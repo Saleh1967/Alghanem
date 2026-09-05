@@ -23,6 +23,7 @@ class _DefaultProvenance:
     pass
 
 
+# Distinguishes omitted provenance from an explicit None in branch-birth tests.
 _DEFAULT_PROVENANCE = _DefaultProvenance()
 
 

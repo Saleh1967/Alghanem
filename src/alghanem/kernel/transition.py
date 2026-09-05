@@ -33,7 +33,10 @@ class BranchOriginProvenance:
     def __post_init__(self) -> None:
         if not self.preserved_components:
             raise ValueError("branch origin provenance requires preserved components")
-        _validate_components("branch origin provenance", self.preserved_components)
+        _validate_components(
+            "branch origin provenance preserved components",
+            self.preserved_components,
+        )
         if self.branch_anchor == self.origin_anchor:
             raise ValueError(
                 "branch origin provenance requires a distinct branch anchor"
@@ -75,11 +78,12 @@ class LicensedTransition(TransitionCandidate):
     replacement paths that rerun ``__init__`` are not licensing paths.
     """
 
-    license_token: InitVar[object | None] = None
+    _license_token: InitVar[object | None] = None
 
-    def __post_init__(self, license_token: object | None) -> None:
-        if license_token is not _LICENSE_TOKEN:
+    def __post_init__(self, _license_token: object | None) -> None:
+        if _license_token is not _LICENSE_TOKEN:
             raise ValueError("licensed transitions must be issued by LicensingGate")
+        _validate_candidate_components(self)
         self.validate_success()
 
 
@@ -109,24 +113,23 @@ class LicensingGate:
             outcome=candidate.outcome,
             result=candidate.result,
             branch_origin_provenance=candidate.branch_origin_provenance,
-            license_token=_LICENSE_TOKEN,
+            _license_token=_LICENSE_TOKEN,
         )
 
 
-def _validate_components(name: str, components: tuple[str, ...]) -> None:
+def _validate_components(label: str, components: tuple[str, ...]) -> None:
     if any(not component.strip() for component in components):
-        raise ValueError(f"{name} components cannot be blank")
+        raise ValueError(f"{label} cannot be blank")
     if len(set(components)) != len(components):
-        raise ValueError(f"{name} components must be unique")
+        raise ValueError(f"{label} must be unique")
 
 
 def _validate_candidate_components(candidate: TransitionCandidate) -> None:
-    _validate_components("preserved", candidate.preserved)
-    _validate_components("changed", candidate.changed)
+    _validate_components("preserved components", candidate.preserved)
+    _validate_components("changed components", candidate.changed)
 
 
 def _validate_successful_transition_fields(candidate: TransitionCandidate) -> None:
-    _validate_candidate_components(candidate)
     if candidate.result is None:
         raise ValueError("successful transitions require a result")
     if (
