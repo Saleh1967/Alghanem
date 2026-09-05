@@ -18,7 +18,12 @@ from alghanem.kernel import (
     TransitionDecision,
 )
 
-_DEFAULT_PROVENANCE = object()
+
+class _DefaultProvenance:
+    pass
+
+
+_DEFAULT_PROVENANCE = _DefaultProvenance()
 
 
 def claim(claim_id: str = "claim-1", statement: str = "supported") -> Claim:
@@ -37,9 +42,10 @@ def make_candidate(
     transition_evidence: tuple[Evidence, ...] | None = None,
     anchor: Anchor | None = None,
     operation: Operation | None = None,
-    branch_origin_provenance: BranchOriginProvenance | object | None = (
-        _DEFAULT_PROVENANCE
-    ),
+    result: OperationResult | None = OperationResult("result"),
+    branch_origin_provenance: (
+        BranchOriginProvenance | _DefaultProvenance | None
+    ) = _DEFAULT_PROVENANCE,
 ) -> TransitionCandidate:
     anchor = anchor or Anchor("a", "D")
     transition_claim = transition_claim or claim()
@@ -68,7 +74,7 @@ def make_candidate(
         trace=Trace(("started",)),
         residuals=(Residual("remainder"),),
         outcome=outcome,
-        result=OperationResult("result"),
+        result=result,  # type: ignore[arg-type]
         branch_origin_provenance=branch_origin_provenance,
     )
 
@@ -127,6 +133,12 @@ def test_licensing_gate_issues_successful_transition():
     assert isinstance(transition, LicensedTransition)
 
 
+def test_licensing_gate_rejects_already_licensed_transition():
+    transition = make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION)
+    with pytest.raises(ValueError, match="re-licensed"):
+        LicensingGate.license(transition)
+
+
 def test_identity_preserving_requires_declared_invariant():
     with pytest.raises(ValueError, match="invariant"):
         license_candidate(
@@ -179,6 +191,16 @@ def test_success_without_evidence_is_rejected():
             make_candidate(
                 Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
                 transition_evidence=(),
+            )
+        )
+
+
+def test_success_without_result_is_rejected():
+    with pytest.raises(ValueError, match="result"):
+        license_candidate(
+            make_candidate(
+                Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
+                result=None,
             )
         )
 
@@ -325,6 +347,23 @@ def test_branch_origin_provenance_must_match_transition_anchor():
                 operation=Operation("op", "new"),
                 branch_origin_provenance=BranchOriginProvenance(
                     Anchor("other", "D"), Anchor("branch", "D"), ("origin-data",)
+                ),
+            )
+        )
+
+
+def test_branch_origin_provenance_branch_domain_must_match_transition_domain():
+    anchor = Anchor("a", "D")
+    with pytest.raises(ValueError, match="transition domain"):
+        license_candidate(
+            make_candidate(
+                Outcome.CERTIFIED_BRANCH_BIRTH,
+                preserved=("origin-data",),
+                changed=("new",),
+                anchor=anchor,
+                operation=Operation("op", "new"),
+                branch_origin_provenance=BranchOriginProvenance(
+                    anchor, Anchor("branch", "OTHER"), ("origin-data",)
                 ),
             )
         )

@@ -1,7 +1,7 @@
 """Foundational, language-agnostic kernel types."""
 
 from .anchor import Anchor, State
-from .certificate import ClaimEvidenceBinding
+from .binding import ClaimEvidenceBinding
 from .evidence import Claim, Evidence
 from .operation import Operation, OperationResult
 from .residual import Residual

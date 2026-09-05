@@ -86,7 +86,8 @@ class LicensingGate:
     def license(candidate: TransitionCandidate) -> LicensedTransition:
         """Issue a licensed transition after structural validation."""
 
-        candidate.validate_success()
+        if isinstance(candidate, LicensedTransition):
+            raise ValueError("licensed transitions cannot be re-licensed")
         return LicensedTransition(
             anchor=candidate.anchor,
             before_state=candidate.before_state,
@@ -158,6 +159,13 @@ def _validate_branch_birth(candidate: TransitionCandidate) -> None:
         raise ValueError("certified branch births require explicit origin provenance")
     if candidate.branch_origin_provenance.origin_anchor != candidate.anchor:
         raise ValueError("branch origin provenance must match the transition anchor")
+    if (
+        candidate.branch_origin_provenance.branch_anchor.domain
+        != candidate.anchor.domain
+    ):
+        raise ValueError(
+            "branch origin provenance branch anchor must match the transition domain"
+        )
     provenance_components = set(candidate.branch_origin_provenance.preserved_components)
     if not provenance_components.issubset(set(candidate.preserved)):
         raise ValueError(
