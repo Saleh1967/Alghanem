@@ -47,9 +47,11 @@ class BranchOriginProvenance:
 class TransitionCandidate:
     """A transition-shaped candidate that has not crossed the licensing boundary.
 
-    ``anchor`` is the source anchor; ``target_anchor`` is the anchor the
-    transition targets. When omitted, ``target_anchor`` defaults to the source
-    anchor. Branch births must declare an explicit distinct target anchor.
+    ``anchor`` is the source anchor; ``target_anchor`` is the explicitly
+    declared anchor the transition targets. A candidate may omit
+    ``target_anchor`` before licensing, but a successful transition must
+    declare it explicitly; ``resolved_target_anchor`` never substitutes for
+    the explicitness requirement.
     """
 
     anchor: Anchor
@@ -69,7 +71,11 @@ class TransitionCandidate:
 
     @property
     def resolved_target_anchor(self) -> Anchor:
-        """The explicit target anchor, defaulting to the source anchor."""
+        """The declared target anchor, defaulting to the source anchor.
+
+        A convenience view for incomplete candidates only; it never satisfies
+        the explicit-target-anchor requirement for a successful transition.
+        """
         return self.target_anchor if self.target_anchor is not None else self.anchor
 
     def __post_init__(self) -> None:
@@ -151,7 +157,9 @@ def _validate_successful_transition_fields(candidate: TransitionCandidate) -> No
         raise ValueError(
             "operation source domain must match the transition anchor domain"
         )
-    target_anchor = candidate.resolved_target_anchor
+    if candidate.target_anchor is None:
+        raise ValueError("successful transitions require an explicit target anchor")
+    target_anchor = candidate.target_anchor
     if (
         candidate.operation.target_domain is not None
         and candidate.operation.target_domain != target_anchor.domain
@@ -195,7 +203,9 @@ def _validate_branch_birth(candidate: TransitionCandidate) -> None:
         raise ValueError("certified branch births require explicit origin provenance")
     if candidate.branch_origin_provenance.origin_anchor != candidate.anchor:
         raise ValueError("branch origin provenance must match the transition anchor")
-    target_anchor = candidate.resolved_target_anchor
+    if candidate.target_anchor is None:
+        raise ValueError("certified branch births require an explicit target anchor")
+    target_anchor = candidate.target_anchor
     if target_anchor == candidate.anchor:
         raise ValueError("certified branch births require a distinct target anchor")
     if candidate.branch_origin_provenance.branch_anchor != target_anchor:
@@ -215,9 +225,10 @@ class NonSuccessDecisionAudit:
 
     A non-success decision is not an erased history: it preserves the trace,
     the residuals, and a structural reason so the decision can be reviewed.
-    The assessed candidate is optional because undefinedness may arise before
-    a complete candidate can be constructed. Residuals are preserved, not
-    interpreted.
+    When an assessed candidate exists, the audit trace and residuals are bound
+    to that candidate's own history, so no history is fabricated or attached
+    without provenance. Without a candidate, the audit owns its trace and
+    residuals directly. Residuals are preserved, not interpreted.
     """
 
     trace: Trace
@@ -233,6 +244,14 @@ class NonSuccessDecisionAudit:
         ):
             raise ValueError(
                 "non-success decision audits cannot reference a licensed transition"
+            )
+        if self.candidate is not None and self.trace != self.candidate.trace:
+            raise ValueError(
+                "non-success decision audit trace must match the candidate trace"
+            )
+        if self.candidate is not None and self.residuals != self.candidate.residuals:
+            raise ValueError(
+                "non-success decision audit residuals must match the candidate"
             )
 
 

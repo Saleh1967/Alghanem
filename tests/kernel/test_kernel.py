@@ -48,14 +48,17 @@ def make_candidate(
     branch_origin_provenance: (
         BranchOriginProvenance | _DefaultProvenance | None
     ) = _DEFAULT_PROVENANCE,
-    target_anchor: Anchor | None = None,
+    target_anchor: Anchor | _DefaultProvenance | None = _DEFAULT_PROVENANCE,
 ) -> TransitionCandidate:
     anchor = anchor or Anchor("a", "D")
     transition_claim = transition_claim or claim()
     if transition_evidence is None:
         transition_evidence = (evidence(transition_claim.claim_id),)
-    if outcome is Outcome.CERTIFIED_BRANCH_BIRTH and target_anchor is None:
-        target_anchor = Anchor("branch", "D")
+    if target_anchor is _DEFAULT_PROVENANCE:
+        if outcome is Outcome.CERTIFIED_BRANCH_BIRTH:
+            target_anchor = Anchor("branch", "D")
+        else:
+            target_anchor = anchor
     if (
         branch_origin_provenance is _DEFAULT_PROVENANCE
         and outcome is Outcome.CERTIFIED_BRANCH_BIRTH
@@ -88,9 +91,15 @@ def make_candidate(
 def make_audit(
     candidate: TransitionCandidate | None = None,
 ) -> NonSuccessDecisionAudit:
+    if candidate is not None:
+        trace = candidate.trace
+        residuals = candidate.residuals
+    else:
+        trace = Trace(("assessed",))
+        residuals = (Residual("remainder"),)
     return NonSuccessDecisionAudit(
-        trace=Trace(("assessed",)),
-        residuals=(Residual("remainder"),),
+        trace=trace,
+        residuals=residuals,
         reason="licensing refused",
         candidate=candidate,
     )
@@ -493,7 +502,7 @@ def test_identity_preserving_accepts_target_anchor_equal_to_source():
             target_anchor=anchor,
         )
     )
-    assert transition.resolved_target_anchor == transition.anchor
+    assert transition.target_anchor == transition.anchor
 
 
 def test_branch_birth_rejects_target_anchor_equal_to_source():
@@ -527,8 +536,8 @@ def test_branch_birth_binds_target_anchor_to_provenance_branch():
     provenance = transition.branch_origin_provenance
     assert provenance is not None
     assert provenance.origin_anchor == transition.anchor
-    assert provenance.branch_anchor == transition.resolved_target_anchor == target
-    assert transition.resolved_target_anchor != transition.anchor
+    assert provenance.branch_anchor == transition.target_anchor == target
+    assert transition.target_anchor != transition.anchor
 
 
 def test_branch_origin_provenance_origin_must_match_source_anchor():
@@ -651,3 +660,55 @@ def test_undefined_decision_is_representable_without_a_candidate():
     decision = TransitionDecision(Outcome.UNDEFINED, audit=make_audit())
     assert decision.audit is not None
     assert decision.audit.candidate is None
+
+
+def test_candidate_cannot_be_audited_with_another_trace():
+    candidate = make_candidate(Outcome.BLOCK, result=None)
+    with pytest.raises(ValueError, match="candidate trace"):
+        NonSuccessDecisionAudit(
+            trace=Trace(("fabricated",)),
+            residuals=candidate.residuals,
+            reason="licensing refused",
+            candidate=candidate,
+        )
+
+
+def test_candidate_cannot_be_audited_with_other_residuals():
+    candidate = make_candidate(Outcome.BLOCK, result=None)
+    with pytest.raises(ValueError, match="candidate"):
+        NonSuccessDecisionAudit(
+            trace=candidate.trace,
+            residuals=(Residual("invented"),),
+            reason="licensing refused",
+            candidate=candidate,
+        )
+
+
+def test_audit_bound_to_candidate_preserves_the_candidate_history():
+    candidate = make_candidate(Outcome.DEFER, result=None)
+    decision = TransitionDecision(Outcome.DEFER, audit=make_audit(candidate))
+    assert decision.audit is not None
+    assert decision.audit.trace == candidate.trace
+    assert decision.audit.residuals == candidate.residuals
+    assert decision.audit.candidate is candidate
+
+
+@pytest.mark.parametrize(
+    "outcome",
+    [Outcome.IDENTITY_PRESERVING_TRANSFORMATION, Outcome.CERTIFIED_BRANCH_BIRTH],
+)
+def test_success_without_explicit_target_anchor_cannot_be_licensed(outcome: Outcome):
+    with pytest.raises(ValueError, match="explicit target anchor"):
+        license_candidate(make_candidate(outcome, target_anchor=None))
+
+
+def test_explicit_target_anchor_equal_to_source_is_licensed():
+    anchor = Anchor("a", "D")
+    transition = license_candidate(
+        make_candidate(
+            Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
+            anchor=anchor,
+            target_anchor=anchor,
+        )
+    )
+    assert transition.target_anchor is anchor

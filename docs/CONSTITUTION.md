@@ -5,7 +5,7 @@ These are the initial laws of the language-agnostic kernel:
 | Law | Status | Kernel v0.1 scope |
 | --- | --- | --- |
 | Explicit domain | ENFORCED | Anchors require a non-blank domain. When an operation declares a source domain, it must match the source anchor's domain. When an operation declares a target domain, it must match the target anchor's domain. |
-| Explicit target anchor | ENFORCED | Every successful transition has an explicit SourceAnchor and TargetAnchor. Identity-preserving transformations require source anchor = target anchor. Certified branch births require source anchor != target anchor, and branch provenance must bind the actual source and target anchors. |
+| Explicit target anchor | ENFORCED | No successful transition without an explicitly declared target anchor; a default derived from the source anchor never satisfies licensing. Identity-preserving transformations require source anchor = target anchor. Certified branch births require source anchor != target anchor, and branch provenance must bind the actual source and target anchors. |
 | Evidence present | ENFORCED | Successful transitions require at least one evidence record. |
 | Evidence-to-claim binding | ENFORCED | Successful-transition evidence is structurally bound by claim id to the transition's own claim. This is not proof sufficiency. |
 | Licensing boundary | ENFORCED | Candidates become licensed transitions only through the licensing gate. The gate is a controlled construction boundary inside the Python API, not a cryptographic or security-grade mechanism. |
@@ -14,7 +14,7 @@ These are the initial laws of the language-agnostic kernel:
 | Declared change | ENFORCED | Every successful transition has a result and a changed component matching the operation's declared change. |
 | Branch birth separation | ENFORCED | Certified branch birth is distinct from identity preservation and requires preserved origin provenance tied to declared preserved components and a distinct branch anchor equal to the target anchor. |
 | Non-transition outcomes | ENFORCED | `BLOCK`, `DEFER`, and `UNDEFINED` are decisions, not licensed transitions. |
-| Non-success audit | ENFORCED | No non-success decision without reviewable audit information. Every non-success decision preserves its trace, its residuals, and a non-blank structural reason; the assessed candidate is preserved when one exists. Non-success decision histories must not be erased. |
+| Non-success audit | ENFORCED | No non-success decision without reviewable audit information. Every non-success decision preserves its trace, its residuals, and a non-blank structural reason; the assessed candidate is preserved when one exists, and the audit's trace and residuals are then bound to that candidate's own history — no history without provenance from the assessed attempt. Without a candidate, the audit owns its trace and residuals directly. Non-success decision histories must not be erased. |
 | Residual presence | PARTIALLY_ENFORCED | Residual records cannot be blank when present and are preserved in non-success audits, but residual provenance is not defined and residuals are not interpreted or ranked. |
 | No epistemic promotion | DECLARED_DEFERRED | Claim/evidence binding is structural only; evidential sufficiency is not implemented. |
 | No higher-layer repair | DECLARED_DEFERRED | Higher layers may not repair invalid lower-layer transitions, but layer authority is not defined. |
