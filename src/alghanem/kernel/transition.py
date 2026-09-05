@@ -1,6 +1,7 @@
 """Transition candidates, structurally admissible transitions, and
 explicit decisions."""
 
+import hashlib
 from dataclasses import InitVar, dataclass
 from enum import Enum, auto
 from uuid import uuid4
@@ -12,6 +13,48 @@ from .residual import Residual
 from .trace import Trace
 
 _ADMISSION_TOKEN = object()
+
+
+def _compute_transition_fingerprint(candidate: "TransitionCandidate") -> str:
+    """Deterministic, content-based identity for a candidate's own content.
+
+    ``admission_id`` is intentionally opaque and run-specific (a fresh
+    ``uuid4().hex`` per admission), which prevents accidental replay across
+    unrelated ``StructurallyAdmissibleTransition`` instances but also means
+    running the exact same experiment twice never produces the same
+    identity. This fingerprint is the complementary, deterministic identity:
+    ``OccurrenceIdentity != ContentIdentity``. Two candidates built from the
+    same declared content (anchors, claim id, preserved/changed sets, kind,
+    and a best-effort ``repr`` of the opaque before/after state payloads)
+    always hash to the same fingerprint, independent of when or how many
+    times admission ran.
+
+    This is a best-effort digest, not a cryptographic identity guarantee:
+    ``repr`` is not guaranteed stable across Python versions or for every
+    object (for example, default object reprs embed memory addresses), so a
+    matching fingerprint is corroborating evidence of reproducibility, not a
+    formal proof of content equality.
+    """
+
+    resolved_target = (
+        candidate.target_anchor
+        if candidate.target_anchor is not None
+        else candidate.anchor
+    )
+    parts = (
+        candidate.kind.name,
+        candidate.anchor.identifier,
+        candidate.anchor.domain,
+        resolved_target.identifier,
+        resolved_target.domain,
+        candidate.claim.claim_id,
+        repr(candidate.before_state.value),
+        repr(candidate.after_state.value),
+        "|".join(sorted(candidate.preserved)),
+        "|".join(sorted(candidate.changed)),
+    )
+    digest = hashlib.sha256("\x1f".join(parts).encode("utf-8", errors="surrogatepass"))
+    return digest.hexdigest()
 
 
 class TransitionKind(Enum):
@@ -160,10 +203,20 @@ class StructurallyAdmissibleTransition(TransitionCandidate):
     candidate to create this type.
     Dataclass replacement paths that rerun ``__init__`` are not admission
     paths.
+
+    Carries two distinct identities, deliberately not conflated:
+    ``admission_id`` is an opaque, run-specific ``uuid4().hex`` (prevents
+    accidental replay across separate admissions of otherwise-similar
+    content), while ``transition_fingerprint`` is a deterministic,
+    content-based digest of the candidate's own declared fields (enables
+    independent reproducibility: the same input admitted twice, today or
+    tomorrow, yields the same fingerprint even though it gets a fresh
+    ``admission_id`` each time). ``OccurrenceIdentity != ContentIdentity``.
     """
 
     _admission_token: InitVar[object | None] = None
     admission_id: str = ""
+    transition_fingerprint: str = ""
 
     def __post_init__(self, _admission_token: object | None) -> None:
         if _admission_token is not _ADMISSION_TOKEN:
@@ -174,6 +227,10 @@ class StructurallyAdmissibleTransition(TransitionCandidate):
         if not self.admission_id.strip():
             raise ValueError(
                 "structurally admissible transitions require an admission id"
+            )
+        if not self.transition_fingerprint.strip():
+            raise ValueError(
+                "structurally admissible transitions require a transition fingerprint"
             )
         # Re-validated here, not inherited from TransitionCandidate: this
         # dataclass's own __post_init__ fully overrides the parent's, and
@@ -222,6 +279,7 @@ class StructuralAdmissionGate:
                 branch_origin_provenance=candidate.branch_origin_provenance,
                 target_anchor=candidate.target_anchor,
                 admission_id=uuid4().hex,
+                transition_fingerprint=_compute_transition_fingerprint(candidate),
                 _admission_token=_ADMISSION_TOKEN,
             )
         except ValueError as error:

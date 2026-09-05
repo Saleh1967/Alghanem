@@ -42,6 +42,27 @@ Hardening laws close this module's scope for Kernel v0.1:
    ``__eq__`` return non-bool values). A non-``bool`` comparison result is
    rejected with a typed ``InvariantComparisonError`` rather than silently
    coerced into a verification.
+7. ``InvariantVerificationDecision`` is also gate-issued, not just
+   ``InvariantVerificationBundle``: a caller cannot hand-build
+   ``InvariantVerificationDecision(status=VERIFIED, ...)`` without going
+   through ``InvariantVerificationGate.assess_all_preserved``, and a
+   ``VERIFIED`` decision enforces the same complete-coverage,
+   no-duplicates, transition-bound, single-snapshot requirements as the
+   bundle.
+8. ``DEFER`` carries real operational meaning, distinct from ``BLOCK``:
+   epistemic non-answers (an unregistered extractor, a failing extractor,
+   or an ambiguous non-``bool`` comparison) are ``DEFER``, while a
+   genuinely disproved invariant (``I(before) != I(after)``) is ``BLOCK``.
+   Internal/programming errors are neither: they are not caught and
+   propagate as ordinary exceptions, rather than being silently coerced
+   into either epistemic status.
+9. Reproducibility alongside replay resistance: ``admission_id`` and
+   ``registry_snapshot_id`` are opaque, run-specific identities (fresh
+   ``uuid4().hex`` per instance) that guard against accidental replay.
+   ``transition_fingerprint`` and ``registry_content_hash`` are their
+   deterministic, content-based complements, recorded in addition to (not
+   instead of) the opaque identities: ``OccurrenceIdentity !=
+   ContentIdentity``.
 
 ``InvariantVerificationGate.verify`` is the only way to produce an
 ``InvariantVerification``. It extracts a value from ``before_state`` and
@@ -60,6 +81,7 @@ replay, not against a determined, dishonest caller fabricating matching
 field values by hand.
 """
 
+import hashlib
 import threading
 from collections.abc import Callable, Mapping
 from dataclasses import InitVar, dataclass
@@ -77,6 +99,7 @@ InvariantExtractor = Callable[[State], object]
 
 _VERIFICATION_TOKEN = object()
 _SEAL_TOKEN = object()
+_DECISION_TOKEN = object()
 
 
 @dataclass(frozen=True, slots=True)
@@ -132,6 +155,14 @@ class InvariantVerificationProvenance:
     ``invariant_id``: ``Verification(T1) does not imply Verification(T2)``.
 
     This is a structural binding, not a cryptographic identity claim.
+
+    ``source_admission_id``/``registry_snapshot_id`` are opaque, run-specific
+    identities (each a fresh ``uuid4().hex``) that guard against accidental
+    replay across instances. ``source_transition_fingerprint``/
+    ``registry_content_hash`` are their deterministic, content-based
+    complements: ``OccurrenceIdentity != ContentIdentity``. Both pairs are
+    recorded together, not one instead of the other, so replay resistance
+    and independent reproducibility hold at the same time.
     """
 
     source_claim_id: str
@@ -142,6 +173,8 @@ class InvariantVerificationProvenance:
     extractor_id: str
     source_admission_id: str | None = None
     registry_snapshot_id: str | None = None
+    source_transition_fingerprint: str | None = None
+    registry_content_hash: str | None = None
 
     def __post_init__(self) -> None:
         if not self.source_claim_id.strip():
@@ -169,6 +202,20 @@ class InvariantVerificationProvenance:
         ):
             raise ValueError(
                 "invariant verification provenance requires a registry snapshot id"
+            )
+        if (
+            self.source_transition_fingerprint is not None
+            and not self.source_transition_fingerprint.strip()
+        ):
+            raise ValueError(
+                "invariant verification provenance requires a transition fingerprint"
+            )
+        if (
+            self.registry_content_hash is not None
+            and not self.registry_content_hash.strip()
+        ):
+            raise ValueError(
+                "invariant verification provenance requires a registry content hash"
             )
 
 
@@ -256,6 +303,18 @@ class InvariantProvenanceMismatchError(ValueError):
     """
 
 
+# Errors that mean "this invariant could not be observed/checked", not
+# "this invariant was checked and disproved". ``InvariantVerificationGate.
+# assess_all_preserved`` maps exactly these to ``DEFER``; every other
+# exception is a programming/internal error and is left to propagate rather
+# than being coerced into a BLOCK or DEFER epistemic judgment.
+_UNTESTABLE_EVIDENCE_ERRORS = (
+    UnregisteredExtractorError,
+    InvariantExtractionError,
+    InvariantComparisonError,
+)
+
+
 class InvariantVerificationDecisionStatus(Enum):
     VERIFIED = auto()
     BLOCK = auto()
@@ -264,7 +323,34 @@ class InvariantVerificationDecisionStatus(Enum):
 
 @dataclass(frozen=True, slots=True)
 class InvariantVerificationDecision:
-    """Auditable result of checking the complete preserved-invariant set."""
+    """Auditable result of checking the complete preserved-invariant set.
+
+    Gate-issued only, mirroring ``InvariantVerification`` and
+    ``StructurallyAdmissibleTransition``: passing anything other than
+    ``InvariantVerificationGate``'s private decision token raises. Without
+    this, an ordinary caller could hand-build
+    ``InvariantVerificationDecision(status=VERIFIED, ...)`` without ever
+    running ``InvariantVerificationGate.verify``, letting a later layer that
+    trusts ``decision.status == VERIFIED`` be fooled by a self-declared
+    result -- the same failure mode this module closes for individual
+    ``InvariantVerification``s. A ``VERIFIED`` decision additionally can only
+    be constructed with complete, duplicate-free, transition-bound coverage
+    (the same requirements ``InvariantVerificationBundle`` enforces), so
+    ``BundleAuthority`` and ``DecisionIntegrity`` no longer diverge.
+
+    ``status`` distinguishes three genuinely different situations, not just
+    two: ``BLOCK`` means the invariant was checked and found *not*
+    preserved (``I(before) != I(after)``) -- a disproved claim. ``DEFER``
+    means the invariant could not be checked at all (an unregistered
+    extractor, a failing extractor, or an ambiguous, non-``bool``
+    comparison) -- an epistemically untestable claim, not a disproved one.
+    Conflating the two would let ``"we could not observe this"`` masquerade
+    as ``"we observed that it failed"``. Internal/programming errors
+    (anything not raised as one of the recognized untestable-evidence
+    errors) are not caught into either status; they propagate as ordinary
+    exceptions, since a bug in the checking code itself is neither a
+    verified fact about the invariant nor an epistemic non-answer about it.
+    """
 
     status: InvariantVerificationDecisionStatus
     transition: "StructurallyAdmissibleTransition"
@@ -273,19 +359,42 @@ class InvariantVerificationDecision:
     trace: Trace | None = None
     residuals: tuple[object, ...] = ()
     reason: str = ""
+    _decision_token: InitVar[object | None] = None
 
-    def __post_init__(self) -> None:
+    def __post_init__(self, _decision_token: object | None) -> None:
+        if _decision_token is not _DECISION_TOKEN:
+            raise ValueError(
+                "invariant verification decisions must be issued by "
+                "InvariantVerificationGate"
+            )
         if not self.reason.strip():
             raise ValueError("invariant verification decisions require a reason")
         if self.status is InvariantVerificationDecisionStatus.VERIFIED:
             if self.failed_components:
                 raise ValueError("verified decisions cannot have failed components")
-            if set(v.component for v in self.verifications) != set(
-                self.transition.preserved
-            ):
+            components = tuple(v.component for v in self.verifications)
+            if len(set(components)) != len(components):
+                raise ValueError(
+                    "verified decisions cannot contain duplicate components"
+                )
+            if set(components) != set(self.transition.preserved):
                 raise ValueError(
                     "verified decisions require complete invariant coverage"
                 )
+            for verification in self.verifications:
+                InvariantVerificationGate.require_bound_to(
+                    verification, self.transition
+                )
+                if not verification.preserved:
+                    raise ValueError(
+                        "verified decisions require every invariant to be preserved"
+                    )
+            snapshot_ids = {
+                verification.provenance.registry_snapshot_id
+                for verification in self.verifications
+            }
+            if len(snapshot_ids) != 1 or None in snapshot_ids:
+                raise ValueError("verified decisions require one registry snapshot")
 
 
 class InvariantVerificationError(ValueError):
@@ -342,7 +451,7 @@ class SealedInvariantExtractorRegistry:
     to register anything -- it only resolves.
     """
 
-    __slots__ = ("_extractors", "_registry_snapshot_id")
+    __slots__ = ("_extractors", "_registry_snapshot_id", "_registry_content_hash")
 
     def __init__(
         self, extractors: Mapping[str, InvariantExtractor], _seal_token: object
@@ -368,12 +477,33 @@ class SealedInvariantExtractorRegistry:
         # call can interleave with it.
         self._extractors: dict[str, InvariantExtractor] = dict(extractors)
         self._registry_snapshot_id = uuid4().hex
+        self._registry_content_hash = hashlib.sha256(
+            "|".join(sorted(self._extractors)).encode("utf-8")
+        ).hexdigest()
 
     @property
     def registry_snapshot_id(self) -> str:
         """Opaque identity of this sealed registry snapshot."""
 
         return self._registry_snapshot_id
+
+    @property
+    def registry_content_hash(self) -> str:
+        """Deterministic digest of this snapshot's registered extractor ids.
+
+        ``registry_snapshot_id`` is an opaque ``uuid4().hex`` minted fresh by
+        every ``seal()`` call, so it cannot by itself confirm that two
+        snapshots (perhaps sealed on different days) actually registered the
+        same extractors. This hash is the deterministic complement:
+        ``OccurrenceIdentity != ContentIdentity`` applies to registries too.
+        It only covers registered extractor *ids*, not the extractor
+        callables' own behavior -- two registries could register the same id
+        with differently-behaving callables and still hash identically, so
+        this is corroborating evidence of reproducible registration, not a
+        proof that the underlying callables are identical.
+        """
+
+        return self._registry_content_hash
 
     def resolve(self, extractor_id: str) -> InvariantExtractor:
         """Resolve a registered extractor, or raise if none is registered."""
@@ -507,6 +637,8 @@ class InvariantVerificationGate:
             extractor_id=spec.extractor_id,
             source_admission_id=transition.admission_id,
             registry_snapshot_id=registry.registry_snapshot_id,
+            source_transition_fingerprint=transition.transition_fingerprint,
+            registry_content_hash=registry.registry_content_hash,
         )
         trace = Trace(
             transition.trace.events
@@ -528,7 +660,23 @@ class InvariantVerificationGate:
         specs: tuple[InvariantSpec, ...],
         registry: SealedInvariantExtractorRegistry,
     ) -> InvariantVerificationDecision:
-        """Assess complete invariant coverage without discarding failed history."""
+        """Assess complete invariant coverage without discarding failed history.
+
+        Distinguishes three outcomes, not two: ``BLOCK`` means at least one
+        declared invariant was actually checked and found not preserved.
+        ``DEFER`` means at least one declared invariant could not be checked
+        at all -- an unregistered extractor
+        (``UnregisteredExtractorError``), a failing extractor
+        (``InvariantExtractionError``), or an ambiguous, non-``bool``
+        comparison (``InvariantComparisonError``). ``I(before) != I(after)``
+        (disproved) is not the same epistemic situation as ``I currently
+        untestable`` (unavailable evidence), so they are never coalesced
+        into the same status. Any other exception (an internal/programming
+        error, not one of the recognized untestable-evidence errors) is not
+        caught here; it propagates to the caller unchanged, since a bug in
+        the checking code itself is neither a verified nor a deferred
+        judgment about the invariant.
+        """
 
         if {spec.component for spec in specs} != set(transition.preserved):
             return InvariantVerificationDecision(
@@ -538,6 +686,7 @@ class InvariantVerificationGate:
                 trace=transition.trace,
                 residuals=transition.residuals,
                 reason="invariant specs must exactly cover preserved components",
+                _decision_token=_DECISION_TOKEN,
             )
         verifications: list[InvariantVerification] = []
         if len({spec.component for spec in specs}) != len(specs):
@@ -548,6 +697,7 @@ class InvariantVerificationGate:
                 trace=transition.trace,
                 residuals=transition.residuals,
                 reason="invariant specs cannot duplicate preserved components",
+                _decision_token=_DECISION_TOKEN,
             )
         current_component = ""
         try:
@@ -556,7 +706,7 @@ class InvariantVerificationGate:
                 verifications.append(
                     InvariantVerificationGate.verify(transition, spec, registry)
                 )
-        except Exception as error:
+        except _UNTESTABLE_EVIDENCE_ERRORS as error:
             failed = tuple(
                 component
                 for component in transition.preserved
@@ -566,16 +716,17 @@ class InvariantVerificationGate:
             if current_component and current_component not in failed:
                 failed += (current_component,)
             return InvariantVerificationDecision(
-                status=InvariantVerificationDecisionStatus.BLOCK,
+                status=InvariantVerificationDecisionStatus.DEFER,
                 transition=transition,
                 verifications=tuple(verifications),
                 failed_components=failed,
                 trace=Trace(
                     transition.trace.events
-                    + (f"invariant verification blocked: {error}",)
+                    + (f"invariant verification deferred: {error}",)
                 ),
                 residuals=transition.residuals,
                 reason=str(error),
+                _decision_token=_DECISION_TOKEN,
             )
         if any(not verification.preserved for verification in verifications):
             failed = tuple(
@@ -591,6 +742,7 @@ class InvariantVerificationGate:
                 trace=verifications[-1].trace if verifications else transition.trace,
                 residuals=transition.residuals,
                 reason="one or more preserved invariants were not verified",
+                _decision_token=_DECISION_TOKEN,
             )
         return InvariantVerificationDecision(
             status=InvariantVerificationDecisionStatus.VERIFIED,
@@ -599,6 +751,7 @@ class InvariantVerificationGate:
             trace=verifications[-1].trace,
             residuals=transition.residuals,
             reason="all declared preserved invariants were verified",
+            _decision_token=_DECISION_TOKEN,
         )
 
     @staticmethod
@@ -638,9 +791,15 @@ class InvariantVerificationGate:
             or provenance.source_target_anchor != transition.resolved_target_anchor
             or provenance.source_trace != transition.trace
             or provenance.source_admission_id != transition.admission_id
+            or provenance.source_transition_fingerprint
+            != transition.transition_fingerprint
             or (
                 registry is not None
-                and provenance.registry_snapshot_id != registry.registry_snapshot_id
+                and (
+                    provenance.registry_snapshot_id != registry.registry_snapshot_id
+                    or provenance.registry_content_hash
+                    != registry.registry_content_hash
+                )
             )
         ):
             raise InvariantProvenanceMismatchError(
