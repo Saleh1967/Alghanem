@@ -45,7 +45,14 @@ class BranchOriginProvenance:
 
 @dataclass(frozen=True, slots=True)
 class TransitionCandidate:
-    """A transition-shaped candidate that has not crossed the licensing boundary."""
+    """A transition-shaped candidate that has not crossed the licensing boundary.
+
+    ``anchor`` is the source anchor; ``target_anchor`` is the explicitly
+    declared anchor the transition targets. A candidate may omit
+    ``target_anchor`` before licensing, but a successful transition must
+    declare it explicitly; ``resolved_target_anchor`` never substitutes for
+    the explicitness requirement.
+    """
 
     anchor: Anchor
     before_state: State
@@ -60,6 +67,16 @@ class TransitionCandidate:
     outcome: Outcome
     result: OperationResult | None
     branch_origin_provenance: BranchOriginProvenance | None = None
+    target_anchor: Anchor | None = None
+
+    @property
+    def resolved_target_anchor(self) -> Anchor:
+        """The declared target anchor, defaulting to the source anchor.
+
+        A convenience view for incomplete candidates only; it never satisfies
+        the explicit-target-anchor requirement for a successful transition.
+        """
+        return self.target_anchor if self.target_anchor is not None else self.anchor
 
     def __post_init__(self) -> None:
         _validate_candidate_components(self)
@@ -113,6 +130,7 @@ class LicensingGate:
             outcome=candidate.outcome,
             result=candidate.result,
             branch_origin_provenance=candidate.branch_origin_provenance,
+            target_anchor=candidate.target_anchor,
             _license_token=_LICENSE_TOKEN,
         )
 
@@ -139,6 +157,14 @@ def _validate_successful_transition_fields(candidate: TransitionCandidate) -> No
         raise ValueError(
             "operation source domain must match the transition anchor domain"
         )
+    if candidate.target_anchor is None:
+        raise ValueError("successful transitions require an explicit target anchor")
+    target_anchor = candidate.target_anchor
+    if (
+        candidate.operation.target_domain is not None
+        and candidate.operation.target_domain != target_anchor.domain
+    ):
+        raise ValueError("operation target domain must match the target anchor domain")
     if candidate.outcome in {Outcome.BLOCK, Outcome.DEFER, Outcome.UNDEFINED}:
         raise ValueError("non-transition outcomes cannot be LicensedTransition")
     if not candidate.evidence:
@@ -153,6 +179,10 @@ def _validate_successful_transition_fields(candidate: TransitionCandidate) -> No
         if not candidate.changed:
             raise ValueError(
                 "identity-preserving transformations require a declared change"
+            )
+        if target_anchor != candidate.anchor:
+            raise ValueError(
+                "identity-preserving transformations require an unchanged anchor"
             )
     if not candidate.changed:
         raise ValueError("successful transitions require a declared change")
@@ -173,12 +203,14 @@ def _validate_branch_birth(candidate: TransitionCandidate) -> None:
         raise ValueError("certified branch births require explicit origin provenance")
     if candidate.branch_origin_provenance.origin_anchor != candidate.anchor:
         raise ValueError("branch origin provenance must match the transition anchor")
-    if (
-        candidate.branch_origin_provenance.branch_anchor.domain
-        != candidate.anchor.domain
-    ):
+    if candidate.target_anchor is None:
+        raise ValueError("certified branch births require an explicit target anchor")
+    target_anchor = candidate.target_anchor
+    if target_anchor == candidate.anchor:
+        raise ValueError("certified branch births require a distinct target anchor")
+    if candidate.branch_origin_provenance.branch_anchor != target_anchor:
         raise ValueError(
-            "branch origin provenance branch anchor must match the transition domain"
+            "branch origin provenance branch anchor must be the target anchor"
         )
     provenance_components = set(candidate.branch_origin_provenance.preserved_components)
     if not provenance_components.issubset(set(candidate.preserved)):
@@ -188,20 +220,65 @@ def _validate_branch_birth(candidate: TransitionCandidate) -> None:
 
 
 @dataclass(frozen=True, slots=True)
+class NonSuccessDecisionAudit:
+    """Reviewable record of a decision that did not license a transition.
+
+    A non-success decision is not an erased history: it preserves the trace,
+    the residuals, and a structural reason so the decision can be reviewed.
+    When an assessed candidate exists, the audit trace and residuals are bound
+    to that candidate's own history, so no history is fabricated or attached
+    without provenance. Without a candidate, the audit owns its trace and
+    residuals directly. Residuals are preserved, not interpreted.
+    """
+
+    trace: Trace
+    residuals: tuple[Residual, ...]
+    reason: str
+    candidate: TransitionCandidate | None = None
+
+    def __post_init__(self) -> None:
+        if not self.reason.strip():
+            raise ValueError("non-success decisions require a structural reason")
+        if self.candidate is not None and isinstance(
+            self.candidate, LicensedTransition
+        ):
+            raise ValueError(
+                "non-success decision audits cannot reference a licensed transition"
+            )
+        if self.candidate is not None and self.trace != self.candidate.trace:
+            raise ValueError(
+                "non-success decision audit trace must match the candidate trace"
+            )
+        if self.candidate is not None and self.residuals != self.candidate.residuals:
+            raise ValueError(
+                "non-success decision audit residuals must match the candidate"
+            )
+
+
+@dataclass(frozen=True, slots=True)
 class TransitionDecision:
     """The assessment of an attempted transition, successful or not."""
 
     outcome: Outcome
     transition: LicensedTransition | None = None
+    audit: NonSuccessDecisionAudit | None = None
 
     def __post_init__(self) -> None:
         successful = {
             Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
             Outcome.CERTIFIED_BRANCH_BIRTH,
         }
-        if self.outcome in successful and self.transition is None:
-            raise ValueError("successful decisions require a licensed transition")
-        if self.outcome not in successful and self.transition is not None:
-            raise ValueError("non-transition decisions cannot contain a transition")
+        if self.outcome in successful:
+            if self.transition is None:
+                raise ValueError("successful decisions require a licensed transition")
+            if self.audit is not None:
+                raise ValueError(
+                    "successful decisions cannot carry a non-success audit"
+                )
+        else:
+            if self.transition is not None:
+                raise ValueError("non-transition decisions cannot contain a transition")
+            if self.audit is None:
+                raise ValueError("non-transition decisions require an audit record")
         if self.transition is not None and self.outcome is not self.transition.outcome:
             raise ValueError("decision and transition outcomes must match")
