@@ -244,6 +244,14 @@ class SealedInvariantExtractorRegistry:
                 "sealed invariant extractor registries must be issued by "
                 "InvariantExtractorRegistry.seal()"
             )
+        # ``extractors`` is copied into a fresh, private dict here. This
+        # constructor call happens synchronously inside
+        # ``InvariantExtractorRegistry.seal()``'s ``with self._lock:`` block
+        # (Python evaluates and fully executes the constructed expression,
+        # including this copy, before the ``with`` statement's lock release
+        # runs as part of returning), so the copy is made while the
+        # registration lock is still held -- no concurrent ``register()``
+        # call can interleave with it.
         self._extractors: dict[str, InvariantExtractor] = dict(extractors)
 
     def resolve(self, extractor_id: str) -> InvariantExtractor:
@@ -304,7 +312,12 @@ class InvariantExtractorRegistry:
         injected into ``InvariantVerificationGate``). Registering more
         extractors on this instance after sealing does not retroactively
         affect already-issued sealed views: each ``seal()`` call snapshots
-        the registrations made so far.
+        the registrations made so far. The snapshot copy itself happens
+        inside ``SealedInvariantExtractorRegistry.__init__``, which this
+        method calls while still holding ``self._lock`` (the lock is only
+        released once the constructor -- and its internal copy -- has
+        already returned), so a concurrent ``register()`` cannot interleave
+        with the copy.
         """
 
         with self._lock:
