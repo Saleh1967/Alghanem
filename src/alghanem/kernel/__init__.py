@@ -8,10 +8,13 @@ from .residual import Residual
 from .trace import Trace
 from .transition import (
     BranchOriginProvenance,
+    CertifiedOutcome,
     DecisionReasonCode,
     NonSuccessDecisionAudit,
     Outcome,
+    StructuralAdmissionDecision,
     StructuralAdmissionGate,
+    StructuralDecisionStatus,
     StructurallyAdmissibleTransition,
     TransitionCandidate,
     TransitionDecision,
@@ -21,6 +24,7 @@ from .transition import (
 __all__ = [
     "Anchor",
     "BranchOriginProvenance",
+    "CertifiedOutcome",
     "Claim",
     "ClaimEvidenceBinding",
     "DecisionReasonCode",
@@ -31,7 +35,9 @@ __all__ = [
     "Outcome",
     "Residual",
     "State",
+    "StructuralAdmissionDecision",
     "StructuralAdmissionGate",
+    "StructuralDecisionStatus",
     "StructurallyAdmissibleTransition",
     "Trace",
     "TransitionCandidate",

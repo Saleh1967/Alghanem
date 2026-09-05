@@ -9,12 +9,12 @@ These are the initial laws of the language-agnostic kernel:
 | Evidence present | ENFORCED | Successful transitions require at least one evidence record. |
 | Evidence-to-claim binding | ENFORCED | Successful-transition evidence is structurally bound by claim id to the transition's own claim. This is not proof sufficiency. |
 | Structural admission boundary | ENFORCED | Candidates become `StructurallyAdmissibleTransition`s only through `StructuralAdmissionGate`. The gate is a controlled construction boundary inside the Python API, not a cryptographic or security-grade mechanism, and it certifies structural completeness only — not evidential sufficiency, domain-transition authority, or layer authority. Structural admission must not be conflated with a future `LicensedTransition`: `Representability != Licensability` and `StructuralValidity != EvidentialSufficiency`. |
-| Claimed kind vs. certified outcome | ENFORCED | Every successful candidate declares a `TransitionKind` (`IDENTITY_PRESERVATION_CLAIM` or `BRANCH_BIRTH_CLAIM`) that must match its `Outcome`; non-transition outcomes (`BLOCK`/`DEFER`/`UNDEFINED`) cannot declare a kind. `TransitionKind` names an honest, uncertified claim: `Outcome.IDENTITY_PRESERVING_TRANSFORMATION` and `Outcome.CERTIFIED_BRANCH_BIRTH` are reserved for a future, fully certified `LicensedTransition`, not asserted by structural admission alone. In particular, `target_anchor == anchor` is a structural check, not proof: `AnchorEquality != ProvenIdentityPreservation`. Declaring a name in `preserved`/`changed` is not proof it was extracted from `before_state`/`after_state`: `DeclaredInvariant != VerifiedInvariant`. |
+| Claimed kind vs. certified outcome | ENFORCED | Every candidate declares what it represents via `TransitionKind` (`IDENTITY_PRESERVATION_CLAIM` or `BRANCH_BIRTH_CLAIM`). Candidates do not carry certified outcomes or decision statuses (`Candidate != Decision`); a candidate cannot decide or certify its own outcome. `StructuralAdmissionGate` evaluates the candidate and yields a `StructuralAdmissionDecision` with a status (`ADMITTED`, `BLOCK`, `DEFER`, `UNDEFINED`). `CertifiedOutcome` (`IDENTITY_PRESERVING_TRANSFORMATION`, `CERTIFIED_BRANCH_BIRTH`) is strictly reserved for the final certification stage (`CertifiedTransition`), not asserted by structural admission alone. In particular, `target_anchor == anchor` is a structural check, not proof: `AnchorEquality != ProvenIdentityPreservation`. Declaring a name in `preserved`/`changed` is not proof it was extracted from `before_state`/`after_state`: `DeclaredInvariant != VerifiedInvariant`. |
 | Identity invariant | ENFORCED | Identity-preserving transformations require a declared invariant. |
 | Preserved/changed separation | ENFORCED | Preserved and changed components are non-blank, unique, and disjoint. |
 | Declared change | ENFORCED | Every successful transition has a result and a changed component matching the operation's declared change. |
 | Branch birth separation | ENFORCED | Certified branch birth is distinct from identity preservation and requires preserved origin provenance tied to declared preserved components and a distinct branch anchor equal to the target anchor. |
-| Non-transition outcomes | ENFORCED | `BLOCK`, `DEFER`, and `UNDEFINED` are decisions, not `StructurallyAdmissibleTransition`s. |
+| Non-admitted decisions | ENFORCED | `BLOCK`, `DEFER`, and `UNDEFINED` are external decision statuses (`StructuralDecisionStatus`), never properties of a candidate or `StructurallyAdmissibleTransition`s. |
 | Non-success audit | ENFORCED | No non-success decision without reviewable audit information. Every non-success decision preserves its trace, its residuals, and a non-blank structural reason; the assessed candidate is preserved when one exists, and the audit's trace and residuals are then bound to that candidate's own history — no history without provenance from the assessed attempt. Without a candidate, the audit owns its trace and residuals directly. Non-success decision histories must not be erased. An optional `DecisionReasonCode` provides a coarse-grained, machine-auditable classification alongside the human-readable `reason`; it does not replace `reason` or carry additional structural authority. |
 | Residual presence | PARTIALLY_ENFORCED | Residual records cannot be blank when present and are preserved in non-success audits, but residual provenance is not defined and residuals are not interpreted or ranked. |
 | No epistemic promotion | DECLARED_DEFERRED | Claim/evidence binding is structural only; evidential sufficiency is not implemented. |
@@ -35,13 +35,16 @@ transition is structurally admissible.
 Kernel v0.1's epistemic ladder, current rung marked with `*`:
 
 ```
-Representable -> *StructurallyAdmissible* -> EvidentiallySupported -> AuthorityLicensed -> Certified
+Representable (TransitionCandidate) -> *StructurallyAdmissible* (StructurallyAdmissibleTransition) -> EvidentiallySupported -> AuthorityLicensed -> Certified (CertifiedTransition)
 ```
 
 `TransitionKind` names the claim a candidate makes (what it is *representing*);
 `StructurallyAdmissibleTransition` certifies only that the claim is
-well-formed. Evidential sufficiency, authority to license a transition
-(including a cross-domain one), and certification are later rungs, deferred
+well-formed under structural laws. `StructuralAdmissionGate` evaluates candidates
+to produce `StructuralAdmissionDecision`s (`ADMITTED`, `BLOCK`, `DEFER`, `UNDEFINED`).
+Evidential sufficiency (`EvidentiallySupportedTransition`), authority to license a
+transition (`AuthorityLicensedTransition`), and final certification
+(`CertifiedTransition` carrying `CertifiedOutcome`) are later rungs, deferred
 beyond Kernel v0.1. A linguistic layer (for example, a future Carrier/J
 adapter) must be built as a client that produces evidence and invariant
 claims for this kernel to structurally admit; it must not be granted

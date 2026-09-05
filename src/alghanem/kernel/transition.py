@@ -13,24 +13,6 @@ from .trace import Trace
 _ADMISSION_TOKEN = object()
 
 
-class Outcome(Enum):
-    """The complete initial vocabulary of transition outcomes.
-
-    ``IDENTITY_PRESERVING_TRANSFORMATION`` and ``CERTIFIED_BRANCH_BIRTH`` are
-    reserved for a future, fully certified ``LicensedTransition``; at Kernel
-    v0.1 they are produced only by ``StructuralAdmissionGate``, which
-    certifies structural completeness, not the underlying claim. See
-    ``TransitionKind`` and ``docs/CONSTITUTION.md`` for the authoritative
-    claim-vs-certification distinction.
-    """
-
-    IDENTITY_PRESERVING_TRANSFORMATION = auto()
-    CERTIFIED_BRANCH_BIRTH = auto()
-    BLOCK = auto()
-    DEFER = auto()
-    UNDEFINED = auto()
-
-
 class TransitionKind(Enum):
     """What a transition candidate claims to be, prior to certification.
 
@@ -52,18 +34,39 @@ class TransitionKind(Enum):
     BRANCH_BIRTH_CLAIM = auto()
 
 
-_KIND_FOR_OUTCOME = {
-    Outcome.IDENTITY_PRESERVING_TRANSFORMATION: (
-        TransitionKind.IDENTITY_PRESERVATION_CLAIM
-    ),
-    Outcome.CERTIFIED_BRANCH_BIRTH: TransitionKind.BRANCH_BIRTH_CLAIM,
-}
+class CertifiedOutcome(Enum):
+    """The vocabulary of fully certified transition outcomes.
 
-# The single source of truth for which outcomes are transition-shaped
-# (successful) versus non-transition decisions. `_KIND_FOR_OUTCOME`'s keys,
-# the success-outcome checks below, and `TransitionDecision`'s success check
-# all derive from this set so they cannot fall out of sync.
-_SUCCESSFUL_OUTCOMES = frozenset(_KIND_FOR_OUTCOME)
+    ``IDENTITY_PRESERVING_TRANSFORMATION`` and ``CERTIFIED_BRANCH_BIRTH`` are
+    strictly reserved for the final certification stage (a future
+    ``CertifiedTransition`` / ``CertifiedLicensedTransition``). They cannot be
+    carried by uncertified ``TransitionCandidate`` proposals or by intermediate
+    ``StructurallyAdmissibleTransition``s, which only certify structural
+    well-formedness.
+    """
+
+    IDENTITY_PRESERVING_TRANSFORMATION = auto()
+    CERTIFIED_BRANCH_BIRTH = auto()
+
+
+class StructuralDecisionStatus(Enum):
+    """The status of a structural admission assessment.
+
+    ``ADMITTED`` indicates the transition candidate satisfies all structural
+    laws and was issued as a ``StructurallyAdmissibleTransition``. ``BLOCK``,
+    ``DEFER``, and ``UNDEFINED`` are non-admission decision statuses; they are
+    external judgments rendered on or without a candidate, never intrinsic
+    properties of a candidate itself.
+    """
+
+    ADMITTED = auto()
+    BLOCK = auto()
+    DEFER = auto()
+    UNDEFINED = auto()
+
+
+# Backward compatibility alias
+Outcome = CertifiedOutcome
 
 
 @dataclass(frozen=True, slots=True)
@@ -91,6 +94,11 @@ class BranchOriginProvenance:
 class TransitionCandidate:
     """A transition-shaped candidate that has not crossed the admission boundary.
 
+    A candidate declares what it claims to be via ``kind`` (a ``TransitionKind``),
+    together with its anchors, state representations, operation, claim, evidence,
+    and trace history. It does not carry an outcome or decision status: candidates
+    do not judge or certify themselves.
+
     ``anchor`` is the source anchor; ``target_anchor`` is the explicitly
     declared anchor the transition targets. A candidate may omit
     ``target_anchor`` before admission, but a successful transition must
@@ -108,11 +116,10 @@ class TransitionCandidate:
     changed: tuple[str, ...]
     trace: Trace
     residuals: tuple[Residual, ...]
-    outcome: Outcome
-    result: OperationResult | None
+    kind: TransitionKind
+    result: OperationResult | None = None
     branch_origin_provenance: BranchOriginProvenance | None = None
     target_anchor: Anchor | None = None
-    kind: TransitionKind | None = None
 
     @property
     def resolved_target_anchor(self) -> Anchor:
@@ -124,8 +131,9 @@ class TransitionCandidate:
         return self.target_anchor if self.target_anchor is not None else self.anchor
 
     def __post_init__(self) -> None:
+        if not isinstance(self.kind, TransitionKind):
+            raise ValueError("a candidate requires a declared TransitionKind")
         _validate_candidate_components(self)
-        _validate_kind(self)
 
     def validate_success(self) -> None:
         """Validate the structural laws required for structural admission."""
@@ -137,20 +145,15 @@ class TransitionCandidate:
 class StructurallyAdmissibleTransition(TransitionCandidate):
     """A transition that is structurally complete, issued only by the gate.
 
-    Structural admission is not evidential sufficiency and not authority to
-    cross domains: it certifies that the transition is well-formed under the
-    Kernel v0.1 structural laws (explicit anchors, claim-bound evidence,
-    preserved/changed separation, branch provenance, and so on). Whether the
-    bound evidence is *sufficient* to support the claim, whether a rank or
-    layer has *authority* to make the transition, and whether crossing
-    domains is *licensed* are all deferred questions Kernel v0.1 does not
-    answer. ``StructurallyAdmissibleTransition`` therefore must not be read
-    as ``LicensedTransition``: representability is not licensability.
+    Structural admission is not evidential sufficiency, not authority to
+    cross domains, and not final certification: it certifies that the transition
+    is well-formed under the Kernel v0.1 structural laws (explicit anchors,
+    claim-bound evidence, preserved/changed separation, branch provenance, and
+    so on).
 
     ``kind`` is the honestly-named claim (a ``TransitionKind``) this
-    transition makes; ``outcome`` names the same claim shape for backward
-    compatibility with the wider decision vocabulary, but neither field
-    certifies that the claim is true. Certification is a future gate.
+    transition makes. It does not carry a ``CertifiedOutcome``; certification
+    is a future gate at the end of the epistemic ladder.
 
     Use ``StructuralAdmissionGate.admit`` on a candidate to create this type.
     Dataclass replacement paths that rerun ``__init__`` are not admission
@@ -170,8 +173,9 @@ class StructurallyAdmissibleTransition(TransitionCandidate):
         # any dataclasses.replace() on an existing instance re-runs __init__
         # (and therefore this method), so the checks must be re-asserted
         # rather than assumed to still hold.
+        if not isinstance(self.kind, TransitionKind):
+            raise ValueError("a candidate requires a declared TransitionKind")
         _validate_candidate_components(self)
-        _validate_kind(self)
         self.validate_success()
 
 
@@ -203,11 +207,10 @@ class StructuralAdmissionGate:
             changed=candidate.changed,
             trace=candidate.trace,
             residuals=candidate.residuals,
-            outcome=candidate.outcome,
+            kind=candidate.kind,
             result=candidate.result,
             branch_origin_provenance=candidate.branch_origin_provenance,
             target_anchor=candidate.target_anchor,
-            kind=candidate.kind,
             _admission_token=_ADMISSION_TOKEN,
         )
 
@@ -222,36 +225,6 @@ def _validate_components(label: str, components: tuple[str, ...]) -> None:
 def _validate_candidate_components(candidate: TransitionCandidate) -> None:
     _validate_components("preserved components", candidate.preserved)
     _validate_components("changed components", candidate.changed)
-
-
-def _validate_kind(candidate: TransitionCandidate) -> None:
-    """Validate that a candidate's declared kind matches its outcome.
-
-    ``kind`` and ``outcome`` are kept as two independent fields on purpose,
-    not one derived from the other: ``outcome`` is the decision-level
-    vocabulary slot (shared with ``TransitionDecision`` and the future,
-    fully certified ``LicensedTransition``), while ``kind`` is the narrower,
-    honestly-named claim a candidate itself makes. They coincide 1:1 today
-    only because Kernel v0.1 has exactly two success-shaped outcomes; a
-    future kind vocabulary is not required to stay in lockstep with the
-    outcome vocabulary (for example, distinct kinds might later map to the
-    same certified outcome). This function is the explicit seam that keeps
-    the two fields consistent for as long as they do overlap, rather than
-    collapsing them into a single field that a later split would have to
-    re-separate.
-    """
-
-    expected_kind = _KIND_FOR_OUTCOME.get(candidate.outcome)
-    if expected_kind is None:
-        if candidate.kind is not None:
-            raise ValueError(
-                "non-transition outcomes cannot declare a claimed transition kind"
-            )
-        return
-    if candidate.kind is None:
-        raise ValueError("a successful outcome requires a declared transition kind")
-    if candidate.kind is not expected_kind:
-        raise ValueError("declared transition kind must match the candidate's outcome")
 
 
 def _validate_successful_transition_fields(candidate: TransitionCandidate) -> None:
@@ -272,17 +245,13 @@ def _validate_successful_transition_fields(candidate: TransitionCandidate) -> No
         and candidate.operation.target_domain != target_anchor.domain
     ):
         raise ValueError("operation target domain must match the target anchor domain")
-    if candidate.outcome not in _SUCCESSFUL_OUTCOMES:
-        raise ValueError(
-            "non-transition outcomes cannot be StructurallyAdmissibleTransition"
-        )
     if not candidate.evidence:
         raise ValueError("successful transitions require evidence")
     if any(
         evidence.claim_id != candidate.claim.claim_id for evidence in candidate.evidence
     ):
         raise ValueError("transition evidence must be bound to its claim")
-    if candidate.outcome is Outcome.IDENTITY_PRESERVING_TRANSFORMATION:
+    if candidate.kind is TransitionKind.IDENTITY_PRESERVATION_CLAIM:
         if not candidate.preserved:
             raise ValueError("identity-preserving transformations require an invariant")
         if not candidate.changed:
@@ -293,6 +262,11 @@ def _validate_successful_transition_fields(candidate: TransitionCandidate) -> No
             raise ValueError(
                 "identity-preserving transformations require an unchanged anchor"
             )
+    elif candidate.kind is TransitionKind.BRANCH_BIRTH_CLAIM:
+        _validate_branch_birth(candidate)
+    else:
+        raise ValueError("unrecognized transition kind")
+
     if not candidate.changed:
         raise ValueError("successful transitions require a declared change")
     if candidate.operation.declared_change not in candidate.changed:
@@ -301,8 +275,6 @@ def _validate_successful_transition_fields(candidate: TransitionCandidate) -> No
         )
     if not set(candidate.preserved).isdisjoint(candidate.changed):
         raise ValueError("preserved and changed components must be disjoint")
-    if candidate.outcome is Outcome.CERTIFIED_BRANCH_BIRTH:
-        _validate_branch_birth(candidate)
 
 
 def _validate_branch_birth(candidate: TransitionCandidate) -> None:
@@ -400,32 +372,37 @@ class NonSuccessDecisionAudit:
 
 
 @dataclass(frozen=True, slots=True)
-class TransitionDecision:
-    """The assessment of an attempted transition, successful or not."""
+class StructuralAdmissionDecision:
+    """The assessment of an attempted transition admission, successful or not."""
 
-    outcome: Outcome
-    admissible: StructurallyAdmissibleTransition | None = None
+    status: StructuralDecisionStatus
+    transition: StructurallyAdmissibleTransition | None = None
     audit: NonSuccessDecisionAudit | None = None
 
+    @property
+    def admissible(self) -> StructurallyAdmissibleTransition | None:
+        """Compatibility property for accessing the admitted transition."""
+        return self.transition
+
     def __post_init__(self) -> None:
-        if self.outcome in _SUCCESSFUL_OUTCOMES:
-            if self.admissible is None:
+        if not isinstance(self.status, StructuralDecisionStatus):
+            raise ValueError("status must be a StructuralDecisionStatus member")
+        if self.status is StructuralDecisionStatus.ADMITTED:
+            if self.transition is None:
                 raise ValueError(
-                    "successful decisions require a structurally admissible transition"
+                    "admitted decisions require a structurally admissible transition"
                 )
             if self.audit is not None:
-                raise ValueError(
-                    "successful decisions cannot carry a non-success audit"
-                )
+                raise ValueError("admitted decisions cannot carry a non-success audit")
         else:
-            if self.admissible is not None:
+            if self.transition is not None:
                 raise ValueError(
-                    "non-transition decisions cannot contain a structurally "
+                    "non-admitted decisions cannot contain a structurally "
                     "admissible transition"
                 )
             if self.audit is None:
-                raise ValueError("non-transition decisions require an audit record")
-        if self.admissible is not None and self.outcome is not self.admissible.outcome:
-            raise ValueError(
-                "decision and structurally admissible transition outcomes must match"
-            )
+                raise ValueError("non-admitted decisions require an audit record")
+
+
+# Backward compatibility alias
+TransitionDecision = StructuralAdmissionDecision
