@@ -70,6 +70,7 @@ gate-level authority -- this is representation, not certification.
 
 from __future__ import annotations
 
+import dataclasses
 import hashlib
 import json
 from collections.abc import Mapping
@@ -222,14 +223,7 @@ class CanonicalOperationManifest:
         )
 
     def to_canonical(self) -> CanonicalValue:
-        return canonicalize(
-            {
-                "name": self.name,
-                "declared_change": self.declared_change,
-                "source_domain": self.source_domain,
-                "target_domain": self.target_domain,
-            }
-        )
+        return canonicalize(dataclasses.asdict(self))
 
 
 @dataclass(frozen=True, slots=True)

@@ -72,6 +72,37 @@ def admit(candidate: TransitionCandidate) -> StructurallyAdmissibleTransition:
     return StructuralAdmissionGate.require_admitted(candidate)
 
 
+def make_branch_candidate(
+    anchor: Anchor,
+    branch_target: Anchor,
+    *,
+    preserved: tuple[str, ...] = ("identity", "form"),
+) -> TransitionCandidate:
+    base = make_candidate(
+        anchor=anchor, target_anchor=branch_target, preserved=preserved
+    )
+    return TransitionCandidate(
+        anchor=base.anchor,
+        target_anchor=branch_target,
+        before_state=base.before_state,
+        operation=base.operation,
+        after_state=base.after_state,
+        claim=base.claim,
+        evidence=base.evidence,
+        preserved=base.preserved,
+        changed=base.changed,
+        trace=base.trace,
+        residuals=base.residuals,
+        kind=TransitionKind.BRANCH_BIRTH_CLAIM,
+        branch_origin_provenance=BranchOriginProvenance(
+            origin_anchor=anchor,
+            branch_anchor=branch_target,
+            preserved_components=base.preserved,
+        ),
+        result=base.result,
+    )
+
+
 def test_same_content_different_occurrence_yields_same_content_id() -> None:
     t1 = admit(make_candidate())
     t2 = admit(make_candidate())
@@ -137,34 +168,8 @@ def test_changing_target_anchor_changes_content_id() -> None:
     branch_target_1 = Anchor("branch-1", "D")
     branch_target_2 = Anchor("branch-2", "D")
 
-    def make_branch_transition(
-        branch_target: Anchor,
-    ) -> StructurallyAdmissibleTransition:
-        base = make_candidate(anchor=anchor, target_anchor=branch_target)
-        candidate = TransitionCandidate(
-            anchor=base.anchor,
-            target_anchor=branch_target,
-            before_state=base.before_state,
-            operation=base.operation,
-            after_state=base.after_state,
-            claim=base.claim,
-            evidence=base.evidence,
-            preserved=base.preserved,
-            changed=base.changed,
-            trace=base.trace,
-            residuals=base.residuals,
-            kind=TransitionKind.BRANCH_BIRTH_CLAIM,
-            branch_origin_provenance=BranchOriginProvenance(
-                origin_anchor=anchor,
-                branch_anchor=branch_target,
-                preserved_components=base.preserved,
-            ),
-            result=base.result,
-        )
-        return admit(candidate)
-
-    transition_a = make_branch_transition(branch_target_1)
-    transition_b = make_branch_transition(branch_target_2)
+    transition_a = admit(make_branch_candidate(anchor, branch_target_1))
+    transition_b = admit(make_branch_candidate(anchor, branch_target_2))
 
     content_id_a = CanonicalTransitionEncoder.encode(transition_a).content_id
     content_id_b = CanonicalTransitionEncoder.encode(transition_b).content_id
@@ -173,28 +178,10 @@ def test_changing_target_anchor_changes_content_id() -> None:
 
 
 def test_changing_kind_changes_content_id() -> None:
-    identity_candidate = make_candidate()
+    anchor = Anchor("a", "D")
     branch_target = Anchor("b", "D")
-    branch_candidate = TransitionCandidate(
-        anchor=identity_candidate.anchor,
-        target_anchor=branch_target,
-        before_state=identity_candidate.before_state,
-        operation=Operation("op", "component"),
-        after_state=identity_candidate.after_state,
-        claim=identity_candidate.claim,
-        evidence=identity_candidate.evidence,
-        preserved=identity_candidate.preserved,
-        changed=identity_candidate.changed,
-        trace=identity_candidate.trace,
-        residuals=identity_candidate.residuals,
-        kind=TransitionKind.BRANCH_BIRTH_CLAIM,
-        branch_origin_provenance=BranchOriginProvenance(
-            origin_anchor=identity_candidate.anchor,
-            branch_anchor=branch_target,
-            preserved_components=identity_candidate.preserved,
-        ),
-        result=identity_candidate.result,
-    )
+    identity_candidate = make_candidate(anchor=anchor)
+    branch_candidate = make_branch_candidate(anchor, branch_target)
 
     identity_transition = admit(identity_candidate)
     branch_transition = admit(branch_candidate)
@@ -226,31 +213,8 @@ def test_branch_origin_provenance_instance_identity_does_not_affect_content_id()
     anchor = Anchor("a", "D")
     branch_target = Anchor("b", "D")
 
-    def make_branch_candidate() -> TransitionCandidate:
-        base = make_candidate(anchor=anchor, target_anchor=branch_target)
-        return TransitionCandidate(
-            anchor=base.anchor,
-            target_anchor=branch_target,
-            before_state=base.before_state,
-            operation=base.operation,
-            after_state=base.after_state,
-            claim=base.claim,
-            evidence=base.evidence,
-            preserved=base.preserved,
-            changed=base.changed,
-            trace=base.trace,
-            residuals=base.residuals,
-            kind=TransitionKind.BRANCH_BIRTH_CLAIM,
-            branch_origin_provenance=BranchOriginProvenance(
-                origin_anchor=anchor,
-                branch_anchor=branch_target,
-                preserved_components=base.preserved,
-            ),
-            result=base.result,
-        )
-
-    branch_candidate_1 = make_branch_candidate()
-    branch_candidate_2 = make_branch_candidate()
+    branch_candidate_1 = make_branch_candidate(anchor, branch_target)
+    branch_candidate_2 = make_branch_candidate(anchor, branch_target)
     assert (
         branch_candidate_1.branch_origin_provenance
         is not branch_candidate_2.branch_origin_provenance
@@ -315,24 +279,27 @@ def test_mutating_payload_after_snapshot_does_not_change_manifest() -> None:
     )
 
 
-def test_unsupported_payload_raises_canonicalization_error() -> None:
-    class Weird:
-        def __repr__(self) -> str:
-            return "stable-looking-value"
+class _WeirdWithStableRepr:
+    """A payload whose ``repr()`` looks stable but is not canonicalizable.
 
-    transition = admit(make_candidate(before_value=Weird()))
+    Used to assert ``StableRepr != CanonicalIdentity``: canonicalization
+    must refuse this, never fall back to ``repr()``.
+    """
+
+    def __repr__(self) -> str:
+        return "stable-looking-value"
+
+
+def test_unsupported_payload_raises_canonicalization_error() -> None:
+    transition = admit(make_candidate(before_value=_WeirdWithStableRepr()))
 
     with pytest.raises(CanonicalizationError):
         CanonicalTransitionEncoder.encode(transition)
 
 
 def test_canonicalize_rejects_repr_fallback_directly() -> None:
-    class Weird:
-        def __repr__(self) -> str:
-            return "stable-looking-value"
-
     with pytest.raises(CanonicalizationError):
-        canonicalize(Weird())
+        canonicalize(_WeirdWithStableRepr())
 
 
 @pytest.mark.parametrize("bad_float", [float("nan"), float("inf"), float("-inf")])
