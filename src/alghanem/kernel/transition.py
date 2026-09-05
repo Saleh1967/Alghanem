@@ -25,8 +25,11 @@ class TransitionKind(Enum):
     ``AnchorEquality != ProvenIdentityPreservation``. Likewise, declaring a
     name in ``preserved`` or ``changed`` is not proof that the named
     component was actually extracted from ``before_state``/``after_state``:
-    ``DeclaredInvariant != VerifiedInvariant``. Both remain deferred until an
-    evidence-sufficiency gate exists. See ``docs/CONSTITUTION.md`` for the
+    ``DeclaredInvariant != VerifiedInvariant``. Anchor equality remains
+    unverified pending an evidence-sufficiency gate; a single declared
+    invariant can be independently checked via ``invariant.
+    InvariantVerificationGate``, but that check is not yet required for, or
+    wired into, structural admission. See ``docs/CONSTITUTION.md`` for the
     full epistemic ladder this vocabulary sits on.
     """
 

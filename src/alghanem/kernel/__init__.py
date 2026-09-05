@@ -3,6 +3,15 @@
 from .anchor import Anchor, State
 from .binding import ClaimEvidenceBinding
 from .evidence import Claim, Evidence
+from .invariant import (
+    InvariantExtractionError,
+    InvariantExtractorRegistry,
+    InvariantObservation,
+    InvariantSpec,
+    InvariantVerification,
+    InvariantVerificationGate,
+    UnregisteredExtractorError,
+)
 from .operation import Operation, OperationResult
 from .residual import Residual
 from .trace import Trace
@@ -28,6 +37,12 @@ __all__ = [
     "ClaimEvidenceBinding",
     "DecisionReasonCode",
     "Evidence",
+    "InvariantExtractionError",
+    "InvariantExtractorRegistry",
+    "InvariantObservation",
+    "InvariantSpec",
+    "InvariantVerification",
+    "InvariantVerificationGate",
     "NonSuccessDecisionAudit",
     "StructuralAdmissionError",
     "Operation",
@@ -41,4 +56,5 @@ __all__ = [
     "Trace",
     "TransitionCandidate",
     "TransitionKind",
+    "UnregisteredExtractorError",
 ]
