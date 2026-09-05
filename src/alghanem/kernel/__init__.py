@@ -6,7 +6,7 @@ from .evidence import Claim, Evidence
 from .operation import Operation, OperationResult
 from .residual import Residual
 from .trace import Trace
-from .transition import LicensedTransition, Outcome
+from .transition import LicensedTransition, Outcome, TransitionDecision
 
 __all__ = [
     "Anchor",
@@ -20,4 +20,5 @@ __all__ = [
     "Residual",
     "State",
     "Trace",
+    "TransitionDecision",
 ]

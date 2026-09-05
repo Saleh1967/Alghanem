@@ -2,13 +2,16 @@
 
 from dataclasses import dataclass
 
+from .evidence import Claim, Evidence
+
 
 @dataclass(frozen=True, slots=True)
 class Certificate:
-    """A certificate records a claim supported by supplied evidence."""
+    """A claim together with the evidence supplied to support it."""
 
-    statement: str
+    claim: Claim
+    evidence: tuple[Evidence, ...]
 
     def __post_init__(self) -> None:
-        if not self.statement:
-            raise ValueError("a certificate requires a statement")
+        if not self.evidence:
+            raise ValueError("a certificate requires evidence")
