@@ -50,6 +50,17 @@ from alghanem.kernel.invariant import (
     _VERIFICATION_TOKEN as _VERIFICATION_TOKEN_FOR_TESTS,
 )
 
+# The import above intentionally reaches into the module's private
+# construction sentinel. This is deliberate white-box testing: several
+# InvariantVerification invariants (matching observation/provenance ids, an
+# actual bool `preserved`) are re-asserted in __post_init__ as
+# defense-in-depth even though InvariantVerificationGate.verify itself never
+# produces a mismatched value; exercising those branches requires
+# constructing an otherwise-valid instance while bypassing the gate, which
+# is only possible with the real token. If the sentinel mechanism is ever
+# renamed or replaced, these tests are expected to break loudly and be
+# updated alongside it, rather than silently pass.
+
 
 class _DefaultProvenance:
     pass
