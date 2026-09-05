@@ -163,6 +163,14 @@ class InvariantVerification:
     trace: Trace
     observation: InvariantObservation
     provenance: InvariantVerificationProvenance
+    # The leading underscore here does not mean "conventionally private but
+    # freely usable by keyword"; it means "gate-only". No caller outside
+    # ``InvariantVerificationGate.verify`` holds a reference to
+    # ``_VERIFICATION_TOKEN``, so passing this keyword directly is only ever
+    # legitimate from that gate (or from white-box tests that deliberately
+    # import the token to exercise otherwise-unreachable invariants). This
+    # mirrors the existing ``_admission_token`` convention on
+    # ``StructurallyAdmissibleTransition`` in ``transition.py``.
     _verification_token: InitVar[object | None] = None
 
     def __post_init__(self, _verification_token: object | None) -> None:
@@ -239,6 +247,12 @@ class SealedInvariantExtractorRegistry:
     def __init__(
         self, extractors: Mapping[str, InvariantExtractor], _seal_token: object
     ) -> None:
+        # As with ``InvariantVerification``'s ``_verification_token``, the
+        # leading underscore marks this as "seal-only", not "conventionally
+        # private but freely usable by keyword". Only
+        # ``InvariantExtractorRegistry.seal()`` holds ``_SEAL_TOKEN``, so
+        # passing this keyword directly is only ever legitimate from that
+        # method.
         if _seal_token is not _SEAL_TOKEN:
             raise ValueError(
                 "sealed invariant extractor registries must be issued by "
