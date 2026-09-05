@@ -17,7 +17,9 @@ from .invariant import (
     InvariantVerificationError,
     InvariantVerificationGate,
     InvariantVerificationProvenance,
+    RegisteredInvariantDefinition,
     SealedInvariantExtractorRegistry,
+    UnauthorizedExtractorError,
     UnregisteredExtractorError,
 )
 from .operation import Operation, OperationResult
@@ -59,6 +61,7 @@ __all__ = [
     "InvariantVerificationGate",
     "InvariantVerificationProvenance",
     "NonSuccessDecisionAudit",
+    "RegisteredInvariantDefinition",
     "StructuralAdmissionError",
     "Operation",
     "OperationResult",
@@ -72,5 +75,6 @@ __all__ = [
     "Trace",
     "TransitionCandidate",
     "TransitionKind",
+    "UnauthorizedExtractorError",
     "UnregisteredExtractorError",
 ]
