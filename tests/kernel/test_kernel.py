@@ -1024,6 +1024,24 @@ def test_invariant_gate_wraps_extractor_failures() -> None:
         InvariantVerificationGate.verify(transition, spec, registry)
 
 
+def test_invariant_gate_wraps_comparison_failures() -> None:
+    transition = make_transition()
+    registry = InvariantExtractorRegistry()
+
+    class _Uncomparable:
+        def __eq__(self, other: object) -> bool:
+            raise RuntimeError("cannot compare")
+
+    registry.register("uncomparable-extractor", lambda state: _Uncomparable())
+    spec = InvariantSpec(
+        invariant_id="inv-1",
+        component="identity",
+        extractor_id="uncomparable-extractor",
+    )
+    with pytest.raises(InvariantExtractionError, match="comparing before/after"):
+        InvariantVerificationGate.verify(transition, spec, registry)
+
+
 def test_invariant_spec_cannot_embed_an_extractor_callable() -> None:
     # A spec only carries a string extractor_id; there is no field through
     # which a candidate could smuggle in its own executable "proof".

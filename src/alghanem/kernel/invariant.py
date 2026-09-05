@@ -117,6 +117,11 @@ class InvariantExtractorRegistry:
     Extractors are registered here, never carried by a ``TransitionCandidate``
     or an ``InvariantSpec``. A spec only names an ``extractor_id``; resolving
     that id to an actual callable is this registry's authority alone.
+
+    Not thread-safe: concurrent ``register`` calls on the same instance are
+    not synchronized. Registration is expected at module import/setup time,
+    not under concurrent access; callers sharing a registry across threads
+    must provide their own synchronization.
     """
 
     def __init__(self) -> None:
@@ -184,12 +189,18 @@ class InvariantVerificationGate:
             extractor, transition.before_state, "before_state", spec
         )
         after_value = _extract(extractor, transition.after_state, "after_state", spec)
+        try:
+            preserved = before_value == after_value
+        except Exception as error:
+            raise InvariantExtractionError(
+                f"comparing before/after values failed for invariant "
+                f"{spec.invariant_id!r}: {error}"
+            ) from error
         observation = InvariantObservation(
             invariant_id=spec.invariant_id,
             before_value=before_value,
             after_value=after_value,
         )
-        preserved = before_value == after_value
         trace = Trace(
             transition.trace.events
             + (f"invariant {spec.invariant_id} verified: preserved={preserved}",)
