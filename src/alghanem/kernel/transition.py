@@ -224,6 +224,22 @@ def _validate_candidate_components(candidate: TransitionCandidate) -> None:
 
 
 def _validate_kind(candidate: TransitionCandidate) -> None:
+    """Validate that a candidate's declared kind matches its outcome.
+
+    ``kind`` and ``outcome`` are kept as two independent fields on purpose,
+    not one derived from the other: ``outcome`` is the decision-level
+    vocabulary slot (shared with ``TransitionDecision`` and the future,
+    fully certified ``LicensedTransition``), while ``kind`` is the narrower,
+    honestly-named claim a candidate itself makes. They coincide 1:1 today
+    only because Kernel v0.1 has exactly two success-shaped outcomes; a
+    future kind vocabulary is not required to stay in lockstep with the
+    outcome vocabulary (for example, distinct kinds might later map to the
+    same certified outcome). This function is the explicit seam that keeps
+    the two fields consistent for as long as they do overlap, rather than
+    collapsing them into a single field that a later split would have to
+    re-separate.
+    """
+
     expected_kind = _KIND_FOR_OUTCOME.get(candidate.outcome)
     if expected_kind is None:
         if candidate.kind is not None:
