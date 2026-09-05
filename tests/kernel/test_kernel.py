@@ -111,7 +111,10 @@ def test_non_success_outcomes_are_not_successes(outcome):
 
 def test_non_transition_decision_cannot_contain_a_transition():
     with pytest.raises(ValueError, match="non-transition"):
-        TransitionDecision(Outcome.BLOCK, make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION))
+        TransitionDecision(
+            Outcome.BLOCK,
+            make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION),
+        )
 
 
 def test_success_without_evidence_is_rejected():
@@ -128,6 +131,54 @@ def test_success_without_evidence_is_rejected():
             residuals=(),
             outcome=Outcome.CERTIFIED_BRANCH_BIRTH,
             result=OperationResult("result"),
+        )
+
+
+def test_success_without_result_is_rejected():
+    with pytest.raises(ValueError, match="result"):
+        LicensedTransition(
+            anchor=Anchor("a", "D"),
+            before_state=State("before"),
+            operation=Operation("op", "changed"),
+            after_state=State("after"),
+            evidence=(Evidence(Claim("supported"), "record"),),
+            preserved=("identity",),
+            changed=("component",),
+            trace=Trace(("started",)),
+            residuals=(),
+            outcome=Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
+            result=None,  # type: ignore[arg-type]
+        )
+
+
+def test_branch_birth_requires_evidence_and_result():
+    with pytest.raises(ValueError, match="evidence"):
+        LicensedTransition(
+            anchor=Anchor("a", "D"),
+            before_state=State("before"),
+            operation=Operation("op", "changed"),
+            after_state=State("after"),
+            evidence=(),
+            preserved=(),
+            changed=("new",),
+            trace=Trace(("started",)),
+            residuals=(),
+            outcome=Outcome.CERTIFIED_BRANCH_BIRTH,
+            result=OperationResult("result"),
+        )
+    with pytest.raises(ValueError, match="result"):
+        LicensedTransition(
+            anchor=Anchor("a", "D"),
+            before_state=State("before"),
+            operation=Operation("op", "changed"),
+            after_state=State("after"),
+            evidence=(Evidence(Claim("supported"), "record"),),
+            preserved=(),
+            changed=("new",),
+            trace=Trace(("started",)),
+            residuals=(),
+            outcome=Outcome.CERTIFIED_BRANCH_BIRTH,
+            result=None,  # type: ignore[arg-type]
         )
 
 
