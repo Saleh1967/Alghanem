@@ -18,6 +18,7 @@ from alghanem.kernel import (
     Trace,
     TransitionCandidate,
     TransitionDecision,
+    TransitionKind,
 )
 
 
@@ -27,6 +28,13 @@ class _DefaultProvenance:
 
 # Distinguishes omitted provenance from an explicit None in branch-birth tests.
 _DEFAULT_PROVENANCE = _DefaultProvenance()
+
+_KIND_FOR_OUTCOME = {
+    Outcome.IDENTITY_PRESERVING_TRANSFORMATION: (
+        TransitionKind.IDENTITY_PRESERVATION_CLAIM
+    ),
+    Outcome.CERTIFIED_BRANCH_BIRTH: TransitionKind.BRANCH_BIRTH_CLAIM,
+}
 
 
 def claim(claim_id: str = "claim-1", statement: str = "supported") -> Claim:
@@ -50,6 +58,7 @@ def make_candidate(
         BranchOriginProvenance | _DefaultProvenance | None
     ) = _DEFAULT_PROVENANCE,
     target_anchor: Anchor | _DefaultProvenance | None = _DEFAULT_PROVENANCE,
+    kind: TransitionKind | _DefaultProvenance | None = _DEFAULT_PROVENANCE,
 ) -> TransitionCandidate:
     anchor = anchor or Anchor("a", "D")
     transition_claim = transition_claim or claim()
@@ -71,6 +80,8 @@ def make_candidate(
         )
     if branch_origin_provenance is _DEFAULT_PROVENANCE:
         branch_origin_provenance = None
+    if kind is _DEFAULT_PROVENANCE:
+        kind = _KIND_FOR_OUTCOME.get(outcome)
     return TransitionCandidate(
         anchor=anchor,
         before_state=State("before"),
@@ -86,6 +97,7 @@ def make_candidate(
         result=result,
         branch_origin_provenance=branch_origin_provenance,
         target_anchor=target_anchor,
+        kind=kind,
     )
 
 
@@ -196,6 +208,40 @@ def test_branch_birth_is_distinct_from_identity_preservation():
         make_transition(Outcome.CERTIFIED_BRANCH_BIRTH).outcome
         is not Outcome.IDENTITY_PRESERVING_TRANSFORMATION
     )
+
+
+def test_admitted_transition_carries_the_matching_claimed_kind():
+    identity_transition = make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION)
+    assert identity_transition.kind is TransitionKind.IDENTITY_PRESERVATION_CLAIM
+    branch_transition = make_transition(Outcome.CERTIFIED_BRANCH_BIRTH)
+    assert branch_transition.kind is TransitionKind.BRANCH_BIRTH_CLAIM
+
+
+def test_successful_outcome_requires_a_declared_kind():
+    with pytest.raises(ValueError, match="declared transition kind"):
+        make_candidate(Outcome.IDENTITY_PRESERVING_TRANSFORMATION, kind=None)
+
+
+def test_declared_kind_must_match_the_outcome():
+    with pytest.raises(ValueError, match="must match the candidate's outcome"):
+        make_candidate(
+            Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
+            kind=TransitionKind.BRANCH_BIRTH_CLAIM,
+        )
+
+
+@pytest.mark.parametrize("outcome", [Outcome.BLOCK, Outcome.DEFER, Outcome.UNDEFINED])
+def test_non_transition_outcomes_cannot_declare_a_kind(outcome: Outcome):
+    with pytest.raises(ValueError, match="cannot declare a claimed transition kind"):
+        make_candidate(
+            outcome, result=None, kind=TransitionKind.IDENTITY_PRESERVATION_CLAIM
+        )
+
+
+@pytest.mark.parametrize("outcome", [Outcome.BLOCK, Outcome.DEFER, Outcome.UNDEFINED])
+def test_non_transition_outcomes_default_to_no_kind(outcome: Outcome):
+    candidate = make_candidate(outcome, result=None)
+    assert candidate.kind is None
 
 
 @pytest.mark.parametrize("outcome", [Outcome.BLOCK, Outcome.DEFER, Outcome.UNDEFINED])

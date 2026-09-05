@@ -15,6 +15,7 @@ from .transition import (
     StructurallyAdmissibleTransition,
     TransitionCandidate,
     TransitionDecision,
+    TransitionKind,
 )
 
 __all__ = [
@@ -35,4 +36,5 @@ __all__ = [
     "Trace",
     "TransitionCandidate",
     "TransitionDecision",
+    "TransitionKind",
 ]

@@ -14,13 +14,54 @@ _ADMISSION_TOKEN = object()
 
 
 class Outcome(Enum):
-    """The complete initial vocabulary of transition outcomes."""
+    """The complete initial vocabulary of transition outcomes.
+
+    ``IDENTITY_PRESERVING_TRANSFORMATION`` and ``CERTIFIED_BRANCH_BIRTH`` name
+    the two claim shapes a successful candidate can take. At Kernel v0.1 they
+    are produced only by ``StructuralAdmissionGate``, which certifies
+    structural completeness, not that identity was actually preserved or that
+    a branch was actually, authoritatively born. The corresponding
+    ``TransitionCandidate.kind`` / ``StructurallyAdmissibleTransition.kind``
+    (a ``TransitionKind``) is the honestly-named claim; these two ``Outcome``
+    members are reserved to describe a future, fully certified
+    ``LicensedTransition`` once evidence-sufficiency and authority gates
+    exist. Reading a structurally admissible transition's outcome as already
+    certified is exactly the confusion this vocabulary must not create.
+    """
 
     IDENTITY_PRESERVING_TRANSFORMATION = auto()
     CERTIFIED_BRANCH_BIRTH = auto()
     BLOCK = auto()
     DEFER = auto()
     UNDEFINED = auto()
+
+
+class TransitionKind(Enum):
+    """What a transition candidate claims to be, prior to certification.
+
+    A claimed kind is not a certified outcome. ``StructuralAdmissionGate``
+    validates that a candidate of this kind is well-formed under Kernel
+    v0.1's structural laws (for example, that an identity-preservation claim
+    declares an unchanged target anchor); it does not verify that the claim
+    is true. In particular, anchor equality (``target_anchor == anchor``) is
+    a structural check, not proof that identity was preserved in substance:
+    ``AnchorEquality != ProvenIdentityPreservation``. Likewise, declaring a
+    name in ``preserved`` or ``changed`` is not proof that the named
+    component was actually extracted from ``before_state``/``after_state``:
+    ``DeclaredInvariant != VerifiedInvariant``. Both remain deferred until an
+    evidence-sufficiency gate exists.
+    """
+
+    IDENTITY_PRESERVATION_CLAIM = auto()
+    BRANCH_BIRTH_CLAIM = auto()
+
+
+_KIND_FOR_OUTCOME = {
+    Outcome.IDENTITY_PRESERVING_TRANSFORMATION: (
+        TransitionKind.IDENTITY_PRESERVATION_CLAIM
+    ),
+    Outcome.CERTIFIED_BRANCH_BIRTH: TransitionKind.BRANCH_BIRTH_CLAIM,
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -69,6 +110,7 @@ class TransitionCandidate:
     result: OperationResult | None
     branch_origin_provenance: BranchOriginProvenance | None = None
     target_anchor: Anchor | None = None
+    kind: TransitionKind | None = None
 
     @property
     def resolved_target_anchor(self) -> Anchor:
@@ -81,6 +123,7 @@ class TransitionCandidate:
 
     def __post_init__(self) -> None:
         _validate_candidate_components(self)
+        _validate_kind(self)
 
     def validate_success(self) -> None:
         """Validate the structural laws required for structural admission."""
@@ -102,6 +145,11 @@ class StructurallyAdmissibleTransition(TransitionCandidate):
     answer. ``StructurallyAdmissibleTransition`` therefore must not be read
     as ``LicensedTransition``: representability is not licensability.
 
+    ``kind`` is the honestly-named claim (a ``TransitionKind``) this
+    transition makes; ``outcome`` names the same claim shape for backward
+    compatibility with the wider decision vocabulary, but neither field
+    certifies that the claim is true. Certification is a future gate.
+
     Use ``StructuralAdmissionGate.admit`` on a candidate to create this type.
     Dataclass replacement paths that rerun ``__init__`` are not admission
     paths.
@@ -116,6 +164,7 @@ class StructurallyAdmissibleTransition(TransitionCandidate):
                 "StructuralAdmissionGate"
             )
         _validate_candidate_components(self)
+        _validate_kind(self)
         self.validate_success()
 
 
@@ -151,6 +200,7 @@ class StructuralAdmissionGate:
             result=candidate.result,
             branch_origin_provenance=candidate.branch_origin_provenance,
             target_anchor=candidate.target_anchor,
+            kind=candidate.kind,
             _admission_token=_ADMISSION_TOKEN,
         )
 
@@ -165,6 +215,20 @@ def _validate_components(label: str, components: tuple[str, ...]) -> None:
 def _validate_candidate_components(candidate: TransitionCandidate) -> None:
     _validate_components("preserved components", candidate.preserved)
     _validate_components("changed components", candidate.changed)
+
+
+def _validate_kind(candidate: TransitionCandidate) -> None:
+    expected_kind = _KIND_FOR_OUTCOME.get(candidate.outcome)
+    if expected_kind is None:
+        if candidate.kind is not None:
+            raise ValueError(
+                "non-transition outcomes cannot declare a claimed transition kind"
+            )
+        return
+    if candidate.kind is None:
+        raise ValueError("a successful outcome requires a declared transition kind")
+    if candidate.kind is not expected_kind:
+        raise ValueError("declared transition kind must match the candidate's outcome")
 
 
 def _validate_successful_transition_fields(candidate: TransitionCandidate) -> None:
