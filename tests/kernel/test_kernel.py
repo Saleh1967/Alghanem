@@ -1585,6 +1585,9 @@ def test_assess_all_preserved_rejects_incomplete_coverage_without_decision() -> 
     )
 
     with pytest.raises(InvariantAssessmentSpecificationError, match="exactly cover"):
+    with pytest.raises(
+        InvariantAssessmentSpecificationError, match="exactly cover"
+    ):
         InvariantVerificationGate.assess_all_preserved(transition, (spec,), registry)
 
 
