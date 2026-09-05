@@ -5,6 +5,7 @@ from alghanem.kernel import (
     BranchOriginProvenance,
     Claim,
     ClaimEvidenceBinding,
+    DecisionReasonCode,
     Evidence,
     NonSuccessDecisionAudit,
     Operation,
@@ -644,6 +645,26 @@ def test_non_success_decisions_preserve_the_assessed_candidate():
 def test_non_success_audit_rejects_an_admitted_transition_as_candidate():
     with pytest.raises(ValueError, match="structurally admissible transition"):
         make_audit(make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION))
+
+
+def test_non_success_decision_audit_accepts_an_optional_reason_code():
+    audit = NonSuccessDecisionAudit(
+        trace=Trace(("assessed",)),
+        residuals=(),
+        reason="target anchor mismatch",
+        reason_code=DecisionReasonCode.TARGET_ANCHOR_MISMATCH,
+    )
+    assert audit.reason_code is DecisionReasonCode.TARGET_ANCHOR_MISMATCH
+    assert audit.reason == "target anchor mismatch"
+
+
+def test_non_success_decision_audit_reason_code_defaults_to_none():
+    audit = NonSuccessDecisionAudit(
+        trace=Trace(("assessed",)),
+        residuals=(),
+        reason="structural admission refused",
+    )
+    assert audit.reason_code is None
 
 
 @pytest.mark.parametrize("reason", ["", "  "])

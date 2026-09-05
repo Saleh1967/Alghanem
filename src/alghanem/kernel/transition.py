@@ -247,7 +247,12 @@ class DecisionReasonCode(Enum):
     ``reason`` remains the human-readable explanation; ``reason_code`` is an
     optional, coarse-grained classification meant to make BLOCK and DEFER
     decisions queryable at scale. It does not replace ``reason`` and does not
-    itself carry additional structural authority.
+    itself carry additional structural authority. Some members (for example
+    ``AUTHORITY_NOT_AVAILABLE`` and ``PROOF_INSUFFICIENT``) name deferred
+    concepts — authority and evidential sufficiency — that Kernel v0.1's
+    structural admission gate does not adjudicate; they are reserved for
+    decisions made by future authority/evidence gates layered on top of this
+    kernel, not something ``StructuralAdmissionGate`` itself determines.
     """
 
     MISSING_EVIDENCE = auto()
