@@ -17,9 +17,6 @@ class ClaimEvidenceBinding:
 
     def __post_init__(self) -> None:
         if not self.evidence:
-            raise ValueError("a certificate requires evidence")
-        if any(evidence.claim != self.claim for evidence in self.evidence):
+            raise ValueError("a claim/evidence binding requires evidence")
+        if any(evidence.claim_id != self.claim.claim_id for evidence in self.evidence):
             raise ValueError("evidence records must be bound to the binding claim")
-
-
-Certificate = ClaimEvidenceBinding

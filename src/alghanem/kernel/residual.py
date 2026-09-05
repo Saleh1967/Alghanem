@@ -10,5 +10,5 @@ class Residual:
     description: str
 
     def __post_init__(self) -> None:
-        if not self.description:
+        if not self.description.strip():
             raise ValueError("a residual requires a description")
