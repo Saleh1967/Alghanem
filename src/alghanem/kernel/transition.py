@@ -31,9 +31,9 @@ class BranchOriginProvenance:
     preserved_components: tuple[str, ...]
 
     def __post_init__(self) -> None:
-        _validate_components("branch origin provenance", self.preserved_components)
         if not self.preserved_components:
             raise ValueError("branch origin provenance requires preserved components")
+        _validate_components("branch origin provenance", self.preserved_components)
         if self.branch_anchor == self.origin_anchor:
             raise ValueError(
                 "branch origin provenance requires a distinct branch anchor"
@@ -55,7 +55,7 @@ class TransitionCandidate:
     trace: Trace
     residuals: tuple[Residual, ...]
     outcome: Outcome
-    result: OperationResult
+    result: OperationResult | None
     branch_origin_provenance: BranchOriginProvenance | None = None
 
     def __post_init__(self) -> None:

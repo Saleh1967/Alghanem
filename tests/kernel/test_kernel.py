@@ -74,7 +74,7 @@ def make_candidate(
         trace=Trace(("started",)),
         residuals=(Residual("remainder"),),
         outcome=outcome,
-        result=result,  # type: ignore[arg-type]
+        result=result,
         branch_origin_provenance=branch_origin_provenance,
     )
 
@@ -387,22 +387,24 @@ def test_branch_origin_provenance_components_must_be_declared_preserved():
 
 
 @pytest.mark.parametrize(
-    "factory,args",
+    "factory,args,error",
     [
-        (Anchor, (" ", "D")),
-        (Anchor, ("a", " ")),
-        (Claim, (" ", "statement")),
-        (Claim, ("claim-1", " ")),
-        (Evidence, (" ", "basis")),
-        (Evidence, ("claim-1", " ")),
-        (Operation, (" ", "change")),
-        (Operation, ("op", " ")),
-        (Residual, (" ",)),
-        (Trace, ((" ",),)),
+        (Anchor, (" ", "D"), "anchor"),
+        (Anchor, ("a", " "), "anchor"),
+        (Claim, (" ", "statement"), "claim"),
+        (Claim, ("claim-1", " "), "claim"),
+        (Evidence, (" ", "basis"), "evidence"),
+        (Evidence, ("claim-1", " "), "evidence"),
+        (Operation, (" ", "change"), "operation"),
+        (Operation, ("op", " "), "operation"),
+        (Residual, (" ",), "residual"),
+        (Trace, ((" ",),), "trace"),
     ],
 )
-def test_blank_structural_names_are_rejected(factory: object, args: tuple[object, ...]):
-    with pytest.raises(ValueError):
+def test_blank_structural_names_are_rejected(
+    factory: object, args: tuple[object, ...], error: str
+):
+    with pytest.raises(ValueError, match=error):
         factory(*args)  # type: ignore[operator]
 
 
