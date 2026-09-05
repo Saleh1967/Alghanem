@@ -79,6 +79,10 @@ from typing import TYPE_CHECKING, Any
 from .operation import Operation
 
 if TYPE_CHECKING:
+    from .anchor import Anchor
+    from .evidence import Claim, Evidence
+    from .residual import Residual
+    from .trace import Trace
     from .transition import StructurallyAdmissibleTransition
 
 _SCHEMA = "alghanem.transition-manifest.v1"
@@ -295,8 +299,42 @@ class CanonicalTransitionManifest:
     residuals: CanonicalValue
     kind: str
     result: CanonicalStateManifest
+    #: The exact bytes ``content_id.digest`` was computed over. Retained
+    #: (not recomputed from the fields above) so the manifest is
+    #: independently auditable/testable without re-deriving and re-hashing
+    #: the document; for very large payloads, callers that only need
+    #: ``content_id`` may discard the manifest after issuance.
     canonical_bytes: bytes
     content_id: TransitionContentIdentity
+
+
+def _canonicalize_anchor(anchor: Anchor) -> CanonicalValue:
+    return canonicalize({"id": anchor.identifier, "domain": anchor.domain})
+
+
+def _canonicalize_claim(claim: Claim) -> CanonicalValue:
+    return canonicalize({"claim_id": claim.claim_id, "statement": claim.statement})
+
+
+def _canonicalize_evidence(evidence: tuple[Evidence, ...]) -> CanonicalValue:
+    return canonicalize(
+        tuple({"claim_id": item.claim_id, "basis": item.basis} for item in evidence)
+    )
+
+
+def _canonicalize_component_set(components: tuple[str, ...]) -> CanonicalValue:
+    """Sorted, deduplicated membership set -- see the module docstring's
+    explicit ``preserved``/``changed`` canonicalization rule."""
+
+    return canonicalize(tuple(sorted(set(components))))
+
+
+def _canonicalize_trace(trace: Trace) -> CanonicalValue:
+    return canonicalize(tuple(trace.events))
+
+
+def _canonicalize_residuals(residuals: tuple[Residual, ...]) -> CanonicalValue:
+    return canonicalize(tuple(residual.description for residual in residuals))
 
 
 class CanonicalTransitionEncoder:
@@ -325,37 +363,21 @@ class CanonicalTransitionEncoder:
                 "encode a canonical transition manifest"
             )
 
-        anchor = transition.anchor
-        target_anchor = transition.resolved_target_anchor
-        anchor_canonical = canonicalize(
-            {"id": anchor.identifier, "domain": anchor.domain}
-        )
-        target_anchor_canonical = canonicalize(
-            {"id": target_anchor.identifier, "domain": target_anchor.domain}
+        anchor_canonical = _canonicalize_anchor(transition.anchor)
+        target_anchor_canonical = _canonicalize_anchor(
+            transition.resolved_target_anchor
         )
         before_state = CanonicalStateManifest.from_payload(
             transition.before_state.value
         )
         after_state = CanonicalStateManifest.from_payload(transition.after_state.value)
         operation = CanonicalOperationManifest.from_operation(transition.operation)
-        claim_canonical = canonicalize(
-            {
-                "claim_id": transition.claim.claim_id,
-                "statement": transition.claim.statement,
-            }
-        )
-        evidence_canonical = canonicalize(
-            tuple(
-                {"claim_id": evidence.claim_id, "basis": evidence.basis}
-                for evidence in transition.evidence
-            )
-        )
-        preserved_canonical = canonicalize(tuple(sorted(set(transition.preserved))))
-        changed_canonical = canonicalize(tuple(sorted(set(transition.changed))))
-        trace_canonical = canonicalize(tuple(transition.trace.events))
-        residuals_canonical = canonicalize(
-            tuple(residual.description for residual in transition.residuals)
-        )
+        claim_canonical = _canonicalize_claim(transition.claim)
+        evidence_canonical = _canonicalize_evidence(transition.evidence)
+        preserved_canonical = _canonicalize_component_set(transition.preserved)
+        changed_canonical = _canonicalize_component_set(transition.changed)
+        trace_canonical = _canonicalize_trace(transition.trace)
+        residuals_canonical = _canonicalize_residuals(transition.residuals)
         result_state = CanonicalStateManifest.from_payload(transition.result.value)
 
         document = _map(
