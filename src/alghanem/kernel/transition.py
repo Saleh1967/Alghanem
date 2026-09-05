@@ -1,13 +1,15 @@
-"""Licensed transitions and explicit transition decisions."""
+"""Transition candidates, licensed transitions, and explicit decisions."""
 
-from dataclasses import dataclass
+from dataclasses import InitVar, dataclass
 from enum import Enum, auto
 
 from .anchor import Anchor, State
-from .evidence import Evidence
+from .evidence import Claim, Evidence
 from .operation import Operation, OperationResult
 from .residual import Residual
 from .trace import Trace
+
+_LICENSE_TOKEN = object()
 
 
 class Outcome(Enum):
@@ -21,47 +23,168 @@ class Outcome(Enum):
 
 
 @dataclass(frozen=True, slots=True)
-class LicensedTransition:
-    """A successful, licensed transition, validated at construction time."""
+class BranchOriginProvenance:
+    """Structural origin provenance for preserved branch components."""
+
+    origin_anchor: Anchor
+    branch_anchor: Anchor
+    preserved_components: tuple[str, ...]
+
+    def __post_init__(self) -> None:
+        if not self.preserved_components:
+            raise ValueError("branch origin provenance requires preserved components")
+        _validate_components(
+            "branch origin provenance preserved components",
+            self.preserved_components,
+        )
+        if self.branch_anchor == self.origin_anchor:
+            raise ValueError(
+                "branch origin provenance requires a distinct branch anchor"
+            )
+
+
+@dataclass(frozen=True, slots=True)
+class TransitionCandidate:
+    """A transition-shaped candidate that has not crossed the licensing boundary."""
 
     anchor: Anchor
     before_state: State
     operation: Operation
     after_state: State
+    claim: Claim
     evidence: tuple[Evidence, ...]
     preserved: tuple[str, ...]
     changed: tuple[str, ...]
     trace: Trace
     residuals: tuple[Residual, ...]
     outcome: Outcome
-    result: OperationResult
+    result: OperationResult | None
+    branch_origin_provenance: BranchOriginProvenance | None = None
 
     def __post_init__(self) -> None:
-        if self.result is None:
-            raise ValueError("successful transitions require a result")
-        if self.outcome in {Outcome.BLOCK, Outcome.DEFER, Outcome.UNDEFINED}:
-            raise ValueError("non-transition outcomes cannot be LicensedTransition")
-        if not self.evidence:
-            raise ValueError("successful transitions require evidence")
-        if self.outcome is Outcome.IDENTITY_PRESERVING_TRANSFORMATION:
-            if not self.preserved:
-                raise ValueError(
-                    "identity-preserving transformations require an invariant"
-                )
-            if not self.changed:
-                raise ValueError(
-                    "identity-preserving transformations require a declared change"
-                )
-        if not self.changed:
-            raise ValueError("successful transitions require a declared change")
-        if self.operation.declared_change not in self.changed:
+        _validate_candidate_components(self)
+
+    def validate_success(self) -> None:
+        """Validate the structural laws required for licensing success."""
+
+        _validate_successful_transition_fields(self)
+
+
+@dataclass(frozen=True, slots=True)
+class LicensedTransition(TransitionCandidate):
+    """A successful transition issued only by the licensing boundary.
+
+    Use ``LicensingGate.license`` on a candidate to create this type. Dataclass
+    replacement paths that rerun ``__init__`` are not licensing paths.
+    """
+
+    _license_token: InitVar[object | None] = None
+
+    def __post_init__(self, _license_token: object | None) -> None:
+        if _license_token is not _LICENSE_TOKEN:
+            raise ValueError("licensed transitions must be issued by LicensingGate")
+        _validate_candidate_components(self)
+        self.validate_success()
+
+
+class LicensingGate:
+    """Minimal structural licensing boundary for successful transitions.
+
+    Already licensed transitions are rejected rather than re-licensed.
+    """
+
+    @staticmethod
+    def license(candidate: TransitionCandidate) -> LicensedTransition:
+        """Issue a licensed transition after structural validation."""
+
+        if isinstance(candidate, LicensedTransition):
+            raise ValueError("licensed transitions cannot be re-licensed")
+        return LicensedTransition(
+            anchor=candidate.anchor,
+            before_state=candidate.before_state,
+            operation=candidate.operation,
+            after_state=candidate.after_state,
+            claim=candidate.claim,
+            evidence=candidate.evidence,
+            preserved=candidate.preserved,
+            changed=candidate.changed,
+            trace=candidate.trace,
+            residuals=candidate.residuals,
+            outcome=candidate.outcome,
+            result=candidate.result,
+            branch_origin_provenance=candidate.branch_origin_provenance,
+            _license_token=_LICENSE_TOKEN,
+        )
+
+
+def _validate_components(label: str, components: tuple[str, ...]) -> None:
+    if any(not component.strip() for component in components):
+        raise ValueError(f"{label} cannot be blank")
+    if len(set(components)) != len(components):
+        raise ValueError(f"{label} must be unique")
+
+
+def _validate_candidate_components(candidate: TransitionCandidate) -> None:
+    _validate_components("preserved components", candidate.preserved)
+    _validate_components("changed components", candidate.changed)
+
+
+def _validate_successful_transition_fields(candidate: TransitionCandidate) -> None:
+    if candidate.result is None:
+        raise ValueError("successful transitions require a result")
+    if (
+        candidate.operation.source_domain is not None
+        and candidate.operation.source_domain != candidate.anchor.domain
+    ):
+        raise ValueError(
+            "operation source domain must match the transition anchor domain"
+        )
+    if candidate.outcome in {Outcome.BLOCK, Outcome.DEFER, Outcome.UNDEFINED}:
+        raise ValueError("non-transition outcomes cannot be LicensedTransition")
+    if not candidate.evidence:
+        raise ValueError("successful transitions require evidence")
+    if any(
+        evidence.claim_id != candidate.claim.claim_id for evidence in candidate.evidence
+    ):
+        raise ValueError("transition evidence must be bound to its claim")
+    if candidate.outcome is Outcome.IDENTITY_PRESERVING_TRANSFORMATION:
+        if not candidate.preserved:
+            raise ValueError("identity-preserving transformations require an invariant")
+        if not candidate.changed:
             raise ValueError(
-                "transition changes must include the operation's declared change"
+                "identity-preserving transformations require a declared change"
             )
-        if not set(self.preserved).isdisjoint(self.changed):
-            raise ValueError("preserved and changed components must be disjoint")
-        if self.outcome is Outcome.CERTIFIED_BRANCH_BIRTH and not self.preserved:
-            raise ValueError("certified branch births require a preserved origin")
+    if not candidate.changed:
+        raise ValueError("successful transitions require a declared change")
+    if candidate.operation.declared_change not in candidate.changed:
+        raise ValueError(
+            "transition changes must include the operation's declared change"
+        )
+    if not set(candidate.preserved).isdisjoint(candidate.changed):
+        raise ValueError("preserved and changed components must be disjoint")
+    if candidate.outcome is Outcome.CERTIFIED_BRANCH_BIRTH:
+        _validate_branch_birth(candidate)
+
+
+def _validate_branch_birth(candidate: TransitionCandidate) -> None:
+    if not candidate.preserved:
+        raise ValueError("certified branch births require preserved information")
+    if candidate.branch_origin_provenance is None:
+        raise ValueError("certified branch births require explicit origin provenance")
+    if candidate.branch_origin_provenance.origin_anchor != candidate.anchor:
+        raise ValueError("branch origin provenance must match the transition anchor")
+    if (
+        candidate.branch_origin_provenance.branch_anchor.domain
+        != candidate.anchor.domain
+    ):
+        raise ValueError(
+            "branch origin provenance branch anchor must match the transition domain"
+        )
+    provenance_components = set(candidate.branch_origin_provenance.preserved_components)
+    if not provenance_components.issubset(set(candidate.preserved)):
+        raise ValueError(
+            "branch origin provenance components must be declared preserved"
+        )
 
 
 @dataclass(frozen=True, slots=True)
