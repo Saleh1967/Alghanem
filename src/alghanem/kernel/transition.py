@@ -31,12 +31,9 @@ class BranchOriginProvenance:
     preserved_components: tuple[str, ...]
 
     def __post_init__(self) -> None:
+        _validate_components("branch origin provenance", self.preserved_components)
         if not self.preserved_components:
             raise ValueError("branch origin provenance requires preserved components")
-        if any(not component.strip() for component in self.preserved_components):
-            raise ValueError("branch origin provenance components cannot be blank")
-        if len(set(self.preserved_components)) != len(self.preserved_components):
-            raise ValueError("branch origin provenance components must be unique")
         if self.branch_anchor == self.origin_anchor:
             raise ValueError(
                 "branch origin provenance requires a distinct branch anchor"
@@ -61,6 +58,10 @@ class TransitionCandidate:
     result: OperationResult
     branch_origin_provenance: BranchOriginProvenance | None = None
 
+    def __post_init__(self) -> None:
+        _validate_components("preserved", self.preserved)
+        _validate_components("changed", self.changed)
+
     def validate_success(self) -> None:
         """Validate the structural laws required for licensing success."""
 
@@ -80,7 +81,10 @@ class LicensedTransition(TransitionCandidate):
 
 
 class LicensingGate:
-    """Minimal structural licensing boundary for successful transitions."""
+    """Minimal structural licensing boundary for successful transitions.
+
+    Already licensed transitions are rejected rather than re-licensed.
+    """
 
     @staticmethod
     def license(candidate: TransitionCandidate) -> LicensedTransition:
@@ -131,8 +135,6 @@ def _validate_successful_transition_fields(candidate: TransitionCandidate) -> No
         evidence.claim_id != candidate.claim.claim_id for evidence in candidate.evidence
     ):
         raise ValueError("transition evidence must be bound to its claim")
-    _validate_components("preserved", candidate.preserved)
-    _validate_components("changed", candidate.changed)
     if candidate.outcome is Outcome.IDENTITY_PRESERVING_TRANSFORMATION:
         if not candidate.preserved:
             raise ValueError("identity-preserving transformations require an invariant")
