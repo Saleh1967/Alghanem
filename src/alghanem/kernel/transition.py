@@ -275,6 +275,11 @@ class NonSuccessDecisionAudit:
     to that candidate's own history, so no history is fabricated or attached
     without provenance. Without a candidate, the audit owns its trace and
     residuals directly. Residuals are preserved, not interpreted.
+
+    ``reason_code``, when present, is an optional machine-auditable
+    classification; the kernel does not verify that it is semantically
+    consistent with the free-text ``reason``, so callers issuing an audit are
+    responsible for keeping the two aligned.
     """
 
     trace: Trace
