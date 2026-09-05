@@ -13,7 +13,9 @@ from alghanem.kernel import (
 )
 
 
-def make_transition(outcome: Outcome, preserved: tuple[str, ...] = ("identity",)):
+def make_transition(
+    outcome: Outcome, preserved: tuple[str, ...] = ("identity",)
+) -> LicensedTransition:
     return LicensedTransition(
         anchor=Anchor("a", "D"),
         operation=Operation("op", "changed"),
@@ -51,7 +53,10 @@ def test_identity_preserving_requires_declared_invariant():
 
 
 def test_branch_birth_is_distinct_from_identity_preservation():
-    assert make_transition(Outcome.CERTIFIED_BRANCH_BIRTH).outcome is not Outcome.IDENTITY_PRESERVING_TRANSFORMATION
+    assert (
+        make_transition(Outcome.CERTIFIED_BRANCH_BIRTH).outcome
+        is not Outcome.IDENTITY_PRESERVING_TRANSFORMATION
+    )
 
 
 @pytest.mark.parametrize("outcome", [Outcome.BLOCK, Outcome.DEFER, Outcome.UNDEFINED])

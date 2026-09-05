@@ -37,7 +37,10 @@ class LicensedTransition:
     def __post_init__(self) -> None:
         if not self.anchor.domain:
             raise ValueError("a transition requires an explicit domain")
-        if not self.preserved and self.outcome is Outcome.IDENTITY_PRESERVING_TRANSFORMATION:
+        if (
+            not self.preserved
+            and self.outcome is Outcome.IDENTITY_PRESERVING_TRANSFORMATION
+        ):
             raise ValueError("identity-preserving transformations require an invariant")
         if self.outcome in {
             Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
