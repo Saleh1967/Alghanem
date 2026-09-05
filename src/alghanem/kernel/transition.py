@@ -30,8 +30,8 @@ class TransitionKind(Enum):
     invariant can be independently checked via
     ``invariant.InvariantVerificationGate``, but that check is not yet
     required for, or wired into, structural admission. See
-    ``docs/CONSTITUTION.md`` for the
-    full epistemic ladder this vocabulary sits on.
+    ``docs/CONSTITUTION.md`` for the full epistemic ladder this vocabulary
+    sits on.
     """
 
     IDENTITY_PRESERVATION_CLAIM = auto()
