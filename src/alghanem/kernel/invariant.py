@@ -13,7 +13,7 @@ independently in an ``InvariantExtractorRegistry``; resolving an
 This keeps ``Candidate does not own certification authority``: nothing here
 lets a candidate hand in ``lambda before, after: True`` and "verify" itself.
 
-Four hardening laws close this module's scope for Kernel v0.1:
+Hardening laws close this module's scope for Kernel v0.1:
 
 1. ``VerificationResult must be gate-issued``: ``InvariantVerification`` is
    constructible only through ``InvariantVerificationGate.verify``, enforced
@@ -30,7 +30,14 @@ Four hardening laws close this module's scope for Kernel v0.1:
    source anchor, resolved target anchor, and source trace), so a
    verification produced for one transition cannot be silently accepted as
    evidence for another via ``InvariantVerificationGate.require_bound_to``.
-4. Boolean comparison integrity: ``before_value == after_value`` is not
+4. Exact transition and snapshot identity: structural admission issues an
+   opaque ``admission_id`` and sealing issues a ``registry_snapshot_id``;
+   verification provenance records both, so matching claim fields alone cannot
+   authorize replay.
+5. Complete coverage: ``InvariantVerificationBundle`` accepts exactly one
+   successful verification for every declared preserved component, while
+   ``InvariantVerificationDecision`` preserves blocked attempts for audit.
+6. Boolean comparison integrity: ``before_value == after_value`` is not
    assumed to return an actual ``bool`` (for example, some libraries'
    ``__eq__`` return non-bool values). A non-``bool`` comparison result is
    rejected with a typed ``InvariantComparisonError`` rather than silently
@@ -42,11 +49,11 @@ Four hardening laws close this module's scope for Kernel v0.1:
 equal; a candidate cannot construct this outcome by declaring
 ``preserved=True``.
 
-Scope: this gate checks one declared invariant against one already
-structurally admitted transition. It does not, by itself, make invariant
-verification mandatory for structural admission, and it is not evidential
-sufficiency, authority licensing, or certification -- those remain later,
-undelivered rungs of the epistemic ladder in ``docs/CONSTITUTION.md``. Nor
+Scope: this gate checks declared invariants against one already structurally
+admitted transition. It does not, by itself, make invariant verification
+mandatory for structural admission, and it is not evidential sufficiency,
+authority licensing, or certification -- those remain later, undelivered rungs
+of the epistemic ladder in ``docs/CONSTITUTION.md``. Nor
 is anything here a cryptographic identity guarantee: the sentinel tokens and
 provenance binding raise the bar against accidental misuse and casual
 replay, not against a determined, dishonest caller fabricating matching
@@ -149,9 +156,17 @@ class InvariantVerificationProvenance:
             raise ValueError(
                 "invariant verification provenance requires an extractor id"
             )
-        if self.source_admission_id is not None and not self.source_admission_id.strip():
-            raise ValueError("invariant verification provenance requires an admission id")
-        if self.registry_snapshot_id is not None and not self.registry_snapshot_id.strip():
+        if (
+            self.source_admission_id is not None
+            and not self.source_admission_id.strip()
+        ):
+            raise ValueError(
+                "invariant verification provenance requires an admission id"
+            )
+        if (
+            self.registry_snapshot_id is not None
+            and not self.registry_snapshot_id.strip()
+        ):
             raise ValueError(
                 "invariant verification provenance requires a registry snapshot id"
             )
@@ -268,7 +283,9 @@ class InvariantVerificationDecision:
             if set(v.component for v in self.verifications) != set(
                 self.transition.preserved
             ):
-                raise ValueError("verified decisions require complete invariant coverage")
+                raise ValueError(
+                    "verified decisions require complete invariant coverage"
+                )
 
 
 class InvariantVerificationError(ValueError):
@@ -298,8 +315,17 @@ class InvariantVerificationBundle:
             InvariantVerificationGate.require_bound_to(verification, self.transition)
             if not verification.preserved:
                 raise ValueError(
-                    "invariant verification bundle requires every invariant to be preserved"
+                    "invariant verification bundle requires every invariant "
+                    "to be preserved"
                 )
+        snapshot_ids = {
+            verification.provenance.registry_snapshot_id
+            for verification in self.verifications
+        }
+        if len(snapshot_ids) != 1 or None in snapshot_ids:
+            raise ValueError(
+                "invariant verification bundle requires one registry snapshot"
+            )
 
 
 class SealedInvariantExtractorRegistry:
@@ -316,7 +342,7 @@ class SealedInvariantExtractorRegistry:
     to register anything -- it only resolves.
     """
 
-    __slots__ = ("_extractors", "registry_snapshot_id")
+    __slots__ = ("_extractors", "_registry_snapshot_id")
 
     def __init__(
         self, extractors: Mapping[str, InvariantExtractor], _seal_token: object
@@ -341,7 +367,13 @@ class SealedInvariantExtractorRegistry:
         # registration lock is still held -- no concurrent ``register()``
         # call can interleave with it.
         self._extractors: dict[str, InvariantExtractor] = dict(extractors)
-        self.registry_snapshot_id = uuid4().hex
+        self._registry_snapshot_id = uuid4().hex
+
+    @property
+    def registry_snapshot_id(self) -> str:
+        """Opaque identity of this sealed registry snapshot."""
+
+        return self._registry_snapshot_id
 
     def resolve(self, extractor_id: str) -> InvariantExtractor:
         """Resolve a registered extractor, or raise if none is registered."""
@@ -508,15 +540,31 @@ class InvariantVerificationGate:
                 reason="invariant specs must exactly cover preserved components",
             )
         verifications: list[InvariantVerification] = []
+        if len({spec.component for spec in specs}) != len(specs):
+            return InvariantVerificationDecision(
+                status=InvariantVerificationDecisionStatus.BLOCK,
+                transition=transition,
+                failed_components=tuple(transition.preserved),
+                trace=transition.trace,
+                residuals=transition.residuals,
+                reason="invariant specs cannot duplicate preserved components",
+            )
+        current_component = ""
         try:
             for spec in specs:
-                verifications.append(InvariantVerificationGate.verify(transition, spec, registry))
+                current_component = spec.component
+                verifications.append(
+                    InvariantVerificationGate.verify(transition, spec, registry)
+                )
         except Exception as error:
             failed = tuple(
                 component
                 for component in transition.preserved
-                if component not in {verification.component for verification in verifications}
+                if component
+                not in {verification.component for verification in verifications}
             )
+            if current_component and current_component not in failed:
+                failed += (current_component,)
             return InvariantVerificationDecision(
                 status=InvariantVerificationDecisionStatus.BLOCK,
                 transition=transition,

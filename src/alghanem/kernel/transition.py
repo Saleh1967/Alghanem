@@ -172,7 +172,9 @@ class StructurallyAdmissibleTransition(TransitionCandidate):
                 "StructuralAdmissionGate"
             )
         if not self.admission_id.strip():
-            raise ValueError("structurally admissible transitions require an admission id")
+            raise ValueError(
+                "structurally admissible transitions require an admission id"
+            )
         # Re-validated here, not inherited from TransitionCandidate: this
         # dataclass's own __post_init__ fully overrides the parent's, and
         # any dataclasses.replace() on an existing instance re-runs __init__
