@@ -180,20 +180,10 @@ class InvariantVerificationGate:
                 "declared preserved components"
             )
         extractor = registry.resolve(spec.extractor_id)
-        try:
-            before_value = extractor(transition.before_state)
-        except Exception as error:
-            raise InvariantExtractionError(
-                f"extractor {spec.extractor_id!r} failed on before_state "
-                f"for invariant {spec.invariant_id!r}: {error}"
-            ) from error
-        try:
-            after_value = extractor(transition.after_state)
-        except Exception as error:
-            raise InvariantExtractionError(
-                f"extractor {spec.extractor_id!r} failed on after_state "
-                f"for invariant {spec.invariant_id!r}: {error}"
-            ) from error
+        before_value = _extract(
+            extractor, transition.before_state, "before_state", spec
+        )
+        after_value = _extract(extractor, transition.after_state, "after_state", spec)
         observation = InvariantObservation(
             invariant_id=spec.invariant_id,
             before_value=before_value,
@@ -210,3 +200,17 @@ class InvariantVerificationGate:
             trace=trace,
             observation=observation,
         )
+
+
+def _extract(
+    extractor: InvariantExtractor, state: State, label: str, spec: InvariantSpec
+) -> object:
+    """Run ``extractor`` on ``state``, wrapping any failure with context."""
+
+    try:
+        return extractor(state)
+    except Exception as error:
+        raise InvariantExtractionError(
+            f"extractor {spec.extractor_id!r} failed on {label} "
+            f"for invariant {spec.invariant_id!r}: {error}"
+        ) from error
