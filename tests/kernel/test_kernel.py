@@ -20,7 +20,6 @@ from alghanem.kernel import (
     TransitionDecision,
     TransitionKind,
 )
-from alghanem.kernel.transition import _KIND_FOR_OUTCOME
 
 
 class _DefaultProvenance:
@@ -75,7 +74,12 @@ def make_candidate(
     if branch_origin_provenance is _DEFAULT_PROVENANCE:
         branch_origin_provenance = None
     if kind is _DEFAULT_PROVENANCE:
-        kind = _KIND_FOR_OUTCOME.get(outcome)
+        if outcome is Outcome.IDENTITY_PRESERVING_TRANSFORMATION:
+            kind = TransitionKind.IDENTITY_PRESERVATION_CLAIM
+        elif outcome is Outcome.CERTIFIED_BRANCH_BIRTH:
+            kind = TransitionKind.BRANCH_BIRTH_CLAIM
+        else:
+            kind = None
     return TransitionCandidate(
         anchor=anchor,
         before_state=State("before"),
