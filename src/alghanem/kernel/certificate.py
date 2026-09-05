@@ -15,3 +15,5 @@ class Certificate:
     def __post_init__(self) -> None:
         if not self.evidence:
             raise ValueError("a certificate requires evidence")
+        if any(evidence.claim != self.claim for evidence in self.evidence):
+            raise ValueError("certificate evidence must support its claim")

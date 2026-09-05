@@ -54,8 +54,12 @@ class LicensedTransition:
                 )
         if not self.changed:
             raise ValueError("successful transitions require a declared change")
+        if self.operation.declared_change not in self.changed:
+            raise ValueError("transition changes must include the operation's declared change")
         if not set(self.preserved).isdisjoint(self.changed):
             raise ValueError("preserved and changed components must be disjoint")
+        if self.outcome is Outcome.CERTIFIED_BRANCH_BIRTH and not self.preserved:
+            raise ValueError("certified branch births require a preserved origin")
 
 
 @dataclass(frozen=True, slots=True)
@@ -72,5 +76,7 @@ class TransitionDecision:
         }
         if self.outcome in successful and self.transition is None:
             raise ValueError("successful decisions require a licensed transition")
+        if self.transition is not None and self.outcome is not self.transition.outcome:
+            raise ValueError("decision and transition outcomes must match")
         if self.outcome not in successful and self.transition is not None:
             raise ValueError("non-transition decisions cannot contain a transition")
