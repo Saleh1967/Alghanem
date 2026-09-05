@@ -21,6 +21,7 @@ These are the initial laws of the language-agnostic kernel:
 | No epistemic promotion | DECLARED_DEFERRED | Claim/evidence binding is structural only; evidential sufficiency is not implemented. |
 | No partial invariant coverage | DECLARED_DEFERRED | No transition may be promoted as preserved from partial invariant coverage; complete invariant verification is available as a separate gate before evidential sufficiency. |
 | No higher-layer repair | DECLARED_DEFERRED | Higher layers may not repair invalid lower-layer transitions, but layer authority is not defined. |
+| Canonical transition content snapshot | ENFORCED_AT_CONTENT_ENCODER | `CanonicalTransitionEncoder` is the sole issuer of `CanonicalTransitionManifest` and `TransitionContentIdentity`. The manifest preserves immutable canonical bytes for every structural transition field, including branch-origin provenance; occurrence-only `admission_id` and projection fingerprint are explicit exclusions. Its SHA-256 value is a digest reference, not proof of canonical-byte equality. Canonical values accept only exact built-in types, distinguish list from tuple and bytes from bytearray, preserve raw Unicode code points without normalization, encode finite floats as IEEE-754 binary64, and reject unsupported values and cycles. `preserved`, `changed`, and branch provenance components are sets; trace, evidence, and residuals are ordered sequences. Schema coverage rejects unaccounted structural fields. |
 
 Invariant assessment request semantics are closed at the gate: `BLOCK` means an
 authorized verifier observed at least one invariant as false; `DEFER` means no
@@ -63,6 +64,10 @@ certification the kernel itself does not yet issue.
 Kernel dataclasses are shallowly immutable: field reassignment is blocked, but
 payload objects stored in `State.value` and `OperationResult.value` are not
 deep-frozen by the kernel.
+
+Canonical manifests are independent snapshots: mutation of a shallow payload
+after encoding cannot alter existing canonical bytes, but a later encoding may
+produce a different content digest for the same admission occurrence.
 
 The kernel does not assume reversibility, global composition, path
 independence, a group, or a groupoid. Those questions are intentionally

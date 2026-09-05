@@ -1584,9 +1584,7 @@ def test_assess_all_preserved_rejects_incomplete_coverage_without_decision() -> 
         invariant_id="inv-1", component="identity", extractor_id="constant-extractor"
     )
 
-    with pytest.raises(
-        InvariantAssessmentSpecificationError, match="exactly cover"
-    ):
+    with pytest.raises(InvariantAssessmentSpecificationError, match="exactly cover"):
         InvariantVerificationGate.assess_all_preserved(transition, (spec,), registry)
 
 
@@ -1611,9 +1609,7 @@ def test_assess_all_preserved_rejects_duplicate_components_in_any_order(
         else (identity_spec, other_spec, identity_spec)[::-1]
     )
 
-    with pytest.raises(
-        InvariantAssessmentSpecificationError, match="duplicate"
-    ):
+    with pytest.raises(InvariantAssessmentSpecificationError, match="duplicate"):
         InvariantVerificationGate.assess_all_preserved(transition, specs, registry)
 
 
@@ -1626,9 +1622,7 @@ def test_require_all_preserved_propagates_assessment_specification_error() -> No
         invariant_id="inv-1", component="identity", extractor_id="constant-extractor"
     )
 
-    with pytest.raises(
-        InvariantAssessmentSpecificationError, match="exactly cover"
-    ):
+    with pytest.raises(InvariantAssessmentSpecificationError, match="exactly cover"):
         InvariantVerificationGate.require_all_preserved(transition, (spec,), registry)
 
 
@@ -1660,12 +1654,14 @@ def test_assess_all_preserved_verifies_all_components() -> None:
     }
 
 
-def _mixed_block_defer_transition_and_specs() -> tuple[
-    StructurallyAdmissibleTransition,
-    InvariantSpec,
-    InvariantSpec,
-    SealedInvariantExtractorRegistry,
-]:
+def _mixed_block_defer_transition_and_specs() -> (
+    tuple[
+        StructurallyAdmissibleTransition,
+        InvariantSpec,
+        InvariantSpec,
+        SealedInvariantExtractorRegistry,
+    ]
+):
     # "identity" is checked and disproved (a real BLOCK); "other" cannot be
     # checked at all (an unregistered extractor, a real DEFER). The claim
     # under test is: a known falsification must dominate an unrelated
