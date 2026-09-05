@@ -15,25 +15,39 @@ from .trace import Trace
 _ADMISSION_TOKEN = object()
 
 
-def _compute_transition_fingerprint(candidate: "TransitionCandidate") -> str:
-    """Deterministic, content-based identity for a candidate's own content.
+def _compute_transition_projection_fingerprint(candidate: "TransitionCandidate") -> str:
+    """Deterministic digest of a *partial projection* of a candidate's content.
 
     ``admission_id`` is intentionally opaque and run-specific (a fresh
     ``uuid4().hex`` per admission), which prevents accidental replay across
     unrelated ``StructurallyAdmissibleTransition`` instances but also means
     running the exact same experiment twice never produces the same
-    identity. This fingerprint is the complementary, deterministic identity:
-    ``OccurrenceIdentity != ContentIdentity``. Two candidates built from the
-    same declared content (anchors, claim id, preserved/changed sets, kind,
-    and a best-effort ``repr`` of the opaque before/after state payloads)
-    always hash to the same fingerprint, independent of when or how many
-    times admission ran.
+    identity. This digest is a deterministic *projection* of some of that
+    content (kind, anchors, claim id, preserved/changed sets, and a
+    best-effort ``repr`` of the opaque before/after state payloads):
+    ``OccurrenceIdentity != ContentIdentity``.
 
-    This is a best-effort digest, not a cryptographic identity guarantee:
-    ``repr`` is not guaranteed stable across Python versions or for every
-    object (for example, default object reprs embed memory addresses), so a
-    matching fingerprint is corroborating evidence of reproducibility, not a
-    formal proof of content equality.
+    This is deliberately **not** claimed as canonical content identity or a
+    reproducibility guarantee:
+
+    * It omits structurally relevant fields that are genuinely part of the
+      candidate's content -- ``claim.statement``, ``operation`` (name,
+      source/target domain), ``evidence``, ``result``,
+      ``branch_origin_provenance``, and ``residuals`` are not included. Two
+      candidates that differ only in one of those fields currently produce
+      the *same* projection fingerprint.
+    * ``repr`` of ``before_state.value``/``after_state.value`` is a
+      best-effort textual projection, not a stable canonical serialization:
+      it is not guaranteed stable across Python versions or for every
+      object (for example, default object reprs embed memory addresses),
+      and ``State`` is only shallowly frozen, so mutating the payload after
+      admission does not change an already-computed fingerprint.
+
+    A full ``CanonicalTransitionManifest`` with explicit, versioned digests
+    for opaque state/result payloads and complete structural coverage is
+    deferred to a dedicated reproducibility PR. Until then, this field is
+    corroborating metadata only -- it must not be treated as proof of
+    content equality or used to promote epistemic status.
     """
 
     resolved_target = (
@@ -207,16 +221,21 @@ class StructurallyAdmissibleTransition(TransitionCandidate):
     Carries two distinct identities, deliberately not conflated:
     ``admission_id`` is an opaque, run-specific ``uuid4().hex`` (prevents
     accidental replay across separate admissions of otherwise-similar
-    content), while ``transition_fingerprint`` is a deterministic,
-    content-based digest of the candidate's own declared fields (enables
-    independent reproducibility: the same input admitted twice, today or
+    content), while ``transition_projection_fingerprint`` is a
+    deterministic digest of a *partial projection* of the candidate's
+    declared fields (the same projected input admitted twice, today or
     tomorrow, yields the same fingerprint even though it gets a fresh
-    ``admission_id`` each time). ``OccurrenceIdentity != ContentIdentity``.
+    ``admission_id`` each time): ``OccurrenceIdentity != ContentIdentity``.
+    It is corroborating metadata only, not a canonical content-identity or
+    reproducibility guarantee -- see
+    ``_compute_transition_projection_fingerprint`` for exactly what it
+    covers and omits. A full ``CanonicalTransitionManifest`` is deferred to
+    a dedicated reproducibility PR.
     """
 
     _admission_token: InitVar[object | None] = None
     admission_id: str = ""
-    transition_fingerprint: str = ""
+    transition_projection_fingerprint: str = ""
 
     def __post_init__(self, _admission_token: object | None) -> None:
         if _admission_token is not _ADMISSION_TOKEN:
@@ -228,9 +247,10 @@ class StructurallyAdmissibleTransition(TransitionCandidate):
             raise ValueError(
                 "structurally admissible transitions require an admission id"
             )
-        if not self.transition_fingerprint.strip():
+        if not self.transition_projection_fingerprint.strip():
             raise ValueError(
-                "structurally admissible transitions require a transition fingerprint"
+                "structurally admissible transitions require a transition "
+                "projection fingerprint"
             )
         # Re-validated here, not inherited from TransitionCandidate: this
         # dataclass's own __post_init__ fully overrides the parent's, and
@@ -279,7 +299,9 @@ class StructuralAdmissionGate:
                 branch_origin_provenance=candidate.branch_origin_provenance,
                 target_anchor=candidate.target_anchor,
                 admission_id=uuid4().hex,
-                transition_fingerprint=_compute_transition_fingerprint(candidate),
+                transition_projection_fingerprint=(
+                    _compute_transition_projection_fingerprint(candidate)
+                ),
                 _admission_token=_ADMISSION_TOKEN,
             )
         except ValueError as error:

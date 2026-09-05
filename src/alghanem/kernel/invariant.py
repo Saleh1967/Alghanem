@@ -1,17 +1,26 @@
-"""Verified invariant preservation: specs, extractors, and verification.
+"""Verified invariant preservation: authorized specs, extractors, and verification.
 
 A ``TransitionCandidate`` may declare a component name in ``preserved``, but
 that is only a claim: ``DeclaredInvariant != VerifiedInvariant``. This module
 closes that gap for a single named invariant at a time, without letting the
-candidate supply its own proof.
+candidate supply its own proof, and without letting the candidate or caller
+choose which extractor is authoritative for a given invariant/component.
 
 ``InvariantSpec`` names *what* should be checked (an invariant id, the
-preserved component it refers to, and a registered extractor id) but never
+preserved component it refers to, and a claimed extractor id) but never
 carries an executable extractor itself. Extractors are registered
 independently in an ``InvariantExtractorRegistry``; resolving an
 ``extractor_id`` to an actual callable is that registry's authority alone.
 This keeps ``Candidate does not own certification authority``: nothing here
 lets a candidate hand in ``lambda before, after: True`` and "verify" itself.
+But merely being a *registered* extractor id is not enough authority to
+check *any* component: ``RegisteredInvariantDefinition`` additionally binds
+a specific ``(domain, component, invariant_id)`` to exactly one authorized
+``extractor_id``, and ``InvariantVerificationGate.verify`` resolves through
+that authorization, not through a bare id lookup. A spec naming a
+registered-but-unauthorized extractor id for its component is treated the
+same as an unregistered one: epistemically untestable, not a candidate- or
+caller-chosen "proof".
 
 Hardening laws close this module's scope for Kernel v0.1:
 
@@ -24,50 +33,65 @@ Hardening laws close this module's scope for Kernel v0.1:
    by ``InvariantExtractorRegistry.seal()``). ``InvariantVerificationGate``
    only ever accepts the sealed, read-only view; it never registers
    extractors and never manufactures registry/governor authority itself.
-3. ``NoInvariantVerificationWithoutSourceTransitionBinding``: every
+3. ``NoVerifiedInvariantWithoutAuthorizedVerifierBinding``: a component can
+   only be checked with the specific extractor id that a trusted
+   ``RegisteredInvariantDefinition`` authorizes for that exact
+   ``(domain, component, invariant_id)`` triple. ``InvariantSpec`` cannot
+   freely pick any registered extractor id and have it accepted merely
+   because it exists in the sealed registry: ``Candidate/Caller does not
+   own verifier selection authority``.
+4. ``NoInvariantVerificationWithoutSourceTransitionBinding``: every
    ``InvariantVerification`` carries an ``InvariantVerificationProvenance``
    binding it to the specific transition it was checked against (claim id,
    source anchor, resolved target anchor, and source trace), so a
    verification produced for one transition cannot be silently accepted as
    evidence for another via ``InvariantVerificationGate.require_bound_to``.
-4. Exact transition and snapshot identity: structural admission issues an
+5. Exact transition and snapshot identity: structural admission issues an
    opaque ``admission_id`` and sealing issues a ``registry_snapshot_id``;
    verification provenance records both, so matching claim fields alone cannot
    authorize replay.
-5. Complete coverage: ``InvariantVerificationBundle`` accepts exactly one
+6. Complete coverage: ``InvariantVerificationBundle`` accepts exactly one
    successful verification for every declared preserved component, while
-   ``InvariantVerificationDecision`` preserves blocked attempts for audit.
-6. Boolean comparison integrity: ``before_value == after_value`` is not
+   ``InvariantVerificationDecision`` preserves blocked/deferred attempts for
+   audit.
+7. Boolean comparison integrity: ``before_value == after_value`` is not
    assumed to return an actual ``bool`` (for example, some libraries'
    ``__eq__`` return non-bool values). A non-``bool`` comparison result is
    rejected with a typed ``InvariantComparisonError`` rather than silently
    coerced into a verification.
-7. ``InvariantVerificationDecision`` is also gate-issued, not just
-   ``InvariantVerificationBundle``: a caller cannot hand-build
-   ``InvariantVerificationDecision(status=VERIFIED, ...)`` without going
-   through ``InvariantVerificationGate.assess_all_preserved``, and a
-   ``VERIFIED`` decision enforces the same complete-coverage,
-   no-duplicates, transition-bound, single-snapshot requirements as the
-   bundle.
-8. ``DEFER`` carries real operational meaning, distinct from ``BLOCK``:
-   epistemic non-answers (an unregistered extractor, a failing extractor,
-   or an ambiguous non-``bool`` comparison) are ``DEFER``, while a
-   genuinely disproved invariant (``I(before) != I(after)``) is ``BLOCK``.
-   Internal/programming errors are neither: they are not caught and
-   propagate as ordinary exceptions, rather than being silently coerced
-   into either epistemic status.
-9. Reproducibility alongside replay resistance: ``admission_id`` and
-   ``registry_snapshot_id`` are opaque, run-specific identities (fresh
-   ``uuid4().hex`` per instance) that guard against accidental replay.
-   ``transition_fingerprint`` and ``registry_content_hash`` are their
-   deterministic, content-based complements, recorded in addition to (not
-   instead of) the opaque identities: ``OccurrenceIdentity !=
-   ContentIdentity``.
+8. ``VerificationArtifactAuthorityMustMatchConstitutionalWording``: both
+   ``InvariantVerificationDecision`` and ``InvariantVerificationBundle`` are
+   gate-issued only, enforced by private sentinel tokens -- not merely one
+   of the two. A caller cannot hand-build
+   ``InvariantVerificationDecision(status=VERIFIED, ...)`` or a bare
+   ``InvariantVerificationBundle(...)`` without going through
+   ``InvariantVerificationGate``, and a ``VERIFIED`` decision enforces the
+   same complete-coverage, no-duplicates, transition-bound,
+   single-snapshot requirements as the bundle.
+9. ``KnownFalsificationDominatesEpistemicDeferral``: aggregating a
+   transition's complete preserved set never lets an untestable component
+   erase an already-disproved one. Every declared component is assessed
+   (not just up to the first failure), and the aggregate follows strict
+   precedence -- ``BLOCK`` if any component is disproved, else ``DEFER`` if
+   any remaining component is untestable, else ``VERIFIED`` -- independent
+   of the order ``specs`` are given in. Disproved (``failed_components``)
+   and untestable (``deferred_components``) components are recorded
+   separately, never merged into one undifferentiated list.
+10. Metadata only, not content identity: ``admission_id`` and
+    ``registry_snapshot_id`` are opaque, run-specific identities (fresh
+    ``uuid4().hex`` per instance) that guard against accidental replay.
+    ``transition_projection_fingerprint`` and ``registry_projection_hash``
+    are recorded alongside them as corroborating, deterministic
+    *projections* of part of the transition/registry content -- they are
+    **not** claimed as canonical content identity or a reproducibility
+    guarantee (see their own docstrings for exactly what each omits), and
+    must not be used to promote epistemic status. A full canonical content
+    identity is deferred to a dedicated reproducibility PR.
 
 ``InvariantVerificationGate.verify`` is the only way to produce an
-``InvariantVerification``. It extracts a value from ``before_state`` and
-``after_state`` via the registered extractor and reports whether they are
-equal; a candidate cannot construct this outcome by declaring
+``InvariantVerification``. It resolves an authorized extractor and extracts
+a value from ``before_state`` and ``after_state``, reporting whether they
+are equal; a candidate cannot construct this outcome by declaring
 ``preserved=True``.
 
 Scope: this gate checks declared invariants against one already structurally
@@ -100,6 +124,7 @@ InvariantExtractor = Callable[[State], object]
 _VERIFICATION_TOKEN = object()
 _SEAL_TOKEN = object()
 _DECISION_TOKEN = object()
+_BUNDLE_TOKEN = object()
 
 
 @dataclass(frozen=True, slots=True)
@@ -109,7 +134,15 @@ class InvariantSpec:
     This is ``ClaimedInvariant``, not ``VerifiedInvariant``: declaring a spec
     is not proof that ``component`` was preserved. ``extractor_id`` is a
     lookup key into an ``InvariantExtractorRegistry``, never an executable
-    callable, so a spec cannot embed its own ad hoc "proof".
+    callable, so a spec cannot embed its own ad hoc "proof". Naming a
+    registered ``extractor_id`` here is only a *claim* about which extractor
+    should be used, not a grant of authority to use it:
+    ``InvariantVerificationGate.verify`` independently checks that a
+    ``RegisteredInvariantDefinition`` actually authorizes this exact
+    ``extractor_id`` for the spec's ``(component, invariant_id)`` (and the
+    transition's domain) before resolving it. A spec naming a registered but
+    unauthorized extractor id is rejected the same way as one naming an
+    unregistered id.
     """
 
     invariant_id: str
@@ -123,6 +156,45 @@ class InvariantSpec:
             raise ValueError("an invariant spec requires a component name")
         if not self.extractor_id.strip():
             raise ValueError("an invariant spec requires a registered extractor id")
+
+
+@dataclass(frozen=True, slots=True)
+class RegisteredInvariantDefinition:
+    """A trusted, registry-owned authorization binding a verifier to a scope.
+
+    This is the authority a bare ``extractor_id`` lookup was missing:
+    registering a callable under an ``extractor_id`` only makes that
+    callable resolvable, it does not say which invariant/component/domain
+    it is *authorized* to check. A ``RegisteredInvariantDefinition`` closes
+    that gap by binding exactly one ``extractor_id`` to a specific
+    ``(domain, component, invariant_id)`` scope, plus a ``version`` for
+    future evolution of the authorization itself. Only trusted
+    registration/governor code (``InvariantExtractorRegistry.authorize``)
+    can create this binding; an ``InvariantSpec`` cannot manufacture one, so
+    ``Candidate/Caller does not own verifier selection authority``.
+    """
+
+    domain: str
+    component: str
+    invariant_id: str
+    extractor_id: str
+    version: str = "1"
+
+    def __post_init__(self) -> None:
+        if not self.domain.strip():
+            raise ValueError("a registered invariant definition requires a domain")
+        if not self.component.strip():
+            raise ValueError("a registered invariant definition requires a component")
+        if not self.invariant_id.strip():
+            raise ValueError(
+                "a registered invariant definition requires an invariant id"
+            )
+        if not self.extractor_id.strip():
+            raise ValueError(
+                "a registered invariant definition requires an extractor id"
+            )
+        if not self.version.strip():
+            raise ValueError("a registered invariant definition requires a version")
 
 
 @dataclass(frozen=True, slots=True)
@@ -158,11 +230,14 @@ class InvariantVerificationProvenance:
 
     ``source_admission_id``/``registry_snapshot_id`` are opaque, run-specific
     identities (each a fresh ``uuid4().hex``) that guard against accidental
-    replay across instances. ``source_transition_fingerprint``/
-    ``registry_content_hash`` are their deterministic, content-based
-    complements: ``OccurrenceIdentity != ContentIdentity``. Both pairs are
-    recorded together, not one instead of the other, so replay resistance
-    and independent reproducibility hold at the same time.
+    replay across instances. ``source_transition_projection_fingerprint``/
+    ``registry_projection_hash`` are recorded alongside them as
+    corroborating, deterministic *projections* of part of the
+    transition/registry content: ``OccurrenceIdentity != ContentIdentity``.
+    They are **not** canonical content identity (see their own docstrings
+    for exactly what each omits) and must not be used to promote epistemic
+    status; a full canonical content identity is deferred to a dedicated
+    reproducibility PR.
     """
 
     source_claim_id: str
@@ -173,8 +248,8 @@ class InvariantVerificationProvenance:
     extractor_id: str
     source_admission_id: str | None = None
     registry_snapshot_id: str | None = None
-    source_transition_fingerprint: str | None = None
-    registry_content_hash: str | None = None
+    source_transition_projection_fingerprint: str | None = None
+    registry_projection_hash: str | None = None
 
     def __post_init__(self) -> None:
         if not self.source_claim_id.strip():
@@ -204,18 +279,19 @@ class InvariantVerificationProvenance:
                 "invariant verification provenance requires a registry snapshot id"
             )
         if (
-            self.source_transition_fingerprint is not None
-            and not self.source_transition_fingerprint.strip()
+            self.source_transition_projection_fingerprint is not None
+            and not self.source_transition_projection_fingerprint.strip()
         ):
             raise ValueError(
-                "invariant verification provenance requires a transition fingerprint"
+                "invariant verification provenance requires a transition "
+                "projection fingerprint"
             )
         if (
-            self.registry_content_hash is not None
-            and not self.registry_content_hash.strip()
+            self.registry_projection_hash is not None
+            and not self.registry_projection_hash.strip()
         ):
             raise ValueError(
-                "invariant verification provenance requires a registry content hash"
+                "invariant verification provenance requires a registry projection hash"
             )
 
 
@@ -273,6 +349,23 @@ class UnregisteredExtractorError(KeyError):
     """Raised when an ``InvariantSpec`` names an unregistered extractor id."""
 
 
+class UnauthorizedExtractorError(ValueError):
+    """Raised when a spec's extractor id is registered but not authorized.
+
+    A registered ``extractor_id`` is merely resolvable; it is not
+    automatically authoritative for every ``(component, invariant_id,
+    domain)`` a spec might name it for. This is raised when no
+    ``RegisteredInvariantDefinition`` authorizes the spec's exact
+    ``extractor_id`` for its ``(domain, component, invariant_id)`` scope --
+    for example, an extractor authorized only for a different component, or
+    a caller naming a different, unauthorized extractor id for an otherwise
+    authorized component/invariant. This is treated as epistemically
+    untestable (no authorized verifier is bound), not as a disproved
+    invariant: ``Candidate/Caller does not own verifier selection
+    authority``.
+    """
+
+
 class InvariantExtractionError(Exception):
     """Raised when a registered extractor fails while extracting a value.
 
@@ -310,6 +403,7 @@ class InvariantProvenanceMismatchError(ValueError):
 # than being coerced into a BLOCK or DEFER epistemic judgment.
 _UNTESTABLE_EVIDENCE_ERRORS = (
     UnregisteredExtractorError,
+    UnauthorizedExtractorError,
     InvariantExtractionError,
     InvariantComparisonError,
 )
@@ -339,14 +433,19 @@ class InvariantVerificationDecision:
     ``BundleAuthority`` and ``DecisionIntegrity`` no longer diverge.
 
     ``status`` distinguishes three genuinely different situations, not just
-    two: ``BLOCK`` means the invariant was checked and found *not*
-    preserved (``I(before) != I(after)``) -- a disproved claim. ``DEFER``
-    means the invariant could not be checked at all (an unregistered
-    extractor, a failing extractor, or an ambiguous, non-``bool``
-    comparison) -- an epistemically untestable claim, not a disproved one.
-    Conflating the two would let ``"we could not observe this"`` masquerade
-    as ``"we observed that it failed"``. Internal/programming errors
-    (anything not raised as one of the recognized untestable-evidence
+    two: ``BLOCK`` means at least one declared component was checked and
+    found *not* preserved (``I(before) != I(after)``) -- a disproved claim.
+    ``DEFER`` means no component was disproved, but at least one could not
+    be checked at all (an unregistered or unauthorized extractor, a failing
+    extractor, or an ambiguous, non-``bool`` comparison) -- an
+    epistemically untestable claim, not a disproved one. ``BLOCK`` always
+    takes precedence over ``DEFER`` for the overall conjunctive claim
+    (``I_1 and I_2 and ... and I_n``): a disproved component is never
+    erased by an untestable one elsewhere (``False and Unknown == False``),
+    so ``failed_components`` (disproved) and ``deferred_components``
+    (untestable) are recorded as separate fields, and the aggregate status
+    never depends on the order ``specs`` were given in. Internal/programming
+    errors (anything not raised as one of the recognized untestable-evidence
     errors) are not caught into either status; they propagate as ordinary
     exceptions, since a bug in the checking code itself is neither a
     verified fact about the invariant nor an epistemic non-answer about it.
@@ -356,6 +455,7 @@ class InvariantVerificationDecision:
     transition: "StructurallyAdmissibleTransition"
     verifications: tuple[InvariantVerification, ...] = ()
     failed_components: tuple[str, ...] = ()
+    deferred_components: tuple[str, ...] = ()
     trace: Trace | None = None
     residuals: tuple[object, ...] = ()
     reason: str = ""
@@ -372,6 +472,8 @@ class InvariantVerificationDecision:
         if self.status is InvariantVerificationDecisionStatus.VERIFIED:
             if self.failed_components:
                 raise ValueError("verified decisions cannot have failed components")
+            if self.deferred_components:
+                raise ValueError("verified decisions cannot have deferred components")
             components = tuple(v.component for v in self.verifications)
             if len(set(components)) != len(components):
                 raise ValueError(
@@ -407,12 +509,28 @@ class InvariantVerificationError(ValueError):
 
 @dataclass(frozen=True, slots=True)
 class InvariantVerificationBundle:
-    """The complete, one-to-one verification coverage for an admitted transition."""
+    """The complete, one-to-one verification coverage for an admitted transition.
+
+    Gate-issued only, matching the constitutional wording that both
+    ``InvariantVerificationDecision`` and ``InvariantVerificationBundle``
+    are gate-issued: passing anything other than
+    ``InvariantVerificationGate``'s private bundle token raises. A bare
+    ``InvariantVerificationBundle(transition, verifications)`` call is no
+    longer legitimate outside ``InvariantVerificationGate.require_all_preserved``,
+    even though its content-validation (complete coverage, no duplicates,
+    transition-bound, single snapshot) is unchanged.
+    """
 
     transition: "StructurallyAdmissibleTransition"
     verifications: tuple[InvariantVerification, ...]
+    _bundle_token: InitVar[object | None] = None
 
-    def __post_init__(self) -> None:
+    def __post_init__(self, _bundle_token: object | None) -> None:
+        if _bundle_token is not _BUNDLE_TOKEN:
+            raise ValueError(
+                "invariant verification bundles must be issued by "
+                "InvariantVerificationGate.require_all_preserved"
+            )
         components = tuple(v.component for v in self.verifications)
         if len(set(components)) != len(components):
             raise ValueError("invariant verification bundle cannot contain duplicates")
@@ -442,19 +560,28 @@ class SealedInvariantExtractorRegistry:
 
     Produced only by ``InvariantExtractorRegistry.seal()``, this is the sole
     registry type ``InvariantVerificationGate.verify`` accepts. It exposes no
-    ``register`` method: registration authority (the mutable
-    ``InvariantExtractorRegistry``, owned by trusted setup/governor code) and
-    resolution authority (this sealed, read-only view, injected into the
-    gate) are different types. A caller who still holds the mutable registry
-    cannot register a fresh extractor and have it recognized by a
-    previously-issued sealed view, and the gate itself never has the ability
-    to register anything -- it only resolves.
+    ``register``/``authorize`` methods: registration and authorization
+    authority (the mutable ``InvariantExtractorRegistry``, owned by trusted
+    setup/governor code) are a distinct type from resolution authority (this
+    sealed, read-only view, injected into the gate). A caller who still
+    holds the mutable registry cannot register or authorize a fresh
+    extractor and have it recognized by a previously-issued sealed view,
+    and the gate itself never has the ability to register or authorize
+    anything -- it only resolves through ``resolve_authorized``.
     """
 
-    __slots__ = ("_extractors", "_registry_snapshot_id", "_registry_content_hash")
+    __slots__ = (
+        "_extractors",
+        "_definitions",
+        "_registry_snapshot_id",
+        "_registry_projection_hash",
+    )
 
     def __init__(
-        self, extractors: Mapping[str, InvariantExtractor], _seal_token: object
+        self,
+        extractors: Mapping[str, InvariantExtractor],
+        definitions: Mapping[tuple[str, str, str], RegisteredInvariantDefinition],
+        _seal_token: object,
     ) -> None:
         # As with ``InvariantVerification``'s ``_verification_token``, the
         # leading underscore marks this as "seal-only", not "conventionally
@@ -467,17 +594,20 @@ class SealedInvariantExtractorRegistry:
                 "sealed invariant extractor registries must be issued by "
                 "InvariantExtractorRegistry.seal()"
             )
-        # ``extractors`` is copied into a fresh, private dict here. This
-        # constructor call happens synchronously inside
-        # ``InvariantExtractorRegistry.seal()``'s ``with self._lock:`` block
-        # (Python evaluates and fully executes the constructed expression,
-        # including this copy, before the ``with`` statement's lock release
-        # runs as part of returning), so the copy is made while the
-        # registration lock is still held -- no concurrent ``register()``
-        # call can interleave with it.
+        # ``extractors``/``definitions`` are copied into fresh, private
+        # containers here. This constructor call happens synchronously
+        # inside ``InvariantExtractorRegistry.seal()``'s ``with self._lock:``
+        # block (Python evaluates and fully executes the constructed
+        # expression, including this copy, before the ``with`` statement's
+        # lock release runs as part of returning), so the copy is made
+        # while the registration lock is still held -- no concurrent
+        # ``register()``/``authorize()`` call can interleave with it.
         self._extractors: dict[str, InvariantExtractor] = dict(extractors)
+        self._definitions: dict[tuple[str, str, str], RegisteredInvariantDefinition] = (
+            dict(definitions)
+        )
         self._registry_snapshot_id = uuid4().hex
-        self._registry_content_hash = hashlib.sha256(
+        self._registry_projection_hash = hashlib.sha256(
             "|".join(sorted(self._extractors)).encode("utf-8")
         ).hexdigest()
 
@@ -488,25 +618,42 @@ class SealedInvariantExtractorRegistry:
         return self._registry_snapshot_id
 
     @property
-    def registry_content_hash(self) -> str:
-        """Deterministic digest of this snapshot's registered extractor ids.
+    def registry_projection_hash(self) -> str:
+        """Deterministic digest of a *partial projection* of this snapshot.
 
         ``registry_snapshot_id`` is an opaque ``uuid4().hex`` minted fresh by
         every ``seal()`` call, so it cannot by itself confirm that two
         snapshots (perhaps sealed on different days) actually registered the
-        same extractors. This hash is the deterministic complement:
-        ``OccurrenceIdentity != ContentIdentity`` applies to registries too.
-        It only covers registered extractor *ids*, not the extractor
-        callables' own behavior -- two registries could register the same id
-        with differently-behaving callables and still hash identically, so
-        this is corroborating evidence of reproducible registration, not a
-        proof that the underlying callables are identical.
+        same extractor ids: ``OccurrenceIdentity != ContentIdentity`` applies
+        to registries too. This hash is deliberately **not** claimed as
+        canonical content identity for the registry:
+
+        * It only covers registered extractor *ids* (sorted, joined), not
+          the authorized ``(domain, component, invariant_id) ->
+          RegisteredInvariantDefinition`` bindings, and not the extractor
+          callables' own behavior. Two registries could register the same
+          ids with differently-behaving callables, or with entirely
+          different authorizations, and still hash identically.
+        * It is corroborating evidence of reproducible *id* registration
+          only, not a proof that the underlying callables or
+          authorizations are identical. A canonical
+          ``RegistryManifestHash`` covering typed extractor registrations
+          (implementation identity/version/digest, authorized scope) is
+          deferred to a dedicated reproducibility PR.
         """
 
-        return self._registry_content_hash
+        return self._registry_projection_hash
 
     def resolve(self, extractor_id: str) -> InvariantExtractor:
-        """Resolve a registered extractor, or raise if none is registered."""
+        """Resolve a registered extractor, or raise if none is registered.
+
+        This performs *resolution* only -- it does not check whether
+        ``extractor_id`` is *authorized* for any particular component or
+        invariant. ``InvariantVerificationGate.verify`` uses
+        ``resolve_authorized`` instead, precisely so a spec cannot pick an
+        arbitrary registered id and have it accepted merely because it
+        resolves.
+        """
 
         try:
             return self._extractors[extractor_id]
@@ -514,6 +661,35 @@ class SealedInvariantExtractorRegistry:
             raise UnregisteredExtractorError(
                 f"no extractor registered for id: {extractor_id!r}"
             ) from error
+
+    def resolve_authorized(
+        self, *, domain: str, component: str, invariant_id: str, extractor_id: str
+    ) -> InvariantExtractor:
+        """Resolve an extractor only if authorized for this exact scope.
+
+        First raises ``UnregisteredExtractorError`` (via ``resolve``) if
+        ``extractor_id`` is not registered at all -- an unresolvable id is
+        never a scope-authorization question. Then raises
+        ``UnauthorizedExtractorError`` unless a
+        ``RegisteredInvariantDefinition`` exists for
+        ``(domain, component, invariant_id)`` *and* that definition's own
+        ``extractor_id`` matches the one requested here. This is the
+        authority check a caller cannot bypass by simply registering (or
+        knowing the id of) some other extractor: a spec naming a
+        registered-but-unauthorized-for-this-scope id fails just as surely
+        as one naming a wholly unregistered id, just with a distinct,
+        typed reason.
+        """
+
+        extractor = self.resolve(extractor_id)
+        definition = self._definitions.get((domain, component, invariant_id))
+        if definition is None or definition.extractor_id != extractor_id:
+            raise UnauthorizedExtractorError(
+                f"extractor {extractor_id!r} is not authorized for "
+                f"domain={domain!r}, component={component!r}, "
+                f"invariant_id={invariant_id!r}"
+            )
+        return extractor
 
 
 class InvariantExtractorRegistry:
@@ -528,16 +704,29 @@ class InvariantExtractorRegistry:
     populated once by trusted setup/governor code, not by an arbitrary
     candidate or linguistic layer immediately before verification.
 
-    ``register`` and ``seal`` are synchronized with an internal lock, so
-    concurrent registration calls on the same instance do not corrupt its
-    internal state. This only protects the registry's own bookkeeping; it
-    does not make the overall registration *sequence* deterministic across
-    threads, so registration is still expected at module import/setup time,
-    not under concurrent, racing access.
+    Registering an extractor id only makes it *resolvable*; it does not, by
+    itself, authorize that extractor for any particular invariant or
+    component. Authorization is a distinct step: ``authorize`` binds a
+    ``RegisteredInvariantDefinition`` (domain, component, invariant_id ->
+    exactly one extractor_id) that must reference an already-registered
+    extractor id. ``InvariantVerificationGate.verify`` only resolves through
+    that authorized binding (``resolve_authorized``), so a candidate/caller
+    naming a registered-but-unauthorized extractor id for a given
+    component is rejected the same way as naming an unregistered one.
+
+    ``register``, ``authorize``, and ``seal`` are synchronized with an
+    internal lock, so concurrent calls on the same instance do not corrupt
+    its internal state. This only protects the registry's own bookkeeping;
+    it does not make the overall registration *sequence* deterministic
+    across threads, so registration is still expected at module
+    import/setup time, not under concurrent, racing access.
     """
 
     def __init__(self) -> None:
         self._extractors: dict[str, InvariantExtractor] = {}
+        self._definitions: dict[
+            tuple[str, str, str], RegisteredInvariantDefinition
+        ] = {}
         self._lock = threading.Lock()
 
     def register(self, extractor_id: str, extractor: InvariantExtractor) -> None:
@@ -545,7 +734,9 @@ class InvariantExtractorRegistry:
 
         Raises if ``extractor_id`` is blank or already registered: an
         extractor id is a stable, single-owner registration, not a mutable
-        slot a later caller can silently overwrite.
+        slot a later caller can silently overwrite. Registering an id does
+        not authorize it for anything; use ``authorize`` separately to bind
+        it to a specific ``(domain, component, invariant_id)`` scope.
         """
 
         if not extractor_id.strip():
@@ -555,24 +746,53 @@ class InvariantExtractorRegistry:
                 raise ValueError(f"extractor id already registered: {extractor_id!r}")
             self._extractors[extractor_id] = extractor
 
-    def seal(self) -> SealedInvariantExtractorRegistry:
-        """Freeze current registrations into a read-only, resolution-only view.
+    def authorize(self, definition: RegisteredInvariantDefinition) -> None:
+        """Authorize ``definition``'s extractor for its declared scope.
 
-        Sealing is the boundary between registration authority (this mutable
-        registry) and resolution authority (the sealed view actually
-        injected into ``InvariantVerificationGate``). Registering more
-        extractors on this instance after sealing does not retroactively
-        affect already-issued sealed views: each ``seal()`` call snapshots
-        the registrations made so far. The snapshot copy itself happens
-        inside ``SealedInvariantExtractorRegistry.__init__``, which this
-        method calls while still holding ``self._lock`` (the lock is only
-        released once the constructor -- and its internal copy -- has
-        already returned), so a concurrent ``register()`` cannot interleave
-        with the copy.
+        Raises if ``definition.extractor_id`` is not already registered (an
+        authorization cannot reference a nonexistent implementation), or if
+        its ``(domain, component, invariant_id)`` scope is already
+        authorized (a scope is a stable, single-owner authorization, not a
+        mutable slot a later caller can silently overwrite).
         """
 
         with self._lock:
-            return SealedInvariantExtractorRegistry(self._extractors, _SEAL_TOKEN)
+            if definition.extractor_id not in self._extractors:
+                raise ValueError(
+                    "cannot authorize an unregistered extractor id: "
+                    f"{definition.extractor_id!r}"
+                )
+            key = (definition.domain, definition.component, definition.invariant_id)
+            if key in self._definitions:
+                raise ValueError(
+                    "invariant definition already authorized for "
+                    f"domain={definition.domain!r}, "
+                    f"component={definition.component!r}, "
+                    f"invariant_id={definition.invariant_id!r}"
+                )
+            self._definitions[key] = definition
+
+    def seal(self) -> SealedInvariantExtractorRegistry:
+        """Freeze current registrations into a read-only, resolution-only view.
+
+        Sealing is the boundary between registration/authorization authority
+        (this mutable registry) and resolution authority (the sealed view
+        actually injected into ``InvariantVerificationGate``). Registering
+        or authorizing more on this instance after sealing does not
+        retroactively affect already-issued sealed views: each ``seal()``
+        call snapshots the registrations and authorizations made so far.
+        The snapshot copy itself happens inside
+        ``SealedInvariantExtractorRegistry.__init__``, which this method
+        calls while still holding ``self._lock`` (the lock is only released
+        once the constructor -- and its internal copy -- has already
+        returned), so a concurrent ``register()``/``authorize()`` cannot
+        interleave with the copy.
+        """
+
+        with self._lock:
+            return SealedInvariantExtractorRegistry(
+                self._extractors, self._definitions, _SEAL_TOKEN
+            )
 
 
 class InvariantVerificationGate:
@@ -605,7 +825,7 @@ class InvariantVerificationGate:
         spec: InvariantSpec,
         registry: SealedInvariantExtractorRegistry,
     ) -> InvariantVerification:
-        """Verify ``spec`` against ``transition`` using a registered extractor."""
+        """Verify ``spec`` against ``transition`` using an authorized extractor."""
 
         if not isinstance(registry, SealedInvariantExtractorRegistry):
             raise TypeError(
@@ -617,7 +837,18 @@ class InvariantVerificationGate:
                 "invariant spec component must be among the transition's "
                 "declared preserved components"
             )
-        extractor = registry.resolve(spec.extractor_id)
+        # ``spec.extractor_id`` is only a claim, not a grant of authority: it
+        # is resolved through ``resolve_authorized``, which raises
+        # ``UnauthorizedExtractorError`` unless a trusted
+        # ``RegisteredInvariantDefinition`` binds exactly this extractor id
+        # to this ``(domain, component, invariant_id)`` scope. The candidate
+        # does not own verifier-selection authority.
+        extractor = registry.resolve_authorized(
+            domain=transition.anchor.domain,
+            component=spec.component,
+            invariant_id=spec.invariant_id,
+            extractor_id=spec.extractor_id,
+        )
         before_value = _extract(
             extractor, transition.before_state, "before_state", spec
         )
@@ -637,8 +868,10 @@ class InvariantVerificationGate:
             extractor_id=spec.extractor_id,
             source_admission_id=transition.admission_id,
             registry_snapshot_id=registry.registry_snapshot_id,
-            source_transition_fingerprint=transition.transition_fingerprint,
-            registry_content_hash=registry.registry_content_hash,
+            source_transition_projection_fingerprint=(
+                transition.transition_projection_fingerprint
+            ),
+            registry_projection_hash=registry.registry_projection_hash,
         )
         trace = Trace(
             transition.trace.events
@@ -662,20 +895,28 @@ class InvariantVerificationGate:
     ) -> InvariantVerificationDecision:
         """Assess complete invariant coverage without discarding failed history.
 
-        Distinguishes three outcomes, not two: ``BLOCK`` means at least one
-        declared invariant was actually checked and found not preserved.
-        ``DEFER`` means at least one declared invariant could not be checked
-        at all -- an unregistered extractor
-        (``UnregisteredExtractorError``), a failing extractor
-        (``InvariantExtractionError``), or an ambiguous, non-``bool``
-        comparison (``InvariantComparisonError``). ``I(before) != I(after)``
-        (disproved) is not the same epistemic situation as ``I currently
-        untestable`` (unavailable evidence), so they are never coalesced
-        into the same status. Any other exception (an internal/programming
-        error, not one of the recognized untestable-evidence errors) is not
-        caught here; it propagates to the caller unchanged, since a bug in
-        the checking code itself is neither a verified nor a deferred
-        judgment about the invariant.
+        Every spec is evaluated independently -- evaluation never stops at
+        the first untestable spec -- so a component checked later in
+        ``specs`` and found disproved is never hidden behind an earlier
+        component's ``DEFER``. Each spec resolves to exactly one of three
+        outcomes: verified-preserved, verified-not-preserved (disproved), or
+        untestable (an unregistered/unauthorized extractor
+        (``UnregisteredExtractorError``, ``UnauthorizedExtractorError``), a
+        failing extractor (``InvariantExtractionError``), or an ambiguous,
+        non-``bool`` comparison (``InvariantComparisonError``)). These are
+        tracked as two separate, order-independent (sorted) component sets:
+        ``failed_components`` (disproved) and ``deferred_components``
+        (untestable). The overall status is then the conjunctive claim's
+        precedence -- ``BLOCK`` if any component is disproved, else
+        ``DEFER`` if any component is untestable, else ``VERIFIED`` -- so a
+        known falsification is never erased by an unrelated deferral
+        (``False and Unknown == False``), and the aggregate judgment does
+        not depend on the order ``specs`` were given in. Any other
+        exception (an internal/programming error, not one of the
+        recognized untestable-evidence errors) is not caught here; it
+        propagates to the caller unchanged, since a bug in the checking
+        code itself is neither a verified nor a deferred judgment about the
+        invariant.
         """
 
         if {spec.component for spec in specs} != set(transition.preserved):
@@ -688,7 +929,6 @@ class InvariantVerificationGate:
                 reason="invariant specs must exactly cover preserved components",
                 _decision_token=_DECISION_TOKEN,
             )
-        verifications: list[InvariantVerification] = []
         if len({spec.component for spec in specs}) != len(specs):
             return InvariantVerificationDecision(
                 status=InvariantVerificationDecisionStatus.BLOCK,
@@ -699,58 +939,44 @@ class InvariantVerificationGate:
                 reason="invariant specs cannot duplicate preserved components",
                 _decision_token=_DECISION_TOKEN,
             )
-        current_component = ""
-        try:
-            for spec in specs:
-                current_component = spec.component
-                verifications.append(
-                    InvariantVerificationGate.verify(transition, spec, registry)
+        verifications: list[InvariantVerification] = []
+        blocked: list[str] = []
+        deferred: list[str] = []
+        events: list[str] = []
+        for spec in specs:
+            try:
+                verification = InvariantVerificationGate.verify(
+                    transition, spec, registry
                 )
-        except _UNTESTABLE_EVIDENCE_ERRORS as error:
-            failed = tuple(
-                component
-                for component in transition.preserved
-                if component
-                not in {verification.component for verification in verifications}
-            )
-            if current_component and current_component not in failed:
-                failed += (current_component,)
-            return InvariantVerificationDecision(
-                status=InvariantVerificationDecisionStatus.DEFER,
-                transition=transition,
-                verifications=tuple(verifications),
-                failed_components=failed,
-                trace=Trace(
-                    transition.trace.events
-                    + (f"invariant verification deferred: {error}",)
-                ),
-                residuals=transition.residuals,
-                reason=str(error),
-                _decision_token=_DECISION_TOKEN,
-            )
-        if any(not verification.preserved for verification in verifications):
-            failed = tuple(
-                verification.component
-                for verification in verifications
-                if not verification.preserved
-            )
-            return InvariantVerificationDecision(
-                status=InvariantVerificationDecisionStatus.BLOCK,
-                transition=transition,
-                verifications=tuple(verifications),
-                failed_components=failed,
-                trace=verifications[-1].trace if verifications else transition.trace,
-                residuals=transition.residuals,
-                reason="one or more preserved invariants were not verified",
-                _decision_token=_DECISION_TOKEN,
-            )
+            except _UNTESTABLE_EVIDENCE_ERRORS as error:
+                deferred.append(spec.component)
+                events.append(
+                    f"invariant {spec.invariant_id} deferred "
+                    f"(component={spec.component}): {error}"
+                )
+                continue
+            verifications.append(verification)
+            events.append(verification.trace.events[-1])
+            if not verification.preserved:
+                blocked.append(spec.component)
+        if blocked:
+            status = InvariantVerificationDecisionStatus.BLOCK
+            reason = "one or more preserved invariants were not verified"
+        elif deferred:
+            status = InvariantVerificationDecisionStatus.DEFER
+            reason = "one or more preserved invariants could not be checked"
+        else:
+            status = InvariantVerificationDecisionStatus.VERIFIED
+            reason = "all declared preserved invariants were verified"
         return InvariantVerificationDecision(
-            status=InvariantVerificationDecisionStatus.VERIFIED,
+            status=status,
             transition=transition,
             verifications=tuple(verifications),
-            trace=verifications[-1].trace,
+            failed_components=tuple(sorted(blocked)),
+            deferred_components=tuple(sorted(deferred)),
+            trace=Trace(transition.trace.events + tuple(events)),
             residuals=transition.residuals,
-            reason="all declared preserved invariants were verified",
+            reason=reason,
             _decision_token=_DECISION_TOKEN,
         )
 
@@ -767,7 +993,9 @@ class InvariantVerificationGate:
         )
         if decision.status is not InvariantVerificationDecisionStatus.VERIFIED:
             raise InvariantVerificationError(decision)
-        return InvariantVerificationBundle(transition, decision.verifications)
+        return InvariantVerificationBundle(
+            transition, decision.verifications, _bundle_token=_BUNDLE_TOKEN
+        )
 
     @staticmethod
     def require_bound_to(
@@ -791,14 +1019,14 @@ class InvariantVerificationGate:
             or provenance.source_target_anchor != transition.resolved_target_anchor
             or provenance.source_trace != transition.trace
             or provenance.source_admission_id != transition.admission_id
-            or provenance.source_transition_fingerprint
-            != transition.transition_fingerprint
+            or provenance.source_transition_projection_fingerprint
+            != transition.transition_projection_fingerprint
             or (
                 registry is not None
                 and (
                     provenance.registry_snapshot_id != registry.registry_snapshot_id
-                    or provenance.registry_content_hash
-                    != registry.registry_content_hash
+                    or provenance.registry_projection_hash
+                    != registry.registry_projection_hash
                 )
             )
         ):
