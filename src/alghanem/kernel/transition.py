@@ -65,10 +65,6 @@ class StructuralDecisionStatus(Enum):
     UNDEFINED = auto()
 
 
-# Backward compatibility alias
-Outcome = CertifiedOutcome
-
-
 @dataclass(frozen=True, slots=True)
 class BranchOriginProvenance:
     """Structural origin provenance for preserved branch components."""
@@ -155,7 +151,8 @@ class StructurallyAdmissibleTransition(TransitionCandidate):
     transition makes. It does not carry a ``CertifiedOutcome``; certification
     is a future gate at the end of the epistemic ladder.
 
-    Use ``StructuralAdmissionGate.admit`` on a candidate to create this type.
+    Use ``StructuralAdmissionGate.assess`` or ``require_admitted`` on a
+    candidate to create this type.
     Dataclass replacement paths that rerun ``__init__`` are not admission
     paths.
     """
@@ -180,39 +177,67 @@ class StructurallyAdmissibleTransition(TransitionCandidate):
 
 
 class StructuralAdmissionGate:
-    """Minimal structural admission boundary for successful transitions.
+    """Structural admission boundary that records every candidate assessment.
 
     This gate only certifies structural completeness. It does not certify
     evidential sufficiency, domain-transition authority, or layer authority;
     those remain deferred beyond Kernel v0.1. Already admitted transitions
-    are rejected rather than re-admitted.
+    are rejected as API misuse rather than re-admitted.
     """
 
     @staticmethod
-    def admit(candidate: TransitionCandidate) -> StructurallyAdmissibleTransition:
-        """Issue a structurally admissible transition after validation."""
+    def assess(candidate: TransitionCandidate) -> "StructuralAdmissionDecision":
+        """Assess a candidate, recording structural failure as a BLOCK decision."""
 
+        if not isinstance(candidate, TransitionCandidate):
+            raise TypeError("structural admission requires a TransitionCandidate")
         if isinstance(candidate, StructurallyAdmissibleTransition):
             raise ValueError(
                 "structurally admissible transitions cannot be re-admitted"
             )
-        return StructurallyAdmissibleTransition(
-            anchor=candidate.anchor,
-            before_state=candidate.before_state,
-            operation=candidate.operation,
-            after_state=candidate.after_state,
-            claim=candidate.claim,
-            evidence=candidate.evidence,
-            preserved=candidate.preserved,
-            changed=candidate.changed,
-            trace=candidate.trace,
-            residuals=candidate.residuals,
-            kind=candidate.kind,
-            result=candidate.result,
-            branch_origin_provenance=candidate.branch_origin_provenance,
-            target_anchor=candidate.target_anchor,
-            _admission_token=_ADMISSION_TOKEN,
+        try:
+            transition = StructurallyAdmissibleTransition(
+                anchor=candidate.anchor,
+                before_state=candidate.before_state,
+                operation=candidate.operation,
+                after_state=candidate.after_state,
+                claim=candidate.claim,
+                evidence=candidate.evidence,
+                preserved=candidate.preserved,
+                changed=candidate.changed,
+                trace=candidate.trace,
+                residuals=candidate.residuals,
+                kind=candidate.kind,
+                result=candidate.result,
+                branch_origin_provenance=candidate.branch_origin_provenance,
+                target_anchor=candidate.target_anchor,
+                _admission_token=_ADMISSION_TOKEN,
+            )
+        except ValueError as error:
+            return StructuralAdmissionDecision(
+                status=StructuralDecisionStatus.BLOCK,
+                audit=NonSuccessDecisionAudit(
+                    trace=candidate.trace,
+                    residuals=candidate.residuals,
+                    reason=str(error),
+                    candidate=candidate,
+                ),
+            )
+        return StructuralAdmissionDecision(
+            status=StructuralDecisionStatus.ADMITTED,
+            transition=transition,
         )
+
+    @staticmethod
+    def require_admitted(
+        candidate: TransitionCandidate,
+    ) -> StructurallyAdmissibleTransition:
+        """Return an admitted transition or raise for structural refusal."""
+
+        decision = StructuralAdmissionGate.assess(candidate)
+        if decision.transition is None:
+            raise StructuralAdmissionError(decision)
+        return decision.transition
 
 
 def _validate_components(label: str, components: tuple[str, ...]) -> None:
@@ -279,24 +304,25 @@ def _validate_successful_transition_fields(candidate: TransitionCandidate) -> No
 
 def _validate_branch_birth(candidate: TransitionCandidate) -> None:
     if not candidate.preserved:
-        raise ValueError("certified branch births require preserved information")
+        raise ValueError("branch-birth claims require preserved information")
     if candidate.branch_origin_provenance is None:
-        raise ValueError("certified branch births require explicit origin provenance")
+        raise ValueError("branch-birth claims require explicit origin provenance")
     if candidate.branch_origin_provenance.origin_anchor != candidate.anchor:
         raise ValueError("branch origin provenance must match the transition anchor")
     if candidate.target_anchor is None:
-        raise ValueError("certified branch births require an explicit target anchor")
+        raise ValueError("branch-birth claims require an explicit target anchor")
     target_anchor = candidate.target_anchor
     if target_anchor == candidate.anchor:
-        raise ValueError("certified branch births require a distinct target anchor")
+        raise ValueError("branch-birth claims require a distinct target anchor")
     if candidate.branch_origin_provenance.branch_anchor != target_anchor:
         raise ValueError(
             "branch origin provenance branch anchor must be the target anchor"
         )
     provenance_components = set(candidate.branch_origin_provenance.preserved_components)
-    if not provenance_components.issubset(set(candidate.preserved)):
+    if provenance_components != set(candidate.preserved):
         raise ValueError(
-            "branch origin provenance components must be declared preserved"
+            "branch origin provenance components must exactly match declared "
+            "preserved components"
         )
 
 
@@ -404,5 +430,14 @@ class StructuralAdmissionDecision:
                 raise ValueError("non-admitted decisions require an audit record")
 
 
-# Backward compatibility alias
-TransitionDecision = StructuralAdmissionDecision
+class StructuralAdmissionError(ValueError):
+    """Exception carrying a non-admitted structural admission decision."""
+
+    def __init__(self, decision: StructuralAdmissionDecision) -> None:
+        if decision.status is StructuralDecisionStatus.ADMITTED:
+            raise ValueError(
+                "structural admission errors require a non-admitted decision"
+            )
+        self.decision = decision
+        assert decision.audit is not None
+        super().__init__(decision.audit.reason)

@@ -3,7 +3,7 @@
 This module enforces constitutional constraints for the language-agnostic
 kernel: immutable core objects, explicit provenance, candidate validation,
 evidence-claim binding, strict separation between claimed TransitionKind and
-certified Outcome, and structural admission decision invariants.
+certified outcomes, and structural admission decision invariants.
 """
 
 from __future__ import annotations
@@ -21,16 +21,15 @@ from alghanem.kernel import (
     NonSuccessDecisionAudit,
     Operation,
     OperationResult,
-    Outcome,
     Residual,
     State,
     StructuralAdmissionDecision,
+    StructuralAdmissionError,
     StructuralAdmissionGate,
     StructuralDecisionStatus,
     StructurallyAdmissibleTransition,
     Trace,
     TransitionCandidate,
-    TransitionDecision,
     TransitionKind,
 )
 
@@ -131,7 +130,7 @@ def make_audit(
 def admit_candidate(
     candidate: TransitionCandidate,
 ) -> StructurallyAdmissibleTransition:
-    return StructuralAdmissionGate.admit(candidate)
+    return StructuralAdmissionGate.require_admitted(candidate)
 
 
 def make_transition(
@@ -185,10 +184,44 @@ def test_structural_admission_gate_issues_successful_transition() -> None:
     assert isinstance(transition, StructurallyAdmissibleTransition)
 
 
+def test_structural_admission_assessment_issues_an_admitted_decision() -> None:
+    decision = StructuralAdmissionGate.assess(make_candidate())
+    assert decision.status is StructuralDecisionStatus.ADMITTED
+    assert isinstance(decision.transition, StructurallyAdmissibleTransition)
+    assert decision.audit is None
+
+
+def test_structural_admission_assessment_records_structural_failure() -> None:
+    candidate = make_candidate(result=None)
+    decision = StructuralAdmissionGate.assess(candidate)
+    assert decision.status is StructuralDecisionStatus.BLOCK
+    assert decision.transition is None
+    assert decision.audit is not None
+    assert decision.audit.candidate is candidate
+    assert decision.audit.trace is candidate.trace
+    assert decision.audit.residuals is candidate.residuals
+    assert "result" in decision.audit.reason
+
+
+def test_require_admitted_preserves_block_audit_in_typed_error() -> None:
+    candidate = make_candidate(result=None)
+    with pytest.raises(StructuralAdmissionError) as raised:
+        StructuralAdmissionGate.require_admitted(candidate)
+
+    decision = raised.value.decision
+    assert decision.status is StructuralDecisionStatus.BLOCK
+    assert decision.transition is None
+    assert decision.audit is not None
+    assert decision.audit.candidate is candidate
+    assert decision.audit.trace is candidate.trace
+    assert decision.audit.residuals is candidate.residuals
+    assert str(raised.value) == decision.audit.reason
+
+
 def test_structural_admission_gate_rejects_already_admitted_transition() -> None:
     transition = make_transition(TransitionKind.IDENTITY_PRESERVATION_CLAIM)
     with pytest.raises(ValueError, match="re-admitted"):
-        StructuralAdmissionGate.admit(transition)
+        StructuralAdmissionGate.require_admitted(transition)
 
 
 def test_identity_preserving_requires_declared_invariant() -> None:
@@ -473,6 +506,27 @@ def test_branch_origin_provenance_components_must_be_declared_preserved() -> Non
                 ),
             )
         )
+
+
+def test_branch_origin_provenance_must_account_for_all_declared_preserved() -> None:
+    anchor = Anchor("a", "D")
+    candidate = make_candidate(
+        TransitionKind.BRANCH_BIRTH_CLAIM,
+        preserved=("origin-data", "unproven-data"),
+        changed=("new",),
+        operation=Operation("op", "new"),
+        branch_origin_provenance=BranchOriginProvenance(
+            anchor, Anchor("branch", "D"), ("origin-data",)
+        ),
+    )
+
+    decision = StructuralAdmissionGate.assess(candidate)
+
+    assert decision.status is StructuralDecisionStatus.BLOCK
+    assert decision.transition is None
+    assert decision.audit is not None
+    assert decision.audit.candidate is candidate
+    assert "exactly match" in decision.audit.reason
 
 
 @pytest.mark.parametrize(
@@ -850,17 +904,3 @@ def test_explicit_target_anchor_equal_to_source_is_admitted() -> None:
         )
     )
     assert transition.target_anchor is anchor
-
-
-def test_transition_decision_alias_compatibility() -> None:
-    transition = make_transition(TransitionKind.IDENTITY_PRESERVATION_CLAIM)
-    decision = TransitionDecision(
-        status=StructuralDecisionStatus.ADMITTED,
-        transition=transition,
-    )
-    assert isinstance(decision, StructuralAdmissionDecision)
-    assert decision.admissible is transition
-
-
-def test_outcome_alias_compatibility() -> None:
-    assert Outcome is CertifiedOutcome
