@@ -219,7 +219,7 @@ def test_branch_origin_provenance_instance_identity_does_not_affect_content_id()
     )
 
 
-
+def test_admission_id_alone_does_not_affect_content_id() -> None:
     candidate = make_candidate()
     transition_1 = admit(candidate)
     transition_2 = admit(candidate)
