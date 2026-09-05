@@ -164,6 +164,11 @@ class StructurallyAdmissibleTransition(TransitionCandidate):
                 "structurally admissible transitions must be issued by "
                 "StructuralAdmissionGate"
             )
+        # Re-validated here, not inherited from TransitionCandidate: this
+        # dataclass's own __post_init__ fully overrides the parent's, and
+        # any dataclasses.replace() on an existing instance re-runs __init__
+        # (and therefore this method), so the checks must be re-asserted
+        # rather than assumed to still hold.
         _validate_candidate_components(self)
         _validate_kind(self)
         self.validate_success()
@@ -356,6 +361,10 @@ class NonSuccessDecisionAudit:
     def __post_init__(self) -> None:
         if not self.reason.strip():
             raise ValueError("non-success decisions require a structural reason")
+        if self.reason_code is not None and not isinstance(
+            self.reason_code, DecisionReasonCode
+        ):
+            raise ValueError("reason_code must be a DecisionReasonCode member")
         if self.candidate is not None and isinstance(
             self.candidate, StructurallyAdmissibleTransition
         ):

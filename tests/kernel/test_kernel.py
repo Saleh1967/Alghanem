@@ -720,6 +720,16 @@ def test_non_success_decision_audit_reason_code_defaults_to_none():
     assert audit.reason_code is None
 
 
+def test_non_success_decision_audit_rejects_a_non_reason_code_value():
+    with pytest.raises(ValueError, match="DecisionReasonCode"):
+        NonSuccessDecisionAudit(
+            trace=Trace(("assessed",)),
+            residuals=(),
+            reason="structural admission refused",
+            reason_code="MISSING_EVIDENCE",  # type: ignore[arg-type]
+        )
+
+
 @pytest.mark.parametrize("reason", ["", "  "])
 def test_non_success_decisions_require_a_non_blank_reason(reason: str):
     with pytest.raises(ValueError, match="structural reason"):
