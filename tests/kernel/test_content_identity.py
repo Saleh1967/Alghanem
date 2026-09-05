@@ -143,9 +143,7 @@ def test_changing_a_content_field_changes_content_id(
 
 def test_changing_operation_changes_content_id() -> None:
     transition_a = admit(make_candidate(operation=Operation("op", "component")))
-    transition_b = admit(
-        make_candidate(operation=Operation("other-op", "component"))
-    )
+    transition_b = admit(make_candidate(operation=Operation("other-op", "component")))
 
     content_id_a = CanonicalTransitionEncoder.encode(transition_a).content_id
     content_id_b = CanonicalTransitionEncoder.encode(transition_b).content_id
@@ -362,5 +360,3 @@ def test_transition_content_identity_requires_non_blank_fields() -> None:
         TransitionContentIdentity(
             algorithm="sha256", canonicalization_version="v1", digest=""
         )
-
-

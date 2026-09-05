@@ -123,8 +123,7 @@ def canonicalize(value: object) -> CanonicalValue:
     if isinstance(value, float):
         if value != value or value in (float("inf"), float("-inf")):
             raise CanonicalizationError(
-                "canonicalization v1 refuses non-finite floats "
-                "(NaN/Infinity/-Infinity)"
+                "canonicalization v1 refuses non-finite floats (NaN/Infinity/-Infinity)"
             )
         return ("float", repr(value))
     if isinstance(value, str):
