@@ -22,7 +22,7 @@ def make_transition(
     return LicensedTransition(
         anchor=Anchor("a", "D"),
         before_state=State("before"),
-        operation=Operation("op", "changed"),
+        operation=Operation("op", "component"),
         after_state=State("after"),
         evidence=(Evidence(Claim("supported"), "record"),),
         preserved=preserved,
@@ -67,7 +67,7 @@ def test_identity_preserving_requires_declared_change():
         LicensedTransition(
             anchor=Anchor("a", "D"),
             before_state=State("before"),
-            operation=Operation("op", "changed"),
+            operation=Operation("op", "component"),
             after_state=State("after"),
             evidence=(Evidence(Claim("supported"), "record"),),
             preserved=("identity",),
@@ -84,7 +84,7 @@ def test_preserved_and_changed_must_be_disjoint():
         LicensedTransition(
             anchor=Anchor("a", "D"),
             before_state=State("before"),
-            operation=Operation("op", "changed"),
+            operation=Operation("op", "component"),
             after_state=State("after"),
             evidence=(Evidence(Claim("supported"), "record"),),
             preserved=("component",),
@@ -122,7 +122,7 @@ def test_success_without_evidence_is_rejected():
         LicensedTransition(
             anchor=Anchor("a", "D"),
             before_state=State("before"),
-            operation=Operation("op", "changed"),
+            operation=Operation("op", "component"),
             after_state=State("after"),
             evidence=(),
             preserved=("identity",),
@@ -139,7 +139,7 @@ def test_success_without_result_is_rejected():
         LicensedTransition(
             anchor=Anchor("a", "D"),
             before_state=State("before"),
-            operation=Operation("op", "changed"),
+            operation=Operation("op", "component"),
             after_state=State("after"),
             evidence=(Evidence(Claim("supported"), "record"),),
             preserved=("identity",),
@@ -156,7 +156,7 @@ def test_branch_birth_requires_evidence_and_result():
         LicensedTransition(
             anchor=Anchor("a", "D"),
             before_state=State("before"),
-            operation=Operation("op", "changed"),
+            operation=Operation("op", "component"),
             after_state=State("after"),
             evidence=(),
             preserved=(),
@@ -170,7 +170,7 @@ def test_branch_birth_requires_evidence_and_result():
         LicensedTransition(
             anchor=Anchor("a", "D"),
             before_state=State("before"),
-            operation=Operation("op", "changed"),
+            operation=Operation("op", "component"),
             after_state=State("after"),
             evidence=(Evidence(Claim("supported"), "record"),),
             preserved=(),
@@ -187,9 +187,56 @@ def test_certificate_without_evidence_is_rejected():
         Certificate(Claim("supported"), ())
 
 
+def test_certificate_rejects_evidence_for_another_claim():
+    with pytest.raises(ValueError, match="support its claim"):
+        Certificate(Claim("supported"), (Evidence(Claim("another"), "record"),))
+
+
+def test_transition_change_must_include_operation_declared_change():
+    with pytest.raises(ValueError, match="declared change"):
+        LicensedTransition(
+            anchor=Anchor("a", "D"),
+            before_state=State("before"),
+            operation=Operation("op", "declared"),
+            after_state=State("after"),
+            evidence=(Evidence(Claim("supported"), "record"),),
+            preserved=("identity",),
+            changed=("recorded",),
+            trace=Trace(("started",)),
+            residuals=(),
+            outcome=Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
+            result=OperationResult("result"),
+        )
+
+
+def test_branch_birth_requires_a_preserved_origin():
+    with pytest.raises(ValueError, match="preserved origin"):
+        LicensedTransition(
+            anchor=Anchor("a", "D"),
+            before_state=State("before"),
+            operation=Operation("op", "new"),
+            after_state=State("after"),
+            evidence=(Evidence(Claim("supported"), "record"),),
+            preserved=(),
+            changed=("new",),
+            trace=Trace(("started",)),
+            residuals=(),
+            outcome=Outcome.CERTIFIED_BRANCH_BIRTH,
+            result=OperationResult("result"),
+        )
+
+
 def test_successful_decision_contains_a_transition():
     decision = TransitionDecision(
         Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
         make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION),
     )
     assert decision.transition is not None
+
+
+def test_successful_decision_must_match_transition_outcome():
+    with pytest.raises(ValueError, match="outcomes must match"):
+        TransitionDecision(
+            Outcome.CERTIFIED_BRANCH_BIRTH,
+            make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION),
+        )
