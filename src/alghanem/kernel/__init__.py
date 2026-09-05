@@ -8,12 +8,14 @@ from .residual import Residual
 from .trace import Trace
 from .transition import (
     BranchOriginProvenance,
-    LicensedTransition,
-    LicensingGate,
+    DecisionReasonCode,
     NonSuccessDecisionAudit,
     Outcome,
+    StructuralAdmissionGate,
+    StructurallyAdmissibleTransition,
     TransitionCandidate,
     TransitionDecision,
+    TransitionKind,
 )
 
 __all__ = [
@@ -21,16 +23,18 @@ __all__ = [
     "BranchOriginProvenance",
     "Claim",
     "ClaimEvidenceBinding",
+    "DecisionReasonCode",
     "Evidence",
-    "LicensingGate",
-    "LicensedTransition",
     "NonSuccessDecisionAudit",
     "Operation",
     "OperationResult",
     "Outcome",
     "Residual",
     "State",
+    "StructuralAdmissionGate",
+    "StructurallyAdmissibleTransition",
     "Trace",
     "TransitionCandidate",
     "TransitionDecision",
+    "TransitionKind",
 ]

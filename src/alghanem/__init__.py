@@ -1,5 +1,5 @@
-"""Language-agnostic research kernel for licensed transformations."""
+"""Language-agnostic research kernel for structurally admissible transformations."""
 
-from .kernel.transition import LicensedTransition, TransitionDecision
+from .kernel.transition import StructurallyAdmissibleTransition, TransitionDecision
 
-__all__ = ["LicensedTransition", "TransitionDecision"]
+__all__ = ["StructurallyAdmissibleTransition", "TransitionDecision"]

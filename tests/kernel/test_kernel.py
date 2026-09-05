@@ -5,18 +5,20 @@ from alghanem.kernel import (
     BranchOriginProvenance,
     Claim,
     ClaimEvidenceBinding,
+    DecisionReasonCode,
     Evidence,
-    LicensedTransition,
-    LicensingGate,
     NonSuccessDecisionAudit,
     Operation,
     OperationResult,
     Outcome,
     Residual,
     State,
+    StructuralAdmissionGate,
+    StructurallyAdmissibleTransition,
     Trace,
     TransitionCandidate,
     TransitionDecision,
+    TransitionKind,
 )
 
 
@@ -49,6 +51,7 @@ def make_candidate(
         BranchOriginProvenance | _DefaultProvenance | None
     ) = _DEFAULT_PROVENANCE,
     target_anchor: Anchor | _DefaultProvenance | None = _DEFAULT_PROVENANCE,
+    kind: TransitionKind | _DefaultProvenance | None = _DEFAULT_PROVENANCE,
 ) -> TransitionCandidate:
     anchor = anchor or Anchor("a", "D")
     transition_claim = transition_claim or claim()
@@ -70,6 +73,13 @@ def make_candidate(
         )
     if branch_origin_provenance is _DEFAULT_PROVENANCE:
         branch_origin_provenance = None
+    if kind is _DEFAULT_PROVENANCE:
+        if outcome is Outcome.IDENTITY_PRESERVING_TRANSFORMATION:
+            kind = TransitionKind.IDENTITY_PRESERVATION_CLAIM
+        elif outcome is Outcome.CERTIFIED_BRANCH_BIRTH:
+            kind = TransitionKind.BRANCH_BIRTH_CLAIM
+        else:
+            kind = None
     return TransitionCandidate(
         anchor=anchor,
         before_state=State("before"),
@@ -85,6 +95,7 @@ def make_candidate(
         result=result,
         branch_origin_provenance=branch_origin_provenance,
         target_anchor=target_anchor,
+        kind=kind,
     )
 
 
@@ -100,19 +111,19 @@ def make_audit(
     return NonSuccessDecisionAudit(
         trace=trace,
         residuals=residuals,
-        reason="licensing refused",
+        reason="structural admission refused",
         candidate=candidate,
     )
 
 
-def license_candidate(candidate: TransitionCandidate) -> LicensedTransition:
-    return LicensingGate.license(candidate)
+def admit_candidate(candidate: TransitionCandidate) -> StructurallyAdmissibleTransition:
+    return StructuralAdmissionGate.admit(candidate)
 
 
 def make_transition(
     outcome: Outcome, preserved: tuple[str, ...] = ("identity",)
-) -> LicensedTransition:
-    return license_candidate(make_candidate(outcome, preserved=preserved))
+) -> StructurallyAdmissibleTransition:
+    return admit_candidate(make_candidate(outcome, preserved=preserved))
 
 
 def test_core_objects_are_immutable():
@@ -136,9 +147,9 @@ def test_trace_and_residual_are_preserved():
     assert transition.residuals == (Residual("remainder"),)
 
 
-def test_licensed_transition_cannot_be_constructed_directly():
-    with pytest.raises(ValueError, match="LicensingGate"):
-        LicensedTransition(
+def test_structurally_admissible_transition_cannot_be_constructed_directly():
+    with pytest.raises(ValueError, match="StructuralAdmissionGate"):
+        StructurallyAdmissibleTransition(
             anchor=Anchor("a", "D"),
             before_state=State("before"),
             operation=Operation("op", "component"),
@@ -154,34 +165,34 @@ def test_licensed_transition_cannot_be_constructed_directly():
         )
 
 
-def test_licensing_gate_issues_successful_transition():
+def test_structural_admission_gate_issues_successful_transition():
     transition = make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION)
-    assert isinstance(transition, LicensedTransition)
+    assert isinstance(transition, StructurallyAdmissibleTransition)
 
 
-def test_licensing_gate_rejects_already_licensed_transition():
+def test_structural_admission_gate_rejects_already_admitted_transition():
     transition = make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION)
-    with pytest.raises(ValueError, match="re-licensed"):
-        LicensingGate.license(transition)
+    with pytest.raises(ValueError, match="re-admitted"):
+        StructuralAdmissionGate.admit(transition)
 
 
 def test_identity_preserving_requires_declared_invariant():
     with pytest.raises(ValueError, match="invariant"):
-        license_candidate(
+        admit_candidate(
             make_candidate(Outcome.IDENTITY_PRESERVING_TRANSFORMATION, preserved=())
         )
 
 
 def test_identity_preserving_requires_declared_change():
     with pytest.raises(ValueError, match="declared change"):
-        license_candidate(
+        admit_candidate(
             make_candidate(Outcome.IDENTITY_PRESERVING_TRANSFORMATION, changed=())
         )
 
 
 def test_preserved_and_changed_must_be_disjoint():
     with pytest.raises(ValueError, match="disjoint"):
-        license_candidate(
+        admit_candidate(
             make_candidate(
                 Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
                 preserved=("component",),
@@ -195,6 +206,40 @@ def test_branch_birth_is_distinct_from_identity_preservation():
         make_transition(Outcome.CERTIFIED_BRANCH_BIRTH).outcome
         is not Outcome.IDENTITY_PRESERVING_TRANSFORMATION
     )
+
+
+def test_admitted_transition_carries_the_matching_claimed_kind():
+    identity_transition = make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION)
+    assert identity_transition.kind is TransitionKind.IDENTITY_PRESERVATION_CLAIM
+    branch_transition = make_transition(Outcome.CERTIFIED_BRANCH_BIRTH)
+    assert branch_transition.kind is TransitionKind.BRANCH_BIRTH_CLAIM
+
+
+def test_successful_outcome_requires_a_declared_kind():
+    with pytest.raises(ValueError, match="declared transition kind"):
+        make_candidate(Outcome.IDENTITY_PRESERVING_TRANSFORMATION, kind=None)
+
+
+def test_declared_kind_must_match_the_outcome():
+    with pytest.raises(ValueError, match="must match the candidate's outcome"):
+        make_candidate(
+            Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
+            kind=TransitionKind.BRANCH_BIRTH_CLAIM,
+        )
+
+
+@pytest.mark.parametrize("outcome", [Outcome.BLOCK, Outcome.DEFER, Outcome.UNDEFINED])
+def test_non_transition_outcomes_cannot_declare_a_kind(outcome: Outcome):
+    with pytest.raises(ValueError, match="cannot declare a claimed transition kind"):
+        make_candidate(
+            outcome, result=None, kind=TransitionKind.IDENTITY_PRESERVATION_CLAIM
+        )
+
+
+@pytest.mark.parametrize("outcome", [Outcome.BLOCK, Outcome.DEFER, Outcome.UNDEFINED])
+def test_non_transition_outcomes_default_to_no_kind(outcome: Outcome):
+    candidate = make_candidate(outcome, result=None)
+    assert candidate.kind is None
 
 
 @pytest.mark.parametrize("outcome", [Outcome.BLOCK, Outcome.DEFER, Outcome.UNDEFINED])
@@ -214,7 +259,7 @@ def test_non_transition_decision_cannot_contain_a_transition():
 
 def test_success_without_evidence_is_rejected():
     with pytest.raises(ValueError, match="evidence"):
-        license_candidate(
+        admit_candidate(
             make_candidate(
                 Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
                 transition_evidence=(),
@@ -224,7 +269,7 @@ def test_success_without_evidence_is_rejected():
 
 def test_success_without_result_is_rejected():
     with pytest.raises(ValueError, match="result"):
-        license_candidate(
+        admit_candidate(
             make_candidate(
                 Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
                 result=None,
@@ -246,7 +291,7 @@ def test_same_statement_does_not_make_same_claim_identity():
     transition_claim = claim("claim-1", "same statement")
     unrelated_evidence = evidence("claim-2")
     with pytest.raises(ValueError, match="transition evidence"):
-        license_candidate(
+        admit_candidate(
             make_candidate(
                 Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
                 transition_claim=transition_claim,
@@ -257,7 +302,7 @@ def test_same_statement_does_not_make_same_claim_identity():
 
 def test_transition_evidence_bound_to_transition_claim_is_accepted():
     transition_claim = claim("claim-1", "transition claim")
-    transition = license_candidate(
+    transition = admit_candidate(
         make_candidate(
             Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
             transition_claim=transition_claim,
@@ -270,7 +315,7 @@ def test_transition_evidence_bound_to_transition_claim_is_accepted():
 
 def test_transition_change_must_include_operation_declared_change():
     with pytest.raises(ValueError, match="declared change"):
-        license_candidate(
+        admit_candidate(
             make_candidate(
                 Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
                 operation=Operation("op", "declared"),
@@ -281,7 +326,7 @@ def test_transition_change_must_include_operation_declared_change():
 
 def test_operation_source_domain_must_match_anchor_domain():
     with pytest.raises(ValueError, match="source domain"):
-        license_candidate(
+        admit_candidate(
             make_candidate(
                 Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
                 anchor=Anchor("a", "DOMAIN_A"),
@@ -296,7 +341,7 @@ def test_operation_source_domain_must_match_anchor_domain():
 
 
 def test_operation_source_domain_matching_anchor_domain_is_accepted():
-    transition = license_candidate(
+    transition = admit_candidate(
         make_candidate(
             Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
             anchor=Anchor("a", "DOMAIN_A"),
@@ -319,7 +364,7 @@ def test_operation_without_source_domain_is_accepted():
 def test_branch_birth_requires_preserved_information():
     anchor = Anchor("a", "D")
     with pytest.raises(ValueError, match="preserved information"):
-        license_candidate(
+        admit_candidate(
             make_candidate(
                 Outcome.CERTIFIED_BRANCH_BIRTH,
                 preserved=(),
@@ -337,7 +382,7 @@ def test_branch_birth_requires_preserved_information():
 
 def test_branch_birth_requires_explicit_origin_provenance():
     with pytest.raises(ValueError, match="origin provenance"):
-        license_candidate(
+        admit_candidate(
             make_candidate(
                 Outcome.CERTIFIED_BRANCH_BIRTH,
                 preserved=("origin-data",),
@@ -365,7 +410,7 @@ def test_branch_origin_provenance_requires_distinct_branch_anchor():
 
 def test_branch_origin_provenance_must_match_transition_anchor():
     with pytest.raises(ValueError, match="transition anchor"):
-        license_candidate(
+        admit_candidate(
             make_candidate(
                 Outcome.CERTIFIED_BRANCH_BIRTH,
                 preserved=("origin-data",),
@@ -381,7 +426,7 @@ def test_branch_origin_provenance_must_match_transition_anchor():
 def test_branch_origin_provenance_branch_anchor_must_be_target_anchor():
     anchor = Anchor("a", "D")
     with pytest.raises(ValueError, match="target anchor"):
-        license_candidate(
+        admit_candidate(
             make_candidate(
                 Outcome.CERTIFIED_BRANCH_BIRTH,
                 preserved=("origin-data",),
@@ -398,7 +443,7 @@ def test_branch_origin_provenance_branch_anchor_must_be_target_anchor():
 def test_branch_origin_provenance_components_must_be_declared_preserved():
     anchor = Anchor("a", "D")
     with pytest.raises(ValueError, match="declared preserved"):
-        license_candidate(
+        admit_candidate(
             make_candidate(
                 Outcome.CERTIFIED_BRANCH_BIRTH,
                 preserved=("origin-data",),
@@ -449,7 +494,7 @@ def test_malformed_transition_components_are_rejected(
     preserved: tuple[str, ...], changed: tuple[str, ...], error: str
 ):
     with pytest.raises(ValueError, match=error):
-        license_candidate(
+        admit_candidate(
             make_candidate(
                 Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
                 preserved=preserved,
@@ -463,7 +508,7 @@ def test_successful_decision_contains_a_transition():
         Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
         make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION),
     )
-    assert decision.transition is not None
+    assert decision.admissible is not None
 
 
 def test_successful_decision_must_match_transition_outcome():
@@ -485,7 +530,7 @@ def test_successful_decision_cannot_carry_a_non_success_audit():
 
 def test_identity_preserving_rejects_a_distinct_target_anchor():
     with pytest.raises(ValueError, match="unchanged anchor"):
-        license_candidate(
+        admit_candidate(
             make_candidate(
                 Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
                 target_anchor=Anchor("other", "D"),
@@ -495,7 +540,7 @@ def test_identity_preserving_rejects_a_distinct_target_anchor():
 
 def test_identity_preserving_accepts_target_anchor_equal_to_source():
     anchor = Anchor("a", "D")
-    transition = license_candidate(
+    transition = admit_candidate(
         make_candidate(
             Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
             anchor=anchor,
@@ -508,7 +553,7 @@ def test_identity_preserving_accepts_target_anchor_equal_to_source():
 def test_branch_birth_rejects_target_anchor_equal_to_source():
     anchor = Anchor("a", "D")
     with pytest.raises(ValueError, match="distinct target anchor"):
-        license_candidate(
+        admit_candidate(
             make_candidate(
                 Outcome.CERTIFIED_BRANCH_BIRTH,
                 preserved=("origin-data",),
@@ -526,7 +571,7 @@ def test_branch_birth_rejects_target_anchor_equal_to_source():
 def test_branch_birth_binds_target_anchor_to_provenance_branch():
     anchor = Anchor("a", "D")
     target = Anchor("branch", "D")
-    transition = license_candidate(
+    transition = admit_candidate(
         make_candidate(
             Outcome.CERTIFIED_BRANCH_BIRTH,
             anchor=anchor,
@@ -542,7 +587,7 @@ def test_branch_birth_binds_target_anchor_to_provenance_branch():
 
 def test_branch_origin_provenance_origin_must_match_source_anchor():
     with pytest.raises(ValueError, match="transition anchor"):
-        license_candidate(
+        admit_candidate(
             make_candidate(
                 Outcome.CERTIFIED_BRANCH_BIRTH,
                 preserved=("origin-data",),
@@ -558,7 +603,7 @@ def test_branch_origin_provenance_origin_must_match_source_anchor():
 def test_operation_target_domain_must_match_target_anchor_domain():
     anchor = Anchor("a", "DOMAIN_A")
     with pytest.raises(ValueError, match="target domain"):
-        license_candidate(
+        admit_candidate(
             make_candidate(
                 Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
                 anchor=anchor,
@@ -573,7 +618,7 @@ def test_operation_target_domain_must_match_target_anchor_domain():
 
 
 def test_operation_target_domain_matching_target_anchor_domain_is_accepted():
-    transition = license_candidate(
+    transition = admit_candidate(
         make_candidate(
             Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
             anchor=Anchor("a", "DOMAIN_A"),
@@ -591,7 +636,7 @@ def test_operation_target_domain_matching_target_anchor_domain_is_accepted():
 def test_cross_domain_branch_birth_is_structurally_representable():
     origin = Anchor("a", "DOMAIN_A")
     target = Anchor("branch", "DOMAIN_B")
-    transition = license_candidate(
+    transition = admit_candidate(
         make_candidate(
             Outcome.CERTIFIED_BRANCH_BIRTH,
             anchor=origin,
@@ -641,9 +686,52 @@ def test_non_success_decisions_preserve_the_assessed_candidate():
     assert decision.audit.candidate is candidate
 
 
-def test_non_success_audit_rejects_a_licensed_transition_as_candidate():
-    with pytest.raises(ValueError, match="licensed transition"):
+def test_non_success_audit_rejects_an_admitted_transition_as_candidate():
+    with pytest.raises(ValueError, match="structurally admissible transition"):
         make_audit(make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION))
+
+
+def test_non_success_decision_audit_accepts_an_optional_reason_code():
+    audit = NonSuccessDecisionAudit(
+        trace=Trace(("assessed",)),
+        residuals=(),
+        reason="target anchor mismatch",
+        reason_code=DecisionReasonCode.TARGET_ANCHOR_MISMATCH,
+    )
+    assert audit.reason_code is DecisionReasonCode.TARGET_ANCHOR_MISMATCH
+    assert audit.reason == "target anchor mismatch"
+
+
+@pytest.mark.parametrize("reason_code", list(DecisionReasonCode))
+def test_non_success_decision_audit_accepts_every_reason_code(
+    reason_code: DecisionReasonCode,
+):
+    audit = NonSuccessDecisionAudit(
+        trace=Trace(("assessed",)),
+        residuals=(),
+        reason="structural admission refused",
+        reason_code=reason_code,
+    )
+    assert audit.reason_code is reason_code
+
+
+def test_non_success_decision_audit_reason_code_defaults_to_none():
+    audit = NonSuccessDecisionAudit(
+        trace=Trace(("assessed",)),
+        residuals=(),
+        reason="structural admission refused",
+    )
+    assert audit.reason_code is None
+
+
+def test_non_success_decision_audit_rejects_a_non_reason_code_value():
+    with pytest.raises(ValueError, match="DecisionReasonCode"):
+        NonSuccessDecisionAudit(
+            trace=Trace(("assessed",)),
+            residuals=(),
+            reason="structural admission refused",
+            reason_code="MISSING_EVIDENCE",  # type: ignore[arg-type]
+        )
 
 
 @pytest.mark.parametrize("reason", ["", "  "])
@@ -668,7 +756,7 @@ def test_candidate_cannot_be_audited_with_another_trace():
         NonSuccessDecisionAudit(
             trace=Trace(("fabricated",)),
             residuals=candidate.residuals,
-            reason="licensing refused",
+            reason="structural admission refused",
             candidate=candidate,
         )
 
@@ -679,7 +767,7 @@ def test_candidate_cannot_be_audited_with_other_residuals():
         NonSuccessDecisionAudit(
             trace=candidate.trace,
             residuals=(Residual("invented"),),
-            reason="licensing refused",
+            reason="structural admission refused",
             candidate=candidate,
         )
 
@@ -697,14 +785,14 @@ def test_audit_bound_to_candidate_preserves_the_candidate_history():
     "outcome",
     [Outcome.IDENTITY_PRESERVING_TRANSFORMATION, Outcome.CERTIFIED_BRANCH_BIRTH],
 )
-def test_success_without_explicit_target_anchor_cannot_be_licensed(outcome: Outcome):
+def test_success_without_explicit_target_anchor_cannot_be_admitted(outcome: Outcome):
     with pytest.raises(ValueError, match="explicit target anchor"):
-        license_candidate(make_candidate(outcome, target_anchor=None))
+        admit_candidate(make_candidate(outcome, target_anchor=None))
 
 
-def test_explicit_target_anchor_equal_to_source_is_licensed():
+def test_explicit_target_anchor_equal_to_source_is_admitted():
     anchor = Anchor("a", "D")
-    transition = license_candidate(
+    transition = admit_candidate(
         make_candidate(
             Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
             anchor=anchor,
