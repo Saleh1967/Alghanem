@@ -157,7 +157,69 @@ def test_changing_kind_changes_content_id() -> None:
     assert content_id_identity != content_id_branch
 
 
-def test_admission_id_alone_does_not_affect_content_id() -> None:
+def test_branch_origin_provenance_instance_identity_does_not_affect_content_id() -> (
+    None
+):
+    """Locks in the module's stated redundancy assumption for branch birth.
+
+    ``CanonicalTransitionManifest`` deliberately excludes
+    ``branch_origin_provenance``. This is only safe because
+    ``_validate_branch_birth`` already forces its ``origin_anchor``,
+    ``branch_anchor``, and ``preserved_components`` to exactly equal the
+    candidate's own ``anchor``, ``target_anchor``, and ``preserved`` --
+    fields the manifest already covers directly. Two structurally
+    equivalent branch-birth candidates built with distinct
+    ``BranchOriginProvenance`` *instances* (same field values, different
+    object identity) must therefore still produce the same content id.
+    """
+
+    anchor = Anchor("a", "D")
+    branch_target = Anchor("b", "D")
+
+    def make_branch_candidate() -> TransitionCandidate:
+        base = make_candidate(anchor=anchor, target_anchor=branch_target)
+        return TransitionCandidate(
+            anchor=base.anchor,
+            target_anchor=branch_target,
+            before_state=base.before_state,
+            operation=base.operation,
+            after_state=base.after_state,
+            claim=base.claim,
+            evidence=base.evidence,
+            preserved=base.preserved,
+            changed=base.changed,
+            trace=base.trace,
+            residuals=base.residuals,
+            kind=TransitionKind.BRANCH_BIRTH_CLAIM,
+            branch_origin_provenance=BranchOriginProvenance(
+                origin_anchor=anchor,
+                branch_anchor=branch_target,
+                preserved_components=base.preserved,
+            ),
+            result=base.result,
+        )
+
+    branch_candidate_1 = make_branch_candidate()
+    branch_candidate_2 = make_branch_candidate()
+    assert (
+        branch_candidate_1.branch_origin_provenance
+        is not branch_candidate_2.branch_origin_provenance
+    )
+    assert (
+        branch_candidate_1.branch_origin_provenance
+        == branch_candidate_2.branch_origin_provenance
+    )
+
+    transition_1 = admit(branch_candidate_1)
+    transition_2 = admit(branch_candidate_2)
+
+    assert (
+        CanonicalTransitionEncoder.encode(transition_1).content_id
+        == CanonicalTransitionEncoder.encode(transition_2).content_id
+    )
+
+
+
     candidate = make_candidate()
     transition_1 = admit(candidate)
     transition_2 = admit(candidate)
