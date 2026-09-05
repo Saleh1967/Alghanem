@@ -9,6 +9,7 @@ certified outcomes, and structural admission decision invariants.
 from __future__ import annotations
 
 import typing
+from collections.abc import Callable
 
 import pytest
 
@@ -20,16 +21,20 @@ from alghanem.kernel import (
     ClaimEvidenceBinding,
     DecisionReasonCode,
     Evidence,
+    InvariantComparisonError,
     InvariantExtractionError,
     InvariantExtractorRegistry,
     InvariantObservation,
+    InvariantProvenanceMismatchError,
     InvariantSpec,
     InvariantVerification,
     InvariantVerificationGate,
+    InvariantVerificationProvenance,
     NonSuccessDecisionAudit,
     Operation,
     OperationResult,
     Residual,
+    SealedInvariantExtractorRegistry,
     State,
     StructuralAdmissionDecision,
     StructuralAdmissionError,
@@ -40,6 +45,9 @@ from alghanem.kernel import (
     TransitionCandidate,
     TransitionKind,
     UnregisteredExtractorError,
+)
+from alghanem.kernel.invariant import (
+    _VERIFICATION_TOKEN as _VERIFICATION_TOKEN_FOR_TESTS,
 )
 
 
@@ -918,6 +926,15 @@ def test_explicit_target_anchor_equal_to_source_is_admitted() -> None:
 # --- Verified invariant preservation -----------------------------------
 
 
+def sealed_registry(
+    *entries: tuple[str, Callable[[State], object]],
+) -> SealedInvariantExtractorRegistry:
+    registry = InvariantExtractorRegistry()
+    for extractor_id, extractor in entries:
+        registry.register(extractor_id, extractor)
+    return registry.seal()
+
+
 def test_invariant_spec_rejects_blank_fields() -> None:
     with pytest.raises(ValueError, match="invariant id"):
         InvariantSpec(invariant_id=" ", component="identity", extractor_id="x")
@@ -932,7 +949,23 @@ def test_invariant_observation_rejects_blank_invariant_id() -> None:
         InvariantObservation(invariant_id=" ", before_value=1, after_value=1)
 
 
+def _make_provenance(
+    transition: StructurallyAdmissibleTransition,
+    invariant_id: str = "inv-1",
+    extractor_id: str = "x",
+) -> InvariantVerificationProvenance:
+    return InvariantVerificationProvenance(
+        source_claim_id=transition.claim.claim_id,
+        source_anchor=transition.anchor,
+        source_target_anchor=transition.resolved_target_anchor,
+        source_trace=transition.trace,
+        invariant_id=invariant_id,
+        extractor_id=extractor_id,
+    )
+
+
 def test_invariant_verification_requires_matching_observation() -> None:
+    transition = make_transition()
     observation = InvariantObservation(
         invariant_id="inv-1", before_value=1, after_value=1
     )
@@ -942,6 +975,71 @@ def test_invariant_verification_requires_matching_observation() -> None:
             preserved=True,
             trace=Trace(("checked",)),
             observation=observation,
+            provenance=_make_provenance(transition, invariant_id="inv-2"),
+            _verification_token=_VERIFICATION_TOKEN_FOR_TESTS,
+        )
+
+
+def test_invariant_verification_requires_matching_provenance() -> None:
+    transition = make_transition()
+    observation = InvariantObservation(
+        invariant_id="inv-1", before_value=1, after_value=1
+    )
+    with pytest.raises(ValueError, match="own provenance"):
+        InvariantVerification(
+            invariant_id="inv-1",
+            preserved=True,
+            trace=Trace(("checked",)),
+            observation=observation,
+            provenance=_make_provenance(transition, invariant_id="inv-mismatch"),
+            _verification_token=_VERIFICATION_TOKEN_FOR_TESTS,
+        )
+
+
+def test_invariant_verification_requires_actual_bool_preserved() -> None:
+    transition = make_transition()
+    observation = InvariantObservation(
+        invariant_id="inv-1", before_value=1, after_value=1
+    )
+    with pytest.raises(ValueError, match="bool"):
+        InvariantVerification(
+            invariant_id="inv-1",
+            preserved=1,  # type: ignore[arg-type]
+            trace=Trace(("checked",)),
+            observation=observation,
+            provenance=_make_provenance(transition),
+            _verification_token=_VERIFICATION_TOKEN_FOR_TESTS,
+        )
+
+
+def test_invariant_verification_cannot_be_constructed_without_gate_token() -> None:
+    transition = make_transition()
+    observation = InvariantObservation(
+        invariant_id="inv-1", before_value=1, after_value=1
+    )
+    with pytest.raises(ValueError, match="InvariantVerificationGate.verify"):
+        InvariantVerification(
+            invariant_id="inv-1",
+            preserved=True,
+            trace=Trace(("checked",)),
+            observation=observation,
+            provenance=_make_provenance(transition),
+        )
+
+
+def test_invariant_verification_cannot_be_constructed_with_wrong_token() -> None:
+    transition = make_transition()
+    observation = InvariantObservation(
+        invariant_id="inv-1", before_value=1, after_value=1
+    )
+    with pytest.raises(ValueError, match="InvariantVerificationGate.verify"):
+        InvariantVerification(
+            invariant_id="inv-1",
+            preserved=True,
+            trace=Trace(("checked",)),
+            observation=observation,
+            provenance=_make_provenance(transition),
+            _verification_token=object(),
         )
 
 
@@ -954,16 +1052,52 @@ def test_registry_rejects_blank_or_duplicate_extractor_ids() -> None:
         registry.register("identity-extractor", lambda state: state.value)
 
 
-def test_registry_resolve_raises_for_unregistered_id() -> None:
-    registry = InvariantExtractorRegistry()
+def test_sealed_registry_resolve_raises_for_unregistered_id() -> None:
+    registry = sealed_registry()
     with pytest.raises(UnregisteredExtractorError):
         registry.resolve("missing")
 
 
+def test_sealed_registry_has_no_register_method() -> None:
+    registry = sealed_registry(("identity-extractor", lambda state: state.value))
+    assert not hasattr(registry, "register")
+
+
+def test_sealed_registry_cannot_be_constructed_without_seal_token() -> None:
+    with pytest.raises(ValueError, match="InvariantExtractorRegistry.seal"):
+        SealedInvariantExtractorRegistry({}, object())
+
+
+def test_sealing_snapshots_registrations_after_further_mutation() -> None:
+    registry = InvariantExtractorRegistry()
+    registry.register("identity-extractor", lambda state: state.value)
+    sealed = registry.seal()
+    # A registration added after sealing is not visible through the
+    # already-issued sealed view: registration authority and resolution
+    # authority are separate, and sealing is a point-in-time snapshot.
+    registry.register("late-extractor", lambda state: "late")
+    with pytest.raises(UnregisteredExtractorError):
+        sealed.resolve("late-extractor")
+
+
+def test_gate_rejects_unsealed_mutable_registry() -> None:
+    transition = make_transition()
+    mutable_registry = InvariantExtractorRegistry()
+    mutable_registry.register("constant-extractor", lambda state: "same")
+    spec = InvariantSpec(
+        invariant_id="inv-1", component="identity", extractor_id="constant-extractor"
+    )
+    with pytest.raises(TypeError, match="SealedInvariantExtractorRegistry"):
+        InvariantVerificationGate.verify(
+            transition,
+            spec,
+            mutable_registry,  # type: ignore[arg-type]
+        )
+
+
 def test_invariant_gate_verifies_preserved_value() -> None:
     transition = make_transition()
-    registry = InvariantExtractorRegistry()
-    registry.register("constant-extractor", lambda state: "same")
+    registry = sealed_registry(("constant-extractor", lambda state: "same"))
     spec = InvariantSpec(
         invariant_id="inv-1", component="identity", extractor_id="constant-extractor"
     )
@@ -973,12 +1107,18 @@ def test_invariant_gate_verifies_preserved_value() -> None:
     assert verification.observation.after_value == "same"
     assert verification.trace.events[:-1] == transition.trace.events
     assert "inv-1" in verification.trace.events[-1]
+    assert verification.provenance.source_claim_id == transition.claim.claim_id
+    assert verification.provenance.source_anchor == transition.anchor
+    assert (
+        verification.provenance.source_target_anchor
+        == transition.resolved_target_anchor
+    )
+    assert verification.provenance.source_trace == transition.trace
 
 
 def test_invariant_gate_detects_non_preservation() -> None:
     transition = make_transition()
-    registry = InvariantExtractorRegistry()
-    registry.register("value-extractor", lambda state: state.value)
+    registry = sealed_registry(("value-extractor", lambda state: state.value))
     spec = InvariantSpec(
         invariant_id="inv-1", component="identity", extractor_id="value-extractor"
     )
@@ -990,8 +1130,7 @@ def test_invariant_gate_detects_non_preservation() -> None:
 
 def test_invariant_gate_rejects_component_not_declared_preserved() -> None:
     transition = make_transition(preserved=("identity",))
-    registry = InvariantExtractorRegistry()
-    registry.register("value-extractor", lambda state: state.value)
+    registry = sealed_registry(("value-extractor", lambda state: state.value))
     spec = InvariantSpec(
         invariant_id="inv-1", component="other", extractor_id="value-extractor"
     )
@@ -1001,7 +1140,7 @@ def test_invariant_gate_rejects_component_not_declared_preserved() -> None:
 
 def test_invariant_gate_requires_registered_extractor() -> None:
     transition = make_transition()
-    registry = InvariantExtractorRegistry()
+    registry = sealed_registry()
     spec = InvariantSpec(
         invariant_id="inv-1", component="identity", extractor_id="missing"
     )
@@ -1011,12 +1150,11 @@ def test_invariant_gate_requires_registered_extractor() -> None:
 
 def test_invariant_gate_wraps_extractor_failures() -> None:
     transition = make_transition()
-    registry = InvariantExtractorRegistry()
 
     def failing_extractor(state: State) -> object:
         raise RuntimeError("boom")
 
-    registry.register("failing-extractor", failing_extractor)
+    registry = sealed_registry(("failing-extractor", failing_extractor))
     spec = InvariantSpec(
         invariant_id="inv-1", component="identity", extractor_id="failing-extractor"
     )
@@ -1026,13 +1164,14 @@ def test_invariant_gate_wraps_extractor_failures() -> None:
 
 def test_invariant_gate_wraps_comparison_failures() -> None:
     transition = make_transition()
-    registry = InvariantExtractorRegistry()
 
     class _RaisingEquality:
         def __eq__(self, other: object) -> bool:
             raise RuntimeError("cannot compare")
 
-    registry.register("uncomparable-extractor", lambda state: _RaisingEquality())
+    registry = sealed_registry(
+        ("uncomparable-extractor", lambda state: _RaisingEquality())
+    )
     spec = InvariantSpec(
         invariant_id="inv-1",
         component="identity",
@@ -1042,8 +1181,48 @@ def test_invariant_gate_wraps_comparison_failures() -> None:
         InvariantVerificationGate.verify(transition, spec, registry)
 
 
+def test_invariant_gate_rejects_non_bool_comparison_result() -> None:
+    transition = make_transition()
+
+    class _NonBoolEquality:
+        def __eq__(self, other: object) -> object:
+            return "not-a-bool"
+
+    registry = sealed_registry(("non-bool-extractor", lambda state: _NonBoolEquality()))
+    spec = InvariantSpec(
+        invariant_id="inv-1", component="identity", extractor_id="non-bool-extractor"
+    )
+    with pytest.raises(InvariantComparisonError, match="did not return a bool"):
+        InvariantVerificationGate.verify(transition, spec, registry)
+
+
 def test_invariant_spec_cannot_embed_an_extractor_callable() -> None:
     # A spec only carries a string extractor_id; there is no field through
     # which a candidate could smuggle in its own executable "proof".
     field_types = typing.get_type_hints(InvariantSpec)
     assert field_types["extractor_id"] is str
+
+
+def test_invariant_verification_is_bound_to_its_own_transition() -> None:
+    transition = make_transition()
+    registry = sealed_registry(("value-extractor", lambda state: state.value))
+    spec = InvariantSpec(
+        invariant_id="inv-1", component="identity", extractor_id="value-extractor"
+    )
+    verification = InvariantVerificationGate.verify(transition, spec, registry)
+    assert (
+        InvariantVerificationGate.require_bound_to(verification, transition)
+        is verification
+    )
+
+
+def test_invariant_verification_cannot_be_replayed_against_another_transition() -> None:
+    transition_a = admit_candidate(make_candidate(anchor=Anchor("a", "D")))
+    transition_b = admit_candidate(make_candidate(anchor=Anchor("b", "D")))
+    registry = sealed_registry(("value-extractor", lambda state: state.value))
+    spec = InvariantSpec(
+        invariant_id="inv-1", component="identity", extractor_id="value-extractor"
+    )
+    verification = InvariantVerificationGate.verify(transition_a, spec, registry)
+    with pytest.raises(InvariantProvenanceMismatchError):
+        InvariantVerificationGate.require_bound_to(verification, transition_b)
