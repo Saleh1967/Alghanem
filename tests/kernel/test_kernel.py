@@ -1028,11 +1028,11 @@ def test_invariant_gate_wraps_comparison_failures() -> None:
     transition = make_transition()
     registry = InvariantExtractorRegistry()
 
-    class _Uncomparable:
+    class _RaisingEquality:
         def __eq__(self, other: object) -> bool:
             raise RuntimeError("cannot compare")
 
-    registry.register("uncomparable-extractor", lambda state: _Uncomparable())
+    registry.register("uncomparable-extractor", lambda state: _RaisingEquality())
     spec = InvariantSpec(
         invariant_id="inv-1",
         component="identity",
