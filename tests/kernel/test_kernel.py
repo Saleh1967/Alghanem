@@ -1177,7 +1177,7 @@ def test_invariant_gate_wraps_comparison_failures() -> None:
         component="identity",
         extractor_id="uncomparable-extractor",
     )
-    with pytest.raises(InvariantExtractionError, match="comparing before/after"):
+    with pytest.raises(InvariantComparisonError, match="comparing before/after"):
         InvariantVerificationGate.verify(transition, spec, registry)
 
 

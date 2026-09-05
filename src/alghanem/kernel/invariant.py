@@ -53,6 +53,7 @@ replay, not against a determined, dishonest caller fabricating matching
 field values by hand.
 """
 
+import threading
 from collections.abc import Callable, Mapping
 from dataclasses import InitVar, dataclass
 from typing import TYPE_CHECKING
@@ -172,6 +173,9 @@ class InvariantVerification:
             )
         if not self.invariant_id.strip():
             raise ValueError("an invariant verification requires an invariant id")
+        # `type(...) is not bool` (not `isinstance`) is deliberate: it rejects
+        # bool subclasses too, so a truthy/falsy-but-not-actually-bool value
+        # cannot masquerade as a genuine preservation decision.
         if type(self.preserved) is not bool:
             raise ValueError("an invariant verification's preserved must be a bool")
         if self.invariant_id != self.observation.invariant_id:
@@ -265,14 +269,17 @@ class InvariantExtractorRegistry:
     populated once by trusted setup/governor code, not by an arbitrary
     candidate or linguistic layer immediately before verification.
 
-    Not thread-safe: concurrent ``register`` calls on the same instance are
-    not synchronized. Registration is expected at module import/setup time,
-    not under concurrent access; callers sharing a registry across threads
-    must provide their own synchronization.
+    ``register`` and ``seal`` are synchronized with an internal lock, so
+    concurrent registration calls on the same instance do not corrupt its
+    internal state. This only protects the registry's own bookkeeping; it
+    does not make the overall registration *sequence* deterministic across
+    threads, so registration is still expected at module import/setup time,
+    not under concurrent, racing access.
     """
 
     def __init__(self) -> None:
         self._extractors: dict[str, InvariantExtractor] = {}
+        self._lock = threading.Lock()
 
     def register(self, extractor_id: str, extractor: InvariantExtractor) -> None:
         """Register an extractor under ``extractor_id``.
@@ -284,9 +291,10 @@ class InvariantExtractorRegistry:
 
         if not extractor_id.strip():
             raise ValueError("an extractor id cannot be blank")
-        if extractor_id in self._extractors:
-            raise ValueError(f"extractor id already registered: {extractor_id!r}")
-        self._extractors[extractor_id] = extractor
+        with self._lock:
+            if extractor_id in self._extractors:
+                raise ValueError(f"extractor id already registered: {extractor_id!r}")
+            self._extractors[extractor_id] = extractor
 
     def seal(self) -> SealedInvariantExtractorRegistry:
         """Freeze current registrations into a read-only, resolution-only view.
@@ -299,7 +307,8 @@ class InvariantExtractorRegistry:
         the registrations made so far.
         """
 
-        return SealedInvariantExtractorRegistry(dict(self._extractors), _SEAL_TOKEN)
+        with self._lock:
+            return SealedInvariantExtractorRegistry(dict(self._extractors), _SEAL_TOKEN)
 
 
 class InvariantVerificationGate:
@@ -423,11 +432,15 @@ def _compare(before_value: object, after_value: object, spec: InvariantSpec) -> 
     try:
         comparison = before_value == after_value
     except Exception as error:
-        raise InvariantExtractionError(
+        raise InvariantComparisonError(
             f"comparing before/after values failed for invariant "
             f"{spec.invariant_id!r}: {error}"
         ) from error
     if type(comparison) is not bool:
+        # `type(...) is not bool` (not `isinstance`) deliberately excludes
+        # bool subclasses too, so ambiguous or non-boolean comparator
+        # semantics (for example, some libraries' element-wise `__eq__`)
+        # cannot masquerade as a genuine preservation decision.
         raise InvariantComparisonError(
             f"comparator for invariant {spec.invariant_id!r} did not return a "
             f"bool (got {type(comparison).__name__})"
