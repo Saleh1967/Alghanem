@@ -27,9 +27,10 @@ class TransitionKind(Enum):
     component was actually extracted from ``before_state``/``after_state``:
     ``DeclaredInvariant != VerifiedInvariant``. Anchor equality remains
     unverified pending an evidence-sufficiency gate; a single declared
-    invariant can be independently checked via ``invariant.
-    InvariantVerificationGate``, but that check is not yet required for, or
-    wired into, structural admission. See ``docs/CONSTITUTION.md`` for the
+    invariant can be independently checked via
+    ``invariant.InvariantVerificationGate``, but that check is not yet
+    required for, or wired into, structural admission. See
+    ``docs/CONSTITUTION.md`` for the
     full epistemic ladder this vocabulary sits on.
     """
 

@@ -308,7 +308,7 @@ class InvariantExtractorRegistry:
         """
 
         with self._lock:
-            return SealedInvariantExtractorRegistry(dict(self._extractors), _SEAL_TOKEN)
+            return SealedInvariantExtractorRegistry(self._extractors, _SEAL_TOKEN)
 
 
 class InvariantVerificationGate:
