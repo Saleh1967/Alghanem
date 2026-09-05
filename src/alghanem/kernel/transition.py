@@ -3,6 +3,7 @@ explicit decisions."""
 
 from dataclasses import InitVar, dataclass
 from enum import Enum, auto
+from uuid import uuid4
 
 from .anchor import Anchor, State
 from .evidence import Claim, Evidence
@@ -162,12 +163,17 @@ class StructurallyAdmissibleTransition(TransitionCandidate):
     """
 
     _admission_token: InitVar[object | None] = None
+    admission_id: str = ""
 
     def __post_init__(self, _admission_token: object | None) -> None:
         if _admission_token is not _ADMISSION_TOKEN:
             raise ValueError(
                 "structurally admissible transitions must be issued by "
                 "StructuralAdmissionGate"
+            )
+        if not self.admission_id.strip():
+            raise ValueError(
+                "structurally admissible transitions require an admission id"
             )
         # Re-validated here, not inherited from TransitionCandidate: this
         # dataclass's own __post_init__ fully overrides the parent's, and
@@ -215,6 +221,7 @@ class StructuralAdmissionGate:
                 result=candidate.result,
                 branch_origin_provenance=candidate.branch_origin_provenance,
                 target_anchor=candidate.target_anchor,
+                admission_id=uuid4().hex,
                 _admission_token=_ADMISSION_TOKEN,
             )
         except ValueError as error:
