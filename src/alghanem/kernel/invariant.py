@@ -56,7 +56,9 @@ field values by hand.
 import threading
 from collections.abc import Callable, Mapping
 from dataclasses import InitVar, dataclass
+from enum import Enum, auto
 from typing import TYPE_CHECKING
+from uuid import uuid4
 
 from .anchor import Anchor, State
 from .trace import Trace
@@ -131,6 +133,8 @@ class InvariantVerificationProvenance:
     source_trace: Trace
     invariant_id: str
     extractor_id: str
+    source_admission_id: str | None = None
+    registry_snapshot_id: str | None = None
 
     def __post_init__(self) -> None:
         if not self.source_claim_id.strip():
@@ -144,6 +148,12 @@ class InvariantVerificationProvenance:
         if not self.extractor_id.strip():
             raise ValueError(
                 "invariant verification provenance requires an extractor id"
+            )
+        if self.source_admission_id is not None and not self.source_admission_id.strip():
+            raise ValueError("invariant verification provenance requires an admission id")
+        if self.registry_snapshot_id is not None and not self.registry_snapshot_id.strip():
+            raise ValueError(
+                "invariant verification provenance requires a registry snapshot id"
             )
 
 
@@ -163,6 +173,7 @@ class InvariantVerification:
     trace: Trace
     observation: InvariantObservation
     provenance: InvariantVerificationProvenance
+    component: str = ""
     # The leading underscore here does not mean "conventionally private but
     # freely usable by keyword"; it means "gate-only". No caller outside
     # ``InvariantVerificationGate.verify`` holds a reference to
@@ -192,6 +203,8 @@ class InvariantVerification:
             )
         if self.invariant_id != self.provenance.invariant_id:
             raise ValueError("invariant verification must reference its own provenance")
+        if self.component and not self.component.strip():
+            raise ValueError("an invariant verification component cannot be blank")
 
 
 class UnregisteredExtractorError(KeyError):
@@ -228,6 +241,67 @@ class InvariantProvenanceMismatchError(ValueError):
     """
 
 
+class InvariantVerificationDecisionStatus(Enum):
+    VERIFIED = auto()
+    BLOCK = auto()
+    DEFER = auto()
+
+
+@dataclass(frozen=True, slots=True)
+class InvariantVerificationDecision:
+    """Auditable result of checking the complete preserved-invariant set."""
+
+    status: InvariantVerificationDecisionStatus
+    transition: "StructurallyAdmissibleTransition"
+    verifications: tuple[InvariantVerification, ...] = ()
+    failed_components: tuple[str, ...] = ()
+    trace: Trace | None = None
+    residuals: tuple[object, ...] = ()
+    reason: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.reason.strip():
+            raise ValueError("invariant verification decisions require a reason")
+        if self.status is InvariantVerificationDecisionStatus.VERIFIED:
+            if self.failed_components:
+                raise ValueError("verified decisions cannot have failed components")
+            if set(v.component for v in self.verifications) != set(
+                self.transition.preserved
+            ):
+                raise ValueError("verified decisions require complete invariant coverage")
+
+
+class InvariantVerificationError(ValueError):
+    """Typed error carrying a complete invariant verification decision."""
+
+    def __init__(self, decision: InvariantVerificationDecision) -> None:
+        self.decision = decision
+        super().__init__(decision.reason)
+
+
+@dataclass(frozen=True, slots=True)
+class InvariantVerificationBundle:
+    """The complete, one-to-one verification coverage for an admitted transition."""
+
+    transition: "StructurallyAdmissibleTransition"
+    verifications: tuple[InvariantVerification, ...]
+
+    def __post_init__(self) -> None:
+        components = tuple(v.component for v in self.verifications)
+        if len(set(components)) != len(components):
+            raise ValueError("invariant verification bundle cannot contain duplicates")
+        if set(components) != set(self.transition.preserved):
+            raise ValueError(
+                "invariant verification bundle must exactly cover preserved components"
+            )
+        for verification in self.verifications:
+            InvariantVerificationGate.require_bound_to(verification, self.transition)
+            if not verification.preserved:
+                raise ValueError(
+                    "invariant verification bundle requires every invariant to be preserved"
+                )
+
+
 class SealedInvariantExtractorRegistry:
     """Read-only, resolution-only view over a sealed set of registered extractors.
 
@@ -242,7 +316,7 @@ class SealedInvariantExtractorRegistry:
     to register anything -- it only resolves.
     """
 
-    __slots__ = ("_extractors",)
+    __slots__ = ("_extractors", "registry_snapshot_id")
 
     def __init__(
         self, extractors: Mapping[str, InvariantExtractor], _seal_token: object
@@ -267,6 +341,7 @@ class SealedInvariantExtractorRegistry:
         # registration lock is still held -- no concurrent ``register()``
         # call can interleave with it.
         self._extractors: dict[str, InvariantExtractor] = dict(extractors)
+        self.registry_snapshot_id = uuid4().hex
 
     def resolve(self, extractor_id: str) -> InvariantExtractor:
         """Resolve a registered extractor, or raise if none is registered."""
@@ -398,6 +473,8 @@ class InvariantVerificationGate:
             source_trace=transition.trace,
             invariant_id=spec.invariant_id,
             extractor_id=spec.extractor_id,
+            source_admission_id=transition.admission_id,
+            registry_snapshot_id=registry.registry_snapshot_id,
         )
         trace = Trace(
             transition.trace.events
@@ -409,13 +486,93 @@ class InvariantVerificationGate:
             trace=trace,
             observation=observation,
             provenance=provenance,
+            component=spec.component,
             _verification_token=_VERIFICATION_TOKEN,
         )
+
+    @staticmethod
+    def assess_all_preserved(
+        transition: "StructurallyAdmissibleTransition",
+        specs: tuple[InvariantSpec, ...],
+        registry: SealedInvariantExtractorRegistry,
+    ) -> InvariantVerificationDecision:
+        """Assess complete invariant coverage without discarding failed history."""
+
+        if {spec.component for spec in specs} != set(transition.preserved):
+            return InvariantVerificationDecision(
+                status=InvariantVerificationDecisionStatus.BLOCK,
+                transition=transition,
+                failed_components=tuple(transition.preserved),
+                trace=transition.trace,
+                residuals=transition.residuals,
+                reason="invariant specs must exactly cover preserved components",
+            )
+        verifications: list[InvariantVerification] = []
+        try:
+            for spec in specs:
+                verifications.append(InvariantVerificationGate.verify(transition, spec, registry))
+        except Exception as error:
+            failed = tuple(
+                component
+                for component in transition.preserved
+                if component not in {verification.component for verification in verifications}
+            )
+            return InvariantVerificationDecision(
+                status=InvariantVerificationDecisionStatus.BLOCK,
+                transition=transition,
+                verifications=tuple(verifications),
+                failed_components=failed,
+                trace=Trace(
+                    transition.trace.events
+                    + (f"invariant verification blocked: {error}",)
+                ),
+                residuals=transition.residuals,
+                reason=str(error),
+            )
+        if any(not verification.preserved for verification in verifications):
+            failed = tuple(
+                verification.component
+                for verification in verifications
+                if not verification.preserved
+            )
+            return InvariantVerificationDecision(
+                status=InvariantVerificationDecisionStatus.BLOCK,
+                transition=transition,
+                verifications=tuple(verifications),
+                failed_components=failed,
+                trace=verifications[-1].trace if verifications else transition.trace,
+                residuals=transition.residuals,
+                reason="one or more preserved invariants were not verified",
+            )
+        return InvariantVerificationDecision(
+            status=InvariantVerificationDecisionStatus.VERIFIED,
+            transition=transition,
+            verifications=tuple(verifications),
+            trace=verifications[-1].trace,
+            residuals=transition.residuals,
+            reason="all declared preserved invariants were verified",
+        )
+
+    @staticmethod
+    def require_all_preserved(
+        transition: "StructurallyAdmissibleTransition",
+        specs: tuple[InvariantSpec, ...],
+        registry: SealedInvariantExtractorRegistry,
+    ) -> InvariantVerificationBundle:
+        """Return a complete bundle or raise while preserving its decision."""
+
+        decision = InvariantVerificationGate.assess_all_preserved(
+            transition, specs, registry
+        )
+        if decision.status is not InvariantVerificationDecisionStatus.VERIFIED:
+            raise InvariantVerificationError(decision)
+        return InvariantVerificationBundle(transition, decision.verifications)
 
     @staticmethod
     def require_bound_to(
         verification: InvariantVerification,
         transition: "StructurallyAdmissibleTransition",
+        registry: SealedInvariantExtractorRegistry | None = None,
     ) -> InvariantVerification:
         """Return ``verification`` only if it is bound to ``transition``.
 
@@ -432,6 +589,11 @@ class InvariantVerificationGate:
             or provenance.source_anchor != transition.anchor
             or provenance.source_target_anchor != transition.resolved_target_anchor
             or provenance.source_trace != transition.trace
+            or provenance.source_admission_id != transition.admission_id
+            or (
+                registry is not None
+                and provenance.registry_snapshot_id != registry.registry_snapshot_id
+            )
         ):
             raise InvariantProvenanceMismatchError(
                 "invariant verification is not bound to the given transition"
