@@ -963,13 +963,6 @@ class InvariantVerificationGate:
         if set(components) != set(transition.preserved):
             raise InvariantAssessmentSpecificationError(
                 "invariant specs must exactly cover preserved components"
-        if {spec.component for spec in specs} != set(transition.preserved):
-            raise InvariantAssessmentSpecificationError(
-                "invariant specs must exactly cover preserved components"
-            )
-        if len({spec.component for spec in specs}) != len(specs):
-            raise InvariantAssessmentSpecificationError(
-                "invariant specs cannot duplicate preserved components"
             )
         verifications: list[InvariantVerification] = []
         blocked: list[str] = []
