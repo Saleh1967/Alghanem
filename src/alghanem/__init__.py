@@ -2,12 +2,14 @@
 
 from .kernel.transition import (
     StructuralAdmissionDecision,
+    StructuralAdmissionError,
     StructuralDecisionStatus,
     StructurallyAdmissibleTransition,
 )
 
 __all__ = [
     "StructuralAdmissionDecision",
+    "StructuralAdmissionError",
     "StructuralDecisionStatus",
     "StructurallyAdmissibleTransition",
 ]

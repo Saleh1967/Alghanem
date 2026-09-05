@@ -24,6 +24,7 @@ from alghanem.kernel import (
     Residual,
     State,
     StructuralAdmissionDecision,
+    StructuralAdmissionError,
     StructuralAdmissionGate,
     StructuralDecisionStatus,
     StructurallyAdmissibleTransition,
@@ -200,6 +201,21 @@ def test_structural_admission_assessment_records_structural_failure() -> None:
     assert decision.audit.trace is candidate.trace
     assert decision.audit.residuals is candidate.residuals
     assert "result" in decision.audit.reason
+
+
+def test_require_admitted_preserves_block_audit_in_typed_error() -> None:
+    candidate = make_candidate(result=None)
+    with pytest.raises(StructuralAdmissionError) as raised:
+        StructuralAdmissionGate.require_admitted(candidate)
+
+    decision = raised.value.decision
+    assert decision.status is StructuralDecisionStatus.BLOCK
+    assert decision.transition is None
+    assert decision.audit is not None
+    assert decision.audit.candidate is candidate
+    assert decision.audit.trace is candidate.trace
+    assert decision.audit.residuals is candidate.residuals
+    assert str(raised.value) == decision.audit.reason
 
 
 def test_structural_admission_gate_rejects_already_admitted_transition() -> None:
@@ -490,6 +506,27 @@ def test_branch_origin_provenance_components_must_be_declared_preserved() -> Non
                 ),
             )
         )
+
+
+def test_branch_origin_provenance_must_account_for_all_declared_preserved() -> None:
+    anchor = Anchor("a", "D")
+    candidate = make_candidate(
+        TransitionKind.BRANCH_BIRTH_CLAIM,
+        preserved=("origin-data", "unproven-data"),
+        changed=("new",),
+        operation=Operation("op", "new"),
+        branch_origin_provenance=BranchOriginProvenance(
+            anchor, Anchor("branch", "D"), ("origin-data",)
+        ),
+    )
+
+    decision = StructuralAdmissionGate.assess(candidate)
+
+    assert decision.status is StructuralDecisionStatus.BLOCK
+    assert decision.transition is None
+    assert decision.audit is not None
+    assert decision.audit.candidate is candidate
+    assert "exactly match" in decision.audit.reason
 
 
 @pytest.mark.parametrize(

@@ -236,8 +236,7 @@ class StructuralAdmissionGate:
 
         decision = StructuralAdmissionGate.assess(candidate)
         if decision.transition is None:
-            assert decision.audit is not None
-            raise ValueError(decision.audit.reason)
+            raise StructuralAdmissionError(decision)
         return decision.transition
 
 
@@ -320,9 +319,10 @@ def _validate_branch_birth(candidate: TransitionCandidate) -> None:
             "branch origin provenance branch anchor must be the target anchor"
         )
     provenance_components = set(candidate.branch_origin_provenance.preserved_components)
-    if not provenance_components.issubset(set(candidate.preserved)):
+    if provenance_components != set(candidate.preserved):
         raise ValueError(
-            "branch origin provenance components must be declared preserved"
+            "branch origin provenance components must exactly match declared "
+            "preserved components"
         )
 
 
@@ -428,3 +428,16 @@ class StructuralAdmissionDecision:
                 )
             if self.audit is None:
                 raise ValueError("non-admitted decisions require an audit record")
+
+
+class StructuralAdmissionError(ValueError):
+    """Exception carrying a non-admitted structural admission decision."""
+
+    def __init__(self, decision: StructuralAdmissionDecision) -> None:
+        if decision.status is StructuralDecisionStatus.ADMITTED:
+            raise ValueError(
+                "structural admission errors require a non-admitted decision"
+            )
+        self.decision = decision
+        assert decision.audit is not None
+        super().__init__(decision.audit.reason)
