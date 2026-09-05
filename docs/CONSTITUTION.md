@@ -24,6 +24,6 @@ These are the initial laws of the language-agnostic kernel:
 - The foundational kernel is language-agnostic.
 
 At Kernel v0.1, an operation's target domain is declared metadata only; it does
-not grant transition authority or define composition. The kernel does not assume
-reversibility, global composition, path independence, a group, or a groupoid.
-Those questions are intentionally deferred until later milestones.
+not grant transition authority. The kernel does not assume reversibility,
+global composition, path independence, a group, or a groupoid. Those questions
+are intentionally deferred until later milestones.
