@@ -397,6 +397,8 @@ def test_branch_origin_provenance_components_must_be_declared_preserved():
         (Evidence, ("claim-1", " "), "evidence"),
         (Operation, (" ", "change"), "operation"),
         (Operation, ("op", " "), "operation"),
+        (Operation, ("op", "change", " "), "source domain"),
+        (Operation, ("op", "change", None, " "), "target domain"),
         (Residual, (" ",), "residual"),
         (Trace, ((" ",),), "trace"),
     ],

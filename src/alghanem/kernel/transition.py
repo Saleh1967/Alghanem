@@ -59,8 +59,7 @@ class TransitionCandidate:
     branch_origin_provenance: BranchOriginProvenance | None = None
 
     def __post_init__(self) -> None:
-        _validate_components("preserved", self.preserved)
-        _validate_components("changed", self.changed)
+        _validate_candidate_components(self)
 
     def validate_success(self) -> None:
         """Validate the structural laws required for licensing success."""
@@ -70,7 +69,11 @@ class TransitionCandidate:
 
 @dataclass(frozen=True, slots=True)
 class LicensedTransition(TransitionCandidate):
-    """A successful transition issued only by the licensing boundary."""
+    """A successful transition issued only by the licensing boundary.
+
+    Use ``LicensingGate.license`` on a candidate to create this type. Dataclass
+    replacement paths that rerun ``__init__`` are not licensing paths.
+    """
 
     license_token: InitVar[object | None] = None
 
@@ -117,7 +120,13 @@ def _validate_components(name: str, components: tuple[str, ...]) -> None:
         raise ValueError(f"{name} components must be unique")
 
 
+def _validate_candidate_components(candidate: TransitionCandidate) -> None:
+    _validate_components("preserved", candidate.preserved)
+    _validate_components("changed", candidate.changed)
+
+
 def _validate_successful_transition_fields(candidate: TransitionCandidate) -> None:
+    _validate_candidate_components(candidate)
     if candidate.result is None:
         raise ValueError("successful transitions require a result")
     if (
