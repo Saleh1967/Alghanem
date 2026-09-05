@@ -396,6 +396,15 @@ class InvariantProvenanceMismatchError(ValueError):
     """
 
 
+class InvariantAssessmentSpecificationError(ValueError):
+    """Raised when specs cannot form a complete, unambiguous assessment request.
+
+    Missing, extra, or duplicate components describe an invalid request, not an
+    observed invariant failure. The error is deliberately separate from
+    ``InvariantVerificationError``, which always carries an epistemic decision.
+    """
+
+
 # Errors that mean "this invariant could not be observed/checked", not
 # "this invariant was checked and disproved". ``InvariantVerificationGate.
 # assess_all_preserved`` maps exactly these to ``DEFER``; every other
@@ -432,8 +441,8 @@ class InvariantVerificationDecision:
     (the same requirements ``InvariantVerificationBundle`` enforces), so
     ``BundleAuthority`` and ``DecisionIntegrity`` no longer diverge.
 
-    ``status`` distinguishes three genuinely different situations, not just
-    two: ``BLOCK`` means at least one declared component was checked and
+    ``status`` distinguishes three genuinely different epistemic situations:
+    ``BLOCK`` means at least one declared component was checked and
     found *not* preserved (``I(before) != I(after)``) -- a disproved claim.
     ``DEFER`` means no component was disproved, but at least one could not
     be checked at all (an unregistered or unauthorized extractor, a failing
@@ -449,6 +458,9 @@ class InvariantVerificationDecision:
     errors) are not caught into either status; they propagate as ordinary
     exceptions, since a bug in the checking code itself is neither a
     verified fact about the invariant nor an epistemic non-answer about it.
+    Likewise, malformed assessment specifications are rejected before
+    assessment with ``InvariantAssessmentSpecificationError`` rather than
+    being represented by any status.
     """
 
     status: InvariantVerificationDecisionStatus
@@ -895,7 +907,13 @@ class InvariantVerificationGate:
     ) -> InvariantVerificationDecision:
         """Assess complete invariant coverage without discarding failed history.
 
-        Every spec is evaluated independently -- evaluation never stops at
+        The specification must first contain exactly one spec for each declared
+        preserved component. Missing, extra, or duplicate components raise
+        ``InvariantAssessmentSpecificationError``: a malformed request is
+        neither a falsified nor an untestable invariant claim.
+
+        Once the request is well-formed, every spec is evaluated independently
+        -- evaluation never stops at
         the first untestable spec -- so a component checked later in
         ``specs`` and found disproved is never hidden behind an earlier
         component's ``DEFER``. Each spec resolves to exactly one of three
@@ -919,25 +937,14 @@ class InvariantVerificationGate:
         invariant.
         """
 
-        if {spec.component for spec in specs} != set(transition.preserved):
-            return InvariantVerificationDecision(
-                status=InvariantVerificationDecisionStatus.BLOCK,
-                transition=transition,
-                failed_components=tuple(transition.preserved),
-                trace=transition.trace,
-                residuals=transition.residuals,
-                reason="invariant specs must exactly cover preserved components",
-                _decision_token=_DECISION_TOKEN,
+        components = tuple(spec.component for spec in specs)
+        if len(set(components)) != len(components):
+            raise InvariantAssessmentSpecificationError(
+                "invariant specs cannot duplicate preserved components"
             )
-        if len({spec.component for spec in specs}) != len(specs):
-            return InvariantVerificationDecision(
-                status=InvariantVerificationDecisionStatus.BLOCK,
-                transition=transition,
-                failed_components=tuple(transition.preserved),
-                trace=transition.trace,
-                residuals=transition.residuals,
-                reason="invariant specs cannot duplicate preserved components",
-                _decision_token=_DECISION_TOKEN,
+        if set(components) != set(transition.preserved):
+            raise InvariantAssessmentSpecificationError(
+                "invariant specs must exactly cover preserved components"
             )
         verifications: list[InvariantVerification] = []
         blocked: list[str] = []

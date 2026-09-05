@@ -21,6 +21,7 @@ from alghanem.kernel import (
     ClaimEvidenceBinding,
     DecisionReasonCode,
     Evidence,
+    InvariantAssessmentSpecificationError,
     InvariantComparisonError,
     InvariantExtractionError,
     InvariantExtractorRegistry,
@@ -1572,6 +1573,91 @@ def test_assess_all_preserved_verified_status() -> None:
     assert decision.status is InvariantVerificationDecisionStatus.VERIFIED
     assert not decision.failed_components
     assert not decision.deferred_components
+
+
+def test_assess_all_preserved_rejects_incomplete_coverage_without_decision() -> None:
+    transition = make_transition(preserved=("identity", "other"))
+    registry = sealed_registry(
+        ("constant-extractor", lambda state: "same", "identity", "inv-1")
+    )
+    spec = InvariantSpec(
+        invariant_id="inv-1", component="identity", extractor_id="constant-extractor"
+    )
+
+    with pytest.raises(
+        InvariantAssessmentSpecificationError, match="exactly cover"
+    ):
+        InvariantVerificationGate.assess_all_preserved(transition, (spec,), registry)
+
+
+@pytest.mark.parametrize("specs_order", ("original", "reversed"))
+def test_assess_all_preserved_rejects_duplicate_components_in_any_order(
+    specs_order: str,
+) -> None:
+    transition = make_transition(preserved=("identity", "other"))
+    registry = sealed_registry(
+        ("identity-extractor", lambda state: "same", "identity", "inv-1"),
+        ("other-extractor", lambda state: "same", "other", "inv-2"),
+    )
+    identity_spec = InvariantSpec(
+        invariant_id="inv-1", component="identity", extractor_id="identity-extractor"
+    )
+    other_spec = InvariantSpec(
+        invariant_id="inv-2", component="other", extractor_id="other-extractor"
+    )
+    specs = (
+        (identity_spec, other_spec, identity_spec)
+        if specs_order == "original"
+        else (identity_spec, other_spec, identity_spec)[::-1]
+    )
+
+    with pytest.raises(
+        InvariantAssessmentSpecificationError, match="duplicate"
+    ):
+        InvariantVerificationGate.assess_all_preserved(transition, specs, registry)
+
+
+def test_require_all_preserved_propagates_assessment_specification_error() -> None:
+    transition = make_transition(preserved=("identity", "other"))
+    registry = sealed_registry(
+        ("constant-extractor", lambda state: "same", "identity", "inv-1")
+    )
+    spec = InvariantSpec(
+        invariant_id="inv-1", component="identity", extractor_id="constant-extractor"
+    )
+
+    with pytest.raises(
+        InvariantAssessmentSpecificationError, match="exactly cover"
+    ):
+        InvariantVerificationGate.require_all_preserved(transition, (spec,), registry)
+
+
+def test_assess_all_preserved_verifies_all_components() -> None:
+    transition = make_transition(preserved=("identity", "other"))
+    registry = sealed_registry(
+        ("identity-extractor", lambda state: "same", "identity", "inv-1"),
+        ("other-extractor", lambda state: "same", "other", "inv-2"),
+    )
+    specs = (
+        InvariantSpec(
+            invariant_id="inv-1",
+            component="identity",
+            extractor_id="identity-extractor",
+        ),
+        InvariantSpec(
+            invariant_id="inv-2", component="other", extractor_id="other-extractor"
+        ),
+    )
+
+    decision = InvariantVerificationGate.assess_all_preserved(
+        transition, specs, registry
+    )
+
+    assert decision.status is InvariantVerificationDecisionStatus.VERIFIED
+    assert {verification.component for verification in decision.verifications} == {
+        "identity",
+        "other",
+    }
 
 
 def _mixed_block_defer_transition_and_specs() -> tuple[

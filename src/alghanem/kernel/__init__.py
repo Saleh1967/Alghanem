@@ -4,6 +4,7 @@ from .anchor import Anchor, State
 from .binding import ClaimEvidenceBinding
 from .evidence import Claim, Evidence
 from .invariant import (
+    InvariantAssessmentSpecificationError,
     InvariantComparisonError,
     InvariantExtractionError,
     InvariantExtractorRegistry,
@@ -47,6 +48,7 @@ __all__ = [
     "ClaimEvidenceBinding",
     "DecisionReasonCode",
     "Evidence",
+    "InvariantAssessmentSpecificationError",
     "InvariantComparisonError",
     "InvariantExtractionError",
     "InvariantExtractorRegistry",

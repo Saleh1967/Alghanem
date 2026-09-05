@@ -22,6 +22,14 @@ These are the initial laws of the language-agnostic kernel:
 | No partial invariant coverage | DECLARED_DEFERRED | No transition may be promoted as preserved from partial invariant coverage; complete invariant verification is available as a separate gate before evidential sufficiency. |
 | No higher-layer repair | DECLARED_DEFERRED | Higher layers may not repair invalid lower-layer transitions, but layer authority is not defined. |
 
+Invariant assessment request semantics are closed at the gate: `BLOCK` means an
+authorized verifier observed at least one invariant as false; `DEFER` means no
+invariant was false but at least one could not be checked; and `VERIFIED` means
+every declared component was checked and preserved. Missing, extra, or duplicate
+specifications are malformed requests and raise
+`InvariantAssessmentSpecificationError`; they produce no epistemic decision and
+must not be recorded as failed components.
+
 At Kernel v0.1, an operation's target domain is declared structural metadata
 only; it does not grant transition or domain-transition authority. Source and
 target domains may differ; whether they must coincide is a licensing question
