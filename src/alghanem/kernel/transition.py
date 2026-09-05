@@ -21,6 +21,13 @@ class Outcome(Enum):
 
 
 @dataclass(frozen=True, slots=True)
+class BranchOriginProvenance:
+    """Explicit origin provenance for a certified branch birth."""
+
+    origin: Anchor
+
+
+@dataclass(frozen=True, slots=True)
 class LicensedTransition:
     """A successful, licensed transition, validated at construction time."""
 
@@ -35,10 +42,18 @@ class LicensedTransition:
     residuals: tuple[Residual, ...]
     outcome: Outcome
     result: OperationResult
+    branch_origin_provenance: BranchOriginProvenance | None = None
 
     def __post_init__(self) -> None:
         if self.result is None:
             raise ValueError("successful transitions require a result")
+        if (
+            self.operation.source_domain is not None
+            and self.operation.source_domain != self.anchor.domain
+        ):
+            raise ValueError(
+                "operation source domain must match the transition anchor domain"
+            )
         if self.outcome in {Outcome.BLOCK, Outcome.DEFER, Outcome.UNDEFINED}:
             raise ValueError("non-transition outcomes cannot be LicensedTransition")
         if not self.evidence:
@@ -60,8 +75,19 @@ class LicensedTransition:
             )
         if not set(self.preserved).isdisjoint(self.changed):
             raise ValueError("preserved and changed components must be disjoint")
-        if self.outcome is Outcome.CERTIFIED_BRANCH_BIRTH and not self.preserved:
-            raise ValueError("certified branch births require a preserved origin")
+        if self.outcome is Outcome.CERTIFIED_BRANCH_BIRTH:
+            if not self.preserved:
+                raise ValueError(
+                    "certified branch births require preserved information"
+                )
+            if self.branch_origin_provenance is None:
+                raise ValueError(
+                    "certified branch births require explicit origin provenance"
+                )
+            if self.branch_origin_provenance.origin != self.anchor:
+                raise ValueError(
+                    "branch origin provenance must match the transition anchor"
+                )
 
 
 @dataclass(frozen=True, slots=True)

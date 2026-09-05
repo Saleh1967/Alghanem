@@ -6,10 +6,16 @@ from .evidence import Claim, Evidence
 from .operation import Operation, OperationResult
 from .residual import Residual
 from .trace import Trace
-from .transition import LicensedTransition, Outcome, TransitionDecision
+from .transition import (
+    BranchOriginProvenance,
+    LicensedTransition,
+    Outcome,
+    TransitionDecision,
+)
 
 __all__ = [
     "Anchor",
+    "BranchOriginProvenance",
     "Certificate",
     "Claim",
     "Evidence",

@@ -1,4 +1,4 @@
-"""Claims and the evidence that supports them."""
+"""Claims and evidence records bound to them."""
 
 from dataclasses import dataclass
 
@@ -16,7 +16,7 @@ class Claim:
 
 @dataclass(frozen=True, slots=True)
 class Evidence:
-    """A record supporting a claim; it is not itself the claim."""
+    """A record bound to a claim; binding is not proof sufficiency."""
 
     claim: Claim
     basis: str

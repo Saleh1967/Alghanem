@@ -7,7 +7,7 @@ from .evidence import Claim, Evidence
 
 @dataclass(frozen=True, slots=True)
 class Certificate:
-    """A claim together with the evidence supplied to support it."""
+    """A claim together with evidence records bound to it."""
 
     claim: Claim
     evidence: tuple[Evidence, ...]
@@ -16,4 +16,4 @@ class Certificate:
         if not self.evidence:
             raise ValueError("a certificate requires evidence")
         if any(evidence.claim != self.claim for evidence in self.evidence):
-            raise ValueError("certificate evidence must support its claim")
+            raise ValueError("certificate evidence must be bound to its claim")
