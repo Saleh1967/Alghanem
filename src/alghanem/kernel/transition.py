@@ -59,6 +59,12 @@ _KIND_FOR_OUTCOME = {
     Outcome.CERTIFIED_BRANCH_BIRTH: TransitionKind.BRANCH_BIRTH_CLAIM,
 }
 
+# The single source of truth for which outcomes are transition-shaped
+# (successful) versus non-transition decisions. `_KIND_FOR_OUTCOME`'s keys,
+# the success-outcome checks below, and `TransitionDecision`'s success check
+# all derive from this set so they cannot fall out of sync.
+_SUCCESSFUL_OUTCOMES = frozenset(_KIND_FOR_OUTCOME)
+
 
 @dataclass(frozen=True, slots=True)
 class BranchOriginProvenance:
@@ -266,7 +272,7 @@ def _validate_successful_transition_fields(candidate: TransitionCandidate) -> No
         and candidate.operation.target_domain != target_anchor.domain
     ):
         raise ValueError("operation target domain must match the target anchor domain")
-    if candidate.outcome in {Outcome.BLOCK, Outcome.DEFER, Outcome.UNDEFINED}:
+    if candidate.outcome not in _SUCCESSFUL_OUTCOMES:
         raise ValueError(
             "non-transition outcomes cannot be StructurallyAdmissibleTransition"
         )
@@ -402,11 +408,7 @@ class TransitionDecision:
     audit: NonSuccessDecisionAudit | None = None
 
     def __post_init__(self) -> None:
-        successful = {
-            Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
-            Outcome.CERTIFIED_BRANCH_BIRTH,
-        }
-        if self.outcome in successful:
+        if self.outcome in _SUCCESSFUL_OUTCOMES:
             if self.admissible is None:
                 raise ValueError(
                     "successful decisions require a structurally admissible transition"
