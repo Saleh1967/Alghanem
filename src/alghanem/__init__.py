@@ -4,12 +4,10 @@ from .kernel.transition import (
     StructuralAdmissionDecision,
     StructuralDecisionStatus,
     StructurallyAdmissibleTransition,
-    TransitionDecision,
 )
 
 __all__ = [
     "StructuralAdmissionDecision",
     "StructuralDecisionStatus",
     "StructurallyAdmissibleTransition",
-    "TransitionDecision",
 ]

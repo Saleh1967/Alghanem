@@ -11,13 +11,11 @@ from .transition import (
     CertifiedOutcome,
     DecisionReasonCode,
     NonSuccessDecisionAudit,
-    Outcome,
     StructuralAdmissionDecision,
     StructuralAdmissionGate,
     StructuralDecisionStatus,
     StructurallyAdmissibleTransition,
     TransitionCandidate,
-    TransitionDecision,
     TransitionKind,
 )
 
@@ -32,7 +30,6 @@ __all__ = [
     "NonSuccessDecisionAudit",
     "Operation",
     "OperationResult",
-    "Outcome",
     "Residual",
     "State",
     "StructuralAdmissionDecision",
@@ -41,6 +38,5 @@ __all__ = [
     "StructurallyAdmissibleTransition",
     "Trace",
     "TransitionCandidate",
-    "TransitionDecision",
     "TransitionKind",
 ]
