@@ -6,6 +6,8 @@ These are the initial laws of the language-agnostic kernel:
   Domain names alone are insufficient: when an operation declares a source
   domain, that binding must be compatible with the transition anchor's domain.
 - No successful transition without evidence.
+  Successful-transition evidence must be structurally bound to the transition's
+  own claim.
 - Evidence-to-claim binding is structural only; it is not proof sufficiency.
 - No identity-preserving transformation without a declared invariant.
 - No hidden change: preserved and changed components must be distinguishable.
@@ -16,11 +18,12 @@ These are the initial laws of the language-agnostic kernel:
   outcomes are represented by a `TransitionDecision` without a transition.
 - Every successful transition has evidence, a result, and a declared change.
 - A branch birth is distinct from an identity-preserving transformation.
-  Certified branch birth requires preserved origin provenance, not merely a
-  non-empty preserved set.
+  Certified branch birth requires preserved origin provenance tied to declared
+  preserved components, not merely a non-empty preserved set.
 - Higher layers may not retroactively repair an invalid lower-layer transition.
 - The foundational kernel is language-agnostic.
 
-The kernel does not assume reversibility, global composition, path
-independence, a group, or a groupoid. Those questions are intentionally
-deferred until later milestones.
+At Kernel v0.1, an operation's target domain is declared metadata only; it does
+not grant transition authority or define composition. The kernel does not assume
+reversibility, global composition, path independence, a group, or a groupoid.
+Those questions are intentionally deferred until later milestones.

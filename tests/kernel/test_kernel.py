@@ -3,8 +3,8 @@ import pytest
 from alghanem.kernel import (
     Anchor,
     BranchOriginProvenance,
-    Certificate,
     Claim,
+    ClaimEvidenceBinding,
     Evidence,
     LicensedTransition,
     Operation,
@@ -21,12 +21,14 @@ def make_transition(
     outcome: Outcome, preserved: tuple[str, ...] = ("identity",)
 ) -> LicensedTransition:
     anchor = Anchor("a", "D")
+    claim = Claim("supported")
     return LicensedTransition(
         anchor=anchor,
         before_state=State("before"),
         operation=Operation("op", "component"),
         after_state=State("after"),
-        evidence=(Evidence(Claim("supported"), "record"),),
+        claim=claim,
+        evidence=(Evidence(claim, "record"),),
         preserved=preserved,
         changed=("component",),
         trace=Trace(("started",)),
@@ -34,7 +36,7 @@ def make_transition(
         outcome=outcome,
         result=OperationResult("result"),
         branch_origin_provenance=(
-            BranchOriginProvenance(anchor)
+            BranchOriginProvenance(anchor, preserved)
             if outcome is Outcome.CERTIFIED_BRANCH_BIRTH
             else None
         ),
@@ -47,15 +49,15 @@ def test_core_objects_are_immutable():
         anchor.domain = "other"  # type: ignore[misc]
 
 
-def test_state_and_certificate_are_immutable_core_objects():
+def test_state_and_claim_evidence_binding_are_immutable_core_objects():
     state = State("opaque")
-    certificate = Certificate(
+    binding = ClaimEvidenceBinding(
         Claim("supported"), (Evidence(Claim("supported"), "record"),)
     )
     assert state.value == "opaque"
-    assert certificate.claim.statement == "supported"
+    assert binding.claim.statement == "supported"
     with pytest.raises(AttributeError):
-        certificate.claim = Claim("changed")  # type: ignore[misc]
+        binding.claim = Claim("changed")  # type: ignore[misc]
 
 
 def test_trace_and_residual_are_preserved():
@@ -76,6 +78,7 @@ def test_identity_preserving_requires_declared_change():
             before_state=State("before"),
             operation=Operation("op", "component"),
             after_state=State("after"),
+            claim=Claim("supported"),
             evidence=(Evidence(Claim("supported"), "record"),),
             preserved=("identity",),
             changed=(),
@@ -93,6 +96,7 @@ def test_preserved_and_changed_must_be_disjoint():
             before_state=State("before"),
             operation=Operation("op", "component"),
             after_state=State("after"),
+            claim=Claim("supported"),
             evidence=(Evidence(Claim("supported"), "record"),),
             preserved=("component",),
             changed=("component",),
@@ -131,6 +135,7 @@ def test_success_without_evidence_is_rejected():
             before_state=State("before"),
             operation=Operation("op", "component"),
             after_state=State("after"),
+            claim=Claim("supported"),
             evidence=(),
             preserved=("identity",),
             changed=("component",),
@@ -148,6 +153,7 @@ def test_success_without_result_is_rejected():
             before_state=State("before"),
             operation=Operation("op", "component"),
             after_state=State("after"),
+            claim=Claim("supported"),
             evidence=(Evidence(Claim("supported"), "record"),),
             preserved=("identity",),
             changed=("component",),
@@ -165,6 +171,7 @@ def test_branch_birth_requires_evidence_and_result():
             before_state=State("before"),
             operation=Operation("op", "component"),
             after_state=State("after"),
+            claim=Claim("supported"),
             evidence=(),
             preserved=(),
             changed=("new",),
@@ -179,6 +186,7 @@ def test_branch_birth_requires_evidence_and_result():
             before_state=State("before"),
             operation=Operation("op", "component"),
             after_state=State("after"),
+            claim=Claim("supported"),
             evidence=(Evidence(Claim("supported"), "record"),),
             preserved=(),
             changed=("new",),
@@ -189,14 +197,54 @@ def test_branch_birth_requires_evidence_and_result():
         )
 
 
-def test_certificate_without_evidence_is_rejected():
+def test_claim_evidence_binding_without_evidence_is_rejected():
     with pytest.raises(ValueError, match="evidence"):
-        Certificate(Claim("supported"), ())
+        ClaimEvidenceBinding(Claim("supported"), ())
 
 
-def test_certificate_rejects_evidence_for_another_claim():
-    with pytest.raises(ValueError, match="bound to its claim"):
-        Certificate(Claim("supported"), (Evidence(Claim("another"), "record"),))
+def test_claim_evidence_binding_rejects_evidence_for_another_claim():
+    with pytest.raises(ValueError, match="binding claim"):
+        ClaimEvidenceBinding(
+            Claim("supported"), (Evidence(Claim("another"), "record"),)
+        )
+
+
+def test_transition_evidence_must_be_bound_to_transition_claim():
+    with pytest.raises(ValueError, match="transition evidence"):
+        LicensedTransition(
+            anchor=Anchor("a", "D"),
+            before_state=State("before"),
+            operation=Operation("op", "component"),
+            after_state=State("after"),
+            claim=Claim("transition claim"),
+            evidence=(Evidence(Claim("unrelated claim"), "record"),),
+            preserved=("identity",),
+            changed=("component",),
+            trace=Trace(("started",)),
+            residuals=(),
+            outcome=Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
+            result=OperationResult("result"),
+        )
+
+
+def test_transition_evidence_bound_to_transition_claim_is_accepted():
+    claim = Claim("transition claim")
+    transition = LicensedTransition(
+        anchor=Anchor("a", "D"),
+        before_state=State("before"),
+        operation=Operation("op", "component"),
+        after_state=State("after"),
+        claim=claim,
+        evidence=(Evidence(claim, "record"),),
+        preserved=("identity",),
+        changed=("component",),
+        trace=Trace(("started",)),
+        residuals=(),
+        outcome=Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
+        result=OperationResult("result"),
+    )
+
+    assert transition.evidence[0].claim == transition.claim
 
 
 def test_transition_change_must_include_operation_declared_change():
@@ -206,6 +254,7 @@ def test_transition_change_must_include_operation_declared_change():
             before_state=State("before"),
             operation=Operation("op", "declared"),
             after_state=State("after"),
+            claim=Claim("supported"),
             evidence=(Evidence(Claim("supported"), "record"),),
             preserved=("identity",),
             changed=("recorded",),
@@ -228,6 +277,7 @@ def test_operation_source_domain_must_match_anchor_domain():
                 target_domain="DOMAIN_C",
             ),
             after_state=State("after"),
+            claim=Claim("supported"),
             evidence=(Evidence(Claim("supported"), "record"),),
             preserved=("identity",),
             changed=("component",),
@@ -249,6 +299,7 @@ def test_operation_source_domain_matching_anchor_domain_is_accepted():
             target_domain="DOMAIN_C",
         ),
         after_state=State("after"),
+        claim=Claim("supported"),
         evidence=(Evidence(Claim("supported"), "record"),),
         preserved=("identity",),
         changed=("component",),
@@ -274,6 +325,7 @@ def test_branch_birth_requires_preserved_information():
             before_state=State("before"),
             operation=Operation("op", "new"),
             after_state=State("after"),
+            claim=Claim("supported"),
             evidence=(Evidence(Claim("supported"), "record"),),
             preserved=(),
             changed=("new",),
@@ -281,7 +333,7 @@ def test_branch_birth_requires_preserved_information():
             residuals=(),
             outcome=Outcome.CERTIFIED_BRANCH_BIRTH,
             result=OperationResult("result"),
-            branch_origin_provenance=BranchOriginProvenance(anchor),
+            branch_origin_provenance=BranchOriginProvenance(anchor, ("origin-data",)),
         )
 
 
@@ -292,6 +344,7 @@ def test_branch_birth_requires_explicit_origin_provenance():
             before_state=State("before"),
             operation=Operation("op", "new"),
             after_state=State("after"),
+            claim=Claim("supported"),
             evidence=(Evidence(Claim("supported"), "record"),),
             preserved=("origin-data",),
             changed=("new",),
@@ -302,6 +355,11 @@ def test_branch_birth_requires_explicit_origin_provenance():
         )
 
 
+def test_branch_origin_provenance_requires_preserved_components():
+    with pytest.raises(ValueError, match="preserved components"):
+        BranchOriginProvenance(Anchor("a", "D"), ())
+
+
 def test_branch_origin_provenance_must_match_transition_anchor():
     with pytest.raises(ValueError, match="transition anchor"):
         LicensedTransition(
@@ -309,6 +367,7 @@ def test_branch_origin_provenance_must_match_transition_anchor():
             before_state=State("before"),
             operation=Operation("op", "new"),
             after_state=State("after"),
+            claim=Claim("supported"),
             evidence=(Evidence(Claim("supported"), "record"),),
             preserved=("origin-data",),
             changed=("new",),
@@ -316,7 +375,31 @@ def test_branch_origin_provenance_must_match_transition_anchor():
             residuals=(),
             outcome=Outcome.CERTIFIED_BRANCH_BIRTH,
             result=OperationResult("result"),
-            branch_origin_provenance=BranchOriginProvenance(Anchor("other", "D")),
+            branch_origin_provenance=BranchOriginProvenance(
+                Anchor("other", "D"), ("origin-data",)
+            ),
+        )
+
+
+def test_branch_origin_provenance_components_must_be_declared_preserved():
+    anchor = Anchor("a", "D")
+    with pytest.raises(ValueError, match="declared preserved"):
+        LicensedTransition(
+            anchor=anchor,
+            before_state=State("before"),
+            operation=Operation("op", "new"),
+            after_state=State("after"),
+            claim=Claim("supported"),
+            evidence=(Evidence(Claim("supported"), "record"),),
+            preserved=("origin-data",),
+            changed=("new",),
+            trace=Trace(("started",)),
+            residuals=(),
+            outcome=Outcome.CERTIFIED_BRANCH_BIRTH,
+            result=OperationResult("result"),
+            branch_origin_provenance=BranchOriginProvenance(
+                anchor, ("invented-origin-data",)
+            ),
         )
 
 

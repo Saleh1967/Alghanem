@@ -5,7 +5,10 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True, slots=True)
 class Operation:
-    """A declared operation; execution and reversibility are not assumed."""
+    """A declared operation; execution and reversibility are not assumed.
+
+    ``target_domain`` is declared metadata only at Kernel v0.1.
+    """
 
     name: str
     declared_change: str

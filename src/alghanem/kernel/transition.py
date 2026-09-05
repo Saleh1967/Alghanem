@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from enum import Enum, auto
 
 from .anchor import Anchor, State
-from .evidence import Evidence
+from .evidence import Claim, Evidence
 from .operation import Operation, OperationResult
 from .residual import Residual
 from .trace import Trace
@@ -22,9 +22,14 @@ class Outcome(Enum):
 
 @dataclass(frozen=True, slots=True)
 class BranchOriginProvenance:
-    """Explicit origin provenance for a certified branch birth."""
+    """Structural origin provenance for preserved branch components."""
 
     origin: Anchor
+    preserved_components: tuple[str, ...]
+
+    def __post_init__(self) -> None:
+        if not self.preserved_components:
+            raise ValueError("branch origin provenance requires preserved components")
 
 
 @dataclass(frozen=True, slots=True)
@@ -35,6 +40,7 @@ class LicensedTransition:
     before_state: State
     operation: Operation
     after_state: State
+    claim: Claim
     evidence: tuple[Evidence, ...]
     preserved: tuple[str, ...]
     changed: tuple[str, ...]
@@ -58,6 +64,8 @@ class LicensedTransition:
             raise ValueError("non-transition outcomes cannot be LicensedTransition")
         if not self.evidence:
             raise ValueError("successful transitions require evidence")
+        if any(evidence.claim != self.claim for evidence in self.evidence):
+            raise ValueError("transition evidence must be bound to its claim")
         if self.outcome is Outcome.IDENTITY_PRESERVING_TRANSFORMATION:
             if not self.preserved:
                 raise ValueError(
@@ -87,6 +95,13 @@ class LicensedTransition:
             if self.branch_origin_provenance.origin != self.anchor:
                 raise ValueError(
                     "branch origin provenance must match the transition anchor"
+                )
+            provenance_components = set(
+                self.branch_origin_provenance.preserved_components
+            )
+            if not provenance_components.issubset(set(self.preserved)):
+                raise ValueError(
+                    "branch origin provenance components must be declared preserved"
                 )
 
 

@@ -1,7 +1,7 @@
 """Foundational, language-agnostic kernel types."""
 
 from .anchor import Anchor, State
-from .certificate import Certificate
+from .certificate import Certificate, ClaimEvidenceBinding
 from .evidence import Claim, Evidence
 from .operation import Operation, OperationResult
 from .residual import Residual
@@ -18,6 +18,7 @@ __all__ = [
     "BranchOriginProvenance",
     "Certificate",
     "Claim",
+    "ClaimEvidenceBinding",
     "Evidence",
     "LicensedTransition",
     "Operation",
