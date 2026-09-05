@@ -1,4 +1,5 @@
-"""Transition candidates, licensed transitions, and explicit decisions."""
+"""Transition candidates, structurally admissible transitions, and
+explicit decisions."""
 
 from dataclasses import InitVar, dataclass
 from enum import Enum, auto
@@ -9,7 +10,7 @@ from .operation import Operation, OperationResult
 from .residual import Residual
 from .trace import Trace
 
-_LICENSE_TOKEN = object()
+_ADMISSION_TOKEN = object()
 
 
 class Outcome(Enum):
@@ -45,11 +46,11 @@ class BranchOriginProvenance:
 
 @dataclass(frozen=True, slots=True)
 class TransitionCandidate:
-    """A transition-shaped candidate that has not crossed the licensing boundary.
+    """A transition-shaped candidate that has not crossed the admission boundary.
 
     ``anchor`` is the source anchor; ``target_anchor`` is the explicitly
     declared anchor the transition targets. A candidate may omit
-    ``target_anchor`` before licensing, but a successful transition must
+    ``target_anchor`` before admission, but a successful transition must
     declare it explicitly; ``resolved_target_anchor`` never substitutes for
     the explicitness requirement.
     """
@@ -82,41 +83,60 @@ class TransitionCandidate:
         _validate_candidate_components(self)
 
     def validate_success(self) -> None:
-        """Validate the structural laws required for licensing success."""
+        """Validate the structural laws required for structural admission."""
 
         _validate_successful_transition_fields(self)
 
 
 @dataclass(frozen=True, slots=True)
-class LicensedTransition(TransitionCandidate):
-    """A successful transition issued only by the licensing boundary.
+class StructurallyAdmissibleTransition(TransitionCandidate):
+    """A transition that is structurally complete, issued only by the gate.
 
-    Use ``LicensingGate.license`` on a candidate to create this type. Dataclass
-    replacement paths that rerun ``__init__`` are not licensing paths.
+    Structural admission is not evidential sufficiency and not authority to
+    cross domains: it certifies that the transition is well-formed under the
+    Kernel v0.1 structural laws (explicit anchors, claim-bound evidence,
+    preserved/changed separation, branch provenance, and so on). Whether the
+    bound evidence is *sufficient* to support the claim, whether a rank or
+    layer has *authority* to make the transition, and whether crossing
+    domains is *licensed* are all deferred questions Kernel v0.1 does not
+    answer. ``StructurallyAdmissibleTransition`` therefore must not be read
+    as ``LicensedTransition``: representability is not licensability.
+
+    Use ``StructuralAdmissionGate.admit`` on a candidate to create this type.
+    Dataclass replacement paths that rerun ``__init__`` are not admission
+    paths.
     """
 
-    _license_token: InitVar[object | None] = None
+    _admission_token: InitVar[object | None] = None
 
-    def __post_init__(self, _license_token: object | None) -> None:
-        if _license_token is not _LICENSE_TOKEN:
-            raise ValueError("licensed transitions must be issued by LicensingGate")
+    def __post_init__(self, _admission_token: object | None) -> None:
+        if _admission_token is not _ADMISSION_TOKEN:
+            raise ValueError(
+                "structurally admissible transitions must be issued by "
+                "StructuralAdmissionGate"
+            )
         _validate_candidate_components(self)
         self.validate_success()
 
 
-class LicensingGate:
-    """Minimal structural licensing boundary for successful transitions.
+class StructuralAdmissionGate:
+    """Minimal structural admission boundary for successful transitions.
 
-    Already licensed transitions are rejected rather than re-licensed.
+    This gate only certifies structural completeness. It does not certify
+    evidential sufficiency, domain-transition authority, or layer authority;
+    those remain deferred beyond Kernel v0.1. Already admitted transitions
+    are rejected rather than re-admitted.
     """
 
     @staticmethod
-    def license(candidate: TransitionCandidate) -> LicensedTransition:
-        """Issue a licensed transition after structural validation."""
+    def admit(candidate: TransitionCandidate) -> StructurallyAdmissibleTransition:
+        """Issue a structurally admissible transition after validation."""
 
-        if isinstance(candidate, LicensedTransition):
-            raise ValueError("licensed transitions cannot be re-licensed")
-        return LicensedTransition(
+        if isinstance(candidate, StructurallyAdmissibleTransition):
+            raise ValueError(
+                "structurally admissible transitions cannot be re-admitted"
+            )
+        return StructurallyAdmissibleTransition(
             anchor=candidate.anchor,
             before_state=candidate.before_state,
             operation=candidate.operation,
@@ -131,7 +151,7 @@ class LicensingGate:
             result=candidate.result,
             branch_origin_provenance=candidate.branch_origin_provenance,
             target_anchor=candidate.target_anchor,
-            _license_token=_LICENSE_TOKEN,
+            _admission_token=_ADMISSION_TOKEN,
         )
 
 
@@ -166,7 +186,9 @@ def _validate_successful_transition_fields(candidate: TransitionCandidate) -> No
     ):
         raise ValueError("operation target domain must match the target anchor domain")
     if candidate.outcome in {Outcome.BLOCK, Outcome.DEFER, Outcome.UNDEFINED}:
-        raise ValueError("non-transition outcomes cannot be LicensedTransition")
+        raise ValueError(
+            "non-transition outcomes cannot be StructurallyAdmissibleTransition"
+        )
     if not candidate.evidence:
         raise ValueError("successful transitions require evidence")
     if any(
@@ -219,9 +241,28 @@ def _validate_branch_birth(candidate: TransitionCandidate) -> None:
         )
 
 
+class DecisionReasonCode(Enum):
+    """A machine-auditable classification of a non-success decision.
+
+    ``reason`` remains the human-readable explanation; ``reason_code`` is an
+    optional, coarse-grained classification meant to make BLOCK and DEFER
+    decisions queryable at scale. It does not replace ``reason`` and does not
+    itself carry additional structural authority.
+    """
+
+    MISSING_EVIDENCE = auto()
+    DOMAIN_MISMATCH = auto()
+    TARGET_ANCHOR_MISMATCH = auto()
+    INVARIANT_VIOLATION = auto()
+    PROVENANCE_VIOLATION = auto()
+    RESIDUAL_UNRESOLVED = auto()
+    AUTHORITY_NOT_AVAILABLE = auto()
+    PROOF_INSUFFICIENT = auto()
+
+
 @dataclass(frozen=True, slots=True)
 class NonSuccessDecisionAudit:
-    """Reviewable record of a decision that did not license a transition.
+    """Reviewable record of a decision that did not admit a transition.
 
     A non-success decision is not an erased history: it preserves the trace,
     the residuals, and a structural reason so the decision can be reviewed.
@@ -235,15 +276,17 @@ class NonSuccessDecisionAudit:
     residuals: tuple[Residual, ...]
     reason: str
     candidate: TransitionCandidate | None = None
+    reason_code: DecisionReasonCode | None = None
 
     def __post_init__(self) -> None:
         if not self.reason.strip():
             raise ValueError("non-success decisions require a structural reason")
         if self.candidate is not None and isinstance(
-            self.candidate, LicensedTransition
+            self.candidate, StructurallyAdmissibleTransition
         ):
             raise ValueError(
-                "non-success decision audits cannot reference a licensed transition"
+                "non-success decision audits cannot reference a structurally "
+                "admissible transition"
             )
         if self.candidate is not None and self.trace != self.candidate.trace:
             raise ValueError(
@@ -260,7 +303,7 @@ class TransitionDecision:
     """The assessment of an attempted transition, successful or not."""
 
     outcome: Outcome
-    transition: LicensedTransition | None = None
+    admissible: StructurallyAdmissibleTransition | None = None
     audit: NonSuccessDecisionAudit | None = None
 
     def __post_init__(self) -> None:
@@ -269,16 +312,18 @@ class TransitionDecision:
             Outcome.CERTIFIED_BRANCH_BIRTH,
         }
         if self.outcome in successful:
-            if self.transition is None:
-                raise ValueError("successful decisions require a licensed transition")
+            if self.admissible is None:
+                raise ValueError(
+                    "successful decisions require a structurally admissible transition"
+                )
             if self.audit is not None:
                 raise ValueError(
                     "successful decisions cannot carry a non-success audit"
                 )
         else:
-            if self.transition is not None:
+            if self.admissible is not None:
                 raise ValueError("non-transition decisions cannot contain a transition")
             if self.audit is None:
                 raise ValueError("non-transition decisions require an audit record")
-        if self.transition is not None and self.outcome is not self.transition.outcome:
+        if self.admissible is not None and self.outcome is not self.admissible.outcome:
             raise ValueError("decision and transition outcomes must match")
