@@ -406,19 +406,11 @@ class InvariantProvenanceMismatchError(ValueError):
 
 
 class InvariantAssessmentSpecificationError(ValueError):
-    """Raised when the ``specs`` handed to an assessment are themselves malformed.
+    """Raised when specs cannot form a complete, unambiguous assessment request.
 
-    ``BLOCK`` means at least one *verified* invariant was found not
-    preserved -- a disproved claim about the transition. It never means
-    "the caller's request was structurally wrong" (specs that do not
-    exactly cover ``transition.preserved``, or that name the same
-    component more than once). A malformed request was never checked
-    against any extractor at all, so treating it as ``BLOCK`` -- and
-    recording every declared component as "failed" -- would equate
-    ``MalformedVerificationRequest`` with ``DisprovedInvariant``. This
-    error keeps that structural failure out of the epistemic judgment
-    entirely: it is raised before any component is assessed, and no
-    ``InvariantVerificationDecision`` is produced for it.
+    Missing, extra, or duplicate components describe an invalid request, not an
+    observed invariant failure. The error is deliberately separate from
+    ``InvariantVerificationError``, which always carries an epistemic decision.
     """
 
 
@@ -458,8 +450,8 @@ class InvariantVerificationDecision:
     (the same requirements ``InvariantVerificationBundle`` enforces), so
     ``BundleAuthority`` and ``DecisionIntegrity`` no longer diverge.
 
-    ``status`` distinguishes three genuinely different situations, not just
-    two: ``BLOCK`` means at least one declared component was checked and
+    ``status`` distinguishes three genuinely different epistemic situations:
+    ``BLOCK`` means at least one declared component was checked and
     found *not* preserved (``I(before) != I(after)``) -- a disproved claim.
     ``DEFER`` means no component was disproved, but at least one could not
     be checked at all (an unregistered or unauthorized extractor, a failing
@@ -475,6 +467,9 @@ class InvariantVerificationDecision:
     errors) are not caught into either status; they propagate as ordinary
     exceptions, since a bug in the checking code itself is neither a
     verified fact about the invariant nor an epistemic non-answer about it.
+    Likewise, malformed assessment specifications are rejected before
+    assessment with ``InvariantAssessmentSpecificationError`` rather than
+    being represented by any status.
     """
 
     status: InvariantVerificationDecisionStatus
@@ -921,7 +916,13 @@ class InvariantVerificationGate:
     ) -> InvariantVerificationDecision:
         """Assess complete invariant coverage without discarding failed history.
 
-        Every spec is evaluated independently -- evaluation never stops at
+        The specification must first contain exactly one spec for each declared
+        preserved component. Missing, extra, or duplicate components raise
+        ``InvariantAssessmentSpecificationError``: a malformed request is
+        neither a falsified nor an untestable invariant claim.
+
+        Once the request is well-formed, every spec is evaluated independently
+        -- evaluation never stops at
         the first untestable spec -- so a component checked later in
         ``specs`` and found disproved is never hidden behind an earlier
         component's ``DEFER``. Each spec resolves to exactly one of three
@@ -954,13 +955,14 @@ class InvariantVerificationGate:
         ``DisprovedInvariant``.
         """
 
-        if {spec.component for spec in specs} != set(transition.preserved):
-            raise InvariantAssessmentSpecificationError(
-                "invariant specs must exactly cover preserved components"
-            )
-        if len({spec.component for spec in specs}) != len(specs):
+        components = tuple(spec.component for spec in specs)
+        if len(set(components)) != len(components):
             raise InvariantAssessmentSpecificationError(
                 "invariant specs cannot duplicate preserved components"
+            )
+        if set(components) != set(transition.preserved):
+            raise InvariantAssessmentSpecificationError(
+                "invariant specs must exactly cover preserved components"
             )
         verifications: list[InvariantVerification] = []
         blocked: list[str] = []

@@ -1575,85 +1575,89 @@ def test_assess_all_preserved_verified_status() -> None:
     assert not decision.deferred_components
 
 
-def test_assess_all_preserved_verified_for_multiple_components() -> None:
+def test_assess_all_preserved_rejects_incomplete_coverage_without_decision() -> None:
     transition = make_transition(preserved=("identity", "other"))
     registry = sealed_registry(
-        ("same-extractor", lambda state: "same", "identity", "inv-1"),
-        ("same-extractor-2", lambda state: "same", "other", "inv-2"),
-    )
-    specs = (
-        InvariantSpec(
-            invariant_id="inv-1", component="identity", extractor_id="same-extractor"
-        ),
-        InvariantSpec(
-            invariant_id="inv-2", component="other", extractor_id="same-extractor-2"
-        ),
-    )
-    decision = InvariantVerificationGate.assess_all_preserved(
-        transition, specs, registry
-    )
-    assert decision.status is InvariantVerificationDecisionStatus.VERIFIED
-    assert not decision.failed_components
-    assert not decision.deferred_components
-
-
-def test_assess_all_preserved_rejects_incomplete_coverage_as_specification_error() -> (
-    None
-):
-    # Malformed request: "other" is declared preserved but has no spec at
-    # all. No extractor is ever consulted, so this must not be reported as
-    # a disproved ("BLOCK") invariant.
-    transition = make_transition(preserved=("identity", "other"))
-    registry = sealed_registry(
-        ("value-extractor", lambda state: state.value, "identity", "inv-1")
+        ("constant-extractor", lambda state: "same", "identity", "inv-1")
     )
     spec = InvariantSpec(
-        invariant_id="inv-1", component="identity", extractor_id="value-extractor"
+        invariant_id="inv-1", component="identity", extractor_id="constant-extractor"
     )
+
     with pytest.raises(
-        InvariantAssessmentSpecificationError,
-        match="exactly cover preserved components",
+        InvariantAssessmentSpecificationError, match="exactly cover"
     ):
         InvariantVerificationGate.assess_all_preserved(transition, (spec,), registry)
 
 
-def test_assess_all_preserved_rejects_duplicate_components_as_specification_error() -> (
-    None
-):
-    # Malformed request: "identity" is named by two specs. No extractor is
-    # ever consulted for the disallowed duplicate, so this must not be
-    # reported as a disproved ("BLOCK") invariant.
-    transition = make_transition(preserved=("identity",))
+@pytest.mark.parametrize("specs_order", ("original", "reversed"))
+def test_assess_all_preserved_rejects_duplicate_components_in_any_order(
+    specs_order: str,
+) -> None:
+    transition = make_transition(preserved=("identity", "other"))
     registry = sealed_registry(
-        ("value-extractor", lambda state: state.value, "identity", "inv-1")
+        ("identity-extractor", lambda state: "same", "identity", "inv-1"),
+        ("other-extractor", lambda state: "same", "other", "inv-2"),
+    )
+    identity_spec = InvariantSpec(
+        invariant_id="inv-1", component="identity", extractor_id="identity-extractor"
+    )
+    other_spec = InvariantSpec(
+        invariant_id="inv-2", component="other", extractor_id="other-extractor"
     )
     specs = (
-        InvariantSpec(
-            invariant_id="inv-1", component="identity", extractor_id="value-extractor"
-        ),
-        InvariantSpec(
-            invariant_id="inv-2", component="identity", extractor_id="value-extractor"
-        ),
+        (identity_spec, other_spec, identity_spec)
+        if specs_order == "original"
+        else (identity_spec, other_spec, identity_spec)[::-1]
     )
+
     with pytest.raises(
-        InvariantAssessmentSpecificationError,
-        match="cannot duplicate preserved components",
+        InvariantAssessmentSpecificationError, match="duplicate"
     ):
         InvariantVerificationGate.assess_all_preserved(transition, specs, registry)
 
 
-def test_require_all_preserved_propagates_specification_error() -> None:
-    # A malformed request must not be silently absorbed into a BLOCK
-    # decision by require_all_preserved either.
+def test_require_all_preserved_propagates_assessment_specification_error() -> None:
     transition = make_transition(preserved=("identity", "other"))
     registry = sealed_registry(
-        ("value-extractor", lambda state: state.value, "identity", "inv-1")
+        ("constant-extractor", lambda state: "same", "identity", "inv-1")
     )
     spec = InvariantSpec(
-        invariant_id="inv-1", component="identity", extractor_id="value-extractor"
+        invariant_id="inv-1", component="identity", extractor_id="constant-extractor"
     )
-    with pytest.raises(InvariantAssessmentSpecificationError):
+
+    with pytest.raises(
+        InvariantAssessmentSpecificationError, match="exactly cover"
+    ):
         InvariantVerificationGate.require_all_preserved(transition, (spec,), registry)
+
+
+def test_assess_all_preserved_verifies_all_components() -> None:
+    transition = make_transition(preserved=("identity", "other"))
+    registry = sealed_registry(
+        ("identity-extractor", lambda state: "same", "identity", "inv-1"),
+        ("other-extractor", lambda state: "same", "other", "inv-2"),
+    )
+    specs = (
+        InvariantSpec(
+            invariant_id="inv-1",
+            component="identity",
+            extractor_id="identity-extractor",
+        ),
+        InvariantSpec(
+            invariant_id="inv-2", component="other", extractor_id="other-extractor"
+        ),
+    )
+
+    decision = InvariantVerificationGate.assess_all_preserved(
+        transition, specs, registry
+    )
+
+    assert decision.status is InvariantVerificationDecisionStatus.VERIFIED
+    assert {verification.component for verification in decision.verifications} == {
+        "identity",
+        "other",
+    }
 
 
 def _mixed_block_defer_transition_and_specs() -> tuple[
