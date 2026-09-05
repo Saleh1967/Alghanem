@@ -122,6 +122,56 @@ def test_changing_operation_changes_content_id() -> None:
     assert content_id_a != content_id_b
 
 
+def test_changing_anchor_changes_content_id() -> None:
+    transition_a = admit(make_candidate(anchor=Anchor("a", "D")))
+    transition_b = admit(make_candidate(anchor=Anchor("other", "D")))
+
+    content_id_a = CanonicalTransitionEncoder.encode(transition_a).content_id
+    content_id_b = CanonicalTransitionEncoder.encode(transition_b).content_id
+
+    assert content_id_a != content_id_b
+
+
+def test_changing_target_anchor_changes_content_id() -> None:
+    anchor = Anchor("a", "D")
+    branch_target_1 = Anchor("branch-1", "D")
+    branch_target_2 = Anchor("branch-2", "D")
+
+    def make_branch_transition(
+        branch_target: Anchor,
+    ) -> StructurallyAdmissibleTransition:
+        base = make_candidate(anchor=anchor, target_anchor=branch_target)
+        candidate = TransitionCandidate(
+            anchor=base.anchor,
+            target_anchor=branch_target,
+            before_state=base.before_state,
+            operation=base.operation,
+            after_state=base.after_state,
+            claim=base.claim,
+            evidence=base.evidence,
+            preserved=base.preserved,
+            changed=base.changed,
+            trace=base.trace,
+            residuals=base.residuals,
+            kind=TransitionKind.BRANCH_BIRTH_CLAIM,
+            branch_origin_provenance=BranchOriginProvenance(
+                origin_anchor=anchor,
+                branch_anchor=branch_target,
+                preserved_components=base.preserved,
+            ),
+            result=base.result,
+        )
+        return admit(candidate)
+
+    transition_a = make_branch_transition(branch_target_1)
+    transition_b = make_branch_transition(branch_target_2)
+
+    content_id_a = CanonicalTransitionEncoder.encode(transition_a).content_id
+    content_id_b = CanonicalTransitionEncoder.encode(transition_b).content_id
+
+    assert content_id_a != content_id_b
+
+
 def test_changing_kind_changes_content_id() -> None:
     identity_candidate = make_candidate()
     branch_target = Anchor("b", "D")

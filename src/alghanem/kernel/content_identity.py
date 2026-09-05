@@ -76,11 +76,10 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
-from .operation import Operation
-
 if TYPE_CHECKING:
     from .anchor import Anchor
     from .evidence import Claim, Evidence
+    from .operation import Operation
     from .residual import Residual
     from .trace import Trace
     from .transition import StructurallyAdmissibleTransition
