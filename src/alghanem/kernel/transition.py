@@ -35,8 +35,6 @@ class LicensedTransition:
     result: OperationResult | None = None
 
     def __post_init__(self) -> None:
-        if not self.anchor.domain:
-            raise ValueError("a transition requires an explicit domain")
         if (
             not self.preserved
             and self.outcome is Outcome.IDENTITY_PRESERVING_TRANSFORMATION

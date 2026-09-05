@@ -2,6 +2,7 @@ import pytest
 
 from alghanem.kernel import (
     Anchor,
+    Certificate,
     Claim,
     Evidence,
     LicensedTransition,
@@ -9,6 +10,7 @@ from alghanem.kernel import (
     OperationResult,
     Outcome,
     Residual,
+    State,
     Trace,
 )
 
@@ -39,6 +41,15 @@ def test_core_objects_are_immutable():
     anchor = Anchor("a", "D")
     with pytest.raises(AttributeError):
         anchor.domain = "other"  # type: ignore[misc]
+
+
+def test_state_and_certificate_are_immutable_core_objects():
+    state = State("opaque")
+    certificate = Certificate("supported")
+    assert state.value == "opaque"
+    assert certificate.statement == "supported"
+    with pytest.raises(AttributeError):
+        certificate.statement = "changed"  # type: ignore[misc]
 
 
 def test_trace_and_residual_are_preserved():
