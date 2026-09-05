@@ -20,7 +20,8 @@ class Outcome(Enum):
     the two claim shapes a successful candidate can take. At Kernel v0.1 they
     are produced only by ``StructuralAdmissionGate``, which certifies
     structural completeness, not that identity was actually preserved or that
-    a branch was actually, authoritatively born. The corresponding
+    a branch was authoritatively confirmed to have been born. The
+    corresponding
     ``TransitionCandidate.kind`` / ``StructurallyAdmissibleTransition.kind``
     (a ``TransitionKind``) is the honestly-named claim; these two ``Outcome``
     members are reserved to describe a future, fully certified

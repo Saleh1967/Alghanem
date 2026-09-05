@@ -20,6 +20,7 @@ from alghanem.kernel import (
     TransitionDecision,
     TransitionKind,
 )
+from alghanem.kernel.transition import _KIND_FOR_OUTCOME
 
 
 class _DefaultProvenance:
@@ -28,13 +29,6 @@ class _DefaultProvenance:
 
 # Distinguishes omitted provenance from an explicit None in branch-birth tests.
 _DEFAULT_PROVENANCE = _DefaultProvenance()
-
-_KIND_FOR_OUTCOME = {
-    Outcome.IDENTITY_PRESERVING_TRANSFORMATION: (
-        TransitionKind.IDENTITY_PRESERVATION_CLAIM
-    ),
-    Outcome.CERTIFIED_BRANCH_BIRTH: TransitionKind.BRANCH_BIRTH_CLAIM,
-}
 
 
 def claim(claim_id: str = "claim-1", statement: str = "supported") -> Claim:
