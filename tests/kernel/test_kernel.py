@@ -8,6 +8,7 @@ from alghanem.kernel import (
     Evidence,
     LicensedTransition,
     LicensingGate,
+    NonSuccessDecisionAudit,
     Operation,
     OperationResult,
     Outcome,
@@ -47,18 +48,21 @@ def make_candidate(
     branch_origin_provenance: (
         BranchOriginProvenance | _DefaultProvenance | None
     ) = _DEFAULT_PROVENANCE,
+    target_anchor: Anchor | None = None,
 ) -> TransitionCandidate:
     anchor = anchor or Anchor("a", "D")
     transition_claim = transition_claim or claim()
     if transition_evidence is None:
         transition_evidence = (evidence(transition_claim.claim_id),)
+    if outcome is Outcome.CERTIFIED_BRANCH_BIRTH and target_anchor is None:
+        target_anchor = Anchor("branch", "D")
     if (
         branch_origin_provenance is _DEFAULT_PROVENANCE
         and outcome is Outcome.CERTIFIED_BRANCH_BIRTH
     ):
         branch_origin_provenance = BranchOriginProvenance(
             origin_anchor=anchor,
-            branch_anchor=Anchor("branch", "D"),
+            branch_anchor=target_anchor,
             preserved_components=preserved,
         )
     if branch_origin_provenance is _DEFAULT_PROVENANCE:
@@ -77,6 +81,18 @@ def make_candidate(
         outcome=outcome,
         result=result,
         branch_origin_provenance=branch_origin_provenance,
+        target_anchor=target_anchor,
+    )
+
+
+def make_audit(
+    candidate: TransitionCandidate | None = None,
+) -> NonSuccessDecisionAudit:
+    return NonSuccessDecisionAudit(
+        trace=Trace(("assessed",)),
+        residuals=(Residual("remainder"),),
+        reason="licensing refused",
+        candidate=candidate,
     )
 
 
@@ -183,6 +199,7 @@ def test_non_transition_decision_cannot_contain_a_transition():
         TransitionDecision(
             Outcome.BLOCK,
             make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION),
+            make_audit(),
         )
 
 
@@ -278,7 +295,6 @@ def test_operation_source_domain_matching_anchor_domain_is_accepted():
                 "op",
                 "component",
                 source_domain="DOMAIN_A",
-                target_domain="DOMAIN_C",
             ),
         )
     )
@@ -353,9 +369,9 @@ def test_branch_origin_provenance_must_match_transition_anchor():
         )
 
 
-def test_branch_origin_provenance_branch_domain_must_match_transition_domain():
+def test_branch_origin_provenance_branch_anchor_must_be_target_anchor():
     anchor = Anchor("a", "D")
-    with pytest.raises(ValueError, match="transition domain"):
+    with pytest.raises(ValueError, match="target anchor"):
         license_candidate(
             make_candidate(
                 Outcome.CERTIFIED_BRANCH_BIRTH,
@@ -364,7 +380,7 @@ def test_branch_origin_provenance_branch_domain_must_match_transition_domain():
                 anchor=anchor,
                 operation=Operation("op", "new"),
                 branch_origin_provenance=BranchOriginProvenance(
-                    anchor, Anchor("branch", "OTHER"), ("origin-data",)
+                    anchor, Anchor("other-branch", "D"), ("origin-data",)
                 ),
             )
         )
@@ -447,3 +463,191 @@ def test_successful_decision_must_match_transition_outcome():
             Outcome.CERTIFIED_BRANCH_BIRTH,
             make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION),
         )
+
+
+def test_successful_decision_cannot_carry_a_non_success_audit():
+    with pytest.raises(ValueError, match="non-success audit"):
+        TransitionDecision(
+            Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
+            make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION),
+            make_audit(),
+        )
+
+
+def test_identity_preserving_rejects_a_distinct_target_anchor():
+    with pytest.raises(ValueError, match="unchanged anchor"):
+        license_candidate(
+            make_candidate(
+                Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
+                target_anchor=Anchor("other", "D"),
+            )
+        )
+
+
+def test_identity_preserving_accepts_target_anchor_equal_to_source():
+    anchor = Anchor("a", "D")
+    transition = license_candidate(
+        make_candidate(
+            Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
+            anchor=anchor,
+            target_anchor=anchor,
+        )
+    )
+    assert transition.resolved_target_anchor == transition.anchor
+
+
+def test_branch_birth_rejects_target_anchor_equal_to_source():
+    anchor = Anchor("a", "D")
+    with pytest.raises(ValueError, match="distinct target anchor"):
+        license_candidate(
+            make_candidate(
+                Outcome.CERTIFIED_BRANCH_BIRTH,
+                preserved=("origin-data",),
+                changed=("new",),
+                anchor=anchor,
+                operation=Operation("op", "new"),
+                target_anchor=anchor,
+                branch_origin_provenance=BranchOriginProvenance(
+                    anchor, Anchor("branch", "D"), ("origin-data",)
+                ),
+            )
+        )
+
+
+def test_branch_birth_binds_target_anchor_to_provenance_branch():
+    anchor = Anchor("a", "D")
+    target = Anchor("branch", "D")
+    transition = license_candidate(
+        make_candidate(
+            Outcome.CERTIFIED_BRANCH_BIRTH,
+            anchor=anchor,
+            target_anchor=target,
+        )
+    )
+    provenance = transition.branch_origin_provenance
+    assert provenance is not None
+    assert provenance.origin_anchor == transition.anchor
+    assert provenance.branch_anchor == transition.resolved_target_anchor == target
+    assert transition.resolved_target_anchor != transition.anchor
+
+
+def test_branch_origin_provenance_origin_must_match_source_anchor():
+    with pytest.raises(ValueError, match="transition anchor"):
+        license_candidate(
+            make_candidate(
+                Outcome.CERTIFIED_BRANCH_BIRTH,
+                preserved=("origin-data",),
+                changed=("new",),
+                operation=Operation("op", "new"),
+                branch_origin_provenance=BranchOriginProvenance(
+                    Anchor("other", "D"), Anchor("branch", "D"), ("origin-data",)
+                ),
+            )
+        )
+
+
+def test_operation_target_domain_must_match_target_anchor_domain():
+    anchor = Anchor("a", "DOMAIN_A")
+    with pytest.raises(ValueError, match="target domain"):
+        license_candidate(
+            make_candidate(
+                Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
+                anchor=anchor,
+                operation=Operation(
+                    "op",
+                    "component",
+                    source_domain="DOMAIN_A",
+                    target_domain="DOMAIN_C",
+                ),
+            )
+        )
+
+
+def test_operation_target_domain_matching_target_anchor_domain_is_accepted():
+    transition = license_candidate(
+        make_candidate(
+            Outcome.IDENTITY_PRESERVING_TRANSFORMATION,
+            anchor=Anchor("a", "DOMAIN_A"),
+            operation=Operation(
+                "op",
+                "component",
+                source_domain="DOMAIN_A",
+                target_domain="DOMAIN_A",
+            ),
+        )
+    )
+    assert transition.operation.target_domain == transition.anchor.domain
+
+
+def test_cross_domain_branch_birth_is_structurally_representable():
+    origin = Anchor("a", "DOMAIN_A")
+    target = Anchor("branch", "DOMAIN_B")
+    transition = license_candidate(
+        make_candidate(
+            Outcome.CERTIFIED_BRANCH_BIRTH,
+            anchor=origin,
+            operation=Operation(
+                "op",
+                "component",
+                source_domain="DOMAIN_A",
+                target_domain="DOMAIN_B",
+            ),
+            target_anchor=target,
+        )
+    )
+    provenance = transition.branch_origin_provenance
+    assert provenance is not None
+    assert provenance.branch_anchor.domain != provenance.origin_anchor.domain
+    assert transition.operation.target_domain == target.domain
+
+
+@pytest.mark.parametrize("outcome", [Outcome.BLOCK, Outcome.DEFER, Outcome.UNDEFINED])
+def test_non_success_decisions_cannot_contain_a_transition(outcome: Outcome):
+    with pytest.raises(ValueError, match="non-transition"):
+        TransitionDecision(
+            outcome,
+            make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION),
+            make_audit(),
+        )
+
+
+@pytest.mark.parametrize("outcome", [Outcome.BLOCK, Outcome.DEFER, Outcome.UNDEFINED])
+def test_non_success_decisions_require_an_audit(outcome: Outcome):
+    with pytest.raises(ValueError, match="audit"):
+        TransitionDecision(outcome)
+
+
+@pytest.mark.parametrize("outcome", [Outcome.BLOCK, Outcome.DEFER, Outcome.UNDEFINED])
+def test_non_success_decisions_preserve_trace_and_residuals(outcome: Outcome):
+    decision = TransitionDecision(outcome, audit=make_audit())
+    assert decision.audit is not None
+    assert decision.audit.trace.events == ("assessed",)
+    assert decision.audit.residuals == (Residual("remainder"),)
+
+
+def test_non_success_decisions_preserve_the_assessed_candidate():
+    candidate = make_candidate(Outcome.BLOCK, result=None)
+    decision = TransitionDecision(Outcome.BLOCK, audit=make_audit(candidate))
+    assert decision.audit is not None
+    assert decision.audit.candidate is candidate
+
+
+def test_non_success_audit_rejects_a_licensed_transition_as_candidate():
+    with pytest.raises(ValueError, match="licensed transition"):
+        make_audit(make_transition(Outcome.IDENTITY_PRESERVING_TRANSFORMATION))
+
+
+@pytest.mark.parametrize("reason", ["", "  "])
+def test_non_success_decisions_require_a_non_blank_reason(reason: str):
+    with pytest.raises(ValueError, match="structural reason"):
+        NonSuccessDecisionAudit(
+            trace=Trace(("assessed",)),
+            residuals=(),
+            reason=reason,
+        )
+
+
+def test_undefined_decision_is_representable_without_a_candidate():
+    decision = TransitionDecision(Outcome.UNDEFINED, audit=make_audit())
+    assert decision.audit is not None
+    assert decision.audit.candidate is None
