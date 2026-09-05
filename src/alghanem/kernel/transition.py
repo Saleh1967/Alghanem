@@ -327,8 +327,13 @@ class TransitionDecision:
                 )
         else:
             if self.admissible is not None:
-                raise ValueError("non-transition decisions cannot contain a transition")
+                raise ValueError(
+                    "non-transition decisions cannot contain a structurally "
+                    "admissible transition"
+                )
             if self.audit is None:
                 raise ValueError("non-transition decisions require an audit record")
         if self.admissible is not None and self.outcome is not self.admissible.outcome:
-            raise ValueError("decision and transition outcomes must match")
+            raise ValueError(
+                "decision and structurally admissible transition outcomes must match"
+            )

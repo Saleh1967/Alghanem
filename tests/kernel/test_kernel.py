@@ -658,6 +658,19 @@ def test_non_success_decision_audit_accepts_an_optional_reason_code():
     assert audit.reason == "target anchor mismatch"
 
 
+@pytest.mark.parametrize("reason_code", list(DecisionReasonCode))
+def test_non_success_decision_audit_accepts_every_reason_code(
+    reason_code: DecisionReasonCode,
+):
+    audit = NonSuccessDecisionAudit(
+        trace=Trace(("assessed",)),
+        residuals=(),
+        reason="structural admission refused",
+        reason_code=reason_code,
+    )
+    assert audit.reason_code is reason_code
+
+
 def test_non_success_decision_audit_reason_code_defaults_to_none():
     audit = NonSuccessDecisionAudit(
         trace=Trace(("assessed",)),
