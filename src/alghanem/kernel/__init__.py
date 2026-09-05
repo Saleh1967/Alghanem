@@ -2,6 +2,14 @@
 
 from .anchor import Anchor, State
 from .binding import ClaimEvidenceBinding
+from .content_identity import (
+    CanonicalizationError,
+    CanonicalOperationManifest,
+    CanonicalStateManifest,
+    CanonicalTransitionEncoder,
+    CanonicalTransitionManifest,
+    TransitionContentIdentity,
+)
 from .evidence import Claim, Evidence
 from .invariant import (
     InvariantAssessmentSpecificationError,
@@ -43,6 +51,11 @@ from .transition import (
 __all__ = [
     "Anchor",
     "BranchOriginProvenance",
+    "CanonicalOperationManifest",
+    "CanonicalStateManifest",
+    "CanonicalTransitionEncoder",
+    "CanonicalTransitionManifest",
+    "CanonicalizationError",
     "CertifiedOutcome",
     "Claim",
     "ClaimEvidenceBinding",
@@ -76,6 +89,7 @@ __all__ = [
     "StructurallyAdmissibleTransition",
     "Trace",
     "TransitionCandidate",
+    "TransitionContentIdentity",
     "TransitionKind",
     "UnauthorizedExtractorError",
     "UnregisteredExtractorError",
