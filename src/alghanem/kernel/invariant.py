@@ -87,6 +87,15 @@ Hardening laws close this module's scope for Kernel v0.1:
     guarantee (see their own docstrings for exactly what each omits), and
     must not be used to promote epistemic status. A full canonical content
     identity is deferred to a dedicated reproducibility PR.
+11. ``MalformedRequestIsNotDisprovedInvariant``: ``BLOCK`` means at least
+    one component was actually verified against an authorized extractor
+    and found not preserved. Specs that fail to exactly cover
+    ``transition.preserved``, or that duplicate a component, were never
+    checked against anything -- ``assess_all_preserved`` raises a typed
+    ``InvariantAssessmentSpecificationError`` for these instead of
+    returning a ``BLOCK`` decision with fabricated ``failed_components``,
+    so a malformed caller request can never masquerade as a disproved
+    invariant.
 
 ``InvariantVerificationGate.verify`` is the only way to produce an
 ``InvariantVerification``. It resolves an authorized extractor and extracts
@@ -393,6 +402,23 @@ class InvariantProvenanceMismatchError(ValueError):
     does not match the transition it is being checked against -- for example,
     a verification produced for one transition being replayed as if it were
     evidence for a different one.
+    """
+
+
+class InvariantAssessmentSpecificationError(ValueError):
+    """Raised when the ``specs`` handed to an assessment are themselves malformed.
+
+    ``BLOCK`` means at least one *verified* invariant was found not
+    preserved -- a disproved claim about the transition. It never means
+    "the caller's request was structurally wrong" (specs that do not
+    exactly cover ``transition.preserved``, or that name the same
+    component more than once). A malformed request was never checked
+    against any extractor at all, so treating it as ``BLOCK`` -- and
+    recording every declared component as "failed" -- would equate
+    ``MalformedVerificationRequest`` with ``DisprovedInvariant``. This
+    error keeps that structural failure out of the epistemic judgment
+    entirely: it is raised before any component is assessed, and no
+    ``InvariantVerificationDecision`` is produced for it.
     """
 
 
@@ -917,27 +943,24 @@ class InvariantVerificationGate:
         propagates to the caller unchanged, since a bug in the checking
         code itself is neither a verified nor a deferred judgment about the
         invariant.
+
+        ``specs`` that do not exactly cover ``transition.preserved``, or
+        that name the same component more than once, are a malformed
+        request, not an epistemic judgment: no component in such a request
+        was ever actually checked against an extractor, so this raises
+        ``InvariantAssessmentSpecificationError`` instead of returning a
+        ``BLOCK`` decision. Equating a malformed request with a disproved
+        invariant would let ``MalformedVerificationRequest`` masquerade as
+        ``DisprovedInvariant``.
         """
 
         if {spec.component for spec in specs} != set(transition.preserved):
-            return InvariantVerificationDecision(
-                status=InvariantVerificationDecisionStatus.BLOCK,
-                transition=transition,
-                failed_components=tuple(transition.preserved),
-                trace=transition.trace,
-                residuals=transition.residuals,
-                reason="invariant specs must exactly cover preserved components",
-                _decision_token=_DECISION_TOKEN,
+            raise InvariantAssessmentSpecificationError(
+                "invariant specs must exactly cover preserved components"
             )
         if len({spec.component for spec in specs}) != len(specs):
-            return InvariantVerificationDecision(
-                status=InvariantVerificationDecisionStatus.BLOCK,
-                transition=transition,
-                failed_components=tuple(transition.preserved),
-                trace=transition.trace,
-                residuals=transition.residuals,
-                reason="invariant specs cannot duplicate preserved components",
-                _decision_token=_DECISION_TOKEN,
+            raise InvariantAssessmentSpecificationError(
+                "invariant specs cannot duplicate preserved components"
             )
         verifications: list[InvariantVerification] = []
         blocked: list[str] = []
