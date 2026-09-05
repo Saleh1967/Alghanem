@@ -16,18 +16,12 @@ _ADMISSION_TOKEN = object()
 class Outcome(Enum):
     """The complete initial vocabulary of transition outcomes.
 
-    ``IDENTITY_PRESERVING_TRANSFORMATION`` and ``CERTIFIED_BRANCH_BIRTH`` name
-    the two claim shapes a successful candidate can take. At Kernel v0.1 they
-    are produced only by ``StructuralAdmissionGate``, which certifies
-    structural completeness, not that identity was actually preserved or that
-    a branch was authoritatively confirmed to have been born. The
-    corresponding
-    ``TransitionCandidate.kind`` / ``StructurallyAdmissibleTransition.kind``
-    (a ``TransitionKind``) is the honestly-named claim; these two ``Outcome``
-    members are reserved to describe a future, fully certified
-    ``LicensedTransition`` once evidence-sufficiency and authority gates
-    exist. Reading a structurally admissible transition's outcome as already
-    certified is exactly the confusion this vocabulary must not create.
+    ``IDENTITY_PRESERVING_TRANSFORMATION`` and ``CERTIFIED_BRANCH_BIRTH`` are
+    reserved for a future, fully certified ``LicensedTransition``; at Kernel
+    v0.1 they are produced only by ``StructuralAdmissionGate``, which
+    certifies structural completeness, not the underlying claim. See
+    ``TransitionKind`` and ``docs/CONSTITUTION.md`` for the authoritative
+    claim-vs-certification distinction.
     """
 
     IDENTITY_PRESERVING_TRANSFORMATION = auto()
@@ -50,7 +44,8 @@ class TransitionKind(Enum):
     name in ``preserved`` or ``changed`` is not proof that the named
     component was actually extracted from ``before_state``/``after_state``:
     ``DeclaredInvariant != VerifiedInvariant``. Both remain deferred until an
-    evidence-sufficiency gate exists.
+    evidence-sufficiency gate exists. See ``docs/CONSTITUTION.md`` for the
+    full epistemic ladder this vocabulary sits on.
     """
 
     IDENTITY_PRESERVATION_CLAIM = auto()
