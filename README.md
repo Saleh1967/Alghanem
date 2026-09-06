@@ -29,11 +29,13 @@ run, and manifests bind an audit ledger to one run plus the run's declared
 normalization policy and Unicode database version before later factorization or
 identity-birth gates may consume it.
 
-The next quotient artifact is `NormalizationFiberCandidate`: a derived
-equivalence class of ledger audits that share one normalized
-`SurfaceAtomCandidate`. Fibers record occurrence counts and raw surface
-variants without replacing the occurrence ledger and without introducing
-Carrier, State, binding, or Arabic cardinality claims.
+The next audit artifact is `NormalizationResidualTable`: an occurrence-complete
+derived table with one row per audit, including unchanged rows, raw and
+normalized codepoint sequences, atom counts, prefix/suffix delta boundaries,
+removed/inserted segments, and the current candidate surface. The weaker
+`NormalizationEquivalenceProjection` remains only a quotient projection over
+equal normalized `SurfaceAtomCandidate`s; it is not a born object and does not
+introduce Carrier, State, binding, or Arabic cardinality claims.
 
 ## Development
 

@@ -106,8 +106,8 @@ class ObservationLedgerManifest:
 
 
 @dataclass(frozen=True)
-class NormalizationFiberCandidate:
-    """One normalization equivalence class over occurrence-preserving audits."""
+class NormalizationEquivalenceClass:
+    """A derived quotient class over occurrence-preserving audits."""
 
     candidate: SurfaceAtomCandidate
     members: tuple[NormalizationAudit, ...]
@@ -115,32 +115,71 @@ class NormalizationFiberCandidate:
 
     def __post_init__(self) -> None:
         if not isinstance(self.candidate, SurfaceAtomCandidate):
-            raise ValueError("normalization fiber must declare a surface candidate")
+            raise ValueError(
+                "normalization equivalence class must declare a surface candidate"
+            )
         if not self.members:
-            raise ValueError("normalization fiber must contain at least one member")
+            raise ValueError(
+                "normalization equivalence class must contain at least one member"
+            )
         if any(member.candidate != self.candidate for member in self.members):
-            raise ValueError("normalization fiber members must share one candidate")
+            raise ValueError(
+                "normalization equivalence class members must share one candidate"
+            )
         if self.raw_variants != tuple(
             sorted({member.trace.observation.surface for member in self.members})
         ):
-            raise ValueError("normalization fiber raw variants must be canonical")
+            raise ValueError(
+                "normalization equivalence class raw variants must be canonical"
+            )
 
     @property
     def occurrence_count(self) -> int:
-        """Number of observation occurrences in this normalization fiber."""
+        """Number of observation occurrences in this quotient class."""
         return len(self.members)
 
     @property
     def raw_variant_count(self) -> int:
-        """Number of distinct raw surfaces collapsed into this fiber."""
+        """Number of distinct raw surfaces collapsed into this quotient class."""
         return len(self.raw_variants)
 
 
 @dataclass(frozen=True)
-class NormalizationFiberCandidateProjection:
-    """A quotient projection that groups observations by normalized candidate."""
+class NormalizationEquivalenceProjection:
+    """A derived projection grouping observations by normalized candidate."""
 
-    fibers: tuple[NormalizationFiberCandidate, ...]
+    classes: tuple[NormalizationEquivalenceClass, ...]
+
+
+@dataclass(frozen=True)
+class NormalizationResidualRow:
+    """Occurrence-complete, non-linguistic row of raw-to-NFC residual data."""
+
+    run_id: str
+    source_id: str
+    occurrence_id: str
+    raw_surface: str
+    raw_codepoints: tuple[str, ...]
+    normalized_surface: str
+    normalized_codepoints: tuple[str, ...]
+    raw_atom_count: int
+    normalized_atom_count: int
+    changed: bool
+    length_delta: int
+    common_prefix_len: int
+    common_suffix_len: int
+    removed_segment: str
+    inserted_segment: str
+    order_changed: bool
+    residual_count: int
+    candidate_surface: str
+
+
+@dataclass(frozen=True)
+class NormalizationResidualTable:
+    """A derived residual table with exactly one row per ledger occurrence."""
+
+    rows: tuple[NormalizationResidualRow, ...]
 
 
 class SurfaceNormalization:
@@ -197,15 +236,15 @@ class SurfaceNormalization:
         )
 
     @staticmethod
-    def normalization_fibers(
+    def normalization_equivalence_projection(
         manifest: ObservationLedgerManifest,
-    ) -> NormalizationFiberCandidateProjection:
-        """Derive normalization fibers without replacing the occurrence ledger."""
+    ) -> NormalizationEquivalenceProjection:
+        """Derive NFC equivalence classes without replacing the occurrence ledger."""
         grouped: dict[SurfaceAtomCandidate, list[NormalizationAudit]] = {}
         for audit in manifest.ledger.audits:
             grouped.setdefault(audit.candidate, []).append(audit)
 
-        fibers = []
+        classes = []
         for candidate, members in sorted(grouped.items()):
             canonical_members = tuple(
                 sorted(
@@ -217,8 +256,8 @@ class SurfaceNormalization:
                     ),
                 )
             )
-            fibers.append(
-                NormalizationFiberCandidate(
+            classes.append(
+                NormalizationEquivalenceClass(
                     candidate,
                     canonical_members,
                     tuple(
@@ -231,4 +270,77 @@ class SurfaceNormalization:
                     ),
                 )
             )
-        return NormalizationFiberCandidateProjection(tuple(fibers))
+        return NormalizationEquivalenceProjection(tuple(classes))
+
+    @staticmethod
+    def residual_table(
+        manifest: ObservationLedgerManifest,
+    ) -> NormalizationResidualTable:
+        """Derive an occurrence-complete residual table from a manifested ledger."""
+        return NormalizationResidualTable(
+            tuple(
+                _residual_row(audit)
+                for audit in sorted(
+                    manifest.ledger.audits,
+                    key=lambda item: (
+                        item.trace.observation.provenance.run_identity.run_id,
+                        item.trace.observation.provenance.source_id,
+                        item.trace.observation.provenance.occurrence_id,
+                    ),
+                )
+            )
+        )
+
+
+def _common_prefix_len(raw: tuple[str, ...], normalized: tuple[str, ...]) -> int:
+    count = 0
+    for raw_atom, normalized_atom in zip(raw, normalized):
+        if raw_atom != normalized_atom:
+            break
+        count += 1
+    return count
+
+
+def _common_suffix_len(
+    raw: tuple[str, ...], normalized: tuple[str, ...], prefix_len: int
+) -> int:
+    count = 0
+    max_count = min(len(raw), len(normalized)) - prefix_len
+    while count < max_count and raw[-(count + 1)] == normalized[-(count + 1)]:
+        count += 1
+    return count
+
+
+def _residual_row(audit: NormalizationAudit) -> NormalizationResidualRow:
+    observation = audit.trace.observation
+    provenance = observation.provenance
+    raw_codepoints = tuple(observation.surface)
+    normalized_codepoints = tuple(audit.trace.normalized_surface)
+    prefix_len = _common_prefix_len(raw_codepoints, normalized_codepoints)
+    suffix_len = _common_suffix_len(raw_codepoints, normalized_codepoints, prefix_len)
+    raw_end = len(raw_codepoints) - suffix_len
+    normalized_end = len(normalized_codepoints) - suffix_len
+    changed = observation.surface != audit.trace.normalized_surface
+
+    return NormalizationResidualRow(
+        run_id=provenance.run_identity.run_id,
+        source_id=provenance.source_id,
+        occurrence_id=provenance.occurrence_id,
+        raw_surface=observation.surface,
+        raw_codepoints=raw_codepoints,
+        normalized_surface=audit.trace.normalized_surface,
+        normalized_codepoints=normalized_codepoints,
+        raw_atom_count=len(raw_codepoints),
+        normalized_atom_count=len(normalized_codepoints),
+        changed=changed,
+        length_delta=len(raw_codepoints) - len(normalized_codepoints),
+        common_prefix_len=prefix_len,
+        common_suffix_len=suffix_len,
+        removed_segment="".join(raw_codepoints[prefix_len:raw_end]),
+        inserted_segment="".join(normalized_codepoints[prefix_len:normalized_end]),
+        order_changed=changed
+        and sorted(raw_codepoints) == sorted(normalized_codepoints)
+        and raw_codepoints != normalized_codepoints,
+        residual_count=len(audit.residuals),
+        candidate_surface=audit.candidate.normalized_surface,
+    )
