@@ -21,6 +21,17 @@ pre-existing evidence could still be ingested through an authorized run.
 It also does not claim anything about evidence quality or outcome:
 `AuthorizedEvidence != SufficientEvidence`, `AuthorizedEvidence` does not
 imply `ResidualSurvival`, and it does not imply `Birth`.
+
+G0.2a.3.1 closes `OccurrenceIssuanceIntegrity`: each issuer keeps its own
+registry of the occurrence ids it has issued and rejects a repeat, so
+`authorization_id`, `run_id`, and `snapshot_id` are injective within their
+issuing scope (an authority's own authorizations, one authorization's own
+runs, one run's own snapshots) rather than caller-chosen strings a caller
+could repeat across distinct occurrences. Only within that enforced scope
+does `EvidenceOccurrenceIdentity != EvidenceContentIdentity` hold without
+qualification; two distinct `EvidenceAcquisitionAuthority` instances are
+still separate issuance scopes and are not, by themselves, proof that their
+respective ids never collide.
 """
 
 from __future__ import annotations
@@ -179,6 +190,9 @@ class EvidenceAcquisitionRun:
     domain: str
     evidence_mode: EvidenceMode
     _token: object | None = field(default=None, repr=False, compare=False)
+    _issued_snapshot_ids: set[str] = field(
+        default_factory=set, repr=False, compare=False, init=False
+    )
 
     def __post_init__(self) -> None:
         if self._token is not _EVIDENCE_ACQUISITION_TOKEN:
@@ -206,8 +220,14 @@ class EvidenceAcquisitionRun:
     ) -> AuthorizedEvidenceSnapshot:
         """The sole path from a captured payload to an assessable snapshot."""
 
+        _require_text(snapshot_id, "evidence snapshot id")
+        if snapshot_id in self._issued_snapshot_ids:
+            raise EvidenceAcquisitionAuthorityError(
+                "evidence snapshot id already issued by this evidence "
+                "acquisition run"
+            )
         manifest = CanonicalEvidenceContentEncoder.encode(payload)
-        return AuthorizedEvidenceSnapshot(
+        snapshot = AuthorizedEvidenceSnapshot(
             snapshot_id=snapshot_id,
             run_id=self.run_id,
             authorization_id=self.authorization_id,
@@ -218,6 +238,8 @@ class EvidenceAcquisitionRun:
             trace=trace,
             _token=_EVIDENCE_ACQUISITION_TOKEN,
         )
+        self._issued_snapshot_ids.add(snapshot_id)
+        return snapshot
 
 
 @dataclass(frozen=True, slots=True)
@@ -233,6 +255,9 @@ class EvidenceAcquisitionAuthorization:
     authorization_id: str
     binding: BirthExperimentSpecificationContentBinding
     _token: object | None = field(default=None, repr=False, compare=False)
+    _issued_run_ids: set[str] = field(
+        default_factory=set, repr=False, compare=False, init=False
+    )
 
     def __post_init__(self) -> None:
         if self._token is not _EVIDENCE_ACQUISITION_TOKEN:
@@ -274,7 +299,13 @@ class EvidenceAcquisitionAuthorization:
     def open_run(self, run_id: str) -> EvidenceAcquisitionRun:
         """The sole path from an authorization to an acquisition run."""
 
-        return EvidenceAcquisitionRun(
+        _require_text(run_id, "evidence acquisition run id")
+        if run_id in self._issued_run_ids:
+            raise EvidenceAcquisitionAuthorityError(
+                "evidence acquisition run id already issued by this "
+                "authorization"
+            )
+        run = EvidenceAcquisitionRun(
             run_id=run_id,
             authorization_id=self.authorization_id,
             experiment_content_id=self.experiment_content_id,
@@ -282,10 +313,15 @@ class EvidenceAcquisitionAuthorization:
             evidence_mode=self.evidence_mode,
             _token=_EVIDENCE_ACQUISITION_TOKEN,
         )
+        self._issued_run_ids.add(run_id)
+        return run
 
 
 class EvidenceAcquisitionAuthority:
     """Separate authority boundary issuing evidence acquisition authorizations."""
+
+    def __init__(self) -> None:
+        self._issued_authorization_ids: set[str] = set()
 
     def authorize(
         self,
@@ -300,11 +336,19 @@ class EvidenceAcquisitionAuthority:
                 "evidence acquisition authority requires a genuine frozen "
                 "experiment binding"
             )
-        return EvidenceAcquisitionAuthorization(
+        _require_text(authorization_id, "evidence acquisition authorization id")
+        if authorization_id in self._issued_authorization_ids:
+            raise EvidenceAcquisitionAuthorityError(
+                "evidence acquisition authorization id already issued by "
+                "this authority"
+            )
+        authorization = EvidenceAcquisitionAuthorization(
             authorization_id=authorization_id,
             binding=binding,
             _token=_EVIDENCE_ACQUISITION_TOKEN,
         )
+        self._issued_authorization_ids.add(authorization_id)
+        return authorization
 
 
 __all__ = [
