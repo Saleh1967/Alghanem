@@ -147,7 +147,13 @@ class CanonicalBirthSemanticsEncoder:
 
     Every declared field of ``ResidualDefinitionSpec``, ``ClosureCriterionSpec``,
     and ``WeakerModelSpec`` is included in its canonical encoding: content
-    identity cannot silently ignore a field that later drifts.
+    identity cannot silently ignore a field that later drifts. Order-only
+    collections (``invariants``, ``strict_predecessors``, ``strict_successors``)
+    are sorted before encoding: for content-identity purposes their declared
+    order carries no independent semantic meaning, only membership does.
+    Encoding requires the exact declared spec type -- not a subclass -- so a
+    caller cannot smuggle undeclared additional state past this encoder by
+    subclassing one of these frozen dataclasses.
     """
 
     @classmethod
