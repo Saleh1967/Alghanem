@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 from unicodedata import combining, normalize
 
 
@@ -57,6 +57,19 @@ class FrozenSymbolicEncoding:
             raise ValueError("carrier identities must be unique")
         if len({state.identifier for state in self.states}) != len(self.states):
             raise ValueError("state identities must be unique")
+        expected_bindings = {
+            (carrier.identifier, state.identifier)
+            for carrier in self.carriers
+            for state in self.states
+        }
+        actual_bindings = {
+            (assignment.carrier.identifier, assignment.state.identifier)
+            for assignment in self.assignments
+        }
+        if actual_bindings != expected_bindings:
+            raise ValueError(
+                "a frozen Arabic encoding requires every carrier-state binding"
+            )
 
 
 class ArabicSymbolEncodingV1:
@@ -93,7 +106,9 @@ class ArabicSymbolEncodingV1:
             encoding = CanonicalSurfaceEncoding(normalized_surface, assignment)
             prior = self._surfaces.setdefault(normalized_surface, encoding)
             if prior.assignment != assignment:
-                raise ValueError("a canonical surface cannot collide across assignments")
+                raise ValueError(
+                    "a canonical surface cannot collide across assignments"
+                )
 
     @staticmethod
     def orthographic_normalize(raw_unicode: str) -> str:
@@ -104,7 +119,9 @@ class ArabicSymbolEncodingV1:
 
     @staticmethod
     def _split_surface(normalized_surface: str) -> tuple[str, str]:
-        bases = [character for character in normalized_surface if not combining(character)]
+        bases = [
+            character for character in normalized_surface if not combining(character)
+        ]
         states = [character for character in normalized_surface if combining(character)]
         if len(bases) != 1 or len(states) != 1:
             raise ValueError(
@@ -129,7 +146,7 @@ class ArabicSymbolEncodingV1:
         return tuple(self._surfaces.values())
 
     def freeze(self) -> FrozenSymbolicEncoding:
-        """Close discovery after the required symbolic cardinalities are born."""
+        """Close discovery after identities and all bindings are born."""
         return FrozenSymbolicEncoding(
             self.carrier_identities,
             self.state_identities,
