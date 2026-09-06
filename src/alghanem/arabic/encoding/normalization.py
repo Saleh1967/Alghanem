@@ -155,12 +155,10 @@ class NormalizationEquivalenceProjection:
 class NormalizationResidualRow:
     """Occurrence-complete, non-linguistic row of raw-to-NFC residual data.
 
-    ``residual_count`` is the width of the local atom-delta segment, not the
-    length of ``NormalizationAudit.residuals``. ``candidate_surface`` duplicates
-    the current normalized
-    projection surface so consumers can audit the table without dereferencing
-    the original candidate object. It is projection metadata, not a new
-    identity claim.
+    Count and segment attributes are derived from the stored raw/normalized
+    codepoints and common boundaries, so consumers do not need to keep duplicate
+    constructor fields in sync. ``candidate_surface`` is the current normalized
+    projection surface; it is projection metadata, not a new identity claim.
     """
 
     run_id: str
@@ -170,17 +168,8 @@ class NormalizationResidualRow:
     raw_codepoints: tuple[str, ...]
     normalized_surface: str
     normalized_codepoints: tuple[str, ...]
-    raw_atom_count: int
-    normalized_atom_count: int
-    changed: bool
-    length_delta: int
     common_prefix_len: int
     common_suffix_len: int
-    removed_segment: str
-    inserted_segment: str
-    order_changed: bool
-    residual_count: int
-    candidate_surface: str
 
     def __post_init__(self) -> None:
         for field_name, string_value in (
@@ -189,52 +178,86 @@ class NormalizationResidualRow:
             ("occurrence id", self.occurrence_id),
             ("raw surface", self.raw_surface),
             ("normalized surface", self.normalized_surface),
-            ("candidate surface", self.candidate_surface),
         ):
             if not isinstance(string_value, str) or not string_value:
                 raise ValueError(f"{field_name} must be a non-empty string")
-        for field_name, segment_value in (
-            ("removed segment", self.removed_segment),
-            ("inserted segment", self.inserted_segment),
-        ):
-            if not isinstance(segment_value, str):
-                raise ValueError(f"{field_name} must be a string")
         if self.raw_codepoints != tuple(self.raw_surface):
             raise ValueError("raw codepoints must reproduce the raw surface")
         if self.normalized_codepoints != tuple(self.normalized_surface):
             raise ValueError(
                 "normalized codepoints must reproduce the normalized surface"
             )
-        if self.raw_atom_count != len(self.raw_codepoints):
-            raise ValueError("raw atom count must match raw codepoints")
-        if self.normalized_atom_count != len(self.normalized_codepoints):
-            raise ValueError("normalized atom count must match normalized codepoints")
         for field_name, integer_value in (
-            ("length delta", self.length_delta),
             ("common prefix length", self.common_prefix_len),
             ("common suffix length", self.common_suffix_len),
-            ("residual count", self.residual_count),
         ):
             if isinstance(integer_value, bool) or not isinstance(integer_value, int):
                 raise ValueError(f"{field_name} must be an integer")
         if self.common_prefix_len < 0 or self.common_suffix_len < 0:
             raise ValueError("common boundary lengths must be non-negative")
-        if self.residual_count < 0:
-            raise ValueError("residual count must be non-negative")
         if self.common_prefix_len + self.common_suffix_len > min(
-            self.raw_atom_count, self.normalized_atom_count
+            len(self.raw_codepoints), len(self.normalized_codepoints)
         ):
             raise ValueError("common boundary lengths must not overlap")
-        if self.length_delta != self.raw_atom_count - self.normalized_atom_count:
-            raise ValueError("length delta must equal raw minus normalized count")
-        if not isinstance(self.changed, bool):
-            raise ValueError("changed must be a boolean")
-        if not isinstance(self.order_changed, bool):
-            raise ValueError("order changed must be a boolean")
-        if self.changed != (self.raw_surface != self.normalized_surface):
-            raise ValueError("changed must match raw/normalized surface equality")
-        if self.candidate_surface != self.normalized_surface:
-            raise ValueError("candidate surface must match normalized surface")
+
+    @property
+    def raw_atom_count(self) -> int:
+        """Number of raw codepoints observed before normalization."""
+        return len(self.raw_codepoints)
+
+    @property
+    def normalized_atom_count(self) -> int:
+        """Number of codepoints produced after normalization."""
+        return len(self.normalized_codepoints)
+
+    @property
+    def changed(self) -> bool:
+        """Whether raw and normalized surfaces differ."""
+        return self.raw_surface != self.normalized_surface
+
+    @property
+    def length_delta(self) -> int:
+        """Raw atom count minus normalized atom count."""
+        return self.raw_atom_count - self.normalized_atom_count
+
+    @property
+    def removed_segment(self) -> str:
+        """Raw residual segment outside the shared prefix/suffix."""
+        return "".join(self._removed_codepoints)
+
+    @property
+    def inserted_segment(self) -> str:
+        """Normalized residual segment outside the shared prefix/suffix."""
+        return "".join(self._inserted_codepoints)
+
+    @property
+    def order_changed(self) -> bool:
+        """Whether the local residual segment preserves atoms but changes order."""
+        return (
+            self.changed
+            and sorted(self._removed_codepoints) == sorted(self._inserted_codepoints)
+            and self._removed_codepoints != self._inserted_codepoints
+        )
+
+    @property
+    def residual_count(self) -> int:
+        """Width of the local atom-delta segment."""
+        return max(len(self._removed_codepoints), len(self._inserted_codepoints))
+
+    @property
+    def candidate_surface(self) -> str:
+        """Current normalized projection surface for this residual row."""
+        return self.normalized_surface
+
+    @property
+    def _removed_codepoints(self) -> tuple[str, ...]:
+        raw_end = len(self.raw_codepoints) - self.common_suffix_len
+        return self.raw_codepoints[self.common_prefix_len : raw_end]
+
+    @property
+    def _inserted_codepoints(self) -> tuple[str, ...]:
+        normalized_end = len(self.normalized_codepoints) - self.common_suffix_len
+        return self.normalized_codepoints[self.common_prefix_len : normalized_end]
 
 
 @dataclass(frozen=True)
@@ -382,11 +405,6 @@ def _residual_row(audit: NormalizationAudit) -> NormalizationResidualRow:
     normalized_codepoints = tuple(audit.trace.normalized_surface)
     prefix_len = _common_prefix_len(raw_codepoints, normalized_codepoints)
     suffix_len = _common_suffix_len(raw_codepoints, normalized_codepoints, prefix_len)
-    raw_end = len(raw_codepoints) - suffix_len
-    normalized_end = len(normalized_codepoints) - suffix_len
-    removed_codepoints = raw_codepoints[prefix_len:raw_end]
-    inserted_codepoints = normalized_codepoints[prefix_len:normalized_end]
-    changed = observation.surface != audit.trace.normalized_surface
 
     return NormalizationResidualRow(
         run_id=provenance.run_identity.run_id,
@@ -396,17 +414,6 @@ def _residual_row(audit: NormalizationAudit) -> NormalizationResidualRow:
         raw_codepoints=raw_codepoints,
         normalized_surface=audit.trace.normalized_surface,
         normalized_codepoints=normalized_codepoints,
-        raw_atom_count=len(raw_codepoints),
-        normalized_atom_count=len(normalized_codepoints),
-        changed=changed,
-        length_delta=len(raw_codepoints) - len(normalized_codepoints),
         common_prefix_len=prefix_len,
         common_suffix_len=suffix_len,
-        removed_segment="".join(removed_codepoints),
-        inserted_segment="".join(inserted_codepoints),
-        order_changed=changed
-        and sorted(removed_codepoints) == sorted(inserted_codepoints)
-        and removed_codepoints != inserted_codepoints,
-        residual_count=max(len(removed_codepoints), len(inserted_codepoints)),
-        candidate_surface=audit.candidate.normalized_surface,
     )
