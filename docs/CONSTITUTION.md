@@ -22,6 +22,7 @@ These are the initial laws of the language-agnostic kernel:
 | No partial invariant coverage | DECLARED_DEFERRED | No transition may be promoted as preserved from partial invariant coverage; complete invariant verification is available as a separate gate before evidential sufficiency. |
 | No higher-layer repair | DECLARED_DEFERRED | Higher layers may not repair invalid lower-layer transitions, but layer authority is not defined. |
 | Canonical transition content snapshot | ENFORCED_AT_CONTENT_ENCODER | `CanonicalTransitionEncoder` is the sole issuer of `CanonicalTransitionManifest` and `TransitionContentIdentity`. The manifest preserves immutable canonical bytes for every structural transition field, including branch-origin provenance; occurrence-only `admission_id` and projection fingerprint are explicit exclusions. Its SHA-256 value is a digest reference, not proof of canonical-byte equality. Canonical values accept only exact built-in types, distinguish list from tuple and bytes from bytearray, preserve raw Unicode code points without normalization, encode finite floats as IEEE-754 binary64, and reject unsupported values and cycles. `preserved`, `changed`, and branch provenance components are sets; trace, evidence, and residuals are ordered sequences. Schema coverage rejects unaccounted structural fields. |
+| G0.2a.1 birth semantics content identity | ENFORCED_AT_CONTENT_ENCODER | `NoResidualIdDriftAfterFreeze`/`NoClosureCriterionIdDriftAfterFreeze` (G0.2a's id-equality checks) are label identity, not content identity: `ResidualDefinitionId != ResidualDefinitionContentIdentity`, and the same distinction holds for `ClosureCriterionSpec` and `WeakerModelSpec`. `CanonicalBirthSemanticsEncoder` is the sole issuer of `CanonicalResidualDefinitionManifest`, `CanonicalClosureCriterionManifest`, `CanonicalWeakerModelManifest`, and their `BirthSemanticsContentIdentity` SHA-256 digest references, covering every declared field of each spec. `BirthSemanticsContentRegistry` freezes the *first* canonical content bound to an exact `(domain, role, target_id)` scope; a later attempt to bind different content to that same scope is content drift and is rejected, not silently accepted because the id string still matches. `BirthAssessmentContentBinding` resolves every scope a `BirthAssessmentSemanticsContract` declares against a `SealedBirthSemanticsContentRegistry` and requires `CID(runtime) == CID(frozen)` for the residual definition, the closure criterion, and every weaker model; an unresolvable scope raises rather than passing silently. This closes `NoSemanticDriftAfterFreeze` for content, distinct from and in addition to `NoResidualDefinitionDriftAfterFreeze`/`NoClosureCriterionDriftAfterFreeze` for ids. It performs no evaluation and issues no `BirthVerdict`, `BirthCandidate`, or `Freeze`; `EvaluatorId != EvaluatorImplementationIdentity` and evaluator execution authority remain out of scope. |
 
 Invariant assessment request semantics are closed at the gate: `BLOCK` means an
 authorized verifier observed at least one invariant as false; `DEFER` means no
@@ -162,6 +163,24 @@ an exact `(domain, role, target_id, evaluator_id)` scope.
 boundary while executing no assessment. G0.2a obeys `NoVerdictYet`: it issues
 no `ResidualAssessment`, `BirthCandidate`, `BirthVerdict`, `Freeze`, or E0
 result.
+
+G0.2a's id-equality checks close *label* identity, not *content* identity:
+`SameId` does not imply `SameSemantics`. G0.2a.1 closes that separately.
+`ResidualDefinitionId != ResidualDefinitionContentIdentity`, and the same
+distinction holds for `ClosureCriterionSpec` and `WeakerModelSpec`.
+`CanonicalBirthSemanticsEncoder` issues immutable canonical manifests and
+`BirthSemanticsContentIdentity` digests for each; `BirthSemanticsContentRegistry`
+freezes the first canonical content bound to an exact
+`(domain, role, target_id)` scope, rejecting later content drift under the
+same id; and `BirthAssessmentContentBinding` proves
+`CID(runtime) == CID(frozen)` for the residual definition, the closure
+criterion, and every weaker model bound to a `BirthAssessmentSemanticsContract`.
+This closes `NoSemanticDriftAfterFreeze`. It still performs no evaluation and
+issues no birth authority. `EvaluatorId != EvaluatorImplementationIdentity`
+remains open: this stage authorizes evaluator *declarations*, not evaluator
+*implementations*, and any future runtime must resolve evaluator execution
+through a registry-owned implementation bound to an approved content
+identity, never a caller-supplied callable.
 
 Later G0.2 stages alone may implement the complete authority chain:
 `BirthAssessmentRequest -> ResidualAssessment ->
