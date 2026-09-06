@@ -27,7 +27,6 @@ def specification(revision_id: str = "r1") -> BirthExperimentSpecification:
             (("count", "multiset"), ("set", "multiset"), ("multiset", "sequence")),
         ),
         birth_query=BirthQuery("query", "is sequence necessary?", "sequence"),
-        frozen_weaker_models=("count", "set", "multiset"),
         residual_definition="unexplained distinction",
         closure_criterion="all prerequisite models fail to close the residual",
         evidence_requirements="exhaustive proof over the finite domain",
@@ -51,11 +50,8 @@ def test_specification_derives_complete_prerequisite_cone() -> None:
     assert spec.competing_projections == ("unicode",)
 
 
-def test_specification_rejects_caller_selected_incomplete_cone() -> None:
-    with pytest.raises(
-        BirthExperimentSpecificationError,
-        match="exactly equal the derived prerequisite cone",
-    ):
+def test_specification_does_not_accept_caller_selected_cone() -> None:
+    with pytest.raises(TypeError, match="unexpected keyword"):
         BirthExperimentSpecification(
             experiment_id="experiment",
             revision_id="r1",

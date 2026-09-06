@@ -120,11 +120,12 @@ milestones that are held to these same laws.
 
 `BirthExperimentSpecification` is a language-agnostic, frozen pre-evidence
 contract. It contains an experiment and revision identity, evidence mode,
-domain, frozen projection poset, `BirthQuery`, frozen weaker-model set,
-residual definition, closure criterion, and evidence requirements. It does
-not contain an evidence snapshot, a candidate, or a verdict. Its
-`PrerequisiteCone` is derived as `Down_E(q)` from the poset and query, and its
-incomparable projections are recorded as possible competing explanations.
+domain, frozen projection poset, `BirthQuery`, residual definition, closure
+criterion, and evidence requirements. It does not contain an evidence
+snapshot, a candidate, a verdict, or caller-selected weaker models. Its frozen
+weaker-model set and `PrerequisiteCone` are both derived as `Down_E(q)` from
+the poset and query, and its incomparable projections are recorded as possible
+competing explanations.
 
 `BirthAssessmentRequest = FrozenExperimentSpecification + EvidenceSnapshot`;
 this ordering prevents evidence from redesigning the question or its closure

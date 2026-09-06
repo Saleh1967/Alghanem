@@ -89,14 +89,7 @@ class ProjectionPoset:
 
         if projection not in self.projections:
             raise BirthExperimentSpecificationError("unknown target projection")
-        predecessors: set[str] = set()
-        frontier = [projection]
-        while frontier:
-            richer = frontier.pop()
-            for lower, relation_richer in self.strict_relations:
-                if relation_richer == richer and lower not in predecessors:
-                    predecessors.add(lower)
-                    frontier.append(lower)
+        predecessors = self._traverse(projection, reverse=True)
         return tuple(item for item in self.projections if item in predecessors)
 
     def incomparable_with(self, projection: str) -> tuple[str, ...]:
@@ -105,23 +98,24 @@ class ProjectionPoset:
         if projection not in self.projections:
             raise BirthExperimentSpecificationError("unknown target projection")
         predecessors = set(self.strict_predecessors(projection))
-        successors = self._strict_successors(projection)
+        successors = self._traverse(projection, reverse=False)
         return tuple(
             candidate
             for candidate in self.projections
             if candidate not in predecessors | successors | {projection}
         )
 
-    def _strict_successors(self, projection: str) -> set[str]:
-        successors: set[str] = set()
+    def _traverse(self, projection: str, *, reverse: bool) -> set[str]:
+        related: set[str] = set()
         frontier = [projection]
         while frontier:
-            lower = frontier.pop()
-            for relation_lower, richer in self.strict_relations:
-                if relation_lower == lower and richer not in successors:
-                    successors.add(richer)
-                    frontier.append(richer)
-        return successors
+            current = frontier.pop()
+            for lower, richer in self.strict_relations:
+                source, target = (richer, lower) if reverse else (lower, richer)
+                if source == current and target not in related:
+                    related.add(target)
+                    frontier.append(target)
+        return related
 
 
 @dataclass(frozen=True, slots=True)
@@ -134,7 +128,6 @@ class BirthExperimentSpecification:
     domain: str
     projection_poset: ProjectionPoset
     birth_query: BirthQuery
-    frozen_weaker_models: tuple[str, ...]
     residual_definition: str
     closure_criterion: str
     evidence_requirements: str
@@ -152,13 +145,6 @@ class BirthExperimentSpecification:
             raise BirthExperimentSpecificationError(
                 "birth query target must be declared by the projection poset"
             )
-        expected = self.prerequisite_cone
-        if set(self.frozen_weaker_models) != set(expected) or len(
-            self.frozen_weaker_models
-        ) != len(expected):
-            raise BirthExperimentSpecificationError(
-                "frozen weaker models must exactly equal the derived prerequisite cone"
-            )
 
     @property
     def prerequisite_cone(self) -> tuple[str, ...]:
@@ -167,6 +153,12 @@ class BirthExperimentSpecification:
         return self.projection_poset.strict_predecessors(
             self.birth_query.target_projection
         )
+
+    @property
+    def frozen_weaker_models(self) -> tuple[str, ...]:
+        """The frozen weaker-model set, derived from the frozen poset."""
+
+        return self.prerequisite_cone
 
     @property
     def competing_projections(self) -> tuple[str, ...]:
