@@ -1,13 +1,13 @@
-"""Arabic symbolic-encoding foundations."""
+"""Observation and normalization artifacts for Arabic surface encoding."""
 
-from .encoding import (
+from .candidates import SurfaceAtomCandidate
+from .normalization import (
     NormalizationAudit,
     NormalizationResidual,
     NormalizationTrace,
-    RawSurfaceObservation,
-    SurfaceAtomCandidate,
     SurfaceNormalization,
 )
+from .observation import RawSurfaceObservation
 
 __all__ = [
     "NormalizationAudit",

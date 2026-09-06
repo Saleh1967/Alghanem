@@ -14,11 +14,11 @@ candidate claims to be (its `TransitionKind`) is likewise kept distinct from
 any certified outcome. See `docs/CONSTITUTION.md` for the full law-by-law
 status.
 
-The first Arabic layer, `ArabicSymbolEncodingV1`, is independent of grammar.
-It discovers carrier identities, combining-state identities, their separately
-born bindings, and normalized canonical surface encodings before freezing an
-exactly 29-by-4 symbolic foundation. Linguistic names and grammatical concepts
-remain outside this layer.
+The initial Arabic layer is limited to `RawSurfaceObservation` and
+`SurfaceNormalization`. It emits normalization traces, residuals, and
+uninterpreted surface-atom candidates. It does not infer carrier or state
+identities, bindings, Arabic cardinalities, or grammatical concepts; those
+require separate future birth gates and a later E0 audit.
 
 ## Development
 
