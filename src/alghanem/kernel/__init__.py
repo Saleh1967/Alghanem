@@ -42,6 +42,15 @@ from .content_identity import (
     TransitionContentIdentity,
 )
 from .evidence import Claim, Evidence
+from .experiment_spec_content_identity import (
+    BirthExperimentContentIdentityError,
+    BirthExperimentSpecificationContentBinding,
+    BirthExperimentSpecificationContentIdentity,
+    CanonicalBirthExperimentSpecificationEncoder,
+    CanonicalBirthExperimentSpecificationManifest,
+    FrozenPreEvidenceExperimentManifest,
+    PreEvidenceSpecificationRegistry,
+)
 from .invariant import (
     InvariantAssessmentSpecificationError,
     InvariantComparisonError,
@@ -89,6 +98,9 @@ __all__ = [
     "BirthAssessmentRequest",
     "BirthAssessmentSemanticsContract",
     "BirthExperimentSpecification",
+    "BirthExperimentContentIdentityError",
+    "BirthExperimentSpecificationContentBinding",
+    "BirthExperimentSpecificationContentIdentity",
     "BirthExperimentSpecificationError",
     "BirthEvaluatorRole",
     "BirthQuery",
@@ -98,6 +110,8 @@ __all__ = [
     "BirthVerdictStatus",
     "BranchOriginProvenance",
     "CanonicalBirthSemanticsEncoder",
+    "CanonicalBirthExperimentSpecificationEncoder",
+    "CanonicalBirthExperimentSpecificationManifest",
     "CanonicalClosureCriterionManifest",
     "CanonicalResidualDefinitionManifest",
     "CanonicalTransitionEncoder",
@@ -113,6 +127,7 @@ __all__ = [
     "EvidenceMode",
     "EvidenceSnapshot",
     "FrozenBirthSemanticsContentScope",
+    "FrozenPreEvidenceExperimentManifest",
     "InvariantAssessmentSpecificationError",
     "InvariantComparisonError",
     "InvariantExtractionError",
@@ -133,6 +148,7 @@ __all__ = [
     "Operation",
     "OperationResult",
     "ProjectionPoset",
+    "PreEvidenceSpecificationRegistry",
     "Residual",
     "ResidualDefinitionSpec",
     "SealedBirthAssessmentEvaluatorRegistry",

@@ -1,7 +1,15 @@
 """G0.1 question, specification, and evidence-binding contracts only."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from enum import Enum, auto
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .experiment_spec_content_identity import (
+        BirthExperimentSpecificationContentBinding,
+    )
 
 _BIRTH_EVALUATOR_DEFINITION_TOKEN = object()
 
@@ -644,15 +652,28 @@ class EvidenceSnapshot:
 class BirthAssessmentRequest:
     """A valid request for G0.2; it is not an assessment or a verdict."""
 
-    specification: BirthExperimentSpecification
+    experiment_binding: BirthExperimentSpecificationContentBinding
     evidence_snapshot: EvidenceSnapshot
 
     def __post_init__(self) -> None:
-        if not isinstance(self.specification, BirthExperimentSpecification):
+        from .experiment_spec_content_identity import (
+            BirthExperimentSpecificationContentBinding,
+        )
+
+        if (
+            type(self.experiment_binding)
+            is not BirthExperimentSpecificationContentBinding
+        ):
             raise BirthExperimentSpecificationError(
-                "assessment request requires a frozen experiment specification"
+                "assessment request requires an authorized frozen experiment binding"
             )
         if not isinstance(self.evidence_snapshot, EvidenceSnapshot):
             raise BirthExperimentSpecificationError(
                 "assessment request requires an evidence snapshot"
             )
+
+    @property
+    def specification(self) -> BirthExperimentSpecification:
+        """The specification proven equal to the authorized frozen manifest."""
+
+        return self.experiment_binding.specification

@@ -133,10 +133,13 @@ Its frozen weaker-model set and `PrerequisiteCone` are both derived as
 distinct frozen-model-set and query-relative order roles. Its incomparable
 projections are recorded as possible competing explanations.
 
-`BirthAssessmentRequest = FrozenExperimentSpecification + EvidenceSnapshot`;
-this ordering prevents evidence from redesigning the question or its closure
-criterion. The contract validates malformed specifications before any request
-can enter a future runtime. G0.1 stops at `BirthAssessmentRequest`: it has no
+`BirthAssessmentRequest = AuthorizedFrozenExperimentBinding + EvidenceSnapshot`;
+the request refuses a raw `BirthExperimentSpecification`. This ordering
+enforces `NoAssessmentRequestWithoutAuthorizedPreEvidenceFreeze` and
+`EvidenceMayBeAttachedOnlyToAnAuthorizedFrozenExperiment`, preventing evidence
+from redesigning the question or its closure criterion. The contract validates
+malformed bindings before any request can enter a future runtime. G0.1 stops at
+`BirthAssessmentRequest`: it has no
 executable verdict, revision-history, competing-explanation assessment, or
 freeze authority. `BirthVerdictStatus` is future vocabulary only.
 
@@ -170,12 +173,26 @@ G0.2a's id-equality checks close *label* identity, not *content* identity:
 distinction holds for `ClosureCriterionSpec` and `WeakerModelSpec`.
 `CanonicalBirthSemanticsEncoder` issues immutable canonical manifests and
 `BirthSemanticsContentIdentity` digests for each; `BirthSemanticsContentRegistry`
-freezes the first canonical content bound to an exact
+freezes the canonical bytes of the first canonical content bound to an exact
 `(domain, role, target_id)` scope, rejecting later content drift under the
 same id; and `BirthAssessmentContentBinding` proves
-`CID(runtime) == CID(frozen)` for the residual definition, the closure
+exact canonical-byte equality for the residual definition, the closure
 criterion, and every weaker model bound to a `BirthAssessmentSemanticsContract`.
-This closes `NoSemanticDriftAfterFreeze`. It still performs no evaluation and
+This closes `NoDeclaredSemanticDigestDriftAfterFreeze`; the registry retains
+the canonical bytes and binding compares those bytes directly, so it also
+enforces `ExactCanonicalContentFreeze` rather than treating digest equality as
+content equality. G0.2a.2 separately gives every complete
+`BirthExperimentSpecification` an encoder-issued canonical manifest and
+content identity, covering its revision, evidence mode, domain, poset, query
+and hypothesis, residual/closure declarations, and evidence requirements.
+`PreEvidenceSpecificationRegistry` alone issues a
+`FrozenPreEvidenceExperimentManifest`; semantic-registry sealing requires that
+manifest, so a semantic snapshot cannot float independently of its frozen
+experiment specification. All canonical encoders enforce schema coverage:
+every declared field is either encoded or listed as an explicit derived
+exclusion, including `ProjectionPoset`, `BirthQuery`, and
+`StructureHypothesis`; adding an unaccounted field rejects encoding. It still
+performs no evaluation and
 issues no birth authority. `EvaluatorId != EvaluatorImplementationIdentity`
 remains open: this stage authorizes evaluator *declarations*, not evaluator
 *implementations*, and any future runtime must resolve evaluator execution

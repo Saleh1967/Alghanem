@@ -1,5 +1,8 @@
+from dataclasses import fields
+
 import pytest
 
+import alghanem.kernel.birth_content_identity as semantics_identity
 from alghanem.kernel.birth import (
     BirthAssessmentSemanticsContract,
     BirthEvaluatorRole,
@@ -13,6 +16,9 @@ from alghanem.kernel.birth import (
     WeakerModelSpec,
 )
 from alghanem.kernel.birth_content_identity import (
+    CLOSURE_CRITERION_MANIFEST_COVERAGE,
+    RESIDUAL_DEFINITION_MANIFEST_COVERAGE,
+    WEAKER_MODEL_MANIFEST_COVERAGE,
     BirthAssessmentContentBinding,
     BirthSemanticsContentIdentity,
     BirthSemanticsContentIdentityError,
@@ -20,6 +26,10 @@ from alghanem.kernel.birth_content_identity import (
     CanonicalBirthSemanticsEncoder,
     CanonicalResidualDefinitionManifest,
     FrozenBirthSemanticsContentScope,
+)
+from alghanem.kernel.experiment_spec_content_identity import (
+    CanonicalBirthExperimentSpecificationEncoder,
+    PreEvidenceSpecificationRegistry,
 )
 
 
@@ -131,28 +141,29 @@ def sealed_registry_for(contract: BirthAssessmentSemanticsContract):
         domain=domain,
         role=BirthEvaluatorRole.RESIDUAL_DEFINITION,
         target_id=contract.residual_definition.residual_id,
-        content_id=CanonicalBirthSemanticsEncoder.encode_residual_definition(
+        manifest=CanonicalBirthSemanticsEncoder.encode_residual_definition(
             contract.residual_definition
-        ).content_id,
+        ),
     )
     registry.freeze(
         domain=domain,
         role=BirthEvaluatorRole.CLOSURE_CRITERION,
         target_id=contract.closure_criterion.criterion_id,
-        content_id=CanonicalBirthSemanticsEncoder.encode_closure_criterion(
+        manifest=CanonicalBirthSemanticsEncoder.encode_closure_criterion(
             contract.closure_criterion
-        ).content_id,
+        ),
     )
     for model in contract.weaker_models:
         registry.freeze(
             domain=domain,
             role=BirthEvaluatorRole.WEAKER_MODEL,
             target_id=model.model_id,
-            content_id=CanonicalBirthSemanticsEncoder.encode_weaker_model(
-                model
-            ).content_id,
+            manifest=CanonicalBirthSemanticsEncoder.encode_weaker_model(model),
         )
-    return registry.seal("snapshot")
+    frozen_experiment = PreEvidenceSpecificationRegistry().freeze(
+        CanonicalBirthExperimentSpecificationEncoder.encode(contract.specification)
+    )
+    return registry.seal("snapshot", frozen_experiment)
 
 
 def test_canonical_encoding_is_deterministic_for_identical_content() -> None:
@@ -165,6 +176,27 @@ def test_canonical_encoding_is_deterministic_for_identical_content() -> None:
 
     assert first.content_id.digest == second.content_id.digest
     assert isinstance(first, CanonicalResidualDefinitionManifest)
+
+
+def test_every_semantics_schema_field_is_covered_by_its_manifest() -> None:
+    assert {item.name for item in fields(ResidualDefinitionSpec)} == set(
+        RESIDUAL_DEFINITION_MANIFEST_COVERAGE
+    )
+    assert {item.name for item in fields(ClosureCriterionSpec)} == set(
+        CLOSURE_CRITERION_MANIFEST_COVERAGE
+    )
+    assert {item.name for item in fields(WeakerModelSpec)} == set(
+        WEAKER_MODEL_MANIFEST_COVERAGE
+    )
+
+
+def test_encoder_rejects_an_unaccounted_semantics_field(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(semantics_identity, "WEAKER_MODEL_MANIFEST_COVERAGE", ())
+
+    with pytest.raises(RuntimeError, match="explicitly account"):
+        CanonicalBirthSemanticsEncoder.encode_weaker_model(weaker_model_specs()[0])
 
 
 @pytest.mark.parametrize(
@@ -203,6 +235,7 @@ def test_frozen_content_scope_cannot_be_hand_constructed() -> None:
             domain="finite-domain",
             role=BirthEvaluatorRole.RESIDUAL_DEFINITION,
             target_id="residual",
+            canonical_bytes=b"{}",
             content_id=CanonicalBirthSemanticsEncoder.encode_residual_definition(
                 residual_definition()
             ).content_id,
@@ -211,24 +244,24 @@ def test_frozen_content_scope_cannot_be_hand_constructed() -> None:
 
 def test_registry_freezes_first_content_and_accepts_matching_rebinds() -> None:
     registry = BirthSemanticsContentRegistry()
-    content_id = CanonicalBirthSemanticsEncoder.encode_residual_definition(
+    manifest = CanonicalBirthSemanticsEncoder.encode_residual_definition(
         residual_definition()
-    ).content_id
+    )
 
     first = registry.freeze(
         domain="finite-domain",
         role=BirthEvaluatorRole.RESIDUAL_DEFINITION,
         target_id="residual",
-        content_id=content_id,
+        manifest=manifest,
     )
     second = registry.freeze(
         domain="finite-domain",
         role=BirthEvaluatorRole.RESIDUAL_DEFINITION,
         target_id="residual",
-        content_id=content_id,
+        manifest=manifest,
     )
 
-    assert first.content_id.digest == second.content_id.digest == content_id.digest
+    assert first.canonical_bytes == second.canonical_bytes == manifest.canonical_bytes
 
 
 def test_registry_rejects_drifted_content_for_the_same_scope() -> None:
@@ -237,9 +270,9 @@ def test_registry_rejects_drifted_content_for_the_same_scope() -> None:
         domain="finite-domain",
         role=BirthEvaluatorRole.RESIDUAL_DEFINITION,
         target_id="residual",
-        content_id=CanonicalBirthSemanticsEncoder.encode_residual_definition(
+        manifest=CanonicalBirthSemanticsEncoder.encode_residual_definition(
             residual_definition()
-        ).content_id,
+        ),
     )
 
     with pytest.raises(
@@ -249,9 +282,9 @@ def test_registry_rejects_drifted_content_for_the_same_scope() -> None:
             domain="finite-domain",
             role=BirthEvaluatorRole.RESIDUAL_DEFINITION,
             target_id="residual",
-            content_id=CanonicalBirthSemanticsEncoder.encode_residual_definition(
+            manifest=CanonicalBirthSemanticsEncoder.encode_residual_definition(
                 residual_definition(evaluator_id="eval-Y")
-            ).content_id,
+            ),
         )
 
 
@@ -305,11 +338,14 @@ def test_content_binding_requires_every_scope_to_be_frozen_in_the_registry() -> 
         domain="finite-domain",
         role=BirthEvaluatorRole.RESIDUAL_DEFINITION,
         target_id="residual",
-        content_id=CanonicalBirthSemanticsEncoder.encode_residual_definition(
+        manifest=CanonicalBirthSemanticsEncoder.encode_residual_definition(
             contract.residual_definition
-        ).content_id,
+        ),
     )
-    sealed = registry.seal("partial-snapshot")
+    frozen_experiment = PreEvidenceSpecificationRegistry().freeze(
+        CanonicalBirthExperimentSpecificationEncoder.encode(contract.specification)
+    )
+    sealed = registry.seal("partial-snapshot", frozen_experiment)
 
     with pytest.raises(BirthSemanticsContentIdentityError, match="no frozen content"):
         BirthAssessmentContentBinding(contract=contract, registry_snapshot=sealed)
@@ -329,4 +365,56 @@ def test_content_binding_requires_a_real_contract_and_sealed_registry() -> None:
         BirthAssessmentContentBinding(
             contract=contract,
             registry_snapshot="not-a-registry",  # type: ignore[arg-type]
+        )
+
+
+def test_content_binding_rejects_a_snapshot_bound_to_another_experiment() -> None:
+    contract = assessment_semantics()
+    registry = BirthSemanticsContentRegistry()
+    domain = contract.specification.domain
+    registry.freeze(
+        domain=domain,
+        role=BirthEvaluatorRole.RESIDUAL_DEFINITION,
+        target_id="residual",
+        manifest=CanonicalBirthSemanticsEncoder.encode_residual_definition(
+            contract.residual_definition
+        ),
+    )
+    registry.freeze(
+        domain=domain,
+        role=BirthEvaluatorRole.CLOSURE_CRITERION,
+        target_id="closure",
+        manifest=CanonicalBirthSemanticsEncoder.encode_closure_criterion(
+            contract.closure_criterion
+        ),
+    )
+    for model in contract.weaker_models:
+        registry.freeze(
+            domain=domain,
+            role=BirthEvaluatorRole.WEAKER_MODEL,
+            target_id=model.model_id,
+            manifest=CanonicalBirthSemanticsEncoder.encode_weaker_model(model),
+        )
+    other_specification = BirthExperimentSpecification(
+        experiment_id="other-experiment",
+        revision_id="r1",
+        revision_sequence=1,
+        evidence_mode=EvidenceMode.FORMAL,
+        domain=domain,
+        projection_poset=contract.specification.projection_poset,
+        birth_query=contract.specification.birth_query,
+        residual_definition_id="residual",
+        residual_definition="unexplained distinction",
+        closure_criterion_id="closure",
+        closure_criterion="all prerequisite models fail to close the residual",
+        evidence_requirements="exhaustive proof over the finite domain",
+    )
+    frozen_experiment = PreEvidenceSpecificationRegistry().freeze(
+        CanonicalBirthExperimentSpecificationEncoder.encode(other_specification)
+    )
+
+    with pytest.raises(BirthSemanticsContentIdentityError, match="authorized frozen"):
+        BirthAssessmentContentBinding(
+            contract=contract,
+            registry_snapshot=registry.seal("wrong-experiment", frozen_experiment),
         )
