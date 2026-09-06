@@ -152,9 +152,7 @@ def sealed_registry_for(contract: BirthAssessmentSemanticsContract):
             domain=domain,
             role=BirthEvaluatorRole.WEAKER_MODEL,
             target_id=model.model_id,
-            manifest=CanonicalBirthSemanticsEncoder.encode_weaker_model(
-                model
-            ),
+            manifest=CanonicalBirthSemanticsEncoder.encode_weaker_model(model),
         )
     frozen_experiment = PreEvidenceSpecificationRegistry().freeze(
         CanonicalBirthExperimentSpecificationEncoder.encode(contract.specification)
@@ -340,4 +338,56 @@ def test_content_binding_requires_a_real_contract_and_sealed_registry() -> None:
         BirthAssessmentContentBinding(
             contract=contract,
             registry_snapshot="not-a-registry",  # type: ignore[arg-type]
+        )
+
+
+def test_content_binding_rejects_a_snapshot_bound_to_another_experiment() -> None:
+    contract = assessment_semantics()
+    registry = BirthSemanticsContentRegistry()
+    domain = contract.specification.domain
+    registry.freeze(
+        domain=domain,
+        role=BirthEvaluatorRole.RESIDUAL_DEFINITION,
+        target_id="residual",
+        manifest=CanonicalBirthSemanticsEncoder.encode_residual_definition(
+            contract.residual_definition
+        ),
+    )
+    registry.freeze(
+        domain=domain,
+        role=BirthEvaluatorRole.CLOSURE_CRITERION,
+        target_id="closure",
+        manifest=CanonicalBirthSemanticsEncoder.encode_closure_criterion(
+            contract.closure_criterion
+        ),
+    )
+    for model in contract.weaker_models:
+        registry.freeze(
+            domain=domain,
+            role=BirthEvaluatorRole.WEAKER_MODEL,
+            target_id=model.model_id,
+            manifest=CanonicalBirthSemanticsEncoder.encode_weaker_model(model),
+        )
+    other_specification = BirthExperimentSpecification(
+        experiment_id="other-experiment",
+        revision_id="r1",
+        revision_sequence=1,
+        evidence_mode=EvidenceMode.FORMAL,
+        domain=domain,
+        projection_poset=contract.specification.projection_poset,
+        birth_query=contract.specification.birth_query,
+        residual_definition_id="residual",
+        residual_definition="unexplained distinction",
+        closure_criterion_id="closure",
+        closure_criterion="all prerequisite models fail to close the residual",
+        evidence_requirements="exhaustive proof over the finite domain",
+    )
+    frozen_experiment = PreEvidenceSpecificationRegistry().freeze(
+        CanonicalBirthExperimentSpecificationEncoder.encode(other_specification)
+    )
+
+    with pytest.raises(BirthSemanticsContentIdentityError, match="authorized frozen"):
+        BirthAssessmentContentBinding(
+            contract=contract,
+            registry_snapshot=registry.seal("wrong-experiment", frozen_experiment),
         )

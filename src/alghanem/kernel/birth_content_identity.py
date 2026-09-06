@@ -311,7 +311,7 @@ def _manifest_matches_scope(
         BirthEvaluatorRole.CLOSURE_CRITERION: "criterion_id",
         BirthEvaluatorRole.WEAKER_MODEL: "model_id",
     }[role]
-    return encoded["domain"] == domain and encoded[id_field] == target_id
+    return bool(encoded["domain"] == domain and encoded[id_field] == target_id)
 
 
 class BirthSemanticsContentRegistry:
@@ -355,7 +355,10 @@ class BirthSemanticsContentRegistry:
             )
         key = (domain, role, target_id)
         existing = self._scopes.get(key)
-        if existing is not None and existing.canonical_bytes != manifest.canonical_bytes:
+        if (
+            existing is not None
+            and existing.canonical_bytes != manifest.canonical_bytes
+        ):
             raise BirthSemanticsContentIdentityError(
                 "runtime canonical content does not match the frozen canonical "
                 "content for this scope: SameId != SameSemantics"
@@ -384,7 +387,8 @@ class BirthSemanticsContentRegistry:
             )
         if type(frozen_experiment) is not FrozenPreEvidenceExperimentManifest:
             raise BirthSemanticsContentIdentityError(
-                "content registry seal requires a frozen pre-evidence experiment manifest"
+                "content registry seal requires a frozen pre-evidence "
+                "experiment manifest"
             )
         return SealedBirthSemanticsContentRegistry(
             snapshot_id=snapshot_id,
@@ -417,7 +421,8 @@ class SealedBirthSemanticsContentRegistry:
             )
         if type(self.frozen_experiment) is not FrozenPreEvidenceExperimentManifest:
             raise BirthSemanticsContentIdentityError(
-                "sealed content registry requires a frozen pre-evidence experiment manifest"
+                "sealed content registry requires a frozen pre-evidence "
+                "experiment manifest"
             )
         if not isinstance(self.scopes, tuple):
             raise BirthSemanticsContentIdentityError(
@@ -447,7 +452,7 @@ class SealedBirthSemanticsContentRegistry:
         scope = self._index.get((domain, role, target_id))
         if scope is None:
             raise BirthSemanticsContentIdentityError(
-                "no frozen canonical content is recorded for this scope "
+                "no frozen content (canonical bytes) is recorded for this scope "
                 f"({_scope_label(domain, role, target_id)})"
             )
         return scope
@@ -527,9 +532,7 @@ class BirthAssessmentContentBinding:
 
         weaker_model_content_ids = []
         for model in self.contract.weaker_models:
-            runtime = CanonicalBirthSemanticsEncoder.encode_weaker_model(
-                model
-            )
+            runtime = CanonicalBirthSemanticsEncoder.encode_weaker_model(model)
             frozen = self.registry_snapshot.resolve_frozen(
                 domain=domain,
                 role=BirthEvaluatorRole.WEAKER_MODEL,
