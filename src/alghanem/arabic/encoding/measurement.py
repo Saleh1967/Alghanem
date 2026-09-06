@@ -37,5 +37,7 @@ class MeasurementRunIdentity:
 
     def __post_init__(self) -> None:
         if not isinstance(self.protocol, MeasurementProtocolSpec):
-            raise ValueError("measurement run protocol must be a MeasurementProtocolSpec")
+            raise ValueError(
+                "measurement run protocol must be a MeasurementProtocolSpec"
+            )
         _require_non_empty_string(self.run_id, "measurement run id")

@@ -36,7 +36,9 @@ def observation(
     run_identity: MeasurementRunIdentity | None = None,
 ) -> RawSurfaceObservation:
     return RawSurfaceObservation(
-        ObservationProvenance(run_identity or measurement_run(), source_id, occurrence_id),
+        ObservationProvenance(
+            run_identity or measurement_run(), source_id, occurrence_id
+        ),
         surface,
     )
 
