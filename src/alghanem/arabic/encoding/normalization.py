@@ -232,7 +232,7 @@ class NormalizationResidualRow:
 
     @property
     def order_changed(self) -> bool:
-        """Whether the local residual segment preserves atoms but changes order."""
+        """Whether the local residual segment is a pure atom permutation."""
         return (
             self.changed
             and sorted(self._removed_codepoints) == sorted(self._inserted_codepoints)

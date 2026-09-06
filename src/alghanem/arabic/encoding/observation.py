@@ -11,9 +11,9 @@ from .measurement import MeasurementRunIdentity
 class ObservationProvenance:
     """Run-scoped occurrence identity supplied by the measurement protocol."""
 
-    run_identity: MeasurementRunIdentity
     source_id: str
     occurrence_id: str
+    run_identity: MeasurementRunIdentity
 
     def __post_init__(self) -> None:
         if not isinstance(self.run_identity, MeasurementRunIdentity):

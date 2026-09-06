@@ -38,7 +38,9 @@ def observation(
 ) -> RawSurfaceObservation:
     return RawSurfaceObservation(
         ObservationProvenance(
-            run_identity or measurement_run(), source_id, occurrence_id
+            source_id,
+            occurrence_id,
+            run_identity or measurement_run(),
         ),
         surface,
     )
@@ -357,6 +359,6 @@ def test_observation_provenance_requires_measurement_run() -> None:
 def test_observation_rejects_empty_or_non_string_surfaces(surface: object) -> None:
     with pytest.raises(ValueError, match="non-empty string"):
         RawSurfaceObservation(
-            ObservationProvenance(measurement_run(), "source", "one"),
+            ObservationProvenance("source", "one", measurement_run()),
             surface,  # type: ignore[arg-type]
         )
