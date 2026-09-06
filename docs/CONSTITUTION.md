@@ -72,3 +72,38 @@ produce a different content digest for the same admission occurrence.
 The kernel does not assume reversibility, global composition, path
 independence, a group, or a groupoid. Those questions are intentionally
 deferred until later milestones.
+
+## G0 — Birth Protocol (declared law, no runtime gate yet)
+
+The kernel and Arabic layer never introduce a new named object, cardinality,
+or ontology term because it is convenient, expected, or traditional. A
+candidate object is only permitted to be *born* — frozen and eventually
+handed a traditional name — through the following declared chain. At Kernel
+v0.1 this chain is **law only**: no `BirthGate`, rank/complexity class,
+`Carrier`/`State`/`Binding` type, or intervention-operation runtime exists
+yet. Those are separate, later milestones that must themselves be
+structurally admitted like any other change; this section only freezes the
+constraints they will have to satisfy.
+
+```
+MeasuredResidual -> WeakerProjectionExhaustion -> IndependentClosure -> Freeze -> E0 -> TraditionalName
+```
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `NoBirthWithoutMeasuredResidual` | DECLARED_DEFERRED | No candidate object, factor, or axis may be born unless a *measured* residual (from real observations, not synthetic interventions alone) remains unexplained after every currently licensed weaker projection has been applied. Absence of residual anywhere is not evidence of absence everywhere; it only closes the scope in which it was measured. |
+| `NoBirthBeforeWeakerExhaustion` | DECLARED_DEFERRED | Before any higher-rank or richer-structure candidate may be proposed, every known weaker projection capable of explaining the residual must first be tried and shown insufficient. A birth proposal that skips available weaker projections is malformed, not merely unproven. |
+| `NoHigherRankBeforeLowerResidualClosure` | DECLARED_DEFERRED | A structure at rank `r+1` may not be examined, let alone born, while unexplained residual remains open at rank `r` or below. Rank itself, and its coordinates, are not fixed in advance; a new rank coordinate is subject to the same birth chain as any other candidate. |
+| `ScopedNoBirthIsNotGlobalNoBirth` | DECLARED_DEFERRED | A `NO_BIRTH` verdict is always scoped to the exact `(experiment, domain, weaker-model set, measurement run, evidence snapshot)` tuple that produced it. It must be recorded and read as `NO_BIRTH_IN_SCOPE(...)`, never generalized into an unscoped, global claim that no such object exists anywhere. |
+| `ProjectionIsNotOntology` | DECLARED_DEFERRED | Weaker-model projections (for example count, set, multiset, ordered-tuple) are analysis tools for deciding whether a residual survives, not born objects and not linguistic claims. Projections form a partial order, not a total order: `P_count` and `P_set` are incomparable (`P_count ⊀ P_set`, `P_set ⊀ P_count`), while both are recoverable from `P_multiset`, and `P_multiset` is recoverable from `P_seq` (`P_count ⪯ P_multi`, `P_set ⪯ P_multi`, `P_multi ⪯ P_seq`). No total-order complexity vector may be assumed across projections or coordinates that have not themselves been born. |
+| `InterventionOperationIsNotOntology` | DECLARED_DEFERRED | A declared basis of experimental interventions (for example an "ExperimentalInterventionBasisV0" of delete/insert/substitute/repeat/swap) is an explicit, named, non-exhaustive experimental tool. It must never be asserted to be the complete set of primitive operations, and its members are not linguistic or structural objects. |
+| `CounterfactualResultIsNotObservation` | DECLARED_DEFERRED | The output of a synthetic/counterfactual intervention applied to a previously observed occurrence is not itself a `RawSurfaceObservation` or any other measured observation. It must be marked `observed=False` and must never be merged into, or treated as equivalent to, the observation or normalization ledgers. |
+| `SyntheticInterventionMayGenerateHypothesisOnly` | DECLARED_DEFERRED | A residual discovered only through synthetic/counterfactual interventions (`R_synthetic`) may license nothing beyond a hypothesis. It cannot by itself satisfy `NoBirthWithoutMeasuredResidual`. A hypothesis becomes birth-eligible only after an independently measured contrast (`R_measured`), drawn from real observations under a measurement run, is found to match the hypothesis and itself survives every licensed weaker projection, with replication in a second, independent measurement run. |
+| `TraditionalNamingOnlyAfterFreezeAndE0` | DECLARED_DEFERRED | A traditional name (linguistic, grammatical, or morphological) may only be attached after the chain `Birth -> IndependentClosure -> Freeze -> E0` has completed. The name is never part of the birth proof, never influences whether closure or freeze occurs, and the kernel itself must never define or reference `TraditionalName`; any such naming step belongs strictly to a downstream, kernel-independent evaluation/oracle layer. |
+
+These nine laws are declared now, ahead of any experiment, precisely so that
+the question being asked cannot be quietly reshaped by the answer an
+experiment later produces. Implementing `BirthGate`, a rank/complexity
+representation, an intervention runtime, or any `Carrier`/`State`/`Binding`
+candidate is out of scope for this section and must occur in later,
+separately reviewed milestones that are held to these same laws.

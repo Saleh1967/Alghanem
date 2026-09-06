@@ -37,6 +37,14 @@ removed/inserted segments, and the current candidate surface. The weaker
 equal normalized `SurfaceAtomCandidate`s; it is not a born object and does not
 introduce Carrier, State, binding, or Arabic cardinality claims.
 
+G0 freezes the birth protocol itself, ahead of any experiment: before any new
+Arabic candidate, factor, or rank coordinate may be born, a measured residual
+(not a synthetic-intervention artifact alone) must survive exhaustion of every
+licensed weaker projection, and any resulting name may only be attached after
+an independent closure, freeze, and `E0` step. See the "G0 — Birth Protocol"
+section of `docs/CONSTITUTION.md` for the full declared laws; no `BirthGate`,
+rank/complexity runtime, or intervention runtime exists yet.
+
 ## Development
 
 ```bash
