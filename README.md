@@ -14,9 +14,11 @@ candidate claims to be (its `TransitionKind`) is likewise kept distinct from
 any certified outcome. See `docs/CONSTITUTION.md` for the full law-by-law
 status.
 
-Arabic linguistic layers are intentionally deferred. Concepts such as carriers,
-morphology, syntax, and identity certificates will be added only after the
-foundational kernel has been independently tested.
+The first Arabic layer, `ArabicSymbolEncodingV1`, is independent of grammar.
+It discovers carrier identities, combining-state identities, their separately
+born bindings, and normalized canonical surface encodings before freezing an
+exactly 29-by-4 symbolic foundation. Linguistic names and grammatical concepts
+remain outside this layer.
 
 ## Development
 
