@@ -21,11 +21,45 @@ pre-existing evidence could still be ingested through an authorized run.
 It also does not claim anything about evidence quality or outcome:
 `AuthorizedEvidence != SufficientEvidence`, `AuthorizedEvidence` does not
 imply `ResidualSurvival`, and it does not imply `Birth`.
+
+G0.2a.3.1 closes `IssuerScopedOccurrenceUniqueness`: each issuer keeps its
+own registry of the occurrence ids it has issued and rejects a repeat, so
+`authorization_id`, `run_id`, and `snapshot_id` are injective within their
+issuing scope (an authority's own authorizations, one authorization's own
+runs, one run's own snapshots) rather than caller-chosen strings a caller
+could repeat across distinct occurrences.
+
+This is deliberately *not* called `EvidenceOccurrenceIdentity`:
+`LocalInjectivity != PortableIdentity`. Proving an id is never repeated
+within one issuer's own registry does not prove it is never repeated across
+issuers. `AuthorizedEvidenceSnapshot` carries no `issuer_scope_id`, so two
+different `EvidenceAcquisitionAuthority` instances are two different,
+uncoordinated issuance scopes: each may independently issue
+`authorization_id="a1"` / `run_id="r1"` / `snapshot_id="s1"`, and if both also
+share the same frozen experiment binding, payload, and trace, the two
+resulting snapshots' comparable fields coincide even though the two
+acquisition occurrences are genuinely independent. This closes
+`IssuerScopedOccurrenceUniqueness` only within each issuer's own scope, not
+globally, and nothing proves distinct issuers' ids never collide with each
+other. `PortableEvidenceOccurrenceIdentity` remains deferred pending a
+self-issuing issuer-scope identity propagated through
+`Authorization -> Run -> Snapshot`. Each issuer's registry check-and-insert
+is synchronized with an internal lock, so concurrent calls on the same
+authority, authorization, or run instance cannot race past the uniqueness
+check; it does not make cross-instance issuance globally coordinated.
+
+`EvidenceAcquisitionRun` and `EvidenceAcquisitionAuthorization` are
+`ExternallyFrozen, InternallyStatefulAuthority` objects, not plain immutable
+value objects: `frozen=True` fixes their own declared identity fields, but
+each also holds a private, mutable `_issued_*` registry and lock (excluded
+from equality, `repr`, and from any content identity) purely as operational
+bookkeeping for this stage's uniqueness check.
 """
 
 from __future__ import annotations
 
 import hashlib
+import threading
 from dataclasses import dataclass, field
 
 from .birth import BirthExperimentSpecificationError, EvidenceMode, _require_text
@@ -179,6 +213,15 @@ class EvidenceAcquisitionRun:
     domain: str
     evidence_mode: EvidenceMode
     _token: object | None = field(default=None, repr=False, compare=False)
+    # Mutable containers deliberately held by this frozen dataclass: their own
+    # identity is never reassigned, only their contents mutate, for internal
+    # occurrence-id bookkeeping that must survive across issuing calls.
+    _issued_snapshot_ids: set[str] = field(
+        default_factory=set, repr=False, compare=False, init=False
+    )
+    _lock: threading.Lock = field(
+        default_factory=threading.Lock, repr=False, compare=False, init=False
+    )
 
     def __post_init__(self) -> None:
         if self._token is not _EVIDENCE_ACQUISITION_TOKEN:
@@ -206,18 +249,27 @@ class EvidenceAcquisitionRun:
     ) -> AuthorizedEvidenceSnapshot:
         """The sole path from a captured payload to an assessable snapshot."""
 
+        _require_text(snapshot_id, "evidence snapshot id")
         manifest = CanonicalEvidenceContentEncoder.encode(payload)
-        return AuthorizedEvidenceSnapshot(
-            snapshot_id=snapshot_id,
-            run_id=self.run_id,
-            authorization_id=self.authorization_id,
-            experiment_content_id=self.experiment_content_id,
-            domain=self.domain,
-            evidence_mode=self.evidence_mode,
-            evidence_manifest=manifest,
-            trace=trace,
-            _token=_EVIDENCE_ACQUISITION_TOKEN,
-        )
+        with self._lock:
+            if snapshot_id in self._issued_snapshot_ids:
+                raise EvidenceAcquisitionAuthorityError(
+                    "evidence snapshot id already issued by this evidence "
+                    "acquisition run"
+                )
+            snapshot = AuthorizedEvidenceSnapshot(
+                snapshot_id=snapshot_id,
+                run_id=self.run_id,
+                authorization_id=self.authorization_id,
+                experiment_content_id=self.experiment_content_id,
+                domain=self.domain,
+                evidence_mode=self.evidence_mode,
+                evidence_manifest=manifest,
+                trace=trace,
+                _token=_EVIDENCE_ACQUISITION_TOKEN,
+            )
+            self._issued_snapshot_ids.add(snapshot_id)
+            return snapshot
 
 
 @dataclass(frozen=True, slots=True)
@@ -233,6 +285,15 @@ class EvidenceAcquisitionAuthorization:
     authorization_id: str
     binding: BirthExperimentSpecificationContentBinding
     _token: object | None = field(default=None, repr=False, compare=False)
+    # Mutable containers deliberately held by this frozen dataclass: their own
+    # identity is never reassigned, only their contents mutate, for internal
+    # occurrence-id bookkeeping that must survive across issuing calls.
+    _issued_run_ids: set[str] = field(
+        default_factory=set, repr=False, compare=False, init=False
+    )
+    _lock: threading.Lock = field(
+        default_factory=threading.Lock, repr=False, compare=False, init=False
+    )
 
     def __post_init__(self) -> None:
         if self._token is not _EVIDENCE_ACQUISITION_TOKEN:
@@ -274,18 +335,31 @@ class EvidenceAcquisitionAuthorization:
     def open_run(self, run_id: str) -> EvidenceAcquisitionRun:
         """The sole path from an authorization to an acquisition run."""
 
-        return EvidenceAcquisitionRun(
-            run_id=run_id,
-            authorization_id=self.authorization_id,
-            experiment_content_id=self.experiment_content_id,
-            domain=self.domain,
-            evidence_mode=self.evidence_mode,
-            _token=_EVIDENCE_ACQUISITION_TOKEN,
-        )
+        _require_text(run_id, "evidence acquisition run id")
+        with self._lock:
+            if run_id in self._issued_run_ids:
+                raise EvidenceAcquisitionAuthorityError(
+                    "evidence acquisition run id already issued by this "
+                    "authorization"
+                )
+            run = EvidenceAcquisitionRun(
+                run_id=run_id,
+                authorization_id=self.authorization_id,
+                experiment_content_id=self.experiment_content_id,
+                domain=self.domain,
+                evidence_mode=self.evidence_mode,
+                _token=_EVIDENCE_ACQUISITION_TOKEN,
+            )
+            self._issued_run_ids.add(run_id)
+            return run
 
 
 class EvidenceAcquisitionAuthority:
     """Separate authority boundary issuing evidence acquisition authorizations."""
+
+    def __init__(self) -> None:
+        self._issued_authorization_ids: set[str] = set()
+        self._lock = threading.Lock()
 
     def authorize(
         self,
@@ -300,11 +374,20 @@ class EvidenceAcquisitionAuthority:
                 "evidence acquisition authority requires a genuine frozen "
                 "experiment binding"
             )
-        return EvidenceAcquisitionAuthorization(
-            authorization_id=authorization_id,
-            binding=binding,
-            _token=_EVIDENCE_ACQUISITION_TOKEN,
-        )
+        _require_text(authorization_id, "evidence acquisition authorization id")
+        with self._lock:
+            if authorization_id in self._issued_authorization_ids:
+                raise EvidenceAcquisitionAuthorityError(
+                    "evidence acquisition authorization id already issued by "
+                    "this authority"
+                )
+            authorization = EvidenceAcquisitionAuthorization(
+                authorization_id=authorization_id,
+                binding=binding,
+                _token=_EVIDENCE_ACQUISITION_TOKEN,
+            )
+            self._issued_authorization_ids.add(authorization_id)
+            return authorization
 
 
 __all__ = [

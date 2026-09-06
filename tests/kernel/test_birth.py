@@ -324,6 +324,90 @@ def test_authorized_evidence_ingestion_derives_content_identity() -> None:
     assert first.experiment_content_id == binding.content_id
 
 
+def test_evidence_acquisition_authority_rejects_repeated_authorization_id() -> None:
+    binding = frozen_specification_binding()
+    authority = EvidenceAcquisitionAuthority()
+    authority.authorize(authorization_id="authorization", binding=binding)
+
+    with pytest.raises(EvidenceAcquisitionAuthorityError, match="already issued"):
+        authority.authorize(authorization_id="authorization", binding=binding)
+
+
+def test_evidence_acquisition_authorization_rejects_repeated_run_id() -> None:
+    binding = frozen_specification_binding()
+    authorization = EvidenceAcquisitionAuthority().authorize(
+        authorization_id="authorization", binding=binding
+    )
+    authorization.open_run("run")
+
+    with pytest.raises(EvidenceAcquisitionAuthorityError, match="already issued"):
+        authorization.open_run("run")
+
+
+def test_evidence_acquisition_run_rejects_repeated_snapshot_id() -> None:
+    binding = frozen_specification_binding()
+    authorization = EvidenceAcquisitionAuthority().authorize(
+        authorization_id="authorization", binding=binding
+    )
+    run = authorization.open_run("run")
+    run.ingest(snapshot_id="s1", payload="content", trace="trace")
+
+    with pytest.raises(EvidenceAcquisitionAuthorityError, match="already issued"):
+        run.ingest(snapshot_id="s1", payload="other content", trace="trace")
+
+
+def test_evidence_occurrence_ids_are_scoped_and_independent() -> None:
+    binding = frozen_specification_binding()
+    authority = EvidenceAcquisitionAuthority()
+    first_authorization = authority.authorize(authorization_id="a1", binding=binding)
+    second_authorization = EvidenceAcquisitionAuthority().authorize(
+        authorization_id="a1", binding=binding
+    )
+
+    first_run = first_authorization.open_run("run-1")
+    second_run = second_authorization.open_run("run-1")
+    other_run = first_authorization.open_run("run-2")
+
+    assert first_run.run_id == second_run.run_id == "run-1"
+    assert other_run.run_id != first_run.run_id
+
+    first_run.ingest(snapshot_id="s1", payload="content", trace="trace")
+    other_run.ingest(snapshot_id="s1", payload="content", trace="trace")
+
+
+def test_issuer_scoped_uniqueness_is_not_yet_a_portable_occurrence_identity() -> None:
+    """`LocalInjectivity != PortableIdentity` (G0.2a.3.1 is scope-relative).
+
+    Two distinct `EvidenceAcquisitionAuthority` instances are two distinct,
+    uncoordinated issuance scopes: nothing stops both from independently
+    issuing the same `authorization_id`/`run_id`/`snapshot_id` triple. If they
+    also share the same frozen experiment binding, payload, and trace, the
+    resulting snapshots' comparable representations coincide even though the
+    two acquisition occurrences are genuinely independent objects. Proving
+    `PortableEvidenceOccurrenceIdentity` would require a self-issuing
+    issuer-scope identity propagated through the chain, which does not exist
+    yet.
+    """
+
+    binding = frozen_specification_binding()
+    first_snapshot = (
+        EvidenceAcquisitionAuthority()
+        .authorize(authorization_id="a1", binding=binding)
+        .open_run("r1")
+        .ingest(snapshot_id="s1", payload="same content", trace="same-trace")
+    )
+    second_snapshot = (
+        EvidenceAcquisitionAuthority()
+        .authorize(authorization_id="a1", binding=binding)
+        .open_run("r1")
+        .ingest(snapshot_id="s1", payload="same content", trace="same-trace")
+    )
+
+    assert first_snapshot is not second_snapshot
+    assert first_snapshot == second_snapshot
+    assert first_snapshot.content_id == second_snapshot.content_id
+
+
 def test_g0_2a_binds_executable_semantics_without_birth_verdict() -> None:
     semantics = assessment_semantics()
 

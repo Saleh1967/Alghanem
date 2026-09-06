@@ -24,6 +24,7 @@ These are the initial laws of the language-agnostic kernel:
 | Canonical transition content snapshot | ENFORCED_AT_CONTENT_ENCODER | `CanonicalTransitionEncoder` is the sole issuer of `CanonicalTransitionManifest` and `TransitionContentIdentity`. The manifest preserves immutable canonical bytes for every structural transition field, including branch-origin provenance; occurrence-only `admission_id` and projection fingerprint are explicit exclusions. Its SHA-256 value is a digest reference, not proof of canonical-byte equality. Canonical values accept only exact built-in types, distinguish list from tuple and bytes from bytearray, preserve raw Unicode code points without normalization, encode finite floats as IEEE-754 binary64, and reject unsupported values and cycles. `preserved`, `changed`, and branch provenance components are sets; trace, evidence, and residuals are ordered sequences. Schema coverage rejects unaccounted structural fields. |
 | G0.2a.1 birth semantics content identity | ENFORCED_AT_CONTENT_ENCODER | `NoResidualIdDriftAfterFreeze`/`NoClosureCriterionIdDriftAfterFreeze` (G0.2a's id-equality checks) are label identity, not content identity: `ResidualDefinitionId != ResidualDefinitionContentIdentity`, and the same distinction holds for `ClosureCriterionSpec` and `WeakerModelSpec`. `CanonicalBirthSemanticsEncoder` is the sole issuer of `CanonicalResidualDefinitionManifest`, `CanonicalClosureCriterionManifest`, `CanonicalWeakerModelManifest`, and their `BirthSemanticsContentIdentity` SHA-256 digest references, covering every declared field of each spec. `BirthSemanticsContentRegistry` freezes the *first* canonical content bound to an exact `(domain, role, target_id)` scope; a later attempt to bind different content to that same scope is content drift and is rejected, not silently accepted because the id string still matches. `BirthAssessmentContentBinding` resolves every scope a `BirthAssessmentSemanticsContract` declares against a `SealedBirthSemanticsContentRegistry` and requires `CID(runtime) == CID(frozen)` for the residual definition, the closure criterion, and every weaker model; an unresolvable scope raises rather than passing silently. This closes `NoSemanticDriftAfterFreeze` for content, distinct from and in addition to `NoResidualDefinitionDriftAfterFreeze`/`NoClosureCriterionDriftAfterFreeze` for ids. It performs no evaluation and issues no `BirthVerdict`, `BirthCandidate`, or `Freeze`; `EvaluatorId != EvaluatorImplementationIdentity` and evaluator execution authority remain out of scope. |
 | G0.2a.3 evidence acquisition authority | ENFORCED_AT_ACQUISITION_AUTHORITY | Binding evidence to a frozen experiment (G0.2a.2) proves only `FreezePrecedesRequestConstruction`, not that the freeze authorized the evidence's own acquisition; a caller could still select evidence first and attach a freeze afterward. This stage closes the narrower, code-provable `FrozenExperimentPrecedesAuthorizedEvidenceIngestion` instead of an unprovable external-world chronology claim (`AuthorizedCapture != ProofOfExternalAcquisitionChronology`). `EvidenceAcquisitionAuthority.authorize` is the sole issuer of an `EvidenceAcquisitionAuthorization`, requiring a genuine, verified `BirthExperimentSpecificationContentBinding` (`NoEvidenceAcquisitionAuthorizationWithoutFrozenExperiment`); its `experiment_content_id`, `domain`, `evidence_mode`, `evidence_requirements`, `revision_id`, and `revision_sequence` are derived properties of that binding, never independent caller-supplied facts. Only that authorization can issue an `EvidenceAcquisitionRun` (`open_run`), and only that run can issue an `AuthorizedEvidenceSnapshot` (`ingest`), closing `NoAssessableEvidenceSnapshotWithoutAcquisitionAuthorization`; none of the three is caller-constructible. `CanonicalEvidenceContentEncoder` alone issues the ingested payload's `EvidenceContentIdentity`, keeping `EvidenceOccurrenceIdentity != EvidenceContentIdentity` (`snapshot_id`/`run_id`/`authorization_id` name one occurrence; `content_id` is a digest over ingested bytes). `BirthAssessmentRequest` now requires an `AuthorizedEvidenceSnapshot` (rejecting the deprecated, unauthorized `EvidenceSnapshot`) and rejects a snapshot whose `experiment_content_id` does not equal its own experiment binding's `content_id`. `AuthorizedEvidence != SufficientEvidence`: this stage does not imply `ResidualSurvival` or `Birth`, and issues no `ResidualAssessment` or `BirthVerdict`. |
+| G0.2a.3.1 issuer-scoped occurrence issuance integrity | ENFORCED_AT_ACQUISITION_AUTHORITY | Before this stage, `authorization_id`/`run_id`/`snapshot_id` were caller-chosen strings with no uniqueness authority: an issuer accepted a repeat of the same id, so `same(id) => same(occurrence)` did not hold and these were `EvidenceOccurrenceCoordinates`, not a proven identity. Each issuer now keeps its own registry of ids it has already issued -- `EvidenceAcquisitionAuthority` for `authorization_id`, one `EvidenceAcquisitionAuthorization` for its own `run_id`s, one `EvidenceAcquisitionRun` for its own `snapshot_id`s -- and `EvidenceAcquisitionAuthorityError` rejects a repeat within that scope, even for a snapshot repeat carrying different content. Each registry's check-and-insert is synchronized with an internal lock so concurrent calls on one instance cannot race past the uniqueness check. This makes issuance injective *within its declared scope* (`IssuerScopedOccurrenceUniqueness = PROVED`): two ids from the same issuer that are equal name the same occurrence, and two ids from the same issuer that differ name different occurrences. `LocalInjectivity != PortableIdentity`: `AuthorizedEvidenceSnapshot` carries no `issuer_scope_id`, so two distinct `EvidenceAcquisitionAuthority` instances are separate, uncoordinated issuance scopes whose ids are not thereby proven to differ from each other, and two snapshots from different authorities can share identical comparable representations despite being genuinely independent occurrences. `PortableEvidenceOccurrenceIdentity` remains `DEFERRED` pending a self-issuing `EvidenceIssuerScopeIdentity` propagated through the chain. `EvidenceAcquisitionRun`/`EvidenceAcquisitionAuthorization` are `ExternallyFrozen, InternallyStatefulAuthority` objects: `frozen=True` fixes their own declared identity fields, but each also holds a private, mutable `_issued_*` registry and lock (excluded from equality, `repr`, and content identity) as operational bookkeeping only. |
 
 Invariant assessment request semantics are closed at the gate: `BLOCK` means an
 authorized verifier observed at least one invariant as false; `DEFER` means no
@@ -194,6 +195,92 @@ authorized run. It also does not claim anything about evidence quality:
 `AuthorizedEvidence != SufficientEvidence`, and authorized evidence does not
 imply `ResidualSurvival` or `Birth`. G0.2a.3 issues no `ResidualAssessment`
 and no `BirthVerdict`.
+
+### G0.2a.3.1 — Issuer-scoped occurrence issuance integrity
+
+G0.2a.3 alone let `authorization_id`, `run_id`, and `snapshot_id` be any
+non-empty, caller-chosen string: nothing stopped
+`EvidenceAcquisitionAuthority.authorize` from issuing two authorizations for
+the same `authorization_id`, an authorization from opening the same `run_id`
+twice, or a run from ingesting two different payloads under the same
+`snapshot_id`. These strings were therefore `EvidenceOccurrenceCoordinates`
+with real provenance, but not yet a proven `EvidenceOccurrenceIdentity`:
+`same(id)` did not imply `same(occurrence)`, since an issuer would accept the
+id again.
+
+Each issuer now keeps its own registry of the ids it has already issued and
+rejects a repeat with `EvidenceAcquisitionAuthorityError`: an
+`EvidenceAcquisitionAuthority` instance tracks its issued `authorization_id`s,
+one `EvidenceAcquisitionAuthorization` tracks its own issued `run_id`s, and
+one `EvidenceAcquisitionRun` tracks its own issued `snapshot_id`s (rejecting a
+repeat even when the later `ingest` call carries different content). Each
+registry's check-and-insert is synchronized with an internal lock, so
+concurrent calls on the same authority, authorization, or run instance cannot
+race past the uniqueness check. This makes issuance injective within its
+declared scope: two ids issued by the same issuer are equal only if they name
+the same occurrence, and distinct ids issued by the same issuer always name
+distinct occurrences. This is `IssuerScopedOccurrenceUniqueness`, precisely:
+
+```
+forall issuer, id:
+    Issued_issuer(o1) = id and Issued_issuer(o2) = id => o1 = o2
+```
+
+This is deliberately **not** named `EvidenceOccurrenceIdentity`, because
+`LocalInjectivity != PortableIdentity`: proving an id is never repeated
+*within one issuer's own registry* does not prove it is never repeated
+*across issuers*. Nothing in `AuthorizedEvidenceSnapshot` carries an
+`issuer_scope_id`, so two distinct `EvidenceAcquisitionAuthority` instances
+remain two distinct, uncoordinated issuance scopes: each is free to issue
+`authorization_id="a1"`, whose `open_run("r1")` issues `run_id="r1"`, whose
+`ingest(snapshot_id="s1", ...)` issues `snapshot_id="s1"`, and nothing in the
+resulting snapshot's comparable fields (`snapshot_id`, `run_id`,
+`authorization_id`, `experiment_content_id`, `domain`, `evidence_mode`,
+`trace`) distinguishes which authority issued it. If both authorities also
+share the same frozen experiment binding, payload, and trace, the two
+snapshots' comparable representations coincide even though the two
+acquisition occurrences are genuinely independent
+(`Occurrence_A != Occurrence_B` yet
+`Representation(Occurrence_A) == Representation(Occurrence_B)`). A portable
+identity would require an issuer-scope identity of its own -- one that
+carries its own issuance authority rather than being another caller-chosen
+string -- propagated through `Authorization -> Run -> Snapshot`; that is not
+built here. So the accurate judgment is:
+
+```
+IssuerScopedOccurrenceUniqueness = PROVED
+PortableEvidenceOccurrenceIdentity = DEFERRED
+```
+
+`BirthAssessmentRequest` does not hold an authority or issuer-scope object
+either: it only checks `snapshot.experiment_content_id ==
+binding.content_id`, so it cannot and does not distinguish which authority
+scope produced an otherwise-matching snapshot. This is an accepted, narrower
+surface than a caller might assume from the name "occurrence identity" alone,
+and is the reason this stage's claim is `IssuerScopedOccurrenceUniqueness`,
+not `EvidenceOccurrenceIdentity`.
+
+This closes `IssuerScopedOccurrenceUniqueness` only within each issuer's own
+scope, not globally: two different `EvidenceAcquisitionAuthority` instances
+are two different issuance scopes, and nothing proves their respective
+`authorization_id`s differ from one another. `EvidenceAcquisitionAuthority()`
+remains a construction boundary, not a permission or security authority --
+identical to how `StructuralAdmissionGate` construction is not itself a claim
+of external authorization.
+
+`EvidenceAcquisitionRun` and `EvidenceAcquisitionAuthorization` are
+`ExternallyFrozen, InternallyStatefulAuthority` objects, not plain immutable
+value objects: their dataclass is `frozen=True` so their *own* declared
+identity fields (`run_id`, `authorization_id`, `binding`, etc.) can never be
+reassigned after construction, but each also holds a private, mutable
+`_issued_*` registry `set` and a `threading.Lock` (both `compare=False`,
+`repr=False`, `init=False`) as internal operational bookkeeping state. This
+bookkeeping is deliberately excluded from equality, `repr`, and from any
+content-identity computation (it is never hashed or serialized into
+`EvidenceContentIdentity` or any experiment content identity): it exists only
+to enforce this stage's issuance uniqueness, not to describe the object's own
+identity or content.
+
 
 G0.2 is split into smaller authority-preserving stages. G0.2a defines only
 executable assessment contracts: `ResidualDefinitionSpec` identifies the
