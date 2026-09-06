@@ -70,6 +70,23 @@ def test_specification_rejects_caller_selected_incomplete_cone() -> None:
         )
 
 
+@pytest.mark.parametrize(
+    ("projections", "relations", "message"),
+    [
+        (("one", "two"), (("one", "missing"),), "declared projections"),
+        (("one", "two"), (("one", "two"), ("one", "two")), "duplicates"),
+        (("one", "two"), (("one", "two"), ("two", "one")), "cycles"),
+    ],
+)
+def test_projection_poset_rejects_malformed_relations(
+    projections: tuple[str, ...],
+    relations: tuple[tuple[str, str], ...],
+    message: str,
+) -> None:
+    with pytest.raises(BirthExperimentSpecificationError, match=message):
+        ProjectionPoset(projections, relations)
+
+
 def test_evidence_is_bound_after_the_frozen_specification() -> None:
     assessment = request()
 

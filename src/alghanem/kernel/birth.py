@@ -105,16 +105,23 @@ class ProjectionPoset:
         if projection not in self.projections:
             raise BirthExperimentSpecificationError("unknown target projection")
         predecessors = set(self.strict_predecessors(projection))
-        successors = {
-            candidate
-            for candidate in self.projections
-            if projection in self.strict_predecessors(candidate)
-        }
+        successors = self._strict_successors(projection)
         return tuple(
             candidate
             for candidate in self.projections
             if candidate not in predecessors | successors | {projection}
         )
+
+    def _strict_successors(self, projection: str) -> set[str]:
+        successors: set[str] = set()
+        frontier = [projection]
+        while frontier:
+            lower = frontier.pop()
+            for relation_lower, richer in self.strict_relations:
+                if relation_lower == lower and richer not in successors:
+                    successors.add(richer)
+                    frontier.append(richer)
+        return successors
 
 
 @dataclass(frozen=True, slots=True)
