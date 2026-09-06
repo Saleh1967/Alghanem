@@ -7,6 +7,7 @@ from enum import Enum, auto
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from .evidence_acquisition import AuthorizedEvidenceSnapshot
     from .experiment_spec_content_identity import (
         BirthExperimentSpecificationContentBinding,
     )
@@ -638,7 +639,14 @@ class BirthAssessmentEvaluatorDefinitions:
 
 @dataclass(frozen=True, slots=True)
 class EvidenceSnapshot:
-    """Evidence bound only after the experiment specification is frozen."""
+    """Deprecated: a bare, unauthorized evidence description.
+
+    This type carries no acquisition provenance and cannot prove that its
+    content was ingested under any frozen experiment. It is retained only for
+    historical reference and is no longer accepted by `BirthAssessmentRequest`;
+    use `evidence_acquisition.AuthorizedEvidenceSnapshot` instead, which is
+    issuer-only and bound to an `EvidenceAcquisitionAuthorization`.
+    """
 
     snapshot_id: str
     description: str
@@ -653,9 +661,10 @@ class BirthAssessmentRequest:
     """A valid request for G0.2; it is not an assessment or a verdict."""
 
     experiment_binding: BirthExperimentSpecificationContentBinding
-    evidence_snapshot: EvidenceSnapshot
+    evidence_snapshot: AuthorizedEvidenceSnapshot
 
     def __post_init__(self) -> None:
+        from .evidence_acquisition import AuthorizedEvidenceSnapshot
         from .experiment_spec_content_identity import (
             BirthExperimentSpecificationContentBinding,
         )
@@ -667,9 +676,17 @@ class BirthAssessmentRequest:
             raise BirthExperimentSpecificationError(
                 "assessment request requires an authorized frozen experiment binding"
             )
-        if not isinstance(self.evidence_snapshot, EvidenceSnapshot):
+        if type(self.evidence_snapshot) is not AuthorizedEvidenceSnapshot:
             raise BirthExperimentSpecificationError(
-                "assessment request requires an evidence snapshot"
+                "assessment request requires an authorized evidence snapshot issued "
+                "by an evidence acquisition run"
+            )
+        if (
+            self.evidence_snapshot.experiment_content_id
+            != self.experiment_binding.content_id
+        ):
+            raise BirthExperimentSpecificationError(
+                "evidence snapshot was not acquired under this frozen experiment"
             )
 
     @property

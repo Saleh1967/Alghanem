@@ -42,6 +42,16 @@ from .content_identity import (
     TransitionContentIdentity,
 )
 from .evidence import Claim, Evidence
+from .evidence_acquisition import (
+    AuthorizedEvidenceSnapshot,
+    CanonicalEvidenceContentEncoder,
+    CanonicalEvidenceContentManifest,
+    EvidenceAcquisitionAuthority,
+    EvidenceAcquisitionAuthorityError,
+    EvidenceAcquisitionAuthorization,
+    EvidenceAcquisitionRun,
+    EvidenceContentIdentity,
+)
 from .experiment_spec_content_identity import (
     BirthExperimentContentIdentityError,
     BirthExperimentSpecificationContentBinding,
@@ -91,6 +101,7 @@ from .transition import (
 __all__ = [
     "Anchor",
     "AuthorizedBirthAssessmentEvaluatorDefinition",
+    "AuthorizedEvidenceSnapshot",
     "BirthAssessmentContentBinding",
     "BirthAssessmentEvaluatorAuthorityError",
     "BirthAssessmentEvaluatorDefinitions",
@@ -117,6 +128,8 @@ __all__ = [
     "CanonicalTransitionEncoder",
     "CanonicalTransitionManifest",
     "CanonicalWeakerModelManifest",
+    "CanonicalEvidenceContentEncoder",
+    "CanonicalEvidenceContentManifest",
     "CertifiedOutcome",
     "Claim",
     "ClaimEvidenceBinding",
@@ -124,6 +137,11 @@ __all__ = [
     "ClosureCriterionSpec",
     "DecisionReasonCode",
     "Evidence",
+    "EvidenceAcquisitionAuthority",
+    "EvidenceAcquisitionAuthorityError",
+    "EvidenceAcquisitionAuthorization",
+    "EvidenceAcquisitionRun",
+    "EvidenceContentIdentity",
     "EvidenceMode",
     "EvidenceSnapshot",
     "FrozenBirthSemanticsContentScope",
