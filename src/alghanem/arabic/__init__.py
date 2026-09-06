@@ -2,6 +2,7 @@
 
 from .encoding import (
     DistinctSurfaceAtomCandidateProjection,
+    InterventionType,
     MeasurementProtocolSpec,
     MeasurementRunIdentity,
     MeasurementRunManifest,
@@ -17,11 +18,17 @@ from .encoding import (
     ObservationProvenance,
     RawSurfaceObservation,
     SurfaceAtomCandidate,
+    SurfaceAtomIntervention,
+    SurfaceAtomInterventionAudit,
+    SurfaceInterventionAuditRow,
+    SurfaceInterventionAuditTable,
+    SurfaceInterventionTrace,
     SurfaceNormalization,
 )
 
 __all__ = [
     "DistinctSurfaceAtomCandidateProjection",
+    "InterventionType",
     "MeasurementProtocolSpec",
     "MeasurementRunIdentity",
     "MeasurementRunManifest",
@@ -37,5 +44,10 @@ __all__ = [
     "ObservationProvenance",
     "RawSurfaceObservation",
     "SurfaceAtomCandidate",
+    "SurfaceAtomIntervention",
+    "SurfaceAtomInterventionAudit",
+    "SurfaceInterventionAuditRow",
+    "SurfaceInterventionAuditTable",
+    "SurfaceInterventionTrace",
     "SurfaceNormalization",
 ]
