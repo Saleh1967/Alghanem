@@ -13,6 +13,8 @@ from alghanem.arabic import (
     ObservationLedgerManifest,
     ObservationProvenance,
     RawSurfaceObservation,
+    SurfaceAtomIntervention,
+    SurfaceAtomInterventionAudit,
     SurfaceNormalization,
 )
 
@@ -353,6 +355,84 @@ def test_residual_table_detects_order_change_within_delta_segment() -> None:
 def test_observation_provenance_requires_measurement_run() -> None:
     with pytest.raises(ValueError, match="measurement run identity"):
         ObservationProvenance("source", "one", "extra")  # type: ignore[arg-type]
+
+
+def test_surface_atom_intervention_audit_records_neutral_operations() -> None:
+    run_identity = measurement_run()
+    manifest = SurfaceNormalization.ledger_manifest(
+        run_identity,
+        [
+            observation("source", "delete", "abc", run_identity),
+            observation("source", "substitute", "abc", run_identity),
+            observation("source", "repeat", "abc", run_identity),
+            observation("source", "swap", "abc", run_identity),
+            observation("source", "insert", "abc", run_identity),
+        ],
+    )
+    table = SurfaceAtomInterventionAudit.audit(
+        manifest,
+        (
+            SurfaceAtomIntervention("source", "delete", "delete", (1,)),
+            SurfaceAtomIntervention("source", "substitute", "substitute", (1,), "x"),
+            SurfaceAtomIntervention("source", "repeat", "repeat", (1,)),
+            SurfaceAtomIntervention("source", "swap", "swap", (0, 2)),
+            SurfaceAtomIntervention("source", "insert", "insert", (1,), "x"),
+        ),
+    )
+
+    assert [row.result_surface for row in table.rows] == [
+        "ac",
+        "axc",
+        "abbc",
+        "cba",
+        "axbc",
+    ]
+    assert table.rows[0].preserved_positions == (0,)
+    assert table.rows[0].displaced_atoms == ((1, "b"), (2, "c"))
+    assert table.rows[1].multiplicity_delta == (("b", -1), ("x", 1))
+    assert table.rows[2].equality_signature == ((1, 2),)
+    assert table.rows[3].order_delta is True
+    assert table.rows[4].boundary_delta is None
+    assert all(row.residual == () for row in table.rows)
+    assert table.rows[0].trace.source_atoms == ("a", "b", "c")
+
+
+def test_intervention_audit_handles_empty_results_and_invalid_targets() -> None:
+    run_identity = measurement_run()
+    manifest = SurfaceNormalization.ledger_manifest(
+        run_identity, [observation("source", "one", "a", run_identity)]
+    )
+
+    table = SurfaceAtomInterventionAudit.audit(
+        manifest, (SurfaceAtomIntervention("source", "one", "delete", (0,)),)
+    )
+
+    assert table.rows[0].result_surface == ""
+    assert table.rows[0].result_atoms == ()
+    with pytest.raises(ValueError, match="manifested occurrence"):
+        SurfaceAtomInterventionAudit.audit(
+            manifest, (SurfaceAtomIntervention("source", "missing", "delete", (0,)),)
+        )
+
+
+@pytest.mark.parametrize(
+    ("intervention", "error"),
+    [
+        (SurfaceAtomIntervention("source", "one", "swap", (0, 0)), "distinct"),
+        (SurfaceAtomIntervention("source", "one", "delete", (1,)), "outside"),
+        (SurfaceAtomIntervention("source", "one", "insert", (-1,), "x"), "outside"),
+    ],
+)
+def test_surface_atom_intervention_audit_rejects_invalid_coordinates(
+    intervention: SurfaceAtomIntervention, error: str
+) -> None:
+    run_identity = measurement_run()
+    manifest = SurfaceNormalization.ledger_manifest(
+        run_identity, [observation("source", "one", "a", run_identity)]
+    )
+
+    with pytest.raises(ValueError, match=error):
+        SurfaceAtomInterventionAudit.audit(manifest, (intervention,))
 
 
 @pytest.mark.parametrize("surface", ["", 1])
