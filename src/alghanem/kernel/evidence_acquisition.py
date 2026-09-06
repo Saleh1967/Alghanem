@@ -22,20 +22,38 @@ It also does not claim anything about evidence quality or outcome:
 `AuthorizedEvidence != SufficientEvidence`, `AuthorizedEvidence` does not
 imply `ResidualSurvival`, and it does not imply `Birth`.
 
-G0.2a.3.1 closes `OccurrenceIssuanceIntegrity`: each issuer keeps its own
-registry of the occurrence ids it has issued and rejects a repeat, so
+G0.2a.3.1 closes `IssuerScopedOccurrenceUniqueness`: each issuer keeps its
+own registry of the occurrence ids it has issued and rejects a repeat, so
 `authorization_id`, `run_id`, and `snapshot_id` are injective within their
 issuing scope (an authority's own authorizations, one authorization's own
 runs, one run's own snapshots) rather than caller-chosen strings a caller
 could repeat across distinct occurrences.
 
-This closes `EvidenceOccurrenceIdentity` only within each issuer's own scope,
-not globally: two different `EvidenceAcquisitionAuthority` instances are two
-different issuance scopes, and nothing proves their respective ids never
-collide with each other. Each issuer's registry check-and-insert is
-synchronized with an internal lock, so concurrent calls on the same
+This is deliberately *not* called `EvidenceOccurrenceIdentity`:
+`LocalInjectivity != PortableIdentity`. Proving an id is never repeated
+within one issuer's own registry does not prove it is never repeated across
+issuers. `AuthorizedEvidenceSnapshot` carries no `issuer_scope_id`, so two
+different `EvidenceAcquisitionAuthority` instances are two different,
+uncoordinated issuance scopes: each may independently issue
+`authorization_id="a1"` / `run_id="r1"` / `snapshot_id="s1"`, and if both also
+share the same frozen experiment binding, payload, and trace, the two
+resulting snapshots' comparable fields coincide even though the two
+acquisition occurrences are genuinely independent. This closes
+`IssuerScopedOccurrenceUniqueness` only within each issuer's own scope, not
+globally, and nothing proves distinct issuers' ids never collide with each
+other. `PortableEvidenceOccurrenceIdentity` remains deferred pending a
+self-issuing issuer-scope identity propagated through
+`Authorization -> Run -> Snapshot`. Each issuer's registry check-and-insert
+is synchronized with an internal lock, so concurrent calls on the same
 authority, authorization, or run instance cannot race past the uniqueness
 check; it does not make cross-instance issuance globally coordinated.
+
+`EvidenceAcquisitionRun` and `EvidenceAcquisitionAuthorization` are
+`ExternallyFrozen, InternallyStatefulAuthority` objects, not plain immutable
+value objects: `frozen=True` fixes their own declared identity fields, but
+each also holds a private, mutable `_issued_*` registry and lock (excluded
+from equality, `repr`, and from any content identity) purely as operational
+bookkeeping for this stage's uniqueness check.
 """
 
 from __future__ import annotations
