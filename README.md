@@ -22,6 +22,21 @@ identities; distinct candidates are only a derived projection. It does not
 infer identities, bindings, Arabic cardinalities, or grammatical concepts;
 those require separate future birth gates and a later E0 audit.
 
+P0.1 freezes measurement authority with `MeasurementProtocolSpec`,
+`MeasurementRunIdentity`, `MeasurementRunManifest`, and
+`ObservationLedgerManifest`. An observation provenance must name its measurement
+run, and manifests bind an audit ledger to one run plus the run's declared
+normalization policy and Unicode database version before later factorization or
+identity-birth gates may consume it.
+
+The next audit artifact is `NormalizationResidualTable`: an occurrence-complete
+derived table with one row per audit, including unchanged rows, raw and
+normalized codepoint sequences, atom counts, prefix/suffix delta boundaries,
+removed/inserted segments, and the current candidate surface. The weaker
+`NormalizationEquivalenceProjection` remains only a quotient projection over
+equal normalized `SurfaceAtomCandidate`s; it is not a born object and does not
+introduce Carrier, State, binding, or Arabic cardinality claims.
+
 ## Development
 
 ```bash
