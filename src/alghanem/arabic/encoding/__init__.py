@@ -1,6 +1,14 @@
 """Observation and normalization artifacts for Arabic surface encoding."""
 
 from .candidates import SurfaceAtomCandidate
+from .intervention import (
+    InterventionType,
+    SurfaceAtomIntervention,
+    SurfaceAtomInterventionAudit,
+    SurfaceInterventionAuditRow,
+    SurfaceInterventionAuditTable,
+    SurfaceInterventionTrace,
+)
 from .measurement import (
     MeasurementProtocolSpec,
     MeasurementRunIdentity,
@@ -23,6 +31,7 @@ from .observation import ObservationProvenance, RawSurfaceObservation
 
 __all__ = [
     "DistinctSurfaceAtomCandidateProjection",
+    "InterventionType",
     "MeasurementProtocolSpec",
     "MeasurementRunIdentity",
     "MeasurementRunManifest",
@@ -38,5 +47,10 @@ __all__ = [
     "ObservationProvenance",
     "RawSurfaceObservation",
     "SurfaceAtomCandidate",
+    "SurfaceAtomIntervention",
+    "SurfaceAtomInterventionAudit",
+    "SurfaceInterventionAuditRow",
+    "SurfaceInterventionAuditTable",
+    "SurfaceInterventionTrace",
     "SurfaceNormalization",
 ]

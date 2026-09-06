@@ -37,6 +37,13 @@ removed/inserted segments, and the current candidate surface. The weaker
 equal normalized `SurfaceAtomCandidate`s; it is not a born object and does not
 introduce Carrier, State, binding, or Arabic cardinality claims.
 
+P0.2 provides `SurfaceAtomInterventionAudit`: an occurrence-bound table of
+controlled delete, substitute, repeat, swap, and insert operations on
+uninterpreted atoms. Its rows preserve source/result sequences, positions,
+multiplicity and ordering deltas, equality signatures, deterministic traces,
+and an empty operation-model residual; it introduces no linguistic categories
+or identity claims.
+
 ## Development
 
 ```bash
