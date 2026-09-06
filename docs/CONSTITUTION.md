@@ -238,7 +238,6 @@ contracts match the frozen residual-definition and closure-criterion
 identities, experiment, domain, queried projection, prerequisite cone, schemas,
 and poset relations. Matching only domain or schema is insufficient:
 `NoResidualDefinitionDriftAfterFreeze` and
-
 `NoClosureCriterionDriftAfterFreeze` require exact identity equality.
 
 Evaluator ids in these contracts are declarations only:
