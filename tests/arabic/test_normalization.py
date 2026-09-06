@@ -71,6 +71,6 @@ def test_unknown_combining_marks_remain_uninterpreted_surface_atoms() -> None:
 
 
 @pytest.mark.parametrize("surface", ["", 1])
-def test_observation_rejects_non_empty_non_string_surfaces(surface: object) -> None:
+def test_observation_rejects_empty_or_non_string_surfaces(surface: object) -> None:
     with pytest.raises(ValueError, match="non-empty string"):
         RawSurfaceObservation(surface)  # type: ignore[arg-type]
