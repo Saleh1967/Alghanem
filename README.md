@@ -15,10 +15,11 @@ any certified outcome. See `docs/CONSTITUTION.md` for the full law-by-law
 status.
 
 The initial Arabic layer is limited to `RawSurfaceObservation` and
-`SurfaceNormalization`. It emits normalization traces, residuals, and
-uninterpreted surface-atom candidates. It does not infer carrier or state
-identities, bindings, Arabic cardinalities, or grammatical concepts; those
-require separate future birth gates and a later E0 audit.
+`SurfaceNormalization`. It emits versioned normalization traces, residuals,
+and uninterpreted surface-atom candidates. `ObservationAuditLedger` preserves
+every occurrence; distinct candidates are only a derived projection. It does
+not infer identities, bindings, Arabic cardinalities, or grammatical concepts;
+those require separate future birth gates and a later E0 audit.
 
 ## Development
 

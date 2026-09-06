@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass
-from unicodedata import normalize
+from unicodedata import normalize, unidata_version
 
 from .candidates import SurfaceAtomCandidate
 from .observation import RawSurfaceObservation
@@ -16,7 +16,8 @@ class NormalizationTrace:
 
     observation: RawSurfaceObservation
     normalized_surface: str
-    normalizer: str = "Unicode NFC"
+    normalization_form: str
+    unicode_database_version: str
 
 
 @dataclass(frozen=True)
@@ -36,13 +37,32 @@ class NormalizationAudit:
     candidate: SurfaceAtomCandidate
 
 
+@dataclass(frozen=True)
+class ObservationAuditLedger:
+    """The occurrence-preserving record from which projections are derived."""
+
+    audits: tuple[NormalizationAudit, ...]
+
+
+@dataclass(frozen=True)
+class DistinctSurfaceAtomCandidateProjection:
+    """A derived, canonical-order projection of the ledger's candidates."""
+
+    candidates: tuple[SurfaceAtomCandidate, ...]
+
+
 class SurfaceNormalization:
     """Produce canonical surface candidates without inferring linguistic roles."""
 
     @staticmethod
     def normalize(observation: RawSurfaceObservation) -> NormalizationAudit:
         normalized_surface = normalize("NFC", observation.surface)
-        trace = NormalizationTrace(observation, normalized_surface)
+        trace = NormalizationTrace(
+            observation,
+            normalized_surface,
+            normalization_form="NFC",
+            unicode_database_version=unidata_version,
+        )
         residuals = (
             ()
             if normalized_surface == observation.surface
@@ -55,11 +75,19 @@ class SurfaceNormalization:
         )
 
     @classmethod
-    def candidates(
+    def audit_ledger(
         cls, observations: Iterable[RawSurfaceObservation]
-    ) -> tuple[SurfaceAtomCandidate, ...]:
-        """Return distinct candidates in canonical order, independent of input order."""
-        candidates = {
-            cls.normalize(observation).candidate for observation in observations
-        }
-        return tuple(sorted(candidates))
+    ) -> ObservationAuditLedger:
+        """Normalize every observation without removing occurrence provenance."""
+        return ObservationAuditLedger(
+            tuple(cls.normalize(observation) for observation in observations)
+        )
+
+    @staticmethod
+    def distinct_candidates(
+        ledger: ObservationAuditLedger,
+    ) -> DistinctSurfaceAtomCandidateProjection:
+        """Derive distinct candidates from a ledger without altering that ledger."""
+        return DistinctSurfaceAtomCandidateProjection(
+            tuple(sorted({audit.candidate for audit in ledger.audits}))
+        )
