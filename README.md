@@ -14,9 +14,13 @@ candidate claims to be (its `TransitionKind`) is likewise kept distinct from
 any certified outcome. See `docs/CONSTITUTION.md` for the full law-by-law
 status.
 
-Arabic linguistic layers are intentionally deferred. Concepts such as carriers,
-morphology, syntax, and identity certificates will be added only after the
-foundational kernel has been independently tested.
+The initial Arabic layer is limited to `RawSurfaceObservation` and
+`SurfaceNormalization`. It emits versioned normalization traces, residuals,
+and uninterpreted surface-atom candidates. `ObservationAuditLedger` preserves
+every occurrence under measurement-protocol-supplied source and occurrence
+identities; distinct candidates are only a derived projection. It does not
+infer identities, bindings, Arabic cardinalities, or grammatical concepts;
+those require separate future birth gates and a later E0 audit.
 
 ## Development
 
