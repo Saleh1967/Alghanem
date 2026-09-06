@@ -37,12 +37,16 @@ removed/inserted segments, and the current candidate surface. The weaker
 equal normalized `SurfaceAtomCandidate`s; it is not a born object and does not
 introduce Carrier, State, binding, or Arabic cardinality claims.
 
-P0.2 provides `SurfaceAtomInterventionAudit`: an occurrence-bound table of
-controlled delete, substitute, repeat, swap, and insert operations on
-uninterpreted atoms. Its rows preserve source/result sequences, positions,
-multiplicity and ordering deltas, equality signatures, deterministic traces,
-and an empty operation-model residual; it introduces no linguistic categories
-or identity claims.
+G0 freezes the birth protocol itself, ahead of any experiment: before any new
+Arabic candidate, factor, or structural coordinate may be born, either a
+measured residual (empirical mode) or an exhaustive proof over a declared
+finite formal domain (formal mode) — never a synthetic-intervention artifact
+alone — must survive exhaustion of every weaker model licensed and frozen for
+that experiment. Reaching a `BirthCandidate` is distinct from `Freeze`, and
+any resulting name may only be attached afterward, following independent
+closure, freeze, and an `E0` step. See the "G0 — Birth Protocol" section of
+`docs/CONSTITUTION.md` for the full declared laws; no `BirthGate`,
+rank/complexity runtime, or intervention runtime exists yet.
 
 ## Development
 

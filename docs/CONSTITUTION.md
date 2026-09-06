@@ -72,3 +72,44 @@ produce a different content digest for the same admission occurrence.
 The kernel does not assume reversibility, global composition, path
 independence, a group, or a groupoid. Those questions are intentionally
 deferred until later milestones.
+
+## G0 — Birth Protocol (declared law, no runtime gate yet)
+
+The kernel and Arabic layer never introduce a new named object, cardinality,
+or ontology term because it is convenient, expected, or traditional. A
+candidate object is only permitted to be *born* — closed independently and
+eventually handed a traditional name — through the following declared chain.
+At Kernel v0.1 this chain is **law only**: no `BirthGate`, rank/complexity
+class, `Carrier`/`State`/`Binding` type, or intervention-operation runtime
+exists yet. Those are separate, later milestones that must themselves be
+structurally admitted like any other change; this section only freezes the
+constraints they will have to satisfy.
+
+```
+Evidence -> Residual -> LicensedWeakerExhaustion -> NecessaryInvariantCandidate -> BirthCandidate -> IndependentClosure -> Freeze -> E0 -> TraditionalName
+```
+
+`Birth != Freeze`: reaching a `BirthCandidate` that survives closure is the
+judgment that an object has become legitimate within the scope of the proof;
+`Freeze` is the separate, later act of fixing the specific version that
+succeeded so that `E0` cannot alter it. Naming never occurs before both have
+happened.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `NoBirthWithoutResidualOrFormalNecessity` | DECLARED_DEFERRED | No candidate object, factor, or axis may be born without one of two independent evidence modes. In `EMPIRICAL` mode, a *measured* residual (from real observations, not synthetic interventions alone) must remain unexplained after every licensed weaker projection has been applied. In `FORMAL` mode, over a declared `FrozenFormalDomain` with `card(Ω) < ∞` (or another exhaustively decidable closed domain), an exhaustive proof over every element of that domain, with no weaker formal model sufficing, may license birth without any measurement run. A `MIXED` mode combines both and must satisfy each mode's own condition on its own part of the claim. `FormalProof ⇏ EmpiricalReality` and `EmpiricalPattern ⇏ MathematicalNecessity`: neither mode substitutes for the other, and every birth must declare which mode(s) it relies on. |
+| `NoBirthBeforeLicensedWeakerExhaustion` | DECLARED_DEFERRED | Before any richer-structure candidate may be proposed, every weaker projection or formal model *licensed and frozen for that experiment* (`W_E = {W_1, ..., W_n}`), not an unbounded or open-ended "every weaker model conceivable," must first be tried and shown insufficient. A birth proposal that skips a licensed weaker model is malformed, not merely unproven. Discovering a new weaker model `W_{n+1}` afterward does not retroactively invalidate a prior closure; it opens a new, separately recorded revision. |
+| `NoRicherStructureBeforeLowerOpenResidualClosure` | DECLARED_DEFERRED | A candidate structure `q` that is structurally richer than `p` under a partial order licensed by the experiment (`q ≻ p`) may not be examined, let alone born, while unexplained residual remains open at `p` or anything comparably weak. This is a partial-order constraint, not a linear "rank `r+1`" constraint: structures need not be totally ordered, and two candidates may be genuinely incomparable (for example `P_count ∥ P_set`). Any new comparison coordinate is itself subject to this same birth chain before it may be assumed. |
+| `ScopedBirthIsNotGlobalOntologyClaim` | DECLARED_DEFERRED | Both a `NO_BIRTH` verdict and a `BIRTH` verdict are always scoped to the exact `(experiment, domain, licensed weaker-model set, evidence mode, measurement run or formal domain, evidence snapshot)` tuple that produced them. They must be recorded and read as `NO_BIRTH_IN_SCOPE(...)` / `BIRTH_IN_SCOPE(...)`, never generalized into an unscoped, global claim that such an object does or does not exist anywhere. |
+| `ProjectionIsNotOntology` | DECLARED_DEFERRED | Weaker-model projections (for example count, set, multiset, ordered-tuple) are analysis tools for deciding whether a residual survives, not born objects and not linguistic claims. Projections form a partial order, not a total order: `P_count` and `P_set` are incomparable (`P_count ∥ P_set`), while both are recoverable from `P_multiset`, and `P_multiset` is recoverable from `P_seq` (`P_count ⪯ P_multi`, `P_set ⪯ P_multi`, `P_multi ⪯ P_seq`). No total-order complexity vector may be assumed across projections or coordinates that have not themselves been born. |
+| `InterventionOperationIsNotOntology` | DECLARED_DEFERRED | A declared basis of experimental interventions (for example an "ExperimentalInterventionBasisV0" of delete/insert/substitute/repeat/swap) is an explicit, named, non-exhaustive experimental tool. It must never be asserted to be the complete set of primitive operations, and its members are not linguistic or structural objects. |
+| `CounterfactualResultIsNotObservation` | DECLARED_DEFERRED | The output of a synthetic/counterfactual intervention applied to a previously observed occurrence is not itself a `RawSurfaceObservation` or any other measured observation. This is a type/authority separation, not an implementation detail: a counterfactual result must belong to a distinct type that cannot be admitted into the observation or normalization ledgers, regardless of how any particular field on it is named or valued. |
+| `SyntheticInterventionMayGenerateHypothesisOnly` | DECLARED_DEFERRED | A residual discovered only through synthetic/counterfactual interventions (`R_synthetic`) may license nothing beyond a hypothesis (recorded as a `HypothesisResidual`, not a `FactorCandidate`). It cannot by itself satisfy `NoBirthWithoutResidualOrFormalNecessity`. A hypothesis becomes birth-eligible only after an independently measured contrast (`R_measured`), drawn from real observations under a measurement run, is found to match the hypothesis and itself survives every licensed weaker projection, with replication in a second, independent measurement run. For example, a `swap` intervention showing `(a, b) != (b, a)` at the codepoint-sequence level proves only `CodepointSequenceIsOrderSensitive` within the synthetic domain; it does not by itself birth any order-related linguistic or structural candidate. |
+| `TraditionalNamingOnlyAfterFreezeAndE0` | DECLARED_DEFERRED | A traditional name (linguistic, grammatical, or morphological) may only be attached after the full chain `BirthCandidate -> IndependentClosure -> Freeze -> E0` has completed. The name is never part of the birth proof, never influences whether birth, closure, or freeze occurs, and the kernel itself must never define or reference `TraditionalName`; any such naming step belongs strictly to a downstream, kernel-independent evaluation/oracle layer. |
+
+These laws are declared now, ahead of any experiment, precisely so that the
+question being asked cannot be quietly reshaped by the answer an experiment
+later produces. Implementing `BirthGate`, a rank/complexity representation,
+an intervention runtime, or any `Carrier`/`State`/`Binding` candidate is out
+of scope for this section and must occur in later, separately reviewed
+milestones that are held to these same laws.
