@@ -4,10 +4,13 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass
+from typing import Final, Literal
 from unicodedata import normalize, unidata_version
 
 from .candidates import SurfaceAtomCandidate
 from .observation import RawSurfaceObservation
+
+_NORMALIZATION_FORM: Final[Literal["NFC"]] = "NFC"
 
 
 @dataclass(frozen=True)
@@ -56,11 +59,11 @@ class SurfaceNormalization:
 
     @staticmethod
     def normalize(observation: RawSurfaceObservation) -> NormalizationAudit:
-        normalized_surface = normalize("NFC", observation.surface)
+        normalized_surface = normalize(_NORMALIZATION_FORM, observation.surface)
         trace = NormalizationTrace(
             observation,
             normalized_surface,
-            normalization_form="NFC",
+            normalization_form=_NORMALIZATION_FORM,
             unicode_database_version=unidata_version,
         )
         residuals = (
@@ -87,7 +90,7 @@ class SurfaceNormalization:
     def distinct_candidates(
         ledger: ObservationAuditLedger,
     ) -> DistinctSurfaceAtomCandidateProjection:
-        """Derive distinct candidates from a ledger without altering that ledger."""
+        """Derive distinct candidates in canonical order without altering the ledger."""
         return DistinctSurfaceAtomCandidateProjection(
             tuple(sorted({audit.candidate for audit in ledger.audits}))
         )
