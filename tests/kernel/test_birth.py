@@ -359,9 +359,7 @@ def test_evidence_acquisition_run_rejects_repeated_snapshot_id() -> None:
 def test_evidence_occurrence_ids_are_scoped_and_independent() -> None:
     binding = frozen_specification_binding()
     authority = EvidenceAcquisitionAuthority()
-    first_authorization = authority.authorize(
-        authorization_id="a1", binding=binding
-    )
+    first_authorization = authority.authorize(authorization_id="a1", binding=binding)
     second_authorization = EvidenceAcquisitionAuthority().authorize(
         authorization_id="a1", binding=binding
     )
