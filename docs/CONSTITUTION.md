@@ -23,6 +23,7 @@ These are the initial laws of the language-agnostic kernel:
 | No higher-layer repair | DECLARED_DEFERRED | Higher layers may not repair invalid lower-layer transitions, but layer authority is not defined. |
 | Canonical transition content snapshot | ENFORCED_AT_CONTENT_ENCODER | `CanonicalTransitionEncoder` is the sole issuer of `CanonicalTransitionManifest` and `TransitionContentIdentity`. The manifest preserves immutable canonical bytes for every structural transition field, including branch-origin provenance; occurrence-only `admission_id` and projection fingerprint are explicit exclusions. Its SHA-256 value is a digest reference, not proof of canonical-byte equality. Canonical values accept only exact built-in types, distinguish list from tuple and bytes from bytearray, preserve raw Unicode code points without normalization, encode finite floats as IEEE-754 binary64, and reject unsupported values and cycles. `preserved`, `changed`, and branch provenance components are sets; trace, evidence, and residuals are ordered sequences. Schema coverage rejects unaccounted structural fields. |
 | G0.2a.1 birth semantics content identity | ENFORCED_AT_CONTENT_ENCODER | `NoResidualIdDriftAfterFreeze`/`NoClosureCriterionIdDriftAfterFreeze` (G0.2a's id-equality checks) are label identity, not content identity: `ResidualDefinitionId != ResidualDefinitionContentIdentity`, and the same distinction holds for `ClosureCriterionSpec` and `WeakerModelSpec`. `CanonicalBirthSemanticsEncoder` is the sole issuer of `CanonicalResidualDefinitionManifest`, `CanonicalClosureCriterionManifest`, `CanonicalWeakerModelManifest`, and their `BirthSemanticsContentIdentity` SHA-256 digest references, covering every declared field of each spec. `BirthSemanticsContentRegistry` freezes the *first* canonical content bound to an exact `(domain, role, target_id)` scope; a later attempt to bind different content to that same scope is content drift and is rejected, not silently accepted because the id string still matches. `BirthAssessmentContentBinding` resolves every scope a `BirthAssessmentSemanticsContract` declares against a `SealedBirthSemanticsContentRegistry` and requires `CID(runtime) == CID(frozen)` for the residual definition, the closure criterion, and every weaker model; an unresolvable scope raises rather than passing silently. This closes `NoSemanticDriftAfterFreeze` for content, distinct from and in addition to `NoResidualDefinitionDriftAfterFreeze`/`NoClosureCriterionDriftAfterFreeze` for ids. It performs no evaluation and issues no `BirthVerdict`, `BirthCandidate`, or `Freeze`; `EvaluatorId != EvaluatorImplementationIdentity` and evaluator execution authority remain out of scope. |
+| G0.2a.3 evidence acquisition authority | ENFORCED_AT_ACQUISITION_AUTHORITY | Binding evidence to a frozen experiment (G0.2a.2) proves only `FreezePrecedesRequestConstruction`, not that the freeze authorized the evidence's own acquisition; a caller could still select evidence first and attach a freeze afterward. This stage closes the narrower, code-provable `FrozenExperimentPrecedesAuthorizedEvidenceIngestion` instead of an unprovable external-world chronology claim (`AuthorizedCapture != ProofOfExternalAcquisitionChronology`). `EvidenceAcquisitionAuthority.authorize` is the sole issuer of an `EvidenceAcquisitionAuthorization`, requiring a genuine, verified `BirthExperimentSpecificationContentBinding` (`NoEvidenceAcquisitionAuthorizationWithoutFrozenExperiment`); its `experiment_content_id`, `domain`, `evidence_mode`, `evidence_requirements`, `revision_id`, and `revision_sequence` are derived properties of that binding, never independent caller-supplied facts. Only that authorization can issue an `EvidenceAcquisitionRun` (`open_run`), and only that run can issue an `AuthorizedEvidenceSnapshot` (`ingest`), closing `NoAssessableEvidenceSnapshotWithoutAcquisitionAuthorization`; none of the three is caller-constructible. `CanonicalEvidenceContentEncoder` alone issues the ingested payload's `EvidenceContentIdentity`, keeping `EvidenceOccurrenceIdentity != EvidenceContentIdentity` (`snapshot_id`/`run_id`/`authorization_id` name one occurrence; `content_id` is a digest over ingested bytes). `BirthAssessmentRequest` now requires an `AuthorizedEvidenceSnapshot` (rejecting the deprecated, unauthorized `EvidenceSnapshot`) and rejects a snapshot whose `experiment_content_id` does not equal its own experiment binding's `content_id`. `AuthorizedEvidence != SufficientEvidence`: this stage does not imply `ResidualSurvival` or `Birth`, and issues no `ResidualAssessment` or `BirthVerdict`. |
 
 Invariant assessment request semantics are closed at the gate: `BLOCK` means an
 authorized verifier observed at least one invariant as false; `DEFER` means no
@@ -133,15 +134,66 @@ Its frozen weaker-model set and `PrerequisiteCone` are both derived as
 distinct frozen-model-set and query-relative order roles. Its incomparable
 projections are recorded as possible competing explanations.
 
-`BirthAssessmentRequest = AuthorizedFrozenExperimentBinding + EvidenceSnapshot`;
-the request refuses a raw `BirthExperimentSpecification`. This ordering
-enforces `NoAssessmentRequestWithoutAuthorizedPreEvidenceFreeze` and
+`BirthAssessmentRequest = AuthorizedFrozenExperimentBinding +
+AuthorizedEvidenceSnapshot`; the request refuses a raw
+`BirthExperimentSpecification` and refuses the legacy, unauthorized
+`EvidenceSnapshot` (deprecated: it carries no acquisition provenance). This
+ordering enforces `NoAssessmentRequestWithoutAuthorizedPreEvidenceFreeze` and
 `EvidenceMayBeAttachedOnlyToAnAuthorizedFrozenExperiment`, preventing evidence
 from redesigning the question or its closure criterion. The contract validates
 malformed bindings before any request can enter a future runtime. G0.1 stops at
 `BirthAssessmentRequest`: it has no
 executable verdict, revision-history, competing-explanation assessment, or
 freeze authority. `BirthVerdictStatus` is future vocabulary only.
+
+### G0.2a.3 — Evidence acquisition authority
+
+Binding evidence to a frozen experiment is not enough: a caller could still
+select or construct evidence before designing an experiment, then attach it
+to a `BirthExperimentSpecificationContentBinding` produced afterward. This
+proves only `FreezePrecedesRequestConstruction`, not that the freeze
+authorized the evidence's own acquisition. G0.2a.3 closes the narrower,
+code-provable claim `FrozenExperimentPrecedesAuthorizedEvidenceIngestion`
+instead of an unprovable external-world chronology claim.
+
+The chain is
+`BirthExperimentSpecification -> FrozenPreEvidenceExperimentManifest ->
+BirthExperimentSpecificationContentBinding -> EvidenceAcquisitionAuthorization
+-> EvidenceAcquisitionRun -> AuthorizedEvidenceSnapshot`.
+`EvidenceAcquisitionAuthority.authorize` is the sole issuer of an
+`EvidenceAcquisitionAuthorization`, and requires a genuine, already-verified
+`BirthExperimentSpecificationContentBinding`
+(`NoEvidenceAcquisitionAuthorizationWithoutFrozenExperiment`). The
+authorization does not accept caller-supplied `experiment_content_id`,
+`domain`, `evidence_mode`, `evidence_requirements`, `revision_id`, or
+`revision_sequence`: every one of these is a derived property read from the
+verified binding, so an authorization can never assert a condition the frozen
+experiment did not itself freeze.
+
+An `EvidenceAcquisitionAuthorization` is also the sole issuer of an
+`EvidenceAcquisitionRun` (`authorization.open_run(...)`), and an
+`EvidenceAcquisitionRun` is the sole issuer of an `AuthorizedEvidenceSnapshot`
+(`run.ingest(...)`), closing
+`NoAssessableEvidenceSnapshotWithoutAcquisitionAuthorization`: no caller can
+construct any of the three objects directly, each raising
+`EvidenceAcquisitionAuthorityError` when its authority token is missing.
+`CanonicalEvidenceContentEncoder` is the sole issuer of the ingested payload's
+`EvidenceContentIdentity`; a snapshot never accepts a caller-supplied content
+identity. This keeps `EvidenceOccurrenceIdentity != EvidenceContentIdentity`:
+`snapshot_id`, `run_id`, and `authorization_id` name one acquisition
+occurrence, while `content_id` is a digest over the ingested bytes, shared by
+any two occurrences that ingest byte-identical content.
+`BirthAssessmentRequest` further checks that its evidence snapshot's
+`experiment_content_id` equals its own experiment binding's `content_id`,
+rejecting a snapshot authorized under a different frozen experiment.
+
+`AuthorizedCapture != ProofOfExternalAcquisitionChronology`: this stage does
+not prove when or how evidence was first observed or produced outside this
+process, and pre-existing evidence could still be ingested through an
+authorized run. It also does not claim anything about evidence quality:
+`AuthorizedEvidence != SufficientEvidence`, and authorized evidence does not
+imply `ResidualSurvival` or `Birth`. G0.2a.3 issues no `ResidualAssessment`
+and no `BirthVerdict`.
 
 G0.2 is split into smaller authority-preserving stages. G0.2a defines only
 executable assessment contracts: `ResidualDefinitionSpec` identifies the

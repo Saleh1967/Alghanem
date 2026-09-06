@@ -21,6 +21,13 @@ from alghanem.kernel.birth import (
     StructureHypothesis,
     WeakerModelSpec,
 )
+from alghanem.kernel.evidence_acquisition import (
+    AuthorizedEvidenceSnapshot,
+    EvidenceAcquisitionAuthority,
+    EvidenceAcquisitionAuthorityError,
+    EvidenceAcquisitionAuthorization,
+    EvidenceAcquisitionRun,
+)
 from alghanem.kernel.experiment_spec_content_identity import (
     BirthExperimentSpecificationContentBinding,
     CanonicalBirthExperimentSpecificationEncoder,
@@ -58,6 +65,19 @@ def frozen_specification_binding() -> BirthExperimentSpecificationContentBinding
         CanonicalBirthExperimentSpecificationEncoder.encode(spec)
     )
     return BirthExperimentSpecificationContentBinding(spec, frozen)
+
+
+def authorized_evidence_snapshot(
+    binding: BirthExperimentSpecificationContentBinding | None = None,
+) -> AuthorizedEvidenceSnapshot:
+    authorization = EvidenceAcquisitionAuthority().authorize(
+        authorization_id="authorization",
+        binding=binding if binding is not None else frozen_specification_binding(),
+    )
+    run = authorization.open_run("run")
+    return run.ingest(
+        snapshot_id="snapshot", payload="enumeration", trace="acquisition-trace"
+    )
 
 
 def residual_definition() -> ResidualDefinitionSpec:
@@ -163,7 +183,7 @@ def test_g0_1_exports_no_birth_authority_or_freeze() -> None:
 
 def test_assessment_request_binds_evidence_after_frozen_specification() -> None:
     request = BirthAssessmentRequest(
-        frozen_specification_binding(), EvidenceSnapshot("snapshot", "enumeration")
+        frozen_specification_binding(), authorized_evidence_snapshot()
     )
 
     assert request.evidence_snapshot.snapshot_id == "snapshot"
@@ -177,17 +197,131 @@ def test_malformed_assessment_request_cannot_enter_future_runtime(
     with pytest.raises(BirthExperimentSpecificationError, match="frozen experiment"):
         BirthAssessmentRequest(
             binding_value,  # type: ignore[arg-type]
-            EvidenceSnapshot("snapshot", "enumeration"),
+            authorized_evidence_snapshot(),
         )
 
 
-@pytest.mark.parametrize("evidence_value", (None, "not-an-evidence-snapshot"))
+@pytest.mark.parametrize(
+    "evidence_value", (None, "not-an-evidence-snapshot", EvidenceSnapshot("s", "d"))
+)
 def test_request_requires_a_real_evidence_snapshot(evidence_value: object) -> None:
-    with pytest.raises(BirthExperimentSpecificationError, match="evidence snapshot"):
+    with pytest.raises(BirthExperimentSpecificationError, match="authorized evidence"):
         BirthAssessmentRequest(
             frozen_specification_binding(),
             evidence_value,  # type: ignore[arg-type]
         )
+
+
+def test_request_rejects_snapshot_acquired_under_a_different_experiment() -> None:
+    other_spec = BirthExperimentSpecification(
+        experiment_id="other-experiment",
+        revision_id="r1",
+        revision_sequence=1,
+        evidence_mode=EvidenceMode.FORMAL,
+        domain="finite-domain",
+        projection_poset=ProjectionPoset(("sequence",), ()),
+        birth_query=BirthQuery(
+            "query",
+            StructureHypothesis("structure", "a structure is necessary"),
+            "sequence",
+        ),
+        residual_definition_id="residual",
+        residual_definition="unexplained distinction",
+        closure_criterion_id="closure",
+        closure_criterion="all prerequisite models fail to close the residual",
+        evidence_requirements="exhaustive proof over the finite domain",
+    )
+    other_frozen = PreEvidenceSpecificationRegistry().freeze(
+        CanonicalBirthExperimentSpecificationEncoder.encode(other_spec)
+    )
+    other_binding = BirthExperimentSpecificationContentBinding(other_spec, other_frozen)
+    foreign_snapshot = authorized_evidence_snapshot(other_binding)
+
+    with pytest.raises(BirthExperimentSpecificationError, match="not acquired under"):
+        BirthAssessmentRequest(frozen_specification_binding(), foreign_snapshot)
+
+
+def test_evidence_acquisition_authorization_requires_a_genuine_frozen_binding() -> None:
+    for bad_binding in (None, specification(), "not-a-binding"):
+        with pytest.raises(EvidenceAcquisitionAuthorityError, match="genuine frozen"):
+            EvidenceAcquisitionAuthority().authorize(
+                authorization_id="authorization",
+                binding=bad_binding,  # type: ignore[arg-type]
+            )
+
+
+def test_evidence_acquisition_authorization_derives_conditions_from_binding() -> None:
+    binding = frozen_specification_binding()
+    authorization = EvidenceAcquisitionAuthority().authorize(
+        authorization_id="authorization", binding=binding
+    )
+
+    assert authorization.experiment_content_id == binding.content_id
+    assert authorization.domain == binding.specification.domain
+    assert authorization.evidence_mode == binding.specification.evidence_mode
+    assert (
+        authorization.evidence_requirements
+        == binding.specification.evidence_requirements
+    )
+    assert authorization.revision_id == binding.specification.revision_id
+    assert authorization.revision_sequence == binding.specification.revision_sequence
+
+
+def test_evidence_acquisition_authorization_cannot_be_constructed_directly() -> None:
+    binding = frozen_specification_binding()
+    with pytest.raises(EvidenceAcquisitionAuthorityError, match="issued by"):
+        EvidenceAcquisitionAuthorization(
+            authorization_id="authorization", binding=binding
+        )
+
+
+def test_evidence_acquisition_run_cannot_be_constructed_directly() -> None:
+    binding = frozen_specification_binding()
+    with pytest.raises(EvidenceAcquisitionAuthorityError, match="issued by"):
+        EvidenceAcquisitionRun(
+            run_id="run",
+            authorization_id="authorization",
+            experiment_content_id=binding.content_id,
+            domain=binding.specification.domain,
+            evidence_mode=binding.specification.evidence_mode,
+        )
+
+
+def test_authorized_evidence_snapshot_cannot_be_constructed_directly() -> None:
+    binding = frozen_specification_binding()
+    authorization = EvidenceAcquisitionAuthority().authorize(
+        authorization_id="authorization", binding=binding
+    )
+    run = authorization.open_run("run")
+    snapshot = run.ingest(snapshot_id="s", payload="content", trace="trace")
+
+    with pytest.raises(EvidenceAcquisitionAuthorityError, match="issued by"):
+        AuthorizedEvidenceSnapshot(
+            snapshot_id="s",
+            run_id="run",
+            authorization_id="authorization",
+            experiment_content_id=binding.content_id,
+            domain=binding.specification.domain,
+            evidence_mode=binding.specification.evidence_mode,
+            evidence_manifest=snapshot.evidence_manifest,
+            trace="trace",
+        )
+
+
+def test_authorized_evidence_ingestion_derives_content_identity() -> None:
+    binding = frozen_specification_binding()
+    authorization = EvidenceAcquisitionAuthority().authorize(
+        authorization_id="authorization", binding=binding
+    )
+    run = authorization.open_run("run")
+
+    first = run.ingest(snapshot_id="s1", payload="same content", trace="trace")
+    second = run.ingest(snapshot_id="s2", payload="same content", trace="trace")
+    different = run.ingest(snapshot_id="s3", payload="other content", trace="trace")
+
+    assert first.content_id == second.content_id
+    assert first.content_id != different.content_id
+    assert first.experiment_content_id == binding.content_id
 
 
 def test_g0_2a_binds_executable_semantics_without_birth_verdict() -> None:
