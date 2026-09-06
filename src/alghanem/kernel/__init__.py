@@ -2,6 +2,17 @@
 
 from .anchor import Anchor, State
 from .binding import ClaimEvidenceBinding
+from .birth import (
+    BirthAssessmentRequest,
+    BirthExperimentSpecification,
+    BirthExperimentSpecificationError,
+    BirthQuery,
+    BirthVerdictStatus,
+    EvidenceMode,
+    EvidenceSnapshot,
+    ProjectionPoset,
+    StructureHypothesis,
+)
 from .content_identity import (
     CanonicalTransitionEncoder,
     CanonicalTransitionManifest,
@@ -47,6 +58,11 @@ from .transition import (
 
 __all__ = [
     "Anchor",
+    "BirthAssessmentRequest",
+    "BirthExperimentSpecification",
+    "BirthExperimentSpecificationError",
+    "BirthQuery",
+    "BirthVerdictStatus",
     "BranchOriginProvenance",
     "CertifiedOutcome",
     "CanonicalTransitionEncoder",
@@ -55,6 +71,8 @@ __all__ = [
     "ClaimEvidenceBinding",
     "DecisionReasonCode",
     "Evidence",
+    "EvidenceMode",
+    "EvidenceSnapshot",
     "InvariantAssessmentSpecificationError",
     "InvariantComparisonError",
     "InvariantExtractionError",
@@ -74,9 +92,11 @@ __all__ = [
     "StructuralAdmissionError",
     "Operation",
     "OperationResult",
+    "ProjectionPoset",
     "Residual",
     "SealedInvariantExtractorRegistry",
     "State",
+    "StructureHypothesis",
     "StructuralAdmissionDecision",
     "StructuralAdmissionGate",
     "StructuralDecisionStatus",

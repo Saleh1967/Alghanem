@@ -42,9 +42,14 @@ Arabic candidate, factor, or structural coordinate may be born, either a
 measured residual (empirical mode) or an exhaustive proof over a declared
 finite formal domain (formal mode) — never a synthetic-intervention artifact
 alone — must survive exhaustion of every weaker model licensed and frozen for
-that experiment. Reaching a `BirthCandidate` is distinct from `Freeze`, and
-any resulting name may only be attached afterward, following independent
-closure, freeze, and an `E0` step. See the "G0 — Birth Protocol" section of
+that experiment. G0.1 supplies a language-agnostic pre-evidence
+`BirthExperimentSpecification` with a `BirthQuery`, a derived prerequisite
+cone, and a later `BirthAssessmentRequest` that binds the evidence snapshot.
+G0.1 stops at that request: it has no birth-verdict or freeze authority.
+`BirthCandidate` is distinct from a scoped birth verdict and from `Freeze`;
+the later G0.2 gate alone may issue `BIRTH_IN_SCOPE`, then freeze it before a
+separate `E0` step. See the
+"G0 — Birth Protocol" section of
 `docs/CONSTITUTION.md` for the full declared laws; no `BirthGate`,
 rank/complexity runtime, or intervention runtime exists yet.
 
