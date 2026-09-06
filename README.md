@@ -23,10 +23,17 @@ infer identities, bindings, Arabic cardinalities, or grammatical concepts;
 those require separate future birth gates and a later E0 audit.
 
 P0.1 freezes measurement authority with `MeasurementProtocolSpec`,
-`MeasurementRunIdentity`, and `ObservationLedgerManifest`. An observation
-provenance must name its measurement run, and a manifest binds an audit ledger
-to one run plus the run's declared normalization policy before later
-factorization or identity-birth gates may consume it.
+`MeasurementRunIdentity`, `MeasurementRunManifest`, and
+`ObservationLedgerManifest`. An observation provenance must name its measurement
+run, and manifests bind an audit ledger to one run plus the run's declared
+normalization policy and Unicode database version before later factorization or
+identity-birth gates may consume it.
+
+The next quotient artifact is `NormalizationFiberCandidate`: a derived
+equivalence class of ledger audits that share one normalized
+`SurfaceAtomCandidate`. Fibers record occurrence counts and raw surface
+variants without replacing the occurrence ledger and without introducing
+Carrier, State, binding, or Arabic cardinality claims.
 
 ## Development
 

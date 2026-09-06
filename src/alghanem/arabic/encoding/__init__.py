@@ -1,10 +1,16 @@
 """Observation and normalization artifacts for Arabic surface encoding."""
 
 from .candidates import SurfaceAtomCandidate
-from .measurement import MeasurementProtocolSpec, MeasurementRunIdentity
+from .measurement import (
+    MeasurementProtocolSpec,
+    MeasurementRunIdentity,
+    MeasurementRunManifest,
+)
 from .normalization import (
     DistinctSurfaceAtomCandidateProjection,
     NormalizationAudit,
+    NormalizationFiberCandidate,
+    NormalizationFiberCandidateProjection,
     NormalizationResidual,
     NormalizationTrace,
     ObservationAuditLedger,
@@ -17,7 +23,10 @@ __all__ = [
     "DistinctSurfaceAtomCandidateProjection",
     "MeasurementProtocolSpec",
     "MeasurementRunIdentity",
+    "MeasurementRunManifest",
     "NormalizationAudit",
+    "NormalizationFiberCandidate",
+    "NormalizationFiberCandidateProjection",
     "NormalizationResidual",
     "NormalizationTrace",
     "ObservationAuditLedger",

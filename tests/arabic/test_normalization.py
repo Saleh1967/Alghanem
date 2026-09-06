@@ -9,6 +9,7 @@ import pytest
 from alghanem.arabic import (
     MeasurementProtocolSpec,
     MeasurementRunIdentity,
+    MeasurementRunManifest,
     ObservationLedgerManifest,
     ObservationProvenance,
     RawSurfaceObservation,
@@ -151,6 +152,10 @@ def test_manifest_binds_ledger_to_one_measurement_run() -> None:
     manifest = SurfaceNormalization.ledger_manifest(run_identity, observations)
 
     assert manifest.run_identity == run_identity
+    assert manifest.measurement_run_manifest.normalization_form == "NFC"
+    assert manifest.measurement_run_manifest.unicode_database_version == (
+        unidata_version
+    )
     assert manifest.ledger.audits[0].trace.observation.provenance.run_identity == (
         run_identity
     )
@@ -162,7 +167,9 @@ def test_manifest_rejects_observations_from_another_measurement_run() -> None:
     )
 
     with pytest.raises(ValueError, match="measurement run identities"):
-        ObservationLedgerManifest(measurement_run("run-1"), ledger)
+        ObservationLedgerManifest(
+            MeasurementRunManifest.current(measurement_run("run-1")), ledger
+        )
 
 
 def test_manifest_rejects_normalization_policy_mismatch() -> None:
@@ -178,10 +185,89 @@ def test_manifest_rejects_normalization_policy_mismatch() -> None:
     )
 
     with pytest.raises(ValueError, match="normalization"):
-        SurfaceNormalization.ledger_manifest(
-            run_identity,
-            [observation("source", "one", "\u0628\u064e", run_identity)],
+        ObservationLedgerManifest(
+            MeasurementRunManifest(
+                run_identity,
+                normalization_form="NFD",
+                unicode_database_version=unidata_version,
+            ),
+            SurfaceNormalization.audit_ledger(
+                [observation("source", "one", "\u0628\u064e", run_identity)]
+            ),
         )
+
+
+def test_measurement_run_manifest_rejects_policy_mismatch() -> None:
+    run_identity = measurement_run()
+
+    with pytest.raises(ValueError, match="protocol policy"):
+        MeasurementRunManifest(
+            run_identity,
+            normalization_form="NFD",
+            unicode_database_version=unidata_version,
+        )
+
+
+def test_normalization_fibers_group_occurrences_by_candidate() -> None:
+    run_identity = measurement_run()
+    observations = [
+        observation("source", "one", "\u0627\u0654", run_identity),
+        observation("source", "two", "\u0623", run_identity),
+        observation("source", "three", "\u0628\u064e", run_identity),
+    ]
+    manifest = SurfaceNormalization.ledger_manifest(run_identity, observations)
+
+    projection = SurfaceNormalization.normalization_fibers(manifest)
+
+    assert len(projection.fibers) == 2
+    alef_fiber = projection.fibers[0]
+    assert alef_fiber.candidate.normalized_surface == "\u0623"
+    assert alef_fiber.occurrence_count == 2
+    assert alef_fiber.raw_variant_count == 2
+    assert alef_fiber.raw_variants == ("\u0623", "\u0627\u0654")
+    assert {
+        member.trace.observation.provenance.occurrence_id
+        for member in alef_fiber.members
+    } == {"one", "two"}
+
+
+def test_normalization_fibers_are_independent_of_observation_order() -> None:
+    run_identity = measurement_run()
+    observations = [
+        observation("source", "one", "\u0628\u064e", run_identity),
+        observation("source", "two", "\u0627\u0654", run_identity),
+        observation("source", "three", "\u0623", run_identity),
+    ]
+
+    projection = SurfaceNormalization.normalization_fibers(
+        SurfaceNormalization.ledger_manifest(run_identity, observations)
+    )
+    reversed_projection = SurfaceNormalization.normalization_fibers(
+        SurfaceNormalization.ledger_manifest(run_identity, reversed(observations))
+    )
+
+    assert projection == reversed_projection
+
+
+def test_normalization_fibers_do_not_replace_occurrence_ledger() -> None:
+    run_identity = measurement_run()
+    observations = [
+        observation("source", "one", "\u0628\u064e", run_identity),
+        observation("source", "two", "\u0628\u064e", run_identity),
+    ]
+    manifest = SurfaceNormalization.ledger_manifest(run_identity, observations)
+
+    projection = SurfaceNormalization.normalization_fibers(manifest)
+
+    assert len(manifest.ledger.audits) == 2
+    assert len(projection.fibers) == 1
+    assert projection.fibers[0].occurrence_count == 2
+    assert tuple(
+        member.trace.observation for member in projection.fibers[0].members
+    ) == (
+        observations[0],
+        observations[1],
+    )
 
 
 def test_observation_provenance_requires_measurement_run() -> None:
