@@ -21,6 +21,11 @@ from alghanem.kernel.birth import (
     StructureHypothesis,
     WeakerModelSpec,
 )
+from alghanem.kernel.experiment_spec_content_identity import (
+    BirthExperimentSpecificationContentBinding,
+    CanonicalBirthExperimentSpecificationEncoder,
+    PreEvidenceSpecificationRegistry,
+)
 
 
 def specification() -> BirthExperimentSpecification:
@@ -45,6 +50,14 @@ def specification() -> BirthExperimentSpecification:
         closure_criterion="all prerequisite models fail to close the residual",
         evidence_requirements="exhaustive proof over the finite domain",
     )
+
+
+def frozen_specification_binding() -> BirthExperimentSpecificationContentBinding:
+    spec = specification()
+    frozen = PreEvidenceSpecificationRegistry().freeze(
+        CanonicalBirthExperimentSpecificationEncoder.encode(spec)
+    )
+    return BirthExperimentSpecificationContentBinding(spec, frozen)
 
 
 def residual_definition() -> ResidualDefinitionSpec:
@@ -150,19 +163,20 @@ def test_g0_1_exports_no_birth_authority_or_freeze() -> None:
 
 def test_assessment_request_binds_evidence_after_frozen_specification() -> None:
     request = BirthAssessmentRequest(
-        specification(), EvidenceSnapshot("snapshot", "enumeration")
+        frozen_specification_binding(), EvidenceSnapshot("snapshot", "enumeration")
     )
 
     assert request.evidence_snapshot.snapshot_id == "snapshot"
+    assert request.specification == specification()
 
 
-@pytest.mark.parametrize("specification_value", (None, "not-a-specification"))
+@pytest.mark.parametrize("binding_value", (None, specification(), "not-a-binding"))
 def test_malformed_assessment_request_cannot_enter_future_runtime(
-    specification_value: object,
+    binding_value: object,
 ) -> None:
-    with pytest.raises(BirthExperimentSpecificationError, match="specification"):
+    with pytest.raises(BirthExperimentSpecificationError, match="frozen experiment"):
         BirthAssessmentRequest(
-            specification_value,  # type: ignore[arg-type]
+            binding_value,  # type: ignore[arg-type]
             EvidenceSnapshot("snapshot", "enumeration"),
         )
 
@@ -171,7 +185,7 @@ def test_malformed_assessment_request_cannot_enter_future_runtime(
 def test_request_requires_a_real_evidence_snapshot(evidence_value: object) -> None:
     with pytest.raises(BirthExperimentSpecificationError, match="evidence snapshot"):
         BirthAssessmentRequest(
-            specification(),
+            frozen_specification_binding(),
             evidence_value,  # type: ignore[arg-type]
         )
 

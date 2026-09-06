@@ -133,10 +133,13 @@ Its frozen weaker-model set and `PrerequisiteCone` are both derived as
 distinct frozen-model-set and query-relative order roles. Its incomparable
 projections are recorded as possible competing explanations.
 
-`BirthAssessmentRequest = FrozenExperimentSpecification + EvidenceSnapshot`;
-this ordering prevents evidence from redesigning the question or its closure
-criterion. The contract validates malformed specifications before any request
-can enter a future runtime. G0.1 stops at `BirthAssessmentRequest`: it has no
+`BirthAssessmentRequest = AuthorizedFrozenExperimentBinding + EvidenceSnapshot`;
+the request refuses a raw `BirthExperimentSpecification`. This ordering
+enforces `NoAssessmentRequestWithoutAuthorizedPreEvidenceFreeze` and
+`EvidenceMayBeAttachedOnlyToAnAuthorizedFrozenExperiment`, preventing evidence
+from redesigning the question or its closure criterion. The contract validates
+malformed bindings before any request can enter a future runtime. G0.1 stops at
+`BirthAssessmentRequest`: it has no
 executable verdict, revision-history, competing-explanation assessment, or
 freeze authority. `BirthVerdictStatus` is future vocabulary only.
 
@@ -185,7 +188,11 @@ and hypothesis, residual/closure declarations, and evidence requirements.
 `PreEvidenceSpecificationRegistry` alone issues a
 `FrozenPreEvidenceExperimentManifest`; semantic-registry sealing requires that
 manifest, so a semantic snapshot cannot float independently of its frozen
-experiment specification. It still performs no evaluation and
+experiment specification. All canonical encoders enforce schema coverage:
+every declared field is either encoded or listed as an explicit derived
+exclusion, including `ProjectionPoset`, `BirthQuery`, and
+`StructureHypothesis`; adding an unaccounted field rejects encoding. It still
+performs no evaluation and
 issues no birth authority. `EvaluatorId != EvaluatorImplementationIdentity`
 remains open: this stage authorizes evaluator *declarations*, not evaluator
 *implementations*, and any future runtime must resolve evaluator execution

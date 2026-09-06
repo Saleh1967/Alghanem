@@ -1,5 +1,8 @@
+from dataclasses import fields
+
 import pytest
 
+import alghanem.kernel.experiment_spec_content_identity as experiment_identity
 from alghanem.kernel.birth import (
     BirthExperimentSpecification,
     BirthQuery,
@@ -8,6 +11,11 @@ from alghanem.kernel.birth import (
     StructureHypothesis,
 )
 from alghanem.kernel.experiment_spec_content_identity import (
+    BIRTH_QUERY_MANIFEST_COVERAGE,
+    EXPERIMENT_SPECIFICATION_DERIVED_EXCLUSIONS,
+    EXPERIMENT_SPECIFICATION_MANIFEST_COVERAGE,
+    PROJECTION_POSET_MANIFEST_COVERAGE,
+    STRUCTURE_HYPOTHESIS_MANIFEST_COVERAGE,
     BirthExperimentContentIdentityError,
     BirthExperimentSpecificationContentBinding,
     BirthExperimentSpecificationContentIdentity,
@@ -46,6 +54,33 @@ def test_canonical_experiment_manifest_covers_nested_declared_content() -> None:
 
     assert baseline.canonical_bytes != drifted.canonical_bytes
     assert baseline.content_id.digest != drifted.content_id.digest
+
+
+def test_every_experiment_schema_field_has_an_explicit_manifest_disposition() -> None:
+    assert {item.name for item in fields(BirthExperimentSpecification)} == (
+        set(EXPERIMENT_SPECIFICATION_MANIFEST_COVERAGE)
+        | set(EXPERIMENT_SPECIFICATION_DERIVED_EXCLUSIONS)
+    )
+    assert {item.name for item in fields(ProjectionPoset)} == set(
+        PROJECTION_POSET_MANIFEST_COVERAGE
+    )
+    assert {item.name for item in fields(BirthQuery)} == set(
+        BIRTH_QUERY_MANIFEST_COVERAGE
+    )
+    assert {item.name for item in fields(StructureHypothesis)} == set(
+        STRUCTURE_HYPOTHESIS_MANIFEST_COVERAGE
+    )
+
+
+def test_encoder_rejects_an_unaccounted_experiment_field(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        experiment_identity, "STRUCTURE_HYPOTHESIS_MANIFEST_COVERAGE", ()
+    )
+
+    with pytest.raises(RuntimeError, match="explicitly account"):
+        CanonicalBirthExperimentSpecificationEncoder.encode(specification())
 
 
 def test_pre_evidence_registry_rejects_content_drift_for_same_scope() -> None:

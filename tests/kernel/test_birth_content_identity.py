@@ -1,5 +1,8 @@
+from dataclasses import fields
+
 import pytest
 
+import alghanem.kernel.birth_content_identity as semantics_identity
 from alghanem.kernel.birth import (
     BirthAssessmentSemanticsContract,
     BirthEvaluatorRole,
@@ -13,6 +16,9 @@ from alghanem.kernel.birth import (
     WeakerModelSpec,
 )
 from alghanem.kernel.birth_content_identity import (
+    CLOSURE_CRITERION_MANIFEST_COVERAGE,
+    RESIDUAL_DEFINITION_MANIFEST_COVERAGE,
+    WEAKER_MODEL_MANIFEST_COVERAGE,
     BirthAssessmentContentBinding,
     BirthSemanticsContentIdentity,
     BirthSemanticsContentIdentityError,
@@ -170,6 +176,27 @@ def test_canonical_encoding_is_deterministic_for_identical_content() -> None:
 
     assert first.content_id.digest == second.content_id.digest
     assert isinstance(first, CanonicalResidualDefinitionManifest)
+
+
+def test_every_semantics_schema_field_is_covered_by_its_manifest() -> None:
+    assert {item.name for item in fields(ResidualDefinitionSpec)} == set(
+        RESIDUAL_DEFINITION_MANIFEST_COVERAGE
+    )
+    assert {item.name for item in fields(ClosureCriterionSpec)} == set(
+        CLOSURE_CRITERION_MANIFEST_COVERAGE
+    )
+    assert {item.name for item in fields(WeakerModelSpec)} == set(
+        WEAKER_MODEL_MANIFEST_COVERAGE
+    )
+
+
+def test_encoder_rejects_an_unaccounted_semantics_field(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(semantics_identity, "WEAKER_MODEL_MANIFEST_COVERAGE", ())
+
+    with pytest.raises(RuntimeError, match="explicitly account"):
+        CanonicalBirthSemanticsEncoder.encode_weaker_model(weaker_model_specs()[0])
 
 
 @pytest.mark.parametrize(

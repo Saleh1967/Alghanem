@@ -26,7 +26,7 @@ from __future__ import annotations
 import hashlib
 import json
 from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 
 from .birth import (
     BirthAssessmentSemanticsContract,
@@ -44,6 +44,33 @@ from .experiment_spec_content_identity import (
 _CONTENT_ID_TOKEN = object()
 _ALGORITHM = "sha256"
 _CANONICALIZATION_VERSION = "birth-semantics-manifest-v1"
+RESIDUAL_DEFINITION_MANIFEST_COVERAGE = (
+    "residual_id",
+    "domain",
+    "input_projection",
+    "output_schema",
+    "evaluator_id",
+    "invariants",
+    "failure_semantics",
+)
+WEAKER_MODEL_MANIFEST_COVERAGE = (
+    "model_id",
+    "domain",
+    "projection_evaluator_id",
+    "declared_information_loss",
+    "result_schema",
+    "strict_predecessors",
+    "strict_successors",
+)
+CLOSURE_CRITERION_MANIFEST_COVERAGE = (
+    "criterion_id",
+    "residual_id",
+    "domain",
+    "residual_schema",
+    "model_result_schema",
+    "evaluator_id",
+    "failure_semantics",
+)
 
 
 class BirthSemanticsContentIdentityError(BirthExperimentSpecificationError):
@@ -168,6 +195,9 @@ class CanonicalBirthSemanticsEncoder:
             raise BirthSemanticsContentIdentityError(
                 "canonical encoding requires an executable residual definition"
             )
+        cls._assert_schema_coverage(
+            ResidualDefinitionSpec, RESIDUAL_DEFINITION_MANIFEST_COVERAGE
+        )
         encoded = {
             "domain": spec.domain,
             "evaluator_id": spec.evaluator_id,
@@ -194,6 +224,9 @@ class CanonicalBirthSemanticsEncoder:
             raise BirthSemanticsContentIdentityError(
                 "canonical encoding requires an executable closure criterion"
             )
+        cls._assert_schema_coverage(
+            ClosureCriterionSpec, CLOSURE_CRITERION_MANIFEST_COVERAGE
+        )
         encoded = {
             "criterion_id": spec.criterion_id,
             "domain": spec.domain,
@@ -218,6 +251,7 @@ class CanonicalBirthSemanticsEncoder:
             raise BirthSemanticsContentIdentityError(
                 "canonical encoding requires an executable weaker model"
             )
+        cls._assert_schema_coverage(WeakerModelSpec, WEAKER_MODEL_MANIFEST_COVERAGE)
         encoded = {
             "declared_information_loss": spec.declared_information_loss,
             "domain": spec.domain,
@@ -235,6 +269,21 @@ class CanonicalBirthSemanticsEncoder:
             content_id=content_id,
             _manifest_token=_CONTENT_ID_TOKEN,
         )
+
+    @staticmethod
+    def _assert_schema_coverage(
+        specification_type: (
+            type[ResidualDefinitionSpec]
+            | type[ClosureCriterionSpec]
+            | type[WeakerModelSpec]
+        ),
+        manifest_coverage: tuple[str, ...],
+    ) -> None:
+        if {item.name for item in fields(specification_type)} != set(manifest_coverage):
+            raise RuntimeError(
+                "canonical birth semantics manifest coverage must explicitly account "
+                f"for every {specification_type.__name__} field"
+            )
 
 
 def _canonical_bytes(encoded: Mapping[str, object]) -> bytes:
@@ -558,6 +607,9 @@ __all__ = [
     "CanonicalClosureCriterionManifest",
     "CanonicalResidualDefinitionManifest",
     "CanonicalWeakerModelManifest",
+    "CLOSURE_CRITERION_MANIFEST_COVERAGE",
     "FrozenBirthSemanticsContentScope",
+    "RESIDUAL_DEFINITION_MANIFEST_COVERAGE",
     "SealedBirthSemanticsContentRegistry",
+    "WEAKER_MODEL_MANIFEST_COVERAGE",
 ]

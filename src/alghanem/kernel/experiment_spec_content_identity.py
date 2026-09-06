@@ -4,13 +4,37 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 
-from .birth import BirthExperimentSpecification, BirthExperimentSpecificationError
+from .birth import (
+    BirthExperimentSpecification,
+    BirthExperimentSpecificationError,
+    BirthQuery,
+    ProjectionPoset,
+    StructureHypothesis,
+)
 
 _EXPERIMENT_CONTENT_TOKEN = object()
 _ALGORITHM = "sha256"
 _CANONICALIZATION_VERSION = "birth-experiment-specification-manifest-v1"
+EXPERIMENT_SPECIFICATION_MANIFEST_COVERAGE = (
+    "experiment_id",
+    "revision_id",
+    "revision_sequence",
+    "evidence_mode",
+    "domain",
+    "projection_poset",
+    "birth_query",
+    "residual_definition_id",
+    "residual_definition",
+    "closure_criterion_id",
+    "closure_criterion",
+    "evidence_requirements",
+)
+EXPERIMENT_SPECIFICATION_DERIVED_EXCLUSIONS = ("_prerequisite_cone",)
+PROJECTION_POSET_MANIFEST_COVERAGE = ("projections", "strict_relations")
+BIRTH_QUERY_MANIFEST_COVERAGE = ("query_id", "hypothesis", "test_model")
+STRUCTURE_HYPOTHESIS_MANIFEST_COVERAGE = ("hypothesis_id", "statement")
 
 
 class BirthExperimentContentIdentityError(BirthExperimentSpecificationError):
@@ -74,6 +98,7 @@ class CanonicalBirthExperimentSpecificationEncoder:
             raise BirthExperimentContentIdentityError(
                 "canonical encoding requires a birth experiment specification"
             )
+        cls._assert_schema_coverage()
         poset = specification.projection_poset
         query = specification.birth_query
         encoded = {
@@ -115,6 +140,26 @@ class CanonicalBirthExperimentSpecificationEncoder:
             content_id=content_id,
             _token=_EXPERIMENT_CONTENT_TOKEN,
         )
+
+    @staticmethod
+    def _assert_schema_coverage() -> None:
+        schema_dispositions = (
+            (
+                BirthExperimentSpecification,
+                EXPERIMENT_SPECIFICATION_MANIFEST_COVERAGE,
+                EXPERIMENT_SPECIFICATION_DERIVED_EXCLUSIONS,
+            ),
+            (ProjectionPoset, PROJECTION_POSET_MANIFEST_COVERAGE, ()),
+            (BirthQuery, BIRTH_QUERY_MANIFEST_COVERAGE, ()),
+            (StructureHypothesis, STRUCTURE_HYPOTHESIS_MANIFEST_COVERAGE, ()),
+        )
+        for specification_type, covered, exclusions in schema_dispositions:
+            field_names = {item.name for item in fields(specification_type)}
+            if field_names != set(covered) | set(exclusions):
+                raise RuntimeError(
+                    "canonical experiment manifest coverage must explicitly account "
+                    f"for every {specification_type.__name__} field"
+                )
 
 
 @dataclass(frozen=True, slots=True)
@@ -208,6 +253,11 @@ __all__ = [
     "BirthExperimentSpecificationContentIdentity",
     "CanonicalBirthExperimentSpecificationEncoder",
     "CanonicalBirthExperimentSpecificationManifest",
+    "EXPERIMENT_SPECIFICATION_DERIVED_EXCLUSIONS",
+    "EXPERIMENT_SPECIFICATION_MANIFEST_COVERAGE",
     "FrozenPreEvidenceExperimentManifest",
+    "BIRTH_QUERY_MANIFEST_COVERAGE",
     "PreEvidenceSpecificationRegistry",
+    "PROJECTION_POSET_MANIFEST_COVERAGE",
+    "STRUCTURE_HYPOTHESIS_MANIFEST_COVERAGE",
 ]
