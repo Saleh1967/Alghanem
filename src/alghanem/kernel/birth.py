@@ -3,9 +3,15 @@
 from dataclasses import dataclass, field
 from enum import Enum, auto
 
+_BIRTH_EVALUATOR_DEFINITION_TOKEN = object()
+
 
 class BirthExperimentSpecificationError(ValueError):
     """A malformed G0.1 contract cannot enter a future assessment runtime."""
+
+
+class BirthAssessmentEvaluatorAuthorityError(BirthExperimentSpecificationError):
+    """Caller-declared evaluator ids are not trusted evaluator authority."""
 
 
 class EvidenceMode(Enum):
@@ -30,6 +36,14 @@ class ClosureAssessmentStatus(Enum):
     CLOSE = auto()
     FAIL_TO_CLOSE = auto()
     DEFER = auto()
+
+
+class BirthEvaluatorRole(Enum):
+    """Evaluator-declaration roles that a future registry may authorize."""
+
+    RESIDUAL_DEFINITION = auto()
+    WEAKER_MODEL = auto()
+    CLOSURE_CRITERION = auto()
 
 
 def _require_text(value: str, field_name: str) -> None:
@@ -179,7 +193,9 @@ class BirthExperimentSpecification:
     domain: str
     projection_poset: ProjectionPoset
     birth_query: BirthQuery
+    residual_definition_id: str
     residual_definition: str
+    closure_criterion_id: str
     closure_criterion: str
     evidence_requirements: str
     _prerequisite_cone: tuple[str, ...] = field(init=False, repr=False)
@@ -196,7 +212,9 @@ class BirthExperimentSpecification:
                 "revision sequence must be a positive integer"
             )
         _require_text(self.domain, "domain")
+        _require_text(self.residual_definition_id, "residual definition id")
         _require_text(self.residual_definition, "residual definition")
+        _require_text(self.closure_criterion_id, "closure criterion id")
         _require_text(self.closure_criterion, "closure criterion")
         _require_text(self.evidence_requirements, "evidence requirements")
         if not isinstance(self.evidence_mode, EvidenceMode):
@@ -236,7 +254,7 @@ class BirthExperimentSpecification:
 
 @dataclass(frozen=True, slots=True)
 class ResidualDefinitionSpec:
-    """Executable G0.2a contract for deriving a residual inside a frozen domain."""
+    """G0.2a contract for a residual definition; evaluator id is declarative."""
 
     residual_id: str
     domain: str
@@ -258,7 +276,7 @@ class ResidualDefinitionSpec:
 
 @dataclass(frozen=True, slots=True)
 class WeakerModelSpec:
-    """Executable G0.2a contract for one frozen weaker analytical model."""
+    """G0.2a contract for one weaker model; evaluator id is declarative."""
 
     model_id: str
     domain: str
@@ -290,7 +308,7 @@ class WeakerModelSpec:
 
 @dataclass(frozen=True, slots=True)
 class ClosureCriterionSpec:
-    """Executable G0.2a contract for deciding whether a weaker model closes R."""
+    """G0.2a contract for closure semantics; evaluator id is declarative."""
 
     criterion_id: str
     residual_id: str
@@ -321,8 +339,8 @@ class ClosureCriterionSpec:
 
 
 @dataclass(frozen=True, slots=True)
-class BirthAssessmentSemantics:
-    """G0.2a executable assessment semantics; it issues no birth verdict."""
+class BirthAssessmentSemanticsContract:
+    """G0.2a executable assessment contract; it issues no birth verdict."""
 
     specification: BirthExperimentSpecification
     residual_definition: ResidualDefinitionSpec
@@ -342,6 +360,13 @@ class BirthAssessmentSemantics:
             raise BirthExperimentSpecificationError(
                 "assessment semantics require an executable closure criterion"
             )
+        if (
+            self.residual_definition.residual_id
+            != self.specification.residual_definition_id
+        ):
+            raise BirthExperimentSpecificationError(
+                "residual definition id must match the frozen specification"
+            )
         if self.residual_definition.domain != self.specification.domain:
             raise BirthExperimentSpecificationError(
                 "residual definition domain must match the experiment domain"
@@ -356,6 +381,13 @@ class BirthAssessmentSemantics:
         if self.closure_criterion.domain != self.specification.domain:
             raise BirthExperimentSpecificationError(
                 "closure criterion domain must match the experiment domain"
+            )
+        if (
+            self.closure_criterion.criterion_id
+            != self.specification.closure_criterion_id
+        ):
+            raise BirthExperimentSpecificationError(
+                "closure criterion id must match the frozen specification"
             )
         if self.closure_criterion.residual_id != self.residual_definition.residual_id:
             raise BirthExperimentSpecificationError(
@@ -407,6 +439,193 @@ class BirthAssessmentSemantics:
                 raise BirthExperimentSpecificationError(
                     "weaker model successor relation must match the projection poset"
                 )
+
+
+@dataclass(frozen=True, slots=True)
+class AuthorizedBirthAssessmentEvaluatorDefinition:
+    """Registry-issued evaluator authorization for an exact role and target."""
+
+    domain: str
+    role: BirthEvaluatorRole
+    target_id: str
+    evaluator_id: str
+    version: str = "1"
+    _authority_token: object = field(default=None, repr=False, compare=False)
+
+    def __post_init__(self) -> None:
+        if self._authority_token is not _BIRTH_EVALUATOR_DEFINITION_TOKEN:
+            raise BirthAssessmentEvaluatorAuthorityError(
+                "authorized evaluator definitions must be registry-issued"
+            )
+        _require_text(self.domain, "authorized evaluator domain")
+        if not isinstance(self.role, BirthEvaluatorRole):
+            raise BirthAssessmentEvaluatorAuthorityError(
+                "authorized evaluator role must be declared"
+            )
+        _require_text(self.target_id, "authorized evaluator target id")
+        _require_text(self.evaluator_id, "authorized evaluator id")
+        _require_text(self.version, "authorized evaluator version")
+
+
+@dataclass(frozen=True, slots=True)
+class SealedBirthAssessmentEvaluatorRegistry:
+    """Frozen registry snapshot; it authorizes declarations but executes nothing."""
+
+    snapshot_id: str
+    definitions: tuple[AuthorizedBirthAssessmentEvaluatorDefinition, ...]
+    _registry_token: object = field(default=None, repr=False, compare=False)
+
+    def __post_init__(self) -> None:
+        if self._registry_token is not _BIRTH_EVALUATOR_DEFINITION_TOKEN:
+            raise BirthAssessmentEvaluatorAuthorityError(
+                "sealed evaluator registries must be registry-issued"
+            )
+        _require_text(self.snapshot_id, "evaluator registry snapshot id")
+        if not isinstance(self.definitions, tuple):
+            raise BirthAssessmentEvaluatorAuthorityError(
+                "evaluator registry definitions must be frozen"
+            )
+        seen: set[tuple[str, BirthEvaluatorRole, str, str]] = set()
+        for definition in self.definitions:
+            if not isinstance(definition, AuthorizedBirthAssessmentEvaluatorDefinition):
+                raise BirthAssessmentEvaluatorAuthorityError(
+                    "sealed registry requires authorized evaluator definitions"
+                )
+            key = (
+                definition.domain,
+                definition.role,
+                definition.target_id,
+                definition.evaluator_id,
+            )
+            if key in seen:
+                raise BirthAssessmentEvaluatorAuthorityError(
+                    "sealed registry must not contain duplicate definitions"
+                )
+            seen.add(key)
+
+    def resolve_authorized(
+        self,
+        *,
+        domain: str,
+        role: BirthEvaluatorRole,
+        target_id: str,
+        evaluator_id: str,
+    ) -> AuthorizedBirthAssessmentEvaluatorDefinition:
+        """Return a registry-issued authorization for an exact declaration."""
+
+        for definition in self.definitions:
+            if (
+                definition.domain == domain
+                and definition.role is role
+                and definition.target_id == target_id
+                and definition.evaluator_id == evaluator_id
+            ):
+                return definition
+        raise BirthAssessmentEvaluatorAuthorityError(
+            "declared evaluator id is not authorized for this scope"
+        )
+
+
+class BirthAssessmentEvaluatorRegistry:
+    """Authority boundary for evaluator definitions; it performs no assessment."""
+
+    def __init__(self) -> None:
+        self._definitions: dict[
+            tuple[str, BirthEvaluatorRole, str, str],
+            AuthorizedBirthAssessmentEvaluatorDefinition,
+        ] = {}
+
+    def authorize(
+        self,
+        *,
+        domain: str,
+        role: BirthEvaluatorRole,
+        target_id: str,
+        evaluator_id: str,
+        version: str = "1",
+    ) -> AuthorizedBirthAssessmentEvaluatorDefinition:
+        """Authorize a declared evaluator id for one exact role and target."""
+
+        definition = AuthorizedBirthAssessmentEvaluatorDefinition(
+            domain=domain,
+            role=role,
+            target_id=target_id,
+            evaluator_id=evaluator_id,
+            version=version,
+            _authority_token=_BIRTH_EVALUATOR_DEFINITION_TOKEN,
+        )
+        key = (domain, role, target_id, evaluator_id)
+        self._definitions[key] = definition
+        return definition
+
+    def seal(self, snapshot_id: str) -> SealedBirthAssessmentEvaluatorRegistry:
+        """Freeze the authorized evaluator definitions without adding execution."""
+
+        return SealedBirthAssessmentEvaluatorRegistry(
+            snapshot_id=snapshot_id,
+            definitions=tuple(self._definitions.values()),
+            _registry_token=_BIRTH_EVALUATOR_DEFINITION_TOKEN,
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class BirthAssessmentEvaluatorDefinitions:
+    """Registry-authorized evaluator definitions for a semantics contract."""
+
+    contract: BirthAssessmentSemanticsContract
+    registry_snapshot: SealedBirthAssessmentEvaluatorRegistry
+    residual_definition: AuthorizedBirthAssessmentEvaluatorDefinition = field(
+        init=False
+    )
+    weaker_models: tuple[AuthorizedBirthAssessmentEvaluatorDefinition, ...] = field(
+        init=False
+    )
+    closure_criterion: AuthorizedBirthAssessmentEvaluatorDefinition = field(init=False)
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.contract, BirthAssessmentSemanticsContract):
+            raise BirthAssessmentEvaluatorAuthorityError(
+                "evaluator definitions require a birth assessment semantics contract"
+            )
+        if not isinstance(
+            self.registry_snapshot, SealedBirthAssessmentEvaluatorRegistry
+        ):
+            raise BirthAssessmentEvaluatorAuthorityError(
+                "evaluator definitions require a sealed evaluator registry"
+            )
+        object.__setattr__(
+            self,
+            "residual_definition",
+            self.registry_snapshot.resolve_authorized(
+                domain=self.contract.specification.domain,
+                role=BirthEvaluatorRole.RESIDUAL_DEFINITION,
+                target_id=self.contract.residual_definition.residual_id,
+                evaluator_id=self.contract.residual_definition.evaluator_id,
+            ),
+        )
+        object.__setattr__(
+            self,
+            "weaker_models",
+            tuple(
+                self.registry_snapshot.resolve_authorized(
+                    domain=self.contract.specification.domain,
+                    role=BirthEvaluatorRole.WEAKER_MODEL,
+                    target_id=model.model_id,
+                    evaluator_id=model.projection_evaluator_id,
+                )
+                for model in self.contract.weaker_models
+            ),
+        )
+        object.__setattr__(
+            self,
+            "closure_criterion",
+            self.registry_snapshot.resolve_authorized(
+                domain=self.contract.specification.domain,
+                role=BirthEvaluatorRole.CLOSURE_CRITERION,
+                target_id=self.contract.closure_criterion.criterion_id,
+                evaluator_id=self.contract.closure_criterion.evaluator_id,
+            ),
+        )
 
 
 @dataclass(frozen=True, slots=True)

@@ -3,8 +3,13 @@
 from .anchor import Anchor, State
 from .binding import ClaimEvidenceBinding
 from .birth import (
+    AuthorizedBirthAssessmentEvaluatorDefinition,
+    BirthAssessmentEvaluatorAuthorityError,
+    BirthAssessmentEvaluatorDefinitions,
+    BirthAssessmentEvaluatorRegistry,
     BirthAssessmentRequest,
-    BirthAssessmentSemantics,
+    BirthAssessmentSemanticsContract,
+    BirthEvaluatorRole,
     BirthExperimentSpecification,
     BirthExperimentSpecificationError,
     BirthQuery,
@@ -15,6 +20,7 @@ from .birth import (
     EvidenceSnapshot,
     ProjectionPoset,
     ResidualDefinitionSpec,
+    SealedBirthAssessmentEvaluatorRegistry,
     StructureHypothesis,
     WeakerModelSpec,
 )
@@ -63,10 +69,15 @@ from .transition import (
 
 __all__ = [
     "Anchor",
-    "BirthAssessmentSemantics",
+    "AuthorizedBirthAssessmentEvaluatorDefinition",
+    "BirthAssessmentEvaluatorAuthorityError",
+    "BirthAssessmentEvaluatorDefinitions",
+    "BirthAssessmentEvaluatorRegistry",
     "BirthAssessmentRequest",
+    "BirthAssessmentSemanticsContract",
     "BirthExperimentSpecification",
     "BirthExperimentSpecificationError",
+    "BirthEvaluatorRole",
     "BirthQuery",
     "BirthVerdictStatus",
     "BranchOriginProvenance",
@@ -103,6 +114,7 @@ __all__ = [
     "ProjectionPoset",
     "Residual",
     "ResidualDefinitionSpec",
+    "SealedBirthAssessmentEvaluatorRegistry",
     "SealedInvariantExtractorRegistry",
     "State",
     "StructureHypothesis",
