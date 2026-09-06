@@ -137,7 +137,19 @@ can enter a future runtime. G0.1 stops at `BirthAssessmentRequest`: it has no
 executable verdict, revision-history, competing-explanation assessment, or
 freeze authority. `BirthVerdictStatus` is future vocabulary only.
 
-G0.2 alone may implement the complete authority chain:
+G0.2 is split into smaller authority-preserving stages. G0.2a defines only
+executable assessment semantics: `ResidualDefinitionSpec` identifies the
+residual domain, input projection, output schema, evaluator identity,
+invariants, and failure semantics; each `WeakerModelSpec` binds a frozen weaker
+model to its evaluator, information loss, result schema, and exact poset
+relations; and `ClosureCriterionSpec` defines the local
+`Close(W_i, R) ∈ {CLOSE, FAIL_TO_CLOSE, DEFER}` vocabulary for weaker-model
+closure. `BirthAssessmentSemantics` validates that these executable contracts
+match the frozen experiment, domain, queried projection, prerequisite cone,
+schemas, and poset relations. G0.2a obeys `NoVerdictYet`: it issues no
+`ResidualAssessment`, `BirthCandidate`, `BirthVerdict`, `Freeze`, or E0 result.
+
+Later G0.2 stages alone may implement the complete authority chain:
 `BirthAssessmentRequest -> ResidualAssessment ->
 LicensedWeakerExhaustion -> NecessaryInvariantCandidate -> BirthCandidate ->
 IndependentClosureDecision -> gate-issued BirthVerdict -> Freeze -> E0`.

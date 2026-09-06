@@ -4,14 +4,19 @@ from .anchor import Anchor, State
 from .binding import ClaimEvidenceBinding
 from .birth import (
     BirthAssessmentRequest,
+    BirthAssessmentSemantics,
     BirthExperimentSpecification,
     BirthExperimentSpecificationError,
     BirthQuery,
     BirthVerdictStatus,
+    ClosureAssessmentStatus,
+    ClosureCriterionSpec,
     EvidenceMode,
     EvidenceSnapshot,
     ProjectionPoset,
+    ResidualDefinitionSpec,
     StructureHypothesis,
+    WeakerModelSpec,
 )
 from .content_identity import (
     CanonicalTransitionEncoder,
@@ -58,6 +63,7 @@ from .transition import (
 
 __all__ = [
     "Anchor",
+    "BirthAssessmentSemantics",
     "BirthAssessmentRequest",
     "BirthExperimentSpecification",
     "BirthExperimentSpecificationError",
@@ -69,6 +75,8 @@ __all__ = [
     "CanonicalTransitionManifest",
     "Claim",
     "ClaimEvidenceBinding",
+    "ClosureAssessmentStatus",
+    "ClosureCriterionSpec",
     "DecisionReasonCode",
     "Evidence",
     "EvidenceMode",
@@ -94,6 +102,7 @@ __all__ = [
     "OperationResult",
     "ProjectionPoset",
     "Residual",
+    "ResidualDefinitionSpec",
     "SealedInvariantExtractorRegistry",
     "State",
     "StructureHypothesis",
@@ -107,4 +116,5 @@ __all__ = [
     "TransitionKind",
     "UnauthorizedExtractorError",
     "UnregisteredExtractorError",
+    "WeakerModelSpec",
 ]
