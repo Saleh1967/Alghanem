@@ -195,6 +195,9 @@ class EvidenceAcquisitionRun:
     domain: str
     evidence_mode: EvidenceMode
     _token: object | None = field(default=None, repr=False, compare=False)
+    # Mutable containers deliberately held by this frozen dataclass: their own
+    # identity is never reassigned, only their contents mutate, for internal
+    # occurrence-id bookkeeping that must survive across issuing calls.
     _issued_snapshot_ids: set[str] = field(
         default_factory=set, repr=False, compare=False, init=False
     )
@@ -264,6 +267,9 @@ class EvidenceAcquisitionAuthorization:
     authorization_id: str
     binding: BirthExperimentSpecificationContentBinding
     _token: object | None = field(default=None, repr=False, compare=False)
+    # Mutable containers deliberately held by this frozen dataclass: their own
+    # identity is never reassigned, only their contents mutate, for internal
+    # occurrence-id bookkeeping that must survive across issuing calls.
     _issued_run_ids: set[str] = field(
         default_factory=set, repr=False, compare=False, init=False
     )
