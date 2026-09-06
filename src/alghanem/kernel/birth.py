@@ -24,20 +24,22 @@ class BirthVerdictStatus(Enum):
     DEFER_IN_SCOPE = auto()
 
 
-def _require_text(value: str, field: str) -> None:
+def _require_text(value: str, field_name: str) -> None:
     if not isinstance(value, str) or not value.strip():
-        raise BirthExperimentSpecificationError(f"{field} must be non-blank")
+        raise BirthExperimentSpecificationError(f"{field_name} must be non-blank")
 
 
-def _require_unique(values: tuple[str, ...], field: str) -> None:
+def _require_unique(values: tuple[str, ...], field_name: str) -> None:
     if not values:
-        raise BirthExperimentSpecificationError(f"{field} must not be empty")
+        raise BirthExperimentSpecificationError(f"{field_name} must not be empty")
     if any(not isinstance(value, str) or not value.strip() for value in values):
         raise BirthExperimentSpecificationError(
-            f"{field} must contain non-blank values"
+            f"{field_name} must contain non-blank values"
         )
     if len(set(values)) != len(values):
-        raise BirthExperimentSpecificationError(f"{field} must not contain duplicates")
+        raise BirthExperimentSpecificationError(
+            f"{field_name} must not contain duplicates"
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -236,6 +238,11 @@ class BirthVerdict:
         if not isinstance(self.status, BirthVerdictStatus):
             raise ValueError("birth verdict requires a scoped verdict status")
         competing = set(self.request.specification.competing_projections)
+        competing_projections = tuple(
+            item.projection for item in self.competing_explanations
+        )
+        if len(set(competing_projections)) != len(competing_projections):
+            raise ValueError("competing explanations must not duplicate projections")
         if any(
             item.projection not in competing for item in self.competing_explanations
         ):

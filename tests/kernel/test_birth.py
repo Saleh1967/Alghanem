@@ -57,6 +57,7 @@ def test_specification_derives_complete_prerequisite_cone() -> None:
     spec = specification()
 
     assert spec.prerequisite_cone == ("count", "set", "multiset")
+    assert spec.frozen_weaker_models == spec.prerequisite_cone
     assert spec.competing_projections == ("unicode",)
 
 
@@ -108,6 +109,18 @@ def test_birth_with_competing_explanation_requires_discriminating_evidence() -> 
             BirthVerdictStatus.BIRTH_IN_SCOPE,
             "would otherwise be born",
             (CompetingExplanation("unicode", "alternative closure"),),
+        )
+
+
+def test_verdict_rejects_duplicate_competing_explanations() -> None:
+    competing = CompetingExplanation("unicode", "alternative closure")
+
+    with pytest.raises(ValueError, match="must not duplicate projections"):
+        BirthVerdict(
+            request(),
+            BirthVerdictStatus.DEFER_IN_SCOPE,
+            "competing explanation remains unresolved",
+            (competing, competing),
         )
 
 
