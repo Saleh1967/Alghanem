@@ -2,14 +2,24 @@ import pytest
 
 import alghanem.kernel.birth as birth
 from alghanem.kernel.birth import (
+    AuthorizedBirthAssessmentEvaluatorDefinition,
+    BirthAssessmentEvaluatorAuthorityError,
+    BirthAssessmentEvaluatorDefinitions,
+    BirthAssessmentEvaluatorRegistry,
     BirthAssessmentRequest,
+    BirthAssessmentSemanticsContract,
+    BirthEvaluatorRole,
     BirthExperimentSpecification,
     BirthExperimentSpecificationError,
     BirthQuery,
+    ClosureAssessmentStatus,
+    ClosureCriterionSpec,
     EvidenceMode,
     EvidenceSnapshot,
     ProjectionPoset,
+    ResidualDefinitionSpec,
     StructureHypothesis,
+    WeakerModelSpec,
 )
 
 
@@ -29,9 +39,76 @@ def specification() -> BirthExperimentSpecification:
             StructureHypothesis("structure", "a structure is necessary"),
             "sequence",
         ),
+        residual_definition_id="residual",
         residual_definition="unexplained distinction",
+        closure_criterion_id="closure",
         closure_criterion="all prerequisite models fail to close the residual",
         evidence_requirements="exhaustive proof over the finite domain",
+    )
+
+
+def residual_definition() -> ResidualDefinitionSpec:
+    return ResidualDefinitionSpec(
+        residual_id="residual",
+        domain="finite-domain",
+        input_projection="sequence",
+        output_schema="residual-schema",
+        evaluator_id="residual-evaluator",
+        invariants=("total-domain-coverage",),
+        failure_semantics="malformed residual inputs defer assessment",
+    )
+
+
+def weaker_model_specs() -> tuple[WeakerModelSpec, ...]:
+    return (
+        WeakerModelSpec(
+            model_id="count",
+            domain="finite-domain",
+            projection_evaluator_id="count-evaluator",
+            declared_information_loss="forgets identity and order",
+            result_schema="projection-result",
+            strict_predecessors=(),
+            strict_successors=("multiset", "sequence"),
+        ),
+        WeakerModelSpec(
+            model_id="set",
+            domain="finite-domain",
+            projection_evaluator_id="set-evaluator",
+            declared_information_loss="forgets multiplicity and order",
+            result_schema="projection-result",
+            strict_predecessors=(),
+            strict_successors=("multiset", "sequence"),
+        ),
+        WeakerModelSpec(
+            model_id="multiset",
+            domain="finite-domain",
+            projection_evaluator_id="multiset-evaluator",
+            declared_information_loss="forgets order",
+            result_schema="projection-result",
+            strict_predecessors=("count", "set"),
+            strict_successors=("sequence",),
+        ),
+    )
+
+
+def closure_criterion() -> ClosureCriterionSpec:
+    return ClosureCriterionSpec(
+        criterion_id="closure",
+        residual_id="residual",
+        domain="finite-domain",
+        residual_schema="residual-schema",
+        model_result_schema="projection-result",
+        evaluator_id="closure-evaluator",
+        failure_semantics="untestable closure inputs defer assessment",
+    )
+
+
+def assessment_semantics() -> BirthAssessmentSemanticsContract:
+    return BirthAssessmentSemanticsContract(
+        specification=specification(),
+        residual_definition=residual_definition(),
+        weaker_models=weaker_model_specs(),
+        closure_criterion=closure_criterion(),
     )
 
 
@@ -67,6 +144,8 @@ def test_g0_1_exports_no_birth_authority_or_freeze() -> None:
     assert not hasattr(birth, "BirthFreeze")
     assert not hasattr(birth, "BirthRevisionHistory")
     assert not hasattr(birth, "CompetingExplanation")
+    assert not hasattr(birth, "BirthGate")
+    assert not hasattr(birth, "NecessaryInvariantCandidate")
 
 
 def test_assessment_request_binds_evidence_after_frozen_specification() -> None:
@@ -94,4 +173,218 @@ def test_request_requires_a_real_evidence_snapshot(evidence_value: object) -> No
         BirthAssessmentRequest(
             specification(),
             evidence_value,  # type: ignore[arg-type]
+        )
+
+
+def test_g0_2a_binds_executable_semantics_without_birth_verdict() -> None:
+    semantics = assessment_semantics()
+
+    assert semantics.residual_definition.residual_id == (
+        semantics.specification.residual_definition_id
+    )
+    assert semantics.closure_criterion.criterion_id == (
+        semantics.specification.closure_criterion_id
+    )
+    assert semantics.residual_definition.input_projection == "sequence"
+    assert tuple(model.model_id for model in semantics.weaker_models) == (
+        "count",
+        "set",
+        "multiset",
+    )
+    assert semantics.closure_criterion.supported_statuses == (
+        ClosureAssessmentStatus.CLOSE,
+        ClosureAssessmentStatus.FAIL_TO_CLOSE,
+        ClosureAssessmentStatus.DEFER,
+    )
+    assert not hasattr(semantics, "verdict")
+
+
+def test_executable_semantics_require_residual_domain_to_match_spec() -> None:
+    with pytest.raises(BirthExperimentSpecificationError, match="domain"):
+        BirthAssessmentSemanticsContract(
+            specification=specification(),
+            residual_definition=ResidualDefinitionSpec(
+                residual_id="residual",
+                domain="other-domain",
+                input_projection="sequence",
+                output_schema="residual-schema",
+                evaluator_id="residual-evaluator",
+                invariants=("total-domain-coverage",),
+                failure_semantics="malformed residual inputs defer assessment",
+            ),
+            weaker_models=weaker_model_specs(),
+            closure_criterion=closure_criterion(),
+        )
+
+
+def test_executable_semantics_reject_residual_definition_drift() -> None:
+    with pytest.raises(
+        BirthExperimentSpecificationError, match="residual definition id"
+    ):
+        BirthAssessmentSemanticsContract(
+            specification=specification(),
+            residual_definition=ResidualDefinitionSpec(
+                residual_id="changed-residual",
+                domain="finite-domain",
+                input_projection="sequence",
+                output_schema="residual-schema",
+                evaluator_id="residual-evaluator",
+                invariants=("total-domain-coverage",),
+                failure_semantics="malformed residual inputs defer assessment",
+            ),
+            weaker_models=weaker_model_specs(),
+            closure_criterion=ClosureCriterionSpec(
+                criterion_id="closure",
+                residual_id="changed-residual",
+                domain="finite-domain",
+                residual_schema="residual-schema",
+                model_result_schema="projection-result",
+                evaluator_id="closure-evaluator",
+                failure_semantics="untestable closure inputs defer assessment",
+            ),
+        )
+
+
+def test_executable_semantics_reject_closure_criterion_drift() -> None:
+    with pytest.raises(BirthExperimentSpecificationError, match="closure criterion id"):
+        BirthAssessmentSemanticsContract(
+            specification=specification(),
+            residual_definition=residual_definition(),
+            weaker_models=weaker_model_specs(),
+            closure_criterion=ClosureCriterionSpec(
+                criterion_id="changed-closure",
+                residual_id="residual",
+                domain="finite-domain",
+                residual_schema="residual-schema",
+                model_result_schema="projection-result",
+                evaluator_id="closure-evaluator",
+                failure_semantics="untestable closure inputs defer assessment",
+            ),
+        )
+
+
+def test_executable_semantics_require_exact_weaker_cone_coverage() -> None:
+    with pytest.raises(BirthExperimentSpecificationError, match="prerequisite cone"):
+        BirthAssessmentSemanticsContract(
+            specification=specification(),
+            residual_definition=residual_definition(),
+            weaker_models=weaker_model_specs()[:-1],
+            closure_criterion=closure_criterion(),
+        )
+
+
+def test_executable_semantics_reject_weaker_model_relation_mismatch() -> None:
+    weaker_models = weaker_model_specs()
+    malformed = WeakerModelSpec(
+        model_id="multiset",
+        domain="finite-domain",
+        projection_evaluator_id="multiset-evaluator",
+        declared_information_loss="forgets order",
+        result_schema="projection-result",
+        strict_predecessors=("count",),
+        strict_successors=("sequence",),
+    )
+
+    with pytest.raises(BirthExperimentSpecificationError, match="predecessor"):
+        BirthAssessmentSemanticsContract(
+            specification=specification(),
+            residual_definition=residual_definition(),
+            weaker_models=(*weaker_models[:2], malformed),
+            closure_criterion=closure_criterion(),
+        )
+
+
+def test_executable_semantics_bind_closure_to_residual_schema() -> None:
+    with pytest.raises(BirthExperimentSpecificationError, match="residual schema"):
+        BirthAssessmentSemanticsContract(
+            specification=specification(),
+            residual_definition=residual_definition(),
+            weaker_models=weaker_model_specs(),
+            closure_criterion=ClosureCriterionSpec(
+                criterion_id="closure",
+                residual_id="residual",
+                domain="finite-domain",
+                residual_schema="other-schema",
+                model_result_schema="projection-result",
+                evaluator_id="closure-evaluator",
+                failure_semantics="untestable closure inputs defer assessment",
+            ),
+        )
+
+
+def authorized_registry() -> BirthAssessmentEvaluatorRegistry:
+    registry = BirthAssessmentEvaluatorRegistry()
+    registry.authorize(
+        domain="finite-domain",
+        role=BirthEvaluatorRole.RESIDUAL_DEFINITION,
+        target_id="residual",
+        evaluator_id="residual-evaluator",
+    )
+    registry.authorize(
+        domain="finite-domain",
+        role=BirthEvaluatorRole.CLOSURE_CRITERION,
+        target_id="closure",
+        evaluator_id="closure-evaluator",
+    )
+    for model in weaker_model_specs():
+        registry.authorize(
+            domain="finite-domain",
+            role=BirthEvaluatorRole.WEAKER_MODEL,
+            target_id=model.model_id,
+            evaluator_id=model.projection_evaluator_id,
+        )
+    return registry
+
+
+def test_declared_evaluator_id_is_not_an_authorized_evaluator() -> None:
+    with pytest.raises(BirthAssessmentEvaluatorAuthorityError, match="registry-issued"):
+        AuthorizedBirthAssessmentEvaluatorDefinition(
+            domain="finite-domain",
+            role=BirthEvaluatorRole.RESIDUAL_DEFINITION,
+            target_id="residual",
+            evaluator_id=residual_definition().evaluator_id,
+        )
+
+
+def test_sealed_registry_authorizes_declared_evaluator_scopes() -> None:
+    definitions = BirthAssessmentEvaluatorDefinitions(
+        contract=assessment_semantics(),
+        registry_snapshot=authorized_registry().seal("registry-snapshot"),
+    )
+
+    assert definitions.residual_definition.evaluator_id == "residual-evaluator"
+    assert tuple(definition.target_id for definition in definitions.weaker_models) == (
+        "count",
+        "set",
+        "multiset",
+    )
+    assert definitions.closure_criterion.evaluator_id == "closure-evaluator"
+
+
+def test_evaluator_authorization_requires_exact_declared_scope() -> None:
+    registry = authorized_registry()
+    registry.authorize(
+        domain="other-domain",
+        role=BirthEvaluatorRole.RESIDUAL_DEFINITION,
+        target_id="residual",
+        evaluator_id="untrusted-residual-evaluator",
+    )
+
+    with pytest.raises(BirthAssessmentEvaluatorAuthorityError, match="not authorized"):
+        BirthAssessmentEvaluatorDefinitions(
+            contract=BirthAssessmentSemanticsContract(
+                specification=specification(),
+                residual_definition=ResidualDefinitionSpec(
+                    residual_id="residual",
+                    domain="finite-domain",
+                    input_projection="sequence",
+                    output_schema="residual-schema",
+                    evaluator_id="untrusted-residual-evaluator",
+                    invariants=("total-domain-coverage",),
+                    failure_semantics="malformed residual inputs defer assessment",
+                ),
+                weaker_models=weaker_model_specs(),
+                closure_criterion=closure_criterion(),
+            ),
+            registry_snapshot=registry.seal("registry-snapshot"),
         )

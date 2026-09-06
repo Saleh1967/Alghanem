@@ -3,15 +3,26 @@
 from .anchor import Anchor, State
 from .binding import ClaimEvidenceBinding
 from .birth import (
+    AuthorizedBirthAssessmentEvaluatorDefinition,
+    BirthAssessmentEvaluatorAuthorityError,
+    BirthAssessmentEvaluatorDefinitions,
+    BirthAssessmentEvaluatorRegistry,
     BirthAssessmentRequest,
+    BirthAssessmentSemanticsContract,
+    BirthEvaluatorRole,
     BirthExperimentSpecification,
     BirthExperimentSpecificationError,
     BirthQuery,
     BirthVerdictStatus,
+    ClosureAssessmentStatus,
+    ClosureCriterionSpec,
     EvidenceMode,
     EvidenceSnapshot,
     ProjectionPoset,
+    ResidualDefinitionSpec,
+    SealedBirthAssessmentEvaluatorRegistry,
     StructureHypothesis,
+    WeakerModelSpec,
 )
 from .content_identity import (
     CanonicalTransitionEncoder,
@@ -58,9 +69,15 @@ from .transition import (
 
 __all__ = [
     "Anchor",
+    "AuthorizedBirthAssessmentEvaluatorDefinition",
+    "BirthAssessmentEvaluatorAuthorityError",
+    "BirthAssessmentEvaluatorDefinitions",
+    "BirthAssessmentEvaluatorRegistry",
     "BirthAssessmentRequest",
+    "BirthAssessmentSemanticsContract",
     "BirthExperimentSpecification",
     "BirthExperimentSpecificationError",
+    "BirthEvaluatorRole",
     "BirthQuery",
     "BirthVerdictStatus",
     "BranchOriginProvenance",
@@ -69,6 +86,8 @@ __all__ = [
     "CanonicalTransitionManifest",
     "Claim",
     "ClaimEvidenceBinding",
+    "ClosureAssessmentStatus",
+    "ClosureCriterionSpec",
     "DecisionReasonCode",
     "Evidence",
     "EvidenceMode",
@@ -94,6 +113,8 @@ __all__ = [
     "OperationResult",
     "ProjectionPoset",
     "Residual",
+    "ResidualDefinitionSpec",
+    "SealedBirthAssessmentEvaluatorRegistry",
     "SealedInvariantExtractorRegistry",
     "State",
     "StructureHypothesis",
@@ -107,4 +128,5 @@ __all__ = [
     "TransitionKind",
     "UnauthorizedExtractorError",
     "UnregisteredExtractorError",
+    "WeakerModelSpec",
 ]

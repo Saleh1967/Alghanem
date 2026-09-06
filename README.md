@@ -44,8 +44,14 @@ finite formal domain (formal mode) — never a synthetic-intervention artifact
 alone — must survive exhaustion of every weaker model licensed and frozen for
 that experiment. G0.1 supplies a language-agnostic pre-evidence
 `BirthExperimentSpecification` with a `BirthQuery`, a derived prerequisite
-cone, and a later `BirthAssessmentRequest` that binds the evidence snapshot.
-G0.1 stops at that request: it has no birth-verdict or freeze authority.
+cone, stable residual/closure identities, and a later
+`BirthAssessmentRequest` that binds the evidence snapshot. G0.1 stops at that
+request: it has no birth-verdict or freeze authority. G0.2a adds executable
+residual, weaker-model, and closure contracts that must match the frozen
+residual/closure identities. Evaluator ids in those contracts are declarations
+only unless a sealed evaluator registry authorizes the exact scope, and
+`NoVerdictYet` remains in force: no `BirthGate`, `BirthVerdict`,
+`BirthCandidate`, `Freeze`, or E0 authority exists yet.
 `BirthCandidate` is distinct from a scoped birth verdict and from `Freeze`;
 the later G0.2 gate alone may issue `BIRTH_IN_SCOPE`, then freeze it before a
 separate `E0` step. See the

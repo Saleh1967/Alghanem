@@ -122,13 +122,15 @@ milestones that are held to these same laws.
 `BirthExperimentSpecification` is a language-agnostic, frozen pre-evidence
 contract. It contains an experiment identity, revision identity and monotonic
 revision sequence, evidence mode, domain, frozen projection poset,
-`BirthQuery`, residual definition, closure criterion, and evidence
-requirements. It does not contain an evidence snapshot, a candidate, a
-verdict, or caller-selected weaker models. Its frozen weaker-model set and
-`PrerequisiteCone` are both derived as `Down_E(q)` from the poset and query:
-they share values in G0.1, but name the distinct frozen-model-set and
-query-relative order roles. Its incomparable projections are recorded as
-possible competing explanations.
+`BirthQuery`, stable residual-definition identity, residual-definition text,
+stable closure-criterion identity, closure-criterion text, and evidence
+requirements. The stable identities are the freeze boundary; descriptive text
+alone cannot identify a later executable contract. It does not contain an
+evidence snapshot, a candidate, a verdict, or caller-selected weaker models.
+Its frozen weaker-model set and `PrerequisiteCone` are both derived as
+`Down_E(q)` from the poset and query: they share values in G0.1, but name the
+distinct frozen-model-set and query-relative order roles. Its incomparable
+projections are recorded as possible competing explanations.
 
 `BirthAssessmentRequest = FrozenExperimentSpecification + EvidenceSnapshot`;
 this ordering prevents evidence from redesigning the question or its closure
@@ -137,7 +139,31 @@ can enter a future runtime. G0.1 stops at `BirthAssessmentRequest`: it has no
 executable verdict, revision-history, competing-explanation assessment, or
 freeze authority. `BirthVerdictStatus` is future vocabulary only.
 
-G0.2 alone may implement the complete authority chain:
+G0.2 is split into smaller authority-preserving stages. G0.2a defines only
+executable assessment contracts: `ResidualDefinitionSpec` identifies the
+residual domain, input projection, output schema, evaluator-id declaration,
+invariants, and failure semantics; each `WeakerModelSpec` binds a frozen weaker
+model to its evaluator, information loss, result schema, and exact poset
+relations; and `ClosureCriterionSpec` defines the local
+`Close(W_i, R) ∈ {CLOSE, FAIL_TO_CLOSE, DEFER}` vocabulary for weaker-model
+closure. `BirthAssessmentSemanticsContract` validates that these executable
+contracts match the frozen residual-definition and closure-criterion
+identities, experiment, domain, queried projection, prerequisite cone, schemas,
+and poset relations. Matching only domain or schema is insufficient:
+`NoResidualDefinitionDriftAfterFreeze` and
+`NoClosureCriterionDriftAfterFreeze` require exact identity equality.
+
+Evaluator ids in these contracts are declarations only:
+`DeclaredEvaluatorId != AuthorizedEvaluator`. `CallerDoesNotOwnEvaluatorAuthority`
+requires registry-issued definitions before those ids can become authorized for
+an exact `(domain, role, target_id, evaluator_id)` scope.
+`BirthAssessmentEvaluatorRegistry` and
+`SealedBirthAssessmentEvaluatorRegistry` provide that sealed definition
+boundary while executing no assessment. G0.2a obeys `NoVerdictYet`: it issues
+no `ResidualAssessment`, `BirthCandidate`, `BirthVerdict`, `Freeze`, or E0
+result.
+
+Later G0.2 stages alone may implement the complete authority chain:
 `BirthAssessmentRequest -> ResidualAssessment ->
 LicensedWeakerExhaustion -> NecessaryInvariantCandidate -> BirthCandidate ->
 IndependentClosureDecision -> gate-issued BirthVerdict -> Freeze -> E0`.
