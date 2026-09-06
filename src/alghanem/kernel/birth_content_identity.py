@@ -263,6 +263,15 @@ class FrozenBirthSemanticsContentScope:
             )
 
 
+def _require_scope_text(value: str, field_name: str) -> None:
+    if not isinstance(value, str) or not value.strip():
+        raise BirthSemanticsContentIdentityError(f"{field_name} must be non-blank")
+
+
+def _scope_label(domain: str, role: BirthEvaluatorRole, target_id: str) -> str:
+    return f"domain={domain!r}, role={role!r}, target_id={target_id!r}"
+
+
 class BirthSemanticsContentRegistry:
     """Freezes the first canonical content bound to a ``(domain, role, target_id)``.
 
@@ -288,6 +297,12 @@ class BirthSemanticsContentRegistry:
     ) -> FrozenBirthSemanticsContentScope:
         """Bind ``content_id`` to a scope, or verify it matches a prior binding."""
 
+        _require_scope_text(domain, "content scope domain")
+        if not isinstance(role, BirthEvaluatorRole):
+            raise BirthSemanticsContentIdentityError(
+                "content scope role must be declared"
+            )
+        _require_scope_text(target_id, "content scope target id")
         if not isinstance(content_id, BirthSemanticsContentIdentity):
             raise BirthSemanticsContentIdentityError(
                 "registry freeze requires an issued content identity"
@@ -371,7 +386,8 @@ class SealedBirthSemanticsContentRegistry:
         scope = self._index.get((domain, role, target_id))
         if scope is None:
             raise BirthSemanticsContentIdentityError(
-                "no frozen content identity is recorded for this scope"
+                "no frozen content identity is recorded for this scope "
+                f"({_scope_label(domain, role, target_id)})"
             )
         return scope.content_id
 
