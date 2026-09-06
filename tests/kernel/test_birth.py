@@ -138,3 +138,29 @@ def test_revision_history_rejects_out_of_order_revisions() -> None:
             ),
             "r1",
         )
+
+
+def test_revision_history_rejects_a_changed_scope() -> None:
+    first = verdict(BirthVerdictStatus.BIRTH_IN_SCOPE, "r1", 1)
+    changed_scope = BirthVerdict(
+        BirthAssessmentRequest(
+            BirthExperimentSpecification(
+                experiment_id="experiment",
+                revision_id="r2",
+                revision_sequence=2,
+                evidence_mode=EvidenceMode.EMPIRICAL,
+                domain="finite-domain",
+                projection_poset=first.request.specification.projection_poset,
+                birth_query=first.request.specification.birth_query,
+                residual_definition="unexplained distinction",
+                closure_criterion="all prerequisite models fail to close the residual",
+                evidence_requirements="measured observations",
+            ),
+            EvidenceSnapshot("snapshot-r2", "measurement"),
+        ),
+        BirthVerdictStatus.NO_BIRTH_IN_SCOPE,
+        "assessment complete",
+    )
+
+    with pytest.raises(ValueError, match="domain, and evidence mode"):
+        BirthRevisionHistory((first, changed_scope), "r2")

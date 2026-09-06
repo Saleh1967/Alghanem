@@ -1,6 +1,6 @@
 """G0.1 birth-experiment contracts, without a birth-assessment runtime."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum, auto
 
 
@@ -132,6 +132,7 @@ class BirthExperimentSpecification:
     residual_definition: str
     closure_criterion: str
     evidence_requirements: str
+    _prerequisite_cone: tuple[str, ...] = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
         _require_text(self.experiment_id, "experiment id")
@@ -154,14 +155,19 @@ class BirthExperimentSpecification:
             raise BirthExperimentSpecificationError(
                 "birth query target must be declared by the projection poset"
             )
+        object.__setattr__(
+            self,
+            "_prerequisite_cone",
+            self.projection_poset.strict_predecessors(
+                self.birth_query.target_projection
+            ),
+        )
 
     @property
     def prerequisite_cone(self) -> tuple[str, ...]:
         """The derived ``Down_E(q)``; callers cannot select it independently."""
 
-        return self.projection_poset.strict_predecessors(
-            self.birth_query.target_projection
-        )
+        return self._prerequisite_cone
 
     @property
     def frozen_weaker_models(self) -> tuple[str, ...]:
@@ -277,9 +283,12 @@ class BirthRevisionHistory:
             if (
                 specification.experiment_id != first.experiment_id
                 or specification.birth_query.query_id != first.birth_query.query_id
+                or specification.domain != first.domain
+                or specification.evidence_mode is not first.evidence_mode
             ):
                 raise ValueError(
-                    "revision history must retain one experiment and birth query"
+                    "revision history must retain one experiment, query, domain, "
+                    "and evidence mode"
                 )
             if specification.revision_id in revisions:
                 raise ValueError("revision history must not duplicate revisions")
