@@ -119,13 +119,15 @@ milestones that are held to these same laws.
 ### G0.1 — Birth experiment contract
 
 `BirthExperimentSpecification` is a language-agnostic, frozen pre-evidence
-contract. It contains an experiment and revision identity, evidence mode,
-domain, frozen projection poset, `BirthQuery`, residual definition, closure
-criterion, and evidence requirements. It does not contain an evidence
-snapshot, a candidate, a verdict, or caller-selected weaker models. Its frozen
-weaker-model set and `PrerequisiteCone` are both derived as `Down_E(q)` from
-the poset and query, and its incomparable projections are recorded as possible
-competing explanations.
+contract. It contains an experiment identity, revision identity and monotonic
+revision sequence, evidence mode, domain, frozen projection poset,
+`BirthQuery`, residual definition, closure criterion, and evidence
+requirements. It does not contain an evidence snapshot, a candidate, a
+verdict, or caller-selected weaker models. Its frozen weaker-model set and
+`PrerequisiteCone` are both derived as `Down_E(q)` from the poset and query:
+they share values in G0.1, but name the distinct frozen-model-set and
+query-relative order roles. Its incomparable projections are recorded as
+possible competing explanations.
 
 `BirthAssessmentRequest = FrozenExperimentSpecification + EvidenceSnapshot`;
 this ordering prevents evidence from redesigning the question or its closure

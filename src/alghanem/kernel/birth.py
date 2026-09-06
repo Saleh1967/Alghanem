@@ -124,6 +124,7 @@ class BirthExperimentSpecification:
 
     experiment_id: str
     revision_id: str
+    revision_sequence: int
     evidence_mode: EvidenceMode
     domain: str
     projection_poset: ProjectionPoset
@@ -135,6 +136,14 @@ class BirthExperimentSpecification:
     def __post_init__(self) -> None:
         _require_text(self.experiment_id, "experiment id")
         _require_text(self.revision_id, "revision id")
+        if (
+            not isinstance(self.revision_sequence, int)
+            or isinstance(self.revision_sequence, bool)
+            or self.revision_sequence < 1
+        ):
+            raise BirthExperimentSpecificationError(
+                "revision sequence must be a positive integer"
+            )
         _require_text(self.domain, "domain")
         _require_text(self.residual_definition, "residual definition")
         _require_text(self.closure_criterion, "closure criterion")
@@ -156,7 +165,12 @@ class BirthExperimentSpecification:
 
     @property
     def frozen_weaker_models(self) -> tuple[str, ...]:
-        """The frozen weaker-model set, derived from the frozen poset."""
+        """The frozen weaker-model set, derived from the frozen poset.
+
+        G0.1 gives this the same values as ``prerequisite_cone`` but preserves
+        both names because the former is the frozen model-set role and the
+        latter is the query-relative partial-order role.
+        """
 
         return self.prerequisite_cone
 
@@ -257,6 +271,7 @@ class BirthRevisionHistory:
         _require_text(self.active_revision_id, "active revision id")
         first = self.verdicts[0].request.specification
         revisions: set[str] = set()
+        previous_sequence = 0
         for verdict in self.verdicts:
             specification = verdict.request.specification
             if (
@@ -268,7 +283,12 @@ class BirthRevisionHistory:
                 )
             if specification.revision_id in revisions:
                 raise ValueError("revision history must not duplicate revisions")
+            if specification.revision_sequence <= previous_sequence:
+                raise ValueError(
+                    "revision history must be ordered by increasing revision sequence"
+                )
             revisions.add(specification.revision_id)
+            previous_sequence = specification.revision_sequence
         latest_revision = self.verdicts[-1].request.specification.revision_id
         if self.active_revision_id != latest_revision:
             raise ValueError("only the latest recorded revision may be active")

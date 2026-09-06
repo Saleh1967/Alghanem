@@ -16,10 +16,13 @@ from alghanem.kernel.birth import (
 )
 
 
-def specification(revision_id: str = "r1") -> BirthExperimentSpecification:
+def specification(
+    revision_id: str = "r1", revision_sequence: int = 1
+) -> BirthExperimentSpecification:
     return BirthExperimentSpecification(
         experiment_id="experiment",
         revision_id=revision_id,
+        revision_sequence=revision_sequence,
         evidence_mode=EvidenceMode.FORMAL,
         domain="finite-domain",
         projection_poset=ProjectionPoset(
@@ -33,14 +36,21 @@ def specification(revision_id: str = "r1") -> BirthExperimentSpecification:
     )
 
 
-def request(revision_id: str = "r1") -> BirthAssessmentRequest:
+def request(
+    revision_id: str = "r1", revision_sequence: int = 1
+) -> BirthAssessmentRequest:
     return BirthAssessmentRequest(
-        specification(revision_id), EvidenceSnapshot("snapshot", "enumeration")
+        specification(revision_id, revision_sequence),
+        EvidenceSnapshot("snapshot", "enumeration"),
     )
 
 
-def verdict(status: BirthVerdictStatus, revision_id: str = "r1") -> BirthVerdict:
-    return BirthVerdict(request(revision_id), status, "assessment complete")
+def verdict(
+    status: BirthVerdictStatus, revision_id: str = "r1", revision_sequence: int = 1
+) -> BirthVerdict:
+    return BirthVerdict(
+        request(revision_id, revision_sequence), status, "assessment complete"
+    )
 
 
 def test_specification_derives_complete_prerequisite_cone() -> None:
@@ -55,6 +65,7 @@ def test_specification_does_not_accept_caller_selected_cone() -> None:
         BirthExperimentSpecification(
             experiment_id="experiment",
             revision_id="r1",
+            revision_sequence=1,
             evidence_mode=EvidenceMode.FORMAL,
             domain="finite-domain",
             projection_poset=ProjectionPoset(("low", "target"), (("low", "target"),)),
@@ -111,8 +122,19 @@ def test_only_birth_verdict_can_be_frozen() -> None:
 
 def test_revision_history_preserves_old_verdict_and_activates_latest() -> None:
     old = verdict(BirthVerdictStatus.BIRTH_IN_SCOPE, "r1")
-    current = verdict(BirthVerdictStatus.NO_BIRTH_IN_SCOPE, "r2")
+    current = verdict(BirthVerdictStatus.NO_BIRTH_IN_SCOPE, "r2", 2)
     history = BirthRevisionHistory((old, current), "r2")
 
     assert history.verdicts == (old, current)
     assert history.active_revision_id == "r2"
+
+
+def test_revision_history_rejects_out_of_order_revisions() -> None:
+    with pytest.raises(ValueError, match="increasing revision sequence"):
+        BirthRevisionHistory(
+            (
+                verdict(BirthVerdictStatus.NO_BIRTH_IN_SCOPE, "r2", 2),
+                verdict(BirthVerdictStatus.BIRTH_IN_SCOPE, "r1", 1),
+            ),
+            "r1",
+        )
