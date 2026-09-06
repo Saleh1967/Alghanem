@@ -7,17 +7,36 @@ from unicodedata import unidata_version
 import pytest
 
 from alghanem.arabic import (
+    MeasurementProtocolSpec,
+    MeasurementRunIdentity,
+    ObservationLedgerManifest,
     ObservationProvenance,
     RawSurfaceObservation,
     SurfaceNormalization,
 )
 
 
+def measurement_run(run_id: str = "run-1") -> MeasurementRunIdentity:
+    return MeasurementRunIdentity(
+        MeasurementProtocolSpec(
+            protocol_id="surface-measurement",
+            protocol_version="1",
+            source_scope="test-source",
+            normalization_policy="NFC",
+            occurrence_scheme="caller-issued-sequence",
+        ),
+        run_id,
+    )
+
+
 def observation(
-    source_id: str, occurrence_id: str, surface: str
+    source_id: str,
+    occurrence_id: str,
+    surface: str,
+    run_identity: MeasurementRunIdentity | None = None,
 ) -> RawSurfaceObservation:
     return RawSurfaceObservation(
-        ObservationProvenance(source_id, occurrence_id),
+        ObservationProvenance(run_identity or measurement_run(), source_id, occurrence_id),
         surface,
     )
 
@@ -109,7 +128,69 @@ def test_ledger_rejects_duplicate_occurrence_identity() -> None:
         SurfaceNormalization.audit_ledger(repeated)
 
 
+def test_same_occurrence_id_in_distinct_runs_remains_distinct() -> None:
+    repeated = [
+        observation("source", "same", "\u0628\u064e", measurement_run("run-1")),
+        observation("source", "same", "\u0627\u0654", measurement_run("run-2")),
+    ]
+
+    ledger = SurfaceNormalization.audit_ledger(repeated)
+
+    assert len(ledger.audits) == 2
+
+
+def test_manifest_binds_ledger_to_one_measurement_run() -> None:
+    run_identity = measurement_run()
+    observations = [
+        observation("source", "one", "\u0628\u064e", run_identity),
+        observation("source", "two", "\u0627\u0654", run_identity),
+    ]
+
+    manifest = SurfaceNormalization.ledger_manifest(run_identity, observations)
+
+    assert manifest.run_identity == run_identity
+    assert manifest.ledger.audits[0].trace.observation.provenance.run_identity == (
+        run_identity
+    )
+
+
+def test_manifest_rejects_observations_from_another_measurement_run() -> None:
+    ledger = SurfaceNormalization.audit_ledger(
+        [observation("source", "one", "\u0628\u064e", measurement_run("run-2"))]
+    )
+
+    with pytest.raises(ValueError, match="measurement run identities"):
+        ObservationLedgerManifest(measurement_run("run-1"), ledger)
+
+
+def test_manifest_rejects_normalization_policy_mismatch() -> None:
+    run_identity = MeasurementRunIdentity(
+        MeasurementProtocolSpec(
+            protocol_id="surface-measurement",
+            protocol_version="1",
+            source_scope="test-source",
+            normalization_policy="NFD",
+            occurrence_scheme="caller-issued-sequence",
+        ),
+        "run-1",
+    )
+
+    with pytest.raises(ValueError, match="normalization"):
+        SurfaceNormalization.ledger_manifest(
+            run_identity,
+            [observation("source", "one", "\u0628\u064e", run_identity)],
+        )
+
+
+def test_observation_provenance_requires_measurement_run() -> None:
+    with pytest.raises(ValueError, match="measurement run identity"):
+        ObservationProvenance("source", "one", "extra")  # type: ignore[arg-type]
+
+
 @pytest.mark.parametrize("surface", ["", 1])
 def test_observation_rejects_empty_or_non_string_surfaces(surface: object) -> None:
     with pytest.raises(ValueError, match="non-empty string"):
-        RawSurfaceObservation(ObservationProvenance("source", "one"), surface)  # type: ignore[arg-type]
+        RawSurfaceObservation(
+            ObservationProvenance(measurement_run(), "source", "one"),
+            surface,  # type: ignore[arg-type]
+        )

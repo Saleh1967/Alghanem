@@ -22,6 +22,12 @@ identities; distinct candidates are only a derived projection. It does not
 infer identities, bindings, Arabic cardinalities, or grammatical concepts;
 those require separate future birth gates and a later E0 audit.
 
+P0.1 freezes measurement authority with `MeasurementProtocolSpec`,
+`MeasurementRunIdentity`, and `ObservationLedgerManifest`. An observation
+provenance must name its measurement run, and a manifest binds an audit ledger
+to one run plus the run's declared normalization policy before later
+factorization or identity-birth gates may consume it.
+
 ## Development
 
 ```bash

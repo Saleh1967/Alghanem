@@ -2,10 +2,13 @@
 
 from .encoding import (
     DistinctSurfaceAtomCandidateProjection,
+    MeasurementProtocolSpec,
+    MeasurementRunIdentity,
     NormalizationAudit,
     NormalizationResidual,
     NormalizationTrace,
     ObservationAuditLedger,
+    ObservationLedgerManifest,
     ObservationProvenance,
     RawSurfaceObservation,
     SurfaceAtomCandidate,
@@ -14,10 +17,13 @@ from .encoding import (
 
 __all__ = [
     "DistinctSurfaceAtomCandidateProjection",
+    "MeasurementProtocolSpec",
+    "MeasurementRunIdentity",
     "NormalizationAudit",
     "NormalizationResidual",
     "NormalizationTrace",
     "ObservationAuditLedger",
+    "ObservationLedgerManifest",
     "ObservationProvenance",
     "RawSurfaceObservation",
     "SurfaceAtomCandidate",

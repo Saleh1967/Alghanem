@@ -8,6 +8,7 @@ from typing import Final, Literal
 from unicodedata import normalize, unidata_version
 
 from .candidates import SurfaceAtomCandidate
+from .measurement import MeasurementRunIdentity
 from .observation import RawSurfaceObservation
 
 _NORMALIZATION_FORM: Final[Literal["NFC"]] = "NFC"
@@ -49,6 +50,7 @@ class ObservationAuditLedger:
     def __post_init__(self) -> None:
         identities = {
             (
+                audit.trace.observation.provenance.run_identity,
                 audit.trace.observation.provenance.source_id,
                 audit.trace.observation.provenance.occurrence_id,
             )
@@ -65,6 +67,31 @@ class DistinctSurfaceAtomCandidateProjection:
     """A derived, canonical-order projection of the ledger's candidates."""
 
     candidates: tuple[SurfaceAtomCandidate, ...]
+
+
+@dataclass(frozen=True)
+class ObservationLedgerManifest:
+    """A ledger bound to one measurement run and normalization policy."""
+
+    run_identity: MeasurementRunIdentity
+    ledger: ObservationAuditLedger
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.run_identity, MeasurementRunIdentity):
+            raise ValueError("ledger manifest must declare a measurement run identity")
+        if not isinstance(self.ledger, ObservationAuditLedger):
+            raise ValueError("ledger manifest must contain an observation audit ledger")
+        expected_policy = self.run_identity.protocol.normalization_policy
+        for audit in self.ledger.audits:
+            provenance = audit.trace.observation.provenance
+            if provenance.run_identity != self.run_identity:
+                raise ValueError(
+                    "ledger manifest cannot mix measurement run identities"
+                )
+            if audit.trace.normalization_form != expected_policy:
+                raise ValueError(
+                    "ledger manifest normalization must match measurement policy"
+                )
 
 
 class SurfaceNormalization:
@@ -98,6 +125,15 @@ class SurfaceNormalization:
         return ObservationAuditLedger(
             tuple(cls.normalize(observation) for observation in observations)
         )
+
+    @classmethod
+    def ledger_manifest(
+        cls,
+        run_identity: MeasurementRunIdentity,
+        observations: Iterable[RawSurfaceObservation],
+    ) -> ObservationLedgerManifest:
+        """Normalize observations into a ledger authorized by one measurement run."""
+        return ObservationLedgerManifest(run_identity, cls.audit_ledger(observations))
 
     @staticmethod
     def distinct_candidates(
