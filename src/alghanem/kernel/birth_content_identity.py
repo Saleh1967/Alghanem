@@ -16,7 +16,7 @@ closure criteria and weaker models, mirroring the already-established
 This module only issues canonical, immutable content snapshots and their
 digest references, and a registry that freezes the *first* canonical content
 bound to a given ``(domain, role, target_id)`` scope so that any later
-contract naming that exact scope must reproduce identical canonical content.
+contract naming that exact scope must reproduce identical canonical bytes.
 It executes no residual, closure, or weaker-model evaluator, and it issues no
 ``BirthVerdict``, ``BirthCandidate``, or ``Freeze``.
 """
@@ -35,6 +35,10 @@ from .birth import (
     ClosureCriterionSpec,
     ResidualDefinitionSpec,
     WeakerModelSpec,
+)
+from .experiment_spec_content_identity import (
+    BirthExperimentSpecificationContentBinding,
+    FrozenPreEvidenceExperimentManifest,
 )
 
 _CONTENT_ID_TOKEN = object()
@@ -250,11 +254,12 @@ def _issue_content_id(canonical_bytes: bytes) -> BirthSemanticsContentIdentity:
 
 @dataclass(frozen=True, slots=True)
 class FrozenBirthSemanticsContentScope:
-    """A registry-recorded, first-binding content identity for one exact scope."""
+    """A registry-recorded canonical-content snapshot for one exact scope."""
 
     domain: str
     role: BirthEvaluatorRole
     target_id: str
+    canonical_bytes: bytes
     content_id: BirthSemanticsContentIdentity
     _scope_token: object = field(default=None, repr=False, compare=False)
 
@@ -267,6 +272,11 @@ class FrozenBirthSemanticsContentScope:
             raise BirthSemanticsContentIdentityError(
                 "frozen content scope requires an issued content identity"
             )
+        if not isinstance(self.canonical_bytes, bytes):
+            raise BirthSemanticsContentIdentityError(
+                "frozen content scope requires canonical bytes"
+            )
+        _assert_digest_matches(self.canonical_bytes, self.content_id)
 
 
 def _require_scope_text(value: str, field_name: str) -> None:
@@ -276,6 +286,32 @@ def _require_scope_text(value: str, field_name: str) -> None:
 
 def _scope_label(domain: str, role: BirthEvaluatorRole, target_id: str) -> str:
     return f"domain={domain!r}, role={role!r}, target_id={target_id!r}"
+
+
+def _manifest_matches_scope(
+    manifest: (
+        CanonicalResidualDefinitionManifest
+        | CanonicalClosureCriterionManifest
+        | CanonicalWeakerModelManifest
+    ),
+    domain: str,
+    role: BirthEvaluatorRole,
+    target_id: str,
+) -> bool:
+    manifest_type = {
+        BirthEvaluatorRole.RESIDUAL_DEFINITION: CanonicalResidualDefinitionManifest,
+        BirthEvaluatorRole.CLOSURE_CRITERION: CanonicalClosureCriterionManifest,
+        BirthEvaluatorRole.WEAKER_MODEL: CanonicalWeakerModelManifest,
+    }[role]
+    if type(manifest) is not manifest_type:
+        return False
+    encoded = json.loads(manifest.canonical_bytes)
+    id_field = {
+        BirthEvaluatorRole.RESIDUAL_DEFINITION: "residual_id",
+        BirthEvaluatorRole.CLOSURE_CRITERION: "criterion_id",
+        BirthEvaluatorRole.WEAKER_MODEL: "model_id",
+    }[role]
+    return encoded["domain"] == domain and encoded[id_field] == target_id
 
 
 class BirthSemanticsContentRegistry:
@@ -299,9 +335,13 @@ class BirthSemanticsContentRegistry:
         domain: str,
         role: BirthEvaluatorRole,
         target_id: str,
-        content_id: BirthSemanticsContentIdentity,
+        manifest: (
+            CanonicalResidualDefinitionManifest
+            | CanonicalClosureCriterionManifest
+            | CanonicalWeakerModelManifest
+        ),
     ) -> FrozenBirthSemanticsContentScope:
-        """Bind ``content_id`` to a scope, or verify it matches a prior binding."""
+        """Bind canonical content to a scope, or verify a prior byte-exact binding."""
 
         _require_scope_text(domain, "content scope domain")
         if not isinstance(role, BirthEvaluatorRole):
@@ -309,36 +349,46 @@ class BirthSemanticsContentRegistry:
                 "content scope role must be declared"
             )
         _require_scope_text(target_id, "content scope target id")
-        if not isinstance(content_id, BirthSemanticsContentIdentity):
+        if not _manifest_matches_scope(manifest, domain, role, target_id):
             raise BirthSemanticsContentIdentityError(
-                "registry freeze requires an issued content identity"
+                "registry freeze requires a canonical manifest for the exact scope"
             )
         key = (domain, role, target_id)
         existing = self._scopes.get(key)
-        if existing is not None and existing.content_id.digest != content_id.digest:
+        if existing is not None and existing.canonical_bytes != manifest.canonical_bytes:
             raise BirthSemanticsContentIdentityError(
-                "runtime content identity does not match the frozen content "
-                "identity for this scope: SameId != SameSemantics"
+                "runtime canonical content does not match the frozen canonical "
+                "content for this scope: SameId != SameSemantics"
             )
         scope = existing or FrozenBirthSemanticsContentScope(
             domain=domain,
             role=role,
             target_id=target_id,
-            content_id=content_id,
+            canonical_bytes=manifest.canonical_bytes,
+            content_id=manifest.content_id,
             _scope_token=_CONTENT_ID_TOKEN,
         )
         self._scopes[key] = scope
         return scope
 
-    def seal(self, snapshot_id: str) -> SealedBirthSemanticsContentRegistry:
+    def seal(
+        self,
+        snapshot_id: str,
+        frozen_experiment: FrozenPreEvidenceExperimentManifest,
+    ) -> SealedBirthSemanticsContentRegistry:
         """Freeze the recorded content scopes without adding execution."""
 
         if not isinstance(snapshot_id, str) or not snapshot_id.strip():
             raise BirthSemanticsContentIdentityError(
                 "content registry snapshot id must be non-blank"
             )
+        if type(frozen_experiment) is not FrozenPreEvidenceExperimentManifest:
+            raise BirthSemanticsContentIdentityError(
+                "content registry seal requires a frozen pre-evidence experiment manifest"
+            )
         return SealedBirthSemanticsContentRegistry(
             snapshot_id=snapshot_id,
+            frozen_experiment=frozen_experiment,
             scopes=tuple(self._scopes.values()),
             _registry_token=_CONTENT_ID_TOKEN,
         )
@@ -349,6 +399,7 @@ class SealedBirthSemanticsContentRegistry:
     """Frozen registry snapshot; it resolves scopes but executes nothing."""
 
     snapshot_id: str
+    frozen_experiment: FrozenPreEvidenceExperimentManifest
     scopes: tuple[FrozenBirthSemanticsContentScope, ...]
     _registry_token: object = field(default=None, repr=False, compare=False)
     _index: dict[
@@ -363,6 +414,10 @@ class SealedBirthSemanticsContentRegistry:
         if not isinstance(self.snapshot_id, str) or not self.snapshot_id.strip():
             raise BirthSemanticsContentIdentityError(
                 "content registry snapshot id must be non-blank"
+            )
+        if type(self.frozen_experiment) is not FrozenPreEvidenceExperimentManifest:
+            raise BirthSemanticsContentIdentityError(
+                "sealed content registry requires a frozen pre-evidence experiment manifest"
             )
         if not isinstance(self.scopes, tuple):
             raise BirthSemanticsContentIdentityError(
@@ -386,24 +441,24 @@ class SealedBirthSemanticsContentRegistry:
 
     def resolve_frozen(
         self, *, domain: str, role: BirthEvaluatorRole, target_id: str
-    ) -> BirthSemanticsContentIdentity:
-        """Return the frozen content identity for an exact declared scope."""
+    ) -> FrozenBirthSemanticsContentScope:
+        """Return the frozen canonical content for an exact declared scope."""
 
         scope = self._index.get((domain, role, target_id))
         if scope is None:
             raise BirthSemanticsContentIdentityError(
-                "no frozen content identity is recorded for this scope "
+                "no frozen canonical content is recorded for this scope "
                 f"({_scope_label(domain, role, target_id)})"
             )
-        return scope.content_id
+        return scope
 
 
 @dataclass(frozen=True, slots=True)
 class BirthAssessmentContentBinding:
-    """Proves ``CID(runtime) == CID(frozen)`` for one semantics contract.
+    """Proves canonical-byte equality for one semantics contract.
 
     Binding this requires a sealed content registry that already recorded a
-    frozen content identity for every scope the contract declares. A caller
+    frozen canonical content for every scope the contract declares. A caller
     cannot manufacture a passing binding by omitting a scope from the
     registry: ``resolve_frozen`` raises for any scope it does not recognize.
     """
@@ -425,54 +480,67 @@ class BirthAssessmentContentBinding:
             raise BirthSemanticsContentIdentityError(
                 "content binding requires a sealed content registry"
             )
+        try:
+            BirthExperimentSpecificationContentBinding(
+                specification=self.contract.specification,
+                frozen_manifest=self.registry_snapshot.frozen_experiment,
+            )
+        except BirthExperimentSpecificationError as error:
+            raise BirthSemanticsContentIdentityError(
+                "content registry is not bound to this authorized frozen experiment"
+            ) from error
         domain = self.contract.specification.domain
 
-        residual_runtime_id = CanonicalBirthSemanticsEncoder.encode_residual_definition(
+        residual_runtime = CanonicalBirthSemanticsEncoder.encode_residual_definition(
             self.contract.residual_definition
-        ).content_id
-        residual_frozen_id = self.registry_snapshot.resolve_frozen(
+        )
+        residual_frozen = self.registry_snapshot.resolve_frozen(
             domain=domain,
             role=BirthEvaluatorRole.RESIDUAL_DEFINITION,
             target_id=self.contract.residual_definition.residual_id,
         )
-        if residual_runtime_id.digest != residual_frozen_id.digest:
+        if residual_runtime.canonical_bytes != residual_frozen.canonical_bytes:
             raise BirthSemanticsContentIdentityError(
                 "residual definition content identity does not match its "
                 "frozen content identity: SameId != SameSemantics"
             )
-        object.__setattr__(self, "residual_definition_content_id", residual_frozen_id)
+        object.__setattr__(
+            self, "residual_definition_content_id", residual_frozen.content_id
+        )
 
-        closure_runtime_id = CanonicalBirthSemanticsEncoder.encode_closure_criterion(
+        closure_runtime = CanonicalBirthSemanticsEncoder.encode_closure_criterion(
             self.contract.closure_criterion
-        ).content_id
-        closure_frozen_id = self.registry_snapshot.resolve_frozen(
+        )
+        closure_frozen = self.registry_snapshot.resolve_frozen(
             domain=domain,
             role=BirthEvaluatorRole.CLOSURE_CRITERION,
             target_id=self.contract.closure_criterion.criterion_id,
         )
-        if closure_runtime_id.digest != closure_frozen_id.digest:
+        if closure_runtime.canonical_bytes != closure_frozen.canonical_bytes:
             raise BirthSemanticsContentIdentityError(
                 "closure criterion content identity does not match its "
                 "frozen content identity: SameId != SameSemantics"
             )
-        object.__setattr__(self, "closure_criterion_content_id", closure_frozen_id)
+        object.__setattr__(
+            self, "closure_criterion_content_id", closure_frozen.content_id
+        )
 
         weaker_model_content_ids = []
         for model in self.contract.weaker_models:
-            runtime_id = CanonicalBirthSemanticsEncoder.encode_weaker_model(
+            runtime = CanonicalBirthSemanticsEncoder.encode_weaker_model(
                 model
-            ).content_id
-            frozen_id = self.registry_snapshot.resolve_frozen(
+            )
+            frozen = self.registry_snapshot.resolve_frozen(
                 domain=domain,
                 role=BirthEvaluatorRole.WEAKER_MODEL,
                 target_id=model.model_id,
             )
-            if runtime_id.digest != frozen_id.digest:
+            if runtime.canonical_bytes != frozen.canonical_bytes:
                 raise BirthSemanticsContentIdentityError(
                     "weaker model content identity does not match its "
                     "frozen content identity: SameId != SameSemantics"
                 )
-            weaker_model_content_ids.append(frozen_id)
+            weaker_model_content_ids.append(frozen.content_id)
         object.__setattr__(
             self, "weaker_model_content_ids", tuple(weaker_model_content_ids)
         )
