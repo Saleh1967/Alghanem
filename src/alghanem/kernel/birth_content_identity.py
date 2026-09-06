@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 
 from .birth import (
@@ -226,7 +227,7 @@ class CanonicalBirthSemanticsEncoder:
         )
 
 
-def _canonical_bytes(encoded: dict[str, object]) -> bytes:
+def _canonical_bytes(encoded: Mapping[str, object]) -> bytes:
     return json.dumps(
         encoded, ensure_ascii=False, separators=(",", ":"), sort_keys=True
     ).encode("utf-8", "surrogatepass")
@@ -293,7 +294,7 @@ class BirthSemanticsContentRegistry:
         self._scopes[key] = scope
         return scope
 
-    def seal(self, snapshot_id: str) -> "SealedBirthSemanticsContentRegistry":
+    def seal(self, snapshot_id: str) -> SealedBirthSemanticsContentRegistry:
         """Freeze the recorded content scopes without adding execution."""
 
         if not isinstance(snapshot_id, str) or not snapshot_id.strip():
@@ -381,9 +382,7 @@ class BirthAssessmentContentBinding:
             raise BirthSemanticsContentIdentityError(
                 "content binding requires a birth assessment semantics contract"
             )
-        if not isinstance(
-            self.registry_snapshot, SealedBirthSemanticsContentRegistry
-        ):
+        if not isinstance(self.registry_snapshot, SealedBirthSemanticsContentRegistry):
             raise BirthSemanticsContentIdentityError(
                 "content binding requires a sealed content registry"
             )
@@ -402,9 +401,7 @@ class BirthAssessmentContentBinding:
                 "residual definition content identity does not match its "
                 "frozen content identity: SameId != SameSemantics"
             )
-        object.__setattr__(
-            self, "residual_definition_content_id", residual_frozen_id
-        )
+        object.__setattr__(self, "residual_definition_content_id", residual_frozen_id)
 
         closure_runtime_id = CanonicalBirthSemanticsEncoder.encode_closure_criterion(
             self.contract.closure_criterion
