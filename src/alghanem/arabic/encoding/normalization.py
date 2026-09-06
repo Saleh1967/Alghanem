@@ -293,6 +293,7 @@ class SurfaceNormalization:
 
 
 def _common_prefix_len(raw: tuple[str, ...], normalized: tuple[str, ...]) -> int:
+    """Count unchanged leading atoms shared by raw and normalized codepoints."""
     count = 0
     for raw_atom, normalized_atom in zip(raw, normalized):
         if raw_atom != normalized_atom:
@@ -304,6 +305,7 @@ def _common_prefix_len(raw: tuple[str, ...], normalized: tuple[str, ...]) -> int
 def _common_suffix_len(
     raw: tuple[str, ...], normalized: tuple[str, ...], prefix_len: int
 ) -> int:
+    """Count unchanged trailing atoms after excluding the shared prefix."""
     count = 0
     max_count = min(len(raw), len(normalized)) - prefix_len
     while count < max_count and raw[-(count + 1)] == normalized[-(count + 1)]:
@@ -320,6 +322,8 @@ def _residual_row(audit: NormalizationAudit) -> NormalizationResidualRow:
     suffix_len = _common_suffix_len(raw_codepoints, normalized_codepoints, prefix_len)
     raw_end = len(raw_codepoints) - suffix_len
     normalized_end = len(normalized_codepoints) - suffix_len
+    removed_codepoints = raw_codepoints[prefix_len:raw_end]
+    inserted_codepoints = normalized_codepoints[prefix_len:normalized_end]
     changed = observation.surface != audit.trace.normalized_surface
 
     return NormalizationResidualRow(
@@ -336,11 +340,11 @@ def _residual_row(audit: NormalizationAudit) -> NormalizationResidualRow:
         length_delta=len(raw_codepoints) - len(normalized_codepoints),
         common_prefix_len=prefix_len,
         common_suffix_len=suffix_len,
-        removed_segment="".join(raw_codepoints[prefix_len:raw_end]),
-        inserted_segment="".join(normalized_codepoints[prefix_len:normalized_end]),
+        removed_segment="".join(removed_codepoints),
+        inserted_segment="".join(inserted_codepoints),
         order_changed=changed
-        and sorted(raw_codepoints) == sorted(normalized_codepoints)
-        and raw_codepoints != normalized_codepoints,
+        and sorted(removed_codepoints) == sorted(inserted_codepoints)
+        and removed_codepoints != inserted_codepoints,
         residual_count=len(audit.residuals),
         candidate_surface=audit.candidate.normalized_surface,
     )

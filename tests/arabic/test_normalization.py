@@ -332,6 +332,24 @@ def test_residual_table_preserves_zero_residual_rows() -> None:
     assert row.candidate_surface == "\u0628\u064e"
 
 
+def test_residual_table_detects_order_change_within_delta_segment() -> None:
+    run_identity = measurement_run()
+    manifest = SurfaceNormalization.ledger_manifest(
+        run_identity,
+        [observation("source", "one", "\u0628\u0655\u064e", run_identity)],
+    )
+
+    row = SurfaceNormalization.residual_table(manifest).rows[0]
+
+    assert row.raw_codepoints == ("\u0628", "\u0655", "\u064e")
+    assert row.normalized_codepoints == ("\u0628", "\u064e", "\u0655")
+    assert row.common_prefix_len == 1
+    assert row.common_suffix_len == 0
+    assert row.removed_segment == "\u0655\u064e"
+    assert row.inserted_segment == "\u064e\u0655"
+    assert row.order_changed is True
+
+
 def test_observation_provenance_requires_measurement_run() -> None:
     with pytest.raises(ValueError, match="measurement run identity"):
         ObservationProvenance("source", "one", "extra")  # type: ignore[arg-type]
