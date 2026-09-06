@@ -9,7 +9,7 @@ from .measurement import MeasurementRunIdentity
 
 @dataclass(frozen=True)
 class ObservationProvenance:
-    """Stable occurrence identity supplied by the measurement protocol."""
+    """Run-scoped occurrence identity supplied by the measurement protocol."""
 
     run_identity: MeasurementRunIdentity
     source_id: str

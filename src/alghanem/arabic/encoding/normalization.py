@@ -153,7 +153,13 @@ class NormalizationEquivalenceProjection:
 
 @dataclass(frozen=True)
 class NormalizationResidualRow:
-    """Occurrence-complete, non-linguistic row of raw-to-NFC residual data."""
+    """Occurrence-complete, non-linguistic row of raw-to-NFC residual data.
+
+    ``candidate_surface`` intentionally duplicates the current normalized
+    projection surface so consumers can audit the table without dereferencing
+    the original candidate object. It is projection metadata, not a new
+    identity claim.
+    """
 
     run_id: str
     source_id: str
@@ -173,6 +179,60 @@ class NormalizationResidualRow:
     order_changed: bool
     residual_count: int
     candidate_surface: str
+
+    def __post_init__(self) -> None:
+        for field_name, string_value in (
+            ("run id", self.run_id),
+            ("source id", self.source_id),
+            ("occurrence id", self.occurrence_id),
+            ("raw surface", self.raw_surface),
+            ("normalized surface", self.normalized_surface),
+            ("candidate surface", self.candidate_surface),
+        ):
+            if not isinstance(string_value, str) or not string_value:
+                raise ValueError(f"{field_name} must be a non-empty string")
+        for field_name, segment_value in (
+            ("removed segment", self.removed_segment),
+            ("inserted segment", self.inserted_segment),
+        ):
+            if not isinstance(segment_value, str):
+                raise ValueError(f"{field_name} must be a string")
+        if self.raw_codepoints != tuple(self.raw_surface):
+            raise ValueError("raw codepoints must reproduce the raw surface")
+        if self.normalized_codepoints != tuple(self.normalized_surface):
+            raise ValueError(
+                "normalized codepoints must reproduce the normalized surface"
+            )
+        if self.raw_atom_count != len(self.raw_codepoints):
+            raise ValueError("raw atom count must match raw codepoints")
+        if self.normalized_atom_count != len(self.normalized_codepoints):
+            raise ValueError("normalized atom count must match normalized codepoints")
+        for field_name, integer_value in (
+            ("length delta", self.length_delta),
+            ("common prefix length", self.common_prefix_len),
+            ("common suffix length", self.common_suffix_len),
+            ("residual count", self.residual_count),
+        ):
+            if isinstance(integer_value, bool) or not isinstance(integer_value, int):
+                raise ValueError(f"{field_name} must be an integer")
+        if self.common_prefix_len < 0 or self.common_suffix_len < 0:
+            raise ValueError("common boundary lengths must be non-negative")
+        if self.residual_count < 0:
+            raise ValueError("residual count must be non-negative")
+        if self.common_prefix_len + self.common_suffix_len > min(
+            self.raw_atom_count, self.normalized_atom_count
+        ):
+            raise ValueError("common boundary lengths must not overlap")
+        if self.length_delta != self.raw_atom_count - self.normalized_atom_count:
+            raise ValueError("length delta must equal raw minus normalized count")
+        if not isinstance(self.changed, bool):
+            raise ValueError("changed must be a boolean")
+        if not isinstance(self.order_changed, bool):
+            raise ValueError("order changed must be a boolean")
+        if self.changed != (self.raw_surface != self.normalized_surface):
+            raise ValueError("changed must match raw/normalized surface equality")
+        if self.candidate_surface != self.normalized_surface:
+            raise ValueError("candidate surface must match normalized surface")
 
 
 @dataclass(frozen=True)
