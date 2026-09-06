@@ -152,10 +152,8 @@ def test_manifest_binds_ledger_to_one_measurement_run() -> None:
     manifest = SurfaceNormalization.ledger_manifest(run_identity, observations)
 
     assert manifest.run_identity == run_identity
-    assert manifest.measurement_run_manifest.normalization_form == "NFC"
-    assert manifest.measurement_run_manifest.unicode_database_version == (
-        unidata_version
-    )
+    assert manifest.run_manifest.normalization_form == "NFC"
+    assert manifest.run_manifest.unicode_database_version == (unidata_version)
     assert manifest.ledger.audits[0].trace.observation.provenance.run_identity == (
         run_identity
     )
@@ -309,7 +307,7 @@ def test_residual_table_records_atom_level_changed_delta() -> None:
     assert row.removed_segment == "\u0627\u0654"
     assert row.inserted_segment == "\u0623"
     assert row.order_changed is False
-    assert row.residual_count == 1
+    assert row.residual_count == 2
     assert row.candidate_surface == "\u0623"
 
 

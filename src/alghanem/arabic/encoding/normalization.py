@@ -73,17 +73,17 @@ class DistinctSurfaceAtomCandidateProjection:
 class ObservationLedgerManifest:
     """A ledger bound to one measurement run and normalization policy."""
 
-    measurement_run_manifest: MeasurementRunManifest
+    run_manifest: MeasurementRunManifest
     ledger: ObservationAuditLedger
 
     def __post_init__(self) -> None:
-        if not isinstance(self.measurement_run_manifest, MeasurementRunManifest):
+        if not isinstance(self.run_manifest, MeasurementRunManifest):
             raise ValueError("ledger manifest must declare a measurement run manifest")
         if not isinstance(self.ledger, ObservationAuditLedger):
             raise ValueError("ledger manifest must contain an observation audit ledger")
-        expected_run = self.measurement_run_manifest.run_identity
-        expected_policy = self.measurement_run_manifest.normalization_form
-        expected_unicode = self.measurement_run_manifest.unicode_database_version
+        expected_run = self.run_manifest.run_identity
+        expected_policy = self.run_manifest.normalization_form
+        expected_unicode = self.run_manifest.unicode_database_version
         for audit in self.ledger.audits:
             provenance = audit.trace.observation.provenance
             if provenance.run_identity != expected_run:
@@ -102,7 +102,7 @@ class ObservationLedgerManifest:
     @property
     def run_identity(self) -> MeasurementRunIdentity:
         """The measurement run whose observations are preserved in the ledger."""
-        return self.measurement_run_manifest.run_identity
+        return self.run_manifest.run_identity
 
 
 @dataclass(frozen=True)
@@ -155,7 +155,9 @@ class NormalizationEquivalenceProjection:
 class NormalizationResidualRow:
     """Occurrence-complete, non-linguistic row of raw-to-NFC residual data.
 
-    ``candidate_surface`` intentionally duplicates the current normalized
+    ``residual_count`` is the width of the local atom-delta segment, not the
+    length of ``NormalizationAudit.residuals``. ``candidate_surface`` duplicates
+    the current normalized
     projection surface so consumers can audit the table without dereferencing
     the original candidate object. It is projection metadata, not a new
     identity claim.
@@ -405,6 +407,6 @@ def _residual_row(audit: NormalizationAudit) -> NormalizationResidualRow:
         order_changed=changed
         and sorted(removed_codepoints) == sorted(inserted_codepoints)
         and removed_codepoints != inserted_codepoints,
-        residual_count=len(audit.residuals),
+        residual_count=max(len(removed_codepoints), len(inserted_codepoints)),
         candidate_surface=audit.candidate.normalized_surface,
     )
