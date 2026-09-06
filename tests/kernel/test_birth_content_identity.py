@@ -19,6 +19,7 @@ from alghanem.kernel.birth_content_identity import (
     BirthSemanticsContentRegistry,
     CanonicalBirthSemanticsEncoder,
     CanonicalResidualDefinitionManifest,
+    FrozenBirthSemanticsContentScope,
 )
 
 
@@ -193,6 +194,18 @@ def test_content_identity_cannot_be_hand_constructed() -> None:
             algorithm="sha256",
             canonicalization_version="birth-semantics-manifest-v1",
             digest="0" * 64,
+        )
+
+
+def test_frozen_content_scope_cannot_be_hand_constructed() -> None:
+    with pytest.raises(BirthSemanticsContentIdentityError, match="registry-issued"):
+        FrozenBirthSemanticsContentScope(
+            domain="finite-domain",
+            role=BirthEvaluatorRole.RESIDUAL_DEFINITION,
+            target_id="residual",
+            content_id=CanonicalBirthSemanticsEncoder.encode_residual_definition(
+                residual_definition()
+            ).content_id,
         )
 
 

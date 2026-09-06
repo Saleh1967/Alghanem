@@ -58,7 +58,7 @@ class BirthSemanticsContentIdentity:
     algorithm: str
     canonicalization_version: str
     digest: str
-    _content_id_token: object | None = None
+    _content_id_token: object | None = field(default=None, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         if self._content_id_token is not _CONTENT_ID_TOKEN:
@@ -90,7 +90,7 @@ class CanonicalResidualDefinitionManifest:
 
     canonical_bytes: bytes
     content_id: BirthSemanticsContentIdentity
-    _manifest_token: object | None = None
+    _manifest_token: object | None = field(default=None, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         if self._manifest_token is not _CONTENT_ID_TOKEN:
@@ -106,7 +106,7 @@ class CanonicalClosureCriterionManifest:
 
     canonical_bytes: bytes
     content_id: BirthSemanticsContentIdentity
-    _manifest_token: object | None = None
+    _manifest_token: object | None = field(default=None, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         if self._manifest_token is not _CONTENT_ID_TOKEN:
@@ -122,7 +122,7 @@ class CanonicalWeakerModelManifest:
 
     canonical_bytes: bytes
     content_id: BirthSemanticsContentIdentity
-    _manifest_token: object | None = None
+    _manifest_token: object | None = field(default=None, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         if self._manifest_token is not _CONTENT_ID_TOKEN:
@@ -250,6 +250,17 @@ class FrozenBirthSemanticsContentScope:
     role: BirthEvaluatorRole
     target_id: str
     content_id: BirthSemanticsContentIdentity
+    _scope_token: object = field(default=None, repr=False, compare=False)
+
+    def __post_init__(self) -> None:
+        if self._scope_token is not _CONTENT_ID_TOKEN:
+            raise BirthSemanticsContentIdentityError(
+                "frozen content scopes must be registry-issued"
+            )
+        if not isinstance(self.content_id, BirthSemanticsContentIdentity):
+            raise BirthSemanticsContentIdentityError(
+                "frozen content scope requires an issued content identity"
+            )
 
 
 class BirthSemanticsContentRegistry:
@@ -289,7 +300,11 @@ class BirthSemanticsContentRegistry:
                 "identity for this scope: SameId != SameSemantics"
             )
         scope = existing or FrozenBirthSemanticsContentScope(
-            domain=domain, role=role, target_id=target_id, content_id=content_id
+            domain=domain,
+            role=role,
+            target_id=target_id,
+            content_id=content_id,
+            _scope_token=_CONTENT_ID_TOKEN,
         )
         self._scopes[key] = scope
         return scope
@@ -315,6 +330,9 @@ class SealedBirthSemanticsContentRegistry:
     snapshot_id: str
     scopes: tuple[FrozenBirthSemanticsContentScope, ...]
     _registry_token: object = field(default=None, repr=False, compare=False)
+    _index: dict[
+        tuple[str, BirthEvaluatorRole, str], FrozenBirthSemanticsContentScope
+    ] = field(init=False, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         if self._registry_token is not _CONTENT_ID_TOKEN:
@@ -329,34 +347,33 @@ class SealedBirthSemanticsContentRegistry:
             raise BirthSemanticsContentIdentityError(
                 "content registry scopes must be frozen"
             )
-        seen: set[tuple[str, BirthEvaluatorRole, str]] = set()
+        index: dict[
+            tuple[str, BirthEvaluatorRole, str], FrozenBirthSemanticsContentScope
+        ] = {}
         for scope in self.scopes:
             if not isinstance(scope, FrozenBirthSemanticsContentScope):
                 raise BirthSemanticsContentIdentityError(
                     "sealed content registry requires frozen content scopes"
                 )
             key = (scope.domain, scope.role, scope.target_id)
-            if key in seen:
+            if key in index:
                 raise BirthSemanticsContentIdentityError(
                     "sealed content registry must not contain duplicate scopes"
                 )
-            seen.add(key)
+            index[key] = scope
+        object.__setattr__(self, "_index", index)
 
     def resolve_frozen(
         self, *, domain: str, role: BirthEvaluatorRole, target_id: str
     ) -> BirthSemanticsContentIdentity:
         """Return the frozen content identity for an exact declared scope."""
 
-        for scope in self.scopes:
-            if (
-                scope.domain == domain
-                and scope.role is role
-                and scope.target_id == target_id
-            ):
-                return scope.content_id
-        raise BirthSemanticsContentIdentityError(
-            "no frozen content identity is recorded for this scope"
-        )
+        scope = self._index.get((domain, role, target_id))
+        if scope is None:
+            raise BirthSemanticsContentIdentityError(
+                "no frozen content identity is recorded for this scope"
+            )
+        return scope.content_id
 
 
 @dataclass(frozen=True, slots=True)
