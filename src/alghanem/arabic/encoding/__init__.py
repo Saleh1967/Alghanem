@@ -9,7 +9,7 @@ from .normalization import (
     ObservationAuditLedger,
     SurfaceNormalization,
 )
-from .observation import RawSurfaceObservation
+from .observation import ObservationProvenance, RawSurfaceObservation
 
 __all__ = [
     "DistinctSurfaceAtomCandidateProjection",
@@ -17,6 +17,7 @@ __all__ = [
     "NormalizationResidual",
     "NormalizationTrace",
     "ObservationAuditLedger",
+    "ObservationProvenance",
     "RawSurfaceObservation",
     "SurfaceAtomCandidate",
     "SurfaceNormalization",

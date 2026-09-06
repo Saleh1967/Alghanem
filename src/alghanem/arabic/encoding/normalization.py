@@ -46,6 +46,19 @@ class ObservationAuditLedger:
 
     audits: tuple[NormalizationAudit, ...]
 
+    def __post_init__(self) -> None:
+        identities = {
+            (
+                audit.trace.observation.provenance.source_id,
+                audit.trace.observation.provenance.occurrence_id,
+            )
+            for audit in self.audits
+        }
+        if len(identities) != len(self.audits):
+            raise ValueError(
+                "an audit ledger cannot contain duplicate occurrence identity"
+            )
+
 
 @dataclass(frozen=True)
 class DistinctSurfaceAtomCandidateProjection:

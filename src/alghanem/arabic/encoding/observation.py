@@ -6,9 +6,24 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
+class ObservationProvenance:
+    """Stable occurrence identity supplied by the measurement protocol."""
+
+    source_id: str
+    occurrence_id: str
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.source_id, str) or not self.source_id:
+            raise ValueError("an observation source id must be a non-empty string")
+        if not isinstance(self.occurrence_id, str) or not self.occurrence_id:
+            raise ValueError("an observation occurrence id must be a non-empty string")
+
+
+@dataclass(frozen=True)
 class RawSurfaceObservation:
     """An observed non-empty Unicode surface with no linguistic classification."""
 
+    provenance: ObservationProvenance
     surface: str
 
     def __post_init__(self) -> None:
