@@ -45,8 +45,10 @@ alone — must survive exhaustion of every weaker model licensed and frozen for
 that experiment. G0.1 supplies a language-agnostic pre-evidence
 `BirthExperimentSpecification` with a `BirthQuery`, a derived prerequisite
 cone, and a later `BirthAssessmentRequest` that binds the evidence snapshot.
+G0.1 stops at that request: it has no birth-verdict or freeze authority.
 `BirthCandidate` is distinct from a scoped birth verdict and from `Freeze`;
-only `BIRTH_IN_SCOPE` may proceed through freeze and an `E0` step. See the
+the later G0.2 gate alone may issue `BIRTH_IN_SCOPE`, then freeze it before a
+separate `E0` step. See the
 "G0 — Birth Protocol" section of
 `docs/CONSTITUTION.md` for the full declared laws; no `BirthGate`,
 rank/complexity runtime, or intervention runtime exists yet.

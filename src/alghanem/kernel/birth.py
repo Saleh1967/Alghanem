@@ -1,11 +1,11 @@
-"""G0.1 birth-experiment contracts, without a birth-assessment runtime."""
+"""G0.1 question, specification, and evidence-binding contracts only."""
 
 from dataclasses import dataclass, field
 from enum import Enum, auto
 
 
 class BirthExperimentSpecificationError(ValueError):
-    """A malformed experiment specification cannot produce a verdict."""
+    """A malformed G0.1 contract cannot enter a future assessment runtime."""
 
 
 class EvidenceMode(Enum):
@@ -17,7 +17,7 @@ class EvidenceMode(Enum):
 
 
 class BirthVerdictStatus(Enum):
-    """Scoped epistemic outcomes for a structurally valid assessment."""
+    """Future scoped verdict vocabulary; values confer no decision authority."""
 
     BIRTH_IN_SCOPE = auto()
     NO_BIRTH_IN_SCOPE = auto()
@@ -43,22 +43,37 @@ def _require_unique(values: tuple[str, ...], field_name: str) -> None:
 
 
 @dataclass(frozen=True, slots=True)
+class StructureHypothesis:
+    """A proposed structure, distinct from the analytical models used to test it."""
+
+    hypothesis_id: str
+    statement: str
+
+    def __post_init__(self) -> None:
+        _require_text(self.hypothesis_id, "hypothesis id")
+        _require_text(self.statement, "hypothesis statement")
+
+
+@dataclass(frozen=True, slots=True)
 class BirthQuery:
-    """A pre-evidence question about whether a projection is necessary."""
+    """A pre-evidence question testing one model against a structure hypothesis."""
 
     query_id: str
-    statement: str
-    target_projection: str
+    hypothesis: StructureHypothesis
+    test_model: str
 
     def __post_init__(self) -> None:
         _require_text(self.query_id, "query id")
-        _require_text(self.statement, "query statement")
-        _require_text(self.target_projection, "query target projection")
+        if not isinstance(self.hypothesis, StructureHypothesis):
+            raise BirthExperimentSpecificationError(
+                "birth query requires a structure hypothesis"
+            )
+        _require_text(self.test_model, "query test model")
 
 
 @dataclass(frozen=True, slots=True)
 class ProjectionPoset:
-    """A frozen partial order, with pairs ordered as ``(lower, richer)``."""
+    """A frozen partial order of analytical models, ordered ``(lower, richer)``."""
 
     projections: tuple[str, ...]
     strict_relations: tuple[tuple[str, str], ...]
@@ -87,18 +102,18 @@ class ProjectionPoset:
                 )
 
     def strict_predecessors(self, projection: str) -> tuple[str, ...]:
-        """Derive the complete strict lower cone of ``projection``."""
+        """Derive the complete strict lower cone of a test model."""
 
         if projection not in self.projections:
-            raise BirthExperimentSpecificationError("unknown target projection")
+            raise BirthExperimentSpecificationError("unknown test model")
         predecessors = self._traverse(projection, reverse=True)
         return tuple(item for item in self.projections if item in predecessors)
 
     def incomparable_with(self, projection: str) -> tuple[str, ...]:
-        """Derive projections unrelated to ``projection`` in this poset."""
+        """Derive models unrelated to a test model; they are not prerequisites."""
 
         if projection not in self.projections:
-            raise BirthExperimentSpecificationError("unknown target projection")
+            raise BirthExperimentSpecificationError("unknown test model")
         predecessors = set(self.strict_predecessors(projection))
         successors = self._traverse(projection, reverse=False)
         return tuple(
@@ -122,7 +137,7 @@ class ProjectionPoset:
 
 @dataclass(frozen=True, slots=True)
 class BirthExperimentSpecification:
-    """The complete pre-evidence contract for one frozen birth experiment."""
+    """The frozen, pre-evidence G0.1 contract for one experiment revision."""
 
     experiment_id: str
     revision_id: str
@@ -153,16 +168,18 @@ class BirthExperimentSpecification:
         _require_text(self.evidence_requirements, "evidence requirements")
         if not isinstance(self.evidence_mode, EvidenceMode):
             raise BirthExperimentSpecificationError("evidence mode must be declared")
-        if self.birth_query.target_projection not in self.projection_poset.projections:
+        if not isinstance(self.projection_poset, ProjectionPoset):
+            raise BirthExperimentSpecificationError("projection poset must be declared")
+        if not isinstance(self.birth_query, BirthQuery):
+            raise BirthExperimentSpecificationError("birth query must be declared")
+        if self.birth_query.test_model not in self.projection_poset.projections:
             raise BirthExperimentSpecificationError(
-                "birth query target must be declared by the projection poset"
+                "birth query test model must be declared by the projection poset"
             )
         object.__setattr__(
             self,
             "_prerequisite_cone",
-            self.projection_poset.strict_predecessors(
-                self.birth_query.target_projection
-            ),
+            self.projection_poset.strict_predecessors(self.birth_query.test_model),
         )
 
     @property
@@ -173,22 +190,15 @@ class BirthExperimentSpecification:
 
     @property
     def frozen_weaker_models(self) -> tuple[str, ...]:
-        """The frozen weaker-model set, derived from the frozen poset.
-
-        G0.1 gives this the same values as ``prerequisite_cone`` but preserves
-        both names because the former is the frozen model-set role and the
-        latter is the query-relative partial-order role.
-        """
+        """The frozen model-set role of the derived query-relative cone."""
 
         return self.prerequisite_cone
 
     @property
     def competing_projections(self) -> tuple[str, ...]:
-        """Potentially relevant incomparable explanations, not prerequisites."""
+        """Potential competing models for G0.2 to assess, not caller selections."""
 
-        return self.projection_poset.incomparable_with(
-            self.birth_query.target_projection
-        )
+        return self.projection_poset.incomparable_with(self.birth_query.test_model)
 
 
 @dataclass(frozen=True, slots=True)
@@ -205,106 +215,17 @@ class EvidenceSnapshot:
 
 @dataclass(frozen=True, slots=True)
 class BirthAssessmentRequest:
-    """A later assessment request binding frozen terms to actual evidence."""
+    """A valid request for G0.2; it is not an assessment or a verdict."""
 
     specification: BirthExperimentSpecification
     evidence_snapshot: EvidenceSnapshot
 
-
-@dataclass(frozen=True, slots=True)
-class CompetingExplanation:
-    """An incomparable projection that may close the residual instead."""
-
-    projection: str
-    explanation: str
-
     def __post_init__(self) -> None:
-        _require_text(self.projection, "competing projection")
-        _require_text(self.explanation, "competing explanation")
-
-
-@dataclass(frozen=True, slots=True)
-class BirthVerdict:
-    """A scoped result; issuing one is deferred to a future assessment gate."""
-
-    request: BirthAssessmentRequest
-    status: BirthVerdictStatus
-    reason: str
-    competing_explanations: tuple[CompetingExplanation, ...] = ()
-    discriminating_evidence: tuple[str, ...] = ()
-
-    def __post_init__(self) -> None:
-        _require_text(self.reason, "verdict reason")
-        if not isinstance(self.status, BirthVerdictStatus):
-            raise ValueError("birth verdict requires a scoped verdict status")
-        competing = set(self.request.specification.competing_projections)
-        competing_projections = tuple(
-            item.projection for item in self.competing_explanations
-        )
-        if len(set(competing_projections)) != len(competing_projections):
-            raise ValueError("competing explanations must not duplicate projections")
-        if any(
-            item.projection not in competing for item in self.competing_explanations
-        ):
-            raise ValueError(
-                "competing explanations must use projections incomparable "
-                "with the query"
+        if not isinstance(self.specification, BirthExperimentSpecification):
+            raise BirthExperimentSpecificationError(
+                "assessment request requires a frozen experiment specification"
             )
-        if self.status is BirthVerdictStatus.BIRTH_IN_SCOPE and (
-            self.competing_explanations and not self.discriminating_evidence
-        ):
-            raise ValueError(
-                "birth with competing explanations requires discriminating evidence"
+        if not isinstance(self.evidence_snapshot, EvidenceSnapshot):
+            raise BirthExperimentSpecificationError(
+                "assessment request requires an evidence snapshot"
             )
-
-
-@dataclass(frozen=True, slots=True)
-class BirthFreeze:
-    """A frozen birth verdict, permitted only after ``BIRTH_IN_SCOPE``."""
-
-    verdict: BirthVerdict
-    e0_id: str
-
-    def __post_init__(self) -> None:
-        if self.verdict.status is not BirthVerdictStatus.BIRTH_IN_SCOPE:
-            raise ValueError("only BIRTH_IN_SCOPE may be frozen")
-        _require_text(self.e0_id, "E0 id")
-
-
-@dataclass(frozen=True, slots=True)
-class BirthRevisionHistory:
-    """Preserves historical scoped verdicts while selecting the active one."""
-
-    verdicts: tuple[BirthVerdict, ...]
-    active_revision_id: str
-
-    def __post_init__(self) -> None:
-        if not self.verdicts:
-            raise ValueError("revision history requires at least one verdict")
-        _require_text(self.active_revision_id, "active revision id")
-        first = self.verdicts[0].request.specification
-        revisions: set[str] = set()
-        previous_sequence = 0
-        for verdict in self.verdicts:
-            specification = verdict.request.specification
-            if (
-                specification.experiment_id != first.experiment_id
-                or specification.birth_query.query_id != first.birth_query.query_id
-                or specification.domain != first.domain
-                or specification.evidence_mode is not first.evidence_mode
-            ):
-                raise ValueError(
-                    "revision history must retain one experiment, query, domain, "
-                    "and evidence mode"
-                )
-            if specification.revision_id in revisions:
-                raise ValueError("revision history must not duplicate revisions")
-            if specification.revision_sequence <= previous_sequence:
-                raise ValueError(
-                    "revision history must be ordered by increasing revision sequence"
-                )
-            revisions.add(specification.revision_id)
-            previous_sequence = specification.revision_sequence
-        latest_revision = self.verdicts[-1].request.specification.revision_id
-        if self.active_revision_id != latest_revision:
-            raise ValueError("only the latest recorded revision may be active")

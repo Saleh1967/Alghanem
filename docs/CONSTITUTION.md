@@ -92,10 +92,11 @@ BirthQuery -> Evidence -> Residual -> LicensedWeakerExhaustion
 ```
 
 `BirthCandidate != BirthVerdict`: a candidate remains only a proposal until
-`IndependentClosure` produces `BIRTH_IN_SCOPE`. `Freeze` is the separate,
-later act of fixing only that successful scoped verdict so that `E0` cannot
-alter it. `NO_BIRTH_IN_SCOPE` and `DEFER_IN_SCOPE` cannot be frozen. Naming
-never occurs before both birth verdict and freeze have happened.
+`IndependentClosure` produces `BIRTH_IN_SCOPE` through a future gate. `Freeze`
+is the separate, later act of fixing only that successful scoped verdict;
+`E0` consumes that frozen result in a subsequent stage. `NO_BIRTH_IN_SCOPE`
+and `DEFER_IN_SCOPE` cannot be frozen. Naming never occurs before birth
+verdict, freeze, and `E0` have happened.
 
 | Law | Status | Scope |
 | --- | --- | --- |
@@ -132,5 +133,15 @@ possible competing explanations.
 `BirthAssessmentRequest = FrozenExperimentSpecification + EvidenceSnapshot`;
 this ordering prevents evidence from redesigning the question or its closure
 criterion. The contract validates malformed specifications before any request
-or verdict can exist. It deliberately does not implement a `BirthGate`,
-residual assessment, weaker-model execution, or any Arabic-specific type.
+can enter a future runtime. G0.1 stops at `BirthAssessmentRequest`: it has no
+executable verdict, revision-history, competing-explanation assessment, or
+freeze authority. `BirthVerdictStatus` is future vocabulary only.
+
+G0.2 alone may implement the complete authority chain:
+`BirthAssessmentRequest -> ResidualAssessment ->
+LicensedWeakerExhaustion -> NecessaryInvariantCandidate -> BirthCandidate ->
+IndependentClosureDecision -> gate-issued BirthVerdict -> Freeze -> E0`.
+That gate must assess every relevant incomparable model itself; callers cannot
+omit a competitor or promote string placeholders as discriminating evidence.
+It must keep `Freeze` distinct from the subsequent `E0` assessment. No
+Arabic-specific type is part of G0.1 or this deferred G0.2 design.
