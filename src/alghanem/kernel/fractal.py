@@ -342,9 +342,7 @@ class ProofLineageEdge:
 
     parent_ref: FrozenOntologyRef
     child_ref: FrozenFactorRef
-    reopen_experiment_id: str
-    reopen_revision_id: str
-    reopen_specification: ReopenExperimentSpecification | None = None
+    reopen_specification: ReopenExperimentSpecification
 
     def __post_init__(self) -> None:
         if not isinstance(self.parent_ref, (FrozenFactorRef, BornBridgeRef)):
@@ -359,31 +357,21 @@ class ProofLineageEdge:
             raise FractalContractError(
                 "proof lineage must connect distinct frozen factors"
             )
-        _require_text(self.reopen_experiment_id, "proof lineage reopen experiment id")
-        _require_text(self.reopen_revision_id, "proof lineage reopen revision id")
-        if self.child_ref.birth_experiment_id != self.reopen_experiment_id:
+        if not isinstance(
+            self.reopen_specification, ReopenExperimentSpecification
+        ):
+            raise FractalContractError(
+                "proof lineage must bind a reopen experiment specification"
+            )
+        experiment = self.reopen_specification.experiment
+        if self.child_ref.birth_experiment_id != experiment.experiment_id:
             raise FractalContractError(
                 "proof lineage child must be born by its recorded reopen experiment"
             )
-        if self.reopen_specification is not None:
-            if not isinstance(
-                self.reopen_specification, ReopenExperimentSpecification
-            ):
-                raise FractalContractError(
-                    "proof lineage must bind a reopen experiment specification"
-                )
-            experiment = self.reopen_specification.experiment
-            if (
-                experiment.experiment_id != self.reopen_experiment_id
-                or experiment.revision_id != self.reopen_revision_id
-            ):
-                raise FractalContractError(
-                    "proof lineage reopen identity must match its exact specification"
-                )
-            if self.parent_ref not in self.reopen_specification.parents:
-                raise FractalContractError(
-                    "proof lineage parent must be declared by its reopen specification"
-                )
+        if self.parent_ref not in self.reopen_specification.parents:
+            raise FractalContractError(
+                "proof lineage parent must be declared by its reopen specification"
+            )
 
 
 @dataclass(frozen=True, slots=True)
@@ -474,6 +462,14 @@ class FractalSnapshot:
                 raise FractalContractError(
                     "proof lineage endpoints must be exact frozen ontology "
                     "references already present in this snapshot"
+                )
+        reopen_specs: dict[str, ReopenExperimentSpecification] = {}
+        for edge in self.proof_lineage_edges:
+            reopen_id = edge.reopen_specification.reopen_id
+            previous = reopen_specs.setdefault(reopen_id, edge.reopen_specification)
+            if previous != edge.reopen_specification:
+                raise FractalContractError(
+                    "a reopen id must bind one exact experiment specification"
                 )
         adjacency: dict[FrozenOntologyRef, set[FrozenOntologyRef]] = {
             factor: set() for factor in self.frozen_factors
