@@ -69,6 +69,7 @@ from .fractal import (
     FractalProvenancePath,
     FractalSnapshot,
     FrozenFactorRef,
+    ProofLineageEdge,
     ReopenExperimentSpecification,
 )
 from .invariant import (
@@ -184,6 +185,7 @@ __all__ = [
     "OperationResult",
     "ProjectionPoset",
     "PreEvidenceSpecificationRegistry",
+    "ProofLineageEdge",
     "Residual",
     "ResidualDefinitionSpec",
     "ReopenExperimentSpecification",

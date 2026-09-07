@@ -108,7 +108,9 @@ class BornBridgeRef:
 
     Distinct from `FrozenFactorRef`: a bridge's endpoints are themselves
     `FrozenFactorRef`s, so a bridge cannot be referenced before both of its
-    endpoints exist and are frozen (`NoBridgeBeforeEndpointFreeze`).
+    endpoints exist and are frozen (`NoBridgeBeforeEndpointFreeze`). Its birth
+    experiment must also differ from either endpoint's: parentage is proof
+    lineage, never an ontological bridge.
     """
 
     bridge_id: str
@@ -141,6 +143,13 @@ class BornBridgeRef:
         ):
             raise FractalContractError(
                 "bridge endpoint references must not repeat the same factor"
+            )
+        if any(
+            endpoint.birth_experiment_id == self.birth_experiment_id
+            for endpoint in self.endpoint_refs
+        ):
+            raise FractalContractError(
+                "a bridge must be born in an experiment independent of its endpoints"
             )
 
 
@@ -316,13 +325,51 @@ class FractalProvenancePath:
 
 
 @dataclass(frozen=True, slots=True)
+class ProofLineageEdge:
+    """A reopen/provenance edge, never an ontological relation.
+
+    This records that a separately frozen child was discovered by reopening a
+    frozen parent. It belongs exclusively to the provenance graph: neither
+    endpoint is thereby a bridge endpoint and the edge cannot be used as a
+    `BornBridgeRef` or `DerivedRelationSpec`.
+    """
+
+    parent_ref: FrozenFactorRef
+    child_ref: FrozenFactorRef
+    reopen_experiment_id: str
+    reopen_revision_id: str
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.parent_ref, FrozenFactorRef):
+            raise FractalContractError(
+                "proof lineage parents must be frozen factor references"
+            )
+        if not isinstance(self.child_ref, FrozenFactorRef):
+            raise FractalContractError(
+                "proof lineage children must be frozen factor references"
+            )
+        if self.parent_ref == self.child_ref:
+            raise FractalContractError(
+                "proof lineage must connect distinct frozen factors"
+            )
+        _require_text(self.reopen_experiment_id, "proof lineage reopen experiment id")
+        _require_text(self.reopen_revision_id, "proof lineage reopen revision id")
+        if self.child_ref.birth_experiment_id != self.reopen_experiment_id:
+            raise FractalContractError(
+                "proof lineage child must be born by its recorded reopen experiment"
+            )
+
+
+@dataclass(frozen=True, slots=True)
 class FractalSnapshot:
     """An audit-only snapshot of a discovery jurisdiction's fractal graph.
 
-    `FractalGraph = FrozenFactors + DerivedRelations + BornBridges`: the
-    three are never conflated. This snapshot contains no `ArabicRuleTable`
-    or other compiled artifact; a rule table is a strictly later, derived
-    projection of a frozen snapshot like this one (`RuleTableIsDerivedArtifact`).
+    `FractalGraph = ProvenanceGraph + BornOntologyGraph +
+    DerivedRelationGraph`: the three are never conflated. Proof-lineage edges
+    record reopen history only; frozen factors and born bridges form ontology;
+    reconstructible relations form the derived graph. This snapshot contains no
+    `ArabicRuleTable` or other compiled artifact; a rule table is a strictly
+    later, derived projection (`RuleTableIsDerivedArtifact`).
 
     Membership of a relation's or bridge's referenced factor is checked
     against the *exact* frozen reference recorded in this snapshot -- every
@@ -337,6 +384,7 @@ class FractalSnapshot:
     frozen_factors: tuple[FrozenFactorRef, ...]
     derived_relations: tuple[DerivedRelationSpec, ...]
     born_bridges: tuple[BornBridgeRef, ...]
+    proof_lineage_edges: tuple[ProofLineageEdge, ...] = ()
     _factor_ids: frozenset[str] = field(init=False, repr=False, compare=False)
     _frozen_refs: frozenset[FrozenFactorRef] = field(
         init=False, repr=False, compare=False
@@ -359,6 +407,12 @@ class FractalSnapshot:
         if any(not isinstance(bridge, BornBridgeRef) for bridge in self.born_bridges):
             raise FractalContractError(
                 "fractal snapshot bridges must be born bridge references"
+            )
+        if any(
+            not isinstance(edge, ProofLineageEdge) for edge in self.proof_lineage_edges
+        ):
+            raise FractalContractError(
+                "fractal snapshot provenance must be proof lineage edges"
             )
         factor_ids = tuple(factor.factor_id for factor in self.frozen_factors)
         if len(set(factor_ids)) != len(factor_ids):
@@ -383,4 +437,13 @@ class FractalSnapshot:
                 raise FractalContractError(
                     "bridge endpoints must be exact frozen references already "
                     "present in this snapshot, not merely matching factor ids"
+                )
+        for edge in self.proof_lineage_edges:
+            if (
+                edge.parent_ref not in self._frozen_refs
+                or edge.child_ref not in self._frozen_refs
+            ):
+                raise FractalContractError(
+                    "proof lineage endpoints must be exact frozen references "
+                    "already present in this snapshot"
                 )
