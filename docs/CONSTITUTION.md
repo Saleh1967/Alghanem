@@ -413,3 +413,72 @@ by this section, and none should be created merely to anticipate a
 factorization that has not yet been discovered
 (`LayerIsDiscoveryJurisdictionNotOntology`). This section governs, but does
 not implement, the milestones that must be built to close it.
+
+### G0.F.1 — Fractal reopen protocol (declared law, contracts only)
+
+G0.F above closes one experiment's factorization question. Fractality is not
+a folder layout; it is the same execution law applied recursively: a frozen
+result from one experiment must be capable of being read, unmodified, inside
+a *later, higher* experiment, without being reborn, copied, or having its
+identity re-decided:
+
+```
+Birth -> Freeze -> Reopen -> Residual -> MinimalFactorization
+-> Freeze -> Reopen -> ...
+```
+
+Formally, for a jurisdiction (domain) `L` at level `n`, given the already
+frozen set `F_n = {F_1, ..., F_m}` opened in a new jurisdiction `J_{n+1}`:
+
+```
+W_0 = Reopen(F_n) + KnownDerivedRelations
+R_{n+1} = Residual(O_{n+1} | W_0)
+```
+
+`R_{n+1} = 0` licenses `NoBirthAtReopen`: reopening never forces a new layer
+to appear. Otherwise the next frozen layer is exactly:
+
+```
+F_{n+1} = Freeze(MinimalFactorization(Residual(O_{n+1} | Reopen(F_{<=n}))))
+```
+
+which is itself immediately reopenable, making the recurrence indefinite.
+Every higher-layer result is exactly one of three kinds, and the three are
+never conflated: a `BornFactor` (irreducible under every licensed weaker
+reconstruction), a `DerivedRelation` (reconstructible from already-frozen
+factors and shared context; `DERIVED_NO_BIRTH`, per `DerivedRelationDoesNotBirth`
+above), or a `BornBridge` (a coupling between two independently frozen
+factors that survives every licensed weaker reconstruction model). So:
+
+```
+FractalGraph = FrozenFactors + DerivedRelations + BornBridges
+```
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `BirthOnceFreezeOnceReopenMany` | DECLARED_DEFERRED | A factor is born and frozen exactly once; after that, every later experiment that needs it must `Reopen` that one frozen result rather than re-run its birth. Nothing licenses a second, independent birth of what is content-identically the same factor inside the same scope. |
+| `ReopenDoesNotRebirth` | DECLARED_DEFERRED | `Reopen(FrozenFactorRef, E_{n+1})` opens a read-only, licensed window onto an already-frozen factor for use in a new experiment; it is not a second construction of that factor and issues no new `BirthVerdict` for it. Formally `Reopen(F) != Rebirth(F)` and `Id_after(F) == Id_before(F)`: reopening a factor can never change the factor's own declared identity, only license a new question about it. |
+| `NoUpstreamIdentityMutation` | DECLARED_DEFERRED | If `F_i` is frozen, no later result `G` computed from a `Reopen` of `F_i` may modify `F_i`, rename it, reinterpret its identity, merge it with another frozen factor, or change its rank. `G` may only carry `ParentRef(G, F_i)`; new evidence that bears on `F_i` opens a new revision on `F_i` itself (`NewEvidence => NewRevision != HistoricalOverwrite`, consistent with `BirthExperimentSpecification.revision_id`/`revision_sequence`), never a retroactive edit performed by `G`. |
+| `HigherExperimentHoldsRefsNotCopies` | DECLARED_DEFERRED | A higher-level experiment or result holds a `FrozenFactorRef` (`factor_id`, `factor_content_id`, `freeze_certificate_id`, `domain`, `birth_experiment_id`, `birth_revision_id`) to a parent factor, never a reconstructed or mutable copy of the parent's own content. `HigherLayerOwnsReference != HigherLayerOwnsIdentity`: owning the reference grants no authority over the referenced factor's identity. |
+| `NoTraditionalLayerEnum` | DECLARED_DEFERRED | No fixed enumeration of traditional layers (for example `ORTHOGRAPHY`/`PHONOLOGY`/`MORPHOLOGY`/`SYNTAX`/`SEMANTICS`) may be declared as a closed type in the kernel or Arabic runtime. A domain `L` is identified only by its own frozen experiment/jurisdiction scope (`Layer = FrozenExperimentJurisdiction`); two jurisdictions may later be shown to share a factor without that implying either was ever a case of the other. |
+| `FractalParentageDoesNotDefineIdentity` | DECLARED_DEFERRED | A `FractalProvenancePath` records which frozen factors, bridges, derived relations, and reopen experiments produced a later result, strictly for audit and reconstruction of the proof path. `Parentage != Identity`: this path is never part of the later result's own declared identity or content identity, and two results with identical content but different provenance paths remain distinct occurrences, exactly as `EvidenceOccurrenceIdentity != EvidenceContentIdentity` already separates occurrence from content elsewhere in this kernel. |
+| `RevisionDoesNotEraseHistoricalFreeze` | DECLARED_DEFERRED | Restates `FrozenFactorReopeningRequiresNewRevision` (G0.F above) at the fractal-reopen level: new evidence discovered through a `Reopen` never edits, deletes, or silently supersedes a parent's historical frozen record. `ContentIdentity_new(F) == ContentIdentity_old(F)` is required for any claim that a later step merely *reopened* `F`; a change in `F`'s own content identity is not a reopen at all -- it is a new revision or a new birth, recorded separately. |
+
+`FrozenFactorRef`, `BornBridgeRef`, `DerivedRelationSpec`,
+`ReopenExperimentSpecification`, `FractalProvenancePath`, and
+`FractalSnapshot` (`src/alghanem/kernel/fractal.py`) are contract
+*skeletons* only: their constructors validate internal well-formedness
+(non-blank identities, non-empty/non-duplicate parent or endpoint sets, and
+so on), exactly as `BirthExperimentSpecification` and its G0.2a siblings do
+ahead of any executable assessment runtime. None of them is issued by a
+freeze or reopen authority yet, because no such authority exists: a caller
+can construct a syntactically valid `FrozenFactorRef` by hand today, which
+proves only that the contract is well-formed, never that a factor was
+actually born, closed, and frozen (`ConstructibleContract != IssuedByAuthority`).
+A future `FreezeAuthority`/`ReopenAuthority` -- analogous to
+`EvidenceAcquisitionAuthority`'s sole-issuer pattern -- is a separate, later
+milestone. `FractalSnapshot` contains no `ArabicRuleTable` and no other
+compiled artifact; per `RuleTableIsDerivedArtifact` above, any such table
+remains a strictly later, derived projection of a frozen snapshot like this
+one.
+
