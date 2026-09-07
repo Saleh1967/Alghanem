@@ -40,10 +40,13 @@ def factor_ref(
     )
 
 
-def birth_specification() -> BirthExperimentSpecification:
+def birth_specification(
+    experiment_id: str = "reopen-experiment",
+    revision_id: str = "r1",
+) -> BirthExperimentSpecification:
     return BirthExperimentSpecification(
-        experiment_id="reopen-experiment",
-        revision_id="r1",
+        experiment_id=experiment_id,
+        revision_id=revision_id,
         revision_sequence=1,
         evidence_mode=EvidenceMode.FORMAL,
         domain="encoding",
@@ -61,6 +64,20 @@ def birth_specification() -> BirthExperimentSpecification:
         closure_criterion_id="closure",
         closure_criterion="every weaker reconstruction fails to close",
         evidence_requirements="articulatory contrast evidence",
+    )
+
+
+def reopen_specification(
+    parent: FrozenFactorRef | BornBridgeRef,
+    *,
+    experiment_id: str,
+    revision_id: str = "r1",
+) -> ReopenExperimentSpecification:
+    return ReopenExperimentSpecification(
+        reopen_id=f"reopen-{experiment_id}",
+        parents=(parent,),
+        experiment=birth_specification(experiment_id, revision_id),
+        allowed_observables=("obs",),
     )
 
 
@@ -387,8 +404,9 @@ class TestFractalSnapshot:
         lineage = ProofLineageEdge(
             parent_ref=parent,
             child_ref=child,
-            reopen_experiment_id="reopen-experiment",
-            reopen_revision_id="r1",
+            reopen_specification=reopen_specification(
+                parent, experiment_id="reopen-experiment"
+            ),
         )
         snapshot = FractalSnapshot(
             frozen_factors=(parent, child),
@@ -400,14 +418,22 @@ class TestFractalSnapshot:
         assert snapshot.born_bridges == ()
         assert snapshot.derived_relations == ()
 
+    def test_reopen_specification_argument_is_required(self) -> None:
+        with pytest.raises(TypeError):
+            ProofLineageEdge(
+                parent_ref=factor_ref("f1"),
+                child_ref=factor_ref("f2", birth_experiment_id="e2"),
+            )  # type: ignore[call-arg]
+
     def test_rejects_lineage_with_an_endpoint_outside_the_snapshot(self) -> None:
         parent = factor_ref("f1", birth_experiment_id="parent-experiment")
         child = factor_ref("f2", birth_experiment_id="reopen-experiment")
         lineage = ProofLineageEdge(
             parent_ref=parent,
             child_ref=child,
-            reopen_experiment_id="reopen-experiment",
-            reopen_revision_id="r1",
+            reopen_specification=reopen_specification(
+                parent, experiment_id="reopen-experiment"
+            ),
         )
         with pytest.raises(FractalContractError):
             FractalSnapshot(
@@ -415,6 +441,192 @@ class TestFractalSnapshot:
                 derived_relations=(),
                 born_bridges=(),
                 proof_lineage_edges=(lineage,),
+            )
+
+    def test_rejects_indirect_two_edge_cycle(self) -> None:
+        f1 = factor_ref("f1", birth_experiment_id="e1")
+        f2 = factor_ref("f2", birth_experiment_id="e2")
+        edges = (
+            ProofLineageEdge(
+                parent_ref=f1,
+                child_ref=f2,
+                reopen_specification=reopen_specification(f1, experiment_id="e2"),
+            ),
+            ProofLineageEdge(
+                parent_ref=f2,
+                child_ref=f1,
+                reopen_specification=reopen_specification(f2, experiment_id="e1"),
+            ),
+        )
+        with pytest.raises(FractalContractError, match="acyclic"):
+            FractalSnapshot(
+                frozen_factors=(f1, f2),
+                derived_relations=(),
+                born_bridges=(),
+                proof_lineage_edges=edges,
+            )
+
+    def test_rejects_indirect_three_edge_cycle(self) -> None:
+        factors = tuple(
+            factor_ref(f"f{i}", birth_experiment_id=f"e{i}") for i in range(1, 4)
+        )
+        edges = tuple(
+            ProofLineageEdge(
+                parent_ref=factors[index],
+                child_ref=factors[(index + 1) % 3],
+                reopen_specification=reopen_specification(
+                    factors[index], experiment_id=f"e{(index + 1) % 3 + 1}"
+                ),
+            )
+            for index in range(3)
+        )
+        with pytest.raises(FractalContractError, match="acyclic"):
+            FractalSnapshot(
+                frozen_factors=factors,
+                derived_relations=(),
+                born_bridges=(),
+                proof_lineage_edges=edges,
+            )
+
+    def test_accepts_acyclic_lineage_chain(self) -> None:
+        factors = tuple(
+            factor_ref(f"f{i}", birth_experiment_id=f"e{i}") for i in range(1, 4)
+        )
+        edges = tuple(
+            ProofLineageEdge(
+                parent_ref=factors[index],
+                child_ref=factors[index + 1],
+                reopen_specification=reopen_specification(
+                    factors[index], experiment_id=f"e{index + 2}"
+                ),
+            )
+            for index in range(2)
+        )
+        snapshot = FractalSnapshot(
+            frozen_factors=factors,
+            derived_relations=(),
+            born_bridges=(),
+            proof_lineage_edges=edges,
+        )
+        assert snapshot.proof_lineage_edges == edges
+
+    def test_accepts_born_bridge_as_lineage_parent(self) -> None:
+        f1 = factor_ref("f1")
+        f2 = factor_ref("f2")
+        child = factor_ref("f3", birth_experiment_id="reopen-bridge")
+        bridge = BornBridgeRef(
+            bridge_id="b1",
+            bridge_content_id="content-b1",
+            freeze_certificate_id="cert-b1",
+            domain="encoding",
+            endpoint_refs=(f1, f2),
+            birth_experiment_id="bridge-experiment",
+            birth_revision_id="r1",
+        )
+        edge = ProofLineageEdge(
+            parent_ref=bridge,
+            child_ref=child,
+            reopen_specification=reopen_specification(
+                bridge, experiment_id="reopen-bridge"
+            ),
+        )
+        snapshot = FractalSnapshot(
+            frozen_factors=(f1, f2, child),
+            derived_relations=(),
+            born_bridges=(bridge,),
+            proof_lineage_edges=(edge,),
+        )
+        assert snapshot.proof_lineage_edges == (edge,)
+
+    def test_rejects_derived_relation_as_lineage_parent(self) -> None:
+        relation = DerivedRelationRef(relation_id="d1", derivation_content_id="content")
+        with pytest.raises(FractalContractError):
+            ProofLineageEdge(
+                parent_ref=relation,  # type: ignore[arg-type]
+                child_ref=factor_ref("f2", birth_experiment_id="e2"),
+                reopen_specification=reopen_specification(
+                    factor_ref("f1"), experiment_id="e2"
+                ),
+            )
+
+    def test_rejects_parent_not_declared_by_reopen_specification(self) -> None:
+        parent = factor_ref("f1")
+        undeclared = factor_ref("f2")
+        with pytest.raises(FractalContractError, match="declared"):
+            ProofLineageEdge(
+                parent_ref=parent,
+                child_ref=factor_ref("f3", birth_experiment_id="e2"),
+                reopen_specification=reopen_specification(
+                    undeclared, experiment_id="e2"
+                ),
+            )
+
+    def test_rejects_same_reopen_id_bound_to_different_specifications(self) -> None:
+        parent_a = factor_ref("f1")
+        parent_b = factor_ref("f2")
+        child_a = factor_ref("f3", birth_experiment_id="e3")
+        child_b = factor_ref("f4", birth_experiment_id="e4")
+        spec_a = reopen_specification(parent_a, experiment_id="e3")
+        spec_b = ReopenExperimentSpecification(
+            reopen_id=spec_a.reopen_id,
+            parents=(parent_b,),
+            experiment=birth_specification("e4"),
+            allowed_observables=("different-observation",),
+        )
+        edges = (
+            ProofLineageEdge(parent_a, child_a, spec_a),
+            ProofLineageEdge(parent_b, child_b, spec_b),
+        )
+        with pytest.raises(FractalContractError, match="one exact"):
+            FractalSnapshot(
+                frozen_factors=(parent_a, parent_b, child_a, child_b),
+                derived_relations=(),
+                born_bridges=(),
+                proof_lineage_edges=edges,
+            )
+
+    def test_accepts_shared_exact_reopen_specification_for_multiple_parents(
+        self,
+    ) -> None:
+        parent_a = factor_ref("f1")
+        parent_b = factor_ref("f2")
+        child_a = factor_ref("f3", birth_experiment_id="e3")
+        child_b = factor_ref("f4", birth_experiment_id="e3")
+        specification = ReopenExperimentSpecification(
+            reopen_id="shared-reopen",
+            parents=(parent_a, parent_b),
+            experiment=birth_specification("e3"),
+            allowed_observables=("obs",),
+        )
+        edges = (
+            ProofLineageEdge(parent_a, child_a, specification),
+            ProofLineageEdge(parent_b, child_b, specification),
+        )
+        snapshot = FractalSnapshot(
+            frozen_factors=(parent_a, parent_b, child_a, child_b),
+            derived_relations=(),
+            born_bridges=(),
+            proof_lineage_edges=edges,
+        )
+        assert snapshot.proof_lineage_edges == edges
+
+    def test_rejects_reopen_specification_parent_outside_snapshot(self) -> None:
+        parent = factor_ref("f1")
+        outside = factor_ref("outside")
+        child = factor_ref("f2", birth_experiment_id="e2")
+        specification = ReopenExperimentSpecification(
+            reopen_id="reopen-e2",
+            parents=(parent, outside),
+            experiment=birth_specification("e2"),
+            allowed_observables=("obs",),
+        )
+        edge = ProofLineageEdge(parent, child, specification)
+        with pytest.raises(FractalContractError, match="ontology"):
+            FractalSnapshot(
+                frozen_factors=(parent, child),
+                derived_relations=(),
+                born_bridges=(),
+                proof_lineage_edges=(edge,),
             )
 
     def test_rejects_duplicate_factors(self) -> None:

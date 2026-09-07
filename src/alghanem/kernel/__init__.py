@@ -69,6 +69,7 @@ from .fractal import (
     FractalProvenancePath,
     FractalSnapshot,
     FrozenFactorRef,
+    FrozenOntologyRef,
     ProofLineageEdge,
     ReopenExperimentSpecification,
 )
@@ -163,6 +164,7 @@ __all__ = [
     "FractalSnapshot",
     "FrozenBirthSemanticsContentScope",
     "FrozenFactorRef",
+    "FrozenOntologyRef",
     "FrozenPreEvidenceExperimentManifest",
     "InvariantAssessmentSpecificationError",
     "InvariantComparisonError",

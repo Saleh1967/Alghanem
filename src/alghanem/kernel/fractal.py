@@ -153,6 +153,9 @@ class BornBridgeRef:
             )
 
 
+FrozenOntologyRef = FrozenFactorRef | BornBridgeRef
+
+
 @dataclass(frozen=True, slots=True)
 class DerivedRelationSpec:
     """A relation reconstructible from already-frozen factors: `DERIVED_NO_BIRTH`.
@@ -218,7 +221,7 @@ class ReopenExperimentSpecification:
     """
 
     reopen_id: str
-    parents: tuple[FrozenFactorRef, ...]
+    parents: tuple[FrozenOntologyRef, ...]
     experiment: BirthExperimentSpecification
     allowed_observables: tuple[str, ...]
 
@@ -234,9 +237,12 @@ class ReopenExperimentSpecification:
             raise FractalContractError(
                 "a reopen experiment requires at least one frozen parent reference"
             )
-        if any(not isinstance(parent, FrozenFactorRef) for parent in self.parents):
+        if any(
+            not isinstance(parent, FrozenFactorRef | BornBridgeRef)
+            for parent in self.parents
+        ):
             raise FractalContractError(
-                "reopen parents must be frozen factor references"
+                "reopen parents must be frozen ontology references"
             )
         if len(set(self.parents)) != len(self.parents):
             raise FractalContractError(
@@ -334,15 +340,14 @@ class ProofLineageEdge:
     `BornBridgeRef` or `DerivedRelationSpec`.
     """
 
-    parent_ref: FrozenFactorRef
+    parent_ref: FrozenOntologyRef
     child_ref: FrozenFactorRef
-    reopen_experiment_id: str
-    reopen_revision_id: str
+    reopen_specification: ReopenExperimentSpecification
 
     def __post_init__(self) -> None:
-        if not isinstance(self.parent_ref, FrozenFactorRef):
+        if not isinstance(self.parent_ref, FrozenFactorRef | BornBridgeRef):
             raise FractalContractError(
-                "proof lineage parents must be frozen factor references"
+                "proof lineage parents must be frozen ontology references"
             )
         if not isinstance(self.child_ref, FrozenFactorRef):
             raise FractalContractError(
@@ -352,11 +357,45 @@ class ProofLineageEdge:
             raise FractalContractError(
                 "proof lineage must connect distinct frozen factors"
             )
-        _require_text(self.reopen_experiment_id, "proof lineage reopen experiment id")
-        _require_text(self.reopen_revision_id, "proof lineage reopen revision id")
-        if self.child_ref.birth_experiment_id != self.reopen_experiment_id:
+        if not isinstance(self.reopen_specification, ReopenExperimentSpecification):
+            raise FractalContractError(
+                "proof lineage must bind a reopen experiment specification"
+            )
+        experiment = self.reopen_specification.experiment
+        if self.child_ref.birth_experiment_id != experiment.experiment_id:
             raise FractalContractError(
                 "proof lineage child must be born by its recorded reopen experiment"
+            )
+        if self.parent_ref not in self.reopen_specification.parents:
+            raise FractalContractError(
+                "proof lineage parent must be declared by its reopen specification"
+            )
+
+
+def _ensure_acyclic(
+    adjacency: dict[FrozenOntologyRef, set[FrozenOntologyRef]],
+) -> None:
+    """Reject cycles using explicit enter/exit markers instead of recursion."""
+    visiting: set[FrozenOntologyRef] = set()
+    visited: set[FrozenOntologyRef] = set()
+    for node in adjacency:
+        if node in visited:
+            continue
+        stack: list[tuple[FrozenOntologyRef, bool]] = [(node, False)]
+        while stack:
+            current, exiting = stack.pop()
+            if exiting:
+                visiting.remove(current)
+                visited.add(current)
+                continue
+            if current in visited:
+                continue
+            if current in visiting:
+                raise FractalContractError("proof lineage graph must be acyclic")
+            visiting.add(current)
+            stack.append((current, True))
+            stack.extend(
+                (child, False) for child in adjacency[current] if child not in visited
             )
 
 
@@ -438,12 +477,36 @@ class FractalSnapshot:
                     "bridge endpoints must be exact frozen references already "
                     "present in this snapshot, not merely matching factor ids"
                 )
+        reopen_specs: dict[str, ReopenExperimentSpecification] = {}
+        born_bridge_refs = set(self.born_bridges)
+        adjacency: dict[FrozenOntologyRef, set[FrozenOntologyRef]] = {
+            factor: set() for factor in self.frozen_factors
+        }
+        adjacency.update({bridge: set() for bridge in self.born_bridges})
         for edge in self.proof_lineage_edges:
             if (
                 edge.parent_ref not in self._frozen_refs
-                or edge.child_ref not in self._frozen_refs
+                and edge.parent_ref not in born_bridge_refs
+            ) or edge.child_ref not in self._frozen_refs:
+                raise FractalContractError(
+                    "proof lineage endpoints must be exact frozen ontology "
+                    "references already present in this snapshot"
+                )
+            if any(
+                parent not in self._frozen_refs and parent not in born_bridge_refs
+                for parent in edge.reopen_specification.parents
             ):
                 raise FractalContractError(
-                    "proof lineage endpoints must be exact frozen references "
-                    "already present in this snapshot"
+                    "reopen specification parents must be exact frozen ontology "
+                    "references already present in this snapshot"
                 )
+            reopen_id = edge.reopen_specification.reopen_id
+            existing_specification = reopen_specs.setdefault(
+                reopen_id, edge.reopen_specification
+            )
+            if existing_specification != edge.reopen_specification:
+                raise FractalContractError(
+                    "a reopen id must bind one exact experiment specification"
+                )
+            adjacency[edge.parent_ref].add(edge.child_ref)
+        _ensure_acyclic(adjacency)
