@@ -52,6 +52,26 @@ These are the initial laws of the language-agnostic kernel:
 - `ClaimCandidate` has no evidence or evidence-binding field; claim-specific
   evidence binding is deferred to G0.EB.1.
 
+### G0.EB.1 — Claim-relative evidence-role constitution
+
+- `AuthenticatedObservation` identifies an observation with an opaque
+  authentication reference. Authentication does not decide applicability,
+  sufficiency, truth, or knowledge.
+- `EvidenceRoleCandidate(AuthenticatedObservation, ClaimCandidate)` is the
+  smallest current structural pairing for asking whether an observation can
+  bear an evidence role toward a particular structured claim.
+  `EvidenceRoleCandidate != EvidenceApplicability`: it issues no applicability
+  judgment and does not assert that the observation is evidence.
+- `EvidenceRoleIsClaimRelative` is enforced at the candidate boundary:
+  the same authenticated observation paired with distinct claim candidates is
+  a distinct candidate. Observation id alone, claim anchor alone, claim scope
+  alone, and shared authentication provenance all collapse distinct roles and
+  cannot reconstruct this pairing.
+- `EvidenceApplicability != EvidenceSufficiency`,
+  `EvidenceSufficiency != Truth`, and `TruthAssessment != Knowledge` remain
+  outside this milestone. `EvidenceRoleCandidate` has no fields for any of
+  those judgments.
+
 Invariant assessment request semantics are closed at the gate: `BLOCK` means an
 authorized verifier observed at least one invariant as false; `DEFER` means no
 invariant was false but at least one could not be checked; and `VERIFIED` means
