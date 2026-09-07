@@ -60,8 +60,7 @@ class RepositoryArtifactChangeRef:
             )
         if self.before.blob_sha == self.after.blob_sha:
             raise SelfObservationContractError(
-                "repository artifact change requires distinct before/after "
-                "blob shas"
+                "repository artifact change requires distinct before/after " "blob shas"
             )
         _require_same_repository_distinct_commits(
             self.before.snapshot,
