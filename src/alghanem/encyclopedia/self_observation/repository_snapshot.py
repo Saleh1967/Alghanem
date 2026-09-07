@@ -2,7 +2,7 @@
 
 `RepositorySnapshotRef` deliberately says only:
 
-    We are talking about this exact state of the repository.
+    We are talking about this explicitly addressed state of the repository.
 
 It does not say that state is architecturally sound, that any law it seems
 to display holds universally, or that constructing this reference proves
@@ -75,8 +75,8 @@ class RepositorySnapshotRef:
     only `Claim(C, Repository@commit_sha)` does, satisfying the
     constitutional requirement `RepositoryVersionMustBeContentBound`. Two
     refs with the same `repository_identity` but different `commit_sha`
-    name two distinct, equally valid states: a later commit never erases
-    what was true of an earlier one (`RevisionDoesNotEraseHistoricalFreeze`).
+    name two distinct references: a later commit never erases what was
+    true of an earlier one (`RevisionDoesNotEraseHistoricalFreeze`).
 
     Construction here only proves `RepositoryVersionIsExplicitlyAddressed`:
     the triple is well-formed and non-blank. It never proves
