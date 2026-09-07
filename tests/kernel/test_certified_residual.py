@@ -17,7 +17,9 @@ from alghanem.kernel.fractal import FrozenFactorRef
 
 
 def parent() -> FrozenFactorRef:
-    return FrozenFactorRef("factor", "factor-content", "freeze", "domain", "birth", "r1")
+    return FrozenFactorRef(
+        "factor", "factor-content", "freeze", "domain", "birth", "r1"
+    )
 
 
 def observation() -> AuthenticatedObservationBinding:

@@ -218,9 +218,7 @@ class CertifiedResidual:
         object.__setattr__(self, "observation_ref", observation_ref)
         object.__setattr__(self, "scope_ref", scope_ref)
         object.__setattr__(self, "reconstruction_spec_id", reconstruction.spec_id)
-        object.__setattr__(
-            self, "reconstruction_content_id", reconstruction.content_id
-        )
+        object.__setattr__(self, "reconstruction_content_id", reconstruction.content_id)
         object.__setattr__(self, "comparator_spec_id", comparator.spec_id)
         object.__setattr__(self, "comparator_content_id", comparator.content_id)
         object.__setattr__(
@@ -229,7 +227,9 @@ class CertifiedResidual:
         object.__setattr__(
             self, "reconstructed_projection_id", difference.reconstructed_projection_id
         )
-        object.__setattr__(self, "difference_witness_id", difference.difference_witness_id)
+        object.__setattr__(
+            self, "difference_witness_id", difference.difference_witness_id
+        )
         object.__setattr__(self, "trace", trace)
 
     @classmethod
