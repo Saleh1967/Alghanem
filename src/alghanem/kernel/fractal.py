@@ -238,7 +238,7 @@ class ReopenExperimentSpecification:
                 "a reopen experiment requires at least one frozen parent reference"
             )
         if any(
-            not isinstance(parent, (FrozenFactorRef, BornBridgeRef))
+            not isinstance(parent, FrozenFactorRef | BornBridgeRef)
             for parent in self.parents
         ):
             raise FractalContractError(
@@ -345,7 +345,7 @@ class ProofLineageEdge:
     reopen_specification: ReopenExperimentSpecification
 
     def __post_init__(self) -> None:
-        if not isinstance(self.parent_ref, (FrozenFactorRef, BornBridgeRef)):
+        if not isinstance(self.parent_ref, FrozenFactorRef | BornBridgeRef):
             raise FractalContractError(
                 "proof lineage parents must be frozen ontology references"
             )

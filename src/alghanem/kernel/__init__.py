@@ -68,8 +68,8 @@ from .fractal import (
     FractalContractError,
     FractalProvenancePath,
     FractalSnapshot,
-    FrozenOntologyRef,
     FrozenFactorRef,
+    FrozenOntologyRef,
     ProofLineageEdge,
     ReopenExperimentSpecification,
 )

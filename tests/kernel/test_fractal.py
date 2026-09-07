@@ -418,6 +418,13 @@ class TestFractalSnapshot:
         assert snapshot.born_bridges == ()
         assert snapshot.derived_relations == ()
 
+    def test_requires_reopen_specification(self) -> None:
+        with pytest.raises(TypeError):
+            ProofLineageEdge(
+                parent_ref=factor_ref("f1"),
+                child_ref=factor_ref("f2", birth_experiment_id="e2"),
+            )  # type: ignore[call-arg]
+
     def test_rejects_lineage_with_an_endpoint_outside_the_snapshot(self) -> None:
         parent = factor_ref("f1", birth_experiment_id="parent-experiment")
         child = factor_ref("f2", birth_experiment_id="reopen-experiment")
