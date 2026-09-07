@@ -6,9 +6,12 @@ from .applicability import (
     ApplicabilityAssessmentGate,
     ApplicabilityAssessmentSpecification,
     ApplicabilityAssessmentStatus,
+    ApplicabilityEvaluatorRegistry,
     ApplicabilityModelResult,
+    AuthorizedApplicabilityEvaluatorBinding,
     EvidenceApplicabilityAssessment,
     FrozenApplicabilityModel,
+    SealedApplicabilityEvaluatorRegistry,
 )
 from .binding import ClaimEvidenceBinding
 from .birth import (
@@ -142,6 +145,8 @@ __all__ = [
     "ApplicabilityAssessmentSpecification",
     "ApplicabilityAssessmentStatus",
     "ApplicabilityModelResult",
+    "ApplicabilityEvaluatorRegistry",
+    "AuthorizedApplicabilityEvaluatorBinding",
     "AuthenticatedObservationBinding",
     "AuthorizedBirthAssessmentEvaluatorDefinition",
     "AuthorizedEvidenceSnapshot",
@@ -207,6 +212,7 @@ __all__ = [
     "FractalProvenancePath",
     "FractalSnapshot",
     "FrozenApplicabilityModel",
+    "SealedApplicabilityEvaluatorRegistry",
     "FrozenBirthSemanticsContentScope",
     "FrozenFactorRef",
     "FrozenOntologyRef",

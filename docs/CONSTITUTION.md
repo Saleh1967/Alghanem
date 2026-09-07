@@ -99,13 +99,21 @@ These are the initial laws of the language-agnostic kernel:
   or role.
 - `EvidenceApplicabilityAssessment` is limited to `PASS`, `BLOCK`, or `DEFER`
   for the candidate's claim scope, and preserves a reason, trace, and
-  residuals. `BLOCK` takes precedence over `DEFER`, which takes precedence over
-  `PASS`.
-- Applicability models are caller-frozen and explicitly name weaker models.
-  The gate validates that the weakening graph is well-formed and acyclic, then
-  evaluates the declared models. No anchor, scope, role, or provenance
-  checklist is born as a primitive without a declared model and its residual
-  boundary.
+  residuals, plus the content identity of its specification and the snapshot
+  identity of its sealed evaluator registry. `PASS` carries no unresolved
+  residuals; `DEFER` carries at least one.
+- Applicability models are content-bound to authority-issued evaluator
+  bindings, including evaluator implementation identity, candidate role, and
+  claim scope. A caller-supplied callable is not a frozen applicability
+  semantics. The gate validates that the weakening graph is well-formed and
+  acyclic.
+- Models are competing closure models ordered by their declared weaker-model
+  relation. The result is `PASS` when the weakest declared model that closes
+  applicability passes; a stronger unresolved model cannot override it. If no
+  model closes, a licensed block yields `BLOCK`, otherwise unresolved residuals
+  yield `DEFER`.
+- No anchor, scope, role, or provenance checklist is born as a primitive
+  without a declared, authorized model and its residual boundary.
 - The assessment does not assert evidence sufficiency, truth, licensed-claim
   status, or knowledge. A `DEFER` result is an unresolved applicability
   boundary, not a negative truth judgment.
