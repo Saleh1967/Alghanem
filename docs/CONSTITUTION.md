@@ -557,17 +557,28 @@ enforcement mechanism yet:
   (mirroring G0.1-G0.BV.1's own chain) has forced it into existence. A name
   is not a license: naming ahead of birth is exactly the failure this law
   refuses.
-* `ResidualGeometryConstrainsArchitectureSearch` -- whatever architecture
-  search a future stage performs must be constrained by the actual shape of
-  the residuals on hand, not by a convenient or popular prior architecture.
-  Residual geometry is the only permitted source of *new structural demand*
-  (`ResidualGeometry = OnlySourceOfNewStructuralDemand`) -- it is not claimed
-  to be the only thing constraining search overall: frozen prior structure,
-  admissibility, licensed operations, and prior invariants also constrain
-  every future search, alongside residual geometry:
+* `LicensedStructuralDemandConstrainsArchitectureSearch` -- whatever
+  architecture search a future stage performs must be constrained by the
+  actual licensed structural demand on hand, not by a convenient or popular
+  prior architecture. Licensed structural demand is evidence-mode-sensitive
+  (`LicensedStructuralDemand_n = Demand(EvidenceMode_n)`), because
+  `NoBirthWithoutResidualOrFormalNecessity` already declares three
+  independent evidence modes and architecture search must not contradict
+  them:
+  `Demand(EMPIRICAL) = CertifiedResidualGeometry`,
+  `Demand(FORMAL) = CertifiedFormalNecessityWitness`, and
+  `Demand(MIXED) = EmpiricalResidualDemand + FormalNecessityDemand`, where
+  neither component of a mixed demand may substitute for the other on the
+  part of the claim that belongs to it (`FormalProof ⇏ EmpiricalReality`,
+  `EmpiricalPattern ⇏ MathematicalNecessity`). Licensed demand is not
+  claimed to be the only thing constraining search overall: frozen prior
+  structure, admissibility, licensed operations, and prior invariants also
+  constrain every future search, alongside the licensed demand:
   `Search_{n+1} = ConstrainedBy(FrozenPrior_n, LicensedOperations_n,
-  ResidualGeometry_n)`. What residual geometry alone licenses is new
-  structural complexity: `NewStructuralComplexity must be demanded by rho_n`.
+  LicensedStructuralDemand_n)`. What licensed structural demand alone
+  licenses is new structural complexity:
+  `NewStructuralComplexity must be demanded by LicensedStructuralDemand_n`,
+  not by `rho_n` alone.
 * `NoFixedComplexityOrder` -- no future stage may assume, in advance, an
   ordering of model complexity (for example, "try bigrams before trigrams
   before graphs") as a structural law. Any such ordering, if it appears,
@@ -587,17 +598,29 @@ These combine into one governing law for any future architecture search:
 
 ```
 Architecture_{n+1} = Min_ (relation)
-    { A : Preserve(A_n) and Close(A, rho_n) and HeldOutStable(A) }
+    { A : Preserve(A_n) and Close(A, LicensedStructuralDemand_n)
+          and Validation_n(A) }
 ```
 
 That is: the next architecture is the *minimal* structure (under whatever
 partial order the future stage defines and justifies) that preserves the
-previous architecture's proven guarantees, closes the specific residual that
-forced this step, and remains stable under held-out evidence it was not
-fitted to. No future stage may skip the minimality requirement by asserting
-that a richer, named architecture is "obviously" going to be needed
-eventually -- `FuturePossibility != CurrentImplementationLicense` applies
-here exactly as everywhere else in this constitution.
+previous architecture's proven guarantees, closes the licensed structural
+demand that forced this step, and passes the evidence-mode-sensitive
+validation of its own claim. Validation is mode-relative
+(`Validation_n(A) = Validation(EvidenceMode_n, A)`), matching
+`NoBirthWithoutResidualOrFormalNecessity`'s three modes:
+`Validation(EMPIRICAL, A) = HeldOutStable(A)` -- the architecture remains
+stable under held-out evidence it was not fitted to;
+`Validation(FORMAL, A) = ExhaustivelyProvedClosure(A)` -- exhaustive formal
+closure over the declared closed domain, with no held-out measurement
+required, since a formal birth needs no measurement run; and
+`Validation(MIXED, A) = Validation(EMPIRICAL, A) and Validation(FORMAL, A)`,
+each applied within the scope of the part of the claim that belongs to that
+mode, with neither substituting for the other. No future stage may skip the
+minimality requirement by asserting that a richer, named architecture is
+"obviously" going to be needed eventually --
+`FuturePossibility != CurrentImplementationLicense` applies here exactly as
+everywhere else in this constitution.
 
 
 G0's chain as written above reads as *one* candidate object, closed
