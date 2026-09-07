@@ -337,13 +337,24 @@ class ApplicabilityAssessmentGate:
                 else ApplicabilityAssessmentStatus.DEFER
             )
         )
-        selected_ids = {model.model_id for model in weakest_passing}
+        selected_models = weakest_passing
+        if not selected_models:
+            selected_models = [
+                model
+                for model in specification.models
+                if by_id[model.model_id].status is status
+                and not any(
+                    by_id[weaker].status is status
+                    for weaker in model.weaker_model_ids
+                )
+            ]
+        selected_ids = {model.model_id for model in selected_models}
         residuals = tuple(
             residual
             for model_id, result in results
             if status is not ApplicabilityAssessmentStatus.PASS
             and result.status is status
-            and (not selected_ids or model_id in selected_ids)
+            and model_id in selected_ids
             for residual in result.residuals
         )
         events = tuple(
