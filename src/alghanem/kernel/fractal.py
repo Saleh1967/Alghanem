@@ -377,6 +377,7 @@ class ProofLineageEdge:
 def _ensure_acyclic(
     adjacency: dict[FrozenOntologyRef, set[FrozenOntologyRef]],
 ) -> None:
+    """Reject cycles using explicit enter/exit markers instead of recursion."""
     visiting: set[FrozenOntologyRef] = set()
     visited: set[FrozenOntologyRef] = set()
     for node in adjacency:
@@ -496,8 +497,10 @@ class FractalSnapshot:
                     "references already present in this snapshot"
                 )
             reopen_id = edge.reopen_specification.reopen_id
-            previous = reopen_specs.setdefault(reopen_id, edge.reopen_specification)
-            if previous != edge.reopen_specification:
+            existing_specification = reopen_specs.setdefault(
+                reopen_id, edge.reopen_specification
+            )
+            if existing_specification != edge.reopen_specification:
                 raise FractalContractError(
                     "a reopen id must bind one exact experiment specification"
                 )
