@@ -191,6 +191,7 @@ architecture.
 | `NoTotalAlgebraicSelfBootstrap` | DECLARED_DEFERRED | The first algebraic representation may not be the complete ground of its own possibility. `NoTotalSelfBootstrap` is required; `RecursiveSelfExtensionAllowed` is explicitly preserved for later stages (`A_n -> A_{n+1}` is allowed). |
 | `PreAlgebraicEnablingConditionIsNotOrganizedPriorContent` | DECLARED_DEFERRED | `E_-1 != P_0`. Pre-algebraic enabling conditions are not the same object as organized prior content. `ConditionOfPossibility != OrganizedPriorContent`. |
 | `PriorAvailabilityIsNotPriorAuthority` | DECLARED_DEFERRED | `PriorAvailability != PriorAuthority` and `PriorInformation != PriorJudgment`. Availability for possible binding does not license truth, correctness, or judgment authority. |
+| `PreAlgebraicIntelligibilityIsNotPostAlgebraicLicense` | DECLARED_DEFERRED | Any first differentiation/binding step at this boundary is an intelligibility/usability candidate only, not a post-algebraic licensing-authority act. |
 | `NoHiddenEncyclopediaInFoundation` | DECLARED_DEFERRED | Foundation cannot be treated as a hidden finished inventory of truths. Availability of prior structure does not imply pre-certified knowledge. |
 | `DifferenceCandidateIsNotCertifiedResidual` | DECLARED_DEFERRED | `DifferenceCandidate != CertifiedResidual`. A certified residual requires reconstruction/comparison capacity and explicit scope; before that, only candidates exist. |
 | `NoResidualBeforeReconstructionCapacity` | DECLARED_DEFERRED | `Observed + Reconstructed + Comparator + Scope -> ResidualCandidate`. Therefore no residual is licensed before reconstruction capacity exists. |
@@ -198,38 +199,51 @@ architecture.
 | `GenesisIsNotRetrospectiveReconstruction` | DECLARED_DEFERRED | `Genesis != RetrospectiveReconstruction` and `RetrospectiveFormalization != HistoricalGeneration`. Later formal reconstruction can describe prior conditions but does not historically generate them. |
 | `ConditionOfPossibilityIsNotTruthGuarantee` | DECLARED_DEFERRED | `ConditionOfPossibility != TruthGuarantee`. Being necessary for intelligible start does not certify truth-status of the content. |
 | `FoundationalInventoryOpen` | DECLARED_DEFERRED | `FoundationalInventory = OPEN`. No closed primitive tuple is frozen here. Any candidate dimension remains provisional and must face later necessity/deletion audit if claimed foundational. `RetrospectiveMinimalityAudit != FoundationalGeneration`. |
+| `NoPreAlgebraicUseOfPostAlgebraicProofMachinery` | DECLARED_DEFERRED | Later algebra may retrospectively audit G−1 boundary commitments, but post-algebraic proof machinery may not be used to retroactively generate G−1 itself. |
 | `EpistemicPrecedenceIsNotFileOrderOrImplementationChronology` | DECLARED_DEFERRED | `EpistemicPrecedence != FileOrder != ImplementationChronology`. Existing G0+ laws/runtime are not invalidated or rewritten; G−1 states prior conditions they presuppose, not historical implementation order. |
 | `NoClosedOPI0TupleAtGMinus1` | DECLARED_DEFERRED | If `OPI_0` is referenced, it is only a provisional analytical name. It must not be frozen here as a closed tuple, ontology identity, birth-certified object, rank, or evidence-certified status. |
 
 The declared epistemic ordering is:
 
 ```
-E_-1 -> P_0 -> Encounter -> FirstLicensedDifferentiationOrBinding
+E_-1 -> P_0 -> Encounter -> FirstIntelligibleDifferentiationOrBindingCandidate
     -> StableOperationalRegularity -> A_first
 ```
 
-Only after representational birth:
+Only after representational birth, recurrence is evidence-mode typed:
 
 ```
-Reconstruction -> DifferenceAssessment -> ResidualOrDemand
-    -> Birth -> Freeze -> P_1
+P_n + Q_{n+1} + EvidenceMode_{n+1} -> DemandAssessment
+
+D_{n+1} =
+  EMPIRICAL -> CertifiedResidualDemand
+  FORMAL    -> CertifiedFormalNecessityDemand
+  MIXED     -> <D_E, D_F>
+
+D_{n+1} -> MinimalSatisfyingExtension? -> Birth? -> Freeze -> P_{n+1}
 ```
 
-And recursively:
+Mode-specific demand routes:
 
 ```
-P_n + O_{n+1} -> LicensedDifference -> LicensedDemand
-    -> MinimalExtension -> Freeze -> P_{n+1}
+EMPIRICAL: Observation -> Reconstruction -> Difference -> CertifiedResidual -> D_E
+FORMAL:    FormalQuestion -> ExhaustiveNecessityProof -> D_F
+MIXED:     EMPIRICAL and FORMAL tracks both required; neither substitutes for the other
 ```
 
 ### ClosedClaims
 
 - G−1 is declared as pre-algebraic boundary law only.
+- `ClosedClaims` at G−1 means constitutionally fixed boundary commitments for
+  this milestone only; it is not runtime proof or runtime enforcement status.
+- `ClosedAtConstitutionalBoundary != PROVED != ENFORCED`.
 - Total algebraic self-bootstrap is disallowed, while later recursive
   self-extension is allowed.
 - `E_-1 != P_0`, and `ConditionOfPossibility != TruthGuarantee`.
 - `DifferenceCandidate != CertifiedResidual`; no residual before reconstruction
   capacity.
+- Post-algebraic recurrence remains mode-typed (`EMPIRICAL/FORMAL/MIXED`) and
+  is not reduced to residual-only flow.
 - G0+ remains valid in implementation; G−1 asserts epistemic precedence only.
 
 ### UnprovedClaims
@@ -250,6 +264,15 @@ These are candidates only, not frozen primitives.
 
 ### NewResiduals
 
+- `PreAlgebraicLicensingVocabularyUnresolved`: pre-algebraic intelligibility
+  vocabulary must not borrow post-algebraic licensing-authority semantics.
+- `GMinus1PostAlgebraicRecurrenceEvidenceModeMismatch`: post-algebraic
+  recurrence must stay aligned with G0 evidence modes (EMPIRICAL/FORMAL/MIXED)
+  rather than an empirical-only default chain.
+- `ClosedClaimsStatusSemanticsAmbiguous`: constitutional closure can be
+  mistaken for proved or enforced status unless explicitly separated.
+- `PostAlgebraicAuditMustNotBecomeFoundationalGenerator`: retrospective audits
+  are permitted, but cannot generate foundational history.
 - `FoundationalNecessityNotAudited`: candidate foundational dimensions are not
   yet necessity/deletion-audited.
 - `FirstAlgebraBoundaryNotFormalized`: `E_-1 -> P_0 -> A_0` is declared but not
