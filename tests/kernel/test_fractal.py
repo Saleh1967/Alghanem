@@ -587,6 +587,50 @@ class TestFractalSnapshot:
                 proof_lineage_edges=edges,
             )
 
+    def test_accepts_shared_exact_reopen_specification_for_multiple_parents(
+        self,
+    ) -> None:
+        parent_a = factor_ref("f1")
+        parent_b = factor_ref("f2")
+        child_a = factor_ref("f3", birth_experiment_id="e3")
+        child_b = factor_ref("f4", birth_experiment_id="e3")
+        specification = ReopenExperimentSpecification(
+            reopen_id="shared-reopen",
+            parents=(parent_a, parent_b),
+            experiment=birth_specification("e3"),
+            allowed_observables=("obs",),
+        )
+        edges = (
+            ProofLineageEdge(parent_a, child_a, specification),
+            ProofLineageEdge(parent_b, child_b, specification),
+        )
+        snapshot = FractalSnapshot(
+            frozen_factors=(parent_a, parent_b, child_a, child_b),
+            derived_relations=(),
+            born_bridges=(),
+            proof_lineage_edges=edges,
+        )
+        assert snapshot.proof_lineage_edges == edges
+
+    def test_rejects_reopen_specification_parent_outside_snapshot(self) -> None:
+        parent = factor_ref("f1")
+        outside = factor_ref("outside")
+        child = factor_ref("f2", birth_experiment_id="e2")
+        specification = ReopenExperimentSpecification(
+            reopen_id="reopen-e2",
+            parents=(parent, outside),
+            experiment=birth_specification("e2"),
+            allowed_observables=("obs",),
+        )
+        edge = ProofLineageEdge(parent, child, specification)
+        with pytest.raises(FractalContractError, match="ontology"):
+            FractalSnapshot(
+                frozen_factors=(parent, child),
+                derived_relations=(),
+                born_bridges=(),
+                proof_lineage_edges=(edge,),
+            )
+
     def test_rejects_duplicate_factors(self) -> None:
         f1 = factor_ref("f1")
         with pytest.raises(FractalContractError):

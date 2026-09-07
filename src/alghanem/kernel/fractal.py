@@ -496,6 +496,14 @@ class FractalSnapshot:
                     "proof lineage endpoints must be exact frozen ontology "
                     "references already present in this snapshot"
                 )
+            if any(
+                parent not in self._frozen_refs and parent not in born_bridge_refs
+                for parent in edge.reopen_specification.parents
+            ):
+                raise FractalContractError(
+                    "reopen specification parents must be exact frozen ontology "
+                    "references already present in this snapshot"
+                )
             reopen_id = edge.reopen_specification.reopen_id
             existing_specification = reopen_specs.setdefault(
                 reopen_id, edge.reopen_specification
