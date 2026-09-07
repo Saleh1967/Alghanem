@@ -16,6 +16,9 @@ from alghanem.encyclopedia.self_observation import (
     RepositoryTransitionRef,
     SelfObservationContractError,
 )
+from alghanem.encyclopedia.self_observation.observation_run import (
+    _canonical_coordinate,
+)
 
 
 def snapshot(
@@ -557,3 +560,8 @@ def test_bridge_authentication_coordinates_preserve_delimiter_bearing_fields() -
         first_binding.source_authentication_ref
         != second_binding.source_authentication_ref
     )
+
+
+def test_bridge_coordinate_rejects_non_string_field_values() -> None:
+    with pytest.raises(TypeError, match="coordinate values must be strings"):
+        _canonical_coordinate(repository_identity=1)  # type: ignore[arg-type]
