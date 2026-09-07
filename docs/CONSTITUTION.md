@@ -557,17 +557,33 @@ enforcement mechanism yet:
   (mirroring G0.1-G0.BV.1's own chain) has forced it into existence. A name
   is not a license: naming ahead of birth is exactly the failure this law
   refuses.
-* `ResidualGeometryConstrainsArchitectureSearch` -- whatever architecture
-  search a future stage performs must be constrained by the actual shape of
-  the residuals on hand, not by a convenient or popular prior architecture.
-  Residual geometry is the only permitted source of *new structural demand*
-  (`ResidualGeometry = OnlySourceOfNewStructuralDemand`) -- it is not claimed
-  to be the only thing constraining search overall: frozen prior structure,
-  admissibility, licensed operations, and prior invariants also constrain
-  every future search, alongside residual geometry:
+* `LicensedStructuralDemandConstrainsArchitectureSearch` -- whatever
+  architecture search a future stage performs must be constrained by the
+  actual licensed structural demand on hand, not by a convenient or popular
+  prior architecture. Licensed structural demand is evidence-mode-sensitive
+  (`LicensedStructuralDemand_n = Demand(EvidenceMode_n)`), because
+  `NoBirthWithoutResidualOrFormalNecessity` already declares three
+  independent evidence modes and architecture search must not contradict
+  them:
+  `Demand(EMPIRICAL) = CertifiedResidualGeometry`,
+  `Demand(FORMAL) = CertifiedFormalNecessityWitness`, and
+  `Demand(MIXED) = <(D_emp, S_emp), (D_formal, S_formal)>` -- an explicitly
+  typed *scoped* pair, not a sum: `S_emp` and `S_formal` are independently
+  declared scopes of the claim, with no prior assumption that they are
+  disjoint, equal, or exhaustive (the same part of a claim may need both
+  formal necessity and empirical support), and
+  `NoCrossSubstitution(D_emp, D_formal)` -- neither component may compensate
+  for the other on the part of the claim that belongs to it
+  (`FormalProof ⇏ EmpiricalReality`,
+  `EmpiricalPattern ⇏ MathematicalNecessity`). Licensed demand is not
+  claimed to be the only thing constraining search overall: frozen prior
+  structure, admissibility, licensed operations, and prior invariants also
+  constrain every future search, alongside the licensed demand:
   `Search_{n+1} = ConstrainedBy(FrozenPrior_n, LicensedOperations_n,
-  ResidualGeometry_n)`. What residual geometry alone licenses is new
-  structural complexity: `NewStructuralComplexity must be demanded by rho_n`.
+  LicensedStructuralDemand_n)`. What licensed structural demand alone
+  licenses is new structural complexity:
+  `NewStructuralComplexity must be demanded by LicensedStructuralDemand_n`,
+  not by `rho_n` alone.
 * `NoFixedComplexityOrder` -- no future stage may assume, in advance, an
   ordering of model complexity (for example, "try bigrams before trigrams
   before graphs") as a structural law. Any such ordering, if it appears,
@@ -587,17 +603,53 @@ These combine into one governing law for any future architecture search:
 
 ```
 Architecture_{n+1} = Min_ (relation)
-    { A : Preserve(A_n) and Close(A, rho_n) and HeldOutStable(A) }
+    { A : Preserve(A_n) and SatisfyLicensedDemand(A, D_n)
+          and Validation_n(A) }
 ```
 
-That is: the next architecture is the *minimal* structure (under whatever
-partial order the future stage defines and justifies) that preserves the
-previous architecture's proven guarantees, closes the specific residual that
-forced this step, and remains stable under held-out evidence it was not
-fitted to. No future stage may skip the minimality requirement by asserting
-that a richer, named architecture is "obviously" going to be needed
-eventually -- `FuturePossibility != CurrentImplementationLicense` applies
-here exactly as everywhere else in this constitution.
+where `D_n = LicensedStructuralDemand_n`. That is: the next architecture is
+the *minimal* structure (under whatever partial order the future stage
+defines and justifies) that preserves the previous architecture's proven
+guarantees, satisfies the licensed structural demand that forced this step,
+and passes the evidence-mode-sensitive validation of its own claim.
+Satisfaction is itself mode-relative
+(`Demand != Residual`: a residual is only the EMPIRICAL special case of
+licensed demand, so the satisfaction relation is named neutrally rather than
+borrowed from residual logic): in `EMPIRICAL` mode,
+`SatisfyLicensedDemand(A, D)` specializes to residual closure
+(`Close(A, CertifiedResidualGeometry)`); in `FORMAL` mode, it means that `A`
+realizes -- fulfills and instantiates -- the structural necessity that the
+`CertifiedFormalNecessityWitness` proved within its frozen formal domain,
+not that it "closes a residual" (a necessity witness is not a residual to be
+closed); in `MIXED` mode, each component of the typed scoped pair
+`<(D_emp, S_emp), (D_formal, S_formal)>` is satisfied by its own mode's
+relation within its own declared scope.
+Validation is mode-relative
+(`Validation_n(A) = Validation(EvidenceMode_n, A)`), matching
+`NoBirthWithoutResidualOrFormalNecessity`'s three modes:
+`Validation(EMPIRICAL, A) = HeldOutStable(A)` -- the architecture remains
+stable under held-out evidence it was not fitted to;
+`Validation(FORMAL, A) = ExhaustivelyProvedClosure(A)` -- exhaustive formal
+closure over the declared closed domain, with no held-out measurement
+required, since a formal birth needs no measurement run; and
+`Validation(MIXED, A) = Validation_emp(A | S_emp) and
+Validation_formal(A | S_formal)` -- each mode's validation applies to `A`
+restricted to its own declared scope, with no assumption here about whether
+the two scopes overlap, are disjoint, or are exhaustive, and with neither
+substituting for the other. No future stage may skip the
+minimality requirement by asserting that a richer, named architecture is
+"obviously" going to be needed eventually --
+`FuturePossibility != CurrentImplementationLicense` applies here exactly as
+everywhere else in this constitution.
+
+One deferred residual is exposed by this reconciliation and recorded here
+without being closed: G0.F's stated *general* factorization law below
+(`K_L -> Residual(O_L | K_L) -> candidate factorizations`) is still
+residual-only and has not yet been reconciled with the `FORMAL`/`MIXED`
+birth paths that `NoBirthWithoutResidualOrFormalNecessity` declares
+(`G0.F EvidenceModeConsistencyNotAudited`). Auditing and, if needed,
+reconciling G0.F's general law is a separate future frozen-parent question;
+this section neither modifies G0.F nor licenses doing so now.
 
 
 G0's chain as written above reads as *one* candidate object, closed
