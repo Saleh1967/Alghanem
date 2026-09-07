@@ -567,9 +567,12 @@ enforcement mechanism yet:
   them:
   `Demand(EMPIRICAL) = CertifiedResidualGeometry`,
   `Demand(FORMAL) = CertifiedFormalNecessityWitness`, and
-  `Demand(MIXED) = EmpiricalResidualDemand + FormalNecessityDemand`, where
-  neither component of a mixed demand may substitute for the other on the
-  part of the claim that belongs to it (`FormalProof ⇏ EmpiricalReality`,
+  `Demand(MIXED) = <D_emp, D_formal>` -- an explicitly typed pair, not a sum:
+  `D_emp` and `D_formal` are partitioned by the claim's own scope
+  (`Scope(D_emp)` and `Scope(D_formal)` are disjoint parts of the claim), and
+  `NoCrossSubstitution(D_emp, D_formal)` -- neither component may compensate
+  for the other on the part of the claim that belongs to it
+  (`FormalProof ⇏ EmpiricalReality`,
   `EmpiricalPattern ⇏ MathematicalNecessity`). Licensed demand is not
   claimed to be the only thing constraining search overall: frozen prior
   structure, admissibility, licensed operations, and prior invariants also
@@ -598,15 +601,27 @@ These combine into one governing law for any future architecture search:
 
 ```
 Architecture_{n+1} = Min_ (relation)
-    { A : Preserve(A_n) and Close(A, LicensedStructuralDemand_n)
+    { A : Preserve(A_n) and SatisfyLicensedDemand(A, D_n)
           and Validation_n(A) }
 ```
 
-That is: the next architecture is the *minimal* structure (under whatever
-partial order the future stage defines and justifies) that preserves the
-previous architecture's proven guarantees, closes the licensed structural
-demand that forced this step, and passes the evidence-mode-sensitive
-validation of its own claim. Validation is mode-relative
+where `D_n = LicensedStructuralDemand_n`. That is: the next architecture is
+the *minimal* structure (under whatever partial order the future stage
+defines and justifies) that preserves the previous architecture's proven
+guarantees, satisfies the licensed structural demand that forced this step,
+and passes the evidence-mode-sensitive validation of its own claim.
+Satisfaction is itself mode-relative
+(`Demand != Residual`: a residual is only the EMPIRICAL special case of
+licensed demand, so the satisfaction relation is named neutrally rather than
+borrowed from residual logic): in `EMPIRICAL` mode,
+`SatisfyLicensedDemand(A, D)` specializes to residual closure
+(`Close(A, CertifiedResidualGeometry)`); in `FORMAL` mode, it means that `A`
+realizes -- fulfills and instantiates -- the structural necessity that the
+`CertifiedFormalNecessityWitness` proved within its frozen formal domain,
+not that it "closes a residual" (a necessity witness is not a residual to be
+closed); in `MIXED` mode, each component of the typed pair
+`<D_emp, D_formal>` is satisfied by its own mode's relation on its own scope.
+Validation is mode-relative
 (`Validation_n(A) = Validation(EvidenceMode_n, A)`), matching
 `NoBirthWithoutResidualOrFormalNecessity`'s three modes:
 `Validation(EMPIRICAL, A) = HeldOutStable(A)` -- the architecture remains
@@ -621,6 +636,15 @@ minimality requirement by asserting that a richer, named architecture is
 "obviously" going to be needed eventually --
 `FuturePossibility != CurrentImplementationLicense` applies here exactly as
 everywhere else in this constitution.
+
+One deferred residual is exposed by this reconciliation and recorded here
+without being closed: G0.F's stated *general* factorization law below
+(`K_L -> Residual(O_L | K_L) -> candidate factorizations`) is still
+residual-only and has not yet been reconciled with the `FORMAL`/`MIXED`
+birth paths that `NoBirthWithoutResidualOrFormalNecessity` declares
+(`G0.F EvidenceModeConsistencyNotAudited`). Auditing and, if needed,
+reconciling G0.F's general law is a separate future frozen-parent question;
+this section neither modifies G0.F nor licenses doing so now.
 
 
 G0's chain as written above reads as *one* candidate object, closed
