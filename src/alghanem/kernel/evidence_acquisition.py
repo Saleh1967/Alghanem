@@ -81,10 +81,11 @@ class EvidenceAcquisitionAuthorityError(BirthExperimentSpecificationError):
 class EvidenceContentIdentity:
     """A digest reference to encoder-issued canonical evidence content.
 
-    This is `EvidenceContentIdentity`, distinct from the occurrence identity
-    (`snapshot_id`, `run_id`, `authorization_id`) of the acquisition that
-    produced it: two authorized ingestions of byte-identical content share
-    this identity even though they are different occurrences.
+    This is `EvidenceContentIdentity`, distinct from the issuer-scoped
+    occurrence identifiers (`snapshot_id`, `run_id`, `authorization_id`) of
+    the acquisition that produced it: two authorized ingestions of
+    byte-identical content share this identity even though they are
+    different occurrences.
     """
 
     algorithm: str
