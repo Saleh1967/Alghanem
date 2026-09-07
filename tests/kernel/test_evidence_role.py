@@ -107,6 +107,9 @@ def candidate(
 
 
 def test_binding_rejects_direct_construction() -> None:
+    from alghanem.kernel import AuthenticatedObservationBinding as PublicBinding
+
+    assert PublicBinding is AuthenticatedObservationBinding
     with pytest.raises(ValueError, match="must be issued through"):
         AuthenticatedObservationBinding(
             "imaginary-observation", "imaginary-authentication"
