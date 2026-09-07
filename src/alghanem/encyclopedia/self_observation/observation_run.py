@@ -9,6 +9,7 @@ from alghanem.kernel._internal.authenticated_observation_bridge import (
     AuthenticatedObservationBinding,
     issue_from_source_authority,
 )
+from alghanem.kernel._internal.text import is_non_blank_text
 
 from .artifact_ref import RepositoryArtifactRef
 from .authenticated_artifact import AuthenticatedRepositoryArtifact
@@ -34,10 +35,7 @@ def _canonical_coordinate(**coordinate_fields: str) -> str:
     portable observation identity.
     """
 
-    if any(
-        type(value) is not str or not value.strip()
-        for value in coordinate_fields.values()
-    ):
+    if any(not is_non_blank_text(value) for value in coordinate_fields.values()):
         raise TypeError("source coordinate values must be non-blank text")
     return json.dumps(
         coordinate_fields, ensure_ascii=False, separators=(",", ":"), sort_keys=True
