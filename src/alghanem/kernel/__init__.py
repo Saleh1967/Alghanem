@@ -2,6 +2,17 @@
 
 from ._internal.authenticated_observation_bridge import AuthenticatedObservationBinding
 from .anchor import Anchor, State
+from .applicability import (
+    ApplicabilityAssessmentGate,
+    ApplicabilityAssessmentSpecification,
+    ApplicabilityAssessmentStatus,
+    ApplicabilityEvaluatorRegistry,
+    ApplicabilityModelResult,
+    AuthorizedApplicabilityEvaluatorBinding,
+    EvidenceApplicabilityAssessment,
+    FrozenApplicabilityModel,
+    SealedApplicabilityEvaluatorRegistry,
+)
 from .binding import ClaimEvidenceBinding
 from .birth import (
     AuthorizedBirthAssessmentEvaluatorDefinition,
@@ -130,7 +141,13 @@ from .transition import (
 
 __all__ = [
     "Anchor",
+    "ApplicabilityAssessmentGate",
+    "ApplicabilityAssessmentSpecification",
+    "ApplicabilityAssessmentStatus",
+    "ApplicabilityEvaluatorRegistry",
+    "ApplicabilityModelResult",
     "AuthenticatedObservationBinding",
+    "AuthorizedApplicabilityEvaluatorBinding",
     "AuthorizedBirthAssessmentEvaluatorDefinition",
     "AuthorizedEvidenceSnapshot",
     "BirthAssessmentContentBinding",
@@ -181,6 +198,7 @@ __all__ = [
     "DerivedRelationRef",
     "DerivedRelationSpec",
     "Evidence",
+    "EvidenceApplicabilityAssessment",
     "EvidenceAcquisitionAuthority",
     "EvidenceAcquisitionAuthorityError",
     "EvidenceAcquisitionAuthorization",
@@ -193,6 +211,7 @@ __all__ = [
     "FractalContractError",
     "FractalProvenancePath",
     "FractalSnapshot",
+    "FrozenApplicabilityModel",
     "FrozenBirthSemanticsContentScope",
     "FrozenFactorRef",
     "FrozenOntologyRef",
@@ -223,6 +242,7 @@ __all__ = [
     "Residual",
     "ResidualDefinitionSpec",
     "ReopenExperimentSpecification",
+    "SealedApplicabilityEvaluatorRegistry",
     "SealedBirthAssessmentEvaluatorRegistry",
     "SealedBirthSemanticsContentRegistry",
     "SealedInvariantExtractorRegistry",

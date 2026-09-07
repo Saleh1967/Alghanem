@@ -25,6 +25,15 @@ observation evidence for a claim.
 Bindings are source-bound authenticated coordinates, not portable observation
 identities; portable identity remains deferred.
 
+G0.EA.1 assesses an existing `EvidenceRoleCandidate` only for applicability in
+the claim's scope. Its gate-issued `EvidenceApplicabilityAssessment` is
+`PASS`, `BLOCK`, or `DEFER`, with reason, trace, residuals, and the identities
+of its frozen specification and sealed evaluator registry. Evaluators are
+authority-issued and bound to the candidate's role and claim scope. The gate
+selects the weakest declared model that closes applicability rather than
+aggregating every model's worst status. This stage does not assess sufficiency,
+truth, licensed-claim status, or knowledge.
+
 The initial Arabic layer is limited to `RawSurfaceObservation` and
 `SurfaceNormalization`. It emits versioned normalization traces, residuals,
 and uninterpreted surface-atom candidates. `ObservationAuditLedger` preserves
