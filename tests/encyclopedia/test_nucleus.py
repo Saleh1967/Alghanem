@@ -14,7 +14,16 @@ from alghanem.kernel.birth import (
     ProjectionPoset,
     StructureHypothesis,
 )
-from alghanem.kernel.fractal import FractalSnapshot
+from alghanem.kernel.experiment_spec_content_identity import (
+    BirthExperimentSpecificationContentBinding,
+    CanonicalBirthExperimentSpecificationEncoder,
+    PreEvidenceSpecificationRegistry,
+)
+from alghanem.kernel.fractal import (
+    FractalSnapshot,
+    FrozenFactorRef,
+    ReopenExperimentSpecification,
+)
 
 
 def birth_specification() -> BirthExperimentSpecification:
@@ -39,21 +48,32 @@ def birth_specification() -> BirthExperimentSpecification:
 
 
 def root_inquiry() -> RootInquiry:
+    specification = birth_specification()
     return RootInquiry(
         inquiry_id="root-inquiry",
         jurisdiction_id="discovery-jurisdiction",
-        experiment=birth_specification(),
+        experiment_binding=BirthExperimentSpecificationContentBinding(
+            specification,
+            PreEvidenceSpecificationRegistry().freeze(
+                CanonicalBirthExperimentSpecificationEncoder.encode(specification)
+            ),
+        ),
     )
 
 
 class TestInquiryContracts:
-    def test_root_inquiry_requires_complete_g0_specification(self) -> None:
+    def test_root_inquiry_requires_frozen_pre_evidence_content_binding(self) -> None:
         with pytest.raises(EncyclopediaContractError):
             RootInquiry(
                 inquiry_id="root-inquiry",
                 jurisdiction_id="discovery-jurisdiction",
-                experiment="proposal-only",  # type: ignore[arg-type]
+                experiment_binding="specification-only",  # type: ignore[arg-type]
             )
+
+    def test_root_inquiry_exposes_the_bound_specification(self) -> None:
+        inquiry = root_inquiry()
+
+        assert inquiry.experiment is inquiry.experiment_binding.specification
 
     def test_proposal_is_not_executable_inquiry(self) -> None:
         proposal = QuestionProposal(
@@ -65,6 +85,8 @@ class TestInquiryContracts:
         assert "experiment" not in QuestionProposal.__dataclass_fields__
         assert "execute" not in dir(proposal)
         assert "proposal" not in RootInquiry.__dataclass_fields__
+        assert "experiment" not in RootInquiry.__dataclass_fields__
+        assert "experiment_binding" in RootInquiry.__dataclass_fields__
 
     def test_contracts_do_not_introduce_domain_text_or_knowledge_fields(self) -> None:
         declared_fields = set(QuestionProposal.__dataclass_fields__)
@@ -76,7 +98,7 @@ class TestInquiryContracts:
 
 
 class TestGrowthFrontier:
-    def test_deferred_root_inquiry_remains_in_immutable_frontier(self) -> None:
+    def test_frontier_is_immutable(self) -> None:
         frontier = GrowthFrontier((root_inquiry(),), ())
 
         assert frontier.root_inquiries == (root_inquiry(),)
@@ -100,3 +122,55 @@ class TestEncyclopediaNucleusSnapshot:
         assert snapshot.fractal is fractal
         with pytest.raises(AttributeError):
             snapshot.fractal = FractalSnapshot((), (), ())  # type: ignore[misc]
+
+    def test_reopen_parents_must_exist_as_exact_snapshot_references(self) -> None:
+        parent = FrozenFactorRef(
+            factor_id="factor",
+            factor_content_id="content",
+            freeze_certificate_id="certificate",
+            domain="discovery-jurisdiction",
+            birth_experiment_id="parent-experiment",
+            birth_revision_id="r1",
+        )
+        reopen = ReopenExperimentSpecification(
+            reopen_id="reopen",
+            parents=(parent,),
+            experiment=birth_specification(),
+            allowed_observables=("observation",),
+        )
+
+        with pytest.raises(EncyclopediaContractError, match="exact frozen"):
+            EncyclopediaNucleusSnapshot(
+                fractal=FractalSnapshot((), (), ()),
+                frontier=GrowthFrontier((), (reopen,)),
+            )
+
+    def test_reopen_parent_must_not_only_share_a_factor_id(self) -> None:
+        recorded = FrozenFactorRef(
+            factor_id="factor",
+            factor_content_id="original-content",
+            freeze_certificate_id="certificate",
+            domain="discovery-jurisdiction",
+            birth_experiment_id="parent-experiment",
+            birth_revision_id="r1",
+        )
+        drifted = FrozenFactorRef(
+            factor_id="factor",
+            factor_content_id="drifted-content",
+            freeze_certificate_id="certificate",
+            domain="discovery-jurisdiction",
+            birth_experiment_id="parent-experiment",
+            birth_revision_id="r1",
+        )
+        reopen = ReopenExperimentSpecification(
+            reopen_id="reopen",
+            parents=(drifted,),
+            experiment=birth_specification(),
+            allowed_observables=("observation",),
+        )
+
+        with pytest.raises(EncyclopediaContractError, match="exact frozen"):
+            EncyclopediaNucleusSnapshot(
+                fractal=FractalSnapshot((recorded,), (), ()),
+                frontier=GrowthFrontier((), (reopen,)),
+            )

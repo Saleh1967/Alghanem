@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from alghanem.kernel.fractal import FractalSnapshot
+from alghanem.kernel.fractal import FractalSnapshot, FrozenOntologyRef
 
 from .frontier import GrowthFrontier
 from .inquiry import EncyclopediaContractError
@@ -26,3 +26,12 @@ class EncyclopediaNucleusSnapshot:
             raise EncyclopediaContractError(
                 "encyclopedia nucleus requires a GrowthFrontier"
             )
+        ontology_refs: frozenset[FrozenOntologyRef] = frozenset(
+            self.fractal.frozen_factors + self.fractal.born_bridges
+        )
+        for inquiry in self.frontier.reopen_inquiries:
+            if any(parent not in ontology_refs for parent in inquiry.parents):
+                raise EncyclopediaContractError(
+                    "frontier reopen parents must be exact frozen ontology "
+                    "references present in the fractal snapshot"
+                )

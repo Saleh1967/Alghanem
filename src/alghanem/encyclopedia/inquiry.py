@@ -14,6 +14,9 @@ from alghanem.kernel.birth import (
     BirthExperimentSpecificationError,
     _require_text,
 )
+from alghanem.kernel.experiment_spec_content_identity import (
+    BirthExperimentSpecificationContentBinding,
+)
 
 
 class EncyclopediaContractError(BirthExperimentSpecificationError):
@@ -26,8 +29,9 @@ class QuestionProposal:
 
     Question generation is distinct from question authorization. This contract
     intentionally has no experiment or execution fields: a future authority
-    must first translate an approved proposal into a separately frozen G0
-    specification before a `RootInquiry` may be constructed.
+    must first translate an approved proposal into a complete G0 specification,
+    freeze its canonical content, and bind it before a `RootInquiry` may be
+    constructed.
     """
 
     proposal_id: str
@@ -42,16 +46,25 @@ class QuestionProposal:
 
 @dataclass(frozen=True, slots=True)
 class RootInquiry:
-    """A neutral root inquiry bound to one complete pre-evidence G0 contract."""
+    """A neutral root inquiry bound to authority-frozen pre-evidence content."""
 
     inquiry_id: str
     jurisdiction_id: str
-    experiment: BirthExperimentSpecification
+    experiment_binding: BirthExperimentSpecificationContentBinding
 
     def __post_init__(self) -> None:
         _require_text(self.inquiry_id, "root inquiry id")
         _require_text(self.jurisdiction_id, "root inquiry jurisdiction id")
-        if not isinstance(self.experiment, BirthExperimentSpecification):
+        if not isinstance(
+            self.experiment_binding, BirthExperimentSpecificationContentBinding
+        ):
             raise EncyclopediaContractError(
-                "a root inquiry requires a complete BirthExperimentSpecification"
+                "a root inquiry requires an authority-frozen pre-evidence "
+                "experiment content binding"
             )
+
+    @property
+    def experiment(self) -> BirthExperimentSpecification:
+        """Return the content-bound experiment specification."""
+
+        return self.experiment_binding.specification
