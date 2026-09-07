@@ -512,7 +512,7 @@ GrowthFrontier = RootInquiries + ReopenInquiries
 only frozen discovery contracts, whose construction remains non-authoritative
 until the future birth and freeze authorities exist. The frontier holds open
 questions. Frontier immutability is a contract property; preserving an inquiry
-after a future `DEFER` verdict is deferred until a growth transition exists.
+after a `DEFER` verdict is deferred until a growth transition mechanism exists.
 
 | Law | Status | Scope |
 | --- | --- | --- |

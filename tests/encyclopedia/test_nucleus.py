@@ -20,6 +20,7 @@ from alghanem.kernel.experiment_spec_content_identity import (
     PreEvidenceSpecificationRegistry,
 )
 from alghanem.kernel.fractal import (
+    BornBridgeRef,
     FractalSnapshot,
     FrozenFactorRef,
     ReopenExperimentSpecification,
@@ -181,3 +182,43 @@ class TestEncyclopediaNucleusSnapshot:
                 fractal=FractalSnapshot((recorded,), (), ()),
                 frontier=GrowthFrontier((), (reopen,)),
             )
+
+    def test_reopen_parent_may_be_a_snapshot_born_bridge(self) -> None:
+        first = FrozenFactorRef(
+            factor_id="first",
+            factor_content_id="first-content",
+            freeze_certificate_id="first-certificate",
+            domain="discovery-jurisdiction",
+            birth_experiment_id="first-experiment",
+            birth_revision_id="r1",
+        )
+        second = FrozenFactorRef(
+            factor_id="second",
+            factor_content_id="second-content",
+            freeze_certificate_id="second-certificate",
+            domain="discovery-jurisdiction",
+            birth_experiment_id="second-experiment",
+            birth_revision_id="r1",
+        )
+        bridge = BornBridgeRef(
+            bridge_id="bridge",
+            bridge_content_id="bridge-content",
+            freeze_certificate_id="bridge-certificate",
+            domain="discovery-jurisdiction",
+            endpoint_refs=(first, second),
+            birth_experiment_id="bridge-experiment",
+            birth_revision_id="r1",
+        )
+        reopen = ReopenExperimentSpecification(
+            reopen_id="bridge-reopen",
+            parents=(bridge,),
+            experiment=birth_specification(),
+            allowed_observables=("observation",),
+        )
+
+        snapshot = EncyclopediaNucleusSnapshot(
+            fractal=FractalSnapshot((first, second), (), (bridge,)),
+            frontier=GrowthFrontier((), (reopen,)),
+        )
+
+        assert snapshot.frontier.reopen_inquiries == (reopen,)
