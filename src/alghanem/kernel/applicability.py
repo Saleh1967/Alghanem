@@ -8,10 +8,11 @@ knowledge judgment.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from collections.abc import Callable
+from dataclasses import InitVar, dataclass, field
 from enum import Enum
-from typing import Callable, InitVar
 
+from .claim_constitution import ClaimScopeRef
 from .evidence_role import EvidenceRoleCandidate
 from .residual import Residual
 from .trace import Trace
@@ -91,7 +92,9 @@ class ApplicabilityAssessmentSpecification:
         known = set(identifiers)
         for model in self.models:
             if not set(model.weaker_model_ids) <= known:
-                raise ValueError("applicability models reference an unknown weaker model")
+                raise ValueError(
+                    "applicability models reference an unknown weaker model"
+                )
         if _has_cycle(self.models):
             raise ValueError("applicability model weakening must be acyclic")
 
@@ -103,7 +106,7 @@ class EvidenceApplicabilityAssessment:
     candidate: EvidenceRoleCandidate
     status: ApplicabilityAssessmentStatus
     reason: str
-    scope: object
+    scope: ClaimScopeRef
     trace: Trace
     residuals: tuple[Residual, ...]
     model_results: tuple[tuple[str, ApplicabilityModelResult], ...] = ()
@@ -118,7 +121,9 @@ class EvidenceApplicabilityAssessment:
                 "ApplicabilityAssessmentGate"
             )
         if type(self.candidate) is not EvidenceRoleCandidate:
-            raise TypeError("applicability assessments require an evidence-role candidate")
+            raise TypeError(
+                "applicability assessments require an evidence-role candidate"
+            )
         if not isinstance(self.status, ApplicabilityAssessmentStatus):
             raise TypeError("applicability assessments require a status")
         if type(self.reason) is not str or not self.reason.strip():
@@ -142,7 +147,9 @@ class ApplicabilityAssessmentGate:
         specification: ApplicabilityAssessmentSpecification,
     ) -> EvidenceApplicabilityAssessment:
         if type(candidate) is not EvidenceRoleCandidate:
-            raise TypeError("applicability assessment requires an evidence-role candidate")
+            raise TypeError(
+                "applicability assessment requires an evidence-role candidate"
+            )
         if type(specification) is not ApplicabilityAssessmentSpecification:
             raise TypeError("applicability assessment requires a specification")
 
@@ -166,8 +173,12 @@ class ApplicabilityAssessmentGate:
             residual for _, result in results for residual in result.residuals
         )
         events = tuple(
-            f"applicability model {identifier}: {result.status.value}"
+            event
             for identifier, result in results
+            for event in (
+                f"applicability model {identifier}: {result.status.value}",
+                *result.trace.events,
+            )
         )
         reason = "; ".join(
             f"{identifier}: {result.reason}" for identifier, result in results

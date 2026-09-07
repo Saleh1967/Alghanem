@@ -2,6 +2,14 @@
 
 from ._internal.authenticated_observation_bridge import AuthenticatedObservationBinding
 from .anchor import Anchor, State
+from .applicability import (
+    ApplicabilityAssessmentGate,
+    ApplicabilityAssessmentSpecification,
+    ApplicabilityAssessmentStatus,
+    ApplicabilityModelResult,
+    EvidenceApplicabilityAssessment,
+    FrozenApplicabilityModel,
+)
 from .binding import ClaimEvidenceBinding
 from .birth import (
     AuthorizedBirthAssessmentEvaluatorDefinition,
@@ -49,14 +57,6 @@ from .claim_constitution import (
     ClaimQualification,
     ClaimScopeRef,
     PredicateRef,
-)
-from .applicability import (
-    ApplicabilityAssessmentGate,
-    ApplicabilityAssessmentSpecification,
-    ApplicabilityAssessmentStatus,
-    ApplicabilityModelResult,
-    EvidenceApplicabilityAssessment,
-    FrozenApplicabilityModel,
 )
 from .content_identity import (
     CanonicalTransitionEncoder,

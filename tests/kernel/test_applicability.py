@@ -64,7 +64,10 @@ def test_assessment_aggregates_models_without_claiming_sufficiency() -> None:
     observed = candidate()
     specification = ApplicabilityAssessmentSpecification(
         (
-            FrozenApplicabilityModel("source-attestation", lambda _: result(ApplicabilityAssessmentStatus.PASS)),
+            FrozenApplicabilityModel(
+                "source-attestation",
+                lambda _: result(ApplicabilityAssessmentStatus.PASS),
+            ),
             FrozenApplicabilityModel(
                 "historical-proof",
                 lambda _: result(ApplicabilityAssessmentStatus.DEFER),
@@ -85,8 +88,12 @@ def test_assessment_aggregates_models_without_claiming_sufficiency() -> None:
 def test_block_precedes_defer_and_assessments_cannot_be_fabricated() -> None:
     specification = ApplicabilityAssessmentSpecification(
         (
-            FrozenApplicabilityModel("source", lambda _: result(ApplicabilityAssessmentStatus.BLOCK)),
-            FrozenApplicabilityModel("history", lambda _: result(ApplicabilityAssessmentStatus.DEFER)),
+            FrozenApplicabilityModel(
+                "source", lambda _: result(ApplicabilityAssessmentStatus.BLOCK)
+            ),
+            FrozenApplicabilityModel(
+                "history", lambda _: result(ApplicabilityAssessmentStatus.DEFER)
+            ),
         )
     )
     assessment = ApplicabilityAssessmentGate.assess(candidate(), specification)
@@ -106,7 +113,11 @@ def test_weaker_model_graph_must_be_frozen_and_acyclic() -> None:
     with pytest.raises(ValueError, match="acyclic"):
         ApplicabilityAssessmentSpecification(
             (
-                FrozenApplicabilityModel("a", lambda _: result(ApplicabilityAssessmentStatus.PASS), ("b",)),
-                FrozenApplicabilityModel("b", lambda _: result(ApplicabilityAssessmentStatus.PASS), ("a",)),
+                FrozenApplicabilityModel(
+                    "a", lambda _: result(ApplicabilityAssessmentStatus.PASS), ("b",)
+                ),
+                FrozenApplicabilityModel(
+                    "b", lambda _: result(ApplicabilityAssessmentStatus.PASS), ("a",)
+                ),
             )
         )
