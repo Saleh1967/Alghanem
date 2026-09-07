@@ -52,21 +52,35 @@ These are the initial laws of the language-agnostic kernel:
 - `ClaimCandidate` has no evidence or evidence-binding field; claim-specific
   evidence binding is deferred to G0.EB.1.
 
+### G0.OB.1 — Authenticated-observation bridge
+
+- `AuthenticationIdentifier != AuthenticationCertificate`: strings naming an
+  observation and its authentication never constitute an authenticated
+  observation.
+- `AuthenticatedObservationBinding` is issued only through the source-agnostic
+  kernel `AuthenticatedObservationBridge`. A source-specific authority must
+  invoke that internal bridge only after issuing its own authenticated
+  observation. The G0.SO.1 repository adapter is
+  `RepositoryObservationRun.bridge_authenticated_fragment`, which accepts only
+  its own authority-issued `AuthenticatedRepositoryFragment`.
+- The kernel imports no source-layer type. A binding's source references are
+  audit coordinates derived by the source authority, not a certificate
+  reconstructed from caller-supplied identifiers.
+
 ### G0.EB.1 — Claim-relative evidence-role constitution
 
-- `AuthenticatedObservation` identifies an observation with an opaque
-  authentication reference. Authentication does not decide applicability,
-  sufficiency, truth, or knowledge.
-- `EvidenceRoleCandidate(AuthenticatedObservation, ClaimCandidate)` is the
-  smallest current structural pairing for asking whether an observation can
-  bear an evidence role toward a particular structured claim.
-  `EvidenceRoleCandidate != EvidenceApplicability`: it issues no applicability
-  judgment and does not assert that the observation is evidence.
-- `EvidenceRoleIsClaimRelative` is enforced at the candidate boundary:
-  the same authenticated observation paired with distinct claim candidates is
-  a distinct candidate. Observation id alone, claim anchor alone, claim scope
-  alone, and shared authentication provenance all collapse distinct roles and
-  cannot reconstruct this pairing.
+- `EvidenceRoleCandidate(AuthenticatedObservationBinding, ClaimCandidate,
+  EvidenceRoleRef)` is a proposed evidence role. `EvidenceRoleRef` is opaque:
+  `EvidenceRoleRef != EvidenceRoleSemantics != EvidenceApplicability`.
+- Projection collisions prove the three coordinates are necessary for the
+  declared distinction target: deleting observation, claim, or role collapses
+  distinct candidates. This is
+  `EvidenceRoleCandidateCoreMinimality`, not a claim of semantic minimality.
+- `EvidenceRoleCandidate != EvidenceApplicability`: it does not assert that
+  the observation is evidence or that the proposed role applies.
+- `LegacyEvidence != EvidenceRoleCandidate`: legacy `Evidence(claim_id, basis)`
+  and `ClaimEvidenceBinding` remain a separate claim-id system and never issue
+  or substitute for a G0.EB.1 candidate.
 - `EvidenceApplicability != EvidenceSufficiency`,
   `EvidenceSufficiency != Truth`, and `TruthAssessment != Knowledge` remain
   outside this milestone. `EvidenceRoleCandidate` has no fields for any of

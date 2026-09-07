@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from alghanem.kernel.evidence_role import (
+    AuthenticatedObservationBinding,
+    AuthenticatedObservationBridge,
+)
+
 from .artifact_ref import RepositoryArtifactRef
 from .authenticated_artifact import AuthenticatedRepositoryArtifact
 from .authenticated_fragment import AuthenticatedRepositoryFragment
@@ -118,6 +123,29 @@ class RepositoryObservationRun:
             content_id,
             self,
             _token=self._issuance_capability,
+        )
+
+    def bridge_authenticated_fragment(
+        self, fragment: AuthenticatedRepositoryFragment
+    ) -> AuthenticatedObservationBinding:
+        """Bridge one authority-issued repository fragment into G0.OB.1."""
+
+        if fragment.observation_run is not self:
+            raise SelfObservationContractError(
+                "fragment is not owned by this observation run"
+            )
+        artifact = fragment.artifact
+        snapshot = artifact.snapshot.snapshot
+        return AuthenticatedObservationBridge._issue(
+            (
+                f"{snapshot.repository_identity}@{snapshot.commit_sha}:"
+                f"{artifact.artifact_path}:{fragment.fragment_locator}:"
+                f"{fragment.fragment_content_id}"
+            ),
+            (
+                f"{self.run_id}:{self.provider_identity}:"
+                f"{self.implementation_identity}:{self.protocol_version}"
+            ),
         )
 
     def observe_transition(

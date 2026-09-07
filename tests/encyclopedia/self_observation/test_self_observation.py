@@ -472,3 +472,19 @@ def test_authenticated_objects_and_runs_reject_direct_construction() -> None:
         RepositoryObservationAuthority(FakeProvider()).open_run().__class__(
             "run", "provider", "implementation", "1", FakeProvider()
         )
+
+
+def test_authenticated_fragment_can_be_bridged_only_by_its_own_run() -> None:
+    run = authenticated_run()
+    observed = run.observe_snapshot(snapshot("c1", "t1"))
+    artifact_observation = run.observe_artifact(
+        observed, artifact(snapshot("c1", "t1"), blob_sha="b1")
+    )
+    fragment = run.observe_fragment(artifact_observation, "RootInquiry")
+
+    binding = run.bridge_authenticated_fragment(fragment)
+
+    assert "RootInquiry" in binding.source_observation_ref
+    assert binding.source_authentication_ref.startswith(f"{run.run_id}:")
+    with pytest.raises(SelfObservationContractError):
+        authenticated_run().bridge_authenticated_fragment(fragment)

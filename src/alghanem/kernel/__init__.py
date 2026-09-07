@@ -65,7 +65,12 @@ from .evidence_acquisition import (
     EvidenceAcquisitionRun,
     EvidenceContentIdentity,
 )
-from .evidence_role import AuthenticatedObservation, EvidenceRoleCandidate
+from .evidence_role import (
+    AuthenticatedObservationBinding,
+    AuthenticatedObservationBridge,
+    EvidenceRoleCandidate,
+    EvidenceRoleRef,
+)
 from .experiment_spec_content_identity import (
     BirthExperimentContentIdentityError,
     BirthExperimentSpecificationContentBinding,
@@ -126,7 +131,8 @@ from .transition import (
 
 __all__ = [
     "Anchor",
-    "AuthenticatedObservation",
+    "AuthenticatedObservationBinding",
+    "AuthenticatedObservationBridge",
     "AuthorizedBirthAssessmentEvaluatorDefinition",
     "AuthorizedEvidenceSnapshot",
     "BirthAssessmentContentBinding",
@@ -178,6 +184,7 @@ __all__ = [
     "DerivedRelationSpec",
     "Evidence",
     "EvidenceRoleCandidate",
+    "EvidenceRoleRef",
     "EvidenceAcquisitionAuthority",
     "EvidenceAcquisitionAuthorityError",
     "EvidenceAcquisitionAuthorization",

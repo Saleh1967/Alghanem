@@ -1,8 +1,9 @@
-"""G0.EB.1's pre-sufficiency constitution of claim-relative evidence roles.
+"""G0.OB.1 and G0.EB.1's pre-applicability evidence-role boundary.
 
-An authenticated observation is not evidence by itself.  A
-``EvidenceRoleCandidate`` records only that one authenticated observation is
-being considered in relation to one structured claim.  It does not decide
+G0.OB.1 bridges a source-specific authenticated observation into an
+authority-issued kernel binding without making the kernel depend on a source
+layer. G0.EB.1 then records a proposed role relative to that binding, a
+structured claim, and an opaque role reference. Neither milestone decides
 applicability, sufficiency, truth, or knowledge.
 """
 
@@ -12,44 +13,93 @@ from dataclasses import dataclass
 
 from .claim_constitution import ClaimCandidate
 
+_AUTHENTICATED_OBSERVATION_BINDING_TOKEN = object()
+
 
 def _require_text(value: str, name: str) -> None:
     if type(value) is not str or not value.strip():
         raise ValueError(f"{name} must be non-blank text")
 
 
-@dataclass(frozen=True, slots=True)
-class AuthenticatedObservation:
-    """An observation identified with the authentication that attests to it.
+@dataclass(frozen=True, slots=True, init=False)
+class AuthenticatedObservationBinding:
+    """A kernel binding issued from one source-authenticated observation.
 
-    The identifiers are opaque references.  They do not assert that the
-    observation applies to any claim, nor do they decide its evidential force.
+    The source-specific authority owns issuance. Source references identify
+    what that authority authenticated; they are not caller assertions of
+    authentication and do not decide evidence applicability.
     """
 
-    observation_id: str
-    authentication_id: str
+    source_observation_ref: str
+    source_authentication_ref: str
+
+    def __init__(
+        self,
+        source_observation_ref: str,
+        source_authentication_ref: str,
+        *,
+        _token: object | None = None,
+    ) -> None:
+        if _token is not _AUTHENTICATED_OBSERVATION_BINDING_TOKEN:
+            raise ValueError(
+                "authenticated observation bindings must be issued through "
+                "AuthenticatedObservationBridge"
+            )
+        _require_text(source_observation_ref, "source observation reference")
+        _require_text(source_authentication_ref, "source authentication reference")
+        object.__setattr__(self, "source_observation_ref", source_observation_ref)
+        object.__setattr__(self, "source_authentication_ref", source_authentication_ref)
+
+
+class AuthenticatedObservationBridge:
+    """Internal G0.OB.1 construction bridge for source authorities.
+
+    It deliberately has no public issuance API. A source-specific observation
+    authority calls ``_issue`` only after authenticating its own observation.
+    Thus this kernel module remains source-agnostic while the resulting binding
+    cannot be caller-constructed from arbitrary identifier strings.
+    """
+
+    @staticmethod
+    def _issue(
+        source_observation_ref: str, source_authentication_ref: str
+    ) -> AuthenticatedObservationBinding:
+        return AuthenticatedObservationBinding(
+            source_observation_ref,
+            source_authentication_ref,
+            _token=_AUTHENTICATED_OBSERVATION_BINDING_TOKEN,
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class EvidenceRoleRef:
+    """An opaque role reference, not a role semantics or applicability judgment."""
+
+    identifier: str
 
     def __post_init__(self) -> None:
-        _require_text(self.observation_id, "observation id")
-        _require_text(self.authentication_id, "observation authentication id")
+        _require_text(self.identifier, "evidence role reference")
 
 
 @dataclass(frozen=True, slots=True)
 class EvidenceRoleCandidate:
-    """One proposed evidence role, relative to one observation and one claim.
+    """A proposed, claim-relative evidence role before applicability assessment."""
 
-    This is a structural pairing only.  ``EvidenceRoleCandidate`` is neither
-    an applicability judgment nor an evidence-sufficiency, truth, or knowledge
-    judgment.
-    """
-
-    observation: AuthenticatedObservation
+    authenticated_observation_binding: AuthenticatedObservationBinding
     claim: ClaimCandidate
+    role: EvidenceRoleRef
 
     def __post_init__(self) -> None:
-        if type(self.observation) is not AuthenticatedObservation:
+        if (
+            type(self.authenticated_observation_binding)
+            is not AuthenticatedObservationBinding
+        ):
             raise TypeError(
-                "evidence role candidate requires an authenticated observation"
+                "evidence role candidate requires an authenticated observation binding"
             )
         if type(self.claim) is not ClaimCandidate:
             raise TypeError("evidence role candidate requires a claim candidate")
+        if type(self.role) is not EvidenceRoleRef:
+            raise TypeError(
+                "evidence role candidate requires an evidence role reference"
+            )

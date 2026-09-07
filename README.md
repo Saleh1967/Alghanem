@@ -14,10 +14,13 @@ candidate claims to be (its `TransitionKind`) is likewise kept distinct from
 any certified outcome. See `docs/CONSTITUTION.md` for the full law-by-law
 status.
 
-G0.EB.1 adds only a claim-relative `EvidenceRoleCandidate` pairing of an
-`AuthenticatedObservation` with a `ClaimCandidate`. It does not judge
-applicability, sufficiency, truth, or knowledge: authenticating an observation
-does not by itself make it evidence for a claim.
+G0.OB.1 bridges a source-specific, authority-issued authenticated observation
+to a kernel `AuthenticatedObservationBinding`; identifiers alone never
+constitute authentication. G0.EB.1 then adds a claim-relative
+`EvidenceRoleCandidate` over that binding, a `ClaimCandidate`, and an opaque
+`EvidenceRoleRef`. It does not judge applicability, sufficiency, truth, or
+knowledge: authentication or a proposed role does not by itself make an
+observation evidence for a claim.
 
 The initial Arabic layer is limited to `RawSurfaceObservation` and
 `SurfaceNormalization`. It emits versioned normalization traces, residuals,

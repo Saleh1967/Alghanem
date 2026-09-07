@@ -1,4 +1,4 @@
-"""Constitutional tests for G0.EB.1's claim-relative evidence role boundary."""
+"""Constitutional tests for G0.OB.1 and G0.EB.1."""
 
 from dataclasses import fields
 from typing import cast
@@ -7,15 +7,20 @@ import pytest
 
 from alghanem.kernel import (
     Anchor,
-    AuthenticatedObservation,
+    AuthenticatedObservationBinding,
+    AuthenticatedObservationBridge,
     CanonicalClaimContentEncoder,
+    Claim,
     ClaimCandidate,
     ClaimContentManifest,
     ClaimCore,
+    ClaimEvidenceBinding,
     ClaimOccurrenceRef,
     ClaimPolarity,
     ClaimScopeRef,
+    Evidence,
     EvidenceRoleCandidate,
+    EvidenceRoleRef,
     PredicateRef,
 )
 
@@ -42,107 +47,131 @@ def claim(
     )
 
 
-def observation(
-    observation_id: str = "maqayis-naql-observation",
-    authentication_id: str = "archive-attestation-1",
-) -> AuthenticatedObservation:
-    return AuthenticatedObservation(observation_id, authentication_id)
+def binding(
+    observation: str = "maqayis-naql-observation",
+    authentication: str = "archive-attestation-1",
+) -> AuthenticatedObservationBinding:
+    return AuthenticatedObservationBridge._issue(observation, authentication)
+
+
+def role(identifier: str = "source-attestation") -> EvidenceRoleRef:
+    return EvidenceRoleRef(identifier)
+
+
+def candidate(
+    observed: AuthenticatedObservationBinding | None = None,
+    asserted_claim: ClaimCandidate | None = None,
+    proposed_role: EvidenceRoleRef | None = None,
+) -> EvidenceRoleCandidate:
+    return EvidenceRoleCandidate(
+        observed or binding(), asserted_claim or claim(), proposed_role or role()
+    )
+
+
+def test_binding_rejects_direct_construction() -> None:
+    with pytest.raises(
+        ValueError, match="issued through AuthenticatedObservationBridge"
+    ):
+        AuthenticatedObservationBinding(
+            "imaginary-observation", "imaginary-authentication"
+        )
 
 
 def test_same_observation_has_distinct_roles_for_distinct_claims() -> None:
-    source_statement = claim(predicate="ibn-faris-says-origin-is-transfer")
-    historical_truth = claim(predicate="historical-origin-is-transfer")
-    observed = observation()
+    observed = binding()
+    first = candidate(observed, claim(predicate="source-says-origin"))
+    second = candidate(observed, claim(predicate="historical-origin"))
 
-    first = EvidenceRoleCandidate(observed, source_statement)
-    second = EvidenceRoleCandidate(observed, historical_truth)
-
-    assert first.observation == second.observation
+    assert (
+        first.authenticated_observation_binding
+        == second.authenticated_observation_binding
+    )
     assert first.claim != second.claim
     assert first != second
 
 
-@pytest.mark.parametrize(
-    ("field_name", "value"),
-    [
-        ("observation_id", ""),
-        ("authentication_id", "   "),
-    ],
-)
-def test_authenticated_observation_rejects_blank_coordinates(
-    field_name: str, value: str
-) -> None:
-    values = {
-        "observation_id": "maqayis-naql-observation",
-        "authentication_id": "archive-attestation-1",
-    }
-    values[field_name] = value
+def test_same_observation_and_claim_have_distinct_proposed_roles() -> None:
+    observed, asserted_claim = binding(), claim()
+    first = candidate(observed, asserted_claim, role("source-attestation"))
+    second = candidate(observed, asserted_claim, role("historical-origin-support"))
 
-    with pytest.raises(ValueError, match="must be non-blank text"):
-        AuthenticatedObservation(**values)
+    assert (
+        first.authenticated_observation_binding
+        == second.authenticated_observation_binding
+    )
+    assert first.claim == second.claim
+    assert first.role != second.role
+    assert first != second
 
 
-def test_role_requires_authenticated_observation_and_structured_claim() -> None:
-    with pytest.raises(TypeError, match="authenticated observation"):
-        EvidenceRoleCandidate(cast(AuthenticatedObservation, "observation"), claim())
+def test_role_requires_binding_claim_and_role_reference() -> None:
+    with pytest.raises(TypeError, match="authenticated observation binding"):
+        EvidenceRoleCandidate(
+            cast(AuthenticatedObservationBinding, "binding"), claim(), role()
+        )
     with pytest.raises(TypeError, match="claim candidate"):
-        EvidenceRoleCandidate(observation(), cast(ClaimCandidate, "claim"))
+        EvidenceRoleCandidate(binding(), cast(ClaimCandidate, "claim"), role())
+    with pytest.raises(TypeError, match="evidence role reference"):
+        EvidenceRoleCandidate(binding(), claim(), cast(EvidenceRoleRef, "role"))
 
 
-def test_observation_authentication_is_not_evidence_applicability() -> None:
-    assert {item.name for item in fields(AuthenticatedObservation)} == {
-        "observation_id",
-        "authentication_id",
-    }
+def test_role_reference_is_opaque_and_candidate_stops_before_later_judgments() -> None:
+    assert {item.name for item in fields(EvidenceRoleRef)} == {"identifier"}
     assert {item.name for item in fields(EvidenceRoleCandidate)} == {
-        "observation",
+        "authenticated_observation_binding",
         "claim",
+        "role",
     }
-
-
-def test_role_candidate_stops_before_sufficiency_truth_and_knowledge() -> None:
-    field_names = {item.name for item in fields(EvidenceRoleCandidate)}
-
-    assert field_names.isdisjoint({"applicable", "sufficient", "truth", "knowledge"})
-
-
-def test_weaker_id_only_model_collapses_distinct_roles() -> None:
-    observed = observation()
-    first = EvidenceRoleCandidate(observed, claim(predicate="source-says-origin"))
-    second = EvidenceRoleCandidate(observed, claim(predicate="historical-origin"))
-
-    assert first.observation.observation_id == second.observation.observation_id
-    assert first != second
-
-
-def test_weaker_anchor_only_model_collapses_distinct_roles() -> None:
-    observed = observation()
-    first = EvidenceRoleCandidate(observed, claim(predicate="source-says-origin"))
-    second = EvidenceRoleCandidate(observed, claim(predicate="historical-origin"))
-
-    assert first.claim.content.core.anchor == second.claim.content.core.anchor
-    assert first != second
-
-
-def test_weaker_scope_only_model_collapses_distinct_roles() -> None:
-    observed = observation()
-    first = EvidenceRoleCandidate(observed, claim(predicate="source-says-origin"))
-    second = EvidenceRoleCandidate(observed, claim(predicate="historical-origin"))
-
-    assert first.claim.content.core.scope == second.claim.content.core.scope
-    assert first != second
-
-
-def test_weaker_shared_provenance_model_collapses_distinct_roles() -> None:
-    shared_authentication = "archive-attestation-1"
-    first = EvidenceRoleCandidate(
-        observation("maqayis-naql-observation", shared_authentication),
-        claim(predicate="source-says-origin"),
-    )
-    second = EvidenceRoleCandidate(
-        observation("maqayis-naql-copy", shared_authentication),
-        claim(predicate="historical-origin"),
+    assert {item.name for item in fields(EvidenceRoleCandidate)}.isdisjoint(
+        {"applicable", "sufficient", "truth", "knowledge"}
     )
 
-    assert first.observation.authentication_id == second.observation.authentication_id
+
+def projection(value: EvidenceRoleCandidate, deleted: str) -> tuple[object, ...]:
+    return tuple(
+        coordinate
+        for name, coordinate in (
+            ("observation", value.authenticated_observation_binding),
+            ("claim", value.claim),
+            ("role", value.role),
+        )
+        if name != deleted
+    )
+
+
+@pytest.mark.parametrize(
+    ("deleted", "first", "second"),
+    [
+        (
+            "observation",
+            candidate(binding("first-observation"), claim(), role()),
+            candidate(binding("second-observation"), claim(), role()),
+        ),
+        (
+            "claim",
+            candidate(binding(), claim(predicate="source-says-origin"), role()),
+            candidate(binding(), claim(predicate="historical-origin"), role()),
+        ),
+        (
+            "role",
+            candidate(binding(), claim(), role("source-attestation")),
+            candidate(binding(), claim(), role("counterevidence")),
+        ),
+    ],
+    ids=["observation", "claim", "role"],
+)
+def test_deleting_each_core_coordinate_collapses_distinct_roles(
+    deleted: str, first: EvidenceRoleCandidate, second: EvidenceRoleCandidate
+) -> None:
     assert first != second
+    assert projection(first, deleted) == projection(second, deleted)
+
+
+def test_legacy_evidence_and_claim_binding_are_not_g0eb1_candidates() -> None:
+    legacy = ClaimEvidenceBinding(
+        Claim("legacy-claim", "statement"), (Evidence("legacy-claim", "basis"),)
+    )
+
+    assert type(legacy) is ClaimEvidenceBinding
+    assert type(candidate()) is EvidenceRoleCandidate
+    assert "role" not in {item.name for item in fields(ClaimEvidenceBinding)}
