@@ -118,11 +118,12 @@ def test_content_identity_rejects_invalid_encoder_issued_values(
     ],
 )
 def test_claim_core_rejects_wrong_typed_fields(field: str, invalid: object) -> None:
+    baseline = core()
     values: dict[str, object] = {
-        "anchor": core().anchor,
-        "predicate": core().predicate,
-        "polarity": core().polarity,
-        "scope": core().scope,
+        "anchor": baseline.anchor,
+        "predicate": baseline.predicate,
+        "polarity": baseline.polarity,
+        "scope": baseline.scope,
     }
     values[field] = invalid
 

@@ -12,7 +12,6 @@ import hashlib
 import json
 from dataclasses import dataclass, field, fields
 from enum import Enum
-from typing import Any
 
 from .anchor import Anchor
 
@@ -108,6 +107,17 @@ class ClaimContentManifest:
             raise TypeError("claim qualifications must be a tuple of qualifications")
 
 
+_CLAIM_CONTENT_MANIFEST_FIELDS = frozenset(
+    item.name for item in fields(ClaimContentManifest)
+)
+_CLAIM_CORE_FIELDS = frozenset(item.name for item in fields(ClaimCore))
+_PREDICATE_REF_FIELDS = frozenset(item.name for item in fields(PredicateRef))
+_CLAIM_SCOPE_REF_FIELDS = frozenset(item.name for item in fields(ClaimScopeRef))
+_CLAIM_QUALIFICATION_FIELDS = frozenset(
+    item.name for item in fields(ClaimQualification)
+)
+
+
 @dataclass(frozen=True, slots=True)
 class ClaimContentIdentity:
     """A digest reference to canonical structured claim content."""
@@ -194,34 +204,37 @@ class CanonicalClaimContentEncoder:
     @staticmethod
     def _assert_schema_coverage() -> None:
         CanonicalClaimContentEncoder._assert_type_coverage(
-            ClaimContentManifest,
+            "ClaimContentManifest",
+            _CLAIM_CONTENT_MANIFEST_FIELDS,
             CLAIM_CONTENT_MANIFEST_COVERAGE,
         )
 
     @staticmethod
     def _assert_nested_schema_coverage() -> None:
         CanonicalClaimContentEncoder._assert_type_coverage(
-            ClaimCore, CLAIM_CORE_COVERAGE
+            "ClaimCore", _CLAIM_CORE_FIELDS, CLAIM_CORE_COVERAGE
         )
         CanonicalClaimContentEncoder._assert_type_coverage(
-            PredicateRef, PREDICATE_REF_COVERAGE
+            "PredicateRef", _PREDICATE_REF_FIELDS, PREDICATE_REF_COVERAGE
         )
         CanonicalClaimContentEncoder._assert_type_coverage(
-            ClaimScopeRef, CLAIM_SCOPE_REF_COVERAGE
+            "ClaimScopeRef", _CLAIM_SCOPE_REF_FIELDS, CLAIM_SCOPE_REF_COVERAGE
         )
         CanonicalClaimContentEncoder._assert_type_coverage(
-            ClaimQualification, CLAIM_QUALIFICATION_COVERAGE
+            "ClaimQualification",
+            _CLAIM_QUALIFICATION_FIELDS,
+            CLAIM_QUALIFICATION_COVERAGE,
         )
 
     @staticmethod
     def _assert_type_coverage(
-        content_type: Any,
+        content_type_name: str,
+        actual_fields: frozenset[str],
         covered_fields: tuple[str, ...],
     ) -> None:
-        actual_fields = {item.name for item in fields(content_type)}
         if actual_fields != set(covered_fields):
             raise RuntimeError(
-                f"{content_type.__name__} coverage must explicitly account for "
+                f"{content_type_name} coverage must explicitly account for "
                 "every identity-bearing field"
             )
 
