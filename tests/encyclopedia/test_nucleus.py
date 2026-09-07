@@ -63,6 +63,20 @@ def root_inquiry() -> RootInquiry:
 
 
 class TestInquiryContracts:
+    @pytest.mark.parametrize(
+        "field_name", ["proposal_id", "jurisdiction_id", "basis_id"]
+    )
+    def test_question_proposal_rejects_blank_fields(self, field_name: str) -> None:
+        kwargs = {
+            "proposal_id": "proposal",
+            "jurisdiction_id": "discovery-jurisdiction",
+            "basis_id": "residual",
+        }
+        kwargs[field_name] = ""
+
+        with pytest.raises(EncyclopediaContractError):
+            QuestionProposal(**kwargs)
+
     def test_root_inquiry_requires_frozen_pre_evidence_content_binding(self) -> None:
         with pytest.raises(EncyclopediaContractError):
             RootInquiry(
@@ -120,8 +134,39 @@ class TestGrowthFrontier:
         with pytest.raises(EncyclopediaContractError):
             GrowthFrontier((inquiry, inquiry), ())
 
+    @pytest.mark.parametrize(
+        ("root_inquiries", "reopen_inquiries"),
+        [
+            ([], ()),
+            (("not-an-inquiry",), ()),
+            ((), []),
+            ((), ("not-a-reopen",)),
+        ],
+    )
+    def test_rejects_non_tuple_or_wrongly_typed_inquiries(
+        self, root_inquiries: object, reopen_inquiries: object
+    ) -> None:
+        with pytest.raises(EncyclopediaContractError):
+            GrowthFrontier(root_inquiries, reopen_inquiries)  # type: ignore[arg-type]
+
 
 class TestEncyclopediaNucleusSnapshot:
+    @pytest.mark.parametrize(
+        ("fractal", "frontier"),
+        [
+            ("not-a-fractal", GrowthFrontier((), ())),
+            (FractalSnapshot((), (), ()), "not-a-frontier"),
+        ],
+    )
+    def test_rejects_wrongly_typed_state_parts(
+        self, fractal: object, frontier: object
+    ) -> None:
+        with pytest.raises(EncyclopediaContractError):
+            EncyclopediaNucleusSnapshot(  # type: ignore[arg-type]
+                fractal=fractal,
+                frontier=frontier,
+            )
+
     def test_wraps_immutable_fractal_and_open_frontier(self) -> None:
         fractal = FractalSnapshot((), (), ())
         snapshot = EncyclopediaNucleusSnapshot(
