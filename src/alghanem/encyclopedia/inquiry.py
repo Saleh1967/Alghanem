@@ -12,7 +12,6 @@ from dataclasses import dataclass
 from alghanem.kernel.birth import (
     BirthExperimentSpecification,
     BirthExperimentSpecificationError,
-    _require_text,
 )
 from alghanem.kernel.experiment_spec_content_identity import (
     BirthExperimentSpecificationContentBinding,
@@ -21,6 +20,11 @@ from alghanem.kernel.experiment_spec_content_identity import (
 
 class EncyclopediaContractError(BirthExperimentSpecificationError):
     """A malformed encyclopedia contract cannot enter the growth frontier."""
+
+
+def _require_text(value: str, field_name: str) -> None:
+    if not isinstance(value, str) or not value.strip():
+        raise EncyclopediaContractError(f"{field_name} must be non-blank")
 
 
 @dataclass(frozen=True, slots=True)
