@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from .authenticated_artifact import AuthenticatedRepositoryArtifact
 from .authenticated_snapshot import _AUTHORITY_TOKEN
-from .observation_run import RepositoryObservationRun
+
+if TYPE_CHECKING:
+    from .authenticated_artifact import AuthenticatedRepositoryArtifact
+    from .observation_run import RepositoryObservationRun
 from .repository_snapshot import SelfObservationContractError, _require_text
 
 
@@ -19,13 +23,13 @@ class AuthenticatedRepositoryFragment:
 
     def __init__(
         self,
-        artifact,
-        fragment_locator,
-        fragment_content_id,
-        observation_run,
+        artifact: AuthenticatedRepositoryArtifact,
+        fragment_locator: str,
+        fragment_content_id: str,
+        observation_run: RepositoryObservationRun,
         *,
-        _token=None,
-    ):
+        _token: object | None = None,
+    ) -> None:
         if _token is not _AUTHORITY_TOKEN:
             raise SelfObservationContractError(
                 "authenticated fragments may only be issued by the observation "
@@ -37,7 +41,7 @@ class AuthenticatedRepositoryFragment:
             )
         _require_text(fragment_locator, "authenticated fragment locator")
         _require_text(fragment_content_id, "authenticated fragment content id")
-        if observation_run != artifact.observation_run:
+        if observation_run is not artifact.observation_run:
             raise SelfObservationContractError(
                 "fragment and artifact must share an observation run"
             )
@@ -45,7 +49,3 @@ class AuthenticatedRepositoryFragment:
         object.__setattr__(self, "fragment_locator", fragment_locator)
         object.__setattr__(self, "fragment_content_id", fragment_content_id)
         object.__setattr__(self, "observation_run", observation_run)
-
-    @classmethod
-    def _issue(cls, artifact, locator, content_id, run):
-        return cls(artifact, locator, content_id, run, _token=_AUTHORITY_TOKEN)

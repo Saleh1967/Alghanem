@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
-from .observation_run import RepositoryObservationRun
+if TYPE_CHECKING:
+    from .observation_run import RepositoryObservationRun
 from .repository_snapshot import RepositorySnapshotRef, SelfObservationContractError
 
 _AUTHORITY_TOKEN = object()
@@ -22,6 +24,8 @@ class AuthenticatedRepositorySnapshot:
         *,
         _token: object | None = None,
     ) -> None:
+        from .observation_run import RepositoryObservationRun
+
         if _token is not _AUTHORITY_TOKEN:
             raise SelfObservationContractError(
                 "authenticated snapshots may only be issued by the "
@@ -37,9 +41,3 @@ class AuthenticatedRepositorySnapshot:
             )
         object.__setattr__(self, "snapshot", snapshot)
         object.__setattr__(self, "observation_run", observation_run)
-
-    @classmethod
-    def _issue(
-        cls, snapshot: RepositorySnapshotRef, run: RepositoryObservationRun
-    ) -> "AuthenticatedRepositorySnapshot":
-        return cls(snapshot, run, _token=_AUTHORITY_TOKEN)

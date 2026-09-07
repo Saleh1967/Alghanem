@@ -1,9 +1,15 @@
 import pytest
 
 from alghanem.encyclopedia.self_observation import (
+    AuthenticatedRepositoryArtifact,
+    AuthenticatedRepositoryFragment,
+    AuthenticatedRepositorySnapshot,
+    AuthenticatedRepositoryTransition,
     RepositoryArtifactChangeRef,
     RepositoryArtifactRef,
     RepositoryFragmentRef,
+    RepositoryObservationAuthority,
+    RepositoryObservationRequest,
     RepositorySnapshotRef,
     RepositoryTransitionRef,
     SelfObservationContractError,
@@ -332,3 +338,106 @@ class TestRepositoryTransitionRef:
 
         assert transition.from_snapshot == from_snap
         assert transition.to_snapshot == to_snap
+
+
+class FakeProvider:
+    provider_identity = "fixture"
+    implementation_identity = "fixture-v1"
+    protocol_version = "1"
+
+    def resolve_repository(self, identity: str) -> str | None:
+        return identity if identity == "Alghanem" else None
+
+    def resolve_commit(self, repository: str, commit_sha: str) -> str | None:
+        return commit_sha if commit_sha in {"c1", "c2", "c3"} else None
+
+    def tree_for_commit(self, commit: str) -> str:
+        return {"c1": "t1", "c2": "t2", "c3": "t3"}[commit]
+
+    def blob_at_path(self, tree_sha: str, path: str) -> str | None:
+        return {"t1": "b1", "t2": "b2", "t3": "b3"}.get(tree_sha)
+
+    def fragment_from_blob(self, blob_sha: str, locator: str) -> str | None:
+        return f"{blob_sha}:{locator}" if locator else None
+
+    def is_ancestor(self, repository: str, from_sha: str, to_sha: str) -> bool:
+        return (from_sha, to_sha) == ("c1", "c2")
+
+
+def authenticated_run():
+    return RepositoryObservationAuthority(FakeProvider()).open_run()
+
+
+def test_authenticated_types_have_no_public_issue_helpers() -> None:
+    assert not hasattr(AuthenticatedRepositorySnapshot, "_issue")
+    assert not hasattr(AuthenticatedRepositoryArtifact, "_issue")
+    assert not hasattr(AuthenticatedRepositoryFragment, "_issue")
+    assert not hasattr(AuthenticatedRepositoryTransition, "_issue")
+
+
+def test_one_run_can_authenticate_and_transition_two_snapshots() -> None:
+    run = authenticated_run()
+    first = run.observe_snapshot(snapshot("c1", "t1"))
+    second = run.observe_snapshot(snapshot("c2", "t2"))
+
+    transition = run.observe_transition(first, second)
+
+    assert transition.from_snapshot is first
+    assert transition.to_snapshot is second
+
+
+def test_cross_run_transition_is_rejected() -> None:
+    first = authenticated_run().observe_snapshot(snapshot("c1", "t1"))
+    second = authenticated_run().observe_snapshot(snapshot("c2", "t2"))
+
+    with pytest.raises(SelfObservationContractError):
+        authenticated_run().observe_transition(first, second)
+
+
+def test_non_ancestral_transition_is_rejected() -> None:
+    run = authenticated_run()
+    first = run.observe_snapshot(snapshot("c2", "t2"))
+    second = run.observe_snapshot(snapshot("c3", "t3"))
+
+    with pytest.raises(SelfObservationContractError):
+        run.observe_transition(first, second)
+
+
+def test_request_remains_an_address_and_observation_authenticates_it() -> None:
+    request = RepositoryObservationRequest(snapshot("c1", "t1"))
+    observed = RepositoryObservationAuthority(FakeProvider()).observe(request)
+
+    assert observed.snapshot == request.requested_snapshot
+
+
+def test_fake_snapshot_tree_is_rejected() -> None:
+    with pytest.raises(SelfObservationContractError):
+        authenticated_run().observe_snapshot(snapshot("c1", "fake-tree"))
+
+
+def test_fake_artifact_blob_is_rejected() -> None:
+    run = authenticated_run()
+    observed = run.observe_snapshot(snapshot("c1", "t1"))
+
+    with pytest.raises(SelfObservationContractError):
+        run.observe_artifact(observed, artifact(snapshot("c1", "t1"), blob_sha="fake"))
+
+
+def test_missing_fragment_is_rejected() -> None:
+    run = authenticated_run()
+    observed = run.observe_snapshot(snapshot("c1", "t1"))
+    observed_artifact = run.observe_artifact(
+        observed, artifact(snapshot("c1", "t1"), blob_sha="b1")
+    )
+
+    with pytest.raises(SelfObservationContractError):
+        run.observe_fragment(observed_artifact, "")
+
+
+def test_authenticated_objects_and_runs_reject_direct_construction() -> None:
+    with pytest.raises(SelfObservationContractError):
+        AuthenticatedRepositorySnapshot(snapshot(), None)  # type: ignore[arg-type]
+    with pytest.raises(SelfObservationContractError):
+        RepositoryObservationAuthority(FakeProvider()).open_run().__class__(
+            "run", "provider", "implementation", "1", FakeProvider()
+        )

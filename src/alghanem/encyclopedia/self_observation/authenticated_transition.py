@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from .authenticated_snapshot import _AUTHORITY_TOKEN, AuthenticatedRepositorySnapshot
-from .observation_run import RepositoryObservationRun
+
+if TYPE_CHECKING:
+    from .observation_run import RepositoryObservationRun
 from .repository_snapshot import SelfObservationContractError
 
 
@@ -16,8 +19,13 @@ class AuthenticatedRepositoryTransition:
     observation_run: RepositoryObservationRun
 
     def __init__(
-        self, from_snapshot, to_snapshot, observation_run, *, _token=None
-    ):
+        self,
+        from_snapshot: AuthenticatedRepositorySnapshot,
+        to_snapshot: AuthenticatedRepositorySnapshot,
+        observation_run: RepositoryObservationRun,
+        *,
+        _token: object | None = None,
+    ) -> None:
         if _token is not _AUTHORITY_TOKEN:
             raise SelfObservationContractError(
                 "authenticated transitions may only be issued by the "
@@ -41,8 +49,8 @@ class AuthenticatedRepositoryTransition:
                 "transition snapshots must have distinct commits"
             )
         if (
-            from_snapshot.observation_run != observation_run
-            or to_snapshot.observation_run != observation_run
+            from_snapshot.observation_run is not observation_run
+            or to_snapshot.observation_run is not observation_run
         ):
             raise SelfObservationContractError(
                 "transition snapshots must share the observation run"
@@ -50,7 +58,3 @@ class AuthenticatedRepositoryTransition:
         object.__setattr__(self, "from_snapshot", from_snapshot)
         object.__setattr__(self, "to_snapshot", to_snapshot)
         object.__setattr__(self, "observation_run", observation_run)
-
-    @classmethod
-    def _issue(cls, from_snapshot, to_snapshot, run):
-        return cls(from_snapshot, to_snapshot, run, _token=_AUTHORITY_TOKEN)
