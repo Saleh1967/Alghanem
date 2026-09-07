@@ -19,6 +19,7 @@ Governing laws (see `docs/CONSTITUTION.md`, Encyclopedia Self-Observation):
 - `RepositoryVersionIsExplicitlyAddressed`
 - `RepositoryVersionIsContentAuthenticated` (DEFERRED)
 - `SameRepositoryIdentity`
+- `DifferentCommitsIsNotHistoricalTransition` (DEFERRED)
 - `ArtifactChangeRecordsBothSides`
 """
 
