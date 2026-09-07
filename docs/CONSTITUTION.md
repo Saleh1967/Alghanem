@@ -430,7 +430,12 @@ definition, implementation identity, role, target, the exact
 (not a caller-substituted one), input content, output content, and trace.
 
 This record answers only "did a specific, registry-bound implementation run
-against a specific, authorized request's evidence?". It carries no
+within the context of a specific, authorized assessment request, while
+preserving that request and its attached evidence reference?"
+(`ExecutedInContextOfAuthorizedRequest + AttachedEvidenceReference`, not
+`ExecutedAgainstAuthorizedEvidence`): `EvidenceAttachedToRecord !=
+EvaluatorExecutedOnEvidence`, and `InputProvenance = DECLARED_DEFERRED`. It
+carries no
 `ResidualEvaluationResult`, `WeakerModelEvaluationResult`,
 `ClosureEvaluationResult`, aggregate execution status, residual survival,
 weaker-model exhaustion, `BirthCandidate`, `IndependentClosure`,
@@ -550,7 +555,14 @@ enforcement mechanism yet:
 * `ResidualGeometryConstrainsArchitectureSearch` -- whatever architecture
   search a future stage performs must be constrained by the actual shape of
   the residuals on hand, not by a convenient or popular prior architecture.
-  The residual geometry is the only permitted source of search bias.
+  Residual geometry is the only permitted source of *new structural demand*
+  (`ResidualGeometry = OnlySourceOfNewStructuralDemand`) -- it is not claimed
+  to be the only thing constraining search overall: frozen prior structure,
+  admissibility, licensed operations, and prior invariants also constrain
+  every future search, alongside residual geometry:
+  `Search_{n+1} = ConstrainedBy(FrozenPrior_n, LicensedOperations_n,
+  ResidualGeometry_n)`. What residual geometry alone licenses is new
+  structural complexity: `NewStructuralComplexity must be demanded by rho_n`.
 * `NoFixedComplexityOrder` -- no future stage may assume, in advance, an
   ordering of model complexity (for example, "try bigrams before trigrams
   before graphs") as a structural law. Any such ordering, if it appears,
