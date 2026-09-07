@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from alghanem.encyclopedia.self_observation import (
@@ -485,6 +487,63 @@ def test_authenticated_fragment_can_be_bridged_only_by_its_own_run() -> None:
     binding = run.bridge_authenticated_fragment(fragment)
 
     assert "RootInquiry" in binding.source_observation_ref
-    assert binding.source_authentication_ref.startswith(f"{run.run_id}:")
+    assert run.run_id in binding.source_authentication_ref
     with pytest.raises(SelfObservationContractError):
         authenticated_run().bridge_authenticated_fragment(fragment)
+
+
+def test_bridge_coordinates_are_injective_when_fields_contain_delimiters() -> None:
+    first_run = authenticated_run()
+    first_snapshot = first_run.observe_snapshot(snapshot("c1", "t1"))
+    first_artifact = first_run.observe_artifact(
+        first_snapshot, artifact(first_snapshot.snapshot, path="a:b", blob_sha="b1")
+    )
+    first = first_run.bridge_authenticated_fragment(
+        first_run.observe_fragment(first_artifact, "c")
+    )
+
+    second_run = authenticated_run()
+    second_snapshot = second_run.observe_snapshot(snapshot("c1", "t1"))
+    second_artifact = second_run.observe_artifact(
+        second_snapshot, artifact(second_snapshot.snapshot, path="a", blob_sha="b1")
+    )
+    second = second_run.bridge_authenticated_fragment(
+        second_run.observe_fragment(second_artifact, "b:c")
+    )
+
+    assert first.source_observation_ref != second.source_observation_ref
+
+
+def test_bridge_authentication_coordinates_preserve_delimiter_bearing_fields() -> None:
+    first_provider = FakeProvider()
+    first_provider.provider_identity = "provider:a"
+    first_provider.implementation_identity = "implementation:b"
+    second_provider = FakeProvider()
+    second_provider.provider_identity = "provider"
+    second_provider.implementation_identity = "a:implementation:b"
+    first = RepositoryObservationAuthority(first_provider).open_run()
+    second = RepositoryObservationAuthority(second_provider).open_run()
+    first_snapshot = first.observe_snapshot(snapshot("c1", "t1"))
+    second_snapshot = second.observe_snapshot(snapshot("c1", "t1"))
+    first_artifact = first.observe_artifact(
+        first_snapshot, artifact(first_snapshot.snapshot, blob_sha="b1")
+    )
+    second_artifact = second.observe_artifact(
+        second_snapshot, artifact(second_snapshot.snapshot, blob_sha="b1")
+    )
+
+    first_binding = first.bridge_authenticated_fragment(
+        first.observe_fragment(first_artifact, "provider:field")
+    )
+    second_binding = second.bridge_authenticated_fragment(
+        second.observe_fragment(second_artifact, "provider")
+    )
+
+    first_coordinate = json.loads(first_binding.source_authentication_ref)
+    second_coordinate = json.loads(second_binding.source_authentication_ref)
+    assert first_coordinate["provider_identity"] == "provider:a"
+    assert second_coordinate["provider_identity"] == "provider"
+    assert (
+        first_binding.source_authentication_ref
+        != second_binding.source_authentication_ref
+    )

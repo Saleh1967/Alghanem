@@ -57,15 +57,21 @@ These are the initial laws of the language-agnostic kernel:
 - `AuthenticationIdentifier != AuthenticationCertificate`: strings naming an
   observation and its authentication never constitute an authenticated
   observation.
-- `AuthenticatedObservationBinding` is issued only through the source-agnostic
-  kernel `AuthenticatedObservationBridge`. A source-specific authority must
-  invoke that internal bridge only after issuing its own authenticated
+- `AuthenticatedObservationBinding` is issued only through a private,
+  source-agnostic kernel bridge. A source-specific authority must invoke that
+  internal bridge only after issuing its own authenticated
   observation. The G0.SO.1 repository adapter is
   `RepositoryObservationRun.bridge_authenticated_fragment`, which accepts only
   its own authority-issued `AuthenticatedRepositoryFragment`.
-- The kernel imports no source-layer type. A binding's source references are
-  audit coordinates derived by the source authority, not a certificate
-  reconstructed from caller-supplied identifiers.
+- The bridge is absent from the public kernel API. This establishes
+  `NoPublicCallerIssuancePath` as a controlled Python API boundary, not
+  cryptographic impossibility of forgery.
+- The kernel imports no source-layer type. Repository-source coordinates use
+  canonical JSON over every declared field, so delimiter-bearing values cannot
+  collapse distinct provenance tuples. A binding is a
+  `SourceBoundAuthenticatedCoordinate`, not a portable identity:
+  `PortableAuthenticatedObservationIdentity = DECLARED_DEFERRED` until an
+  issuer-scope identity is explicitly propagated.
 
 ### G0.EB.1 — Claim-relative evidence-role constitution
 

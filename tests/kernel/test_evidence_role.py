@@ -5,10 +5,15 @@ from typing import cast
 
 import pytest
 
+import alghanem.kernel as kernel
+from alghanem.encyclopedia.self_observation import (
+    RepositoryArtifactRef,
+    RepositoryObservationAuthority,
+    RepositorySnapshotRef,
+)
 from alghanem.kernel import (
     Anchor,
     AuthenticatedObservationBinding,
-    AuthenticatedObservationBridge,
     CanonicalClaimContentEncoder,
     Claim,
     ClaimCandidate,
@@ -23,6 +28,32 @@ from alghanem.kernel import (
     EvidenceRoleRef,
     PredicateRef,
 )
+
+
+class SourceProvider:
+    provider_identity = "test-provider"
+    implementation_identity = "test-implementation"
+    protocol_version = "1"
+
+    def resolve_repository(self, repository_identity: str) -> object | None:
+        return repository_identity
+
+    def resolve_commit(self, repository: object, commit_sha: str) -> object | None:
+        return commit_sha
+
+    def tree_for_commit(self, commit: object) -> str | None:
+        return "tree-1"
+
+    def blob_at_path(self, tree_sha: str, artifact_path: str) -> str | None:
+        return "blob-1"
+
+    def fragment_from_blob(self, blob_sha: str, fragment_locator: str) -> str | None:
+        return f"{blob_sha}/{fragment_locator}"
+
+    def is_ancestor(
+        self, repository: object, from_commit_sha: str, to_commit_sha: str
+    ) -> bool:
+        return False
 
 
 def claim(
@@ -48,10 +79,17 @@ def claim(
 
 
 def binding(
-    observation: str = "maqayis-naql-observation",
-    authentication: str = "archive-attestation-1",
+    path: str = "maqayis-naql",
+    locator: str = "entry",
 ) -> AuthenticatedObservationBinding:
-    return AuthenticatedObservationBridge._issue(observation, authentication)
+    run = RepositoryObservationAuthority(SourceProvider()).open_run()
+    snapshot = run.observe_snapshot(
+        RepositorySnapshotRef("lexicon-source", "commit-1", "tree-1")
+    )
+    artifact = run.observe_artifact(
+        snapshot, RepositoryArtifactRef(snapshot.snapshot, path, "blob-1")
+    )
+    return run.bridge_authenticated_fragment(run.observe_fragment(artifact, locator))
 
 
 def role(identifier: str = "source-attestation") -> EvidenceRoleRef:
@@ -69,12 +107,11 @@ def candidate(
 
 
 def test_binding_rejects_direct_construction() -> None:
-    with pytest.raises(
-        ValueError, match="issued through AuthenticatedObservationBridge"
-    ):
+    with pytest.raises(ValueError, match="must be issued through"):
         AuthenticatedObservationBinding(
             "imaginary-observation", "imaginary-authentication"
         )
+    assert not hasattr(kernel, "AuthenticatedObservationBridge")
 
 
 def test_same_observation_has_distinct_roles_for_distinct_claims() -> None:
@@ -139,6 +176,9 @@ def projection(value: EvidenceRoleCandidate, deleted: str) -> tuple[object, ...]
     )
 
 
+_SHARED_BINDING = binding()
+
+
 @pytest.mark.parametrize(
     ("deleted", "first", "second"),
     [
@@ -149,13 +189,13 @@ def projection(value: EvidenceRoleCandidate, deleted: str) -> tuple[object, ...]
         ),
         (
             "claim",
-            candidate(binding(), claim(predicate="source-says-origin"), role()),
-            candidate(binding(), claim(predicate="historical-origin"), role()),
+            candidate(_SHARED_BINDING, claim(predicate="source-says-origin"), role()),
+            candidate(_SHARED_BINDING, claim(predicate="historical-origin"), role()),
         ),
         (
             "role",
-            candidate(binding(), claim(), role("source-attestation")),
-            candidate(binding(), claim(), role("counterevidence")),
+            candidate(_SHARED_BINDING, claim(), role("source-attestation")),
+            candidate(_SHARED_BINDING, claim(), role("counterevidence")),
         ),
     ],
     ids=["observation", "claim", "role"],

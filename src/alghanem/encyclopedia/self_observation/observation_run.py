@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
 
 from alghanem.kernel.evidence_role import (
     AuthenticatedObservationBinding,
-    AuthenticatedObservationBridge,
+    _issue_authenticated_observation_binding,
 )
 
 from .artifact_ref import RepositoryArtifactRef
@@ -22,6 +23,12 @@ from .repository_snapshot import (
 )
 
 _RUN_TOKEN = object()
+
+
+def _canonical_coordinate(**fields: str) -> str:
+    """Injectively encode typed source-coordinate fields for bridge provenance."""
+
+    return json.dumps(fields, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
 
 
 @dataclass(frozen=True, slots=True, init=False)
@@ -136,15 +143,19 @@ class RepositoryObservationRun:
             )
         artifact = fragment.artifact
         snapshot = artifact.snapshot.snapshot
-        return AuthenticatedObservationBridge._issue(
-            (
-                f"{snapshot.repository_identity}@{snapshot.commit_sha}:"
-                f"{artifact.artifact_path}:{fragment.fragment_locator}:"
-                f"{fragment.fragment_content_id}"
+        return _issue_authenticated_observation_binding(
+            _canonical_coordinate(
+                repository_identity=snapshot.repository_identity,
+                commit_sha=snapshot.commit_sha,
+                artifact_path=artifact.artifact_path,
+                fragment_locator=fragment.fragment_locator,
+                fragment_content_id=fragment.fragment_content_id,
             ),
-            (
-                f"{self.run_id}:{self.provider_identity}:"
-                f"{self.implementation_identity}:{self.protocol_version}"
+            _canonical_coordinate(
+                run_id=self.run_id,
+                provider_identity=self.provider_identity,
+                implementation_identity=self.implementation_identity,
+                protocol_version=self.protocol_version,
             ),
         )
 

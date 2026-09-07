@@ -43,7 +43,7 @@ class AuthenticatedObservationBinding:
         if _token is not _AUTHENTICATED_OBSERVATION_BINDING_TOKEN:
             raise ValueError(
                 "authenticated observation bindings must be issued through "
-                "AuthenticatedObservationBridge"
+                "a source authority"
             )
         _require_text(source_observation_ref, "source observation reference")
         _require_text(source_authentication_ref, "source authentication reference")
@@ -51,24 +51,21 @@ class AuthenticatedObservationBinding:
         object.__setattr__(self, "source_authentication_ref", source_authentication_ref)
 
 
-class AuthenticatedObservationBridge:
-    """Internal G0.OB.1 construction bridge for source authorities.
+def _issue_authenticated_observation_binding(
+    source_observation_ref: str, source_authentication_ref: str
+) -> AuthenticatedObservationBinding:
+    """Issue a binding for use exclusively by a source authority.
 
-    It deliberately has no public issuance API. A source-specific observation
-    authority calls ``_issue`` only after authenticating its own observation.
-    Thus this kernel module remains source-agnostic while the resulting binding
-    cannot be caller-constructed from arbitrary identifier strings.
+    This private module function is intentionally absent from the kernel public
+    API. A source-specific authority calls it only after authenticating its own
+    observation. This preserves the source-agnostic kernel dependency direction.
     """
 
-    @staticmethod
-    def _issue(
-        source_observation_ref: str, source_authentication_ref: str
-    ) -> AuthenticatedObservationBinding:
-        return AuthenticatedObservationBinding(
-            source_observation_ref,
-            source_authentication_ref,
-            _token=_AUTHENTICATED_OBSERVATION_BINDING_TOKEN,
-        )
+    return AuthenticatedObservationBinding(
+        source_observation_ref,
+        source_authentication_ref,
+        _token=_AUTHENTICATED_OBSERVATION_BINDING_TOKEN,
+    )
 
 
 @dataclass(frozen=True, slots=True)

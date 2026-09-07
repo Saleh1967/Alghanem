@@ -67,7 +67,6 @@ from .evidence_acquisition import (
 )
 from .evidence_role import (
     AuthenticatedObservationBinding,
-    AuthenticatedObservationBridge,
     EvidenceRoleCandidate,
     EvidenceRoleRef,
 )
@@ -132,7 +131,6 @@ from .transition import (
 __all__ = [
     "Anchor",
     "AuthenticatedObservationBinding",
-    "AuthenticatedObservationBridge",
     "AuthorizedBirthAssessmentEvaluatorDefinition",
     "AuthorizedEvidenceSnapshot",
     "BirthAssessmentContentBinding",
