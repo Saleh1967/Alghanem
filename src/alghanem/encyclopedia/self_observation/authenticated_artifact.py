@@ -5,15 +5,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from .authenticated_snapshot import _AUTHORITY_TOKEN, AuthenticatedRepositorySnapshot
+from .authenticated_snapshot import AuthenticatedRepositorySnapshot
 
 if TYPE_CHECKING:
     from .observation_run import RepositoryObservationRun
-from .repository_snapshot import (
-    SelfObservationContractError,
-    _require_authority_token,
-    _require_text,
-)
+from .repository_snapshot import SelfObservationContractError, _require_text
 
 
 @dataclass(frozen=True, slots=True, init=False)
@@ -32,7 +28,6 @@ class AuthenticatedRepositoryArtifact:
         *,
         _token: object | None = None,
     ) -> None:
-        _require_authority_token(_token, _AUTHORITY_TOKEN, "authenticated artifacts")
         if not isinstance(snapshot, AuthenticatedRepositorySnapshot):
             raise SelfObservationContractError(
                 "authenticated artifact requires an authenticated snapshot"
@@ -42,6 +37,10 @@ class AuthenticatedRepositoryArtifact:
         if observation_run is not snapshot.observation_run:
             raise SelfObservationContractError(
                 "artifact and snapshot must share an observation run"
+            )
+        if not observation_run._accepts_capability(_token):
+            raise SelfObservationContractError(
+                "authenticated artifacts may only be issued by their observation run"
             )
         object.__setattr__(self, "snapshot", snapshot)
         object.__setattr__(self, "artifact_path", artifact_path)

@@ -6,13 +6,11 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from .authenticated_artifact import AuthenticatedRepositoryArtifact
-from .authenticated_snapshot import _AUTHORITY_TOKEN
 
 if TYPE_CHECKING:
     from .observation_run import RepositoryObservationRun
 from .repository_snapshot import (
     SelfObservationContractError,
-    _require_authority_token,
     _require_text,
 )
 
@@ -33,7 +31,6 @@ class AuthenticatedRepositoryFragment:
         *,
         _token: object | None = None,
     ) -> None:
-        _require_authority_token(_token, _AUTHORITY_TOKEN, "authenticated fragments")
         if not isinstance(artifact, AuthenticatedRepositoryArtifact):
             raise SelfObservationContractError(
                 "authenticated fragment requires an authenticated artifact"
@@ -43,6 +40,10 @@ class AuthenticatedRepositoryFragment:
         if observation_run is not artifact.observation_run:
             raise SelfObservationContractError(
                 "fragment and artifact must share an observation run"
+            )
+        if not observation_run._accepts_capability(_token):
+            raise SelfObservationContractError(
+                "authenticated fragments may only be issued by their observation run"
             )
         object.__setattr__(self, "artifact", artifact)
         object.__setattr__(self, "fragment_locator", fragment_locator)

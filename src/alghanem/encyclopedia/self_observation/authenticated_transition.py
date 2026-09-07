@@ -5,13 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from .authenticated_snapshot import _AUTHORITY_TOKEN, AuthenticatedRepositorySnapshot
+from .authenticated_snapshot import AuthenticatedRepositorySnapshot
 
 if TYPE_CHECKING:
     from .observation_run import RepositoryObservationRun
 from .repository_snapshot import (
     SelfObservationContractError,
-    _require_authority_token,
 )
 
 
@@ -29,7 +28,6 @@ class AuthenticatedRepositoryTransition:
         *,
         _token: object | None = None,
     ) -> None:
-        _require_authority_token(_token, _AUTHORITY_TOKEN, "authenticated transitions")
         if not isinstance(
             from_snapshot, AuthenticatedRepositorySnapshot
         ) or not isinstance(to_snapshot, AuthenticatedRepositorySnapshot):
@@ -53,6 +51,10 @@ class AuthenticatedRepositoryTransition:
         ):
             raise SelfObservationContractError(
                 "transition snapshots must share the observation run"
+            )
+        if not observation_run._accepts_capability(_token):
+            raise SelfObservationContractError(
+                "authenticated transitions may only be issued by their observation run"
             )
         object.__setattr__(self, "from_snapshot", from_snapshot)
         object.__setattr__(self, "to_snapshot", to_snapshot)

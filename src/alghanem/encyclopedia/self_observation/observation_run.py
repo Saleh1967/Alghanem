@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from .artifact_ref import RepositoryArtifactRef
 from .authenticated_artifact import AuthenticatedRepositoryArtifact
 from .authenticated_fragment import AuthenticatedRepositoryFragment
-from .authenticated_snapshot import _AUTHORITY_TOKEN, AuthenticatedRepositorySnapshot
+from .authenticated_snapshot import AuthenticatedRepositorySnapshot
 from .authenticated_transition import AuthenticatedRepositoryTransition
 from .observation_provider import RepositoryObservationProvider
 from .repository_snapshot import (
@@ -30,6 +30,7 @@ class RepositoryObservationRun:
     _provider: RepositoryObservationProvider = field(
         init=False, repr=False, compare=False
     )
+    _issuance_capability: object = field(init=False, repr=False, compare=False)
 
     def __init__(
         self,
@@ -57,6 +58,10 @@ class RepositoryObservationRun:
         object.__setattr__(self, "implementation_identity", implementation_identity)
         object.__setattr__(self, "protocol_version", protocol_version)
         object.__setattr__(self, "_provider", provider)
+        object.__setattr__(self, "_issuance_capability", object())
+
+    def _accepts_capability(self, capability: object | None) -> bool:
+        return capability is self._issuance_capability
 
     def observe_snapshot(
         self, ref: RepositorySnapshotRef
@@ -71,7 +76,9 @@ class RepositoryObservationRun:
             raise SelfObservationContractError(
                 "repository snapshot could not be authenticated"
             )
-        return AuthenticatedRepositorySnapshot(ref, self, _token=_AUTHORITY_TOKEN)
+        return AuthenticatedRepositorySnapshot(
+            ref, self, _token=self._issuance_capability
+        )
 
     def observe_artifact(
         self, snapshot: AuthenticatedRepositorySnapshot, ref: RepositoryArtifactRef
@@ -86,7 +93,11 @@ class RepositoryObservationRun:
                 "repository artifact could not be authenticated"
             )
         return AuthenticatedRepositoryArtifact(
-            snapshot, ref.artifact_path, ref.blob_sha, self, _token=_AUTHORITY_TOKEN
+            snapshot,
+            ref.artifact_path,
+            ref.blob_sha,
+            self,
+            _token=self._issuance_capability,
         )
 
     def observe_fragment(
@@ -102,7 +113,11 @@ class RepositoryObservationRun:
                 "repository fragment could not be authenticated"
             )
         return AuthenticatedRepositoryFragment(
-            artifact, locator, content_id, self, _token=_AUTHORITY_TOKEN
+            artifact,
+            locator,
+            content_id,
+            self,
+            _token=self._issuance_capability,
         )
 
     def observe_transition(
@@ -130,5 +145,8 @@ class RepositoryObservationRun:
                 "repository transition ancestry could not be authenticated"
             )
         return AuthenticatedRepositoryTransition(
-            from_snapshot, to_snapshot, self, _token=_AUTHORITY_TOKEN
+            from_snapshot,
+            to_snapshot,
+            self,
+            _token=self._issuance_capability,
         )
