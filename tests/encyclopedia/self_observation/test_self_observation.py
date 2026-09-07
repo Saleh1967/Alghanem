@@ -150,6 +150,25 @@ class TestRepositoryArtifactChangeRef:
                 after=artifact(to_snap, path="a.py", blob_sha="blob-a"),
             )
 
+    def test_requires_the_same_repository_identity_on_both_sides(self) -> None:
+        from_snap = snapshot("c1", repository_identity="Alghanem")
+        to_snap = snapshot("c2", repository_identity="OtherRepository")
+
+        with pytest.raises(SelfObservationContractError):
+            RepositoryArtifactChangeRef(
+                before=artifact(from_snap, path="a.py", blob_sha="blob-a"),
+                after=artifact(to_snap, path="a.py", blob_sha="blob-b"),
+            )
+
+    def test_requires_distinct_snapshot_commit_shas(self) -> None:
+        same_snap = snapshot("c1")
+
+        with pytest.raises(SelfObservationContractError):
+            RepositoryArtifactChangeRef(
+                before=artifact(same_snap, path="a.py", blob_sha="blob-a"),
+                after=artifact(same_snap, path="a.py", blob_sha="blob-b"),
+            )
+
     def test_accepts_a_well_formed_change(self) -> None:
         from_snap = snapshot("c1")
         to_snap = snapshot("c2")

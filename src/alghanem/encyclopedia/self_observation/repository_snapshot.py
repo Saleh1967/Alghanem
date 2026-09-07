@@ -1,4 +1,4 @@
-"""A content-bound reference to one state of the `Alghanem` repository itself.
+"""An explicitly-addressed reference to one state of the `Alghanem` repository.
 
 `RepositorySnapshotRef` deliberately says only:
 
@@ -14,7 +14,10 @@ anything about the repository beyond its own identity
 
 and carries no evidence, claim, or knowledge field of its own.
 
-This module only makes a version *explicitly addressed*
+`RepositoryVersionMustBeContentBound` is the constitutional requirement
+that grounds a claim only in an explicit version, never a bare branch name
+(`Claim(C, Repository@commit_sha)`, never `Claim(C, Repository in
+general)`). This module only makes a version *explicitly addressed*
 (`RepositoryVersionIsExplicitlyAddressed`): every field is a caller-supplied
 string, and no authority here checks that `tree_sha` is genuinely the tree
 of `commit_sha`, or that `commit_sha` actually exists in
@@ -43,14 +46,14 @@ def _require_text(value: str, field_name: str) -> None:
 
 @dataclass(frozen=True, slots=True)
 class RepositorySnapshotRef:
-    """An opaque reference to one exact, content-bound repository state.
+    """An opaque reference to one exact, explicitly-addressed repository state.
 
     `KnowledgeAboutMain` (an unversioned branch name) never grounds a claim;
-    only `Claim(C, Repository@commit_sha)` does
-    (`RepositoryVersionMustBeContentBound`). Two refs with the same
-    `repository_identity` but different `commit_sha` name two distinct,
-    equally valid states: a later commit never erases what was true of an
-    earlier one (`RevisionDoesNotEraseHistoricalFreeze`).
+    only `Claim(C, Repository@commit_sha)` does, satisfying the
+    constitutional requirement `RepositoryVersionMustBeContentBound`. Two
+    refs with the same `repository_identity` but different `commit_sha`
+    name two distinct, equally valid states: a later commit never erases
+    what was true of an earlier one (`RevisionDoesNotEraseHistoricalFreeze`).
 
     Construction here only proves `RepositoryVersionIsExplicitlyAddressed`:
     the triple is well-formed and non-blank. It never proves
@@ -67,4 +70,5 @@ class RepositorySnapshotRef:
         _require_text(self.repository_identity, "repository identity")
         _require_text(self.commit_sha, "repository commit sha")
         _require_text(self.tree_sha, "repository tree sha")
+
 

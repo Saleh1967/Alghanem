@@ -6,6 +6,13 @@ exists in the new snapshot and was labeled changed by some external
 process. `RepositoryArtifactChangeRef` instead keeps both ends bound to
 their own snapshot, so a future claim about *what* changed always has both
 sides available.
+
+`ArtifactChangeRefIsContextDependent` does not hold here: this contract
+enforces its own minimal snapshot coherence directly, rather than relying
+on a later `RepositoryTransitionRef` to reject a mismatched pair. It does
+not attempt to prove `Ancestor(before, after)`; it only refuses to pair two
+artifacts that plainly cannot belong to the same before/after move, namely
+one from a different repository or the same commit on both sides.
 """
 
 from __future__ import annotations
@@ -25,7 +32,10 @@ class RepositoryArtifactChangeRef:
     a candidate rename/move) and is deliberately out of scope here as a
     future `RepositoryArtifactMoveCandidate`. `before.blob_sha` and
     `after.blob_sha` must differ: a pair with no content difference is not
-    a change.
+    a change. `before.snapshot` and `after.snapshot` must share the same
+    `repository_identity` and name distinct `commit_sha`s: pairing artifacts
+    from two different repositories, or from the same commit, is rejected
+    here directly rather than left to a later `RepositoryTransitionRef`.
     """
 
     before: RepositoryArtifactRef
@@ -49,6 +59,19 @@ class RepositoryArtifactChangeRef:
             raise SelfObservationContractError(
                 "repository artifact change requires distinct before/after "
                 "blob shas"
+            )
+        if (
+            self.before.snapshot.repository_identity
+            != self.after.snapshot.repository_identity
+        ):
+            raise SelfObservationContractError(
+                "repository artifact change requires the same "
+                "repository_identity on both sides"
+            )
+        if self.before.snapshot.commit_sha == self.after.snapshot.commit_sha:
+            raise SelfObservationContractError(
+                "repository artifact change requires distinct before/after "
+                "snapshot commit shas"
             )
 
     @property
