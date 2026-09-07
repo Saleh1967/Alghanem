@@ -620,3 +620,4 @@ def test_evaluator_authorization_requires_exact_declared_scope() -> None:
             ),
             registry_snapshot=registry.seal("registry-snapshot"),
         )
+

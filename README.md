@@ -70,11 +70,11 @@ request: it has no birth-verdict or freeze authority. G0.2a adds executable
 residual, weaker-model, and closure contracts that must match the frozen
 residual/closure identities. Evaluator ids in those contracts are declarations
 only unless a sealed evaluator registry authorizes the exact scope, and
-`NoVerdictYet` remains in force: no `BirthGate`, `BirthVerdict`,
-`BirthCandidate`, `Freeze`, or E0 authority exists yet.
+G0.BV.1 remains deferred: no runtime birth-verdict authority exists until an
+assessment authority, `BirthCandidate`, and `IndependentClosure` exist.
 `BirthCandidate` is distinct from a scoped birth verdict and from `Freeze`;
-the later G0.2 gate alone may issue `BIRTH_IN_SCOPE`, then freeze it before a
-separate `E0` step. See the
+the future G0.BV.1 authority may issue `BIRTH_IN_SCOPE`, then a later freeze
+authority may freeze it before a separate `E0` step. See the
 "G0 — Birth Protocol" section of
 `docs/CONSTITUTION.md` for the full declared laws; no `BirthGate` or
 rank/complexity runtime exists yet. A non-linguistic

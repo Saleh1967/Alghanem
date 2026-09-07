@@ -32,7 +32,7 @@ class EvidenceMode(Enum):
 
 
 class BirthVerdictStatus(Enum):
-    """Future scoped verdict vocabulary; values confer no decision authority."""
+    """The three scoped outcomes that a birth-verdict authority may issue."""
 
     BIRTH_IN_SCOPE = auto()
     NO_BIRTH_IN_SCOPE = auto()
@@ -694,3 +694,4 @@ class BirthAssessmentRequest:
         """The specification proven equal to the authorized frozen manifest."""
 
         return self.experiment_binding.specification
+
