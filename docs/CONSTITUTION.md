@@ -497,3 +497,39 @@ trustworthy. `FractalSnapshot` contains no `ArabicRuleTable` and no other
 compiled artifact; per `RuleTableIsDerivedArtifact` above, any such table
 remains a strictly later, derived projection of a frozen snapshot like this
 one.
+
+## Encyclopedia Nucleus — Constitution
+
+The encyclopedia is an application consumer of the kernel, never a replacement
+for it. Its minimal state is:
+
+```
+EncyclopediaNucleusSnapshot = FractalSnapshot + GrowthFrontier
+GrowthFrontier = RootInquiries + ReopenInquiries
+```
+
+`FractalSnapshot` remains a discovery graph, not a knowledge graph. It holds
+only frozen discovery contracts, whose construction remains non-authoritative
+until the future birth and freeze authorities exist. The frontier holds open
+questions. Frontier immutability is a contract property; preserving an inquiry
+after a `DEFER` verdict is deferred until a growth transition mechanism exists.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `NoDedicatedTraditionalSchemaFields` | PROVED (at contract level) | The encyclopedia namespace has no dedicated domain, ontology, or human-science label fields. |
+| `NoSemanticLabelLeakThroughIdentifiers` | DECLARED_DEFERRED | Identifiers are opaque keys, not semantic evidence; a future registry and evaluator authority must ensure their values cannot influence discovery. |
+| `QuestionGenerationIsNotAuthorization` | PROVED (at contract level) | `QuestionProposal` has no experiment or execution field. `RootInquiry` requires a `BirthExperimentSpecificationContentBinding`, which proves its complete G0 specification exactly matches registry-frozen pre-evidence content. |
+| `QuestionGrowthUsesReopen` | PROVED (at contract level) | Later questions around frozen results are represented by kernel `ReopenExperimentSpecification`; sequential inquiry is not an ontological bridge. |
+| `FrontierReopenParentMustExistInSnapshot` | PROVED (at contract level) | Every reopen parent in the frontier must exactly equal a frozen factor or born bridge reference present in the paired `FractalSnapshot`; identifier equality alone is insufficient. |
+| `FrontierImmutability` | PROVED (at contract level) | The frozen frontier contract cannot be mutated after construction. |
+| `DeferPreservesOpenQuestion` | DECLARED_DEFERRED | A future `EncyclopediaGrowthTransition` must retain an inquiry after a `DEFER` result; no verdict-to-frontier transition exists yet. |
+| `NoKnowledgeBeforeLicensedClaim` | PROVED (at contract level) | The nucleus contains no claim or knowledge fields. Frozen factors are not knowledge states. |
+| `NoTextBeforeKnowledgeProjection` | PROVED (at contract level) | The nucleus contains no article or text fields; rendering is a later projection and cannot create knowledge. |
+| `NoIndexFeedbackIntoDiscovery` | DECLARED_DEFERRED | A future index or renderer may project licensed knowledge but may not authorize or alter discovery. |
+
+`src/alghanem/encyclopedia/inquiry.py`,
+`src/alghanem/encyclopedia/frontier.py`, and
+`src/alghanem/encyclopedia/snapshot.py` intentionally define no growth engine,
+domain taxonomy, knowledge graph, article store, or evaluator authority.
+`EncyclopediaGrowthTransition` is the deferred future boundary for applying
+authorized kernel outcomes to a nucleus snapshot.
