@@ -506,9 +506,14 @@ exclusion, including `ProjectionPoset`, `BirthQuery`, and
 performs no evaluation and
 issues no birth authority. `EvaluatorId != EvaluatorImplementationIdentity`
 remains open: this stage authorizes evaluator *declarations*, not evaluator
-*implementations*, and any future runtime must resolve evaluator execution
-through a registry-owned implementation bound to an approved content
-identity, never a caller-supplied callable.
+*implementations*. `G0.BA.1a` already provides a runtime invocation boundary
+that resolves evaluator execution through a registry-owned implementation,
+never a caller-supplied callable, but proves only registry-bound invocation:
+`ImplementationIdentityIsContentAuthenticated = DEFERRED`. Any later runtime
+that claims reproducible or content-authenticated evaluator implementation
+identity must instead bind that implementation to independently
+authenticated content; `G0.BA.1a` does not yet close that requirement
+(`AuthorizedCallableInvocation != ReproducibleImplementationIdentity`).
 
 Later G0.2 stages alone may implement the complete authority chain:
 `BirthAssessmentRequest -> ResidualAssessment ->
