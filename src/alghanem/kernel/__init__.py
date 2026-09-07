@@ -124,12 +124,9 @@ from .invariant import (
 )
 from .operation import Operation, OperationResult
 from .residual import (
-    CertifiedResidual,
-    ObservedDifference,
-    ReconstructionSpec,
     Residual,
+    ResidualCertificationCandidate,
     ResidualCertificationError,
-    ResidualComparatorSpec,
 )
 from .trace import Trace
 from .transition import (
@@ -247,11 +244,8 @@ __all__ = [
     "ProjectionPoset",
     "ProofLineageEdge",
     "Residual",
-    "CertifiedResidual",
-    "ObservedDifference",
-    "ReconstructionSpec",
+    "ResidualCertificationCandidate",
     "ResidualCertificationError",
-    "ResidualComparatorSpec",
     "ResidualDefinitionSpec",
     "ReopenExperimentSpecification",
     "SealedApplicabilityEvaluatorRegistry",

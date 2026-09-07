@@ -2,17 +2,16 @@ import pytest
 
 from alghanem.kernel import (
     AuthenticatedObservationBinding,
-    CertifiedResidual,
-    ObservedDifference,
-    ReconstructionSpec,
     Residual,
+    ResidualCertificationCandidate,
     ResidualCertificationError,
-    ResidualComparatorSpec,
     Trace,
 )
 from alghanem.kernel._internal.authenticated_observation_bridge import (
     issue_from_source_authority,
 )
+from alghanem.kernel.birth import ResidualDefinitionSpec
+from alghanem.kernel.birth_content_identity import CanonicalBirthSemanticsEncoder
 from alghanem.kernel.fractal import FrozenFactorRef
 
 
@@ -26,122 +25,113 @@ def observation() -> AuthenticatedObservationBinding:
     return issue_from_source_authority("observation", "authentication")
 
 
-def reconstruction() -> ReconstructionSpec:
-    return ReconstructionSpec.register("reconstruction", "rebuild projection")
-
-
-def comparator() -> ResidualComparatorSpec:
-    return ResidualComparatorSpec.register("comparator", "exact projection equality")
-
-
-def difference(
-    comparator_spec: ResidualComparatorSpec | None = None,
-    *,
-    witness: str = "difference",
-) -> ObservedDifference:
-    spec = comparator_spec or comparator()
-    return ObservedDifference(
-        spec.spec_id, spec.content_id, "observed", "reconstructed", witness
+def residual_definition() -> ResidualDefinitionSpec:
+    return ResidualDefinitionSpec(
+        residual_id="residual",
+        domain="domain",
+        input_projection="projection",
+        output_schema="schema",
+        evaluator_id="declarative-evaluator",
+        invariants=("coverage",),
+        failure_semantics="defer malformed inputs",
     )
 
 
-def certified() -> CertifiedResidual:
-    return CertifiedResidual.certify(
-        "residual",
-        parent(),
-        observation(),
-        "scope",
-        reconstruction(),
-        comparator(),
-        difference(),
-        Trace(("observe", "reconstruct", "compare")),
+def candidate() -> ResidualCertificationCandidate:
+    definition = residual_definition()
+    manifest = CanonicalBirthSemanticsEncoder.encode_residual_definition(definition)
+    return ResidualCertificationCandidate(
+        residual_id="residual-occurrence",
+        parent_freeze_ref=parent(),
+        observation_ref=observation(),
+        scope_ref="scope",
+        residual_definition=definition,
+        residual_definition_content_id=manifest.content_id,
+        reconstruction_attempt_ref="attempt-ref",
+        comparison_result_ref="comparison-ref",
+        trace=Trace(("observe", "reconstruct", "compare")),
     )
 
 
-def test_certified_residual_binds_all_provenance() -> None:
-    result = certified()
+def test_candidate_composes_existing_frozen_residual_definition() -> None:
+    result = candidate()
 
-    assert result.parent_freeze_ref == parent()
-    assert result.observation_ref == observation()
-    assert result.reconstruction_spec_id == "reconstruction"
-    assert result.comparator_spec_id == "comparator"
-    assert result.observed_projection_id == "observed"
-    assert result.reconstructed_projection_id == "reconstructed"
-    assert result.difference_witness_id == "difference"
-    assert result.residual_content_id
+    assert result.residual_definition is not None
+    assert result.residual_definition_content_id.digest
+    assert result.residual_id != result.residual_definition.residual_id
 
 
-def test_legacy_residual_is_not_a_certified_residual() -> None:
+def test_legacy_residual_has_no_certification_authority() -> None:
     assert isinstance(Residual("legacy remainder"), Residual)
-    assert not isinstance(Residual("legacy remainder"), CertifiedResidual)
+    assert not isinstance(Residual("legacy remainder"), ResidualCertificationCandidate)
 
 
-def test_certification_requires_exact_frozen_parent() -> None:
-    with pytest.raises(ResidualCertificationError):
-        CertifiedResidual.certify(
-            "residual",
-            "factor-id",  # type: ignore[arg-type]
+def test_contract_does_not_claim_that_a_reference_proves_freeze() -> None:
+    assert candidate().parent_freeze_ref == parent()
+
+    # FrozenFactorRef remains caller-constructible until G0.FA.1.
+    forged = FrozenFactorRef(
+        "forged", "forged-content", "forged-certificate", "domain", "birth", "r1"
+    )
+    assert (
+        ResidualCertificationCandidate(
+            "occurrence",
+            forged,
             observation(),
             "scope",
-            reconstruction(),
-            comparator(),
-            difference(),
+            residual_definition(),
+            CanonicalBirthSemanticsEncoder.encode_residual_definition(
+                residual_definition()
+            ).content_id,
+            "attempt",
+            "comparison",
             Trace(("compare",)),
-        )
+        ).parent_freeze_ref
+        == forged
+    )
 
 
-def test_certification_requires_authenticated_observation() -> None:
+def test_contract_rejects_missing_authenticated_observation() -> None:
+    definition = residual_definition()
+    manifest = CanonicalBirthSemanticsEncoder.encode_residual_definition(definition)
     with pytest.raises(ResidualCertificationError):
-        CertifiedResidual.certify(
-            "residual",
+        ResidualCertificationCandidate(
+            "occurrence",
             parent(),
             "observation",  # type: ignore[arg-type]
             "scope",
-            reconstruction(),
-            comparator(),
-            difference(),
+            definition,
+            manifest.content_id,
+            "attempt",
+            "comparison",
             Trace(("compare",)),
         )
 
 
-def test_certification_rejects_no_difference() -> None:
-    spec = comparator()
-    no_difference = ObservedDifference(
-        spec.spec_id, spec.content_id, "same", "same", ""
-    )
-
+def test_contract_rejects_missing_reconstruction_or_comparison_reference() -> None:
+    definition = residual_definition()
+    manifest = CanonicalBirthSemanticsEncoder.encode_residual_definition(definition)
     with pytest.raises(ResidualCertificationError):
-        CertifiedResidual.certify(
-            "residual",
+        ResidualCertificationCandidate(
+            "occurrence",
             parent(),
             observation(),
             "scope",
-            reconstruction(),
-            spec,
-            no_difference,
+            definition,
+            manifest.content_id,
+            "",
+            "comparison",
             Trace(("compare",)),
         )
-
-
-def test_certification_rejects_posthoc_or_unregistered_specs() -> None:
     with pytest.raises(ResidualCertificationError):
-        ReconstructionSpec("reconstruction", "posthoc")  # type: ignore[call-arg]
-    with pytest.raises(ResidualCertificationError):
-        ResidualComparatorSpec("comparator", "posthoc")  # type: ignore[call-arg]
-
-
-def test_changing_provenance_changes_content_identity() -> None:
-    first = certified()
-    second = CertifiedResidual.certify(
-        "residual",
-        parent(),
-        issue_from_source_authority("other-observation", "authentication"),
-        "scope",
-        reconstruction(),
-        comparator(),
-        difference(),
-        Trace(("observe", "reconstruct", "compare")),
-    )
-
-    assert first != second
-    assert first.residual_content_id != second.residual_content_id
+        ResidualCertificationCandidate(
+            "occurrence",
+            parent(),
+            observation(),
+            "scope",
+            definition,
+            manifest.content_id,
+            "attempt",
+            "",
+            Trace(("compare",)),
+        )
