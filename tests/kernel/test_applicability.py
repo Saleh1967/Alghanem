@@ -255,6 +255,43 @@ def test_block_is_preserved_when_no_model_closes() -> None:
     assert assessment.status is ApplicabilityAssessmentStatus.BLOCK
 
 
+def test_stronger_block_does_not_override_weaker_defer() -> None:
+    candidate = claim("historical-origin", "historical-origin-proof")
+    registry = ApplicabilityEvaluatorRegistry()
+    scope = candidate.claim.content.core.scope
+    registry.register(
+        "weak-defer",
+        "implementation-v1",
+        candidate.role.identifier,
+        scope,
+        lambda _: result(
+            ApplicabilityAssessmentStatus.DEFER,
+            (Residual("weak unresolved boundary"),),
+        ),
+    )
+    registry.register(
+        "strong-block",
+        "implementation-v2",
+        candidate.role.identifier,
+        scope,
+        lambda _: result(ApplicabilityAssessmentStatus.BLOCK),
+    )
+    assessment = ApplicabilityAssessmentGate.assess(
+        candidate,
+        ApplicabilityAssessmentSpecification(
+            (
+                FrozenApplicabilityModel("weak-model", "weak-defer"),
+                FrozenApplicabilityModel(
+                    "strong-model", "strong-block", ("weak-model",)
+                ),
+            )
+        ),
+        registry.seal("registry-1"),
+    )
+
+    assert assessment.status is ApplicabilityAssessmentStatus.DEFER
+
+
 def test_assessment_cannot_be_fabricated_and_models_are_content_bound() -> None:
     candidate = claim("source-says-origin", "source-attestation")
     with pytest.raises(ValueError, match="issued by"):
