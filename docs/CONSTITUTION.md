@@ -430,7 +430,12 @@ definition, implementation identity, role, target, the exact
 (not a caller-substituted one), input content, output content, and trace.
 
 This record answers only "did a specific, registry-bound implementation run
-against a specific, authorized request's evidence?". It carries no
+within the context of a specific, authorized assessment request, while
+preserving that request and its attached evidence reference?"
+(`ExecutedInContextOfAuthorizedRequest + AttachedEvidenceReference`, not
+`ExecutedAgainstAuthorizedEvidence`): `EvidenceAttachedToRecord !=
+EvaluatorExecutedOnEvidence`, and `InputProvenance = DECLARED_DEFERRED`. It
+carries no
 `ResidualEvaluationResult`, `WeakerModelEvaluationResult`,
 `ClosureEvaluationResult`, aggregate execution status, residual survival,
 weaker-model exhaustion, `BirthCandidate`, `IndependentClosure`,
@@ -501,9 +506,14 @@ exclusion, including `ProjectionPoset`, `BirthQuery`, and
 performs no evaluation and
 issues no birth authority. `EvaluatorId != EvaluatorImplementationIdentity`
 remains open: this stage authorizes evaluator *declarations*, not evaluator
-*implementations*, and any future runtime must resolve evaluator execution
-through a registry-owned implementation bound to an approved content
-identity, never a caller-supplied callable.
+*implementations*. `G0.BA.1a` already provides a runtime invocation boundary
+that resolves evaluator execution through a registry-owned implementation,
+never a caller-supplied callable, but proves only registry-bound invocation:
+`ImplementationIdentityIsContentAuthenticated = DEFERRED`. Any later runtime
+that claims reproducible or content-authenticated evaluator implementation
+identity must instead bind that implementation to independently
+authenticated content; `G0.BA.1a` does not yet close that requirement
+(`AuthorizedCallableInvocation != ReproducibleImplementationIdentity`).
 
 Later G0.2 stages alone may implement the complete authority chain:
 `BirthAssessmentRequest -> ResidualAssessment ->
@@ -550,7 +560,14 @@ enforcement mechanism yet:
 * `ResidualGeometryConstrainsArchitectureSearch` -- whatever architecture
   search a future stage performs must be constrained by the actual shape of
   the residuals on hand, not by a convenient or popular prior architecture.
-  The residual geometry is the only permitted source of search bias.
+  Residual geometry is the only permitted source of *new structural demand*
+  (`ResidualGeometry = OnlySourceOfNewStructuralDemand`) -- it is not claimed
+  to be the only thing constraining search overall: frozen prior structure,
+  admissibility, licensed operations, and prior invariants also constrain
+  every future search, alongside residual geometry:
+  `Search_{n+1} = ConstrainedBy(FrozenPrior_n, LicensedOperations_n,
+  ResidualGeometry_n)`. What residual geometry alone licenses is new
+  structural complexity: `NewStructuralComplexity must be demanded by rho_n`.
 * `NoFixedComplexityOrder` -- no future stage may assume, in advance, an
   ordering of model complexity (for example, "try bigrams before trigrams
   before graphs") as a structural law. Any such ordering, if it appears,
