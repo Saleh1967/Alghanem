@@ -1,12 +1,14 @@
 """Constitutional tests for G0.C.1's evidence-free claim candidates."""
 
 from dataclasses import fields
+from typing import cast
 
 import pytest
 
 from alghanem.kernel import (
     Anchor,
     CanonicalClaimContentEncoder,
+    CanonicalClaimContentManifest,
     Claim,
     ClaimCandidate,
     ClaimContentIdentity,
@@ -107,6 +109,61 @@ def test_content_identity_rejects_invalid_encoder_issued_values(
 
 
 @pytest.mark.parametrize(
+    ("field", "invalid"),
+    [
+        ("anchor", cast(Anchor, "not-an-anchor")),
+        ("predicate", cast(PredicateRef, "not-a-predicate-reference")),
+        ("polarity", cast(ClaimPolarity, "not-a-polarity")),
+        ("scope", cast(ClaimScopeRef, "not-a-scope-reference")),
+    ],
+)
+def test_claim_core_rejects_wrong_typed_fields(field: str, invalid: object) -> None:
+    values: dict[str, object] = {
+        "anchor": core().anchor,
+        "predicate": core().predicate,
+        "polarity": core().polarity,
+        "scope": core().scope,
+    }
+    values[field] = invalid
+
+    with pytest.raises(TypeError, match="claim core requires"):
+        ClaimCore(**values)  # type: ignore[arg-type]
+
+
+def test_content_manifest_and_candidate_reject_wrong_typed_fields() -> None:
+    valid_content = content()
+    valid_manifest = CanonicalClaimContentEncoder.encode(valid_content)
+
+    with pytest.raises(TypeError, match="claim content requires"):
+        ClaimContentManifest(core=cast(ClaimCore, "not-a-core"))
+    with pytest.raises(TypeError, match="claim qualifications must"):
+        ClaimContentManifest(
+            core=core(),
+            qualifications=cast(
+                tuple[ClaimQualification, ...], ("not-a-qualification",)
+            ),
+        )
+    with pytest.raises(TypeError, match="claim candidate requires"):
+        ClaimCandidate(
+            occurrence=cast(ClaimOccurrenceRef, "not-an-occurrence"),
+            content=valid_content,
+            content_manifest=valid_manifest,
+        )
+    with pytest.raises(TypeError, match="claim candidate requires"):
+        ClaimCandidate(
+            occurrence=ClaimOccurrenceRef("claim-1"),
+            content=cast(ClaimContentManifest, "not-content"),
+            content_manifest=valid_manifest,
+        )
+    with pytest.raises(TypeError, match="claim candidate requires"):
+        ClaimCandidate(
+            occurrence=ClaimOccurrenceRef("claim-1"),
+            content=valid_content,
+            content_manifest=cast(CanonicalClaimContentManifest, "not-a-manifest"),
+        )
+
+
+@pytest.mark.parametrize(
     ("deleted", "distinct"),
     [
         (
@@ -179,7 +236,7 @@ def test_predicate_reference_has_no_rendered_text_field() -> None:
 @pytest.mark.parametrize(
     "coverage_name",
     [
-        "MANIFEST_COVERAGE",
+        "CLAIM_CONTENT_MANIFEST_COVERAGE",
         "CLAIM_CORE_COVERAGE",
         "PREDICATE_REF_COVERAGE",
         "CLAIM_SCOPE_REF_COVERAGE",

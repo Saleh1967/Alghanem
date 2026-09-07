@@ -19,7 +19,7 @@ from .anchor import Anchor
 _CLAIM_CONTENT_TOKEN = object()
 _ALGORITHM = "sha256"
 _CANONICALIZATION_VERSION = "claim-content-manifest-v1"
-MANIFEST_COVERAGE = ("core", "qualifications")
+CLAIM_CONTENT_MANIFEST_COVERAGE = ("core", "qualifications")
 CLAIM_CORE_COVERAGE = ("anchor", "predicate", "polarity", "scope")
 PREDICATE_REF_COVERAGE = ("identifier",)
 CLAIM_SCOPE_REF_COVERAGE = ("scope_type", "reference")
@@ -195,7 +195,7 @@ class CanonicalClaimContentEncoder:
     def _assert_schema_coverage() -> None:
         CanonicalClaimContentEncoder._assert_type_coverage(
             ClaimContentManifest,
-            MANIFEST_COVERAGE,
+            CLAIM_CONTENT_MANIFEST_COVERAGE,
         )
 
     @staticmethod
