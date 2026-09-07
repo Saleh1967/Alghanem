@@ -63,6 +63,7 @@ from .experiment_spec_content_identity import (
 )
 from .fractal import (
     BornBridgeRef,
+    DerivedRelationRef,
     DerivedRelationSpec,
     FractalContractError,
     FractalProvenancePath,
@@ -146,6 +147,7 @@ __all__ = [
     "ClosureAssessmentStatus",
     "ClosureCriterionSpec",
     "DecisionReasonCode",
+    "DerivedRelationRef",
     "DerivedRelationSpec",
     "Evidence",
     "EvidenceAcquisitionAuthority",

@@ -463,21 +463,29 @@ FractalGraph = FrozenFactors + DerivedRelations + BornBridges
 | `NoTraditionalLayerEnum` | DECLARED_DEFERRED | No fixed enumeration of traditional layers (for example `ORTHOGRAPHY`/`PHONOLOGY`/`MORPHOLOGY`/`SYNTAX`/`SEMANTICS`) may be declared as a closed type in the kernel or Arabic runtime. A domain `L` is identified only by its own frozen experiment/jurisdiction scope (`Layer = FrozenExperimentJurisdiction`); two jurisdictions may later be shown to share a factor without that implying either was ever a case of the other. |
 | `FractalParentageDoesNotDefineIdentity` | DECLARED_DEFERRED | A `FractalProvenancePath` records which frozen factors, bridges, derived relations, and reopen experiments produced a later result, strictly for audit and reconstruction of the proof path. `Parentage != Identity`: this path is never part of the later result's own declared identity or content identity, and two results with identical content but different provenance paths remain distinct occurrences, exactly as `EvidenceOccurrenceIdentity != EvidenceContentIdentity` already separates occurrence from content elsewhere in this kernel. |
 | `RevisionDoesNotEraseHistoricalFreeze` | DECLARED_DEFERRED | Restates `FrozenFactorReopeningRequiresNewRevision` (G0.F above) at the fractal-reopen level: new evidence discovered through a `Reopen` never edits, deletes, or silently supersedes a parent's historical frozen record. `ContentIdentity_new(F) == ContentIdentity_old(F)` is required for any claim that a later step merely *reopened* `F`; a change in `F`'s own content identity is not a reopen at all -- it is a new revision or a new birth, recorded separately. |
+| `ExactFrozenReferencePreservation` | PROVED (at contract level) | `FractalSnapshot` checks a derived relation's or bridge's referenced factor against the *exact* `FrozenFactorRef` recorded in the snapshot -- every declared field (`factor_id`, `factor_content_id`, `freeze_certificate_id`, `domain`, `birth_experiment_id`, `birth_revision_id`), never against a bare `factor_id` string. A reference sharing a `factor_id` but differing in content id, domain, birth experiment/revision, or freeze certificate names a different, unrecognized occurrence and is rejected. `factor_id` equality alone is never sufficient membership proof. |
+| `ReopenComposesG0DoesNotForkG0` | PROVED (at contract level) | `ReopenExperimentSpecification` embeds one ordinary, complete `BirthExperimentSpecification` (`experiment`) rather than redeclaring its own `new_question`/`residual_definition`/`closure_criterion` fields. This preserves G0's own revision identity, `EvidenceMode`, `ProjectionPoset`, `BirthQuery`, residual/closure identities, and derived prerequisite cone verbatim, so reopen semantics cannot drift from G0 semantics over time (`G0SemanticsDriftBetweenBirthAndReopen` is closed, not merely avoided by convention). Reopen uses G0; Reopen does not fork G0. |
+| `DerivedRelationProvenanceIsContentBound` | PROVED (at contract level) | `FractalProvenancePath.derived_relation_refs` holds `DerivedRelationRef` values (`relation_id` plus `derivation_content_id`), never bare `relation_id` strings. `SameRelationId != SameDerivationSemantics`: two derivations that happen to reuse the same `relation_id` but disagree on `derivation_content_id` are distinguishable, so drift in a derived relation's own recorded content is detectable from its provenance rather than silently trusted by id alone. |
 
 `FrozenFactorRef`, `BornBridgeRef`, `DerivedRelationSpec`,
-`ReopenExperimentSpecification`, `FractalProvenancePath`, and
-`FractalSnapshot` (`src/alghanem/kernel/fractal.py`) are contract
-*skeletons* only: their constructors validate internal well-formedness
-(non-blank identities, non-empty/non-duplicate parent or endpoint sets, and
-so on), exactly as `BirthExperimentSpecification` and its G0.2a siblings do
-ahead of any executable assessment runtime. None of them is issued by a
+`DerivedRelationRef`, `ReopenExperimentSpecification`,
+`FractalProvenancePath`, and `FractalSnapshot`
+(`src/alghanem/kernel/fractal.py`) are contract *skeletons* only: their
+constructors validate internal well-formedness (non-blank identities,
+non-empty/non-duplicate parent or endpoint sets, exact-reference membership,
+and so on), exactly as `BirthExperimentSpecification` and its G0.2a siblings
+do ahead of any executable assessment runtime. None of them is issued by a
 freeze or reopen authority yet, because no such authority exists: a caller
 can construct a syntactically valid `FrozenFactorRef` by hand today, which
 proves only that the contract is well-formed, never that a factor was
-actually born, closed, and frozen (`ConstructibleContract != IssuedByAuthority`).
-A future `FreezeAuthority`/`ReopenAuthority` -- analogous to
+actually born, closed, and frozen (`ConstructibleContract != IssuedByAuthority`,
+equivalently `WellFormedFrozenFactorRef != AuthorityIssuedFrozenFactorRef`).
+No code anywhere in the kernel may treat successful construction, or a
+passing `isinstance(x, FrozenFactorRef)` check, as proof that a genuine
+freeze occurred. A future `FreezeAuthority`/`ReopenAuthority` -- analogous to
 `EvidenceAcquisitionAuthority`'s sole-issuer pattern -- is a separate, later
-milestone. `FractalSnapshot` contains no `ArabicRuleTable` and no other
+milestone; only that authority may make an issued `FrozenFactorRef`
+trustworthy. `FractalSnapshot` contains no `ArabicRuleTable` and no other
 compiled artifact; per `RuleTableIsDerivedArtifact` above, any such table
 remains a strictly later, derived projection of a frozen snapshot like this
 one.

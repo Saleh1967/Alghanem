@@ -28,21 +28,47 @@ and its G0.2a siblings do before any executable assessment runtime exists.
 A caller can therefore construct a syntactically valid `FrozenFactorRef` by
 hand today; that is deliberate and mirrors G0.1's `BirthExperimentSpecification`
 before `PreEvidenceSpecificationRegistry` existed. It does not mean a factor
-has actually been born or frozen: `ConstructibleContract != IssuedByAuthority`.
-A future freeze/reopen authority -- analogous to
+has actually been born or frozen: `ConstructibleContract != IssuedByAuthority`,
+equivalently `WellFormedFrozenFactorRef != AuthorityIssuedFrozenFactorRef`. No
+code in this module (or elsewhere) may treat successful construction, or a
+passing `isinstance` check, as proof that a genuine freeze occurred. A
+future freeze/reopen authority -- analogous to
 `EvidenceAcquisitionAuthority`'s sole-issuer pattern -- is a separate,
-later milestone.
+later milestone; only that authority may make an issued `FrozenFactorRef`
+trustworthy.
 
 This module deliberately does not define a `Layer` enum
 (`NoTraditionalLayerEnum`): a domain is a `DiscoveryJurisdiction`, identified
 by its own frozen experiment scope, never by a preset linguistic category.
+
+Two structural integrity properties are enforced even at this
+pre-authority, skeleton stage:
+
+- `ExactFrozenReferencePreservation`: `FractalSnapshot` checks relation and
+  bridge membership against the *exact* `FrozenFactorRef` value recorded in
+  the snapshot (every declared field), never against a bare `factor_id`. A
+  reference that shares a `factor_id` but differs in content id, domain,
+  birth experiment, birth revision, or freeze certificate names a different,
+  unrecognized occurrence and is rejected, not silently accepted.
+- `ReopenComposesG0DoesNotForkG0`: `ReopenExperimentSpecification` embeds an
+  ordinary, complete `BirthExperimentSpecification` rather than redeclaring
+  its own question/residual/closure fields, so reopen semantics can never
+  drift from G0 semantics. `DerivedRelationRef`-based provenance similarly
+  binds a derived relation's `derivation_content_id`, not merely its
+  `relation_id`, into `FractalProvenancePath` (`SameRelationId !=
+  SameDerivationSemantics`).
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from .birth import BirthExperimentSpecificationError, _require_text, _require_text_tuple
+from .birth import (
+    BirthExperimentSpecification,
+    BirthExperimentSpecificationError,
+    _require_text,
+    _require_text_tuple,
+)
 
 
 class FractalContractError(BirthExperimentSpecificationError):
@@ -161,33 +187,40 @@ class DerivedRelationSpec:
 
 @dataclass(frozen=True, slots=True)
 class ReopenExperimentSpecification:
-    """A pre-evidence contract opening a new question around frozen parents.
+    """A pre-evidence contract opening a new G0 question around frozen parents.
 
     `Reopen(F) != Rebirth(F)`: this contract never reconstructs, copies, or
-    revalidates a parent's content; it only declares a new question about
-    the parents as they already stand. `E_{n+1} = Reopen(F_1, ..., F_k;
-    Q_{n+1})`, never `BuildNewVersion(F_1, ..., F_k)`. Every declared parent
-    is preserved verbatim (`PreservedParentIdentities`); nothing here can
-    mutate an upstream frozen factor (`NoUpstreamIdentityMutation`).
+    revalidates a parent's content; it only attaches a normal, complete
+    `BirthExperimentSpecification` to a set of already-frozen parents.
+    `E_{n+1} = Reopen(F_1, ..., F_k; Q_{n+1})`, never
+    `BuildNewVersion(F_1, ..., F_k)`. Every declared parent is preserved
+    verbatim (`PreservedParentIdentities`); nothing here can mutate an
+    upstream frozen factor (`NoUpstreamIdentityMutation`).
+
+    Reopen deliberately does **not** redeclare its own question, residual
+    definition, or closure criterion: doing so would let reopen semantics
+    drift from G0 semantics over time (`G0SemanticsDriftBetweenBirthAndReopen`).
+    Instead, `experiment` embeds a complete, ordinary
+    `BirthExperimentSpecification` unmodified, so a reopened experiment
+    keeps G0's own revision identity, `EvidenceMode`, `ProjectionPoset`,
+    `BirthQuery`, residual/closure identities, and derived prerequisite
+    cone -- `ReopenComposesG0DoesNotForkG0`: reopen uses G0, it does not fork
+    G0's experiment protocol into a second, parallel one.
     """
 
     reopen_id: str
     parents: tuple[FrozenFactorRef, ...]
-    new_question: str
+    experiment: BirthExperimentSpecification
     allowed_observables: tuple[str, ...]
-    residual_definition_id: str
-    residual_definition: str
-    closure_criterion_id: str
-    closure_criterion: str
 
     def __post_init__(self) -> None:
         _require_text(self.reopen_id, "reopen id")
-        _require_text(self.new_question, "reopen new question")
         _require_text_tuple(self.allowed_observables, "reopen allowed observables")
-        _require_text(self.residual_definition_id, "reopen residual definition id")
-        _require_text(self.residual_definition, "reopen residual definition")
-        _require_text(self.closure_criterion_id, "reopen closure criterion id")
-        _require_text(self.closure_criterion, "reopen closure criterion")
+        if not isinstance(self.experiment, BirthExperimentSpecification):
+            raise FractalContractError(
+                "a reopen experiment must embed a frozen G0 "
+                "BirthExperimentSpecification, not a parallel specification"
+            )
         if len(self.parents) < 1:
             raise FractalContractError(
                 "a reopen experiment requires at least one frozen parent reference"
@@ -196,10 +229,32 @@ class ReopenExperimentSpecification:
             raise FractalContractError(
                 "reopen parents must be frozen factor references"
             )
-        if len({parent.factor_id for parent in self.parents}) != len(self.parents):
+        if len(set(self.parents)) != len(self.parents):
             raise FractalContractError(
-                "reopen parents must not repeat the same frozen factor"
+                "reopen parents must not repeat the same exact frozen reference"
             )
+
+
+@dataclass(frozen=True, slots=True)
+class DerivedRelationRef:
+    """A content-bound reference to an already-recorded `DerivedRelationSpec`.
+
+    `SameRelationId != SameDerivationSemantics`: a bare `relation_id` string
+    cannot distinguish two different derivations that happen to reuse the
+    same id, exactly as `EvidenceOccurrenceIdentity != EvidenceContentIdentity`
+    already separates label from content elsewhere in this kernel. Provenance
+    that names a derived relation must therefore bind both the `relation_id`
+    and the `derivation_content_id` it observed, so a later drift in the
+    relation's own recorded content is detectable rather than silently
+    trusted by id alone.
+    """
+
+    relation_id: str
+    derivation_content_id: str
+
+    def __post_init__(self) -> None:
+        _require_text(self.relation_id, "derived relation ref id")
+        _require_text(self.derivation_content_id, "derived relation ref content id")
 
 
 @dataclass(frozen=True, slots=True)
@@ -217,7 +272,7 @@ class FractalProvenancePath:
     factor_id: str
     reopened_factor_refs: tuple[FrozenFactorRef, ...]
     reopened_bridge_refs: tuple[BornBridgeRef, ...]
-    derived_relation_ids: tuple[str, ...]
+    derived_relation_refs: tuple[DerivedRelationRef, ...]
     reopen_experiment_id: str
     reopen_revision_id: str
     residual_id: str
@@ -238,11 +293,14 @@ class FractalProvenancePath:
             raise FractalContractError(
                 "reopened bridge provenance must be born bridge references"
             )
-        _require_text_tuple(
-            self.derived_relation_ids,
-            "provenance derived relation ids",
-            allow_empty=True,
-        )
+        if any(
+            not isinstance(ref, DerivedRelationRef)
+            for ref in self.derived_relation_refs
+        ):
+            raise FractalContractError(
+                "derived relation provenance must be content-bound derived "
+                "relation references, not bare relation id strings"
+            )
         if not self.reopened_factor_refs and not self.reopened_bridge_refs:
             raise FractalContractError(
                 "a provenance path requires at least one reopened ancestor"
@@ -265,12 +323,24 @@ class FractalSnapshot:
     three are never conflated. This snapshot contains no `ArabicRuleTable`
     or other compiled artifact; a rule table is a strictly later, derived
     projection of a frozen snapshot like this one (`RuleTableIsDerivedArtifact`).
+
+    Membership of a relation's or bridge's referenced factor is checked
+    against the *exact* frozen reference recorded in this snapshot -- every
+    declared field, not merely `factor_id` -- so a reference that shares a
+    `factor_id` but differs in `factor_content_id`, `domain`,
+    `birth_experiment_id`, `birth_revision_id`, or `freeze_certificate_id` is
+    rejected as an unrecognized, distinct occurrence
+    (`ExactFrozenReferencePreservation`); `factor_id` equality alone is never
+    sufficient.
     """
 
     frozen_factors: tuple[FrozenFactorRef, ...]
     derived_relations: tuple[DerivedRelationSpec, ...]
     born_bridges: tuple[BornBridgeRef, ...]
     _factor_ids: frozenset[str] = field(init=False, repr=False, compare=False)
+    _frozen_refs: frozenset[FrozenFactorRef] = field(
+        init=False, repr=False, compare=False
+    )
 
     def __post_init__(self) -> None:
         if any(
@@ -296,19 +366,21 @@ class FractalSnapshot:
                 "fractal snapshot must not repeat the same frozen factor"
             )
         object.__setattr__(self, "_factor_ids", frozenset(factor_ids))
+        object.__setattr__(self, "_frozen_refs", frozenset(self.frozen_factors))
         for relation in self.derived_relations:
             if any(
-                source.factor_id not in self._factor_ids
+                source not in self._frozen_refs
                 for source in relation.source_factor_refs
             ):
                 raise FractalContractError(
-                    "derived relation sources must be part of this snapshot"
+                    "derived relation sources must be exact frozen references "
+                    "already present in this snapshot, not merely matching factor ids"
                 )
         for bridge in self.born_bridges:
             if any(
-                endpoint.factor_id not in self._factor_ids
-                for endpoint in bridge.endpoint_refs
+                endpoint not in self._frozen_refs for endpoint in bridge.endpoint_refs
             ):
                 raise FractalContractError(
-                    "bridge endpoints must be part of this snapshot"
+                    "bridge endpoints must be exact frozen references already "
+                    "present in this snapshot, not merely matching factor ids"
                 )
