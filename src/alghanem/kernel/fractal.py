@@ -374,6 +374,34 @@ class ProofLineageEdge:
             )
 
 
+def _ensure_acyclic(
+    adjacency: dict[FrozenOntologyRef, set[FrozenOntologyRef]],
+) -> None:
+    visiting: set[FrozenOntologyRef] = set()
+    visited: set[FrozenOntologyRef] = set()
+    for node in adjacency:
+        if node in visited:
+            continue
+        stack: list[tuple[FrozenOntologyRef, bool]] = [(node, False)]
+        while stack:
+            current, exiting = stack.pop()
+            if exiting:
+                visiting.remove(current)
+                visited.add(current)
+                continue
+            if current in visited:
+                continue
+            if current in visiting:
+                raise FractalContractError("proof lineage graph must be acyclic")
+            visiting.add(current)
+            stack.append((current, True))
+            stack.extend(
+                (child, False)
+                for child in adjacency[current]
+                if child not in visited
+            )
+
+
 @dataclass(frozen=True, slots=True)
 class FractalSnapshot:
     """An audit-only snapshot of a discovery jurisdiction's fractal graph.
@@ -452,7 +480,12 @@ class FractalSnapshot:
                     "bridge endpoints must be exact frozen references already "
                     "present in this snapshot, not merely matching factor ids"
                 )
+        reopen_specs: dict[str, ReopenExperimentSpecification] = {}
         born_bridge_refs = set(self.born_bridges)
+        adjacency: dict[FrozenOntologyRef, set[FrozenOntologyRef]] = {
+            factor: set() for factor in self.frozen_factors
+        }
+        adjacency.update({bridge: set() for bridge in self.born_bridges})
         for edge in self.proof_lineage_edges:
             if (
                 edge.parent_ref not in self._frozen_refs
@@ -462,42 +495,11 @@ class FractalSnapshot:
                     "proof lineage endpoints must be exact frozen ontology "
                     "references already present in this snapshot"
                 )
-        reopen_specs: dict[str, ReopenExperimentSpecification] = {}
-        for edge in self.proof_lineage_edges:
             reopen_id = edge.reopen_specification.reopen_id
             previous = reopen_specs.setdefault(reopen_id, edge.reopen_specification)
             if previous != edge.reopen_specification:
                 raise FractalContractError(
                     "a reopen id must bind one exact experiment specification"
                 )
-        adjacency: dict[FrozenOntologyRef, set[FrozenOntologyRef]] = {
-            factor: set() for factor in self.frozen_factors
-        }
-        adjacency.update({bridge: set() for bridge in self.born_bridges})
-        for edge in self.proof_lineage_edges:
             adjacency[edge.parent_ref].add(edge.child_ref)
-
-        visiting: set[FrozenOntologyRef] = set()
-        visited: set[FrozenOntologyRef] = set()
-
-        for node in adjacency:
-            if node in visited:
-                continue
-            stack: list[tuple[FrozenOntologyRef, bool]] = [(node, False)]
-            while stack:
-                current, exiting = stack.pop()
-                if exiting:
-                    visiting.remove(current)
-                    visited.add(current)
-                    continue
-                if current in visited:
-                    continue
-                if current in visiting:
-                    raise FractalContractError("proof lineage graph must be acyclic")
-                visiting.add(current)
-                stack.append((current, True))
-                stack.extend(
-                    (child, False)
-                    for child in adjacency[current]
-                    if child not in visited
-                )
+        _ensure_acyclic(adjacency)
