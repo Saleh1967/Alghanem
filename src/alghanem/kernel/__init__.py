@@ -50,6 +50,14 @@ from .claim_constitution import (
     ClaimScopeRef,
     PredicateRef,
 )
+from .applicability import (
+    ApplicabilityAssessmentGate,
+    ApplicabilityAssessmentSpecification,
+    ApplicabilityAssessmentStatus,
+    ApplicabilityModelResult,
+    EvidenceApplicabilityAssessment,
+    FrozenApplicabilityModel,
+)
 from .content_identity import (
     CanonicalTransitionEncoder,
     CanonicalTransitionManifest,
@@ -130,6 +138,10 @@ from .transition import (
 
 __all__ = [
     "Anchor",
+    "ApplicabilityAssessmentGate",
+    "ApplicabilityAssessmentSpecification",
+    "ApplicabilityAssessmentStatus",
+    "ApplicabilityModelResult",
     "AuthenticatedObservationBinding",
     "AuthorizedBirthAssessmentEvaluatorDefinition",
     "AuthorizedEvidenceSnapshot",
@@ -181,6 +193,7 @@ __all__ = [
     "DerivedRelationRef",
     "DerivedRelationSpec",
     "Evidence",
+    "EvidenceApplicabilityAssessment",
     "EvidenceAcquisitionAuthority",
     "EvidenceAcquisitionAuthorityError",
     "EvidenceAcquisitionAuthorization",
@@ -193,6 +206,7 @@ __all__ = [
     "FractalContractError",
     "FractalProvenancePath",
     "FractalSnapshot",
+    "FrozenApplicabilityModel",
     "FrozenBirthSemanticsContentScope",
     "FrozenFactorRef",
     "FrozenOntologyRef",

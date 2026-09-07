@@ -92,6 +92,24 @@ These are the initial laws of the language-agnostic kernel:
   outside this milestone. `EvidenceRoleCandidate` has no fields for any of
   those judgments.
 
+### G0.EA.1 — Evidence applicability assessment
+
+- `ApplicabilityAssessmentGate` consumes an existing
+  `EvidenceRoleCandidate`; it does not create or alter an observation, claim,
+  or role.
+- `EvidenceApplicabilityAssessment` is limited to `PASS`, `BLOCK`, or `DEFER`
+  for the candidate's claim scope, and preserves a reason, trace, and
+  residuals. `BLOCK` takes precedence over `DEFER`, which takes precedence over
+  `PASS`.
+- Applicability models are caller-frozen and explicitly name weaker models.
+  The gate validates that the weakening graph is well-formed and acyclic, then
+  evaluates the declared models. No anchor, scope, role, or provenance
+  checklist is born as a primitive without a declared model and its residual
+  boundary.
+- The assessment does not assert evidence sufficiency, truth, licensed-claim
+  status, or knowledge. A `DEFER` result is an unresolved applicability
+  boundary, not a negative truth judgment.
+
 Invariant assessment request semantics are closed at the gate: `BLOCK` means an
 authorized verifier observed at least one invariant as false; `DEFER` means no
 invariant was false but at least one could not be checked; and `VERIFIED` means
