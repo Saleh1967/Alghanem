@@ -123,7 +123,11 @@ from .invariant import (
     UnregisteredExtractorError,
 )
 from .operation import Operation, OperationResult
-from .residual import Residual
+from .residual import (
+    Residual,
+    ResidualCertificationCandidate,
+    ResidualCertificationError,
+)
 from .trace import Trace
 from .transition import (
     BranchOriginProvenance,
@@ -240,6 +244,8 @@ __all__ = [
     "ProjectionPoset",
     "ProofLineageEdge",
     "Residual",
+    "ResidualCertificationCandidate",
+    "ResidualCertificationError",
     "ResidualDefinitionSpec",
     "ReopenExperimentSpecification",
     "SealedApplicabilityEvaluatorRegistry",
