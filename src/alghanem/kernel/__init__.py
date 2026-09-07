@@ -1,5 +1,6 @@
 """Foundational, language-agnostic kernel types."""
 
+from ._authenticated_observation_bridge import AuthenticatedObservationBinding
 from .anchor import Anchor, State
 from .binding import ClaimEvidenceBinding
 from .birth import (
@@ -66,7 +67,6 @@ from .evidence_acquisition import (
     EvidenceContentIdentity,
 )
 from .evidence_role import (
-    AuthenticatedObservationBinding,
     EvidenceRoleCandidate,
     EvidenceRoleRef,
 )

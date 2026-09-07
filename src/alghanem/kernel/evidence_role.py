@@ -11,61 +11,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from ._authenticated_observation_bridge import AuthenticatedObservationBinding
 from .claim_constitution import ClaimCandidate
-
-_AUTHENTICATED_OBSERVATION_BINDING_TOKEN = object()
 
 
 def _require_text(value: str, name: str) -> None:
     if type(value) is not str or not value.strip():
         raise ValueError(f"{name} must be non-blank text")
-
-
-@dataclass(frozen=True, slots=True, init=False)
-class AuthenticatedObservationBinding:
-    """A kernel binding issued from one source-authenticated observation.
-
-    The source-specific authority owns issuance. Source references identify
-    what that authority authenticated; they are not caller assertions of
-    authentication and do not decide evidence applicability.
-    """
-
-    source_observation_ref: str
-    source_authentication_ref: str
-
-    def __init__(
-        self,
-        source_observation_ref: str,
-        source_authentication_ref: str,
-        *,
-        _token: object | None = None,
-    ) -> None:
-        if _token is not _AUTHENTICATED_OBSERVATION_BINDING_TOKEN:
-            raise ValueError(
-                "authenticated observation bindings must be issued through "
-                "a source authority"
-            )
-        _require_text(source_observation_ref, "source observation reference")
-        _require_text(source_authentication_ref, "source authentication reference")
-        object.__setattr__(self, "source_observation_ref", source_observation_ref)
-        object.__setattr__(self, "source_authentication_ref", source_authentication_ref)
-
-
-def _issue_authenticated_observation_binding(
-    source_observation_ref: str, source_authentication_ref: str
-) -> AuthenticatedObservationBinding:
-    """Issue a binding for use exclusively by a source authority.
-
-    This private module function is intentionally absent from the kernel public
-    API. A source-specific authority calls it only after authenticating its own
-    observation. This preserves the source-agnostic kernel dependency direction.
-    """
-
-    return AuthenticatedObservationBinding(
-        source_observation_ref,
-        source_authentication_ref,
-        _token=_AUTHENTICATED_OBSERVATION_BINDING_TOKEN,
-    )
 
 
 @dataclass(frozen=True, slots=True)

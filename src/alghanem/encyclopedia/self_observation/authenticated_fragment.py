@@ -49,3 +49,15 @@ class AuthenticatedRepositoryFragment:
         object.__setattr__(self, "fragment_locator", fragment_locator)
         object.__setattr__(self, "fragment_content_id", fragment_content_id)
         object.__setattr__(self, "observation_run", observation_run)
+
+    def source_observation_coordinate(self) -> dict[str, str]:
+        """Return all source-observation fields for G0.OB.1 provenance encoding."""
+
+        snapshot = self.artifact.snapshot.snapshot
+        return {
+            "repository_identity": snapshot.repository_identity,
+            "commit_sha": snapshot.commit_sha,
+            "artifact_path": self.artifact.artifact_path,
+            "fragment_locator": self.fragment_locator,
+            "fragment_content_id": self.fragment_content_id,
+        }

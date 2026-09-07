@@ -6,9 +6,9 @@ import json
 from dataclasses import dataclass, field
 
 from alghanem.kernel._authenticated_observation_bridge import (
+    AuthenticatedObservationBinding,
     issue_from_source_authority,
 )
-from alghanem.kernel.evidence_role import AuthenticatedObservationBinding
 
 from .artifact_ref import RepositoryArtifactRef
 from .authenticated_artifact import AuthenticatedRepositoryArtifact
@@ -141,16 +141,8 @@ class RepositoryObservationRun:
             raise SelfObservationContractError(
                 "fragment is not owned by this observation run"
             )
-        artifact = fragment.artifact
-        snapshot = artifact.snapshot.snapshot
         return issue_from_source_authority(
-            _canonical_coordinate(
-                repository_identity=snapshot.repository_identity,
-                commit_sha=snapshot.commit_sha,
-                artifact_path=artifact.artifact_path,
-                fragment_locator=fragment.fragment_locator,
-                fragment_content_id=fragment.fragment_content_id,
-            ),
+            _canonical_coordinate(**fragment.source_observation_coordinate()),
             _canonical_coordinate(
                 run_id=self.run_id,
                 provider_identity=self.provider_identity,

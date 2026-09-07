@@ -1,4 +1,4 @@
-"""Internal G0.OB.1 bridge for source observation authorities.
+"""Internal G0.OB.1 binding and bridge for source observation authorities.
 
 This module is intentionally excluded from the public kernel API. Source
 adapters invoke it only after their own authority has authenticated an
@@ -6,10 +6,39 @@ observation; ordinary callers consume the resulting binding but cannot issue
 one through ``alghanem.kernel``.
 """
 
-from .evidence_role import (
-    AuthenticatedObservationBinding,
-    _issue_authenticated_observation_binding,
-)
+from dataclasses import dataclass
+
+_AUTHENTICATED_OBSERVATION_BINDING_TOKEN = object()
+
+
+def _require_text(value: str, name: str) -> None:
+    if type(value) is not str or not value.strip():
+        raise ValueError(f"{name} must be non-blank text")
+
+
+@dataclass(frozen=True, slots=True, init=False)
+class AuthenticatedObservationBinding:
+    """A source-bound authenticated coordinate issued by a source authority."""
+
+    source_observation_ref: str
+    source_authentication_ref: str
+
+    def __init__(
+        self,
+        source_observation_ref: str,
+        source_authentication_ref: str,
+        *,
+        _token: object | None = None,
+    ) -> None:
+        if _token is not _AUTHENTICATED_OBSERVATION_BINDING_TOKEN:
+            raise ValueError(
+                "authenticated observation bindings must be issued through "
+                "a source authority"
+            )
+        _require_text(source_observation_ref, "source observation reference")
+        _require_text(source_authentication_ref, "source authentication reference")
+        object.__setattr__(self, "source_observation_ref", source_observation_ref)
+        object.__setattr__(self, "source_authentication_ref", source_authentication_ref)
 
 
 def issue_from_source_authority(
@@ -17,6 +46,8 @@ def issue_from_source_authority(
 ) -> AuthenticatedObservationBinding:
     """Issue a kernel binding from a source authority's authenticated observation."""
 
-    return _issue_authenticated_observation_binding(
-        source_observation_ref, source_authentication_ref
+    return AuthenticatedObservationBinding(
+        source_observation_ref,
+        source_authentication_ref,
+        _token=_AUTHENTICATED_OBSERVATION_BINDING_TOKEN,
     )
