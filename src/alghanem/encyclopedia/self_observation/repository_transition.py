@@ -10,7 +10,7 @@ never prove that `to_snapshot` is a genuine, later revision reachable from
 `from_snapshot` in the repository's real history (`Ancestor(from, to)`).
 This module only proves that both snapshots name the *same repository*
 (`SameRepositoryIdentity`) and distinct commits within it; proving true
-ancestry is deliberately `DEFERRED` to a future
+ancestry is deliberately `DECLARED_DEFERRED` to a future
 `RepositoryObservationAuthority`, exactly like content authentication in
 `repository_snapshot.py`.
 """

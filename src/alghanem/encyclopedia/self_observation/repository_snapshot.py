@@ -22,7 +22,7 @@ general)`). This module only makes a version *explicitly addressed*
 string, and no authority here checks that `tree_sha` is genuinely the tree
 of `commit_sha`, or that `commit_sha` actually exists in
 `repository_identity`. Content authentication
-(`RepositoryVersionIsContentAuthenticated`) is deliberately `DEFERRED` to a
+(`RepositoryVersionIsContentAuthenticated`) is deliberately `DECLARED_DEFERRED` to a
 future `RepositoryObservationAuthority`, exactly as `FrozenFactorRef` in
 `src/alghanem/kernel/fractal.py` is constructible by hand today without
 proving a genuine freeze occurred: `Identifier != EvidenceOfIdentity`.
@@ -82,7 +82,7 @@ class RepositorySnapshotRef:
     the triple is well-formed and non-blank. It never proves
     `RepositoryVersionIsContentAuthenticated` -- that `tree_sha` is really
     the tree of `commit_sha` in `repository_identity` -- which remains
-    `DEFERRED` until a future `RepositoryObservationAuthority` exists.
+    `DECLARED_DEFERRED` until a future `RepositoryObservationAuthority` exists.
     """
 
     repository_identity: str

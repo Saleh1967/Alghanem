@@ -12,7 +12,7 @@ this module proves only `RepositoryVersionIsExplicitlyAddressed`
 (`artifact_path` and `blob_sha` are non-blank and anchored to a snapshot),
 never `RepositoryVersionIsContentAuthenticated` -- that `blob_sha` is truly
 the blob found at `artifact_path` in that snapshot's tree. That
-authentication remains `DEFERRED` to a future `RepositoryObservationAuthority`.
+authentication remains `DECLARED_DEFERRED` to a future `RepositoryObservationAuthority`.
 """
 
 from __future__ import annotations
