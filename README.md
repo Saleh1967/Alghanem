@@ -70,13 +70,11 @@ request: it has no birth-verdict or freeze authority. G0.2a adds executable
 residual, weaker-model, and closure contracts that must match the frozen
 residual/closure identities. Evaluator ids in those contracts are declarations
 only unless a sealed evaluator registry authorizes the exact scope, and
-G0.BV.1 now adds the narrow `BirthVerdictAuthority`: it converts a validated
-`BirthAssessment` into a scoped `BirthVerdict` while preserving experiment,
-content, evidence, evaluator, and weaker-model provenance. It still issues no
-`Freeze`, `BirthCandidate`, or E0 authority.
+G0.BV.1 remains deferred: no runtime birth-verdict authority exists until an
+assessment authority, `BirthCandidate`, and `IndependentClosure` exist.
 `BirthCandidate` is distinct from a scoped birth verdict and from `Freeze`;
-the G0.BV.1 authority may issue `BIRTH_IN_SCOPE`, then a later freeze authority
-may freeze it before a separate `E0` step. See the
+the future G0.BV.1 authority may issue `BIRTH_IN_SCOPE`, then a later freeze
+authority may freeze it before a separate `E0` step. See the
 "G0 — Birth Protocol" section of
 `docs/CONSTITUTION.md` for the full declared laws; no `BirthGate` or
 rank/complexity runtime exists yet. A non-linguistic
