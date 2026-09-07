@@ -12,6 +12,7 @@ import hashlib
 import json
 from dataclasses import dataclass, field, fields
 from enum import Enum
+from typing import Any
 
 from .anchor import Anchor
 
@@ -20,6 +21,10 @@ _ALGORITHM = "sha256"
 _CANONICALIZATION_VERSION = "claim-content-manifest-v1"
 MANIFEST_COVERAGE = ("core", "qualifications")
 OCCURRENCE_ONLY_EXCLUSIONS: tuple[str, ...] = ()
+CLAIM_CORE_COVERAGE = ("anchor", "predicate", "polarity", "scope")
+PREDICATE_REF_COVERAGE = ("identifier",)
+CLAIM_SCOPE_REF_COVERAGE = ("scope_type", "reference")
+CLAIM_QUALIFICATION_COVERAGE = ("kind", "value")
 
 
 def _require_text(value: str, name: str) -> None:
@@ -154,6 +159,7 @@ class CanonicalClaimContentEncoder:
         if type(content) is not ClaimContentManifest:
             raise TypeError("canonical claim encoding requires claim content")
         cls._assert_schema_coverage()
+        cls._assert_nested_schema_coverage()
         encoded = {
             "anchor": {
                 "domain": content.core.anchor.domain,
@@ -188,12 +194,39 @@ class CanonicalClaimContentEncoder:
 
     @staticmethod
     def _assert_schema_coverage() -> None:
-        manifest_fields = {item.name for item in fields(ClaimContentManifest)}
-        accounted_for = set(MANIFEST_COVERAGE) | set(OCCURRENCE_ONLY_EXCLUSIONS)
-        if manifest_fields != accounted_for:
+        CanonicalClaimContentEncoder._assert_type_coverage(
+            ClaimContentManifest,
+            MANIFEST_COVERAGE,
+            OCCURRENCE_ONLY_EXCLUSIONS,
+        )
+
+    @staticmethod
+    def _assert_nested_schema_coverage() -> None:
+        CanonicalClaimContentEncoder._assert_type_coverage(
+            ClaimCore, CLAIM_CORE_COVERAGE
+        )
+        CanonicalClaimContentEncoder._assert_type_coverage(
+            PredicateRef, PREDICATE_REF_COVERAGE
+        )
+        CanonicalClaimContentEncoder._assert_type_coverage(
+            ClaimScopeRef, CLAIM_SCOPE_REF_COVERAGE
+        )
+        CanonicalClaimContentEncoder._assert_type_coverage(
+            ClaimQualification, CLAIM_QUALIFICATION_COVERAGE
+        )
+
+    @staticmethod
+    def _assert_type_coverage(
+        content_type: Any,
+        covered_fields: tuple[str, ...],
+        excluded_fields: tuple[str, ...] = (),
+    ) -> None:
+        actual_fields = {item.name for item in fields(content_type)}
+        accounted_for = set(covered_fields) | set(excluded_fields)
+        if actual_fields != accounted_for:
             raise RuntimeError(
-                "claim content manifest coverage must explicitly account for "
-                "every claim content field"
+                f"{content_type.__name__} coverage must explicitly account for "
+                "every identity-bearing field"
             )
 
 

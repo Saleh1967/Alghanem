@@ -72,20 +72,43 @@ def test_content_identity_is_encoder_issued_and_independent_of_occurrence() -> N
     assert first.content_id == second.content_id
 
 
-@pytest.mark.parametrize("deleted", ["anchor", "predicate", "polarity", "scope"])
-def test_every_claim_core_field_is_necessary_for_representability(deleted: str) -> None:
-    core_fields = {
-        "anchor": core().anchor,
-        "predicate": core().predicate,
-        "polarity": core().polarity,
-        "scope": core().scope,
-    }
-    del core_fields[deleted]
+def projection(claim_core: ClaimCore, deleted: str) -> tuple[object, ...]:
+    return tuple(
+        value
+        for name, value in (
+            ("anchor", claim_core.anchor),
+            ("predicate", claim_core.predicate),
+            ("polarity", claim_core.polarity),
+            ("scope", claim_core.scope),
+        )
+        if name != deleted
+    )
 
-    with pytest.raises(
-        TypeError, match=f"missing 1 required positional argument: '{deleted}'"
-    ):
-        ClaimCore(**core_fields)  # type: ignore[call-arg]
+
+@pytest.mark.parametrize(
+    ("deleted", "distinct"),
+    [
+        (
+            "anchor",
+            core(
+                anchor=Anchor(
+                    identifier="Saleh1967/Alghanem@62755d8",
+                    domain="repository",
+                )
+            ),
+        ),
+        ("predicate", core(predicate=PredicateRef("other-predicate"))),
+        ("polarity", core(polarity=ClaimPolarity.NEGATE)),
+        ("scope", core(scope=ClaimScopeRef("repository", "Saleh1967/Alghanem"))),
+    ],
+)
+def test_deleting_each_core_field_collapses_distinct_claims(
+    deleted: str, distinct: ClaimCore
+) -> None:
+    baseline = core()
+
+    assert baseline != distinct
+    assert projection(baseline, deleted) == projection(distinct, deleted)
 
 
 def test_core_fields_and_ordered_qualifications_are_claim_content() -> None:
@@ -131,10 +154,22 @@ def test_predicate_reference_has_no_rendered_text_field() -> None:
     assert {item.name for item in fields(PredicateRef)} == {"identifier"}
 
 
-def test_schema_coverage_rejects_an_unaccounted_manifest_field(
+@pytest.mark.parametrize(
+    "coverage_name",
+    [
+        "MANIFEST_COVERAGE",
+        "CLAIM_CORE_COVERAGE",
+        "PREDICATE_REF_COVERAGE",
+        "CLAIM_SCOPE_REF_COVERAGE",
+        "CLAIM_QUALIFICATION_COVERAGE",
+    ],
+)
+def test_schema_coverage_rejects_unaccounted_identity_bearing_fields(
     monkeypatch: pytest.MonkeyPatch,
+    coverage_name: str,
 ) -> None:
-    monkeypatch.setattr(claim_constitution, "MANIFEST_COVERAGE", ("core",))
+    coverage = getattr(claim_constitution, coverage_name)
+    monkeypatch.setattr(claim_constitution, coverage_name, coverage[:-1])
 
     with pytest.raises(RuntimeError, match="coverage"):
         CanonicalClaimContentEncoder.encode(content())
