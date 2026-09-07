@@ -452,12 +452,11 @@ class FractalSnapshot:
                     "bridge endpoints must be exact frozen references already "
                     "present in this snapshot, not merely matching factor ids"
                 )
+        born_bridge_refs = set(self.born_bridges)
         for edge in self.proof_lineage_edges:
             if (
                 edge.parent_ref not in self._frozen_refs
-                and edge.parent_ref not in {
-                    bridge for bridge in self.born_bridges
-                }
+                and edge.parent_ref not in born_bridge_refs
             ) or edge.child_ref not in self._frozen_refs:
                 raise FractalContractError(
                     "proof lineage endpoints must be exact frozen ontology "
@@ -481,18 +480,24 @@ class FractalSnapshot:
         visiting: set[FrozenOntologyRef] = set()
         visited: set[FrozenOntologyRef] = set()
 
-        def visit(node: FrozenOntologyRef) -> None:
-            if node in visiting:
-                raise FractalContractError(
-                    "proof lineage graph must be acyclic"
-                )
-            if node in visited:
-                return
-            visiting.add(node)
-            for child in adjacency[node]:
-                visit(child)
-            visiting.remove(node)
-            visited.add(node)
-
         for node in adjacency:
-            visit(node)
+            if node in visited:
+                continue
+            stack: list[tuple[FrozenOntologyRef, bool]] = [(node, False)]
+            while stack:
+                current, exiting = stack.pop()
+                if exiting:
+                    visiting.remove(current)
+                    visited.add(current)
+                    continue
+                if current in visited:
+                    continue
+                if current in visiting:
+                    raise FractalContractError("proof lineage graph must be acyclic")
+                visiting.add(current)
+                stack.append((current, True))
+                stack.extend(
+                    (child, False)
+                    for child in adjacency[current]
+                    if child not in visited
+                )
