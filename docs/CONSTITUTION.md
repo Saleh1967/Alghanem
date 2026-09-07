@@ -174,6 +174,95 @@ The kernel does not assume reversibility, global composition, path
 independence, a group, or a groupoid. Those questions are intentionally
 deferred until later milestones.
 
+## G−1 — Pre-Algebraic Conditions of Licensed Intelligibility (law-only)
+
+This milestone declares one constitutional boundary question:
+
+```
+What must be true before the first algebraic representation is even possible?
+```
+
+It is law-only and boundary-only. It introduces no runtime, class, enum, gate,
+evidence machinery, residual machinery, algebra primitive, or learning
+architecture.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `NoTotalAlgebraicSelfBootstrap` | DECLARED_DEFERRED | The first algebraic representation may not be the complete ground of its own possibility. `NoTotalSelfBootstrap` is required; `RecursiveSelfExtensionAllowed` is explicitly preserved for later stages (`A_n -> A_{n+1}` is allowed). |
+| `PreAlgebraicEnablingConditionIsNotOrganizedPriorContent` | DECLARED_DEFERRED | `E_-1 != P_0`. Pre-algebraic enabling conditions are not the same object as organized prior content. `ConditionOfPossibility != OrganizedPriorContent`. |
+| `PriorAvailabilityIsNotPriorAuthority` | DECLARED_DEFERRED | `PriorAvailability != PriorAuthority` and `PriorInformation != PriorJudgment`. Availability for possible binding does not license truth, correctness, or judgment authority. |
+| `NoHiddenEncyclopediaInFoundation` | DECLARED_DEFERRED | Foundation cannot be treated as a hidden finished inventory of truths. Availability of prior structure does not imply pre-certified knowledge. |
+| `DifferenceCandidateIsNotCertifiedResidual` | DECLARED_DEFERRED | `DifferenceCandidate != CertifiedResidual`. A certified residual requires reconstruction/comparison capacity and explicit scope; before that, only candidates exist. |
+| `NoResidualBeforeReconstructionCapacity` | DECLARED_DEFERRED | `Observed + Reconstructed + Comparator + Scope -> ResidualCandidate`. Therefore no residual is licensed before reconstruction capacity exists. |
+| `NoPrematureGMinus1PrimitivePromotion` | DECLARED_DEFERRED | Evidence, Rank, Closure, and Residual are not G−1 primitives and must not be installed as foundational atoms at this stage. |
+| `GenesisIsNotRetrospectiveReconstruction` | DECLARED_DEFERRED | `Genesis != RetrospectiveReconstruction` and `RetrospectiveFormalization != HistoricalGeneration`. Later formal reconstruction can describe prior conditions but does not historically generate them. |
+| `ConditionOfPossibilityIsNotTruthGuarantee` | DECLARED_DEFERRED | `ConditionOfPossibility != TruthGuarantee`. Being necessary for intelligible start does not certify truth-status of the content. |
+| `FoundationalInventoryOpen` | DECLARED_DEFERRED | `FoundationalInventory = OPEN`. No closed primitive tuple is frozen here. Any candidate dimension remains provisional and must face later necessity/deletion audit if claimed foundational. `RetrospectiveMinimalityAudit != FoundationalGeneration`. |
+| `EpistemicPrecedenceIsNotFileOrderOrImplementationChronology` | DECLARED_DEFERRED | `EpistemicPrecedence != FileOrder != ImplementationChronology`. Existing G0+ laws/runtime are not invalidated or rewritten; G−1 states prior conditions they presuppose, not historical implementation order. |
+| `NoClosedOPI0TupleAtGMinus1` | DECLARED_DEFERRED | If `OPI_0` is referenced, it is only a provisional analytical name. It must not be frozen here as a closed tuple, ontology identity, birth-certified object, rank, or evidence-certified status. |
+
+The declared epistemic ordering is:
+
+```
+E_-1 -> P_0 -> Encounter -> FirstLicensedDifferentiationOrBinding
+    -> StableOperationalRegularity -> A_first
+```
+
+Only after representational birth:
+
+```
+Reconstruction -> DifferenceAssessment -> ResidualOrDemand
+    -> Birth -> Freeze -> P_1
+```
+
+And recursively:
+
+```
+P_n + O_{n+1} -> LicensedDifference -> LicensedDemand
+    -> MinimalExtension -> Freeze -> P_{n+1}
+```
+
+### ClosedClaims
+
+- G−1 is declared as pre-algebraic boundary law only.
+- Total algebraic self-bootstrap is disallowed, while later recursive
+  self-extension is allowed.
+- `E_-1 != P_0`, and `ConditionOfPossibility != TruthGuarantee`.
+- `DifferenceCandidate != CertifiedResidual`; no residual before reconstruction
+  capacity.
+- G0+ remains valid in implementation; G−1 asserts epistemic precedence only.
+
+### UnprovedClaims
+
+- Final foundational inventory membership and cardinality.
+- Any proof that a particular candidate foundational dimension is strictly
+  necessary.
+- Historical generation path of pre-algebraic conditions.
+
+### CandidateFoundationalDimensions
+
+- Distinction availability.
+- Persistence availability.
+- Accessibility availability.
+- Binding availability.
+
+These are candidates only, not frozen primitives.
+
+### NewResiduals
+
+- `FoundationalNecessityNotAudited`: candidate foundational dimensions are not
+  yet necessity/deletion-audited.
+- `FirstAlgebraBoundaryNotFormalized`: `E_-1 -> P_0 -> A_0` is declared but not
+  yet formalized as a separate algebra boundary milestone.
+
+### ForbiddenNextJumps
+
+- Do not introduce runtime/classes/enums/gates/evaluator machinery under G−1.
+- Do not treat Evidence, Rank, Closure, or Residual as G−1 primitives.
+- Do not close `OPI_0` into a fixed tuple or ontology identity.
+- Do not reinterpret retrospective formalization as historical generation.
+- Do not claim G−1 rewrites or invalidates existing G0/G0.MA/G0.F/BA/BV/RC law.
+
 ## G0 — Birth Protocol (declared law, no runtime gate yet)
 
 The kernel and Arabic layer never introduce a new named object, cardinality,
