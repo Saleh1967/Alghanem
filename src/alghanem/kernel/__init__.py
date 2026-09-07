@@ -66,6 +66,14 @@ from .content_identity import (
     CanonicalTransitionManifest,
     TransitionContentIdentity,
 )
+from .evaluator_execution import (
+    AuthorizedBirthEvaluatorImplementationBinding,
+    BirthEvaluatorExecutionError,
+    BirthEvaluatorExecutionGate,
+    BirthEvaluatorExecutionRecord,
+    BirthEvaluatorImplementationRegistry,
+    SealedBirthEvaluatorImplementationRegistry,
+)
 from .evidence import Claim, Evidence
 from .evidence_acquisition import (
     AuthorizedEvidenceSnapshot,
@@ -153,6 +161,7 @@ __all__ = [
     "AuthenticatedObservationBinding",
     "AuthorizedApplicabilityEvaluatorBinding",
     "AuthorizedBirthAssessmentEvaluatorDefinition",
+    "AuthorizedBirthEvaluatorImplementationBinding",
     "AuthorizedEvidenceSnapshot",
     "BirthAssessmentContentBinding",
     "BirthAssessmentEvaluatorAuthorityError",
@@ -166,6 +175,10 @@ __all__ = [
     "BirthExperimentSpecificationContentIdentity",
     "BirthExperimentSpecificationError",
     "BirthEvaluatorRole",
+    "BirthEvaluatorExecutionError",
+    "BirthEvaluatorExecutionGate",
+    "BirthEvaluatorExecutionRecord",
+    "BirthEvaluatorImplementationRegistry",
     "BirthQuery",
     "BirthSemanticsContentIdentity",
     "BirthSemanticsContentIdentityError",
@@ -250,6 +263,7 @@ __all__ = [
     "ReopenExperimentSpecification",
     "SealedApplicabilityEvaluatorRegistry",
     "SealedBirthAssessmentEvaluatorRegistry",
+    "SealedBirthEvaluatorImplementationRegistry",
     "SealedBirthSemanticsContentRegistry",
     "SealedInvariantExtractorRegistry",
     "State",
