@@ -314,18 +314,12 @@ class ApplicabilityAssessmentGate:
             results.append((model.model_id, result))
         by_id = dict(results)
         weaker_closure = _weaker_closure(specification.models)
-        passing = [
-            model for model in specification.models
-            if by_id[model.model_id].status is ApplicabilityAssessmentStatus.PASS
-        ]
-        weakest_passing = [
-            model
-            for model in passing
-            if not any(
-                by_id[weaker].status is ApplicabilityAssessmentStatus.PASS
-                for weaker in weaker_closure[model.model_id]
-            )
-        ]
+        passing = _models_with_status(
+            specification.models, by_id, ApplicabilityAssessmentStatus.PASS
+        )
+        weakest_passing = _weakest_models(
+            passing, by_id, weaker_closure, ApplicabilityAssessmentStatus.PASS
+        )
         status = (
             ApplicabilityAssessmentStatus.PASS
             if passing
@@ -340,15 +334,12 @@ class ApplicabilityAssessmentGate:
         )
         selected_models = weakest_passing
         if not selected_models:
-            selected_models = [
-                model
-                for model in specification.models
-                if by_id[model.model_id].status is status
-                and not any(
-                    by_id[weaker].status is status
-                    for weaker in weaker_closure[model.model_id]
-                )
-            ]
+            selected_models = _weakest_models(
+                _models_with_status(specification.models, by_id, status),
+                by_id,
+                weaker_closure,
+                status,
+            )
         selected_ids = {model.model_id for model in selected_models}
         residuals = tuple(
             residual
@@ -400,6 +391,30 @@ def _weaker_closure(
     for model in models:
         descendants(model.model_id)
     return closure
+
+
+def _models_with_status(
+    models: tuple[FrozenApplicabilityModel, ...],
+    results: dict[str, ApplicabilityModelResult],
+    status: ApplicabilityAssessmentStatus,
+) -> list[FrozenApplicabilityModel]:
+    return [model for model in models if results[model.model_id].status is status]
+
+
+def _weakest_models(
+    models: list[FrozenApplicabilityModel],
+    results: dict[str, ApplicabilityModelResult],
+    weaker_closure: dict[str, frozenset[str]],
+    status: ApplicabilityAssessmentStatus,
+) -> list[FrozenApplicabilityModel]:
+    return [
+        model
+        for model in models
+        if not any(
+            results[weaker].status is status
+            for weaker in weaker_closure[model.model_id]
+        )
+    ]
 
 
 def _has_cycle(models: tuple[FrozenApplicabilityModel, ...]) -> bool:

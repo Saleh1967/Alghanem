@@ -184,6 +184,11 @@ def test_weakest_closing_model_is_not_worst_status_aggregation() -> None:
 
     assert assessment.status is ApplicabilityAssessmentStatus.PASS
     assert not assessment.residuals
+    assert [model_id for model_id, _ in assessment.model_results] == [
+        "weak-model",
+        "strong-model",
+        "strongest-model",
+    ]
     assert assessment.specification_id
     assert assessment.registry_snapshot_id == "registry-1"
 
@@ -211,6 +216,43 @@ def test_status_residual_consistency_and_authorized_scope() -> None:
             ),
             registry.seal("registry-1"),
         )
+
+
+def test_block_is_preserved_when_no_model_closes() -> None:
+    candidate = claim("historical-origin", "historical-origin-proof")
+    registry = ApplicabilityEvaluatorRegistry()
+    scope = candidate.claim.content.core.scope
+    registry.register(
+        "blocked",
+        "implementation-v1",
+        candidate.role.identifier,
+        scope,
+        lambda _: result(ApplicabilityAssessmentStatus.BLOCK),
+    )
+    registry.register(
+        "deferred",
+        "implementation-v2",
+        candidate.role.identifier,
+        scope,
+        lambda _: result(
+            ApplicabilityAssessmentStatus.DEFER,
+            (Residual("unresolved historical scope"),),
+        ),
+    )
+    assessment = ApplicabilityAssessmentGate.assess(
+        candidate,
+        ApplicabilityAssessmentSpecification(
+            (
+                FrozenApplicabilityModel("blocked-model", "blocked"),
+                FrozenApplicabilityModel(
+                    "deferred-model", "deferred", ("blocked-model",)
+                ),
+            )
+        ),
+        registry.seal("registry-1"),
+    )
+
+    assert assessment.status is ApplicabilityAssessmentStatus.BLOCK
 
 
 def test_assessment_cannot_be_fabricated_and_models_are_content_bound() -> None:
