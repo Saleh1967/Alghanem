@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 from .authenticated_snapshot import _AUTHORITY_TOKEN, AuthenticatedRepositorySnapshot
 
 if TYPE_CHECKING:
-    from .authenticated_snapshot import AuthenticatedRepositorySnapshot
     from .observation_run import RepositoryObservationRun
 from .repository_snapshot import SelfObservationContractError, _require_text
 

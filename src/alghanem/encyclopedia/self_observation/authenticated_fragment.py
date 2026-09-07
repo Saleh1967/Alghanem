@@ -9,7 +9,6 @@ from .authenticated_artifact import AuthenticatedRepositoryArtifact
 from .authenticated_snapshot import _AUTHORITY_TOKEN
 
 if TYPE_CHECKING:
-    from .authenticated_artifact import AuthenticatedRepositoryArtifact
     from .observation_run import RepositoryObservationRun
 from .repository_snapshot import SelfObservationContractError, _require_text
 
