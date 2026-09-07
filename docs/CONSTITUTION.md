@@ -216,9 +216,9 @@ Only after representational birth, recurrence is evidence-mode typed:
 P_n + Q_{n+1} + EvidenceMode_{n+1} -> DemandAssessment
 
 D_{n+1} =
-  EMPIRICAL -> CertifiedResidualDemand
-  FORMAL    -> CertifiedFormalNecessityDemand
-  MIXED     -> <D_E, D_F>
+  EMPIRICAL -> Demand(EMPIRICAL), as defined by G0.MA
+  FORMAL    -> Demand(FORMAL), as defined by G0.MA
+  MIXED     -> Demand(MIXED), as defined by G0.MA
 
 D_{n+1} -> MinimalSatisfyingExtension? -> Birth? -> Freeze -> P_{n+1}
 ```
@@ -226,8 +226,8 @@ D_{n+1} -> MinimalSatisfyingExtension? -> Birth? -> Freeze -> P_{n+1}
 Mode-specific demand routes:
 
 ```
-EMPIRICAL: Observation -> Reconstruction -> Difference -> CertifiedResidual -> D_E
-FORMAL:    FormalQuestion -> ExhaustiveNecessityProof -> D_F
+EMPIRICAL: Observation -> Reconstruction -> Difference -> CertifiedResidualGeometry
+FORMAL:    FormalQuestion -> ExhaustiveNecessityProof -> CertifiedFormalNecessityWitness
 MIXED:     EMPIRICAL and FORMAL tracks both required; neither substitutes for the other
 ```
 
@@ -262,17 +262,24 @@ MIXED:     EMPIRICAL and FORMAL tracks both required; neither substitutes for th
 
 These are candidates only, not frozen primitives.
 
+### ClosedResiduals (lineage preserved)
+
+- `PreAlgebraicLicensingVocabularyUnresolved`
+  - Status: `CLOSED_BY_G_MINUS_1_1`
+  - Closure law: `PreAlgebraicIntelligibilityIsNotPostAlgebraicLicense`
+- `GMinus1PostAlgebraicRecurrenceEvidenceModeMismatch`
+  - Status: `CLOSED_BY_G_MINUS_1_1`
+  - Closure law: evidence-mode typed recurrence with
+    `Demand(EvidenceMode) as defined by G0.MA`.
+- `ClosedClaimsStatusSemanticsAmbiguous`
+  - Status: `CLOSED_BY_G_MINUS_1_1`
+  - Closure law: `ClosedAtConstitutionalBoundary != PROVED != ENFORCED`.
+- `PostAlgebraicAuditMustNotBecomeFoundationalGenerator`
+  - Status: `CLOSED_BY_G_MINUS_1_1`
+  - Closure law: `NoPreAlgebraicUseOfPostAlgebraicProofMachinery`.
+
 ### NewResiduals
 
-- `PreAlgebraicLicensingVocabularyUnresolved`: pre-algebraic intelligibility
-  vocabulary must not borrow post-algebraic licensing-authority semantics.
-- `GMinus1PostAlgebraicRecurrenceEvidenceModeMismatch`: post-algebraic
-  recurrence must stay aligned with G0 evidence modes (EMPIRICAL/FORMAL/MIXED)
-  rather than an empirical-only default chain.
-- `ClosedClaimsStatusSemanticsAmbiguous`: constitutional closure can be
-  mistaken for proved or enforced status unless explicitly separated.
-- `PostAlgebraicAuditMustNotBecomeFoundationalGenerator`: retrospective audits
-  are permitted, but cannot generate foundational history.
 - `FoundationalNecessityNotAudited`: candidate foundational dimensions are not
   yet necessity/deletion-audited.
 - `FirstAlgebraBoundaryNotFormalized`: `E_-1 -> P_0 -> A_0` is declared but not
