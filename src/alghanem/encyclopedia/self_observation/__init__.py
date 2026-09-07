@@ -25,7 +25,15 @@ Governing laws (see `docs/CONSTITUTION.md`, Encyclopedia Self-Observation):
 
 from .artifact_change_ref import RepositoryArtifactChangeRef
 from .artifact_ref import RepositoryArtifactRef
+from .authenticated_artifact import AuthenticatedRepositoryArtifact
+from .authenticated_fragment import AuthenticatedRepositoryFragment
+from .authenticated_snapshot import AuthenticatedRepositorySnapshot
+from .authenticated_transition import AuthenticatedRepositoryTransition
 from .fragment_ref import RepositoryFragmentRef
+from .observation_authority import RepositoryObservationAuthority
+from .observation_provider import RepositoryObservationProvider
+from .observation_request import RepositoryObservationRequest
+from .observation_run import RepositoryObservationRun
 from .repository_snapshot import (
     RepositorySnapshotRef,
     SelfObservationContractError,
@@ -35,7 +43,15 @@ from .repository_transition import RepositoryTransitionRef
 __all__ = [
     "RepositoryArtifactChangeRef",
     "RepositoryArtifactRef",
+    "AuthenticatedRepositoryArtifact",
+    "AuthenticatedRepositoryFragment",
+    "AuthenticatedRepositorySnapshot",
+    "AuthenticatedRepositoryTransition",
     "RepositoryFragmentRef",
+    "RepositoryObservationAuthority",
+    "RepositoryObservationProvider",
+    "RepositoryObservationRequest",
+    "RepositoryObservationRun",
     "RepositorySnapshotRef",
     "RepositoryTransitionRef",
     "SelfObservationContractError",
