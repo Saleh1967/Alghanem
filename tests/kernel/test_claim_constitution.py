@@ -86,6 +86,27 @@ def projection(claim_core: ClaimCore, deleted: str) -> tuple[object, ...]:
 
 
 @pytest.mark.parametrize(
+    ("algorithm", "version", "digest"),
+    [
+        ("sha1", "claim-content-manifest-v1", "0" * 64),
+        ("sha256", "other-version", "0" * 64),
+        ("sha256", "claim-content-manifest-v1", "0" * 63),
+        ("sha256", "claim-content-manifest-v1", "g" * 64),
+    ],
+)
+def test_content_identity_rejects_invalid_encoder_issued_values(
+    algorithm: str, version: str, digest: str
+) -> None:
+    with pytest.raises(ValueError, match="invalid claim content identity"):
+        ClaimContentIdentity(
+            algorithm,
+            version,
+            digest,
+            _token=claim_constitution._CLAIM_CONTENT_TOKEN,
+        )
+
+
+@pytest.mark.parametrize(
     ("deleted", "distinct"),
     [
         (
@@ -101,6 +122,7 @@ def projection(claim_core: ClaimCore, deleted: str) -> tuple[object, ...]:
         ("polarity", core(polarity=ClaimPolarity.NEGATE)),
         ("scope", core(scope=ClaimScopeRef("repository", "Saleh1967/Alghanem"))),
     ],
+    ids=["anchor", "predicate", "polarity", "scope"],
 )
 def test_deleting_each_core_field_collapses_distinct_claims(
     deleted: str, distinct: ClaimCore
