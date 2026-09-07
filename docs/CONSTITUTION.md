@@ -29,7 +29,8 @@ These are the initial laws of the language-agnostic kernel:
 | G0.2a.1 birth semantics content identity | ENFORCED_AT_CONTENT_ENCODER | `NoResidualIdDriftAfterFreeze`/`NoClosureCriterionIdDriftAfterFreeze` (G0.2a's id-equality checks) are label identity, not content identity: `ResidualDefinitionId != ResidualDefinitionContentIdentity`, and the same distinction holds for `ClosureCriterionSpec` and `WeakerModelSpec`. `CanonicalBirthSemanticsEncoder` is the sole issuer of `CanonicalResidualDefinitionManifest`, `CanonicalClosureCriterionManifest`, `CanonicalWeakerModelManifest`, and their `BirthSemanticsContentIdentity` SHA-256 digest references, covering every declared field of each spec. `BirthSemanticsContentRegistry` freezes the *first* canonical content bound to an exact `(domain, role, target_id)` scope; a later attempt to bind different content to that same scope is content drift and is rejected, not silently accepted because the id string still matches. `BirthAssessmentContentBinding` resolves every scope a `BirthAssessmentSemanticsContract` declares against a `SealedBirthSemanticsContentRegistry` and requires `CID(runtime) == CID(frozen)` for the residual definition, the closure criterion, and every weaker model; an unresolvable scope raises rather than passing silently. This closes `NoSemanticDriftAfterFreeze` for content, distinct from and in addition to `NoResidualDefinitionDriftAfterFreeze`/`NoClosureCriterionDriftAfterFreeze` for ids. It performs no evaluation and issues no `BirthVerdict`, `BirthCandidate`, or `Freeze`; `EvaluatorId != EvaluatorImplementationIdentity` and evaluator execution authority remain out of scope. |
 | G0.2a.3 evidence acquisition authority | ENFORCED_AT_ACQUISITION_AUTHORITY | Binding evidence to a frozen experiment (G0.2a.2) proves only `FreezePrecedesRequestConstruction`, not that the freeze authorized the evidence's own acquisition; a caller could still select evidence first and attach a freeze afterward. This stage closes the narrower, code-provable `FrozenExperimentPrecedesAuthorizedEvidenceIngestion` instead of an unprovable external-world chronology claim (`AuthorizedCapture != ProofOfExternalAcquisitionChronology`). `EvidenceAcquisitionAuthority.authorize` is the sole issuer of an `EvidenceAcquisitionAuthorization`, requiring a genuine, verified `BirthExperimentSpecificationContentBinding` (`NoEvidenceAcquisitionAuthorizationWithoutFrozenExperiment`); its `experiment_content_id`, `domain`, `evidence_mode`, `evidence_requirements`, `revision_id`, and `revision_sequence` are derived properties of that binding, never independent caller-supplied facts. Only that authorization can issue an `EvidenceAcquisitionRun` (`open_run`), and only that run can issue an `AuthorizedEvidenceSnapshot` (`ingest`), closing `NoAssessableEvidenceSnapshotWithoutAcquisitionAuthorization`; none of the three is caller-constructible. `CanonicalEvidenceContentEncoder` alone issues the ingested payload's `EvidenceContentIdentity`, keeping `EvidenceOccurrenceIdentity != EvidenceContentIdentity` (`snapshot_id`/`run_id`/`authorization_id` name one occurrence; `content_id` is a digest over ingested bytes). `BirthAssessmentRequest` now requires an `AuthorizedEvidenceSnapshot` (rejecting the deprecated, unauthorized `EvidenceSnapshot`) and rejects a snapshot whose `experiment_content_id` does not equal its own experiment binding's `content_id`. `AuthorizedEvidence != SufficientEvidence`: this stage does not imply `ResidualSurvival` or `Birth`, and issues no `ResidualAssessment` or `BirthVerdict`. |
 | G0.2a.3.1 issuer-scoped occurrence issuance integrity | ENFORCED_AT_ACQUISITION_AUTHORITY | Before this stage, `authorization_id`/`run_id`/`snapshot_id` were caller-chosen strings with no uniqueness authority: an issuer accepted a repeat of the same id, so `same(id) => same(occurrence)` did not hold and these were `EvidenceOccurrenceCoordinates`, not a proven identity. Each issuer now keeps its own registry of ids it has already issued -- `EvidenceAcquisitionAuthority` for `authorization_id`, one `EvidenceAcquisitionAuthorization` for its own `run_id`s, one `EvidenceAcquisitionRun` for its own `snapshot_id`s -- and `EvidenceAcquisitionAuthorityError` rejects a repeat within that scope, even for a snapshot repeat carrying different content. Each registry's check-and-insert is synchronized with an internal lock so concurrent calls on one instance cannot race past the uniqueness check. This makes issuance injective *within its declared scope* (`IssuerScopedOccurrenceUniqueness = PROVED`): two ids from the same issuer that are equal name the same occurrence, and two ids from the same issuer that differ name different occurrences. `LocalInjectivity != PortableIdentity`: `AuthorizedEvidenceSnapshot` carries no `issuer_scope_id`, so two distinct `EvidenceAcquisitionAuthority` instances are separate, uncoordinated issuance scopes whose ids are not thereby proven to differ from each other, and two snapshots from different authorities can share identical comparable representations despite being genuinely independent occurrences. `PortableEvidenceOccurrenceIdentity` remains `DEFERRED` pending a self-issuing `EvidenceIssuerScopeIdentity` propagated through the chain. `EvidenceAcquisitionRun`/`EvidenceAcquisitionAuthorization` are `ExternallyFrozen, InternallyStatefulAuthority` objects: `frozen=True` fixes their own declared identity fields, but each also holds a private, mutable `_issued_*` registry and lock (excluded from equality, `repr`, and content identity) as operational bookkeeping only. |
-| G0.BA.1a authorized evaluator implementation binding | ENFORCED_AT_EXECUTION_GATE | Closes exactly one narrower residual left open by G0.2a: `AuthorizedBirthAssessmentEvaluatorDefinition != AuthorizedEvaluatorImplementation != EvaluatorExecution`. G0.2a's registry authorizes evaluator *declarations* (`domain`, `role`, `target_id`, `evaluator_id`) only, and performs no execution. `AuthorizedBirthEvaluatorImplementationBinding` is unchanged from and does not retroactively grant execution semantics to `AuthorizedBirthAssessmentEvaluatorDefinition`; instead, `BirthEvaluatorImplementationRegistry.register` requires an already-authorized definition plus an `implementation_identity` and an executable callable, and only `BirthEvaluatorImplementationRegistry.seal` freezes those bindings into a `SealedBirthEvaluatorImplementationRegistry`. `BirthEvaluatorExecutionGate.execute` is the sole authority that may resolve a binding by exact `(domain, role, target_id, evaluator_id, implementation_identity)` scope and invoke it, producing a `BirthEvaluatorExecutionRecord` -- a non-caller-constructible audit record preserving the authorized definition, implementation identity, role, target, the exact `BirthAssessmentRequest` and its own bound `AuthorizedEvidenceSnapshot`, input/output content, and trace. This record carries no `ResidualEvaluationResult`, `WeakerModelEvaluationResult`, `ClosureEvaluationResult`, aggregate assessment, residual survival, weaker-model exhaustion, `BirthCandidate`, `IndependentClosure`, `BirthVerdict`, or `Freeze` meaning: `Definition != ImplementationBinding != ExecutionRecord != Assessment`. Composing per-role execution records into any assessment remains a separate, later, still-deferred question. |
+| G0.BA.1a authorized evaluator implementation binding | ENFORCED_AT_EXECUTION_GATE | Closes exactly one narrower residual left open by G0.2a: `AuthorizedBirthAssessmentEvaluatorDefinition != AuthorizedEvaluatorImplementation != EvaluatorExecution`. G0.2a's registry authorizes evaluator *declarations* (`domain`, `role`, `target_id`, `evaluator_id`) only, and performs no execution. `AuthorizedBirthEvaluatorImplementationBinding` is unchanged from and does not retroactively grant execution semantics to `AuthorizedBirthAssessmentEvaluatorDefinition`; instead, `BirthEvaluatorImplementationRegistry.register` requires an already-authorized definition plus an `implementation_identity` and an executable callable, and only `BirthEvaluatorImplementationRegistry.seal` freezes those bindings into a `SealedBirthEvaluatorImplementationRegistry`. `BirthEvaluatorExecutionGate.execute` is the sole authority that may resolve a binding by exact `(domain, role, target_id, evaluator_id, implementation_identity)` scope and invoke it, producing a `BirthEvaluatorExecutionRecord` -- a non-caller-constructible audit record preserving the authorized definition, implementation identity, role, target, the exact `BirthAssessmentRequest` and its own bound `AuthorizedEvidenceSnapshot`, input/output content, and trace. This record carries no `ResidualEvaluationResult`, `WeakerModelEvaluationResult`, `ClosureEvaluationResult`, aggregate assessment, residual survival, weaker-model exhaustion, `BirthCandidate`, `IndependentClosure`, `BirthVerdict`, or `Freeze` meaning: `Definition != ImplementationBinding != ExecutionRecord != Assessment`. Composing per-role execution records into any assessment remains a separate, later, still-deferred question. `AuthorizedCallableInvocation`, not `AuthorizedAssessmentEvidenceExecution`: the gate invokes the bound callable on caller-supplied `input_content`; it does not prove that content was derived from, or equals, the attached `AuthorizedEvidenceSnapshot`'s own payload (`EvidenceAttachedToRecord != EvaluatorExecutedOnEvidence`; `InputProvenance = DECLARED_DEFERRED`). Nor does it prove the resolved definition belongs to this request's own frozen `BirthAssessmentContentBinding`/`BirthAssessmentEvaluatorDefinitions` -- only that its `domain` matches (`AuthorizedDefinition != DefinitionAuthorizedForThisFrozenExperiment`). `implementation_identity` is a declared, caller-chosen string with no canonical manifest or digest of its own (`DeclaredImplementationId != ImplementationContentIdentity`; `ImplementationIdentityIsContentAuthenticated = DEFERRED`). |
+| G0.MA.0 no predetermined pattern architecture (law only) | DECLARED_LAW_ONLY | See **G0.MA — Meta-architecture law** below. No runtime type or gate exists yet; this is a constitutional constraint on all future pattern-discovery, factorization-search, or architecture-selection work, including any future G0.BA/G0.F stage. |
 
 
 ### G0.C.1 — Minimal claim constitution
@@ -448,7 +449,10 @@ undecided questions. This stage does not assume they will be closed next, or
 in this shape; it closes only the one question stated above.
 
 
-
+G0.2 is split into smaller authority-preserving stages. G0.2a defines only
+executable assessment contracts: `ResidualDefinitionSpec` identifies the
+residual domain, input projection, output schema, evaluator-id declaration,
+invariants, and failure semantics; each `WeakerModelSpec` binds a frozen weaker
 model to its evaluator, information loss, result schema, and exact poset
 relations; and `ClosureCriterionSpec` defines the local
 `Close(W_i, R) ∈ {CLOSE, FAIL_TO_CLOSE, DEFER}` vocabulary for weaker-model
@@ -510,7 +514,74 @@ omit a competitor or promote string placeholders as discriminating evidence.
 It must keep `Freeze` distinct from the subsequent `E0` assessment. No
 Arabic-specific type is part of G0.1 or this deferred G0.2 design.
 
-## G0.F — Factorization-First Ontology (declared law, no runtime yet)
+## G0.MA — Meta-architecture law (declared law, no runtime yet)
+
+This law governs every future stage that searches for, selects, or names a
+pattern, factorization, or architecture -- including any future extension of
+G0.BA beyond G0.BA.1a, and any future stage of G0.F. It is declared now, as
+law only, with no accompanying type or gate, precisely so that it constrains
+those future stages before their first line of runtime code is written.
+
+The recurring risk this law closes: an agent (human or automated) with
+foreknowledge of common pattern-discovery techniques -- bigrams, trigrams,
+graphs, hypergraphs, transformers, or any other named architecture -- reaches
+for one of them because it is familiar, not because the system's own frozen
+residuals have forced it. That is exactly the same failure mode `G0.BV.1` and
+`G0.BA.1a` were written to refuse for birth verdicts and evaluator execution:
+naming or licensing a structure before the evidence that would force it.
+
+The following are declared, law-only constraints; none has a runtime
+enforcement mechanism yet:
+
+* `NoPredeterminedPatternArchitecture` -- no future stage may fix, in
+  advance, which family of pattern-recognition architecture (bigram,
+  trigram, graph, hypergraph, transformer, or any other) will be used to
+  discover structure in residuals. The choice must be an output of the
+  process, never an input to it.
+* `PatternType ∉ PriorOntology` -- the vocabulary of pattern types available
+  to a future discovery stage is not fixed by this constitution, this
+  codebase, or any prior stage's ontology. A pattern type is only real once
+  something forces its birth; it cannot be pre-declared "just in case."
+* `NoPatternNameBeforeIndependentBirth` -- a pattern may not be named,
+  typed, or exposed as an API surface before an independent birth process
+  (mirroring G0.1-G0.BV.1's own chain) has forced it into existence. A name
+  is not a license: naming ahead of birth is exactly the failure this law
+  refuses.
+* `ResidualGeometryConstrainsArchitectureSearch` -- whatever architecture
+  search a future stage performs must be constrained by the actual shape of
+  the residuals on hand, not by a convenient or popular prior architecture.
+  The residual geometry is the only permitted source of search bias.
+* `NoFixedComplexityOrder` -- no future stage may assume, in advance, an
+  ordering of model complexity (for example, "try bigrams before trigrams
+  before graphs") as a structural law. Any such ordering, if it appears,
+  must itself be derived from evidence, not declared upfront.
+* `FuturePossibility != CurrentImplementationLicense` -- that a future
+  architecture is conceivable, discussed, or even likely, does not license
+  building it now, or building scaffolding for it now. This mirrors
+  `RoadmapKnowledge != ExecutionAuthority` below at the level of technical
+  architecture rather than agent process.
+* `AgentRoadmapKnowledge != ExecutionAuthority` -- an agent's own knowledge
+  of where a roadmap is likely headed is not, by itself, authority to
+  implement the next stage in the same session that closed the current one.
+  What licenses the next stage is the next session's fresh audit of the
+  frozen parent's own residuals, not carried-over foresight.
+
+These combine into one governing law for any future architecture search:
+
+```
+Architecture_{n+1} = Min_ (relation)
+    { A : Preserve(A_n) and Close(A, rho_n) and HeldOutStable(A) }
+```
+
+That is: the next architecture is the *minimal* structure (under whatever
+partial order the future stage defines and justifies) that preserves the
+previous architecture's proven guarantees, closes the specific residual that
+forced this step, and remains stable under held-out evidence it was not
+fitted to. No future stage may skip the minimality requirement by asserting
+that a richer, named architecture is "obviously" going to be needed
+eventually -- `FuturePossibility != CurrentImplementationLicense` applies
+here exactly as everywhere else in this constitution.
+
 
 G0's chain as written above reads as *one* candidate object, closed
 independently and frozen. That phrasing is a special case, not the general
