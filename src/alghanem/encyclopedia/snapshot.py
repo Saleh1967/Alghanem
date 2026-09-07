@@ -32,6 +32,7 @@ class EncyclopediaNucleusSnapshot:
         for inquiry in self.frontier.reopen_inquiries:
             if any(parent not in ontology_refs for parent in inquiry.parents):
                 raise EncyclopediaContractError(
-                    "frontier reopen parents must be exact frozen ontology "
+                    "frontier reopen parents for "
+                    f"{inquiry.reopen_id!r} must be exact frozen ontology "
                     "references present in the fractal snapshot"
                 )

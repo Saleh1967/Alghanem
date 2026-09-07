@@ -149,7 +149,7 @@ class TestEncyclopediaNucleusSnapshot:
             allowed_observables=("observation",),
         )
 
-        with pytest.raises(EncyclopediaContractError, match="exact frozen"):
+        with pytest.raises(EncyclopediaContractError, match="reopen.*exact frozen"):
             EncyclopediaNucleusSnapshot(
                 fractal=FractalSnapshot((), (), ()),
                 frontier=GrowthFrontier((), (reopen,)),
