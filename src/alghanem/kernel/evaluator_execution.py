@@ -4,12 +4,9 @@ This module closes exactly one question: can an already registry-authorized
 birth evaluator definition (`AuthorizedBirthAssessmentEvaluatorDefinition`,
 issued under G0.2a) be bound to an exact implementation identity and executed
 through an authority boundary that produces a non-caller-constructible
-execution record?
-
-It does not answer, and must not be read as answering, any question about
-residual survival, weaker-model exhaustion, closure, birth candidacy,
-independent closure, birth verdicts, or freeze. ``Definition !=
-ImplementationBinding != ExecutionRecord != Assessment``:
+execution record? The scope of that question is narrower than its name might
+suggest, and is deliberately named ``AuthorizedCallableInvocation`` rather
+than ``AuthorizedAssessmentEvidenceExecution``:
 
 * ``AuthorizedBirthAssessmentEvaluatorDefinition`` (G0.2a) authorizes a
   *declaration* only; it is preserved unchanged here and gains no execution
@@ -18,10 +15,41 @@ ImplementationBinding != ExecutionRecord != Assessment``:
   declaration to one implementation identity and one executable callable.
   It is issued only by ``BirthEvaluatorImplementationRegistry``; callers
   cannot construct it directly.
-* ``BirthEvaluatorExecutionRecord`` is the auditable record of one execution
-  of a bound implementation. It is issued only by
-  ``BirthEvaluatorExecutionGate.execute`` and carries no assessment,
-  survival, exhaustion, closure, verdict, or freeze meaning.
+* ``BirthEvaluatorExecutionRecord`` is the auditable record of one *callable
+  invocation*. It is issued only by ``BirthEvaluatorExecutionGate.execute``
+  and carries no assessment, survival, exhaustion, closure, verdict, or
+  freeze meaning.
+
+It does not answer, and must not be read as answering, any question about
+residual survival, weaker-model exhaustion, closure, birth candidacy,
+independent closure, birth verdicts, or freeze. ``Definition !=
+ImplementationBinding != ExecutionRecord != Assessment``.
+
+Three claims this module explicitly does **not** make, each recorded here so
+a caller cannot read more into a ``BirthEvaluatorExecutionRecord`` than it
+proves:
+
+* ``InputProvenance = DECLARED_DEFERRED``. The gate invokes the bound
+  implementation on the caller-supplied ``input_content`` string. The
+  record also carries the request's own ``AuthorizedEvidenceSnapshot`` for
+  audit context, but nothing checks that ``input_content`` was derived from,
+  or equals, that snapshot's own payload. ``EvidenceAttachedToRecord !=
+  EvaluatorExecutedOnEvidence``: a record proves an implementation ran on
+  *some* input content alongside *some* evidence snapshot -- not that the
+  one caused, or matches, the other. Binding evaluator input to authorized
+  evidence content is a separate, later, still-open question.
+* ``AuthorizedDefinition != DefinitionAuthorizedForThisFrozenExperiment``.
+  The gate checks only that the resolved definition's ``domain`` matches
+  ``request.specification.domain``; it never checks the request's own
+  ``BirthAssessmentContentBinding`` or ``BirthAssessmentEvaluatorDefinitions``.
+  A definition authorized for the same domain, but never bound into this
+  particular experiment's frozen semantics contract, can still execute here.
+* ``ImplementationIdentityIsContentAuthenticated = DEFERRED``.
+  ``implementation_identity`` is a plain, caller-chosen string accepted by
+  ``BirthEvaluatorImplementationRegistry.register``. There is no canonical
+  manifest or content-identity digest of the implementation itself (unlike
+  ``BirthSemanticsContentIdentity`` for declarations): ``DeclaredImplementationId
+  != ImplementationContentIdentity``.
 """
 
 from __future__ import annotations
@@ -220,12 +248,19 @@ class SealedBirthEvaluatorImplementationRegistry:
 
 @dataclass(frozen=True, slots=True)
 class BirthEvaluatorExecutionRecord:
-    """The gate-issued record of one execution of a bound implementation.
+    """The gate-issued record of one authorized callable invocation.
 
-    This record proves that a specific, registry-bound implementation ran
-    against a specific, authorized request's evidence. It carries no
-    assessment, survival, exhaustion, closure, verdict, or freeze meaning:
-    those remain separate, later, and still-deferred authorities.
+    This record proves that a specific, registry-bound implementation was
+    invoked with specific caller-supplied input content, alongside a specific
+    authorized request and its own bound evidence snapshot. It does **not**
+    prove that the invoked implementation ran *on* that evidence snapshot's
+    payload (``EvidenceAttachedToRecord != EvaluatorExecutedOnEvidence``;
+    ``InputProvenance = DECLARED_DEFERRED``), nor that the resolved
+    definition was itself bound into this request's own frozen assessment
+    semantics contract (``AuthorizedDefinition !=
+    DefinitionAuthorizedForThisFrozenExperiment``). It carries no assessment,
+    survival, exhaustion, closure, verdict, or freeze meaning: those remain
+    separate, later, and still-deferred authorities.
     """
 
     definition: AuthorizedBirthAssessmentEvaluatorDefinition
@@ -284,7 +319,19 @@ class BirthEvaluatorExecutionRecord:
 
 
 class BirthEvaluatorExecutionGate:
-    """The sole authority that may invoke a bound implementation."""
+    """The sole authority that may invoke a bound implementation.
+
+    This gate performs an ``AuthorizedCallableInvocation``, not an
+    ``AuthorizedAssessmentEvidenceExecution``: it checks only that the
+    resolved definition's ``domain`` matches the request's frozen experiment
+    domain, and calls the bound implementation with the caller-supplied
+    ``input_content``. It does not check that ``input_content`` was derived
+    from the request's evidence snapshot, and it does not check that the
+    resolved definition is itself bound into this request's own frozen
+    ``BirthAssessmentContentBinding``/``BirthAssessmentEvaluatorDefinitions``.
+    See the module docstring for the full, explicit list of claims this gate
+    does not make.
+    """
 
     @staticmethod
     def execute(
@@ -295,7 +342,14 @@ class BirthEvaluatorExecutionGate:
         request: BirthAssessmentRequest,
         input_content: str,
     ) -> BirthEvaluatorExecutionRecord:
-        """Execute the exact bound implementation and record the result."""
+        """Invoke the exact bound implementation on caller-supplied input.
+
+        Does not verify that ``input_content`` originates from
+        ``request.evidence_snapshot``'s own payload
+        (``InputProvenance = DECLARED_DEFERRED``), and does not verify that
+        ``definition`` is bound into this request's own frozen assessment
+        semantics contract beyond matching domain.
+        """
 
         if type(definition) is not AuthorizedBirthAssessmentEvaluatorDefinition:
             raise BirthEvaluatorExecutionError(

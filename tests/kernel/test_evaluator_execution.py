@@ -364,3 +364,73 @@ def test_execution_record_preserves_the_exact_request_and_evidence() -> None:
 
     assert record.request is request
     assert record.evidence_snapshot is request.evidence_snapshot
+
+
+# --- Acknowledged residuals: EvidenceAttachedToRecord != -----------------
+# --- EvaluatorExecutedOnEvidence, and AuthorizedDefinition != ------------
+# --- DefinitionAuthorizedForThisFrozenExperiment. These tests document ---
+# --- the current, deliberately narrow scope of G0.BA.1a; they are not ---
+# --- regression guards for a stronger guarantee that does not exist yet.-
+
+
+def test_input_content_need_not_originate_from_the_evidence_payload() -> None:
+    """InputProvenance = DECLARED_DEFERRED.
+
+    The gate never compares ``input_content`` against the request's own
+    evidence snapshot payload. This test makes that narrow scope explicit:
+    a record is issued even though ``input_content`` shares nothing with the
+    evidence snapshot's own canonical bytes, proving the gate performs an
+    ``AuthorizedCallableInvocation``, not an
+    ``AuthorizedAssessmentEvidenceExecution``.
+    """
+
+    definition = authorized_definition()
+    registry = sealed_registry_with(definition)
+    request = assessment_request()
+    evidence_bytes = request.evidence_snapshot.evidence_manifest.canonical_bytes
+
+    record = BirthEvaluatorExecutionGate.execute(
+        definition=definition,
+        implementation_identity="impl-v1",
+        registry=registry,
+        request=request,
+        input_content="unrelated-to-evidence-payload",
+    )
+
+    assert record.input_content.encode() != evidence_bytes
+    assert record.evidence_snapshot is request.evidence_snapshot
+
+
+def test_definition_authorized_for_domain_need_not_be_bound_to_this_experiment() -> (
+    None
+):
+    """AuthorizedDefinition != DefinitionAuthorizedForThisFrozenExperiment.
+
+    The gate checks only that the resolved definition's ``domain`` matches
+    the request's frozen experiment domain; it never checks the request's
+    own ``BirthAssessmentContentBinding``/``BirthAssessmentEvaluatorDefinitions``.
+    This test documents that a definition authorized in a registry that has
+    no relationship whatsoever to this request's experiment can still
+    execute against it, as long as the domain string matches.
+    """
+
+    unrelated_registry = BirthAssessmentEvaluatorRegistry()
+    definition = unrelated_registry.authorize(
+        domain="finite-domain",
+        role=BirthEvaluatorRole.RESIDUAL_DEFINITION,
+        target_id="an-unrelated-target",
+        evaluator_id="an-unrelated-evaluator",
+    )
+    registry = sealed_registry_with(definition)
+    request = assessment_request()
+
+    record = BirthEvaluatorExecutionGate.execute(
+        definition=definition,
+        implementation_identity="impl-v1",
+        registry=registry,
+        request=request,
+        input_content="raw-evidence",
+    )
+
+    assert record.definition == definition
+    assert record.definition.target_id == "an-unrelated-target"
