@@ -83,10 +83,15 @@ or ontology term because it is convenient, expected, or traditional. A
 candidate object is only permitted to be *born* — closed independently and
 eventually handed a traditional name — through the following declared chain.
 At Kernel v0.1 this chain is **law only**: no `BirthGate`, rank/complexity
-class, `Carrier`/`State`/`Binding` type, or intervention-operation runtime
-exists yet. Those are separate, later milestones that must themselves be
-structurally admitted like any other change; this section only freezes the
-constraints they will have to satisfy.
+class, or Arabic-specific carrier/state/relation ontology type exists yet. A
+non-linguistic intervention-operation runtime does already exist (see
+`InterventionOperationIsNotOntology` below); it is a declared experimental
+tool, not one of these ontology types, and does not itself satisfy this
+chain. Those ontology types are separate, later milestones that must
+themselves be structurally admitted like any other change, and must not be
+named in advance of the residual that would force them (`G0.F` below); this
+section only freezes the constraints they will have to satisfy if and when
+they are born.
 
 ```
 BirthQuery -> Evidence -> Residual -> LicensedWeakerExhaustion
@@ -116,9 +121,14 @@ verdict, freeze, and `E0` have happened.
 These laws are declared now, ahead of any experiment, precisely so that the
 question being asked cannot be quietly reshaped by the answer an experiment
 later produces. Implementing `BirthGate`, a rank/complexity representation,
-an intervention runtime, or any `Carrier`/`State`/`Binding` candidate is out
-of scope for this section and must occur in later, separately reviewed
-milestones that are held to these same laws.
+or any Arabic-specific carrier/state/relation ontology type is out of scope
+for this section and must occur in later, separately reviewed milestones
+that are held to these same laws. No such type -- including any general
+linguistic "binding" relation -- is to be named or scaffolded before a
+residual is shown to force it: see `G0.F`'s `DerivedRelationDoesNotBirth` and
+`NoTraditionalSchemaBeforeFactorization` below. (`kernel/binding.py`'s
+`ClaimEvidenceBinding` is an unrelated kernel-level evidence/claim binding,
+not an Arabic linguistic relation, and is out of scope of this paragraph.)
 
 ### G0.1 — Birth experiment contract
 
@@ -346,3 +356,60 @@ That gate must assess every relevant incomparable model itself; callers cannot
 omit a competitor or promote string placeholders as discriminating evidence.
 It must keep `Freeze` distinct from the subsequent `E0` assessment. No
 Arabic-specific type is part of G0.1 or this deferred G0.2 design.
+
+## G0.F — Factorization-First Ontology (declared law, no runtime yet)
+
+G0's chain as written above reads as *one* candidate object, closed
+independently and frozen. That phrasing is a special case, not the general
+law: a domain `L`'s residual over everything frozen prior to experiment
+(`K_L`) does not name in advance how many candidate objects, or which ones,
+would close it. Requiring `Residual(O_L | K_L) = 0` may force a single
+factor, several jointly-necessary factors, or none at all
+(`NO_BIRTH_IN_SCOPE`). This section restates G0's chain, for any domain `L`,
+as closing a **minimal sufficient irreducible factorization** rather than a
+single named object, and it is held to the same discipline as G0: **law
+only**, ahead of any runtime, ahead of any Arabic-specific folder structure,
+and ahead of any decision about how many factors traditional grammar expects.
+
+```
+K_L -> Residual(O_L | K_L) -> candidate factorizations F (poset-ordered)
+    -> Sufficiency(F) & FamilyMinimality(F) & ComponentIrreducibility(F)
+    -> IndependentClosure -> BirthVerdict -> Freeze(F*) -> Bridge stage -> E0
+```
+
+`Bridge stage`: once (and only once) two factors are each independently
+frozen, a *separate* birth protocol -- not automatic adjacency -- decides
+whether any relation between them is itself born or merely derived. `E0`
+here names a mapping graph from the frozen factor/bridge network to external
+(traditional) terminology, not a single rename step. Neither the
+factorization runtime nor the bridge runtime nor the E0-mapping runtime is
+implemented by this section; as with G0, only the constraints they must
+satisfy are frozen now.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `NoTraditionalSchemaBeforeFactorization` | DECLARED_DEFERRED | A domain `L`'s factorization is discovered from `Residual(O_L \| K_L)`, never assumed from a traditional grammatical schema (for example, a presumed phonology/morphology/syntax/semantics split) before that residual is examined. A traditional category name may describe a result after `E0`; it must never seed or constrain the search for one. |
+| `NoPredeterminedFactorCount` | DECLARED_DEFERRED | No experiment, spec, or runtime may fix in advance how many factors a domain's minimal factorization contains. `Residual(O_L \| K_L) = 0` licenses `NO_BIRTH_IN_SCOPE` for the whole domain; a nonzero residual licenses exactly the factor family the closure proof produces, whether that is one factor, several, or (pending further evidence) none yet decidable. |
+| `FactorizationMinimalityIsPartialOrderRelative` | DECLARED_DEFERRED | The set of admissible minimal factorizations for `L` is `M_L = Min_{≺_L}{F : Sufficient_L(F) and Closed_L(F)}`, where `≺_L` is the domain's frozen partial order over candidate factor families and `Min` selects its minimal elements. `M_L` is never computed as `argmin` of a linear/scalar complexity measure: `ProjectionIsNotOntology`'s ban on assuming a total-order complexity vector across projections applies equally here to factor families. |
+| `MultipleIncomparableMinimalFactorizationsDefer` | DECLARED_DEFERRED | If `\|M_L\| > 1` and two members of `M_L` are pairwise incomparable under `≺_L` (neither is derivable from, nor a refinement of, the other under currently licensed weaker models), no verdict may pick one: the assessment is `DEFER_IN_SCOPE`, mirroring `NoRicherStructureBeforeLowerOpenResidualClosure`'s treatment of an incomparable competing explanation, until discriminating evidence resolves the competition. |
+| `DerivedRelationDoesNotBirth` | DECLARED_DEFERRED | A relation between two already-frozen factors `F_i`, `F_j` is not itself a candidate for birth merely because both endpoints exist. If the relation's value is fully reconstructible from `F_i`, `F_j`, and shared already-frozen context (`ReconstructibleRelation => Derived, not Born`), it is recorded as a derived relationship (`D*`), not promoted to an ontology object, regardless of how useful or traditionally named that relationship is. |
+| `NoBridgeBeforeIndependentEndpointFreeze` | DECLARED_DEFERRED | A `BridgeResidualExperiment(F_i, F_j)` may only be opened after both `F_i` and `F_j` have each already completed their own independent `Freeze`. Endpoint existence as an in-progress candidate, hypothesis, or unclosed factor never licenses opening a bridge experiment between them. |
+| `NoBridgeBirthIfReconstructible` | DECLARED_DEFERRED | Given frozen `F_i`, `F_j`, and shared context, if every licensed weaker reconstruction model accounts for the coupling between them (residual `R_ij = 0`), the relation is `DERIVED`, not a `BridgeCandidate`. Only a coupling residual that survives every licensed weaker reconstruction model (`R_ij != 0` after exhaustion) may proceed to `BridgeCandidate -> IndependentClosure -> Freeze`, mirroring `NoBirthBeforeLicensedWeakerExhaustion` for bridges. |
+| `FrozenFactorReopeningRequiresNewRevision` | DECLARED_DEFERRED | A frozen factor's content is fixed at freeze time and is never silently mutated by later evidence. New evidence bearing on an already-frozen factor opens a new, separately recorded revision (mirroring `NoBirthBeforeLicensedWeakerExhaustion`'s treatment of a newly discovered weaker model); it does not erase, edit in place, or retroactively rewrite the original frozen verdict's historical scoped record. |
+| `LayerIsDiscoveryJurisdictionNotOntology` | DECLARED_DEFERRED | A domain `L` (however named -- "encoding," "phonology," "morphology," or otherwise) denotes only the scope of experiment, evidence, and residual under examination: a `DiscoveryJurisdiction`, not a promise that factorization will reproduce any traditional layer boundary. A single born factor may cut across what tradition calls two layers, or one traditional layer may fracture into several independently born factors; neither outcome is a failure of this law. |
+| `E0IsExternalAuditOnly` | DECLARED_DEFERRED | `E0` maps the frozen factor/bridge network to external (traditional or reference) terminology for audit and communication only. `E0` certifies no birth, closure, or freeze decision, and a factor's or bridge's epistemic status never depends on whether, or how, `E0` maps it to an external name. |
+| `E0MappingMayBePartialAndManyToMany` | DECLARED_DEFERRED | The `E0` mapping `Π^E0 : FrozenDiscoveryGraph ⇀ ExternalConceptGraph` is a partial relation, not a total function: an entry may be one-to-one, one-to-many, many-to-one, or absent entirely (a frozen factor with no traditional counterpart, or a traditional term matching no single frozen factor). An unmapped frozen factor, or a traditional term left unmatched, is not itself evidence against either side. |
+| `RuleTableIsDerivedArtifact` | DECLARED_DEFERRED | Any future "Arabic rule table" is a compiled, read-only projection of the frozen factor set, frozen bridge set, derived-relation set, and `E0` mapping (`ArabicRuleTable = Compile(F*, B*, D*, Π^E0)`), produced strictly after those inputs are frozen. It is never hand-authored ahead of, or independently of, that frozen network. |
+| `NoRuleTableFeedbackIntoDiscovery` | DECLARED_DEFERRED | A compiled rule table, or any traditional inventory or category count it reflects, may never feed back into an open experiment, residual criterion, weaker-model set, or factorization search (`ArabicRuleTable ↛ Discovery`, `TraditionalInventory ↛ FactorCount`, `TraditionalCategory ↛ ResidualCriterion`). Discovery in progress must not be steered toward reproducing a table that has not yet been compiled from it. |
+| `NoOracleLabelCriterionOrFunctionLeakBeforeFreeze` | DECLARED_DEFERRED | No caller-supplied oracle label, closure criterion, or evaluator function/callable may be substituted for, or silently override, the frozen residual definition, closure criterion, or weaker-model specifications bound at G0.1/G0.2a, for any stage of factorization, bridge, or `E0` assessment. This extends `EvaluatorId != EvaluatorImplementationIdentity` and `CallerDoesNotOwnEvaluatorAuthority` (G0.2a) to the factorization and bridge stages: a caller may declare which evaluator it expects, but never supply, swap, or leak the executing implementation itself ahead of a sealed registry's authorization. |
+
+These fourteen laws are declared now, before any factorization runtime,
+`EvaluatorImplementationIdentity`/execution-authority stage (itself still
+open per `EvaluatorId != EvaluatorImplementationIdentity` above), typed
+residual/provenance stage, bridge-assessment stage, or `E0`-mapping-audit
+stage exists. As with G0, no Arabic-specific `phonology`/`morphology`/
+`syntax`/`semantics` (or similarly pre-committed) module or folder is created
+by this section, and none should be created merely to anticipate a
+factorization that has not yet been discovered
+(`LayerIsDiscoveryJurisdictionNotOntology`). This section governs, but does
+not implement, the milestones that must be built to close it.

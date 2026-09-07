@@ -56,8 +56,14 @@ only unless a sealed evaluator registry authorizes the exact scope, and
 the later G0.2 gate alone may issue `BIRTH_IN_SCOPE`, then freeze it before a
 separate `E0` step. See the
 "G0 — Birth Protocol" section of
-`docs/CONSTITUTION.md` for the full declared laws; no `BirthGate`,
-rank/complexity runtime, or intervention runtime exists yet.
+`docs/CONSTITUTION.md` for the full declared laws; no `BirthGate` or
+rank/complexity runtime exists yet. A non-linguistic
+`SurfaceAtomIntervention`/`SurfaceInterventionTrace` runtime does exist
+(`src/alghanem/arabic/encoding/intervention.py`), but per
+`InterventionOperationIsNotOntology` and
+`SyntheticInterventionMayGenerateHypothesisOnly` it is an explicit,
+non-exhaustive experimental tool that can license at most a hypothesis, never
+a `BirthGate` verdict on its own.
 
 ## Development
 
