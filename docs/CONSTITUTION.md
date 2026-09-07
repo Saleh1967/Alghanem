@@ -497,3 +497,33 @@ trustworthy. `FractalSnapshot` contains no `ArabicRuleTable` and no other
 compiled artifact; per `RuleTableIsDerivedArtifact` above, any such table
 remains a strictly later, derived projection of a frozen snapshot like this
 one.
+
+## Encyclopedia Nucleus — Constitution
+
+The encyclopedia is an application consumer of the kernel, never a replacement
+for it. Its minimal state is:
+
+```
+EncyclopediaNucleusSnapshot = FractalSnapshot + GrowthFrontier
+GrowthFrontier = RootInquiries + ReopenInquiries
+```
+
+`FractalSnapshot` remains a discovery graph, not a knowledge graph. It holds
+only frozen discovery contracts, whose construction remains non-authoritative
+until the future birth and freeze authorities exist. The frontier holds open
+questions, including deferred questions; `DEFER` neither proves failure nor
+removes an inquiry.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `NoNameBeforeBirth` | PROVED (at contract level) | The encyclopedia namespace has no domain, ontology, or human-science label types. A `jurisdiction_id` scopes an inquiry only; it does not name a born domain. |
+| `QuestionGenerationIsNotAuthorization` | PROVED (at contract level) | `QuestionProposal` has no experiment or execution field. Only `RootInquiry`, bound to a complete `BirthExperimentSpecification`, can enter a `GrowthFrontier`. |
+| `QuestionGrowthUsesReopen` | PROVED (at contract level) | Later questions around frozen results are represented by kernel `ReopenExperimentSpecification`; sequential inquiry is not an ontological bridge. |
+| `NoKnowledgeBeforeLicensedClaim` | PROVED (at contract level) | The nucleus contains no claim or knowledge fields. Frozen factors are not knowledge states. |
+| `NoTextBeforeKnowledgeProjection` | PROVED (at contract level) | The nucleus contains no article or text fields; rendering is a later projection and cannot create knowledge. |
+| `NoIndexFeedbackIntoDiscovery` | DECLARED_DEFERRED | A future index or renderer may project licensed knowledge but may not authorize or alter discovery. |
+
+`src/alghanem/encyclopedia/inquiry.py`,
+`src/alghanem/encyclopedia/frontier.py`, and
+`src/alghanem/encyclopedia/snapshot.py` intentionally define no growth engine,
+domain taxonomy, knowledge graph, article store, or evaluator authority.
