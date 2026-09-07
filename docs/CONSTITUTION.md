@@ -522,7 +522,7 @@ after a future `DEFER` verdict is deferred until a growth transition exists.
 | `QuestionGrowthUsesReopen` | PROVED (at contract level) | Later questions around frozen results are represented by kernel `ReopenExperimentSpecification`; sequential inquiry is not an ontological bridge. |
 | `FrontierReopenParentMustExistInSnapshot` | PROVED (at contract level) | Every reopen parent in the frontier must exactly equal a frozen factor or born bridge reference present in the paired `FractalSnapshot`; identifier equality alone is insufficient. |
 | `FrontierImmutability` | PROVED (at contract level) | The frozen frontier contract cannot be mutated after construction. |
-| `DeferPreservesOpenQuestion` | DECLARED_DEFERRED | A future authorized growth transition must retain an inquiry after a `DEFER` result; no verdict-to-frontier transition exists yet. |
+| `DeferPreservesOpenQuestion` | DECLARED_DEFERRED | A future `EncyclopediaGrowthTransition` must retain an inquiry after a `DEFER` result; no verdict-to-frontier transition exists yet. |
 | `NoKnowledgeBeforeLicensedClaim` | PROVED (at contract level) | The nucleus contains no claim or knowledge fields. Frozen factors are not knowledge states. |
 | `NoTextBeforeKnowledgeProjection` | PROVED (at contract level) | The nucleus contains no article or text fields; rendering is a later projection and cannot create knowledge. |
 | `NoIndexFeedbackIntoDiscovery` | DECLARED_DEFERRED | A future index or renderer may project licensed knowledge but may not authorize or alter discovery. |
@@ -531,3 +531,5 @@ after a future `DEFER` verdict is deferred until a growth transition exists.
 `src/alghanem/encyclopedia/frontier.py`, and
 `src/alghanem/encyclopedia/snapshot.py` intentionally define no growth engine,
 domain taxonomy, knowledge graph, article store, or evaluator authority.
+`EncyclopediaGrowthTransition` is the deferred future boundary for applying
+authorized kernel outcomes to a nucleus snapshot.

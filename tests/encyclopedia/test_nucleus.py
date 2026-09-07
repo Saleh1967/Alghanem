@@ -145,6 +145,13 @@ class TestEncyclopediaNucleusSnapshot:
                 frontier=GrowthFrontier((), (reopen,)),
             )
 
+        snapshot = EncyclopediaNucleusSnapshot(
+            fractal=FractalSnapshot((parent,), (), ()),
+            frontier=GrowthFrontier((), (reopen,)),
+        )
+
+        assert snapshot.frontier.reopen_inquiries == (reopen,)
+
     def test_reopen_parent_must_not_only_share_a_factor_id(self) -> None:
         recorded = FrozenFactorRef(
             factor_id="factor",
