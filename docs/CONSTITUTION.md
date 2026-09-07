@@ -567,9 +567,11 @@ enforcement mechanism yet:
   them:
   `Demand(EMPIRICAL) = CertifiedResidualGeometry`,
   `Demand(FORMAL) = CertifiedFormalNecessityWitness`, and
-  `Demand(MIXED) = <D_emp, D_formal>` -- an explicitly typed pair, not a sum:
-  `D_emp` and `D_formal` are partitioned by the claim's own scope
-  (`Scope(D_emp)` and `Scope(D_formal)` are disjoint parts of the claim), and
+  `Demand(MIXED) = <(D_emp, S_emp), (D_formal, S_formal)>` -- an explicitly
+  typed *scoped* pair, not a sum: `S_emp` and `S_formal` are independently
+  declared scopes of the claim, with no prior assumption that they are
+  disjoint, equal, or exhaustive (the same part of a claim may need both
+  formal necessity and empirical support), and
   `NoCrossSubstitution(D_emp, D_formal)` -- neither component may compensate
   for the other on the part of the claim that belongs to it
   (`FormalProof ⇏ EmpiricalReality`,
@@ -619,8 +621,9 @@ borrowed from residual logic): in `EMPIRICAL` mode,
 realizes -- fulfills and instantiates -- the structural necessity that the
 `CertifiedFormalNecessityWitness` proved within its frozen formal domain,
 not that it "closes a residual" (a necessity witness is not a residual to be
-closed); in `MIXED` mode, each component of the typed pair
-`<D_emp, D_formal>` is satisfied by its own mode's relation on its own scope.
+closed); in `MIXED` mode, each component of the typed scoped pair
+`<(D_emp, S_emp), (D_formal, S_formal)>` is satisfied by its own mode's
+relation within its own declared scope.
 Validation is mode-relative
 (`Validation_n(A) = Validation(EvidenceMode_n, A)`), matching
 `NoBirthWithoutResidualOrFormalNecessity`'s three modes:
@@ -629,9 +632,11 @@ stable under held-out evidence it was not fitted to;
 `Validation(FORMAL, A) = ExhaustivelyProvedClosure(A)` -- exhaustive formal
 closure over the declared closed domain, with no held-out measurement
 required, since a formal birth needs no measurement run; and
-`Validation(MIXED, A) = Validation(EMPIRICAL, A) and Validation(FORMAL, A)`,
-each applied within the scope of the part of the claim that belongs to that
-mode, with neither substituting for the other. No future stage may skip the
+`Validation(MIXED, A) = Validation_emp(A | S_emp) and
+Validation_formal(A | S_formal)` -- each mode's validation applies to `A`
+restricted to its own declared scope, with no assumption here about whether
+the two scopes overlap, are disjoint, or are exhaustive, and with neither
+substituting for the other. No future stage may skip the
 minimality requirement by asserting that a richer, named architecture is
 "obviously" going to be needed eventually --
 `FuturePossibility != CurrentImplementationLicense` applies here exactly as
