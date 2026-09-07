@@ -20,6 +20,7 @@ _ALGORITHM = "sha256"
 _CANONICALIZATION_VERSION = "claim-content-manifest-v1"
 CLAIM_CONTENT_MANIFEST_COVERAGE = ("core", "qualifications")
 CLAIM_CORE_COVERAGE = ("anchor", "predicate", "polarity", "scope")
+ANCHOR_COVERAGE = ("identifier", "domain")
 PREDICATE_REF_COVERAGE = ("identifier",)
 CLAIM_SCOPE_REF_COVERAGE = ("scope_type", "reference")
 CLAIM_QUALIFICATION_COVERAGE = ("kind", "value")
@@ -111,6 +112,7 @@ _CLAIM_CONTENT_MANIFEST_FIELDS = frozenset(
     item.name for item in fields(ClaimContentManifest)
 )
 _CLAIM_CORE_FIELDS = frozenset(item.name for item in fields(ClaimCore))
+_ANCHOR_FIELDS = frozenset(item.name for item in fields(Anchor))
 _PREDICATE_REF_FIELDS = frozenset(item.name for item in fields(PredicateRef))
 _CLAIM_SCOPE_REF_FIELDS = frozenset(item.name for item in fields(ClaimScopeRef))
 _CLAIM_QUALIFICATION_FIELDS = frozenset(
@@ -213,6 +215,9 @@ class CanonicalClaimContentEncoder:
     def _assert_nested_schema_coverage() -> None:
         CanonicalClaimContentEncoder._assert_type_coverage(
             "ClaimCore", _CLAIM_CORE_FIELDS, CLAIM_CORE_COVERAGE
+        )
+        CanonicalClaimContentEncoder._assert_type_coverage(
+            "Anchor", _ANCHOR_FIELDS, ANCHOR_COVERAGE
         )
         CanonicalClaimContentEncoder._assert_type_coverage(
             "PredicateRef", _PREDICATE_REF_FIELDS, PREDICATE_REF_COVERAGE

@@ -239,6 +239,7 @@ def test_predicate_reference_has_no_rendered_text_field() -> None:
     [
         "CLAIM_CONTENT_MANIFEST_COVERAGE",
         "CLAIM_CORE_COVERAGE",
+        "ANCHOR_COVERAGE",
         "PREDICATE_REF_COVERAGE",
         "CLAIM_SCOPE_REF_COVERAGE",
         "CLAIM_QUALIFICATION_COVERAGE",

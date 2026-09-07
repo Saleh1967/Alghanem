@@ -38,9 +38,10 @@ These are the initial laws of the language-agnostic kernel:
   `DECLARED_DEFERRED`.
 - Predicate rendering and semantics are deferred; text is not claim input or
   primary identity.
-- `CanonicalClaimContentEncoder` alone issues `ClaimContentIdentity`. Coverage
+- `CanonicalClaimContentEncoder` is the sole public issuer of
+  `ClaimContentIdentity` through the controlled canonical-encoder API. Coverage
   guards fail closed for every field of `ClaimContentManifest`, `ClaimCore`,
-  `PredicateRef`, `ClaimScopeRef`, and `ClaimQualification`.
+  `Anchor`, `PredicateRef`, `ClaimScopeRef`, and `ClaimQualification`.
 - Qualification tuple order is content-significant
   (`NoUnlicensedQualificationCommutation`); scope and polarity are encoded
   content.
