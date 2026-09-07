@@ -694,4 +694,3 @@ class BirthAssessmentRequest:
         """The specification proven equal to the authorized frozen manifest."""
 
         return self.experiment_binding.specification
-
