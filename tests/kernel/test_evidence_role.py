@@ -111,7 +111,7 @@ def test_binding_rejects_direct_construction() -> None:
         AuthenticatedObservationBinding(
             "imaginary-observation", "imaginary-authentication"
         )
-    assert not hasattr(kernel, "AuthenticatedObservationBridge")
+    assert not hasattr(kernel, "issue_from_source_authority")
 
 
 def test_same_observation_has_distinct_roles_for_distinct_claims() -> None:

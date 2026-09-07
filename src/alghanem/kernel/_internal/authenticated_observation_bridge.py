@@ -8,12 +8,9 @@ resulting binding but cannot issue one through ``alghanem.kernel``.
 
 from dataclasses import dataclass
 
+from .text import require_text
+
 _AUTHENTICATED_OBSERVATION_BINDING_TOKEN = object()
-
-
-def _require_text(value: str, name: str) -> None:
-    if type(value) is not str or not value.strip():
-        raise ValueError(f"{name} must be non-blank text")
 
 
 @dataclass(frozen=True, slots=True, init=False)
@@ -35,8 +32,8 @@ class AuthenticatedObservationBinding:
                 "authenticated observation bindings must be issued through "
                 "a source authority"
             )
-        _require_text(source_observation_ref, "source observation reference")
-        _require_text(source_authentication_ref, "source authentication reference")
+        require_text(source_observation_ref, "source observation reference")
+        require_text(source_authentication_ref, "source authentication reference")
         object.__setattr__(self, "source_observation_ref", source_observation_ref)
         object.__setattr__(self, "source_authentication_ref", source_authentication_ref)
 

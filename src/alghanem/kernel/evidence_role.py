@@ -12,12 +12,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ._internal.authenticated_observation_bridge import AuthenticatedObservationBinding
+from ._internal.text import require_text
 from .claim_constitution import ClaimCandidate
-
-
-def _require_text(value: str, name: str) -> None:
-    if type(value) is not str or not value.strip():
-        raise ValueError(f"{name} must be non-blank text")
 
 
 @dataclass(frozen=True, slots=True)
@@ -27,7 +23,7 @@ class EvidenceRoleRef:
     identifier: str
 
     def __post_init__(self) -> None:
-        _require_text(self.identifier, "evidence role reference")
+        require_text(self.identifier, "evidence role reference")
 
 
 @dataclass(frozen=True, slots=True)
