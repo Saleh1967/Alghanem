@@ -5,10 +5,10 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass, field
 
-from alghanem.kernel.evidence_role import (
-    AuthenticatedObservationBinding,
-    _issue_authenticated_observation_binding,
+from alghanem.kernel._authenticated_observation_bridge import (
+    issue_from_source_authority,
 )
+from alghanem.kernel.evidence_role import AuthenticatedObservationBinding
 
 from .artifact_ref import RepositoryArtifactRef
 from .authenticated_artifact import AuthenticatedRepositoryArtifact
@@ -143,7 +143,7 @@ class RepositoryObservationRun:
             )
         artifact = fragment.artifact
         snapshot = artifact.snapshot.snapshot
-        return _issue_authenticated_observation_binding(
+        return issue_from_source_authority(
             _canonical_coordinate(
                 repository_identity=snapshot.repository_identity,
                 commit_sha=snapshot.commit_sha,
