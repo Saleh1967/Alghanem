@@ -3,15 +3,20 @@ import pytest
 import alghanem.kernel.birth as birth
 from alghanem.kernel.birth import (
     AuthorizedBirthAssessmentEvaluatorDefinition,
+    BirthAssessment,
     BirthAssessmentEvaluatorAuthorityError,
     BirthAssessmentEvaluatorDefinitions,
     BirthAssessmentEvaluatorRegistry,
     BirthAssessmentRequest,
     BirthAssessmentSemanticsContract,
+    BirthAssessmentStatus,
     BirthEvaluatorRole,
     BirthExperimentSpecification,
     BirthExperimentSpecificationError,
     BirthQuery,
+    BirthVerdict,
+    BirthVerdictAuthority,
+    BirthVerdictStatus,
     ClosureAssessmentStatus,
     ClosureCriterionSpec,
     EvidenceMode,
@@ -21,6 +26,8 @@ from alghanem.kernel.birth import (
     StructureHypothesis,
     WeakerModelSpec,
 )
+from alghanem.kernel.residual import Residual
+from alghanem.kernel.trace import Trace
 from alghanem.kernel.evidence_acquisition import (
     AuthorizedEvidenceSnapshot,
     EvidenceAcquisitionAuthority,
@@ -619,4 +626,56 @@ def test_evaluator_authorization_requires_exact_declared_scope() -> None:
                 closure_criterion=closure_criterion(),
             ),
             registry_snapshot=registry.seal("registry-snapshot"),
+        )
+
+
+def test_birth_verdict_authority_issues_scoped_verdict_without_freeze() -> None:
+    request = BirthAssessmentRequest(
+        frozen_specification_binding(), authorized_evidence_snapshot()
+    )
+    definitions = BirthAssessmentEvaluatorDefinitions(
+        contract=assessment_semantics(),
+        registry_snapshot=authorized_registry().seal("registry-snapshot"),
+    )
+    assessment = BirthAssessment(
+        request=request,
+        evaluator_definitions=definitions,
+        status=BirthAssessmentStatus.BIRTH,
+        reason="the residual survives every licensed weaker model",
+        trace=Trace(("residual assessed", "weaker models exhausted")),
+        residuals=(Residual("unexplained distinction"),),
+    )
+
+    verdict = BirthVerdictAuthority.issue(assessment)
+
+    assert verdict.status is BirthVerdictStatus.BIRTH_IN_SCOPE
+    assert verdict.scope.experiment_content_id == request.experiment_binding.content_id
+    assert verdict.scope.evidence_content_id == request.evidence_snapshot.content_id
+    assert verdict.scope.weaker_model_ids == ("count", "set", "multiset")
+    assert verdict.scope.evaluator_registry_snapshot_id == "registry-snapshot"
+    assert verdict.trace == assessment.trace
+    assert not hasattr(verdict, "freeze")
+
+
+def test_birth_verdict_cannot_be_constructed_by_callers() -> None:
+    request = BirthAssessmentRequest(
+        frozen_specification_binding(), authorized_evidence_snapshot()
+    )
+    definitions = BirthAssessmentEvaluatorDefinitions(
+        contract=assessment_semantics(),
+        registry_snapshot=authorized_registry().seal("registry-snapshot"),
+    )
+    assessment = BirthAssessment(
+        request=request,
+        evaluator_definitions=definitions,
+        status=BirthAssessmentStatus.DEFER,
+        reason="the closure evidence is unresolved",
+        trace=Trace(("closure deferred",)),
+    )
+
+    with pytest.raises(BirthExperimentSpecificationError, match="issued"):
+        BirthVerdict(
+            assessment=assessment,
+            status=BirthVerdictStatus.DEFER_IN_SCOPE,
+            scope=assessment.scope,
         )
