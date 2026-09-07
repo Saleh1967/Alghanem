@@ -357,9 +357,7 @@ class ProofLineageEdge:
             raise FractalContractError(
                 "proof lineage must connect distinct frozen factors"
             )
-        if not isinstance(
-            self.reopen_specification, ReopenExperimentSpecification
-        ):
+        if not isinstance(self.reopen_specification, ReopenExperimentSpecification):
             raise FractalContractError(
                 "proof lineage must bind a reopen experiment specification"
             )
@@ -397,9 +395,7 @@ def _ensure_acyclic(
             visiting.add(current)
             stack.append((current, True))
             stack.extend(
-                (child, False)
-                for child in adjacency[current]
-                if child not in visited
+                (child, False) for child in adjacency[current] if child not in visited
             )
 
 

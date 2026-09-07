@@ -539,9 +539,7 @@ class TestFractalSnapshot:
         assert snapshot.proof_lineage_edges == (edge,)
 
     def test_rejects_derived_relation_as_lineage_parent(self) -> None:
-        relation = DerivedRelationRef(
-            relation_id="d1", derivation_content_id="content"
-        )
+        relation = DerivedRelationRef(relation_id="d1", derivation_content_id="content")
         with pytest.raises(FractalContractError):
             ProofLineageEdge(
                 parent_ref=relation,  # type: ignore[arg-type]
