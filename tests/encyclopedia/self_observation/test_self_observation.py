@@ -563,5 +563,19 @@ def test_bridge_authentication_coordinates_preserve_delimiter_bearing_fields() -
 
 
 def test_bridge_coordinate_rejects_non_string_field_values() -> None:
-    with pytest.raises(TypeError, match="coordinate values must be exact text"):
+    with pytest.raises(TypeError, match="coordinate values must be non-blank text"):
         _canonical_coordinate(repository_identity=1)  # type: ignore[arg-type]
+
+
+def test_repeated_bridge_of_one_fragment_preserves_its_binding() -> None:
+    run = authenticated_run()
+    observed = run.observe_snapshot(snapshot("c1", "t1"))
+    artifact_observation = run.observe_artifact(
+        observed, artifact(snapshot("c1", "t1"), blob_sha="b1")
+    )
+    fragment = run.observe_fragment(artifact_observation, "RootInquiry")
+
+    first = run.bridge_authenticated_fragment(fragment)
+    second = run.bridge_authenticated_fragment(fragment)
+
+    assert first == second

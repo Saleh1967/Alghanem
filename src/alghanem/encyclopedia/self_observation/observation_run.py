@@ -35,7 +35,7 @@ def _canonical_coordinate(**coordinate_fields: str) -> str:
     """
 
     if any(type(value) is not str for value in coordinate_fields.values()):
-        raise TypeError("source coordinate values must be exact text")
+        raise TypeError("source coordinate values must be non-blank text")
     return json.dumps(
         coordinate_fields, ensure_ascii=False, separators=(",", ":"), sort_keys=True
     )

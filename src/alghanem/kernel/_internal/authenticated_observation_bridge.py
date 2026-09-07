@@ -4,6 +4,8 @@ This module belongs to the explicit internal adapter namespace, excluded from
 the public kernel API. Source adapters invoke it only after their own
 authority has authenticated an observation. Ordinary callers consume the
 resulting binding but cannot issue one through ``alghanem.kernel``.
+Python's internal-module and private-token conventions are a controlled API
+boundary, not cryptographic protection against deliberate private access.
 """
 
 from dataclasses import dataclass
