@@ -17,17 +17,30 @@ class AuthenticatedRepositoryFragment:
     fragment_content_id: str
     observation_run: RepositoryObservationRun
 
-    def __init__(self, artifact, fragment_locator, fragment_content_id, observation_run, *, _token=None):
+    def __init__(
+        self,
+        artifact,
+        fragment_locator,
+        fragment_content_id,
+        observation_run,
+        *,
+        _token=None,
+    ):
         if _token is not _AUTHORITY_TOKEN:
             raise SelfObservationContractError(
-                "authenticated fragments may only be issued by the observation authority"
+                "authenticated fragments may only be issued by the observation "
+                "authority"
             )
         if not isinstance(artifact, AuthenticatedRepositoryArtifact):
-            raise SelfObservationContractError("authenticated fragment requires an authenticated artifact")
+            raise SelfObservationContractError(
+                "authenticated fragment requires an authenticated artifact"
+            )
         _require_text(fragment_locator, "authenticated fragment locator")
         _require_text(fragment_content_id, "authenticated fragment content id")
         if observation_run != artifact.observation_run:
-            raise SelfObservationContractError("fragment and artifact must share an observation run")
+            raise SelfObservationContractError(
+                "fragment and artifact must share an observation run"
+            )
         object.__setattr__(self, "artifact", artifact)
         object.__setattr__(self, "fragment_locator", fragment_locator)
         object.__setattr__(self, "fragment_content_id", fragment_content_id)
