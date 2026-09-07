@@ -18,37 +18,31 @@ ancestry is deliberately `DEFERRED` to a future
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TypeVar
 
 from .artifact_change_ref import RepositoryArtifactChangeRef
 from .artifact_ref import RepositoryArtifactRef
-from .repository_snapshot import RepositorySnapshotRef, SelfObservationContractError
+from .repository_snapshot import (
+    RepositorySnapshotRef,
+    SelfObservationContractError,
+    _require_same_repository_distinct_commits,
+)
+
+_HasArtifactPath = TypeVar(
+    "_HasArtifactPath", RepositoryArtifactRef, RepositoryArtifactChangeRef
+)
 
 
-def _require_artifact_tuple(
-    values: tuple[RepositoryArtifactRef, ...], field_name: str
+def _require_ref_tuple(
+    values: tuple[_HasArtifactPath, ...],
+    field_name: str,
+    element_type: type[_HasArtifactPath],
 ) -> tuple[str, ...]:
     if not isinstance(values, tuple) or any(
-        not isinstance(value, RepositoryArtifactRef) for value in values
+        not isinstance(value, element_type) for value in values
     ):
         raise SelfObservationContractError(
-            f"{field_name} must be a tuple of RepositoryArtifactRef values"
-        )
-    paths = tuple(value.artifact_path for value in values)
-    if len(set(paths)) != len(paths):
-        raise SelfObservationContractError(
-            f"{field_name} must not repeat an artifact path"
-        )
-    return paths
-
-
-def _require_artifact_change_tuple(
-    values: tuple[RepositoryArtifactChangeRef, ...], field_name: str
-) -> tuple[str, ...]:
-    if not isinstance(values, tuple) or any(
-        not isinstance(value, RepositoryArtifactChangeRef) for value in values
-    ):
-        raise SelfObservationContractError(
-            f"{field_name} must be a tuple of RepositoryArtifactChangeRef values"
+            f"{field_name} must be a tuple of {element_type.__name__} values"
         )
     paths = tuple(value.artifact_path for value in values)
     if len(set(paths)) != len(paths):
@@ -86,24 +80,17 @@ class RepositoryTransitionRef:
             raise SelfObservationContractError(
                 "repository transition requires a to_snapshot RepositorySnapshotRef"
             )
-        if (
-            self.from_snapshot.repository_identity
-            != self.to_snapshot.repository_identity
-        ):
-            raise SelfObservationContractError(
-                "repository transition requires the same repository_identity "
-                "on both snapshots"
-            )
-        if self.from_snapshot.commit_sha == self.to_snapshot.commit_sha:
-            raise SelfObservationContractError(
-                "repository transition requires distinct from/to commit shas"
-            )
-        changed_paths = _require_artifact_change_tuple(
-            self.changed_artifacts, "changed artifacts"
+        _require_same_repository_distinct_commits(
+            self.from_snapshot, self.to_snapshot, "repository transition"
         )
-        added_paths = _require_artifact_tuple(self.added_artifacts, "added artifacts")
-        removed_paths = _require_artifact_tuple(
-            self.removed_artifacts, "removed artifacts"
+        changed_paths = _require_ref_tuple(
+            self.changed_artifacts, "changed artifacts", RepositoryArtifactChangeRef
+        )
+        added_paths = _require_ref_tuple(
+            self.added_artifacts, "added artifacts", RepositoryArtifactRef
+        )
+        removed_paths = _require_ref_tuple(
+            self.removed_artifacts, "removed artifacts", RepositoryArtifactRef
         )
         if any(
             change.before.snapshot != self.from_snapshot

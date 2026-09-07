@@ -44,6 +44,29 @@ def _require_text(value: str, field_name: str) -> None:
         raise SelfObservationContractError(f"{field_name} must be non-blank")
 
 
+def _require_same_repository_distinct_commits(
+    from_snapshot: RepositorySnapshotRef,
+    to_snapshot: RepositorySnapshotRef,
+    field_description: str,
+) -> None:
+    """Shared `SameRepositoryIdentity` + distinct-commit coherence check.
+
+    Used by both `RepositoryArtifactChangeRef` and `RepositoryTransitionRef`
+    so a before/after pair is coherent even outside a transition, without
+    duplicating the same two checks in each module.
+    """
+
+    if from_snapshot.repository_identity != to_snapshot.repository_identity:
+        raise SelfObservationContractError(
+            f"{field_description} requires the same repository_identity "
+            "on both sides"
+        )
+    if from_snapshot.commit_sha == to_snapshot.commit_sha:
+        raise SelfObservationContractError(
+            f"{field_description} requires distinct commit shas"
+        )
+
+
 @dataclass(frozen=True, slots=True)
 class RepositorySnapshotRef:
     """An opaque reference to one exact, explicitly-addressed repository state.

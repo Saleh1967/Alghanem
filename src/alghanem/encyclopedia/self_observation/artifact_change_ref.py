@@ -20,7 +20,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .artifact_ref import RepositoryArtifactRef
-from .repository_snapshot import SelfObservationContractError
+from .repository_snapshot import (
+    SelfObservationContractError,
+    _require_same_repository_distinct_commits,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -60,19 +63,11 @@ class RepositoryArtifactChangeRef:
                 "repository artifact change requires distinct before/after "
                 "blob shas"
             )
-        if (
-            self.before.snapshot.repository_identity
-            != self.after.snapshot.repository_identity
-        ):
-            raise SelfObservationContractError(
-                "repository artifact change requires the same "
-                "repository_identity on both sides"
-            )
-        if self.before.snapshot.commit_sha == self.after.snapshot.commit_sha:
-            raise SelfObservationContractError(
-                "repository artifact change requires distinct before/after "
-                "snapshot commit shas"
-            )
+        _require_same_repository_distinct_commits(
+            self.before.snapshot,
+            self.after.snapshot,
+            "repository artifact change",
+        )
 
     @property
     def artifact_path(self) -> str:
