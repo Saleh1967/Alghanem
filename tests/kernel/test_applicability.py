@@ -159,11 +159,24 @@ def test_weakest_closing_model_is_not_worst_status_aggregation() -> None:
             (Residual("stronger unresolved boundary"),),
         ),
     )
+    registry.register(
+        "strongest",
+        "implementation-v3",
+        candidate.role.identifier,
+        scope,
+        lambda _: result(
+            ApplicabilityAssessmentStatus.DEFER,
+            (Residual("strongest unresolved boundary"),),
+        ),
+    )
     sealed = registry.seal("registry-1")
     specification = ApplicabilityAssessmentSpecification(
         (
             FrozenApplicabilityModel("weak-model", "weak"),
             FrozenApplicabilityModel("strong-model", "strong", ("weak-model",)),
+            FrozenApplicabilityModel(
+                "strongest-model", "strongest", ("strong-model",)
+            ),
         )
     )
 

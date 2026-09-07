@@ -313,6 +313,7 @@ class ApplicabilityAssessmentGate:
                 )
             results.append((model.model_id, result))
         by_id = dict(results)
+        weaker_closure = _weaker_closure(specification.models)
         passing = [
             model for model in specification.models
             if by_id[model.model_id].status is ApplicabilityAssessmentStatus.PASS
@@ -322,7 +323,7 @@ class ApplicabilityAssessmentGate:
             for model in passing
             if not any(
                 by_id[weaker].status is ApplicabilityAssessmentStatus.PASS
-                for weaker in model.weaker_model_ids
+                for weaker in weaker_closure[model.model_id]
             )
         ]
         status = (
@@ -345,7 +346,7 @@ class ApplicabilityAssessmentGate:
                 if by_id[model.model_id].status is status
                 and not any(
                     by_id[weaker].status is status
-                    for weaker in model.weaker_model_ids
+                    for weaker in weaker_closure[model.model_id]
                 )
             ]
         selected_ids = {model.model_id for model in selected_models}
@@ -366,7 +367,12 @@ class ApplicabilityAssessmentGate:
             )
         )
         return EvidenceApplicabilityAssessment(
-            candidate, status, "; ".join(f"{i}: {r.reason}" for i, r in results),
+            candidate,
+            status,
+            "; ".join(
+                f"{model_id}: {result.reason}"
+                for model_id, result in results
+            ),
             candidate.claim.content.core.scope, Trace(events), residuals,
             specification.specification_id,
             registry.snapshot_id,
@@ -374,6 +380,26 @@ class ApplicabilityAssessmentGate:
             tuple(results),
             _assessment_token=_ASSESSMENT_TOKEN,
         )
+
+
+def _weaker_closure(
+    models: tuple[FrozenApplicabilityModel, ...],
+) -> dict[str, frozenset[str]]:
+    graph = {model.model_id: model.weaker_model_ids for model in models}
+    closure: dict[str, frozenset[str]] = {}
+
+    def descendants(model_id: str) -> frozenset[str]:
+        if model_id in closure:
+            return closure[model_id]
+        values = set(graph[model_id])
+        for weaker in graph[model_id]:
+            values.update(descendants(weaker))
+        closure[model_id] = frozenset(values)
+        return closure[model_id]
+
+    for model in models:
+        descendants(model.model_id)
+    return closure
 
 
 def _has_cycle(models: tuple[FrozenApplicabilityModel, ...]) -> bool:
