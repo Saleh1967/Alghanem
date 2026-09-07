@@ -16,6 +16,7 @@ from alghanem.kernel.fractal import (
     FractalProvenancePath,
     FractalSnapshot,
     FrozenFactorRef,
+    ProofLineageEdge,
     ReopenExperimentSpecification,
 )
 
@@ -86,7 +87,7 @@ class TestFrozenFactorRef:
             factor_content_id="content",
             freeze_certificate_id="cert",
             domain="encoding",
-            birth_experiment_id="experiment",
+            birth_experiment_id="bridge-experiment",
             birth_revision_id="r1",
         )
         kwargs[field_name] = ""
@@ -122,7 +123,7 @@ class TestBornBridgeRef:
             freeze_certificate_id="cert-b1",
             domain="encoding",
             endpoint_refs=(factor_ref("f1"), factor_ref("f2")),
-            birth_experiment_id="experiment",
+            birth_experiment_id="bridge-experiment",
             birth_revision_id="r1",
         )
         assert len(bridge.endpoint_refs) == 2
@@ -135,7 +136,7 @@ class TestBornBridgeRef:
                 freeze_certificate_id="cert-b1",
                 domain="encoding",
                 endpoint_refs=(factor_ref("f1"),),
-                birth_experiment_id="experiment",
+                birth_experiment_id="bridge-experiment",
                 birth_revision_id="r1",
             )
 
@@ -147,7 +148,7 @@ class TestBornBridgeRef:
                 freeze_certificate_id="cert-b1",
                 domain="encoding",
                 endpoint_refs=(factor_ref("f1"), factor_ref("f1")),
-                birth_experiment_id="experiment",
+                birth_experiment_id="bridge-experiment",
                 birth_revision_id="r1",
             )
 
@@ -159,6 +160,18 @@ class TestBornBridgeRef:
                 freeze_certificate_id="cert-b1",
                 domain="encoding",
                 endpoint_refs=(factor_ref("f1"), "not-a-ref"),  # type: ignore[arg-type]
+                birth_experiment_id="bridge-experiment",
+                birth_revision_id="r1",
+            )
+
+    def test_requires_an_experiment_independent_of_its_endpoints(self) -> None:
+        with pytest.raises(FractalContractError):
+            BornBridgeRef(
+                bridge_id="b1",
+                bridge_content_id="content-b1",
+                freeze_certificate_id="cert-b1",
+                domain="encoding",
+                endpoint_refs=(factor_ref("f1"), factor_ref("f2")),
                 birth_experiment_id="experiment",
                 birth_revision_id="r1",
             )
@@ -361,12 +374,48 @@ class TestFractalSnapshot:
                     freeze_certificate_id="cert-b1",
                     domain="encoding",
                     endpoint_refs=(f1, f2),
-                    birth_experiment_id="experiment",
+                    birth_experiment_id="bridge-experiment",
                     birth_revision_id="r1",
                 ),
             ),
         )
         assert len(snapshot.frozen_factors) == 2
+
+    def test_records_reopen_lineage_outside_other_graphs(self) -> None:
+        parent = factor_ref("f1", birth_experiment_id="parent-experiment")
+        child = factor_ref("f2", birth_experiment_id="reopen-experiment")
+        lineage = ProofLineageEdge(
+            parent_ref=parent,
+            child_ref=child,
+            reopen_experiment_id="reopen-experiment",
+            reopen_revision_id="r1",
+        )
+        snapshot = FractalSnapshot(
+            frozen_factors=(parent, child),
+            derived_relations=(),
+            born_bridges=(),
+            proof_lineage_edges=(lineage,),
+        )
+        assert snapshot.proof_lineage_edges == (lineage,)
+        assert snapshot.born_bridges == ()
+        assert snapshot.derived_relations == ()
+
+    def test_rejects_lineage_with_an_endpoint_outside_the_snapshot(self) -> None:
+        parent = factor_ref("f1", birth_experiment_id="parent-experiment")
+        child = factor_ref("f2", birth_experiment_id="reopen-experiment")
+        lineage = ProofLineageEdge(
+            parent_ref=parent,
+            child_ref=child,
+            reopen_experiment_id="reopen-experiment",
+            reopen_revision_id="r1",
+        )
+        with pytest.raises(FractalContractError):
+            FractalSnapshot(
+                frozen_factors=(parent,),
+                derived_relations=(),
+                born_bridges=(),
+                proof_lineage_edges=(lineage,),
+            )
 
     def test_rejects_duplicate_factors(self) -> None:
         f1 = factor_ref("f1")
@@ -410,7 +459,7 @@ class TestFractalSnapshot:
                         freeze_certificate_id="cert-b1",
                         domain="encoding",
                         endpoint_refs=(f1, outside),
-                        birth_experiment_id="experiment",
+                        birth_experiment_id="bridge-experiment",
                         birth_revision_id="r1",
                     ),
                 ),
@@ -483,7 +532,7 @@ class TestFractalSnapshot:
                         freeze_certificate_id="cert-b1",
                         domain="encoding",
                         endpoint_refs=(f1_drifted, f2),
-                        birth_experiment_id="experiment",
+                        birth_experiment_id="bridge-experiment",
                         birth_revision_id="r1",
                     ),
                 ),
@@ -506,7 +555,7 @@ class TestFractalSnapshot:
                         freeze_certificate_id="cert-b1",
                         domain="encoding",
                         endpoint_refs=(f1_recertified, f2),
-                        birth_experiment_id="experiment",
+                        birth_experiment_id="bridge-experiment",
                         birth_revision_id="r1",
                     ),
                 ),

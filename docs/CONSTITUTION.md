@@ -458,6 +458,10 @@ FractalGraph = FrozenFactors + DerivedRelations + BornBridges
 | --- | --- | --- |
 | `BirthOnceFreezeOnceReopenMany` | DECLARED_DEFERRED | A factor is born and frozen exactly once; after that, every later experiment that needs it must `Reopen` that one frozen result rather than re-run its birth. Nothing licenses a second, independent birth of what is content-identically the same factor inside the same scope. |
 | `ReopenDoesNotRebirth` | DECLARED_DEFERRED | `Reopen(FrozenFactorRef, E_{n+1})` opens a read-only, licensed window onto an already-frozen factor for use in a new experiment; it is not a second construction of that factor and issues no new `BirthVerdict` for it. Formally `Reopen(F) != Rebirth(F)` and `Id_after(F) == Id_before(F)`: reopening a factor can never change the factor's own declared identity, only license a new question about it. |
+| `NoBridgeForSequentialInquiry` | PROVED (at contract level) | A later question about a frozen factor is represented only by `ReopenExperimentSpecification` and, once its result is frozen, `ProofLineageEdge`. A proof-lineage edge records discovery history and is not accepted as a `BornBridgeRef` or `DerivedRelationSpec`. |
+| `ParentageIsNotOntologicalRelation` | PROVED (at contract level) | `FractalSnapshot` keeps `proof_lineage_edges` separate from `born_bridges` and `derived_relations`: parentage belongs exclusively to the provenance graph and cannot populate the born ontology or derived-relation graphs. |
+| `BridgeRequiresIndependentEndpointBirth` | PROVED (at contract level) | `BornBridgeRef` requires at least two distinct frozen endpoints and a bridge birth experiment distinct from every endpoint birth experiment. The bridge is therefore a separately born third object, not the edge by which either endpoint's question was reopened. |
+| `BridgeRequiresResidualBeyondEndpointReconstruction` | DECLARED_DEFERRED | A future bridge gate may freeze a `BornBridgeRef` only after its own G0 experiment shows a coupling residual beyond both endpoints and shared frozen context; a zero residual produces `DerivedRelationSpec`, never a bridge. |
 | `NoUpstreamIdentityMutation` | DECLARED_DEFERRED | If `F_i` is frozen, no later result `G` computed from a `Reopen` of `F_i` may modify `F_i`, rename it, reinterpret its identity, merge it with another frozen factor, or change its rank. `G` may only carry `ParentRef(G, F_i)`; new evidence that bears on `F_i` opens a new revision on `F_i` itself (`NewEvidence => NewRevision != HistoricalOverwrite`, consistent with `BirthExperimentSpecification.revision_id`/`revision_sequence`), never a retroactive edit performed by `G`. |
 | `HigherExperimentHoldsRefsNotCopies` | DECLARED_DEFERRED | A higher-level experiment or result holds a `FrozenFactorRef` (`factor_id`, `factor_content_id`, `freeze_certificate_id`, `domain`, `birth_experiment_id`, `birth_revision_id`) to a parent factor, never a reconstructed or mutable copy of the parent's own content. `HigherLayerOwnsReference != HigherLayerOwnsIdentity`: owning the reference grants no authority over the referenced factor's identity. |
 | `NoTraditionalLayerEnum` | DECLARED_DEFERRED | No fixed enumeration of traditional layers (for example `ORTHOGRAPHY`/`PHONOLOGY`/`MORPHOLOGY`/`SYNTAX`/`SEMANTICS`) may be declared as a closed type in the kernel or Arabic runtime. A domain `L` is identified only by its own frozen experiment/jurisdiction scope (`Layer = FrozenExperimentJurisdiction`); two jurisdictions may later be shown to share a factor without that implying either was ever a case of the other. |
@@ -469,7 +473,7 @@ FractalGraph = FrozenFactors + DerivedRelations + BornBridges
 
 `FrozenFactorRef`, `BornBridgeRef`, `DerivedRelationSpec`,
 `DerivedRelationRef`, `ReopenExperimentSpecification`,
-`FractalProvenancePath`, and `FractalSnapshot`
+`FractalProvenancePath`, `ProofLineageEdge`, and `FractalSnapshot`
 (`src/alghanem/kernel/fractal.py`) are contract *skeletons* only: their
 constructors validate internal well-formedness (non-blank identities,
 non-empty/non-duplicate parent or endpoint sets, exact-reference membership,
@@ -489,4 +493,3 @@ trustworthy. `FractalSnapshot` contains no `ArabicRuleTable` and no other
 compiled artifact; per `RuleTableIsDerivedArtifact` above, any such table
 remains a strictly later, derived projection of a frozen snapshot like this
 one.
-
