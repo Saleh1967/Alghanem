@@ -134,6 +134,25 @@ class TestGrowthFrontier:
         with pytest.raises(EncyclopediaContractError):
             GrowthFrontier((inquiry, inquiry), ())
 
+    def test_rejects_duplicate_reopen_inquiry_ids(self) -> None:
+        parent = FrozenFactorRef(
+            factor_id="factor",
+            factor_content_id="content",
+            freeze_certificate_id="certificate",
+            domain="discovery-jurisdiction",
+            birth_experiment_id="parent-experiment",
+            birth_revision_id="r1",
+        )
+        inquiry = ReopenExperimentSpecification(
+            reopen_id="reopen",
+            parents=(parent,),
+            experiment=birth_specification(),
+            allowed_observables=("observation",),
+        )
+
+        with pytest.raises(EncyclopediaContractError):
+            GrowthFrontier((), (inquiry, inquiry))
+
     @pytest.mark.parametrize(
         ("root_inquiries", "reopen_inquiries"),
         [
