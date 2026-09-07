@@ -1,4 +1,4 @@
-"""G0.1 question, specification, and evidence-binding contracts only."""
+"""G0.1 contracts and the G0.BV.1 birth-verdict authority."""
 
 from __future__ import annotations
 
@@ -11,8 +11,10 @@ if TYPE_CHECKING:
     from .experiment_spec_content_identity import (
         BirthExperimentSpecificationContentBinding,
     )
+    from .residual import Residual
 
 _BIRTH_EVALUATOR_DEFINITION_TOKEN = object()
+_BIRTH_VERDICT_TOKEN = object()
 
 
 class BirthExperimentSpecificationError(ValueError):
@@ -32,11 +34,19 @@ class EvidenceMode(Enum):
 
 
 class BirthVerdictStatus(Enum):
-    """Future scoped verdict vocabulary; values confer no decision authority."""
+    """The three scoped outcomes that a birth-verdict authority may issue."""
 
     BIRTH_IN_SCOPE = auto()
     NO_BIRTH_IN_SCOPE = auto()
     DEFER_IN_SCOPE = auto()
+
+
+class BirthAssessmentStatus(Enum):
+    """The assessment outcomes accepted by the birth-verdict authority."""
+
+    BIRTH = auto()
+    NO_BIRTH = auto()
+    DEFER = auto()
 
 
 class ClosureAssessmentStatus(Enum):
@@ -694,3 +704,161 @@ class BirthAssessmentRequest:
         """The specification proven equal to the authorized frozen manifest."""
 
         return self.experiment_binding.specification
+
+
+@dataclass(frozen=True, slots=True)
+class BirthAssessmentScope:
+    """The immutable scope carried by one assessment and its resulting verdict."""
+
+    experiment_id: str
+    revision_id: str
+    revision_sequence: int
+    domain: str
+    evidence_mode: EvidenceMode
+    experiment_content_id: str
+    evidence_snapshot_id: str
+    evidence_content_id: str
+    residual_definition_id: str
+    closure_criterion_id: str
+    weaker_model_ids: tuple[str, ...]
+    evaluator_registry_snapshot_id: str
+    evaluator_ids: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class BirthAssessment:
+    """A scoped assessment awaiting conversion into an authority-issued verdict."""
+
+    request: BirthAssessmentRequest
+    evaluator_definitions: BirthAssessmentEvaluatorDefinitions
+    status: BirthAssessmentStatus
+    reason: str
+    trace: "Trace"
+    residuals: tuple["Residual", ...] = ()
+    scope: BirthAssessmentScope = field(init=False)
+
+    def __post_init__(self) -> None:
+        from .residual import Residual
+        from .trace import Trace
+
+        if type(self.request) is not BirthAssessmentRequest:
+            raise BirthExperimentSpecificationError(
+                "birth assessment requires a validated assessment request"
+            )
+        if type(self.evaluator_definitions) is not BirthAssessmentEvaluatorDefinitions:
+            raise BirthAssessmentEvaluatorAuthorityError(
+                "birth assessment requires registry-authorized evaluator definitions"
+            )
+        if self.evaluator_definitions.contract.specification != self.request.specification:
+            raise BirthExperimentSpecificationError(
+                "evaluator definitions must target the assessment request"
+            )
+        if not isinstance(self.status, BirthAssessmentStatus):
+            raise BirthExperimentSpecificationError(
+                "birth assessment status must be declared"
+            )
+        _require_text(self.reason, "birth assessment reason")
+        if type(self.trace) is not Trace:
+            raise BirthExperimentSpecificationError(
+                "birth assessment requires a trace"
+            )
+        if not isinstance(self.residuals, tuple) or any(
+            type(residual) is not Residual for residual in self.residuals
+        ):
+            raise BirthExperimentSpecificationError(
+                "birth assessment residuals must be frozen residual records"
+            )
+        contract = self.evaluator_definitions.contract
+        specification = self.request.specification
+        evaluator_ids = (
+            self.evaluator_definitions.residual_definition.evaluator_id,
+            *(definition.evaluator_id for definition in self.evaluator_definitions.weaker_models),
+            self.evaluator_definitions.closure_criterion.evaluator_id,
+        )
+        object.__setattr__(
+            self,
+            "scope",
+            BirthAssessmentScope(
+                experiment_id=specification.experiment_id,
+                revision_id=specification.revision_id,
+                revision_sequence=specification.revision_sequence,
+                domain=specification.domain,
+                evidence_mode=specification.evidence_mode,
+                experiment_content_id=self.request.experiment_binding.content_id,
+                evidence_snapshot_id=self.request.evidence_snapshot.snapshot_id,
+                evidence_content_id=self.request.evidence_snapshot.content_id,
+                residual_definition_id=contract.residual_definition.residual_id,
+                closure_criterion_id=contract.closure_criterion.criterion_id,
+                weaker_model_ids=tuple(model.model_id for model in contract.weaker_models),
+                evaluator_registry_snapshot_id=(
+                    self.evaluator_definitions.registry_snapshot.snapshot_id
+                ),
+                evaluator_ids=evaluator_ids,
+            ),
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class BirthVerdict:
+    """An authority-issued scoped birth result; it does not freeze anything."""
+
+    assessment: BirthAssessment
+    status: BirthVerdictStatus
+    scope: BirthAssessmentScope
+    _authority_token: object = field(default=None, repr=False, compare=False)
+
+    def __post_init__(self) -> None:
+        if self._authority_token is not _BIRTH_VERDICT_TOKEN:
+            raise BirthExperimentSpecificationError(
+                "birth verdicts must be issued by BirthVerdictAuthority"
+            )
+        if type(self.assessment) is not BirthAssessment:
+            raise BirthExperimentSpecificationError(
+                "birth verdict requires a birth assessment"
+            )
+        if not isinstance(self.status, BirthVerdictStatus):
+            raise BirthExperimentSpecificationError(
+                "birth verdict status must be declared"
+            )
+        if self.scope != self.assessment.scope:
+            raise BirthExperimentSpecificationError(
+                "birth verdict scope must match its assessment"
+            )
+
+    @property
+    def request(self) -> BirthAssessmentRequest:
+        return self.assessment.request
+
+    @property
+    def trace(self) -> "Trace":
+        return self.assessment.trace
+
+    @property
+    def residuals(self) -> tuple["Residual", ...]:
+        return self.assessment.residuals
+
+    @property
+    def reason(self) -> str:
+        return self.assessment.reason
+
+
+class BirthVerdictAuthority:
+    """Convert one validated assessment into the only three scoped verdicts."""
+
+    @staticmethod
+    def issue(assessment: BirthAssessment) -> BirthVerdict:
+        if type(assessment) is not BirthAssessment:
+            raise BirthExperimentSpecificationError(
+                "birth verdict authority requires a birth assessment"
+            )
+        status = {
+            BirthAssessmentStatus.BIRTH: BirthVerdictStatus.BIRTH_IN_SCOPE,
+            BirthAssessmentStatus.NO_BIRTH: BirthVerdictStatus.NO_BIRTH_IN_SCOPE,
+            BirthAssessmentStatus.DEFER: BirthVerdictStatus.DEFER_IN_SCOPE,
+        }[assessment.status]
+        return BirthVerdict(
+            assessment=assessment,
+            status=status,
+            scope=assessment.scope,
+            _authority_token=_BIRTH_VERDICT_TOKEN,
+        )
