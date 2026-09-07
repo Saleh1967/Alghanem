@@ -488,6 +488,16 @@ def test_authenticated_fragment_can_be_bridged_only_by_its_own_run() -> None:
 
     assert "RootInquiry" in binding.source_observation_ref
     assert run.run_id in binding.source_authentication_ref
+
+
+def test_cross_run_fragment_bridge_is_rejected() -> None:
+    source_run = authenticated_run()
+    observed = source_run.observe_snapshot(snapshot("c1", "t1"))
+    artifact_observation = source_run.observe_artifact(
+        observed, artifact(snapshot("c1", "t1"), blob_sha="b1")
+    )
+    fragment = source_run.observe_fragment(artifact_observation, "RootInquiry")
+
     with pytest.raises(SelfObservationContractError):
         authenticated_run().bridge_authenticated_fragment(fragment)
 
