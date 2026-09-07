@@ -174,13 +174,16 @@ The kernel does not assume reversibility, global composition, path
 independence, a group, or a groupoid. Those questions are intentionally
 deferred until later milestones.
 
-## G−1 — Pre-Algebraic Conditions of Licensed Intelligibility (law-only)
+## G−1 — Pre-Algebraic Conditions of Intelligibility (law-only)
 
 This milestone declares one constitutional boundary question:
 
 ```
 What must be true before the first algebraic representation is even possible?
 ```
+
+Intelligibility here carries no post-algebraic licensing, evidence, rank,
+truth, or authority semantics.
 
 It is law-only and boundary-only. It introduces no runtime, class, enum, gate,
 evidence machinery, residual machinery, algebra primitive, or learning
@@ -192,13 +195,14 @@ architecture.
 | `PreAlgebraicEnablingConditionIsNotOrganizedPriorContent` | DECLARED_DEFERRED | `E_-1 != P_0`. Pre-algebraic enabling conditions are not the same object as organized prior content. `ConditionOfPossibility != OrganizedPriorContent`. |
 | `PriorAvailabilityIsNotPriorAuthority` | DECLARED_DEFERRED | `PriorAvailability != PriorAuthority` and `PriorInformation != PriorJudgment`. Availability for possible binding does not license truth, correctness, or judgment authority. |
 | `PreAlgebraicIntelligibilityIsNotPostAlgebraicLicense` | DECLARED_DEFERRED | Any first differentiation/binding step at this boundary is an intelligibility/usability candidate only, not a post-algebraic licensing-authority act. |
+| `FirstAlgebraRepresentabilityIsNotG0Birth` | DECLARED_DEFERRED | `FirstAlgebraRepresentability != G0Birth`. The representability boundary question must not be collapsed into post-algebraic birth authority semantics. |
 | `NoHiddenEncyclopediaInFoundation` | DECLARED_DEFERRED | Foundation cannot be treated as a hidden finished inventory of truths. Availability of prior structure does not imply pre-certified knowledge. |
 | `DifferenceCandidateIsNotCertifiedResidual` | DECLARED_DEFERRED | `DifferenceCandidate != CertifiedResidual`. A certified residual requires reconstruction/comparison capacity and explicit scope; before that, only candidates exist. |
 | `NoResidualBeforeReconstructionCapacity` | DECLARED_DEFERRED | `Observed + Reconstructed + Comparator + Scope -> ResidualCandidate`. Therefore no residual is licensed before reconstruction capacity exists. |
 | `NoPrematureGMinus1PrimitivePromotion` | DECLARED_DEFERRED | Evidence, Rank, Closure, and Residual are not G−1 primitives and must not be installed as foundational atoms at this stage. |
 | `GenesisIsNotRetrospectiveReconstruction` | DECLARED_DEFERRED | `Genesis != RetrospectiveReconstruction` and `RetrospectiveFormalization != HistoricalGeneration`. Later formal reconstruction can describe prior conditions but does not historically generate them. |
 | `ConditionOfPossibilityIsNotTruthGuarantee` | DECLARED_DEFERRED | `ConditionOfPossibility != TruthGuarantee`. Being necessary for intelligible start does not certify truth-status of the content. |
-| `FoundationalInventoryOpen` | DECLARED_DEFERRED | `FoundationalInventory = OPEN`. No closed primitive tuple is frozen here. Any candidate dimension remains provisional and must face later necessity/deletion audit if claimed foundational. `RetrospectiveMinimalityAudit != FoundationalGeneration`. |
+| `FoundationalInventoryOpen` | DECLARED_DEFERRED | `FoundationalInventory = OPEN` at the level of exact internal factorization. `NecessityOfUsablePriorInformationRelatedToReality = FOUNDATIONAL_GIVEN`, but no exact or partially closed three-factor ontology is frozen at G−1. `RetrospectiveMinimalityAudit != FoundationalGeneration`. |
 | `NoPreAlgebraicUseOfPostAlgebraicProofMachinery` | DECLARED_DEFERRED | Later algebra may retrospectively audit G−1 boundary commitments, but post-algebraic proof machinery may not be used to retroactively generate G−1 itself. |
 | `EpistemicPrecedenceIsNotFileOrderOrImplementationChronology` | DECLARED_DEFERRED | `EpistemicPrecedence != FileOrder != ImplementationChronology`. Existing G0+ laws/runtime are not invalidated or rewritten; G−1 states prior conditions they presuppose, not historical implementation order. |
 | `NoClosedOPI0TupleAtGMinus1` | DECLARED_DEFERRED | If `OPI_0` is referenced, it is only a provisional analytical name. It must not be frozen here as a closed tuple, ontology identity, birth-certified object, rank, or evidence-certified status. |
@@ -206,8 +210,10 @@ architecture.
 The declared epistemic ordering is:
 
 ```
-E_-1 -> P_0 -> Encounter -> FirstIntelligibleDifferentiationOrBindingCandidate
-    -> StableOperationalRegularity -> A_first
+E_-1 -> P_0^{given} -> Encounter -> FirstIntelligibleDifferentiationOrBindingCandidate
+    -> StableRepeatableRegularityCandidate -> ?
+
+? = FirstAlgebraRepresentabilityCriterionNotYetDerived
 ```
 
 Only after representational birth, recurrence is evidence-mode typed:
@@ -242,48 +248,62 @@ MIXED:     EMPIRICAL and FORMAL tracks both required; neither substitutes for th
 - `E_-1 != P_0`, and `ConditionOfPossibility != TruthGuarantee`.
 - `DifferenceCandidate != CertifiedResidual`; no residual before reconstruction
   capacity.
+- `FirstAlgebraRepresentability != G0Birth`.
 - Post-algebraic recurrence remains mode-typed (`EMPIRICAL/FORMAL/MIXED`) and
   is not reduced to residual-only flow.
 - G0+ remains valid in implementation; G−1 asserts epistemic precedence only.
 
 ### UnprovedClaims
 
+- Exact functional/internal factorization of `P_0`.
 - Final foundational inventory membership and cardinality.
 - Any proof that a particular candidate foundational dimension is strictly
   necessary.
 - Historical generation path of pre-algebraic conditions.
 
-### CandidateFoundationalDimensions
+### SourceAttestedPriorDimensions
 
-- Distinction availability.
-- Persistence availability.
-- Accessibility availability.
-- Binding availability.
+- `NecessityOfUsablePriorInformationRelatedToReality = FOUNDATIONAL_GIVEN`.
+- `SourceAttestedPriorDimensions ⊇ {ThingDirectedInformation,
+  RealityOrWhatTheThingIsDirectedInformation, PropertyDirectedInformation}`.
+- `ExactFactorization(P_0) = OPEN`.
+- `PriorAvailability != PriorAuthority`.
+- `PriorInformation != PriorJudgment`.
+- `ConditionOfPossibility != TruthGuarantee`.
+- `NoHiddenEncyclopediaInFoundation`.
 
-These are candidates only, not frozen primitives.
+These are boundary commitments, not a frozen ontology or closed primitive tuple.
 
-### ClosedResiduals (lineage preserved)
+### ResolvedAuditQuestions (lineage preserved)
 
 - `PreAlgebraicLicensingVocabularyUnresolved`
-  - Status: `CLOSED_BY_G_MINUS_1_1`
+  - Previous audit label: `ClosedResiduals`
+  - Status: `RESOLVED_BY_G_MINUS_1_1`
   - Closure law: `PreAlgebraicIntelligibilityIsNotPostAlgebraicLicense`
 - `GMinus1PostAlgebraicRecurrenceEvidenceModeMismatch`
-  - Status: `CLOSED_BY_G_MINUS_1_1`
+  - Previous audit label: `ClosedResiduals`
+  - Status: `RESOLVED_BY_G_MINUS_1_1`
   - Closure law: evidence-mode typed recurrence with
     `Demand(EvidenceMode) as defined by G0.MA`.
 - `ClosedClaimsStatusSemanticsAmbiguous`
-  - Status: `CLOSED_BY_G_MINUS_1_1`
+  - Previous audit label: `ClosedResiduals`
+  - Status: `RESOLVED_BY_G_MINUS_1_1`
   - Closure law: `ClosedAtConstitutionalBoundary != PROVED != ENFORCED`.
 - `PostAlgebraicAuditMustNotBecomeFoundationalGenerator`
-  - Status: `CLOSED_BY_G_MINUS_1_1`
+  - Previous audit label: `ClosedResiduals`
+  - Status: `RESOLVED_BY_G_MINUS_1_1`
   - Closure law: `NoPreAlgebraicUseOfPostAlgebraicProofMachinery`.
 
-### NewResiduals
+### OpenAuditQuestions
 
-- `FoundationalNecessityNotAudited`: candidate foundational dimensions are not
-  yet necessity/deletion-audited.
-- `FirstAlgebraBoundaryNotFormalized`: `E_-1 -> P_0 -> A_0` is declared but not
-  yet formalized as a separate algebra boundary milestone.
+- `OrganizedPriorContentBoundaryNotDerived`: exact boundary between `E_-1` and
+  organized prior content is not yet fully derived.
+- `FirstAlgebraRepresentabilityCriterionNotDerived`: the criterion that upgrades
+  stable repeatable regularity to first algebra representability remains open.
+- `P0FunctionalMinimalityNotAudited`
+  - Status: `DEFERRED_UNTIL_POSTALGEBRAIC_RETROSPECTIVE_AUDIT`
+  - Note: prior-information necessity is given; minimal internal/functional
+    factorization remains open.
 
 ### ForbiddenNextJumps
 
