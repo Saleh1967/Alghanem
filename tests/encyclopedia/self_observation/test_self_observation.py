@@ -43,6 +43,20 @@ class TestRepositorySnapshotRef:
         with pytest.raises(SelfObservationContractError):
             RepositorySnapshotRef(**kwargs)
 
+    @pytest.mark.parametrize(
+        "field_name", ["repository_identity", "commit_sha", "tree_sha"]
+    )
+    def test_rejects_whitespace_only_fields(self, field_name: str) -> None:
+        kwargs = {
+            "repository_identity": "Alghanem",
+            "commit_sha": "c1",
+            "tree_sha": "t1",
+        }
+        kwargs[field_name] = "   "
+
+        with pytest.raises(SelfObservationContractError):
+            RepositorySnapshotRef(**kwargs)
+
     def test_distinct_commits_are_distinct_snapshots(self) -> None:
         assert snapshot("c1") != snapshot("c2")
 
@@ -152,6 +166,19 @@ class TestRepositoryTransitionRef:
                 ),
                 added_artifacts=(),
                 removed_artifacts=(),
+            )
+
+    def test_rejects_duplicate_artifact_paths_across_buckets(self) -> None:
+        from_snap = snapshot("c1")
+        to_snap = snapshot("c2")
+
+        with pytest.raises(SelfObservationContractError):
+            RepositoryTransitionRef(
+                from_snapshot=from_snap,
+                to_snapshot=to_snap,
+                changed_artifacts=(),
+                added_artifacts=(artifact(to_snap, path="same.py"),),
+                removed_artifacts=(artifact(from_snap, path="same.py"),),
             )
 
     def test_accepts_a_well_formed_transition(self) -> None:

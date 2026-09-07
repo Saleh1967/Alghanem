@@ -77,3 +77,14 @@ class RepositoryTransitionRef:
             raise SelfObservationContractError(
                 "removed artifacts must be anchored to from_snapshot"
             )
+        all_paths = tuple(
+            artifact.artifact_path
+            for artifact in self.changed_artifacts
+            + self.added_artifacts
+            + self.removed_artifacts
+        )
+        if len(set(all_paths)) != len(all_paths):
+            raise SelfObservationContractError(
+                "an artifact path must not appear in more than one of "
+                "changed/added/removed artifacts"
+            )
