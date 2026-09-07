@@ -562,9 +562,10 @@ def test_bridge_authentication_coordinates_preserve_delimiter_bearing_fields() -
     )
 
 
-def test_bridge_coordinate_rejects_non_string_field_values() -> None:
+@pytest.mark.parametrize("value", [1, "   "])
+def test_bridge_coordinate_rejects_non_text_field_values(value: object) -> None:
     with pytest.raises(TypeError, match="coordinate values must be non-blank text"):
-        _canonical_coordinate(repository_identity=1)  # type: ignore[arg-type]
+        _canonical_coordinate(repository_identity=value)  # type: ignore[arg-type]
 
 
 def test_repeated_bridge_of_one_fragment_preserves_its_binding() -> None:
