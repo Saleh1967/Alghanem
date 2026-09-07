@@ -29,6 +29,8 @@ These are the initial laws of the language-agnostic kernel:
 | G0.2a.1 birth semantics content identity | ENFORCED_AT_CONTENT_ENCODER | `NoResidualIdDriftAfterFreeze`/`NoClosureCriterionIdDriftAfterFreeze` (G0.2a's id-equality checks) are label identity, not content identity: `ResidualDefinitionId != ResidualDefinitionContentIdentity`, and the same distinction holds for `ClosureCriterionSpec` and `WeakerModelSpec`. `CanonicalBirthSemanticsEncoder` is the sole issuer of `CanonicalResidualDefinitionManifest`, `CanonicalClosureCriterionManifest`, `CanonicalWeakerModelManifest`, and their `BirthSemanticsContentIdentity` SHA-256 digest references, covering every declared field of each spec. `BirthSemanticsContentRegistry` freezes the *first* canonical content bound to an exact `(domain, role, target_id)` scope; a later attempt to bind different content to that same scope is content drift and is rejected, not silently accepted because the id string still matches. `BirthAssessmentContentBinding` resolves every scope a `BirthAssessmentSemanticsContract` declares against a `SealedBirthSemanticsContentRegistry` and requires `CID(runtime) == CID(frozen)` for the residual definition, the closure criterion, and every weaker model; an unresolvable scope raises rather than passing silently. This closes `NoSemanticDriftAfterFreeze` for content, distinct from and in addition to `NoResidualDefinitionDriftAfterFreeze`/`NoClosureCriterionDriftAfterFreeze` for ids. It performs no evaluation and issues no `BirthVerdict`, `BirthCandidate`, or `Freeze`; `EvaluatorId != EvaluatorImplementationIdentity` and evaluator execution authority remain out of scope. |
 | G0.2a.3 evidence acquisition authority | ENFORCED_AT_ACQUISITION_AUTHORITY | Binding evidence to a frozen experiment (G0.2a.2) proves only `FreezePrecedesRequestConstruction`, not that the freeze authorized the evidence's own acquisition; a caller could still select evidence first and attach a freeze afterward. This stage closes the narrower, code-provable `FrozenExperimentPrecedesAuthorizedEvidenceIngestion` instead of an unprovable external-world chronology claim (`AuthorizedCapture != ProofOfExternalAcquisitionChronology`). `EvidenceAcquisitionAuthority.authorize` is the sole issuer of an `EvidenceAcquisitionAuthorization`, requiring a genuine, verified `BirthExperimentSpecificationContentBinding` (`NoEvidenceAcquisitionAuthorizationWithoutFrozenExperiment`); its `experiment_content_id`, `domain`, `evidence_mode`, `evidence_requirements`, `revision_id`, and `revision_sequence` are derived properties of that binding, never independent caller-supplied facts. Only that authorization can issue an `EvidenceAcquisitionRun` (`open_run`), and only that run can issue an `AuthorizedEvidenceSnapshot` (`ingest`), closing `NoAssessableEvidenceSnapshotWithoutAcquisitionAuthorization`; none of the three is caller-constructible. `CanonicalEvidenceContentEncoder` alone issues the ingested payload's `EvidenceContentIdentity`, keeping `EvidenceOccurrenceIdentity != EvidenceContentIdentity` (`snapshot_id`/`run_id`/`authorization_id` name one occurrence; `content_id` is a digest over ingested bytes). `BirthAssessmentRequest` now requires an `AuthorizedEvidenceSnapshot` (rejecting the deprecated, unauthorized `EvidenceSnapshot`) and rejects a snapshot whose `experiment_content_id` does not equal its own experiment binding's `content_id`. `AuthorizedEvidence != SufficientEvidence`: this stage does not imply `ResidualSurvival` or `Birth`, and issues no `ResidualAssessment` or `BirthVerdict`. |
 | G0.2a.3.1 issuer-scoped occurrence issuance integrity | ENFORCED_AT_ACQUISITION_AUTHORITY | Before this stage, `authorization_id`/`run_id`/`snapshot_id` were caller-chosen strings with no uniqueness authority: an issuer accepted a repeat of the same id, so `same(id) => same(occurrence)` did not hold and these were `EvidenceOccurrenceCoordinates`, not a proven identity. Each issuer now keeps its own registry of ids it has already issued -- `EvidenceAcquisitionAuthority` for `authorization_id`, one `EvidenceAcquisitionAuthorization` for its own `run_id`s, one `EvidenceAcquisitionRun` for its own `snapshot_id`s -- and `EvidenceAcquisitionAuthorityError` rejects a repeat within that scope, even for a snapshot repeat carrying different content. Each registry's check-and-insert is synchronized with an internal lock so concurrent calls on one instance cannot race past the uniqueness check. This makes issuance injective *within its declared scope* (`IssuerScopedOccurrenceUniqueness = PROVED`): two ids from the same issuer that are equal name the same occurrence, and two ids from the same issuer that differ name different occurrences. `LocalInjectivity != PortableIdentity`: `AuthorizedEvidenceSnapshot` carries no `issuer_scope_id`, so two distinct `EvidenceAcquisitionAuthority` instances are separate, uncoordinated issuance scopes whose ids are not thereby proven to differ from each other, and two snapshots from different authorities can share identical comparable representations despite being genuinely independent occurrences. `PortableEvidenceOccurrenceIdentity` remains `DEFERRED` pending a self-issuing `EvidenceIssuerScopeIdentity` propagated through the chain. `EvidenceAcquisitionRun`/`EvidenceAcquisitionAuthorization` are `ExternallyFrozen, InternallyStatefulAuthority` objects: `frozen=True` fixes their own declared identity fields, but each also holds a private, mutable `_issued_*` registry and lock (excluded from equality, `repr`, and content identity) as operational bookkeeping only. |
+| G0.BA.1a authorized evaluator implementation binding | ENFORCED_AT_EXECUTION_GATE | Closes exactly one narrower residual left open by G0.2a: `AuthorizedBirthAssessmentEvaluatorDefinition != AuthorizedEvaluatorImplementation != EvaluatorExecution`. G0.2a's registry authorizes evaluator *declarations* (`domain`, `role`, `target_id`, `evaluator_id`) only, and performs no execution. `AuthorizedBirthEvaluatorImplementationBinding` is unchanged from and does not retroactively grant execution semantics to `AuthorizedBirthAssessmentEvaluatorDefinition`; instead, `BirthEvaluatorImplementationRegistry.register` requires an already-authorized definition plus an `implementation_identity` and an executable callable, and only `BirthEvaluatorImplementationRegistry.seal` freezes those bindings into a `SealedBirthEvaluatorImplementationRegistry`. `BirthEvaluatorExecutionGate.execute` is the sole authority that may resolve a binding by exact `(domain, role, target_id, evaluator_id, implementation_identity)` scope and invoke it, producing a `BirthEvaluatorExecutionRecord` -- a non-caller-constructible audit record preserving the authorized definition, implementation identity, role, target, the exact `BirthAssessmentRequest` and its own bound `AuthorizedEvidenceSnapshot`, input/output content, and trace. This record carries no `ResidualEvaluationResult`, `WeakerModelEvaluationResult`, `ClosureEvaluationResult`, aggregate assessment, residual survival, weaker-model exhaustion, `BirthCandidate`, `IndependentClosure`, `BirthVerdict`, or `Freeze` meaning: `Definition != ImplementationBinding != ExecutionRecord != Assessment`. Composing per-role execution records into any assessment remains a separate, later, still-deferred question. |
+
 
 ### G0.C.1 — Minimal claim constitution
 
@@ -388,10 +390,65 @@ to enforce this stage's issuance uniqueness, not to describe the object's own
 identity or content.
 
 
-G0.2 is split into smaller authority-preserving stages. G0.2a defines only
-executable assessment contracts: `ResidualDefinitionSpec` identifies the
-residual domain, input projection, output schema, evaluator-id declaration,
-invariants, and failure semantics; each `WeakerModelSpec` binds a frozen weaker
+### G0.BA.1a — Authorized evaluator implementation binding
+
+G0.2a's `BirthAssessmentEvaluatorRegistry` authorizes evaluator
+*declarations* for an exact `(domain, role, target_id, evaluator_id)` scope
+and explicitly performs no assessment. That leaves a narrower residual than
+"birth assessment execution is missing": `AuthorizedBirthAssessmentEvaluatorDefinition`
+does not, and must not, imply `AuthorizedEvaluatorImplementation`, and neither
+implies `EvaluatorExecution`. This stage closes exactly that one narrower
+question: can an already registry-authorized definition be bound to an exact
+implementation identity and executed through an authority boundary that
+produces a non-caller-constructible record?
+
+`AuthorizedBirthAssessmentEvaluatorDefinition` is preserved completely
+unchanged; it gains no execution semantics here. A separate
+`AuthorizedBirthEvaluatorImplementationBinding` binds one such definition to
+one `implementation_identity` and one executable callable.
+`BirthEvaluatorImplementationRegistry.register` is the only way to construct
+one, and it requires the caller to already hold a genuine, registry-issued
+`AuthorizedBirthAssessmentEvaluatorDefinition` -- a bare evaluator id string
+cannot substitute for it. `BirthEvaluatorImplementationRegistry.seal` freezes
+the registered bindings into a `SealedBirthEvaluatorImplementationRegistry`,
+which resolves only by the exact five-part scope
+`(domain, role, target_id, evaluator_id, implementation_identity)`; an
+unregistered implementation identity, or a definition mismatched on domain,
+role, target, or evaluator id, is rejected rather than silently resolved.
+
+`BirthEvaluatorExecutionGate.execute` is the sole authority that may invoke a
+bound implementation. It resolves the exact binding, re-checks that the
+resolved binding's own definition equals the caller-supplied definition,
+requires the request's frozen experiment domain to match the definition's
+domain, and calls the bound implementation with the caller-supplied input
+content. The bound implementation must return `(output_content, trace)`; any
+other shape is rejected. Only the gate can construct the resulting
+`BirthEvaluatorExecutionRecord`, which preserves the exact authorized
+definition, implementation identity, role, target, the exact
+`BirthAssessmentRequest`, that request's own bound `AuthorizedEvidenceSnapshot`
+(not a caller-substituted one), input content, output content, and trace.
+
+This record answers only "did a specific, registry-bound implementation run
+against a specific, authorized request's evidence?". It carries no
+`ResidualEvaluationResult`, `WeakerModelEvaluationResult`,
+`ClosureEvaluationResult`, aggregate execution status, residual survival,
+weaker-model exhaustion, `BirthCandidate`, `IndependentClosure`,
+`BirthVerdict`, or `Freeze` meaning:
+
+```
+Definition != ImplementationBinding != ExecutionRecord != Assessment
+```
+
+Composing per-role execution records (residual, weaker-model, closure) into
+any assessment, and any question of whether the frozen weaker-model family as
+a whole has been exhausted (`WeakerFamilyExhausted <=> forall W_i in
+FrozenWeakerSet: AuthorizedExecution(W_i)`, distinct from
+`Executed(W_i)` for any single model), remain separate, later, and still
+undecided questions. This stage does not assume they will be closed next, or
+in this shape; it closes only the one question stated above.
+
+
+
 model to its evaluator, information loss, result schema, and exact poset
 relations; and `ClosureCriterionSpec` defines the local
 `Close(W_i, R) ∈ {CLOSE, FAIL_TO_CLOSE, DEFER}` vocabulary for weaker-model

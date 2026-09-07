@@ -32,7 +32,7 @@ class EvidenceMode(Enum):
 
 
 class BirthVerdictStatus(Enum):
-    """The three scoped outcomes that a birth-verdict authority may issue."""
+    """Future scoped outcomes; values confer no authority by themselves."""
 
     BIRTH_IN_SCOPE = auto()
     NO_BIRTH_IN_SCOPE = auto()
