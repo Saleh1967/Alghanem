@@ -66,6 +66,10 @@ class RootInquiry:
                 "a root inquiry requires an authority-frozen pre-evidence "
                 "experiment content binding"
             )
+        if self.jurisdiction_id != self.experiment_binding.specification.domain:
+            raise EncyclopediaContractError(
+                "root inquiry jurisdiction must match its bound experiment domain"
+            )
 
     @property
     def experiment(self) -> BirthExperimentSpecification:

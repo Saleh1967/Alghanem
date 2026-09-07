@@ -76,6 +76,15 @@ class TestInquiryContracts:
 
         assert inquiry.experiment is inquiry.experiment_binding.specification
 
+    def test_root_inquiry_jurisdiction_must_match_bound_experiment_domain(self) -> None:
+        inquiry = root_inquiry()
+        with pytest.raises(EncyclopediaContractError, match="jurisdiction"):
+            RootInquiry(
+                inquiry_id=inquiry.inquiry_id,
+                jurisdiction_id="different-jurisdiction",
+                experiment_binding=inquiry.experiment_binding,
+            )
+
     def test_proposal_is_not_executable_inquiry(self) -> None:
         proposal = QuestionProposal(
             proposal_id="residual-proposal",
