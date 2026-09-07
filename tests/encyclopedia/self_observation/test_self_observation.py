@@ -404,10 +404,35 @@ def test_non_ancestral_transition_is_rejected() -> None:
 
 
 def test_request_remains_an_address_and_observation_authenticates_it() -> None:
-    request = RepositoryObservationRequest(snapshot("c1", "t1"))
-    observed = RepositoryObservationAuthority(FakeProvider()).observe(request)
+    requested_snapshot = snapshot("c1", "t1")
+    request = RepositoryObservationRequest(requested_snapshot)
+    observed, artifacts = RepositoryObservationAuthority(FakeProvider()).observe(
+        request
+    )
 
-    assert observed.snapshot == request.requested_snapshot
+    assert observed.snapshot == requested_snapshot
+    assert artifacts == ()
+
+
+def test_observe_returns_authenticated_requested_artifacts() -> None:
+    requested_snapshot = snapshot("c1", "t1")
+    requested_artifact = artifact(requested_snapshot, blob_sha="b1")
+    observed, artifacts = RepositoryObservationAuthority(FakeProvider()).observe(
+        RepositoryObservationRequest(requested_snapshot, (requested_artifact,))
+    )
+
+    assert observed.snapshot == requested_snapshot
+    assert artifacts[0].artifact_path == requested_artifact.artifact_path
+
+
+def test_request_rejects_wrong_artifact_type() -> None:
+    with pytest.raises(SelfObservationContractError):
+        RepositoryObservationRequest(snapshot(), ("not-an-artifact",))  # type: ignore[arg-type]
+
+
+def test_request_rejects_artifact_from_another_snapshot() -> None:
+    with pytest.raises(SelfObservationContractError):
+        RepositoryObservationRequest(snapshot("c1"), (artifact(snapshot("c2", "t2")),))
 
 
 def test_fake_snapshot_tree_is_rejected() -> None:

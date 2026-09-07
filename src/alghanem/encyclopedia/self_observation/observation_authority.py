@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from uuid import uuid4
 
+from .authenticated_artifact import AuthenticatedRepositoryArtifact
 from .authenticated_snapshot import AuthenticatedRepositorySnapshot
 from .observation_provider import RepositoryObservationProvider
 from .observation_request import RepositoryObservationRequest
@@ -28,8 +29,10 @@ class RepositoryObservationAuthority:
 
     def observe(
         self, request: RepositoryObservationRequest
-    ) -> AuthenticatedRepositorySnapshot:
-        """Observe one request in a single-shot run.
+    ) -> tuple[
+        AuthenticatedRepositorySnapshot, tuple[AuthenticatedRepositoryArtifact, ...]
+    ]:
+        """Observe one request in a single-shot run and return its artifacts.
 
         Use :meth:`open_run` when authenticated artifacts, fragments, or
         transitions must remain available in the same execution scope.
@@ -37,6 +40,8 @@ class RepositoryObservationAuthority:
 
         run = self.open_run()
         snapshot = run.observe_snapshot(request.requested_snapshot)
-        for artifact in request.requested_artifacts:
+        artifacts = tuple(
             run.observe_artifact(snapshot, artifact)
-        return snapshot
+            for artifact in request.requested_artifacts
+        )
+        return snapshot, artifacts
