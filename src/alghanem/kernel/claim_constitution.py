@@ -20,7 +20,6 @@ _CLAIM_CONTENT_TOKEN = object()
 _ALGORITHM = "sha256"
 _CANONICALIZATION_VERSION = "claim-content-manifest-v1"
 MANIFEST_COVERAGE = ("core", "qualifications")
-OCCURRENCE_ONLY_EXCLUSIONS: tuple[str, ...] = ()
 CLAIM_CORE_COVERAGE = ("anchor", "predicate", "polarity", "scope")
 PREDICATE_REF_COVERAGE = ("identifier",)
 CLAIM_SCOPE_REF_COVERAGE = ("scope_type", "reference")
@@ -197,7 +196,6 @@ class CanonicalClaimContentEncoder:
         CanonicalClaimContentEncoder._assert_type_coverage(
             ClaimContentManifest,
             MANIFEST_COVERAGE,
-            OCCURRENCE_ONLY_EXCLUSIONS,
         )
 
     @staticmethod
@@ -219,11 +217,9 @@ class CanonicalClaimContentEncoder:
     def _assert_type_coverage(
         content_type: Any,
         covered_fields: tuple[str, ...],
-        excluded_fields: tuple[str, ...] = (),
     ) -> None:
         actual_fields = {item.name for item in fields(content_type)}
-        accounted_for = set(covered_fields) | set(excluded_fields)
-        if actual_fields != accounted_for:
+        if actual_fields != set(covered_fields):
             raise RuntimeError(
                 f"{content_type.__name__} coverage must explicitly account for "
                 "every identity-bearing field"
