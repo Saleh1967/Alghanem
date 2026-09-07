@@ -1,5 +1,6 @@
 """Foundational, language-agnostic kernel types."""
 
+from ._internal.authenticated_observation_bridge import AuthenticatedObservationBinding
 from .anchor import Anchor, State
 from .binding import ClaimEvidenceBinding
 from .birth import (
@@ -65,6 +66,10 @@ from .evidence_acquisition import (
     EvidenceAcquisitionRun,
     EvidenceContentIdentity,
 )
+from .evidence_role import (
+    EvidenceRoleCandidate,
+    EvidenceRoleRef,
+)
 from .experiment_spec_content_identity import (
     BirthExperimentContentIdentityError,
     BirthExperimentSpecificationContentBinding,
@@ -125,6 +130,7 @@ from .transition import (
 
 __all__ = [
     "Anchor",
+    "AuthenticatedObservationBinding",
     "AuthorizedBirthAssessmentEvaluatorDefinition",
     "AuthorizedEvidenceSnapshot",
     "BirthAssessmentContentBinding",
@@ -181,6 +187,8 @@ __all__ = [
     "EvidenceAcquisitionRun",
     "EvidenceContentIdentity",
     "EvidenceMode",
+    "EvidenceRoleCandidate",
+    "EvidenceRoleRef",
     "EvidenceSnapshot",
     "FractalContractError",
     "FractalProvenancePath",

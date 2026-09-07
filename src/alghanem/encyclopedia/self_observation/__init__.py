@@ -3,7 +3,7 @@
 `Repository != KnowledgeAboutRepository`: every contract in this package is
 a pure observation of the `Alghanem` repository as a `SourceArtifact` --
 never a claim, evidence binding, or knowledge state about it. No module here
-defines a `Claim`, `EvidenceBinding`, or `SelfKnowledge` runtime; those
+defines a `Claim`, `EvidenceRoleCandidate`, or `SelfKnowledge` runtime; those
 remain a later, separate milestone (`SelfKnowledgeBridgeExperiment`) built on
 top of these references, once a claim/evidence constitution exists.
 

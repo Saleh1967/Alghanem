@@ -52,6 +52,46 @@ These are the initial laws of the language-agnostic kernel:
 - `ClaimCandidate` has no evidence or evidence-binding field; claim-specific
   evidence binding is deferred to G0.EB.1.
 
+### G0.OB.1 — Authenticated-observation bridge
+
+- `AuthenticationIdentifier != AuthenticationCertificate`: strings naming an
+  observation and its authentication never constitute an authenticated
+  observation.
+- `AuthenticatedObservationBinding` is issued only through a private,
+  source-agnostic kernel bridge. A source-specific authority must invoke that
+  internal bridge only after issuing its own authenticated
+  observation. The G0.SO.1 repository adapter is
+  `RepositoryObservationRun.bridge_authenticated_fragment`, which accepts only
+  its own authority-issued `AuthenticatedRepositoryFragment`.
+- The bridge is absent from the public kernel API. This establishes
+  `NoPublicCallerIssuancePath` as a controlled Python API boundary, not
+  cryptographic impossibility of forgery.
+- The kernel imports no source-layer type. Repository-source coordinates use
+  canonical JSON over every declared field, so delimiter-bearing values cannot
+  collapse distinct provenance tuples. A binding is a
+  `SourceBoundAuthenticatedCoordinate`, not a portable identity:
+  `PortableAuthenticatedObservationIdentity = DECLARED_DEFERRED` until an
+  issuer-scope identity is explicitly propagated.
+
+### G0.EB.1 — Claim-relative evidence-role constitution
+
+- `EvidenceRoleCandidate(AuthenticatedObservationBinding, ClaimCandidate,
+  EvidenceRoleRef)` is a proposed evidence role. `EvidenceRoleRef` is opaque:
+  `EvidenceRoleRef != EvidenceRoleSemantics != EvidenceApplicability`.
+- Projection collisions prove the three coordinates are necessary for the
+  declared distinction target: deleting observation, claim, or role collapses
+  distinct candidates. This is
+  `EvidenceRoleCandidateCoreMinimality`, not a claim of semantic minimality.
+- `EvidenceRoleCandidate != EvidenceApplicability`: it does not assert that
+  the observation is evidence or that the proposed role applies.
+- `LegacyEvidence != EvidenceRoleCandidate`: legacy `Evidence(claim_id, basis)`
+  and `ClaimEvidenceBinding` remain a separate claim-id system and never issue
+  or substitute for a G0.EB.1 candidate.
+- `EvidenceApplicability != EvidenceSufficiency`,
+  `EvidenceSufficiency != Truth`, and `TruthAssessment != Knowledge` remain
+  outside this milestone. `EvidenceRoleCandidate` has no fields for any of
+  those judgments.
+
 Invariant assessment request semantics are closed at the gate: `BLOCK` means an
 authorized verifier observed at least one invariant as false; `DEFER` means no
 invariant was false but at least one could not be checked; and `VERIFIED` means

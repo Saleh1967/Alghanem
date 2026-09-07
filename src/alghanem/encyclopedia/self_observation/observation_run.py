@@ -2,7 +2,14 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
+
+from alghanem.kernel._internal.authenticated_observation_bridge import (
+    AuthenticatedObservationBinding,
+    issue_from_source_authority,
+)
+from alghanem.kernel._internal.text import is_non_blank_text
 
 from .artifact_ref import RepositoryArtifactRef
 from .authenticated_artifact import AuthenticatedRepositoryArtifact
@@ -17,6 +24,22 @@ from .repository_snapshot import (
 )
 
 _RUN_TOKEN = object()
+
+
+def _canonical_coordinate(**coordinate_fields: str) -> str:
+    """Encode one fixed set of string fields without delimiter ambiguity.
+
+    For a fixed declared field set, JSON values are validated as exact strings,
+    keys are sorted, and JSON escaping preserves each string's boundaries.
+    This is injective over those declared fields; it does not establish a
+    portable observation identity.
+    """
+
+    if any(not is_non_blank_text(value) for value in coordinate_fields.values()):
+        raise TypeError("source coordinate values must be non-blank text")
+    return json.dumps(
+        coordinate_fields, ensure_ascii=False, separators=(",", ":"), sort_keys=True
+    )
 
 
 @dataclass(frozen=True, slots=True, init=False)
@@ -118,6 +141,25 @@ class RepositoryObservationRun:
             content_id,
             self,
             _token=self._issuance_capability,
+        )
+
+    def bridge_authenticated_fragment(
+        self, fragment: AuthenticatedRepositoryFragment
+    ) -> AuthenticatedObservationBinding:
+        """Bridge one authority-issued repository fragment into G0.OB.1."""
+
+        if fragment.observation_run is not self:
+            raise SelfObservationContractError(
+                "fragment is not owned by this observation run"
+            )
+        return issue_from_source_authority(
+            _canonical_coordinate(**fragment.source_observation_coordinate()),
+            _canonical_coordinate(
+                run_id=self.run_id,
+                provider_identity=self.provider_identity,
+                implementation_identity=self.implementation_identity,
+                protocol_version=self.protocol_version,
+            ),
         )
 
     def observe_transition(
