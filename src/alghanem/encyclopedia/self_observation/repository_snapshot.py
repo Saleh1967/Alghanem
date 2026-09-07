@@ -93,5 +93,3 @@ class RepositorySnapshotRef:
         _require_text(self.repository_identity, "repository identity")
         _require_text(self.commit_sha, "repository commit sha")
         _require_text(self.tree_sha, "repository tree sha")
-
-

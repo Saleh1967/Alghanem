@@ -564,7 +564,7 @@ milestone, built only once a claim/evidence constitution exists.
 
 | Law | Status | Scope |
 | --- | --- | --- |
-| `RepositorySnapshotIsNotKnowledge` | PROVED (at contract level) | `RepositorySnapshotRef` has no claim, evidence, or knowledge field; it names one content-bound repository state and nothing else. |
+| `RepositorySnapshotIsNotKnowledge` | PROVED (at contract level) | `RepositorySnapshotRef` has no claim, evidence, or knowledge field; it names one explicitly-addressed repository state and nothing else. |
 | `RepositoryArtifactIsNotEvidenceByItself` | PROVED (at contract level) | `RepositoryArtifactRef` and `RepositoryFragmentRef` name a file or fragment carrier only; naming a fragment proves nothing about any claim until a future `EvidenceBinding` exists. |
 | `DocumentationIsNotImplementation` | DECLARED_DEFERRED | A future claim constitution must keep `DeclaredSelfModel` (from `docs/CONSTITUTION.md` and other prose) distinct from `ImplementedSelfModel` (from source); this module records neither yet. |
 | `TestPassIsNotUniversalTruth` | DECLARED_DEFERRED | A future evidence constitution must keep `TestedSelfModel` (from passing tests/CI at one commit) distinct from `FormalProofEvidence` and from universal correctness; no test-evidence field exists yet. |
@@ -579,7 +579,7 @@ milestone, built only once a claim/evidence constitution exists.
 
 `RepositoryTransitionRef` records `changed_artifacts` (as
 `RepositoryArtifactChangeRef` before/after pairs), `added_artifacts`, and
-`removed_artifacts` between two content-bound snapshots of the *same*
+`removed_artifacts` between two explicitly-addressed snapshots of the *same*
 repository, but `Change != Improvement`: it makes no claim that a later
 commit is better, safer, or more correct than an earlier one.
 `RevisionDoesNotEraseHistoricalFreeze` follows directly from

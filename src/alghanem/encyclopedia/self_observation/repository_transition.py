@@ -1,9 +1,9 @@
 """A reference to one observed transition between two repository snapshots.
 
 `Change != Improvement`: this contract records only what moved between two
-content-bound commits (`c_n -> c_{n+1}`), never that the later state is
-better, safer, or more correct. A future `ImprovementClaim` would need its
-own evidence; none is implied here.
+explicitly-addressed commits (`c_n -> c_{n+1}`), never that the later state
+is better, safer, or more correct. A future `ImprovementClaim` would need
+its own evidence; none is implied here.
 
 `DifferentCommits !=> HistoricalTransition`: two distinct commit shas alone
 never prove that `to_snapshot` is a genuine, later revision reachable from
