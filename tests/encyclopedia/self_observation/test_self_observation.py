@@ -96,6 +96,17 @@ class TestRepositoryArtifactRef:
 
 
 class TestRepositoryFragmentRef:
+    def test_accepts_a_well_formed_fragment_ref(self) -> None:
+        fragment = RepositoryFragmentRef(
+            artifact=artifact(),
+            fragment_locator="RootInquiry",
+            fragment_content_id="fragment-1",
+        )
+
+        assert fragment.artifact == artifact()
+        assert fragment.fragment_locator == "RootInquiry"
+        assert fragment.fragment_content_id == "fragment-1"
+
     def test_requires_repository_artifact_ref(self) -> None:
         with pytest.raises(SelfObservationContractError):
             RepositoryFragmentRef(
