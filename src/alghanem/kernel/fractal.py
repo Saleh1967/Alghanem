@@ -153,6 +153,9 @@ class BornBridgeRef:
             )
 
 
+FrozenOntologyRef = FrozenFactorRef | BornBridgeRef
+
+
 @dataclass(frozen=True, slots=True)
 class DerivedRelationSpec:
     """A relation reconstructible from already-frozen factors: `DERIVED_NO_BIRTH`.
@@ -218,7 +221,7 @@ class ReopenExperimentSpecification:
     """
 
     reopen_id: str
-    parents: tuple[FrozenFactorRef, ...]
+    parents: tuple[FrozenOntologyRef, ...]
     experiment: BirthExperimentSpecification
     allowed_observables: tuple[str, ...]
 
@@ -234,9 +237,12 @@ class ReopenExperimentSpecification:
             raise FractalContractError(
                 "a reopen experiment requires at least one frozen parent reference"
             )
-        if any(not isinstance(parent, FrozenFactorRef) for parent in self.parents):
+        if any(
+            not isinstance(parent, (FrozenFactorRef, BornBridgeRef))
+            for parent in self.parents
+        ):
             raise FractalContractError(
-                "reopen parents must be frozen factor references"
+                "reopen parents must be frozen ontology references"
             )
         if len(set(self.parents)) != len(self.parents):
             raise FractalContractError(
@@ -334,15 +340,16 @@ class ProofLineageEdge:
     `BornBridgeRef` or `DerivedRelationSpec`.
     """
 
-    parent_ref: FrozenFactorRef
+    parent_ref: FrozenOntologyRef
     child_ref: FrozenFactorRef
     reopen_experiment_id: str
     reopen_revision_id: str
+    reopen_specification: ReopenExperimentSpecification | None = None
 
     def __post_init__(self) -> None:
-        if not isinstance(self.parent_ref, FrozenFactorRef):
+        if not isinstance(self.parent_ref, (FrozenFactorRef, BornBridgeRef)):
             raise FractalContractError(
-                "proof lineage parents must be frozen factor references"
+                "proof lineage parents must be frozen ontology references"
             )
         if not isinstance(self.child_ref, FrozenFactorRef):
             raise FractalContractError(
@@ -358,6 +365,25 @@ class ProofLineageEdge:
             raise FractalContractError(
                 "proof lineage child must be born by its recorded reopen experiment"
             )
+        if self.reopen_specification is not None:
+            if not isinstance(
+                self.reopen_specification, ReopenExperimentSpecification
+            ):
+                raise FractalContractError(
+                    "proof lineage must bind a reopen experiment specification"
+                )
+            experiment = self.reopen_specification.experiment
+            if (
+                experiment.experiment_id != self.reopen_experiment_id
+                or experiment.revision_id != self.reopen_revision_id
+            ):
+                raise FractalContractError(
+                    "proof lineage reopen identity must match its exact specification"
+                )
+            if self.parent_ref not in self.reopen_specification.parents:
+                raise FractalContractError(
+                    "proof lineage parent must be declared by its reopen specification"
+                )
 
 
 @dataclass(frozen=True, slots=True)
@@ -441,9 +467,36 @@ class FractalSnapshot:
         for edge in self.proof_lineage_edges:
             if (
                 edge.parent_ref not in self._frozen_refs
-                or edge.child_ref not in self._frozen_refs
-            ):
+                and edge.parent_ref not in {
+                    bridge for bridge in self.born_bridges
+                }
+            ) or edge.child_ref not in self._frozen_refs:
                 raise FractalContractError(
-                    "proof lineage endpoints must be exact frozen references "
-                    "already present in this snapshot"
+                    "proof lineage endpoints must be exact frozen ontology "
+                    "references already present in this snapshot"
                 )
+        adjacency: dict[FrozenOntologyRef, set[FrozenOntologyRef]] = {
+            factor: set() for factor in self.frozen_factors
+        }
+        adjacency.update({bridge: set() for bridge in self.born_bridges})
+        for edge in self.proof_lineage_edges:
+            adjacency[edge.parent_ref].add(edge.child_ref)
+
+        visiting: set[FrozenOntologyRef] = set()
+        visited: set[FrozenOntologyRef] = set()
+
+        def visit(node: FrozenOntologyRef) -> None:
+            if node in visiting:
+                raise FractalContractError(
+                    "proof lineage graph must be acyclic"
+                )
+            if node in visited:
+                return
+            visiting.add(node)
+            for child in adjacency[node]:
+                visit(child)
+            visiting.remove(node)
+            visited.add(node)
+
+        for node in adjacency:
+            visit(node)
