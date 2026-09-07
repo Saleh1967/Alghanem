@@ -1,6 +1,7 @@
 import pytest
 
 from alghanem.encyclopedia.self_observation import (
+    RepositoryArtifactChangeRef,
     RepositoryArtifactRef,
     RepositoryFragmentRef,
     RepositorySnapshotRef,
@@ -9,9 +10,13 @@ from alghanem.encyclopedia.self_observation import (
 )
 
 
-def snapshot(commit_sha: str = "c1", tree_sha: str = "t1") -> RepositorySnapshotRef:
+def snapshot(
+    commit_sha: str = "c1",
+    tree_sha: str = "t1",
+    repository_identity: str = "Alghanem",
+) -> RepositorySnapshotRef:
     return RepositorySnapshotRef(
-        repository_identity="Alghanem",
+        repository_identity=repository_identity,
         commit_sha=commit_sha,
         tree_sha=tree_sha,
     )
@@ -20,11 +25,12 @@ def snapshot(commit_sha: str = "c1", tree_sha: str = "t1") -> RepositorySnapshot
 def artifact(
     snap: RepositorySnapshotRef | None = None,
     path: str = "src/alghanem/encyclopedia/inquiry.py",
+    blob_sha: str = "blob-1",
 ) -> RepositoryArtifactRef:
     return RepositoryArtifactRef(
         snapshot=snap if snap is not None else snapshot(),
         artifact_path=path,
-        blob_sha="blob-1",
+        blob_sha=blob_sha,
     )
 
 
@@ -111,6 +117,51 @@ class TestRepositoryFragmentRef:
             RepositoryFragmentRef(**kwargs)
 
 
+class TestRepositoryArtifactChangeRef:
+    def test_requires_repository_artifact_refs(self) -> None:
+        with pytest.raises(SelfObservationContractError):
+            RepositoryArtifactChangeRef(
+                before="not-an-artifact",  # type: ignore[arg-type]
+                after=artifact(),
+            )
+        with pytest.raises(SelfObservationContractError):
+            RepositoryArtifactChangeRef(
+                before=artifact(),
+                after="not-an-artifact",  # type: ignore[arg-type]
+            )
+
+    def test_requires_the_same_artifact_path_on_both_sides(self) -> None:
+        from_snap = snapshot("c1")
+        to_snap = snapshot("c2")
+
+        with pytest.raises(SelfObservationContractError):
+            RepositoryArtifactChangeRef(
+                before=artifact(from_snap, path="a.py", blob_sha="blob-a"),
+                after=artifact(to_snap, path="b.py", blob_sha="blob-b"),
+            )
+
+    def test_requires_distinct_blob_shas(self) -> None:
+        from_snap = snapshot("c1")
+        to_snap = snapshot("c2")
+
+        with pytest.raises(SelfObservationContractError):
+            RepositoryArtifactChangeRef(
+                before=artifact(from_snap, path="a.py", blob_sha="blob-a"),
+                after=artifact(to_snap, path="a.py", blob_sha="blob-a"),
+            )
+
+    def test_accepts_a_well_formed_change(self) -> None:
+        from_snap = snapshot("c1")
+        to_snap = snapshot("c2")
+
+        change = RepositoryArtifactChangeRef(
+            before=artifact(from_snap, path="a.py", blob_sha="blob-a"),
+            after=artifact(to_snap, path="a.py", blob_sha="blob-b"),
+        )
+
+        assert change.artifact_path == "a.py"
+
+
 class TestRepositoryTransitionRef:
     def test_requires_distinct_from_and_to_snapshots(self) -> None:
         same = snapshot("c1")
@@ -124,9 +175,20 @@ class TestRepositoryTransitionRef:
                 removed_artifacts=(),
             )
 
-    def test_added_and_changed_artifacts_must_be_anchored_to_to_snapshot(
-        self,
-    ) -> None:
+    def test_requires_the_same_repository_identity(self) -> None:
+        from_snap = snapshot("c1", repository_identity="Alghanem")
+        to_snap = snapshot("c2", repository_identity="OtherRepository")
+
+        with pytest.raises(SelfObservationContractError):
+            RepositoryTransitionRef(
+                from_snapshot=from_snap,
+                to_snapshot=to_snap,
+                changed_artifacts=(),
+                added_artifacts=(),
+                removed_artifacts=(),
+            )
+
+    def test_added_artifacts_must_be_anchored_to_to_snapshot(self) -> None:
         from_snap = snapshot("c1")
         to_snap = snapshot("c2")
 
@@ -152,7 +214,9 @@ class TestRepositoryTransitionRef:
                 removed_artifacts=(artifact(to_snap),),
             )
 
-    def test_rejects_duplicate_artifact_paths_within_one_bucket(self) -> None:
+    def test_changed_artifacts_before_side_must_be_anchored_to_from_snapshot(
+        self,
+    ) -> None:
         from_snap = snapshot("c1")
         to_snap = snapshot("c2")
 
@@ -161,10 +225,48 @@ class TestRepositoryTransitionRef:
                 from_snapshot=from_snap,
                 to_snapshot=to_snap,
                 changed_artifacts=(
+                    RepositoryArtifactChangeRef(
+                        before=artifact(to_snap, path="a.py", blob_sha="blob-a"),
+                        after=artifact(to_snap, path="a.py", blob_sha="blob-b"),
+                    ),
+                ),
+                added_artifacts=(),
+                removed_artifacts=(),
+            )
+
+    def test_changed_artifacts_after_side_must_be_anchored_to_to_snapshot(
+        self,
+    ) -> None:
+        from_snap = snapshot("c1")
+        to_snap = snapshot("c2")
+
+        with pytest.raises(SelfObservationContractError):
+            RepositoryTransitionRef(
+                from_snapshot=from_snap,
+                to_snapshot=to_snap,
+                changed_artifacts=(
+                    RepositoryArtifactChangeRef(
+                        before=artifact(from_snap, path="a.py", blob_sha="blob-a"),
+                        after=artifact(from_snap, path="a.py", blob_sha="blob-b"),
+                    ),
+                ),
+                added_artifacts=(),
+                removed_artifacts=(),
+            )
+
+    def test_rejects_duplicate_artifact_paths_within_one_bucket(self) -> None:
+        from_snap = snapshot("c1")
+        to_snap = snapshot("c2")
+
+        with pytest.raises(SelfObservationContractError):
+            RepositoryTransitionRef(
+                from_snapshot=from_snap,
+                to_snapshot=to_snap,
+                changed_artifacts=(),
+                added_artifacts=(
                     artifact(to_snap, path="a.py"),
                     artifact(to_snap, path="a.py"),
                 ),
-                added_artifacts=(),
                 removed_artifacts=(),
             )
 
@@ -188,7 +290,12 @@ class TestRepositoryTransitionRef:
         transition = RepositoryTransitionRef(
             from_snapshot=from_snap,
             to_snapshot=to_snap,
-            changed_artifacts=(artifact(to_snap, path="changed.py"),),
+            changed_artifacts=(
+                RepositoryArtifactChangeRef(
+                    before=artifact(from_snap, path="changed.py", blob_sha="blob-a"),
+                    after=artifact(to_snap, path="changed.py", blob_sha="blob-b"),
+                ),
+            ),
             added_artifacts=(artifact(to_snap, path="added.py"),),
             removed_artifacts=(artifact(from_snap, path="removed.py"),),
         )

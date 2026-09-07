@@ -571,11 +571,23 @@ milestone, built only once a claim/evidence constitution exists.
 | `SelfModelIsNotSystem` | PROVED (at contract level) | `RepositorySnapshotRef`, `RepositoryArtifactRef`, `RepositoryFragmentRef`, and `RepositoryTransitionRef` are all references anchored to a commit; none of them is, contains, or executes the repository itself. |
 | `SelfDescriptionDoesNotGrantAuthority` | PROVED (at contract level) | This module defines no freeze, reopen, or mutation authority; constructing or observing any of its refs grants no permission to alter the kernel or encyclopedia they describe. |
 | `RepositoryVersionMustBeContentBound` | PROVED (at contract level) | Every ref in this module is anchored to an explicit `commit_sha` (never a branch name); `RepositoryArtifactRef` and `RepositoryFragmentRef` are anchored to their exact snapshot, and `RepositoryTransitionRef` requires distinct `from_snapshot`/`to_snapshot` commit shas. |
+| `RepositoryVersionIsExplicitlyAddressed` | PROVED (at contract level) | `RepositorySnapshotRef` and `RepositoryArtifactRef` require non-blank `commit_sha`/`tree_sha`/`blob_sha` fields, each anchored to an explicit version, never a bare identifier without context. |
+| `RepositoryVersionIsContentAuthenticated` | DECLARED_DEFERRED | `tree_sha` and `blob_sha` remain caller-constructible: no authority here checks that a `tree_sha` is really the tree of its `commit_sha`, or that a `blob_sha` is really the blob at its `artifact_path`, exactly as `FrozenFactorRef` in `src/alghanem/kernel/fractal.py` is constructible without proving a genuine freeze (`Identifier != EvidenceOfIdentity`). Only a future `RepositoryObservationAuthority` may make these fields trustworthy. |
+| `SameRepositoryIdentity` | PROVED (at contract level) | `RepositoryTransitionRef` requires `from_snapshot.repository_identity == to_snapshot.repository_identity`; a pair naming two different repositories is rejected, not silently accepted as a transition. |
+| `DifferentCommitsIsNotHistoricalTransition` | DECLARED_DEFERRED | `RepositoryTransitionRef` proves only distinct commit shas within the same repository, never that `to_snapshot` is genuinely reachable from `from_snapshot` (`Ancestor(from, to)`); true ancestry proof is deferred to a future `RepositoryObservationAuthority`. |
+| `ArtifactChangeRecordsBothSides` | PROVED (at contract level) | `RepositoryArtifactChangeRef` requires both a `before` (anchored to `from_snapshot`) and an `after` (anchored to `to_snapshot`) `RepositoryArtifactRef`, sharing the same `artifact_path` with distinct `blob_sha`s, so a delta can be reconstructed instead of only naming the post-change file. |
 
-`RepositoryTransitionRef` records `changed_artifacts`, `added_artifacts`,
-and `removed_artifacts` between two content-bound snapshots, but
-`Change != Improvement`: it makes no claim that a later commit is better,
-safer, or more correct than an earlier one. `RevisionDoesNotEraseHistoricalFreeze`
-follows directly from `RepositoryVersionMustBeContentBound`: a later
-snapshot never invalidates what a licensed claim once said about an earlier
-one, because the two are distinct, equally addressable versions.
+`RepositoryTransitionRef` records `changed_artifacts` (as
+`RepositoryArtifactChangeRef` before/after pairs), `added_artifacts`, and
+`removed_artifacts` between two content-bound snapshots of the *same*
+repository, but `Change != Improvement`: it makes no claim that a later
+commit is better, safer, or more correct than an earlier one.
+`RevisionDoesNotEraseHistoricalFreeze` follows directly from
+`RepositoryVersionMustBeContentBound`: a later snapshot never invalidates
+what a licensed claim once said about an earlier one, because the two are
+distinct, equally addressable versions. A path renamed or moved between
+`from_snapshot` and `to_snapshot` (`SameContent+DifferentPath`) is
+deliberately out of scope for `RepositoryArtifactChangeRef`, which requires
+an identical `artifact_path` on both sides; a future
+`RepositoryArtifactMoveCandidate` would carry that separate identity
+question.

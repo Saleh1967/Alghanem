@@ -6,6 +6,13 @@ possible evidence, never evidence itself
 content a future claim will cite, proves nothing about that claim; only an
 explicit `EvidenceBinding` between a fragment and a claim can do that, and
 no such binding exists in this module.
+
+Like `RepositorySnapshotRef.tree_sha`, `blob_sha` is caller-supplied here:
+this module proves only `RepositoryVersionIsExplicitlyAddressed`
+(`artifact_path` and `blob_sha` are non-blank and anchored to a snapshot),
+never `RepositoryVersionIsContentAuthenticated` -- that `blob_sha` is truly
+the blob found at `artifact_path` in that snapshot's tree. That
+authentication remains `DEFERRED` to a future `RepositoryObservationAuthority`.
 """
 
 from __future__ import annotations

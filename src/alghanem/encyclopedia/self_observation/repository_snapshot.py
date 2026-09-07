@@ -13,6 +13,16 @@ anything about the repository beyond its own identity
     -> SelfKnowledge
 
 and carries no evidence, claim, or knowledge field of its own.
+
+This module only makes a version *explicitly addressed*
+(`RepositoryVersionIsExplicitlyAddressed`): every field is a caller-supplied
+string, and no authority here checks that `tree_sha` is genuinely the tree
+of `commit_sha`, or that `commit_sha` actually exists in
+`repository_identity`. Content authentication
+(`RepositoryVersionIsContentAuthenticated`) is deliberately `DEFERRED` to a
+future `RepositoryObservationAuthority`, exactly as `FrozenFactorRef` in
+`src/alghanem/kernel/fractal.py` is constructible by hand today without
+proving a genuine freeze occurred: `Identifier != EvidenceOfIdentity`.
 """
 
 from __future__ import annotations
@@ -41,6 +51,12 @@ class RepositorySnapshotRef:
     `repository_identity` but different `commit_sha` name two distinct,
     equally valid states: a later commit never erases what was true of an
     earlier one (`RevisionDoesNotEraseHistoricalFreeze`).
+
+    Construction here only proves `RepositoryVersionIsExplicitlyAddressed`:
+    the triple is well-formed and non-blank. It never proves
+    `RepositoryVersionIsContentAuthenticated` -- that `tree_sha` is really
+    the tree of `commit_sha` in `repository_identity` -- which remains
+    `DEFERRED` until a future `RepositoryObservationAuthority` exists.
     """
 
     repository_identity: str
@@ -51,3 +67,4 @@ class RepositorySnapshotRef:
         _require_text(self.repository_identity, "repository identity")
         _require_text(self.commit_sha, "repository commit sha")
         _require_text(self.tree_sha, "repository tree sha")
+

@@ -16,8 +16,13 @@ Governing laws (see `docs/CONSTITUTION.md`, Encyclopedia Self-Observation):
 - `SelfModelIsNotSystem`
 - `SelfDescriptionDoesNotGrantAuthority`
 - `RepositoryVersionMustBeContentBound`
+- `RepositoryVersionIsExplicitlyAddressed`
+- `RepositoryVersionIsContentAuthenticated` (DEFERRED)
+- `SameRepositoryIdentity`
+- `ArtifactChangeRecordsBothSides`
 """
 
+from .artifact_change_ref import RepositoryArtifactChangeRef
 from .artifact_ref import RepositoryArtifactRef
 from .fragment_ref import RepositoryFragmentRef
 from .repository_snapshot import (
@@ -27,6 +32,7 @@ from .repository_snapshot import (
 from .repository_transition import RepositoryTransitionRef
 
 __all__ = [
+    "RepositoryArtifactChangeRef",
     "RepositoryArtifactRef",
     "RepositoryFragmentRef",
     "RepositorySnapshotRef",
