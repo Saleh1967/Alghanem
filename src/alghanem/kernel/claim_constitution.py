@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from enum import Enum
 
 from .anchor import Anchor
@@ -18,6 +18,8 @@ from .anchor import Anchor
 _CLAIM_CONTENT_TOKEN = object()
 _ALGORITHM = "sha256"
 _CANONICALIZATION_VERSION = "claim-content-manifest-v1"
+MANIFEST_COVERAGE = ("core", "qualifications")
+OCCURRENCE_ONLY_EXCLUSIONS: tuple[str, ...] = ()
 
 
 def _require_text(value: str, name: str) -> None:
@@ -57,23 +59,45 @@ class ClaimQualification:
 
 
 @dataclass(frozen=True, slots=True)
-class ClaimContentManifest:
-    """Structured claim content before canonical identity is issued."""
+class PredicateRef:
+    """An opaque predicate reference; its rendering and semantics are deferred."""
+
+    identifier: str
+
+    def __post_init__(self) -> None:
+        _require_text(self.identifier, "predicate reference")
+
+
+@dataclass(frozen=True, slots=True)
+class ClaimCore:
+    """The irreducible structured content required to represent a claim."""
 
     anchor: Anchor
-    predicate: str
+    predicate: PredicateRef
     polarity: ClaimPolarity
     scope: ClaimScopeRef
-    qualifications: tuple[ClaimQualification, ...] = ()
 
     def __post_init__(self) -> None:
         if type(self.anchor) is not Anchor:
-            raise TypeError("claim content requires an anchor")
-        _require_text(self.predicate, "claim predicate")
+            raise TypeError("claim core requires an anchor")
+        if type(self.predicate) is not PredicateRef:
+            raise TypeError("claim core requires a predicate reference")
         if not isinstance(self.polarity, ClaimPolarity):
-            raise TypeError("claim content requires a claim polarity")
+            raise TypeError("claim core requires a claim polarity")
         if type(self.scope) is not ClaimScopeRef:
-            raise TypeError("claim content requires a claim scope")
+            raise TypeError("claim core requires a claim scope")
+
+
+@dataclass(frozen=True, slots=True)
+class ClaimContentManifest:
+    """A claim core plus optional, ordered qualifications."""
+
+    core: ClaimCore
+    qualifications: tuple[ClaimQualification, ...] = ()
+
+    def __post_init__(self) -> None:
+        if type(self.core) is not ClaimCore:
+            raise TypeError("claim content requires a claim core")
         if type(self.qualifications) is not tuple or any(
             type(item) is not ClaimQualification for item in self.qualifications
         ):
@@ -129,20 +153,21 @@ class CanonicalClaimContentEncoder:
     def encode(cls, content: ClaimContentManifest) -> CanonicalClaimContentManifest:
         if type(content) is not ClaimContentManifest:
             raise TypeError("canonical claim encoding requires claim content")
+        cls._assert_schema_coverage()
         encoded = {
             "anchor": {
-                "domain": content.anchor.domain,
-                "identifier": content.anchor.identifier,
+                "domain": content.core.anchor.domain,
+                "identifier": content.core.anchor.identifier,
             },
-            "polarity": content.polarity.value,
-            "predicate": content.predicate,
+            "polarity": content.core.polarity.value,
+            "predicate_ref": content.core.predicate.identifier,
             "qualifications": [
                 {"kind": item.kind, "value": item.value}
                 for item in content.qualifications
             ],
             "scope": {
-                "reference": content.scope.reference,
-                "scope_type": content.scope.scope_type,
+                "reference": content.core.scope.reference,
+                "scope_type": content.core.scope.scope_type,
             },
             "version": _CANONICALIZATION_VERSION,
         }
@@ -161,10 +186,20 @@ class CanonicalClaimContentEncoder:
             _token=_CLAIM_CONTENT_TOKEN,
         )
 
+    @staticmethod
+    def _assert_schema_coverage() -> None:
+        manifest_fields = {item.name for item in fields(ClaimContentManifest)}
+        accounted_for = set(MANIFEST_COVERAGE) | set(OCCURRENCE_ONLY_EXCLUSIONS)
+        if manifest_fields != accounted_for:
+            raise RuntimeError(
+                "claim content manifest coverage must explicitly account for "
+                "every claim content field"
+            )
+
 
 @dataclass(frozen=True, slots=True)
 class ClaimOccurrenceRef:
-    """A locally supplied reference to one claim occurrence, never its semantics."""
+    """A local reference, not a portable identity, for one claim occurrence."""
 
     value: str
 

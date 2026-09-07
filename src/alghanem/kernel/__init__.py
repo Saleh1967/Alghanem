@@ -42,10 +42,12 @@ from .claim_constitution import (
     ClaimCandidate,
     ClaimContentIdentity,
     ClaimContentManifest,
+    ClaimCore,
     ClaimOccurrenceRef,
     ClaimPolarity,
     ClaimQualification,
     ClaimScopeRef,
+    PredicateRef,
 )
 from .content_identity import (
     CanonicalTransitionEncoder,
@@ -161,6 +163,7 @@ __all__ = [
     "ClaimCandidate",
     "ClaimContentIdentity",
     "ClaimContentManifest",
+    "ClaimCore",
     "ClaimEvidenceBinding",
     "ClaimOccurrenceRef",
     "ClaimPolarity",
@@ -206,6 +209,7 @@ __all__ = [
     "Operation",
     "OperationResult",
     "ProjectionPoset",
+    "PredicateRef",
     "PreEvidenceSpecificationRegistry",
     "ProofLineageEdge",
     "Residual",
