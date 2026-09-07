@@ -174,9 +174,7 @@ def test_weakest_closing_model_is_not_worst_status_aggregation() -> None:
         (
             FrozenApplicabilityModel("weak-model", "weak"),
             FrozenApplicabilityModel("strong-model", "strong", ("weak-model",)),
-            FrozenApplicabilityModel(
-                "strongest-model", "strongest", ("strong-model",)
-            ),
+            FrozenApplicabilityModel("strongest-model", "strongest", ("strong-model",)),
         )
     )
 

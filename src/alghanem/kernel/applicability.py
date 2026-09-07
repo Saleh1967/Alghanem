@@ -51,9 +51,7 @@ class ApplicabilityModelResult:
             raise ValueError("DEFER applicability results require residuals")
 
 
-ApplicabilityEvaluator = Callable[
-    [EvidenceRoleCandidate], ApplicabilityModelResult
-]
+ApplicabilityEvaluator = Callable[[EvidenceRoleCandidate], ApplicabilityModelResult]
 
 
 @dataclass(frozen=True, slots=True, init=False)
@@ -196,8 +194,7 @@ class FrozenApplicabilityModel:
             if type(value) is not str or not value.strip():
                 raise ValueError(f"applicability {name} must be non-blank text")
         if type(self.weaker_model_ids) is not tuple or any(
-            type(item) is not str or not item.strip()
-            for item in self.weaker_model_ids
+            type(item) is not str or not item.strip() for item in self.weaker_model_ids
         ):
             raise TypeError("weaker applicability model ids must be text")
         if self.model_id in self.weaker_model_ids:
@@ -314,12 +311,8 @@ class ApplicabilityAssessmentGate:
             results.append((model.model_id, result))
         by_id = dict(results)
         weaker_closure = _weaker_closure(specification.models)
-        weakest_models = _weakest_models(
-            specification.models, by_id, weaker_closure
-        )
-        weakest_statuses = {
-            by_id[model.model_id].status for model in weakest_models
-        }
+        weakest_models = _weakest_models(specification.models, by_id, weaker_closure)
+        weakest_statuses = {by_id[model.model_id].status for model in weakest_models}
         status = (
             ApplicabilityAssessmentStatus.PASS
             if ApplicabilityAssessmentStatus.PASS in weakest_statuses
@@ -352,11 +345,10 @@ class ApplicabilityAssessmentGate:
         return EvidenceApplicabilityAssessment(
             candidate,
             status,
-            "; ".join(
-                f"{model_id}: {result.reason}"
-                for model_id, result in results
-            ),
-            candidate.claim.content.core.scope, Trace(events), residuals,
+            "; ".join(f"{model_id}: {result.reason}" for model_id, result in results),
+            candidate.claim.content.core.scope,
+            Trace(events),
+            residuals,
             specification.specification_id,
             registry.snapshot_id,
             registry.registry_projection_hash,
@@ -393,9 +385,7 @@ def _weakest_models(
     return [
         model
         for model in models
-        if not any(
-            weaker in weaker_closure[model.model_id] for weaker in results
-        )
+        if not any(weaker in weaker_closure[model.model_id] for weaker in results)
     ]
 
 
