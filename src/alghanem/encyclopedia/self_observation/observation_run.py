@@ -26,8 +26,16 @@ _RUN_TOKEN = object()
 
 
 def _canonical_coordinate(**fields: str) -> str:
-    """Injectively encode typed source-coordinate fields for bridge provenance."""
+    """Encode one fixed set of string fields without delimiter ambiguity.
 
+    For a fixed declared field set, JSON values are validated as exact strings,
+    keys are sorted, and JSON escaping preserves each string's boundaries.
+    This is injective over those declared fields; it does not establish a
+    portable observation identity.
+    """
+
+    if any(type(value) is not str for value in fields.values()):
+        raise TypeError("source coordinate values must be strings")
     return json.dumps(fields, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
 
 
