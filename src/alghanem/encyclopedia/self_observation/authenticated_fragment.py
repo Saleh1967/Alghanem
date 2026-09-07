@@ -10,7 +10,11 @@ from .authenticated_snapshot import _AUTHORITY_TOKEN
 
 if TYPE_CHECKING:
     from .observation_run import RepositoryObservationRun
-from .repository_snapshot import SelfObservationContractError, _require_text
+from .repository_snapshot import (
+    SelfObservationContractError,
+    _require_authority_token,
+    _require_text,
+)
 
 
 @dataclass(frozen=True, slots=True, init=False)
@@ -29,11 +33,7 @@ class AuthenticatedRepositoryFragment:
         *,
         _token: object | None = None,
     ) -> None:
-        if _token is not _AUTHORITY_TOKEN:
-            raise SelfObservationContractError(
-                "authenticated fragments may only be issued by the observation "
-                "authority"
-            )
+        _require_authority_token(_token, _AUTHORITY_TOKEN, "authenticated fragments")
         if not isinstance(artifact, AuthenticatedRepositoryArtifact):
             raise SelfObservationContractError(
                 "authenticated fragment requires an authenticated artifact"

@@ -438,6 +438,12 @@ def test_authenticated_objects_and_runs_reject_direct_construction() -> None:
     with pytest.raises(SelfObservationContractError):
         AuthenticatedRepositorySnapshot(snapshot(), None)  # type: ignore[arg-type]
     with pytest.raises(SelfObservationContractError):
+        AuthenticatedRepositoryArtifact(None, "", "", None)  # type: ignore[arg-type]
+    with pytest.raises(SelfObservationContractError):
+        AuthenticatedRepositoryFragment(None, "", "", None)  # type: ignore[arg-type]
+    with pytest.raises(SelfObservationContractError):
+        AuthenticatedRepositoryTransition(None, None, None)  # type: ignore[arg-type]
+    with pytest.raises(SelfObservationContractError):
         RepositoryObservationAuthority(FakeProvider()).open_run().__class__(
             "run", "provider", "implementation", "1", FakeProvider()
         )

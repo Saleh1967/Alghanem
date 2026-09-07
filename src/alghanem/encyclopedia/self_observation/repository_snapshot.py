@@ -44,6 +44,15 @@ def _require_text(value: str, field_name: str) -> None:
         raise SelfObservationContractError(f"{field_name} must be non-blank")
 
 
+def _require_authority_token(
+    token: object | None, expected: object, object_name: str
+) -> None:
+    if token is not expected:
+        raise SelfObservationContractError(
+            f"{object_name} may only be issued by the observation authority"
+        )
+
+
 def _require_same_repository_distinct_commits(
     from_snapshot: RepositorySnapshotRef,
     to_snapshot: RepositorySnapshotRef,

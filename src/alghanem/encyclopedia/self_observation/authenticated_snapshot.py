@@ -7,7 +7,11 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .observation_run import RepositoryObservationRun
-from .repository_snapshot import RepositorySnapshotRef, SelfObservationContractError
+from .repository_snapshot import (
+    RepositorySnapshotRef,
+    SelfObservationContractError,
+    _require_authority_token,
+)
 
 _AUTHORITY_TOKEN = object()
 
@@ -26,11 +30,7 @@ class AuthenticatedRepositorySnapshot:
     ) -> None:
         from .observation_run import RepositoryObservationRun
 
-        if _token is not _AUTHORITY_TOKEN:
-            raise SelfObservationContractError(
-                "authenticated snapshots may only be issued by the "
-                "observation authority"
-            )
+        _require_authority_token(_token, _AUTHORITY_TOKEN, "authenticated snapshots")
         if not isinstance(snapshot, RepositorySnapshotRef):
             raise SelfObservationContractError(
                 "authenticated snapshot requires a snapshot ref"

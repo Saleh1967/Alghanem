@@ -29,7 +29,11 @@ class RepositoryObservationAuthority:
     def observe(
         self, request: RepositoryObservationRequest
     ) -> AuthenticatedRepositorySnapshot:
-        """Compatibility helper that observes a single requested snapshot."""
+        """Observe one request in a single-shot run.
+
+        Use :meth:`open_run` when authenticated artifacts, fragments, or
+        transitions must remain available in the same execution scope.
+        """
 
         run = self.open_run()
         snapshot = run.observe_snapshot(request.requested_snapshot)
