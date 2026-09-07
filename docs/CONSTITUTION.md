@@ -305,6 +305,39 @@ These are boundary commitments, not a frozen ontology or closed primitive tuple.
   - Note: prior-information necessity is given; minimal internal/functional
     factorization remains open.
 
+### TheoreticalProgramBeforePostAlgebraicAudit
+
+This section freezes the *question form* for the next theoretical stage. It
+does not claim completion of derivation, minimality, or closure.
+
+- `NecessityOfUsablePriorInformationRelatedToReality = FOUNDATIONAL_GIVEN`.
+- `ExactFactorization(P_0) = OPEN`.
+- `FirstAlgebraRepresentabilityCriterionNotDerived` remains open.
+
+The immediate target is to separate three layers that must not be conflated:
+
+- `PriorContent`: what is already present in prior information.
+- `PriorAvailability`: what makes that prior content retrievable and usable.
+- `RealityBindingCapacity`: what makes usable prior content connectable to new
+  encountered reality.
+
+Boundary law for this stage:
+
+- `PriorContent != PriorAvailability`.
+- `PriorAvailability != RealityBindingCapacity`.
+- No item is declared primitive only because it appears early in explanation.
+
+Central open question (theoretical, not yet a derived criterion):
+
+- What is the minimal set of preconditions under which first intelligibility is
+  possible at all?
+
+Audit-position clarification:
+
+- Philosophical/theoretical analysis of candidate preconditions is allowed now.
+- Proof that a candidate set is minimal and irreducible remains
+  `DEFERRED_UNTIL_POSTALGEBRAIC_RETROSPECTIVE_AUDIT`.
+
 ### ForbiddenNextJumps
 
 - Do not introduce runtime/classes/enums/gates/evaluator machinery under G−1.
