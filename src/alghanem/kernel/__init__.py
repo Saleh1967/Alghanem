@@ -1,6 +1,6 @@
 """Foundational, language-agnostic kernel types."""
 
-from ._authenticated_observation_bridge import AuthenticatedObservationBinding
+from ._internal.authenticated_observation_bridge import AuthenticatedObservationBinding
 from .anchor import Anchor, State
 from .binding import ClaimEvidenceBinding
 from .birth import (

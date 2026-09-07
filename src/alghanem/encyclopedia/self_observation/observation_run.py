@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass, field
 
-from alghanem.kernel._authenticated_observation_bridge import (
+from alghanem.kernel._internal.authenticated_observation_bridge import (
     AuthenticatedObservationBinding,
     issue_from_source_authority,
 )
@@ -25,7 +25,7 @@ from .repository_snapshot import (
 _RUN_TOKEN = object()
 
 
-def _canonical_coordinate(**fields: str) -> str:
+def _canonical_coordinate(**coordinate_fields: str) -> str:
     """Encode one fixed set of string fields without delimiter ambiguity.
 
     For a fixed declared field set, JSON values are validated as exact strings,
@@ -34,9 +34,11 @@ def _canonical_coordinate(**fields: str) -> str:
     portable observation identity.
     """
 
-    if any(type(value) is not str for value in fields.values()):
+    if any(type(value) is not str for value in coordinate_fields.values()):
         raise TypeError("source coordinate values must be strings")
-    return json.dumps(fields, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
+    return json.dumps(
+        coordinate_fields, ensure_ascii=False, separators=(",", ":"), sort_keys=True
+    )
 
 
 @dataclass(frozen=True, slots=True, init=False)

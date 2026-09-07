@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ._authenticated_observation_bridge import AuthenticatedObservationBinding
+from ._internal.authenticated_observation_bridge import AuthenticatedObservationBinding
 from .claim_constitution import ClaimCandidate
 
 

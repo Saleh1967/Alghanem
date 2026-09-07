@@ -1,10 +1,9 @@
 """Internal G0.OB.1 binding and bridge for source observation authorities.
 
-This module is intentionally excluded from the public kernel API. Its direct
-use by source adapters is the explicit, narrow cross-package exception that
-permits those adapters to issue bindings only after their own authority has
-authenticated an observation. Ordinary callers consume the resulting binding
-but cannot issue one through ``alghanem.kernel``.
+This module belongs to the explicit internal adapter namespace, excluded from
+the public kernel API. Source adapters invoke it only after their own
+authority has authenticated an observation. Ordinary callers consume the
+resulting binding but cannot issue one through ``alghanem.kernel``.
 """
 
 from dataclasses import dataclass
