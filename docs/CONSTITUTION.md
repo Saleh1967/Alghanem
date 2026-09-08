@@ -213,7 +213,8 @@ The declared epistemic ordering is:
 E_-1 -> P_0^{given} -> Encounter -> FirstIntelligibleDifferentiationOrBindingCandidate
     -> StableRepeatableRegularityCandidate
     -> CaseBoundDescriptionInsufficientCandidate
-    -> MaterialIndependentRepresentationDemandCandidate
+    -> ParticularInstanceIdentityInsufficientCandidate
+    -> RepresentativeIndependentStructuralDeterminationCandidate
     -> ?
 
 ? = FirstAlgebraRepresentabilityCriterionNotYetDerived
@@ -354,7 +355,8 @@ Target form for this stage:
 ```
 StableRepeatableRegularityCandidate
   -> CaseBoundDescriptionInsufficientCandidate
-  -> MaterialIndependentRepresentationDemandCandidate
+  -> ParticularInstanceIdentityInsufficientCandidate
+  -> RepresentativeIndependentStructuralDeterminationCandidate
   -> FirstAlgebraRepresentabilityCriterionNotYetDerived
 ```
 
@@ -363,29 +365,41 @@ Interpretive boundary for this target form:
 - Re-identifiable regularity across differentiated cases can pressure a
   representation demand.
 - `CaseBoundDescriptionInsufficientCandidate != FirstAlgebraRepresentability`.
-- `MaterialIndependentRepresentationDemandCandidate != FirstAlgebraRepresentability`.
+- `ParticularInstanceIdentityInsufficientCandidate != FirstAlgebraRepresentability`.
+- `RepresentativeIndependentStructuralDeterminationCandidate != FirstAlgebraRepresentability`.
 - Pressure toward representation is not completed representation.
+- The candidate pressure is: identity of the revealing instance is insufficient
+  to determine the result; structural determination must survive across
+  independently differentiated representatives.
 
 Conservative non-equivalence guards:
 
 - `Repetition != FirstAlgebraicRepresentation`.
 - `Similarity != ProvenSingleRegularity`.
 - `RepeatableRegularity != IndependentRepresentationOfThatRegularity`.
-- `LinguisticCarrier != AlgebraicRepresentation`.
 - `CrossCaseReIdentification != ProvenUnifiedRegularity`.
+- `CaseBoundDescription != RepresentativeIndependentStructuralDetermination`.
+- `DependenceOnParticularInstanceIdentity != FirstAlgebraRepresentability`.
+- `TrivialOneExampleAbstraction != FirstAlgebraRepresentability`.
 - `NeedForHigherRepresentation != AchievedHigherRepresentation`.
+- `AlgebraRepresentability != AlgebraNecessity`.
 - `FirstAlgebraRepresentability != G0Birth`.
+- `RepresentabilityCandidate != LicensedAlgebraBirth`.
 
 Refutation-question matrix (questioning only; no final derivation here):
 
+Rows for prior persistence, binding capacity, and linguistic-carrier analysis
+belong to first-intelligibility/language sections, not this algebra
+representability boundary subsection.
+
 | Explanatory candidate | Piercing question |
 | --- | --- |
-| Prior persistence candidate | Can later encounter-effects be explained with no persistence that stays re-identifiable? |
-| Binding candidate | Is mere co-presence of prior and present sufficient without a binding relation? |
-| Re-identification candidate | Can recurrence be explained if each event is wholly new with nothing re-identifiable across cases? |
-| Carrier candidate | Can transportable linguistic expression be explained with no externally re-identifiable difference? |
-| Cross-case regularity candidate | Can a strictly case-bound description preserve what repeats across differentiated cases? |
-| Case-independence candidate | Can the shared part be represented without any degree of separation from its concrete cases? |
+| Repetition-only candidate | Can mere repetition, with no unified regularity claim, explain the observed invariance? |
+| Similarity-only candidate | Can loose similarity explain the observations without one structurally unified regularity? |
+| Case-bound description candidate | Can a strictly case-bound description preserve what repeats across differentiated cases? |
+| Particular-instance-identity dependence candidate | If representative identity is changed while structural role-pattern is preserved, does determination collapse? |
+| Structural nondeterminacy candidate | Can the same role-pattern map to incompatible determinations without violating the candidate boundary? |
+| Trivial one-example abstraction candidate | Can a one-example or one-representative abstraction stand without independent differentiated support? |
 
 Matrix output constraint:
 
@@ -394,6 +408,8 @@ Matrix output constraint:
 - It does not yield a necessity certificate at G−1.
 - Minimality and irreducibility remain
   `DEFERRED_UNTIL_POSTALGEBRAIC_RETROSPECTIVE_AUDIT`.
+- No-weaker closure, independent validation, reconstruction, and birth authority
+  remain later/post-algebraic audit questions.
 
 ### ForbiddenNextJumps
 
