@@ -211,7 +211,10 @@ The declared epistemic ordering is:
 
 ```
 E_-1 -> P_0^{given} -> Encounter -> FirstIntelligibleDifferentiationOrBindingCandidate
-    -> StableRepeatableRegularityCandidate -> ?
+    -> StableRepeatableRegularityCandidate
+    -> CaseBoundDescriptionInsufficientCandidate
+    -> MaterialIndependentRepresentationDemandCandidate
+    -> ?
 
 ? = FirstAlgebraRepresentabilityCriterionNotYetDerived
 ```
@@ -299,7 +302,8 @@ These are boundary commitments, not a frozen ontology or closed primitive tuple.
 - `OrganizedPriorContentBoundaryNotDerived`: exact boundary between `E_-1` and
   organized prior content is not yet fully derived.
 - `FirstAlgebraRepresentabilityCriterionNotDerived`: the criterion that upgrades
-  stable repeatable regularity to first algebra representability remains open.
+  pre-algebraic representational-pressure candidates to first algebra
+  representability remains open.
 - `P0FunctionalMinimalityNotAudited`
   - Status: `DEFERRED_UNTIL_POSTALGEBRAIC_RETROSPECTIVE_AUDIT`
   - Note: prior-information necessity is given; minimal internal/functional
@@ -336,6 +340,59 @@ Audit-position clarification:
 
 - Philosophical/theoretical analysis of candidate preconditions is allowed now.
 - Proof that a candidate set is minimal and irreducible remains
+  `DEFERRED_UNTIL_POSTALGEBRAIC_RETROSPECTIVE_AUDIT`.
+
+### First Algebra Representability — Falsifiable Boundary Candidate
+
+This subsection stays inside G−1 and remains boundary-law only.
+
+It does not claim that algebra is born, nor that a fully unified regularity or algebraic
+element has already been derived.
+
+Target form for this stage:
+
+```
+StableRepeatableRegularityCandidate
+  -> CaseBoundDescriptionInsufficientCandidate
+  -> MaterialIndependentRepresentationDemandCandidate
+  -> FirstAlgebraRepresentabilityCriterionNotYetDerived
+```
+
+Interpretive boundary for this target form:
+
+- Re-identifiable regularity across differentiated cases can pressure a
+  representation demand.
+- `CaseBoundDescriptionInsufficientCandidate != FirstAlgebraRepresentability`.
+- `MaterialIndependentRepresentationDemandCandidate != FirstAlgebraRepresentability`.
+- Pressure toward representation is not completed representation.
+
+Conservative non-equivalence guards:
+
+- `Repetition != FirstAlgebraicRepresentation`.
+- `Similarity != ProvenSingleRegularity`.
+- `RepeatableRegularity != IndependentRepresentationOfThatRegularity`.
+- `LinguisticCarrier != AlgebraicRepresentation`.
+- `CrossCaseReIdentification != ProvenUnifiedRegularity`.
+- `NeedForHigherRepresentation != AchievedHigherRepresentation`.
+- `FirstAlgebraRepresentability != G0Birth`.
+
+Refutation-question matrix (questioning only; no final derivation here):
+
+| Explanatory candidate | Piercing question |
+| --- | --- |
+| Prior persistence candidate | Can later encounter-effects be explained with no persistence that stays re-identifiable? |
+| Binding candidate | Is mere co-presence of prior and present sufficient without a binding relation? |
+| Re-identification candidate | Can recurrence be explained if each event is wholly new with nothing re-identifiable across cases? |
+| Carrier candidate | Can transportable linguistic expression be explained with no externally re-identifiable difference? |
+| Cross-case regularity candidate | Can a strictly case-bound description preserve what repeats across differentiated cases? |
+| Case-independence candidate | Can the shared part be represented without any degree of separation from its concrete cases? |
+
+Matrix output constraint:
+
+- Failure of a weaker explanatory model yields only
+  `CandidateNecessityForFurtherAudit`.
+- It does not yield a necessity certificate at G−1.
+- Minimality and irreducibility remain
   `DEFERRED_UNTIL_POSTALGEBRAIC_RETROSPECTIVE_AUDIT`.
 
 ### ForbiddenNextJumps
