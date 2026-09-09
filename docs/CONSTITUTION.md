@@ -220,6 +220,10 @@ E_-1 -> P_0^{given} -> Encounter -> FirstIntelligibleDifferentiationOrBindingCan
 ? = FirstAlgebraRepresentabilityCriterionNotYetDerived
 ```
 
+PR47 is an open-audit boundary update only: it records falsifiable pressure
+toward first algebra representability while leaving
+`FirstAlgebraRepresentabilityCriterionNotYetDerived` explicitly unresolved.
+
 Only after representational birth, recurrence is evidence-mode typed:
 
 ```
@@ -252,7 +256,11 @@ MIXED:     EMPIRICAL and FORMAL tracks both required; neither substitutes for th
 - `E_-1 != P_0`, and `ConditionOfPossibility != TruthGuarantee`.
 - `DifferenceCandidate != CertifiedResidual`; no residual before reconstruction
   capacity.
+- `AlgebraRepresentability != AlgebraNecessity`.
 - `FirstAlgebraRepresentability != G0Birth`.
+- `RepresentabilityCandidate != LicensedAlgebraBirth`.
+- `RepresentabilityPressure != RepresentabilityProof`.
+- `OpenAuditUpdate != CriterionClosure`.
 - Post-algebraic recurrence remains mode-typed (`EMPIRICAL/FORMAL/MIXED`) and
   is not reduced to residual-only flow.
 - G0+ remains valid in implementation; G−1 asserts epistemic precedence only.
@@ -300,51 +308,8 @@ These are boundary commitments, not a frozen ontology or closed primitive tuple.
 
 ### OpenAuditQuestions
 
-- `OrganizedPriorContentBoundaryNotDerived`: exact boundary between `E_-1` and
-  organized prior content is not yet fully derived.
 - `FirstAlgebraRepresentabilityCriterionNotDerived`: the criterion that upgrades
-  pre-algebraic representational-pressure candidates to first algebra
-  representability remains open.
-- `P0FunctionalMinimalityNotAudited`
-  - Status: `DEFERRED_UNTIL_POSTALGEBRAIC_RETROSPECTIVE_AUDIT`
-  - Note: prior-information necessity is given; minimal internal/functional
-    factorization remains open.
-- `P0AdmissionRightCriterionNotFullyDerived`: the criterion that decides whether
-  a concept belongs to `PriorContent`, `EnablingCondition`, `BornStructure`, or
-  `Unresolved` is now scoped but not yet closed as a complete inventory.
-
-### TheoreticalProgramBeforePostAlgebraicAudit
-
-This section freezes the *question form* for the next theoretical stage. It
-does not claim completion of derivation, minimality, or closure.
-
-- `NecessityOfUsablePriorInformationRelatedToReality = FOUNDATIONAL_GIVEN`.
-- `ExactFactorization(P_0) = OPEN`.
-- `FirstAlgebraRepresentabilityCriterionNotDerived` remains open.
-
-The immediate target is to separate three layers that must not be conflated:
-
-- `PriorContent`: what is already present in prior information.
-- `PriorAvailability`: what makes that prior content retrievable and usable.
-- `RealityBindingCapacity`: what makes usable prior content connectable to new
-  encountered reality.
-
-Boundary law for this stage:
-
-- `PriorContent != PriorAvailability`.
-- `PriorAvailability != RealityBindingCapacity`.
-- No item is declared primitive only because it appears early in explanation.
-
-Central open question (theoretical, not yet a derived criterion):
-
-- What is the minimal set of preconditions under which first intelligibility is
-  possible at all?
-
-Audit-position clarification:
-
-- Philosophical/theoretical analysis of candidate preconditions is allowed now.
-- Proof that a candidate set is minimal and irreducible remains
-  `DEFERRED_UNTIL_POSTALGEBRAIC_RETROSPECTIVE_AUDIT`.
+  stable repeatable regularity to first algebra representability remains open.
 
 ### First Algebra Representability — Falsifiable Boundary Candidate
 
