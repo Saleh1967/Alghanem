@@ -308,8 +308,47 @@ These are boundary commitments, not a frozen ontology or closed primitive tuple.
 
 ### OpenAuditQuestions
 
+- `OrganizedPriorContentBoundaryNotDerived`: exact boundary between `E_-1` and
+  organized prior content is not yet fully derived.
 - `FirstAlgebraRepresentabilityCriterionNotDerived`: the criterion that upgrades
   stable repeatable regularity to first algebra representability remains open.
+- `P0FunctionalMinimalityNotAudited`
+  - Status: `DEFERRED_UNTIL_POSTALGEBRAIC_RETROSPECTIVE_AUDIT`
+  - Note: prior-information necessity is given; minimal internal/functional
+    factorization remains open.
+
+### TheoreticalProgramBeforePostAlgebraicAudit
+
+This section freezes the *question form* for the next theoretical stage. It
+does not claim completion of derivation, minimality, or closure.
+
+- `NecessityOfUsablePriorInformationRelatedToReality = FOUNDATIONAL_GIVEN`.
+- `ExactFactorization(P_0) = OPEN`.
+- `FirstAlgebraRepresentabilityCriterionNotDerived` remains open.
+
+The immediate target is to separate three layers that must not be conflated:
+
+- `PriorContent`: what is already present in prior information.
+- `PriorAvailability`: what makes that prior content retrievable and usable.
+- `RealityBindingCapacity`: what makes usable prior content connectable to new
+  encountered reality.
+
+Boundary law for this stage:
+
+- `PriorContent != PriorAvailability`.
+- `PriorAvailability != RealityBindingCapacity`.
+- No item is declared primitive only because it appears early in explanation.
+
+Central open question (theoretical, not yet a derived criterion):
+
+- What is the minimal set of preconditions under which first intelligibility is
+  possible at all?
+
+Audit-position clarification:
+
+- Philosophical/theoretical analysis of candidate preconditions is allowed now.
+- Proof that a candidate set is minimal and irreducible remains
+  `DEFERRED_UNTIL_POSTALGEBRAIC_RETROSPECTIVE_AUDIT`.
 
 ### First Algebra Representability — Falsifiable Boundary Candidate
 
@@ -378,81 +417,6 @@ Matrix output constraint:
   `DEFERRED_UNTIL_POSTALGEBRAIC_RETROSPECTIVE_AUDIT`.
 - No-weaker closure, independent validation, reconstruction, and birth authority
   remain later/post-algebraic audit questions.
-
-### Post-PR47 Foundational Type-Discipline (scope-limited, docs-only)
-
-This subsection records a separate audit question from PR47's algebra
-representability boundary:
-
-```
-For each foundational candidate concept x, which role is licensed now:
-PriorContent(x), EnablingCondition(x), BornStructure(x), or Unresolved(x)?
-```
-
-Boundary rule:
-
-- `PriorContent != EnablingCondition != BornStructure`.
-- `Unresolved` is a protected audit status, not a defect.
-- Utility does not grant primitive status.
-- This subsection does not derive first algebra representability and does not
-  rewrite PR47's open chain.
-
-Classification test (order-preserving):
-
-1. If `x` is the kind of claim that can be true/false about encountered reality,
-   classify as `PriorContentCandidate`.
-2. Else, if `x` is not itself a reality-claim but is required to make use of
-   prior content in an encounter, classify as `EnablingConditionCandidate`.
-3. Else, if `x` appears only after comparison/naming/counting/measurement/
-   abstraction/judgment activity, classify as `BornStructureCandidate`.
-4. If none is currently derivable, classify as `UnresolvedCandidate`.
-
-Current scope target (retrospective reconstruction only):
-
-```
-Gamma_scope = "minimal reconstruction of first human intelligibility",
-excluding language-system birth, number-system birth, empirical-science
-method growth, judgment-rank systems, and post-algebraic authority.
-```
-
-Within this scope, the compressed functional core candidate is:
-
-```
-F_0 = <R, C, P; tau, beta>
-```
-
-- `R`: encountered reality under interpretation.
-- `C`: cognitively fit carrier (human implementation: fit brain).
-- `P`: usable prior information related to the encounter.
-- `tau`: transfer of reality-effect into the cognitive carrier.
-- `beta`: binding-use of transferred effect with prior information to yield
-  intelligibility.
-
-This remains scope-relative:
-
-- `Finality_(Gamma, W)` only, relative to tested weaker-model families.
-- `FunctionalMinimalCore != MetaphysicalAtomization`.
-- `NoClosedOPI0TupleAtGMinus1` remains in force.
-- `ExactOntologicalFactorization(P_0) = OPEN` remains in force.
-
-Membership condition for usable prior information in this scope:
-
-```
-p in P  iff  Prior(p) and Available(p) and RelatedToEncounter(p)
-```
-
-These are membership constraints, not additional primitive entities.
-
-Immediate typing consequences for this scope (non-exhaustive):
-
-- `PriorContent`: encounter-relevant prior information.
-- `EnablingCondition`: transfer-capacity (`tau`) and binding-capacity (`beta`);
-  preservation/availability/recall remain functional constraints, not
-  independent primitives.
-- `BornStructure`: naming systems, counting/number structures, measurement
-  systems, and higher epistemic ranking systems.
-- `Unresolved`: cause/condition/blocker schemas, space/time conceptual status,
-  part-whole, and classification status until separately derived.
 
 ### ForbiddenNextJumps
 
