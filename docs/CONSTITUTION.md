@@ -311,6 +311,149 @@ These are boundary commitments, not a frozen ontology or closed primitive tuple.
 - `FirstAlgebraRepresentabilityCriterionNotDerived`: the criterion that upgrades
   stable repeatable regularity to first algebra representability remains open.
 
+### First Algebra Representability — Falsifiable Boundary Candidate
+
+This subsection stays inside G−1 and remains boundary-law only.
+
+It does not claim that algebra is born, nor that a fully unified regularity or algebraic
+element has already been derived.
+
+Target form for this stage:
+
+```
+StableRepeatableRegularityCandidate
+  -> CaseBoundDescriptionInsufficientCandidate
+  -> ParticularInstanceIdentityInsufficientCandidate
+  -> RepresentativeIndependentStructuralDeterminationCandidate
+  -> FirstAlgebraRepresentabilityCriterionNotYetDerived
+```
+
+Interpretive boundary for this target form:
+
+- Re-identifiable regularity across differentiated cases can pressure a
+  representation demand.
+- `CaseBoundDescriptionInsufficientCandidate != FirstAlgebraRepresentability`.
+- `ParticularInstanceIdentityInsufficientCandidate != FirstAlgebraRepresentability`.
+- `RepresentativeIndependentStructuralDeterminationCandidate != FirstAlgebraRepresentability`.
+- Pressure toward representation is not completed representation.
+- The candidate pressure is: identity of the revealing instance is insufficient
+  to determine the result; structural determination must survive across
+  independently differentiated representatives.
+
+Conservative non-equivalence guards:
+
+- `Repetition != FirstAlgebraicRepresentation`.
+- `Similarity != ProvenSingleRegularity`.
+- `RepeatableRegularity != IndependentRepresentationOfThatRegularity`.
+- `CrossCaseReIdentification != ProvenUnifiedRegularity`.
+- `CaseBoundDescription != RepresentativeIndependentStructuralDetermination`.
+- `DependenceOnParticularInstanceIdentity != FirstAlgebraRepresentability`.
+- `TrivialOneExampleAbstraction != FirstAlgebraRepresentability`.
+- `NeedForHigherRepresentation != AchievedHigherRepresentation`.
+- `AlgebraRepresentability != AlgebraNecessity`.
+- `FirstAlgebraRepresentability != G0Birth`.
+- `RepresentabilityCandidate != LicensedAlgebraBirth`.
+
+Refutation-question matrix (questioning only; no final derivation here):
+
+Rows for prior persistence, binding capacity, and linguistic-carrier analysis
+belong to first-intelligibility/language sections, not this algebra
+representability boundary subsection.
+
+| Explanatory candidate | Piercing question |
+| --- | --- |
+| Repetition-only candidate | Can mere repetition, with no unified regularity claim, explain the observed invariance? |
+| Similarity-only candidate | Can loose similarity explain the observations without one structurally unified regularity? |
+| Case-bound description candidate | Can a strictly case-bound description preserve what repeats across differentiated cases? |
+| Particular-instance-identity dependence candidate | If representative identity is changed while structural role-pattern is preserved, does determination collapse? |
+| Structural nondeterminacy candidate | Can the same role-pattern map to incompatible determinations without violating the candidate boundary? |
+| Trivial one-example abstraction candidate | Can a one-example or one-representative abstraction stand without independent differentiated support? |
+
+Matrix output constraint:
+
+- Failure of a weaker explanatory model yields only
+  `CandidateNecessityForFurtherAudit`.
+- It does not yield a necessity certificate at G−1.
+- Minimality and irreducibility remain
+  `DEFERRED_UNTIL_POSTALGEBRAIC_RETROSPECTIVE_AUDIT`.
+- No-weaker closure, independent validation, reconstruction, and birth authority
+  remain later/post-algebraic audit questions.
+
+### Post-PR47 Foundational Type-Discipline (scope-limited, docs-only)
+
+This subsection records a separate audit question from PR47's algebra
+representability boundary:
+
+```
+For each foundational candidate concept x, which role is licensed now:
+PriorContent(x), EnablingCondition(x), BornStructure(x), or Unresolved(x)?
+```
+
+Boundary rule:
+
+- `PriorContent != EnablingCondition != BornStructure`.
+- `Unresolved` is a protected audit status, not a defect.
+- Utility does not grant primitive status.
+- This subsection does not derive first algebra representability and does not
+  rewrite PR47's open chain.
+
+Classification test (order-preserving):
+
+1. If `x` is the kind of claim that can be true/false about encountered reality,
+   classify as `PriorContentCandidate`.
+2. Else, if `x` is not itself a reality-claim but is required to make use of
+   prior content in an encounter, classify as `EnablingConditionCandidate`.
+3. Else, if `x` appears only after comparison/naming/counting/measurement/
+   abstraction/judgment activity, classify as `BornStructureCandidate`.
+4. If none is currently derivable, classify as `UnresolvedCandidate`.
+
+Current scope target (retrospective reconstruction only):
+
+```
+Gamma_scope = "minimal reconstruction of first human intelligibility",
+excluding language-system birth, number-system birth, empirical-science
+method growth, judgment-rank systems, and post-algebraic authority.
+```
+
+Within this scope, the compressed functional core candidate is:
+
+```
+F_0 = <R, C, P; tau, beta>
+```
+
+- `R`: encountered reality under interpretation.
+- `C`: cognitively fit carrier (human implementation: fit brain).
+- `P`: usable prior information related to the encounter.
+- `tau`: transfer of reality-effect into the cognitive carrier.
+- `beta`: binding-use of transferred effect with prior information to yield
+  intelligibility.
+
+This remains scope-relative:
+
+- `Finality_(Gamma, W)` only, relative to tested weaker-model families.
+- `FunctionalMinimalCore != MetaphysicalAtomization`.
+- `NoClosedOPI0TupleAtGMinus1` remains in force.
+- `ExactOntologicalFactorization(P_0) = OPEN` remains in force.
+
+Membership condition for usable prior information in this scope:
+
+```
+p in P  iff  Prior(p) and Available(p) and RelatedToEncounter(p)
+```
+
+These are membership constraints, not additional primitive entities.
+
+Immediate typing consequences for this scope (non-exhaustive):
+
+- `PriorContent`: encounter-relevant prior information.
+- `EnablingCondition`: transfer-capacity (`tau`) and binding-capacity (`beta`);
+  preservation/availability/recall remain functional constraints, not
+  independent primitives.
+- `BornStructure`: naming systems, counting/number structures, measurement
+  systems, and higher epistemic ranking systems.
+- `Unresolved`: cause/condition/blocker schemas, space/time conceptual status,
+  part-whole, and classification status until separately derived.
+
 ### ForbiddenNextJumps
 
 - Do not introduce runtime/classes/enums/gates/evaluator machinery under G−1.
