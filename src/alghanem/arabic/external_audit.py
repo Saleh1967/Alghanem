@@ -96,6 +96,7 @@ class ExternalAuditResult:
     نتيجة_التدقيق_الخارجي: str
     سبب: str
     النموذج_المختبر: str
+    عدد_الشواهد: int
     مخروط_الأضعف_المشتق: tuple[str, ...]
     الإسقاطات_المنافسة_المشتقة: tuple[str, ...]
     عدد_القراءات_المنافسة: int
@@ -111,6 +112,7 @@ class ExternalAuditResult:
             "نتيجة_التدقيق_الخارجي": self.نتيجة_التدقيق_الخارجي,
             "سبب": self.سبب,
             "النموذج_المختبر": self.النموذج_المختبر,
+            "عدد_الشواهد": self.عدد_الشواهد,
             "مخروط_الأضعف_المشتق": list(self.مخروط_الأضعف_المشتق),
             "الإسقاطات_المنافسة_المشتقة": list(self.الإسقاطات_المنافسة_المشتقة),
             "عدد_القراءات_المنافسة": self.عدد_القراءات_المنافسة,
@@ -178,6 +180,26 @@ def _require_text(value: Any, field_name: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ExternalAuditError(f"{field_name} must be non-blank text")
     return value
+
+
+def read_declared_witnesses(card: dict[str, Any]) -> tuple[str, ...]:
+    """Return the card's declared witnesses, structurally validated only.
+
+    The field is optional at this stage: a card without `الأدلة` is still a
+    well-formed card and yields an empty tuple. When present, it must be a
+    list of non-blank text entries.
+
+    This reads the declared witnesses; it does not classify them, weigh them,
+    relate them to the tested model, or let them influence any audit outcome
+    (`DeclaredWitness != AssessedEvidence`). Their only effect is the
+    reported `عدد_الشواهد` count.
+    """
+    raw_witnesses = card.get("الأدلة")
+    if raw_witnesses is None:
+        return ()
+    if not isinstance(raw_witnesses, list):
+        raise ExternalAuditError("الأدلة must be a list of non-blank text")
+    return tuple(_require_text(witness, "الأدلة[]") for witness in raw_witnesses)
 
 
 def _read_json_yaml(path: Path) -> dict[str, Any]:
@@ -279,6 +301,7 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
     card_path = Path(path)
     card = _read_json_yaml(card_path)
     specification = build_birth_spec_from_card(card)
+    declared_witnesses = read_declared_witnesses(card)
 
     alternatives = card.get("القراءات_المنافسة")
     if not isinstance(alternatives, list):
@@ -323,6 +346,7 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
             نتيجة_التدقيق_الخارجي="DEFER_التدقيق",
             سبب=("تعذر الحسم الخارجي: علاقة المنافسة/الأضعف أو إغلاق Down_E غير مكتمل"),
             النموذج_المختبر=specification.birth_query.test_model,
+            عدد_الشواهد=len(declared_witnesses),
             مخروط_الأضعف_المشتق=specification.frozen_weaker_models,
             الإسقاطات_المنافسة_المشتقة=specification.competing_projections,
             عدد_القراءات_المنافسة=len(parsed_alternatives),
@@ -338,6 +362,7 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
         نتيجة_التدقيق_الخارجي="PASS_التدقيق",
         سبب="لا توجد علاقة منافسة حاجبة في البطاقة الخارجية",
         النموذج_المختبر=specification.birth_query.test_model,
+        عدد_الشواهد=len(declared_witnesses),
         مخروط_الأضعف_المشتق=specification.frozen_weaker_models,
         الإسقاطات_المنافسة_المشتقة=specification.competing_projections,
         عدد_القراءات_المنافسة=len(parsed_alternatives),

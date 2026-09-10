@@ -93,6 +93,12 @@ external audit status (`نتيجة_التدقيق_الخارجي`), derives
 `مخروط_الأضعف_المشتق` from the frozen projection poset (rejecting
 caller-declared weaker cones), reports all competing readings, and exposes
 explicit `حالة_إغلاق_Down_E`/`سبب_حالة_إغلاق_Down_E` fields.
+An optional `الأدلة` list of non-blank declared witnesses is now read and
+structurally validated, and its size is reported as `عدد_الشواهد`. This is a
+count only: `DeclaredWitness != AssessedEvidence`. The auditor does not
+classify witnesses, relate them to the tested model, or let them affect
+`نتيجة_التدقيق_الخارجي`; a card without the field is still well-formed and
+counts zero.
 `علاقة_بالنموذج_المختبر` is a closed vocabulary — `غير_متعينة`,
 `أضعف_صوريًّا`, `مكافئ_صوريًّا`, `غير_قابل_للمقارنة` — and any other text
 (a misspelling or an invented term) is rejected instead of silently counting

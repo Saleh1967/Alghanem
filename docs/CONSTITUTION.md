@@ -316,6 +316,21 @@ These are boundary commitments, not a frozen ontology or closed primitive tuple.
   - Status: `DEFERRED_UNTIL_POSTALGEBRAIC_RETROSPECTIVE_AUDIT`
   - Note: prior-information necessity is given; minimal internal/functional
     factorization remains open.
+- `ThirdTransmittedEvidenceModeNotDecided`
+  - Status: `OPEN`
+  - Question: is there a third, transmission-based evidence path independent of
+    `EMPIRICAL` and `FORMAL`, in which a claim rests on *what was transmitted or
+    reported* rather than on a measured residual or an exhaustive formal proof?
+  - Standing evidence: the only concrete support currently in this repository is
+    empirical, not theoretical. Two of the three audit cards under
+    `examples/external_audit/` declare witnesses that are records of a
+    *disagreement between sources* ("خلاف نحوي مُسجَّل", "تنازع مُسجَّل"), not
+    derivations from a text. Those witnesses fit neither `EMPIRICAL` (no
+    measurement run) nor `FORMAL` (no exhaustive proof over a closed domain).
+  - Not decided here: this question is recorded, not answered. `EvidenceMode`
+    is unchanged, and `evidence_requirements` is part of frozen experiment
+    content identity, so no mode may be added without a dedicated milestone
+    that addresses that content-identity impact.
 
 ### TheoreticalProgramBeforePostAlgebraicAudit
 
@@ -479,6 +494,24 @@ residual is shown to force it: see `G0.F`'s `DerivedRelationDoesNotBirth` and
 `NoTraditionalSchemaBeforeFactorization` below. (`kernel/binding.py`'s
 `ClaimEvidenceBinding` is an unrelated kernel-level evidence/claim binding,
 not an Arabic linguistic relation, and is out of scope of this paragraph.)
+
+#### Recorded external-source conflict (not a law, not a relaxation)
+
+An external jurisprudential source consulted while reviewing this protocol
+licenses answering a question with *more* than was asked ("الجواب بأكثر مما
+سُئل"): a valid answer may legitimately settle matters beyond the question's
+own subject. This directly conflicts with
+`NoRicherStructureBeforeLowerOpenResidualClosure` above, which blocks
+examination of a richer structure `q` while any `p ∈ Down_E(q)` has an open
+residual, and with `TraditionalNamingOnlyAfterFreezeAndE0`, which forbids
+naming anything a residual has not forced.
+
+The conflict is recorded, not resolved, and neither side is weakened to fit
+the other. In this repository the constitutional laws govern: an audit or
+experiment may not answer beyond the structure its own query and prerequisite
+cone license, regardless of that external precedent. This paragraph exists so
+that the conflict cannot later be presented as agreement, and so that the
+external precedent cannot be cited as grounds for relaxing either law.
 
 ### G0.1 — Birth experiment contract
 
