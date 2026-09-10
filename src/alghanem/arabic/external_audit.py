@@ -216,9 +216,7 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
             "القراءات_المنافسة[].علاقة_بالنموذج_المختبر",
         )
         parsed_alternatives.append((reading, relation))
-    unresolved = [
-        pair for pair in parsed_alternatives if pair[1] == "غير_متعينة"
-    ]
+    unresolved = [pair for pair in parsed_alternatives if pair[1] == "غير_متعينة"]
     down_e_status, down_e_reason = _assess_down_e_closure(
         card,
         weaker_cone=specification.frozen_weaker_models,
@@ -229,9 +227,7 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
         return ExternalAuditResult(
             الجهة="مدقق_خارجي",
             نتيجة_التدقيق_الخارجي="DEFER_التدقيق",
-            سبب=(
-                "تعذر الحسم الخارجي: علاقة المنافسة/الأضعف أو إغلاق Down_E غير مكتمل"
-            ),
+            سبب=("تعذر الحسم الخارجي: علاقة المنافسة/الأضعف أو إغلاق Down_E غير مكتمل"),
             النموذج_المختبر=specification.birth_query.test_model,
             مخروط_الأضعف_المشتق=specification.frozen_weaker_models,
             الإسقاطات_المنافسة_المشتقة=specification.competing_projections,
