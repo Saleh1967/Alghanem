@@ -15,6 +15,7 @@ from alghanem.arabic import (
     LOCAL_CANONICALIZATION_VERSION,
     SOURCE_CANONICALIZATION_VERSION,
     SOURCE_DECLARED_CONTENT_ID,
+    SOURCE_DIGEST_COVERED_FIELDS,
     SOURCE_LEDGER_ID,
     SOURCE_PROJECT,
     SOURCE_VOCABULARY_ID,
@@ -253,3 +254,14 @@ def test_no_kernel_module_reads_the_import_contract() -> None:
         assert source is not None and source.origin is not None
         with open(source.origin, encoding="utf-8") as handle:
             assert "imported_feature_vocabulary" not in handle.read()
+
+
+def test_the_local_identity_covers_strictly_more_than_the_source_digest() -> None:
+    assert set(SOURCE_DIGEST_COVERED_FIELDS) == {"root", "origin_type"}
+    entry_fields = {item.name for item in fields(ImportedVocabularyEntry)}
+    assert set(SOURCE_DIGEST_COVERED_FIELDS) < entry_fields
+    original = ImportedVocabularyContentVerifier.verify(vocabulary())
+    uncovered = (replace(entries()[0], raw_category="JAMID"),) + entries()[1:]
+    changed = ImportedVocabularyContentVerifier.verify(vocabulary(entries=uncovered))
+    assert changed.local_content_id.digest != original.local_content_id.digest
+    assert changed.source_declared_content_id == original.source_declared_content_id

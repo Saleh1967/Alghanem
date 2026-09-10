@@ -460,7 +460,13 @@ frame assuming them would be an abstraction ahead of its referent. The source
 digest is recorded and pinned as declared; re-deriving it *here* would require
 the source's byte-precise canonicalization schema and its full payload, neither
 of which is in this repository, and that gap is stated in the module rather than
-papered over.
+papered over. What *is* known about that digest is recorded and enforced: by the
+export generator's own self-check, the source content id is computed over only
+each entry's `root` and `origin_type`, so `raw_category` and `batch_note` can
+change without moving it. The Alghanem-side identity covers every entry field,
+making it strictly finer rather than equivalent — an import-time guard asserts
+that `SOURCE_DIGEST_COVERED_FIELDS` is a proper subset of the entry fields, so
+the two digests can never be read as attesting the same thing.
 
 G0.F declares, ahead of any runtime, that factorization is the general case
 of birth (a domain may close with one factor, several jointly-necessary

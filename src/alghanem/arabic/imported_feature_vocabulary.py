@@ -134,6 +134,15 @@ IMPORTED_VOCABULARY_IS_NOT_BORN_NOTE: Final = (
     "والاستيراد لا يقوم مقامها"
 )
 
+SOURCE_DIGEST_COVERED_FIELDS: Final = ("root", "origin_type")
+
+SOURCE_DIGEST_FIELD_COVERAGE_NOTE: Final = (
+    "بصمة المصدر تغطّي حقلين فقط من كل مُدخَل (الجذر ونوع الأصل) بشهادة "
+    "مولِّد التصدير نفسه، فالتصنيف الخام وملاحظة الدفعة خارج تغطيتها: يتغيّران "
+    "دون أن تتغيّر؛ وبصمة الغانم المحلّية تغطّي حقول المُدخَل كلَّها، فهي أدقّ "
+    "لا مساوية، والمساواة بينهما خطأٌ في قراءة ما تشهد به كلٌّ منهما"
+)
+
 SOURCE_DIGEST_REDERIVATION_NOTE: Final = (
     "بصمة المصدر (gflk.canonical.v1) مُسجَّلة كما صُرِّح بها، وإعادة اشتقاقها "
     "هنا تحتاج مخطَّط ترميزها بدقّة البايت وحمولته الكاملة؛ فحتى يُودَعا في "
@@ -543,6 +552,15 @@ _assert_no_fields_matching(
     "an imported entry may not carry a result, verdict, or birth field",
 )
 
+_ENTRY_FIELD_NAMES: Final = frozenset(
+    item.name for item in fields(ImportedVocabularyEntry)
+)
+if not frozenset(SOURCE_DIGEST_COVERED_FIELDS) < _ENTRY_FIELD_NAMES:
+    raise RuntimeError(  # pragma: no cover - guard
+        "the local content identity must cover strictly more entry fields than "
+        "the source digest does, so the two are never read as equivalent"
+    )
+
 
 __all__ = [
     "EXPECTED_DISTRIBUTION",
@@ -554,6 +572,8 @@ __all__ = [
     "LOCAL_CANONICALIZATION_VERSION",
     "SOURCE_CANONICALIZATION_VERSION",
     "SOURCE_DECLARED_CONTENT_ID",
+    "SOURCE_DIGEST_COVERED_FIELDS",
+    "SOURCE_DIGEST_FIELD_COVERAGE_NOTE",
     "SOURCE_DIGEST_REDERIVATION_NOTE",
     "SOURCE_LEDGER_ID",
     "SOURCE_PROJECT",
