@@ -447,9 +447,7 @@ def test_missing_witness_field_is_accepted_and_counted_as_zero(
 def test_every_reported_field_is_covered_by_the_witness_stability_check() -> None:
     result = audit_card(_example_card("man_2_255.yaml"))
 
-    assert set(result.to_dict()) == {
-        field.name for field in dataclasses.fields(result)
-    }
+    assert set(result.to_dict()) == {field.name for field in dataclasses.fields(result)}
 
 
 @pytest.mark.parametrize(
