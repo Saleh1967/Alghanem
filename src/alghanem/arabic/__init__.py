@@ -1,5 +1,19 @@
 """Arabic symbolic-encoding foundations."""
 
+from .comprehension_defect import (
+    CLOSED_VOCABULARY,
+    DECLARABLE_VALUES,
+    NOT_APPLICABLE,
+    PRIORITY_ARGUMENTS,
+    SCOPE_NOTE,
+    ComprehensionDefectCause,
+    ComprehensionDefectError,
+    PriorityArgument,
+    canonical_defect_classification,
+    compare_defect_priority,
+    defect_priority,
+    priority_argument,
+)
 from .encoding import (
     DistinctSurfaceAtomCandidateProjection,
     InterventionType,
@@ -27,11 +41,16 @@ from .encoding import (
 )
 
 __all__ = [
+    "CLOSED_VOCABULARY",
+    "ComprehensionDefectCause",
+    "ComprehensionDefectError",
+    "DECLARABLE_VALUES",
     "DistinctSurfaceAtomCandidateProjection",
     "InterventionType",
     "MeasurementProtocolSpec",
     "MeasurementRunIdentity",
     "MeasurementRunManifest",
+    "NOT_APPLICABLE",
     "NormalizationAudit",
     "NormalizationEquivalenceClass",
     "NormalizationEquivalenceProjection",
@@ -42,7 +61,10 @@ __all__ = [
     "ObservationAuditLedger",
     "ObservationLedgerManifest",
     "ObservationProvenance",
+    "PRIORITY_ARGUMENTS",
+    "PriorityArgument",
     "RawSurfaceObservation",
+    "SCOPE_NOTE",
     "SurfaceAtomCandidate",
     "SurfaceAtomIntervention",
     "SurfaceAtomInterventionAudit",
@@ -50,4 +72,8 @@ __all__ = [
     "SurfaceInterventionAuditTable",
     "SurfaceInterventionTrace",
     "SurfaceNormalization",
+    "canonical_defect_classification",
+    "compare_defect_priority",
+    "defect_priority",
+    "priority_argument",
 ]

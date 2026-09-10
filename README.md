@@ -146,6 +146,28 @@ an invisible character can no longer turn a deferred relation into a passing
 one; the key is used only for comparison and never replaces the card's own
 reported text.
 
+Each competing reading may also carry an optional `سبب_الإخلال_بالفهم`, a
+second closed vocabulary drawn from the usuli list of causes of defective
+comprehension — `اشتراك`, `نقل`, `مجاز`, `إضمار`, `تخصيص` — plus the explicit
+`لا_ينطبق`. `src/alghanem/arabic/comprehension_defect.py` also fixes the
+documented priority order `تخصيص > مجاز = إضمار > نقل > اشتراك`, with a full
+textual argument and a named source recorded for each of the ten pairwise
+comparisons, so no rank in that order rests on estimation. Two limits are
+recorded deliberately. First, `DeclaredDefectCause != AssessedRelation`: the
+classification is reported as `تصنيف_أسباب_الإخلال_بالفهم` and moves nothing
+— it never enters the derived `BirthExperimentSpecification`, never changes
+`نتيجة_التدقيق_الخارجي`, and neither `IndependentClosureGate` nor
+`BirthVerdictGate` reads it. Second, the framework addresses **ambiguity of
+meaning in a fixed text**, not **multiplicity of recited readings** and not
+**weakness of transmission**; so a card whose dispute is over the wording
+itself, or over whether a report is `آحاد` rather than `متواتر`, falls outside
+it by construction. Its partial applicability to the example cards is
+therefore an expected structural result, not a gap: across the four cards only
+three of eight competing readings are described by one of the five causes
+(`تخفيف_إن_وضمير_شأن` in `hadhan_20_63.yaml` as `إضمار`, and the `مَن`/`ما`
+readings in `man_2_255.yaml` and `maa_2_197.yaml` as `اشتراك`); the remaining
+five are declared `لا_ينطبق` rather than forced into a label.
+
 G0.F declares, ahead of any runtime, that factorization is the general case
 of birth (a domain may close with one factor, several jointly-necessary
 factors, or none) and that fractality is a law, not a folder layout: a
