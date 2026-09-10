@@ -108,7 +108,22 @@ or rank/complexity runtime exists yet. A non-linguistic
 `InterventionOperationIsNotOntology` and
 `SyntheticInterventionMayGenerateHypothesisOnly` it is an explicit,
 non-exhaustive experimental tool that can license at most a hypothesis, never
-a `BirthGate` verdict on its own.
+a `BirthGate` verdict on its own. That "at most a hypothesis" is no longer
+prose only: `src/alghanem/arabic/encoding/provenance_genus.py` derives an
+`EvidenceProvenanceGenus` (`MEASURED`, `SYNTHETIC`, and deliberately no
+`MIXED`) from the artifact's own type rather than from any caller-written
+label — `DeclaredProvenanceLabel != DerivedProvenanceGenus` — so an
+intervention result cannot enter a `MeasuredContrastSet`, measured evidence
+cannot enter a `HypothesisResidual`, and only `EvidenceProvenanceGate` may
+issue a classification at all. The module deliberately contains no rank, no
+promotion, and no freeze: birth eligibility needs a measured contrast that
+survives every licensed weaker projection *and* replicates in a second
+independent measurement run, and no authority here assesses either, so
+`HypothesisResidual.is_birth_eligible` is structurally `False` and counting
+measured sources may not stand in for that assessment. This genus is
+deliberately *not* named `EvidenceGenus`, which already names an unrelated
+linguistic-evidence distinction in
+`src/alghanem/arabic/probe_preregistration.py`.
 
 For bounded card-level review, the repository also includes
 `src/alghanem/arabic/external_audit.py` with a golden example at
