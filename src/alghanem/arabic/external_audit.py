@@ -8,7 +8,8 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
+from unicodedata import category, normalize
 
 from alghanem.kernel.birth import (
     BirthExperimentSpecification,
@@ -21,6 +22,37 @@ from alghanem.kernel.birth import (
 
 class ExternalAuditError(ValueError):
     """Raised when the external audit card is malformed."""
+
+
+_TATWEEL: Final = "\u0640"
+_LETTER_FOLDING: Final = {
+    "\u0622": "\u0627",
+    "\u0623": "\u0627",
+    "\u0625": "\u0627",
+    "\u0671": "\u0627",
+    "\u0649": "\u064a",
+    "\u0629": "\u0647",
+}
+_UNDETERMINED_RELATION: Final = "غير_متعينة"
+_CLOSED_STATUS: Final = "مغلق"
+
+
+def comparison_key(value: str) -> str:
+    """Return the orthography-insensitive key used to compare card text.
+
+    The key applies the repository's `NFC` normalization form, drops every
+    combining mark, invisible formatting character, and `TATWEEL`, and folds
+    equivalent `ALEF`, `ALEF MAQSURA`, and `TEH MARBUTA` surface forms. It
+    exists only so that comparisons do not silently depend on optional
+    diacritics or invisible characters; it asserts no linguistic identity and
+    never replaces the card's own text in any reported field.
+    """
+    unmarked = "".join(
+        character
+        for character in normalize("NFC", value)
+        if category(character) not in {"Mn", "Cf"} and character != _TATWEEL
+    )
+    return "".join(_LETTER_FOLDING.get(character, character) for character in unmarked)
 
 
 @dataclass(frozen=True, slots=True)
@@ -74,20 +106,28 @@ def _assess_down_e_closure(
             "غير_متعينة",
             "لا يوجد توثيق لإغلاق سوابق Down_E المطلوبة",
         )
-    closure_by_model: dict[str, str] = {}
+    closure_by_model: dict[str, tuple[str, str]] = {}
     for entry in raw_entries:
         if not isinstance(entry, dict):
             raise ExternalAuditError("اغلاق_سوابق_Down_E entries must be mappings")
         model = _require_text(entry.get("نموذج"), "اغلاق_سوابق_Down_E[].نموذج")
         status = _require_text(entry.get("حالة"), "اغلاق_سوابق_Down_E[].حالة")
-        closure_by_model[model] = status
-    if set(closure_by_model) != set(weaker_cone):
+        closure_by_model[comparison_key(model)] = (model, status)
+    cone_keys = {comparison_key(model) for model in weaker_cone}
+    if (
+        set(closure_by_model) != cone_keys
+        or len(cone_keys) != len(weaker_cone)
+        or len(closure_by_model) != len(raw_entries)
+    ):
         return (
             "غير_متعينة",
             "توثيق إغلاق Down_E لا يطابق مخروط السوابق الأضعف المشتق بدقة",
         )
+    closed_key = comparison_key(_CLOSED_STATUS)
     non_closed = sorted(
-        model for model, status in closure_by_model.items() if status != "مغلق"
+        model
+        for model, status in closure_by_model.values()
+        if comparison_key(status) != closed_key
     )
     if non_closed:
         return (
@@ -216,7 +256,11 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
             "القراءات_المنافسة[].علاقة_بالنموذج_المختبر",
         )
         parsed_alternatives.append((reading, relation))
-    unresolved = [pair for pair in parsed_alternatives if pair[1] == "غير_متعينة"]
+    unresolved = [
+        pair
+        for pair in parsed_alternatives
+        if comparison_key(pair[1]) == comparison_key(_UNDETERMINED_RELATION)
+    ]
     down_e_status, down_e_reason = _assess_down_e_closure(
         card,
         weaker_cone=specification.frozen_weaker_models,

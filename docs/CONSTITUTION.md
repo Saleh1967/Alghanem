@@ -515,7 +515,13 @@ result (`نتيجة_التدقيق_الخارجي`) for communication/audit trac
 must not be interpreted as issuing `BirthVerdict` or freeze authority. Its
 weaker-prerequisite cone is derived from the experiment's frozen projection
 poset, not caller-declared, and it may defer when competing-relation typing or
-`Down_E` closure documentation is unresolved.
+`Down_E` closure documentation is unresolved. Because a surface spelling is not
+an epistemic distinction, every card comparison runs over an
+orthography-insensitive key rather than raw text: optional diacritics,
+invisible formatting characters, `TATWEEL`, and equivalent `ALEF`/`ALEF
+MAQSURA`/`TEH MARBUTA` forms may not decide whether a relation counts as
+determined or a `Down_E` prerequisite counts as closed. The key governs
+comparison only; reported fields keep the card's own spelling.
 
 ### G0.2a.3 — Evidence acquisition authority
 

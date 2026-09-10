@@ -7,6 +7,7 @@ from alghanem.arabic.external_audit import (
     ExternalAuditError,
     audit_card,
     build_birth_spec_from_card,
+    comparison_key,
 )
 
 
@@ -150,3 +151,127 @@ def test_external_audit_defers_for_maa_2_197_card() -> None:
     assert result.عدد_القراءات_المنافسة == 1
     assert result.عدد_العلاقات_غير_المتعينة == 1
     assert result.حالة_إغلاق_Down_E == "غير_متعينة"
+
+
+def _relation_card(relation: str) -> dict[str, object]:
+    return {
+        "معرف_السؤال": "q",
+        "معرف_الفرضية": "h",
+        "الفرضية": "x",
+        "النموذج_المختبر": "A",
+        "القراءات_المنافسة": [{"قراءة": "B", "علاقة_بالنموذج_المختبر": relation}],
+        "تعريف_التجربة": {
+            "experiment_id": "e",
+            "revision_id": "r1",
+            "evidence_mode": "FORMAL",
+            "domain": "d",
+            "projections": ["A", "B"],
+            "strict_relations": [],
+            "residual_definition_id": "res",
+            "residual_definition": "residual",
+            "closure_criterion_id": "c",
+            "closure_criterion": "close",
+            "evidence_requirements": "req",
+        },
+    }
+
+
+@pytest.mark.parametrize(
+    "relation",
+    [
+        "غير_متعينة",
+        "غير_متعيّنة",
+        "غَيْر_متعينة",
+        "غيــر_متعينة",
+        "غير_متعينه",
+        "غير_متعينة\u200f",
+    ],
+)
+def test_undetermined_relation_is_orthography_insensitive(
+    tmp_path: Path, relation: str
+) -> None:
+    path = tmp_path / "relation.json"
+    path.write_text(
+        json.dumps(_relation_card(relation), ensure_ascii=False), encoding="utf-8"
+    )
+
+    result = audit_card(path)
+
+    assert result.نتيجة_التدقيق_الخارجي == "DEFER_التدقيق"
+    assert result.عدد_العلاقات_غير_المتعينة == 1
+    assert result.حالة_إغلاق_Down_E == "غير_متعينة"
+    assert result.تفاصيل_القراءات_المنافسة == (("B", relation),)
+
+
+def test_determined_relation_is_still_distinguished(tmp_path: Path) -> None:
+    path = tmp_path / "determined.json"
+    path.write_text(
+        json.dumps(_relation_card("منافس_غير_أضعف"), ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    result = audit_card(path)
+
+    assert result.نتيجة_التدقيق_الخارجي == "PASS_التدقيق"
+    assert result.عدد_العلاقات_غير_المتعينة == 0
+
+
+def _down_e_card(model: str, status: str) -> dict[str, object]:
+    return {
+        "معرف_السؤال": "q",
+        "معرف_الفرضية": "h",
+        "الفرضية": "x",
+        "النموذج_المختبر": "أضعف",
+        "القراءات_المنافسة": [],
+        "تعريف_التجربة": {
+            "experiment_id": "e",
+            "revision_id": "r1",
+            "evidence_mode": "FORMAL",
+            "domain": "d",
+            "projections": ["أضعف", "اضعف_سابق"],
+            "strict_relations": [["اضعف_سابق", "أضعف"]],
+            "residual_definition_id": "res",
+            "residual_definition": "residual",
+            "closure_criterion_id": "c",
+            "closure_criterion": "close",
+            "evidence_requirements": "req",
+        },
+        "اغلاق_سوابق_Down_E": [{"نموذج": model, "حالة": status}],
+    }
+
+
+@pytest.mark.parametrize("model", ["اضعف_سابق", "أضعف_سابق", "آضعف_سابق"])
+@pytest.mark.parametrize("status", ["مغلق", "مغلَق", "مُغْلَق"])
+def test_down_e_closure_is_orthography_insensitive(
+    tmp_path: Path, model: str, status: str
+) -> None:
+    path = tmp_path / "down_e.json"
+    path.write_text(
+        json.dumps(_down_e_card(model, status), ensure_ascii=False), encoding="utf-8"
+    )
+
+    result = audit_card(path)
+
+    assert result.مخروط_الأضعف_المشتق == ("اضعف_سابق",)
+    assert result.حالة_إغلاق_Down_E == "مغلق"
+    assert result.نتيجة_التدقيق_الخارجي == "PASS_التدقيق"
+
+
+def test_down_e_non_closed_status_reports_the_card_spelling(tmp_path: Path) -> None:
+    path = tmp_path / "down_e_open.json"
+    path.write_text(
+        json.dumps(_down_e_card("أضعف_سابق", "غير_مغلق"), ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    result = audit_card(path)
+
+    assert result.حالة_إغلاق_Down_E == "غير_مغلق"
+    assert "أضعف_سابق" in result.سبب_حالة_إغلاق_Down_E
+
+
+def test_comparison_key_preserves_distinct_readings() -> None:
+    assert comparison_key("غير_متعيّنة") == comparison_key("غير_متعينة")
+    assert comparison_key("منافس_غير_أضعف") != comparison_key("غير_متعينة")
+    assert comparison_key("أولى") == comparison_key("اولي")
+    assert comparison_key("غير_متعينة") != comparison_key("غير_متعينى")

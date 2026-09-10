@@ -92,7 +92,13 @@ non-authoritative (`ExternalAuditor != KernelAuthority`): it emits only
 external audit status (`نتيجة_التدقيق_الخارجي`), derives
 `مخروط_الأضعف_المشتق` from the frozen projection poset (rejecting
 caller-declared weaker cones), reports all competing readings, and exposes
-explicit `حالة_إغلاق_Down_E`/`سبب_حالة_إغلاق_Down_E` fields.
+explicit `حالة_إغلاق_Down_E`/`سبب_حالة_إغلاق_Down_E` fields. Card text is
+compared through `comparison_key`, an orthography-insensitive key (NFC plus
+removal of combining marks, invisible formatting characters, and `TATWEEL`,
+plus `ALEF`/`ALEF MAQSURA`/`TEH MARBUTA` folding), so an optional diacritic or
+an invisible character can no longer turn a deferred relation into a passing
+one; the key is used only for comparison and never replaces the card's own
+reported text.
 
 G0.F declares, ahead of any runtime, that factorization is the general case
 of birth (a domain may close with one factor, several jointly-necessary
