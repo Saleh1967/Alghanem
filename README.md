@@ -92,7 +92,16 @@ non-authoritative (`ExternalAuditor != KernelAuthority`): it emits only
 external audit status (`نتيجة_التدقيق_الخارجي`), derives
 `مخروط_الأضعف_المشتق` from the frozen projection poset (rejecting
 caller-declared weaker cones), reports all competing readings, and exposes
-explicit `حالة_إغلاق_Down_E`/`سبب_حالة_إغلاق_Down_E` fields. Card text is
+explicit `حالة_إغلاق_Down_E`/`سبب_حالة_إغلاق_Down_E` fields.
+`علاقة_بالنموذج_المختبر` is a closed vocabulary — `غير_متعينة`,
+`أضعف_صوريًّا`, `مكافئ_صوريًّا`, `غير_قابل_للمقارنة` — and any other text
+(a misspelling or an invented term) is rejected instead of silently counting
+as a resolved relation. Following
+`NoRicherStructureBeforeLowerOpenResidualClosure`, an incomparable competing
+reading defers unless the card declares `تفسير_منافس_كامل: false`; when the
+flag is absent or true the reading still blocks, because an incomparable
+projection that offers a complete competing explanation is unresolved until
+discriminating evidence exists. Card text is
 compared through `comparison_key`, an orthography-insensitive key (NFC plus
 removal of combining marks, invisible formatting characters, and `TATWEEL`,
 plus `ALEF`/`ALEF MAQSURA`/`TEH MARBUTA` folding), so an optional diacritic or
