@@ -36,6 +36,8 @@ class ExternalAuditResult:
     عدد_القراءات_المنافسة: int
     عدد_العلاقات_غير_المتعينة: int
     تفاصيل_القراءات_المنافسة: tuple[tuple[str, str], ...]
+    حالة_إغلاق_Down_E: str
+    سبب_حالة_إغلاق_Down_E: str
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -51,7 +53,48 @@ class ExternalAuditResult:
                 {"قراءة": name, "علاقة_بالنموذج_المختبر": relation}
                 for name, relation in self.تفاصيل_القراءات_المنافسة
             ],
+            "حالة_إغلاق_Down_E": self.حالة_إغلاق_Down_E,
+            "سبب_حالة_إغلاق_Down_E": self.سبب_حالة_إغلاق_Down_E,
         }
+
+
+def _assess_down_e_closure(
+    card: dict[str, Any], *, weaker_cone: tuple[str, ...], unresolved_relations: int
+) -> tuple[str, str]:
+    if unresolved_relations:
+        return (
+            "غير_متعينة",
+            "نوع العلاقة الصورية مع قراءات منافسة ما زال غير متعين",
+        )
+    if not weaker_cone:
+        return ("مغلق", "مخروط السوابق الأضعف فارغ في التصور الحالي")
+    raw_entries = card.get("اغلاق_سوابق_Down_E")
+    if not isinstance(raw_entries, list):
+        return (
+            "غير_متعينة",
+            "لا يوجد توثيق لإغلاق سوابق Down_E المطلوبة",
+        )
+    closure_by_model: dict[str, str] = {}
+    for entry in raw_entries:
+        if not isinstance(entry, dict):
+            raise ExternalAuditError("اغلاق_سوابق_Down_E entries must be mappings")
+        model = _require_text(entry.get("نموذج"), "اغلاق_سوابق_Down_E[].نموذج")
+        status = _require_text(entry.get("حالة"), "اغلاق_سوابق_Down_E[].حالة")
+        closure_by_model[model] = status
+    if set(closure_by_model) != set(weaker_cone):
+        return (
+            "غير_متعينة",
+            "توثيق إغلاق Down_E لا يطابق مخروط السوابق الأضعف المشتق بدقة",
+        )
+    non_closed = sorted(
+        model for model, status in closure_by_model.items() if status != "مغلق"
+    )
+    if non_closed:
+        return (
+            "غير_مغلق",
+            f"سوابق Down_E غير مغلقة: {', '.join(non_closed)}",
+        )
+    return ("مغلق", "كل سوابق Down_E المشتقة موثقة كمغلقة")
 
 
 def _require_text(value: Any, field_name: str) -> str:
@@ -176,14 +219,18 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
     unresolved = [
         pair for pair in parsed_alternatives if pair[1] == "غير_متعينة"
     ]
+    down_e_status, down_e_reason = _assess_down_e_closure(
+        card,
+        weaker_cone=specification.frozen_weaker_models,
+        unresolved_relations=len(unresolved),
+    )
 
-    if unresolved:
+    if unresolved or down_e_status != "مغلق":
         return ExternalAuditResult(
             الجهة="مدقق_خارجي",
             نتيجة_التدقيق_الخارجي="DEFER_التدقيق",
             سبب=(
-                "نوع العلاقة الصورية بين القراءات المنافسة والنموذج المختبر غير متعين "
-                "(Alternative != Weaker)"
+                "تعذر الحسم الخارجي: علاقة المنافسة/الأضعف أو إغلاق Down_E غير مكتمل"
             ),
             النموذج_المختبر=specification.birth_query.test_model,
             مخروط_الأضعف_المشتق=specification.frozen_weaker_models,
@@ -191,6 +238,8 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
             عدد_القراءات_المنافسة=len(parsed_alternatives),
             عدد_العلاقات_غير_المتعينة=len(unresolved),
             تفاصيل_القراءات_المنافسة=tuple(parsed_alternatives),
+            حالة_إغلاق_Down_E=down_e_status,
+            سبب_حالة_إغلاق_Down_E=down_e_reason,
         )
 
     return ExternalAuditResult(
@@ -203,6 +252,8 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
         عدد_القراءات_المنافسة=len(parsed_alternatives),
         عدد_العلاقات_غير_المتعينة=0,
         تفاصيل_القراءات_المنافسة=tuple(parsed_alternatives),
+        حالة_إغلاق_Down_E=down_e_status,
+        سبب_حالة_إغلاق_Down_E=down_e_reason,
     )
 
 

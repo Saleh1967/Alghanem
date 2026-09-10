@@ -28,6 +28,7 @@ def test_external_audit_defers_when_relations_are_undetermined() -> None:
         ("شرطية", "غير_متعينة"),
         ("موصولة", "غير_متعينة"),
     )
+    assert result.حالة_إغلاق_Down_E == "غير_متعينة"
 
 
 def test_weaker_cone_is_derived_not_caller_declared() -> None:
@@ -95,3 +96,38 @@ def test_external_audit_processes_all_competing_readings() -> None:
         ("C", "منافس_غير_أضعف"),
         ("D", "غير_متعينة"),
     )
+    assert result.حالة_إغلاق_Down_E == "غير_متعينة"
+
+
+def test_external_audit_requires_down_e_closure_for_non_empty_cone() -> None:
+    card = {
+        "معرف_السؤال": "q",
+        "معرف_الفرضية": "h",
+        "الفرضية": "x",
+        "النموذج_المختبر": "A",
+        "القراءات_المنافسة": [],
+        "تعريف_التجربة": {
+            "experiment_id": "e",
+            "revision_id": "r1",
+            "evidence_mode": "FORMAL",
+            "domain": "d",
+            "projections": ["A", "B"],
+            "strict_relations": [["B", "A"]],
+            "residual_definition_id": "res",
+            "residual_definition": "residual",
+            "closure_criterion_id": "c",
+            "closure_criterion": "close",
+            "evidence_requirements": "req",
+        },
+        "اغلاق_سوابق_Down_E": [
+            {"نموذج": "B", "حالة": "غير_مغلق"},
+        ],
+    }
+    path = Path("/tmp/external_audit_down_e_not_closed.json")
+    path.write_text(json.dumps(card, ensure_ascii=False), encoding="utf-8")
+
+    result = audit_card(path)
+
+    assert result.نتيجة_التدقيق_الخارجي == "DEFER_التدقيق"
+    assert result.مخروط_الأضعف_المشتق == ("B",)
+    assert result.حالة_إغلاق_Down_E == "غير_مغلق"
