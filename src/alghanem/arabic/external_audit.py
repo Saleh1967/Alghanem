@@ -1,6 +1,13 @@
 """External Arabic-card auditor that uses current Alghanem G0 contracts.
 
 This module intentionally does not issue kernel verdict authority.
+
+A card may optionally classify each competing reading with one of the five
+usuli causes of defective comprehension (`comprehension_defect`), or with an
+explicit `لا_ينطبق`. That classification is read, validated against the closed
+vocabulary, and reported; it moves nothing. It is absent from the derived
+`BirthExperimentSpecification`, absent from `نتيجة_التدقيق_الخارجي`, and no
+kernel gate consumes it.
 """
 
 from __future__ import annotations
@@ -9,7 +16,6 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Final
-from unicodedata import category, normalize
 
 from alghanem.kernel.birth import (
     BirthExperimentSpecification,
@@ -19,20 +25,30 @@ from alghanem.kernel.birth import (
     StructureHypothesis,
 )
 
+from .comprehension_defect import (
+    NOT_APPLICABLE,
+    ComprehensionDefectCause,
+    ComprehensionDefectError,
+    canonical_defect_classification,
+)
+from .text_key import comparison_key
+
 
 class ExternalAuditError(ValueError):
     """Raised when the external audit card is malformed."""
 
 
-_TATWEEL: Final = "\u0640"
-_LETTER_FOLDING: Final = {
-    "\u0622": "\u0627",
-    "\u0623": "\u0627",
-    "\u0625": "\u0627",
-    "\u0671": "\u0627",
-    "\u0649": "\u064a",
-    "\u0629": "\u0647",
-}
+__all__ = [
+    "ExternalAuditError",
+    "ExternalAuditResult",
+    "audit_card",
+    "build_birth_spec_from_card",
+    "canonical_relation",
+    "comparison_key",
+    "main",
+    "read_declared_witnesses",
+]
+
 _UNDETERMINED_RELATION: Final = "غير_متعينة"
 _WEAKER_RELATION: Final = "أضعف_صوريًّا"
 _EQUIVALENT_RELATION: Final = "مكافئ_صوريًّا"
@@ -44,24 +60,6 @@ _ALLOWED_RELATIONS: Final = (
     _INCOMPARABLE_RELATION,
 )
 _CLOSED_STATUS: Final = "مغلق"
-
-
-def comparison_key(value: str) -> str:
-    """Return the orthography-insensitive key used to compare card text.
-
-    The key applies the repository's `NFC` normalization form, drops every
-    combining mark, invisible formatting character, and `TATWEEL`, and folds
-    equivalent `ALEF`, `ALEF MAQSURA`, and `TEH MARBUTA` surface forms. It
-    exists only so that comparisons do not silently depend on optional
-    diacritics or invisible characters; it asserts no linguistic identity and
-    never replaces the card's own text in any reported field.
-    """
-    unmarked = "".join(
-        character
-        for character in normalize("NFC", value)
-        if category(character) not in {"Mn", "Cf"} and character != _TATWEEL
-    )
-    return "".join(_LETTER_FOLDING.get(character, character) for character in unmarked)
 
 
 _RELATION_BY_KEY: Final = {
@@ -105,6 +103,7 @@ class ExternalAuditResult:
     تفاصيل_القراءات_المنافسة: tuple[tuple[str, str], ...]
     حالة_إغلاق_Down_E: str
     سبب_حالة_إغلاق_Down_E: str
+    تصنيف_أسباب_الإخلال_بالفهم: tuple[tuple[str, str], ...]
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -126,6 +125,10 @@ class ExternalAuditResult:
             ],
             "حالة_إغلاق_Down_E": self.حالة_إغلاق_Down_E,
             "سبب_حالة_إغلاق_Down_E": self.سبب_حالة_إغلاق_Down_E,
+            "تصنيف_أسباب_الإخلال_بالفهم": [
+                {"قراءة": name, "سبب_الإخلال_بالفهم": classification}
+                for name, classification in self.تصنيف_أسباب_الإخلال_بالفهم
+            ],
         }
 
 
@@ -180,6 +183,31 @@ def _require_text(value: Any, field_name: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ExternalAuditError(f"{field_name} must be non-blank text")
     return value
+
+
+def _read_defect_classification(value: Any) -> str:
+    """Return the declared closed-vocabulary defect classification of a reading.
+
+    The field is optional: a competing reading without `سبب_الإخلال_بالفهم` is
+    simply unclassified and is not reported here. When it is declared, only
+    one of the five usuli causes or the explicit `لا_ينطبق` is accepted.
+
+    `DeclaredDefectCause != AssessedRelation`: this classification is reported
+    and nothing more. It never enters `build_birth_spec_from_card`, never
+    changes `نتيجة_التدقيق_الخارجي`, and no kernel gate reads it.
+    """
+
+    if not isinstance(value, str):
+        raise ExternalAuditError(
+            "القراءات_المنافسة[].سبب_الإخلال_بالفهم must be non-blank text"
+        )
+    try:
+        cause = canonical_defect_classification(value)
+    except ComprehensionDefectError as exc:
+        raise ExternalAuditError(f"القراءات_المنافسة[].{exc}") from exc
+    if isinstance(cause, ComprehensionDefectCause):
+        return cause.value
+    return NOT_APPLICABLE
 
 
 def read_declared_witnesses(card: dict[str, Any]) -> tuple[str, ...]:
@@ -307,6 +335,7 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
     if not isinstance(alternatives, list):
         raise ExternalAuditError("القراءات_المنافسة must be a list")
     parsed_alternatives: list[tuple[str, str]] = []
+    defect_classifications: list[tuple[str, str]] = []
     unresolved: list[tuple[str, str]] = []
     blocking_incomparable: list[tuple[str, str]] = []
     for item in alternatives:
@@ -327,6 +356,11 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
             raise ExternalAuditError(
                 "القراءات_المنافسة[].تفسير_منافس_كامل is meaningful only for "
                 + _INCOMPARABLE_RELATION
+            )
+        declared_defect = item.get("سبب_الإخلال_بالفهم")
+        if declared_defect is not None:
+            defect_classifications.append(
+                (reading, _read_defect_classification(declared_defect))
             )
         parsed_alternatives.append((reading, declared_relation))
         if relation == _UNDETERMINED_RELATION:
@@ -355,6 +389,7 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
             تفاصيل_القراءات_المنافسة=tuple(parsed_alternatives),
             حالة_إغلاق_Down_E=down_e_status,
             سبب_حالة_إغلاق_Down_E=down_e_reason,
+            تصنيف_أسباب_الإخلال_بالفهم=tuple(defect_classifications),
         )
 
     return ExternalAuditResult(
@@ -371,6 +406,7 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
         تفاصيل_القراءات_المنافسة=tuple(parsed_alternatives),
         حالة_إغلاق_Down_E=down_e_status,
         سبب_حالة_إغلاق_Down_E=down_e_reason,
+        تصنيف_أسباب_الإخلال_بالفهم=tuple(defect_classifications),
     )
 
 
