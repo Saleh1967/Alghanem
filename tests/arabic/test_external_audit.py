@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -21,6 +22,12 @@ def test_external_audit_defers_when_relations_are_undetermined() -> None:
     assert result.النموذج_المختبر == "استفهامية"
     assert result.مخروط_الأضعف_المشتق == ()
     assert set(result.الإسقاطات_المنافسة_المشتقة) == {"شرطية", "موصولة"}
+    assert result.عدد_القراءات_المنافسة == 2
+    assert result.عدد_العلاقات_غير_المتعينة == 2
+    assert result.تفاصيل_القراءات_المنافسة == (
+        ("شرطية", "غير_متعينة"),
+        ("موصولة", "غير_متعينة"),
+    )
 
 
 def test_weaker_cone_is_derived_not_caller_declared() -> None:
@@ -48,3 +55,43 @@ def test_weaker_cone_is_derived_not_caller_declared() -> None:
 
     with pytest.raises(ExternalAuditError, match="derived"):
         build_birth_spec_from_card(card)
+
+
+def test_external_audit_processes_all_competing_readings() -> None:
+    card = {
+        "معرف_السؤال": "q",
+        "معرف_الفرضية": "h",
+        "الفرضية": "x",
+        "النموذج_المختبر": "A",
+        "القراءات_المنافسة": [
+            {"قراءة": "B", "علاقة_بالنموذج_المختبر": "غير_متعينة"},
+            {"قراءة": "C", "علاقة_بالنموذج_المختبر": "منافس_غير_أضعف"},
+            {"قراءة": "D", "علاقة_بالنموذج_المختبر": "غير_متعينة"},
+        ],
+        "تعريف_التجربة": {
+            "experiment_id": "e",
+            "revision_id": "r1",
+            "evidence_mode": "FORMAL",
+            "domain": "d",
+            "projections": ["A", "B", "C", "D"],
+            "strict_relations": [],
+            "residual_definition_id": "res",
+            "residual_definition": "residual",
+            "closure_criterion_id": "c",
+            "closure_criterion": "close",
+            "evidence_requirements": "req",
+        },
+    }
+    path = Path("/tmp/external_audit_all_competitors.json")
+    path.write_text(json.dumps(card, ensure_ascii=False), encoding="utf-8")
+
+    result = audit_card(path)
+
+    assert result.نتيجة_التدقيق_الخارجي == "DEFER_التدقيق"
+    assert result.عدد_القراءات_المنافسة == 3
+    assert result.عدد_العلاقات_غير_المتعينة == 2
+    assert result.تفاصيل_القراءات_المنافسة == (
+        ("B", "غير_متعينة"),
+        ("C", "منافس_غير_أضعف"),
+        ("D", "غير_متعينة"),
+    )

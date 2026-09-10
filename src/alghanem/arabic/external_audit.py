@@ -33,6 +33,9 @@ class ExternalAuditResult:
     النموذج_المختبر: str
     مخروط_الأضعف_المشتق: tuple[str, ...]
     الإسقاطات_المنافسة_المشتقة: tuple[str, ...]
+    عدد_القراءات_المنافسة: int
+    عدد_العلاقات_غير_المتعينة: int
+    تفاصيل_القراءات_المنافسة: tuple[tuple[str, str], ...]
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -42,6 +45,12 @@ class ExternalAuditResult:
             "النموذج_المختبر": self.النموذج_المختبر,
             "مخروط_الأضعف_المشتق": list(self.مخروط_الأضعف_المشتق),
             "الإسقاطات_المنافسة_المشتقة": list(self.الإسقاطات_المنافسة_المشتقة),
+            "عدد_القراءات_المنافسة": self.عدد_القراءات_المنافسة,
+            "عدد_العلاقات_غير_المتعينة": self.عدد_العلاقات_غير_المتعينة,
+            "تفاصيل_القراءات_المنافسة": [
+                {"قراءة": name, "علاقة_بالنموذج_المختبر": relation}
+                for name, relation in self.تفاصيل_القراءات_المنافسة
+            ],
         }
 
 
@@ -154,11 +163,18 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
     alternatives = card.get("القراءات_المنافسة")
     if not isinstance(alternatives, list):
         raise ExternalAuditError("القراءات_المنافسة must be a list")
+    parsed_alternatives: list[tuple[str, str]] = []
+    for item in alternatives:
+        if not isinstance(item, dict):
+            raise ExternalAuditError("كل قراءة منافسة يجب أن تكون كائنًا")
+        reading = _require_text(item.get("قراءة"), "القراءات_المنافسة[].قراءة")
+        relation = _require_text(
+            item.get("علاقة_بالنموذج_المختبر"),
+            "القراءات_المنافسة[].علاقة_بالنموذج_المختبر",
+        )
+        parsed_alternatives.append((reading, relation))
     unresolved = [
-        item
-        for item in alternatives
-        if isinstance(item, dict)
-        and item.get("علاقة_بالنموذج_المختبر") == "غير_متعينة"
+        pair for pair in parsed_alternatives if pair[1] == "غير_متعينة"
     ]
 
     if unresolved:
@@ -172,6 +188,9 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
             النموذج_المختبر=specification.birth_query.test_model,
             مخروط_الأضعف_المشتق=specification.frozen_weaker_models,
             الإسقاطات_المنافسة_المشتقة=specification.competing_projections,
+            عدد_القراءات_المنافسة=len(parsed_alternatives),
+            عدد_العلاقات_غير_المتعينة=len(unresolved),
+            تفاصيل_القراءات_المنافسة=tuple(parsed_alternatives),
         )
 
     return ExternalAuditResult(
@@ -181,6 +200,9 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
         النموذج_المختبر=specification.birth_query.test_model,
         مخروط_الأضعف_المشتق=specification.frozen_weaker_models,
         الإسقاطات_المنافسة_المشتقة=specification.competing_projections,
+        عدد_القراءات_المنافسة=len(parsed_alternatives),
+        عدد_العلاقات_غير_المتعينة=0,
+        تفاصيل_القراءات_المنافسة=tuple(parsed_alternatives),
     )
 
 
