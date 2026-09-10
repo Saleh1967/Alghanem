@@ -131,3 +131,22 @@ def test_external_audit_requires_down_e_closure_for_non_empty_cone() -> None:
     assert result.نتيجة_التدقيق_الخارجي == "DEFER_التدقيق"
     assert result.مخروط_الأضعف_المشتق == ("B",)
     assert result.حالة_إغلاق_Down_E == "غير_مغلق"
+
+
+def test_external_audit_defers_for_maa_2_197_card() -> None:
+    card_path = (
+        Path(__file__).resolve().parents[2]
+        / "examples"
+        / "external_audit"
+        / "maa_2_197.yaml"
+    )
+
+    result = audit_card(card_path)
+
+    assert result.نتيجة_التدقيق_الخارجي == "DEFER_التدقيق"
+    assert result.النموذج_المختبر == "ما_شرطية"
+    assert result.مخروط_الأضعف_المشتق == ()
+    assert result.الإسقاطات_المنافسة_المشتقة == ("ما_موصولة",)
+    assert result.عدد_القراءات_المنافسة == 1
+    assert result.عدد_العلاقات_غير_المتعينة == 1
+    assert result.حالة_إغلاق_Down_E == "غير_متعينة"
