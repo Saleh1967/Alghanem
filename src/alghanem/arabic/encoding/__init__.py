@@ -28,10 +28,30 @@ from .normalization import (
     SurfaceNormalization,
 )
 from .observation import ObservationProvenance, RawSurfaceObservation
+from .provenance_genus import (
+    BIRTH_ELIGIBILITY_DEFERRAL_NOTE,
+    COUNTERFACTUAL_IS_NOT_OBSERVATION_NOTE,
+    PROVENANCE_AUTHORITY_NOTE,
+    SYNTHETIC_LICENSES_HYPOTHESIS_ONLY_NOTE,
+    EvidenceProvenanceClassification,
+    EvidenceProvenanceError,
+    EvidenceProvenanceGate,
+    EvidenceProvenanceGenus,
+    HypothesisResidual,
+    MeasuredContrastSet,
+)
 
 __all__ = [
+    "BIRTH_ELIGIBILITY_DEFERRAL_NOTE",
+    "COUNTERFACTUAL_IS_NOT_OBSERVATION_NOTE",
     "DistinctSurfaceAtomCandidateProjection",
+    "EvidenceProvenanceClassification",
+    "EvidenceProvenanceError",
+    "EvidenceProvenanceGate",
+    "EvidenceProvenanceGenus",
+    "HypothesisResidual",
     "InterventionType",
+    "MeasuredContrastSet",
     "MeasurementProtocolSpec",
     "MeasurementRunIdentity",
     "MeasurementRunManifest",
@@ -45,7 +65,9 @@ __all__ = [
     "ObservationAuditLedger",
     "ObservationLedgerManifest",
     "ObservationProvenance",
+    "PROVENANCE_AUTHORITY_NOTE",
     "RawSurfaceObservation",
+    "SYNTHETIC_LICENSES_HYPOTHESIS_ONLY_NOTE",
     "SurfaceAtomCandidate",
     "SurfaceAtomIntervention",
     "SurfaceAtomInterventionAudit",
