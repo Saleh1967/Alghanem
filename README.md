@@ -168,6 +168,40 @@ three of eight competing readings are described by one of the five causes
 readings in `man_2_255.yaml` and `maa_2_197.yaml` as `اشتراك`); the remaining
 five are declared `لا_ينطبق` rather than forced into a label.
 
+`src/alghanem/arabic/word_class_formal.py` adds the first Layer B proof whose
+own structure aims at a *positive* result rather than a documented deferral. It
+states, in `FORMAL` mode terms only, a `FrozenFormalDomain` of exactly two
+binary questions taken verbatim from *الشخصية الإسلامية*, part 3, on the
+division of the single word: "هل يستقلّ اللفظ بمعناه بلا حاجة للفظ آخر؟" and,
+asked only when the first answer is `نعم`, "هل يدلّ اللفظ بهيئته الصرفية (لا
+بذاته) على أحد الأزمنة الثلاثة؟". The admissible state set is exactly three —
+`(لا، غير_مطروح)`, `(نعم، نعم)`, `(نعم، لا)` — because `غير_مطروح` is a
+declared vocabulary value rather than a silent `None`, so the fourth state (`لا`
+with the second question answered) is closed structurally instead of leaking in.
+`classify` derives `حرف`/`فعل`/`اسم` directly from the two answers with no
+default branch, and refuses any state outside the domain instead of mapping it
+to the nearest one. Each of the four textually attested lexemes carries its two
+explicit answers with their quoted evidence plus a closed
+`حامل الدلالة الزمنية` field (`بالهيئة`/`بالذات`/`لا_دلالة_زمنية`) *from which*
+the second answer is derived and checked, which is what keeps `أمس` — temporal
+"بذاته لا بهيئته" — an `اسم` rather than a `فعل` by construction, not by
+comment. `prove_over_attested_corpus` reports one row per lexeme without
+stopping at a first failure; on the four attested lexemes (`مِن`, `قام`, `زيد`,
+`أمس`) the derived class matches the attested class in every case, with no
+exception and no ambiguous state, so the report carries the deliberately exact
+title "أول شهادة صورية شاملة ناجحة على نطاق محدود".
+
+Two limits are recorded as deliberately as the result. First,
+`FormalClassification != BirthVerdict` and `DeclaredWordClass != BornOntology`:
+this is documentation and formal classification only — no type in `kernel/`, no
+`Freeze`, no `E0`, no gate reads it, it never enters a
+`BirthExperimentSpecification`, and it leaves every external-audit field
+byte-identical. It is therefore *not* a birth; that name would require a freeze
+and an `E0` step that do not exist yet. Second, the scope is exactly four
+lexemes from one named source and three classes: `مصدر`, `مضارع`, and
+`لازم/متعدي` are excluded by declaration, because they need a morphological
+source this repository has not supplied.
+
 G0.F declares, ahead of any runtime, that factorization is the general case
 of birth (a domain may close with one factor, several jointly-necessary
 factors, or none) and that fractality is a law, not a folder layout: a
