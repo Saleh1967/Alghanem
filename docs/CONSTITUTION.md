@@ -322,15 +322,71 @@ These are boundary commitments, not a frozen ontology or closed primitive tuple.
     `EMPIRICAL` and `FORMAL`, in which a claim rests on *what was transmitted or
     reported* rather than on a measured residual or an exhaustive formal proof?
   - Standing evidence: the only concrete support currently in this repository is
-    empirical, not theoretical. Two of the three audit cards under
-    `examples/external_audit/` declare witnesses that are records of a
-    *disagreement between sources* ("خلاف نحوي مُسجَّل", "تنازع مُسجَّل"), not
-    derivations from a text. Those witnesses fit neither `EMPIRICAL` (no
-    measurement run) nor `FORMAL` (no exhaustive proof over a closed domain).
-  - Not decided here: this question is recorded, not answered. `EvidenceMode`
-    is unchanged, and `evidence_requirements` is part of frozen experiment
-    content identity, so no mode may be added without a dedicated milestone
-    that addresses that content-identity impact.
+    empirical, not theoretical, and it is named card by card rather than by any
+    "two of three" generality. `maa_2_197.yaml` declares "خلاف نحوي مُسجَّل"
+    and `imran_3_33.yaml` declares "تنازع مُسجَّل": both are records of a
+    *disagreement between sources*, not derivations from a text, and they fit
+    neither `EMPIRICAL` (no measurement run) nor `FORMAL` (no exhaustive proof
+    over a closed domain). `man_2_255.yaml` is explicitly *not* of that kind:
+    its witness ("وجود (ذا) بعد (من) قرينة نحوية تقليدية على الاستفهام") is a
+    traditional grammatical clue about the text itself, not a transmitted
+    disagreement. Only those two cards, named individually, stand behind this
+    question.
+  - Measured standing: `عدد_الشواهد` is `1` on all three cards under
+    `examples/external_audit/`. The counter therefore separates nothing at
+    present, and it neither strengthens nor weakens this question. What
+    distinguishes the witnesses above is the *kind* of their source, which the
+    auditor does not read: `DeclaredWitness != AssessedEvidence` still holds,
+    and classifying witnesses remains out of scope. No upgrade of this question
+    may rest on the counter while its value is uniform.
+  - Not decided here: this question is recorded, not answered. Status remains
+    `OPEN`. `EvidenceMode` is unchanged, and `evidence_requirements` is part of
+    frozen experiment content identity, so no mode may be added without a
+    dedicated milestone that addresses that content-identity impact.
+- `DeclaredVersusDerivedRecurrenceNotExplained`
+  - Status: `OBSERVED_NOT_EXPLAINED`
+  - Observation: the shape "a caller/card *declares* something; an authority
+    *derives* or *verifies* it independently; the declaration never becomes the
+    verified thing" recurs across this repository well beyond the four sites it
+    was first noticed at. Located by search, not by recollection:
+    `DeclaredInvariant != VerifiedInvariant`
+    (`kernel/transition.py:86`, `kernel/invariant.py:4`),
+    `ClaimedInvariant != VerifiedInvariant` (`kernel/invariant.py:313`),
+    an `InvariantSpec.extractor_id` as "only a claim, not a grant of authority"
+    with `Candidate/Caller does not own verifier selection authority`
+    (`kernel/invariant.py:148`, `kernel/invariant.py:183`,
+    `kernel/invariant.py:861`), gate-issued-only verification decisions and
+    bundles that a caller cannot hand-build, `Candidate != Decision` and
+    `AnchorEquality != ProvenIdentityPreservation`
+    (`kernel/transition.py:83`), `DeclaredEvaluatorId != AuthorizedEvaluator`
+    with `CallerDoesNotOwnEvaluatorAuthority`,
+    `AuthorizedDefinition != DefinitionAuthorizedForThisFrozenExperiment` and
+    `EvidenceAttachedToRecord != EvaluatorExecutedOnEvidence`
+    (`kernel/evaluator_execution.py:41`, `kernel/evaluator_execution.py:257`),
+    `DeclaredImplementationId != ImplementationContentIdentity`,
+    `AuthorizedCapture != ProofOfExternalAcquisitionChronology` and
+    `AuthorizedEvidence != SufficientEvidence`
+    (`kernel/evidence_acquisition.py:19-22`),
+    `ConstructibleContract != IssuedByAuthority` /
+    `WellFormedFrozenFactorRef != AuthorityIssuedFrozenFactorRef`
+    (`kernel/fractal.py:31-32`), `SameId != SameSemantics` /
+    `ResidualDefinitionId != ResidualDefinitionContentIdentity`
+    (`kernel/birth_content_identity.py:1`,
+    `kernel/birth_content_identity.py:11`), the refusal of a caller-declared
+    weaker cone (`arabic/external_audit.py:231`), and
+    `DeclaredWitness != AssessedEvidence` (`arabic/external_audit.py:194`).
+  - Two distinct sub-shapes, not one: in some sites the declaration is *checked
+    against* the derived value and a mismatch is rejected outright (unauthorized
+    `extractor_id`, caller-declared weaker cone, content drift under
+    `SameId != SameSemantics`); in others the declaration is merely *carried and
+    reported* with no authority ever attached to it (`DeclaredWitness`,
+    `DeclaredImplementationId`, `AuthorizedEvidence != SufficientEvidence`).
+    Whether these are one structure or two is not decided here.
+  - Not a law and not named: this entry records a recurrence, nothing more. No
+    law, type, base class, shared abstraction, or general name is created for
+    it, and none may be introduced on the strength of this observation alone.
+    A recurrence of phrasing is not proof of a shared underlying structure; the
+    recurrence itself is what has yet to be explained.
 
 ### TheoreticalProgramBeforePostAlgebraicAudit
 

@@ -98,7 +98,9 @@ structurally validated, and its size is reported as `عدد_الشواهد`. Thi
 count only: `DeclaredWitness != AssessedEvidence`. The auditor does not
 classify witnesses, relate them to the tested model, or let them affect
 `نتيجة_التدقيق_الخارجي`; a card without the field is still well-formed and
-counts zero.
+counts zero. Adding or removing witnesses leaves every other reported field
+byte-identical, and the count is currently `1` on all three example cards, so
+it separates nothing at present.
 `علاقة_بالنموذج_المختبر` is a closed vocabulary — `غير_متعينة`,
 `أضعف_صوريًّا`, `مكافئ_صوريًّا`, `غير_قابل_للمقارنة` — and any other text
 (a misspelling or an invented term) is rejected instead of silently counting
