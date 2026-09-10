@@ -427,9 +427,9 @@ class ImportedVocabularyContentVerifier:
             )
 
 
-def vocabulary_from_export_mapping(payload: Mapping[str, Any]) -> (
-    ImportedFeatureVocabulary
-):
+def vocabulary_from_export_mapping(
+    payload: Mapping[str, Any],
+) -> ImportedFeatureVocabulary:
     """اقرأ حمولة تصديرٍ مصدرية، وارفض كل ما خرج عن المفردات المغلقة."""
 
     if not isinstance(payload, Mapping):
