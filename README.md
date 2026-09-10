@@ -282,6 +282,50 @@ certificate must declare its documented `علاقة`, the `هذيان` branch mu
 that out-of-assignment note and every other branch must leave it `لا_ينطبق`; the
 note is a required field checked at construction, not a comment.
 
+`src/alghanem/arabic/distributional_probe_report.py` is deliberately **not** a
+fourth certificate: it records a *negative* measurement with the same
+discipline the three positive ones use. Over 2193 surface forms (support ≥ 5),
+with five purely distributional features — length, final-position ratio,
+successor diversity, predecessor diversity, and silent-skeleton host diversity
+— a scan of `k` from 2 to 11 under `silhouette` alone selected **k = 2, not
+3**, with an unbalanced split (2159 vs 34). That partition did not reproduce
+the `اسم`/`فعل`/`حرف` division, and the module says so structurally rather
+than in prose: `ProbeOutcome` is a closed three-value vocabulary
+(`أعاد_اكتشاف_التقسيم`, `اكتشف_طبقة_أخرى`, `لم_يفصل`), the recorded report
+declares `اكتشف_طبقة_أخرى`, and `الادّعاء_المنفي` is a **required** field on
+every negative outcome that must be `لا_ينطبق` on a rediscovery outcome —
+exactly as the `هذيان` branch above must declare its out-of-assignment note
+and every other branch must not. What the probe did find is recorded as two
+named layers rather than forced onto a grammatical label: `فرط_اتصال` (34
+members at k=2, 26 at k=3), which mixes true particles (`في`, `من`, `على`,
+`إلّا`, `إنّ`) with very high-frequency content words (`الله`, `الذين`,
+`قال`, `كان`) under one distinguishing signature — huge frequency, near-zero
+final ratio, very high connection diversity; and `فاصلة_قرآنية` (289 members
+at k=3), whose high final ratio (0.5–1.0) with near-zero successor diversity
+structurally favours `يَعْلَمُونَ`-type plural imperfects and the `فعيل`
+pattern. The second is a **stylistic/rhythmic** effect — Qur'anic verse
+cadence — not a grammatical class, and that distinction is enforced rather
+than annotated: each layer's `طبيعة` is derived from its kind, and no
+discovered layer may declare itself `نحوي`, because that is precisely the
+claim the measurement failed to establish. Consistency is checked too: cluster
+sizes must total the declared form count, every partition's `k` must lie
+inside the scanned range, and a layer's member count must be an actual cluster
+size of the partition it is claimed at.
+
+Its limits are recorded as deliberately as the result. This module is a
+*record of a measurement, not a measurement pipeline*: it reads no corpus,
+computes no feature, runs no clustering, and cannot reproduce its own numbers;
+reproduction would need a deterministic pipeline with a named corpus, a frozen
+seed, and a declared stopping rule, which does not exist here. It declares no
+replacement feature and no second experiment either, because choosing features
+*after* seeing the clusters is exactly what the pre-evidence gate in `kernel/`
+forbids, so any follow-up needs a specification frozen before its evidence.
+And authority-wise it is inert like the rest: `ProbeOutcome != BirthVerdict`
+and `DiscoveredCluster != BornOntology` — no type in `kernel/`, no `Freeze`, no
+`E0`, no gate reads it, and every external-audit field stays byte-identical.
+The module carries no success title at all, since dressing a negative result
+in the three certificates' title would be disguise rather than record.
+
 G0.F declares, ahead of any runtime, that factorization is the general case
 of birth (a domain may close with one factor, several jointly-necessary
 factors, or none) and that fractality is a law, not a folder layout: a
