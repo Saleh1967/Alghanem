@@ -330,15 +330,21 @@ These are boundary commitments, not a frozen ontology or closed primitive tuple.
     over a closed domain). `man_2_255.yaml` is explicitly *not* of that kind:
     its witness ("وجود (ذا) بعد (من) قرينة نحوية تقليدية على الاستفهام") is a
     traditional grammatical clue about the text itself, not a transmitted
-    disagreement. Only those two cards, named individually, stand behind this
-    question.
-  - Measured standing: `عدد_الشواهد` is `1` on all three cards under
-    `examples/external_audit/`. The counter therefore separates nothing at
-    present, and it neither strengthens nor weakens this question. What
-    distinguishes the witnesses above is the *kind* of their source, which the
-    auditor does not read: `DeclaredWitness != AssessedEvidence` still holds,
-    and classifying witnesses remains out of scope. No upgrade of this question
-    may rest on the counter while its value is uniform.
+    disagreement. `hadhan_20_63.yaml` (طه:63) declares five witnesses, each
+    naming its own grammarian (الطبري نقلًا عن لغة بلحارث بن كعب، أبو عمرو بن
+    العلاء ورفض الزجّاج له، قراءة عاصم والخليل، مذهب كنانة، والشاذ الآحاد عن
+    أُبَيّ بن كعب والخليل); these too are records of transmitted disagreement.
+    Only those cards, named individually, stand behind this question.
+  - Measured standing: `عدد_الشواهد` is no longer uniform. It is `1` on
+    `man_2_255.yaml`, `maa_2_197.yaml`, and `imran_3_33.yaml`, and `5` on
+    `hadhan_20_63.yaml`. This records a change in measurement only; it is not
+    an upgrade of this question, which stays `OPEN`. A larger count is still a
+    count of declared text: `DeclaredWitness != AssessedEvidence` still holds,
+    the auditor does not read the *kind* of a witness's source, classifying
+    witnesses remains out of scope, and multiplicity of named transmitters is
+    not itself evidence that a third transmission-based `EvidenceMode` exists.
+    The richer card also defers exactly like the other three, so nothing in the
+    reported outcome distinguishes it.
   - Not decided here: this question is recorded, not answered. Status remains
     `OPEN`. `EvidenceMode` is unchanged, and `evidence_requirements` is part of
     frozen experiment content identity, so no mode may be added without a

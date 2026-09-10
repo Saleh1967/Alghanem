@@ -422,12 +422,50 @@ def test_unresolved_relation_outranks_documented_down_e_closure(
     assert result.نتيجة_التدقيق_الخارجي == "DEFER_التدقيق"
 
 
+_EXAMPLE_WITNESS_COUNTS = {
+    "man_2_255.yaml": 1,
+    "maa_2_197.yaml": 1,
+    "imran_3_33.yaml": 1,
+    "hadhan_20_63.yaml": 5,
+}
+
+
+def test_external_audit_defers_for_hadhan_20_63_card() -> None:
+    result = audit_card(_example_card("hadhan_20_63.yaml"))
+
+    assert result.نتيجة_التدقيق_الخارجي == "DEFER_التدقيق"
+    assert result.النموذج_المختبر == "لغة_بلحارث_ألف_ثابتة"
+    assert result.عدد_الشواهد == 5
+    assert result.مخروط_الأضعف_المشتق == ()
+    assert result.الإسقاطات_المنافسة_المشتقة == (
+        "تصحيح_لفظي_هذين",
+        "تخفيف_إن_وضمير_شأن",
+        "مذهب_كنانة_قلب_الألف_ياء",
+        "شاذ_آحاد_ما_هذان_إلا_ساحران",
+    )
+    assert result.عدد_القراءات_المنافسة == 4
+    assert result.عدد_العلاقات_غير_المتعينة == 4
+    assert result.عدد_المنافسات_غير_القابلة_للمقارنة_الحاجبة == 0
+    assert result.حالة_إغلاق_Down_E == "غير_متعينة"
+
+
+def test_hadhan_card_witnesses_are_five_distinct_named_positions() -> None:
+    card = json.loads(_example_card("hadhan_20_63.yaml").read_text(encoding="utf-8"))
+    witnesses = read_declared_witnesses(card)
+
+    assert witnesses == tuple(card["الأدلة"])
+    assert len(witnesses) == 5
+    assert len(set(witnesses)) == 5
+    for name in ("الطبري", "أبو عمرو", "عاصم", "كنانة", "أُبَيّ"):
+        assert any(name in witness for witness in witnesses)
+
+
 def test_declared_witnesses_are_counted_for_every_example_card() -> None:
-    for name in ("man_2_255.yaml", "maa_2_197.yaml", "imran_3_33.yaml"):
+    for name, expected in _EXAMPLE_WITNESS_COUNTS.items():
         result = audit_card(_example_card(name))
 
-        assert result.عدد_الشواهد == 1
-        assert result.to_dict()["عدد_الشواهد"] == 1
+        assert result.عدد_الشواهد == expected
+        assert result.to_dict()["عدد_الشواهد"] == expected
 
 
 def test_missing_witness_field_is_accepted_and_counted_as_zero(
@@ -450,21 +488,19 @@ def test_every_reported_field_is_covered_by_the_witness_stability_check() -> Non
     assert set(result.to_dict()) == {field.name for field in dataclasses.fields(result)}
 
 
-@pytest.mark.parametrize(
-    "name", ["man_2_255.yaml", "maa_2_197.yaml", "imran_3_33.yaml"]
-)
+@pytest.mark.parametrize("name", sorted(_EXAMPLE_WITNESS_COUNTS))
 @pytest.mark.parametrize("witness_count", [0, 2])
 def test_changing_the_witness_count_leaves_every_other_field_identical(
     tmp_path: Path, name: str, witness_count: int
 ) -> None:
     baseline = audit_card(_example_card(name)).to_dict()
-    assert baseline.pop("عدد_الشواهد") == 1
+    assert baseline.pop("عدد_الشواهد") == _EXAMPLE_WITNESS_COUNTS[name]
 
     card = json.loads(_example_card(name).read_text(encoding="utf-8"))
     if witness_count == 0:
         del card["الأدلة"]
     else:
-        card["الأدلة"] = list(card["الأدلة"]) + ["شاهد إضافي معلن في البطاقة"]
+        card["الأدلة"] = ["شاهد معلن في البطاقة", "شاهد إضافي معلن في البطاقة"]
     path = tmp_path / "witness_variant.json"
     path.write_text(json.dumps(card, ensure_ascii=False), encoding="utf-8")
 
