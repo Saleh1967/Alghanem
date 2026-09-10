@@ -11,6 +11,10 @@ from .normalization import ObservationLedgerManifest
 InterventionType = Literal["delete", "substitute", "repeat", "swap", "insert"]
 
 
+class InterventionCoordinateError(ValueError):
+    """A named coordinate is outside the sequence the intervention is applied to."""
+
+
 @dataclass(frozen=True)
 class SurfaceAtomIntervention:
     """One position-indexed operation on an observed surface candidate.
@@ -210,6 +214,19 @@ class SurfaceAtomInterventionAudit:
         return SurfaceInterventionAuditTable(tuple(rows))
 
 
+def apply_intervention(
+    intervention: SurfaceAtomIntervention, source_atoms: tuple[str, ...]
+) -> tuple[str, ...]:
+    """Apply one intervention to an atom sequence without any audit binding.
+
+    The audited pipeline applies every intervention to its own manifested
+    occurrence. Composing two interventions on one occurrence needs the second
+    applied to the first result, so the deterministic application step is
+    exposed here; it carries no provenance and grants no authority.
+    """
+    return _apply(intervention, source_atoms)
+
+
 def _apply(
     intervention: SurfaceAtomIntervention, source_atoms: tuple[str, ...]
 ) -> tuple[str, ...]:
@@ -251,7 +268,9 @@ def _apply(
 def _require_coordinate(coordinate: int, atom_count: int, *, allow_end: bool) -> None:
     upper_bound = atom_count if allow_end else atom_count - 1
     if coordinate < 0 or coordinate > upper_bound:
-        raise ValueError("intervention coordinate is outside the source atom sequence")
+        raise InterventionCoordinateError(
+            "intervention coordinate is outside the source atom sequence"
+        )
 
 
 def _shared_atom_sequence(
