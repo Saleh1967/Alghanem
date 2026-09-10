@@ -84,6 +84,19 @@ is currently that single value, because the other two statuses require a
 gate-issued `IndependentClosureDecision` no authority here can produce
 (`DeferredVerdict != Birth`). It issues no `Freeze` and no `E0` mapping, and a
 `DEFER_IN_SCOPE` decision may not be frozen.
+G0.IC.1a (`src/alghanem/kernel/independent_closure.py`) closes exactly one
+conjunct of that missing closure, using the same register -> seal -> gate shape:
+`ClosureScopeRegistry` issues and seals `AuthorizedClosureScope`s, and
+`IndependentClosureGate.assess` is the sole issuer of an
+`IndependentClosureAssessment`. It accepts no comparability claim from its
+caller and reads only the request's own frozen `ProjectionPoset`; because that
+question is exhaustively decidable over a finite projection set, both
+`COMPETITION_RESOLVED_IN_POSET` and `COMPETITION_UNRESOLVED_IN_POSET` are
+reachable. An absent strict relation is always counted as unresolved, so an
+undetermined relation is never read as a resolution. This is still not closure:
+`is_independent_closure` is `False` unconditionally, because a surviving
+residual and an exhausted licensed weaker model set have no authority here, and
+`BirthVerdictGate` is deliberately not wired to consume the assessment.
 `BirthCandidate` is distinct from a scoped birth verdict and from `Freeze`;
 the future G0.BV.1 authority may issue `BIRTH_IN_SCOPE`, then a later freeze
 authority may freeze it before a separate `E0` step. See the
