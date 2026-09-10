@@ -98,7 +98,9 @@ from .imported_feature_vocabulary import (
 )
 from .imported_vocabulary_source_digest import (
     MISMATCH_CAUSE_NOTE,
+    NO_CONSUMER_ASSUMES_VERIFIED_DIGEST_NOTE,
     REDERIVATION_IS_NOT_AUTHORITY_NOTE,
+    SOURCE_DIGEST_REMAINS_DECLARED_NOTE,
     SOURCE_DIGEST_SCHEMA_NOTE,
     SOURCE_FIELD_SEPARATOR,
     SOURCE_PAYLOAD_ABSENCE_NOTE,
@@ -331,6 +333,7 @@ __all__ = [
     "MeasurementRunManifest",
     "NOT_APPLICABLE",
     "NOT_APPLICABLE_TEXT",
+    "NO_CONSUMER_ASSUMES_VERIFIED_DIGEST_NOTE",
     "NormalizationAudit",
     "NormalizationEquivalenceClass",
     "NormalizationEquivalenceProjection",
@@ -397,6 +400,7 @@ __all__ = [
     "SOURCE_DIGEST_COVERED_FIELDS",
     "SOURCE_DIGEST_FIELD_COVERAGE_NOTE",
     "SOURCE_DIGEST_REDERIVATION_NOTE",
+    "SOURCE_DIGEST_REMAINS_DECLARED_NOTE",
     "SOURCE_DIGEST_SCHEMA_NOTE",
     "SOURCE_FIELD_SEPARATOR",
     "SOURCE_LEDGER_ID",

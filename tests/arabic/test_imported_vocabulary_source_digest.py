@@ -9,12 +9,16 @@ from typing import Any
 
 import pytest
 
+import alghanem
 from alghanem.arabic import (
     EXPECTED_DISTRIBUTION,
     EXPECTED_ROW_COUNT,
+    NO_CONSUMER_ASSUMES_VERIFIED_DIGEST_NOTE,
     SOURCE_CANONICALIZATION_VERSION,
     SOURCE_DECLARED_CONTENT_ID,
     SOURCE_DIGEST_COVERED_FIELDS,
+    SOURCE_DIGEST_REDERIVATION_NOTE,
+    SOURCE_DIGEST_REMAINS_DECLARED_NOTE,
     SOURCE_FIELD_SEPARATOR,
     SOURCE_LEDGER_ID,
     SOURCE_PROJECT,
@@ -215,3 +219,34 @@ def test_recorded_release_digest_is_rederived_from_the_deposited_export() -> Non
     assert identity.digest == SOURCE_DECLARED_CONTENT_ID
     assert identity.row_count == EXPECTED_ROW_COUNT
     assert sum(EXPECTED_DISTRIBUTION.values()) == EXPECTED_ROW_COUNT
+
+
+def test_no_module_consumes_the_source_digest_as_if_it_were_verified() -> None:
+    package_root = Path(alghanem.__file__).parent
+    permitted = {
+        package_root / "arabic" / "imported_vocabulary_source_digest.py",
+        package_root / "arabic" / "__init__.py",
+    }
+    consumers = [
+        path
+        for path in package_root.rglob("*.py")
+        if path not in permitted
+        and "imported_vocabulary_source_digest" in path.read_text(encoding="utf-8")
+    ]
+
+    assert consumers == []
+
+
+def test_the_recorded_notes_do_not_claim_the_pinned_digest_was_rederived() -> None:
+    assert "تبقى مقارنةً بمرجعٍ مُثبَّت لا إعادةَ حسابٍ مستقلّة" in (
+        SOURCE_DIGEST_REDERIVATION_NOTE
+    )
+    assert "مُعلَنٌ لا مُعادَ اشتقاقه" in SOURCE_DIGEST_REMAINS_DECLARED_NOTE
+    assert "لا شيء في المسار الحالي يعتمد" in (NO_CONSUMER_ASSUMES_VERIFIED_DIGEST_NOTE)
+
+
+def test_the_deposited_export_payload_is_still_absent() -> None:
+    assert not EXPORT_FIXTURE.exists(), (
+        "the export payload is deposited, so the skip guard must be removed and "
+        "the recorded notes revisited: the digest would then be re-derived"
+    )
