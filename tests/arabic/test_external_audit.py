@@ -7,6 +7,7 @@ from alghanem.arabic.external_audit import (
     ExternalAuditError,
     audit_card,
     build_birth_spec_from_card,
+    canonical_relation,
     comparison_key,
 )
 
@@ -67,7 +68,7 @@ def test_external_audit_processes_all_competing_readings() -> None:
         "النموذج_المختبر": "A",
         "القراءات_المنافسة": [
             {"قراءة": "B", "علاقة_بالنموذج_المختبر": "غير_متعينة"},
-            {"قراءة": "C", "علاقة_بالنموذج_المختبر": "منافس_غير_أضعف"},
+            {"قراءة": "C", "علاقة_بالنموذج_المختبر": "مكافئ_صوريًّا"},
             {"قراءة": "D", "علاقة_بالنموذج_المختبر": "غير_متعينة"},
         ],
         "تعريف_التجربة": {
@@ -94,7 +95,7 @@ def test_external_audit_processes_all_competing_readings() -> None:
     assert result.عدد_العلاقات_غير_المتعينة == 2
     assert result.تفاصيل_القراءات_المنافسة == (
         ("B", "غير_متعينة"),
-        ("C", "منافس_غير_أضعف"),
+        ("C", "مكافئ_صوريًّا"),
         ("D", "غير_متعينة"),
     )
     assert result.حالة_إغلاق_Down_E == "غير_متعينة"
@@ -206,7 +207,7 @@ def test_undetermined_relation_is_orthography_insensitive(
 def test_determined_relation_is_still_distinguished(tmp_path: Path) -> None:
     path = tmp_path / "determined.json"
     path.write_text(
-        json.dumps(_relation_card("منافس_غير_أضعف"), ensure_ascii=False),
+        json.dumps(_relation_card("مكافئ_صوريًّا"), ensure_ascii=False),
         encoding="utf-8",
     )
 
@@ -214,6 +215,118 @@ def test_determined_relation_is_still_distinguished(tmp_path: Path) -> None:
 
     assert result.نتيجة_التدقيق_الخارجي == "PASS_التدقيق"
     assert result.عدد_العلاقات_غير_المتعينة == 0
+    assert result.عدد_المنافسات_غير_القابلة_للمقارنة_الحاجبة == 0
+
+
+@pytest.mark.parametrize(
+    "relation",
+    ["منافس_غير_أضعف", "أضعف", "اقوى_صوريا", "أضعف_صوري", ""],
+)
+def test_relation_outside_closed_vocabulary_is_rejected(
+    tmp_path: Path, relation: str
+) -> None:
+    path = tmp_path / "unknown_relation.json"
+    path.write_text(
+        json.dumps(_relation_card(relation), ensure_ascii=False), encoding="utf-8"
+    )
+
+    with pytest.raises(ExternalAuditError):
+        audit_card(path)
+
+
+@pytest.mark.parametrize("relation", ["أضعف_صوريًّا", "اضعف_صوريا", "مكافئ_صوريًّا"])
+def test_resolved_relations_are_orthography_insensitive(
+    tmp_path: Path, relation: str
+) -> None:
+    path = tmp_path / "resolved.json"
+    path.write_text(
+        json.dumps(_relation_card(relation), ensure_ascii=False), encoding="utf-8"
+    )
+
+    result = audit_card(path)
+
+    assert result.نتيجة_التدقيق_الخارجي == "PASS_التدقيق"
+    assert result.تفاصيل_القراءات_المنافسة == (("B", relation),)
+
+
+def test_incomparable_complete_rival_explanation_still_defers(
+    tmp_path: Path,
+) -> None:
+    card = _relation_card("غير_قابل_للمقارنة")
+    readings = card["القراءات_المنافسة"]
+    assert isinstance(readings, list)
+    readings[0]["تفسير_منافس_كامل"] = True
+    path = tmp_path / "incomparable_blocking.json"
+    path.write_text(json.dumps(card, ensure_ascii=False), encoding="utf-8")
+
+    result = audit_card(path)
+
+    assert result.نتيجة_التدقيق_الخارجي == "DEFER_التدقيق"
+    assert result.عدد_العلاقات_غير_المتعينة == 0
+    assert result.عدد_المنافسات_غير_القابلة_للمقارنة_الحاجبة == 1
+
+
+def test_incomparable_without_declared_rival_explanation_defers(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "incomparable_silent.json"
+    path.write_text(
+        json.dumps(_relation_card("غير_قابل_للمقارنة"), ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    result = audit_card(path)
+
+    assert result.نتيجة_التدقيق_الخارجي == "DEFER_التدقيق"
+    assert result.عدد_المنافسات_غير_القابلة_للمقارنة_الحاجبة == 1
+
+
+def test_incomparable_non_rival_explanation_does_not_block(tmp_path: Path) -> None:
+    card = _relation_card("غير_قابل_للمقارنة")
+    readings = card["القراءات_المنافسة"]
+    assert isinstance(readings, list)
+    readings[0]["تفسير_منافس_كامل"] = False
+    path = tmp_path / "incomparable_open.json"
+    path.write_text(json.dumps(card, ensure_ascii=False), encoding="utf-8")
+
+    result = audit_card(path)
+
+    assert result.نتيجة_التدقيق_الخارجي == "PASS_التدقيق"
+    assert result.عدد_المنافسات_غير_القابلة_للمقارنة_الحاجبة == 0
+
+
+def test_rival_explanation_flag_is_rejected_for_other_relations(
+    tmp_path: Path,
+) -> None:
+    card = _relation_card("مكافئ_صوريًّا")
+    readings = card["القراءات_المنافسة"]
+    assert isinstance(readings, list)
+    readings[0]["تفسير_منافس_كامل"] = True
+    path = tmp_path / "flag_misuse.json"
+    path.write_text(json.dumps(card, ensure_ascii=False), encoding="utf-8")
+
+    with pytest.raises(ExternalAuditError, match="تفسير_منافس_كامل"):
+        audit_card(path)
+
+
+def test_rival_explanation_flag_must_be_boolean(tmp_path: Path) -> None:
+    card = _relation_card("غير_قابل_للمقارنة")
+    readings = card["القراءات_المنافسة"]
+    assert isinstance(readings, list)
+    readings[0]["تفسير_منافس_كامل"] = "نعم"
+    path = tmp_path / "flag_text.json"
+    path.write_text(json.dumps(card, ensure_ascii=False), encoding="utf-8")
+
+    with pytest.raises(ExternalAuditError, match="تفسير_منافس_كامل"):
+        audit_card(path)
+
+
+def test_canonical_relation_maps_spellings_to_closed_vocabulary() -> None:
+    assert canonical_relation("غَيْر_متعينه") == "غير_متعينة"
+    assert canonical_relation("اضعف_صوريا") == "أضعف_صوريًّا"
+    assert canonical_relation("غير_قابل_للمقارنه") == "غير_قابل_للمقارنة"
+    with pytest.raises(ExternalAuditError):
+        canonical_relation("مكافي_صوريا")
 
 
 def _down_e_card(model: str, status: str) -> dict[str, object]:

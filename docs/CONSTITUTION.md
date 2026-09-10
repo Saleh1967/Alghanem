@@ -515,7 +515,13 @@ result (`نتيجة_التدقيق_الخارجي`) for communication/audit trac
 must not be interpreted as issuing `BirthVerdict` or freeze authority. Its
 weaker-prerequisite cone is derived from the experiment's frozen projection
 poset, not caller-declared, and it may defer when competing-relation typing or
-`Down_E` closure documentation is unresolved. Because a surface spelling is not
+`Down_E` closure documentation is unresolved. Competing-relation typing draws
+on a closed vocabulary (`غير_متعينة`, `أضعف_صوريًّا`, `مكافئ_صوريًّا`,
+`غير_قابل_للمقارنة`); an unrecognized value is rejected rather than treated as
+a resolved relation, and, per
+`NoRicherStructureBeforeLowerOpenResidualClosure`, a `غير_قابل_للمقارنة`
+reading stops blocking only when the card explicitly denies that it offers a
+complete competing explanation. Because a surface spelling is not
 an epistemic distinction, every card comparison runs over an
 orthography-insensitive key rather than raw text: optional diacritics,
 invisible formatting characters, `TATWEEL`, and equivalent `ALEF`/`ALEF

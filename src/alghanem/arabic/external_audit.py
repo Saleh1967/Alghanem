@@ -34,6 +34,15 @@ _LETTER_FOLDING: Final = {
     "\u0629": "\u0647",
 }
 _UNDETERMINED_RELATION: Final = "غير_متعينة"
+_WEAKER_RELATION: Final = "أضعف_صوريًّا"
+_EQUIVALENT_RELATION: Final = "مكافئ_صوريًّا"
+_INCOMPARABLE_RELATION: Final = "غير_قابل_للمقارنة"
+_ALLOWED_RELATIONS: Final = (
+    _UNDETERMINED_RELATION,
+    _WEAKER_RELATION,
+    _EQUIVALENT_RELATION,
+    _INCOMPARABLE_RELATION,
+)
 _CLOSED_STATUS: Final = "مغلق"
 
 
@@ -55,6 +64,30 @@ def comparison_key(value: str) -> str:
     return "".join(_LETTER_FOLDING.get(character, character) for character in unmarked)
 
 
+_RELATION_BY_KEY: Final = {
+    comparison_key(relation): relation for relation in _ALLOWED_RELATIONS
+}
+if len(_RELATION_BY_KEY) != len(_ALLOWED_RELATIONS):  # pragma: no cover - guard
+    raise RuntimeError("two allowed relations collapse onto one comparison key")
+
+
+def canonical_relation(value: str) -> str:
+    """Return the closed-vocabulary relation named by ``value``.
+
+    Only `غير_متعينة` and the explicitly resolved relations
+    `أضعف_صوريًّا`, `مكافئ_صوريًّا`, and `غير_قابل_للمقارنة` are accepted. Any
+    other text — a misspelling or an invented term — is rejected instead of
+    being silently counted as a resolved relation.
+    """
+    relation = _RELATION_BY_KEY.get(comparison_key(value))
+    if relation is None:
+        allowed = "، ".join(_ALLOWED_RELATIONS)
+        raise ExternalAuditError(
+            "القراءات_المنافسة[].علاقة_بالنموذج_المختبر must be one of: " + allowed
+        )
+    return relation
+
+
 @dataclass(frozen=True, slots=True)
 class ExternalAuditResult:
     """External audit outcome; this is not a kernel birth verdict."""
@@ -67,6 +100,7 @@ class ExternalAuditResult:
     الإسقاطات_المنافسة_المشتقة: tuple[str, ...]
     عدد_القراءات_المنافسة: int
     عدد_العلاقات_غير_المتعينة: int
+    عدد_المنافسات_غير_القابلة_للمقارنة_الحاجبة: int
     تفاصيل_القراءات_المنافسة: tuple[tuple[str, str], ...]
     حالة_إغلاق_Down_E: str
     سبب_حالة_إغلاق_Down_E: str
@@ -81,6 +115,9 @@ class ExternalAuditResult:
             "الإسقاطات_المنافسة_المشتقة": list(self.الإسقاطات_المنافسة_المشتقة),
             "عدد_القراءات_المنافسة": self.عدد_القراءات_المنافسة,
             "عدد_العلاقات_غير_المتعينة": self.عدد_العلاقات_غير_المتعينة,
+            "عدد_المنافسات_غير_القابلة_للمقارنة_الحاجبة": (
+                self.عدد_المنافسات_غير_القابلة_للمقارنة_الحاجبة
+            ),
             "تفاصيل_القراءات_المنافسة": [
                 {"قراءة": name, "علاقة_بالنموذج_المختبر": relation}
                 for name, relation in self.تفاصيل_القراءات_المنافسة
@@ -91,12 +128,12 @@ class ExternalAuditResult:
 
 
 def _assess_down_e_closure(
-    card: dict[str, Any], *, weaker_cone: tuple[str, ...], unresolved_relations: int
+    card: dict[str, Any], *, weaker_cone: tuple[str, ...], blocking_relations: int
 ) -> tuple[str, str]:
-    if unresolved_relations:
+    if blocking_relations:
         return (
             "غير_متعينة",
-            "نوع العلاقة الصورية مع قراءات منافسة ما زال غير متعين",
+            "علاقة المنافسة مع قراءة منافسة ما زالت حاجبة قبل فحص إغلاق Down_E",
         )
     if not weaker_cone:
         return ("مغلق", "مخروط السوابق الأضعف فارغ في التصور الحالي")
@@ -247,27 +284,40 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
     if not isinstance(alternatives, list):
         raise ExternalAuditError("القراءات_المنافسة must be a list")
     parsed_alternatives: list[tuple[str, str]] = []
+    unresolved: list[tuple[str, str]] = []
+    blocking_incomparable: list[tuple[str, str]] = []
     for item in alternatives:
         if not isinstance(item, dict):
             raise ExternalAuditError("كل قراءة منافسة يجب أن تكون كائنًا")
         reading = _require_text(item.get("قراءة"), "القراءات_المنافسة[].قراءة")
-        relation = _require_text(
+        declared_relation = _require_text(
             item.get("علاقة_بالنموذج_المختبر"),
             "القراءات_المنافسة[].علاقة_بالنموذج_المختبر",
         )
-        parsed_alternatives.append((reading, relation))
-    unresolved = [
-        pair
-        for pair in parsed_alternatives
-        if comparison_key(pair[1]) == comparison_key(_UNDETERMINED_RELATION)
-    ]
+        relation = canonical_relation(declared_relation)
+        complete_rival = item.get("تفسير_منافس_كامل")
+        if complete_rival is not None and not isinstance(complete_rival, bool):
+            raise ExternalAuditError(
+                "القراءات_المنافسة[].تفسير_منافس_كامل must be true or false"
+            )
+        if relation != _INCOMPARABLE_RELATION and complete_rival is not None:
+            raise ExternalAuditError(
+                "القراءات_المنافسة[].تفسير_منافس_كامل is meaningful only for "
+                + _INCOMPARABLE_RELATION
+            )
+        parsed_alternatives.append((reading, declared_relation))
+        if relation == _UNDETERMINED_RELATION:
+            unresolved.append((reading, declared_relation))
+        elif relation == _INCOMPARABLE_RELATION and complete_rival is not False:
+            blocking_incomparable.append((reading, declared_relation))
+    blocking = len(unresolved) + len(blocking_incomparable)
     down_e_status, down_e_reason = _assess_down_e_closure(
         card,
         weaker_cone=specification.frozen_weaker_models,
-        unresolved_relations=len(unresolved),
+        blocking_relations=blocking,
     )
 
-    if unresolved or down_e_status != "مغلق":
+    if blocking or down_e_status != "مغلق":
         return ExternalAuditResult(
             الجهة="مدقق_خارجي",
             نتيجة_التدقيق_الخارجي="DEFER_التدقيق",
@@ -277,6 +327,7 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
             الإسقاطات_المنافسة_المشتقة=specification.competing_projections,
             عدد_القراءات_المنافسة=len(parsed_alternatives),
             عدد_العلاقات_غير_المتعينة=len(unresolved),
+            عدد_المنافسات_غير_القابلة_للمقارنة_الحاجبة=len(blocking_incomparable),
             تفاصيل_القراءات_المنافسة=tuple(parsed_alternatives),
             حالة_إغلاق_Down_E=down_e_status,
             سبب_حالة_إغلاق_Down_E=down_e_reason,
@@ -285,12 +336,13 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
     return ExternalAuditResult(
         الجهة="مدقق_خارجي",
         نتيجة_التدقيق_الخارجي="PASS_التدقيق",
-        سبب="لا توجد علاقات غير متعينة في البطاقة الخارجية",
+        سبب="لا توجد علاقة منافسة حاجبة في البطاقة الخارجية",
         النموذج_المختبر=specification.birth_query.test_model,
         مخروط_الأضعف_المشتق=specification.frozen_weaker_models,
         الإسقاطات_المنافسة_المشتقة=specification.competing_projections,
         عدد_القراءات_المنافسة=len(parsed_alternatives),
         عدد_العلاقات_غير_المتعينة=0,
+        عدد_المنافسات_غير_القابلة_للمقارنة_الحاجبة=0,
         تفاصيل_القراءات_المنافسة=tuple(parsed_alternatives),
         حالة_إغلاق_Down_E=down_e_status,
         سبب_حالة_إغلاق_Down_E=down_e_reason,
