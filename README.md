@@ -456,11 +456,27 @@ untouched, byte for byte. And it is not a kernel authority: no `Freeze`, no
 `E0`, no verdict, and no kernel gate reads it, asserted by a test that scans
 every `kernel/` module. The scope stays narrow to `OriginType` alone, because
 the weight and structure vocabularies have not been exported yet and a general
-frame assuming them would be an abstraction ahead of its referent. The source
-digest is recorded and pinned as declared; re-deriving it *here* would require
-the source's byte-precise canonicalization schema and its full payload, neither
-of which is in this repository, and that gap is stated in the module rather than
-papered over. What *is* known about that digest is recorded and enforced: by the
+frame assuming them would be an abstraction ahead of its referent.
+`src/alghanem/arabic/imported_vocabulary_source_digest.py` closes the
+re-derivation gap that the import contract stated rather than papered over: it
+deposits the source's `gflk.canonical.v1` schema byte-precisely — each entry's
+`root` and `origin_type` joined by `U+001F`, entries sorted by root and joined
+by `U+001E`, UTF-8 with no BOM and no additional Unicode normalization, hashed
+with the shared `canonical_content` digest primitive — so
+`verify_source_declared_content_id` recomputes the declared source id from the
+entries instead of comparing it to itself. Separators inside a field, duplicate
+roots, an out-of-vocabulary origin type, and an unrecorded canonicalization
+version are all refused, a mismatch names both of its possible causes (a
+changed payload versus a differently applied schema), and
+`RederivedSourceContentIdentity` is issuable only by that verification.
+Re-derivation still transfers no authority: `REDERIVATION_IS_NOT_AUTHORITY_NOTE`
+records that identical bytes are not a promoted freeze, a birth, or a kernel
+permission. The full 270-row source payload is not deposited in this repository
+yet, so `verify_export_payload` and the export-fixture test are the drop-in slot
+for it — the machinery is exercised on the schema's own reference pairs, and the
+absence is recorded in `SOURCE_PAYLOAD_ABSENCE_NOTE` rather than claimed as a
+verification that happened. What *is* known about that digest is recorded and
+enforced: by the
 export generator's own self-check, the source content id is computed over only
 each entry's `root` and `origin_type`, so `raw_category` and `batch_note` can
 change without moving it. The Alghanem-side identity covers every entry field,
