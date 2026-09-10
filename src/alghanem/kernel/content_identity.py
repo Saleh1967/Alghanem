@@ -3,12 +3,18 @@
 from __future__ import annotations
 
 import base64
-import hashlib
 import json
 import math
 import struct
 from dataclasses import dataclass, fields
 from typing import cast
+
+from alghanem.canonical_content import (
+    CANONICAL_HASH_ALGORITHM,
+    canonical_digest,
+    is_canonical_digest,
+)
+from alghanem.canonical_content import canonical_bytes as _canonical_bytes
 
 from .anchor import Anchor, State
 from .evidence import Claim, Evidence
@@ -18,7 +24,7 @@ from .trace import Trace
 from .transition import BranchOriginProvenance, StructurallyAdmissibleTransition
 
 _CONTENT_ID_TOKEN = object()
-_ALGORITHM = "sha256"
+_ALGORITHM = CANONICAL_HASH_ALGORITHM
 _CANONICALIZATION_VERSION = "transition-manifest-v1"
 
 # These fields belong to one admitted transition's content. Occurrence-specific
@@ -69,8 +75,7 @@ class TransitionContentIdentity:
         if (
             self.algorithm != _ALGORITHM
             or self.canonicalization_version != _CANONICALIZATION_VERSION
-            or len(self.digest) != 64
-            or any(character not in "0123456789abcdef" for character in self.digest)
+            or not is_canonical_digest(self.digest)
         ):
             raise ValueError("invalid transition content identity")
 
@@ -89,8 +94,7 @@ class CanonicalTransitionManifest:
                 "canonical transition manifests must be issued by "
                 "CanonicalTransitionEncoder"
             )
-        digest = hashlib.sha256(self.canonical_bytes).hexdigest()
-        if digest != self.content_id.digest:
+        if canonical_digest(self.canonical_bytes) != self.content_id.digest:
             raise ValueError("manifest bytes do not match its content digest")
 
 
@@ -105,17 +109,15 @@ class CanonicalTransitionEncoder:
             raise TypeError("canonical encoding requires an admitted transition")
         cls._assert_schema_coverage()
         encoded = cls._encode_transition(transition)
-        canonical_bytes = json.dumps(
-            encoded, ensure_ascii=False, separators=(",", ":"), sort_keys=True
-        ).encode("utf-8", "surrogatepass")
+        content_bytes = _canonical_bytes(encoded)
         content_id = TransitionContentIdentity(
             algorithm=_ALGORITHM,
             canonicalization_version=_CANONICALIZATION_VERSION,
-            digest=hashlib.sha256(canonical_bytes).hexdigest(),
+            digest=canonical_digest(content_bytes),
             _content_id_token=_CONTENT_ID_TOKEN,
         )
         return CanonicalTransitionManifest(
-            canonical_bytes=canonical_bytes,
+            canonical_bytes=content_bytes,
             content_id=content_id,
             _manifest_token=_CONTENT_ID_TOKEN,
         )

@@ -2,9 +2,15 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 from dataclasses import dataclass, field, fields
+
+from alghanem.canonical_content import (
+    CANONICAL_HASH_ALGORITHM,
+    canonical_bytes,
+    canonical_digest,
+    is_canonical_digest,
+)
 
 from .birth import (
     BirthExperimentSpecification,
@@ -15,7 +21,7 @@ from .birth import (
 )
 
 _EXPERIMENT_CONTENT_TOKEN = object()
-_ALGORITHM = "sha256"
+_ALGORITHM = CANONICAL_HASH_ALGORITHM
 _CANONICALIZATION_VERSION = "birth-experiment-specification-manifest-v1"
 EXPERIMENT_SPECIFICATION_MANIFEST_COVERAGE = (
     "experiment_id",
@@ -59,8 +65,7 @@ class BirthExperimentSpecificationContentIdentity:
         if (
             self.algorithm != _ALGORITHM
             or self.canonicalization_version != _CANONICALIZATION_VERSION
-            or len(self.digest) != 64
-            or any(character not in "0123456789abcdef" for character in self.digest)
+            or not is_canonical_digest(self.digest)
         ):
             raise BirthExperimentContentIdentityError(
                 "invalid experiment specification content identity"
@@ -81,7 +86,7 @@ class CanonicalBirthExperimentSpecificationManifest:
                 "canonical experiment manifests must be issued by "
                 "CanonicalBirthExperimentSpecificationEncoder"
             )
-        if hashlib.sha256(self.canonical_bytes).hexdigest() != self.content_id.digest:
+        if canonical_digest(self.canonical_bytes) != self.content_id.digest:
             raise BirthExperimentContentIdentityError(
                 "manifest bytes do not match its content digest"
             )
@@ -126,17 +131,15 @@ class CanonicalBirthExperimentSpecificationEncoder:
             "revision_sequence": specification.revision_sequence,
             "version": _CANONICALIZATION_VERSION,
         }
-        canonical_bytes = json.dumps(
-            encoded, ensure_ascii=False, separators=(",", ":"), sort_keys=True
-        ).encode("utf-8", "surrogatepass")
+        content_bytes = canonical_bytes(encoded)
         content_id = BirthExperimentSpecificationContentIdentity(
             algorithm=_ALGORITHM,
             canonicalization_version=_CANONICALIZATION_VERSION,
-            digest=hashlib.sha256(canonical_bytes).hexdigest(),
+            digest=canonical_digest(content_bytes),
             _token=_EXPERIMENT_CONTENT_TOKEN,
         )
         return CanonicalBirthExperimentSpecificationManifest(
-            canonical_bytes=canonical_bytes,
+            canonical_bytes=content_bytes,
             content_id=content_id,
             _token=_EXPERIMENT_CONTENT_TOKEN,
         )
