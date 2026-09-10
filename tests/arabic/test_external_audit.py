@@ -9,6 +9,7 @@ from alghanem.arabic.external_audit import (
     build_birth_spec_from_card,
     canonical_relation,
     comparison_key,
+    read_declared_witnesses,
 )
 
 
@@ -418,3 +419,64 @@ def test_unresolved_relation_outranks_documented_down_e_closure(
     assert result.مخروط_الأضعف_المشتق == ("علمية_فقط",)
     assert result.حالة_إغلاق_Down_E == "غير_متعينة"
     assert result.نتيجة_التدقيق_الخارجي == "DEFER_التدقيق"
+
+
+def test_declared_witnesses_are_counted_for_every_example_card() -> None:
+    for name in ("man_2_255.yaml", "maa_2_197.yaml", "imran_3_33.yaml"):
+        result = audit_card(_example_card(name))
+
+        assert result.عدد_الشواهد == 1
+        assert result.to_dict()["عدد_الشواهد"] == 1
+
+
+def test_missing_witness_field_is_accepted_and_counted_as_zero(
+    tmp_path: Path,
+) -> None:
+    card = _relation_card("مكافئ_صوريًّا")
+    assert "الأدلة" not in card
+    path = tmp_path / "no_witnesses.json"
+    path.write_text(json.dumps(card, ensure_ascii=False), encoding="utf-8")
+
+    result = audit_card(path)
+
+    assert result.عدد_الشواهد == 0
+    assert result.نتيجة_التدقيق_الخارجي == "PASS_التدقيق"
+
+
+def test_declared_witnesses_do_not_change_the_audit_outcome(
+    tmp_path: Path,
+) -> None:
+    baseline = audit_card(_example_card("man_2_255.yaml"))
+    card = json.loads(_example_card("man_2_255.yaml").read_text(encoding="utf-8"))
+    card["الأدلة"] = list(card["الأدلة"]) + ["شاهد إضافي معلن في البطاقة"]
+    path = tmp_path / "extra_witness.json"
+    path.write_text(json.dumps(card, ensure_ascii=False), encoding="utf-8")
+
+    result = audit_card(path)
+
+    assert result.عدد_الشواهد == 2
+    assert baseline.عدد_الشواهد == 1
+    assert result.نتيجة_التدقيق_الخارجي == baseline.نتيجة_التدقيق_الخارجي
+    assert result.سبب == baseline.سبب
+    assert result.حالة_إغلاق_Down_E == baseline.حالة_إغلاق_Down_E
+    assert result.سبب_حالة_إغلاق_Down_E == baseline.سبب_حالة_إغلاق_Down_E
+
+
+@pytest.mark.parametrize(
+    "witnesses",
+    ["نص مفرد لا قائمة", {"شاهد": "قيمة"}, [""], ["  "], ["شاهد صحيح", 3], [None]],
+)
+def test_malformed_witness_field_is_rejected(tmp_path: Path, witnesses: object) -> None:
+    card = _relation_card("مكافئ_صوريًّا")
+    card["الأدلة"] = witnesses
+    path = tmp_path / "bad_witnesses.json"
+    path.write_text(json.dumps(card, ensure_ascii=False), encoding="utf-8")
+
+    with pytest.raises(ExternalAuditError, match="الأدلة"):
+        audit_card(path)
+
+
+def test_declared_witnesses_are_read_verbatim() -> None:
+    card = json.loads(_example_card("maa_2_197.yaml").read_text(encoding="utf-8"))
+
+    assert read_declared_witnesses(card) == tuple(card["الأدلة"])
