@@ -1,3 +1,4 @@
+import dataclasses
 import json
 from pathlib import Path
 
@@ -443,23 +444,39 @@ def test_missing_witness_field_is_accepted_and_counted_as_zero(
     assert result.نتيجة_التدقيق_الخارجي == "PASS_التدقيق"
 
 
-def test_declared_witnesses_do_not_change_the_audit_outcome(
-    tmp_path: Path,
+def test_every_reported_field_is_covered_by_the_witness_stability_check() -> None:
+    result = audit_card(_example_card("man_2_255.yaml"))
+
+    assert set(result.to_dict()) == {
+        field.name for field in dataclasses.fields(result)
+    }
+
+
+@pytest.mark.parametrize(
+    "name", ["man_2_255.yaml", "maa_2_197.yaml", "imran_3_33.yaml"]
+)
+@pytest.mark.parametrize("witness_count", [0, 2])
+def test_changing_the_witness_count_leaves_every_other_field_identical(
+    tmp_path: Path, name: str, witness_count: int
 ) -> None:
-    baseline = audit_card(_example_card("man_2_255.yaml"))
-    card = json.loads(_example_card("man_2_255.yaml").read_text(encoding="utf-8"))
-    card["الأدلة"] = list(card["الأدلة"]) + ["شاهد إضافي معلن في البطاقة"]
-    path = tmp_path / "extra_witness.json"
+    baseline = audit_card(_example_card(name)).to_dict()
+    assert baseline.pop("عدد_الشواهد") == 1
+
+    card = json.loads(_example_card(name).read_text(encoding="utf-8"))
+    if witness_count == 0:
+        del card["الأدلة"]
+    else:
+        card["الأدلة"] = list(card["الأدلة"]) + ["شاهد إضافي معلن في البطاقة"]
+    path = tmp_path / "witness_variant.json"
     path.write_text(json.dumps(card, ensure_ascii=False), encoding="utf-8")
 
-    result = audit_card(path)
+    reported = audit_card(path).to_dict()
 
-    assert result.عدد_الشواهد == 2
-    assert baseline.عدد_الشواهد == 1
-    assert result.نتيجة_التدقيق_الخارجي == baseline.نتيجة_التدقيق_الخارجي
-    assert result.سبب == baseline.سبب
-    assert result.حالة_إغلاق_Down_E == baseline.حالة_إغلاق_Down_E
-    assert result.سبب_حالة_إغلاق_Down_E == baseline.سبب_حالة_إغلاق_Down_E
+    assert reported.pop("عدد_الشواهد") == witness_count
+    assert reported == baseline
+    assert json.dumps(reported, ensure_ascii=False, sort_keys=True) == json.dumps(
+        baseline, ensure_ascii=False, sort_keys=True
+    )
 
 
 @pytest.mark.parametrize(
