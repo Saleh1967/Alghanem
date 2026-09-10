@@ -426,6 +426,48 @@ drift into two; `Canonicalization != Authority`, and importing it transfers a
 byte encoding and nothing else. No measurement pipeline, corpus, or Phase-2
 experiment is created here.
 
+`src/alghanem/arabic/imported_feature_vocabulary.py` builds the Alghanem half of
+the cross-project import that the readiness work named as missing: the source
+project `GFLK-Taaqol-GPT` exports the `OriginType` vocabulary
+`gflk.origin_type.v1`, derived from the `ORIGIN_LEDGER_AR_v1` ledger, with a
+deterministic content id and a self-declared `FROZEN_LOCAL` freeze scope. The
+boundary the module keeps is `ForeignFrozenExport != LocalFreeze`, one level
+above `Canonicalization != Authority`: `ForeignFreezeScope.FROZEN_LOCAL` is read
+as declared and never promoted — no function here turns it into
+`SpecificationFreeze.FROZEN`, a kernel `Freeze`, an `E0`, or a birth. The
+imported vocabulary is bound to `EvidenceGenus.MORPHO_FUNCTIONAL` and refuses
+any other genus, its `OriginType` vocabulary is closed with `UNRESOLVED` as a
+member rather than a gap, and its distribution is a *derived* count over the
+entries: a declared distribution or row count that disagrees with the derived
+one is refused, so no field exists that the answer can simply be written into.
+`ImportedVocabularyContentVerifier` is the sole issuer of a
+`VerifiedVocabularyImport`, re-deriving an Alghanem-side content id through the
+same shared `canonical_content` primitive rather than trusting the digest the
+export declares, with the encoding schema checked at import against the
+dataclass fields. `assert_matches_recorded_release` pins the recorded release —
+270 rows, 126 `EVENT` / 56 `ENTITY` / 88 `UNRESOLVED`, the source ids and the
+declared source digest — so a mismatched import is refused rather than passed
+through silently.
+
+Two things this deliberately is *not*. It is not the deferred born
+morpho-functional vocabulary: an imported foreign vocabulary is not one born
+here, and the five distributional features and `RECORDED_PROBE_REPORT` are
+untouched, byte for byte. And it is not a kernel authority: no `Freeze`, no
+`E0`, no verdict, and no kernel gate reads it, asserted by a test that scans
+every `kernel/` module. The scope stays narrow to `OriginType` alone, because
+the weight and structure vocabularies have not been exported yet and a general
+frame assuming them would be an abstraction ahead of its referent. The source
+digest is recorded and pinned as declared; re-deriving it *here* would require
+the source's byte-precise canonicalization schema and its full payload, neither
+of which is in this repository, and that gap is stated in the module rather than
+papered over. What *is* known about that digest is recorded and enforced: by the
+export generator's own self-check, the source content id is computed over only
+each entry's `root` and `origin_type`, so `raw_category` and `batch_note` can
+change without moving it. The Alghanem-side identity covers every entry field,
+making it strictly finer rather than equivalent — an import-time guard asserts
+that `SOURCE_DIGEST_COVERED_FIELDS` is a proper subset of the entry fields, so
+the two digests can never be read as attesting the same thing.
+
 G0.F declares, ahead of any runtime, that factorization is the general case
 of birth (a domain may close with one factor, several jointly-necessary
 factors, or none) and that fractality is a law, not a folder layout: a
