@@ -241,6 +241,47 @@ classes, so the kinds of majāz relation (`مشابهة`, `مجاورة`, …), 
 would need one attestation per value to be branch-complete by construction, and
 this repository has only one.
 
+`src/alghanem/arabic/madlul_alone_formal.py` completes the set with a third
+certificate from the same named source (*الشخصية الإسلامية*, part 3), on the
+division of the **madlūl alone** into five sections. Its classified unit is a
+single lafẓ *whose own signified is tested* — the question is what kind of thing
+the madlūl itself is, not how the lafẓ relates to some other meaning — so it is
+structurally simpler than the previous two: only three binary questions. The
+`FrozenMadlulDomain` states them verbatim: "نوع مدلول اللفظ؟" (`معنى`/`لفظ`),
+asked always; then, asked only when the first answer is `لفظ`, "تركيب اللفظ
+المدلول؟" (`مفرد`/`مركّب`) and "حالة وضعه؟" (`مستعمَل`/`مهمَل`). The admissible
+state set is exactly five, one per section: `معنى`, `لفظ_مفرد_مستعمَل`,
+`لفظ_مفرد_مهمَل`, `لفظ_مركّب_مستعمَل`, and `هذيان`. As in the first two
+certificates `غير_مطروح` is a declared vocabulary value rather than a silent
+`None`, `classify_madlul` is total on those five states with no default branch
+and refuses every other state instead of approximating it, and no answer is
+written freely: each is derived from a closed carrier field
+(`حامل جنس المدلول`, `حامل تركيب اللفظ المدلول`, `حامل حال الوضع`) against which
+any hand-written answer is checked and rejected — which is what makes flipping
+the usage carrier of `الكلمة` produce `لفظ_مفرد_مهمَل` by construction.
+`prove_madlul_over_attested_corpus` reports one row per witness without stopping
+at a first failure; on the five textually attested witnesses (`الحيوان`,
+`الكلمة`, `الضاد`, `الخبر`, `الهذيان`) the derived section matches the attested
+section in every case, so the report carries the exact title
+"شهادة صورية شاملة ناجحة على نطاق محدود".
+
+Its two limits are again recorded as deliberately as the result.
+`FormalClassification != BirthVerdict` and
+`DeclaredSignifiedKind != BornOntology` — no type in `kernel/`, no `Freeze`, no
+`E0`, no gate reads it, and every external-audit field stays byte-identical; and
+the scope is exactly five witnesses from one named source and five sections, so
+the division of the signified lafẓ into `اسم`/`فعل`/`حرف`, the kinds of
+compound, and the degrees of neglect are excluded by declaration. One further
+scope limit belongs to the fifth branch alone and is recorded structurally
+rather than hidden: the source itself says of `الهذيان` that "هذا القسم غير
+موضوع، أي لم تضعه العرب؛ لأن الغرض من التركيب الإفادة، وهذا لا يفيد؛ ولكنه
+موجود". That branch is therefore structurally valid and *must* be classified
+like the rest, yet it falls **outside the scope of linguistic assignment**
+unlike the other four. So, exactly as the `مجاز` branch of the second
+certificate must declare its documented `علاقة`, the `هذيان` branch must declare
+that out-of-assignment note and every other branch must leave it `لا_ينطبق`; the
+note is a required field checked at construction, not a comment.
+
 G0.F declares, ahead of any runtime, that factorization is the general case
 of birth (a domain may close with one factor, several jointly-necessary
 factors, or none) and that fractality is a law, not a folder layout: a
