@@ -11,15 +11,17 @@ Governing laws (see `docs/CONSTITUTION.md`, Encyclopedia Self-Observation):
 
 - `RepositorySnapshotIsNotKnowledge`
 - `RepositoryArtifactIsNotEvidenceByItself`
-- `DocumentationIsNotImplementation`
-- `TestPassIsNotUniversalTruth`
+- `DocumentationIsNotImplementation` (DECLARED_DEFERRED)
+- `TestPassIsNotUniversalTruth` (DECLARED_DEFERRED)
 - `SelfModelIsNotSystem`
 - `SelfDescriptionDoesNotGrantAuthority`
-- `RepositoryVersionMustBeContentBound`
+- `RepositoryVersionMustBeContentBound` (CONSTITUTIONAL REQUIREMENT)
 - `RepositoryVersionIsExplicitlyAddressed`
-- `RepositoryVersionIsContentAuthenticated` (DECLARED_DEFERRED)
+- `RepositoryVersionIsContentAuthenticated` (within provider scope)
 - `SameRepositoryIdentity`
-- `DifferentCommitsIsNotHistoricalTransition` (DECLARED_DEFERRED)
+- `DifferentCommitsIsNotHistoricalTransition` (within provider scope)
+- `AuthenticatedObservationIsNotEvidence`
+- `ProviderDeclaredImplementationIdIsNotExecutionIdentity` (DECLARED_DEFERRED)
 - `ArtifactChangeRecordsBothSides`
 """
 

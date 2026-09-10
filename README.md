@@ -338,6 +338,39 @@ them from any authority yet: constructing one only proves it is
 well-formed, never that a factor was actually born and frozen. See the
 "G0.F" section of `docs/CONSTITUTION.md` for the full declared laws.
 
+The encyclopedia (`src/alghanem/encyclopedia/`) is an application consumer of
+the kernel, never a replacement for it. Its minimal state is
+`EncyclopediaNucleusSnapshot = FractalSnapshot + GrowthFrontier`, where the
+frontier holds only open questions: `RootInquiry` values, each requiring a
+`BirthExperimentSpecificationContentBinding` so that question *generation* is
+kept distinct from question *authorization* (a `QuestionProposal` carries no
+experiment or execution field at all), and kernel
+`ReopenExperimentSpecification` values, whose parents must exactly equal a
+frozen factor or born bridge present in the paired `FractalSnapshot` —
+identifier equality alone is refused. The nucleus deliberately has no domain,
+ontology, claim, knowledge, article, or text field, and defines no growth
+engine: `EncyclopediaGrowthTransition` remains the deferred boundary for
+applying authorized kernel outcomes to a snapshot.
+
+`src/alghanem/encyclopedia/self_observation/` applies that same discipline to
+this repository itself, under
+`System != RepositoryRepresentation != SelfModel != KnowledgeAboutSystem`. It
+defines only the first link of
+`RepositorySnapshot -> Evidence -> Claim -> EpistemicLicensing -> SelfKnowledge`:
+address-only refs anchored to an explicit `commit_sha`/`tree_sha`/`blob_sha`
+rather than a branch name, plus a `RepositoryObservationAuthority` that opens a
+run and verifies repository→commit→tree and tree/path→blob before issuing
+authenticated snapshots and artifacts. Authentication is not evidence
+(`AuthenticatedObservationIsNotEvidence`), and content authentication holds
+only within the provider's returned observations, never as universal
+repository truth. `RepositoryArtifactChangeRef` records both sides of a change
+so a delta is reconstructible, but `Change != Improvement`; and distinct commit
+shas alone are not a historical transition — an `AuthenticatedRepositoryTransition`
+needs two authenticated snapshots from one run plus a provider ancestry
+witness. No `Claim`, `EvidenceBinding`, or `SelfKnowledge` runtime exists here;
+that is a later `SelfKnowledgeBridgeExperiment`. See the "Encyclopedia Nucleus"
+and "Encyclopedia Self-Observation" sections of `docs/CONSTITUTION.md`.
+
 ## Development
 
 ```bash
