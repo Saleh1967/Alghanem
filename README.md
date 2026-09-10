@@ -202,6 +202,45 @@ lexemes from one named source and three classes: `مصدر`, `مضارع`, and
 `لازم/متعدي` are excluded by declaration, because they need a morphological
 source this repository has not supplied.
 
+`src/alghanem/arabic/lafz_madlul_relation_formal.py` repeats that structure for
+the relation between a lafẓ and its madlūl, from the same named source
+(*الشخصية الإسلامية*, part 3), with one deliberate structural difference: the
+classified unit is a *lafẓ cluster* (`عنقود لفظي` — one or more lafẓ, one or
+more meanings, and the tested usage itself), not an isolated single word,
+because `متباين` and `مترادف` describe a relation *between* several lafẓ and
+because `حقيقة` and `مجاز` are separated by the tested usage rather than by the
+bare word, so `الأسد` used of the beast and `الأسد` used of the brave man are
+two distinct clusters. The `FrozenRelationDomain` states five questions — the
+number of lafẓ, the number of meanings, then (only when one lafẓ carries
+several meanings) whether the lafẓ was assigned to each meaning initially,
+then (only when it was not) whether it became famous in the second meaning
+until the first was abandoned, then (only when it did not) which meaning the
+tested usage intends — whose admissible state set is exactly seven, one per
+class: `منفرد`, `متباين`, `مترادف`, `مشترك`, `منقول`, `حقيقة`, `مجاز`. As in
+the first certificate, `غير_مطروح` is a declared vocabulary value rather than a
+silent `None`, `classify_relation` is total on those seven states with no
+default branch and refuses every other state instead of approximating it, and
+no answer is written freely: the first two are derived from the actual lexeme
+and meaning counts, and the last three from closed carrier fields
+(`حامل الوضع الابتدائي`, `حامل الاشتهار والهجر`,
+`حامل المعنى المقصود بالاستعمال`) against which any hand-written answer is
+checked and rejected — which is what makes flipping the fame carrier of the
+`مجاز` cluster produce `منقول` by construction.
+`prove_relations_over_attested_corpus` reports one row per cluster without
+stopping at a first failure; on the seven
+textually attested clusters (`الله`, `السواد`/`البياض`, `الأسد`/`السبع`,
+`العين`, `الصلاة`, `الأسد` as `حقيقة`, `الأسد` as `مجاز`) the derived class
+matches the attested class in every case, so the report carries the exact title
+"شهادة صورية شاملة ناجحة على نطاق محدود". Its two limits are the same, and as
+deliberate: `FormalClassification != BirthVerdict` and
+`DeclaredRelation != BornOntology` — no type in `kernel/`, no `Freeze`, no
+`E0`, no gate reads it, and every external-audit field stays byte-identical;
+and the scope is exactly seven clusters from one named source and seven
+classes, so the kinds of majāz relation (`مشابهة`, `مجاورة`, …), `كناية`, and
+`استعارة` are excluded by declaration, because a closed vocabulary for them
+would need one attestation per value to be branch-complete by construction, and
+this repository has only one.
+
 G0.F declares, ahead of any runtime, that factorization is the general case
 of birth (a domain may close with one factor, several jointly-necessary
 factors, or none) and that fractality is a law, not a folder layout: a
