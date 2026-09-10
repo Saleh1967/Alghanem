@@ -85,6 +85,15 @@ rank/complexity runtime exists yet. A non-linguistic
 non-exhaustive experimental tool that can license at most a hypothesis, never
 a `BirthGate` verdict on its own.
 
+For bounded card-level review, the repository also includes
+`src/alghanem/arabic/external_audit.py` with a golden example at
+`examples/external_audit/man_2_255.yaml`. This auditor is explicitly
+non-authoritative (`ExternalAuditor != KernelAuthority`): it emits only
+external audit status (`نتيجة_التدقيق_الخارجي`), derives
+`مخروط_الأضعف_المشتق` from the frozen projection poset (rejecting
+caller-declared weaker cones), reports all competing readings, and exposes
+explicit `حالة_إغلاق_Down_E`/`سبب_حالة_إغلاق_Down_E` fields.
+
 G0.F declares, ahead of any runtime, that factorization is the general case
 of birth (a domain may close with one factor, several jointly-necessary
 factors, or none) and that fractality is a law, not a folder layout: a

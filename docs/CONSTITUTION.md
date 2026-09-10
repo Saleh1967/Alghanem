@@ -508,6 +508,15 @@ executable verdict, revision-history, competing-explanation assessment, or
 freeze authority. G0.BV.1 remains deferred: no runtime authority may issue a verdict until an
 assessment authority, BirthCandidate, and IndependentClosure exist.
 
+The current repository-level Arabic card auditor
+(`src/alghanem/arabic/external_audit.py`) is intentionally outside kernel
+verdict authority. It may parse an external card and emit an external audit
+result (`نتيجة_التدقيق_الخارجي`) for communication/audit traceability, but it
+must not be interpreted as issuing `BirthVerdict` or freeze authority. Its
+weaker-prerequisite cone is derived from the experiment's frozen projection
+poset, not caller-declared, and it may defer when competing-relation typing or
+`Down_E` closure documentation is unresolved.
+
 ### G0.2a.3 — Evidence acquisition authority
 
 Binding evidence to a frozen experiment is not enough: a caller could still
