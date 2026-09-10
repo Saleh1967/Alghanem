@@ -48,6 +48,14 @@ from .birth_content_identity import (
     FrozenBirthSemanticsContentScope,
     SealedBirthSemanticsContentRegistry,
 )
+from .birth_verdict import (
+    AuthorizedBirthVerdictScope,
+    BirthVerdictAuthorityError,
+    BirthVerdictDecision,
+    BirthVerdictGate,
+    BirthVerdictScopeRegistry,
+    SealedBirthVerdictScopeRegistry,
+)
 from .claim_constitution import (
     CanonicalClaimContentEncoder,
     CanonicalClaimContentManifest,
@@ -110,6 +118,15 @@ from .fractal import (
     ProofLineageEdge,
     ReopenExperimentSpecification,
 )
+from .independent_closure import (
+    AuthorizedClosureScope,
+    ClosureScopeRegistry,
+    ComparabilityClosureStatus,
+    IndependentClosureAssessment,
+    IndependentClosureAuthorityError,
+    IndependentClosureGate,
+    SealedClosureScopeRegistry,
+)
 from .invariant import (
     InvariantAssessmentSpecificationError,
     InvariantComparisonError,
@@ -167,6 +184,8 @@ __all__ = [
     "BirthAssessmentEvaluatorAuthorityError",
     "BirthAssessmentEvaluatorDefinitions",
     "BirthAssessmentEvaluatorRegistry",
+    "AuthorizedBirthVerdictScope",
+    "AuthorizedClosureScope",
     "BirthAssessmentRequest",
     "BirthAssessmentSemanticsContract",
     "BirthExperimentSpecification",
@@ -183,6 +202,10 @@ __all__ = [
     "BirthSemanticsContentIdentity",
     "BirthSemanticsContentIdentityError",
     "BirthSemanticsContentRegistry",
+    "BirthVerdictAuthorityError",
+    "BirthVerdictDecision",
+    "BirthVerdictGate",
+    "BirthVerdictScopeRegistry",
     "BirthVerdictStatus",
     "BornBridgeRef",
     "BranchOriginProvenance",
@@ -201,6 +224,8 @@ __all__ = [
     "CertifiedOutcome",
     "Claim",
     "ClaimCandidate",
+    "ClosureScopeRegistry",
+    "ComparabilityClosureStatus",
     "ClaimContentIdentity",
     "ClaimContentManifest",
     "ClaimCore",
@@ -233,6 +258,9 @@ __all__ = [
     "FrozenFactorRef",
     "FrozenOntologyRef",
     "FrozenPreEvidenceExperimentManifest",
+    "IndependentClosureAssessment",
+    "IndependentClosureAuthorityError",
+    "IndependentClosureGate",
     "InvariantAssessmentSpecificationError",
     "InvariantComparisonError",
     "InvariantExtractionError",
@@ -264,6 +292,8 @@ __all__ = [
     "SealedApplicabilityEvaluatorRegistry",
     "SealedBirthAssessmentEvaluatorRegistry",
     "SealedBirthEvaluatorImplementationRegistry",
+    "SealedBirthVerdictScopeRegistry",
+    "SealedClosureScopeRegistry",
     "SealedBirthSemanticsContentRegistry",
     "SealedInvariantExtractorRegistry",
     "State",
