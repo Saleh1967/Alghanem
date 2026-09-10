@@ -251,9 +251,7 @@ def test_the_named_pair_lists_are_byte_stable() -> None:
 def test_identical_interventions_are_excluded_by_declaration() -> None:
     checks = reference_matrix()
 
-    assert all(
-        check.assessment.left != check.assessment.right for check in checks
-    )
+    assert all(check.assessment.left != check.assessment.right for check in checks)
     assert "الأزواج المتطابقة مستثناةٌ من المصفوفة تصريحًا" in (
         IDENTICAL_PAIR_EXCLUSION_NOTE
     )
@@ -263,18 +261,14 @@ def test_a_mismatch_is_labelled_and_never_silently_dropped() -> None:
     left = make("delete", (1,))
     right = make("substitute", (4,), "\u0632")
     assessment = predict_commutation(left, right, len(REFERENCE_ATOMS))
-    fabricated = CommutationCheck(
-        "distant", assessment, CommutationVerdict.COMMUTES
-    )
+    fabricated = CommutationCheck("distant", assessment, CommutationVerdict.COMMUTES)
 
     assert fabricated.agreement is (
         PredictionOracleAgreement.PREDICTION_ORACLE_MISMATCH
     )
     assert fabricated.label.startswith("PREDICTION_ORACLE_MISMATCH(")
     assert mismatched_pairs((fabricated,)) == (fabricated.label,)
-    assert law_status((fabricated,)) is (
-        DerivedLawStatus.PARTIAL_WITH_NAMED_RESIDUALS
-    )
+    assert law_status((fabricated,)) is (DerivedLawStatus.PARTIAL_WITH_NAMED_RESIDUALS)
 
 
 def test_value_coincidence_is_outside_the_declared_scope_not_swallowed() -> None:
@@ -289,9 +283,7 @@ def test_value_coincidence_is_outside_the_declared_scope_not_swallowed() -> None
     assert check.assessment.verdict is CommutationVerdict.CONFLICTS
     assert check.assessment.reason is ConflictReason.SHIFT
     assert check.observed is CommutationVerdict.COMMUTES
-    assert check.agreement is (
-        PredictionOracleAgreement.PREDICTION_ORACLE_MISMATCH
-    )
+    assert check.agreement is (PredictionOracleAgreement.PREDICTION_ORACLE_MISMATCH)
     assert len(set(REFERENCE_ATOMS)) == len(REFERENCE_ATOMS)
     assert "مصادفةً قيميّة لا تبادلًا بنيويًّا" in VALUE_COINCIDENCE_NOTE
 

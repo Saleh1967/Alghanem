@@ -313,11 +313,14 @@ def predict_commutation(
         )
     if set(left_footprint.touched) & set(right_footprint.touched):
         return CommutationAssessment(
-            left, right, atom_count, CommutationVerdict.CONFLICTS, ConflictReason.OVERLAP
+            left,
+            right,
+            atom_count,
+            CommutationVerdict.CONFLICTS,
+            ConflictReason.OVERLAP,
         )
     if any(
-        left_footprint.shift.moves(coordinate)
-        for coordinate in right_footprint.touched
+        left_footprint.shift.moves(coordinate) for coordinate in right_footprint.touched
     ) or any(
         right_footprint.shift.moves(coordinate) for coordinate in left_footprint.touched
     ):
@@ -370,9 +373,7 @@ def _compose(
 def _order_is_undefined(
     first: InterventionFootprint, second: InterventionFootprint, atom_count: int
 ) -> bool:
-    return not is_applicable(
-        second.intervention, atom_count + first.shift.delta
-    )
+    return not is_applicable(second.intervention, atom_count + first.shift.delta)
 
 
 REFERENCE_ATOMS: Final[tuple[str, ...]] = (
@@ -415,6 +416,7 @@ def _build(
     payload: str,
     atom_count: int,
 ) -> SurfaceAtomIntervention | None:
+    coordinates: tuple[int, ...]
     if intervention_type == "swap":
         if anchor + 1 <= atom_count - 1:
             coordinates = (anchor, anchor + 1)
@@ -458,9 +460,7 @@ def reference_matrix(
 def _select(
     checks: tuple[CommutationCheck, ...], verdict: CommutationVerdict
 ) -> tuple[str, ...]:
-    return tuple(
-        check.label for check in checks if check.assessment.verdict is verdict
-    )
+    return tuple(check.label for check in checks if check.assessment.verdict is verdict)
 
 
 def commuting_pairs(checks: tuple[CommutationCheck, ...]) -> tuple[str, ...]:
