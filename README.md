@@ -70,14 +70,26 @@ request: it has no birth-verdict or freeze authority. G0.2a adds executable
 residual, weaker-model, and closure contracts that must match the frozen
 residual/closure identities. Evaluator ids in those contracts are declarations
 only unless a sealed evaluator registry authorizes the exact scope, and
-G0.BV.1 remains deferred: no runtime birth-verdict authority exists until an
+G0.BV.1's birth branch remains deferred: no runtime authority issues
+`BIRTH_IN_SCOPE` or `NO_BIRTH_IN_SCOPE` until an
 assessment authority, `BirthCandidate`, and `IndependentClosure` exist.
+G0.BV.1a makes only the deferral branch executable
+(`src/alghanem/kernel/birth_verdict.py`): `BirthVerdictScopeRegistry` issues
+and seals `AuthorizedBirthVerdictScope`s whose conditions are derived from a
+verified frozen experiment binding, and `BirthVerdictGate.assess` is the sole
+issuer of a `BirthVerdictDecision`. The gate accepts no status, reason, or
+closure claim from its caller (`CallerDoesNotOwnVerdictAuthority`) and derives
+`DEFER_IN_SCOPE` from the request's own frozen projection poset. Its codomain
+is currently that single value, because the other two statuses require a
+gate-issued `IndependentClosureDecision` no authority here can produce
+(`DeferredVerdict != Birth`). It issues no `Freeze` and no `E0` mapping, and a
+`DEFER_IN_SCOPE` decision may not be frozen.
 `BirthCandidate` is distinct from a scoped birth verdict and from `Freeze`;
 the future G0.BV.1 authority may issue `BIRTH_IN_SCOPE`, then a later freeze
 authority may freeze it before a separate `E0` step. See the
 "G0 — Birth Protocol" section of
-`docs/CONSTITUTION.md` for the full declared laws; no `BirthGate` or
-rank/complexity runtime exists yet. A non-linguistic
+`docs/CONSTITUTION.md` for the full declared laws; no birth-issuing `BirthGate`
+or rank/complexity runtime exists yet. A non-linguistic
 `SurfaceAtomIntervention`/`SurfaceInterventionTrace` runtime does exist
 (`src/alghanem/arabic/encoding/intervention.py`), but per
 `InterventionOperationIsNotOntology` and

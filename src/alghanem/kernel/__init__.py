@@ -48,6 +48,14 @@ from .birth_content_identity import (
     FrozenBirthSemanticsContentScope,
     SealedBirthSemanticsContentRegistry,
 )
+from .birth_verdict import (
+    AuthorizedBirthVerdictScope,
+    BirthVerdictAuthorityError,
+    BirthVerdictDecision,
+    BirthVerdictGate,
+    BirthVerdictScopeRegistry,
+    SealedBirthVerdictScopeRegistry,
+)
 from .claim_constitution import (
     CanonicalClaimContentEncoder,
     CanonicalClaimContentManifest,
@@ -167,6 +175,7 @@ __all__ = [
     "BirthAssessmentEvaluatorAuthorityError",
     "BirthAssessmentEvaluatorDefinitions",
     "BirthAssessmentEvaluatorRegistry",
+    "AuthorizedBirthVerdictScope",
     "BirthAssessmentRequest",
     "BirthAssessmentSemanticsContract",
     "BirthExperimentSpecification",
@@ -183,6 +192,10 @@ __all__ = [
     "BirthSemanticsContentIdentity",
     "BirthSemanticsContentIdentityError",
     "BirthSemanticsContentRegistry",
+    "BirthVerdictAuthorityError",
+    "BirthVerdictDecision",
+    "BirthVerdictGate",
+    "BirthVerdictScopeRegistry",
     "BirthVerdictStatus",
     "BornBridgeRef",
     "BranchOriginProvenance",
@@ -264,6 +277,7 @@ __all__ = [
     "SealedApplicabilityEvaluatorRegistry",
     "SealedBirthAssessmentEvaluatorRegistry",
     "SealedBirthEvaluatorImplementationRegistry",
+    "SealedBirthVerdictScopeRegistry",
     "SealedBirthSemanticsContentRegistry",
     "SealedInvariantExtractorRegistry",
     "State",
