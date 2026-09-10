@@ -275,3 +275,33 @@ def test_comparison_key_preserves_distinct_readings() -> None:
     assert comparison_key("منافس_غير_أضعف") != comparison_key("غير_متعينة")
     assert comparison_key("أولى") == comparison_key("اولي")
     assert comparison_key("غير_متعينة") != comparison_key("غير_متعينى")
+
+
+def _example_card(name: str) -> Path:
+    return Path(__file__).resolve().parents[2] / "examples" / "external_audit" / name
+
+
+def test_external_audit_defers_for_imran_3_33_card() -> None:
+    result = audit_card(_example_card("imran_3_33.yaml"))
+
+    assert result.نتيجة_التدقيق_الخارجي == "DEFER_التدقيق"
+    assert result.النموذج_المختبر == "علمية_وعجمة"
+    assert result.مخروط_الأضعف_المشتق == ("علمية_فقط",)
+    assert result.الإسقاطات_المنافسة_المشتقة == ("علمية_وزيادة_ألف_ونون",)
+    assert result.عدد_العلاقات_غير_المتعينة == 1
+    assert result.حالة_إغلاق_Down_E == "غير_متعينة"
+
+
+def test_unresolved_relation_outranks_documented_down_e_closure(
+    tmp_path: Path,
+) -> None:
+    card = json.loads(_example_card("imran_3_33.yaml").read_text(encoding="utf-8"))
+    card["اغلاق_سوابق_Down_E"] = [{"نموذج": "علمية_فقط", "حالة": "مغلق"}]
+    path = tmp_path / "imran_documented.json"
+    path.write_text(json.dumps(card, ensure_ascii=False), encoding="utf-8")
+
+    result = audit_card(path)
+
+    assert result.مخروط_الأضعف_المشتق == ("علمية_فقط",)
+    assert result.حالة_إغلاق_Down_E == "غير_متعينة"
+    assert result.نتيجة_التدقيق_الخارجي == "DEFER_التدقيق"
