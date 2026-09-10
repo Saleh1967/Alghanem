@@ -326,6 +326,63 @@ and `DiscoveredCluster != BornOntology` — no type in `kernel/`, no `Freeze`, n
 The module carries no success title at all, since dressing a negative result
 in the three certificates' title would be disguise rather than record.
 
+`src/alghanem/arabic/probe_preregistration.py` closes the one gap that record
+left open. That module freezes a *past* experiment's specification alongside
+its result, but for a *future* experiment it offered only a prose constant, so
+nothing structurally prevented a later result from having its features chosen
+after its clusters were seen:
+
+```
+FrozenProbeSpecification (recorded past run)
+    != EnforcedPreEvidenceSpecification (binding future run)
+```
+
+`FrozenFollowupProbeSpecification` declares `experiment_id`, `revision_id`,
+`revision_sequence`, an `EvidenceGenus`, the frozen feature set, support
+threshold, scanned-`k` range, `SelectionCriterion`, `StoppingRule`, and a
+declared evaluation criterion — and carries **no result field at all**, which
+is checked at import against the dataclass's own fields rather than trusted.
+`PreEvidenceProbeSpecificationRegistry.freeze` is the only issuer of a
+`FrozenPreEvidenceProbeManifest`, and refuses different content re-frozen under
+the same `(experiment_id, revision_id, revision_sequence)` identity;
+`FollowupProbeSpecificationContentBinding` re-encodes the live specification
+and compares canonical bytes, so post-freeze drift cannot be bound. A
+`ProbeResultAttachment` is then *unconstructible* without that binding, and
+refuses at construction — never as a warning — any feature outside the frozen
+set, any selection criterion or stopping rule other than the frozen ones, and
+any `k` outside the frozen range.
+
+`EvidenceGenus` is deliberately two-valued (`توزيعي`, `صرفي_وظيفي`) with **no**
+`MIXED`: combining two genera is an explicit composition
+`(E_distributional, E_morphological, CompositionRule)` needing a contract that
+does not exist yet, and a shorthand enum value would hide that structure. The
+morpho-functional genus is declared but not yet constructible, because no
+frozen morphological feature vocabulary has been born — refused with that exact
+reason rather than silently admitted.
+
+`Phase2OpenQuestion` records the scientific question with **no answer or
+verdict field**, and requires all three hypotheses rather than a false
+dichotomy: (A) only these five features are insufficient; (B) the
+`اسم`/`فعل`/`حرف` division is not a surface-distributional kind at all, so no
+enlargement of that evidence genus recovers it; (C) the division is recoverable
+distributionally, but only after lower structural variables (boundary,
+position, morphological transformation) are themselves born as licensed
+carriers — which is what `Closure_L -> Handoff_L -> Birth_{L+1}` would predict.
+This PR answers none of them.
+
+Authority-wise the module is inert like the record it guards:
+`ProbeResultAttachment != BirthVerdict`,
+`FrozenFollowupProbeSpecification != BirthExperimentSpecification`, and its
+freeze registry is a local documentation-layer registry, not a kernel
+authority — no `Freeze`, no `E0`, and no kernel gate reads any of it, which is
+asserted by a test that scans every `kernel/` module for such a reference. The
+only thing shared with the kernel is `src/alghanem/canonical_content.py`, an
+authority-free canonical-encoding and digest primitive now used by both this
+module and the kernel's two encoders, so that one canonicalization rule cannot
+drift into two; `Canonicalization != Authority`, and importing it transfers a
+byte encoding and nothing else. No measurement pipeline, corpus, or Phase-2
+experiment is created here.
+
 G0.F declares, ahead of any runtime, that factorization is the general case
 of birth (a domain may close with one factor, several jointly-necessary
 factors, or none) and that fractality is a law, not a folder layout: a
@@ -337,6 +394,39 @@ reopen protocol —`FrozenFactorRef`, `BornBridgeRef`, `DerivedRelationSpec`,
 them from any authority yet: constructing one only proves it is
 well-formed, never that a factor was actually born and frozen. See the
 "G0.F" section of `docs/CONSTITUTION.md` for the full declared laws.
+
+The encyclopedia (`src/alghanem/encyclopedia/`) is an application consumer of
+the kernel, never a replacement for it. Its minimal state is
+`EncyclopediaNucleusSnapshot = FractalSnapshot + GrowthFrontier`, where the
+frontier holds only open questions: `RootInquiry` values, each requiring a
+`BirthExperimentSpecificationContentBinding` so that question *generation* is
+kept distinct from question *authorization* (a `QuestionProposal` carries no
+experiment or execution field at all), and kernel
+`ReopenExperimentSpecification` values, whose parents must exactly equal a
+frozen factor or born bridge present in the paired `FractalSnapshot` —
+identifier equality alone is refused. The nucleus deliberately has no domain,
+ontology, claim, knowledge, article, or text field, and defines no growth
+engine: `EncyclopediaGrowthTransition` remains the deferred boundary for
+applying authorized kernel outcomes to a snapshot.
+
+`src/alghanem/encyclopedia/self_observation/` applies that same discipline to
+this repository itself, under
+`System != RepositoryRepresentation != SelfModel != KnowledgeAboutSystem`. It
+defines only the first link of
+`RepositorySnapshot -> Evidence -> Claim -> EpistemicLicensing -> SelfKnowledge`:
+address-only refs anchored to an explicit `commit_sha`/`tree_sha`/`blob_sha`
+rather than a branch name, plus a `RepositoryObservationAuthority` that opens a
+run and verifies repository→commit→tree and tree/path→blob before issuing
+authenticated snapshots and artifacts. Authentication is not evidence
+(`AuthenticatedObservationIsNotEvidence`), and content authentication holds
+only within the provider's returned observations, never as universal
+repository truth. `RepositoryArtifactChangeRef` records both sides of a change
+so a delta is reconstructible, but `Change != Improvement`; and distinct commit
+shas alone are not a historical transition — an `AuthenticatedRepositoryTransition`
+needs two authenticated snapshots from one run plus a provider ancestry
+witness. No `Claim`, `EvidenceBinding`, or `SelfKnowledge` runtime exists here;
+that is a later `SelfKnowledgeBridgeExperiment`. See the "Encyclopedia Nucleus"
+and "Encyclopedia Self-Observation" sections of `docs/CONSTITUTION.md`.
 
 ## Development
 
