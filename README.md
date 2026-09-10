@@ -385,6 +385,34 @@ position, morphological transformation) are themselves born as licensed
 carriers — which is what `Closure_L -> Handoff_L -> Birth_{L+1}` would predict.
 This PR answers none of them.
 
+`src/alghanem/arabic/readiness_rank.py` closes the level-up of that same gap:
+the four-rank phase-2 status table (`BUILT_AND_CHECKED`, `NOT_YET_FROZEN`,
+`NOT_STARTED`, `OPEN`) previously existed only as prose in a pull-request body,
+where nothing stopped it from later being read as an enforced fact —
+`RecordedStatusProse != EnforcedReadinessRecord`. It is now a
+`ReadinessRankRecord` over **four independent closed vocabularies**
+(`StructuralReadiness`, `SpecificationFreeze`, `MeasurementProgress`,
+`QuestionStatus`) rather than one enum with four values, because a single
+ladder implies a false total order in which a higher rank looks entailed by its
+position. Four is the minimum sufficient count, not an assumption: merging
+structure with freeze would make freezing an automatic promotion of a checked
+build, though a checked build with no frozen future specification is exactly
+today's state; merging freeze with measurement would erase the difference
+between a frozen specification that binds every later measurement and no
+specification at all; merging measurement with the question would make a
+completed measurement a settlement. Implication runs **one way only**, as a
+prior condition: measurement beyond `NOT_STARTED` requires `FROZEN`, `FROZEN`
+requires `BUILT_AND_CHECKED`, and closure requires `COMPLETED` — while a frozen
+specification with no measurement yet, and a completed measurement with an open
+question, are both admissible states now. `CLOSED_BY_FROZEN_EXPERIMENT` is
+declared in the vocabulary but unconstructible, under the same discipline as
+`MORPHO_FUNCTIONAL`, and is refused at construction of *any* record rather than
+only in the module-level one, with its own named reason (no birth gate exists
+here to issue a closure) checked before the general implication message. Each
+rank carries a non-blank justification, and the single `PHASE2_READINESS` takes
+its `question_id` from `PHASE2_OPEN_QUESTION` rather than copying it, so the two
+cannot drift.
+
 Authority-wise the module is inert like the record it guards:
 `ProbeResultAttachment != BirthVerdict`,
 `FrozenFollowupProbeSpecification != BirthExperimentSpecification`, and its
