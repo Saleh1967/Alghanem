@@ -634,11 +634,24 @@ progress later, and the two foreign aims live in a separate `ForeignDeclaredAim`
 type so that their exclusion from any later derivation is structural rather than
 remembered. The module cites the open audit question
 `DeclaredVersusDerivedRecurrenceNotExplained` as its direct design source, as §5
-requires, and a test enforces that citation. No indicator exists yet: the
-derivation readers §4 names (constitution-row and audit-question counters) and
-the indicator derived from them are a later milestone, and no field here carries
-a value. The layer is authority-inert, orders nothing by priority, and an
-automated scan asserts that no `kernel/` module reads it.
+requires, and a test enforces that citation. The layer is authority-inert,
+orders nothing by priority, and an automated scan asserts that no `kernel/`
+module reads it.
+
+The next milestone adds the two derivation readers §4 names, and only those:
+`alghanem.program.constitution_ledger` derives, from `docs/CONSTITUTION.md`
+itself, one `LawRow` per law-table row with its declared status, and one
+`AuditQuestionRow` per open or resolved audit question with its lineage. Counts
+are derived properties, never written fields, so no number can disagree with the
+document. A status outside the closed `DeclaredLawStatus` vocabulary stops the
+read with a named refusal instead of skipping the row, since a silently short
+count reads later as a complete table; a missing section or an unreadable
+document is likewise a named refusal rather than an empty ledger. An open
+question whose status the record never declares carries
+`NO_STATUS_DECLARED_IN_RECORD` rather than a blank. The reader binds to no aim:
+it imports no `AimId` and no `AimRecord`, because joining a count to a
+particular aim *is* the indicator, which remains deferred along with everything
+§4 requires of it.
 
 ## Development
 

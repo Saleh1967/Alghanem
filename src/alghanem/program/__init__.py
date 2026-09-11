@@ -1,4 +1,4 @@
-"""طبقة البرنامج: سجلّ الغايات، خاملةً سلطويًّا ولا تقرؤها النواة."""
+"""طبقة البرنامج: سجلّ الغايات ودفترا اشتقاقه، خاملةً سلطويًّا ولا تقرؤها النواة."""
 
 from .aims import (
     AIM_RECORDS,
@@ -18,22 +18,56 @@ from .aims import (
     AttainmentStanding,
     ForeignDeclaredAim,
 )
+from .constitution_ledger import (
+    CONSTITUTION_RELATIVE_PATH,
+    DESIGN_SOURCE_CITATION_NOTE,
+    LEDGER_AUTHORITY_NOTE,
+    NO_STATUS_DECLARED_IN_RECORD,
+    UNKNOWN_STATUS_IS_REFUSED_NOTE,
+    AuditQuestionLedger,
+    AuditQuestionRow,
+    AuditQuestionStanding,
+    ConstitutionLedger,
+    ConstitutionLedgerError,
+    DeclaredLawStatus,
+    LawRow,
+    LawRowLedger,
+    constitution_document_path,
+    load_constitution_ledger,
+    read_constitution_ledger,
+)
 
 __all__ = [
     "AIMS_AUTHORITY_NOTE",
     "AIM_RECORDS",
     "ATTAINMENT_DEFERRAL_NOTE",
+    "CONSTITUTION_RELATIVE_PATH",
+    "DESIGN_SOURCE_CITATION_NOTE",
     "DESIGN_SOURCE_OPEN_QUESTION",
     "FOREIGN_AIM_BOUNDARY_NOTE",
     "FOREIGN_DECLARED_AIMS",
+    "LEDGER_AUTHORITY_NOTE",
     "NO_INDICATOR_IN_THIS_MILESTONE_NOTE",
     "NO_PRIORITY_ORDER_NOTE",
+    "NO_STATUS_DECLARED_IN_RECORD",
     "TWO_INDEPENDENT_AXES_NOTE",
     "UNCLASSIFIED_IS_NOT_PROGRESS_NOTE",
+    "UNKNOWN_STATUS_IS_REFUSED_NOTE",
     "AimEngagement",
     "AimId",
     "AimRecord",
     "AimRecordError",
     "AttainmentStanding",
+    "AuditQuestionLedger",
+    "AuditQuestionRow",
+    "AuditQuestionStanding",
+    "ConstitutionLedger",
+    "ConstitutionLedgerError",
+    "DeclaredLawStatus",
     "ForeignDeclaredAim",
+    "LawRow",
+    "LawRowLedger",
+    "constitution_document_path",
+    "load_constitution_ledger",
+    "read_constitution_ledger",
 ]
