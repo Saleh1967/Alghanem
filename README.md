@@ -125,6 +125,54 @@ deliberately *not* named `EvidenceGenus`, which already names an unrelated
 linguistic-evidence distinction in
 `src/alghanem/arabic/probe_preregistration.py`.
 
+`src/alghanem/arabic/encoding/intervention_footprint.py` closes the one
+question that intervention runtime left open — whether two interventions on
+the same occurrence commute — using no data beyond the intervention
+definitions themselves. Each intervention's footprint (its ReadSet, its
+WriteSet, and its coordinate shift) is *derived, never written*:
+`InterventionFootprint` holds exactly one field, the intervention, and
+exposes `read_set`, `write_set`, `shift`, and `touched` as properties, so a
+footprint contradicting its own intervention is structurally unconstructible
+— `DerivedFootprint != DeclaredFootprint`. Shift is modelled explicitly
+rather than folded away: `delete` and `repeat` shift from `i + 1`, `insert`
+from `i`, so two interventions with disjoint write sets still conflict when
+one sits at or past the other's shift origin. The verdict is three-valued
+(`COMMUTES`, `CONFLICTS`, `UNDEFINED`) with an ordered precedence:
+`out_of_range` → `UNDEFINED` is decided **before** overlap and **before**
+shift, because an order whose second step falls outside the shifted sequence
+is not merely different but inapplicable, and its oracle is asserted against
+`InterventionCoordinateError` by name.
+
+What the module delivers is a **named pair list**, not a generalized
+confluence law — `NamedCriticalPairs != GeneralizedLaw`. `reference_matrix`
+runs the full 5 × 5 type matrix over seven named coordinate configurations
+(`adjacent`, `distant`, `at_zero`, `same_coordinate`, `descending`,
+`upper_edge`, `append_edge`) on a six-atom sequence, excluding identical
+interventions by declaration, and reports 41 commuting pairs, 102 critical
+pairs (`overlap` or `shift`), and 8 undefined pairs across 151 configured
+pairs, with every predicted verdict confirmed by `observe_commutation`
+applying both orders through the real application path (MATCH_ALL, 151/151).
+The scope is declared, not silently widened: the model reads coordinates and
+not values, so a sequence with repeated atoms can make two orders agree by
+**value coincidence** rather than structural commutation. That limit is
+recorded in `VALUE_COINCIDENCE_NOTE` and demonstrated by an explicit test,
+and the reference matrix therefore runs on distinct atoms only.
+
+Two absences are deliberate. First, a disagreement between the predicted and
+the observed verdict is recorded, never folded: it is labelled
+`PREDICTION_ORACLE_MISMATCH(τᵢ,τⱼ)`, kept in the list, and drops the derived
+`law_status()` to `PARTIAL_WITH_NAMED_RESIDUALS` — the status is derived from
+the matrix rather than written into it, and the footprint definition is not
+retrofitted to match what was observed (`PredictedVerdict != ObservedVerdict`).
+Second, nothing consumes the result:
+`NO_KERNEL_MODULE_CONSUMES_INTERVENTION_FOOTPRINT_NOTE` records that no
+kernel module, no gate, no `Freeze`, and no `E0` reads anything here, and
+exporting the module from `alghanem.arabic.encoding` is availability, not
+consumption. That absence is enforced by an import-tree sweep test rather
+than asserted in prose, because agreement between a model and its oracle
+disciplines the model and grants no authority at all —
+`AgreedVerdict != GrantedAuthority`.
+
 For bounded card-level review, the repository also includes
 `src/alghanem/arabic/external_audit.py` with a golden example at
 `examples/external_audit/man_2_255.yaml`. This auditor is explicitly
