@@ -323,9 +323,7 @@ class TableCensus:
             if not isinstance(table, ReadTable):
                 raise ConstitutionLedgerError("كل عنصرٍ جدولٌ مرصود")
             if table.header_line <= previous_line:
-                raise ConstitutionLedgerError(
-                    "ترتيب الجداول ترتيبُ ورودها في الوثيقة"
-                )
+                raise ConstitutionLedgerError("ترتيب الجداول ترتيبُ ورودها في الوثيقة")
             previous_line = table.header_line
 
     @property
@@ -494,9 +492,7 @@ def _read_tables(lines: list[str]) -> tuple[tuple[LawRow, ...], TableCensus]:
         number = index + 1
         cells = _split_row(line)
         if len(cells) < 2:
-            raise ConstitutionLedgerError(
-                f"صفُّ جدولٍ ناقص الأعمدة عند السطر {number}"
-            )
+            raise ConstitutionLedgerError(f"صفُّ جدولٍ ناقص الأعمدة عند السطر {number}")
         if index + 1 >= total or not _is_delimiter_row(_split_row(lines[index + 1])):
             raise ConstitutionLedgerError(
                 f"جدولٌ بلا سطر فصلٍ بعد ترويسته عند السطر {number}: جدولٌ "

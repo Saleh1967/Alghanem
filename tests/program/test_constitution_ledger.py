@@ -156,8 +156,7 @@ def test_an_interrupted_table_is_refused_not_partially_read() -> None:
 
 def test_a_document_without_any_table_is_refused() -> None:
     document = (
-        "# Title\n\n### OpenAuditQuestions\n\n"
-        "- `AQuestion`\n  - Status: `OPEN`\n"
+        "# Title\n\n### OpenAuditQuestions\n\n" "- `AQuestion`\n  - Status: `OPEN`\n"
     )
     document += (
         "\n### ResolvedAuditQuestions\n\n- `AClosedQuestion`\n"
