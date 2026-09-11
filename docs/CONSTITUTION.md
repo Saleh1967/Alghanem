@@ -1378,3 +1378,108 @@ deliberately out of scope for `RepositoryArtifactChangeRef`, which requires
 an identical `artifact_path` on both sides; a future
 `RepositoryArtifactMoveCandidate` would carry that separate identity
 question.
+
+## G0.T.0 — Intended theorem for the pure derivational core (DRAFT — NOT LAW)
+
+**Status: DRAFT_TEXT_ONLY.** This section is a text experiment, not a law and
+not a merged constitutional clause. It adds no row to any law table, changes
+no gate, authorizes nothing, and grants no epistemic promotion. Its only
+purpose is to find out whether the intended theorem can be *stated* at all in
+current kernel terms. Nothing here is proved; where this text asserts, it
+asserts as a declared assumption.
+
+### Scope of the draft statement
+
+The kernel divides, for provability purposes, into two halves that must not
+be conflated:
+
+- a **pure derivational core** — `BirthVerdictGate.assess` and
+  `IndependentClosureGate.assess`, which read no evidence payload and compute
+  their status from frozen specification fields alone; and
+- an **opaque oracle edge** — registry-bound invariant extractors, evaluator
+  input derivations, and evaluator implementations, which are arbitrary
+  callables with no declared denotation (`ObservedDeterminism != ProvenPurity`).
+
+This draft states a theorem about the first half only. The second half enters
+only as explicitly assumed axioms (§ *Assumed oracle axioms*), never as
+proved content.
+
+### T-1 (intended, unproved) — Verdict derivation is specification-local
+
+> For every `BirthAssessmentRequest` `r` that is successfully constructed, and
+> every `SealedBirthVerdictScopeRegistry` `R` that resolves a scope `s` for
+> `r`'s own `(domain, experiment_content_id)`, the `BirthVerdictDecision`
+> issued by `BirthVerdictGate.assess(registry=R, request=r)` is a total
+> function of `r.specification.competing_projections` and
+> `r.specification.frozen_weaker_models` alone — both of which are derived by
+> `BirthExperimentSpecification` from its own frozen `projection_poset` and
+> `birth_query`. In particular the decision's `status` and `reason` are
+> independent of `r.evidence_snapshot`'s payload, of every evaluator, every
+> derivation, and every extractor, and of `R`'s other scopes.
+
+**T-1′ (companion, same shape).** The same statement holds for
+`IndependentClosureGate.assess` with `ComparabilityClosureStatus` in place of
+`BirthVerdictStatus`.
+
+**Intended corollary (weak).** Because the codomain reachable by the current
+gate is the single value `DEFER_IN_SCOPE`, T-1 currently entails no claim
+about any birth. The theorem is stated now so that its *shape* is fixed before
+`BIRTH_IN_SCOPE` becomes reachable; today its subject matter is deferral.
+
+**What T-1 does not say.** It does not say the verdict is *correct*, *sound*,
+*justified by the evidence*, or *consistent with its inputs* in any sense
+richer than "computed from these frozen fields". `SpecificationLocality !=
+EvidentialConsistency`. It is a non-interference/locality statement, not a
+soundness statement.
+
+### Assumed oracle axioms (declared, not proved)
+
+Any future statement that reaches past the pure core must discharge or assume
+these. They are recorded here as assumptions precisely because the kernel
+cannot establish them:
+
+| Axiom | Assumed content | Why it is not proved here |
+| --- | --- | --- |
+| `OracleTotality` | A registry-bound extractor/derivation/implementation returns a value for every input it is invoked on. | Bound callables are arbitrary Python; they may raise or diverge. The kernel converts raising into `DEFER`, which records an epistemic non-answer rather than establishing totality. |
+| `OracleDeterminism` | A bound callable returns equal output for equal input, across invocations and processes. | `EvaluatorInputDerivationGate` observes one repeat invocation only; it explicitly records `ObservedDeterminism != ProvenPurity`. Nothing excludes hidden state, clock, or environment dependence. |
+| `OraclePurity` | A bound callable has no effect on kernel or external state. | Python imposes no effect discipline and the kernel performs no static analysis of bound callables. |
+| `OracleIdentityFaithfulness` | A declared `implementation_identity` names the code that actually ran. | Declared identity is caller/provider metadata; the kernel compares strings, it does not attest the executing artifact. |
+| `SchemaDenotation` | Declared schema strings (`result_schema`, `residual_schema`, `model_result_schema`, `output_schema`) denote sets of values, and a returned value lies in the denoted set. | These fields are opaque text compared only by equality; no interpretation function from schema text to a value set exists anywhere in the kernel. |
+| `FailureSemanticsDenotation` | `failure_semantics` and `declared_information_loss` denote something a judgment could be checked against. | Same: declarative text, never interpreted. |
+
+An oracle-touching theorem is therefore, at best, of the form
+"assuming `OracleTotality ∧ OracleDeterminism ∧ …`, then …". None of these
+assumptions is currently testable inside the kernel, and asserting them is not
+weaker than asserting the conclusion by inspection.
+
+### Where the intended statement is not expressible (the actual finding)
+
+Writing T-1 exposed that the *originally intended* theorem — "every
+successfully constructed request yields a judgment consistent with its
+inputs" — cannot be written down in current kernel terms. The following
+phrases have no referent here, and each needs a different remedy:
+
+| Missing term | Why it cannot be stated | What would be needed |
+| --- | --- | --- |
+| "consistent with its inputs" | There is no relation in the kernel between an evidence payload and a verdict. The gate never reads the payload, and no predicate `Consistent(evidence, verdict)` is definable because evidence bytes are deliberately uninterpreted. | An interpretation of evidence content — a genuine denotational layer — which G0 deliberately does not have. |
+| "a judgment" as a semantic object | `BirthVerdictStatus` is an enum label; it carries no truth condition. `DEFER_IN_SCOPE` is defined by its issuing procedure, not by a condition on the world. | Semantics for statuses, stated independently of the procedure that emits them. |
+| "for every request" as a quantifier | Quantification over all constructible `BirthAssessmentRequest`s is not expressible in Python or in mypy-strict types; construction validity lives in `__post_init__` raises, which are a procedure, not a predicate. | An external proof object (dependent types / a proof assistant), or at minimum an explicit predicate mirroring every `__post_init__` check. |
+| "successfully constructed" as a predicate | Success is defined operationally as "no exception was raised by some constructor", and the set of raises is distributed across many `__post_init__` bodies in several modules. There is no single, quotable well-formedness predicate to appear as the theorem's hypothesis. | A consolidated, auditable statement of the admission predicate, derived from — and kept in step with — the constructors. |
+| "the same request" across runs | Request identity is partly occurrence identity (`uuid4`, `admission_id`) and only partly content identity; `OccurrenceIdentity != ContentIdentity` is declared law. A theorem quantifying over requests-up-to-content cannot yet name its own equivalence relation. | Total content identity coverage for requests, not only for experiment specifications, residuals, criteria, and weaker models. |
+| "necessarily" / "must" | The kernel's modality is runtime refusal: a violation raises. Refusal establishes that *this* execution did not proceed, never that no execution could. | A proof-carrying notion of impossibility, which runtime raises cannot supply. |
+
+`BirthAssessmentSemanticsContract` is **not** this theorem and does not
+approach it: it is a per-instance referential well-formedness predicate
+(matching ids, domains, schemas, exact prerequisite-cone coverage, poset
+agreement) evaluated in `__post_init__`. It quantifies over nothing and issues
+no verdict. In the shape above it belongs in T-1's *hypothesis*, not its
+conclusion; `ReferentialConsistencyContract != DenotationalSemantics`, and the
+name "semantics contract" overstates what it establishes.
+
+### Reconsideration condition (tracked, not scheduled)
+
+This draft is not to be promoted to law, and the "prove once vs. re-verify per
+instance" question is not to be reopened, until **both** hold: `BIRTH_IN_SCOPE`
+is actually reachable through a real closure authority, **and** the law tables
+above have stopped moving. Until then any theorem proved here has `DEFER` as
+its only subject.
