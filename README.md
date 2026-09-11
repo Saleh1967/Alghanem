@@ -653,6 +653,25 @@ it imports no `AimId` and no `AimRecord`, because joining a count to a
 particular aim *is* the indicator, which remains deferred along with everything
 §4 requires of it.
 
+Selecting law tables by their `Law | Status` header was a validity condition,
+but *non*-selection used to be silent: a law table whose header drifted by a
+space, a case, or a neighbouring word would vanish from the count with no error
+raised, because nothing *conflicted* — something was simply never counted. The
+refusal rule therefore moved one layer up, from the cell to the table:
+`DeclaredTableHeader` is a closed vocabulary extracted from the document, and
+every pipe table is now either read, or excluded under a declared header, or
+refused by name and line; a table without a delimiter row after its header is
+refused too, instead of having one of its rows consumed as a header. A derived
+`TableCensus` records each table found, so an excluded table is visible rather
+than merely absent. What remains is named rather than hidden in
+`NAMED_RESIDUALS`: `TABLE_HEADER_MATCH_COMPLETENESS_UNVERIFIED` (a law table
+written under another declared header is still excluded without refusal) and
+`NO_DECLARED_TOTAL_TO_CROSS_CHECK` (the document declares no total, so the
+derived count rests on "no refusal fired", which is *no shortfall was detected*,
+not *no shortfall exists*). Inventing a declared total in the document to close
+that gap would be fabrication, not verification: §4's "a declared value that
+contradicts the derived one is refused" presupposes a genuine declared value.
+
 ## Development
 
 ```bash
