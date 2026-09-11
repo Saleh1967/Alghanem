@@ -25,7 +25,10 @@ agreed verdict     != granted authority
 وإن لم تتقاطع مجموعتا الكتابة. وهذا بالضبط نوع الخطأ الذي لا يظهر في
 الحالة النموذجية، فمصفوفة المرجع تُشغَّل على تكويناتٍ مسمّاة: متجاورتان،
 ومتباعدتان، وعند الصفر، وعند الإحداثية نفسها، ونازلتان، وعند الحافة
-القصوى، وعند حدّ الإلحاق.
+القصوى، وعند حدّ الإلحاق، وتبديلٌ غيرُ متجاورٍ يكتنف مبدأ الإزاحة،
+وتبديلٌ يشارك إحداثيةً واحدة لا أكثر. وتُشغَّل كذلك على تسلسلٍ أدنى من
+ذرّتين وعلى تسلسلٍ ثانٍ متمايز الذرّات، فالأحكام تتبع الإحداثيات والطول
+وحدهما لا قيمَ الذرّات.
 
 **٣. `UNDEFINED` فرعٌ قائم لا قيمةٌ في مفردة.** إذا خرجت إحداثيةُ الثاني
 عن المدى بعد تطبيق الأول (وهو ما تفعله الإزاحة السالبة عند الحافة)، فليس
@@ -86,7 +89,8 @@ NO_KERNEL_MODULE_CONSUMES_INTERVENTION_FOOTPRINT_NOTE: Final = (
 DERIVED_LAW_SCOPE_NOTE: Final = (
     "المُنتَج قائمةُ أزواجٍ مسمّاة على تكويناتٍ مسمّاة، لا قانونَ تبادلٍ "
     "معمَّمًا على جبر التدخّلات كلِّه: المصفوفة تشمل الأنواع الخمسة كاملةً "
-    "بسبع تكوينات إحداثيات، وما وراءها غيرُ مقيسٍ هنا فلا يُدَّعى"
+    "بتسع تكوينات إحداثيات، وأزواجًا مرتَّبةً لا ثلاثيات، وما وراءها غيرُ "
+    "مقيسٍ هنا فلا يُدَّعى"
 )
 
 VALUE_COINCIDENCE_NOTE: Final = (
@@ -106,6 +110,19 @@ IDENTICAL_PAIR_EXCLUSION_NOTE: Final = (
     "تبادلُ تدخّلٍ مع نفسه حرفيًّا صحيحٌ بلا مضمون: الترتيبان تركيبٌ واحد. "
     "فالأزواج المتطابقة مستثناةٌ من المصفوفة تصريحًا، لا محذوفةٌ لأن حكمها "
     "خالف التوقّع"
+)
+
+ORDERED_TRIPLES_ABSENCE_NOTE: Final = (
+    "المقيس أزواجٌ مرتَّبة وحدها، ولا ثلاثياتٍ هنا: وحكمُ الثلاثيّ لا يُشتَقّ "
+    "من أحكام أزواجه، إذ قد يتبادل كلُّ زوجٍ على حدة ولا يستوي ترتيبُ "
+    "الثلاثة. فالغياب مسجَّلٌ باسمه لا مُستنتَجٌ سكوتًا، ولا يُوسَّع القياسُ "
+    "إليها قبل أن يوجد مستهلكٌ يطلبها"
+)
+
+PAYLOAD_INDEPENDENCE_NOTE: Final = (
+    "الأحكام تتبع الإحداثيات والطول وحدهما لا قيمَ الذرّات: فتشغيلُ المصفوفة "
+    "على تسلسلٍ ثانٍ متمايز الذرّات يعطي الأحكام نفسها بايتًا ببايت، وهذا "
+    "مفحوصٌ باختبارٍ لا مُصرَّحٌ به وحسب"
 )
 
 
@@ -388,6 +405,17 @@ REFERENCE_ATOMS: Final[tuple[str, ...]] = (
 REFERENCE_SOURCE_ID: Final = "reference-occurrence"
 REFERENCE_OCCURRENCE_ID: Final = "0"
 
+ALTERNATE_ATOMS: Final[tuple[str, ...]] = (
+    "\u0642",
+    "\u0643",
+    "\u0644",
+    "\u0645",
+    "\u0646",
+    "\u0649",
+)
+
+MINIMAL_ATOMS: Final[tuple[str, ...]] = ("\u0642", "\u0643")
+
 LEFT_PAYLOAD: Final = "\u0632"
 RIGHT_PAYLOAD: Final = "\u0637"
 
@@ -399,14 +427,16 @@ INTERVENTION_TYPES: Final[tuple[InterventionType, ...]] = (
     "insert",
 )
 
-COORDINATE_CONFIGURATIONS: Final[tuple[tuple[str, int, int], ...]] = (
-    ("adjacent", 1, 2),
-    ("distant", 1, 4),
-    ("at_zero", 0, 3),
-    ("same_coordinate", 2, 2),
-    ("descending", 4, 1),
-    ("upper_edge", 4, 5),
-    ("append_edge", 5, 6),
+COORDINATE_CONFIGURATIONS: Final[tuple[tuple[str, int, int, int], ...]] = (
+    ("adjacent", 1, 2, 1),
+    ("distant", 1, 4, 1),
+    ("at_zero", 0, 3, 1),
+    ("same_coordinate", 2, 2, 1),
+    ("descending", 4, 1, 1),
+    ("upper_edge", 4, 5, 1),
+    ("append_edge", 5, 6, 1),
+    ("straddling_swap", 2, 1, 3),
+    ("swap_shares_one_coordinate", 1, 1, 2),
 )
 
 
@@ -415,13 +445,14 @@ def _build(
     anchor: int,
     payload: str,
     atom_count: int,
+    swap_span: int,
 ) -> SurfaceAtomIntervention | None:
     coordinates: tuple[int, ...]
     if intervention_type == "swap":
-        if anchor + 1 <= atom_count - 1:
-            coordinates = (anchor, anchor + 1)
-        elif anchor - 1 >= 0 and anchor <= atom_count - 1:
-            coordinates = (anchor - 1, anchor)
+        if anchor + swap_span <= atom_count - 1:
+            coordinates = (anchor, anchor + swap_span)
+        elif anchor - swap_span >= 0 and anchor <= atom_count - 1:
+            coordinates = (anchor - swap_span, anchor)
         else:
             return None
     else:
@@ -441,14 +472,23 @@ def _build(
 def reference_matrix(
     source_atoms: tuple[str, ...] = REFERENCE_ATOMS,
 ) -> tuple[CommutationCheck, ...]:
-    """المصفوفة الكاملة: خمسةُ أنواعٍ × خمسة × سبعةُ تكوينات، بترتيبٍ حتميّ."""
+    """المصفوفة الكاملة: خمسةُ أنواعٍ × خمسة × تكويناتُ الإحداثيات، بترتيبٍ حتميّ."""
     atom_count = len(source_atoms)
     checks: list[CommutationCheck] = []
-    for configuration, left_anchor, right_anchor in COORDINATE_CONFIGURATIONS:
+    for (
+        configuration,
+        left_anchor,
+        right_anchor,
+        swap_span,
+    ) in COORDINATE_CONFIGURATIONS:
         for left_type in INTERVENTION_TYPES:
             for right_type in INTERVENTION_TYPES:
-                left = _build(left_type, left_anchor, LEFT_PAYLOAD, atom_count)
-                right = _build(right_type, right_anchor, RIGHT_PAYLOAD, atom_count)
+                left = _build(
+                    left_type, left_anchor, LEFT_PAYLOAD, atom_count, swap_span
+                )
+                right = _build(
+                    right_type, right_anchor, RIGHT_PAYLOAD, atom_count, swap_span
+                )
                 if left is None or right is None or left == right:
                     continue
                 checks.append(
@@ -498,11 +538,15 @@ def law_status(checks: tuple[CommutationCheck, ...]) -> DerivedLawStatus:
 
 
 __all__ = [
+    "ALTERNATE_ATOMS",
     "COORDINATE_CONFIGURATIONS",
     "DERIVED_LAW_SCOPE_NOTE",
     "IDENTICAL_PAIR_EXCLUSION_NOTE",
     "INTERVENTION_TYPES",
+    "MINIMAL_ATOMS",
     "NO_KERNEL_MODULE_CONSUMES_INTERVENTION_FOOTPRINT_NOTE",
+    "ORDERED_TRIPLES_ABSENCE_NOTE",
+    "PAYLOAD_INDEPENDENCE_NOTE",
     "PREDICTION_ORACLE_MISMATCH_NOTE",
     "REFERENCE_ATOMS",
     "VALUE_COINCIDENCE_NOTE",
