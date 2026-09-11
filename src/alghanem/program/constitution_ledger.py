@@ -36,9 +36,22 @@
 فصار للترويسات مفردةٌ مغلقة مُستخرَجة من الوثيقة كما استُخرجت مفردةُ الحالات،
 وكلّ جدولٍ إمّا مقروءٌ أو مُستبعَدٌ مُصرَّحًا به أو مرفوضٌ باسمه؛ ولا تخطّي صامت.
 
+**والقاعدة نفسها تُرفَع طبقةً ثانية هنا: من الجدول إلى نقطة سؤال التدقيق.** كان
+قارئُ الأسئلة يُطابق شكلًا واحدًا متوقَّعًا ويتخطّى ما عداه صامتًا: نقطةٌ عليا
+كُتبت بشكلٍ آخر تسقط بلا خطأ فيسقط سؤالُها من التعداد، ووسمٌ فرعيٌّ غيرُ معروف
+يُقرَأ فراغًا فيُقرَأ سؤالٌ ناطقٌ بحالته «لا حالة مُعلَنة في السجل». فصار لأشكال
+النقطة العليا مفردةٌ مغلقة (`DeclaredQuestionBulletShape`) ولوسوم النقاط الفرعية
+مفردةٌ مغلقة (`DeclaredQuestionBulletLabel`) فيها الوسومُ المقروءة والوسومُ
+**المُستبعَدة مُصرَّحًا باستبعادها**، على منهج `DeclaredTableHeader`؛ وكلّ نقطةٍ
+في القسمين إمّا مقروءةٌ أو مُستبعَدةٌ بوسمٍ مُصرَّح به أو مرفوضةٌ باسمها وموضعها،
+وتُحصى كلُّها في `QuestionBulletCensus`. ووسمٌ يتكرّر في السؤال الواحد يُرفَض ولا
+يُرجَّح أوّلُه، ونقطةٌ فرعيةٌ قبل أوّل سؤالٍ مُسمّى وسمٌ بلا صاحبٍ فتُرفَض.
+
 **وما بقي بعد ذلك مُسمّى لا مطويّ** (`NAMED_RESIDUALS`): الوثيقة لا تُعلن مجموعًا
 يُقابَل بالمُشتَقّ، فالتعدادُ قائمٌ على «لم يُكتشَف نقص» لا على «أُثبِت عدم وجود
-نقص»؛ وهذا حدٌّ صادق يُصرَّح به، لا عيبٌ يُخفى ولا ثقةٌ تُدَّعى.
+نقص»؛ ومفردةُ الوسوم مُستخرَجةٌ من نصّ اليوم ولا صفَّ في الدستور يُلزم السؤال
+بشكلٍ منها؛ ووسمٌ مُستبعَدٌ مُصرَّحٌ باستبعاده قد يحمل غدًا حالةً مُعلَنة فيسقط
+بلا رفض. وهذه حدودٌ صادقة يُصرَّح بها، لا عيوبٌ تُخفى ولا ثقةٌ تُدَّعى.
 
 **الجهل عضوٌ في المفردة لا فراغٌ يُطوى** (§٤): سؤالُ تدقيقٍ مفتوحٌ لا يُصرّح
 السجلّ بحالته يحمل `NO_STATUS_DECLARED_IN_RECORD`، لا سلسلةً فارغة تُقرَأ لاحقًا
@@ -100,6 +113,20 @@ TABLE_HEADER_MATCH_COMPLETENESS_UNVERIFIED: Final = (
 
 NO_DECLARED_TOTAL_TO_CROSS_CHECK: Final = "NO_DECLARED_TOTAL_TO_CROSS_CHECK"
 
+UNKNOWN_QUESTION_BULLET_IS_REFUSED_NOTE: Final = (
+    "نقطةٌ في قسمَي الأسئلة خارج مفردتَي الأشكال والوسوم تُوقف القراءة ولا "
+    "تُتخطّى: النقطةُ الساقطة لا تتعارض مع شيءٍ لأنها لم تُقرَأ أصلًا، فيُقرَأ "
+    "سؤالٌ ناقصٌ أو يسقط سؤالٌ بتمامه بلا أثرٍ يدلّ عليه"
+)
+
+QUESTION_BULLET_LABEL_VOCABULARY_IS_NOT_DECLARED_IN_RECORD: Final = (
+    "QUESTION_BULLET_LABEL_VOCABULARY_IS_NOT_DECLARED_IN_RECORD"
+)
+
+EXCLUDED_QUESTION_BULLET_MAY_CARRY_A_DECLARED_STATUS: Final = (
+    "EXCLUDED_QUESTION_BULLET_MAY_CARRY_A_DECLARED_STATUS"
+)
+
 NAMED_RESIDUALS: Final[Mapping[str, str]] = MappingProxyType(
     {
         TABLE_HEADER_MATCH_COMPLETENESS_UNVERIFIED: (
@@ -115,6 +142,18 @@ NAMED_RESIDUALS: Final[Mapping[str, str]] = MappingProxyType(
             "«مُعلَن» في الوثيقة لإغلاقه افتعالٌ لا تحقّق، فقاعدة «المخالفة "
             "تُرفَض لا تُقرَّر» تفترض قيمةً مُعلَنةً أصلًا"
         ),
+        QUESTION_BULLET_LABEL_VOCABULARY_IS_NOT_DECLARED_IN_RECORD: (
+            "مفردتا شكل النقطة العليا ووسم النقطة الفرعية مُستخرَجتان من نصّ "
+            "الوثيقة اليوم، ولا صفَّ في الدستور يُلزم سؤال التدقيق بشكلٍ منهما؛ "
+            "فوسمٌ جديدٌ يُكتَب غدًا يُرفَع به خطأٌ هنا باسمه، وهو رفضُ القارئ "
+            "لا إلزامُ السجلّ"
+        ),
+        EXCLUDED_QUESTION_BULLET_MAY_CARRY_A_DECLARED_STATUS: (
+            "صارت كلّ نقطةٍ إمّا مقروءةً أو مُستبعَدةً بوسمٍ مُصرَّح به أو "
+            "مرفوضةً باسمها، فانتفى التخطّي الصامت؛ وتبقى حالةٌ غيرُ قابلةٍ "
+            "للكشف من داخل النصّ: حالةٌ مُعلَنة تُكتَب غدًا تحت وسمٍ مُصرَّح "
+            "باستبعاده تُستبعَد بلا رفض، إذ الاستبعاد على الوسم لا على المحتوى"
+        ),
     }
 )
 
@@ -122,7 +161,8 @@ _OPEN_SECTION_HEADING: Final = "### OpenAuditQuestions"
 _RESOLVED_SECTION_HEADING: Final = "### ResolvedAuditQuestions"
 
 _UNESCAPED_PIPE: Final = re.compile(r"(?<!\\)\|")
-_TOP_LEVEL_BULLET: Final = re.compile(r"^- `(?P<name>[^`]+)`")
+_TOP_LEVEL_NAME_ONLY: Final = re.compile(r"^- `(?P<name>[^`]+)`$")
+_TOP_LEVEL_NAME_WITH_INLINE_NOTE: Final = re.compile(r"^- `(?P<name>[^`]+)`: \S.*$")
 _SUB_BULLET: Final = re.compile(r"^\s+- (?P<body>.*)$")
 
 
@@ -181,6 +221,53 @@ class DeclaredTableHeader(Enum):
         return self is DeclaredTableHeader.LAW_ROWS
 
 
+class DeclaredQuestionBulletShape(Enum):
+    """أشكال النقطة العليا في قسمَي الأسئلة، مفردةً مغلقة مُستخرَجة من النصّ.
+
+    الشكلان قائمان في الوثيقة معًا: سؤالٌ اسمُه وحده ثم نقاطٌ فرعية تحته،
+    وسؤالٌ يليه نصٌّ داخليّ في سطره نفسه. ودمجُهما في شكلٍ واحدٍ متساهل يُعيد
+    التخطّي الصامت من باب آخر، وإسقاطُ أحدهما يُسقط أسئلةً قائمة.
+    """
+
+    NAME_ONLY = "- `Name`"
+    NAME_WITH_INLINE_NOTE = "- `Name`: text"
+
+
+class DeclaredQuestionBulletLabel(Enum):
+    """وسوم النقاط الفرعية كما وردت نصًّا، مقروءَها ومُستبعَدَها مُصرَّحًا به.
+
+    على منهج `DeclaredTableHeader`: الاستبعادُ مُعلَنٌ لا مُستنتَجٌ من صمت،
+    فوسمٌ خارج هذه المفردة يُرفَض باسمه وموضعه ولا يُقرَأ فراغًا.
+    """
+
+    STATUS = "Status"
+    PREVIOUS_AUDIT_LABEL = "Previous audit label"
+    CLOSURE_LAW = "Closure law"
+    NOTE = "Note"
+    QUESTION = "Question"
+    STANDING_EVIDENCE = "Standing evidence"
+    MEASURED_STANDING = "Measured standing"
+    NOT_DECIDED_HERE = "Not decided here"
+    OBSERVATION = "Observation"
+    TWO_DISTINCT_SUB_SHAPES = "Two distinct sub-shapes, not one"
+    NOT_A_LAW_AND_NOT_NAMED = "Not a law and not named"
+
+    @property
+    def is_read_into_the_row(self) -> bool:
+        """أيُقرَأ هذا الوسم في صفّ السؤال؟ الاستبعادُ مُصرَّحٌ به لا مطويّ."""
+
+        return self in _ROW_BEARING_LABELS
+
+
+_ROW_BEARING_LABELS: Final[frozenset[DeclaredQuestionBulletLabel]] = frozenset(
+    {
+        DeclaredQuestionBulletLabel.STATUS,
+        DeclaredQuestionBulletLabel.PREVIOUS_AUDIT_LABEL,
+        DeclaredQuestionBulletLabel.CLOSURE_LAW,
+    }
+)
+
+
 _STATUS_BY_TEXT: Final[Mapping[str, DeclaredLawStatus]] = MappingProxyType(
     {member.value: member for member in DeclaredLawStatus}
 )
@@ -189,10 +276,20 @@ _TABLE_HEADER_BY_COLUMNS: Final[Mapping[tuple[str, ...], DeclaredTableHeader]] =
     MappingProxyType({member.value: member for member in DeclaredTableHeader})
 )
 
+_LABELS_LONGEST_FIRST: Final[tuple[DeclaredQuestionBulletLabel, ...]] = tuple(
+    sorted(
+        DeclaredQuestionBulletLabel, key=lambda label: len(label.value), reverse=True
+    )
+)
+
 if len(_STATUS_BY_TEXT) != len(DeclaredLawStatus):  # pragma: no cover - guard
     raise RuntimeError("two law statuses must not share one declared text")
 if len(_TABLE_HEADER_BY_COLUMNS) != len(DeclaredTableHeader):  # pragma: no cover
     raise RuntimeError("two table headers must not share one declared column pair")
+if len({label.value for label in DeclaredQuestionBulletLabel}) != len(
+    DeclaredQuestionBulletLabel
+):  # pragma: no cover - guard
+    raise RuntimeError("two bullet labels must not share one declared text")
 if len(AuditQuestionStanding) != 2:  # pragma: no cover - guard
     raise RuntimeError("audit standing is deliberately two-valued")
 
@@ -346,6 +443,102 @@ class TableCensus:
 
 
 @dataclass(frozen=True, slots=True)
+class ReadQuestionBullet:
+    """نقطةٌ واحدة من قسمَي الأسئلة، بشكلها المُصرَّح به أو وسمها المُصرَّح به.
+
+    حقلا الشكل والوسم لا يجتمعان ولا يرتفعان: النقطة العليا شكلٌ من مفردته،
+    والنقطة الفرعية وسمٌ من مفردته، وما عداهما مرفوضٌ عند القراءة لا مُسجَّلٌ
+    هنا. وحضورُ النقطة المُستبعَدة في هذا الأثر هو الفارق بين «استُبعدت بوسمٍ
+    معروف» و«لم تُرَ أصلًا».
+    """
+
+    document_line: int
+    standing: AuditQuestionStanding
+    question_name: str
+    shape: DeclaredQuestionBulletShape | None = None
+    label: DeclaredQuestionBulletLabel | None = None
+
+    def __post_init__(self) -> None:
+        _require_positive_line(self.document_line, "موضع النقطة")
+        if not isinstance(self.standing, AuditQuestionStanding):
+            raise ConstitutionLedgerError("موقف النقطة من مفردته المغلقة")
+        _require_non_blank(self.question_name, "اسم سؤال النقطة")
+        if self.shape is not None and not isinstance(
+            self.shape, DeclaredQuestionBulletShape
+        ):
+            raise ConstitutionLedgerError("شكل النقطة العليا من مفردته المغلقة")
+        if self.label is not None and not isinstance(
+            self.label, DeclaredQuestionBulletLabel
+        ):
+            raise ConstitutionLedgerError("وسم النقطة الفرعية من مفردته المغلقة")
+        if (self.shape is None) == (self.label is None):
+            raise ConstitutionLedgerError(
+                "النقطة إمّا عليا بشكلٍ مُصرَّح به أو فرعيةٌ بوسمٍ مُصرَّح به، "
+                "ولا تجمع الاثنين ولا تخلو منهما"
+            )
+
+    @property
+    def is_question_head(self) -> bool:
+        """أنقطةٌ عليا تُسمّي سؤالًا هذه؟"""
+
+        return self.shape is not None
+
+    @property
+    def is_read_into_the_row(self) -> bool:
+        """أدخلت هذه النقطة في صفّ السؤال، أم استُبعدت بوسمٍ مُصرَّح به؟"""
+
+        return self.label is None or self.label.is_read_into_the_row
+
+
+@dataclass(frozen=True, slots=True)
+class QuestionBulletCensus:
+    """إحصاءُ نقاط قسمَي الأسئلة كلِّها: المقروءُ منها والمُستبعَدُ مُصرَّحًا به.
+
+    لا حقلَ عددٍ هنا؛ التعدادُ خاصّيةٌ تُحسَب من النقاط المرصودة. والمرفوضةُ
+    لا تبلغ هذا الإحصاء أصلًا، إذ يُوقِفها رفضٌ مُسمّى عند القراءة.
+    """
+
+    bullets: tuple[ReadQuestionBullet, ...]
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.bullets, tuple) or not self.bullets:
+            raise ConstitutionLedgerError("إحصاء النقاط مجموعةٌ غير فارغة")
+        previous_line = 0
+        for bullet in self.bullets:
+            if not isinstance(bullet, ReadQuestionBullet):
+                raise ConstitutionLedgerError("كل عنصرٍ نقطةٌ مرصودة")
+            if bullet.document_line <= previous_line:
+                raise ConstitutionLedgerError("ترتيب النقاط ترتيبُ ورودها في الوثيقة")
+            previous_line = bullet.document_line
+
+    @property
+    def bullet_count(self) -> int:
+        """عدد النقاط المرصودة، محسوبًا لا مكتوبًا."""
+
+        return len(self.bullets)
+
+    @property
+    def head_bullets(self) -> tuple[ReadQuestionBullet, ...]:
+        """النقاط العليا التي سمّت أسئلةً، بترتيب ورودها."""
+
+        return tuple(bullet for bullet in self.bullets if bullet.is_question_head)
+
+    @property
+    def read_bullets(self) -> tuple[ReadQuestionBullet, ...]:
+        """النقاط التي دخلت صفوف الأسئلة، بترتيب ورودها."""
+
+        return tuple(bullet for bullet in self.bullets if bullet.is_read_into_the_row)
+
+    @property
+    def excluded_bullets(self) -> tuple[ReadQuestionBullet, ...]:
+        """النقاط المُستبعَدة بوسمٍ مُصرَّح به، لا بصمتٍ ولا بتخطٍّ."""
+
+        return tuple(
+            bullet for bullet in self.bullets if not bullet.is_read_into_the_row
+        )
+
+
+@dataclass(frozen=True, slots=True)
 class LawRowLedger:
     """دفتر صفوف الدستور: تعدادُه خاصّيةٌ تُحسَب، ولا حقلَ عددٍ فيه."""
 
@@ -445,6 +638,7 @@ class ConstitutionLedger:
     laws: LawRowLedger
     audit_questions: AuditQuestionLedger
     tables: TableCensus
+    question_bullets: QuestionBulletCensus
 
     def __post_init__(self) -> None:
         if not isinstance(self.laws, LawRowLedger):
@@ -453,6 +647,8 @@ class ConstitutionLedger:
             raise ConstitutionLedgerError("دفتر الأسئلة من نوعه")
         if not isinstance(self.tables, TableCensus):
             raise ConstitutionLedgerError("إحصاء الجداول من نوعه")
+        if not isinstance(self.question_bullets, QuestionBulletCensus):
+            raise ConstitutionLedgerError("إحصاء النقاط من نوعه")
 
 
 def _split_row(line: str) -> tuple[str, ...]:
@@ -568,11 +764,8 @@ def _logical_bullets(lines: list[str], start: int, end: int) -> list[tuple[int, 
     return bullets
 
 
-def _labelled_value(body: str, label: str) -> str:
-    prefix = f"{label}:"
-    if not body.startswith(prefix):
-        return ""
-    value = body[len(prefix) :].strip()
+def _bullet_value(body: str, label: DeclaredQuestionBulletLabel) -> str:
+    value = body[len(label.value) + 1 :].strip()
     candidate = value[:-1].strip() if value.endswith(".") else value
     if (
         len(candidate) > 2
@@ -584,16 +777,45 @@ def _labelled_value(body: str, label: str) -> str:
     return value
 
 
+def _declared_bullet_label(
+    body: str, number: int, text: str
+) -> DeclaredQuestionBulletLabel:
+    for label in _LABELS_LONGEST_FIRST:
+        if body.startswith(f"{label.value}:"):
+            return label
+    raise ConstitutionLedgerError(
+        f"وسمُ نقطةٍ خارج المفردة المغلقة عند السطر {number}: "
+        f"{text.strip()!r} — {UNKNOWN_QUESTION_BULLET_IS_REFUSED_NOTE}"
+    )
+
+
+def _declared_bullet_shape(
+    text: str, number: int
+) -> tuple[DeclaredQuestionBulletShape, str]:
+    name_only = _TOP_LEVEL_NAME_ONLY.match(text)
+    if name_only is not None:
+        return DeclaredQuestionBulletShape.NAME_ONLY, name_only.group("name")
+    with_note = _TOP_LEVEL_NAME_WITH_INLINE_NOTE.match(text)
+    if with_note is not None:
+        return (
+            DeclaredQuestionBulletShape.NAME_WITH_INLINE_NOTE,
+            with_note.group("name"),
+        )
+    raise ConstitutionLedgerError(
+        f"نقطةٌ عليا خارج مفردة الأشكال عند السطر {number}: "
+        f"{text.strip()!r} — {UNKNOWN_QUESTION_BULLET_IS_REFUSED_NOTE}"
+    )
+
+
 def _read_section_questions(
     lines: list[str], heading: str, standing: AuditQuestionStanding
-) -> list[AuditQuestionRow]:
+) -> tuple[list[AuditQuestionRow], list[ReadQuestionBullet]]:
     start, end = _section_bounds(lines, heading)
     questions: list[AuditQuestionRow] = []
+    bullets: list[ReadQuestionBullet] = []
     name = ""
     line_number = 0
-    declared_status = ""
-    previous_label = ""
-    closure_law = ""
+    values: dict[DeclaredQuestionBulletLabel, str] = {}
 
     def flush() -> None:
         if not name:
@@ -602,36 +824,61 @@ def _read_section_questions(
             AuditQuestionRow(
                 name=name,
                 standing=standing,
-                declared_status=declared_status or NO_STATUS_DECLARED_IN_RECORD,
+                declared_status=(
+                    values.get(DeclaredQuestionBulletLabel.STATUS)
+                    or NO_STATUS_DECLARED_IN_RECORD
+                ),
                 document_line=line_number,
-                previous_audit_label=previous_label,
-                closure_law=closure_law,
+                previous_audit_label=values.get(
+                    DeclaredQuestionBulletLabel.PREVIOUS_AUDIT_LABEL, ""
+                ),
+                closure_law=values.get(DeclaredQuestionBulletLabel.CLOSURE_LAW, ""),
             )
         )
 
     for number, text in _logical_bullets(lines, start, end):
-        top = _TOP_LEVEL_BULLET.match(text)
-        if top is not None:
-            flush()
-            name = top.group("name")
-            line_number = number
-            declared_status = ""
-            previous_label = ""
-            closure_law = ""
-            continue
-        if not name:
-            continue
         sub = _SUB_BULLET.match(text)
         if sub is None:
+            shape, read_name = _declared_bullet_shape(text, number)
+            flush()
+            name = read_name
+            line_number = number
+            values = {}
+            bullets.append(
+                ReadQuestionBullet(
+                    document_line=number,
+                    standing=standing,
+                    question_name=name,
+                    shape=shape,
+                )
+            )
             continue
+        if not name:
+            raise ConstitutionLedgerError(
+                f"نقطةٌ فرعية قبل أيّ سؤالٍ مُسمّى عند السطر {number}: "
+                f"{text.strip()!r} — وسمٌ بلا صاحبٍ لا يُطوى ولا يُنسَب إلى "
+                "سؤالٍ لاحق"
+            )
         body = sub.group("body").strip()
-        declared_status = declared_status or _labelled_value(body, "Status")
-        previous_label = previous_label or _labelled_value(body, "Previous audit label")
-        closure_law = closure_law or _labelled_value(body, "Closure law")
+        label = _declared_bullet_label(body, number, text)
+        if label in values:
+            raise ConstitutionLedgerError(
+                f"وسمٌ مكرّر في السؤال {name} عند السطر {number}: {label.value} — "
+                "لا يُرجَّح أوّلُ الموضعين على الآخر"
+            )
+        values[label] = _bullet_value(body, label)
+        bullets.append(
+            ReadQuestionBullet(
+                document_line=number,
+                standing=standing,
+                question_name=name,
+                label=label,
+            )
+        )
     flush()
     if not questions:
         raise ConstitutionLedgerError(f"لم يُقرَأ أيّ سؤالٍ من القسم: {heading}")
-    return questions
+    return questions, bullets
 
 
 def read_constitution_ledger(document_text: str) -> ConstitutionLedger:
@@ -640,19 +887,22 @@ def read_constitution_ledger(document_text: str) -> ConstitutionLedger:
     if not isinstance(document_text, str) or not document_text.strip():
         raise ConstitutionLedgerError("نصّ الوثيقة نصٌّ غير فارغ")
     lines = document_text.splitlines()
-    questions = _read_section_questions(
+    open_questions, open_bullets = _read_section_questions(
         lines, _OPEN_SECTION_HEADING, AuditQuestionStanding.OPEN
     )
-    questions.extend(
-        _read_section_questions(
-            lines, _RESOLVED_SECTION_HEADING, AuditQuestionStanding.RESOLVED
-        )
+    resolved_questions, resolved_bullets = _read_section_questions(
+        lines, _RESOLVED_SECTION_HEADING, AuditQuestionStanding.RESOLVED
+    )
+    questions = open_questions + resolved_questions
+    bullets = sorted(
+        open_bullets + resolved_bullets, key=lambda bullet: bullet.document_line
     )
     rows, census = _read_tables(lines)
     return ConstitutionLedger(
         laws=LawRowLedger(rows=rows),
         audit_questions=AuditQuestionLedger(questions=tuple(questions)),
         tables=census,
+        question_bullets=QuestionBulletCensus(bullets=tuple(bullets)),
     )
 
 
@@ -684,9 +934,12 @@ __all__ = [
     "LEDGER_AUTHORITY_NOTE",
     "NAMED_RESIDUALS",
     "NO_DECLARED_TOTAL_TO_CROSS_CHECK",
+    "EXCLUDED_QUESTION_BULLET_MAY_CARRY_A_DECLARED_STATUS",
     "NO_INDICATOR_IN_THIS_READER_NOTE",
     "NO_STATUS_DECLARED_IN_RECORD",
+    "QUESTION_BULLET_LABEL_VOCABULARY_IS_NOT_DECLARED_IN_RECORD",
     "TABLE_HEADER_MATCH_COMPLETENESS_UNVERIFIED",
+    "UNKNOWN_QUESTION_BULLET_IS_REFUSED_NOTE",
     "UNKNOWN_STATUS_IS_REFUSED_NOTE",
     "UNKNOWN_TABLE_HEADER_IS_REFUSED_NOTE",
     "AuditQuestionLedger",
@@ -695,9 +948,13 @@ __all__ = [
     "ConstitutionLedger",
     "ConstitutionLedgerError",
     "DeclaredLawStatus",
+    "DeclaredQuestionBulletLabel",
+    "DeclaredQuestionBulletShape",
     "DeclaredTableHeader",
     "LawRow",
     "LawRowLedger",
+    "QuestionBulletCensus",
+    "ReadQuestionBullet",
     "ReadTable",
     "TableCensus",
     "constitution_document_path",

@@ -742,6 +742,39 @@ this reader entirely, and `SECTION_3_CLASSIFIES_SIX_OF_THIRTEEN` records that th
 document's silence about the other seven is now derived and enforced but still
 silence. The indicator remains deferred with everything §4 requires of it.
 
+The fifth milestone adds no fifth reader. It pays the debt the fourth one named
+in its own closing lines: the audit-question bullet in
+`alghanem.program.constitution_ledger` was the last known place where an
+unexpected shape was skipped in silence, while the same rule had already been
+raised to table headers, to guards, and to the aims document's bullets. Coding it
+showed the skip was in three places, not one: a top-level bullet written in
+another shape dropped its whole question from the count; a sub-bullet under an
+unrecognised label was read as blank; and a label repeated inside one question
+silently preferred its first occurrence. The second is the worst of them, because
+a question whose status is written under an unknown label was read as
+`NO_STATUS_DECLARED_IN_RECORD` — the *declared ignorance* that §4 insists upon
+becoming a cover for a failed read.
+
+Two closed vocabularies now carry that: `DeclaredQuestionBulletShape` (a name
+alone, or a name followed by inline prose — both really occur, so accepting only
+one would drop two questions, and accepting any dash would reopen the silent
+skip), and `DeclaredQuestionBulletLabel`, whose eleven members hold the three
+labels that are read into a row and the eight that are *declared excluded* rather
+than passed over unmentioned, exactly as `DeclaredTableHeader` does. Every bullet
+in both sections is now read, or excluded under a declared label, or refused by
+name and line, and all of them land in a derived `QuestionBulletCensus` with no
+written count; a sub-bullet appearing before any named question is a label with no
+owner and is refused too. The repository document still reads as five open and
+four resolved questions: the hardening corrected no number, it removed that
+number's reliance on "no strange shape happened to appear". What remains is named
+rather than hidden: `QUESTION_BULLET_LABEL_VOCABULARY_IS_NOT_DECLARED_IN_RECORD`
+(the two vocabularies are extracted from today's text, and no constitutional row
+obliges a question to take a shape from them) and
+`EXCLUDED_QUESTION_BULLET_MAY_CARRY_A_DECLARED_STATUS` (exclusion is by label,
+not by content, so a status written tomorrow under a declared-excluded label is
+excluded without refusal). Tighter reading is not truth of what is read, and the
+indicator remains deferred with everything §4 requires of it.
+
 ## Development
 
 ```bash
