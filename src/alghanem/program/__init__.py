@@ -1,5 +1,30 @@
 """طبقة البرنامج: سجلّ الغايات وقرّاء اشتقاقه، خاملةً سلطويًّا ولا تقرؤها النواة."""
 
+from .aim_indicator import (
+    AIM_INDICATOR_AUTHORITY_NOTE,
+    CITATION_LINK_IS_NOT_ATTAINMENT,
+    CITATION_PROSE_IS_NOT_A_TOKEN_STREAM,
+    DEFERRAL_WAS_NOT_A_PERMANENT_BOUNDARY_NOTE,
+    DEFERRED_VALUE_READER_IS_NOT_REACHED_BY_ANY_CITATION,
+    LEDGER_COUNT_MOVEMENT_IS_NOT_AIM_MOVEMENT,
+    NO_SUM_ACROSS_READERS_NOTE,
+    UNKNOWN_CITATION_TOKEN_IS_REFUSED_NOTE,
+    AimCitationLink,
+    AimIndicator,
+    AimIndicatorError,
+    CitationCensus,
+    CitedSourceGenus,
+    CitedTokenShape,
+    ReadCitation,
+    constitution_repository_root,
+    derive_aim_indicator,
+)
+from .aim_indicator import (
+    DESIGN_SOURCE_CITATION_NOTE as AIM_INDICATOR_DESIGN_SOURCE_CITATION_NOTE,
+)
+from .aim_indicator import (
+    NAMED_RESIDUALS as AIM_INDICATOR_NAMED_RESIDUALS,
+)
 from .aims import (
     AIM_RECORDS,
     AIMS_AUTHORITY_NOTE,
@@ -105,6 +130,25 @@ from .deferred_value_ledger import (
 from .deferred_value_ledger import NAMED_RESIDUALS as DEFERRED_VALUE_NAMED_RESIDUALS
 
 __all__ = [
+    "AIM_INDICATOR_AUTHORITY_NOTE",
+    "AIM_INDICATOR_DESIGN_SOURCE_CITATION_NOTE",
+    "AIM_INDICATOR_NAMED_RESIDUALS",
+    "CITATION_LINK_IS_NOT_ATTAINMENT",
+    "CITATION_PROSE_IS_NOT_A_TOKEN_STREAM",
+    "DEFERRAL_WAS_NOT_A_PERMANENT_BOUNDARY_NOTE",
+    "DEFERRED_VALUE_READER_IS_NOT_REACHED_BY_ANY_CITATION",
+    "LEDGER_COUNT_MOVEMENT_IS_NOT_AIM_MOVEMENT",
+    "NO_SUM_ACROSS_READERS_NOTE",
+    "UNKNOWN_CITATION_TOKEN_IS_REFUSED_NOTE",
+    "AimCitationLink",
+    "AimIndicator",
+    "AimIndicatorError",
+    "CitationCensus",
+    "CitedSourceGenus",
+    "CitedTokenShape",
+    "ReadCitation",
+    "constitution_repository_root",
+    "derive_aim_indicator",
     "AIMS_AUTHORITY_NOTE",
     "AIMS_DOCUMENT_DESIGN_SOURCE_CITATION_NOTE",
     "AIMS_DOCUMENT_LEDGER_AUTHORITY_NOTE",
