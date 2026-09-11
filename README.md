@@ -617,14 +617,28 @@ started are kept distinct from aims blocked by a named obstacle
 (`NamedObstacle != SilentAbsence`), the cross-project import loop (`A0.PP.3`)
 is declared as an aim in its own right rather than left implicit, and two
 foreign aims from that source project are recorded as declared only
-(`DeclaredForeignAim != AlghanemRecord`). This is the documentation stage
-alone: `DeclaredAim != LicensedProgramme`, `Aim != Achievement`,
-`AimsDocument != Authority`. No type, vocabulary, indicator value, or test
-exists yet and nothing imports the document; the deferred enforced layer is
-bound in advance by §5 of that document, including the requirement that a
-future `AimRecord` cite the open audit question
-`DeclaredVersusDerivedRecurrenceNotExplained` as its direct design source
-instead of silently re-deriving it.
+(`DeclaredForeignAim != AlghanemRecord`). The boundary of that document is
+unchanged: `DeclaredAim != LicensedProgramme`, `Aim != Achievement`,
+`AimsDocument != Authority`.
+
+Stage two of AIM.1 has begun in `alghanem.program.aims`, one milestone at a
+time. `AimRecord` holds each aim's question, what would count as reaching it,
+what would not count even though it resembles it, and its citation, across two
+independent vocabularies — `AimEngagement` and `AttainmentStanding` — rather
+than one ordinal scale, with every refused merge justified in writing as
+`readiness_rank.py` does. `AttainmentStanding.REACHED` is declared but refused
+at construction itself, like `QuestionStatus.CLOSED_BY_FROZEN_EXPERIMENT`: no
+authority here issues an aim's attainment. Missing classification is a
+vocabulary member (`UNCLASSIFIED_IN_RECORD`), never a blank that reads as
+progress later, and the two foreign aims live in a separate `ForeignDeclaredAim`
+type so that their exclusion from any later derivation is structural rather than
+remembered. The module cites the open audit question
+`DeclaredVersusDerivedRecurrenceNotExplained` as its direct design source, as §5
+requires, and a test enforces that citation. No indicator exists yet: the
+derivation readers §4 names (constitution-row and audit-question counters) and
+the indicator derived from them are a later milestone, and no field here carries
+a value. The layer is authority-inert, orders nothing by priority, and an
+automated scan asserts that no `kernel/` module reads it.
 
 ## Development
 
