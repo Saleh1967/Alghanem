@@ -709,6 +709,39 @@ to no aim either: it imports no `AimId`, no `AimRecord`, and no
 `AttainmentStanding`, and the indicator remains deferred with everything §4
 requires of it.
 
+The fourth milestone follows in `alghanem.program.aims_document_ledger`, and only
+it: the aims layer is finally subjected to the rule it had been imposing on
+everything else. The three earlier readers checked declared against derived in the
+constitution and in the `src/` tree, while the aim record itself remained a hand
+copy of `docs/AIMS.md` prose that nothing checked — a layer exempting itself from
+its own law. Coding it showed that the record's prose is a paraphrase rather than a
+transcription: markup is dropped and citations are normalised, so comparing text
+verbatim would have rejected the standing record outright or forced a shape onto
+the document that the document never declared. What is derived instead is the
+structure the document really does declare — aim identity and order, bullet labels,
+the §3 classification, and the partial-attainment remainder — and the gap is named
+rather than hidden (`RECORD_PROSE_IS_PARAPHRASE_NOT_TRANSCRIPTION`).
+
+The bullet vocabulary turned out to be six labels rather than the expected four,
+because one aim carries two variant labels with a different separator: dropping
+them would have silently dropped that aim from the read, and merging them into the
+ordinary attainment label would have erased the very distinction from which the
+record derives partial attainment. The field-presence laws of `AimRecord` — three
+mandatory bullets, exactly one attainment bullet, a remainder if and only if the
+attainment is partial — are now enforced against the document that is their source,
+not only against the record copied from it. `AimRecordCorrespondence` carries no
+pass/fail field at all: its construction *is* the correspondence, and disagreement
+is a named refusal rather than a recorded verdict, since a result field would allow
+a failed correspondence to be carried around and reported. Importing `AimId` here
+is not the indicator, and the difference is structural rather than promised: the
+indicator would bind a derived *count* to an aim, while this reader binds an aim to
+its own source text, imports none of the three readers, and a test parses its
+imports to enforce that. Transcription fidelity is not an aim's truth
+(`TRANSCRIPTION_FIDELITY_IS_NOT_AIM_TRUTH`): a false aim copied faithfully passes
+this reader entirely, and `SECTION_3_CLASSIFIES_SIX_OF_THIRTEEN` records that the
+document's silence about the other seven is now derived and enforced but still
+silence. The indicator remains deferred with everything §4 requires of it.
+
 ## Development
 
 ```bash
