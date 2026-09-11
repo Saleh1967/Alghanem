@@ -1,5 +1,38 @@
 """طبقة البرنامج: سجلّ الغايات وقرّاء اشتقاقه، خاملةً سلطويًّا ولا تقرؤها النواة."""
 
+from .aim_indicator import (
+    AIM_INDICATOR_AUTHORITY_NOTE,
+    CITATION_SUPPORT_IS_DECLARED_BY_THE_RECORD_NOT_BY_THE_CONSTITUTION,
+    COUNT_IS_DERIVED_NOT_WRITTEN_NOTE,
+    DECLARED_STATUS_MUST_MATCH_ONE_SUPPORT_NOTE,
+    NO_DECLARED_SUPPORT_TOTAL_TO_CROSS_CHECK,
+    SECTION_HEADING_CARRIES_NO_DECLARED_STATUS,
+    SUPPORT_COUNT_IS_NOT_PROGRESS,
+    SUPPORT_STANDING_IS_NOT_A_DEFERRAL_CLASS_NOTE,
+    THIRD_READER_IS_CITED_BY_NO_AIM,
+    UNCOVERED_CITATION_TEXT_IS_REFUSED_NOTE,
+    UNKNOWN_CITATION_REFERENCE_IS_REFUSED_NOTE,
+    AimIndicatorError,
+    AimIndicatorLedger,
+    AimIndicatorRow,
+    AimSupportStanding,
+    CitationReferenceCensus,
+    CitedSupportKind,
+    DeclaredCitationFiller,
+    DeclaredCitationShape,
+    DeclaredUnresolvableReference,
+    ReadCitationReference,
+    load_aim_indicator_ledger,
+    read_aim_indicator_ledger,
+    read_aim_indicator_row,
+    repository_root_path,
+)
+from .aim_indicator import (
+    DESIGN_SOURCE_CITATION_NOTE as AIM_INDICATOR_DESIGN_SOURCE_CITATION_NOTE,
+)
+from .aim_indicator import (
+    NAMED_RESIDUALS as AIM_INDICATOR_NAMED_RESIDUALS,
+)
 from .aims import (
     AIM_RECORDS,
     AIMS_AUTHORITY_NOTE,
@@ -105,6 +138,33 @@ from .deferred_value_ledger import (
 from .deferred_value_ledger import NAMED_RESIDUALS as DEFERRED_VALUE_NAMED_RESIDUALS
 
 __all__ = [
+    "AIM_INDICATOR_AUTHORITY_NOTE",
+    "AIM_INDICATOR_DESIGN_SOURCE_CITATION_NOTE",
+    "AIM_INDICATOR_NAMED_RESIDUALS",
+    "CITATION_SUPPORT_IS_DECLARED_BY_THE_RECORD_NOT_BY_THE_CONSTITUTION",
+    "COUNT_IS_DERIVED_NOT_WRITTEN_NOTE",
+    "DECLARED_STATUS_MUST_MATCH_ONE_SUPPORT_NOTE",
+    "NO_DECLARED_SUPPORT_TOTAL_TO_CROSS_CHECK",
+    "SECTION_HEADING_CARRIES_NO_DECLARED_STATUS",
+    "SUPPORT_COUNT_IS_NOT_PROGRESS",
+    "SUPPORT_STANDING_IS_NOT_A_DEFERRAL_CLASS_NOTE",
+    "THIRD_READER_IS_CITED_BY_NO_AIM",
+    "UNCOVERED_CITATION_TEXT_IS_REFUSED_NOTE",
+    "UNKNOWN_CITATION_REFERENCE_IS_REFUSED_NOTE",
+    "AimIndicatorError",
+    "AimIndicatorLedger",
+    "AimIndicatorRow",
+    "AimSupportStanding",
+    "CitationReferenceCensus",
+    "CitedSupportKind",
+    "DeclaredCitationFiller",
+    "DeclaredCitationShape",
+    "DeclaredUnresolvableReference",
+    "ReadCitationReference",
+    "load_aim_indicator_ledger",
+    "read_aim_indicator_ledger",
+    "read_aim_indicator_row",
+    "repository_root_path",
     "AIMS_AUTHORITY_NOTE",
     "AIMS_DOCUMENT_DESIGN_SOURCE_CITATION_NOTE",
     "AIMS_DOCUMENT_LEDGER_AUTHORITY_NOTE",
