@@ -10,9 +10,11 @@ import pytest
 
 import alghanem.kernel as kernel_package
 from alghanem.program import (
+    EXCLUDED_QUESTION_BULLET_MAY_CARRY_A_DECLARED_STATUS,
     NAMED_RESIDUALS,
     NO_DECLARED_TOTAL_TO_CROSS_CHECK,
     NO_STATUS_DECLARED_IN_RECORD,
+    QUESTION_BULLET_LABEL_VOCABULARY_IS_NOT_DECLARED_IN_RECORD,
     TABLE_HEADER_MATCH_COMPLETENESS_UNVERIFIED,
     AuditQuestionLedger,
     AuditQuestionRow,
@@ -20,9 +22,13 @@ from alghanem.program import (
     ConstitutionLedger,
     ConstitutionLedgerError,
     DeclaredLawStatus,
+    DeclaredQuestionBulletLabel,
+    DeclaredQuestionBulletShape,
     DeclaredTableHeader,
     LawRow,
     LawRowLedger,
+    QuestionBulletCensus,
+    ReadQuestionBullet,
     ReadTable,
     TableCensus,
     constitution_document_path,
@@ -55,6 +61,8 @@ _READER_TYPES = (
     AuditQuestionLedger,
     ReadTable,
     TableCensus,
+    ReadQuestionBullet,
+    QuestionBulletCensus,
     ConstitutionLedger,
 )
 
@@ -194,6 +202,8 @@ def test_the_residuals_left_after_the_hardening_are_named_not_hidden() -> None:
     assert set(NAMED_RESIDUALS) == {
         TABLE_HEADER_MATCH_COMPLETENESS_UNVERIFIED,
         NO_DECLARED_TOTAL_TO_CROSS_CHECK,
+        QUESTION_BULLET_LABEL_VOCABULARY_IS_NOT_DECLARED_IN_RECORD,
+        EXCLUDED_QUESTION_BULLET_MAY_CARRY_A_DECLARED_STATUS,
     }
     assert all(text.strip() for text in NAMED_RESIDUALS.values())
     with pytest.raises(TypeError):
@@ -403,3 +413,159 @@ def test_no_kernel_module_reads_the_derivation_readers() -> None:
         assert "ConstitutionLedger" not in text, module.name
         assert "LawRowLedger" not in text, module.name
         assert "AuditQuestionLedger" not in text, module.name
+
+
+def test_a_drifted_question_bullet_is_refused_not_silently_dropped() -> None:
+    document = _MINIMAL_DOCUMENT.replace(
+        "- `AnOpenQuestionWithStatus`",
+        "- **AnOpenQuestionWithStatus**",
+    )
+    with pytest.raises(ConstitutionLedgerError, match="نقطةٌ عليا خارج مفردة الأشكال"):
+        read_constitution_ledger(document)
+
+
+def test_an_undeclared_bullet_label_is_refused_not_read_as_blank() -> None:
+    document = _MINIMAL_DOCUMENT.replace(
+        "  - Status: `OPEN`\n\n### ResolvedAuditQuestions",
+        "  - Status: `OPEN`\n  - Declared standing: `OPEN`\n"
+        "\n### ResolvedAuditQuestions",
+    )
+    with pytest.raises(ConstitutionLedgerError, match="وسمُ نقطةٍ خارج المفردة"):
+        read_constitution_ledger(document)
+
+
+def test_a_declared_excluded_label_is_counted_not_refused() -> None:
+    document = _MINIMAL_DOCUMENT.replace(
+        "  - Status: `OPEN`\n\n### ResolvedAuditQuestions",
+        "  - Status: `OPEN`\n  - Note: this bullet is excluded, not skipped.\n"
+        "\n### ResolvedAuditQuestions",
+    )
+    ledger = read_constitution_ledger(document)
+    excluded = ledger.question_bullets.excluded_bullets
+    assert [bullet.label for bullet in excluded] == [DeclaredQuestionBulletLabel.NOTE]
+    assert excluded[0].question_name == "AnOpenQuestionWithStatus"
+    assert excluded[0].is_read_into_the_row is False
+    assert ledger.audit_questions.open_count == 2
+
+
+def test_a_repeated_label_in_one_question_is_refused_not_resolved_by_order() -> None:
+    document = _MINIMAL_DOCUMENT.replace(
+        "  - Status: `OPEN`\n\n### ResolvedAuditQuestions",
+        "  - Status: `OPEN`\n  - Status: `OBSERVED_NOT_EXPLAINED`\n"
+        "\n### ResolvedAuditQuestions",
+    )
+    with pytest.raises(ConstitutionLedgerError, match="وسمٌ مكرّر في السؤال"):
+        read_constitution_ledger(document)
+
+
+def test_a_sub_bullet_before_any_named_question_is_refused() -> None:
+    document = _MINIMAL_DOCUMENT.replace(
+        "### OpenAuditQuestions\n\n- `AnOpenQuestionWithoutStatus`",
+        "### OpenAuditQuestions\n\n  - Status: `OPEN`\n\n"
+        "- `AnOpenQuestionWithoutStatus`",
+    )
+    with pytest.raises(ConstitutionLedgerError, match="نقطةٌ فرعية قبل أيّ سؤالٍ"):
+        read_constitution_ledger(document)
+
+
+def test_both_declared_head_shapes_are_read_and_counted() -> None:
+    ledger = read_constitution_ledger(_MINIMAL_DOCUMENT)
+    heads = ledger.question_bullets.head_bullets
+    assert [bullet.shape for bullet in heads] == [
+        DeclaredQuestionBulletShape.NAME_WITH_INLINE_NOTE,
+        DeclaredQuestionBulletShape.NAME_ONLY,
+        DeclaredQuestionBulletShape.NAME_ONLY,
+    ]
+    assert [bullet.standing for bullet in heads] == [
+        AuditQuestionStanding.OPEN,
+        AuditQuestionStanding.OPEN,
+        AuditQuestionStanding.RESOLVED,
+    ]
+
+
+def test_the_bullet_census_counts_are_derived_and_ordered() -> None:
+    ledger = read_constitution_ledger(_MINIMAL_DOCUMENT)
+    census = ledger.question_bullets
+    assert census.bullet_count == len(census.bullets)
+    assert census.bullet_count == len(census.read_bullets) + len(
+        census.excluded_bullets
+    )
+    assert not any("count" in item.name for item in fields(QuestionBulletCensus))
+    assert not any("count" in item.name for item in fields(ReadQuestionBullet))
+    with pytest.raises(ConstitutionLedgerError, match="غير فارغة"):
+        QuestionBulletCensus(bullets=())
+    first = ReadQuestionBullet(
+        document_line=6,
+        standing=AuditQuestionStanding.OPEN,
+        question_name="AQuestion",
+        shape=DeclaredQuestionBulletShape.NAME_ONLY,
+    )
+    second = ReadQuestionBullet(
+        document_line=5,
+        standing=AuditQuestionStanding.OPEN,
+        question_name="AQuestion",
+        label=DeclaredQuestionBulletLabel.STATUS,
+    )
+    with pytest.raises(ConstitutionLedgerError, match="ترتيب النقاط"):
+        QuestionBulletCensus(bullets=(first, second))
+
+
+def test_a_read_bullet_is_either_a_head_or_a_label_never_both_nor_neither() -> None:
+    with pytest.raises(ConstitutionLedgerError, match="ولا تخلو منهما"):
+        ReadQuestionBullet(
+            document_line=5,
+            standing=AuditQuestionStanding.OPEN,
+            question_name="AQuestion",
+        )
+    with pytest.raises(ConstitutionLedgerError, match="ولا تخلو منهما"):
+        ReadQuestionBullet(
+            document_line=5,
+            standing=AuditQuestionStanding.OPEN,
+            question_name="AQuestion",
+            shape=DeclaredQuestionBulletShape.NAME_ONLY,
+            label=DeclaredQuestionBulletLabel.STATUS,
+        )
+    with pytest.raises(ConstitutionLedgerError, match="وسم النقطة الفرعية"):
+        ReadQuestionBullet(
+            document_line=5,
+            standing=AuditQuestionStanding.OPEN,
+            question_name="AQuestion",
+            label="Status",  # type: ignore[arg-type]
+        )
+    with pytest.raises(ConstitutionLedgerError, match="شكل النقطة العليا"):
+        ReadQuestionBullet(
+            document_line=5,
+            standing=AuditQuestionStanding.OPEN,
+            question_name="AQuestion",
+            shape="- `Name`",  # type: ignore[arg-type]
+        )
+
+
+def test_the_read_labels_are_declared_not_inferred_from_silence() -> None:
+    read_labels = {
+        label for label in DeclaredQuestionBulletLabel if label.is_read_into_the_row
+    }
+    assert read_labels == {
+        DeclaredQuestionBulletLabel.STATUS,
+        DeclaredQuestionBulletLabel.PREVIOUS_AUDIT_LABEL,
+        DeclaredQuestionBulletLabel.CLOSURE_LAW,
+    }
+    assert len(DeclaredQuestionBulletLabel) > len(read_labels)
+
+
+def test_the_repository_question_bullets_are_all_read_or_declared_excluded() -> None:
+    ledger = load_constitution_ledger()
+    census = ledger.question_bullets
+    assert census.bullet_count == len(census.read_bullets) + len(
+        census.excluded_bullets
+    )
+    assert len(census.head_bullets) == (
+        ledger.audit_questions.open_count + ledger.audit_questions.resolved_count
+    )
+    assert census.excluded_bullets
+    assert all(
+        bullet.label is not None and not bullet.label.is_read_into_the_row
+        for bullet in census.excluded_bullets
+    )
+    names = {bullet.question_name for bullet in census.bullets}
+    assert names == {question.name for question in ledger.audit_questions.questions}
