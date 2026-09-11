@@ -29,6 +29,17 @@
 لاحقًا «لا صفوف مؤجَّلة هنا»، وهو خطأٌ أخطر من التوقّف؛ وتعدادٌ صامتُ النقص أسوأ
 من غياب تعداد.
 
+**والقاعدة نفسها تُرفَع طبقةً: من الخلية إلى الجدول.** كان اختيارُ الجداول
+بترويسةِ `Law | Status` شرطَ صحّة، لكنّ *عدم* الاختيار كان صامتًا: جدولُ قوانينَ
+ترويستُه مختلفةٌ قليلًا (مسافةٌ زائدة، حرفٌ كبير مغاير، اسمٌ مجاور) يسقط من
+التعداد بلا خطأٍ يُرفَع، لأن شيئًا لم *يتعارض*، بل شيئًا **لم يُحسَب أصلًا**.
+فصار للترويسات مفردةٌ مغلقة مُستخرَجة من الوثيقة كما استُخرجت مفردةُ الحالات،
+وكلّ جدولٍ إمّا مقروءٌ أو مُستبعَدٌ مُصرَّحًا به أو مرفوضٌ باسمه؛ ولا تخطّي صامت.
+
+**وما بقي بعد ذلك مُسمّى لا مطويّ** (`NAMED_RESIDUALS`): الوثيقة لا تُعلن مجموعًا
+يُقابَل بالمُشتَقّ، فالتعدادُ قائمٌ على «لم يُكتشَف نقص» لا على «أُثبِت عدم وجود
+نقص»؛ وهذا حدٌّ صادق يُصرَّح به، لا عيبٌ يُخفى ولا ثقةٌ تُدَّعى.
+
 **الجهل عضوٌ في المفردة لا فراغٌ يُطوى** (§٤): سؤالُ تدقيقٍ مفتوحٌ لا يُصرّح
 السجلّ بحالته يحمل `NO_STATUS_DECLARED_IN_RECORD`، لا سلسلةً فارغة تُقرَأ لاحقًا
 `OPEN` بحكم موقعها.
@@ -77,7 +88,36 @@ UNKNOWN_STATUS_IS_REFUSED_NOTE: Final = (
     "الصامت يُنتج تعدادًا ناقصًا يُقرَأ جدولًا تامًّا"
 )
 
-_LAW_TABLE_HEADER: Final = ("Law", "Status")
+UNKNOWN_TABLE_HEADER_IS_REFUSED_NOTE: Final = (
+    "ترويسةٌ خارج المفردة المغلقة تُوقف القراءة ولا يُتخطّى جدولها: الجدولُ "
+    "غيرُ المُطابَق لا يتعارض مع شيءٍ لأنه لم يُحسَب أصلًا، والسقوطُ الصامت "
+    "لجدولٍ كامل أخطر من رفضٍ مُسمّى"
+)
+
+TABLE_HEADER_MATCH_COMPLETENESS_UNVERIFIED: Final = (
+    "TABLE_HEADER_MATCH_COMPLETENESS_UNVERIFIED"
+)
+
+NO_DECLARED_TOTAL_TO_CROSS_CHECK: Final = "NO_DECLARED_TOTAL_TO_CROSS_CHECK"
+
+NAMED_RESIDUALS: Final[Mapping[str, str]] = MappingProxyType(
+    {
+        TABLE_HEADER_MATCH_COMPLETENESS_UNVERIFIED: (
+            "صار كلّ جدولٍ في الوثيقة إمّا مقروءًا أو مُستبعَدًا بترويسةٍ "
+            "مُصرَّح بها أو مرفوضًا باسمه، فانتفى التخطّي الصامت؛ وتبقى حالةٌ "
+            "غيرُ قابلةٍ للكشف من داخل النصّ: جدولُ قوانينَ كُتبت ترويستُه "
+            "بترويسةٍ أخرى مُصرَّح باستبعادها يُستبعَد بلا رفض"
+        ),
+        NO_DECLARED_TOTAL_TO_CROSS_CHECK: (
+            "الوثيقة لا تُصرّح بمجموع صفوفها ولا بعدد أسئلتها، فالتعدادُ "
+            "المُشتَقّ قائمٌ على «لم يُرفَع خطأ» لا على مقابلةٍ بعددٍ مرجعيّ "
+            "مستقلّ: «لم يُكتشَف نقص» لا «أُثبِت عدم وجود نقص»؛ واستحداثُ عددٍ "
+            "«مُعلَن» في الوثيقة لإغلاقه افتعالٌ لا تحقّق، فقاعدة «المخالفة "
+            "تُرفَض لا تُقرَّر» تفترض قيمةً مُعلَنةً أصلًا"
+        ),
+    }
+)
+
 _OPEN_SECTION_HEADING: Final = "### OpenAuditQuestions"
 _RESOLVED_SECTION_HEADING: Final = "### ResolvedAuditQuestions"
 
@@ -124,12 +164,35 @@ class AuditQuestionStanding(Enum):
     RESOLVED = "ResolvedAuditQuestions"
 
 
+class DeclaredTableHeader(Enum):
+    """ترويسات جداول الوثيقة، مفردةً مغلقة مُستخرَجة من نصّها لا مُبتكَرة.
+
+    القيمة هي العمودان الأوّلان كما وردا نصًّا؛ وما بعدهما وصفُ نطاقٍ لا يُقرَأ
+    (`Kernel v0.1 scope` مرّةً و`Scope` مرارًا)، فلا يدخل في التمييز.
+    """
+
+    LAW_ROWS = ("Law", "Status")
+    EXPLANATORY_CANDIDATES = ("Explanatory candidate", "Piercing question")
+
+    @property
+    def carries_law_rows(self) -> bool:
+        """أجدولُ قوانينَ هذا؟ الاستبعادُ مُصرَّحٌ به لا مُستنتَجٌ من صمت."""
+
+        return self is DeclaredTableHeader.LAW_ROWS
+
+
 _STATUS_BY_TEXT: Final[Mapping[str, DeclaredLawStatus]] = MappingProxyType(
     {member.value: member for member in DeclaredLawStatus}
 )
 
+_TABLE_HEADER_BY_COLUMNS: Final[Mapping[tuple[str, ...], DeclaredTableHeader]] = (
+    MappingProxyType({member.value: member for member in DeclaredTableHeader})
+)
+
 if len(_STATUS_BY_TEXT) != len(DeclaredLawStatus):  # pragma: no cover - guard
     raise RuntimeError("two law statuses must not share one declared text")
+if len(_TABLE_HEADER_BY_COLUMNS) != len(DeclaredTableHeader):  # pragma: no cover
+    raise RuntimeError("two table headers must not share one declared column pair")
 if len(AuditQuestionStanding) != 2:  # pragma: no cover - guard
     raise RuntimeError("audit standing is deliberately two-valued")
 
@@ -218,6 +281,70 @@ class AuditQuestionRow:
         """هل ما زال السؤال مفتوحًا في السجلّ؟"""
 
         return self.standing is AuditQuestionStanding.OPEN
+
+
+@dataclass(frozen=True, slots=True)
+class ReadTable:
+    """جدولٌ واحد كما وُجد في الوثيقة: ترويستُه المُصرَّح بها وموضعُها ونصُّها."""
+
+    declared_header: DeclaredTableHeader
+    header_text: str
+    header_line: int
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.declared_header, DeclaredTableHeader):
+            raise ConstitutionLedgerError("ترويسة الجدول من مفردتها المغلقة")
+        _require_non_blank(self.header_text, "نصّ الترويسة")
+        _require_positive_line(self.header_line, "موضع الترويسة")
+
+    @property
+    def carries_law_rows(self) -> bool:
+        """أقُرئت صفوفُ هذا الجدول قوانينَ، أم استُبعد بترويسةٍ مُصرَّح بها؟"""
+
+        return self.declared_header.carries_law_rows
+
+
+@dataclass(frozen=True, slots=True)
+class TableCensus:
+    """إحصاءُ جداول الوثيقة كلِّها: المقروءُ منها والمُستبعَدُ مُصرَّحًا به.
+
+    لا حقلَ عددٍ هنا أيضًا؛ التعدادُ خاصّيةٌ تُحسَب من الجداول المرصودة، فلا
+    يُكتَب عددٌ يخالف الأثر. وحضورُ الجدول المُستبعَد في الإحصاء هو الفارق بين
+    «استُبعد بترويسةٍ معروفة» و«لم يُرَ أصلًا».
+    """
+
+    tables: tuple[ReadTable, ...]
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.tables, tuple) or not self.tables:
+            raise ConstitutionLedgerError("إحصاء الجداول مجموعةٌ غير فارغة")
+        previous_line = 0
+        for table in self.tables:
+            if not isinstance(table, ReadTable):
+                raise ConstitutionLedgerError("كل عنصرٍ جدولٌ مرصود")
+            if table.header_line <= previous_line:
+                raise ConstitutionLedgerError(
+                    "ترتيب الجداول ترتيبُ ورودها في الوثيقة"
+                )
+            previous_line = table.header_line
+
+    @property
+    def table_count(self) -> int:
+        """عدد الجداول المرصودة، محسوبًا لا مكتوبًا."""
+
+        return len(self.tables)
+
+    @property
+    def law_tables(self) -> tuple[ReadTable, ...]:
+        """الجداول التي قُرئت صفوفُها قوانينَ، بترتيب ورودها."""
+
+        return tuple(table for table in self.tables if table.carries_law_rows)
+
+    @property
+    def excluded_tables(self) -> tuple[ReadTable, ...]:
+        """الجداول المُستبعَدة بترويسةٍ مُصرَّح بها، لا بصمتٍ ولا بتخطٍّ."""
+
+        return tuple(table for table in self.tables if not table.carries_law_rows)
 
 
 @dataclass(frozen=True, slots=True)
@@ -319,12 +446,15 @@ class ConstitutionLedger:
 
     laws: LawRowLedger
     audit_questions: AuditQuestionLedger
+    tables: TableCensus
 
     def __post_init__(self) -> None:
         if not isinstance(self.laws, LawRowLedger):
             raise ConstitutionLedgerError("دفتر الصفوف من نوعه")
         if not isinstance(self.audit_questions, AuditQuestionLedger):
             raise ConstitutionLedgerError("دفتر الأسئلة من نوعه")
+        if not isinstance(self.tables, TableCensus):
+            raise ConstitutionLedgerError("إحصاء الجداول من نوعه")
 
 
 def _split_row(line: str) -> tuple[str, ...]:
@@ -334,36 +464,77 @@ def _split_row(line: str) -> tuple[str, ...]:
 
 
 def _is_delimiter_row(cells: tuple[str, ...]) -> bool:
-    return all(cell and set(cell) <= {"-", ":", " "} for cell in cells)
+    return bool(cells) and all(cell and set(cell) <= {"-", ":", " "} for cell in cells)
 
 
-def _read_law_rows(lines: list[str]) -> tuple[LawRow, ...]:
+def _declared_header(
+    cells: tuple[str, ...], number: int, line: str
+) -> DeclaredTableHeader:
+    header = _TABLE_HEADER_BY_COLUMNS.get(tuple(cells[:2]))
+    if header is None:
+        raise ConstitutionLedgerError(
+            f"ترويسةُ جدولٍ خارج المفردة المغلقة عند السطر {number}: "
+            f"{line.strip()!r} — {UNKNOWN_TABLE_HEADER_IS_REFUSED_NOTE}"
+        )
+    return header
+
+
+def _read_tables(lines: list[str]) -> tuple[tuple[LawRow, ...], TableCensus]:
+    """امسح جداول الوثيقة كلَّها: تُقرَأ أو تُستبعَد مُصرَّحًا بها أو تُرفَض."""
+
     rows: list[LawRow] = []
-    header: tuple[str, ...] | None = None
-    for number, line in enumerate(lines, start=1):
+    tables: list[ReadTable] = []
+    index = 0
+    total = len(lines)
+    while index < total:
+        line = lines[index]
         if not line.startswith("|"):
-            header = None
+            index += 1
             continue
+        number = index + 1
         cells = _split_row(line)
-        if header is None:
-            header = cells
-            continue
-        if _is_delimiter_row(cells):
-            continue
-        if tuple(header[:2]) != _LAW_TABLE_HEADER:
-            continue
         if len(cells) < 2:
-            raise ConstitutionLedgerError(f"صفُّ قانونٍ ناقص الأعمدة عند السطر {number}")
-        status = _STATUS_BY_TEXT.get(cells[1])
-        if status is None:
             raise ConstitutionLedgerError(
-                f"حالةٌ خارج المفردة المغلقة عند السطر {number}: {cells[1]!r} — "
-                f"{UNKNOWN_STATUS_IS_REFUSED_NOTE}"
+                f"صفُّ جدولٍ ناقص الأعمدة عند السطر {number}"
             )
-        rows.append(LawRow(law=cells[0], status=status, document_line=number))
+        if index + 1 >= total or not _is_delimiter_row(_split_row(lines[index + 1])):
+            raise ConstitutionLedgerError(
+                f"جدولٌ بلا سطر فصلٍ بعد ترويسته عند السطر {number}: جدولٌ "
+                "مقطوعٌ يُقرَأ صفُّه ترويسةً فيسقط من التعداد صامتًا"
+            )
+        header = _declared_header(cells, number, line)
+        tables.append(
+            ReadTable(
+                declared_header=header,
+                header_text=line.strip(),
+                header_line=number,
+            )
+        )
+        index += 2
+        while index < total and lines[index].startswith("|"):
+            body_number = index + 1
+            body_cells = _split_row(lines[index])
+            index += 1
+            if not header.carries_law_rows:
+                continue
+            if len(body_cells) < 2:
+                raise ConstitutionLedgerError(
+                    f"صفُّ قانونٍ ناقص الأعمدة عند السطر {body_number}"
+                )
+            status = _STATUS_BY_TEXT.get(body_cells[1])
+            if status is None:
+                raise ConstitutionLedgerError(
+                    f"حالةٌ خارج المفردة المغلقة عند السطر {body_number}: "
+                    f"{body_cells[1]!r} — {UNKNOWN_STATUS_IS_REFUSED_NOTE}"
+                )
+            rows.append(
+                LawRow(law=body_cells[0], status=status, document_line=body_number)
+            )
+    if not tables:
+        raise ConstitutionLedgerError("لم يُقرَأ أيّ جدولٍ من الوثيقة")
     if not rows:
         raise ConstitutionLedgerError("لم يُقرَأ أيّ صفّ قانونٍ من الوثيقة")
-    return tuple(rows)
+    return tuple(rows), TableCensus(tables=tuple(tables))
 
 
 def _section_bounds(lines: list[str], heading: str) -> tuple[int, int]:
@@ -481,9 +652,11 @@ def read_constitution_ledger(document_text: str) -> ConstitutionLedger:
             lines, _RESOLVED_SECTION_HEADING, AuditQuestionStanding.RESOLVED
         )
     )
+    rows, census = _read_tables(lines)
     return ConstitutionLedger(
-        laws=LawRowLedger(rows=_read_law_rows(lines)),
+        laws=LawRowLedger(rows=rows),
         audit_questions=AuditQuestionLedger(questions=tuple(questions)),
+        tables=census,
     )
 
 
@@ -513,17 +686,24 @@ __all__ = [
     "CONSTITUTION_RELATIVE_PATH",
     "DESIGN_SOURCE_CITATION_NOTE",
     "LEDGER_AUTHORITY_NOTE",
+    "NAMED_RESIDUALS",
+    "NO_DECLARED_TOTAL_TO_CROSS_CHECK",
     "NO_INDICATOR_IN_THIS_READER_NOTE",
     "NO_STATUS_DECLARED_IN_RECORD",
+    "TABLE_HEADER_MATCH_COMPLETENESS_UNVERIFIED",
     "UNKNOWN_STATUS_IS_REFUSED_NOTE",
+    "UNKNOWN_TABLE_HEADER_IS_REFUSED_NOTE",
     "AuditQuestionLedger",
     "AuditQuestionRow",
     "AuditQuestionStanding",
     "ConstitutionLedger",
     "ConstitutionLedgerError",
     "DeclaredLawStatus",
+    "DeclaredTableHeader",
     "LawRow",
     "LawRowLedger",
+    "ReadTable",
+    "TableCensus",
     "constitution_document_path",
     "load_constitution_ledger",
     "read_constitution_ledger",

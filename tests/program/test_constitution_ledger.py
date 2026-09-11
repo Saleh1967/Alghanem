@@ -10,14 +10,21 @@ import pytest
 
 import alghanem.kernel as kernel_package
 from alghanem.program import (
+    NAMED_RESIDUALS,
+    NO_DECLARED_TOTAL_TO_CROSS_CHECK,
     NO_STATUS_DECLARED_IN_RECORD,
+    TABLE_HEADER_MATCH_COMPLETENESS_UNVERIFIED,
     AuditQuestionLedger,
     AuditQuestionRow,
     AuditQuestionStanding,
+    ConstitutionLedger,
     ConstitutionLedgerError,
     DeclaredLawStatus,
+    DeclaredTableHeader,
     LawRow,
     LawRowLedger,
+    ReadTable,
+    TableCensus,
     constitution_document_path,
     load_constitution_ledger,
     read_constitution_ledger,
@@ -39,6 +46,16 @@ _ANSWER_MARKERS = (
     "percent",
     "estimate",
     "priority",
+)
+
+_READER_TYPES = (
+    LawRow,
+    AuditQuestionRow,
+    LawRowLedger,
+    AuditQuestionLedger,
+    ReadTable,
+    TableCensus,
+    ConstitutionLedger,
 )
 
 _MINIMAL_DOCUMENT = """# Title
@@ -102,6 +119,86 @@ def test_only_law_tables_are_counted() -> None:
     ledger = read_constitution_ledger(_MINIMAL_DOCUMENT)
     counted = {row.law for row in ledger.laws.rows}
     assert "Repetition-only candidate" not in counted
+    assert ledger.tables.table_count == 2
+    assert [table.declared_header for table in ledger.tables.tables] == [
+        DeclaredTableHeader.LAW_ROWS,
+        DeclaredTableHeader.EXPLANATORY_CANDIDATES,
+    ]
+    excluded = ledger.tables.excluded_tables
+    assert len(excluded) == 1
+    assert excluded[0].header_text.startswith("| Explanatory candidate")
+    assert excluded[0].carries_law_rows is False
+
+
+@pytest.mark.parametrize(
+    "drifted",
+    [
+        "| Laws | Status | Scope |",
+        "| Law | Status Declared | Scope |",
+        "| law | status | Scope |",
+        "| `Law` | `Status` | Scope |",
+    ],
+)
+def test_a_drifted_law_header_is_refused_not_silently_dropped(drifted: str) -> None:
+    document = _MINIMAL_DOCUMENT.replace("| Law | Status | Scope |", drifted)
+    with pytest.raises(ConstitutionLedgerError, match="ترويسةُ جدولٍ خارج"):
+        read_constitution_ledger(document)
+
+
+def test_an_interrupted_table_is_refused_not_partially_read() -> None:
+    document = _MINIMAL_DOCUMENT.replace(
+        "| `FirstLaw` | ENFORCED | scope one |",
+        "| `FirstLaw` | ENFORCED | scope one |\n\nprose between the rows\n",
+    )
+    with pytest.raises(ConstitutionLedgerError, match="بلا سطر فصلٍ"):
+        read_constitution_ledger(document)
+
+
+def test_a_document_without_any_table_is_refused() -> None:
+    document = (
+        "# Title\n\n### OpenAuditQuestions\n\n"
+        "- `AQuestion`\n  - Status: `OPEN`\n"
+    )
+    document += (
+        "\n### ResolvedAuditQuestions\n\n- `AClosedQuestion`\n"
+        "  - Previous audit label: `Old`\n  - Status: `RESOLVED`\n"
+        "  - Closure law: `SomeLaw`\n"
+    )
+    with pytest.raises(ConstitutionLedgerError, match="لم يُقرَأ أيّ جدولٍ"):
+        read_constitution_ledger(document)
+
+
+def test_the_table_census_is_ordered_and_never_empty() -> None:
+    with pytest.raises(ConstitutionLedgerError, match="غير فارغة"):
+        TableCensus(tables=())
+    first = ReadTable(
+        declared_header=DeclaredTableHeader.LAW_ROWS,
+        header_text="| Law | Status |",
+        header_line=5,
+    )
+    second = ReadTable(
+        declared_header=DeclaredTableHeader.EXPLANATORY_CANDIDATES,
+        header_text="| Explanatory candidate | Piercing question |",
+        header_line=4,
+    )
+    with pytest.raises(ConstitutionLedgerError, match="ترتيب الجداول"):
+        TableCensus(tables=(first, second))
+    with pytest.raises(ConstitutionLedgerError, match="ترويسة الجدول"):
+        ReadTable(
+            declared_header="Law | Status",  # type: ignore[arg-type]
+            header_text="| Law | Status |",
+            header_line=5,
+        )
+
+
+def test_the_residuals_left_after_the_hardening_are_named_not_hidden() -> None:
+    assert set(NAMED_RESIDUALS) == {
+        TABLE_HEADER_MATCH_COMPLETENESS_UNVERIFIED,
+        NO_DECLARED_TOTAL_TO_CROSS_CHECK,
+    }
+    assert all(text.strip() for text in NAMED_RESIDUALS.values())
+    with pytest.raises(TypeError):
+        NAMED_RESIDUALS["X"] = "y"  # type: ignore[index]
 
 
 def test_an_escaped_pipe_does_not_split_a_row() -> None:
@@ -220,9 +317,12 @@ def test_an_empty_ledger_is_refused() -> None:
 def test_counts_are_derived_properties_and_never_written_fields() -> None:
     declared = {item.name for item in fields(LawRowLedger)}
     declared |= {item.name for item in fields(AuditQuestionLedger)}
+    declared |= {item.name for item in fields(TableCensus)}
+    declared |= {item.name for item in fields(ReadTable)}
     assert not any("count" in name for name in declared)
     ledger = read_constitution_ledger(_MINIMAL_DOCUMENT)
     assert sum(ledger.laws.status_counts.values()) == ledger.laws.row_count
+    assert ledger.tables.table_count == len(ledger.tables.tables)
     with pytest.raises(TypeError):
         ledger.laws.status_counts[DeclaredLawStatus.ENFORCED] = 99  # type: ignore[index]
 
@@ -248,7 +348,7 @@ def test_a_read_row_is_frozen_and_replacement_is_revalidated() -> None:
 
 @pytest.mark.parametrize("marker", _ANSWER_MARKERS)
 def test_no_reader_type_carries_an_answer_bearing_field(marker: str) -> None:
-    for declaring_type in (LawRow, AuditQuestionRow, LawRowLedger, AuditQuestionLedger):
+    for declaring_type in _READER_TYPES:
         declared = {item.name for item in fields(declaring_type)}
         assert not any(marker in name for name in declared), declaring_type
 
@@ -262,7 +362,7 @@ def test_the_reader_is_not_bound_to_any_aim() -> None:
         "ForeignDeclaredAim",
     }
     assert bound == set()
-    for declaring_type in (LawRow, AuditQuestionRow, LawRowLedger, AuditQuestionLedger):
+    for declaring_type in _READER_TYPES:
         declared = {item.name for item in fields(declaring_type)}
         assert not any("aim" in name for name in declared), declaring_type
 
@@ -278,6 +378,9 @@ def test_the_repository_document_is_read_without_refusal() -> None:
     ledger = load_constitution_ledger()
     assert ledger.laws.row_count == sum(ledger.laws.status_counts.values())
     assert ledger.laws.row_count > 100
+    assert ledger.tables.table_count == 8
+    assert len(ledger.tables.law_tables) == 7
+    assert len(ledger.tables.excluded_tables) == 1
     assert ledger.laws.status_counts[DeclaredLawStatus.DECLARED_DEFERRED] > 0
     assert ledger.laws.status_counts[DeclaredLawStatus.ENFORCED_AT_AIM_RECORD] == 1
     open_names = {question.name for question in ledger.audit_questions.open_questions}
