@@ -145,18 +145,30 @@ is not merely different but inapplicable, and its oracle is asserted against
 
 What the module delivers is a **named pair list**, not a generalized
 confluence law — `NamedCriticalPairs != GeneralizedLaw`. `reference_matrix`
-runs the full 5 × 5 type matrix over seven named coordinate configurations
+runs the full 5 × 5 type matrix over nine named coordinate configurations
 (`adjacent`, `distant`, `at_zero`, `same_coordinate`, `descending`,
-`upper_edge`, `append_edge`) on a six-atom sequence, excluding identical
-interventions by declaration, and reports 41 commuting pairs, 102 critical
-pairs (`overlap` or `shift`), and 8 undefined pairs across 151 configured
-pairs, with every predicted verdict confirmed by `observe_commutation`
-applying both orders through the real application path (MATCH_ALL, 151/151).
-The scope is declared, not silently widened: the model reads coordinates and
-not values, so a sequence with repeated atoms can make two orders agree by
-**value coincidence** rather than structural commutation. That limit is
-recorded in `VALUE_COINCIDENCE_NOTE` and demonstrated by an explicit test,
-and the reference matrix therefore runs on distinct atoms only.
+`upper_edge`, `append_edge`, `straddling_swap`, `swap_shares_one_coordinate`)
+on a six-atom sequence, excluding identical interventions by declaration, and
+reports 48 commuting pairs, 141 critical pairs (`overlap` or `shift`), and 9
+undefined pairs across 198 configured pairs, with every predicted verdict
+confirmed by `observe_commutation` applying both orders through the real
+application path (MATCH_ALL, 198/198). The last two configurations exercise
+the shapes an adjacent-only matrix cannot reach: a non-adjacent `swap` whose
+coordinates straddle a `delete`'s shift origin (`delete@2 × swap@1,4 ::
+shift`) and a `swap` sharing exactly one coordinate with a `delete`
+(`delete@1 × swap@1,3 :: overlap`). The same matrix is run over a minimal
+two-atom sequence and over a second, disjoint six-atom sequence, whose named
+pair lists are byte-identical to the reference run: verdicts follow
+coordinates and length alone, never atom values
+(`PAYLOAD_INDEPENDENCE_NOTE`). The scope is declared, not silently widened:
+the model reads coordinates and not values, so a sequence with repeated atoms
+can make two orders agree by **value coincidence** rather than structural
+commutation. That limit is recorded in `VALUE_COINCIDENCE_NOTE` and
+demonstrated by an explicit test, and the reference matrix therefore runs on
+distinct atoms only. Ordered pairs are the whole measured domain:
+`ORDERED_TRIPLES_ABSENCE_NOTE` records that a three-way critical-pair set is
+not derivable from pairwise verdicts and is therefore not claimed, rather
+than left to silence.
 
 Two absences are deliberate. First, a disagreement between the predicted and
 the observed verdict is recorded, never folded: it is labelled

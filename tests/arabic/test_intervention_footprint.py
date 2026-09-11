@@ -7,17 +7,22 @@ from pathlib import Path
 import pytest
 
 import alghanem
+from alghanem.arabic.encoding import intervention_footprint
 from alghanem.arabic.encoding.intervention import (
     InterventionCoordinateError,
     SurfaceAtomIntervention,
     apply_intervention,
 )
 from alghanem.arabic.encoding.intervention_footprint import (
+    ALTERNATE_ATOMS,
     COORDINATE_CONFIGURATIONS,
     DERIVED_LAW_SCOPE_NOTE,
     IDENTICAL_PAIR_EXCLUSION_NOTE,
     INTERVENTION_TYPES,
+    MINIMAL_ATOMS,
     NO_KERNEL_MODULE_CONSUMES_INTERVENTION_FOOTPRINT_NOTE,
+    ORDERED_TRIPLES_ABSENCE_NOTE,
+    PAYLOAD_INDEPENDENCE_NOTE,
     PREDICTION_ORACLE_MISMATCH_NOTE,
     REFERENCE_ATOMS,
     VALUE_COINCIDENCE_NOTE,
@@ -211,11 +216,11 @@ def test_the_reference_matrix_covers_every_type_pair_and_every_configuration() -
         for check in checks
     }
 
-    assert configurations == {name for name, _, _ in COORDINATE_CONFIGURATIONS}
+    assert configurations == {name for name, *_ in COORDINATE_CONFIGURATIONS}
     assert type_pairs == {
         (left, right) for left in INTERVENTION_TYPES for right in INTERVENTION_TYPES
     }
-    assert len(checks) == 151
+    assert len(checks) == 198
 
 
 def test_every_predicted_verdict_is_confirmed_by_the_applied_oracle() -> None:
@@ -286,6 +291,85 @@ def test_value_coincidence_is_outside_the_declared_scope_not_swallowed() -> None
     assert check.agreement is (PredictionOracleAgreement.PREDICTION_ORACLE_MISMATCH)
     assert len(set(REFERENCE_ATOMS)) == len(REFERENCE_ATOMS)
     assert "مصادفةً قيميّة لا تبادلًا بنيويًّا" in VALUE_COINCIDENCE_NOTE
+
+
+def test_a_non_adjacent_swap_straddling_a_shift_origin_conflicts_by_shift() -> None:
+    check = check_commutation(
+        make("delete", (2,)),
+        make("swap", (1, 4)),
+        REFERENCE_ATOMS,
+        "straddling_swap",
+    )
+
+    assert check.assessment.verdict is CommutationVerdict.CONFLICTS
+    assert check.assessment.reason is ConflictReason.SHIFT
+    assert check.observed is CommutationVerdict.CONFLICTS
+    assert check.agreement is PredictionOracleAgreement.MATCH
+    assert f"{check.label} :: shift" in critical_pairs(reference_matrix())
+
+
+def test_a_swap_sharing_exactly_one_coordinate_conflicts_by_overlap() -> None:
+    check = check_commutation(
+        make("delete", (1,)),
+        make("swap", (1, 3)),
+        REFERENCE_ATOMS,
+        "swap_shares_one_coordinate",
+    )
+
+    assert set(footprint(check.assessment.left).touched) & set(
+        footprint(check.assessment.right).touched
+    ) == {1}
+    assert check.assessment.verdict is CommutationVerdict.CONFLICTS
+    assert check.assessment.reason is ConflictReason.OVERLAP
+    assert check.observed is CommutationVerdict.CONFLICTS
+
+
+def test_the_widened_configurations_are_still_confirmed_by_the_oracle() -> None:
+    checks = reference_matrix()
+    widened = {"straddling_swap", "swap_shares_one_coordinate"}
+
+    assert widened <= {name for name, *_ in COORDINATE_CONFIGURATIONS}
+    assert [check for check in checks if check.configuration in widened]
+    assert mismatched_pairs(checks) == ()
+    assert law_status(checks) is DerivedLawStatus.DERIVED_LAW_CONFIRMED
+
+
+def test_the_minimal_two_atom_sequence_is_measured_not_assumed() -> None:
+    checks = reference_matrix(MINIMAL_ATOMS)
+
+    assert len(MINIMAL_ATOMS) == 2
+    assert len(set(MINIMAL_ATOMS)) == len(MINIMAL_ATOMS)
+    assert checks
+    assert mismatched_pairs(checks) == ()
+    assert law_status(checks) is DerivedLawStatus.DERIVED_LAW_CONFIRMED
+    assert undefined_pairs(checks)
+
+
+def test_the_verdicts_follow_coordinates_and_length_not_atom_values() -> None:
+    reference = reference_matrix()
+    alternate = reference_matrix(ALTERNATE_ATOMS)
+
+    assert len(ALTERNATE_ATOMS) == len(REFERENCE_ATOMS)
+    assert len(set(ALTERNATE_ATOMS)) == len(ALTERNATE_ATOMS)
+    assert not set(ALTERNATE_ATOMS) & set(REFERENCE_ATOMS)
+    assert commuting_pairs(alternate) == commuting_pairs(reference)
+    assert critical_pairs(alternate) == critical_pairs(reference)
+    assert undefined_pairs(alternate) == undefined_pairs(reference)
+    assert mismatched_pairs(alternate) == ()
+    assert "الإحداثيات والطول وحدهما" in PAYLOAD_INDEPENDENCE_NOTE
+
+
+def test_ordered_triples_are_absent_by_record_not_by_silence() -> None:
+    exported = set(intervention_footprint.__all__) - {"ORDERED_TRIPLES_ABSENCE_NOTE"}
+
+    assert not [name for name in exported if "triple" in name.lower()]
+    assert not [
+        name
+        for name in exported
+        if callable(getattr(intervention_footprint, name)) and "triple" in name.lower()
+    ]
+    assert "ولا ثلاثياتٍ هنا" in ORDERED_TRIPLES_ABSENCE_NOTE
+    assert "لا يُشتَقّ " in ORDERED_TRIPLES_ABSENCE_NOTE
 
 
 def test_an_empty_matrix_confirms_no_law() -> None:
