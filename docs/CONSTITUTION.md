@@ -1438,14 +1438,35 @@ Any future statement that reaches past the pure core must discharge or assume
 these. They are recorded here as assumptions precisely because the kernel
 cannot establish them:
 
-| Axiom | Assumed content | Why it is not proved here |
-| --- | --- | --- |
-| `OracleTotality` | A registry-bound extractor/derivation/implementation returns a value for every input it is invoked on. | Bound callables are arbitrary Python; they may raise or diverge. The kernel converts raising into `DEFER`, which records an epistemic non-answer rather than establishing totality. |
-| `OracleDeterminism` | A bound callable returns equal output for equal input, across invocations and processes. | `EvaluatorInputDerivationGate` observes one repeat invocation only; it explicitly records `ObservedDeterminism != ProvenPurity`. Nothing excludes hidden state, clock, or environment dependence. |
-| `OraclePurity` | A bound callable has no effect on kernel or external state. | Python imposes no effect discipline and the kernel performs no static analysis of bound callables. |
-| `OracleIdentityFaithfulness` | A declared `implementation_identity` names the code that actually ran. | Declared identity is caller/provider metadata; the kernel compares strings, it does not attest the executing artifact. |
-| `SchemaDenotation` | Declared schema strings (`result_schema`, `residual_schema`, `model_result_schema`, `output_schema`) denote sets of values, and a returned value lies in the denoted set. | These fields are opaque text compared only by equality; no interpretation function from schema text to a value set exists anywhere in the kernel. |
-| `FailureSemanticsDenotation` | `failure_semantics` and `declared_information_loss` denote something a judgment could be checked against. | Same: declarative text, never interpreted. |
+This list is written as prose, not as a table: the document's table grammar
+is a closed vocabulary of declared headers, and inventing a new header shape
+for a draft would either be refused outright or silently widen that grammar.
+
+- `OracleTotality` — *assumed*: a registry-bound extractor, derivation, or
+  implementation returns a value for every input it is invoked on. *Not proved
+  here*: bound callables are arbitrary Python and may raise or diverge. The
+  kernel converts raising into `DEFER`, which records an epistemic non-answer
+  rather than establishing totality.
+- `OracleDeterminism` — *assumed*: a bound callable returns equal output for
+  equal input, across invocations and processes. *Not proved here*:
+  `EvaluatorInputDerivationGate` observes one repeat invocation only and
+  explicitly records `ObservedDeterminism != ProvenPurity`; nothing excludes
+  hidden state, clock, or environment dependence.
+- `OraclePurity` — *assumed*: a bound callable has no effect on kernel or
+  external state. *Not proved here*: Python imposes no effect discipline and
+  the kernel performs no static analysis of bound callables.
+- `OracleIdentityFaithfulness` — *assumed*: a declared
+  `implementation_identity` names the code that actually ran. *Not proved
+  here*: declared identity is caller/provider metadata; the kernel compares
+  strings, it does not attest the executing artifact.
+- `SchemaDenotation` — *assumed*: declared schema strings (`result_schema`,
+  `residual_schema`, `model_result_schema`, `output_schema`) denote sets of
+  values, and a returned value lies in the denoted set. *Not proved here*:
+  these fields are opaque text compared only by equality; no interpretation
+  function from schema text to a value set exists anywhere in the kernel.
+- `FailureSemanticsDenotation` — *assumed*: `failure_semantics` and
+  `declared_information_loss` denote something a judgment could be checked
+  against. *Not proved here*: same — declarative text, never interpreted.
 
 An oracle-touching theorem is therefore, at best, of the form
 "assuming `OracleTotality ∧ OracleDeterminism ∧ …`, then …". None of these
@@ -1459,14 +1480,38 @@ successfully constructed request yields a judgment consistent with its
 inputs" — cannot be written down in current kernel terms. The following
 phrases have no referent here, and each needs a different remedy:
 
-| Missing term | Why it cannot be stated | What would be needed |
-| --- | --- | --- |
-| "consistent with its inputs" | There is no relation in the kernel between an evidence payload and a verdict. The gate never reads the payload, and no predicate `Consistent(evidence, verdict)` is definable because evidence bytes are deliberately uninterpreted. | An interpretation of evidence content — a genuine denotational layer — which G0 deliberately does not have. |
-| "a judgment" as a semantic object | `BirthVerdictStatus` is an enum label; it carries no truth condition. `DEFER_IN_SCOPE` is defined by its issuing procedure, not by a condition on the world. | Semantics for statuses, stated independently of the procedure that emits them. |
-| "for every request" as a quantifier | Quantification over all constructible `BirthAssessmentRequest`s is not expressible in Python or in mypy-strict types; construction validity lives in `__post_init__` raises, which are a procedure, not a predicate. | An external proof object (dependent types / a proof assistant), or at minimum an explicit predicate mirroring every `__post_init__` check. |
-| "successfully constructed" as a predicate | Success is defined operationally as "no exception was raised by some constructor", and the set of raises is distributed across many `__post_init__` bodies in several modules. There is no single, quotable well-formedness predicate to appear as the theorem's hypothesis. | A consolidated, auditable statement of the admission predicate, derived from — and kept in step with — the constructors. |
-| "the same request" across runs | Request identity is partly occurrence identity (`uuid4`, `admission_id`) and only partly content identity; `OccurrenceIdentity != ContentIdentity` is declared law. A theorem quantifying over requests-up-to-content cannot yet name its own equivalence relation. | Total content identity coverage for requests, not only for experiment specifications, residuals, criteria, and weaker models. |
-| "necessarily" / "must" | The kernel's modality is runtime refusal: a violation raises. Refusal establishes that *this* execution did not proceed, never that no execution could. | A proof-carrying notion of impossibility, which runtime raises cannot supply. |
+- **"consistent with its inputs"** — there is no relation in the kernel
+  between an evidence payload and a verdict. The gate never reads the payload,
+  and no predicate `Consistent(evidence, verdict)` is definable because
+  evidence bytes are deliberately uninterpreted. *Remedy*: an interpretation of
+  evidence content — a genuine denotational layer — which G0 deliberately does
+  not have.
+- **"a judgment" as a semantic object** — `BirthVerdictStatus` is an enum
+  label carrying no truth condition; `DEFER_IN_SCOPE` is defined by its issuing
+  procedure, not by a condition on the world. *Remedy*: semantics for statuses,
+  stated independently of the procedure that emits them.
+- **"for every request" as a quantifier** — quantification over all
+  constructible `BirthAssessmentRequest`s is not expressible in Python or in
+  mypy-strict types; construction validity lives in `__post_init__` raises,
+  which are a procedure, not a predicate. *Remedy*: an external proof object
+  (dependent types / a proof assistant), or at minimum an explicit predicate
+  mirroring every `__post_init__` check.
+- **"successfully constructed" as a predicate** — success is defined
+  operationally as "no exception was raised by some constructor", and the set
+  of raises is distributed across many `__post_init__` bodies in several
+  modules. There is no single, quotable well-formedness predicate to appear as
+  the theorem's hypothesis. *Remedy*: a consolidated, auditable statement of the
+  admission predicate, derived from — and kept in step with — the constructors.
+- **"the same request" across runs** — request identity is partly occurrence
+  identity (`uuid4`, `admission_id`) and only partly content identity;
+  `OccurrenceIdentity != ContentIdentity` is declared law. A theorem
+  quantifying over requests-up-to-content cannot yet name its own equivalence
+  relation. *Remedy*: total content identity coverage for requests, not only for
+  experiment specifications, residuals, criteria, and weaker models.
+- **"necessarily" / "must"** — the kernel's modality is runtime refusal: a
+  violation raises. Refusal establishes that *this* execution did not proceed,
+  never that no execution could. *Remedy*: a proof-carrying notion of
+  impossibility, which runtime raises cannot supply.
 
 `BirthAssessmentSemanticsContract` is **not** this theorem and does not
 approach it: it is a per-instance referential well-formedness predicate
