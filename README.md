@@ -672,6 +672,43 @@ not *no shortfall exists*). Inventing a declared total in the document to close
 that gap would be fabrication, not verification: §4's "a declared value that
 contradicts the derived one is refused" presupposes a genuine declared value.
 
+The third and last reader §4 names follows in
+`alghanem.program.deferred_value_ledger`, and only it: the declared-but-unbuildable
+values that still hold an aim open — `BIRTH_IN_SCOPE`, `MORPHO_FUNCTIONAL`, and
+`CLOSED_BY_FROZEN_EXPERIMENT`. Its source is the `src/` tree rather than a
+document: each member is imported live, so a rename is a named refusal rather
+than a value silently read as released, and the holding module's own text is
+parsed so the site and shape of the hold are derived rather than written.
+Coding it showed that "unbuildable" is not one shape but three, and they are
+kept apart in a three-valued `DeferredValueShape` instead of merged: a guard
+that names the value and raises; a guard that never names it at all and merely
+admits its only sibling in a two-valued vocabulary; and a value no guard refuses
+at all, because its sole authority never writes it and so its derived codomain
+never reaches it. Merging them would drop a live distinction — the first is
+found by searching for the member's name, the second never is, and the third
+raises nothing because no attempt is ever refused.
+
+Each row carries both its declared shape and the shape derived from the code,
+and a disagreement is refused at construction rather than recorded: the
+`DeclaredVersusDerivedRecurrenceNotExplained` form finally doing real work,
+where the previous reader had no declared total to compare against. The refusal
+rule rises one more layer, from the table to the guard: every guard over a
+tracked vocabulary lands in a derived `GuardCensus`, and a declared site with no
+witness in its module's text halts the read by name instead of being skipped,
+since a short ledger reads later as "this value is no longer held". What remains
+is named rather than hidden: `REFUSAL_SHAPE_IS_NOT_A_DECLARED_VOCABULARY`
+(nothing in the record obliges a hold to take one of the three observed shapes),
+`SIBLING_ADMISSION_REFUSAL_DEPENDS_ON_VOCABULARY_SIZE` (that hold is written
+nowhere and follows from an allow-list over a two-valued vocabulary, whose size
+is checked live), `CODOMAIN_DERIVED_FROM_LITERAL_WRITES_ONLY` (a codomain read
+from literal writes means *no reaching write was found*, not *no execution
+reaches it*), and `SECTION_4_NAMES_THREE_VALUES_ONLY` (other held values exist —
+`AttainmentStanding.REACHED`, `BirthVerdictStatus.NO_BIRTH_IN_SCOPE` — and
+widening §4's list is a judgment this milestone does not hold). This reader binds
+to no aim either: it imports no `AimId`, no `AimRecord`, and no
+`AttainmentStanding`, and the indicator remains deferred with everything §4
+requires of it.
+
 ## Development
 
 ```bash
