@@ -602,6 +602,30 @@ witness. No `Claim`, `EvidenceBinding`, or `SelfKnowledge` runtime exists here;
 that is a later `SelfKnowledgeBridgeExperiment`. See the "Encyclopedia Nucleus"
 and "Encyclopedia Self-Observation" sections of `docs/CONSTITUTION.md`.
 
+[`docs/AIMS.md`](docs/AIMS.md) (AIM.1) declares the programme's own aims, in
+Arabic like the other programme/Arabic-layer documents, extracted from this
+record rather than dictated from outside it: each aim names its question, what
+would count as reaching it, what would not count even though it resembles it,
+and its citation. Progress indicators are declared **epistemic and never
+engineering**, with the reason named rather than left implicit: an engineering
+indicator answers "does the code run?", while this programme's indicators
+answer "is the judgment the code issues earned by its evidence?" — two
+independent questions, since an empty function that always returns `PASS` can
+carry full coverage and a green CI. `pytest`/`ruff`/`mypy` therefore remain a
+CI requirement and are not an aim or an indicator of one. Aims that have not
+started are kept distinct from aims blocked by a named obstacle
+(`NamedObstacle != SilentAbsence`), the cross-project import loop (`A0.PP.3`)
+is declared as an aim in its own right rather than left implicit, and two
+foreign aims from that source project are recorded as declared only
+(`DeclaredForeignAim != AlghanemRecord`). This is the documentation stage
+alone: `DeclaredAim != LicensedProgramme`, `Aim != Achievement`,
+`AimsDocument != Authority`. No type, vocabulary, indicator value, or test
+exists yet and nothing imports the document; the deferred enforced layer is
+bound in advance by §5 of that document, including the requirement that a
+future `AimRecord` cite the open audit question
+`DeclaredVersusDerivedRecurrenceNotExplained` as its direct design source
+instead of silently re-deriving it.
+
 ## Development
 
 ```bash
