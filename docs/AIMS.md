@@ -80,8 +80,11 @@ NamedObstacle != SilentAbsence
 * البلوغ: تقويمٌ فعليّ لمحتوى الدليل يُصيّر `is_independent_closure` قابلةً
   لغير `False`.
 * ليس بلوغًا: `COMPETITION_RESOLVED_IN_POSET` وحدها
-  (`ComparabilityClosure != IndependentClosure`).
-* المستند: صفّ `G0.IC.1a`، و`InputProvenance = DECLARED_DEFERRED` في `G0.BA.1a`.
+  (`ComparabilityClosure != IndependentClosure`)، ولا إثباتُ أصلِ مدخلِ
+  المُقيِّم وحده في `G0.BA.1b`؛ فذلك يرفع عائقًا لازمًا غير كافٍ ولا يُصيّر
+  `is_independent_closure` غير `False`.
+* المستند: صفّ `G0.IC.1a`، وصفّ `G0.BA.1b` الذي أغلق
+  `InputProvenance = DECLARED_DEFERRED` المُعلَن في `G0.BA.1a`.
 
 ### AIM-K4 — سلطةُ التجميد ثم `E0`
 
@@ -199,7 +202,9 @@ NamedObstacle != SilentAbsence
 
 * **لم تبدأ**: AIM-K4، AIM-E1، AIM-E2 — لا عملَ قائمًا، ولا حاجزَ مُسمّى.
 * **بدأت واصطدمت بحاجزٍ مُسمّى**: AIM-K2 وAIM-K3 (الحاجز: غيابُ سلطةِ تقويمِ
-  محتوى الدليل، `InputProvenance = DECLARED_DEFERRED`)، وAIM-A2 (الحاجز:
+  محتوى الدليل؛ وقد أغلق `G0.BA.1b` منه شرطًا لازمًا واحدًا فقط هو
+  `InputProvenance`، فصار مدخلُ المُقيِّم مُشتقًّا بإثباتٍ من لقطة الدليل
+  المُصرَّح بها، بينما بقي تقويمُ المحتوى نفسه بلا سلطة)، وAIM-A2 (الحاجز:
   نتيجةٌ سالبة مُسجَّلة بثلاثة فروضٍ قائمة).
 
 ### غايتان مُستورَدتان، مُسجَّلتان كما أُعلنتا ولا يُتحقَّق منهما هنا

@@ -97,6 +97,29 @@ undetermined relation is never read as a resolution. This is still not closure:
 `is_independent_closure` is `False` unconditionally, because a surviving
 residual and an exhausted licensed weaker model set have no authority here, and
 `BirthVerdictGate` is deliberately not wired to consume the assessment.
+G0.BA.1b (`src/alghanem/kernel/evaluator_input_provenance.py`) closes exactly
+one of the three claims G0.BA.1a refused to make: `InputProvenance =
+DECLARED_DEFERRED`. G0.BA.1a runs a bound implementation on caller-supplied
+input and merely attaches the request's evidence snapshot, so a record proves
+an implementation ran on *some* content alongside *some* evidence, never that
+the one came from the other. Here an `EvaluatorInputDerivation` receives
+exactly one argument — the canonical bytes of the request's own authorized
+evidence manifest — and `EvaluatorInputDerivationGate.derive` accepts no input
+content and no domain at all (`CallerDoesNotOwnInputContent`): the caller
+chooses which registry-sealed derivation runs, never what the evaluator sees.
+The issued `EvaluatorInputContentIdentity` digests the source evidence
+identity, the derivation id, the implementation identity, and the produced
+content together, so it binds what was produced, from which exact evidence,
+and by which declared derivation (`OutputDigest != DerivationIdentity`).
+`ProvenanceBoundEvaluatorExecutionGate` delegates the invocation to the
+unchanged `BirthEvaluatorExecutionGate` and binds the resulting record to the
+derivation that fed it; G0.BA.1a itself is preserved exactly, still accepting
+unrelated input by design. Three claims stay refused:
+`DerivationIdIsContentAuthenticated = DEFERRED`, the inherited
+`AuthorizedDefinition != DefinitionAuthorizedForThisFrozenExperiment`, and
+`ProvenInputProvenance != AssessedEvidence` — `is_assessment` is `False`
+unconditionally, so proven provenance still says nothing about residual
+survival, weaker-model exhaustion, or closure.
 `BirthCandidate` is distinct from a scoped birth verdict and from `Freeze`;
 the future G0.BV.1 authority may issue `BIRTH_IN_SCOPE`, then a later freeze
 authority may freeze it before a separate `E0` step. See the
