@@ -1,60 +1,3 @@
-"""المؤشر المعرفيّ: ربطُ الغاية بمصادرها المقروءة عبر نصّ استشهادها وحده.
-
-هذه **المرحلة السادسة من الطور الثاني** لـ AIM.1، وهي الخطوة التي أُجِّلت
-صراحةً في خواتيم المراحل الخمس السابقة كلِّها: «ربطُ عددٍ مقروء بغايةٍ بعينها هو
-المؤشر نفسه». فالمصادر الثلاثة التي سمّتها §٤ من `docs/AIMS.md` صارت مقروءةً
-كلَّها — صفوفُ الدستور وأسئلةُ تدقيقه في `constitution_ledger`، والقيمُ المُعلَنة
-غير القابلة للبناء في `deferred_value_ledger` — وبقي الربط::
-
-    CitedSource      != Attainment
-    DerivedLink      != Progress
-    LedgerCount      != AimMovement
-    ReadableCitation != TrueCitation
-
-**المنعُ السابق كان تأجيلًا لا حدًّا دائمًا.** مُنع القرّاء الثلاثة من استيراد
-`AimId` و`AimRecord` لأن ذلك الاستيراد **هو** المؤشر، لا لأنه محظور في نفسه؛
-وهذه الوحدة تستوردهم جميعًا لأوّل مرّة، فتُصرّح بذلك ولا تُهرّبه. والخمولُ
-السلطويّ يبقى مفحوصًا كما كان، لكن من ناحيته الصحيحة: لا وحدة في `kernel/`
-تستورد طبقة البرنامج، ويُفحَص ذلك بمسحٍ آليّ.
-
-**الربط مُشتَقّ لا مكتوب** (§٤): لا حقلَ يُكتَب فيه «مؤشر الغاية» ولا عددَ يُكتَب
-في صنف. الرابط الوحيد المشروع هو حقل `citation` المُعلَن أصلًا في `AimRecord`
-منذ المرحلة الأولى: تُستخرَج منه رموزُه بأشكالٍ مُصرَّح بها، ثم يُبحَث عن كلّ
-رمزٍ في دفاتر القرّاء الثلاثة وفي نصّ الدستور. فالمُعلَن نصُّ الاستشهاد،
-والمُشتَقّ ما وُجد فعلًا، والمخالفة — رمزٌ لا يُعثَر له على مرجع — تُرفَض عند
-الإنشاء ولا تُقرَّر.
-
-**المصدر التصميميّ المباشر، مُستشهَدًا به لا مُعادًا اشتقاقه.** شكلُ «الجهة
-تُعلن، والقارئ لا يقبل إلا من مفردةٍ مغلقة يملكها، والمخالفة تُرفَض» مأخوذٌ من
-سؤال التدقيق المفتوح `DeclaredVersusDerivedRecurrenceNotExplained` مصدرًا
-مباشرًا (إلزام §٥)، لا بديهةً تُعاد هنا صامتةً؛ فهو مرصودٌ غير مفسَّر، ولا
-يُستحدَث له هنا اسمٌ عامّ ولا صنفُ أساسٍ مشترك يوحّد الشكل بين القرّاء.
-
-**مفرداتٌ مغلقة متعدّدة لا مقياسٌ رتبيّ واحد** (§٥)، مع تعليلِ كلّ دمجٍ مرفوض:
-
-* لا يُجمَع عددُ الصفوف مع عددِ الأسئلة مع عددِ القيم المحجوزة في رقمٍ واحد:
-  المجموعُ يخلق استلزامًا كاذبًا هو أن صفًّا واحدًا يعادل سؤالًا واحدًا يعادل
-  قيمةً محجوزة، ولا شيء في السجلّ يُصرّح بهذا التعادل.
-* ولا تُرتَّب الغايات بحسب أعدادها: الترتيبُ بالعدد هو تقديرُ القرب من البلوغ
-  الذي تمنعه §٦ نصًّا، وهو حكمٌ لا سلطةَ هنا تملكه.
-* ولا يُدمَج «جنس المصدر» مع «هل قُرئ في دفتر»: الجنسُ يُسقط حالةً قائمة —
-  مسارٌ في الشجرة وقسمٌ في الوثيقة كلاهما غيرُ مقروءٍ في دفتر، وهما مختلفان.
-
-**الجهل عضوٌ في المفردة لا فراغٌ يُطوى** (§٤): غايةٌ لا يبلغ استشهادُها أيّ
-دفترٍ من الثلاثة تحمل `NO_LEDGER_READABLE_SOURCE` صراحةً، لا صفرًا يُقرَأ
-«لم تتقدّم» ولا فراغًا يُقرَأ «لا مصدر لها».
-
-**الرفض لا التخطّي الصامت، مرفوعًا طبقةً خامسة: من النقطة إلى الاستشهاد.** كما
-صار كلُّ جدولٍ ثم كلُّ حارسٍ ثم كلُّ نقطةٍ إمّا مقروءًا أو مُستبعَدًا بجنسٍ
-مُصرَّح به أو مرفوضًا باسمه وموضعه، يصير كلُّ رمزٍ في نصّ الاستشهاد كذلك،
-ويُحصى الكلّ في `CitationCensus` بلا عددٍ مكتوب. فرمزٌ يسقط صامتًا يُنتج غايةً
-تبدو أقلّ استنادًا ممّا صرّحت به وثيقتها.
-
-**لا ترقية ولا حقل نتيجة**: لا دالّة هنا تحوّل رابطًا إلى `Freeze` ولا `E0` ولا
-حكمِ ولادة ولا `AttainmentStanding.REACHED`؛ ولا حقلَ في أيّ صنفٍ هنا يحمل
-جوابًا أو حكمًا أو مؤشرَ قيمة، ويُفحَص ذلك على حقول الأصناف نفسها لا في نثر.
-
-**وترتيب الروابط ترتيبُ §٢** لا ترتيبَ أهمّية ولا قربٍ من بلوغ (§٦).
 """المؤشر المعرفي المُشتَقّ: عددٌ مقروءٌ مربوطٌ بغايةٍ بعينها، بلا حكمٍ ولا ترقية.
 
 هذه **المرحلة السادسة من الطور الثاني** لـ AIM.1، وهي المرحلة التي أجّلتها
@@ -131,84 +74,108 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Final
 
-from .aims import AIM_RECORDS, DESIGN_SOURCE_OPEN_QUESTION, AimId, AimRecord
+from .aims import AIM_RECORDS, AimId, AimRecord
 from .constitution_ledger import (
+    NO_STATUS_DECLARED_IN_RECORD,
+    AuditQuestionStanding,
     ConstitutionLedger,
+    DeclaredLawStatus,
     constitution_document_path,
-    read_constitution_ledger,
+    load_constitution_ledger,
 )
-from .deferred_value_ledger import (
-    DeferredValueLedger,
-    DeferredValueSite,
-    read_deferred_value_ledger,
+from .deferred_value_ledger import DeferredValueSite
+
+DESIGN_SOURCE_CITATION_NOTE: Final = (
+    "شكلُ «المُعلَن مقابل المُشتَقّ» مأخوذٌ من سؤال التدقيق المفتوح "
+    "`DeclaredVersusDerivedRecurrenceNotExplained` بوصفه مصدرًا مباشرًا لا "
+    "بديهةً تُعاد اشتقاقًا صامتًا؛ فالسؤال مرصودٌ غير مفسَّر، والبناءُ عليه بلا "
+    "تسميته يُحوّله أساسًا مُسلَّمًا به بلا مرور بحكم"
 )
 
 AIM_INDICATOR_AUTHORITY_NOTE: Final = (
-    "ربطٌ فقط: لا يُنتج هذا المؤشر ولادةً ولا حكمًا ولا تجميدًا ولا `E0`، ولا "
-    "يرفع غايةً إلى بلوغ، ولا يُرتّب الغايات بأولوية، ولا تقرؤه بوّابةٌ في النواة"
+    "مؤشرٌ معرفيّ فقط: لا يُصدر هذا الدفتر ولادةً ولا حكم ولادة، ولا يُجمِّد، "
+    "ولا يكتب بلوغَ غايةٍ ولا يُرقّيه، ولا تقرؤه أيّ بوّابةٍ في النواة"
 )
 
-DESIGN_SOURCE_CITATION_NOTE: Final = (
-    "شكلُ «الجهة تُعلن، والقارئ لا يقبل إلا من مفردةٍ مغلقة يملكها، والمخالفة "
-    f"تُرفَض» مأخوذٌ من `{DESIGN_SOURCE_OPEN_QUESTION}` مصدرًا مباشرًا، لا "
-    "بديهةً تُعاد هنا صامتةً"
+COUNT_IS_DERIVED_NOT_WRITTEN_NOTE: Final = (
+    "كلّ عددٍ هنا خاصّيةٌ تُحسَب من الإشارات المقروءة، ولا حقلَ عددٍ يُكتَب فيه "
+    "جواب؛ وإعلانُ مؤشرٍ بلا اشتقاقٍ من أثرٍ قائم هو الحقل المكتوب الذي تمنعه §٤"
 )
 
-DEFERRAL_WAS_NOT_A_PERMANENT_BOUNDARY_NOTE: Final = (
-    "منعُ القرّاء الثلاثة من استيراد `AimId` كان تأجيلًا للمؤشر لا حدًّا "
-    "دائمًا عليه؛ وهذه الوحدة تستوردهم مُصرِّحةً، والخمولُ السلطويّ يبقى "
-    "مفحوصًا من ناحيته الصحيحة: لا وحدة في `kernel/` تقرأ طبقة البرنامج"
+UNKNOWN_CITATION_REFERENCE_IS_REFUSED_NOTE: Final = (
+    "إشارةٌ في الاستشهاد لا تُحَلّ إلى صفٍّ ولا سؤالٍ ولا قسمٍ ولا مسارٍ ولا "
+    "تُستبعَد بإعلانٍ تُرفَض باسم غايتها وموضع حرفها: قراءةٌ جزئية تُنتج «لا "
+    "مستند لهذه الغاية» وهو ادّعاءُ غيابٍ لم يُقرَأ"
 )
 
-UNKNOWN_CITATION_TOKEN_IS_REFUSED_NOTE: Final = (
-    "رمزٌ في نصّ الاستشهاد لا يُعثَر له على مرجعٍ يُوقف القراءة باسمه وموضعه "
-    "ولا يُتخطّى: الرمزُ الساقط لا يتعارض مع شيءٍ لأنه لم يُقرَأ أصلًا، فتبدو "
-    "الغاية أقلّ استنادًا ممّا صرّحت به وثيقتها"
+UNCOVERED_CITATION_TEXT_IS_REFUSED_NOTE: Final = (
+    "نصٌّ في الاستشهاد لا تُغطّيه إشارةٌ مقروءة ولا رابطٌ مُصرَّحٌ به يُرفَض "
+    "باسم غايته وموضعه: التغطيةُ الناقصة تُخفي إشارةً لم تُقرَأ خلف صمت"
 )
 
-NO_SUM_ACROSS_READERS_NOTE: Final = (
-    "لا مجموعَ واحدًا عبر القرّاء الثلاثة: جمعُ صفٍّ إلى سؤالٍ إلى قيمةٍ "
-    "محجوزة يستلزم تعادلها، ولا شيء في السجلّ يُصرّح به؛ والترتيبُ بالعدد "
-    "تقديرُ قربٍ من بلوغٍ تمنعه §٦"
+DECLARED_STATUS_MUST_MATCH_ONE_SUPPORT_NOTE: Final = (
+    "الحالة المُعلَنة بين قوسين في الاستشهاد تُقابَل بحالات المستندات المقروءة، "
+    "ويكفي أن تُطابق واحدًا منها: فهي تصف بعضها لا كلَّها، وإلزامُها بمطابقة "
+    "الكلّ يرفض استشهادًا صادقًا، وإسقاطُها يُلغي مقابلةً قائمة"
 )
 
-CITATION_LINK_IS_NOT_ATTAINMENT: Final = "CITATION_LINK_IS_NOT_ATTAINMENT"
-
-CITATION_PROSE_IS_NOT_A_TOKEN_STREAM: Final = "CITATION_PROSE_IS_NOT_A_TOKEN_STREAM"
-
-LEDGER_COUNT_MOVEMENT_IS_NOT_AIM_MOVEMENT: Final = (
-    "LEDGER_COUNT_MOVEMENT_IS_NOT_AIM_MOVEMENT"
+SUPPORT_STANDING_IS_NOT_A_DEFERRAL_CLASS_NOTE: Final = (
+    "موقفُ المستندات وصفٌ لتجانس حالاتها المُعلَنة لا تصنيفٌ لها إلى «مؤجَّلة» "
+    "و«مُنفَّذة»: لا وثيقةَ تُعلن هذه القسمة، واستحداثُها هنا حكمٌ لا سلطة "
+    "لهذه الطبقة به"
 )
 
-DEFERRED_VALUE_READER_IS_NOT_REACHED_BY_ANY_CITATION: Final = (
-    "DEFERRED_VALUE_READER_IS_NOT_REACHED_BY_ANY_CITATION"
+CITATION_SUPPORT_IS_DECLARED_BY_THE_RECORD_NOT_BY_THE_CONSTITUTION: Final = (
+    "CITATION_SUPPORT_IS_DECLARED_BY_THE_RECORD_NOT_BY_THE_CONSTITUTION"
+)
+
+SUPPORT_COUNT_IS_NOT_PROGRESS: Final = "SUPPORT_COUNT_IS_NOT_PROGRESS"
+
+NO_DECLARED_SUPPORT_TOTAL_TO_CROSS_CHECK: Final = (
+    "NO_DECLARED_SUPPORT_TOTAL_TO_CROSS_CHECK"
+)
+
+THIRD_READER_IS_CITED_BY_NO_AIM: Final = "THIRD_READER_IS_CITED_BY_NO_AIM"
+
+SECTION_HEADING_CARRIES_NO_DECLARED_STATUS: Final = (
+    "SECTION_HEADING_CARRIES_NO_DECLARED_STATUS"
 )
 
 NAMED_RESIDUALS: Final[Mapping[str, str]] = MappingProxyType(
     {
-        CITATION_LINK_IS_NOT_ATTAINMENT: (
-            "بلوغُ الرمز في دفترٍ يُثبت أن الغاية تستند إلى مصدرٍ قائم، لا أنها "
-            "تقدّمت نحوه ولا أنها قاربته: غايةٌ مستندةٌ إلى عشرة صفوفٍ مقروءة "
-            "لم تبلغ شيئًا، والبلوغُ حكمٌ على أثرٍ لا على استشهاد"
+        CITATION_SUPPORT_IS_DECLARED_BY_THE_RECORD_NOT_BY_THE_CONSTITUTION: (
+            "الربط يجري في اتّجاهٍ واحد: الاستشهاد يُسمّي مستنده، ولا صفَّ في "
+            "`docs/CONSTITUTION.md` يُسمّي الغاية التي يسنده. فصفٌّ كان "
+            "**ينبغي** أن يُستشهَد به لغايةٍ ولم يُذكَر في استشهادها غيرُ "
+            "مرئيٍّ هنا البتّة، ولا يرفع به هذا الدفتر خطأً؛ وهو شقيقُ "
+            "`SECTION_3_CLASSIFIES_SIX_OF_THIRTEEN`: ما لم يُصرّح به السجلّ لا "
+            "يكشفه قارئُ السجلّ"
         ),
-        CITATION_PROSE_IS_NOT_A_TOKEN_STREAM: (
-            "نصّ الاستشهاد نثرٌ مُعاد الصياغة لا تعدادُ رموز: فيه ما يُسمّي "
-            "أسرةً من الصفوف بلا شكلٍ مُستخرَج (مثل «صفوف G0 في الدستور»)، وما "
-            "ليس بشكلٍ مُصرَّح به ليس رمزًا يُقرَأ ولا يُرفَع به خطأ؛ فالقراءة "
-            "تبلغ ما احتملت الأشكالُ المُصرَّح بها وحدها، وهذا شقيقُ "
-            "`RECORD_PROSE_IS_PARAPHRASE_NOT_TRANSCRIPTION`"
+        SUPPORT_COUNT_IS_NOT_PROGRESS: (
+            "عددُ المستندات المقروءة لغايةٍ ليس مسافةً إلى بلوغها: غايتان "
+            "بعددٍ واحد ليستا على قربٍ واحد، وغايةٌ بمستندٍ واحد قد تكون أبعدَ "
+            "من غايةٍ بعشرة. فلا يُرتّب هذا الدفتر الغايات ولا يُقارن بينها "
+            "ولا يشتقّ من العدد نسبةً ولا رتبة"
         ),
-        LEDGER_COUNT_MOVEMENT_IS_NOT_AIM_MOVEMENT: (
-            "أعدادُ الصفوف والأسئلة تتغيّر بتحرير الوثيقة وحده، وهذا الرابط "
-            "يتغيّر معها؛ فتغيّرُ العدد لا يُقرَأ حركةً في غاية، ولا يُقابَل "
-            "بعددٍ مرجعيّ مستقلّ، وهو شقيقُ `NO_DECLARED_TOTAL_TO_CROSS_CHECK`"
+        NO_DECLARED_SUPPORT_TOTAL_TO_CROSS_CHECK: (
+            "لا وثيقةَ تُعلن كم مستندًا لغايةٍ بعينها، فالعددُ المقروء مُشتَقٌّ "
+            "وحده ولا يُقابَل بمرجعٍ مستقلّ. وثقتُه قائمةٌ على «لم يُرفَع خطأ» "
+            "أي «لم يُكتشَف نقص»، لا على «أُثبِت عدم وجود نقص»؛ وهو شقيقُ "
+            "`NO_DECLARED_TOTAL_TO_CROSS_CHECK` في موضعٍ أعلى منه"
         ),
-        DEFERRED_VALUE_READER_IS_NOT_REACHED_BY_ANY_CITATION: (
-            "القارئ الثالث مقروءٌ هنا وجنسُه عضوٌ في المفردة وحاضرٌ في الإحصاء "
-            "ولو بصفر، ولا يبلغه استشهادُ غايةٍ اليوم: أسماءُ القيم الثلاث "
-            "تَرِد في أسئلة الغايات وحدودها لا في مستنداتها. وتوسيعُ الرابط "
-            "إلى بقيّة حقول السجلّ يجعل كلّ ذكرٍ لقيمةٍ استشهادًا بها، وهو "
-            "حكمٌ لا تملكه هذه المرحلة؛ فالبقيّة مُسمّاة لا مطويّة"
+        THIRD_READER_IS_CITED_BY_NO_AIM: (
+            "القارئ الثالث (`deferred_value_ledger`) لا يبلغه أيّ استشهاد: لا "
+            "غايةَ في §٢ تُسمّي `BIRTH_IN_SCOPE` ولا `MORPHO_FUNCTIONAL` ولا "
+            "`CLOSED_BY_FROZEN_EXPERIMENT` في استشهادها، فعدده صفرٌ في كلّ صفّ. "
+            "والصفرُ هنا **مُشتَقٌّ** بمسح أسماء المواضع في نصّ الاستشهاد لا "
+            "مفترَضٌ بإسقاط القارئ؛ ومع ذلك يبقى أن §٤ سمّت ثلاثة مصادر ولم "
+            "يبلغ الربطُ ثالثَها، وهذا حدٌّ يُسمّى ولا يُغلَق هنا"
+        ),
+        SECTION_HEADING_CARRIES_NO_DECLARED_STATUS: (
+            "القسمُ المُستشهَد به يُحَلّ بوجود عنوانه في الوثيقة وحده، ولا حالةَ "
+            "مُعلَنة له تدخل تجانسَ الحالات؛ فاستشهادٌ بقسمٍ كامل يُقرَأ حضورًا "
+            "لا حالةً، وغايةٌ كلُّ مستندها أقسامٌ لا يُقرَأ لها موقفُ حالاتٍ "
+            "البتّة. وهذا حدُّ الوثيقة لا نقصُ القارئ: العنوان لا يحمل عمود حالة"
         ),
     }
 )
@@ -228,87 +195,183 @@ _ANSWER_BEARING_FIELD_MARKERS: Final = (
     "percent",
     "estimate",
     "priority",
+    "progress",
+    "share",
+    "ratio",
+    "rank",
+    "closeness",
+    "attainment",
 )
-
-_REPOSITORY_PATH_SHAPE: Final = re.compile(r"^(?:docs|src|tests|examples)/[\w./-]*$")
-_ROW_IDENTIFIER_SHAPE: Final = re.compile(r"^[A-Z]\d(?:\.[A-Z]+)+\.\d+[a-z]?$")
-
-_TOKEN_PATTERN: Final = re.compile(
-    r"«(?P<guillemet>[^»]+)»"
-    r"|`(?P<backtick>[^`]+)`"
-    r"|(?P<path>(?:docs|src|tests|examples)/[\w./-]*)"
-    r"|(?<![A-Za-z0-9_.`])(?P<row_id>[A-Z]\d(?:\.[A-Z]+)+\.\d+[a-z]?)"
-    r"|(?<![A-Za-z0-9_`])(?P<camel>[A-Z][a-z0-9]+(?:[A-Z][a-z0-9]+)+)(?![A-Za-z0-9_])"
-)
-
-_HEADING_LINE: Final = re.compile(r"^#{1,6} (?P<heading>.+)$")
-_CLAIM_LINE: Final = re.compile(r"^- `(?P<claim>[^`]+)`\.?$")
 
 
 class AimIndicatorError(ValueError):
-    """ربطٌ مرفوض؛ لا يُحمَل الرمزُ على أقرب مرجعٍ مقبول."""
+    """قراءةٌ مرفوضة؛ لا يُحمَل الاستشهاد على أقرب مستندٍ مقبول."""
 
 
-class CitedTokenShape(Enum):
-    """أشكال الرمز في نصّ الاستشهاد، مفردةً مغلقة مُستخرَجة من السجلّ لا مُبتكَرة.
+class DeclaredCitationShape(Enum):
+    """أشكال الإشارة في نصّ الاستشهاد، مفردةً مغلقة مُستخرَجة من النصّ لا مُبتكَرة.
 
-    الأشكال الخمسة قائمةٌ في `AimRecord.citation` اليوم معًا، والدمجُ بينها
-    يُسقط شكلًا قائمًا: المسارُ يُكتَب عاريًا، واسمُ الصفّ النثريّ بين علامتَي
-    اقتباسٍ مزدوجتين، واسمُ السؤال بين علامتَي تنصيصٍ مائلتين أو عاريًا مُدمَجًا،
-    ومعرّفُ الصفّ بنقاطٍ وأرقام.
+    القيمة هي الشكل كما يُكتَب، لا نمطُ مطابقته؛ والأنماط مُجمَّعة في
+    `_SHAPE_PATTERNS` بترتيب مطابقةٍ يُقدّم الأطول على الأقصر، كما قُدّم أطول
+    وسمٍ في `constitution_ledger`.
     """
 
-    REPOSITORY_PATH_TEXT = "مسارٌ_في_الشجرة"
-    GUILLEMET_SPAN = "بين_علامتَي_اقتباس"
-    BACKTICK_SPAN = "بين_علامتَي_تنصيص"
-    DOTTED_ROW_IDENTIFIER = "معرّفُ_صفٍّ_بنقاط"
-    BARE_JOINED_NAME = "اسمٌ_مُدمَجٌ_عارٍ"
+    ROW = "صفّ X"
+    DUAL_ROW = "صفّا X وY"
+    ROW_GROUP = "صفوف X"
+    SECTION = "قسم X"
+    BACKTICKED_NAME = "`X`"
+    REPOSITORY_PATH = "dir/file"
 
 
-class CitedSourceGenus(Enum):
-    """جنسُ المصدر المستشهَد به، والجهلُ عضوٌ فيه لا فراغٌ يُطوى.
+class CitedSupportKind(Enum):
+    """جنسُ ما حُلَّت إليه الإشارة، مفردةً مستقلّةً عن شكلها في النصّ.
 
-    الأجناس الثلاثة الأولى وحدها مقروءةٌ في دفاتر §٤ الثلاثة؛ وما بعدها
-    **مُستبعَدٌ مُصرَّحٌ باستبعاده** على منهج `DeclaredTableHeader`، لا مطويٌّ
-    بصمت القارئ عنه: القسمُ في الوثيقة ليس صفًّا، والمسارُ في الشجرة ليس عددًا،
-    وسطرُ الدعوى ليس قانونًا؛ وكلُّها مُتحقَّقٌ من وجودها قبل استبعادها.
+    الفصلُ بين الجنس والشكل مقصود: `صفّ G0.F.1` و`قسم G0.F.1` شكلٌ واحد تقريبًا
+    ومرجعان مختلفان، و`` `X` `` شكلٌ واحد يُحَلّ صفًّا مرّةً وسؤالًا أخرى.
+    ودمجُ المفردتين يُسقط الفارق بين ما أُعلن وما وُجد.
     """
 
-    CONSTITUTION_LAW_ROW = "صفٌّ_في_الدستور"
-    AUDIT_QUESTION = "سؤالُ_تدقيق"
-    DEFERRED_VALUE_SITE = "قيمةٌ_محجوزة"
-    CONSTITUTION_SECTION = "قسمٌ_في_الدستور"
-    CONSTITUTION_CLAIM_LINE = "سطرُ_دعوى_في_الدستور"
-    REPOSITORY_PATH = "مسارٌ_في_المستودع"
-    NO_LEDGER_READABLE_SOURCE = "لا_مصدرَ_مقروءًا_في_دفتر"
+    LAW_ROW = "صفّ_دستورٍ_مقروء"
+    AUDIT_QUESTION = "سؤال_تدقيقٍ_مقروء"
+    DOCUMENT_SECTION = "قسمٌ_في_الوثيقة"
+    REPOSITORY_PATH = "مسارٌ_في_الشجرة"
+    DECLARED_UNRESOLVABLE = "مُستبعَدٌ_بإعلانٍ_لا_بصمت"
 
     @property
-    def is_read_in_a_ledger(self) -> bool:
-        """أقُرئ هذا الجنس في دفترٍ من دفاتر §٤ الثلاثة؟"""
+    def is_resolved_support(self) -> bool:
+        """أمستندٌ مقروءٌ هذا؟ الاستبعادُ مُصرَّحٌ به لا مُستنتَجٌ من صمت."""
 
-        return self in _LEDGER_BACKED_GENERA
+        return self is not CitedSupportKind.DECLARED_UNRESOLVABLE
 
 
-_LEDGER_BACKED_GENERA: Final[frozenset[CitedSourceGenus]] = frozenset(
-    {
-        CitedSourceGenus.CONSTITUTION_LAW_ROW,
-        CitedSourceGenus.AUDIT_QUESTION,
-        CitedSourceGenus.DEFERRED_VALUE_SITE,
-    }
+class AimSupportStanding(Enum):
+    """موقفُ مستندات الغاية المقروءة: تجانسُ حالاتها، والجهلُ عضوٌ فيه.
+
+    ليست سُلَّمًا ولا تقديرًا لقربٍ من بلوغ، ولا تصنيفًا إلى «مؤجَّل» و«مُنفَّذ»؛
+    فتلك قسمةٌ لا تُعلنها وثيقة، واستحداثُها هنا حكمٌ لا سلطة لهذه الطبقة به.
+
+    والعضو الثالث «لا مستند ذا حالةٍ مُعلَنة» ليس «لا مستند»: غايةٌ كلُّ
+    مستندها أقسامٌ أو مسارات لها مستندٌ مقروءٌ قائم، ولا حالةَ له تدخل
+    التجانس؛ وحملُ الحالتين على اسمٍ واحد يُنكر مستندًا قُرئ فعلًا.
+    """
+
+    ONE_DECLARED_STATUS = "حالةٌ_مُعلَنةٌ_واحدة"
+    DIFFERENT_DECLARED_STATUSES = "حالاتٌ_مُعلَنةٌ_مختلفة"
+    NO_STATUS_BEARING_SUPPORT = "لا_مستند_ذا_حالةٍ_مُعلَنة"
+
+
+class DeclaredCitationFiller(Enum):
+    """الروابط المُصرَّح بها في نصّ الاستشهاد، وما عداها يُرفَض لا يُطوى.
+
+    تُقاس على `DeclaredTableHeader`: الاستبعادُ مُعلَنٌ لا مُستنتَجٌ من صمت
+    القارئ؛ فنصٌّ باقٍ بعد الإشارات والروابط يُرفَض بموضعه، ولو كان حرفًا واحدًا.
+    """
+
+    COMMA = "،"
+    CONJUNCTION = "و"
+    OPEN_PAREN = "("
+    CLOSE_PAREN = ")"
+    IN_THE_CONSTITUTION = "في الدستور"
+
+
+class DeclaredUnresolvableReference(Enum):
+    """إشاراتٌ قائمةٌ اليوم لا يبلغها أيٌّ من دفاتر §٤، مُستبعَدةً بإعلان.
+
+    القيمة ثنائيّة: شكلُ الإشارة واسمُها كما يُستخرَج منه. والاستبعادُ مقيَّدٌ
+    بالشكل قصدًا: اسمٌ يُستبعَد في شكلٍ لا يُستبعَد في غيره.
+    """
+
+    UNNAMED_ROW_GROUP = (DeclaredCitationShape.ROW_GROUP, "G0")
+    COMMITMENT_BULLET = (
+        DeclaredCitationShape.BACKTICKED_NAME,
+        "ExactFactorization(P_0) = OPEN",
+    )
+
+    @property
+    def shape(self) -> DeclaredCitationShape:
+        """شكلُ الإشارة الذي يقع فيه الاستبعاد."""
+
+        return self.value[0]
+
+    @property
+    def reference_name(self) -> str:
+        """اسمُ الإشارة المُستبعَدة كما يُستخرَج من شكلها."""
+
+        return self.value[1]
+
+
+_EXCLUSION_REASONS: Final[Mapping[DeclaredUnresolvableReference, str]] = (
+    MappingProxyType(
+        {
+            DeclaredUnresolvableReference.UNNAMED_ROW_GROUP: (
+                "«صفوف G0» جمعٌ لا يُسمّي صفًّا بعينه، وحملُه على كلّ صفٍّ "
+                "يبدأ بـ`G0` اختيارٌ من القارئ لا إعلانٌ من السجلّ"
+            ),
+            DeclaredUnresolvableReference.COMMITMENT_BULLET: (
+                "`ExactFactorization(P_0) = OPEN` نقطةُ التزامٍ في قسمٍ ليس "
+                "جدولَ قوانينَ ولا قسمَ أسئلة، فلا يبلغها دفترُ الصفوف ولا "
+                "دفترُ الأسئلة؛ وحلُّها بحضورها النصّيّ وحده يستحدث قارئًا "
+                "رابعًا لا تملكه هذه المرحلة"
+            ),
+        }
+    )
 )
 
-_TOKEN_GENERA: Final[tuple[CitedSourceGenus, ...]] = tuple(
-    genus
-    for genus in CitedSourceGenus
-    if genus is not CitedSourceGenus.NO_LEDGER_READABLE_SOURCE
+
+_SHAPE_PATTERNS: Final[tuple[tuple[DeclaredCitationShape, re.Pattern[str]], ...]] = (
+    (
+        DeclaredCitationShape.DUAL_ROW,
+        re.compile(r"صفّا\s+«?([^»،()]+?)»?\s+و«?([^»،()]+?)»?(?=\s*[،()]|$)"),
+    ),
+    (DeclaredCitationShape.ROW_GROUP, re.compile(r"صفوف\s+«?([^»،()\s]+)»?")),
+    (DeclaredCitationShape.ROW, re.compile(r"صفّ\s+«?([^»،()\s]+)»?")),
+    (
+        DeclaredCitationShape.SECTION,
+        re.compile(r"قسم\s+«?([^»،()]+?)»?(?=\s*[،()]|$)"),
+    ),
+    (DeclaredCitationShape.BACKTICKED_NAME, re.compile(r"`([^`]+)`")),
+    (
+        DeclaredCitationShape.REPOSITORY_PATH,
+        re.compile(r"(?:docs|src|tests|examples)/[^\s،()]*"),
+    ),
 )
 
-if len(CitedTokenShape) != 5:  # pragma: no cover - guard
-    raise RuntimeError("a citation token takes one of exactly five observed shapes")
-if len(_LEDGER_BACKED_GENERA) != 3:  # pragma: no cover - guard
-    raise RuntimeError("section 4 names exactly three derivation readers")
-if CitedSourceGenus.NO_LEDGER_READABLE_SOURCE.is_read_in_a_ledger:  # pragma: no cover
-    raise RuntimeError("the ignorance member is not a ledger-backed genus")
+_DECLARED_STATUS_PARENTHETICAL: Final = re.compile(r"\(([A-Z][A-Z_0-9 ]*)\)")
+
+_FILLERS_LONGEST_FIRST: Final[tuple[DeclaredCitationFiller, ...]] = tuple(
+    sorted(DeclaredCitationFiller, key=lambda filler: len(filler.value), reverse=True)
+)
+"""الروابط مرتَّبةً بالأطول أوّلًا، على منهج `_LABELS_LONGEST_FIRST`.
+
+الترتيب شرطُ صحّةٍ لا تحسينُ أداء: حذفُ الرابط المفرد `و` قبل العبارة «في
+الدستور» يقطع حرفًا من داخلها فيبقى بقيّةٌ مبتورة تُرفَض على نصٍّ سليم.
+"""
+
+_HEADING_LINE: Final = re.compile(r"^#{2,4}\s+(.+?)\s*$")
+
+_ROW_IDENTIFIER: Final = re.compile(r"^[A-Z][A-Za-z0-9]*(?:\.[A-Za-z0-9]+)+$")
+"""شكلُ معرّف الصفّ المُصرَّح به: حروفٌ ثم نقطةٌ فأكثر، على صورة `G0.BV.1a`.
+
+الكلمةُ الأولى من اسم الصفّ ليست معرّفًا دائمًا: «Explicit domain» و«Explicit
+target anchor» يشتركان في كلمتهما الأولى، فاتّخاذُها معرّفًا يُنشئ تكرارًا
+كاذبًا يرفع خطأً على وثيقةٍ سليمة. فالمعرّفُ ما طابق هذا الشكل وحده، وما عداه
+اسمُ صفٍّ يُحَلّ بتمامه لا بأوّل كلمةٍ منه.
+"""
+
+
+if len(DeclaredCitationShape) != 6:  # pragma: no cover - guard
+    raise RuntimeError("citation shapes are exactly the six read from the record")
+if len(_SHAPE_PATTERNS) != len(DeclaredCitationShape) or {
+    shape for shape, _ in _SHAPE_PATTERNS
+} != set(DeclaredCitationShape):  # pragma: no cover - guard
+    raise RuntimeError("every declared citation shape carries exactly one pattern")
+if set(_EXCLUSION_REASONS) != set(
+    DeclaredUnresolvableReference
+):  # pragma: no cover - guard
+    raise RuntimeError("every declared exclusion must name its reason")
+if len(AimSupportStanding) != 3:  # pragma: no cover - guard
+    raise RuntimeError("support standing is deliberately three-valued")
 
 
 def _require_non_blank(value: str, field_name: str) -> str:
@@ -317,22 +380,19 @@ def _require_non_blank(value: str, field_name: str) -> str:
     return value
 
 
-def _require_non_negative_offset(value: int, field_name: str) -> int:
+def _require_blank(value: str, field_name: str, reason: str) -> str:
+    if not isinstance(value, str) or value:
+        raise AimIndicatorError(f"{field_name} يبقى فارغًا: {reason}")
+    return value
+
+
+def _require_non_negative(value: int, field_name: str) -> int:
     if not isinstance(value, int) or isinstance(value, bool) or value < 0:
-        raise AimIndicatorError(f"{field_name} موضعٌ غير سالب")
+        raise AimIndicatorError(f"{field_name} عددٌ غير سالب")
     return value
 
 
 @dataclass(frozen=True, slots=True)
-class ReadCitation:
-    """رمزٌ واحد من نصّ استشهادٍ، بشكله المُصرَّح به وجنسه ومرجعه المُشتَقّ."""
-
-    aim_id: AimId
-    shape: CitedTokenShape
-    text: str
-    genus: CitedSourceGenus
-    reference: str
-    offset: int
 class ReadCitationReference:
     """إشارةٌ واحدة قُرئت من استشهاد غاية: شكلُها، واسمها، وما حُلَّت إليه."""
 
@@ -348,251 +408,288 @@ class ReadCitationReference:
     def __post_init__(self) -> None:
         if not isinstance(self.aim_id, AimId):
             raise AimIndicatorError("معرّف الغاية من مفردته المغلقة")
-        if not isinstance(self.shape, CitedTokenShape):
-            raise AimIndicatorError("شكل الرمز من مفردته المغلقة")
-        if not isinstance(self.genus, CitedSourceGenus):
-            raise AimIndicatorError("جنس المصدر من مفردته المغلقة")
-        if self.genus is CitedSourceGenus.NO_LEDGER_READABLE_SOURCE:
-            raise AimIndicatorError(
-                "عضوُ الجهل رتبةُ غايةٍ لا جنسُ رمز: رمزٌ بلا مرجعٍ مرفوضٌ "
-                f"باسمه وموضعه — {UNKNOWN_CITATION_TOKEN_IS_REFUSED_NOTE}"
+        if not isinstance(self.shape, DeclaredCitationShape):
+            raise AimIndicatorError("شكل الإشارة من مفردته المغلقة")
+        if not isinstance(self.kind, CitedSupportKind):
+            raise AimIndicatorError("جنس المستند من مفردته المغلقة")
+        _require_non_blank(self.reference_name, "اسم الإشارة")
+        _require_non_negative(self.citation_offset, "موضع الإشارة")
+
+        if self.kind.is_resolved_support:
+            _require_non_blank(self.resolved_target, "المستند المُشتَقّ")
+        else:
+            _require_blank(
+                self.resolved_target,
+                "المستند المُشتَقّ",
+                "الإشارة المُستبعَدة بإعلانٍ لا تُحَلّ إلى مستند",
             )
-        _require_non_blank(self.text, "نصّ الرمز")
-        _require_non_blank(self.reference, "مرجع الرمز المُشتَقّ")
-        _require_non_negative_offset(self.offset, "موضع الرمز في الاستشهاد")
+
+        if self.kind in _STATUS_BEARING_KINDS:
+            _require_non_blank(self.derived_status, "الحالة المُشتَقّة")
+        else:
+            _require_blank(
+                self.derived_status,
+                "الحالة المُشتَقّة",
+                "لا حالةَ مُعلَنة لهذا الجنس، وكتابةُ حالةٍ له استحداثُ عمودٍ "
+                "لا تحمله الوثيقة",
+            )
+
+        if self.kind is CitedSupportKind.AUDIT_QUESTION:
+            if not isinstance(self.question_standing, AuditQuestionStanding):
+                raise AimIndicatorError("موقف السؤال من مفردته المغلقة")
+        elif self.question_standing is not None:
+            raise AimIndicatorError(
+                "موقفُ سؤالٍ لجنسٍ ليس سؤالًا: الموقف قسمةُ الدستور لأسئلته وحدها"
+            )
 
     @property
-    def is_read_in_a_ledger(self) -> bool:
-        """أبلغ هذا الرمزُ دفترًا من دفاتر §٤، أم استُبعد بجنسٍ مُصرَّح به؟"""
+    def is_resolved(self) -> bool:
+        """هل حُلَّت الإشارة إلى مستندٍ قائم؟"""
 
-        return self.genus.is_read_in_a_ledger
+        return self.kind.is_resolved_support
+
+
+_STATUS_BEARING_KINDS: Final[frozenset[CitedSupportKind]] = frozenset(
+    {CitedSupportKind.LAW_ROW, CitedSupportKind.AUDIT_QUESTION}
+)
 
 
 @dataclass(frozen=True, slots=True)
-class CitationCensus:
-    """إحصاءُ رموز الاستشهادات كلِّها: المقروءُ منها والمُستبعَدُ مُصرَّحًا به.
+class CitationReferenceCensus:
+    """إحصاءُ كلّ إشارةٍ قُرئت، مقروءِها ومُستبعَدِها؛ فالمُستبعَد يُرى لا يُطوى."""
 
-    لا حقلَ عددٍ هنا؛ التعدادُ خاصّيةٌ تُحسَب من الرموز المرصودة. والمرفوضُ لا
-    يبلغ هذا الإحصاء أصلًا، إذ يُوقِفه رفضٌ مُسمّى عند القراءة؛ وحضورُ الرمز
-    المُستبعَد فيه هو الفارق بين «استُبعد بجنسٍ معروف» و«لم يُرَ أصلًا».
-    """
-
-    tokens: tuple[ReadCitation, ...]
+    references: tuple[ReadCitationReference, ...]
 
     def __post_init__(self) -> None:
-        if not isinstance(self.tokens, tuple) or not self.tokens:
-            raise AimIndicatorError("إحصاء الرموز مجموعةٌ غير فارغة")
-        for token in self.tokens:
-            if not isinstance(token, ReadCitation):
-                raise AimIndicatorError("كل عنصرٍ رمزٌ مرصود")
+        if not isinstance(self.references, tuple) or not self.references:
+            raise AimIndicatorError("إحصاء الإشارات مجموعةٌ غير فارغة")
+        for reference in self.references:
+            if not isinstance(reference, ReadCitationReference):
+                raise AimIndicatorError("كل عنصرٍ إشارةٌ مقروءة")
 
     @property
-    def token_count(self) -> int:
-        """عدد الرموز المرصودة، محسوبًا لا مكتوبًا."""
+    def reference_count(self) -> int:
+        """عدد الإشارات كلِّها، محسوبًا لا مكتوبًا."""
 
-        return len(self.tokens)
-
-    @property
-    def read_tokens(self) -> tuple[ReadCitation, ...]:
-        """الرموز التي بلغت دفترًا من الثلاثة، بترتيب ورودها."""
-
-        return tuple(token for token in self.tokens if token.is_read_in_a_ledger)
+        return len(self.references)
 
     @property
-    def excluded_tokens(self) -> tuple[ReadCitation, ...]:
-        """الرموز المُستبعَدة بجنسٍ مُصرَّح به، لا بصمتٍ ولا بتخطٍّ."""
+    def kind_counts(self) -> Mapping[CitedSupportKind, int]:
+        """تعدادُ الإشارات بحسب جنسها، وكل عضوٍ حاضرٌ ولو بصفر."""
 
-        return tuple(token for token in self.tokens if not token.is_read_in_a_ledger)
-
-    @property
-    def genus_counts(self) -> Mapping[CitedSourceGenus, int]:
-        """تعدادُ الرموز بحسب جنسها، وكلّ جنسِ رمزٍ حاضرٌ ولو بصفر."""
-
-        counts = dict.fromkeys(_TOKEN_GENERA, 0)
-        for token in self.tokens:
-            counts[token.genus] += 1
+        counts = dict.fromkeys(CitedSupportKind, 0)
+        for reference in self.references:
+            counts[reference.kind] += 1
         return MappingProxyType(counts)
 
     @property
-    def shape_counts(self) -> Mapping[CitedTokenShape, int]:
-        """تعدادُ الرموز بحسب شكلها المكتوب، وكلّ شكلٍ حاضرٌ ولو بصفر."""
+    def shape_counts(self) -> Mapping[DeclaredCitationShape, int]:
+        """تعدادُ الإشارات بحسب شكلها في النصّ، وكل عضوٍ حاضرٌ ولو بصفر."""
 
-        counts = dict.fromkeys(CitedTokenShape, 0)
-        for token in self.tokens:
-            counts[token.shape] += 1
+        counts = dict.fromkeys(DeclaredCitationShape, 0)
+        for reference in self.references:
+            counts[reference.shape] += 1
         return MappingProxyType(counts)
+
+    @property
+    def excluded_references(self) -> tuple[ReadCitationReference, ...]:
+        """الإشاراتُ المُستبعَدةُ بإعلان، حاضرةً في الإحصاء لا مطويّة."""
+
+        return tuple(
+            reference for reference in self.references if not reference.is_resolved
+        )
 
 
 @dataclass(frozen=True, slots=True)
-class AimCitationLink:
-    """رابطُ غايةٍ واحدة بمصادرها المقروءة، مُشتَقًّا من نصّ استشهادها وحده.
-
-    لا حقلَ عددٍ ولا حقلَ نتيجةٍ ولا حقلَ بلوغ: قيامُ الرابط هو الربط نفسه،
-    وكلُّ عددٍ خاصّيةٌ تُحسَب، وأعدادُ القرّاء الثلاثة تبقى مفصولةً لا مجموعة.
-    """
+class AimIndicatorRow:
+    """صفُّ غايةٍ واحدة: إشاراتُها المقروءة وحالتُها المُعلَنة، بلا حقل عدد."""
 
     aim_id: AimId
-    tokens: tuple[ReadCitation, ...]
+    references: tuple[ReadCitationReference, ...]
+    declared_status_in_citation: str = ""
 
     def __post_init__(self) -> None:
         if not isinstance(self.aim_id, AimId):
-            raise AimIndicatorError("معرّف الغاية من مفردته المغلقة")        if not isinstance(self.tokens, tuple) or not self.tokens:
+            raise AimIndicatorError("معرّف الغاية من مفردته المغلقة")
+        if not isinstance(self.references, tuple) or not self.references:
             raise AimIndicatorError(
-                f"{self.aim_id.value}: استشهادٌ بلا رمزٍ واحد مقروء — "
-                "مستندُ الغاية لازمٌ في السجلّ، وخلوُّه من كلّ شكلٍ مُصرَّح به "
-                "يُقرَأ «لا مستند» وهو ادّعاءٌ لم تُقرَأ الوثيقة لأجله"
+                f"استشهادُ {self.aim_id.value} بلا إشارةٍ مقروءة: صفٌّ فارغ "
+                "يُقرَأ «لا مستند» وهو ادّعاءُ غيابٍ لم يُقرَأ"
             )
         previous_offset = -1
-        for token in self.tokens:
-            if not isinstance(token, ReadCitation):
-                raise AimIndicatorError("كل عنصرٍ رمزٌ مرصود")
-            if token.aim_id is not self.aim_id:
+        for reference in self.references:
+            if not isinstance(reference, ReadCitationReference):
+                raise AimIndicatorError("كل عنصرٍ إشارةٌ مقروءة")
+            if reference.aim_id is not self.aim_id:
                 raise AimIndicatorError(
-                    f"رمزٌ من استشهاد {token.aim_id.value} في رابط "
-                    f"{self.aim_id.value}: الرمز لا يُنسَب إلى غير غايته"
+                    "إشارةٌ من استشهاد غايةٍ أخرى لا تُحسَب لهذه: الربط يُشتَقّ "
+                    "من نصّ الغاية نفسها"
                 )
-            if token.offset <= previous_offset:
-                raise AimIndicatorError("ترتيب الرموز ترتيبُ ورودها في الاستشهاد")
-            previous_offset = token.offset
+            if reference.citation_offset <= previous_offset:
+                raise AimIndicatorError("ترتيب الإشارات ترتيبُ ورودها في الاستشهاد")
+            previous_offset = reference.citation_offset
 
-    def references_of_genus(self, genus: CitedSourceGenus) -> tuple[str, ...]:
-        """مراجعُ جنسٍ بعينه بترتيب ورودها، لا مجموعةً واحدة عبر الأجناس."""
+        if self.declared_status_in_citation:
+            declared = self.declared_status_in_citation
+            if declared not in {
+                reference.derived_status
+                for reference in self.references
+                if reference.derived_status
+            }:
+                raise AimIndicatorError(
+                    f"حالةٌ مُعلَنة في استشهاد {self.aim_id.value} لا تُطابق أيّ "
+                    f"مستندٍ مقروء: {declared} -- "
+                    f"{DECLARED_STATUS_MUST_MATCH_ONE_SUPPORT_NOTE}"
+                )
 
-        if not isinstance(genus, CitedSourceGenus):
-            raise AimIndicatorError("جنس المصدر من مفردته المغلقة")
-        if genus is CitedSourceGenus.NO_LEDGER_READABLE_SOURCE:
-            raise AimIndicatorError("عضوُ الجهل رتبةُ غايةٍ لا جنسُ رمز، فلا مراجعَ تُطلَب به")
-        return tuple(token.reference for token in self.tokens if token.genus is genus)
+    def references_of_kind(
+        self, kind: CitedSupportKind
+    ) -> tuple[ReadCitationReference, ...]:
+        """إشاراتُ جنسٍ بعينه بترتيب ورودها في الاستشهاد."""
 
-    @property
-    def law_rows(self) -> tuple[str, ...]:
-        """صفوفُ الدستور التي بلغها استشهادُ الغاية، بترتيب ورودها."""
-
-        return self.references_of_genus(CitedSourceGenus.CONSTITUTION_LAW_ROW)
-
-    @property
-    def audit_questions(self) -> tuple[str, ...]:
-        """أسئلةُ التدقيق التي بلغها استشهادُ الغاية، بترتيب ورودها."""
-
-        return self.references_of_genus(CitedSourceGenus.AUDIT_QUESTION)
-
-    @property
-    def deferred_values(self) -> tuple[str, ...]:
-        """القيمُ المحجوزة التي بلغها استشهادُ الغاية، بترتيب ورودها."""
-
-        return self.references_of_genus(CitedSourceGenus.DEFERRED_VALUE_SITE)
-
-    @property
-    def law_row_count(self) -> int:
-        """عددُ صفوف الدستور المبلوغة، محسوبًا وحده لا مجموعًا إلى غيره."""
-
-        return len(self.law_rows)
-
-    @property
-    def audit_question_count(self) -> int:
-        """عددُ أسئلة التدقيق المبلوغة، محسوبًا وحده لا مجموعًا إلى غيره."""
-
-        return len(self.audit_questions)
-
-    @property
-    def deferred_value_count(self) -> int:
-        """عددُ القيم المحجوزة المبلوغة، محسوبًا وحده لا مجموعًا إلى غيره."""
-
-        return len(self.deferred_values)
-
-    @property
-    def ledger_backed_genera(self) -> tuple[CitedSourceGenus, ...]:
-        """أجناسُ المصادر المقروءة في دفاتر §٤، أو عضوُ الجهل صريحًا."""
-
-        reached = tuple(
-            genus
-            for genus in _TOKEN_GENERA
-            if genus.is_read_in_a_ledger
-            and any(token.genus is genus for token in self.tokens)
+        if not isinstance(kind, CitedSupportKind):
+            raise AimIndicatorError("جنس المستند من مفردته المغلقة")
+        return tuple(
+            reference for reference in self.references if reference.kind is kind
         )
-        if reached:
-            return reached
-        return (CitedSourceGenus.NO_LEDGER_READABLE_SOURCE,)
 
     @property
-    def has_ledger_readable_source(self) -> bool:
-        """أبلغ استشهادُ الغاية دفترًا من الثلاثة؟ والغيابُ قيمةٌ لا فراغ."""
+    def reference_count(self) -> int:
+        """عدد إشارات الاستشهاد كلِّها، محسوبًا لا مكتوبًا."""
 
-        return CitedSourceGenus.NO_LEDGER_READABLE_SOURCE not in (
-            self.ledger_backed_genera
+        return len(self.references)
+
+    @property
+    def resolved_support_count(self) -> int:
+        """عدد المستندات المقروءة، محسوبًا لا مكتوبًا."""
+
+        return len([True for reference in self.references if reference.is_resolved])
+
+    @property
+    def kind_counts(self) -> Mapping[CitedSupportKind, int]:
+        """تعدادُ مستندات هذه الغاية بحسب جنسها، وكل عضوٍ حاضرٌ ولو بصفر."""
+
+        counts = dict.fromkeys(CitedSupportKind, 0)
+        for reference in self.references:
+            counts[reference.kind] += 1
+        return MappingProxyType(counts)
+
+    @property
+    def law_status_counts(self) -> Mapping[DeclaredLawStatus, int]:
+        """تعدادُ صفوف هذه الغاية بحسب حالتها المُعلَنة، وكل عضوٍ حاضرٌ ولو بصفر."""
+
+        counts = dict.fromkeys(DeclaredLawStatus, 0)
+        for reference in self.references_of_kind(CitedSupportKind.LAW_ROW):
+            counts[DeclaredLawStatus(reference.derived_status)] += 1
+        return MappingProxyType(counts)
+
+    @property
+    def question_standing_counts(self) -> Mapping[AuditQuestionStanding, int]:
+        """تعدادُ أسئلة هذه الغاية بحسب موقفها، وكل عضوٍ حاضرٌ ولو بصفر."""
+
+        counts = dict.fromkeys(AuditQuestionStanding, 0)
+        for reference in self.references_of_kind(CitedSupportKind.AUDIT_QUESTION):
+            standing = reference.question_standing
+            if standing is None:  # pragma: no cover - guard
+                raise AimIndicatorError("سؤالٌ مقروءٌ بلا موقف")
+            counts[standing] += 1
+        return MappingProxyType(counts)
+
+    @property
+    def questions_without_declared_status_count(self) -> int:
+        """عدد أسئلة هذه الغاية التي لم يُصرّح السجلّ بحالتها، جهلًا مقروءًا لا مطويًّا."""
+
+        return len(
+            [
+                True
+                for reference in self.references_of_kind(
+                    CitedSupportKind.AUDIT_QUESTION
+                )
+                if reference.derived_status == NO_STATUS_DECLARED_IN_RECORD
+            ]
         )
+
+    @property
+    def deferred_value_site_count(self) -> int:
+        """عدد مواضع §٤ الثلاثة التي يُسمّيها هذا الاستشهاد، مُشتقًّا لا مفترَضًا."""
+
+        names = {site.member_name for site in DeferredValueSite}
+        return len(
+            [True for reference in self.references if reference.reference_name in names]
+        )
+
+    @property
+    def support_standing(self) -> AimSupportStanding:
+        """موقفُ المستندات: تجانسُ حالاتها المُعلَنة، لا قربُها من بلوغ."""
+
+        statuses = {
+            reference.derived_status
+            for reference in self.references
+            if reference.derived_status
+        }
+        if not statuses:
+            return AimSupportStanding.NO_STATUS_BEARING_SUPPORT
+        if len(statuses) == 1:
+            return AimSupportStanding.ONE_DECLARED_STATUS
+        return AimSupportStanding.DIFFERENT_DECLARED_STATUSES
+
+    @property
+    def status_is_declared_in_citation(self) -> bool:
+        """هل صرّح الاستشهاد بحالةٍ تُقابَل؟ الغيابُ يُقرَأ غيابًا لا مطابقة."""
+
+        return bool(self.declared_status_in_citation)
 
 
 @dataclass(frozen=True, slots=True)
-class AimIndicator:
-    """المؤشر المعرفيّ: روابطُ الغايات بمصادرها المقروءة، وإحصاءُ رموزها.
+class AimIndicatorLedger:
+    """دفترُ المؤشر: صفٌّ لكل غاية بترتيب §٢، وإحصاءٌ لكلّ إشارةٍ قُرئت."""
 
-    وهو مؤشرُ **استنادٍ** لا مؤشرُ بلوغ: لا يحمل رتبةَ بلوغٍ ولا يُغيّرها ولا
-    يُرتّب الغايات، ولا يجمع أعداد القرّاء الثلاثة في رقمٍ واحد.
-    """
-
-    links: tuple[AimCitationLink, ...]
-    citations: CitationCensus
+    rows: tuple[AimIndicatorRow, ...]
 
     def __post_init__(self) -> None:
-        if not isinstance(self.links, tuple) or not self.links:
-            raise AimIndicatorError("روابط الغايات مجموعةٌ غير فارغة")
-        if not isinstance(self.citations, CitationCensus):
-            raise AimIndicatorError("إحصاء الرموز من نوعه")
-        seen: set[AimId] = set()
-        for link in self.links:
-            if not isinstance(link, AimCitationLink):
-                raise AimIndicatorError("كل عنصرٍ رابطُ غايةٍ مقروء")
-            if link.aim_id in seen:
-                raise AimIndicatorError(
-                    f"غايةٌ مكرّرة: {link.aim_id.value} — التكرار يُفسد التعداد "
-                    "ولا يُطوى"
-                )
-            seen.add(link.aim_id)
-        linked_tokens = tuple(token for link in self.links for token in link.tokens)
-        if linked_tokens != self.citations.tokens:
+        if not isinstance(self.rows, tuple):
+            raise AimIndicatorError("دفتر المؤشر مجموعةٌ من الصفوف")
+        read_ids = tuple(row.aim_id for row in self.rows)
+        if read_ids != tuple(AIM_RECORDS):
             raise AimIndicatorError(
-                "إحصاءُ الرموز يخالف رموزَ الروابط: إحصاءٌ ناقصٌ أو زائد يُقرَأ "
-                f"قراءةً تامّة — {UNKNOWN_CITATION_TOKEN_IS_REFUSED_NOTE}"
+                "الدفتر يحمل صفًّا لكل غايةٍ بترتيب ورودها في §٢: غايةٌ ساقطةٌ "
+                "تُقرَأ «لا مستند لها» وهو ادّعاءُ غيابٍ لم يُقرَأ، وترتيبٌ "
+                "مغاير يُقرَأ ترتيبَ أولويةٍ لا تملكه هذه الطبقة"
             )
+        for row in self.rows:
+            if not isinstance(row, AimIndicatorRow):
+                raise AimIndicatorError("كل عنصرٍ صفُّ مؤشرٍ مقروء")
 
     @property
-    def linked_aim_count(self) -> int:
-        """عدد الغايات المربوطة بمصادرها، محسوبًا لا مكتوبًا."""
+    def row_count(self) -> int:
+        """عدد صفوف الدفتر، محسوبًا لا مكتوبًا."""
 
-        return len(self.links)
-
-    def link(self, aim_id: AimId) -> AimCitationLink:
-        """رابطُ غايةٍ بعينها؛ وغيابُه رفضٌ مُسمّى لا `None` يُطوى."""
-
-        if not isinstance(aim_id, AimId):
-            raise AimIndicatorError("معرّف الغاية من مفردته المغلقة")
-        for link in self.links:
-            if link.aim_id is aim_id:
-                return link
-        raise AimIndicatorError(f"لا رابطَ لهذه الغاية: {aim_id.value}")
+        return len(self.rows)
 
     @property
-    def aims_without_ledger_readable_source(self) -> tuple[AimId, ...]:
-        """الغايات التي لا يبلغ استشهادُها دفترًا، مُسمّاةً لا مطويّة."""
+    def rows_by_aim(self) -> Mapping[AimId, AimIndicatorRow]:
+        """صفوف الدفتر مُفهرَسةً بغاياتها، بلا ترجيحٍ بينها."""
 
-        return tuple(
-            link.aim_id for link in self.links if not link.has_ledger_readable_source
+        return MappingProxyType({row.aim_id: row for row in self.rows})
+
+    @property
+    def census(self) -> CitationReferenceCensus:
+        """إحصاءُ كلّ إشارةٍ في كلّ استشهاد، مقروءِها ومُستبعَدِها."""
+
+        return CitationReferenceCensus(
+            references=tuple(
+                reference for row in self.rows for reference in row.references
+            )
         )
 
-    def reached_references(self, genus: CitedSourceGenus) -> tuple[str, ...]:
-        """مراجعُ جنسٍ بعينه عبر الغايات كلِّها، بلا تكرارٍ وبترتيب ورودها."""
+    @property
+    def support_standing_counts(self) -> Mapping[AimSupportStanding, int]:
+        """تعدادُ الغايات بحسب موقف مستنداتها، وكل عضوٍ حاضرٌ ولو بصفر."""
 
-        if not isinstance(genus, CitedSourceGenus):
-            raise AimIndicatorError("جنس المصدر من مفردته المغلقة")
-        if genus is CitedSourceGenus.NO_LEDGER_READABLE_SOURCE:
-            raise AimIndicatorError("عضوُ الجهل رتبةُ غايةٍ لا جنسُ رمز، فلا مراجعَ تُطلَب به")
-        seen: list[str] = []
-        for link in self.links:
-            for reference in link.references_of_genus(genus):
-                if reference not in seen:
-                    seen.append(reference)
-        return tuple(seen)
+        counts = dict.fromkeys(AimSupportStanding, 0)
+        for row in self.rows:
+            counts[row.support_standing] += 1
+        return MappingProxyType(counts)
 
 
 def _assert_no_fields_matching(
@@ -603,243 +700,258 @@ def _assert_no_fields_matching(
             raise RuntimeError(message)
 
 
-for _declaring_type in (ReadCitation, CitationCensus, AimCitationLink, AimIndicator):
+for _declaring_type in (
+    ReadCitationReference,
+    CitationReferenceCensus,
+    AimIndicatorRow,
+    AimIndicatorLedger,
+):
     _assert_no_fields_matching(
         _declaring_type,
         _ANSWER_BEARING_FIELD_MARKERS,
-        "an indicator type may not carry an answer, verdict, or attainment field",
+        "an indicator type may not carry an answer, verdict, attainment, "
+        "progress, or ranking field",
     )
 
 
-@dataclass(frozen=True, slots=True)
-class _CitationSources:
-    """مراجعُ القراءة مجموعةً في موضعٍ واحد، داخليةً لا مُصدَّرة."""
+def _law_index(
+    ledger: ConstitutionLedger,
+) -> tuple[Mapping[str, DeclaredLawStatus], Mapping[str, DeclaredLawStatus]]:
+    by_name: dict[str, DeclaredLawStatus] = {}
+    by_identifier: dict[str, DeclaredLawStatus] = {}
+    for row in ledger.laws.rows:
+        name = row.law.strip("`")
+        by_name[name] = row.status
+        tokens = name.split()
+        if len(tokens) > 1 and _ROW_IDENTIFIER.match(tokens[0]):
+            identifier = tokens[0]
+            if identifier in by_identifier:
+                raise AimIndicatorError(
+                    f"معرّفُ صفٍّ مكرّر في الدستور: {identifier} -- "
+                    "حلُّ إشارةٍ إليه ترجيحٌ بلا تعليل"
+                )
+            by_identifier[identifier] = row.status
+    return MappingProxyType(by_name), MappingProxyType(by_identifier)
 
-    law_rows_by_identifier: Mapping[str, str]
-    law_rows_by_name: Mapping[str, str]
-    audit_questions: Mapping[str, str]
-    deferred_values: Mapping[str, str]
-    headings: tuple[str, ...]
-    claim_lines: frozenset[str]
-    repository_root: Path
+
+def _section_headings(document_text: str) -> frozenset[str]:
+    headings: set[str] = set()
+    for line in document_text.splitlines():
+        match = _HEADING_LINE.match(line)
+        if match is None:
+            continue
+        heading = match.group(1)
+        headings.add(heading)
+        headings.add(heading.split(" — ")[0].strip())
+    return frozenset(headings)
 
 
-def _law_row_identifier(law: str) -> str:
-    head = law.split(" ", 1)[0]
-    return head if _ROW_IDENTIFIER_SHAPE.match(head) else ""
+def _declared_exclusion(
+    shape: DeclaredCitationShape, name: str
+) -> DeclaredUnresolvableReference | None:
+    for member in DeclaredUnresolvableReference:
+        if member.shape is shape and member.reference_name == name:
+            return member
+    return None
 
 
-def _collect_sources(
-    constitution: ConstitutionLedger,
-    deferred_values: DeferredValueLedger,
+def _scan_citation(
+    citation: str,
+) -> tuple[tuple[tuple[int, DeclaredCitationShape, str], ...], str]:
+    covered = [False] * len(citation)
+    found: list[tuple[int, DeclaredCitationShape, str]] = []
+    for shape, pattern in _SHAPE_PATTERNS:
+        for match in pattern.finditer(citation):
+            if any(covered[match.start() : match.end()]):
+                continue
+            for index in range(match.start(), match.end()):
+                covered[index] = True
+            if shape is DeclaredCitationShape.DUAL_ROW:
+                for group in (1, 2):
+                    found.append((match.start(group), shape, match.group(group)))
+            elif shape is DeclaredCitationShape.REPOSITORY_PATH:
+                found.append((match.start(), shape, match.group(0)))
+            else:
+                found.append((match.start(1), shape, match.group(1)))
+    declared_statuses: list[str] = []
+    for match in _DECLARED_STATUS_PARENTHETICAL.finditer(citation):
+        if any(covered[match.start() : match.end()]):
+            continue
+        for index in range(match.start(), match.end()):
+            covered[index] = True
+        declared_statuses.append(match.group(1))
+    if len(declared_statuses) > 1:
+        raise AimIndicatorError(
+            "حالتان مُعلَنتان في استشهادٍ واحد: ترجيحُ إحداهما على الأخرى حكمٌ "
+            "لا تملكه هذه الطبقة"
+        )
+    residue = "".join(
+        character for index, character in enumerate(citation) if not covered[index]
+    )
+    for filler in _FILLERS_LONGEST_FIRST:
+        residue = residue.replace(filler.value, "")
+    if residue.strip():
+        raise AimIndicatorError(
+            f"نصٌّ غير مقروءٍ في الاستشهاد: {residue.strip()!r} -- "
+            f"{UNCOVERED_CITATION_TEXT_IS_REFUSED_NOTE}"
+        )
+    return tuple(sorted(found)), (declared_statuses[0] if declared_statuses else "")
+
+
+def _resolve_reference(
+    aim_id: AimId,
+    shape: DeclaredCitationShape,
+    name: str,
+    offset: int,
+    laws_by_name: Mapping[str, DeclaredLawStatus],
+    laws_by_identifier: Mapping[str, DeclaredLawStatus],
+    questions: Mapping[str, tuple[AuditQuestionStanding, str]],
+    headings: frozenset[str],
+    repository_root: Path,
+) -> ReadCitationReference:
+    if _declared_exclusion(shape, name) is not None:
+        return ReadCitationReference(
+            aim_id=aim_id,
+            shape=shape,
+            reference_name=name,
+            kind=CitedSupportKind.DECLARED_UNRESOLVABLE,
+            citation_offset=offset,
+        )
+
+    if shape is DeclaredCitationShape.REPOSITORY_PATH:
+        if not (repository_root / name).exists():
+            raise AimIndicatorError(
+                f"استشهاد {aim_id.value} يُسمّي مسارًا لا وجود له: {name} -- "
+                f"{UNKNOWN_CITATION_REFERENCE_IS_REFUSED_NOTE}"
+            )
+        return ReadCitationReference(
+            aim_id=aim_id,
+            shape=shape,
+            reference_name=name,
+            kind=CitedSupportKind.REPOSITORY_PATH,
+            citation_offset=offset,
+            resolved_target=name,
+        )
+
+    if shape is DeclaredCitationShape.SECTION:
+        if name not in headings:
+            raise AimIndicatorError(
+                f"استشهاد {aim_id.value} يُسمّي قسمًا لا عنوانَ له في الوثيقة: "
+                f"{name} -- {UNKNOWN_CITATION_REFERENCE_IS_REFUSED_NOTE}"
+            )
+        return ReadCitationReference(
+            aim_id=aim_id,
+            shape=shape,
+            reference_name=name,
+            kind=CitedSupportKind.DOCUMENT_SECTION,
+            citation_offset=offset,
+            resolved_target=name,
+        )
+
+    status = laws_by_name.get(name, laws_by_identifier.get(name))
+    if status is not None:
+        return ReadCitationReference(
+            aim_id=aim_id,
+            shape=shape,
+            reference_name=name,
+            kind=CitedSupportKind.LAW_ROW,
+            citation_offset=offset,
+            resolved_target=name,
+            derived_status=status.value,
+        )
+
+    question = questions.get(name)
+    if question is not None:
+        return ReadCitationReference(
+            aim_id=aim_id,
+            shape=shape,
+            reference_name=name,
+            kind=CitedSupportKind.AUDIT_QUESTION,
+            citation_offset=offset,
+            resolved_target=name,
+            derived_status=question[1],
+            question_standing=question[0],
+        )
+
+    raise AimIndicatorError(
+        f"إشارةٌ في استشهاد {aim_id.value} عند الحرف {offset} لا تُحَلّ إلى صفٍّ "
+        f"ولا سؤالٍ ولا قسمٍ ولا مسارٍ ولا تُستبعَد بإعلان: {name} -- "
+        f"{UNKNOWN_CITATION_REFERENCE_IS_REFUSED_NOTE}"
+    )
+
+
+def read_aim_indicator_row(
+    record: AimRecord,
+    ledger: ConstitutionLedger,
     document_text: str,
     repository_root: Path,
-) -> _CitationSources:
-    rows_by_identifier: dict[str, str] = {}
-    rows_by_name: dict[str, str] = {}
-    for row in constitution.laws.rows:
-        rows_by_name[row.law] = row.law
-        identifier = _law_row_identifier(row.law)
-        if identifier:
-            if identifier in rows_by_identifier:
-                raise AimIndicatorError(
-                    f"معرّفُ صفٍّ مكرّر في الدستور: {identifier} — الترجيح بين "
-                    "صفّين بمعرّفٍ واحد حكمٌ لا يملكه هذا الرابط"
-                )
-            rows_by_identifier[identifier] = row.law
+) -> AimIndicatorRow:
+    """اقرأ صفَّ غايةٍ واحدة من استشهادها، ورافضًا كلَّ إشارةٍ لا تُحَلّ."""
 
-    questions = {
-        question.name: question.name
-        for question in constitution.audit_questions.questions
-    }
-    values = {site.member_name: site.member_name for site in DeferredValueSite}
-    if tuple(values) != tuple(
-        row.site.member_name for row in deferred_values.rows
-    ):  # pragma: no cover - guard
-        raise AimIndicatorError(
-            "دفترُ القيم المحجوزة لا يوافق مواضعَه المُعلَنة، فلا يُقرَأ منه مرجع"
+    if not isinstance(record, AimRecord):
+        raise AimIndicatorError("الغاية سجلٌّ مفروضٌ بالبنية")
+    if not isinstance(ledger, ConstitutionLedger):
+        raise AimIndicatorError("دفتر الدستور من نوعه")
+    if not isinstance(repository_root, Path):
+        raise AimIndicatorError("جذر الشجرة مسارٌ")
+
+    laws_by_name, laws_by_identifier = _law_index(ledger)
+    questions: Mapping[str, tuple[AuditQuestionStanding, str]] = MappingProxyType(
+        {
+            question.name: (question.standing, question.declared_status)
+            for question in ledger.audit_questions.questions
+        }
+    )
+    headings = _section_headings(document_text)
+
+    scanned, declared_status = _scan_citation(record.citation)
+    references = tuple(
+        _resolve_reference(
+            aim_id=record.aim_id,
+            shape=shape,
+            name=name,
+            offset=offset,
+            laws_by_name=laws_by_name,
+            laws_by_identifier=laws_by_identifier,
+            questions=questions,
+            headings=headings,
+            repository_root=repository_root,
         )
-
-    headings: list[str] = []
-    claim_lines: set[str] = set()
-    for line in document_text.splitlines():
-        heading = _HEADING_LINE.match(line)
-        if heading is not None:
-            headings.append(heading.group("heading").strip())
-            continue
-        claim = _CLAIM_LINE.match(line)
-        if claim is not None:
-            claim_lines.add(claim.group("claim").strip())
-
-    return _CitationSources(
-        law_rows_by_identifier=MappingProxyType(rows_by_identifier),
-        law_rows_by_name=MappingProxyType(rows_by_name),
-        audit_questions=MappingProxyType(questions),
-        deferred_values=MappingProxyType(values),
-        headings=tuple(headings),
-        claim_lines=frozenset(claim_lines),
-        repository_root=repository_root,
+        for offset, shape, name in scanned
+    )
+    return AimIndicatorRow(
+        aim_id=record.aim_id,
+        references=references,
+        declared_status_in_citation=declared_status,
     )
 
 
-def _heading_reference(text: str, sources: _CitationSources) -> str:
-    for heading in sources.headings:
-        if heading == text or heading.startswith(f"{text} —"):
-            return heading
-    return ""
+def read_aim_indicator_ledger(
+    ledger: ConstitutionLedger,
+    document_text: str,
+    repository_root: Path,
+) -> AimIndicatorLedger:
+    """اربط كلَّ غايةٍ بمستنداتها المقروءة، صفًّا لكل غايةٍ بترتيب §٢."""
 
-
-def _resolve_token(
-    aim_id: AimId,
-    shape: CitedTokenShape,
-    text: str,
-    offset: int,
-    sources: _CitationSources,
-) -> ReadCitation:
-    """اشتقّ مرجعَ الرمز وجنسَه، ورُدَّ ما لا مرجعَ له باسمه وموضعه."""
-
-    genus: CitedSourceGenus | None = None
-    reference = ""
-
-    if _REPOSITORY_PATH_SHAPE.match(text):
-        if (sources.repository_root / text).exists():
-            genus = CitedSourceGenus.REPOSITORY_PATH
-            reference = text
-    elif _ROW_IDENTIFIER_SHAPE.match(text):
-        law = sources.law_rows_by_identifier.get(text, "")
-        if law:
-            genus = CitedSourceGenus.CONSTITUTION_LAW_ROW
-            reference = law
-        else:
-            heading = _heading_reference(text, sources)
-            if heading:
-                genus = CitedSourceGenus.CONSTITUTION_SECTION
-                reference = heading
-    else:
-        law = sources.law_rows_by_name.get(text, "") or sources.law_rows_by_name.get(
-            f"`{text}`", ""
+    return AimIndicatorLedger(
+        rows=tuple(
+            read_aim_indicator_row(
+                record=record,
+                ledger=ledger,
+                document_text=document_text,
+                repository_root=repository_root,
+            )
+            for record in AIM_RECORDS.values()
         )
-        question = sources.audit_questions.get(text, "")
-        value = sources.deferred_values.get(text, "")
-        heading = _heading_reference(text, sources)
-        if law:
-            genus = CitedSourceGenus.CONSTITUTION_LAW_ROW
-            reference = law
-        elif question:
-            genus = CitedSourceGenus.AUDIT_QUESTION
-            reference = question
-        elif value:
-            genus = CitedSourceGenus.DEFERRED_VALUE_SITE
-            reference = value
-        elif heading:
-            genus = CitedSourceGenus.CONSTITUTION_SECTION
-            reference = heading
-        elif text in sources.claim_lines:
-            genus = CitedSourceGenus.CONSTITUTION_CLAIM_LINE
-            reference = text
-
-    if genus is None:
-        raise AimIndicatorError(
-            f"{aim_id.value}: رمزٌ لا مرجعَ له في الموضع {offset}: {text} — "
-            f"{UNKNOWN_CITATION_TOKEN_IS_REFUSED_NOTE}"
-        )
-    return ReadCitation(
-        aim_id=aim_id,
-        shape=shape,
-        text=text,
-        genus=genus,
-        reference=reference,
-        offset=offset,
     )
 
 
-_SHAPE_BY_GROUP: Final[Mapping[str, CitedTokenShape]] = MappingProxyType(
-    {
-        "guillemet": CitedTokenShape.GUILLEMET_SPAN,
-        "backtick": CitedTokenShape.BACKTICK_SPAN,
-        "path": CitedTokenShape.REPOSITORY_PATH_TEXT,
-        "row_id": CitedTokenShape.DOTTED_ROW_IDENTIFIER,
-        "camel": CitedTokenShape.BARE_JOINED_NAME,
-    }
-)
-
-if set(_SHAPE_BY_GROUP.values()) != set(CitedTokenShape):  # pragma: no cover - guard
-    raise RuntimeError("every declared token shape must have a reading group")
-
-
-def _read_link(record: AimRecord, sources: _CitationSources) -> AimCitationLink:
-    tokens: list[ReadCitation] = []
-    for match in _TOKEN_PATTERN.finditer(record.citation):
-        group = match.lastgroup
-        if group is None or group not in _SHAPE_BY_GROUP:  # pragma: no cover - guard
-            raise AimIndicatorError(
-                f"{record.aim_id.value}: شكلُ رمزٍ بلا مجموعةٍ مُصرَّح بها — "
-                f"{UNKNOWN_CITATION_TOKEN_IS_REFUSED_NOTE}"
-            )
-        text = (match.group(group) or "").strip()
-        if not text:
-            raise AimIndicatorError(
-                f"{record.aim_id.value}: رمزٌ فارغ في الموضع {match.start()} — "
-                f"{UNKNOWN_CITATION_TOKEN_IS_REFUSED_NOTE}"
-            )
-        tokens.append(
-            _resolve_token(
-                record.aim_id, _SHAPE_BY_GROUP[group], text, match.start(), sources
-            )
-        )
-    return AimCitationLink(aim_id=record.aim_id, tokens=tuple(tokens))
-
-
-def constitution_repository_root() -> Path:
-    """جذرُ المستودع مشتقًّا من موضع هذه الوحدة، لا مكتوبًا ولا مُمرَّرًا."""
+def repository_root_path() -> Path:
+    """جذرُ شجرة المستودع، مشتقًّا من موضع هذه الوحدة لا مكتوبًا."""
 
     return Path(__file__).resolve().parents[3]
 
 
-def derive_aim_indicator(
-    records: Mapping[AimId, AimRecord] = AIM_RECORDS,
-    constitution: ConstitutionLedger | None = None,
-    deferred_values: DeferredValueLedger | None = None,
-    document_text: str | None = None,
-) -> AimIndicator:
-    """اربط كلّ غايةٍ بمصادرها المقروءة من نصّ استشهادها، ورُدَّ ما لا مرجعَ له."""
-
-    if not isinstance(records, Mapping) or not records:
-        raise AimIndicatorError("سجلّ الغايات مفردٌ غير فارغ")
-    for aim_id, record in records.items():
-        if not isinstance(record, AimRecord):
-            raise AimIndicatorError("كل عنصرٍ سجلُّ غايةٍ")
-        if record.aim_id is not aim_id:
-            raise AimIndicatorError(
-                f"مفتاحُ السجلّ {aim_id.value} يخالف معرّفه {record.aim_id.value}"
-            )
-
-    repository_root = constitution_repository_root()
-    if document_text is None:
-        document = constitution_document_path()
-        try:
-            text = document.read_text(encoding="utf-8")
-        except OSError as error:
-            raise AimIndicatorError(
-                f"تعذّرت قراءة وثيقة الدستور عند {document}: رابطٌ فارغ يُقرَأ "
-                "«لا مصادر للغايات» وهو ادّعاءٌ لم تُقرَأ الوثيقة لأجله"
-            ) from error
-    else:
-        text = _require_non_blank(document_text, "نصّ وثيقة الدستور")
-
-    ledger = read_constitution_ledger(text) if constitution is None else constitution
-    if not isinstance(ledger, ConstitutionLedger):
-        raise AimIndicatorError("دفتر الدستور من نوعه")
-    values = (
-        read_deferred_value_ledger() if deferred_values is None else deferred_values
-    )
-    if not isinstance(values, DeferredValueLedger):
-        raise AimIndicatorError("دفتر القيم المحجوزة من نوعه")
-
-    sources = _collect_sources(ledger, values, text, repository_root)
-    links = tuple(_read_link(record, sources) for record in records.values())
-    tokens = tuple(token for link in links for token in link.tokens)
-    return AimIndicator(links=links, citations=CitationCensus(tokens=tokens))
 def load_aim_indicator_ledger(path: Path | None = None) -> AimIndicatorLedger:
     """اقرأ الدفتر من وثيقة الدستور نفسها؛ وغيابُها رفضٌ مُسمّى لا دفترٌ فارغ."""
 
@@ -862,22 +974,30 @@ def load_aim_indicator_ledger(path: Path | None = None) -> AimIndicatorLedger:
 
 __all__ = [
     "AIM_INDICATOR_AUTHORITY_NOTE",
-    "CITATION_LINK_IS_NOT_ATTAINMENT",
-    "CITATION_PROSE_IS_NOT_A_TOKEN_STREAM",
-    "DEFERRAL_WAS_NOT_A_PERMANENT_BOUNDARY_NOTE",
-    "DEFERRED_VALUE_READER_IS_NOT_REACHED_BY_ANY_CITATION",
+    "CITATION_SUPPORT_IS_DECLARED_BY_THE_RECORD_NOT_BY_THE_CONSTITUTION",
+    "COUNT_IS_DERIVED_NOT_WRITTEN_NOTE",
+    "DECLARED_STATUS_MUST_MATCH_ONE_SUPPORT_NOTE",
     "DESIGN_SOURCE_CITATION_NOTE",
-    "LEDGER_COUNT_MOVEMENT_IS_NOT_AIM_MOVEMENT",
     "NAMED_RESIDUALS",
-    "NO_SUM_ACROSS_READERS_NOTE",
-    "UNKNOWN_CITATION_TOKEN_IS_REFUSED_NOTE",
-    "AimCitationLink",
-    "AimIndicator",
+    "NO_DECLARED_SUPPORT_TOTAL_TO_CROSS_CHECK",
+    "SECTION_HEADING_CARRIES_NO_DECLARED_STATUS",
+    "SUPPORT_COUNT_IS_NOT_PROGRESS",
+    "SUPPORT_STANDING_IS_NOT_A_DEFERRAL_CLASS_NOTE",
+    "THIRD_READER_IS_CITED_BY_NO_AIM",
+    "UNCOVERED_CITATION_TEXT_IS_REFUSED_NOTE",
+    "UNKNOWN_CITATION_REFERENCE_IS_REFUSED_NOTE",
     "AimIndicatorError",
-    "CitationCensus",
-    "CitedSourceGenus",
-    "CitedTokenShape",
-    "ReadCitation",
-    "constitution_repository_root",
-    "derive_aim_indicator",
+    "AimIndicatorLedger",
+    "AimIndicatorRow",
+    "AimSupportStanding",
+    "CitationReferenceCensus",
+    "CitedSupportKind",
+    "DeclaredCitationFiller",
+    "DeclaredCitationShape",
+    "DeclaredUnresolvableReference",
+    "ReadCitationReference",
+    "load_aim_indicator_ledger",
+    "read_aim_indicator_ledger",
+    "read_aim_indicator_row",
+    "repository_root_path",
 ]
