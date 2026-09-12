@@ -1148,6 +1148,20 @@ not establish, including two open questions it leaves unresolved. The
 dataset is not vendored; `examples/reference/lisan345_cluster_adjacency.py`
 re-derives the table from a hash-checked copy of the frozen input.
 
+The second record,
+[`docs/reference/arabic_identity_confusion_catalog.md`](docs/reference/arabic_identity_confusion_catalog.md),
+catalogs five Arabic identity-confusion failure modes reported by an independent
+session that ran a structurally similar five-gate protocol over a different
+corpus: homograph collision under bare-skeleton reduction, a tanwīn-bearing
+silent letter read as vowel-bearing, gemination erased by undifferentiated mark
+stripping, a case ending folded into template identity, and a pattern space
+whose members are mostly not lexical items. Each is offered as a candidate test
+case for the deferred G0.2 or a later Arabic identity-birth layer, with its
+proposed law named in negative form. Unlike the first record it carries no
+frozen dataset, no hash, and no re-derivation script, so it is testimony rather
+than measurement, and its numbers are unaudited; the record says so in its own
+body and names the measurement-wrapping path any promotion would have to take.
+
 ## Development
 
 ```bash
