@@ -949,6 +949,20 @@ making it strictly finer rather than equivalent — an import-time guard asserts
 that `SOURCE_DIGEST_COVERED_FIELDS` is a proper subset of the entry fields, so
 the two digests can never be read as attesting the same thing.
 
+`src/alghanem/arabic/mantuq_mafhum_ifada.py` gains the eighth link's one strict
+qualification. That link's division is exhaustive — مطابقة and تضمن are منطوق,
+التزام is مفهوم, and there is no third — but one thing never falls on the مفهوم
+side: **the type of the ruling itself**. It is منطوق always, never derived by
+مفهوم موافقة or مخالفة from an accompanying descriptor; only a ruling's side
+qualifications are read that way. `SignifiedAspect` names what a reading falls
+upon, `نوع_الحكم` or `قيد_جانبي`, and `RulingAspectReading` refuses exactly one
+combination at construction: the type of the ruling read through
+`DalalaChannel.مفهوم`. The aspect is not a rung inside the channel and ranks
+nothing: reading a side qualification by مفهوم stays open, and a test asserts
+it. The channel is read off the held `DalalaRecord` rather than rewritten, so it
+stays derived in one place, and the descriptor a مفهوم was read from must be
+named while a منطوق carries none — so no مفهوم is attributed to an unnamed وصف.
+
 `src/alghanem/arabic/wad_naql.py`, `src/alghanem/arabic/umum_khusus.py`, and
 `src/alghanem/arabic/decision_chain.py` build the fourth link, the tenth link,
 and the ledger of the decision chain itself (G0.W in `docs/CONSTITUTION.md`).

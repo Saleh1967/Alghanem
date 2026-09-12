@@ -36,6 +36,12 @@
 وهذا لا يفيد؛ ولكنه موجود." فـ`غير_مُفيد` حالٌ لتركيبٍ **قائم** لا لتركيبٍ معدوم،
 وهذا هو بعينه ما يمنع قراءةَ عدم الإفادة غيابًا.
 
+**نوعُ الحكم منطوقٌ دائمًا أبدًا**: القسمةُ هنا حاصرةٌ (مطابقةٌ وتضمُّنٌ منطوق،
+والتزامٌ مفهوم، ولا ثالث)، ومع ذلك فموضعٌ واحدٌ لا يقع في جهة المفهوم البتّة: نوعُ
+الحكم نفسِه. لا يُشتَقّ بمفهوم موافقةٍ ولا مخالفةٍ من وصفٍ مرافق، وإنما تُقرَأ
+بالمفهوم قيودُه الجانبية وحدها. و`SignifiedAspect` تُسمّي موضعَ القراءة،
+و`RulingAspectReading` ترفض التركيبَ الممنوع وحده عند الإنشاء.
+
 **الحالُ تُشتَقّ من حواملها ولا تُكتَب** (على منهج `UnderstandingRecord.standing`):
 كلّ سجلٍّ يحمل حواملَه — حاملَ القناة، وحاملَ قسم المفهوم، وحاملَ الإفادة مع شاهده
 — وتُشتَقّ الأحوالُ الثلاثة منها، وتُرفَض الحالُ المُعلَنة المخالفة عند الإنشاء.
@@ -54,6 +60,7 @@ from typing import Final
 
 __all__ = [
     "BENEFIT_IS_READ_NOT_ASSUMED_NOTE",
+    "TYPE_SIGNIFICATION_IS_ALWAYS_MANTUQ_NOTE",
     "IFADA_SOURCE_TEXT_NOTE",
     "MAFHUM_IS_NOT_CONTENT_STANDING_NOTE",
     "MANTUQ_MAFHUM_IFADA_AUTHORITY_NOTE",
@@ -64,6 +71,8 @@ __all__ = [
     "IfadaStanding",
     "MafhumKind",
     "MantuqMafhumIfadaError",
+    "RulingAspectReading",
+    "SignifiedAspect",
 ]
 
 
@@ -87,6 +96,11 @@ IFADA_SOURCE_TEXT_NOTE: Final[str] = (
 BENEFIT_IS_READ_NOT_ASSUMED_NOTE: Final[str] = (
     "`غير_مقروء` عضوٌ مُصرَّحٌ به في المفردة لا فراغٌ يُطوى: ما لم تُقرَأ "
     "فائدتُه لا يُقرَأ غيرَ مُفيد، ولا مُفيدًا"
+)
+
+TYPE_SIGNIFICATION_IS_ALWAYS_MANTUQ_NOTE: Final[str] = (
+    "نوعُ الحكم نفسِه منطوقٌ دائمًا أبدًا: لا يُشتَقّ بمفهوم موافقةٍ ولا مخالفةٍ "
+    "من وصفٍ مرافق، وإنما يُقرَأ المفهومُ في القيود الجانبية وحدها"
 )
 
 STANDING_IS_DERIVED_NOT_WRITTEN_NOTE: Final[str] = (
@@ -150,12 +164,26 @@ class IfadaStanding(Enum):
         return self is not IfadaStanding.غير_مقروء
 
 
+class SignifiedAspect(Enum):
+    """ما الذي قُرئ من اللفظ: نوعُ الحكم نفسُه، أم قيدٌ جانبيٌّ مرافق؟
+
+    ليست قسمةً في القناة ولا رتبةً فيها، بل تمييزُ **موضوع** القراءة: فالقناة
+    تُجيب «أحُمِل على اللفظ؟»، وهذه تُجيب «أعلى نوع الحكم وقعت القراءة أم على
+    قيدٍ من قيوده؟». وعليها وحدها يجري القيدُ الثامن.
+    """
+
+    نوع_الحكم = "نوع_الحكم"
+    قيد_جانبي = "قيد_جانبي"
+
+
 if len(DalalaChannel) != 2:  # pragma: no cover - guard
     raise RuntimeError("قناةُ الدلالة ثنائيةٌ مغلقة.")
 if len(MafhumKind) != 3:  # pragma: no cover - guard
     raise RuntimeError("قسمةُ المفهوم ثلاثيةٌ مغلقة، وعدمُ الانطباق عضوٌ فيها.")
 if len(IfadaStanding) != 3:  # pragma: no cover - guard
     raise RuntimeError("حالُ الإفادة ثلاثيةٌ مغلقة، والجهلُ عضوٌ فيها.")
+if len(SignifiedAspect) != 2:  # pragma: no cover - guard
+    raise RuntimeError("موضوعُ القراءة ثنائيٌّ مغلق: نوعُ الحكم أو قيدٌ جانبيّ.")
 
 
 def _require_non_blank(value: str, label: str) -> str:
@@ -310,8 +338,57 @@ class DalalaCensus:
         return MappingProxyType(counts)
 
 
+@dataclass(frozen=True, slots=True)
+class RulingAspectReading:
+    """قراءةٌ واحدةٌ مع موضوعها، يجري عليها قيدُ «نوعُ الحكم منطوقٌ دائمًا».
+
+    الحاملُ `reading` هو `DalalaRecord` بعينه لا نسخةٌ منه، فالقناةُ تبقى مُشتَقّة
+    في موضعها الواحد ولا تُكتَب هنا ثانية. والمرفوضُ واحدٌ لا غير: أن يُقرَأ
+    **نوعُ الحكم** بقناة `مفهوم`؛ فذلك اشتقاقُ نوعِ حكمٍ من وصفٍ مرافق، وهو ما
+    يمنعه القيد. وليس في هذا ترجيحٌ للمنطوق على المفهوم ولا إبطالٌ للمفهوم: قراءةُ
+    القيود الجانبية بالمفهوم قائمةٌ بابها مفتوح.
+
+    و`accompanying_descriptor` الوصفُ المرافق الذي قُرئ منه المفهوم: يلزم متى
+    كانت القناةُ مفهومًا فلا يُسنَد مفهومٌ إلى وصفٍ لم يُسَمَّ، ويبقى فارغًا متى
+    كانت منطوقًا فلا يُفتعَل له وصفٌ لم تُقرَأ منه دلالة.
+    """
+
+    aspect: SignifiedAspect
+    reading: DalalaRecord
+    accompanying_descriptor: str
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.aspect, SignifiedAspect):
+            raise MantuqMafhumIfadaError("موضوعُ القراءة من مفردته المغلقة.")
+        if not isinstance(self.reading, DalalaRecord):
+            raise MantuqMafhumIfadaError("القراءةُ سجلُّ دلالةٍ مُصاغ، لا نصٌّ حرّ.")
+
+        if self.channel is DalalaChannel.مفهوم:
+            _require_non_blank(self.accompanying_descriptor, "الوصف المرافق")
+        else:
+            _require_blank(
+                self.accompanying_descriptor,
+                "الوصف المرافق",
+                "المنطوقُ محمولٌ على اللفظ نفسه فلا وصفَ مرافقًا قُرئ منه",
+            )
+
+        if (
+            self.aspect is SignifiedAspect.نوع_الحكم
+            and self.channel is DalalaChannel.مفهوم
+        ):
+            raise MantuqMafhumIfadaError(
+                f"{TYPE_SIGNIFICATION_IS_ALWAYS_MANTUQ_NOTE}."
+            )
+
+    @property
+    def channel(self) -> DalalaChannel:
+        """القناةُ مقروءةً من القراءة نفسها، لا مُعادةَ الكتابة هنا."""
+
+        return self.reading.channel
+
+
 def _assert_no_fields_matching(markers: tuple[str, ...]) -> None:
-    for declaring_type in (DalalaRecord, DalalaCensus):
+    for declaring_type in (DalalaRecord, DalalaCensus, RulingAspectReading):
         for field in fields(declaring_type):
             for marker in markers:
                 if marker in field.name:  # pragma: no cover - guard

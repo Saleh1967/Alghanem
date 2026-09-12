@@ -395,6 +395,10 @@ def test_the_repository_document_is_read_without_refusal() -> None:
     assert ledger.laws.status_counts[DeclaredLawStatus.ENFORCED_AT_WAD_NAQL] == 3
     assert ledger.laws.status_counts[DeclaredLawStatus.ENFORCED_AT_UMUM_KHUSUS] == 2
     assert ledger.laws.status_counts[DeclaredLawStatus.ENFORCED_AT_DECISION_CHAIN] == 1
+    assert (
+        ledger.laws.status_counts[DeclaredLawStatus.ENFORCED_AT_MANTUQ_MAFHUM_IFADA]
+        == 1
+    )
     open_names = {question.name for question in ledger.audit_questions.open_questions}
     assert DESIGN_SOURCE_OPEN_QUESTION in open_names
     assert ledger.audit_questions.resolved_count > 0
