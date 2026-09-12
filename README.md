@@ -823,6 +823,39 @@ making it strictly finer rather than equivalent — an import-time guard asserts
 that `SOURCE_DIGEST_COVERED_FIELDS` is a proper subset of the entry fields, so
 the two digests can never be read as attesting the same thing.
 
+`src/alghanem/arabic/epistemic_layers.py` is the first module written under
+G0.N, and it closes the layer confusion that law names rather than the law
+itself. Three layers are kept apart as one closed vocabulary — physical
+existence (sound as a perceived phenomenon), the conventional knot (the
+letter as a written convention), and statistical attribute analysis — and a
+piece of evidence never carries a written layer label:
+`DeclaredLayerLabel != DerivedOntologicalLayer`, enforced exactly as
+`provenance_genus.py` enforces its own genus. `OntologicalLayerGate` is the
+sole issuer of a classification and derives it from the artifact's own type,
+so a `RawSurfaceObservation` or a `NormalizationAudit` is the conventional
+knot and a `DistributionalProbeReport` or one of its `DiscoveredLayer`s is
+statistical attribute analysis, while an artifact of any other type is
+refused by its type name rather than mapped to the nearest layer. Each
+layer's epistemic standing is derived from the layer and never written
+beside it, and the three standings are checked at import to be pairwise
+distinct. The physical layer is declared in the vocabulary and structurally
+unconstructible: no artifact here is recorded sound, so issuing a physical
+classification would claim a measurement that never ran
+(`UnicodeIsNotRecordedSound`), and dropping the member instead of refusing it
+would suggest the two remaining layers are all there is — which is the
+confusion being avoided. `CrossLayerInferenceRecord` then models the one
+legitimate way the layers may be related at all: a declared external
+citation, recorded as `مُصرَّح_غير_مُتحقَّق` and never promoted, because
+`CrossLayerInferenceIsImported` — reading a statistical cluster as physical
+homogeneity is an inference imported from outside this pipeline, not a
+product of it. `VERIFIED_LOCALLY` is declared and refused at construction
+under the same discipline, since no authority here inspects evidence outside
+language, and `is_produced_by_this_pipeline` is `False` structurally.
+Authority-wise the module is inert like its siblings:
+`OntologicalLayerClassification != BirthVerdict`, no `Freeze`, no `E0`, no
+kernel gate reads it — asserted by a sweep over every `kernel/` module — and
+every external-audit field stays byte-identical.
+
 G0.N declares, law-only and ahead of any runtime, what a carrier *is*:
 `Carrier != DiscoveredEssence`, and a carrier is instead a knot tied by
 convention at the one point on a fiber of regularity that survived every
