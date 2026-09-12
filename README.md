@@ -798,6 +798,37 @@ not by content, so a status written tomorrow under a declared-excluded label is
 excluded without refusal). Tighter reading is not truth of what is read, and the
 indicator remains deferred with everything §4 requires of it.
 
+The sixth milestone is that indicator, in `alghanem.program.aim_indicator`, and it
+takes the step every earlier milestone closed by deferring: binding a derived count
+to a particular aim. All three sources §4 names are now read, so only the binding
+was left, and the ban on importing `AimId` into the three readers was a deferral of
+this step rather than a permanent boundary — this module imports them openly, while
+authority inertness is checked from the side that still holds: no module under
+`kernel/` reads the programme layer. The only legitimate link is the `citation`
+field the record has carried since the first milestone: tokens are extracted from it
+under declared shapes and resolved against the three ledgers and the constitution's
+own text, so the declared side is the citation and the derived side is what was
+actually found, and a token with no referent is refused by name and offset instead of
+being skipped. Coding it showed that silent skipping returned through the language
+itself, inside the layer built to refuse it: the usual word boundary (`\w`) counts
+Arabic letters, so a token joined to the conjunction *wāw* — `وG0.BV.1` — was read as
+no token at all and two aims silently lost a cited row each. Row names turned out to
+have three shapes (a dotted identifier plus prose title, a prose title alone, and a
+backticked name the citation writes without its backticks), prefix matching had to be
+refused so that `G0.BV.1` never resolves to `G0.BV.1a`, and not every cited thing is a
+row: sections, a claim line, and repository paths are declared-excluded genera whose
+existence is verified before they are excluded. Two aims reach no ledger at all and
+carry `NO_LEDGER_READABLE_SOURCE` explicitly rather than a zero, and the third
+reader — the declared-but-unbuildable values — is reached by no citation at all,
+because those names occur in the aims' questions rather than their sources
+(`DEFERRED_VALUE_READER_IS_NOT_REACHED_BY_ANY_CITATION`). The counts stay separate
+per reader, are never summed, and never order the aims. What the indicator measures is
+*citation*, not attainment: an aim resting on many rows has attained nothing
+(`CITATION_LINK_IS_NOT_ATTAINMENT`), ledger counts move when the document is edited
+and that movement is not an aim's movement
+(`LEDGER_COUNT_MOVEMENT_IS_NOT_AIM_MOVEMENT`), and nothing here promotes anything to
+`Freeze`, `E0`, a birth verdict, or `AttainmentStanding.REACHED`.
+
 ## Development
 
 ```bash
