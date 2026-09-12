@@ -11,7 +11,9 @@ import pytest
 
 import alghanem.kernel as kernel_package
 from alghanem.arabic import (
+    CLOSED_CORPUS_TEMPORAL_STRUCTURE,
     FIRST_ORGANIZED_INFORMATION_QUESTION,
+    EvidenceTemporalStructure,
     ExemptionHypothesis,
     ExemptionOpenQuestion,
     IstiqraScope,
@@ -19,13 +21,25 @@ from alghanem.arabic import (
     RepetitionPattern,
     ScopedFinding,
     SourceIndependence,
+    TawaturQuestionStanding,
     TransmissionStanding,
     TransmissionStandingError,
     TransmissionStandingRecord,
+    UnconstructibilityGenus,
     derive_scope_statement,
     derive_standing,
+    tawatur_question_standing,
+    unconstructibility_genus,
 )
 from alghanem.arabic.external_audit import audit_card
+from alghanem.arabic.transmission_standing import (
+    DESIGN_CONVERGENCE_PROVENANCE_IS_UNVERIFIED,
+    MUTAWATIR_IS_UNCONSTRUCTIBLE_NOTE,
+    NAMED_RESIDUALS,
+    NO_IMPORT_ENTRY_FOR_A_FOREIGN_RECURRENCE_CLAIM_NOTE,
+    SIBLING_HOLDS_ARE_NOT_CLASSIFIED_HERE,
+    SUCCESSION_CARRIER_IS_WRITABLE_WITHOUT_A_TEMPORAL_AUTHORITY,
+)
 
 _EXAMPLES = Path(__file__).resolve().parents[2] / "examples" / "external_audit"
 _CARDS = (
@@ -115,7 +129,7 @@ def test_a_carrier_outside_its_vocabulary_is_refused_not_approximated() -> None:
 
 
 def test_the_recurrent_standing_is_declared_and_unconstructible() -> None:
-    with pytest.raises(TransmissionStandingError, match="ادّعاءُ فحصٍ لم يجرِ"):
+    with pytest.raises(TransmissionStandingError, match="غيرُ مستقيم الوضع"):
         record(
             independence=SourceIndependence.COLLUSION_IMPOSSIBLE,
             repetition=RepetitionPattern.SUCCESSIVE_GENERATIONS,
@@ -126,8 +140,79 @@ def test_the_recurrent_standing_is_declared_and_unconstructible() -> None:
 def test_claiming_recurrence_over_weaker_carriers_is_refused_by_its_own_message() -> (
     None
 ):
-    with pytest.raises(TransmissionStandingError, match="ادّعاءُ فحصٍ لم يجرِ"):
+    with pytest.raises(TransmissionStandingError, match="غيرُ مستقيم الوضع"):
         record(declared_standing=TransmissionStanding.MUTAWATIR)
+
+
+def test_the_refusal_of_recurrence_names_a_category_mismatch_not_a_missing_tool() -> (
+    None
+):
+    assert "خطأٍ فئويٍّ بنيويّ" in MUTAWATIR_IS_UNCONSTRUCTIBLE_NOTE
+    assert "لا بغياب سلطةٍ اليوم" in MUTAWATIR_IS_UNCONSTRUCTIBLE_NOTE
+    assert "لا سلطةَ في هذا المستودع" not in MUTAWATIR_IS_UNCONSTRUCTIBLE_NOTE
+
+
+def test_a_closed_corpus_is_a_synchronic_section_so_the_question_is_ill_posed() -> None:
+    assert (
+        CLOSED_CORPUS_TEMPORAL_STRUCTURE
+        is EvidenceTemporalStructure.SYNCHRONIC_FROZEN_SECTION
+    )
+    assert unconstructibility_genus(CLOSED_CORPUS_TEMPORAL_STRUCTURE) is (
+        UnconstructibilityGenus.REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH
+    )
+    assert tawatur_question_standing(CLOSED_CORPUS_TEMPORAL_STRUCTURE) is (
+        TawaturQuestionStanding.ILL_POSED_ON_THIS_STRUCTURE
+    )
+
+
+def test_a_diachronic_succession_is_held_by_missing_authority_not_by_category() -> None:
+    succession = EvidenceTemporalStructure.DIACHRONIC_INDEPENDENT_SUCCESSION
+    assert unconstructibility_genus(succession) is (
+        UnconstructibilityGenus.HELD_BY_MISSING_AUTHORITY_TODAY
+    )
+    assert tawatur_question_standing(succession) is (
+        TawaturQuestionStanding.WELL_POSED_AND_UNVERIFIED_HERE
+    )
+
+
+def test_an_unsettled_genus_is_declared_and_never_derived_by_default() -> None:
+    assert UnconstructibilityGenus.GENUS_NOT_SETTLED not in {
+        unconstructibility_genus(structure) for structure in EvidenceTemporalStructure
+    }
+
+
+def test_a_temporal_structure_outside_its_vocabulary_is_refused() -> None:
+    with pytest.raises(TransmissionStandingError, match="مفردتها المغلقة"):
+        unconstructibility_genus("\u0645\u0642\u0637\u0639")  # type: ignore[arg-type]
+
+
+def test_the_residuals_name_the_meta_provenance_and_the_unclassified_siblings() -> None:
+    assert set(NAMED_RESIDUALS) == {
+        SUCCESSION_CARRIER_IS_WRITABLE_WITHOUT_A_TEMPORAL_AUTHORITY,
+        SIBLING_HOLDS_ARE_NOT_CLASSIFIED_HERE,
+        DESIGN_CONVERGENCE_PROVENANCE_IS_UNVERIFIED,
+    }
+    for text in NAMED_RESIDUALS.values():
+        assert text.strip()
+
+
+def test_no_import_entry_exists_for_a_foreign_recurrence_claim() -> None:
+    source = (
+        Path(__file__).resolve().parents[2]
+        / "src"
+        / "alghanem"
+        / "arabic"
+        / "transmission_standing.py"
+    ).read_text(encoding="utf-8")
+    declarations = tuple(
+        line
+        for line in source.splitlines()
+        if line.startswith(("import ", "from ", "class ", "def "))
+    )
+    assert not any("Foreign" in line or "Imported" in line for line in declarations)
+    assert "\u0641\u0626\u0648\u064a" in (
+        NO_IMPORT_ENTRY_FOR_A_FOREIGN_RECURRENCE_CLAIM_NOTE
+    )
 
 
 def test_a_written_standing_that_contradicts_its_carriers_is_refused() -> None:

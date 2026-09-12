@@ -940,11 +940,32 @@ established), and repetition pattern (successive independent cycles, a single
 batch, or none) — and `derive_standing` is total over them with no default
 branch; a written degree contradicting its carriers is refused at
 construction, so there is no place to write the answer directly.
-`متواتر` is declared in the vocabulary and structurally unconstructible under
-the same discipline as `شاهد_لكل_فرع` and `CLOSED_BY_FROZEN_EXPERIMENT`: no
-authority here verifies source independence across successive generations, so
-issuing the degree would claim a check that never ran, and the refusal is
-raised with its own message before the general carrier-mismatch one. The two
+`متواتر` is declared in the vocabulary and unconstructible, but — under
+`TawaturRequiresDiachronicSuccession` (G0.N) — by a **category mismatch rather
+than a missing tool**: recurrence presupposes succession through time, and a
+closed corpus is a frozen synchronic section that carries no temporal
+dimension in which successive independent cycles could occur, so asking
+whether a finding over it is `متواتر` is ill-posed rather than unanswered for
+now. The two genera are kept apart in `UnconstructibilityGenus` instead of
+being merged into one "unconstructible", on the model of what
+`DeferredValueShape` revealed about holds: over a synchronic structure the
+refusal is categorical and no future authority lifts it, while over a genuinely
+diachronic succession it falls back to an ordinary hold for missing authority,
+and `unconstructibility_genus` derives which from the structure alone with no
+default branch (a third member, `GENUS_NOT_SETTLED`, is declared and never
+derived, so nothing is carried onto the nearer genus). The refusal is still
+raised with its own message before the general carrier-mismatch one. For the
+same categorical reason there is **no import entry for a foreign recurrence
+claim**: importing a declared-unverified claim makes sense where the concept
+applies and only the check is missing, as with `ForeignDeclaredCase`, not
+where the question does not stand at all — so `متواتر` stays a member with no
+entrance, with that reason written rather than left silent. Three residuals
+are named in the module instead of being folded away: the succession carrier
+stays writable because no authority here derives a report's temporal
+structure; the sibling holds elsewhere in the tree are deliberately not
+classified by genus here; and the provenance of this design's convergence with
+a prior external discussion is recorded as unverifiable in this repository and
+is never read as independent corroboration. The two
 induction scopes are handled the same way: a complete enumeration over a
 closed corpus is certain **inside that corpus only**, and the scope sentence
 is derived by `derive_scope_statement` rather than written, with a declared
