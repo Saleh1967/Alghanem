@@ -352,14 +352,19 @@ _DECLARED_AIMS: Final = (
         ),
         what_does_not_count=(
             "`COMPETITION_RESOLVED_IN_POSET` وحدها: "
-            "`ComparabilityClosure != IndependentClosure`"
+            "`ComparabilityClosure != IndependentClosure`؛ ولا تركيبُ "
+            "الموصولات الثلاثة في G0.IC.1e: "
+            "`SatisfiedConjunctsIsNotIndependentClosure`"
         ),
-        citation="docs/CONSTITUTION.md، صفّ G0.IC.1a وصفّ G0.BA.1a",
+        citation="docs/CONSTITUTION.md، صفّ G0.IC.1a وصفّ G0.BA.1a وصفّ G0.IC.1e",
         engagement=AimEngagement.BLOCKED_BY_NAMED_OBSTACLE,
         attainment=AttainmentStanding.NOT_REACHED,
         named_obstacle=(
             "غيابُ سلطةِ تقويمِ محتوى الدليل: `InputProvenance = "
-            "DECLARED_DEFERRED` في صفّ G0.BA.1a"
+            "DECLARED_DEFERRED` في صفّ G0.BA.1a؛ وقد ضيّقه G0.IC.1e إلى "
+            "`OneWitnessIsNotResidualCertification` و"
+            "`SurvivalReadIsNotMeasuredReplicatedResidual` و"
+            "`CoverageIsNotCorrectness`"
         ),
     ),
     AimRecord(

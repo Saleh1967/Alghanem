@@ -193,6 +193,31 @@ still `False` on every branch and `IndependentClosureAssessment` stays untouched
 `DeclaredVocabularyIsNotProvenSemantics`,
 `SealedBeforeAssessmentIsNotSealedBeforeEvidence`, and
 `OneWitnessIsNotResidualCertification` stay open by name.
+G0.IC.1e (`src/alghanem/kernel/independent_closure_composition.py`) composes
+those three readings, and claims nothing beyond what they say. It reads nothing
+new — no evidence is opened, no evaluator executed, no poset inspected — because
+every input is already a gate-issued reading
+(`ThreeReadingsAreNotAFourth`). `IndependentClosureCompositionGate.assess` takes
+exactly the three readings and no status, reason, or closure claim, and refuses
+readings that do not all speak for the same `BirthAssessmentRequest`
+(`OneRequestOrRefusal`). All `2 x 3 x 3 = 18` combinations were enumerated
+before the module was written and are asserted by name in the tests: a
+refuting conjunct (a weaker model that closes the residual, or a residual that
+does not survive) outranks every deferral, an unresolved comparability counts as
+ignorance and never as refutation
+(`UnresolvedComparabilityIsIgnoranceNotRefutation`), and refuted and
+undetermined conjuncts are tracked separately, as
+`InvariantVerificationDecision` tracks failed and deferred components. Ten
+combinations are refuted, seven undetermined, and exactly one — resolved
+comparability, exhausted licensed weaker models, and a surviving residual —
+reaches `CONJUNCTS_SATISFIED_PENDING_RESIDUAL_CERTIFICATION`. Even that one
+yields `is_independent_closure == False`
+(`SatisfiedConjunctsIsNotIndependentClosure`): the conjuncts hold *as read*, and
+`OneWitnessIsNotResidualCertification`,
+`SurvivalReadIsNotMeasuredReplicatedResidual` and `CoverageIsNotCorrectness`
+remain open by name, so the status says what was reached and what it is pending
+on rather than overstating it. `CompositionIsNotAVerdict`: the stage is not
+wired to `BirthVerdictGate`, and `ClosureRefutedInScope != NO_BIRTH_IN_SCOPE`.
 `BirthCandidate` is distinct from a scoped birth verdict and from `Freeze`;
 the future G0.BV.1 authority may issue `BIRTH_IN_SCOPE`, then a later freeze
 authority may freeze it before a separate `E0` step. See the
