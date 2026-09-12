@@ -860,6 +860,38 @@ close is named too: nothing derives that a §7 section corresponds to exactly on
 module in the tree
 (`MILESTONE_SECTION_TO_MODULE_CORRESPONDENCE_IS_NOT_DERIVED`).
 
+The seventh milestone, in `alghanem.program.milestone_ledger`, pays that debt: the
+correspondence between a §7 section and a module is now derived rather than read
+by eye, and two sections for one milestone — precisely what happened and nothing
+prevented — is refused at construction. The map is declared twice, in the
+document's header sentence and again in each §7 section, and the reader
+corresponds the two declarations without ranking either, because preferring one
+would be the reader's choice and not the document's declaration. Existence in the
+tree is then derived in both directions: every claimed module must be present, and
+every module in the programme layer must be claimed by some milestone, since a
+module that lands with no §7 section is code whose coding revealed nothing on
+record, which §5 forbids.
+
+Coding it corrected the plan again. The map is not one-to-one: the fifth milestone
+created no module but reopened the second's `constitution_ledger.py`, so a binary
+"claims / does not claim" would have had to either refuse the fifth or fold away
+that it returned to an earlier module, and the standing is three-valued instead —
+first claim, reopening, and no claim at all. The first milestone's section names
+no module in its own body; its module is named in §7's preamble, so that is
+accepted under an explicit `NAMED_IN_SECTION_PREAMBLE` mark rather than by a silent
+skip. One module is named in two shapes — a bare filename for the fifth, full paths
+elsewhere — and the shapes are kept apart because a bare name resolves only inside
+the programme package. And not every §7 section is a milestone: the double-landing
+record is an incident that names a milestone and claims no module, so reading it as
+a milestone would have raised a false duplicate while dropping it from the census
+would have hidden a section behind silence. What stays open is named in code:
+existence is not authorship (`MODULE_EXISTENCE_IS_NOT_MODULE_AUTHORSHIP`), both
+corresponded declarations are prose so their agreement on one error is invisible
+here (`BOTH_DECLARATIONS_ARE_PROSE_NOT_TREE_DERIVED`), and why a module was
+reopened is prose the ledger does not derive
+(`REOPENING_IS_DERIVED_BUT_ITS_REASON_IS_NOT`). Reaching a seventh milestone is
+not reaching an aim: this ledger brings no §2 aim closer and promotes none.
+
 ## Development
 
 ```bash
