@@ -823,6 +823,23 @@ making it strictly finer rather than equivalent — an import-time guard asserts
 that `SOURCE_DIGEST_COVERED_FIELDS` is a proper subset of the entry fields, so
 the two digests can never be read as attesting the same thing.
 
+`src/alghanem/arabic/pipeline_stations.py` adds the sixth G0.N module, the
+eleven-station table of §9. The table is **derived, not written**, on the model
+of `milestone_ledger`: each station names its module by path, and whether that
+module exists is read from the tree itself, so a station whose module is absent
+reads as `محطة_غير_مُرمَّزة` rather than being skipped in silence — and an
+absent Arabic package is refused outright rather than read as "no modules",
+because an unread tree cannot report emptiness. Every station carries an
+epistemic state from a closed five-member vocabulary (`معلومة`, `فرض`, `آحاد`,
+`آحاد_مُجمَّد`, `ظنّي`), so the epistemic distance between raw observation and
+a distributional probe is visible in the table rather than assumed by position.
+Station 0 — the spoken sound — is **refused inside the table by its own
+message**: this repository's data is encoded text and not recorded sound, the
+same refusal `UnicodeIsNotRecordedSound` makes in `epistemic_layers`. Station ∞
+is moduleless by necessity rather than by omission, and is therefore declared in
+a note and never given an ordinal that could later be "filled in". Like its
+siblings the ledger is a reading of the tree, not an authority over it.
+
 `src/alghanem/arabic/qiyas_rabt_registration.py` adds the fifth G0.N module,
 on analogy and linking (§10). It is a **registration, not a certificate**, on
 the model of `compound_layer_preregistration`. A `QiyasRegistration` carries
