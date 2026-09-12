@@ -288,6 +288,19 @@ from .maluma_mafhum import (
     SemanticTarget,
     UnderstandingRecord,
 )
+from .mantuq_mafhum_ifada import (
+    BENEFIT_IS_READ_NOT_ASSUMED_NOTE,
+    IFADA_SOURCE_TEXT_NOTE,
+    MAFHUM_IS_NOT_CONTENT_STANDING_NOTE,
+    MANTUQ_MAFHUM_IFADA_AUTHORITY_NOTE,
+    STANDING_IS_DERIVED_NOT_WRITTEN_NOTE,
+    DalalaCensus,
+    DalalaChannel,
+    DalalaRecord,
+    IfadaStanding,
+    MafhumKind,
+    MantuqMafhumIfadaError,
+)
 from .pipeline_stations import (
     ARABIC_PACKAGE_RELATIVE_PATH,
     STATION_ZERO_NOTE,
@@ -812,4 +825,15 @@ __all__ = [
     "verify_export_payload",
     "verify_source_declared_content_id",
     "vocabulary_from_export_mapping",
+    "BENEFIT_IS_READ_NOT_ASSUMED_NOTE",
+    "IFADA_SOURCE_TEXT_NOTE",
+    "MAFHUM_IS_NOT_CONTENT_STANDING_NOTE",
+    "MANTUQ_MAFHUM_IFADA_AUTHORITY_NOTE",
+    "STANDING_IS_DERIVED_NOT_WRITTEN_NOTE",
+    "DalalaCensus",
+    "DalalaChannel",
+    "DalalaRecord",
+    "IfadaStanding",
+    "MafhumKind",
+    "MantuqMafhumIfadaError",
 ]

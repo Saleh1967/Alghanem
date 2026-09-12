@@ -113,6 +113,32 @@ from .constitution_ledger import (
     load_constitution_ledger,
     read_constitution_ledger,
 )
+from .dalala_indicator import (
+    CHANNEL_IS_DERIVED_BY_A_SECOND_INDEPENDENT_READING_NOTE,
+    CHANNEL_READS_THE_CITATION_NOT_THE_MEASURED_ARABIC_SURFACE,
+    DALALA_INDICATOR_AUTHORITY_NOTE,
+    IFADA_HERE_IS_READ_STATUS_NOT_LINGUISTIC_BENEFIT,
+    MANTUQ_COUNT_IS_NOT_PERFORMANCE,
+    MUKHALAFA_IS_UNREAD_IN_TODAYS_TRACE,
+    PERFORMANCE_INDICATOR_IS_REFUSED_BY_SECTION_ONE_NOTE,
+    UNRESOLVED_REFERENCE_HAS_NO_CHANNEL,
+    DalalaIndicatorError,
+    DalalaIndicatorLedger,
+    DalalaIndicatorRow,
+    DalalaReferenceCensus,
+    ReadDalalaReference,
+    SupportNameIndex,
+    build_support_name_index,
+    load_dalala_indicator_ledger,
+    read_dalala_indicator_ledger,
+    read_dalala_reference,
+)
+from .dalala_indicator import (
+    DESIGN_SOURCE_CITATION_NOTE as DALALA_INDICATOR_DESIGN_SOURCE_CITATION_NOTE,
+)
+from .dalala_indicator import (
+    NAMED_RESIDUALS as DALALA_INDICATOR_NAMED_RESIDUALS,
+)
 from .deferred_value_ledger import (
     CODOMAIN_DERIVED_FROM_LITERAL_WRITES_ONLY,
     DEFERRED_VALUE_LEDGER_AUTHORITY_NOTE,
@@ -318,4 +344,24 @@ __all__ = [
     "correspond_milestones_to_tree",
     "programme_module_paths",
     "read_milestone_ledger",
+    "CHANNEL_IS_DERIVED_BY_A_SECOND_INDEPENDENT_READING_NOTE",
+    "CHANNEL_READS_THE_CITATION_NOT_THE_MEASURED_ARABIC_SURFACE",
+    "DALALA_INDICATOR_AUTHORITY_NOTE",
+    "DALALA_INDICATOR_DESIGN_SOURCE_CITATION_NOTE",
+    "DALALA_INDICATOR_NAMED_RESIDUALS",
+    "IFADA_HERE_IS_READ_STATUS_NOT_LINGUISTIC_BENEFIT",
+    "MANTUQ_COUNT_IS_NOT_PERFORMANCE",
+    "MUKHALAFA_IS_UNREAD_IN_TODAYS_TRACE",
+    "PERFORMANCE_INDICATOR_IS_REFUSED_BY_SECTION_ONE_NOTE",
+    "UNRESOLVED_REFERENCE_HAS_NO_CHANNEL",
+    "DalalaIndicatorError",
+    "DalalaIndicatorLedger",
+    "DalalaIndicatorRow",
+    "DalalaReferenceCensus",
+    "ReadDalalaReference",
+    "SupportNameIndex",
+    "build_support_name_index",
+    "load_dalala_indicator_ledger",
+    "read_dalala_indicator_ledger",
+    "read_dalala_reference",
 ]
