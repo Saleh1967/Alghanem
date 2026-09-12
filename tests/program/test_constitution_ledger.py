@@ -392,7 +392,7 @@ def test_the_repository_document_is_read_without_refusal() -> None:
     assert len(ledger.tables.excluded_tables) == 1
     assert ledger.laws.status_counts[DeclaredLawStatus.DECLARED_DEFERRED] > 0
     assert ledger.laws.status_counts[DeclaredLawStatus.ENFORCED_AT_AIM_RECORD] == 1
-    assert ledger.laws.status_counts[DeclaredLawStatus.ENFORCED_AT_WAD_NAQL] == 3
+    assert ledger.laws.status_counts[DeclaredLawStatus.ENFORCED_AT_WAD_NAQL] == 4
     assert ledger.laws.status_counts[DeclaredLawStatus.ENFORCED_AT_UMUM_KHUSUS] == 2
     assert ledger.laws.status_counts[DeclaredLawStatus.ENFORCED_AT_DECISION_CHAIN] == 1
     assert (

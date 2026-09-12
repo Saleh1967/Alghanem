@@ -1,8 +1,19 @@
-"""اختبارُ بنية الاستشهاد المعجميّ، وسَوقُ البطاقات الثلاث على الفرع نفسه.
+"""اختبارُ بنية الاستشهاد المعجميّ، وسَوقُ البطاقات على الفرع نفسه.
 
 والمقصودُ حسمُ سؤالٍ واحد: أوقوفُ البطاقات عند الحلقة الرابعة خطأٌ فئويٌّ دائم
 أم فجوةٌ مؤقّتة؟ فيُشتَقّ الجوابُ من واصفٍ يُفحَص، ويُسجَّل لكلّ بطاقةٍ ما جرى
 فعلًا: بنيتُها، وجنسُ امتناعها، وحالُ سؤال التواتر عليها، ودرجتُها إن قامت.
+
+**وبطاقةُ (عسعس) في التكوير:١٧ مضمومةٌ هنا لغرضٍ واحدٍ لا أكثر**: فعلٌ مُجمَلٌ
+حقيقيّ (مشتركٌ بين إقبال الليل وإدباره) يُساق على النمط نفسه، فيُقرأ أنّ الوقوف
+عند الرابعة عامٌّ على الأجناس الثلاثة — اسمٌ (قُروء، مَلِك)، وأداةٌ (أنّى)،
+وفعلٌ (عسعس) — لا خاصٌّ بالأسماء. ولا يُستنتَج منها شيءٌ سوى ذلك: لا ترجيحَ بين
+القراءتين، ولا حكمَ فقهيّ، ولا دعوى على معجمٍ في ذاته.
+
+**وأنّ الأداة نفسها تتجاوز الرابعةَ حين تقوم البنية** مُثبَتٌ على حدة بضابطٍ
+سالبٍ ببطاقةٍ اصطناعيةٍ صريحة الغرض في
+`tests/arabic/test_fourth_link_negative_control.py`، فوقوفُ هذه البطاقات وقوفٌ
+مُشتَقٌّ لا عطلُ أداة.
 """
 
 import json
@@ -45,7 +56,12 @@ from alghanem.arabic.transmission_standing import (
 from alghanem.arabic.wad_naql import WadRecord
 
 _EXAMPLES: Final = Path(__file__).resolve().parents[2] / "examples" / "external_audit"
-_CARDS: Final = ("quru_2_228.yaml", "anna_2_223.yaml", "malik_114_2.yaml")
+_CARDS: Final = (
+    "quru_2_228.yaml",
+    "anna_2_223.yaml",
+    "malik_114_2.yaml",
+    "assa_81_17.yaml",
+)
 
 _COMPILER: Final = "لسان العرب لابن منظور"
 
@@ -299,7 +315,7 @@ def test_a_card_path_without_an_attribution_list_is_refused() -> None:
 
 @pytest.mark.parametrize("name", _CARDS)
 def test_each_card_declares_a_flat_title_citation_today(name: str) -> None:
-    """المُخرَجُ الفعليُّ للاختبار: البطاقاتُ الثلاث مسطَّحةٌ لا متعاقبة."""
+    """المُخرَجُ الفعليُّ للاختبار: البطاقاتُ كلُّها مسطَّحةٌ لا متعاقبة."""
 
     card = _card(name)
     path = card_lexical_wad_path(card)
@@ -316,7 +332,7 @@ def test_each_card_declares_a_flat_title_citation_today(name: str) -> None:
 
 @pytest.mark.parametrize("name", _CARDS)
 def test_every_card_still_stops_at_the_fourth_link_by_a_named_genus(name: str) -> None:
-    """الوقوفُ واحدٌ في البطاقات الثلاث، ومُعلَّلٌ ببنيةٍ مُشتَقّة لا بانتظار."""
+    """الوقوفُ واحدٌ في البطاقات كلِّها، ومُعلَّلٌ ببنيةٍ مُشتَقّة لا بانتظار."""
 
     stop = first_stop(traverse(_card(name)))
 
