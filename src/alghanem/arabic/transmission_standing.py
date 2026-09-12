@@ -21,11 +21,32 @@
 درجةٍ مكتوبةٍ تخالف المُشتَقّة تُرفَض عند الإنشاء، فلا موضعَ تُكتَب فيه النتيجة
 مباشرةً.
 
-**المتواتر مُعلَنٌ في المفردة وغيرُ قابلٍ للبناء اليوم**، بالانضباط نفسه الذي
-مُنع به `شاهد_لكل_فرع` و`CLOSED_BY_FROZEN_EXPERIMENT` و`مُتحقَّق_محليًّا`: لا
-سلطةَ في هذا المستودع تفحص استقلالَ مصادرَ عبر أجيالٍ متعاقبة، فإصدارُ الدرجة
-ادّعاءُ فحصٍ لم يجرِ. ويُرفَض برسالته الخاصّة **قبل** الرسالة العامّة، كيلا
-يُقرَأ رفضٌ مبنيٌّ على انعدام السلطة رفضًا أضعفَ مبنيًّا على نقص حامل.
+**المتواتر مُعلَنٌ في المفردة وممتنعٌ عن الكسب الداخليّ بخطأٍ فئويّ، لا محجوزٌ
+لغياب سلطة** (`TawaturRequiresDiachronicSuccession` في §G0.N من
+`docs/CONSTITUTION.md`): التواترُ **بتعريفه** يشترط تعاقبَ أجيالٍ مستقلّةٍ
+زمنيًّا — شهاداتٌ تَرِد في دوراتٍ متعاقبةٍ متباعدةٍ في الزمن — والمدوّنةُ
+المغلقة **مقطعٌ متزامنٌ مُجمَّد**: نصٌّ واحدٌ لا يزيد ولا يتجدّد، فلا بُعدَ
+زمنيَّ فيه يقع فيه التعاقبُ أصلًا. فسؤالُ «أمتواترٌ هذا؟» على بنيةٍ كهذه **غيرُ
+مستقيم الوضع**، كسؤال «أمتواطئٌ العددُ خمسةٌ أم مشكَّك؟»؛ وهو غيرُ سؤالٍ بلا
+جوابٍ بعد.
+
+والفرقُ عمليّ لا لفظيّ: «حاولنا فلم نجد سلطة» يُنقَض بسلطةٍ تُبنى غدًا — وهو
+بعينه ما تمنع `NoReachingWrite != ProvenUnreachable` أن يُقرَأ برهانًا — أمّا
+«البنيةُ لا تحمل البُعدَ الذي يفترضه المفهوم» فلا تنقضه أداة، لأن العلّة في نوع
+السؤال لا في عدّة الفحص. ولذلك يُفصَل **جنسُ الامتناع** في مفردةٍ مغلقة
+(`UnconstructibilityGenus`) بدل دمج البابين في «غير قابلة للبناء» وحدها، على
+منوال ما كشفه `DeferredValueShape` من أن الحجز أشكالٌ لا شكلٌ واحد: فعلى بنيةٍ
+متزامنة الامتناعُ فئويّ، وعلى تعاقبٍ زمنيٍّ حقيقيّ يعود الامتناعُ حجزًا عاديًّا
+لغياب سلطةٍ تفحص استقلالَ المصادر.
+
+ويُرفَض إصدارُ الدرجة برسالته الخاصّة **قبل** الرسالة العامّة، كيلا يُقرَأ رفضٌ
+فئويٌّ رفضًا أضعفَ مبنيًّا على نقص حامل.
+
+**ولا مدخلَ استيرادٍ لادّعاء تواترٍ أجنبيّ هنا، والسببُ فئويٌّ مكتوبٌ لا
+صامت**: لمّا كان الخطأ في نوع السؤال لا في السلطة، فلا معنى لاستيراد «ادّعاء
+تواتر» ليُسجَّل على بنيةٍ لا يصحّ المفهومُ عليها؛ فيبقى `متواتر` عضوًا في
+المفردة بلا مدخل، بخلاف `ForeignDeclaredCase` و`ImportedInferenceStanding` حيث
+كان الامتناعُ سلطويًّا فصحّ فيه الاستيرادُ المُصرَّح به.
 
 **الاستقراء نطاقان لا مبلغان من الدقّة**: تامٌّ داخل مجموعةٍ مغلقة فيُنتج يقينًا
 **داخل حدودها**، وناقصٌ خارجها فيبقى ظنيًّا مهما اتّسع. وجملةُ النطاق **تُشتَقّ
@@ -41,12 +62,18 @@
 `ScopedFinding != CertifiedResidual`؛ لا ولادةَ ولا تجميدَ ولا `E0`، ولا تقرأ
 هذه الوحدةَ أيّ بوّابةٍ في `kernel/`، وحقولُ التدقيق الخارجيّ تبقى متطابقةً
 بايتًا.
+
+**والبقايا مُسمّاةٌ لا مطويّة** (`NAMED_RESIDUALS`)، ومنها أنّ جنسَ الامتناع
+لا يُصنَّف هنا لأخوات هذا الحجز في الشجرة، وأنّ منشأ تطابق هذا التصميم مع نقاشٍ
+سابق غيرُ متحقَّقٍ بشيءٍ في المستودع فلا يُقرَأ تحقّقًا مستقلًّا.
 """
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, fields
 from enum import Enum
+from types import MappingProxyType
 from typing import Final
 
 _FORBIDDEN_COUNT_FIELD_MARKERS: Final = (
@@ -108,18 +135,80 @@ class ExemptionHypothesis(Enum):
     EXEMPTION_QUESTION_ILL_POSED = "السؤال_نفسه_غير_مستقيم_الوضع"
 
 
+class EvidenceTemporalStructure(Enum):
+    """بنيةُ قاعدة الشواهد زمنيًّا: مقطعٌ متزامن، أو تعاقبٌ زمنيٌّ مستقلّ.
+
+    المدوّنةُ المغلقة `مقطع_متزامن_مُجمَّد` بحكم كونها مغلقة: نصٌّ لا يزيد ولا
+    يتجدّد لا يحمل بُعدًا زمنيًّا تقع فيه دوراتٌ متعاقبة.
+    """
+
+    SYNCHRONIC_FROZEN_SECTION = "مقطع_متزامن_مُجمَّد"
+    DIACHRONIC_INDEPENDENT_SUCCESSION = "تعاقب_زمني_مستقل"
+
+
+class UnconstructibilityGenus(Enum):
+    """جنسُ امتناع قيمةٍ مُعلَنة: أحجزٌ لغياب سلطة، أم خطأٌ فئويّ بنيويّ؟
+
+    ودمجُ الجنسين في «غير قابلة للبناء» وحدها يُسقط فارقًا عمليًّا: الأوّل
+    تَرفعه سلطةٌ تُبنى غدًا، والثاني لا ترفعه أداةٌ لأن العلّة في نوع السؤال.
+    والعضوُ الثالث لمن لم تُحسَم جهتُه، فلا يُحمَل على أقربهما.
+    """
+
+    HELD_BY_MISSING_AUTHORITY_TODAY = "محجوزة_لغياب_سلطة_اليوم"
+    REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH = "ممتنعة_بخطأ_فئوي_بنيوي"
+    GENUS_NOT_SETTLED = "جنس_الامتناع_غير_محسوم"
+
+
+class TawaturQuestionStanding(Enum):
+    """حالُ سؤال التواتر على بنيةٍ بعينها: أمستقيمُ الوضع أصلًا أم لا؟"""
+
+    ILL_POSED_ON_THIS_STRUCTURE = "غير_مستقيم_الوضع_على_هذه_البنية"
+    WELL_POSED_AND_UNVERIFIED_HERE = "مستقيم_الوضع_وغير_متحقق_هنا"
+
+
 if len(TransmissionStanding) != 3:  # pragma: no cover - guard
     raise RuntimeError("the transmission standings are deliberately three")
 if len(IstiqraScope) != 2:  # pragma: no cover - guard
     raise RuntimeError("induction scope is deliberately two-valued")
 if len(ExemptionHypothesis) != 3:  # pragma: no cover - guard
     raise RuntimeError("the exemption question declares exactly three hypotheses")
+if len(EvidenceTemporalStructure) != 2:  # pragma: no cover - guard
+    raise RuntimeError("an evidence base is a synchronic section or a succession")
+if len(UnconstructibilityGenus) != 3:  # pragma: no cover - guard
+    raise RuntimeError("a hold is by authority, by category mismatch, or unsettled")
+if len(TawaturQuestionStanding) != 2:  # pragma: no cover - guard
+    raise RuntimeError("a question is ill-posed on a structure or well-posed on it")
+
+
+CLOSED_CORPUS_TEMPORAL_STRUCTURE: Final = (
+    EvidenceTemporalStructure.SYNCHRONIC_FROZEN_SECTION
+)
+
+TAWATUR_REQUIRES_DIACHRONIC_SUCCESSION_NOTE: Final = (
+    "TawaturRequiresDiachronicSuccession: التواترُ بتعريفه يشترط تعاقبَ أجيالٍ "
+    "مستقلّةٍ زمنيًّا، والمدوّنةُ المغلقة مقطعٌ متزامنٌ مُجمَّد لا يزيد ولا "
+    "يتجدّد؛ فلا بُعدَ زمنيَّ فيها يقع فيه التعاقبُ أصلًا"
+)
+
+CATEGORY_MISMATCH_IS_NOT_MISSING_AUTHORITY_NOTE: Final = (
+    "الامتناعُ الفئويّ غيرُ الحجز لغياب سلطة: الحجزُ ترفعه سلطةٌ تُبنى غدًا، "
+    "والخطأُ الفئويّ لا ترفعه أداةٌ لأن العلّة في نوع السؤال لا في عدّة الفحص؛ "
+    "فسؤالُ التواتر على بنيةٍ متزامنة باطلُ الصياغة لا بلا جوابٍ بعد"
+)
+
+NO_IMPORT_ENTRY_FOR_A_FOREIGN_RECURRENCE_CLAIM_NOTE: Final = (
+    "لا مدخلَ استيرادٍ لادّعاء تواترٍ أجنبيّ، والسببُ فئويٌّ لا سلطويّ: استيرادُ "
+    "ادّعاءٍ مُصرَّحٍ غيرِ متحقَّق يصحّ حيث يصحّ المفهومُ على البنية ويُعوز "
+    "الفحصُ وحده، ولا يصحّ حيث لا يستقيم السؤالُ أصلًا؛ فيبقى `متواتر` عضوًا "
+    "بلا مدخل، وسببُ ذلك مكتوبٌ هنا لا مطويّ"
+)
 
 
 MUTAWATIR_IS_UNCONSTRUCTIBLE_NOTE: Final = (
-    "المتواترُ مُعلَنٌ وغيرُ قابلٍ للبناء هنا: لا سلطةَ في هذا المستودع تفحص "
-    "استقلالَ مصادرَ يستحيل معه التواطؤ ولا تعاقبَ دوراتٍ مستقلّة عبر أجيال، "
-    "فإصدارُ الدرجة ادّعاءُ فحصٍ لم يجرِ لا اختصارُ طريق"
+    "المتواترُ مُعلَنٌ وممتنعٌ عن الكسب الداخليّ بخطأٍ فئويٍّ بنيويّ لا بغياب "
+    "سلطةٍ اليوم: التواترُ يشترط تعاقبَ أجيالٍ مستقلّةٍ زمنيًّا، والمدوّنةُ "
+    "المغلقة مقطعٌ متزامنٌ مُجمَّد لا بُعدَ زمنيَّ فيه؛ فسؤالُ التواتر عليها "
+    "غيرُ مستقيم الوضع، لا سؤالٌ بلا جوابٍ بعد ترفعه سلطةٌ تُبنى غدًا"
 )
 
 COUNT_IS_NOT_RECURRENCE_NOTE: Final = (
@@ -147,6 +236,71 @@ TRANSMISSION_AUTHORITY_NOTE: Final = (
     "تسجيلٌ فقط: لا تُصدر هذه الوحدة ولادةً ولا حكمًا ولا تجميدًا ولا `E0`، ولا "
     "تقرؤها أيّ بوّابةٍ في النواة"
 )
+
+SUCCESSION_CARRIER_IS_WRITABLE_WITHOUT_A_TEMPORAL_AUTHORITY: Final = (
+    "SUCCESSION_CARRIER_IS_WRITABLE_WITHOUT_A_TEMPORAL_AUTHORITY"
+)
+
+SIBLING_HOLDS_ARE_NOT_CLASSIFIED_HERE: Final = "SIBLING_HOLDS_ARE_NOT_CLASSIFIED_HERE"
+
+DESIGN_CONVERGENCE_PROVENANCE_IS_UNVERIFIED: Final = (
+    "DESIGN_CONVERGENCE_PROVENANCE_IS_UNVERIFIED"
+)
+
+NAMED_RESIDUALS: Final[Mapping[str, str]] = MappingProxyType(
+    {
+        SUCCESSION_CARRIER_IS_WRITABLE_WITHOUT_A_TEMPORAL_AUTHORITY: (
+            "`RepetitionPattern.SUCCESSIVE_GENERATIONS` يبقى حاملًا يُكتَب، ولا "
+            "سلطةَ هنا تشتقّ بنيةَ قاعدة الشواهد زمنيًّا من الخبر نفسه؛ "
+            "فكاتبُه على خبرٍ مأخوذٍ من مدوّنةٍ مغلقة يقع في الخطأ الفئويّ "
+            "نفسه، ويُدرِكه رفضُ الدرجة لا رفضُ الحامل. وربطُ الخبر ببنيته "
+            "الزمنية مشروطٌ بسلطةٍ لا توجد اليوم، فهو حجزٌ لغياب سلطة لا "
+            "امتناعٌ فئويّ، ولا يُحسَم هنا بتشديد الحوامل"
+        ),
+        SIBLING_HOLDS_ARE_NOT_CLASSIFIED_HERE: (
+            "في الشجرة قيمٌ مُعلَنةٌ أخرى غيرُ قابلةٍ للبناء "
+            "(`ImportedInferenceStanding.VERIFIED_LOCALLY`، "
+            "و`OntologicalLayer.PHYSICAL_EXISTENCE`، "
+            "و`QuestionStatus.CLOSED_BY_FROZEN_EXPERIMENT`)، ولا تُصنَّف "
+            "أجناسُ امتناعها هنا: تصنيفُ حجزٍ في وحدةٍ أخرى حكمٌ على وحدةٍ لا "
+            "تملكه هذه، والاستبعادُ مُسمّى لا مطويّ"
+        ),
+        DESIGN_CONVERGENCE_PROVENANCE_IS_UNVERIFIED: (
+            "تطابقُ هذا التصميم مع نقاشٍ خارجيٍّ سابق واقعةٌ لا يملك المستودعُ "
+            "ما يفحص منشأها: أتزامنٌ مستقلّ هو أم أثرُ عرضٍ مباشر؟ لا شيءَ هنا "
+            "يُقرَأ منه الجواب، فيُسجَّل السؤالُ ولا يُحسَم، ولا يُستشهَد "
+            "بالتطابق تحقّقًا مستقلًّا لأيّ قرارٍ في هذه الوحدة"
+        ),
+    }
+)
+
+
+def unconstructibility_genus(
+    structure: EvidenceTemporalStructure,
+) -> UnconstructibilityGenus:
+    """اشتقّ جنسَ امتناع `متواتر` من بنية قاعدة الشواهد؛ دالّةٌ تامّة بلا فرعٍ افتراضيّ.
+
+    على المقطع المتزامن الامتناعُ فئويّ فلا ترفعه أداة؛ وعلى التعاقب الزمنيّ
+    الحقيقيّ يعود حجزًا عاديًّا لغياب سلطةٍ تفحص استقلالَ المصادر عبر الدورات.
+    """
+
+    if not isinstance(structure, EvidenceTemporalStructure):
+        raise TransmissionStandingError("بنيةُ قاعدة الشواهد من مفردتها المغلقة")
+    if structure is EvidenceTemporalStructure.SYNCHRONIC_FROZEN_SECTION:
+        return UnconstructibilityGenus.REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH
+    return UnconstructibilityGenus.HELD_BY_MISSING_AUTHORITY_TODAY
+
+
+def tawatur_question_standing(
+    structure: EvidenceTemporalStructure,
+) -> TawaturQuestionStanding:
+    """أمستقيمُ الوضع سؤالُ التواتر على هذه البنية؟ مُشتَقٌّ من البنية لا مكتوب."""
+
+    if unconstructibility_genus(structure) is (
+        UnconstructibilityGenus.REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH
+    ):
+        return TawaturQuestionStanding.ILL_POSED_ON_THIS_STRUCTURE
+    return TawaturQuestionStanding.WELL_POSED_AND_UNVERIFIED_HERE
 
 
 def _require_non_blank(value: str, field_name: str) -> str:
@@ -358,12 +512,21 @@ for _declaring_type in (
 
 __all__ = [
     "AHAD_IS_NEVER_EXEMPT_FROM_RECHECK_NOTE",
+    "CATEGORY_MISMATCH_IS_NOT_MISSING_AUTHORITY_NOTE",
+    "CLOSED_CORPUS_TEMPORAL_STRUCTURE",
     "COUNT_IS_NOT_RECURRENCE_NOTE",
+    "DESIGN_CONVERGENCE_PROVENANCE_IS_UNVERIFIED",
     "DIRECT_GENERALIZATION_IS_REFUSED_NOTE",
     "FARD_NEEDS_MEASUREMENT_NOT_REPETITION_NOTE",
     "FIRST_ORGANIZED_INFORMATION_QUESTION",
     "MUTAWATIR_IS_UNCONSTRUCTIBLE_NOTE",
+    "NAMED_RESIDUALS",
+    "NO_IMPORT_ENTRY_FOR_A_FOREIGN_RECURRENCE_CLAIM_NOTE",
+    "SIBLING_HOLDS_ARE_NOT_CLASSIFIED_HERE",
+    "SUCCESSION_CARRIER_IS_WRITABLE_WITHOUT_A_TEMPORAL_AUTHORITY",
+    "TAWATUR_REQUIRES_DIACHRONIC_SUCCESSION_NOTE",
     "TRANSMISSION_AUTHORITY_NOTE",
+    "EvidenceTemporalStructure",
     "ExemptionHypothesis",
     "ExemptionOpenQuestion",
     "IstiqraScope",
@@ -371,9 +534,13 @@ __all__ = [
     "RepetitionPattern",
     "ScopedFinding",
     "SourceIndependence",
+    "TawaturQuestionStanding",
     "TransmissionStanding",
     "TransmissionStandingError",
     "TransmissionStandingRecord",
+    "UnconstructibilityGenus",
     "derive_scope_statement",
     "derive_standing",
+    "tawatur_question_standing",
+    "unconstructibility_genus",
 ]
