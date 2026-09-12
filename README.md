@@ -478,6 +478,53 @@ certificate must declare its documented `علاقة`, the `هذيان` branch mu
 that out-of-assignment note and every other branch must leave it `لا_ينطبق`; the
 note is a required field checked at construction, not a comment.
 
+`src/alghanem/arabic/compound_layer_preregistration.py` is the compound layer's
+registration, and deliberately **not** a fourth certificate:
+`Preregistration != Certificate`. Four stages were requested for the compound —
+the governance pair (`العامل والمعمول`), the predicative relations
+(`النسب الإسنادية`), the two modes by which a maʿmūl affects the meaning
+(`التضمين والتقييد`), and the three relational values
+(`الفاعلية والمفعولية والمسببية`) — and the request fixes their outcome
+vocabularies, their named refusals, and which stage reads another's output. What
+it cannot fix is the one thing every existing certificate rests on: a named
+source, its questions quoted by their own wording, and one textually attested
+witness per branch. This repository contains none for the compound, which is
+precisely why `madlul_alone_formal.py` deferred «أقسام المركّب (إسنادي وغير
+إسنادي)» by name in the first place. So the honest artifact today is the frozen
+*requirement*, not the proof: each stage is registered with its closed outcome
+vocabulary (each including `لا_ينطبق` as a declared member rather than a gap),
+its refusals by name and statement, and a non-blank note saying exactly which
+source material is missing. There is no frozen domain, no carriers, no decision
+function, no witness, and no proof, so the module carries no success title at all
+— only `COMPOUND_SUCCESS_TITLE_IS_WITHHELD`, which says why one is withheld.
+
+Three structural guards keep the registration from drifting into the thing it is
+not. `AttestationStanding` is three-valued and its third member,
+`شاهد_لكل_فرع`, is **declared but unconstructible** today under exactly the
+discipline of `MeasurementProgress.CLOSED_BY_FROZEN_EXPERIMENT` and
+`EvidenceGenus.MORPHO_FUNCTIONAL`: no authority here verifies that a text attests
+a branch, so issuing that value would claim a check that never ran, and it is
+refused *before* the general "no source supplied" message so that a refusal
+grounded in absent authority is not read as the shallower absent source. The
+dependency order is derived rather than written — stage three reads stage one's
+outcome and stage four reads stage two's, which is what would keep two
+certificates from disagreeing silently — so a registration whose written
+prerequisites differ from the derived ones is refused at construction, as is a
+stage placed before its prerequisite. And coverage precedes judgement as in
+`WeakerModelExhaustionGate`: a missing stage and a duplicated stage each raise,
+because a stage left unregistered is not a stage without limits.
+`certificate_is_constructible` is `False` on every branch, no type here carries a
+result, verdict, birth, or proof field (checked at import against its own
+dataclass fields), the module imports nothing from `kernel/`, and every
+external-audit field stays byte-identical. Two limits are recorded as
+deliberately as the registration itself:
+`RequestedVocabularyIsNotAttestedVocabulary` — that `عامل` and `معمول` are the
+vocabulary the request names does not make them the source's vocabulary, nor
+branch-complete — and the two standing deferrals in `madlul_alone_formal.py` and
+`lafz_madlul_relation_formal.py` are left in their own wording, because editing
+them now would suggest a debt was paid when the compound is still undivided and
+`سببية` still unclassified.
+
 `src/alghanem/arabic/distributional_probe_report.py` is deliberately **not** a
 fourth certificate: it records a *negative* measurement with the same
 discipline the three positive ones use. Over 2193 surface forms (support ≥ 5),
