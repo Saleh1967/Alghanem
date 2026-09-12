@@ -525,6 +525,104 @@ branch-complete — and the two standing deferrals in `madlul_alone_formal.py` a
 them now would suggest a debt was paid when the compound is still undivided and
 `سببية` still unclassified.
 
+`src/alghanem/arabic/kulli_juzi_formal.py` is a fourth certificate from the same
+named source (*الشخصية الإسلامية*, part 3), on the division of the **name** into
+`كلّي` and `جزئي` and the sub-divisions of each. Its structure differs from the
+first three in one respect that is stated before the code rather than after it:
+this passage does *not* yield a single four-level decision tree. It gives one
+first-level partition and **three mutually independent sub-partitions** — two of
+them partition the kullī set twice over (`متواطئ`/`مشكِّك` and `جنس`/`مشتق`) and
+one partitions the juzʾī set (`علَم`/`ضمير`). Treating the two kullī axes as one
+two-step tree would force every witness into a joint cell such as
+`(كلّي، متواطئ، جنس)`, and the source attests no such cell: `الوجود` is attested
+as `مشكِّك` and never placed on the genus axis, `الأسود` is attested as `مشتق` and
+never placed on the equivocation axis. So the frozen domain is axis-aware:
+`card(Ω) = 8`, each witness declares exactly *one* attested axis, asking a kullī
+axis of a juzʾī name (or the reverse) is refused by `classify_kulli_juzi`, and
+every witness on a kullī axis must carry a required
+`ملاحظة استقلال المحورين` field — `لا_ينطبق` on every other branch — saying in
+its own words that attestation on one axis is not attestation on the other. As
+in the earlier certificates `غير_مطروح` and `لا_محور_مُثبَت` are declared
+vocabulary values rather than silent `None`s, the decision function is total with
+no default branch, and no answer is written freely: the first is derived from
+`حامل وقوع الشركة` and both the declared axis *and* its outcome are derived
+together from a single `حامل التفريع`, so flipping that carrier on `الإنسان`
+produces `كلّي_مشكِّك` by construction. `prove_kulli_juzi_over_attested_corpus`
+reports one row per witness without stopping at a first failure; on the nine
+attested witnesses (`الحيوان`, `الكاتب`, `الإنسان`, `الوجود`, `السواد`,
+`الأسود`, `زيد`, `عبد الله`, `هو`) the derived class matches the attested class
+in every case, so the report carries the exact title "شهادة صورية شاملة ناجحة
+على نطاق محدود".
+
+Its limits are recorded as deliberately as the result.
+`FormalClassification != BirthVerdict` and
+`DeclaredUniversality != BornOntology` — no type in `kernel/`, no `Freeze`, no
+`E0`, no gate reads it, and every external-audit field stays byte-identical; and
+the scope is the attested witnesses of one named source and eight classes, so the
+five Aristotelian universals, the degrees of `تشكيك`, the kinds of pronoun, and
+any link between this division and the division of the lafẓ by signifier and
+signified are excluded by declaration. One further limit belongs to the term
+`جنس` alone and is recorded rather than assumed: in this source `جنس` is a
+specific term *inside* the `جنس`/`مشتق` pair under the kullī — the lafẓ signifying
+an unspecified essence. This certificate does **not** establish that it is the
+Aristotelian logical genus, nor that it coincides with what another vocabulary
+calls `الجامد`. That equation is an independent claim with no proof here, so it
+is recorded verbatim in `JINS_IS_NOT_A_PROVED_SYNONYM_NOTE` as an unproved claim
+that no function in the module reads — the same discipline as
+`RequestedVocabularyIsNotAttestedVocabulary`: a name occurring in two
+vocabularies does not make them one vocabulary.
+
+Two additions to `src/alghanem/arabic/lafz_madlul_relation_formal.py` strengthen
+what was already there without changing a single state, carrier, witness, or
+result. First, the source's own **closure sentence** — «ينقسم اللفظ باعتبار
+الدال والمدلول... إلى سبعة أقسام: هي المنفرد، والمتباين، والمترادف، والمشترك،
+والمنقول، والحقيقة، والمجاز» — is recorded in `RELATION_CLOSURE_ATTESTATION` and
+carried as a field of the frozen domain. Until now `card(Ω) = 7` rested on this
+repository's reading of the source; it now rests on a quoted statement, and the
+tie is checked rather than asserted: an import-time guard, repeated in
+`FrozenRelationDomain.__post_init__`, verifies that every one of the seven
+declared relation names actually occurs in that sentence, so adding an eighth
+branch or renaming one to something the sentence does not name fails at import
+instead of passing silently. Second, the source's preference rule on the
+synonymy branch — «الترادف خلاف الأصل» — is recorded in
+`MURADIF_PRESUMPTION_NOTE` and deliberately left **inert**: no function reads it,
+it enters neither the domain nor any carrier, and a test asserts it is mentioned
+exactly once in the module body. That is not timidity but typing: it is a
+defeasible preference to be applied *under doubt*, whereas the decision function
+is total on a closed domain that has no doubt state, so making it operative would
+mean introducing a hesitation state the domain does not have — a change to the
+certificate's structure rather than a strengthening of it.
+
+`src/alghanem/arabic/convergence_claim_register.py` records **claims about
+convergence and their standing**, and is emphatically not a convergence verdict:
+`ClaimRegister != ConvergenceVerdict`. There is no convergence machinery in this
+repository at all — no type, no gate, no measuring function — so a named
+criterion invented in conversation is not a test that ran, and saying a claim
+"satisfies" one presents a personal judgement in the shape of an automated check.
+That refusal is registered by name as `NamedCriterionIsNotABuiltGate`. Two claims
+are registered today. The first — that classifying the *shariʿ* names into
+«متباينة ومترادفة ومشتركة ومشكِّكة ومتواطئة» is a second independent application
+of one classification to different material — stands as `مرفوضة_بفحصٍ_مباشر`,
+because direct inspection shows the list takes **three branches** from the
+sevenfold signifier/signified classification (`متباين`, `مترادف`, `مشترك`) and
+**two outcomes** from the equivocation axis under the kullī (`متواطئ`, `مشكِّك`):
+it merges two independent classifications rather than re-issuing one of them on a
+new test case. The refutation is required by construction to name both merged
+classifications with their own modules and borrowed branches, and it is recorded
+as final for the claim *as stated* rather than pending — `RefusalIsNotDeferral` —
+because the defect is in the claim's structure and no later evidence added to
+either classification removes it. The second claim, that the source contains a
+section named «المتوسطة», stands as `مصدر_مُسمّى_غائب`: the term occurs in no
+text supplied to this repository, and substituting a synonym or hunting for one
+without instruction is refused by name. Coverage precedes judgement as elsewhere:
+a missing or duplicated claim raises, the third standing
+(`مقبولة_بسلطة_تقارب`) is declared but **unconstructible** today under exactly the
+discipline of `شاهد_لكل_فرع`, no type carries a result, verdict, birth,
+certificate, or proof field (checked at import against its own dataclass fields),
+the module imports nothing from `kernel/`, every external-audit field stays
+byte-identical, and there is no success title at all — only
+`CONVERGENCE_SUCCESS_TITLE_IS_WITHHELD`, which says why one is withheld.
+
 `src/alghanem/arabic/distributional_probe_report.py` is deliberately **not** a
 fourth certificate: it records a *negative* measurement with the same
 discipline the three positive ones use. Over 2193 surface forms (support ≥ 5),
