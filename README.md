@@ -1680,6 +1680,45 @@ byte-checkable structural claim rather than a passed title
 frozen synchronic section is a question this module neither decides nor needs
 (`COMPILER_SYNCHRONY_IS_NOT_DECIDED_HERE`).
 
+The eleventh milestone asks whether the fourth link is a fact about single
+words or about a shape that recurs one level up, and it isolates that single
+variable rather than testing it on material that already carries another one.
+Every level-one card standing today (قُروء, أنّى, مَلِك, عسعس) is lexically
+مُجمَل, so a stop above it could always be read two ways: the composition
+mechanism failed, or level-one ambiguity leaked upward. «الغنم السائمة» has
+neither term in dispute, so any stop is attributable to the mechanism alone.
+`src/alghanem/arabic/level_two_manat.py` builds `TaqyeedManatGate`, the link
+parallel to link four but asked of the *constraint* rather than of a word: does
+a transmission path exist for this qualifier specifically — not for الغنم and
+not for السائمة separately — establishing that it is مُخصِّص (producing مفهوم
+المخالفة) rather than a وصف طردي? Level-one inputs are read from their actual
+issued closure through `ClosedLevelOneCard`, which accepts only a gate-issued
+`EvidenceApplicabilityAssessment` bound to that card's own scope and refuses
+re-analysing raw text (`LEVEL_ONE_CLOSURE_IS_READ_NOT_REPEATED_NOTE`).
+`CompositionGenus` is derived from the relation declared in a named source and
+refused when a written field disagrees. The order of reading was fixed in
+advance and kept: the synthetic `test_only` control in
+`tests/arabic/test_level_two_manat_negative_control.py` proves the link *stands*
+when the constraint's path stands and stops when a single attribution is
+removed, and only then were the real cards read. They stop —
+`وقوف_آلة_لانقطاع_نقل_القيد`, flat-title structure,
+`REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH` — and the stop is recorded as issued,
+not engineered away. Three things this unit does not establish are named rather
+than implied: it is not the frozen `TADMIN_TAQYID` certificate and does not
+widen that stage's frozen outcome vocabulary
+(`LEVEL_TWO_LINK_IS_NOT_THE_TADMIN_TAQYID_CERTIFICATE_NOTE`,
+`COMPOSITION_GENUS_IS_NOT_A_FROZEN_STAGE_OUTCOME_NOTE`), it issues no fractal
+(Φ) verdict about its own resemblance to link four, because a unit that judged
+its own parallel would be both litigant and judge
+(`FRACTAL_VERDICT_IS_NOT_ISSUED_HERE_NOTE`), and it decides no fiqh question
+about zakāt. An input stop (genus undecided) is kept in a different member from
+a mechanism stop so the two variables do not merge again by the back door
+(`INPUT_STOP_IS_NOT_A_MECHANISM_FAILURE_NOTE`). The hadith is a new witness, not
+a previously coded example, and its cards live in `examples/level_two_manat/`
+rather than among the Quranic audit cards; no member of `BayanKind` was added
+for it (`NEW_WITNESS_IS_NOT_AN_ESTABLISHED_EXAMPLE_NOTE`,
+`HADITH_SOURCE_DOES_NOT_WIDEN_THE_BAYAN_VOCABULARY_NOTE`).
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future
