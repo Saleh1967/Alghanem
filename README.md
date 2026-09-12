@@ -823,6 +823,37 @@ making it strictly finer rather than equivalent — an import-time guard asserts
 that `SOURCE_DIGEST_COVERED_FIELDS` is a proper subset of the entry fields, so
 the two digests can never be read as attesting the same thing.
 
+G0.N declares, law-only and ahead of any runtime, what a carrier *is*:
+`Carrier != DiscoveredEssence`, and a carrier is instead a knot tied by
+convention at the one point on a fiber of regularity that survived every
+weaker model licensed and frozen for its own experiment. Its structural
+consequence is about `Freeze`: freezing fixes a knot at one declared version
+of the fiber — one tool, one corpus, one normalization policy — so reopening
+when that version changes is the condition of the knot's continuity rather
+than a defect of the earlier freeze, which is why `FreezeIsFiberVersionScoped`
+composes the existing `G0.F.1` reopen protocol instead of forking a second
+one. `NodeContinuityIsContentNotOccurrence` names exactly which half of the
+continuity question the repository already answers and which it does not:
+`TransitionContentIdentity` and `OCCURRENCE_ONLY_EXCLUSIONS`
+(`src/alghanem/kernel/content_identity.py`) already make it impossible for
+`admission_id` — a fingerprint that an execution happened, not of which
+phenomenon it was about — to enter a content identity, but deciding that two
+content identities produced under two tool versions name one knot is issued
+by no authority here and does not follow from digest equality alone.
+`NoIntentProjection` unifies `NoLabelLeak` and `NoOracleTuningBeforeFreeze` as
+two applications of one origin, forbidding both the original author's intent
+and the running researcher's expectation as grounds for settling a
+candidate's meaning. `ExistenceIsBinaryRankIsGraded` and
+`RankNeverCertifiesEssence` separate the binary existence judgement, which
+`StructuralDecisionStatus` already carries, from graded evidential rank, which
+has no machinery in this repository at all; and
+`CompleteInductionIsCorpusBounded` and
+`NoBedrockWithoutRecurringDirayaSurvival` bound what an exhaustive corpus
+result may be said to establish and refuse to read repeated survivals as
+bedrock. The whole section is declared law: no runtime, class, enum, gate,
+rank primitive, or continuity authority is introduced by it. See the "G0.N"
+section of `docs/CONSTITUTION.md`.
+
 G0.F declares, ahead of any runtime, that factorization is the general case
 of birth (a domain may close with one factor, several jointly-necessary
 factors, or none) and that fractality is a law, not a folder layout: a

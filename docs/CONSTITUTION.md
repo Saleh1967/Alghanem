@@ -517,6 +517,50 @@ Matrix output constraint:
 - Do not reinterpret retrospective formalization as historical generation.
 - Do not claim G−1 rewrites or invalidates existing G0/G0.MA/G0.F/BA/BV/RC law.
 
+## G0.N — Knot ontology of the carrier (law-only)
+
+This milestone declares one ontological commitment about what a carrier *is*,
+ahead of any runtime that could issue one:
+
+```
+Carrier != DiscoveredEssence
+Carrier  = KnotTiedOnAFiberOfRegularity
+```
+
+A carrier is not an essence that was latent in the material and finally
+found. It is a knot tied, by convention and justified statistically or
+formally, at a point on a continuous fiber of regularity — the one point that
+survived every weaker model licensed and frozen for that experiment. Nothing
+below promotes that convention into a discovery, and nothing below weakens it
+into an arbitrary choice: a knot is licensed exactly by what it survived.
+
+The structural consequence is about `Freeze`, and it is stated here rather
+than left to be noticed later. Freezing does not fix a final essence; it
+fixes a knot *at one version of the fiber* — one tool, one corpus, one
+moment. Reopening when the fiber changes is therefore not a contradiction of
+the earlier freeze but the condition of the knot's continuity, which is why
+this section binds itself to the existing `G0.F.1` reopen protocol instead of
+forking a parallel one.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `KnotNotEssence` | DECLARED_DEFERRED | A carrier is a conventional knot tied at a point that survived every licensed, frozen weaker model for its own experiment, never an essence that pre-existed the experiment and was uncovered by it. `SurvivedEveryLicensedWeakerModel` is the whole warrant for the knot; no separate act of recognition, intuition, or traditional naming adds anything to it, and `TraditionalName` remains strictly posterior per `NamingIsPosterior` below in G0. |
+| `FreezeIsFiberVersionScoped` | DECLARED_DEFERRED | `Freeze(K)` fixes a knot at one declared version of the fiber (tool identity, corpus, normalization policy, Unicode database version), never an essence independent of that version. Consequently reopening `K` when the fiber version changes is required rather than merely permitted, and is not a defect of the earlier freeze. This composes `G0.F.1`'s `ReopenDoesNotRebirth` and `RevisionDoesNotEraseHistoricalFreeze` and forks neither: a fiber-version change opens a new revision on `K` itself and leaves the historical frozen record intact. |
+| `NodeContinuityIsContentNotOccurrence` | DECLARED_DEFERRED | Two results separated in time or tool version may be read as *the same carrier* only if their content identity matches. Name equality is never sufficient, and occurrence identity is never sufficient: `admission_id` fingerprints that an execution happened, not which phenomenon it was about. `TransitionContentIdentity` and `OCCURRENCE_ONLY_EXCLUSIONS` (`src/alghanem/kernel/content_identity.py`) already enforce the exclusion half of this law — an occurrence field cannot enter a content identity — but the comparison half, deciding that two content identities produced under two tool versions name one knot, is issued by no authority in this repository and is not implied by digest equality alone. |
+| `NoIntentProjection` | DECLARED_DEFERRED | No candidate's meaning may be settled by (a) the intent of whoever originally laid down the phenomenon, or (b) the intent of the researcher running the experiment. The only admissible meaning is what a surviving residual forces after every weaker model licensed and frozen *for that experiment* has been exhausted. `NoLabelLeak` (case a) and `NoOracleTuningBeforeFreeze` (case b) are two applications of this one origin, not two independent prohibitions, and neither is weakened by the other's satisfaction. |
+| `ExistenceIsBinaryRankIsGraded` | DECLARED_DEFERRED | Two different questions may not share one verdict type. Whether a thing exists at all is binary and ungraded, and corresponds to `StructuralDecisionStatus` as a purely logical judgement. How well a judgement about a thing's attributes matches reality is graded by strength of evidence, and corresponds to whatever lower-confidence-bound, z-score, or p-value machinery a later measurement layer supplies. No such rank machinery exists in this repository today, so this law is declared over a codomain that is not yet constructible here. |
+| `RankNeverCertifiesEssence` | DECLARED_DEFERRED | A rank may reach any height and still remain a measurement of the strength of presumptive evidence about an attribute. It never converts into the binary existence judgement, and never certifies an essence. Retractions of high-rank results are therefore structural rather than accidental: those results answered attribute questions, which stay presumptive at every rank. |
+| `CompleteInductionIsCorpusBounded` | DECLARED_DEFERRED | Exhaustive enumeration over a closed finite set yields certainty *inside that set only*. A `PASS` over a complete corpus must be stated as established within that corpus and presumptive beyond it until a second independent corpus is enumerated. Direct generalization from one closed corpus to the open language it is drawn from is refused by name, not softened by hedging prose. |
+| `NoBedrockWithoutRecurringDirayaSurvival` | DECLARED_DEFERRED | Ontological and epistemological scrutiny is a continuing process, not a gate passed once. Every independent new application — another corpus, another tool, another scope — is a fresh occasion to fail. Repeated survivals never fix the framework as bedrock; they license only the reading that it has not been defeated yet. |
+
+This section is law-only and boundary-only, in the manner of `G−1` above. It
+introduces no runtime, class, enum, gate, rank primitive, or continuity
+authority, and it neither invalidates nor rewrites any existing G0, G0.MA,
+G0.F, G0.BA, G0.BV, or G0.IC law. In particular it issues no
+`CarrierNodeContinuityReading`: deciding that two frozen results name one knot
+across two tool versions is exactly the authority this repository does not
+have, and declaring the law is not exercising it.
+
 ## G0 — Birth Protocol (declared law, no runtime gate yet)
 
 The kernel and Arabic layer never introduce a new named object, cardinality,
