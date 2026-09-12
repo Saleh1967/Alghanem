@@ -364,6 +364,69 @@ three of eight competing readings are described by one of the five causes
 readings in `man_2_255.yaml` and `maa_2_197.yaml` as `اشتراك`); the remaining
 five are declared `لا_ينطبق` rather than forced into a label.
 
+That priority order also carries an obligation, now made visible. Declaring a
+cause that sits late in the order is an implicit claim that every cause ranked
+ahead of it has already been excluded by evidence, so classifying a word as
+`اشتراك` — the last of the five — before excluding `نقل`, `مجاز`, `إضمار`, and
+`تخصيص` is methodologically premature even where it happens to be right
+(`EXHAUSTION_PRECEDES_CLASSIFICATION_NOTE`). A classified competing reading may
+therefore declare `استبعاد_الأسباب_الأقوى`, each entry naming one cause, its
+exclusion evidence, and its named source; *which* causes are owed is derived
+from the existing order alone, never declared by the card, and an entry naming
+a cause that is not stronger — or naming one twice — is refused at read time
+rather than silently counted. The derived three-valued result
+(`استنفاد_مكتمل` / `استنفاد_ناقص` with the remaining causes named / `لا_يلزم_استنفاد`)
+is reported as `حالة_استنفاد_الأسباب_الأقوى` and judges nothing: it changes no
+`نتيجة_التدقيق_الخارجي` and fails no card (`REPORTED_EXHAUSTION_IS_NOT_A_GATE_NOTE`),
+and the analogy to `NoBirthBeforeLicensedWeakerExhaustion` is named with its
+difference rather than claimed as identity — there exhaustion closes a gate,
+here it is only reported. As it stands, `quru_2_228.yaml` reads
+`استنفاد_ناقص` with all four stronger causes still unexcluded, which is the
+point: the gap in the argument is now visible instead of silent.
+
+A third closed vocabulary, `src/alghanem/arabic/apparent_conflict.py`, sits
+beside those five without merging into them, because it answers a different
+question: not *what makes one word's meaning unclear* but *whether a claimed
+conflict between two witnesses is real at all*. Its governing rule is that mere
+resemblance between two texts creates no contradiction — the default between
+them is **difference**, and conflict is a claim requiring proof rather than a
+presumption (`DEFAULT_IS_DIFFERENCE_NOT_CONTRADICTION_NOTE`). It names exactly
+three causes of *apparent* conflict — `التعميم` (treating a ruling tied to one
+incident as general), `التجريد` (stripping an incident of its circumstances
+before comparing), `الاشتباه` (surface resemblance between incidents that
+differ in substance) — plus the explicit `لا_ينطبق`, and records for each the
+matching remedy of the threefold treatment: separate each incident, tie the
+treatment to its own incident, tie the incident to its circumstances; that is,
+restore every text to its full context *before* any comparison. Deliberately
+there is **no** priority order among the three: they are distinct kinds, not
+degrees of one severity, so `defect_priority` is not replicated here and the
+absence is recorded rather than left implicit
+(`NO_PRIORITY_AMONG_APPARENT_CONFLICT_CAUSES_NOTE`). `الاشتباه` is not
+`الاشتراك` — resemblance between two incidents is not multiplicity of
+assignment in one word — and an import-time guard checks that the comparison
+keys of the two vocabularies do not intersect
+(`ISHTIBAH_IS_NOT_ISHTIRAK_NOTE`). A competing reading may carry the optional
+`سبب_التعارض_الظاهر`, reported as `تصنيف_أسباب_التعارض_الظاهر` under exactly
+the same inertness: absent from the derived specification, absent from the
+audit outcome, read by no kernel gate.
+
+Finally, a deferred result is no longer treated as a closed one. A balance
+between two probable indications never settles in fact, because accepting it
+would require one of three impermissible things — acting on both at once,
+discarding both, or preferring one arbitrarily — so `DEFER` is read as *the
+preponderating indication has not been found yet*, never as *none exists*
+(`TAADUL_IS_NEVER_A_SETTLED_RESULT_NOTE`). Nothing in the gate changes: no
+`BLOCK` path is introduced, and the status is neither softened nor hardened.
+What changes is that the residual now says in its own text that the search for
+a further preponderating indication remains open, and a deferred external audit
+reports `حالة_البحث` as `بحث_مستمرّ_مطلوب` together with `ما_يُبحَث_عنه`, which
+names the specific readings still sought rather than gesturing at openness in
+general. Seeking a *preponderating* indication is a weaker claim than
+establishing an *eliminating* one, so this marker licenses no elimination and
+no accumulation of supporting indications into one
+(`PREPONDERANCE_SOUGHT_IS_NOT_ELIMINATION_LICENSED_NOTE`);
+`ONE_SOUND_ELIMINATION_SUFFICES_NOTE` stands unchanged.
+
 `src/alghanem/arabic/manat_verification.py` runs the G0.EA.1 applicability gate
 over one real Arabic word for the first time: `قُرُوء` in البقرة:228, through
 `examples/external_audit/quru_2_228.yaml`. It adds no constitutional law; the

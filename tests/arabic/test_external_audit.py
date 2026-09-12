@@ -5,6 +5,10 @@ from pathlib import Path
 import pytest
 
 from alghanem.arabic.external_audit import (
+    NO_OPEN_RESEARCH,
+    PREPONDERANCE_SOUGHT_IS_NOT_ELIMINATION_LICENSED_NOTE,
+    RESEARCH_REMAINS_OPEN,
+    RESEARCH_REMAINS_OPEN_AFTER_DEFER_NOTE,
     ExternalAuditError,
     audit_card,
     build_birth_spec_from_card,
@@ -531,3 +535,51 @@ def test_declared_witnesses_are_read_verbatim() -> None:
     card = json.loads(_example_card("maa_2_197.yaml").read_text(encoding="utf-8"))
 
     assert read_declared_witnesses(card) == tuple(card["الأدلة"])
+
+
+def test_a_deferred_audit_names_what_is_still_sought() -> None:
+    """`DEFER` is an open research state, never a settled balance."""
+
+    result = audit_card(_example_card("man_2_255.yaml"))
+
+    assert result.نتيجة_التدقيق_الخارجي == "DEFER_التدقيق"
+    assert result.حالة_البحث == RESEARCH_REMAINS_OPEN == "بحث_مستمرّ_مطلوب"
+    assert result.ما_يُبحَث_عنه == (
+        "قرينة ترجيحٍ إضافية للقراءة المنافسة (شرطية)",
+        "قرينة ترجيحٍ إضافية للقراءة المنافسة (موصولة)",
+    )
+
+
+def test_a_closed_audit_carries_no_open_research_marker(tmp_path: Path) -> None:
+    card = _relation_card("مكافئ_صوريًّا")
+    path = tmp_path / "closed.json"
+    path.write_text(json.dumps(card, ensure_ascii=False), encoding="utf-8")
+
+    result = audit_card(path)
+
+    assert result.نتيجة_التدقيق_الخارجي == "PASS_التدقيق"
+    assert result.حالة_البحث == NO_OPEN_RESEARCH
+    assert result.ما_يُبحَث_عنه == ()
+
+
+def test_a_deferred_down_e_closure_is_itself_named_as_open_research(
+    tmp_path: Path,
+) -> None:
+    card = _relation_card("أضعف_صوريًّا")
+    card["تعريف_التجربة"]["strict_relations"] = [["B", "A"]]
+    path = tmp_path / "down_e.json"
+    path.write_text(json.dumps(card, ensure_ascii=False), encoding="utf-8")
+
+    result = audit_card(path)
+
+    assert result.نتيجة_التدقيق_الخارجي == "DEFER_التدقيق"
+    assert result.حالة_البحث == RESEARCH_REMAINS_OPEN
+    assert result.ما_يُبحَث_عنه == ("إغلاق سوابق Down_E الموثَّق",)
+
+
+def test_the_open_research_marker_records_why_a_balance_never_settles() -> None:
+    assert "لم يُكتشَف المرجِّح" in RESEARCH_REMAINS_OPEN_AFTER_DEFER_NOTE
+    assert "التشهّي" in RESEARCH_REMAINS_OPEN_AFTER_DEFER_NOTE
+    assert "أضعف من البحث عن قرينةٍ مُقصِية" in (
+        PREPONDERANCE_SOUGHT_IS_NOT_ELIMINATION_LICENSED_NOTE
+    )
