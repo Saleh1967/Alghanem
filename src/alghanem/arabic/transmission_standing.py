@@ -63,6 +63,28 @@
 هذه الوحدةَ أيّ بوّابةٍ في `kernel/`، وحقولُ التدقيق الخارجيّ تبقى متطابقةً
 بايتًا.
 
+**وبنيةُ قاعدة الشواهد نفسها تُشتَقّ ولا تُمرَّر، ببوّابةٍ جزئيةٍ غيرِ متناظرة**:
+لمّا كان الجنسُ يُشتَقّ **من** التصنيف الزمنيّ، بقي التصنيفُ نفسه — لو مُرِّر
+وسيطًا مُعلَنًا — مقدّمةً غيرَ محقَّقةٍ تنجح عليها البوّابةُ كلّها؛ وهو بعينه
+شكلُ الثغرة الأصليّة على مستوًى أعمق. فيُشتَقّ من `EvidenceBaseDescriptor`
+باشتقاقٍ **غير متناظر بالضرورة**:
+
+* **التزامنُ يُبرهَن**: الإغلاقُ يُعاد اشتقاق بصمته من التعداد نفسه ببدائيّة
+  `canonical_content` العديمة السلطة؛ ومن عجز عن تعداد أعضاء قاعدته لم يُثبت
+  إغلاقَها. وعدمُ النموّ يستلزم انتفاء البُعد الذي يقع فيه التعاقب.
+* **والتعاقبُ لا يُبرهَن هنا أبدًا**: `DIACHRONIC_INDEPENDENT_SUCCESSION` لا
+  تُشتَقّ من أيّ واصفٍ كان، لأنّ إثباتها سلطةٌ زمنيّةٌ غيرُ موجودة؛ واشتقاقُها
+  إيجابًا هو بعينه انقلابُ `NoReachingWrite != ProvenUnreachable` الذي تمنعه هذه
+  الوحدة. فتُترَك مُعلَنةً بلا مُشتِقّ، على منوال `متواتر` نفسها.
+* **و«ليست مقطعًا مُجمَّدًا» ليست «إذن تعاقبٌ حقيقيّ»**: سالبةٌ لا تُثبت نقيضًا،
+  فلو بقيت المفردةُ ثنائيّةً لأنتج الاستبعادُ وحده تعاقبًا بالنفي. ولذلك عضوٌ
+  ثالث `TEMPORAL_STRUCTURE_NOT_SETTLED`، على منوال `GENUS_NOT_SETTLED`، هو وحده
+  بقيّةُ الاشتقاق حين يعجز البرهان.
+
+والمكسبُ **طبقةٌ واحدة من التسلسل لا التسلسلُ كلّه**، مُسمًّى لا مطويًّا: تعدادُ
+الأعضاء يبقى مُعلَنًا من المستدعي، والمتبدِّلُ أنّ المُعلَن صار دعوى بنيويّةً
+تُعاد مطابقتُها بالبايت بدل حكمٍ زمنيٍّ لا يُفحَص.
+
 **والبقايا مُسمّاةٌ لا مطويّة** (`NAMED_RESIDUALS`)، ومنها أنّ جنسَ الامتناع
 لا يُصنَّف هنا لأخوات هذا الحجز في الشجرة، وأنّ منشأ تطابق هذا التصميم مع نقاشٍ
 سابق غيرُ متحقَّقٍ بشيءٍ في المستودع فلا يُقرَأ تحقّقًا مستقلًّا.
@@ -75,6 +97,12 @@ from dataclasses import dataclass, fields
 from enum import Enum
 from types import MappingProxyType
 from typing import Final
+
+from alghanem.canonical_content import (
+    canonical_bytes,
+    canonical_digest,
+    is_canonical_digest,
+)
 
 _FORBIDDEN_COUNT_FIELD_MARKERS: Final = (
     "count",
@@ -136,14 +164,18 @@ class ExemptionHypothesis(Enum):
 
 
 class EvidenceTemporalStructure(Enum):
-    """بنيةُ قاعدة الشواهد زمنيًّا: مقطعٌ متزامن، أو تعاقبٌ زمنيٌّ مستقلّ.
+    """بنيةُ قاعدة الشواهد زمنيًّا، مُشتَقَّةً لا مُمرَّرة، باشتقاقٍ غير متناظر.
 
     المدوّنةُ المغلقة `مقطع_متزامن_مُجمَّد` بحكم كونها مغلقة: نصٌّ لا يزيد ولا
-    يتجدّد لا يحمل بُعدًا زمنيًّا تقع فيه دوراتٌ متعاقبة.
+    يتجدّد لا يحمل بُعدًا زمنيًّا تقع فيه دوراتٌ متعاقبة — وهذا وحده ما يُبرهَن
+    هنا. أمّا `تعاقب_زمني_مستقل` فمُعلَنٌ بلا مُشتِقّ: إثباتُه سلطةٌ زمنيّةٌ
+    غيرُ موجودة، واشتقاقُه بالنفي من تعذّر برهان الإغلاق سالبةٌ تُقرَأ إثباتًا.
+    ولذلك العضوُ الثالث: بقيّةُ الاشتقاق حين يعجز البرهان، لا جوابٌ أضعف.
     """
 
     SYNCHRONIC_FROZEN_SECTION = "مقطع_متزامن_مُجمَّد"
     DIACHRONIC_INDEPENDENT_SUCCESSION = "تعاقب_زمني_مستقل"
+    TEMPORAL_STRUCTURE_NOT_SETTLED = "بنية_الشواهد_الزمنية_غير_محسومة"
 
 
 class UnconstructibilityGenus(Enum):
@@ -164,6 +196,7 @@ class TawaturQuestionStanding(Enum):
 
     ILL_POSED_ON_THIS_STRUCTURE = "غير_مستقيم_الوضع_على_هذه_البنية"
     WELL_POSED_AND_UNVERIFIED_HERE = "مستقيم_الوضع_وغير_متحقق_هنا"
+    STANDING_NOT_SETTLED_ON_THIS_STRUCTURE = "حال_السؤال_غير_محسوم_على_هذه_البنية"
 
 
 if len(TransmissionStanding) != 3:  # pragma: no cover - guard
@@ -172,16 +205,36 @@ if len(IstiqraScope) != 2:  # pragma: no cover - guard
     raise RuntimeError("induction scope is deliberately two-valued")
 if len(ExemptionHypothesis) != 3:  # pragma: no cover - guard
     raise RuntimeError("the exemption question declares exactly three hypotheses")
-if len(EvidenceTemporalStructure) != 2:  # pragma: no cover - guard
-    raise RuntimeError("an evidence base is a synchronic section or a succession")
+if len(EvidenceTemporalStructure) != 3:  # pragma: no cover - guard
+    raise RuntimeError(
+        "a structure is provably synchronic, declaredly diachronic, or unsettled: "
+        "a two-valued vocabulary would let exclusion alone prove a succession"
+    )
 if len(UnconstructibilityGenus) != 3:  # pragma: no cover - guard
     raise RuntimeError("a hold is by authority, by category mismatch, or unsettled")
-if len(TawaturQuestionStanding) != 2:  # pragma: no cover - guard
-    raise RuntimeError("a question is ill-posed on a structure or well-posed on it")
+if len(TawaturQuestionStanding) != 3:  # pragma: no cover - guard
+    raise RuntimeError("a question is ill-posed, well-posed, or not settled here")
 
 
-CLOSED_CORPUS_TEMPORAL_STRUCTURE: Final = (
-    EvidenceTemporalStructure.SYNCHRONIC_FROZEN_SECTION
+CLOSURE_BINDING_SCHEMA_VERSION: Final = "evidence-base-closure.v1"
+
+ASYMMETRIC_DERIVATION_NOTE: Final = (
+    "بوّابةُ البنية الزمنية جزئيةٌ بالضرورة لا متناظرة: إثباتُ الإغلاق فحصُ "
+    "ارتباطٍ يملكه هذا المستودع — تعدادٌ تُعاد بصمتُه — وإثباتُ التعاقب سلطةٌ "
+    "زمنيّةٌ لا يملكها؛ فبوّابةٌ متناظرة تشتقّ الطرفين تُعيد بعينه انقلابَ "
+    "`NoReachingWrite != ProvenUnreachable` بمظهر إصلاح"
+)
+
+NEGATION_IS_NOT_PROOF_OF_THE_CONTRARY_NOTE: Final = (
+    "«ليست مقطعًا مُجمَّدًا» لا تُنتج «إذن تعاقبٌ حقيقيّ»: سالبةُ أحد الطرفين "
+    "لا تُثبت الآخر ولو بدَوَا الاحتمالين الوحيدين؛ ولذلك بقيّةُ الاشتقاق "
+    "`بنية_الشواهد_الزمنية_غير_محسومة` لا الطرفُ الآخر"
+)
+
+CLOSURE_IS_REDERIVED_NOT_TRUSTED_NOTE: Final = (
+    "بصمةُ الإغلاق تُعاد اشتقاقها من التعداد نفسه ولا تُصدَّق مُعلَنةً، ببدائيّة "
+    "الترميز القانونيّ العديمة السلطة: من لم يُعدّد أعضاء قاعدته لم يُثبت "
+    "إغلاقَها، وقاعدةٌ تقبل واردًا جديدًا لا تُعدَّد أصلًا"
 )
 
 TAWATUR_REQUIRES_DIACHRONIC_SUCCESSION_NOTE: Final = (
@@ -247,15 +300,39 @@ DESIGN_CONVERGENCE_PROVENANCE_IS_UNVERIFIED: Final = (
     "DESIGN_CONVERGENCE_PROVENANCE_IS_UNVERIFIED"
 )
 
+CLOSURE_ENUMERATION_IS_DECLARED_BY_ITS_CALLER: Final = (
+    "CLOSURE_ENUMERATION_IS_DECLARED_BY_ITS_CALLER"
+)
+
+ARRIVAL_CYCLE_CARRIER_IS_DELIBERATELY_ABSENT: Final = (
+    "ARRIVAL_CYCLE_CARRIER_IS_DELIBERATELY_ABSENT"
+)
+
 NAMED_RESIDUALS: Final[Mapping[str, str]] = MappingProxyType(
     {
         SUCCESSION_CARRIER_IS_WRITABLE_WITHOUT_A_TEMPORAL_AUTHORITY: (
+            "بقيّةٌ مُضيَّقةٌ لا مرفوعة: بنيةُ قاعدة الشواهد صارت تُشتَقّ من "
+            "واصفٍ يُفحَص، فلم تعد تُمرَّر تصنيفًا مُعلَنًا؛ لكن "
             "`RepetitionPattern.SUCCESSIVE_GENERATIONS` يبقى حاملًا يُكتَب، ولا "
-            "سلطةَ هنا تشتقّ بنيةَ قاعدة الشواهد زمنيًّا من الخبر نفسه؛ "
+            "شيءَ هنا يربط `TransmissionStandingRecord` بقاعدة شواهدَ أصلًا. "
             "فكاتبُه على خبرٍ مأخوذٍ من مدوّنةٍ مغلقة يقع في الخطأ الفئويّ "
-            "نفسه، ويُدرِكه رفضُ الدرجة لا رفضُ الحامل. وربطُ الخبر ببنيته "
-            "الزمنية مشروطٌ بسلطةٍ لا توجد اليوم، فهو حجزٌ لغياب سلطة لا "
-            "امتناعٌ فئويّ، ولا يُحسَم هنا بتشديد الحوامل"
+            "نفسه، ويُدرِكه رفضُ الدرجة لا رفضُ الحامل؛ وربطُ الخبر بقاعدته "
+            "مشروطٌ بسلطةٍ لا توجد اليوم، فهو حجزٌ لغياب سلطة لا امتناعٌ فئويّ"
+        ),
+        CLOSURE_ENUMERATION_IS_DECLARED_BY_ITS_CALLER: (
+            "التسلسلُ أُزيلت منه طبقةٌ واحدة لا كلُّه، والقولُ بغير ذلك يُعيد "
+            "الفشلَ نفسه: تعدادُ أعضاء القاعدة يبقى مُعلَنًا من المستدعي، ولا "
+            "شيءَ هنا يقابله بعالَمٍ خارج المستودع ليقول إنّ التعداد تامّ. "
+            "والمتبدِّلُ أنّ المُعلَن صار دعوى بنيويّةً تُعاد مطابقتُها بالبايت "
+            "— يُلزِم صاحبَها بتعدادٍ مُعيَّنٍ لا يقبل واردًا صامتًا — بدل حكمٍ "
+            "زمنيٍّ يُمرَّر بلا ما يفحصه أصلًا"
+        ),
+        ARRIVAL_CYCLE_CARRIER_IS_DELIBERATELY_ABSENT: (
+            "لا حاملَ في الواصف لدورات الورود ولا لتباعدها الزمنيّ، والحذفُ "
+            "مقصودٌ مُسمًّى: لمّا كان التعاقبُ لا يُشتَقّ هنا إيجابًا، فحاملٌ "
+            "كهذا لا يُغيّر مُخرَجَ البوّابة بحال، ووجودُه يُوهم شاهدًا على "
+            "التعاقب حيث لا شاهد. وإضافتُه تحتاج السلطةَ الزمنيّة نفسها "
+            "الغائبة، لا حقلًا يُكتَب"
         ),
         SIBLING_HOLDS_ARE_NOT_CLASSIFIED_HERE: (
             "في الشجرة قيمٌ مُعلَنةٌ أخرى غيرُ قابلةٍ للبناء "
@@ -275,38 +352,155 @@ NAMED_RESIDUALS: Final[Mapping[str, str]] = MappingProxyType(
 )
 
 
-def unconstructibility_genus(
-    structure: EvidenceTemporalStructure,
-) -> UnconstructibilityGenus:
-    """اشتقّ جنسَ امتناع `متواتر` من بنية قاعدة الشواهد؛ دالّةٌ تامّة بلا فرعٍ افتراضيّ.
-
-    على المقطع المتزامن الامتناعُ فئويّ فلا ترفعه أداة؛ وعلى التعاقب الزمنيّ
-    الحقيقيّ يعود حجزًا عاديًّا لغياب سلطةٍ تفحص استقلالَ المصادر عبر الدورات.
-    """
-
-    if not isinstance(structure, EvidenceTemporalStructure):
-        raise TransmissionStandingError("بنيةُ قاعدة الشواهد من مفردتها المغلقة")
-    if structure is EvidenceTemporalStructure.SYNCHRONIC_FROZEN_SECTION:
-        return UnconstructibilityGenus.REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH
-    return UnconstructibilityGenus.HELD_BY_MISSING_AUTHORITY_TODAY
-
-
-def tawatur_question_standing(
-    structure: EvidenceTemporalStructure,
-) -> TawaturQuestionStanding:
-    """أمستقيمُ الوضع سؤالُ التواتر على هذه البنية؟ مُشتَقٌّ من البنية لا مكتوب."""
-
-    if unconstructibility_genus(structure) is (
-        UnconstructibilityGenus.REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH
-    ):
-        return TawaturQuestionStanding.ILL_POSED_ON_THIS_STRUCTURE
-    return TawaturQuestionStanding.WELL_POSED_AND_UNVERIFIED_HERE
-
-
 def _require_non_blank(value: str, field_name: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise TransmissionStandingError(f"{field_name} نصٌّ غير فارغ")
     return value
+
+
+def closure_binding_digest(base_id: str, members: tuple[str, ...]) -> str:
+    """اشتقّ بصمةَ ارتباط الإغلاق من اسم القاعدة وتعداد أعضائها وحدهما."""
+
+    identifier = _require_non_blank(base_id, "معرّف قاعدة الشواهد").strip()
+    encoded = [
+        CLOSURE_BINDING_SCHEMA_VERSION,
+        identifier,
+        sorted(_require_non_blank(member, "عضو القاعدة").strip() for member in members),
+    ]
+    return canonical_digest(canonical_bytes(encoded))
+
+
+@dataclass(frozen=True, slots=True)
+class EvidenceBaseDescriptor:
+    """واصفُ قاعدة شواهدَ بارتباط إغلاقها، يُفحَص ولا يُصدَّق.
+
+    الإغلاقُ يُدَّعى بتعدادٍ كامل وبصمةٍ مُعلَنة عليه، ثمّ تُعاد البصمةُ اشتقاقًا
+    من التعداد نفسه؛ فمخالفتُها رفضٌ عند الإنشاء لا حالٌ «غير محسوم»، على منوال
+    رفض الدرجة المكتوبة المخالفة للمُشتَقّة. ومن لم يُعلِن ارتباطًا بقيت قاعدتُه
+    غيرَ محسومة البنية، ولم تصر بذلك تعاقبًا.
+    """
+
+    base_id: str
+    enumerated_members: tuple[str, ...]
+    declared_closure_digest: str | None = None
+
+    def __post_init__(self) -> None:
+        _require_non_blank(self.base_id, "معرّف قاعدة الشواهد")
+        if not isinstance(self.enumerated_members, tuple):
+            raise TransmissionStandingError("تعدادُ الأعضاء مجموعةٌ مرتَّبة")
+        for member in self.enumerated_members:
+            _require_non_blank(member, "عضو القاعدة")
+        stripped = tuple(member.strip() for member in self.enumerated_members)
+        if len(set(stripped)) != len(stripped):
+            raise TransmissionStandingError(
+                "عضوٌ مكرَّرٌ في التعداد: تعدادان مختلفان لقاعدةٍ واحدة يُنتجان "
+                "بصمتين، فيصير الإغلاقُ المُثبَتُ إغلاقَ نصٍّ آخر"
+            )
+        if self.declared_closure_digest is None:
+            return
+        if not is_canonical_digest(self.declared_closure_digest):
+            raise TransmissionStandingError(
+                "بصمةُ الإغلاق المُعلَنة على شكل البصمة القانونيّة أو لا تكون"
+            )
+        if not stripped:
+            raise TransmissionStandingError(
+                "تعدادٌ خالٍ لا يُثبت إغلاقًا: قاعدةٌ بلا أعضاءٍ مُعدَّدين لا "
+                "يُقال فيها إنّها لا تزيد"
+            )
+        if self.declared_closure_digest != closure_binding_digest(
+            self.base_id, self.enumerated_members
+        ):
+            raise TransmissionStandingError(CLOSURE_IS_REDERIVED_NOT_TRUSTED_NOTE)
+
+    @property
+    def closure_is_rederived(self) -> bool:
+        """أأُعيد اشتقاقُ ارتباط الإغلاق فعلًا؟ مُشتَقٌّ من نجاح الإنشاء نفسه."""
+
+        return self.declared_closure_digest is not None
+
+
+def closed_evidence_base(
+    base_id: str, members: tuple[str, ...]
+) -> EvidenceBaseDescriptor:
+    """ابنِ واصفًا مُغلَقًا ببصمته المُشتَقّة؛ اختصارٌ لا إعفاءٌ من إعادة الاشتقاق."""
+
+    return EvidenceBaseDescriptor(
+        base_id=base_id,
+        enumerated_members=members,
+        declared_closure_digest=closure_binding_digest(base_id, members),
+    )
+
+
+def derive_evidence_temporal_structure(
+    base: EvidenceBaseDescriptor,
+) -> EvidenceTemporalStructure:
+    """اشتقّ بنيةَ قاعدة الشواهد زمنيًّا؛ دالّةٌ تامّةٌ جزئيّةُ البرهان لا متناظرة.
+
+    تُنتج `SYNCHRONIC_FROZEN_SECTION` حين يُعاد اشتقاق ارتباط الإغلاق فعلًا،
+    وإلّا `TEMPORAL_STRUCTURE_NOT_SETTLED`. ولا تُنتج
+    `DIACHRONIC_INDEPENDENT_SUCCESSION` بحال: إثباتُها سلطةٌ زمنيّةٌ غائبة،
+    واشتقاقُها بالنفي إثباتُ نقيضٍ من سالبة.
+    """
+
+    if not isinstance(base, EvidenceBaseDescriptor):
+        raise TransmissionStandingError("بنيةُ قاعدة الشواهد تُشتَقّ من واصفها")
+    if base.closure_is_rederived:
+        return EvidenceTemporalStructure.SYNCHRONIC_FROZEN_SECTION
+    return EvidenceTemporalStructure.TEMPORAL_STRUCTURE_NOT_SETTLED
+
+
+REFERENCE_CLOSED_EVIDENCE_BASE: Final = closed_evidence_base(
+    "reference-closed-evidence-base",
+    ("مقطع-مرجعي-أوّل", "مقطع-مرجعي-ثانٍ"),
+)
+
+CLOSED_CORPUS_TEMPORAL_STRUCTURE: Final = derive_evidence_temporal_structure(
+    REFERENCE_CLOSED_EVIDENCE_BASE
+)
+
+REFERENCE_BASE_IS_AN_INPUT_NOT_A_CORPUS_NOTE: Final = (
+    "`REFERENCE_CLOSED_EVIDENCE_BASE` مُدخَلٌ مرجعيٌّ تقوم عليه الآلةُ مُختبَرةً، "
+    "لا مدوّنةٌ مُودَعةٌ في هذا المستودع؛ فما يُبرهَن عليه شكلُ البرهان — تعدادٌ "
+    "تُعاد بصمتُه — لا صدقُ تعدادٍ بعينه على العالَم"
+)
+
+
+def _genus_of_structure(
+    structure: EvidenceTemporalStructure,
+) -> UnconstructibilityGenus:
+    """صِلْ كلَّ بنيةٍ بجنس امتناعها؛ دالّةٌ تامّة بلا فرعٍ افتراضيّ."""
+
+    if structure is EvidenceTemporalStructure.SYNCHRONIC_FROZEN_SECTION:
+        return UnconstructibilityGenus.REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH
+    if structure is EvidenceTemporalStructure.DIACHRONIC_INDEPENDENT_SUCCESSION:
+        return UnconstructibilityGenus.HELD_BY_MISSING_AUTHORITY_TODAY
+    return UnconstructibilityGenus.GENUS_NOT_SETTLED
+
+
+def unconstructibility_genus(
+    base: EvidenceBaseDescriptor,
+) -> UnconstructibilityGenus:
+    """اشتقّ جنسَ امتناع `متواتر` من واصف قاعدة الشواهد لا من تصنيفٍ مُمرَّر.
+
+    على المقطع المتزامن الامتناعُ فئويّ فلا ترفعه أداة؛ وعلى التعاقب الزمنيّ
+    الحقيقيّ يعود حجزًا عاديًّا لغياب سلطةٍ تفحص استقلالَ المصادر عبر الدورات؛
+    وعلى ما لم يُحسَم يبقى الجنسُ غيرَ محسوم، فلا يُحمَل على أقربهما.
+    """
+
+    return _genus_of_structure(derive_evidence_temporal_structure(base))
+
+
+def tawatur_question_standing(
+    base: EvidenceBaseDescriptor,
+) -> TawaturQuestionStanding:
+    """أمستقيمُ الوضع سؤالُ التواتر على هذه القاعدة؟ مُشتَقٌّ من واصفها لا مكتوب."""
+
+    genus = unconstructibility_genus(base)
+    if genus is UnconstructibilityGenus.REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH:
+        return TawaturQuestionStanding.ILL_POSED_ON_THIS_STRUCTURE
+    if genus is UnconstructibilityGenus.HELD_BY_MISSING_AUTHORITY_TODAY:
+        return TawaturQuestionStanding.WELL_POSED_AND_UNVERIFIED_HERE
+    return TawaturQuestionStanding.STANDING_NOT_SETTLED_ON_THIS_STRUCTURE
 
 
 def derive_standing(
@@ -502,6 +696,7 @@ for _declaring_type in (
     TransmissionStandingRecord,
     ScopedFinding,
     ExemptionOpenQuestion,
+    EvidenceBaseDescriptor,
 ):
     _assert_no_fields_matching(
         _declaring_type,
@@ -512,8 +707,13 @@ for _declaring_type in (
 
 __all__ = [
     "AHAD_IS_NEVER_EXEMPT_FROM_RECHECK_NOTE",
+    "ARRIVAL_CYCLE_CARRIER_IS_DELIBERATELY_ABSENT",
+    "ASYMMETRIC_DERIVATION_NOTE",
     "CATEGORY_MISMATCH_IS_NOT_MISSING_AUTHORITY_NOTE",
     "CLOSED_CORPUS_TEMPORAL_STRUCTURE",
+    "CLOSURE_BINDING_SCHEMA_VERSION",
+    "CLOSURE_ENUMERATION_IS_DECLARED_BY_ITS_CALLER",
+    "CLOSURE_IS_REDERIVED_NOT_TRUSTED_NOTE",
     "COUNT_IS_NOT_RECURRENCE_NOTE",
     "DESIGN_CONVERGENCE_PROVENANCE_IS_UNVERIFIED",
     "DIRECT_GENERALIZATION_IS_REFUSED_NOTE",
@@ -521,11 +721,15 @@ __all__ = [
     "FIRST_ORGANIZED_INFORMATION_QUESTION",
     "MUTAWATIR_IS_UNCONSTRUCTIBLE_NOTE",
     "NAMED_RESIDUALS",
+    "NEGATION_IS_NOT_PROOF_OF_THE_CONTRARY_NOTE",
     "NO_IMPORT_ENTRY_FOR_A_FOREIGN_RECURRENCE_CLAIM_NOTE",
+    "REFERENCE_BASE_IS_AN_INPUT_NOT_A_CORPUS_NOTE",
+    "REFERENCE_CLOSED_EVIDENCE_BASE",
     "SIBLING_HOLDS_ARE_NOT_CLASSIFIED_HERE",
     "SUCCESSION_CARRIER_IS_WRITABLE_WITHOUT_A_TEMPORAL_AUTHORITY",
     "TAWATUR_REQUIRES_DIACHRONIC_SUCCESSION_NOTE",
     "TRANSMISSION_AUTHORITY_NOTE",
+    "EvidenceBaseDescriptor",
     "EvidenceTemporalStructure",
     "ExemptionHypothesis",
     "ExemptionOpenQuestion",
@@ -539,6 +743,9 @@ __all__ = [
     "TransmissionStandingError",
     "TransmissionStandingRecord",
     "UnconstructibilityGenus",
+    "closed_evidence_base",
+    "closure_binding_digest",
+    "derive_evidence_temporal_structure",
     "derive_scope_statement",
     "derive_standing",
     "tawatur_question_standing",

@@ -11,8 +11,12 @@ import pytest
 
 import alghanem.kernel as kernel_package
 from alghanem.arabic import (
+    ASYMMETRIC_DERIVATION_NOTE,
     CLOSED_CORPUS_TEMPORAL_STRUCTURE,
     FIRST_ORGANIZED_INFORMATION_QUESTION,
+    NEGATION_IS_NOT_PROOF_OF_THE_CONTRARY_NOTE,
+    REFERENCE_CLOSED_EVIDENCE_BASE,
+    EvidenceBaseDescriptor,
     EvidenceTemporalStructure,
     ExemptionHypothesis,
     ExemptionOpenQuestion,
@@ -26,6 +30,9 @@ from alghanem.arabic import (
     TransmissionStandingError,
     TransmissionStandingRecord,
     UnconstructibilityGenus,
+    closed_evidence_base,
+    closure_binding_digest,
+    derive_evidence_temporal_structure,
     derive_scope_statement,
     derive_standing,
     tawatur_question_standing,
@@ -33,6 +40,8 @@ from alghanem.arabic import (
 )
 from alghanem.arabic.external_audit import audit_card
 from alghanem.arabic.transmission_standing import (
+    ARRIVAL_CYCLE_CARRIER_IS_DELIBERATELY_ABSENT,
+    CLOSURE_ENUMERATION_IS_DECLARED_BY_ITS_CALLER,
     DESIGN_CONVERGENCE_PROVENANCE_IS_UNVERIFIED,
     MUTAWATIR_IS_UNCONSTRUCTIBLE_NOTE,
     NAMED_RESIDUALS,
@@ -157,43 +166,117 @@ def test_a_closed_corpus_is_a_synchronic_section_so_the_question_is_ill_posed() 
         CLOSED_CORPUS_TEMPORAL_STRUCTURE
         is EvidenceTemporalStructure.SYNCHRONIC_FROZEN_SECTION
     )
-    assert unconstructibility_genus(CLOSED_CORPUS_TEMPORAL_STRUCTURE) is (
+    assert unconstructibility_genus(REFERENCE_CLOSED_EVIDENCE_BASE) is (
         UnconstructibilityGenus.REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH
     )
-    assert tawatur_question_standing(CLOSED_CORPUS_TEMPORAL_STRUCTURE) is (
+    assert tawatur_question_standing(REFERENCE_CLOSED_EVIDENCE_BASE) is (
         TawaturQuestionStanding.ILL_POSED_ON_THIS_STRUCTURE
     )
 
 
-def test_a_diachronic_succession_is_held_by_missing_authority_not_by_category() -> None:
-    succession = EvidenceTemporalStructure.DIACHRONIC_INDEPENDENT_SUCCESSION
-    assert unconstructibility_genus(succession) is (
-        UnconstructibilityGenus.HELD_BY_MISSING_AUTHORITY_TODAY
+def test_the_closed_corpus_structure_is_derived_from_a_base_not_written() -> None:
+    assert CLOSED_CORPUS_TEMPORAL_STRUCTURE is derive_evidence_temporal_structure(
+        REFERENCE_CLOSED_EVIDENCE_BASE
     )
-    assert tawatur_question_standing(succession) is (
-        TawaturQuestionStanding.WELL_POSED_AND_UNVERIFIED_HERE
+    assert REFERENCE_CLOSED_EVIDENCE_BASE.closure_is_rederived is True
+
+
+def test_a_declared_closure_digest_is_rederived_from_the_enumeration() -> None:
+    members = ("\u0623", "\u0628")
+    base = closed_evidence_base("base-1", members)
+    assert base.declared_closure_digest == closure_binding_digest("base-1", members)
+    assert derive_evidence_temporal_structure(base) is (
+        EvidenceTemporalStructure.SYNCHRONIC_FROZEN_SECTION
     )
 
 
-def test_an_unsettled_genus_is_declared_and_never_derived_by_default() -> None:
-    assert UnconstructibilityGenus.GENUS_NOT_SETTLED not in {
-        unconstructibility_genus(structure) for structure in EvidenceTemporalStructure
-    }
+def test_a_closure_digest_that_fails_rederivation_is_refused_not_left_unsettled() -> (
+    None
+):
+    with pytest.raises(TransmissionStandingError, match="تُعاد اشتقاقها"):
+        EvidenceBaseDescriptor(
+            base_id="base-1",
+            enumerated_members=("\u0623", "\u0628"),
+            declared_closure_digest=closure_binding_digest("base-2", ("\u0623",)),
+        )
 
 
-def test_a_temporal_structure_outside_its_vocabulary_is_refused() -> None:
-    with pytest.raises(TransmissionStandingError, match="مفردتها المغلقة"):
-        unconstructibility_genus("\u0645\u0642\u0637\u0639")  # type: ignore[arg-type]
+def test_a_closure_digest_over_an_empty_enumeration_is_refused() -> None:
+    with pytest.raises(TransmissionStandingError, match="لا يُثبت إغلاقًا"):
+        EvidenceBaseDescriptor(
+            base_id="base-1",
+            enumerated_members=(),
+            declared_closure_digest=closure_binding_digest("base-1", ()),
+        )
+
+
+def test_a_duplicated_member_is_refused_so_one_base_has_one_digest() -> None:
+    with pytest.raises(TransmissionStandingError, match="مكرَّرٌ"):
+        EvidenceBaseDescriptor(
+            base_id="base-1", enumerated_members=("\u0623", "\u0623")
+        )
+
+
+def test_a_base_without_a_closure_binding_is_unsettled_not_a_succession() -> None:
+    base = EvidenceBaseDescriptor(base_id="base-1", enumerated_members=("\u0623",))
+    assert derive_evidence_temporal_structure(base) is (
+        EvidenceTemporalStructure.TEMPORAL_STRUCTURE_NOT_SETTLED
+    )
+    assert unconstructibility_genus(base) is (UnconstructibilityGenus.GENUS_NOT_SETTLED)
+    assert tawatur_question_standing(base) is (
+        TawaturQuestionStanding.STANDING_NOT_SETTLED_ON_THIS_STRUCTURE
+    )
+
+
+@pytest.mark.parametrize("members", ((), ("\u0623",), ("\u0623", "\u0628")))
+@pytest.mark.parametrize("bind_closure", (True, False))
+def test_a_succession_is_never_derived_from_any_descriptor(
+    members: tuple[str, ...], bind_closure: bool
+) -> None:
+    if bind_closure and not members:
+        pytest.skip("an empty enumeration may carry no closure binding")
+    base = (
+        closed_evidence_base("base-1", members)
+        if bind_closure
+        else EvidenceBaseDescriptor(base_id="base-1", enumerated_members=members)
+    )
+    assert derive_evidence_temporal_structure(base) is not (
+        EvidenceTemporalStructure.DIACHRONIC_INDEPENDENT_SUCCESSION
+    )
+
+
+def test_a_diachronic_succession_stays_declared_and_held_by_missing_authority() -> None:
+    assert (
+        EvidenceTemporalStructure.DIACHRONIC_INDEPENDENT_SUCCESSION
+        in EvidenceTemporalStructure
+    )
+    assert NEGATION_IS_NOT_PROOF_OF_THE_CONTRARY_NOTE.strip()
+    assert ASYMMETRIC_DERIVATION_NOTE.strip()
+
+
+def test_a_temporal_structure_is_no_longer_passable_as_a_classification() -> None:
+    with pytest.raises(TransmissionStandingError, match="تُشتَقّ من واصفها"):
+        unconstructibility_genus(
+            EvidenceTemporalStructure.DIACHRONIC_INDEPENDENT_SUCCESSION  # type: ignore[arg-type]
+        )
 
 
 def test_the_residuals_name_the_meta_provenance_and_the_unclassified_siblings() -> None:
     assert set(NAMED_RESIDUALS) == {
         SUCCESSION_CARRIER_IS_WRITABLE_WITHOUT_A_TEMPORAL_AUTHORITY,
+        CLOSURE_ENUMERATION_IS_DECLARED_BY_ITS_CALLER,
+        ARRIVAL_CYCLE_CARRIER_IS_DELIBERATELY_ABSENT,
         SIBLING_HOLDS_ARE_NOT_CLASSIFIED_HERE,
         DESIGN_CONVERGENCE_PROVENANCE_IS_UNVERIFIED,
     }
     for text in NAMED_RESIDUALS.values():
         assert text.strip()
+
+
+def test_the_descriptor_declares_no_arrival_cycle_or_count_carrier() -> None:
+    declared = {item.name for item in fields(EvidenceBaseDescriptor)}
+    for marker in ("count", "number", "size", "total", "verdict", "birth", "cycle"):
+        assert not any(marker in name for name in declared), marker
 
 
 def test_no_import_entry_exists_for_a_foreign_recurrence_claim() -> None:
@@ -239,6 +322,7 @@ def test_no_type_here_carries_a_count_or_verdict_field() -> None:
         TransmissionStandingRecord,
         ScopedFinding,
         ExemptionOpenQuestion,
+        EvidenceBaseDescriptor,
     ):
         declared = {item.name for item in fields(declaring_type)}
         for marker in ("count", "number", "size", "total", "verdict", "birth"):
