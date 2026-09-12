@@ -1044,7 +1044,9 @@ experiments. It is non-normative: nothing there licenses a transition, births
 an object, or amends `docs/CONSTITUTION.md`. The first record,
 [`docs/reference/lisan345_cluster_adjacency.md`](docs/reference/lisan345_cluster_adjacency.md),
 measures same-place adjacency in the 6,529 triliteral roots of the open
-`lisan345` dataset and states in its own body what it does not establish. The
+`lisan345` dataset: under a declared 0.5 threshold six of nine clusters show
+avoidance and three do not, and the record states in its own body what it does
+not establish, including two open questions it leaves unresolved. The
 dataset is not vendored; `examples/reference/lisan345_cluster_adjacency.py`
 re-derives the table from a hash-checked copy of the frozen input.
 
