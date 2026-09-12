@@ -1634,6 +1634,52 @@ no constitution row supports it and coding it would make it an unverified premis
 the whole division succeeds on
 (`FRACTAL_OPEN_ENDEDNESS_IS_AN_UNSOURCED_CLAIM_NOTE`).
 
+The tenth milestone answered one question and refused to leave it pending.
+Three independent cards — قُروء (2:228), أنّى (2:223), and مَلِك (114:2) —
+had stopped at exactly the same place, the fourth link (الوضع بالنقل), because
+none of them declares how the meaning it cites *reached* it. Whether that stop
+was a permanent category error or a temporary gap was decided by applying the
+method already tested in `transmission_standing` to a new source — the lexicon
+rather than a corpus — instead of building a fourth card in the hope that the
+barrier would lift by itself. `src/alghanem/arabic/lexical_transmission.py`
+adds `LexicalTransmissionDescriptor`, built exactly like
+`EvidenceBaseDescriptor`: a claim about structure whose digest is re-derived
+from the enumeration itself and refused at construction when it disagrees. The
+hypothesis under test was that لسان العرب is not genuinely synchronic — Ibn
+Manẓūr compiled it from successive lexicographers named inside his own text —
+so a card that transcribes that internal attribution chain would carry a
+structure the closed-corpus argument never covered. The derivation is
+asymmetric like its sibling: a flat title citation is *proved* by re-deriving
+the digest of an empty chain, a named successive attribution is *proved* by
+re-deriving the digest of an ordered enumeration of two or more attributions
+each quoting its own authority verbatim, and a card that declares no lexical
+path at all reads `بنية_الاستشهاد_غير_محسومة` rather than being carried onto
+either side. Order is load-bearing here and members are therefore not sorted
+before digesting (`ORDER_IS_LOAD_BEARING_NOTE`), and an empty enumeration is
+accepted here though refused there, because the claim it carries is the
+*absence* of a transcribed chain rather than closure
+(`EMPTY_CHAIN_IS_A_CLAIM_NOT_A_CLOSURE_NOTE`). The test ran, and the answer is
+the negative one: all three cards declare a flat title citation, so the genus
+is `REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH` and the tawatur question is
+ill-posed on that structure — named as
+`FlatTitleCitationIsNotATransmissionChain`, a permanent category error of the
+same kind as `TawaturRequiresDiachronicSuccession`, not a hold waiting for a
+tool. The fourth link therefore still stops, but the stop is now derived and
+explained rather than pending, and `decision_chain`'s constraint (ب) says so.
+Even in the positive branch recurrence would stay out of reach: an internal
+attribution is containment inside one compiler's text, not a proof of source
+independence, so `SourceIndependence.NOT_ESTABLISHED` is structural on this
+path and the derived degree is `آحاد` or `فرض` and never `متواتر`
+(`INTERNAL_ATTRIBUTION_IS_NOT_SOURCE_INDEPENDENCE_NOTE`,
+`MUTAWATIR_HAS_NO_ENTRY_ON_THIS_PATH_NOTE`). `wad_naql` is untouched: a derived
+degree is handed to it through a thin `LexicalWadPath` and recorded as an
+ordinary `WadRecord`. What was not lifted is named: no لسان العرب text is
+vendored here, so attributions remain declared by the caller — now as a
+byte-checkable structural claim rather than a passed title
+(`LISAN_TEXT_IS_NOT_VENDORED_HERE`) — and whether the compiler is itself a
+frozen synchronic section is a question this module neither decides nor needs
+(`COMPILER_SYNCHRONY_IS_NOT_DECIDED_HERE`).
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future
