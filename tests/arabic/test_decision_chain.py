@@ -11,6 +11,7 @@ import pytest
 
 import alghanem.kernel as kernel_package
 from alghanem.arabic import (
+    APPLICATION_STOPS_AT_THE_FOURTH_LINK_NOTE,
     ARABIC_PACKAGE_RELATIVE_PATH,
     GOVERNING_CONSTRAINTS,
     UNIVERSAL_IDEA_IS_ABSENT_NOTE,
@@ -235,6 +236,19 @@ def test_the_absent_universal_idea_is_recorded_structurally_not_written() -> Non
     assert first.gap_note == UNIVERSAL_IDEA_IS_ABSENT_NOTE
     assert "GFLK" in UNIVERSAL_IDEA_IS_ABSENT_NOTE
     assert "مهمّةٌ مستقلّة" in UNIVERSAL_IDEA_IS_ABSENT_NOTE
+
+
+def test_the_second_constraint_names_the_link_that_stopped_the_application() -> None:
+    """غيابُ القيد (ب) ليس فراغًا نظريًّا كالقيد (أ) بل وقوفٌ عند موضعٍ مُسمًّى."""
+
+    second = GOVERNING_CONSTRAINTS[1]
+
+    assert second.gap_note == APPLICATION_STOPS_AT_THE_FOURTH_LINK_NOTE
+    assert second.gap_note != GOVERNING_CONSTRAINTS[0].gap_note
+    assert "الناس:٢" in APPLICATION_STOPS_AT_THE_FOURTH_LINK_NOTE
+    assert "الحلقة الرابعة" in APPLICATION_STOPS_AT_THE_FOURTH_LINK_NOTE
+    assert "TransmissionStanding" in APPLICATION_STOPS_AT_THE_FOURTH_LINK_NOTE
+    assert "لا لفراغٍ نظريّ كالقيد (أ)" in APPLICATION_STOPS_AT_THE_FOURTH_LINK_NOTE
 
 
 def test_no_type_here_carries_a_count_or_verdict_field() -> None:
