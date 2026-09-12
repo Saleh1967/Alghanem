@@ -1,7 +1,9 @@
 """الاختبارُ الفارق للمستوى الثاني: يُسجَّل ما يقع كما يقع، ولا يُدَّعى ما لم يقع.
 
-**والمقروءُ هنا شيئان لا ثالثَ لهما**: (١) أنّ الاختبار الفارق **لم يُجرَ بعد**
-لأنّ تعدادَ الإسنادات في بطاقة التركيب الحقيقية ما زال خاليًا؛ (٢) أنّ تطابقَ
+**والمقروءُ هنا شيئان لا ثالثَ لهما**: (١) أنّ الاختبار الفارق **أُجري أوّلَ
+مرّةٍ على نصٍّ منقولٍ بحروفه**، فانتقل الفرعُ إلى (وقف_بإسناد_واحد_منقول) وبقي
+جنسُ الوقوف كما كان، أي أنّ المدخل الواقعيّ الأوّل نزل على أثر التعداد المُسمّى
+سلفًا ولم يُفنِّد الوقوف؛ (٢) أنّ تطابقَ
 أجناس الوقوف عبر المستويين تطابقُ روايةٍ لا تطابقُ دراية، فلا يُبنى عليه ادّعاءٌ
 فركتاليّ.
 
@@ -33,11 +35,14 @@ from alghanem.arabic.level_two_discrimination import (
     stop_match_genus,
 )
 from alghanem.arabic.level_two_manat import (
+    SPECIFYING_TRANSMISSION_MARKERS,
+    TARDI_TRANSMISSION_MARKERS,
     ClosedLevelOneCard,
     CompositionGenus,
     CompositionRole,
     LevelTwoCompositionInput,
     LevelTwoStopGenus,
+    QaydSignification,
     TaqyeedManatGate,
 )
 from alghanem.arabic.lexical_transmission import LEXICAL_CHAIN_MINIMUM_ATTRIBUTIONS
@@ -168,45 +173,95 @@ def test_the_recurring_pattern_is_named_with_its_prospective_question() -> None:
     )
 
 
-def test_the_real_composition_card_has_not_been_supplied_with_any_attribution() -> None:
-    """بطاقةُ التركيب الحقيقية اليوم: لا إسنادَ منقولًا، فالاختبارُ لم يُجرَ."""
+def test_the_composition_card_now_carries_exactly_one_verbatim_attribution() -> None:
+    """أوّلُ تشغيلٍ فعليّ: إسنادٌ واحدٌ منقولٌ بحروفه، والفرعُ ينتقل ولا يقف الجنس."""
 
     composition_card = _card(_COMPOSITION)
+    attributions = composition_card["طريق_النقل_المعجمي"]["الإسنادات"]
     attempt = TaqyeedManatGate.assess(_composition_input())
 
-    assert composition_card["طريق_النقل_المعجمي"]["الإسنادات"] == []
-    assert card_stop_data_standing(composition_card) is StopDataStanding.لا_إسناد_منقول
+    assert len(attributions) == 1
+    assert attributions[0]["السلطة"] == "الزين بن المنير"
+    assert attributions[0]["السلطة"] in attributions[0]["الاقتباس_المنقول"]
+    assert (
+        card_stop_data_standing(composition_card) is StopDataStanding.إسناد_واحد_منقول
+    )
     assert attempt.stood_up is False
     assert attempt.stop_genus is LevelTwoStopGenus.وقوف_آلة_لانقطاع_نقل_القيد
     assert (
         discrimination_branch(attempt, composition_card)
-        is DiscriminationBranch.لم_يُزوَّد_بإسناد_بعد
+        is DiscriminationBranch.وقف_بإسناد_واحد_منقول
     )
+    assert (
+        discrimination_branch(attempt, composition_card)
+        is not DiscriminationBranch.لم_يُزوَّد_بإسناد_بعد
+    )
+
+
+def test_one_real_attribution_lands_on_the_already_named_arity_artifact() -> None:
+    """المدخلُ الواقعيُّ الأوّل لم يُفنِّد الوقوف: نزل على أثر التعداد المُسمّى سلفًا."""
+
+    filled = _card(_COMPOSITION)
+    emptied = json.loads(json.dumps(filled))
+    emptied["طريق_النقل_المعجمي"]["الإسنادات"] = []
+
+    filled_attempt = TaqyeedManatGate.assess(_composition_input())
+    filled_reading = card_stop_reading("ghanam_saima_composition", filled)
+    emptied_reading = card_stop_reading("ghanam_saima_composition", emptied)
+
+    assert filled_reading.genus is emptied_reading.genus
+    assert filled_attempt.stop_genus is LevelTwoStopGenus.وقوف_آلة_لانقطاع_نقل_القيد
+    assert filled_reading.data is not emptied_reading.data
+    assert "لا بنيةٌ لغويةٌ" in ARITY_IS_NOT_A_LINGUISTIC_STRUCTURE_NOTE
+
+
+def test_the_marker_vocabularies_were_not_widened_to_reach_the_prediction() -> None:
+    """النصُّ الحرفيُّ لم يُطابِق علامةً، ولم تُوسَّع المفردةُ بعد رؤيته لتُطابِقه."""
+
+    excerpt = _card(_COMPOSITION)["طريق_النقل_المعجمي"]["الإسنادات"][0][
+        "الاقتباس_المنقول"
+    ]
+    attempt = TaqyeedManatGate.assess(_composition_input())
+
+    assert "مفهوم الصفة" in excerpt
+    assert not any(marker in excerpt for marker in SPECIFYING_TRANSMISSION_MARKERS)
+    assert not any(marker in excerpt for marker in TARDI_TRANSMISSION_MARKERS)
+    assert attempt.qayd_signification is QaydSignification.دلالة_القيد_غير_محسومة
+    assert attempt.qayd_signification is not QaydSignification.دلالة_القيد_متعارضة
 
 
 def test_the_branch_reading_of_today_forbids_any_cross_level_match_claim() -> None:
     """الفرعُ القائم اليوم يمنع ادّعاءَ التطابق بنصّه المُسجَّل قبل القراءة."""
 
     entry = LEVEL_TWO_DISCRIMINATION_PREREGISTRATION.registration_for(
-        DiscriminationBranch.لم_يُزوَّد_بإسناد_بعد
+        DiscriminationBranch.وقف_بإسناد_واحد_منقول
     )
 
-    assert "لم يُجرَ" in entry.licensed_reading
-    assert IDENTICAL_STOP_GENUS_IS_NOT_FRACTAL_EVIDENCE_NOTE in entry.refused_reading
+    assert ARITY_IS_NOT_A_LINGUISTIC_STRUCTURE_NOTE in entry.refused_reading
+    assert "تطابقًا عبر المستويين" in entry.refused_reading
+    assert (
+        IDENTICAL_STOP_GENUS_IS_NOT_FRACTAL_EVIDENCE_NOTE
+        in LEVEL_TWO_DISCRIMINATION_PREREGISTRATION.registration_for(
+            DiscriminationBranch.لم_يُزوَّد_بإسناد_بعد
+        ).refused_reading
+    )
 
 
 def test_the_four_level_one_cards_and_the_composition_match_only_as_riwaya() -> None:
     """الأجناسُ الأربعة وبطاقةُ التركيب: تطابقُ روايةٍ لا تطابقُ دراية."""
 
-    readings = tuple(
+    level_one = tuple(
         card_stop_reading(name, _card(_EXTERNAL / name)) for name in _LEVEL_ONE_CARDS
-    ) + (card_stop_reading("ghanam_saima_composition", _card(_COMPOSITION)),)
+    )
+    composition = card_stop_reading("ghanam_saima_composition", _card(_COMPOSITION))
+    readings = level_one + (composition,)
 
     assert all(
         reading.genus is UnconstructibilityGenus.REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH
         for reading in readings
     )
-    assert all(reading.data is StopDataStanding.لا_إسناد_منقول for reading in readings)
+    assert all(reading.data is StopDataStanding.لا_إسناد_منقول for reading in level_one)
+    assert composition.data is StopDataStanding.إسناد_واحد_منقول
     assert stop_match_genus(readings) is StopMatchGenus.تطابق_رواية
     assert stop_match_genus(readings) is not StopMatchGenus.تطابق_دراية_مرشح
 
