@@ -47,6 +47,14 @@ class ClosureAssessmentStatus(Enum):
     DEFER = auto()
 
 
+class ResidualSurvivalStatus(Enum):
+    """Local survival outcome vocabulary for a residual definition, not verdicts."""
+
+    SURVIVES = auto()
+    DOES_NOT_SURVIVE = auto()
+    DEFER = auto()
+
+
 class BirthEvaluatorRole(Enum):
     """Evaluator-declaration roles that a future registry may authorize."""
 
@@ -281,6 +289,16 @@ class ResidualDefinitionSpec:
         _require_text(self.evaluator_id, "residual evaluator id")
         _require_text_tuple(self.invariants, "residual invariants")
         _require_text(self.failure_semantics, "residual failure semantics")
+
+    @property
+    def supported_statuses(self) -> tuple[ResidualSurvivalStatus, ...]:
+        """The only local outcomes of a residual survival reading."""
+
+        return (
+            ResidualSurvivalStatus.SURVIVES,
+            ResidualSurvivalStatus.DOES_NOT_SURVIVE,
+            ResidualSurvivalStatus.DEFER,
+        )
 
 
 @dataclass(frozen=True, slots=True)

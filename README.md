@@ -166,6 +166,33 @@ repository, so `is_independent_closure` is still `False` on every branch and
 `IndependentClosureAssessment` is untouched. `WeakerModelClosesResidual !=
 NoBirthVerdict`, `CoverageIsNotCorrectness`, `FrozenConeIsDeclaredNotProven`,
 and `SameRequestIsNotSameEvidenceRun` stay open by name.
+G0.IC.1d (`src/alghanem/kernel/residual_survival.py`) reads the third and last
+conjunct, for exactly one witness. Nothing new is invented here either: the
+residual whose survival is at stake is already declared by
+`ResidualDefinitionSpec`, and the closed three-member vocabulary of a survival
+reading is declared on that same frozen contract, exactly as
+`ClosureCriterionSpec` declares the vocabulary of `Close(W_i, R)`. The missing
+relation was again between an evaluator's `output_content` — a plain string —
+and a member of that set, and `DeclaredResidualSurvivalVocabulary` supplies it
+as declared data, frozen in a sealed registry against a content-bound residual
+definition. `ResidualSurvivalGate.assess` accepts no status and no reason, and
+matches by exact string equality: an unrecognized output is refused by residual
+id and never read as `DEFER`, as are a record under any other role and a target
+that is not the request's own frozen `residual_definition_id`. The evidence mode
+is read from the frozen experiment rather than from the caller, and `MIXED` is
+refused by name (`MixedModeNeedsTwoScopedWitnesses`): that mode is an explicitly
+typed scoped pair, and no authority here proves its two declared scopes or that
+neither component compensated for the other, so one certificate a later reader
+could take as satisfying both modes is refused rather than issued. All three
+conjuncts of closure are now derived on their own — comparability by G0.IC.1a,
+exhaustion by G0.IC.1c, survival here — but *composing* them is a separate
+question with no authority in this repository, so `is_independent_closure` is
+still `False` on every branch and `IndependentClosureAssessment` stays untouched.
+`DoesNotSurvive != NO_BIRTH_IN_SCOPE`,
+`SurvivalReadIsNotMeasuredReplicatedResidual`, `FormalNecessityIsNotProvedHere`,
+`DeclaredVocabularyIsNotProvenSemantics`,
+`SealedBeforeAssessmentIsNotSealedBeforeEvidence`, and
+`OneWitnessIsNotResidualCertification` stay open by name.
 `BirthCandidate` is distinct from a scoped birth verdict and from `Freeze`;
 the future G0.BV.1 authority may issue `BIRTH_IN_SCOPE`, then a later freeze
 authority may freeze it before a separate `E0` step. See the
