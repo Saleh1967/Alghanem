@@ -843,6 +843,23 @@ was raised" rather than on proof of completeness
 progress (`SUPPORT_COUNT_IS_NOT_PROGRESS`): the ledger orders no aims, compares
 none, derives no ratio or rank, and reaches none of them.
 
+That milestone was coded twice, in two parallel branches neither of which saw the
+other, and both landed. Merging them spliced one version's module docstring onto
+the other's code, so neither the module nor its test could even be imported, and
+§7 carried two sections of the same name. One version is now kept whole, and the
+other is refused by name rather than erased: it called its vocabularies
+`CitedTokenShape` and `CitedSourceGenus` and named residuals
+(`CITATION_LINK_IS_NOT_ATTAINMENT`, `CITATION_PROSE_IS_NOT_A_TOKEN_STREAM`,
+`LEDGER_COUNT_MOVEMENT_IS_NOT_AIM_MOVEMENT`) that no code reads today, so §7 of
+[`docs/AIMS.md`](docs/AIMS.md) names them as open positions instead of folding
+them away. Two independent codings of one milestone certify neither of them, and
+each branch passed `pytest`, `ruff`, and `mypy --strict` on its own while their
+merge did not import at all — a measured witness for §1's refusal of engineering
+indicators as indicators of this programme's aims. What this restoration does not
+close is named too: nothing derives that a §7 section corresponds to exactly one
+module in the tree
+(`MILESTONE_SECTION_TO_MODULE_CORRESPONDENCE_IS_NOT_DERIVED`).
+
 ## Development
 
 ```bash
