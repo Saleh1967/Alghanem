@@ -823,6 +823,27 @@ making it strictly finer rather than equivalent — an import-time guard asserts
 that `SOURCE_DIGEST_COVERED_FIELDS` is a proper subset of the entry fields, so
 the two digests can never be read as attesting the same thing.
 
+`src/alghanem/arabic/maluma_mafhum.py` adds the fourth G0.N module, on the
+ontological triad of §3. A correct structural/syntactic reading of a text is
+**information only**: `UnderstandingRecord` derives `معلومة` whenever the sanad
+is empty, and writing `مفهوم` there is refused, so the promotion cannot be made
+by assertion. Information becomes a concept only through a delegation chain
+that terminates in direct sense, modelled exactly like the delegation chain of
+`SealedInvariantExtractorRegistry`: each `SanadLink` either *is* direct sense
+(and therefore has no earlier link) or delegates to a named earlier link, the
+chain must be connected, a link delegating to itself is refused, a second
+direct sense inside the chain breaks it, and a chain that never reaches sense
+yields no concept **however long it is** — length is not a substitute for
+termination. The other two targets of "meaning" are excluded **structurally,
+not practically**: correspondence to the external world needs evidence entirely
+outside language, and the individual speaker's intention is excluded by the
+explicit text of `NoIntentProjection`; both are declared members of the closed
+`SemanticTarget` vocabulary and refused at construction with their own reasons,
+leaving `استرجاع_الوضع` — stable distributional regularity across a linguistic
+community — as the only legitimate target. The module is inert: no verdict, no
+intent field, no kernel module mentions it, and external-audit output is
+unchanged.
+
 `src/alghanem/arabic/riwaya_diraya_registration.py` adds the third G0.N
 module, on the two acceptance gates of §4. They are two structurally separate
 readers, not one record with two fields: `RiwayaReading` carries only the
