@@ -1748,10 +1748,15 @@ it (`IDENTICAL_STOP_GENUS_IS_NOT_FRACTAL_EVIDENCE_NOTE`,
 from crashing on the most common real case it will meet: a path transmitting
 both a specification and a طردي reading is now read as a named case,
 `QaydSignification.دلالة_القيد_متعارضة` with its own stop genus, instead of
-raising (`TRANSMITTED_CONFLICT_IS_A_CASE_NOT_A_CRASH_NOTE`). No source text was
-supplied for the composition card, so its attribution list is still empty and
-the stop stands exactly as issued; no fiqh question and no fractal (Φ) verdict
-is decided here either. One further open variable observed while freezing that
+raising (`TRANSMITTED_CONFLICT_IS_A_CASE_NOT_A_CRASH_NOTE`). The source text for
+the composition card was sought and not obtained: the primary مَتْن was
+unreachable and only paraphrasing secondary summaries came back, so the
+attribution list is still empty and the stop stands exactly as issued — but the
+emptiness is now recorded as an *attempted* lookup whose verification failed
+rather than one never attempted, refused under
+`SecondaryParaphraseIsNotAVerbatimExcerpt` for inability to match the text
+letter-for-letter, not for any weakness of the source. No fiqh question and no
+fractal (Φ) verdict is decided here either. One further open variable observed while freezing that
 preregistration — whether `طريق_النقل_المعجمي` is a third path read in its own
 right or a dependent of the constraint's path — is entered in
 `qayd_marker_preregistration.NAMED_RESIDUALS` as

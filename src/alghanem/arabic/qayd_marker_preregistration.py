@@ -23,7 +23,9 @@
 
 **ولا يُقدَّم هنا نصٌّ ولا تُملأ بطاقة**: هذا التسجيلُ يسبق النقلَ ولا يقوم
 مقامه، وتعدادُ إسنادات بطاقة التركيب يبقى على حاله حتى يُنقَل نصٌّ حرفيٌّ
-بموضعه.
+بموضعه. وقد طُلِب ذلك النصُّ فامتنع التحقق منه، فصار الخلاءُ خلاءَ محاولةٍ
+مُسجَّلةٍ بجنس امتناعها لا خلاءَ ما لم يُطلَب
+(`SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE`).
 
 **والجبهاتُ المفتوحةُ تُسمّى ولا تُفتَح**: `NAMED_RESIDUALS` هنا سجلٌّ معرفيٌّ
 يُؤرّخ المتغيّرَ المرصود بموضع رصده، ولا يأذن ببناء أداةٍ له ولا بتشغيل شيءٍ
@@ -59,6 +61,7 @@ __all__ = [
     "OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE",
     "QAYD_MARKER_PREREGISTRATION",
     "SCAN_BLINDNESS_IS_NOT_A_READING_OF_THE_TEXT_NOTE",
+    "SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE",
     "TRANSMITTED_CONFLICT_CERTIFIES_NOTHING_FROZEN_NOTE",
     "VERBATIM_TEXT_IS_NOT_SUPPLIED_HERE",
     "MarkerOutcomeRegistration",
@@ -116,6 +119,15 @@ OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE: Final[str] = (
 )
 
 _SCAN_BLINDNESS_RESIDUAL: Final[str] = "SCAN_IS_BLIND_TO_NEGATION_AND_STANCE"
+
+SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE: Final[str] = (
+    "SecondaryParaphraseIsNotAVerbatimExcerpt: شرحٌ ثانويٌّ يحكي معنى نصٍّ "
+    "ويضع بين هلالين ما يُظنّ لفظَه ليس اقتباسًا منقولًا بنصّه: "
+    "`LexicalAttribution` يُلزِم مقطعًا يُقابَل بحروفه، ومن نقل عن واسطةٍ "
+    "تحكي فقد نقل معنًى لا لفظًا. والردُّ هنا لتعذُّر التحقق الحرفيّ وحده، "
+    "لا لضعف مصدرٍ في نفسه ولا لجهالة قائله — وهو المعيارُ عينُه الذي "
+    "طُبِّق قبلُ حين لم يُنقَل عن الطبري لفظٌ لم يُمكن مقابلتُه"
+)
 
 
 class QaydMarkerPreregistrationError(ValueError):
@@ -368,6 +380,10 @@ QAYD_MARKER_PREREGISTRATION: Final[QaydMarkerPreregistration] = (
                 name="OpenFrontIsRegisteredNotOpened",
                 statement=OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE,
             ),
+            NamedRefusal(
+                name="SecondaryParaphraseIsNotAVerbatimExcerpt",
+                statement=SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE,
+            ),
         ),
     )
 )
@@ -388,7 +404,15 @@ NAMED_RESIDUALS: Final[MappingProxyType[str, str]] = MappingProxyType(
             "هنا لبطاقة تركيب «سائمة الغنم»، ولا يُملأ تعدادُ إسناداتها من "
             "شرحٍ بالمعنى. ويبقى خلاءُ التعداد على علّته المكتوبة في البطاقة "
             "نفسها حتى يُنقَل نصٌّ بحروفه وموضعه، ويُشترَط في كلّ اقتباسٍ أن "
-            "يحتوي اسمَ سلطته نصًّا كما يُلزِم `LexicalAttribution`"
+            "يحتوي اسمَ سلطته نصًّا كما يُلزِم `LexicalAttribution`. "
+            "**وقد طُلِب النصُّ فعلًا ولم يُظفَر به**: جرت محاولةُ تحصيل "
+            "مقطعَي «فتح الباري» (قولُ الزين بن المنير في حذف وصف السوم، "
+            "وترجيحُ ابن حجر في مفهوم الصفة) في الكوميت الذي كُتِبت فيه هذه "
+            "الزيادة، فامتنع الوصولُ إلى المتون المصدريّة ولم يَرِد إلّا "
+            "حكايةُ معنًى في وسائط ثانوية. فخلاءُ التعداد اليوم خلاءُ "
+            "**محاولةٍ امتنع فيها التحقق**، لا خلاءُ ما لم يُطلَب بعد؛ "
+            "والفارقُ بينهما يُقرأ من هذا النصّ لا يُستنبَط. "
+            + SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE
         ),
         LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED: (
             "جبهةٌ مفتوحةٌ مرصودةٌ تُسمّى هنا ولا يُعمَل فيها: متغيّرُ "

@@ -11,6 +11,8 @@
 كما وُصِف؛ فمتى زال الحدُّ سقط اختبارُه ولم يُقرَّ بيانُه بلا ما يُصدّقه.
 """
 
+import json
+from pathlib import Path
 from typing import Final
 
 import pytest
@@ -33,7 +35,9 @@ from alghanem.arabic.qayd_marker_preregistration import (
     NAMED_RESIDUALS,
     OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE,
     QAYD_MARKER_PREREGISTRATION,
+    SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE,
     TRANSMITTED_CONFLICT_CERTIFIES_NOTHING_FROZEN_NOTE,
+    VERBATIM_TEXT_IS_NOT_SUPPLIED_HERE,
     MarkerOutcomeRegistration,
     MarkerScanLimit,
     QaydMarkerPreregistration,
@@ -41,6 +45,13 @@ from alghanem.arabic.qayd_marker_preregistration import (
 )
 
 _TEST_ONLY_MARKER: Final = "test_only"
+
+_COMPOSITION: Final = (
+    Path(__file__).resolve().parents[2]
+    / "examples"
+    / "level_two_manat"
+    / "ghanam_saima_composition.yaml"
+)
 
 
 def _descriptor(*excerpts: str) -> LexicalTransmissionDescriptor:
@@ -221,6 +232,33 @@ def test_the_open_front_is_registered_with_its_observation_locus_only() -> None:
     assert {refusal.name for refusal in QAYD_MARKER_PREREGISTRATION.refusals} >= {
         "OpenFrontIsRegisteredNotOpened"
     }
+
+
+def test_the_verbatim_emptiness_is_an_attempted_not_an_unattempted_stop() -> None:
+    """خلاءُ التعداد اليوم خلاءُ محاولةٍ امتنع فيها التحقق، لا خلاءَ ما لم يُطلَب."""
+
+    residual = NAMED_RESIDUALS[VERBATIM_TEXT_IS_NOT_SUPPLIED_HERE]
+
+    assert "طُلِب النصُّ فعلًا ولم يُظفَر به" in residual
+    assert "حكايةُ معنًى في وسائط ثانوية" in residual
+    assert SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE in residual
+    assert "الطبري" in SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE
+    assert "لتعذُّر التحقق الحرفيّ وحده" in (
+        SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE
+    )
+    assert {refusal.name for refusal in QAYD_MARKER_PREREGISTRATION.refusals} >= {
+        "SecondaryParaphraseIsNotAVerbatimExcerpt"
+    }
+
+
+def test_the_failed_lookup_left_the_card_and_the_vocabularies_untouched() -> None:
+    """امتناعُ التحقق لم يُحرّك بطاقةً ولا مفردةً: التعدادُ خالٍ كما كان."""
+
+    card = json.loads(_COMPOSITION.read_text(encoding="utf-8"))
+
+    assert card["طريق_النقل_المعجمي"]["الإسنادات"] == []
+    assert len(QaydSignification) == 4
+    assert len(MarkerScanLimit) == 4
 
 
 def test_registering_a_front_builds_no_tool_and_widens_no_closed_vocabulary() -> None:
