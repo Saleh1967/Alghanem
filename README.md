@@ -1020,7 +1020,25 @@ an epistemically loaded tool could be measured, and this repository has none —
 the gap is recorded structurally here instead of being smoothed over in prose,
 and writing that idea is left as separate work. Constraint (ب) admits only one
 acceptable test, a complete application to a real word or verse, and not the
-description of yet another stage of the measuring apparatus.
+description of yet another stage of the measuring apparatus — and that test has
+now been *run* rather than argued about. `examples/external_audit/malik_114_2.yaml`
+carries مَلِك at الناس:٢, chosen because the word's spelling there is not
+disputed: the مالك/مَلِك contest belongs to الفاتحة:٤ and is a contest of
+*reading*, not of signification, which the card excludes by name rather than by
+silence. `tests/arabic/test_malik_114_2_card.py` drives that one card through
+links ٤–١٣ and derives, from the card's own text, which link stops it: the
+fourth, الوضع بالنقل, because a manat-shaped card declares its named sources but
+never declares the *path* by which they arrived — no member of
+`TransmissionStanding` appears in it, which is the very same absence that stops
+link ١٢. Links ٥, ٦ and ٧ stand up on the card, and are therefore *not* read as
+reached, by the same succession rule the ledger applies everywhere. So the two
+governing constraints stay `مُصرَّح_غير_مُرمَّز` but no longer for one reason:
+(أ) lacks a theory nobody has written, while (ب) lacks nothing but a traversal
+that stopped at a named position. No `jiddiya_ifada.py` is created, because a
+module measuring an application that did not complete is exactly the *further
+stage of the measuring apparatus* that constraint (ب) forbids; and no third
+standing member is opened, since a distinction is admitted here only when one
+side can be derived.
 
 `src/alghanem/arabic/classical_kernel_map.py` adds the seventh and last G0.N
 module, the twelve-row map of §8. Every row carries a `سند` from a closed
