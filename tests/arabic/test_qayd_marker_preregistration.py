@@ -15,6 +15,9 @@ from typing import Final
 
 import pytest
 
+from alghanem.arabic.level_two_discrimination import (
+    LEVEL_TWO_DISCRIMINATION_PREREGISTRATION,
+)
 from alghanem.arabic.level_two_manat import (
     QaydSignification,
     derive_qayd_signification,
@@ -24,9 +27,11 @@ from alghanem.arabic.lexical_transmission import (
     LexicalTransmissionDescriptor,
 )
 from alghanem.arabic.qayd_marker_preregistration import (
+    LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED,
     MARKER_SCAN_READS_THE_EXCERPT_ALONE_NOTE,
     MARKER_VOCABULARY_IS_FROZEN_BEFORE_ITS_TEXT_NOTE,
     NAMED_RESIDUALS,
+    OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE,
     QAYD_MARKER_PREREGISTRATION,
     TRANSMITTED_CONFLICT_CERTIFIES_NOTHING_FROZEN_NOTE,
     MarkerOutcomeRegistration,
@@ -194,14 +199,44 @@ def test_the_widening_condition_precedes_any_text_it_would_be_measured_on() -> N
 
 
 def test_the_two_residuals_are_named_and_the_verbatim_text_is_not_supplied() -> None:
-    """الفضلتان مُسمّاتان بنصّهما: عمى المسح، وأنّ النقل الحرفيّ لم يُقدَّم بعد."""
+    """الفضلاتُ مُسمّاةٌ بنصّها: عمى المسح، وانتفاءُ النقل، والجبهةُ المؤجَّلة."""
 
     assert set(NAMED_RESIDUALS) == {
         "SCAN_IS_BLIND_TO_NEGATION_AND_STANCE",
         "VERBATIM_TEXT_IS_NOT_SUPPLIED_HERE",
+        "LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED",
     }
     assert all(statement.strip() for statement in NAMED_RESIDUALS.values())
     assert "شرحٍ بالمعنى" in NAMED_RESIDUALS["VERBATIM_TEXT_IS_NOT_SUPPLIED_HERE"]
+
+
+def test_the_open_front_is_registered_with_its_observation_locus_only() -> None:
+    """المتغيّرُ المرصود يُسمّى بموضع رصده، وتاريخُه من الكوميت لا من نصٍّ مكتوب."""
+
+    residual = NAMED_RESIDUALS[LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED]
+
+    assert "طريق_النقل_المعجمي" in residual
+    assert "الكوميت الذي أُضيفت فيه هذه البقيّة" in residual
+    assert OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE in residual
+    assert {refusal.name for refusal in QAYD_MARKER_PREREGISTRATION.refusals} >= {
+        "OpenFrontIsRegisteredNotOpened"
+    }
+
+
+def test_registering_a_front_builds_no_tool_and_widens_no_closed_vocabulary() -> None:
+    """التسجيلُ تأريخٌ لا عمل: لا مفردةَ وُسِّعت، ولا متغيّرَ التجربة تبدّل."""
+
+    assert "لا تُبنى له أداةٌ" in OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE
+    assert (
+        "NoRicherStructureBeforeLowerOpenResidualClosure"
+        in OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE
+    )
+    assert len(QaydSignification) == 4
+    assert len(MarkerScanLimit) == 4
+    assert "الإسنادات" in LEVEL_TWO_DISCRIMINATION_PREREGISTRATION.controlled_variable
+    assert "ولا يُمَسّ شيءٌ سواه" in (
+        LEVEL_TWO_DISCRIMINATION_PREREGISTRATION.controlled_variable
+    )
 
 
 def test_every_named_limit_is_registered_with_a_statement_of_its_own() -> None:

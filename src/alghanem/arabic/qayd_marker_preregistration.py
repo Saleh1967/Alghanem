@@ -25,6 +25,11 @@
 مقامه، وتعدادُ إسنادات بطاقة التركيب يبقى على حاله حتى يُنقَل نصٌّ حرفيٌّ
 بموضعه.
 
+**والجبهاتُ المفتوحةُ تُسمّى ولا تُفتَح**: `NAMED_RESIDUALS` هنا سجلٌّ معرفيٌّ
+يُؤرّخ المتغيّرَ المرصود بموضع رصده، ولا يأذن ببناء أداةٍ له ولا بتشغيل شيءٍ
+عليه قبل إغلاق التجربة الجارية
+(`OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE`).
+
 **خمولٌ سلطويّ**: لا ولادةَ هنا ولا حكمَ ولادةٍ ولا تجميدَ ولا `E0`، ولا تقرأ
 هذه المخرجاتِ بوّابةٌ في `kernel/`.
 """
@@ -47,9 +52,11 @@ from .level_two_manat import (
 from .text_key import comparison_key
 
 __all__ = [
+    "LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED",
     "MARKER_SCAN_READS_THE_EXCERPT_ALONE_NOTE",
     "MARKER_VOCABULARY_IS_FROZEN_BEFORE_ITS_TEXT_NOTE",
     "NAMED_RESIDUALS",
+    "OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE",
     "QAYD_MARKER_PREREGISTRATION",
     "SCAN_BLINDNESS_IS_NOT_A_READING_OF_THE_TEXT_NOTE",
     "TRANSMITTED_CONFLICT_CERTIFIES_NOTHING_FROZEN_NOTE",
@@ -92,6 +99,21 @@ TRANSMITTED_CONFLICT_CERTIFIES_NOTHING_FROZEN_NOTE: Final[str] = (
 )
 
 VERBATIM_TEXT_IS_NOT_SUPPLIED_HERE: Final[str] = "VERBATIM_TEXT_IS_NOT_SUPPLIED_HERE"
+
+LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED: Final[str] = (
+    "LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED"
+)
+
+OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE: Final[str] = (
+    "OpenFrontIsRegisteredNotOpened: تسميةُ جبهةٍ مفتوحةٍ في هذا السجلّ تأريخٌ "
+    "معرفيٌّ لا إذنُ عملٍ فيها: يُكتَب المتغيّرُ المرصود بموضع رصده فلا يُطوى، "
+    "ولا تُبنى له أداةٌ ولا يُشغَّل عليه مسحٌ قبل أن تُغلَق التجربةُ الجارية "
+    "بنتيجةٍ واحدةٍ كاملة. وهذا إعمالٌ لـ"
+    "`NoRicherStructureBeforeLowerOpenResidualClosure` في "
+    "`docs/CONSTITUTION.md`: قانونٌ تسلسليٌّ يمنع فحصَ الأعلى قبل إغلاق بقيّة "
+    "الأدنى، لا رخصةٌ لفتح جبهاتٍ متوازية. والفركتاليّةُ هنا إعادةُ تطبيق "
+    "القانون نفسِه على مستوًى تالٍ **بعد** إغلاق سابقه، لا فتحُ المستويات معًا"
+)
 
 _SCAN_BLINDNESS_RESIDUAL: Final[str] = "SCAN_IS_BLIND_TO_NEGATION_AND_STANCE"
 
@@ -342,6 +364,10 @@ QAYD_MARKER_PREREGISTRATION: Final[QaydMarkerPreregistration] = (
                 name="TransmittedConflictCertifiesNothingFrozen",
                 statement=TRANSMITTED_CONFLICT_CERTIFIES_NOTHING_FROZEN_NOTE,
             ),
+            NamedRefusal(
+                name="OpenFrontIsRegisteredNotOpened",
+                statement=OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE,
+            ),
         ),
     )
 )
@@ -363,6 +389,16 @@ NAMED_RESIDUALS: Final[MappingProxyType[str, str]] = MappingProxyType(
             "شرحٍ بالمعنى. ويبقى خلاءُ التعداد على علّته المكتوبة في البطاقة "
             "نفسها حتى يُنقَل نصٌّ بحروفه وموضعه، ويُشترَط في كلّ اقتباسٍ أن "
             "يحتوي اسمَ سلطته نصًّا كما يُلزِم `LexicalAttribution`"
+        ),
+        LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED: (
+            "جبهةٌ مفتوحةٌ مرصودةٌ تُسمّى هنا ولا يُعمَل فيها: متغيّرُ "
+            "`طريق_النقل_المعجمي` — أهو طريقٌ ثالثٌ يُقرأ في نفسه أم تابعٌ "
+            "لطريق نقل القيد؟ — رُصِد عند تجميد هذا التسجيل نفسِه، أي في "
+            "الكوميت الذي أُضيفت فيه هذه البقيّة لا قبله؛ ويُقرأ تاريخُه من "
+            "بيانات ذلك الكوميت لا من رقمٍ يُكتَب في النصّ فيصير دعوى مكتوبةً "
+            "لا يفحصها شيء. ولم تُبنَ له أداةٌ ولا مفردةٌ ولا عضوٌ في تعدادٍ "
+            "قائم، ولا يُشغَّل عليه شيءٌ قبل أن تُغلَق تجربةُ «سائمة الغنم» "
+            "الجارية بنتيجةٍ واحدةٍ كاملة. " + OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE
         ),
     }
 )

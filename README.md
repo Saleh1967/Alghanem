@@ -1751,7 +1751,18 @@ both a specification and a طردي reading is now read as a named case,
 raising (`TRANSMITTED_CONFLICT_IS_A_CASE_NOT_A_CRASH_NOTE`). No source text was
 supplied for the composition card, so its attribution list is still empty and
 the stop stands exactly as issued; no fiqh question and no fractal (Φ) verdict
-is decided here either.
+is decided here either. One further open variable observed while freezing that
+preregistration — whether `طريق_النقل_المعجمي` is a third path read in its own
+right or a dependent of the constraint's path — is entered in
+`qayd_marker_preregistration.NAMED_RESIDUALS` as
+`LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED`, and nothing more: no tool, no
+vocabulary member, and no run against it until the «سائمة الغنم» experiment
+closes with one complete result. Registering a front is a ledger entry, not a
+licence to work it; that is this repository's own sequential law
+`NoRicherStructureBeforeLowerOpenResidualClosure` applied one level down, and
+the refusal is named `OpenFrontIsRegisteredNotOpened`. Its observation date is
+the commit that added the residual, read from commit metadata rather than
+written into the text as an unverifiable field.
 
 ## Reference material
 
