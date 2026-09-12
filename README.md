@@ -823,6 +823,208 @@ making it strictly finer rather than equivalent — an import-time guard asserts
 that `SOURCE_DIGEST_COVERED_FIELDS` is a proper subset of the entry fields, so
 the two digests can never be read as attesting the same thing.
 
+`src/alghanem/arabic/classical_kernel_map.py` adds the seventh and last G0.N
+module, the twelve-row map of §8. Every row carries a `سند` from a closed
+three-member vocabulary — `مُشتقّ_من_الشيفرة`, `اجتهاد_ترجمة`,
+`مُصرَّح_غير_مُتحقَّق` — and the row is checked against the tree rather than
+trusted: the named kernel structure's existence is read from
+`src/alghanem/kernel` itself (by parsing definitions, not by importing, so the
+Arabic layer still imports nothing from the kernel). A structure that does not
+exist may not claim derivation from the code, and a structure that does exist
+may not be recorded as merely declared, because in either case the check
+actually ran and came out otherwise. That rule is what makes the `Carrier` row
+honest: the document's map assumes a kernel `Carrier`, and there is none in
+this tree, so the row reads `مُصرَّح_غير_مُتحقَّق` derived from absence rather
+than asserted. The `اجتهاد_ترجمة` rows record the remaining, more important
+caution: matching a classical concept to a kernel structure is a **translation
+judgement, not a transmission** — naming `State` opposite الحال does not mean
+the classical authors meant this structure, only that the structure named is
+really there. The map issues nothing and is read by nothing.
+
+`src/alghanem/arabic/pipeline_stations.py` adds the sixth G0.N module, the
+eleven-station table of §9. The table is **derived, not written**, on the model
+of `milestone_ledger`: each station names its module by path, and whether that
+module exists is read from the tree itself, so a station whose module is absent
+reads as `محطة_غير_مُرمَّزة` rather than being skipped in silence — and an
+absent Arabic package is refused outright rather than read as "no modules",
+because an unread tree cannot report emptiness. Every station carries an
+epistemic state from a closed five-member vocabulary (`معلومة`, `فرض`, `آحاد`,
+`آحاد_مُجمَّد`, `ظنّي`), so the epistemic distance between raw observation and
+a distributional probe is visible in the table rather than assumed by position.
+Station 0 — the spoken sound — is **refused inside the table by its own
+message**: this repository's data is encoded text and not recorded sound, the
+same refusal `UnicodeIsNotRecordedSound` makes in `epistemic_layers`. Station ∞
+is moduleless by necessity rather than by omission, and is therefore declared in
+a note and never given an ordinal that could later be "filled in". Like its
+siblings the ledger is a reading of the tree, not an authority over it.
+
+`src/alghanem/arabic/qiyas_rabt_registration.py` adds the fifth G0.N module,
+on analogy and linking (§10). It is a **registration, not a certificate**, on
+the model of `compound_layer_preregistration`. A `QiyasRegistration` carries
+the four classical pillars, and its origin is not free text: `asl_reference`
+must name one of the frozen formal domains **derived by import** from the
+repository itself (`frozen_asl_references()`), so an analogy cannot be anchored
+to something that was never frozen here — which is exactly why the document's
+own examples (`prefixes ⊂ ziyada`, `SUN-MOON-LETTERS-AR-1`) cannot be
+registered as origins at all and are recorded instead as `ForeignDeclaredCase`,
+declared and never verified, on the model of `ForeignDeclaredAim`. The standing
+is derived from `illa_application` alone: an illa that actually applies yields
+`صحيح_من_أصله`, while mere categorial resemblance or an illa absent from the
+text yields **`باطل_من_أصله`, not "weak"** — weakness is a degree within a
+standing analogy, invalidity from the origin denies that one stands, so the
+vocabulary has exactly two members and no gradation between them. For linking,
+an imported connection that was never tested is `استرجاع`; `ربط` is declared
+and structurally unconstructible, refused with its own message when no held-out
+sample is supplied and with the unconstructibility note when one is, because no
+authority here runs a generalization over cases withheld from the certificate's
+own formation. No kernel module reads any of it, and external-audit output is
+unchanged.
+
+`src/alghanem/arabic/maluma_mafhum.py` adds the fourth G0.N module, on the
+ontological triad of §3. A correct structural/syntactic reading of a text is
+**information only**: `UnderstandingRecord` derives `معلومة` whenever the sanad
+is empty, and writing `مفهوم` there is refused, so the promotion cannot be made
+by assertion. Information becomes a concept only through a delegation chain
+that terminates in direct sense, modelled exactly like the delegation chain of
+`SealedInvariantExtractorRegistry`: each `SanadLink` either *is* direct sense
+(and therefore has no earlier link) or delegates to a named earlier link, the
+chain must be connected, a link delegating to itself is refused, a second
+direct sense inside the chain breaks it, and a chain that never reaches sense
+yields no concept **however long it is** — length is not a substitute for
+termination. The other two targets of "meaning" are excluded **structurally,
+not practically**: correspondence to the external world needs evidence entirely
+outside language, and the individual speaker's intention is excluded by the
+explicit text of `NoIntentProjection`; both are declared members of the closed
+`SemanticTarget` vocabulary and refused at construction with their own reasons,
+leaving `استرجاع_الوضع` — stable distributional regularity across a linguistic
+community — as the only legitimate target. The module is inert: no verdict, no
+intent field, no kernel module mentions it, and external-audit output is
+unchanged.
+
+`src/alghanem/arabic/riwaya_diraya_registration.py` adds the third G0.N
+module, on the two acceptance gates of §4. They are two structurally separate
+readers, not one record with two fields: `RiwayaReading` carries only the
+channel — tool identity, digest, change-log reference, and whether the result
+was reproduced independently — and `DirayaReading` carries only the matn, on
+one of two typed branches. The channel standing is derived from independent
+reproduction alone and a written standing contradicting it is refused, so a
+tool cannot be declared sound while its result fails to reproduce (the
+`isti'la p=0.000` shape). The **remedy is derived from the kind of failure,
+never written**: a riwaya failure yields `إصلاح_الأداة`, an ontological diraya
+failure yields `إعادة_تعريف_الفئات`, an epistemological one yields
+`تشديد_اختبار_الأدلة`. That derivation is the refusal named
+`CategoryRedefinitionIsNotEvidenceTightening`: a matn that is of the wrong
+genus cannot be rescued by tightening an evidence test that does not touch it,
+and a matn defeated by something stronger and already frozen cannot be rescued
+by reclassifying its categories. The branch distinction is enforced at
+construction rather than trusted: an epistemological reading must name the
+stronger frozen matn it was tested against, and an ontological reading — being
+prior to any evidence — is refused if it names one at all, because its question
+is classificatory. Continuing scrutiny is structural too: a reading carries
+one or more `IndependentApplication` entries and **no `اجتيزت`/passed field**,
+repeated survival reads as "لم يُهزَم بعد" and never as "ثابت", and a single
+defeat among many survivals still reads as defeated. Like its siblings the
+module is a **registration, not a gate**: it issues no verdict, and no kernel
+module mentions it.
+
+`src/alghanem/arabic/transmission_standing.py` adds the second G0.N module,
+on the three degrees of certainty and the two scopes of induction. The three
+degrees — `متواتر`, `آحاد`, `فرض` — are not a ladder that a growing number
+climbs: their conditions are qualitative, and the module carries **no count
+field at all**, checked at import against the dataclasses' own fields, because
+a field counting sources would reopen the very door ("many narrators make
+recurrence") the qualitative conditions close. The degree is derived from
+three closed carriers — basis of knowledge (direct observation versus
+inference), source independence (collusion impossible versus not
+established), and repetition pattern (successive independent cycles, a single
+batch, or none) — and `derive_standing` is total over them with no default
+branch; a written degree contradicting its carriers is refused at
+construction, so there is no place to write the answer directly.
+`متواتر` is declared in the vocabulary and structurally unconstructible under
+the same discipline as `شاهد_لكل_فرع` and `CLOSED_BY_FROZEN_EXPERIMENT`: no
+authority here verifies source independence across successive generations, so
+issuing the degree would claim a check that never ran, and the refusal is
+raised with its own message before the general carrier-mismatch one. The two
+induction scopes are handled the same way: a complete enumeration over a
+closed corpus is certain **inside that corpus only**, and the scope sentence
+is derived by `derive_scope_statement` rather than written, with a declared
+sentence that differs from the derived one refused at construction — so
+generalizing directly from a closed corpus to the open language it was drawn
+from is structurally unsayable rather than avoided by hedging prose
+(`is_certain_beyond_the_enumerated_set` is `False` structurally). Finally the
+exemption of "the first organized information" from the full birth protocol
+is recorded as `FIRST_ORGANIZED_INFORMATION_QUESTION`, an open question with
+all three hypotheses and **no answer field**, on the model of
+`Phase2OpenQuestion`: self-evidence to the researcher is not recurrence, and
+that difference is exactly what the qualitative conditions separate. The
+module is inert like its siblings: `TransmissionStanding != BirthVerdict`, no
+`Freeze`, no `E0`, no kernel gate reads it, and every external-audit field
+stays byte-identical.
+
+`src/alghanem/arabic/epistemic_layers.py` is the first module written under
+G0.N, and it closes the layer confusion that law names rather than the law
+itself. Three layers are kept apart as one closed vocabulary — physical
+existence (sound as a perceived phenomenon), the conventional knot (the
+letter as a written convention), and statistical attribute analysis — and a
+piece of evidence never carries a written layer label:
+`DeclaredLayerLabel != DerivedOntologicalLayer`, enforced exactly as
+`provenance_genus.py` enforces its own genus. `OntologicalLayerGate` is the
+sole issuer of a classification and derives it from the artifact's own type,
+so a `RawSurfaceObservation` or a `NormalizationAudit` is the conventional
+knot and a `DistributionalProbeReport` or one of its `DiscoveredLayer`s is
+statistical attribute analysis, while an artifact of any other type is
+refused by its type name rather than mapped to the nearest layer. Each
+layer's epistemic standing is derived from the layer and never written
+beside it, and the three standings are checked at import to be pairwise
+distinct. The physical layer is declared in the vocabulary and structurally
+unconstructible: no artifact here is recorded sound, so issuing a physical
+classification would claim a measurement that never ran
+(`UnicodeIsNotRecordedSound`), and dropping the member instead of refusing it
+would suggest the two remaining layers are all there is — which is the
+confusion being avoided. `CrossLayerInferenceRecord` then models the one
+legitimate way the layers may be related at all: a declared external
+citation, recorded as `مُصرَّح_غير_مُتحقَّق` and never promoted, because
+`CrossLayerInferenceIsImported` — reading a statistical cluster as physical
+homogeneity is an inference imported from outside this pipeline, not a
+product of it. `VERIFIED_LOCALLY` is declared and refused at construction
+under the same discipline, since no authority here inspects evidence outside
+language, and `is_produced_by_this_pipeline` is `False` structurally.
+Authority-wise the module is inert like its siblings:
+`OntologicalLayerClassification != BirthVerdict`, no `Freeze`, no `E0`, no
+kernel gate reads it — asserted by a sweep over every `kernel/` module — and
+every external-audit field stays byte-identical.
+
+G0.N declares, law-only and ahead of any runtime, what a carrier *is*:
+`Carrier != DiscoveredEssence`, and a carrier is instead a knot tied by
+convention at the one point on a fiber of regularity that survived every
+weaker model licensed and frozen for its own experiment. Its structural
+consequence is about `Freeze`: freezing fixes a knot at one declared version
+of the fiber — one tool, one corpus, one normalization policy — so reopening
+when that version changes is the condition of the knot's continuity rather
+than a defect of the earlier freeze, which is why `FreezeIsFiberVersionScoped`
+composes the existing `G0.F.1` reopen protocol instead of forking a second
+one. `NodeContinuityIsContentNotOccurrence` names exactly which half of the
+continuity question the repository already answers and which it does not:
+`TransitionContentIdentity` and `OCCURRENCE_ONLY_EXCLUSIONS`
+(`src/alghanem/kernel/content_identity.py`) already make it impossible for
+`admission_id` — a fingerprint that an execution happened, not of which
+phenomenon it was about — to enter a content identity, but deciding that two
+content identities produced under two tool versions name one knot is issued
+by no authority here and does not follow from digest equality alone.
+`NoIntentProjection` unifies `NoLabelLeak` and `NoOracleTuningBeforeFreeze` as
+two applications of one origin, forbidding both the original author's intent
+and the running researcher's expectation as grounds for settling a
+candidate's meaning. `ExistenceIsBinaryRankIsGraded` and
+`RankNeverCertifiesEssence` separate the binary existence judgement, which
+`StructuralDecisionStatus` already carries, from graded evidential rank, which
+has no machinery in this repository at all; and
+`CompleteInductionIsCorpusBounded` and
+`NoBedrockWithoutRecurringDirayaSurvival` bound what an exhaustive corpus
+result may be said to establish and refuse to read repeated survivals as
+bedrock. The whole section is declared law: no runtime, class, enum, gate,
+rank primitive, or continuity authority is introduced by it. See the "G0.N"
+section of `docs/CONSTITUTION.md`.
+
 G0.F declares, ahead of any runtime, that factorization is the general case
 of birth (a domain may close with one factor, several jointly-necessary
 factors, or none) and that fractality is a law, not a folder layout: a
