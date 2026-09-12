@@ -1,5 +1,17 @@
 """Arabic symbolic-encoding foundations."""
 
+from .classical_kernel_map import (
+    ABSENT_STRUCTURE_NOTE,
+    CLASSICAL_KERNEL_MAP_IS_NOT_A_GATE_NOTE,
+    KERNEL_PACKAGE_RELATIVE_PATH,
+    TRANSLATION_IS_NOT_TRANSMISSION_NOTE,
+    ClassicalKernelMapError,
+    MapRow,
+    MapRowReading,
+    MapSanad,
+    kernel_symbol_names,
+    read_map,
+)
 from .compound_layer_preregistration import (
     COMPOUND_AUTHORITY_NOTE,
     COMPOUND_LAYER_PREREGISTRATION,
@@ -398,6 +410,7 @@ from .word_class_formal import (
 )
 
 __all__ = [
+    "ABSENT_STRUCTURE_NOTE",
     "ADMISSIBLE_STATES",
     "AHAD_IS_NEVER_EXEMPT_FROM_RECHECK_NOTE",
     "ARABIC_PACKAGE_RELATIVE_PATH",
@@ -414,6 +427,7 @@ __all__ = [
     "AttestedSignifiedWitness",
     "BIRTH_ELIGIBILITY_DEFERRAL_NOTE",
     "CATEGORY_REDEFINITION_IS_NOT_EVIDENCE_TIGHTENING_NOTE",
+    "CLASSICAL_KERNEL_MAP_IS_NOT_A_GATE_NOTE",
     "CLOSED_VOCABULARY",
     "COMPOSITION_DEFERRAL_NOTE",
     "COMPOUND_AUTHORITY_NOTE",
@@ -434,6 +448,7 @@ __all__ = [
     "CanonicalFollowupProbeSpecificationEncoder",
     "CanonicalFollowupProbeSpecificationManifest",
     "ClaimStanding",
+    "ClassicalKernelMapError",
     "CompoundLayerPreregistration",
     "CompoundLayerPreregistrationError",
     "CompoundStage",
@@ -512,6 +527,7 @@ __all__ = [
     "InterventionType",
     "IstiqraScope",
     "JINS_IS_NOT_A_PROVED_SYNONYM_NOTE",
+    "KERNEL_PACKAGE_RELATIVE_PATH",
     "KULLI_ADMISSIBLE_STATES",
     "KULLI_AUTHORITY_NOTE",
     "KULLI_AXIS_INDEPENDENCE_NOTE",
@@ -555,6 +571,9 @@ __all__ = [
     "MadlulProofRow",
     "MadlulSection",
     "MalumaMafhumError",
+    "MapRow",
+    "MapRowReading",
+    "MapSanad",
     "MeasuredContrastSet",
     "MeasurementProgress",
     "MeasurementProtocolSpec",
@@ -699,6 +718,7 @@ __all__ = [
     "SurfaceInterventionTrace",
     "SurfaceNormalization",
     "TERMINAL_STATION_NOTE",
+    "TRANSLATION_IS_NOT_TRANSMISSION_NOTE",
     "TRANSMISSION_AUTHORITY_NOTE",
     "TemporalSignifierCarrier",
     "TransferFameCarrier",
@@ -742,11 +762,13 @@ __all__ = [
     "is_second_question_asked",
     "is_sub_partition_askable",
     "is_third_question_asked",
+    "kernel_symbol_names",
     "priority_argument",
     "prove_kulli_juzi_over_attested_corpus",
     "prove_madlul_over_attested_corpus",
     "prove_over_attested_corpus",
     "prove_relations_over_attested_corpus",
+    "read_map",
     "read_stations",
     "repository_root_path",
     "source_canonical_bytes",

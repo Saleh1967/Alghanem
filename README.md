@@ -823,6 +823,24 @@ making it strictly finer rather than equivalent — an import-time guard asserts
 that `SOURCE_DIGEST_COVERED_FIELDS` is a proper subset of the entry fields, so
 the two digests can never be read as attesting the same thing.
 
+`src/alghanem/arabic/classical_kernel_map.py` adds the seventh and last G0.N
+module, the twelve-row map of §8. Every row carries a `سند` from a closed
+three-member vocabulary — `مُشتقّ_من_الشيفرة`, `اجتهاد_ترجمة`,
+`مُصرَّح_غير_مُتحقَّق` — and the row is checked against the tree rather than
+trusted: the named kernel structure's existence is read from
+`src/alghanem/kernel` itself (by parsing definitions, not by importing, so the
+Arabic layer still imports nothing from the kernel). A structure that does not
+exist may not claim derivation from the code, and a structure that does exist
+may not be recorded as merely declared, because in either case the check
+actually ran and came out otherwise. That rule is what makes the `Carrier` row
+honest: the document's map assumes a kernel `Carrier`, and there is none in
+this tree, so the row reads `مُصرَّح_غير_مُتحقَّق` derived from absence rather
+than asserted. The `اجتهاد_ترجمة` rows record the remaining, more important
+caution: matching a classical concept to a kernel structure is a **translation
+judgement, not a transmission** — naming `State` opposite الحال does not mean
+the classical authors meant this structure, only that the structure named is
+really there. The map issues nothing and is read by nothing.
+
 `src/alghanem/arabic/pipeline_stations.py` adds the sixth G0.N module, the
 eleven-station table of §9. The table is **derived, not written**, on the model
 of `milestone_ledger`: each station names its module by path, and whether that
