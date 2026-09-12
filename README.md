@@ -828,6 +828,50 @@ per reader, are never summed, and never order the aims. What the indicator measu
 and that movement is not an aim's movement
 (`LEDGER_COUNT_MOVEMENT_IS_NOT_AIM_MOVEMENT`), and nothing here promotes anything to
 `Freeze`, `E0`, a birth verdict, or `AttainmentStanding.REACHED`.
+The sixth milestone is that indicator, in `alghanem.program.aim_indicator`. It is
+the one thing the three readers were forbidden to do — bind a derived count to a
+named aim — so it imports `AimId` and all three of them, and the boundary it keeps
+is authority, not imports: no verdict, no freeze, no `E0`, and it neither imports
+nor writes `AttainmentStanding` anywhere, which a test enforces by parsing the
+module. The binding is derived, not written: a hand-written table of aim to
+supporting rows would be exactly the written field §4 forbids, so the only source
+is `AimRecord.citation`. The citation *declares* a support; the ledgers *derive*
+whether that support exists, and a citation naming a row, a section, or a path
+that does not exist is refused at construction rather than reported.
+
+Coding it corrected the plan in several places, all recorded in §7 of
+`docs/AIMS.md`. The parenthetical status in a citation describes *some* of its
+supports and not all — `AIM-K1` cites one `ENFORCED` row and one
+`DECLARED_DEFERRED` row and declares only the second — so the rule is that it must
+match at least one, and matching none is refused. The per-aim standing is
+homogeneity of declared statuses, not a split into "deferred" and "enforced": no
+document declares that split, and inventing it here would be a judgement this
+layer has no authority to make. Its ignorance member had to be renamed from "no
+resolvable support" to "no status-bearing support", because `AIM-E2` cites a real
+section and a real path, neither of which carries a status column. Indexing rows
+by their first word raised a false duplicate on a healthy document, so the
+identifier shape is declared explicitly, and `G0.BV.1` is matched whole so that it
+cannot silently claim `G0.BV.1a` too. Reading the status parenthesis by a separate
+scan read `P_0` out of `` `ExactFactorization(P_0) = OPEN` `` — stage two's
+"reading a cell from the wrong position" returning one layer up — so the
+parenthesis is only a status where no reference already covers it.
+
+The refusal rule rises a fifth layer, from the bullet to the citation reference:
+every position in a citation is a reference read under a declared shape, or a
+declared connective, or a reference *declared unresolvable* and counted in
+`CitationReferenceCensus` so that it is seen, or refused by aim and character
+offset. Every count is a property over what was read; no type here has a count
+field, and every vocabulary member appears in every census even at zero. What
+stays open is named in code, not prose: the third of §4's readers is cited by no
+aim at all (`THIRD_READER_IS_CITED_BY_NO_AIM`, a zero that is derived by scanning
+for those value names, not assumed by dropping the reader); the binding runs one
+way, so a row that *should* support an aim but is uncited is invisible here
+(`CITATION_SUPPORT_IS_DECLARED_BY_THE_RECORD_NOT_BY_THE_CONSTITUTION`); and no
+document declares how many supports an aim has, so the count rests on "no refusal
+was raised" rather than on proof of completeness
+(`NO_DECLARED_SUPPORT_TOTAL_TO_CROSS_CHECK`). Above all, a support count is not
+progress (`SUPPORT_COUNT_IS_NOT_PROGRESS`): the ledger orders no aims, compares
+none, derives no ratio or rank, and reaches none of them.
 
 ## Development
 

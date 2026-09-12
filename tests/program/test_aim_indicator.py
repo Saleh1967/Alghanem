@@ -27,6 +27,51 @@ from alghanem.program import (
     CitedTokenShape,
     ReadCitation,
     derive_aim_indicator,
+"""Tests for the sixth AIM.1 milestone: the indicator binding aims to supports."""
+
+from __future__ import annotations
+
+import ast
+import pkgutil
+from dataclasses import fields, replace
+from pathlib import Path
+
+import pytest
+
+import alghanem.arabic as arabic_package
+import alghanem.encyclopedia as encyclopedia_package
+import alghanem.kernel as kernel_package
+from alghanem.program import (
+    AIM_INDICATOR_AUTHORITY_NOTE,
+    AIM_INDICATOR_DESIGN_SOURCE_CITATION_NOTE,
+    AIM_INDICATOR_NAMED_RESIDUALS,
+    AIM_RECORDS,
+    CITATION_SUPPORT_IS_DECLARED_BY_THE_RECORD_NOT_BY_THE_CONSTITUTION,
+    COUNT_IS_DERIVED_NOT_WRITTEN_NOTE,
+    NO_DECLARED_SUPPORT_TOTAL_TO_CROSS_CHECK,
+    SECTION_HEADING_CARRIES_NO_DECLARED_STATUS,
+    SUPPORT_COUNT_IS_NOT_PROGRESS,
+    THIRD_READER_IS_CITED_BY_NO_AIM,
+    AimId,
+    AimIndicatorError,
+    AimIndicatorLedger,
+    AimIndicatorRow,
+    AimSupportStanding,
+    AttainmentStanding,
+    AuditQuestionStanding,
+    CitationReferenceCensus,
+    CitedSupportKind,
+    DeclaredCitationFiller,
+    DeclaredCitationShape,
+    DeclaredLawStatus,
+    DeclaredUnresolvableReference,
+    DeferredValueSite,
+    ReadCitationReference,
+    constitution_document_path,
+    load_aim_indicator_ledger,
+    load_constitution_ledger,
+    read_aim_indicator_row,
+    repository_root_path,
 )
 from alghanem.program import aim_indicator as indicator_module
 from alghanem.program.aims import DESIGN_SOURCE_OPEN_QUESTION

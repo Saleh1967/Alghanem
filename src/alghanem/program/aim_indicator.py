@@ -55,6 +55,70 @@
 جوابًا أو حكمًا أو مؤشرَ قيمة، ويُفحَص ذلك على حقول الأصناف نفسها لا في نثر.
 
 **وترتيب الروابط ترتيبُ §٢** لا ترتيبَ أهمّية ولا قربٍ من بلوغ (§٦).
+"""المؤشر المعرفي المُشتَقّ: عددٌ مقروءٌ مربوطٌ بغايةٍ بعينها، بلا حكمٍ ولا ترقية.
+
+هذه **المرحلة السادسة من الطور الثاني** لـ AIM.1، وهي المرحلة التي أجّلتها
+المراحل الخمس السابقة كلُّها بالعبارة نفسها: «والمؤشرُ — بشروط §٤ كاملةً —
+مؤجَّلٌ إلى مرحلةٍ لاحقة». والمؤشر هو بعينه ما مُنع عنه القرّاء الثلاثة: **ربطُ
+عددٍ مقروء بغايةٍ بعينها**. فما كان مُنِعَ هناك لأنه سابقٌ لأوانه يقوم هنا
+بوصفه موضوع المرحلة، لا بوصفه تساهلًا في القاعدة::
+
+    DerivedCount  != Progress
+    CitedSupport  != Attainment
+    Indicator     != Verdict
+    AimsDocument  != Authority
+
+**المصدر التصميمي المباشر، مُستشهَدًا به لا مُعادًا اشتقاقه.** شكلُ «الجهة
+تُعلن، والقارئ لا يقبل إلا من مفردةٍ مغلقة يملكها هو، والمخالفة تُرفَض عند
+الإنشاء» مأخوذٌ هنا من سؤال التدقيق المفتوح
+`DeclaredVersusDerivedRecurrenceNotExplained` بوصفه **مصدرًا مباشرًا** (إلزام §٥
+من `docs/AIMS.md`)، لا بوصفه بديهةً تُعاد اشتقاقًا صامتًا. وذلك السؤال مرصودٌ
+غير مفسَّر، فلا يُستحدَث له هنا اسمٌ عامّ ولا صنفُ أساسٍ مشترك يوحّد الشكل بين
+القرّاء الخمسة؛ يُستعمل في موضعه ويُنسَب إلى سؤاله.
+
+**الربط مُشتَقٌّ لا مكتوب** (§٤): لا جدولَ بيدٍ يقول «الغاية الفلانية تستند إلى
+الصفوف الفلانية»، فذلك هو بعينه الحقل المكتوب الذي تمنعه §٤، وهو الخطأ الذي
+أغلقته المرحلة الرابعة على `aims.py` نفسها. والمصدر الوحيد للربط هو
+`AimRecord.citation`: الاستشهاد **يُعلن** مستندًا، والدفاتر الثلاثة **تشتقّ** هل
+لذلك المستند وجودٌ في وثيقة الدستور أو في شجرة المستودع. واستشهادٌ يُسمّي صفًّا
+لا وجود له يُرفَض عند الإنشاء ولا يُقرَّر.
+
+**مفرداتٌ مغلقة متعدّدة لا مقياسٌ رتبيّ واحد** (§٥)، مع تعليل كلّ دمجٍ مرفوض:
+
+* `DeclaredCitationShape` (شكلُ الإشارة في النصّ) و`CitedSupportKind` (جنسُ ما
+  حُلَّت إليه) مفردتان لا واحدة: شكلٌ واحد (`صفّ X`) قد يُحَلّ صفًّا، وشكلٌ آخر
+  (`` `X` ``) قد يُحَلّ صفًّا أو سؤالًا؛ ودمجُهما يُسقط الفارق بين ما كُتب وما
+  وُجد، وهو الفارق الذي تقوم عليه المرحلة كلُّها.
+* `AimSupportStanding` لا تُدمَج في أيّ منهما، ولا تصير درجةً في سُلَّم بلوغ:
+  هي وصفٌ لتجانس حالات المستندات المقروءة لا تقديرٌ لقربٍ من غاية.
+* ولا تُستحدَث رتبةٌ رابعة («نسبة إنجاز» أو «ترتيب أولوية» أو «قرب من بلوغ»)،
+  لأن §٦ تمنع الترتيب وتقديرَ القرب صراحةً، والتقديرُ هو عينه الحكم الذي لا
+  سلطة هنا تملكه. والمنعُ بنيةٌ لا وعد: يُفحَص اسمُ كلّ حقلٍ في كلّ صنفٍ هنا
+  عند الاستيراد.
+
+**لا حقلَ عددٍ البتّة** (§٤): كلّ عددٍ هنا خاصّيةٌ تُحسَب من الإشارات المقروءة،
+على منهج `LawRowLedger.row_count` و`AuditQuestionLedger.open_count`. وكلّ عضوٍ
+في كلّ مفردةٍ حاضرٌ في الإحصاء ولو بصفر، فالصفرُ المقروء لا يُطوى.
+
+**الرفض لا التخطّي الصامت، مرفوعًا طبقةً خامسة.** ارتفعت القاعدة من الخلية إلى
+الجدول (المرحلة الثانية)، ثم إلى الحارس (الثالثة)، ثم إلى نقطة §٢ (الرابعة)، ثم
+إلى نقطة سؤال التدقيق (الخامسة)؛ وترتفع هنا إلى **الإشارة داخل الاستشهاد**: كلّ
+موضعٍ من نصّ الاستشهاد إمّا إشارةٌ مقروءةٌ بشكلٍ من المفردة المغلقة، أو رابطٌ
+مُصرَّحٌ به (`DeclaredCitationFiller`)، أو مرفوضٌ باسم الغاية وموضع الحرف. فلا
+يُقرَأ استشهادٌ قراءةً جزئية تُنتج «لا مستند لهذه الغاية» وهو ادّعاءُ غيابٍ لم
+يُقرَأ.
+
+**استيرادُ `AimId` والقرّاء الثلاثة معًا هو المرحلة نفسها.** مُنع القرّاء
+الثلاثة من استيراد `AimId` لأن الربط سابقٌ لأوانه هناك؛ وهذه الوحدة تستوردهم
+جميعًا لأنها الربط. والحدّ المحفوظ ليس حدَّ الاستيراد بل حدُّ السلطة: لا ترقية،
+ولا حكم، ولا بلوغ.
+
+**خمولٌ سلطويّ مفحوص**: `AimIndicatorLedger != BirthVerdict`؛ لا تُصدر هذه
+الوحدة ولادةً ولا حكمًا ولا تجميدًا ولا `E0`، ولا تكتب `AttainmentStanding` في
+أيّ موضع، ولا تقرؤها أيّ وحدةٍ في `kernel/`، وهو ما يفحصه اختبارٌ يمسح الشجرة.
+
+**وترتيب الصفوف ترتيبُ ورود الغايات في §٢**، لا ترتيبَ أهمّية ولا قربٍ من بلوغ
+(§٦).
 """
 
 from __future__ import annotations
@@ -269,6 +333,17 @@ class ReadCitation:
     genus: CitedSourceGenus
     reference: str
     offset: int
+class ReadCitationReference:
+    """إشارةٌ واحدة قُرئت من استشهاد غاية: شكلُها، واسمها، وما حُلَّت إليه."""
+
+    aim_id: AimId
+    shape: DeclaredCitationShape
+    reference_name: str
+    kind: CitedSupportKind
+    citation_offset: int
+    resolved_target: str = ""
+    derived_status: str = ""
+    question_standing: AuditQuestionStanding | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.aim_id, AimId):
@@ -361,8 +436,7 @@ class AimCitationLink:
 
     def __post_init__(self) -> None:
         if not isinstance(self.aim_id, AimId):
-            raise AimIndicatorError("معرّف الغاية من مفردته المغلقة")
-        if not isinstance(self.tokens, tuple) or not self.tokens:
+            raise AimIndicatorError("معرّف الغاية من مفردته المغلقة")        if not isinstance(self.tokens, tuple) or not self.tokens:
             raise AimIndicatorError(
                 f"{self.aim_id.value}: استشهادٌ بلا رمزٍ واحد مقروء — "
                 "مستندُ الغاية لازمٌ في السجلّ، وخلوُّه من كلّ شكلٍ مُصرَّح به "
@@ -766,6 +840,24 @@ def derive_aim_indicator(
     links = tuple(_read_link(record, sources) for record in records.values())
     tokens = tuple(token for link in links for token in link.tokens)
     return AimIndicator(links=links, citations=CitationCensus(tokens=tokens))
+def load_aim_indicator_ledger(path: Path | None = None) -> AimIndicatorLedger:
+    """اقرأ الدفتر من وثيقة الدستور نفسها؛ وغيابُها رفضٌ مُسمّى لا دفترٌ فارغ."""
+
+    document = constitution_document_path() if path is None else path
+    if not isinstance(document, Path):
+        raise AimIndicatorError("موضع الوثيقة مسارٌ")
+    try:
+        text = document.read_text(encoding="utf-8")
+    except OSError as error:
+        raise AimIndicatorError(
+            f"تعذّرت قراءة وثيقة الدستور عند {document}: دفترٌ فارغ يُقرَأ «لا "
+            "مستند لأيّ غاية» وهو ادّعاءُ غيابٍ لم تُقرَأ الوثيقة لأجله"
+        ) from error
+    return read_aim_indicator_ledger(
+        ledger=load_constitution_ledger(document),
+        document_text=text,
+        repository_root=repository_root_path(),
+    )
 
 
 __all__ = [
