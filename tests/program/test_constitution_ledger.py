@@ -387,11 +387,14 @@ def test_the_repository_document_is_read_without_refusal() -> None:
     ledger = load_constitution_ledger()
     assert ledger.laws.row_count == sum(ledger.laws.status_counts.values())
     assert ledger.laws.row_count > 100
-    assert ledger.tables.table_count == 9
-    assert len(ledger.tables.law_tables) == 8
+    assert ledger.tables.table_count == 10
+    assert len(ledger.tables.law_tables) == 9
     assert len(ledger.tables.excluded_tables) == 1
     assert ledger.laws.status_counts[DeclaredLawStatus.DECLARED_DEFERRED] > 0
     assert ledger.laws.status_counts[DeclaredLawStatus.ENFORCED_AT_AIM_RECORD] == 1
+    assert ledger.laws.status_counts[DeclaredLawStatus.ENFORCED_AT_WAD_NAQL] == 3
+    assert ledger.laws.status_counts[DeclaredLawStatus.ENFORCED_AT_UMUM_KHUSUS] == 2
+    assert ledger.laws.status_counts[DeclaredLawStatus.ENFORCED_AT_DECISION_CHAIN] == 1
     open_names = {question.name for question in ledger.audit_questions.open_questions}
     assert DESIGN_SOURCE_OPEN_QUESTION in open_names
     assert ledger.audit_questions.resolved_count > 0

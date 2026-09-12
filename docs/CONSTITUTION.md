@@ -562,6 +562,34 @@ G0.F, G0.BA, G0.BV, or G0.IC law. In particular it issues no
 across two tool versions is exactly the authority this repository does not
 have, and declaring the law is not exercising it.
 
+## G0.W — The decision chain: wad, umum/khusus, and the chain ledger
+
+This milestone builds three Arabic-layer modules for the fourth, tenth, and
+framing positions of the decision chain that runs from an identity-free
+codepoint to a concept grounded in sense. It adds no kernel authority: none of
+the three imports anything from `kernel/`, none is read by anything in it, and
+none issues a birth, a `Freeze`, or an `E0`.
+
+The founding correction is stated as law rather than left in prose. Language is
+laid down by human beings and not by God: neither revelation (a vicious circle,
+since revelation is itself understood only through a language prior to it) nor
+necessary knowledge (which would entail necessary knowledge of God, contrary to
+observed fact) is a path to it. `وعلَّم آدم الأسماء` is therefore the teaching
+of the *realities and properties of things* — a direct concept in the sense of
+`ContentStanding.مفهوم` — not the teaching of lexemes. The consequence is the
+one that matters structurally: because the laying-down is a purely human,
+historically contingent event, it is knowable only by transmission — not
+because it is sacred, but because nothing else reaches a past convention.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `WadIsHumanNotDivine` | ENFORCED_AT_WAD_NAQL | `WadOrigin` is a closed two-member vocabulary and `وضع_بشري` is **derived from an exhausted two-part refutation, never declared in a field**: a `TawqifRefutation` must carry both `لا_طريق_بالوحي` and `لا_طريق_بعلم_ضروري`, each with an excerpt quoted verbatim from the one named source and checked by containment (`src/alghanem/arabic/wad_naql.py`). One ground alone leaves the other possibility standing, so a single-ground refutation fails at construction rather than producing a warning. The rejected reading of `وعلَّم آدم الأسماء` as lexemes is a named member of `AdamTeachingReading` refused by the source's own words, not a silent absence. `HumanWad != ArbitraryChoice`: a human convention is a collective settlement that actually occurred, transmitted as it occurred and not invented as one wishes. |
+| `WadKnownOnlyByNaql` | ENFORCED_AT_WAD_NAQL | A `WadRecord` — the pairing of one `لفظ` with one `مدلول` — carries its path of knowledge only as a `TransmissionStanding` (متواتر/آحاد/فرض), imported rather than copied, and `known_only_by_naql` is structural rather than optional. The two refused paths are refused by name and by construction: `refuse_derivation` always raises for `استنباط_من_التحليل_التوزيعي` and `استنباط_من_تحليل_المدلول`, because link 3a knows only relations among carriers and states and link 3b knows no particular lexeme at all. `Naql != Sanctity`. |
+| `DistributionalTraceIsNotWadPath` | ENFORCED_AT_WAD_NAQL | The trace of a convention is not the path to knowing it, and neither statement corrects the other. `ONLY_LEGITIMATE_TARGET_NOTE` in `maluma_mafhum` describes a real distributional regularity left by a settled convention and stands unchanged; what it may not do is yield *which* lexeme was paired with *which* meaning, since an equivalent regularity can arise from incidental repetition or sample bias. `DistributionalCorroboration` is therefore constructible only over an already transmitted `WadRecord`, its `function` is fixed at `يرفع_دراية`, and `transmission_after_corroboration` returns the prior standing unchanged: statistics raise diraya and never manufacture riwaya. |
+| `TakhsisIsNotIhmal` | ENFORCED_AT_UMUM_KHUSUS | Specialization is the operation of *both* evidences, never the dropping of one: the specializer operates at its locus and the general remains authoritative beyond it. `TakhsisRegistration` (`src/alghanem/arabic/umum_khusus.py`) holds exactly the general evidence, the specializer, and a named conflict locus; there is no field into which a dropped or outweighed evidence could be written, and an import-time sweep refuses one. The channel of specialization is **derived** from the specializer's own `DalalaChannel` — imported from `mantuq_mafhum_ifada` rather than duplicated — so specializing a general by a `مفهوم` is read off the evidence rather than asserted. A general specializing a general, a specializer that is itself general, an evidence specializing itself, or a specialization with no named locus each fail at construction, the last because the default is difference rather than contradiction (`DEFAULT_IS_DIFFERENCE_NOT_CONTRADICTION_NOTE`). `TakhsisChannel.لا_تخصيص` is a declared member that no derivation from a standing specializer can ever produce. |
+| `TafriPathsAreNotMixed` | ENFORCED_AT_UMUM_KHUSUS | A general rule branches onto its individuals and a universal rule branches onto its particulars; the two are distinct paths, not synonyms. `TafriRegistration` derives its path from a closed `RuleGenus` and refuses a declared path that disagrees. `RuleGenus` is deliberately *not* `Universality` from `kulli_juzi_formal`: that vocabulary classifies a single word as كلّي or جزئي on attested evidence, and mapping its `جزئي` onto a general rule would be the very genus confusion this row forbids — a foreign value passed to `tafri_path_of` is refused rather than coerced. |
+| `ChainReachIsDerivedNotCoded` | ENFORCED_AT_DECISION_CHAIN | `decision_chain` reads the fifteen positions of the chain off the tree, and reach is derived by succession rather than from coding alone: each link conditions the next, so a coded link preceded by an unreached one reads `مسبوقة_بحلقة_غير_بالغة` and never `بالغة`. This is what keeps the chain from reading as complete while links 1 and 2 (the carrier, and the (carrier, state) derivative) stay deferred under `KnotNotEssence`. Deferral by law is **declared, not inferred from absence**: a link with no module at all names the constitutional law that defers it, while a link naming a module has its coding read from the tree like any other. The two governing constraints — the idea/method/means test and the seriousness/benefit test — are recorded as the chain's *frame* rather than positions in it, both `مُصرَّح_غير_مُرمَّز`, and no `GoverningConstraint` declaring itself coded is constructible today: constraint (أ) awaits a written universal idea for GFLK, which this repository does not have and which this milestone deliberately does not invent, and constraint (ب) admits only one acceptable test — a complete application to a real word or verse. The ledger is a reading of the tree and not an authority over it. |
+
 ## G0 — Birth Protocol (declared law, no runtime gate yet)
 
 The kernel and Arabic layer never introduce a new named object, cardinality,

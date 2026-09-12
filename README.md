@@ -949,6 +949,65 @@ making it strictly finer rather than equivalent — an import-time guard asserts
 that `SOURCE_DIGEST_COVERED_FIELDS` is a proper subset of the entry fields, so
 the two digests can never be read as attesting the same thing.
 
+`src/alghanem/arabic/wad_naql.py`, `src/alghanem/arabic/umum_khusus.py`, and
+`src/alghanem/arabic/decision_chain.py` build the fourth link, the tenth link,
+and the ledger of the decision chain itself (G0.W in `docs/CONSTITUTION.md`).
+The chain runs from an identity-free codepoint to a concept grounded in sense,
+and its two third links — the signifier alone (statistical) and the signified
+alone (philosophical) — do not meet on their own: neither knows one particular
+lexeme paired with one particular meaning. Their pairing is the **وضع**, and
+`wad_naql` is its place. The origin is not written into a field: `WadOrigin`
+becomes `وضع_بشري` only by a two-part refutation of divine institution — no path
+by revelation (a vicious circle, since revelation is understood only through a
+prior language) and no path by necessary knowledge (which would entail necessary
+knowledge of God, contrary to observed fact) — with both grounds required and
+each quoted verbatim from one named source, *الشخصية الإسلامية* part 1, on
+الوضع. `وعلَّم آدم الأسماء` is read there as the teaching of the realities and
+properties of things, a direct concept rather than lexemes, and the lexeme
+reading is a named refused member rather than a silent absence. The consequence
+is the point of the link: a `WadRecord` carries its path of knowledge only as a
+`TransmissionStanding`, and the two derivational routes are refused by a
+function that always raises. This is deliberately *not* a correction of
+`ONLY_LEGITIMATE_TARGET_NOTE` in `maluma_mafhum`: a settled convention really
+does leave a distributional trace, and that note describes it correctly. What a
+trace cannot do is say which lexeme was paired with which meaning, since an
+equivalent regularity can arise from incidental repetition or sample bias — so
+`DistributionalCorroboration` is constructible only over an already transmitted
+record, its function is fixed at `يرفع_دراية`, and the standing after
+corroboration is the standing before it.
+
+`umum_khusus` closes the tenth link on one rule: the general is specialized by a
+`مفهوم` **without the first evidence being dropped**. A `TakhsisRegistration`
+holds the general, the specializer, and a named conflict locus, and there is no
+field into which a discarded evidence could be written — an import-time sweep
+refuses one, so `Takhsis != Ihmal` is unconstructible to violate rather than
+merely discouraged. The channel is derived from the specializer's own
+`DalalaChannel`, imported from `mantuq_mafhum_ifada` rather than duplicated, and
+a specialization with no named locus is refused because the default between two
+texts is difference, not contradiction. Its second half keeps two branchings
+apart: a general rule branches onto individuals, a universal rule onto
+particulars. `RuleGenus` is its own closed vocabulary and not `Universality`
+from `kulli_juzi_formal`, because that one classifies a single *word* and
+mapping its `جزئي` onto a general rule would be the genus confusion the rule
+forbids; a foreign value is refused rather than coerced. Like its siblings it is
+a registration, not a certificate: it names no source text and issues nothing.
+
+`decision_chain` reads the chain's fifteen positions off the tree in the manner
+of `pipeline_stations`, and adds what a station table does not need: **reach is
+derived by succession**, because each link conditions the next. A coded link
+preceded by an unreached one reads `مسبوقة_بحلقة_غير_بالغة`, which is what keeps
+the chain from appearing complete while links 1 and 2 — the carrier, and the
+(carrier, state) derivative — remain deferred under `KnotNotEssence`. Deferral
+by law is declared and names its constitutional law; absence of a module is
+never read as deferral by itself. The two governing constraints are recorded as
+the chain's frame rather than positions in it, and neither can be declared
+coded: constraint (أ) would need a written universal idea for GFLK against which
+an epistemically loaded tool could be measured, and this repository has none —
+the gap is recorded structurally here instead of being smoothed over in prose,
+and writing that idea is left as separate work. Constraint (ب) admits only one
+acceptable test, a complete application to a real word or verse, and not the
+description of yet another stage of the measuring apparatus.
+
 `src/alghanem/arabic/classical_kernel_map.py` adds the seventh and last G0.N
 module, the twelve-row map of §8. Every row carries a `سند` from a closed
 three-member vocabulary — `مُشتقّ_من_الشيفرة`, `اجتهاد_ترجمة`,

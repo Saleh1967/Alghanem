@@ -76,12 +76,24 @@ def test_the_fourth_link_is_coded_by_this_milestone() -> None:
     assert fourth.coding is ChainLinkCoding.مُرمَّزة
 
 
-def test_the_tenth_link_is_declared_and_read_as_uncoded_not_skipped() -> None:
+def test_the_tenth_link_is_coded_by_this_milestone() -> None:
     tenth = next(
         item for item in read_chain().readings if item.declaration.label == "١٠"
     )
     assert tenth.declaration.module_relative_path == "umum_khusus.py"
+    assert tenth.coding is ChainLinkCoding.مُرمَّزة
+
+
+def test_a_tree_without_the_tenth_link_module_reads_it_as_uncoded_not_skipped(
+    tmp_path: Path,
+) -> None:
+    package = tmp_path / ARABIC_PACKAGE_RELATIVE_PATH
+    (package / "encoding").mkdir(parents=True)
+    (package / "encoding" / "observation.py").write_text("", encoding="utf-8")
+    ledger = read_chain(tmp_path)
+    tenth = next(item for item in ledger.readings if item.declaration.label == "١٠")
     assert tenth.coding is ChainLinkCoding.حلقة_غير_مُرمَّزة
+    assert len(ledger.readings) == 15
 
 
 def test_the_first_two_links_stay_deferred_by_a_named_constitutional_law() -> None:
