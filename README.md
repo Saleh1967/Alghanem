@@ -364,6 +364,37 @@ three of eight competing readings are described by one of the five causes
 readings in `man_2_255.yaml` and `maa_2_197.yaml` as `اشتراك`); the remaining
 five are declared `لا_ينطبق` rather than forced into a label.
 
+`src/alghanem/arabic/manat_verification.py` runs the G0.EA.1 applicability gate
+over one real Arabic word for the first time: `قُرُوء` in البقرة:228, through
+`examples/external_audit/quru_2_228.yaml`. It adds no constitutional law; the
+gate has existed since G0.EA.1 and had never been applied to linguistic
+material. The card declares each `قرينة` with a closed two-value `جنس_البيان` —
+`بيان_بالقول` for a textual indication (the verse's own
+`وَلَا يَحِلُّ لَهُنَّ أَن يَكْتُمْنَ مَا خَلَقَ اللَّهُ فِي أَرْحَامِهِنَّ`, and Ṭabarī's
+`جامع البيان` transmitting both readings by name) and `بيان_بالفعل` for a
+lexical-usage indication (`لسان العرب`, مادة ق ر أ) — and no rank at all: a
+`رتبة`/`أولوية`/`نتيجة` key on a `قرينة` fails the read rather than being
+ignored, and the order is derived from the genus alone. The precedence of
+`قول` over `فعل` is stated in this gate's own terms rather than assumed:
+G0.EA.1 decides by the *weakest* model that closes and a stronger unresolved
+model cannot override it, so `بيان_بالقول` is placed in the weakest, and
+therefore non-overridable, position and `بيان_بالفعل` is declared stronger than
+it (`QAWL_OCCUPIES_THE_NON_OVERRIDABLE_POSITION_NOTE`). A card declaring a
+`بيان_بالفعل` قرينة without a single `بيان_بالقول` one is refused at read time,
+so no lexical indication can ever be the weakest model and decide alone
+(`FIL_NEVER_DECIDES_ALONE_NOTE`). `BLOCK` has no path in this layer and its
+absence is declared, not covered. The named sources are cited as testimony and
+nothing more: no corpus is read and no file digest is re-derived here
+(`NAMED_SOURCE_IS_TESTIMONY_NOT_MEASUREMENT_NOTE`), and the two `بيان` terms
+are used in the declared narrow sense, not the full usuli sense of the
+Lawgiver's exposition. The result on the `قُرُوء` card is `DEFER` with one named
+residual per unresolved rival reading — the competing `طهر` reading is declared
+`غير_متعينة`, and the قول قرائن themselves transmit both senses from one named
+source — and that deferral is the intended outcome, not a gap to be engineered
+away into `PASS`. `ExternalAuditor != KernelAuthority` holds throughout: adding
+a declared verdict field to the card leaves the gate's status unchanged, and an
+evaluator sealed for a different claim scope is refused by the gate.
+
 `src/alghanem/arabic/word_class_formal.py` adds the first Layer B proof whose
 own structure aims at a *positive* result rather than a documented deferral. It
 states, in `FORMAL` mode terms only, a `FrozenFormalDomain` of exactly two
