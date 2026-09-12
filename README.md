@@ -823,6 +823,40 @@ making it strictly finer rather than equivalent — an import-time guard asserts
 that `SOURCE_DIGEST_COVERED_FIELDS` is a proper subset of the entry fields, so
 the two digests can never be read as attesting the same thing.
 
+`src/alghanem/arabic/transmission_standing.py` adds the second G0.N module,
+on the three degrees of certainty and the two scopes of induction. The three
+degrees — `متواتر`, `آحاد`, `فرض` — are not a ladder that a growing number
+climbs: their conditions are qualitative, and the module carries **no count
+field at all**, checked at import against the dataclasses' own fields, because
+a field counting sources would reopen the very door ("many narrators make
+recurrence") the qualitative conditions close. The degree is derived from
+three closed carriers — basis of knowledge (direct observation versus
+inference), source independence (collusion impossible versus not
+established), and repetition pattern (successive independent cycles, a single
+batch, or none) — and `derive_standing` is total over them with no default
+branch; a written degree contradicting its carriers is refused at
+construction, so there is no place to write the answer directly.
+`متواتر` is declared in the vocabulary and structurally unconstructible under
+the same discipline as `شاهد_لكل_فرع` and `CLOSED_BY_FROZEN_EXPERIMENT`: no
+authority here verifies source independence across successive generations, so
+issuing the degree would claim a check that never ran, and the refusal is
+raised with its own message before the general carrier-mismatch one. The two
+induction scopes are handled the same way: a complete enumeration over a
+closed corpus is certain **inside that corpus only**, and the scope sentence
+is derived by `derive_scope_statement` rather than written, with a declared
+sentence that differs from the derived one refused at construction — so
+generalizing directly from a closed corpus to the open language it was drawn
+from is structurally unsayable rather than avoided by hedging prose
+(`is_certain_beyond_the_enumerated_set` is `False` structurally). Finally the
+exemption of "the first organized information" from the full birth protocol
+is recorded as `FIRST_ORGANIZED_INFORMATION_QUESTION`, an open question with
+all three hypotheses and **no answer field**, on the model of
+`Phase2OpenQuestion`: self-evidence to the researcher is not recurrence, and
+that difference is exactly what the qualitative conditions separate. The
+module is inert like its siblings: `TransmissionStanding != BirthVerdict`, no
+`Freeze`, no `E0`, no kernel gate reads it, and every external-audit field
+stays byte-identical.
+
 `src/alghanem/arabic/epistemic_layers.py` is the first module written under
 G0.N, and it closes the layer confusion that law names rather than the law
 itself. Three layers are kept apart as one closed vocabulary — physical
