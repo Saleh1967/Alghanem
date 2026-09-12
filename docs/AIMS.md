@@ -86,9 +86,14 @@ NamedObstacle != SilentAbsence
 * ليس بلوغًا: `COMPETITION_RESOLVED_IN_POSET` وحدها
   (`ComparabilityClosure != IndependentClosure`)، ولا إثباتُ أصلِ مدخلِ
   المُقيِّم وحده في `G0.BA.1b`؛ فذلك يرفع عائقًا لازمًا غير كافٍ ولا يُصيّر
-  `is_independent_closure` غير `False`.
+  `is_independent_closure` غير `False`. ولا تركيبُ الموصولات الثلاثة في
+  `G0.IC.1e`: التركيب يُصدر حكمًا مُشتقًّا عن القراءات الثلاث، وأقصى ما يبلغه
+  `CONJUNCTS_SATISFIED_PENDING_RESIDUAL_CERTIFICATION`، و
+  `SatisfiedConjunctsIsNotIndependentClosure` تُبقي `is_independent_closure`
+  على `False`.
 * المستند: صفّ `G0.IC.1a`، وصفّ `G0.BA.1b` الذي أغلق
-  `InputProvenance = DECLARED_DEFERRED` المُعلَن في `G0.BA.1a`.
+  `InputProvenance = DECLARED_DEFERRED` المُعلَن في `G0.BA.1a`، وصفّ
+  `G0.IC.1e` الذي ضيّق الحاجز ولم يرفعه.
 
 ### AIM-K4 — سلطةُ التجميد ثم `E0`
 
@@ -208,8 +213,11 @@ NamedObstacle != SilentAbsence
 * **بدأت واصطدمت بحاجزٍ مُسمّى**: AIM-K2 وAIM-K3 (الحاجز: غيابُ سلطةِ تقويمِ
   محتوى الدليل؛ وقد أغلق `G0.BA.1b` منه شرطًا لازمًا واحدًا فقط هو
   `InputProvenance`، فصار مدخلُ المُقيِّم مُشتقًّا بإثباتٍ من لقطة الدليل
-  المُصرَّح بها، بينما بقي تقويمُ المحتوى نفسه بلا سلطة)، وAIM-A2 (الحاجز:
-  نتيجةٌ سالبة مُسجَّلة بثلاثة فروضٍ قائمة).
+  المُصرَّح بها، بينما بقي تقويمُ المحتوى نفسه بلا سلطة؛ ثم ضيّق `G0.IC.1e`
+  حاجزَ AIM-K3 بأن ركّب الموصولات الثلاثة في حكمٍ واحد مُشتَقّ، فصار المتبقّي
+  مُسمّى بثلاثة أسماء لا بغيابٍ عامّ: `OneWitnessIsNotResidualCertification`
+  و`SurvivalReadIsNotMeasuredReplicatedResidual` و`CoverageIsNotCorrectness`)،
+  وAIM-A2 (الحاجز: نتيجةٌ سالبة مُسجَّلة بثلاثة فروضٍ قائمة).
 
 ### غايتان مُستورَدتان، مُسجَّلتان كما أُعلنتا ولا يُتحقَّق منهما هنا
 

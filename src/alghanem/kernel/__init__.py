@@ -141,6 +141,13 @@ from .independent_closure import (
     IndependentClosureGate,
     SealedClosureScopeRegistry,
 )
+from .independent_closure_composition import (
+    IndependentClosureCompositionError,
+    IndependentClosureCompositionGate,
+    IndependentClosureCompositionStatus,
+    IndependentClosureConjunct,
+    IndependentClosureDecision,
+)
 from .invariant import (
     InvariantAssessmentSpecificationError,
     InvariantComparisonError,
@@ -306,6 +313,11 @@ __all__ = [
     "FrozenPreEvidenceExperimentManifest",
     "IndependentClosureAssessment",
     "IndependentClosureAuthorityError",
+    "IndependentClosureCompositionError",
+    "IndependentClosureCompositionGate",
+    "IndependentClosureCompositionStatus",
+    "IndependentClosureConjunct",
+    "IndependentClosureDecision",
     "IndependentClosureGate",
     "InvariantAssessmentSpecificationError",
     "InvariantComparisonError",
