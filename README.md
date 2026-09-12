@@ -798,36 +798,6 @@ not by content, so a status written tomorrow under a declared-excluded label is
 excluded without refusal). Tighter reading is not truth of what is read, and the
 indicator remains deferred with everything §4 requires of it.
 
-The sixth milestone is that indicator, in `alghanem.program.aim_indicator`, and it
-takes the step every earlier milestone closed by deferring: binding a derived count
-to a particular aim. All three sources §4 names are now read, so only the binding
-was left, and the ban on importing `AimId` into the three readers was a deferral of
-this step rather than a permanent boundary — this module imports them openly, while
-authority inertness is checked from the side that still holds: no module under
-`kernel/` reads the programme layer. The only legitimate link is the `citation`
-field the record has carried since the first milestone: tokens are extracted from it
-under declared shapes and resolved against the three ledgers and the constitution's
-own text, so the declared side is the citation and the derived side is what was
-actually found, and a token with no referent is refused by name and offset instead of
-being skipped. Coding it showed that silent skipping returned through the language
-itself, inside the layer built to refuse it: the usual word boundary (`\w`) counts
-Arabic letters, so a token joined to the conjunction *wāw* — `وG0.BV.1` — was read as
-no token at all and two aims silently lost a cited row each. Row names turned out to
-have three shapes (a dotted identifier plus prose title, a prose title alone, and a
-backticked name the citation writes without its backticks), prefix matching had to be
-refused so that `G0.BV.1` never resolves to `G0.BV.1a`, and not every cited thing is a
-row: sections, a claim line, and repository paths are declared-excluded genera whose
-existence is verified before they are excluded. Two aims reach no ledger at all and
-carry `NO_LEDGER_READABLE_SOURCE` explicitly rather than a zero, and the third
-reader — the declared-but-unbuildable values — is reached by no citation at all,
-because those names occur in the aims' questions rather than their sources
-(`DEFERRED_VALUE_READER_IS_NOT_REACHED_BY_ANY_CITATION`). The counts stay separate
-per reader, are never summed, and never order the aims. What the indicator measures is
-*citation*, not attainment: an aim resting on many rows has attained nothing
-(`CITATION_LINK_IS_NOT_ATTAINMENT`), ledger counts move when the document is edited
-and that movement is not an aim's movement
-(`LEDGER_COUNT_MOVEMENT_IS_NOT_AIM_MOVEMENT`), and nothing here promotes anything to
-`Freeze`, `E0`, a birth verdict, or `AttainmentStanding.REACHED`.
 The sixth milestone is that indicator, in `alghanem.program.aim_indicator`. It is
 the one thing the three readers were forbidden to do — bind a derived count to a
 named aim — so it imports `AimId` and all three of them, and the boundary it keeps
@@ -872,6 +842,23 @@ was raised" rather than on proof of completeness
 (`NO_DECLARED_SUPPORT_TOTAL_TO_CROSS_CHECK`). Above all, a support count is not
 progress (`SUPPORT_COUNT_IS_NOT_PROGRESS`): the ledger orders no aims, compares
 none, derives no ratio or rank, and reaches none of them.
+
+That milestone was coded twice, in two parallel branches neither of which saw the
+other, and both landed. Merging them spliced one version's module docstring onto
+the other's code, so neither the module nor its test could even be imported, and
+§7 carried two sections of the same name. One version is now kept whole, and the
+other is refused by name rather than erased: it called its vocabularies
+`CitedTokenShape` and `CitedSourceGenus` and named residuals
+(`CITATION_LINK_IS_NOT_ATTAINMENT`, `CITATION_PROSE_IS_NOT_A_TOKEN_STREAM`,
+`LEDGER_COUNT_MOVEMENT_IS_NOT_AIM_MOVEMENT`) that no code reads today, so §7 of
+[`docs/AIMS.md`](docs/AIMS.md) names them as open positions instead of folding
+them away. Two independent codings of one milestone certify neither of them, and
+each branch passed `pytest`, `ruff`, and `mypy --strict` on its own while their
+merge did not import at all — a measured witness for §1's refusal of engineering
+indicators as indicators of this programme's aims. What this restoration does not
+close is named too: nothing derives that a §7 section corresponds to exactly one
+module in the tree
+(`MILESTONE_SECTION_TO_MODULE_CORRESPONDENCE_IS_NOT_DERIVED`).
 
 ## Development
 
