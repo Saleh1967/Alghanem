@@ -15,8 +15,10 @@ from alghanem.arabic.external_audit import audit_card
 from alghanem.arabic.lafz_madlul_relation_formal import (
     ATTESTED_CLUSTERS,
     FROZEN_RELATION_DOMAIN,
+    MURADIF_PRESUMPTION_NOTE,
     NOT_APPLICABLE_TEXT,
     RELATION_ADMISSIBLE_STATES,
+    RELATION_CLOSURE_ATTESTATION,
     RELATION_FIFTH_QUESTION,
     RELATION_FIRST_QUESTION,
     RELATION_FOURTH_QUESTION,
@@ -43,6 +45,7 @@ from alghanem.arabic.lafz_madlul_relation_formal import (
     is_third_question_asked,
     prove_relations_over_attested_corpus,
 )
+from alghanem.arabic.text_key import comparison_key
 
 _EXAMPLES = Path(__file__).resolve().parents[2] / "examples" / "external_audit"
 
@@ -648,3 +651,49 @@ def test_the_classification_changes_no_external_audit_field(card: str) -> None:
         audit_card(_EXAMPLES / card).to_dict(), ensure_ascii=False, sort_keys=True
     )
     assert before == after
+
+
+def test_the_closure_attestation_names_every_declared_relation() -> None:
+    attestation_key = comparison_key(RELATION_CLOSURE_ATTESTATION)
+
+    assert "سبعة أقسام" in RELATION_CLOSURE_ATTESTATION
+    assert all(
+        comparison_key(relation.value) in attestation_key
+        for relation in LafzMadlulRelation
+    )
+    assert FROZEN_RELATION_DOMAIN.closure_attestation == RELATION_CLOSURE_ATTESTATION
+    assert FROZEN_RELATION_DOMAIN.cardinality == len(LafzMadlulRelation)
+
+
+def test_a_closure_attestation_that_leaves_a_relation_unnamed_is_refused() -> None:
+    with pytest.raises(LafzMadlulRelationError):
+        FrozenRelationDomain(
+            closure_attestation="ينقسم اللفظ إلى المنفرد والمتباين والمترادف"
+        )
+    with pytest.raises(LafzMadlulRelationError):
+        FrozenRelationDomain(closure_attestation="   ")
+
+
+def test_the_muradif_presumption_is_recorded_but_never_read() -> None:
+    assert "الترادف خلاف الأصل" in MURADIF_PRESUMPTION_NOTE
+    assert "غير مُفعَّلة" in MURADIF_PRESUMPTION_NOTE
+
+    source = (
+        Path(__file__).resolve().parents[2]
+        / "src"
+        / "alghanem"
+        / "arabic"
+        / "lafz_madlul_relation_formal.py"
+    ).read_text(encoding="utf-8")
+
+    body = source.split('"""\n\nfrom __future__', 1)[1]
+    mentions = tuple(
+        line for line in body.splitlines() if "MURADIF_PRESUMPTION_NOTE" in line
+    )
+
+    assert len(mentions) == 1
+    assert mentions[0].startswith("MURADIF_PRESUMPTION_NOTE: Final = (")
+    assert all(
+        MURADIF_PRESUMPTION_NOTE not in (cluster.majaz_relation, cluster.tested_usage)
+        for cluster in ATTESTED_CLUSTERS
+    )
