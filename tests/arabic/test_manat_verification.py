@@ -14,7 +14,10 @@ import pytest
 
 from alghanem.arabic.manat_verification import (
     FIL_MODEL_ID,
+    ONE_SOUND_ELIMINATION_SUFFICES_NOTE,
+    PREPONDERANCE_SOUGHT_IS_NOT_ELIMINATION_LICENSED_NOTE,
     QAWL_MODEL_ID,
+    TAADUL_IS_NEVER_A_SETTLED_RESULT_NOTE,
     BayanKind,
     ManatVerificationError,
     assess_manat_from_card,
@@ -189,3 +192,39 @@ def test_resolving_every_competing_reading_closes_on_the_qawl_model() -> None:
     assert assessment.status is ApplicabilityAssessmentStatus.PASS
     assert assessment.residuals == ()
     assert manat_claim_scope(card).reference == "البقرة:228:قُرُوء"
+
+
+def test_a_defer_is_read_as_an_unfound_preponderance_not_as_a_settled_balance() -> None:
+    """`DEFER` names what is still sought; it is never a closed conclusion."""
+
+    assessment = assess_manat_from_card(_card(), _binding())
+
+    assert assessment.status is ApplicabilityAssessmentStatus.DEFER
+    assert assessment.residuals
+    for residual in assessment.residuals:
+        assert "ما زالت غير متعينة بعد هذه القرائن" in residual.description
+        assert "البحث عن قرينةٍ مُرجِّحة إضافية باقٍ مطلوبًا" in residual.description
+        assert TAADUL_IS_NEVER_A_SETTLED_RESULT_NOTE in residual.description
+
+    assert "لم يُكتشَف المرجِّح" in TAADUL_IS_NEVER_A_SETTLED_RESULT_NOTE
+    assert "التشهّي" in TAADUL_IS_NEVER_A_SETTLED_RESULT_NOTE
+
+
+def test_the_open_research_marker_licenses_no_elimination() -> None:
+    assert "أضعف من المُقصِية" in PREPONDERANCE_SOUGHT_IS_NOT_ELIMINATION_LICENSED_NOTE
+    assert (
+        "ONE_SOUND_ELIMINATION_SUFFICES_NOTE"
+        in PREPONDERANCE_SOUGHT_IS_NOT_ELIMINATION_LICENSED_NOTE
+    )
+    assert "تراكمَ مؤيِّدات" in ONE_SOUND_ELIMINATION_SUFFICES_NOTE
+
+
+def test_a_closed_assessment_carries_no_open_research_residual() -> None:
+    card = _card()
+    for reading in card["القراءات_المنافسة"]:
+        reading["علاقة_بالنموذج_المختبر"] = "أضعف_صوريًّا"
+
+    assessment = assess_manat_from_card(card, _binding())
+
+    assert assessment.status is ApplicabilityAssessmentStatus.PASS
+    assert assessment.residuals == ()

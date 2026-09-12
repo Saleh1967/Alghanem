@@ -8,6 +8,23 @@ explicit `لا_ينطبق`. That classification is read, validated against the c
 vocabulary, and reported; it moves nothing. It is absent from the derived
 `BirthExperimentSpecification`, absent from `نتيجة_التدقيق_الخارجي`, and no
 kernel gate consumes it.
+
+The same holds for two further optional declarations, each inert in exactly
+the same sense. A competing reading may carry `سبب_التعارض_الظاهر`, one of the
+three causes of *apparent* conflict (`apparent_conflict`) or `لا_ينطبق`; and a
+classified reading may carry `استبعاد_الأسباب_الأقوى`, the declared exclusions
+of every cause ranked ahead of its own classification, from which
+`حالة_استنفاد_الأسباب_الأقوى` is derived and reported
+(`REPORTED_EXHAUSTION_IS_NOT_A_GATE_NOTE`).
+
+Finally, a deferred audit reports `حالة_البحث` with the single named value
+`بحث_مستمرّ_مطلوب` and names the readings still sought. A `DEFER` here is read
+as *the preponderating indication has not been found yet*, never as *no
+preponderating indication exists*
+(`RESEARCH_REMAINS_OPEN_AFTER_DEFER_NOTE`), and that marker licenses no
+elimination: seeking a preponderating indication is a weaker claim than
+establishing an eliminating one
+(`PREPONDERANCE_SOUGHT_IS_NOT_ELIMINATION_LICENSED_NOTE`).
 """
 
 from __future__ import annotations
@@ -25,11 +42,21 @@ from alghanem.kernel.birth import (
     StructureHypothesis,
 )
 
+from .apparent_conflict import (
+    NOT_APPLICABLE as APPARENT_CONFLICT_NOT_APPLICABLE,
+)
+from .apparent_conflict import (
+    ApparentConflictCause,
+    ApparentConflictError,
+    canonical_apparent_conflict_classification,
+)
 from .comprehension_defect import (
     NOT_APPLICABLE,
     ComprehensionDefectCause,
     ComprehensionDefectError,
+    assess_exhaustion,
     canonical_defect_classification,
+    read_stronger_cause_exclusions,
 )
 from .text_key import comparison_key
 
@@ -39,6 +66,10 @@ class ExternalAuditError(ValueError):
 
 
 __all__ = [
+    "NO_OPEN_RESEARCH",
+    "PREPONDERANCE_SOUGHT_IS_NOT_ELIMINATION_LICENSED_NOTE",
+    "RESEARCH_REMAINS_OPEN",
+    "RESEARCH_REMAINS_OPEN_AFTER_DEFER_NOTE",
     "ExternalAuditError",
     "ExternalAuditResult",
     "audit_card",
@@ -60,6 +91,22 @@ _ALLOWED_RELATIONS: Final = (
     _INCOMPARABLE_RELATION,
 )
 _CLOSED_STATUS: Final = "مغلق"
+
+RESEARCH_REMAINS_OPEN: Final = "بحث_مستمرّ_مطلوب"
+NO_OPEN_RESEARCH: Final = "لا_بحث_معلَّق"
+
+RESEARCH_REMAINS_OPEN_AFTER_DEFER_NOTE: Final = (
+    "ResearchRemainsOpenAfterDefer: التعادل بين ظنّيين لا يستقرّ نتيجةً "
+    "نهائية، فقبولُه يستلزم أحد ثلاثة محاذير: العمل بالمتنافيين معًا، أو "
+    "إهدارهما معًا، أو الترجيح بالتشهّي؛ فيُقرأ DEFER (لم يُكتشَف المرجِّح "
+    "بعد) لا (لا مرجِّح)، ويُصاحَب دومًا بتسمية ما يُبحَث عنه بعينه"
+)
+PREPONDERANCE_SOUGHT_IS_NOT_ELIMINATION_LICENSED_NOTE: Final = (
+    "PreponderanceSoughtIsNotEliminationLicensed: البحث عن قرينةٍ مُرجِّحة "
+    "ادّعاءٌ أضعف من البحث عن قرينةٍ مُقصِية، فلا تُقرأ علامةُ البحث "
+    "المستمرّ إذنًا بتحويل تراكم المؤيِّدات إلى إقصاء؛ "
+    "ONE_SOUND_ELIMINATION_SUFFICES_NOTE باقٍ بحرفه"
+)
 
 
 _RELATION_BY_KEY: Final = {
@@ -104,6 +151,10 @@ class ExternalAuditResult:
     حالة_إغلاق_Down_E: str
     سبب_حالة_إغلاق_Down_E: str
     تصنيف_أسباب_الإخلال_بالفهم: tuple[tuple[str, str], ...]
+    تصنيف_أسباب_التعارض_الظاهر: tuple[tuple[str, str], ...]
+    حالة_استنفاد_الأسباب_الأقوى: tuple[tuple[str, str, tuple[str, ...]], ...]
+    حالة_البحث: str
+    ما_يُبحَث_عنه: tuple[str, ...]
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -129,6 +180,20 @@ class ExternalAuditResult:
                 {"قراءة": name, "سبب_الإخلال_بالفهم": classification}
                 for name, classification in self.تصنيف_أسباب_الإخلال_بالفهم
             ],
+            "تصنيف_أسباب_التعارض_الظاهر": [
+                {"قراءة": name, "سبب_التعارض_الظاهر": classification}
+                for name, classification in self.تصنيف_أسباب_التعارض_الظاهر
+            ],
+            "حالة_استنفاد_الأسباب_الأقوى": [
+                {
+                    "قراءة": name,
+                    "الحالة": status,
+                    "الأسباب_الأقوى_الباقية": list(remaining),
+                }
+                for name, status, remaining in self.حالة_استنفاد_الأسباب_الأقوى
+            ],
+            "حالة_البحث": self.حالة_البحث,
+            "ما_يُبحَث_عنه": list(self.ما_يُبحَث_عنه),
         }
 
 
@@ -208,6 +273,69 @@ def _read_defect_classification(value: Any) -> str:
     if isinstance(cause, ComprehensionDefectCause):
         return cause.value
     return NOT_APPLICABLE
+
+
+def _read_apparent_conflict_classification(value: Any) -> str:
+    """Return the declared closed-vocabulary apparent-conflict cause.
+
+    The field is optional exactly like `سبب_الإخلال_بالفهم`, and is read with
+    the same strictness: one of the three causes of apparent conflict or the
+    explicit `لا_ينطبق`, never anything else and never folded onto one of the
+    five causes of defective comprehension.
+
+    `DeclaredApparentConflictCause != AssessedRelation`: this classification is
+    reported and nothing more.
+    """
+
+    if not isinstance(value, str):
+        raise ExternalAuditError(
+            "القراءات_المنافسة[].سبب_التعارض_الظاهر must be non-blank text"
+        )
+    try:
+        cause = canonical_apparent_conflict_classification(value)
+    except ApparentConflictError as exc:
+        raise ExternalAuditError(f"القراءات_المنافسة[].{exc}") from exc
+    if isinstance(cause, ApparentConflictCause):
+        return cause.value
+    return APPARENT_CONFLICT_NOT_APPLICABLE
+
+
+def _read_exhaustion_row(
+    reading: str, item: dict[str, Any], classification: str | None
+) -> tuple[str, str, tuple[str, ...]] | None:
+    """Derive the reported exhaustion status of one classified reading.
+
+    The exclusions are declared under the reading; which causes they must cover
+    is derived from the priority order in `comprehension_defect`, never
+    declared by the card. A reading with no classification, or one declared
+    `لا_ينطبق`, claims no cause and so owes no exhaustion — declaring
+    exclusions there is refused rather than silently ignored.
+    """
+
+    declared_exclusions = item.get("استبعاد_الأسباب_الأقوى")
+    if classification is None or classification == NOT_APPLICABLE:
+        if declared_exclusions is not None:
+            raise ExternalAuditError(
+                "القراءات_المنافسة[].استبعاد_الأسباب_الأقوى is meaningful only "
+                "for a reading classified with one of the five causes"
+            )
+        return None
+    cause = canonical_defect_classification(classification)
+    assert cause is not None  # `لا_ينطبق` returned above
+    try:
+        exclusions = (
+            ()
+            if declared_exclusions is None
+            else read_stronger_cause_exclusions(declared_exclusions, cause)
+        )
+        assessment = assess_exhaustion(cause, exclusions)
+    except ComprehensionDefectError as exc:
+        raise ExternalAuditError(f"القراءات_المنافسة[].{exc}") from exc
+    return (
+        reading,
+        assessment.status.value,
+        tuple(remaining.value for remaining in assessment.remaining),
+    )
 
 
 def read_declared_witnesses(card: dict[str, Any]) -> tuple[str, ...]:
@@ -336,6 +464,8 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
         raise ExternalAuditError("القراءات_المنافسة must be a list")
     parsed_alternatives: list[tuple[str, str]] = []
     defect_classifications: list[tuple[str, str]] = []
+    conflict_classifications: list[tuple[str, str]] = []
+    exhaustion_rows: list[tuple[str, str, tuple[str, ...]]] = []
     unresolved: list[tuple[str, str]] = []
     blocking_incomparable: list[tuple[str, str]] = []
     for item in alternatives:
@@ -358,9 +488,17 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
                 + _INCOMPARABLE_RELATION
             )
         declared_defect = item.get("سبب_الإخلال_بالفهم")
+        classification: str | None = None
         if declared_defect is not None:
-            defect_classifications.append(
-                (reading, _read_defect_classification(declared_defect))
+            classification = _read_defect_classification(declared_defect)
+            defect_classifications.append((reading, classification))
+        exhaustion_row = _read_exhaustion_row(reading, item, classification)
+        if exhaustion_row is not None:
+            exhaustion_rows.append(exhaustion_row)
+        declared_conflict = item.get("سبب_التعارض_الظاهر")
+        if declared_conflict is not None:
+            conflict_classifications.append(
+                (reading, _read_apparent_conflict_classification(declared_conflict))
             )
         parsed_alternatives.append((reading, declared_relation))
         if relation == _UNDETERMINED_RELATION:
@@ -390,6 +528,14 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
             حالة_إغلاق_Down_E=down_e_status,
             سبب_حالة_إغلاق_Down_E=down_e_reason,
             تصنيف_أسباب_الإخلال_بالفهم=tuple(defect_classifications),
+            تصنيف_أسباب_التعارض_الظاهر=tuple(conflict_classifications),
+            حالة_استنفاد_الأسباب_الأقوى=tuple(exhaustion_rows),
+            حالة_البحث=RESEARCH_REMAINS_OPEN,
+            ما_يُبحَث_عنه=tuple(
+                f"قرينة ترجيحٍ إضافية للقراءة المنافسة ({reading})"
+                for reading, _ in (*unresolved, *blocking_incomparable)
+            )
+            or ("إغلاق سوابق Down_E الموثَّق",),
         )
 
     return ExternalAuditResult(
@@ -407,6 +553,10 @@ def audit_card(path: str | Path) -> ExternalAuditResult:
         حالة_إغلاق_Down_E=down_e_status,
         سبب_حالة_إغلاق_Down_E=down_e_reason,
         تصنيف_أسباب_الإخلال_بالفهم=tuple(defect_classifications),
+        تصنيف_أسباب_التعارض_الظاهر=tuple(conflict_classifications),
+        حالة_استنفاد_الأسباب_الأقوى=tuple(exhaustion_rows),
+        حالة_البحث=NO_OPEN_RESEARCH,
+        ما_يُبحَث_عنه=(),
     )
 
 
