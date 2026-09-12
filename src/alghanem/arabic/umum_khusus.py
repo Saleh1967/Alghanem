@@ -237,13 +237,9 @@ class TakhsisRegistration:
                 "المُخصَّصُ دليلٌ عامٌّ في لفظه؛ وتخصيصُ خاصٍّ بخاصٍّ ليس تخصيصًا."
             )
         if self.specializer.scope is not DalilScope.خاص:
-            raise UmumKhususError(
-                "المُخصِّصُ دليلٌ خاصٌّ في لفظه؛ وعامٌّ لا يُخصِّص عامًّا مثلَه."
-            )
+            raise UmumKhususError("المُخصِّصُ دليلٌ خاصٌّ في لفظه؛ وعامٌّ لا يُخصِّص عامًّا مثلَه.")
         if self.general.reference == self.specializer.reference:
-            raise UmumKhususError(
-                "دليلٌ يُخصِّص نفسَه ليس تخصيصًا بل إعادةَ قراءةٍ لنصٍّ واحد."
-            )
+            raise UmumKhususError("دليلٌ يُخصِّص نفسَه ليس تخصيصًا بل إعادةَ قراءةٍ لنصٍّ واحد.")
         _require_non_blank(self.conflict_locus, "موضعُ التعارض")
 
     @property

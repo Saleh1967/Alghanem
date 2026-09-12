@@ -130,8 +130,7 @@ def test_a_coded_link_after_a_broken_one_is_not_read_as_reached() -> None:
     ]
     assert coded_after_break
     assert all(
-        reach is ChainLinkReach.مسبوقة_بحلقة_غير_بالغة
-        for _, reach in coded_after_break
+        reach is ChainLinkReach.مسبوقة_بحلقة_غير_بالغة for _, reach in coded_after_break
     )
 
 

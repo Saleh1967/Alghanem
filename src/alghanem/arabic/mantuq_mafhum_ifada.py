@@ -376,9 +376,7 @@ class RulingAspectReading:
             self.aspect is SignifiedAspect.نوع_الحكم
             and self.channel is DalalaChannel.مفهوم
         ):
-            raise MantuqMafhumIfadaError(
-                f"{TYPE_SIGNIFICATION_IS_ALWAYS_MANTUQ_NOTE}."
-            )
+            raise MantuqMafhumIfadaError(f"{TYPE_SIGNIFICATION_IS_ALWAYS_MANTUQ_NOTE}.")
 
     @property
     def channel(self) -> DalalaChannel:

@@ -257,9 +257,7 @@ class TawqifRefutation:
     def __post_init__(self) -> None:
         _require_non_blank(self.source, "المصدر")
         if self.source != WAD_SOURCE:
-            raise WadNaqlError(
-                "المصدرُ هو المصدرُ المُسمّى بعينه؛ واسمٌ حرٌّ لا يصلح شاهدًا."
-            )
+            raise WadNaqlError("المصدرُ هو المصدرُ المُسمّى بعينه؛ واسمٌ حرٌّ لا يصلح شاهدًا.")
         if not isinstance(self.grounds, tuple):
             raise WadNaqlError("شِقّا البرهان سلسلةٌ مُجمَّدة.")
         declared = tuple(item.ground for item in self.grounds)

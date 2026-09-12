@@ -262,9 +262,7 @@ class ChainLinkDeclaration:
         if self.module_relative_path is not None:
             _require_non_blank(self.module_relative_path, "وحدةُ الحلقة")
             if self.module_relative_path.endswith("__init__.py"):
-                raise DecisionChainError(
-                    "وحدةُ الحلقة وحدةٌ مُسمّاة، لا ملفَّ تجميعِ حزمة."
-                )
+                raise DecisionChainError("وحدةُ الحلقة وحدةٌ مُسمّاة، لا ملفَّ تجميعِ حزمة.")
         if self.deferral_law is not None:
             _require_non_blank(self.deferral_law, "قانونُ التأجيل")
 
