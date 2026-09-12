@@ -120,6 +120,52 @@ unrelated input by design. Three claims stay refused:
 `ProvenInputProvenance != AssessedEvidence` — `is_assessment` is `False`
 unconditionally, so proven provenance still says nothing about residual
 survival, weaker-model exhaustion, or closure.
+G0.IC.1b (`src/alghanem/kernel/weaker_model_closure.py`) takes the first step
+into what those records *mean*, for exactly one weaker model at a time. It
+invents no vocabulary: `ClosureCriterionSpec` already declared the closed
+three-member outcome set of `Close(W_i, R)`, and the frozen projection poset
+already derived which models must be closed. The one missing relation was
+between an evaluator's `output_content` — a plain string — and a member of
+that set. `DeclaredClosureOutcomeVocabulary` supplies it as declared data,
+frozen in a sealed registry against a content-bound closure criterion, and
+required to cover every declared outcome exactly once so that none is
+unreachable by construction. `WeakerModelClosureGate.assess` accepts no status
+and no reason, and matches the output by exact string equality: no trimming,
+no case folding, no prefix match, and no default. An unrecognized output is
+refused by model id and is never read as `DEFER`, because reading ignorance as
+a declared outcome is the exact failure the gate exists to prevent; a record
+under any other role, or naming a target outside the derived prerequisite cone,
+is refused too. What stays refused is named: `LocalClosureOutcome !=
+WeakerModelExhaustion` (nothing here aggregates the cone, and
+`is_weaker_model_exhaustion` is `False` unconditionally),
+`WeakerModelClosure != IndependentClosure` (`is_independent_closure` is `False`
+on every branch and `IndependentClosureAssessment` is untouched),
+`DeclaredVocabularyIsNotProvenSemantics`, and
+`SealedBeforeAssessmentIsNotSealedBeforeEvidence`.
+G0.IC.1c (`src/alghanem/kernel/weaker_model_exhaustion.py`) aggregates those
+per-model certificates into the second conjunct of closure, and stops there.
+The licensed set is not invented: the frozen projection poset already derived
+the cone before any evidence existed, so how many models must be answered is
+fixed in advance and cannot be trimmed to fit whichever certificates happen to
+exist. Coverage therefore comes before judgement, copied from
+`InvariantVerificationGate.assess_all_preserved`: a missing model, a model
+answered twice, and a model the poset never licensed are each a malformed
+request that raises, because an unevaluated model is ignorance and reading
+ignorance as a failure to close is exactly how a fabricated exhaustion would be
+manufactured. Certificates must also share one `BirthAssessmentRequest`, since
+certificates from different requests describe different evidence.
+`WeakerModelExhaustionGate.assess` then accepts no status and no reason, reads
+every certificate rather than stopping at the first, and applies a fixed
+precedence — `WEAKER_MODEL_CLOSES_RESIDUAL` beats `EXHAUSTION_UNDETERMINED`
+beats `LICENSED_WEAKER_MODELS_EXHAUSTED` — so a known `CLOSE` is never erased
+by an unrelated `DEFER`, and the aggregate does not depend on the order the
+certificates were given in. Two of the three conjuncts of closure are now
+derived, comparability by G0.IC.1a and exhaustion here; the third, a residual
+surviving measurement or formal proof, is certified by no authority in this
+repository, so `is_independent_closure` is still `False` on every branch and
+`IndependentClosureAssessment` is untouched. `WeakerModelClosesResidual !=
+NoBirthVerdict`, `CoverageIsNotCorrectness`, `FrozenConeIsDeclaredNotProven`,
+and `SameRequestIsNotSameEvidenceRun` stay open by name.
 `BirthCandidate` is distinct from a scoped birth verdict and from `Freeze`;
 the future G0.BV.1 authority may issue `BIRTH_IN_SCOPE`, then a later freeze
 authority may freeze it before a separate `E0` step. See the
@@ -859,6 +905,38 @@ indicators as indicators of this programme's aims. What this restoration does no
 close is named too: nothing derives that a §7 section corresponds to exactly one
 module in the tree
 (`MILESTONE_SECTION_TO_MODULE_CORRESPONDENCE_IS_NOT_DERIVED`).
+
+The seventh milestone, in `alghanem.program.milestone_ledger`, pays that debt: the
+correspondence between a §7 section and a module is now derived rather than read
+by eye, and two sections for one milestone — precisely what happened and nothing
+prevented — is refused at construction. The map is declared twice, in the
+document's header sentence and again in each §7 section, and the reader
+corresponds the two declarations without ranking either, because preferring one
+would be the reader's choice and not the document's declaration. Existence in the
+tree is then derived in both directions: every claimed module must be present, and
+every module in the programme layer must be claimed by some milestone, since a
+module that lands with no §7 section is code whose coding revealed nothing on
+record, which §5 forbids.
+
+Coding it corrected the plan again. The map is not one-to-one: the fifth milestone
+created no module but reopened the second's `constitution_ledger.py`, so a binary
+"claims / does not claim" would have had to either refuse the fifth or fold away
+that it returned to an earlier module, and the standing is three-valued instead —
+first claim, reopening, and no claim at all. The first milestone's section names
+no module in its own body; its module is named in §7's preamble, so that is
+accepted under an explicit `NAMED_IN_SECTION_PREAMBLE` mark rather than by a silent
+skip. One module is named in two shapes — a bare filename for the fifth, full paths
+elsewhere — and the shapes are kept apart because a bare name resolves only inside
+the programme package. And not every §7 section is a milestone: the double-landing
+record is an incident that names a milestone and claims no module, so reading it as
+a milestone would have raised a false duplicate while dropping it from the census
+would have hidden a section behind silence. What stays open is named in code:
+existence is not authorship (`MODULE_EXISTENCE_IS_NOT_MODULE_AUTHORSHIP`), both
+corresponded declarations are prose so their agreement on one error is invisible
+here (`BOTH_DECLARATIONS_ARE_PROSE_NOT_TREE_DERIVED`), and why a module was
+reopened is prose the ledger does not derive
+(`REOPENING_IS_DERIVED_BUT_ITS_REASON_IS_NOT`). Reaching a seventh milestone is
+not reaching an aim: this ledger brings no §2 aim closer and promotes none.
 
 ## Development
 
