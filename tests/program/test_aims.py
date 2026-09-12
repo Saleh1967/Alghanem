@@ -9,15 +9,22 @@ import pytest
 
 import alghanem.kernel as kernel_package
 from alghanem.program import (
+    AIM_ATTAINMENT_REFUSAL_GENERA,
     AIM_RECORDS,
+    AIM_TERMINATION_DESCRIPTORS,
+    ATTAINMENT_DEFERRAL_NOTE,
     DESIGN_SOURCE_OPEN_QUESTION,
     FOREIGN_DECLARED_AIMS,
+    AimAttainmentRefusalGenus,
     AimEngagement,
     AimId,
     AimRecord,
     AimRecordError,
+    AimTerminationDescriptor,
+    AimTerminationStructure,
     AttainmentStanding,
     ForeignDeclaredAim,
+    TerminationProofSite,
 )
 from alghanem.program import aims as aims_module
 
@@ -202,3 +209,85 @@ def test_no_kernel_module_reads_the_aim_record_layer() -> None:
         assert "alghanem.program" not in text, module.name
         assert "AimRecord" not in text, module.name
         assert "AIM_RECORDS" not in text, module.name
+
+
+# --- the ninth milestone: the refusal genus is derived, not declared ---
+
+
+def test_the_termination_and_genus_vocabularies_are_three_valued() -> None:
+    assert len(AimTerminationStructure) == 3
+    assert len(AimAttainmentRefusalGenus) == 3
+    members = [*AimTerminationStructure, *AimAttainmentRefusalGenus]
+    assert len({member.value for member in members}) == len(members)
+
+
+def test_no_aim_carries_a_proved_termination_structure_today() -> None:
+    for aim_id, descriptor in AIM_TERMINATION_DESCRIPTORS.items():
+        assert descriptor.aim_id is aim_id
+        assert descriptor.proved_sites == frozenset()
+        assert (
+            aims_module.derive_aim_termination_structure(descriptor)
+            is AimTerminationStructure.TERMINATION_STRUCTURE_NOT_SETTLED
+        )
+
+
+def test_the_refusal_genus_is_unsettled_for_every_aim_today() -> None:
+    assert set(AIM_ATTAINMENT_REFUSAL_GENERA) == set(AimId)
+    assert set(AIM_ATTAINMENT_REFUSAL_GENERA.values()) == {
+        AimAttainmentRefusalGenus.GENUS_NOT_SETTLED
+    }
+
+
+def test_a_descriptor_may_not_carry_a_proof_no_authority_issued() -> None:
+    site = TerminationProofSite.CONSTITUTION_ROW_ESTABLISHING_A_TERMINAL_ARTEFACT
+    with pytest.raises(AimRecordError, match="لا موضعَ برهانٍ قائمًا"):
+        AimTerminationDescriptor(aim_id=AimId.K4, proved_sites=frozenset({site}))
+
+
+def test_the_structure_reader_is_total_over_its_proof_sites() -> None:
+    open_ended = (
+        TerminationProofSite.CONSTITUTION_ROW_ESTABLISHING_FRACTAL_OPEN_ENDEDNESS
+    )
+    terminal = TerminationProofSite.CONSTITUTION_ROW_ESTABLISHING_A_TERMINAL_ARTEFACT
+    read = aims_module._structure_of_proved_sites
+    assert (
+        read(frozenset({open_ended}))
+        is AimTerminationStructure.OPEN_ENDED_BY_FRACTAL_RECURSION
+    )
+    assert (
+        read(frozenset({terminal}))
+        is AimTerminationStructure.TERMINAL_ON_A_NAMED_ARTEFACT
+    )
+    assert (
+        read(frozenset()) is AimTerminationStructure.TERMINATION_STRUCTURE_NOT_SETTLED
+    )
+    with pytest.raises(AimRecordError, match="موضعا برهانٍ متناقضان"):
+        read(frozenset({open_ended, terminal}))
+
+
+def test_each_structure_carries_its_own_refusal_genus() -> None:
+    genus = aims_module._genus_of_structure
+    assert (
+        genus(AimTerminationStructure.OPEN_ENDED_BY_FRACTAL_RECURSION)
+        is AimAttainmentRefusalGenus.REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH
+    )
+    assert (
+        genus(AimTerminationStructure.TERMINAL_ON_A_NAMED_ARTEFACT)
+        is AimAttainmentRefusalGenus.HELD_BY_MISSING_AUTHORITY_TODAY
+    )
+    assert (
+        genus(AimTerminationStructure.TERMINATION_STRUCTURE_NOT_SETTLED)
+        is AimAttainmentRefusalGenus.GENUS_NOT_SETTLED
+    )
+
+
+def test_the_deferral_note_no_longer_declares_one_genus_for_all_aims() -> None:
+    assert "لا سلطة هنا تُصدر بلوغَ غاية" not in ATTAINMENT_DEFERRAL_NOTE
+    assert "يُشتَقّ" in ATTAINMENT_DEFERRAL_NOTE
+
+
+def test_the_descriptor_carries_no_declared_structure_field() -> None:
+    names = {item.name for item in fields(AimTerminationDescriptor)}
+    assert names == {"aim_id", "proved_sites"}
+    for marker in _ANSWER_MARKERS:
+        assert not any(marker in name for name in names)
