@@ -199,14 +199,39 @@ def test_the_stop_is_not_read_as_an_input_stop_nor_as_a_settled_specification() 
     assert composition.qayd_signification is not QaydSignification.وصف_طردي
 
 
-def test_the_empty_attribution_list_is_declared_a_refusal_not_an_oversight() -> None:
-    """خلوُّ الإسنادات مكتوبٌ بعلّته: لا يُصنَع اقتباسٌ حيث لا نقلَ منقولًا بنصّه."""
+def test_the_single_attribution_is_a_property_of_the_text_not_a_choice() -> None:
+    """الإسنادُ واحدٌ لأنّ النصَّ سمّى قائلًا واحدًا، ولا يُصنَع ثانٍ لبلوغ العتبة."""
+
+    card = _card(_COMPOSITION)
+    attributions = card["طريق_النقل_المعجمي"]["الإسنادات"]
+
+    assert len(attributions) == 1
+    assert attributions[0]["السلطة"] in attributions[0]["الاقتباس_المنقول"]
+    assert "ابن حجر العسقلاني" not in attributions[0]["الاقتباس_المنقول"]
+    assert "ابن حجر العسقلاني" in card["طريق_النقل_المعجمي"]["المصدر"]
+    assert "تُنشئ لفظًا لم يقع في النصّ" in card["بيان_الإسناد_الواحد"]
+    assert "لا يُقرأ من هذه البطاقة حكمٌ" in card["لا_حكم_فقهي"]
+
+
+def test_the_print_edition_locus_residual_is_raised_only_in_part() -> None:
+    """[ص: 372] ترقيمُ إحالةٍ مُتعارَف، ولكنّ المجلَّد والنسخةَ الورقية لم يُتحقَّقا."""
 
     card = _card(_COMPOSITION)
 
-    assert card["طريق_النقل_المعجمي"]["الإسنادات"] == []
-    assert "تصنع إسنادًا حيث لا إسناد" in card["بيان_الإسنادات_الخالية"]
-    assert "لا يُقرأ من هذه البطاقة حكمٌ" in card["لا_حكم_فقهي"]
+    assert "PRINT_EDITION_LOCUS_NOT_VERIFIED" in card["بيان_موضع_الطبعة"]
+    assert "جزئيًّا لا كلّيًّا" in card["بيان_موضع_الطبعة"]
+    assert "[ص: 372]" in card["طريق_النقل_المعجمي"]["الإسنادات"][0]["الموضع"]
+
+
+def test_the_written_prediction_is_kept_beside_the_outcome_that_refuted_it() -> None:
+    """التوقّعُ مكتوبٌ بجوار ما وقع: (متعارضة) انتُظِرت فوقعت (غير محسومة)."""
+
+    card = _card(_COMPOSITION)
+    attempt = TaqyeedManatGate.assess(_composition_input())
+
+    assert "MarkerVocabularyIsFrozenBeforeItsText" in card["بيان_التوقع_قبل_التشغيل"]
+    assert "ولم تُوسَّع المفردةُ" in card["بيان_التوقع_قبل_التشغيل"]
+    assert attempt.qayd_signification is QaydSignification.دلالة_القيد_غير_محسومة
 
 
 def test_no_standing_and_no_gate_status_is_written_in_any_real_card() -> None:

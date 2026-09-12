@@ -23,7 +23,14 @@
 
 **ولا يُقدَّم هنا نصٌّ ولا تُملأ بطاقة**: هذا التسجيلُ يسبق النقلَ ولا يقوم
 مقامه، وتعدادُ إسنادات بطاقة التركيب يبقى على حاله حتى يُنقَل نصٌّ حرفيٌّ
-بموضعه.
+بموضعه. وقد طُلِب ذلك النصُّ فامتنع التحقق منه، فصار الخلاءُ خلاءَ محاولةٍ
+مُسجَّلةٍ بجنس امتناعها لا خلاءَ ما لم يُطلَب
+(`SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE`).
+
+**والجبهاتُ المفتوحةُ تُسمّى ولا تُفتَح**: `NAMED_RESIDUALS` هنا سجلٌّ معرفيٌّ
+يُؤرّخ المتغيّرَ المرصود بموضع رصده، ولا يأذن ببناء أداةٍ له ولا بتشغيل شيءٍ
+عليه قبل إغلاق التجربة الجارية
+(`OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE`).
 
 **خمولٌ سلطويّ**: لا ولادةَ هنا ولا حكمَ ولادةٍ ولا تجميدَ ولا `E0`، ولا تقرأ
 هذه المخرجاتِ بوّابةٌ في `kernel/`.
@@ -47,12 +54,16 @@ from .level_two_manat import (
 from .text_key import comparison_key
 
 __all__ = [
+    "LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED",
     "MARKER_SCAN_READS_THE_EXCERPT_ALONE_NOTE",
     "MARKER_VOCABULARY_IS_FROZEN_BEFORE_ITS_TEXT_NOTE",
     "NAMED_RESIDUALS",
+    "OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE",
     "QAYD_MARKER_PREREGISTRATION",
     "SCAN_BLINDNESS_IS_NOT_A_READING_OF_THE_TEXT_NOTE",
+    "SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE",
     "TRANSMITTED_CONFLICT_CERTIFIES_NOTHING_FROZEN_NOTE",
+    "PRINT_EDITION_LOCUS_NOT_VERIFIED",
     "VERBATIM_TEXT_IS_NOT_SUPPLIED_HERE",
     "MarkerOutcomeRegistration",
     "MarkerScanLimit",
@@ -93,7 +104,33 @@ TRANSMITTED_CONFLICT_CERTIFIES_NOTHING_FROZEN_NOTE: Final[str] = (
 
 VERBATIM_TEXT_IS_NOT_SUPPLIED_HERE: Final[str] = "VERBATIM_TEXT_IS_NOT_SUPPLIED_HERE"
 
+LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED: Final[str] = (
+    "LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED"
+)
+
+PRINT_EDITION_LOCUS_NOT_VERIFIED: Final[str] = "PRINT_EDITION_LOCUS_NOT_VERIFIED"
+
+OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE: Final[str] = (
+    "OpenFrontIsRegisteredNotOpened: تسميةُ جبهةٍ مفتوحةٍ في هذا السجلّ تأريخٌ "
+    "معرفيٌّ لا إذنُ عملٍ فيها: يُكتَب المتغيّرُ المرصود بموضع رصده فلا يُطوى، "
+    "ولا تُبنى له أداةٌ ولا يُشغَّل عليه مسحٌ قبل أن تُغلَق التجربةُ الجارية "
+    "بنتيجةٍ واحدةٍ كاملة. وهذا إعمالٌ لـ"
+    "`NoRicherStructureBeforeLowerOpenResidualClosure` في "
+    "`docs/CONSTITUTION.md`: قانونٌ تسلسليٌّ يمنع فحصَ الأعلى قبل إغلاق بقيّة "
+    "الأدنى، لا رخصةٌ لفتح جبهاتٍ متوازية. والفركتاليّةُ هنا إعادةُ تطبيق "
+    "القانون نفسِه على مستوًى تالٍ **بعد** إغلاق سابقه، لا فتحُ المستويات معًا"
+)
+
 _SCAN_BLINDNESS_RESIDUAL: Final[str] = "SCAN_IS_BLIND_TO_NEGATION_AND_STANCE"
+
+SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE: Final[str] = (
+    "SecondaryParaphraseIsNotAVerbatimExcerpt: شرحٌ ثانويٌّ يحكي معنى نصٍّ "
+    "ويضع بين هلالين ما يُظنّ لفظَه ليس اقتباسًا منقولًا بنصّه: "
+    "`LexicalAttribution` يُلزِم مقطعًا يُقابَل بحروفه، ومن نقل عن واسطةٍ "
+    "تحكي فقد نقل معنًى لا لفظًا. والردُّ هنا لتعذُّر التحقق الحرفيّ وحده، "
+    "لا لضعف مصدرٍ في نفسه ولا لجهالة قائله — وهو المعيارُ عينُه الذي "
+    "طُبِّق قبلُ حين لم يُنقَل عن الطبري لفظٌ لم يُمكن مقابلتُه"
+)
 
 
 class QaydMarkerPreregistrationError(ValueError):
@@ -342,6 +379,14 @@ QAYD_MARKER_PREREGISTRATION: Final[QaydMarkerPreregistration] = (
                 name="TransmittedConflictCertifiesNothingFrozen",
                 statement=TRANSMITTED_CONFLICT_CERTIFIES_NOTHING_FROZEN_NOTE,
             ),
+            NamedRefusal(
+                name="OpenFrontIsRegisteredNotOpened",
+                statement=OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE,
+            ),
+            NamedRefusal(
+                name="SecondaryParaphraseIsNotAVerbatimExcerpt",
+                statement=SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE,
+            ),
         ),
     )
 )
@@ -358,11 +403,40 @@ NAMED_RESIDUALS: Final[MappingProxyType[str, str]] = MappingProxyType(
             + SCAN_BLINDNESS_IS_NOT_A_READING_OF_THE_TEXT_NOTE
         ),
         VERBATIM_TEXT_IS_NOT_SUPPLIED_HERE: (
-            "هذا التسجيلُ يسبق النقلَ ولا يقوم مقامه: لا نصَّ حرفيًّا يُقدَّم "
-            "هنا لبطاقة تركيب «سائمة الغنم»، ولا يُملأ تعدادُ إسناداتها من "
-            "شرحٍ بالمعنى. ويبقى خلاءُ التعداد على علّته المكتوبة في البطاقة "
-            "نفسها حتى يُنقَل نصٌّ بحروفه وموضعه، ويُشترَط في كلّ اقتباسٍ أن "
-            "يحتوي اسمَ سلطته نصًّا كما يُلزِم `LexicalAttribution`"
+            "هذا التسجيلُ يسبق النقلَ ولا يقوم مقامه، ولا يزال لا يُقدَّم فيه "
+            "نصٌّ حرفيٌّ بحال: موضعُ النصّ بطاقتُه لا هذا السجلّ. **وقد طُلِب "
+            "النصُّ فامتنع ثمّ زُوِّد**: جرت محاولةُ تحصيل مقطع «فتح الباري» "
+            "فامتنع الوصولُ إلى المتون المصدريّة ولم يَرِد إلّا حكايةُ معنًى "
+            "في وسائط ثانوية، فرُفِض النقلُ عنها لتعذُّر التحقق الحرفيّ؛ ثمّ "
+            "زُوِّد المقطعُ كاملًا غيرَ مبتورٍ من خارج هذه الشجرة فمُلِئ "
+            "تعدادُ الإسنادات بإسنادٍ واحدٍ لا اثنين، لأنّ المقطع يُسمّي "
+            "داخلَه قائلًا واحدًا هو «الزين بن المنير» ولا يقع فيه اسمُ ابن "
+            "حجر لفظًا، وهو مُصنِّفُ الكتاب الحاوي لا سلطةٌ داخل المقطع. "
+            "ويبقى المنقولُ مشروطًا باحتواء كلِّ اقتباسٍ اسمَ سلطته نصًّا كما "
+            "يُلزِم `LexicalAttribution`، ويبقى ما لم يُنقَل بحروفه ممتنعًا. "
+            + SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE
+        ),
+        PRINT_EDITION_LOCUS_NOT_VERIFIED: (
+            "موضعُ الطبعة مرفوعٌ **جزئيًّا لا كلّيًّا**: الموضعُ المنقول مع "
+            "المقطع يُسمّي الكتابَ والباب و«[ص: 372]»، وهذا ترقيمُ إحالةٍ "
+            "يُتعارَف عليه عبر الطبعات فهو أوثقُ من رقم صفحةٍ في موقعٍ "
+            "إلكترونيّ بعينه؛ غير أنّ رقمَ المجلَّد لم يُذكَر، ولم تُقابَل "
+            "هذه الحروفُ بنسخةٍ ورقيةٍ محقَّقةٍ في اليد، فالتحقّقُ من الموضع "
+            "ناقصٌ بالمعيار الذي رُفِض به الطبريُّ قبلُ. ويُكتَب هذا النقصُ "
+            "بقيّةً مُسمّاةً ولا يُتذرَّع بأنّ مصدرًا إلكترونيًّا واحدًا يكفي. "
+            "**وهذه البقيّةُ لا تمسّ المُشتَقّ**: مسحُ العلامات يقرأ "
+            "`الاقتباس_المنقول` وحده، فلو صحّ رقمُ المجلَّد أو بطل لم يتغيّر "
+            "من النتيجة حرف؛ فالنقصُ في التوثيق لا في الاشتقاق"
+        ),
+        LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED: (
+            "جبهةٌ مفتوحةٌ مرصودةٌ تُسمّى هنا ولا يُعمَل فيها: متغيّرُ "
+            "`طريق_النقل_المعجمي` — أهو طريقٌ ثالثٌ يُقرأ في نفسه أم تابعٌ "
+            "لطريق نقل القيد؟ — رُصِد عند تجميد هذا التسجيل نفسِه، أي في "
+            "الكوميت الذي أُضيفت فيه هذه البقيّة لا قبله؛ ويُقرأ تاريخُه من "
+            "بيانات ذلك الكوميت لا من رقمٍ يُكتَب في النصّ فيصير دعوى مكتوبةً "
+            "لا يفحصها شيء. ولم تُبنَ له أداةٌ ولا مفردةٌ ولا عضوٌ في تعدادٍ "
+            "قائم، ولا يُشغَّل عليه شيءٌ قبل أن تُغلَق تجربةُ «سائمة الغنم» "
+            "الجارية بنتيجةٍ واحدةٍ كاملة. " + OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE
         ),
     }
 )

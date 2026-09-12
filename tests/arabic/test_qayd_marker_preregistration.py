@@ -11,11 +11,18 @@
 كما وُصِف؛ فمتى زال الحدُّ سقط اختبارُه ولم يُقرَّ بيانُه بلا ما يُصدّقه.
 """
 
+import json
+from pathlib import Path
 from typing import Final
 
 import pytest
 
+from alghanem.arabic.level_two_discrimination import (
+    LEVEL_TWO_DISCRIMINATION_PREREGISTRATION,
+)
 from alghanem.arabic.level_two_manat import (
+    SPECIFYING_TRANSMISSION_MARKERS,
+    TARDI_TRANSMISSION_MARKERS,
     QaydSignification,
     derive_qayd_signification,
 )
@@ -24,11 +31,16 @@ from alghanem.arabic.lexical_transmission import (
     LexicalTransmissionDescriptor,
 )
 from alghanem.arabic.qayd_marker_preregistration import (
+    LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED,
     MARKER_SCAN_READS_THE_EXCERPT_ALONE_NOTE,
     MARKER_VOCABULARY_IS_FROZEN_BEFORE_ITS_TEXT_NOTE,
     NAMED_RESIDUALS,
+    OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE,
+    PRINT_EDITION_LOCUS_NOT_VERIFIED,
     QAYD_MARKER_PREREGISTRATION,
+    SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE,
     TRANSMITTED_CONFLICT_CERTIFIES_NOTHING_FROZEN_NOTE,
+    VERBATIM_TEXT_IS_NOT_SUPPLIED_HERE,
     MarkerOutcomeRegistration,
     MarkerScanLimit,
     QaydMarkerPreregistration,
@@ -36,6 +48,13 @@ from alghanem.arabic.qayd_marker_preregistration import (
 )
 
 _TEST_ONLY_MARKER: Final = "test_only"
+
+_COMPOSITION: Final = (
+    Path(__file__).resolve().parents[2]
+    / "examples"
+    / "level_two_manat"
+    / "ghanam_saima_composition.yaml"
+)
 
 
 def _descriptor(*excerpts: str) -> LexicalTransmissionDescriptor:
@@ -193,15 +212,91 @@ def test_the_widening_condition_precedes_any_text_it_would_be_measured_on() -> N
     assert "يسبق" in condition
 
 
-def test_the_two_residuals_are_named_and_the_verbatim_text_is_not_supplied() -> None:
-    """الفضلتان مُسمّاتان بنصّهما: عمى المسح، وأنّ النقل الحرفيّ لم يُقدَّم بعد."""
+def test_the_residuals_are_named_and_the_verbatim_text_is_not_supplied_here() -> None:
+    """الفضلاتُ مُسمّاةٌ بنصّها: عمى المسح، وموضعُ النقل، وموضعُ الطبعة، والجبهة."""
 
     assert set(NAMED_RESIDUALS) == {
         "SCAN_IS_BLIND_TO_NEGATION_AND_STANCE",
         "VERBATIM_TEXT_IS_NOT_SUPPLIED_HERE",
+        "PRINT_EDITION_LOCUS_NOT_VERIFIED",
+        "LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED",
     }
     assert all(statement.strip() for statement in NAMED_RESIDUALS.values())
-    assert "شرحٍ بالمعنى" in NAMED_RESIDUALS["VERBATIM_TEXT_IS_NOT_SUPPLIED_HERE"]
+    assert (
+        "موضعُ النصّ بطاقتُه لا هذا السجلّ"
+        in (NAMED_RESIDUALS["VERBATIM_TEXT_IS_NOT_SUPPLIED_HERE"])
+    )
+
+
+def test_the_open_front_is_registered_with_its_observation_locus_only() -> None:
+    """المتغيّرُ المرصود يُسمّى بموضع رصده، وتاريخُه من الكوميت لا من نصٍّ مكتوب."""
+
+    residual = NAMED_RESIDUALS[LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED]
+
+    assert "طريق_النقل_المعجمي" in residual
+    assert "الكوميت الذي أُضيفت فيه هذه البقيّة" in residual
+    assert OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE in residual
+    assert {refusal.name for refusal in QAYD_MARKER_PREREGISTRATION.refusals} >= {
+        "OpenFrontIsRegisteredNotOpened"
+    }
+
+
+def test_the_failed_attempt_and_its_later_supply_are_both_kept_in_the_record() -> None:
+    """الامتناعُ الأوّل والتزويدُ اللاحق مكتوبان معًا: لا يُمحى أحدُهما بالآخر."""
+
+    residual = NAMED_RESIDUALS[VERBATIM_TEXT_IS_NOT_SUPPLIED_HERE]
+
+    assert "طُلِب النصُّ فامتنع ثمّ زُوِّد" in residual
+    assert "بإسنادٍ واحدٍ لا اثنين" in residual
+    assert "حكايةُ معنًى في وسائط ثانوية" in residual
+    assert SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE in residual
+    assert "الطبري" in SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE
+    assert "لتعذُّر التحقق الحرفيّ وحده" in (
+        SECONDARY_PARAPHRASE_IS_NOT_A_VERBATIM_EXCERPT_NOTE
+    )
+    assert {refusal.name for refusal in QAYD_MARKER_PREREGISTRATION.refusals} >= {
+        "SecondaryParaphraseIsNotAVerbatimExcerpt"
+    }
+
+
+def test_the_print_edition_locus_residual_is_raised_in_part_and_not_in_whole() -> None:
+    """[ص: 372] رفعت البقيّةَ جزئيًّا، والمجلَّدُ والنسخةُ الورقية لم يُتحقَّقا."""
+
+    residual = NAMED_RESIDUALS[PRINT_EDITION_LOCUS_NOT_VERIFIED]
+
+    assert "جزئيًّا لا كلّيًّا" in residual
+    assert "رقمَ المجلَّد لم يُذكَر" in residual
+    assert "الطبريُّ" in residual
+    assert "لا تمسّ المُشتَقّ" in residual
+
+
+def test_the_supplied_text_filled_the_card_and_left_vocabularies_untouched() -> None:
+    """النقلُ حرّك البطاقةَ وحدها: لا مفردةَ وُسِّعت، ولا احتمالَ نتيجةٍ أُضيف."""
+
+    card = json.loads(_COMPOSITION.read_text(encoding="utf-8"))
+    excerpt = card["طريق_النقل_المعجمي"]["الإسنادات"][0]["الاقتباس_المنقول"]
+
+    assert len(card["طريق_النقل_المعجمي"]["الإسنادات"]) == 1
+    assert not any(marker in excerpt for marker in SPECIFYING_TRANSMISSION_MARKERS)
+    assert not any(marker in excerpt for marker in TARDI_TRANSMISSION_MARKERS)
+    assert len(QaydSignification) == 4
+    assert len(MarkerScanLimit) == 4
+
+
+def test_registering_a_front_builds_no_tool_and_widens_no_closed_vocabulary() -> None:
+    """التسجيلُ تأريخٌ لا عمل: لا مفردةَ وُسِّعت، ولا متغيّرَ التجربة تبدّل."""
+
+    assert "لا تُبنى له أداةٌ" in OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE
+    assert (
+        "NoRicherStructureBeforeLowerOpenResidualClosure"
+        in OPEN_FRONT_IS_REGISTERED_NOT_OPENED_NOTE
+    )
+    assert len(QaydSignification) == 4
+    assert len(MarkerScanLimit) == 4
+    assert "الإسنادات" in LEVEL_TWO_DISCRIMINATION_PREREGISTRATION.controlled_variable
+    assert "ولا يُمَسّ شيءٌ سواه" in (
+        LEVEL_TWO_DISCRIMINATION_PREREGISTRATION.controlled_variable
+    )
 
 
 def test_every_named_limit_is_registered_with_a_statement_of_its_own() -> None:

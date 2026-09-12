@@ -1741,17 +1741,55 @@ threshold" from "a chain at or above it", and `stop_match_genus` reads several
 stops together: identical genera count as `تطابق_رواية` while any side is still
 empty, as `تطابق_غير_محسوم` while any side sits at one attribution, and only as
 `تطابق_دراية_مرشح` when every side is a real chain. Read across the four
-level-one cards and the composition card as they stand today, the match is
-`تطابق_رواية`: the experiment has not been run, and no fractal claim may rest on
-it (`IDENTICAL_STOP_GENUS_IS_NOT_FRACTAL_EVIDENCE_NOTE`,
+level-one cards and the composition card, the match is `تطابق_رواية`, and no
+fractal claim may rest on it (`IDENTICAL_STOP_GENUS_IS_NOT_FRACTAL_EVIDENCE_NOTE`,
 `ARITY_IS_NOT_A_LINGUISTIC_STRUCTURE_NOTE`). The same milestone stops the tool
 from crashing on the most common real case it will meet: a path transmitting
 both a specification and a طردي reading is now read as a named case,
 `QaydSignification.دلالة_القيد_متعارضة` with its own stop genus, instead of
-raising (`TRANSMITTED_CONFLICT_IS_A_CASE_NOT_A_CRASH_NOTE`). No source text was
-supplied for the composition card, so its attribution list is still empty and
-the stop stands exactly as issued; no fiqh question and no fractal (Φ) verdict
-is decided here either.
+raising (`TRANSMITTED_CONFLICT_IS_A_CASE_NOT_A_CRASH_NOTE`). The source text was
+first sought and not obtained — the primary مَتْن was unreachable and only
+paraphrasing secondary summaries came back, refused under
+`SecondaryParaphraseIsNotAVerbatimExcerpt` for inability to match the text
+letter-for-letter, not for any weakness of the source — and was then supplied
+whole from outside this tree, so **the experiment has now actually been run for
+the first time on transmitted text**. Three things fell, none of them the thing
+predicted. First, the passage names exactly **one** authority inside itself
+(«الزين بن المنير»); Ibn Hajar is the compiler of the containing work and does
+not occur in it by name, so he stays in `المصدر`, and manufacturing a second
+attribution to reach the arity threshold would write words the text does not
+contain. Second, that single genuine attribution lands precisely on the arity
+artifact named above: the composition card derives the same
+`REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH` and the same
+`وقوف_آلة_لانقطاع_نقل_القيد` as it did while transmitting nothing, and only the
+discrimination branch moves, from `لم_يُزوَّد_بإسناد_بعد` to
+`وقف_بإسناد_واحد_منقول`. The prospective question *which real input falsifies
+this stop?* therefore has its first real answer, and the answer is that this one
+does not. Third, the predicted `دلالة_القيد_متعارضة` did **not** occur:
+`derive_qayd_signification` returned `دلالة_القيد_غير_محسومة`, because Ibn Hajar
+writes «مفهوم الصفة» and «اعتبرت / لم يعتبر» while the frozen marker vocabularies
+carry «مفهوم المخالفة», «أخرج» and «لا زكاة». Neither vocabulary was widened to
+make the prediction come true; doing so after reading this particular text is
+exactly what `MarkerVocabularyIsFrozenBeforeItsText` forbids, and if «مفهوم
+الصفة» deserves membership that decision must be registered away from this case
+and applied to it afterwards as a result rather than as a cause. The locus
+residual is raised only in part and is recorded as such
+(`PRINT_EDITION_LOCUS_NOT_VERIFIED`): the bracketed «[ص: 372]» is cross-edition
+reference pagination rather than one site's page number, but the volume is
+unstated and no critical print edition was collated by hand — and that gap
+touches documentation only, since the marker scan reads the excerpt alone. No
+fiqh question and no fractal (Φ) verdict is decided here either. One further open variable observed while freezing that
+preregistration — whether `طريق_النقل_المعجمي` is a third path read in its own
+right or a dependent of the constraint's path — is entered in
+`qayd_marker_preregistration.NAMED_RESIDUALS` as
+`LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED`, and nothing more: no tool, no
+vocabulary member, and no run against it until the «سائمة الغنم» experiment
+closes with one complete result. Registering a front is a ledger entry, not a
+licence to work it; that is this repository's own sequential law
+`NoRicherStructureBeforeLowerOpenResidualClosure` applied one level down, and
+the refusal is named `OpenFrontIsRegisteredNotOpened`. Its observation date is
+the commit that added the residual, read from commit metadata rather than
+written into the text as an unverifiable field.
 
 ## Reference material
 
