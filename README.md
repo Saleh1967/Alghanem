@@ -823,6 +823,28 @@ making it strictly finer rather than equivalent — an import-time guard asserts
 that `SOURCE_DIGEST_COVERED_FIELDS` is a proper subset of the entry fields, so
 the two digests can never be read as attesting the same thing.
 
+`src/alghanem/arabic/qiyas_rabt_registration.py` adds the fifth G0.N module,
+on analogy and linking (§10). It is a **registration, not a certificate**, on
+the model of `compound_layer_preregistration`. A `QiyasRegistration` carries
+the four classical pillars, and its origin is not free text: `asl_reference`
+must name one of the frozen formal domains **derived by import** from the
+repository itself (`frozen_asl_references()`), so an analogy cannot be anchored
+to something that was never frozen here — which is exactly why the document's
+own examples (`prefixes ⊂ ziyada`, `SUN-MOON-LETTERS-AR-1`) cannot be
+registered as origins at all and are recorded instead as `ForeignDeclaredCase`,
+declared and never verified, on the model of `ForeignDeclaredAim`. The standing
+is derived from `illa_application` alone: an illa that actually applies yields
+`صحيح_من_أصله`, while mere categorial resemblance or an illa absent from the
+text yields **`باطل_من_أصله`, not "weak"** — weakness is a degree within a
+standing analogy, invalidity from the origin denies that one stands, so the
+vocabulary has exactly two members and no gradation between them. For linking,
+an imported connection that was never tested is `استرجاع`; `ربط` is declared
+and structurally unconstructible, refused with its own message when no held-out
+sample is supplied and with the unconstructibility note when one is, because no
+authority here runs a generalization over cases withheld from the certificate's
+own formation. No kernel module reads any of it, and external-audit output is
+unchanged.
+
 `src/alghanem/arabic/maluma_mafhum.py` adds the fourth G0.N module, on the
 ontological triad of §3. A correct structural/syntactic reading of a text is
 **information only**: `UnderstandingRecord` derives `معلومة` whenever the sanad
