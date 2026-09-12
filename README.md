@@ -823,6 +823,32 @@ making it strictly finer rather than equivalent — an import-time guard asserts
 that `SOURCE_DIGEST_COVERED_FIELDS` is a proper subset of the entry fields, so
 the two digests can never be read as attesting the same thing.
 
+`src/alghanem/arabic/riwaya_diraya_registration.py` adds the third G0.N
+module, on the two acceptance gates of §4. They are two structurally separate
+readers, not one record with two fields: `RiwayaReading` carries only the
+channel — tool identity, digest, change-log reference, and whether the result
+was reproduced independently — and `DirayaReading` carries only the matn, on
+one of two typed branches. The channel standing is derived from independent
+reproduction alone and a written standing contradicting it is refused, so a
+tool cannot be declared sound while its result fails to reproduce (the
+`isti'la p=0.000` shape). The **remedy is derived from the kind of failure,
+never written**: a riwaya failure yields `إصلاح_الأداة`, an ontological diraya
+failure yields `إعادة_تعريف_الفئات`, an epistemological one yields
+`تشديد_اختبار_الأدلة`. That derivation is the refusal named
+`CategoryRedefinitionIsNotEvidenceTightening`: a matn that is of the wrong
+genus cannot be rescued by tightening an evidence test that does not touch it,
+and a matn defeated by something stronger and already frozen cannot be rescued
+by reclassifying its categories. The branch distinction is enforced at
+construction rather than trusted: an epistemological reading must name the
+stronger frozen matn it was tested against, and an ontological reading — being
+prior to any evidence — is refused if it names one at all, because its question
+is classificatory. Continuing scrutiny is structural too: a reading carries
+one or more `IndependentApplication` entries and **no `اجتيزت`/passed field**,
+repeated survival reads as "لم يُهزَم بعد" and never as "ثابت", and a single
+defeat among many survivals still reads as defeated. Like its siblings the
+module is a **registration, not a gate**: it issues no verdict, and no kernel
+module mentions it.
+
 `src/alghanem/arabic/transmission_standing.py` adds the second G0.N module,
 on the three degrees of certainty and the two scopes of induction. The three
 degrees — `متواتر`, `آحاد`, `فرض` — are not a ladder that a growing number
