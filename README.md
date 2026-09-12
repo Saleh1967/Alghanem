@@ -120,6 +120,28 @@ unrelated input by design. Three claims stay refused:
 `ProvenInputProvenance != AssessedEvidence` — `is_assessment` is `False`
 unconditionally, so proven provenance still says nothing about residual
 survival, weaker-model exhaustion, or closure.
+G0.IC.1b (`src/alghanem/kernel/weaker_model_closure.py`) takes the first step
+into what those records *mean*, for exactly one weaker model at a time. It
+invents no vocabulary: `ClosureCriterionSpec` already declared the closed
+three-member outcome set of `Close(W_i, R)`, and the frozen projection poset
+already derived which models must be closed. The one missing relation was
+between an evaluator's `output_content` — a plain string — and a member of
+that set. `DeclaredClosureOutcomeVocabulary` supplies it as declared data,
+frozen in a sealed registry against a content-bound closure criterion, and
+required to cover every declared outcome exactly once so that none is
+unreachable by construction. `WeakerModelClosureGate.assess` accepts no status
+and no reason, and matches the output by exact string equality: no trimming,
+no case folding, no prefix match, and no default. An unrecognized output is
+refused by model id and is never read as `DEFER`, because reading ignorance as
+a declared outcome is the exact failure the gate exists to prevent; a record
+under any other role, or naming a target outside the derived prerequisite cone,
+is refused too. What stays refused is named: `LocalClosureOutcome !=
+WeakerModelExhaustion` (nothing here aggregates the cone, and
+`is_weaker_model_exhaustion` is `False` unconditionally),
+`WeakerModelClosure != IndependentClosure` (`is_independent_closure` is `False`
+on every branch and `IndependentClosureAssessment` is untouched),
+`DeclaredVocabularyIsNotProvenSemantics`, and
+`SealedBeforeAssessmentIsNotSealedBeforeEvidence`.
 `BirthCandidate` is distinct from a scoped birth verdict and from `Freeze`;
 the future G0.BV.1 authority may issue `BIRTH_IN_SCOPE`, then a later freeze
 authority may freeze it before a separate `E0` step. See the

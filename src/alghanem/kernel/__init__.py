@@ -180,6 +180,15 @@ from .transition import (
     TransitionCandidate,
     TransitionKind,
 )
+from .weaker_model_closure import (
+    AuthorizedClosureOutcomeVocabulary,
+    ClosureOutcomeVocabularyRegistry,
+    DeclaredClosureOutcomeVocabulary,
+    SealedClosureOutcomeVocabularyRegistry,
+    WeakerModelClosureCertificate,
+    WeakerModelClosureError,
+    WeakerModelClosureGate,
+)
 
 __all__ = [
     "Anchor",
@@ -332,5 +341,12 @@ __all__ = [
     "TransitionKind",
     "UnauthorizedExtractorError",
     "UnregisteredExtractorError",
+    "AuthorizedClosureOutcomeVocabulary",
+    "ClosureOutcomeVocabularyRegistry",
+    "DeclaredClosureOutcomeVocabulary",
+    "SealedClosureOutcomeVocabularyRegistry",
+    "WeakerModelClosureCertificate",
+    "WeakerModelClosureError",
+    "WeakerModelClosureGate",
     "WeakerModelSpec",
 ]
