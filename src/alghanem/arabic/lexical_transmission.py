@@ -96,6 +96,16 @@ if len(LexicalCitationStructure) != 3:  # pragma: no cover - guard
 
 LEXICAL_CHAIN_SCHEMA_VERSION: Final = "lexical-attribution-chain.v1"
 
+LEXICAL_CHAIN_MINIMUM_ATTRIBUTIONS: Final = 2
+
+CHAIN_ARITY_THRESHOLD_IS_LOAD_BEARING_NOTE: Final = (
+    "ChainArityThresholdIsLoadBearing: التعاقبُ لا يقوم بأقلّ من إسنادين، "
+    "فالعتبةُ هنا عددٌ مُسمًّى لا رقمٌ مدسوسٌ في شرط. ولازمُها أنّ استشهادًا "
+    "بإسنادٍ **واحدٍ حقيقيٍّ تمامًا** يُشتَقّ `عنوان_واحد_مسطح` بجنس امتناعٍ "
+    "واحدٍ مع من لم يَنقُل إسنادًا أصلًا؛ فتطابقُ الجنسين في هذين الحالين أثرُ "
+    "عتبةٍ لا شهادةُ بنيةٍ تكرّرت، ومن قرأه شهادةً قرأ قيدَ الأداة نصًّا في العالم"
+)
+
 CARD_LEXICAL_PATH_KEY: Final = "طريق_النقل_المعجمي"
 
 ALLOWED_LEXICAL_PATH_KEYS: Final = ("المصدر", "المادة", "الإسنادات")
@@ -333,7 +343,7 @@ def derive_lexical_citation_structure(
         raise LexicalTransmissionError("بنيةُ الاستشهاد تُشتَقّ من واصفها")
     if not descriptor.chain_is_rederived:
         return LexicalCitationStructure.بنية_الاستشهاد_غير_محسومة
-    if len(descriptor.attributions) >= 2:
+    if len(descriptor.attributions) >= LEXICAL_CHAIN_MINIMUM_ATTRIBUTIONS:
         return LexicalCitationStructure.إسناد_داخلي_متعاقب_مسمى
     return LexicalCitationStructure.عنوان_واحد_مسطح
 
@@ -565,11 +575,13 @@ __all__ = [
     "ALLOWED_ATTRIBUTION_KEYS",
     "ALLOWED_LEXICAL_PATH_KEYS",
     "CARD_LEXICAL_PATH_KEY",
+    "CHAIN_ARITY_THRESHOLD_IS_LOAD_BEARING_NOTE",
     "CHAIN_IS_REDERIVED_NOT_TRUSTED_NOTE",
     "COMPILER_SYNCHRONY_IS_NOT_DECIDED_HERE",
     "EMPTY_CHAIN_IS_A_CLAIM_NOT_A_CLOSURE_NOTE",
     "FLAT_TITLE_CITATION_IS_NOT_A_TRANSMISSION_CHAIN_NOTE",
     "INTERNAL_ATTRIBUTION_IS_NOT_SOURCE_INDEPENDENCE_NOTE",
+    "LEXICAL_CHAIN_MINIMUM_ATTRIBUTIONS",
     "LEXICAL_CHAIN_SCHEMA_VERSION",
     "LEXICAL_TRANSMISSION_IS_NOT_A_GATE_NOTE",
     "LISAN_TEXT_IS_NOT_VENDORED_HERE",

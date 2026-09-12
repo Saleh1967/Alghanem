@@ -95,6 +95,7 @@ __all__ = [
     "LEVEL_TWO_LINK_IS_NOT_THE_TADMIN_TAQYID_CERTIFICATE_NOTE",
     "NEW_WITNESS_IS_NOT_AN_ESTABLISHED_EXAMPLE_NOTE",
     "SPECIFICATION_IS_A_KIND_NOT_A_DEGREE_NOTE",
+    "TRANSMITTED_CONFLICT_IS_A_CASE_NOT_A_CRASH_NOTE",
     "SPECIFYING_TRANSMISSION_MARKERS",
     "TARDI_TRANSMISSION_MARKERS",
     "TAQYEED_LINK_LABEL",
@@ -159,6 +160,14 @@ INPUT_STOP_IS_NOT_A_MECHANISM_FAILURE_NOTE: Final[str] = (
     "InputStopIsNotAMechanismFailure: وقوفُ الرابط لأن جنس التركيب غيرُ محسومٍ "
     "أو ليس تقييدًا وقوفُ مدخلٍ لم تُختبَر معه الآلةُ أصلًا؛ وقراءتُه فشلًا "
     "للآلة تُعيد خلطَ المتغيّرين الذي وُضِع هذا المدخلُ لعزله"
+)
+
+TRANSMITTED_CONFLICT_IS_A_CASE_NOT_A_CRASH_NOTE: Final[str] = (
+    "TransmittedConflictIsACaseNotACrash: طريقٌ يَنقُل التخصيصَ والطرديّة معًا "
+    "حالٌ واقعةٌ مشهودةٌ في الخلاف الفقهيّ، لا مدخلٌ مُشوَّه؛ فتُقرأ حالًا "
+    "مُسمّاةً بعضوٍ في المفردة وبجنس وقوفٍ يخصّها، ولا تُسقِط الأداة باستثناء. "
+    "ورفعُ الاستثناء عند حالٍ واقعيةٍ شائعة يجعل الأداةَ عاجزةً عن قراءة أكثر "
+    "ما وُضِعت له"
 )
 
 FRACTAL_VERDICT_IS_NOT_ISSUED_HERE_NOTE: Final[str] = (
@@ -245,6 +254,7 @@ class QaydSignification(Enum):
 
     قيد_مخصص = "قيد_مخصص"
     وصف_طردي = "وصف_طردي"
+    دلالة_القيد_متعارضة = "دلالة_القيد_متعارضة"
     دلالة_القيد_غير_محسومة = "دلالة_القيد_غير_محسومة"
 
 
@@ -259,6 +269,7 @@ class LevelTwoStopGenus(Enum):
     وقوف_مدخل_قبل_اختبار_الآلة = "وقوف_مدخل_قبل_اختبار_الآلة"
     وقوف_آلة_لانقطاع_نقل_القيد = "وقوف_آلة_لانقطاع_نقل_القيد"
     وقوف_آلة_لغياب_تخصيص_منقول = "وقوف_آلة_لغياب_تخصيص_منقول"
+    وقوف_آلة_لتعارض_منقول_في_دلالة_القيد = "وقوف_آلة_لتعارض_منقول_في_دلالة_القيد"
 
 
 if len(CompositionRole) != 2:  # pragma: no cover - guard
@@ -268,10 +279,13 @@ if len(CompositionGenus) != 4:  # pragma: no cover - guard
         "جنسُ التركيب رباعيٌّ مغلق: إسنادية وإضافية وتقييدية وغير محسوم، "
         "وعدمُ الحسم عضوٌ فيه لا فراغٌ خارجه"
     )
-if len(QaydSignification) != 3:  # pragma: no cover - guard
-    raise RuntimeError("دلالةُ القيد ثلاثيةٌ مغلقة: فسالبةُ التخصيص ليست إثباتًا للطرديّة")
-if len(LevelTwoStopGenus) != 4:  # pragma: no cover - guard
-    raise RuntimeError("موقفُ الرابط قيامٌ أو وقوفُ مدخلٍ أو وقوفُ آلةٍ بسببين")
+if len(QaydSignification) != 4:  # pragma: no cover - guard
+    raise RuntimeError(
+        "دلالةُ القيد رباعيةٌ مغلقة: فسالبةُ التخصيص ليست إثباتًا للطرديّة، "
+        "والتعارضُ المنقولُ عضوٌ فيها لا استثناءٌ يُسقِط الأداة"
+    )
+if len(LevelTwoStopGenus) != 5:  # pragma: no cover - guard
+    raise RuntimeError("موقفُ الرابط قيامٌ أو وقوفُ مدخلٍ أو وقوفُ آلةٍ بثلاثة أسباب مُسمّاة")
 
 
 _GENUS_BY_KEY: Final[dict[str, CompositionGenus]] = {
@@ -396,6 +410,9 @@ def derive_qayd_signification(
 
     ولا يُقرأ غيابُ التصريح طرديّةً ولا تخصيصًا: العضوُ الثالث موضعُ من لم
     يُنقَل عنه واحدٌ منهما (`SPECIFICATION_IS_A_KIND_NOT_A_DEGREE_NOTE`).
+
+    وطريقٌ يَنقُل التخصيصَ والطرديّة معًا حالٌ واقعةٌ تُقرأ بعضوٍ رابعٍ مُسمّى،
+    لا استثناءٌ يُسقِط الأداة (`TRANSMITTED_CONFLICT_IS_A_CASE_NOT_A_CRASH_NOTE`).
     """
 
     if not isinstance(descriptor, LexicalTransmissionDescriptor):
@@ -409,10 +426,7 @@ def derive_qayd_signification(
     )
     tardi = any(marker in excerpt for excerpt in excerpts for marker in _TARDI_KEYS)
     if specifying and tardi:
-        raise LevelTwoManatError(
-            "طريقٌ واحدٌ يَنقُل التخصيصَ والطرديّة معًا في قيدٍ واحد: "
-            "التعارضُ يُرفَض ولا يُحمَل على أحد الطرفين"
-        )
+        return QaydSignification.دلالة_القيد_متعارضة
     if specifying:
         return QaydSignification.قيد_مخصص
     if tardi:
@@ -627,6 +641,22 @@ class TaqyeedManatGate:
             )
 
         signification = composition.qayd_signification
+        if signification is QaydSignification.دلالة_القيد_متعارضة:
+            return TaqyeedLinkAttempt(
+                label=TAQYEED_LINK_LABEL,
+                module_relative_path="level_two_manat.py",
+                stood_up=False,
+                missing_declaration=(
+                    "طريقُ نقل القيد قائمٌ ودرجتُه مُشتَقّة، وإسناداتُه تَنقُل "
+                    "التخصيصَ والطرديّة معًا؛ فالوقوفُ لتعارضٍ منقولٍ يُقرأ حالًا "
+                    f"مُسمّاة ولا يُحمَل على أحد الطرفين. "
+                    f"{TRANSMITTED_CONFLICT_IS_A_CASE_NOT_A_CRASH_NOTE}"
+                ),
+                stop_genus=(LevelTwoStopGenus.وقوف_آلة_لتعارض_منقول_في_دلالة_القيد),
+                qayd_signification=signification,
+                standing=standing,
+            )
+
         if signification is not QaydSignification.قيد_مخصص:
             return TaqyeedLinkAttempt(
                 label=TAQYEED_LINK_LABEL,
