@@ -158,20 +158,26 @@ def test_the_reopened_module_is_derived_and_named_not_refused(
 ) -> None:
     reopened = ledger.reopened_modules
     assert set(reopened) == {
-        f"{PROGRAMME_PACKAGE_RELATIVE_PATH}/constitution_ledger.py"
+        f"{PROGRAMME_PACKAGE_RELATIVE_PATH}/constitution_ledger.py",
+        f"{PROGRAMME_PACKAGE_RELATIVE_PATH}/aims.py",
     }
     assert reopened[f"{PROGRAMME_PACKAGE_RELATIVE_PATH}/constitution_ledger.py"] == (
         MilestoneOrdinal.SECOND,
         MilestoneOrdinal.FIFTH,
     )
-    assert (
-        ledger.row(MilestoneOrdinal.FIFTH).claim_standing
-        is ModuleClaimStanding.REOPENED_BY_THIS_MILESTONE
+    assert reopened[f"{PROGRAMME_PACKAGE_RELATIVE_PATH}/aims.py"] == (
+        MilestoneOrdinal.FIRST,
+        MilestoneOrdinal.NINTH,
     )
-    assert (
-        ledger.row(MilestoneOrdinal.SECOND).claim_standing
-        is ModuleClaimStanding.FIRST_CODED_HERE
-    )
+    for ordinal in (MilestoneOrdinal.FIFTH, MilestoneOrdinal.NINTH):
+        assert (
+            ledger.row(ordinal).claim_standing
+            is ModuleClaimStanding.REOPENED_BY_THIS_MILESTONE
+        )
+    for ordinal in (MilestoneOrdinal.SECOND, MilestoneOrdinal.FIRST):
+        assert (
+            ledger.row(ordinal).claim_standing is ModuleClaimStanding.FIRST_CODED_HERE
+        )
 
 
 def test_a_reopening_claimed_before_its_first_claimant_is_refused() -> None:

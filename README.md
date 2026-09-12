@@ -1389,6 +1389,34 @@ assumed (`MUKHALAFA_IS_UNREAD_IN_TODAYS_TRACE`); and an uttered-support count is
 not performance and not a distance to attainment
 (`MANTUQ_COUNT_IS_NOT_PERFORMANCE`).
 
+The ninth milestone added no module. It returned to the first milestone's
+`alghanem.program.aims`, where refusing `AttainmentStanding.REACHED` carried a
+note asserting that "no authority here issues attainment" — that is, it declared
+one refusal genus, *held by a missing authority today*, over all thirteen aims at
+once and derived it from nothing. Review proposed the opposite verdict: that
+attainment is refused by a permanent category mismatch, since open-ended
+discovery aims have no end for attainment to fall in. Coding found both answers
+to be the same error in opposite directions. AIM-K4's attainment is an existence
+condition on a named artefact — a freeze authority that issues `FrozenFactorRef`
+— not an endless fractal level, so the aims are not one genus and no blanket
+verdict over them is derived. The refusal genus is therefore split into a closed
+vocabulary and derived per aim from its termination structure, after
+`UnconstructibilityGenus` and `EvidenceTemporalStructure` in
+`alghanem.arabic.transmission_standing`, cited rather than re-derived. The
+derivation here is weaker than its sibling and the gap is named: there synchrony
+was provable by re-deriving a closure digest, while here neither side is provable
+today, so every aim reads `GENUS_NOT_SETTLED`
+(`NO_TERMINATION_PROOF_EXISTS_TODAY_NOTE`) — an honest weakening of a claim that
+was stronger than its evidence, not a retreat, and not a midpoint between the two
+genera (`NOT_SETTLED_IS_NOT_A_MIDPOINT_NOTE`). Behaviour is unchanged: `REACHED`
+is still refused at construction. Proof sites are named though none exists, so
+the remainder is named rather than silent, and a descriptor carrying a proof no
+authority issued is refused at construction. The claim that every birth opens a
+higher fractal level is recorded and deliberately not coded as a derivor, because
+no constitution row supports it and coding it would make it an unverified premise
+the whole division succeeds on
+(`FRACTAL_OPEN_ENDEDNESS_IS_AN_UNSOURCED_CLAIM_NOTE`).
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future

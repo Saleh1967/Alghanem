@@ -40,6 +40,33 @@
 سلطةَ أصدرته. والرفض عند الإنشاء نفسه لا عند سجلٍّ بعينه، وإلا أمكن بناء سجلٍّ
 آخر يحمل القيمة بلا رادع.
 
+**وجنسُ ذلك الرفض يُشتَقّ ولا يُعلَن — وهذا ما أضافته المرحلة التاسعة.** كان
+النصّ السابق لـ`ATTAINMENT_DEFERRAL_NOTE` يقول «لا سلطة هنا تُصدر بلوغَ غاية»،
+فيجزم بأن الرفض من جنس **الحجز لغياب سلطة اليوم** على الغايات الثلاث عشرة
+دفعةً واحدة، بلا واصفٍ يُشتَقّ منه. وهذا بعينه شكلُ الثغرة التي أغلقتها
+`unconstructibility_genus` في `alghanem.arabic.transmission_standing` حين رفضت
+أن يُمرَّر التصنيفُ الزمنيّ وسيطًا مُعلَنًا فتنجح عليه البوّابةُ كلّها بمقدّمةٍ
+غير محقَّقة. والجزمُ المضادّ — أن الرفض **خطأٌ فئويّ** لأن الغايات مفتوحةُ
+النهاية فركتاليًّا — يُعيد الخطأ نفسه بجنسٍ معاكس لا يُصلحه: فـ AIM-K4 بلوغُها
+شرطُ وجودٍ على مصنوعٍ مُسمّى (`FrozenFactorRef` صادرةً عن سلطة)، لا مستوًى لا
+نهاية له؛ فالغايات ليست جنسًا واحدًا، وأيّ حكمٍ شاملٍ عليها حكمٌ بلا اشتقاق.
+
+فيُفصَل **جنسُ الرفض** في مفردةٍ مغلقة (`AimAttainmentRefusalGenus`)، ويُشتَقّ
+من بنية نهاية الغاية (`AimTerminationStructure`) لا من حقلٍ يُكتَب؛ على منوال
+`UnconstructibilityGenus` و`EvidenceTemporalStructure` حرفًا بحرف، لا اسمًا
+عامًّا يُستحدَث فوقهما. **والاشتقاق هنا أضعفُ من نظيره هناك، والفارقُ مُسمّى**:
+هناك كان التزامنُ يُبرهَن ببصمة الإغلاق فبقي طرفٌ واحد بلا برهان، وهنا **لا
+طرفَ يُبرهَن اليوم** — لا في الأثر المقروء ما يُثبت أن غايةً بعينها مفتوحةُ
+النهاية بنيويًّا، ولا ما يُثبت أنها ذاتُ نهاية. فنتيجةُ الاشتقاق على أثر اليوم
+`GENUS_NOT_SETTLED` في الغايات كلّها، وهذا **إضعافٌ صادق** لدعوى كانت أقوى من
+دليلها لا تراجعٌ عن مكسب. والسلوك لا يتبدّل: `REACHED` تبقى مرفوضةً عند
+الإنشاء كما كانت.
+
+**ودعوى «كلُّ ميلادٍ يفتح مستوًى فركتاليًّا أعلى» غيرُ مُرمَّزةٍ مُشتِقًّا،
+والسببُ مكتوب**: هي دعوى معقولة ولا يُسندها اليوم صفٌّ في `docs/CONSTITUTION.md`،
+فتُترَك بقيّةً مُسمّاة؛ وترميزُها مُشتِقًّا يجعلها مقدّمةً غير محقَّقة تنجح
+عليها القسمةُ كلّها، وهو عينُ ما تُغلقه هذه المرحلة.
+
 **`DeclaredForeignAim != AlghanemRecord` حدٌّ نوعيّ لا قيمةُ حقل.** الغايتان
 المستورَدتان تُسجَّلان بنوعٍ منفصل `ForeignDeclaredAim` بلا `AimId` وبلا أيّ
 رتبة انشغالٍ أو بلوغ. ودمجهما في `AimRecord` بحقل مَصْدرية يجعل استبعادهما من
@@ -128,10 +155,57 @@ class AttainmentStanding(Enum):
     REACHED = "بُلِغت"
 
 
+class AimTerminationStructure(Enum):
+    """بنيةُ نهاية الغاية: أمفتوحةٌ فركتاليًّا، أم ذاتُ نهايةٍ على مصنوعٍ مُسمّى؟
+
+    والعضو الثالث ليس فراغًا يُطوى: «ليست مفتوحةً بالبرهان» ليست «إذن ذاتُ
+    نهاية»، وسالبةٌ لا تُثبت نقيضًا؛ فلو بقيت المفردةُ ثنائيّةً لأنتج
+    الاستبعادُ وحده نهايةً بالنفي. على منوال `TEMPORAL_STRUCTURE_NOT_SETTLED`
+    في `alghanem.arabic.transmission_standing`.
+    """
+
+    OPEN_ENDED_BY_FRACTAL_RECURSION = "مفتوحةٌ_بالتعاقب_الفركتاليّ"
+    TERMINAL_ON_A_NAMED_ARTEFACT = "ذاتُ_نهايةٍ_على_مصنوعٍ_مُسمّى"
+    TERMINATION_STRUCTURE_NOT_SETTLED = "بنيةُ_النهاية_غير_محسومة"
+
+
+class AimAttainmentRefusalGenus(Enum):
+    """جنسُ رفض `REACHED`: أحجزٌ لغياب سلطةٍ اليوم، أم امتناعٌ فئويّ، أم لا يُعلَم؟
+
+    الفارقُ عمليّ لا لفظيّ: الحجزُ ترفعه سلطةٌ تُبنى غدًا، والخطأُ الفئويّ لا
+    ترفعه أداةٌ لأن العلّة في نوع السؤال لا في عدّة الفحص. والأسماء مأخوذةٌ
+    لفظًا من `UnconstructibilityGenus` استشهادًا بموضعها لا استحداثًا لتجريدٍ
+    يوحّد البابين.
+    """
+
+    HELD_BY_MISSING_AUTHORITY_TODAY = "محجوزة_لغياب_سلطة_اليوم"
+    REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH = "ممتنعة_بخطأ_فئوي_بنيوي"
+    GENUS_NOT_SETTLED = "جنسُ_الرفض_غير_محسوم"
+
+
+class TerminationProofSite(Enum):
+    """مواضعُ البرهان الممكنة على بنية النهاية، ولا واحدَ منها قائمٌ اليوم.
+
+    تُسمّى المواضعُ لتكون البقيّةُ مُسمّاةً لا مطويّة: من بنى أحدَها بنى
+    الاشتقاقَ الإيجابيّ، ومن لم يبنِه بقي الجنسُ غيرَ محسوم.
+    """
+
+    CONSTITUTION_ROW_ESTABLISHING_FRACTAL_OPEN_ENDEDNESS = (
+        "صفٌّ دستوريّ يُثبت انفتاح الغاية بالتعاقب الفركتاليّ"
+    )
+    CONSTITUTION_ROW_ESTABLISHING_A_TERMINAL_ARTEFACT = (
+        "صفٌّ دستوريّ يُثبت أن بلوغ الغاية شرطُ وجودٍ على مصنوعٍ مُسمًّى"
+    )
+
+
 if len(AimEngagement) != 3:  # pragma: no cover - guard
     raise RuntimeError("engagement is deliberately three-valued")
 if len(AttainmentStanding) != 3:  # pragma: no cover - guard
     raise RuntimeError("attainment standing is deliberately three-valued")
+if len(AimTerminationStructure) != 3:  # pragma: no cover - guard
+    raise RuntimeError("termination structure is deliberately three-valued")
+if len(AimAttainmentRefusalGenus) != 3:  # pragma: no cover - guard
+    raise RuntimeError("refusal genus is deliberately three-valued")
 
 
 TWO_INDEPENDENT_AXES_NOTE: Final = (
@@ -141,9 +215,41 @@ TWO_INDEPENDENT_AXES_NOTE: Final = (
 )
 
 ATTAINMENT_DEFERRAL_NOTE: Final = (
-    "البلوغ مُعلَنٌ في المفردة وغير قابل للبناء اليوم: لا سلطة هنا تُصدر بلوغَ "
-    "غاية، فكتابته ادّعاءُ بلوغٍ لم يُصدره أحد -- ويُرفض عند الإنشاء نفسه لا "
-    "عند سجلٍّ بعينه"
+    "البلوغ مُعلَنٌ في المفردة وغير قابل للبناء هنا، ويُرفض عند الإنشاء نفسه لا "
+    "عند سجلٍّ بعينه؛ وجنسُ هذا الرفض لا يُجزَم به في هذا النصّ بل يُشتَقّ لكلّ "
+    "غايةٍ على حدة من بنية نهايتها، فانظر "
+    "`REFUSAL_GENUS_IS_DERIVED_NOT_DECLARED_NOTE`"
+)
+
+REFUSAL_GENUS_IS_DERIVED_NOT_DECLARED_NOTE: Final = (
+    "جنسُ رفض البلوغ مُشتَقٌّ من بنية نهاية الغاية لا مكتوبٌ في حقل ولا مُعلَنٌ "
+    "في نثر: وحكمٌ واحد على الغايات الثلاث عشرة — حجزًا كان أو امتناعًا "
+    "فئويًّا — حكمٌ بلا اشتقاق، إذ AIM-K4 بلوغُها شرطُ وجودٍ على مصنوعٍ مُسمّى "
+    "لا مستوًى لا نهاية له"
+)
+
+CATEGORY_MISMATCH_IS_NOT_MISSING_AUTHORITY_NOTE: Final = (
+    "الامتناعُ الفئويّ غيرُ الحجز لغياب سلطة، والفارقُ مُسمًّى في موضعه من "
+    "`alghanem.arabic.transmission_standing` ويُستشهَد به هنا ولا يُعاد اشتقاقه: "
+    "الحجزُ ترفعه سلطةٌ تُبنى غدًا، والخطأُ الفئويّ لا ترفعه أداة"
+)
+
+NO_TERMINATION_PROOF_EXISTS_TODAY_NOTE: Final = (
+    "لا موضعَ برهانٍ قائمًا اليوم على بنية نهاية أيّ غاية: لا في الأثر المقروء "
+    "ما يُثبت انفتاحًا فركتاليًّا ولا ما يُثبت نهايةً على مصنوعٍ مُسمّى؛ فواصفُ "
+    "كلّ غايةٍ يُرفَض عند الإنشاء إن حمل موضعَ برهانٍ لم تُصدره سلطة، ويبقى "
+    "الجنسُ غيرَ محسوم"
+)
+
+FRACTAL_OPEN_ENDEDNESS_IS_AN_UNSOURCED_CLAIM_NOTE: Final = (
+    "دعوى أن كلّ ميلادٍ يفتح مستوًى فركتاليًّا أعلى لا يُسندها صفٌّ في "
+    "`docs/CONSTITUTION.md` اليوم، فلا تُرمَّز مُشتِقًّا: ترميزُها يجعلها "
+    "مقدّمةً غير محقَّقة تنجح عليها القسمةُ كلّها"
+)
+
+NOT_SETTLED_IS_NOT_A_MIDPOINT_NOTE: Final = (
+    "`GENUS_NOT_SETTLED` ليست منزلةً بين الحجز والامتناع ولا درجةً في سُلَّم: "
+    "هي تصريحٌ بأن الاشتقاق عجز، ولا تُقرَأ قربًا من بلوغٍ ولا بعدًا عنه"
 )
 
 UNCLASSIFIED_IS_NOT_PROGRESS_NOTE: Final = (
@@ -282,6 +388,88 @@ class ForeignDeclaredAim:
         return False
 
 
+@dataclass(frozen=True, slots=True)
+class AimTerminationDescriptor:
+    """واصفُ بنية نهاية غايةٍ واحدة: مواضعُ برهانها لا تصنيفُها المُعلَن.
+
+    التصنيفُ نفسه لا يُمرَّر وسيطًا: لو مُرِّر لبقي مقدّمةً غير محقَّقة ينجح
+    عليها الاشتقاقُ كلّه، وهو شكلُ الثغرة التي تُغلقها هذه المرحلة. ويُرفض
+    موضعُ البرهان عند الإنشاء ما دامت لا سلطةَ هنا تُصدره.
+    """
+
+    aim_id: AimId
+    proved_sites: frozenset[TerminationProofSite] = frozenset()
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.aim_id, AimId):
+            raise AimRecordError("معرّف الغاية من مفردته المغلقة")
+        if not isinstance(self.proved_sites, frozenset):
+            raise AimRecordError("مواضع البرهان مجموعةٌ مُجمَّدة")
+        for site in self.proved_sites:
+            if not isinstance(site, TerminationProofSite):
+                raise AimRecordError("موضع البرهان من مفردته المغلقة")
+        if self.proved_sites:
+            raise AimRecordError(NO_TERMINATION_PROOF_EXISTS_TODAY_NOTE)
+
+
+def _structure_of_proved_sites(
+    sites: frozenset[TerminationProofSite],
+) -> AimTerminationStructure:
+    """صِلْ مواضعَ البرهان ببنية النهاية؛ دالّةٌ تامّة بلا فرعٍ افتراضيّ.
+
+    وموضعا البرهان معًا تناقضٌ يُرفَض لا يُرجَّح أحدهما فيه: بنيةٌ واحدة لا
+    تكون مفتوحةً وذاتَ نهايةٍ في آن.
+    """
+
+    open_ended = (
+        TerminationProofSite.CONSTITUTION_ROW_ESTABLISHING_FRACTAL_OPEN_ENDEDNESS
+    )
+    terminal = TerminationProofSite.CONSTITUTION_ROW_ESTABLISHING_A_TERMINAL_ARTEFACT
+    if open_ended in sites and terminal in sites:
+        raise AimRecordError(
+            "موضعا برهانٍ متناقضان لبنيةٍ واحدة: لا تكون الغايةُ مفتوحةً "
+            "فركتاليًّا وذاتَ نهايةٍ على مصنوعٍ مُسمًّى معًا"
+        )
+    if open_ended in sites:
+        return AimTerminationStructure.OPEN_ENDED_BY_FRACTAL_RECURSION
+    if terminal in sites:
+        return AimTerminationStructure.TERMINAL_ON_A_NAMED_ARTEFACT
+    return AimTerminationStructure.TERMINATION_STRUCTURE_NOT_SETTLED
+
+
+def _genus_of_structure(
+    structure: AimTerminationStructure,
+) -> AimAttainmentRefusalGenus:
+    """صِلْ كلَّ بنيةٍ بجنس رفضها؛ دالّةٌ تامّة بلا فرعٍ افتراضيّ."""
+
+    if structure is AimTerminationStructure.OPEN_ENDED_BY_FRACTAL_RECURSION:
+        return AimAttainmentRefusalGenus.REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH
+    if structure is AimTerminationStructure.TERMINAL_ON_A_NAMED_ARTEFACT:
+        return AimAttainmentRefusalGenus.HELD_BY_MISSING_AUTHORITY_TODAY
+    return AimAttainmentRefusalGenus.GENUS_NOT_SETTLED
+
+
+def derive_aim_termination_structure(
+    descriptor: AimTerminationDescriptor,
+) -> AimTerminationStructure:
+    """اشتقّ بنية نهاية الغاية من واصفها لا من تصنيفٍ مُمرَّر.
+
+    ونتيجتُها على أثر اليوم `TERMINATION_STRUCTURE_NOT_SETTLED` في الغايات
+    كلّها، لأنّ لا موضعَ برهانٍ قائمًا؛ وهذا تصريحٌ بعجز الاشتقاق لا منزلةٌ
+    وسطى.
+    """
+
+    return _structure_of_proved_sites(descriptor.proved_sites)
+
+
+def aim_attainment_refusal_genus(
+    descriptor: AimTerminationDescriptor,
+) -> AimAttainmentRefusalGenus:
+    """أحجزٌ لغياب سلطةٍ رفضُ البلوغ هنا أم امتناعٌ فئويّ؟ مُشتَقٌّ لا مكتوب."""
+
+    return _genus_of_structure(derive_aim_termination_structure(descriptor))
+
+
 def _assert_no_fields_matching(
     declaring_type: type, markers: tuple[str, ...], message: str
 ) -> None:
@@ -299,6 +487,11 @@ _assert_no_fields_matching(
     ForeignDeclaredAim,
     _ANSWER_BEARING_FIELD_MARKERS,
     "a foreign declared aim may not carry an answer, verdict, or indicator field",
+)
+_assert_no_fields_matching(
+    AimTerminationDescriptor,
+    _ANSWER_BEARING_FIELD_MARKERS,
+    "a termination descriptor may not carry an answer, verdict, or indicator field",
 )
 
 
@@ -563,6 +756,25 @@ if set(AIM_RECORDS) != set(AimId):  # pragma: no cover - guard
     raise RuntimeError("every declared aim id must carry exactly one record")
 
 
+AIM_TERMINATION_DESCRIPTORS: Final[Mapping[AimId, AimTerminationDescriptor]] = (
+    MappingProxyType(
+        {aim_id: AimTerminationDescriptor(aim_id=aim_id) for aim_id in AimId}
+    )
+)
+
+AIM_ATTAINMENT_REFUSAL_GENERA: Final[Mapping[AimId, AimAttainmentRefusalGenus]] = (
+    MappingProxyType(
+        {
+            aim_id: aim_attainment_refusal_genus(descriptor)
+            for aim_id, descriptor in AIM_TERMINATION_DESCRIPTORS.items()
+        }
+    )
+)
+
+if set(AIM_TERMINATION_DESCRIPTORS) != set(AimId):  # pragma: no cover - guard
+    raise RuntimeError("every declared aim id must carry exactly one descriptor")
+
+
 FOREIGN_DECLARED_AIMS: Final = (
     ForeignDeclaredAim(
         foreign_aim_id="WEIGHT-FIBER-EDIT-GRAPH-HGEN-INDEPENDENCE",
@@ -594,19 +806,32 @@ if any(
 
 __all__ = [
     "AIMS_AUTHORITY_NOTE",
+    "AIM_ATTAINMENT_REFUSAL_GENERA",
     "AIM_RECORDS",
+    "AIM_TERMINATION_DESCRIPTORS",
     "ATTAINMENT_DEFERRAL_NOTE",
+    "CATEGORY_MISMATCH_IS_NOT_MISSING_AUTHORITY_NOTE",
     "DESIGN_SOURCE_OPEN_QUESTION",
     "FOREIGN_AIM_BOUNDARY_NOTE",
     "FOREIGN_DECLARED_AIMS",
+    "FRACTAL_OPEN_ENDEDNESS_IS_AN_UNSOURCED_CLAIM_NOTE",
+    "NOT_SETTLED_IS_NOT_A_MIDPOINT_NOTE",
     "NO_INDICATOR_IN_THIS_MILESTONE_NOTE",
     "NO_PRIORITY_ORDER_NOTE",
+    "NO_TERMINATION_PROOF_EXISTS_TODAY_NOTE",
+    "REFUSAL_GENUS_IS_DERIVED_NOT_DECLARED_NOTE",
     "TWO_INDEPENDENT_AXES_NOTE",
     "UNCLASSIFIED_IS_NOT_PROGRESS_NOTE",
+    "AimAttainmentRefusalGenus",
     "AimEngagement",
     "AimId",
     "AimRecord",
     "AimRecordError",
+    "AimTerminationDescriptor",
+    "AimTerminationStructure",
     "AttainmentStanding",
     "ForeignDeclaredAim",
+    "TerminationProofSite",
+    "aim_attainment_refusal_genus",
+    "derive_aim_termination_structure",
 ]
