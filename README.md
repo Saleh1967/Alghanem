@@ -1358,6 +1358,37 @@ reopened is prose the ledger does not derive
 (`REOPENING_IS_DERIVED_BUT_ITS_REASON_IS_NOT`). Reaching a seventh milestone is
 not reaching an aim: this ledger brings no §2 aim closer and promotes none.
 
+The eighth milestone, in `alghanem.program.dalala_indicator`, reads *how* a
+citation reaches its support rather than how many supports it has. Its source was
+a request to make *mantūq* (what the wording utters), *mafhūm* (what is understood
+from it), and *ifāda* (benefit) into **performance indicators**; coding it found
+that name refused by §1 of `docs/AIMS.md`, which separates "does the code work?"
+from "is the verdict earned by its evidence?", so the refusal was recorded in the
+document as a declaration and the indicator was built epistemically under §4
+instead of smuggling performance in under another name. The three closed
+vocabularies live once, in `alghanem.arabic.mantuq_mafhum_ifada`, and the
+programme reader imports them rather than minting a second set with the same
+words. The channel itself is derived by a second independent reading: the sixth
+milestone records what a reference resolved to but not by which road, since the
+declared name and the derived target read alike whether the citation named a
+constitution row in full or reached it through an identifier that stands in for
+the full name. So this reader builds its own index — names present verbatim are
+uttered, names that only reach a support through something unsaid are understood
+— and a reference the sixth milestone resolved but this index cannot reach is
+refused by name, with neither reading outranking the other. A reference excluded
+by declaration is uttered in the prose yet reaches nothing, so it carries no
+channel at all (`UNRESOLVED_REFERENCE_HAS_NO_CHANNEL`) and is counted as
+`غير_مُفيد`, which is the classical "it exists and does not benefit" case quoted
+in `madlul_alone_formal.py`. What stays open is named: benefit here means reaching
+a declared status, not linguistic benefit
+(`IFADA_HERE_IS_READ_STATUS_NOT_LINGUISTIC_BENEFIT`); what is read is citation
+prose, not a measured Arabic surface
+(`CHANNEL_READS_THE_CITATION_NOT_THE_MEASURED_ARABIC_SURFACE`); the count of
+`مخالفة` is zero today, derived by checking every understood reference rather than
+assumed (`MUKHALAFA_IS_UNREAD_IN_TODAYS_TRACE`); and an uttered-support count is
+not performance and not a distance to attainment
+(`MANTUQ_COUNT_IS_NOT_PERFORMANCE`).
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future
