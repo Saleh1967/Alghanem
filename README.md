@@ -1791,6 +1791,62 @@ the refusal is named `OpenFrontIsRegisteredNotOpened`. Its observation date is
 the commit that added the residual, read from commit metadata rather than
 written into the text as an unverifiable field.
 
+The next preregistration freezes a *sentence* card, and the first thing it
+establishes is a boundary rather than a reading. The four standing formal
+certificates all classify a **lexeme or a cluster of lexemes**; a sentence is a
+new unit of analysis, and reading the new card as a silent widening of those
+certificates would merge two genera under one name
+(`SentenceIsNotALexeme`).
+`src/alghanem/arabic/sentence_card_preregistration.py` therefore registers
+nineteen card items before their answers, in the shape of
+`compound_layer_preregistration.py`: one frozen reference per item from a
+closed three-member vocabulary (`OneFrozenReferencePerItem`), a three-valued
+standing with no member named "done", a derived prerequisite cone that refuses
+any written cone that differs from it, a named refusal on every item, and no
+result field at all under an import-time guard. Seven items are derived from
+certificates already in the tree, **two are deferred by their own law** — they
+are the first and the second-plus-third stages of
+`compound_layer_preregistration` themselves, not look-alikes, and issuing them
+as a certificate here would silently retire that registration
+(`CompoundStageIsDeferredNotReopened`) — and **ten await a source text that is
+not transmitted in this tree**: six of them wait on books of which not one
+letter is carried here — no «النحو الواضح» and no (ن و ر) entry from «لسان
+العرب» — and four on loci of الشخصية الإسلامية ج٣ that no critical print
+edition in hand was collated against. An unanswerable
+item is recorded as a named standing rather than an empty cell, because an
+incomplete card is the result and not a defect
+(`IncompleteCardIsTheResultNotADefect`).
+
+Running it once, on «اللهُ نورُ السماواتِ والأرضِ» (النور:٣٥), produced two
+findings that were not predicted. First, **five items are read, not seven**:
+`منطوق_مفهوم` stops although its own module is coded, because its derived
+prerequisite — the مطابقة/تضمّن/التزام item — awaits a text, and attainment is
+derived by succession exactly as in `decision_chain`. Coding a unit is
+therefore not reaching it. Second, the card's `كلّي` derivation for «نور»
+returns `كلّي_مشكِّك`, while the request that commissioned the card read it
+`كلّي_متواطئ`; the transmitted excerpt frozen in `kulli_juzi_formal` names
+النور among the مشكِّك examples («مثل الوجود والنور»). Neither the vocabulary
+nor the attested witness was edited to make the commissioned reading come out,
+and the divergence is recorded as a named residual rather than resolved, since
+only «الوجود» is an attested witness in that module. The `الإفادة` item stops
+too, and stops for a stated reason: its prerequisite is one of the deferred
+compound-layer items, so `غير_مقروء` is not read as `غير_مُفيد`. The
+prediction that «في بيوتٍ» will derive `غير_مُفيد` when isolated from its
+متعلَّق is frozen in `NAMED_RESIDUALS` **before** it is run, together with the
+input that would falsify it, and the second and third sentences are named there
+as fronts registered and not opened. The card's own placement against the open
+«سائمة الغنم» front is argued in the module rather than assumed: it consumes no
+output of that experiment and is consumed by none, its derivable items reuse
+certificates frozen before both, and its only richer items are the deferred
+ones, so it is read as `∥` and not as a blocked front
+(`ParallelFrontIsNotABlockedFront`). No birth, no verdict, no freeze, no `E0`,
+no kernel gate reads any of it, and no fractal (Φ) claim is made from one card
+fitting three sentence genera (`OneCardOnThreeSentencesIsNotFractality`). The
+first application lives in `examples/sentence_card/nur_24_35.yaml` plus a
+single traversal in `tests/arabic/test_sentence_card_nur_24_35.py`, not in a
+production module, because the card has not yet proved its worth on one
+complete sentence.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future
