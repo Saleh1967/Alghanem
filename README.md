@@ -395,6 +395,38 @@ away into `PASS`. `ExternalAuditor != KernelAuthority` holds throughout: adding
 a declared verdict field to the card leaves the gate's status unchanged, and an
 evaluator sealed for a different claim scope is refused by the gate.
 
+The same module now carries a second, independent genus beside `جنس_البيان`:
+`QarinaFunction`, a closed two-value vocabulary of `قرينة_مؤيِّدة` (tilts toward
+a reading without cancelling another) and `قرينة_مُقصِية` (voids one named rival
+reading entirely at this position). It is added *beside* the qawl/fiʿl genus,
+not in its place: neither `BayanKind` nor the derived order of
+`derive_bayan_models` changed. Elimination is a **kind, not a degree**: a
+`قرينة_مُقصِية` whose own statement merely calls the rival less likely — or
+states no impossibility at all — fails at construction rather than being
+silently demoted to `قرينة_مؤيِّدة` (`ELIMINATION_IS_A_KIND_NOT_A_DEGREE_NOTE`).
+The impossibility test reads the qarina's own declared text, because a separate
+`مستحيل: true` flag would let a preference-worded statement pass a formal check
+on an unverified premise. One qarina names exactly one excluded rival — never a
+list — and no function accumulates supporting qarain into an elimination, so a
+single sound elimination closes the gate with no reinforcement, and repeating a
+supporting qarina any number of times changes nothing
+(`ONE_SOUND_ELIMINATION_SUFFICES_NOTE`). A `بيان_بالفعل` elimination removes
+nothing by itself: this extends the existing `FIL_NEVER_DECIDES_ALONE_NOTE` by
+naming it as its origin and testing the same عِلّة — the lexical indication does
+not decide alone, therefore it does not eliminate alone
+(`FIL_NEGATION_NEVER_ELIMINATES_ALONE_NOTE`). An undeclared `وظيفة_القرينة`
+reads as `قرينة_مؤيِّدة`, because the default state must always be the weaker
+claim, so `quru_2_228.yaml` is untouched and still defers.
+`examples/external_audit/anna_2_223.yaml` is the first card to use the genus:
+`أنّى` in البقرة:223, where the word `حَرْثَكُمْ` in the same verse — a
+`بيان_بالقول` قرينة, no external inference — makes the `من أين` reading
+impossible at this position, since what is not a place of tillage admits no
+question about the direction of coming. The card closes at `PASS` with no
+residual on a single elimination, against the `قُرُوء` card's `DEFER`. `BLOCK`
+still has no path here and the elimination opens none: it removes a rival
+reading, it does not falsify the tested model. This adds no constitutional row;
+it extends G0.EA.1 by the same method as the قُرُوء application.
+
 `src/alghanem/arabic/word_class_formal.py` adds the first Layer B proof whose
 own structure aims at a *positive* result rather than a documented deferral. It
 states, in `FORMAL` mode terms only, a `FrozenFormalDomain` of exactly two
