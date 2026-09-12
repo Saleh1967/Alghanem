@@ -10,6 +10,16 @@
 أشدّها. وكل مقارنة في هذا الترتيب مصحوبة بحجّتها النصّية الكاملة في
 `PRIORITY_ARGUMENTS`، فلا يبقى في الترتيب موضع تقدير غير مُعلَّل.
 
+**والترتيب يستلزم استنفادًا لا مجرّد رتبة**: إعلانُ سببٍ متأخّرٍ في الترتيب
+ادّعاءٌ ضمنيّ بأن كل ما هو أولى منه بالحمل قد استُبعِد بدليل. فتصنيفُ لفظٍ
+بـ`اشتراك` — وهو آخر الخمسة رتبةً — سابقٌ لأوانه منهجيًّا ما لم تُستبعَد
+الأربعة الأولى منه صراحةً، ولو صادف الصواب تاريخيًّا
+(`EXHAUSTION_PRECEDES_CLASSIFICATION_NOTE`). والاستنفاد هنا **يُبلَّغ ولا
+يَحكُم**، وهذا فارقٌ مُسمّى لا تطابقٌ مُدّعى مع
+`NoBirthBeforeLicensedWeakerExhaustion` في G0: هناك استنفادٌ يُغلِق بوّابةً
+ويمنع ولادة، وهنا حالةٌ تقريرية تُظهِر نقص الاستدلال بدل أن يمرّ صامتًا
+(`REPORTED_EXHAUSTION_IS_NOT_A_GATE_NOTE`).
+
 نطاق الإطار وحدوده — تسجيل صريح، لا اعتذار لاحق:
 
 * هذا الإطار يعالج تحديدًا **غموض الدلالة في نصّ ثابت**: لفظٌ ثبت نصُّه ثم
@@ -31,9 +41,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from enum import Enum
-from typing import Final
+from typing import Any, Final
 
 from .text_key import comparison_key
 
@@ -289,3 +300,136 @@ def _require_cause(cause: ComprehensionDefectCause) -> ComprehensionDefectCause:
             "priority arguments compare closed-vocabulary causes only"
         )
     return cause
+
+
+EXHAUSTION_PRECEDES_CLASSIFICATION_NOTE: Final = (
+    "ExhaustionPrecedesClassification: إعلانُ سببٍ متأخّرٍ في ترتيب الخمسة "
+    "ادّعاءٌ ضمنيّ بأن كلّ ما هو أولى منه بالحمل قد استُبعِد بدليل؛ فالتصنيف "
+    "قبل استبعاد الأقوى رتبةً سابقٌ لأوانه منهجيًّا ولو صادف الصواب"
+)
+REPORTED_EXHAUSTION_IS_NOT_A_GATE_NOTE: Final = (
+    "ReportedExhaustionIsNotAGate: استنفاد الأسباب الأقوى هنا حالةٌ تقريرية "
+    "تُقرأ وتُذكَر، ولا تُسقِط بطاقةً ولا تغيّر نتيجة التدقيق الخارجي ولا "
+    "تُحرّك بوّابة نواة؛ والفارق عن استنفاد G0 مُسمّى لا مُدّعى تطابقه"
+)
+
+
+class ExhaustionStatus(Enum):
+    """حالة استنفاد الأسباب الأقوى رتبةً من التصنيف المُعلَن؛ مفردة ثلاثية."""
+
+    COMPLETE = "استنفاد_مكتمل"
+    INCOMPLETE = "استنفاد_ناقص"
+    NOT_REQUIRED = "لا_يلزم_استنفاد"
+
+
+@dataclass(frozen=True, slots=True)
+class StrongerCauseExclusion:
+    """استبعادٌ مُعلَنٌ لسببٍ أولى بالحمل، بدليله ومصدره المُسمّى."""
+
+    cause: ComprehensionDefectCause
+    evidence: str
+    named_source: str
+
+
+@dataclass(frozen=True, slots=True)
+class ExhaustionAssessment:
+    """حالةٌ مُشتَقّة من الترتيب القائم، وتسميةُ ما بقي بغير استبعاد."""
+
+    status: ExhaustionStatus
+    remaining: tuple[ComprehensionDefectCause, ...]
+
+
+def stronger_causes(
+    cause: ComprehensionDefectCause,
+) -> tuple[ComprehensionDefectCause, ...]:
+    """الأسباب الأولى بالحمل من `cause`، مُشتَقّةً من `_PRIORITY_RANK` وحده.
+
+    لا جدولَ ثانيًا هنا: الأقوى هو الأصغر رتبةً في نفس الترتيب المُحتجّ له في
+    `PRIORITY_ARGUMENTS`. فـ`اشتراك` يُعيد الأربعة، و`تخصيص` يُعيد الفارغ،
+    و`مجاز` و`إضمار` متساويان فلا يُعدّ أحدهما أقوى من الآخر.
+    """
+
+    rank = defect_priority(cause)
+    return tuple(
+        other for other in ComprehensionDefectCause if _PRIORITY_RANK[other] < rank
+    )
+
+
+def read_stronger_cause_exclusions(
+    entries: Any, declared: ComprehensionDefectCause
+) -> tuple[StrongerCauseExclusion, ...]:
+    """يقرأ استبعادات الأسباب الأقوى المُعلَنة تحت قراءةٍ منافسةٍ مصنَّفة.
+
+    البطاقة لا تُعلن أيُّها أقوى — ذلك مُشتَقٌّ من الترتيب — وإنما تُعلن الاسم
+    ودليل الاستبعاد ومصدره المُسمّى. ويُرفَض عند القراءة: السبب المكرَّر،
+    والسبب الذي ليس أقوى رتبةً من المُعلَن (المساوي أو الأضعف)، فلا يُموَّه
+    الاستنفاد بإضافاتٍ لا تلزم.
+    """
+
+    if not isinstance(entries, Sequence) or isinstance(entries, str | bytes):
+        raise ComprehensionDefectError("استبعاد_الأسباب_الأقوى must be a list")
+    allowed = set(stronger_causes(declared))
+    exclusions: list[StrongerCauseExclusion] = []
+    seen: set[ComprehensionDefectCause] = set()
+    for entry in entries:
+        if not isinstance(entry, Mapping):
+            raise ComprehensionDefectError(
+                "استبعاد_الأسباب_الأقوى[] entries must be mappings"
+            )
+        unknown = set(entry) - {"السبب", "دليل_الاستبعاد", "المصدر_المُسمّى"}
+        if unknown:
+            raise ComprehensionDefectError(
+                "استبعاد_الأسباب_الأقوى[] accepts only: السبب، دليل_الاستبعاد،"
+                " المصدر_المُسمّى"
+            )
+        cause = canonical_defect_classification(
+            _require_text(entry.get("السبب"), "استبعاد_الأسباب_الأقوى[].السبب")
+        )
+        if cause is None:
+            raise ComprehensionDefectError(
+                "استبعاد_الأسباب_الأقوى[].السبب لا يقبل لا_ينطبق"
+            )
+        if cause not in allowed:
+            raise ComprehensionDefectError(
+                "استبعاد_الأسباب_الأقوى[].السبب يجب أن يكون أولى بالحمل من "
+                f"({declared.value})؛ " + EXHAUSTION_PRECEDES_CLASSIFICATION_NOTE
+            )
+        if cause in seen:
+            raise ComprehensionDefectError("استبعاد_الأسباب_الأقوى[].السبب لا يتكرّر")
+        seen.add(cause)
+        exclusions.append(
+            StrongerCauseExclusion(
+                cause=cause,
+                evidence=_require_text(
+                    entry.get("دليل_الاستبعاد"),
+                    "استبعاد_الأسباب_الأقوى[].دليل_الاستبعاد",
+                ),
+                named_source=_require_text(
+                    entry.get("المصدر_المُسمّى"),
+                    "استبعاد_الأسباب_الأقوى[].المصدر_المُسمّى",
+                ),
+            )
+        )
+    return tuple(exclusions)
+
+
+def assess_exhaustion(
+    declared: ComprehensionDefectCause,
+    exclusions: tuple[StrongerCauseExclusion, ...] = (),
+) -> ExhaustionAssessment:
+    """حالةٌ تقريرية لا حكم: ما بقي من الأقوى بلا استبعادٍ يُسمَّى بعينه."""
+
+    required = stronger_causes(declared)
+    if not required:
+        return ExhaustionAssessment(ExhaustionStatus.NOT_REQUIRED, ())
+    excluded = {item.cause for item in exclusions}
+    remaining = tuple(cause for cause in required if cause not in excluded)
+    if remaining:
+        return ExhaustionAssessment(ExhaustionStatus.INCOMPLETE, remaining)
+    return ExhaustionAssessment(ExhaustionStatus.COMPLETE, ())
+
+
+def _require_text(value: Any, field_name: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise ComprehensionDefectError(f"{field_name} must be non-blank text")
+    return value

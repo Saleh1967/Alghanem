@@ -164,6 +164,8 @@ def test_the_classification_moves_no_authority_and_no_derived_specification(
 
         assert stripped.pop("تصنيف_أسباب_الإخلال_بالفهم") == []
         assert classified.pop("تصنيف_أسباب_الإخلال_بالفهم") != []
+        assert stripped.pop("حالة_استنفاد_الأسباب_الأقوى") == []
+        classified.pop("حالة_استنفاد_الأسباب_الأقوى")
         assert stripped == classified
         assert build_birth_spec_from_card(card) == build_birth_spec_from_card(
             json.loads(_card(name).read_text(encoding="utf-8"))

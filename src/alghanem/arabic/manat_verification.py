@@ -67,6 +67,16 @@
 تطبيق هذا الجنس: «حرثكم» في الآية نفسها تُقصي قراءة «من أين»، فتُغلِق البوّابة
 بـ`PASS` بقرينةٍ مُقصِيةٍ واحدة، دون تراكم مؤيِّدات.
 
+**و`DEFER` ليس خاتمةً مستقرّة**: التعادل بين ظنّيين لا يقع مستقرًّا في نفس
+الأمر، لأن قبوله يستلزم أحد ثلاثة محاذير — العمل بالمتنافيين معًا، أو إهدارهما
+معًا، أو الترجيح بالتشهّي. فالقراءة الصحيحة لهذه الحالة **«لم يُكتشَف
+المرجِّح بعد»** لا «لا مرجِّح»، وتُسمّى الفضلةُ ما بقي مطلوبًا البحث عنه
+بعينه (`TAADUL_IS_NEVER_A_SETTLED_RESULT_NOTE`). وهذا **لا يُغيّر بنية
+البوّابة بحرف**: لا مسار `BLOCK` يُستحدَث، ولا تُلطَّف الحالة ولا تُشدَّد،
+ولا يُقرأ هذا إذنًا بتحويل تراكم المؤيِّدات إلى إقصاء — فالمطلوب قرينةٌ
+**مُرجِّحة**، وهي ادّعاءٌ أضعف من المُقصِية، و`ONE_SOUND_ELIMINATION_SUFFICES`
+باقٍ بحرفه (`PREPONDERANCE_SOUGHT_IS_NOT_ELIMINATION_LICENSED_NOTE`).
+
 والنتيجة المتوقَّعة على بطاقة (قُرُوء) `DEFER` بفضلةٍ مُسمّاة، وهي **نجاح**
 لا نقص: القراءة المنافسة (طهر) مُعلَنةٌ `غير_متعينة`، والقرائن القولية نفسها
 تَنقُل المعنيين معًا عن مصدرٍ واحدٍ مُسمّى، فلا تُعيِّن واحدًا منهما. وأيّ
@@ -125,9 +135,11 @@ __all__ = [
     "NAMED_SOURCE_IS_TESTIMONY_NOT_MEASUREMENT_NOTE",
     "NO_BLOCK_PATH_IN_THIS_LAYER_NOTE",
     "ONE_SOUND_ELIMINATION_SUFFICES_NOTE",
+    "PREPONDERANCE_SOUGHT_IS_NOT_ELIMINATION_LICENSED_NOTE",
     "PREFERENCE_MARKERS",
     "QAWL_MODEL_ID",
     "QAWL_OCCUPIES_THE_NON_OVERRIDABLE_POSITION_NOTE",
+    "TAADUL_IS_NEVER_A_SETTLED_RESULT_NOTE",
     "BayanKind",
     "ManatQarina",
     "ManatVerificationError",
@@ -243,6 +255,18 @@ FIL_NEGATION_NEVER_ELIMINATES_ALONE_NOTE: Final = (
     "FIL_NEVER_DECIDES_ALONE_NOTE بنفس العلّة لا بتشابهٍ فئويّ صامت: لا يستقلّ "
     "المعجمي بالحسم، فكذلك لا يُسقِط قرينةً منافسةً وحده؛ ولا يُقصي إلا ما "
     "كان جنس بيانه بيانًا بالقول"
+)
+TAADUL_IS_NEVER_A_SETTLED_RESULT_NOTE: Final = (
+    "TaadulIsNeverASettledResult: التعادل بين ظنّيين لا يستقرّ نتيجةً نهائية، "
+    "إذ يستلزم قبولُه أحد ثلاثة محاذير: العمل بالمتنافيين معًا، أو إهدارهما "
+    "معًا، أو الترجيح بالتشهّي؛ فتُقرأ DEFER (لم يُكتشَف المرجِّح بعد) لا "
+    "(لا مرجِّح)، وتُسمّى الفضلةُ ما بقي مطلوبًا البحث عنه بعينه"
+)
+PREPONDERANCE_SOUGHT_IS_NOT_ELIMINATION_LICENSED_NOTE: Final = (
+    "PreponderanceSoughtIsNotEliminationLicensed: المطلوب بعد DEFER قرينةٌ "
+    "مُرجِّحة، وهي ادّعاءٌ أضعف من المُقصِية؛ فلا تُقرأ هذه العلامة إذنًا "
+    "بتحويل تراكم المؤيِّدات إلى إقصاء، و ONE_SOUND_ELIMINATION_SUFFICES_NOTE "
+    "باقٍ بحرفه"
 )
 NAMED_SOURCE_IS_TESTIMONY_NOT_MEASUREMENT_NOTE: Final = (
     "NamedSourceIsTestimonyNotMeasurement: المصادر المُسمّاة تُذكَر بأسمائها "
@@ -648,7 +672,9 @@ def _bayan_evaluator(
                 residuals=tuple(
                     Residual(
                         f"{kind.value}: القراءة المنافسة ({reading}) في {scope} "
-                        "ما زالت غير متعينة بعد هذه القرائن"
+                        "ما زالت غير متعينة بعد هذه القرائن، والبحث عن قرينةٍ "
+                        "مُرجِّحة إضافية باقٍ مطلوبًا لا مُغلَقًا؛ "
+                        + TAADUL_IS_NEVER_A_SETTLED_RESULT_NOTE
                     )
                     for reading in unresolved_readings
                 ),
