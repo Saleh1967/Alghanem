@@ -28,6 +28,7 @@ from alghanem.arabic.level_two_manat import (
     INPUT_STOP_IS_NOT_A_MECHANISM_FAILURE_NOTE,
     LEVEL_ONE_CLOSURE_IS_READ_NOT_REPEATED_NOTE,
     SPECIFICATION_IS_A_KIND_NOT_A_DEGREE_NOTE,
+    TRANSMITTED_CONFLICT_IS_A_CASE_NOT_A_CRASH_NOTE,
     ClosedLevelOneCard,
     CompositionGenus,
     CompositionRole,
@@ -38,7 +39,10 @@ from alghanem.arabic.level_two_manat import (
     TaqyeedManatGate,
     tadmin_taqyid_certificate_is_constructible,
 )
-from alghanem.arabic.lexical_transmission import LexicalCitationStructure
+from alghanem.arabic.lexical_transmission import (
+    LEXICAL_CHAIN_MINIMUM_ATTRIBUTIONS,
+    LexicalCitationStructure,
+)
 from alghanem.arabic.manat_verification import assess_manat_from_card
 from alghanem.arabic.transmission_standing import (
     TransmissionStanding,
@@ -390,3 +394,53 @@ def test_the_frozen_tadmin_taqyid_stage_is_left_exactly_as_it_was() -> None:
     """قيامُ الرابط لا يُقدِّم نصَّ المرحلة المُجمَّدة ولا يُصيّر شهادتَها ممكنة."""
 
     assert tadmin_taqyid_certificate_is_constructible() is False
+
+
+def test_one_genuinely_transmitted_attribution_stops_by_the_arity_threshold_alone(
+    tmp_path: Path,
+) -> None:
+    """إسنادٌ واحدٌ يَنقُل التخصيصَ صراحةً يقف بجنس من لم يَنقُل شيئًا.
+
+    وهذا هو الضابطُ الفارق: لو كان الوقوفُ الحاصلُ على البطاقة الحقيقية شهادةً
+    على بنيةٍ لغويةٍ لاختلف جنسُه هنا، إذ نُقِل التخصيصُ بنصّه؛ فلمّا اتّحد
+    الجنسان ثبت أنّ الوقوفَ أثرُ عتبة العدد لا نتيجةَ فحصٍ بنيويّ.
+    """
+
+    composition = _composition_card()
+    composition["طريق_النقل_المعجمي"]["الإسنادات"] = composition["طريق_النقل_المعجمي"][
+        "الإسنادات"
+    ][:1]
+    single = TaqyeedManatGate.assess(_input(tmp_path, composition))
+
+    empty = _composition_card()
+    empty["طريق_النقل_المعجمي"]["الإسنادات"] = []
+    none_at_all = TaqyeedManatGate.assess(_input(tmp_path, empty))
+
+    assert LEXICAL_CHAIN_MINIMUM_ATTRIBUTIONS == 2
+    assert (
+        "أخرج" in composition["طريق_النقل_المعجمي"]["الإسنادات"][0]["الاقتباس_المنقول"]
+    )
+    assert single.stood_up is False
+    assert single.stop_genus is none_at_all.stop_genus
+    assert single.stop_genus is LevelTwoStopGenus.وقوف_آلة_لانقطاع_نقل_القيد
+    assert single.standing is none_at_all.standing is None
+
+
+def test_a_transmitted_conflict_is_read_as_a_named_stop_not_a_raised_error(
+    tmp_path: Path,
+) -> None:
+    """طريقٌ يَنقُل التخصيصَ والطرديّة معًا حالٌ تُقرأ، ولا تُسقِط الأداة."""
+
+    composition = _composition_card()
+    composition["طريق_النقل_المعجمي"]["الإسنادات"][1]["الاقتباس_المنقول"] = (
+        "وقالت سلطةٌ ثانية مخترعة: هذا وصف طردي لا مفهوم له"
+    )
+    attempt = TaqyeedManatGate.assess(_input(tmp_path, composition))
+
+    assert attempt.stood_up is False
+    assert attempt.stop_genus is LevelTwoStopGenus.وقوف_آلة_لتعارض_منقول_في_دلالة_القيد
+    assert attempt.qayd_signification is QaydSignification.دلالة_القيد_متعارضة
+    assert attempt.standing is TransmissionStanding.AHAD
+    assert (
+        TRANSMITTED_CONFLICT_IS_A_CASE_NOT_A_CRASH_NOTE in attempt.missing_declaration
+    )

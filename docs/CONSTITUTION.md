@@ -1602,6 +1602,46 @@ compiled artifact; per `RuleTableIsDerivedArtifact` above, any such table
 remains a strictly later, derived projection of a frozen snapshot like this
 one.
 
+## G0.L2.D — Discriminating the level-two stop (registration-only)
+
+This milestone is registration and derivation only: it issues no birth, no
+verdict, no freeze, and no `E0`, and nothing in `kernel/` reads its outputs.
+
+```
+ArityArtifact       != LinguisticStructure
+RiwayaStopMatch     != DirayaStopMatch
+UnfalsifiableStop   != DerivedNegativeResult
+TransmittedConflict != MalformedInput
+```
+
+`derive_lexical_citation_structure` recognises a chain only at or above
+`LEXICAL_CHAIN_MINIMUM_ATTRIBUTIONS` (two). A citation carrying one genuinely
+transmitted attribution therefore derives the same flat-title structure, and the
+same `REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH`, as a card that transmitted
+nothing at all — so the level-two stop recorded for «سائمة الغنم» was not
+falsifiable by a single real attribution. That is the same shape as the earlier
+demand for `متواتر` by name, which made link four permanently impossible rather
+than contingently stopped, and the recurrence is now recorded as a pattern with
+a prospective question every new gate must answer before it is built: *which
+real input falsifies this stop?* A stop no real input can falsify is a tool
+limit, not a finding.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `ArityIsNotALinguisticStructure` | DECLARED_DEFERRED | Identical unconstructibility genera derived on either side of a declared arity threshold are an artifact of that threshold, never evidence that one linguistic structure recurred. A stop at one transmitted attribution licenses exactly one reading — the threshold was not reached — and neither refutes nor supports any claim about the composition itself. |
+| `IdenticalStopGenusIsNotFractalEvidenceWhileDataIsAbsent` | DECLARED_DEFERRED | Matching stop genera across levels, or across any number of cases, may be read as a candidate structural recurrence (`تطابق_دراية_مرشح`) only when every side transmitted a real chain at or above the threshold. While any side is still empty the match is `تطابق_رواية` — nothing has been written yet — and while any side sits at a single attribution the match stays unsettled. No fractal (Φ) verdict rests on any of the three. |
+| `StructurallyUnfalsifiableNegativeIsARecurringPattern` | DECLARED_DEFERRED | Before a gate is built, the input that would falsify its stop must be named. Where no constructible real input can falsify it, the stop reports a limit of the tool and may not be recorded as a derived negative result about the world. |
+| `TransmittedConflictIsACaseNotACrash` | DECLARED_DEFERRED | A real transmission path carrying both a specifying and a طردي reading is a case to be read by a named member and a named stop genus, never an exception that halts the mechanism, and never to be resolved silently onto either side. |
+
+The discriminating experiment itself is registered in
+`src/alghanem/arabic/level_two_discrimination.py` before any text is
+transmitted: one movable variable (the `الإسنادات` enumeration of the
+composition card), its fixed elements, and six named branches each stating what
+it licenses and what it refuses. Its scope is the (الغنم)/(سائمة) pair alone;
+only the match guard is general. As of this milestone no source text has been
+supplied, the enumeration is empty, and the registered reading of the standing
+branch is that the experiment has not been run.
+
 ## Encyclopedia Nucleus — Constitution
 
 The encyclopedia is an application consumer of the kernel, never a replacement

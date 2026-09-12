@@ -1719,6 +1719,40 @@ rather than among the Quranic audit cards; no member of `BayanKind` was added
 for it (`NEW_WITNESS_IS_NOT_AN_ESTABLISHED_EXAMPLE_NOTE`,
 `HADITH_SOURCE_DOES_NOT_WIDEN_THE_BAYAN_VOCABULARY_NOTE`).
 
+The twelfth milestone asks what that stop is worth, and the first finding is
+about the tool, not the text. `derive_lexical_citation_structure` treats a
+citation as a chain only at or above a threshold now named
+`LEXICAL_CHAIN_MINIMUM_ATTRIBUTIONS` (two), so a citation carrying **one
+genuinely transmitted attribution** derives the same flat-title structure, and
+therefore the same `REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH`, as a card that
+transmitted nothing at all. The level-two stop was consequently not falsifiable
+by a single real attribution: a structurally unreadable negative, the same shape
+as the earlier demand for `متواتر` by name that made link four permanently
+impossible rather than contingently stopped. That recurrence is now named as a
+pattern with a prospective question for every future gate — *which real input
+falsifies this stop?* — in
+`STRUCTURALLY_UNFALSIFIABLE_NEGATIVE_IS_A_RECURRING_PATTERN_NOTE`.
+`src/alghanem/arabic/level_two_discrimination.py` freezes, before any text is
+transmitted, the single variable the discriminating experiment may move (the
+`الإسنادات` enumeration of the «سائمة الغنم» composition card and nothing else),
+what stays fixed, and what each of the six named branches licenses and refuses.
+`StopDataStanding` separates "nothing transmitted" from "one below the
+threshold" from "a chain at or above it", and `stop_match_genus` reads several
+stops together: identical genera count as `تطابق_رواية` while any side is still
+empty, as `تطابق_غير_محسوم` while any side sits at one attribution, and only as
+`تطابق_دراية_مرشح` when every side is a real chain. Read across the four
+level-one cards and the composition card as they stand today, the match is
+`تطابق_رواية`: the experiment has not been run, and no fractal claim may rest on
+it (`IDENTICAL_STOP_GENUS_IS_NOT_FRACTAL_EVIDENCE_NOTE`,
+`ARITY_IS_NOT_A_LINGUISTIC_STRUCTURE_NOTE`). The same milestone stops the tool
+from crashing on the most common real case it will meet: a path transmitting
+both a specification and a طردي reading is now read as a named case,
+`QaydSignification.دلالة_القيد_متعارضة` with its own stop genus, instead of
+raising (`TRANSMITTED_CONFLICT_IS_A_CASE_NOT_A_CRASH_NOTE`). No source text was
+supplied for the composition card, so its attribution list is still empty and
+the stop stands exactly as issued; no fiqh question and no fractal (Φ) verdict
+is decided here either.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future
