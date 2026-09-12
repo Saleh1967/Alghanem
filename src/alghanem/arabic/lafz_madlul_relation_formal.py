@@ -13,6 +13,17 @@
     فإن أُطلق على المعنى الموضوع له فهو الحقيقة، وإن أُطلق على المعنى المنقول
     إليه فهو المجاز."
 
+وفي المصدر نفسه جملةُ حصرٍ يُصرِّح بها هو بعدد الأقسام وبأسمائها معًا:
+
+    "ينقسم اللفظ باعتبار الدال والمدلول... إلى سبعة أقسام: هي المنفرد،
+    والمتباين، والمترادف، والمشترك، والمنقول، والحقيقة، والمجاز."
+
+وهذه الجملة ليست زينةً توثيقية: بها صار انغلاقُ المفردة عند سبعةٍ **منصوصًا في
+المصدر** لا قراءةً لهذا المستودع، ولذلك رُبط `card(Ω) = 7` بها ربطًا مفحوصًا عند
+الاستيراد — يُتحقَّق أن كل اسمٍ من الأسماء السبعة وارد في جملة الحصر نفسها، فلو
+أُضيف قسمٌ ثامن أو أُعيدت تسمية قسمٍ بما لا تُسمّيه الجملة لَسقط الاستيراد بدل أن
+يمضي الادّعاء صامتًا.
+
 هذه الوحدة تبني — بنفس نمط `word_class_formal.py`، وعلى معيار
 `NoBirthWithoutResidualOrFormalNecessity` في وضعه الصوري (`FORMAL`) وصفًا لا
 تفعيلًا — مجالًا صوريًّا مجمَّدًا، ودالةَ قرارٍ كلّيةً عليه، ثم برهانًا شاملًا
@@ -60,6 +71,14 @@
 * عند نجاح البرهان الشامل تُستعمل التسمية الدقيقة وحدها: "شهادة صورية شاملة
   ناجحة على نطاق محدود" — لا "ولادة"، فتلك تسمية لاحقة تحتاج `Freeze` و`E0` لم
   يُبنَيا بعد.
+
+وفي المصدر نفسه قاعدةُ ترجيحٍ مصرَّحٌ بها في فرع الترادف: **"الترادف خلاف
+الأصل"**، أي أن الأصل عدم الترادف، فعند التردّد يُحمَل اللفظ على غيره. وهي
+مسجَّلة هنا بنصّها في `MURADIF_PRESUMPTION_NOTE`، **ولا تقرأها دالّةٌ في هذه
+الوحدة ولا تدخل في المجال ولا في الحوامل**: لأنها قاعدةُ ترجيحٍ عند الشكّ، ودالّةُ
+القرار هنا كلّيةٌ على مجالٍ مغلق لا حالةَ شكٍّ فيه أصلًا. فتحويلُها إلى فرعٍ أو
+حاملٍ كان سيقتضي إدخال حالةِ ترددٍ لا يعرفها هذا المجال، وهو تغييرٌ في بنية
+الشهادة لا تقويةٌ لها؛ فسُجِّلت مُصرَّحةً غيرَ مُفعَّلة بدل أن تُقحَم أو تُهمَل.
 """
 
 from __future__ import annotations
@@ -135,6 +154,19 @@ class UsageIntentCarrier(Enum):
 
 
 RELATION_SOURCE: Final = "الشخصية الإسلامية، الجزء الثالث، في علاقة اللفظ بالمعنى"
+
+RELATION_CLOSURE_ATTESTATION: Final = (
+    "ينقسم اللفظ باعتبار الدال والمدلول... إلى سبعة أقسام: هي المنفرد، "
+    "والمتباين، والمترادف، والمشترك، والمنقول، والحقيقة، والمجاز"
+)
+
+MURADIF_PRESUMPTION_NOTE: Final = (
+    "قاعدة ترجيحٍ منصوصة في المصدر على فرع الترادف: «الترادف خلاف الأصل»، أي أن "
+    "الأصل عدم الترادف فيُحمَل اللفظ عليه عند التردّد. وهي مُسجَّلة غير مُفعَّلة: "
+    "لا تقرأها دالّةٌ في هذه الوحدة، ولا تدخل في المجال ولا في الحوامل، لأن دالّة "
+    "القرار كلّية على مجالٍ مغلق لا حالة شكٍّ فيه تُرجَّح"
+)
+
 
 RELATION_FIRST_QUESTION: Final = "عدد الألفاظ في العنقود؟"
 
@@ -268,6 +300,18 @@ if len(_FOURTH_ANSWER_BY_CARRIER) != len(TransferFameCarrier):  # pragma: no cov
 if len(_FIFTH_ANSWER_BY_CARRIER) != len(UsageIntentCarrier):  # pragma: no cover
     raise RuntimeError("a usage-intent carrier derives no fifth answer")
 
+_CLOSURE_ATTESTATION_KEY: Final = comparison_key(RELATION_CLOSURE_ATTESTATION)
+
+if any(  # pragma: no cover - guard
+    comparison_key(relation.value) not in _CLOSURE_ATTESTATION_KEY
+    for relation in LafzMadlulRelation
+):
+    raise RuntimeError("a declared relation is not named in the closure attestation")
+if len(RELATION_ADMISSIBLE_STATES) != len(
+    LafzMadlulRelation
+):  # pragma: no cover - guard
+    raise RuntimeError("the admissible states do not match the attested closure count")
+
 
 def _require_count(count: RelationCount, field_name: str) -> RelationCount:
     if not isinstance(count, RelationCount):
@@ -298,6 +342,7 @@ class FrozenRelationDomain:
     """المجال الصوري المجمَّد: أسئلته الخمسة، وشروطها، وحالاته السبع، ومصدره."""
 
     source: str = RELATION_SOURCE
+    closure_attestation: str = RELATION_CLOSURE_ATTESTATION
     first_question: str = RELATION_FIRST_QUESTION
     second_question: str = RELATION_SECOND_QUESTION
     third_question: str = RELATION_THIRD_QUESTION
@@ -311,6 +356,7 @@ class FrozenRelationDomain:
     def __post_init__(self) -> None:
         for name in (
             "source",
+            "closure_attestation",
             "first_question",
             "second_question",
             "third_question",
@@ -323,6 +369,16 @@ class FrozenRelationDomain:
         if set(self.admissible_states) != set(RELATION_ADMISSIBLE_STATES):
             raise LafzMadlulRelationError(
                 "the frozen formal domain is exactly the seven admissible states"
+            )
+        attestation_key = comparison_key(self.closure_attestation)
+        unnamed = tuple(
+            relation.value
+            for relation in LafzMadlulRelation
+            if comparison_key(relation.value) not in attestation_key
+        )
+        if unnamed:
+            raise LafzMadlulRelationError(
+                "جملة الحصر تُسمّي الأقسام السبعة كلها، ولم تُسمِّ: " + "، ".join(unnamed)
             )
 
     @property
