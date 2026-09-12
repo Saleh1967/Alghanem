@@ -17,6 +17,11 @@ from alghanem.arabic import (
     IfadaStanding,
     MafhumKind,
     MantuqMafhumIfadaError,
+    RulingAspectReading,
+    SignifiedAspect,
+)
+from alghanem.arabic.mantuq_mafhum_ifada import (
+    TYPE_SIGNIFICATION_IS_ALWAYS_MANTUQ_NOTE,
 )
 
 
@@ -188,3 +193,82 @@ def test_no_kernel_module_reads_these_vocabularies() -> None:
         text = Path(spec.origin).read_text(encoding="utf-8")
         for name in ("mantuq_mafhum_ifada", "DalalaChannel", "IfadaStanding"):
             assert name not in text, (module.name, name)
+
+
+# --- the eighth link: the type of the ruling is always mantūq ---
+
+
+def test_the_type_of_the_ruling_is_readable_by_the_wording() -> None:
+    reading = RulingAspectReading(
+        aspect=SignifiedAspect.نوع_الحكم,
+        reading=record(),
+        accompanying_descriptor="",
+    )
+    assert reading.channel is DalalaChannel.منطوق
+
+
+def test_the_type_of_the_ruling_is_never_derived_from_a_descriptor() -> None:
+    for agreeing, kind in ((True, MafhumKind.موافقة), (False, MafhumKind.مخالفة)):
+        with pytest.raises(MantuqMafhumIfadaError) as raised:
+            RulingAspectReading(
+                aspect=SignifiedAspect.نوع_الحكم,
+                reading=understood(
+                    agrees_with_the_uttered_ruling=agreeing,
+                    declared_mafhum_kind=kind,
+                ),
+                accompanying_descriptor="وصفٌ مرافقٌ مقروء",
+            )
+        assert TYPE_SIGNIFICATION_IS_ALWAYS_MANTUQ_NOTE in str(raised.value)
+
+
+def test_a_side_qualification_may_still_be_read_by_mafhum() -> None:
+    reading = RulingAspectReading(
+        aspect=SignifiedAspect.قيد_جانبي,
+        reading=understood(),
+        accompanying_descriptor="وصفٌ مرافقٌ مقروء",
+    )
+    assert reading.channel is DalalaChannel.مفهوم
+
+
+def test_a_mafhum_without_a_named_descriptor_is_refused() -> None:
+    with pytest.raises(MantuqMafhumIfadaError):
+        RulingAspectReading(
+            aspect=SignifiedAspect.قيد_جانبي,
+            reading=understood(),
+            accompanying_descriptor="   ",
+        )
+
+
+def test_a_mantuq_carries_no_fabricated_descriptor() -> None:
+    with pytest.raises(MantuqMafhumIfadaError):
+        RulingAspectReading(
+            aspect=SignifiedAspect.نوع_الحكم,
+            reading=record(),
+            accompanying_descriptor="وصفٌ لم تُقرَأ منه دلالة",
+        )
+
+
+def test_the_aspect_and_the_reading_are_both_formed_values() -> None:
+    with pytest.raises(MantuqMafhumIfadaError):
+        RulingAspectReading(
+            aspect=DalalaChannel.منطوق,  # type: ignore[arg-type]
+            reading=record(),
+            accompanying_descriptor="",
+        )
+    with pytest.raises(MantuqMafhumIfadaError):
+        RulingAspectReading(
+            aspect=SignifiedAspect.نوع_الحكم,
+            reading="منطوقٌ بلا سجلّ",  # type: ignore[arg-type]
+            accompanying_descriptor="",
+        )
+
+
+def test_the_aspect_vocabulary_is_closed_and_is_not_a_channel() -> None:
+    assert len(SignifiedAspect) == 2
+    assert {member.value for member in SignifiedAspect} == {"نوع_الحكم", "قيد_جانبي"}
+    assert not set(SignifiedAspect) & set(DalalaChannel)
+
+
+def test_the_aspect_reading_writes_no_channel_of_its_own() -> None:
+    declared = {field.name for field in fields(RulingAspectReading)}
+    assert declared == {"aspect", "reading", "accompanying_descriptor"}
