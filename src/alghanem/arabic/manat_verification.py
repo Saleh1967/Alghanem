@@ -41,9 +41,31 @@
 (`NAMED_SOURCE_IS_TESTIMONY_NOT_MEASUREMENT_NOTE`).
 
 **ولا مسار `BLOCK` في هذه الطبقة**، وغيابه مُصرَّحٌ به لا مُغطّى: ليس في
-البطاقة قرينةٌ تُكذِّب النموذج المختبَر تكذيبًا بنيويًّا، فالمُقيِّمان هنا
-يُنتجان `PASS` أو `DEFER` فقط، وإدخال `BLOCK` يحتاج جنسَ قرينةٍ نافيةٍ لم
-يُبنَ بعد (`NO_BLOCK_PATH_IN_THIS_LAYER_NOTE`).
+البطاقة قرينةٌ تُكذِّب النموذج المختبَر تكذيبًا بنيويًّا. والقرينة المُقصِية
+المضافة هنا تُقصي **قراءةً منافسة** ولا تُكذِّب النموذج المختبَر، فالمُقيِّمان
+ما زالا يُنتجان `PASS` أو `DEFER` فقط (`NO_BLOCK_PATH_IN_THIS_LAYER_NOTE`).
+
+**ووظيفة القرينة جنسٌ مستقلٌّ يُضاف بجانب جنس البيان لا بديلًا عنه**: مفردة
+`QarinaFunction` ثنائية مغلقة ولا ثالث لها — `قرينة_مؤيِّدة` تُرجِّح قراءةً
+دون إلغاء الأخرى، و`قرينة_مُقصِية` تُبطِل انطباق قراءةٍ منافسةٍ مُسمّاةٍ
+بالكلّية على هذا الموضع بعينه. وجنس البيان (قول/فعل) وترتيبه المُشتقّ لم
+يتغيّرا بحرف.
+
+**والإقصاء نوعٌ لا درجة**: تُرفَض عند الإنشاء كلُّ قرينةٍ تُصنَّف `مُقصِية`
+ولا يُصرِّح نصُّها باستحالة القراءة المُقصاة على هذا الموضع، أو يُصرِّح بأنها
+«أرجح» فحسب؛ فالفارق بين الإقصاء والترجيح ليس شدّةً في العبارة
+(`ELIMINATION_IS_A_KIND_NOT_A_DEGREE_NOTE`). والقرينة الواحدة تُقصي قراءةً
+واحدةً مُسمّاةً لا قائمة، ولا دالّةَ تُحوِّل تراكمَ المؤيِّدات إلى إقصاء
+(`ONE_SOUND_ELIMINATION_SUFFICES_NOTE`).
+
+**ولا يُقصي بيان الفعل وحده**، امتدادًا لنفس علّة `FIL_NEVER_DECIDES_ALONE`
+لا افتراضًا لتشابهٍ فئويّ: القرائن المُقصِية لا تُسقِط قراءةً منافسةً إلا
+إذا كان جنس بيانها `بيان_بالقول`، فيبقى الإقصاء صادرًا من موضع الأضعف الذي
+لا يُنقَض (`FIL_NEGATION_NEVER_ELIMINATES_ALONE_NOTE`).
+
+وبطاقة «أنّى» في البقرة:223 (`examples/external_audit/anna_2_223.yaml`) هي
+تطبيق هذا الجنس: «حرثكم» في الآية نفسها تُقصي قراءة «من أين»، فتُغلِق البوّابة
+بـ`PASS` بقرينةٍ مُقصِيةٍ واحدة، دون تراكم مؤيِّدات.
 
 والنتيجة المتوقَّعة على بطاقة (قُرُوء) `DEFER` بفضلةٍ مُسمّاة، وهي **نجاح**
 لا نقص: القراءة المنافسة (طهر) مُعلَنةٌ `غير_متعينة`، والقرائن القولية نفسها
@@ -92,20 +114,28 @@ from .text_key import comparison_key
 __all__ = [
     "BAYAN_TERMS_ARE_USED_IN_THE_DECLARED_NARROW_SENSE_NOTE",
     "CLOSED_BAYAN_VOCABULARY",
+    "CLOSED_QARINA_FUNCTION_VOCABULARY",
+    "ELIMINATION_IS_A_KIND_NOT_A_DEGREE_NOTE",
     "FIL_MODEL_ID",
+    "FIL_NEGATION_NEVER_ELIMINATES_ALONE_NOTE",
     "FIL_NEVER_DECIDES_ALONE_NOTE",
     "FORBIDDEN_QARINA_KEYS",
+    "IMPOSSIBILITY_MARKERS",
     "MANAT_ROLE_IDENTIFIER",
     "NAMED_SOURCE_IS_TESTIMONY_NOT_MEASUREMENT_NOTE",
     "NO_BLOCK_PATH_IN_THIS_LAYER_NOTE",
+    "ONE_SOUND_ELIMINATION_SUFFICES_NOTE",
+    "PREFERENCE_MARKERS",
     "QAWL_MODEL_ID",
     "QAWL_OCCUPIES_THE_NON_OVERRIDABLE_POSITION_NOTE",
     "BayanKind",
     "ManatQarina",
     "ManatVerificationError",
+    "QarinaFunction",
     "assess_manat_from_card",
     "build_manat_candidate",
     "derive_bayan_models",
+    "eliminated_competing_readings",
     "manat_claim_anchor",
     "manat_claim_scope",
     "read_manat_qarain",
@@ -127,6 +157,40 @@ class BayanKind(Enum):
 
 CLOSED_BAYAN_VOCABULARY: Final = tuple(kind.value for kind in BayanKind)
 
+
+class QarinaFunction(Enum):
+    """مفردة وظيفة القرينة المغلقة: مؤيِّدةٌ ومُقصِية، ولا ثالث ولا مختلط."""
+
+    SUPPORTING = "قرينة_مؤيِّدة"
+    NEGATING = "قرينة_مُقصِية"
+
+
+CLOSED_QARINA_FUNCTION_VOCABULARY: Final = tuple(
+    function.value for function in QarinaFunction
+)
+
+IMPOSSIBILITY_MARKERS: Final = (
+    "يستحيل",
+    "مستحيل",
+    "استحالة",
+    "يمتنع",
+    "امتناع",
+    "لا يتصور",
+    "لا يصح",
+    "منتف",
+)
+PREFERENCE_MARKERS: Final = (
+    "أرجح",
+    "راجح",
+    "ترجيح",
+    "أظهر",
+    "أقوى",
+    "أولى",
+    "أضعف",
+    "الأكثر",
+    "الأشهر",
+)
+
 QAWL_MODEL_ID: Final = "نموذج_بيان_بالقول"
 FIL_MODEL_ID: Final = "نموذج_بيان_بالفعل"
 MANAT_ROLE_IDENTIFIER: Final = "قرينة_تحقيق_المناط"
@@ -135,6 +199,8 @@ ALLOWED_QARINA_KEYS: Final = (
     "معرف",
     "القرينة",
     "جنس_البيان",
+    "وظيفة_القرينة",
+    "القراءة_المُقصاة",
     "المصدر_المُسمّى",
 )
 FORBIDDEN_QARINA_KEYS: Final = (
@@ -158,8 +224,25 @@ FIL_NEVER_DECIDES_ALONE_NOTE: Final = (
     "بالقول تُرفَض عند القراءة، فلا تُتصوَّر حالةٌ يستقلّ فيها المعجمي بالحسم"
 )
 NO_BLOCK_PATH_IN_THIS_LAYER_NOTE: Final = (
-    "NoBlockPathInThisLayer: لا قرينةَ نافيةً في هذه الطبقة، فالمُقيِّمان "
-    "يُنتجان PASS أو DEFER فقط، وغيابُ BLOCK مُصرَّحٌ به لا مُغطّى"
+    "NoBlockPathInThisLayer: القرينة المُقصِية تُقصي قراءةً منافسةً ولا تُكذِّب "
+    "النموذج المختبَر، فالمُقيِّمان يُنتجان PASS أو DEFER فقط، وغيابُ BLOCK "
+    "مُصرَّحٌ به لا مُغطّى"
+)
+ELIMINATION_IS_A_KIND_NOT_A_DEGREE_NOTE: Final = (
+    "EliminationIsAKindNotADegree: القرينة المُقصِية يجب أن يُصرِّح نصُّها "
+    "باستحالة القراءة المُقصاة على هذا الموضع بعينه؛ ونصٌّ يصفها بأنها أرجح "
+    "أو أظهر يُرفَض عند الإنشاء، فالفارق نوعٌ لا درجة"
+)
+ONE_SOUND_ELIMINATION_SUFFICES_NOTE: Final = (
+    "OneSoundEliminationSuffices: الإقصاء فعلٌ نوعيٌّ لقرينةٍ واحدة تُسمّي "
+    "قراءةً واحدةً مُقصاة، فلا قائمةَ إقصاءاتٍ في القرينة ولا تراكمَ مؤيِّداتٍ "
+    "يُعامَل إقصاءً، وقرينةٌ مُقصِيةٌ واحدةٌ تكفي لإغلاق البوّابة بلا تعزيز"
+)
+FIL_NEGATION_NEVER_ELIMINATES_ALONE_NOTE: Final = (
+    "FilNegationNeverEliminatesAlone: امتدادٌ مُصرَّحٌ لأصله "
+    "FIL_NEVER_DECIDES_ALONE_NOTE بنفس العلّة لا بتشابهٍ فئويّ صامت: لا يستقلّ "
+    "المعجمي بالحسم، فكذلك لا يُسقِط قرينةً منافسةً وحده؛ ولا يُقصي إلا ما "
+    "كان جنس بيانه بيانًا بالقول"
 )
 NAMED_SOURCE_IS_TESTIMONY_NOT_MEASUREMENT_NOTE: Final = (
     "NamedSourceIsTestimonyNotMeasurement: المصادر المُسمّاة تُذكَر بأسمائها "
@@ -174,6 +257,17 @@ _KIND_BY_KEY: Final = {comparison_key(kind.value): kind for kind in BayanKind}
 if len(_KIND_BY_KEY) != len(BayanKind):  # pragma: no cover - guard
     raise RuntimeError("two bayan kinds collapse onto one comparison key")
 
+_FUNCTION_BY_KEY: Final = {
+    comparison_key(function.value): function for function in QarinaFunction
+}
+if len(_FUNCTION_BY_KEY) != len(QarinaFunction):  # pragma: no cover - guard
+    raise RuntimeError("two qarina functions collapse onto one comparison key")
+
+_IMPOSSIBILITY_KEYS: Final = tuple(
+    comparison_key(marker) for marker in IMPOSSIBILITY_MARKERS
+)
+_PREFERENCE_KEYS: Final = tuple(comparison_key(marker) for marker in PREFERENCE_MARKERS)
+
 _FORBIDDEN_KEY_KEYS: Final = frozenset(
     comparison_key(name) for name in FORBIDDEN_QARINA_KEYS
 )
@@ -184,12 +278,14 @@ _ALLOWED_KEY_KEYS: Final = frozenset(
 
 @dataclass(frozen=True, slots=True)
 class ManatQarina:
-    """قرينةٌ واحدة بجنس بيانها ومصدرها المُسمّى؛ لا رتبةَ فيها ولا نتيجة."""
+    """قرينةٌ واحدة بجنس بيانها ووظيفتها ومصدرها؛ لا رتبةَ فيها ولا نتيجة."""
 
     identifier: str
     statement: str
     kind: BayanKind
     named_source: str
+    function: QarinaFunction = QarinaFunction.SUPPORTING
+    excluded_reading: str | None = None
 
     def __post_init__(self) -> None:
         for value, name in (
@@ -201,6 +297,27 @@ class ManatQarina:
                 raise ManatVerificationError(f"قرائن_المناط[].{name} نصٌّ غير فارغ")
         if not isinstance(self.kind, BayanKind):
             raise ManatVerificationError("قرائن_المناط[].جنس_البيان من المفردة المغلقة")
+        if not isinstance(self.function, QarinaFunction):
+            raise ManatVerificationError(
+                "قرائن_المناط[].وظيفة_القرينة من المفردة المغلقة"
+            )
+        if self.function is QarinaFunction.SUPPORTING:
+            if self.excluded_reading is not None:
+                raise ManatVerificationError(
+                    "قرائن_المناط[].القراءة_المُقصاة لا تُعلَن إلا في قرينةٍ "
+                    "وظيفتها " + QarinaFunction.NEGATING.value
+                )
+            return
+        if type(self.excluded_reading) is not str or not self.excluded_reading.strip():
+            raise ManatVerificationError(
+                "قرائن_المناط[].القراءة_المُقصاة نصٌّ غير فارغ يُسمّي قراءةً "
+                "منافسةً واحدة؛ " + ONE_SOUND_ELIMINATION_SUFFICES_NOTE
+            )
+        statement_key = comparison_key(self.statement)
+        if any(marker in statement_key for marker in _PREFERENCE_KEYS):
+            raise ManatVerificationError(ELIMINATION_IS_A_KIND_NOT_A_DEGREE_NOTE)
+        if not any(marker in statement_key for marker in _IMPOSSIBILITY_KEYS):
+            raise ManatVerificationError(ELIMINATION_IS_A_KIND_NOT_A_DEGREE_NOTE)
 
 
 def _assert_no_verdict_fields() -> None:
@@ -209,7 +326,16 @@ def _assert_no_verdict_fields() -> None:
     declared = {comparison_key(item.name) for item in fields(ManatQarina)}
     forbidden = {
         comparison_key(name)
-        for name in (*FORBIDDEN_QARINA_KEYS, "rank", "order", "status", "verdict")
+        for name in (
+            *FORBIDDEN_QARINA_KEYS,
+            "rank",
+            "order",
+            "status",
+            "verdict",
+            "weight",
+            "score",
+            "count",
+        )
     }
     if declared & forbidden:  # pragma: no cover - import guard
         raise RuntimeError("لا يجوز أن تحمل قرينةُ المناط رتبةً ولا نتيجة")
@@ -234,11 +360,39 @@ def _canonical_kind(value: str) -> BayanKind:
     return kind
 
 
+def _canonical_function(value: str) -> QarinaFunction:
+    function = _FUNCTION_BY_KEY.get(comparison_key(value))
+    if function is None:
+        allowed = "، ".join(CLOSED_QARINA_FUNCTION_VOCABULARY)
+        raise ManatVerificationError(
+            "قرائن_المناط[].وظيفة_القرينة يجب أن يكون أحد: " + allowed
+        )
+    return function
+
+
+def _competing_reading_names(card: Mapping[str, Any]) -> tuple[str, ...]:
+    """أسماء القراءات المنافسة كما أُعلِنت في البطاقة، بلا تأويل."""
+
+    alternatives = card.get("القراءات_المنافسة")
+    if not isinstance(alternatives, list):
+        raise ManatVerificationError("القراءات_المنافسة قائمة")
+    names: list[str] = []
+    for item in alternatives:
+        if not isinstance(item, dict):
+            raise ManatVerificationError("كل قراءة منافسة يجب أن تكون كائنًا")
+        names.append(_require_text(item.get("قراءة"), "القراءات_المنافسة[].قراءة"))
+    return tuple(names)
+
+
 def read_manat_qarain(card: Mapping[str, Any]) -> tuple[ManatQarina, ...]:
     """يقرأ قرائن المناط المُعلَنة، ويرفض كلَّ رتبةٍ مكتوبة.
 
     الجنس مُعلَنٌ في البطاقة، والترتيب مُشتَقٌّ منه في `derive_bayan_models`؛
     فأيّ مفتاحٍ يُسمّي رتبةً أو أولويةً أو نتيجةً يُسقِط القراءة بدل أن يُهمَل.
+
+    ووظيفة القرينة اختيارية الإعلان لأن الحالة الافتراضية يجب أن تكون الأضعف
+    ادّعاءً: غيابُ التصريح يُقرَأ `قرينة_مؤيِّدة`، إذ الإقصاء ادّعاءٌ أقوى لا
+    يقوم إلا بتصريحٍ إيجابيّ صارم.
     """
 
     raw = card.get("قرائن_المناط")
@@ -258,6 +412,15 @@ def read_manat_qarain(card: Mapping[str, Any]) -> tuple[ManatQarina, ...]:
             raise ManatVerificationError(
                 "قرائن_المناط[] لا تقبل إلا: " + "، ".join(ALLOWED_QARINA_KEYS)
             )
+        declared_function = entry.get("وظيفة_القرينة")
+        function = (
+            QarinaFunction.SUPPORTING
+            if declared_function is None
+            else _canonical_function(
+                _require_text(declared_function, "قرائن_المناط[].وظيفة_القرينة")
+            )
+        )
+        declared_excluded = entry.get("القراءة_المُقصاة")
         qarain.append(
             ManatQarina(
                 identifier=_require_text(entry.get("معرف"), "قرائن_المناط[].معرف"),
@@ -268,6 +431,14 @@ def read_manat_qarain(card: Mapping[str, Any]) -> tuple[ManatQarina, ...]:
                 named_source=_require_text(
                     entry.get("المصدر_المُسمّى"), "قرائن_المناط[].المصدر_المُسمّى"
                 ),
+                function=function,
+                excluded_reading=(
+                    None
+                    if declared_excluded is None
+                    else _require_text(
+                        declared_excluded, "قرائن_المناط[].القراءة_المُقصاة"
+                    )
+                ),
             )
         )
     identifiers = [item.identifier for item in qarain]
@@ -275,6 +446,17 @@ def read_manat_qarain(card: Mapping[str, Any]) -> tuple[ManatQarina, ...]:
         raise ManatVerificationError("معرّفات قرائن المناط لا تتكرّر")
     if not any(item.kind is BayanKind.QAWL for item in qarain):
         raise ManatVerificationError(FIL_NEVER_DECIDES_ALONE_NOTE)
+    declared_readings = {
+        comparison_key(name) for name in _competing_reading_names(card)
+    }
+    for item in qarain:
+        if item.excluded_reading is None:
+            continue
+        if comparison_key(item.excluded_reading) not in declared_readings:
+            raise ManatVerificationError(
+                "قرائن_المناط[].القراءة_المُقصاة تُسمّي قراءةً غير مُعلَنةٍ في "
+                "القراءات_المنافسة"
+            )
     return tuple(qarain)
 
 
@@ -321,6 +503,29 @@ def undetermined_competing_readings(card: Mapping[str, Any]) -> tuple[str, ...]:
         if relation == "غير_متعينة":
             unresolved.append(reading)
     return tuple(unresolved)
+
+
+def eliminated_competing_readings(
+    card: Mapping[str, Any], qarain: tuple[ManatQarina, ...]
+) -> tuple[str, ...]:
+    """يعيد القراءات المنافسة التي أُقصيت بقرينةٍ مُقصِيةٍ جنسُ بيانها قول.
+
+    القرينة المُقصِية من `بيان_بالفعل` تُقرَأ وتُذكَر ولا تُسقِط شيئًا وحدها
+    (`FIL_NEGATION_NEVER_ELIMINATES_ALONE_NOTE`)، والقرينة الواحدة تُسقِط
+    قراءةً واحدةً مُسمّاة لا قائمة (`ONE_SOUND_ELIMINATION_SUFFICES_NOTE`).
+    """
+
+    declared = _competing_reading_names(card)
+    eliminated_keys = {
+        comparison_key(item.excluded_reading)
+        for item in qarain
+        if item.function is QarinaFunction.NEGATING
+        and item.kind is BayanKind.QAWL
+        and item.excluded_reading is not None
+    }
+    return tuple(
+        reading for reading in declared if comparison_key(reading) in eliminated_keys
+    )
 
 
 def _card_word_reference(card: Mapping[str, Any]) -> str:
@@ -385,7 +590,12 @@ def _implementation_identity(kind: BayanKind, qarain: tuple[ManatQarina, ...]) -
         {
             "جنس_البيان": kind.value,
             "القرائن": [
-                {"المصدر_المُسمّى": item.named_source, "معرف": item.identifier}
+                {
+                    "المصدر_المُسمّى": item.named_source,
+                    "معرف": item.identifier,
+                    "وظيفة_القرينة": item.function.value,
+                    "القراءة_المُقصاة": item.excluded_reading,
+                }
                 for item in qarain
             ],
         },
@@ -400,17 +610,29 @@ def _bayan_evaluator(
     kind: BayanKind,
     qarain: tuple[ManatQarina, ...],
     unresolved_readings: tuple[str, ...],
+    eliminated_readings: tuple[str, ...] = (),
 ) -> Callable[[EvidenceRoleCandidate], ApplicabilityModelResult]:
     """مُقيِّمٌ كلّيٌّ على مُدخَلات البطاقة: يُغلِق فقط إذا لم تبقَ قراءةٌ غير متعينة.
 
     لا `BLOCK` هنا (`NO_BLOCK_PATH_IN_THIS_LAYER_NOTE`)، ولا تُقرأ نتيجةٌ من
     البطاقة: القرائن تُثبِت أن في الطبقة ما يُنظَر فيه، وبقاءُ قراءةٍ منافسةٍ
-    غير متعينة يُبقي مدلول اللفظ غير معيَّن في نطاق الدعوى.
+    غير متعينة ولا مُقصاة يُبقي مدلول اللفظ غير معيَّن في نطاق الدعوى.
     """
 
     named = "، ".join(item.identifier for item in qarain)
     events = tuple(
-        f"{kind.value}: {item.identifier} — {item.named_source}" for item in qarain
+        f"{kind.value}: {item.identifier} — {item.function.value}"
+        + (
+            f" — تُقصي ({item.excluded_reading})"
+            if item.excluded_reading is not None
+            else ""
+        )
+        + f" — {item.named_source}"
+        for item in qarain
+    ) + tuple(
+        f"{kind.value}: القراءة المنافسة ({reading}) مُقصاةٌ بقرينةٍ مُقصِيةٍ "
+        "واحدةٍ من بيان القول"
+        for reading in eliminated_readings
     )
 
     def evaluate(candidate: EvidenceRoleCandidate) -> ApplicabilityModelResult:
@@ -436,6 +658,11 @@ def _bayan_evaluator(
             reason=(
                 f"قرائن {kind.value} ({named}) تنطبق في {scope}: لا قراءةَ "
                 "منافسةٍ غير متعينة"
+                + (
+                    "، والقراءات المُقصاة: " + "، ".join(eliminated_readings)
+                    if eliminated_readings
+                    else ""
+                )
             ),
             trace=Trace(events),
         )
@@ -453,7 +680,14 @@ def seal_bayan_evaluators(
     """
 
     models = derive_bayan_models(qarain)
-    unresolved = undetermined_competing_readings(card)
+    undetermined = undetermined_competing_readings(card)
+    eliminated = eliminated_competing_readings(card, qarain)
+    eliminated_keys = {comparison_key(reading) for reading in eliminated}
+    unresolved = tuple(
+        reading
+        for reading in undetermined
+        if comparison_key(reading) not in eliminated_keys
+    )
     scope = manat_claim_scope(card)
     registry = ApplicabilityEvaluatorRegistry()
     for model in models:
@@ -464,7 +698,7 @@ def seal_bayan_evaluators(
             implementation_identity=_implementation_identity(kind, group),
             role_identifier=MANAT_ROLE_IDENTIFIER,
             scope=scope,
-            evaluator=_bayan_evaluator(kind, group, unresolved),
+            evaluator=_bayan_evaluator(kind, group, unresolved, eliminated),
         )
     return registry.seal(f"manat-{_card_word_reference(card)}")
 
