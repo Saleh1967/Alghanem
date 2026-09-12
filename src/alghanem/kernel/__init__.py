@@ -32,6 +32,7 @@ from .birth import (
     EvidenceSnapshot,
     ProjectionPoset,
     ResidualDefinitionSpec,
+    ResidualSurvivalStatus,
     SealedBirthAssessmentEvaluatorRegistry,
     StructureHypothesis,
     WeakerModelSpec,
@@ -165,6 +166,15 @@ from .residual import (
     Residual,
     ResidualCertificationCandidate,
     ResidualCertificationError,
+)
+from .residual_survival import (
+    AuthorizedResidualSurvivalVocabulary,
+    DeclaredResidualSurvivalVocabulary,
+    ResidualSurvivalCertificate,
+    ResidualSurvivalError,
+    ResidualSurvivalGate,
+    ResidualSurvivalVocabularyRegistry,
+    SealedResidualSurvivalVocabularyRegistry,
 )
 from .trace import Trace
 from .transition import (
@@ -326,6 +336,11 @@ __all__ = [
     "ResidualCertificationCandidate",
     "ResidualCertificationError",
     "ResidualDefinitionSpec",
+    "ResidualSurvivalCertificate",
+    "ResidualSurvivalError",
+    "ResidualSurvivalGate",
+    "ResidualSurvivalStatus",
+    "ResidualSurvivalVocabularyRegistry",
     "ReopenExperimentSpecification",
     "SealedApplicabilityEvaluatorRegistry",
     "SealedBirthAssessmentEvaluatorRegistry",
@@ -348,9 +363,12 @@ __all__ = [
     "UnauthorizedExtractorError",
     "UnregisteredExtractorError",
     "AuthorizedClosureOutcomeVocabulary",
+    "AuthorizedResidualSurvivalVocabulary",
     "ClosureOutcomeVocabularyRegistry",
     "DeclaredClosureOutcomeVocabulary",
+    "DeclaredResidualSurvivalVocabulary",
     "SealedClosureOutcomeVocabularyRegistry",
+    "SealedResidualSurvivalVocabularyRegistry",
     "WeakerModelClosureCertificate",
     "WeakerModelClosureError",
     "WeakerModelClosureGate",
