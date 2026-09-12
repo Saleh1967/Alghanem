@@ -5,6 +5,9 @@
 ما يفعله أن يسوق بطاقةً واحدة على الحلقات بترتيبها، ويُسجّل أين وقفت ولماذا
 بالاسم.
 
+**وسَوقُ الحلقات مُخرَجٌ إلى `card_traversal`** ليُساق عليه أكثرُ من بطاقة
+بالمنهج نفسه، فلا يُعمَّم حكمُ بطاقةٍ واحدة على غيرها.
+
 **والوقوفُ مُشتَقٌّ من البطاقة لا مكتوبٌ هنا**: لكلّ حلقةٍ إعلانٌ تحتاجه من
 مفرداتها المغلقة، ويُفحَص نصُّ البطاقة كلُّه عن أعضاء تلك المفردات؛ فإن لم
 يَرِد منها عضوٌ فالحلقةُ واقفةٌ لغياب إعلانٍ مُسمًّى، لا لحكمٍ كُتِب في هذا
@@ -21,41 +24,34 @@
 
 import hashlib
 import json
-import re
-from dataclasses import dataclass
-from enum import Enum
 from pathlib import Path
 from typing import Any, Final
 
 import pytest
+from card_traversal import (
+    LinkAttempt,
+    declared_members,
+    first_stop,
+    lexical_citation_genus,
+    traverse,
+)
 
 from alghanem.arabic.comprehension_defect import (
     ComprehensionDefectCause,
     canonical_defect_classification,
 )
-from alghanem.arabic.maluma_mafhum import SanadOrigin, SemanticTarget
-from alghanem.arabic.manat_verification import (
-    FIL_MODEL_ID,
-    QAWL_MODEL_ID,
-    assess_manat_from_card,
-    derive_bayan_models,
-    manat_claim_scope,
-    read_manat_qarain,
+from alghanem.arabic.lexical_transmission import (
+    FLAT_TITLE_CITATION_IS_NOT_A_TRANSMISSION_CHAIN_NOTE,
+    LexicalCitationStructure,
+    card_lexical_citation_structure,
+    card_transmission_standing,
 )
-from alghanem.arabic.mantuq_mafhum_ifada import DalalaChannel, MafhumKind
-from alghanem.arabic.qiyas_rabt_registration import (
-    IllaApplication,
-    frozen_asl_references,
-)
-from alghanem.arabic.riwaya_diraya_registration import DirayaBranch, RiwayaStanding
-from alghanem.arabic.text_key import comparison_key
+from alghanem.arabic.manat_verification import assess_manat_from_card, manat_claim_scope
 from alghanem.arabic.transmission_standing import (
     KnowledgeBasis,
-    RepetitionPattern,
-    SourceIndependence,
     TransmissionStanding,
+    UnconstructibilityGenus,
 )
-from alghanem.arabic.umum_khusus import DalilScope, RuleGenus
 from alghanem.arabic.wad_naql import (
     DistributionalCorroboration,
     WadNaqlError,
@@ -128,260 +124,6 @@ def _binding() -> AuthenticatedObservationBinding:
     return run.bridge_authenticated_fragment(run.observe_fragment(artifact, "البطاقة"))
 
 
-def _texts(payload: Any) -> tuple[str, ...]:
-    """كلُّ نصوص البطاقة، مفاتيحَ وقيَمًا، مسرودةً بلا تأويل."""
-
-    if isinstance(payload, str):
-        return (payload,)
-    if isinstance(payload, dict):
-        collected: list[str] = []
-        for key, value in payload.items():
-            collected.extend(_texts(key))
-            collected.extend(_texts(value))
-        return tuple(collected)
-    if isinstance(payload, list):
-        collected = []
-        for item in payload:
-            collected.extend(_texts(item))
-        return tuple(collected)
-    return ()
-
-
-def _declares(card: dict[str, Any], term: str) -> bool:
-    """أيرِد المصطلحُ في البطاقة كلمةً قائمةً بنفسها، لا جزءًا من كلمةٍ أخرى؟"""
-
-    boundary = r"[\w\u0621-\u064a]"
-    pattern = re.compile(
-        f"(?<!{boundary})" + re.escape(comparison_key(term)) + f"(?!{boundary})"
-    )
-    return any(pattern.search(comparison_key(text)) for text in _texts(card))
-
-
-def _declared_members(card: dict[str, Any], vocabulary: type[Enum]) -> tuple[Enum, ...]:
-    """أعضاءُ المفردة المغلقة التي تُصرّح بها البطاقة نصًّا، وقد تكون فارغة."""
-
-    return tuple(member for member in vocabulary if _declares(card, str(member.value)))
-
-
-@dataclass(frozen=True, slots=True)
-class LinkAttempt:
-    """محاولةُ حلقةٍ واحدة على هذه البطاقة: أقامت، أم وقفت ولأيّ إعلانٍ غائب."""
-
-    label: str
-    module_relative_path: str
-    stood_up: bool
-    missing_declaration: str
-
-
-def _link_four(card: dict[str, Any]) -> LinkAttempt:
-    """٤ الوضع بالنقل: يلزمه طريقُ معرفةٍ من `TransmissionStanding` وحدها."""
-
-    declared = _declared_members(card, TransmissionStanding)
-    return LinkAttempt(
-        label="٤",
-        module_relative_path="wad_naql.py",
-        stood_up=bool(declared),
-        missing_declaration=(
-            ""
-            if declared
-            else "درجةُ النقل من `TransmissionStanding` (متواتر/آحاد/فرض): "
-            "بطاقةُ المناط تُعلن قرائنَ موضعٍ ومصادرَها المُسمّاة، ولا تُعلن "
-            "طريقَ معرفة الوضع؛ فـ`WadRecord` غيرُ قابلٍ للتسجيل منها، "
-            "و`DistributionalCorroboration` لا تقوم إلا على منقولٍ سابق."
-        ),
-    )
-
-
-def _link_five(card: dict[str, Any]) -> LinkAttempt:
-    """٥ تحقيقُ المناط: البطاقةُ مصوغةٌ لهذه الحلقة بعينها."""
-
-    read_manat_qarain(card)
-    return LinkAttempt(
-        label="٥",
-        module_relative_path="manat_verification.py",
-        stood_up=True,
-        missing_declaration="",
-    )
-
-
-def _link_six(card: dict[str, Any]) -> LinkAttempt:
-    """٦ ما يخلّ بالفهم: البطاقةُ تُصنّف كلَّ قراءةٍ منافسةٍ بسببٍ من المفردة."""
-
-    declared = tuple(
-        canonical_defect_classification(reading["سبب_الإخلال_بالفهم"])
-        for reading in card["القراءات_المنافسة"]
-        if "سبب_الإخلال_بالفهم" in reading
-    )
-    return LinkAttempt(
-        label="٦",
-        module_relative_path="comprehension_defect.py",
-        stood_up=len(declared) == len(card["القراءات_المنافسة"]),
-        missing_declaration=(
-            ""
-            if len(declared) == len(card["القراءات_المنافسة"])
-            else "سبب_الإخلال_بالفهم لكلّ قراءةٍ منافسة"
-        ),
-    )
-
-
-def _link_seven(card: dict[str, Any]) -> LinkAttempt:
-    """٧ البيانُ بالقول مقدَّمًا على البيان بالفعل: الترتيبُ مُشتَقٌّ من القرائن."""
-
-    derived = derive_bayan_models(read_manat_qarain(card))
-    models = {model.model_id: model for model in derived}
-    ordered = models[QAWL_MODEL_ID].weaker_model_ids == () and models[
-        FIL_MODEL_ID
-    ].weaker_model_ids == (QAWL_MODEL_ID,)
-    return LinkAttempt(
-        label="٧",
-        module_relative_path="manat_verification.py",
-        stood_up=ordered,
-        missing_declaration="" if ordered else "قرينتا قولٍ وفعلٍ معًا في البطاقة",
-    )
-
-
-def _link_eight(card: dict[str, Any]) -> LinkAttempt:
-    """٨ المنطوقُ والمفهوم: يلزمه قناةُ دلالةٍ وجنسُ مفهومٍ مُعلَنان."""
-
-    declared = _declared_members(card, DalalaChannel) and _declared_members(
-        card, MafhumKind
-    )
-    return LinkAttempt(
-        label="٨",
-        module_relative_path="mantuq_mafhum_ifada.py",
-        stood_up=bool(declared),
-        missing_declaration=(
-            ""
-            if declared
-            else "قناةُ الدلالة (`DalalaChannel`) وجنسُ المفهوم (`MafhumKind`): "
-            "البطاقةُ تُعلن مدلولَ اللفظ ولا تُعلن دلالةً ثانيةً يُحمَل عليها."
-        ),
-    )
-
-
-def _link_nine(card: dict[str, Any]) -> LinkAttempt:
-    """٩ القياسُ بعلّةٍ منطبقة: يلزمه أصلٌ مُجمَّدٌ مُسمًّى وعلّةٌ مُعلَنة."""
-
-    declared = any(
-        _declares(card, reference) for reference in frozen_asl_references()
-    ) and bool(_declared_members(card, IllaApplication))
-    return LinkAttempt(
-        label="٩",
-        module_relative_path="qiyas_rabt_registration.py",
-        stood_up=declared,
-        missing_declaration=(
-            ""
-            if declared
-            else "أصلٌ من `frozen_asl_references()` وانطباقُ علّةٍ من "
-            "`IllaApplication`: البطاقةُ موضعٌ واحد بلا فرعٍ مقيسٍ عليه."
-        ),
-    )
-
-
-def _link_ten(card: dict[str, Any]) -> LinkAttempt:
-    """١٠ العمومُ والخصوص: يلزمه دليلان بنطاقَيهما، أو جنسُ قاعدةٍ للتفريع."""
-
-    declared = bool(_declared_members(card, DalilScope)) or bool(
-        _declared_members(card, RuleGenus)
-    )
-    return LinkAttempt(
-        label="١٠",
-        module_relative_path="umum_khusus.py",
-        stood_up=declared,
-        missing_declaration=(
-            ""
-            if declared
-            else "نطاقُ الدليل (`DalilScope`) أو جنسُ القاعدة (`RuleGenus`): "
-            "لا عامَّ في البطاقة ولا مخصِّصَ له ولا موضعَ تعارضٍ مُسمًّى."
-        ),
-    )
-
-
-def _link_eleven(card: dict[str, Any]) -> LinkAttempt:
-    """١١ الروايةُ والدراية: يلزمها قناةُ نقلٍ مُعرَّفةٌ ببصمتها، أو فرعُ درايةٍ."""
-
-    declared = bool(_declared_members(card, RiwayaStanding)) or bool(
-        _declared_members(card, DirayaBranch)
-    )
-    return LinkAttempt(
-        label="١١",
-        module_relative_path="riwaya_diraya_registration.py",
-        stood_up=declared,
-        missing_declaration=(
-            ""
-            if declared
-            else "حالُ الرواية (`RiwayaStanding`) أو فرعُ الدراية "
-            "(`DirayaBranch`): البطاقةُ نصٌّ مقروء لا تشغيلُ أداةٍ بهويةٍ وبصمة."
-        ),
-    )
-
-
-def _link_twelve(card: dict[str, Any]) -> LinkAttempt:
-    """١٢ درجةُ اليقين: تُشتَقّ من أساسٍ واستقلالٍ وتكرارٍ مُعلَنة."""
-
-    declared = (
-        bool(_declared_members(card, KnowledgeBasis))
-        and bool(_declared_members(card, SourceIndependence))
-        and bool(_declared_members(card, RepetitionPattern))
-    )
-    return LinkAttempt(
-        label="١٢",
-        module_relative_path="transmission_standing.py",
-        stood_up=declared,
-        missing_declaration=(
-            ""
-            if declared
-            else "أساسُ المعرفة واستقلالُ المصادر ونمطُ التكرار، وهي عينُ ما "
-            "تفتقده الحلقةُ ٤: البطاقةُ تُسمّي مصادرَها ولا تصف طريقَ ورودها."
-        ),
-    )
-
-
-def _link_thirteen(card: dict[str, Any]) -> LinkAttempt:
-    """١٣ المعلومةُ والمفهوم: يلزمها هدفٌ دلاليٌّ وسندٌ ينتهي إلى حسٍّ مباشر."""
-
-    declared = bool(_declared_members(card, SemanticTarget)) and bool(
-        _declared_members(card, SanadOrigin)
-    )
-    return LinkAttempt(
-        label="١٣",
-        module_relative_path="maluma_mafhum.py",
-        stood_up=declared,
-        missing_declaration=(
-            ""
-            if declared
-            else "هدفُ الفهم (`SemanticTarget`) وأصلُ السند (`SanadOrigin`): "
-            "لا سلسلةَ تسليمٍ في البطاقة تنتهي إلى حسٍّ مباشر."
-        ),
-    )
-
-
-def _traverse(card: dict[str, Any]) -> tuple[LinkAttempt, ...]:
-    """سَوقُ البطاقة على الحلقات ٤–١٣ بترتيبها، بلا تقديمٍ ولا تأخير."""
-
-    return (
-        _link_four(card),
-        _link_five(card),
-        _link_six(card),
-        _link_seven(card),
-        _link_eight(card),
-        _link_nine(card),
-        _link_ten(card),
-        _link_eleven(card),
-        _link_twelve(card),
-        _link_thirteen(card),
-    )
-
-
-def _first_stop(attempts: tuple[LinkAttempt, ...]) -> LinkAttempt | None:
-    """أوّلُ حلقةٍ وقفت؛ وما بعدها لا يُقرأ بالغًا وإن قام بذاته."""
-
-    for attempt in attempts:
-        if not attempt.stood_up:
-            return attempt
-    return None
-
-
 def test_the_card_is_admitted_and_defers_with_named_residuals() -> None:
     """الحلقةُ ٥ تقوم على هذه البطاقة، و`DEFER` بفضلةٍ مُسمّاة نتيجةٌ مقبولة."""
 
@@ -417,8 +159,8 @@ def test_the_neighbouring_qiraat_dispute_is_excluded_by_name_not_by_silence() ->
 def test_the_first_application_stops_at_the_fourth_link_for_a_named_absence() -> None:
     """المعطى الذي تدور عليه المسألة: أيُّ حلقةٍ أوقفت التطبيق، ولأيّ غياب."""
 
-    attempts = _traverse(_card())
-    stop = _first_stop(attempts)
+    attempts = traverse(_card())
+    stop = first_stop(attempts)
 
     assert stop is not None
     assert stop.label == "٤"
@@ -426,24 +168,43 @@ def test_the_first_application_stops_at_the_fourth_link_for_a_named_absence() ->
     assert "TransmissionStanding" in stop.missing_declaration
 
 
+def test_the_fourth_link_stops_by_a_derived_category_error_not_by_waiting() -> None:
+    """الوقوفُ عند ٤ صار مُعلَّلًا ببنيةٍ مُشتَقّة: خطأٌ فئويٌّ دائم لا انتظار."""
+
+    card = _card()
+
+    assert (
+        card_lexical_citation_structure(card)
+        is LexicalCitationStructure.عنوان_واحد_مسطح
+    )
+    assert lexical_citation_genus(card) is (
+        UnconstructibilityGenus.REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH
+    )
+    assert card_transmission_standing(card) is None
+    assert "عنوان_واحد_مسطح" in first_stop(traverse(card)).missing_declaration  # type: ignore[union-attr]
+    assert "FlatTitleCitationIsNotATransmissionChain" in (
+        FLAT_TITLE_CITATION_IS_NOT_A_TRANSMISSION_CHAIN_NOTE
+    )
+
+
 def test_the_fourth_and_twelfth_links_stop_for_the_same_absent_declaration() -> None:
     """وقوفُ ٤ و١٢ غيابُ إعلانٍ واحد، لا غيابان: طريقُ ورود النقل."""
 
-    by_label = {attempt.label: attempt for attempt in _traverse(_card())}
+    by_label = {attempt.label: attempt for attempt in traverse(_card())}
 
     assert by_label["٤"].stood_up is False
     assert by_label["١٢"].stood_up is False
     assert "عينُ ما تفتقده الحلقةُ ٤" in by_label["١٢"].missing_declaration
-    assert _declared_members(_card(), TransmissionStanding) == ()
-    assert _declared_members(_card(), KnowledgeBasis) == ()
+    assert declared_members(_card(), TransmissionStanding) == ()
+    assert declared_members(_card(), KnowledgeBasis) == ()
 
 
 def test_links_that_stand_up_after_the_stop_are_not_read_as_reached() -> None:
     """٥ و٦ و٧ تقوم بذاتها على هذه البطاقة، ولا تُقرأ بالغةً بعد وقوف ٤."""
 
-    attempts = _traverse(_card())
+    attempts = traverse(_card())
     by_label = {attempt.label: attempt for attempt in attempts}
-    stop = _first_stop(attempts)
+    stop = first_stop(attempts)
 
     stood = [attempt.label for attempt in attempts if attempt.stood_up]
 
@@ -455,7 +216,7 @@ def test_links_that_stand_up_after_the_stop_are_not_read_as_reached() -> None:
 def test_the_traversal_is_not_complete_so_the_application_test_is_unmet() -> None:
     """الاختبارُ الذي يطلبه القيدُ (ب) تطبيقٌ كاملٌ ناجز، وهذا لم يكتمل."""
 
-    attempts = _traverse(_card())
+    attempts = traverse(_card())
 
     assert not all(attempt.stood_up for attempt in attempts)
     assert [attempt.label for attempt in attempts if not attempt.stood_up] == [
@@ -497,7 +258,7 @@ def test_a_corroboration_without_a_prior_transmitted_record_is_refused() -> None
     )
 
     assert corroboration.transmission_after_corroboration is transmitted.transmission
-    assert _declared_members(_card(), TransmissionStanding) == ()
+    assert declared_members(_card(), TransmissionStanding) == ()
 
 
 def test_the_traversal_issues_no_verdict_and_writes_nothing_into_the_tree() -> None:
