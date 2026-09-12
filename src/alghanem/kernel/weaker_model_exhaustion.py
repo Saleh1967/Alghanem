@@ -34,7 +34,9 @@ independently; the gate never stops at the first one. The status is then the
 conjunctive claim's precedence, mirroring `BLOCK > DEFER > VERIFIED`:
 
 ```
-WEAKER_MODEL_CLOSES_RESIDUAL > EXHAUSTION_UNDETERMINED > LICENSED_WEAKER_MODELS_EXHAUSTED
+WEAKER_MODEL_CLOSES_RESIDUAL
+  > EXHAUSTION_UNDETERMINED
+  > LICENSED_WEAKER_MODELS_EXHAUSTED
 ```
 
 A single `CLOSE` outranks every deferral: knowing that some weaker model *does*

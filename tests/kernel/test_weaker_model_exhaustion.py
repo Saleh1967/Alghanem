@@ -176,9 +176,7 @@ def test_a_missing_model_is_refused_and_never_read_as_failure_to_close() -> None
 
 def test_an_empty_certificate_set_is_refused() -> None:
     with pytest.raises(WeakerModelExhaustionError, match="exactly cover"):
-        WeakerModelExhaustionGate.assess(
-            request=assessment_request(), certificates=()
-        )
+        WeakerModelExhaustionGate.assess(request=assessment_request(), certificates=())
 
 
 def test_a_duplicated_model_is_refused() -> None:

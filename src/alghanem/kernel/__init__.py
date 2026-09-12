@@ -166,18 +166,6 @@ from .residual import (
     ResidualCertificationCandidate,
     ResidualCertificationError,
 )
-from .residual_survival import (
-    AuthorizedResidualSurvivalVocabulary,
-    CertifiedIndependentClosure,
-    CertifiedIndependentClosureGate,
-    DeclaredResidualSurvivalVocabulary,
-    ResidualSurvivalCertificate,
-    ResidualSurvivalError,
-    ResidualSurvivalGate,
-    ResidualSurvivalStatus,
-    ResidualSurvivalVocabularyRegistry,
-    SealedResidualSurvivalVocabularyRegistry,
-)
 from .trace import Trace
 from .transition import (
     BranchOriginProvenance,
@@ -366,16 +354,6 @@ __all__ = [
     "WeakerModelClosureCertificate",
     "WeakerModelClosureError",
     "WeakerModelClosureGate",
-    "AuthorizedResidualSurvivalVocabulary",
-    "CertifiedIndependentClosure",
-    "CertifiedIndependentClosureGate",
-    "DeclaredResidualSurvivalVocabulary",
-    "ResidualSurvivalCertificate",
-    "ResidualSurvivalError",
-    "ResidualSurvivalGate",
-    "ResidualSurvivalStatus",
-    "ResidualSurvivalVocabularyRegistry",
-    "SealedResidualSurvivalVocabularyRegistry",
     "WeakerModelExhaustionAssessment",
     "WeakerModelExhaustionError",
     "WeakerModelExhaustionGate",

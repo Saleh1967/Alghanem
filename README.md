@@ -142,6 +142,30 @@ WeakerModelExhaustion` (nothing here aggregates the cone, and
 on every branch and `IndependentClosureAssessment` is untouched),
 `DeclaredVocabularyIsNotProvenSemantics`, and
 `SealedBeforeAssessmentIsNotSealedBeforeEvidence`.
+G0.IC.1c (`src/alghanem/kernel/weaker_model_exhaustion.py`) aggregates those
+per-model certificates into the second conjunct of closure, and stops there.
+The licensed set is not invented: the frozen projection poset already derived
+the cone before any evidence existed, so how many models must be answered is
+fixed in advance and cannot be trimmed to fit whichever certificates happen to
+exist. Coverage therefore comes before judgement, copied from
+`InvariantVerificationGate.assess_all_preserved`: a missing model, a model
+answered twice, and a model the poset never licensed are each a malformed
+request that raises, because an unevaluated model is ignorance and reading
+ignorance as a failure to close is exactly how a fabricated exhaustion would be
+manufactured. Certificates must also share one `BirthAssessmentRequest`, since
+certificates from different requests describe different evidence.
+`WeakerModelExhaustionGate.assess` then accepts no status and no reason, reads
+every certificate rather than stopping at the first, and applies a fixed
+precedence — `WEAKER_MODEL_CLOSES_RESIDUAL` beats `EXHAUSTION_UNDETERMINED`
+beats `LICENSED_WEAKER_MODELS_EXHAUSTED` — so a known `CLOSE` is never erased
+by an unrelated `DEFER`, and the aggregate does not depend on the order the
+certificates were given in. Two of the three conjuncts of closure are now
+derived, comparability by G0.IC.1a and exhaustion here; the third, a residual
+surviving measurement or formal proof, is certified by no authority in this
+repository, so `is_independent_closure` is still `False` on every branch and
+`IndependentClosureAssessment` is untouched. `WeakerModelClosesResidual !=
+NoBirthVerdict`, `CoverageIsNotCorrectness`, `FrozenConeIsDeclaredNotProven`,
+and `SameRequestIsNotSameEvidenceRun` stay open by name.
 `BirthCandidate` is distinct from a scoped birth verdict and from `Freeze`;
 the future G0.BV.1 authority may issue `BIRTH_IN_SCOPE`, then a later freeze
 authority may freeze it before a separate `E0` step. See the
