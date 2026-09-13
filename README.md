@@ -1965,6 +1965,53 @@ the two genera blocks each stage: absence of a text, which a source lifts, or
 absence of any authority to verify branch-to-text attestation, which no number
 of further texts lifts.
 
+The five governing sections of *uṣūl al-dalāla* now have a ceiling of their own
+in `usul_dalala_sections.py`, written before the modules it measures so that it
+is a standard rather than a description of what happened to be built. Its five
+members are closed, and `attribute_proposal` returns `مردود` for any proposal
+attributed to no section — silence is refusal, never quiet admission. The
+rejection of «الظاهر والمؤوَّل» is recorded there as a named precedent with its
+ground. Coverage is not written in a table but read from the tree by
+`read_sections`, so الناسخ والمنسوخ reads `غير_مُرمَّز` for exactly one reason:
+no module answers to it, because no ج٣ wording for it has been extracted. That
+absence is carried as `NASKH_TEXT_NOT_EXTRACTED_RESIDUAL` rather than filled by
+a vocabulary built ahead of its text.
+
+`dalalat_thalath.py` encodes مطابقة، تضمّن، التزام as an *independent* closed
+vocabulary, not as a widening of the frozen binary `DalalaChannel`, which
+`ThreeDalalatAreNotTheDalalaChannelPair` already refuses by name. A one-way
+derivation maps مطابقة and تضمّن to منطوق and التزام to مفهوم;
+`dalalat_of_channel` returns every match and chooses none, since منطوق answers
+to two dalālāt and picking one would be preference without a preferrer. The
+condition «اللزومُ شرطٌ وليس بموجِب» is recorded as a named refusal, not as a
+logical entailment flag. This module is the only one of the five bound to a text
+actually transcribed in the repository.
+
+`mutlaq_muqayyad.py` makes carrying conditional on *both* unities at once — of
+the ruling and of its cause — and registers the ẓihār / accidental-killing pair
+as a witness of **non**-carrying: the ruling is the same عتق رقبة in both, yet
+the causes differ, so the قيد does not travel. A non-carrying witness is the
+sharper one, because a carrying witness satisfies both conditions together and
+so cannot show that either alone is insufficient. `DalilScope` and
+`TAKHSIS_IS_NOT_IHMAL_NOTE` are imported from `umum_khusus`, never copied, and a
+guard asserts the two standings vocabularies stay distinct.
+
+Inside `lafz_madlul_relation_formal.py`, the carrying cascade — شرعية، then
+عرفية، then لغوية، then مجاز «صوناً للكلام عن الإهمال» — is added as a derived
+ordering, `haml_cascade`, under exactly the rule already applied to «الترادف
+خلاف الأصل»: declared, not activated. Neither `classify_relation` nor
+`prove_relations_over_attested_corpus` reads it, the frozen domain stays at
+seven states, and a guard refuses any ḥaqīqa genus that appears in the closure
+attestation, since `HaqiqaGenus` is the genus carried onto and
+`LafzMadlulRelation.HAQIQA` is a division of the relation itself.
+
+Four of these five rest on wording supplied in a request rather than
+transcribed from ج٣. Each therefore names its own gap —
+`SECTION_CLOSURE_WORDING_NOT_TRANSCRIBED`, `MUTLAQ_WORDING_NOT_TRANSCRIBED`,
+`CASCADE_WORDING_IS_NOT_TRANSCRIBED` — and each module declares itself a
+registration, not a certificate. None of them holds authority: no birth, no
+`E0`, no read from `kernel/`.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future

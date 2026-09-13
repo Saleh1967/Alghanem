@@ -79,6 +79,23 @@
 القرار هنا كلّيةٌ على مجالٍ مغلق لا حالةَ شكٍّ فيه أصلًا. فتحويلُها إلى فرعٍ أو
 حاملٍ كان سيقتضي إدخال حالةِ ترددٍ لا يعرفها هذا المجال، وهو تغييرٌ في بنية
 الشهادة لا تقويةٌ لها؛ فسُجِّلت مُصرَّحةً غيرَ مُفعَّلة بدل أن تُقحَم أو تُهمَل.
+
+ومثلُها — وبنفس حكمها بالضبط — **ترتيبُ الحمل عند تعذّر الحقيقة**: الحقيقةُ
+الشرعيةُ أوّلًا، فالعرفيةُ، فاللغويةُ، فإن تعذّرت الثلاثُ حُمِل اللفظُ على
+المجاز «صونًا للكلام عن الإهمال». وهو **تسلسلُ قرارٍ مرتَّبٌ لا قائمةُ خياراتٍ
+متكافئة**، ولذلك رُمِّز ترتيبًا مُشتَقًّا في `HaqiqaGenus` و`haml_cascade` لا
+مفردةً جديدةً في المجال. و**لا تقرؤه دالّةُ القرار السباعية ولا تدخل حواملُه
+فيها** لنفس سبب الترادف بحرفه: التسلسلُ يعمل في حالِ **تعذّرٍ وترجيحٍ** لا
+يعرفها مجالٌ مغلقٌ دالّتُه كلّية، وإقحامُه فيها يُدخِل حالةَ تردّدٍ ليست منه
+فيُغيّر بنية الشهادة بدل أن يُقوّيها. و`حقيقة` في `LafzMadlulRelation` قسمٌ في
+علاقة اللفظ بمدلوله، و`HaqiqaGenus` جنسُ الحقيقة المحمولِ عليها عند التعذّر؛
+اسمان متّفقان لفظًا مختلفان موضوعًا، وحملُ أحدهما على الآخر يخلط قسمةَ العلاقة
+بترتيب الترجيح.
+
+وبقيّةُ هذا الترتيب مُسمّاةٌ لا مطويّة (`CASCADE_WORDING_IS_NOT_TRANSCRIBED`):
+لفظُه لم يُنقَل بحروفه في هذا المستودع كما نُقلت نصوصُ الأقسام السبعة وجملةُ
+حصرها، وإنما وصف في طلبٍ يُحيل إلى ج٣؛ فهو مطلوبٌ لا مُثبَت، وفارقُ السند هذا
+يُسجَّل ولا يُطوى.
 """
 
 from __future__ import annotations
@@ -166,6 +183,70 @@ MURADIF_PRESUMPTION_NOTE: Final = (
     "لا تقرأها دالّةٌ في هذه الوحدة، ولا تدخل في المجال ولا في الحوامل، لأن دالّة "
     "القرار كلّية على مجالٍ مغلق لا حالة شكٍّ فيه تُرجَّح"
 )
+
+CASCADE_IS_AN_ORDER_NOT_A_MENU_NOTE: Final = (
+    "ترتيبُ الحمل عند تعذّر الحقيقة تسلسلُ قرارٍ مرتَّب لا قائمةُ خياراتٍ "
+    "متكافئة: الشرعيةُ ثمّ العرفيةُ ثمّ اللغوية، فإن تعذّرت الثلاثُ حُمِل على "
+    "المجاز صونًا للكلام عن الإهمال. ومن قرأها قائمةً متكافئةً جاز له أن يبدأ "
+    "من أيّها شاء فيسقط الترتيبُ وهو كلُّ مضمون القاعدة"
+)
+
+CASCADE_IS_DECLARED_NOT_ACTIVATED_NOTE: Final = (
+    "التسلسلُ مُسجَّلٌ غيرُ مُفعَّل، بنفس حكم «الترادف خلاف الأصل» بحرفه: لا "
+    "تقرؤه دالّةُ القرار السباعية ولا تدخل حواملُه في المجال، لأنه يعمل في حالِ "
+    "تعذّرٍ وترجيحٍ لا يعرفها مجالٌ مغلقٌ دالّتُه كلّية"
+)
+
+CASCADE_WORDING_IS_NOT_TRANSCRIBED: Final = (
+    "CASCADE_WORDING_IS_NOT_TRANSCRIBED: لفظُ هذا الترتيب لم يُنقَل بحروفه في "
+    "هذا المستودع كما نُقلت نصوصُ الأقسام السبعة وجملةُ حصرها، وإنما وُصف في "
+    "طلبٍ يُحيل إلى ج٣؛ فهو مطلوبٌ لا مُثبَت، وفارقُ السند يُسجَّل ولا يُطوى"
+)
+
+HAQIQA_GENUS_IS_NOT_THE_RELATION_MEMBER_NOTE: Final = (
+    "`HaqiqaGenus` جنسُ الحقيقة المحمولِ عليها عند التعذّر، و"
+    "`LafzMadlulRelation.HAQIQA` قسمٌ في علاقة اللفظ بمدلوله؛ اسمان متّفقان "
+    "لفظًا مختلفان موضوعًا، وحملُ أحدهما على الآخر يخلط قسمةَ العلاقة بترتيب "
+    "الترجيح"
+)
+
+
+class HaqiqaGenus(Enum):
+    """أجناسُ الحقيقة بترتيب تقديمها عند الحمل؛ ثلاثةٌ مغلقةٌ مرتَّبة."""
+
+    SHARIYYA = "شرعية"
+    URFIYYA = "عرفية"
+    LUGHAWIYYA = "لغوية"
+
+
+HAQIQA_CASCADE_ORDER: Final[tuple[HaqiqaGenus, ...]] = (
+    HaqiqaGenus.SHARIYYA,
+    HaqiqaGenus.URFIYYA,
+    HaqiqaGenus.LUGHAWIYYA,
+)
+
+CASCADE_FALLBACK: Final = "مجاز"
+
+
+def haml_cascade(available: frozenset[HaqiqaGenus]) -> HaqiqaGenus | str:
+    """اشتقّ المحمولَ عليه من الترتيب: أوّلُ متيسّرٍ فيه، وإلّا فالمجاز.
+
+    لا تُقرَأ هذه الدالّةُ في دالّة القرار السباعية ولا في برهانها: هي مُسجَّلةٌ
+    غيرُ مُفعَّلة، على حكم «الترادف خلاف الأصل» بحرفه.
+    """
+
+    if not isinstance(available, frozenset):
+        raise LafzMadlulRelationError(
+            "المتيسّرُ من أجناس الحقيقة مجموعةٌ مُجمَّدة، لا تعدادٌ مرتَّبٌ "
+            "يُقرأ منه ترتيبٌ ثانٍ يخالف الترتيب المنصوص."
+        )
+    for genus in available:
+        if not isinstance(genus, HaqiqaGenus):
+            raise LafzMadlulRelationError("أجناسُ الحقيقة من مفردتها المغلقة الثلاثية.")
+    for genus in HAQIQA_CASCADE_ORDER:
+        if genus in available:
+            return genus
+    return CASCADE_FALLBACK
 
 
 RELATION_FIRST_QUESTION: Final = "عدد الألفاظ في العنقود؟"
@@ -881,4 +962,25 @@ def prove_relations_over_attested_corpus(
         )
     return RelationProofReport(
         rows=tuple(rows), domain=FROZEN_RELATION_DOMAIN, source=RELATION_SOURCE
+    )
+
+
+if len(HaqiqaGenus) != 3:  # pragma: no cover - guard
+    raise RuntimeError("أجناسُ الحقيقة ثلاثةٌ مغلقة في هذا الترتيب.")
+if HAQIQA_CASCADE_ORDER != tuple(HaqiqaGenus):  # pragma: no cover - guard
+    raise RuntimeError(
+        "الترتيبُ يُغطّي الأجناسَ الثلاثةَ كاملةً بترتيب تقديمها: "
+        + CASCADE_IS_AN_ORDER_NOT_A_MENU_NOTE
+    )
+if any(  # pragma: no cover - guard
+    comparison_key(genus.value) in _CLOSURE_ATTESTATION_KEY for genus in HaqiqaGenus
+):
+    raise RuntimeError(
+        "جنسُ الحقيقة مُسمًّى في جملة حصر الأقسام السبعة، فيُقرأ قسمًا فيها: "
+        + HAQIQA_GENUS_IS_NOT_THE_RELATION_MEMBER_NOTE
+    )
+if len(RELATION_ADMISSIBLE_STATES) != 7:  # pragma: no cover - guard
+    raise RuntimeError(
+        "المجالُ المُجمَّد سبعُ حالاتٍ بعد إضافة الترتيب كما كان قبلها: "
+        + CASCADE_IS_DECLARED_NOT_ACTIVATED_NOTE
     )
