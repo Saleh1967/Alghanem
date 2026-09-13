@@ -86,6 +86,8 @@ def _stop_genus(registration: CardItemRegistration) -> str:
 
     if registration.standing is ItemStanding.DEFERRED_BY_NAMED_LAW:
         return f"مؤجَّل_بقانونٍ_مُسمّى: {registration.deferring_law}"
+    if registration.standing is ItemStanding.SOURCE_TEXT_SUPPLIED_WITHOUT_CERTIFICATE:
+        return f"نصٌّ_مُزوَّدٌ_بلا_شهادة_صورية: {registration.supplied_text_key}"
     return "مصدر_غير_مُقدَّم"
 
 
@@ -195,7 +197,7 @@ def test_certificate_is_not_constructible() -> None:
     assert SENTENCE_CARD_PREREGISTRATION.certificate_is_constructible is False
 
 
-def test_standings_are_seven_derived_two_deferred_ten_awaiting() -> None:
+def test_standings_are_seven_derived_two_deferred_four_supplied_six_awaiting() -> None:
     derived = SENTENCE_CARD_PREREGISTRATION.items_with_standing(
         ItemStanding.DERIVED_FROM_EXISTING_CERTIFICATE
     )
@@ -205,8 +207,17 @@ def test_standings_are_seven_derived_two_deferred_ten_awaiting() -> None:
     awaiting = SENTENCE_CARD_PREREGISTRATION.items_with_standing(
         ItemStanding.AWAITING_SOURCE_TEXT
     )
-    assert (len(derived), len(deferred), len(awaiting)) == (7, 2, 10)
+    supplied = SENTENCE_CARD_PREREGISTRATION.items_with_standing(
+        ItemStanding.SOURCE_TEXT_SUPPLIED_WITHOUT_CERTIFICATE
+    )
+    assert (len(derived), len(deferred), len(supplied), len(awaiting)) == (7, 2, 4, 6)
     assert set(deferred) == {CardItem.AMIL_MAMUL, CardItem.NISAB_TADMIN_TAQYID}
+    assert set(supplied) == {
+        CardItem.MUTABAQA_TADAMMUN_ILTIZAM,
+        CardItem.KHABAR_INSHA,
+        CardItem.WAZN,
+        CardItem.ISHTIQAQ_SARF,
+    }
 
 
 def test_each_item_carries_exactly_one_frozen_reference() -> None:
@@ -230,6 +241,7 @@ def test_written_prerequisites_that_differ_from_the_derived_cone_are_refused() -
             standing=ItemStanding.AWAITING_SOURCE_TEXT,
             supporting_module="",
             deferring_law="",
+            supplied_text_key="",
             prerequisites=(),
             refusals=(NamedRefusal(name="n", statement="s"),),
             note="شرطٌ مكتوبٌ على خلاف المُشتَقّ",
@@ -244,6 +256,7 @@ def test_derived_item_without_a_module_is_refused() -> None:
             standing=ItemStanding.DERIVED_FROM_EXISTING_CERTIFICATE,
             supporting_module="",
             deferring_law="",
+            supplied_text_key="",
             prerequisites=(),
             refusals=(NamedRefusal(name="n", statement="s"),),
             note="اشتقاقٌ بلا وحدة",
@@ -258,6 +271,7 @@ def test_deferred_item_without_a_named_law_is_refused() -> None:
             standing=ItemStanding.DEFERRED_BY_NAMED_LAW,
             supporting_module="",
             deferring_law="",
+            supplied_text_key="",
             prerequisites=(),
             refusals=(NamedRefusal(name="n", statement="s"),),
             note="تأجيلٌ بلا اسمِ قانون",
@@ -272,6 +286,7 @@ def test_awaiting_item_may_not_claim_a_module() -> None:
             standing=ItemStanding.AWAITING_SOURCE_TEXT,
             supporting_module="word_class_formal.py",
             deferring_law="",
+            supplied_text_key="",
             prerequisites=(),
             refusals=(NamedRefusal(name="n", statement="s"),),
             note="انتظارُ نصٍّ مع ادّعاء وحدة",
@@ -286,6 +301,7 @@ def test_item_without_a_named_refusal_is_refused() -> None:
             standing=ItemStanding.AWAITING_SOURCE_TEXT,
             supporting_module="",
             deferring_law="",
+            supplied_text_key="",
             prerequisites=(),
             refusals=(),
             note="بندٌ بلا حدٍّ مُسمًّى",
@@ -318,6 +334,15 @@ def test_named_refusals_and_residuals_are_stated_not_only_named() -> None:
     }
     assert "SECOND_AND_THIRD_SENTENCES_ARE_REGISTERED_NOT_OPENED" in NAMED_RESIDUALS
     assert "SHIBH_JUMLA_IFADA_PREDICTION_IS_FROZEN_BEFORE_ITS_RUN" in NAMED_RESIDUALS
+    for key in (
+        "TERM_NOT_LOCATED_IN_DECLARED_SOURCE",
+        "MODERN_COPYRIGHTED_SOURCE_NOT_DIGITIZED_OPENLY",
+        "EXTRACTED_LINE_NUMBERS_ARE_NOT_PRINT_PAGINATION",
+        "DIGITALLY_ENCODED_PRINT_PAGINATION_UNCOLLATED",
+        "LISAN_MATN_IS_QUOTED_NOT_VENDORED_WHOLESALE",
+        "LISAN_NUR_MATERIAL_CARRIES_NO_JAMID_MUSHTAQ_OR_DAL_ALONE_STATEMENT",
+    ):
+        assert key in NAMED_RESIDUALS
     for statement in NAMED_RESIDUALS.values():
         assert statement.strip()
 
@@ -421,8 +446,26 @@ def test_items_awaiting_a_source_text_stop_as_source_not_supplied() -> None:
         CardItem.MURAB_MABNI,
         CardItem.JAMID_MUSHTAQ,
         CardItem.DAL_ALONE,
-        CardItem.WAZN,
         CardItem.MAQAM,
-        CardItem.KHABAR_INSHA,
     ):
         assert readings[item].stop_genus == "مصدر_غير_مُقدَّم"
+
+
+def test_supplied_text_items_stop_by_their_own_genus_not_as_missing_source() -> None:
+    """تزويدُ النصّ نقل البندَ من جنسِ وقوفٍ إلى جنسٍ آخر، ولم يُبلِغه قراءةً."""
+
+    readings = {reading.item: reading for reading in traverse_card(_read_card())}
+    for item, key in (
+        (CardItem.WAZN, "WAZN_LISAN_NUR"),
+        (CardItem.KHABAR_INSHA, "KHABAR_INSHA_SHAKHSIYYA_THREE"),
+        (
+            CardItem.MUTABAQA_TADAMMUN_ILTIZAM,
+            "MUTABAQA_TADAMMUN_ILTIZAM_SHAKHSIYYA_THREE",
+        ),
+    ):
+        assert readings[item].stop_genus == f"نصٌّ_مُزوَّدٌ_بلا_شهادة_صورية: {key}"
+        assert not readings[item].is_read
+    assert (
+        readings[CardItem.ISHTIQAQ_SARF].stop_genus
+        == f"مسبوق_ببندٍ_غير_بالغ: {CardItem.WAZN.value}"
+    )
