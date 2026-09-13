@@ -489,6 +489,17 @@ from .mantuq_mafhum_ifada import (
     RulingAspectReading,
     SignifiedAspect,
 )
+from .morphological_necessity_measurement import (
+    DomainApplication,
+    DomainApplicationRow,
+    MorphologicalNecessityMeasurementError,
+    NecessityProbeReport,
+    PairMeasurement,
+    PairStanding,
+    ReaderAttempt,
+    apply_domain_to_pair,
+    run_necessity_probe,
+)
 from .morphological_necessity_probe import (
     DISCRIMINATION_TARGET_DIGEST,
     FROZEN_DISCRIMINATION_TARGET,
@@ -1113,6 +1124,15 @@ __all__ = [
     "MeasurementRunIdentity",
     "MeasurementRunManifest",
     "MergedClassification",
+    "DomainApplication",
+    "DomainApplicationRow",
+    "MorphologicalNecessityMeasurementError",
+    "NecessityProbeReport",
+    "PairMeasurement",
+    "PairStanding",
+    "ReaderAttempt",
+    "apply_domain_to_pair",
+    "run_necessity_probe",
     "MorphologicalNecessityProbeError",
     "DISCRIMINATION_TARGET_DIGEST",
     "FROZEN_DISCRIMINATION_TARGET",
