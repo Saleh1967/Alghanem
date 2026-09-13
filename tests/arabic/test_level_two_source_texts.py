@@ -106,7 +106,9 @@ def test_every_disqualified_hit_is_named_with_its_ground() -> None:
     """المُستبعَدُ يُسمّى بموضعه وسلطته وعلّته، ولا يُطوى في رقمٍ مُجمَل."""
 
     assert len(QAYD_ATTRIBUTION_SCAN.disqualified_hits) == 2
-    authorities = {hit.named_authority for hit in QAYD_ATTRIBUTION_SCAN.disqualified_hits}
+    authorities = {
+        hit.named_authority for hit in QAYD_ATTRIBUTION_SCAN.disqualified_hits
+    }
     assert authorities == {"مجاهد", "أبو عبيدة"}
     for hit in QAYD_ATTRIBUTION_SCAN.disqualified_hits:
         assert hit.line_number > 0

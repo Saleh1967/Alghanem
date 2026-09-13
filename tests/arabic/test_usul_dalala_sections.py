@@ -11,6 +11,7 @@ import alghanem.kernel as kernel_package
 from alghanem.arabic import (
     COVERAGE_IS_READ_FROM_THE_TREE_NOTE,
     FIVE_SECTIONS_ARE_CLOSED_NOTE,
+    NASKH_TEXT_ARRIVED_NOTE,
     NASKH_TEXT_NOT_EXTRACTED_RESIDUAL,
     REJECTED_PROPOSALS,
     REQUESTED_SECTIONS_ARE_NOT_ATTESTED_NOTE,
@@ -84,13 +85,33 @@ def test_the_coverage_is_read_from_the_tree_not_written_in_a_report() -> None:
     coding = {reading.section: reading.coding for reading in ledger.readings}
     assert coding[DalalaSection.العموم_والخصوص] is SectionCoding.مُرمَّز
     assert coding[DalalaSection.المطلق_والمقيد] is SectionCoding.مُرمَّز
-    assert coding[DalalaSection.الناسخ_والمنسوخ] is SectionCoding.غير_مُرمَّز
+    assert coding[DalalaSection.الناسخ_والمنسوخ] is SectionCoding.مُرمَّز
     assert "الشجرة" in COVERAGE_IS_READ_FROM_THE_TREE_NOTE
 
 
-def test_the_naskh_section_has_no_module_and_its_absence_is_a_named_residual() -> None:
-    assert modules_of_section(DalalaSection.الناسخ_والمنسوخ) == ()
-    assert "NASKH" in NASKH_TEXT_NOT_EXTRACTED_RESIDUAL
+def test_the_naskh_section_gained_its_module_when_its_text_arrived() -> None:
+    """كان `غير_مُرمَّز` بعلّةٍ مُسمّاة، فصار `مُرمَّز` بارتفاع تلك العلّة نفسها.
+
+    وانقلابُ القراءة جاء من الشجرة: وُضِعت الوحدةُ فقُرِئت، ولم يُحرَّر جدولُ
+    تغطيةٍ ليقول إنّها مُرمَّزة.
+    """
+
+    assert modules_of_section(DalalaSection.الناسخ_والمنسوخ) == ("naskh_mansukh.py",)
+    assert "NASKH" in NASKH_TEXT_ARRIVED_NOTE
+
+
+def test_the_lifted_residual_is_kept_and_marked_lifted_not_erased() -> None:
+    """البقيّةُ المرفوعةُ تبقى مكتوبةً: رفعُها حادثةٌ تُقرأ لا أثرٌ يُمحى."""
+
+    assert "NASKH_TEXT_NOT_EXTRACTED" in NASKH_TEXT_NOT_EXTRACTED_RESIDUAL
+    assert "مرفوعة" in NASKH_TEXT_NOT_EXTRACTED_RESIDUAL
+
+
+def test_lifting_one_residual_did_not_lift_its_neighbour() -> None:
+    """مجيءُ النصّ رفع «لا نصَّ له»، ولم يرفع «لم يُقابَل نصُّه» بطبعةٍ مُسمّاة."""
+
+    assert "لم تُنقَل بحروفها" in SECTION_CLOSURE_WORDING_NOT_TRANSCRIBED
+    assert "NASKH_WORDING_IS_SUPPLIED_NOT_COLLATED" in NASKH_TEXT_ARRIVED_NOTE
 
 
 def test_every_declared_module_exists_in_the_tree() -> None:

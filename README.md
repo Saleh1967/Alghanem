@@ -2065,6 +2065,69 @@ closes the one below it runs the two together — which is exactly what
 birth, no verdict, no freeze, no `E0`, and not one character of
 `qayd_marker_preregistration` or `level_two_manat` changed.
 
+### الناسخ والمنسوخ: the last uncoded section of `usul_dalala_sections`
+
+Of the five governing sections of دلالة الألفاظ, four have carried modules for
+some time; `الناسخ_والمنسوخ` was the only one that read `غير_مُرمَّز`. That was
+not an oversight but a refusal with a named ground —
+`NASKH_TEXT_NOT_EXTRACTED_RESIDUAL`: no text for it had been transcribed, and
+building a vocabulary for a section before its text arrives means the text, when
+it does arrive, gets fitted to a vocabulary that preceded it rather than derived
+from it. That is precisely what `MarkerVocabularyIsFrozenBeforeItsText` forbids.
+The text has now been supplied, so `naskh_mansukh.py` is built *from* it, and the
+section's reading flipped to `مُرمَّز` **by reading the tree** — the coverage map
+is derived from module presence, never written in a table, so no coverage
+declaration was edited to produce that flip.
+
+The definition is transcribed as given: «النسخُ هو إبطالُ الحكم المستفاد من نصٍّ
+سابقٍ بنصٍّ لاحق». Its three conditions — that the abrogated ruling be
+شرعي, that the lifting evidence be متراخٍ in time, and that the original address
+not be مقيَّد بوقت معيَّن — are conjunctive and **derived**, never written in a
+field, on the same `BothUnitiesOrNoCarrying` pattern that `mutlaq_muqayyad`
+already uses. Settling for two of the three would abrogate rulings that are not
+abrogable.
+
+Four distinctions do the real work, each one preventing a specific collapse:
+
+- `ExpiryIsNotNaskh`. A time-bound address lapses when its time lapses, by
+  itself, needing no abrogator at all. Reading that lapse as naskh would admit
+  into the chapter what was never in it and hand naskh a stock of false
+  supporting instances. So `انتهاء_وقت_لا_نسخ` is a *third member* of the outcome
+  vocabulary, not a politer spelling of `لا_نسخ`, and it is evaluated first —
+  an address outside the chapter must not be described as having failed the
+  chapter's conditions.
+- `NoNaskhOfTheCertainByTheProbable`. «لا يجوز أن ينسخ المتواتر إلا بالمتواتر».
+  The ladder is **imported** from `TransmissionStanding`, not rebuilt here, so
+  there is no second ranking to drift out of step with the first.
+- `FardIsNotAWeakerRankButNoRankAtAll`. Refusing an آحاد abrogator of a متواتر
+  refuses something measured that fell short; refusing a فرض abrogator refuses
+  something never measured. Folding both into one ground would suggest a فرض can
+  be argued up into an abrogator, when it can only be *measured* into one. Each
+  gets its own refusal member.
+- `IbtalIsNotButlan`. «الإبطالُ هو نسخُ الحكم، وأمّا الباطلُ فهو ضدُّ الحقّ».
+  Naskh lifts a ruling that was **sound** and whose term ended; it is no verdict
+  against it. An import-time guard therefore rejects any candidate field naming
+  invalidity, corruption, or weakness.
+
+نسخ التلاوة is recorded exactly as transmitted: `لم_يثبت_بالقطعي`. That is a
+denial of establishment, not a denial of possibility, so `واقع` and `ممتنع` both
+remain in the vocabulary with no entry, and the emptiness of both must not be
+read as preferring either.
+
+What this does *not* do is named as carefully. The wording arrived in a request
+citing الشخصية الإسلامية ج٣ by extracted line numbers, and was never collated
+against a named print edition: `NASKH_WORDING_IS_SUPPLIED_NOT_COLLATED` and
+`EXTRACTED_LINE_NUMBERS_ARE_NOT_PRINT_PAGINATION` say so, and the module is a
+registration, not a certificate. No verse and no ḥadīth is judged abrogated
+here (`NoRulingIsIssuedOnAnyText`); the venue قرآن/سنة is declared by the caller
+and derived from nothing; and naskh across the two venues has no transmitted
+wording, so the module neither permits nor forbids it. The lifted residual stays
+in the tree marked as lifted rather than deleted, because a residual's lifting is
+an event to be read, not a trace to be erased — and lifting it did not lift its
+neighbour: `SECTION_CLOSURE_WORDING_NOT_TRANSCRIBED` stands exactly where it
+stood. The module issues no birth, no verdict, no freeze, no `E0`, and imports
+nothing from `kernel/`.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future

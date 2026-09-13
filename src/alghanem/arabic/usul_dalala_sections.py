@@ -26,11 +26,18 @@
 فكونُها مطلوبةً لا يُثبت أنها مفردةُ المصدر بلفظه، ولذلك هذه الوحدة **تسجيل**
 لا شهادة، وبقيّتُها مُسمّاةٌ في `SECTION_CLOSURE_WORDING_NOT_TRANSCRIBED`.
 
-**والناسخُ والمنسوخ بقيّةٌ بحثيةٌ مُسمّاة** (`NASKH_TEXT_NOT_EXTRACTED_RESIDUAL`)
-ولا وحدةَ له اليوم: لم يُستخرَج له نصٌّ واحد، وبناءُ مفردةٍ له الآن كتابةُ مفردةٍ
-قبل مصدرها ثمّ تفصيلُ مقاسها عليه حين يجيء — وهو بعينه ما يمنعه
-`MarkerVocabularyIsFrozenBeforeItsText`. فالقسمُ مذكورٌ في المفردة لا محذوفٌ
-منها، وحالُه تُقرأ `غير_مُرمَّز` من الشجرة نفسها.
+**وبقيّةُ الناسخ والمنسوخ رُفِعت بمجيء نصِّها لا بإعلانِ رفعها**
+(`NASKH_TEXT_ARRIVED_NOTE`): كان القسمُ وحدَه بلا وحدة لعلّةٍ مُسمّاة — «لم
+يُستخرَج له نصٌّ واحد» — وبناءُ مفردةٍ له حينئذٍ كتابةُ مفردةٍ قبل مصدرها ثمّ
+تفصيلُ مقاسها عليه حين يجيء، وهو بعينه ما يمنعه
+`MarkerVocabularyIsFrozenBeforeItsText`. ثمّ نُقِل اللفظُ — التعريفُ والشروطُ
+الثلاثةُ والمحلُّ ورتبةُ الناسخ — فبُنيت `naskh_mansukh` **منه**، وانقلبت قراءةُ
+القسم إلى `مُرمَّز` **من الشجرة نفسها** لا بتحرير جدول.
+
+**ورفعُ هذه البقيّة لم يرفع أختَها**: اللفظُ منقولٌ في طلبٍ ولم يُقابَل بطبعةٍ
+مُسمّاة، فبقيّةُ `SECTION_CLOSURE_WORDING_NOT_TRANSCRIBED` قائمةٌ كما كانت،
+ومثلُها في الوحدة الجديدة `NASKH_WORDING_IS_SUPPLIED_NOT_COLLATED`. مجيءُ النصّ
+رفعَ «لا نصَّ له»، ولم يرفع «لم يُقابَل نصُّه».
 
 **وهذه الوحدة تسجيلٌ لا سلطة**: لا ولادة، ولا حكمَ ولادة، ولا تجميد، ولا `E0`،
 ولا تستورد من `kernel/` شيئًا، ولا تقرؤها وحدةٌ فيه.
@@ -49,6 +56,7 @@ from .pipeline_stations import ARABIC_PACKAGE_RELATIVE_PATH, repository_root_pat
 __all__ = [
     "COVERAGE_IS_READ_FROM_THE_TREE_NOTE",
     "FIVE_SECTIONS_ARE_CLOSED_NOTE",
+    "NASKH_TEXT_ARRIVED_NOTE",
     "NASKH_TEXT_NOT_EXTRACTED_RESIDUAL",
     "REJECTED_PROPOSALS",
     "REQUESTED_SECTIONS_ARE_NOT_ATTESTED_NOTE",
@@ -133,11 +141,21 @@ SECTION_CLOSURE_WORDING_NOT_TRANSCRIBED: Final[str] = (
 )
 
 NASKH_TEXT_NOT_EXTRACTED_RESIDUAL: Final[str] = (
-    "NASKH_TEXT_NOT_EXTRACTED: الناسخُ والمنسوخ قسمٌ من الخمسة لم يُستخرَج له "
-    "نصٌّ واحدٌ بعد، فلا وحدةَ له اليوم؛ وبناءُ مفردةٍ له قبل نصّها يجعل النصَّ "
-    "حين يجيء يُفصَّل على مفردةٍ سبقته بدل أن تُشتَقّ منه، وهو ما يمنعه "
-    "`MarkerVocabularyIsFrozenBeforeItsText`. فالقسمُ مذكورٌ في المفردة لا "
-    "محذوفٌ منها، وحالُه تُقرأ من الشجرة `غير_مُرمَّز`"
+    "NASKH_TEXT_NOT_EXTRACTED: بقيّةٌ **مرفوعة**، تُحفَظ لأنّ رفعها حادثةٌ "
+    "تُقرأ لا أثرٌ يُمحى. كان الناسخُ والمنسوخ وحدَه بلا وحدة لأنّه «لم يُستخرَج "
+    "له نصٌّ واحدٌ بعد»، وبناءُ مفردةٍ له قبل نصّها يجعل النصَّ حين يجيء يُفصَّل "
+    "على مفردةٍ سبقته بدل أن تُشتَقّ منه — وهو ما يمنعه "
+    "`MarkerVocabularyIsFrozenBeforeItsText`. ثمّ جاء النصُّ فبُنيت منه "
+    "`naskh_mansukh`، فارتفعت هذه البقيّةُ بمجيء موجَبها لا بالتنازل عنها"
+)
+
+NASKH_TEXT_ARRIVED_NOTE: Final[str] = (
+    "NASKH_TEXT_ARRIVED: رُفِعت بقيّةُ «لا نصَّ له» بنقل التعريف والشروط "
+    "الثلاثة والمحلّ ورتبة الناسخ، فبُنيت `naskh_mansukh` منها وانقلبت قراءةُ "
+    "القسم `مُرمَّز` من الشجرة نفسها لا بتحرير جدول. ولم تُرفع بذلك بقيّةُ "
+    "المقابلة: اللفظُ منقولٌ في طلبٍ لم يُقابَل بطبعةٍ مُسمّاة، وتلك مُسمّاةٌ في "
+    "`naskh_mansukh.NASKH_WORDING_IS_SUPPLIED_NOT_COLLATED`. ورفعُ بقيّةٍ ليس "
+    "رفعًا لجارتها"
 )
 
 COVERAGE_IS_READ_FROM_THE_TREE_NOTE: Final[str] = (
@@ -160,7 +178,7 @@ _SECTION_MODULES: Final[dict[DalalaSection, tuple[str, ...]]] = {
         "manat_verification.py",
         "comprehension_defect.py",
     ),
-    DalalaSection.الناسخ_والمنسوخ: (),
+    DalalaSection.الناسخ_والمنسوخ: ("naskh_mansukh.py",),
 }
 
 SECTION_MODULES: Final[MappingProxyType[DalalaSection, tuple[str, ...]]] = (
@@ -400,9 +418,10 @@ if len(AttributionOutcome) != 2:  # pragma: no cover - guard
     raise RuntimeError("نتيجةُ العرض ثنائيةٌ مغلقة.")
 if set(_SECTION_MODULES) != set(DalalaSection):  # pragma: no cover - guard
     raise RuntimeError("خريطةُ الوحدات غيرُ تامّةٍ على الأقسام الخمسة.")
-if _SECTION_MODULES[DalalaSection.الناسخ_والمنسوخ]:  # pragma: no cover - guard
+if not _SECTION_MODULES[DalalaSection.الناسخ_والمنسوخ]:  # pragma: no cover - guard
     raise RuntimeError(
-        "الناسخُ والمنسوخ بلا وحدةٍ حتى يُنقَل نصُّه: " + NASKH_TEXT_NOT_EXTRACTED_RESIDUAL
+        "الناسخُ والمنسوخ صارت له وحدةٌ بمجيء نصّه، فلا يُعاد تفريغُه بحذفٍ "
+        "صامتٍ يُقرأ «لا نصَّ له» وقد جاء نصُّه: " + NASKH_TEXT_ARRIVED_NOTE
     )
 if not REJECTED_PROPOSALS:  # pragma: no cover - guard
     raise RuntimeError("سابقةُ الردّ مُسجَّلةٌ في الشجرة لا مرويّةٌ في تقرير.")
