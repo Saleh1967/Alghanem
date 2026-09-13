@@ -6,6 +6,7 @@
 تحرّك بوّابةً ولا تغيّر تدقيقًا خارجيًّا.
 """
 
+import inspect
 import json
 from pathlib import Path
 
@@ -697,3 +698,79 @@ def test_the_muradif_presumption_is_recorded_but_never_read() -> None:
         MURADIF_PRESUMPTION_NOTE not in (cluster.majaz_relation, cluster.tested_usage)
         for cluster in ATTESTED_CLUSTERS
     )
+
+
+def test_the_haqiqa_genera_are_three_and_ordered() -> None:
+    from alghanem.arabic.lafz_madlul_relation_formal import (
+        HAQIQA_CASCADE_ORDER,
+        HaqiqaGenus,
+    )
+
+    assert len(HaqiqaGenus) == 3
+    assert HAQIQA_CASCADE_ORDER == (
+        HaqiqaGenus.SHARIYYA,
+        HaqiqaGenus.URFIYYA,
+        HaqiqaGenus.LUGHAWIYYA,
+    )
+
+
+def test_the_cascade_takes_the_first_available_genus_in_the_stated_order() -> None:
+    from alghanem.arabic.lafz_madlul_relation_formal import HaqiqaGenus, haml_cascade
+
+    assert (
+        haml_cascade(frozenset({HaqiqaGenus.LUGHAWIYYA, HaqiqaGenus.SHARIYYA}))
+        is HaqiqaGenus.SHARIYYA
+    )
+    assert (
+        haml_cascade(frozenset({HaqiqaGenus.LUGHAWIYYA, HaqiqaGenus.URFIYYA}))
+        is HaqiqaGenus.URFIYYA
+    )
+    assert haml_cascade(frozenset({HaqiqaGenus.LUGHAWIYYA})) is HaqiqaGenus.LUGHAWIYYA
+
+
+def test_majaz_is_the_fallback_only_when_all_three_are_unavailable() -> None:
+    from alghanem.arabic.lafz_madlul_relation_formal import (
+        CASCADE_FALLBACK,
+        haml_cascade,
+    )
+
+    assert haml_cascade(frozenset()) == CASCADE_FALLBACK == "مجاز"
+
+
+def test_the_cascade_refuses_an_ordered_input_that_could_smuggle_a_second_order() -> (
+    None
+):
+    from alghanem.arabic.lafz_madlul_relation_formal import (
+        HaqiqaGenus,
+        LafzMadlulRelationError,
+        haml_cascade,
+    )
+
+    with pytest.raises(LafzMadlulRelationError):
+        haml_cascade((HaqiqaGenus.SHARIYYA,))  # type: ignore[arg-type]
+    with pytest.raises(LafzMadlulRelationError):
+        haml_cascade(frozenset({"شرعية"}))  # type: ignore[arg-type]
+
+
+def test_the_cascade_is_declared_not_activated() -> None:
+    from alghanem.arabic import lafz_madlul_relation_formal as module
+
+    proof = inspect.getsource(module.prove_relations_over_attested_corpus)
+    decision = inspect.getsource(module.classify_relation)
+    for name in ("haml_cascade", "HaqiqaGenus", "CASCADE_FALLBACK"):
+        assert name not in proof, name
+        assert name not in decision, name
+    assert len(module.RELATION_ADMISSIBLE_STATES) == 7
+    assert "غيرُ مُفعَّل" in module.CASCADE_IS_DECLARED_NOT_ACTIVATED_NOTE
+
+
+def test_the_cascade_source_gap_is_named_not_folded() -> None:
+    from alghanem.arabic.lafz_madlul_relation_formal import (
+        CASCADE_IS_AN_ORDER_NOT_A_MENU_NOTE,
+        CASCADE_WORDING_IS_NOT_TRANSCRIBED,
+        HAQIQA_GENUS_IS_NOT_THE_RELATION_MEMBER_NOTE,
+    )
+
+    assert "CASCADE_WORDING_IS_NOT_TRANSCRIBED" in CASCADE_WORDING_IS_NOT_TRANSCRIBED
+    assert "لا قائمةُ خياراتٍ" in CASCADE_IS_AN_ORDER_NOT_A_MENU_NOTE
+    assert "`HaqiqaGenus`" in HAQIQA_GENUS_IS_NOT_THE_RELATION_MEMBER_NOTE

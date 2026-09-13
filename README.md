@@ -1896,6 +1896,122 @@ transmitted inside one compiler's text. That the material opens by citing the
 card's own verse («قال الله عز وجل: الله نور السماوات والأرض») is recorded as a
 textual coincidence in the test, not read as an argument for anything.
 
+A second witness to the same material then arrived from a *fourth* book —
+the «ن و ر» entry of Ibn Fāris's *Maqāyīs al-Lugha* — and the first thing it
+forced was a genus decision rather than a filling-in. The card's reference
+vocabulary is a closed three-member set with exactly one reference per item
+(`OneFrozenReferencePerItem`), so a text from outside it has only two ways in:
+swapping an item's declared reference **after** seeing what the new text says,
+which is precisely what was refused for «المقام»; or adding a second reference
+to an item, which reopens source-selection after the answer and voids the
+preregistration at its root. Neither was taken. The entry is transcribed
+verbatim in `sentence_card_source_texts.py` as a **corroborating** text
+(`CorroboratingSourceText`), a genus that names the items it corroborates
+rather than an item it supplies, carries no reference field at all, and is
+required by its own constructor to declare the boundary
+`CORROBORATION_IS_NOT_A_DECLARED_REFERENCE` among its residuals. **No item's
+standing or reference changed**, and a test asserts that. Its locus is
+`موضع_غير_متحقق` and not the middle rank: an "entry number" is a finding-list
+index, not the pagination of a named print edition, and no edition, editor, or
+digital witness was named (`ENTRY_NUMBER_IS_NOT_PRINT_PAGINATION`,
+`PRINT_EDITION_NOT_NAMED`). Two findings are recorded rather than smoothed. The
+wazn witness it carries — «والمنارة: مفعلة من الاستنارة، والأصل منورة» — is a
+morphological analysis of the *same derivative* «منارة» that the Thaʿlab line
+already gave, not of the card word «نور», so the standing residual
+`WaznOfADerivativeIsNotTheWaznOfTheCardWord` survives the corroboration instead
+of being retired by it. And the entry's «سُمِّيا بذلك من طريقة الإضاءة» is a
+lexicographer's account of *why the thing was so named*, referring the branches
+of a root to one shared semantic measure; the card's question is whether the
+word «نور» is itself morphologically جامد or مشتق. Those are two genera, and
+reading the first as an answer to the second is the same category error the
+tree refuses elsewhere, so `جامد/مشتق` **remains** `ينتظر_نصًّا_مصدريًّا` under
+a named refusal, `ETYMOLOGICAL_DERIVATION_IS_NOT_MORPHOLOGICAL_JUMUD_MUSHTAQ_STATUS`,
+with the reason now being a text that was read rather than a text not found.
+
+The compound layer received its own first supplied text next, and it needed a
+separate module rather than a widening of the card's vocabulary. A compound
+*stage* is not a card *item* (`CompoundStageIsNotACardItem`): the card draws
+from a frozen three-member reference set, while Ibn ʿAqīl's *Sharḥ* and Ibn
+Hishām's *Mughnī al-Labīb* are not members of it at all, so pushing them in
+there would be exactly the widening-after-the-text that
+`MarkerVocabularyIsFrozenBeforeItsText` forbids.
+`src/alghanem/arabic/compound_layer_source_texts.py` therefore opens its own
+two-member vocabulary and records the uncomfortable fact that it was opened
+**after** its text was seen rather than before
+(`REFERENCE_VOCABULARY_OPENED_AFTER_ITS_TEXT_WAS_SEEN`, required in every entry
+by the constructor); that inversion was tolerated only because the module holds
+no outcome vocabulary and no decision function that could be cut to fit the
+text, and because the stage vocabularies themselves were not touched. Both
+excerpts earn the **middle** locus rank honestly: their OpenITI witnesses carry
+`PageV..P..` markers referring to named print editions — Dār al-Turāth, ed.
+Muḥammad Muḥyī al-Dīn ʿAbd al-Ḥamīd for Ibn ʿAqīl; Dār al-Fikr Damascus 1985,
+ed. Māzin al-Mubārak and Muḥammad ʿAlī Ḥamd Allāh for the *Mughnī* — which is
+print pagination, not a website's own page division, though nothing was
+collated against paper. The two editorial teams are **different**, so no
+"single-editor continuity" argument spans the two sources, and a test asserts
+that. The decisive residual is the one that would have been easiest to omit:
+`TERM_IS_USED_NOT_DEFINED_IN_THE_SUPPLIED_TEXT`. Both works *use* عامل and
+معمول inside a particular problem and presuppose the definition; neither states
+it, and neither divides the word exhaustively into those branches. So supplying
+them lifted the missing-transcription deficit for the first stage only, moving
+it alone to `مصدر_مُقدَّم_غير_متحقَّق` while the other three stay at
+`مصدر_غير_مُقدَّم`. `شاهد_لكل_فرع` remains declared-but-unconstructible,
+`certificate_is_constructible` is still `False`, the first stage's outcome
+vocabulary and refusals are unchanged, and the card's own `العامل_والمعمول`
+item keeps both its standing and its declared reference, because
+`CompoundStageIsDeferredNotReopened` requires the deferral to be lifted in the
+stage's own place. A derived `standing_refusal_statement` now names which of
+the two genera blocks each stage: absence of a text, which a source lifts, or
+absence of any authority to verify branch-to-text attestation, which no number
+of further texts lifts.
+
+The five governing sections of *uṣūl al-dalāla* now have a ceiling of their own
+in `usul_dalala_sections.py`, written before the modules it measures so that it
+is a standard rather than a description of what happened to be built. Its five
+members are closed, and `attribute_proposal` returns `مردود` for any proposal
+attributed to no section — silence is refusal, never quiet admission. The
+rejection of «الظاهر والمؤوَّل» is recorded there as a named precedent with its
+ground. Coverage is not written in a table but read from the tree by
+`read_sections`, so الناسخ والمنسوخ reads `غير_مُرمَّز` for exactly one reason:
+no module answers to it, because no ج٣ wording for it has been extracted. That
+absence is carried as `NASKH_TEXT_NOT_EXTRACTED_RESIDUAL` rather than filled by
+a vocabulary built ahead of its text.
+
+`dalalat_thalath.py` encodes مطابقة، تضمّن، التزام as an *independent* closed
+vocabulary, not as a widening of the frozen binary `DalalaChannel`, which
+`ThreeDalalatAreNotTheDalalaChannelPair` already refuses by name. A one-way
+derivation maps مطابقة and تضمّن to منطوق and التزام to مفهوم;
+`dalalat_of_channel` returns every match and chooses none, since منطوق answers
+to two dalālāt and picking one would be preference without a preferrer. The
+condition «اللزومُ شرطٌ وليس بموجِب» is recorded as a named refusal, not as a
+logical entailment flag. This module is the only one of the five bound to a text
+actually transcribed in the repository.
+
+`mutlaq_muqayyad.py` makes carrying conditional on *both* unities at once — of
+the ruling and of its cause — and registers the ẓihār / accidental-killing pair
+as a witness of **non**-carrying: the ruling is the same عتق رقبة in both, yet
+the causes differ, so the قيد does not travel. A non-carrying witness is the
+sharper one, because a carrying witness satisfies both conditions together and
+so cannot show that either alone is insufficient. `DalilScope` and
+`TAKHSIS_IS_NOT_IHMAL_NOTE` are imported from `umum_khusus`, never copied, and a
+guard asserts the two standings vocabularies stay distinct.
+
+Inside `lafz_madlul_relation_formal.py`, the carrying cascade — شرعية، then
+عرفية، then لغوية، then مجاز «صوناً للكلام عن الإهمال» — is added as a derived
+ordering, `haml_cascade`, under exactly the rule already applied to «الترادف
+خلاف الأصل»: declared, not activated. Neither `classify_relation` nor
+`prove_relations_over_attested_corpus` reads it, the frozen domain stays at
+seven states, and a guard refuses any ḥaqīqa genus that appears in the closure
+attestation, since `HaqiqaGenus` is the genus carried onto and
+`LafzMadlulRelation.HAQIQA` is a division of the relation itself.
+
+Four of these five rest on wording supplied in a request rather than
+transcribed from ج٣. Each therefore names its own gap —
+`SECTION_CLOSURE_WORDING_NOT_TRANSCRIBED`, `MUTLAQ_WORDING_NOT_TRANSCRIBED`,
+`CASCADE_WORDING_IS_NOT_TRANSCRIBED` — and each module declares itself a
+registration, not a certificate. None of them holds authority: no birth, no
+`E0`, no read from `kernel/`.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future

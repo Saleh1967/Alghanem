@@ -235,18 +235,21 @@ def test_attested_per_branch_is_declared_but_unconstructible_today() -> None:
         )
 
 
-def test_a_supplied_but_unverified_source_is_refused_with_its_own_reason() -> None:
-    with pytest.raises(CompoundLayerPreregistrationError, match="لم يُقدَّم"):
+def test_a_supplied_standing_without_any_text_key_is_refused() -> None:
+    with pytest.raises(CompoundLayerPreregistrationError, match="بلا مُزوَّد"):
         replace(
-            _registration(CompoundStage.AMIL_MAMUL),
+            _registration(CompoundStage.NISBA_ROLE),
             attestation=AttestationStanding.SOURCE_SUPPLIED_NOT_VERIFIED,
         )
 
 
-def test_every_stage_stands_at_source_not_supplied_with_a_reason() -> None:
+def test_every_unsupplied_stage_stands_at_source_not_supplied_with_a_reason() -> None:
     for registration in COMPOUND_LAYER_PREREGISTRATION.registrations:
-        assert registration.attestation is AttestationStanding.SOURCE_NOT_SUPPLIED
         assert registration.missing_source_note.strip()
+        if registration.stage is CompoundStage.AMIL_MAMUL:
+            continue
+        assert registration.attestation is AttestationStanding.SOURCE_NOT_SUPPLIED
+        assert registration.supplied_text_keys == ()
 
 
 def test_no_certificate_is_constructible_on_any_branch() -> None:
