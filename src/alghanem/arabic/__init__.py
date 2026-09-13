@@ -489,6 +489,16 @@ from .mantuq_mafhum_ifada import (
     RulingAspectReading,
     SignifiedAspect,
 )
+from .morphological_necessity_probe import (
+    DISCRIMINATION_TARGET_DIGEST,
+    FROZEN_DISCRIMINATION_TARGET,
+    PRE_REGISTERED_EXPECTATION,
+    DiscriminationPair,
+    MorphologicalNecessityProbeError,
+    WeakerDomainReference,
+    discrimination_target_digest,
+    read_weaker_domain_cone,
+)
 from .mutlaq_muqayyad import (
     BOTH_UNITIES_ARE_REQUIRED_NOTE,
     CARRYING_IS_NOT_IHMAL_NOTE,
@@ -1103,6 +1113,14 @@ __all__ = [
     "MeasurementRunIdentity",
     "MeasurementRunManifest",
     "MergedClassification",
+    "MorphologicalNecessityProbeError",
+    "DISCRIMINATION_TARGET_DIGEST",
+    "FROZEN_DISCRIMINATION_TARGET",
+    "PRE_REGISTERED_EXPECTATION",
+    "DiscriminationPair",
+    "WeakerDomainReference",
+    "discrimination_target_digest",
+    "read_weaker_domain_cone",
     "MutlaqMuqayyadError",
     "MutlaqMuqayyadPair",
     "NAMED_RESIDUALS",
