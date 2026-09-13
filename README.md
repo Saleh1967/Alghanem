@@ -2012,6 +2012,59 @@ transcribed from ج٣. Each therefore names its own gap —
 registration, not a certificate. None of them holds authority: no birth, no
 `E0`, no read from `kernel/`.
 
+The «سائمة الغنم» front, open since it was registered, is now **closed by a
+negative result rather than lifted by one**. The composition card stopped at
+`وقوف_آلة_لانقطاع_نقل_القيد` with `REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH`, and
+the reason was an arity artifact: the chain threshold is two attributions and the
+card transmits one. What that stop left genuinely open was *which* kind of
+deficit it recorded — an incomplete transcription that a fuller reading would
+lift, or a source that simply contains no second attribution. The question was
+answered by running it. `src/alghanem/arabic/level_two_source_texts.py` freezes a
+scan of **the whole of** *Fatḥ al-Bārī* — not its book of zakāt, and not its
+chapter on زكاة الغنم — in the OpenITI witness of a named print edition (Dār
+al-Maʿrifa, Beirut, 1379 AH, 13 vols.), identified by file digest and byte length
+because the corpus is not vendored here. The two frozen tokens «سائمة» and
+«السوم» occur thirty-three times; three of those co-occur with an attribution
+formula; exactly **one** lies in the material of the قيد. The other two are named
+individually with the ground of their exclusion rather than absorbed into a
+count: Mujāhid glosses «المسومة» outside the zakāt verse, and Abū ʿUbayda derives
+«مسومة» in Āl ʿImrān — sharing a root is not sharing a question. So the stop is
+**final for this source**, and no transcription effort lifts it.
+
+Three things are recorded that it would have been easier to leave out. First,
+nothing was promoted: the stop genus, the unconstructibility genus, the flat-title
+citation structure and `دلالة_القيد_غير_محسومة` are all unchanged, and
+`EXHAUSTION_DOES_NOT_CHANGE_THE_STOP_GENUS` says so, because reading an
+exhaustion as a promotion reads a negative result as a positive one. Second, the
+excerpt the card transmitted «from outside this tree» was collated against this
+independent witness and **matched letter for letter** — the first external
+confirmation of a transcribed excerpt in this repository — but the match is on
+bare letters, since the digital witness carries no vocalisation or punctuation to
+compare, and the residual names that limit instead of claiming the orthography
+was collated. Third, the locus was raised only in part and the disagreement was
+not smoothed: the volume is settled at three by the `PageV03P317` and
+`PageV03P318` milestones that bracket the passage, but whether a milestone closes
+its page or opens it was not verified, so the page is left standing between 317
+and 318 (`PAGE_MILESTONE_CONVENTION_NOT_VERIFIED`) rather than guessed. The card's
+own «[ص: ٣٧٢]» belongs to a different edition and was **not** overwritten by this
+one, which is the same refusal applied earlier to «المقام»; and
+`مقابل_بنسخة_ورقية_محققة` still has no entry, because pagination encoded from a
+named print edition is not collation against paper.
+
+Two boundaries carry the weight. `ExhaustedSourceIsNotAnExhaustedWorld`: one book
+named in the card's own `المصدر` field was exhausted, not the question — reading
+this as a finding that later commentators added nothing to Zayn ibn al-Munīr
+would write the tool's limit into the world. And
+`ClosureIsNotTheOpeningOfWhatItUnblocks`: satisfying the condition that
+`LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED` attached to `طريق_النقل_المعجمي`
+proves the sequential block has lifted, and does nothing else. No tool, no
+vocabulary, and no member of any existing enumeration was built for that front in
+the step that closed its prerequisite, since opening a level in the same act that
+closes the one below it runs the two together — which is exactly what
+`NoRicherStructureBeforeLowerOpenResidualClosure` forbids. The module issues no
+birth, no verdict, no freeze, no `E0`, and not one character of
+`qayd_marker_preregistration` or `level_two_manat` changed.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future
