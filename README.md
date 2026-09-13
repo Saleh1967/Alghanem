@@ -1965,6 +1965,67 @@ the two genera blocks each stage: absence of a text, which a source lifts, or
 absence of any authority to verify branch-to-text attestation, which no number
 of further texts lifts.
 
+A fifth supplied section then arrived with five pieces of material at once, and
+the first thing it forced was a distinction the repository had not needed until
+now: **transcription versus description**.
+`src/alghanem/arabic/usul_section_source_texts.py` sorts what was supplied by
+the *genus of its supply* rather than by its subject
+(`SectionMaterialStanding`). Three pieces arrived inside quotation marks and are
+held as `SectionExcerpt`, checked by containment like every other transcription
+in this layer. Four arrived as *descriptions of an argument or an example* with
+no words of their source attached, and are held as `DescribedSectionMaterial`,
+which carries **no `verbatim_text` field at all** so that no containment check
+can ever be run against it and read a paraphrase as its source's own wording —
+the same line `CASCADE_WORDING_IS_NOT_TRANSCRIBED` draws elsewhere, enforced
+here by the absence of the field rather than by a note. Every entry of both
+kinds is required by its constructor to declare
+`SECTION_SOURCE_BOOK_IS_NOT_NAMED`, and the excerpt constructor **refuses** any
+locus above `موضع_غير_متحقق`: no title, author, death-year, volume, page,
+edition, or digital witness was given for this section, so the middle rank is
+not merely unclaimed but unreachable.
+
+What this repaired is narrower than it first looked. The priority ladder of the
+five comprehension defects — `تخصيص > مجاز = إضمار > نقل > اشتراك` — was already
+in `comprehension_defect.py` with ten pairwise arguments, so nothing was
+*filled*. What the ten arguments lacked was transcription: they are this
+module's own wording argued to named books with no locus inside them. The new
+excerpt supplies the actual words of exactly **one** of the ten comparisons
+(«النقل أولى من الاشتراك؛ لأن المنقول مدلوله بمعنى واحد... بخلاف المشترك
+فمدلوله متعدد»), and a test walks all ten verdicts against the excerpt to assert
+that only that one is attested. The gap is therefore recorded, not closed, by
+`PRIORITY_LADDER_ARGUMENTS_ARE_PARAPHRASE_NOT_TRANSCRIPTION`. The ladder
+notation `الاشتراك < النقل < …` is the requester's, not the source's, and says
+so in a residual. The dawr proof for classifying «طلقتك» as إنشاء, and the
+examples الحج / الطهور / الفرض‑الواجب, arrived as descriptions only, so
+`CardItem.KHABAR_INSHA` keeps its standing untouched and the sevenfold and
+kullī decision domains keep their attested witnesses, each asserted by a test.
+
+`src/alghanem/arabic/tawlid_lafzi.py` holds the sharpest claim in that section
+and is deliberately kept as a separate, declared-but-unactivated module. Three
+generation tools each own exactly one domain — تعريب for things and proper
+names, اشتقاق for meanings, مجاز for imagery — so an operation is classified by
+the *kind of its content* before any tool is judged, and mixing them is the
+named error the source condemned. The verdict itself turns on a single binary:
+was the foreign **word** taken and shaped to an Arabic pattern (Arabic by
+correct تعريب), or was only its **meaning** taken and dressed in a word from an
+unrelated Arabic root (outside the language entirely)? `غير_محسوم` is a declared
+member on both the mode and the standing vocabularies, so a lexeme whose
+generation was never established is never pushed to either side. Two boundaries
+are written into the module because both were easy to cross silently.
+`OutsideTheLanguageIsNotADistributionalOutlier` refuses any reading of this
+verdict as rarity or as a `distributional_probe_report` result: it is a textual
+judgement about how a word was made, and usage counts neither establish nor
+rebut it. `HaqiqaGeneraExhaustionIsQuotedNotDerived` refuses the tempting move
+of completing the source's negation from `HaqiqaGenus`; the source itself named
+لغوية, شرعية, and عرفية, and an import-time guard only *checks* that all three
+appear in the quoted letters — coverage verification, not derivation. The five
+lexemes the source judged (هاتف، سيارة، قطار، عربة، مقود) are held as cited
+witnesses whose standing is a derived property with no field behind it, and they
+are explicitly **not** rows of `ImportedFeatureVocabulary`, which is frozen at
+its foreign source with an expected row count that a sixth row would invalidate.
+Neither module is read by any gate, changes any item's standing, or opens a
+member in any frozen vocabulary.
+
 The five governing sections of *uṣūl al-dalāla* now have a ceiling of their own
 in `usul_dalala_sections.py`, written before the modules it measures so that it
 is a standard rather than a description of what happened to be built. Its five

@@ -225,6 +225,17 @@ _ARGUMENT_BY_PAIR: Final = {argument.pair: argument for argument in _ARGUMENTS}
 
 PRIORITY_ARGUMENTS: Final = _ARGUMENTS
 
+PRIORITY_LADDER_ARGUMENTS_ARE_PARAPHRASE_NOT_TRANSCRIPTION: Final = (
+    "PRIORITY_LADDER_ARGUMENTS_ARE_PARAPHRASE_NOT_TRANSCRIPTION: حجج "
+    "`PRIORITY_ARGUMENTS` **عبارةُ هذه الوحدة** محتجًّا بها إلى كتبٍ مُسمّاةٍ "
+    "بأسمائها، لا حروفًا منقولةً عن مواضعَ مُعيَّنةٍ فيها: لا جزءَ ولا صفحةَ ولا "
+    "طبعةَ ولا شاهدَ يُقابَل عليه. وقد زُوِّدت بعد ذلك حروفٌ لمقارنةٍ واحدةٍ من "
+    "العشر — «النقل أولى من الاشتراك» — في `usul_section_source_texts."
+    "PRIORITY_LADDER_EXCERPT` من قسمٍ لم يُسَمَّ كتابُه؛ فارتفع بها نقصُ النقل "
+    "في تلك المقارنة وحدها، وبقي في التسع الباقيات. وفارقُ السند يُسجَّل ولا "
+    "يُطوى، على منوال `CASCADE_WORDING_IS_NOT_TRANSCRIBED` بحرفه"
+)
+
 _CAUSE_BY_KEY: Final = {
     comparison_key(cause.value): cause for cause in ComprehensionDefectCause
 }
