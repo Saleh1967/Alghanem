@@ -34,6 +34,14 @@
 العامّة، حتى لا يُقرأ رفضٌ سببه «لا سلطة تُصدرها» على أنه الأسهل: «لم يُقدَّم
 المصدر بعد».
 
+وقد زُوِّدت المرحلةُ الأولى بنصّين بعد ذلك، فانتقلت وحدَها إلى
+`مصدر_مُقدَّم_غير_متحقَّق`. والفارقُ بين رفضَيها بعد التزويد هو عين ما تحفظه
+`standing_refusal_statement`: المراحلُ الثلاث الباقية يمنعها **غيابُ النصّ**،
+وهو رفعٌ مشروطٌ بمصدر يُزوَّد في موضعه؛ والأولى يمنعها بعد تزويدها **غيابُ
+سلطةِ تحقُّق** من إسناد فرعٍ إلى نصّه، وهو رفضٌ بنيويٌّ لا يرفعه تزويدُ عشرة
+نصوصٍ أخرى. ولذلك بقيت `certificate_is_constructible` على `False`، ولم تُوسَّع
+مفردةُ مخرجات المرحلة الأولى ولا رُفِع منها رفضٌ واحدٌ بعد رؤية نصّها.
+
 وترتيب التبعية **مُشتَقّ لا مكتوب**: المرحلة الثالثة تقرأ مخرجات الأولى،
 والرابعة تقرأ مخرجات الثانية، وهذا هو ما يمنع الشهادتين من التناقض صامتتين.
 فمن كتب شرطًا يخالف المُشتَقّ رُدَّ عند الإنشاء، ولا يوجد حقلٌ تُكتَب فيه
@@ -126,7 +134,18 @@ _ATTESTED_PER_BRANCH_REFUSAL: Final = (
 
 _SOURCE_MISSING_REFUSAL: Final = (
     "لم يُقدَّم لهذه المرحلة نصٌّ مصدريّ في هذا المستودع، فالموقف الوحيد "
-    "القابل للبناء اليوم هو `مصدر_غير_مُقدَّم`"
+    "القابل للبناء لها هو `مصدر_غير_مُقدَّم`؛ ورفعُ هذا الرفض يكون بتزويد "
+    "نصٍّ مُسمّى في موضعه لا بإعلان الموقف وحده"
+)
+
+_SUPPLIED_WITHOUT_KEYS_REFUSAL: Final = (
+    "`مصدر_مُقدَّم_غير_متحقَّق` موقفٌ يُشتَقّ من نصٍّ مُزوَّدٍ مُسمًّى بمفتاحه، "
+    "فإعلانُه بلا مفاتيح دعوى تزويدٍ بلا مُزوَّد"
+)
+
+_KEYS_WITHOUT_SUPPLY_REFUSAL: Final = (
+    "مفاتيحُ نصوصٍ مُزوَّدةٍ مكتوبةٌ على مرحلةٍ موقفُها `مصدر_غير_مُقدَّم`؛ "
+    "وهذا تصريحان متناقضان في تسجيلٍ واحد، فيُرَدّ ولا يُرجَّح أحدهما صمتًا"
 )
 
 _DERIVED_PREREQUISITES: Final[dict[CompoundStage, tuple[CompoundStage, ...]]] = {
@@ -183,6 +202,7 @@ class CompoundStageRegistration:
     prerequisites: tuple[CompoundStage, ...]
     attestation: AttestationStanding
     missing_source_note: str
+    supplied_text_keys: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not isinstance(self.stage, CompoundStage):
@@ -195,8 +215,21 @@ class CompoundStageRegistration:
             )
         if self.attestation is AttestationStanding.ATTESTED_PER_BRANCH:
             raise CompoundLayerPreregistrationError(_ATTESTED_PER_BRANCH_REFUSAL)
-        if self.attestation is not AttestationStanding.SOURCE_NOT_SUPPLIED:
-            raise CompoundLayerPreregistrationError(_SOURCE_MISSING_REFUSAL)
+        if not isinstance(self.supplied_text_keys, tuple):
+            raise CompoundLayerPreregistrationError("مفاتيحُ النصوص المُزوَّدة تعدادٌ مرتَّب.")
+        seen_keys: set[str] = set()
+        for supplied_key in self.supplied_text_keys:
+            _require_text(supplied_key, "مفتاح نصٍّ مُزوَّد")
+            if supplied_key in seen_keys:
+                raise CompoundLayerPreregistrationError(
+                    f"مفتاحٌ مكرّر في مرحلة {self.stage.value}: {supplied_key}."
+                )
+            seen_keys.add(supplied_key)
+        if self.attestation is AttestationStanding.SOURCE_NOT_SUPPLIED:
+            if self.supplied_text_keys:
+                raise CompoundLayerPreregistrationError(_KEYS_WITHOUT_SUPPLY_REFUSAL)
+        elif not self.supplied_text_keys:
+            raise CompoundLayerPreregistrationError(_SUPPLIED_WITHOUT_KEYS_REFUSAL)
 
         _require_text(self.missing_source_note, "بيان غياب المصدر")
         _require_text(self.undecided_outcome, "قيمة عدم الانطباق")
@@ -244,6 +277,19 @@ class CompoundStageRegistration:
                 f"شروط مرحلة {self.stage.value} مكتوبةٌ على خلاف المُشتَقّ؛ "
                 "والتبعية تُشتَقّ من قراءة مرحلةٍ لمخرجات أخرى، ولا تُكتَب."
             )
+
+    @property
+    def standing_refusal_statement(self) -> str:
+        """بيانُ ما يمنع هذه المرحلةَ من الترقّي، مُشتَقًّا من موقفها لا مكتوبًا.
+
+        المرحلةُ التي لم يُزوَّد نصُّها يمنعها غيابُ النصّ، وهو رفعٌ مشروطٌ
+        بمصدر. والمرحلةُ المُزوَّدُ نصُّها يمنعها **غيابُ سلطةِ تحقُّقٍ** من
+        إسناد فرعٍ إلى نصّه، وهو رفضٌ لا يرفعه تزويدُ عشرة نصوصٍ أخرى.
+        """
+
+        if self.attestation is AttestationStanding.SOURCE_NOT_SUPPLIED:
+            return _SOURCE_MISSING_REFUSAL
+        return _ATTESTED_PER_BRANCH_REFUSAL
 
 
 @dataclass(frozen=True, slots=True)
@@ -334,11 +380,16 @@ _AMIL_MAMUL: Final = CompoundStageRegistration(
         ),
     ),
     prerequisites=(),
-    attestation=AttestationStanding.SOURCE_NOT_SUPPLIED,
+    attestation=AttestationStanding.SOURCE_SUPPLIED_NOT_VERIFIED,
     missing_source_note=(
-        "لم يُقدَّم نصٌّ يُثبِت أسئلة العمل ولا حوامله (حامل الاقتضاء، وحامل "
-        "الأثر، وحامل الموقع)، ولا شاهدٌ واحدٌ لكلٍّ من الفروع الثلاثة"
+        "زُوِّد لهذه المرحلة نصّان في `compound_layer_source_texts`: شرحُ ابن "
+        "عقيل في باب «اشتغال العامل عن المعمول»، ومغني اللبيب في الفصل بين "
+        "العامل والمعمول. وكلاهما **يستعمل** المصطلحين ولا **يَحُدّهما**، ولا "
+        "يقسم اللفظَ إليهما قسمةً حاصرة، فلم يقم بهما شاهدٌ لفرعٍ واحدٍ من "
+        "الفروع الثلاثة، ولا حاملٌ من حوامل العمل (الاقتضاء، والأثر، والموقع). "
+        "فالمرفوعُ نقصُ النقل وحده، والباقي `شاهد_لكل_فرع` برفضه الخاصّ"
     ),
+    supplied_text_keys=("AMIL_MAMUL_IBN_AQIL_ISHTIGHAL", "AMIL_MAMUL_MUGHNI_FASL"),
 )
 
 _NISBA_ISNADIYYA: Final = CompoundStageRegistration(

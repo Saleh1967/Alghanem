@@ -1928,6 +1928,43 @@ tree refuses elsewhere, so `جامد/مشتق` **remains** `ينتظر_نصًّ�
 a named refusal, `ETYMOLOGICAL_DERIVATION_IS_NOT_MORPHOLOGICAL_JUMUD_MUSHTAQ_STATUS`,
 with the reason now being a text that was read rather than a text not found.
 
+The compound layer received its own first supplied text next, and it needed a
+separate module rather than a widening of the card's vocabulary. A compound
+*stage* is not a card *item* (`CompoundStageIsNotACardItem`): the card draws
+from a frozen three-member reference set, while Ibn ʿAqīl's *Sharḥ* and Ibn
+Hishām's *Mughnī al-Labīb* are not members of it at all, so pushing them in
+there would be exactly the widening-after-the-text that
+`MarkerVocabularyIsFrozenBeforeItsText` forbids.
+`src/alghanem/arabic/compound_layer_source_texts.py` therefore opens its own
+two-member vocabulary and records the uncomfortable fact that it was opened
+**after** its text was seen rather than before
+(`REFERENCE_VOCABULARY_OPENED_AFTER_ITS_TEXT_WAS_SEEN`, required in every entry
+by the constructor); that inversion was tolerated only because the module holds
+no outcome vocabulary and no decision function that could be cut to fit the
+text, and because the stage vocabularies themselves were not touched. Both
+excerpts earn the **middle** locus rank honestly: their OpenITI witnesses carry
+`PageV..P..` markers referring to named print editions — Dār al-Turāth, ed.
+Muḥammad Muḥyī al-Dīn ʿAbd al-Ḥamīd for Ibn ʿAqīl; Dār al-Fikr Damascus 1985,
+ed. Māzin al-Mubārak and Muḥammad ʿAlī Ḥamd Allāh for the *Mughnī* — which is
+print pagination, not a website's own page division, though nothing was
+collated against paper. The two editorial teams are **different**, so no
+"single-editor continuity" argument spans the two sources, and a test asserts
+that. The decisive residual is the one that would have been easiest to omit:
+`TERM_IS_USED_NOT_DEFINED_IN_THE_SUPPLIED_TEXT`. Both works *use* عامل and
+معمول inside a particular problem and presuppose the definition; neither states
+it, and neither divides the word exhaustively into those branches. So supplying
+them lifted the missing-transcription deficit for the first stage only, moving
+it alone to `مصدر_مُقدَّم_غير_متحقَّق` while the other three stay at
+`مصدر_غير_مُقدَّم`. `شاهد_لكل_فرع` remains declared-but-unconstructible,
+`certificate_is_constructible` is still `False`, the first stage's outcome
+vocabulary and refusals are unchanged, and the card's own `العامل_والمعمول`
+item keeps both its standing and its declared reference, because
+`CompoundStageIsDeferredNotReopened` requires the deferral to be lifted in the
+stage's own place. A derived `standing_refusal_statement` now names which of
+the two genera blocks each stage: absence of a text, which a source lifts, or
+absence of any authority to verify branch-to-text attestation, which no number
+of further texts lifts.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future

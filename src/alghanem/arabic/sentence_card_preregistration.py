@@ -914,8 +914,11 @@ SENTENCE_CARD_PREREGISTRATION: Final = SentenceCardPreregistration(
             deferring_law="Preregistration != Certificate",
             note=(
                 "هذا البندُ هو بعينه المرحلةُ الأولى في "
-                "`compound_layer_preregistration`، وموقفُها هناك "
-                "`مصدر_غير_مُقدَّم`؛ وإصدارُه شهادةً هنا يُسقط ذلك التسجيلَ صامتًا"
+                "`compound_layer_preregistration`، وقد زُوِّدت هناك بنصَّين "
+                "فصار موقفُها `مصدر_مُقدَّم_غير_متحقَّق`؛ **وموقفُ هذا البند لم "
+                "يتغيّر ولم يُبدَّل مرجعُه المُعلَن**، لأن رفعَ التأجيل يكون في "
+                "موضع المرحلة لا بإعادة تسميتها هنا. وإصدارُه شهادةً هنا يُسقط "
+                "ذلك التسجيلَ صامتًا"
             ),
             refusals=(
                 NamedRefusal(
