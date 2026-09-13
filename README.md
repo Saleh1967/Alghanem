@@ -2012,6 +2012,170 @@ transcribed from ج٣. Each therefore names its own gap —
 registration, not a certificate. None of them holds authority: no birth, no
 `E0`, no read from `kernel/`.
 
+The «سائمة الغنم» front, open since it was registered, is now **closed by a
+negative result rather than lifted by one**. The composition card stopped at
+`وقوف_آلة_لانقطاع_نقل_القيد` with `REFUSED_BY_STRUCTURAL_CATEGORY_MISMATCH`, and
+the reason was an arity artifact: the chain threshold is two attributions and the
+card transmits one. What that stop left genuinely open was *which* kind of
+deficit it recorded — an incomplete transcription that a fuller reading would
+lift, or a source that simply contains no second attribution. The question was
+answered by running it. `src/alghanem/arabic/level_two_source_texts.py` freezes a
+scan of **the whole of** *Fatḥ al-Bārī* — not its book of zakāt, and not its
+chapter on زكاة الغنم — in the OpenITI witness of a named print edition (Dār
+al-Maʿrifa, Beirut, 1379 AH, 13 vols.), identified by file digest and byte length
+because the corpus is not vendored here. The two frozen tokens «سائمة» and
+«السوم» occur thirty-three times; three of those co-occur with an attribution
+formula; exactly **one** lies in the material of the قيد. The other two are named
+individually with the ground of their exclusion rather than absorbed into a
+count: Mujāhid glosses «المسومة» outside the zakāt verse, and Abū ʿUbayda derives
+«مسومة» in Āl ʿImrān — sharing a root is not sharing a question. So the stop is
+**final for this source**, and no transcription effort lifts it.
+
+Three things are recorded that it would have been easier to leave out. First,
+nothing was promoted: the stop genus, the unconstructibility genus, the flat-title
+citation structure and `دلالة_القيد_غير_محسومة` are all unchanged, and
+`EXHAUSTION_DOES_NOT_CHANGE_THE_STOP_GENUS` says so, because reading an
+exhaustion as a promotion reads a negative result as a positive one. Second, the
+excerpt the card transmitted «from outside this tree» was collated against this
+independent witness and **matched letter for letter** — the first external
+confirmation of a transcribed excerpt in this repository — but the match is on
+bare letters, since the digital witness carries no vocalisation or punctuation to
+compare, and the residual names that limit instead of claiming the orthography
+was collated. Third, the locus was raised only in part and the disagreement was
+not smoothed: the volume is settled at three by the `PageV03P317` and
+`PageV03P318` milestones that bracket the passage, but whether a milestone closes
+its page or opens it was not verified, so the page is left standing between 317
+and 318 (`PAGE_MILESTONE_CONVENTION_NOT_VERIFIED`) rather than guessed. The card's
+own «[ص: ٣٧٢]» belongs to a different edition and was **not** overwritten by this
+one, which is the same refusal applied earlier to «المقام»; and
+`مقابل_بنسخة_ورقية_محققة` still has no entry, because pagination encoded from a
+named print edition is not collation against paper.
+
+Two boundaries carry the weight. `ExhaustedSourceIsNotAnExhaustedWorld`: one book
+named in the card's own `المصدر` field was exhausted, not the question — reading
+this as a finding that later commentators added nothing to Zayn ibn al-Munīr
+would write the tool's limit into the world. And
+`ClosureIsNotTheOpeningOfWhatItUnblocks`: satisfying the condition that
+`LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED` attached to `طريق_النقل_المعجمي`
+proves the sequential block has lifted, and does nothing else. No tool, no
+vocabulary, and no member of any existing enumeration was built for that front in
+the step that closed its prerequisite, since opening a level in the same act that
+closes the one below it runs the two together — which is exactly what
+`NoRicherStructureBeforeLowerOpenResidualClosure` forbids. The module issues no
+birth, no verdict, no freeze, no `E0`, and not one character of
+`qayd_marker_preregistration` or `level_two_manat` changed.
+
+### الناسخ والمنسوخ: the last uncoded section of `usul_dalala_sections`
+
+Of the five governing sections of دلالة الألفاظ, four have carried modules for
+some time; `الناسخ_والمنسوخ` was the only one that read `غير_مُرمَّز`. That was
+not an oversight but a refusal with a named ground —
+`NASKH_TEXT_NOT_EXTRACTED_RESIDUAL`: no text for it had been transcribed, and
+building a vocabulary for a section before its text arrives means the text, when
+it does arrive, gets fitted to a vocabulary that preceded it rather than derived
+from it. That is precisely what `MarkerVocabularyIsFrozenBeforeItsText` forbids.
+The text has now been supplied, so `naskh_mansukh.py` is built *from* it, and the
+section's reading flipped to `مُرمَّز` **by reading the tree** — the coverage map
+is derived from module presence, never written in a table, so no coverage
+declaration was edited to produce that flip.
+
+The definition is transcribed as given: «النسخُ هو إبطالُ الحكم المستفاد من نصٍّ
+سابقٍ بنصٍّ لاحق». Its three conditions — that the abrogated ruling be
+شرعي, that the lifting evidence be متراخٍ in time, and that the original address
+not be مقيَّد بوقت معيَّن — are conjunctive and **derived**, never written in a
+field, on the same `BothUnitiesOrNoCarrying` pattern that `mutlaq_muqayyad`
+already uses. Settling for two of the three would abrogate rulings that are not
+abrogable.
+
+Four distinctions do the real work, each one preventing a specific collapse:
+
+- `ExpiryIsNotNaskh`. A time-bound address lapses when its time lapses, by
+  itself, needing no abrogator at all. Reading that lapse as naskh would admit
+  into the chapter what was never in it and hand naskh a stock of false
+  supporting instances. So `انتهاء_وقت_لا_نسخ` is a *third member* of the outcome
+  vocabulary, not a politer spelling of `لا_نسخ`, and it is evaluated first —
+  an address outside the chapter must not be described as having failed the
+  chapter's conditions.
+- `NoNaskhOfTheCertainByTheProbable`. «لا يجوز أن ينسخ المتواتر إلا بالمتواتر».
+  The ladder is **imported** from `TransmissionStanding`, not rebuilt here, so
+  there is no second ranking to drift out of step with the first.
+- `FardIsNotAWeakerRankButNoRankAtAll`. Refusing an آحاد abrogator of a متواتر
+  refuses something measured that fell short; refusing a فرض abrogator refuses
+  something never measured. Folding both into one ground would suggest a فرض can
+  be argued up into an abrogator, when it can only be *measured* into one. Each
+  gets its own refusal member.
+- `IbtalIsNotButlan`. «الإبطالُ هو نسخُ الحكم، وأمّا الباطلُ فهو ضدُّ الحقّ».
+  Naskh lifts a ruling that was **sound** and whose term ended; it is no verdict
+  against it. An import-time guard therefore rejects any candidate field naming
+  invalidity, corruption, or weakness.
+
+نسخ التلاوة is recorded exactly as transmitted: `لم_يثبت_بالقطعي`. That is a
+denial of establishment, not a denial of possibility, so `واقع` and `ممتنع` both
+remain in the vocabulary with no entry, and the emptiness of both must not be
+read as preferring either.
+
+What this does *not* do is named as carefully. The wording arrived in a request
+citing الشخصية الإسلامية ج٣ by extracted line numbers, and was never collated
+against a named print edition: `NASKH_WORDING_IS_SUPPLIED_NOT_COLLATED` and
+`EXTRACTED_LINE_NUMBERS_ARE_NOT_PRINT_PAGINATION` say so, and the module is a
+registration, not a certificate. No verse and no ḥadīth is judged abrogated
+here (`NoRulingIsIssuedOnAnyText`); the venue قرآن/سنة is declared by the caller
+and derived from nothing; and naskh across the two venues has no transmitted
+wording, so the module neither permits nor forbids it. The lifted residual stays
+in the tree marked as lifted rather than deleted, because a residual's lifting is
+an event to be read, not a trace to be erased — and lifting it did not lift its
+neighbour: `SECTION_CLOSURE_WORDING_NOT_TRANSCRIBED` stands exactly where it
+stood. The module issues no birth, no verdict, no freeze, no `E0`, and imports
+nothing from `kernel/`.
+
+### Opening the `طريق_النقل_المعجمي` front by answering its variable
+
+`LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED` registered one open variable and
+forbade work on it until the سائمة الغنم experiment closed with a single complete
+result. That experiment closed with a complete negative, so the sequential block
+of `NoRicherStructureBeforeLowerOpenResidualClosure` has lifted and the front may
+be opened. It is opened the only way that counts: by **answering its variable** —
+«أهو طريقٌ ثالثٌ يُقرأ في نفسه أم تابعٌ لطريق نقل القيد؟» — not by widening a
+vocabulary. `LexicalCitationStructure` still has exactly three members, and not
+one character of `qayd_marker_preregistration` changed, because answering a
+question by editing the place that records it removes the question instead of
+answering it.
+
+`lexical_path_census.py` reads the cards in `examples/` **at call time** and
+derives the answer: `يقرأ_في_نفسه`. Both keys are imported, never re-spelled —
+`CARD_LEXICAL_PATH_KEY` from `lexical_transmission` and
+`CARD_COMPOSITION_RELATION_KEY` from `level_two_manat` — since a key written
+twice gets changed in one place and left in the other.
+
+The argument is not the tally. The dependency claim is universal — *the lexical
+path is never declared except alongside the qayd path* — so a single counter-
+instance refutes it (`OneCounterInstanceDecidesADependencyClaim`). The derivation
+therefore tests for the **existence** of a card declaring the lexical path with
+no composition relation, and the standing would be identical if the ratio were
+one to five instead of five to one. Arguing from the count would make the answer
+hostage to whichever card gets written tomorrow. In this tree the counter-
+instances are named individually, not merely counted.
+
+Three limits are recorded rather than absorbed. `DeclaringAPathIsNotWalkingIt`:
+four of the six declare the key with an **empty** attribution list, so what is
+derived is that the declaration is independent of the qayd path, not that the
+path was walked — chain strength stays in `lexical_transmission` behind
+`LEXICAL_CHAIN_MINIMUM_ATTRIBUTIONS`, and this census derives no citation
+structure and no transmission standing at all. (An empty declaration still
+counts as a counter-instance, because the refuted claim is a claim about
+*declaration*.) `SchemaIdentityIsNotSemanticIndependence`: all six agree on the
+same three keys, which witnesses one shape wherever the field occurs and proves
+nothing about independence of meaning. And `ThisTreeIsNotTheWorld` — the same
+limit as `ExhaustedSourceIsNotAnExhaustedWorld`, applied to a tree instead of a
+book: exhaustive over `examples/` is not exhaustive over cards. One further gap
+is named: only dependence *in declaration* was tested, and a dependence in
+content — the lexical path being read for the sake of the qayd even when declared
+alone — is neither examined nor denied, since refuting one shape of dependence is
+not refuting every shape. No card list is frozen here either, so the census is
+true with the tree and false with it, and is not a certificate to be cited after
+the cards change. The module issues no birth, no verdict, no freeze, no `E0`, and
+imports nothing from `kernel/`.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future
