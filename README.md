@@ -1896,6 +1896,38 @@ transmitted inside one compiler's text. That the material opens by citing the
 card's own verse («قال الله عز وجل: الله نور السماوات والأرض») is recorded as a
 textual coincidence in the test, not read as an argument for anything.
 
+A second witness to the same material then arrived from a *fourth* book —
+the «ن و ر» entry of Ibn Fāris's *Maqāyīs al-Lugha* — and the first thing it
+forced was a genus decision rather than a filling-in. The card's reference
+vocabulary is a closed three-member set with exactly one reference per item
+(`OneFrozenReferencePerItem`), so a text from outside it has only two ways in:
+swapping an item's declared reference **after** seeing what the new text says,
+which is precisely what was refused for «المقام»; or adding a second reference
+to an item, which reopens source-selection after the answer and voids the
+preregistration at its root. Neither was taken. The entry is transcribed
+verbatim in `sentence_card_source_texts.py` as a **corroborating** text
+(`CorroboratingSourceText`), a genus that names the items it corroborates
+rather than an item it supplies, carries no reference field at all, and is
+required by its own constructor to declare the boundary
+`CORROBORATION_IS_NOT_A_DECLARED_REFERENCE` among its residuals. **No item's
+standing or reference changed**, and a test asserts that. Its locus is
+`موضع_غير_متحقق` and not the middle rank: an "entry number" is a finding-list
+index, not the pagination of a named print edition, and no edition, editor, or
+digital witness was named (`ENTRY_NUMBER_IS_NOT_PRINT_PAGINATION`,
+`PRINT_EDITION_NOT_NAMED`). Two findings are recorded rather than smoothed. The
+wazn witness it carries — «والمنارة: مفعلة من الاستنارة، والأصل منورة» — is a
+morphological analysis of the *same derivative* «منارة» that the Thaʿlab line
+already gave, not of the card word «نور», so the standing residual
+`WaznOfADerivativeIsNotTheWaznOfTheCardWord` survives the corroboration instead
+of being retired by it. And the entry's «سُمِّيا بذلك من طريقة الإضاءة» is a
+lexicographer's account of *why the thing was so named*, referring the branches
+of a root to one shared semantic measure; the card's question is whether the
+word «نور» is itself morphologically جامد or مشتق. Those are two genera, and
+reading the first as an answer to the second is the same category error the
+tree refuses elsewhere, so `جامد/مشتق` **remains** `ينتظر_نصًّا_مصدريًّا` under
+a named refusal, `ETYMOLOGICAL_DERIVATION_IS_NOT_MORPHOLOGICAL_JUMUD_MUSHTAQ_STATUS`,
+with the reason now being a text that was read rather than a text not found.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future

@@ -22,6 +22,17 @@
 الرقميّان** في الشاهد المُعتمَد؛ فتُنقَل هنا مقاطعُ قصيرةٌ يحمل كلٌّ منها اسمَ
 سلطته نصًّا، ولا تُنسَخ المادةُ كاملةً ببنيتها المُوسَّمة.
 
+**ونصٌّ من كتابٍ خارج المفردة المُجمَّدة يُسجَّل مُعاضِدًا لا مرجعًا**
+(`CorroborationIsNotADeclaredReference`): مفردةُ المراجع في بطاقة الجملة ثلاثيةٌ
+مغلقة، ولكلّ بندٍ منها واحدٌ لا أكثر (`OneFrozenReferencePerItem`). فحين يُنقَل
+نصٌّ من كتابٍ رابع — «مقاييس اللغة» لابن فارس (ت٣٩٥هـ) — فله مخرجان لا ثالثَ
+لهما: أن يُبدَّل به مرجعُ بندٍ مُعلَنٌ **بعد رؤية نصّه**، وهو عينُ ما مُنِع في
+بند «المقام» («ولا يُبدَّل مرجعُه المُعلَن بعد رؤية النتيجة»)؛ أو أن يُضاف
+مرجعًا ثانيًا للبند، وهو عينُ ما يُبطِل التسجيلَ المسبق من أصله. فيُسجَّل
+جنسًا ثالثًا: نصٌّ **مُعاضِدٌ مُسمًّى** يُنقَل بحروفه وتُسمّى بقاياه، **ولا
+يدخل خانةَ مرجعٍ ولا يُغيِّر موقفَ بندٍ واحد**. وتغييرُ المواقف يكون بنصٍّ في
+المرجع المُعلَن أو بشهادةٍ صورية، لا بشاهدٍ مُعاضِد.
+
 **ولا سلطةَ لهذه الوحدة**: لا ولادةَ، ولا حكمَ ولادةٍ، ولا تجميد، ولا `E0`، ولا
 تقرؤها بوّابةٌ في `kernel/`، ولا تدخل في `BirthExperimentSpecification`.
 """
@@ -37,19 +48,26 @@ from .sentence_card_preregistration import CardItem, FrozenReference
 from .text_key import comparison_key
 
 __all__ = [
+    "CORROBORATING_SOURCE_TEXTS",
+    "CORROBORATION_IS_NOT_A_DECLARED_REFERENCE_NOTE",
     "DIGITAL_WITNESS_TAGGING_IS_NOT_QUOTED_WHOLESALE_NOTE",
+    "ETYMOLOGICAL_DERIVATION_IS_NOT_MORPHOLOGICAL_STATUS_NOTE",
     "ISHTIQAQ_SARF_LISAN_NUR",
     "KHABAR_INSHA_SHAKHSIYYA_THREE",
     "LISAN_DIGITAL_WITNESS",
+    "MAQAYIS_NUR_ENTRY",
     "MUTABAQA_TADAMMUN_ILTIZAM_SHAKHSIYYA_THREE",
     "PUBLIC_DOMAIN_MATN_IS_NOT_AN_OPEN_LICENCE_NOTE",
     "SUPPLIED_SOURCE_TEXTS",
     "SUPPLIED_TEXT_IS_NOT_A_CERTIFICATE_NOTE",
     "WAZN_LISAN_NUR",
+    "CorroboratingSourceText",
     "DigitalWitness",
     "LocusVerification",
     "SourceTextError",
     "SuppliedSourceText",
+    "corroborating_text_for",
+    "require_attested_corroborating_excerpt",
     "require_attested_excerpt",
     "supplied_text_for",
 ]
@@ -83,6 +101,22 @@ DIGITAL_WITNESS_TAGGING_IS_NOT_QUOTED_WHOLESALE_NOTE: Final[str] = (
     "DigitalWitnessTaggingIsNotQuotedWholesale: يُنقَل من الشاهد الرقميّ ما "
     "يحتاجه البندُ من حروف المتن مُسنَدًا، ولا تُنسَخ المادةُ كاملةً ببنيتها "
     "المُوسَّمة وعلاماتها؛ فالمطلوبُ نصُّ السلطة لا جهدُ الترميز"
+)
+
+CORROBORATION_IS_NOT_A_DECLARED_REFERENCE_NOTE: Final[str] = (
+    "CorroborationIsNotADeclaredReference: النصُّ المُعاضِدُ يُنقَل بحروفه "
+    "وتُسمّى بقاياه، ولا يدخل خانةَ مرجعِ بندٍ ولا يُضاف مرجعًا ثانيًا له ولا "
+    "يُغيِّر موقفَه؛ فتبديلُ المرجع المُعلَن بعد رؤية نصّه انتقاءُ مصدرٍ بعد "
+    "الجواب، وتعدُّدُ المراجع في البند الواحد يُبطِل التسجيلَ المسبق من أصله"
+)
+
+ETYMOLOGICAL_DERIVATION_IS_NOT_MORPHOLOGICAL_STATUS_NOTE: Final[str] = (
+    "ETYMOLOGICAL_DERIVATION_IS_NOT_MORPHOLOGICAL_JUMUD_MUSHTAQ_STATUS: قولُ "
+    "المعجميّ «سُمِّيا بذلك من طريقة الإضاءة» بيانُ وجهِ التسمية وردُّ الفروع "
+    "إلى مقياسٍ دلاليٍّ جامعٍ للمادة، وسؤالُ البند بناءٌ صرفيٌّ في لفظٍ بعينه: "
+    "أهو جامدٌ اسمُ عينٍ أم مشتقٌّ؟ فردُّ «نور» إلى أصلٍ يدلّ على الإضاءة لا "
+    "يُخرِجه من الجمود ولا يُدخِله في الاشتقاق، وحملُ أحد الجنسين على الآخر "
+    "قراءةُ جوابٍ من سؤالٍ غيرِ سؤاله"
 )
 
 
@@ -190,6 +224,89 @@ class SuppliedSourceText:
         return self.locus_verification is LocusVerification.مقابل_بنسخة_ورقية_محققة
 
 
+@dataclass(frozen=True, slots=True)
+class CorroboratingSourceText:
+    """نصٌّ مُعاضِدٌ من كتابٍ خارج المفردة المُجمَّدة؛ لا مرجعَ بندٍ ولا موقف.
+
+    فارقُه عن `SuppliedSourceText` جنسيٌّ لا لفظيّ: ذاك يُنقَل **في مرجع البند
+    المُعلَن** فيرفع عنه نقصَ النقل ويُغيِّر موقفَه إلى `نصٌّ_مُزوَّدٌ_بلا_شهادة
+    _صورية`؛ وهذا يُنقَل من كتابٍ **ليس مرجعَ أيّ بند**، فلا يرفع نقصًا ولا
+    يُغيِّر موقفًا. ولذلك يُسمّي `corroborated_items` البنودَ التي **يُعاضِدها**
+    لا البندَ الذي يُزوِّده، ولا حقلَ `reference` فيه البتّة.
+    """
+
+    key: str
+    source_name: str
+    locus_statement: str
+    locus_verification: LocusVerification
+    verbatim_text: str
+    corroborated_items: tuple[CardItem, ...]
+    internal_authorities: tuple[str, ...]
+    named_residuals: tuple[str, ...]
+    digital_witness: DigitalWitness | None = None
+
+    def __post_init__(self) -> None:
+        for value, label in (
+            (self.key, "مفتاحُ النصّ"),
+            (self.source_name, "اسمُ الكتاب المُعاضِد"),
+            (self.locus_statement, "بيانُ الموضع"),
+            (self.verbatim_text, "النصُّ المنقول"),
+        ):
+            if not isinstance(value, str) or not value.strip():
+                raise SourceTextError(f"{label} نصٌّ غير فارغ؛ ولا يُترَك صمتًا.")
+        if not isinstance(self.locus_verification, LocusVerification):
+            raise SourceTextError("جنسُ التحقّق من الموضع عضوٌ في مفردته المغلقة.")
+        if not isinstance(self.corroborated_items, tuple):
+            raise SourceTextError("البنودُ المُعاضَدةُ تعدادٌ مرتَّب.")
+        if not self.corroborated_items:
+            raise SourceTextError(
+                f"نصُّ {self.key} لا يُعاضِد بندًا واحدًا؛ ونصٌّ لا يُسمّي ما "
+                "يُعاضِده منقولٌ بلا موضعٍ من البطاقة."
+            )
+        seen: set[CardItem] = set()
+        for item in self.corroborated_items:
+            if not isinstance(item, CardItem):
+                raise SourceTextError("كلُّ بندٍ مُعاضَدٍ عضوٌ في مفردته المغلقة.")
+            if item in seen:
+                raise SourceTextError(f"بندٌ مكرَّرٌ في مُعاضَدات {self.key}: {item.value}.")
+            seen.add(item)
+        if not isinstance(self.internal_authorities, tuple):
+            raise SourceTextError("سلطاتُ النصّ الداخلية تعدادٌ مرتَّب.")
+        haystack = comparison_key(self.verbatim_text)
+        for authority in self.internal_authorities:
+            if not isinstance(authority, str) or not authority.strip():
+                raise SourceTextError("كلُّ سلطةٍ داخليةٍ اسمٌ غيرُ فارغ.")
+            if comparison_key(authority.strip()) not in haystack:
+                raise SourceTextError(
+                    f"السلطةُ «{authority}» غيرُ واقعةٍ في النصّ المنقول نصًّا؛ "
+                    "وإسنادٌ لا يُقرأ فيه المُسنَد إليه إحالةٌ مبهمة."
+                )
+        if not isinstance(self.named_residuals, tuple) or not self.named_residuals:
+            raise SourceTextError(
+                f"نصُّ {self.key} بلا بقيّةٍ مُسمّاةٍ واحدة؛ وحدودُ النقل تُسمّى "
+                "ولا تُترَك للقارئ."
+            )
+        if "CORROBORATION_IS_NOT_A_DECLARED_REFERENCE" not in self.named_residuals:
+            raise SourceTextError(
+                f"نصُّ {self.key} مُعاضِدٌ ولا يحمل بقيّةَ "
+                "`CORROBORATION_IS_NOT_A_DECLARED_REFERENCE`؛ وحدُّ المُعاضِد "
+                "يُكتَب في بقاياه لا يُترَك لحسن الظنّ."
+            )
+        for residual in self.named_residuals:
+            if not isinstance(residual, str) or not residual.strip():
+                raise SourceTextError("كلُّ بقيّةٍ مُسمّاةٍ مفتاحٌ غيرُ فارغ.")
+        if self.digital_witness is not None and not isinstance(
+            self.digital_witness, DigitalWitness
+        ):
+            raise SourceTextError("الشاهدُ الرقميُّ `DigitalWitness` أو لا شيء.")
+
+    @property
+    def changes_no_item_standing(self) -> bool:
+        """`True` دائمًا: المُعاضِدُ لا يرفع نقصَ نقلٍ ولا يُبدِّل موقفَ بند."""
+
+        return True
+
+
 MUTABAQA_TADAMMUN_ILTIZAM_SHAKHSIYYA_THREE: Final[SuppliedSourceText] = (
     SuppliedSourceText(
         key="MUTABAQA_TADAMMUN_ILTIZAM_SHAKHSIYYA_THREE",
@@ -273,6 +390,41 @@ ISHTIQAQ_SARF_LISAN_NUR: Final[SuppliedSourceText] = SuppliedSourceText(
 )
 
 
+MAQAYIS_NUR_ENTRY: Final[CorroboratingSourceText] = CorroboratingSourceText(
+    key="MAQAYIS_NUR_ENTRY",
+    source_name="مقاييس اللغة، أحمد بن فارس بن زكريا (ت٣٩٥هـ)، مادة (ن و ر)",
+    locus_statement=(
+        "مقاييس اللغة، مادة (ن و ر)، «رقم الإدخال ٣٨٥٢»؛ ورقمُ الإدخال ترقيمُ "
+        "فهرسةٍ لا ترقيمُ صفحاتِ طبعةٍ ورقيةٍ مُسمّاة، ولم تُذكَر دارٌ ولا "
+        "تحقيقٌ ولا سنةُ طبع، ولم يُسَمَّ شاهدٌ رقميٌّ يُقابَل عليه"
+    ),
+    locus_verification=LocusVerification.موضع_غير_متحقق,
+    verbatim_text=(
+        "النون والواو والراء أصل صحيح يدل على إضاءة واضطراب وقلة ثبات. منه "
+        "النور والنار، سميا بذلك من طريقة الإضاءة، ولأن ذلك يكون مضطربا سريع "
+        "الحركة. وتنورت النار: تبصرتها... ومنه النور: نور الشجر ونواه. وأنارت "
+        "الشجرة: أخرجت النور. والمنارة: مفعلة من الاستنارة، والأصل منورة. ومنه "
+        "منار الأرض: حدودها وأعلامها، سميت لبيانها وظهورها. والذي قلناه في قلة "
+        "الثبات امرأة نوار، أي عفيفة تنور، أي تنفر من القبيح... النؤور: دخان "
+        "الفتيلة يتخذه كحلا ووشما"
+    ),
+    corroborated_items=(
+        CardItem.WAZN,
+        CardItem.ISHTIQAQ_SARF,
+        CardItem.JAMID_MUSHTAQ,
+    ),
+    internal_authorities=(),
+    named_residuals=(
+        "CORROBORATION_IS_NOT_A_DECLARED_REFERENCE",
+        "PRINT_EDITION_NOT_NAMED",
+        "ENTRY_NUMBER_IS_NOT_PRINT_PAGINATION",
+        "QUOTATION_CONTAINS_MARKED_ELISIONS",
+        "WAZN_WITNESS_IS_AGAIN_THE_DERIVATIVE_NOT_THE_CARD_WORD",
+        "ETYMOLOGICAL_DERIVATION_IS_NOT_MORPHOLOGICAL_JUMUD_MUSHTAQ_STATUS",
+    ),
+)
+
+
 SUPPLIED_SOURCE_TEXTS: Final[MappingProxyType[str, SuppliedSourceText]] = (
     MappingProxyType(
         {
@@ -296,6 +448,35 @@ def supplied_text_for(key: str) -> SuppliedSourceText:
             f"لا نصَّ مُزوَّدًا بهذا المفتاح: {key!r}؛ والمفاتيحُ مُسجَّلةٌ مغلقة."
         )
     return SUPPLIED_SOURCE_TEXTS[key]
+
+
+CORROBORATING_SOURCE_TEXTS: Final[MappingProxyType[str, CorroboratingSourceText]] = (
+    MappingProxyType({MAQAYIS_NUR_ENTRY.key: MAQAYIS_NUR_ENTRY})
+)
+
+
+def corroborating_text_for(key: str) -> CorroboratingSourceText:
+    """النصُّ المُعاضِدُ بمفتاحه؛ ومفتاحٌ غيرُ مُسجَّلٍ يُرَدّ ولا يُحمَل على غيره."""
+
+    if not isinstance(key, str) or key not in CORROBORATING_SOURCE_TEXTS:
+        raise SourceTextError(
+            f"لا نصَّ مُعاضِدًا بهذا المفتاح: {key!r}؛ والمفاتيحُ مُسجَّلةٌ مغلقة."
+        )
+    return CORROBORATING_SOURCE_TEXTS[key]
+
+
+def require_attested_corroborating_excerpt(key: str, excerpt: str) -> str:
+    """رُدَّ الاقتباسَ إن لم يكن حرفُه واقعًا في النصّ المُعاضِد نفسه."""
+
+    corroborating = corroborating_text_for(key)
+    if not isinstance(excerpt, str) or not excerpt.strip():
+        raise SourceTextError("الاقتباسُ نصٌّ غير فارغ.")
+    if comparison_key(excerpt) not in comparison_key(corroborating.verbatim_text):
+        raise SourceTextError(
+            f"اقتباسٌ لا يقع حرفُه في نصّ {key}: والتحقّقُ بالاحتواء لا "
+            "بالتصديق، وحكايةُ المعنى ليست نقلًا."
+        )
+    return excerpt
 
 
 def require_attested_excerpt(key: str, excerpt: str) -> str:
@@ -328,7 +509,7 @@ _FORBIDDEN_FIELD_TOKENS: Final[tuple[str, ...]] = (
 def _assert_no_result_field() -> None:
     """حارسُ استيراد: لا حقلَ نتيجةٍ يتسلّل إلى وحدة النقل لاحقًا."""
 
-    for declaring_type in (SuppliedSourceText, DigitalWitness):
+    for declaring_type in (SuppliedSourceText, CorroboratingSourceText, DigitalWitness):
         for declared in fields(declaring_type):
             lowered = declared.name.lower()
             for token in _FORBIDDEN_FIELD_TOKENS:
