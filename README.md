@@ -2128,6 +2128,54 @@ neighbour: `SECTION_CLOSURE_WORDING_NOT_TRANSCRIBED` stands exactly where it
 stood. The module issues no birth, no verdict, no freeze, no `E0`, and imports
 nothing from `kernel/`.
 
+### Opening the `طريق_النقل_المعجمي` front by answering its variable
+
+`LEXICAL_PATH_FRONT_IS_REGISTERED_NOT_OPENED` registered one open variable and
+forbade work on it until the سائمة الغنم experiment closed with a single complete
+result. That experiment closed with a complete negative, so the sequential block
+of `NoRicherStructureBeforeLowerOpenResidualClosure` has lifted and the front may
+be opened. It is opened the only way that counts: by **answering its variable** —
+«أهو طريقٌ ثالثٌ يُقرأ في نفسه أم تابعٌ لطريق نقل القيد؟» — not by widening a
+vocabulary. `LexicalCitationStructure` still has exactly three members, and not
+one character of `qayd_marker_preregistration` changed, because answering a
+question by editing the place that records it removes the question instead of
+answering it.
+
+`lexical_path_census.py` reads the cards in `examples/` **at call time** and
+derives the answer: `يقرأ_في_نفسه`. Both keys are imported, never re-spelled —
+`CARD_LEXICAL_PATH_KEY` from `lexical_transmission` and
+`CARD_COMPOSITION_RELATION_KEY` from `level_two_manat` — since a key written
+twice gets changed in one place and left in the other.
+
+The argument is not the tally. The dependency claim is universal — *the lexical
+path is never declared except alongside the qayd path* — so a single counter-
+instance refutes it (`OneCounterInstanceDecidesADependencyClaim`). The derivation
+therefore tests for the **existence** of a card declaring the lexical path with
+no composition relation, and the standing would be identical if the ratio were
+one to five instead of five to one. Arguing from the count would make the answer
+hostage to whichever card gets written tomorrow. In this tree the counter-
+instances are named individually, not merely counted.
+
+Three limits are recorded rather than absorbed. `DeclaringAPathIsNotWalkingIt`:
+four of the six declare the key with an **empty** attribution list, so what is
+derived is that the declaration is independent of the qayd path, not that the
+path was walked — chain strength stays in `lexical_transmission` behind
+`LEXICAL_CHAIN_MINIMUM_ATTRIBUTIONS`, and this census derives no citation
+structure and no transmission standing at all. (An empty declaration still
+counts as a counter-instance, because the refuted claim is a claim about
+*declaration*.) `SchemaIdentityIsNotSemanticIndependence`: all six agree on the
+same three keys, which witnesses one shape wherever the field occurs and proves
+nothing about independence of meaning. And `ThisTreeIsNotTheWorld` — the same
+limit as `ExhaustedSourceIsNotAnExhaustedWorld`, applied to a tree instead of a
+book: exhaustive over `examples/` is not exhaustive over cards. One further gap
+is named: only dependence *in declaration* was tested, and a dependence in
+content — the lexical path being read for the sake of the qayd even when declared
+alone — is neither examined nor denied, since refuting one shape of dependence is
+not refuting every shape. No card list is frozen here either, so the census is
+true with the tree and false with it, and is not a certificate to be cited after
+the cards change. The module issues no birth, no verdict, no freeze, no `E0`, and
+imports nothing from `kernel/`.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future
