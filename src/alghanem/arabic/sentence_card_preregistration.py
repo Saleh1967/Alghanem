@@ -19,15 +19,19 @@
 مرجعٌ واحدٌ لا أكثر. وتعدُّدُ المراجع في البند الواحد يفتح بابَ انتقاءِ المصدر
 بعد رؤية الجواب، وهو ما يُبطِل التسجيلَ المسبق من أصله.
 
-**وموقفُ البند ثلاثيّ، ولا رابعَ له اليوم**: بندٌ **مُشتَقٌّ من شهادةٍ قائمة**
-يُسمّي وحدتَها بمسارها، ووجودُ الوحدة **يُقرأ من الشجرة** لا يُكتَب (على منوال
-`pipeline_stations`)؛ وبندٌ **مؤجَّلٌ بقانونٍ مُسمّى**، وهو ما وقع لبندَي طبقة
-المركّب؛ وبندٌ **ينتظر نصًّا مصدريًّا** لم يُقدَّم في هذه الشجرة. ولا قيمةَ رابعة
-اسمُها «مُنجَز»، لأنّ الإنجازَ شهادةٌ لا موقفُ تسجيل.
+**وموقفُ البند رباعيّ**: بندٌ **مُشتَقٌّ من شهادةٍ قائمة** يُسمّي وحدتَها بمسارها،
+ووجودُ الوحدة **يُقرأ من الشجرة** لا يُكتَب (على منوال `pipeline_stations`)؛ وبندٌ
+**مؤجَّلٌ بقانونٍ مُسمّى**، وهو ما وقع لبندَي طبقة المركّب؛ وبندٌ **ينتظر نصًّا
+مصدريًّا** لم يُقدَّم في هذه الشجرة؛ وبندٌ **زُوِّد نصُّه المصدريُّ بحروفه ولا
+شهادةَ صوريةَ له**، وهو العضوُ الرابع الذي فتحته حالةٌ وقعت فعلًا حين نُقِلت
+نصوصُ الجزء الثالث ومقطعان من مادة (ن و ر). ولا قيمةَ خامسة اسمُها «مُنجَز»،
+لأنّ الإنجازَ شهادةٌ لا موقفُ تسجيل.
 
-**وعشرةُ بنودٍ من التسعةَ عشرَ تنتظر نصًّا، وبندان مؤجَّلان — وهذه نتيجةٌ لا
-عطل** (`IncompleteCardIsTheResultNotADefect`). فالبطاقةُ التي تُملأ خاناتُها
-كلُّها اليوم إنما تُملأ بغير سند.
+**وستّةُ بنودٍ من التسعةَ عشرَ تنتظر نصًّا، وأربعةٌ زُوِّدت نصوصُها بلا شهادة،
+وبندان مؤجَّلان — وهذه نتيجةٌ لا عطل** (`IncompleteCardIsTheResultNotADefect`).
+فالبطاقةُ التي تُملأ خاناتُها كلُّها اليوم إنما تُملأ بغير سند. **وتزويدُ النصّ
+ليس شهادة** (`SuppliedTextIsNotAFormalCertificate`): بندٌ زُوِّد نصُّه يبقى غيرَ
+مقروءٍ في أيّ بطاقة حتى يقوم له مجالٌ مُجمَّدٌ ودالّةُ قرارٍ وشاهدٌ لكلّ فرع.
 
 **وترتيبُ التبعية مُشتَقٌّ لا مكتوب**: لكلّ بندٍ مخروطُ شرطٍ مُشتَقّ، ومن كتب
 شرطًا يخالف المُشتَقّ رُدَّ عند الإنشاء، ومن سجّل بندًا قبل شرطه رُدَّ كذلك.
@@ -66,6 +70,7 @@ __all__ = [
     "PARALLEL_FRONT_READING_NOTE",
     "SENTENCE_CARD_PREREGISTRATION",
     "SENTENCE_IS_NOT_A_LEXEME_NOTE",
+    "SUPPLIED_TEXT_IS_NOT_A_CERTIFICATE_NOTE",
     "CardItem",
     "CardItemRegistration",
     "CardItemSupportReading",
@@ -116,11 +121,20 @@ class FrozenReference(Enum):
 
 
 class ItemStanding(Enum):
-    """موقفُ البند اليوم؛ ثلاثيٌّ مغلق، ولا عضوَ فيه اسمُه «مُنجَز»."""
+    """موقفُ البند اليوم؛ رباعيٌّ مغلق، ولا عضوَ فيه اسمُه «مُنجَز».
+
+    والعضوُ الرابع `SOURCE_TEXT_SUPPLIED_WITHOUT_CERTIFICATE` فُتِح لحالةٍ وقعت
+    فعلًا فلم تَسَعها الثلاثيةُ الأولى: بندٌ **زُوِّد نصُّه المصدريُّ بحروفه**
+    فلم يعد ينتظر نقلًا، ولا وحدةَ صوريةً يُشتَقّ منها، ولا قانونَ تأجيلٍ
+    يحجبه. وجمعُه مع `AWAITING_SOURCE_TEXT` يُخفي تزويدًا وقع، وجمعُه مع
+    `DERIVED_FROM_EXISTING_CERTIFICATE` يقرأ نصًّا منقولًا شهادةً صورية؛ وكلاهما
+    خلطُ جنسين تحت اسم. وهو **ليس «مُنجَزًا»**: الإنجازُ شهادةٌ لا موقفُ تسجيل.
+    """
 
     DERIVED_FROM_EXISTING_CERTIFICATE = "مُشتَقّ_من_شهادة_قائمة"
     DEFERRED_BY_NAMED_LAW = "مؤجَّل_بقانونٍ_مُسمّى"
     AWAITING_SOURCE_TEXT = "ينتظر_نصًّا_مصدريًّا"
+    SOURCE_TEXT_SUPPLIED_WITHOUT_CERTIFICATE = "نصٌّ_مُزوَّدٌ_بلا_شهادة_صورية"
 
 
 class SupportCoding(Enum):
@@ -157,6 +171,12 @@ FRACTAL_VERDICT_IS_NOT_ISSUED_HERE_NOTE: Final[str] = (
     "OneCardOnThreeSentencesIsNotFractality: سَوقُ البطاقة الواحدة على جملةٍ "
     "اسميةٍ وفعليةٍ وشبهِ جملة لا يُثبِت فركتاليّةً ولا ينفيها؛ تكرارُ البنية "
     "ليس دليلَها"
+)
+
+SUPPLIED_TEXT_IS_NOT_A_CERTIFICATE_NOTE: Final[str] = (
+    "SuppliedTextIsNotAFormalCertificate: تزويدُ نصٍّ مصدريٍّ يرفع نقصَ النقل "
+    "وحده؛ ولا يُنشئ مجالًا مُجمَّدًا ولا دالّةَ قرارٍ ولا حاملًا يُشتَقّ منه، "
+    "فالبندُ المُزوَّدُ نصُّه يبقى غيرَ مقروءٍ في البطاقة كما كان"
 )
 
 PARALLEL_FRONT_READING_NOTE: Final[str] = (
@@ -196,8 +216,15 @@ _LAW_REQUIRED_REFUSAL: Final[str] = (
 )
 
 _AWAITING_REFUSAL: Final[str] = (
-    "البندُ الذي ينتظر نصًّا مصدريًّا لا وحدةَ له ولا قانونَ تأجيل: نقصُه في "
-    "النقل لا في السلطة، وخلطُ الجنسين يُخفي أيَّهما يُرفَع بالنصّ"
+    "البندُ الذي ينتظر نصًّا مصدريًّا لا وحدةَ له ولا قانونَ تأجيل ولا مفتاحَ "
+    "نصٍّ مُزوَّد: نقصُه في النقل لا في السلطة، وخلطُ الأجناس يُخفي أيَّها "
+    "يُرفَع بالنصّ"
+)
+
+_SUPPLIED_KEY_REQUIRED_REFUSAL: Final[str] = (
+    "البندُ الذي زُوِّد نصُّه يُسمّي مفتاحَ ذلك النصّ في "
+    "`sentence_card_source_texts`، ولا يُسمّي وحدةً صوريةً ولا قانونَ تأجيل؛ "
+    "فالنقلُ المُزوَّد ليس شهادةً ولا حجبًا"
 )
 
 _DERIVED_PREREQUISITES: Final[dict[CardItem, tuple[CardItem, ...]]] = {
@@ -266,6 +293,7 @@ class CardItemRegistration:
     standing: ItemStanding
     supporting_module: str
     deferring_law: str
+    supplied_text_key: str
     prerequisites: tuple[CardItem, ...]
     refusals: tuple[NamedRefusal, ...]
     note: str
@@ -288,6 +316,9 @@ class CardItemRegistration:
             _require_blank(
                 self.deferring_law, "قانونُ التأجيل", _MODULE_REQUIRED_REFUSAL
             )
+            _require_blank(
+                self.supplied_text_key, "مفتاحُ النصّ المُزوَّد", _MODULE_REQUIRED_REFUSAL
+            )
             if self.supporting_module.endswith("__init__.py"):
                 raise SentenceCardPreregistrationError(
                     "وحدةُ البند وحدةٌ مُسمّاة، لا ملفَّ تجميعِ حزمة."
@@ -295,9 +326,25 @@ class CardItemRegistration:
         elif self.standing is ItemStanding.DEFERRED_BY_NAMED_LAW:
             _require_text(self.deferring_law, "قانونُ التأجيل")
             _require_blank(self.supporting_module, "وحدةُ البند", _LAW_REQUIRED_REFUSAL)
+            _require_blank(
+                self.supplied_text_key, "مفتاحُ النصّ المُزوَّد", _LAW_REQUIRED_REFUSAL
+            )
+        elif self.standing is ItemStanding.SOURCE_TEXT_SUPPLIED_WITHOUT_CERTIFICATE:
+            _require_text(self.supplied_text_key, "مفتاحُ النصّ المُزوَّد")
+            _require_blank(
+                self.supporting_module, "وحدةُ البند", _SUPPLIED_KEY_REQUIRED_REFUSAL
+            )
+            _require_blank(
+                self.deferring_law,
+                "قانونُ التأجيل",
+                _SUPPLIED_KEY_REQUIRED_REFUSAL,
+            )
         else:
             _require_blank(self.supporting_module, "وحدةُ البند", _AWAITING_REFUSAL)
             _require_blank(self.deferring_law, "قانونُ التأجيل", _AWAITING_REFUSAL)
+            _require_blank(
+                self.supplied_text_key, "مفتاحُ النصّ المُزوَّد", _AWAITING_REFUSAL
+            )
 
         if not self.refusals:
             raise SentenceCardPreregistrationError(
@@ -466,6 +513,7 @@ def _registration(
     refusals: tuple[NamedRefusal, ...],
     supporting_module: str = "",
     deferring_law: str = "",
+    supplied_text_key: str = "",
 ) -> CardItemRegistration:
     return CardItemRegistration(
         item=item,
@@ -473,6 +521,7 @@ def _registration(
         standing=standing,
         supporting_module=supporting_module,
         deferring_law=deferring_law,
+        supplied_text_key=supplied_text_key,
         prerequisites=derived_prerequisites(item),
         refusals=refusals,
         note=note,
@@ -500,9 +549,10 @@ SENTENCE_CARD_PREREGISTRATION: Final = SentenceCardPreregistration(
             reference=FrozenReference.AL_NAHW_AL_WADIH,
             standing=ItemStanding.AWAITING_SOURCE_TEXT,
             note=(
-                "لا يَرِد في هذه الشجرة حرفٌ واحدٌ منقولٌ من «النحو الواضح»، "
-                "فعلاماتُ الرفع والجر الأصليةُ والفرعية بلا نصٍّ يُثبِت أسئلتها "
-                "ولا شاهدٍ لكلّ فرع"
+                "«النحو الواضح» عملٌ حديثٌ محميٌّ بحقوق نشرٍ فعلية، ولا يُتوقَّع "
+                "وجودُه في كوربصٍ مفتوح؛ فوقوفُ هذا البند امتناعٌ قانونيٌّ دائمٌ "
+                "مُسمًّى (`MODERN_COPYRIGHTED_SOURCE_NOT_DIGITIZED_OPENLY`) لا "
+                "فجوةُ بحثٍ مؤقتة، ولا يُطلَب له بحثٌ إضافيّ"
             ),
             refusals=(
                 NamedRefusal(
@@ -526,7 +576,7 @@ SENTENCE_CARD_PREREGISTRATION: Final = SentenceCardPreregistration(
             reference=FrozenReference.AL_NAHW_AL_WADIH,
             standing=ItemStanding.AWAITING_SOURCE_TEXT,
             note=(
-                "قسمةُ المعرب والمبنيّ بلا نصٍّ في هذه الشجرة؛ والمعيارُ "
+                "المصدرُ نفسُه ممتنعٌ بالجنس الدائم نفسه، فالقسمةُ بلا نصّ؛ والمعيارُ "
                 "المذكورُ في الطلب (أسماءُ الإشارة والموصول والضمائر وحدها "
                 "مبنية) دعوى حصرٍ تحتاج نصَّها لا تعدادَ أمثلة"
             ),
@@ -552,9 +602,11 @@ SENTENCE_CARD_PREREGISTRATION: Final = SentenceCardPreregistration(
             reference=FrozenReference.LISAN_AL_ARAB,
             standing=ItemStanding.AWAITING_SOURCE_TEXT,
             note=(
-                "لا تَرِد مادةُ (ن و ر) من «لسان العرب» في هذه الشجرة؛ ويُسجَّل "
-                "هنا فارقٌ يُخشى طيُّه: «المشتق» في قسمة الكلّي غيرُ «المشتق» "
-                "الصرفيّ المقصود في هذا البند"
+                "مادةُ (ن و ر) قُرِئت في شاهدٍ رقميٍّ مُسمًّى ومُسِحت، فلم يقع "
+                "فيها لفظُ «مشتق» ولا «اشتقاق» ولا مرّةً واحدة؛ فالبندُ يقف "
+                "**نتيجةَ مسحٍ جرى** لا لغياب بحث. ويُسجَّل هنا فارقٌ يُخشى "
+                "طيُّه: «المشتق» في قسمة الكلّي غيرُ «المشتق» الصرفيّ المقصود "
+                "في هذا البند"
             ),
             refusals=(
                 NamedRefusal(
@@ -649,11 +701,13 @@ SENTENCE_CARD_PREREGISTRATION: Final = SentenceCardPreregistration(
         _registration(
             item=CardItem.MUTABAQA_TADAMMUN_ILTIZAM,
             reference=FrozenReference.SHAKHSIYYA_THREE,
-            standing=ItemStanding.AWAITING_SOURCE_TEXT,
+            standing=ItemStanding.SOURCE_TEXT_SUPPLIED_WITHOUT_CERTIFICATE,
+            supplied_text_key="MUTABAQA_TADAMMUN_ILTIZAM_SHAKHSIYYA_THREE",
             note=(
-                "دلالاتُ المطابقة والتضمّن والالتزام لا مفردةَ لها في هذه الشجرة "
-                "ولا نصَّ مُثبَتًا؛ والموضعُ المذكورُ في الطلب (ج٣:1024، 1028) "
-                "غيرُ مُقابَلٍ بطبعةٍ محقَّقة"
+                "زُوِّد نصُّ الدلالات الثلاث بحروفه في `sentence_card_source_"
+                "texts`، فسقط عن البند نقصُ النقل وحده: لا مفردةَ له بعد، ولا "
+                "دالّةَ قرار، ولا شاهدَ لكلّ فرع؛ وموضعُه `موضع_غير_متحقق` لأنّ "
+                "المصدرَ ملفُّ `.docx` بلا بيانات طبعةٍ مؤكَّدة"
             ),
             refusals=(
                 NamedRefusal(
@@ -672,6 +726,14 @@ SENTENCE_CARD_PREREGISTRATION: Final = SentenceCardPreregistration(
                         "BeforeItsText`"
                     ),
                 ),
+                NamedRefusal(
+                    name="SuppliedTextIsNotAFormalCertificate",
+                    statement=(
+                        "تزويدُ النصّ يرفع نقصَ النقل ولا يُنشئ مجالًا مُجمَّدًا "
+                        "ولا حاملًا يُشتَقّ منه؛ فالبندُ لا يزال غيرَ مقروءٍ في "
+                        "أيّ بطاقة"
+                    ),
+                ),
             ),
         ),
         _registration(
@@ -679,9 +741,10 @@ SENTENCE_CARD_PREREGISTRATION: Final = SentenceCardPreregistration(
             reference=FrozenReference.LISAN_AL_ARAB,
             standing=ItemStanding.AWAITING_SOURCE_TEXT,
             note=(
-                "الدالُّ وحده بنيةٌ صوتيةٌ صرفيةٌ مجرّدة، ويلزمه مدخلُ (ن و ر) "
-                "منقولًا بحروفه؛ والمسبارُ التوزيعيُّ في هذه الشجرة يقيس توزيعًا "
-                "ولا يَنقُل معجمًا"
+                "الدالُّ وحده بنيةٌ صوتيةٌ صرفيةٌ مجرّدة؛ والمُزوَّدُ من مادة "
+                "(ن و ر) معانٍ ومنقولاتُ سلطاتٍ لا تحليلَ دالٍّ مجرّدٍ عن مدلوله، "
+                "فالبندُ يقف بعد قراءة المادة لا قبلها. والمسبارُ التوزيعيُّ في "
+                "هذه الشجرة يقيس توزيعًا ولا يَنقُل معجمًا"
             ),
             refusals=(
                 NamedRefusal(
@@ -727,7 +790,9 @@ SENTENCE_CARD_PREREGISTRATION: Final = SentenceCardPreregistration(
             note=(
                 "الاقترانُ لا يُعرَف إلا بالنقل كما يُقرّره `wad_naql`، ولم "
                 "يُقدَّم هنا نقلٌ تفسيريٌّ مُسنَدٌ بحروفه لهذا الاستعمال بعينه؛ "
-                "فالبندُ `مصدر_غير_مُقدَّم` نتيجةً لا خانةً فارغة"
+                "فالبندُ `مصدر_غير_مُقدَّم` نتيجةً لا خانةً فارغة. ورفعُ بندَي "
+                "الوزن والاشتقاق بنصٍّ مُزوَّدٍ لا يمسّه، ولا يرفعه رفعُ «الدال "
+                "وحده» لو وقع، لأنّ `refuse_derivation` يرفض الطريقين معًا"
             ),
             refusals=(
                 NamedRefusal(
@@ -751,11 +816,13 @@ SENTENCE_CARD_PREREGISTRATION: Final = SentenceCardPreregistration(
         _registration(
             item=CardItem.WAZN,
             reference=FrozenReference.LISAN_AL_ARAB,
-            standing=ItemStanding.AWAITING_SOURCE_TEXT,
+            standing=ItemStanding.SOURCE_TEXT_SUPPLIED_WITHOUT_CERTIFICATE,
+            supplied_text_key="WAZN_LISAN_NUR",
             note=(
-                "الوزنُ بلا نصٍّ معجميٍّ منقول؛ ويُسجَّل هنا ما نبّه عليه سجلُّ "
-                "`arabic_identity_confusion_catalog` من أنّ فضاء الأوزان أكثرُ "
-                "أعضائه ليس ألفاظًا مستعمَلة"
+                "زُوِّد من مادة (ن و ر) نصٌّ يُسمّي وزنًا بعينه مُسنَدًا إلى ثعلب "
+                "(«منارة وهي مفعلة من النور»)؛ ووزنُ «نور» نفسه غيرُ منصوصٍ في "
+                "المقطع، فالمزوَّدُ نصُّ سلطةٍ في وزن مشتقٍّ من المادة لا وزنُ "
+                "كلمة البطاقة، والفارقُ يُسجَّل ولا يُطوى"
             ),
             refusals=(
                 NamedRefusal(
@@ -773,16 +840,25 @@ SENTENCE_CARD_PREREGISTRATION: Final = SentenceCardPreregistration(
                         "وذلك عينُ تصادم المتجانسات المرصود في السجلّ نفسه"
                     ),
                 ),
+                NamedRefusal(
+                    name="WaznOfADerivativeIsNotTheWaznOfTheCardWord",
+                    statement=(
+                        "«مفعلة» وزنُ «منارة» في النصّ المنقول، ولا يُقرأ وزنًا "
+                        "لـ«نور» في الآية؛ وحملُ أحدهما على الآخر كتابةُ نتيجةٍ "
+                        "لا يحملها النصّ"
+                    ),
+                ),
             ),
         ),
         _registration(
             item=CardItem.ISHTIQAQ_SARF,
             reference=FrozenReference.LISAN_AL_ARAB,
-            standing=ItemStanding.AWAITING_SOURCE_TEXT,
+            standing=ItemStanding.SOURCE_TEXT_SUPPLIED_WITHOUT_CERTIFICATE,
+            supplied_text_key="ISHTIQAQ_SARF_LISAN_NUR",
             note=(
-                "الجذرُ والمصدرُ يلزمهما مدخلُ المعجم بحروفه؛ ولا تُقدِّم هذه "
-                "الشجرة إلا قياسًا توزيعيًّا على مجموعة جذورٍ مفتوحةٍ لا نقلًا "
-                "معجميًّا لهذه المادة"
+                "زُوِّد نصٌّ مُسنَدٌ إلى الجوهري يَنسِب «مناور» إلى النور ويُعلِّل "
+                "الهمزَ تشبيهًا بالأصليّ؛ وهو نقلُ سلطةٍ في اشتقاق المادة، ولا "
+                "يقوم مقامَ مجالٍ صوريٍّ للجذر والمصدر لا يزال غيرَ مُرمَّز"
             ),
             refusals=(
                 NamedRefusal(
@@ -797,6 +873,13 @@ SENTENCE_CARD_PREREGISTRATION: Final = SentenceCardPreregistration(
                     statement=(
                         "كونُ المادة ثلاثيةً جوفاء قراءةٌ صرفيةٌ تحتاج سندَها، "
                         "ولا تُقرأ من عدد حروف السطح"
+                    ),
+                ),
+                NamedRefusal(
+                    name="SuppliedLexiconLineIsNotAMorphologicalDomain",
+                    statement=(
+                        "سطرٌ معجميٌّ مُسنَدٌ يرفع نقصَ النقل ولا يُنشئ قسمةً "
+                        "صرفيةً مغلقةً ولا دالّةَ اشتقاقٍ تُقرأ بها البطاقة"
                     ),
                 ),
             ),
@@ -862,8 +945,11 @@ SENTENCE_CARD_PREREGISTRATION: Final = SentenceCardPreregistration(
             reference=FrozenReference.SHAKHSIYYA_THREE,
             standing=ItemStanding.AWAITING_SOURCE_TEXT,
             note=(
-                "سندُ المقام في الطلب «سياقُ السورة»، وهو ليس نقلًا عن مصدرٍ "
-                "مُسمًّى؛ فالبندُ ينتظر نصًّا يُثبِت مفردةَ المقامات وحصرَها"
+                "بُحِث عن تعريفٍ إجرائيٍّ للمقام في المصدر المُعلَن (ج٣) فلم "
+                "يُوجَد أصلًا، فجنسُ وقوفه غيرُ جنس ما سبق: "
+                "`TERM_NOT_LOCATED_IN_DECLARED_SOURCE` لا «موضعٌ غيرُ متحقَّق». "
+                "وقد يكون مصطلحًا بلاغيًّا في علم المعاني لا أصوليًّا، ولا "
+                "يُبدَّل مرجعُه المُعلَن بعد رؤية النتيجة"
             ),
             refusals=(
                 NamedRefusal(
@@ -886,11 +972,12 @@ SENTENCE_CARD_PREREGISTRATION: Final = SentenceCardPreregistration(
         _registration(
             item=CardItem.KHABAR_INSHA,
             reference=FrozenReference.SHAKHSIYYA_THREE,
-            standing=ItemStanding.AWAITING_SOURCE_TEXT,
+            standing=ItemStanding.SOURCE_TEXT_SUPPLIED_WITHOUT_CERTIFICATE,
+            supplied_text_key="KHABAR_INSHA_SHAKHSIYYA_THREE",
             note=(
-                "قسمةُ الخبر والإنشاء بلا مفردةٍ ولا نصٍّ في هذه الشجرة؛ وتعليلُ "
-                "الطلب («يحتمل الصدقَ والكذبَ عقلًا») يخلط حدَّ الخبر بحكمٍ على "
-                "مضمونه فيلزمه فصلٌ صريح"
+                "زُوِّد نصُّ الفرق بين الخبر والإنشاء بحروفه، وفيه فارقٌ ثانٍ لم "
+                "يذكره الطلب: مقارنةُ الإنشاء للفظ دون الخبر. ولا مفردةَ للقسمة "
+                "بعد ولا شاهدَ لفرعيها، والموضعُ `موضع_غير_متحقق`"
             ),
             refusals=(
                 NamedRefusal(
@@ -982,6 +1069,10 @@ NAMED_REFUSALS: Final[tuple[NamedRefusal, ...]] = (
     NamedRefusal(
         name="ParallelFrontIsNotABlockedFront", statement=PARALLEL_FRONT_READING_NOTE
     ),
+    NamedRefusal(
+        name="SuppliedTextIsNotAFormalCertificate",
+        statement=SUPPLIED_TEXT_IS_NOT_A_CERTIFICATE_NOTE,
+    ),
 )
 
 
@@ -1004,17 +1095,87 @@ NAMED_RESIDUALS: Final[MappingProxyType[str, str]] = MappingProxyType(
         ),
         "SHAKHSIYYA_VOLUME_THREE_LOCUS_NOT_VERIFIED": (
             "مواضعُ الجزء الثالث المذكورةُ في الطلب (743-745، و719، و761، و"
-            "1024، و1028) لم تُقابَل بطبعةٍ محقَّقةٍ في اليد ولا نُقِلت حروفُها "
-            "هنا؛ فهي إحالةٌ غيرُ متحقَّقة على منوال "
-            "`PRINT_EDITION_LOCUS_NOT_VERIFIED`. وهذه البقيّةُ لا تمسّ "
-            "المُشتَقّ: البنودُ المُشتَقّة تقرأ مجالاتٍ مُجمَّدةً قائمةً في "
-            "الشجرة لا أرقامَ صفحات"
+            "1024، و1028) لم تُقابَل بطبعةٍ محقَّقةٍ في اليد؛ فهي إحالةٌ غيرُ "
+            "متحقَّقة على منوال `PRINT_EDITION_LOCUS_NOT_VERIFIED`. **وقد "
+            "نُقِلت منها حروفٌ بعد ذلك**: نصّا الدلالات الثلاث والخبر/الإنشاء "
+            "مُثبَتان الآن في `sentence_card_source_texts` عن نسخة `.docx` "
+            "مرفوعةٍ بلا بيانات طبعةٍ مؤكَّدة، فارتفع نقصُ النقل وحده وبقي نقصُ "
+            "الموضع بحاله، وأرقامُ تلك «السطور» ترقيمُ استخراجٍ آليّ "
+            "(`EXTRACTED_LINE_NUMBERS_ARE_NOT_PRINT_PAGINATION`). وهذه البقيّةُ "
+            "لا تمسّ المُشتَقّ: البنودُ المُشتَقّة تقرأ مجالاتٍ مُجمَّدةً قائمةً "
+            "في الشجرة لا أرقامَ صفحات"
         ),
         "NAHW_AND_LISAN_TEXTS_ARE_ABSENT_FROM_THIS_TREE": (
-            "لا يَرِد في هذه الشجرة حرفٌ واحدٌ منقولٌ من «النحو الواضح» ولا "
-            "مادةُ (ن و ر) من «لسان العرب»، فستّةُ بنودٍ تقف بذلك نتيجةً لا "
-            "عطلًا. **وأيُّ مدخلٍ يُفنّد هذا الوقوف؟** مقطعٌ منقولٌ بحروفه "
-            "يحمل اسمَ سلطته نصًّا كما يُلزِم `LexicalAttribution`"
+            "**هذه البقيّةُ سقطت شطرُها وبقي شطرُها، ولا تُمحى بل تُقرأ "
+            "مؤرَّخة**. نصُّها الأوّل: «لا يَرِد في هذه الشجرة حرفٌ واحدٌ منقولٌ "
+            "من النحو الواضح ولا مادةُ (ن و ر) من لسان العرب، فستّةُ بنودٍ تقف "
+            "بذلك». وقد أُجري البحثُ فعلًا فوُجِدت مادةُ (ن و ر) في شاهدٍ رقميٍّ "
+            "مُسمًّى، ونُقِل منها مقطعان مُسنَدان إلى ثعلب والجوهري، فارتفع "
+            "الشطرُ المعجميُّ في بندَين (الوزن، والاشتقاق والصرف) وبقي بندان "
+            "معجميّان واقفَين لأنّ المادة لا تحمل نصَّهما "
+            "(`LISAN_NUR_MATERIAL_CARRIES_NO_JAMID_MUSHTAQ_OR_DAL_ALONE_"
+            "STATEMENT`). أمّا شطرُ «النحو الواضح» فلم يسقط ولا يُتوقَّع سقوطُه: "
+            "جنسُه `MODERN_COPYRIGHTED_SOURCE_NOT_DIGITIZED_OPENLY`. **وأيُّ "
+            "مدخلٍ يُفنّد ما بقي؟** مقطعٌ منقولٌ بحروفه يحمل اسمَ سلطته نصًّا "
+            "كما يُلزِم `LexicalAttribution`"
+        ),
+        "LISAN_NUR_MATERIAL_CARRIES_NO_JAMID_MUSHTAQ_OR_DAL_ALONE_STATEMENT": (
+            "مادةُ (ن و ر) قُرِئت كاملةً في الشاهد الرقميّ المُسمّى ومُسِحت، "
+            "فلم يقع فيها لفظُ «مشتق» ولا «اشتقاق»، ولا تحليلٌ للدالّ مجرّدًا عن "
+            "مدلوله؛ فبندا «جامد/مشتق» و«الدال وحده» يقفان **بعد قراءة المصدر "
+            "لا قبله**، وهذا وقوفٌ بنتيجةِ مسحٍ جرى لا بغياب بحث. ومن قرأ "
+            "«زُوِّدت المادةُ» رفعًا لكلّ بندٍ معجميٍّ فقد عمّم ما لم يُقرَأ. "
+            "**وأيُّ مدخلٍ يُفنّده؟** موضعٌ في المادة نفسها — أو تصريحٌ بمادةٍ "
+            "أخرى مُعلَنةٍ قبل قراءتها — يحمل نصَّ أحد البندين بحروفه"
+        ),
+        "TERM_NOT_LOCATED_IN_DECLARED_SOURCE": (
+            "**جنسٌ غيرُ جنس «الموضع غير المتحقَّق»، والفرقُ حامل**: هناك موضعٌ "
+            "مذكورٌ لم يُقابَل بطبعة، وهنا **المصطلحُ غائبٌ عن المصدر المُعلَن "
+            "أصلًا**. بُحِث عن تعريفٍ إجرائيٍّ لـ«المقام» في الجزء الثالث فلم "
+            "يُوجَد، فبقي البندُ معلَّقًا بهذا الجنس وحده. ولم يُبدَّل مرجعُه "
+            "المُعلَن ولم تُوسَّع مفردةُ `FrozenReference` لتسَع مرجعًا بلاغيًّا، "
+            "لأنّ تبديلَ المصدر بعد رؤية النتيجة هو عينُ ما يُبطِل التسجيلَ "
+            "المسبق. **وأيُّ مدخلٍ يُفنّده؟** موضعٌ في ج٣ يحمل حدَّ المقام "
+            "وقسمتَه بحروفه"
+        ),
+        "MODERN_COPYRIGHTED_SOURCE_NOT_DIGITIZED_OPENLY": (
+            "**امتناعٌ قانونيٌّ دائم لا فجوةُ بحثٍ مؤقتة**: «النحو الواضح» — "
+            "ومثلُه «المعجم الوسيط» الذي لا بندَ في هذه البطاقة مُحالٌ عليه "
+            "أصلًا فيُسجَّل امتناعُه عامًّا بلا ربطٍ مُختلَق — عملان حديثان "
+            "محميّان بحقوق نشرٍ فعلية، لا تراثيّان كلسان العرب؛ فلا يُتوقَّع "
+            "وجودُهما في كوربصٍ مفتوح، ولا يُهدَر في طلبهما بحثٌ إضافيّ. "
+            "**وأيُّ مدخلٍ يرفعه؟** نسخةٌ مُرخَّصةٌ مشروعةٌ في اليد يُنقَل منها "
+            "بحروفها؛ ولا يرفعه وجودُ نصٍّ منشورٍ بلا ترخيص"
+        ),
+        "DIGITALLY_ENCODED_PRINT_PAGINATION_UNCOLLATED": (
+            "**مرتبةٌ وسطى مُسمّاة، لا شاهدٌ رقميٌّ خام ولا مقابلةٌ باليد**: "
+            "علاماتُ `PageV05P240`…`PageV05P245` في الشاهد المُعتمَد ترقيمُ "
+            "**طبعةٍ ورقيةٍ مُسمّاةٍ ببياناتها** (دار صادر، ط٣، ١٤١٤هـ) مُضمَّنٌ "
+            "في النصّ، لا ترقيمُ موقعٍ إلكترونيّ؛ فهو أوثقُ ممّا رُدَّ به "
+            "الطبريُّ وأدنى ممّا تُثبِته مقابلةُ نسخةٍ ورقيةٍ محقَّقةٍ في اليد، "
+            "على منوال «[ص: 372]» في مقطع فتح الباري. وجنسُه مُسمًّى في "
+            "`LocusVerification.ترقيم_طبعة_مرمز_رقميا_غير_مقابل`، ويبقى العضوُ "
+            "الأعلى `مقابل_بنسخة_ورقية_محققة` **بلا مدخلٍ اليوم** فلا يُقرأ "
+            "الوسطُ سقفًا. **وأيُّ مدخلٍ يرفعه؟** مقابلةُ هذه الحروف بنسخةٍ "
+            "ورقيةٍ محدَّدةِ الدار والسنة والطبعة"
+        ),
+        "EXTRACTED_LINE_NUMBERS_ARE_NOT_PRINT_PAGINATION": (
+            "كلُّ ترقيم «سطر» ورد في طلبات هذه البطاقة (٧١٩، و٨٩٢، و١٠٢٤، "
+            "و١٠٢٨، و٧٤٣-٧٤٥…) **ترقيمٌ آليٌّ من استخراجٍ نصيٍّ لملفّ `.docx`، "
+            "لا ترقيمُ صفحاتِ طبعةٍ مطبوعةٍ معتمَدة**؛ فهو غيرُ قابلٍ للاستشهاد "
+            "الخارجيّ حتى تُقابَل تلك الفقراتُ بنسخةٍ ورقيةٍ محدَّدة الدار "
+            "والسنة والطبعة. وهذا يسري على كلّ ما نُقِل من الجزء الثالث في هذه "
+            "الشجرة، ومنه النصّان المُزوَّدان في `sentence_card_source_texts`. "
+            "**وأيُّ مدخلٍ يرفعه؟** بياناتُ طبعةٍ مُسمّاةٍ وصفحةٌ فيها تُقابَل "
+            "بها الحروفُ المنقولة"
+        ),
+        "LISAN_MATN_IS_QUOTED_NOT_VENDORED_WHOLESALE": (
+            "متنُ لسان العرب (ابن منظور، ت٧١١هـ) مِلكٌ عامٌّ في نفسه، ولا ملفَّ "
+            "ترخيصٍ في مستودع الشاهد الرقميّ المُعتمَد؛ فالمنقولُ هنا "
+            "**اقتباساتٌ قصيرةٌ مُسنَدةٌ من المتن** لا المادةُ كاملةً ببنيتها "
+            "المُوسَّمة وعلامات صفحاتها، إذ الذي قد يحمل جهدًا محميًّا هو "
+            "التوسيمُ والترقيمُ الرقميّان لا كلماتُ ابن منظور. "
+            "`PublicDomainMatnIsNotAnOpenLicence`"
         ),
         "TASHKIK_DIVERGENCE_IS_A_READING_NOT_A_CORRECTION": (
             "نصُّ المصدر المُثبَتُ في `kulli_juzi_formal` يَسوق «النور» في مثال "
@@ -1049,8 +1210,10 @@ if len(CardItem) != 19:  # pragma: no cover - guard
     raise RuntimeError("بنودُ البطاقة تسعةَ عشرَ بندًا مغلقة.")
 if len(FrozenReference) != 3:  # pragma: no cover - guard
     raise RuntimeError("المراجعُ ثلاثةٌ مُجمَّدةٌ مغلقة.")
-if len(ItemStanding) != 3:  # pragma: no cover - guard
-    raise RuntimeError("موقفُ البند ثلاثيٌّ مغلق.")
+if len(ItemStanding) != 4:  # pragma: no cover - guard
+    raise RuntimeError(
+        "موقفُ البند رباعيٌّ مغلق: ثلاثيةٌ تُخفي حالةَ نصٍّ زُوِّد بلا شهادةٍ صورية."
+    )
 if len(SupportCoding) != 3:  # pragma: no cover - guard
     raise RuntimeError("حالُ الترميز ثلاثيةٌ مغلقة.")
 if set(_DERIVED_PREREQUISITES) != set(CardItem):  # pragma: no cover - guard

@@ -1847,6 +1847,55 @@ single traversal in `tests/arabic/test_sentence_card_nur_24_35.py`, not in a
 production module, because the card has not yet proved its worth on one
 complete sentence.
 
+Four of the card's ten items awaiting a source text have since been **supplied
+with one, and the search behind two of them was actually run rather than
+assumed**. The material «ن و ر» of *Lisān al-ʿArab* was located inside the
+OpenITI corpus at
+`OpenITI/RELEASE:data/0711IbnManzurIfriqi/0711IbnManzurIfriqi.LisanCarab/…Shamela0001687-ara1.mARkdown`,
+whose own header declares the print edition it paginates (Dār Ṣādir, 3rd ed.
+1414 AH, 15 vols.) and whose embedded `PageV05P240…P245` markers bound the
+material to volume 5. Two short attributed lines were transcribed from it — one
+to Thaʿlab on the pattern «مفعلة», one to al-Jawharī on the derivation of
+«مناور» — raising `الوزن` and `الاشتقاق والصرف`; two passages from the third
+volume of *al-Shakhṣiyya al-Islāmiyya* were transcribed for
+`مطابقة/تضمن/التزام` and `خبري/إنشائي`. That forced a structural decision
+rather than a cosmetic one: a supplied text is neither a waiting item, nor a
+formal certificate, nor a deferred one, so `ItemStanding` gained a named fourth
+member, `نصٌّ_مُزوَّدٌ_بلا_شهادة_صورية`, and the traversal now stops those items
+by that genus instead of reporting «مصدر غير مُقدَّم» for a source that was in
+fact supplied (`SuppliedTextIsNotAFormalCertificate`). Locus verification gained
+its own three-ranked vocabulary in
+`src/alghanem/arabic/sentence_card_source_texts.py`, whose **middle** rank is
+the point: digitally encoded pagination of a *named print edition*, uncollated
+by hand (`DIGITALLY_ENCODED_PRINT_PAGINATION_UNCOLLATED`), ranks above a source
+that names no edition at all and below hand collation — and the top member
+`مقابل_بنسخة_ورقية_محققة` deliberately has **no entry today**. Only short
+attributed excerpts were transcribed, never the tagged material wholesale:
+Ibn Manẓūr's متن is public domain while the digital tagging effort is not
+(`PublicDomainMatnIsNotAnOpenLicence`). What did **not** fall is recorded with
+the same care as what did. Scanning the whole material returned zero
+occurrences of «مشتق» or «اشتقاق» and no signifier-alone analysis, so
+`جامد/مشتق` and `الدال وحده` stop *after* reading the source rather than before
+it; «المقام» has no operational definition anywhere in the declared volume, so
+it stops by a different genus altogether
+(`TERM_NOT_LOCATED_IN_DECLARED_SOURCE`) and its frozen reference was **not**
+swapped after seeing that result; *al-Naḥw al-Wāḍiḥ* and *al-Muʿjam al-Wasīṭ*
+are modern copyrighted works whose absence is a permanent legal refusal, not a
+research gap (`MODERN_COPYRIGHTED_SOURCE_NOT_DIGITIZED_OPENLY`); and every
+«line number» quoted from the `.docx` extraction is marked non-citable until
+collated against a named print edition
+(`EXTRACTED_LINE_NUMBERS_ARE_NOT_PRINT_PAGINATION`). One unprompted finding came
+out of the traversal: `الاشتقاق والصرف` still stops, although its own text is
+now supplied, because its derived prerequisite `الوزن` has not been reached —
+the sequential law again, one level down. The card's `طريق_النقل_المعجمي` now
+carries four internally named attributions (Ibn al-Athīr, Abū Manṣūr, Thaʿlab,
+al-Jawharī) and therefore derives `إسناد_داخلي_متعاقب_مسمى` rather than
+`عنوان_واحد_مسطح` — the first real entry on that path — while source
+independence remains `NOT_ESTABLISHED` structurally, since all of it is
+transmitted inside one compiler's text. That the material opens by citing the
+card's own verse («قال الله عز وجل: الله نور السماوات والأرض») is recorded as a
+textual coincidence in the test, not read as an argument for anything.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future

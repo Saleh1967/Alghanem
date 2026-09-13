@@ -544,6 +544,19 @@ from .sentence_card_preregistration import (
 from .sentence_card_preregistration import (
     derived_prerequisites as sentence_card_derived_prerequisites,
 )
+from .sentence_card_source_texts import (
+    DIGITAL_WITNESS_TAGGING_IS_NOT_QUOTED_WHOLESALE_NOTE,
+    LISAN_DIGITAL_WITNESS,
+    PUBLIC_DOMAIN_MATN_IS_NOT_AN_OPEN_LICENCE_NOTE,
+    SUPPLIED_SOURCE_TEXTS,
+    SUPPLIED_TEXT_IS_NOT_A_CERTIFICATE_NOTE,
+    DigitalWitness,
+    LocusVerification,
+    SourceTextError,
+    SuppliedSourceText,
+    require_attested_excerpt,
+    supplied_text_for,
+)
 from .transmission_standing import (
     AHAD_IS_NEVER_EXEMPT_FROM_RECHECK_NOTE,
     ASYMMETRIC_DERIVATION_NOTE,
@@ -1098,6 +1111,17 @@ __all__ = [
     "SubOutcome",
     "SubPartition",
     "SubPartitionCarrier",
+    "DIGITAL_WITNESS_TAGGING_IS_NOT_QUOTED_WHOLESALE_NOTE",
+    "LISAN_DIGITAL_WITNESS",
+    "PUBLIC_DOMAIN_MATN_IS_NOT_AN_OPEN_LICENCE_NOTE",
+    "SUPPLIED_SOURCE_TEXTS",
+    "SUPPLIED_TEXT_IS_NOT_A_CERTIFICATE_NOTE",
+    "DigitalWitness",
+    "LocusVerification",
+    "SourceTextError",
+    "SuppliedSourceText",
+    "require_attested_excerpt",
+    "supplied_text_for",
     "SupportCoding",
     "SurfaceAtomCandidate",
     "SurfaceAtomIntervention",
