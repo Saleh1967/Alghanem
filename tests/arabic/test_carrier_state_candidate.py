@@ -18,6 +18,9 @@ from alghanem.arabic.encoding.carrier_state_candidate import (
     ENCODING_LAYER_REGISTRY,
     MEASURED_INVERTIBILITY_SOURCES,
     NO_WEAKER_MODEL_WAS_LICENSED_OR_FROZEN,
+    ONE_SOURCE_IS_MEASURED_TWO_REMAIN_UNMEASURED,
+    QURANIC_CORPUS_INVERTIBILITY,
+    REFUSAL_IS_NOT_A_ROUND_TRIP,
     ROUND_TRIP_IS_INVERTIBILITY_NOT_ATOMICITY,
     SOURCE_PERCENTAGES_ARE_UNMEASURED_HERE,
     THREE_SOURCES_ARE_CORPUS_BOUNDED,
@@ -33,6 +36,7 @@ from alghanem.arabic.encoding.carrier_state_candidate import (
     derive_alef_states,
     round_trip_holds,
 )
+from alghanem.arabic.irab_corpus_witness import QURANIC_ARABIC_CORPUS_WITNESS
 
 CODEC = CarrierStateCodec()
 
@@ -275,11 +279,72 @@ def test_the_carrier_set_is_declared_and_holds_no_foreign_letter() -> None:
 # --- measurement over an external source -----------------------------------
 
 
-def test_no_external_percentage_is_recorded_without_a_digest() -> None:
-    assert MEASURED_INVERTIBILITY_SOURCES == ()
-    assert "MEASURED_INVERTIBILITY_SOURCES is empty" in (
+def test_every_recorded_source_carries_the_digest_that_re_derives_it() -> None:
+    assert MEASURED_INVERTIBILITY_SOURCES == (QURANIC_CORPUS_INVERTIBILITY,)
+    for source in MEASURED_INVERTIBILITY_SOURCES:
+        assert len(source.source_sha256) == 64
+        assert source.source_byte_length > 0
+    assert QURANIC_CORPUS_INVERTIBILITY.source_sha256 == (
+        QURANIC_ARABIC_CORPUS_WITNESS.sha256
+    )
+    assert QURANIC_CORPUS_INVERTIBILITY.source_byte_length == (
+        QURANIC_ARABIC_CORPUS_WITNESS.byte_length
+    )
+    assert "superseded" in SOURCE_PERCENTAGES_ARE_UNMEASURED_HERE
+    assert "ONE_SOURCE_IS_MEASURED_TWO_REMAIN_UNMEASURED" in (
         SOURCE_PERCENTAGES_ARE_UNMEASURED_HERE
     )
+    assert "not a measured language" in ONE_SOURCE_IS_MEASURED_TWO_REMAIN_UNMEASURED
+
+
+def test_a_refused_token_is_outside_the_denominator_and_says_so() -> None:
+    measurement = InvertibilityMeasurement(
+        source_id="probe",
+        source_sha256="a" * 64,
+        source_byte_length=12,
+        normalization_form="NFC",
+        unicode_database_version=unicodedata.unidata_version,
+        token_total=10,
+        token_mismatches=1,
+        token_refusals=2,
+    )
+    assert measurement.accepted_tokens == 8
+    assert measurement.matched_tokens == 7
+    assert measurement.matched_fraction == 7 / 8
+    assert "over accepted tokens" in REFUSAL_IS_NOT_A_ROUND_TRIP
+    assert QURANIC_CORPUS_INVERTIBILITY.token_refusals == 6
+    assert QURANIC_CORPUS_INVERTIBILITY.matched_fraction == 1.0
+
+
+def test_a_measurement_that_accepted_nothing_is_not_a_measurement() -> None:
+    base = {
+        "source_id": "probe",
+        "source_sha256": "a" * 64,
+        "source_byte_length": 12,
+        "normalization_form": "NFC",
+        "unicode_database_version": unicodedata.unidata_version,
+        "token_total": 4,
+        "token_mismatches": 0,
+    }
+    with pytest.raises(CarrierStateEncodingError, match="accepted no token"):
+        InvertibilityMeasurement(**{**base, "token_refusals": 4})
+    with pytest.raises(CarrierStateEncodingError, match="non-negative integer"):
+        InvertibilityMeasurement(**{**base, "token_refusals": -1})
+    with pytest.raises(CarrierStateEncodingError, match="contradictory claims"):
+        InvertibilityMeasurement(**{**base, "token_mismatches": 3, "token_refusals": 3})
+
+
+def test_measure_counts_a_refused_token_rather_than_propagating_its_error() -> None:
+    measurement = InvertibilityMeasurement.measure(
+        ["\u0628\u0650\u0633\u0652\u0645\u0650", "\u0628" + FATHA + DAMMA],
+        source_id="probe",
+        source_sha256="a" * 64,
+        source_byte_length=12,
+    )
+    assert measurement.token_total == 2
+    assert measurement.token_refusals == 1
+    assert measurement.token_mismatches == 0
+    assert measurement.matched_fraction == 1.0
 
 
 def test_a_measurement_derives_its_counts_by_running_the_codec() -> None:
@@ -336,6 +401,8 @@ def test_the_residuals_left_by_this_encoding_are_named_not_hidden() -> None:
         "THREE_SOURCES_ARE_CORPUS_BOUNDED",
         "CARRIER_SET_IS_DECLARED_NOT_DERIVED",
         "SOURCE_PERCENTAGES_ARE_UNMEASURED_HERE",
+        "ONE_SOURCE_IS_MEASURED_TWO_REMAIN_UNMEASURED",
+        "REFUSAL_IS_NOT_A_ROUND_TRIP",
         "UTHMANI_RESIDUE_MIXES_PHENOMENA_WITH_DROPPED_SYMBOLS",
         "ALEF_STATE_EXCLUSIVITY_IS_DECLARED_NOT_ENFORCED",
     }

@@ -62,12 +62,22 @@ requires the source's `sha256`, its byte length, the normalization form and the
 Unicode database version, on the pattern of
 `alghanem.arabic.level_two_source_texts.QaydAttributionScan`, and its counts
 are derived by running the codec rather than passed in.
-`MEASURED_INVERTIBILITY_SOURCES` is empty because no digest came with the deposit
-(`SOURCE_PERCENTAGES_ARE_UNMEASURED_HERE`), and the two Uthmani figures that
-arrived with it (93.38% and 95.76%) disagree with each other and were measured
-before the dropped-symbol defect was known, so they mix a codec defect with the
-Uthmani phenomena they were read as measuring
-(`UTHMANI_RESIDUE_MIXES_PHENOMENA_WITH_DROPPED_SYMBOLS`).
+
+One source is now measured. A later external revision of the deposited codec
+arrived with a digest-less claim of a clean round trip, and re-deriving it
+required a corpus that *is* fingerprinted — the Quranic Arabic Corpus deposit
+already named in `alghanem.arabic.irab_corpus_witness`. Its bytes stay
+unvendored on the Fatiha precedent (digest and byte length, never the bytes),
+and the counts it yields are recorded in `MEASURED_INVERTIBILITY_SOURCES`
+(`ONE_SOURCE_IS_MEASURED_TWO_REMAIN_UNMEASURED`). That rate is a rate **over
+accepted tokens**: six tokens are refused at construction by the
+already-closed silent-overwrite rule and are therefore outside the denominator,
+which is named rather than absorbed (`REFUSAL_IS_NOT_A_ROUND_TRIP`). The two
+Uthmani figures that arrived with the original deposit (93.38% and 95.76%)
+disagree with each other and were measured before the dropped-symbol defect was
+known, so they mix a codec defect with the Uthmani phenomena they were read as
+measuring (`UTHMANI_RESIDUE_MIXES_PHENOMENA_WITH_DROPPED_SYMBOLS`) and stay
+unmeasured here.
 
 Finally, a clean round trip over any closed text stays bounded by that text.
 `CompleteInductionIsCorpusBounded` refuses the step from an exhausted corpus to
@@ -95,6 +105,9 @@ __all__ = [
     "ENCODING_LAYER_REGISTRY",
     "MEASURED_INVERTIBILITY_SOURCES",
     "NO_WEAKER_MODEL_WAS_LICENSED_OR_FROZEN",
+    "ONE_SOURCE_IS_MEASURED_TWO_REMAIN_UNMEASURED",
+    "QURANIC_CORPUS_INVERTIBILITY",
+    "REFUSAL_IS_NOT_A_ROUND_TRIP",
     "ROUND_TRIP_IS_INVERTIBILITY_NOT_ATOMICITY",
     "SOURCE_PERCENTAGES_ARE_UNMEASURED_HERE",
     "THREE_SOURCES_ARE_CORPUS_BOUNDED",
@@ -143,9 +156,26 @@ CARRIER_SET_IS_DECLARED_NOT_DERIVED: Final = (
 )
 
 SOURCE_PERCENTAGES_ARE_UNMEASURED_HERE: Final = (
-    "no percentage over any external text is recorded here: a rate is only "
-    "re-derivable by a holder of the same bytes, and no source digest or byte "
-    "length was supplied with the deposit, so MEASURED_INVERTIBILITY_SOURCES is empty"
+    "superseded and kept under its old name so a reader of the earlier record "
+    "finds what replaced it: no percentage was recorded here while no source "
+    "digest or byte length had been supplied; see "
+    "ONE_SOURCE_IS_MEASURED_TWO_REMAIN_UNMEASURED for what is measured now"
+)
+
+ONE_SOURCE_IS_MEASURED_TWO_REMAIN_UNMEASURED: Final = (
+    "exactly one source is measured: the fingerprinted Quranic Arabic Corpus "
+    "deposit, recorded by digest and byte length and never by vendored bytes, "
+    "so a holder of the same bytes re-derives every count; the two Uthmani "
+    "figures that arrived with the deposit remain unmeasured, and a measured "
+    "source is not a measured language"
+)
+
+REFUSAL_IS_NOT_A_ROUND_TRIP: Final = (
+    "a token refused at construction is neither matched nor mismatched: it is "
+    "outside the denominator, so the derived fraction is a fraction over "
+    "accepted tokens and never over the source; token_refusals is carried "
+    "beside the two totals so a clean rate cannot hide how much it declined "
+    "to read"
 )
 
 UTHMANI_RESIDUE_MIXES_PHENOMENA_WITH_DROPPED_SYMBOLS: Final = (
@@ -170,6 +200,10 @@ CARRIER_STATE_NAMED_RESIDUALS: Final[dict[str, str]] = {
     "THREE_SOURCES_ARE_CORPUS_BOUNDED": THREE_SOURCES_ARE_CORPUS_BOUNDED,
     "CARRIER_SET_IS_DECLARED_NOT_DERIVED": CARRIER_SET_IS_DECLARED_NOT_DERIVED,
     "SOURCE_PERCENTAGES_ARE_UNMEASURED_HERE": SOURCE_PERCENTAGES_ARE_UNMEASURED_HERE,
+    "ONE_SOURCE_IS_MEASURED_TWO_REMAIN_UNMEASURED": (
+        ONE_SOURCE_IS_MEASURED_TWO_REMAIN_UNMEASURED
+    ),
+    "REFUSAL_IS_NOT_A_ROUND_TRIP": REFUSAL_IS_NOT_A_ROUND_TRIP,
     "UTHMANI_RESIDUE_MIXES_PHENOMENA_WITH_DROPPED_SYMBOLS": (
         UTHMANI_RESIDUE_MIXES_PHENOMENA_WITH_DROPPED_SYMBOLS
     ),
@@ -700,9 +734,11 @@ def derive_alef_states(
 class InvertibilityMeasurement:
     """A round-trip measurement over one external source, re-derivable by bytes.
 
-    It carries no percentage field. The rate is a property derived from the two
+    It carries no percentage field. The rate is a property derived from the
     counts, and the counts are produced by `measure` rather than passed in, so
-    a written rate with no measurement behind it is unsayable here.
+    a written rate with no measurement behind it is unsayable here. Tokens the
+    codec refuses at construction are counted separately and excluded from the
+    denominator by name, per `REFUSAL_IS_NOT_A_ROUND_TRIP`.
     """
 
     source_id: str
@@ -712,6 +748,7 @@ class InvertibilityMeasurement:
     unicode_database_version: str
     token_total: int
     token_mismatches: int
+    token_refusals: int = 0
 
     def __post_init__(self) -> None:
         for value, name in (
@@ -744,16 +781,36 @@ class InvertibilityMeasurement:
                 "more mismatches than tokens is two contradictory claims in one "
                 "measurement"
             )
+        if not isinstance(self.token_refusals, int) or self.token_refusals < 0:
+            raise CarrierStateEncodingError("a refusal total is a non-negative integer")
+        if self.token_refusals + self.token_mismatches > self.token_total:
+            raise CarrierStateEncodingError(
+                "more refused and mismatched tokens than tokens is two "
+                "contradictory claims in one measurement"
+            )
+        if self.token_refusals == self.token_total:
+            raise CarrierStateEncodingError(
+                "a measurement that accepted no token at all is not a "
+                "measurement; see REFUSAL_IS_NOT_A_ROUND_TRIP"
+            )
+
+    @property
+    def accepted_tokens(self) -> int:
+        """Tokens the codec read at all; refused tokens are not among them."""
+        return self.token_total - self.token_refusals
 
     @property
     def matched_tokens(self) -> int:
-        """Tokens that came back identical. Derived from the two totals."""
-        return self.token_total - self.token_mismatches
+        """Accepted tokens that came back identical. Derived from the totals."""
+        return self.accepted_tokens - self.token_mismatches
 
     @property
     def matched_fraction(self) -> float:
-        """The round-trip fraction, derived; see THREE_SOURCES_ARE_CORPUS_BOUNDED."""
-        return self.matched_tokens / self.token_total
+        """Over accepted tokens, not over the source: REFUSAL_IS_NOT_A_ROUND_TRIP.
+
+        Corpus-bounded besides; see THREE_SOURCES_ARE_CORPUS_BOUNDED.
+        """
+        return self.matched_tokens / self.accepted_tokens
 
     @classmethod
     def measure(
@@ -767,9 +824,15 @@ class InvertibilityMeasurement:
         """Run the codec over these tokens and record what it did, not a claim."""
         counted = 0
         mismatched = 0
+        refused = 0
         for token in tokens:
             counted += 1
-            if not round_trip_holds(token):
+            try:
+                held = round_trip_holds(token)
+            except CarrierStateEncodingError:
+                refused += 1
+                continue
+            if not held:
                 mismatched += 1
         return cls(
             source_id=source_id,
@@ -779,8 +842,38 @@ class InvertibilityMeasurement:
             unicode_database_version=unicodedata.unidata_version,
             token_total=counted,
             token_mismatches=mismatched,
+            token_refusals=refused,
         )
 
 
-MEASURED_INVERTIBILITY_SOURCES: Final[tuple[InvertibilityMeasurement, ...]] = ()
-"""Empty: see SOURCE_PERCENTAGES_ARE_UNMEASURED_HERE. Absence is not a failure."""
+QURANIC_CORPUS_INVERTIBILITY: Final[InvertibilityMeasurement] = (
+    InvertibilityMeasurement(
+        source_id=(
+            "Quranic Arabic Corpus (morphology) 0.4, segments joined into word "
+            "tokens by (sura:aya:word), Buckwalter transliterated"
+        ),
+        source_sha256=(
+            "a1d12923815341face765083805d2148ed2d9f5cc3f7d6665219d887675d8c46"
+        ),
+        source_byte_length=6_309_503,
+        normalization_form="NFC",
+        unicode_database_version="15.0.0",
+        token_total=77_429,
+        token_mismatches=0,
+        token_refusals=6,
+    )
+)
+"""Re-derived by `examples/irab/measure_carrier_state_invertibility.py`.
+
+The digest and byte length are the ones already frozen in
+`alghanem.arabic.irab_corpus_witness.QURANIC_ARABIC_CORPUS_WITNESS`; the bytes
+are not vendored here, on the same terms as every other external witness in
+this tree. Six tokens are refused rather than read, and the derived fraction is
+over the accepted remainder: `REFUSAL_IS_NOT_A_ROUND_TRIP`.
+"""
+
+
+MEASURED_INVERTIBILITY_SOURCES: Final[tuple[InvertibilityMeasurement, ...]] = (
+    QURANIC_CORPUS_INVERTIBILITY,
+)
+"""One source, measured. See ONE_SOURCE_IS_MEASURED_TWO_REMAIN_UNMEASURED."""

@@ -2317,18 +2317,62 @@ alphabetic codepoint of every script a carrier, and it says of itself that it is
 declared and not derived from any property of Arabic
 (`CARRIER_SET_IS_DECLARED_NOT_DERIVED`).
 
-No percentage over any external text is recorded. A rate is re-derivable only by
-a holder of the same bytes, so `InvertibilityMeasurement` requires the source's
-`sha256`, its byte length, the normalization form and the Unicode database
-version, on the pattern of `QaydAttributionScan`, and derives its counts by
-running the codec rather than accepting them; it carries no percentage field at
-all. `MEASURED_INVERTIBILITY_SOURCES` is therefore empty, since no digest came
-with the deposit (`SOURCE_PERCENTAGES_ARE_UNMEASURED_HERE`), and a clean round
-trip over a closed text would in any case stay bounded by it under
-`CompleteInductionIsCorpusBounded` (`THREE_SOURCES_ARE_CORPUS_BOUNDED`). What
-the tests do establish is stated with its bound: every embedded case and a
-bounded probe of a few thousand generated surfaces round-trip exactly and no two
-distinct surfaces share one unit sequence *within that probe*.
+No percentage over any external text was recorded at first. A rate is
+re-derivable only by a holder of the same bytes, so `InvertibilityMeasurement`
+requires the source's `sha256`, its byte length, the normalization form and the
+Unicode database version, on the pattern of `QaydAttributionScan`, and derives
+its counts by running the codec rather than accepting them; it carries no
+percentage field at all. One source is now measured. A second external revision
+of the deposited codec arrived later, claiming a clean round trip at 100.0000%
+over "78,245" Quranic words and over an unnamed modern-Arabic sample, and
+re-deriving that claim required a corpus that *is* fingerprinted — the Quranic
+Arabic Corpus deposit already recorded in `irab_corpus_witness`, digest and byte
+length only, never vendored bytes. The result is
+`QURANIC_CORPUS_INVERTIBILITY`, and it is stated with the bound that makes it
+honest: six of its 77,429 words are refused at construction by the
+already-closed silent-overwrite rule rather than read, so the derived fraction
+is a fraction over accepted tokens and `token_refusals` is carried beside the
+other two totals (`REFUSAL_IS_NOT_A_ROUND_TRIP`). The two Uthmani figures that
+came with the original deposit stay unmeasured
+(`ONE_SOURCE_IS_MEASURED_TWO_REMAIN_UNMEASURED`), and a clean round trip over a
+closed text stays bounded by it under `CompleteInductionIsCorpusBounded`
+(`THREE_SOURCES_ARE_CORPUS_BOUNDED`). What the tests establish is stated with
+its bound: every embedded case and a bounded probe of a few thousand generated
+surfaces round-trip exactly and no two distinct surfaces share one unit sequence
+*within that probe*.
+
+### Auditing a deposited revision by running it, not by reading it
+
+`src/alghanem/arabic/gflk_codec_revision_audit.py` records what that 100.0000%
+claim did when it was re-derived here. It came back **99.992251%**: six real
+words of the corpus are corrupted silently, `فَٱدَّٰرَْٰٔتُمْ` losing a fatha
+with no warning, and all six are one genus — a second write over a state already
+read, which is the first defect this tree had already named and closed, restored
+by the revision's own loop (`SILENT_OVERWRITE_DEFECT_REINSTATED`). The second
+closed defect is restored too: `madd_self` still returns before reading the
+fields written beside it, so `آً` comes back as `آ`. Those forms never occur in
+the Quranic corpus, which is exactly why a corpus rate could read as 100% while
+they were broken (`A_CORPUS_RATE_DOES_NOT_COVER_THE_UNATTESTED`). The claimed
+population is unidentified — no digest, no byte length, no tokenization rule, so
+the 816-word gap from the measured 77,429 cannot be attributed
+(`THE_CLAIMED_CORPUS_IS_UNIDENTIFIED`) — and the "independent" second source was
+run with the same tool and the same success criterion, which is one line of
+evidence run twice rather than two (`SECOND_SOURCE_IS_NOT_AN_INDEPENDENT_LINE`).
+One thing in the revision is a genuine repair and is credited by running it:
+non-carrier symbols are no longer dropped, so `العربية!` and `hello` survive
+(`PASSTHROUGH_DEFECT_IS_GENUINELY_CLOSED_IN_THE_DEPOSIT`).
+
+The refusal is computed, not written. `CodecRevisionAudit` has no field a
+verdict could be placed in — a guard runs at import to keep one from being added
+later — and `outcome` is derived from comparing the claim against the
+measurement and from the standing residuals, so both branches are reachable and
+changing the verdict means changing an input that shows. Every number above is
+re-derived by `examples/irab/measure_carrier_state_invertibility.py` against the
+fingerprinted bytes, including the six locations by `(sura:aya:word)`; none is
+written by hand into the tree. And a clean round trip, had it held, would still
+have shown only that the encoding loses nothing
+(`ROUND_TRIP_IS_INVERTIBILITY_NOT_ATOMICITY`): nothing here is born, ranked or
+frozen, and no gate in `kernel/` reads any of it.
 
 ### Scanning two adjacent sukuns without buying a hundred per cent
 
@@ -2388,6 +2432,57 @@ a language avoids the adjacency because avoiding it is easier is an induction
 over the utterances met and bounded by them; no weaker model was licensed or
 frozen for this predicate, so nothing here is born, ranked, or frozen
 (`PHONETIC_ECONOMY_IS_AN_INDUCTION_NOT_A_LICENCE`).
+
+### Asking whether a relation layer exists at all, before writing a reader for it
+
+The previous round closed with a named absence: the Quranic Arabic Corpus
+morphology file carries four columns, not ten, and no head or relation among
+them — `SYNTACTIC_LAYER_ABSENT_IN_THIS_FORMAT`. That closed one format, not the
+question. `src/alghanem/arabic/ud_relation_layer_step0.py` is a step-zero record
+for the separate question: does *any* reachable Arabic treebank actually carry a
+populated dependency layer? It is a census and a deposit, not a reader
+(`STEP_ZERO_IS_NOT_A_READER`). It measures no syntactic function and compares no
+claim of objecthood against another; whether such a measurement is ever run is a
+separate decision this module does not take.
+
+Five files were fetched and read as bytes rather than as project descriptions.
+`ar_pud-ud-test` (1,000 sentences, 20,747 tokens) and the three
+`ar_padt-ud-*` files (7,664 sentences, 282,384 tokens in total) carry `HEAD` and
+`DEPREL` populated on *every* token line, so the outcome for them is
+`RELATION_LAYER_PRESENT`. `ar_nyuad-ud-test` is the case that a project
+description would have hidden: its `HEAD` and `DEPREL` are populated on all
+74,125 tokens while `FORM` and `LEMMA` are an underscore on all 74,125, because
+the underlying Penn Arabic Treebank text is LDC-licensed and was removed. That
+is `RELATION_LAYER_PRESENT_BUT_LICENCE_BLOCKED`: an annotation layer over words
+that are not there (`SURFACE_WITHHELD_IS_NOT_A_CORPUS`). No repository named
+`UD_Classical_Arabic` exists at all; the probe returned 404
+(`UD_CLASSICAL_ARABIC_DOES_NOT_EXIST`), so the reachable sources are newswire
+and not the register every earlier Arabic number in this tree was measured on
+(`REGISTER_IS_NEWSWIRE_NOT_QURANIC`).
+
+`OBJ_VS_OBL_IS_PARTLY_CASE_DEFINED` is named in the module before any reader
+exists, because it is a known property of the UD schema and not a finding to be
+discovered after an accuracy figure — which is exactly how
+`ACCUSATIVE_IS_NOT_OBJECTHOOD` was named too late last round. The census then
+measures the size of that gap instead of assuming it: in `ar_padt-ud-train`,
+23,002 tokens carry `Case=Acc` and only 5,449 of them are labelled `obj`, so
+case alone over-predicts objecthood more than fourfold. A test asserts this
+separation holds in every measured file, and it is asserted over counts, not
+over a prose claim.
+
+No treebank bytes are vendored. Each file is deposited as its own independent
+witness — digest, byte length and licence terms, in the `IrabCorpusWitness`
+style — and none of them reuses or extends `QURANIC_ARABIC_CORPUS_WITNESS`.
+PADT is CC BY-NC-SA 3.0 while this repository is MIT, and that non-commercial
+condition follows the bytes rather than the digest
+(`NON_COMMERCIAL_IS_NOT_THIS_TREES_LICENCE`). `FORM` is unvocalised in both
+usable treebanks, with PADT carrying the vocalised form only in `MISC` under
+`Vform` and PUD not carrying it at all, so anything fed to `CarrierStateCodec`
+from here must name which column it was fed
+(`UNVOCALIZED_FORMS_ARE_NOT_CARRIER_STATE_INPUT`). The outcome is a derived
+property over a closed three-value vocabulary, never a stored field, and every
+number in the module is re-derived by
+`examples/irab/measure_ud_relation_layer.py` against the recorded digests.
 
 ## Reference material
 
