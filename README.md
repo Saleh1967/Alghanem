@@ -2301,6 +2301,47 @@ pass. The module issues no birth, no verdict of its own, no freeze, no `E0`, is
 read by neither `IndependentClosureGate` nor `BirthVerdictGate`, and declares no
 success title.
 
+### What a genuinely independent line must deposit before closure can flip
+
+"Supplying a separate line flips it to `PASS` with no edit" is true of the
+computation and, on its own, trivially gameable: the comparison is textual, so
+re-spelling the *same* corpus with an added tatweel, a vowel mark, or different
+whitespace would read as a second corpus and flip the verdict without a new
+source. That is the registered defect committed from the other side.
+`phonetic_economy_independent_line.py` closes it with an admission gate that a
+proposed line must clear before it enters the check, and it requires two things,
+not one:
+
+1. **A computed break after canonicalization.** Each axis is compared under
+   `NFKC`, with combining marks and tatweel dropped, whitespace folded, and case
+   folded, so orthographic variation alone is not independence. A line must
+   differ from *every* baseline item on an axis to break it — agreeing with one
+   is sharing. A `tool_identity` that still contains the attached tool's own
+   path cannot be claimed as a separate tool, however it is re-wrapped.
+2. **A deposited source.** `ExternalSourceDeposit` is deposited only by a
+   content digest in the repository's `canonical_content` shape — a citation
+   alone deposits nothing — and every broken axis must be one the deposit
+   licenses. This is the discipline of `imported_vocabulary_source_digest`: the
+   machine is built and tested, and when the payload is absent that is said
+   plainly rather than assumed away.
+
+`AdmittedIndependentLine` is token-issued by `admit_independent_line` alone and
+recomputes its broken axes from the line and the baseline it was judged against,
+so an admission cannot be carried over to different evidence.
+`closure_check_with_admitted_line` and `candidate_with_admitted_line` then
+re-run the *same* check: on `PASS` the blocking residual is dropped because its
+cause is gone, the verdict computes to `CLOSURE_MET_PENDING_AUTHORITY` — still
+not a birth, since that authority does not exist here —
+`TOOL_IS_APPROXIMATE_RECONSTRUCTION` survives, and the returned card is a new
+value, so the registered negative result is never overwritten.
+
+No such line is deposited. `ADMITTED_INDEPENDENT_LINES` is empty, the residual
+`NO_INDEPENDENT_LINE_DEPOSITED` records that with session-wide scope, an
+import-time guard checks that `PHONETIC_ECONOMY_CANDIDATE` is still `FAIL` and
+`DEFER_IN_SCOPE`, and a test asserts it. What changed is the *flippability*,
+under conditions that cannot be met by relabelling — not the state of the
+evidence.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future
