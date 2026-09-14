@@ -2616,6 +2616,41 @@ measurement itself is filed in the second-outcome machinery by
 written as constants, and classified as an incomplete measurement on a right
 question.
 
+### The second row filled: reading those rows before any condition is written
+
+`src/alghanem/arabic/alif_carrier_inspection.py` fills
+`DirectCertaintyStep.RAW_SAMPLE_INSPECTION`, and only that row. It reads the
+table the raw count produced — it does not recount the text and does not touch
+that module's code. For every alif carrier row it returns the context a human
+reads a row by: the verse line, the ordinal position in that line, and the
+immediate neighbour atoms on each side (an honest `None` at a line edge, never a
+placeholder). All 23 rows come back, not a selection, which is why the module
+names `FULL_SET_NOT_A_SAMPLE`: "sample" applies to the other half only.
+
+That other half is the slice of non-alif carriers, chosen by a principle written
+in code and carried on the record rather than explained in a comment —
+`ONE_ROW_PER_VERSE_LINE_IS_THE_SLICE_PRINCIPLE`: the first vowel-carrying
+non-alif row in each verse line, seven rows, the same on every run, every line
+covered. A chosen slice is not a representative one
+(`THE_SLICE_IS_CHOSEN_NOT_REPRESENTATIVE`).
+
+The rows are read against `RASM_IS_IMLAI_NOT_UTHMANI` specifically. Each sample
+carries a `RasmForm` field read from the characters of its own word — plain `ا`
+or explicit waṣl `ٱ` — per row, never a summary count. On the deposited
+transcription the explicit waṣla does not occur at all, and that absence is the
+finding: `WASLA_FORM_ABSENT_FROM_THIS_DEPOSIT` is filed as a named row,
+conditionally on the measurement, so a deposit that did contain `ٱ` would not
+file it. A count that never met the form the residual warns about is narrower
+than it looks, and the narrowing is stated instead of being left inside a zero.
+The residual itself stays open and unresolved, only better characterized
+(`RASM_RESIDUAL_STAYS_OPEN`).
+
+No record in the module has a verdict, status or pass/fail field; judgment stays
+outside, as in the raw count. No exclusion condition was written
+(`INSPECTION_WRITES_NO_CONDITION`) — `ONE_CONDITION_AT_A_TIME` and the two steps
+after it stay empty and are asserted to stay empty, and `assess_freeze` was not
+touched.
+
 ## Development
 
 ```bash
