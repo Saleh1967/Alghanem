@@ -424,6 +424,24 @@ REPORTED_UNVERIFIED_FIGURES: Final[tuple[UnverifiedFigureRecord, ...]] = (
         source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
         constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
     ),
+    UnverifiedFigureRecord(
+        subject="نسبةُ قانون الابتداء المذكورةُ مقيسةً على القرآن",
+        figure_text="٩٩٫٩٩٧٤٪",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="المخالفتان المذكورتان لقانون الابتداء: «لْيَقْطَعْ» و«لْيَقْضُوا»",
+        figure_text="موضعان اثنان",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="نسبةُ قانون الابتداء بعد استبعاد لام الأمر الساكنة",
+        figure_text="١٠٠٫٠٠٠٠٪",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.CLASSIFICATION_INCOMPLETE,
+    ),
 )
 """أرقامُ نصّ البروتوكول نفسِه، مقروءةً بقاعدته: خبرٌ مُسجَّلٌ لا قياسٌ مقبول."""
 

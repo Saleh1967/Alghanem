@@ -2912,6 +2912,83 @@ Nothing follows in this step: no pre-registration, no extraction, no rule node,
 no `DirectCertaintyStep` row, no import from `kernel/`
 (`THIS_PROBE_IS_NOT_A_GATE`).
 
+### Three laws registered, and the instrument that could not read the first one
+
+Three laws arrived formally stated — ابتداء, وصل, وقف — together with a logical
+derivation of منع التقاء الساكنين, a figure of **99.9974%** said to be measured
+on the Quran, an exclusion named *after* that figure (لام الأمر الساكنة) said to
+raise it to **100.0000%**, and a freeze identifier. Those are four different
+genera and `src/alghanem/arabic/ibtida_wasl_waqf_registration.py` keeps them
+apart instead of accepting them as one submission.
+
+The laws themselves are registered with their words and their formal text, at
+the lowest of three verification ranks: no book, author, edition or locus was
+supplied, so `SuppliedLaw` **refuses construction** at either higher rank, which
+makes the bottom rank a rank rather than a ceiling — the same shape
+`fatiha_source_text` uses. The figures went where quoted figures go, into the
+one existing `REPORTED_UNVERIFIED_FIGURES` register with their source genus and
+constraint: this tree vendors no Quranic corpus, so 99.9974% is not re-derivable
+here, and recording it is not endorsing it.
+
+What *is* run is one small reading, on the only text deposited in this tree by
+its letters, with a declared surface criterion: the written state of the first
+carrier of each written word. It found **no position beginning with a written
+sukun** in the deposited Fatiha — and that result is worth much less than it
+looks, because of what the same run exposed. Of 29 positions only **15** are
+decidable at all; the other **14** carry no written mark on their first carrier
+and are recorded as `لا_حالة_مكتوبة`, never as compliant. Those fourteen are
+precisely the hamzat-wasl positions — `الْحَمْدُ`, `اهْدِنَا`, `الصِّرَاطَ` —
+and that is the finding that bears on the submitted figure:
+`HAMZAT_WASL_IS_NOT_DECIDABLE_FROM_THE_WRITTEN_MARKS`. The law's own escape
+clause `IsHamzatWasl(a₁)` has **no surface test**; deciding it needs lexical or
+morphological knowledge that the marks do not carry. So a reader that scores
+this law on written words is either silently reading the unmarked carrier as
+compliant, or it is using an identifier that was never declared. Either way the
+instrument, not the law, is what the percentage measured.
+
+The exclusion is treated the same way. It may well be a true description of
+recitation — لام الأمر الساكنة does not begin a recitation — and it is still an
+amendment made after seeing the number it repairs
+(`EXCLUDING_A_COUNTEREXAMPLE_AFTER_THE_NUMBER_IS_AN_AMENDMENT`), the standing
+that `ud_objecthood_amendment` was forced to declare in its own structure. Two
+consequences are named rather than left implicit: the amended population is
+defined by the very feature that produced the two counterexamples, so
+100.0000% is derived from the definition and not from the text
+(`THE_AMENDED_POPULATION_IS_DEFINED_BY_THE_COUNTEREXAMPLES`); and a criterion
+that can reclassify *any* counterexample as "not a real beginning" is no longer
+falsifiable at all
+(`AN_EXCLUSION_RULE_THAT_ADMITS_NO_COUNTEREXAMPLE_IS_NOT_MEASURABLE`). The
+repair is not refused, only its order: the identifier of a non-beginning has to
+be written **before** the next reading, so that the law keeps a position that
+could refute it.
+
+The derivation of منع التقاء الساكنين is neither measured nor contradicted here
+(`THE_DERIVATION_IS_NOT_A_MEASUREMENT`). The adjacency scan finds zero pairs of
+written sukuns in the deposited text, and that zero is explicitly not a
+confirmation: a bare carrier and the first half of a geminate are both quiescent
+in speech and carry no sukun mark
+(`A_WRITTEN_SUKUN_IS_NOT_EVERY_QUIESCENCE`). A second shape — an unmarked
+carrier before a geminate — is therefore reported so the positions are visible,
+and running it exposed the scan's own limit in the same breath: the shape
+catches the assimilated article lām of `اللَّهِ` alongside the madd alif of
+`الضَّالِّينَ`, and separating them is again lexical knowledge the marks do not
+hold (`THE_SHAPE_DOES_NOT_SEPARATE_THE_ARTICLE_LAM_FROM_THE_MADD_ALIF`). Its ten
+rows are not ten madd positions, and the module says so rather than letting the
+count be read that way.
+
+The freeze is refused, and refused by derivation rather than by assertion:
+`derive_submitted_freeze_standing` reads the source identity of what was
+actually read, and a reading over a text deposited in this tree is not a reading
+over the population the figure speaks about, however many rows it has. The
+acceptance branch is reachable and stays reachable, so the refusal is
+conditional rather than decorative. Wasl and waqf are registered with no reading
+at all (`WASL_AND_WAQF_ARE_REGISTERED_WITHOUT_A_READING`): both speak about a
+phonetic juncture or a stopping place, and written word boundaries do not
+record either — which is the same confusion between «حدّ الكلمة المكتوبة»
+and «موضع الابتداء الصوتيّ» that the submission itself named. The module issues
+no birth, no verdict, no freeze, no `E0`, and imports neither `kernel/` nor the
+program layer.
+
 ## Development
 
 The first measurement in this tree against an *externally* annotated corpus is
