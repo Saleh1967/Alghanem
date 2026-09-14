@@ -14,10 +14,14 @@ import alghanem.kernel as kernel_package
 from alghanem.program import (
     CODOMAIN_DERIVED_FROM_LITERAL_WRITES_ONLY,
     DEFERRED_VALUE_NAMED_RESIDUALS,
+    FORM_VOCABULARY_IS_READ_NOT_LAWFUL,
     REFUSAL_SHAPE_IS_NOT_A_DECLARED_VOCABULARY,
+    SEARCH_SCOPE_IS_DECLARED_NOT_PROVEN,
+    SEARCHED_OVER_UNREAD_FORMS_IS_UNOCCUPIED_TODAY,
     SECTION_4_DECLARED_VALUE_NAMES,
     SECTION_4_NAMES_THREE_VALUES_ONLY,
     SIBLING_ADMISSION_REFUSAL_DEPENDS_ON_VOCABULARY_SIZE,
+    AbsenceGenus,
     DeferredValueLedger,
     DeferredValueLedgerError,
     DeferredValueRow,
@@ -25,6 +29,9 @@ from alghanem.program import (
     DeferredValueSite,
     GuardCensus,
     ReadGuard,
+    ReferenceCensus,
+    ReferenceForm,
+    VocabularyReference,
     read_deferred_value_ledger,
 )
 from alghanem.program import deferred_value_ledger as reader_module
@@ -49,6 +56,8 @@ _ANSWER_MARKERS = (
 _READER_TYPES = (
     ReadGuard,
     GuardCensus,
+    VocabularyReference,
+    ReferenceCensus,
     DeferredValueRow,
     DeferredValueLedger,
 )
@@ -84,6 +93,8 @@ def unreachable_row(**overrides: object) -> DeferredValueRow:
         derived_shape=DeferredValueShape.UNREACHABLE_FROM_SOLE_AUTHORITY,
         evidence_line=378,
         authority_codomain=("DEFER_IN_SCOPE",),
+        absence_genus=AbsenceGenus.SEARCHED_AND_NOT_FOUND,
+        searched_forms=(ReferenceForm.MEMBER_ATTRIBUTE_IN_CONSTRUCTOR_KEYWORD,),
     )
     base.update(overrides)
     return DeferredValueRow(**base)  # type: ignore[arg-type]
@@ -162,21 +173,39 @@ def test_closed_vocabularies_reject_foreign_values() -> None:
 def test_a_missing_site_is_refused_and_never_read_as_an_unheld_value() -> None:
     ledger = read_deferred_value_ledger()
     with pytest.raises(DeferredValueLedgerError, match="مواضع مُعلَنة لم تُقرَأ"):
-        DeferredValueLedger(rows=ledger.rows[:2], guards=ledger.guards)
+        DeferredValueLedger(
+            rows=ledger.rows[:2],
+            guards=ledger.guards,
+            references=ledger.references,
+        )
 
 
 def test_a_duplicated_site_is_refused() -> None:
     ledger = read_deferred_value_ledger()
     with pytest.raises(DeferredValueLedgerError, match="موضعٌ مكرّر"):
-        DeferredValueLedger(rows=(*ledger.rows, ledger.rows[0]), guards=ledger.guards)
+        DeferredValueLedger(
+            rows=(*ledger.rows, ledger.rows[0]),
+            guards=ledger.guards,
+            references=ledger.references,
+        )
 
 
 def test_an_empty_ledger_is_refused() -> None:
     ledger = read_deferred_value_ledger()
     with pytest.raises(DeferredValueLedgerError, match="غير فارغة"):
-        DeferredValueLedger(rows=(), guards=ledger.guards)
+        DeferredValueLedger(rows=(), guards=ledger.guards, references=ledger.references)
     with pytest.raises(DeferredValueLedgerError, match="إحصاء الحرّاس من نوعه"):
-        DeferredValueLedger(rows=ledger.rows, guards=ledger.rows)  # type: ignore[arg-type]
+        DeferredValueLedger(
+            rows=ledger.rows,
+            guards=ledger.rows,  # type: ignore[arg-type]
+            references=ledger.references,
+        )
+    with pytest.raises(DeferredValueLedgerError, match="إحصاء الإشارات من نوعه"):
+        DeferredValueLedger(
+            rows=ledger.rows,
+            guards=ledger.guards,
+            references=ledger.guards,  # type: ignore[arg-type]
+        )
 
 
 def test_a_renamed_or_removed_member_is_a_named_refusal(
@@ -284,6 +313,9 @@ def test_the_residuals_left_by_this_reader_are_named_not_hidden() -> None:
         SIBLING_ADMISSION_REFUSAL_DEPENDS_ON_VOCABULARY_SIZE,
         CODOMAIN_DERIVED_FROM_LITERAL_WRITES_ONLY,
         SECTION_4_NAMES_THREE_VALUES_ONLY,
+        SEARCH_SCOPE_IS_DECLARED_NOT_PROVEN,
+        FORM_VOCABULARY_IS_READ_NOT_LAWFUL,
+        SEARCHED_OVER_UNREAD_FORMS_IS_UNOCCUPIED_TODAY,
     }
     assert all(text.strip() for text in DEFERRED_VALUE_NAMED_RESIDUALS.values())
     with pytest.raises(TypeError):
@@ -336,3 +368,195 @@ def test_no_kernel_module_reads_the_deferred_value_reader() -> None:
         assert "alghanem.program" not in text, module.name
         assert "DeferredValueLedger" not in text, module.name
         assert "DeferredValueSite" not in text, module.name
+
+
+# --- the tenth milestone: the absence genus is derived, not one folded category ---
+
+
+def test_the_absence_genus_is_three_valued_and_not_a_ladder() -> None:
+    assert len(AbsenceGenus) == 3
+    assert AbsenceGenus.NOT_SEARCHED_AT_THIS_SITE.a_search_ran is False
+    assert AbsenceGenus.SEARCHED_AND_NOT_FOUND.a_search_ran is True
+    assert AbsenceGenus.SEARCHED_OVER_UNREAD_FORMS.a_search_ran is True
+    assert AbsenceGenus.SEARCHED_AND_NOT_FOUND.claims_an_exhausted_source is True
+    assert AbsenceGenus.SEARCHED_OVER_UNREAD_FORMS.claims_an_exhausted_source is False
+
+
+def test_each_site_derives_its_absence_genus_from_the_shape_of_its_hold() -> None:
+    ledger = read_deferred_value_ledger()
+    derived = {row.site: row.absence_genus for row in ledger.rows}
+    assert derived == {
+        DeferredValueSite.CLOSED_BY_FROZEN_EXPERIMENT: (
+            AbsenceGenus.NOT_SEARCHED_AT_THIS_SITE
+        ),
+        DeferredValueSite.MORPHO_FUNCTIONAL: AbsenceGenus.NOT_SEARCHED_AT_THIS_SITE,
+        DeferredValueSite.BIRTH_IN_SCOPE: AbsenceGenus.SEARCHED_AND_NOT_FOUND,
+    }
+    for row in ledger.rows:
+        searched_here = row.derived_shape is (
+            DeferredValueShape.UNREACHABLE_FROM_SOLE_AUTHORITY
+        )
+        assert searched_here is row.absence_genus.a_search_ran
+
+
+def test_every_absence_genus_is_counted_even_the_unoccupied_one() -> None:
+    counts = read_deferred_value_ledger().absence_genus_counts
+    assert set(counts) == set(AbsenceGenus)
+    assert counts[AbsenceGenus.NOT_SEARCHED_AT_THIS_SITE] == 2
+    assert counts[AbsenceGenus.SEARCHED_AND_NOT_FOUND] == 1
+    assert counts[AbsenceGenus.SEARCHED_OVER_UNREAD_FORMS] == 0
+    with pytest.raises(TypeError):
+        counts[AbsenceGenus.SEARCHED_AND_NOT_FOUND] = 9  # type: ignore[index]
+
+
+def test_a_genus_that_contradicts_the_shape_of_its_hold_is_refused() -> None:
+    with pytest.raises(DeferredValueLedgerError, match="لا يجري إلا حيث"):
+        naming_row(
+            absence_genus=AbsenceGenus.SEARCHED_AND_NOT_FOUND,
+            searched_forms=(ReferenceForm.MEMBER_ATTRIBUTE_IN_COMPARISON,),
+        )
+    with pytest.raises(DeferredValueLedgerError, match="لا يجري إلا حيث"):
+        unreachable_row(
+            absence_genus=AbsenceGenus.NOT_SEARCHED_AT_THIS_SITE, searched_forms=()
+        )
+
+
+def test_a_claimed_search_without_a_read_scope_is_refused_at_construction() -> None:
+    with pytest.raises(DeferredValueLedgerError, match="بحثٌ بلا نطاقٍ مقروء"):
+        unreachable_row(searched_forms=())
+    with pytest.raises(DeferredValueLedgerError, match="صيغُ إشارةٍ مقروءة"):
+        unreachable_row(searched_forms=(ReferenceForm.UNREAD_FORM,))
+    with pytest.raises(DeferredValueLedgerError, match="صيغةٌ مكرّرة"):
+        unreachable_row(
+            searched_forms=(
+                ReferenceForm.MEMBER_ATTRIBUTE_IN_COMPARISON,
+                ReferenceForm.MEMBER_ATTRIBUTE_IN_COMPARISON,
+            )
+        )
+
+
+def test_a_site_that_was_never_searched_carries_no_scope_and_no_unread_line() -> None:
+    with pytest.raises(DeferredValueLedgerError, match="لا يحمل نطاقًا"):
+        naming_row(searched_forms=(ReferenceForm.MEMBER_ATTRIBUTE_IN_COMPARISON,))
+    with pytest.raises(DeferredValueLedgerError, match="لا يحمل نطاقًا"):
+        naming_row(unread_form_lines=(12,))
+
+
+def test_an_exhaustion_claim_over_a_text_holding_an_unread_form_is_refused() -> None:
+    with pytest.raises(DeferredValueLedgerError, match="دعوى استقصاءٍ"):
+        unreachable_row(unread_form_lines=(319,))
+    with pytest.raises(DeferredValueLedgerError, match="بلا صيغةٍ"):
+        unreachable_row(absence_genus=AbsenceGenus.SEARCHED_OVER_UNREAD_FORMS)
+
+
+def test_the_unread_form_lines_are_positive_document_lines() -> None:
+    with pytest.raises(DeferredValueLedgerError, match="أرقامُ أسطرٍ موجبة"):
+        unreachable_row(
+            absence_genus=AbsenceGenus.SEARCHED_OVER_UNREAD_FORMS,
+            unread_form_lines=(0,),
+        )
+
+
+def test_every_reference_to_a_tracked_vocabulary_is_classified_never_skipped() -> None:
+    census = read_deferred_value_ledger().references
+    assert census.reference_count == len(census.references)
+    assert set(census.form_counts) == set(ReferenceForm)
+    assert census.reference_count == sum(census.form_counts.values())
+    assert census.form_counts[ReferenceForm.UNREAD_FORM] == 0
+    assert census.unread_lines == ()
+    assert all(form.is_read for form in census.read_forms)
+    assert census.references_in("alghanem.kernel.birth_verdict") == census.references
+
+
+def test_a_member_written_only_in_a_comparison_is_mentioned_not_constructed() -> None:
+    census = read_deferred_value_ledger().references
+    assert census.members_mentioned_without_construction == ("BIRTH_IN_SCOPE",)
+    constructed = {
+        reference.member_name
+        for reference in census.references
+        if reference.form.writes_a_member_into_a_construction
+    }
+    assert constructed == {"DEFER_IN_SCOPE"}
+
+
+def test_a_reference_names_its_member_exactly_where_the_form_reads_one() -> None:
+    with pytest.raises(DeferredValueLedgerError, match="اسم العضو المُشار إليه"):
+        VocabularyReference(
+            module_name="m",
+            vocabulary_name="V",
+            form=ReferenceForm.MEMBER_ATTRIBUTE_IN_COMPARISON,
+            member_name="",
+            document_line=3,
+        )
+    with pytest.raises(DeferredValueLedgerError, match="يبقى فارغًا"):
+        VocabularyReference(
+            module_name="m",
+            vocabulary_name="V",
+            form=ReferenceForm.VOCABULARY_IN_TYPE_POSITION,
+            member_name="M",
+            document_line=3,
+        )
+    with pytest.raises(DeferredValueLedgerError, match="صيغة الإشارة"):
+        VocabularyReference(
+            module_name="m",
+            vocabulary_name="V",
+            form="عضوٌ مكتوبٌ طرفًا في مقارنة",  # type: ignore[arg-type]
+            member_name="M",
+            document_line=3,
+        )
+    with pytest.raises(DeferredValueLedgerError, match="كل عنصرٍ إشارةٌ مرصودة"):
+        ReferenceCensus(references=("not a reference",))  # type: ignore[arg-type]
+
+
+def test_an_unrecognised_form_is_carried_as_unread_and_blocks_an_exhaustion_claim(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = (
+        "from enum import Enum\n"
+        "class V(Enum):\n"
+        "    A = 'a'\n"
+        "    B = 'b'\n"
+        "def build(value: V) -> object:\n"
+        "    chosen = V['A']\n"
+        "    return Made(member=V.B, other=chosen)\n"
+    )
+    references = reader_module._scan_references(
+        ast.parse(source), "m", "V", frozenset({"A", "B"})
+    )
+    census = ReferenceCensus(references=tuple(references))
+    assert census.form_counts[ReferenceForm.UNREAD_FORM] == 1
+    assert census.unread_lines == (6,)
+    genus, forms, unread = reader_module._absence_genus(census)
+    assert genus is AbsenceGenus.SEARCHED_OVER_UNREAD_FORMS
+    assert ReferenceForm.MEMBER_ATTRIBUTE_IN_CONSTRUCTOR_KEYWORD in forms
+    assert unread == (6,)
+
+
+def test_a_text_whose_every_form_is_read_yields_a_searched_and_not_found_genus() -> (
+    None
+):
+    source = (
+        "from enum import Enum\n"
+        "class V(Enum):\n"
+        "    A = 'a'\n"
+        "    B = 'b'\n"
+        "def build(value: V) -> object:\n"
+        "    if isinstance(value, V) and value is V.A:\n"
+        "        return Made(member=V.B)\n"
+        "    return None\n"
+    )
+    references = reader_module._scan_references(
+        ast.parse(source), "m", "V", frozenset({"A", "B"})
+    )
+    census = ReferenceCensus(references=tuple(references))
+    assert census.form_counts[ReferenceForm.UNREAD_FORM] == 0
+    genus, _, unread = reader_module._absence_genus(census)
+    assert genus is AbsenceGenus.SEARCHED_AND_NOT_FOUND
+    assert unread == ()
+
+
+def test_the_absence_genus_is_not_an_answer_field_and_carries_no_verdict() -> None:
+    for declaring_type in (DeferredValueRow, ReferenceCensus, VocabularyReference):
+        declared = {item.name for item in fields(declaring_type)}
+        assert not any("reached" in name for name in declared), declaring_type
+        assert not any("progress" in name for name in declared), declaring_type

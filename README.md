@@ -1634,6 +1634,36 @@ no constitution row supports it and coding it would make it an unverified premis
 the whole division succeeds on
 (`FRACTAL_OPEN_ENDEDNESS_IS_AN_UNSOURCED_CLAIM_NOTE`).
 
+The tenth §7 milestone added no module either. It returned to
+`alghanem.program.deferred_value_ledger` to answer the question its ninth
+predecessor wrote down and left pending: does "absent from the read trace" need
+splitting between *not searched for in this source* and *searched and not
+found*? The question was decided on the trace of that ledger itself rather than
+on prose, and the answer is that absence is not one category and not two but
+three. A value whose hold is already established by a naming guard or by a
+sibling guard was never searched for at all; a value searched for over a text
+every one of whose references is a readable form is genuinely not found; and a
+value searched for over a text holding even one reference the reader cannot
+classify is not-found without exhaustion, so the third member
+`SEARCHED_OVER_UNREAD_FORMS` exists and is counted at zero rather than folded
+away. Because the two searched genera differ only in the scope actually read,
+whoever declares one is now required to carry that scope — the closed
+`ReferenceForm` vocabulary it covered and the document lines it could not read —
+and a descriptor declaring a search with no read scope, or an exhaustion over a
+line it admits it could not read, is refused at construction. The reference
+census that makes this derivable also corrected a claim the module would
+otherwise have made: `BirthVerdictStatus.BIRTH_IN_SCOPE` *is* written in
+`alghanem.kernel.birth_verdict`, as an operand of a comparison, so the honest
+statement is that it is mentioned and never constructed, not that it is never
+written (`members_mentioned_without_construction`). Nothing was promoted:
+`AttainmentStanding.REACHED` is still refused at construction and no aim moved.
+What was not lifted is named — a declared search scope is readable in the tree
+and not proved about the world (`SEARCH_SCOPE_IS_DECLARED_NOT_PROVEN`), the form
+vocabulary is a reader's four positions and not a law about Python
+(`FORM_VOCABULARY_IS_READ_NOT_LAWFUL`), and the third genus has no occupant in
+today's trace, which is a fact about today and not a proof that it cannot occur
+(`SEARCHED_OVER_UNREAD_FORMS_IS_UNOCCUPIED_TODAY`).
+
 The tenth milestone answered one question and refused to leave it pending.
 Three independent cards — قُروء (2:228), أنّى (2:223), and مَلِك (114:2) —
 had stopped at exactly the same place, the fourth link (الوضع بالنقل), because
@@ -2237,164 +2267,127 @@ true with the tree and false with it, and is not a certificate to be cited after
 the cards change. The module issues no birth, no verdict, no freeze, no `E0`, and
 imports nothing from `kernel/`.
 
-### A GFLK candidate run through G0 as a gate, and the FAIL it actually returned
+### Depositing a carrier/state codec as a measured round trip, not as an atom
 
-An external GFLK session (carrier/state algebra over Quranic text) produced
-about 130 statistical findings. Its single strongest one — *idgham occurs when
-the place-of-articulation distance between a sakin consonant and the letter
-after it is small; izhar when it is large* — was run through the G0 chain
-(`BirthQuery → Evidence → LicensedWeakerExhaustion → IndependentClosureCheck →
-BirthVerdict`) as a **gate, not a description**. It **failed at
-`IndependentClosureCheck`**, and `phonetic_economy_candidate.py` registers that
-failure rather than the claim: the verdict is `DEFER_IN_SCOPE`, and the module
-is a registration of a negative result, not a `BirthCandidate`.
+An externally built (carrier, state) codec for vocalized Arabic was offered to
+this tree with the claim that the pair is "the only consistent atomic unit of
+the vocalized Arabic letter", proved to four decimal places over three
+independent texts. `src/alghanem/arabic/encoding/carrier_state_candidate.py`
+accepts the codec and declines the claim, because what was measured is a round
+trip: `retrieve(generate(s)) == s`. Losing nothing is a property of *every*
+information-preserving re-encoding — "the unit is the whole word" round-trips
+too — so a rate is evidence about loss and never evidence that the chosen unit
+is atomic, minimal, or unique (`ROUND_TRIP_IS_INVERTIBILITY_NOT_ATOMICITY`).
+G0.N licenses a knot by the weaker models it survived, and no weaker model was
+licensed or frozen here, so nothing is born, ranked, or frozen
+(`NO_WEAKER_MODEL_WAS_LICENSED_OR_FROZEN`), and the type is a
+`CarrierStateUnit` produced by a candidate codec rather than an `Atom` or a
+`Protocol`.
 
-The two evidence lines (nun-sakin, `F=4.0`; lam al-taʿrīf shamsī/qamarī,
-`F=9.5`) carry their `corpus_identity`, `tool_identity`, and `metric_definition`
-populated, never omitted — omission is the exact defect that would let one line
-of evidence applied twice look like two. All three are identical across both
-items, because both are the same self-invented place-distance tool run over the
-same single corpus under the same metric definition, on two adjacent phonetic
-phenomena. `IndependentClosureCheck.outcome` **computes** `FAIL` from that: it
-is a property over the evidence, not a stored verdict, so supplying a line from
-a genuinely separate corpus, tool, or metric definition flips it to `PASS` with
-no edit to a single line, and a `FAIL` can never be left written on a card whose
-content no longer supports it. The licensed weaker exhaustion is recorded as
-run — random baseline and heaviness-alone, both failed — so the residual
-survives; that conjunct is not what blocked the chain.
+Three defects were found by running the deposited codec rather than by reading
+its prose, and the third is the one that decided the design. Two consecutive
+harakat, two tanwin marks, a harakah followed by a tanwin, and a doubled shadda
+each wrote over a value already derived and returned a surface different from
+the input; the deposit's own revision closed the first of these by hand, which
+would have closed an instance while the genus stayed open, so a single rule now
+refuses every second write into a slot that already holds a derived value. Every
+non-carrier codepoint was dropped silently — `العربية!` came back without its
+exclamation mark — and is now carried as an explicit passthrough unit, which
+also means the Uthmani residue reported with the deposit mixes a codec defect
+with the five Uthmani phenomena it was read as measuring, and arrived as two
+figures that disagree with each other
+(`UTHMANI_RESIDUE_MIXES_PHENOMENA_WITH_DROPPED_SYMBOLS`). Third, a dedicated
+`madd_self` state wrote `tanwin`, `silent` and `waw_madda` onto the unit for
+`آ` and then returned from retrieval before reading any of them, so inspecting
+the unit showed information that retrieval had already discarded. `آ` is now an
+ordinary seat on the `ء` carrier, which makes the special case disappear rather
+than be guarded, and units whose state is structural are checked at
+construction to carry nothing else — so "no field is written and never read" is
+a property of the type instead of a claim about one branch.
 
-The refusal is structural, on the `SectionExcerpt` pattern: a certified finding
-is a **separate type** issued only by `certify_phonetic_economy_candidate`,
-which refuses while `INDEPENDENT_CLOSURE_NOT_MET` stands, and whose constructor
-refuses a direct call. A `DEFER_IN_SCOPE` registration is therefore not an
-instance of the certified type at all, rather than an instance carrying a
-docstring warning. `INDEPENDENT_CLOSURE_NOT_MET` says plainly that same-corpus /
-same-tool / same-metric repetition across adjacent phenomena is not
-independence, per `NoBedrockWithoutRecurringDirayaSurvival`, under which every
-*independent* new application is a fresh occasion to fail and repetition inside
-one application is not one.
+The layer registry's first claim was settled by derivation rather than by
+editing its wording. It asserted that the alef carries `sukun_implicit`
+exclusively; `derive_alef_states` runs the codec and returns the states an alef
+actually holds, and it returns more than one, because ordinary orthography
+writes tanwin on the alef. Enforcing the claim would refuse real text, so it is
+recorded as declared and deliberately unenforced
+(`ALEF_STATE_EXCLUSIVITY_IS_DECLARED_NOT_ENFORCED`). The carrier set is written
+out in the module instead of being `str.isalpha`, which had made every
+alphabetic codepoint of every script a carrier, and it says of itself that it is
+declared and not derived from any property of Arabic
+(`CARRIER_SET_IS_DECLARED_NOT_DERIVED`).
 
-The tool itself is attached, not described: `phonetic_economy_tool.py` sits at
-the path used as `tool_identity`, so the numbers can be re-run and refused.
-Its own header disclaims what it is — a simplified average-place-distance
-reconstruction of the session's KL-divergence co-occurrence tool — and it
-returns `3.43` and `9.96`, not the session's `4.0` and `9.5`. That mismatch is
-registered as a second residual, `TOOL_IS_APPROXIMATE_RECONSTRUCTION`, and the
-discrepancy is **computed live** by running the attached tool and comparing it
-against the session values on the card: the simplified numbers are never
-substituted for the session's Evidence values, and the place table is not
-adjusted to force a match. A card carrying an unreproduced reading without that
-residual cannot be constructed. The tool also names the deeper point, which the
-numeric gap is not: the place table is itself the session's invention, never
-checked against an independent phonetics source, and *that* is why closure
-fails.
+No percentage over any external text is recorded. A rate is re-derivable only by
+a holder of the same bytes, so `InvertibilityMeasurement` requires the source's
+`sha256`, its byte length, the normalization form and the Unicode database
+version, on the pattern of `QaydAttributionScan`, and derives its counts by
+running the codec rather than accepting them; it carries no percentage field at
+all. `MEASURED_INVERTIBILITY_SOURCES` is therefore empty, since no digest came
+with the deposit (`SOURCE_PERCENTAGES_ARE_UNMEASURED_HERE`), and a clean round
+trip over a closed text would in any case stay bounded by it under
+`CompleteInductionIsCorpusBounded` (`THREE_SOURCES_ARE_CORPUS_BOUNDED`). What
+the tests do establish is stated with its bound: every embedded case and a
+bounded probe of a few thousand generated surfaces round-trip exactly and no two
+distinct surfaces share one unit sequence *within that probe*.
 
-A third residual, `GFLK_SESSION_FINDINGS_SHARE_ONE_ORIGIN`, is registered as an
-object with session-wide scope rather than left as a comment: all ~130 findings
-share the one corpus and the one tool, so none may be assumed to clear
-`IndependentClosure` without a genuinely separate source, tool, or metric
-definition. This candidate is the worked example, not the special case.
+### Scanning two adjacent sukuns without buying a hundred per cent
 
-Nothing is promoted: AIM-K3 stays open, no runtime gate is added (none exists
-per `docs/CONSTITUTION.md`), and the `FAIL` is not softened into a qualified
-pass. The module issues no birth, no verdict of its own, no freeze, no `E0`, is
-read by neither `IndependentClosureGate` nor `BirthVerdictGate`, and declares no
-success title.
+`src/alghanem/arabic/encoding/sakin_adjacency.py` reads the units of
+`carrier_state_candidate` and reports, for every adjacent pair whose members
+both hold a sukun, whether the pair is counted or excluded and by which named
+exclusion. It reports one row per pair, excluded rows included, so nothing is
+subtracted before it can be looked at. It records no rate. A predicate that
+names an exclusion for every pair it meets reaches a clean residue by
+construction, and that cleanliness is a property of the predicate rather than a
+measurement of the language (`CLOSURE_IS_A_PREDICATE_NOT_A_MEASURED_RATE`).
+Sharper still, an exclusion written *after* inspecting what an earlier pass left
+over is a description of that residue and cannot also be evidence for the rule it
+rescues; `SakinClashExclusion.is_residue_defined` marks the three that were
+(`RESIDUE_DEFINED_EXCLUSIONS_ARE_NOT_INDEPENDENT_EVIDENCE`). No source text is
+vendored here, so no figure quoted elsewhere is re-derivable and none is written
+down; `SakinClashScan` requires a digest, a byte length, a normalization form
+and a Unicode database version, derives its counts by running the scan, holds no
+percentage field, and `MEASURED_SAKIN_CLASH_SOURCES` is empty.
 
-### What a genuinely independent line must deposit before closure can flip
+Three things were settled by running the codec rather than by reasoning about
+it. `derive_article_gemination_offsets` shows that the definite article puts the
+gemination mark at unit offset 2 before a sun letter that is not `lam`, and at
+offset 1 in `ٱلَّذين` where the `lam` is itself geminated — so the pair (`ٱ`, `ل`)
+in `ٱلشَّمس` carries the mark on *neither* member and no gemination check of any
+single position reaches it. What reaches it is that `ٱ` extends a sound instead
+of closing a syllable; the assimilation check reaches the *next* pair, (`ل`, `ش`),
+and there the mark sits on the second member. Both checks are needed and they
+answer about different pairs. Second, the silent zero is already carried on the
+unit it follows rather than arriving as a stray unit, so `قَالُوا۟` yields five
+units and a scan expecting a sixth would find nothing to repair. Third,
+`derive_ha_and_ta_marbuta_units` shows that the small waw and small yeh writing
+the connecting vowel after `ه` arrive as passthrough units — sound extension,
+never a sukun holder — while `ة` arrives as carrier `ت` under
+`CarrierSeat.TA_MARBUTA`, so at a stop, where it is read `ه`, the unit still
+reports `ت` (`TA_MARBUTA_PAUSAL_HA_IS_NOT_ENCODED`).
 
-"Supplying a separate line flips it to `PASS` with no edit" is true of the
-computation and, on its own, trivially gameable: the comparison is textual, so
-re-spelling the *same* corpus with an added tatweel, a vowel mark, or different
-whitespace would read as a second corpus and flip the verdict without a new
-source. That is the registered defect committed from the other side.
-`phonetic_economy_independent_line.py` closes it with an admission gate that a
-proposed line must clear before it enters the check, and it requires two things,
-not one:
-
-1. **A computed break after canonicalization.** Each axis is compared under
-   `NFKC`, with combining marks and tatweel dropped, whitespace folded, and case
-   folded, so orthographic variation alone is not independence. A line must
-   differ from *every* baseline item on an axis to break it — agreeing with one
-   is sharing. A `tool_identity` that still contains the attached tool's own
-   path cannot be claimed as a separate tool, however it is re-wrapped.
-2. **A deposited source.** `ExternalSourceDeposit` is deposited only by a
-   content digest in the repository's `canonical_content` shape — a citation
-   alone deposits nothing — and every broken axis must be one the deposit
-   licenses. This is the discipline of `imported_vocabulary_source_digest`: the
-   machine is built and tested, and when the payload is absent that is said
-   plainly rather than assumed away.
-
-`AdmittedIndependentLine` is token-issued by `admit_independent_line` alone and
-recomputes its broken axes from the line and the baseline it was judged against,
-so an admission cannot be carried over to different evidence.
-`closure_check_with_admitted_line` and `candidate_with_admitted_line` then
-re-run the *same* check: on `PASS` the blocking residual is dropped because its
-cause is gone, the verdict computes to `CLOSURE_MET_PENDING_AUTHORITY` — still
-not a birth, since that authority does not exist here —
-`TOOL_IS_APPROXIMATE_RECONSTRUCTION` survives, and the returned card is a new
-value, so the registered negative result is never overwritten.
-
-No line that breaks the **corpus** axis is deposited. The residual
-`NO_INDEPENDENT_CORPUS_LINE_DEPOSITED` records that standing limit, and the gate
-module registers no line of its own — deposits live in their own modules, with
-their own sources. Whatever passes this gate leaves `PHONETIC_ECONOMY_CANDIDATE`
-itself untouched: an import-time guard and a test check it is still `FAIL` and
-`DEFER_IN_SCOPE`, because admission returns a new value rather than mutating the
-registered one.
-
-### The classical makhārij table, deposited — and what it did to the numbers
-
-`INDEPENDENT_CLOSURE_NOT_MET` named the deep cause precisely: the place table
-was *the session's own invention, never checked against an independent phonetics
-source*. `classical_makharij_table.py` supplies the replacement — the classical
-seventeen-makhraj ordering from the deepest throat to the lips, as in Sībawayh's
-*al-Kitāb* (bāb ʿadad ḥurūf al-ʿarabiyya wa-makhārijihā) and the standard tajwīd
-division: three throat, ten tongue, two lips, plus khayshūm for ghunna and jawf
-for the madd letters. It is attested far outside the GFLK session. Its 28 ranked
-consonants are deposited as bytes, the digest is *re-derived on every import*
-rather than declared, a test pins it, and a letter with no rank is refused
-outright rather than skipped — silently dropping one would move an average with
-no visible trace. It is recorded in
-[`docs/reference/classical_makharij_ordering.md`](docs/reference/classical_makharij_ordering.md).
-
-`phonetic_economy_classical_line.py` runs that deposit through the admission
-gate above. It breaks the **tool** and **metric** axes — both licensed by the
-deposit — and not the corpus axis, so closure computes `PASS` and the extended
-card reaches `CLOSURE_MET_PENDING_AUTHORITY`. Only the nun-sakin line is
-admitted: feeding lam al-taʿrīf through the same new table would repeat the
-original defect, one tool applied twice to adjacent phenomena.
-
-The result that matters is not the flip. It is what the independent table did to
-the numbers:
-
-| | session | repo's simplified tool | classical table |
-|---|---:|---:|---:|
-| nun-sakin | 4.0 | 3.43 | **2.33** |
-| lam al-taʿrīf | 9.5 | 9.96 | **1.74** |
-
-**The direction survives; the magnitudes collapse.** Both ratios stay above 1 —
-izhar and qamarī really are farther in place of articulation, which is what the
-claim asserts. But the sharp contrast the finding's strength rested on,
-`F=9.5` for lam al-taʿrīf above all, falls to `1.74`, near the no-difference
-line. Stated without softening: **the magnitudes were an artefact of the
-session's own table, not of a property of Arabic.** That is registered as
-`SESSION_MAGNITUDES_ARE_TABLE_ARTEFACTS` and computed live by running both
-tables — no number is substituted for another and no table is adjusted toward a
-match. The session's table is not deleted either: `phonetic_economy_tool.py`
-stands with its `3.43`/`9.96` as the witness to the negative result, and this is
-a second computation read beside it.
-
-Three limits stand, each a residual object: the **corpus axis is still
-collapsed** (both computations run over traditional letter partitions, not over
-a measurement in a text, so `PASS` is not three breaks); treating a **difference
-of ranks as a distance is our modelling step**, not something the sources say;
-and the ordering is deposited as re-digested bytes, **not transcribed from a
-specific edition with a page citation**. And `PASS` is not a verdict on the
-claim — it says the evidence line now has an independent tool and metric, not
-that the claim is true. `PHONETIC_ECONOMY_CANDIDATE` itself is untouched, still
-`FAIL` and `DEFER_IN_SCOPE`; the extended card is a new value, so a registered
-negative result is never overwritten by a later change of state.
+Writing the module surfaced one defect of the kind the tree already refuses. The
+dagger-alef exclusion named a case no pair could reach, because a dagger unit
+holds no sukun and so was never a member of a pair while silently resetting
+adjacency: a name written and never read. A dagger is now read through like a
+passthrough unit and the exclusion is reported on the pair that spans it, and a
+test asserts that *every* member of the exclusion enum is reachable — the guard
+is the genus, not that instance. Passthrough units are read through rather than
+treated as separators, because the classic adjacency is the one across a word
+boundary and a space is a passthrough unit; the number skipped is recorded so a
+wide gap stays visible. A stop mark is only a passthrough unit, so a sukun read
+because the reader stopped cannot be told from a sukun of the connected reading
+(`PAUSAL_SUKUN_IS_NOT_DISTINGUISHED_FROM_CONNECTED_SUKUN`), and the rulings of
+the sukun-bearing nun act where the following consonant carries a vowel and so
+decide no pair counted here (`NUN_SAKINA_RULINGS_ARE_NOT_MODELLED_HERE`). The
+disconnected letter openings are placed outside the rule's scope by a written
+list, because each letter is uttered under its own name and the question is not
+posed of such a sequence — a declaration about scope, not a result
+(`MUQATTAAT_ARE_EXCLUDED_BY_DEFINITION_NOT_MEASURED`). Finally, an argument that
+a language avoids the adjacency because avoiding it is easier is an induction
+over the utterances met and bounded by them; no weaker model was licensed or
+frozen for this predicate, so nothing here is born, ranked, or frozen
+(`PHONETIC_ECONOMY_IS_AN_INDUCTION_NOT_A_LICENCE`).
 
 ## Reference material
 
