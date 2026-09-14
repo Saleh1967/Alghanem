@@ -95,6 +95,12 @@ DUPLICATE_MILESTONE_SECTION_IS_REFUSED_NOTE: Final = (
     "بالبنية"
 )
 
+NESTED_ORDINAL_TEXT_IS_NOT_AN_OCCURRENCE_NOTE: Final = (
+    "رتبةٌ نصُّها جزءٌ من نصِّ رتبةٍ أطول — «الثانية» داخل «الثانية عشرة» — "
+    "لا تُعَدّ ذِكرًا لها: عدُّها ذِكرًا يُخرج تكرارًا موهومًا يُوقف القراءة "
+    "على وثيقةٍ سليمة، والتمييزُ يُشتَقّ بالمواضع لا بترتيب المفردة"
+)
+
 DECLARATIONS_DISAGREE_IS_REFUSED_NOTE: Final = (
     "الترويسة و§٧ إعلانان مستقلّان لخريطةٍ واحدة، واختلافُهما يُرفَض ولا "
     "يُرجَّح أحدهما: الترجيحُ اختيارٌ من القارئ لا إعلانٌ من الوثيقة"
@@ -187,6 +193,8 @@ class MilestoneOrdinal(Enum):
     EIGHTH = "الثامنة"
     NINTH = "التاسعة"
     TENTH = "العاشرة"
+    ELEVENTH = "الحادية عشرة"
+    TWELFTH = "الثانية عشرة"
 
     @property
     def declaration_position(self) -> int:
@@ -578,6 +586,32 @@ def _first_module_reference(
     return None
 
 
+def _ordinal_text_occurrences(joined: str, text: str) -> tuple[int, ...]:
+    """مواضعُ ذِكرِ نصِّ رتبةٍ، بعد طرح ما وقع داخل نصِّ رتبةٍ أطول يحتويه.
+
+    «الثانية» جزءٌ من «الثانية عشرة»، فالبحثُ الساذج يُخرج موضعين لرتبةٍ
+    ذُكرت مرّة، ثم يُرفَض التكرارُ الموهوم على وثيقةٍ سليمة.
+    """
+
+    covered: list[tuple[int, int]] = []
+    for longer in _ORDINAL_BY_TEXT:
+        if longer == text or text not in longer:
+            continue
+        start = joined.find(longer)
+        while start >= 0:
+            covered.append((start, start + len(longer)))
+            start = joined.find(longer, start + 1)
+
+    occurrences: list[int] = []
+    start = joined.find(text)
+    while start >= 0:
+        stop = start + len(text)
+        if not any(low <= start and stop <= high for low, high in covered):
+            occurrences.append(start)
+        start = joined.find(text, start + 1)
+    return tuple(occurrences)
+
+
 def _read_header_declarations(
     lines: list[str], end: int
 ) -> tuple[HeaderMilestoneDeclaration, ...]:
@@ -590,15 +624,15 @@ def _read_header_declarations(
     joined = "\n".join(lines[:end])
     positions: list[tuple[int, MilestoneOrdinal]] = []
     for text, ordinal in _ORDINAL_BY_TEXT.items():
-        start = joined.find(text)
-        if start < 0:
+        occurrences = _ordinal_text_occurrences(joined, text)
+        if not occurrences:
             continue
-        if joined.find(text, start + 1) >= 0:
+        if len(occurrences) > 1:
             raise MilestoneLedgerError(
                 f"رتبةٌ مكرّرة في الترويسة: {ordinal.value} — "
                 f"{DUPLICATE_MILESTONE_SECTION_IS_REFUSED_NOTE}"
             )
-        positions.append((start + len(text), ordinal))
+        positions.append((occurrences[0] + len(text), ordinal))
     positions.sort()
 
     declarations: list[HeaderMilestoneDeclaration] = []
@@ -864,6 +898,7 @@ __all__ = [
     "PROGRAMME_PACKAGE_RELATIVE_PATH",
     "REOPENING_IS_DERIVED_BUT_ITS_REASON_IS_NOT",
     "UNCLAIMED_MODULE_IS_REFUSED_NOTE",
+    "NESTED_ORDINAL_TEXT_IS_NOT_AN_OCCURRENCE_NOTE",
     "UNKNOWN_SECTION_HEADING_IS_REFUSED_NOTE",
     "DeclaredModuleReference",
     "DeclaredModuleShape",

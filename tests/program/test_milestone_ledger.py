@@ -266,7 +266,7 @@ def test_an_unknown_subsection_heading_is_refused(document_text: str) -> None:
 
 def test_an_unknown_ordinal_in_a_known_heading_is_refused(document_text: str) -> None:
     altered = document_text + (
-        "\n### ما كشفته المرحلة الحادية عشرة (لا رتبةَ لها)\n\n"
+        "\n### ما كشفته المرحلة الثالثة عشرة (لا رتبةَ لها)\n\n"
         "قامت في `src/alghanem/program/aims.py`.\n"
     )
     with pytest.raises(MilestoneLedgerError, match="رتبةُ مرحلةٍ خارج المفردة"):
@@ -513,3 +513,20 @@ def test_rows_and_sections_are_frozen_against_quiet_mutation(
 def test_a_row_for_an_ordinal_without_one_is_refused(ledger: MilestoneLedger) -> None:
     with pytest.raises(MilestoneLedgerError):
         ledger.row("السابعة")  # type: ignore[arg-type]
+
+
+def test_a_nested_ordinal_text_is_not_counted_as_a_second_mention() -> None:
+    """«الثانية» داخل «الثانية عشرة» ليست ذِكرًا ثانيًا للرتبة الثانية."""
+
+    joined = "المرحلة الثانية في `a.py`؛ ثم الثانية عشرة في `b.py`."
+    assert ledger_module._ordinal_text_occurrences(joined, "الثانية عشرة") == (
+        joined.find("الثانية عشرة"),
+    )
+    assert ledger_module._ordinal_text_occurrences(joined, "الثانية") == (
+        joined.find("الثانية"),
+    )
+
+
+def test_a_genuinely_repeated_ordinal_is_still_refused() -> None:
+    joined = "المرحلة الثانية عشرة ثم الثانية عشرة"
+    assert len(ledger_module._ordinal_text_occurrences(joined, "الثانية عشرة")) == 2
