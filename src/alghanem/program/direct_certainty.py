@@ -365,6 +365,24 @@ REPORTED_UNVERIFIED_FIGURES: Final[tuple[UnverifiedFigureRecord, ...]] = (
         source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
         constraint=FigureConstraint.CLASSIFICATION_INCOMPLETE,
     ),
+    UnverifiedFigureRecord(
+        subject="تمامُ فضاء الحامل/الحالة المذكور في سُلَّم اليقين",
+        figure_text="١٣١/١٣١",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="انعكاسُ الحامل/الحالة إلى نصٍّ مُشكَّل على مُدوَّنةٍ مغلقة",
+        figure_text="١٠٠٫٠٠٠٠٪ على ٧٨٬٢٤٥ كلمة",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="المطابقةُ المذكورة بلا استثناء في مقدّمة سُلَّم اليقين",
+        figure_text="٢٨/٢٨",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
 )
 """أرقامُ نصّ البروتوكول نفسِه، مقروءةً بقاعدته: خبرٌ مُسجَّلٌ لا قياسٌ مقبول."""
 

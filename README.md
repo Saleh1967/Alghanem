@@ -2465,6 +2465,37 @@ digest, a byte length, a normalization form and a Unicode database version,
 derives its counts by running the gate, holds no percentage field, and
 `MEASURED_PURITY_SOURCES` is empty.
 
+### A certainty ladder whose ceiling is derived, not announced
+
+A five-rung ladder was put to this tree — bits ↔ number ↔ (carrier, state) ↔
+vocalized text ↔ syntax ↔ meaning — with the first three marked "certain, 100%"
+and the last two marked "not reached". Stopping short of meaning is right. The
+line, however, was drawn one rung too high, and
+`src/alghanem/program/certainty_ladder.py` derives where it actually falls.
+
+`RungStanding` carries no member meaning *absolutely certain*. Every rung lands
+in one of three genera instead: certain relative to a declaration, corpus-bounded
+induction, or not reached with a counterexample in hand. These are different
+kinds of reason, not points on a scale.
+
+The third rung is the correction. "(carrier, state) ↔ vocalized text" is a
+round-trip claim over a closed corpus, which is precisely the case
+`CompleteInductionIsCorpusBounded` (`docs/CONSTITUTION.md`) was written for:
+exhaustive enumeration over a closed finite set yields certainty inside that set
+and conjecture beyond it. Enlarging the corpus does not lift that bound, because
+the bound is on the genus of the inference, not on the sample size.
+
+The first two rungs are certain only relative to declarations: the carrier set is
+written down rather than derived (`CARRIER_SET_IS_DECLARED_NOT_DERIVED`), and the
+bit correspondence rests on a declared width and order.
+
+`derive_ladder_ceiling()` walks the rungs in order and halts at the first one not
+reached, so the ceiling moves if any standing moves — it is never a number parked
+somewhere else. None of the quoted figures (131/131, 100.0000% over 78,245 words,
+28/28) is re-derivable here; they are filed in `REPORTED_UNVERIFIED_FIGURES` as
+prose, while `derive_declared_carrier_state_product()` reports what this tree
+actually declares, for comparison rather than substitution.
+
 ## Development
 
 ```bash
