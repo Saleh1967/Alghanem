@@ -28,10 +28,12 @@
    تحقّق.
 
 **وما لا تفعله**: لا تختلق هذه الوحدةُ خطًّا مستقلًّا ولا تُودِع مصدرًا ليس
-عندنا. فلا خطَّ مقبولٌ واحدٌ فيها — `ADMITTED_INDEPENDENT_LINES` صفٌّ فارغ،
-وبقيّةُ `NO_INDEPENDENT_LINE_DEPOSITED` تقول ذلك بمداها — وبطاقةُ
-`PHONETIC_ECONOMY_CANDIDATE` تبقى `FAIL` و`DEFER_IN_SCOPE` كما سُجِّلت، وحارسُ
-استيرادٍ هنا يفحص ذلك فعلًا. والمتغيِّرُ قابليةُ القلبِ لا حالُ الدليل.
+عندنا، ولا تُسجّل خطًّا واحدًا من عندها — `ADMITTED_INDEPENDENT_LINES` صفٌّ
+فارغ، فالإيداعاتُ تُسجَّل في وحداتها بمصادرها لا في البوّابة التي تفحصها.
+وبطاقةُ `PHONETIC_ECONOMY_CANDIDATE` تبقى `FAIL` و`DEFER_IN_SCOPE` كما سُجِّلت
+مهما قُبل من خطوطٍ لاحقًا، وحارسُ استيرادٍ هنا يفحص ذلك فعلًا: القبولُ يُعيد
+قيمةً جديدة ولا يُبدّل المُسجَّل. وبقيّةُ `NO_INDEPENDENT_CORPUS_LINE_DEPOSITED`
+تسجّل الحدَّ الباقي: لا خطَّ ينفكّ على محور الكوربص مُودَعًا في المستودع.
 
 **ولا سلطةَ لهذه الوحدة**: حتى على فرع `PASS` أقصى ما يُبلَغ
 `CLOSURE_MET_PENDING_AUTHORITY` — لا ولادةَ ولا تجميدَ ولا `E0`؛ ولا يقرؤها
@@ -215,17 +217,17 @@ SESSION_BASELINE_EVIDENCE: Final[tuple[PhoneticEvidenceItem, ...]] = (
     PHONETIC_ECONOMY_CANDIDATE.closure_check.evidence
 )
 
-NO_INDEPENDENT_LINE_RESIDUAL_CODE: Final[str] = "NO_INDEPENDENT_LINE_DEPOSITED"
+NO_INDEPENDENT_LINE_RESIDUAL_CODE: Final[str] = "NO_INDEPENDENT_CORPUS_LINE_DEPOSITED"
 
 NO_INDEPENDENT_LINE_DEPOSITED: Final[RegisteredResidual] = RegisteredResidual(
     code=NO_INDEPENDENT_LINE_RESIDUAL_CODE,
     statement=(
-        "بوّابةُ قبولِ الخطّ المستقلّ مبنيّةٌ مُختبَرة، ولا خطَّ مقبولٌ واحدٌ "
-        "مُودَعٌ في هذا المستودع: لا كوربصَ ثانيًا ولا أداةً مقابَلةً بمصدرِ "
-        "صوتيّاتٍ مستقلٍّ ولا تعريفَ مقياسٍ منفصلًا. فبطاقةُ الاقتصاد الصوتيّ "
-        "تبقى `FAIL` و`DEFER_IN_SCOPE` كما سُجِّلت، والمتغيِّرُ قابليةُ القلب "
-        "لا حالُ الدليل؛ ولا يُعدُّ وجودُ الآلة إيداعًا ولا يُقرأ استعدادُها "
-        "اجتيازًا"
+        "لا خطَّ دليلٍ ينفكّ على **محور الكوربص** مُودَعٌ في هذا المستودع: لا "
+        "كوربصَ ثانيًا ولا قياسَ تلازمٍ في نصٍّ آخر. فما يُقبَل بهذه البوّابة "
+        "ينفكّ على الأداة أو تعريفِ المقياس أو كلَيهما، ويبقى محورُ الكوربص "
+        "منطبقًا؛ ولا يُقرأ `PASS` كأنّه ثلاثةُ انفكاكات. وهذه الوحدةُ نفسُها "
+        "لا تُسجّل خطًّا واحدًا — `ADMITTED_INDEPENDENT_LINES` صفٌّ فارغ — "
+        "فالإيداعاتُ تُسجَّل في وحداتها بمصادرها، لا في البوّابة التي تفحصها"
     ),
     scope=ResidualScope.كل_نتائج_الجلسة,
 )

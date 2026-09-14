@@ -2335,12 +2335,66 @@ not a birth, since that authority does not exist here —
 `TOOL_IS_APPROXIMATE_RECONSTRUCTION` survives, and the returned card is a new
 value, so the registered negative result is never overwritten.
 
-No such line is deposited. `ADMITTED_INDEPENDENT_LINES` is empty, the residual
-`NO_INDEPENDENT_LINE_DEPOSITED` records that with session-wide scope, an
-import-time guard checks that `PHONETIC_ECONOMY_CANDIDATE` is still `FAIL` and
-`DEFER_IN_SCOPE`, and a test asserts it. What changed is the *flippability*,
-under conditions that cannot be met by relabelling — not the state of the
-evidence.
+No line that breaks the **corpus** axis is deposited. The residual
+`NO_INDEPENDENT_CORPUS_LINE_DEPOSITED` records that standing limit, and the gate
+module registers no line of its own — deposits live in their own modules, with
+their own sources. Whatever passes this gate leaves `PHONETIC_ECONOMY_CANDIDATE`
+itself untouched: an import-time guard and a test check it is still `FAIL` and
+`DEFER_IN_SCOPE`, because admission returns a new value rather than mutating the
+registered one.
+
+### The classical makhārij table, deposited — and what it did to the numbers
+
+`INDEPENDENT_CLOSURE_NOT_MET` named the deep cause precisely: the place table
+was *the session's own invention, never checked against an independent phonetics
+source*. `classical_makharij_table.py` supplies the replacement — the classical
+seventeen-makhraj ordering from the deepest throat to the lips, as in Sībawayh's
+*al-Kitāb* (bāb ʿadad ḥurūf al-ʿarabiyya wa-makhārijihā) and the standard tajwīd
+division: three throat, ten tongue, two lips, plus khayshūm for ghunna and jawf
+for the madd letters. It is attested far outside the GFLK session. Its 28 ranked
+consonants are deposited as bytes, the digest is *re-derived on every import*
+rather than declared, a test pins it, and a letter with no rank is refused
+outright rather than skipped — silently dropping one would move an average with
+no visible trace. It is recorded in
+[`docs/reference/classical_makharij_ordering.md`](docs/reference/classical_makharij_ordering.md).
+
+`phonetic_economy_classical_line.py` runs that deposit through the admission
+gate above. It breaks the **tool** and **metric** axes — both licensed by the
+deposit — and not the corpus axis, so closure computes `PASS` and the extended
+card reaches `CLOSURE_MET_PENDING_AUTHORITY`. Only the nun-sakin line is
+admitted: feeding lam al-taʿrīf through the same new table would repeat the
+original defect, one tool applied twice to adjacent phenomena.
+
+The result that matters is not the flip. It is what the independent table did to
+the numbers:
+
+| | session | repo's simplified tool | classical table |
+|---|---:|---:|---:|
+| nun-sakin | 4.0 | 3.43 | **2.33** |
+| lam al-taʿrīf | 9.5 | 9.96 | **1.74** |
+
+**The direction survives; the magnitudes collapse.** Both ratios stay above 1 —
+izhar and qamarī really are farther in place of articulation, which is what the
+claim asserts. But the sharp contrast the finding's strength rested on,
+`F=9.5` for lam al-taʿrīf above all, falls to `1.74`, near the no-difference
+line. Stated without softening: **the magnitudes were an artefact of the
+session's own table, not of a property of Arabic.** That is registered as
+`SESSION_MAGNITUDES_ARE_TABLE_ARTEFACTS` and computed live by running both
+tables — no number is substituted for another and no table is adjusted toward a
+match. The session's table is not deleted either: `phonetic_economy_tool.py`
+stands with its `3.43`/`9.96` as the witness to the negative result, and this is
+a second computation read beside it.
+
+Three limits stand, each a residual object: the **corpus axis is still
+collapsed** (both computations run over traditional letter partitions, not over
+a measurement in a text, so `PASS` is not three breaks); treating a **difference
+of ranks as a distance is our modelling step**, not something the sources say;
+and the ordering is deposited as re-digested bytes, **not transcribed from a
+specific edition with a page citation**. And `PASS` is not a verdict on the
+claim — it says the evidence line now has an independent tool and metric, not
+that the claim is true. `PHONETIC_ECONOMY_CANDIDATE` itself is untouched, still
+`FAIL` and `DEFER_IN_SCOPE`; the extended card is a new value, so a registered
+negative result is never overwritten by a later change of state.
 
 ## Reference material
 

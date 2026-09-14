@@ -216,12 +216,13 @@ def test_registered_candidate_is_untouched() -> None:
         certify_phonetic_economy_candidate(PHONETIC_ECONOMY_CANDIDATE)
 
 
-def test_no_independent_line_is_deposited_in_this_repository() -> None:
-    """لا خطَّ مقبولٌ مُودَعٌ هنا، والبقيّةُ تقول ذلك بمداها لا بتعليق."""
+def test_no_independent_corpus_line_is_deposited_in_this_repository() -> None:
+    """لا خطَّ ينفكّ على محور الكوربص مُودَعًا؛ والبقيّةُ تقول ذلك بمداها."""
 
     assert ADMITTED_INDEPENDENT_LINES == ()
     assert NO_INDEPENDENT_LINE_DEPOSITED.code == NO_INDEPENDENT_LINE_RESIDUAL_CODE
-    assert "قابليةُ القلب" in NO_INDEPENDENT_LINE_DEPOSITED.statement
+    assert NO_INDEPENDENT_LINE_RESIDUAL_CODE == "NO_INDEPENDENT_CORPUS_LINE_DEPOSITED"
+    assert "محورُ الكوربص" in NO_INDEPENDENT_LINE_DEPOSITED.statement
 
 
 def test_admission_error_is_caught_as_registration_error() -> None:
