@@ -2653,6 +2653,31 @@ touched.
 
 ## Development
 
+The first measurement in this tree against an *externally* annotated corpus is
+`src/alghanem/arabic/irab_case_readout.py`. A claim arrived here that a word
+following a perfect verb and ending in *fatḥa* is a direct object, at "100%"
+accuracy; that figure was an artefact of a harness comparing its own expected
+string against itself, and a later hand-check reported 48% without measuring
+against any annotated source. Run as stated against the Quranic Arabic Corpus
+(morphology 0.4, attributed and digest-pinned in
+`src/alghanem/arabic/irab_corpus_witness.py`, bytes deliberately not vendored),
+it scores **33.9%**.
+
+After fixing four defects the corpus itself exposed — the final vowel belonging
+to an attached pronoun, a bound preposition, the alif of accusative *tanwīn*
+read as a *maqṣūr* ending, and shadda/fatḥa byte order closed by NFC — a
+surface reader recovers the *case* marking at **97.1%** on a held-out split
+(odd-numbered suras; rules were developed on the even-numbered half, whose
+97.4% is recorded beside it so the fitting gap is visible). Shapes with no
+visible case mark are a third outcome, `متعذّر_القياس`, never counted as wrong.
+
+That is a weaker claim than the one that arrived: the corpus annotates *case*,
+not syntactic function, and the accusative also carries ḥāl, tamyīz, ẓarf and
+the noun of `inna`, so `ACCUSATIVE_IS_NOT_OBJECTHOOD` stays an open residual and
+97.1% is not an answer to the original hypothesis. Every frozen number is
+re-derived, not asserted: `examples/irab/measure_case_readout.py` verifies the
+corpus digest and recomputes them, exiting non-zero on any drift.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
