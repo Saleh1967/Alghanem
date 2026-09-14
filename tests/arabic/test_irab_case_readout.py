@@ -39,8 +39,10 @@ def test_witness_names_its_licences_and_a_full_digest() -> None:
     assert len(witness.sha256) == 64
     assert witness.byte_length == 6_309_503
     assert len(witness.licenses) == 2
-    assert "corpus.quran.com" in witness.attribution_requirement
-    assert "tanzil.info" in witness.attribution_requirement
+    assert witness.required_attribution_links == (
+        "http://corpus.quran.com",
+        "http://tanzil.info",
+    )
 
 
 def test_witness_refuses_a_short_digest() -> None:
@@ -54,6 +56,7 @@ def test_witness_refuses_a_short_digest() -> None:
             sha256="abc",
             byte_length=1,
             licenses=("L",),
+            required_attribution_links=("http://example.invalid",),
             attribution_requirement="a",
             annotation_note="n",
         )
@@ -70,6 +73,24 @@ def test_witness_refuses_a_corpus_without_a_named_licence() -> None:
             sha256="a" * 64,
             byte_length=1,
             licenses=(),
+            required_attribution_links=("http://example.invalid",),
+            attribution_requirement="a",
+            annotation_note="n",
+        )
+
+
+def test_witness_refuses_an_attribution_with_no_declared_link() -> None:
+    with pytest.raises(IrabCorpusWitnessError):
+        IrabCorpusWitness(
+            corpus="c",
+            version="v",
+            upstream="u",
+            measured_mirror="m",
+            measured_path="p",
+            sha256="a" * 64,
+            byte_length=1,
+            licenses=("L",),
+            required_attribution_links=(),
             attribution_requirement="a",
             annotation_note="n",
         )

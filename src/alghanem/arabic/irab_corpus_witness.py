@@ -88,6 +88,7 @@ class IrabCorpusWitness:
     sha256: str
     byte_length: int
     licenses: tuple[str, ...]
+    required_attribution_links: tuple[str, ...]
     attribution_requirement: str
     annotation_note: str
 
@@ -121,6 +122,19 @@ class IrabCorpusWitness:
                     f"رخصةٌ مكرّرة: {license_name}؛ والتكرارُ يُوهِم تعدُّدَ أذون."
                 )
             seen.add(license_name)
+        if not self.required_attribution_links:
+            raise IrabCorpusWitnessError(
+                "شرطُ الإسناد يُسمّي مواضعَ الإحالة بأعيانها؛ وشرطٌ بلا موضعٍ "
+                "مُعلَنٍ لا يُتحقَّق من الوفاء به."
+            )
+        links: set[str] = set()
+        for link in self.required_attribution_links:
+            _require_text(link, "موضعُ إحالةٍ مشروط")
+            if link in links:
+                raise IrabCorpusWitnessError(
+                    f"موضعُ إحالةٍ مكرّر: {link}؛ والتكرارُ يُوهِم تعدُّدَ شروط."
+                )
+            links.add(link)
         _require_text(self.attribution_requirement, "شرطُ الإسناد")
         _require_text(self.annotation_note, "بيانُ التوسيم")
 
@@ -136,6 +150,10 @@ QURANIC_ARABIC_CORPUS_WITNESS: Final[IrabCorpusWitness] = IrabCorpusWitness(
     licenses=(
         "GNU General Public License (Quranic Arabic Corpus, © 2011 Kais Dukes)",
         "Creative Commons BY-ND 3.0 Unported (Tanzil Quran Text, Uthmani 1.0.2)",
+    ),
+    required_attribution_links=(
+        "http://corpus.quran.com",
+        "http://tanzil.info",
     ),
     attribution_requirement=(
         "تشترط ترويسةُ الملفّ التصريحَ بالمصدر (Quranic Arabic Corpus) "
