@@ -412,6 +412,18 @@ REPORTED_UNVERIFIED_FIGURES: Final[tuple[UnverifiedFigureRecord, ...]] = (
         source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
         constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
     ),
+    UnverifiedFigureRecord(
+        subject="عددُ قواعد «النحو الواضح» المذكورُ في اقتراح المصدر النحويّ",
+        figure_text="٤٢١ قاعدة",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="عددُ أجزاء «النحو الواضح» المذكورُ في الاقتراح نفسِه",
+        figure_text="٣ أجزاء",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
 )
 """أرقامُ نصّ البروتوكول نفسِه، مقروءةً بقاعدته: خبرٌ مُسجَّلٌ لا قياسٌ مقبول."""
 
