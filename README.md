@@ -2542,6 +2542,42 @@ middle figure, and the total-certainty examples — arrived as prose and are fil
 in the one existing `REPORTED_UNVERIFIED_FIGURES` register rather than a second
 one, because two registers for one report split it.
 
+### A step bound to code, so "something ran" cannot pass for "this step ran"
+
+Encoding the two-outcome rule exposed a gap in the protocol module while
+building its own examples, not while looking for it: `StepRecord` demands a
+module name and a function name, `run_step` imports and calls them, and nothing
+ties the callable to the step it claims. A `ProtocolRun` pointing all six steps
+at a single contamination-gate function still freezes as `FROZEN_ADMISSIBLE`
+today. `src/alghanem/program/step_reproducers.py` reads that binding instead of
+asserting it: `STEP_REPRODUCERS` names, per step, which callables in this tree
+actually perform it, and `assess_record_binding()` reports whether a record
+points at its own step's code, at another step's code, or at something the
+registry has not judged.
+
+The third standing is an abstention, not a refusal. Reading absence from a
+written registry as a refusal would let a declared list contradict correct code
+that was simply never registered
+(`ABSENCE_FROM_THE_REGISTRY_IS_NOT_A_REFUSAL`), and five of the six steps have
+no code in this tree at all — their emptiness is readable, and their standing is
+derived from the empty row rather than written into it. A second, unintended
+narrowing surfaced from the same reading: `run_step` calls its target with no
+arguments, so the protocol's practical test — "do you have the code that
+produces it?" — narrows in practice to "do you have a zero-argument entry
+point?". `derive_reproducers_run_step_cannot_call()` derives from the
+signatures that `scan_lines` and `scan_tokens`, which *are* the purity gate,
+fail that narrowing.
+
+The finding is filed with the previous stage's own machinery rather than as
+prose beside it: `STEP_BINDING_DISCOVERY` is a `DeeperLayerRecord`, so the
+second outcome is used at the first place it occurred instead of being declared
+and then left idle. This module is a reader and not a gate — it does not tighten
+`assess_freeze`, is not imported by `direct_certainty.py`, and is read by no
+gate in `kernel/` (`THIS_READER_IS_NOT_A_GATE`). A conforming binding says the
+function is registered for that step; it does not say its output was correct or
+that the step ran on the intended data
+(`A_BOUND_STEP_IS_NOT_A_CORRECT_MEASUREMENT`).
+
 ## Development
 
 ```bash
