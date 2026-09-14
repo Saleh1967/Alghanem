@@ -2317,18 +2317,62 @@ alphabetic codepoint of every script a carrier, and it says of itself that it is
 declared and not derived from any property of Arabic
 (`CARRIER_SET_IS_DECLARED_NOT_DERIVED`).
 
-No percentage over any external text is recorded. A rate is re-derivable only by
-a holder of the same bytes, so `InvertibilityMeasurement` requires the source's
-`sha256`, its byte length, the normalization form and the Unicode database
-version, on the pattern of `QaydAttributionScan`, and derives its counts by
-running the codec rather than accepting them; it carries no percentage field at
-all. `MEASURED_INVERTIBILITY_SOURCES` is therefore empty, since no digest came
-with the deposit (`SOURCE_PERCENTAGES_ARE_UNMEASURED_HERE`), and a clean round
-trip over a closed text would in any case stay bounded by it under
-`CompleteInductionIsCorpusBounded` (`THREE_SOURCES_ARE_CORPUS_BOUNDED`). What
-the tests do establish is stated with its bound: every embedded case and a
-bounded probe of a few thousand generated surfaces round-trip exactly and no two
-distinct surfaces share one unit sequence *within that probe*.
+No percentage over any external text was recorded at first. A rate is
+re-derivable only by a holder of the same bytes, so `InvertibilityMeasurement`
+requires the source's `sha256`, its byte length, the normalization form and the
+Unicode database version, on the pattern of `QaydAttributionScan`, and derives
+its counts by running the codec rather than accepting them; it carries no
+percentage field at all. One source is now measured. A second external revision
+of the deposited codec arrived later, claiming a clean round trip at 100.0000%
+over "78,245" Quranic words and over an unnamed modern-Arabic sample, and
+re-deriving that claim required a corpus that *is* fingerprinted — the Quranic
+Arabic Corpus deposit already recorded in `irab_corpus_witness`, digest and byte
+length only, never vendored bytes. The result is
+`QURANIC_CORPUS_INVERTIBILITY`, and it is stated with the bound that makes it
+honest: six of its 77,429 words are refused at construction by the
+already-closed silent-overwrite rule rather than read, so the derived fraction
+is a fraction over accepted tokens and `token_refusals` is carried beside the
+other two totals (`REFUSAL_IS_NOT_A_ROUND_TRIP`). The two Uthmani figures that
+came with the original deposit stay unmeasured
+(`ONE_SOURCE_IS_MEASURED_TWO_REMAIN_UNMEASURED`), and a clean round trip over a
+closed text stays bounded by it under `CompleteInductionIsCorpusBounded`
+(`THREE_SOURCES_ARE_CORPUS_BOUNDED`). What the tests establish is stated with
+its bound: every embedded case and a bounded probe of a few thousand generated
+surfaces round-trip exactly and no two distinct surfaces share one unit sequence
+*within that probe*.
+
+### Auditing a deposited revision by running it, not by reading it
+
+`src/alghanem/arabic/gflk_codec_revision_audit.py` records what that 100.0000%
+claim did when it was re-derived here. It came back **99.992251%**: six real
+words of the corpus are corrupted silently, `فَٱدَّٰرَْٰٔتُمْ` losing a fatha
+with no warning, and all six are one genus — a second write over a state already
+read, which is the first defect this tree had already named and closed, restored
+by the revision's own loop (`SILENT_OVERWRITE_DEFECT_REINSTATED`). The second
+closed defect is restored too: `madd_self` still returns before reading the
+fields written beside it, so `آً` comes back as `آ`. Those forms never occur in
+the Quranic corpus, which is exactly why a corpus rate could read as 100% while
+they were broken (`A_CORPUS_RATE_DOES_NOT_COVER_THE_UNATTESTED`). The claimed
+population is unidentified — no digest, no byte length, no tokenization rule, so
+the 816-word gap from the measured 77,429 cannot be attributed
+(`THE_CLAIMED_CORPUS_IS_UNIDENTIFIED`) — and the "independent" second source was
+run with the same tool and the same success criterion, which is one line of
+evidence run twice rather than two (`SECOND_SOURCE_IS_NOT_AN_INDEPENDENT_LINE`).
+One thing in the revision is a genuine repair and is credited by running it:
+non-carrier symbols are no longer dropped, so `العربية!` and `hello` survive
+(`PASSTHROUGH_DEFECT_IS_GENUINELY_CLOSED_IN_THE_DEPOSIT`).
+
+The refusal is computed, not written. `CodecRevisionAudit` has no field a
+verdict could be placed in — a guard runs at import to keep one from being added
+later — and `outcome` is derived from comparing the claim against the
+measurement and from the standing residuals, so both branches are reachable and
+changing the verdict means changing an input that shows. Every number above is
+re-derived by `examples/irab/measure_carrier_state_invertibility.py` against the
+fingerprinted bytes, including the six locations by `(sura:aya:word)`; none is
+written by hand into the tree. And a clean round trip, had it held, would still
+have shown only that the encoding loses nothing
+(`ROUND_TRIP_IS_INVERTIBILITY_NOT_ATOMICITY`): nothing here is born, ranked or
+frozen, and no gate in `kernel/` reads any of it.
 
 ### Scanning two adjacent sukuns without buying a hundred per cent
 
