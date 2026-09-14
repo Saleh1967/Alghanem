@@ -2989,6 +2989,54 @@ and «موضع الابتداء الصوتيّ» that the submission itself name
 no birth, no verdict, no freeze, no `E0`, and imports neither `kernel/` nor the
 program layer.
 
+### Reading this README instead of trusting it
+
+The tree already had a reader for `docs/CONSTITUTION.md`, another for
+`docs/AIMS.md`, and a third mapping the milestone sections of that document onto
+the modules they claim. This file was the last declaring document with no reader
+at all, so every achievement announced here was accepted because it was written.
+`src/alghanem/program/achievement_ledger.py` closes that: it derives the
+achievement claims out of this text rather than reading them by eye.
+
+A claim is read by one written shape and never by estimated meaning: a gate
+identifier, then prose carrying no code span and no parenthesis, then the
+module path in a parenthesised code span. Seven claims are read that way today,
+and every other mention of a gate identifier is a mention rather than a claim.
+Estimating a claim from a nearby path instead would attach a surface
+intervention module to one gate and a content-identity module to another, both
+wrongly, so the boundary is written into the reader and named rather than left
+to judgement.
+
+Naming a path that happens to exist proves only that a string was written
+twice. Each claimed module is therefore imported, and the symbols the prose
+names inside the claim's span are matched against what that module actually
+carries; a claim with no resident symbol at all is refused by gate id and line
+number. The witness is derived from the tree's own convention —
+`src/alghanem/X/Y.py` is witnessed by `tests/X/test_Y.py` — and its standing has
+three members, not two: derived and present, registered elsewhere, or not
+registered at all, the last being an abstention rather than a refusal.
+
+The three-way correspondence between this file and the constitution found
+something that was not known before: `P0.1`, announced above as freezing
+measurement authority, is named nowhere in `docs/CONSTITUTION.md`. Refusal runs
+in one direction only, and that asymmetry is derived rather than polite: a gate
+that *claims a module* without a constitutional row is refused at construction,
+while a gate merely mentioned — which is what `P0.1` is — is recorded under a
+named standing, because raising it to a refusal would oblige a read-only ledger
+to edit the constitution. Gates heading constitutional sections without a
+mention here are enumerated under a third standing of their own, so nothing
+falls silently on either side.
+
+Two standing gaps are now counted rather than assumed away. The five scripts
+under `examples/` that no test calls are recorded as declared-but-not-
+reproduced, and the two skipped tests are classified into two declared genera —
+conditional on an undeposited input, and a case inapplicable by construction —
+with any third skip form refused by file and line, since a skip whose genus is
+unnamed is counted as a pass and is not one. What stays open is named:
+`getattr` sees an imported symbol exactly as it sees a defined one, a witness
+file that collects is not a witness that checks this claim, and a test that
+mentions an example script does not thereby run it.
+
 ## Development
 
 The first measurement in this tree against an *externally* annotated corpus is
