@@ -10,7 +10,8 @@
 
 فمسارٌ تُوجَّه خطواتُه الستُّ كلُّها إلى دالةٍ واحدةٍ من كاشف التلوّث يُخرِج
 `FROZEN_ADMISSIBLE` اليوم؛ وذلك ما تفعله أمثلةُ الاختبارات نفسُها، لا لتحايلٍ
-بل لأنّ الشجرة لا تملك كودًا لخمسٍ من الخطوات أصلًا. وهذه نتيجةٌ من الفئة
+بل لأنّ الشجرة لم تملك كودًا لخمسٍ من الخطوات يوم كُتب هذا (وهي أربعٌ اليوم بعد
+ملء صفّ `RAW_COUNT`). وهذه نتيجةٌ من الفئة
 الثانية بمصطلح `binary_outcome`: لم تُغلَق الفجوة، وضاق المجهولُ بمعلومةٍ
 مُسمّاة؛ ولذلك سُجِّلت هنا في `STEP_BINDING_DISCOVERY` بتلك الآلة نفسِها لا
 بنثرٍ على هامشها.
@@ -30,6 +31,10 @@
 `scan_lines` و`scan_tokens` هما كاشفُ التلوّث عينُه ولا يُستدعيان فارغَين.
 و`derive_reproducers_run_step_cannot_call` يُخرج ذلك اشتقاقًا من التواقيع لا
 إعلانًا (`THE_PROTOCOL_TEST_IS_NARROWED_TO_ZERO_ARGUMENT_ENTRY_POINTS`).
+
+**ولا تستورد هذه الوحدةُ وحدةً عربيةً في رأسها.** مُعيدُ إنتاج الخطوة الأولى
+يُستورَد داخل `derive_raw_count_record` وحدَها، وبقيةُ السجلّ أسماءٌ تُحَلّ عند
+الطلب؛ فالقارئُ يبقى قارئًا لا مالكًا لكودٍ بعينه.
 """
 
 from __future__ import annotations
@@ -62,6 +67,7 @@ __all__ = [
     "assess_record_binding",
     "assess_run_bindings",
     "derive_implemented_steps",
+    "derive_raw_count_record",
     "derive_reproducers_run_step_cannot_call",
     "derive_unimplemented_steps",
     "step_implementation_standing",
@@ -105,6 +111,7 @@ class ReproducerRef:
 
 
 _GATE_MODULE: Final[str] = "alghanem.arabic.encoding.contamination_gate"
+_RAW_COUNT_MODULE: Final[str] = "alghanem.arabic.alif_state_raw_count"
 
 
 STEP_REPRODUCERS: Final[Mapping[DirectCertaintyStep, tuple[ReproducerRef, ...]]] = (
@@ -116,7 +123,11 @@ STEP_REPRODUCERS: Final[Mapping[DirectCertaintyStep, tuple[ReproducerRef, ...]]]
                 ReproducerRef(_GATE_MODULE, "derive_negative_filter_blind_spots"),
                 ReproducerRef(_GATE_MODULE, "derive_head_tail_blind_spot"),
             ),
-            DirectCertaintyStep.RAW_COUNT: (),
+            DirectCertaintyStep.RAW_COUNT: (
+                ReproducerRef(
+                    _RAW_COUNT_MODULE, "run_raw_count_on_the_deposited_fatiha"
+                ),
+            ),
             DirectCertaintyStep.RAW_SAMPLE_INSPECTION: (),
             DirectCertaintyStep.ONE_CONDITION_AT_A_TIME: (),
             DirectCertaintyStep.ITERATE_UNTIL_FULL_CLASSIFICATION: (),
@@ -124,7 +135,11 @@ STEP_REPRODUCERS: Final[Mapping[DirectCertaintyStep, tuple[ReproducerRef, ...]]]
         }
     )
 )
-"""كودُ كلّ خطوةٍ في هذه الشجرة؛ وخمسُ خطواتٍ خاليةٌ، وخلوُّها مقروءٌ لا مطويّ.
+"""كودُ كلّ خطوةٍ في هذه الشجرة؛ وأربعُ خطواتٍ خاليةٌ، وخلوُّها مقروءٌ لا مطويّ.
+
+وكانت خمسًا حين سُجِّل `STEP_BINDING_DISCOVERY`، ثمّ مُلئ صفُّ `RAW_COUNT`
+بمدخلٍ عديم الوسائط في `alghanem.arabic.alif_state_raw_count` يُشغِّل كاشفَ
+التلوّث ثمّ يعُدّ ذرّات نصٍّ عربيٍّ مُودَعٍ بحروفه.
 
 و`FREEZE_ASSESSMENT` خاليةٌ عن قصدٍ لا عن سهو: `assess_freeze` يحكم على المسار
 كلِّه، فجعلُه خطوةً داخل المسار يجعل المسارَ يشهد لنفسه.
@@ -293,14 +308,14 @@ def derive_reproducers_run_step_cannot_call() -> tuple[ReproducerRef, ...]:
 
 # --- الكشفُ نفسُه، مُسجَّلًا بآلة قاعدة النتيجتين لا بنثرٍ على هامشها ----------
 
-
 STEP_BINDING_DISCOVERY: Final[DeeperLayerRecord] = DeeperLayerRecord(
     subject="ربطُ خطوات بروتوكول اليقين المباشر بكودها في هذه الشجرة",
     narrowed_unknown=(
         "تصريحُ الخطوة لا يُقيِّد الدالةَ المُسمّاة بأن تكون كودَ تلك الخطوة، "
         "فمسارٌ تُوجَّه خطواتُه الستُّ إلى دالةٍ واحدةٍ يُقبَل تجميدُه اليوم؛ "
-        "وخمسٌ من الخطوات الستّ لا كودَ لها في هذه الشجرة أصلًا، فلا يقوم "
-        "لها ربطٌ موافقٌ ولو أُريد"
+        "وكانت خمسٌ من الخطوات الستّ بلا كودٍ في هذه الشجرة يوم سُجِّل هذا "
+        "الكشف، فلا يقوم لها ربطٌ موافقٌ ولو أُريد، ثمّ مُلئ صفُّ `RAW_COUNT` "
+        "بمدخلٍ عديم الوسائط فبقيت أربعٌ خاليةً"
     ),
     reason=(
         "المحاولةُ لم تُغلِق الفجوة في موضع الحكم، وسمَّت بدلًا من ذلك موضعَين "
@@ -328,6 +343,50 @@ _DISCOVERY_GENUS_IF_A_FIGURE_ARRIVES: Final = (
 
 ولا رقمَ اليوم، فالتصنيفُ غيرُ مُسنَدٍ إلى السجلّ ولا يُقرأ قياسًا قائمًا.
 """
+
+
+def derive_raw_count_record() -> DeeperLayerRecord:
+    """شغِّل مُعيدَ إنتاج الخطوة الأولى الآن وأخرِج سجلَّ فئته الثانية بأرقامه.
+
+    والعدُّ نفسُه قائمٌ في `alghanem.arabic.alif_state_raw_count`، ولا تستورد
+    طبقةُ العربية طبقةَ البرنامج؛ فموضعُ التصنيف هنا لا هناك، ويُستورَد العدُّ
+    داخل الدالّة فلا يصير هذا القارئُ مالكًا لوحدةٍ عربيةٍ بعينها.
+
+    **وهو من الفئة الثانية لا الأولى**: نصٌّ واحدٌ مُشكَّلٌ غيرُ مقابَلٍ لا
+    يُغلِق دعوى الألف، وإنّما يُضيِّق المجهولَ بموضعٍ مُسمًّى قابلٍ للعدّ.
+    وأرقامُه تُحسَب عند الطلب ولا تُكتَب ثوابتَ، فلا يبقى رقمٌ في الشجرة بعد
+    تغيُّر النصّ الذي اشتُقّ منه.
+    """
+    from ..arabic.alif_state_raw_count import run_raw_count_on_the_deposited_fatiha
+
+    table = run_raw_count_on_the_deposited_fatiha()
+    exceptions = table.alif_rows_carrying_a_short_vowel
+    return DeeperLayerRecord(
+        subject=(
+            "حالاتُ الحامل «ا» في نقلٍ مُشكَّلٍ واحدٍ مُودَعٍ في هذه الشجرة "
+            f"({table.source_id})"
+        ),
+        narrowed_unknown=(
+            f"في هذا النقل {len(table.rows)} ذرّةَ حامل، منها "
+            f"{len(table.alif_rows)} حاملُها ألفٌ مجرّدة، وعددُ الألفات التي "
+            "حملت واحدةً من {فتحة، ضمّة، كسرة} هو "
+            f"{len(exceptions)}؛ وحملت "
+            f"{len(table.other_rows_carrying_a_short_vowel)} ذرّةً من "
+            f"{len(table.other_carrier_rows)} ذرّةٍ حاملُها غيرُ الألف إحدى "
+            "الثلاث"
+        ),
+        reason=(
+            "عدٌّ خامٌّ على نصٍّ واحدٍ مُشكَّلٍ بالرسم الإملائيّ لم يُقابَل "
+            "بطبعةٍ مُسمّاة؛ فهو يُسمّي موضعًا قابلًا للعدّ ولا يمتدّ حكمُه "
+            "إلى العربية ولا إلى رسمٍ آخر"
+        ),
+        opening_mid_figure=(
+            f"{len(exceptions)} استثناءً للألف في {len(table.alif_rows)} موضعَ ألف"
+        ),
+        mid_figure_classification=(
+            MidFigureClassification.INCOMPLETE_MEASUREMENT_ON_A_RIGHT_QUESTION
+        ),
+    )
 
 
 # --- ما تتركه هذه القراءة مفتوحًا، مُسمًّى ------------------------------------
