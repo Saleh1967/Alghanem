@@ -58,17 +58,18 @@ def test_every_protocol_step_has_a_row_in_the_registry() -> None:
     assert set(STEP_REPRODUCERS) == set(DirectCertaintyStep)
 
 
-def test_two_of_the_six_steps_have_code_in_this_tree_today() -> None:
+def test_three_of_the_six_steps_have_code_in_this_tree_today() -> None:
     assert derive_implemented_steps() == (
         DirectCertaintyStep.DATA_PURITY_CHECK,
         DirectCertaintyStep.RAW_COUNT,
+        DirectCertaintyStep.RAW_SAMPLE_INSPECTION,
     )
-    assert len(derive_unimplemented_steps()) == 4
+    assert len(derive_unimplemented_steps()) == 3
 
 
 def test_an_empty_row_reads_as_no_implementation_rather_than_silence() -> None:
     assert (
-        step_implementation_standing(DirectCertaintyStep.RAW_SAMPLE_INSPECTION)
+        step_implementation_standing(DirectCertaintyStep.ONE_CONDITION_AT_A_TIME)
         is StepImplementationStanding.NO_IMPLEMENTATION_IN_THIS_TREE
     )
     assert (
@@ -122,7 +123,7 @@ def test_code_outside_the_registry_is_unjudged_rather_than_refused() -> None:
 
 
 def test_every_row_carries_its_steps_implementation_standing() -> None:
-    row = assess_record_binding(_record(DirectCertaintyStep.RAW_SAMPLE_INSPECTION))
+    row = assess_record_binding(_record(DirectCertaintyStep.ONE_CONDITION_AT_A_TIME))
     assert (
         row.step_standing is StepImplementationStanding.NO_IMPLEMENTATION_IN_THIS_TREE
     )
@@ -269,10 +270,9 @@ def test_pointing_the_raw_count_code_at_another_step_is_a_named_mismatch() -> No
     assert row.registered_for == (DirectCertaintyStep.RAW_COUNT,)
 
 
-def test_filling_one_row_did_not_fill_the_other_four() -> None:
-    """خطوةٌ واحدةٌ مُلئت، والأربعُ الباقيةُ تبقى خاليةً مقروءةً لا مُزيَّفة."""
+def test_filling_the_second_row_did_not_fill_the_other_three() -> None:
+    """خطوتان مُلئتا، والثلاثُ الباقيةُ تبقى خاليةً مقروءةً لا مُزيَّفة."""
     assert derive_unimplemented_steps() == (
-        DirectCertaintyStep.RAW_SAMPLE_INSPECTION,
         DirectCertaintyStep.ONE_CONDITION_AT_A_TIME,
         DirectCertaintyStep.ITERATE_UNTIL_FULL_CLASSIFICATION,
         DirectCertaintyStep.FREEZE_ASSESSMENT,
@@ -297,3 +297,43 @@ def test_the_freeze_gate_was_not_touched_by_filling_a_row() -> None:
     """هذه القراءةُ ما زالت قارئًا لا بوّابة: المسارُ المخالفُ يُقبَل كما كان."""
     run = ProtocolRun(records=tuple(_record(step) for step in DirectCertaintyStep))
     assert assess_freeze(run).status is FreezeStatus.FROZEN_ADMISSIBLE
+
+
+# --- الخطوةُ الثانية: فحصُ العيّنة مربوطًا بخطوته ومُشغَّلًا --------------------
+
+
+def test_the_sample_inspection_row_names_a_zero_argument_entry_point() -> None:
+    refs = STEP_REPRODUCERS[DirectCertaintyStep.RAW_SAMPLE_INSPECTION]
+    assert len(refs) == 1
+    assert refs[0].module == "alghanem.arabic.alif_carrier_inspection"
+    assert refs[0] not in derive_reproducers_run_step_cannot_call()
+
+
+def test_the_sample_inspection_declaration_binds_to_its_own_step() -> None:
+    ref = STEP_REPRODUCERS[DirectCertaintyStep.RAW_SAMPLE_INSPECTION][0]
+    row = assess_record_binding(
+        _record(
+            DirectCertaintyStep.RAW_SAMPLE_INSPECTION,
+            module=ref.module,
+            callable_name=ref.callable_name,
+        )
+    )
+    assert row.standing is BindingStanding.BOUND_TO_ITS_OWN_STEP
+    assert row.registered_for == (DirectCertaintyStep.RAW_SAMPLE_INSPECTION,)
+    assert row.step_standing is StepImplementationStanding.IMPLEMENTED_IN_THIS_TREE
+
+
+def test_run_step_actually_runs_the_sample_inspection_on_the_counted_rows() -> None:
+    """الاختبارُ العمليّ مُشغَّلًا: صفوفٌ بسياقها من المُودَع، لا `None`."""
+    ref = STEP_REPRODUCERS[DirectCertaintyStep.RAW_SAMPLE_INSPECTION][0]
+    inspection = run_step(
+        StepRecord(
+            step=DirectCertaintyStep.RAW_SAMPLE_INSPECTION,
+            reproducer_module=ref.module,
+            reproducer_callable=ref.callable_name,
+            source_genus=CertaintySourceGenus.RERUN_NOW_IN_THIS_PROCESS,
+        )
+    )
+    assert len(inspection.alif_samples) == 23
+    assert all(sample.verse_line.strip() for sample in inspection.alif_samples)
+    assert "WASLA_FORM_ABSENT_FROM_THIS_DEPOSIT" in inspection.filed_findings

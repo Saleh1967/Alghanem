@@ -112,6 +112,7 @@ class ReproducerRef:
 
 _GATE_MODULE: Final[str] = "alghanem.arabic.encoding.contamination_gate"
 _RAW_COUNT_MODULE: Final[str] = "alghanem.arabic.alif_state_raw_count"
+_INSPECTION_MODULE: Final[str] = "alghanem.arabic.alif_carrier_inspection"
 
 
 STEP_REPRODUCERS: Final[Mapping[DirectCertaintyStep, tuple[ReproducerRef, ...]]] = (
@@ -128,18 +129,26 @@ STEP_REPRODUCERS: Final[Mapping[DirectCertaintyStep, tuple[ReproducerRef, ...]]]
                     _RAW_COUNT_MODULE, "run_raw_count_on_the_deposited_fatiha"
                 ),
             ),
-            DirectCertaintyStep.RAW_SAMPLE_INSPECTION: (),
+            DirectCertaintyStep.RAW_SAMPLE_INSPECTION: (
+                ReproducerRef(
+                    _INSPECTION_MODULE,
+                    "inspect_the_deposited_fatiha_alif_carriers",
+                ),
+            ),
             DirectCertaintyStep.ONE_CONDITION_AT_A_TIME: (),
             DirectCertaintyStep.ITERATE_UNTIL_FULL_CLASSIFICATION: (),
             DirectCertaintyStep.FREEZE_ASSESSMENT: (),
         }
     )
 )
-"""كودُ كلّ خطوةٍ في هذه الشجرة؛ وأربعُ خطواتٍ خاليةٌ، وخلوُّها مقروءٌ لا مطويّ.
+"""كودُ كلّ خطوةٍ في هذه الشجرة؛ وثلاثُ خطواتٍ خاليةٌ، وخلوُّها مقروءٌ لا مطويّ.
 
 وكانت خمسًا حين سُجِّل `STEP_BINDING_DISCOVERY`، ثمّ مُلئ صفُّ `RAW_COUNT`
 بمدخلٍ عديم الوسائط في `alghanem.arabic.alif_state_raw_count` يُشغِّل كاشفَ
-التلوّث ثمّ يعُدّ ذرّات نصٍّ عربيٍّ مُودَعٍ بحروفه.
+التلوّث ثمّ يعُدّ ذرّات نصٍّ عربيٍّ مُودَعٍ بحروفه، ثمّ مُلئ صفُّ
+`RAW_SAMPLE_INSPECTION` بمدخلٍ عديم الوسائط في
+`alghanem.arabic.alif_carrier_inspection` يقرأ صفوفَ ذلك العدّ بسياقها ولا
+يُعيد عدَّها.
 
 و`FREEZE_ASSESSMENT` خاليةٌ عن قصدٍ لا عن سهو: `assess_freeze` يحكم على المسار
 كلِّه، فجعلُه خطوةً داخل المسار يجعل المسارَ يشهد لنفسه.
@@ -315,7 +324,8 @@ STEP_BINDING_DISCOVERY: Final[DeeperLayerRecord] = DeeperLayerRecord(
         "فمسارٌ تُوجَّه خطواتُه الستُّ إلى دالةٍ واحدةٍ يُقبَل تجميدُه اليوم؛ "
         "وكانت خمسٌ من الخطوات الستّ بلا كودٍ في هذه الشجرة يوم سُجِّل هذا "
         "الكشف، فلا يقوم لها ربطٌ موافقٌ ولو أُريد، ثمّ مُلئ صفُّ `RAW_COUNT` "
-        "بمدخلٍ عديم الوسائط فبقيت أربعٌ خاليةً"
+        "بمدخلٍ عديم الوسائط، ثمّ صفُّ `RAW_SAMPLE_INSPECTION` بمدخلٍ مثله، "
+        "فبقيت ثلاثٌ خاليةً"
     ),
     reason=(
         "المحاولةُ لم تُغلِق الفجوة في موضع الحكم، وسمَّت بدلًا من ذلك موضعَين "
