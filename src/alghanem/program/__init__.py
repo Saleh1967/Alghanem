@@ -94,6 +94,21 @@ from .aims_document_ledger import (
 from .aims_document_ledger import (
     NAMED_RESIDUALS as AIMS_DOCUMENT_NAMED_RESIDUALS,
 )
+from .binary_outcome import (
+    BINARY_OUTCOME_NAMED_RESIDUALS,
+    NO_KERNEL_MODULE_CONSUMES_THE_BINARY_OUTCOME_RULE,
+    REFUSED_CLOSING_PHRASES,
+    REFUSED_PHRASES_ARE_DECLARED_NOT_DERIVED,
+    TOTAL_CERTAINTY_IS_RELATIVE_TO_ITS_BOUND_RUN,
+    TWO_OUTCOMES_ARE_A_PARTITION_NOT_A_SCALE,
+    BinaryOutcomeError,
+    ClassifiedAttempt,
+    DeeperLayerRecord,
+    GapClosureOutcome,
+    MidFigureClassification,
+    TotalCertaintyRecord,
+    classify_attempt,
+)
 from .certainty_ladder import (
     AGREEING_ON_THE_CEILING_IS_NOT_AGREEING_ON_THE_RUNGS,
     BIT_WIDTH_IS_A_CONVENTION_NOT_A_THEOREM,
@@ -480,4 +495,17 @@ __all__ = [
     "derive_embedded_round_trip_span",
     "derive_ladder_ceiling",
     "rung_assessment",
+    "BINARY_OUTCOME_NAMED_RESIDUALS",
+    "NO_KERNEL_MODULE_CONSUMES_THE_BINARY_OUTCOME_RULE",
+    "REFUSED_CLOSING_PHRASES",
+    "REFUSED_PHRASES_ARE_DECLARED_NOT_DERIVED",
+    "TOTAL_CERTAINTY_IS_RELATIVE_TO_ITS_BOUND_RUN",
+    "TWO_OUTCOMES_ARE_A_PARTITION_NOT_A_SCALE",
+    "BinaryOutcomeError",
+    "ClassifiedAttempt",
+    "DeeperLayerRecord",
+    "GapClosureOutcome",
+    "MidFigureClassification",
+    "TotalCertaintyRecord",
+    "classify_attempt",
 ]
