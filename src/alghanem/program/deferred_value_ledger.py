@@ -61,6 +61,43 @@
 تُرقّيها، ولا تقرؤها أيّ وحدةٍ في `kernel/`، وهو ما يفحصه اختبارٌ يمسح وحداتها.
 
 **وترتيب الصفوف ترتيبُ ورود الأسماء في §٤**، لا ترتيبَ أهمّية ولا أولوية (§٦).
+
+---
+
+**ما أضافته المرحلة العاشرة إلى هذه الوحدة (إعادةُ فتحٍ لا مطالبةٌ أولى).**
+تركت المرحلةُ التاسعة سؤالًا مُعلَّقًا باسمه: أيحتاج «غائبٌ في الأثر المقروء»
+تفريعًا بين «لم يُبحَث عنه في هذا المصدر» و«بُحِث فلم يُوجَد»؟ وقد نُصَّ هناك
+على أنه لا يُحسَم إلا على أثر هذا القارئ لا على أثر وحدة الغايات؛ فيُحسَم هنا
+على أثره::
+
+    Mention        != Construction
+    NotSearched    != NotFound
+    ReadForms      != AllForms
+    ExhaustedSource!= ExhaustedWorld
+
+والجواب: **يحتاج، وينقسم ثلاثًا لا اثنتين** (`AbsenceGenus`). فبين «لم يُبحَث»
+و«بُحِث فلم يُوجَد» تقع حالةٌ ثالثة قائمةٌ بنيويًّا: بحثٌ جرى وفي النصّ صيغةٌ
+لا يقرأ هذا القارئ عضوَها، فبقي بحثُه غيرَ مستقصٍ. ولولا الثالثة لوجب حملُ
+البحث غير المستقصي على إحدى الأُخريين، وكلاهما كذبٌ في اتجاه.
+
+* **والجنسُ مُشتَقٌّ من موضع الحجز لا مكتوبٌ في حقل**: البحث في مجال السلطة لا
+  يجري إلا حيث كان الحجز `UNREACHABLE_FROM_SOLE_AUTHORITY`؛ فالموضعان
+  الآخران وُجد حجزُهما بحارسٍ قبل أن يُسأل عن مجال سلطة، فهما «لم يُبحَث» لا
+  «بُحِث فلم يُوجَد». واختلافُ الجنس عن شكل الحجز يُرفَض عند الإنشاء.
+* **ومن ادّعى بحثًا لزمه نطاقُه**: صفٌّ يحمل جنسًا فيه بحثٌ بلا `searched_forms`
+  يُرفَض عند الإنشاء (`SEARCH_SCOPE_IS_REQUIRED_OF_THE_SEARCHER_NOTE`)، ودعوى
+  استقصاءٍ مع موضعٍ غير مقروء تُرفَض كذلك، وبحثٌ مُعلَنٌ غيرُ مستقصٍ بلا موضعٍ
+  يُسمّي مانعَه يُرفَض ثالثًا.
+* **وصيغُ الإشارة أربعٌ مقروءةٌ من موضعها في الشجرة لا من دلالةٍ تُقدَّر**
+  (`ReferenceForm`)، والرابعةُ `UNREAD_FORM` **حملٌ على الأضعف** لا سلّةَ طيّ:
+  ما لم يُقرَأ موضعُه يُسجَّل طريقًا قد يُنتج أيّ عضو، فيمنع دعوى الاستقصاء.
+* **وما كشفه الترميز فبدّل قراءةً قائمة**: `BIRTH_IN_SCOPE` **مكتوبٌ** في نصّ
+  سلطته الوحيدة، طرفًا في مقارنة، ومع ذلك لا تبلغه. فالذكرُ ليس إنتاجًا
+  (`members_mentioned_without_construction`)، وغيابُه عن مجال السلطة ليس غيابًا
+  عن النصّ؛ وقراءةُ «لا يُذكر أصلًا» كانت ستكون خطأً لو قِيلت.
+* **والحدُّ لم يُمَسّ**: لا يُقرَأ جنسُ الغياب رفعًا لحجزٍ ولا قربًا منه،
+  و`NOT_SEARCHED_AT_THIS_SITE` ليست درجةً أدنى في سُلَّم عثور
+  (`NOT_SEARCHED_IS_NOT_A_WEAKER_FOUND_NOTE`).
 """
 
 from __future__ import annotations
@@ -114,6 +151,25 @@ THREE_SHAPES_ARE_NOT_ONE_NOTE: Final = (
     "خطأٌ أصلًا؛ ودمجُها يُسقط فارقًا قائمًا اليوم"
 )
 
+ABSENCE_IS_NOT_ONE_CATEGORY_NOTE: Final = (
+    "غيابُ العضو من مجال سلطته ليس مقولةً واحدة: موضعٌ لم يجرِ فيه بحثٌ أصلًا "
+    "لأن حجزه وُجد قبله، وموضعٌ بُحِث في نصّه كلِّه بصيغٍ مقروءة فلم يُوجَد، "
+    "وموضعٌ بُحِث فيه وفي نصّه صيغةٌ لا تُقرَأ فبقي بحثُه غيرَ مستقصٍ. ودمجُها "
+    "في «غائبٌ في الأثر المقروء» يُسوّي بين من لم يبحث ومن بحث فلم يجد"
+)
+
+SEARCH_SCOPE_IS_REQUIRED_OF_THE_SEARCHER_NOTE: Final = (
+    "من أعلن «بُحِث فلم يُوجَد» لزمه نطاقُ بحثٍ مقروء — صيغُ الإشارة التي "
+    "قرأها فعلًا — ويُرفَض عند الإنشاء بدونه: دعوى بحثٍ بلا نطاقٍ مقروء "
+    "استقصاءٌ مُدّعًى، وهي أقوى من دعوى «لم أبحث» بلا زيادة دليل"
+)
+
+NOT_SEARCHED_IS_NOT_A_WEAKER_FOUND_NOTE: Final = (
+    "`NOT_SEARCHED_AT_THIS_SITE` ليست درجةً أدنى في سُلَّم عثورٍ ولا منزلةً "
+    "بين الوجود والعدم: هي تصريحٌ بأن هذا القارئ لم يُجرِ بحثًا في ذلك "
+    "الموضع، ولا تُقرَأ ترجيحًا لأحد الطرفين"
+)
+
 REFUSAL_SHAPE_IS_NOT_A_DECLARED_VOCABULARY: Final = (
     "REFUSAL_SHAPE_IS_NOT_A_DECLARED_VOCABULARY"
 )
@@ -127,6 +183,14 @@ CODOMAIN_DERIVED_FROM_LITERAL_WRITES_ONLY: Final = (
 )
 
 SECTION_4_NAMES_THREE_VALUES_ONLY: Final = "SECTION_4_NAMES_THREE_VALUES_ONLY"
+
+SEARCH_SCOPE_IS_DECLARED_NOT_PROVEN: Final = "SEARCH_SCOPE_IS_DECLARED_NOT_PROVEN"
+
+FORM_VOCABULARY_IS_READ_NOT_LAWFUL: Final = "FORM_VOCABULARY_IS_READ_NOT_LAWFUL"
+
+SEARCHED_OVER_UNREAD_FORMS_IS_UNOCCUPIED_TODAY: Final = (
+    "SEARCHED_OVER_UNREAD_FORMS_IS_UNOCCUPIED_TODAY"
+)
 
 NAMED_RESIDUALS: Final[Mapping[str, str]] = MappingProxyType(
     {
@@ -157,6 +221,27 @@ NAMED_RESIDUALS: Final[Mapping[str, str]] = MappingProxyType(
             "المرحلة، واستيرادُ `AttainmentStanding` هنا يربط القارئ بوحدة "
             "الغايات وهو ما تمنعه المرحلة. والاستبعاد مُسمّى لا مطويّ"
         ),
+        SEARCH_SCOPE_IS_DECLARED_NOT_PROVEN: (
+            "نطاقُ البحث المقروء هنا نصُّ وحدةٍ واحدة: وحدةُ الحجز نفسها. "
+            "فـ«بُحِث فلم يُوجَد» استقصاءٌ على المصدر المقروء لا على العالم، "
+            "وهو شقيقُ `ExhaustedSourceIsNotAnExhaustedWorld`: عضوٌ يُنتَج في "
+            "وحدةٍ أخرى أو يُبنى وقت التنفيذ من قيمةٍ واردة لا يراه هذا "
+            "القارئ، ولا يُقرَأ غيابُه من نصٍّ واحد برهانًا على غيابه من كلّ نصّ"
+        ),
+        FORM_VOCABULARY_IS_READ_NOT_LAWFUL: (
+            "صيغُ الإشارة الأربع مُستخرَجةٌ من نصّ هذا المستودع اليوم، ولا صفَّ "
+            "في `docs/CONSTITUTION.md` يُلزم إشارةً بأن تأخذ إحداها؛ وما خرج "
+            "عنها يُحمَل على `UNREAD_FORM` وحدها — وهي الجهةُ الأضعف دعوى لا "
+            "الأقوى — فيُقرَأ الغيابُ غيرَ مستقصًى بدل أن يُقرَأ مستقصًى. "
+            "والحملُ على الأضعف اختيارُ اتجاهٍ مُسمًّى، لا برهانَ أن الصيغة "
+            "تُنتج عضوًا فعلًا"
+        ),
+        SEARCHED_OVER_UNREAD_FORMS_IS_UNOCCUPIED_TODAY: (
+            "`SEARCHED_OVER_UNREAD_FORMS` لا يشغلها موضعٌ في الشجرة اليوم، "
+            "وصفرُها مقروءٌ في الإحصاء لا مطويّ: فخلوُّها ليس دليلًا على أن "
+            "الصيغ غير المقروءة لا تقع، وإنما على أن وحدةَ الحجز الوحيدة التي "
+            "جرى فيها بحثٌ خلت منها. ولا يُقرَأ هذا الخلوّ تزكيةً للشجرة"
+        ),
     }
 )
 
@@ -171,6 +256,59 @@ class DeferredValueShape(Enum):
     REFUSED_BY_NAMING_THE_VALUE = "مرفوضة_بحارسٍ_يُسمّيها"
     REFUSED_BY_ADMITTING_ONLY_A_SIBLING = "مرفوضة_بقبول_أخيها_وحده"
     UNREACHABLE_FROM_SOLE_AUTHORITY = "لا_تبلغها_سلطتها_الوحيدة"
+
+
+class ReferenceForm(Enum):
+    """صيغُ الإشارة إلى مفردةٍ في نصّ وحدتها، مُستخرَجةً من موضع الإشارة نفسه.
+
+    والصيغة الرابعة ليست سلّةَ مهملاتٍ تُطوى فيها الإشارات: هي **الحملُ على
+    الأضعف دعوى**، فما لم يُقرَأ موضعُه يُقرَأ طريقًا قد يُنتج أيّ عضو، فيمنع
+    دعوى الاستقصاء بدل أن يُسكَت عنه فتقوم الدعوى بلا مانع.
+    """
+
+    MEMBER_ATTRIBUTE_IN_CONSTRUCTOR_KEYWORD = "عضوٌ مكتوبٌ وسيطًا مُسمًّى في بناء"
+    MEMBER_ATTRIBUTE_IN_COMPARISON = "عضوٌ مكتوبٌ طرفًا في مقارنة"
+    VOCABULARY_IN_TYPE_POSITION = "المفردةُ في موضع نوعٍ لا موضع قيمة"
+    UNREAD_FORM = "صيغةٌ لا يقرأ هذا القارئ عضوَها"
+
+    @property
+    def is_read(self) -> bool:
+        """أقرأ هذا القارئُ ما تُنتجه الصيغة؟ وإلا فالبحثُ فيها لم يجرِ."""
+
+        return self is not ReferenceForm.UNREAD_FORM
+
+    @property
+    def writes_a_member_into_a_construction(self) -> bool:
+        """أتكتب الصيغةُ عضوًا في بناءٍ فيبلغه مجالُ السلطة المُشتَقّ؟"""
+
+        return self is ReferenceForm.MEMBER_ATTRIBUTE_IN_CONSTRUCTOR_KEYWORD
+
+
+class AbsenceGenus(Enum):
+    """جنسُ غياب العضو عن مجال سلطته: أبحثٌ لم يجرِ، أم بحثٌ لم يجد، أم بحثٌ غيرُ مستقصٍ؟
+
+    ثلاثةٌ لا اثنان، والثالثُ ليس منزلةً بين الأوّلين: `NOT_SEARCHED_AT_THIS_SITE`
+    تصريحٌ بأن البحث لم يجرِ أصلًا، و`SEARCHED_AND_NOT_FOUND` دعوى استقصاءٍ على
+    نصٍّ قُرئت صيغُه كلُّها، و`SEARCHED_OVER_UNREAD_FORMS` بحثٌ جرى وبقي فيه
+    طريقٌ لم يُقرَأ. على منوال `TERMINATION_STRUCTURE_NOT_SETTLED` في
+    `alghanem.program.aims`: الجهلُ عضوٌ في المفردة لا فراغٌ يُطوى.
+    """
+
+    NOT_SEARCHED_AT_THIS_SITE = "لم_يُبحَث_عنه_في_هذا_المصدر"
+    SEARCHED_AND_NOT_FOUND = "بُحِث_فلم_يُوجَد"
+    SEARCHED_OVER_UNREAD_FORMS = "بُحِث_وفي_النصّ_صيغةٌ_لا_تُقرَأ"
+
+    @property
+    def a_search_ran(self) -> bool:
+        """أجرى بحثٌ في نصّ الوحدة أصلًا؟"""
+
+        return self is not AbsenceGenus.NOT_SEARCHED_AT_THIS_SITE
+
+    @property
+    def claims_an_exhausted_source(self) -> bool:
+        """أتدّعي هذه الرتبةُ استقصاءً على المصدر المقروء وحده؟"""
+
+        return self is AbsenceGenus.SEARCHED_AND_NOT_FOUND
 
 
 class DeferredValueSite(Enum):
@@ -235,6 +373,10 @@ _DECLARED_SHAPE_BY_SITE: Final[Mapping[DeferredValueSite, DeferredValueShape]] =
 
 if len(DeferredValueShape) != 3:  # pragma: no cover - guard
     raise RuntimeError("a hold takes one of exactly three observed shapes")
+if len(ReferenceForm) != 4:  # pragma: no cover - guard
+    raise RuntimeError("a reference takes one of exactly four read forms")
+if len(AbsenceGenus) != 3:  # pragma: no cover - guard
+    raise RuntimeError("an absence is deliberately three-valued")
 if set(_DECLARED_SHAPE_BY_SITE) != set(DeferredValueSite):  # pragma: no cover - guard
     raise RuntimeError("every declared site must declare the shape it expects")
 if tuple(site.member_name for site in DeferredValueSite) != (
@@ -321,6 +463,121 @@ class GuardCensus:
 
 
 @dataclass(frozen=True, slots=True)
+class VocabularyReference:
+    """إشارةٌ واحدة إلى مفردةٍ متتبَّعة في نصّ وحدتها: صيغتُها وعضوُها وموضعُها."""
+
+    module_name: str
+    vocabulary_name: str
+    form: ReferenceForm
+    member_name: str
+    document_line: int
+
+    def __post_init__(self) -> None:
+        _require_non_blank(self.module_name, "اسم الوحدة")
+        _require_non_blank(self.vocabulary_name, "اسم المفردة")
+        if not isinstance(self.form, ReferenceForm):
+            raise DeferredValueLedgerError("صيغة الإشارة من مفردتها المغلقة")
+        if self.form in (
+            ReferenceForm.MEMBER_ATTRIBUTE_IN_CONSTRUCTOR_KEYWORD,
+            ReferenceForm.MEMBER_ATTRIBUTE_IN_COMPARISON,
+        ):
+            _require_non_blank(self.member_name, "اسم العضو المُشار إليه")
+        else:
+            _require_blank(
+                self.member_name,
+                "اسم العضو المُشار إليه",
+                "لا يُسمّى العضو إلا حيث قرأه القارئ في موضع الإشارة نفسه",
+            )
+        _require_positive_line(self.document_line, "موضع الإشارة")
+
+
+@dataclass(frozen=True, slots=True)
+class ReferenceCensus:
+    """إحصاءُ كلّ إشارةٍ إلى المفردة في نصّ الوحدة الممسوحة، مقروءةً أو غير مقروءة.
+
+    هذا الإحصاء **هو** نطاق البحث: من ادّعى «بُحِث فلم يُوجَد» أراه ما قرأ،
+    ومن وقعت في نصّه صيغةٌ غير مقروءة رُدَّت دعواه إلى الأضعف. ولا حقلَ عددٍ
+    هنا؛ التعدادُ خاصّيةٌ تُحسَب.
+    """
+
+    references: tuple[VocabularyReference, ...]
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.references, tuple):
+            raise DeferredValueLedgerError("إحصاء الإشارات مجموعةٌ")
+        for reference in self.references:
+            if not isinstance(reference, VocabularyReference):
+                raise DeferredValueLedgerError("كل عنصرٍ إشارةٌ مرصودة")
+
+    @property
+    def reference_count(self) -> int:
+        """عدد الإشارات المرصودة، محسوبًا لا مكتوبًا."""
+
+        return len(self.references)
+
+    @property
+    def form_counts(self) -> Mapping[ReferenceForm, int]:
+        """تعدادُ الإشارات بحسب صيغتها، وكل صيغةٍ حاضرةٌ ولو بصفر."""
+
+        counts = dict.fromkeys(ReferenceForm, 0)
+        for reference in self.references:
+            counts[reference.form] += 1
+        return MappingProxyType(counts)
+
+    @property
+    def read_forms(self) -> tuple[ReferenceForm, ...]:
+        """الصيغُ المقروءة التي وقعت فعلًا، بترتيب أوّل وقوعها: نطاقُ البحث."""
+
+        seen: list[ReferenceForm] = []
+        for reference in self.references:
+            if reference.form.is_read and reference.form not in seen:
+                seen.append(reference.form)
+        return tuple(seen)
+
+    @property
+    def unread_lines(self) -> tuple[int, ...]:
+        """مواضعُ الصيغ غير المقروءة بترتيب ورودها؛ وخلوُّها لا يُطوى."""
+
+        return tuple(
+            reference.document_line
+            for reference in self.references
+            if not reference.form.is_read
+        )
+
+    @property
+    def members_mentioned_without_construction(self) -> tuple[str, ...]:
+        """أعضاءٌ مكتوبةٌ في النصّ قراءةً لا بناءً، بترتيب ورودها بلا تكرار.
+
+        الذكرُ ليس إنتاجًا: عضوٌ يُقارَن به مكتوبٌ في نصّ سلطته ولا تبلغه، فلا
+        يُقرَأ حضورُه في النصّ رفعًا لحجزه، ولا يُقرَأ غيابُه عن مجال السلطة
+        غيابًا عن النصّ كلِّه.
+        """
+
+        constructed = {
+            reference.member_name
+            for reference in self.references
+            if reference.form.writes_a_member_into_a_construction
+        }
+        mentioned: list[str] = []
+        for reference in self.references:
+            name = reference.member_name
+            if not name or name in constructed or name in mentioned:
+                continue
+            mentioned.append(name)
+        return tuple(mentioned)
+
+    def references_in(self, module_name: str) -> tuple[VocabularyReference, ...]:
+        """إشاراتُ وحدةٍ بعينها بترتيب ورودها في نصّها."""
+
+        _require_non_blank(module_name, "اسم الوحدة")
+        return tuple(
+            reference
+            for reference in self.references
+            if reference.module_name == module_name
+        )
+
+
+@dataclass(frozen=True, slots=True)
 class DeferredValueRow:
     """قيمةٌ مُعلَنةٌ واحدة غيرُ قابلةٍ للبناء، بشكلَي حجزها المُعلَن والمُشتَقّ."""
 
@@ -330,6 +587,9 @@ class DeferredValueRow:
     evidence_line: int
     admitted_sibling: str = ""
     authority_codomain: tuple[str, ...] = ()
+    absence_genus: AbsenceGenus = AbsenceGenus.NOT_SEARCHED_AT_THIS_SITE
+    searched_forms: tuple[ReferenceForm, ...] = ()
+    unread_form_lines: tuple[int, ...] = ()
 
     def __post_init__(self) -> None:
         if not isinstance(self.site, DeferredValueSite):
@@ -385,6 +645,69 @@ class DeferredValueRow:
                 "مجال السلطة لا يُسجَّل إلا حيث كان الحجز انعدامَ بلوغٍ منها"
             )
 
+        self._validate_absence()
+
+    def _validate_absence(self) -> None:
+        """رُدَّ جنسَ غيابٍ يخالف شكلَ الحجز، أو دعوى بحثٍ بلا نطاقٍ مقروء."""
+
+        if not isinstance(self.absence_genus, AbsenceGenus):
+            raise DeferredValueLedgerError("جنس الغياب من مفردته المغلقة")
+        if not isinstance(self.searched_forms, tuple) or any(
+            not isinstance(form, ReferenceForm) or not form.is_read
+            for form in self.searched_forms
+        ):
+            raise DeferredValueLedgerError(
+                "نطاق البحث صيغُ إشارةٍ مقروءة من مفردتها المغلقة: "
+                "والصيغةُ غير المقروءة ليست نطاقًا بُحِث فيه"
+            )
+        if len(set(self.searched_forms)) != len(self.searched_forms):
+            raise DeferredValueLedgerError(
+                "صيغةٌ مكرّرة في نطاق البحث: التكرار يُضخّم النطاق ولا يُوسّعه"
+            )
+        if not isinstance(self.unread_form_lines, tuple) or any(
+            not isinstance(line, int) or isinstance(line, bool) or line <= 0
+            for line in self.unread_form_lines
+        ):
+            raise DeferredValueLedgerError("مواضع الصيغ غير المقروءة أرقامُ أسطرٍ موجبة")
+
+        searched_here = self.derived_shape is (
+            DeferredValueShape.UNREACHABLE_FROM_SOLE_AUTHORITY
+        )
+        if searched_here != self.absence_genus.a_search_ran:
+            raise DeferredValueLedgerError(
+                f"{self.site.member_name}: شكلُ الحجز "
+                f"{self.derived_shape.value} وجنسُ الغياب "
+                f"{self.absence_genus.value} — البحثُ في مجال السلطة لا يجري "
+                "إلا حيث كان الحجز انعدامَ بلوغٍ منها، ولا يُدّعى حيث لم يجرِ"
+            )
+
+        if not self.absence_genus.a_search_ran:
+            if self.searched_forms or self.unread_form_lines:
+                raise DeferredValueLedgerError(
+                    "موضعٌ لم يجرِ فيه بحثٌ لا يحمل نطاقًا ولا مواضعَ غير "
+                    f"مقروءة — {NOT_SEARCHED_IS_NOT_A_WEAKER_FOUND_NOTE}"
+                )
+            return
+
+        if not self.searched_forms:
+            raise DeferredValueLedgerError(
+                f"{self.site.member_name}: بحثٌ بلا نطاقٍ مقروء — "
+                f"{SEARCH_SCOPE_IS_REQUIRED_OF_THE_SEARCHER_NOTE}"
+            )
+
+        if self.absence_genus.claims_an_exhausted_source:
+            if self.unread_form_lines:
+                raise DeferredValueLedgerError(
+                    f"{self.site.member_name}: دعوى استقصاءٍ ونصُّها يحمل صيغةً "
+                    f"غير مقروءة عند {self.unread_form_lines[0]} — "
+                    f"{NAMED_RESIDUALS[FORM_VOCABULARY_IS_READ_NOT_LAWFUL]}"
+                )
+        elif not self.unread_form_lines:
+            raise DeferredValueLedgerError(
+                f"{self.site.member_name}: بحثٌ مُعلَنٌ غيرُ مستقصٍ بلا صيغةٍ "
+                "غير مقروءةٍ تُسمّى بموضعها: غيرُ المستقصي يُرى مانعُه"
+            )
+
     @property
     def is_named_by_its_hold(self) -> bool:
         """أيُسمّي موضعُ الحجز العضوَ نفسه؟ وإلا فالحجز مُستلزَمٌ لا مكتوب."""
@@ -406,12 +729,15 @@ class DeferredValueLedger:
 
     rows: tuple[DeferredValueRow, ...]
     guards: GuardCensus
+    references: ReferenceCensus
 
     def __post_init__(self) -> None:
         if not isinstance(self.rows, tuple) or not self.rows:
             raise DeferredValueLedgerError("دفتر القيم مجموعةٌ غير فارغة")
         if not isinstance(self.guards, GuardCensus):
             raise DeferredValueLedgerError("إحصاء الحرّاس من نوعه")
+        if not isinstance(self.references, ReferenceCensus):
+            raise DeferredValueLedgerError("إحصاء الإشارات من نوعه")
         seen: set[DeferredValueSite] = set()
         for row in self.rows:
             if not isinstance(row, DeferredValueRow):
@@ -453,6 +779,24 @@ class DeferredValueLedger:
         if not isinstance(shape, DeferredValueShape):
             raise DeferredValueLedgerError("شكل الحجز من مفردته المغلقة")
         return tuple(row for row in self.rows if row.derived_shape is shape)
+
+    @property
+    def absence_genus_counts(self) -> Mapping[AbsenceGenus, int]:
+        """تعدادُ الصفوف بحسب جنس غيابها، وكل عضوٍ حاضرٌ ولو بصفر."""
+
+        counts = dict.fromkeys(AbsenceGenus, 0)
+        for row in self.rows:
+            counts[row.absence_genus] += 1
+        return MappingProxyType(counts)
+
+    def rows_with_absence_genus(
+        self, genus: AbsenceGenus
+    ) -> tuple[DeferredValueRow, ...]:
+        """صفوفُ جنسِ غيابٍ بعينه بترتيب ورود أسمائها في §٤."""
+
+        if not isinstance(genus, AbsenceGenus):
+            raise DeferredValueLedgerError("جنس الغياب من مفردته المغلقة")
+        return tuple(row for row in self.rows if row.absence_genus is genus)
 
 
 def _member_attribute(node: ast.expr, vocabulary_name: str) -> str:
@@ -522,6 +866,126 @@ def _scan_authority_codomain(
     return tuple(members), first_line
 
 
+_TYPE_CHECK_CALLS: Final = ("isinstance", "issubclass")
+
+
+def _type_positions(tree: ast.AST) -> set[int]:
+    """مواضعُ النوع: التعليقاتُ التوضيحية ووسيطا `isinstance`/`issubclass`.
+
+    تُقرَأ من بنية الشجرة لا من دلالةٍ تُقدَّر: موضعُ التعليق التوضيحيّ حقلٌ
+    مستقلّ في العقدة، ووسيطُ فحص النوع يُسمّى باسمه الحرفيّ. وما عداهما يبقى
+    موضعَ قيمة.
+    """
+
+    marked: set[int] = set()
+    for node in ast.walk(tree):
+        annotations: list[ast.expr | None] = []
+        if isinstance(node, ast.AnnAssign | ast.arg):
+            annotations.append(node.annotation)
+        elif isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
+            annotations.append(node.returns)
+        elif (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id in _TYPE_CHECK_CALLS
+        ):
+            annotations.extend(node.args)
+        for annotation in annotations:
+            if annotation is None:
+                continue
+            for inner in ast.walk(annotation):
+                marked.add(id(inner))
+    return marked
+
+
+def _scan_references(
+    tree: ast.AST, module_name: str, vocabulary_name: str, member_names: frozenset[str]
+) -> list[VocabularyReference]:
+    """امسح كلّ إشارةٍ إلى المفردة في نصّ الوحدة، ولا تتخطَّ واحدة.
+
+    الحملُ على الأضعف: ما لم يُقرَأ موضعُه يُسجَّل `UNREAD_FORM` لا يُطوى، لأن
+    الطيَّ يُنتج دعوى استقصاءٍ بلا مانعٍ مرئيّ.
+    """
+
+    type_positions = _type_positions(tree)
+    keyword_values = {
+        id(keyword.value)
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        for keyword in node.keywords
+    }
+    comparison_operands: set[int] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Compare):
+            comparison_operands.add(id(node.left))
+            comparison_operands.update(id(item) for item in node.comparators)
+
+    references: list[VocabularyReference] = []
+    attribute_bases = {
+        id(node.value)
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Attribute)
+        and isinstance(node.value, ast.Name)
+        and node.value.id == vocabulary_name
+    }
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Attribute):
+            if not isinstance(node.value, ast.Name) or node.value.id != vocabulary_name:
+                continue
+            if node.attr not in member_names:
+                form, member = ReferenceForm.UNREAD_FORM, ""
+            elif id(node) in keyword_values:
+                form, member = (
+                    ReferenceForm.MEMBER_ATTRIBUTE_IN_CONSTRUCTOR_KEYWORD,
+                    node.attr,
+                )
+            elif id(node) in comparison_operands:
+                form, member = ReferenceForm.MEMBER_ATTRIBUTE_IN_COMPARISON, node.attr
+            else:
+                form, member = ReferenceForm.UNREAD_FORM, ""
+            references.append(
+                VocabularyReference(
+                    module_name=module_name,
+                    vocabulary_name=vocabulary_name,
+                    form=form,
+                    member_name=member,
+                    document_line=node.lineno,
+                )
+            )
+        elif isinstance(node, ast.Name) and node.id == vocabulary_name:
+            if id(node) in attribute_bases:
+                continue
+            form = (
+                ReferenceForm.VOCABULARY_IN_TYPE_POSITION
+                if id(node) in type_positions
+                else ReferenceForm.UNREAD_FORM
+            )
+            references.append(
+                VocabularyReference(
+                    module_name=module_name,
+                    vocabulary_name=vocabulary_name,
+                    form=form,
+                    member_name="",
+                    document_line=node.lineno,
+                )
+            )
+    return sorted(references, key=lambda reference: reference.document_line)
+
+
+def _absence_genus(
+    census: ReferenceCensus,
+) -> tuple[AbsenceGenus, tuple[ReferenceForm, ...], tuple[int, ...]]:
+    """اشتقّ جنسَ الغياب من نطاق البحث المقروء ومن الصيغ التي لم تُقرَأ."""
+
+    unread = census.unread_lines
+    genus = (
+        AbsenceGenus.SEARCHED_OVER_UNREAD_FORMS
+        if unread
+        else AbsenceGenus.SEARCHED_AND_NOT_FOUND
+    )
+    return genus, census.read_forms, unread
+
+
 def _live_vocabulary(site: DeferredValueSite) -> type[Enum]:
     """استورد المفردة حيّةً؛ وغيابُ العضو رفضٌ مُسمّى لا حجزٌ يُقرَأ مرفوعًا."""
 
@@ -557,8 +1021,12 @@ def _module_source(module_name: str) -> str:
 
 def _read_row(
     site: DeferredValueSite, tree: ast.AST, guards: list[ReadGuard]
-) -> DeferredValueRow:
-    """اشتقّ شكل الحجز من نصّ الوحدة، ورُدَّ الموضع الذي لا شاهد له."""
+) -> tuple[DeferredValueRow, tuple[VocabularyReference, ...]]:
+    """اشتقّ شكل الحجز من نصّ الوحدة، ورُدَّ الموضع الذي لا شاهد له.
+
+    ويُرَدّ مع الصفّ ما قُرئ من إشارات: نطاقُ البحث يُرى ولا يُدّعى، وموضعٌ لم
+    يجرِ فيه بحثٌ لا يُسجَّل له نطاق.
+    """
 
     vocabulary = _live_vocabulary(site)
     declared = _DECLARED_SHAPE_BY_SITE[site]
@@ -572,11 +1040,14 @@ def _read_row(
         if guard.member_name == site.member_name and not guard.negated
     ]
     if naming:
-        return DeferredValueRow(
-            site=site,
-            declared_shape=declared,
-            derived_shape=DeferredValueShape.REFUSED_BY_NAMING_THE_VALUE,
-            evidence_line=naming[0].document_line,
+        return (
+            DeferredValueRow(
+                site=site,
+                declared_shape=declared,
+                derived_shape=DeferredValueShape.REFUSED_BY_NAMING_THE_VALUE,
+                evidence_line=naming[0].document_line,
+            ),
+            (),
         )
 
     sibling_guards = [
@@ -591,12 +1062,15 @@ def _read_row(
                 f"ثنائية، وعددُ أعضائها اليوم {len(vocabulary.__members__)} — "
                 f"{NAMED_RESIDUALS[SIBLING_ADMISSION_REFUSAL_DEPENDS_ON_VOCABULARY_SIZE]}"
             )
-        return DeferredValueRow(
-            site=site,
-            declared_shape=declared,
-            derived_shape=(DeferredValueShape.REFUSED_BY_ADMITTING_ONLY_A_SIBLING),
-            evidence_line=sibling_guards[0].document_line,
-            admitted_sibling=sibling_guards[0].member_name,
+        return (
+            DeferredValueRow(
+                site=site,
+                declared_shape=declared,
+                derived_shape=(DeferredValueShape.REFUSED_BY_ADMITTING_ONLY_A_SIBLING),
+                evidence_line=sibling_guards[0].document_line,
+                admitted_sibling=sibling_guards[0].member_name,
+            ),
+            (),
         )
 
     codomain, line = _scan_authority_codomain(tree, site.vocabulary_name)
@@ -606,12 +1080,29 @@ def _read_row(
             f"مجالَ سلطةٍ مكتوبًا في {site.module_name} — "
             f"{MISSING_HOLD_IS_REFUSED_NOTE}"
         )
-    return DeferredValueRow(
-        site=site,
-        declared_shape=declared,
-        derived_shape=DeferredValueShape.UNREACHABLE_FROM_SOLE_AUTHORITY,
-        evidence_line=line,
-        authority_codomain=codomain,
+    references = tuple(
+        _scan_references(
+            tree,
+            site.module_name,
+            site.vocabulary_name,
+            frozenset(vocabulary.__members__),
+        )
+    )
+    genus, searched_forms, unread_lines = _absence_genus(
+        ReferenceCensus(references=references)
+    )
+    return (
+        DeferredValueRow(
+            site=site,
+            declared_shape=declared,
+            derived_shape=DeferredValueShape.UNREACHABLE_FROM_SOLE_AUTHORITY,
+            evidence_line=line,
+            authority_codomain=codomain,
+            absence_genus=genus,
+            searched_forms=searched_forms,
+            unread_form_lines=unread_lines,
+        ),
+        references,
     )
 
 
@@ -620,29 +1111,41 @@ def read_deferred_value_ledger() -> DeferredValueLedger:
 
     rows: list[DeferredValueRow] = []
     all_guards: list[ReadGuard] = []
+    all_references: list[VocabularyReference] = []
     for site in DeferredValueSite:
         tree = ast.parse(_module_source(site.module_name))
         guards = _scan_guards(tree, site.module_name, site.vocabulary_name)
         all_guards.extend(guards)
-        rows.append(_read_row(site, tree, guards))
+        row, references = _read_row(site, tree, guards)
+        rows.append(row)
+        all_references.extend(references)
     return DeferredValueLedger(
-        rows=tuple(rows), guards=GuardCensus(guards=tuple(all_guards))
+        rows=tuple(rows),
+        guards=GuardCensus(guards=tuple(all_guards)),
+        references=ReferenceCensus(references=tuple(all_references)),
     )
 
 
 __all__ = [
+    "ABSENCE_IS_NOT_ONE_CATEGORY_NOTE",
     "CODOMAIN_DERIVED_FROM_LITERAL_WRITES_ONLY",
     "DEFERRED_VALUE_LEDGER_AUTHORITY_NOTE",
     "DESIGN_SOURCE_CITATION_NOTE",
+    "FORM_VOCABULARY_IS_READ_NOT_LAWFUL",
     "MISSING_HOLD_IS_REFUSED_NOTE",
     "NAMED_RESIDUALS",
+    "NOT_SEARCHED_IS_NOT_A_WEAKER_FOUND_NOTE",
     "NO_INDICATOR_IN_THIS_READER_NOTE",
     "REFUSAL_SHAPE_IS_NOT_A_DECLARED_VOCABULARY",
+    "SEARCHED_OVER_UNREAD_FORMS_IS_UNOCCUPIED_TODAY",
+    "SEARCH_SCOPE_IS_DECLARED_NOT_PROVEN",
+    "SEARCH_SCOPE_IS_REQUIRED_OF_THE_SEARCHER_NOTE",
     "SECTION_4_DECLARED_VALUE_NAMES",
     "SECTION_4_NAMES_THREE_VALUES_ONLY",
     "SHAPE_DISAGREEMENT_IS_REFUSED_NOTE",
     "SIBLING_ADMISSION_REFUSAL_DEPENDS_ON_VOCABULARY_SIZE",
     "THREE_SHAPES_ARE_NOT_ONE_NOTE",
+    "AbsenceGenus",
     "DeferredValueLedger",
     "DeferredValueLedgerError",
     "DeferredValueRow",
@@ -650,5 +1153,8 @@ __all__ = [
     "DeferredValueSite",
     "GuardCensus",
     "ReadGuard",
+    "ReferenceCensus",
+    "ReferenceForm",
+    "VocabularyReference",
     "read_deferred_value_ledger",
 ]

@@ -160,7 +160,12 @@ def test_the_reopened_module_is_derived_and_named_not_refused(
     assert set(reopened) == {
         f"{PROGRAMME_PACKAGE_RELATIVE_PATH}/constitution_ledger.py",
         f"{PROGRAMME_PACKAGE_RELATIVE_PATH}/aims.py",
+        f"{PROGRAMME_PACKAGE_RELATIVE_PATH}/deferred_value_ledger.py",
     }
+    assert reopened[f"{PROGRAMME_PACKAGE_RELATIVE_PATH}/deferred_value_ledger.py"] == (
+        MilestoneOrdinal.THIRD,
+        MilestoneOrdinal.TENTH,
+    )
     assert reopened[f"{PROGRAMME_PACKAGE_RELATIVE_PATH}/constitution_ledger.py"] == (
         MilestoneOrdinal.SECOND,
         MilestoneOrdinal.FIFTH,
@@ -169,12 +174,20 @@ def test_the_reopened_module_is_derived_and_named_not_refused(
         MilestoneOrdinal.FIRST,
         MilestoneOrdinal.NINTH,
     )
-    for ordinal in (MilestoneOrdinal.FIFTH, MilestoneOrdinal.NINTH):
+    for ordinal in (
+        MilestoneOrdinal.FIFTH,
+        MilestoneOrdinal.NINTH,
+        MilestoneOrdinal.TENTH,
+    ):
         assert (
             ledger.row(ordinal).claim_standing
             is ModuleClaimStanding.REOPENED_BY_THIS_MILESTONE
         )
-    for ordinal in (MilestoneOrdinal.SECOND, MilestoneOrdinal.FIRST):
+    for ordinal in (
+        MilestoneOrdinal.SECOND,
+        MilestoneOrdinal.FIRST,
+        MilestoneOrdinal.THIRD,
+    ):
         assert (
             ledger.row(ordinal).claim_standing is ModuleClaimStanding.FIRST_CODED_HERE
         )
@@ -253,7 +266,7 @@ def test_an_unknown_subsection_heading_is_refused(document_text: str) -> None:
 
 def test_an_unknown_ordinal_in_a_known_heading_is_refused(document_text: str) -> None:
     altered = document_text + (
-        "\n### ما كشفته المرحلة العاشرة (لا رتبةَ لها)\n\n"
+        "\n### ما كشفته المرحلة الحادية عشرة (لا رتبةَ لها)\n\n"
         "قامت في `src/alghanem/program/aims.py`.\n"
     )
     with pytest.raises(MilestoneLedgerError, match="رتبةُ مرحلةٍ خارج المفردة"):

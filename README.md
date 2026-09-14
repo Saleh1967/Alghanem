@@ -1634,6 +1634,36 @@ no constitution row supports it and coding it would make it an unverified premis
 the whole division succeeds on
 (`FRACTAL_OPEN_ENDEDNESS_IS_AN_UNSOURCED_CLAIM_NOTE`).
 
+The tenth §7 milestone added no module either. It returned to
+`alghanem.program.deferred_value_ledger` to answer the question its ninth
+predecessor wrote down and left pending: does "absent from the read trace" need
+splitting between *not searched for in this source* and *searched and not
+found*? The question was decided on the trace of that ledger itself rather than
+on prose, and the answer is that absence is not one category and not two but
+three. A value whose hold is already established by a naming guard or by a
+sibling guard was never searched for at all; a value searched for over a text
+every one of whose references is a readable form is genuinely not found; and a
+value searched for over a text holding even one reference the reader cannot
+classify is not-found without exhaustion, so the third member
+`SEARCHED_OVER_UNREAD_FORMS` exists and is counted at zero rather than folded
+away. Because the two searched genera differ only in the scope actually read,
+whoever declares one is now required to carry that scope — the closed
+`ReferenceForm` vocabulary it covered and the document lines it could not read —
+and a descriptor declaring a search with no read scope, or an exhaustion over a
+line it admits it could not read, is refused at construction. The reference
+census that makes this derivable also corrected a claim the module would
+otherwise have made: `BirthVerdictStatus.BIRTH_IN_SCOPE` *is* written in
+`alghanem.kernel.birth_verdict`, as an operand of a comparison, so the honest
+statement is that it is mentioned and never constructed, not that it is never
+written (`members_mentioned_without_construction`). Nothing was promoted:
+`AttainmentStanding.REACHED` is still refused at construction and no aim moved.
+What was not lifted is named — a declared search scope is readable in the tree
+and not proved about the world (`SEARCH_SCOPE_IS_DECLARED_NOT_PROVEN`), the form
+vocabulary is a reader's four positions and not a law about Python
+(`FORM_VOCABULARY_IS_READ_NOT_LAWFUL`), and the third genus has no occupant in
+today's trace, which is a fact about today and not a proof that it cannot occur
+(`SEARCHED_OVER_UNREAD_FORMS_IS_UNOCCUPIED_TODAY`).
+
 The tenth milestone answered one question and refused to leave it pending.
 Three independent cards — قُروء (2:228), أنّى (2:223), and مَلِك (114:2) —
 had stopped at exactly the same place, the fourth link (الوضع بالنقل), because
