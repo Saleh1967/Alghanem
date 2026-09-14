@@ -26,6 +26,11 @@
 لأن حذفَ الخبر إخفاءٌ كما أن قبولَه تصديقٌ، وكلاهما مرفوض
 (`RECORDING_IS_NOT_ENDORSING`). وهذا تطبيقُ البروتوكول على نصّه، لا استثناءٌ له.
 
+**وقاعدةُ النتيجتين تقرأ هذه الوحدةَ ولا تُقرَأ منها.** ما بعد التجميد —
+تصنيفُ كلّ محاولةِ إغلاقِ فجوةٍ في فئتين لا ثالثَ لهما — قائمٌ في
+`alghanem.program.binary_outcome`، وهو يستدعي `assess_freeze` ليحسب قبولَ فئته
+الأولى؛ ولا تستورد هذه الوحدةُ تلك، فاتّجاهُ الاعتماد واحدٌ لا يُعكَس.
+
 **ولا سلطةَ لهذه الوحدة على النواة.** لا يقرؤها `BirthVerdictGate` ولا
 `InvariantVerificationGate` ولا أيُّ وحدةٍ في `kernel/`؛ فهي سجلٌّ وحارسٌ لمن
 استعملها، لا بابٌ يعبره غيرُه (`NO_KERNEL_MODULE_CONSUMES_THIS_PROTOCOL`).
@@ -380,6 +385,30 @@ REPORTED_UNVERIFIED_FIGURES: Final[tuple[UnverifiedFigureRecord, ...]] = (
     UnverifiedFigureRecord(
         subject="المطابقةُ المذكورة بلا استثناء في مقدّمة سُلَّم اليقين",
         figure_text="٢٨/٢٨",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="تسلسلُ الانزلاق المذكور في قاعدة النتيجتين",
+        figure_text="٦٩٫٢٪ ← ٩٦٫٥٥٪ ← ٩٩٫٨٣٪ ← «١٠٠٪»",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="الرقمُ الوسط غيرُ المُفسَّر في اختبار CV+CV الأوّل",
+        figure_text="٦٩٫٥٧٪",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.CLASSIFICATION_INCOMPLETE,
+    ),
+    UnverifiedFigureRecord(
+        subject="نسبةُ الفتحة في «إنّ وأخواتها» المذكورة مثالًا لليقين التامّ",
+        figure_text="٥٣٫٠٪",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="تمامُ الأسماء الخمسة المذكور مثالًا لليقين التامّ",
+        figure_text="١٥/١٥",
         source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
         constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
     ),

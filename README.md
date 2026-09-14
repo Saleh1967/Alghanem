@@ -2496,6 +2496,88 @@ somewhere else. None of the quoted figures (131/131, 100.0000% over 78,245 words
 prose, while `derive_declared_carrier_state_product()` reports what this tree
 actually declares, for comparison rather than substitution.
 
+### Two outcomes and no third, so a comfortable middle result is unsayable
+
+Section 7 of the direct-certainty protocol says every attempt to close a gap ends
+in exactly one of two outcomes, and
+`src/alghanem/program/binary_outcome.py` encodes that by leaving no third member
+in the vocabulary: `GapClosureOutcome` has `TOTAL_CERTAINTY` and
+`DEEPER_LAYER_REVEALED` and nothing else, so a comfortable mixed verdict is not
+expressible rather than merely discouraged — the same move `RungStanding` makes
+by carrying no member meaning *absolutely certain*. The two are a partition of
+attempts, not points on a scale: revealing a deeper layer does not sit below
+total certainty (`TWO_OUTCOMES_ARE_A_PARTITION_NOT_A_SCALE`).
+
+Admission to the first outcome is computed, not asserted here.
+`TotalCertaintyRecord` only constructs when bound to a `ProtocolRun` that
+`assess_freeze` admits, so the certainty is relative to that run and its six
+re-run steps rather than absolute
+(`TOTAL_CERTAINTY_IS_RELATIVE_TO_ITS_BOUND_RUN`), and the dependency runs one
+way only — this module reads `direct_certainty.py` and is never read by it. A
+record carrying a declared exception that needs extra justification is refused at
+construction, so "total certainty, except for…" cannot be written and then read
+as certainty.
+
+The second outcome is a successful diagnostic step recorded with the same clarity
+as the first, not an apology for failure. `DeeperLayerRecord` refuses to exist
+without naming what measurably narrowed the unknown — a contamination newly
+named, a design shown to need rebuilding rather than extending, an unnoticed
+fourth entangled class. An un-certain middle figure may not be left hanging:
+once one is written down it must be classified by `MidFigureClassification` as
+either a correct measurement of a wrong question or an incomplete measurement of
+a right one, both of which are sub-genera of the second outcome. A classification
+without a written figure is refused too, since it classifies something nobody can
+read.
+
+The evasive closing formulas the protocol names — "partial result", "a
+preliminary signal needing more work", "close to the target" — are refused in
+the reason fields against `REFUSED_CLOSING_PHRASES`, matched over text stripped
+of diacritics. That is a shape check over a declared list and not a proof that no
+evasive wording survives (`REFUSED_PHRASES_ARE_DECLARED_NOT_DERIVED`), stated in
+the module with the same honesty the contamination gate applies to its own
+declared ranges. `classify_attempt()` has no return path carrying "unclassified":
+anything that is not one of the two records raises. The figures quoted in the
+rule's own text — the 69.2% → 96.55% → 99.83% → "100%" escalation, the 69.57%
+middle figure, and the total-certainty examples — arrived as prose and are filed
+in the one existing `REPORTED_UNVERIFIED_FIGURES` register rather than a second
+one, because two registers for one report split it.
+
+### A step bound to code, so "something ran" cannot pass for "this step ran"
+
+Encoding the two-outcome rule exposed a gap in the protocol module while
+building its own examples, not while looking for it: `StepRecord` demands a
+module name and a function name, `run_step` imports and calls them, and nothing
+ties the callable to the step it claims. A `ProtocolRun` pointing all six steps
+at a single contamination-gate function still freezes as `FROZEN_ADMISSIBLE`
+today. `src/alghanem/program/step_reproducers.py` reads that binding instead of
+asserting it: `STEP_REPRODUCERS` names, per step, which callables in this tree
+actually perform it, and `assess_record_binding()` reports whether a record
+points at its own step's code, at another step's code, or at something the
+registry has not judged.
+
+The third standing is an abstention, not a refusal. Reading absence from a
+written registry as a refusal would let a declared list contradict correct code
+that was simply never registered
+(`ABSENCE_FROM_THE_REGISTRY_IS_NOT_A_REFUSAL`), and five of the six steps have
+no code in this tree at all — their emptiness is readable, and their standing is
+derived from the empty row rather than written into it. A second, unintended
+narrowing surfaced from the same reading: `run_step` calls its target with no
+arguments, so the protocol's practical test — "do you have the code that
+produces it?" — narrows in practice to "do you have a zero-argument entry
+point?". `derive_reproducers_run_step_cannot_call()` derives from the
+signatures that `scan_lines` and `scan_tokens`, which *are* the purity gate,
+fail that narrowing.
+
+The finding is filed with the previous stage's own machinery rather than as
+prose beside it: `STEP_BINDING_DISCOVERY` is a `DeeperLayerRecord`, so the
+second outcome is used at the first place it occurred instead of being declared
+and then left idle. This module is a reader and not a gate — it does not tighten
+`assess_freeze`, is not imported by `direct_certainty.py`, and is read by no
+gate in `kernel/` (`THIS_READER_IS_NOT_A_GATE`). A conforming binding says the
+function is registered for that step; it does not say its output was correct or
+that the step ran on the intended data
+(`A_BOUND_STEP_IS_NOT_A_CORRECT_MEASUREMENT`).
+
 ## Development
 
 ```bash
