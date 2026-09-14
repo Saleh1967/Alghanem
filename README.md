@@ -2484,6 +2484,109 @@ property over a closed three-value vocabulary, never a stored field, and every
 number in the module is re-derived by
 `examples/irab/measure_ud_relation_layer.py` against the recorded digests.
 
+### The claim that started this measured, at last, against syntactic function
+
+The census closed with a condition written into its own module: a step-zero
+count "does not substitute for a frozen pre-registration preceding any later
+measurement" (`STEP_ZERO_IS_NOT_A_READER`).
+`src/alghanem/arabic/ud_objecthood_preregistration.py` is that pre-registration
+and was committed on its own, before a single relation byte was read, so the
+ordering is in the repository's history rather than in a sentence claiming it.
+It freezes the claim as stated, the predictor rule, the column the vowel is
+read from (`MISC:Vform`, never `FORM`), the population, the definition of an
+unreadable position, the development and held-out files, the two decision
+thresholds, and four readings that are refused in advance whatever the number
+turns out to be. It carries no result field at all, and an import-time guard
+keeps one from being added later. What *had* already been seen is named rather
+than hidden: the token, `obj` and `Case=Acc` totals of those files were
+deposited by the census
+(`STEP_ZERO_COUNTS_WERE_KNOWN_BEFORE_THIS_PREREGISTRATION`); no vowel and no
+position adjacent to a perfect verb had ever been read from them.
+
+`src/alghanem/arabic/ud_objecthood_measurement.py` then runs it. **The claim
+falls**: on the held-out `ar_padt-ud-test`, of the 419 positions the claim
+decides it gets 150 right — **35.8%**; on `ar_padt-ud-dev`, 30.1% of 449. The
+declared threshold for refutation was 60%, fixed before the reading, so
+`CLAIM_REFUTED` is derived by that threshold and not by an impression of the
+number. Each measurement is bound to the digest of the specification it ran
+under, so editing the specification after the fact makes the measurement fail
+to *construct* rather than emit a warning. This is the first time the original
+hypothesis has been measured against a **function** annotation rather than a
+**case** annotation; it had stood unmeasured since
+`ACCUSATIVE_IS_NOT_OBJECTHOOD` was named.
+
+The 97.1% of `irab_case_readout` is untouched by this. That number is a reading
+of the *case mark*, and it stands. What falls here is only the second step —
+the move from the mark to the syntactic function.
+
+Most of the failure is not a misread vowel but the population the claim itself
+defines (`FUNCTION_WORDS_ARE_IN_THE_POPULATION_AS_STATED`): 188 of the 269
+held-out errors are function words — `إِلَى`, `أَنَّ`, `وَ`, `لَ` — which end
+in fatḥa and are not nouns at all. The claim as stated excludes no class, so
+they count against it, and excluding them would be measuring a different claim.
+Reach is reported beside precision instead of under it: the rule reaches 68.2%
+of the objects actually present, and 10.1% of positions are unreadable and are
+recorded as `متعذّر_القياس`, never as wrong.
+
+A defect in the frozen specification surfaced during the run and is filed
+rather than quietly repaired
+(`PREREGISTERED_VOCABULARY_COVERS_PREDICTED_POSITIONS_ONLY`): its three-value
+position vocabulary covers predicted and unreadable positions and has no place
+for a readable position the claim does not predict. `classify_position()`
+raises on that case instead of granting it a value it does not have, and the
+class is counted in a fourth named field. Two further residuals are named
+before anyone reads the number the wrong way: `obj` in UD is not the *mafʿūl
+bihi* of Arabic grammar (`OBJ_IS_UD_OBJECTHOOD_NOT_CLASSICAL_MAFUL`), and
+"following the verb" in the claim is linear adjacency in the file, not
+government (`ADJACENCY_IS_NOT_GOVERNMENT`). The two splits ran the identical
+rule with nothing tuned on either, so their gap measures the difference between
+two splits and not fitting (`NO_RULE_DEVELOPMENT_HAPPENED_THIS_ROUND`). Every
+frozen number is re-derived by `examples/irab/measure_ud_objecthood.py` against
+the recorded digests, which imports the vowel reader and the threshold rather
+than re-implementing either.
+
+### Correcting those two defects without editing what was frozen
+
+Both defects are now corrected, and neither is corrected in place.
+`src/alghanem/arabic/ud_objecthood_amendment.py` is a second specification with
+its own digest; the first specification, its digest and its 35.8% are untouched
+(`THE_FROZEN_SPECIFICATION_IS_NOT_EDITED`). Editing a specification after
+seeing the number it produced is the one thing the freeze exists to prevent,
+and it stays prevented even when the edit would be an honest repair — whoever
+edits theirs after the number no longer holds a specification that preceded its
+evidence.
+
+The amendment says so in its own structure rather than in prose that can be
+skipped: its `standing` field is constrained to `معدَّلة_بعد_الرقم`, and it
+cannot be constructed with the stronger value at all
+(`AN_AMENDMENT_AFTER_THE_NUMBER_IS_WEAKER_THAN_A_PREREGISTRATION`). The
+population defect is corrected by excluding exactly the function-word `UPOS`
+list that classified the errors in the first place — a second, hand-picked list
+is refused — and the vocabulary defect by a four-value vocabulary in which a
+readable position the claim does not predict finally has a place of its own, so
+`classify_amended_position()` no longer raises where `classify_position()`
+must. Both thresholds are *imported* from the first specification rather than
+restated, so no threshold can drift toward the new number.
+
+**The correction does not rescue the claim.** On the held-out split precision
+rises from 35.8% to **64.5%** — inside the undecided band, not above the 90%
+standing threshold — while the development split reaches 54.7% and stays below
+the 60% refutation threshold. The two splits therefore return *different*
+verdicts on one treebank under one rule
+(`THE_TWO_SPLITS_DISAGREE_UNDER_THE_AMENDMENT`), and that disagreement is
+itself the reason "the claim stands" cannot be said; the higher of the two
+numbers is not taken and the lower left behind. Reach did not improve either:
+it falls slightly, because the exclusion removes four positions that really
+were `obj`, and that loss is carried in its own field rather than netted away.
+
+The correction has a price, and it is named: excluding function words reads the
+treebank's own `UPOS` column, so the amended reader is no longer a purely
+surface one (`THE_AMENDED_POPULATION_IS_DEFINED_BY_THE_ANNOTATION`). It
+consumes one annotated column to define its population and is then scored
+against another. Running this claim on unannotated text would need a
+part-of-speech classifier that does not exist here, and that classifier's own
+accuracy would enter the number.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future
@@ -2832,7 +2935,10 @@ visible case mark are a third outcome, `متعذّر_القياس`, never counte
 That is a weaker claim than the one that arrived: the corpus annotates *case*,
 not syntactic function, and the accusative also carries ḥāl, tamyīz, ẓarf and
 the noun of `inna`, so `ACCUSATIVE_IS_NOT_OBJECTHOOD` stays an open residual and
-97.1% is not an answer to the original hypothesis. Every frozen number is
+97.1% is not an answer to the original hypothesis. That hypothesis has since
+been measured on its own terms, against the syntactic function annotated in
+`ar_padt-ud-test`, and it falls at 35.8%; the case reading above is unaffected
+by that fall. Every frozen number is
 re-derived, not asserted: `examples/irab/measure_case_readout.py` verifies the
 corpus digest and recomputes them, exiting non-zero on any drift.
 
