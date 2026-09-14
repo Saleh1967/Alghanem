@@ -413,9 +413,7 @@ class AchievementRow:
 
         resident = set(self.resident_symbols)
         return tuple(
-            symbol
-            for symbol in self.claim.declared_symbols
-            if symbol not in resident
+            symbol for symbol in self.claim.declared_symbols if symbol not in resident
         )
 
 
@@ -434,9 +432,7 @@ class GateCorrespondenceRow:
         if not isinstance(self.standing, GateCorrespondenceStanding):
             raise AchievementLedgerError("حال المقابلة من مفردتها المغلقة")
 
-        constitution_only = (
-            GateCorrespondenceStanding.DECLARED_IN_CONSTITUTION_ONLY
-        )
+        constitution_only = GateCorrespondenceStanding.DECLARED_IN_CONSTITUTION_ONLY
         names_readme = self.standing is not constitution_only
         if names_readme:
             if self.readme_line is None:
@@ -527,9 +523,7 @@ class AchievementLedger:
                 )
             seen_gates.add(row.claim.gate_id)
             if row.claim.document_line <= previous_line:
-                raise AchievementLedgerError(
-                    "ترتيب الصفوف ترتيبُ ورودها في `README.md`"
-                )
+                raise AchievementLedgerError("ترتيب الصفوف ترتيبُ ورودها في `README.md`")
             previous_line = row.claim.document_line
 
         seen_correspondence: set[str] = set()
@@ -537,9 +531,7 @@ class AchievementLedger:
             if not isinstance(entry, GateCorrespondenceRow):
                 raise AchievementLedgerError("كل عنصرٍ صفُّ مقابلةٍ")
             if entry.gate_id in seen_correspondence:
-                raise AchievementLedgerError(
-                    f"معرّفٌ مُقابَلٌ مرّتين: {entry.gate_id}"
-                )
+                raise AchievementLedgerError(f"معرّفٌ مُقابَلٌ مرّتين: {entry.gate_id}")
             seen_correspondence.add(entry.gate_id)
 
         for gate_id in seen_gates:
@@ -815,9 +807,7 @@ def derive_resident_symbols(claim: ReadmeAchievementClaim) -> tuple[str, ...]:
             f"{claim.gate_id}: وحدةٌ مُطالَبٌ بها لا تُستورَد "
             f"({claim.relative_path}) — {CLAIMED_MODULE_MUST_IMPORT_NOTE}"
         ) from error
-    return tuple(
-        symbol for symbol in claim.declared_symbols if hasattr(module, symbol)
-    )
+    return tuple(symbol for symbol in claim.declared_symbols if hasattr(module, symbol))
 
 
 def derive_witness_standing(
@@ -889,9 +879,7 @@ def _witness_paths(root: Path) -> tuple[Path, ...]:
 
 
 def _witness_texts(root: Path) -> tuple[str, ...]:
-    return tuple(
-        path.read_text(encoding="utf-8") for path in _witness_paths(root)
-    )
+    return tuple(path.read_text(encoding="utf-8") for path in _witness_paths(root))
 
 
 def census_skipped_witnesses(root: Path) -> tuple[SkippedWitnessRow, ...]:
