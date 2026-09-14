@@ -2416,6 +2416,55 @@ frozen dataset, no hash, and no re-derivation script, so it is testimony rather
 than measurement, and its numbers are unaudited; the record says so in its own
 body and names the measurement-wrapping path any promotion would have to take.
 
+### A purity gate before any raw count, and a protocol that refuses quoted numbers
+
+`src/alghanem/program/direct_certainty.py` encodes one governing rule: the
+source of a claim never exempts it from being re-run. Prose from another
+conversation, my own result in an earlier message, and an "obvious" mathematical
+axiom are one genus here — `CertaintySourceGenus` gives exactly one member,
+`RERUN_NOW_IN_THIS_PROCESS`, the property `supports_freeze`. The operational
+test is coded rather than described: a `StepRecord` must name a module and a
+callable, and `run_step` imports and calls them, so a step declared complete
+without code that runs now fails at the first call
+(`COMPLETION_IS_A_RUN_NOT_A_DECLARATION`). `ProtocolRun` refuses a skipped,
+reordered, or repeated step, and `assess_freeze` returns an admissible freeze
+only for six complete steps all re-run now, naming what is missing and what was
+merely quoted as separate fields so neither hides the other.
+
+The step that comes first is the one that used to come after. `DATA_PURITY_CHECK`
+is step zero: no raw count may run over a text that has not passed a
+contamination gate, and that gate is
+`src/alghanem/arabic/encoding/contamination_gate.py`. It reads whitespace tokens
+and reports one row per token — rejected rows kept, not subtracted — admitting
+only a token built entirely from declared Arabic ranges and holding at least one
+Arabic letter.
+
+Why the filter is positive rather than negative is derived, not argued.
+`derive_negative_filter_blind_spots` runs both filters over an embedded sample
+and returns what the historical `[A-Za-z0-9]` filter admits and this gate
+rejects: a decorative rule of `#` and `=` holds neither a Latin letter nor a
+digit, and a lone stop mark is inside the Arabic block and is still not a word.
+Neither shape is reachable by a filter that enumerates contamination; both are
+reachable by one that names the single admitted shape. Separately,
+`derive_head_tail_blind_spot` takes the same sample and returns the lines a
+head-and-tail window does not read, so inspecting the first and last lines of a
+file is recorded as a sample that may raise a suspicion and may not close one
+(`HEAD_AND_TAIL_INSPECTION_IS_A_SAMPLE_NOT_A_GATE`).
+
+The protocol is then applied to its own founding text. The figures that arrived
+with it — the contaminated token count, the line number, what the first negative
+filter stopped, and the classification rates before and after purification —
+reached this tree as prose from another conversation, and no text is deposited
+here that re-derives any of them. They are not accepted as measurements and they
+are not deleted either: `REPORTED_UNVERIFIED_FIGURES` keeps each one with its
+source genus and its constraint, because deleting a report hides it while
+accepting one believes it (`RECORDING_IS_NOT_ENDORSING`). A figure that *was*
+re-run now is refused entry to that register, so the quoted and the reproduced
+never share a list. No purity rate is recorded anywhere: `PurityScan` requires a
+digest, a byte length, a normalization form and a Unicode database version,
+derives its counts by running the gate, holds no percentage field, and
+`MEASURED_PURITY_SOURCES` is empty.
+
 ## Development
 
 ```bash
