@@ -2433,6 +2433,57 @@ over the utterances met and bounded by them; no weaker model was licensed or
 frozen for this predicate, so nothing here is born, ranked, or frozen
 (`PHONETIC_ECONOMY_IS_AN_INDUCTION_NOT_A_LICENCE`).
 
+### Asking whether a relation layer exists at all, before writing a reader for it
+
+The previous round closed with a named absence: the Quranic Arabic Corpus
+morphology file carries four columns, not ten, and no head or relation among
+them — `SYNTACTIC_LAYER_ABSENT_IN_THIS_FORMAT`. That closed one format, not the
+question. `src/alghanem/arabic/ud_relation_layer_step0.py` is a step-zero record
+for the separate question: does *any* reachable Arabic treebank actually carry a
+populated dependency layer? It is a census and a deposit, not a reader
+(`STEP_ZERO_IS_NOT_A_READER`). It measures no syntactic function and compares no
+claim of objecthood against another; whether such a measurement is ever run is a
+separate decision this module does not take.
+
+Five files were fetched and read as bytes rather than as project descriptions.
+`ar_pud-ud-test` (1,000 sentences, 20,747 tokens) and the three
+`ar_padt-ud-*` files (7,664 sentences, 282,384 tokens in total) carry `HEAD` and
+`DEPREL` populated on *every* token line, so the outcome for them is
+`RELATION_LAYER_PRESENT`. `ar_nyuad-ud-test` is the case that a project
+description would have hidden: its `HEAD` and `DEPREL` are populated on all
+74,125 tokens while `FORM` and `LEMMA` are an underscore on all 74,125, because
+the underlying Penn Arabic Treebank text is LDC-licensed and was removed. That
+is `RELATION_LAYER_PRESENT_BUT_LICENCE_BLOCKED`: an annotation layer over words
+that are not there (`SURFACE_WITHHELD_IS_NOT_A_CORPUS`). No repository named
+`UD_Classical_Arabic` exists at all; the probe returned 404
+(`UD_CLASSICAL_ARABIC_DOES_NOT_EXIST`), so the reachable sources are newswire
+and not the register every earlier Arabic number in this tree was measured on
+(`REGISTER_IS_NEWSWIRE_NOT_QURANIC`).
+
+`OBJ_VS_OBL_IS_PARTLY_CASE_DEFINED` is named in the module before any reader
+exists, because it is a known property of the UD schema and not a finding to be
+discovered after an accuracy figure — which is exactly how
+`ACCUSATIVE_IS_NOT_OBJECTHOOD` was named too late last round. The census then
+measures the size of that gap instead of assuming it: in `ar_padt-ud-train`,
+23,002 tokens carry `Case=Acc` and only 5,449 of them are labelled `obj`, so
+case alone over-predicts objecthood more than fourfold. A test asserts this
+separation holds in every measured file, and it is asserted over counts, not
+over a prose claim.
+
+No treebank bytes are vendored. Each file is deposited as its own independent
+witness — digest, byte length and licence terms, in the `IrabCorpusWitness`
+style — and none of them reuses or extends `QURANIC_ARABIC_CORPUS_WITNESS`.
+PADT is CC BY-NC-SA 3.0 while this repository is MIT, and that non-commercial
+condition follows the bytes rather than the digest
+(`NON_COMMERCIAL_IS_NOT_THIS_TREES_LICENCE`). `FORM` is unvocalised in both
+usable treebanks, with PADT carrying the vocalised form only in `MISC` under
+`Vform` and PUD not carrying it at all, so anything fed to `CarrierStateCodec`
+from here must name which column it was fed
+(`UNVOCALIZED_FORMS_ARE_NOT_CARRIER_STATE_INPUT`). The outcome is a derived
+property over a closed three-value vocabulary, never a stored field, and every
+number in the module is re-derived by
+`examples/irab/measure_ud_relation_layer.py` against the recorded digests.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future
