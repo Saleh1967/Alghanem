@@ -2237,6 +2237,70 @@ true with the tree and false with it, and is not a certificate to be cited after
 the cards change. The module issues no birth, no verdict, no freeze, no `E0`, and
 imports nothing from `kernel/`.
 
+### A GFLK candidate run through G0 as a gate, and the FAIL it actually returned
+
+An external GFLK session (carrier/state algebra over Quranic text) produced
+about 130 statistical findings. Its single strongest one — *idgham occurs when
+the place-of-articulation distance between a sakin consonant and the letter
+after it is small; izhar when it is large* — was run through the G0 chain
+(`BirthQuery → Evidence → LicensedWeakerExhaustion → IndependentClosureCheck →
+BirthVerdict`) as a **gate, not a description**. It **failed at
+`IndependentClosureCheck`**, and `phonetic_economy_candidate.py` registers that
+failure rather than the claim: the verdict is `DEFER_IN_SCOPE`, and the module
+is a registration of a negative result, not a `BirthCandidate`.
+
+The two evidence lines (nun-sakin, `F=4.0`; lam al-taʿrīf shamsī/qamarī,
+`F=9.5`) carry their `corpus_identity`, `tool_identity`, and `metric_definition`
+populated, never omitted — omission is the exact defect that would let one line
+of evidence applied twice look like two. All three are identical across both
+items, because both are the same self-invented place-distance tool run over the
+same single corpus under the same metric definition, on two adjacent phonetic
+phenomena. `IndependentClosureCheck.outcome` **computes** `FAIL` from that: it
+is a property over the evidence, not a stored verdict, so supplying a line from
+a genuinely separate corpus, tool, or metric definition flips it to `PASS` with
+no edit to a single line, and a `FAIL` can never be left written on a card whose
+content no longer supports it. The licensed weaker exhaustion is recorded as
+run — random baseline and heaviness-alone, both failed — so the residual
+survives; that conjunct is not what blocked the chain.
+
+The refusal is structural, on the `SectionExcerpt` pattern: a certified finding
+is a **separate type** issued only by `certify_phonetic_economy_candidate`,
+which refuses while `INDEPENDENT_CLOSURE_NOT_MET` stands, and whose constructor
+refuses a direct call. A `DEFER_IN_SCOPE` registration is therefore not an
+instance of the certified type at all, rather than an instance carrying a
+docstring warning. `INDEPENDENT_CLOSURE_NOT_MET` says plainly that same-corpus /
+same-tool / same-metric repetition across adjacent phenomena is not
+independence, per `NoBedrockWithoutRecurringDirayaSurvival`, under which every
+*independent* new application is a fresh occasion to fail and repetition inside
+one application is not one.
+
+The tool itself is attached, not described: `phonetic_economy_tool.py` sits at
+the path used as `tool_identity`, so the numbers can be re-run and refused.
+Its own header disclaims what it is — a simplified average-place-distance
+reconstruction of the session's KL-divergence co-occurrence tool — and it
+returns `3.43` and `9.96`, not the session's `4.0` and `9.5`. That mismatch is
+registered as a second residual, `TOOL_IS_APPROXIMATE_RECONSTRUCTION`, and the
+discrepancy is **computed live** by running the attached tool and comparing it
+against the session values on the card: the simplified numbers are never
+substituted for the session's Evidence values, and the place table is not
+adjusted to force a match. A card carrying an unreproduced reading without that
+residual cannot be constructed. The tool also names the deeper point, which the
+numeric gap is not: the place table is itself the session's invention, never
+checked against an independent phonetics source, and *that* is why closure
+fails.
+
+A third residual, `GFLK_SESSION_FINDINGS_SHARE_ONE_ORIGIN`, is registered as an
+object with session-wide scope rather than left as a comment: all ~130 findings
+share the one corpus and the one tool, so none may be assumed to clear
+`IndependentClosure` without a genuinely separate source, tool, or metric
+definition. This candidate is the worked example, not the special case.
+
+Nothing is promoted: AIM-K3 stays open, no runtime gate is added (none exists
+per `docs/CONSTITUTION.md`), and the `FAIL` is not softened into a qualified
+pass. The module issues no birth, no verdict of its own, no freeze, no `E0`, is
+read by neither `IndependentClosureGate` nor `BirthVerdictGate`, and declares no
+success title.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future
