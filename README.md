@@ -2267,6 +2267,69 @@ true with the tree and false with it, and is not a certificate to be cited after
 the cards change. The module issues no birth, no verdict, no freeze, no `E0`, and
 imports nothing from `kernel/`.
 
+### Depositing a carrier/state codec as a measured round trip, not as an atom
+
+An externally built (carrier, state) codec for vocalized Arabic was offered to
+this tree with the claim that the pair is "the only consistent atomic unit of
+the vocalized Arabic letter", proved to four decimal places over three
+independent texts. `src/alghanem/arabic/encoding/carrier_state_candidate.py`
+accepts the codec and declines the claim, because what was measured is a round
+trip: `retrieve(generate(s)) == s`. Losing nothing is a property of *every*
+information-preserving re-encoding — "the unit is the whole word" round-trips
+too — so a rate is evidence about loss and never evidence that the chosen unit
+is atomic, minimal, or unique (`ROUND_TRIP_IS_INVERTIBILITY_NOT_ATOMICITY`).
+G0.N licenses a knot by the weaker models it survived, and no weaker model was
+licensed or frozen here, so nothing is born, ranked, or frozen
+(`NO_WEAKER_MODEL_WAS_LICENSED_OR_FROZEN`), and the type is a
+`CarrierStateUnit` produced by a candidate codec rather than an `Atom` or a
+`Protocol`.
+
+Three defects were found by running the deposited codec rather than by reading
+its prose, and the third is the one that decided the design. Two consecutive
+harakat, two tanwin marks, a harakah followed by a tanwin, and a doubled shadda
+each wrote over a value already derived and returned a surface different from
+the input; the deposit's own revision closed the first of these by hand, which
+would have closed an instance while the genus stayed open, so a single rule now
+refuses every second write into a slot that already holds a derived value. Every
+non-carrier codepoint was dropped silently — `العربية!` came back without its
+exclamation mark — and is now carried as an explicit passthrough unit, which
+also means the Uthmani residue reported with the deposit mixes a codec defect
+with the five Uthmani phenomena it was read as measuring, and arrived as two
+figures that disagree with each other
+(`UTHMANI_RESIDUE_MIXES_PHENOMENA_WITH_DROPPED_SYMBOLS`). Third, a dedicated
+`madd_self` state wrote `tanwin`, `silent` and `waw_madda` onto the unit for
+`آ` and then returned from retrieval before reading any of them, so inspecting
+the unit showed information that retrieval had already discarded. `آ` is now an
+ordinary seat on the `ء` carrier, which makes the special case disappear rather
+than be guarded, and units whose state is structural are checked at
+construction to carry nothing else — so "no field is written and never read" is
+a property of the type instead of a claim about one branch.
+
+The layer registry's first claim was settled by derivation rather than by
+editing its wording. It asserted that the alef carries `sukun_implicit`
+exclusively; `derive_alef_states` runs the codec and returns the states an alef
+actually holds, and it returns more than one, because ordinary orthography
+writes tanwin on the alef. Enforcing the claim would refuse real text, so it is
+recorded as declared and deliberately unenforced
+(`ALEF_STATE_EXCLUSIVITY_IS_DECLARED_NOT_ENFORCED`). The carrier set is written
+out in the module instead of being `str.isalpha`, which had made every
+alphabetic codepoint of every script a carrier, and it says of itself that it is
+declared and not derived from any property of Arabic
+(`CARRIER_SET_IS_DECLARED_NOT_DERIVED`).
+
+No percentage over any external text is recorded. A rate is re-derivable only by
+a holder of the same bytes, so `InvertibilityMeasurement` requires the source's
+`sha256`, its byte length, the normalization form and the Unicode database
+version, on the pattern of `QaydAttributionScan`, and derives its counts by
+running the codec rather than accepting them; it carries no percentage field at
+all. `MEASURED_INVERTIBILITY_SOURCES` is therefore empty, since no digest came
+with the deposit (`SOURCE_PERCENTAGES_ARE_UNMEASURED_HERE`), and a clean round
+trip over a closed text would in any case stay bounded by it under
+`CompleteInductionIsCorpusBounded` (`THREE_SOURCES_ARE_CORPUS_BOUNDED`). What
+the tests do establish is stated with its bound: every embedded case and a
+bounded probe of a few thousand generated surfaces round-trip exactly and no two
+distinct surfaces share one unit sequence *within that probe*.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future
