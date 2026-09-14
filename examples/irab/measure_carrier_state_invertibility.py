@@ -106,8 +106,7 @@ def main() -> int:
 
     outcomes = [
         measurement.token_total == QURANIC_CORPUS_INVERTIBILITY.token_total,
-        measurement.token_mismatches
-        == QURANIC_CORPUS_INVERTIBILITY.token_mismatches,
+        measurement.token_mismatches == QURANIC_CORPUS_INVERTIBILITY.token_mismatches,
         measurement.token_refusals == QURANIC_CORPUS_INVERTIBILITY.token_refusals,
         unicodedata.unidata_version
         == QURANIC_CORPUS_INVERTIBILITY.unicode_database_version,

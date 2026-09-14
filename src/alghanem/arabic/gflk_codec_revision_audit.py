@@ -194,18 +194,18 @@ class CorruptedToken:
     surface_out: str
 
     def __post_init__(self) -> None:
-        for value, label in (
+        for number, label in (
             (self.sura, "رقمُ السورة"),
             (self.aya, "رقمُ الآية"),
             (self.word, "رقمُ الكلمة"),
         ):
-            if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+            if isinstance(number, bool) or not isinstance(number, int) or number < 1:
                 raise GflkCodecRevisionAuditError(f"{label} عددٌ صحيحٌ موجب.")
-        for value, label in (
+        for surface, label in (
             (self.surface_in, "الصورةُ الداخلة"),
             (self.surface_out, "الصورةُ الخارجة"),
         ):
-            if not isinstance(value, str) or not value.strip():
+            if not isinstance(surface, str) or not surface.strip():
                 raise GflkCodecRevisionAuditError(f"{label} نصٌّ غير فارغ.")
         if self.surface_in == self.surface_out:
             raise GflkCodecRevisionAuditError(
@@ -243,8 +243,7 @@ SILENT_OVERWRITE_LOCATIONS: Final[tuple[CorruptedToken, ...]] = (
         word=1,
         surface_in="\u0644\u0650\u0651\u0646\u064f\u062d\u0650\u0652\u06d7"
         "\u0649\u064e",
-        surface_out="\u0644\u0651\u0650\u0646\u064f\u062d\u0652\u06d7\u0649"
-        "\u064e",
+        surface_out="\u0644\u0651\u0650\u0646\u064f\u062d\u0652\u06d7\u0649" "\u064e",
     ),
     CorruptedToken(
         sura=27,
@@ -252,8 +251,7 @@ SILENT_OVERWRITE_LOCATIONS: Final[tuple[CorruptedToken, ...]] = (
         word=8,
         surface_in="\u0621\u064e\u0627\u062a\u064e\u0649\u0670\u0646\u064e"
         "\u0650\u06d7",
-        surface_out="\u0621\u064e\u0627\u062a\u064e\u0649\u0670\u0646\u0650"
-        "\u06d7",
+        surface_out="\u0621\u064e\u0627\u062a\u064e\u0649\u0670\u0646\u0650" "\u06d7",
     ),
     CorruptedToken(
         sura=46,
@@ -305,13 +303,11 @@ class CodecRevisionAudit:
             raise GflkCodecRevisionAuditError("منشأُ المراجعة نصٌّ غير فارغ.")
         if not isinstance(self.tree_codec_measurement, InvertibilityMeasurement):
             raise GflkCodecRevisionAuditError(
-                "المقيسُ قياسٌ مُشتقٌّ من تشغيلِ مِرمازِ هذه الشجرة، لا رقمٌ "
-                "مكتوب."
+                "المقيسُ قياسٌ مُشتقٌّ من تشغيلِ مِرمازِ هذه الشجرة، لا رقمٌ " "مكتوب."
             )
         if not isinstance(self.witness, IrabCorpusWitness):
             raise GflkCodecRevisionAuditError(
-                "التدقيقُ مربوطٌ بشاهدٍ خارجيٍّ مُبصَّم؛ وبلا شاهدٍ لا يُعاد "
-                "اشتقاقُه."
+                "التدقيقُ مربوطٌ بشاهدٍ خارجيٍّ مُبصَّم؛ وبلا شاهدٍ لا يُعاد " "اشتقاقُه."
             )
         if (
             self.tree_codec_measurement.source_sha256 != self.witness.sha256
@@ -335,9 +331,7 @@ class CodecRevisionAudit:
             or not isinstance(self.claimed_token_total, int)
             or self.claimed_token_total < 1
         ):
-            raise GflkCodecRevisionAuditError(
-                "عددُ الكلماتِ المُدّعى عددٌ صحيحٌ موجب."
-            )
+            raise GflkCodecRevisionAuditError("عددُ الكلماتِ المُدّعى عددٌ صحيحٌ موجب.")
         if not isinstance(self.corrupted_tokens, tuple) or any(
             not isinstance(item, CorruptedToken) for item in self.corrupted_tokens
         ):
@@ -410,9 +404,7 @@ def _refuse_result_bearing_fields() -> None:
 
     declared = {item.name for item in fields(CodecRevisionAudit)}
     for marker in _RESULT_BEARING_FIELD_MARKERS:
-        offending = sorted(
-            name for name in declared if marker in name.split("_")
-        )
+        offending = sorted(name for name in declared if marker in name.split("_"))
         if offending:
             raise GflkCodecRevisionAuditError(
                 "حكمُ التدقيق مُشتقٌّ لا مكتوب؛ وحقلٌ كهذا يُبطِل الاشتقاق: "

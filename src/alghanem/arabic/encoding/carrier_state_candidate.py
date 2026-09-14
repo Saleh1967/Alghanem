@@ -782,9 +782,7 @@ class InvertibilityMeasurement:
                 "measurement"
             )
         if not isinstance(self.token_refusals, int) or self.token_refusals < 0:
-            raise CarrierStateEncodingError(
-                "a refusal total is a non-negative integer"
-            )
+            raise CarrierStateEncodingError("a refusal total is a non-negative integer")
         if self.token_refusals + self.token_mismatches > self.token_total:
             raise CarrierStateEncodingError(
                 "more refused and mismatched tokens than tokens is two "
