@@ -2558,9 +2558,10 @@ registry has not judged.
 The third standing is an abstention, not a refusal. Reading absence from a
 written registry as a refusal would let a declared list contradict correct code
 that was simply never registered
-(`ABSENCE_FROM_THE_REGISTRY_IS_NOT_A_REFUSAL`), and five of the six steps have
-no code in this tree at all — their emptiness is readable, and their standing is
-derived from the empty row rather than written into it. A second, unintended
+(`ABSENCE_FROM_THE_REGISTRY_IS_NOT_A_REFUSAL`), and five of the six steps had
+no code in this tree at all when that reading was filed — their emptiness is
+readable, and their standing is derived from the empty row rather than written
+into it. A second, unintended
 narrowing surfaced from the same reading: `run_step` calls its target with no
 arguments, so the protocol's practical test — "do you have the code that
 produces it?" — narrows in practice to "do you have a zero-argument entry
@@ -2577,6 +2578,43 @@ gate in `kernel/` (`THIS_READER_IS_NOT_A_GATE`). A conforming binding says the
 function is registered for that step; it does not say its output was correct or
 that the step ran on the intended data
 (`A_BOUND_STEP_IS_NOT_A_CORRECT_MEASUREMENT`).
+
+### One empty row filled: a raw count of alif states on a deposited text
+
+The first of those empty rows now holds code.
+`src/alghanem/arabic/fatiha_source_text.py` deposits one short vocalized Arabic
+text — al-Fātiḥa, seven lines — with its normal form checked at import and its
+digest derived from the letters rather than written beside them. The requested
+Uthmani edition (Tanzil Project) could not be reached from this environment, so
+the deposit does not claim it: the letters are a transcription made in this tree
+and collated against nothing, declared in a three-valued
+`TranscriptionStanding` whose two higher members stay empty
+(`A_TRANSCRIPTION_IS_NOT_AN_EDITION`, `RASM_IS_IMLAI_NOT_UTHMANI`).
+
+`src/alghanem/arabic/alif_state_raw_count.py` writes the measured claim as text
+before counting it (`ALIF_STATE_CLAIM`): that a `ا` carrier never holds one of
+{fatḥa, ḍamma, kasra}, while other carriers do in real positions. It then
+decomposes text into `(carrier, state)` atoms and keeps one row per occurrence,
+marks that precede any carrier and codepoints that are neither carrier nor mark
+included, so nothing is dropped before a reader sees it. Any alif that *does*
+carry one of the three would be kept as a named row in
+`alif_rows_carrying_a_short_vowel` rather than summarized away; on the deposited
+transcription that field is empty, which is neither a proof nor a verdict
+(`A_COUNT_IS_NOT_A_VERDICT`, `ONE_TEXT_IS_NOT_A_CORPUS`).
+
+`count_alif_states()` takes any lines and knows no particular text; the
+zero-argument entry point `run_raw_count_on_the_deposited_fatiha()` pins the
+deposit, runs step zero (the contamination gate) first and refuses to count if
+one token is rejected. That shape is deliberate: it is exactly the narrowing
+`THE_PROTOCOL_TEST_IS_NARROWED_TO_ZERO_ARGUMENT_ENTRY_POINTS` named, so the
+entry point passes `derive_reproducers_run_step_cannot_call()` while the general
+counter stays general. Only `DirectCertaintyStep.RAW_COUNT` was registered;
+the other four rows stay empty and are asserted to stay empty, and
+`assess_freeze` was not touched, so this reader is still not a gate. The
+measurement itself is filed in the second-outcome machinery by
+`derive_raw_count_record()`, whose figures are computed from a run rather than
+written as constants, and classified as an incomplete measurement on a right
+question.
 
 ## Development
 
