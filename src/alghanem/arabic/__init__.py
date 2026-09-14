@@ -426,6 +426,46 @@ from .lafz_madlul_relation_formal import (
     is_third_question_asked,
     prove_relations_over_attested_corpus,
 )
+from .letter_fingerprint import (
+    DIMENSION_PROVENANCE,
+    FOUR_DIMENSIONS_ARE_NOT_FOUR_MEASUREMENTS_NOTE,
+    IMPORTED_ROLE_COUNTS,
+    ITHLAQ_LETTERS,
+    LETTER_FINGERPRINT_IS_NOT_A_GATE_NOTE,
+    LETTER_VOCABULARY,
+    ROOT_SHARE_IS_NOT_A_DENSITY_NOTE,
+    UNIQUENESS_WITHOUT_A_NULL_BASELINE_IS_HALF_A_MEASUREMENT_NOTE,
+    CorpusReading,
+    DimensionProvenance,
+    ExclusionReason,
+    FingerprintCensus,
+    LetterFingerprint,
+    LetterFingerprintError,
+    LetterPositionCounts,
+    PreferredPosition,
+    RootExclusion,
+    compute_fingerprint_census,
+    fold_root,
+    read_triliteral_roots,
+    round_half_up_percent,
+    structural_collision_classes,
+    uniform_null_unique_counts,
+)
+from .letter_fingerprint import (
+    NAMED_RESIDUALS as LETTER_FINGERPRINT_NAMED_RESIDUALS,
+)
+from .letter_fingerprint import (
+    NORMALIZATION_FORM as LETTER_FINGERPRINT_NORMALIZATION_FORM,
+)
+from .letter_fingerprint import (
+    ROOT_COLUMN as LETTER_FINGERPRINT_ROOT_COLUMN,
+)
+from .letter_fingerprint import (
+    ROOT_TYPE_COLUMN as LETTER_FINGERPRINT_ROOT_TYPE_COLUMN,
+)
+from .letter_fingerprint import (
+    TRILITERAL_ROOT_TYPE as LETTER_FINGERPRINT_TRILITERAL_ROOT_TYPE,
+)
 from .level_two_discrimination import (
     ARITY_IS_NOT_A_LINGUISTIC_STRUCTURE_NOTE,
     DISCRIMINATION_AUTHORITY_NOTE,
@@ -1031,6 +1071,34 @@ from .word_class_formal import (
 )
 
 __all__ = [
+    "DIMENSION_PROVENANCE",
+    "FOUR_DIMENSIONS_ARE_NOT_FOUR_MEASUREMENTS_NOTE",
+    "IMPORTED_ROLE_COUNTS",
+    "ITHLAQ_LETTERS",
+    "LETTER_FINGERPRINT_IS_NOT_A_GATE_NOTE",
+    "LETTER_FINGERPRINT_NAMED_RESIDUALS",
+    "LETTER_FINGERPRINT_NORMALIZATION_FORM",
+    "LETTER_FINGERPRINT_ROOT_COLUMN",
+    "LETTER_FINGERPRINT_ROOT_TYPE_COLUMN",
+    "LETTER_FINGERPRINT_TRILITERAL_ROOT_TYPE",
+    "LETTER_VOCABULARY",
+    "ROOT_SHARE_IS_NOT_A_DENSITY_NOTE",
+    "UNIQUENESS_WITHOUT_A_NULL_BASELINE_IS_HALF_A_MEASUREMENT_NOTE",
+    "CorpusReading",
+    "DimensionProvenance",
+    "ExclusionReason",
+    "FingerprintCensus",
+    "LetterFingerprint",
+    "LetterFingerprintError",
+    "LetterPositionCounts",
+    "PreferredPosition",
+    "RootExclusion",
+    "compute_fingerprint_census",
+    "fold_root",
+    "read_triliteral_roots",
+    "round_half_up_percent",
+    "structural_collision_classes",
+    "uniform_null_unique_counts",
     "ABROGATION_OF_RULING_IS_NOT_OF_WORDING_NOTE",
     "ABSENT_STRUCTURE_NOTE",
     "ADAM_TEACHING_EVIDENCE",
