@@ -2330,6 +2330,65 @@ the tests do establish is stated with its bound: every embedded case and a
 bounded probe of a few thousand generated surfaces round-trip exactly and no two
 distinct surfaces share one unit sequence *within that probe*.
 
+### Scanning two adjacent sukuns without buying a hundred per cent
+
+`src/alghanem/arabic/encoding/sakin_adjacency.py` reads the units of
+`carrier_state_candidate` and reports, for every adjacent pair whose members
+both hold a sukun, whether the pair is counted or excluded and by which named
+exclusion. It reports one row per pair, excluded rows included, so nothing is
+subtracted before it can be looked at. It records no rate. A predicate that
+names an exclusion for every pair it meets reaches a clean residue by
+construction, and that cleanliness is a property of the predicate rather than a
+measurement of the language (`CLOSURE_IS_A_PREDICATE_NOT_A_MEASURED_RATE`).
+Sharper still, an exclusion written *after* inspecting what an earlier pass left
+over is a description of that residue and cannot also be evidence for the rule it
+rescues; `SakinClashExclusion.is_residue_defined` marks the three that were
+(`RESIDUE_DEFINED_EXCLUSIONS_ARE_NOT_INDEPENDENT_EVIDENCE`). No source text is
+vendored here, so no figure quoted elsewhere is re-derivable and none is written
+down; `SakinClashScan` requires a digest, a byte length, a normalization form
+and a Unicode database version, derives its counts by running the scan, holds no
+percentage field, and `MEASURED_SAKIN_CLASH_SOURCES` is empty.
+
+Three things were settled by running the codec rather than by reasoning about
+it. `derive_article_gemination_offsets` shows that the definite article puts the
+gemination mark at unit offset 2 before a sun letter that is not `lam`, and at
+offset 1 in `ٱلَّذين` where the `lam` is itself geminated — so the pair (`ٱ`, `ل`)
+in `ٱلشَّمس` carries the mark on *neither* member and no gemination check of any
+single position reaches it. What reaches it is that `ٱ` extends a sound instead
+of closing a syllable; the assimilation check reaches the *next* pair, (`ل`, `ش`),
+and there the mark sits on the second member. Both checks are needed and they
+answer about different pairs. Second, the silent zero is already carried on the
+unit it follows rather than arriving as a stray unit, so `قَالُوا۟` yields five
+units and a scan expecting a sixth would find nothing to repair. Third,
+`derive_ha_and_ta_marbuta_units` shows that the small waw and small yeh writing
+the connecting vowel after `ه` arrive as passthrough units — sound extension,
+never a sukun holder — while `ة` arrives as carrier `ت` under
+`CarrierSeat.TA_MARBUTA`, so at a stop, where it is read `ه`, the unit still
+reports `ت` (`TA_MARBUTA_PAUSAL_HA_IS_NOT_ENCODED`).
+
+Writing the module surfaced one defect of the kind the tree already refuses. The
+dagger-alef exclusion named a case no pair could reach, because a dagger unit
+holds no sukun and so was never a member of a pair while silently resetting
+adjacency: a name written and never read. A dagger is now read through like a
+passthrough unit and the exclusion is reported on the pair that spans it, and a
+test asserts that *every* member of the exclusion enum is reachable — the guard
+is the genus, not that instance. Passthrough units are read through rather than
+treated as separators, because the classic adjacency is the one across a word
+boundary and a space is a passthrough unit; the number skipped is recorded so a
+wide gap stays visible. A stop mark is only a passthrough unit, so a sukun read
+because the reader stopped cannot be told from a sukun of the connected reading
+(`PAUSAL_SUKUN_IS_NOT_DISTINGUISHED_FROM_CONNECTED_SUKUN`), and the rulings of
+the sukun-bearing nun act where the following consonant carries a vowel and so
+decide no pair counted here (`NUN_SAKINA_RULINGS_ARE_NOT_MODELLED_HERE`). The
+disconnected letter openings are placed outside the rule's scope by a written
+list, because each letter is uttered under its own name and the question is not
+posed of such a sequence — a declaration about scope, not a result
+(`MUQATTAAT_ARE_EXCLUDED_BY_DEFINITION_NOT_MEASURED`). Finally, an argument that
+a language avoids the adjacency because avoiding it is easier is an induction
+over the utterances met and bounded by them; no weaker model was licensed or
+frozen for this predicate, so nothing here is born, ranked, or frozen
+(`PHONETIC_ECONOMY_IS_AN_INDUCTION_NOT_A_LICENCE`).
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future
