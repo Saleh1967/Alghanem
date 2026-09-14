@@ -2746,6 +2746,69 @@ outside, as in the raw count. No exclusion condition was written
 after it stay empty and are asserted to stay empty, and `assess_freeze` was not
 touched.
 
+### A proposed grammar source checked before it was built on
+
+A new syntactic source was proposed for later tree work — *النحو الواضح في
+قواعد اللغة العربية* by علي الجارم ومصطفى أمين, reported as 421 numbered rules
+across three parts, each with worked examples and exercises. The same discipline
+that governed the QAC witness was applied first:
+`src/alghanem/arabic/nahw_wadih_source_probe.py` is step zero and nothing after
+it.
+
+Five places were asked for the book, in the order written in
+`PROBED_CANDIDATES`: the two Shamela hosts, ketabonline, an archive.org item's
+metadata, and Hindawi — the last included so that a publisher who *does* state
+an open licence is a recorded negative rather than an unexamined gap. None of
+them opened: the host names themselves did not resolve from this environment, so
+no page, no licence line and no byte was read. That is recorded as its own
+standing, `UNREACHABLE_FROM_THIS_SANDBOX`, not as "unavailable" — the same
+distinction `REQUESTED_EDITION_WAS_NOT_REACHED` drew for the Tanzil edition. A
+page that was not opened may not be read as silent either: its licence standing
+is `NOT_READ_BECAUSE_PAGE_WAS_NOT_OPENED`, and a candidate that claims a digest,
+a text layer or a rule heading without an opened page is refused at
+construction. What a search engine *said* about those licences arrived as prose
+about pages nobody here opened, so it is not written down as a verbatim licence
+string (`SECOND_HAND_LICENCE_REPORT_IS_NOT_A_READ_PAGE`).
+
+The outcome is therefore **`SOURCE_LICENCE_UNRESOLVED`**, and it is computed
+rather than declared: `derive_probe_outcome()` reads the rows, and licence
+dominates order — if no candidate reaches an explicit open licence, the
+structure standing is forced to `NOT_INSPECTED_LICENCE_BLOCKED_FIRST`, so an
+"extractable structure" finding over a text of unresolved rights is not
+expressible rather than merely discouraged. `GrammarSourceProbeOutcome` has
+exactly three members and no fourth meaning "partially usable", on the pattern
+`GapClosureOutcome` set. Rights-reserved and silence both block, and the first is
+the stronger bar, not the weaker one
+(`RIGHTS_RESERVED_IS_A_STRONGER_BAR_THAN_SILENCE`).
+
+Two constraints are named before any extraction rather than after.
+`A_DIGEST_IS_NOT_A_PERMISSION` separates the two moves that look alike: a hash
+over bytes we may not redistribute is admissible as a pin — that is exactly the
+QAC case — while lifting the book's 421 rule statements, or even "just the
+headings", is a derivative of the text and is not deposited without a named
+permission. And `A_RULE_STATEMENT_IS_NOT_A_DECISION_PROCEDURE` is filed now, at
+step zero, so it cannot later be discovered as a surprise: a numbered rule states
+a generalisation in prose (*الفاعل مرفوع دائمًا*) and carries no algorithmic test
+for recognising when it applies to a token sequence, so "421 rules → 421 decision
+nodes" is a conversion of a different genus and a larger size than depositing the
+book's structure. Whether the source is usable at all is what this step asks;
+whether a tree is buildable from it is not.
+
+The wrong book is refused mechanically rather than remembered: *معاني النحو*
+(السامرائي) is kept as `MAANI_AL_NAHW_REJECTED_WORK` with its rejection ground —
+semantic-justification prose, no numbered rule spine — and a candidate naming it,
+or any work other than the intended one, raises. The reported figures (421 rules,
+3 parts) reached this tree as prose and are filed in the one existing
+`REPORTED_UNVERIFIED_FIGURES` register, not stored as validated constants. The
+question of whether the matn has fallen into the public domain by age in some
+jurisdictions, while a particular modern printing has not, is recorded open as
+`PUBLIC_DOMAIN_BY_AGE_IS_A_JURISDICTIONAL_QUESTION` and is not read as a
+permission here.
+
+Nothing follows in this step: no pre-registration, no extraction, no rule node,
+no `DirectCertaintyStep` row, no import from `kernel/`
+(`THIS_PROBE_IS_NOT_A_GATE`).
+
 ## Development
 
 The first measurement in this tree against an *externally* annotated corpus is
