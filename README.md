@@ -2545,6 +2545,48 @@ frozen number is re-derived by `examples/irab/measure_ud_objecthood.py` against
 the recorded digests, which imports the vowel reader and the threshold rather
 than re-implementing either.
 
+### Correcting those two defects without editing what was frozen
+
+Both defects are now corrected, and neither is corrected in place.
+`src/alghanem/arabic/ud_objecthood_amendment.py` is a second specification with
+its own digest; the first specification, its digest and its 35.8% are untouched
+(`THE_FROZEN_SPECIFICATION_IS_NOT_EDITED`). Editing a specification after
+seeing the number it produced is the one thing the freeze exists to prevent,
+and it stays prevented even when the edit would be an honest repair — whoever
+edits theirs after the number no longer holds a specification that preceded its
+evidence.
+
+The amendment says so in its own structure rather than in prose that can be
+skipped: its `standing` field is constrained to `معدَّلة_بعد_الرقم`, and it
+cannot be constructed with the stronger value at all
+(`AN_AMENDMENT_AFTER_THE_NUMBER_IS_WEAKER_THAN_A_PREREGISTRATION`). The
+population defect is corrected by excluding exactly the function-word `UPOS`
+list that classified the errors in the first place — a second, hand-picked list
+is refused — and the vocabulary defect by a four-value vocabulary in which a
+readable position the claim does not predict finally has a place of its own, so
+`classify_amended_position()` no longer raises where `classify_position()`
+must. Both thresholds are *imported* from the first specification rather than
+restated, so no threshold can drift toward the new number.
+
+**The correction does not rescue the claim.** On the held-out split precision
+rises from 35.8% to **64.5%** — inside the undecided band, not above the 90%
+standing threshold — while the development split reaches 54.7% and stays below
+the 60% refutation threshold. The two splits therefore return *different*
+verdicts on one treebank under one rule
+(`THE_TWO_SPLITS_DISAGREE_UNDER_THE_AMENDMENT`), and that disagreement is
+itself the reason "the claim stands" cannot be said; the higher of the two
+numbers is not taken and the lower left behind. Reach did not improve either:
+it falls slightly, because the exclusion removes four positions that really
+were `obj`, and that loss is carried in its own field rather than netted away.
+
+The correction has a price, and it is named: excluding function words reads the
+treebank's own `UPOS` column, so the amended reader is no longer a purely
+surface one (`THE_AMENDED_POPULATION_IS_DEFINED_BY_THE_ANNOTATION`). It
+consumes one annotated column to define its population and is then scored
+against another. Running this claim on unannotated text would need a
+part-of-speech classifier that does not exist here, and that classifier's own
+accuracy would enter the number.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future

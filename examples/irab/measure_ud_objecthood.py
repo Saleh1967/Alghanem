@@ -39,6 +39,15 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+from alghanem.arabic.ud_objecthood_amendment import (
+    AMENDED_DEVELOPMENT_SPLIT_MEASUREMENT,
+    AMENDED_HELD_OUT_SPLIT_MEASUREMENT,
+    AMENDED_OBJECTHOOD_SPECIFICATION,
+    AmendedObjecthoodMeasurement,
+    AmendedPositionOutcome,
+    classify_amended_position,
+    is_function_word,
+)
 from alghanem.arabic.ud_objecthood_measurement import (
     DEVELOPMENT_SPLIT_OBJECTHOOD_MEASUREMENT,
     FUNCTION_WORD_UPOS_TAGS,
@@ -143,23 +152,118 @@ def census_positions(text: str) -> PositionCensus:
     )
 
 
-def _compare(frozen: ObjecthoodMeasurement, measured: PositionCensus) -> list[str]:
+@dataclass(frozen=True, slots=True)
+class AmendedPositionCensus:
+    """The same positions under the amended specification's population."""
+
+    population: int
+    predicted_and_is_object: int
+    predicted_and_is_not_object: int
+    unreadable_positions: int
+    readable_but_not_predicted: int
+    objects_in_population: int
+    objects_lost_to_the_exclusion: int
+
+
+def census_amended_positions(text: str) -> AmendedPositionCensus:
+    """Count the same positions with the function-word classes excluded.
+
+    The exclusion reads the treebank's own ``UPOS`` column, which is what
+    `THE_AMENDED_POPULATION_IS_DEFINED_BY_THE_ANNOTATION` names: this is no
+    longer a purely surface reader. The vowel reading and the four-value
+    classification are imported, never re-implemented here.
+    """
+
+    population = 0
+    hit = miss = unreadable = not_predicted = objects = lost = 0
+    for sentence in _sentences(text):
+        for index in range(1, len(sentence)):
+            previous = sentence[index - 1]
+            if previous[3] != _VERB_UPOS:
+                continue
+            if _PERFECT_ASPECT not in previous[5].split("|"):
+                continue
+            columns = sentence[index]
+            relation = columns[7]
+            is_object = (
+                relation.split(":")[0] == OBJECTHOOD_PREREGISTRATION.gold_relation
+            )
+            if is_function_word(columns[3]):
+                lost += int(is_object)
+                continue
+            population += 1
+            objects += int(is_object)
+            vocalized = _vocalized_form(columns[9])
+            outcome = classify_amended_position(vocalized or "", relation)
+            if outcome is AmendedPositionOutcome.UNREADABLE_SURFACE:
+                unreadable += 1
+            elif outcome is AmendedPositionOutcome.READABLE_BUT_NOT_PREDICTED:
+                not_predicted += 1
+            elif outcome is AmendedPositionOutcome.PREDICTED_AND_IS_OBJECT:
+                hit += 1
+            else:
+                miss += 1
+    return AmendedPositionCensus(
+        population=population,
+        predicted_and_is_object=hit,
+        predicted_and_is_not_object=miss,
+        unreadable_positions=unreadable,
+        readable_but_not_predicted=not_predicted,
+        objects_in_population=objects,
+        objects_lost_to_the_exclusion=lost,
+    )
+
+
+def _compare(
+    frozen: ObjecthoodMeasurement | AmendedObjecthoodMeasurement,
+    measured: PositionCensus | AmendedPositionCensus,
+    labels: tuple[str, ...],
+) -> list[str]:
     drifts: list[str] = []
-    for label in (
-        "population",
-        "predicted_and_is_object",
-        "predicted_and_is_not_object",
-        "unreadable_positions",
-        "readable_but_not_predicted",
-        "objects_in_population",
-        "function_word_errors",
-        "content_word_errors",
-    ):
+    for label in labels:
         recorded = getattr(frozen, label)
         found = getattr(measured, label)
         if recorded != found:
             drifts.append(f"{label}: recorded {recorded}, measured {found}")
     return drifts
+
+
+_SHARED_LABELS: tuple[str, ...] = (
+    "population",
+    "predicted_and_is_object",
+    "predicted_and_is_not_object",
+    "unreadable_positions",
+    "readable_but_not_predicted",
+    "objects_in_population",
+)
+
+_AS_STATED_LABELS: tuple[str, ...] = _SHARED_LABELS + (
+    "function_word_errors",
+    "content_word_errors",
+)
+
+_AMENDED_LABELS: tuple[str, ...] = _SHARED_LABELS + ("objects_lost_to_the_exclusion",)
+
+
+def _verified_bytes(
+    directory: Path, witness_path: str, sha256: str, byte_length: int, allow: bool
+) -> bytes | None:
+    path = directory / witness_path
+    if not path.is_file():
+        print(f"error: {path} is missing", file=sys.stderr)
+        return None
+    raw = path.read_bytes()
+    digest = hashlib.sha256(raw).hexdigest()
+    if digest != sha256 or len(raw) != byte_length:
+        message = (
+            f"{path} has sha256 {digest} and {len(raw)} bytes; the frozen "
+            f"witness is {sha256} with {byte_length} bytes"
+        )
+        if not allow:
+            print(f"error: {message}", file=sys.stderr)
+            return None
+        print(f"warning: {message}", file=sys.stderr)
+    return raw
 
 
 def main() -> int:
@@ -171,29 +275,26 @@ def main() -> int:
     args = parser.parse_args()
 
     print(f"pre-registration digest: {OBJECTHOOD_PREREGISTRATION.content_digest}")
+    print(
+        "amended specification digest: "
+        f"{AMENDED_OBJECTHOOD_SPECIFICATION.content_digest} "
+        f"(standing: {AMENDED_OBJECTHOOD_SPECIFICATION.standing.value})"
+    )
     ok = True
     for frozen in (
         DEVELOPMENT_SPLIT_OBJECTHOOD_MEASUREMENT,
         HELD_OUT_SPLIT_OBJECTHOOD_MEASUREMENT,
     ):
-        path = args.treebank_directory / frozen.witness.measured_path
-        if not path.is_file():
-            print(f"error: {path} is missing", file=sys.stderr)
+        raw = _verified_bytes(
+            args.treebank_directory,
+            frozen.witness.measured_path,
+            frozen.witness.sha256,
+            frozen.witness.byte_length,
+            args.allow_unfrozen_input,
+        )
+        if raw is None:
             ok = False
             continue
-        raw = path.read_bytes()
-        digest = hashlib.sha256(raw).hexdigest()
-        if digest != frozen.witness.sha256 or len(raw) != frozen.witness.byte_length:
-            message = (
-                f"{path} has sha256 {digest} and {len(raw)} bytes; the frozen "
-                f"witness is {frozen.witness.sha256} with "
-                f"{frozen.witness.byte_length} bytes"
-            )
-            if not args.allow_unfrozen_input:
-                print(f"error: {message}", file=sys.stderr)
-                ok = False
-                continue
-            print(f"warning: {message}", file=sys.stderr)
 
         measured = census_positions(raw.decode("utf-8"))
         print(
@@ -209,7 +310,40 @@ def main() -> int:
             f"recall={frozen.recall_over_objects:.4f} "
             f"decision={frozen.decision.value}"
         )
-        drifts = _compare(frozen, measured)
+        drifts = _compare(frozen, measured, _AS_STATED_LABELS)
+        for drift in drifts:
+            print(f"    drift: {drift}", file=sys.stderr)
+        ok = ok and not drifts
+
+    for amended in (
+        AMENDED_DEVELOPMENT_SPLIT_MEASUREMENT,
+        AMENDED_HELD_OUT_SPLIT_MEASUREMENT,
+    ):
+        raw = _verified_bytes(
+            args.treebank_directory,
+            amended.witness.measured_path,
+            amended.witness.sha256,
+            amended.witness.byte_length,
+            args.allow_unfrozen_input,
+        )
+        if raw is None:
+            ok = False
+            continue
+
+        amended_measured = census_amended_positions(raw.decode("utf-8"))
+        print(
+            f"[{amended.split}] population={amended_measured.population} "
+            f"hit={amended_measured.predicted_and_is_object} "
+            f"miss={amended_measured.predicted_and_is_not_object} "
+            f"unreadable={amended_measured.unreadable_positions} "
+            f"not_predicted={amended_measured.readable_but_not_predicted} "
+            f"objects={amended_measured.objects_in_population} "
+            f"objects_lost={amended_measured.objects_lost_to_the_exclusion} "
+            f"precision={amended.precision_on_decided:.4f} "
+            f"recall={amended.recall_over_objects:.4f} "
+            f"decision={amended.decision.value}"
+        )
+        drifts = _compare(amended, amended_measured, _AMENDED_LABELS)
         for drift in drifts:
             print(f"    drift: {drift}", file=sys.stderr)
         ok = ok and not drifts
