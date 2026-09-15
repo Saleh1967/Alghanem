@@ -2614,6 +2614,34 @@ frozen dataset, no hash, and no re-derivation script, so it is testimony rather
 than measurement, and its numbers are unaudited; the record says so in its own
 body and names the measurement-wrapping path any promotion would have to take.
 
+The third record,
+[`docs/reference/word_hierarchy_rebuild.md`](docs/reference/word_hierarchy_rebuild.md),
+deposits an externally supplied six-level hierarchy of Arabic word structure —
+letter, vowel, syllable, pattern, word, and `mabnī` — in both of the versions it
+arrived in, the second of which declares that it fully replaces the first, plus a
+third text that declares a freeze and retracts the hierarchy's word-boundary gap
+figure. Depositing only the corrected version would erase that claims were
+withdrawn, so
+`src/alghanem/arabic/word_hierarchy_deposit.py` records each withdrawal with its
+successor and its stated reason, and names the figures that were dropped with no
+reason given as exactly that. Every node carries its standing from the existing
+four-member `LayerEpistemicStanding` vocabulary, and a node may be marked
+measured only if it names a layer that is actually in
+`word_structure_dictionary.MEASURED_LAYERS` — so the deposit cannot promote a
+withheld layer by writing a word. No corpus, measurement manifest, or
+observation ledger arrived with the text, so all eighteen of its figures,
+including its "zero breach" universals, are registered as not re-derivable in
+this tree, each with a named reason and the condition that would make it
+re-derivable. A figure that rests on another names it in `depends_on_figure`, and
+a figure the text presents as the output of a class defined as "whatever is left"
+is refused at construction unless it carries that tag — so the third text's three
+headline results are recorded as one witness read three times, not three. The two
+freeze identifiers it cites are kept verbatim alongside a field stating that
+neither was issued by this tree. Seventeen conflicts with this tree are recorded
+and none is resolved; ten of them block import, and the newest level collides
+with three standing refusal texts rather than merely lacking a corpus. The four
+withheld dictionary layers remain withheld after the deposit exactly as before it.
+
 ### A purity gate before any raw count, and a protocol that refuses quoted numbers
 
 `src/alghanem/program/direct_certainty.py` encodes one governing rule: the
