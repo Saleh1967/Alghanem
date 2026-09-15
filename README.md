@@ -2989,6 +2989,48 @@ and «موضع الابتداء الصوتيّ» that the submission itself name
 no birth, no verdict, no freeze, no `E0`, and imports neither `kernel/` nor the
 program layer.
 
+### A cited witness name, derived from the tree instead of taken from a report
+
+An external reading of this tree found a place no earlier stage closed: a report
+about this repository pointed at a test named `test_silent_overwrite_is_refused`,
+which exists nowhere in the tree, while the witness that actually stands there is
+named `test_a_second_write_over_a_read_state_is_refused_not_absorbed`. The
+report's conclusion was correct and derived by running the tests — a second write
+over an already-read state *is* refused — so the true conclusion carried the
+fabricated name past inspection, and whoever believed the conclusion believed the
+pointer with it.
+
+`src/alghanem/program/witness_citation.py` judges the pointer rather than the
+conclusion. `derive_witness_names()` parses a file with `ast` and returns the
+witness names written in it, so a test file need not be importable for its names
+to be read and nothing in it is executed to read them; a path outside the tree is
+refused rather than read. `cite_witness()` returns one of three standings —
+derived from the named file, absent from it, or the file is not in the tree — and
+the third is kept separate because "this name is missing from a file that does
+not exist" judges the wrong thing. For the same reason a missing file returns
+`None` while an existing file with no witnesses returns an empty tuple.
+
+Each `WitnessCitation` carries the derived names beside its standing and is
+refused at construction if the two disagree, because a verdict without what it
+was derived from has to be believed again on someone's word — the very defect the
+row exists for. `audit_report_citations()` returns one row per citation and
+deliberately returns no aggregate "accepted/refused" word, since that word would
+itself be quoted onward. The incident is filed with the previous stage's
+machinery, as `FABRICATED_WITNESS_NAME_DISCOVERY`, a `DeeperLayerRecord` naming
+both the fabricated and the real name.
+
+This module is a reader and not a gate: it does not tighten `assess_freeze`, is
+not imported by `direct_certainty.py`, and is read by no gate in `kernel/`
+(`CITATION_READER_IS_NOT_A_GATE`). A derived name says a function with that name
+is written in that file; it does not say the test is collected, that it passes,
+or that it checks what the report claimed
+(`A_DERIVED_NAME_IS_NOT_A_PASSING_TEST`). The judgement is on the (name, file)
+pair, so a refused citation is not a claim that the name is absent from the tree
+(`ABSENCE_IN_ONE_FILE_IS_NOT_ABSENCE_IN_THE_TREE`), and the pair still arrives
+from whoever wrote the report, so a report that stays silent about a witness
+contradicting it is not exposed here
+(`THE_CITED_PAIR_IS_STILL_SUPPLIED_BY_THE_REPORTER`).
+
 ### Reading this README instead of trusting it
 
 The tree already had a reader for `docs/CONSTITUTION.md`, another for
