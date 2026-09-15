@@ -2642,6 +2642,35 @@ and none is resolved; ten of them block import, and the newest level collides
 with three standing refusal texts rather than merely lacking a corpus. The four
 withheld dictionary layers remain withheld after the deposit exactly as before it.
 
+The fourth record,
+[`docs/reference/gflk_arabic_letter_specification.md`](docs/reference/gflk_arabic_letter_specification.md),
+deposits the language-independent GFLK specification for processing the Arabic
+letter, now in both of the versions it arrived in. The second version qualifies
+claims the first stated flatly — every "analytic", "proof", and "logical
+certainty" in it is now read relative to a declared definition rather than
+absolutely — and adds four blocks the first did not contain: a corrected
+free-versus-augmented root criterion with four corpus counts, a neutral-alif
+reading, a uniform CVC-CVC syllable signature for the imperative, and a
+nine-level transitivity hierarchy ending in "a passive exists, therefore the verb
+is genuinely transitive". Depositing the expanded version alone would erase that
+a claim was first asserted and then narrowed, so
+`src/alghanem/arabic/gflk_specification_deposit.py` records each changed locus
+with what both versions said and what this tree reads in the change, and refuses
+a deposit that declares fewer than two versions. No corpus arrived with the text,
+and neither did the root file it names, so all seven of its new figures are
+registered as not re-derivable, each with a named reason and the condition that
+would change that; the "unconfirmed" count is defined by non-match against that
+absent root list, so it is refused at construction unless it names the figure it
+depends on. Its "zero deviation on 4/4" and "6/6" sweeps are recorded as
+enumerated examples rather than populations. The four freeze identifiers it cites
+have zero matches in `src/`, `docs/`, and `tests/`, and a test enforces that,
+keeping them verbatim beside a field stating that none was issued here. Five new
+conflicts are recorded and none resolved: the imperative signature alone collides
+with three refusals that were written before the text arrived — the syllable
+layer is withheld, hamzat waṣl is not decidable from the written marks, and a
+final sukūn is not distinguished pausal from connected — all three wider than the
+one open limit the text declares for itself.
+
 ### A purity gate before any raw count, and a protocol that refuses quoted numbers
 
 `src/alghanem/program/direct_certainty.py` encodes one governing rule: the
