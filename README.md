@@ -2682,13 +2682,26 @@ truncated digest, and the full digest is already frozen in this tree in
 `compression_model_preregistration.FROZEN_CORPUS`; the module asserts that
 equality at import rather than restating the hex, and a truncated digest like
 `3763...6c5a` is refused outright, since two ends are not a fingerprint. The
-other, `maqayis_by_root_csv_999.csv`, arrives as a name only: its origin is given
-as Ibn Fāris's *Maqāyīs al-Lugha*, but copies of a dictionary differ byte for
-byte, so naming an origin is not fingerprinting a file and its counts stay
-not re-derivable. The reason attached to the corpus counts is narrowed to what is
-actually still missing — the root file, a `MeasurementRunManifest`, and a written
-pre-measurement expectation — rather than deleted, because a named corpus is not
-a performed measurement. One arithmetic observation is recorded for a later
+other, `maqayis_by_root_csv_999.csv`, first arrived as a name only — its origin
+given as Ibn Fāris's *Maqāyīs al-Lugha*, and copies of a dictionary differ byte
+for byte, so naming an origin is not fingerprinting a file. Its bytes have since
+been uploaded into this tree, so
+`src/alghanem/arabic/maqayis_root_table_deposit.py` freezes their length and
+digest and re-checks both on every read, and the two figures the text named leave
+the withheld register for `REDERIVED_SPECIFICATION_FIGURES`, each carrying the
+counting rule that produced it: 4,576 records under a rule that a record is a CSV
+row and not a file line (the file has 36,597 lines), and 4,087 trilateral roots
+under a rule that counts distinct `root_full` values and not rows (4,089 rows are
+typed `ثلاثي`, two roots appearing twice). What that buys is re-derivability, not
+vindication: a matching count shows the counter counted this file under this
+rule, and each entry carries a written limit on what it still does not establish
+— that this is the copy measured there, since the incoming text quoted no digest;
+that a freeze identifier is issued; or anything about how many trilateral roots
+Arabic has. The reason attached to the corpus counts is narrowed to what is
+actually still missing — a `MeasurementRunManifest` and a written pre-measurement
+expectation — rather than deleted, because a named corpus is not a performed
+measurement, and those four counts are measured against the corpus rather than
+against the root table. One arithmetic observation is recorded for a later
 reader and decided by no one: the four counts sum to 78,081, while 78,215 appears
 for the same corpus in the third record.
 
