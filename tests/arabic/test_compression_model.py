@@ -186,3 +186,32 @@ def test_the_superseded_figures_are_recorded_with_their_closure() -> None:
 def test_the_named_residuals_declare_the_ratio_is_not_a_linguistic_claim() -> None:
     assert "A_COMPRESSION_RATIO_IS_NOT_A_LINGUISTIC_CLAIM" in NAMED_RESIDUALS
     assert "THIS_IS_REGISTRATION_NOT_AUTHORITY" in NAMED_RESIDUALS
+
+
+def test_the_reported_pilot_lineage_marks_unverified_figures_as_unissued() -> None:
+    """أرقامُ PILOT-3/4/5 تُسجَّل بوصفها ما وَرَد، لا بوصفها ما قِيس."""
+
+    from alghanem.arabic.compression_model_revision_audit import (
+        ADAPTIVE_CODING_DISSOLVES_THE_TABLE_QUESTION_NOTE,
+        AN_UNISSUED_FIGURE_IS_NOT_A_RESULT_NOTE,
+        REPORTED_PILOT_LINEAGE,
+        IssuanceStanding,
+    )
+
+    by_ratio = {figure.reported_ratio: figure for figure in REPORTED_PILOT_LINEAGE}
+    for unissued in ("85.11%", "87.67%", "88.01%"):
+        assert (
+            by_ratio[unissued].standing
+            is IssuanceStanding.NOT_ISSUED_NO_DECLARED_ROUND_TRIP
+        )
+    assert by_ratio["88.34%"].standing is IssuanceStanding.NOT_ISSUED_NO_CORPUS_DIGEST
+    issued = [
+        figure
+        for figure in REPORTED_PILOT_LINEAGE
+        if figure.standing is IssuanceStanding.ISSUED
+    ]
+    assert len(issued) == 2
+    assert all("PILOT-2" == figure.pilot for figure in issued)
+    assert all(figure.what_is_missing.strip() for figure in REPORTED_PILOT_LINEAGE)
+    assert "لا نموذجَ يُنقَل" in ADAPTIVE_CODING_DISSOLVES_THE_TABLE_QUESTION_NOTE
+    assert "AnUnissuedFigureIsNotAResult" in AN_UNISSUED_FIGURE_IS_NOT_A_RESULT_NOTE
