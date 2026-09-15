@@ -25,11 +25,20 @@
 المُوسَّع وحده يُخفي أنّ دعوًى أُطلِقت ثمّ قُيِّدت، فتُقرأ المواصفةُ بعد جلساتٍ
 كأنّها لم تتغيّر — ويضيع أنفسُ ما فيها: مواضعُ التقييد.
 
-`A_NUMBER_WITHOUT_A_CORPUS_IS_NOT_A_MEASUREMENT`: كلُّ رقمٍ في النسخة الثانية —
-عددَ جذورٍ كان أو عددَ كلماتٍ أو «6/6» — يُسجَّل غيرَ قابلٍ لإعادة الاشتقاق في
-هذه الشجرة، بسببٍ مُسمًّى وشرطِ اشتقاقٍ مكتوب. فلم تصل مدوّنةٌ مُبصَّمة، ولا
-`maqayis_by_root_csv_999.csv` المُسمَّى في النصّ، ولا `MeasurementRunManifest`
-(`arabic/encoding/measurement.py`)، ولا سجلُّ رصدٍ يُطابَق عليه.
+`A_NUMBER_WITHOUT_A_CORPUS_IS_NOT_A_MEASUREMENT`: كلُّ رقمٍ لم تصل بايتاتُ
+مصدره — عددَ كلماتٍ كان أو «6/6» — يُسجَّل غيرَ قابلٍ لإعادة الاشتقاق في هذه
+الشجرة، بسببٍ مُسمًّى وشرطِ اشتقاقٍ مكتوب. فلم تصل مدوّنةٌ مُبصَّمةٌ لمسار
+القياس، ولا `MeasurementRunManifest` (`arabic/encoding/measurement.py`)، ولا
+سجلُّ رصدٍ يُطابَق عليه.
+
+`A_REDERIVED_FIGURE_LEAVES_THE_WITHHELD_REGISTER`: وصلت بعدُ بايتاتُ
+`maqayis_by_root_csv_999.csv` إلى الشجرة، فبُصِّمت وجُمِّدت في
+`maqayis_root_table_deposit`، وأُعيد اشتقاقُ عددين كانا مُسجَّلين هنا
+غيرَ قابلين له: ٤٬٥٧٦ سجلًّا و٤٬٠٨٧ جذرًا ثلاثيًّا متمايزًا. فينتقلان من
+`GFLK_SPECIFICATION_NUMERIC_CLAIMS` إلى `REDERIVED_SPECIFICATION_FIGURES`
+بقاعدةِ عدٍّ مُعلَنةٍ وقيمةٍ مفحوصةٍ في الاختبارات، ومعهما نصُّ **ما لا
+يزالان لا يُثبتانه**: مطابقةُ عددٍ لا تُصدِّق الدعوى المبنيّةَ عليه. وأرقامُ
+المدوّنة الأربعةُ باقيةٌ بحالها، إذ مسارُ قياسها ليس هذا الملفّ.
 
 `AN_ENUMERATED_EXAMPLE_SWEEP_IS_NOT_A_UNIVERSAL`: «صفرُ انحرافٍ على 4/4» و«6/6
 حالة مُختبَرة» عدُّ أمثلةٍ مُعدَّدةٍ لا عدُّ مجتمع؛ ومنزلتُهما منزلةُ
@@ -53,10 +62,13 @@
 `A_NAMED_SOURCE_IS_NOT_DEPOSITED_BYTES`: تسميةُ أصلِ المصدر — «معجم مقاييس
 اللغة لابن فارس» — ليست بصمةَ ملفّ: نسخُ المعجم تختلف بايتًا، ومَن قاس على نسخةٍ
 لم يَقِس على أخرى. فالمصدرُ المُسمَّى بلا بصمةٍ يُسجَّل مُسمًّى، ويبقى رقمُه غيرَ
-قابلٍ لإعادة الاشتقاق. واستثناءُ ذلك واحدٌ: بصمةٌ وصلت **وطابقت** بصمةً مُجمَّدةً
-في هذه الشجرة سلفًا، والمطابقةُ مفحوصةٌ في الشيفرة لا مقروءةٌ بالعين. وحتّى
-هذا لا يُثبت أنّ رقمًا قيس على تلك البايتات؛ يُثبت أنّ الإشارة تقع على بايتاتٍ
-معروفةٍ هنا.
+قابلٍ لإعادة الاشتقاق. ويُرفَع ذلك بأحد وجهين لا ثالثَ لهما: بصمةٌ وصلت
+**وطابقت** بصمةً مُجمَّدةً في هذه الشجرة سلفًا (`quran-simple-enhanced.txt`)،
+أو بايتاتٌ وصلت بأعيانها فبُصِّمت هنا وصار يُطابَق عليها عند كلّ قراءة
+(`maqayis_by_root_csv_999.csv` في `maqayis_root_table_deposit`). والمطابقةُ في
+الوجهين مفحوصةٌ في الشيفرة لا مقروءةٌ بالعين. والوجهُ الأوّل يُثبت أنّ الإشارة
+تقع على بايتاتٍ معروفةٍ هنا لا أنّ رقمًا قيس عليها؛ والثاني يجعل ما كان عدُّه
+متعذّرًا معدودًا، ولا يجعل الدعوى المبنيّةَ على العدد مُصدَّقة.
 
 `THIS_IS_REGISTRATION_NOT_AUTHORITY`: لا ولادةَ هنا، ولا حكمَ ولادة، ولا
 تجميدَ `E0`، ولا استيرادَ من `kernel/`، ولا تقرأ هذه الوحدةَ وحدةٌ فيه. ولا
@@ -73,6 +85,10 @@ from pathlib import Path
 from typing import Final
 
 from .compression_model_preregistration import FROZEN_CORPUS
+from .maqayis_root_table_deposit import (
+    FROZEN_ROOT_TABLE,
+    REDERIVED_SPECIFICATION_FIGURES,
+)
 from .pipeline_stations import repository_root_path
 
 __all__ = [
@@ -81,6 +97,7 @@ __all__ = [
     "A_RECORDED_CONFLICT_IS_NOT_A_RESOLVED_ONE_NOTE",
     "A_SUBMITTED_FREEZE_IS_NOT_A_FREEZE_HERE_NOTE",
     "A_NAMED_SOURCE_IS_NOT_DEPOSITED_BYTES_NOTE",
+    "A_REDERIVED_FIGURE_LEAVES_THE_WITHHELD_REGISTER_NOTE",
     "A_SUPERSEDED_VERSION_IS_RECORDED_NOT_ERASED_NOTE",
     "GFLK_SPECIFICATION_AMENDMENTS",
     "GFLK_SPECIFICATION_CONFLICTS",
@@ -121,15 +138,25 @@ NOT_ISSUED_BY_THIS_TREE: Final[str] = (
 
 _NO_CORPUS_REACHED_THIS_TREE: Final[str] = (
     "§٢-ب سمَّت المدوّنةَ ببصمةٍ تُطابق `FROZEN_CORPUS` هنا، والمطابقةُ مفحوصةٌ "
-    "عند الاستيراد؛ لكنّ الاسمَ ليس القياس: لم يصل ملفُّ الجذور "
-    "`maqayis_by_root_csv_999.csv` ولا بصمتُه، ولا `MeasurementRunManifest` يُجمّد "
-    "صورةَ التطبيع وإصدارَ قاعدة Unicode، ولا سجلُّ رصدٍ يُطابَق عليه"
+    "عند الاستيراد؛ لكنّ الاسمَ ليس القياس: لا `MeasurementRunManifest` يُجمّد "
+    "صورةَ التطبيع وإصدارَ قاعدة Unicode لمسار القياس، ولا سجلُّ رصدٍ يُطابَق "
+    "عليه. وقاعدةُ الجذور وصلت بعدُ وبُصِّمت في `maqayis_root_table_deposit`، "
+    "وهي شرطٌ من شروط الاشتقاق لا كلُّها"
 )
 
+_REDERIVED_FIGURES: Final[frozenset[str]] = frozenset(
+    entry.figure for entry in REDERIVED_SPECIFICATION_FIGURES
+)
+"""أرقامُ النصّ التي غادرت سجلَّ المتعذّر، مقروءةً من موضع اشتقاقها لا منسوخة."""
+
+_REDERIVED_TRILATERAL_ROOT_FIGURE: Final[str] = "4,087"
+"""رقمُ الجذور الثلاثيّة، ووجودُه في `_REDERIVED_FIGURES` مفحوصٌ عند الاستيراد."""
+
 _REDERIVATION_CONDITION: Final[str] = (
-    "إيداعُ بايتات المدوّنة وقاعدةِ الجذور مُبصَّمةً، و`MeasurementRunManifest` "
-    "لمسار القياس، وتوقّعٌ مكتوبٌ قبل القياس على منوال "
-    "`OCP_PREREGISTERED_EXPECTATION`"
+    "`MeasurementRunManifest` لمسار القياس على البايتات المُبصَّمة، وسجلُّ "
+    "رصدٍ يُطابَق عليه، وتوقّعٌ مكتوبٌ قبل القياس على منوال "
+    "`OCP_PREREGISTERED_EXPECTATION`؛ وقاعدةُ الجذور المُبصَّمة تحقّقت في "
+    "`maqayis_root_table_deposit` فلم تَعُد من الناقص"
 )
 
 _FORBIDDEN_FIELD_TOKENS: Final[tuple[str, ...]] = (
@@ -477,13 +504,16 @@ NAMED_SOURCE_ATTRIBUTIONS: Final[tuple[NamedSourceAttribution, ...]] = (
             "ثلاثيًّا مأخوذان منه، وأصلُه «معجم مقاييس اللغة لابن فارس»"
         ),
         how_it_reached_the_other_conversation=(
-            "رفعَه المستخدمُ مباشرةً في تلك المحادثة، بنصِّ §٢-ب"
+            "رفعَه المستخدمُ مباشرةً في تلك المحادثة، بنصِّ §٢-ب؛ ثمّ رفعَه إلى "
+            "هذه الشجرة بأعيان بايتاته، فبُصِّم فيها"
         ),
         what_is_still_missing=(
-            "بايتاتُه لم تصل هنا ولا بصمةَ له: وتسميةُ الأصل ليست بصمةَ ملفّ، "
-            "فنسخُ المعجم تختلف بايتًا. فالعددان غيرُ قابلين لإعادة الاشتقاق"
+            "أنّ هذه النسخةَ هي التي قيس عليها هناك: البصمةُ الآن مُجمَّدةٌ في "
+            "`maqayis_root_table_deposit` ويُطابَق عليها عند كلّ قراءة، لكنّ "
+            "النصَّ الواردَ لم يذكر بصمةً تُقابَل بها، ونسخُ المعجم تختلف "
+            "بايتًا. والعددان صارا مُعادَي الاشتقاق هنا، وهذا عدٌّ لا تصديق"
         ),
-        digest_in_this_tree=None,
+        digest_in_this_tree=FROZEN_ROOT_TABLE.sha256_hex,
     ),
 )
 
@@ -591,38 +621,12 @@ GFLK_SPECIFICATION_AMENDMENTS: Final[tuple[SpecificationAmendment, ...]] = (
 
 GFLK_SPECIFICATION_NUMERIC_CLAIMS: Final[tuple[SpecificationNumericClaim, ...]] = (
     SpecificationNumericClaim(
-        figure="4,087",
-        locus="§٢-أ — `JARAD-MAZID-CORRECTED-AR-1`",
-        claim_text=(
-            "«معجم مقاييس اللغة، 4,087 جذرًا ثلاثيًّا مُبصَّمًا، ملف "
-            "maqayis_by_root_csv_999.csv»"
-        ),
-        not_rederivable_because=(
-            "الملفُّ المُسمَّى غيرُ موجودٍ في الشجرة، ولا بصمةَ له، ولا التزامَ "
-            "مُجمَّدًا على نسخةٍ بعينها؛ و«مُبصَّم» في النصّ وصفٌ لا بصمة. و§٢-ب "
-            "سمَّت أصلَه «معجم مقاييس اللغة لابن فارس»، وتسميةُ الأصل لا تُبصِّم "
-            "ملفًّا: نسخُ المعجم تختلف بايتًا"
-        ),
-        what_would_make_it_rederivable=_REDERIVATION_CONDITION,
-    ),
-    SpecificationNumericClaim(
-        figure="4,576",
-        locus="§٢-ب — رسالةُ التسمية",
-        claim_text="«maqayis_by_root_csv_999.csv (معجم مقاييس اللغة، 4,576 سجلًّا)»",
-        not_rederivable_because=(
-            "رقمٌ جديدٌ لم يَرِد في النسختين، وصل مع تسميةِ المصدر لا مع بايتاته؛ "
-            "ولا يُعرَف من النصّ ما «السجلّ» ولا علاقتُه بالجذور الأربعة آلافٍ "
-            "وسبعةٍ وثمانين"
-        ),
-        what_would_make_it_rederivable=_REDERIVATION_CONDITION,
-    ),
-    SpecificationNumericClaim(
         figure="10,599",
         locus="§٢-أ — نتيجةٌ أوّليّةٌ على المدوّنة",
         claim_text="«مجرد مؤكَّد=10,599»",
         not_rederivable_because=_NO_CORPUS_REACHED_THIS_TREE,
         what_would_make_it_rederivable=_REDERIVATION_CONDITION,
-        depends_on_figure="4,087",
+        depends_on_figure=_REDERIVED_TRILATERAL_ROOT_FIGURE,
     ),
     SpecificationNumericClaim(
         figure="11,467",
@@ -633,7 +637,7 @@ GFLK_SPECIFICATION_NUMERIC_CLAIMS: Final[tuple[SpecificationNumericClaim, ...]] 
             "المطابقة، فعددُها دالّةٌ في قاعدة الجذور لا في العربية"
         ),
         what_would_make_it_rederivable=_REDERIVATION_CONDITION,
-        depends_on_figure="4,087",
+        depends_on_figure=_REDERIVED_TRILATERAL_ROOT_FIGURE,
         is_residue_defined=True,
     ),
     SpecificationNumericClaim(
@@ -929,9 +933,18 @@ A_SUPERSEDED_VERSION_IS_RECORDED_NOT_ERASED_NOTE: Final[str] = (
 )
 
 A_NUMBER_WITHOUT_A_CORPUS_IS_NOT_A_MEASUREMENT_NOTE: Final[str] = (
-    "ANumberWithoutACorpusIsNotAMeasurement: كلُّ رقمٍ في النسخة الثانية غيرُ "
-    "قابلٍ لإعادة الاشتقاق بسببٍ مُسمًّى؛ وملفُّ الجذور المُسمَّى في النصّ غيرُ "
-    "موجودٍ في الشجرة، و«مُبصَّم» وصفٌ في جملةٍ لا بصمةٌ تُطابَق"
+    "ANumberWithoutACorpusIsNotAMeasurement: كلُّ رقمٍ بقي في "
+    "`GFLK_SPECIFICATION_NUMERIC_CLAIMS` غيرُ قابلٍ لإعادة الاشتقاق بسببٍ "
+    "مُسمًّى؛ ومسارُ قياسه على المدوّنة بلا `MeasurementRunManifest` ولا سجلِّ "
+    "رصدٍ يُطابَق عليه ولا توقّعٍ مكتوبٍ قبل القياس"
+)
+
+A_REDERIVED_FIGURE_LEAVES_THE_WITHHELD_REGISTER_NOTE: Final[str] = (
+    "ARederivedFigureLeavesTheWithheldRegister: وصلت بايتاتُ "
+    "`maqayis_by_root_csv_999.csv` فبُصِّمت في `maqayis_root_table_deposit`، "
+    "فغادر ٤٬٥٧٦ و٤٬٠٨٧ سجلَّ المتعذّر إلى `REDERIVED_SPECIFICATION_FIGURES` "
+    "بقاعدتَي عدٍّ مُعلَنتين؛ ومطابقةُ العدد عدٌّ لا تصديقٌ لدعوى، وأرقامُ "
+    "المدوّنة الأربعةُ باقيةٌ بحالها"
 )
 
 AN_ENUMERATED_EXAMPLE_SWEEP_IS_NOT_A_UNIVERSAL_NOTE: Final[str] = (
@@ -953,8 +966,9 @@ NAMING_A_FREEZE_CHANGES_ITS_CHECKABILITY_NOT_ITS_STANDING_NOTE: Final[str] = (
 )
 
 A_NAMED_SOURCE_IS_NOT_DEPOSITED_BYTES_NOTE: Final[str] = (
-    "ANamedSourceIsNotDepositedBytes: `maqayis_by_root_csv_999.csv` مُسمًّى "
-    "أصلًا («معجم مقاييس اللغة») بلا بصمة، ونسخُ المعجم تختلف بايتًا. و"
+    "ANamedSourceIsNotDepositedBytes: تسميةُ الأصل («معجم مقاييس اللغة») ليست "
+    "بصمةَ ملفّ، ونسخُ المعجم تختلف بايتًا؛ فلمّا وصلت بايتاتُ "
+    "`maqayis_by_root_csv_999.csv` نفسِها بُصِّمت وصار يُطابَق عليها. و"
     "`quran-simple-enhanced.txt` بصمتُه تُطابق `FROZEN_CORPUS` هنا مطابقةً "
     "مفحوصةً في الشيفرة، وهذا يُثبت موقعَ الإشارة لا أنّ رقمًا قيس عليها"
 )
@@ -1007,26 +1021,38 @@ if len(
     {conflict.locus_in_specification for conflict in GFLK_SPECIFICATION_CONFLICTS}
 ) != len(GFLK_SPECIFICATION_CONFLICTS):  # pragma: no cover - حارس
     raise RuntimeError("لا يُسجَّل تعارضٌ واحدٌ بصفّين.")
-_KNOWN_FIGURES: Final[frozenset[str]] = frozenset(
-    claim.figure for claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS
+_KNOWN_FIGURES: Final[frozenset[str]] = (
+    frozenset(claim.figure for claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS)
+    | _REDERIVED_FIGURES
 )
 for _claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS:  # pragma: no cover - حارس
     if _claim.depends_on_figure is None:
         continue
     if _claim.depends_on_figure not in _KNOWN_FIGURES:
-        raise RuntimeError("وسمُ التبعيّة يُحيل إلى رقمٍ مُسجَّلٍ في السجلّ نفسِه.")
+        raise RuntimeError(
+            "وسمُ التبعيّة يُحيل إلى رقمٍ مُسجَّلٍ في السجلّ نفسِه أو مُعادِ "
+            "الاشتقاق في `maqayis_root_table_deposit`."
+        )
     if _claim.depends_on_figure == _claim.figure:
         raise RuntimeError("لا يعتمد رقمٌ على نفسه.")
 if len({attribution.source_name for attribution in NAMED_SOURCE_ATTRIBUTIONS}) != len(
     NAMED_SOURCE_ATTRIBUTIONS
 ):  # pragma: no cover - حارس
     raise RuntimeError("لا يُسجَّل مصدرٌ مُسمًّى بصفّين.")
+_FROZEN_DIGESTS_IN_THIS_TREE: Final[frozenset[str]] = frozenset(
+    (FROZEN_CORPUS.sha256_hex, FROZEN_ROOT_TABLE.sha256_hex)
+)
 for _attribution in NAMED_SOURCE_ATTRIBUTIONS:  # pragma: no cover - حارس
     if _attribution.digest_in_this_tree is None:
         continue
-    if _attribution.digest_in_this_tree != FROZEN_CORPUS.sha256_hex:
+    if _attribution.digest_in_this_tree not in _FROZEN_DIGESTS_IN_THIS_TREE:
         raise RuntimeError(
             "بصمةٌ منسوبةٌ لمصدرٍ لا تُسجَّل إلّا إن طابقت بصمةً مُجمَّدةً في هذه "
             "الشجرة؛ والمطابقةُ تُفحَص هنا ولا تُقرأ بالعين."
         )
+if _REDERIVED_TRILATERAL_ROOT_FIGURE not in _REDERIVED_FIGURES:  # pragma: no cover
+    raise RuntimeError(
+        "وسمُ التبعيّة يُحيل إلى رقمٍ مُعادِ الاشتقاق في "
+        "`maqayis_root_table_deposit`، والإحالةُ تُفحَص هنا."
+    )
 _assert_no_result_field()
