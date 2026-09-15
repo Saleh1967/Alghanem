@@ -103,7 +103,9 @@ __all__ = [
     "ABSENCE_ASSUMPTION_IS_NAMED_FOR_THE_CODE_NOT_FOR_A_LINGUISTIC_CLAIM",
     "ABSENCE_OF_A_WITNESS_IS_NOT_A_WITNESS_OF_ABSENCE",
     "AN_OBSERVED_MARK_IS_NOT_A_DERIVED_STATE",
+    "A_WORD_BOUNDARY_HERE_IS_A_PASSTHROUGH_AND_NOT_A_LEXICAL_BOUNDARY",
     "CLASSIFICATION_READS_THE_DEPOSITED_MODULE_AND_DOES_NOT_AMEND_IT",
+    "DECLARED_JOINERS",
     "DECLARED_STATE_MARKS",
     "EFFICIENT_CAUSE_IS_OMITTED_BY_DECISION_NOT_BY_SILENCE",
     "EvidencedUnit",
@@ -173,6 +175,18 @@ AN_OBSERVED_MARK_IS_NOT_A_DERIVED_STATE: Final = (
     "observations and zero units, being refused by the deposited codec"
 )
 
+A_WORD_BOUNDARY_HERE_IS_A_PASSTHROUGH_AND_NOT_A_LEXICAL_BOUNDARY: Final = (
+    "UNDECIDABLE is reported for an alef that opens a run of carriers, and "
+    "such a run opens at the start of the surface or after any passthrough "
+    "unit that is not a declared joiner. this is a surface rule and never a "
+    "lexical one: it does not know what a word is, it knows where the "
+    "carriers stop. probing it found its own defect, since a tatweel is a "
+    "passthrough that joins rather than separates and opened a word until "
+    "DECLARED_JOINERS was named; the set is declared in this module and "
+    "derived from no property of Arabic, so another joiner nobody named "
+    "would reopen the same defect"
+)
+
 ORPHAN_MARKS_ARE_CARRIED_AND_EVIDENCE_NOTHING: Final = (
     "a mark written with no carrier before it is generated as a passthrough "
     "unit by the deposited codec; it is carried here so that no observed mark "
@@ -219,6 +233,9 @@ STATE_EVIDENCE_NAMED_RESIDUALS: Final[dict[str, str]] = {
         UNDECIDABILITY_IS_DERIVED_FROM_THE_SURFACE_NOT_DECLARED_FOR_THE_ALEF
     ),
     "AN_OBSERVED_MARK_IS_NOT_A_DERIVED_STATE": AN_OBSERVED_MARK_IS_NOT_A_DERIVED_STATE,
+    "A_WORD_BOUNDARY_HERE_IS_A_PASSTHROUGH_AND_NOT_A_LEXICAL_BOUNDARY": (
+        A_WORD_BOUNDARY_HERE_IS_A_PASSTHROUGH_AND_NOT_A_LEXICAL_BOUNDARY
+    ),
     "ORPHAN_MARKS_ARE_CARRIED_AND_EVIDENCE_NOTHING": (
         ORPHAN_MARKS_ARE_CARRIED_AND_EVIDENCE_NOTHING
     ),
@@ -575,6 +592,13 @@ class EvidencedUnit:
 _WORD_INITIAL_UNDECIDABLE_CARRIERS: Final[frozenset[str]] = frozenset("\u0627")
 """الحاملُ الذي لا تحسم العلاماتُ حالتَه في أوّل الكلمة: الألفُ المجرّدة وحدها."""
 
+DECLARED_JOINERS: Final[frozenset[str]] = frozenset(
+    "\u0640"  # التطويل
+    "\u200c"  # فاصلُ الوصل
+    "\u200d"  # واصلُ الوصل
+)
+"""نقاطُ ترميزٍ تمرّ بين الحوامل ولا تفتح كلمةً جديدة، مُعلَنةٌ لا مشتقّة."""
+
 
 @dataclass(frozen=True)
 class EvidencingReader:
@@ -632,7 +656,10 @@ class EvidencingReader:
                         unit, self._evidence_for(unit, held, word_initial), held
                     )
                 )
-                word_initial = unit.state is CarrierState.PASSTHROUGH
+                word_initial = (
+                    unit.state is CarrierState.PASSTHROUGH
+                    and unit.carrier not in DECLARED_JOINERS
+                )
             index += span
         self._refuse_a_lost_observation(observations, evidenced)
         return tuple(evidenced)

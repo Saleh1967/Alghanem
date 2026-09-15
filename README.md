@@ -3019,6 +3019,71 @@ by that fall. Every frozen number is
 re-derived, not asserted: `examples/irab/measure_case_readout.py` verifies the
 corpus digest and recomputes them, exiting non-zero on any drift.
 
+### Naming what a refusal is, and what a state rests on
+
+`src/alghanem/arabic/encoding/state_evidence.py` does two things to the
+deposited codec without editing one byte of it.
+
+It **names what is already there**. `carrier_state_candidate` refuses at
+construction in thirty places, and each refusal belongs to a different classical
+genus, and none carried the name of its genus. The sites are read out of that
+module's own abstract syntax tree by `derive_refusal_sites`, never from a
+hand-written list, and classified into a closed triad: **condition** (a positive
+constraint on the input, sixteen sites), **preventer** (a structure present that
+blocks a judgement whose condition is met, twelve), and **undecidable** (a place
+where the marks settle nothing, so the refusal is an abstention rather than a
+verdict, two — both of them a second write into a slot already derived once).
+Adding a refusal without a genus, or removing one that is classified, fails at
+import rather than passing with a warning
+(`CLASSIFICATION_READS_THE_DEPOSITED_MODULE_AND_DOES_NOT_AMEND_IT`).
+
+It **fills the one gap that probing found**. The codec produces `الحمد` as five
+`SUKUN_IMPLICIT` units while the surface writes no mark at all, so an assumed
+state and a read one were the same value. `StateEvidence` separates them, and a
+`CarrierStateUnit` is not wrapped without the genus of the sign it rests on:
+`WRITTEN_MARK` names the mark and its offset, `ABSENCE_ASSUMPTION` is named for
+what the codec actually does rather than for an underlying sukun it cannot see
+(`ABSENCE_ASSUMPTION_IS_NAMED_FOR_THE_CODE_NOT_FOR_A_LINGUISTIC_CLAIM`), and
+`UNDECIDABLE` is reported for an unmarked alef opening a run of carriers. That
+last one settles a disagreement between two modules of this tree:
+`ibtida_wasl_waqf_registration` records such an alef as unmeasurable
+(`HAMZAT_WASL_IS_NOT_DECIDABLE_FROM_THE_WRITTEN_MARKS`) while the codec asserted
+sukun. Nothing is declared undecidable for the alef as such — a written wasla
+`ٱ` is not undecidable, because whoever wrote it decided
+(`UNDECIDABILITY_IS_DERIVED_FROM_THE_SURFACE_NOT_DECLARED_FOR_THE_ALEF`).
+
+`MarkObservation` records a codepoint at an offset and carries no state, and the
+two genera stay apart by derivation rather than by wording: `بَُ` yields two
+observations and zero units, since the codec refuses it
+(`AN_OBSERVED_MARK_IS_NOT_A_DERIVED_STATE`). Offsets are derived by writing each
+prefix back through the deposited codec, so no second mark reader exists to
+disagree with the first; the reader checks that what it wrote is a prefix of the
+surface instead of assuming it. Two defects were found by probing the module's
+own rules rather than by reasoning about them: `retrieve` emits shadda before
+harakah while NFC orders them the other way, which pointed nine of forty-six
+offsets at the wrong codepoint until the written prefix was normalized before
+being diffed; and a tatweel is a passthrough that *joins*, so it opened a new
+word and made a mid-word alef undecidable until `DECLARED_JOINERS` was named. A
+boundary here is a passthrough, never a lexical fact, and the joiner set is
+declared and derived from no property of Arabic
+(`A_WORD_BOUNDARY_HERE_IS_A_PASSTHROUGH_AND_NOT_A_LEXICAL_BOUNDARY`).
+
+Capacities are derived and never tabulated: `derive_observed_capacities` reports
+which marks actually fell on which carriers in the surfaces it was handed, and a
+pair no surface exhibits is recorded as unobserved and never as impossible
+(`ABSENCE_OF_A_WITNESS_IS_NOT_A_WITNESS_OF_ABSENCE`). Three things are
+deliberately absent with their reasons written down: no essence of a letter,
+since identity in this tree is deferred to a birth gate that is not built
+(`LETTER_EXISTENCE_HERE_IS_OBSERVED_NOT_ESSENTIAL`); no declared relation table,
+which would owe the separation `letter_fingerprint` applies to its imported
+tables (`NO_RELATION_TABLE_IS_DECLARED_HERE`); and no efficient cause, which is
+omitted as a recorded decision that stays open to challenge rather than absorbed
+into the existence of the letter and passed over
+(`EFFICIENT_CAUSE_IS_OMITTED_BY_DECISION_NOT_BY_SILENCE`).
+`examples/state_evidence/read_state_evidence.py` prints the genus of every state
+of any surface passed to it. Nothing here is born, ranked or frozen, and no gate
+in `kernel/` reads it.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest

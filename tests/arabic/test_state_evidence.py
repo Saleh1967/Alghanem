@@ -17,6 +17,7 @@ from alghanem.arabic.encoding.carrier_state_candidate import (
     round_trip_holds,
 )
 from alghanem.arabic.encoding.state_evidence import (
+    DECLARED_JOINERS,
     DECLARED_STATE_MARKS,
     REFUSAL_GENUS_REGISTRY,
     STATE_EVIDENCE_NAMED_RESIDUALS,
@@ -41,6 +42,7 @@ SHADDA = "\u0651"
 SUKUN = "\u0652"
 DAGGER_ALIF = "\u0670"
 ALEF_WASLA = "\u0671"
+TATWEEL = "\u0640"
 AL_HAMD = "\u0627\u0644\u062d\u0645\u062f"
 
 
@@ -323,5 +325,33 @@ def test_the_named_residuals_are_non_empty_prose() -> None:
 def test_the_efficient_cause_is_recorded_as_omitted_by_decision() -> None:
     assert (
         "EFFICIENT_CAUSE_IS_OMITTED_BY_DECISION_NOT_BY_SILENCE"
+        in STATE_EVIDENCE_NAMED_RESIDUALS
+    )
+
+
+# --- عطبٌ وجده فحصُ القاعدة نفسِها، فأُغلق ------------------------------------
+
+
+def test_a_tatweel_does_not_open_a_word_so_a_joined_alef_is_not_undecidable() -> None:
+    units = EvidencingReader().read(BA + TATWEEL + ALEF)
+    assert units[1].unit.state is CarrierState.PASSTHROUGH
+    assert units[2].unit.carrier == ALEF
+    assert units[2].evidence is StateEvidence.ABSENCE_ASSUMPTION
+
+
+def test_a_space_still_opens_a_word_after_the_joiner_rule() -> None:
+    units = EvidencingReader().read(BA + " " + ALEF)
+    assert units[2].evidence is StateEvidence.UNDECIDABLE
+
+
+def test_a_punctuation_mark_opens_a_word_and_a_joiner_does_not() -> None:
+    assert EvidencingReader().read("!" + ALEF)[1].evidence is StateEvidence.UNDECIDABLE
+    assert TATWEEL in DECLARED_JOINERS
+    assert "!" not in DECLARED_JOINERS
+
+
+def test_the_word_boundary_rule_names_itself_as_a_surface_rule() -> None:
+    assert (
+        "A_WORD_BOUNDARY_HERE_IS_A_PASSTHROUGH_AND_NOT_A_LEXICAL_BOUNDARY"
         in STATE_EVIDENCE_NAMED_RESIDUALS
     )
