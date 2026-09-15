@@ -7,6 +7,7 @@ from dataclasses import fields
 
 import pytest
 
+from alghanem.arabic.compression_model_preregistration import FROZEN_CORPUS
 from alghanem.arabic.gflk_feature_table_import_barrier import (
     ANALYTIC_REGISTRATIONS,
     FEATURE_TABLE_IMPORT_BARRIERS,
@@ -22,6 +23,7 @@ from alghanem.arabic.gflk_specification_deposit import (
     GFLK_SPECIFICATION_CONFLICTS,
     GFLK_SPECIFICATION_DEPOSIT,
     GFLK_SPECIFICATION_NUMERIC_CLAIMS,
+    NAMED_SOURCE_ATTRIBUTIONS,
     NOT_ISSUED_BY_THIS_TREE,
     SPECIFICATION_RELATIVE_PATH,
     SUBMITTED_FREEZE_IDENTIFIERS,
@@ -29,6 +31,7 @@ from alghanem.arabic.gflk_specification_deposit import (
     GflkSpecificationConflict,
     GflkSpecificationDeposit,
     GflkSpecificationDepositError,
+    NamedSourceAttribution,
     ProvenanceGenus,
     SpecificationAmendment,
     SpecificationNumericClaim,
@@ -261,7 +264,16 @@ def test_every_figure_is_registered_as_not_rederivable_with_its_condition() -> N
         assert claim.not_rederivable_because.strip()
         assert claim.what_would_make_it_rederivable.strip()
     figures = {claim.figure for claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS}
-    assert {"4,087", "10,599", "11,467", "37,682", "18,333", "6/6", "4/4"} == figures
+    assert {
+        "4,087",
+        "4,576",
+        "10,599",
+        "11,467",
+        "37,682",
+        "18,333",
+        "6/6",
+        "4/4",
+    } == figures
 
 
 def test_a_residue_defined_figure_without_a_dependency_tag_is_refused() -> None:
@@ -283,13 +295,18 @@ def test_a_residue_defined_figure_without_a_dependency_tag_is_refused() -> None:
         )
 
 
-def test_the_four_submitted_freezes_are_kept_verbatim_and_disowned() -> None:
+def test_the_nine_submitted_freezes_are_kept_verbatim_and_disowned() -> None:
     identifiers = {entry.identifier for entry in SUBMITTED_FREEZE_IDENTIFIERS}
     assert identifiers == {
         "JARAD-MAZID-CORRECTED-AR-1",
         "FI'L-AMR-SYLLABLE-SIGNATURE-AR-1",
         "MUDARI-WEAK-RADICAL-IDENTITY-AR-1",
         "LUZUM-TA'ADDI-STRUCTURAL-TOOL-AR-1",
+        "FI'L-FOUR-DIMENSIONS-AR-1",
+        "FI'L-LAZIM-MAJHUL-FOUR-DIMENSIONS-AR-1",
+        "MASDAR-SYLLABLE-LOGIC-AR-1",
+        "SAMA'I-SYLLABLE-RELATIONS-AR-1",
+        "MAZID-VERB-SYLLABLE-LOGIC-AR-1",
     }
     for entry in SUBMITTED_FREEZE_IDENTIFIERS:
         assert entry.not_issued_by_this_tree == NOT_ISSUED_BY_THIS_TREE
@@ -358,3 +375,70 @@ def test_the_withheld_layers_are_still_withheld_after_this_deposit() -> None:
     assert DictionaryLayer.JARAD_ANALYSIS in withheld
     assert DictionaryLayer.SYLLABLES_AND_WAZN in withheld
     assert DictionaryLayer.JARAD_ANALYSIS not in MEASURED_LAYERS
+
+
+def test_the_follow_up_naming_message_is_deposited_verbatim() -> None:
+    """§٢-ب تحمل رسالةَ التسمية كما وصلت، ولا تُعَدّ نسخةً ثالثةً للمواصفة."""
+
+    text = read_specification_bytes().decode("utf-8")
+    assert "## ٢-ب — النصّ المُودَع حرفيًّا (رسالةُ التسمية الواردة)" in text
+    assert "MAZID-VERB-SYLLABLE-LOGIC-AR-1" in text
+    assert "maqayis_by_root_csv_999.csv" in text
+    assert GFLK_SPECIFICATION_DEPOSIT.deposited_versions == 2
+    assert GFLK_SPECIFICATION_DEPOSIT.deposited_follow_up_messages == 1
+
+
+def test_counting_the_follow_up_message_as_a_third_version_is_refused() -> None:
+    """التسميةُ ليست تعديلًا للمواصفة، فلا تُعَدّ نسخةً فيها."""
+
+    with pytest.raises(GflkSpecificationDepositError):
+        GflkSpecificationDeposit(
+            genus=ProvenanceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+            arrival_date="2026-09-15",
+            relative_path=SPECIFICATION_RELATIVE_PATH,
+            deposited_versions=2,
+            deposited_follow_up_messages=2,
+        )
+
+
+def test_the_named_corpus_digest_is_checked_against_the_frozen_one() -> None:
+    """البصمةُ المنسوبةُ تُطابَق على `FROZEN_CORPUS` في الشجرة لا تُقرأ بالعين."""
+
+    by_name = {entry.source_name: entry for entry in NAMED_SOURCE_ATTRIBUTIONS}
+    corpus = by_name["quran-simple-enhanced.txt"]
+    assert corpus.digest_in_this_tree == FROZEN_CORPUS.sha256_hex
+    assert FROZEN_CORPUS.source_name == "quran-simple-enhanced.txt"
+    assert corpus.what_is_still_missing.strip()
+
+
+def test_the_named_root_file_has_no_digest_here() -> None:
+    """تسميةُ «معجم مقاييس اللغة» أصلًا ليست بصمةَ ملفّ، فالعددان بلا اشتقاق."""
+
+    by_name = {entry.source_name: entry for entry in NAMED_SOURCE_ATTRIBUTIONS}
+    roots = by_name["maqayis_by_root_csv_999.csv"]
+    assert roots.digest_in_this_tree is None
+    assert "بصمة" in roots.what_is_still_missing
+    new_figure = next(
+        claim for claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS if claim.figure == "4,576"
+    )
+    assert new_figure.not_rederivable_because.strip()
+
+
+def test_a_truncated_or_malformed_source_digest_is_refused() -> None:
+    """«3763...6c5a» طرفان لا بصمة، ولا يُطابَق عليهما."""
+
+    with pytest.raises(GflkSpecificationDepositError):
+        NamedSourceAttribution(
+            source_name="ملفّ",
+            what_it_is="وصف",
+            how_it_reached_the_other_conversation="كيف",
+            what_is_still_missing="ما نقص",
+            digest_in_this_tree="3763...6c5a",
+        )
+    with pytest.raises(GflkSpecificationDepositError):
+        NamedSourceAttribution(
+            source_name="ملفّ",
+            what_it_is="وصف",
+            how_it_reached_the_other_conversation="كيف",
+            what_is_still_missing="   ",
+        )

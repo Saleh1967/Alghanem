@@ -2662,7 +2662,7 @@ registered as not re-derivable, each with a named reason and the condition that
 would change that; the "unconfirmed" count is defined by non-match against that
 absent root list, so it is refused at construction unless it names the figure it
 depends on. Its "zero deviation on 4/4" and "6/6" sweeps are recorded as
-enumerated examples rather than populations. The four freeze identifiers it cites
+enumerated examples rather than populations. The freeze identifiers it cites
 have zero matches in `src/`, `docs/`, and `tests/`, and a test enforces that,
 keeping them verbatim beside a field stating that none was issued here. Five new
 conflicts are recorded and none resolved: the imperative signature alone collides
@@ -2670,6 +2670,27 @@ with three refusals that were written before the text arrived — the syllable
 layer is withheld, hamzat waṣl is not decidable from the written marks, and a
 final sukūn is not distinguished pausal from connected — all three wider than the
 one open limit the text declares for itself.
+
+A later message from the same conversation, deposited verbatim in §٢-ب, closed
+two gaps in that text without changing anything's standing. It names the nine
+freeze identifiers that had been referred to only as a count, so all nine are now
+registered here, swept for, and found nowhere in the tree — naming made the check
+possible, and the sender says plainly that it does not make them frozen here, so
+that agreement is recorded rather than argued. It also names the two sources the
+figures came from. One of them, `quran-simple-enhanced.txt`, is cited by a
+truncated digest, and the full digest is already frozen in this tree in
+`compression_model_preregistration.FROZEN_CORPUS`; the module asserts that
+equality at import rather than restating the hex, and a truncated digest like
+`3763...6c5a` is refused outright, since two ends are not a fingerprint. The
+other, `maqayis_by_root_csv_999.csv`, arrives as a name only: its origin is given
+as Ibn Fāris's *Maqāyīs al-Lugha*, but copies of a dictionary differ byte for
+byte, so naming an origin is not fingerprinting a file and its counts stay
+not re-derivable. The reason attached to the corpus counts is narrowed to what is
+actually still missing — the root file, a `MeasurementRunManifest`, and a written
+pre-measurement expectation — rather than deleted, because a named corpus is not
+a performed measurement. One arithmetic observation is recorded for a later
+reader and decided by no one: the four counts sum to 78,081, while 78,215 appears
+for the same corpus in the third record.
 
 ### A purity gate before any raw count, and a protocol that refuses quoted numbers
 

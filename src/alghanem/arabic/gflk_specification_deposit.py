@@ -40,9 +40,23 @@
 
 `A_SUBMITTED_FREEZE_IS_NOT_A_FREEZE_HERE`: مُعرِّفُ تجميدٍ وصل من خارج الشجرة
 يُحفَظ بحروفه ومعه حقلٌ يقول إنّه **غيرُ صادرٍ عنها**، على منوال
-`SUBMITTED_FREEZE_IDENTIFIER` في `ibtida_wasl_waqf_registration`. والأربعةُ
-الواردةُ في النسخة الثانية بصفر تطابقٍ في `src/` و`docs/` و`tests/`، فإعلانُ
-التجميد في محادثةٍ خارجيّةٍ لا يُجمّد شيئًا هنا.
+`SUBMITTED_FREEZE_IDENTIFIER` في `ibtida_wasl_waqf_registration`. والتسعةُ
+المُسمَّاةُ في §٢-ب بصفر تطابقٍ في `src/` و`docs/` و`tests/`، فإعلانُ التجميد
+في محادثةٍ خارجيّةٍ لا يُجمّد شيئًا هنا.
+
+`NAMING_A_FREEZE_CHANGES_ITS_CHECKABILITY_NOT_ITS_STANDING`: قبل §٢-ب كان
+المذكورُ «تسعةَ سجلّاتٍ مجمَّدة» بلا أسماء، فلم يكن يُمكن حتّى فحصُه بحثًا عن
+تطابق؛ وبعده صارت التسعةُ تُفحَص فحصًا آليًّا. وهذا كسبٌ في **قابليّة الفحص**
+لا في المنزلة: التسميةُ لا تُجمّد، والمنزلةُ بعد التسمية هي المنزلةُ قبلها —
+وهو ما تقوله الرسالةُ الواردةُ نفسُها، فيُسجَّل اتّفاقًا لا تنازلًا.
+
+`A_NAMED_SOURCE_IS_NOT_DEPOSITED_BYTES`: تسميةُ أصلِ المصدر — «معجم مقاييس
+اللغة لابن فارس» — ليست بصمةَ ملفّ: نسخُ المعجم تختلف بايتًا، ومَن قاس على نسخةٍ
+لم يَقِس على أخرى. فالمصدرُ المُسمَّى بلا بصمةٍ يُسجَّل مُسمًّى، ويبقى رقمُه غيرَ
+قابلٍ لإعادة الاشتقاق. واستثناءُ ذلك واحدٌ: بصمةٌ وصلت **وطابقت** بصمةً مُجمَّدةً
+في هذه الشجرة سلفًا، والمطابقةُ مفحوصةٌ في الشيفرة لا مقروءةٌ بالعين. وحتّى
+هذا لا يُثبت أنّ رقمًا قيس على تلك البايتات؛ يُثبت أنّ الإشارة تقع على بايتاتٍ
+معروفةٍ هنا.
 
 `THIS_IS_REGISTRATION_NOT_AUTHORITY`: لا ولادةَ هنا، ولا حكمَ ولادة، ولا
 تجميدَ `E0`، ولا استيرادَ من `kernel/`، ولا تقرأ هذه الوحدةَ وحدةٌ فيه. ولا
@@ -58,6 +72,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Final
 
+from .compression_model_preregistration import FROZEN_CORPUS
 from .pipeline_stations import repository_root_path
 
 __all__ = [
@@ -65,11 +80,14 @@ __all__ = [
     "A_NUMBER_WITHOUT_A_CORPUS_IS_NOT_A_MEASUREMENT_NOTE",
     "A_RECORDED_CONFLICT_IS_NOT_A_RESOLVED_ONE_NOTE",
     "A_SUBMITTED_FREEZE_IS_NOT_A_FREEZE_HERE_NOTE",
+    "A_NAMED_SOURCE_IS_NOT_DEPOSITED_BYTES_NOTE",
     "A_SUPERSEDED_VERSION_IS_RECORDED_NOT_ERASED_NOTE",
     "GFLK_SPECIFICATION_AMENDMENTS",
     "GFLK_SPECIFICATION_CONFLICTS",
     "GFLK_SPECIFICATION_DEPOSIT",
     "GFLK_SPECIFICATION_NUMERIC_CLAIMS",
+    "NAMED_SOURCE_ATTRIBUTIONS",
+    "NAMING_A_FREEZE_CHANGES_ITS_CHECKABILITY_NOT_ITS_STANDING_NOTE",
     "NOT_ISSUED_BY_THIS_TREE",
     "SPECIFICATION_RELATIVE_PATH",
     "SUBMITTED_FREEZE_IDENTIFIERS",
@@ -78,6 +96,7 @@ __all__ = [
     "GflkSpecificationConflict",
     "GflkSpecificationDeposit",
     "GflkSpecificationDepositError",
+    "NamedSourceAttribution",
     "ProvenanceGenus",
     "SpecificationAmendment",
     "SpecificationNumericClaim",
@@ -101,9 +120,10 @@ NOT_ISSUED_BY_THIS_TREE: Final[str] = (
 )
 
 _NO_CORPUS_REACHED_THIS_TREE: Final[str] = (
-    "لم تصل مدوّنةٌ مُودَعةٌ مُبصَّمة، ولا ملفُّ الجذور `maqayis_by_root_csv_999.csv` "
-    "المُسمَّى في النصّ، ولا `MeasurementRunManifest` يُجمّد صورةَ التطبيع وإصدارَ "
-    "قاعدة Unicode، ولا سجلُّ رصدٍ يُطابَق عليه"
+    "§٢-ب سمَّت المدوّنةَ ببصمةٍ تُطابق `FROZEN_CORPUS` هنا، والمطابقةُ مفحوصةٌ "
+    "عند الاستيراد؛ لكنّ الاسمَ ليس القياس: لم يصل ملفُّ الجذور "
+    "`maqayis_by_root_csv_999.csv` ولا بصمتُه، ولا `MeasurementRunManifest` يُجمّد "
+    "صورةَ التطبيع وإصدارَ قاعدة Unicode، ولا سجلُّ رصدٍ يُطابَق عليه"
 )
 
 _REDERIVATION_CONDITION: Final[str] = (
@@ -236,6 +256,45 @@ class SpecificationNumericClaim:
 
 
 @dataclass(frozen=True, slots=True)
+class NamedSourceAttribution:
+    """مصدرٌ سُمّي في §٢-ب: ما هو، وكيف وصل هناك، وبصمتُه هنا إن وُجدت.
+
+    `A_NAMED_SOURCE_IS_NOT_DEPOSITED_BYTES`: الاسمُ ليس البايتات. و
+    `digest_in_this_tree` لا يُملأ إلّا ببصمةٍ **مُجمَّدةٍ في هذه الشجرة سلفًا**
+    تُقرأ من موضعها لا تُنسَخ رقمًا، ووجودُها لا يعني أنّ رقمًا قيس عليها.
+    """
+
+    source_name: str
+    what_it_is: str
+    how_it_reached_the_other_conversation: str
+    what_is_still_missing: str
+    digest_in_this_tree: str | None = None
+
+    def __post_init__(self) -> None:
+        for field_name in (
+            "source_name",
+            "what_it_is",
+            "how_it_reached_the_other_conversation",
+            "what_is_still_missing",
+        ):
+            if not str(getattr(self, field_name)).strip():
+                raise GflkSpecificationDepositError(
+                    "مصدرٌ مُسمًّى بلا بيانِ ما بقي ناقصًا يُقرأ بعد جلساتٍ مصدرًا "
+                    "مُودَعًا، والتسميةُ ليست إيداعًا"
+                )
+        digest = self.digest_in_this_tree
+        if digest is None:
+            return
+        if len(digest) != 64 or any(
+            character not in "0123456789abcdef" for character in digest
+        ):
+            raise GflkSpecificationDepositError(
+                "بصمةُ مصدرٍ تُسجَّل كاملةً بالنظام السادس عشر الصغير (64 خانة)؛ "
+                "و«3763...6c5a» طرفان لا بصمة، ولا يُطابَق عليهما"
+            )
+
+
+@dataclass(frozen=True, slots=True)
 class SubmittedFreezeIdentifier:
     """مُعرِّفُ تجميدٍ وارد: نصُّه، وما يُعلنه، وأنّه غيرُ صادرٍ عن هذه الشجرة."""
 
@@ -287,6 +346,7 @@ class GflkSpecificationDeposit:
     arrival_date: str
     relative_path: str
     deposited_versions: int = 2
+    deposited_follow_up_messages: int = 1
 
     def __post_init__(self) -> None:
         if not self.arrival_date.strip() or not self.relative_path.strip():
@@ -295,6 +355,11 @@ class GflkSpecificationDeposit:
             raise GflkSpecificationDepositError(
                 "النسختان تُودَعان معًا؛ وإيداعُ المُوسَّعة وحدها يمحو أنّ دعوًى "
                 "أُطلِقت ثمّ قُيِّدت"
+            )
+        if self.deposited_follow_up_messages != 1:
+            raise GflkSpecificationDepositError(
+                "رسالةُ التسمية اللاحقةُ تُعَدّ نصًّا لاحقًا لا نسخةً ثالثة؛ "
+                "وعدُّها نسخةً يجعل التسميةَ تعديلًا للمواصفة وهي ليست كذلك"
             )
 
     def digest(self, root: Path | None = None) -> str:
@@ -308,6 +373,7 @@ GFLK_SPECIFICATION_DEPOSIT: Final[GflkSpecificationDeposit] = GflkSpecificationD
     arrival_date="2026-09-15",
     relative_path=SPECIFICATION_RELATIVE_PATH,
     deposited_versions=2,
+    deposited_follow_up_messages=1,
 )
 
 
@@ -343,6 +409,81 @@ SUBMITTED_FREEZE_IDENTIFIERS: Final[tuple[SubmittedFreezeIdentifier, ...]] = (
             "متعدّيًا حقيقيًّا، استلزامًا أحاديَّ الاتجاه"
         ),
         not_issued_by_this_tree=NOT_ISSUED_BY_THIS_TREE,
+    ),
+    SubmittedFreezeIdentifier(
+        identifier="FI'L-FOUR-DIMENSIONS-AR-1",
+        what_it_declares=(
+            "تجميدٌ يُعلن للفعل أربعةَ أبعادٍ مُميِّزة، سُمّي في §٢-ب ولم يَرِد "
+            "نصُّه ولا مسطرةُ قياسه"
+        ),
+        not_issued_by_this_tree=NOT_ISSUED_BY_THIS_TREE,
+    ),
+    SubmittedFreezeIdentifier(
+        identifier="FI'L-LAZIM-MAJHUL-FOUR-DIMENSIONS-AR-1",
+        what_it_declares=(
+            "تجميدٌ يُعلن الأبعادَ الأربعةَ نفسَها للّازم والمبنيِّ للمجهول، "
+            "سُمّي في §٢-ب ولم يَرِد نصُّه"
+        ),
+        not_issued_by_this_tree=NOT_ISSUED_BY_THIS_TREE,
+    ),
+    SubmittedFreezeIdentifier(
+        identifier="MASDAR-SYLLABLE-LOGIC-AR-1",
+        what_it_declares=(
+            "تجميدٌ يُعلن منطقًا مقطعيًّا للمصدر يفصل السماعيَّ عن القياسيّ، "
+            "سُمّي في §٢-ب ولم يَرِد نصُّه"
+        ),
+        not_issued_by_this_tree=NOT_ISSUED_BY_THIS_TREE,
+    ),
+    SubmittedFreezeIdentifier(
+        identifier="SAMA'I-SYLLABLE-RELATIONS-AR-1",
+        what_it_declares=(
+            "تجميدٌ يُعلن علاقاتٍ ثلاثًا بين مقاطع المصدر السماعيّ (تجاورٌ "
+            "وتخطٍّ)، سُمّي في §٢-ب ولم يَرِد نصُّه"
+        ),
+        not_issued_by_this_tree=NOT_ISSUED_BY_THIS_TREE,
+    ),
+    SubmittedFreezeIdentifier(
+        identifier="MAZID-VERB-SYLLABLE-LOGIC-AR-1",
+        what_it_declares=(
+            "تجميدٌ يُعلن منطقًا مقطعيًّا لأوزان المزيد: تحوّلُ عينِ الفعل "
+            "CV←CVV، سُمّي في §٢-ب ولم يَرِد نصُّه"
+        ),
+        not_issued_by_this_tree=NOT_ISSUED_BY_THIS_TREE,
+    ),
+)
+
+
+NAMED_SOURCE_ATTRIBUTIONS: Final[tuple[NamedSourceAttribution, ...]] = (
+    NamedSourceAttribution(
+        source_name="quran-simple-enhanced.txt",
+        what_it_is=(
+            "المدوّنةُ التي تقول §٢-ب إنّ أعدادَ الضغط والصرف قيست عليها، "
+            "مذكورةً ببصمةٍ مُختصَرةٍ طرفاها «3763» و«6c5a»"
+        ),
+        how_it_reached_the_other_conversation=(
+            "لم يُذكَر؛ والمذكورُ أنّ بصمتَها «مُسجَّلةٌ سابقًا في الإيداع الأوّل»"
+        ),
+        what_is_still_missing=(
+            "أنّ البصمةَ تقع على بايتاتٍ مُجمَّدةٍ هنا لا يعني أنّ رقمًا قيس "
+            "عليها: لا `MeasurementRunManifest` لمسار القياس، ولا سجلَّ رصدٍ "
+            "يُطابَق عليه، ولا توقّعٌ مكتوبٌ قبل القياس"
+        ),
+        digest_in_this_tree=FROZEN_CORPUS.sha256_hex,
+    ),
+    NamedSourceAttribution(
+        source_name="maqayis_by_root_csv_999.csv",
+        what_it_is=(
+            "ملفُّ الجذور الذي تقول §٢-ب إنّ عددَي ٤٬٥٧٦ سجلًّا و٤٬٠٨٧ جذرًا "
+            "ثلاثيًّا مأخوذان منه، وأصلُه «معجم مقاييس اللغة لابن فارس»"
+        ),
+        how_it_reached_the_other_conversation=(
+            "رفعَه المستخدمُ مباشرةً في تلك المحادثة، بنصِّ §٢-ب"
+        ),
+        what_is_still_missing=(
+            "بايتاتُه لم تصل هنا ولا بصمةَ له: وتسميةُ الأصل ليست بصمةَ ملفّ، "
+            "فنسخُ المعجم تختلف بايتًا. فالعددان غيرُ قابلين لإعادة الاشتقاق"
+        ),
+        digest_in_this_tree=None,
     ),
 )
 
@@ -458,7 +599,20 @@ GFLK_SPECIFICATION_NUMERIC_CLAIMS: Final[tuple[SpecificationNumericClaim, ...]] 
         ),
         not_rederivable_because=(
             "الملفُّ المُسمَّى غيرُ موجودٍ في الشجرة، ولا بصمةَ له، ولا التزامَ "
-            "مُجمَّدًا على نسخةٍ بعينها؛ و«مُبصَّم» في النصّ وصفٌ لا بصمة"
+            "مُجمَّدًا على نسخةٍ بعينها؛ و«مُبصَّم» في النصّ وصفٌ لا بصمة. و§٢-ب "
+            "سمَّت أصلَه «معجم مقاييس اللغة لابن فارس»، وتسميةُ الأصل لا تُبصِّم "
+            "ملفًّا: نسخُ المعجم تختلف بايتًا"
+        ),
+        what_would_make_it_rederivable=_REDERIVATION_CONDITION,
+    ),
+    SpecificationNumericClaim(
+        figure="4,576",
+        locus="§٢-ب — رسالةُ التسمية",
+        claim_text="«maqayis_by_root_csv_999.csv (معجم مقاييس اللغة، 4,576 سجلًّا)»",
+        not_rederivable_because=(
+            "رقمٌ جديدٌ لم يَرِد في النسختين، وصل مع تسميةِ المصدر لا مع بايتاته؛ "
+            "ولا يُعرَف من النصّ ما «السجلّ» ولا علاقتُه بالجذور الأربعة آلافٍ "
+            "وسبعةٍ وثمانين"
         ),
         what_would_make_it_rederivable=_REDERIVATION_CONDITION,
     ),
@@ -786,9 +940,32 @@ AN_ENUMERATED_EXAMPLE_SWEEP_IS_NOT_A_UNIVERSAL_NOTE: Final[str] = (
 )
 
 A_SUBMITTED_FREEZE_IS_NOT_A_FREEZE_HERE_NOTE: Final[str] = (
-    "ASubmittedFreezeIsNotAFreezeHere: المُعرِّفاتُ الأربعةُ محفوظةٌ بحروفها ومعها "
+    "ASubmittedFreezeIsNotAFreezeHere: المُعرِّفاتُ التسعةُ محفوظةٌ بحروفها ومعها "
     "`NOT_ISSUED_BY_THIS_TREE`؛ واسمُ التجميد ليس سندًا لمضمونه، ولا يُقرأ "
     "إعلانُ التجميد في محادثةٍ خارجيّةٍ تجميدًا في هذه الشجرة"
+)
+
+NAMING_A_FREEZE_CHANGES_ITS_CHECKABILITY_NOT_ITS_STANDING_NOTE: Final[str] = (
+    "NamingAFreezeChangesItsCheckabilityNotItsStanding: «تسعةُ سجلّاتٍ مجمَّدة» "
+    "بلا أسماءٍ لم تكن تُفحَص أصلًا؛ وبعد تسميتِها في §٢-ب فُحِصت التسعةُ في "
+    "`src/` و`docs/` و`tests/` بصفر تطابقٍ خارج مواضع تسجيلها. والمكسبُ في "
+    "قابليّة الفحص لا في المنزلة، والمُرسِلُ نفسُه يقول ذلك، فيُسجَّل اتّفاقًا"
+)
+
+A_NAMED_SOURCE_IS_NOT_DEPOSITED_BYTES_NOTE: Final[str] = (
+    "ANamedSourceIsNotDepositedBytes: `maqayis_by_root_csv_999.csv` مُسمًّى "
+    "أصلًا («معجم مقاييس اللغة») بلا بصمة، ونسخُ المعجم تختلف بايتًا. و"
+    "`quran-simple-enhanced.txt` بصمتُه تُطابق `FROZEN_CORPUS` هنا مطابقةً "
+    "مفحوصةً في الشيفرة، وهذا يُثبت موقعَ الإشارة لا أنّ رقمًا قيس عليها"
+)
+
+THE_FOUR_COUNTS_DO_NOT_SUM_TO_THE_KNOWN_TOTAL_NOTE: Final[str] = (
+    "TheFourCountsDoNotSumToTheKnownTotal: مجموعُ الأربعة المُسجَّلة "
+    "(10,599 + 11,467 + 37,682 + 18,333) = 78,081، وفي "
+    "`docs/reference/word_hierarchy_rebuild.md` يَرِد 78,215 على المدوّنة "
+    "نفسِها المُسمَّاة الآن. الفرقُ 134 مُسجَّلٌ ملاحظةً لقارئٍ لاحق: لا النصُّ "
+    "ادّعى المجموع، ولا هذه الشجرة تعرف أيَّ الحدّين يُشير إلى ماذا، ولا "
+    "يُحسَم شيءٌ منه هنا"
 )
 
 
@@ -798,6 +975,7 @@ def _assert_no_result_field() -> None:
     for dataclass_type in (
         GflkSpecificationConflict,
         GflkSpecificationDeposit,
+        NamedSourceAttribution,
         SpecificationAmendment,
         SpecificationNumericClaim,
         SubmittedFreezeIdentifier,
@@ -839,4 +1017,16 @@ for _claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS:  # pragma: no cover - حارس
         raise RuntimeError("وسمُ التبعيّة يُحيل إلى رقمٍ مُسجَّلٍ في السجلّ نفسِه.")
     if _claim.depends_on_figure == _claim.figure:
         raise RuntimeError("لا يعتمد رقمٌ على نفسه.")
+if len({attribution.source_name for attribution in NAMED_SOURCE_ATTRIBUTIONS}) != len(
+    NAMED_SOURCE_ATTRIBUTIONS
+):  # pragma: no cover - حارس
+    raise RuntimeError("لا يُسجَّل مصدرٌ مُسمًّى بصفّين.")
+for _attribution in NAMED_SOURCE_ATTRIBUTIONS:  # pragma: no cover - حارس
+    if _attribution.digest_in_this_tree is None:
+        continue
+    if _attribution.digest_in_this_tree != FROZEN_CORPUS.sha256_hex:
+        raise RuntimeError(
+            "بصمةٌ منسوبةٌ لمصدرٍ لا تُسجَّل إلّا إن طابقت بصمةً مُجمَّدةً في هذه "
+            "الشجرة؛ والمطابقةُ تُفحَص هنا ولا تُقرأ بالعين."
+        )
 _assert_no_result_field()
