@@ -31,6 +31,8 @@
 يُستدعى شيءٌ، في `src/alghanem/program/step_reproducers.py`؛ ثم الخامسة عشرة،
 وهي التأكّدُ من إنجازات `README.md` اشتقاقًا لا قراءةً بالعين، في
 `src/alghanem/program/achievement_ledger.py`. وما كشفه
+وهي اشتقاقُ اسمِ الشاهد من الشجرة بدل نقله عن تقريرٍ يُحيل إليه، في
+`src/alghanem/program/witness_citation.py`. وما كشفه
 ترميزُ كلّ مرحلةٍ فعدَّل هذه الوثيقة مُسجَّلٌ في §٧، لا مُدمَجٌ صامتًا فيما
 سبقه.
 

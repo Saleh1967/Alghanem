@@ -339,6 +339,21 @@ from .step_reproducers import (
     derive_unimplemented_steps,
     step_implementation_standing,
 )
+from .witness_citation import (
+    A_DERIVED_NAME_IS_NOT_A_PASSING_TEST,
+    ABSENCE_IN_ONE_FILE_IS_NOT_ABSENCE_IN_THE_TREE,
+    CITATION_READER_IS_NOT_A_GATE,
+    FABRICATED_WITNESS_NAME_DISCOVERY,
+    THE_CITED_PAIR_IS_STILL_SUPPLIED_BY_THE_REPORTER,
+    WITNESS_CITATION_NAMED_RESIDUALS,
+    CitationStanding,
+    WitnessCitation,
+    WitnessCitationError,
+    audit_report_citations,
+    cite_witness,
+    derive_unsupported_citations,
+    derive_witness_names,
+)
 
 __all__ = [
     "ACHIEVEMENT_LEDGER_AUTHORITY_NOTE",
@@ -634,4 +649,17 @@ __all__ = [
     "derive_reproducers_run_step_cannot_call",
     "derive_unimplemented_steps",
     "step_implementation_standing",
+    "ABSENCE_IN_ONE_FILE_IS_NOT_ABSENCE_IN_THE_TREE",
+    "A_DERIVED_NAME_IS_NOT_A_PASSING_TEST",
+    "CITATION_READER_IS_NOT_A_GATE",
+    "FABRICATED_WITNESS_NAME_DISCOVERY",
+    "THE_CITED_PAIR_IS_STILL_SUPPLIED_BY_THE_REPORTER",
+    "WITNESS_CITATION_NAMED_RESIDUALS",
+    "CitationStanding",
+    "WitnessCitation",
+    "WitnessCitationError",
+    "audit_report_citations",
+    "cite_witness",
+    "derive_unsupported_citations",
+    "derive_witness_names",
 ]
