@@ -343,8 +343,7 @@ class WordHierarchyDeposit:
             raise WordHierarchyDepositError("إيداعٌ بلا تاريخِ وصولٍ أو بلا موضع")
         if self.deposited_versions != 3:
             raise WordHierarchyDepositError(
-                "النصوصُ الثلاثةُ تُودَع معًا؛ وإيداعُ المُصحَّح وحده يمحو أنّ "
-                "دعاوى سُحبت"
+                "النصوصُ الثلاثةُ تُودَع معًا؛ وإيداعُ المُصحَّح وحده يمحو أنّ دعاوى سُحبت"
             )
 
     def digest(self, root: Path | None = None) -> str:
@@ -825,8 +824,7 @@ WORD_HIERARCHY_NUMERIC_CLAIMS: Final[tuple[HierarchyNumericClaim, ...]] = (
         figure="مُغلَق 100% — التركيب النحويّ",
         locus="§٢-ب — إغلاق التركيب النحويّ",
         claim_text=(
-            "ثلاثُ فئاتِ إدغامٍ متكاملةٍ تُفسِّر كلَّ «ساكن يتيم» بلا استثناءٍ "
-            "واحدٍ متبقٍّ"
+            "ثلاثُ فئاتِ إدغامٍ متكاملةٍ تُفسِّر كلَّ «ساكن يتيم» بلا استثناءٍ واحدٍ متبقٍّ"
         ),
         not_rederivable_because=(
             f"{_NO_CORPUS_REACHED_THIS_TREE}. والفئةُ الثالثةُ موصوفةٌ في نصّها "
@@ -1193,8 +1191,7 @@ WORD_HIERARCHY_CONFLICTS: Final[tuple[HierarchyConflict, ...]] = (
     HierarchyConflict(
         locus_in_hierarchy="§٢-ب — استقلالُ التركيب المزجيّ عن إغلاق النحويّ",
         hierarchy_says=(
-            "ثلاثُ نتائجَ مستقلّة: إغلاقٌ نحويٌّ، وصفرُ فجوةٍ، وغيابُ التركيب "
-            "المزجيّ شاهدًا"
+            "ثلاثُ نتائجَ مستقلّة: إغلاقٌ نحويٌّ، وصفرُ فجوةٍ، وغيابُ التركيب المزجيّ شاهدًا"
         ),
         this_tree_says=(
             "الثلاثةُ مخرجُ فئةٍ واحدةٍ لا ثلاثةُ شهود: صفرُ الفجوة وصفرُ "
