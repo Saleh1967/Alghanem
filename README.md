@@ -3126,6 +3126,48 @@ into the existence of the letter and passed over
 of any surface passed to it. Nothing here is born, ranked or frozen, and no gate
 in `kernel/` reads it.
 
+`compression_model_preregistration` freezes a compression measurement before it
+is taken: the bytes it may be taken on (a length and a SHA-256, not a vendored
+copy), the declared table representation, the first-symbol context, and two
+*total* tie-break rules. The measurement itself lives in
+`compression_model_measurement`, and three things about it are structural
+rather than advisory. Its input is raw bytes whose length and digest are
+checked before they are decoded, never an intermediate representation — the
+first version of this measurement was arithmetically correct on a rebuilt
+representation that had silently dropped the ḥarakāt, so it reported 36 symbols
+where the bytes hold 51 and an alphabet is now counted from the bytes rather
+than declared (`MEASUREMENT_IS_BOUND_TO_BYTES_NOT_TO_A_REPRESENTATION`). A
+byte-identical round trip is a precondition of issuing any figure at all, not a
+line in the report: `ModelMeasurement` refuses construction without it, so
+there is no path in the module that emits a ratio for an encoding that was
+never decoded back (`ROUND_TRIP_IS_A_PRECONDITION_OF_ISSUANCE`). And two sizes
+are emitted or none — the encoded payload and the total that is actually
+decodable from scratch with its tables — because a payload figure presented as
+a file size is a size that cannot be decoded without knowledge it never
+counted (`TWO_SIZES_OR_NONE`).
+
+The tie-break is declared because the table is not invariant, and this cuts the
+opposite way from the obvious guess: Huffman's cost is optimal and therefore
+numerically unique however many optimal trees exist, so the payload figures are
+reproducible byte-for-byte under any rule, while the *sum of code lengths* —
+and with it the table — differs between equal-cost trees. Canonical coding does
+not close that, since it fixes the code given the lengths and not the length
+multiset. `MINIMAL_TABLE` (frequency, then shallower subtree, then fewer
+leaves, then smallest codepoint) is total and leaves no tie, and preferring the
+shallower subtree minimises the sum of lengths, so it never yields a larger
+table than the simpler rule. On the frozen corpus the measured figures are
+68.8837% and 68.8674% at order zero, and 78.7818% payload with **78.5774%
+total** at order one, against zlib -9 at 80.5551% quoted as an external ceiling
+and not as a model from this layer. `compression_model_revision_audit` keeps
+the superseded figures on the record with the defect and the closure for each —
+44.85%/50.03%, the bare 78.78%, the estimated 78.45% — because erasing a wrong
+number hides the lesson and leaves the door it came through open. A compression
+ratio here is a re-derivable number about bytes and never a linguistic claim
+(`A_COMPRESSION_RATIO_IS_NOT_A_LINGUISTIC_CLAIM`); nothing is born, ranked or
+frozen as evidence, and no gate in `kernel/` reads it.
+`examples/compression/measure_compression_model.py` re-derives every frozen
+figure from a copy of the bytes and exits non-zero on any drift.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
