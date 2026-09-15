@@ -19,14 +19,41 @@
 يحمل حسمًا. فمن سجّل تعارضًا وحسمه في الجلسة نفسها بلا مُدخَلٍ جديدٍ إنّما
 رجّح ما كان يرجّحه سلفًا.
 
+`A_SUPERSEDED_VERSION_IS_RECORDED_NOT_ERASED`: وصلت المواصفةُ في نسختين،
+والثانيةُ توسّع الأولى وتُقيّد بعضَ دعاويها. فتُودَع النسختان معًا، ويُسجَّل
+لكلّ موضعٍ تغيّر ما قالته كلُّ نسخةٍ فيه وما تقرؤه الشجرةُ في التغيّر. وإيداعُ
+المُوسَّع وحده يُخفي أنّ دعوًى أُطلِقت ثمّ قُيِّدت، فتُقرأ المواصفةُ بعد جلساتٍ
+كأنّها لم تتغيّر — ويضيع أنفسُ ما فيها: مواضعُ التقييد.
+
+`A_NUMBER_WITHOUT_A_CORPUS_IS_NOT_A_MEASUREMENT`: كلُّ رقمٍ في النسخة الثانية —
+عددَ جذورٍ كان أو عددَ كلماتٍ أو «6/6» — يُسجَّل غيرَ قابلٍ لإعادة الاشتقاق في
+هذه الشجرة، بسببٍ مُسمًّى وشرطِ اشتقاقٍ مكتوب. فلم تصل مدوّنةٌ مُبصَّمة، ولا
+`maqayis_by_root_csv_999.csv` المُسمَّى في النصّ، ولا `MeasurementRunManifest`
+(`arabic/encoding/measurement.py`)، ولا سجلُّ رصدٍ يُطابَق عليه.
+
+`AN_ENUMERATED_EXAMPLE_SWEEP_IS_NOT_A_UNIVERSAL`: «صفرُ انحرافٍ على 4/4» و«6/6
+حالة مُختبَرة» عدُّ أمثلةٍ مُعدَّدةٍ لا عدُّ مجتمع؛ ومنزلتُهما منزلةُ
+`EnumeratedExamplesAreNotAnExhaustiveCriterion` في `sentence_card_preregistration`
+و`ONE_COUNTER_INSTANCE_DECIDES` في `lexical_path_census`، وكلاهما مكتوبٌ قبل
+وصول النسخة الثانية. ودعوى العمومِ أثقلُ من النسبة لا أخفّ، إذ يكفي لنقضها
+موضعٌ واحد.
+
+`A_SUBMITTED_FREEZE_IS_NOT_A_FREEZE_HERE`: مُعرِّفُ تجميدٍ وصل من خارج الشجرة
+يُحفَظ بحروفه ومعه حقلٌ يقول إنّه **غيرُ صادرٍ عنها**، على منوال
+`SUBMITTED_FREEZE_IDENTIFIER` في `ibtida_wasl_waqf_registration`. والأربعةُ
+الواردةُ في النسخة الثانية بصفر تطابقٍ في `src/` و`docs/` و`tests/`، فإعلانُ
+التجميد في محادثةٍ خارجيّةٍ لا يُجمّد شيئًا هنا.
+
 `THIS_IS_REGISTRATION_NOT_AUTHORITY`: لا ولادةَ هنا، ولا حكمَ ولادة، ولا
-تجميدَ `E0`، ولا استيرادَ من `kernel/`، ولا تقرأ هذه الوحدةَ وحدةٌ فيه.
+تجميدَ `E0`، ولا استيرادَ من `kernel/`، ولا تقرأ هذه الوحدةَ وحدةٌ فيه. ولا
+تُرفَع بها طبقةٌ محجوبة، ولا يُصدَر بها تصنيفُ مقطعٍ أو وزنٍ أو جذر؛ وليس فيها
+حقلُ نتيجةٍ ولا حسم، وحارسٌ عند الاستيراد يمنع تسلُّلَهما لاحقًا.
 """
 
 from __future__ import annotations
 
 import hashlib
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from enum import Enum
 from pathlib import Path
 from typing import Final
@@ -34,16 +61,27 @@ from typing import Final
 from .pipeline_stations import repository_root_path
 
 __all__ = [
+    "AN_ENUMERATED_EXAMPLE_SWEEP_IS_NOT_A_UNIVERSAL_NOTE",
+    "A_NUMBER_WITHOUT_A_CORPUS_IS_NOT_A_MEASUREMENT_NOTE",
     "A_RECORDED_CONFLICT_IS_NOT_A_RESOLVED_ONE_NOTE",
+    "A_SUBMITTED_FREEZE_IS_NOT_A_FREEZE_HERE_NOTE",
+    "A_SUPERSEDED_VERSION_IS_RECORDED_NOT_ERASED_NOTE",
+    "GFLK_SPECIFICATION_AMENDMENTS",
     "GFLK_SPECIFICATION_CONFLICTS",
     "GFLK_SPECIFICATION_DEPOSIT",
+    "GFLK_SPECIFICATION_NUMERIC_CLAIMS",
+    "NOT_ISSUED_BY_THIS_TREE",
     "SPECIFICATION_RELATIVE_PATH",
+    "SUBMITTED_FREEZE_IDENTIFIERS",
     "THE_DEPOSIT_IS_NOT_AN_ADOPTION_NOTE",
     "ConflictStanding",
     "GflkSpecificationConflict",
     "GflkSpecificationDeposit",
     "GflkSpecificationDepositError",
     "ProvenanceGenus",
+    "SpecificationAmendment",
+    "SpecificationNumericClaim",
+    "SubmittedFreezeIdentifier",
     "read_specification_bytes",
     "specification_digest",
 ]
@@ -55,6 +93,36 @@ SPECIFICATION_RELATIVE_PATH: Final[str] = (
 
 class GflkSpecificationDepositError(ValueError):
     """رفضٌ عند الإنشاء: إيداعٌ ناقصٌ أو تعارضٌ بلا موضعٍ أو بلا شرطِ حسم."""
+
+
+NOT_ISSUED_BY_THIS_TREE: Final[str] = (
+    "مُعرِّفٌ لم تُصدِره هذه الشجرة ولا يوجد فيها: صفرُ تطابقٍ في `src/` و`docs/` "
+    "و`tests/`؛ محفوظٌ بحروفه ليُراجَع لا ليُعمَل به"
+)
+
+_NO_CORPUS_REACHED_THIS_TREE: Final[str] = (
+    "لم تصل مدوّنةٌ مُودَعةٌ مُبصَّمة، ولا ملفُّ الجذور `maqayis_by_root_csv_999.csv` "
+    "المُسمَّى في النصّ، ولا `MeasurementRunManifest` يُجمّد صورةَ التطبيع وإصدارَ "
+    "قاعدة Unicode، ولا سجلُّ رصدٍ يُطابَق عليه"
+)
+
+_REDERIVATION_CONDITION: Final[str] = (
+    "إيداعُ بايتات المدوّنة وقاعدةِ الجذور مُبصَّمةً، و`MeasurementRunManifest` "
+    "لمسار القياس، وتوقّعٌ مكتوبٌ قبل القياس على منوال "
+    "`OCP_PREREGISTERED_EXPECTATION`"
+)
+
+_FORBIDDEN_FIELD_TOKENS: Final[tuple[str, ...]] = (
+    "result",
+    "outcome_value",
+    "verdict",
+    "birth",
+    "certificate",
+    "resolution",
+    "resolved",
+    "measured_value",
+    "proof",
+)
 
 
 class ProvenanceGenus(Enum):
@@ -96,6 +164,98 @@ class GflkSpecificationConflict:
                 )
 
 
+@dataclass(frozen=True, slots=True)
+class SpecificationAmendment:
+    """موضعٌ تغيّر بين النسختين: ما قالته كلٌّ منهما، وما تقرؤه الشجرةُ في التغيّر.
+
+    `A_SUPERSEDED_VERSION_IS_RECORDED_NOT_ERASED`: التغيّرُ حدثٌ يُسجَّل بنصّه؛
+    وقراءةُ الشجرة للتغيّر ليست حسمًا للتعارض القائم في الموضع نفسه.
+    """
+
+    locus: str
+    first_version_said: str
+    second_version_says: str
+    what_this_tree_reads_in_the_change: str
+
+    def __post_init__(self) -> None:
+        for field_name in (
+            "locus",
+            "first_version_said",
+            "second_version_says",
+            "what_this_tree_reads_in_the_change",
+        ):
+            if not str(getattr(self, field_name)).strip():
+                raise GflkSpecificationDepositError(
+                    "موضعُ تغيّرٍ بلا نصِّ النسختين أو بلا قراءةٍ للتغيّر يُقرأ "
+                    "بعد جلساتٍ كأنّ شيئًا لم يتغيّر؛ والتغيّرُ حدثٌ يُسجَّل"
+                )
+
+
+@dataclass(frozen=True, slots=True)
+class SpecificationNumericClaim:
+    """رقمٌ ورد في المواصفة: نصُّه، وسببُ تعذّر اشتقاقه، وشرطُ اشتقاقه.
+
+    `A_DEPENDENT_FIGURE_IS_NOT_A_SECOND_WITNESS`: رقمٌ يقوم على رقمٍ آخرَ في
+    الوثيقة نفسِها يُسمّيه في `depends_on_figure`، فلا يُقرأ الاثنان شاهدين
+    مستقلّين. ورقمٌ فئتُه مُعرَّفةٌ بالباقي (`is_residue_defined`) لا يُقبَل بلا
+    وسمِ تبعيّةٍ يُسمّي ما يقوم عليه.
+    """
+
+    figure: str
+    locus: str
+    claim_text: str
+    not_rederivable_because: str
+    what_would_make_it_rederivable: str
+    depends_on_figure: str | None = None
+    is_residue_defined: bool = False
+
+    def __post_init__(self) -> None:
+        for field_name in (
+            "figure",
+            "locus",
+            "claim_text",
+            "not_rederivable_because",
+            "what_would_make_it_rederivable",
+        ):
+            if not str(getattr(self, field_name)).strip():
+                raise GflkSpecificationDepositError(
+                    "رقمٌ بلا سببِ تعذّرٍ أو بلا شرطِ اشتقاقٍ يُقرأ مقيسًا في "
+                    "هذه الشجرة، وهو ما لم يقع"
+                )
+        if self.depends_on_figure is not None and not self.depends_on_figure.strip():
+            raise GflkSpecificationDepositError(
+                "وسمُ التبعيّة يُسمّي الرقمَ المُعتمَدَ عليه بنصّه؛ ووسمٌ فارغٌ "
+                "يُخفي التبعيّةَ ولا يُسجّلها"
+            )
+        if self.is_residue_defined and self.depends_on_figure is None:
+            raise GflkSpecificationDepositError(
+                "رقمٌ فئتُه مُعرَّفةٌ بالباقي لا يُسجَّل بلا وسمِ تبعيّةٍ يُسمّي "
+                "ما يقوم عليه: فئةٌ عُرِّفت بأنّها «ما لم يُطابِق» تتحرّك بحركة "
+                "ما طابَق، فليست شاهدًا مستقلًّا عنه"
+            )
+
+
+@dataclass(frozen=True, slots=True)
+class SubmittedFreezeIdentifier:
+    """مُعرِّفُ تجميدٍ وارد: نصُّه، وما يُعلنه، وأنّه غيرُ صادرٍ عن هذه الشجرة."""
+
+    identifier: str
+    what_it_declares: str
+    not_issued_by_this_tree: str
+
+    def __post_init__(self) -> None:
+        for field_name in (
+            "identifier",
+            "what_it_declares",
+            "not_issued_by_this_tree",
+        ):
+            if not str(getattr(self, field_name)).strip():
+                raise GflkSpecificationDepositError(
+                    "مُعرِّفُ تجميدٍ وارد بلا حقلٍ يقول إنّه غيرُ صادرٍ عن هذه "
+                    "الشجرة يُقرأ بعد جلساتٍ تجميدًا فيها؛ والوسمُ لازمٌ لا زينة"
+                )
+
+
 def specification_path(root: Path | None = None) -> Path:
     """مسارُ الوثيقة المُودَعة، مُشتقًّا من جذر المستودع لا مكتوبًا مطلقًا."""
 
@@ -121,15 +281,21 @@ def specification_digest(root: Path | None = None) -> str:
 
 @dataclass(frozen=True, slots=True)
 class GflkSpecificationDeposit:
-    """الإيداع: جنسُ المصدر، وتاريخُ الوصول، وموضعُ النصّ، ولا شيءَ سواه."""
+    """الإيداع: جنسُ المصدر، وتاريخُ الوصول، وموضعُ النصّ، وعددُ النسخ المُودَعة."""
 
     genus: ProvenanceGenus
     arrival_date: str
     relative_path: str
+    deposited_versions: int = 2
 
     def __post_init__(self) -> None:
         if not self.arrival_date.strip() or not self.relative_path.strip():
             raise GflkSpecificationDepositError("إيداعٌ بلا تاريخِ وصولٍ أو بلا موضع")
+        if self.deposited_versions != 2:
+            raise GflkSpecificationDepositError(
+                "النسختان تُودَعان معًا؛ وإيداعُ المُوسَّعة وحدها يمحو أنّ دعوًى "
+                "أُطلِقت ثمّ قُيِّدت"
+            )
 
     def digest(self, root: Path | None = None) -> str:
         """بصمةُ الوثيقة الآن، تُقرأ من الملفّ في كلّ نداء."""
@@ -141,6 +307,223 @@ GFLK_SPECIFICATION_DEPOSIT: Final[GflkSpecificationDeposit] = GflkSpecificationD
     genus=ProvenanceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
     arrival_date="2026-09-15",
     relative_path=SPECIFICATION_RELATIVE_PATH,
+    deposited_versions=2,
+)
+
+
+SUBMITTED_FREEZE_IDENTIFIERS: Final[tuple[SubmittedFreezeIdentifier, ...]] = (
+    SubmittedFreezeIdentifier(
+        identifier="JARAD-MAZID-CORRECTED-AR-1",
+        what_it_declares=(
+            "تجميدٌ يُعلن تصحيحَ معيار مجرد/مزيد بمطابقة الهيكل الساكن الكامل "
+            "على قاعدة جذورٍ مُسمَّاة، وأنّ الخانة الجذريّة صامتٌ حقيقيٌّ ومدّ"
+        ),
+        not_issued_by_this_tree=NOT_ISSUED_BY_THIS_TREE,
+    ),
+    SubmittedFreezeIdentifier(
+        identifier="FI'L-AMR-SYLLABLE-SIGNATURE-AR-1",
+        what_it_declares=(
+            "تجميدٌ يُعلن لفعل الأمر بصمةً صوتيّةً موحَّدة: وزن CVC-CVC وسكونٌ "
+            "ختاميٌّ صريح، بصفر انحرافٍ على أربعة أمثلة"
+        ),
+        not_issued_by_this_tree=NOT_ISSUED_BY_THIS_TREE,
+    ),
+    SubmittedFreezeIdentifier(
+        identifier="MUDARI-WEAK-RADICAL-IDENTITY-AR-1",
+        what_it_declares=(
+            "تجميدٌ يُعلن حسمَ هويّة حرف العلّة من صيغة المضارع: ضمّةٌ قبل المدّ "
+            "تدلّ على الواو، وكسرةٌ على الياء"
+        ),
+        not_issued_by_this_tree=NOT_ISSUED_BY_THIS_TREE,
+    ),
+    SubmittedFreezeIdentifier(
+        identifier="LUZUM-TA'ADDI-STRUCTURAL-TOOL-AR-1",
+        what_it_declares=(
+            "تجميدٌ يُعلن أداةً بنيويّةً للتعدّي: وجودُ مبنيٍّ للمجهول يستلزم "
+            "متعدّيًا حقيقيًّا، استلزامًا أحاديَّ الاتجاه"
+        ),
+        not_issued_by_this_tree=NOT_ISSUED_BY_THIS_TREE,
+    ),
+)
+
+
+GFLK_SPECIFICATION_AMENDMENTS: Final[tuple[SpecificationAmendment, ...]] = (
+    SpecificationAmendment(
+        locus="§٣ — إطباق ⊆ استعلاء",
+        first_version_said="«علاقةُ احتواءٍ مُثبَتةٌ تحليليًّا (لا إحصائيًّا)» بإطلاق",
+        second_version_says=(
+            "«تحليليًّا **بالنسبة للتعريف التقليدي المُعلَن**، لا تحليليًّا "
+            "بإطلاق»، ونصُّ التعريف مذكورٌ: «استعلاء + التصاق حاصر» (جنس+فصل)"
+        ),
+        what_this_tree_reads_in_the_change=(
+            "تقييدٌ يوافق نصًّا ما كان مكتوبًا في الشجرة قبل وصوله: "
+            "`AN_ANALYTIC_TRUTH_IS_NOT_A_DISCOVERY` و`AnalyticRegistration."
+            "definition_text` في `gflk_feature_table_import_barrier`. وموافقةُ "
+            "نصٍّ واردٍ لشرطٍ قائمٍ تُسجَّل ولا تُقرأ حسمًا للتعارض المُسجَّل في "
+            "الموضع نفسه: الحسمُ ليس من شأن الإيداع"
+        ),
+    ),
+    SpecificationAmendment(
+        locus="عمومُ ألفاظ «تحليلي» و«برهان» و«يقين منطقي»",
+        first_version_said="مُستعمَلةٌ بلا قيدٍ مُعلَن",
+        second_version_says=(
+            "مقروءةٌ كلُّها بالتحفّظ نفسِه: تحليليّةٌ بالنسبة للتعريف المُعلَن "
+            "لا بإطلاق — ومنها ثنائيّةُ PASS/FAIL في §١، وشرطُ بدء المقطع "
+            "بصامتٍ متحرّكٍ في §٥"
+        ),
+        what_this_tree_reads_in_the_change=(
+            "تقييدٌ جنسيٌّ لا درجيّ: دعوى اليقين صارت مشروطةً بتعريفها. ولا "
+            "يرفع هذا حجبًا عن طبقةٍ محجوبة، ولا يُحوّل رقمًا غيرَ مُبصَّمٍ إلى "
+            "مقيس"
+        ),
+    ),
+    SpecificationAmendment(
+        locus="§٣ — الألف والتاء المربوطة",
+        first_version_said="غيرُ واردتين في جداول الصفة والمخرج",
+        second_version_says=(
+            "الألفُ «العنصر السابع عشر المحايد»: N/A على المحاور الأربعة معًا، "
+            "ومحايدةٌ معلوماتيًّا في ثلاثةٍ من أربعة أدوارٍ لا في الرابع (حاملة "
+            "التنوين)؛ والتاءُ المربوطة مُستبعَدةٌ اصطلاحيًّا لا حيادًا"
+        ),
+        what_this_tree_reads_in_the_change=(
+            "إضافةٌ تستلزم فرزَ أدوار الألف الأربعة، وفيها همزةُ الوصل — وهي "
+            "`HAMZAT_WASL_IS_NOT_DECIDABLE_FROM_THE_WRITTEN_MARKS` في "
+            "`ibtida_wasl_waqf_registration`. والدورُ الرابعُ وحده مقروءٌ هنا "
+            "على الوحدة القائمة (`tanwin_alif_seat`)، والثلاثةُ الباقيةُ متعذّرة"
+        ),
+    ),
+    SpecificationAmendment(
+        locus="مجرد/مزيد — `JARAD-MAZID-CORRECTED-AR-1`",
+        first_version_said="غيرُ واردٍ في المواصفة أصلًا",
+        second_version_says=(
+            "معيارٌ مُصحَّحٌ بمطابقة الهيكل الساكن الكامل على 4,087 جذرًا، بأربعة "
+            "أعدادٍ على المدوّنة، وبخانةٍ جذريّةٍ = صامتٌ حقيقيٌّ + مدّ تفصل "
+            "المزيدَ عن المجرّد في 6/6"
+        ),
+        what_this_tree_reads_in_the_change=(
+            "إضافةٌ بلا مدوّنةٍ واصلة: الطبقةُ `JARAD_ANALYSIS` محجوبةٌ في "
+            "`word_structure_dictionary` ومنزلتُها `HYPOTHESIS_WITH_A_DECLARED_"
+            "DEFECT`، وملفُّ الجذور المُسمَّى غيرُ موجودٍ في الشجرة ولا بصمةَ له"
+        ),
+    ),
+    SpecificationAmendment(
+        locus="فعل الأمر — `FI'L-AMR-SYLLABLE-SIGNATURE-AR-1`",
+        first_version_said="غيرُ واردٍ في المواصفة أصلًا",
+        second_version_says=(
+            "وزنٌ موحَّدٌ CVC-CVC وسكونٌ ختاميٌّ صريح، بصفر انحرافٍ على 4/4 "
+            "أمثلة، وحدٌّ مفتوحٌ واحدٌ مُعلَن: تصادمُه مع أسماءٍ مماثلة الوزن"
+        ),
+        what_this_tree_reads_in_the_change=(
+            "إضافةٌ تصطدم بثلاثة حواجزَ قائمةٍ قبل وصولها، والحدُّ المُعلَن فيها "
+            "أضيقُ منها: المقطعُ محجوب، وهمزةُ الوصل في «اُكْتُبْ» متعذّرة، "
+            "والسكونُ الختاميُّ غيرُ مُميَّزٍ وقفًا من وصلٍ "
+            "(`PAUSAL_SUKUN_IS_NOT_DISTINGUISHED_FROM_CONNECTED_SUKUN`)"
+        ),
+    ),
+    SpecificationAmendment(
+        locus="متعدٍّ/لازم — البناء الهرميّ التاسع",
+        first_version_said="غيرُ واردٍ في المواصفة أصلًا",
+        second_version_says=(
+            "تسعةُ مستوياتٍ متتاليةٍ «كلٌّ منها مجمَّدٌ بسجلّه الخاصّ»، تُختَم "
+            "بـ«وجود مبنيٍّ للمجهول ⟹ متعدٍّ حقيقي»"
+        ),
+        what_this_tree_reads_in_the_change=(
+            "إضافةٌ تُحيل إلى سجلّاتٍ مجمَّدةٍ لا وجودَ لها هنا: أربعةُ "
+            "مُعرِّفاتٍ مُسجَّلةٌ في `SUBMITTED_FREEZE_IDENTIFIERS` بصفر تطابق. "
+            "ومسارُ المفعوليّة الوحيدُ في الشجرة مقيسٌ على مدوّنةٍ صحفيّةٍ "
+            "بحدودٍ مكتوبة (`ud_objecthood_measurement`، `ACCUSATIVE_IS_NOT_"
+            "OBJECTHOOD`)، ولا يقرأ مبنيًّا للمجهول أصلًا"
+        ),
+    ),
+    SpecificationAmendment(
+        locus="§٦ — أرقام الضغط",
+        first_version_said="85.11٪ و87.67٪ و88.01٪ و88.34٪ بسجلّ تصحيحاتها",
+        second_version_says="الأرقامُ نفسُها بلا تغييرٍ في قيمةٍ ولا في سندٍ",
+        what_this_tree_reads_in_the_change=(
+            "رقمٌ تكرّر في نسختين من المصدر نفسِه ليس شاهدين: منزلتُه في الشجرة "
+            "كما كانت في `compression_model_revision_audit`، والتعارضُ المُسجَّل "
+            "عليه قائمٌ بحاله"
+        ),
+    ),
+)
+
+
+GFLK_SPECIFICATION_NUMERIC_CLAIMS: Final[tuple[SpecificationNumericClaim, ...]] = (
+    SpecificationNumericClaim(
+        figure="4,087",
+        locus="§٢-أ — `JARAD-MAZID-CORRECTED-AR-1`",
+        claim_text=(
+            "«معجم مقاييس اللغة، 4,087 جذرًا ثلاثيًّا مُبصَّمًا، ملف "
+            "maqayis_by_root_csv_999.csv»"
+        ),
+        not_rederivable_because=(
+            "الملفُّ المُسمَّى غيرُ موجودٍ في الشجرة، ولا بصمةَ له، ولا التزامَ "
+            "مُجمَّدًا على نسخةٍ بعينها؛ و«مُبصَّم» في النصّ وصفٌ لا بصمة"
+        ),
+        what_would_make_it_rederivable=_REDERIVATION_CONDITION,
+    ),
+    SpecificationNumericClaim(
+        figure="10,599",
+        locus="§٢-أ — نتيجةٌ أوّليّةٌ على المدوّنة",
+        claim_text="«مجرد مؤكَّد=10,599»",
+        not_rederivable_because=_NO_CORPUS_REACHED_THIS_TREE,
+        what_would_make_it_rederivable=_REDERIVATION_CONDITION,
+        depends_on_figure="4,087",
+    ),
+    SpecificationNumericClaim(
+        figure="11,467",
+        locus="§٢-أ — نتيجةٌ أوّليّةٌ على المدوّنة",
+        claim_text="«غير مؤكَّد (٣ أحرف، لا يطابق جذرًا مُبصَّمًا)=11,467»",
+        not_rederivable_because=(
+            f"{_NO_CORPUS_REACHED_THIS_TREE}؛ والفئةُ مُعرَّفةٌ سلبًا بعدم "
+            "المطابقة، فعددُها دالّةٌ في قاعدة الجذور لا في العربية"
+        ),
+        what_would_make_it_rederivable=_REDERIVATION_CONDITION,
+        depends_on_figure="4,087",
+        is_residue_defined=True,
+    ),
+    SpecificationNumericClaim(
+        figure="37,682",
+        locus="§٢-أ — نتيجةٌ أوّليّةٌ على المدوّنة",
+        claim_text="«مزيد محتمل (>٣ أحرف صامتة)=37,682»",
+        not_rederivable_because=(
+            f"{_NO_CORPUS_REACHED_THIS_TREE}؛ وعدُّ الصوامت يستلزم فرزَ الصامت "
+            "من المدّ، وهو ما تحجبه `SYLLABLES_AND_WAZN`"
+        ),
+        what_would_make_it_rederivable=_REDERIVATION_CONDITION,
+    ),
+    SpecificationNumericClaim(
+        figure="18,333",
+        locus="§٢-أ — نتيجةٌ أوّليّةٌ على المدوّنة",
+        claim_text="«غير محدَّد (<٣)=18,333»",
+        not_rederivable_because=_NO_CORPUS_REACHED_THIS_TREE,
+        what_would_make_it_rederivable=_REDERIVATION_CONDITION,
+    ),
+    SpecificationNumericClaim(
+        figure="6/6",
+        locus="§٢-أ — الخانة الجذريّة = صامتٌ حقيقيٌّ + مدّ",
+        claim_text=(
+            "«3 خانات=مجرد حتمًا (يشمل بلا استثناء: سالم كَتَبَ، أجوف قَالَ، "
+            "ناقص واوي دَعَا، ناقص يائي رَمَى، لفيف وَقَى/وَفَى — 6/6 حالة "
+            "مُختبَرة بنجاح)»"
+        ),
+        not_rederivable_because=(
+            "أمثلةٌ مُعدَّدةٌ ستٌّ لا مجتمعٌ مُعرَّف، و«بلا استثناء» دعوى عمومٍ "
+            "لا تُقاس على ستّة؛ ولم تصل مدوّنةٌ يُعَدّ فيها المخالف"
+        ),
+        what_would_make_it_rederivable=_REDERIVATION_CONDITION,
+    ),
+    SpecificationNumericClaim(
+        figure="4/4",
+        locus="§٢-أ — `FI'L-AMR-SYLLABLE-SIGNATURE-AR-1`",
+        claim_text="«مُختبَر بصفر انحراف على 4/4 أمثلة (اُكْتُبْ، اِضْرِبْ، اِذْهَبْ، اُنْظُرْ)»",
+        not_rederivable_because=(
+            "أربعةُ أمثلةٍ مُعدَّدةٍ لا مجتمع؛ و«صفرُ انحراف» دعوى عمومٍ يكفي "
+            "لنقضها موضعٌ واحدٌ خارجها. ومقطعةُ الأمثلة نفسِها متعذّرةٌ هنا: "
+            "همزةُ الوصل غيرُ مُميَّزة، والسكونُ الختاميُّ غيرُ مفروزٍ وقفًا من وصل"
+        ),
+        what_would_make_it_rederivable=_REDERIVATION_CONDITION,
+    ),
 )
 
 
@@ -244,6 +627,120 @@ GFLK_SPECIFICATION_CONFLICTS: Final[tuple[GflkSpecificationConflict, ...]] = (
         ),
         standing=ConflictStanding.RECORDED_UNRESOLVED,
     ),
+    GflkSpecificationConflict(
+        locus_in_specification="§٢-أ — فعل الأمر: وزن CVC-CVC وسكونٌ ختاميٌّ صريح",
+        specification_says=(
+            "بصمةٌ صوتيّةٌ موحَّدةٌ لفعل الأمر، مُختبَرةٌ بصفر انحرافٍ على أربعة "
+            "أمثلةٍ تبدأ كلُّها بهمزة وصلٍ وتُختَم بسكون"
+        ),
+        this_tree_says=(
+            "الوزنُ والمقطعُ محجوبان (`DictionaryLayer.SYLLABLES_AND_WAZN`)، "
+            "وهمزةُ الوصل غيرُ مُميَّزةٍ من العلامات المكتوبة، والسكونُ الختاميُّ "
+            "غيرُ مفروزٍ وقفًا من وصلٍ — فالحدّان اللذان تقوم عليهما البصمةُ "
+            "كلاهما متعذّرٌ هنا قبل وصول النصّ"
+        ),
+        tree_reference=(
+            "`HAMZAT_WASL_IS_NOT_DECIDABLE_FROM_THE_WRITTEN_MARKS` في "
+            "`ibtida_wasl_waqf_registration`، و"
+            "`PAUSAL_SUKUN_IS_NOT_DISTINGUISHED_FROM_CONNECTED_SUKUN` في "
+            "`encoding/sakin_adjacency`، وحجبُ الطبقة في "
+            "`word_structure_dictionary`"
+        ),
+        what_would_resolve_it=(
+            "رفعُ الحجب عن طبقة المقطع بشرطها المكتوب في "
+            "`DICTIONARY_LAYER_REGISTRATIONS`، ومقياسٌ يفرز همزةَ الوصل والسكونَ "
+            "الوقفيَّ من غيرهما؛ ثمّ عدُّ المخالف على مدوّنةٍ مُبصَّمةٍ لا على "
+            "أربعة أمثلة"
+        ),
+        standing=ConflictStanding.BLOCKS_IMPORT_UNTIL_RESOLVED,
+    ),
+    GflkSpecificationConflict(
+        locus_in_specification="§٢-أ — «وجود مبنيٍّ للمجهول ⟹ متعدٍّ حقيقي»",
+        specification_says=(
+            "أداةٌ بنيويّةٌ للتعدّي باسم `LUZUM-TA'ADDI-STRUCTURAL-TOOL-AR-1`، "
+            "خاتمةُ بناءٍ من تسعة مستوياتٍ «كلٌّ منها مجمَّدٌ بسجلّه الخاصّ»"
+        ),
+        this_tree_says=(
+            "المفعوليّةُ مقيسةٌ هنا على طبقة علاقات UD في مدوّنةٍ صحفيّةٍ لا "
+            "قرآنيّة، و`obj` فيها مفعوليّةُ UD لا المفعولُ به الكلاسيكيّ، "
+            "والحالةُ ليست الوظيفة؛ ولا تُقرأ في الشجرة صيغةُ مجهولٍ أصلًا"
+        ),
+        tree_reference=(
+            "`ACCUSATIVE_IS_NOT_OBJECTHOOD` في `irab_case_readout`، و"
+            "`OBJ_IS_UD_OBJECTHOOD_NOT_CLASSICAL_MAFUL` و"
+            "`REGISTER_IS_NEWSWIRE_NOT_QURANIC` في `ud_objecthood_preregistration`"
+        ),
+        what_would_resolve_it=(
+            "تسجيلٌ قَبْليٌّ يُعرّف كاشفَ المجهول من العلامات المكتوبة وحدها، "
+            "ومدوّنةٌ مُبصَّمةٌ يُقاس عليها، وتوقّعٌ مكتوبٌ قبل القياس؛ والاستلزامُ "
+            "أحاديُّ الاتجاه يبقى أحاديًّا: غيابُ المجهول لا يُثبت اللزوم"
+        ),
+        standing=ConflictStanding.BLOCKS_IMPORT_UNTIL_RESOLVED,
+    ),
+    GflkSpecificationConflict(
+        locus_in_specification="§٢-أ — أربعةُ مُعرِّفات تجميدٍ واردة",
+        specification_says=(
+            "تسعةُ مستوياتٍ «كلٌّ منها مجمَّدٌ بسجلّه الخاصّ»، ويُسمّي منها أربعةَ "
+            "مُعرِّفاتٍ بأسمائها"
+        ),
+        this_tree_says=(
+            "المُعرِّفاتُ الأربعةُ بصفر تطابقٍ في `src/` و`docs/` و`tests/`؛ فما "
+            "جُمِّد جُمِّد في موضعٍ آخر، وإعلانُ التجميد في محادثةٍ خارجيّةٍ لا "
+            "يُجمّد شيئًا هنا"
+        ),
+        tree_reference=(
+            "`SUBMITTED_FREEZE_IDENTIFIERS` في هذه الوحدة، على منوال "
+            "`SUBMITTED_FREEZE_IDENTIFIER` في `ibtida_wasl_waqf_registration`"
+        ),
+        what_would_resolve_it=(
+            "وصولُ نصّ كلّ سجلٍّ مُجمَّدٍ ببايتاته ومدوّنته، فيُودَع كلٌّ منها "
+            "على حدة؛ ولا يُقرأ اسمُ تجميدٍ سندًا لمضمونه"
+        ),
+        standing=ConflictStanding.RECORDED_UNRESOLVED,
+    ),
+    GflkSpecificationConflict(
+        locus_in_specification="§٢-أ — الألف «العنصر السابع عشر المحايد»",
+        specification_says=(
+            "حيادٌ تامٌّ صفاتيًّا على المحاور الأربعة، وحيادٌ معلوماتيٌّ في ثلاثةٍ "
+            "من أربعة أدوارٍ وظيفيّةٍ للألف"
+        ),
+        this_tree_says=(
+            "فرزُ أدوار الألف الأربعة غيرُ ممكنٍ من العلامات المكتوبة: همزةُ "
+            "الوصل متعذّرة، والدورُ الوحيدُ المقروءُ هنا حاملُ التنوين على "
+            "الوحدة القائمة؛ فالقسمةُ الرباعيّةُ مُدخَلٌ لا مخرج"
+        ),
+        tree_reference=(
+            "`HAMZAT_WASL_IS_NOT_DECIDABLE_FROM_THE_WRITTEN_MARKS`، و"
+            "`DictionaryLayer.TANWEEN_ANALYSIS` دورًا على `tanwin_alif_seat`"
+        ),
+        what_would_resolve_it=(
+            "مقياسٌ يفرز الأدوارَ الأربعةَ من العلامات وحدها، أو التصريحُ بأنّ "
+            "القسمةَ مأخوذةٌ من تحليلٍ نحويٍّ سابقٍ لا مقروءةٌ من النصّ"
+        ),
+        standing=ConflictStanding.RECORDED_UNRESOLVED,
+    ),
+    GflkSpecificationConflict(
+        locus_in_specification="§٢-أ — أعدادُ مجرد/مزيد الأربعة",
+        specification_says=(
+            "«مجرد مؤكَّد=10,599؛ غير مؤكَّد=11,467؛ مزيد محتمل=37,682؛ غير "
+            "محدَّد=18,333» على مدوّنةٍ وقاعدةِ جذورٍ مُسمَّاة"
+        ),
+        this_tree_says=(
+            "الطبقةُ `JARAD_ANALYSIS` محجوبةٌ ومنزلتُها فرضٌ مُعلَنُ العطب، ولا "
+            "ملفَّ الجذور في الشجرة ولا بصمةَ له؛ وفئةُ «غير المؤكَّد» مُعرَّفةٌ "
+            "بعدم المطابقة فتتحرّك بحركة القاعدة لا بحركة اللغة"
+        ),
+        tree_reference=(
+            "`word_structure_dictionary.WITHHELD_LAYERS`، و"
+            "`SpecificationNumericClaim.is_residue_defined` في هذه الوحدة"
+        ),
+        what_would_resolve_it=(
+            "إيداعُ بايتات قاعدة الجذور والمدوّنة مُبصَّمتين، و"
+            "`MeasurementRunManifest` لمسار القياس، وتوقّعٌ مكتوبٌ قبل القياس؛ "
+            "وعندها يصير العدُّ سكربتَ اشتقاقٍ في `examples/reference/` لا نصًّا يُقرأ"
+        ),
+        standing=ConflictStanding.BLOCKS_IMPORT_UNTIL_RESOLVED,
+    ),
 )
 
 
@@ -269,3 +766,77 @@ THIS_IS_REGISTRATION_NOT_AUTHORITY_NOTE: Final[str] = (
     "تسجيلٌ لا سلطة: لا ولادةَ ولا حكمَ ولادةٍ ولا تجميدَ `E0`، ولا استيرادَ من "
     "`kernel/`، ولا تقرأ هذه الوحدةَ وحدةٌ فيه"
 )
+
+
+A_SUPERSEDED_VERSION_IS_RECORDED_NOT_ERASED_NOTE: Final[str] = (
+    "ASupersededVersionIsRecordedNotErased: النسختان تُودَعان معًا، ولكلّ موضعٍ "
+    "تغيّر نصُّ النسختين فيه وقراءةُ الشجرة للتغيّر؛ وإيداعُ المُوسَّعة وحدها "
+    "يمحو أنّ دعوًى أُطلِقت ثمّ قُيِّدت"
+)
+
+A_NUMBER_WITHOUT_A_CORPUS_IS_NOT_A_MEASUREMENT_NOTE: Final[str] = (
+    "ANumberWithoutACorpusIsNotAMeasurement: كلُّ رقمٍ في النسخة الثانية غيرُ "
+    "قابلٍ لإعادة الاشتقاق بسببٍ مُسمًّى؛ وملفُّ الجذور المُسمَّى في النصّ غيرُ "
+    "موجودٍ في الشجرة، و«مُبصَّم» وصفٌ في جملةٍ لا بصمةٌ تُطابَق"
+)
+
+AN_ENUMERATED_EXAMPLE_SWEEP_IS_NOT_A_UNIVERSAL_NOTE: Final[str] = (
+    "AnEnumeratedExampleSweepIsNotAUniversal: «4/4» و«6/6» عدُّ أمثلةٍ لا عدُّ "
+    "مجتمع، و«بلا استثناء» دعوى عمومٍ يكفي لنقضها موضعٌ واحدٌ خارج الأمثلة"
+)
+
+A_SUBMITTED_FREEZE_IS_NOT_A_FREEZE_HERE_NOTE: Final[str] = (
+    "ASubmittedFreezeIsNotAFreezeHere: المُعرِّفاتُ الأربعةُ محفوظةٌ بحروفها ومعها "
+    "`NOT_ISSUED_BY_THIS_TREE`؛ واسمُ التجميد ليس سندًا لمضمونه، ولا يُقرأ "
+    "إعلانُ التجميد في محادثةٍ خارجيّةٍ تجميدًا في هذه الشجرة"
+)
+
+
+def _assert_no_result_field() -> None:
+    """حارسُ استيراد: لا حقلَ نتيجةٍ ولا حسمٍ يتسلّل إلى إيداعٍ لاحقًا."""
+
+    for dataclass_type in (
+        GflkSpecificationConflict,
+        GflkSpecificationDeposit,
+        SpecificationAmendment,
+        SpecificationNumericClaim,
+        SubmittedFreezeIdentifier,
+    ):
+        for declared in fields(dataclass_type):
+            lowered = declared.name.lower()
+            for token in _FORBIDDEN_FIELD_TOKENS:
+                if token in lowered:
+                    raise GflkSpecificationDepositError(
+                        f"حقلٌ يحمل نتيجةً أو حسمًا تسلّل إلى "
+                        f"{dataclass_type.__name__}: {declared.name}؛ والإيداعُ "
+                        "لا نتيجةَ فيه ولا حسم"
+                    )
+
+
+if len({entry.identifier for entry in SUBMITTED_FREEZE_IDENTIFIERS}) != len(
+    SUBMITTED_FREEZE_IDENTIFIERS
+):  # pragma: no cover - حارس
+    raise RuntimeError("لا يُسجَّل مُعرِّفُ تجميدٍ واردٍ مرّتين.")
+if len({claim.figure for claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS}) != len(
+    GFLK_SPECIFICATION_NUMERIC_CLAIMS
+):  # pragma: no cover - حارس
+    raise RuntimeError("لا يُسجَّل رقمٌ واحدٌ بصفّين.")
+if len({amendment.locus for amendment in GFLK_SPECIFICATION_AMENDMENTS}) != len(
+    GFLK_SPECIFICATION_AMENDMENTS
+):  # pragma: no cover - حارس
+    raise RuntimeError("لا يُسجَّل موضعُ تغيّرٍ واحدٌ بصفّين.")
+if len(
+    {conflict.locus_in_specification for conflict in GFLK_SPECIFICATION_CONFLICTS}
+) != len(GFLK_SPECIFICATION_CONFLICTS):  # pragma: no cover - حارس
+    raise RuntimeError("لا يُسجَّل تعارضٌ واحدٌ بصفّين.")
+_KNOWN_FIGURES: Final[frozenset[str]] = frozenset(
+    claim.figure for claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS
+)
+for _claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS:  # pragma: no cover - حارس
+    if _claim.depends_on_figure is None:
+        continue
+    if _claim.depends_on_figure not in _KNOWN_FIGURES:
+        raise RuntimeError("وسمُ التبعيّة يُحيل إلى رقمٍ مُسجَّلٍ في السجلّ نفسِه.")
+    if _claim.depends_on_figure == _claim.figure:
+        raise RuntimeError("لا يعتمد رقمٌ على نفسه.")
+_assert_no_result_field()

@@ -18,12 +18,21 @@ from alghanem.arabic.gflk_feature_table_import_barrier import (
     frozen_makhraj_count,
 )
 from alghanem.arabic.gflk_specification_deposit import (
+    GFLK_SPECIFICATION_AMENDMENTS,
     GFLK_SPECIFICATION_CONFLICTS,
     GFLK_SPECIFICATION_DEPOSIT,
+    GFLK_SPECIFICATION_NUMERIC_CLAIMS,
+    NOT_ISSUED_BY_THIS_TREE,
+    SPECIFICATION_RELATIVE_PATH,
+    SUBMITTED_FREEZE_IDENTIFIERS,
     ConflictStanding,
     GflkSpecificationConflict,
+    GflkSpecificationDeposit,
     GflkSpecificationDepositError,
     ProvenanceGenus,
+    SpecificationAmendment,
+    SpecificationNumericClaim,
+    SubmittedFreezeIdentifier,
     read_specification_bytes,
     specification_digest,
     specification_path,
@@ -37,6 +46,8 @@ from alghanem.arabic.gflk_state_machine_registration import (
     StateMachineRegistrationError,
     existing_carrier_state_names,
 )
+from alghanem.arabic.word_structure_dictionary import MEASURED_LAYERS, WITHHELD_LAYERS
+from alghanem.arabic.word_structure_dictionary_preregistration import DictionaryLayer
 
 
 def test_the_deposited_document_exists_in_the_tree() -> None:
@@ -189,3 +200,161 @@ def test_the_ocp_expectation_is_defer_and_written_with_its_prior_grounds() -> No
     assert expectation.expected_outcome == "DEFER لا PASS"
     assert "phonetic_economy_candidate" in expectation.grounds_known_before_measuring
     assert expectation.what_would_overturn_the_expectation.strip()
+
+
+def test_both_versions_are_deposited_verbatim_in_the_document() -> None:
+    """§٢ و§٢-أ تحملان النصّين كما وصلا، فلا يُحرَّر المُودَع صامتًا."""
+
+    text = read_specification_bytes().decode("utf-8")
+    assert "## ٢ — النصّ المُودَع حرفيًّا (النسخة الأولى)" in text
+    assert "## ٢-أ — النصّ المُودَع حرفيًّا (النسخة الثانية الواردة)" in text
+    assert "العنصر السابع عشر المحايد" in text
+    assert "FI'L-AMR-SYLLABLE-SIGNATURE-AR-1" in text
+    assert "shرط حتمية" in text
+    assert GFLK_SPECIFICATION_DEPOSIT.deposited_versions == 2
+
+
+def test_depositing_the_expanded_version_alone_is_refused() -> None:
+    """إيداعُ المُوسَّعة وحدها يمحو أنّ دعوًى أُطلِقت ثمّ قُيِّدت."""
+
+    with pytest.raises(GflkSpecificationDepositError):
+        GflkSpecificationDeposit(
+            genus=ProvenanceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+            arrival_date="2026-09-15",
+            relative_path=SPECIFICATION_RELATIVE_PATH,
+            deposited_versions=1,
+        )
+
+
+def test_every_amendment_names_both_versions_and_the_tree_reading() -> None:
+    assert GFLK_SPECIFICATION_AMENDMENTS
+    for amendment in GFLK_SPECIFICATION_AMENDMENTS:
+        assert amendment.first_version_said.strip()
+        assert amendment.second_version_says.strip()
+        assert amendment.what_this_tree_reads_in_the_change.strip()
+    loci = " | ".join(item.locus for item in GFLK_SPECIFICATION_AMENDMENTS)
+    assert "فعل الأمر" in loci
+    assert "متعدٍّ/لازم" in loci
+    with pytest.raises(GflkSpecificationDepositError):
+        SpecificationAmendment(
+            locus="§٣",
+            first_version_said="قول",
+            second_version_says="قول آخر",
+            what_this_tree_reads_in_the_change="  ",
+        )
+
+
+def test_the_compression_figures_are_recorded_as_unchanged() -> None:
+    """رقمٌ تكرّر في نسختين من المصدر نفسِه ليس شاهدين."""
+
+    by_locus = {item.locus: item for item in GFLK_SPECIFICATION_AMENDMENTS}
+    entry = by_locus["§٦ — أرقام الضغط"]
+    assert "بلا تغيير" in entry.second_version_says
+    assert "compression_model_revision_audit" in (
+        entry.what_this_tree_reads_in_the_change
+    )
+
+
+def test_every_figure_is_registered_as_not_rederivable_with_its_condition() -> None:
+    assert GFLK_SPECIFICATION_NUMERIC_CLAIMS
+    for claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS:
+        assert claim.not_rederivable_because.strip()
+        assert claim.what_would_make_it_rederivable.strip()
+    figures = {claim.figure for claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS}
+    assert {"4,087", "10,599", "11,467", "37,682", "18,333", "6/6", "4/4"} == figures
+
+
+def test_a_residue_defined_figure_without_a_dependency_tag_is_refused() -> None:
+    """فئةٌ عُرِّفت بعدم المطابقة تتحرّك بحركة القاعدة، فليست شاهدًا مستقلًّا."""
+
+    unconfirmed = next(
+        claim for claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS if claim.figure == "11,467"
+    )
+    assert unconfirmed.is_residue_defined
+    assert unconfirmed.depends_on_figure == "4,087"
+    with pytest.raises(GflkSpecificationDepositError):
+        SpecificationNumericClaim(
+            figure="ر",
+            locus="§٢-أ",
+            claim_text="نصّ",
+            not_rederivable_because="سبب",
+            what_would_make_it_rederivable="شرط",
+            is_residue_defined=True,
+        )
+
+
+def test_the_four_submitted_freezes_are_kept_verbatim_and_disowned() -> None:
+    identifiers = {entry.identifier for entry in SUBMITTED_FREEZE_IDENTIFIERS}
+    assert identifiers == {
+        "JARAD-MAZID-CORRECTED-AR-1",
+        "FI'L-AMR-SYLLABLE-SIGNATURE-AR-1",
+        "MUDARI-WEAK-RADICAL-IDENTITY-AR-1",
+        "LUZUM-TA'ADDI-STRUCTURAL-TOOL-AR-1",
+    }
+    for entry in SUBMITTED_FREEZE_IDENTIFIERS:
+        assert entry.not_issued_by_this_tree == NOT_ISSUED_BY_THIS_TREE
+        assert entry.what_it_declares.strip()
+    with pytest.raises(GflkSpecificationDepositError):
+        SubmittedFreezeIdentifier(
+            identifier="X-AR-1",
+            what_it_declares="إعلان",
+            not_issued_by_this_tree="",
+        )
+
+
+def test_no_submitted_freeze_identifier_exists_in_this_tree() -> None:
+    """صفرُ تطابقٍ في `src/` و`docs/` و`tests/` عدا مواضعَ التسجيل نفسِها."""
+
+    root = specification_path().parent.parent.parent
+    registration_files = {
+        root / "src" / "alghanem" / "arabic" / "gflk_specification_deposit.py",
+        root / "docs" / "reference" / "gflk_arabic_letter_specification.md",
+        root / "tests" / "arabic" / "test_gflk_specification_deposit.py",
+        root / "README.md",
+    }
+    for entry in SUBMITTED_FREEZE_IDENTIFIERS:
+        for folder in ("src", "docs", "tests"):
+            for path in (root / folder).rglob("*"):
+                if not path.is_file() or path in registration_files:
+                    continue
+                if path.suffix not in {".py", ".md"}:
+                    continue
+                assert entry.identifier not in path.read_text(encoding="utf-8")
+
+
+def test_the_new_conflicts_are_recorded_and_still_unresolved() -> None:
+    loci = " | ".join(
+        conflict.locus_in_specification for conflict in GFLK_SPECIFICATION_CONFLICTS
+    )
+    assert "فعل الأمر" in loci
+    assert "مبنيٍّ للمجهول" in loci
+    assert "مُعرِّفات تجميدٍ واردة" in loci
+    assert all(
+        conflict.standing
+        in {
+            ConflictStanding.RECORDED_UNRESOLVED,
+            ConflictStanding.BLOCKS_IMPORT_UNTIL_RESOLVED,
+        }
+        for conflict in GFLK_SPECIFICATION_CONFLICTS
+    )
+
+
+def test_no_register_carries_a_result_or_resolution_field() -> None:
+    forbidden = {"result", "verdict", "resolved", "resolution", "proof"}
+    for dataclass_type in (
+        SpecificationAmendment,
+        SpecificationNumericClaim,
+        SubmittedFreezeIdentifier,
+        GflkSpecificationDeposit,
+    ):
+        names = {field.name.lower() for field in fields(dataclass_type)}
+        assert not (names & forbidden)
+
+
+def test_the_withheld_layers_are_still_withheld_after_this_deposit() -> None:
+    """الإيداعُ لا يرفع حجبًا: طبقةُ مجرد/مزيد وطبقةُ المقطع محجوبتان كما كانتا."""
+
+    withheld = {entry.layer for entry in WITHHELD_LAYERS}
+    assert DictionaryLayer.JARAD_ANALYSIS in withheld
+    assert DictionaryLayer.SYLLABLES_AND_WAZN in withheld
+    assert DictionaryLayer.JARAD_ANALYSIS not in MEASURED_LAYERS
