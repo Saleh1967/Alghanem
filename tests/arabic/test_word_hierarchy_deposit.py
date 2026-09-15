@@ -13,6 +13,8 @@ from alghanem.arabic.gflk_specification_deposit import (
 )
 from alghanem.arabic.word_hierarchy_deposit import (
     HIERARCHY_RELATIVE_PATH,
+    NOT_ISSUED_BY_THIS_TREE,
+    SUBMITTED_FREEZE_IDENTIFIERS,
     SUPERSEDED_CLAIMS,
     WORD_HIERARCHY_CONFLICTS,
     WORD_HIERARCHY_DEPOSIT,
@@ -22,6 +24,7 @@ from alghanem.arabic.word_hierarchy_deposit import (
     HierarchyLevel,
     HierarchyNode,
     HierarchyNumericClaim,
+    SubmittedFreezeIdentifier,
     SupersededClaim,
     WordHierarchyDeposit,
     WordHierarchyDepositError,
@@ -34,6 +37,8 @@ from alghanem.arabic.word_structure_dictionary_preregistration import (
     DictionaryLayer,
     LayerEpistemicStanding,
 )
+
+_ANY_CONDITION = "إيداعُ مدوّنةٍ مُبصَّمة"
 
 
 def test_the_deposited_document_exists_in_the_tree() -> None:
@@ -49,13 +54,13 @@ def test_the_digest_is_rederived_from_the_file_not_stored() -> None:
     assert WORD_HIERARCHY_DEPOSIT.digest() == expected
 
 
-def test_the_deposit_declares_a_foreign_genus_and_two_versions() -> None:
+def test_the_deposit_declares_a_foreign_genus_and_three_texts() -> None:
     assert (
         WORD_HIERARCHY_DEPOSIT.genus is ProvenanceGenus.PROSE_FROM_ANOTHER_CONVERSATION
     )
     assert WORD_HIERARCHY_DEPOSIT.arrival_date == "2026-09-15"
     assert WORD_HIERARCHY_DEPOSIT.relative_path == HIERARCHY_RELATIVE_PATH
-    assert WORD_HIERARCHY_DEPOSIT.deposited_versions == 2
+    assert WORD_HIERARCHY_DEPOSIT.deposited_versions == 3
 
 
 def test_depositing_the_corrected_version_alone_is_refused() -> None:
@@ -71,11 +76,12 @@ def test_depositing_the_corrected_version_alone_is_refused() -> None:
 
 
 def test_both_versions_are_deposited_verbatim_in_the_document() -> None:
-    """§٢ و§٢-أ يحملان النصّين كما وصلا، فلا يُحرَّر المُودَع صامتًا."""
+    """§٢ و§٢-أ و§٢-ب تحمل النصوصَ كما وصلت، فلا يُحرَّر المُودَع صامتًا."""
 
     text = read_hierarchy_bytes().decode("utf-8")
     assert "## ٢ — النصّ المُودَع حرفيًّا (النسخة الثانية)" in text
     assert "## ٢-أ — النصّ المُودَع حرفيًّا (النسخة الأولى، المنسوخة)" in text
+    assert "## ٢-ب — النصّ المُودَع حرفيًّا (التجميد الثالث الوارد)" in text
     # سطورٌ من النسخة الثانية وحدها
     assert "> ## المستوى ٥ — المبني (عابر لكل ما سبق)" in text.replace("\u200f", "")
     assert "مسحوب من الخواص الموثوقة" in text
@@ -83,6 +89,21 @@ def test_both_versions_are_deposited_verbatim_in_the_document() -> None:
     assert "صفر خرق/8,756" in text
     assert "٩٥.٦٧٪" in text
     assert "6/6 أمثلة" in text
+    # سطورٌ من التجميد الثالث وحده، بما فيها ما يُخالف الشجرة
+    assert "**تم التجميد — SPEECH-PARTS-AND-COMPOSITION-AR-1**" in text
+    assert "مكتشَف الآن، يُفسِّر كل ما تبقّى" in text
+    assert "يُلغي كل من 4.76% و1% المذكورتين سابقًا" in text
+
+
+def test_the_third_text_carries_a_header_denying_it_is_frozen_here() -> None:
+    """إعلانُ تجميدٍ خارجيٍّ لا يُقرأ تجميدًا هنا؛ والترويسةُ تسبق النصّ."""
+
+    text = read_hierarchy_bytes().decode("utf-8")
+    header = text.index("**ترويسةٌ لازمةٌ قبل النصّ:**")
+    body = text.index("**تم التجميد — SPEECH-PARTS-AND-COMPOSITION-AR-1**")
+    assert header < body
+    assert "غيرُ موجودين في هذه الشجرة" in text
+    assert "محفوظٌ بحروفه ليُراجَع لا ليُعمَل به" in text
 
 
 def test_the_document_declares_deferred_standing_and_no_authority() -> None:
@@ -175,6 +196,16 @@ def test_the_four_named_withdrawals_are_recorded() -> None:
     assert "همزة الوصل" in loci
 
 
+def test_the_gap_withdrawal_names_a_reason_unlike_the_six_silent_figures() -> None:
+    """سحبُ ٤٫٧٦٪ جاء بسببٍ مذكور، فلا يُسجَّل «ساقطًا بلا سبب»."""
+
+    gap = [claim for claim in SUPERSEDED_CLAIMS if "الفجوة" in claim.locus]
+    assert len(gap) == 1
+    assert "بإدغام عابر" in gap[0].why_it_was_withdrawn
+    assert "لا `WITHDRAWN_WITHOUT_A_STATED_REASON`" in gap[0].why_it_was_withdrawn
+    assert "«١٪» لم تصل هذه الشجرةَ قطّ" in gap[0].second_version_says
+
+
 def test_a_withdrawal_without_a_reason_is_refused() -> None:
     with pytest.raises(WordHierarchyDepositError):
         SupersededClaim(
@@ -212,6 +243,117 @@ def test_a_number_without_a_rederivation_condition_is_refused() -> None:
         )
 
 
+def test_a_residue_defined_zero_is_refused_without_a_dependency_tag() -> None:
+    """فئةٌ عُرِّفت بالباقي لا يتبقّى بعدها شيء؛ فصفرُها تابعٌ يُسمّي ما يقوم عليه."""
+
+    with pytest.raises(WordHierarchyDepositError):
+        HierarchyNumericClaim(
+            figure="صفر تمامًا",
+            locus="§٢-ب",
+            claim_text="صفرُ فجوةٍ بعد تفسير كلّ المرشَّحين",
+            not_rederivable_because="لا مدوّنة",
+            what_would_make_it_rederivable=_ANY_CONDITION,
+            is_residue_defined=True,
+        )
+
+
+def test_the_same_zero_is_accepted_once_it_names_what_it_rests_on() -> None:
+    claim = HierarchyNumericClaim(
+        figure="صفر تمامًا",
+        locus="§٢-ب",
+        claim_text="صفرُ فجوةٍ بعد تفسير كلّ المرشَّحين",
+        not_rederivable_because="لا مدوّنة",
+        what_would_make_it_rederivable=_ANY_CONDITION,
+        depends_on_figure="مُغلَق 100% — التركيب النحويّ",
+        is_residue_defined=True,
+    )
+    assert claim.depends_on_figure == "مُغلَق 100% — التركيب النحويّ"
+
+
+def test_an_empty_dependency_tag_is_refused() -> None:
+    with pytest.raises(WordHierarchyDepositError):
+        HierarchyNumericClaim(
+            figure="صفر",
+            locus="§٢-ب",
+            claim_text="دعوى",
+            not_rederivable_because="لا مدوّنة",
+            what_would_make_it_rederivable=_ANY_CONDITION,
+            depends_on_figure="   ",
+        )
+
+
+def test_the_three_results_of_the_third_text_are_recorded_as_one_witness() -> None:
+    """إغلاقُ النحويّ وصفرُ الفجوة وصفرُ المزجيّ مخرجُ فئةٍ واحدةٍ لا ثلاثةُ شهود."""
+
+    by_figure = {claim.figure: claim for claim in WORD_HIERARCHY_NUMERIC_CLAIMS}
+    closure = by_figure["مُغلَق 100% — التركيب النحويّ"]
+    assert closure.is_residue_defined
+    assert closure.depends_on_figure == "98.9%"
+    for dependent in (
+        "صفر تمامًا — الفجوة بين الكلمة المنطقيّة والفراغيّة",
+        "صفر حالة — التركيب المزجيّ",
+    ):
+        assert by_figure[dependent].depends_on_figure == closure.figure
+        assert by_figure[dependent].is_residue_defined
+
+
+def test_every_dependency_tag_points_at_a_figure_in_the_same_register() -> None:
+    figures = {claim.figure for claim in WORD_HIERARCHY_NUMERIC_CLAIMS}
+    for claim in WORD_HIERARCHY_NUMERIC_CLAIMS:
+        if claim.depends_on_figure is None:
+            continue
+        assert claim.depends_on_figure in figures
+        assert claim.depends_on_figure != claim.figure
+
+
+def test_the_third_texts_figures_are_registered_not_rederivable() -> None:
+    figures = {claim.figure for claim in WORD_HIERARCHY_NUMERIC_CLAIMS}
+    assert {"98.9%", "56%", "23%"} <= figures
+    assert "مُغلَق 100% — التركيب النحويّ" in figures
+
+
+def test_a_submitted_freeze_identifier_is_kept_but_disowned() -> None:
+    """مُعرِّفُ تجميدٍ واردٍ محفوظٌ بحروفه ومعه أنّه غيرُ صادرٍ عن هذه الشجرة."""
+
+    identifiers = {entry.identifier for entry in SUBMITTED_FREEZE_IDENTIFIERS}
+    assert identifiers == {
+        "SPEECH-PARTS-AND-COMPOSITION-AR-1",
+        "WAQF-SEL-MARKER-PROXY-AR-1",
+    }
+    for entry in SUBMITTED_FREEZE_IDENTIFIERS:
+        assert entry.not_issued_by_this_tree == NOT_ISSUED_BY_THIS_TREE
+        assert "ليُراجَع لا ليُعمَل به" in entry.not_issued_by_this_tree
+
+
+def test_a_submitted_freeze_identifier_without_the_disclaimer_is_refused() -> None:
+    with pytest.raises(WordHierarchyDepositError):
+        SubmittedFreezeIdentifier(
+            identifier="SOME-FREEZE-AR-1",
+            what_it_declares="تجميدٌ ما",
+            not_issued_by_this_tree="   ",
+        )
+
+
+def test_neither_submitted_identifier_exists_anywhere_else_in_the_tree() -> None:
+    """المُعرِّفان لا يوجدان في الشجرة إلا في هذا الإيداع وفي وثيقته واختبارها."""
+
+    root = hierarchy_path().parent.parent.parent
+    allowed = {
+        root / "docs" / "reference" / "word_hierarchy_rebuild.md",
+        root / "src" / "alghanem" / "arabic" / "word_hierarchy_deposit.py",
+        root / "tests" / "arabic" / "test_word_hierarchy_deposit.py",
+    }
+    for identifier in (
+        "SPEECH-PARTS-AND-COMPOSITION-AR-1",
+        "WAQF-SEL-MARKER-PROXY-AR-1",
+    ):
+        for folder, suffix in (("src", ".py"), ("docs", ".md"), ("tests", ".py")):
+            for path in (root / folder).rglob(f"*{suffix}"):
+                if path in allowed:
+                    continue
+                assert identifier not in path.read_text(encoding="utf-8")
+
+
 def test_no_conflict_carries_a_resolution_field() -> None:
     """التعارضُ يحمل شرطَ حسمه ولا يحمل حسمًا؛ ولا عضوَ «محسوم» في المنزلة."""
 
@@ -233,13 +375,13 @@ def test_every_conflict_names_its_locus_reference_and_resolution_condition() -> 
         assert conflict.what_would_resolve_it.strip()
 
 
-def test_the_eight_import_barriers_are_recorded() -> None:
+def test_the_ten_import_barriers_are_recorded() -> None:
     barriers = [
         conflict
         for conflict in WORD_HIERARCHY_CONFLICTS
         if conflict.standing is ConflictStanding.BLOCKS_IMPORT_UNTIL_RESOLVED
     ]
-    assert len(barriers) == 8
+    assert len(barriers) == 10
     loci = " | ".join(conflict.locus_in_hierarchy for conflict in barriers)
     assert "همزة الوصل" in loci
     assert "الشدّة" in loci
@@ -247,6 +389,41 @@ def test_the_eight_import_barriers_are_recorded() -> None:
     assert "المخرج" in loci
     assert "الصفة" in loci
     assert "المبنيّ" in loci
+    assert "فئةُ الإدغام الثالثة" in loci
+    assert "وكيلُ الوقف" in loci
+
+
+def test_the_residue_defined_closure_is_blocked_by_the_standing_refusal() -> None:
+    """فئةٌ كُتبت بعد فحص البواقي ليست شاهدًا للقاعدة التي أنقذتها."""
+
+    closure = [
+        conflict
+        for conflict in WORD_HIERARCHY_CONFLICTS
+        if "فئةُ الإدغام الثالثة" in conflict.locus_in_hierarchy
+    ]
+    assert len(closure) == 1
+    assert (
+        "RESIDUE_DEFINED_EXCLUSIONS_ARE_NOT_INDEPENDENT_EVIDENCE"
+        in closure[0].tree_reference
+    )
+    assert closure[0].standing is ConflictStanding.BLOCKS_IMPORT_UNTIL_RESOLVED
+    assert "قبل الفحص" in closure[0].what_would_resolve_it
+
+
+def test_the_waqf_proxy_is_blocked_because_the_signal_is_undefined() -> None:
+    """الإشارةُ المُميِّزةُ غيرُ مُعرَّفةٍ في المرماز، لا ضعيفةٌ ولا ناقصة."""
+
+    proxy = [
+        conflict
+        for conflict in WORD_HIERARCHY_CONFLICTS
+        if "وكيلُ الوقف" in conflict.locus_in_hierarchy
+    ]
+    assert len(proxy) == 1
+    assert (
+        "PAUSAL_SUKUN_IS_NOT_DISTINGUISHED_FROM_CONNECTED_SUKUN"
+        in proxy[0].tree_reference
+    )
+    assert proxy[0].standing is ConflictStanding.BLOCKS_IMPORT_UNTIL_RESOLVED
 
 
 def test_the_fifth_level_conflict_cites_the_three_refusing_texts() -> None:
@@ -303,6 +480,7 @@ def test_the_deposit_carries_no_analysis_function_and_no_result_field() -> None:
         SupersededClaim,
         HierarchyNumericClaim,
         HierarchyConflict,
+        SubmittedFreezeIdentifier,
         WordHierarchyDeposit,
     ):
         for declared in fields(dataclass_type):
