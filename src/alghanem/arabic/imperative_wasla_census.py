@@ -78,6 +78,7 @@ from .imperative_wasla_specification import (
 
 __all__ = [
     "ARRIVING_IMPERATIVE_DIVERGENCES",
+    "A_SECOND_ARRIVING_TABLE_IS_NOT_A_SECOND_MEASUREMENT_NOTE",
     "AUGMENTED_FORM_TAGS",
     "BARE_IMPERATIVE_SEGMENTS",
     "DOUBLED_ROOT_RESIDUAL",
@@ -88,8 +89,11 @@ __all__ = [
     "REDERIVED_IMPERFECT_COEXISTENCE",
     "REDERIVED_SALIM_AJWAF_TEST",
     "REDERIVED_SHAPE_TABLES",
+    "SECOND_ARRIVING_SHAPE_FIGURES",
     "SHA_256_ORDERS_NOTHING_NOTE",
+    "SPLIT_LAFIF_IS_A_FIFTH_RULE_NOT_A_READING_NOTE",
     "THE_MECHANISM_WAS_TESTED_INSIDE_ONE_CLASS_NOT_BETWEEN_TWO_NOTE",
+    "THE_SCOPE_OF_THE_ARRIVING_RATIO_WAS_NOT_DECLARED_NOTE",
     "THE_SOUND_EXCEPTIONS_WERE_ALL_ONE_THING_NOTE",
     "ArrivingImperativeDivergence",
     "IdghamAgreement",
@@ -98,12 +102,15 @@ __all__ = [
     "ImperfectCoexistence",
     "NamedResidualLocation",
     "PermutationOutcome",
+    "SecondArrivingShapeFigure",
     "ShapeCount",
     "classify_root",
     "idgham_agreement",
     "imperfect_coexistence",
     "permutation_test",
     "read_imperative",
+    "second_arriving_figures_that_matched",
+    "second_arriving_figures_without_a_rule",
     "shape_table",
 ]
 
@@ -142,6 +149,27 @@ THE_IMPERFECT_AS_A_PRECONDITION_WAS_NOT_SETTLED_NOTE: Final[str] = (
     "لا تثبت ولا تُفنَّد من هذه البايتات"
 )
 
+A_SECOND_ARRIVING_TABLE_IS_NOT_A_SECOND_MEASUREMENT_NOTE: Final[str] = (
+    "ASecondArrivingTableIsNotASecondMeasurement: وصل جدولٌ ثانٍ بأعدادٍ أخرى "
+    "للأصناف نفسِها، ولم يصل معه مدوَّنتُه ولا قاعدةُ عدِّه ولا سَعةُ أمره؛ "
+    "فيُودَع كما وصل ويُقابَل بما خرج من البايتات، ولا تُعدَّل القاعدةُ ليُطابِق"
+)
+
+SPLIT_LAFIF_IS_A_FIFTH_RULE_NOT_A_READING_NOTE: Final[str] = (
+    "SplitLafifIsAFifthRuleNotAReading: «اللفيفُ المفروق» ليس صنفًا في "
+    "`RootShape` ولا في القواعد الأربع المُجمَّدة؛ ففصلُه قاعدةٌ خامسةٌ تُسَنّ "
+    "وتُعلَن بمُصادَرتها، ولم تُسَنّ — فرقمُ «٦» يُسجَّل غيرَ مُعادِ الاشتقاق "
+    "بهذه القواعد، ولا يُسَنُّ لأجله بابٌ بعد رؤية رقمه"
+)
+
+THE_SCOPE_OF_THE_ARRIVING_RATIO_WAS_NOT_DECLARED_NOTE: Final[str] = (
+    "TheScopeOfTheArrivingRatioWasNotDeclared: الوارِدُ ٢١٧/٢٥٨ والمقيسُ "
+    "١١٦/١٤٩، ولم تُعلَن سَعةُ الوارد: أهي الأمرُ المجرَّدُ وحدَه أم الأمرُ "
+    "في الأوزان كلِّها؟ والمقيسُ هنا الأمرُ المجرَّدُ وحدَه بنصّ قاعدته، "
+    "فالفرقُ يُعرَض ولا يُفسَّر بترجيحٍ يُقدَّم على أنّه قراءة"
+)
+
+
 SHA_256_ORDERS_NOTHING_NOTE: Final[str] = (
     "Sha256OrdersNothing: لا خاصيّةَ حفظِ ترتيبٍ في `SHA-256` البتّة، "
     "ومدخلان متجاوران يُخرِجان بصمتين لا علاقةَ بينهما؛ فالبصمةُ تُثبِت "
@@ -163,6 +191,15 @@ IMPERATIVE_WASLA_CENSUS_NAMED_RESIDUALS: Final[dict[str, str]] = {
         THE_IMPERFECT_AS_A_PRECONDITION_WAS_NOT_SETTLED_NOTE
     ),
     "Sha256OrdersNothing": SHA_256_ORDERS_NOTHING_NOTE,
+    "ASecondArrivingTableIsNotASecondMeasurement": (
+        A_SECOND_ARRIVING_TABLE_IS_NOT_A_SECOND_MEASUREMENT_NOTE
+    ),
+    "SplitLafifIsAFifthRuleNotAReading": (
+        SPLIT_LAFIF_IS_A_FIFTH_RULE_NOT_A_READING_NOTE
+    ),
+    "TheScopeOfTheArrivingRatioWasNotDeclared": (
+        THE_SCOPE_OF_THE_ARRIVING_RATIO_WAS_NOT_DECLARED_NOTE
+    ),
 }
 
 
@@ -607,6 +644,144 @@ ARRIVING_IMPERATIVE_DIVERGENCES: Final[tuple[ArrivingImperativeDivergence, ...]]
     ArrivingImperativeDivergence(_arriving("استثناءاتُ الناقص"), "1", "علّة_وهمزة"),
 )
 """كلُّ رقمٍ وارِدٍ في مقابل ما خرج من البايتات، تحت أسخى قاعدةٍ عليه."""
+
+
+@dataclass(frozen=True, slots=True)
+class SecondArrivingShapeFigure:
+    """رقمٌ من الجدول الثاني الوارد، بمقابله من البايتات تحت قاعدةٍ مُسمّاة.
+
+    و`rederived_value` يكون `None` حين لا يُعاد اشتقاقُ الرقم بالقواعد
+    المُجمَّدة أصلًا؛ فلا يُوضَع له مقابلٌ مُقدَّرٌ ولا تُسَنُّ له قاعدة.
+    """
+
+    label: str
+    claimed_value: str
+    rederived_value: str | None
+    under_rule: str
+    why: str
+
+    def __post_init__(self) -> None:
+        for value, name in (
+            (self.label, "وصفُ الرقم"),
+            (self.claimed_value, "قيمتُه كما وصلت"),
+            (self.under_rule, "القاعدةُ التي يُقابَل تحتها"),
+            (self.why, "سببُ المقابلة"),
+        ):
+            if not isinstance(value, str) or not value.strip():
+                raise ImperativeWaslaCensusError(f"{name} نصٌّ غير فارغ.")
+        if self.rederived_value is not None and not self.rederived_value.strip():
+            raise ImperativeWaslaCensusError(
+                "مقابلٌ فارغٌ ليس مقابلًا؛ وما لا يُعاد اشتقاقُه يُكتَب `None` "
+                "صراحةً لا فراغًا."
+            )
+
+    @property
+    def matched(self) -> bool:
+        return self.rederived_value == self.claimed_value
+
+
+SECOND_ARRIVING_SHAPE_FIGURES: Final[tuple[SecondArrivingShapeFigure, ...]] = (
+    SecondArrivingShapeFigure(
+        label="صيغُ السالم",
+        claimed_value="481",
+        rederived_value="604",
+        under_rule="علّة_فقط",
+        why="أضيقُ القواعد على السالم؛ وتحتها ٥١٠ من ٦٠٤ بهمزة وصل",
+    ),
+    SecondArrivingShapeFigure(
+        label="نسبةُ السالم بألف وصل",
+        claimed_value="86%",
+        rederived_value="84.44",
+        under_rule="علّة_فقط",
+        why="النسبةُ تتبدّل بتبدّل القاعدة: ٨٤٫٤٤٪ هنا و١٠٠٪ تحت أسخاها",
+    ),
+    SecondArrivingShapeFigure(
+        label="صيغُ الناقص",
+        claimed_value="100",
+        rederived_value="107",
+        under_rule="علّة_فقط",
+        why="الناقصُ ١٠٧ مقاطعَ تحت القاعدتين الضيّقتين و٧٨ تحت السخيّتين",
+    ),
+    SecondArrivingShapeFigure(
+        label="نسبةُ الناقص بألف وصل",
+        claimed_value="99%",
+        rederived_value="77.57",
+        under_rule="علّة_فقط",
+        why="٨٣ من ١٠٧؛ وتبلغ ٩٨٫٧٢٪ تحت «علّة وهمزة» لا تحت أضيق القواعد",
+    ),
+    SecondArrivingShapeFigure(
+        label="صيغُ الأجوف",
+        claimed_value="401",
+        rederived_value="425",
+        under_rule="علّة_فقط",
+        why="٤٢٥ تحت أضيق القواعد و٤٤٥ تحت أسخاها؛ والوارِدُ خارجَ المدى",
+    ),
+    SecondArrivingShapeFigure(
+        label="الأجوفُ بألف وصل",
+        claimed_value="صفر %",
+        rederived_value="صفر %",
+        under_rule="القواعدُ الأربع جميعًا",
+        why="هذا هو الثابتُ الوحيدُ الذي طابق: صفرٌ تحت القواعد كلِّها",
+    ),
+    SecondArrivingShapeFigure(
+        label="صيغُ المثال",
+        claimed_value="16",
+        rederived_value="38",
+        under_rule="علّة_فقط",
+        why="٣٨ تحت أضيق القواعد و٩٩ تحت أسخاها؛ والوارِدُ دون المدى",
+    ),
+    SecondArrivingShapeFigure(
+        label="المثالُ بألف وصل",
+        claimed_value="صفر %",
+        rederived_value="صفر %",
+        under_rule="علّة_فقط",
+        why="صفرٌ تحت القاعدتين الضيّقتين، وموضعٌ واحدٌ يظهر تحت «علّة وهمزة»",
+    ),
+    SecondArrivingShapeFigure(
+        label="صيغُ اللفيف المفروق",
+        claimed_value="6",
+        rederived_value=None,
+        under_rule="لا قاعدةَ له في المُجمَّد",
+        why=SPLIT_LAFIF_IS_A_FIFTH_RULE_NOT_A_READING_NOTE,
+    ),
+    SecondArrivingShapeFigure(
+        label="اللفيفُ المفروقُ بألف وصل",
+        claimed_value="صفر %",
+        rederived_value=None,
+        under_rule="لا قاعدةَ له في المُجمَّد",
+        why=(
+            "اللفيفُ غيرُ المفروق ١٤ من ٤٤ بهمزة وصل تحت «علّة وهمزة»، "
+            "و٠ من ٧ تحت أضيقها؛ ولا يُقسَم إلى مفروقٍ ومقرونٍ بقاعدةٍ مُجمَّدة. "
+            + SPLIT_LAFIF_IS_A_FIFTH_RULE_NOT_A_READING_NOTE
+        ),
+    ),
+)
+"""الجدولُ الثاني الوارِدُ مقابلَ البايتات؛ ولم يطابق منه إلّا الصفران.
+
+وصفرُ الأجوف طابق **تحت القواعد الأربع جميعًا**، وصفرُ المثال طابق تحت
+القاعدتين الضيّقتين وحدَهما إذ يظهر له موضعٌ واحدٌ تحت «علّة وهمزة»؛ فالفرقُ
+بين الطبقتين مكتوبٌ في `under_rule` ولا يُطوى. وأمّا الأعدادُ كلُّها — ٤٨١
+و١٠٠ و٤٠١ و١٦ — فخالفت، ولم تُعدَّل قاعدةٌ لتُطابِقها.
+
+وما لا يُعاد اشتقاقُه بالقواعد المُجمَّدة يُكتَب `None` صراحةً، فلا يُقرأ
+سكوتُه موافقةً ولا مخالفة.
+"""
+
+
+def second_arriving_figures_that_matched() -> tuple[SecondArrivingShapeFigure, ...]:
+    """ما طابق من الجدول الثاني؛ وعرضُه وحدَه دون سائره انتقاءٌ، فيُقرأ معه."""
+
+    return tuple(figure for figure in SECOND_ARRIVING_SHAPE_FIGURES if figure.matched)
+
+
+def second_arriving_figures_without_a_rule() -> tuple[SecondArrivingShapeFigure, ...]:
+    """ما لا يُعاد اشتقاقُه بالقواعد الأربع؛ وهو اللفيفُ المفروقُ وحدَه."""
+
+    return tuple(
+        figure
+        for figure in SECOND_ARRIVING_SHAPE_FIGURES
+        if figure.rederived_value is None
+    )
 
 
 def _assert_the_specification_is_the_frozen_one() -> None:
