@@ -2827,10 +2827,12 @@ given as Ibn Fāris's *Maqāyīs al-Lugha*, and copies of a dictionary differ by
 for byte, so naming an origin is not fingerprinting a file. Its bytes have since
 been uploaded into this tree, so
 `src/alghanem/arabic/maqayis_root_table_deposit.py` freezes their length and
-digest and re-checks both on every read, and the two figures the text named leave
+digest and re-checks both on every read, and the figures the text named leave
 the withheld register for `REDERIVED_SPECIFICATION_FIGURES`, each carrying the
 counting rule that produced it: 4,576 records under a rule that a record is a CSV
-row and not a file line (the file has 36,597 lines), and 4,087 trilateral roots
+row and not a file line; 36,597 lines under a rule that counts line separators in
+the bytes, the file having no final separator so a `splitlines` rule yields 36,598
+— two rules, not a contradiction; and 4,087 trilateral roots
 under a rule that counts distinct `root_full` values and not rows (4,089 rows are
 typed `ثلاثي`, two roots appearing twice). What that buys is re-derivability, not
 vindication: a matching count shows the counter counted this file under this
