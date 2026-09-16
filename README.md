@@ -3740,10 +3740,12 @@ the column binding of the deposited bytes remains the depositor's declaration,
 not a reading taken from the mirror. CC BY 3.0 permits vendoring, unlike
 QAC (GPL) and Tanzil (CC BY-ND), and that licence is exercised: the bytes are
 deposited at `corpora/MASAQ.csv`, so the twenty figures re-derive in CI with no
-declaration at all. A checkout without them still passes a path in
-`ALGHANEM_MASAQ_PATH`. Neither route weakens the gate — the deposited location
-is a declared place, not a certificate, and length and digest are matched
-before any figure is returned.
+declaration at all — a named CI step runs the re-derivation script when those
+bytes are present and, when they are absent, says so out loud and re-derives
+nothing rather than passing silently. A checkout without them still passes a
+path in `ALGHANEM_MASAQ_PATH`. Neither route weakens the gate — the deposited
+location is a declared place, not a certificate, and length and digest are
+matched before any figure is returned.
 
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,

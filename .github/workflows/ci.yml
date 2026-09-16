@@ -21,3 +21,11 @@ jobs:
       - run: ruff check .
       - run: ruff format --check .
       - run: mypy src
+      - name: Re-derive the MASAQ witnesses from the deposited bytes
+        run: |
+          if [ -f corpora/MASAQ.csv ]; then
+            python examples/arabic/rederive_masaq_witnesses.py
+          else
+            echo "SKIPPED: corpora/MASAQ.csv is absent, so the twenty MASAQ figures were not re-derived in this run."
+            echo "This step is skipped out loud, never silently: a missing deposit is a missing measurement, not a pass."
+          fi

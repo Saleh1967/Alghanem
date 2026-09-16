@@ -2,8 +2,16 @@
 
 **ما تفعله هذه الوحدة**: تُجمِّد بصمةَ `MASAQ.csv` وطولَ بايتاتها ورخصتَها
 وشرطَ إسنادها، ثمّ تُودِع عشرين رقمًا يحمل كلٌّ منها **قاعدةَ عدّه ودالّةَ
-إعادة اشتقاقه**، وترفض إخراجَ رقمٍ من بايتاتٍ لا تطابق البصمةَ والطول. ولا
-تُنسَخ البايتاتُ إلى الشجرة، وإن كانت الرخصةُ تُجيز.
+إعادة اشتقاقه**، وترفض إخراجَ رقمٍ من بايتاتٍ لا تطابق البصمةَ والطول.
+
+`A_DEPOSIT_BAN_IS_A_LICENCE_FACT_NOT_A_HOUSE_STYLE`: كانت هذه الوثيقةُ تقول
+«ولا تُنسَخ البايتاتُ إلى الشجرة، وإن كانت الرخصةُ تُجيز»، وذلك خطأٌ يُصحَّح
+لا يُعكَس صامتًا: النمطُ الذي يُبقي بايتاتِ `QAC` (بـGPL) ونصِّ تنزيل
+(بـCC BY-ND) خارجَ الشجرة **واقعةُ رخصةٍ** في تلك المدوَّنات بأعيانها، لا
+عادةَ بيتٍ تُقيَّد بها مدوَّنةٌ تُجيز رخصتُها الإيداع. و MASAQ بـCC BY 3.0
+تُجيزه، فبايتاتُها تُودَع في `corpora/MASAQ.csv` موضعًا مسنونًا. ولا يُزاد
+بهذا الإيداعِ يقينٌ ذرّة: الموضعُ مكانٌ مُعلَنٌ لا شهادة، والبصمةُ والطولُ
+يُفحصان قبل كلِّ رقمٍ كما يُفحصان لأيّ مسارٍ مُصرَّحٍ به.
 
 `WHAT_QAC_COULD_NOT_CLOSE`: المدوَّنةُ الصرفيةُ للقرآن تَسِم `VN` ولا تنزل تحته،
 فبقيت أبوابُ المشتقّات **مُرشَّحةً بلا مرجِع**. و MASAQ تَسِمها بأسمائها
@@ -53,6 +61,7 @@ __all__ = [
     "BYTE_LENGTH_RULE",
     "DIGEST_RULE",
     "A_CONSERVATION_AUDIT_IS_NOT_AN_ACCURACY_CLAIM_NOTE",
+    "A_DEPOSIT_BAN_IS_A_LICENCE_FACT_NOT_A_HOUSE_STYLE_NOTE",
     "AN_IMPORTED_TAG_IS_A_HUMAN_JUDGEMENT_NOT_A_MEASUREMENT_NOTE",
     "A_MIRROR_WITH_ANOTHER_DIGEST_IS_NOT_THESE_BYTES_NOTE",
     "COMPLETE_INDUCTION_IS_CORPUS_BOUNDED_NOTE",
@@ -193,6 +202,14 @@ A_MIRROR_WITH_ANOTHER_DIGEST_IS_NOT_THESE_BYTES_NOTE: Final[str] = (
     "شرطُ كلِّ رقمٍ يخرج من هنا"
 )
 
+A_DEPOSIT_BAN_IS_A_LICENCE_FACT_NOT_A_HOUSE_STYLE_NOTE: Final[str] = (
+    "ADepositBanIsALicenceFactNotAHouseStyle: إبقاءُ بايتاتِ مدوَّنةٍ خارجَ "
+    "الشجرة واقعةُ رخصتِها هي، لا عادةٌ عامّةٌ تُقاس عليها مدوَّنةٌ أخرى؛ "
+    "فـCC BY 3.0 تُجيز إيداعَ MASAQ في `corpora/MASAQ.csv`، ولا يزيد هذا "
+    "الإيداعُ في يقين رقمٍ شيئًا: الموضعُ مُعلَنٌ لا شاهد، والبصمةُ والطولُ "
+    "يُفحصان قبل كلِّ رقمٍ"
+)
+
 SHA_256_ORDERS_NOTHING_NOTE: Final[str] = (
     "Sha256OrdersNothing: لا خاصيّةَ حفظِ ترتيبٍ في `SHA-256` البتّة، "
     "فالبصمةُ تُثبِت الهويّةَ ولا تُرتِّب؛ وتبديلُ بايتٍ واحدٍ يُبدِّل البصمةَ "
@@ -217,6 +234,9 @@ MASAQ_DEPOSIT_NAMED_RESIDUALS: Final[dict[str, str]] = {
         A_MIRROR_WITH_ANOTHER_DIGEST_IS_NOT_THESE_BYTES_NOTE
     ),
     "Sha256OrdersNothing": SHA_256_ORDERS_NOTHING_NOTE,
+    "ADepositBanIsALicenceFactNotAHouseStyle": (
+        A_DEPOSIT_BAN_IS_A_LICENCE_FACT_NOT_A_HOUSE_STYLE_NOTE
+    ),
 }
 
 
