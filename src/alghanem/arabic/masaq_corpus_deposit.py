@@ -70,6 +70,7 @@ __all__ = [
     "MASAQ_LICENCE",
     "MASAQ_PATH_VARIABLE",
     "MASAQ_REDERIVED_FIGURES",
+    "MASAQ_RELATIVE_PATH",
     "MASAQ_SHA256",
     "MASAQ_DEPOSIT_NAMED_RESIDUALS",
     "MIRROR_CORROBORATION",
@@ -91,6 +92,7 @@ __all__ = [
     "masaq_records",
     "masaq_text",
     "read_masaq_bytes",
+    "vendored_masaq_path",
     "rederive_embedded_newline_breaks",
     "rederive_embedded_newline_records",
     "rederive_line_count",
@@ -124,7 +126,25 @@ MASAQ_ATTRIBUTION: Final[str] = (
 """نصُّ الإسناد؛ وهو **شرطُ رخصةٍ** لا لطفَ عبارة، فلا يُخرَج رقمٌ بحذفه."""
 
 MASAQ_PATH_VARIABLE: Final[str] = "ALGHANEM_MASAQ_PATH"
-"""متغيّرُ البيئة الذي يُمرَّر به مسارُ البايتات؛ فهي غيرُ منسوخةٍ إلى الشجرة."""
+"""متغيّرُ البيئة الذي يُمرَّر به مسارُ البايتات حين تكون خارجَ الشجرة."""
+
+MASAQ_RELATIVE_PATH: Final[str] = "corpora/MASAQ.csv"
+"""موضعُ البايتات داخل الشجرة إن أُودِعت؛ موضعٌ **مسنونٌ** لا مُخمَّن.
+
+ورخصةُ `CC BY 3.0` تُجيز هذا الإيداعَ صراحةً، بخلاف مرايا أخرى يمنعها
+ناشروها؛ فالنمطُ الذي يُبقي بايتاتِ تلك خارجَ الشجرة لا يُقيّد هذه.
+ووجودُ الملفّ في هذا الموضع **لا يُغني عن المطابقة**: البصمةُ والطولُ
+يُفحصان كما يُفحصان لأيّ مسارٍ مُمرَّر، فالموضعُ ليس شهادة.
+"""
+
+_REPOSITORY_ROOT: Final[Path] = Path(__file__).resolve().parents[3]
+
+
+def vendored_masaq_path() -> Path:
+    """الموضعُ المسنونُ داخل الشجرة، محسوبًا من موضع هذه الوحدة لا من `cwd`."""
+
+    return _REPOSITORY_ROOT / MASAQ_RELATIVE_PATH
+
 
 MORPH_TAG_COLUMN: Final[str] = "Morph_Tag"
 """العمودُ الذي يحمل وَسْمَ الصرف؛ ربطٌ يُسَنّ ويُعلَن، لا يُقرأ من بصمة."""
@@ -340,17 +360,26 @@ MIRROR_CORROBORATION: Final[MirrorCorroboration] = MirrorCorroboration(
 
 
 def masaq_path(path: Path | str | None = None) -> Path:
-    """مسارُ البايتات: المُمرَّرُ، وإلّا `ALGHANEM_MASAQ_PATH`، وإلّا رفضٌ صريح."""
+    """مسارُ البايتات: المُمرَّرُ، وإلّا `ALGHANEM_MASAQ_PATH`، وإلّا المُودَعُ في الشجرة.
+
+    والترتيبُ مقصود: تصريحُ المستدعي أوّلًا، ثمّ تصريحُ البيئة، ثمّ الموضعُ
+    المسنونُ `corpora/MASAQ.csv` **إن كان موجودًا فعلًا**. ولا رابعَ لها:
+    غيابُ الثلاثة رفضٌ صريح، ولا يُخمَّن موضعُ الملفّ من اسمٍ ولا من `cwd`.
+    """
 
     if path is not None:
         return Path(path)
     declared = os.environ.get(MASAQ_PATH_VARIABLE)
-    if not declared:
-        raise MasaqDepositError(
-            "بايتاتُ MASAQ غيرُ منسوخةٍ إلى هذه الشجرة؛ فيُمرَّر مسارُها أو "
-            f"يُصرَّح به في `{MASAQ_PATH_VARIABLE}`، ولا يُخمَّن موضعُها."
-        )
-    return Path(declared)
+    if declared:
+        return Path(declared)
+    vendored = vendored_masaq_path()
+    if vendored.is_file():
+        return vendored
+    raise MasaqDepositError(
+        "بايتاتُ MASAQ ليست في هذه الشجرة ولا صُرِّح بمسارها؛ فتُودَع في "
+        f"`{MASAQ_RELATIVE_PATH}` أو يُصرَّح به في `{MASAQ_PATH_VARIABLE}`، "
+        "ولا يُخمَّن موضعُها."
+    )
 
 
 def read_masaq_bytes(path: Path | str | None = None) -> bytes:

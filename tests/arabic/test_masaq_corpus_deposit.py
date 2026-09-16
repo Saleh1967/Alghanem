@@ -4,7 +4,8 @@
 منسوخةٍ إلى هذه الشجرة، والمُحاكى بنيةُ الصفّ وحدَها — ترويسةٌ، وسجلٌّ فيه
 فاصلُ سطرٍ داخل حقلٍ مُقتبَس، ومقاطعُ كلمةٍ واحدةٍ تحمل `Word_No` مكرَّرًا.
 ولا يُقرأ من سطرٍ مُصطنَعٍ رقمٌ عن المدوَّنة البتّة؛ أرقامُها كلُّها من
-البايتات المُبصَّمة، وإعادةُ اشتقاقها اختبارٌ يُفعَّل بـ`ALGHANEM_MASAQ_PATH`.
+البايتات المُبصَّمة، وإعادةُ اشتقاقها اختبارٌ يُفعَّل ببايتات `corpora/MASAQ.csv`
+المُودَعة في الشجرة، أو بمسارٍ يُصرَّح به في `ALGHANEM_MASAQ_PATH`.
 """
 
 from __future__ import annotations
@@ -29,6 +30,7 @@ from alghanem.arabic.masaq_corpus_deposit import (
     MASAQ_LICENCE,
     MASAQ_PATH_VARIABLE,
     MASAQ_REDERIVED_FIGURES,
+    MASAQ_RELATIVE_PATH,
     MASAQ_SHA256,
     MIRROR_CORROBORATION,
     MORPH_TAG_COLUMN,
@@ -39,6 +41,7 @@ from alghanem.arabic.masaq_corpus_deposit import (
     RederivedFigure,
     figures_named,
     lines_are_conserved,
+    masaq_path,
     masaq_records,
     read_masaq_bytes,
     rederive_embedded_newline_breaks,
@@ -46,6 +49,7 @@ from alghanem.arabic.masaq_corpus_deposit import (
     rederive_line_count,
     rederive_record_count,
     rederive_tag_count,
+    vendored_masaq_path,
 )
 
 SYNTHETIC_HEADER = "ID,Sura_No,Verse_No,Word_No,Column5,Morph_Tag,Gloss"
@@ -214,10 +218,52 @@ def test_bytes_are_refused_on_a_length_or_a_digest_mismatch(tmp_path: Path) -> N
         read_masaq_bytes(tmp_path / "absent.csv")
 
 
-def test_no_path_is_guessed_when_none_is_declared(
+def test_no_path_is_guessed_beyond_the_deposited_location(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    """الموضعُ المسنونُ وحدَه يُجرَّب بلا تصريح؛ وغيابُه رفضٌ لا تخمين."""
+
     monkeypatch.delenv(MASAQ_PATH_VARIABLE, raising=False)
+
+    if vendored_masaq_path().is_file():
+        assert masaq_path() == vendored_masaq_path()
+        return
+
+    with pytest.raises(MasaqDepositError):
+        read_masaq_bytes()
+
+
+def test_the_deposited_location_is_resolved_from_the_tree_not_the_cwd(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.delenv(MASAQ_PATH_VARIABLE, raising=False)
+    monkeypatch.chdir(tmp_path)
+
+    assert vendored_masaq_path().is_absolute()
+    assert vendored_masaq_path().as_posix().endswith(MASAQ_RELATIVE_PATH)
+    assert MASAQ_RELATIVE_PATH == "corpora/MASAQ.csv"
+
+
+def test_a_declared_path_outranks_the_deposited_location(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """الإيداعُ في الشجرة لا يُبطِل تصريحًا؛ والمُمرَّرُ يسبق البيئةَ ويسبقانه."""
+
+    elsewhere = tmp_path / "MASAQ.csv"
+    monkeypatch.setenv(MASAQ_PATH_VARIABLE, str(elsewhere))
+
+    assert masaq_path() == elsewhere
+    assert masaq_path(tmp_path / "passed.csv") == tmp_path / "passed.csv"
+
+
+def test_the_deposited_location_is_no_certificate_of_the_bytes(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """ملفٌّ في الموضع الصحيح ببايتاتٍ أخرى مرفوضٌ كغيره: الموضعُ ليس بصمة."""
+
+    impostor = tmp_path / "MASAQ.csv"
+    impostor.write_bytes(SYNTHETIC_BYTES)
+    monkeypatch.setenv(MASAQ_PATH_VARIABLE, str(impostor))
 
     with pytest.raises(MasaqDepositError):
         read_masaq_bytes()
@@ -259,12 +305,12 @@ def test_the_attribution_is_a_licence_condition_carried_in_the_module() -> None:
 
 
 @pytest.mark.skipif(
-    not os.environ.get(MASAQ_PATH_VARIABLE),
+    not os.environ.get(MASAQ_PATH_VARIABLE) and not vendored_masaq_path().is_file(),
     reason=(
-        "the MASAQ bytes are not vendored in this repository: its CC BY 3.0 "
-        "licence would permit it, but the witness pattern of this tree keeps "
-        f"corpus bytes out. Set {MASAQ_PATH_VARIABLE} to the exact MASAQ.csv "
-        "whose digest is deposited to re-derive all twenty figures here"
+        "the MASAQ bytes are absent from this checkout. Its CC BY 3.0 licence "
+        f"permits depositing them at {MASAQ_RELATIVE_PATH}; until they are "
+        f"there, set {MASAQ_PATH_VARIABLE} to the exact MASAQ.csv whose digest "
+        "is deposited to re-derive all twenty figures here"
     ),
 )
 def test_all_twenty_figures_rederive_from_the_deposited_bytes() -> None:
