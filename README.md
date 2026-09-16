@@ -3956,6 +3956,67 @@ settles nothing about estimated markers by counting them.
 `examples/arabic/measure_irab_operators.py` prints each arriving figure beside
 its derivation and exits non-zero on any that differs.
 
+A third denominator follows, and the unit built on it opens with a retraction.
+`src/alghanem/arabic/ibtida_preregistration.py` freezes the **positions that
+admit inchoativity** — mubtadaʾ 3,598 (imported from the first freeze, never
+restated), mubtadaʾ muʾakhkhar 570, khabar 2,057, ism ḥarf nāsikh 2,086 and its
+khabar 929, ism fiʿl nāsikh 1,199 and its khabar 799, and ism lā al-nāfiya
+li-l-jins 111 — and the denominator is their **sum**, 11,349, derived rather
+than written as a ninth figure that could drift from the eight. It is not the
+stems and not the segments: 11,349, 77,797 and 157,677 are three declared
+denominators under `ADenominatorIsDeclaredNotAssumed`, and a module-level guard
+refuses the unit outright if the inchoative total ever equals either of the
+other two. Four mutually exclusive and jointly exhaustive classes partition
+those eight values — bare, particle-nasḵẖ, verb-nasḵẖ, and lā of absolute
+negation — with a guard that no value falls in two classes, none outside all
+four, and their sum is the denominator exactly. The lā class has **no khabar
+value in this column at all**, which is recorded as *did not arrive*, never as
+a zero. `TheTwoColumnsAreNotOneFigure` keeps the earlier freeze untouched:
+"khabar" in `Syntactic_Role` is 2,057 and "khabar" in `Phrasal_Function` is
+1,398, two tags under two conditions rather than two rival numbers, and the
+constructor refuses any position declared on the phrasal column.
+
+Two limits are written into the unit rather than left to a reader.
+`ARoleTagIsNotALink`: a "khabar" tag says *this is a predicate*, not *this is
+the predicate of that mubtadaʾ*; the corpus binds no two terms, so
+`ibtida_census.py` reports three standings for each inchoative **inside its own
+verse** — one tagged predicate, no tagged predicate, or more than one candidate
+— and the second is named by its place, not summed into a zero. There is no
+gold for that link, so the output structures carry no accuracy, precision,
+recall or score field and a guard refuses one (`NoGoldForTheInchoativeLink`).
+`AnInchoativeGovernorIsSemanticNotLexical`: inchoativity is a semantic
+governor, so no lexical detector is sought for it, and 35.4% of mubtadaʾ
+positions are marked by sukūn — the ruling stands while the marker is absent.
+Four residues are named before they are excused, in five lines so that neither
+of the two nasikh differences hides inside a sum: three accusative mubtadaʾ,
+whose **individual inspection is mandatory** and whose places are emitted one
+by one rather than summarised; an arriving 187 that does **not** derive by
+subtraction from the eight (3,598 + 570 − 2,057 = 2,111), so its two terms stay
+a declared empty place; 1,157 and 400 derived by subtraction and never written
+as third numbers; and a fronted predicate that carries no tag at all, so its
+size is `None` rather than zero. The three-part `PreMeasurementExpectation` is
+the only thing written before its answer, and each part is falsifiable: the
+three accusatives stay three, the nasikh ratios stay near 2.25:1 and 1.5:1 —
+**if the two sides come out equal the hypothesis fails** — and every tagged
+nāsikh has a tagged name in its own verse, a governor without one being a
+residue that gets named, not zeroed.
+
+The retraction is recorded in the unit itself rather than quietly corrected.
+It was declared earlier along this path that the predicate is not annotated;
+that was wrong, and it came from scanning the top ten values of a column and
+then denying the rest of it. The predicate is annotated by four values — khabar,
+khabar ḥarf nāsikh, khabar fiʿl nāsikh, and mubtadaʾ muʾakhkhar. The arithmetic
+is recorded as it fell rather than tidied: the first three sum to exactly 3,785,
+and adding mubtadaʾ muʾakhkhar gives 4,355, so the figure 3,785 arrived
+attributed to four values while being the sum of three. From that error
+`APartialScanForbidsATotalDenial` is enacted — a partial scan licenses no total
+denial; its answer is *not examined*, never *not there* — this being its third
+recurrence on this path. `examples/arabic/measure_ibtida_census.py` prints the
+declared denominator, each arriving figure beside its derivation, the class
+conservation check and the named residues, and exits non-zero on any
+difference, and the byte-gated test skips with a written reason until the
+fingerprinted bytes resolve.
+
 ### A census whose numbers no one claimed first
 
 While those bytes are awaited, `src/alghanem/arabic/maqayis_witness_census.py`
