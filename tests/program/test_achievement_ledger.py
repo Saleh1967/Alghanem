@@ -442,13 +442,22 @@ def test_every_example_script_carries_a_declared_reproduction_standing(
         assert isinstance(entry.standing, ExampleScriptStanding)
 
 
-def test_no_example_script_in_this_tree_is_reproduced_by_a_witness(
+def test_two_example_scripts_in_this_tree_are_reproduced_and_the_rest_are_not(
     ledger: AchievementLedger,
 ) -> None:
+    """الرتبتان معًا مسكونتان، والمذكورُ في شاهدٍ ليس بذلك مُشغَّلًا فيه."""
+
+    reproduced = ledger.example_scripts_by_standing(
+        ExampleScriptStanding.REPRODUCED_BY_A_WITNESS
+    )
     unreproduced = ledger.example_scripts_by_standing(
         ExampleScriptStanding.DECLARED_NOT_REPRODUCED
     )
-    assert len(unreproduced) == ledger.example_script_count
+    assert [entry.relative_path for entry in reproduced] == [
+        "examples/arabic/rederive_gflk_witnesses.py",
+        "examples/kernel/license_transitions.py",
+    ]
+    assert len(reproduced) + len(unreproduced) == ledger.example_script_count
     assert (
         EXAMPLE_SCRIPT_REFERENCE_IS_NOT_EXECUTION in ACHIEVEMENT_LEDGER_NAMED_RESIDUALS
     )

@@ -7,9 +7,12 @@ import hashlib
 import pytest
 
 from alghanem.arabic.maqayis_root_table_deposit import (
+    A_COUNT_IS_RELATIVE_TO_ITS_COUNTING_RULE_NOTE,
     DECLARED_COLUMNS,
+    FILE_LINE_COUNTING_RULE,
     FROZEN_ROOT_TABLE,
     REDERIVED_DISTINCT_TRILATERAL_ROOTS,
+    REDERIVED_FILE_LINE_COUNT,
     REDERIVED_RECORD_COUNT,
     REDERIVED_SPECIFICATION_FIGURES,
     ROOT_TABLE_RELATIVE_PATH,
@@ -17,8 +20,10 @@ from alghanem.arabic.maqayis_root_table_deposit import (
     MaqayisRootTableError,
     RederivedSpecificationFigure,
     RootTableReference,
+    file_ends_with_a_line_separator,
     read_root_table_bytes,
     rederive_distinct_trilateral_roots,
+    rederive_file_line_count,
     rederive_record_count,
     root_table_digest,
     root_table_path,
@@ -63,6 +68,26 @@ def test_a_row_count_is_not_a_line_count() -> None:
     assert line_count > rederive_record_count()
 
 
+def test_the_line_count_is_rederived_under_a_declared_counting_rule() -> None:
+    """٣٦٬٥٩٧ صار له قاعدةٌ ودالّةٌ تُعيد اشتقاقَه، لا ذِكرًا في نثرٍ وحده."""
+
+    assert rederive_file_line_count() == REDERIVED_FILE_LINE_COUNT == 36_597
+    assert FILE_LINE_COUNTING_RULE.strip()
+    assert "٣٦٬٥٩٧" in A_COUNT_IS_RELATIVE_TO_ITS_COUNTING_RULE_NOTE
+    assert "FILE_LINE_COUNTING_RULE" in A_COUNT_IS_RELATIVE_TO_ITS_COUNTING_RULE_NOTE
+
+
+def test_the_two_line_counting_rules_differ_by_the_missing_final_separator() -> None:
+    """العددان ليسا تناقضًا بل قاعدتان، وعلّةُ الفرق واقعةٌ تُفحَص لا تُخمَّن."""
+
+    data = read_root_table_bytes()
+    by_separator = data.count(b"\n")
+    by_splitlines = len(data.decode("utf-8").splitlines())
+    assert file_ends_with_a_line_separator() is False
+    assert by_splitlines == by_separator + 1 == 36_598
+    assert rederive_file_line_count() == by_separator
+
+
 def test_the_trilateral_root_count_is_on_distinct_roots_not_rows() -> None:
     """٤٬٠٨٧ على الجذور المتمايزة؛ وصفوفُ «ثلاثي» ٤٬٠٨٩ لجذرين بصفّين."""
 
@@ -80,9 +105,10 @@ def test_the_rederived_figures_carry_their_counting_rule_and_their_limit() -> No
     """رقمٌ بلا قاعدةِ عدٍّ أو بلا حدٍّ مكتوبٍ لما لا يُثبته لا يُسجَّل."""
 
     figures = {entry.figure: entry for entry in REDERIVED_SPECIFICATION_FIGURES}
-    assert set(figures) == {"4,576", "4,087"}
+    assert set(figures) == {"4,576", "4,087", "36,597"}
     assert figures["4,576"].rederived_count == rederive_record_count()
     assert figures["4,087"].rederived_count == rederive_distinct_trilateral_roots()
+    assert figures["36,597"].rederived_count == rederive_file_line_count()
     for entry in REDERIVED_SPECIFICATION_FIGURES:
         assert entry.counting_rule.strip()
         assert entry.what_it_still_does_not_establish.strip()

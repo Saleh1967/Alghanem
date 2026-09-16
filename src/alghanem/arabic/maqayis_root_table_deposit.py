@@ -17,8 +17,16 @@
 
 `A_COUNT_IS_RELATIVE_TO_ITS_COUNTING_RULE`: «سجلّ» و«جذر ثلاثيّ» ليسا
 مُعطَيين في البايتات؛ هما ناتجُ قاعدةِ عدٍّ تُعلَن قبل الرقم. فكلُّ عددٍ هنا
-يحمل قاعدتَه بنصّها (`RECORD_COUNTING_RULE`، `TRILATERAL_ROOT_COUNTING_RULE`)،
-ورقمٌ بلا قاعدتِه ليس قابلًا لإعادة الاشتقاق ولو طابقت بصمةُ ملفّه.
+يحمل قاعدتَه بنصّها (`RECORD_COUNTING_RULE`، `TRILATERAL_ROOT_COUNTING_RULE`،
+`FILE_LINE_COUNTING_RULE`)، ورقمٌ بلا قاعدتِه ليس قابلًا لإعادة الاشتقاق ولو
+طابقت بصمةُ ملفّه.
+
+`THE_LINE_COUNT_WAS_ITSELF_RULE_FREE`: كان ٣٦٬٥٩٧ مذكورًا في نصّ القانون
+أعلاه بلا قاعدةِ عدٍّ وبلا إعادةِ اشتقاق، بخلاف العددين المذكورين معه —
+فالقانونُ كان يُخالَف في مثاله. وهو صحيحٌ تحت قاعدةٍ واحدةٍ بعينها (عدُّ
+فواصل الأسطر)، ويصير ٣٦٬٥٩٨ تحت قاعدةٍ أخرى مشروعةٍ (`splitlines`) لأنّ
+الملفَّ **لا ينتهي بفاصل سطر**؛ فالقاعدةُ تُعلَن هنا بنصّها، والعددُ يُعاد
+اشتقاقُه، والفرقُ يُسمّى ولا يُطوى.
 
 `A_COUNT_IN_A_FILE_IS_NOT_A_COUNT_IN_ARABIC`: ٤٬٠٨٧ عددُ جذورٍ ثلاثيّةٍ
 متمايزةٍ **في هذا الملفّ**، وهو دالّةٌ في نسخة المعجم وفي قاعدة العدّ معًا؛
@@ -51,21 +59,26 @@ __all__ = [
     "A_COUNT_IN_A_FILE_IS_NOT_A_COUNT_IN_ARABIC_NOTE",
     "A_COUNT_IS_RELATIVE_TO_ITS_COUNTING_RULE_NOTE",
     "DECLARED_COLUMNS",
+    "FILE_LINE_COUNTING_RULE",
     "FROZEN_ROOT_TABLE",
     "RECORD_COUNTING_RULE",
     "REDERIVED_DISTINCT_TRILATERAL_ROOTS",
+    "REDERIVED_FILE_LINE_COUNT",
     "REDERIVED_RECORD_COUNT",
     "REDERIVED_SPECIFICATION_FIGURES",
     "ROOT_TABLE_RELATIVE_PATH",
     "THE_BYTES_ARE_IN_THE_TREE_NOW_NOTE",
     "THE_CORPUS_FIGURES_STAY_WITHHELD_NOTE",
+    "THE_LINE_COUNT_WAS_ITSELF_RULE_FREE_NOTE",
     "TRILATERAL_ROOT_COUNTING_RULE",
     "TRILATERAL_ROOT_TYPE",
     "MaqayisRootTableError",
     "RederivedSpecificationFigure",
     "RootTableReference",
+    "file_ends_with_a_line_separator",
     "read_root_table_bytes",
     "rederive_distinct_trilateral_roots",
+    "rederive_file_line_count",
     "rederive_record_count",
     "root_table_digest",
     "root_table_path",
@@ -154,6 +167,14 @@ TRILATERAL_ROOT_COUNTING_RULE: Final[str] = (
     "والرباعيُّ المكرَّرُ خارج هذا العدّ بنصّ القاعدة لا بإهمال"
 )
 
+FILE_LINE_COUNTING_RULE: Final[str] = (
+    "سطرُ الملفّ محسوبٌ بعدد فواصل الأسطر (`\\n`) في البايتات، وهي قاعدةُ "
+    "`wc -l` نفسُها. وهذه القاعدةُ ليست الوحيدةَ المشروعة: الملفُّ **لا "
+    "ينتهي بفاصل سطر**، فقاعدةُ «عدُّ المقاطع التي يُنتجها `splitlines`» "
+    "تُعطي واحدًا أكثر، لأنّ البايتات بعد الفاصل الأخير مقطعٌ لا فاصلَ له. "
+    "فالعددان صحيحان كلٌّ تحت قاعدته، والمُجمَّدُ هنا الأولى بنصّها"
+)
+
 
 def root_table_path(root: Path | None = None) -> Path:
     """مسارُ الملفّ، مُشتقًّا من جذر المستودع لا مكتوبًا مطلقًا."""
@@ -211,6 +232,18 @@ def rederive_record_count(root: Path | None = None) -> int:
     return len(root_table_rows(root))
 
 
+def rederive_file_line_count(root: Path | None = None) -> int:
+    """عددُ أسطر الملفّ تحت `FILE_LINE_COUNTING_RULE`، من البايتات المُبصَّمة."""
+
+    return read_root_table_bytes(root).count(b"\n")
+
+
+def file_ends_with_a_line_separator(root: Path | None = None) -> bool:
+    """هل تنتهي البايتاتُ بفاصل سطر؟ عليه يدور فرقُ القاعدتين، فلا يُخمَّن."""
+
+    return read_root_table_bytes(root).endswith(b"\n")
+
+
 def rederive_distinct_trilateral_roots(root: Path | None = None) -> int:
     """عددُ الجذور الثلاثيّة المتمايزة تحت `TRILATERAL_ROOT_COUNTING_RULE`."""
 
@@ -231,6 +264,14 @@ REDERIVED_DISTINCT_TRILATERAL_ROOTS: Final[int] = 4_087
 
 وصفوفُ «ثلاثي» ٤٬٠٨٩ لا ٤٬٠٨٧؛ والفرقُ جذران مكرَّران بصفّين، فالمطابقةُ تقع
 على **المتمايز** لا على الصفوف، وهو ما تقوله `TRILATERAL_ROOT_COUNTING_RULE`.
+"""
+
+REDERIVED_FILE_LINE_COUNT: Final[int] = 36_597
+"""٣٦٬٥٩٧: الرقمُ الذي ذُكر في نصّ القانون بلا قاعدةٍ، مُعادًا اشتقاقُه بقاعدته.
+
+وهو عددُ فواصل الأسطر تحت `FILE_LINE_COUNTING_RULE`. والملفُّ لا ينتهي بفاصل
+سطر، فقاعدةُ `splitlines` تُعطي ٣٦٬٥٩٨؛ والعددان ليسا تناقضًا بل قاعدتان،
+و`file_ends_with_a_line_separator` هي الواقعةُ التي يدور عليها الفرق.
 """
 
 
@@ -298,6 +339,20 @@ REDERIVED_SPECIFICATION_FIGURES: Final[tuple[RederivedSpecificationFigure, ...]]
             "الثلاثيّة، ولا يُقرأ منه تصنيفُ جذرٍ بعينه مجرّدًا أو مزيدًا"
         ),
     ),
+    RederivedSpecificationFigure(
+        figure="36,597",
+        locus="§٢-ب ونصُّ `A_COUNT_IS_RELATIVE_TO_ITS_COUNTING_RULE` نفسِه",
+        claim_text="«صفٌّ في csv لا سطرٌ في ملفّ (أسطرُه ٣٦٬٥٩٧)»",
+        rederived_count=REDERIVED_FILE_LINE_COUNT,
+        counting_rule=FILE_LINE_COUNTING_RULE,
+        what_it_still_does_not_establish=(
+            "أنّ ٣٦٬٥٩٧ «عددُ أسطر الملفّ» مطلقًا: هو عددُها تحت قاعدةٍ "
+            "واحدةٍ من قاعدتين مشروعتين، ويصير ٣٦٬٥٩٨ تحت الأخرى لأنّ "
+            "الملفَّ لا ينتهي بفاصل سطر. وكان الرقمُ مذكورًا هنا بلا قاعدةٍ "
+            "ولا إعادةِ اشتقاق، فكان نصُّ القانون يُخالَف في مثاله؛ "
+            "والمرفوعُ بهذا الإدخال تلك المخالفةُ وحدها، لا شيءٌ عن الملفّ"
+        ),
+    ),
 )
 
 
@@ -309,9 +364,18 @@ THE_BYTES_ARE_IN_THE_TREE_NOW_NOTE: Final[str] = (
 )
 
 A_COUNT_IS_RELATIVE_TO_ITS_COUNTING_RULE_NOTE: Final[str] = (
-    "ACountIsRelativeToItsCountingRule: «سجلّ» و«جذر ثلاثيّ» ناتجُ قاعدةٍ "
-    "تُعلَن قبل الرقم لا مُعطًى في البايتات؛ فأسطرُ الملفّ ٣٦٬٥٩٧ وسجلّاتُه "
-    "٤٬٥٧٦، وصفوفُ «ثلاثي» ٤٬٠٨٩ ومتمايزُها ٤٬٠٨٧"
+    "ACountIsRelativeToItsCountingRule: «سجلّ» و«جذر ثلاثيّ» و«سطر» ناتجُ "
+    "قاعدةٍ تُعلَن قبل الرقم لا مُعطًى في البايتات؛ فأسطرُ الملفّ ٣٦٬٥٩٧ تحت "
+    "`FILE_LINE_COUNTING_RULE`، وسجلّاتُه ٤٬٥٧٦، وصفوفُ «ثلاثي» ٤٬٠٨٩ "
+    "ومتمايزُها ٤٬٠٨٧ — كلٌّ بقاعدته المكتوبة ومُعادَ الاشتقاق"
+)
+
+THE_LINE_COUNT_WAS_ITSELF_RULE_FREE_NOTE: Final[str] = (
+    "TheLineCountWasItselfRuleFree: ذُكر ٣٦٬٥٩٧ في نصّ القانون أعلاه بلا "
+    "قاعدةِ عدٍّ وبلا إعادةِ اشتقاق، بخلاف العددين المذكورين معه؛ فكان "
+    "القانونُ يُخالَف في مثاله. وقد صار له قاعدةٌ ودالّةٌ تُعيد اشتقاقَه، "
+    "وصار فرقُ القاعدتين (٣٦٬٥٩٧ مقابل ٣٦٬٥٩٨) مُسمًّى بعلّته: غيابُ فاصل "
+    "السطر الأخير، مفحوصًا بـ `file_ends_with_a_line_separator` لا مُخمَّنًا"
 )
 
 A_COUNT_IN_A_FILE_IS_NOT_A_COUNT_IN_ARABIC_NOTE: Final[str] = (

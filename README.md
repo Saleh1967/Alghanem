@@ -2827,10 +2827,12 @@ given as Ibn Fāris's *Maqāyīs al-Lugha*, and copies of a dictionary differ by
 for byte, so naming an origin is not fingerprinting a file. Its bytes have since
 been uploaded into this tree, so
 `src/alghanem/arabic/maqayis_root_table_deposit.py` freezes their length and
-digest and re-checks both on every read, and the two figures the text named leave
+digest and re-checks both on every read, and the figures the text named leave
 the withheld register for `REDERIVED_SPECIFICATION_FIGURES`, each carrying the
 counting rule that produced it: 4,576 records under a rule that a record is a CSV
-row and not a file line (the file has 36,597 lines), and 4,087 trilateral roots
+row and not a file line; 36,597 lines under a rule that counts line separators in
+the bytes, the file having no final separator so a `splitlines` rule yields 36,598
+— two rules, not a contradiction; and 4,087 trilateral roots
 under a rule that counts distinct `root_full` values and not rows (4,089 rows are
 typed `ثلاثي`, two roots appearing twice). What that buys is re-derivability, not
 vindication: a matching count shows the counter counted this file under this
@@ -3300,9 +3302,12 @@ to edit the constitution. Gates heading constitutional sections without a
 mention here are enumerated under a third standing of their own, so nothing
 falls silently on either side.
 
-Two standing gaps are now counted rather than assumed away. The five scripts
-under `examples/` that no test calls are recorded as declared-but-not-
-reproduced, and the two skipped tests are classified into two declared genera —
+Two standing gaps are now counted rather than assumed away. The scripts under
+`examples/` that no test calls are recorded as declared-but-not-reproduced —
+all of them until `examples/kernel/license_transitions.py` and
+`examples/arabic/rederive_gflk_witnesses.py` each arrived with a witness that
+loads and runs it, leaving those two alone in the other standing — and the two
+skipped tests are classified into two declared genera —
 conditional on an undeposited input, and a case inapplicable by construction —
 with any third skip form refused by file and line, since a skip whose genus is
 unnamed is counted as a pass and is not one. What stays open is named:

@@ -425,13 +425,13 @@ def test_the_named_root_file_is_now_fingerprinted_here() -> None:
     assert roots.what_is_still_missing.strip()
 
 
-def test_the_two_root_figures_left_the_withheld_register() -> None:
-    """٤٬٥٧٦ و٤٬٠٨٧ غادرا سجلَّ المتعذّر إلى سجلّ المُعاد اشتقاقُه، ومعهما حدُّهما."""
+def test_the_root_file_figures_left_the_withheld_register() -> None:
+    """٤٬٥٧٦ و٤٬٠٨٧ و٣٦٬٥٩٧ غادرت سجلَّ المتعذّر إلى المُعاد اشتقاقُه بحدودها."""
 
     withheld = {claim.figure for claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS}
     rederived = {entry.figure: entry for entry in REDERIVED_SPECIFICATION_FIGURES}
-    assert {"4,576", "4,087"} == set(rederived)
-    assert not ({"4,576", "4,087"} & withheld)
+    assert {"4,576", "4,087", "36,597"} == set(rederived)
+    assert not ({"4,576", "4,087", "36,597"} & withheld)
     for entry in REDERIVED_SPECIFICATION_FIGURES:
         assert entry.counting_rule.strip()
         assert entry.what_it_still_does_not_establish.strip()
