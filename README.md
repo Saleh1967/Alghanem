@@ -3737,19 +3737,23 @@ length and a different digest re-derives the fourteen tag counts exactly and
 diverges on all six byte-and-line figures; that is recorded as corroboration
 under `AMirrorWithAnotherDigestIsNotTheseBytes`, not as a second witness, and
 the column binding of the deposited bytes remains the depositor's declaration,
-not a reading taken from the mirror. CC BY 3.0 would permit vendoring, unlike
-QAC (GPL) and Tanzil (CC BY-ND); the bytes are still **not vendored** — the path
-is passed in `ALGHANEM_MASAQ_PATH` and matched on length and digest before any
-figure is returned.
+not a reading taken from the mirror. CC BY 3.0 permits vendoring, unlike
+QAC (GPL) and Tanzil (CC BY-ND), and that licence is exercised: the bytes are
+deposited at `corpora/MASAQ.csv`, so the twenty figures re-derive in CI with no
+declaration at all. A checkout without them still passes a path in
+`ALGHANEM_MASAQ_PATH`. Neither route weakens the gate — the deposited location
+is a declared place, not a certificate, and length and digest are matched
+before any figure is returned.
 
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
 T. Zerrouki, http://arramooz.sourceforge.net/ and
 https://github.com/linuxscout/qutrub. MASAQ: Morphologically-Analyzed and
 Syntactically-Annotated Quran, Majdi Sawalha, University of Jordan,
-DOI 10.17632/9yvrzxktmr.2, licensed CC BY 3.0 — its bytes are not vendored
-here, and whoever opens them owes its authors that attribution, which is
-recorded as a condition of the deposit before any figure is issued. All
+DOI 10.17632/9yvrzxktmr.2, licensed CC BY 3.0 — its bytes are deposited at
+`corpora/MASAQ.csv` under that licence, and whoever opens them owes its authors
+that attribution, which is recorded as a condition of the deposit before any
+figure is issued. All
 attributions are licence conditions, not courtesies.
 
 ```bash
