@@ -3487,6 +3487,44 @@ tree. The independent convergences are recorded too, each with what it does not
 establish. Nothing is born, ranked or frozen as evidence, and no module in
 `kernel/` reads any of it.
 
+One of those conflicts named a condition rather than a defeat: resolving the
+weak radical by matching a consonantal skeleton against the root table is
+circular, since `خيف`, `نيم`, `هوب` and `قيل` are separate entries there
+alongside `خوف`, `نوم`, `هيب` and `قول`, so the skeleton returns both. The
+condition written before any witness arrived was "a fingerprinted witness
+outside the surface form". `hollow_root_root_census` is that witness put to
+work: the `ROOT` feature of the Quranic Arabic Corpus morphology file, tagged
+word by word by others before this question was asked, bound to the digest and
+byte length already frozen in `irab_corpus_witness`. Counting under three named
+rules — segments, words, verses, since 124 without its rule is not a number —
+one side of every competing pair is untagged in that corpus: خوف 124 against
+خيف 0, نوم 9 against نيم 0, قول 1,722 against قيل 2, and هوب/هيب both 0, over
+128,219 morphological segments. The numbers arrived declared *before* the count
+was run here and matched exactly, which makes the match predictive rather than
+fitted (`THE_NUMBERS_ARRIVED_BEFORE_THE_RUN`). The two قيل occurrences were
+examined individually and are not mistagged قول: (7:4:10:1) قَآئِلُونَ and
+(25:24:7:1) مَقِيلًا carry lemmas `qaA^}iluwn` and `maqiyl`, the midday-rest
+root, distinguished in the bytes themselves. The zero for هوب/هيب confirms what
+`hollow_root_levels_preregistration` already declared: يَهَابُ was a
+hand-built example, never an observed corpus form, so it is neither deleted nor
+promoted. What this does *not* establish is named as loudly: a tagged root is a
+human judgement, not a measurement, so a zero means "untagged in this corpus",
+not "absent from Arabic"; and the census is not a root extractor — the
+circularity loses its live alternative *inside this corpus*, which is not the
+same as a rule from surface form to root (`THE_CENSUS_IS_NOT_A_ROOT_EXTRACTOR`).
+Accordingly the recorded conflict's `tree_reference` and
+`what_would_resolve_it` now point at the census and its re-derivation script,
+while its standing stays `THE_TREE_CANNOT_TEST_IT`: changing a rank is a
+separate, deliberate decision, never a side effect of depositing numbers. The
+corpus bytes are still not vendored — its GPL licence and the CC BY-ND Tanzil
+text it embeds forbid modification — so the re-derivation runs at the holder of
+the bytes via `examples/irab/measure_hollow_root_census.py`, and no number
+passes before the digest and length match.
+
+Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
+Tanzil Quran text, http://tanzil.info. Both attributions are licence
+conditions, not courtesies.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest

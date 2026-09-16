@@ -174,3 +174,27 @@ def test_no_kernel_module_reads_the_hollow_root_ladder() -> None:
         assert spec is not None and spec.origin is not None
         text = pathlib.Path(spec.origin).read_text(encoding="utf-8")
         assert "hollow_root_levels" not in text, module.name
+
+
+def test_the_circular_root_conflict_points_at_the_census_without_changing_rank() -> (
+    None
+):
+    """المرجعُ يُحدَّث والمنزلةُ لا: تبديلُ المنزلة قرارٌ مستقلٌّ لا أثرٌ جانبيّ.
+
+    فالمرجعُ يُشير إلى `hollow_root_root_census` وإلى سكربت إعادة الاشتقاق،
+    والمنزلةُ باقيةٌ `THE_TREE_CANNOT_TEST_IT` حتى يُتَّخذ القرارُ بنفسه.
+    """
+
+    circular = [
+        conflict
+        for conflict in HOLLOW_ROOT_CONFLICTS
+        if "جدول الجذور" in conflict.locus
+    ]
+    assert len(circular) == 1
+    conflict = circular[0]
+
+    assert "hollow_root_root_census" in conflict.tree_reference
+    assert "measure_hollow_root_census" in conflict.tree_reference
+    assert "QURANIC_ARABIC_CORPUS_WITNESS" in conflict.tree_reference
+    assert conflict.standing is ConflictStanding.THE_TREE_CANNOT_TEST_IT
+    assert "تبديلُ المنزلة قرارٌ مستقلٌّ" in conflict.what_would_resolve_it
