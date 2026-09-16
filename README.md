@@ -3594,6 +3594,52 @@ sources. Nor does the table speak to augmented forms or quadriliterals: every
 root in it is trilateral. The table's bytes remain unvendored; its GPL requires
 attribution to T. Zerrouki, with verb data collected by M. Kebdani.
 
+The next unit measures **hamzat al-waṣl in the bare imperative by root shape**
+on the same fingerprinted bytes, and it begins with a correction to the frame
+it arrived in: SHA-256 has **no order-preserving property whatever**. The
+avalanche effect makes two adjacent inputs produce two unrelated digests, so a
+digest can be "followed up and down" in no sense at all; it fixes identity, not
+order. The ordering work that *was* done earlier in this tree was over Unicode
+code points, which do order, and that remains untouched. The specification
+(`src/alghanem/arabic/imperative_wasla_specification.py`, digest
+`994d8b9e…6e23`) is marked `مُصاغة_بعد_الرقم` — **formulated after the number**
+— because it was: the bytes were read first and the rules written afterwards,
+and saying so is cheaper than pretending otherwise. It therefore freezes
+**four** competing definitions of the weak radical rather than one, because the
+result depends on the choice and hiding the choice would hide the result: waw
+and yāʾ alone, or waw and yāʾ and hamza; and with the doubled root left inside
+the sound class or separated out of it. Across all 1,181 bare imperative
+segments (all trilateral; the corpus has no quadriliteral bare imperative), one
+thing is **invariant under every rule**: the hollow root takes hamzat al-waṣl
+in **zero** positions — 0/425 under the narrowest rule, 0/445 under the widest
+— and the assimilated root is near it. What is **not** invariant is the number
+quoted for the sound root: it moves from 510/604 = 84.4% to 493/493 = 100.0%
+purely by changing the rule. The arriving figure of 96.9% appears under none of
+the four, and of seventeen arriving figures only two re-derived: lafīf 14/44,
+and the count of one nāqiṣ exception. The sample size 838 was 938; the mithāl
+0/52 was 1/99; 217/258 roots was 116/149. The arriving table is reproducible
+only if **hamza is counted as a weak letter**, which conflates المهموز with
+المعتلّ — so the whole pattern rests on an undeclared rule, which is why all
+four are now declared. The claimed `p = 0.0000` is **arithmetically
+impossible**: a permutation p-value over 5,000 permutations has a hard floor of
+1/5001 = 0.0002, which is what both tests return (gap 84.44 and 100.00 points,
+zero null draws as extreme, maximum null gap ~11.2). The strongest finding was
+not in the arriving table at all: the fourteen sound-class exceptions turn out
+to be, **without a single exception, doubled roots** — and inside that one
+class the proposed mechanism can be tested *within* a group rather than
+correlated *between* two groups. It holds 21 of 22: where the gemination is
+assimilated the waṣl is absent 13/13, where it is broken the waṣl is present
+8/8. The one disagreement is 33:33 `qaro` — the classically contested form,
+where QAC's own tagging is internally inconsistent (tagged bare while its lemma
+`taqar~a` is form V) — and the single nāqiṣ exception is 2:186 `daEa`, tagged
+IMPV but commonly read as a perfect with nūn al-wiqāya. Both are recorded as
+named residual positions rather than corrected into agreement. The claim that
+the imperfect is a precondition of the imperative is **neither proved nor
+refuted here**: 116 of 149 imperative roots have a bare imperfect and 33 do
+not, but a bounded corpus yields absence of evidence, not evidence of absence,
+and that limit is written into the module instead of being argued around.
+Re-derived by `examples/irab/measure_imperative_wasla.py`.
+
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
 T. Zerrouki, http://arramooz.sourceforge.net/ and
