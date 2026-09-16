@@ -1,0 +1,129 @@
+"""Re-derive the thirteen arriving i'rab figures from the fingerprinted bytes.
+
+MASAQ annotates more than morphology: three of its columns carry i'rab —
+``Syntactic_Role``, ``Case_Mood_Marker`` and ``Phrasal_Function`` — and two
+more, ``Word_No`` and ``Column5``, decide whether a count is a count of
+segments or of words. The thirteen figures frozen in
+``alghanem.arabic.irab_column_preregistration`` arrived **from the holder of
+the bytes**; they were not measured in this tree, and freezing them is not
+believing them. This script re-derives each one and prints the claim beside
+the derivation::
+
+    ALGHANEM_MASAQ_PATH=/path/to/MASAQ.csv \\
+        python examples/arabic/measure_irab_columns.py
+
+The bytes are read from ``corpora/MASAQ.csv`` when they are there; the
+variable above is for bytes held elsewhere. Either way the byte length and the
+SHA-256 are matched before a single record is parsed.
+
+Three standings are printed, never collapsed into one: a value that is present
+and agrees, a value that is present and differs, and a value that **is not a
+value of that column at all**. The third is a statement about the label, not
+about the corpus — a transcription difference in spacing, hamza or vowelling
+would produce it, and reading it as a zero would turn an unread name into a
+measured absence.
+
+This script adopts no figure, issues no verdict, joins no corpus to another,
+and imports nothing from ``alghanem.kernel``. Counting an annotator's
+judgement is not settling it: the 1,632 "estimated ḍamma" segments are a count
+of judgements about something with no written trace, and no count decides that
+question.
+"""
+
+from __future__ import annotations
+
+import sys
+
+from alghanem.arabic.irab_column_census import (
+    IrabCensusError,
+    IrabValueStanding,
+    column_census,
+    read_figures,
+)
+from alghanem.arabic.irab_column_preregistration import (
+    IRAB_COLUMNS,
+    IRAB_PREREGISTRATION_DIGEST,
+    STANDING,
+)
+from alghanem.arabic.masaq_corpus_deposit import (
+    MASAQ_ATTRIBUTION,
+    MASAQ_PATH_VARIABLE,
+    MASAQ_RELATIVE_PATH,
+    MasaqDepositError,
+    masaq_records,
+    read_masaq_bytes,
+)
+
+
+def main() -> int:
+    try:
+        data = read_masaq_bytes()
+        records = masaq_records(data)
+    except MasaqDepositError as error:
+        print(f"error: {error}", file=sys.stderr)
+        print(
+            f"place the MASAQ.csv whose digest is deposited in "
+            f"{MASAQ_RELATIVE_PATH}, or set {MASAQ_PATH_VARIABLE} to it",
+            file=sys.stderr,
+        )
+        return 2
+
+    print(MASAQ_ATTRIBUTION)
+    print("(attribution is a licence condition, not a courtesy)")
+    print(f"preregistration digest: {IRAB_PREREGISTRATION_DIGEST}")
+    print(f"registration standing: {STANDING.value}")
+    print()
+
+    try:
+        readings = read_figures(records)
+    except IrabCensusError as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 3
+
+    unresolved: list[str] = []
+    for reading in readings:
+        figure = reading.figure
+        mark = {
+            IrabValueStanding.PRESENT_AND_AGREES: "ok",
+            IrabValueStanding.PRESENT_AND_DIFFERS: "DIFFERS",
+            IrabValueStanding.NOT_A_VALUE_OF_THIS_COLUMN: "ABSENT LABEL",
+        }[reading.standing]
+        print(f"  [{mark}] {figure.label} ({figure.column})")
+        print(f"         claimed: {figure.claimed_count}")
+        print(f"         derived: {reading.derived_count} segments")
+        if reading.word_count is not None:
+            print(f"         and {reading.word_count} words (a second count)")
+        print(f"         rule: {figure.counting_rule.value}")
+        if not reading.agrees:
+            unresolved.append(f"{figure.label}: {reading.standing.value}")
+    print()
+
+    for column in IRAB_COLUMNS:
+        try:
+            census = column_census(records, column.name)
+        except IrabCensusError as error:
+            print(f"  [STOPPED] {column.name}: {error}")
+            unresolved.append(f"{column.name}: العمودُ غائبٌ عن الترويسة")
+            continue
+        print(
+            f"  {column.name} ({column.arabic_name}): "
+            f"{census.distinct_values} distinct values, "
+            f"{census.annotated_segments} annotated segments, "
+            f"{census.unannotated_segments} unannotated"
+        )
+        print(f"         limit: {column.what_it_does_not_annotate}")
+    print()
+
+    if unresolved:
+        print(
+            f"error: {len(unresolved)} figure(s) did not re-derive: {unresolved}",
+            file=sys.stderr,
+        )
+        return 1
+    print(f"{len(readings)} arriving figures re-derived from the deposited bytes")
+    print("this script adopts nothing and deposits no cross-corpus figure")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

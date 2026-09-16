@@ -3749,6 +3749,38 @@ length and the digest are matched in every case before a figure is returned, so
 a file of the right name in the right place is still refused if it is not these
 bytes.
 
+MASAQ turned out to carry **i'rab, not only morphology**, and that is where the
+next module goes. Three of its columns annotate it — `Syntactic_Role`,
+`Case_Mood_Marker` and `Phrasal_Function` — and two more, `Word_No` and
+`Column5`, decide whether a count counts segments or words.
+`src/alghanem/arabic/irab_column_preregistration.py` freezes those five columns,
+three counting rules and the thirteen figures that **arrived from the holder of
+the bytes**: 66 distinct syntactic roles, fāʿil 10,483, mafʿūl bihi 8,878, muḍāf
+ilayhi 9,123, mubtadaʾ 3,598; 14 distinct case/mood markers, of which the
+sub-markers are thabāt al-nūn 2,611, ḥadhf al-nūn 1,913, yāʾ 1,884, wāw 723; the
+**estimated** markers, ḍamma 1,632 and fatḥa 1,404; and nāʾib fāʿil 57 in the
+phrasal column. Its standing is `مُصاغ_بعد_الرقم` and
+`TheFiguresArrivedFromTheHolderOfTheBytes` says plainly that these were measured
+elsewhere, so the freeze records a **claimed** number, not a measured one; they
+were not adopted, and `irab_column_census.py` re-derives every one of them from
+the fingerprinted bytes or produces nothing at all. Four named laws bound it.
+`AnAbsentValueIsNotAZero` splits what a single zero used to hide into three
+standings — present and agreeing, present and differing, and **not a value of
+that column at all** — because a difference of spacing, hamza or vowelling in a
+transcribed label would otherwise be read as a measured absence in Arabic.
+`AMissingColumnStopsTheCount` refuses a missing column instead of returning zero
+for it, since a zero passes through a report looking like a measurement.
+`SegmentsAndWordsAreTwoCounts` returns both counts for every value, that
+confusion being exactly the one that dropped an alignment from 23.3% to 0.3%.
+`CountingAJudgementIsNotSettlingIt` holds that the 1,632 estimated ḍammas are a
+count of annotator judgements about something with **no written trace**, so the
+question this tree could not settle is not settled by counting it — and that
+nāʾib fāʿil here is a witness inside MASAQ, never added to QAC's `PASS`. Sixteen
+synthetic-row tests, declared as synthetic, plus one test that runs the moment
+the bytes are resolvable; `examples/arabic/measure_irab_columns.py` prints each
+claim beside its derivation and exits non-zero on any figure that does not
+re-derive.
+
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
 T. Zerrouki, http://arramooz.sourceforge.net/ and
