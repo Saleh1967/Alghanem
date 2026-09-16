@@ -23,6 +23,18 @@ about the corpus — a transcription difference in spacing, hamza or vowelling
 would produce it, and reading it as a zero would turn an unread name into a
 measured absence.
 
+``Morph_type`` is read before any figure: it is the one column declared full
+in 100% of segments, so if it is not, the reading itself — record splitting,
+embedded newlines in a quoted field — is what is at fault, not the frozen
+figures, and every later difference is classed as a difference in the bytes.
+
+A figure that differs is neither edited nor explained away: it is recorded as
+it fell and classed by a rule written before it was seen — a counting-rule
+difference (the word count, not the segment count, is what the claim matched),
+a value-name difference (the frozen spelling is not a value of that column at
+all), a difference in the bytes, or **not yet classified**, which is a class of
+its own so that no difference is pushed into a box too small for it.
+
 Coverage is printed too, and it is what keeps a count from being read as a
 census of Arabic: 57 nāʾib fāʿil sit in a column filled in 1.79% of segments,
 so that is 57 of what was annotated, not 57 passives in the Quran. A coverage
@@ -44,11 +56,13 @@ from alghanem.arabic.irab_column_census import (
     IrabCensusError,
     IrabValueStanding,
     column_census,
+    read_anchor,
     read_coverage,
     read_figures,
-    segment_total_agrees,
+    record_differences,
 )
 from alghanem.arabic.irab_column_preregistration import (
+    A_DIFFERENCE_IS_CLASSIFIED_NOT_ABSORBED_NOTE,
     ARRIVING_COLUMN_COVERAGE,
     ARRIVING_SEGMENT_TOTAL,
     IRAB_COLUMNS,
@@ -86,10 +100,33 @@ def main() -> int:
     print(SPELLING_CHECK_BESIDE_THE_EXPECTATION)
     print()
 
-    if segment_total_agrees(records):
-        print(f"  [ok] segment total: {len(records)}")
+    try:
+        anchor = read_anchor(records)
+    except IrabCensusError as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 3
+
+    if anchor.segment_total_agrees:
+        print(f"  [ok] segment total: {anchor.total_records}")
     else:
-        print(f"  [DIFFERS] segment total: {len(records)} != {ARRIVING_SEGMENT_TOTAL}")
+        print(
+            f"  [DIFFERS] segment total: {anchor.total_records} != "
+            f"{ARRIVING_SEGMENT_TOTAL}"
+        )
+    if anchor.every_segment_is_filled:
+        print(f"  [ok] anchor {anchor.column}: filled in every segment")
+    else:
+        print(
+            f"  [DIFFERS] anchor {anchor.column}: "
+            f"{anchor.filled_cells}/{anchor.total_records} segments filled, "
+            f"claimed {anchor.declared_percentage}%"
+        )
+    if not anchor.holds:
+        print(
+            "  the anchor is read before the figures: a difference here "
+            "indicts the reading (record splitting, embedded newlines), "
+            "not the frozen figures"
+        )
     print()
 
     try:
@@ -115,6 +152,18 @@ def main() -> int:
         if not reading.agrees:
             unresolved.append(f"{figure.label}: {reading.standing.value}")
     print()
+
+    differences = record_differences(readings, anchor=anchor)
+    if differences:
+        print(A_DIFFERENCE_IS_CLASSIFIED_NOT_ABSORBED_NOTE)
+        for difference in differences:
+            print(
+                f"  [{difference.difference_class.name}] {difference.label}: "
+                f"claimed {difference.claimed_count}, "
+                f"derived {difference.derived_count}, "
+                f"standing {difference.standing.value}"
+            )
+        print()
 
     for column in IRAB_COLUMNS:
         try:

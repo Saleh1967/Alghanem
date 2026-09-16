@@ -3805,6 +3805,27 @@ bytes are resolvable; `examples/arabic/measure_irab_columns.py` prints each clai
 beside its derivation and exits non-zero on any figure or coverage that does not
 re-derive.
 
+Two things are settled before the bytes arrive rather than after. The first is
+the order of reading: `Morph_type` is the only column declared filled in 100% of
+segments, so `read_anchor` is read **before any figure** and
+`TheAnchorIsReadBeforeTheFigures` records why — if that column is not full, or
+the record total is not 157,677, what is at fault is the reading itself, record
+splitting or a newline embedded in a quoted field, and a difference in some
+figure read at that point is a reading of a broken pipe. The second is what
+happens to a figure that differs. `ADifferenceIsClassifiedNotAbsorbed` forbids
+editing the frozen figure or its counting rule until they match; the difference
+is recorded as it fell and classed by `IrabDifferenceClass`, whose four classes
+are frozen into the preregistration digest **before** any of them was seen: a
+counting-rule difference (the word count, not the segment count, is what the
+claim matched), a value-name difference (the frozen spelling is not a value of
+that column at all), a difference in the bytes, and **not yet classified** —
+which is a declared class precisely so that no difference is pushed into a box
+too small for it. Finally, `masaq_bytes_are_resolvable()` is now the skip
+condition for every byte-gated test, so
+`ASkipIsConditionedOnTheBytesNotTheVariable`: a variable pointing at a file that
+is not there skips, and bytes that resolve but differ do **not** skip — they
+fail, because the place is not a certificate.
+
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
 T. Zerrouki, http://arramooz.sourceforge.net/ and

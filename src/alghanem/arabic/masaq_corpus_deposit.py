@@ -58,6 +58,7 @@ __all__ = [
     "A_FAILED_UPLOAD_IS_NOT_A_DEPOSIT_NOTE",
     "AN_IGNORED_PATH_CANNOT_RECEIVE_A_DEPOSIT_NOTE",
     "A_MIRROR_WITH_ANOTHER_DIGEST_IS_NOT_THESE_BYTES_NOTE",
+    "A_SKIP_IS_CONDITIONED_ON_THE_BYTES_NOT_THE_VARIABLE_NOTE",
     "COMPLETE_INDUCTION_IS_CORPUS_BOUNDED_NOTE",
     "DEPOSITED_DERIVED_NOUN_COUNTS",
     "DEPOSIT_DIRECTORY",
@@ -96,6 +97,7 @@ __all__ = [
     "figures_named",
     "deposit_path_ignore_rule",
     "unsanctioned_deposit_files",
+    "masaq_bytes_are_resolvable",
     "masaq_digest",
     "masaq_path",
     "masaq_records",
@@ -298,6 +300,13 @@ SHA_256_ORDERS_NOTHING_NOTE: Final[str] = (
     "كلَّها بلا جوارٍ بين المدخلين"
 )
 
+A_SKIP_IS_CONDITIONED_ON_THE_BYTES_NOT_THE_VARIABLE_NOTE: Final[str] = (
+    "ASkipIsConditionedOnTheBytesNotTheVariable: يُتخطّى الاختبارُ حين "
+    "**لا يُحلّ مسارٌ إلى ملفٍّ موجود** لا حين يخلو متغيّرُ البيئة؛ فمتغيّرٌ "
+    "مضبوطٌ على مسارٍ لا ملفَّ فيه كان يُنتِج خطأً يُقرأ فشلَ قياس، ومسارٌ "
+    "مُحلٌّ إلى ملفٍّ مخالفِ البصمة **لا يُتخطّى** بل يفشل: الموضعُ ليس شهادة"
+)
+
 MASAQ_DEPOSIT_NAMED_RESIDUALS: Final[dict[str, str]] = {
     "CompleteInductionIsCorpusBounded": COMPLETE_INDUCTION_IS_CORPUS_BOUNDED_NOTE,
     "AnImportedTagIsAHumanJudgementNotAMeasurement": (
@@ -319,6 +328,9 @@ MASAQ_DEPOSIT_NAMED_RESIDUALS: Final[dict[str, str]] = {
     "AFailedUploadIsNotADeposit": A_FAILED_UPLOAD_IS_NOT_A_DEPOSIT_NOTE,
     "AnIgnoredPathCannotReceiveADeposit": (
         AN_IGNORED_PATH_CANNOT_RECEIVE_A_DEPOSIT_NOTE
+    ),
+    "ASkipIsConditionedOnTheBytesNotTheVariable": (
+        A_SKIP_IS_CONDITIONED_ON_THE_BYTES_NOT_THE_VARIABLE_NOTE
     ),
 }
 
@@ -483,6 +495,22 @@ def masaq_path(path: Path | str | None = None) -> Path:
         f"`{MASAQ_RELATIVE_PATH}` أو يُصرَّح به في `{MASAQ_PATH_VARIABLE}`، "
         "ولا يُخمَّن موضعُها."
     )
+
+
+def masaq_bytes_are_resolvable(path: Path | str | None = None) -> bool:
+    """أيُحَلُّ مسارٌ إلى ملفٍّ **موجود** بأبواب `masaq_path` الثلاثة؟
+
+    وهذا شرطُ التخطّي وحدَه: `ASkipIsConditionedOnTheBytesNotTheVariable`.
+    فلا يُقرأ منها طولٌ ولا بصمة، ولا تُصدِّق ملفًّا: ملفٌّ موجودٌ بالاسم
+    المسنون ومخالفُ البصمة **يُحَلّ ولا يُتخطّى**، فيقع الرفضُ في
+    `read_masaq_bytes` حيث موضعُه، لا هنا صامتًا.
+    """
+
+    try:
+        resolved = masaq_path(path)
+    except MasaqDepositError:
+        return False
+    return resolved.is_file()
 
 
 def read_masaq_bytes(path: Path | str | None = None) -> bytes:
