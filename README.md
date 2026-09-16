@@ -3805,6 +3805,80 @@ bytes are resolvable; `examples/arabic/measure_irab_columns.py` prints each clai
 beside its derivation and exits non-zero on any figure or coverage that does not
 re-derive.
 
+### The join finally legislated, and six numbers where one was claimed
+
+A message arrived claiming that Ibn Fāris's *Maqāyīs al-Lugha* covers roots the
+Quran does not: 4,565 roots there against 1,532 tagged in the Quranic Arabic
+Corpus, 1,204 shared, 3,361 (73.6%) uncovered, 3,011 of them trilateral — and,
+in the other direction, 328 roots tagged in the corpus but absent from Maqāyīs,
+which the sender diagnosed as **a transliteration fault in their own tool**:
+Buckwalter `A` supposedly standing for hamza-on-alif and being read as bare
+alif. Nothing about that could be adopted as it stood, because the join it
+assumes is exactly the one this tree had twice refused to take:
+`TheJoinWasNotTaken` recorded a literal intersection of **zero, measured**,
+between Buckwalter roots and Arabic ones, and said plainly that bridging them
+needs a transliteration table and a hamza decision, both of which are **rules
+legislated, not readings taken**, and both of which must be frozen in a
+separate specification before any measurement. `root_orthography_bridge` is
+that specification: it opens no file and emits no count — a guard refuses any
+field whose name carries one — and holds the Buckwalter table character by
+character from the corpus's own documentation, in which `A` is **bare alif**
+and the six hamza characters `' | > & < }` are each distinct. So the incoming
+diagnosis is not adopted either: it is frozen as one of **two competing
+hypotheses**, against the rival reading that the corpus's `ROOT` field unifies
+hamza by convention, in which case no tool is broken and a normalisation rule
+is unavoidable. The two differ on a single observable — whether any of the six
+hamza characters occurs in that field at all — so `qac_root_alphabet` emits the
+field's alphabet **before any transliteration**, the transliteration itself
+being the accused. The cause of the 328 is therefore left unwritten until that
+observation is made, and neither hypothesis is deleted afterwards, since
+deleting the refuted one would make the survivor read as obvious rather than as
+a result.
+
+Six counting questions were put to the sender and none was answered, so none
+was decided on their behalf: each is recorded in
+`UNANSWERED_COUNTING_DECISIONS` with the number it moves and how it was handled
+instead. The hamza target — bare `ا` or seated `أ` — is enacted **both ways**
+as two named rules, which is why the overlap table has six stages rather than
+four: raw, transliterated only, transliterated plus each hamza rule, and
+transliterated plus each full chain with `ى ← ي` and `ة ← ت`. `ا ← و/ي` is
+**refused by name** rather than omitted, because deciding a weak radical is the
+conflict already ranked `THE_TREE_CANNOT_TEST_IT`, not a difference of
+spelling. No stage is declared "the" number: `overlap_readouts` emits all six
+or raises, and there is no function that computes one alone, since a figure
+printed only after normalisation hides the rule that produced it. Every rule
+states **what it destroys**, and `fusions_under` names the merged roots
+themselves rather than their total — سأل and سال become one form under the
+bare-alif rule, and that is the price of the intersection it buys. The `ة ← ت`
+rule fires on nothing in the Maqāyīs root column, which is a **measured** zero
+fixed by a test against the fingerprinted bytes, not an assumption; the rule
+stays enacted because silence on one table is not silence on every table.
+
+What re-derives here and now is the Maqāyīs side, its bytes being in this tree:
+4,565 distinct `root_full` values over all four `root_type` values under a
+counting rule that did not exist before — `maqayis_root_table_deposit` had
+rules for records and for trilaterals only, and 4,565 is neither — and 4,087
+trilaterals under the existing one, both emitted together since the sender did
+not say which side of that line their figure sat on. The corpus side does not
+re-derive here and is not guessed: its bytes stay unvendored under GPL and CC
+BY-ND, so `qac_roots` takes a path from whoever holds them and matches the
+frozen digest and byte length before a single character leaves it, and the
+tests that depend on them **skip with a written reason** rather than passing in
+silence. `examples/irab/measure_maqayis_qac_root_overlap.py` prints the
+alphabet, all six stages, the distinctions each destroyed, and each arriving
+figure beside the stages at which it matches, exiting non-zero when a claimed
+figure matches no stage under any frozen rule. Two limits are written into the
+modules rather than left to a reader. `AbsenceInQacIsAbsenceFromATagging`: the
+`ROOT` field is an annotators' classification, so an uncovered root is one
+**not tagged in this edition**, never one the Quran does not contain.
+`The3361CarryNoMorphologicalTag`: Maqāyīs is an etymological-semantic
+dictionary and not an annotated corpus, so what it adds widens the **space of
+roots**, not the space of morphological measurement, and no form, bāb or
+augmentation is read out of any of its entries. `TheJoinWasNotTaken` itself is
+left **unedited**, with a note recorded beside it that its condition has since
+been met — a test asserts its wording character for character — because erasing
+a reservation once it has been answered hides that it was ever a barrier.
+
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
 T. Zerrouki, http://arramooz.sourceforge.net/ and
