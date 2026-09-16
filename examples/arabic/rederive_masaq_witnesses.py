@@ -2,13 +2,14 @@
 
 MASAQ is CC BY 3.0 — the first witness in this tree whose licence permits
 vendoring, unlike the Quranic Arabic Corpus (GPL) and the Tanzil text it
-embeds (CC BY-ND). That wider licence is exercised: the bytes are deposited at
-``corpora/MASAQ.csv``, and this script finds them there with no environment
-variable at all::
+embeds (CC BY-ND). That wider licence reserves one sanctioned place for those
+bytes, ``corpora/MASAQ.csv``, but **they are not in this tree yet**. Once they
+are deposited there this script finds them with no environment variable at
+all::
 
     python examples/arabic/rederive_masaq_witnesses.py
 
-A checkout without those bytes is still served, by declaring their path::
+Until then — and for any checkout without them — their path is declared::
 
     ALGHANEM_MASAQ_PATH=/path/to/MASAQ.csv \\
         python examples/arabic/rederive_masaq_witnesses.py

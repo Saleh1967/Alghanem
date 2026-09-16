@@ -3738,20 +3738,25 @@ diverges on all six byte-and-line figures; that is recorded as corroboration
 under `AMirrorWithAnotherDigestIsNotTheseBytes`, not as a second witness, and
 the column binding of the deposited bytes remains the depositor's declaration,
 not a reading taken from the mirror. CC BY 3.0 permits vendoring, unlike
-QAC (GPL) and Tanzil (CC BY-ND), and that licence is exercised: the bytes are
-deposited at `corpora/MASAQ.csv`, so the twenty figures re-derive in CI with no
-declaration at all. A checkout without them still passes a path in
-`ALGHANEM_MASAQ_PATH`. Neither route weakens the gate — the deposited location
+QAC (GPL) and Tanzil (CC BY-ND), so one sanctioned place is reserved for those
+bytes — `corpora/MASAQ.csv` — but **the bytes are not in this tree yet**, and
+the place alone re-derives nothing: until they are deposited there, the twenty
+figures require a path in `ALGHANEM_MASAQ_PATH` and the re-derivation test
+skips without one. Neither route weakens the gate — the deposited location
 is a declared place, not a certificate, and length and digest are matched
-before any figure is returned.
+before any figure is returned. What has twice reached that directory instead is
+a failed web upload under another name, and `AFailedUploadIsNotADeposit` now
+states the consequence: only `README.md` and `MASAQ.csv` may sit in `corpora/`,
+any other name fails a test rather than resting there implying the corpus has
+arrived.
 
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
 T. Zerrouki, http://arramooz.sourceforge.net/ and
 https://github.com/linuxscout/qutrub. MASAQ: Morphologically-Analyzed and
 Syntactically-Annotated Quran, Majdi Sawalha, University of Jordan,
-DOI 10.17632/9yvrzxktmr.2, licensed CC BY 3.0 — its bytes are deposited at
-`corpora/MASAQ.csv` under that licence, and whoever opens them owes its authors
+DOI 10.17632/9yvrzxktmr.2, licensed CC BY 3.0 — its licence permits depositing
+its bytes at `corpora/MASAQ.csv`, and whoever opens them owes its authors
 that attribution, which is recorded as a condition of the deposit before any
 figure is issued. All
 attributions are licence conditions, not courtesies.
