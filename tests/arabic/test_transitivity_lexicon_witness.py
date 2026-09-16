@@ -29,6 +29,7 @@ from alghanem.arabic.transitivity_lexicon_witness import (
     REDERIVED_MARK_COUNTS,
     REDERIVED_ROOT_LEVEL_COUNTS,
     REDERIVED_ROOTS_JOINING_THE_PARTITION_UNCHANGED,
+    THE_JOIN_WAS_NOT_TAKEN_NOTE,
     TRANSITIVITY_LEXICON_NAMED_RESIDUALS,
     WITNESS_ROOT_ALPHABET,
     TransitivityLexiconError,
@@ -173,9 +174,27 @@ def test_the_named_residuals_are_declared() -> None:
         "TheJoinWasNotTaken",
         "ALexiconIsNotACorpus",
         "TheTableIsTrilateralOnly",
+        "TheTransliterationRuleWasLaterEnactedBesideIt",
     }
     for name, note in TRANSITIVITY_LEXICON_NAMED_RESIDUALS.items():
         assert note.startswith(f"{name}:")
+
+
+def test_the_join_reservation_text_is_answered_beside_it_not_edited() -> None:
+    """سُنّت قاعدةُ التحويل في `root_orthography_bridge`، والتحفّظُ باقٍ بنصّه.
+
+    فمحوُ تحفّظٍ بعد أن أُجيب يُخفي أنّه كان مانعًا؛ والجوابُ يُكتَب بجانبه.
+    """
+
+    assert THE_JOIN_WAS_NOT_TAKEN_NOTE == (
+        "TheJoinWasNotTaken: جذورُ المدوَّنة بترميز Buckwalter وجذورُ الجدول "
+        "بالعربية، فالتقاطعُ الحرفيُّ صفرٌ مقيس؛ ووصلُهما قاعدةُ تحويلٍ تُسَنّ "
+        "وتُجمَّد قبل القياس، لا قراءةٌ تُقرأ، فوُقِف عند الإيداع"
+    )
+    beside = TRANSITIVITY_LEXICON_NAMED_RESIDUALS[
+        "TheTransliterationRuleWasLaterEnactedBesideIt"
+    ]
+    assert "root_orthography_bridge" in beside
 
 
 @pytest.mark.skipif(

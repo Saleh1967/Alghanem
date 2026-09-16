@@ -73,6 +73,7 @@ __all__ = [
     "REDERIVED_ROOT_LEVEL_COUNTS",
     "REDERIVED_ROOTS_JOINING_THE_PARTITION_UNCHANGED",
     "THE_JOIN_WAS_NOT_TAKEN_NOTE",
+    "THE_TRANSLITERATION_RULE_WAS_LATER_ENACTED_BESIDE_IT_NOTE",
     "THE_MARKS_MEANING_IS_UPSTREAMS_NOT_OURS_NOTE",
     "THE_TABLE_IS_TRILATERAL_ONLY_NOTE",
     "TRANSITIVITY_LEXICON_NAMED_RESIDUALS",
@@ -107,6 +108,15 @@ THE_JOIN_WAS_NOT_TAKEN_NOTE: Final[str] = (
     "وتُجمَّد قبل القياس، لا قراءةٌ تُقرأ، فوُقِف عند الإيداع"
 )
 
+THE_TRANSLITERATION_RULE_WAS_LATER_ENACTED_BESIDE_IT_NOTE: Final[str] = (
+    "TheTransliterationRuleWasLaterEnactedBesideIt: اشترط `TheJoinWasNotTaken` "
+    "جدولَ تحويلٍ وقرارَ توحيدِ همزةٍ يُسَنّان في مواصفةٍ مستقلّةٍ قبل القياس، "
+    "وقد سُنَّا بعدَه في `root_orthography_bridge`. ونصُّ التحفّظ **باقٍ بحاله "
+    "غيرَ معدَّل**: محوُ تحفّظٍ بعد أن أُجيب يُخفي أنّه كان مانعًا. ولم يُقَس "
+    "بهذا جدولُ الأفعال: القاعدةُ عامّةٌ، والتقاطعُ الصفرُ المُسجَّلُ هنا حالُه "
+    "على حاله حتى يُشغَّل عدٌّ على هذه البايتات بعينها"
+)
+
 A_LEXICON_IS_NOT_A_CORPUS_NOTE: Final[str] = (
     "ALexiconIsNotACorpus: مداخلُ الجدول أفعالٌ مجرَّدةٌ من السياق بلا تواترٍ "
     "ولا موضعِ ورود؛ فالمقيسُ منه حكمُ لزومٍ وتعدٍّ لا شيوع"
@@ -123,6 +133,9 @@ TRANSITIVITY_LEXICON_NAMED_RESIDUALS: Final[dict[str, str]] = {
         TWO_MIRRORS_ONE_DIGEST_IS_NOT_TWO_WITNESSES_NOTE
     ),
     "TheJoinWasNotTaken": THE_JOIN_WAS_NOT_TAKEN_NOTE,
+    "TheTransliterationRuleWasLaterEnactedBesideIt": (
+        THE_TRANSLITERATION_RULE_WAS_LATER_ENACTED_BESIDE_IT_NOTE
+    ),
     "ALexiconIsNotACorpus": A_LEXICON_IS_NOT_A_CORPUS_NOTE,
     "TheTableIsTrilateralOnly": THE_TABLE_IS_TRILATERAL_ONLY_NOTE,
 }
