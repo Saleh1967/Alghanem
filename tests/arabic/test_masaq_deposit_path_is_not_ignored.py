@@ -19,7 +19,6 @@
 from __future__ import annotations
 
 import shutil
-import subprocess
 from pathlib import Path
 
 import pytest
@@ -28,6 +27,7 @@ from alghanem.arabic.masaq_corpus_deposit import (
     DEPOSIT_DIRECTORY,
     MASAQ_RELATIVE_PATH,
     SANCTIONED_DEPOSIT_FILENAMES,
+    deposit_path_ignore_rule,
 )
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
@@ -42,37 +42,12 @@ def _git_available() -> bool:
     return shutil.which("git") is not None and (REPOSITORY_ROOT / ".git").exists()
 
 
-def _ignore_rule_for(relative_path: str) -> str | None:
-    """قاعدةُ التجاهل التي تُصيب المسار، أو `None` إن لم يُتجاهَل.
-
-    و`git check-ignore -v` يُخرِج عند الإصابة سطرَ القاعدة بمصدرها ورقمها،
-    ويخرج برمز `1` إن لم يُصَب المسارُ بشيء؛ وأيُّ رمزٍ آخر عطبٌ في الأداة
-    لا حكمٌ على المسار، فيُرفَع.
-    """
-
-    completed = subprocess.run(
-        ["git", "check-ignore", "-v", "--no-index", "--", relative_path],
-        cwd=REPOSITORY_ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if completed.returncode == 1:
-        return None
-    if completed.returncode == 0:
-        return completed.stdout.strip()
-    raise RuntimeError(
-        f"`git check-ignore` أخفق برمز {completed.returncode}: "
-        f"{completed.stderr.strip()}"
-    )
-
-
 @pytest.mark.skipif(not _git_available(), reason="لا شجرةَ git هنا فلا قاعدةَ تُقرأ")
 @pytest.mark.parametrize("relative_path", SANCTIONED_DEPOSIT_PATHS)
 def test_no_ignore_rule_hides_a_sanctioned_deposit_path(relative_path: str) -> None:
     """لا قاعدةَ تجاهلٍ تُصيب موضعًا مسنونًا في مجلَّد الإيداع."""
 
-    rule = _ignore_rule_for(relative_path)
+    rule = deposit_path_ignore_rule(relative_path)
     assert rule is None, (
         f"`{relative_path}` يُصيبه تجاهلٌ: {rule}. وهذا يجعل إضافتَه تفشل "
         "صامتةً، فتبقى دعوى الإيداع بلا بايتات. فإمّا أن تُرفَع القاعدة، "
@@ -87,4 +62,6 @@ def test_the_probe_detects_an_ignore_rule_when_one_exists() -> None:
     ويُقاس على مسارٍ متجاهَلٍ في الشجرة فعلًا، فلا تُكتَب قاعدةٌ لأجل اختبار.
     """
 
-    assert _ignore_rule_for(f"{DEPOSIT_DIRECTORY}/__pycache__/x.pyc") is not None
+    assert (
+        deposit_path_ignore_rule(f"{DEPOSIT_DIRECTORY}/__pycache__/x.pyc") is not None
+    )

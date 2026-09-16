@@ -44,6 +44,7 @@ import csv
 import hashlib
 import io
 import os
+import subprocess
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -55,6 +56,7 @@ __all__ = [
     "A_CONSERVATION_AUDIT_IS_NOT_AN_ACCURACY_CLAIM_NOTE",
     "AN_IMPORTED_TAG_IS_A_HUMAN_JUDGEMENT_NOT_A_MEASUREMENT_NOTE",
     "A_FAILED_UPLOAD_IS_NOT_A_DEPOSIT_NOTE",
+    "AN_IGNORED_PATH_CANNOT_RECEIVE_A_DEPOSIT_NOTE",
     "A_MIRROR_WITH_ANOTHER_DIGEST_IS_NOT_THESE_BYTES_NOTE",
     "COMPLETE_INDUCTION_IS_CORPUS_BOUNDED_NOTE",
     "DEPOSITED_DERIVED_NOUN_COUNTS",
@@ -92,6 +94,7 @@ __all__ = [
     "deposit_directory_path",
     "deposit_place_is_clean",
     "figures_named",
+    "deposit_path_ignore_rule",
     "unsanctioned_deposit_files",
     "masaq_digest",
     "masaq_path",
@@ -202,6 +205,46 @@ def deposit_place_is_clean(directory: Path | str | None = None) -> bool:
     return not unsanctioned_deposit_files(directory)
 
 
+AN_IGNORED_PATH_CANNOT_RECEIVE_A_DEPOSIT_NOTE: Final[str] = (
+    "AnIgnoredPathCannotReceiveADeposit: قاعدةُ تجاهلٍ تُصيب "
+    f"`{MASAQ_RELATIVE_PATH}` تجعل إضافتَه تفشل **صامتةً** — لا رسالةَ خطأٍ "
+    "في كلّ الحالات، وإنّما ملفٌّ لا يُدرَج. وذلك أخفى من الرفع الفاشل باسمٍ "
+    "طارئ، لأنّ ذاك يترك في الشجرة ما يدلّ عليه وهذا لا يترك شيئًا"
+)
+
+
+def deposit_path_ignore_rule(relative_path: str = MASAQ_RELATIVE_PATH) -> str | None:
+    """قاعدةُ التجاهل التي تُصيب مسارًا في الشجرة، أو `None` إن لم يُتجاهَل.
+
+    وهذه تُمسك ما هو أسبقُ من `unsanctioned_deposit_files()`: تلك تحكم على ما
+    **نزل** في موضع الإيداع، وهذه على ما يمنع البايتاتِ من النزول أصلًا؛
+    فالحارسانِ على طرفَي الإيداع ولا يُغني أحدُهما عن الآخر.
+
+    ولا تحكم على البايتات: المطابقةُ على الطول والبصمة موضعُها
+    `read_masaq_bytes`. ويُرفَع `MasaqDepositError` إن تعذّر سؤالُ `git`،
+    فغيابُ الجواب ليس جوابًا بالنفي.
+    """
+
+    try:
+        completed = subprocess.run(
+            ["git", "check-ignore", "-v", "--no-index", "--", relative_path],
+            cwd=_REPOSITORY_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as error:  # pragma: no cover - يعتمد على غياب `git` من النظام
+        raise MasaqDepositError(f"تعذّر تشغيل `git check-ignore`: {error}") from error
+    if completed.returncode == 1:
+        return None
+    if completed.returncode == 0:
+        return completed.stdout.strip()
+    raise MasaqDepositError(
+        f"`git check-ignore` أخفق برمز {completed.returncode}: "
+        f"{completed.stderr.strip()}"
+    )
+
+
 MORPH_TAG_COLUMN: Final[str] = "Morph_Tag"
 """العمودُ الذي يحمل وَسْمَ الصرف؛ ربطٌ يُسَنّ ويُعلَن، لا يُقرأ من بصمة."""
 
@@ -274,6 +317,9 @@ MASAQ_DEPOSIT_NAMED_RESIDUALS: Final[dict[str, str]] = {
     ),
     "Sha256OrdersNothing": SHA_256_ORDERS_NOTHING_NOTE,
     "AFailedUploadIsNotADeposit": A_FAILED_UPLOAD_IS_NOT_A_DEPOSIT_NOTE,
+    "AnIgnoredPathCannotReceiveADeposit": (
+        AN_IGNORED_PATH_CANNOT_RECEIVE_A_DEPOSIT_NOTE
+    ),
 }
 
 
