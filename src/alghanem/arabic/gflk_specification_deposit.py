@@ -559,8 +559,11 @@ GFLK_SPECIFICATION_AMENDMENTS: Final[tuple[SpecificationAmendment, ...]] = (
         what_this_tree_reads_in_the_change=(
             "إضافةٌ تستلزم فرزَ أدوار الألف الأربعة، وفيها همزةُ الوصل — وهي "
             "`HAMZAT_WASL_IS_NOT_DECIDABLE_FROM_THE_WRITTEN_MARKS` في "
-            "`ibtida_wasl_waqf_registration`. والدورُ الرابعُ وحده مقروءٌ هنا "
-            "على الوحدة القائمة (`tanwin_alif_seat`)، والثلاثةُ الباقيةُ متعذّرة"
+            "`ibtida_wasl_waqf_registration`. وقراءةُ `p_extractor` تفرز من "
+            "الأربعة ثلاثةً: حاملةَ التنوين، وحرفَ المدّ، والألفَ الفارقة؛ "
+            "وتبقى همزةُ الوصل وحدَها متعذّرةً، فتبقى الدعوى المعلوماتيّةُ — "
+            "وهي على الأدوار الأربعة معًا — غيرَ قابلةٍ للاختبار هنا "
+            "(`alif_neutrality_registration`)"
         ),
     ),
     SpecificationAmendment(

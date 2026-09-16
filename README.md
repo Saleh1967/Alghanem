@@ -2587,6 +2587,146 @@ against another. Running this claim on unannotated text would need a
 part-of-speech classifier that does not exist here, and that classifier's own
 accuracy would enter the number.
 
+### Reading the GFLK extractor as roles over units, without a new state
+
+The deposited GFLK specification asks for a state machine whose second pass
+assigns letters states such as `MADD_EXTENSION`, `ASSIMILATED_SILENT` and
+`TANWEEN_ALIF_CARRIER`. Those are not states here. `CarrierState` stays closed
+at seven measured members, and
+`src/alghanem/arabic/p_extractor.py` reads the specification's proposals as
+*roles over units the codec already emits* — a derived reading, not an
+enlargement of the vocabulary. `HARAKA_BEARING` follows the same discipline: it
+is a predicate computed from state and roles, never a stored flag that could
+drift from them.
+
+The rule order is frozen before the reader exists.
+`p_extractor_preregistration.py` fixes the eight Pass-2 rules as an ordered
+tuple with, per rule, its trigger, what it reads from the unit, and whether it
+is decidable from the written marks at all. Two are registered as **not**
+decidable up front — the waṣl-lām branch and the shamsiyya/qamariyya split —
+so the reader emits an `UndecidedSite` there instead of a guess, and the
+implementation refuses to import if its rule names ever disagree with the
+frozen tuple.
+
+**What was measured:** the acceptance floor was written before running, and it
+is the existing codec's own round trip — no regression in the percentage *and*
+no token newly corrupted. The six tokens the codec already loses are named test
+cases rather than absorbed into a percentage, because a percentage hides a
+single word and a named case does not.
+`examples/letter_fingerprint/measure_p_extractor_floor.py` re-derives the
+figure from the corpus bytes and exits non-zero on drift.
+
+**What it does not establish:** nothing about the phonetic reality of these
+roles. It establishes that the specification's second pass can be *stated* over
+this tree's units without adding a state, and that stating it costs no round
+trip. Writing the vowel of a waṣl alif remains impossible here, and that is the
+reader's refusal, not its silence.
+
+### One proposal that stays outside the vocabulary altogether
+
+The specification's last Pass-2 rule reclassifies a letter as
+`AMBIGUOUS_MADD_OR_TANWEEN_ROOT`, calling it an explicit DEFER. A vocabulary
+that contains a member meaning "undecided" can no longer be read as a closed
+set of decided values, so this tree refuses membership
+(`REFUSAL_IS_NOT_A_MEMBER_OF_THE_VOCABULARY`). The condition is still detected:
+it comes back as a separate `AmbiguityRecord` collection beside the reading,
+with the site, the competing readings, and what would decide between them. A
+structural test walks every enum in `src/` with the AST and asserts the name
+appears as a member of none of them — the same zero-match sweep used elsewhere
+in this tree, pointed at a name this tree was invited to adopt.
+
+### Alif on two scopes that must not be merged
+
+`src/alghanem/arabic/alif_neutrality_registration.py` records the
+specification's alif reading as what it is: two claims on two different scopes.
+Featurally the alif is N/A on all four axes together — not "low" and not
+"original" by default, but absent — and that is a claim about a feature grid.
+Informationally it is neutral in three of its four roles and *not* neutral in
+the fourth, where it carries the tanwīn mark itself; that is a claim about an
+information projection. The two do not contradict each other and are not
+averaged into one "mostly neutral" verdict.
+
+**What was measured:** after the extractor landed, three of the four roles are
+separable from the written marks in this tree — madd, differentiating alif, and
+tanwīn carrier all have named roles. The fourth, waṣl, is not, and the
+amendment in `gflk_specification_deposit` was updated to say exactly that
+rather than to keep claiming all four are unreadable.
+
+**What it does not establish:** the informational claim itself. Testing "π with
+the alif equals π without it" needs a projection this tree does not compute, so
+the claim is recorded as untestable here rather than as unsupported. Tāʾ
+marbūṭa is recorded as conventionally excluded, with the note that its
+connected-speech pronunciation — the actual reason the exclusion is different
+in kind from the alif's — is read nowhere in this tree.
+
+### Six templates, and a wazn that is a projection rather than an object
+
+`syllable_preregistration.py` freezes, before any segmentation runs: the six
+templates as a closed enum; shadda expansion into a closing sākin plus an
+opening mutaḥarrik; the declaration that wazn is a **derived projection, not a
+born morphological object**; the reading of tanwīn as a vowel plus a closing
+nūn that is not written; and four structural acceptance conditions — closure,
+reconstruction, totality, determinism — each written down before it could be
+checked.
+
+`syllabifier.py` then segments deterministically over the extractor's output.
+A word it cannot segment is emitted in `wazn_unresolved` with a named reason,
+never as `None`, and when the stopping point coincides with a standing refusal
+the refusal is named in the record: words opening on a waṣl alif fail because
+the alif's vowel is not decidable, and the record says so instead of reporting
+a mysterious failure. The waqf transform is a separate, explicitly named
+function taking a *stated* pausal input, because this tree cannot tell a pausal
+sukūn from a connected one by looking.
+
+**What it does not establish:** `DictionaryLayer.SYLLABLES_AND_WAZN` is still
+withheld. The floor script prints the unresolved share with **no threshold
+attached** (`NO_THRESHOLD_IS_INVENTED_AFTER_THE_FACT`), and the corpus is not
+vendored, so no figure is issued here. Two limits are recorded rather than
+quietly handled: the tanwīn seat on alif maqṣūra is not read, and the free
+madda mark is not read as length.
+
+### A root criterion that counts slots and refuses to name a weak letter
+
+`jarad_mazid_preregistration.py` freezes the corrected criterion — a slot is a
+real consonant **or a madd**, three slots is mujarrad, four or more is mazīd —
+together with a limit declared permanent rather than temporary: this criterion
+measures **length only** and says nothing about whether a given wāw or yāʾ is
+root or augment. No wider measurement lifts that; it is a property of the
+criterion, not of the sample size.
+
+`jarad_mazid.py` matches full consonant skeletons against the digest-checked
+Maqāyīs root table, which re-verifies byte length, SHA-256 and header on every
+read. Prefix matching — the defect the specification corrects in itself — is
+absent, and the two match kinds it does emit, exact skeleton and ordered
+subsequence, stay separate and unranked. A structural test asserts no
+`RootMatchKind` member anywhere in `src/` contains `PREFIX`.
+
+**What it does not establish:** any corpus figure. The four deposited counts
+(10,599 / 11,467 / 37,682 / 18,333) are carried in the preregistration as
+figures **to be compared against**, with `is_adopted=True` refused at
+construction, because they lack a `MeasurementRunManifest` and a written
+pre-measurement expectation — two of the four prerequisites frozen alongside
+them. Their arithmetic gap against 78,215 was already recorded in the deposit
+and is not restated here. What ships is a criterion and a tool, not a count.
+
+### Naming the four milestones that were not built, and why
+
+`gflk_milestone_blocking_registration.py` records the rest of the plan rather
+than omitting it. Four milestones are named with their missing input, the kind
+of block, and what would lift it: the feature tables (no digest-able source for
+the 13-category scheme, no bytes for the 12-axis sifa table), the OCP
+permutation test (its classification source is undefined until the tables
+resolve), the conditional-bit tree encoding (its bit inventory *is* the sifa
+table), and the compression ladder (a scope decision not taken). The
+distinction the module insists on is between "not measured yet" and "not
+measurable from here"; all four are the second kind.
+
+No figure crosses a standing block. 88.34%, 18.75%–23.2% and p≈0.027 are listed
+in the records as figures explicitly *not* carried across, since mentioning a
+number inside a Python module does not make it measured. The import barriers in
+`gflk_feature_table_import_barrier` stay `OPEN`, and an import-time guard makes
+this registration refuse to load if one is ever lifted without revisiting it.
+
 ## Reference material
 
 `docs/reference/` holds frozen external measurements kept for future
