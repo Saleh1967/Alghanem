@@ -3521,6 +3521,48 @@ text it embeds forbid modification — so the re-derivation runs at the holder o
 the bytes via `examples/irab/measure_hollow_root_census.py`, and no number
 passes before the digest and length match.
 
+### Four transitivity results kept, and fifteen arriving numbers that failed
+
+A second claim arrived against the same fingerprinted corpus: that roots whose
+bare perfect is never tagged passive are intransitive candidates, that they
+differ sharply from confirmed transitives in the passive participle, and that
+"an intransitive becomes transitive by augmentation" is refuted as a rule.
+`transitivity_probe_preregistration` freezes the rules before the numbers —
+both classification rules rest on *absences* read from the schema, since this
+corpus tags neither `ACT` on active verbs nor `(I)` on form I, so an active
+verb is one without `PASS` and a bare verb is one without a form tag; a reader
+who demanded the positive tags would report zero active verbs in the Qurʾān.
+It also freezes the permutation protocol with its seed, and states before any
+figure that a permutation *p* has a floor of `1/5001` rather than reaching
+`0.0000`, and that the passive-participle test is **not independent of its own
+definition**: the groups were defined by the presence and absence of the
+passive, and the passive participle is a passive form.
+`transitivity_corpus_census` then re-derives, at the holder of the bytes via
+`examples/irab/measure_transitivity_census.py`: 1,642 tagged roots, 398 with a
+bare active perfect, splitting into 68 confirmed transitive and 330
+intransitive candidates; 48 roots carry a bare imperfect passive with no bare
+perfect passive against 34 with both, so one tense is not the voice of a root;
+the passive participle stands at 44.1% against 17.0%, a 27.15-point gap with
+`p = 1/5001`; and the augmentation hypothesis is refuted as a rule from two
+directions at once — 13.3% of intransitive candidates against 14.7% of
+transitives, a difference that is not significant (`p ≈ 0.85`) — while
+surviving as a possibility in named, located forms (علم → II at (6:91:31:2),
+عود → IV at (22:22:8:1), حفظ → X at (5:44:17:1)). Two things are recorded
+against the arriving text rather than smoothed over. First, **none of its
+fifteen figures re-derived**: 1,532 against 1,642, 67/312 against 68/330,
+46/35 against 48/34, 27.47 against 27.15, 18.40 against 20.05. The rule was
+not tuned until they matched; the divergence table is printed by the script
+and frozen in `ARRIVING_FIGURE_DIVERGENCES`, and what survived is the
+*direction* of two results, not their arithmetic. Second, its criterion
+"the gap exceeds the maximum null gap" is shown to drop a real effect: the
+active-participle gap of 21.07 points falls *below* the maximum null gap of
+24.62 and is nevertheless significant at `p = 0.0012`. What was never measured
+is left without a number rather than with a zero — the maṣdar, the
+morphological noun of place and of time, the noun of instrument, and tamyīz
+are not tagged in this corpus at all, and `POS:LOC` and `POS:T` are syntactic
+adverbials, not morphological patterns, so any figure about them from these
+bytes would be fabricated. The corpus bytes remain unvendored.
+
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Both attributions are licence
 conditions, not courtesies.
