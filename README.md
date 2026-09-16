@@ -3899,6 +3899,63 @@ condition for every byte-gated test, so
 is not there skips, and bytes that resolve but differ do **not** skip — they
 fail, because the place is not a certificate.
 
+The 76.36% coverage of `Syntactic_Role` reads as a gap in the annotation, and
+it is not one: it is a ratio taken over the wrong denominator. Restricted to
+**stems** — `Morph_type == "Stem"`, 77,797 of them — the same column is filled
+in 99.6838%, because prefixes and suffixes have no i'rab case to begin with and
+counting them lowers a ratio that never fell.
+`src/alghanem/arabic/irab_operator_preregistration.py` freezes that denominator
+with its counting rule, and `ADenominatorIsDeclaredNotAssumed` is the law that
+follows: 76.36% and 99.68% are not rival numbers but two ratios with two
+denominators, so no ratio leaves either module without its denominator in the
+same structure — `ArrivingStemCoverage` and `StemCoverageReading` both carry it,
+and a coverage built without one cannot be constructed at all. The acceptance
+threshold is 99% on the stem denominator, and it is declared as what it is:
+the coverage arrived first, so the threshold is a stated measure for future
+readings, not a bar this figure cleared before anyone saw it.
+
+The residue — 246 stems with no role — is **named before it is excused**. It is
+neither noise nor one fault: 190 verses at 1.29 stems each, in two distinct
+patterns. A verse whose other stems are annotated and one is not is a lapse in
+a cell; a verse left wholly unannotated is a skipped verse, and the largest,
+2:13, holds thirteen of them in consecutive positions. `ResiduePattern` freezes
+both patterns and a declared third, **neither pattern**, so that no verse is
+pushed into a box too small for it, and `measure_residue` classes every verse
+by them from the bytes. What did not arrive is how the remaining 82 stems split
+between the second and third patterns, and `AnUndeclaredSplitIsNotAZero` keeps
+that place declared and empty: `ArrivingResidueAccount.stems` is `None` there,
+meaning *did not arrive*, never *zero*. `CoverageIsNotCorrectness` states the
+other limit, and the residue itself witnesses it: in that same 2:13, "آمَنَ" —
+a perfect verb — is tagged `مجزوم`, so 99.68% counts the stems that were
+annotated, not the stems annotated rightly.
+
+The relation itself is the weakest claim of the three and says so.
+`irab_operator_census.py` reads eight frozen detectors — three operators (ḥarf
+jarr, past verb, imperfect verb), three dependents (ism majrūr, fāʿil, mafʿūl
+bihi) and two neutrals — whose **counts are imported from the figures already
+frozen** in `irab_column_preregistration`, never restated, since a number frozen
+twice is two numbers that can drift apart without either failing. Every value
+outside those eight answers `خارج_الكواشف`, a declared standing rather than a
+side it was pushed into. `ARelationNeedsTwoPresentTerms` bounds every pair by
+one verse: a dependent is never joined to an operator in another verse to
+complete a count, and each dependent gets one of three standings that no zero
+collapses — an operator before it, an operator after it, or **no operator
+observed** — with the distance to the nearest one reported in words, not merely
+its existence. `AnUnreadableWordKeyIsCountedNotDropped` counts a row whose word
+key is not an integer in a field of its own instead of dropping it silently out
+of a denominator. `AnOperatorTagIsNotAProvenGovernment` is the limit that
+matters: the corpus has no column binding an operator to its own dependent, so
+these are counts of neighbourhood under a frozen rule, and neighbourhood is not
+government. `PreMeasurementExpectation` is the one thing here written before its
+answer — that operators precede their dependents in the great majority, and that
+one word is the commonest distance — and both halves are falsifiable. The unit
+reads the `Phrase` column not at all (`ThePhraseColumnIsNotUsed`: 1.80% filled,
+and structurally skewed, since it tags the embedded clause and not the main
+one), infers no marker from a case (`TheMarkerIsNotInferredFromTheCase`), and
+settles nothing about estimated markers by counting them.
+`examples/arabic/measure_irab_operators.py` prints each arriving figure beside
+its derivation and exits non-zero on any that differs.
+
 ### A census whose numbers no one claimed first
 
 While those bytes are awaited, `src/alghanem/arabic/maqayis_witness_census.py`
