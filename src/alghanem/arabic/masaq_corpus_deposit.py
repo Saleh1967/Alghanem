@@ -2,8 +2,10 @@
 
 **ما تفعله هذه الوحدة**: تُجمِّد بصمةَ `MASAQ.csv` وطولَ بايتاتها ورخصتَها
 وشرطَ إسنادها، ثمّ تُودِع عشرين رقمًا يحمل كلٌّ منها **قاعدةَ عدّه ودالّةَ
-إعادة اشتقاقه**، وترفض إخراجَ رقمٍ من بايتاتٍ لا تطابق البصمةَ والطول. ولا
-تُنسَخ البايتاتُ إلى الشجرة، وإن كانت الرخصةُ تُجيز.
+إعادة اشتقاقه**، وترفض إخراجَ رقمٍ من بايتاتٍ لا تطابق البصمةَ والطول.
+ورخصةُ `CC BY 3.0` تُجيز نسخَ البايتات إلى الشجرة، فموضعُها `corpora/MASAQ.csv`
+وإسنادُها في `corpora/README.md`؛ ويبقى `ALGHANEM_MASAQ_PATH` بابًا لمن كانت
+بايتاتُه خارجَها. والمطابقةُ على الطول والبصمة شرطٌ في البابين معًا.
 
 `WHAT_QAC_COULD_NOT_CLOSE`: المدوَّنةُ الصرفيةُ للقرآن تَسِم `VN` ولا تنزل تحته،
 فبقيت أبوابُ المشتقّات **مُرشَّحةً بلا مرجِع**. و MASAQ تَسِمها بأسمائها
@@ -49,6 +51,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Final
 
+from .pipeline_stations import repository_root_path
+
 __all__ = [
     "BYTE_LENGTH_RULE",
     "DIGEST_RULE",
@@ -69,6 +73,7 @@ __all__ = [
     "MASAQ_DOI",
     "MASAQ_LICENCE",
     "MASAQ_PATH_VARIABLE",
+    "MASAQ_RELATIVE_PATH",
     "MASAQ_REDERIVED_FIGURES",
     "MASAQ_SHA256",
     "MASAQ_DEPOSIT_NAMED_RESIDUALS",
@@ -86,11 +91,13 @@ __all__ = [
     "MirrorCorroboration",
     "RederivedFigure",
     "figures_named",
+    "masaq_bytes_are_resolvable",
     "masaq_digest",
     "masaq_path",
     "masaq_records",
     "masaq_text",
     "read_masaq_bytes",
+    "vendored_masaq_path",
     "rederive_embedded_newline_breaks",
     "rederive_embedded_newline_records",
     "rederive_line_count",
@@ -124,7 +131,14 @@ MASAQ_ATTRIBUTION: Final[str] = (
 """نصُّ الإسناد؛ وهو **شرطُ رخصةٍ** لا لطفَ عبارة، فلا يُخرَج رقمٌ بحذفه."""
 
 MASAQ_PATH_VARIABLE: Final[str] = "ALGHANEM_MASAQ_PATH"
-"""متغيّرُ البيئة الذي يُمرَّر به مسارُ البايتات؛ فهي غيرُ منسوخةٍ إلى الشجرة."""
+"""متغيّرُ البيئة الذي يُمرَّر به مسارُ البايتات إن كانت خارجَ الشجرة."""
+
+MASAQ_RELATIVE_PATH: Final[str] = "corpora/MASAQ.csv"
+"""موضعُ البايتات في الشجرة إن أُودِعت؛ ورخصتُها تُجيز ذلك، والإسنادُ في `corpora/README.md`.
+
+ووجودُ ملفٍّ في هذا الموضع لا يُغني عن مطابقةٍ: الطولُ والبصمةُ يُفحصان قبل
+كلِّ رقمٍ يخرج، سواءٌ أجاء الملفُّ من الشجرة أم من مسارٍ مُصرَّحٍ به.
+"""
 
 MORPH_TAG_COLUMN: Final[str] = "Morph_Tag"
 """العمودُ الذي يحمل وَسْمَ الصرف؛ ربطٌ يُسَنّ ويُعلَن، لا يُقرأ من بصمة."""
@@ -339,18 +353,40 @@ MIRROR_CORROBORATION: Final[MirrorCorroboration] = MirrorCorroboration(
 """قرينةٌ مقيسةٌ لا شاهدٌ ثانٍ: مرآتان ببصمتين ليستا نصًّا مرّتين."""
 
 
+def vendored_masaq_path(root: Path | None = None) -> Path:
+    """موضعُ البايتات في الشجرة، مُشتقًّا من جذر المستودع لا مكتوبًا مطلقًا."""
+
+    return (root or repository_root_path()) / MASAQ_RELATIVE_PATH
+
+
+def masaq_bytes_are_resolvable() -> bool:
+    """أيوجد ملفٌّ يُقرأ؟ وجودُه لا يعني مطابقتَه؛ المطابقةُ في `read_masaq_bytes`."""
+
+    declared = os.environ.get(MASAQ_PATH_VARIABLE)
+    if declared and Path(declared).is_file():
+        return True
+    return vendored_masaq_path().is_file()
+
+
 def masaq_path(path: Path | str | None = None) -> Path:
-    """مسارُ البايتات: المُمرَّرُ، وإلّا `ALGHANEM_MASAQ_PATH`، وإلّا رفضٌ صريح."""
+    """مسارُ البايتات: المُمرَّرُ، وإلّا `ALGHANEM_MASAQ_PATH`، وإلّا الشجرة.
+
+    ولا يُخمَّن موضعٌ رابع: إن لم يُصِب أحدُ الثلاثة ملفًّا رُفِض الطلبُ صريحًا.
+    """
 
     if path is not None:
         return Path(path)
     declared = os.environ.get(MASAQ_PATH_VARIABLE)
-    if not declared:
-        raise MasaqDepositError(
-            "بايتاتُ MASAQ غيرُ منسوخةٍ إلى هذه الشجرة؛ فيُمرَّر مسارُها أو "
-            f"يُصرَّح به في `{MASAQ_PATH_VARIABLE}`، ولا يُخمَّن موضعُها."
-        )
-    return Path(declared)
+    if declared:
+        return Path(declared)
+    vendored = vendored_masaq_path()
+    if vendored.is_file():
+        return vendored
+    raise MasaqDepositError(
+        f"بايتاتُ MASAQ ليست في `{MASAQ_RELATIVE_PATH}` من هذه الشجرة؛ "
+        f"فيُمرَّر مسارُها أو يُصرَّح به في `{MASAQ_PATH_VARIABLE}`، ولا "
+        "يُخمَّن موضعُها."
+    )
 
 
 def read_masaq_bytes(path: Path | str | None = None) -> bytes:

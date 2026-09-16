@@ -1,13 +1,16 @@
 """Re-derive, in one pass, every MASAQ figure deposited in this tree.
 
-The bytes are **not vendored here**. MASAQ is CC BY 3.0 — the first witness in
-this tree whose licence would permit vendoring, unlike the Quranic Arabic
-Corpus (GPL) and the Tanzil text it embeds (CC BY-ND). They are still not
-vendored: consistency with the existing witness pattern was preferred over
-exercising the wider licence. Pass the path instead::
+MASAQ is CC BY 3.0 — the first witness in this tree whose licence permits
+vendoring, unlike the Quranic Arabic Corpus (GPL) and the Tanzil text it embeds
+(CC BY-ND). The bytes are read from ``corpora/MASAQ.csv`` when they are there,
+with the attribution its licence requires recorded in ``corpora/README.md``.
+Bytes held elsewhere are passed instead::
 
     ALGHANEM_MASAQ_PATH=/path/to/MASAQ.csv \\
         python examples/arabic/rederive_masaq_witnesses.py
+
+The resolution order is the explicit argument, then that variable, then the
+tree; no fourth location is guessed.
 
 Every figure is matched against the byte length and the SHA-256 **before** it
 is produced, and every figure carries the counting rule that produced it. A
@@ -36,6 +39,7 @@ from alghanem.arabic.masaq_corpus_deposit import (
     MASAQ_ATTRIBUTION,
     MASAQ_PATH_VARIABLE,
     MASAQ_REDERIVED_FIGURES,
+    MASAQ_RELATIVE_PATH,
     MasaqDepositError,
     lines_are_conserved,
     read_masaq_bytes,
@@ -48,8 +52,8 @@ def main() -> int:
     except MasaqDepositError as error:
         print(f"error: {error}", file=sys.stderr)
         print(
-            f"set {MASAQ_PATH_VARIABLE} to the MASAQ.csv whose digest is "
-            "deposited; the bytes are not in this tree",
+            f"place the MASAQ.csv whose digest is deposited in "
+            f"{MASAQ_RELATIVE_PATH}, or set {MASAQ_PATH_VARIABLE} to it",
             file=sys.stderr,
         )
         return 2

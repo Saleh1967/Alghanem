@@ -10,7 +10,6 @@
 from __future__ import annotations
 
 import hashlib
-import os
 from pathlib import Path
 
 import pytest
@@ -29,6 +28,7 @@ from alghanem.arabic.masaq_corpus_deposit import (
     MASAQ_LICENCE,
     MASAQ_PATH_VARIABLE,
     MASAQ_REDERIVED_FIGURES,
+    MASAQ_RELATIVE_PATH,
     MASAQ_SHA256,
     MIRROR_CORROBORATION,
     MORPH_TAG_COLUMN,
@@ -39,6 +39,7 @@ from alghanem.arabic.masaq_corpus_deposit import (
     RederivedFigure,
     figures_named,
     lines_are_conserved,
+    masaq_bytes_are_resolvable,
     masaq_records,
     read_masaq_bytes,
     rederive_embedded_newline_breaks,
@@ -46,6 +47,7 @@ from alghanem.arabic.masaq_corpus_deposit import (
     rederive_line_count,
     rederive_record_count,
     rederive_tag_count,
+    vendored_masaq_path,
 )
 
 SYNTHETIC_HEADER = "ID,Sura_No,Verse_No,Word_No,Column5,Morph_Tag,Gloss"
@@ -215,10 +217,44 @@ def test_bytes_are_refused_on_a_length_or_a_digest_mismatch(tmp_path: Path) -> N
 
 
 def test_no_path_is_guessed_when_none_is_declared(
-    monkeypatch: pytest.MonkeyPatch,
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
-    monkeypatch.delenv(MASAQ_PATH_VARIABLE, raising=False)
+    """ثلاثةُ أبوابٍ لا رابع: المُمرَّرُ، فالمتغيّر، فالشجرة، ثمّ رفضٌ صريح."""
 
+    monkeypatch.delenv(MASAQ_PATH_VARIABLE, raising=False)
+    monkeypatch.setattr(
+        "alghanem.arabic.masaq_corpus_deposit.vendored_masaq_path",
+        lambda root=None: tmp_path / MASAQ_RELATIVE_PATH,
+    )
+
+    with pytest.raises(MasaqDepositError):
+        read_masaq_bytes()
+
+
+def test_the_vendored_path_is_derived_from_the_tree_not_written_absolutely() -> None:
+    path = vendored_masaq_path()
+
+    assert path.as_posix().endswith(MASAQ_RELATIVE_PATH)
+    assert path.is_absolute()
+    assert (
+        path.parent / "README.md"
+    ).is_file(), "الإسنادُ شرطُ رخصةٍ لا لطفَ عبارة: `corpora/README.md` يحمل نصَّه"
+
+
+def test_vendored_bytes_are_still_matched_on_length_and_digest(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """وجودُ ملفٍّ في الموضع لا يجعله هذه البايتات؛ المطابقةُ قائمةٌ في البابين."""
+
+    impostor = tmp_path / "MASAQ.csv"
+    impostor.write_bytes(SYNTHETIC_BYTES)
+    monkeypatch.delenv(MASAQ_PATH_VARIABLE, raising=False)
+    monkeypatch.setattr(
+        "alghanem.arabic.masaq_corpus_deposit.vendored_masaq_path",
+        lambda root=None: impostor,
+    )
+
+    assert masaq_bytes_are_resolvable()
     with pytest.raises(MasaqDepositError):
         read_masaq_bytes()
 
@@ -259,12 +295,12 @@ def test_the_attribution_is_a_licence_condition_carried_in_the_module() -> None:
 
 
 @pytest.mark.skipif(
-    not os.environ.get(MASAQ_PATH_VARIABLE),
+    not masaq_bytes_are_resolvable(),
     reason=(
-        "the MASAQ bytes are not vendored in this repository: its CC BY 3.0 "
-        "licence would permit it, but the witness pattern of this tree keeps "
-        f"corpus bytes out. Set {MASAQ_PATH_VARIABLE} to the exact MASAQ.csv "
-        "whose digest is deposited to re-derive all twenty figures here"
+        f"the MASAQ bytes are not in {MASAQ_RELATIVE_PATH} and "
+        f"{MASAQ_PATH_VARIABLE} is unset. Its CC BY 3.0 licence permits "
+        "vendoring them; place the exact MASAQ.csv whose digest is deposited "
+        "there, or declare its path, to re-derive all twenty figures here"
     ),
 )
 def test_all_twenty_figures_rederive_from_the_deposited_bytes() -> None:
