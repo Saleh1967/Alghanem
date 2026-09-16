@@ -3304,9 +3304,10 @@ falls silently on either side.
 
 Two standing gaps are now counted rather than assumed away. The scripts under
 `examples/` that no test calls are recorded as declared-but-not-reproduced —
-all of them until `examples/kernel/license_transitions.py` arrived with a
-witness that loads and runs it, leaving that one script alone in the other
-standing — and the two skipped tests are classified into two declared genera —
+all of them until `examples/kernel/license_transitions.py` and
+`examples/arabic/rederive_gflk_witnesses.py` each arrived with a witness that
+loads and runs it, leaving those two alone in the other standing — and the two
+skipped tests are classified into two declared genera —
 conditional on an undeposited input, and a case inapplicable by construction —
 with any third skip form refused by file and line, since a skip whose genus is
 unnamed is counted as a pass and is not one. What stays open is named:
