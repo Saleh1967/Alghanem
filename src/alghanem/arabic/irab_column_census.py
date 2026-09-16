@@ -27,6 +27,16 @@
 مُوسِّمٍ على ما لا أثرَ له في الرسم؛ فلا يُحسَم به بابُ المقدَّر، ولا يُقرأ
 عددُ «نائب فاعل» مجهولًا مقيسًا في مدوَّنةٍ أخرى.
 
+`THE_ANCHOR_IS_READ_BEFORE_THE_FIGURES`: `read_anchor` تُقرأ أوّلًا، لأنّ
+`Morph_type` وحدَه مُصرَّحٌ بامتلائه ١٠٠٪؛ فإن لم يمتلئ في كلّ سجلّ أو خالفت
+جملةُ السجلّات فالخللُ في القراءة — تقطيعِ السجلّات أو أسطرٍ مضمَّنة — لا في
+الأرقام، وكلُّ فرقٍ بعدها يُصنَّف `THE_BYTES_THEMSELVES` حتّى تقوم.
+
+`A_DIFFERENCE_IS_CLASSIFIED_NOT_ABSORBED`: `classify_difference` تُصنِّف ما
+خالف بأبواب `IrabDifferenceClass` المسنونةِ قبل رؤيته، و`record_differences`
+تُسجّله كما وقع. ولا يُعدَّل هنا رقمٌ مُجمَّدٌ ولا قاعدةُ عدٍّ لتُطابِق ما
+قِيس؛ والتصنيفُ تسجيلٌ لا مَعذِرة.
+
 وهذه الوحدة تسجيلٌ لا سلطة: لا ولادةَ فيها، ولا حكمَ ولادة، ولا تجميدَ `E0`،
 ولا تستورد من `kernel/` شيئًا، ولا تقرؤها وحدةٌ فيه.
 """
@@ -39,13 +49,17 @@ from enum import Enum
 from typing import Final
 
 from .irab_column_preregistration import (
+    A_DIFFERENCE_IS_CLASSIFIED_NOT_ABSORBED_NOTE,
+    ANCHOR_COLUMN_NAME,
     ARRIVING_COLUMN_COVERAGE,
     ARRIVING_IRAB_FIGURES,
     ARRIVING_SEGMENT_TOTAL,
     IRAB_PREREGISTRATION_DIGEST,
+    THE_ANCHOR_IS_READ_BEFORE_THE_FIGURES_NOTE,
     ArrivingColumnCoverage,
     ArrivingIrabFigure,
     IrabCountingRule,
+    IrabDifferenceClass,
     column_named,
 )
 from .masaq_corpus_deposit import (
@@ -55,6 +69,13 @@ from .masaq_corpus_deposit import (
 )
 
 __all__ = [
+    "record_differences",
+    "read_anchor",
+    "classify_difference",
+    "IrabDifferenceRecord",
+    "AnchorReading",
+    "A_DIFFERENCE_IS_CLASSIFIED_NOT_ABSORBED_NOTE",
+    "THE_ANCHOR_IS_READ_BEFORE_THE_FIGURES_NOTE",
     "A_COVERAGE_IS_COMPARED_AT_ITS_DECLARED_PRECISION_NOTE",
     "CoverageReading",
     "non_empty_cells",
@@ -126,6 +147,10 @@ A_COVERAGE_IS_COMPARED_AT_ITS_DECLARED_PRECISION_NOTE: Final[str] = (
 
 
 IRAB_CENSUS_NAMED_RESIDUALS: Final[dict[str, str]] = {
+    "TheAnchorIsReadBeforeTheFigures": THE_ANCHOR_IS_READ_BEFORE_THE_FIGURES_NOTE,
+    "ADifferenceIsClassifiedNotAbsorbed": (
+        A_DIFFERENCE_IS_CLASSIFIED_NOT_ABSORBED_NOTE
+    ),
     "ACoverageIsComparedAtItsDeclaredPrecision": (
         A_COVERAGE_IS_COMPARED_AT_ITS_DECLARED_PRECISION_NOTE
     ),
@@ -392,6 +417,128 @@ def segment_total_agrees(records: Sequence[Mapping[str, str]]) -> bool:
     """أطابق عددُ السجلّات جملةَ المقاطع المُدَّعاة؟ عدًّا لا اشتقاقًا من نسبة."""
 
     return len(records) == ARRIVING_SEGMENT_TOTAL
+
+
+@dataclass(frozen=True, slots=True)
+class AnchorReading:
+    """قراءةُ المرساة: `Morph_type` مملوءًا في كلّ سجلّ، وجملةُ السجلّات معه.
+
+    `TheAnchorIsReadBeforeTheFigures`: تُقرأ قبل رقمٍ من أرقام الإعراب، لأنّ
+    سقوطَها يُحوِّل السؤالَ من «أخالف الرقمُ؟» إلى «أصحّت القراءةُ أصلًا؟».
+    """
+
+    column: str
+    declared_percentage: str
+    filled_cells: int
+    total_records: int
+
+    @property
+    def every_segment_is_filled(self) -> bool:
+        """أمُلِئ العمودُ في كلّ سجلٍّ؟ لا تقريبَ هنا: المطابقةُ خليّةً بخليّة."""
+
+        return self.total_records > 0 and self.filled_cells == self.total_records
+
+    @property
+    def segment_total_agrees(self) -> bool:
+        """أطابقت جملةُ السجلّات المُدَّعاة؟ عدًّا سجلًّا سجلًّا لا اشتقاقًا."""
+
+        return self.total_records == ARRIVING_SEGMENT_TOTAL
+
+    @property
+    def holds(self) -> bool:
+        """أقامت المرساةُ بشقَّيها؟ وسقوطُ أحدهما سقوطُها."""
+
+        return self.every_segment_is_filled and self.segment_total_agrees
+
+
+def read_anchor(records: Sequence[Mapping[str, str]]) -> AnchorReading:
+    """اقرأ المرساةَ وحدَها؛ وعمودُها الغائبُ يُوقِف كلَّ ما بعده لا يُصفَّر."""
+
+    declared = next(
+        (
+            coverage.declared_percentage
+            for coverage in ARRIVING_COLUMN_COVERAGE
+            if coverage.column == ANCHOR_COLUMN_NAME
+        ),
+        None,
+    )
+    if declared is None:
+        raise IrabCensusError(
+            f"لا تغطيةَ مُصرَّحًا بها للمرساة «{ANCHOR_COLUMN_NAME}»؛ "
+            "ولا تُقاس مرساةٌ بلا مُدَّعًى تُقابَل به."
+        )
+    return AnchorReading(
+        column=ANCHOR_COLUMN_NAME,
+        declared_percentage=declared,
+        filled_cells=non_empty_cells(records, ANCHOR_COLUMN_NAME),
+        total_records=len(records),
+    )
+
+
+def classify_difference(
+    reading: IrabFigureReading, *, anchor: AnchorReading | None = None
+) -> IrabDifferenceClass:
+    """بابُ الفرق بالقاعدة المسنونة قبل رؤيته؛ ولا يُعدَّل بها رقمٌ مُجمَّد.
+
+    والترتيبُ مقصودٌ: المرساةُ أوّلًا — فإن سقطت فالمُتَّهَمُ القراءةُ لا
+    الأرقام — ثمّ اسمُ القيمة، ثمّ قاعدةُ العدّ، ثمّ «لم يُصنَّف».
+    `ADifferenceIsClassifiedNotAbsorbed`.
+    """
+
+    if reading.agrees:
+        raise IrabCensusError(
+            "لا فرقَ يُصنَّف: القراءةُ طابقت المُدَّعى، وتصنيفُ الموافق "
+            "يُنشئ بابًا لِما لم يقع. " + A_DIFFERENCE_IS_CLASSIFIED_NOT_ABSORBED_NOTE
+        )
+    if anchor is not None and not anchor.holds:
+        return IrabDifferenceClass.THE_BYTES_THEMSELVES
+    if reading.standing is IrabValueStanding.NOT_A_VALUE_OF_THIS_COLUMN:
+        return IrabDifferenceClass.VALUE_NAME
+    if (
+        reading.word_count is not None
+        and reading.word_count == reading.figure.claimed_count
+    ):
+        return IrabDifferenceClass.COUNTING_RULE
+    return IrabDifferenceClass.NOT_YET_CLASSIFIED
+
+
+@dataclass(frozen=True, slots=True)
+class IrabDifferenceRecord:
+    """الفرقُ مُسجَّلًا كما وقع: المُدَّعى، والمُشتَقّ، والمنزلة، والباب."""
+
+    label: str
+    column: str
+    value: str | None
+    claimed_count: int
+    derived_count: int
+    word_count: int | None
+    standing: IrabValueStanding
+    difference_class: IrabDifferenceClass
+    preregistration_digest: str
+    corpus_digest: str
+
+
+def record_differences(
+    readings: Sequence[IrabFigureReading], *, anchor: AnchorReading | None = None
+) -> tuple[IrabDifferenceRecord, ...]:
+    """سجِّلْ كلَّ ما خالف بترتيب وروده؛ ولا يُطوى فرقٌ ولا يُعدَّل رقمُه."""
+
+    return tuple(
+        IrabDifferenceRecord(
+            label=reading.figure.label,
+            column=reading.figure.column,
+            value=reading.figure.value,
+            claimed_count=reading.figure.claimed_count,
+            derived_count=reading.derived_count,
+            word_count=reading.word_count,
+            standing=reading.standing,
+            difference_class=classify_difference(reading, anchor=anchor),
+            preregistration_digest=reading.preregistration_digest,
+            corpus_digest=reading.corpus_digest,
+        )
+        for reading in readings
+        if not reading.agrees
+    )
 
 
 def census_from_bytes(data: bytes) -> tuple[IrabFigureReading, ...]:

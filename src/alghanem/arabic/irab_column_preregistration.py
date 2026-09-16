@@ -53,6 +53,10 @@ from typing import Final
 from ..canonical_content import canonical_bytes, canonical_digest
 
 __all__ = [
+    "IrabDifferenceClass",
+    "THE_ANCHOR_IS_READ_BEFORE_THE_FIGURES_NOTE",
+    "A_DIFFERENCE_IS_CLASSIFIED_NOT_ABSORBED_NOTE",
+    "ANCHOR_COLUMN_NAME",
     "ArrivingColumnCoverage",
     "SPELLING_CHECK_BESIDE_THE_EXPECTATION",
     "SECOND_CONSIGNMENT_IRAB_FIGURES",
@@ -161,6 +165,21 @@ A_CLAIMED_VALUE_ABSENT_IS_NOT_A_ZERO_COUNT_NOTE: Final[str] = (
     "والغيابُ خبرٌ عن اسم القيمة قد يكون خطأَ نقلٍ أو اختلافَ صياغةٍ أو ترميز"
 )
 
+THE_ANCHOR_IS_READ_BEFORE_THE_FIGURES_NOTE: Final[str] = (
+    "TheAnchorIsReadBeforeTheFigures: `Morph_type` وحدَه مُصرَّحٌ بامتلائه "
+    "١٠٠٪، فيُقرأ **قبل** رقمٍ من أرقام الإعراب؛ فإن خالف فالمُتَّهَمُ "
+    "القراءةُ نفسُها — تقطيعُ السجلّات أو أسطرٌ مضمَّنةٌ في حقلٍ مقتبَس — لا "
+    "الأرقامُ المُجمَّدة، وقراءةُ فرقٍ في رقمٍ حينئذٍ قراءةُ عطبٍ في الأنبوب"
+)
+
+A_DIFFERENCE_IS_CLASSIFIED_NOT_ABSORBED_NOTE: Final[str] = (
+    "ADifferenceIsClassifiedNotAbsorbed: إن خالف رقمٌ فلا يُعدَّل المُجمَّدُ "
+    "ولا قاعدةُ عدِّه حتّى يُطابِق؛ يُسجَّل الفرقُ كما هو ويُصنَّف بـ"
+    "`IrabDifferenceClass` المسنونةِ **قبل رؤيته**: خلافُ قاعدةِ عدٍّ، أو "
+    "خلافُ اسم قيمةٍ، أو خلافٌ في البايتات نفسِها، أو لم يُصنَّف بعد — "
+    "و«لم يُصنَّف» بابٌ مُعلَنٌ كي لا يُدفَع فرقٌ إلى بابٍ لا يسعه"
+)
+
 IRAB_PREREGISTRATION_NAMED_RESIDUALS: Final[dict[str, str]] = {
     "ThisRegistrationIsNotPriorToTheNumber": (
         THIS_REGISTRATION_IS_NOT_PRIOR_TO_THE_NUMBER_NOTE
@@ -185,6 +204,10 @@ IRAB_PREREGISTRATION_NAMED_RESIDUALS: Final[dict[str, str]] = {
     "AThinlyCoveredColumnIsNotACensusOfArabic": (
         A_THINLY_COVERED_COLUMN_IS_NOT_A_CENSUS_OF_ARABIC_NOTE
     ),
+    "TheAnchorIsReadBeforeTheFigures": THE_ANCHOR_IS_READ_BEFORE_THE_FIGURES_NOTE,
+    "ADifferenceIsClassifiedNotAbsorbed": (
+        A_DIFFERENCE_IS_CLASSIFIED_NOT_ABSORBED_NOTE
+    ),
 }
 
 
@@ -195,6 +218,8 @@ INVARIABLE_DECLINABLE_COLUMN: Final[str] = "Invariable_Declinable"
 PHRASAL_FUNCTION_COLUMN: Final[str] = "Phrasal_Function"
 SEGMENT_INDEX_COLUMN_NAME: Final[str] = "Word_No"
 WORD_KEY_COLUMN_NAME: Final[str] = "Column5"
+ANCHOR_COLUMN_NAME: Final[str] = "Morph_type"
+"""العمودُ المُصرَّحُ بامتلائه ١٠٠٪؛ وهو المرساةُ لا رقمٌ من أرقام الإعراب."""
 
 
 class IrabCountingRule(Enum):
@@ -219,6 +244,35 @@ class IrabCountingRule(Enum):
         "الخليةُ المملوءة: سجلٌّ قيمةُ عموده المُعلَن غيرُ فارغةٍ بعد تجريد "
         "الفراغ الطرفيّ، منسوبًا إلى جملة السجلّات؛ والمقامُ مقاطعُ الملفِّ "
         "كلُّها لا المُعرَبُ منها وحدَه"
+    )
+
+
+class IrabDifferenceClass(Enum):
+    """أبوابُ الفرق، مسنونةً **قبل رؤيته**؛ ولا يُفتَح بابٌ بعد وقوعه.
+
+    `ADifferenceIsClassifiedNotAbsorbed`: التصنيفُ تسجيلٌ للفرق لا مَعذِرةٌ
+    له، ولا يُعدَّل به رقمٌ مُجمَّدٌ ولا قاعدةُ عدّ.
+    """
+
+    COUNTING_RULE = (
+        "خلافُ قاعدةِ عدٍّ: وردت القيمةُ وخالف عددُ المقاطع، وعددُ الكلمات "
+        "بالثلاثيّة `(Sura_No، Verse_No، Column5)` هو المطابقُ للمُدَّعى؛ "
+        "فالمُدَّعى عُدَّ بالكلمة والمقيسُ بالمقطع، والوحدتان اثنتان"
+    )
+    VALUE_NAME = (
+        "خلافُ اسم قيمةٍ: لم تَرِد الصورةُ المُجمَّدةُ في العمود البتّة، "
+        "فالخبرُ عن **اسم القيمة** — تشكيلًا أو مسافةً أو صورةَ همزةٍ أو "
+        "ترميزًا — لا عن المدوَّنة؛ ولا يُقرأ صفرًا ولا تكذيبًا للرقم"
+    )
+    THE_BYTES_THEMSELVES = (
+        "خلافٌ في البايتات أو في قراءتها: مرساةُ `Morph_type` لم تكتمل أو "
+        "جملةُ السجلّات خالفت، فالمُتَّهَمُ الأنبوبُ لا الأرقام؛ ولا يُصنَّف "
+        "فرقٌ آخرُ ما دامت المرساةُ ساقطة"
+    )
+    NOT_YET_CLASSIFIED = (
+        "لم يُصنَّف بعد: وردت القيمةُ وخالف عددُها ولم يُفسِّره عدُّ الكلمات، "
+        "والمرساةُ قائمة؛ فيُسجَّل الفرقُ بلا بابٍ يسعه، ولا يُدفَع إلى بابٍ "
+        "ليختفي"
     )
 
 
@@ -790,7 +844,7 @@ class ArrivingColumnCoverage:
 
 
 ARRIVING_COLUMN_COVERAGE: Final[tuple[ArrivingColumnCoverage, ...]] = (
-    ArrivingColumnCoverage(column="Morph_type", declared_percentage="100.0000"),
+    ArrivingColumnCoverage(column=ANCHOR_COLUMN_NAME, declared_percentage="100.0000"),
     ArrivingColumnCoverage(column="Segmented_Word", declared_percentage="98.2553"),
     ArrivingColumnCoverage(column="Morph_tag", declared_percentage="98.2039"),
     ArrivingColumnCoverage(
@@ -872,6 +926,10 @@ def preregistration_digest() -> str:
                     [coverage.column, coverage.declared_percentage]
                     for coverage in ARRIVING_COLUMN_COVERAGE
                 ],
+                "difference_classes": {
+                    item.name: item.value for item in IrabDifferenceClass
+                },
+                "anchor_column": ANCHOR_COLUMN_NAME,
                 "expectation": PRE_REGISTERED_EXPECTATION,
                 "spelling_check": SPELLING_CHECK_BESIDE_THE_EXPECTATION,
                 "residuals": sorted(IRAB_PREREGISTRATION_NAMED_RESIDUALS),

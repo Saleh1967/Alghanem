@@ -8,30 +8,34 @@
 
 from __future__ import annotations
 
-import os
 import unicodedata
 
 import pytest
 
 from alghanem.arabic.irab_column_census import (
     IRAB_CENSUS_NAMED_RESIDUALS,
+    AnchorReading,
     CoverageReading,
     IrabCensusError,
     IrabValueStanding,
     census_from_bytes,
+    classify_difference,
     column_census,
     distinct_value_count,
     non_empty_cells,
+    read_anchor,
     read_coverage,
     read_coverages,
     read_figure,
     read_figures,
+    record_differences,
     segment_total_agrees,
     segments_with_value,
     value_counts,
     words_with_value,
 )
 from alghanem.arabic.irab_column_preregistration import (
+    ANCHOR_COLUMN_NAME,
     ARRIVING_COLUMN_COVERAGE,
     ARRIVING_IRAB_FIGURES,
     ARRIVING_SEGMENT_TOTAL,
@@ -51,6 +55,7 @@ from alghanem.arabic.irab_column_preregistration import (
     ArrivingColumnCoverage,
     ArrivingIrabFigure,
     IrabCountingRule,
+    IrabDifferenceClass,
     IrabPreregistrationError,
     RegistrationStanding,
     column_named,
@@ -58,11 +63,10 @@ from alghanem.arabic.irab_column_preregistration import (
     preregistration_digest,
 )
 from alghanem.arabic.masaq_corpus_deposit import (
-    MASAQ_PATH_VARIABLE,
     MASAQ_RELATIVE_PATH,
+    masaq_bytes_are_resolvable,
     masaq_records,
     read_masaq_bytes,
-    vendored_masaq_path,
 )
 
 SYNTHETIC_RECORDS: tuple[dict[str, str], ...] = (
@@ -307,33 +311,46 @@ def test_a_csv_without_the_declared_columns_stops_the_census() -> None:
 
 
 @pytest.mark.skipif(
-    not os.environ.get(MASAQ_PATH_VARIABLE) and not vendored_masaq_path().is_file(),
+    not masaq_bytes_are_resolvable(),
     reason=(
-        f"the MASAQ bytes are not in {MASAQ_RELATIVE_PATH} and no path is "
-        "declared; the thirteen arriving i'rab figures are re-derived only "
-        "from the fingerprinted bytes"
+        f"no MASAQ bytes resolve from {MASAQ_RELATIVE_PATH} nor from a "
+        "declared path; the arriving i'rab figures are re-derived only from "
+        "the fingerprinted bytes. Bytes that resolve and differ are not "
+        "skipped: they fail"
     ),
 )
 def test_the_arriving_figures_are_rederived_from_the_deposited_bytes() -> None:
     """يُعرَض المُدَّعى والمُشتَقّ معًا؛ ولا يُعدَّل رقمٌ ليُطابِق ما قِيس."""
 
     records = masaq_records(read_masaq_bytes())
+    anchor = read_anchor(records)
+
+    assert anchor.every_segment_is_filled, (
+        "المرساةُ لم تمتلئ في كلّ سجلّ، فالمُتَّهَمُ القراءةُ لا الأرقام: "
+        f"{anchor.filled_cells} من {anchor.total_records}"
+    )
+    assert anchor.segment_total_agrees, (
+        "جملةُ المقاطع خالفت المُدَّعى قبل قراءة رقمٍ واحد: "
+        f"{anchor.total_records} لا {ARRIVING_SEGMENT_TOTAL}"
+    )
+
     readings = read_figures(records)
+    differences = record_differences(readings, anchor=anchor)
 
     disagreeing = [
         (
-            reading.figure.label,
-            reading.figure.claimed_count,
-            reading.derived_count,
-            reading.standing.value,
+            difference.label,
+            difference.claimed_count,
+            difference.derived_count,
+            difference.standing.value,
+            difference.difference_class.name,
         )
-        for reading in readings
-        if not reading.agrees
+        for difference in differences
     ]
 
     assert disagreeing == [], (
         "أرقامٌ واردةٌ لم تُطابِق ما اشتُقَّ من البايتات المُبصَّمة؛ "
-        "والفرقُ يُعرَض ولا يُطوى: " + repr(disagreeing)
+        "والفرقُ يُعرَض مُصنَّفًا ولا يُطوى: " + repr(disagreeing)
     )
 
 
@@ -469,10 +486,10 @@ def test_the_segment_total_is_counted_not_derived_from_a_percentage() -> None:
 
 
 @pytest.mark.skipif(
-    not os.environ.get(MASAQ_PATH_VARIABLE) and not vendored_masaq_path().is_file(),
+    not masaq_bytes_are_resolvable(),
     reason=(
-        f"the MASAQ bytes are not in {MASAQ_RELATIVE_PATH} and no path is "
-        "declared; the ten arriving coverages and the segment total are "
+        f"no MASAQ bytes resolve from {MASAQ_RELATIVE_PATH} nor from a "
+        "declared path; the ten arriving coverages and the segment total are "
         "re-derived only from the fingerprinted bytes"
     ),
 )
@@ -493,3 +510,191 @@ def test_the_arriving_coverages_are_rederived_from_the_deposited_bytes() -> None
     assert disagreeing == [], "تغطياتٌ واردةٌ لم تُطابِق ما اشتُقَّ من البايتات: " + repr(
         disagreeing
     )
+
+
+ANCHORED_RECORDS: tuple[dict[str, str], ...] = tuple(
+    {**record, ANCHOR_COLUMN_NAME: "STEM"} for record in SYNTHETIC_RECORDS
+)
+"""الصفوفُ نفسُها ومعها عمودُ المرساة مملوءًا؛ ولا رقمَ فيها عن المدوَّنة."""
+
+
+def test_the_anchor_column_is_absent_so_the_reading_stops() -> None:
+    """مرساةٌ غائبةٌ عن الترويسة تُوقِف القراءةَ ولا تُحمَل على أقرب اسمٍ إليها."""
+
+    with pytest.raises(IrabCensusError):
+        read_anchor(SYNTHETIC_RECORDS)
+
+
+def test_the_anchor_is_read_before_the_figures_and_holds_by_two_halves() -> None:
+    """المرساةُ شقّان: امتلاءُ كلّ سجلّ، وجملةُ السجلّات؛ وسقوطُ أحدهما سقوطُها."""
+
+    anchor = read_anchor(ANCHORED_RECORDS)
+
+    assert anchor.column == ANCHOR_COLUMN_NAME
+    assert anchor.declared_percentage == "100.0000"
+    assert anchor.filled_cells == len(ANCHORED_RECORDS)
+    assert anchor.every_segment_is_filled
+    assert not anchor.segment_total_agrees
+    assert not anchor.holds
+    assert "TheAnchorIsReadBeforeTheFigures" in IRAB_CENSUS_NAMED_RESIDUALS
+    assert "TheAnchorIsReadBeforeTheFigures" in IRAB_PREREGISTRATION_NAMED_RESIDUALS
+
+
+def test_an_unfilled_anchor_cell_drops_the_anchor() -> None:
+    """خليّةٌ واحدةٌ فارغةٌ تُسقِط المرساةَ؛ ولا تُقرَّب ٩٩٫٩٪ إلى مئة."""
+
+    holed = (*ANCHORED_RECORDS[:-1], {**ANCHORED_RECORDS[-1], ANCHOR_COLUMN_NAME: ""})
+
+    anchor = read_anchor(holed)
+
+    assert anchor.filled_cells == len(holed) - 1
+    assert not anchor.every_segment_is_filled
+    assert not anchor.holds
+
+
+FALLEN_ANCHOR = AnchorReading(
+    column=ANCHOR_COLUMN_NAME,
+    declared_percentage="100.0000",
+    filled_cells=4,
+    total_records=5,
+)
+"""مرساةٌ ساقطةٌ مُصطنَعة؛ تُصرَّح ولا تُقرأ قياسًا عن المدوَّنة."""
+
+STANDING_ANCHOR = AnchorReading(
+    column=ANCHOR_COLUMN_NAME,
+    declared_percentage="100.0000",
+    filled_cells=ARRIVING_SEGMENT_TOTAL,
+    total_records=ARRIVING_SEGMENT_TOTAL,
+)
+"""مرساةٌ قائمةٌ مُصطنَعة؛ لتُقرأ أبوابُ الفرق حين لا يكون الأنبوبُ متَّهَمًا."""
+
+
+def test_a_missing_value_name_is_classed_as_a_name_not_as_a_zero() -> None:
+    """«ليست من قيم هذا العمود» بابُها اسمُ القيمة؛ وهو نصُّ الشقّ الأوّل."""
+
+    figure = ArrivingIrabFigure(
+        label="صورةٌ لم تَرِد",
+        column=SYNTACTIC_ROLE_COLUMN,
+        value="مُبتدأ",
+        claimed_count=2,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    )
+
+    reading = read_figure(ANCHORED_RECORDS, figure)
+
+    assert reading.standing is IrabValueStanding.NOT_A_VALUE_OF_THIS_COLUMN
+    assert (
+        classify_difference(reading, anchor=STANDING_ANCHOR)
+        is IrabDifferenceClass.VALUE_NAME
+    )
+
+
+def test_a_claim_matched_by_the_word_count_is_classed_as_a_counting_rule() -> None:
+    """مقطعان وكلمةٌ واحدة: مُدَّعًى يُطابِق الكلماتِ بابُه قاعدةُ العدّ."""
+
+    figure = ArrivingIrabFigure(
+        label="مبتدأٌ بعدِّ الكلمات",
+        column=SYNTACTIC_ROLE_COLUMN,
+        value="مبتدأ",
+        claimed_count=1,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    )
+
+    reading = read_figure(ANCHORED_RECORDS, figure)
+
+    assert reading.derived_count == 2
+    assert reading.word_count == 1
+    assert (
+        classify_difference(reading, anchor=STANDING_ANCHOR)
+        is IrabDifferenceClass.COUNTING_RULE
+    )
+
+
+def test_a_difference_the_word_count_does_not_explain_is_left_unclassified() -> None:
+    """لا يُدفَع فرقٌ إلى بابٍ لا يسعه؛ و«لم يُصنَّف» بابٌ مُعلَنٌ لذلك."""
+
+    figure = ArrivingIrabFigure(
+        label="مبتدأٌ بعددٍ لا يُفسِّره شيء",
+        column=SYNTACTIC_ROLE_COLUMN,
+        value="مبتدأ",
+        claimed_count=5,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    )
+
+    reading = read_figure(ANCHORED_RECORDS, figure)
+
+    assert reading.standing is IrabValueStanding.PRESENT_AND_DIFFERS
+    assert (
+        classify_difference(reading, anchor=STANDING_ANCHOR)
+        is IrabDifferenceClass.NOT_YET_CLASSIFIED
+    )
+
+
+def test_a_fallen_anchor_indicts_the_reading_before_any_other_class() -> None:
+    """ما دامت المرساةُ ساقطةً فالمُتَّهَمُ الأنبوبُ، ولا يُصنَّف فرقٌ بغيره."""
+
+    figure = ArrivingIrabFigure(
+        label="صورةٌ لم تَرِد مع مرساةٍ ساقطة",
+        column=SYNTACTIC_ROLE_COLUMN,
+        value="مُبتدأ",
+        claimed_count=2,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    )
+
+    reading = read_figure(ANCHORED_RECORDS, figure)
+
+    assert (
+        classify_difference(reading, anchor=FALLEN_ANCHOR)
+        is IrabDifferenceClass.THE_BYTES_THEMSELVES
+    )
+
+
+def test_an_agreeing_reading_has_no_difference_to_classify() -> None:
+    """تصنيفُ الموافق يُنشئ بابًا لِما لم يقع؛ فيُرفَع به خطأ."""
+
+    figure = ArrivingIrabFigure(
+        label="مبتدأٌ بعدِّ المقاطع",
+        column=SYNTACTIC_ROLE_COLUMN,
+        value="مبتدأ",
+        claimed_count=2,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    )
+
+    reading = read_figure(ANCHORED_RECORDS, figure)
+
+    assert reading.agrees
+    with pytest.raises(IrabCensusError):
+        classify_difference(reading, anchor=STANDING_ANCHOR)
+
+
+def test_recording_a_difference_edits_neither_the_figure_nor_the_rule() -> None:
+    """السجلُّ يحمل المُدَّعى كما جُمِّد؛ والبصمةُ بعده كهي قبله."""
+
+    before = preregistration_digest()
+    readings = read_figures(ANCHORED_RECORDS)
+
+    differences = record_differences(readings, anchor=FALLEN_ANCHOR)
+
+    assert len(differences) == sum(1 for reading in readings if not reading.agrees)
+    claimed = {figure.label: figure.claimed_count for figure in ARRIVING_IRAB_FIGURES}
+    for difference in differences:
+        assert difference.claimed_count == claimed[difference.label]
+        assert difference.preregistration_digest == IRAB_PREREGISTRATION_DIGEST
+        assert difference.difference_class is IrabDifferenceClass.THE_BYTES_THEMSELVES
+    assert preregistration_digest() == before
+    assert "ADifferenceIsClassifiedNotAbsorbed" in IRAB_CENSUS_NAMED_RESIDUALS
+    assert "ADifferenceIsClassifiedNotAbsorbed" in IRAB_PREREGISTRATION_NAMED_RESIDUALS
+
+
+def test_the_difference_classes_are_frozen_in_the_preregistration_digest() -> None:
+    """أبوابُ الفرق مسنونةٌ قبل رؤيته، فهي داخلةٌ في بصمة التسجيل."""
+
+    assert len(IrabDifferenceClass) == 4
+    assert {item.name for item in IrabDifferenceClass} == {
+        "COUNTING_RULE",
+        "VALUE_NAME",
+        "THE_BYTES_THEMSELVES",
+        "NOT_YET_CLASSIFIED",
+    }
+    for item in IrabDifferenceClass:
+        assert item.value.strip() == item.value and item.value

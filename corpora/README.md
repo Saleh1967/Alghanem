@@ -52,3 +52,20 @@ export ALGHANEM_MASAQ_PATH=/absolute/path/to/MASAQ.csv
 `unsanctioned_deposit_files()` قبل أيّ مطابقةِ بصمة، تحت
 `AFailedUploadIsNotADeposit`. وحذفُ الاسم الطارئ ليس تنظيفًا: بقاؤه دعوى
 إيداعٍ بلا بايتات.
+
+### التخطّي معلَّقٌ بالبايتات لا بالمتغيّر
+
+الاختباراتُ المعلَّقةُ على البايتات تُتخطّى حين **لا يُحَلُّ مسارٌ إلى ملفٍّ
+موجود** — `masaq_bytes_are_resolvable()` — لا حين يخلو `ALGHANEM_MASAQ_PATH`.
+فمتغيّرٌ مضبوطٌ على مسارٍ لا ملفَّ فيه كان يُخرِج خطأً يُقرأ فشلَ قياس، وملفٌّ
+مُحَلٌّ مخالفُ البصمة **لا يُتخطّى** بل يَفشَل، تحت
+`ASkipIsConditionedOnTheBytesNotTheVariable`. ولحظةَ نزول البايتات الصحيحةِ
+هنا تنتقل تلك الاختباراتُ من `skipped` إلى `passed` بلا سطرِ تعديلٍ واحد.
+
+### أوّلُ ما يُقرأ حين تصل
+
+`Morph_type` مرساةً: هو العمودُ الوحيدُ المُصرَّحُ بامتلائه ١٠٠٪، فيُقرأ قبل
+رقمٍ من أرقام الإعراب تحت `TheAnchorIsReadBeforeTheFigures`. وإن خالف رقمٌ بعده
+فلا يُعدَّل المُجمَّدُ ولا قاعدةُ عدِّه: يُسجَّل الفرقُ كما وقع ويُصنَّف بأبواب
+`IrabDifferenceClass` المسنونةِ قبل رؤيته، تحت
+`ADifferenceIsClassifiedNotAbsorbed`.
