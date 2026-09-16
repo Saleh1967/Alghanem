@@ -8,6 +8,8 @@
 
 from __future__ import annotations
 
+import os
+
 import pytest
 
 from alghanem.arabic.irab_column_census import (
@@ -41,10 +43,11 @@ from alghanem.arabic.irab_column_preregistration import (
     preregistration_digest,
 )
 from alghanem.arabic.masaq_corpus_deposit import (
+    MASAQ_PATH_VARIABLE,
     MASAQ_RELATIVE_PATH,
-    masaq_bytes_are_resolvable,
     masaq_records,
     read_masaq_bytes,
+    vendored_masaq_path,
 )
 
 SYNTHETIC_RECORDS: tuple[dict[str, str], ...] = (
@@ -275,7 +278,7 @@ def test_a_csv_without_the_declared_columns_stops_the_census() -> None:
 
 
 @pytest.mark.skipif(
-    not masaq_bytes_are_resolvable(),
+    not os.environ.get(MASAQ_PATH_VARIABLE) and not vendored_masaq_path().is_file(),
     reason=(
         f"the MASAQ bytes are not in {MASAQ_RELATIVE_PATH} and no path is "
         "declared; the thirteen arriving i'rab figures are re-derived only "

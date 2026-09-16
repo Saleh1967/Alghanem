@@ -4,12 +4,14 @@
 منسوخةٍ إلى هذه الشجرة، والمُحاكى بنيةُ الصفّ وحدَها — ترويسةٌ، وسجلٌّ فيه
 فاصلُ سطرٍ داخل حقلٍ مُقتبَس، ومقاطعُ كلمةٍ واحدةٍ تحمل `Word_No` مكرَّرًا.
 ولا يُقرأ من سطرٍ مُصطنَعٍ رقمٌ عن المدوَّنة البتّة؛ أرقامُها كلُّها من
-البايتات المُبصَّمة، وإعادةُ اشتقاقها اختبارٌ يُفعَّل بـ`ALGHANEM_MASAQ_PATH`.
+البايتات المُبصَّمة، وإعادةُ اشتقاقها اختبارٌ يُفعَّل ببايتات `corpora/MASAQ.csv`
+المُودَعة في الشجرة، أو بمسارٍ يُصرَّح به في `ALGHANEM_MASAQ_PATH`.
 """
 
 from __future__ import annotations
 
 import hashlib
+import os
 from pathlib import Path
 
 import pytest
@@ -37,9 +39,10 @@ from alghanem.arabic.masaq_corpus_deposit import (
     MasaqDepositError,
     MirrorCorroboration,
     RederivedFigure,
+    deposit_place_is_clean,
     figures_named,
     lines_are_conserved,
-    masaq_bytes_are_resolvable,
+    masaq_path,
     masaq_records,
     read_masaq_bytes,
     rederive_embedded_newline_breaks,
@@ -47,6 +50,7 @@ from alghanem.arabic.masaq_corpus_deposit import (
     rederive_line_count,
     rederive_record_count,
     rederive_tag_count,
+    unsanctioned_deposit_files,
     vendored_masaq_path,
 )
 
@@ -216,45 +220,53 @@ def test_bytes_are_refused_on_a_length_or_a_digest_mismatch(tmp_path: Path) -> N
         read_masaq_bytes(tmp_path / "absent.csv")
 
 
-def test_no_path_is_guessed_when_none_is_declared(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+def test_no_path_is_guessed_beyond_the_deposited_location(
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """ثلاثةُ أبوابٍ لا رابع: المُمرَّرُ، فالمتغيّر، فالشجرة، ثمّ رفضٌ صريح."""
+    """الموضعُ المسنونُ وحدَه يُجرَّب بلا تصريح؛ وغيابُه رفضٌ لا تخمين."""
 
     monkeypatch.delenv(MASAQ_PATH_VARIABLE, raising=False)
-    monkeypatch.setattr(
-        "alghanem.arabic.masaq_corpus_deposit.vendored_masaq_path",
-        lambda root=None: tmp_path / MASAQ_RELATIVE_PATH,
-    )
+
+    if vendored_masaq_path().is_file():
+        assert masaq_path() == vendored_masaq_path()
+        return
 
     with pytest.raises(MasaqDepositError):
         read_masaq_bytes()
 
 
-def test_the_vendored_path_is_derived_from_the_tree_not_written_absolutely() -> None:
-    path = vendored_masaq_path()
-
-    assert path.as_posix().endswith(MASAQ_RELATIVE_PATH)
-    assert path.is_absolute()
-    assert (
-        path.parent / "README.md"
-    ).is_file(), "الإسنادُ شرطُ رخصةٍ لا لطفَ عبارة: `corpora/README.md` يحمل نصَّه"
-
-
-def test_vendored_bytes_are_still_matched_on_length_and_digest(
+def test_the_deposited_location_is_resolved_from_the_tree_not_the_cwd(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
-    """وجودُ ملفٍّ في الموضع لا يجعله هذه البايتات؛ المطابقةُ قائمةٌ في البابين."""
+    monkeypatch.delenv(MASAQ_PATH_VARIABLE, raising=False)
+    monkeypatch.chdir(tmp_path)
+
+    assert vendored_masaq_path().is_absolute()
+    assert vendored_masaq_path().as_posix().endswith(MASAQ_RELATIVE_PATH)
+    assert MASAQ_RELATIVE_PATH == "corpora/MASAQ.csv"
+
+
+def test_a_declared_path_outranks_the_deposited_location(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """الإيداعُ في الشجرة لا يُبطِل تصريحًا؛ والمُمرَّرُ يسبق البيئةَ ويسبقانه."""
+
+    elsewhere = tmp_path / "MASAQ.csv"
+    monkeypatch.setenv(MASAQ_PATH_VARIABLE, str(elsewhere))
+
+    assert masaq_path() == elsewhere
+    assert masaq_path(tmp_path / "passed.csv") == tmp_path / "passed.csv"
+
+
+def test_the_deposited_location_is_no_certificate_of_the_bytes(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """ملفٌّ في الموضع الصحيح ببايتاتٍ أخرى مرفوضٌ كغيره: الموضعُ ليس بصمة."""
 
     impostor = tmp_path / "MASAQ.csv"
     impostor.write_bytes(SYNTHETIC_BYTES)
-    monkeypatch.delenv(MASAQ_PATH_VARIABLE, raising=False)
-    monkeypatch.setattr(
-        "alghanem.arabic.masaq_corpus_deposit.vendored_masaq_path",
-        lambda root=None: impostor,
-    )
+    monkeypatch.setenv(MASAQ_PATH_VARIABLE, str(impostor))
 
-    assert masaq_bytes_are_resolvable()
     with pytest.raises(MasaqDepositError):
         read_masaq_bytes()
 
@@ -295,12 +307,12 @@ def test_the_attribution_is_a_licence_condition_carried_in_the_module() -> None:
 
 
 @pytest.mark.skipif(
-    not masaq_bytes_are_resolvable(),
+    not os.environ.get(MASAQ_PATH_VARIABLE) and not vendored_masaq_path().is_file(),
     reason=(
-        f"the MASAQ bytes are not in {MASAQ_RELATIVE_PATH} and "
-        f"{MASAQ_PATH_VARIABLE} is unset. Its CC BY 3.0 licence permits "
-        "vendoring them; place the exact MASAQ.csv whose digest is deposited "
-        "there, or declare its path, to re-derive all twenty figures here"
+        "the MASAQ bytes are absent from this checkout. Its CC BY 3.0 licence "
+        f"permits depositing them at {MASAQ_RELATIVE_PATH}; until they are "
+        f"there, set {MASAQ_PATH_VARIABLE} to the exact MASAQ.csv whose digest "
+        "is deposited to re-derive all twenty figures here"
     ),
 )
 def test_all_twenty_figures_rederive_from_the_deposited_bytes() -> None:
@@ -350,3 +362,34 @@ def test_a_mirror_that_agrees_in_everything_is_not_recorded_as_a_corroboration()
             what_it_establishes="موافقةٌ تامّة",
             what_it_does_not_establish="حدٌّ مكتوب",
         )
+
+
+def test_no_unsanctioned_file_sits_in_the_deposit_place() -> None:
+    """موضعُ الإيداع لا يسكنه إلّا بيانُه وبايتاتُه باسمها المسنون.
+
+    ورفعٌ فاشلٌ ينزل فيه باسمٍ آخرَ يُوهِم أنّ البايتات حاضرة، وهو ما وقع
+    مرّتين في هذه الشجرة؛ فالمنعُ اختبارٌ لا تنبيهٌ في بيان.
+    """
+
+    strays = unsanctioned_deposit_files()
+    assert strays == (), [path.name for path in strays]
+    assert deposit_place_is_clean()
+    assert "AFailedUploadIsNotADeposit" in MASAQ_DEPOSIT_NAMED_RESIDUALS
+
+
+def test_a_stray_name_in_the_deposit_place_is_caught_before_any_digest(
+    tmp_path: Path,
+) -> None:
+    """الاسمُ الطارئُ يُمسَك قبل المطابقة، فلا يُعتذَر له بقِصَرِ بايتاته."""
+
+    (tmp_path / "README.md").write_text("بيانٌ مأذونٌ فيه", encoding="utf-8")
+    (tmp_path / MASAQ_RELATIVE_PATH.rsplit("/", 1)[1]).write_bytes(b"")
+    stray = tmp_path / "Masaq cor.txt"
+    stray.write_bytes(b"\n")
+
+    assert unsanctioned_deposit_files(tmp_path) == (stray,)
+    assert not deposit_place_is_clean(tmp_path)
+
+
+def test_an_absent_deposit_place_has_no_stray_files(tmp_path: Path) -> None:
+    assert unsanctioned_deposit_files(tmp_path / "لا-وجودَ-له") == ()

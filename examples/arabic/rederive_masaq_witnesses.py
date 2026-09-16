@@ -1,16 +1,22 @@
 """Re-derive, in one pass, every MASAQ figure deposited in this tree.
 
 MASAQ is CC BY 3.0 — the first witness in this tree whose licence permits
-vendoring, unlike the Quranic Arabic Corpus (GPL) and the Tanzil text it embeds
-(CC BY-ND). The bytes are read from ``corpora/MASAQ.csv`` when they are there,
-with the attribution its licence requires recorded in ``corpora/README.md``.
-Bytes held elsewhere are passed instead::
+vendoring, unlike the Quranic Arabic Corpus (GPL) and the Tanzil text it
+embeds (CC BY-ND). That wider licence reserves one sanctioned place for those
+bytes, ``corpora/MASAQ.csv``, but **they are not in this tree yet**. Once they
+are deposited there this script finds them with no environment variable at
+all::
+
+    python examples/arabic/rederive_masaq_witnesses.py
+
+Until then — and for any checkout without them — their path is declared::
 
     ALGHANEM_MASAQ_PATH=/path/to/MASAQ.csv \\
         python examples/arabic/rederive_masaq_witnesses.py
 
-The resolution order is the explicit argument, then that variable, then the
-tree; no fourth location is guessed.
+The deposited location is a **declared place, never a certificate**: bytes
+found there are matched against the digest and the byte length exactly as any
+passed path is, and a mismatch is refused rather than adopted.
 
 Every figure is matched against the byte length and the SHA-256 **before** it
 is produced, and every figure carries the counting rule that produced it. A
@@ -52,8 +58,8 @@ def main() -> int:
     except MasaqDepositError as error:
         print(f"error: {error}", file=sys.stderr)
         print(
-            f"place the MASAQ.csv whose digest is deposited in "
-            f"{MASAQ_RELATIVE_PATH}, or set {MASAQ_PATH_VARIABLE} to it",
+            f"deposit the MASAQ.csv whose digest is deposited at "
+            f"{MASAQ_RELATIVE_PATH}, or set {MASAQ_PATH_VARIABLE} to its path",
             file=sys.stderr,
         )
         return 2

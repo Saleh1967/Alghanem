@@ -2,10 +2,8 @@
 
 **ما تفعله هذه الوحدة**: تُجمِّد بصمةَ `MASAQ.csv` وطولَ بايتاتها ورخصتَها
 وشرطَ إسنادها، ثمّ تُودِع عشرين رقمًا يحمل كلٌّ منها **قاعدةَ عدّه ودالّةَ
-إعادة اشتقاقه**، وترفض إخراجَ رقمٍ من بايتاتٍ لا تطابق البصمةَ والطول.
-ورخصةُ `CC BY 3.0` تُجيز نسخَ البايتات إلى الشجرة، فموضعُها `corpora/MASAQ.csv`
-وإسنادُها في `corpora/README.md`؛ ويبقى `ALGHANEM_MASAQ_PATH` بابًا لمن كانت
-بايتاتُه خارجَها. والمطابقةُ على الطول والبصمة شرطٌ في البابين معًا.
+إعادة اشتقاقه**، وترفض إخراجَ رقمٍ من بايتاتٍ لا تطابق البصمةَ والطول. ولا
+تُنسَخ البايتاتُ إلى الشجرة، وإن كانت الرخصةُ تُجيز.
 
 `WHAT_QAC_COULD_NOT_CLOSE`: المدوَّنةُ الصرفيةُ للقرآن تَسِم `VN` ولا تنزل تحته،
 فبقيت أبوابُ المشتقّات **مُرشَّحةً بلا مرجِع**. و MASAQ تَسِمها بأسمائها
@@ -46,21 +44,23 @@ import csv
 import hashlib
 import io
 import os
+import subprocess
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Final
-
-from .pipeline_stations import repository_root_path
 
 __all__ = [
     "BYTE_LENGTH_RULE",
     "DIGEST_RULE",
     "A_CONSERVATION_AUDIT_IS_NOT_AN_ACCURACY_CLAIM_NOTE",
     "AN_IMPORTED_TAG_IS_A_HUMAN_JUDGEMENT_NOT_A_MEASUREMENT_NOTE",
+    "A_FAILED_UPLOAD_IS_NOT_A_DEPOSIT_NOTE",
+    "AN_IGNORED_PATH_CANNOT_RECEIVE_A_DEPOSIT_NOTE",
     "A_MIRROR_WITH_ANOTHER_DIGEST_IS_NOT_THESE_BYTES_NOTE",
     "COMPLETE_INDUCTION_IS_CORPUS_BOUNDED_NOTE",
     "DEPOSITED_DERIVED_NOUN_COUNTS",
+    "DEPOSIT_DIRECTORY",
     "DEPOSITED_EMBEDDED_NEWLINE_BREAKS",
     "DEPOSITED_EMBEDDED_NEWLINE_RECORDS",
     "DEPOSITED_LINE_COUNT",
@@ -73,14 +73,15 @@ __all__ = [
     "MASAQ_DOI",
     "MASAQ_LICENCE",
     "MASAQ_PATH_VARIABLE",
-    "MASAQ_RELATIVE_PATH",
     "MASAQ_REDERIVED_FIGURES",
+    "MASAQ_RELATIVE_PATH",
     "MASAQ_SHA256",
     "MASAQ_DEPOSIT_NAMED_RESIDUALS",
     "MIRROR_CORROBORATION",
     "MORPH_TAG_COLUMN",
     "NO_ROOT_COLUMN_SO_NO_CROSS_CORPUS_FIGURE_NOTE",
     "RECORD_COUNTING_RULE",
+    "SANCTIONED_DEPOSIT_FILENAMES",
     "SEGMENT_INDEX_COLUMN",
     "SHA_256_ORDERS_NOTHING_NOTE",
     "SYNTHETIC_LINES_ARE_DECLARED_NOT_HIDDEN_NOTE",
@@ -90,8 +91,11 @@ __all__ = [
     "MasaqDepositError",
     "MirrorCorroboration",
     "RederivedFigure",
+    "deposit_directory_path",
+    "deposit_place_is_clean",
     "figures_named",
-    "masaq_bytes_are_resolvable",
+    "deposit_path_ignore_rule",
+    "unsanctioned_deposit_files",
     "masaq_digest",
     "masaq_path",
     "masaq_records",
@@ -131,14 +135,115 @@ MASAQ_ATTRIBUTION: Final[str] = (
 """نصُّ الإسناد؛ وهو **شرطُ رخصةٍ** لا لطفَ عبارة، فلا يُخرَج رقمٌ بحذفه."""
 
 MASAQ_PATH_VARIABLE: Final[str] = "ALGHANEM_MASAQ_PATH"
-"""متغيّرُ البيئة الذي يُمرَّر به مسارُ البايتات إن كانت خارجَ الشجرة."""
+"""متغيّرُ البيئة الذي يُمرَّر به مسارُ البايتات حين تكون خارجَ الشجرة."""
 
 MASAQ_RELATIVE_PATH: Final[str] = "corpora/MASAQ.csv"
-"""موضعُ البايتات في الشجرة إن أُودِعت؛ ورخصتُها تُجيز ذلك، والإسنادُ في `corpora/README.md`.
+"""موضعُ البايتات داخل الشجرة إن أُودِعت؛ موضعٌ **مسنونٌ** لا مُخمَّن.
 
-ووجودُ ملفٍّ في هذا الموضع لا يُغني عن مطابقةٍ: الطولُ والبصمةُ يُفحصان قبل
-كلِّ رقمٍ يخرج، سواءٌ أجاء الملفُّ من الشجرة أم من مسارٍ مُصرَّحٍ به.
+ورخصةُ `CC BY 3.0` تُجيز هذا الإيداعَ صراحةً، بخلاف مرايا أخرى يمنعها
+ناشروها؛ فالنمطُ الذي يُبقي بايتاتِ تلك خارجَ الشجرة لا يُقيّد هذه.
+ووجودُ الملفّ في هذا الموضع **لا يُغني عن المطابقة**: البصمةُ والطولُ
+يُفحصان كما يُفحصان لأيّ مسارٍ مُمرَّر، فالموضعُ ليس شهادة.
 """
+
+_REPOSITORY_ROOT: Final[Path] = Path(__file__).resolve().parents[3]
+
+
+def vendored_masaq_path() -> Path:
+    """الموضعُ المسنونُ داخل الشجرة، محسوبًا من موضع هذه الوحدة لا من `cwd`."""
+
+    return _REPOSITORY_ROOT / MASAQ_RELATIVE_PATH
+
+
+DEPOSIT_DIRECTORY: Final[str] = "corpora"
+"""مجلَّدُ الإيداع؛ يُقرأ من موضع هذه الوحدة لا من `cwd`."""
+
+SANCTIONED_DEPOSIT_FILENAMES: Final[tuple[str, ...]] = ("README.md", "MASAQ.csv")
+"""ما يجوز أن يسكن مجلَّدَ الإيداع: بيانُه، وبايتاتُه باسمها المسنون، ولا ثالثَ."""
+
+A_FAILED_UPLOAD_IS_NOT_A_DEPOSIT_NOTE: Final[str] = (
+    "AFailedUploadIsNotADeposit: ملفٌّ يصل إلى مجلَّد الإيداع باسمٍ غيرِ "
+    f"`{SANCTIONED_DEPOSIT_FILENAMES[1]}` — أو بطولٍ وبصمةٍ لا يطابقان "
+    "المُودَعَين — ليس إيداعًا ناقصًا بل **ليس إيداعًا**: لا يُقرأ منه رقمٌ، "
+    "ولا يُصحِّح دعوى الإيداع في البيان، ولا يُترَك ساكنًا في موضعٍ يُوهِم أنّ "
+    "البايتات حاضرة"
+)
+
+
+def deposit_directory_path() -> Path:
+    """مسارُ مجلَّد الإيداع داخل الشجرة."""
+
+    return _REPOSITORY_ROOT / DEPOSIT_DIRECTORY
+
+
+def unsanctioned_deposit_files(directory: Path | str | None = None) -> tuple[Path, ...]:
+    """الملفّاتُ الساكنةُ في موضع الإيداع بلا إذنٍ، مرتَّبةً بأسمائها.
+
+    ولا تحكم هذه الدالّةُ على بايتات `MASAQ.csv` نفسِها: المطابقةُ على الطول
+    والبصمة موضعُها `read_masaq_bytes`، وهذه تُمسك ما هو أسبقُ منها — اسمًا
+    طارئًا نزل في موضع الإيداع ولا قاعدةَ له.
+    """
+
+    resolved = deposit_directory_path() if directory is None else Path(directory)
+    if not resolved.is_dir():
+        return ()
+    return tuple(
+        sorted(
+            (
+                entry
+                for entry in resolved.iterdir()
+                if entry.name not in SANCTIONED_DEPOSIT_FILENAMES
+            ),
+            key=lambda entry: entry.name,
+        )
+    )
+
+
+def deposit_place_is_clean(directory: Path | str | None = None) -> bool:
+    """صِدْقُ أنّ موضعَ الإيداع لا يسكنه إلّا مأذونٌ فيه."""
+
+    return not unsanctioned_deposit_files(directory)
+
+
+AN_IGNORED_PATH_CANNOT_RECEIVE_A_DEPOSIT_NOTE: Final[str] = (
+    "AnIgnoredPathCannotReceiveADeposit: قاعدةُ تجاهلٍ تُصيب "
+    f"`{MASAQ_RELATIVE_PATH}` تجعل إضافتَه تفشل **صامتةً** — لا رسالةَ خطأٍ "
+    "في كلّ الحالات، وإنّما ملفٌّ لا يُدرَج. وذلك أخفى من الرفع الفاشل باسمٍ "
+    "طارئ، لأنّ ذاك يترك في الشجرة ما يدلّ عليه وهذا لا يترك شيئًا"
+)
+
+
+def deposit_path_ignore_rule(relative_path: str = MASAQ_RELATIVE_PATH) -> str | None:
+    """قاعدةُ التجاهل التي تُصيب مسارًا في الشجرة، أو `None` إن لم يُتجاهَل.
+
+    وهذه تُمسك ما هو أسبقُ من `unsanctioned_deposit_files()`: تلك تحكم على ما
+    **نزل** في موضع الإيداع، وهذه على ما يمنع البايتاتِ من النزول أصلًا؛
+    فالحارسانِ على طرفَي الإيداع ولا يُغني أحدُهما عن الآخر.
+
+    ولا تحكم على البايتات: المطابقةُ على الطول والبصمة موضعُها
+    `read_masaq_bytes`. ويُرفَع `MasaqDepositError` إن تعذّر سؤالُ `git`،
+    فغيابُ الجواب ليس جوابًا بالنفي.
+    """
+
+    try:
+        completed = subprocess.run(
+            ["git", "check-ignore", "-v", "--no-index", "--", relative_path],
+            cwd=_REPOSITORY_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as error:  # pragma: no cover - يعتمد على غياب `git` من النظام
+        raise MasaqDepositError(f"تعذّر تشغيل `git check-ignore`: {error}") from error
+    if completed.returncode == 1:
+        return None
+    if completed.returncode == 0:
+        return completed.stdout.strip()
+    raise MasaqDepositError(
+        f"`git check-ignore` أخفق برمز {completed.returncode}: "
+        f"{completed.stderr.strip()}"
+    )
+
 
 MORPH_TAG_COLUMN: Final[str] = "Morph_Tag"
 """العمودُ الذي يحمل وَسْمَ الصرف؛ ربطٌ يُسَنّ ويُعلَن، لا يُقرأ من بصمة."""
@@ -211,6 +316,10 @@ MASAQ_DEPOSIT_NAMED_RESIDUALS: Final[dict[str, str]] = {
         A_MIRROR_WITH_ANOTHER_DIGEST_IS_NOT_THESE_BYTES_NOTE
     ),
     "Sha256OrdersNothing": SHA_256_ORDERS_NOTHING_NOTE,
+    "AFailedUploadIsNotADeposit": A_FAILED_UPLOAD_IS_NOT_A_DEPOSIT_NOTE,
+    "AnIgnoredPathCannotReceiveADeposit": (
+        AN_IGNORED_PATH_CANNOT_RECEIVE_A_DEPOSIT_NOTE
+    ),
 }
 
 
@@ -353,25 +462,12 @@ MIRROR_CORROBORATION: Final[MirrorCorroboration] = MirrorCorroboration(
 """قرينةٌ مقيسةٌ لا شاهدٌ ثانٍ: مرآتان ببصمتين ليستا نصًّا مرّتين."""
 
 
-def vendored_masaq_path(root: Path | None = None) -> Path:
-    """موضعُ البايتات في الشجرة، مُشتقًّا من جذر المستودع لا مكتوبًا مطلقًا."""
-
-    return (root or repository_root_path()) / MASAQ_RELATIVE_PATH
-
-
-def masaq_bytes_are_resolvable() -> bool:
-    """أيوجد ملفٌّ يُقرأ؟ وجودُه لا يعني مطابقتَه؛ المطابقةُ في `read_masaq_bytes`."""
-
-    declared = os.environ.get(MASAQ_PATH_VARIABLE)
-    if declared and Path(declared).is_file():
-        return True
-    return vendored_masaq_path().is_file()
-
-
 def masaq_path(path: Path | str | None = None) -> Path:
-    """مسارُ البايتات: المُمرَّرُ، وإلّا `ALGHANEM_MASAQ_PATH`، وإلّا الشجرة.
+    """مسارُ البايتات: المُمرَّرُ، وإلّا `ALGHANEM_MASAQ_PATH`، وإلّا المُودَعُ في الشجرة.
 
-    ولا يُخمَّن موضعٌ رابع: إن لم يُصِب أحدُ الثلاثة ملفًّا رُفِض الطلبُ صريحًا.
+    والترتيبُ مقصود: تصريحُ المستدعي أوّلًا، ثمّ تصريحُ البيئة، ثمّ الموضعُ
+    المسنونُ `corpora/MASAQ.csv` **إن كان موجودًا فعلًا**. ولا رابعَ لها:
+    غيابُ الثلاثة رفضٌ صريح، ولا يُخمَّن موضعُ الملفّ من اسمٍ ولا من `cwd`.
     """
 
     if path is not None:
@@ -383,9 +479,9 @@ def masaq_path(path: Path | str | None = None) -> Path:
     if vendored.is_file():
         return vendored
     raise MasaqDepositError(
-        f"بايتاتُ MASAQ ليست في `{MASAQ_RELATIVE_PATH}` من هذه الشجرة؛ "
-        f"فيُمرَّر مسارُها أو يُصرَّح به في `{MASAQ_PATH_VARIABLE}`، ولا "
-        "يُخمَّن موضعُها."
+        "بايتاتُ MASAQ ليست في هذه الشجرة ولا صُرِّح بمسارها؛ فتُودَع في "
+        f"`{MASAQ_RELATIVE_PATH}` أو يُصرَّح به في `{MASAQ_PATH_VARIABLE}`، "
+        "ولا يُخمَّن موضعُها."
     )
 
 

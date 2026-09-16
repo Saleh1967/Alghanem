@@ -3737,17 +3737,18 @@ length and a different digest re-derives the fourteen tag counts exactly and
 diverges on all six byte-and-line figures; that is recorded as corroboration
 under `AMirrorWithAnotherDigestIsNotTheseBytes`, not as a second witness, and
 the column binding of the deposited bytes remains the depositor's declaration,
-not a reading taken from the mirror. CC BY 3.0 permits vendoring, unlike QAC
-(GPL) and Tanzil (CC BY-ND), and that permission is now exercised: the bytes
-belong in `corpora/MASAQ.csv`, with the attribution their licence requires
-recorded in `corpora/README.md` before any figure is issued. The earlier refusal
-to vendor was a preference for consistency with the witness pattern, not a legal
-constraint, and it was dropped once it became the one thing preventing
-verification. The resolution order is an explicit path, then
-`ALGHANEM_MASAQ_PATH`, then the tree; no fourth location is guessed, and the
-length and the digest are matched in every case before a figure is returned, so
-a file of the right name in the right place is still refused if it is not these
-bytes.
+not a reading taken from the mirror. CC BY 3.0 permits vendoring, unlike
+QAC (GPL) and Tanzil (CC BY-ND), so one sanctioned place is reserved for those
+bytes — `corpora/MASAQ.csv` — but **the bytes are not in this tree yet**, and
+the place alone re-derives nothing: until they are deposited there, the twenty
+figures require a path in `ALGHANEM_MASAQ_PATH` and the re-derivation test
+skips without one. Neither route weakens the gate — the deposited location
+is a declared place, not a certificate, and length and digest are matched
+before any figure is returned. What has twice reached that directory instead is
+a failed web upload under another name, and `AFailedUploadIsNotADeposit` now
+states the consequence: only `README.md` and `MASAQ.csv` may sit in `corpora/`,
+any other name fails a test rather than resting there implying the corpus has
+arrived.
 
 MASAQ turned out to carry **i'rab, not only morphology**, and that is where the
 next module goes. Three of its columns annotate it — `Syntactic_Role`,
@@ -3775,7 +3776,7 @@ confusion being exactly the one that dropped an alignment from 23.3% to 0.3%.
 `CountingAJudgementIsNotSettlingIt` holds that the 1,632 estimated ḍammas are a
 count of annotator judgements about something with **no written trace**, so the
 question this tree could not settle is not settled by counting it — and that
-nāʾib fāʿil here is a witness inside MASAQ, never added to QAC's `PASS`. Sixteen
+nāʾib fāʿil here is a witness inside MASAQ, never added to QAC's `PASS`. Seventeen
 synthetic-row tests, declared as synthetic, plus one test that runs the moment
 the bytes are resolvable; `examples/arabic/measure_irab_columns.py` prints each
 claim beside its derivation and exits non-zero on any figure that does not
@@ -3786,9 +3787,10 @@ Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
 T. Zerrouki, http://arramooz.sourceforge.net/ and
 https://github.com/linuxscout/qutrub. MASAQ: Morphologically-Analyzed and
 Syntactically-Annotated Quran, Majdi Sawalha, University of Jordan,
-DOI 10.17632/9yvrzxktmr.2, licensed CC BY 3.0 — whoever opens its bytes owes
-its authors that attribution, which is recorded in `corpora/README.md` and in
-the deposit module as a condition of every figure. All
+DOI 10.17632/9yvrzxktmr.2, licensed CC BY 3.0 — its licence permits depositing
+its bytes at `corpora/MASAQ.csv`, and whoever opens them owes its authors
+that attribution, which is recorded as a condition of the deposit before any
+figure is issued. All
 attributions are licence conditions, not courtesies.
 
 ```bash
