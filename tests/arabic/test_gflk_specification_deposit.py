@@ -49,6 +49,10 @@ from alghanem.arabic.gflk_state_machine_registration import (
     StateMachineRegistrationError,
     existing_carrier_state_names,
 )
+from alghanem.arabic.maqayis_root_table_deposit import (
+    FROZEN_ROOT_TABLE,
+    REDERIVED_SPECIFICATION_FIGURES,
+)
 from alghanem.arabic.word_structure_dictionary import MEASURED_LAYERS, WITHHELD_LAYERS
 from alghanem.arabic.word_structure_dictionary_preregistration import DictionaryLayer
 
@@ -264,9 +268,9 @@ def test_every_figure_is_registered_as_not_rederivable_with_its_condition() -> N
         assert claim.not_rederivable_because.strip()
         assert claim.what_would_make_it_rederivable.strip()
     figures = {claim.figure for claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS}
+    assert "4,087" not in figures
+    assert "4,576" not in figures
     assert {
-        "4,087",
-        "4,576",
         "10,599",
         "11,467",
         "37,682",
@@ -411,17 +415,35 @@ def test_the_named_corpus_digest_is_checked_against_the_frozen_one() -> None:
     assert corpus.what_is_still_missing.strip()
 
 
-def test_the_named_root_file_has_no_digest_here() -> None:
-    """تسميةُ «معجم مقاييس اللغة» أصلًا ليست بصمةَ ملفّ، فالعددان بلا اشتقاق."""
+def test_the_named_root_file_is_now_fingerprinted_here() -> None:
+    """وصلت بايتاتُ ملفّ الجذور، فبصمتُه مُجمَّدةٌ ويُطابَق عليها لا تُقرأ بالعين."""
 
     by_name = {entry.source_name: entry for entry in NAMED_SOURCE_ATTRIBUTIONS}
     roots = by_name["maqayis_by_root_csv_999.csv"]
-    assert roots.digest_in_this_tree is None
-    assert "بصمة" in roots.what_is_still_missing
-    new_figure = next(
-        claim for claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS if claim.figure == "4,576"
-    )
-    assert new_figure.not_rederivable_because.strip()
+    assert roots.digest_in_this_tree == FROZEN_ROOT_TABLE.sha256_hex
+    assert FROZEN_ROOT_TABLE.source_name == "maqayis_by_root_csv_999.csv"
+    assert roots.what_is_still_missing.strip()
+
+
+def test_the_two_root_figures_left_the_withheld_register() -> None:
+    """٤٬٥٧٦ و٤٬٠٨٧ غادرا سجلَّ المتعذّر إلى سجلّ المُعاد اشتقاقُه، ومعهما حدُّهما."""
+
+    withheld = {claim.figure for claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS}
+    rederived = {entry.figure: entry for entry in REDERIVED_SPECIFICATION_FIGURES}
+    assert {"4,576", "4,087"} == set(rederived)
+    assert not ({"4,576", "4,087"} & withheld)
+    for entry in REDERIVED_SPECIFICATION_FIGURES:
+        assert entry.counting_rule.strip()
+        assert entry.what_it_still_does_not_establish.strip()
+
+
+def test_the_corpus_figures_are_still_withheld_after_the_root_file_arrived() -> None:
+    """وصولُ ملفّ الجذور لا يرفع أرقامَ المدوّنة: مسارُ قياسها ليس هذا الملفّ."""
+
+    withheld = {claim.figure for claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS}
+    assert {"10,599", "11,467", "37,682", "18,333"} <= withheld
+    for claim in GFLK_SPECIFICATION_NUMERIC_CLAIMS:
+        assert "MeasurementRunManifest" in claim.what_would_make_it_rederivable
 
 
 def test_a_truncated_or_malformed_source_digest_is_refused() -> None:
