@@ -39,6 +39,7 @@ from alghanem.arabic.masaq_corpus_deposit import (
     MasaqDepositError,
     MirrorCorroboration,
     RederivedFigure,
+    deposit_place_is_clean,
     figures_named,
     lines_are_conserved,
     masaq_path,
@@ -49,6 +50,7 @@ from alghanem.arabic.masaq_corpus_deposit import (
     rederive_line_count,
     rederive_record_count,
     rederive_tag_count,
+    unsanctioned_deposit_files,
     vendored_masaq_path,
 )
 
@@ -360,3 +362,34 @@ def test_a_mirror_that_agrees_in_everything_is_not_recorded_as_a_corroboration()
             what_it_establishes="موافقةٌ تامّة",
             what_it_does_not_establish="حدٌّ مكتوب",
         )
+
+
+def test_no_unsanctioned_file_sits_in_the_deposit_place() -> None:
+    """موضعُ الإيداع لا يسكنه إلّا بيانُه وبايتاتُه باسمها المسنون.
+
+    ورفعٌ فاشلٌ ينزل فيه باسمٍ آخرَ يُوهِم أنّ البايتات حاضرة، وهو ما وقع
+    مرّتين في هذه الشجرة؛ فالمنعُ اختبارٌ لا تنبيهٌ في بيان.
+    """
+
+    strays = unsanctioned_deposit_files()
+    assert strays == (), [path.name for path in strays]
+    assert deposit_place_is_clean()
+    assert "AFailedUploadIsNotADeposit" in MASAQ_DEPOSIT_NAMED_RESIDUALS
+
+
+def test_a_stray_name_in_the_deposit_place_is_caught_before_any_digest(
+    tmp_path: Path,
+) -> None:
+    """الاسمُ الطارئُ يُمسَك قبل المطابقة، فلا يُعتذَر له بقِصَرِ بايتاته."""
+
+    (tmp_path / "README.md").write_text("بيانٌ مأذونٌ فيه", encoding="utf-8")
+    (tmp_path / MASAQ_RELATIVE_PATH.rsplit("/", 1)[1]).write_bytes(b"")
+    stray = tmp_path / "Masaq cor.txt"
+    stray.write_bytes(b"\n")
+
+    assert unsanctioned_deposit_files(tmp_path) == (stray,)
+    assert not deposit_place_is_clean(tmp_path)
+
+
+def test_an_absent_deposit_place_has_no_stray_files(tmp_path: Path) -> None:
+    assert unsanctioned_deposit_files(tmp_path / "لا-وجودَ-له") == ()
