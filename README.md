@@ -3563,8 +3563,41 @@ are not tagged in this corpus at all, and `POS:LOC` and `POS:T` are syntactic
 adverbials, not morphological patterns, so any figure about them from these
 bytes would be fabricated. The corpus bytes remain unvendored.
 
+### An independent lāzim/mutaʿaddin witness, deposited fingerprinted
+
+The reservation above — that the passive-participle test shares a parent with
+the definition it tests — needs a witness authored outside this question, and
+`transitivity_lexicon_witness` deposits one: the trilateral verb table carried
+by Qutrub and Arramooz Alwaseet, whose transitivity mark is a **stated lexical
+judgement**, not a morphological derivation. Its bytes were opened at two
+mirrors — `linuxscout/arramooz/data/verbs/triverbtable.py` and
+`linuxscout/qutrub/libqutrub/triverbtable.py` — and both returned the same
+SHA-256 `75fc716f…aa7d8a` at 846,066 bytes, which proves the mirrors do not
+differ and does *not* make them two witnesses. The manual CSV the table is
+generated from is deposited beside it (`e54cb3fe…bd970`, 580,755 bytes) as
+provenance, with it recorded that the transitivity judgement is **not a column
+in it**. The meaning of the three marks is taken from upstream's own code
+rather than guessed: `libqutrub/verb_db.py` reads mīm and kāf as transitive and
+lām as intransitive, with kāf common to both. Re-derived at the holder of the
+bytes via `examples/irab/measure_transitivity_lexicon.py`, which reads the file
+as text and never executes it: 7,953 entries, 6,909 distinct verbs, 5,196
+distinct trilateral roots; 3,656 lām, 2,977 kāf, 1,320 mīm; and at root level
+1,587 roots marked intransitive only against 3,609 with at least one transitive
+or common reading. What is deliberately **not** done is the join: the Quranic
+roots are written in 28 Buckwalter ASCII characters and these in 29 Arabic ones
+(with hamza appearing both bare and seated), so their literal intersection with
+the 398 partitioned roots is **zero, measured**. Bridging them requires a
+transliteration table and a hamza-unification decision, and both are rules that
+would be legislated, not readings that can be taken; so this unit stops at the
+deposit and the census, and issues no figure about agreement between the two
+sources. Nor does the table speak to augmented forms or quadriliterals: every
+root in it is trilateral. The table's bytes remain unvendored; its GPL requires
+attribution to T. Zerrouki, with verb data collected by M. Kebdani.
+
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
-Tanzil Quran text, http://tanzil.info. Both attributions are licence
+Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
+T. Zerrouki, http://arramooz.sourceforge.net/ and
+https://github.com/linuxscout/qutrub. All attributions are licence
 conditions, not courtesies.
 
 ```bash
