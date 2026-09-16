@@ -3702,14 +3702,55 @@ only produce an unencoded station. `examples/irab/measure_masdar_priority.py`
 will run the whole census the moment the holder of the bytes declares the
 length, the mirror, the licence and the six column names.
 
+MASAQ then arrived **whole**, and is deposited as a fingerprinted witness
+rather than adopted (`src/alghanem/arabic/masaq_corpus_deposit.py`): digest
+`d43d2a81…6f3a`, byte length 20,302,008, licence CC BY 3.0, and the attribution
+its licence requires carried in the module as a condition of every figure. It
+closes what QAC could not: QAC tags `VN` and nothing below it, while MASAQ names
+the derived-noun categories — 4,216 `GERUND`, 125 `GERUND_MEEM`, 84
+`GERUND_INSTANT`, 38 `GERUND_PROFESSION`, 2 `GERUND_STATE`, 225
+`NOUN_TIME_PLACE`, 24 `NOUN_INSTRUMENT`, 3,156 `NOUN_ACTIVE_PART`, 501
+`NOUN_PASSIVE_PART`, 1,646 `ADJ_QUALIT`, 459 `ADJ_INTENS`, 643 `ADJ_COMP`, 125
+`NOUN_RELATIVE`, 1 `NOUN_DIMINUTIVE` — so those categories move from *candidate
+without a referent* to *measurable against a human gold*. Each of the twenty
+deposited figures carries its counting rule, its written limit and a
+re-derivation function; `examples/arabic/rederive_masaq_witnesses.py` re-derives
+all twenty in one pass and exits non-zero on drift. Two figures are rule-free
+twice over and are therefore **declared rather than picked**: `splitlines()`
+gives 157,854 lines, `csv.DictReader` gives 157,677 records, and the gap of 177
+is measured, not estimated — one header row plus 176 line breaks inside quoted
+fields, spread over 154 records. `Word_No` is a **segment** index inside a word,
+not a word index; the word key is `Column5`, and confusing the two dropped a
+precision measurement from 23.3% to 0.3% before it was caught. The witness
+caught a defect on its first run: `embedded_newline_records` re-derived as 0
+against a deposited 154, and the fault was in the re-derivation function, not
+the deposit — `splitlines()` had already split the embedded newlines before
+`csv.reader` saw them. Four named laws bound the deposit:
+`CompleteInductionIsCorpusBounded` (4,216 is a count **in these bytes**, not a
+count of Arabic verbal nouns), `AnImportedTagIsAHumanJudgementNotAMeasurement`
+(a zero means *not annotated here*), `AConservationAuditIsNotAnAccuracyClaim`
+and `SyntheticLinesAreDeclaredNotHidden`. What it does **not** close: MASAQ has
+**no root column**, so joining it to QAC or to Maqāyīs is positional
+`(sura, verse, word)` — exactly where the 23.3% → 0.3% failure came from — and
+**no cross-corpus figure is deposited**. A public mirror of a different byte
+length and a different digest re-derives the fourteen tag counts exactly and
+diverges on all six byte-and-line figures; that is recorded as corroboration
+under `AMirrorWithAnotherDigestIsNotTheseBytes`, not as a second witness, and
+the column binding of the deposited bytes remains the depositor's declaration,
+not a reading taken from the mirror. CC BY 3.0 would permit vendoring, unlike
+QAC (GPL) and Tanzil (CC BY-ND); the bytes are still **not vendored** — the path
+is passed in `ALGHANEM_MASAQ_PATH` and matched on length and digest before any
+figure is returned.
+
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
 T. Zerrouki, http://arramooz.sourceforge.net/ and
-https://github.com/linuxscout/qutrub. MASAQ is not deposited here and its
-bytes were never opened in this tree; whoever opens them owes its authors the
-attribution its licence requires, and that attribution is recorded as a
-condition of the deposit before any figure is issued. All attributions are
-licence conditions, not courtesies.
+https://github.com/linuxscout/qutrub. MASAQ: Morphologically-Analyzed and
+Syntactically-Annotated Quran, Majdi Sawalha, University of Jordan,
+DOI 10.17632/9yvrzxktmr.2, licensed CC BY 3.0 — its bytes are not vendored
+here, and whoever opens them owes its authors that attribution, which is
+recorded as a condition of the deposit before any figure is issued. All
+attributions are licence conditions, not courtesies.
 
 ```bash
 python -m pip install -e '.[dev]'
