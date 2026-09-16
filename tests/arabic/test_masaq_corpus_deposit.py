@@ -11,7 +11,6 @@
 from __future__ import annotations
 
 import hashlib
-import os
 from pathlib import Path
 
 import pytest
@@ -42,6 +41,7 @@ from alghanem.arabic.masaq_corpus_deposit import (
     deposit_place_is_clean,
     figures_named,
     lines_are_conserved,
+    masaq_bytes_are_resolvable,
     masaq_path,
     masaq_records,
     read_masaq_bytes,
@@ -271,6 +271,36 @@ def test_the_deposited_location_is_no_certificate_of_the_bytes(
         read_masaq_bytes()
 
 
+def test_a_skip_is_conditioned_on_the_bytes_not_the_variable(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """التخطّي معلَّقٌ بحلِّ مسارٍ إلى ملفٍّ موجود، لا بضبط متغيّر البيئة."""
+
+    monkeypatch.setenv(MASAQ_PATH_VARIABLE, str(tmp_path / "absent.csv"))
+    assert not masaq_bytes_are_resolvable()
+
+    impostor = tmp_path / "MASAQ.csv"
+    impostor.write_bytes(SYNTHETIC_BYTES)
+    monkeypatch.setenv(MASAQ_PATH_VARIABLE, str(impostor))
+
+    assert masaq_bytes_are_resolvable()
+    with pytest.raises(MasaqDepositError):
+        read_masaq_bytes()
+    assert "ASkipIsConditionedOnTheBytesNotTheVariable" in (
+        MASAQ_DEPOSIT_NAMED_RESIDUALS
+    )
+
+
+def test_no_declaration_and_no_deposit_resolves_to_nothing(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """غيابُ الأبواب الثلاثة يُخرِج `False` لا خطأً يُقرأ فشلَ قياس."""
+
+    monkeypatch.delenv(MASAQ_PATH_VARIABLE, raising=False)
+
+    assert masaq_bytes_are_resolvable() is vendored_masaq_path().is_file()
+
+
 def test_sha256_is_identity_not_order() -> None:
     """`Sha256OrdersNothing` مُنفَّذًا لا مُعادًا: ترتيبُ المدخلين لا يُورَّث."""
 
@@ -307,12 +337,13 @@ def test_the_attribution_is_a_licence_condition_carried_in_the_module() -> None:
 
 
 @pytest.mark.skipif(
-    not os.environ.get(MASAQ_PATH_VARIABLE) and not vendored_masaq_path().is_file(),
+    not masaq_bytes_are_resolvable(),
     reason=(
-        "the MASAQ bytes are absent from this checkout. Its CC BY 3.0 licence "
+        "no MASAQ bytes resolve in this checkout. Its CC BY 3.0 licence "
         f"permits depositing them at {MASAQ_RELATIVE_PATH}; until they are "
         f"there, set {MASAQ_PATH_VARIABLE} to the exact MASAQ.csv whose digest "
-        "is deposited to re-derive all twenty figures here"
+        "is deposited to re-derive all twenty figures here. Bytes that resolve "
+        "and differ are not skipped: they fail"
     ),
 )
 def test_all_twenty_figures_rederive_from_the_deposited_bytes() -> None:

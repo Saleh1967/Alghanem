@@ -3805,6 +3805,64 @@ bytes are resolvable; `examples/arabic/measure_irab_columns.py` prints each clai
 beside its derivation and exits non-zero on any figure or coverage that does not
 re-derive.
 
+Two things are settled before the bytes arrive rather than after. The first is
+the order of reading: `Morph_type` is the only column declared filled in 100% of
+segments, so `read_anchor` is read **before any figure** and
+`TheAnchorIsReadBeforeTheFigures` records why — if that column is not full, or
+the record total is not 157,677, what is at fault is the reading itself, record
+splitting or a newline embedded in a quoted field, and a difference in some
+figure read at that point is a reading of a broken pipe. The second is what
+happens to a figure that differs. `ADifferenceIsClassifiedNotAbsorbed` forbids
+editing the frozen figure or its counting rule until they match; the difference
+is recorded as it fell and classed by `IrabDifferenceClass`, whose four classes
+are frozen into the preregistration digest **before** any of them was seen: a
+counting-rule difference (the word count, not the segment count, is what the
+claim matched), a value-name difference (the frozen spelling is not a value of
+that column at all), a difference in the bytes, and **not yet classified** —
+which is a declared class precisely so that no difference is pushed into a box
+too small for it. Finally, `masaq_bytes_are_resolvable()` is now the skip
+condition for every byte-gated test, so
+`ASkipIsConditionedOnTheBytesNotTheVariable`: a variable pointing at a file that
+is not there skips, and bytes that resolve but differ do **not** skip — they
+fail, because the place is not a certificate.
+
+### A census whose numbers no one claimed first
+
+While those bytes are awaited, `src/alghanem/arabic/maqayis_witness_census.py`
+measures bytes that are already here. `maqayis_by_root_csv_999.csv` is
+fingerprinted in this tree, so its poetry-evidence and semantic-axes columns can
+be counted without waiting for anyone, and a census is measured from them:
+1,944 records carrying poetry evidence, 4,176 witness segments, of which 4,176
+bear the hemistich marker, a `root_type` census of 4,089 / 428 / 56 / 3 summing
+to the 4,576 records, and a comparison of each record's declared `axes_count`
+against the segments of its own `semantic_axes` cell — 2,890 agreeing, 822
+differing, 864 blank. The epistemic position here is the inverse of the MASAQ
+one and is written down as such. `NoClaimPrecededTheseNumbers`: nobody
+transmitted these figures in advance, so a match tests no transmitter and
+vindicates no one; and `TheRulesWereWrittenAfterTheseNumbersWereSeen`, recorded
+rather than hidden, since what keeps a rule from having been cut to fit a
+pleasing number is that it is written out in full and re-derived from
+fingerprinted bytes, not that it was written first.
+
+Three of the module's limits are the reason the figures are not one number.
+`ASeparatorIsTheProducersNotThePoets`: `|` is the file producer's mark, so a
+segment count is a count of his separators, and a bar falling inside a line
+would inflate it — which is why the segments bearing the `…` marker are counted
+alongside, their equality being a corroboration that closes nothing.
+`AWitnessSegmentIsNotAVerse`: metre, attribution and completeness are
+unverified, so 4,176 is a count of segments in a file, not of witnesses in
+Arabic or in Ibn Fāris. And `ABlankIsNotAZero`: the 864 records declaring no
+`axes_count` are a third class, never folded into agreement or disagreement, so
+no agreement ratio is published — the denominator itself would be in dispute.
+Of the 822 differences, 597 are an empty axes cell against a declared 1, and
+neither side is adjusted to remove any of them.
+`ADeclaredCellIsCheckedAgainstItsOwnFile` keeps the comparison inside one
+record, and `TheBytesHereAreNotTheWithheldBytes` keeps this census from being
+read as progress on MASAQ: a figure reached from one file does not stand in for
+the bytes of another. `examples/arabic/measure_maqayis_witnesses.py` re-derives
+every one of them beside its rule and its limit, and exits non-zero on any
+drift.
+
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
 T. Zerrouki, http://arramooz.sourceforge.net/ and
