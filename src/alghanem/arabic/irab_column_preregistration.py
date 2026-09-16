@@ -53,6 +53,17 @@ from typing import Final
 from ..canonical_content import canonical_bytes, canonical_digest
 
 __all__ = [
+    "ArrivingColumnCoverage",
+    "SPELLING_CHECK_BESIDE_THE_EXPECTATION",
+    "SECOND_CONSIGNMENT_IRAB_FIGURES",
+    "INVARIABLE_DECLINABLE_COLUMN",
+    "FIRST_CONSIGNMENT_IRAB_FIGURES",
+    "CASE_MOOD_COLUMN",
+    "A_TRANSMITTED_SPELLING_IS_NOT_THE_HEADER_NOTE",
+    "A_THINLY_COVERED_COLUMN_IS_NOT_A_CENSUS_OF_ARABIC_NOTE",
+    "A_COVERAGE_IS_NOT_A_COUNT_NOTE",
+    "ARRIVING_SEGMENT_TOTAL",
+    "ARRIVING_COLUMN_COVERAGE",
     "ARRIVING_IRAB_FIGURES",
     "A_CLAIMED_VALUE_ABSENT_IS_NOT_A_ZERO_COUNT_NOTE",
     "A_COLUMN_NAME_IS_A_DECLARATION_UNTIL_THE_HEADER_IS_READ_NOTE",
@@ -126,6 +137,24 @@ AN_ESTIMATED_MARKER_HAS_NO_WRITTEN_TRACE_NOTE: Final[str] = (
     "البتّة؛ والمعدودُ وَسْمُهما، والعددُ يُحصي أحكامًا ولا يُثبِت تقديرًا"
 )
 
+A_TRANSMITTED_SPELLING_IS_NOT_THE_HEADER_NOTE: Final[str] = (
+    "ATransmittedSpellingIsNotTheHeader: وصلت الصياغةُ الحرفيّةُ للقيم فطابقت "
+    "المُجمَّدَ هنا حرفًا حرفًا؛ وذلك يُثبِت موافقةَ المنقول للناقل لا موافقتَه "
+    "للبايتات، فخطرُ «ليست من قيم هذا العمود» انخفض ولم يزل"
+)
+
+A_COVERAGE_IS_NOT_A_COUNT_NOTE: Final[str] = (
+    "ACoverageIsNotACount: نسبةُ الامتلاء تُقارَن عند منازلها المُصرَّح بها "
+    "وحدَها — ٨٤٫٤٥٪ منزلتان لا أربع — وضربُها في المقام لا يُخرِج عددًا "
+    "مقيسًا بل مدًى عرضُه ألوفُ المقاطع؛ فالعددُ يُعَدُّ ولا يُشتَقُّ منها"
+)
+
+A_THINLY_COVERED_COLUMN_IS_NOT_A_CENSUS_OF_ARABIC_NOTE: Final[str] = (
+    "AThinlyCoveredColumnIsNotACensusOfArabic: عمودٌ تغطيتُه ١٫٧٩٪ عددُه خبرٌ "
+    "عمّا وُسِم فيه لا عمّا في القرآن؛ فـ«نائبُ فاعلٍ ٥٧» ليس عددَ المجهول، "
+    "ولا يُقابَل بعددٍ من عمودٍ تغطيتُه ٧٦٪ ولا بعددٍ من مدوَّنةٍ أخرى"
+)
+
 A_CLAIMED_VALUE_ABSENT_IS_NOT_A_ZERO_COUNT_NOTE: Final[str] = (
     "AClaimedValueAbsentIsNotAZeroCount: قيمةٌ لم تَرِد في العمود البتّة "
     "جوابُها «ليست من قيم هذا العمود» لا «صفر»؛ فالصفرُ خبرٌ عن المدوَّنة، "
@@ -149,11 +178,20 @@ IRAB_PREREGISTRATION_NAMED_RESIDUALS: Final[dict[str, str]] = {
     "AClaimedValueAbsentIsNotAZeroCount": (
         A_CLAIMED_VALUE_ABSENT_IS_NOT_A_ZERO_COUNT_NOTE
     ),
+    "ATransmittedSpellingIsNotTheHeader": (
+        A_TRANSMITTED_SPELLING_IS_NOT_THE_HEADER_NOTE
+    ),
+    "ACoverageIsNotACount": A_COVERAGE_IS_NOT_A_COUNT_NOTE,
+    "AThinlyCoveredColumnIsNotACensusOfArabic": (
+        A_THINLY_COVERED_COLUMN_IS_NOT_A_CENSUS_OF_ARABIC_NOTE
+    ),
 }
 
 
 SYNTACTIC_ROLE_COLUMN: Final[str] = "Syntactic_Role"
+CASE_MOOD_COLUMN: Final[str] = "Case_Mood"
 CASE_MOOD_MARKER_COLUMN: Final[str] = "Case_Mood_Marker"
+INVARIABLE_DECLINABLE_COLUMN: Final[str] = "Invariable_Declinable"
 PHRASAL_FUNCTION_COLUMN: Final[str] = "Phrasal_Function"
 SEGMENT_INDEX_COLUMN_NAME: Final[str] = "Word_No"
 WORD_KEY_COLUMN_NAME: Final[str] = "Column5"
@@ -176,6 +214,11 @@ class IrabCountingRule(Enum):
         "الكلمةُ ذاتُ القيمة: ثلاثيّةُ `(Sura_No، Verse_No، Column5)` متمايزةً "
         "ورد فيها مقطعٌ واحدٌ فأكثرُ بالقيمة المطلوبة؛ وهو غيرُ عدِّ المقاطع، "
         "ويُودَع معه ليُرى الفرقُ بدل أن يُقرأ أحدُهما مكان الآخر"
+    )
+    NON_EMPTY_COLUMN_CELLS = (
+        "الخليةُ المملوءة: سجلٌّ قيمةُ عموده المُعلَن غيرُ فارغةٍ بعد تجريد "
+        "الفراغ الطرفيّ، منسوبًا إلى جملة السجلّات؛ والمقامُ مقاطعُ الملفِّ "
+        "كلُّها لا المُعرَبُ منها وحدَه"
     )
 
 
@@ -234,6 +277,30 @@ IRAB_COLUMNS: Final[tuple[IrabColumn, ...]] = (
         what_it_does_not_annotate=(
             "مجهولًا مقيسًا في مدوَّنةٍ أخرى: «نائبُ فاعل» هنا غيرُ `PASS` في "
             "مدوَّنة القرآن الصرفية، ولا يُجمَع عددٌ من هذه إلى عددٍ من تلك"
+        ),
+    ),
+    IrabColumn(
+        name=CASE_MOOD_COLUMN,
+        arabic_name="بابُ الإعراب",
+        what_it_annotates=(
+            "حالَ الموضع لا علامتَها: مبنيٌّ ومرفوعٌ ومجرورٌ ومنصوبٌ ومجزوم، "
+            "خمسُ قيمٍ لا سادسَ لها في هذه البايتات"
+        ),
+        what_it_does_not_annotate=(
+            "العلامةَ نفسَها: تلك في `Case_Mood_Marker`، وتغطيةُ العمودين "
+            "واحدةٌ فلا يُقرأ ذلك توكيدًا لأحدهما بالآخر"
+        ),
+    ),
+    IrabColumn(
+        name=INVARIABLE_DECLINABLE_COLUMN,
+        arabic_name="البناءُ والإعراب",
+        what_it_annotates=(
+            "كونَ الكلمة مبنيّةً أو معربة، ومعهما أصنافُ المبنيّات: الضميرُ "
+            "المتّصل، وألْ التعريف، والموصولُ، والإشارةُ، والشرطُ، والاستفهام"
+        ),
+        what_it_does_not_annotate=(
+            "قسمةً مُطَّردةً بين قيمتين: «مبني» و«معرب» قيمتان من اثنتَي عشرةَ، "
+            "وبقيّتُها أصنافٌ لا أقسامٌ، فلا يُجمَع بعضُها إلى بعضٍ مجموعًا"
         ),
     ),
     IrabColumn(
@@ -312,7 +379,7 @@ class ArrivingIrabFigure:
             )
 
 
-ARRIVING_IRAB_FIGURES: Final[tuple[ArrivingIrabFigure, ...]] = (
+FIRST_CONSIGNMENT_IRAB_FIGURES: Final[tuple[ArrivingIrabFigure, ...]] = (
     ArrivingIrabFigure(
         label="قيمُ الوظيفة النحوية المتمايزة",
         column=SYNTACTIC_ROLE_COLUMN,
@@ -405,11 +472,342 @@ ARRIVING_IRAB_FIGURES: Final[tuple[ArrivingIrabFigure, ...]] = (
         counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
     ),
 )
-"""ثلاثةَ عشرَ رقمًا كما وصلت، بقيمها المُصرَّح بها؛ ولا يُقرأ واحدٌ منها مقيسًا هنا.
+"""ثلاثةَ عشرَ رقمًا كما وصلت أوّلَ مرّة، بقيمها المُصرَّح بها؛ ولا يُقرأ واحدٌ
+منها مقيسًا هنا.
 
 وصورةُ القيمة نفسُها **دعوى**: إن خالفت صياغةُ المُوسِّم ما كُتِب هنا خرج
 الجوابُ «ليست من قيم هذا العمود» لا صفرًا، وذلك نصُّ
 `AClaimedValueAbsentIsNotAZeroCount`.
+"""
+
+
+SECOND_CONSIGNMENT_IRAB_FIGURES: Final[tuple[ArrivingIrabFigure, ...]] = (
+    ArrivingIrabFigure(
+        label="حرف جر — Syntactic_Role",
+        column=SYNTACTIC_ROLE_COLUMN,
+        value="حرف جر",
+        claimed_count=13_034,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="اسم مجرور — Syntactic_Role",
+        column=SYNTACTIC_ROLE_COLUMN,
+        value="اسم مجرور",
+        claimed_count=12_243,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="حرف غير عامل — Syntactic_Role",
+        column=SYNTACTIC_ROLE_COLUMN,
+        value="حرف غير عامل",
+        claimed_count=9_999,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="حرف عطف — Syntactic_Role",
+        column=SYNTACTIC_ROLE_COLUMN,
+        value="حرف عطف",
+        claimed_count=8_909,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="فعل مضارع — Syntactic_Role",
+        column=SYNTACTIC_ROLE_COLUMN,
+        value="فعل مضارع",
+        claimed_count=7_527,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="فعل ماضٍ — Syntactic_Role",
+        column=SYNTACTIC_ROLE_COLUMN,
+        value="فعل ماضٍ",
+        claimed_count=7_321,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="قيمُ باب الإعراب المتمايزة",
+        column=CASE_MOOD_COLUMN,
+        value=None,
+        claimed_count=5,
+        counting_rule=IrabCountingRule.DISTINCT_COLUMN_VALUES,
+    ),
+    ArrivingIrabFigure(
+        label="مبني — Case_Mood",
+        column=CASE_MOOD_COLUMN,
+        value="مبني",
+        claimed_count=53_687,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="مرفوع — Case_Mood",
+        column=CASE_MOOD_COLUMN,
+        value="مرفوع",
+        claimed_count=27_015,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="مجرور — Case_Mood",
+        column=CASE_MOOD_COLUMN,
+        value="مجرور",
+        claimed_count=23_255,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="منصوب — Case_Mood",
+        column=CASE_MOOD_COLUMN,
+        value="منصوب",
+        claimed_count=19_327,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="مجزوم — Case_Mood",
+        column=CASE_MOOD_COLUMN,
+        value="مجزوم",
+        claimed_count=1_490,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="السكون — Case_Mood_Marker",
+        column=CASE_MOOD_MARKER_COLUMN,
+        value="السكون",
+        claimed_count=43_056,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="الفتحة — Case_Mood_Marker",
+        column=CASE_MOOD_MARKER_COLUMN,
+        value="الفتحة",
+        claimed_count=39_700,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="الكسرة — Case_Mood_Marker",
+        column=CASE_MOOD_MARKER_COLUMN,
+        value="الكسرة",
+        claimed_count=16_953,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="الضمة — Case_Mood_Marker",
+        column=CASE_MOOD_MARKER_COLUMN,
+        value="الضمة",
+        claimed_count=13_668,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="قيمُ وظيفة التركيب المتمايزة",
+        column=PHRASAL_FUNCTION_COLUMN,
+        value=None,
+        claimed_count=9,
+        counting_rule=IrabCountingRule.DISTINCT_COLUMN_VALUES,
+    ),
+    ArrivingIrabFigure(
+        label="خبر — Phrasal_Function",
+        column=PHRASAL_FUNCTION_COLUMN,
+        value="خبر",
+        claimed_count=1_398,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="خبر حرف ناسخ — Phrasal_Function",
+        column=PHRASAL_FUNCTION_COLUMN,
+        value="خبر حرف ناسخ",
+        claimed_count=783,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="خبر فعل ناسخ — Phrasal_Function",
+        column=PHRASAL_FUNCTION_COLUMN,
+        value="خبر فعل ناسخ",
+        claimed_count=551,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="خبر لا النافية للجنس — Phrasal_Function",
+        column=PHRASAL_FUNCTION_COLUMN,
+        value="خبر لا النافية للجنس",
+        claimed_count=34,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="حال — Phrasal_Function",
+        column=PHRASAL_FUNCTION_COLUMN,
+        value="حال",
+        claimed_count=4,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="بدل — Phrasal_Function",
+        column=PHRASAL_FUNCTION_COLUMN,
+        value="بدل",
+        claimed_count=1,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="فاعل — Phrasal_Function",
+        column=PHRASAL_FUNCTION_COLUMN,
+        value="فاعل",
+        claimed_count=1,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="نعت — Phrasal_Function",
+        column=PHRASAL_FUNCTION_COLUMN,
+        value="نعت",
+        claimed_count=1,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="قيمُ البناء والإعراب المتمايزة",
+        column=INVARIABLE_DECLINABLE_COLUMN,
+        value=None,
+        claimed_count=12,
+        counting_rule=IrabCountingRule.DISTINCT_COLUMN_VALUES,
+    ),
+    ArrivingIrabFigure(
+        label="مبني — Invariable_Declinable",
+        column=INVARIABLE_DECLINABLE_COLUMN,
+        value="مبني",
+        claimed_count=54_734,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="معرب — Invariable_Declinable",
+        column=INVARIABLE_DECLINABLE_COLUMN,
+        value="معرب",
+        claimed_count=39_509,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="ضمير متصل — Invariable_Declinable",
+        column=INVARIABLE_DECLINABLE_COLUMN,
+        value="ضمير متصل",
+        claimed_count=23_579,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="ال التعريف — Invariable_Declinable",
+        column=INVARIABLE_DECLINABLE_COLUMN,
+        value="ال التعريف",
+        claimed_count=8_372,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="اسم موصول — Invariable_Declinable",
+        column=INVARIABLE_DECLINABLE_COLUMN,
+        value="اسم موصول",
+        claimed_count=3_242,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="ضمير منفصل مبني — Invariable_Declinable",
+        column=INVARIABLE_DECLINABLE_COLUMN,
+        value="ضمير منفصل مبني",
+        claimed_count=1_265,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="اسم إشارة — Invariable_Declinable",
+        column=INVARIABLE_DECLINABLE_COLUMN,
+        value="اسم إشارة",
+        claimed_count=1_071,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="اسم شرط — Invariable_Declinable",
+        column=INVARIABLE_DECLINABLE_COLUMN,
+        value="اسم شرط",
+        claimed_count=833,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="اسم استفهام — Invariable_Declinable",
+        column=INVARIABLE_DECLINABLE_COLUMN,
+        value="اسم استفهام",
+        claimed_count=417,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+    ArrivingIrabFigure(
+        label="ضمير فصل — Invariable_Declinable",
+        column=INVARIABLE_DECLINABLE_COLUMN,
+        value="ضمير فصل",
+        claimed_count=125,
+        counting_rule=IrabCountingRule.SEGMENTS_WITH_VALUE,
+    ),
+)
+"""الدُّفعةُ الثانيةُ كما وصلت بصياغتها الحرفيّة، ومعها عمودان لم يكونا مُعلَنين.
+
+ومنزلتُها منزلةُ الأولى سواءً: `TheFiguresArrivedFromTheHolderOfTheBytes` يشملها،
+فوصولُ الصياغة الحرفيّةِ رفعَ احتمالَ خطأِ النقل ولم يجعل الرقمَ مقيسًا هنا.
+"""
+
+
+ARRIVING_IRAB_FIGURES: Final[tuple[ArrivingIrabFigure, ...]] = (
+    FIRST_CONSIGNMENT_IRAB_FIGURES + SECOND_CONSIGNMENT_IRAB_FIGURES
+)
+"""الدُّفعتان مجموعتين؛ وكلُّ رقمٍ فيهما دعوًى حتى يُعادَ اشتقاقُه من البايتات."""
+
+
+ARRIVING_SEGMENT_TOTAL: Final[int] = 157_677
+"""جملةُ المقاطع كما وصلت: مقامُ كلِّ نسبةِ تغطيةٍ أدناه.
+
+ووصل أنّ `Morph_type` مملوءٌ في ١٠٠٪ منها، فهو المرساةُ الوحيدةُ المكتملة؛
+وهذا العددُ نفسُه يُعاد اشتقاقُه سجلًّا سجلًّا، فلا يُؤخَذ من النسبة.
+"""
+
+
+@dataclass(frozen=True, slots=True)
+class ArrivingColumnCoverage:
+    """نسبةُ امتلاء عمودٍ كما وصلت، بدقّتها المُصرَّح بها لا بأكثرَ منها."""
+
+    column: str
+    declared_percentage: str
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.column, str) or not self.column.strip():
+            raise IrabPreregistrationError("اسمُ العمود نصٌّ غير فارغ.")
+        if not isinstance(self.declared_percentage, str):
+            raise IrabPreregistrationError("النسبةُ تُحفَظ بنصِّها لا بعائمٍ يُقرَّب.")
+        try:
+            value = float(self.declared_percentage)
+        except ValueError as error:
+            raise IrabPreregistrationError(
+                f"نسبةٌ لا تُقرأ عددًا: {self.declared_percentage}"
+            ) from error
+        if not 0.0 <= value <= 100.0:
+            raise IrabPreregistrationError("النسبةُ بين صفرٍ ومئة.")
+        if "." not in self.declared_percentage:
+            raise IrabPreregistrationError(
+                "تُكتَب النسبةُ بمنازلها العشرية كما وصلت، فبها تُعرَف دقّةُ "
+                "المقارنة؛ ونسبةٌ بلا منازلَ تُقارَن بدقّةٍ لم تُصرَّح."
+            )
+
+    @property
+    def decimal_places(self) -> int:
+        """عددُ المنازل المُصرَّح بها؛ وعندها تقف المقارنةُ ولا تتجاوزها."""
+
+        return len(self.declared_percentage.split(".")[1])
+
+
+ARRIVING_COLUMN_COVERAGE: Final[tuple[ArrivingColumnCoverage, ...]] = (
+    ArrivingColumnCoverage(column="Morph_type", declared_percentage="100.0000"),
+    ArrivingColumnCoverage(column="Segmented_Word", declared_percentage="98.2553"),
+    ArrivingColumnCoverage(column="Morph_tag", declared_percentage="98.2039"),
+    ArrivingColumnCoverage(
+        column=INVARIABLE_DECLINABLE_COLUMN, declared_percentage="84.45"
+    ),
+    ArrivingColumnCoverage(column="Possessive_Construct", declared_percentage="79.14"),
+    ArrivingColumnCoverage(column=CASE_MOOD_COLUMN, declared_percentage="79.13"),
+    ArrivingColumnCoverage(column=CASE_MOOD_MARKER_COLUMN, declared_percentage="79.13"),
+    ArrivingColumnCoverage(column=SYNTACTIC_ROLE_COLUMN, declared_percentage="76.3631"),
+    ArrivingColumnCoverage(column="Phrase", declared_percentage="1.80"),
+    ArrivingColumnCoverage(column=PHRASAL_FUNCTION_COLUMN, declared_percentage="1.79"),
+)
+"""تغطيةُ الأعمدة العشرةِ كما وصلت؛ وأربعةٌ منها ليست من أعمدة الإعراب الخمسة.
+
+وهي مُودَعةٌ لأنّها تحسم ما لا يحسمه العدُّ وحدَه: «نائبُ فاعلٍ ٥٧» في عمودٍ
+تغطيتُه ١٫٧٩٪ ليس ٥٧ مجهولًا في القرآن، بل ٥٧ ممّا وُسِم في جزءٍ من مئةٍ من
+المقاطع؛ ومن قرأه الأوّلَ قرأ عمودًا شبهَ خالٍ خبرًا عن العربية.
 """
 
 
@@ -430,6 +828,15 @@ PRE_REGISTERED_EXPECTATION: Final[str] = (
     "مقطعٌ لا كلمة؛ ولذلك أُودِعت القاعدتان معًا. **ثالثًا**: لا يُتوقَّع من "
     "«ضمّةٍ مقدَّرة» و«فتحةٍ مقدَّرة» أن تحسما بابَ المقدَّر: عددُهما إحصاءُ "
     "أحكامٍ، والحسمُ يحتاج قاعدةً تُسَنّ لا عددًا يُقرأ"
+)
+
+
+SPELLING_CHECK_BESIDE_THE_EXPECTATION: Final[str] = (
+    "SpellingCheckBesideTheExpectation: بعد صوغ `PRE_REGISTERED_EXPECTATION` "
+    "وصلت الصياغةُ الحرفيّةُ للقيم، فقُوبِلت بالمُجمَّد هنا فطابقته في القيم "
+    "الثلاثَ عشرةَ كلِّها. ولم يُعدَّل نصُّ التوقّع: تعديلُه بعد بلوغ الخبر "
+    "يمحو ما كان يُقاس به. فيُكتَب الفحصُ إلى جانبه لا مكانَه، وحدُّ ما "
+    "يُثبِته في " + A_TRANSMITTED_SPELLING_IS_NOT_THE_HEADER_NOTE
 )
 
 
@@ -460,7 +867,13 @@ def preregistration_digest() -> str:
                     ]
                     for figure in ARRIVING_IRAB_FIGURES
                 ],
+                "segment_total": ARRIVING_SEGMENT_TOTAL,
+                "column_coverage": [
+                    [coverage.column, coverage.declared_percentage]
+                    for coverage in ARRIVING_COLUMN_COVERAGE
+                ],
                 "expectation": PRE_REGISTERED_EXPECTATION,
+                "spelling_check": SPELLING_CHECK_BESIDE_THE_EXPECTATION,
                 "residuals": sorted(IRAB_PREREGISTRATION_NAMED_RESIDUALS),
             }
         )
@@ -485,7 +898,7 @@ _FORBIDDEN_FIELD_MARKERS: Final[tuple[str, ...]] = (
 def _assert_no_outcome_field() -> None:
     """احرسْ خلوَّ وحدة التجميد من حقلِ نتيجةٍ أو مُخرَجٍ مقيس."""
 
-    for dataclass_type in (IrabColumn, ArrivingIrabFigure):
+    for dataclass_type in (IrabColumn, ArrivingIrabFigure, ArrivingColumnCoverage):
         for field in fields(dataclass_type):
             lowered = field.name.lower()
             for marker in _FORBIDDEN_FIELD_MARKERS:
@@ -495,6 +908,22 @@ def _assert_no_outcome_field() -> None:
                         "هذه وحدةُ تجميدٍ قبل القياس. "
                         + THIS_REGISTRATION_IS_NOT_PRIOR_TO_THE_NUMBER_NOTE
                     )
+
+
+def _assert_the_two_consignments_do_not_overlap() -> None:
+    """احرسْ ألّا تُعادَ دفعةٌ في الأخرى: إعادةُ رقمٍ تُوهِم وصولَه مرّتين."""
+
+    first = {
+        (figure.column, figure.value, figure.counting_rule.name)
+        for figure in FIRST_CONSIGNMENT_IRAB_FIGURES
+    }
+    for figure in SECOND_CONSIGNMENT_IRAB_FIGURES:
+        key = (figure.column, figure.value, figure.counting_rule.name)
+        if key in first:
+            raise RuntimeError(
+                f"{figure.label} وصل في الدُّفعتين؛ والتكرارُ يُوهِم شاهدين. "
+                + THE_FIGURES_ARRIVED_FROM_THE_HOLDER_OF_THE_BYTES_NOTE
+            )
 
 
 def _assert_the_columns_and_figures_are_distinct() -> None:
@@ -512,7 +941,11 @@ def _assert_the_columns_and_figures_are_distinct() -> None:
     ]
     if len(set(keyed)) != len(keyed):
         raise RuntimeError("رقمان بعمودٍ وقيمةٍ وقاعدةٍ واحدة؛ فهما رقمٌ قُرِئ مرّتين.")
+    covered = [coverage.column for coverage in ARRIVING_COLUMN_COVERAGE]
+    if len(set(covered)) != len(covered):
+        raise RuntimeError("عمودٌ بنسبتَي تغطية؛ فلا يُعرَف أيُّهما تُقارَن به.")
 
 
 _assert_no_outcome_field()
 _assert_the_columns_and_figures_are_distinct()
+_assert_the_two_consignments_do_not_overlap()

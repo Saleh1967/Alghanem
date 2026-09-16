@@ -39,8 +39,11 @@ from enum import Enum
 from typing import Final
 
 from .irab_column_preregistration import (
+    ARRIVING_COLUMN_COVERAGE,
     ARRIVING_IRAB_FIGURES,
+    ARRIVING_SEGMENT_TOTAL,
     IRAB_PREREGISTRATION_DIGEST,
+    ArrivingColumnCoverage,
     ArrivingIrabFigure,
     IrabCountingRule,
     column_named,
@@ -52,6 +55,12 @@ from .masaq_corpus_deposit import (
 )
 
 __all__ = [
+    "A_COVERAGE_IS_COMPARED_AT_ITS_DECLARED_PRECISION_NOTE",
+    "CoverageReading",
+    "non_empty_cells",
+    "read_coverage",
+    "read_coverages",
+    "segment_total_agrees",
     "A_MISSING_COLUMN_STOPS_THE_COUNT_NOTE",
     "AN_ABSENT_VALUE_IS_NOT_A_ZERO_NOTE",
     "COUNTING_A_JUDGEMENT_IS_NOT_SETTLING_IT_NOTE",
@@ -108,7 +117,18 @@ COUNTING_A_JUDGEMENT_IS_NOT_SETTLING_IT_NOTE: Final[str] = (
     "شاهدٌ في هذه المدوَّنة لا مجهولٌ مقيسٌ في غيرها"
 )
 
+A_COVERAGE_IS_COMPARED_AT_ITS_DECLARED_PRECISION_NOTE: Final[str] = (
+    "ACoverageIsComparedAtItsDeclaredPrecision: النسبةُ المقيسةُ تُقرَّب إلى "
+    "منازل النسبة المُصرَّح بها ثمّ تُقارَن؛ فـ٨٤٫٤٥٪ تُقارَن بمنزلتين، "
+    "ومطابقتُها لا تُثبِت المنزلةَ الثالثة، وعددُ الخلايا المملوءةِ يُعاد "
+    "معها كي يُقرأ العددُ ولا تُقرأ النسبةُ عددًا"
+)
+
+
 IRAB_CENSUS_NAMED_RESIDUALS: Final[dict[str, str]] = {
+    "ACoverageIsComparedAtItsDeclaredPrecision": (
+        A_COVERAGE_IS_COMPARED_AT_ITS_DECLARED_PRECISION_NOTE
+    ),
     "NoFigureWithoutTheFingerprintedBytes": (
         NO_FIGURE_WITHOUT_THE_FINGERPRINTED_BYTES_NOTE
     ),
@@ -310,6 +330,68 @@ def column_census(
         counts=counts,
         unannotated_segments=len(records) - annotated,
     )
+
+
+@dataclass(frozen=True, slots=True)
+class CoverageReading:
+    """قراءةُ تغطيةِ عمودٍ: عددُها ومقامُها ونسبتُها، والمُدَّعى إلى جانبها."""
+
+    column: str
+    declared_percentage: str
+    non_empty_cells: int
+    total_records: int
+
+    @property
+    def measured_percentage(self) -> float:
+        """النسبةُ المقيسةُ كاملةً؛ ولا تُقارَن بها بل بمُقرَّبِها."""
+
+        if self.total_records == 0:
+            raise IrabCensusError(
+                "لا سجلَّ يُقسَم عليه. " + NO_FIGURE_WITHOUT_THE_FINGERPRINTED_BYTES_NOTE
+            )
+        return 100.0 * self.non_empty_cells / self.total_records
+
+    @property
+    def agrees(self) -> bool:
+        """أطابقت عند المنازل المُصرَّح بها وحدَها؟ `ACoverageIsNotACount`."""
+
+        places = len(self.declared_percentage.split(".")[1])
+        return f"{self.measured_percentage:.{places}f}" == self.declared_percentage
+
+
+def non_empty_cells(records: Sequence[Mapping[str, str]], column: str) -> int:
+    """عددُ الخلايا المملوءة تحت `NON_EMPTY_COLUMN_CELLS`؛ والغيابُ يُوقِف العدّ."""
+
+    _require_column(records, column)
+    return sum(1 for record in records if record.get(column, "").strip())
+
+
+def read_coverage(
+    records: Sequence[Mapping[str, str]], coverage: ArrivingColumnCoverage
+) -> CoverageReading:
+    """أعِد اشتقاقَ تغطيةِ عمودٍ مُدَّعاةٍ؛ وعمودٌ غائبٌ يُرفَع به خطأ."""
+
+    return CoverageReading(
+        column=coverage.column,
+        declared_percentage=coverage.declared_percentage,
+        non_empty_cells=non_empty_cells(records, coverage.column),
+        total_records=len(records),
+    )
+
+
+def read_coverages(
+    records: Sequence[Mapping[str, str]],
+    coverages: Sequence[ArrivingColumnCoverage] = ARRIVING_COLUMN_COVERAGE,
+) -> tuple[CoverageReading, ...]:
+    """قراءةُ التغطيات كلِّها؛ ولا تُسقَط واحدةٌ لأنّ عمودَها ليس من الخمسة."""
+
+    return tuple(read_coverage(records, coverage) for coverage in coverages)
+
+
+def segment_total_agrees(records: Sequence[Mapping[str, str]]) -> bool:
+    """أطابق عددُ السجلّات جملةَ المقاطع المُدَّعاة؟ عدًّا لا اشتقاقًا من نسبة."""
+
+    return len(records) == ARRIVING_SEGMENT_TOTAL
 
 
 def census_from_bytes(data: bytes) -> tuple[IrabFigureReading, ...]:

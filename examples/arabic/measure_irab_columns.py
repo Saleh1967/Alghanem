@@ -1,13 +1,13 @@
-"""Re-derive the thirteen arriving i'rab figures from the fingerprinted bytes.
+"""Re-derive the arriving i'rab figures and coverages from the fingerprinted bytes.
 
-MASAQ annotates more than morphology: three of its columns carry i'rab —
-``Syntactic_Role``, ``Case_Mood_Marker`` and ``Phrasal_Function`` — and two
-more, ``Word_No`` and ``Column5``, decide whether a count is a count of
-segments or of words. The thirteen figures frozen in
-``alghanem.arabic.irab_column_preregistration`` arrived **from the holder of
-the bytes**; they were not measured in this tree, and freezing them is not
-believing them. This script re-derives each one and prints the claim beside
-the derivation::
+MASAQ annotates more than morphology: five of its columns carry i'rab —
+``Syntactic_Role``, ``Case_Mood``, ``Case_Mood_Marker``, ``Phrasal_Function``
+and ``Invariable_Declinable`` — and two more, ``Word_No`` and ``Column5``,
+decide whether a count is a count of segments or of words. The figures frozen
+in ``alghanem.arabic.irab_column_preregistration`` arrived **from the holder of
+the bytes** in two consignments; they were not measured in this tree, and
+freezing them is not believing them. This script re-derives each one and prints
+the claim beside the derivation::
 
     ALGHANEM_MASAQ_PATH=/path/to/MASAQ.csv \\
         python examples/arabic/measure_irab_columns.py
@@ -22,6 +22,12 @@ value of that column at all**. The third is a statement about the label, not
 about the corpus — a transcription difference in spacing, hamza or vowelling
 would produce it, and reading it as a zero would turn an unread name into a
 measured absence.
+
+Coverage is printed too, and it is what keeps a count from being read as a
+census of Arabic: 57 nāʾib fāʿil sit in a column filled in 1.79% of segments,
+so that is 57 of what was annotated, not 57 passives in the Quran. A coverage
+is compared at the precision it was declared to and no further — 84.45% is two
+places — and it is never multiplied back into a count.
 
 This script adopts no figure, issues no verdict, joins no corpus to another,
 and imports nothing from ``alghanem.kernel``. Counting an annotator's
@@ -38,11 +44,16 @@ from alghanem.arabic.irab_column_census import (
     IrabCensusError,
     IrabValueStanding,
     column_census,
+    read_coverage,
     read_figures,
+    segment_total_agrees,
 )
 from alghanem.arabic.irab_column_preregistration import (
+    ARRIVING_COLUMN_COVERAGE,
+    ARRIVING_SEGMENT_TOTAL,
     IRAB_COLUMNS,
     IRAB_PREREGISTRATION_DIGEST,
+    SPELLING_CHECK_BESIDE_THE_EXPECTATION,
     STANDING,
 )
 from alghanem.arabic.masaq_corpus_deposit import (
@@ -72,6 +83,13 @@ def main() -> int:
     print("(attribution is a licence condition, not a courtesy)")
     print(f"preregistration digest: {IRAB_PREREGISTRATION_DIGEST}")
     print(f"registration standing: {STANDING.value}")
+    print(SPELLING_CHECK_BESIDE_THE_EXPECTATION)
+    print()
+
+    if segment_total_agrees(records):
+        print(f"  [ok] segment total: {len(records)}")
+    else:
+        print(f"  [DIFFERS] segment total: {len(records)} != {ARRIVING_SEGMENT_TOTAL}")
     print()
 
     try:
@@ -114,13 +132,35 @@ def main() -> int:
         print(f"         limit: {column.what_it_does_not_annotate}")
     print()
 
+    for coverage in ARRIVING_COLUMN_COVERAGE:
+        try:
+            reading = read_coverage(records, coverage)
+        except IrabCensusError as error:
+            print(f"  [STOPPED] {coverage.column}: {error}")
+            unresolved.append(f"{coverage.column}: العمودُ غائبٌ عن الترويسة")
+            continue
+        mark = "ok" if reading.agrees else "DIFFERS"
+        print(
+            f"  [{mark}] coverage {coverage.column}: "
+            f"claimed {coverage.declared_percentage}%, "
+            f"derived {reading.measured_percentage:.4f}% "
+            f"({reading.non_empty_cells}/{reading.total_records} segments)"
+        )
+        if not reading.agrees:
+            unresolved.append(f"coverage {coverage.column}")
+    print()
+
     if unresolved:
         print(
             f"error: {len(unresolved)} figure(s) did not re-derive: {unresolved}",
             file=sys.stderr,
         )
         return 1
-    print(f"{len(readings)} arriving figures re-derived from the deposited bytes")
+    print(
+        f"{len(readings)} arriving figures and "
+        f"{len(ARRIVING_COLUMN_COVERAGE)} coverages re-derived from the "
+        "deposited bytes"
+    )
     print("this script adopts nothing and deposits no cross-corpus figure")
     return 0
 
