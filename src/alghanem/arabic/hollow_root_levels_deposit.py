@@ -372,11 +372,22 @@ HOLLOW_ROOT_CONFLICTS: Final[tuple[HollowRootConflict, ...]] = (
         ),
         tree_reference=(
             "`maqayis_root_table_deposit.root_table_rows`؛ "
-            "`THE_WEAK_RADICAL_IS_DECLARED_NOT_EXTRACTED_NOTE`"
+            "`THE_WEAK_RADICAL_IS_DECLARED_NOT_EXTRACTED_NOTE`؛ "
+            "والشاهدُ الخارجيُّ الذي يستوفي شرطَ الحسم صار مُسمًّى ومُشغَّلًا في "
+            "`hollow_root_root_census` وفي "
+            "`examples/irab/measure_hollow_root_census.py`، مربوطًا ببصمة "
+            "`irab_corpus_witness.QURANIC_ARABIC_CORPUS_WITNESS` وطولِها"
         ),
         what_would_resolve_it=(
             "شاهدٌ خارجَ الصورة السطحية يُسنِد هويّةَ العلّة إسنادًا مُبصَّمًا، "
-            "أو مستخرِجُ جذورٍ يُبنى ويُختبَر ويُودَع في هذه الشجرة"
+            "أو مستخرِجُ جذورٍ يُبنى ويُختبَر ويُودَع في هذه الشجرة. والمسارُ "
+            "الأوّلُ صار قائمًا مُشغَّلًا لا مُقترَحًا: خانةُ `ROOT` في "
+            "المدوَّنة الصرفية تُسنِد هويّةَ العلّة لكلّ مقطعٍ بعينه. ويبقى "
+            "لتبديل المنزلة أمران لا يُطويان: أن يُسجَّل تشغيلٌ على بايتاتٍ "
+            "طابقت البصمةَ والطول، وأن يُسمّى مدى ما حسمه — فالمحسومُ انتفاءُ "
+            "المُنازِع **في هذه المدوَّنة** لا انكشافُ قاعدةٍ تأخذ صورةً "
+            "سطحيةً فتُرجِع جذرَها؛ وتبديلُ المنزلة قرارٌ مستقلٌّ لا أثرٌ "
+            "جانبيٌّ لإيداع أرقام"
         ),
         standing=ConflictStanding.THE_TREE_CANNOT_TEST_IT,
     ),
