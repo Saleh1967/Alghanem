@@ -3640,11 +3640,76 @@ not, but a bounded corpus yields absence of evidence, not evidence of absence,
 and that limit is written into the module instead of being argued around.
 Re-derived by `examples/irab/measure_imperative_wasla.py`.
 
+A second table then arrived for the same question — sound 481 at 86%, nāqiṣ 100
+at 99%, hollow 401 at zero, mithāl 16 at zero, split lafīf 6 at zero — and it
+is recorded as **divergence, not as a second measurement**
+(`SECOND_ARRIVING_SHAPE_FIGURES`): the frozen specification and its digest were
+not touched, because the tree's rule is that a rule is never tuned until it
+matches an arriving number. Of its ten figures **two re-derived**, and both are
+zeros: the hollow root's zero waṣl, which holds under all four rules, and the
+mithāl's zero, which holds under the two narrow ones. The counts themselves do
+not: 481 against 604, 100 against 107, 401 against 425–445, 16 against 38–99.
+The gap is unexplained because the arriving table never declared its **scope** —
+bare imperative only, or the imperative in every form; and from which corpus —
+and the same undeclared scope is the likeliest reason 217/258 stands against
+the re-derived 116/149. "Split lafīf" is not a class in `RootShape` at all:
+separating it is a **fifth rule that would have to be legislated**, and
+legislating it after seeing its number would be legislating to the number, so
+the figure 6 is recorded as **not re-derivable under the frozen rules** rather
+than made re-derivable by a new door. The reservation attached to the arriving
+result 1 — absence in a corpus is not absence in the language — was already
+written in the module and stays.
+
+The third arriving result, **"the maṣdar comes first"**, is genuinely new to
+this tree, and it is the one that **could not be measured at all**. Its corpus,
+MASAQ.csv, arrived as a digest (`d43d2a81…6f3a`) and nothing else. A digest
+alone is not a deposit: `IrabCorpusWitness` also requires the byte length, the
+mirror that was actually opened, the licence and its attribution condition, and
+none of those were given — so `MASAQ_CORPUS_WITNESS` is **`None`**, with two
+open barriers naming exactly what would lift it
+(`src/alghanem/arabic/masaq_corpus_witness.py`). The column names are likewise
+**not guessed**: `MasaqColumnBinding` must be declared by whoever holds the
+bytes and is digested into every figure it produces, because which column
+carries the tag is a decision, not a reading. The hypothesis is nevertheless
+pre-registered and frozen (digest `6e042d75…e213c`, standing
+`مُصاغة_بعد_الرقم`), with its three claims separately falsifiable — the maṣdar
+distinguishes the form where the verb is shared; it separates senses that the
+root identity merges; it reveals a transitivity the passive misses — and with a
+permutation protocol fixed before any number. The census
+(`masdar_priority_census.py`) carries the pipeline and **zero re-derived
+figures**: standing `لم_تُفتَح_البايتات`, six arriving figures with no
+re-derivation. Four named residuals bound what the result could have meant even
+if measured. A `GERUND` tag is a **human annotator's judgement, not a property
+measured from bytes**. **One root is not a corpus**: قوم with its four
+distinct maṣdars (قيام، إقامة/إقام، تقويم، مقام) is a witness of possibility,
+not a corpus rate, and a single root cannot overturn the order of a structure.
+A present maṣdar is **not a measured transitivity**: moving from "إقامة is
+tagged" to "أقام is transitive" needs a rule joining maṣdar to transitivity,
+and no such rule has been legislated, so `transitivity_from_masdar` **raises
+instead of returning a number**. And the zero passive of أقام is absence in a
+bounded corpus — the very reservation accepted for result 1, applied here at
+the same weight. The claim also spans **two corpora**: the passive was measured
+in QAC, the maṣdar is tagged in MASAQ, and joining them is a root-transliteration
+rule that would be legislated, exactly the join that `THE_JOIN_WAS_NOT_TAKEN`
+already stopped once in this tree. Two corpora annotating the same text are two
+hands agreeing, not twice the text, and no count from one is added to a count
+from the other (`TwoCorporaAreNotOneCorpus`). The verdict that the structure
+`verb → transitivity → derivatives` is mis-ordered and that the maṣdar must
+precede is therefore **recorded as a named open objection with the weight it
+actually carries**, not executed: it rests on one root, and `pipeline_stations`
+derives its stations from the tree, so promoting an unencoded station would
+only produce an unencoded station. `examples/irab/measure_masdar_priority.py`
+will run the whole census the moment the holder of the bytes declares the
+length, the mirror, the licence and the six column names.
+
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
 T. Zerrouki, http://arramooz.sourceforge.net/ and
-https://github.com/linuxscout/qutrub. All attributions are licence
-conditions, not courtesies.
+https://github.com/linuxscout/qutrub. MASAQ is not deposited here and its
+bytes were never opened in this tree; whoever opens them owes its authors the
+attribution its licence requires, and that attribution is recorded as a
+condition of the deposit before any figure is issued. All attributions are
+licence conditions, not courtesies.
 
 ```bash
 python -m pip install -e '.[dev]'

@@ -33,12 +33,15 @@ from alghanem.arabic.imperative_wasla_census import (
     REDERIVED_IMPERFECT_COEXISTENCE,
     REDERIVED_SALIM_AJWAF_TEST,
     REDERIVED_SHAPE_TABLES,
+    SECOND_ARRIVING_SHAPE_FIGURES,
     ImperativeWaslaCensusError,
     classify_root,
     idgham_agreement,
     imperfect_coexistence,
     permutation_test,
     read_imperative,
+    second_arriving_figures_that_matched,
+    second_arriving_figures_without_a_rule,
     shape_table,
 )
 from alghanem.arabic.imperative_wasla_specification import (
@@ -282,6 +285,9 @@ def test_the_named_residuals_are_declared() -> None:
         "TheOneDoubledResidualIsTheContestedFormItself",
         "TheImperfectAsAPreconditionWasNotSettled",
         "Sha256OrdersNothing",
+        "ASecondArrivingTableIsNotASecondMeasurement",
+        "SplitLafifIsAFifthRuleNotAReading",
+        "TheScopeOfTheArrivingRatioWasNotDeclared",
     }
     for name, note in IMPERATIVE_WASLA_CENSUS_NAMED_RESIDUALS.items():
         assert note.startswith(f"{name}:")
@@ -329,3 +335,26 @@ def test_the_frozen_census_rederives_from_the_witness_bytes() -> None:
         assert permutation_test(frozen.label, sound, hollow) == frozen
     assert idgham_agreement(readings) == REDERIVED_IDGHAM_AGREEMENT
     assert imperfect_coexistence(records) == REDERIVED_IMPERFECT_COEXISTENCE
+
+
+def test_the_second_arriving_table_is_recorded_as_divergence_not_as_a_rule() -> None:
+    """الجدولُ الثاني الواردُ يُسجَّل فرقًا، ولا يُمَسُّ به رقمٌ مُعادُ الاشتقاق."""
+
+    assert len(SECOND_ARRIVING_SHAPE_FIGURES) == 10
+    matched = {figure.label for figure in second_arriving_figures_that_matched()}
+    assert matched == {"الأجوفُ بألف وصل", "المثالُ بألف وصل"}
+    without_a_rule = second_arriving_figures_without_a_rule()
+    assert len(without_a_rule) == 2
+    assert all("لفيف" in figure.label for figure in without_a_rule)
+    assert all(figure.rederived_value is None for figure in without_a_rule)
+    assert specification_digest() == IMPERATIVE_WASL_SPECIFICATION_DIGEST
+    assert set(REDERIVED_SHAPE_TABLES) == {rule.name for rule in WEAKNESS_RULES}
+
+
+def test_the_second_arriving_notes_are_named_residuals() -> None:
+    for name in (
+        "ASecondArrivingTableIsNotASecondMeasurement",
+        "SplitLafifIsAFifthRuleNotAReading",
+        "TheScopeOfTheArrivingRatioWasNotDeclared",
+    ):
+        assert name in IMPERATIVE_WASLA_CENSUS_NAMED_RESIDUALS
