@@ -3452,6 +3452,41 @@ frozen as evidence, and no gate in `kernel/` reads it.
 `examples/compression/measure_compression_model.py` re-derives every frozen
 figure from a copy of the bytes and exits non-zero on any drift.
 
+`hollow_root_levels_preregistration` freezes twenty-four hand-built hollow-root
+surfaces and four named projections before a single measuring function was
+written, and guards the set with a re-derived digest. `hollow_root_levels_measurement`
+then reads the ladder with the tree's own frozen readers — `text_key.comparison_key`,
+`p_extractor.read_surface`, `syllabifier.syllabify_surface` — and finds
+collisions by *grouping* surfaces under a shared fingerprint rather than by
+comparing each surface against the previous one
+(`A_COLLISION_IS_FOUND_BY_GROUPING_NOT_BY_PAIRWISE_COMPARISON`); a detector that
+requires the states to *differ* before reporting a collision hides the total
+collision, which is the strongest one, not the weakest
+(`A_TOTAL_COLLISION_IS_THE_STRONGEST_ONE_NOT_THE_INVISIBLE_ONE`). Two incoming
+claims invert under this reading. The claim that a "root skeleton" collapses
+قَالَ and قُلْ holds only under the projection that also drops the madd carrier,
+not under `comparison_key`, and the projection was never named. The claim that
+template-plus-vowel-state "resolves the surface form completely with not one
+collision" is a property of the four-form sample, not of the fingerprint: on the
+frozen twenty-four, six collision classes collapse them to ten fingerprints, the
+strongest being قَوْلٌ/بَيْعٌ/خَوْفٌ/نَوْمٌ, identical in template and state
+although و and ي are visible in the orthography. The ladder is also not
+monotone: distinct fingerprints fall 23 → 18 → 5 → 10 as the levels advance, so
+the order is one of naming, not of increasing resolution
+(`A_LATER_LEVEL_IS_NOT_NECESSARILY_A_FINER_ONE`). The surviving level-3 claim is
+bounded — يَخَافُ (waw) and يَهَابُ (ya) share one fingerprint exactly, a limit
+`docs/reference/gflk_arabic_letter_specification.md` had already recorded before
+the claim arrived. `hollow_root_levels_deposit` records all of this without a
+resolution field, along with the three files whose declared digests were quoted
+but whose bytes never reached this tree
+(`THE_BYTES_NEVER_REACHED_THIS_TREE`) — only the quoted digest *prefixes* are
+stored, since completing a digest from anywhere but its source is invention, not
+transcription (`A_QUOTED_DIGEST_PREFIX_IS_NOT_A_DIGEST`). Every corpus-derived
+figure is filed as not re-derivable here, because no corpus file exists in this
+tree. The independent convergences are recorded too, each with what it does not
+establish. Nothing is born, ranked or frozen as evidence, and no module in
+`kernel/` reads any of it.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
