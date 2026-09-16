@@ -3750,6 +3750,61 @@ states the consequence: only `README.md` and `MASAQ.csv` may sit in `corpora/`,
 any other name fails a test rather than resting there implying the corpus has
 arrived.
 
+MASAQ turned out to carry **i'rab, not only morphology**, and that is where the
+next module goes. Three of its columns annotate it — `Syntactic_Role`,
+`Case_Mood_Marker` and `Phrasal_Function` — and two more, `Word_No` and
+`Column5`, decide whether a count counts segments or words.
+`src/alghanem/arabic/irab_column_preregistration.py` freezes those five columns,
+four counting rules and the thirteen figures that **arrived from the holder of
+the bytes**: 66 distinct syntactic roles, fāʿil 10,483, mafʿūl bihi 8,878, muḍāf
+ilayhi 9,123, mubtadaʾ 3,598; 14 distinct case/mood markers, of which the
+sub-markers are thabāt al-nūn 2,611, ḥadhf al-nūn 1,913, yāʾ 1,884, wāw 723; the
+**estimated** markers, ḍamma 1,632 and fatḥa 1,404; and nāʾib fāʿil 57 in the
+phrasal column. Its standing is `مُصاغ_بعد_الرقم` and
+`TheFiguresArrivedFromTheHolderOfTheBytes` says plainly that these were measured
+elsewhere, so the freeze records a **claimed** number, not a measured one; they
+were not adopted, and `irab_column_census.py` re-derives every one of them from
+the fingerprinted bytes or produces nothing at all. Four named laws bound it.
+`AnAbsentValueIsNotAZero` splits what a single zero used to hide into three
+standings — present and agreeing, present and differing, and **not a value of
+that column at all** — because a difference of spacing, hamza or vowelling in a
+transcribed label would otherwise be read as a measured absence in Arabic.
+`AMissingColumnStopsTheCount` refuses a missing column instead of returning zero
+for it, since a zero passes through a report looking like a measurement.
+`SegmentsAndWordsAreTwoCounts` returns both counts for every value, that
+confusion being exactly the one that dropped an alignment from 23.3% to 0.3%.
+`CountingAJudgementIsNotSettlingIt` holds that the 1,632 estimated ḍammas are a
+count of annotator judgements about something with **no written trace**, so the
+question this tree could not settle is not settled by counting it — and that
+nāʾib fāʿil here is a witness inside MASAQ, never added to QAC's `PASS`.
+
+A second consignment then arrived, and with it the one thing that could be
+checked here and now without the bytes: the **literal spelling** of every value.
+All thirteen frozen strings matched it character for character — "فعل ماضٍ" with
+the hamza on a dotted yāʾ, "ضمة مقدرة" with no shadda, "ال التعريف" with the
+space — so the likeliest way the re-derivation could have failed is now closed.
+`PRE_REGISTERED_EXPECTATION` was **not edited** to say so; editing a frozen
+expectation once its answer is in hand erases the thing it was measuring
+against, so `SpellingCheckBesideTheExpectation` is written next to it instead,
+and `ATransmittedSpellingIsNotTheHeader` states its limit: agreeing with a
+transmitted list is agreeing with the transmitter, not with the header. The
+consignment also brought two further columns — `Case_Mood` (mabnī 53,687, marfūʿ
+27,015, majrūr 23,255, manṣūb 19,327, majzūm 1,490; five values and no sixth)
+and `Invariable_Declinable` (twelve values, mabnī 54,734 and muʿrab 39,509 among
+them) — thirty-six further figures, the 157,677-segment total, and the per-column
+**coverage**. Coverage is what stops a count being read as a census of Arabic:
+`AThinlyCoveredColumnIsNotACensusOfArabic` holds that 57 nāʾib fāʿil in a column
+filled in 1.79% of segments is 57 of what was annotated, not 57 passives in the
+Quran, and is not to be set beside a figure from a column filled in 76%.
+`ACoverageIsNotACount` refuses the other direction: a percentage is compared at
+the places it was declared to — 84.45% is two — and multiplying it back by the
+denominator yields a range thousands of segments wide, not a measurement, so the
+157,677 is counted row by row and never derived from 100.0000%. Twenty-five
+synthetic-row tests, declared as synthetic, plus two that run the moment the
+bytes are resolvable; `examples/arabic/measure_irab_columns.py` prints each claim
+beside its derivation and exits non-zero on any figure or coverage that does not
+re-derive.
+
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
 T. Zerrouki, http://arramooz.sourceforge.net/ and
