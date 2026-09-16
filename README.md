@@ -4004,6 +4004,74 @@ that attribution, which is recorded as a condition of the deposit before any
 figure is issued. All
 attributions are licence conditions, not courtesies.
 
+### A closure defined once, and the thin column that reads half of it
+
+`src/alghanem/arabic/waqf_closure_preregistration.py` freezes a syntactic waqf
+— the point at which a predicative unit closes — and keeps it apart from the
+phonetic waqf already registered in `ibtida_wasl_waqf_registration`, which is
+the quiescing of a final state in recitation. `ThePhoneticWaqfIsNotThisWaqf`:
+one word for two subjects does not make them one subject, and neither is
+measured by the other.
+
+The proposed law is one sentence: a predicative unit closes when both of its
+terms are present, and a prepositional phrase never closes by itself. Three
+standings follow, with no zero gathering them — **closed**, **open**, and
+**dependent** — and `waqf_closure_census.py` measures them inside one verse
+over a declared denominator, **the keys**: stems carrying a frozen
+opening-term value. `ANullifiedDenominatorIsNotAZero` makes the conservation a
+check rather than an assumption; closed plus open plus dependent equals the
+keys exactly, or the gap is printed rather than adjusted away.
+
+Every detector is a **pair of (column, value)**, and the tree itself supplies
+the witness for why. `فاعل` in `Syntactic_Role` is 10,483; `فاعل` in
+`Phrasal_Function` is 1. Those are two values, not one value with two numbers,
+which is what `AValueWithoutItsColumnIsTwoValues` says and what the test
+asserts against the frozen figures. The same rule keeps four arriving values
+out of every count: `ظرف زمان` (1,426), `ظرف مكان` (758), a second
+`نائب فاعل` (747, against the 57 frozen for `Phrasal_Function`), and
+`اسم ناسخ`, whose own count never arrived at all — only a difference of 1,157
+from its predicate, and a difference without both of its terms yields no
+number. They are registered suspended by name with a written reason, under
+`AnUnfrozenValueIsNotADetector`, because a guessed spelling turns "not among
+this column's values" into a silent zero.
+
+Three limits are written inside the unit rather than around it.
+`AClosureIsInferredFromNeighbourhoodNotTagged`: no column says "the sentence
+closed here", so closure is an inference from two tagged terms in one verse.
+`AVerseBoundaryIsNotASentenceBoundary` is the sharpest of them, because every
+figure the unit issues uses the verse as its unit while a sentence spans
+verses and a verse holds sentences — a unit called open may close in the next
+one. And `APhraseIsNotAClause` is a definition, not a finding: a prepositional
+phrase stays dependent even when an attachment is observed in its verse, and
+that observation is counted in a field of its own rather than promoting the
+standing.
+
+The nominal figures carry a fourth limit that the tree forced on the design.
+`AThinColumnIsNotAThickOne`: the two terms of a nominal clause are read from
+two columns of very different coverage — `مبتدأ` from `Syntactic_Role` at
+76.3631% of segments, `خبر` and its kinds from `Phrasal_Function` at 1.79% —
+so the count of **open** nominal units reads first as an empty column, not as
+an unclosed clause, and no closure rate is issued from it as a statement about
+Arabic. That is the very objection that excluded `Phrase` (1.80%), so it could
+not be raised against one column and passed over in silence for the other;
+`Phrase` is read nowhere here, and a test asserts its absence from the columns
+this census reads. `APartialScanForbidsATotalDenial` governs the other
+direction: nothing is denied of a column until `scan_column_values` has walked
+all of its values, so "this closing spelling is absent" is a statement about a
+spelling in these bytes, never about a category in Arabic.
+
+The expectation is written before the measurement and is falsifiable in two of
+its three parts: verbal keys should exceed nominal keys on this denominator —
+the common traditional claim, tested with its denominator rather than with the
+biased `Phrase` column — and the open share of nominal clauses should exceed
+the verbal one by roughly the gap between the two columns' coverage. The third
+part, that no phrase is ever closed, is declared **not** a discovery but a
+reading of the definition, and it is written down as such.
+`examples/arabic/measure_waqf_closure.py` prints every frozen detector beside
+its count, every suspended value beside its reason, and every measured figure
+beside its limit, exiting non-zero on any drift; the measurement itself waits
+on the fingerprinted MASAQ bytes, and in their absence nothing is estimated.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
