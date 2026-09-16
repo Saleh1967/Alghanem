@@ -146,9 +146,7 @@ def split_witness_segments(cell: str) -> tuple[str, ...]:
 def count_records_carrying_poetry_evidence(root: Path | None = None) -> int:
     """عددُ السجلّات الحاملة شاهدًا تحت `WITNESS_RECORD_COUNTING_RULE`."""
 
-    return sum(
-        1 for row in root_table_rows(root) if row["poetry_evidence"].strip()
-    )
+    return sum(1 for row in root_table_rows(root) if row["poetry_evidence"].strip())
 
 
 def count_witness_segments(root: Path | None = None) -> int:

@@ -3826,6 +3826,43 @@ condition for every byte-gated test, so
 is not there skips, and bytes that resolve but differ do **not** skip — they
 fail, because the place is not a certificate.
 
+### A census whose numbers no one claimed first
+
+While those bytes are awaited, `src/alghanem/arabic/maqayis_witness_census.py`
+measures bytes that are already here. `maqayis_by_root_csv_999.csv` is
+fingerprinted in this tree, so its poetry-evidence and semantic-axes columns can
+be counted without waiting for anyone, and a census is measured from them:
+1,944 records carrying poetry evidence, 4,176 witness segments, of which 4,176
+bear the hemistich marker, a `root_type` census of 4,089 / 428 / 56 / 3 summing
+to the 4,576 records, and a comparison of each record's declared `axes_count`
+against the segments of its own `semantic_axes` cell — 2,890 agreeing, 822
+differing, 864 blank. The epistemic position here is the inverse of the MASAQ
+one and is written down as such. `NoClaimPrecededTheseNumbers`: nobody
+transmitted these figures in advance, so a match tests no transmitter and
+vindicates no one; and `TheRulesWereWrittenAfterTheseNumbersWereSeen`, recorded
+rather than hidden, since what keeps a rule from having been cut to fit a
+pleasing number is that it is written out in full and re-derived from
+fingerprinted bytes, not that it was written first.
+
+Three of the module's limits are the reason the figures are not one number.
+`ASeparatorIsTheProducersNotThePoets`: `|` is the file producer's mark, so a
+segment count is a count of his separators, and a bar falling inside a line
+would inflate it — which is why the segments bearing the `…` marker are counted
+alongside, their equality being a corroboration that closes nothing.
+`AWitnessSegmentIsNotAVerse`: metre, attribution and completeness are
+unverified, so 4,176 is a count of segments in a file, not of witnesses in
+Arabic or in Ibn Fāris. And `ABlankIsNotAZero`: the 864 records declaring no
+`axes_count` are a third class, never folded into agreement or disagreement, so
+no agreement ratio is published — the denominator itself would be in dispute.
+Of the 822 differences, 597 are an empty axes cell against a declared 1, and
+neither side is adjusted to remove any of them.
+`ADeclaredCellIsCheckedAgainstItsOwnFile` keeps the comparison inside one
+record, and `TheBytesHereAreNotTheWithheldBytes` keeps this census from being
+read as progress on MASAQ: a figure reached from one file does not stand in for
+the bytes of another. `examples/arabic/measure_maqayis_witnesses.py` re-derives
+every one of them beside its rule and its limit, and exits non-zero on any
+drift.
+
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
 T. Zerrouki, http://arramooz.sourceforge.net/ and
