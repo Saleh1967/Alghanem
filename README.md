@@ -3993,6 +3993,31 @@ the bytes of another. `examples/arabic/measure_maqayis_witnesses.py` re-derives
 every one of them beside its rule and its limit, and exits non-zero on any
 drift.
 
+`referent_candidate_preregistration` and `referent_candidate_census` add a
+pronoun candidate-enumeration tool that **never names a referent**. Its
+declared denominator is only the fifteen pronoun tags that actually encode a
+person/number/gender triple — 2,608 of MASAQ's 23,579 pronouns, about 11%;
+`ElevenPercentIsTheRealDenominator` keeps the aggregate `SUBJ_PRON` (7,964),
+`POSS_PRON` (7,678) and `OBJ_PRON` (3,211) tags outside the denominator with
+their reasons written, and `AnUnparsedTagYieldsNoConstraint` counts any tag
+that fails to parse instead of granting it a default constraint. The search
+window — the pronoun's own verse plus the one before it, inside its sura, and
+only nouns preceding it — is frozen before measurement under
+`AWindowIsDeclaredNotOptimised`. Because MASAQ tags neither gender nor number
+on nouns, agreement is decided by a frozen suffix rule over `Segmented_Word`,
+declared as `GenderAndNumberAreInferredNotTagged`; broken plurals and the
+ya-nun ending stay `INFERENCE_UNDETERMINED` and are counted, never matched. No
+precision or recall figure is issued here, and none ever can be:
+`TheReferentIsNotAnnotatedAnywhere` — there is no gold standard in any source
+at hand, so `CandidateSetCensus.__post_init__` refuses any field claiming
+precision, recall, accuracy or a gold referent rather than ignoring it. The
+only legitimate outputs are candidate-set size, the share narrowed to a single
+candidate, the distribution by triple, and the listed zero-candidate
+positions, under `ACandidateSetIsNotAnAnswer`. Each pronoun gets one of four
+named standings — single, multiple, zero, or discourse participant (first and
+second person leave nominal matching before any search) — and no zero gathers
+two of them.
+
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
 T. Zerrouki, http://arramooz.sourceforge.net/ and
