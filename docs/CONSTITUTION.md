@@ -1336,6 +1336,79 @@ of an argument against birth in this scope, not that verdict. This stage issues
 no `BirthVerdict`, no `BirthCandidate`, no `Freeze`, no `E0` mapping, and no
 `TraditionalName`.
 
+## G0.EX — Experimental authority (the third path)
+
+Two authorities existed before this section: a constitutional one that may
+certify a birth and run nothing, and an executive one that may use what was
+born and certify nothing. Between them there was no place to *try* anything. A
+candidate could be argued about but never exercised, and the only way to
+exercise it would have been to let execution stand in for birth -- precisely
+what `ExecutiveAuthorityCannotIssueBirth` forbids.
+
+G0.EX opens a third path, deliberately weak, whose whole purpose is to run what
+has not been born without letting the run prove that it was:
+
+```
+DeclaredExperimentalCandidate -> ExperimentalAuthority -> ExperimentalRun
+-> ObservedExperimentalResult (trace + observed unaccounted cases + failures)
+-> ExperimentalEvidenceOffer -> [G0.2a.3 acquisition chain]
+-> BirthAssessmentRequest -> ... -> BirthVerdictGate -> BirthCertificate
+```
+
+A run closes exactly one question, and its answer has exactly one shape:
+
+> this declared candidate, under these declared conditions, on these declared
+> inputs, produced this output -- or this failure.
+
+It does not answer whether a genus was born, whether the candidate's identity
+is independent, whether it differs from the origin it claims to branch from,
+whether it is necessary, whether a weaker model would have sufficed, or whether
+anything holds outside the run's own declared scope.
+
+What this buys is a laboratory in which the question *is a new genus necessary*
+can be attacked from the negative side cheaply. Two declared models are run
+over one case set frozen before either ran: if the model with fewer declared
+parts accounts for every case, there is nothing for a richer candidate to be
+necessary for, and the matter ends there. If cases survive the first model and
+not the second, that is a contrast between two opaque model references over one
+declared case set -- which is a reason to open a birth experiment, never a
+birth. The kernel names no genus in this section, so no contrast decided here
+can say which genus won.
+
+G0.EX.1a (`kernel/experimental.py`) declares the candidate, the frozen case
+set, the frozen per-case outcome vocabulary, and the run authority that issues
+`ExperimentalRunRecord`. G0.EX.1b (`kernel/experimental_comparison.py`) reads
+two runs against each other, and one candidate's repeated runs against
+themselves. G0.EX.1c (`kernel/experimental_evidence_gate.py`) is the single
+door out: it issues a payload that the existing G0.2a.3 acquisition chain must
+still ingest, and it issues no `AuthorizedEvidenceSnapshot` of its own.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `ExperimentalSuccessIsNotBirth` | ENFORCED_AT_EXPERIMENTAL_AUTHORITY | A completed run records observed facts and confers nothing. `ExperimentalRunRecord` exposes `confers_birth`, `confers_validity`, `confers_constitutional_evidence`, `confers_identity_proof`, `confers_difference_from_origin` and `confers_necessity` as structurally `False` derived properties, so the ceiling is read from the object rather than from this table. |
+| `ExperimentalFailureIsNotNoBirth` | ENFORCED_AT_EXPERIMENTAL_AUTHORITY | A failed or aborted run is recorded, never discarded: `ExperimentalAuthority.run` captures the exception rather than propagating it, and stores an `ExperimentalFailureRecord` naming the failure kind, the case, the message, and the trace up to that point. A failure is not `NO_BIRTH_IN_SCOPE`, and `ExperimentalOutcomeStatus` is about how the run ended, never about whether its result was valid. |
+| `ExperimentalCandidateIsNotBirthCandidate` | ENFORCED_AT_EXPERIMENTAL_AUTHORITY | No type in G0.EX is, subclasses, or is accepted by anything on the birth path, and `ExperimentalAuthorityError` is a plain `ValueError` rather than a `BirthExperimentSpecificationError`, so an experimental refusal cannot be caught as a birth-protocol refusal. An import sweep asserts that `experimental` and `experimental_comparison` import nothing from the birth, verdict, certificate, closure, survival, exhaustion or acquisition modules, and that no kernel module outside the G0.EX gate imports them. |
+| `NoValidityFieldOnAnExperimentalArtifact` | ENFORCED_AT_EXPERIMENTAL_AUTHORITY | No experimental type may declare a field named for birth, validity, correctness, certification, rank or verdict. `sweep_forbidden_fields` runs at import over every dataclass in the three modules, so a field added later fails the import rather than quietly conferring a status -- the technique already used to keep `HypothesisResidual` free of a candidate or verdict field. |
+| `ObservedUnexplainedCasesIsNotCertifiedResidual` | ENFORCED_AT_EXPERIMENTAL_AUTHORITY | `observed_unexplained_cases` is derived by reading each per-case output through a two-token vocabulary frozen in the run request *before* the run, so what counts as "not accounted for" cannot be chosen after seeing the output. An output matching neither token fails the run rather than being reinterpreted. The reading is an observation, never a `ResidualCertificationCandidate`, and it satisfies no condition of `NoBirthWithoutResidualOrFormalNecessity`. |
+| `BetterExperimentalFitIsNotNecessity` | ENFORCED_AT_EXPERIMENTAL_AUTHORITY | `ModelContrastObservation` derives all four of its case tuples and its status from two authority-issued records over one case set compared by object identity; it accepts no status and no claim. All four statuses, including `B_CLOSES_STRICT_SUPERSET`, expose `confers_necessity`, `confers_birth` and `confers_residual_certification` as structurally `False`. Two runs of the same declared model, or over two separately declared case sets, are refused rather than contrasted. |
+| `ObservedDeterminismInThisProcessIsNotReproducibility` | ENFORCED_AT_EXPERIMENTAL_AUTHORITY | `ReplayObservation` derives whether repeated runs of one request agreed on output, trace and outcome status. `proves_reproducibility` and `proves_independent_replication` are structurally `False`: agreement inside one process is not determinism, portability, or the independent second measurement run that `SyntheticInterventionMayGenerateHypothesisOnly` requires. One record read twice is refused as a replay. |
+| `ExperimentalResultIsNotConstitutionalEvidence` | ENFORCED_AT_EXPERIMENTAL_EVIDENCE_GATE | `ExperimentalEvidenceGate.offer` is the only path out of the experimental path, and it derives every admission condition: scope equal to the frozen experiment's own domain read from the binding, a replay covering this very record whose outputs, traces and statuses agreed, an authority-issued trace, and a payload encoded canonically from the record itself. The gate issues no `AuthorizedEvidenceSnapshot` and imports no acquisition type: `OfferedExperimentalEvidence != AuthorizedEvidence != SufficientEvidence != Residual != Birth`, and `FrozenExperimentPrecedesAuthorizedEvidenceIngestion` is preserved unchanged because the G0.2a.3 chain must still ingest the payload. |
+| `AFailedRunIsStillOffered` | ENFORCED_AT_EXPERIMENTAL_EVIDENCE_GATE | A failed or aborted run may be offered and is marked by the offer's own derived `records_failure`. Dropping failures at the gate would make the record of an experiment better than the experiment was; keeping them changes no verdict, because `ExperimentalFailureIsNotNoBirth` still holds. |
+| `ExperimentalAuthorityCannotCertifyOrExecute` | ENFORCED_AT_EXPERIMENTAL_AUTHORITY | `ExperimentalAuthority` exposes `run` and its own id and nothing else; `ExperimentalEvidenceGate` exposes `offer` and its own id and nothing else. Both surfaces are checked at import and asserted by test, alongside the unchanged surfaces of `ConstitutionalBirthAuthority`, `ExecutiveAdmissionGate` and `BirthVerdictGate`, which gain nothing from this milestone. |
+| `NoBornEntityIsRequiredToRunAnExperiment` | ENFORCED_AT_EXPERIMENTAL_AUTHORITY | A run requires no certificate, no `ExecutableEntity`, and no verdict. That is the point of the third path: the laboratory may try what the constitution has not admitted. |
+| `ExperimentalRunIsNotExecutionOfABornEntity` | ENFORCED_AT_EXPERIMENTAL_AUTHORITY | An `ExperimentalRunRecord` is not an `ExecutableEntity`, cannot be produced from one, and cannot produce one; neither type is a subclass of the other. Running in the laboratory and using what was born remain two acts under two authorities. |
+| `DeclaredOriginIsNotProvedBranchRelation` | DECLARED_DEFERRED | `declared_origin_ref` is the origin a caller *claims* the candidate branched from, and `ExperimentalCandidateDeclaration.proves_origin_branch_relation` is structurally `False`. Nothing here checks that the origin exists, that a `BranchOriginProvenance` could be derived for the pair, or that the candidate differs from it; `DeclaredCandidateId != ProvedIdentity` likewise. |
+| `ExperimentalIsolationIsProcessLocal` | DECLARED_DEFERRED | The authority's isolation is authority isolation: an implementation's exception is captured into a record instead of escaping into the caller's control flow, and an operation the request never permitted aborts the run. Nothing restricts filesystem, network, memory, or time. `CapturedFailure != SandboxedExecution`, and a genuine sandbox is a separate, later milestone. |
+| `ExperimentalOutputIsSyntheticUnlessItsInputsWereMeasured` | DECLARED_DEFERRED | `CounterfactualResultIsNotObservation` and `SyntheticInterventionMayGenerateHypothesisOnly` apply to experimental output unchanged. Case inputs here are caller-supplied strings with no measurement provenance, so an offered result carries at most hypothesis force; no authority in this section assesses residual survival, weaker-model exhaustion, or replication in a second independent measurement run. |
+| `NoGenusNameIsIntroducedHere` | ENFORCED_AT_EXPERIMENTAL_AUTHORITY | Candidate, origin and model references are opaque caller strings, and the kernel defines no genus vocabulary in this section. The instruction-versus-rule question is expressible as a contrast between two opaque model references and in no other way, so `TraditionalNamingOnlyAfterFreezeAndE0` cannot be circumvented by an experiment that names its own winner. |
+
+These laws exist so that a repository which can now run things does not
+gradually begin to treat running them as evidence that they deserved to exist.
+The formulae are short: `ExperimentalSuccess != Birth`,
+`ExperimentalFailure != NoBirth`, `BetterExperimentalFit != Birth`, and
+`ExperimentalResult != ConstitutionalEvidence` until one gate, one acquisition
+chain, and one constitutional assessment have each done their own work.
+
 ## G0.MA — Meta-architecture law (declared law, no runtime yet)
 
 This law governs every future stage that searches for, selects, or names a
