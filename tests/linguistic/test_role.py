@@ -60,9 +60,7 @@ def test_the_role_is_a_closed_vocabulary_member_not_free_text() -> None:
 
 def test_an_unread_role_is_a_declared_member_not_an_absence() -> None:
     assert RelationalRole.UNREAD in set(RelationalRole)
-    unread = RelationalRoleRef(
-        role=RelationalRole.UNREAD, read_from="لم تُقرأ بعد"
-    )
+    unread = RelationalRoleRef(role=RelationalRole.UNREAD, read_from="لم تُقرأ بعد")
     assert unread.role is RelationalRole.UNREAD
 
 

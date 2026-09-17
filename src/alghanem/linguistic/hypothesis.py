@@ -346,9 +346,7 @@ REQUIRED_NOTATION_SITES: Final[tuple[NotationSite, ...]] = (
     ),
     NotationSite(
         site_id="closure-yields-pre-ifadah",
-        literal=(
-            r"RelationalClosure" "\n" r"\Rightarrow" "\n" r"PreIfadahClosure"
-        ),
+        literal=(r"RelationalClosure" "\n" r"\Rightarrow" "\n" r"PreIfadahClosure"),
         what_it_decides="أنّ ناتجَ الإغلاق الأوّلَ ما قبلَ الإفادة لا الإفادة",
         what_its_absence_invalidates="الخطوةَ التي تمنع قفزَ الإغلاق إلى الإفادة",
     ),

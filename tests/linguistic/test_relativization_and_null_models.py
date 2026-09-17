@@ -57,8 +57,7 @@ def test_every_registered_null_model_awaits_a_held_out_corpus() -> None:
     assert NISBAH_NULL_MODELS
     for model in NISBAH_NULL_MODELS:
         assert (
-            model.run_standing
-            is RunStanding.DEFERRED_UNTIL_A_HELD_OUT_CORPUS_IS_NAMED
+            model.run_standing is RunStanding.DEFERRED_UNTIL_A_HELD_OUT_CORPUS_IS_NAMED
         )
 
 
@@ -74,7 +73,5 @@ def test_a_runnable_registration_before_a_named_corpus_is_refused() -> None:
 
 def test_the_corpus_independence_conditions_are_frozen_and_named() -> None:
     assert CORPUS_INDEPENDENCE_CONDITIONS
-    ids = tuple(
-        condition.condition_id for condition in CORPUS_INDEPENDENCE_CONDITIONS
-    )
+    ids = tuple(condition.condition_id for condition in CORPUS_INDEPENDENCE_CONDITIONS)
     assert len(set(ids)) == len(ids)

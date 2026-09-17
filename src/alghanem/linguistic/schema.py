@@ -188,9 +188,7 @@ class LinguisticNisbahSchema:
         for group in (self.sorts, self.laws):
             for member in group:
                 if isinstance(member, NisbahSignature | PredicateSignature):
-                    raise LinguisticNisbahSchemaError(
-                        NO_CONCRETE_NISBAH_IN_THE_NUCLEUS
-                    )
+                    raise LinguisticNisbahSchemaError(NO_CONCRETE_NISBAH_IN_THE_NUCLEUS)
         sort_ids = _require_text_tuple(
             tuple(sort.sort_id for sort in self.sorts), "أسماءُ الأصناف"
         )

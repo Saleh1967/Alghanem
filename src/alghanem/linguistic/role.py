@@ -156,9 +156,7 @@ def _refuse_a_buried_component() -> None:
         for field in fields(declaring):
             annotation = field.type
             name = (
-                annotation.__name__
-                if isinstance(annotation, type)
-                else str(annotation)
+                annotation.__name__ if isinstance(annotation, type) else str(annotation)
             )
             if forbidden.__name__ in name:
                 raise RuntimeError(RELATION_IS_NOT_REPRESENTATION)
