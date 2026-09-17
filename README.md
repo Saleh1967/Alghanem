@@ -1,5 +1,21 @@
 # Alghanem
 
+> **Start here: [`docs/VISION.md`](docs/VISION.md)** — what Alghanem is, why it
+> exists, and what it does not claim. This README is a cumulative engineering
+> log; the vision document is the entry point, and its "current state" section
+> is rendered from `src/alghanem/program/project_state.py`, never hand-edited.
+>
+> **In one sentence.** Alghanem is a research system for building *licensed,
+> reconstructible epistemic transitions*: it takes Arabic as its first proving
+> ground, and grants no result an authority higher than its evidence. The
+> product is not the linguistic findings but the chain behind them — where a
+> claim came from, what licensed it, in what scope it holds, what rank it
+> carries, what still blocks its promotion, and what the next permitted step
+> is.
+>
+> Reading order: **`docs/VISION.md` → `docs/AIMS.md` → `docs/CONSTITUTION.md` →
+> source → tests → the derived state block.**
+
 Alghanem is a research codebase for a general algebra of licensed
 transformations. The current release is the language-agnostic **Kernel v0.1**:
 small, shallowly immutable data structures for anchors, operations, evidence,
@@ -218,6 +234,39 @@ yields `is_independent_closure == False`
 remain open by name, so the status says what was reached and what it is pending
 on rather than overstating it. `CompositionIsNotAVerdict`: the stage is not
 wired to `BirthVerdictGate`, and `ClosureRefutedInScope != NO_BIRTH_IN_SCOPE`.
+G0.BC.1a (`src/alghanem/kernel/birth_certificate.py`) supplies the contract both
+of those stages stop short of, and activates neither birth branch.
+`BirthVerdict != BirthCertificate != Execution`: a verdict decides that the
+conditions for existence of this genus were met in this scope, a certificate
+preserves that decision with its scope, necessity readings, evidence references,
+preventers and trace, and execution uses what was born and may never create it.
+Two authorities exist and neither can perform the other's act — only
+`ConstitutionalBirthAuthority.assess` may produce a `BirthCertificate` and it
+exposes no method that runs anything, and only `ExecutiveAdmissionGate.admit`
+may produce an `ExecutableEntity` and it exposes no method that certifies
+anything — so `ExecutiveAuthorityCannotIssueBirth` and
+`ConstitutionalBirthAuthorityCannotExecuteTheBornEntity` are enforced by the two
+classes' public surfaces rather than by prose, and successful execution is never
+evidence of valid birth. A candidate's existence does not oblige its birth, a
+use for it does not, and frequent use of it does not; what obliges it is an
+unclosed residual that the exhausted lower layer did not close and that no
+weaker reconstruction still suffices to explain, and all three conjuncts are
+*read* from the closure decision rather than re-derived
+(`NoBirthWithoutUnclosedResidual`, `NoBirthBeforeLowerLayerExhaustion`,
+`NoBirthWhenAWeakerReconstructionStillSuffices`).
+`APreventerHasAnIdentityNotABoolean`: every member of `BirthPreventer` is
+derived on every assessment, held or cleared, each carrying its own reason, so a
+refusal records *which* ground stopped the birth. `NoCertificateIsReachableInThisTree`
+is declared rather than discovered — three preventers hold on every branch,
+naming three different missing authorities (no `BirthCandidate` issuer, no
+identity proof, no proof of difference from the origin), and a fourth holds
+because G0.BV.1a still only defers — and all `3^5 = 243` reading combinations
+are enumerated in test with none yielding a certificate. A certificate would
+still confer neither `Freeze` nor truth nor any global ontology claim
+(`BirthDoesNotMeanFreeze`, `BirthDoesNotMeanTruth`), and no
+instruction/rule/law/constitution ladder is encoded, since each such genus would
+need its own certificate first (`NoGenusLadderIsEncodedHere`).
+
 `BirthCandidate` is distinct from a scoped birth verdict and from `Freeze`;
 the future G0.BV.1 authority may issue `BIRTH_IN_SCOPE`, then a later freeze
 authority may freeze it before a separate `E0` step. See the
@@ -3516,8 +3565,9 @@ Accordingly the recorded conflict's `tree_reference` and
 `what_would_resolve_it` now point at the census and its re-derivation script,
 while its standing stays `THE_TREE_CANNOT_TEST_IT`: changing a rank is a
 separate, deliberate decision, never a side effect of depositing numbers. The
-corpus bytes are still not vendored — its GPL licence and the CC BY-ND Tanzil
-text it embeds forbid modification — so the re-derivation runs at the holder of
+corpus bytes are still not vendored — permission to copy them under its GPL
+licence and the CC BY-ND Tanzil text it embeds has not been examined here — so
+the re-derivation runs at the holder of
 the bytes via `examples/irab/measure_hollow_root_census.py`, and no number
 passes before the digest and length match.
 
@@ -3737,9 +3787,15 @@ length and a different digest re-derives the fourteen tag counts exactly and
 diverges on all six byte-and-line figures; that is recorded as corroboration
 under `AMirrorWithAnotherDigestIsNotTheseBytes`, not as a second witness, and
 the column binding of the deposited bytes remains the depositor's declaration,
-not a reading taken from the mirror. CC BY 3.0 permits vendoring, unlike
-QAC (GPL) and Tanzil (CC BY-ND), so one sanctioned place is reserved for those
-bytes — `corpora/MASAQ.csv` — but **the bytes are not in this tree yet**, and
+not a reading taken from the mirror. One sanctioned place is reserved for those
+bytes — `corpora/MASAQ.csv` — on the strength of the recorded `CC BY 3.0`
+label. That reservation asserts **nothing** about QAC or Tanzil: their bytes
+stay outside this tree because permission to copy them **has not been examined
+and not been deposited here**, not because it was examined and found absent —
+forbidding derivatives is not forbidding verbatim copies, and requiring
+attribution and notice is not forbidding anything
+(`APermissionUnexaminedIsNotAPermissionRefused`). And **the bytes are not in
+this tree yet**, and
 the place alone re-derives nothing: until they are deposited there, the twenty
 figures require a path in `ALGHANEM_MASAQ_PATH` and the re-derivation test
 skips without one. Neither route weakens the gate — the deposited location
@@ -3749,6 +3805,33 @@ a failed web upload under another name, and `AFailedUploadIsNotADeposit` now
 states the consequence: only `README.md` and `MASAQ.csv` may sit in `corpora/`,
 any other name fails a test rather than resting there implying the corpus has
 arrived.
+
+The state of that path has a name in this README, and nowhere else:
+**Empirical Witness Activation — تفعيل الشاهد التجريبي**. It is a documentary
+label for the state of the MASAQ witness alone. It is **not** a programme
+milestone, **not** a readiness rank, **not** a constitutional status, and
+nothing in `docs/AIMS.md`, `milestone_ledger` or `readiness_rank` records it —
+those track a different axis. Two axes run side by side and are not one:
+*programme construction* (laws, gates, evidence, ranks, aims, execution) and
+the *empirical witness lifecycle* (specified → path prepared → bytes absent →
+bytes resolved → identity verified → figures re-derived → differences
+classified). MASAQ sits at *bytes absent* on the second axis, and moving it
+along that axis moves nothing on the first.
+`TheReadyPathIsTheMasaqWitnessPathNotProgrammeCompletion` says the consequence:
+what is ready is the path that receives this witness, verifies its identity and
+re-derives its figures — not the programme. Arriving bytes enact no
+`DECLARED_DEFERRED` law, create no authority to judge or to birth, close no
+epistemic aim, raise no result's rank merely because a file is now in hand, and
+turn no induction over this corpus into a claim about open Arabic; the limit in
+`CompleteInductionIsCorpusBounded` is unchanged by their arrival. Reaching the
+end of the witness lifecycle is not the completion of the project.
+`RederivationIsComparisonNotAutomaticEndorsement` closes the second door: the
+bytes do not adopt the twenty frozen figures, they run the re-derivation
+functions against them. A match holds **within the scope of this witness**; a
+mismatch is recorded as it fell. The frozen figure is never edited to fit the
+result, nor is its counting rule, and re-derivation is a comparison rather than
+an automatic epistemic promotion — a prior claim does not become true because
+its witness became available.
 
 MASAQ turned out to carry **i'rab, not only morphology**, and that is where the
 next module goes. Three of its columns annotate it — `Syntactic_Role`,
@@ -3899,6 +3982,124 @@ condition for every byte-gated test, so
 is not there skips, and bytes that resolve but differ do **not** skip — they
 fail, because the place is not a certificate.
 
+The 76.36% coverage of `Syntactic_Role` reads as a gap in the annotation, and
+it is not one: it is a ratio taken over the wrong denominator. Restricted to
+**stems** — `Morph_type == "Stem"`, 77,797 of them — the same column is filled
+in 99.6838%, because prefixes and suffixes have no i'rab case to begin with and
+counting them lowers a ratio that never fell.
+`src/alghanem/arabic/irab_operator_preregistration.py` freezes that denominator
+with its counting rule, and `ADenominatorIsDeclaredNotAssumed` is the law that
+follows: 76.36% and 99.68% are not rival numbers but two ratios with two
+denominators, so no ratio leaves either module without its denominator in the
+same structure — `ArrivingStemCoverage` and `StemCoverageReading` both carry it,
+and a coverage built without one cannot be constructed at all. The acceptance
+threshold is 99% on the stem denominator, and it is declared as what it is:
+the coverage arrived first, so the threshold is a stated measure for future
+readings, not a bar this figure cleared before anyone saw it.
+
+The residue — 246 stems with no role — is **named before it is excused**. It is
+neither noise nor one fault: 190 verses at 1.29 stems each, in two distinct
+patterns. A verse whose other stems are annotated and one is not is a lapse in
+a cell; a verse left wholly unannotated is a skipped verse, and the largest,
+2:13, holds thirteen of them in consecutive positions. `ResiduePattern` freezes
+both patterns and a declared third, **neither pattern**, so that no verse is
+pushed into a box too small for it, and `measure_residue` classes every verse
+by them from the bytes. What did not arrive is how the remaining 82 stems split
+between the second and third patterns, and `AnUndeclaredSplitIsNotAZero` keeps
+that place declared and empty: `ArrivingResidueAccount.stems` is `None` there,
+meaning *did not arrive*, never *zero*. `CoverageIsNotCorrectness` states the
+other limit, and the residue itself witnesses it: in that same 2:13, "آمَنَ" —
+a perfect verb — is tagged `مجزوم`, so 99.68% counts the stems that were
+annotated, not the stems annotated rightly.
+
+The relation itself is the weakest claim of the three and says so.
+`irab_operator_census.py` reads eight frozen detectors — three operators (ḥarf
+jarr, past verb, imperfect verb), three dependents (ism majrūr, fāʿil, mafʿūl
+bihi) and two neutrals — whose **counts are imported from the figures already
+frozen** in `irab_column_preregistration`, never restated, since a number frozen
+twice is two numbers that can drift apart without either failing. Every value
+outside those eight answers `خارج_الكواشف`, a declared standing rather than a
+side it was pushed into. `ARelationNeedsTwoPresentTerms` bounds every pair by
+one verse: a dependent is never joined to an operator in another verse to
+complete a count, and each dependent gets one of three standings that no zero
+collapses — an operator before it, an operator after it, or **no operator
+observed** — with the distance to the nearest one reported in words, not merely
+its existence. `AnUnreadableWordKeyIsCountedNotDropped` counts a row whose word
+key is not an integer in a field of its own instead of dropping it silently out
+of a denominator. `AnOperatorTagIsNotAProvenGovernment` is the limit that
+matters: the corpus has no column binding an operator to its own dependent, so
+these are counts of neighbourhood under a frozen rule, and neighbourhood is not
+government. `PreMeasurementExpectation` is the one thing here written before its
+answer — that operators precede their dependents in the great majority, and that
+one word is the commonest distance — and both halves are falsifiable. The unit
+reads the `Phrase` column not at all (`ThePhraseColumnIsNotUsed`: 1.80% filled,
+and structurally skewed, since it tags the embedded clause and not the main
+one), infers no marker from a case (`TheMarkerIsNotInferredFromTheCase`), and
+settles nothing about estimated markers by counting them.
+`examples/arabic/measure_irab_operators.py` prints each arriving figure beside
+its derivation and exits non-zero on any that differs.
+
+A third denominator follows, and the unit built on it opens with a retraction.
+`src/alghanem/arabic/ibtida_preregistration.py` freezes the **positions that
+admit inchoativity** — mubtadaʾ 3,598 (imported from the first freeze, never
+restated), mubtadaʾ muʾakhkhar 570, khabar 2,057, ism ḥarf nāsikh 2,086 and its
+khabar 929, ism fiʿl nāsikh 1,199 and its khabar 799, and ism lā al-nāfiya
+li-l-jins 111 — and the denominator is their **sum**, 11,349, derived rather
+than written as a ninth figure that could drift from the eight. It is not the
+stems and not the segments: 11,349, 77,797 and 157,677 are three declared
+denominators under `ADenominatorIsDeclaredNotAssumed`, and a module-level guard
+refuses the unit outright if the inchoative total ever equals either of the
+other two. Four mutually exclusive and jointly exhaustive classes partition
+those eight values — bare, particle-nasḵẖ, verb-nasḵẖ, and lā of absolute
+negation — with a guard that no value falls in two classes, none outside all
+four, and their sum is the denominator exactly. The lā class has **no khabar
+value in this column at all**, which is recorded as *did not arrive*, never as
+a zero. `TheTwoColumnsAreNotOneFigure` keeps the earlier freeze untouched:
+"khabar" in `Syntactic_Role` is 2,057 and "khabar" in `Phrasal_Function` is
+1,398, two tags under two conditions rather than two rival numbers, and the
+constructor refuses any position declared on the phrasal column.
+
+Two limits are written into the unit rather than left to a reader.
+`ARoleTagIsNotALink`: a "khabar" tag says *this is a predicate*, not *this is
+the predicate of that mubtadaʾ*; the corpus binds no two terms, so
+`ibtida_census.py` reports three standings for each inchoative **inside its own
+verse** — one tagged predicate, no tagged predicate, or more than one candidate
+— and the second is named by its place, not summed into a zero. There is no
+gold for that link, so the output structures carry no accuracy, precision,
+recall or score field and a guard refuses one (`NoGoldForTheInchoativeLink`).
+`AnInchoativeGovernorIsSemanticNotLexical`: inchoativity is a semantic
+governor, so no lexical detector is sought for it, and 35.4% of mubtadaʾ
+positions are marked by sukūn — the ruling stands while the marker is absent.
+Four residues are named before they are excused, in five lines so that neither
+of the two nasikh differences hides inside a sum: three accusative mubtadaʾ,
+whose **individual inspection is mandatory** and whose places are emitted one
+by one rather than summarised; an arriving 187 that does **not** derive by
+subtraction from the eight (3,598 + 570 − 2,057 = 2,111), so its two terms stay
+a declared empty place; 1,157 and 400 derived by subtraction and never written
+as third numbers; and a fronted predicate that carries no tag at all, so its
+size is `None` rather than zero. The three-part `PreMeasurementExpectation` is
+the only thing written before its answer, and each part is falsifiable: the
+three accusatives stay three, the nasikh ratios stay near 2.25:1 and 1.5:1 —
+**if the two sides come out equal the hypothesis fails** — and every tagged
+nāsikh has a tagged name in its own verse, a governor without one being a
+residue that gets named, not zeroed.
+
+The retraction is recorded in the unit itself rather than quietly corrected.
+It was declared earlier along this path that the predicate is not annotated;
+that was wrong, and it came from scanning the top ten values of a column and
+then denying the rest of it. The predicate is annotated by four values — khabar,
+khabar ḥarf nāsikh, khabar fiʿl nāsikh, and mubtadaʾ muʾakhkhar. The arithmetic
+is recorded as it fell rather than tidied: the first three sum to exactly 3,785,
+and adding mubtadaʾ muʾakhkhar gives 4,355, so the figure 3,785 arrived
+attributed to four values while being the sum of three. From that error
+`APartialScanForbidsATotalDenial` is enacted — a partial scan licenses no total
+denial; its answer is *not examined*, never *not there* — this being its third
+recurrence on this path. `examples/arabic/measure_ibtida_census.py` prints the
+declared denominator, each arriving figure beside its derivation, the class
+conservation check and the named residues, and exits non-zero on any
+difference, and the byte-gated test skips with a written reason until the
+fingerprinted bytes resolve.
+
 ### A census whose numbers no one claimed first
 
 While those bytes are awaited, `src/alghanem/arabic/maqayis_witness_census.py`
@@ -4046,6 +4247,30 @@ this commit either, and both this module's tests and the parent's assert that
 hold by construction on `E` itself, which is precisely why the module records
 that they are not read as a result without the adversarial controls beside
 them.
+`referent_candidate_preregistration` and `referent_candidate_census` add a
+pronoun candidate-enumeration tool that **never names a referent**. Its
+declared denominator is only the fifteen pronoun tags that actually encode a
+person/number/gender triple — 2,608 of MASAQ's 23,579 pronouns, about 11%;
+`ElevenPercentIsTheRealDenominator` keeps the aggregate `SUBJ_PRON` (7,964),
+`POSS_PRON` (7,678) and `OBJ_PRON` (3,211) tags outside the denominator with
+their reasons written, and `AnUnparsedTagYieldsNoConstraint` counts any tag
+that fails to parse instead of granting it a default constraint. The search
+window — the pronoun's own verse plus the one before it, inside its sura, and
+only nouns preceding it — is frozen before measurement under
+`AWindowIsDeclaredNotOptimised`. Because MASAQ tags neither gender nor number
+on nouns, agreement is decided by a frozen suffix rule over `Segmented_Word`,
+declared as `GenderAndNumberAreInferredNotTagged`; broken plurals and the
+ya-nun ending stay `INFERENCE_UNDETERMINED` and are counted, never matched. No
+precision or recall figure is issued here, and none ever can be:
+`TheReferentIsNotAnnotatedAnywhere` — there is no gold standard in any source
+at hand, so `CandidateSetCensus.__post_init__` refuses any field claiming
+precision, recall, accuracy or a gold referent rather than ignoring it. The
+only legitimate outputs are candidate-set size, the share narrowed to a single
+candidate, the distribution by triple, and the listed zero-candidate
+positions, under `ACandidateSetIsNotAnAnswer`. Each pronoun gets one of four
+named standings — single, multiple, zero, or discourse participant (first and
+second person leave nominal matching before any search) — and no zero gathers
+two of them.
 
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
@@ -4057,6 +4282,210 @@ its bytes at `corpora/MASAQ.csv`, and whoever opens them owes its authors
 that attribution, which is recorded as a condition of the deposit before any
 figure is issued. All
 attributions are licence conditions, not courtesies.
+
+### A closure defined once, and the thin column that reads half of it
+
+`src/alghanem/arabic/waqf_closure_preregistration.py` freezes a syntactic waqf
+— the point at which a predicative unit closes — and keeps it apart from the
+phonetic waqf already registered in `ibtida_wasl_waqf_registration`, which is
+the quiescing of a final state in recitation. `ThePhoneticWaqfIsNotThisWaqf`:
+one word for two subjects does not make them one subject, and neither is
+measured by the other.
+
+The proposed law is one sentence: a predicative unit closes when both of its
+terms are present, and a prepositional phrase never closes by itself. Three
+standings follow, with no zero gathering them — **closed**, **open**, and
+**dependent** — and `waqf_closure_census.py` measures them inside one verse
+over a declared denominator, **the keys**: stems carrying a frozen
+opening-term value. `ANullifiedDenominatorIsNotAZero` makes the conservation a
+check rather than an assumption; closed plus open plus dependent equals the
+keys exactly, or the gap is printed rather than adjusted away.
+
+Every detector is a **pair of (column, value)**, and the tree itself supplies
+the witness for why. `فاعل` in `Syntactic_Role` is 10,483; `فاعل` in
+`Phrasal_Function` is 1. Those are two values, not one value with two numbers,
+which is what `AValueWithoutItsColumnIsTwoValues` says and what the test
+asserts against the frozen figures. The same rule keeps four arriving values
+out of every count: `ظرف زمان` (1,426), `ظرف مكان` (758), a second
+`نائب فاعل` (747, against the 57 frozen for `Phrasal_Function`), and
+`اسم ناسخ`, whose own count never arrived at all — only a difference of 1,157
+from its predicate, and a difference without both of its terms yields no
+number. They are registered suspended by name with a written reason, under
+`AnUnfrozenValueIsNotADetector`, because a guessed spelling turns "not among
+this column's values" into a silent zero.
+
+Three limits are written inside the unit rather than around it.
+`AClosureIsInferredFromNeighbourhoodNotTagged`: no column says "the sentence
+closed here", so closure is an inference from two tagged terms in one verse.
+`AVerseBoundaryIsNotASentenceBoundary` is the sharpest of them, because every
+figure the unit issues uses the verse as its unit while a sentence spans
+verses and a verse holds sentences — a unit called open may close in the next
+one. And `APhraseIsNotAClause` is a definition, not a finding: a prepositional
+phrase stays dependent even when an attachment is observed in its verse, and
+that observation is counted in a field of its own rather than promoting the
+standing.
+
+The nominal figures carry a fourth limit that the tree forced on the design.
+`AThinColumnIsNotAThickOne`: the two terms of a nominal clause are read from
+two columns of very different coverage — `مبتدأ` from `Syntactic_Role` at
+76.3631% of segments, `خبر` and its kinds from `Phrasal_Function` at 1.79% —
+so the count of **open** nominal units reads first as an empty column, not as
+an unclosed clause, and no closure rate is issued from it as a statement about
+Arabic. That is the very objection that excluded `Phrase` (1.80%), so it could
+not be raised against one column and passed over in silence for the other;
+`Phrase` is read nowhere here, and a test asserts its absence from the columns
+this census reads. `APartialScanForbidsATotalDenial` governs the other
+direction: nothing is denied of a column until `scan_column_values` has walked
+all of its values, so "this closing spelling is absent" is a statement about a
+spelling in these bytes, never about a category in Arabic.
+
+The expectation is written before the measurement and is falsifiable in two of
+its three parts: verbal keys should exceed nominal keys on this denominator —
+the common traditional claim, tested with its denominator rather than with the
+biased `Phrase` column — and the open share of nominal clauses should exceed
+the verbal one by roughly the gap between the two columns' coverage. The third
+part, that no phrase is ever closed, is declared **not** a discovery but a
+reading of the definition, and it is written down as such.
+`examples/arabic/measure_waqf_closure.py` prints every frozen detector beside
+its count, every suspended value beside its reason, and every measured figure
+beside its limit, exiting non-zero on any drift; the measurement itself waits
+on the fingerprinted MASAQ bytes, and in their absence nothing is estimated.
+
+`src/alghanem/arabic/transition_authority.py` gathers one constraint that was
+already distributed across the tree without a common name: nothing is derived
+from a carrier except what that carrier preserves or what a licensed bridge
+permits. The module is a **gathering, not an authority** — it judges no
+transition, licenses none, and imports nothing from `kernel/`. It deposits four
+named limits plus three about itself:
+`NoDerivationBeyondTheAuthorityOfItsCarrier`;
+`AZeroShowsAnUnbuiltBridgeNotAnImpossibleOne` (a zero shows *that* bridge was
+never built, not that building it is impossible);
+`ASignIsNotItsReferentAndNeitherIsItUnrelatedToIt` (what is denied is the direct
+transition, not the relation); `FormalEncodingIsNotConceptualMeaning` (expressly
+*not* `Language != Meaning`);
+`ADerivedCrossModuleLawIsNotAnAttestedSourceLaw` (this is an Alghanem
+construction from existing constraints, not a transmitted text, not attributed
+to al-Nabhani, and it raises no row's status in `docs/CONSTITUTION.md`);
+`SupportIsACheckedInvariantNotAnImport`; and
+`TheFourLayerSeriesIsAnAlghanemComposition` (the reality/concept/lafẓ/carrier
+ordering rests on transmitted texts not yet collated against a printed source,
+so the series is neither attributed nor encoded as a vocabulary). Support is
+evidence only where it is checked: each of the five positions in
+`CARRIER_AUTHORITY_SUPPORTS` carries a probe that is run against the structural
+guard in its own module — the physical layer that cannot be constructed in
+`epistemic_layers`, the two refused derivation paths in `wad_naql`, the
+structurally excluded external-correspondence target and the unsanaded reading
+that stays معلومة in `maluma_mafhum`, and the non-invertible channel derivation
+in `dalalat_thalath`. `supported_positions()` returns only what passed;
+`unsupported_positions()` surfaces the rest rather than folding them into a
+silent count.
+
+### Running what has not been born, without letting the run prove it was born
+
+Two authorities faced each other with nothing between them. `kernel/
+birth_certificate.py` gave the constitutional side a method that certifies and
+cannot run, and the executive side a method that runs and cannot certify, which
+settled who may do what and left no place at all to *try* a candidate. The only
+way to try one would have been to execute it and then argue from the execution
+— the exact move `ExecutiveAuthorityCannotIssueBirth` exists to refuse.
+
+`kernel/experimental.py` opens a third path. `ExperimentalAuthority.run` takes a
+*bound* run request — a declared candidate, a case set frozen before the run,
+one input per case, a set of permitted operations, already tied to one frozen
+experiment — and an implementation, and returns an `ExperimentalRunRecord` that
+says one thing: this declared candidate, under these declared conditions,
+produced this output — or this failure. Every other
+question is answered `False` on the record itself rather than in prose:
+`confers_birth`, `confers_validity`, `confers_constitutional_evidence`,
+`confers_identity_proof`, `confers_difference_from_origin`, `confers_necessity`.
+An implementation that raises does not escape into the caller; the exception
+becomes an `ExperimentalFailureRecord` naming the kind, the case, the message
+and the trace so far, because a failure is one of the facts the experiment
+produced. An operation is reachable only through `ExperimentalRunContext`, the capability
+the authority issues for the case being run: an unpermitted id is refused
+*before* the action runs, the refusal is raised as a `BaseException` so an
+implementation's own `except Exception` cannot swallow it, the run aborts by
+name, and the capability is revoked when its case ends. The authority alone
+writes the run's `operation:` events, so an implementation that writes one into
+its own trace fails the run instead of being believed —
+`UnpermittedOperationCannotExecute` rather than *reported operations are
+audited*. And what counts as "the declared model did not account for this case" is a token
+frozen in the request *before* the run, so an output matching neither token
+fails the run instead of being reinterpreted into whichever reading suits.
+
+`kernel/experimental_comparison.py` is where the instruction-versus-rule
+question becomes answerable without being nameable. Two models are run over one
+case set compared by canonical content digest — two different case sets are
+refused, never reconciled — and `ModelContrastObservation` derives which cases
+each left unaccounted and whether one set is strictly inside the other. The
+useful direction is the negative one: if the model with fewer parts accounts for
+everything, the status reads `NO_DIFFERENCE_OBSERVED` and there is nothing for a
+richer candidate to be necessary for. When the richer model does close strictly
+more, `confers_necessity` is still `False`, and both models are opaque strings,
+so no contrast decided here can announce which genus won.
+`ReplayObservation` reads whether repeated runs agreed, and denies
+reproducibility in the same breath: agreement inside one process is not the
+independent second measurement run that `SyntheticInterventionMayGenerateHypothesisOnly`
+requires.
+
+`kernel/experimental_request_content_identity.py` answers one question for the
+whole path: when are two experimental artifacts *the same artifact*? By one
+rule — the canonical content digest of every declared field, each case input
+included, taken over `alghanem.canonical_content`, the repository's single
+canonicalization primitive. That closes the earlier split in which a contrast
+compared case sets by Python object identity while a replay compared requests
+by dataclass equality, so two artifacts could be the same for one authority and
+different for another.
+
+`kernel/experimental_run_binding.py` answers the other: *which* frozen
+experiment is a run a run of? `ExperimentalRunBindingAuthority.bind` ties one
+request's content id to one frozen experiment's content id before anything
+runs, and `ExperimentalAuthority.run` accepts nothing else. A domain holds many
+experiments and an experiment id holds many revisions, so reading the domain
+alone would let a record produced under one experiment be offered against
+another — and the offer's trace would then name an experiment the run had never
+touched. Hence `SameDomain != SameExperiment` and
+`SameExperimentName != SameFrozenContent`. A binding confers nothing:
+`confers_authorized_evidence`, `confers_birth` and `confers_necessity` are all
+structurally `False`, because it makes a run attributable, never admissible.
+
+`kernel/experimental_evidence_gate.py` is the single door out, and it is
+deliberately narrow. `offer` derives its admission conditions — the bound
+request the record was produced from, a binding whose content id is the very
+one that request was bound to, the record's own request content digest, scope
+equal to the frozen experiment's own domain read from the binding, a replay
+covering this very record whose outputs, traces and statuses agreed, a trace,
+and a canonical manifest encoded from the record rather than written by the
+caller — and issues no `AuthorizedEvidenceSnapshot` at all. The manifest is
+structural rather than delimiter-joined, and carries the request identity, the
+candidate declaration, the case set, every case input, the permitted
+operations, the outcome vocabulary, the outputs or the failure, the trace, the
+replay and contrast readings, and the frozen experiment's content id — so two
+different observations cannot encode to one payload, which joined text could
+not guarantee. The payload must still travel
+the whole G0.2a.3 chain, authorization to run to `ingest`, to become assessable,
+which leaves `FrozenExperimentPrecedesAuthorizedEvidenceIngestion` exactly where
+it was. A failed run may be offered and is marked as such, because dropping
+failures at the door would make the record of an experiment better than the
+experiment was.
+
+The isolation is authority isolation and capability mediation, and the module
+says so rather than implying more: `CapturedFailure != SandboxedExecution`,
+mediation is not confinement, and nothing here restricts filesystem, network,
+memory or time. An ambient effect taken without asking the capability is not
+refused — it is simply not seen, which is why the sandbox remains a declared,
+deferred milestone. Two sweeps hold the paths apart.
+`experimental` and `experimental_comparison` import nothing from the birth,
+verdict, certificate, closure, survival or acquisition modules; no kernel module
+outside the gate imports any experimental type; and a test asserts that the
+surfaces of `ConstitutionalBirthAuthority`, `ExecutiveAdmissionGate` and
+`BirthVerdictGate` gained nothing. The named laws are collected in
+`docs/CONSTITUTION.md` under `G0.EX`, and the short form of all of them is
+`ExperimentalSuccess != Birth`, `ExperimentalFailure != NoBirth`, and
+`ExperimentalEvidenceOffer = BoundRun + FrozenExperimentContentIdentity +
+CanonicalObservedPayload`.
+`examples/kernel/contrast_two_models.py` runs the contrast end to end and prints,
+as its last line, that no birth occurred.
 
 ```bash
 python -m pip install -e '.[dev]'

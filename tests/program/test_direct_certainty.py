@@ -8,6 +8,7 @@ import pytest
 
 import alghanem.kernel as kernel_package
 from alghanem.program.direct_certainty import (
+    ABSENCE_OF_BYTES_IS_NOT_EVERY_GROUND_OF_REFUSAL,
     DIRECT_CERTAINTY_NAMED_RESIDUALS,
     REPORTED_UNVERIFIED_FIGURES,
     CertaintySourceGenus,
@@ -20,6 +21,7 @@ from alghanem.program.direct_certainty import (
     StepRecord,
     UnverifiedFigureRecord,
     assess_freeze,
+    figures_by_constraint,
     run_step,
 )
 
@@ -243,6 +245,38 @@ def test_the_pre_purification_figures_carry_their_constraint() -> None:
     assert FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE in constraints
 
 
+def test_the_constraint_split_is_derived_and_covers_every_record() -> None:
+    split = figures_by_constraint()
+    assert set(split) == set(FigureConstraint)
+    counted = sum(len(records) for records in split.values())
+    assert counted == len(REPORTED_UNVERIFIED_FIGURES)
+    for constraint, records in split.items():
+        for record in records:
+            assert record.constraint is constraint
+
+
+def test_no_single_constraint_accounts_for_every_reported_figure() -> None:
+    split = figures_by_constraint()
+    for constraint, records in split.items():
+        assert records, f"جنسٌ بلا سجلٍّ واحد: {constraint}"
+        assert len(records) < len(REPORTED_UNVERIFIED_FIGURES)
+
+
+def test_the_two_constraints_bytes_cannot_lift_are_populated() -> None:
+    split = figures_by_constraint()
+    assert split[FigureConstraint.COMPUTED_ON_UNPURIFIED_DATA]
+    assert split[FigureConstraint.CLASSIFICATION_INCOMPLETE]
+    assert "ABSENCE_OF_BYTES_IS_NOT_EVERY_GROUND_OF_REFUSAL" in (
+        ABSENCE_OF_BYTES_IS_NOT_EVERY_GROUND_OF_REFUSAL
+    )
+    assert (
+        DIRECT_CERTAINTY_NAMED_RESIDUALS[
+            "ABSENCE_OF_BYTES_IS_NOT_EVERY_GROUND_OF_REFUSAL"
+        ]
+        == ABSENCE_OF_BYTES_IS_NOT_EVERY_GROUND_OF_REFUSAL
+    )
+
+
 def test_a_rerun_figure_may_not_be_filed_as_unverified() -> None:
     with pytest.raises(DirectCertaintyError, match="لا يُسجَّل غيرَ مُتحقَّقٍ منه"):
         UnverifiedFigureRecord(
@@ -285,7 +319,7 @@ def test_no_kernel_module_reads_this_protocol() -> None:
 
 
 def test_every_named_residual_is_reachable_and_says_something() -> None:
-    assert len(DIRECT_CERTAINTY_NAMED_RESIDUALS) == 5
+    assert len(DIRECT_CERTAINTY_NAMED_RESIDUALS) == 6
     for name, text in DIRECT_CERTAINTY_NAMED_RESIDUALS.items():
         assert name.isupper()
         assert name in text
