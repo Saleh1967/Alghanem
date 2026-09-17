@@ -3939,7 +3939,7 @@ drift.
 ### Conditions frozen where a verdict used to be written
 
 `vv_birth_hypothesis.py` and `vv_birth_preregistration.py` open
-**G0.VV-BIRTH-1** as a preregistration and nothing else. The point of the pair
+`G0.VV-BIRTH-1` as a preregistration and nothing else. The point of the pair
 is that four different answers are reachable from them: the extension may
 preserve identity without ever being a neutral element; VV neutrality may be
 refuted outright; the syllable may hold structurally and still not be born
@@ -3988,6 +3988,64 @@ does not exist. `TheCitedFreezeIsAbsentFromThisTree` records that
 `vv_neutral_birth_freeze.py` is nowhere in this tree or its history, so the
 circular fidelity check and the non-sealing digest are closed here by design,
 not by inspecting that file.
+
+### Closing the execution freedom that a preregistration alone leaves open
+
+`vv_birth_amendment.py` is the intermediate commit `G0.VV-BIRTH-1A`, and it
+exists because freezing hypotheses is not the same as freezing their
+execution. It edits neither parent module by a single character:
+`AnAmendmentThatEditsItsParentBreaksTheSeal` records why — rewriting
+`vv_birth_hypothesis` to repair a defect would change
+`PREREGISTRATION_DIGEST`, destroying the seal the future readout is required
+to check. `SUPERSEDED_PREREGISTRATION_PARENT` therefore carries the parent
+commit SHA and the parent content digest, and refuses to import if the living
+digest no longer matches the recorded one. Its scope is stated and checked:
+execution detail only, with all five hypothesis identifiers preserved.
+
+Five gaps are closed. `E` was existential — `∃E: X_V ⇀ X_V` leaves the
+function itself to be written in the next commit, where it could be shaped to
+the data. It now has allowed input fields, forbidden sources, a domain
+predicate, a five-step transformation rule, undefinedness conditions, and
+output invariants; `PhoneticRole.MADD_EXTENSION` and every `syllabifier`
+output are named as forbidden, and an input whose provenance is `MODEL_OUTPUT`
+is refused at construction. Because `E` must read `ا/و/ي` to find the
+extension at all, it is classed `ORTHOGRAPHIC_EXTENSION_OPERATOR` and not
+called a phonetic witness. `X_V` contradicted `𝓠`: its membership admitted
+"zero or more" extension slots while `𝓠 = {1, 2}`. The first of the two
+branches is frozen — `#Extension ∈ {0, 1}` — so the sealed codomain is left
+untouched, and the unchosen branch is recorded with what it would have
+required. The four rivals were prose; each now carries a numbered algorithm
+with its inputs, output and `UNDEFINED` cases, so none can be written weaker or
+stronger inside the readout. The leak ban was by field name, which a rename
+defeats: it is now by `ProvenanceClass`, and `π_I` may read nothing whose
+provenance is `ORTHOGRAPHIC_IDENTITY`, `PROGRAM_POSITION` or `MODEL_OUTPUT` —
+the test renames a banned proxy to `unicode_scalar` and it is still refused.
+And `T' ⊊ T` was undefined on a typed record: the order is now `T' ≺_T T`,
+declared projections over three named trace fields, with a structural refusal
+of any field from which the whole input is recoverable.
+
+A sixth correction is logical rather than executable. The two type hypotheses
+were not symmetric: one distinguishing context refutes `H_same_type`, but
+*failing to find* one does not refute `H_different_type` — the distinguishing
+context may simply be the untested one. The claim is now bounded by a frozen
+context set `K_0`, and the only admissible outcomes are
+`DISTINGUISHED_ON_K0`, `NOT_DISTINGUISHED_ON_K0` and `UNDERPOWERED`, with
+`AbsenceOnAFiniteContextSetIsNotIdentityOfType` stating that the second is a
+claim about `K_0` and not an ontological identity of type.
+
+Three adversarial controls — `E_no_extension`, `E_wrong_quality`,
+`E_wrong_partner` — are frozen so the criterion can be shown to fail
+something. If any of them passes, the outcome is
+`REPRESENTATION_TAUTOLOGY`: a criterion nothing fails measures nothing. The
+outcome vocabulary they need is declared in a second enum here rather than
+injected into the sealed one, and it has no `BORN` member either.
+
+**What it does not establish:** still nothing about VV. There is no readout in
+this commit either, and both this module's tests and the parent's assert that
+`alghanem.arabic.vv_birth_readout` does not exist. `E`'s output invariants
+hold by construction on `E` itself, which is precisely why the module records
+that they are not read as a result without the adversarial controls beside
+them.
 
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
