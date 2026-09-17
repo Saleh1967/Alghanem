@@ -218,6 +218,39 @@ yields `is_independent_closure == False`
 remain open by name, so the status says what was reached and what it is pending
 on rather than overstating it. `CompositionIsNotAVerdict`: the stage is not
 wired to `BirthVerdictGate`, and `ClosureRefutedInScope != NO_BIRTH_IN_SCOPE`.
+G0.BC.1a (`src/alghanem/kernel/birth_certificate.py`) supplies the contract both
+of those stages stop short of, and activates neither birth branch.
+`BirthVerdict != BirthCertificate != Execution`: a verdict decides that the
+conditions for existence of this genus were met in this scope, a certificate
+preserves that decision with its scope, necessity readings, evidence references,
+preventers and trace, and execution uses what was born and may never create it.
+Two authorities exist and neither can perform the other's act — only
+`ConstitutionalBirthAuthority.assess` may produce a `BirthCertificate` and it
+exposes no method that runs anything, and only `ExecutiveAdmissionGate.admit`
+may produce an `ExecutableEntity` and it exposes no method that certifies
+anything — so `ExecutiveAuthorityCannotIssueBirth` and
+`ConstitutionalBirthAuthorityCannotExecuteTheBornEntity` are enforced by the two
+classes' public surfaces rather than by prose, and successful execution is never
+evidence of valid birth. A candidate's existence does not oblige its birth, a
+use for it does not, and frequent use of it does not; what obliges it is an
+unclosed residual that the exhausted lower layer did not close and that no
+weaker reconstruction still suffices to explain, and all three conjuncts are
+*read* from the closure decision rather than re-derived
+(`NoBirthWithoutUnclosedResidual`, `NoBirthBeforeLowerLayerExhaustion`,
+`NoBirthWhenAWeakerReconstructionStillSuffices`).
+`APreventerHasAnIdentityNotABoolean`: every member of `BirthPreventer` is
+derived on every assessment, held or cleared, each carrying its own reason, so a
+refusal records *which* ground stopped the birth. `NoCertificateIsReachableInThisTree`
+is declared rather than discovered — three preventers hold on every branch,
+naming three different missing authorities (no `BirthCandidate` issuer, no
+identity proof, no proof of difference from the origin), and a fourth holds
+because G0.BV.1a still only defers — and all `3^5 = 243` reading combinations
+are enumerated in test with none yielding a certificate. A certificate would
+still confer neither `Freeze` nor truth nor any global ontology claim
+(`BirthDoesNotMeanFreeze`, `BirthDoesNotMeanTruth`), and no
+instruction/rule/law/constitution ladder is encoded, since each such genus would
+need its own certificate first (`NoGenusLadderIsEncodedHere`).
+
 `BirthCandidate` is distinct from a scoped birth verdict and from `Freeze`;
 the future G0.BV.1 authority may issue `BIRTH_IN_SCOPE`, then a later freeze
 authority may freeze it before a separate `E0` step. See the
