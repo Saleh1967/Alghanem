@@ -3,7 +3,8 @@
 This module closes exactly one question: what may be read from two experimental
 runs rather than one? Two readings, and nothing else:
 
-* a *contrast* between two declared models over one identical frozen case set --
+* a *contrast* between two declared models over one frozen case set, identical
+  by canonical content digest --
   which cases each model did not account for, and whether one's unaccounted set
   is strictly contained in the other's;
 * a *replay* of one declared candidate -- whether repeated runs produced
@@ -31,6 +32,13 @@ the independent second measurement run that
 `SyntheticInterventionMayGenerateHypothesisOnly` requires is a measurement
 question, not this one.
 
+`OneContentIdentityLawForSameness`. Both authorities decide what counts as "the
+same thing" by canonical content digest: a replay is repeated runs of one
+request content identity, and a contrast is two distinct request content
+identities read against one case set content identity. Python object identity
+decides nothing here, so two separately constructed but content-equal freezes
+are one freeze for both authorities rather than one for each.
+
 `ThreeReadingsAreNotAFourth`, copied from G0.IC.1e: nothing is re-derived here.
 Both authorities read only what `ExperimentalAuthority` already recorded, and
 neither opens an implementation, a case input, or a frozen experiment.
@@ -51,6 +59,7 @@ from .experimental import (
     _require_text,
     sweep_forbidden_fields,
 )
+from .experimental_request_content_identity import case_set_content_digest
 from .trace import Trace
 
 _CONTRAST_TOKEN = object()
@@ -64,16 +73,23 @@ EXPERIMENTAL_COMPARISON_NAMED_LAWS: dict[str, str] = {
     ),
     "OneCaseSetOrRefusal": (
         "OneCaseSetOrRefusal: two runs may be contrasted only if they were read "
-        "against the same frozen case set, compared by object identity. Runs "
-        "over different case sets are refused, never reconciled, because a "
+        "against the same frozen case set, decided by canonical content digest. "
+        "Runs over different case sets are refused, never reconciled, because a "
         "difference between two case sets would be read as a difference between "
         "two models"
     ),
+    "OneContentIdentityLawForSameness": (
+        "OneContentIdentityLawForSameness: both authorities decide sameness by "
+        "canonical content digest and by no other rule. A replay is repeated "
+        "runs of one request content identity, a contrast is two distinct "
+        "request content identities over one case set content identity, and "
+        "Python object identity decides neither"
+    ),
     "ObservedDeterminismInThisProcessIsNotReproducibility": (
         "ObservedDeterminismInThisProcessIsNotReproducibility: a replay "
-        "observes that runs in this process agreed. It does not establish "
-        "determinism, portability, replication in an independent measurement "
-        "run, or reproducibility of any kind"
+        "observes that runs of one request content identity, in this process, "
+        "agreed. It does not establish determinism, portability, replication "
+        "in an independent measurement run, or reproducibility of any kind"
     ),
     "AContrastReadsRecordsAndDerivesNothingElse": (
         "AContrastReadsRecordsAndDerivesNothingElse: both authorities read only "
@@ -241,9 +257,16 @@ class ExperimentalContrastAuthority:
             raise ExperimentalAuthorityError(
                 "a record contrasted with itself observes no difference at all"
             )
-        if first.case_set is not second.case_set:
+        if case_set_content_digest(first.case_set) != case_set_content_digest(
+            second.case_set
+        ):
             raise ExperimentalAuthorityError(
                 "contrasted runs must be read against the same frozen case set"
+            )
+        if first.request_content_digest == second.request_content_digest:
+            raise ExperimentalAuthorityError(
+                "two runs of one request content identity are a replay, not a "
+                "contrast"
             )
         if first.declared_model_ref == second.declared_model_ref:
             raise ExperimentalAuthorityError(
@@ -340,9 +363,10 @@ class ExperimentalReplayAuthority:
             _require_issued_record(record, "each replayed record")
         first = records[0]
         for record in records[1:]:
-            if record.request != first.request:
+            if record.request_content_digest != first.request_content_digest:
                 raise ExperimentalAuthorityError(
-                    "replayed runs must share one experimental run request"
+                    "replayed runs must share one experimental run request "
+                    "content identity"
                 )
         run_ids = tuple(record.run_id for record in records)
         if len(set(run_ids)) != len(run_ids):

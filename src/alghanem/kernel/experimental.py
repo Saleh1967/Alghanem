@@ -26,6 +26,24 @@ own. This module imports nothing from `birth_verdict`, `birth_certificate`,
 `independent_closure`, or `residual_survival`, so no reading here can travel
 into a verdict path by import alone.
 
+A run is reachable only through a bound request. `ExperimentalAuthority.run`
+accepts no bare `ExperimentalRunRequest`: it takes a `BoundExperimentalRunRequest`
+issued elsewhere against a frozen pre-evidence experiment, reads that binding's
+canonical request content digest, and stamps it onto the record it issues. This
+module defines only the abstract seam and never learns what the request was
+bound *to*, so binding a run to a frozen experiment stays outside this
+authority while running an unbound request stops being expressible.
+
+`UnpermittedOperationCannotExecute`. An implementation reaches an operation only
+through the `ExperimentalRunContext` this authority issues for its own case: the
+context refuses an operation the request never permitted *before* invoking it,
+the authority alone writes the `operation:` events of the run trace, and an
+implementation that writes such an event into its own trace fails the run for
+forging the authority's record. The earlier reading -- trusting whatever
+operations an implementation chose to report -- was
+`ReportedOperationMustBePermitted`, which is a weaker law and no longer the one
+enforced here.
+
 Four claims this module explicitly does **not** make:
 
 * ``Isolation = ProcessLocalOnly``. `ExperimentalAuthority.run` invokes a
@@ -33,7 +51,10 @@ Four claims this module explicitly does **not** make:
   exceptions it raises instead of letting them propagate. That is authority
   isolation -- a failure cannot escape into the caller's control flow as if it
   were the caller's own -- and not a security sandbox: nothing here restricts
-  filesystem, network, memory, or time. `CapturedFailure != SandboxedExecution`.
+  filesystem, network, memory, or time, and an implementation that reaches for
+  an ambient effect directly never passes through the capability at all.
+  `CapturedFailure != SandboxedExecution`, and
+  `MediatedOperation != AmbientEffect`.
 * ``DeclaredOrigin != ProvedBranchRelation``. `declared_origin_ref` is a string
   the caller claims the candidate branched from. Nothing checks that such an
   origin exists, that the candidate differs from it, or that a
@@ -61,15 +82,22 @@ requires.
 from __future__ import annotations
 
 import threading
+from abc import ABC, abstractmethod
 from collections.abc import Callable
 from dataclasses import dataclass, field, fields
 from enum import Enum
+from typing import TypeVar
+
+from alghanem.canonical_content import is_canonical_digest
 
 from .trace import Trace
 
 _EXPERIMENTAL_TOKEN = object()
+_CAPABILITY_TOKEN = object()
 
 _OPERATION_EVENT_PREFIX = "operation:"
+
+_T = TypeVar("_T")
 
 _FORBIDDEN_FIELD_NAMES = frozenset(
     {
@@ -148,6 +176,20 @@ EXPERIMENTAL_NAMED_LAWS: dict[str, str] = {
         "executable entity, cannot be produced from one, and cannot produce "
         "one. Running in the laboratory and using what was born are two acts "
         "under two authorities"
+    ),
+    "UnpermittedOperationCannotExecute": (
+        "UnpermittedOperationCannotExecute: an operation is reachable only "
+        "through the authority-issued capability of the case being run, which "
+        "refuses an unpermitted operation before invoking it and aborts the "
+        "run. The authority alone writes the run's operation events, and an "
+        "implementation that writes one into its own trace fails the run "
+        "rather than being believed"
+    ),
+    "NoRunWithoutABoundRequest": (
+        "NoRunWithoutABoundRequest: this authority runs a bound request or "
+        "nothing. The bare request is not an admissible argument, and the "
+        "canonical content digest the binding carries is stamped onto the "
+        "record rather than recomputed or accepted here"
     ),
     "DeclaredOriginIsNotProvedBranchRelation": (
         "DeclaredOriginIsNotProvedBranchRelation: the origin a candidate "
@@ -343,12 +385,36 @@ class ExperimentalRunRequest:
         )
 
 
+class BoundExperimentalRunRequest(ABC):
+    """The abstract seam through which a bound request reaches this authority.
+
+    A run is admissible only as a bound request, and binding a request to a
+    frozen pre-evidence experiment is not this module's authority to exercise.
+    So the concrete bound request is declared elsewhere and reaches `run` only
+    through this seam, which exposes exactly two readings: the request that was
+    bound, and the canonical content digest the binding derived for it. Nothing
+    here can read, or even name, the experiment a request was bound to.
+    """
+
+    __slots__ = ()
+
+    @property
+    @abstractmethod
+    def request(self) -> ExperimentalRunRequest:
+        """The frozen request this binding closed over."""
+
+    @property
+    @abstractmethod
+    def request_content_digest(self) -> str:
+        """The canonical content digest the binding derived for that request."""
+
+
 class ExperimentalOutcomeStatus(Enum):
     """How the run itself ended. Never whether its result was valid.
 
     `COMPLETED` says the implementation returned a readable output for every
     declared case, `FAILED` that it raised or returned something unreadable,
-    and `ABORTED` that it declared an operation the request never permitted.
+    and `ABORTED` that it reached for an operation the request never permitted.
     None of the three is a judgement about the candidate.
     """
 
@@ -364,6 +430,7 @@ class ExperimentalFailureKind(Enum):
     UNREADABLE_IMPLEMENTATION_RESULT = "UNREADABLE_IMPLEMENTATION_RESULT"
     UNREADABLE_CASE_OUTCOME = "UNREADABLE_CASE_OUTCOME"
     OPERATION_NOT_PERMITTED = "OPERATION_NOT_PERMITTED"
+    OPERATION_EVENT_NOT_AUTHORITY_ISSUED = "OPERATION_EVENT_NOT_AUTHORITY_ISSUED"
 
 
 @dataclass(frozen=True, slots=True)
@@ -403,6 +470,7 @@ class ExperimentalRunRecord:
     run_id: str
     issuing_authority_id: str
     request: ExperimentalRunRequest
+    request_content_digest: str
     outcome_status: ExperimentalOutcomeStatus
     output_content: str | None
     failure: ExperimentalFailureRecord | None
@@ -421,6 +489,11 @@ class ExperimentalRunRecord:
         if type(self.request) is not ExperimentalRunRequest:
             raise ExperimentalAuthorityError(
                 "an experimental run record requires its own run request"
+            )
+        if not is_canonical_digest(self.request_content_digest):
+            raise ExperimentalAuthorityError(
+                "an experimental run record requires the canonical content "
+                "digest of the bound request it ran"
             )
         if not isinstance(self.outcome_status, ExperimentalOutcomeStatus):
             raise ExperimentalAuthorityError(
@@ -514,11 +587,99 @@ class ExperimentalRunRecord:
         return False
 
 
-# An implementation receives one case's input content and returns its output
-# content together with a trace of what it did. It carries no role-specific
-# meaning: this module does not know what any output means, only how the
-# request's own frozen vocabulary reads it.
-ExperimentalImplementation = Callable[[str], tuple[str, Trace]]
+class _UnpermittedOperation(BaseException):
+    """Raised through an implementation when it reaches for a refused operation.
+
+    Deliberately a `BaseException`: an implementation that wraps its work in
+    `except Exception` must not be able to swallow the authority's refusal and
+    carry on as though the operation had been available. Even if it does catch
+    this, the capability has already recorded the refusal, and the run is
+    aborted on return.
+    """
+
+    def __init__(self, operation_id: str) -> None:
+        super().__init__(operation_id)
+        self.operation_id = operation_id
+
+
+class ExperimentalRunContext:
+    """The authority-issued capability through which one case reaches operations.
+
+    `UnpermittedOperationCannotExecute`: an operation the request never
+    permitted is refused *before* the action is invoked, so an implementation
+    cannot perform it and then decline to mention it. A permitted operation is
+    recorded by the authority itself, in the authority's own trace, at the
+    moment it is invoked.
+
+    A capability is issued per case and revoked when that case ends, so it
+    cannot be stored and used to reach an operation outside the run that
+    granted it. This is a mediation boundary and not a sandbox: an
+    implementation that reaches an ambient effect without asking never passes
+    through here, which `ExperimentalIsolationIsProcessLocal` already declares.
+    """
+
+    def __init__(
+        self,
+        *,
+        run_id: str,
+        case_id: str,
+        permitted_operation_ids: frozenset[str],
+        events: list[str],
+        operations_used: list[str],
+        token: object,
+    ) -> None:
+        if token is not _CAPABILITY_TOKEN:
+            raise ExperimentalAuthorityError(
+                "experimental run capabilities must be issued by "
+                "ExperimentalAuthority"
+            )
+        self._run_id = run_id
+        self._case_id = case_id
+        self._permitted_operation_ids = permitted_operation_ids
+        self._events = events
+        self._operations_used = operations_used
+        self._revoked = False
+        self._refused_operation: str | None = None
+
+    @property
+    def run_id(self) -> str:
+        return self._run_id
+
+    @property
+    def case_id(self) -> str:
+        return self._case_id
+
+    @property
+    def permitted_operation_ids(self) -> frozenset[str]:
+        return self._permitted_operation_ids
+
+    def invoke(self, operation_id: str, action: Callable[[], _T]) -> _T:
+        """Perform one declared operation, or refuse it before it happens."""
+
+        _require_text(operation_id, "experimental operation id")
+        if self._revoked:
+            raise ExperimentalAuthorityError(
+                "an experimental run capability cannot be used outside the case "
+                "it was issued for"
+            )
+        if operation_id not in self._permitted_operation_ids:
+            self._refused_operation = operation_id
+            self._revoked = True
+            raise _UnpermittedOperation(operation_id)
+        self._events.append(f"{_OPERATION_EVENT_PREFIX}{operation_id}")
+        if operation_id not in self._operations_used:
+            self._operations_used.append(operation_id)
+        return action()
+
+    def _revoke(self) -> None:
+        self._revoked = True
+
+
+# An implementation receives the capability issued for one case together with
+# that case's input content, and returns its output content with a trace of
+# what it did. It carries no role-specific meaning: this module does not know
+# what any output means, only how the request's own frozen vocabulary reads it.
+ExperimentalImplementation = Callable[[ExperimentalRunContext, str], tuple[str, Trace]]
 
 
 class ExperimentalAuthority:
@@ -548,15 +709,26 @@ class ExperimentalAuthority:
         self,
         *,
         run_id: str,
-        request: ExperimentalRunRequest,
+        bound_request: BoundExperimentalRunRequest,
         implementation: ExperimentalImplementation,
     ) -> ExperimentalRunRecord:
-        """Run one declared candidate over its case set, recording only facts."""
+        """Run one bound request over its case set, recording only facts."""
 
         _require_text(run_id, "experimental run id")
+        if not isinstance(bound_request, BoundExperimentalRunRequest):
+            raise ExperimentalAuthorityError(
+                "an experimental run requires a bound experimental run request"
+            )
+        request = bound_request.request
+        request_content_digest = bound_request.request_content_digest
         if type(request) is not ExperimentalRunRequest:
             raise ExperimentalAuthorityError(
-                "an experimental run requires an experimental run request"
+                "a bound experimental run request must carry its own run request"
+            )
+        if not is_canonical_digest(request_content_digest):
+            raise ExperimentalAuthorityError(
+                "a bound experimental run request must carry the canonical "
+                "content digest of the request it bound"
             )
         if not callable(implementation):
             raise ExperimentalAuthorityError(
@@ -577,6 +749,7 @@ class ExperimentalAuthority:
             f"declared_model:{request.candidate.declared_model_ref}",
             f"scope:{request.declared_scope}",
             f"case_set:{request.case_set.case_set_id}",
+            f"request_content:{request_content_digest}",
         ]
         events.extend(
             f"condition:{condition}"
@@ -590,18 +763,58 @@ class ExperimentalAuthority:
 
         for case_id, input_content in request.inputs:
             events.append(f"case:{case_id}")
+            capability = ExperimentalRunContext(
+                run_id=run_id,
+                case_id=case_id,
+                permitted_operation_ids=request.permitted_operation_ids,
+                events=events,
+                operations_used=operations_used,
+                token=_CAPABILITY_TOKEN,
+            )
+            refused: str | None = None
+            raised: BaseException | None = None
             try:
-                result = implementation(input_content)
+                result = implementation(capability, input_content)
+            except _UnpermittedOperation as refusal:
+                refused = refusal.operation_id
+                result = None
             except Exception as error:  # captured, never propagated
-                events.append(f"case_failed:{case_id}:{type(error).__name__}")
+                raised = error
+                result = None
+            finally:
+                capability._revoke()
+            if refused is None:
+                refused = capability._refused_operation
+            if refused is not None:
+                events.append(f"operation_not_permitted:{case_id}:{refused}")
                 return self._failed_record(
                     run_id=run_id,
                     request=request,
+                    request_content_digest=request_content_digest,
+                    status=ExperimentalOutcomeStatus.ABORTED,
+                    failure=ExperimentalFailureRecord(
+                        failure_kind=ExperimentalFailureKind.OPERATION_NOT_PERMITTED,
+                        case_id=case_id,
+                        message=(
+                            f"operation {refused!r} was not permitted by this "
+                            "run request and was refused before it could run"
+                        ),
+                        trace=Trace(tuple(events)),
+                    ),
+                    operations_used=operations_used,
+                    events=events,
+                )
+            if raised is not None:
+                events.append(f"case_failed:{case_id}:{type(raised).__name__}")
+                return self._failed_record(
+                    run_id=run_id,
+                    request=request,
+                    request_content_digest=request_content_digest,
                     status=ExperimentalOutcomeStatus.FAILED,
                     failure=ExperimentalFailureRecord(
                         failure_kind=ExperimentalFailureKind.IMPLEMENTATION_RAISED,
                         case_id=case_id,
-                        message=f"{type(error).__name__}: {error}",
+                        message=f"{type(raised).__name__}: {raised}",
                         trace=Trace(tuple(events)),
                     ),
                     operations_used=operations_used,
@@ -617,6 +830,7 @@ class ExperimentalAuthority:
                 return self._failed_record(
                     run_id=run_id,
                     request=request,
+                    request_content_digest=request_content_digest,
                     status=ExperimentalOutcomeStatus.FAILED,
                     failure=ExperimentalFailureRecord(
                         failure_kind=(
@@ -633,36 +847,37 @@ class ExperimentalAuthority:
                     events=events,
                 )
             output, case_trace = result
+            forged = tuple(
+                event
+                for event in case_trace.events
+                if event.startswith(_OPERATION_EVENT_PREFIX)
+            )
+            if forged:
+                events.append(f"forged_operation_event:{case_id}:{forged[0]}")
+                return self._failed_record(
+                    run_id=run_id,
+                    request=request,
+                    request_content_digest=request_content_digest,
+                    status=ExperimentalOutcomeStatus.FAILED,
+                    failure=ExperimentalFailureRecord(
+                        failure_kind=(
+                            ExperimentalFailureKind.OPERATION_EVENT_NOT_AUTHORITY_ISSUED
+                        ),
+                        case_id=case_id,
+                        message=(
+                            "operation events are written by this authority "
+                            "when a capability is used, and an implementation "
+                            f"that writes {forged[0]!r} into its own trace is "
+                            "forging the authority's record"
+                        ),
+                        trace=Trace(tuple(events)),
+                    ),
+                    operations_used=operations_used,
+                    events=events,
+                )
             events.extend(
                 f"implementation:{case_id}:{event}" for event in case_trace.events
             )
-
-            for event in case_trace.events:
-                if not event.startswith(_OPERATION_EVENT_PREFIX):
-                    continue
-                operation_id = event[len(_OPERATION_EVENT_PREFIX) :]
-                if operation_id not in request.permitted_operation_ids:
-                    events.append(f"operation_not_permitted:{case_id}:{operation_id}")
-                    return self._failed_record(
-                        run_id=run_id,
-                        request=request,
-                        status=ExperimentalOutcomeStatus.ABORTED,
-                        failure=ExperimentalFailureRecord(
-                            failure_kind=(
-                                ExperimentalFailureKind.OPERATION_NOT_PERMITTED
-                            ),
-                            case_id=case_id,
-                            message=(
-                                f"operation {operation_id!r} was not permitted by "
-                                "this run request"
-                            ),
-                            trace=Trace(tuple(events)),
-                        ),
-                        operations_used=operations_used,
-                        events=events,
-                    )
-                if operation_id not in operations_used:
-                    operations_used.append(operation_id)
 
             if output == vocabulary.accounted_token:
                 events.append(f"case_accounted:{case_id}")
@@ -674,6 +889,7 @@ class ExperimentalAuthority:
                 return self._failed_record(
                     run_id=run_id,
                     request=request,
+                    request_content_digest=request_content_digest,
                     status=ExperimentalOutcomeStatus.FAILED,
                     failure=ExperimentalFailureRecord(
                         failure_kind=ExperimentalFailureKind.UNREADABLE_CASE_OUTCOME,
@@ -694,6 +910,7 @@ class ExperimentalAuthority:
             run_id=run_id,
             issuing_authority_id=self._authority_id,
             request=request,
+            request_content_digest=request_content_digest,
             outcome_status=ExperimentalOutcomeStatus.COMPLETED,
             output_content="\n".join(readings),
             failure=None,
@@ -708,6 +925,7 @@ class ExperimentalAuthority:
         *,
         run_id: str,
         request: ExperimentalRunRequest,
+        request_content_digest: str,
         status: ExperimentalOutcomeStatus,
         failure: ExperimentalFailureRecord,
         operations_used: list[str],
@@ -718,6 +936,7 @@ class ExperimentalAuthority:
             run_id=run_id,
             issuing_authority_id=self._authority_id,
             request=request,
+            request_content_digest=request_content_digest,
             outcome_status=status,
             output_content=None,
             failure=failure,
@@ -729,6 +948,9 @@ class ExperimentalAuthority:
 
 
 _EXPERIMENTAL_AUTHORITY_SURFACE = frozenset({"authority_id", "run"})
+_EXPERIMENTAL_CAPABILITY_SURFACE = frozenset(
+    {"case_id", "invoke", "permitted_operation_ids", "run_id"}
+)
 
 
 def _public_surface(owner: type) -> frozenset[str]:
@@ -762,6 +984,11 @@ if _public_surface(ExperimentalAuthority) != _EXPERIMENTAL_AUTHORITY_SURFACE:
     raise RuntimeError(
         "ExperimentalAuthority must expose no method beyond running an experiment"
     )
+if _public_surface(ExperimentalRunContext) != _EXPERIMENTAL_CAPABILITY_SURFACE:
+    raise RuntimeError(
+        "ExperimentalRunContext must expose no surface beyond invoking one "
+        "permitted operation and naming the run and case it belongs to"
+    )
 for _law_name, _law_text in EXPERIMENTAL_NAMED_LAWS.items():
     if not _law_text.startswith(f"{_law_name}:"):
         raise RuntimeError("each named law text must open with its own law name")
@@ -769,6 +996,7 @@ for _law_name, _law_text in EXPERIMENTAL_NAMED_LAWS.items():
 
 __all__ = [
     "EXPERIMENTAL_NAMED_LAWS",
+    "BoundExperimentalRunRequest",
     "DeclaredCaseSet",
     "ExperimentalAuthority",
     "ExperimentalAuthorityError",
@@ -779,6 +1007,7 @@ __all__ = [
     "ExperimentalImplementation",
     "ExperimentalOperationRef",
     "ExperimentalOutcomeStatus",
+    "ExperimentalRunContext",
     "ExperimentalRunRecord",
     "ExperimentalRunRequest",
     "sweep_forbidden_fields",
