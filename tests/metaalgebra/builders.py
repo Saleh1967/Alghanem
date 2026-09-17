@@ -6,7 +6,9 @@
 
 from __future__ import annotations
 
+from alghanem.metaalgebra.clause import DeclarativeClause
 from alghanem.metaalgebra.layer import (
+    LAYER_COMPONENT_NAMES,
     CarrierSpecification,
     ClosureLawSpecification,
     InvariantComponentSpecification,
@@ -17,6 +19,17 @@ from alghanem.metaalgebra.layer import (
     StateSpaceSpecification,
     TraceObligationSpecification,
 )
+from alghanem.metaalgebra.realization import (
+    REALIZED_TRANSITION_COMPONENT_NAMES,
+    ComponentRealization,
+    LayerRealization,
+    Realization,
+    RealizationDomainRef,
+    ResidualDisposition,
+    ResidualDispositionRealization,
+    TransitionRealization,
+)
+from alghanem.metaalgebra.specification import AbstractSystemSpecification, SchemaRef
 from alghanem.metaalgebra.transition import (
     REQUIRED_AUDIT_CERTIFICATE_FACTS,
     DomainCondition,
@@ -138,5 +151,111 @@ def transition(
             holds_when="عند تأهّل المغلَق لعلاقة الطبقة الأعلى",
             beyond_closure="يزيد على الإغلاق تأهّلَ الخروج، والإغلاقُ داخليّ",
             failure_outcome=TransitionOutcome.DEFER,
+        ),
+    )
+
+
+def specification(
+    spec_id: str = "SIGMA_A.test",
+    *,
+    layer_ids: tuple[str, ...] = ("L0", "L1"),
+    transition_ids: tuple[str, ...] = ("alpha",),
+) -> AbstractSystemSpecification:
+    layers = tuple(layer(layer_id) for layer_id in layer_ids)
+    transitions = tuple(
+        transition(
+            transition_id,
+            source_layer_id=layer_ids[0],
+            target_layer_id=layer_ids[1],
+        )
+        for transition_id in transition_ids
+    )
+    return AbstractSystemSpecification(
+        spec_id=spec_id,
+        schema_ref=SchemaRef.of(),
+        layers=layers,
+        transitions=transitions,
+    )
+
+
+def component_realizations(
+    names: tuple[str, ...],
+    *,
+    prefix: str = "D",
+) -> tuple[ComponentRealization, ...]:
+    return tuple(
+        ComponentRealization(
+            component_name=name,
+            realized_as=f"{prefix}::{name}",
+            realization_condition=DeclarativeClause(
+                clause_id=f"{prefix}.{name}",
+                clause_text=f"شرطُ تحقّق `{name}` في الميدان",
+                why_not_executable="لم تُعطَ له دلالةٌ قابلةٌ للترجمة بعدُ",
+            ),
+            what_would_falsify_this_realization=f"موضعٌ في الميدان لا يستوفي `{name}`",
+        )
+        for name in names
+    )
+
+
+def layer_realization(layer_id: str = "L0", *, prefix: str = "D") -> LayerRealization:
+    return LayerRealization(
+        layer_id=layer_id,
+        components=component_realizations(LAYER_COMPONENT_NAMES, prefix=prefix),
+        residual_dispositions=tuple(
+            ResidualDispositionRealization(
+                disposition=disposition,
+                holds_when=f"شرطُ `{disposition.value}` في الميدان",
+            )
+            for disposition in ResidualDisposition
+        ),
+    )
+
+
+def transition_realization(
+    transition_id: str = "alpha", *, prefix: str = "D"
+) -> TransitionRealization:
+    return TransitionRealization(
+        transition_id=transition_id,
+        components=component_realizations(
+            REALIZED_TRANSITION_COMPONENT_NAMES, prefix=prefix
+        ),
+        unlicensed_outcome_realizations=(
+            (TransitionOutcome.BLOCK, "منعٌ مُسمًّى في الميدان"),
+            (TransitionOutcome.DEFER, "لا-جوابٍ معرفيٍّ في الميدان"),
+        ),
+    )
+
+
+def realization(
+    realization_id: str = "R.test",
+    *,
+    domain_id: str = "D0",
+    spec: AbstractSystemSpecification | None = None,
+    realize_transitions: bool = True,
+) -> Realization:
+    specification_value = specification() if spec is None else spec
+    return Realization(
+        realization_id=realization_id,
+        domain=RealizationDomainRef(
+            domain_id=domain_id,
+            description=f"ميدانٌ صوريٌّ للاختبار `{domain_id}`",
+            what_is_not_this_domain="ما لا يقع في هذا الميدان",
+        ),
+        specification=specification_value,
+        layer_realizations=tuple(
+            layer_realization(layer_id, prefix=domain_id)
+            for layer_id in specification_value.layer_ids
+        ),
+        transition_realizations=(
+            tuple(
+                transition_realization(transition_id, prefix=domain_id)
+                for transition_id in specification_value.transition_ids
+            )
+            if realize_transitions
+            else ()
+        ),
+        deferred_transition_ids=(
+            () if realize_transitions else specification_value.transition_ids
         ),
     )

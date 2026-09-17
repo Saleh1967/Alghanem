@@ -7,12 +7,21 @@
 ولا تُسمّي لغةً، ولا تُصدِر حكمًا، ولا تستورد من `kernel/` حرفًا ولا من
 `arabic/`.
 
-وحداتُها أربع:
+ومستوياتُها ثلاثةٌ لا مستويان:
+
+    Σ_M (لغةُ الجبر)  →  Σ_A (نظريّةٌ بعينها)  →  Realization(Σ_A, D)
+
+وحداتُها:
 
 * `standing` — محورا المنزلة (`G0.ST`)، ورتبةُ استقلال المواصفة.
 * `layer` — `𝒜 = (C, S, Ω, Rel, Inv, Cl, Tr, R)`.
 * `transition` — `𝒯 = (D, G, T, P, τ, ρ)` مع شرط التسليم، وقانونُ مَنعِ القفز.
 * `composition` — شرطُ التجاور، وفصلُ صحّة المبرهنة عن تغطية تمثيلها.
+* `schema` — `Σ_M`: لغةُ الجبر نفسُها، بصفر طبقاتٍ وصفر انتقالات.
+* `clause` — الفصلُ النوعيّ بين البند التصريحيّ والبند القابل للتنفيذ.
+* `specification` — `Σ_A`: نظريّةٌ معيّنةٌ مكتوبةٌ بتلك اللغة، مبصومةٌ بمحتواها.
+* `realization` — تحقيقُ `Σ_A` في ميدان، بتغطيةٍ تامّةٍ ومصائرِ بقايا أربعة.
+* `commutation` — المربّعُ التبادليّ لكلّ انتقال، والتزامُ استقلال التمثيل.
 
 والمعرّفاتُ لاتينيّةٌ والتوثيقُ عربيٌّ رياضيّ، لأنّ هذه الحزمةَ غيرُ مخصوصةٍ
 بالعربيّة وإن كانت العربيّةُ أوّلَ ميادين تمثيلها.
@@ -20,6 +29,33 @@
 
 from __future__ import annotations
 
+from .clause import (
+    AN_EXECUTABLE_CLAUSE_IS_NOT_A_PROMISE_OF_TRUTH,
+    EXECUTABLE_NODE_NAMES,
+    NO_SEMANTICS_FROM_PROSE,
+    And,
+    Clause,
+    ClauseError,
+    Constant,
+    DeclarativeClause,
+    Eq,
+    ExecutableClause,
+    Expression,
+    FieldRef,
+    MemberOf,
+    Not,
+    Or,
+    PartialApply,
+    require_clause,
+)
+from .commutation import (
+    A_BROKEN_SQUARE_INDICTS_THE_REALIZATION_NOT_THE_ALGEBRA,
+    COMMUTATION_LAW,
+    TWO_DOMAINS_PROVE_COVERAGE_NOT_INDEPENDENCE,
+    CommutationObligation,
+    CommutationObligationError,
+    RepresentationIndependenceObligation,
+)
 from .composition import (
     A_CHAIN_IS_NOT_A_PROOF,
     ADJACENCY_IS_A_HYPOTHESIS_NOT_A_CONCLUSION,
@@ -46,6 +82,41 @@ from .layer import (
     ResidualSchemaSpecification,
     StateSpaceSpecification,
     TraceObligationSpecification,
+)
+from .realization import (
+    A_RENAMING_IS_NOT_A_REALIZATION,
+    A_RESIDUAL_MAY_INDICT_THE_DOMAIN,
+    NO_REALIZATION_GRANTS_STANDING,
+    REALIZATION_COVERAGE_IS_EXACT,
+    REALIZED_TRANSITION_COMPONENT_NAMES,
+    SIGMA_IS_THE_ORIGIN_NOT_ITS_REALIZATIONS,
+    ComponentRealization,
+    LayerRealization,
+    Realization,
+    RealizationCoverageError,
+    RealizationDomainRef,
+    RealizationError,
+    ResidualDisposition,
+    ResidualDispositionRealization,
+    TransitionRealization,
+)
+from .schema import (
+    A_SCHEMA_IS_NOT_A_SPECIFICATION,
+    META_ALGEBRA_SCHEMA,
+    NO_CONCRETE_STRUCTURE_IN_THE_SCHEMA,
+    REALIZATION_COMPONENT_NAMES,
+    SCHEMA_VERSION,
+    MetaAlgebraSchema,
+    MetaAlgebraSchemaError,
+    SchemaLaw,
+    SortDeclaration,
+)
+from .specification import (
+    A_CHAIN_IS_NOT_A_SPECIFICATION,
+    A_SPECIFICATION_IS_WRITTEN_IN_A_NAMED_SCHEMA,
+    AbstractSystemSpecification,
+    AbstractSystemSpecificationError,
+    SchemaRef,
 )
 from .standing import (
     A_CONTRACT_WRITTEN_AFTER_ITS_FUNCTION_IS_NOT_A_CONTRACT,
@@ -84,56 +155,108 @@ from .transition import (
 
 __all__ = [
     "ADJACENCY_IS_A_HYPOTHESIS_NOT_A_CONCLUSION",
+    "AN_EXECUTABLE_CLAUSE_IS_NOT_A_PROMISE_OF_TRUTH",
+    "A_BROKEN_SQUARE_INDICTS_THE_REALIZATION_NOT_THE_ALGEBRA",
     "A_CHAIN_IS_NOT_A_PROOF",
+    "A_CHAIN_IS_NOT_A_SPECIFICATION",
     "A_CONTRACT_WRITTEN_AFTER_ITS_FUNCTION_IS_NOT_A_CONTRACT",
     "A_LAYER_TYPE_IS_NOT_A_LAYER_ARCHITECTURE",
     "A_PARTIAL_OPERATION_DECLARES_WHERE_IT_IS_UNDEFINED",
+    "A_RENAMING_IS_NOT_A_REALIZATION",
+    "A_RESIDUAL_MAY_INDICT_THE_DOMAIN",
+    "A_SCHEMA_IS_NOT_A_SPECIFICATION",
+    "A_SPECIFICATION_IS_WRITTEN_IN_A_NAMED_SCHEMA",
+    "AbstractSystemSpecification",
+    "AbstractSystemSpecificationError",
+    "And",
     "BACKWARD_AUDITABILITY_OBLIGATION",
     "CARRIER_IS_NOT_STATE",
     "CLOSURE_IS_NOT_A_RIGHT_OF_EXIT",
+    "COMMUTATION_LAW",
     "COMPOSITION_LAW",
-    "EMPIRICAL_TARGET_INDEPENDENCE_IS_EMPIRICAL_ONLY",
-    "FORMAL_STRUCTURAL_PROOF_IS_NOT_EMPIRICAL_REALITY",
-    "HANDOFF_LAW",
-    "LAYER_COMPONENT_NAMES",
-    "MISSING_EMPIRICAL_EVIDENCE_IS_NOT_MISSING_STRUCTURAL_PROOF",
-    "NO_AXIS_COLLAPSE",
-    "NO_JUMP_CONSTRAINS_THE_PATH_NOT_THE_TARGET_MEMBERSHIP",
-    "NO_JUMP_LAW",
-    "NO_LAYER_IS_DECLARED_HERE",
-    "NO_STRUCTURAL_STANDING_WITHOUT_ITS_FROZEN_SIGMA",
-    "REQUIRED_AUDIT_CERTIFICATE_FACTS",
-    "SPECIFICATION_INDEPENDENCE_IS_NOT_EMPIRICAL_TARGET_INDEPENDENCE",
-    "THEOREM_VALIDITY_IS_NOT_INSTANTIATION_COVERAGE",
-    "TRANSITION_COMPONENT_NAMES",
     "CarrierSpecification",
+    "Clause",
+    "ClauseError",
     "ClosureLawSpecification",
+    "CommutationObligation",
+    "CommutationObligationError",
+    "ComponentRealization",
     "CompositionChain",
     "CompositionChainError",
+    "Constant",
+    "DeclarativeClause",
     "DomainCondition",
     "DualStanding",
+    "EMPIRICAL_TARGET_INDEPENDENCE_IS_EMPIRICAL_ONLY",
+    "EXECUTABLE_NODE_NAMES",
     "EmpiricalStanding",
+    "Eq",
+    "ExecutableClause",
+    "Expression",
+    "FORMAL_STRUCTURAL_PROOF_IS_NOT_EMPIRICAL_REALITY",
+    "FieldRef",
+    "HANDOFF_LAW",
     "HandoffCondition",
     "ImplementationConformanceRecord",
     "InvariantComponentSpecification",
+    "LAYER_COMPONENT_NAMES",
+    "LayerRealization",
     "LayerSignature",
     "LayerSignatureError",
     "LicenseGateSpecification",
     "LicenseRelationSpecification",
+    "META_ALGEBRA_SCHEMA",
+    "MISSING_EMPIRICAL_EVIDENCE_IS_NOT_MISSING_STRUCTURAL_PROOF",
+    "MemberOf",
+    "MetaAlgebraSchema",
+    "MetaAlgebraSchemaError",
     "MetaAlgebraStandingError",
+    "NO_AXIS_COLLAPSE",
+    "NO_CONCRETE_STRUCTURE_IN_THE_SCHEMA",
+    "NO_JUMP_CONSTRAINS_THE_PATH_NOT_THE_TARGET_MEMBERSHIP",
+    "NO_JUMP_LAW",
+    "NO_LAYER_IS_DECLARED_HERE",
+    "NO_REALIZATION_GRANTS_STANDING",
+    "NO_SEMANTICS_FROM_PROSE",
+    "NO_STRUCTURAL_STANDING_WITHOUT_ITS_FROZEN_SIGMA",
+    "Not",
+    "Or",
+    "PartialApply",
     "PartialOperationSpecification",
     "PreservationObligation",
+    "REALIZATION_COMPONENT_NAMES",
+    "REALIZATION_COVERAGE_IS_EXACT",
+    "REALIZED_TRANSITION_COMPONENT_NAMES",
+    "REQUIRED_AUDIT_CERTIFICATE_FACTS",
+    "Realization",
+    "RealizationCoverageError",
+    "RealizationDomainRef",
+    "RealizationError",
+    "RepresentationIndependenceObligation",
+    "ResidualDisposition",
+    "ResidualDispositionRealization",
     "ResidualRankPolicy",
     "ResidualSchemaSpecification",
+    "SCHEMA_VERSION",
+    "SIGMA_IS_THE_ORIGIN_NOT_ITS_REALIZATIONS",
+    "SPECIFICATION_INDEPENDENCE_IS_NOT_EMPIRICAL_TARGET_INDEPENDENCE",
+    "SchemaLaw",
+    "SchemaRef",
+    "SortDeclaration",
     "SpecificationIndependenceGrade",
     "SpecificationSetRef",
     "StateSpaceSpecification",
     "StepObligation",
     "StructuralStanding",
+    "THEOREM_VALIDITY_IS_NOT_INSTANTIATION_COVERAGE",
+    "TRANSITION_COMPONENT_NAMES",
+    "TWO_DOMAINS_PROVE_COVERAGE_NOT_INDEPENDENCE",
     "TraceObligationSpecification",
     "TransformationSpecification",
     "TransitionOutcome",
+    "TransitionRealization",
     "TransitionSignature",
     "TransitionSignatureError",
     "TransitionTraceObligation",
+    "require_clause",
 ]
