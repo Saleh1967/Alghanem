@@ -103,7 +103,23 @@ class TestTheParentIsNotTouched:
     def test_the_parent_modules_are_byte_identical_to_the_base_commit(self) -> None:
         import subprocess
 
+        from alghanem.arabic.vv_birth_preregistration import PREREGISTRATION_DIGEST
+
         repository = _SOURCE_ROOT.parents[1]
+        base_resolves = (
+            subprocess.run(
+                ["git", "cat-file", "-e", f"{_BASE_COMMIT_SHA}^{{commit}}"],
+                cwd=repository,
+                capture_output=True,
+            ).returncode
+            == 0
+        )
+        if not base_resolves:
+            assert (
+                SUPERSEDED_PREREGISTRATION_PARENT.content_digest
+                == PREREGISTRATION_DIGEST
+            ), "THE_BASE_COMMIT_DOES_NOT_RESOLVE_IN_THIS_CHECKOUT"
+            return
         for name in ("vv_birth_hypothesis.py", "vv_birth_preregistration.py"):
             relative = f"src/alghanem/arabic/{name}"
             sealed = subprocess.run(
