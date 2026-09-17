@@ -10,6 +10,14 @@ by name rather than inferred from the absence of one.
 import itertools
 
 import pytest
+from test_independent_closure_composition import (  # type: ignore[import-not-found]
+    assessment_request,
+    comparability_for,
+    exhaustion_for,
+    frozen_specification_binding,
+    specification,
+    survival_for,
+)
 
 from alghanem.kernel.birth import (
     BirthExperimentSpecificationError,
@@ -42,14 +50,6 @@ from alghanem.kernel.independent_closure_composition import (
 )
 from alghanem.kernel.trace import Trace
 from alghanem.kernel.weaker_model_exhaustion import WeakerModelExhaustionStatus
-from tests.kernel.test_independent_closure_composition import (
-    assessment_request,
-    comparability_for,
-    exhaustion_for,
-    frozen_specification_binding,
-    specification,
-    survival_for,
-)
 
 RESOLVED = ComparabilityClosureStatus.COMPETITION_RESOLVED_IN_POSET
 EXHAUSTED = WeakerModelExhaustionStatus.LICENSED_WEAKER_MODELS_EXHAUSTED
