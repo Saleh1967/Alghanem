@@ -3413,6 +3413,31 @@ used to formulate `K`, a signature whose fields can read false, a verified
 re-running the same five surfaces would not be prospective. The laws are
 collected in `docs/CONSTITUTION.md` under `G0.FLT-0`.
 
+The successor is now frozen. `G0.FLT-1` asks whether a licensed Carrier/State
+centre generates syllabic closure better than every weaker representation, and
+it is deposited as text and registration only — no readout module exists in this
+branch, because a reading built alongside its own preregistration cannot testify
+to the order in which they were written. The chain under test runs from carrier
+to a Carrier/State centre, through a licensed join and a closure, to a higher
+centre, and it is registered as six hypotheses that fail separately: the two
+quotients, their predicted product, birth under an opening vowel with its
+negative control, closure under sukūn, and the higher centre itself. `28 × 4` is
+a prediction and never an input; the equivalence relation is declared first and
+counted afterwards.
+
+Two corrections to `G0.FLT-0` are built in. Verbatim fidelity is checked rather
+than promised: fourteen decisive notation sites are enumerated and their
+presence derived from the deposited text at import, which is exactly the check
+whose absence invalidated the previous registration. And the negative controls
+are the experiment rather than its margin — the carrier alone, the state alone,
+and the unordered pair are run on the same surfaces, and a tie is enough to
+defeat the claim that the licensed pair is the lower centre. The name "higher
+centre" is earned only by Reconstruction, Minimality, NoBypass and Closure
+together; `Identity` counts only if verified, otherwise the pair is
+`UNDERPOWERED`; and the seven frozen surfaces are disjoint from the five already
+read, checked at import. The laws are in `docs/CONSTITUTION.md` under
+`G0.FLT-1`.
+
 ## Development
 
 The first measurement in this tree against an *externally* annotated corpus is

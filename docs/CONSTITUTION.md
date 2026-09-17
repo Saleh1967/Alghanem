@@ -1847,6 +1847,63 @@ the only sanctioned reader of the run. Neither the text nor the preregistration
 may be edited now that the run has happened; a different reading requires a new,
 separately frozen preregistration.
 
+## G0.FLT-1 — The licensed Carrier/State centre (preregistration only)
+
+`G0.FLT-0` failed as a test and succeeded as an instrument: it found the defects
+of its own experiment before it could find anything about Arabic. What it forced
+into view is where fractality could actually be tested — the birth of a higher
+centre from lower ones — and this milestone freezes that question **and stops
+there**. It issues no reading, no birth, no verdict, no freeze and no `E0`, and
+no module in `kernel/` reads it. There is deliberately no readout module in this
+deposit: the one thing `G0.FLT-0` got right was the ordering of its commits, and
+that is kept.
+
+The law under test is a chain, frozen with its notation:
+
+```
+Carrier -> Carrier/State Center -> Licensed Join -> Closure -> Higher Center
+```
+
+It is registered as six hypotheses that fail separately rather than one large
+claim, so that the success of the easiest cannot cover the failure of the
+hardest: `C_0` and `V_0` as quotients whose cardinalities are then tested, `M_0`
+as their predicted product, birth under an opening vowel with its negative
+control, closure under sukūn, and `M_1` as the closure of a join. `28 × 4` is a
+prediction, never an input — the equivalence relation is declared first, the
+quotient derived from it, and only then counted; whoever puts the number into
+the relation has tested a definition.
+
+The decisive correction over `G0.FLT-0` is that verbatim fidelity is now
+*checked* rather than promised. Fourteen decisive notation sites are named one
+by one, their presence in the deposited text is derived at import, and the
+report can be inspected before any reading exists. `G0.FLT-0` was lost precisely
+because a digest was taken over a text nobody had compared against the request.
+
+The negative controls are the point of the experiment, not its footnote. Three
+weaker representations — the carrier alone, the state alone, and the unordered
+pair — are run on the same surfaces, and a *tie* is enough to defeat the claim
+that a licensed Carrier/State pair is the lower centre; superiority of the
+weaker model is not required. The name "higher centre" is earned only by
+Reconstruction, Minimality, NoBypass and Closure together. Identity preservation
+counts only if it passes the invariant verification gate; otherwise the pair is
+`UNDERPOWERED`. The seven frozen surfaces are disjoint from the five read in
+`G0.FLT-0`, and the disjointness is checked at import rather than entrusted to
+attention.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `VerbatimFidelityIsCheckedNotPromised` | ENFORCED_AT_PROBE_PREREGISTRATION | Decisive notation sites are enumerated, their presence derived from the deposited text at import, and the fidelity report made inspectable before any readout exists. A missing site makes the registration unfit to run rather than a formatting matter. |
+| `SeparateHypothesesFailSeparately` | ENFORCED_AT_PROBE_PREREGISTRATION | The law is registered as six independently falsifiable hypotheses, each naming what would falsify it, what would make it underpowered, and what would lift that. A single aggregate claim is refused because it lets the easiest component mask the hardest. |
+| `TheCountIsTestedAfterTheQuotient` | ENFORCED_AT_PROBE_PREREGISTRATION | The equivalence relation is declared before the run, the quotient derived from it, and only then counted. A predicted cardinality may never appear in the relation that produces it, or the experiment tests its own definition. |
+| `AWeakerRepresentationThatTiesDefeatsTheClaim` | ENFORCED_AT_PROBE_PREREGISTRATION | The three weaker representations are registered before the run and evaluated on the same surfaces. Equal performance by any of them defeats the claim that the licensed pair is the lower centre; the weaker model need not win. |
+| `FourConditionsOrNoHigherCenter` | DECLARED_DEFERRED | Reconstruction, Minimality, NoBypass and Closure must hold together before anything may be named a higher centre. A failure of one withholds the name rather than weakening it. |
+| `NoReadoutExistsForFLT1Yet` | ENFORCED_AT_PROBE_PREREGISTRATION | This deposit contains the frozen text and the registration only. A reading built in the same deposit could not testify to its own ordering, so the readout belongs to a later commit made after the text has been compared against the request. |
+
+The frozen text is `src/alghanem/arabic/flt1_hypothesis.py` and the ten
+registered items are `src/alghanem/arabic/flt1_preregistration.py`. `G0.FLT-2` —
+syllable to prosodic centre — is named here and not registered; it must reuse
+this law rather than redefine it.
+
 ## Encyclopedia Nucleus — Constitution
 
 The encyclopedia is an application consumer of the kernel, never a replacement
