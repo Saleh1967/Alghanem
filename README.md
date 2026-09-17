@@ -3364,6 +3364,33 @@ unnamed is counted as a pass and is not one. What stays open is named:
 file that collects is not a witness that checks this claim, and a test that
 mentions an example script does not thereby run it.
 
+The first hypothesis in this tree that arrived already formalised from outside
+is the fractal licensed-transition claim: that one transition structure
+`K = (Carrier, Gate, Operation, Identity, Evidence, Residual, Trace, Closure)`
+survives a change of linguistic scale. Its text was frozen verbatim, including
+its mathematical notation, before anything was measured; the ten items it
+demands — the layers compared, the carrier, gate, identity, residual and closure
+in each, the scale transport `S`, the match criterion, the weakest competing
+model, and the PASS/FAIL/UNDERPOWERED conditions — were preregistered and
+committed in their own commit while no readout module existed yet, because the
+text's own `PostHocSimilarity != FractalEvidence` rule cannot be honoured by a
+promise. Four layers were declared (مقطع، كلمة، تركيب، جملة); only the first two
+have a coded carrier here, so two of the three declared pairs were
+`UNDERPOWERED` by declaration rather than by disappointment.
+
+The run then returned `WEAKER_MODEL_RECONSTRUCTS`, and it is recorded as it
+came out. On `syllable-to-word` the transported structure agreed in 24 of 30
+field/case comparisons and a constant model that reads nothing agreed in 28, so
+by the text's own precedence the structure is not supported. The run also
+named the reason, which is the more useful half of the result: in the present
+encoders Trace and Closure are true by construction and Gate and Residual are
+one predicate under two names, so four of the six compared fields cannot
+discriminate anything, and what looked like a hypothesis about Arabic was in
+part a statement about this tree's codecs. Because every ladder name occurs in
+the frozen text, no declared pair is a holdout and `SUPPORTED` is unreachable
+today by construction; `FRACTAL_LAW_PROVED` is not in the output vocabulary at
+all. The laws are collected in `docs/CONSTITUTION.md` under `G0.FLT`.
+
 ## Development
 
 The first measurement in this tree against an *externally* annotated corpus is

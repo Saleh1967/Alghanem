@@ -1748,6 +1748,60 @@ only the match guard is general. As of this milestone no source text has been
 supplied, the enumeration is empty, and the registered reading of the standing
 branch is that the experiment has not been run.
 
+## G0.FLT — The fractal licensed-transition hypothesis (preregistered readout)
+
+This milestone froze a hypothesis text supplied from outside this tree, *verbatim
+and including its mathematical notation*, registered the ten pre-run items the
+text itself demands, and only then built a readout and ran it. It issues no
+birth, no verdict about Arabic, no freeze and no `E0`, and nothing in `kernel/`
+reads its outputs.
+
+```
+FrozenHypothesisText != EstablishedLaw
+StructureMatch       != SurfaceSimilarity
+PostHocSimilarity    != FractalEvidence
+WeakerReconstruction >= StructureMatch  -> WEAKER_MODEL_RECONSTRUCTS
+```
+
+The claim under test is that one transition structure
+`K = (Carrier, Gate, Operation, Identity, Evidence, Residual, Trace, Closure)`
+survives a change of linguistic scale `S`, i.e. `S ∘ K_n ≅ K_m ∘ S`, restricted
+to six fields — Carrier, Gate, Identity, Trace, Residual, Closure — and
+explicitly *not* to frequency, entropy, α, number of states, surface form or
+magnitude. Four jurisdictions are declared (مقطع، كلمة، تركيب، جملة); only the
+first two have a coded carrier in this tree, so exactly one of the three
+declared pairs was measurable and the other two were declared `UNDERPOWERED`
+before the run, not after it.
+
+The first run's reading is recorded as it came out. On `syllable-to-word` the
+transported structure agreed with the upper layer in 24 of 30 field/case
+comparisons, while the weaker `constant-admission` model — which predicts
+admission everywhere and reads nothing — agreed in 28. Under the text's own
+precedence that is `WEAKER_MODEL_RECONSTRUCTS`, and the run also showed *why*:
+in the present codecs Trace and Closure are true by construction, and Gate and
+Residual are the same predicate under two names, so four of the six compared
+fields cannot discriminate any hypothesis at all. That is a statement about
+this tree's encoders, not about Arabic. Because all four ladder names occur in
+the frozen text, no declared pair is a holdout, and `SUPPORTED` is unreachable
+here by construction rather than by result.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `HypothesisTextFrozenBeforeAnyLayerRun` | ENFORCED_AT_PROBE_PREREGISTRATION | The hypothesis text and the ten preregistered items are content-digested and sealed, and the readout gate re-derives both digests and refuses to read on any drift. The preregistration was committed while no readout module existed, so the ordering is a fact of the history and not a claim in prose. |
+| `StructureMatchIsFieldRestricted` | ENFORCED_AT_PROBE_PREREGISTRATION | Correspondence is asserted over the six compared fields only. Frequency, entropy, α, state counts, surface form and magnitude are excluded by name, and a readout that reaches for an excluded field is refused rather than reported. |
+| `NoPairIsHoldoutUnderTheFrozenLadder` | DECLARED_DEFERRED | A layer whose ladder name occurs in the frozen hypothesis text cannot serve as a holdout for it. All four declared layers are named there, so no verdict of `SUPPORTED` may be issued from them however well they match; lifting the stop requires a coded pair whose names are absent from the frozen text. |
+| `WeakerReconstructionOutranksStructureMatch` | ENFORCED_AT_PROBE_PREREGISTRATION | If any weaker model reconstructs the readings at least as well as the transported structure, the verdict is `WEAKER_MODEL_RECONSTRUCTS` regardless of how high the structure's own agreement was. Agreement is never reported as support while a cheaper model matches it. |
+| `AConstructionallyTrueFieldIsNotACorrespondence` | DECLARED_DEFERRED | A compared field that is true by construction at both layers, or that duplicates another field's predicate, agrees trivially and carries no evidential weight. Such fields are named in the readout as non-discriminating rather than counted as matches. |
+| `AbsentCodedCarrierYieldsUnderpowered` | ENFORCED_AT_PROBE_PREREGISTRATION | A declared layer with no coded carrier in this tree yields `UNDERPOWERED` for every pair it enters. Absence of a measurement is never reported as agreement, as refutation, or as a reason to substitute a hand-made carrier. |
+| `FractalLawProvedIsNotAnOutput` | ENFORCED_AT_PROBE_PREREGISTRATION | The permitted outputs are exactly `SUPPORTED`, `REFUTED`, `UNDERPOWERED` and `WEAKER_MODEL_RECONSTRUCTS`. No run, corpus or aggregate may emit `FRACTAL_LAW_PROVED`, and the frozen text says so in its own words. |
+
+The frozen text lives in
+`src/alghanem/arabic/fractal_transition_hypothesis.py`, the ten pre-run items in
+`src/alghanem/arabic/fractal_transition_preregistration.py`, and the sealed
+gate in `src/alghanem/arabic/fractal_transition_readout.py`. Neither the text
+nor the preregistration may be edited now that the run has happened; a different
+reading requires a new, separately frozen preregistration.
+
 ## Encyclopedia Nucleus — Constitution
 
 The encyclopedia is an application consumer of the kernel, never a replacement
