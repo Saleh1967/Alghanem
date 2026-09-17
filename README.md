@@ -4192,6 +4192,35 @@ its count, every suspended value beside its reason, and every measured figure
 beside its limit, exiting non-zero on any drift; the measurement itself waits
 on the fingerprinted MASAQ bytes, and in their absence nothing is estimated.
 
+`src/alghanem/arabic/transition_authority.py` gathers one constraint that was
+already distributed across the tree without a common name: nothing is derived
+from a carrier except what that carrier preserves or what a licensed bridge
+permits. The module is a **gathering, not an authority** — it judges no
+transition, licenses none, and imports nothing from `kernel/`. It deposits four
+named limits plus three about itself:
+`NoDerivationBeyondTheAuthorityOfItsCarrier`;
+`AZeroShowsAnUnbuiltBridgeNotAnImpossibleOne` (a zero shows *that* bridge was
+never built, not that building it is impossible);
+`ASignIsNotItsReferentAndNeitherIsItUnrelatedToIt` (what is denied is the direct
+transition, not the relation); `FormalEncodingIsNotConceptualMeaning` (expressly
+*not* `Language != Meaning`);
+`ADerivedCrossModuleLawIsNotAnAttestedSourceLaw` (this is an Alghanem
+construction from existing constraints, not a transmitted text, not attributed
+to al-Nabhani, and it raises no row's status in `docs/CONSTITUTION.md`);
+`SupportIsACheckedInvariantNotAnImport`; and
+`TheFourLayerSeriesIsAnAlghanemComposition` (the reality/concept/lafẓ/carrier
+ordering rests on transmitted texts not yet collated against a printed source,
+so the series is neither attributed nor encoded as a vocabulary). Support is
+evidence only where it is checked: each of the five positions in
+`CARRIER_AUTHORITY_SUPPORTS` carries a probe that is run against the structural
+guard in its own module — the physical layer that cannot be constructed in
+`epistemic_layers`, the two refused derivation paths in `wad_naql`, the
+structurally excluded external-correspondence target and the unsanaded reading
+that stays معلومة in `maluma_mafhum`, and the non-invertible channel derivation
+in `dalalat_thalath`. `supported_positions()` returns only what passed;
+`unsupported_positions()` surfaces the rest rather than folding them into a
+silent count.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
