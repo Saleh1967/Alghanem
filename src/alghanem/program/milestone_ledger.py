@@ -199,6 +199,7 @@ class MilestoneOrdinal(Enum):
     FOURTEENTH = "الرابعة عشرة"
     FIFTEENTH = "الخامسة عشرة"
     SIXTEENTH = "السادسة عشرة"
+    SEVENTEENTH = "السابعة عشرة"
 
     @property
     def declaration_position(self) -> int:
