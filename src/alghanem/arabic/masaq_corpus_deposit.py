@@ -327,9 +327,7 @@ A_PERMISSION_UNEXAMINED_IS_NOT_A_PERMISSION_REFUSED_NOTE: Final[str] = (
     "حكمًا لم يقرأه فيها، وذلك عينُ ما تمنعه هذه الشجرة في الأرقام"
 )
 
-THE_READY_PATH_IS_THE_MASAQ_WITNESS_PATH_NOT_PROGRAMME_COMPLETION_NOTE: Final[
-    str
-] = (
+THE_READY_PATH_IS_THE_MASAQ_WITNESS_PATH_NOT_PROGRAMME_COMPLETION_NOTE: Final[str] = (
     "TheReadyPathIsTheMasaqWitnessPathNotProgrammeCompletion: الجاهزُ في هذه "
     "الوحدة **مسارُ شاهدٍ واحد**: استقبالُ بايتات MASAQ، والتحقّقُ من هويّتها "
     "بالطول والبصمة، وإعادةُ اشتقاق أرقامها بقواعد عدّها. وليس الجاهزُ "

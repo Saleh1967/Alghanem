@@ -419,9 +419,7 @@ def derive_preventer_findings(
         _exhaustion_finding(exhaustion_status),
         _weaker_reconstruction_finding(exhaustion_status),
         _blocking_residual_finding(closure_status),
-        _evidence_finding(
-            closure_status=closure_status, evidence_mode=evidence_mode
-        ),
+        _evidence_finding(closure_status=closure_status, evidence_mode=evidence_mode),
         _scope_finding(evidence_mode),
     ) + tuple(
         PreventerFinding(preventer=preventer, holds=True, reason=reason)

@@ -4270,6 +4270,71 @@ in `dalalat_thalath`. `supported_positions()` returns only what passed;
 `unsupported_positions()` surfaces the rest rather than folding them into a
 silent count.
 
+### Running what has not been born, without letting the run prove it was born
+
+Two authorities faced each other with nothing between them. `kernel/
+birth_certificate.py` gave the constitutional side a method that certifies and
+cannot run, and the executive side a method that runs and cannot certify, which
+settled who may do what and left no place at all to *try* a candidate. The only
+way to try one would have been to execute it and then argue from the execution
+— the exact move `ExecutiveAuthorityCannotIssueBirth` exists to refuse.
+
+`kernel/experimental.py` opens a third path. `ExperimentalAuthority.run` takes a
+declared candidate, a case set frozen before the run, one input per case, a set
+of permitted operations, and an implementation, and returns an
+`ExperimentalRunRecord` that says one thing: this declared candidate, under
+these declared conditions, produced this output — or this failure. Every other
+question is answered `False` on the record itself rather than in prose:
+`confers_birth`, `confers_validity`, `confers_constitutional_evidence`,
+`confers_identity_proof`, `confers_difference_from_origin`, `confers_necessity`.
+An implementation that raises does not escape into the caller; the exception
+becomes an `ExperimentalFailureRecord` naming the kind, the case, the message
+and the trace so far, because a failure is one of the facts the experiment
+produced. An operation the request never permitted aborts the run by name. And
+what counts as "the declared model did not account for this case" is a token
+frozen in the request *before* the run, so an output matching neither token
+fails the run instead of being reinterpreted into whichever reading suits.
+
+`kernel/experimental_comparison.py` is where the instruction-versus-rule
+question becomes answerable without being nameable. Two models are run over one
+case set compared by object identity — two separately declared case sets are
+refused, never reconciled — and `ModelContrastObservation` derives which cases
+each left unaccounted and whether one set is strictly inside the other. The
+useful direction is the negative one: if the model with fewer parts accounts for
+everything, the status reads `NO_DIFFERENCE_OBSERVED` and there is nothing for a
+richer candidate to be necessary for. When the richer model does close strictly
+more, `confers_necessity` is still `False`, and both models are opaque strings,
+so no contrast decided here can announce which genus won.
+`ReplayObservation` reads whether repeated runs agreed, and denies
+reproducibility in the same breath: agreement inside one process is not the
+independent second measurement run that `SyntheticInterventionMayGenerateHypothesisOnly`
+requires.
+
+`kernel/experimental_evidence_gate.py` is the single door out, and it is
+deliberately narrow. `offer` derives its four admission conditions — scope equal
+to the frozen experiment's own domain read from the binding, a replay covering
+this very record whose outputs, traces and statuses agreed, a trace, and a
+payload canonically encoded from the record rather than written by the caller —
+and issues no `AuthorizedEvidenceSnapshot` at all. The payload must still travel
+the whole G0.2a.3 chain, authorization to run to `ingest`, to become assessable,
+which leaves `FrozenExperimentPrecedesAuthorizedEvidenceIngestion` exactly where
+it was. A failed run may be offered and is marked as such, because dropping
+failures at the door would make the record of an experiment better than the
+experiment was.
+
+The isolation is authority isolation, and the module says so rather than
+implying more: `CapturedFailure != SandboxedExecution`, and nothing here
+restricts filesystem, network, memory or time. Two sweeps hold the paths apart.
+`experimental` and `experimental_comparison` import nothing from the birth,
+verdict, certificate, closure, survival or acquisition modules; no kernel module
+outside the gate imports any experimental type; and a test asserts that the
+surfaces of `ConstitutionalBirthAuthority`, `ExecutiveAdmissionGate` and
+`BirthVerdictGate` gained nothing. The named laws are collected in
+`docs/CONSTITUTION.md` under `G0.EX`, and the short form of all of them is
+`ExperimentalSuccess != Birth` and `ExperimentalFailure != NoBirth`.
+`examples/kernel/contrast_two_models.py` runs the contrast end to end and prints,
+as its last line, that no birth occurred.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest

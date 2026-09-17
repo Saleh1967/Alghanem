@@ -326,9 +326,7 @@ def test_no_verdict_status_other_than_birth_in_scope_may_be_certified() -> None:
 
 
 def test_a_surviving_residual_without_exhaustion_produces_no_certificate() -> None:
-    closure = closure_decision(
-        UNDETERMINED_EXHAUSTION, ResidualSurvivalStatus.SURVIVES
-    )
+    closure = closure_decision(UNDETERMINED_EXHAUSTION, ResidualSurvivalStatus.SURVIVES)
     assessment = ConstitutionalBirthAuthority(authority_id="authority").assess(
         assessment_id="assessment", verdict=verdict_for(closure), closure=closure
     )
@@ -408,7 +406,9 @@ def test_the_authority_refuses_inputs_that_are_not_gate_issued() -> None:
     authority = ConstitutionalBirthAuthority(authority_id="authority")
     with pytest.raises(BirthCertificateAuthorityError):
         authority.assess(
-            assessment_id="a", verdict=None, closure=closure  # type: ignore[arg-type]
+            assessment_id="a",
+            verdict=None,
+            closure=closure,  # type: ignore[arg-type]
         )
     with pytest.raises(BirthCertificateAuthorityError):
         authority.assess(
