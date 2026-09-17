@@ -143,6 +143,7 @@ from .experimental import (
     ExperimentalFailureRecord,
     ExperimentalOperationRef,
     ExperimentalOutcomeStatus,
+    ExperimentalRunContext,
     ExperimentalRunRecord,
     ExperimentalRunRequest,
 )
@@ -156,8 +157,21 @@ from .experimental_comparison import (
 )
 from .experimental_evidence_gate import (
     EXPERIMENTAL_EVIDENCE_NAMED_LAWS,
+    CanonicalExperimentalEvidenceEncoder,
+    CanonicalExperimentalEvidenceManifest,
     ExperimentalEvidenceGate,
     ExperimentalEvidenceOffer,
+)
+from .experimental_request_content_identity import (
+    EXPERIMENTAL_REQUEST_IDENTITY_NAMED_LAWS,
+    CanonicalExperimentalRunRequestEncoder,
+    CanonicalExperimentalRunRequestManifest,
+    ExperimentalRunRequestContentIdentity,
+)
+from .experimental_run_binding import (
+    EXPERIMENTAL_BINDING_NAMED_LAWS,
+    BoundExperimentalRunRequest,
+    ExperimentalRunBindingAuthority,
 )
 from .fractal import (
     BornBridgeRef,
@@ -253,9 +267,11 @@ from .weaker_model_exhaustion import (
 )
 
 __all__ = [
+    "EXPERIMENTAL_BINDING_NAMED_LAWS",
     "EXPERIMENTAL_COMPARISON_NAMED_LAWS",
     "EXPERIMENTAL_EVIDENCE_NAMED_LAWS",
     "EXPERIMENTAL_NAMED_LAWS",
+    "EXPERIMENTAL_REQUEST_IDENTITY_NAMED_LAWS",
     "Anchor",
     "ApplicabilityAssessmentGate",
     "ApplicabilityAssessmentSpecification",
@@ -303,6 +319,7 @@ __all__ = [
     "BirthVerdictScopeRegistry",
     "BirthVerdictStatus",
     "BornBridgeRef",
+    "BoundExperimentalRunRequest",
     "BranchOriginProvenance",
     "CanonicalBirthExperimentSpecificationEncoder",
     "CanonicalBirthExperimentSpecificationManifest",
@@ -314,6 +331,10 @@ __all__ = [
     "CanonicalEvaluatorInputDerivationManifest",
     "CanonicalEvidenceContentEncoder",
     "CanonicalEvidenceContentManifest",
+    "CanonicalExperimentalEvidenceEncoder",
+    "CanonicalExperimentalEvidenceManifest",
+    "CanonicalExperimentalRunRequestEncoder",
+    "CanonicalExperimentalRunRequestManifest",
     "CanonicalResidualDefinitionManifest",
     "CanonicalTransitionEncoder",
     "CanonicalTransitionManifest",
@@ -371,8 +392,11 @@ __all__ = [
     "ExperimentalOperationRef",
     "ExperimentalOutcomeStatus",
     "ExperimentalReplayAuthority",
+    "ExperimentalRunBindingAuthority",
+    "ExperimentalRunContext",
     "ExperimentalRunRecord",
     "ExperimentalRunRequest",
+    "ExperimentalRunRequestContentIdentity",
     "FractalContractError",
     "FractalProvenancePath",
     "FractalSnapshot",

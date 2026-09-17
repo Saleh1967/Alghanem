@@ -153,7 +153,9 @@ def test_no_branch_of_a_record_confers_birth_validity_or_evidence() -> None:
         bound_request=bound(),
         implementation=implementation_for(frozenset()),
     )
-    failed = authority.run(run_id="failed", bound_request=bound(), implementation=raising)
+    failed = authority.run(
+        run_id="failed", bound_request=bound(), implementation=raising
+    )
 
     for record in (completed, failed):
         assert record.confers_birth is False
@@ -199,7 +201,9 @@ def test_an_implementation_that_raises_becomes_a_failure_rather_than_an_exceptio
     ) -> tuple[str, Trace]:
         raise ValueError("no")
 
-    record = authority.run(run_id="run-1", bound_request=bound(), implementation=raising)
+    record = authority.run(
+        run_id="run-1", bound_request=bound(), implementation=raising
+    )
 
     assert record.outcome_status is ExperimentalOutcomeStatus.FAILED
     assert record.failure is not None

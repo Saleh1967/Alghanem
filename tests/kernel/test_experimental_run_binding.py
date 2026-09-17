@@ -28,13 +28,13 @@ from alghanem.kernel.experimental import (
 )
 from alghanem.kernel.experimental_comparison import ExperimentalReplayAuthority
 from alghanem.kernel.experimental_evidence_gate import ExperimentalEvidenceGate
+from alghanem.kernel.experimental_request_content_identity import (
+    request_content_digest,
+)
 from alghanem.kernel.experimental_run_binding import (
     EXPERIMENTAL_BINDING_NAMED_LAWS,
     BoundExperimentalRunRequest,
     ExperimentalRunBindingAuthority,
-)
-from alghanem.kernel.experimental_request_content_identity import (
-    request_content_digest,
 )
 from alghanem.kernel.trace import Trace
 
@@ -144,7 +144,9 @@ def test_one_experiment_name_across_two_revisions_is_two_experiments() -> None:
 
 def test_a_record_of_another_run_is_refused_against_this_binding() -> None:
     authority = ExperimentalRunBindingAuthority(authority_id="binding")
-    first = bound(request(cases=case_set()), binding_id="binding-1", authority=authority)
+    first = bound(
+        request(cases=case_set()), binding_id="binding-1", authority=authority
+    )
     other = bound(
         request(cases=case_set(("c1", "c2"))),
         binding_id="binding-2",

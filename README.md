@@ -4280,24 +4280,32 @@ way to try one would have been to execute it and then argue from the execution
 — the exact move `ExecutiveAuthorityCannotIssueBirth` exists to refuse.
 
 `kernel/experimental.py` opens a third path. `ExperimentalAuthority.run` takes a
-declared candidate, a case set frozen before the run, one input per case, a set
-of permitted operations, and an implementation, and returns an
-`ExperimentalRunRecord` that says one thing: this declared candidate, under
-these declared conditions, produced this output — or this failure. Every other
+*bound* run request — a declared candidate, a case set frozen before the run,
+one input per case, a set of permitted operations, already tied to one frozen
+experiment — and an implementation, and returns an `ExperimentalRunRecord` that
+says one thing: this declared candidate, under these declared conditions,
+produced this output — or this failure. Every other
 question is answered `False` on the record itself rather than in prose:
 `confers_birth`, `confers_validity`, `confers_constitutional_evidence`,
 `confers_identity_proof`, `confers_difference_from_origin`, `confers_necessity`.
 An implementation that raises does not escape into the caller; the exception
 becomes an `ExperimentalFailureRecord` naming the kind, the case, the message
 and the trace so far, because a failure is one of the facts the experiment
-produced. An operation the request never permitted aborts the run by name. And
-what counts as "the declared model did not account for this case" is a token
+produced. An operation is reachable only through `ExperimentalRunContext`, the capability
+the authority issues for the case being run: an unpermitted id is refused
+*before* the action runs, the refusal is raised as a `BaseException` so an
+implementation's own `except Exception` cannot swallow it, the run aborts by
+name, and the capability is revoked when its case ends. The authority alone
+writes the run's `operation:` events, so an implementation that writes one into
+its own trace fails the run instead of being believed —
+`UnpermittedOperationCannotExecute` rather than *reported operations are
+audited*. And what counts as "the declared model did not account for this case" is a token
 frozen in the request *before* the run, so an output matching neither token
 fails the run instead of being reinterpreted into whichever reading suits.
 
 `kernel/experimental_comparison.py` is where the instruction-versus-rule
 question becomes answerable without being nameable. Two models are run over one
-case set compared by object identity — two separately declared case sets are
+case set compared by canonical content digest — two different case sets are
 refused, never reconciled — and `ModelContrastObservation` derives which cases
 each left unaccounted and whether one set is strictly inside the other. The
 useful direction is the negative one: if the model with fewer parts accounts for
@@ -4310,28 +4318,62 @@ reproducibility in the same breath: agreement inside one process is not the
 independent second measurement run that `SyntheticInterventionMayGenerateHypothesisOnly`
 requires.
 
+`kernel/experimental_request_content_identity.py` answers one question for the
+whole path: when are two experimental artifacts *the same artifact*? By one
+rule — the canonical content digest of every declared field, each case input
+included, taken over `alghanem.canonical_content`, the repository's single
+canonicalization primitive. That closes the earlier split in which a contrast
+compared case sets by Python object identity while a replay compared requests
+by dataclass equality, so two artifacts could be the same for one authority and
+different for another.
+
+`kernel/experimental_run_binding.py` answers the other: *which* frozen
+experiment is a run a run of? `ExperimentalRunBindingAuthority.bind` ties one
+request's content id to one frozen experiment's content id before anything
+runs, and `ExperimentalAuthority.run` accepts nothing else. A domain holds many
+experiments and an experiment id holds many revisions, so reading the domain
+alone would let a record produced under one experiment be offered against
+another — and the offer's trace would then name an experiment the run had never
+touched. Hence `SameDomain != SameExperiment` and
+`SameExperimentName != SameFrozenContent`. A binding confers nothing:
+`confers_authorized_evidence`, `confers_birth` and `confers_necessity` are all
+structurally `False`, because it makes a run attributable, never admissible.
+
 `kernel/experimental_evidence_gate.py` is the single door out, and it is
-deliberately narrow. `offer` derives its four admission conditions — scope equal
-to the frozen experiment's own domain read from the binding, a replay covering
-this very record whose outputs, traces and statuses agreed, a trace, and a
-payload canonically encoded from the record rather than written by the caller —
-and issues no `AuthorizedEvidenceSnapshot` at all. The payload must still travel
+deliberately narrow. `offer` derives its admission conditions — the bound
+request the record was produced from, a binding whose content id is the very
+one that request was bound to, the record's own request content digest, scope
+equal to the frozen experiment's own domain read from the binding, a replay
+covering this very record whose outputs, traces and statuses agreed, a trace,
+and a canonical manifest encoded from the record rather than written by the
+caller — and issues no `AuthorizedEvidenceSnapshot` at all. The manifest is
+structural rather than delimiter-joined, and carries the request identity, the
+candidate declaration, the case set, every case input, the permitted
+operations, the outcome vocabulary, the outputs or the failure, the trace, the
+replay and contrast readings, and the frozen experiment's content id — so two
+different observations cannot encode to one payload, which joined text could
+not guarantee. The payload must still travel
 the whole G0.2a.3 chain, authorization to run to `ingest`, to become assessable,
 which leaves `FrozenExperimentPrecedesAuthorizedEvidenceIngestion` exactly where
 it was. A failed run may be offered and is marked as such, because dropping
 failures at the door would make the record of an experiment better than the
 experiment was.
 
-The isolation is authority isolation, and the module says so rather than
-implying more: `CapturedFailure != SandboxedExecution`, and nothing here
-restricts filesystem, network, memory or time. Two sweeps hold the paths apart.
+The isolation is authority isolation and capability mediation, and the module
+says so rather than implying more: `CapturedFailure != SandboxedExecution`,
+mediation is not confinement, and nothing here restricts filesystem, network,
+memory or time. An ambient effect taken without asking the capability is not
+refused — it is simply not seen, which is why the sandbox remains a declared,
+deferred milestone. Two sweeps hold the paths apart.
 `experimental` and `experimental_comparison` import nothing from the birth,
 verdict, certificate, closure, survival or acquisition modules; no kernel module
 outside the gate imports any experimental type; and a test asserts that the
 surfaces of `ConstitutionalBirthAuthority`, `ExecutiveAdmissionGate` and
 `BirthVerdictGate` gained nothing. The named laws are collected in
 `docs/CONSTITUTION.md` under `G0.EX`, and the short form of all of them is
-`ExperimentalSuccess != Birth` and `ExperimentalFailure != NoBirth`.
+`ExperimentalSuccess != Birth`, `ExperimentalFailure != NoBirth`, and
+`ExperimentalEvidenceOffer = BoundRun + FrozenExperimentContentIdentity +
+CanonicalObservedPayload`.
 `examples/kernel/contrast_two_models.py` runs the contrast end to end and prints,
 as its last line, that no birth occurred.
 

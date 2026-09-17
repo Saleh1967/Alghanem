@@ -4,8 +4,13 @@ A reference script with no authority: it certifies nothing, freezes nothing,
 and issues no verdict. It runs the third path (`G0.EX`) end to end so that the
 boundary can be watched rather than read --
 
-    Candidate -> ExperimentalRun -> ObservedResult -> Contrast -> Replay
-    -> ExperimentalEvidenceOffer -> [the acquisition chain, elsewhere]
+    Candidate -> BoundRunRequest -> ExperimentalRun -> ObservedResult
+    -> Contrast -> Replay -> ExperimentalEvidenceOffer
+    -> [the acquisition chain, elsewhere]
+
+Each request is bound to one frozen experiment's own content id *before* it
+runs, because a domain may hold many experiments and an experiment id many
+revisions: `SameDomain != SameExperiment`.
 
 The two models are opaque strings on purpose. One declares fewer parts than the
 other, and whether that difference matters is decided by which cases each fails
@@ -20,16 +25,27 @@ from __future__ import annotations
 from typing import Final
 
 from alghanem.kernel import (
+    BirthExperimentSpecification,
+    BirthExperimentSpecificationContentBinding,
+    BirthQuery,
+    BoundExperimentalRunRequest,
+    CanonicalBirthExperimentSpecificationEncoder,
     DeclaredCaseSet,
+    EvidenceMode,
     ExperimentalAuthority,
     ExperimentalCandidateDeclaration,
     ExperimentalCaseOutcomeVocabulary,
     ExperimentalContrastAuthority,
     ExperimentalOperationRef,
     ExperimentalReplayAuthority,
+    ExperimentalRunBindingAuthority,
+    ExperimentalRunContext,
     ExperimentalRunRecord,
     ExperimentalRunRequest,
     ModelContrastStatus,
+    PreEvidenceSpecificationRegistry,
+    ProjectionPoset,
+    StructureHypothesis,
     Trace,
 )
 
@@ -65,30 +81,77 @@ def request_for(model_ref: str) -> ExperimentalRunRequest:
     )
 
 
-def model(unaccounted: frozenset[str]) -> object:
-    """A model that fails to account for exactly the named cases."""
+def frozen_experiment() -> BirthExperimentSpecificationContentBinding:
+    """One pre-evidence experiment, frozen before anything is run against it."""
 
-    def implementation(input_content: str) -> tuple[str, Trace]:
+    specification = BirthExperimentSpecification(
+        experiment_id="experiment:is-a-richer-model-necessary",
+        revision_id="r1",
+        revision_sequence=1,
+        evidence_mode=EvidenceMode.FORMAL,
+        domain="example-domain",
+        projection_poset=ProjectionPoset(
+            ("count", "sequence"), (("count", "sequence"),)
+        ),
+        birth_query=BirthQuery(
+            "query",
+            StructureHypothesis("structure", "a richer structure is necessary"),
+            "sequence",
+        ),
+        residual_definition_id="residual",
+        residual_definition="a case the declared model does not account for",
+        closure_criterion_id="closure",
+        closure_criterion="the weaker model leaves a case unaccounted",
+        evidence_requirements="exhaustive reading over the frozen case set",
+    )
+    frozen = PreEvidenceSpecificationRegistry().freeze(
+        CanonicalBirthExperimentSpecificationEncoder.encode(specification)
+    )
+    return BirthExperimentSpecificationContentBinding(specification, frozen)
+
+
+def model(unaccounted: frozenset[str]) -> object:
+    """A model that fails to account for exactly the named cases.
+
+    The operation is reached through the capability the authority issued for
+    this case, which refuses an unpermitted one before it can run and writes
+    the run's own operation event itself.
+    """
+
+    def implementation(
+        context: ExperimentalRunContext, input_content: str
+    ) -> tuple[str, Trace]:
         case_id = input_content.removeprefix("input:")
         token = UNACCOUNTED if case_id in unaccounted else ACCOUNTED
-        return token, Trace(("operation:apply", f"read:{case_id}"))
+        context.invoke("apply", lambda: None)
+        return token, Trace((f"read:{case_id}",))
 
     return implementation
 
 
 def run() -> ModelContrastStatus:
     authority = ExperimentalAuthority(authority_id="example-laboratory")
-    simpler = request_for("model-a:fewer-declared-parts")
-    richer = request_for("model-b:more-declared-parts")
+    binding_authority = ExperimentalRunBindingAuthority(authority_id="example-binding")
+    experiment = frozen_experiment()
+    simpler: BoundExperimentalRunRequest = binding_authority.bind(
+        binding_id="binding:model-a",
+        request=request_for("model-a:fewer-declared-parts"),
+        binding=experiment,
+    )
+    richer: BoundExperimentalRunRequest = binding_authority.bind(
+        binding_id="binding:model-b",
+        request=request_for("model-b:more-declared-parts"),
+        binding=experiment,
+    )
 
     record_a: ExperimentalRunRecord = authority.run(
         run_id="run:model-a",
-        request=simpler,
+        bound_request=simpler,
         implementation=model(frozenset({"case-3", "case-4"})),  # type: ignore[arg-type]
     )
     record_b: ExperimentalRunRecord = authority.run(
         run_id="run:model-b",
-        request=richer,
+        bound_request=richer,
         implementation=model(frozenset({"case-4"})),  # type: ignore[arg-type]
     )
 
@@ -101,7 +164,7 @@ def run() -> ModelContrastStatus:
             record_b,
             authority.run(
                 run_id="run:model-b-again",
-                request=richer,
+                bound_request=richer,
                 implementation=model(frozenset({"case-4"})),  # type: ignore[arg-type]
             ),
         ),

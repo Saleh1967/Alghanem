@@ -44,9 +44,7 @@ def test_the_identity_is_derived_from_the_complete_request_content() -> None:
 
     assert type(identity) is ExperimentalRunRequestContentIdentity
     assert identity.algorithm == CANONICAL_HASH_ALGORITHM
-    assert identity.canonicalization_version == (
-        "experimental-run-request-manifest-v1"
-    )
+    assert identity.canonicalization_version == ("experimental-run-request-manifest-v1")
     assert (
         require_content_digest(identity.digest, "request content digest")
         == identity.digest
@@ -86,9 +84,7 @@ def test_every_declared_field_changes_the_identity() -> None:
         ExperimentalRunRequest(
             candidate=base.candidate,
             case_set=base.case_set,
-            inputs=tuple(
-                (case_id, f"other:{case_id}") for case_id, _ in base.inputs
-            ),
+            inputs=tuple((case_id, f"other:{case_id}") for case_id, _ in base.inputs),
             permitted_operations=base.permitted_operations,
             case_outcome_vocabulary=base.case_outcome_vocabulary,
         ),
@@ -135,14 +131,12 @@ def test_a_flat_encoding_collision_is_not_a_content_identity() -> None:
             case_outcome_vocabulary=vocabulary(),
         )
 
-    assert request_content_digest(
-        with_conditions(("a|b",))
-    ) != request_content_digest(with_conditions(("a", "b")))
+    assert request_content_digest(with_conditions(("a|b",))) != request_content_digest(
+        with_conditions(("a", "b"))
+    )
     assert case_set_content_digest(
         DeclaredCaseSet(case_set_id="s", case_ids=("a|b",))
-    ) != case_set_content_digest(
-        DeclaredCaseSet(case_set_id="s", case_ids=("a", "b"))
-    )
+    ) != case_set_content_digest(DeclaredCaseSet(case_set_id="s", case_ids=("a", "b")))
 
 
 def test_a_case_set_identity_reads_content_and_not_object_identity() -> None:

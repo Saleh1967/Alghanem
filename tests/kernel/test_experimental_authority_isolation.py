@@ -14,6 +14,8 @@ from alghanem.kernel import (
     experimental,
     experimental_comparison,
     experimental_evidence_gate,
+    experimental_request_content_identity,
+    experimental_run_binding,
 )
 from alghanem.kernel.birth_certificate import (
     ConstitutionalBirthAuthority,
@@ -25,7 +27,13 @@ from alghanem.kernel.experimental import ExperimentalAuthority, ExperimentalRunR
 
 KERNEL_ROOT = Path(alghanem.__file__).parent / "kernel"
 EXPERIMENTAL_MODULE_NAMES = frozenset(
-    {"experimental", "experimental_comparison", "experimental_evidence_gate"}
+    {
+        "experimental",
+        "experimental_comparison",
+        "experimental_evidence_gate",
+        "experimental_request_content_identity",
+        "experimental_run_binding",
+    }
 )
 FORBIDDEN_UPSTREAM_IMPORTS = frozenset(
     {
@@ -68,10 +76,29 @@ def test_no_kernel_module_outside_the_gate_reads_the_experimental_path() -> None
 
 
 def test_the_experimental_core_reads_nothing_of_the_birth_path() -> None:
-    for module_name in ("experimental", "experimental_comparison"):
+    for module_name in (
+        "experimental",
+        "experimental_comparison",
+        "experimental_request_content_identity",
+    ):
         imported = imported_kernel_modules(KERNEL_ROOT / f"{module_name}.py")
 
         assert not imported & FORBIDDEN_UPSTREAM_IMPORTS
+
+
+def test_the_identity_module_reads_only_the_experimental_core() -> None:
+    imported = imported_kernel_modules(
+        KERNEL_ROOT / "experimental_request_content_identity.py"
+    )
+
+    assert imported == {"experimental"}
+
+
+def test_the_binding_authority_reads_the_frozen_experiment_and_no_acquisition() -> None:
+    imported = imported_kernel_modules(KERNEL_ROOT / "experimental_run_binding.py")
+
+    assert "experiment_spec_content_identity" in imported
+    assert not imported & FORBIDDEN_UPSTREAM_IMPORTS
 
 
 def test_the_gate_reads_only_the_frozen_binding_and_never_the_acquisition_chain() -> (
@@ -91,6 +118,10 @@ def test_the_three_authority_surfaces_gained_nothing_from_this_milestone() -> No
     assert surface(ExecutiveAdmissionGate) == {"admit"}
     assert surface(BirthVerdictGate) == {"assess"}
     assert surface(ExperimentalAuthority) == {"authority_id", "run"}
+    assert surface(experimental_run_binding.ExperimentalRunBindingAuthority) == {
+        "authority_id",
+        "bind",
+    }
 
 
 def test_an_experimental_record_is_not_an_executable_entity() -> None:
@@ -102,3 +133,7 @@ def test_the_experimental_modules_declare_their_own_named_laws() -> None:
     assert experimental.EXPERIMENTAL_NAMED_LAWS
     assert experimental_comparison.EXPERIMENTAL_COMPARISON_NAMED_LAWS
     assert experimental_evidence_gate.EXPERIMENTAL_EVIDENCE_NAMED_LAWS
+    assert (
+        experimental_request_content_identity.EXPERIMENTAL_REQUEST_IDENTITY_NAMED_LAWS
+    )
+    assert experimental_run_binding.EXPERIMENTAL_BINDING_NAMED_LAWS

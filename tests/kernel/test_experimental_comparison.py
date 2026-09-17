@@ -171,9 +171,7 @@ def test_the_weaker_model_may_also_close_the_strict_superset() -> None:
     assert observation.status is ModelContrastStatus.A_CLOSES_STRICT_SUPERSET
 
 
-def test_runs_over_two_different_case_sets_are_refused_rather_than_reconciled() -> (
-    None
-):
+def test_runs_over_two_different_case_sets_are_refused_rather_than_reconciled() -> None:
     authority = ExperimentalAuthority(authority_id="lab")
     first = run_for(
         authority,
@@ -198,9 +196,7 @@ def test_runs_over_two_different_case_sets_are_refused_rather_than_reconciled() 
         )
 
 
-def test_two_separately_declared_but_content_equal_case_sets_are_one_case_set() -> (
-    None
-):
+def test_two_separately_declared_but_content_equal_case_sets_are_one_case_set() -> None:
     """`OneContentIdentityLawForSameness`: sameness is content, not object id."""
 
     authority = ExperimentalAuthority(authority_id="lab")
