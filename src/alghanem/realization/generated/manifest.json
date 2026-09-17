@@ -1,0 +1,15 @@
+{
+  "artifacts": {
+    "artifacts": [
+      {
+        "content_id": "a4c95d6a475c8f2551d0878ff9f0ab39a3f21af82df787b4f294651348a7944f",
+        "relative_path": "sigma_a_reference.py"
+      }
+    ]
+  },
+  "backend_id": "g_py",
+  "generator_digest": "f03c08880b9eb98945f0d0022567a6c17478035b9505a7f95f9ce4d4ed954475",
+  "schema_digest": "25bc5177afc46488e299c1639d4a0baf5ec23c679c67efb3e27aab60b6177826",
+  "sigma_digest": "0f1b42a4172b9275f1b0739304851dfcd6ca335a65de0d8af0ef84bbc424e0ac",
+  "target_language": "python"
+}
