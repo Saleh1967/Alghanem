@@ -408,6 +408,38 @@ These are boundary commitments, not a frozen ontology or closed primitive tuple.
     it, and none may be introduced on the strength of this observation alone.
     A recurrence of phrasing is not proof of a shared underlying structure; the
     recurrence itself is what has yet to be explained.
+- `NisbahSortBelongsToSchemaOrSpecificationNotDecided`
+  - Status: `OPEN`
+  - Question: the text deposited at `G0.NSB-0` proposes that `TermAnchor`,
+    `Predicate`, `Operator`, `ArgumentSlot`, `Nisbah`, `Constraint` and
+    `RelationalClosure` become sorts of the meta-algebra alongside `Layer`,
+    `Transition` and `Realization`. Are they sorts of `Σ_M` — part of what it
+    *means* to be a linguistic structure — or structures of a particular `Σ_A`
+    written in that language?
+  - Two distinct sub-shapes, not one: the deposit answers neither branch and
+    refuses the pair as a false dichotomy, opening a third level `Σ_L` between
+    them under `ThreeLevelsAreNotTwo`. So two questions are folded here under
+    one name: the original either/or, which the deposit declines, and the third
+    level's own warrant, which is untested. `Σ_L` earns its place only if the
+    registered negative controls, once run on a named held-out corpus, are not
+    tied by a weaker representation.
+  - Note: `A_SCHEMA_IS_NOT_A_SPECIFICATION`
+    forbids a particular theory inside the language of the algebra, and a
+    schema carrying one instance is a schema that has turned into a theory whose
+    shape then constrains every theory written after it. Admitting these sorts
+    on the strength of a text nobody has tested would do exactly that, so the
+    question cannot be settled by preference.
+  - Standing evidence: none either way. `Carrier/State` is a sort-level
+    commitment that survived a preregistered negative control in `G0.FLT-1.Q`
+    and produced a mixed first reading; the nisbah nucleus has produced no
+    reading at all. Its negative controls are now registered and frozen, and
+    every one of them is held unrunnable until a held-out corpus is named, so
+    the registration adds no evidence on either branch.
+  - Not decided here: this question is recorded, not answered.
+    `META_ALGEBRA_SCHEMA` keeps its four sorts and its digest, no sort is added,
+    and no authority in this repository may add one on the strength of this
+    entry. `Σ_L` is a separate nucleus built on the digest of `Σ_M` and sharing
+    no sort name with it; standing beside the meta-algebra is not entering it.
 
 ### TheoreticalProgramBeforePostAlgebraicAudit
 
@@ -1964,6 +1996,62 @@ committed after both — is `src/alghanem/arabic/flt1_qiyas_readout.py`. Lifting
 `Minimality` out of `UNDERPOWERED` requires a reconstruction target that does
 not come from the syllabifier; that, and not a larger corpus, is what `G0.FLT-2`
 must obtain first.
+
+## G0.NSB-0 — `Σ_L`, the general linguistic nucleus (deposit and registration only)
+
+`G0.FLT-1` and `G0.FLT-1.Q` both treat a licensed `Carrier/State` pair as the
+lower centre. The hypothesis deposited here disputes that pair's *rank* rather
+than its content: `Representation(x) = (Carrier, State)` answers *how an entity
+exists in the system*, and the text argues that a second, independent question —
+*what does this entity do as language?* — is not answerable from it. Its own
+summary keeps both: `LinguisticObject(x) = Representation(x) + RelationalRole(x)`.
+
+The question "is the nisbah a sort of `Σ_M` or a structure of some `Σ_A`?" is
+refused here as a false dichotomy rather than answered. The claim "language is a
+system for establishing nisab" is more general than Arabic and more specific
+than a law of representation, so it fits neither end. The deposit therefore
+opens a third level between them:
+
+```
+Σ_M (representation)  ->  Σ_L (relation)  ->  Σ_AR (Arabic instantiation)
+```
+
+and the three fail independently: a refuted nisbah claim does not refute the law
+of representation, and a refuted Arabic instantiation does not refute `Σ_L`.
+
+The dependency runs one way and is checked rather than described:
+`metaalgebra -> linguistic -> arabic`. No module under `src/alghanem/linguistic/`
+imports `arabic/`, `kernel/` or the generated tree, and `metaalgebra/` imports
+nothing from `linguistic/`; `src/alghanem/arabic/nisbah_relativization.py` is the
+single site where the two levels meet, and it is the Arabic layer that reaches
+up, never the nucleus that reaches down.
+
+No result is read here. `Σ_L` declares no Arabic term, no `Agent` and no
+`Patient`, carries no corpus, computes no score, and no module in `kernel/` reads
+it. The negative controls that would make the claim falsifiable are registered
+and deliberately not run: the run awaits a held-out corpus that entered neither
+the hypothesis nor the earlier `G0.FLT` experiments.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `ThreeLevelsAreNotTwo` | ENFORCED_AT_LINGUISTIC_NUCLEUS | `Σ_M`, `Σ_L` and `Σ_AR` are three independently falsifiable levels, not two with a disputed boundary. `Σ_L` is built on the *digest* of `Σ_M` rather than its name, so a nucleus pointing at any other language of the algebra is refused at construction, and `LinguisticSortsAreNotMetaSorts` refuses at import any sort name shared between the two levels — a shared name would restore the very merge this level exists to prevent. |
+| `RelativizationIsNotCompetition` | ENFORCED_AT_LINGUISTIC_NUCLEUS | Ranking a standing result is not refuting it. `G0.FLT-1.Q` keeps its letter, its digest and its read result; there is no `SupersessionRecord` here — a result has been read, and `SupersessionIsNotEditing` licenses an exchange only before that — and no competing-statement record either. `OnlyADemonstratedContradictionCompetes`: while the two answer different questions there is no conflict, and a relativization record that declares a contradiction is refused at construction, because a demonstrated contradiction demands a record of a different kind that no authority in this tree issues. |
+| `RelationIsNotRepresentation` | ENFORCED_AT_LINGUISTIC_NUCLEUS | The counterpart of `CarrierIsNotState` one level up, enforced on field *types* rather than field names: `RepresentationRef` and `RelationalRoleRef` are disjoint types, neither may hold a field of the other's type, and the separation is checked at import. Burying a role inside a representation is therefore unsayable rather than refused after the fact, since a name can be changed while the structure stays merged. `RelationalRole.UNREAD` is a declared member, so an unread role is never read as an absent one. |
+| `TermAnchorIsWiderThanGenus` | ENFORCED_AT_LINGUISTIC_NUCLEUS | `زيد`, `هذا`, `أنا`, `خمسة رجال` are identity-preserving terms without being genera in the strict logical sense, so the general primitive is `TermAnchor` and genus is one of its branches. The five named branches are `CandidateBranchIsNotABornKind`: declared candidates awaiting a test, never patterns named before the experiment that would birth them. |
+| `ArityMustBeLicensedBeforeUse` | ENFORCED_AT_LINGUISTIC_NUCLEUS | A predicate's arity may come from a prior specification, a lexical source, a prior proof, or an independent pre-frozen derivation. Exactly one path is refused by name and at construction: reading the arity off the *target case* after seeing it and then using it to establish that case. The refused path is a declared member of the vocabulary rather than an unwritten assumption, so it fails loudly instead of passing under a general name. |
+| `ArgumentRolesAreDeferredToTheirOwnLayer` | DECLARED_DEFERRED | `ArgumentSlot` is a primitive position with no semantic name. No `Agent`, `Patient`, `Cause` or `Result` exists in this nucleus, and naming a slot with one is refused at construction. This keeps `NoPatternNameBeforeIndependentBirth`, and it keeps faith with the standing deferral of `CompoundStage.قيم_النسبة`, which is held open for want of a source text. |
+| `ArgumentFillingIsNotClosure` | ENFORCED_AT_LINGUISTIC_NUCLEUS | Relational closure is five components together — arguments closed, operators scoped, constraints licensed, references resolved, no residual active across the boundary. Filling every argument slot is one fifth of the condition, not the condition. Coverage is exact or refused, on the pattern of the kernel's invariant gate: all five are assessed, a missing or duplicated component is refused, and assessment never stops at the first failure, so every failing component is named. |
+| `RelationalClosureIsNotIfadah` | ENFORCED_AT_LINGUISTIC_NUCLEUS | Closure yields `PreIfadahClosure` and nothing more; ifādah additionally needs a licensed force and the context it requires, which is why `هل قام زيد؟` has a complete nisbah and asserts nothing. `IfadaVocabularyIsNotDuplicated`: the existing `IfadaStanding` in the Arabic layer stays the only such vocabulary, and the one-way derivation from closure to standing belongs to `Σ_AR`, since building it here would both invert the dependency and create a second copy of one list. |
+| `NoConcreteNisbahInTheNucleus` | ENFORCED_AT_LINGUISTIC_NUCLEUS | `Σ_L` says what it *means* to be a term, a predicate or a nisbah, and carries no particular one. A nucleus holding a single instance is a nucleus that has turned into a theory whose shape then constrains every theory written after it — the same refusal `A_SCHEMA_IS_NOT_A_SPECIFICATION` makes one level down. |
+| `RegistrationIsNotARun` | ENFORCED_AT_LINGUISTIC_NUCLEUS | The weaker representations that must defeat the claim, and the independence conditions a corpus must meet, are frozen now; no corpus is named, no score computed, no reading emitted. `TheCorpusIsNamedBeforeTheResult` holds the run open until a held-out set is named that entered neither this hypothesis nor the earlier `G0.FLT` experiments, and `AWeakerRepresentationThatTiesDefeatsTheClaim` is reused rather than reinvented: a tie by the carrier alone, the state alone, or an unordered pair defeats the claim, and superiority of the weaker model is not required. |
+| `VerbatimFidelityIsCheckedNotPromisedForTheNisbahText` | ENFORCED_AT_LINGUISTIC_NUCLEUS | `VerbatimFidelityIsCheckedNotPromised` (G0.FLT-1) is reused rather than restated, and this row records only that it was discharged here: the decisive notation sites of the deposited text are enumerated one by one, their presence derived from the text at import, and the fidelity report is inspectable before any reader exists. A missing site makes the deposit unfit to be read rather than a formatting matter. The text is also marked an internal hypothesis rather than a transmitted source, so nothing here may be cited as naql. |
+| `NoReadoutExistsForNSB0Yet` | ENFORCED_AT_LINGUISTIC_NUCLEUS | The deposit carries the frozen text, the nucleus, the relativization record and the registration of negative controls only. It issues no birth, no verdict, no freeze and no `E0`, and a test asserts that no `kernel/` module reads it. |
+
+The nucleus is `src/alghanem/linguistic/` (`hypothesis`, `role`, `nisbah`,
+`closure`, `schema`, `relativization`, `null_model`) and its single Arabic
+meeting point is `src/alghanem/arabic/nisbah_relativization.py`. Until the
+registered negative controls run on a named held-out corpus, nothing in this
+repository prefers the nisbah nucleus to the pair it ranks.
 
 ## Encyclopedia Nucleus — Constitution
 
