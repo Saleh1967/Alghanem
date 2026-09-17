@@ -150,43 +150,44 @@ def test_the_qiyas_registration_reuses_the_frozen_surfaces_and_weaker_models() -
     }
 
 
+_DEPOSIT_COMMIT_SHA = "146cbac8e39ed2c67977321a3dbf21b3e90374e1"
+
+
 def test_the_deposit_precedes_the_readout_in_the_repository_history() -> None:
     """شاهدُ ترتيبٍ من التاريخ نفسِه: التجميدُ التزامٌ سابقٌ لوحدة القراءة.
 
     وكان هذا الشاهدُ عند الإيداع نفيًا لوجود وحدة القراءة أصلًا. ولمّا
     شُغِّلت القراءةُ في التزامٍ تالٍ لم يُحذَف الشاهدُ بل أُعيدت صياغتُه على
-    ما يُثبِته التاريخ: أنّ ملفَّ القانون دخل في التزامٍ لا يحوي وحدةَ
+    ما يُثبِته التاريخ: أنّ التزامَ التجميد يحوي ملفَّ القانون ولا يحوي وحدةَ
     القراءة. وحذفُه كان سيُضيِّع الدعوى، وإبقاؤه على صيغته كان سيُكذِّبها.
+
+    والالتزامُ مُثبَّتٌ ببصمته لا مُستنبَطٌ من `git log`؛ لأنّ الاستنباط
+    يتعذّر في نسخةٍ ضحلةٍ أو بعد دمجٍ يطوي التاريخ، فيُخرِج التزامًا آخرَ
+    ويُكذِّب الدعوى بلا موجب. وإن لم تُحَلّ البصمةُ في النسخة قيل ذلك باسمه
+    ولم يُدَّعَ الترتيبُ من لا شيء.
     """
 
     import subprocess
 
     root = pathlib.Path(__file__).resolve().parents[2]
 
-    def first_commit(path: str) -> str | None:
-        result = subprocess.run(
-            ["git", "log", "--format=%H", "--diff-filter=A", "--", path],
-            cwd=root,
-            capture_output=True,
-            text=True,
-            check=False,
+    def resolves(revision: str) -> bool:
+        return (
+            subprocess.run(
+                ["git", "cat-file", "-e", revision],
+                cwd=root,
+                capture_output=True,
+            ).returncode
+            == 0
         )
-        lines = [line for line in result.stdout.splitlines() if line.strip()]
-        return lines[-1] if lines else None
 
-    deposit = first_commit("src/alghanem/arabic/flt1_qiyas_law.py")
-    readout = first_commit("src/alghanem/arabic/flt1_qiyas_readout.py")
-    if deposit is None:
-        pytest.skip("تاريخُ المستودع غيرُ متاحٍ في هذه النسخة، فلا يُقرأ الترتيبُ منه")
-    if readout is None:
-        return
+    if not resolves(f"{_DEPOSIT_COMMIT_SHA}^{{commit}}"):
+        pytest.skip("THE_DEPOSIT_COMMIT_DOES_NOT_RESOLVE_IN_THIS_CHECKOUT")
 
-    listed = subprocess.run(
-        ["git", "show", "--name-only", "--format=", deposit],
-        cwd=root,
-        capture_output=True,
-        text=True,
-        check=False,
-    ).stdout
-    assert "flt1_qiyas_law.py" in listed
-    assert "flt1_qiyas_readout.py" not in listed
+    assert resolves(f"{_DEPOSIT_COMMIT_SHA}:src/alghanem/arabic/flt1_qiyas_law.py")
+    assert resolves(
+        f"{_DEPOSIT_COMMIT_SHA}:src/alghanem/arabic/flt1_qiyas_preregistration.py"
+    )
+    assert not resolves(
+        f"{_DEPOSIT_COMMIT_SHA}:src/alghanem/arabic/flt1_qiyas_readout.py"
+    )
