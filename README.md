@@ -1,5 +1,21 @@
 # Alghanem
 
+> **Start here: [`docs/VISION.md`](docs/VISION.md)** — what Alghanem is, why it
+> exists, and what it does not claim. This README is a cumulative engineering
+> log; the vision document is the entry point, and its "current state" section
+> is rendered from `src/alghanem/program/project_state.py`, never hand-edited.
+>
+> **In one sentence.** Alghanem is a research system for building *licensed,
+> reconstructible epistemic transitions*: it takes Arabic as its first proving
+> ground, and grants no result an authority higher than its evidence. The
+> product is not the linguistic findings but the chain behind them — where a
+> claim came from, what licensed it, in what scope it holds, what rank it
+> carries, what still blocks its promotion, and what the next permitted step
+> is.
+>
+> Reading order: **`docs/VISION.md` → `docs/AIMS.md` → `docs/CONSTITUTION.md` →
+> source → tests → the derived state block.**
+
 Alghanem is a research codebase for a general algebra of licensed
 transformations. The current release is the language-agnostic **Kernel v0.1**:
 small, shallowly immutable data structures for anchors, operations, evidence,

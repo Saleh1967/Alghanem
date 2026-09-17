@@ -266,7 +266,7 @@ def test_an_unknown_subsection_heading_is_refused(document_text: str) -> None:
 
 def test_an_unknown_ordinal_in_a_known_heading_is_refused(document_text: str) -> None:
     altered = document_text + (
-        "\n### ما كشفته المرحلة السابعة عشرة (لا رتبةَ لها)\n\n"
+        "\n### ما كشفته المرحلة الثامنة عشرة (لا رتبةَ لها)\n\n"
         "قامت في `src/alghanem/program/aims.py`.\n"
     )
     with pytest.raises(MilestoneLedgerError, match="رتبةُ مرحلةٍ خارج المفردة"):
