@@ -35,7 +35,9 @@ from alghanem.arabic.masaq_corpus_deposit import (
     MASAQ_SHA256,
     MIRROR_CORROBORATION,
     MORPH_TAG_COLUMN,
+    REDERIVATION_IS_COMPARISON_NOT_AUTOMATIC_ENDORSEMENT_NOTE,
     SEGMENT_INDEX_COLUMN,
+    THE_READY_PATH_IS_THE_MASAQ_WITNESS_PATH_NOT_PROGRAMME_COMPLETION_NOTE,
     WORD_KEY_COLUMN,
     MasaqDepositError,
     MirrorCorroboration,
@@ -443,3 +445,66 @@ def test_the_deposit_claims_no_prohibition_over_another_corpus() -> None:
     )
     for forbidden in ("يمنعها ناشروها", "يمنعون النسخ"):
         assert forbidden not in module_source
+
+
+# --- ما اكتمل مسارُ شاهدٍ لا بناءُ برنامج ---------------------------------------
+
+
+def test_the_ready_path_is_named_as_the_witness_path_not_the_programme() -> None:
+    """الجاهزُ مسارُ شاهدٍ واحد؛ والبقيّةُ تُعدِّد ما لا يفعله وصولُ البايتات."""
+
+    note = MASAQ_DEPOSIT_NAMED_RESIDUALS[
+        "TheReadyPathIsTheMasaqWitnessPathNotProgrammeCompletion"
+    ]
+    assert note == (
+        THE_READY_PATH_IS_THE_MASAQ_WITNESS_PATH_NOT_PROGRAMME_COMPLETION_NOTE
+    )
+    assert "DECLARED_DEFERRED" in note
+    assert "CompleteInductionIsCorpusBounded" in note
+
+
+def test_rederivation_is_recorded_as_comparison_not_as_endorsement() -> None:
+    """المقارنةُ تُثبِت في نطاق الشاهد أو تُسجِّل الفرق، ولا تُعدِّل المُجمَّد."""
+
+    note = MASAQ_DEPOSIT_NAMED_RESIDUALS[
+        "RederivationIsComparisonNotAutomaticEndorsement"
+    ]
+    assert note == REDERIVATION_IS_COMPARISON_NOT_AUTOMATIC_ENDORSEMENT_NOTE
+    assert "RederivationIsComparisonNotAutomaticEndorsement" in note
+
+
+def test_the_witness_naming_lives_in_the_readme_and_not_in_the_programme_axis() -> None:
+    """«تفعيل الشاهد التجريبي» تسميةٌ توثيقية، لا مرحلةٌ ولا رتبةٌ ولا حالةٌ دستورية."""
+
+    root = Path(masaq_corpus_deposit.__file__).resolve().parents[3]
+    readme = (root / "README.md").read_text(encoding="utf-8")
+    assert "Empirical Witness Activation" in readme
+
+    for path in (
+        root / "docs" / "AIMS.md",
+        root / "src" / "alghanem" / "program" / "milestone_ledger.py",
+        root / "src" / "alghanem" / "arabic" / "readiness_rank.py",
+    ):
+        text = path.read_text(encoding="utf-8")
+        assert "Empirical Witness Activation" not in text
+        assert "تفعيل الشاهد التجريبي" not in text
+
+
+def test_the_deposit_still_reads_nothing_from_the_kernel() -> None:
+    """السجلُّ خاملٌ: لا يستورد من `kernel/` شيئًا ولو سُمِّيت فيه القوانين."""
+
+    source = Path(masaq_corpus_deposit.__file__).read_text(encoding="utf-8")
+    assert "kernel" not in source.replace("`kernel/`", "")
+
+
+def test_naming_the_limits_moved_no_frozen_figure_and_no_licence() -> None:
+    """تسميةُ الحدّ لا تُبدِّل رقمًا مُجمَّدًا ولا قاعدةَ عدٍّ ولا وسمَ رخصة."""
+
+    assert MASAQ_LICENCE == "CC BY 3.0"
+    assert MASAQ_BYTE_LENGTH == 20_302_008
+    assert DEPOSITED_LINE_COUNT == 157_854
+    assert DEPOSITED_RECORD_COUNT == 157_677
+    assert DEPOSITED_EMBEDDED_NEWLINE_RECORDS == 154
+    assert DEPOSITED_EMBEDDED_NEWLINE_BREAKS == 176
+    assert DEPOSITED_DERIVED_NOUN_COUNTS["GERUND"] == 4_216
+    assert len(MASAQ_REDERIVED_FIGURES) == 20

@@ -3757,6 +3757,33 @@ states the consequence: only `README.md` and `MASAQ.csv` may sit in `corpora/`,
 any other name fails a test rather than resting there implying the corpus has
 arrived.
 
+The state of that path has a name in this README, and nowhere else:
+**Empirical Witness Activation — تفعيل الشاهد التجريبي**. It is a documentary
+label for the state of the MASAQ witness alone. It is **not** a programme
+milestone, **not** a readiness rank, **not** a constitutional status, and
+nothing in `docs/AIMS.md`, `milestone_ledger` or `readiness_rank` records it —
+those track a different axis. Two axes run side by side and are not one:
+*programme construction* (laws, gates, evidence, ranks, aims, execution) and
+the *empirical witness lifecycle* (specified → path prepared → bytes absent →
+bytes resolved → identity verified → figures re-derived → differences
+classified). MASAQ sits at *bytes absent* on the second axis, and moving it
+along that axis moves nothing on the first.
+`TheReadyPathIsTheMasaqWitnessPathNotProgrammeCompletion` says the consequence:
+what is ready is the path that receives this witness, verifies its identity and
+re-derives its figures — not the programme. Arriving bytes enact no
+`DECLARED_DEFERRED` law, create no authority to judge or to birth, close no
+epistemic aim, raise no result's rank merely because a file is now in hand, and
+turn no induction over this corpus into a claim about open Arabic; the limit in
+`CompleteInductionIsCorpusBounded` is unchanged by their arrival. Reaching the
+end of the witness lifecycle is not the completion of the project.
+`RederivationIsComparisonNotAutomaticEndorsement` closes the second door: the
+bytes do not adopt the twenty frozen figures, they run the re-derivation
+functions against them. A match holds **within the scope of this witness**; a
+mismatch is recorded as it fell. The frozen figure is never edited to fit the
+result, nor is its counting rule, and re-derivation is a comparison rather than
+an automatic epistemic promotion — a prior claim does not become true because
+its witness became available.
+
 MASAQ turned out to carry **i'rab, not only morphology**, and that is where the
 next module goes. Three of its columns annotate it — `Syntactic_Role`,
 `Case_Mood_Marker` and `Phrasal_Function` — and two more, `Word_No` and

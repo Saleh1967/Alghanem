@@ -36,6 +36,13 @@
 
 وهذه الوحدة تسجيلٌ لا سلطة: لا ولادةَ فيها، ولا حكمَ ولادة، ولا تجميدَ `E0`،
 ولا تستورد من `kernel/` شيئًا، ولا تقرؤها وحدةٌ فيه.
+
+`THE_READY_PATH_IS_THE_MASAQ_WITNESS_PATH_NOT_PROGRAMME_COMPLETION`: ما اكتمل
+هنا **مسارُ شاهدٍ واحد** لا بناءُ البرنامج. فمحورُ بناء البرنامج — القوانين
+والبوّابات والأدلّة والرتب والغايات — مستقلٌّ عن محور **دورة حياة الشاهد
+التجريبيّ**، ودمجُهما يجعل «تقدُّمَ البرنامج» و«توفُّرَ الدليل» شيئًا واحدًا
+وهما اثنان. و`REDERIVATION_IS_COMPARISON_NOT_AUTOMATIC_ENDORSEMENT` يقفل الباب
+الثاني: نزولُ البايتات يُشغِّل المقارنة ولا يُصدِّق ما جُمِّد قبلها.
 """
 
 from __future__ import annotations
@@ -83,11 +90,13 @@ __all__ = [
     "MORPH_TAG_COLUMN",
     "NO_ROOT_COLUMN_SO_NO_CROSS_CORPUS_FIGURE_NOTE",
     "RECORD_COUNTING_RULE",
+    "REDERIVATION_IS_COMPARISON_NOT_AUTOMATIC_ENDORSEMENT_NOTE",
     "SANCTIONED_DEPOSIT_FILENAMES",
     "SEGMENT_INDEX_COLUMN",
     "SHA_256_ORDERS_NOTHING_NOTE",
     "SYNTHETIC_LINES_ARE_DECLARED_NOT_HIDDEN_NOTE",
     "TAG_COUNTING_RULE",
+    "THE_READY_PATH_IS_THE_MASAQ_WITNESS_PATH_NOT_PROGRAMME_COMPLETION_NOTE",
     "WORD_KEY_COLUMN",
     "DerivedNounTag",
     "MasaqDepositError",
@@ -318,6 +327,28 @@ A_PERMISSION_UNEXAMINED_IS_NOT_A_PERMISSION_REFUSED_NOTE: Final[str] = (
     "حكمًا لم يقرأه فيها، وذلك عينُ ما تمنعه هذه الشجرة في الأرقام"
 )
 
+THE_READY_PATH_IS_THE_MASAQ_WITNESS_PATH_NOT_PROGRAMME_COMPLETION_NOTE: Final[
+    str
+] = (
+    "TheReadyPathIsTheMasaqWitnessPathNotProgrammeCompletion: الجاهزُ في هذه "
+    "الوحدة **مسارُ شاهدٍ واحد**: استقبالُ بايتات MASAQ، والتحقّقُ من هويّتها "
+    "بالطول والبصمة، وإعادةُ اشتقاق أرقامها بقواعد عدّها. وليس الجاهزُ "
+    "المشروعَ. فنزولُ البايتات لا يُنفِّذ قانونًا مُصرَّحًا بتأجيله "
+    "(`DECLARED_DEFERRED`)، ولا يُنشئ سلطةَ حكمٍ ولا ولادة، ولا يُغلِق غايةً "
+    "معرفية، ولا يرفع رتبةَ نتيجةٍ لمجرّد أنّ الملفَّ صار في اليد، ولا يُحيل "
+    "استقراءً على هذه المدوَّنة دعوى عن العربية المفتوحة، ولا يُغيّر حدَّ "
+    "`CompleteInductionIsCorpusBounded` ولا يُوسِّعه"
+)
+
+REDERIVATION_IS_COMPARISON_NOT_AUTOMATIC_ENDORSEMENT_NOTE: Final[str] = (
+    "RederivationIsComparisonNotAutomaticEndorsement: وصولُ البايتات لا يعتمد "
+    "الأرقامَ المُجمَّدة اعتمادًا تلقائيًّا، وإنّما يُشغِّل دوالَّ إعادة "
+    "الاشتقاق عليها. فإن وافق الناتجُ المُجمَّدَ ثبتت المطابقةُ **في نطاق هذا "
+    "الشاهد وحدَه**، وإن خالفه سُجِّل الفرقُ كما وقع. ولا يُعدَّل المُجمَّدُ "
+    "ليُلائم الناتج، ولا قاعدةُ عدّه؛ فإعادةُ الاشتقاق مقارنةٌ لا ترقيةٌ "
+    "معرفيةٌ آلية، ولا تصير الدعوى السابقة حقيقةً لمجرّد أنّ الشاهد صار متاحًا"
+)
+
 MASAQ_DEPOSIT_NAMED_RESIDUALS: Final[dict[str, str]] = {
     "CompleteInductionIsCorpusBounded": COMPLETE_INDUCTION_IS_CORPUS_BOUNDED_NOTE,
     "AnImportedTagIsAHumanJudgementNotAMeasurement": (
@@ -345,6 +376,12 @@ MASAQ_DEPOSIT_NAMED_RESIDUALS: Final[dict[str, str]] = {
     ),
     "APermissionUnexaminedIsNotAPermissionRefused": (
         A_PERMISSION_UNEXAMINED_IS_NOT_A_PERMISSION_REFUSED_NOTE
+    ),
+    "TheReadyPathIsTheMasaqWitnessPathNotProgrammeCompletion": (
+        THE_READY_PATH_IS_THE_MASAQ_WITNESS_PATH_NOT_PROGRAMME_COMPLETION_NOTE
+    ),
+    "RederivationIsComparisonNotAutomaticEndorsement": (
+        REDERIVATION_IS_COMPARISON_NOT_AUTOMATIC_ENDORSEMENT_NOTE
     ),
 }
 
