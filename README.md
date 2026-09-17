@@ -4660,6 +4660,42 @@ otherwise. Refusal blocks promotion, never the record: the claim stays readable
 in its own subdomain. The named laws are collected in `docs/CONSTITUTION.md`
 under `G0.GEN`.
 
+`src/alghanem/prior/` and `src/alghanem/ontology/` open a level *beneath* the
+linguistic nucleus. `Σ_L` (`G0.NSB-0`) already named `GENUS`, `INDIVIDUAL`,
+`REFERENCE`, `EVENT_ANCHOR` and `QUANTITY_ANCHOR` as branches of `TermAnchor`,
+but those are not purely linguistic sorts — they are ontological candidates that
+language *uses* after some earlier layer has fixed them. So the chain splits into
+two axes: an existence axis `PK₀ → O₀ → O_L → O_AR` (the last deferred), and the
+algebra axis `Σ_M ⇝ Σ_L ⇝ Σ_AR` that operates on those objects. The load-bearing
+consequence is `TheAlgebraDoesNotCreateItsObjects`: `Σ_L` does not create `O_L`;
+it works on what `O_L` has licensed.
+
+`prior/conditions.py` is `PK₀`, and it is deliberately narrower than a store of
+facts. It never says "this thing is a genus"; it records the nine conditions
+under which it is legitimate for such a kind to be born — domain, unit criterion,
+identity criterion, attribute possibility, relation possibility, transformation
+conditions, conditions and preventers, preserved trace, and the remainder that
+blocks closure — with exact coverage, each naming what it forbids and the genus
+of its own license. Depositing a ready-made fact there is unsayable, not merely
+refused: a field carrying such a name fails at import.
+
+`ontology/general.py` registers `O₀` candidates, each bound to the digest of the
+base that licensed it and each carrying both a necessity and an irreducibility
+claim. `ontology/linguistic.py` carries the correction the dialogue turned on:
+`OntologicalKind ≠ LinguisticRole`, enforced on field *types* the way
+`RelationIsNotRepresentation` is one level up. `Genus → TermAnchorRole` is a
+license with a condition that could fail; `Genus ⊆ TermAnchor` asserted as a
+primitive truth is not. "Event" is a kind; "event anchor inside a nisbah" is a
+role that object plays.
+
+This is a testbed, not a verdict. It issues no birth, no freeze and no `E0`; no
+`kernel/` module reads it; and `src/alghanem/linguistic/` is untouched — its
+text, digest, schema version and Arabic meeting point are byte-identical to what
+`G0.NSB-0` left, because a layer under which a missing layer was found is not a
+refuted layer. Re-anchoring `Σ_L` to `O_L` and migrating `TermAnchorKind` into a
+licensing reference are declared next steps, not steps taken. The named laws are
+collected in `docs/CONSTITUTION.md` under `G0.PK-0 / G0.ONT-0`.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
