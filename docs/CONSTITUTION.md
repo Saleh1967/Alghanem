@@ -2498,3 +2498,49 @@ independently motivated domains whose bindings were frozen *before* their
 implementations (`PROSPECTIVE_SPECIFICATION_INDEPENDENT`, not merely
 `RETROSPECTIVE_CONFORMANCE`), and at least one discharged commutative square
 `R_{i+1}^D ∘ T_i = T_i^D ∘ R_i^D`.
+
+## G0.GEN — The generalization blocker: local closure is not global closure (declared law, no runtime gate)
+
+This law closes a failure that has recurred in this tree often enough to stop
+being an accident: a claim measured, closed, or exhaustively covered on a
+subdomain was carried, without any further step, to the whole domain. The
+carrier-state work is the latest instance. A state vocabulary that closed over
+one probe's carriers was read as the state vocabulary; a coverage result on a
+short deposited text was read as capacity over Arabic.
+
+```
+LocalClosure         ⇏ GlobalClosure
+CoverageOnSubdomain  ⇏ UniversalCapacity
+```
+
+The step that is blocked is precisely this one:
+
+```
+∀x ∈ D₀, P(x)      ⊬      ∀x ∈ D, P(x)
+```
+
+Two warrants, and only two, license that step: a *proved* identity `D₀ = D`,
+carrying its own named, citable evidence; or a *named* generalization law with
+a statement and a precondition that a reader can check. Any third route —
+"obviously", "in practice", "every example so far" — is refused at
+construction, because enumeration is not a generalization law and a finite
+corpus does not close an open language.
+
+Refusal here is refusal of *promotion*, never of *record*. A claim without a
+warrant stays readable exactly as it was measured, bounded by its subdomain.
+The blocker deletes nothing; it forbids the widening.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `LocalClosureIsNotGlobalClosure` | DECLARED_LAW_ONLY | That a claim is closed, exhaustive, or fully covered over a measured subdomain `D₀` establishes nothing about the domain `D ⊋ D₀`. The extension is a separate step requiring its own warrant, not a consequence that follows from the local result. A reader who treats local closure as global closure has performed an unlicensed extension, whatever the local result's strength. |
+| `CoverageOnSubdomainIsNotUniversalCapacity` | DECLARED_LAW_ONLY | That a vocabulary, model, or state schema accounts for everything observed within a subdomain is a coverage fact about that subdomain. It is not a capacity claim about the domain, and it may not be recorded, cited, or promoted as one. Capacity asserted over what was never measured is the exact step this law blocks. |
+| `DomainIdentityIsAClaimNotAConvenience` | DECLARED_LAW_ONLY | `D₀ = D` is a claim requiring named evidence that cites where it is argued and states what it argues. Asserting domain identity in passing smuggles the conclusion into an unexamined premise. Evidence naming two domains other than the two in the extension request is not evidence in that request and is refused rather than read charitably. |
+| `EnumerationIsNotAGeneralizationLaw` | DECLARED_LAW_ONLY | More examples are not a generalization law. A warrant of this kind must carry an identifier, a statement, and the precondition under which it applies, all three readable and reviewable. Closure over a finite corpus does not extend to an open language, and the absence of a counterexample within a subdomain is not a law about the domain. |
+| `AnUnwarrantedClaimMayBeRecordedInItsSubdomain` | DECLARED_LAW_ONLY | The absence of a warrant blocks promotion, not registration. A claim stays recorded, readable, and citable within the subdomain over which it was measured; only its extension is refused. This law forbids reading the blocker as a deletion rule or as a judgment against the local measurement. |
+| `OneWarrantIsDeclaredNotTwo` | DECLARED_LAW_ONLY | An extension request declares exactly one warrant and carries exactly the evidence that warrant requires. Supplying a domain-identity witness and a generalization law together is refused, because a request carrying both conceals which of them actually bore the extension, and an unattributable warrant cannot be reviewed. |
+
+`G0.GEN` declares law only. It installs no gate, promotes and demotes no
+existing claim, and re-labels no row in any table above; the vocabulary that
+carries the blocker in code (`src/alghanem/metaalgebra/generalization.py`) is
+registration-only, refuses unwarranted extensions at construction, and issues
+no judgment on any claim already standing in this repository.

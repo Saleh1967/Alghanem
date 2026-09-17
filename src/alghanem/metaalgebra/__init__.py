@@ -14,6 +14,7 @@
 وحداتُها:
 
 * `standing` — محورا المنزلة (`G0.ST`)، ورتبةُ استقلال المواصفة.
+* `generalization` — مانعُ التعميم (`G0.GEN`): `LocalClosure ⇏ GlobalClosure`.
 * `layer` — `𝒜 = (C, S, Ω, Rel, Inv, Cl, Tr, R)`.
 * `transition` — `𝒯 = (D, G, T, P, τ, ρ)` مع شرط التسليم، وقانونُ مَنعِ القفز.
 * `composition` — شرطُ التجاور، وفصلُ صحّة المبرهنة عن تغطية تمثيلها.
@@ -65,6 +66,20 @@ from .composition import (
     CompositionChain,
     CompositionChainError,
     StepObligation,
+)
+from .generalization import (
+    AN_UNWARRANTED_CLAIM_MAY_BE_RECORDED_IN_ITS_SUBDOMAIN,
+    COVERAGE_ON_SUBDOMAIN_IS_NOT_UNIVERSAL_CAPACITY,
+    DOMAIN_IDENTITY_IS_A_CLAIM_NOT_A_CONVENIENCE,
+    ENUMERATION_IS_NOT_A_GENERALIZATION_LAW,
+    GENERALIZATION_NAMED_RESIDUALS,
+    LOCAL_CLOSURE_IS_NOT_GLOBAL_CLOSURE,
+    DomainIdentityEvidence,
+    GeneralizationLaw,
+    GeneralizationWarrant,
+    MetaAlgebraGeneralizationError,
+    ScopedClaim,
+    ScopedClaimExtension,
 )
 from .layer import (
     A_LAYER_TYPE_IS_NOT_A_LAYER_ARCHITECTURE,
@@ -156,6 +171,7 @@ from .transition import (
 __all__ = [
     "ADJACENCY_IS_A_HYPOTHESIS_NOT_A_CONCLUSION",
     "AN_EXECUTABLE_CLAUSE_IS_NOT_A_PROMISE_OF_TRUTH",
+    "AN_UNWARRANTED_CLAIM_MAY_BE_RECORDED_IN_ITS_SUBDOMAIN",
     "A_BROKEN_SQUARE_INDICTS_THE_REALIZATION_NOT_THE_ALGEBRA",
     "A_CHAIN_IS_NOT_A_PROOF",
     "A_CHAIN_IS_NOT_A_SPECIFICATION",
@@ -174,6 +190,7 @@ __all__ = [
     "CLOSURE_IS_NOT_A_RIGHT_OF_EXIT",
     "COMMUTATION_LAW",
     "COMPOSITION_LAW",
+    "COVERAGE_ON_SUBDOMAIN_IS_NOT_UNIVERSAL_CAPACITY",
     "CarrierSpecification",
     "Clause",
     "ClauseError",
@@ -184,10 +201,13 @@ __all__ = [
     "CompositionChain",
     "CompositionChainError",
     "Constant",
+    "DOMAIN_IDENTITY_IS_A_CLAIM_NOT_A_CONVENIENCE",
     "DeclarativeClause",
     "DomainCondition",
+    "DomainIdentityEvidence",
     "DualStanding",
     "EMPIRICAL_TARGET_INDEPENDENCE_IS_EMPIRICAL_ONLY",
+    "ENUMERATION_IS_NOT_A_GENERALIZATION_LAW",
     "EXECUTABLE_NODE_NAMES",
     "EmpiricalStanding",
     "Eq",
@@ -195,11 +215,15 @@ __all__ = [
     "Expression",
     "FORMAL_STRUCTURAL_PROOF_IS_NOT_EMPIRICAL_REALITY",
     "FieldRef",
+    "GENERALIZATION_NAMED_RESIDUALS",
+    "GeneralizationLaw",
+    "GeneralizationWarrant",
     "HANDOFF_LAW",
     "HandoffCondition",
     "ImplementationConformanceRecord",
     "InvariantComponentSpecification",
     "LAYER_COMPONENT_NAMES",
+    "LOCAL_CLOSURE_IS_NOT_GLOBAL_CLOSURE",
     "LayerRealization",
     "LayerSignature",
     "LayerSignatureError",
@@ -208,6 +232,7 @@ __all__ = [
     "META_ALGEBRA_SCHEMA",
     "MISSING_EMPIRICAL_EVIDENCE_IS_NOT_MISSING_STRUCTURAL_PROOF",
     "MemberOf",
+    "MetaAlgebraGeneralizationError",
     "MetaAlgebraSchema",
     "MetaAlgebraSchemaError",
     "MetaAlgebraStandingError",
@@ -242,6 +267,8 @@ __all__ = [
     "SPECIFICATION_INDEPENDENCE_IS_NOT_EMPIRICAL_TARGET_INDEPENDENCE",
     "SchemaLaw",
     "SchemaRef",
+    "ScopedClaim",
+    "ScopedClaimExtension",
     "SortDeclaration",
     "SpecificationIndependenceGrade",
     "SpecificationSetRef",

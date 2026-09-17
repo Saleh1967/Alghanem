@@ -4618,6 +4618,48 @@ commutative square `R_{i+1}^D ∘ T_i = T_i^D ∘ R_i^D` is recorded as an
 obligation in `metaalgebra/commutation.py`, and the named laws are collected in
 `docs/CONSTITUTION.md` under `G0.R`.
 
+The carrier-fiber experiment asks one question and refuses the rest: does the
+state space depend on the identity of the carrier, or only on how often and
+where that carrier happens to occur? It runs in three frozen stages.
+`arabic/carrier_fiber_preregistration.py` freezes the contract *before* any
+evidence: a `StateSchema` that declares state as a product of axes — vowel,
+nunation, gemination, quiescence — rather than one flat set of mutually
+exclusive values, with *madd* declared `DEFERRED_NOT_READ_AS_A_STATE` because it
+may be a transition and not an alternative state; three frozen controls
+(frequency, position, boundary); and `word_role` structurally forced to
+`DEFERRED_COVARIATE`, since the morphological tagging it needs is not available
+and inventing it would be fabricating the control. Capacity and composition are
+frozen as two separate measures, because two carriers may admit the same number
+of states and not the same states.
+
+`arabic/carrier_state_observed_fiber.py` measures. It accepts the bytes of any
+corpus with its digest, refuses bytes that miss it, keeps one row per
+occurrence, and keeps deferred-axis marks and unread marks on the row instead of
+dropping them. `arabic/carrier_fiber_null_model.py` then tests
+`State ⟂ Carrier | Frequency, Position, Boundary` by permuting state vectors
+within strata, so the carrier's frequency, position and boundary are preserved
+by construction rather than modelled. All statistics are exact fractions
+reported in permille; a probability is never read as zero in a finite sample.
+Carriers below the frozen support threshold read `UNDETERMINED`, because rarity
+is not a result.
+
+Run on the deposited text these modules refute `E_observed = C × S_global` *in
+this corpus and this encoding* and nothing wider, and they find gemination
+co-occurring with vowels — the empirical reason the state was not frozen as one
+flat axis. The deposited run is declared `CALIBRATION_WITNESS`: a short text
+calibrates the instrument, it does not decide the question, and
+`E_licensed = ⨆_c S_licensed(c)` remains a hypothesis, not a finding. What is
+observed to be absent is not thereby shown to be forbidden.
+
+`metaalgebra/generalization.py` carries the blocker that this work made
+unavoidable: `LocalClosure ⇏ GlobalClosure`. Extending a claim from the
+subdomain it was measured on to a wider domain requires one declared warrant —
+a proved domain identity with its own cited evidence, or a named generalization
+law with a statement and a precondition — and is refused at construction
+otherwise. Refusal blocks promotion, never the record: the claim stays readable
+in its own subdomain. The named laws are collected in `docs/CONSTITUTION.md`
+under `G0.GEN`.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
