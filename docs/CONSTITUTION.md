@@ -1748,6 +1748,223 @@ only the match guard is general. As of this milestone no source text has been
 supplied, the enumeration is empty, and the registered reading of the standing
 branch is that the experiment has not been run.
 
+## G0.FLT-0 — The fractal licensed-transition calibration (invalid preregistration)
+
+This milestone froze a hypothesis text supplied from outside this tree, *verbatim
+and including its mathematical notation*, registered the ten pre-run items the
+text itself demands, and only then built a readout and ran it. It issues no
+birth, no verdict about Arabic, no freeze and no `E0`, and nothing in `kernel/`
+reads its outputs.
+
+```
+FrozenHypothesisText != EstablishedLaw
+StructureMatch       != SurfaceSimilarity
+PostHocSimilarity    != FractalEvidence
+WeakerReconstruction >= StructureMatch  -> WEAKER_MODEL_RECONSTRUCTS
+```
+
+The claim under test is that one transition structure
+`K = (Carrier, Gate, Operation, Identity, Evidence, Residual, Trace, Closure)`
+survives a change of linguistic scale `S`, i.e. `S ∘ K_n ≅ K_m ∘ S`, restricted
+to six fields — Carrier, Gate, Identity, Trace, Residual, Closure — and
+explicitly *not* to frequency, entropy, α, number of states, surface form or
+magnitude. Four jurisdictions are declared (مقطع، كلمة، تركيب، جملة); only the
+first two have a coded carrier in this tree, so exactly one of the three
+declared pairs was measurable and the other two were declared `UNDERPOWERED`
+before the run, not after it.
+
+**This milestone is a calibration, not a test of the hypothesis.** Direct
+inspection of the deposited text found that it diverges from the text that was
+supplied: at the site that decides the success condition the requested text
+carries an explicit order relation between `StructureMatch` and
+`BestWeakerReconstruction`, and the deposited text carries no relation there at
+all, while the module simultaneously declares `NotationIsPartOfTheFrozenText`.
+So `H_frozen != H_requested`, the digest attests a different text, and the
+standing of the run is `INVALID_PREREGISTRATION` — whatever verdict it produced
+is a correct reading of *this* code on *these* surfaces and is not attributable
+to the hypothesis that was asked for. The divergence is derived from the
+deposited text by `fractal_transition_calibration`, not asserted in prose, and
+the frozen text is left exactly as it is, because repairing it would erase the
+only evidence of the defect.
+
+Three further limits were derived rather than described. The comparison
+actually performed is agreement between two boolean predicates on the same
+surface across two encoders, not a test of `S ∘ K_n ≅ K_m ∘ S`: no independent
+scale-transport contract exists in the kernel, so the finding that some fields
+are true by construction diagnoses a weak signature rather than refuting
+fractality. `SUPPORTED` is unreachable in this registration by construction,
+since every ladder name occurs in the frozen text and no declared pair can
+serve as a holdout — an instrument that can refute and cannot support is a
+refutation instrument, not a balanced test. And the `Identity` field is a
+boolean read from an encoder that never passes the invariant verification gate,
+so `DeclaredInvariant != VerifiedInvariant` applies to it directly.
+
+The first run's reading is recorded as it came out, carried whole rather than
+erased, with only its attribution withheld. On `syllable-to-word` the
+transported structure agreed with the upper layer in 24 of 30 field/case
+comparisons, while the weaker `constant-admission` model — which predicts
+admission everywhere and reads nothing — agreed in 28. Under the text's own
+precedence that is `WEAKER_MODEL_RECONSTRUCTS`, and the run also showed *why*:
+in the present codecs Trace and Closure are true by construction, and Gate and
+Residual are the same predicate under two names, so four of the six compared
+fields cannot discriminate any hypothesis at all. That is a statement about
+this tree's encoders, not about Arabic. Because all four ladder names occur in
+the frozen text, no declared pair is a holdout, and `SUPPORTED` is unreachable
+here by construction rather than by result.
+
+The successor experiment is declared by name and not executed. `G0.FLT-1`
+requires a newly frozen verbatim text checked site by site against the supplied
+one, an independent `S` contract defined outside the extractors whose
+commutation is tested rather than assumed, scales that were not used in
+formulating `K` and whose names do not occur in the frozen text, a signature
+whose fields can read false on a real input, an `Identity` that is verified or
+else yields `UNDERPOWERED`, and surfaces and pairs that were not read in
+`G0.FLT-0`. Repairing this criterion and re-running it on the five surfaces
+whose results are now known would not produce prospective evidence.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `HypothesisTextFrozenBeforeAnyLayerRun` | ENFORCED_AT_PROBE_PREREGISTRATION | The hypothesis text and the ten preregistered items are content-digested and sealed, and the readout gate re-derives both digests and refuses to read on any drift. The preregistration was committed while no readout module existed, so the ordering is a fact of the history and not a claim in prose. |
+| `StructureMatchIsFieldRestricted` | ENFORCED_AT_PROBE_PREREGISTRATION | Correspondence is asserted over the six compared fields only. Frequency, entropy, α, state counts, surface form and magnitude are excluded by name, and a readout that reaches for an excluded field is refused rather than reported. |
+| `NoPairIsHoldoutUnderTheFrozenLadder` | DECLARED_DEFERRED | A layer whose ladder name occurs in the frozen hypothesis text cannot serve as a holdout for it. All four declared layers are named there, so no verdict of `SUPPORTED` may be issued from them however well they match; lifting the stop requires a coded pair whose names are absent from the frozen text. |
+| `WeakerReconstructionOutranksStructureMatch` | ENFORCED_AT_PROBE_PREREGISTRATION | If any weaker model reconstructs the readings at least as well as the transported structure, the verdict is `WEAKER_MODEL_RECONSTRUCTS` regardless of how high the structure's own agreement was. Agreement is never reported as support while a cheaper model matches it. |
+| `AConstructionallyTrueFieldIsNotACorrespondence` | DECLARED_DEFERRED | A compared field that is true by construction at both layers, or that duplicates another field's predicate, agrees trivially and carries no evidential weight. Such fields are named in the readout as non-discriminating rather than counted as matches. |
+| `AbsentCodedCarrierYieldsUnderpowered` | ENFORCED_AT_PROBE_PREREGISTRATION | A declared layer with no coded carrier in this tree yields `UNDERPOWERED` for every pair it enters. Absence of a measurement is never reported as agreement, as refutation, or as a reason to substitute a hand-made carrier. |
+| `FractalLawProvedIsNotAnOutput` | ENFORCED_AT_PROBE_PREREGISTRATION | The permitted outputs are exactly `SUPPORTED`, `REFUTED`, `UNDERPOWERED` and `WEAKER_MODEL_RECONSTRUCTS`. No run, corpus or aggregate may emit `FRACTAL_LAW_PROVED`, and the frozen text says so in its own words. |
+| `ADivergentFrozenTextIsAnInvalidPreregistration` | ENFORCED_AT_PROBE_PREREGISTRATION | A digest taken over a text that diverges from the supplied one at a site deciding the success condition attests a different hypothesis, even when the divergence is a transcription error rather than an intent. The run's standing becomes `INVALID_PREREGISTRATION` and its verdict is withheld from attribution to the requested hypothesis, while the divergent text itself is left unrepaired as the evidence of the defect. |
+| `AnUnreachableVerdictIsDeclaredNotDiscovered` | ENFORCED_AT_PROBE_PREREGISTRATION | Which verdicts a registration can and cannot reach is derived and declared with the registration, not learned after the result. An instrument that can reach `REFUTED` but not `SUPPORTED` is named a refutation instrument and may not be presented as a balanced test of the claim. |
+| `BooleanAgreementIsNotScaleTransport` | DECLARED_DEFERRED | Agreement between two boolean predicates on one surface across two encoders is not a test of `S ∘ K_n ≅ K_m ∘ S`. Until an independent scale-transport contract exists outside the extractors and its commutation is tested rather than assumed, a degenerate signature is a diagnosis of the instrument and never a refutation of the claim. |
+| `DeclaredInvariantIsNotAVerifiedOne` | DECLARED_DEFERRED | An `Identity` field read as a boolean from an encoder is a declaration. Identity preservation counts as evidence only when it passes the invariant verification gate; where it cannot, the pair is `UNDERPOWERED` rather than a hit. |
+| `ARepairedRunOnSeenCasesIsNotProspective` | ENFORCED_AT_PROBE_PREREGISTRATION | Once surfaces and pairs have been read, no repair of the criterion makes a re-run on them prospective. A successor experiment requires a newly frozen text and inputs that were not read, registered before it is run. |
+
+The frozen text lives in
+`src/alghanem/arabic/fractal_transition_hypothesis.py`, the ten pre-run items in
+`src/alghanem/arabic/fractal_transition_preregistration.py`, and the sealed
+gate in `src/alghanem/arabic/fractal_transition_readout.py`. The calibration that names this
+milestone's own defects, withholds its verdict and derives its capability
+envelope is `src/alghanem/arabic/fractal_transition_calibration.py`, and it is
+the only sanctioned reader of the run. Neither the text nor the preregistration
+may be edited now that the run has happened; a different reading requires a new,
+separately frozen preregistration.
+
+## G0.FLT-1 — The licensed Carrier/State centre (preregistration only)
+
+`G0.FLT-0` failed as a test and succeeded as an instrument: it found the defects
+of its own experiment before it could find anything about Arabic. What it forced
+into view is where fractality could actually be tested — the birth of a higher
+centre from lower ones — and this milestone freezes that question **and stops
+there**. It issues no reading, no birth, no verdict, no freeze and no `E0`, and
+no module in `kernel/` reads it. There is deliberately no readout module in this
+deposit: the one thing `G0.FLT-0` got right was the ordering of its commits, and
+that is kept.
+
+The law under test is a chain, frozen with its notation:
+
+```
+Carrier -> Carrier/State Center -> Licensed Join -> Closure -> Higher Center
+```
+
+It is registered as six hypotheses that fail separately rather than one large
+claim, so that the success of the easiest cannot cover the failure of the
+hardest: `C_0` and `V_0` as quotients whose cardinalities are then tested, `M_0`
+as their predicted product, birth under an opening vowel with its negative
+control, closure under sukūn, and `M_1` as the closure of a join. `28 × 4` is a
+prediction, never an input — the equivalence relation is declared first, the
+quotient derived from it, and only then counted; whoever puts the number into
+the relation has tested a definition.
+
+The decisive correction over `G0.FLT-0` is that verbatim fidelity is now
+*checked* rather than promised. Fourteen decisive notation sites are named one
+by one, their presence in the deposited text is derived at import, and the
+report can be inspected before any reading exists. `G0.FLT-0` was lost precisely
+because a digest was taken over a text nobody had compared against the request.
+
+The negative controls are the point of the experiment, not its footnote. Three
+weaker representations — the carrier alone, the state alone, and the unordered
+pair — are run on the same surfaces, and a *tie* is enough to defeat the claim
+that a licensed Carrier/State pair is the lower centre; superiority of the
+weaker model is not required. The name "higher centre" is earned only by
+Reconstruction, Minimality, NoBypass and Closure together. Identity preservation
+counts only if it passes the invariant verification gate; otherwise the pair is
+`UNDERPOWERED`. The seven frozen surfaces are disjoint from the five read in
+`G0.FLT-0`, and the disjointness is checked at import rather than entrusted to
+attention.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `VerbatimFidelityIsCheckedNotPromised` | ENFORCED_AT_PROBE_PREREGISTRATION | Decisive notation sites are enumerated, their presence derived from the deposited text at import, and the fidelity report made inspectable before any readout exists. A missing site makes the registration unfit to run rather than a formatting matter. |
+| `SeparateHypothesesFailSeparately` | ENFORCED_AT_PROBE_PREREGISTRATION | The law is registered as six independently falsifiable hypotheses, each naming what would falsify it, what would make it underpowered, and what would lift that. A single aggregate claim is refused because it lets the easiest component mask the hardest. |
+| `TheCountIsTestedAfterTheQuotient` | ENFORCED_AT_PROBE_PREREGISTRATION | The equivalence relation is declared before the run, the quotient derived from it, and only then counted. A predicted cardinality may never appear in the relation that produces it, or the experiment tests its own definition. |
+| `AWeakerRepresentationThatTiesDefeatsTheClaim` | ENFORCED_AT_PROBE_PREREGISTRATION | The three weaker representations are registered before the run and evaluated on the same surfaces. Equal performance by any of them defeats the claim that the licensed pair is the lower centre; the weaker model need not win. |
+| `FourConditionsOrNoHigherCenter` | DECLARED_DEFERRED | Reconstruction, Minimality, NoBypass and Closure must hold together before anything may be named a higher centre. A failure of one withholds the name rather than weakening it. |
+| `NoReadoutExistsForFLT1Yet` | ENFORCED_AT_PROBE_PREREGISTRATION | The registration deposit contains the frozen text and the registration only. A reading built in the same deposit could not testify to its own ordering, so the readout belongs to a later commit. This law was discharged, not repealed: `G0.FLT-1.Q` below repeats the same ordering for its own text, and the test that once asserted the absence of a readout module was restated against repository history rather than deleted. |
+
+The frozen text is `src/alghanem/arabic/flt1_hypothesis.py` and the ten
+registered items are `src/alghanem/arabic/flt1_preregistration.py`. `G0.FLT-2` —
+syllable to prosodic centre — is named here and not registered; it must reuse
+this law rather than redefine it.
+
+## G0.FLT-1.Q — Continuity under an origin, and the birth of an independent branch
+
+`G0.FLT-1` froze the chain `Carrier -> Carrier/State Center -> Licensed Join ->
+Closure -> Higher Center` and stopped. That chain treated every transition as a
+move *upward*. The reformulation frozen here corrects it: a transition must also
+pass a **licensed qiyās between an origin and a candidate branch**, and the
+*qādiḥ* difference is something to be **tested**, never something required.
+
+```
+Q(O,F) = Sh ∧ Sb ∧ ¬Mn ∧ I ∧ w* ∧ μ(O,F) ∧ ¬Δq(O,F)
+```
+
+There are two paths that may not be mixed. `μ ∧ ¬Δq` yields *continuity* under
+the origin (`F ⪯_O O`); `μ_base ∧ Δq*` — a qādiḥ difference whose *effect* is
+shown, not a merely formal one — opens an independent-branch candidate, and even
+then nothing is born until `J ∧ I ∧ Cl` also pass. A third position is forced by
+the text and named explicitly rather than smuggled into either path: a
+difference that exists but whose effect is unshown is `FORMAL_DIFFERENCE_ONLY`.
+
+The text was superseded, not edited. `flt1_hypothesis.py` keeps its letter and
+its digest; the new statement is a second, independent text with its own digest
+and an explicit `SupersessionRecord` saying why the exchange was licensed — the
+first text had never been read, no readout had run and no number had come out,
+so this is a change of hypothesis *before* the test rather than retro-fitting
+*after* a result. Had a single result been seen first, the same exchange would
+have been the exact offence that sank `G0.FLT-0`.
+
+The first run is recorded as it came out, and it is mixed:
+
+- Of eighteen branches across the seven frozen surfaces, nine read
+  `CONTINUITY_UNDER_ORIGIN` and nine `INDEPENDENT_BRANCH_CANDIDATE`.
+- No surface earned the name "higher centre". `فَتَحَ` lost `NoBypass` outright —
+  the no-join path reproduces `CV-CV-CV` exactly, so for that surface the join is
+  ornament. `بَابٌ` lost `Reconstruction` and `Closure` together, because the madd
+  seat at position 1 enters no syllable.
+- The remaining five surfaces are `UNDERPOWERED`, not successful, because
+  `Minimality` is underpowered by construction.
+- `w*` and `μ` held everywhere and are reported as **analytic in this deposit**:
+  they are true by the template function itself, not by the corpus, so they are
+  read and explicitly not counted as evidence.
+- Five of the machine's registered outcomes never fired and are listed as
+  untested rather than silently passed.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `SupersessionIsNotEditing` | ENFORCED_AT_PROBE_PREREGISTRATION | A superseding statement is a second text with its own digest; the superseded text keeps its letter and digest untouched. Supersession is licensed only while no result has been read from the superseded text, and the record must name what would have made it illegitimate. |
+| `TheQadihDifferenceIsTestedNotRequired` | ENFORCED_AT_PROBE_PREREGISTRATION | `Δq` is neither a precondition of success nor of failure; it is asked. Its absence yields continuity under the origin, its presence without shown effect yields a formal difference only, and only a difference whose effect is shown opens an independent branch. |
+| `ContinuityIsNotBirth` | ENFORCED_AT_PROBE_PREREGISTRATION | `CONTINUITY_UNDER_ORIGIN` is a verdict in a different register, not a lower grade of `INDEPENDENT_BRANCH_CANDIDATE`. Counting continuity as a failed birth mixes the two paths the law separates. |
+| `PrecedenceIsPartOfTheMachine` | ENFORCED_AT_PROBE_PREREGISTRATION | The decision machine's rules are deposited in an explicit, gap-free precedence that is checked at import. Reading one line before another changes the verdict, so ordering is law rather than presentation. |
+| `TheTargetIsFrozenBeforeTheScore` | ENFORCED_AT_PROBE_PREREGISTRATION | The reconstruction target is declared before any score and is the same for the licensed and the weaker models. Scoring a weaker model against the licensed model's own output would make the licensed model correct by definition. |
+| `AnalyticGatesCarryNoDiscriminatingWeight` | ENFORCED_AT_PROBE_PREREGISTRATION | A gate that holds by the structure of the reader rather than by the corpus is marked analytic in the readout and excluded from evidence, instead of being counted as a passing field. This is the `G0.FLT-0` signature-degeneracy lesson applied to the successor experiment. |
+| `AnUnfiredRuleIsAnUntestedRule` | ENFORCED_AT_PROBE_PREREGISTRATION | Registered outcomes that the frozen corpus never triggered are enumerated in the run output. Silence from a branch of the decision machine is not evidence that the branch is sound. |
+| `MinimalityIsAsymmetricWhenTheTargetIsNotIndependent` | ENFORCED_AT_PROBE_PREREGISTRATION | Where the reconstruction target is produced by the same reader that embodies the licensed model, the licensed model's advantage is guaranteed by construction. A tie by any weaker representation therefore refutes the claim, while a win by the licensed model leaves `Minimality` `UNDERPOWERED` rather than satisfied. |
+
+The frozen text is `src/alghanem/arabic/flt1_qiyas_law.py`, the machine is
+`src/alghanem/arabic/flt1_qiyas_preregistration.py`, and the reading —
+committed after both — is `src/alghanem/arabic/flt1_qiyas_readout.py`. Lifting
+`Minimality` out of `UNDERPOWERED` requires a reconstruction target that does
+not come from the syllabifier; that, and not a larger corpus, is what `G0.FLT-2`
+must obtain first.
+
 ## Encyclopedia Nucleus — Constitution
 
 The encyclopedia is an application consumer of the kernel, never a replacement
