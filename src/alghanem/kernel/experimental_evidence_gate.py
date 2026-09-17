@@ -564,14 +564,26 @@ def _public_surface(owner: type) -> frozenset[str]:
 
 def _assert_schema_coverage() -> None:
     schema_dispositions = (
-        (ExperimentalRunRecord, RUN_RECORD_MANIFEST_COVERAGE),
-        (ExperimentalFailureRecord, FAILURE_RECORD_MANIFEST_COVERAGE),
-        (ReplayObservation, REPLAY_OBSERVATION_MANIFEST_COVERAGE),
-        (ModelContrastObservation, CONTRAST_OBSERVATION_MANIFEST_COVERAGE),
+        (
+            ExperimentalRunRecord,
+            RUN_RECORD_MANIFEST_COVERAGE,
+            MANIFEST_TOKEN_EXCLUSIONS,
+        ),
+        (ExperimentalFailureRecord, FAILURE_RECORD_MANIFEST_COVERAGE, ()),
+        (
+            ReplayObservation,
+            REPLAY_OBSERVATION_MANIFEST_COVERAGE,
+            MANIFEST_TOKEN_EXCLUSIONS,
+        ),
+        (
+            ModelContrastObservation,
+            CONTRAST_OBSERVATION_MANIFEST_COVERAGE,
+            MANIFEST_TOKEN_EXCLUSIONS,
+        ),
     )
-    for observed_type, covered in schema_dispositions:
+    for observed_type, covered, exclusions in schema_dispositions:
         field_names = {item.name for item in fields(observed_type)}
-        if field_names != set(covered) | set(MANIFEST_TOKEN_EXCLUSIONS):
+        if field_names != set(covered) | set(exclusions):
             raise RuntimeError(
                 "canonical experimental evidence manifest coverage must "
                 f"explicitly account for every {observed_type.__name__} field"

@@ -10,6 +10,7 @@ import pytest
 from test_experimental import (  # type: ignore[import-not-found]
     ACCOUNTED,
     UNACCOUNTED,
+    bound,
     candidate,
     case_set,
     implementation_for,
@@ -22,6 +23,7 @@ from alghanem.kernel.experimental import (
     ExperimentalAuthorityError,
     ExperimentalOperationRef,
     ExperimentalOutcomeStatus,
+    ExperimentalRunContext,
     ExperimentalRunRequest,
 )
 from alghanem.kernel.experimental_comparison import (
@@ -43,7 +45,10 @@ def run_for(
 ) -> object:
     return authority.run(
         run_id=run_id,
-        request=request(cases=cases, model_ref=model_ref),  # type: ignore[arg-type]
+        bound_request=bound(
+            request(cases=cases, model_ref=model_ref),  # type: ignore[arg-type]
+            binding_id=f"binding-{run_id}",
+        ),
         implementation=implementation_for(unaccounted),  # type: ignore[arg-type]
     )
 
@@ -166,7 +171,9 @@ def test_the_weaker_model_may_also_close_the_strict_superset() -> None:
     assert observation.status is ModelContrastStatus.A_CLOSES_STRICT_SUPERSET
 
 
-def test_runs_over_two_case_sets_are_refused_rather_than_reconciled() -> None:
+def test_runs_over_two_different_case_sets_are_refused_rather_than_reconciled() -> (
+    None
+):
     authority = ExperimentalAuthority(authority_id="lab")
     first = run_for(
         authority,
@@ -175,11 +182,10 @@ def test_runs_over_two_case_sets_are_refused_rather_than_reconciled() -> None:
         model_ref="model-a",
         unaccounted=frozenset({"c1"}),
     )
-    # An equal-valued but separately declared case set is still a second freeze.
     second = run_for(
         authority,
         run_id="model-b",
-        cases=case_set(),
+        cases=case_set(("c1", "c2")),
         model_ref="model-b",
         unaccounted=frozenset({"c1"}),
     )
@@ -189,6 +195,83 @@ def test_runs_over_two_case_sets_are_refused_rather_than_reconciled() -> None:
             observation_id="contrast-1",
             record_a=first,  # type: ignore[arg-type]
             record_b=second,  # type: ignore[arg-type]
+        )
+
+
+def test_two_separately_declared_but_content_equal_case_sets_are_one_case_set() -> (
+    None
+):
+    """`OneContentIdentityLawForSameness`: sameness is content, not object id."""
+
+    authority = ExperimentalAuthority(authority_id="lab")
+    first = run_for(
+        authority,
+        run_id="model-a",
+        cases=case_set(),
+        model_ref="model-a",
+        unaccounted=frozenset({"c1"}),
+    )
+    second = run_for(
+        authority,
+        run_id="model-b",
+        cases=case_set(),
+        model_ref="model-b",
+        unaccounted=frozenset({"c1", "c2"}),
+    )
+    assert first.case_set is not second.case_set  # type: ignore[attr-defined]
+
+    observation = ExperimentalContrastAuthority(authority_id="contrast").observe(
+        observation_id="contrast-1",
+        record_a=first,  # type: ignore[arg-type]
+        record_b=second,  # type: ignore[arg-type]
+    )
+
+    assert observation.status is ModelContrastStatus.A_CLOSES_STRICT_SUPERSET
+
+
+def test_two_content_equal_requests_are_one_request_for_a_replay() -> None:
+    """`OneContentIdentityLawForSameness`, read from the replay's own side."""
+
+    authority = ExperimentalAuthority(authority_id="lab")
+    cases = case_set()
+    first = authority.run(
+        run_id="run-1",
+        bound_request=bound(request(cases=cases), binding_id="binding-1"),
+        implementation=implementation_for(frozenset({"c2"})),
+    )
+    # A separately constructed, content-equal request and a second binding.
+    second = authority.run(
+        run_id="run-2",
+        bound_request=bound(request(cases=case_set()), binding_id="binding-2"),
+        implementation=implementation_for(frozenset({"c2"})),
+    )
+    assert first.request is not second.request
+
+    replay = ExperimentalReplayAuthority(authority_id="replay").observe(
+        observation_id="replay-1", records=(first, second)
+    )
+
+    assert replay.outputs_identical is True
+    assert replay.traces_identical is True
+
+
+def test_two_runs_of_one_request_identity_are_a_replay_and_not_a_contrast() -> None:
+    authority = ExperimentalAuthority(authority_id="lab")
+    shared = bound(request(cases=case_set()))
+    first = authority.run(
+        run_id="run-1",
+        bound_request=shared,
+        implementation=implementation_for(frozenset()),
+    )
+    second = authority.run(
+        run_id="run-2",
+        bound_request=shared,
+        implementation=implementation_for(frozenset()),
+    )
+
+    with pytest.raises(ExperimentalAuthorityError):
+        ExperimentalContrastAuthority(authority_id="contrast").observe(
+            observation_id="contrast-1", record_a=first, record_b=second
         )
 
 
@@ -236,12 +319,14 @@ def test_a_run_that_did_not_complete_has_no_per_case_reading_to_contrast() -> No
         unaccounted=frozenset(),
     )
 
-    def raising(_: str) -> tuple[str, Trace]:
+    def raising(
+        context: ExperimentalRunContext, input_content: str
+    ) -> tuple[str, Trace]:
         raise RuntimeError("stopped")
 
     failed = authority.run(
         run_id="model-b",
-        request=request(cases=cases, model_ref="model-b"),
+        bound_request=bound(request(cases=cases, model_ref="model-b")),
         implementation=raising,
     )
     assert failed.outcome_status is ExperimentalOutcomeStatus.FAILED
@@ -257,15 +342,15 @@ def test_a_run_that_did_not_complete_has_no_per_case_reading_to_contrast() -> No
 def test_a_replay_reads_agreement_without_claiming_reproducibility() -> None:
     cases = case_set()
     authority = ExperimentalAuthority(authority_id="lab")
-    shared_request = request(cases=cases)
+    shared_request = bound(request(cases=cases))
     first = authority.run(
         run_id="run-1",
-        request=shared_request,
+        bound_request=shared_request,
         implementation=implementation_for(frozenset({"c2"})),
     )
     second = authority.run(
         run_id="run-2",
-        request=shared_request,
+        bound_request=shared_request,
         implementation=implementation_for(frozenset({"c2"})),
     )
 
@@ -284,15 +369,15 @@ def test_a_replay_reads_agreement_without_claiming_reproducibility() -> None:
 def test_a_replay_detects_a_second_run_that_disagreed() -> None:
     cases = case_set()
     authority = ExperimentalAuthority(authority_id="lab")
-    shared_request = request(cases=cases)
+    shared_request = bound(request(cases=cases))
     first = authority.run(
         run_id="run-1",
-        request=shared_request,
+        bound_request=shared_request,
         implementation=implementation_for(frozenset({"c2"})),
     )
     second = authority.run(
         run_id="run-2",
-        request=shared_request,
+        bound_request=shared_request,
         implementation=implementation_for(frozenset({"c3"})),
     )
 
@@ -308,7 +393,7 @@ def test_one_record_read_twice_is_not_a_replay() -> None:
     authority = ExperimentalAuthority(authority_id="lab")
     record = authority.run(
         run_id="run-1",
-        request=request(),
+        bound_request=bound(),
         implementation=implementation_for(frozenset()),
     )
 
@@ -322,7 +407,7 @@ def test_replayed_runs_must_share_one_request() -> None:
     authority = ExperimentalAuthority(authority_id="lab")
     first = authority.run(
         run_id="run-1",
-        request=request(),
+        bound_request=bound(),
         implementation=implementation_for(frozenset()),
     )
     other_request = ExperimentalRunRequest(
@@ -334,7 +419,7 @@ def test_replayed_runs_must_share_one_request() -> None:
     )
     second = authority.run(
         run_id="run-2",
-        request=other_request,
+        bound_request=bound(other_request),
         implementation=implementation_for(frozenset()),
     )
 
@@ -347,15 +432,15 @@ def test_replayed_runs_must_share_one_request() -> None:
 def test_observation_ids_are_injective_within_each_authority() -> None:
     cases = case_set()
     authority = ExperimentalAuthority(authority_id="lab")
-    shared_request = request(cases=cases)
+    shared_request = bound(request(cases=cases))
     first = authority.run(
         run_id="run-1",
-        request=shared_request,
+        bound_request=shared_request,
         implementation=implementation_for(frozenset()),
     )
     second = authority.run(
         run_id="run-2",
-        request=shared_request,
+        bound_request=shared_request,
         implementation=implementation_for(frozenset()),
     )
     replay_authority = ExperimentalReplayAuthority(authority_id="replay")
