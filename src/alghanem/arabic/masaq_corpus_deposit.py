@@ -58,6 +58,7 @@ __all__ = [
     "A_FAILED_UPLOAD_IS_NOT_A_DEPOSIT_NOTE",
     "AN_IGNORED_PATH_CANNOT_RECEIVE_A_DEPOSIT_NOTE",
     "A_MIRROR_WITH_ANOTHER_DIGEST_IS_NOT_THESE_BYTES_NOTE",
+    "A_PERMISSION_UNEXAMINED_IS_NOT_A_PERMISSION_REFUSED_NOTE",
     "A_SKIP_IS_CONDITIONED_ON_THE_BYTES_NOT_THE_VARIABLE_NOTE",
     "COMPLETE_INDUCTION_IS_CORPUS_BOUNDED_NOTE",
     "DEPOSITED_DERIVED_NOUN_COUNTS",
@@ -142,8 +143,10 @@ MASAQ_PATH_VARIABLE: Final[str] = "ALGHANEM_MASAQ_PATH"
 MASAQ_RELATIVE_PATH: Final[str] = "corpora/MASAQ.csv"
 """موضعُ البايتات داخل الشجرة إن أُودِعت؛ موضعٌ **مسنونٌ** لا مُخمَّن.
 
-ورخصةُ `CC BY 3.0` تُجيز هذا الإيداعَ صراحةً، بخلاف مرايا أخرى يمنعها
-ناشروها؛ فالنمطُ الذي يُبقي بايتاتِ تلك خارجَ الشجرة لا يُقيّد هذه.
+والوسمُ المُودَع `CC BY 3.0` هو ما بُني عليه حجزُ هذا الموضع. وليس في هذه
+الوحدة دعوى أنّ غيرَ MASAQ **ممنوعُ** النسخ: بايتاتُ سائر المدوَّنات باقيةٌ
+خارجَ الشجرة لأنّ إذنَ نسخها **لم يُفحَص ولم يُودَع هنا**، لا لأنّه فُحِص
+فانتفى (`A_PERMISSION_UNEXAMINED_IS_NOT_A_PERMISSION_REFUSED`).
 ووجودُ الملفّ في هذا الموضع **لا يُغني عن المطابقة**: البصمةُ والطولُ
 يُفحصان كما يُفحصان لأيّ مسارٍ مُمرَّر، فالموضعُ ليس شهادة.
 """
@@ -307,6 +310,14 @@ A_SKIP_IS_CONDITIONED_ON_THE_BYTES_NOT_THE_VARIABLE_NOTE: Final[str] = (
     "مُحلٌّ إلى ملفٍّ مخالفِ البصمة **لا يُتخطّى** بل يفشل: الموضعُ ليس شهادة"
 )
 
+A_PERMISSION_UNEXAMINED_IS_NOT_A_PERMISSION_REFUSED_NOTE: Final[str] = (
+    "APermissionUnexaminedIsNotAPermissionRefused: بقاءُ بايتاتِ مدوَّنةٍ "
+    "أخرى خارجَ هذه الشجرة حالةُ **إذنٍ لم يُفحَص ولم يُودَع**، لا حكمٌ بأنّ "
+    "ناشرَها يمنع النسخ. ومنعُ الاشتقاق ليس منعَ النسخ الحرفيّ، وشرطُ "
+    "النسبة والإشعار ليس منعًا؛ فمن قرأ الغيابَ تحريمًا فقد أصدر عن رخصةٍ "
+    "حكمًا لم يقرأه فيها، وذلك عينُ ما تمنعه هذه الشجرة في الأرقام"
+)
+
 MASAQ_DEPOSIT_NAMED_RESIDUALS: Final[dict[str, str]] = {
     "CompleteInductionIsCorpusBounded": COMPLETE_INDUCTION_IS_CORPUS_BOUNDED_NOTE,
     "AnImportedTagIsAHumanJudgementNotAMeasurement": (
@@ -331,6 +342,9 @@ MASAQ_DEPOSIT_NAMED_RESIDUALS: Final[dict[str, str]] = {
     ),
     "ASkipIsConditionedOnTheBytesNotTheVariable": (
         A_SKIP_IS_CONDITIONED_ON_THE_BYTES_NOT_THE_VARIABLE_NOTE
+    ),
+    "APermissionUnexaminedIsNotAPermissionRefused": (
+        A_PERMISSION_UNEXAMINED_IS_NOT_A_PERMISSION_REFUSED_NOTE
     ),
 }
 

@@ -15,7 +15,9 @@ from pathlib import Path
 
 import pytest
 
+from alghanem.arabic import masaq_corpus_deposit
 from alghanem.arabic.masaq_corpus_deposit import (
+    A_PERMISSION_UNEXAMINED_IS_NOT_A_PERMISSION_REFUSED_NOTE,
     DEPOSITED_DERIVED_NOUN_COUNTS,
     DEPOSITED_EMBEDDED_NEWLINE_BREAKS,
     DEPOSITED_EMBEDDED_NEWLINE_RECORDS,
@@ -424,3 +426,20 @@ def test_a_stray_name_in_the_deposit_place_is_caught_before_any_digest(
 
 def test_an_absent_deposit_place_has_no_stray_files(tmp_path: Path) -> None:
     assert unsanctioned_deposit_files(tmp_path / "لا-وجودَ-له") == ()
+
+
+def test_the_deposit_claims_no_prohibition_over_another_corpus() -> None:
+    """بقاءُ مدوَّنةٍ أخرى خارجَ الشجرة إذنٌ لم يُفحَص، لا منعٌ ثبت."""
+
+    assert "APermissionUnexaminedIsNotAPermissionRefused" in (
+        MASAQ_DEPOSIT_NAMED_RESIDUALS
+    )
+    assert MASAQ_DEPOSIT_NAMED_RESIDUALS[
+        "APermissionUnexaminedIsNotAPermissionRefused"
+    ] == A_PERMISSION_UNEXAMINED_IS_NOT_A_PERMISSION_REFUSED_NOTE
+
+    module_source = (
+        Path(masaq_corpus_deposit.__file__).read_text(encoding="utf-8")
+    )
+    for forbidden in ("يمنعها ناشروها", "يمنعون النسخ"):
+        assert forbidden not in module_source

@@ -3516,8 +3516,9 @@ Accordingly the recorded conflict's `tree_reference` and
 `what_would_resolve_it` now point at the census and its re-derivation script,
 while its standing stays `THE_TREE_CANNOT_TEST_IT`: changing a rank is a
 separate, deliberate decision, never a side effect of depositing numbers. The
-corpus bytes are still not vendored — its GPL licence and the CC BY-ND Tanzil
-text it embeds forbid modification — so the re-derivation runs at the holder of
+corpus bytes are still not vendored — permission to copy them under its GPL
+licence and the CC BY-ND Tanzil text it embeds has not been examined here — so
+the re-derivation runs at the holder of
 the bytes via `examples/irab/measure_hollow_root_census.py`, and no number
 passes before the digest and length match.
 
@@ -3737,9 +3738,15 @@ length and a different digest re-derives the fourteen tag counts exactly and
 diverges on all six byte-and-line figures; that is recorded as corroboration
 under `AMirrorWithAnotherDigestIsNotTheseBytes`, not as a second witness, and
 the column binding of the deposited bytes remains the depositor's declaration,
-not a reading taken from the mirror. CC BY 3.0 permits vendoring, unlike
-QAC (GPL) and Tanzil (CC BY-ND), so one sanctioned place is reserved for those
-bytes — `corpora/MASAQ.csv` — but **the bytes are not in this tree yet**, and
+not a reading taken from the mirror. One sanctioned place is reserved for those
+bytes — `corpora/MASAQ.csv` — on the strength of the recorded `CC BY 3.0`
+label. That reservation asserts **nothing** about QAC or Tanzil: their bytes
+stay outside this tree because permission to copy them **has not been examined
+and not been deposited here**, not because it was examined and found absent —
+forbidding derivatives is not forbidding verbatim copies, and requiring
+attribution and notice is not forbidding anything
+(`APermissionUnexaminedIsNotAPermissionRefused`). And **the bytes are not in
+this tree yet**, and
 the place alone re-derives nothing: until they are deposited there, the twenty
 figures require a path in `ALGHANEM_MASAQ_PATH` and the re-derivation test
 skips without one. Neither route weakens the gate — the deposited location
