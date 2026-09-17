@@ -3936,6 +3936,59 @@ the bytes of another. `examples/arabic/measure_maqayis_witnesses.py` re-derives
 every one of them beside its rule and its limit, and exits non-zero on any
 drift.
 
+### Conditions frozen where a verdict used to be written
+
+`vv_birth_hypothesis.py` and `vv_birth_preregistration.py` open
+**G0.VV-BIRTH-1** as a preregistration and nothing else. The point of the pair
+is that four different answers are reachable from them: the extension may
+preserve identity without ever being a neutral element; VV neutrality may be
+refuted outright; the syllable may hold structurally and still not be born
+constitutionally; and CV/CVV may turn out to be one type in two quantity states
+or two types. None of the four is written anywhere in the freeze.
+
+What is frozen is the vocabulary that makes those answers separable. The two
+projections are declared before any run — `π_I` onto a closed vowel quality and
+`π_Q` onto `{1, 2}`, explicitly counting rather than physical time — and
+`letter_index` is named in `BANNED_IDENTITY_PROXIES`, because a program offset
+would make `π_I(E(v)) = π_I(v)` true by storage rather than by phonology.
+`H_E` (an identity-preserving, quantity-changing operator) and `H_N` (a neutral
+element with respect to a stated `⊗` and a stated `∼_I`) are two hypotheses,
+not one, and `NEUTRAL_ELEMENT_SUPPORTED` is not in the outcome vocabulary at
+all. `ExperimentOutcome` has no `BORN` member, so no template match can emit a
+birth. Closure is written as the quotient law `Obs(k[g]) = Obs(k[π(g)])` plus
+`NoCrossBoundaryActiveResidual`, with membership in the syllable template table
+named as what does **not** substitute for it. `LicensedJoin` is a partial typed
+operation carrying its impediments, and a trace counts as reconstruction only
+if every strict subset of it fails the audit.
+
+Four adverse facts about this tree are deposited before the run rather than
+discovered after it: `C` and `V` hold no birth certificate, no recorded sound
+exists here, no reconstruction target independent of the candidate model exists
+— `syllabifier` segments by the very templates `H_S` is about, and
+`p_extractor` attaches `MADD_EXTENSION` by the rule under test — and the madd
+label is itself a rule output. They force, in advance,
+`INDEPENDENT_TARGET_MISSING`, `PHYSICAL_PHONETIC_VERIFICATION = UNDERPOWERED`,
+and a ceiling of `CONDITIONAL_STRUCTURAL_BIRTH` on `H_S` and `UNDEFINED` on
+`H_N`.
+
+Two defects of the earlier freeze are closed by construction.
+`REQUIRED_NOTATION_SITES` is a hand-written list of seventeen
+`(module, symbol)` pairs, never derived from the frozen text, so deleting a
+clause cannot delete its own requirement — the tests check both that no site is
+missing today and that removing one is actually detected. And a self-recomputed
+digest is named as no seal: `ASelfRecomputedDigestIsNotASeal` says outright
+that editing text and digest in one commit is undetectable here, so the seal
+obligation is placed on the readout, which must carry `prereg_commit_sha` and
+`expected_preregistration_digest` from a strictly earlier commit.
+`ACommitCannotContainItsOwnSha` records why this module cannot carry it.
+
+**What it does not establish:** anything at all about VV. There is no readout
+in this commit, and the tests assert that `alghanem.arabic.vv_birth_readout`
+does not exist. `TheCitedFreezeIsAbsentFromThisTree` records that
+`vv_neutral_birth_freeze.py` is nowhere in this tree or its history, so the
+circular fidelity check and the non-sealing digest are closed here by design,
+not by inspecting that file.
+
 Source: the Quranic Arabic Corpus, http://corpus.quran.com — built on the
 Tanzil Quran text, http://tanzil.info. Qutrub and Arramooz Alwaseet,
 T. Zerrouki, http://arramooz.sourceforge.net/ and
