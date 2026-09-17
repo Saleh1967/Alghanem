@@ -1897,12 +1897,73 @@ attention.
 | `TheCountIsTestedAfterTheQuotient` | ENFORCED_AT_PROBE_PREREGISTRATION | The equivalence relation is declared before the run, the quotient derived from it, and only then counted. A predicted cardinality may never appear in the relation that produces it, or the experiment tests its own definition. |
 | `AWeakerRepresentationThatTiesDefeatsTheClaim` | ENFORCED_AT_PROBE_PREREGISTRATION | The three weaker representations are registered before the run and evaluated on the same surfaces. Equal performance by any of them defeats the claim that the licensed pair is the lower centre; the weaker model need not win. |
 | `FourConditionsOrNoHigherCenter` | DECLARED_DEFERRED | Reconstruction, Minimality, NoBypass and Closure must hold together before anything may be named a higher centre. A failure of one withholds the name rather than weakening it. |
-| `NoReadoutExistsForFLT1Yet` | ENFORCED_AT_PROBE_PREREGISTRATION | This deposit contains the frozen text and the registration only. A reading built in the same deposit could not testify to its own ordering, so the readout belongs to a later commit made after the text has been compared against the request. |
+| `NoReadoutExistsForFLT1Yet` | ENFORCED_AT_PROBE_PREREGISTRATION | The registration deposit contains the frozen text and the registration only. A reading built in the same deposit could not testify to its own ordering, so the readout belongs to a later commit. This law was discharged, not repealed: `G0.FLT-1.Q` below repeats the same ordering for its own text, and the test that once asserted the absence of a readout module was restated against repository history rather than deleted. |
 
 The frozen text is `src/alghanem/arabic/flt1_hypothesis.py` and the ten
 registered items are `src/alghanem/arabic/flt1_preregistration.py`. `G0.FLT-2` —
 syllable to prosodic centre — is named here and not registered; it must reuse
 this law rather than redefine it.
+
+## G0.FLT-1.Q — Continuity under an origin, and the birth of an independent branch
+
+`G0.FLT-1` froze the chain `Carrier -> Carrier/State Center -> Licensed Join ->
+Closure -> Higher Center` and stopped. That chain treated every transition as a
+move *upward*. The reformulation frozen here corrects it: a transition must also
+pass a **licensed qiyās between an origin and a candidate branch**, and the
+*qādiḥ* difference is something to be **tested**, never something required.
+
+```
+Q(O,F) = Sh ∧ Sb ∧ ¬Mn ∧ I ∧ w* ∧ μ(O,F) ∧ ¬Δq(O,F)
+```
+
+There are two paths that may not be mixed. `μ ∧ ¬Δq` yields *continuity* under
+the origin (`F ⪯_O O`); `μ_base ∧ Δq*` — a qādiḥ difference whose *effect* is
+shown, not a merely formal one — opens an independent-branch candidate, and even
+then nothing is born until `J ∧ I ∧ Cl` also pass. A third position is forced by
+the text and named explicitly rather than smuggled into either path: a
+difference that exists but whose effect is unshown is `FORMAL_DIFFERENCE_ONLY`.
+
+The text was superseded, not edited. `flt1_hypothesis.py` keeps its letter and
+its digest; the new statement is a second, independent text with its own digest
+and an explicit `SupersessionRecord` saying why the exchange was licensed — the
+first text had never been read, no readout had run and no number had come out,
+so this is a change of hypothesis *before* the test rather than retro-fitting
+*after* a result. Had a single result been seen first, the same exchange would
+have been the exact offence that sank `G0.FLT-0`.
+
+The first run is recorded as it came out, and it is mixed:
+
+- Of eighteen branches across the seven frozen surfaces, nine read
+  `CONTINUITY_UNDER_ORIGIN` and nine `INDEPENDENT_BRANCH_CANDIDATE`.
+- No surface earned the name "higher centre". `فَتَحَ` lost `NoBypass` outright —
+  the no-join path reproduces `CV-CV-CV` exactly, so for that surface the join is
+  ornament. `بَابٌ` lost `Reconstruction` and `Closure` together, because the madd
+  seat at position 1 enters no syllable.
+- The remaining five surfaces are `UNDERPOWERED`, not successful, because
+  `Minimality` is underpowered by construction.
+- `w*` and `μ` held everywhere and are reported as **analytic in this deposit**:
+  they are true by the template function itself, not by the corpus, so they are
+  read and explicitly not counted as evidence.
+- Five of the machine's registered outcomes never fired and are listed as
+  untested rather than silently passed.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `SupersessionIsNotEditing` | ENFORCED_AT_PROBE_PREREGISTRATION | A superseding statement is a second text with its own digest; the superseded text keeps its letter and digest untouched. Supersession is licensed only while no result has been read from the superseded text, and the record must name what would have made it illegitimate. |
+| `TheQadihDifferenceIsTestedNotRequired` | ENFORCED_AT_PROBE_PREREGISTRATION | `Δq` is neither a precondition of success nor of failure; it is asked. Its absence yields continuity under the origin, its presence without shown effect yields a formal difference only, and only a difference whose effect is shown opens an independent branch. |
+| `ContinuityIsNotBirth` | ENFORCED_AT_PROBE_PREREGISTRATION | `CONTINUITY_UNDER_ORIGIN` is a verdict in a different register, not a lower grade of `INDEPENDENT_BRANCH_CANDIDATE`. Counting continuity as a failed birth mixes the two paths the law separates. |
+| `PrecedenceIsPartOfTheMachine` | ENFORCED_AT_PROBE_PREREGISTRATION | The decision machine's rules are deposited in an explicit, gap-free precedence that is checked at import. Reading one line before another changes the verdict, so ordering is law rather than presentation. |
+| `TheTargetIsFrozenBeforeTheScore` | ENFORCED_AT_PROBE_PREREGISTRATION | The reconstruction target is declared before any score and is the same for the licensed and the weaker models. Scoring a weaker model against the licensed model's own output would make the licensed model correct by definition. |
+| `AnalyticGatesCarryNoDiscriminatingWeight` | ENFORCED_AT_PROBE_PREREGISTRATION | A gate that holds by the structure of the reader rather than by the corpus is marked analytic in the readout and excluded from evidence, instead of being counted as a passing field. This is the `G0.FLT-0` signature-degeneracy lesson applied to the successor experiment. |
+| `AnUnfiredRuleIsAnUntestedRule` | ENFORCED_AT_PROBE_PREREGISTRATION | Registered outcomes that the frozen corpus never triggered are enumerated in the run output. Silence from a branch of the decision machine is not evidence that the branch is sound. |
+| `MinimalityIsAsymmetricWhenTheTargetIsNotIndependent` | ENFORCED_AT_PROBE_PREREGISTRATION | Where the reconstruction target is produced by the same reader that embodies the licensed model, the licensed model's advantage is guaranteed by construction. A tie by any weaker representation therefore refutes the claim, while a win by the licensed model leaves `Minimality` `UNDERPOWERED` rather than satisfied. |
+
+The frozen text is `src/alghanem/arabic/flt1_qiyas_law.py`, the machine is
+`src/alghanem/arabic/flt1_qiyas_preregistration.py`, and the reading —
+committed after both — is `src/alghanem/arabic/flt1_qiyas_readout.py`. Lifting
+`Minimality` out of `UNDERPOWERED` requires a reconstruction target that does
+not come from the syllabifier; that, and not a larger corpus, is what `G0.FLT-2`
+must obtain first.
 
 ## Encyclopedia Nucleus — Constitution
 

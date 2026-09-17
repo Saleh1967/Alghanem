@@ -3438,6 +3438,30 @@ together; `Identity` counts only if verified, otherwise the pair is
 read, checked at import. The laws are in `docs/CONSTITUTION.md` under
 `G0.FLT-1`.
 
+`G0.FLT-1.Q` then corrected the law itself before running it. The frozen chain
+treated every transition as a move upward; the correction adds a licensed
+*qiyās* between an origin and a candidate branch, with the *qādiḥ* difference
+**tested** rather than required: `Q(O,F) = Sh ∧ Sb ∧ ¬Mn ∧ I ∧ w* ∧ μ ∧ ¬Δq`.
+Absence of the difference is continuity under the origin, presence with a shown
+effect opens an independent branch, and presence without a shown effect is a
+formal difference only. The earlier text was superseded rather than edited — it
+keeps its letter and its digest, and the supersession record states why the
+exchange was licensed: nothing had been read from it yet. The same commit
+ordering was repeated, the new text and machine landing before the readout
+existed.
+
+The run is recorded as it came out, and no surface earned the name "higher
+centre". Nine of eighteen branches read as continuity and nine as
+independent-branch candidates. `فَتَحَ` lost `NoBypass` outright, because the
+no-join path reproduces `CV-CV-CV` exactly and the join is ornament there;
+`بَابٌ` lost `Reconstruction` and `Closure` together, because the madd seat
+enters no syllable. The rest are `UNDERPOWERED`, since the reconstruction target
+comes from the same reader that embodies the licensed model — so a tie by a
+weaker representation would refute the claim, while the licensed model's win
+proves nothing. `w*` and `μ` held everywhere and are reported as analytic in
+this deposit rather than counted as evidence, and the five decision outcomes the
+corpus never triggered are listed as untested.
+
 ## Development
 
 The first measurement in this tree against an *externally* annotated corpus is

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pathlib
+
 import pytest
 
 from alghanem.arabic.flt1_hypothesis import FLT1_TEXT_DIGEST
@@ -148,9 +150,43 @@ def test_the_qiyas_registration_reuses_the_frozen_surfaces_and_weaker_models() -
     }
 
 
-def test_no_qiyas_readout_module_exists_in_this_deposit() -> None:
-    """شاهدُ ترتيب: هذا الإيداعُ سابقٌ لأيّ وحدةِ قراءةٍ تقرأ منه."""
+def test_the_deposit_precedes_the_readout_in_the_repository_history() -> None:
+    """شاهدُ ترتيبٍ من التاريخ نفسِه: التجميدُ التزامٌ سابقٌ لوحدة القراءة.
 
-    import importlib.util
+    وكان هذا الشاهدُ عند الإيداع نفيًا لوجود وحدة القراءة أصلًا. ولمّا
+    شُغِّلت القراءةُ في التزامٍ تالٍ لم يُحذَف الشاهدُ بل أُعيدت صياغتُه على
+    ما يُثبِته التاريخ: أنّ ملفَّ القانون دخل في التزامٍ لا يحوي وحدةَ
+    القراءة. وحذفُه كان سيُضيِّع الدعوى، وإبقاؤه على صيغته كان سيُكذِّبها.
+    """
 
-    assert importlib.util.find_spec("alghanem.arabic.flt1_qiyas_readout") is None
+    import subprocess
+
+    root = pathlib.Path(__file__).resolve().parents[2]
+
+    def first_commit(path: str) -> str | None:
+        result = subprocess.run(
+            ["git", "log", "--format=%H", "--diff-filter=A", "--", path],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        lines = [line for line in result.stdout.splitlines() if line.strip()]
+        return lines[-1] if lines else None
+
+    deposit = first_commit("src/alghanem/arabic/flt1_qiyas_law.py")
+    readout = first_commit("src/alghanem/arabic/flt1_qiyas_readout.py")
+    if deposit is None:
+        pytest.skip("تاريخُ المستودع غيرُ متاحٍ في هذه النسخة، فلا يُقرأ الترتيبُ منه")
+    if readout is None:
+        return
+
+    listed = subprocess.run(
+        ["git", "show", "--name-only", "--format=", deposit],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    ).stdout
+    assert "flt1_qiyas_law.py" in listed
+    assert "flt1_qiyas_readout.py" not in listed
