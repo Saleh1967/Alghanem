@@ -436,13 +436,12 @@ def test_the_deposit_claims_no_prohibition_over_another_corpus() -> None:
     assert "APermissionUnexaminedIsNotAPermissionRefused" in (
         MASAQ_DEPOSIT_NAMED_RESIDUALS
     )
-    assert MASAQ_DEPOSIT_NAMED_RESIDUALS[
-        "APermissionUnexaminedIsNotAPermissionRefused"
-    ] == A_PERMISSION_UNEXAMINED_IS_NOT_A_PERMISSION_REFUSED_NOTE
-
-    module_source = (
-        Path(masaq_corpus_deposit.__file__).read_text(encoding="utf-8")
+    assert (
+        MASAQ_DEPOSIT_NAMED_RESIDUALS["APermissionUnexaminedIsNotAPermissionRefused"]
+        == A_PERMISSION_UNEXAMINED_IS_NOT_A_PERMISSION_REFUSED_NOTE
     )
+
+    module_source = Path(masaq_corpus_deposit.__file__).read_text(encoding="utf-8")
     for forbidden in ("يمنعها ناشروها", "يمنعون النسخ"):
         assert forbidden not in module_source
 
