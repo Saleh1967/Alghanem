@@ -52,3 +52,9 @@ def test_the_arabic_layer_may_import_the_linguistic_nucleus() -> None:
     relativization = _SOURCE_ROOT / "arabic" / "nisbah_relativization.py"
     modules = _imported_modules(relativization)
     assert any("linguistic" in module for module in modules)
+
+
+def test_no_kernel_module_reads_the_linguistic_nucleus() -> None:
+    for path in sorted((_SOURCE_ROOT / "kernel").glob("*.py")):
+        for module in _imported_modules(path):
+            assert "linguistic" not in module, (path.name, module)

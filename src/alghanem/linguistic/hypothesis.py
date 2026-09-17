@@ -197,7 +197,7 @@ Term+Predicate+Operator
 \rightarrow PreIfadahClosure
 \rightarrow Ifadah
 }
-"""
+"""  # noqa: E501
 
 
 class FidelityStanding(Enum):
@@ -272,7 +272,9 @@ REQUIRED_NOTATION_SITES: Final[tuple[NotationSite, ...]] = (
         site_id="the-n-ary-predicate",
         literal=r"Predicate_n(t_1,\ldots,t_n)",
         what_it_decides="أنّ المحمولَ ذو رتبةٍ لا صفةٌ أحاديّةٌ دائمًا",
-        what_its_absence_invalidates="`Greater(x,y)` و`Give(x,y,z)`، فتضيق النواةُ عنهما",
+        what_its_absence_invalidates=(
+            "`Greater(x,y)` و`Give(x,y,z)`، فتضيق النواةُ عنهما"
+        ),
     ),
     NotationSite(
         site_id="the-argument-slot",

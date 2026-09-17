@@ -173,7 +173,8 @@ class TermAnchorSignature:
         _require_text(self.anchor_id, "مُعرِّفُ المرساة")
         if not isinstance(self.candidate_kind, TermAnchorKind):
             raise NisbahError(
-                "فرعُ المرساة عضوٌ في مفردته المغلقة؛ و" + CANDIDATE_BRANCH_IS_NOT_A_BORN_KIND
+                "فرعُ المرساة عضوٌ في مفردته المغلقة؛ و"
+                + CANDIDATE_BRANCH_IS_NOT_A_BORN_KIND
             )
         _require_text(self.identity_condition, "شرطُ حفظ هويّة الطرف")
 
