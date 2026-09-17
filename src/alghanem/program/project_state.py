@@ -244,7 +244,7 @@ _UNASSIGNED_STATUSES: Final[tuple[str, ...]] = tuple(
 if _UNASSIGNED_STATUSES:  # حارسٌ عند الاستيراد، لا فحصٌ يُؤجَّل إلى الاستدعاء
     raise ProjectStateError(
         "مفردةُ الحالات المُعلَنة غيرُ مُغطّاةٍ بالأجناس: "
-        + "، ".join(_UNASSIGNED_STATUSES)
+        f"{'، '.join(_UNASSIGNED_STATUSES)}"
     )
 
 
@@ -471,8 +471,7 @@ def render_state_block(state: ProjectState) -> str:
     lines = [
         STATE_BLOCK_BEGIN_MARKER,
         "",
-        "> هذه الكتلةُ **مرسومةٌ آليًّا** من "
-        "`src/alghanem/program/project_state.py`،",
+        "> هذه الكتلةُ **مرسومةٌ آليًّا** من `src/alghanem/program/project_state.py`،",
         "> ولا تُحرَّر باليد؛ ويقابلها شاهدٌ حرفًا بحرف.",
         "",
         "| المقروء | العدد |",
