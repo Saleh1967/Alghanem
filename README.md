@@ -234,6 +234,39 @@ yields `is_independent_closure == False`
 remain open by name, so the status says what was reached and what it is pending
 on rather than overstating it. `CompositionIsNotAVerdict`: the stage is not
 wired to `BirthVerdictGate`, and `ClosureRefutedInScope != NO_BIRTH_IN_SCOPE`.
+G0.BC.1a (`src/alghanem/kernel/birth_certificate.py`) supplies the contract both
+of those stages stop short of, and activates neither birth branch.
+`BirthVerdict != BirthCertificate != Execution`: a verdict decides that the
+conditions for existence of this genus were met in this scope, a certificate
+preserves that decision with its scope, necessity readings, evidence references,
+preventers and trace, and execution uses what was born and may never create it.
+Two authorities exist and neither can perform the other's act — only
+`ConstitutionalBirthAuthority.assess` may produce a `BirthCertificate` and it
+exposes no method that runs anything, and only `ExecutiveAdmissionGate.admit`
+may produce an `ExecutableEntity` and it exposes no method that certifies
+anything — so `ExecutiveAuthorityCannotIssueBirth` and
+`ConstitutionalBirthAuthorityCannotExecuteTheBornEntity` are enforced by the two
+classes' public surfaces rather than by prose, and successful execution is never
+evidence of valid birth. A candidate's existence does not oblige its birth, a
+use for it does not, and frequent use of it does not; what obliges it is an
+unclosed residual that the exhausted lower layer did not close and that no
+weaker reconstruction still suffices to explain, and all three conjuncts are
+*read* from the closure decision rather than re-derived
+(`NoBirthWithoutUnclosedResidual`, `NoBirthBeforeLowerLayerExhaustion`,
+`NoBirthWhenAWeakerReconstructionStillSuffices`).
+`APreventerHasAnIdentityNotABoolean`: every member of `BirthPreventer` is
+derived on every assessment, held or cleared, each carrying its own reason, so a
+refusal records *which* ground stopped the birth. `NoCertificateIsReachableInThisTree`
+is declared rather than discovered — three preventers hold on every branch,
+naming three different missing authorities (no `BirthCandidate` issuer, no
+identity proof, no proof of difference from the origin), and a fourth holds
+because G0.BV.1a still only defers — and all `3^5 = 243` reading combinations
+are enumerated in test with none yielding a certificate. A certificate would
+still confer neither `Freeze` nor truth nor any global ontology claim
+(`BirthDoesNotMeanFreeze`, `BirthDoesNotMeanTruth`), and no
+instruction/rule/law/constitution ladder is encoded, since each such genus would
+need its own certificate first (`NoGenusLadderIsEncodedHere`).
+
 `BirthCandidate` is distinct from a scoped birth verdict and from `Freeze`;
 the future G0.BV.1 authority may issue `BIRTH_IN_SCOPE`, then a later freeze
 authority may freeze it before a separate `E0` step. See the
@@ -3532,8 +3565,9 @@ Accordingly the recorded conflict's `tree_reference` and
 `what_would_resolve_it` now point at the census and its re-derivation script,
 while its standing stays `THE_TREE_CANNOT_TEST_IT`: changing a rank is a
 separate, deliberate decision, never a side effect of depositing numbers. The
-corpus bytes are still not vendored — its GPL licence and the CC BY-ND Tanzil
-text it embeds forbid modification — so the re-derivation runs at the holder of
+corpus bytes are still not vendored — permission to copy them under its GPL
+licence and the CC BY-ND Tanzil text it embeds has not been examined here — so
+the re-derivation runs at the holder of
 the bytes via `examples/irab/measure_hollow_root_census.py`, and no number
 passes before the digest and length match.
 
@@ -3753,9 +3787,15 @@ length and a different digest re-derives the fourteen tag counts exactly and
 diverges on all six byte-and-line figures; that is recorded as corroboration
 under `AMirrorWithAnotherDigestIsNotTheseBytes`, not as a second witness, and
 the column binding of the deposited bytes remains the depositor's declaration,
-not a reading taken from the mirror. CC BY 3.0 permits vendoring, unlike
-QAC (GPL) and Tanzil (CC BY-ND), so one sanctioned place is reserved for those
-bytes — `corpora/MASAQ.csv` — but **the bytes are not in this tree yet**, and
+not a reading taken from the mirror. One sanctioned place is reserved for those
+bytes — `corpora/MASAQ.csv` — on the strength of the recorded `CC BY 3.0`
+label. That reservation asserts **nothing** about QAC or Tanzil: their bytes
+stay outside this tree because permission to copy them **has not been examined
+and not been deposited here**, not because it was examined and found absent —
+forbidding derivatives is not forbidding verbatim copies, and requiring
+attribution and notice is not forbidding anything
+(`APermissionUnexaminedIsNotAPermissionRefused`). And **the bytes are not in
+this tree yet**, and
 the place alone re-derives nothing: until they are deposited there, the twenty
 figures require a path in `ALGHANEM_MASAQ_PATH` and the re-derivation test
 skips without one. Neither route weakens the gate — the deposited location
@@ -3765,6 +3805,33 @@ a failed web upload under another name, and `AFailedUploadIsNotADeposit` now
 states the consequence: only `README.md` and `MASAQ.csv` may sit in `corpora/`,
 any other name fails a test rather than resting there implying the corpus has
 arrived.
+
+The state of that path has a name in this README, and nowhere else:
+**Empirical Witness Activation — تفعيل الشاهد التجريبي**. It is a documentary
+label for the state of the MASAQ witness alone. It is **not** a programme
+milestone, **not** a readiness rank, **not** a constitutional status, and
+nothing in `docs/AIMS.md`, `milestone_ledger` or `readiness_rank` records it —
+those track a different axis. Two axes run side by side and are not one:
+*programme construction* (laws, gates, evidence, ranks, aims, execution) and
+the *empirical witness lifecycle* (specified → path prepared → bytes absent →
+bytes resolved → identity verified → figures re-derived → differences
+classified). MASAQ sits at *bytes absent* on the second axis, and moving it
+along that axis moves nothing on the first.
+`TheReadyPathIsTheMasaqWitnessPathNotProgrammeCompletion` says the consequence:
+what is ready is the path that receives this witness, verifies its identity and
+re-derives its figures — not the programme. Arriving bytes enact no
+`DECLARED_DEFERRED` law, create no authority to judge or to birth, close no
+epistemic aim, raise no result's rank merely because a file is now in hand, and
+turn no induction over this corpus into a claim about open Arabic; the limit in
+`CompleteInductionIsCorpusBounded` is unchanged by their arrival. Reaching the
+end of the witness lifecycle is not the completion of the project.
+`RederivationIsComparisonNotAutomaticEndorsement` closes the second door: the
+bytes do not adopt the twenty frozen figures, they run the re-derivation
+functions against them. A match holds **within the scope of this witness**; a
+mismatch is recorded as it fell. The frozen figure is never edited to fit the
+result, nor is its counting rule, and re-derivation is a comparison rather than
+an automatic epistemic promotion — a prior claim does not become true because
+its witness became available.
 
 MASAQ turned out to carry **i'rab, not only morphology**, and that is where the
 next module goes. Three of its columns annotate it — `Syntactic_Role`,
@@ -4173,6 +4240,35 @@ reading of the definition, and it is written down as such.
 its count, every suspended value beside its reason, and every measured figure
 beside its limit, exiting non-zero on any drift; the measurement itself waits
 on the fingerprinted MASAQ bytes, and in their absence nothing is estimated.
+
+`src/alghanem/arabic/transition_authority.py` gathers one constraint that was
+already distributed across the tree without a common name: nothing is derived
+from a carrier except what that carrier preserves or what a licensed bridge
+permits. The module is a **gathering, not an authority** — it judges no
+transition, licenses none, and imports nothing from `kernel/`. It deposits four
+named limits plus three about itself:
+`NoDerivationBeyondTheAuthorityOfItsCarrier`;
+`AZeroShowsAnUnbuiltBridgeNotAnImpossibleOne` (a zero shows *that* bridge was
+never built, not that building it is impossible);
+`ASignIsNotItsReferentAndNeitherIsItUnrelatedToIt` (what is denied is the direct
+transition, not the relation); `FormalEncodingIsNotConceptualMeaning` (expressly
+*not* `Language != Meaning`);
+`ADerivedCrossModuleLawIsNotAnAttestedSourceLaw` (this is an Alghanem
+construction from existing constraints, not a transmitted text, not attributed
+to al-Nabhani, and it raises no row's status in `docs/CONSTITUTION.md`);
+`SupportIsACheckedInvariantNotAnImport`; and
+`TheFourLayerSeriesIsAnAlghanemComposition` (the reality/concept/lafẓ/carrier
+ordering rests on transmitted texts not yet collated against a printed source,
+so the series is neither attributed nor encoded as a vocabulary). Support is
+evidence only where it is checked: each of the five positions in
+`CARRIER_AUTHORITY_SUPPORTS` carries a probe that is run against the structural
+guard in its own module — the physical layer that cannot be constructed in
+`epistemic_layers`, the two refused derivation paths in `wad_naql`, the
+structurally excluded external-correspondence target and the unsanaded reading
+that stays معلومة in `maluma_mafhum`, and the non-invertible channel derivation
+in `dalalat_thalath`. `supported_positions()` returns only what passed;
+`unsupported_positions()` surfaces the rest rather than folding them into a
+silent count.
 
 ```bash
 python -m pip install -e '.[dev]'

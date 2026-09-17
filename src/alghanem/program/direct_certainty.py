@@ -26,6 +26,12 @@
 لأن حذفَ الخبر إخفاءٌ كما أن قبولَه تصديقٌ، وكلاهما مرفوض
 (`RECORDING_IS_NOT_ENDORSING`). وهذا تطبيقُ البروتوكول على نصّه، لا استثناءٌ له.
 
+**وقيدُ الرفض ليس واحدًا.** ليست السجلّاتُ كلُّها متعذّرةَ إعادةِ الاشتقاق:
+منها ما حُسِب على بياناتٍ غير منقّاة، ومنها ما بقي تصنيفُه ناقصًا؛ فوصولُ
+شاهدٍ مُبصَّمٍ إلى الشجرة يرفع جنسًا واحدًا عمّن شهِدَه، ولا يُصحِّح رقمًا عطبُه
+في كيفيّة إنتاجه (`ABSENCE_OF_BYTES_IS_NOT_EVERY_GROUND_OF_REFUSAL`). ولذلك
+تُشتَقّ القسمةُ في `figures_by_constraint()` ولا تُكتَب عددًا في نثر.
+
 **وقاعدةُ النتيجتين تقرأ هذه الوحدةَ ولا تُقرَأ منها.** ما بعد التجميد —
 تصنيفُ كلّ محاولةِ إغلاقِ فجوةٍ في فئتين لا ثالثَ لهما — قائمٌ في
 `alghanem.program.binary_outcome`، وهو يستدعي `assess_freeze` ليحسب قبولَ فئته
@@ -44,6 +50,7 @@ from enum import Enum
 from typing import Any, Final
 
 __all__ = [
+    "ABSENCE_OF_BYTES_IS_NOT_EVERY_GROUND_OF_REFUSAL",
     "COMPLETION_IS_A_RUN_NOT_A_DECLARATION",
     "DIRECT_CERTAINTY_NAMED_RESIDUALS",
     "NO_KERNEL_MODULE_CONSUMES_THIS_PROTOCOL",
@@ -61,6 +68,7 @@ __all__ = [
     "StepRecord",
     "UnverifiedFigureRecord",
     "assess_freeze",
+    "figures_by_constraint",
     "run_step",
 ]
 
@@ -446,6 +454,27 @@ REPORTED_UNVERIFIED_FIGURES: Final[tuple[UnverifiedFigureRecord, ...]] = (
 """أرقامُ نصّ البروتوكول نفسِه، مقروءةً بقاعدته: خبرٌ مُسجَّلٌ لا قياسٌ مقبول."""
 
 
+def figures_by_constraint() -> (
+    dict[FigureConstraint, tuple[UnverifiedFigureRecord, ...]]
+):
+    """السجلّاتُ مقسومةً بقيدها، مُشتقّةً منها لا منسوخةً في عددٍ مكتوب.
+
+    وكلُّ عضوٍ في `FigureConstraint` له مدخلٌ ولو خلا، فلا يُقرأ غيابُ المفتاح
+    نفيًا للجنس. والقسمةُ تُشتَقّ عند كلّ استدعاء، حتى لا تبقى جملةٌ من جنس
+    «سبعةَ عشرَ بقيدٍ واحد» صادقةً بعد أن يتغيّر السجلّ
+    (`ABSENCE_OF_BYTES_IS_NOT_EVERY_GROUND_OF_REFUSAL`).
+    """
+
+    return {
+        constraint: tuple(
+            record
+            for record in REPORTED_UNVERIFIED_FIGURES
+            if record.constraint is constraint
+        )
+        for constraint in FigureConstraint
+    }
+
+
 # --- ما تتركه هذه الوحدة مفتوحًا، مُسمًّى ------------------------------------
 
 
@@ -473,6 +502,17 @@ UNREAD_STEP_ORDER_IS_NOT_A_RANKING: Final[str] = (
     "قوّةٍ معرفية؛ فلا يُقرَأ تقدُّمُ خطوةٍ على أخرى تفضيلًا لدليلها"
 )
 
+ABSENCE_OF_BYTES_IS_NOT_EVERY_GROUND_OF_REFUSAL: Final[str] = (
+    "ABSENCE_OF_BYTES_IS_NOT_EVERY_GROUND_OF_REFUSAL: قيودُ الرفض في "
+    "`FigureConstraint` ثلاثةُ أجناسٍ لا جنسٌ واحد، فنزولُ شاهدٍ مُبصَّمٍ في "
+    "الشجرة يرفع عن سجلٍّ **جنسًا واحدًا** هو تعذُّرُ إعادة الاشتقاق، ولمن "
+    "شهِدَه ذلك الملفُّ وحدَه. و`COMPUTED_ON_UNPURIFIED_DATA` و"
+    "`CLASSIFICATION_INCOMPLETE` عطبان في **كيفيّة إنتاج الرقم** لا في غياب "
+    "ملفّ: الأوّل حُسِب على نصٍّ لم يجتز كاشفَ التلوّث، والثاني ترك بقيّةً غيرَ "
+    "مُصنَّفة؛ فلا يرفعهما بلوغُ البايتات ولو طابقت بصمتَها. والقسمةُ تُشتَقّ "
+    "في `figures_by_constraint()` ولا تُنسَخ عددًا في نثر"
+)
+
 NO_KERNEL_MODULE_CONSUMES_THIS_PROTOCOL: Final[str] = (
     "NO_KERNEL_MODULE_CONSUMES_THIS_PROTOCOL: لا تقرأ هذه الوحدةَ أيُّ بوّابةٍ "
     "في `kernel/`، ولا تدخل في ولادةٍ ولا في ترخيصِ انتقال؛ فحكمُها على من "
@@ -485,5 +525,8 @@ DIRECT_CERTAINTY_NAMED_RESIDUALS: Final[dict[str, str]] = {
     "STEP_ZERO_WAS_ADDED_AFTER_THE_FIVE": STEP_ZERO_WAS_ADDED_AFTER_THE_FIVE_NOTE,
     "UNREAD_STEP_ORDER_IS_NOT_A_RANKING": UNREAD_STEP_ORDER_IS_NOT_A_RANKING,
     "NO_KERNEL_MODULE_CONSUMES_THIS_PROTOCOL": NO_KERNEL_MODULE_CONSUMES_THIS_PROTOCOL,
+    "ABSENCE_OF_BYTES_IS_NOT_EVERY_GROUND_OF_REFUSAL": (
+        ABSENCE_OF_BYTES_IS_NOT_EVERY_GROUND_OF_REFUSAL
+    ),
 }
 """ما لا تحسمه هذه الوحدة، مُسمًّى هنا لا متروكًا ليُفترَض."""
