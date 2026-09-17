@@ -3364,6 +3364,104 @@ unnamed is counted as a pass and is not one. What stays open is named:
 file that collects is not a witness that checks this claim, and a test that
 mentions an example script does not thereby run it.
 
+The first hypothesis in this tree that arrived already formalised from outside
+is the fractal licensed-transition claim: that one transition structure
+`K = (Carrier, Gate, Operation, Identity, Evidence, Residual, Trace, Closure)`
+survives a change of linguistic scale. The intent was to freeze its text
+verbatim, preregister the ten items it demands before anything was measured,
+and only then read. The ordering held — the preregistration was committed in
+its own commit while no readout module existed yet, because the text's own
+`PostHocSimilarity != FractalEvidence` rule cannot be honoured by a promise —
+but the freeze itself did not. Direct inspection found that the deposited text
+diverges from the supplied one at the site that decides the success condition:
+the requested text puts an explicit order relation between `StructureMatch` and
+`BestWeakerReconstruction`, and the deposited text carries no relation there,
+while the module declares in the same breath that notation is part of the
+frozen text. So the digest attests a different hypothesis, and the run's
+standing is `INVALID_PREREGISTRATION`.
+
+That is recorded, not repaired. The divergent text is left exactly as it is,
+because fixing it would erase the only evidence of the defect, and
+`src/alghanem/arabic/fractal_transition_calibration.py` derives the divergence
+from the deposited text rather than asserting it, withholds the verdict from
+being attributed to the requested hypothesis, and states the instrument's
+capability envelope: reachable are `REFUTED`, `UNDERPOWERED` and
+`WEAKER_MODEL_RECONSTRUCTS`; unreachable by construction is `SUPPORTED`, since
+every ladder name occurs in the frozen text and no declared pair can be a
+holdout. An instrument that can refute and cannot support is a refutation
+instrument, not a balanced test, and it is named as one.
+
+The reading itself is carried whole. On `syllable-to-word` the transported
+structure agreed in 24 of 30 field/case comparisons and a constant model that
+reads nothing agreed in 28; two further pairs were `UNDERPOWERED` by
+declaration, their upper layers having no coded carrier here. But the more
+useful half of the result is what the instrument revealed about itself: in the
+present encoders Trace and Closure are true by construction and Gate and
+Residual are one predicate under two names, so four of six compared fields
+cannot discriminate anything; what is being compared is boolean agreement
+between two encoders on one surface, not `S ∘ K_n ≅ K_m ∘ S`, because no
+independent scale-transport contract exists; and `Identity` is a boolean from
+an encoder that never passes the invariant gate, so
+`DeclaredInvariant != VerifiedInvariant` applies to it. The machine found the
+defects of the test before it could find anything about Arabic, and 24 against
+28 is therefore not a refutation of the claim.
+
+The successor is declared by name and not executed. `G0.FLT-1` needs a newly
+frozen text checked site by site, a real independent `S`, scales that were not
+used to formulate `K`, a signature whose fields can read false, a verified
+`Identity`, and inputs unread in `G0.FLT-0`; repairing the criterion and
+re-running the same five surfaces would not be prospective. The laws are
+collected in `docs/CONSTITUTION.md` under `G0.FLT-0`.
+
+The successor is now frozen. `G0.FLT-1` asks whether a licensed Carrier/State
+centre generates syllabic closure better than every weaker representation, and
+it is deposited as text and registration only — no readout module exists in this
+branch, because a reading built alongside its own preregistration cannot testify
+to the order in which they were written. The chain under test runs from carrier
+to a Carrier/State centre, through a licensed join and a closure, to a higher
+centre, and it is registered as six hypotheses that fail separately: the two
+quotients, their predicted product, birth under an opening vowel with its
+negative control, closure under sukūn, and the higher centre itself. `28 × 4` is
+a prediction and never an input; the equivalence relation is declared first and
+counted afterwards.
+
+Two corrections to `G0.FLT-0` are built in. Verbatim fidelity is checked rather
+than promised: fourteen decisive notation sites are enumerated and their
+presence derived from the deposited text at import, which is exactly the check
+whose absence invalidated the previous registration. And the negative controls
+are the experiment rather than its margin — the carrier alone, the state alone,
+and the unordered pair are run on the same surfaces, and a tie is enough to
+defeat the claim that the licensed pair is the lower centre. The name "higher
+centre" is earned only by Reconstruction, Minimality, NoBypass and Closure
+together; `Identity` counts only if verified, otherwise the pair is
+`UNDERPOWERED`; and the seven frozen surfaces are disjoint from the five already
+read, checked at import. The laws are in `docs/CONSTITUTION.md` under
+`G0.FLT-1`.
+
+`G0.FLT-1.Q` then corrected the law itself before running it. The frozen chain
+treated every transition as a move upward; the correction adds a licensed
+*qiyās* between an origin and a candidate branch, with the *qādiḥ* difference
+**tested** rather than required: `Q(O,F) = Sh ∧ Sb ∧ ¬Mn ∧ I ∧ w* ∧ μ ∧ ¬Δq`.
+Absence of the difference is continuity under the origin, presence with a shown
+effect opens an independent branch, and presence without a shown effect is a
+formal difference only. The earlier text was superseded rather than edited — it
+keeps its letter and its digest, and the supersession record states why the
+exchange was licensed: nothing had been read from it yet. The same commit
+ordering was repeated, the new text and machine landing before the readout
+existed.
+
+The run is recorded as it came out, and no surface earned the name "higher
+centre". Nine of eighteen branches read as continuity and nine as
+independent-branch candidates. `فَتَحَ` lost `NoBypass` outright, because the
+no-join path reproduces `CV-CV-CV` exactly and the join is ornament there;
+`بَابٌ` lost `Reconstruction` and `Closure` together, because the madd seat
+enters no syllable. The rest are `UNDERPOWERED`, since the reconstruction target
+comes from the same reader that embodies the licensed model — so a tie by a
+weaker representation would refute the claim, while the licensed model's win
+proves nothing. `w*` and `μ` held everywhere and are reported as analytic in
+this deposit rather than counted as evidence, and the five decision outcomes the
+corpus never triggered are listed as untested.
+
 ## Development
 
 The first measurement in this tree against an *externally* annotated corpus is
