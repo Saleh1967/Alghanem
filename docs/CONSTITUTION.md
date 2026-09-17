@@ -1844,6 +1844,57 @@ an identical `artifact_path` on both sides; a future
 `RepositoryArtifactMoveCandidate` would carry that separate identity
 question.
 
+## G0.ST — Two standing axes: structural and empirical (declared law, no runtime yet)
+
+This law separates two questions that this repository has so far allowed to
+share one answer slot: *is a claim proved relative to a frozen specification?*
+and *has a claim been checked against something measured outside that
+specification?* They are independent axes, and neither is a weaker or stronger
+version of the other.
+
+```
+StructuralStanding          != EmpiricalStanding
+SpecificationIndependence   != EmpiricalTargetIndependence
+TheoremValidity             != InstantiationCoverage
+```
+
+The recurring failure this law closes is visible in the VV experiment already
+registered in `src/alghanem/arabic/vv_birth_hypothesis.py`: a missing
+independent *empirical* target (`INDEPENDENT_TARGET_MISSING`) was read as a
+ceiling on the whole claim, including the part of it that is a statement about
+a frozen algebra and owes nothing to any corpus, microphone, or articulatory
+measurement. `G0.MA` already declares the one direction
+(`FormalProof ⇏ EmpiricalReality`); the converse was never written down, and
+its absence is what let an empirical gap silently lower a structural claim.
+
+What a structural standing requires instead is that the *obligation* be
+independent of the function claiming to discharge it. A transition's contract
+— its domain condition, licensing gate, preserved invariants, trace obligation
+and residual policy — must be frozen, with its own content identity, before the
+transformation that claims to satisfy it exists. A contract written after its
+function is not a contract, in exactly the sense in which a rival model written
+after the result is not a rival (`A_RIVAL_WRITTEN_AFTER_THE_RESULT_IS_NOT_A_RIVAL`).
+
+A structural standing is therefore never absolute. It is always relative to a
+named, content-identified specification set `Σ` and a declared scope, and the
+vocabulary carries that relativity in the name of the value itself rather than
+in a footnote beside it.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `MissingEmpiricalEvidenceIsNotMissingStructuralProof` | DECLARED_LAW_ONLY | The absence, unavailability, or circularity of an independent *empirical* target caps the empirical axis alone. It may not lower, block, defer, or qualify a standing on the structural axis. `INDEPENDENT_TARGET_MISSING` on the empirical axis is consistent with `STRUCTURALLY_PROVED_RELATIVE_TO_SIGMA` on the structural axis, and a reader who treats that pair as a contradiction has merged two axes this law keeps apart. The converse direction — `FormalProof ⇏ EmpiricalReality`, declared in `G0.MA` — remains in force unchanged; this law adds only the direction that was missing. |
+| `SpecificationIndependenceIsTheStructuralIndependence` | DECLARED_LAW_ONLY | The independence a structural claim requires is that its obligation was fixed independently of the function asserted to satisfy it: the contract `(Pre, Post, Inv, Cl, Trace)` frozen, with content identity, before that function existed. An external measured target is not required, and supplying one does not substitute for a frozen contract. A contract derived from, fitted to, or edited after its own implementation establishes nothing (`A_CONTRACT_WRITTEN_AFTER_ITS_FUNCTION_IS_NOT_A_CONTRACT`). |
+| `EmpiricalTargetIndependenceIsEmpiricalOnly` | DECLARED_LAW_ONLY | Independence of a reconstruction target from the candidate model's own rules remains a condition on the empirical axis, where it was introduced. It constrains nothing on the structural axis and may not be imported there under another name. |
+| `NoStructuralStandingWithoutItsFrozenSigma` | DECLARED_LAW_ONLY | No structural standing may be recorded without naming the frozen specification set it is relative to, together with that set's content identity and declared scope. There is no unrelativized structural `PROVED` in this repository; a value whose name omits its `Σ` is refused rather than interpreted generously. |
+| `NoAxisCollapse` | DECLARED_LAW_ONLY | The two standings may not be stored in one field, summed, ordered against one another, or derived one from the other in either direction. A type carrying a single combined verdict over both axes is refused at construction, not corrected at read time. |
+| `TheoremValidityIsNotInstantiationCoverage` | DECLARED_LAW_ONLY | That a theorem is stated and proved symbolically for all `n` is one fact; that the repository currently instantiates it for some particular number of layers or transitions is a second, independent fact. Low coverage is not a defect in the theorem, and high coverage is not a substitute for proving it. Both must be reported, separately named, and neither may stand in for the other. |
+| `SpecificationIndependenceGradeIsHistoricalNotRetrofittable` | DECLARED_LAW_ONLY | The strongest grade, prospective specification independence, is available only where the frozen contract demonstrably predates the implementation. An implementation that already existed when its contract was frozen may reach at most `RETROSPECTIVE_CONFORMANCE` — it conforms to the contract, and that is all that was shown. Recording the stronger grade for such an implementation would make preregistration retroactive, which is the failure preregistration exists to prevent. |
+
+`G0.ST` declares law only. It installs no gate, promotes no existing claim, and
+re-labels no row in any table above; the vocabulary that carries these axes in
+code (`src/alghanem/metaalgebra/standing.py`) is registration-only and issues no
+judgment of its own.
+
 ## G0.T.0 — Intended theorem for the pure derivational core (DRAFT — NOT LAW)
 
 **Status: DRAFT_TEXT_ONLY.** This section is a text experiment, not a law and
@@ -1993,3 +2044,158 @@ instance" question is not to be reopened, until **both** hold: `BIRTH_IN_SCOPE`
 is actually reachable through a real closure authority, **and** the law tables
 above have stopped moving. Until then any theorem proved here has `DEFER` as
 its only subject.
+
+## G0.T.1 — Global licensed composition and backward auditability (DRAFT — NOT LAW)
+
+**Status: DRAFT_TEXT_ONLY.** Like `G0.T.0`, this section adds no row to any law
+table, opens no gate, and promotes nothing. Unlike `G0.T.0`, its subject is not
+the kernel's verdict gates but the domain-neutral meta-algebra registered in
+`src/alghanem/metaalgebra/`: layer signatures, transition signatures, and the
+conditions under which transitions compose. Two theorems are stated, proved
+separately, and must not be merged — failure of the second does not weaken the
+first, and success of the first does not establish the second.
+
+### Objects
+
+A layer signature is the eight-tuple
+
+```
+A_i = (C_i, S_i, Omega_i, Rel_i, Inv_i, Cl_i, Tr_i, R_i)
+```
+
+— carrier, state space, partial operations, licensing relations, invariant
+components, closure law, auditable trace, residuals. The state space is a
+component in its own right and is never folded into the carrier, because
+`Carrier != State` is a finding this repository already paid for, not a
+presentational choice.
+
+A transition signature is the six-tuple
+
+```
+T_i = (D_i, G_i, T_i, P_i, tau_i, rho_i)
+```
+
+— domain condition, licensing gate, transformation, preserved-invariant
+obligation, trace obligation, residual/rank policy — together with an
+independent handoff condition `Handoff_i`.
+
+Neither definition names a layer, fixes a number of layers, or orders them.
+`GenericLayerType != PredeclaredLayerArchitecture`: defining `Graph = (V, E)`
+is not a claim about how many vertices exist, and `G0.MA`'s
+`NoPatternNameBeforeIndependentBirth` bears on the second, never the first.
+
+### The two step laws
+
+**NoJump.**
+
+```
+D_i(x) and G_i(x)  =>  T_i(x) in C_{i+1}
+not G_i(x)         =>  T_i(x) is undefined, or BLOCK/DEFER,
+                       and no successful-transition certificate is issued
+```
+
+The second clause deliberately does **not** say that the value fails to belong
+to `C_{i+1}`. The same object may be a perfectly good member of the next
+carrier by another licensed route; what is refused is *this* transition and the
+authority it would have carried. NoJump constrains the path and its licence,
+not membership in the target carrier
+(`NoJumpConstrainsThePathNotTheTargetMembership`).
+
+**Handoff.**
+
+```
+Cl_i(y) and Handoff_i(y)  =>  y in Dom(T_{i+1})
+```
+
+Closure alone does not entitle exit. An object may be closed inside its own
+layer and still not be qualified for the relation the next layer imposes;
+`ClosureIsNotARightOfExit`. The condition is separate, separately named, and
+must declare what it adds beyond closure — a handoff condition that restates
+the closure law is closure under a second name, and is refused at construction.
+The distinction is not decorative: it is exactly where `Weight -> Derivation`
+and `Word -> SyntacticSlot` will need something closure cannot supply.
+
+### Theorem 1 (intended, proved by induction in this text) — Global licensed composition
+
+> Let `A_0, ..., A_n` be layer signatures and `T_0, ..., T_{n-1}` transition
+> signatures with `T_i` from `A_i` to `A_{i+1}`. Suppose for every `i`:
+> `Typed_i`, `Licensed_i`, `InvariantPreserving_i` (on the named subset `P_i`,
+> with every component of `P_i` declared in both `Inv_i` and `Inv_{i+1}`),
+> `Traceable_i`, `ResidualSafe_i`, and the handoff law above. Then
+> `T^(n) = T_{n-1} o ... o T_0` is defined on every `x` that passes every gate,
+> and the path `x_0 -> x_1 -> ... -> x_n` is licensed at every step, with no
+> unlicensed jump.
+
+*Proof sketch (induction on n).* Base `n = 0`: the empty composition is the
+identity on `Dom(T_0)` and licenses nothing, so the claim holds vacuously.
+Step: assume `T^(k)` is defined and licensed on every `x` passing the first `k`
+gates, producing `x_k in C_k`. `ResidualSafe_k` and `Cl_k` give `Cl_k(x_k)`;
+`Handoff_k(x_k)` gives `x_k in Dom(T_k)` by the handoff law; `D_k(x_k)` and
+`G_k(x_k)` then give `T_k(x_k) in C_{k+1}` by NoJump's first clause, and the
+step carries a licence by construction of `G_k`. If any gate fails, NoJump's
+second clause yields undefined/`BLOCK`/`DEFER` and no certificate, so no
+unlicensed element enters the composition. Hence `T^(k+1)` is defined and
+licensed wherever all `k+1` gates pass. ∎
+
+The theorem is about *paths and licences*, not about correctness of content. It
+does not say the composite output is true, faithful, or linguistically right;
+`LicensedPath != CorrectResult`.
+
+### Theorem 2 (intended, independent) — Backward auditability
+
+> For every step there exists `Audit_i(x_{i+1}, Trace_i)` returning a
+> certificate `(source_class, operation, license, preserved_invariants,
+> residuals)`.
+
+No inverse `T_i^{-1}` is demanded, because layers compress and a compressing
+step has no inverse. What must be recoverable is *the reason the step was
+licensed*, not the original object. The theorem therefore does not weaken as
+layers compress, and the five certificate fields are required jointly — none
+substitutes for another (`REQUIRED_AUDIT_CERTIFICATE_FACTS`). Theorem 2 is
+stated separately from Theorem 1 on purpose: a chain may compose licensedly and
+still fail to be auditable, and an auditable step may sit in a chain that does
+not compose.
+
+### Validity is not coverage
+
+```
+TheoremValidity != InstantiationCoverage
+```
+
+Both theorems are stated and argued for arbitrary `n`. How many Arabic layers
+and transitions this repository has actually built is a second, independent
+figure, derived rather than written (`CompositionChain.instantiation_coverage`).
+As of this section no Arabic instantiation exists at all: the meta-theory is
+frozen first, deliberately, so that the first instantiation is tested against a
+specification that historically precedes it. Low coverage is not a defect in
+the theorem, and high coverage would not substitute for proving it. An earlier
+draft of this work described the theorem as "nearly empty" because only one
+adjacent pair was in view; that description conflated the two figures and is
+withdrawn.
+
+### What this text does not establish
+
+- **The proof lives in this document, not in the type system.** Python and
+  mypy-strict cannot quantify over all well-formed inputs; well-formedness is
+  distributed across `__post_init__` raises. What the code contributes is
+  construction-time refusal of chains whose adjacency hypotheses fail — the
+  theorem's *hypothesis*, never its conclusion
+  (`AdjacencyIsAHypothesisNotAConclusion`).
+- **No transformation is executed anywhere in `metaalgebra/`.** `Typed_i`,
+  `Licensed_i`, and the rest are declared obligations of a step, not measured
+  properties of a run. A registered chain is a frozen structure, not a result.
+- **Any step implemented by a registry-bound callable inherits `G0.T.0`'s
+  oracle axioms** — `OracleTotality`, `OracleDeterminism`, `OraclePurity`,
+  `OracleIdentityFaithfulness`, `SchemaDenotation`,
+  `FailureSemanticsDenotation` — by citation, not by discharge.
+- **Nothing here touches the empirical axis.** Under `G0.ST`, a chain proved
+  relative to its frozen `Σ` may simultaneously carry
+  `EmpiricalStanding = NOT_TESTED`, and that pair is consistent.
+
+### Reconsideration condition (tracked, not scheduled)
+
+Promotion of `G0.T.1` beyond `DRAFT_TEXT_ONLY` requires both: at least two
+independently registered adjacent pairs whose contracts were frozen *before*
+their implementations (`PROSPECTIVE_SPECIFICATION_INDEPENDENT`, not merely
+`RETROSPECTIVE_CONFORMANCE`), and a discharged backward-audit certificate for
+at least one of them.
