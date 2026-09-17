@@ -863,6 +863,12 @@ from .readiness_rank import (
     SpecificationFreeze,
     StructuralReadiness,
 )
+from .realization import (
+    ARABIC_DOMAIN,
+    ARABIC_REALIZATION_IS_STRUCTURAL_NOT_LINGUISTIC,
+    NO_CARRIER_STATE_TO_SYLLABLE_BINDING_YET,
+    arabic_realization,
+)
 from .riwaya_diraya_registration import (
     CATEGORY_REDEFINITION_IS_NOT_EVIDENCE_TIGHTENING_NOTE,
     NO_BEDROCK_NOTE,
@@ -1115,6 +1121,10 @@ from .word_class_formal import (
 )
 
 __all__ = [
+    "ARABIC_DOMAIN",
+    "ARABIC_REALIZATION_IS_STRUCTURAL_NOT_LINGUISTIC",
+    "NO_CARRIER_STATE_TO_SYLLABLE_BINDING_YET",
+    "arabic_realization",
     "ABROGATION_OF_RULING_IS_NOT_OF_WORDING_NOTE",
     "ABSENCE_ASSUMPTION_IS_NAMED_FOR_THE_CODE_NOT_FOR_A_LINGUISTIC_CLAIM",
     "ABSENCE_OF_A_WITNESS_IS_NOT_A_WITNESS_OF_ABSENCE",

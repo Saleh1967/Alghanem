@@ -2416,3 +2416,85 @@ independently registered adjacent pairs whose contracts were frozen *before*
 their implementations (`PROSPECTIVE_SPECIFICATION_INDEPENDENT`, not merely
 `RETROSPECTIVE_CONFORMANCE`), and a discharged backward-audit certificate for
 at least one of them.
+
+## G0.R — Realization law: one origin, parallel realizations (DRAFT — NOT LAW)
+
+**Status: `DRAFT_TEXT_ONLY`.** This section records a structure that now exists
+in code. It does not promote that structure to law, and nothing in it licenses
+any linguistic or empirical claim.
+
+### The three levels
+
+```
+Σ_M  =  MetaAlgebraSchema            the language: what a layer, a transition,
+                                     an audit certificate and a realization are
+
+Σ_A  =  AbstractSystemSpecification  a particular theory written in Σ_M:
+                                     named layers, named transitions
+
+R    =  Realization(Σ_A, D)          Σ_A carried into a domain D
+```
+
+and, in parallel, never in series:
+
+```
+Σ_A  ⟶  R_arabic(Σ_A)          Σ_A  ⟶  R_python(Σ_A)
+```
+
+not `Arabic → Python` and not `Python → Arabic`.
+
+### Declared laws
+
+- **`SchemaIsNotSpecification`.** `Σ_M` carries no concrete layer. A language
+  that already contains the theory written in it cannot be a language.
+- **`SigmaIsTheOrigin`.** `Σ_A`'s digest excludes its realizations. Changing a
+  realization does not change the theory; this is the structural witness that
+  `Σ_A` is an origin rather than a description of one of its images.
+- **`RealizationCoverageIsExact`.** A realization's realized and deferred
+  members must exactly partition `Σ_A`'s members. Partial coverage presented as
+  coverage is the failure mode this forbids.
+- **`ARenamingIsNotARealization`.** Every component realization carries a
+  falsifier distinct from the name it realizes. A binding with no way to be
+  wrong is a translation table, not a realization.
+- **`NoSemanticsFromProse`.** Executable meaning is generated only from
+  `ExecutableClause`; a `DeclarativeClause` yields an explicit refusal that
+  fails loudly when called. Inventing a predicate from a human sentence
+  manufactures agreement.
+- **`CommutationIsPerTransition`.** The square is
+  `R_{i+1}^D ∘ T_i = T_i^D ∘ R_i^D`, with distinct source and target carrier
+  realizations. A single `R^D` on both sides hides the layer change.
+- **`GenerationIsRelativeToTheGeneratorDigest`.** Determinism is a property of
+  `(digest Σ_A, digest g)`, never of `Σ_A` alone, and every manifest carries
+  `sigma_digest`, `generator_digest` and `backend_id`.
+- **`AResidualMayIndictTheDomain`.** A residual may be dispositioned `CLOSE`,
+  `REFINE`, `REVISE_DOMAIN` or `DEFER`. Without `REVISE_DOMAIN` every residual
+  becomes evidence against the theory and never against the binding.
+
+### What this does not establish
+
+- **Two domains prove coverage, not representation independence.** Realizing
+  `Σ_A` in two domains shows the law does not require either domain's
+  vocabulary. Independence requires discharged commutative squares, and those
+  are recorded as obligations, not results.
+- **The Arabic realization is structural, not linguistic.** It binds `Σ_A`'s
+  components to named places in the Arabic domain. It does not bind
+  `CarrierState` to a syllable, a vowel or a weight, and it asserts nothing
+  about Arabic being true under any transition.
+- **The Python realization is structural, not semantic.** Every generated
+  predicate today is an explicit refusal, because `Σ_A` carries no executable
+  clause yet. `G_py` is demonstrated to be a deterministic function; it is not
+  demonstrated to produce working semantics.
+- **A matching manifest is a proof of derivation, not of truth.** Code
+  generated from a false specification is faithfully derived false code.
+- **The core is handwritten and stays handwritten.** `metaalgebra/` is a trusted
+  bootstrap. `G_py(Σ_core) ≅ Implementation_core` is a deferred fixed-point
+  claim, not a milestone reached here, and the generation package must never be
+  imported by the core.
+
+### Reconsideration condition (tracked, not scheduled)
+
+Promotion of `G0.R` beyond `DRAFT_TEXT_ONLY` requires both: two realizations in
+independently motivated domains whose bindings were frozen *before* their
+implementations (`PROSPECTIVE_SPECIFICATION_INDEPENDENT`, not merely
+`RETROSPECTIVE_CONFORMANCE`), and at least one discharged commutative square
+`R_{i+1}^D ∘ T_i = T_i^D ∘ R_i^D`.
