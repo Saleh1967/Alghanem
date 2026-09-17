@@ -4585,6 +4585,39 @@ CanonicalObservedPayload`.
 `examples/kernel/contrast_two_models.py` runs the contrast end to end and prints,
 as its last line, that no birth occurred.
 
+The meta-algebra now has two levels above its realizations rather than one.
+`Σ_M` (`metaalgebra/schema.py`) is the *language*: it says what a layer, a
+transition, an audit certificate and a realization are, and it deliberately
+contains no concrete layer at all. `Σ_A`
+(`metaalgebra/specification.py`) is a *theory written in that language*: named
+layers, named transitions, digested by content. Its digest excludes its
+realizations, which is the structural witness that the theory is an origin and
+not a description of one of its images. From that single origin two realizations
+run in parallel — `arabic/realization.py` and `realization/python_realization.py`
+— so that the relation is `Σ_A → {R_arabic, R_python}` and never
+`Arabic → Python` or `Python → Arabic`. Both are structural bindings today:
+every component realization names a place in its domain and a falsifier distinct
+from that name, every condition is a `DeclarativeClause` carrying its own reason
+for not being executable, and the Arabic side binds no syllable, vowel or
+weight. Residuals may be dispositioned `CLOSE`, `REFINE`, `REVISE_DOMAIN` or
+`DEFER`, so a failed binding can indict the domain mapping instead of always
+indicting the theory.
+
+`realization/` is the generation package: `G_py` renders a Python module from
+`Σ_A` alone, and the committed tree under `realization/generated/` is checked
+byte-for-byte against regeneration. Determinism is declared relative to
+`(digest Σ_A, digest g)` rather than to `Σ_A` alone — the generator's digest is
+computed from its own source bytes, not from a hand-written version string —
+and every manifest carries `sigma_digest`, `generator_digest` and `backend_id`.
+No executable meaning is invented from prose: each prose condition becomes an
+explicit `UnimplementedSemantics` refusal that fails loudly when called, and
+only an `ExecutableClause` compiles to a predicate. `metaalgebra/` stays
+handwritten and imports nothing from the generation package, so `Σ → G → Σ` does
+not close. Two domains prove coverage, not representation independence; the
+commutative square `R_{i+1}^D ∘ T_i = T_i^D ∘ R_i^D` is recorded as an
+obligation in `metaalgebra/commutation.py`, and the named laws are collected in
+`docs/CONSTITUTION.md` under `G0.R`.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
