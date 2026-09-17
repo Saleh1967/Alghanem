@@ -1748,7 +1748,7 @@ only the match guard is general. As of this milestone no source text has been
 supplied, the enumeration is empty, and the registered reading of the standing
 branch is that the experiment has not been run.
 
-## G0.FLT — The fractal licensed-transition hypothesis (preregistered readout)
+## G0.FLT-0 — The fractal licensed-transition calibration (invalid preregistration)
 
 This milestone froze a hypothesis text supplied from outside this tree, *verbatim
 and including its mathematical notation*, registered the ten pre-run items the
@@ -1773,7 +1773,34 @@ first two have a coded carrier in this tree, so exactly one of the three
 declared pairs was measurable and the other two were declared `UNDERPOWERED`
 before the run, not after it.
 
-The first run's reading is recorded as it came out. On `syllable-to-word` the
+**This milestone is a calibration, not a test of the hypothesis.** Direct
+inspection of the deposited text found that it diverges from the text that was
+supplied: at the site that decides the success condition the requested text
+carries an explicit order relation between `StructureMatch` and
+`BestWeakerReconstruction`, and the deposited text carries no relation there at
+all, while the module simultaneously declares `NotationIsPartOfTheFrozenText`.
+So `H_frozen != H_requested`, the digest attests a different text, and the
+standing of the run is `INVALID_PREREGISTRATION` — whatever verdict it produced
+is a correct reading of *this* code on *these* surfaces and is not attributable
+to the hypothesis that was asked for. The divergence is derived from the
+deposited text by `fractal_transition_calibration`, not asserted in prose, and
+the frozen text is left exactly as it is, because repairing it would erase the
+only evidence of the defect.
+
+Three further limits were derived rather than described. The comparison
+actually performed is agreement between two boolean predicates on the same
+surface across two encoders, not a test of `S ∘ K_n ≅ K_m ∘ S`: no independent
+scale-transport contract exists in the kernel, so the finding that some fields
+are true by construction diagnoses a weak signature rather than refuting
+fractality. `SUPPORTED` is unreachable in this registration by construction,
+since every ladder name occurs in the frozen text and no declared pair can
+serve as a holdout — an instrument that can refute and cannot support is a
+refutation instrument, not a balanced test. And the `Identity` field is a
+boolean read from an encoder that never passes the invariant verification gate,
+so `DeclaredInvariant != VerifiedInvariant` applies to it directly.
+
+The first run's reading is recorded as it came out, carried whole rather than
+erased, with only its attribution withheld. On `syllable-to-word` the
 transported structure agreed with the upper layer in 24 of 30 field/case
 comparisons, while the weaker `constant-admission` model — which predicts
 admission everywhere and reads nothing — agreed in 28. Under the text's own
@@ -1785,6 +1812,16 @@ this tree's encoders, not about Arabic. Because all four ladder names occur in
 the frozen text, no declared pair is a holdout, and `SUPPORTED` is unreachable
 here by construction rather than by result.
 
+The successor experiment is declared by name and not executed. `G0.FLT-1`
+requires a newly frozen verbatim text checked site by site against the supplied
+one, an independent `S` contract defined outside the extractors whose
+commutation is tested rather than assumed, scales that were not used in
+formulating `K` and whose names do not occur in the frozen text, a signature
+whose fields can read false on a real input, an `Identity` that is verified or
+else yields `UNDERPOWERED`, and surfaces and pairs that were not read in
+`G0.FLT-0`. Repairing this criterion and re-running it on the five surfaces
+whose results are now known would not produce prospective evidence.
+
 | Law | Status | Scope |
 | --- | --- | --- |
 | `HypothesisTextFrozenBeforeAnyLayerRun` | ENFORCED_AT_PROBE_PREREGISTRATION | The hypothesis text and the ten preregistered items are content-digested and sealed, and the readout gate re-derives both digests and refuses to read on any drift. The preregistration was committed while no readout module existed, so the ordering is a fact of the history and not a claim in prose. |
@@ -1794,13 +1831,21 @@ here by construction rather than by result.
 | `AConstructionallyTrueFieldIsNotACorrespondence` | DECLARED_DEFERRED | A compared field that is true by construction at both layers, or that duplicates another field's predicate, agrees trivially and carries no evidential weight. Such fields are named in the readout as non-discriminating rather than counted as matches. |
 | `AbsentCodedCarrierYieldsUnderpowered` | ENFORCED_AT_PROBE_PREREGISTRATION | A declared layer with no coded carrier in this tree yields `UNDERPOWERED` for every pair it enters. Absence of a measurement is never reported as agreement, as refutation, or as a reason to substitute a hand-made carrier. |
 | `FractalLawProvedIsNotAnOutput` | ENFORCED_AT_PROBE_PREREGISTRATION | The permitted outputs are exactly `SUPPORTED`, `REFUTED`, `UNDERPOWERED` and `WEAKER_MODEL_RECONSTRUCTS`. No run, corpus or aggregate may emit `FRACTAL_LAW_PROVED`, and the frozen text says so in its own words. |
+| `ADivergentFrozenTextIsAnInvalidPreregistration` | ENFORCED_AT_PROBE_PREREGISTRATION | A digest taken over a text that diverges from the supplied one at a site deciding the success condition attests a different hypothesis, even when the divergence is a transcription error rather than an intent. The run's standing becomes `INVALID_PREREGISTRATION` and its verdict is withheld from attribution to the requested hypothesis, while the divergent text itself is left unrepaired as the evidence of the defect. |
+| `AnUnreachableVerdictIsDeclaredNotDiscovered` | ENFORCED_AT_PROBE_PREREGISTRATION | Which verdicts a registration can and cannot reach is derived and declared with the registration, not learned after the result. An instrument that can reach `REFUTED` but not `SUPPORTED` is named a refutation instrument and may not be presented as a balanced test of the claim. |
+| `BooleanAgreementIsNotScaleTransport` | DECLARED_DEFERRED | Agreement between two boolean predicates on one surface across two encoders is not a test of `S ∘ K_n ≅ K_m ∘ S`. Until an independent scale-transport contract exists outside the extractors and its commutation is tested rather than assumed, a degenerate signature is a diagnosis of the instrument and never a refutation of the claim. |
+| `DeclaredInvariantIsNotAVerifiedOne` | DECLARED_DEFERRED | An `Identity` field read as a boolean from an encoder is a declaration. Identity preservation counts as evidence only when it passes the invariant verification gate; where it cannot, the pair is `UNDERPOWERED` rather than a hit. |
+| `ARepairedRunOnSeenCasesIsNotProspective` | ENFORCED_AT_PROBE_PREREGISTRATION | Once surfaces and pairs have been read, no repair of the criterion makes a re-run on them prospective. A successor experiment requires a newly frozen text and inputs that were not read, registered before it is run. |
 
 The frozen text lives in
 `src/alghanem/arabic/fractal_transition_hypothesis.py`, the ten pre-run items in
 `src/alghanem/arabic/fractal_transition_preregistration.py`, and the sealed
-gate in `src/alghanem/arabic/fractal_transition_readout.py`. Neither the text
-nor the preregistration may be edited now that the run has happened; a different
-reading requires a new, separately frozen preregistration.
+gate in `src/alghanem/arabic/fractal_transition_readout.py`. The calibration that names this
+milestone's own defects, withholds its verdict and derives its capability
+envelope is `src/alghanem/arabic/fractal_transition_calibration.py`, and it is
+the only sanctioned reader of the run. Neither the text nor the preregistration
+may be edited now that the run has happened; a different reading requires a new,
+separately frozen preregistration.
 
 ## Encyclopedia Nucleus — Constitution
 
