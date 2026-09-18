@@ -402,13 +402,17 @@ class NormalizationTrace:
 
 
 def normalize_segment_surface(raw: str) -> NormalizationTrace:
-    """طبِّع صورةَ المقطع تحويلًا مُعلَنًا يحفظ أصلَه وما حُذِف منه بمواضعه."""
+    """طبِّع صورةَ المقطع تحويلًا مُعلَنًا مدخلُه الصورةُ الخامُّ بعينها لا مُجرَّدَها.
 
-    stripped = (raw or "").strip()
-    normalized = strip_surface(raw)
+    ``raw`` هو نصُّ MASAQ حرفيًّا؛ وحذفُ الفراغ الطرفيِّ نفسُه عمليّةٌ من عمليّات
+    التحويل تُسجَّل بموضعها الأصليّ، لا خطوةٌ تسبق الأثرَ فتغيب عنه.
+    """
+
+    exact_raw = raw or ""
+    normalized = strip_surface(exact_raw)
     removed: list[tuple[int, str]] = []
     cursor = 0
-    for position, character in enumerate(stripped):
+    for position, character in enumerate(exact_raw):
         if cursor < len(normalized) and normalized[cursor] == character:
             cursor += 1
             continue
@@ -419,7 +423,7 @@ def normalize_segment_surface(raw: str) -> NormalizationTrace:
         )
     return NormalizationTrace(
         transformation=STRIP_SURFACE_TRANSFORMATION,
-        raw=stripped,
+        raw=exact_raw,
         normalized=normalized,
         removed=tuple(removed),
     )
@@ -482,6 +486,11 @@ class MasaqSegmentOccurrence:
             raise MasaqExperimentError("الموضعُ المحلّيُّ عددٌ غيرُ سالب")
         if not isinstance(self.normalization, NormalizationTrace):
             raise MasaqExperimentError("أثرُ التطبيع من نوعه")
+        if self.normalization.raw != self.raw_segment_surface:
+            raise MasaqExperimentError(
+                "مدخلُ أثر التطبيع هو الصورةُ الخامُّ بعينها؛ و"
+                + RAW_OCCURRENCE_IS_NOT_NORMALIZED_PROJECTION
+            )
         if not isinstance(self.held_out, HeldOutMASAQAnnotation):
             raise MasaqExperimentError("الوسومُ المحجوبةُ من نوعها")
 

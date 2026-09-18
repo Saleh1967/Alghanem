@@ -25,6 +25,7 @@ from alghanem.arabic.masaq_fractal_experiment import (
     SEGMENT_INDEX_COLUMN,
     WEAKER_MODEL_TIES_FRACTAL_MODEL,
     MasaqExperimentError,
+    MasaqSegmentOccurrence,
     StandingEvidence,
     build_frozen_binding,
     build_word_inputs,
@@ -241,6 +242,72 @@ def test_the_raw_surface_survives_its_normalization_with_a_replayable_trace() ->
     trace = normalize_segment_surface("سْمِ")
     assert trace.raw == "سْمِ"
     assert trace.replay() == trace.normalized == "سم"
+
+
+def test_the_trace_input_is_the_exact_raw_surface_with_edge_whitespace() -> None:
+    raw = "  بِ+  "
+    trace = normalize_segment_surface(raw)
+    assert trace.raw == raw
+    assert trace.normalized == "ب"
+    assert trace.replay() == trace.normalized
+    assert trace.removed == (
+        (0, " "),
+        (1, " "),
+        (3, "ِ"),
+        (4, "+"),
+        (5, " "),
+        (6, " "),
+    )
+    rows = (
+        {
+            "Sura_No": "2",
+            "Verse_No": "1",
+            "Column5": "w9",
+            "Word_No": "7",
+            "Segmented_Word": raw,
+            MORPH_TAG_COLUMN: "P",
+        },
+        {
+            "Sura_No": "2",
+            "Verse_No": "1",
+            "Column5": "w9",
+            "Word_No": "8",
+            "Segmented_Word": "\tسْمِ ",
+            MORPH_TAG_COLUMN: "N",
+        },
+    )
+    word = build_word_inputs(rows)[0]
+    for occurrence in word.occurrences:
+        assert occurrence.normalization.raw == occurrence.raw_segment_surface
+        assert (
+            occurrence.normalization.replay() == occurrence.normalized_segment_surface
+        )
+    assert word.raw_segments == (raw, "\tسْمِ ")
+    assert word.segments == ("ب", "سم")
+
+
+def test_an_occurrence_refuses_a_trace_that_did_not_start_from_its_raw_surface() -> (
+    None
+):
+    rows = (
+        {
+            "Sura_No": "3",
+            "Verse_No": "1",
+            "Column5": "w1",
+            "Word_No": "1",
+            "Segmented_Word": " بِ ",
+            MORPH_TAG_COLUMN: "P",
+        },
+    )
+    occurrence = build_word_inputs(rows)[0].occurrences[0]
+    with pytest.raises(MasaqExperimentError):
+        MasaqSegmentOccurrence(
+            source_word_no=occurrence.source_word_no,
+            local_segment_position=occurrence.local_segment_position,
+            raw_segment_surface=occurrence.raw_segment_surface,
+            normalization=normalize_segment_surface("بِ"),
+            held_out=occurrence.held_out,
+        )
 
 
 def test_all_five_held_out_columns_are_frozen_and_absent_from_the_projection() -> None:
