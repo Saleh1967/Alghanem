@@ -76,7 +76,7 @@ class ExecutionReport:
             raise TypeError("قيامُ الإدخال من نوعه")
         if self.validation.is_valid != (self.envelope is not None):
             raise TypeError(
-                "إدخالٌ فاسدٌ لا حكمَ معه، وإدخالٌ قائمٌ لا يخلو من حكم؛ "
+                "إدخالٌ باطلُ التكوين لا حكمَ معه، وإدخالٌ قائمٌ لا يخلو من حكم؛ "
                 "وبطلانُ الإدخال ليس حجبًا"
             )
 

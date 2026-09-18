@@ -2978,7 +2978,9 @@ second reading onward that digest is a witness of drift.
 | --- | --- | --- |
 | `ACaseIsAuthoredNotGenerated` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. The golden cases are reviewed `JSON` files under `case_data/`, never the output of Python builders: a program that constructs the evidence cannot be held to account by it. `case_data.py` carries the specification datatypes and the internal-consistency checker only — it opens no file, builds no document, and imports no engine module. Reading the files is the test layer's business, so no file path enters the specification. |
 | `AnExpectationCarriesNoExecutionDigest` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `execution_digest` is born of the readout; admitting it into `DATA` — even as `None` — merges two stages. The field is absent from every type, and any key born of the readout is refused wherever it hides in the expectation tree, at any depth. |
-| `AGoldenCounterCaseIsOneDeclaredDifference` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `GoldenCounterCase = ValidBaseline + OneDeclaredDifference`, for `UNRESOLVED` as much as for `VIOLATED`: a golden case answers one question with the least construction. Two differences in one document are admitted only when multiplicity is itself what is being proved — a single law satisfied on one subject and violated on another — and then the reason is stated by name, never as a shortcut on the number of files. |
+| `ACounterCaseIsOneDeclaredPerturbation` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. In `DATA`: `AuthoredCounterCase = ExpectedPassBaseline + OneDeclaredPerturbation`, for `UNRESOLVED` as much as for `VIOLATED`. The unit of the experiment is the perturbation, not the structural difference: one authored change of meaning may need more than one surface operation for the case to remain constitutionally well formed, so `Perturbation = 1..n StructuralDiff × atomicity_kind × reason`. The kind is one of exactly three. `SINGLE_OPERATION` admits one operation and carries no reason. `COMPOUND_CONSTITUTION_PRESERVATION_CLAIM` admits several operations that serve a single epistemic transition, and is an *author's claim* in `DATA`: the gate can prove `|StructuralDiff| = 2` but cannot prove by itself that the two operations preserved well-formedness — only the input gate at `READOUT` can. `MULTIPLICITY_IS_THE_PROOF` is reserved for the different case where the multiplicity is itself the subject of the proof — a single law satisfied on one subject and violated on another — and is not a second name for a compound. |
+| `ADeclaredPerturbationIsNotALicensedOne` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. A name may not carry a rank higher than its evidence. `DATA: AuthoredCounterCase = ExpectedPassBaseline + OneDeclaredPerturbation`; `READOUT: VerifiedCounterCase = VerifiedPassBaseline + OneLicensedPerturbation`. So `DeclaredPerturbation_DATA ≠ LicensedPerturbation_READOUT`, exactly as `Citation_DATA ≠ ProvenCoverage`: a case whose expectation is `PASS` is an *expected-pass* baseline, never a verified one, and licensing is a rank the readout alone confers. The refined order is `MATRIX ≺ Authored DATA ≺ DeclaredPerturbation ≺ ExpectedPassParent ≺ READOUT ≺ VerifiedPassParent ≺ LicensedPerturbation ≺ DIGEST LEDGER`. |
+| `ABaselineIsTheImmediateStructuralParent` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `baseline_case_id = ImmediateStructuralParent`, not necessarily the root baseline: each case is measured exactly one hop against the case it names, and that parent may itself be a derived, expected-pass case. This is what makes a clean violation possible — `B₀ →ADD anchor.second→ B₁ (expected PASS) →ADD anchor.third→ C (expected BLOCK)` isolates `3 > 2` with no second cause mixed in. The chain remains a tree: no case is its own parent, directly or through intermediaries. And the gate enforces the parent's rank, not merely its existence: `baseline_case_id ⇒ ExpectedDisposition(baseline) = PASS`, so no branch grows out of a case the author already expects to be blocked or deferred. What this proves is bounded — `ExpectedPASS_DATA ≠ VerifiedPASS_READOUT`: the gate establishes only that the author froze an expectation of success for the parent, never that the parent succeeded. |
 | `ACitationIsAClaimUntilTheReadout` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. A `CoverageCitation` in `DATA` is a *claim* of coverage. The `DATA` checker proves only that the citation is legitimate — that it names a required, reachable cell, that its law and standing are that cell's own, that a `SUBJECT`-scoped cell names its witness subject and a `CASE`-scoped cell names none, and that the case's own frozen expectation contains the row cited. `READOUT` alone proves that the case actually reached the cell, by matching the citation against a line of the real trace. This is what prevents paper coverage. |
 | `AnInvariantErrorIsNotInTheUserCaseSpace` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `INVARIANT_ERROR ∉ UserCaseSpace`, so it is not a golden case and is given no document: it is an `EngineSeamWitness` on an internal seam reached by handing the engine incomplete derived material after a provisional pass. Giving it a document would make an engine defect something a case author can request. Invalid input is likewise a separate identity — `InvalidInputWitness ≠ GoldenExecutionCase` — with no trace, no envelope and no verdict. |
 
@@ -3068,14 +3070,15 @@ are admitted into the corpus.
 
 With the immutability and difference gates closed, the corpus grows for the
 first time. Five counter-cases are authored against the single baseline, each
-one a *valid* input that stands as a case and is then judged, and each one
-measured one hop against `case0.baseline.pass` with its difference proved from
-the two texts rather than asserted:
+one an input that stands as a case and is then judged, and each one measured one
+hop against `case0.baseline.pass` with its difference proved from the two texts
+rather than asserted:
 
 - `case0.counter.duplicate_anchor.block` — `ADD nisbah.anchors[1]`, a second
   anchor carrying the first anchor's own id. Claims
   `LS.anchors_do_not_exceed_arity.violated`, `OR.block` and
-  `XS.block_has_no_materialized_identity`.
+  `XS.block_has_no_materialized_identity`. *(Withdrawn at `DATA-1H`; see
+  below.)*
 - `case0.counter.arity_exceeds_slots.block` — `REPLACE nisbah.predicate.arity`,
   three declared and two written. Claims
   `LS.predicate_arity_matches_its_slots.violated`.
@@ -3095,13 +3098,13 @@ the two texts rather than asserted:
   `LS.role_license_is_operative.not_evaluated_by_prerequisite` and
   `XS.blocked_dependent_has_no_residual`.
 
-The fourth case is the first in the corpus where multiplicity is itself the
-proof, and it is so for a constitutional reason rather than a convenience: an
-absent site that is not declared as a standing requirement is *constitutional
+The fourth case is the first in the corpus carried by two structural operations,
+and it is so for a constitutional reason rather than a convenience: an absent
+site that is not declared as a standing requirement is *constitutional
 invalidity*, not a deferral, so the removal of the site and the declaration of
 its unresolved requirement do not stand apart. Two structural operations, one
-authored difference in meaning — which is exactly the case
-`multiplicity_is_the_proof` exists to carry.
+authored change of meaning. At `DATA-1` this was recorded under
+`multiplicity_is_the_proof`; `DATA-1H` corrects that name.
 
 The written corpus now reaches all three verdicts a standing case can reach.
 Every expected trace here is **authored from the frozen law set, not derived**:
@@ -3112,3 +3115,114 @@ one.
 
 Deferred here by name, not by omission: the thirty-one remaining cells, and the
 readout that will either confirm or refute every row written in this tranche.
+
+### G0.CASE-0.DATA-1H — The witness is purified and the rank is named
+
+Three corrections are made before the corpus grows further. None of them moves
+`COVERAGE_MATRIX_DIGEST` or `LAW_SET_DIGEST`: `RUN-0` is not re-run.
+
+**The golden witness for `ANCHORS_DO_NOT_EXCEED_ARITY` was impure.** The frozen
+implementation of that law computes
+`len(anchor_ids) <= arity and len(set(anchor_ids)) == len(anchor_ids)`, so it
+carries two clauses under one name. `case0.counter.duplicate_anchor.block` never
+exceeded the arity at all — two anchors against `arity: 2` — and was blocked by
+the hidden uniqueness clause, proving the unnamed half of the law rather than
+the half the name states. Worse, its trace carried two distinct *occurrences*
+both reporting `subject_id = anchor.first`, collapsing occurrence identity into
+declared identity. It is withdrawn from the corpus and replaced by a one-hop
+chain with unique ids throughout:
+
+    B₀  →ADD anchor.second→  B₁ (expected PASS)  →ADD anchor.third→  C (expected BLOCK)
+
+`case0.baseline.two_anchors.pass` stays inside the bound and is expected to
+pass; `case0.counter.anchors_exceed_arity.block` violates it cleanly at `3 > 2`,
+and inherits the three cells the withdrawn case claimed. The residual is
+unchanged: the expected-pass link claims no cell of its own, so
+`case_data/MANIFEST.json` still names the same thirty-one requirements.
+
+**`RES.RUN0.AnchorArityConflatesIdentityUniqueness`** — an *architectural*
+residual, of a different layer than the uncovered matrix cells, and therefore
+recorded here by name rather than in `MANIFEST.json`, which is reserved for
+`UncoveredMatrixRequirements`. Statement:
+`ANCHORS_DO_NOT_EXCEED_ARITY = CountBound ∧ IdentityUniqueness` in the currently
+frozen implementation. Separating the two clauses is deferred to a later
+law-set revision; `LAW_SET` is not touched now. The withdrawn document is kept
+outside the golden corpus, at
+`tests/execution/fixtures/duplicate_anchor_exposes_arity_uniqueness_conflation.json`,
+so that the evidence for this residual is not lost. A single residual does not
+justify a ledger of its own; one will be opened when several become mechanically
+traceable.
+
+**The unit of the experiment is the perturbation, not the structural
+difference.** `absent_condition_site.defer` exposed this: its two operations are
+not a multiplicity being proved, they are two means of representing one
+epistemic transition — `ResolvedAuthority → DeclaredUnresolvedAuthority`. So
+
+    OneSemanticPerturbation  ≠  OneStructuralDiff
+
+and every counter-case now carries a nested `perturbation` object with an
+`atomicity_kind` drawn from a closed vocabulary of three, and a `reason` required
+of the compound kinds and refused of the single one.
+`COMPOUND_CONSTITUTION_PRESERVATION_CLAIM` is reserved for several operations
+serving one transition, and `MULTIPLICITY_IS_THE_PROOF` for the genuinely
+different case where the multiplicity is the subject of the proof. The latter is
+admitted by the gate but cited by no case in the corpus yet.
+
+**And the name may not outrank its evidence.** `DATA` may not call a
+perturbation *licensed*, nor a case a *valid* baseline, because neither
+licensing nor validity has been read yet:
+
+    DATA:     AuthoredCounterCase  =  ExpectedPassBaseline  +  OneDeclaredPerturbation
+    READOUT:  VerifiedCounterCase  =  VerifiedPassBaseline  +  OneLicensedPerturbation
+
+`COMPOUND_CONSTITUTION_PRESERVATION_CLAIM` is named a *claim* for the same
+reason: the author *declares* several structural differences *intending* to
+preserve the constitution of the case, and `DATA` does not prove that the
+preservation occurred —
+
+    ClaimedConstitutionPreservation  ≠  VerifiedConstitutionPreservation
+
+`DATA` can prove `|StructuralDiff| = 2`; only the input gate at `READOUT` can
+prove that those two operations left the case well formed. For the same reason
+`GoldenExecutionCase` no longer describes itself as a case *whose input stands*:
+it is an authored document, and whether its input stands is a judgment reserved
+for `READOUT` —
+
+    Authored  ⇏  Valid          (as  Declared  ⇏  Licensed)
+
+**And the parent's rank is enforced, not merely assumed.** The written law said
+`ExpectedPassBaseline`, but the gate checked only that the named parent existed,
+that it was not the case itself, and that the chain did not turn back. A case
+expected to be blocked or deferred could therefore have served as a baseline,
+contradicting the law it was written under. A separate gate now enforces
+
+    baseline_case_id  ⇒  ExpectedDisposition(baseline) = PASS
+
+and it runs before the difference and atomicity checks, so an illicit parent is
+refused before its diff is even measured. What it establishes is bounded:
+
+    ExpectedPASS_DATA  ≠  VerifiedPASS_READOUT
+
+the author's frozen expectation of success, never success itself. The refined
+order of the whole layer is therefore
+
+    MATRIX ≺ Authored DATA ≺ DeclaredPerturbation ≺ ExpectedPassParent
+           ≺ READOUT ≺ VerifiedPassParent ≺ LicensedPerturbation
+           ≺ DIGEST LEDGER
+
+and `baseline_case_id = ImmediateStructuralParent`, not the root baseline, so a
+derived expected-pass case may itself be the parent of the next hop. Even the
+parent-child relation inside the corpus now carries an epistemic rank: the
+parent in `DATA` is not a *valid* origin but an *expected-pass* one, and it is
+not a licensed origin until the readout.
+
+Finally, the one surviving use of «إدخال فاسد» outside the frozen matrix — in
+`ExecutionReport.__post_init__` — is corrected to «إدخال باطل التكوين», in
+agreement with the constitution's own wording. The two historical phrases inside
+`coverage.py` are deliberately left alone: they enter
+`COVERAGE_MATRIX_DIGEST`, and `MATRIX ≺ DATA` forbids rewriting a frozen
+specification to improve its language.
+
+Deferred here by name, not by omission: the separation of the arity bound from
+identity uniqueness, the first genuine `MULTIPLICITY_IS_THE_PROOF` case, and the
+readout that alone can turn a declared perturbation into a licensed one.

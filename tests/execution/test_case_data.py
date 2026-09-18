@@ -28,6 +28,7 @@ from alghanem.execution.case_data import (
     GoldenExecutionCase,
     GoldenExpectation,
     InvalidInputWitness,
+    PerturbationAtomicity,
 )
 from alghanem.execution.coverage import COVERAGE_MATRIX
 from alghanem.execution.frozen_json import DiffOperation
@@ -108,16 +109,22 @@ def _second_anchor() -> dict[str, Any]:
     }
 
 
+def _perturbation(
+    atomicity_kind: str = "single_operation", reason: str | None = None
+) -> dict[str, Any]:
+    return {"atomicity_kind": atomicity_kind, "reason": reason}
+
+
 def _counter_case(
     case_id: str,
     differences: list[dict[str, Any]],
-    multiplicity: str | None = None,
+    perturbation: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     case = _case_document()
     case["case_id"] = case_id
     case["baseline_case_id"] = "case0.baseline.pass"
     case["declared_differences"] = differences
-    case["multiplicity_is_the_proof"] = multiplicity
+    case["perturbation"] = perturbation if perturbation is not None else _perturbation()
     return case
 
 
@@ -150,14 +157,19 @@ def test_the_written_corpus_reaches_every_verdict_a_standing_case_reaches() -> N
     assert reached == set(VERDICT_DISPOSITIONS)
 
 
-def test_every_written_counter_case_is_measured_against_a_written_baseline() -> None:
+def test_every_written_case_names_its_immediate_structural_parent() -> None:
     corpus = _corpus()
-    baselines = {case.case_id for case in corpus.cases if case.baseline_case_id is None}
-    counters = tuple(case for case in corpus.cases if case.baseline_case_id is not None)
-    assert counters
-    for case in counters:
-        assert case.baseline_case_id in baselines
+    written = {case.case_id for case in corpus.cases}
+    roots = tuple(case for case in corpus.cases if case.baseline_case_id is None)
+    derived = tuple(case for case in corpus.cases if case.baseline_case_id is not None)
+    assert roots
+    assert derived
+    for case in derived:
+        assert case.baseline_case_id in written
         assert case.declared_differences
+        assert case.perturbation is not None
+    parents = {case.baseline_case_id for case in derived}
+    assert parents - {case.case_id for case in roots}
 
 
 def test_a_file_name_carries_the_identity_written_inside_it() -> None:
@@ -419,12 +431,111 @@ def test_two_faults_are_admitted_when_multiplicity_is_itself_the_proof() -> None
         ),
         _add("nisbah.anchors[1]", _second_anchor(), "مرتكزٌ ثانٍ رخصتُه معطَّلة"),
     ]
-    document["multiplicity_is_the_proof"] = (
+    document["perturbation"] = _perturbation(
+        "multiplicity_is_the_proof",
         "المطلوبُ إثباتُ أنّ قانونًا واحدًا يثبت على موضوعٍ ويُخالَف على آخر في "
-        "القراءة نفسِها؛ فالتعدُّدُ هو محلُّ البرهان لا اختصارُ ملفّات"
+        "القراءة نفسِها؛ فالتعدُّدُ هو محلُّ البرهان لا اختصارُ ملفّات",
     )
     case = GoldenExecutionCase.of(document)
     assert len(case.declared_differences) == 2
+    assert case.perturbation is not None
+    assert (
+        case.perturbation.atomicity_kind
+        is PerturbationAtomicity.MULTIPLICITY_IS_THE_PROOF
+    )
+
+
+def test_two_operations_are_admitted_as_one_constitution_preserving_claim() -> None:
+    document = _case_document()
+    document["case_id"] = "case0.counter.compound"
+    document["baseline_case_id"] = "case0.baseline.pass"
+    document["declared_differences"] = [
+        _replace(
+            "nisbah.predicate.slots[0].condition_site",
+            {"base_id": "base.A", "place": "attribute_possibility"},
+            None,
+            "موضعُ الشرط غائب",
+        ),
+        _add(
+            "unresolved_requirements[0]",
+            {
+                "required_authority": "prior_condition_reference",
+                "subject_id": "site.first",
+                "standing": "unresolved",
+            },
+            "الغيابُ مُصرَّحٌ به مطلبًا غيرَ محسوم",
+        ),
+    ]
+    document["perturbation"] = _perturbation(
+        "compound_constitution_preservation_claim",
+        "العمليّتان وسيلتا تمثيلٍ لانتقالٍ معرفيٍّ واحد، ولا تقوم إحداهما دون الأخرى",
+    )
+    case = GoldenExecutionCase.of(document)
+    assert case.perturbation is not None
+    assert (
+        case.perturbation.atomicity_kind
+        is PerturbationAtomicity.COMPOUND_CONSTITUTION_PRESERVATION_CLAIM
+    )
+
+
+def test_a_counter_case_without_a_declared_perturbation_is_refused() -> None:
+    document = _counter_case(
+        "case0.counter.no_perturbation",
+        [_replace("nisbah.predicate.arity", 2, 3, "الرتبةُ صارت ثلاثًا")],
+    )
+    document["perturbation"] = None
+    with pytest.raises(CaseDataError):
+        GoldenExecutionCase.of(document)
+
+
+def test_a_baseline_that_declares_a_perturbation_is_refused() -> None:
+    document = _case_document()
+    document["perturbation"] = _perturbation()
+    with pytest.raises(CaseDataError):
+        GoldenExecutionCase.of(document)
+
+
+def test_a_single_operation_perturbation_that_carries_a_reason_is_refused() -> None:
+    document = _counter_case(
+        "case0.counter.reasoned_single",
+        [_replace("nisbah.predicate.arity", 2, 3, "الرتبةُ صارت ثلاثًا")],
+        _perturbation("single_operation", "تعليلٌ لا موضعَ له"),
+    )
+    with pytest.raises(CaseDataError):
+        GoldenExecutionCase.of(document)
+
+
+def test_a_compound_perturbation_without_a_reason_is_refused() -> None:
+    document = _counter_case(
+        "case0.counter.unreasoned_compound",
+        [
+            _replace("nisbah.predicate.arity", 2, 3, "الرتبةُ صارت ثلاثًا"),
+            _add("nisbah.anchors[1]", _second_anchor(), "زِيد مرتكزٌ ثانٍ"),
+        ],
+        _perturbation("compound_constitution_preservation_claim", None),
+    )
+    with pytest.raises(CaseDataError):
+        GoldenExecutionCase.of(document)
+
+
+def test_a_compound_kind_on_a_single_declared_difference_is_refused() -> None:
+    document = _counter_case(
+        "case0.counter.compound_of_one",
+        [_replace("nisbah.predicate.arity", 2, 3, "الرتبةُ صارت ثلاثًا")],
+        _perturbation("compound_constitution_preservation_claim", "تعليلٌ لتعدُّدٍ لم يقع"),
+    )
+    with pytest.raises(CaseDataError):
+        GoldenExecutionCase.of(document)
+
+
+def test_an_atomicity_kind_outside_its_closed_vocabulary_is_refused() -> None:
+    document = _counter_case(
+        "case0.counter.unknown_kind",
+        [_replace("nisbah.predicate.arity", 2, 3, "الرتبةُ صارت ثلاثًا")],
+        _perturbation("one_licensed_perturbation"),
+    )
+    with pytest.raises(CaseDataError):
+        GoldenExecutionCase.of(document)
 
 
 def test_a_baseline_that_declares_a_difference_from_nothing_is_refused() -> None:
@@ -680,7 +791,11 @@ def test_two_changed_places_beside_each_other_are_two_differences() -> None:
         ),
         _replace("nisbah.predicate.arity", 2, 3, "رتبةُ المحمول تبدَّلت"),
     ]
-    case = _counter_case("case0.counter.two_subjects", differences, statement)
+    case = _counter_case(
+        "case0.counter.two_subjects",
+        differences,
+        _perturbation("multiplicity_is_the_proof", statement),
+    )
     case["document"]["nisbah"]["anchors"][0]["role_site"]["license_id"] = (
         "license.other"
     )
@@ -706,7 +821,11 @@ def test_a_list_edit_that_hides_its_identity_is_refused() -> None:
         ),
         _add("nisbah.anchors[1]", _second_anchor(), "زِيد مرتكزٌ ثانٍ"),
     ]
-    case = _counter_case("case0.counter.list_edit", differences, statement)
+    case = _counter_case(
+        "case0.counter.list_edit",
+        differences,
+        _perturbation("multiplicity_is_the_proof", statement),
+    )
     case["document"]["nisbah"]["anchors"][0]["role_site"]["license_id"] = (
         "license.other"
     )
@@ -730,6 +849,44 @@ def test_a_baseline_chain_that_turns_back_on_itself_is_refused() -> None:
     second["baseline_case_id"] = "case0.counter.first"
     with pytest.raises(CaseDataError):
         _corpus_with(first, second)
+
+
+def _child_of(parent_case_id: str, case_id: str) -> dict[str, Any]:
+    """فرعٌ بخطوةٍ واحدةٍ نظيفةٍ عن حالةٍ مكتوبةٍ في المدوّنة، أيًّا كان حكمُها المتوقَّع."""
+
+    case = deepcopy(_read(_CORPUS_ROOT / "cases" / f"{parent_case_id}.json"))
+    arity = case["document"]["nisbah"]["predicate"]["arity"]
+    case["document"]["nisbah"]["predicate"]["arity"] = arity + 1
+    case["case_id"] = case_id
+    case["baseline_case_id"] = parent_case_id
+    case["declared_differences"] = [
+        _replace("nisbah.predicate.arity", arity, arity + 1, "الرتبةُ ازدادت واحدًا")
+    ]
+    case["perturbation"] = _perturbation()
+    return case
+
+
+def test_a_counter_whose_baseline_is_expected_to_block_is_refused() -> None:
+    child = _child_of("case0.counter.arity_exceeds_slots.block", "case0.counter.child")
+    with pytest.raises(CaseDataError):
+        _corpus_with(child)
+
+
+def test_a_counter_whose_baseline_is_expected_to_defer_is_refused() -> None:
+    child = _child_of(
+        "case0.counter.absent_condition_site.defer", "case0.counter.child"
+    )
+    with pytest.raises(CaseDataError):
+        _corpus_with(child)
+
+
+def test_a_counter_whose_baseline_is_expected_to_pass_is_admitted() -> None:
+    child = _child_of("case0.baseline.two_anchors.pass", "case0.counter.child")
+    corpus = _corpus_with(child)
+    written = {case.case_id: case for case in corpus.cases}
+    assert written["case0.counter.child"].baseline_case_id == (
+        "case0.baseline.two_anchors.pass"
+    )
 
 
 def test_an_expected_fault_kind_outside_the_closed_vocabulary_is_refused() -> None:
@@ -758,7 +915,7 @@ def test_a_direct_constructor_does_not_share_the_document_it_was_given() -> None
         document_content=raw,
         baseline_case_id=None,
         declared_differences=(),
-        multiplicity_is_the_proof=None,
+        perturbation=None,
     )
     raw["nisbah"]["predicate"]["arity"] = 99
     assert case.document["nisbah"]["predicate"]["arity"] != 99
@@ -798,5 +955,24 @@ def test_a_document_that_carries_a_non_finite_number_is_refused() -> None:
             document_content=raw,
             baseline_case_id=None,
             declared_differences=(),
-            multiplicity_is_the_proof=None,
+            perturbation=None,
         )
+
+
+def test_the_retired_duplicate_anchor_witness_is_outside_the_golden_corpus() -> None:
+    """بقيّةٌ معماريّةٌ محفوظةٌ لا تُغطّي خليّةً: القانونُ المُسمّى بالعدد يحجب بالهويّة."""
+
+    fixture = _read(
+        Path(__file__).resolve().parent
+        / "fixtures"
+        / "duplicate_anchor_exposes_arity_uniqueness_conflation.json"
+    )
+    assert fixture["residual_id"] == "RES.RUN0.AnchorArityConflatesIdentityUniqueness"
+    assert fixture["is_not_in_the_golden_corpus"] is True
+    retired = fixture["retired_case"]
+    corpus = _corpus()
+    assert retired["case_id"] not in {case.case_id for case in corpus.cases}
+    nisbah = retired["document"]["nisbah"]
+    anchor_ids = [anchor["anchor_id"] for anchor in nisbah["anchors"]]
+    assert len(anchor_ids) <= nisbah["predicate"]["arity"]
+    assert len(set(anchor_ids)) != len(anchor_ids)

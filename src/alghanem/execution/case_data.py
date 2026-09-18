@@ -16,14 +16,44 @@
 البصمةُ في سجلٍّ مستقلٍّ لا يرجع إلى `DATA`، وصارت من القراءة الثانية شاهدَ
 انحراف.
 
-**والحالةُ المضادّة أصلٌ صحيحٌ وفرقٌ واحدٌ مُعلَن**
-(`AGoldenCounterCaseIsOneDeclaredDifference`):
+**والحالةُ المضادّة أصلٌ متوقَّعُ النجاح واضطرابٌ واحدٌ مُعلَن**
+(`ACounterCaseIsOneDeclaredPerturbation`):
 
-    GoldenCounterCase  =  ValidBaseline  +  OneDeclaredDifference
+    AuthoredCounterCase  =  ExpectedPassBaseline  +  OneDeclaredPerturbation
 
-فالحالةُ الذهبيّةُ تجيب عن سؤالٍ واحدٍ بأقلّ تركيب. ولا تُجمَع أعطالٌ في وثيقةٍ
-واحدةٍ إلّا أن يكون تعدُّدُ المواضيع نفسُه محلَّ البرهان — كإثبات أنّ قانونًا
-واحدًا يصحّ أن يثبت على موضوعٍ ويُخالَف على آخر — فيُصرَّح بذلك بالاسم.
+فالحالةُ الذهبيّةُ تجيب عن سؤالٍ واحدٍ بأقلّ تركيب. **والاضطرابُ وحدةُ التجربة
+لا الفرقُ البنيويّ**: قد يُعلِن المؤلِّفُ أكثرَ من فرقٍ بنيويٍّ **بقصد** حفظ قيام
+التكوين، ولا تُثبت `DATA` أنّ هذا الحفظَ وقع، فيكون:
+
+    Perturbation  =  1..n StructuralDiff  ×  atomicity_kind  ×  reason
+
+و`atomicity_kind` ثلاثةٌ لا رابعَ لها: `SINGLE_OPERATION` لعمليّةٍ واحدة،
+و`COMPOUND_CONSTITUTION_PRESERVATION_CLAIM` لعمليّاتٍ تخدم انتقالًا معرفيًّا
+واحدًا — دعوى مؤلِّفٍ لا شهادةَ نجاح — و`MULTIPLICITY_IS_THE_PROOF` حين يكون
+التعدُّدُ نفسُه محلَّ البرهان — كقانونٍ واحدٍ يثبت على موضوعٍ ويُخالَف على آخر.
+والثاني غيرُ الثالث: ذاك تعدُّدُ وسائلِ تحقيق فرقٍ واحد، وهذا تعدُّدٌ هو موضوعُ
+القضيّة. وعلى كلّ حال:
+
+    ClaimedConstitutionPreservation  ≠  VerifiedConstitutionPreservation
+
+**والرتبةُ لا تسبق دليلَها** (`ADeclaredPerturbationIsNotALicensedOne`):
+
+    DATA:     AuthoredCounterCase  =  ExpectedPassBaseline  + OneDeclaredPerturbation
+    READOUT:  VerifiedCounterCase  =  VerifiedPassBaseline  + OneLicensedPerturbation
+
+فما تُثبته `DATA` عددُ الفروق البنيويّة ومطابقتُها للمُعلَن؛ ولا تُثبت أنّ
+العمليّاتِ حفظت صحّةَ التكوين، ولا أنّ الأصلَ نجح. فدعوى `COMPOUND` دعوى مؤلِّفٍ
+حتّى تصدّقها القراءة، كما أنّ الاستشهاد دعوى تغطيةٍ حتّى تصدّقها القراءة:
+
+    DeclaredPerturbation_DATA  ≠  LicensedPerturbation_READOUT
+
+**والأصلُ هو الأبُ البنيويُّ المباشر**
+(`ABaselineIsTheImmediateStructuralParent`):
+
+    baseline_case_id  =  ImmediateStructuralParent   لا   RootBaseline
+
+فتُقاس كلُّ حالةٍ خطوةً واحدةً إلى أبيها المُسمّى، ويجوز أن يكون الأبُ نفسُه
+حالةً متفرِّعةً متوقَّعةَ النجاح؛ وبذلك تُبنى مخالفةٌ صافيةٌ لا يختلط فيها سببان.
 
 **والاستشهادُ دعوى تغطيةٍ لا تغطية** (`ACitationIsAClaimUntilTheReadout`):
 
@@ -57,10 +87,9 @@
 
 فيُقاس النصّان المؤلَّفان بعضُهما ببعض — لا يُشغَّل المحرّك ولا يُخرَق
 `DATA ≺ READOUT` — فيُستخرَج فرقٌ بنيويٌّ عمليّتُه `ADD` أو `REMOVE` أو `REPLACE`،
-بموضعه وحالتِه قبلُ وبعدُ، ثمّ يُطابَق بالمُعلَن مطابقةً تامّة. وبهذا صار
-`GoldenCounterCase = ValidBaseline + OneDeclaredDifference` مطلبًا مفروضًا لا
-إفادةً من المؤلِّف. وسلسلةُ الأصول تُقاس خطوةً واحدةً إلى الأصل المُسمّى، ولا
-تعود على نفسها حلقةً.
+بموضعه وحالتِه قبلُ وبعدُ، ثمّ يُطابَق بالمُعلَن مطابقةً تامّة. وبهذا صار عددُ
+الفروق الموافقُ لجنس الاضطراب مطلبًا مفروضًا لا إفادةً من المؤلِّف. وسلسلةُ
+الأصول تُقاس خطوةً واحدةً إلى الأصل المُسمّى، ولا تعود على نفسها حلقةً.
 
 **والعقدُ على الصنف لا على مصنعه** (`AContractBindsTheClassNotItsFactory`):
 المُنشئُ العامُّ في بايثون طريقٌ قانونيٌّ كمثل `of`، فلو اكتفى `of` بالتجميد بقي
@@ -75,6 +104,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, fields
+from enum import Enum
 from typing import Any, Final
 
 from .coverage import (
@@ -105,11 +135,13 @@ from .standing import InputFaultKind
 
 __all__ = [
     "A_BASELINE_CHAIN_DOES_NOT_TURN_BACK_ON_ITSELF",
+    "A_BASELINE_IS_THE_IMMEDIATE_STRUCTURAL_PARENT",
     "A_CONTRACT_BINDS_THE_CLASS_NOT_ITS_FACTORY",
     "A_CASE_IS_AUTHORED_NOT_GENERATED",
     "A_CITATION_IS_A_CLAIM_UNTIL_THE_READOUT",
+    "A_COUNTER_CASE_IS_ONE_DECLARED_PERTURBATION",
     "A_DECLARED_DIFFERENCE_IS_THE_ACTUAL_DIFFERENCE",
-    "A_GOLDEN_COUNTER_CASE_IS_ONE_DECLARED_DIFFERENCE",
+    "A_DECLARED_PERTURBATION_IS_NOT_A_LICENSED_ONE",
     "AN_EXPECTATION_CARRIES_NO_EXECUTION_DIGEST",
     "AN_INVARIANT_ERROR_IS_NOT_IN_THE_USER_CASE_SPACE",
     "CASE_DATA_ID",
@@ -121,12 +153,14 @@ __all__ = [
     "CorpusCoverage",
     "CoverageCitation",
     "DeclaredDifference",
+    "DeclaredPerturbation",
     "EngineSeamWitness",
     "ExpectedTraceRow",
     "GoldenCaseCorpus",
     "GoldenExecutionCase",
     "GoldenExpectation",
     "InvalidInputWitness",
+    "PerturbationAtomicity",
 ]
 
 
@@ -149,9 +183,25 @@ AN_EXPECTATION_CARRIES_NO_EXECUTION_DIGEST: Final[str] = (
     "ولو فارغةً خلطُ مرحلتين؛ وسجلُّ البصمات بعد القراءة الأولى ولا يرجع إلى الحالة"
 )
 
-A_GOLDEN_COUNTER_CASE_IS_ONE_DECLARED_DIFFERENCE: Final[str] = (
-    "الحالةُ المضادّة أصلٌ صحيحٌ وفرقٌ واحدٌ مُعلَن: حالةٌ ذهبيّةٌ تجيب عن سؤالٍ "
-    "واحدٍ بأقلّ تركيب؛ ولا تُجمَع أعطالٌ إلّا أن يكون تعدُّدُ المواضيع محلَّ البرهان"
+A_COUNTER_CASE_IS_ONE_DECLARED_PERTURBATION: Final[str] = (
+    "الحالةُ المضادّة أصلٌ متوقَّعُ النجاح واضطرابٌ واحدٌ مُعلَن: وحدةُ التجربة "
+    "اضطرابٌ له قصدٌ واحد، وقد يُعلِن المؤلِّفُ أكثرَ من فرقٍ بنيويٍّ بقصد حفظ قيام "
+    "التكوين، ولا تُثبت `DATA` أنّ الحفظَ وقع؛ ولا تُجمَع أعطالٌ إلّا أن يكون "
+    "التعدُّدُ نفسُه محلَّ البرهان"
+)
+
+A_DECLARED_PERTURBATION_IS_NOT_A_LICENSED_ONE: Final[str] = (
+    "الاضطرابُ المُعلَنُ غيرُ المُرخَّص: تُثبت `DATA` عددَ الفروق ومطابقتَها "
+    "للمُعلَن، ولا تُثبت حفظَ صحّةِ التكوين ولا نجاحَ الأصل؛ فالترخيصُ رتبةٌ "
+    "تمنحها القراءةُ وحدَها، ولا يحمل الاسمُ رتبةً أعلى من دليله"
+)
+
+A_BASELINE_IS_THE_IMMEDIATE_STRUCTURAL_PARENT: Final[str] = (
+    "الأصلُ هو الأبُ البنيويُّ المباشر لا أصلُ السلسلة: تُقاس كلُّ حالةٍ خطوةً "
+    "واحدةً إلى أبيها المُسمّى، ويجوز أن يكون الأبُ حالةً متفرِّعةً؛ على أن يكون "
+    "حكمُه المتوقَّعُ المجمَّدُ نجاحًا، إذ لا يُبنى فرعٌ على محجوبٍ ولا مؤجَّل. "
+    "والنجاحُ المتوقَّعُ في `DATA` غيرُ النجاح المُتحقَّق في `READOUT`: المُثبَتُ "
+    "هنا أنّ المؤلِّفَ جمَّد توقُّعَ نجاح الأب، لا أنّ الأبَ نجح"
 )
 
 A_DECLARED_DIFFERENCE_IS_THE_ACTUAL_DIFFERENCE: Final[str] = (
@@ -477,15 +527,86 @@ class CoverageCitation:
         raise CaseDataError(f"الاستشهادُ بمطلبٍ ليس في المصفوفة: «{self.requirement_id}»")
 
 
+class PerturbationAtomicity(Enum):
+    """أجناسُ وحدة الاضطراب المُعلَن؛ مفردةٌ مغلقةٌ لا رابعَ لها."""
+
+    SINGLE_OPERATION = "single_operation"
+    COMPOUND_CONSTITUTION_PRESERVATION_CLAIM = (
+        "compound_constitution_preservation_claim"
+    )
+    MULTIPLICITY_IS_THE_PROOF = "multiplicity_is_the_proof"
+
+
+_COMPOUND_ATOMICITY_KINDS: Final[frozenset[PerturbationAtomicity]] = frozenset(
+    {
+        PerturbationAtomicity.COMPOUND_CONSTITUTION_PRESERVATION_CLAIM,
+        PerturbationAtomicity.MULTIPLICITY_IS_THE_PROOF,
+    }
+)
+"""ما يحتمل أكثرَ من فرقٍ بنيويٍّ واحد؛ ولكلٍّ منهما معنًى غيرُ معنى الآخر."""
+
+
+@dataclass(frozen=True, slots=True)
+class DeclaredPerturbation:
+    """اضطرابٌ واحدٌ مُعلَنٌ عن الأصل: جنسُ وحدته وتعليلُه، لا ترخيصَ فيه."""
+
+    atomicity_kind: PerturbationAtomicity
+    reason: str | None
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.atomicity_kind, PerturbationAtomicity):
+            raise CaseDataError("جنسُ وحدةِ الاضطراب عضوٌ في مفردته المغلقة")
+        if self.atomicity_kind is PerturbationAtomicity.SINGLE_OPERATION:
+            if self.reason is not None:
+                raise CaseDataError(
+                    "اضطرابُ عمليّةٍ واحدةٍ لا تعليلَ لتعدُّدٍ فيه؛ والتعليلُ يُكتَب "
+                    "حيث يُحتاج إليه لا زينةً"
+                )
+            return
+        if self.reason is None:
+            raise CaseDataError(
+                "اضطرابٌ مركَّبٌ بلا تعليلٍ دعوى بلا حجّة؛ و"
+                + A_COUNTER_CASE_IS_ONE_DECLARED_PERTURBATION
+            )
+        _text(self.reason, "تعليلُ وحدةِ الاضطراب")
+
+    @classmethod
+    def of(cls, document: Mapping[str, Any]) -> DeclaredPerturbation:
+        _exact_keys(
+            document,
+            frozenset({"atomicity_kind", "reason"}),
+            "الاضطرابُ المُعلَن",
+        )
+        return cls(
+            atomicity_kind=_member(
+                PerturbationAtomicity,
+                document["atomicity_kind"],
+                "جنسُ وحدةِ الاضطراب",
+            ),
+            reason=_optional_text(document["reason"], "تعليلُ وحدةِ الاضطراب"),
+        )
+
+    @property
+    def admits_many_operations(self) -> bool:
+        """أيحتمل هذا الجنسُ أكثرَ من فرقٍ بنيويٍّ واحد؟"""
+
+        return self.atomicity_kind in _COMPOUND_ATOMICITY_KINDS
+
+
 @dataclass(frozen=True, slots=True)
 class GoldenExecutionCase:
-    """قضيّةٌ ذهبيّةٌ قائمةُ الإدخال: وثيقتُها وحدَها، ولا حكمَ فيها ولا توقُّع."""
+    """وثيقةُ حالةٍ ذهبيّةٍ مؤلَّفةٍ قبل القراءة؛ وقيامُ إدخالها مؤجَّلٌ إلى `READOUT`.
+
+    وثيقتُها وحدَها، ولا حكمَ فيها ولا توقُّع؛ فـ`Authored` لا يستلزم `Valid` كما
+    أنّ `Declared` لا يستلزم `Licensed`. والاسمُ التاريخيُّ `GoldenExecutionCase`
+    باقٍ، ومعناه المضبوط `AuthoredGoldenCase`.
+    """
 
     case_id: str
     document_content: Mapping[str, FrozenJson]
     baseline_case_id: str | None
     declared_differences: tuple[DeclaredDifference, ...]
-    multiplicity_is_the_proof: str | None
+    perturbation: DeclaredPerturbation | None
 
     def __post_init__(self) -> None:
         _text(self.case_id, "مُعرِّفُ الحالة")
@@ -504,21 +625,29 @@ class GoldenExecutionCase:
         if self.baseline_case_id is None:
             if self.declared_differences:
                 raise CaseDataError("حالةُ الأصل لا فرقَ لها؛ والفرقُ يُقاس إلى أصلٍ مُسمًّى")
-            if self.multiplicity_is_the_proof is not None:
-                raise CaseDataError("حالةُ الأصل لا تحتجّ بتعدُّدِ مواضيعَ تُثبته")
+            if self.perturbation is not None:
+                raise CaseDataError("حالةُ الأصل لا اضطرابَ فيها؛ والاضطرابُ يُقاس إلى أصل")
             return
         if not self.declared_differences:
             raise CaseDataError(
                 "حالةٌ مضادّةٌ بلا فرقٍ مُعلَنٍ عن أصلها دعوى بلا موضع؛ و"
-                + A_GOLDEN_COUNTER_CASE_IS_ONE_DECLARED_DIFFERENCE
+                + A_COUNTER_CASE_IS_ONE_DECLARED_PERTURBATION
             )
+        if self.perturbation is None:
+            raise CaseDataError(
+                "حالةٌ مضادّةٌ بلا اضطرابٍ مُعلَنٍ جنسُ وحدته مُسمًّى؛ و"
+                + A_COUNTER_CASE_IS_ONE_DECLARED_PERTURBATION
+            )
+        if not isinstance(self.perturbation, DeclaredPerturbation):
+            raise CaseDataError("اضطرابُ الحالة من نوعه لا من قاموسٍ حُمِل عليه")
         many = len(self.declared_differences) > 1
-        if many and self.multiplicity_is_the_proof is None:
-            raise CaseDataError(A_GOLDEN_COUNTER_CASE_IS_ONE_DECLARED_DIFFERENCE)
-        if self.multiplicity_is_the_proof is not None:
-            _text(self.multiplicity_is_the_proof, "تعليلُ تعدُّدِ الفروق")
-            if len(self.declared_differences) < 2:
-                raise CaseDataError("تعليلُ التعدُّدِ لا موضعَ له في حالةٍ فرقُها واحد")
+        if many and not self.perturbation.admits_many_operations:
+            raise CaseDataError(
+                "اضطرابُ عمليّةٍ واحدةٍ لا يُعلَن بفرقين؛ و"
+                + A_COUNTER_CASE_IS_ONE_DECLARED_PERTURBATION
+            )
+        if not many and self.perturbation.admits_many_operations:
+            raise CaseDataError("جنسُ وحدةٍ مركَّبٌ لا موضعَ له في حالةٍ فرقُها المُعلَنُ واحد")
         paths = [difference.path for difference in self.declared_differences]
         if len(set(paths)) != len(paths):
             raise CaseDataError("فرقان في موضعٍ واحدٍ فرقٌ واحدٌ كُتِب مرّتين")
@@ -539,12 +668,13 @@ class GoldenExecutionCase:
                     "document",
                     "baseline_case_id",
                     "declared_differences",
-                    "multiplicity_is_the_proof",
+                    "perturbation",
                 }
             ),
             "ملفُّ الحالة",
         )
         _refuse_readout_keys(document, "ملفُّ الحالة")
+        perturbation = document["perturbation"]
         return cls(
             case_id=document["case_id"],
             document_content=_frozen_mapping(document["document"], "وثيقةُ الحالة"),
@@ -553,8 +683,10 @@ class GoldenExecutionCase:
                 DeclaredDifference.of(_mapping(item, "الفرقُ المُعلَن"))
                 for item in _sequence(document["declared_differences"], "فروقُ الحالة")
             ),
-            multiplicity_is_the_proof=_optional_text(
-                document["multiplicity_is_the_proof"], "تعليلُ تعدُّدِ الفروق"
+            perturbation=(
+                None
+                if perturbation is None
+                else DeclaredPerturbation.of(_mapping(perturbation, "الاضطرابُ المُعلَن"))
             ),
         )
 
@@ -923,6 +1055,7 @@ class GoldenCaseCorpus:
             if case.baseline_case_id == case.case_id:
                 raise CaseDataError("حالةٌ لا تكون أصلًا لنفسها")
         self._refuse_a_baseline_chain_that_turns_back()
+        self._refuse_a_baseline_that_is_not_expected_to_pass()
         self._refuse_a_difference_that_the_two_documents_deny()
         witness_ids = [item.witness_id for item in self.invalid_input_witnesses]
         witness_ids += [item.witness_id for item in self.engine_seam_witnesses]
@@ -960,6 +1093,22 @@ class GoldenCaseCorpus:
                 seen.add(current)
                 current = baselines.get(current)
 
+    def _refuse_a_baseline_that_is_not_expected_to_pass(self) -> None:
+        """الأبُ المباشر مجمَّدُ توقُّعِ النجاح؛ ولا يُبنى فرعٌ على محجوبٍ ولا مؤجَّل."""
+
+        expectations = {item.case_id: item for item in self.expectations}
+        for case in self.cases:
+            if case.baseline_case_id is None:
+                continue
+            baseline = expectations[case.baseline_case_id]
+            if baseline.expected_disposition is not CaseDisposition.PASS:
+                raise CaseDataError(
+                    f"«{case.case_id}» تُقاس إلى أصلٍ حكمُه المتوقَّع "
+                    f"«{baseline.expected_disposition.value}» لا «pass»: "
+                    f"«{case.baseline_case_id}»؛ و"
+                    + A_BASELINE_IS_THE_IMMEDIATE_STRUCTURAL_PARENT
+                )
+
     def _refuse_a_difference_that_the_two_documents_deny(self) -> None:
         """الفرقُ المُعلَن يساوي الفرقَ المُستخرَج من الوثيقتين؛ مقارنةً بخطوةٍ واحدة."""
 
@@ -979,7 +1128,7 @@ class GoldenCaseCorpus:
                 ) from refusal
             self._refuse_a_case_that_matches_its_baseline(case, actual)
             self._refuse_a_declaration_that_is_not_the_difference(case, actual)
-            self._refuse_a_multiplicity_that_the_documents_deny(case, actual)
+            self._refuse_an_atomicity_that_the_documents_deny(case, actual)
 
     @staticmethod
     def _refuse_a_case_that_matches_its_baseline(
@@ -1023,19 +1172,21 @@ class GoldenCaseCorpus:
                 )
 
     @staticmethod
-    def _refuse_a_multiplicity_that_the_documents_deny(
+    def _refuse_an_atomicity_that_the_documents_deny(
         case: GoldenExecutionCase, actual: tuple[StructuralDiff, ...]
     ) -> None:
-        if case.multiplicity_is_the_proof is None:
+        """جنسُ وحدةِ الاضطراب يوافق عددَ الفروق الواقعة؛ ولا يُرخَّص هنا معناه."""
+
+        perturbation = case.perturbation
+        if perturbation is None or not perturbation.admits_many_operations:
             if len(actual) != 1:
                 raise CaseDataError(
-                    f"حالةٌ مضادّةٌ فرقُها الواقعُ أكثرُ من واحدٍ بلا تعليل: "
-                    f"«{case.case_id}»؛ و"
-                    + A_GOLDEN_COUNTER_CASE_IS_ONE_DECLARED_DIFFERENCE
+                    f"اضطرابُ عمليّةٍ واحدةٍ فرقُه الواقعُ أكثرُ من واحد: "
+                    f"«{case.case_id}»؛ و" + A_COUNTER_CASE_IS_ONE_DECLARED_PERTURBATION
                 )
         elif len(actual) < 2:
             raise CaseDataError(
-                f"تعليلُ التعدُّدِ لا موضعَ له في حالةٍ فرقُها الواقعُ واحد: "
+                f"جنسُ وحدةٍ مركَّبٌ لا موضعَ له في حالةٍ فرقُها الواقعُ واحد: "
                 f"«{case.case_id}»"
             )
 
