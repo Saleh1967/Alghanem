@@ -19,13 +19,24 @@ from dataclasses import dataclass
 
 from ..canonical_content import canonical_bytes, canonical_digest, is_canonical_digest
 from .binding import BoundEvaluationRequest, EvaluationBinding
-from .laws import A_FIRST_RUN_HAPPENS_ONCE, EvaluationError
+from .laws import (
+    A_FIRST_RUN_HAPPENS_ONCE,
+    A_HARNESS_IS_NOT_AN_EXECUTION_AUTHORITY,
+    FAILURE_IS_RECEIPTED_BUT_NOT_PROMOTED_TO_REFERENCE_RUN,
+    NO_RUN_REPORT_WITHOUT_BOUND_EXECUTION,
+    EvaluationError,
+)
+from .receipt import BoundExecutionReceipt
 from .residual import RunResidual
 
 __all__ = [
     "FrozenRunReport",
     "RunLedger",
+    "report_from_receipt",
 ]
+
+_REPORT_SEAL: object = object()
+"""ختمُ التقرير؛ خاصٌّ بهذه الوحدة، ولا يبلغه بناءٌ من الواجهة العامّة."""
 
 
 def _require_text(value: object, label: str) -> str:
@@ -52,8 +63,14 @@ class FrozenRunReport:
     residuals: tuple[RunResidual, ...]
     trace: tuple[str, ...]
     run_ordinal: int
+    execution_receipt: BoundExecutionReceipt
+    seal: object
 
     def __post_init__(self) -> None:
+        if self.seal is not _REPORT_SEAL:
+            raise EvaluationError(NO_RUN_REPORT_WITHOUT_BOUND_EXECUTION)
+        if not isinstance(self.execution_receipt, BoundExecutionReceipt):
+            raise EvaluationError(A_HARNESS_IS_NOT_AN_EXECUTION_AUTHORITY)
         _require_digest(self.request_id, "بصمةُ الطلب")
         _require_digest(self.system_content_id, "بصمةُ هويّة القارئ")
         _require_digest(self.payload_digest, "بصمةُ الحمولة المُسلَّمة")
@@ -88,6 +105,25 @@ class FrozenRunReport:
             _require_text(line, "سطرٌ في الأثر")
         if not isinstance(self.run_ordinal, int) or self.run_ordinal < 1:
             raise EvaluationError("رتبةُ التشغيل عددٌ صحيحٌ موجب، وأوّلُها واحد")
+        self._refuse_a_report_that_departs_from_its_receipt()
+
+    def _refuse_a_report_that_departs_from_its_receipt(self) -> None:
+        receipt = self.execution_receipt
+        if not receipt.is_a_reference_run:
+            raise EvaluationError(
+                FAILURE_IS_RECEIPTED_BUT_NOT_PROMOTED_TO_REFERENCE_RUN
+                + "؛ وحالُ الانتهاء: "
+                + receipt.exit_status.value
+            )
+        if (
+            self.request_id != receipt.request_id
+            or self.system_content_id != receipt.system_content_id
+            or self.payload_digest != receipt.payload_digest
+            or self.outputs != receipt.outputs
+            or self.residuals != receipt.residuals
+            or self.trace != receipt.trace
+        ):
+            raise EvaluationError(NO_RUN_REPORT_WITHOUT_BOUND_EXECUTION)
 
     @property
     def is_a_first_run(self) -> bool:
@@ -137,6 +173,7 @@ class FrozenRunReport:
                 for residual in sorted(self.residuals, key=lambda item: item.member_id)
             ],
             "trace": list(self.trace),
+            "execution_receipt": self.execution_receipt.as_canonical_content(),
         }
 
     @property
@@ -155,6 +192,31 @@ class FrozenRunReport:
         """بصمةُ التقرير؛ مُشتَقّةٌ لا مكتوبة."""
 
         return canonical_digest(canonical_bytes(self.as_canonical_content()))
+
+
+def report_from_receipt(
+    receipt: BoundExecutionReceipt, *, run_ordinal: int
+) -> FrozenRunReport:
+    """اشتقَّ تقريرَ تشغيلٍ من إيصالِ سلطةٍ؛ ولا طريقَ آخر إلى تقرير.
+
+    لا يُمرَّر إلى هذه الدالّة مُعرِّفُ طلبٍ ولا بصمةُ هويّةٍ ولا حمولةٌ ولا
+    مخرجاتٌ ولا أثر: كلُّها تُقرَأ من الإيصال. فمن أعادها بيده أعاد الدعوى التي
+    قام هذا الطورُ ليُبطِلها.
+    """
+
+    if not isinstance(receipt, BoundExecutionReceipt):
+        raise EvaluationError(A_HARNESS_IS_NOT_AN_EXECUTION_AUTHORITY)
+    return FrozenRunReport(
+        request_id=receipt.request_id,
+        system_content_id=receipt.system_content_id,
+        payload_digest=receipt.payload_digest,
+        outputs=receipt.outputs,
+        residuals=receipt.residuals,
+        trace=receipt.trace,
+        run_ordinal=run_ordinal,
+        execution_receipt=receipt,
+        seal=_REPORT_SEAL,
+    )
 
 
 class RunLedger:

@@ -5401,6 +5401,83 @@ re-auditable blind evaluation machine plus a `GoldRevealRecord`.
 python examples/evaluation/run_blind_evaluation.py
 ```
 
+### `G0.EXEC-0` — bound reader execution
+
+`G0.EVAL-0` froze the exam, the gold commitment, the reader identities and the
+blind payload, but a `FrozenRunReport` still only *claimed* its system:
+a harness could stamp `system_content_id` on outputs it had invented itself. The
+example did exactly that. This milestone removes that path, in
+`src/alghanem/evaluation_execution/` plus the receipt types in
+`src/alghanem/evaluation/receipt.py`.
+
+- **`NoRunReportWithoutBoundExecution`.** There is one chain and no parallel one:
+  `FrozenSystemIdentity → BoundEvaluationRequest → BlindPayload(bytes) →
+  ExecutionAuthority → BoundExecutionReceipt → FrozenRunReport → RunLedger →
+  GoldRevealRecord`. `report_from_receipt(receipt, run_ordinal=...)` is the only
+  way to obtain a report, and it copies every field from the receipt; the caller
+  may not pass outputs, residuals, digests or a trace of its own.
+- **`OnlyExecutionAuthorityIssuesExecutionReceipts`.** Freezing prevents mutation
+  after construction; it does not prevent forged construction. A
+  `BoundExecutionReceipt` refuses to exist without a module-private authority
+  seal, so a harness cannot build one through the public API —
+  `AHarnessIsNotAnExecutionAuthority`.
+- **`ExecutedReaderIdentity == FrozenReaderIdentity`.** Before running, the
+  authority re-measures all four identity components from scratch — source bytes,
+  configuration, a fresh `reader_import_audit`, the contract interface version —
+  recomposes `system_content_id` with the same shared primitives used to freeze
+  it, and refuses execution on any mismatch or boundary violation.
+- **`MeasuredBytesAreExecutedBytes`.** The bytes that were measured are the bytes
+  copied into a temporary out-of-tree workspace and executed there; the original
+  path is not re-opened at execution time.
+- **`ImplementationChangedDuringExecution -> NoReferenceRunReport`.** The source
+  is re-measured after the process exits; a change means the outputs are not
+  attributed to the frozen identity.
+- **The reader receives bytes on `stdin` and answers with bytes on `stdout`,**
+  in a closed wire format carrying classifications and typed residuals. No
+  `repr`, no `pickle`, no Python object, no contract and no binding crosses into
+  the process. Unknown members, duplicates, blank labels, untyped residuals,
+  members classified and left residual at once, and members left with no residual
+  are each refused under their own named status.
+- **`FailureIsReceiptedButNotPromotedToReferenceRun`.** Once execution is
+  attempted, a receipt is issued even for `RAISED`, `NONZERO_EXIT`,
+  `IDENTITY_MISMATCH`, `BOUNDARY_VIOLATION`,
+  `IMPLEMENTATION_CHANGED_DURING_EXECUTION`, `REFUSED_OUTPUT_SHAPE` and
+  `REFUSED_UNKNOWN_MEMBER`. A receipt witnesses what happened, not that it
+  succeeded; only `COMPLETED` can become a reference run report.
+- **The trace belongs to the authority.** `trace_digest` digests the authority's
+  own execution trace — identity checked, boundary checked, payload digest,
+  return code, stdout and stderr digests, post-execution implementation digest,
+  output validation — not a narrative the reader wrote about itself.
+- **`AResidualIsNamedNotStringly`.** `FrozenRunReport.residuals` is a tuple of
+  `RunResidual(member_id, residual_code, blocking, reason, evidence_ref)` over a
+  closed `ResidualCode` vocabulary. A blocking residual is recorded and carried
+  forward; it does **not** block the reveal, because
+  `AGoldRevealRecordIsNotAVerdict` still holds.
+- **`SeparateProcess != Sandbox`** and **`EvaluationBoundary != ExecutionMechanism`.**
+  The reader runs under `sys.executable -I -S` in a separate process with a pruned
+  environment and a temporary workspace. That is a declared mechanism, recorded as
+  `SEPARATE_PROCESS_DECLARED` with `is_proven == False`; there is no seccomp, no
+  network isolation and no filesystem sandbox here. `evaluation/` stays pure and
+  never imports `evaluation_execution/`, which carries its own import policy
+  declaring every operational access it takes.
+
+The honest claim after this milestone is exactly this and no more: *the frozen
+implementation bytes were executed against the bound blind payload under the
+declared separate-process execution mechanism, and the resulting bytes were
+captured in an authority-issued execution receipt.*
+
+Measured: 8 execution exit statuses, 11 execution laws, 15 evaluation laws, 5
+residual codes, 1 entry point (`read`), 1 wire protocol version, 0 comparison
+functions.
+
+Not built here, deliberately: `G0.F2-0`, `G0.PARALLEL-0`, any second system, any
+comparison, any Pareto dominance, any `Ω_M` and any Arabic generalization claim —
+`NoComparisonBeforeBoundExecution`.
+
+```bash
+python examples/evaluation/run_blind_evaluation.py
+```
+
 
 ```bash
 python -m pip install -e '.[dev]'
