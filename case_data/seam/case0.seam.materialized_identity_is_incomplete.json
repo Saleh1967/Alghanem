@@ -1,0 +1,20 @@
+{
+  "witness_id": "case0.seam.materialized_identity_is_incomplete",
+  "seam": "alghanem.execution.engine._materialize",
+  "reached_by": "نجاحٌ مبدئيٌّ يلقى مادّةً مُشتَقّةً ناقصةً عند التجسيد: لا موضعَ دورٍ ولا موضعَ شرطٍ لما حكمت القوانينُ بقيامه",
+  "refused_document_reason": "لا وثيقةَ لهذا الشاهد: الحدُّ الذي يُبلَغ به داخليٌّ في المحرّك، ولا سبيلَ إليه من وثيقةٍ يكتبها صاحبُ قضيّة؛ ومن كتب له وثيقةً جعل عطبَ المحرّك بابًا في فضاء القضايا",
+  "citations": [
+    {
+      "requirement_id": "OR.invariant_error",
+      "law": null,
+      "witness_subject_id": null,
+      "standing": null
+    },
+    {
+      "requirement_id": "XS.invariant_error_has_no_verdict_and_no_envelope",
+      "law": null,
+      "witness_subject_id": null,
+      "standing": null
+    }
+  ]
+}

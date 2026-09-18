@@ -431,7 +431,7 @@ def test_the_digest_moves_when_a_requirement_moves() -> None:
 
 def test_the_matrix_is_read_by_no_engine_module() -> None:
     for path in sorted((_SOURCE_ROOT / "execution").glob("*.py")):
-        if path.name in {"coverage.py", "__init__.py"}:
+        if path.name in {"coverage.py", "case_data.py", "__init__.py"}:
             continue
         tree = ast.parse(path.read_text(encoding="utf-8"))
         for node in ast.walk(tree):
@@ -440,3 +440,33 @@ def test_the_matrix_is_read_by_no_engine_module() -> None:
             elif isinstance(node, ast.Import):
                 for alias in node.names:
                     assert "coverage" not in alias.name.split("."), path.name
+
+
+def test_the_case_data_is_read_by_no_engine_module() -> None:
+    """المدوّنةُ تقرأ المصفوفةَ ولا يقرؤها المحرّك؛ ومن قرأها صار يُقاس بما يُقاس به."""
+
+    for path in sorted((_SOURCE_ROOT / "execution").glob("*.py")):
+        if path.name in {"case_data.py", "__init__.py"}:
+            continue
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ImportFrom):
+                assert node.module != "case_data", path.name
+            elif isinstance(node, ast.Import):
+                for alias in node.names:
+                    assert "case_data" not in alias.name.split("."), path.name
+
+
+def test_the_case_data_reads_no_engine_module() -> None:
+    """فاحصُ البيانات لا يُشغِّل المحرّكَ ولا يستورده؛ وإلّا كتب المحرّكُ دليلَه."""
+
+    forbidden = {"engine", "laws", "derivation", "replay", "audit", "validation"}
+    tree = ast.parse(
+        (_SOURCE_ROOT / "execution" / "case_data.py").read_text(encoding="utf-8")
+    )
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom):
+            assert node.module not in forbidden, node.module
+        elif isinstance(node, ast.Import):
+            for alias in node.names:
+                assert not forbidden & set(alias.name.split(".")), alias.name
