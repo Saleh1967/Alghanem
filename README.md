@@ -4869,6 +4869,22 @@ coverage matrix are recorded as legacy wording rather than corrected: they enter
 `COVERAGE_MATRIX_DIGEST`, and rewriting a frozen specification to improve its
 language would breach `MATRIX ≺ DATA`.
 
+`G0.CASE-0.DATA-1` is the first growth of the corpus after those gates. Five
+counter-cases are authored against the single baseline: a duplicated anchor id,
+an arity that exceeds its own slots, an argument place named after a deferred
+role, an absent condition site declared as a standing requirement, and a role
+site naming a licence the ontology never granted. Each is a valid input that
+stands as a case and is then judged; each is measured one hop against
+`case0.baseline.pass`, with its difference proved from the two texts rather than
+asserted. The fourth is the first case where multiplicity is itself the proof,
+and for a constitutional reason: an absent site that is not declared as a
+standing requirement is constitutional invalidity rather than a deferral, so the
+removal and the declaration do not stand apart. The corpus now reaches all three
+verdicts a standing case can reach, and the residual falls from forty-three
+requirements to thirty-one. Every expected trace is authored from the frozen law
+set, not derived — no engine was run to write a row, and each cell claimed
+remains a claim until `G0.CASE-0.READOUT`.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest

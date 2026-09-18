@@ -20,6 +20,7 @@ import pytest
 
 from alghanem.execution.case_data import (
     CORPUS_ROOT_NAME,
+    VERDICT_DISPOSITIONS,
     CaseDataError,
     DeclaredDifference,
     EngineSeamWitness,
@@ -141,6 +142,22 @@ def test_the_written_corpus_is_read_and_is_internally_consistent() -> None:
     assert corpus.cases
     assert corpus.engine_seam_witnesses
     assert corpus.invalid_input_witnesses
+
+
+def test_the_written_corpus_reaches_every_verdict_a_standing_case_reaches() -> None:
+    corpus = _corpus()
+    reached = {item.expected_disposition for item in corpus.expectations}
+    assert reached == set(VERDICT_DISPOSITIONS)
+
+
+def test_every_written_counter_case_is_measured_against_a_written_baseline() -> None:
+    corpus = _corpus()
+    baselines = {case.case_id for case in corpus.cases if case.baseline_case_id is None}
+    counters = tuple(case for case in corpus.cases if case.baseline_case_id is not None)
+    assert counters
+    for case in counters:
+        assert case.baseline_case_id in baselines
+        assert case.declared_differences
 
 
 def test_a_file_name_carries_the_identity_written_inside_it() -> None:

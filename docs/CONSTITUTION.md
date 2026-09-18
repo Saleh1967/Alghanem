@@ -3063,3 +3063,52 @@ phrases in that sense.
 Deferred here by name, not by omission: `SequenceIdentityPolicy`, which must
 decide whether a list position is an identity or an order before mid-list edits
 are admitted into the corpus.
+
+### G0.CASE-0.DATA-1 — The first tranche of counter-cases
+
+With the immutability and difference gates closed, the corpus grows for the
+first time. Five counter-cases are authored against the single baseline, each
+one a *valid* input that stands as a case and is then judged, and each one
+measured one hop against `case0.baseline.pass` with its difference proved from
+the two texts rather than asserted:
+
+- `case0.counter.duplicate_anchor.block` — `ADD nisbah.anchors[1]`, a second
+  anchor carrying the first anchor's own id. Claims
+  `LS.anchors_do_not_exceed_arity.violated`, `OR.block` and
+  `XS.block_has_no_materialized_identity`.
+- `case0.counter.arity_exceeds_slots.block` — `REPLACE nisbah.predicate.arity`,
+  three declared and two written. Claims
+  `LS.predicate_arity_matches_its_slots.violated`.
+- `case0.counter.slot_names_a_deferred_role.block` —
+  `REPLACE nisbah.predicate.slots[1].slot_id`, an argument place named after a
+  deferred role. Claims
+  `LS.argument_slot_ids_are_not_deferred_role_names.violated`.
+- `case0.counter.absent_condition_site.defer` —
+  `REPLACE nisbah.predicate.slots[0].condition_site` together with
+  `ADD unresolved_requirements[0]`. Claims
+  `LS.condition_sites_share_the_lineage_base.unresolved`,
+  `LS.condition_sites_are_licensed_for_use.unresolved`, `OR.defer` and
+  `XS.defer_has_no_materialized_identity`.
+- `case0.counter.role_license_is_absent.block` —
+  `REPLACE nisbah.anchors[0].role_site.license_id`, a licence that is not in the
+  ontology. Claims `LS.role_license_granted_for_the_function_read.violated`,
+  `LS.role_license_is_operative.not_evaluated_by_prerequisite` and
+  `XS.blocked_dependent_has_no_residual`.
+
+The fourth case is the first in the corpus where multiplicity is itself the
+proof, and it is so for a constitutional reason rather than a convenience: an
+absent site that is not declared as a standing requirement is *constitutional
+invalidity*, not a deferral, so the removal of the site and the declaration of
+its unresolved requirement do not stand apart. Two structural operations, one
+authored difference in meaning — which is exactly the case
+`multiplicity_is_the_proof` exists to carry.
+
+The written corpus now reaches all three verdicts a standing case can reach.
+Every expected trace here is **authored from the frozen law set, not derived**:
+no engine was run to produce a row, and `A CitationIsAClaimUntilTheReadout`
+still holds of every cell claimed above. The residual falls from forty-three
+requirements to thirty-one, and `case_data/MANIFEST.json` names each remaining
+one.
+
+Deferred here by name, not by omission: the thirty-one remaining cells, and the
+readout that will either confirm or refute every row written in this tranche.
