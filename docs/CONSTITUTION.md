@@ -3613,3 +3613,77 @@ afterwards as observations in the witness.
 The whole stage claims one thing and no more: **we can experimentally run what is
 not yet licensed, under a temporary scoped authority, and turn the run into
 auditable witnesses.**
+
+## `G0.FGEN-EX-1` — hardening the MASAQ witness
+
+`G0.FGEN-EX-0` proved the stage, not the theory. Its first pattern,
+`segment_accretion`, reaches a word by joining its segments in order, and its own
+preregistration declares a weaker model that reaches the same surface by plain
+textual concatenation. A run that merely rebuilds `"".join(segments)` therefore
+demonstrates a correct output and not a necessary architecture:
+
+    CorrectOutput  ≠  NecessityOfArchitecture
+
+`G0.FGEN-EX-1` opens nothing. `fractal_generation/` is untouched, no
+`SufficiencyAssessment`, no `LicensingCandidate` and no `License` is written, no
+permanent `NextScaleSeed` appears, and `ExperimentalLift` stays open. It corrects
+what the witness of `G0.FGEN-EX-0` is allowed to mean, before more of them
+accumulate. Five laws are added, all of them restrictions:
+
+    WeakerModelTieBlocksDistinctiveStructuralSupport
+    TaskOutcome     ≠  ComparativeStanding
+    RawOccurrence   ≠  NormalizedProjection
+    SourceWordNo    ≠  DerivedLocalPosition
+    HeldOut         ≠  Dropped
+
+The tie law blocks the claim of *distinctive* support, not the success of the
+work. Those are two axes, and `G0.FGEN-EX-1` records both per word. A
+`MasaqWordReading`, bound to `word.input_id`, carries an
+`ExperimentalTaskOutcome` — did the algebra reach the target on this input? —
+alongside a `ComparativeStanding` — where does it stand against the weaker
+model? — and the `ExperimentalStanding` that governs only the distinctiveness
+claim. A word whose fractal run reconstructs correctly and whose concatenation
+ties reads `SUCCESS`, `BOTH_SUCCEED` and `UNDERPOWERED` at once, with no
+contradiction. Two correct methods covering the same region are two witnesses,
+not a problem; the only error would be to credit one with what it has not shown.
+`MasaqExperimentReport.coverage_tally` therefore counts task outcomes and
+comparative standings separately, so a full MASAQ run can answer *how much of the
+corpus the algebra closes* independently of *whether the fractal was distinctive*.
+
+Standing is no longer read off closure and reconstruction alone. It is derived
+from the preregistered conditions together — run failure, reconstruction,
+closure, negative controls behaving as preregistered, absence of a blocking
+residual, and absence of a weaker-model tie — in `derive_standing`. A tie yields
+`UNDERPOWERED` and a named residual, `WEAKER_MODEL_TIES_FRACTAL_MODEL`, never
+`OBSERVED_REFUTATION`: a tie does not falsify the reconstruction, it forbids the
+claim that the fractal added distinctive structure.
+
+The adapter no longer authors `IRREDUCIBLE_AT_CURRENT_SCALE` for every word with
+more than one segment. That was a strong claim asserted before measurement, and
+contradicted by the weaker model, which does reach the word from the segment
+scale. What is recorded instead is disciplined ignorance: an
+`UNRESOLVED_DIFFERENCE` stating that the necessity of the higher scale is under
+test and irreducibility at the current scale has not been established. The
+experimental lift still issues while standing is `UNDERPOWERED`, and its witness
+says it ran to *test* the target scale, not to certify it.
+
+Provenance is preserved rather than reinvented. Each `MasaqSegmentOccurrence`
+keeps its raw MASAQ surface, the original `Word_No` verbatim, a separately named
+derived `LocalSegmentPosition`, a `NormalizationTrace` naming the transformation
+and every character it removed with its position, and a
+`HeldOutMASAQAnnotation` freezing all five held-out columns — not `Morph_Tag`
+alone — with column absence distinguished from an empty value. The generator
+projection still shows only the declared visible fields, and a leaked held-out
+field is still refused.
+
+Negative controls are runs. Reversed order and dropped segment pass through the
+same accretion gates and the same readout as the primary branch, and each
+`NegativeControlObservation` records control input identity, transformation,
+output and comparison against the preregistered expectation. A control that
+makes no difference is recorded as a failure to discriminate and drives the
+standing to `UNDERPOWERED`.
+
+The stage claims one thing and no more: **a witness may not be called structural
+support while a weaker model reaches the same result.** The question it leaves
+open is the real one — which transformation genuinely requires the fractal
+algebra, and cannot be reproduced by concatenation.
