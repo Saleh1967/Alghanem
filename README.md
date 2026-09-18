@@ -4696,6 +4696,35 @@ refuted layer. Re-anchoring `Σ_L` to `O_L` and migrating `TermAnchorKind` into 
 licensing reference are declared next steps, not steps taken. The named laws are
 collected in `docs/CONSTITUTION.md` under `G0.PK-0 / G0.ONT-0`.
 
+`src/alghanem/linguistic/anchored.py` then closes the gap on the algebra side.
+`G0.ONT-0` said `Σ_L` operates on what `O_L` licenses, but `Σ_L` still named its
+own sorts. In the anchored layer a term anchor no longer *writes* its kind: it
+carries a `LicensedRoleRef` derived from a license in a standing `O_L`, so
+`GENUS`, `INDIVIDUAL`, `REFERENCE`, `EVENT_ANCHOR` and `QUANTITY_ANCHOR` stop
+being branches of a linguistic primitive. Identity and admissibility conditions
+stop being free prose and become `LicensedConditionRef`s bound to born `PK₀`
+conditions and to the digest of their base — free text is an acceptable
+recording stage, and not enough once an ontological proof is claimed. The whole
+nisbah is bound to one `O_L` digest, so licenses from two ontologies cannot be
+mixed into one structure.
+
+`linguistic-nisbah.schema.v2` stands *beside* `v1`, built on its digest and
+refused if it reuses its version name: `v1` is a text that was read, and
+overwriting a text that was read erases the history of the argument rather than
+correcting it. Exactly one module of the package reads the existence axis, and a
+witness asserts the reader set is exactly `anchored.py` while `ontology/` still
+reads no algebra at all.
+
+This migration is deliberately decoupled from any empirical threshold: no
+measurement can correct a confusion of an object's nature with its function in
+language. Nothing here names a corpus, computes a score or registers an
+acceptance criterion, and the negative controls stay suspended. The open
+question is recorded rather than answered — an absolute match level cannot on
+its own license an adoption, because a weaker model that *ties* already defeats
+the claim, so any future criterion must carry both an absolute floor and a
+margin over each registered null model separately. The named laws are collected
+in `docs/CONSTITUTION.md` under `G0.ONT-1`.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest

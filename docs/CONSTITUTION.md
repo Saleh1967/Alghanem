@@ -2121,6 +2121,42 @@ The existence axis is `src/alghanem/prior/` (`hypothesis`, `conditions`) and
 under experiment and witness, its adoption as a proof subordinate to the algebra
 is a separate, later question that this section does not settle.
 
+## G0.ONT-1 — `Σ_L` re-anchored to `O_L` (deposit and registration only)
+
+`G0.ONT-0` opened the existence axis and stopped there: it said `Σ_L` operates on
+objects `O_L` licenses, but `Σ_L` itself still named its own sorts. This section
+closes that gap on the algebra side, and it does so *beside* `v1`, not over it.
+
+The migration is structural, and it is deliberately **decoupled from any
+empirical threshold**. No measurement can correct a confusion of an object's
+nature with its function in language; that correction is carried by the types.
+Accordingly, nothing here names a corpus, computes a score, or registers an
+acceptance criterion, and the negative controls of `G0.NSB-0` remain suspended.
+
+Three things change in the anchored layer. A term anchor no longer *writes* its
+kind: it carries a `LicensedRoleRef` derived from a license in a standing `O_L`,
+so `GENUS`, `INDIVIDUAL`, `REFERENCE`, `EVENT_ANCHOR` and `QUANTITY_ANCHOR` stop
+being branches of a linguistic primitive and become ontological candidates
+licensed for a linguistic function. An identity condition and an admissibility
+condition are no longer free prose: each is a `LicensedConditionRef` bound to a
+born, licensed `PK₀` condition and to the digest of its base. And the whole
+nisbah is bound to a single `O_L` digest, so licenses from two ontologies cannot
+be mixed into one structure.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `AnAnchorRoleIsALicenseNotAPrimitive` | ENFORCED_AT_ANCHORED_NUCLEUS | An anchor carries a reference to a license, never a written kind. Enforced on field *types* at import, like `OntologicalKindIsNotLinguisticRole` one axis over: no field in the anchored layer may be typed `TermAnchorKind`, so writing the nature where the license belongs is unsayable rather than refused afterwards. A license granted for one function and read as another, and a license whose function is `UNREAD`, are both refused at construction — an unread license is recorded unread and never read as operative. |
+| `FreeTextConditionIsDischargedInV2Only` | ENFORCED_AT_ANCHORED_NUCLEUS | `FreeTextConditionIsNotALicensedCondition` (G0.ONT-0) is discharged here and only here. Every condition field in the anchored layer is typed `LicensedConditionRef` and derived from a standing base, and a condition whose own license genus does not permit use founds no anchor and no slot. `v1` keeps its free text and its `DECLARED_DEFERRED` row unchanged: that row is a true statement about `v1`, and editing it would hide what the earlier stage actually was. |
+| `ALicenseOfAnotherOntologyIsNotALicense` | ENFORCED_AT_ANCHORED_NUCLEUS | An anchored nisbah is bound to one `O_L` digest, and every role reference it holds — the predicate's included — must carry that same digest. Mixing licenses from two ontologies builds on a foundation that no longer stands, and identifier equality would let it pass unnoticed. |
+| `V2StandsBesideV1NotOverIt` | ENFORCED_AT_ANCHORED_NUCLEUS | `linguistic-nisbah.schema.v2` is built on the *digest* of `v1`, is refused if it reuses `v1`'s version name, and is refused if `v1`'s digest has moved. `v1` is a text that was read, and overwriting a text that was read erases the history of the argument instead of correcting it. An anchored schema that is not bound to an ontology is refused too: it would be `v1` under a new name. |
+| `TheAlgebraReadsTheExistenceAxisFromOnePlace` | ENFORCED_AT_ANCHORED_NUCLEUS | Exactly one module of `src/alghanem/linguistic/` reads `prior/` and `ontology/`, and a witness asserts that the reader set is exactly `anchored.py`. The seven `v1` modules stay as they were left. `ontology/` still reads no algebra at all, so the licensing layer is never born from what it licenses. |
+| `ArityLicensingIsReusedNotReinvented` | ENFORCED_AT_ANCHORED_NUCLEUS | The anchored predicate reuses `ArityLicenseGenus` and `DEFERRED_ARGUMENT_ROLE_NAMES` from `v1` rather than copying them. An arity read off the target state still licenses nothing, and a slot named for a deferred semantic role is still refused — one vocabulary, not two that drift apart. |
+| `NoReadoutExistsForONT1Either` | ENFORCED_AT_ANCHORED_NUCLEUS | Structure only. No corpus is named, no score computed, no acceptance threshold registered, no birth, verdict, freeze or `E0` issued, and no `kernel/` module reads the layer. The question of a threshold is open and unregistered: a figure is not derivable until the unit of count, the reference it is measured against, and the ruling on unread units are named. |
+| `AnAbsoluteThresholdIsNotAMargin` | DOCUMENTED_OPEN_QUESTION | Recorded so the open question is not lost. An absolute match level cannot on its own license an adoption, because `AWeakerRepresentationThatTiesDefeatsTheClaim` (G0.NSB-0) already holds: a weaker model that *ties* defeats the claim, so a high level reached alongside a tying null model is a defeat, and a lower level reached against four beaten null models is not. Any future criterion must carry both an absolute floor and a margin over each of the four registered null models separately — not over their best, and not over their mean. |
+
+The anchored layer is `src/alghanem/linguistic/anchored.py`. `§G0.NSB-0` and
+`§G0.PK-0 / G0.ONT-0` both remain standing and unedited.
+
 ## Encyclopedia Nucleus — Constitution
 
 The encyclopedia is an application consumer of the kernel, never a replacement

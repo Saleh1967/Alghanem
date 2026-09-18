@@ -9,8 +9,10 @@
 ثلاثةُ مستوياتٍ يفشل كلٌّ منها مستقلًّا عن الآخر: سقوطُ دعوى النسبة لا يُسقِط
 قانونَ التمثيل، وسقوطُ تحقيقٍ عربيٍّ لا يُسقِط النواةَ اللغويّة.
 
-**والتبعيّةُ أحاديّةُ الاتّجاه**: هذه الحزمةُ تستورد من `metaalgebra/` ومن
-`canonical_content` وحدَهما، ولا تستورد من `arabic/` ولا من `kernel/` حرفًا؛
+**والتبعيّةُ أحاديّةُ الاتّجاه**: وحداتُ `v1` السبعُ تستورد من `metaalgebra/`
+ومن `canonical_content` وحدَهما؛ ووحدةُ `anchored` تضيف إليها `ontology/`
+و`prior/`، لأنّ `Σ_L` يعمل على ما رخّصته `O_L` ولا يُولّده. ولا تستورد هذه
+الحزمةُ من `arabic/` ولا من `kernel/` حرفًا، ولا تقرأ `ontology/` منها شيئًا؛
 والعكسُ مسموح: `arabic/` تُحقّق هذه النواةَ وتقرأ منها. ويُفحَص الاتّجاهُ بشاهدٍ
 لا يُترَك لانتباه.
 
@@ -24,6 +26,8 @@
 * `schema` — `Σ_L` نفسُها: سبعةُ أصنافٍ وقوانينُها، مبنيّةً على بصمة `Σ_M`.
 * `relativization` — ترتيبُ المنزلة بين التمثيل والوظيفة، لا نسخٌ ولا منافسة.
 * `null_model` — النماذجُ الأضعفُ وشروطُ المدوّنة المستقلّة، تسجيلًا بلا تشغيل.
+* `anchored` — `v2`: النسبةُ مُسنَدةً إلى `O_L`، بجانب `v1` لا فوقه؛ وهي
+  وحدَها من هذه الحزمة تقرأ `ontology/`، والعكسُ ممنوع.
 
 **والمعرّفاتُ لاتينيّةٌ والتوثيقُ عربيّ**، لأنّ هذه الحزمةَ غيرُ مخصوصةٍ
 بالعربيّة وإن كانت العربيّةُ أوّلَ ميادين تحقيقها.
@@ -34,6 +38,23 @@
 
 from __future__ import annotations
 
+from .anchored import (
+    A_LICENSE_OF_ANOTHER_ONTOLOGY_IS_NOT_A_LICENSE,
+    AN_ANCHOR_ROLE_IS_A_LICENSE_NOT_A_PRIMITIVE,
+    ANCHORED_NISBAH_SCHEMA,
+    ANCHORED_SCHEMA_VERSION,
+    FREE_TEXT_CONDITION_IS_NOT_A_LICENSED_CONDITION,
+    V2_STANDS_BESIDE_V1_NOT_OVER_IT,
+    AnchoredArgumentSlot,
+    AnchoredLayerError,
+    AnchoredNisbahSchema,
+    AnchoredNisbahSignature,
+    AnchoredPredicateSignature,
+    AnchoredTermAnchor,
+    BaseSchemaRef,
+    LicensedConditionRef,
+    LicensedRoleRef,
+)
 from .closure import (
     ARGUMENT_FILLING_IS_NOT_CLOSURE,
     CLOSURE_COMPONENT_NAMES,
@@ -127,12 +148,16 @@ from .schema import (
 )
 
 __all__ = [
+    "ANCHORED_NISBAH_SCHEMA",
+    "ANCHORED_SCHEMA_VERSION",
+    "AN_ANCHOR_ROLE_IS_A_LICENSE_NOT_A_PRIMITIVE",
     "AN_INTERNAL_HYPOTHESIS_IS_NOT_A_TRANSMITTED_SOURCE_NOTE",
     "AN_OPERATOR_WITHOUT_SCOPE_IS_NOT_SCOPED",
     "AN_UNREAD_ROLE_IS_NOT_AN_ABSENT_ONE",
     "ARGUMENT_FILLING_IS_NOT_CLOSURE",
     "ARGUMENT_ROLES_ARE_DEFERRED_TO_THEIR_OWN_LAYER",
     "ARITY_MUST_BE_LICENSED_BEFORE_USE",
+    "A_LICENSE_OF_ANOTHER_ONTOLOGY_IS_NOT_A_LICENSE",
     "A_WEAKER_REPRESENTATION_THAT_TIES_DEFEATS_THE_CLAIM",
     "CANDIDATE_BRANCH_IS_NOT_A_BORN_KIND",
     "CLOSURE_COMPONENT_NAMES",
@@ -140,6 +165,7 @@ __all__ = [
     "CORPUS_INDEPENDENCE_CONDITIONS",
     "DEFERRED_ARGUMENT_ROLE_NAMES",
     "FIDELITY_IS_DERIVED_NOT_PROMISED_NOTE",
+    "FREE_TEXT_CONDITION_IS_NOT_A_LICENSED_CONDITION",
     "IFADA_PREREQUISITE_NAMES",
     "IFADA_VOCABULARY_IS_NOT_DUPLICATED",
     "LINGUISTIC_NISBAH_SCHEMA",
@@ -163,8 +189,16 @@ __all__ = [
     "TERM_ANCHOR_IS_WIDER_THAN_GENUS",
     "THE_CORPUS_IS_NAMED_BEFORE_THE_RESULT",
     "THREE_LEVELS_ARE_NOT_TWO_NOTE",
+    "V2_STANDS_BESIDE_V1_NOT_OVER_IT",
+    "AnchoredArgumentSlot",
+    "AnchoredLayerError",
+    "AnchoredNisbahSchema",
+    "AnchoredNisbahSignature",
+    "AnchoredPredicateSignature",
+    "AnchoredTermAnchor",
     "ArgumentSlot",
     "ArityLicenseGenus",
+    "BaseSchemaRef",
     "ClosureComponent",
     "ClosureComponentReading",
     "ConstraintKind",
@@ -176,6 +210,8 @@ __all__ = [
     "FidelityStanding",
     "HigherOrderRelativizationRecord",
     "IfadaPrerequisite",
+    "LicensedConditionRef",
+    "LicensedRoleRef",
     "LinguisticLaw",
     "LinguisticNisbahSchema",
     "LinguisticNisbahSchemaError",
