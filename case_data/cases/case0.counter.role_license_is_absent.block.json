@@ -186,5 +186,8 @@
       "statement": "موضعُ دورِ المرساة يُسمّي رخصةً ليست في الأنطولوجيا اللغويّة"
     }
   ],
-  "multiplicity_is_the_proof": null
+  "perturbation": {
+    "atomicity_kind": "single_operation",
+    "reason": null
+  }
 }

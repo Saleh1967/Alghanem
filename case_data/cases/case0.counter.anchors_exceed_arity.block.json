@@ -1,5 +1,5 @@
 {
-  "case_id": "case0.baseline.pass",
+  "case_id": "case0.counter.anchors_exceed_arity.block",
   "document": {
     "schema": "alghanem.execution.v1",
     "nisbah_schema": "linguistic-nisbah.schema.v3",
@@ -171,12 +171,58 @@
             "base_id": "base.A",
             "place": "identity_criterion"
           }
+        },
+        {
+          "anchor_id": "anchor.second",
+          "role_site": {
+            "linguistic_ontology_id": "linguistic.A",
+            "license_id": "license.term",
+            "function": "term_anchor_role"
+          },
+          "condition_site": {
+            "base_id": "base.A",
+            "place": "identity_criterion"
+          }
+        },
+        {
+          "anchor_id": "anchor.third",
+          "role_site": {
+            "linguistic_ontology_id": "linguistic.A",
+            "license_id": "license.term",
+            "function": "term_anchor_role"
+          },
+          "condition_site": {
+            "base_id": "base.A",
+            "place": "identity_criterion"
+          }
         }
       ]
     },
     "unresolved_requirements": []
   },
-  "baseline_case_id": null,
-  "declared_differences": [],
-  "perturbation": null
+  "baseline_case_id": "case0.baseline.two_anchors.pass",
+  "declared_differences": [
+    {
+      "operation": "add",
+      "path": "nisbah.anchors[2]",
+      "before": null,
+      "after": {
+        "anchor_id": "anchor.third",
+        "role_site": {
+          "linguistic_ontology_id": "linguistic.A",
+          "license_id": "license.term",
+          "function": "term_anchor_role"
+        },
+        "condition_site": {
+          "base_id": "base.A",
+          "place": "identity_criterion"
+        }
+      },
+      "statement": "مرساةٌ ثالثةٌ بمُعرِّفٍ خاصٍّ بها، فصار عددُ المراسي ثلاثةً و`arity` اثنان"
+    }
+  ],
+  "perturbation": {
+    "atomicity_kind": "single_operation",
+    "reason": null
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "case_id": "case0.counter.duplicate_anchor.block",
+  "case_id": "case0.counter.anchors_exceed_arity.block",
   "matrix_digest": "bedc47c9ae7302a5e88128feff29f3685e175fdbd4830c0518ae06b0dc3f92a1",
   "law_set_digest": "7522397caf9cf65107ae42b5dcd551a24f643f76a25592afd3e1201bfac23639",
   "expected_disposition": "block",
@@ -90,7 +90,13 @@
     },
     {
       "law": "condition_sites_share_the_lineage_base",
-      "subject_id": "anchor.first",
+      "subject_id": "anchor.second",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "condition_sites_share_the_lineage_base",
+      "subject_id": "anchor.third",
       "standing": "satisfied",
       "blocked_by": null
     },
@@ -114,7 +120,13 @@
     },
     {
       "law": "condition_sites_are_licensed_for_use",
-      "subject_id": "anchor.first",
+      "subject_id": "anchor.second",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "condition_sites_are_licensed_for_use",
+      "subject_id": "anchor.third",
       "standing": "satisfied",
       "blocked_by": null
     },
@@ -132,7 +144,13 @@
     },
     {
       "law": "role_sites_share_the_lineage_ontology",
-      "subject_id": "anchor.first",
+      "subject_id": "anchor.second",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "role_sites_share_the_lineage_ontology",
+      "subject_id": "anchor.third",
       "standing": "satisfied",
       "blocked_by": null
     },
@@ -150,7 +168,13 @@
     },
     {
       "law": "role_license_granted_for_the_function_read",
-      "subject_id": "anchor.first",
+      "subject_id": "anchor.second",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "role_license_granted_for_the_function_read",
+      "subject_id": "anchor.third",
       "standing": "satisfied",
       "blocked_by": null
     },
@@ -168,7 +192,13 @@
     },
     {
       "law": "role_license_is_operative",
-      "subject_id": "anchor.first",
+      "subject_id": "anchor.second",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "role_license_is_operative",
+      "subject_id": "anchor.third",
       "standing": "satisfied",
       "blocked_by": null
     },
