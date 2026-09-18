@@ -4933,6 +4933,49 @@ first family is `PastActiveTransitiveVSO`, and the axis runs
 `SPEC ≺ DATA ≺ READOUT ≺ RT` under one highest law:
 `NoGenerationAuthorityBeyondItsSource`.
 
+`G0.GEN-0.SPEC-H` reviews that specification and lowers three of its claims to
+the rank the evidence supports, changing no goal — and it is the last hardening
+of the linear generator, not a step toward a large `GEN-0` corpus. First, a
+contract must bind the type and not the road that builds it:
+`PassedNisbahSourceRef` and `ProductionSpecification` were freely constructible,
+so the envelope check and the source-membership check could both be walked
+around; both are now closed by an internal issuance capability that never enters
+canonical content, and every source check moves into the constructor, covering
+the lexical choices and the realization constraints the factory never examined.
+The source is no longer summarized by a digest alone — a digest proves the
+inventory's identity without saying what is in it — but carried as a certified
+projection, `SourceInventorySnapshot`, a tuple of `SourceElementRef(element_id,
+element_kind)` with a derived content id, so the specification re-checks its own
+targets, choices and constraints against it. Second, the second rank was named
+for a licence it never issued: the gate reads the realization targets the caller
+wrote and then verifies the product honours them, so `CallerClaim →
+ConformsToCallerClaim ⇏ Licensed`. It is renamed `SpecificationConformantSurface`
+behind a `SpecificationConformanceGate`, with no compatibility aliases, since the
+problem was an epistemic claim and not an API name; `StructurallyLicensedSurface`
+is reserved by text until an independent `SyntacticBindingCertificate` exists.
+Third, what the layer cannot prove is separated from what a run observed:
+`GenerationAuthorityGap` in `generation/authority_gaps.py` is an *architectural*
+gap with a claim, a missing authority and a discharge condition, distinct in type
+from the observed `GenerationResidual`, and two are frozen —
+`RES.GEN0.NoIndependentAnchorToSyntacticFunctionAuthority` (nothing in the source
+binds an anchor to subjecthood or objecthood, so the gate conforms an inverted
+assignment just as readily, and a test witnesses it) and
+`RES.GEN0.NoVerifiedLexicalAttestation` (`LexicalChoiceRef_SPEC ≠
+VerifiedLexicalChoice_READOUT`). Every conformant decision carries both as
+`open_authority_gaps`, so the rank carries its own boundary. Provenance is closed
+structurally rather than by a repeated check: `GeneratedArabicUtterance` no
+longer holds `orthographic_content_id` and `tokens` as two claims that may drift
+apart, it holds the `OrthographicProjection` itself and derives both from it, and
+its construction requires that the trace start at the specification digest and
+end at an orthographic-projection step whose output is that projection's digest.
+The historical `G0.GEN-0` law set is left untouched; the revision is a second law
+set, `G0.GEN-0.SPEC-H`, with its own digest. The order reads `GEN-SPEC ≺ GEN-DATA
+≺ LexicalVerification ≺ GenerationReadout ≺ SpecificationConformance ≺
+SyntacticLicensing ≺ RoundTripCertification`, under `ConformanceIsNotLicensing`,
+and the next milestone is not `GEN-0.DATA` but `G0.FGEN-0.SPEC`, where this line
+becomes the base case of a fractal generation under `LinearGeneration ⊂
+FractalGeneration`.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest

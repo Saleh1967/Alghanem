@@ -21,6 +21,14 @@
 `ResidualsAreObservedNotAuthored`): الرتبةُ ناتجُ بوّابة، والبقايا رصدُ انتقالٍ
 جرى؛ وكلاهما مُحرَّمٌ على صاحب المواصفة.
 
+**وما لزم النوعَ لزمه في كلِّ طريقٍ إليه** (`ContractMustBindClassNotFactory`):
+`PassedNisbahSourceRef` و`ProductionSpecification` كلتاهما مُغلَقةٌ برمز إصدارٍ
+داخليّ، فلا تُبنى إحداهما بناءً مباشرًا يتجاوز فحصَ المصدر. وإشارةُ المصدر تحمل
+**جردَ عناصره** — `SourceInventorySnapshot`: مُعرِّفُ المحمول ومُعرِّفاتُ المراسي
+بأجناسها، ببصمةٍ مُشتَقّةٍ منها لا مكتوبةٍ بجانبها — فيُقاس عليه كلُّ مُعرِّفٍ في
+المواصفة عند كلِّ بناءٍ لا عند المصنع وحدَه. والبصمةُ وحدَها لا تكفي: هي تُثبِت
+هويّةَ الجرد ولا تُخبِر بما فيه، فيُحمَل الجردُ نفسُه إسقاطًا مشهودًا للمصدر.
+
 **والموقعُ التركيبيُّ ليس دورًا دلاليًّا** (`APositionIsNotASemanticRole`): لا
 يُفتَح هنا `Agent` ولا `Patient`، ولا تُعدَّل `linguistic/nisbah.py` لفتحهما.
 وإنّما تقول المواصفة: هذه المرساةُ ستتحقّق في هذا **الموقع** ضمن عائلة
@@ -44,11 +52,14 @@ from enum import Enum
 from types import MappingProxyType
 from typing import Final
 
+from ..canonical_content import canonical_bytes, canonical_digest
 from ..execution.outcome import ExecutionOutcome
 from ..execution.result import ExecutionResultEnvelope
 from .laws import (
     A_POSITION_IS_NOT_A_SEMANTIC_ROLE,
+    CONTRACT_MUST_BIND_CLASS_NOT_FACTORY,
     GENERATION_DOES_NOT_INVENT_INTENT,
+    LEXICAL_CHOICE_REF_IS_A_CLAIM_UNTIL_THE_READOUT,
     NO_GENERATION_AUTHORITY_BEYOND_ITS_SOURCE,
     NO_LEXEME_OUTSIDE_A_FROZEN_LEXICAL_SOURCE,
     NO_WORD_FORM_WITHOUT_MORPHOLOGICAL_TRACE,
@@ -72,12 +83,24 @@ __all__ = [
     "RequestedTense",
     "RequestedVoice",
     "SourceElementKind",
+    "SourceElementRef",
+    "SourceInventorySnapshot",
     "SyntacticRealizationTarget",
 ]
 
 
 class GenerationSpecificationError(ValueError):
     """رفضٌ عند تكوين مواصفةِ إنتاج؛ ولا حملَ على أقرب صورةٍ مقبولة."""
+
+
+class _IssuanceToken:
+    """رمزُ إصدارٍ داخليّ؛ وجودُه بيد هذه الوحدة لا بيد المستدعي."""
+
+    __slots__ = ()
+
+
+_SOURCE_REF_ISSUANCE: Final[_IssuanceToken] = _IssuanceToken()
+_SPECIFICATION_ISSUANCE: Final[_IssuanceToken] = _IssuanceToken()
 
 
 def _require_identifier(value: object, label: str) -> str:
@@ -189,16 +212,112 @@ _LICENSED_CONSTRAINT_PAIRS: Final[
 
 
 @dataclass(frozen=True, slots=True)
+class SourceElementRef:
+    """عنصرٌ في المصدر المرخَّص: مُعرِّفُه وجنسُه، لا إعادةُ وصفٍ له."""
+
+    element_id: str
+    element_kind: SourceElementKind
+
+    def __post_init__(self) -> None:
+        _require_identifier(self.element_id, "مُعرِّفُ عنصر المصدر")
+        if not isinstance(self.element_kind, SourceElementKind):
+            raise GenerationSpecificationError("جنسُ عنصر المصدر عضوٌ في مفردته المغلقة")
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """محتوى العنصر للبصمة."""
+
+        return {
+            "element_id": self.element_id,
+            "element_kind": self.element_kind.value,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class SourceInventorySnapshot:
+    """إسقاطٌ مشهودٌ لجرد المصدر: عناصرُه بأجناسها، وبصمتُه مُشتَقّةٌ منها.
+
+    وهو `CertifiedProjectionOfSource` لا إعادةَ كتابةٍ حرّةٍ للنسبة: لا يحمل
+    نسبةً ولا محمولًا ولا حجّةً، وإنّما جردَ المُعرِّفات التي يُقاس عليها كلُّ
+    مُعرِّفٍ في المواصفة. والبصمةُ وحدَها لا تكفي لإعادة الفحص لاحقًا — فهي
+    تُثبِت هويّةَ الجرد ولا تُخبِر بما فيه — ولذلك يُحمَل الجردُ نفسُه.
+    """
+
+    elements: tuple[SourceElementRef, ...]
+    issuance: _IssuanceToken
+
+    def __post_init__(self) -> None:
+        if self.issuance is not _SOURCE_REF_ISSUANCE:
+            raise GenerationSpecificationError(
+                "جردُ المصدر لا يُنشَأ إلّا من غلافِ نتيجةٍ ناجحة؛ و"
+                + CONTRACT_MUST_BIND_CLASS_NOT_FACTORY
+            )
+        if not isinstance(self.elements, tuple) or not self.elements:
+            raise GenerationSpecificationError(
+                "جردُ عناصر المصدر عنصرٌ فأكثر؛ ومصدرٌ بلا جردٍ لا يُقاس عليه"
+            )
+        identifiers = []
+        predicates = 0
+        for element in self.elements:
+            if not isinstance(element, SourceElementRef):
+                raise GenerationSpecificationError("عنصرُ الجرد من نوعه لا وصفٌ حرّ")
+            identifiers.append(element.element_id)
+            if element.element_kind is SourceElementKind.PREDICATE:
+                predicates += 1
+        if len(set(identifiers)) != len(identifiers):
+            raise GenerationSpecificationError("مُعرِّفُ عنصرٍ واحدٌ لا يتكرّر في جردٍ واحد")
+        if predicates != 1:
+            raise GenerationSpecificationError(
+                "النسبةُ محمولٌ واحدٌ ومراسٍ؛ وجردٌ بمحمولين أو بلا محمولٍ ليس جردَها"
+            )
+
+    def kind_of(self, element_id: str) -> SourceElementKind | None:
+        """جنسُ عنصرٍ في الجرد، أو غيابُه؛ ولا يُستنتَج جنسٌ لعنصرٍ لم يحمله."""
+
+        for element in self.elements:
+            if element.element_id == element_id:
+                return element.element_kind
+        return None
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """محتوى الجرد للبصمة؛ ورمزُ الإصدار سلطةٌ لا محتوى."""
+
+        return {
+            "elements": [
+                element.as_canonical_content()
+                for element in sorted(self.elements, key=lambda ref: ref.element_id)
+            ]
+        }
+
+    @property
+    def content_id(self) -> str:
+        """بصمةُ الجرد مُشتَقّةً من عناصره."""
+
+        return canonical_digest(canonical_bytes(self.as_canonical_content()))
+
+
+@dataclass(frozen=True, slots=True)
 class PassedNisbahSourceRef:
-    """إشارةٌ رفيعةٌ إلى بنيةٍ نجحت: مُعرِّفُها وبصماتُها، لا نسخةٌ من محتواها."""
+    """إشارةٌ رفيعةٌ إلى بنيةٍ نجحت: مُعرِّفُها وبصماتُها وجردُ عناصرها، لا نسخةٌ منها.
+
+    ولا تُبنى إلّا من `from_envelope`؛ فرمزُ الإصدار بيد الوحدة لا بيد المستدعي،
+    وقد كان الفحصُ في مصنعٍ وحدَه شرطًا اختياريًّا يُتجاوَز بالبناء المباشر —
+    و`ContractMustBindClassNotFactory` يُبطِل ذلك.
+    """
 
     nisbah_id: str
     materialized_content_id: str
+    source_inventory: SourceInventorySnapshot
     input_digest: str
     execution_digest: str
     law_set_digest: str
+    issuance: _IssuanceToken
 
     def __post_init__(self) -> None:
+        if self.issuance is not _SOURCE_REF_ISSUANCE:
+            raise GenerationSpecificationError(
+                "إشارةُ المصدر لا تُنشَأ إلّا من غلافِ نتيجةٍ ناجحة؛ و"
+                + CONTRACT_MUST_BIND_CLASS_NOT_FACTORY
+            )
         for value, label in (
             (self.nisbah_id, "مُعرِّفُ النسبة المصدر"),
             (self.materialized_content_id, "بصمةُ المادّة السلطويّة"),
@@ -207,6 +326,10 @@ class PassedNisbahSourceRef:
             (self.law_set_digest, "بصمةُ قائمة القوانين"),
         ):
             _require_identifier(value, label)
+        if not isinstance(self.source_inventory, SourceInventorySnapshot):
+            raise GenerationSpecificationError(
+                "جردُ المصدر إسقاطٌ مشهودٌ من نوعه لا خريطةٌ تُكتَب بجانب الإشارة"
+            )
 
     @classmethod
     def from_envelope(cls, envelope: ExecutionResultEnvelope) -> PassedNisbahSourceRef:
@@ -228,16 +351,39 @@ class PassedNisbahSourceRef:
             raise GenerationSpecificationError(
                 "النجاحُ يبلغ المادّةَ السلطويّة؛ ونجاحٌ بلا هويّةٍ مُتحقِّقةٍ لا يُبنى عليه"
             )
+        nisbah = envelope.declaration.nisbah
+        elements = (
+            SourceElementRef(
+                element_id=nisbah.predicate.predicate_id,
+                element_kind=SourceElementKind.PREDICATE,
+            ),
+            *(
+                SourceElementRef(
+                    element_id=anchor.anchor_id,
+                    element_kind=SourceElementKind.ANCHOR,
+                )
+                for anchor in nisbah.anchors
+            ),
+        )
         return cls(
-            nisbah_id=envelope.declaration.nisbah.nisbah_id,
+            nisbah_id=nisbah.nisbah_id,
             materialized_content_id=materialized.content_id,
+            source_inventory=SourceInventorySnapshot(
+                elements=elements, issuance=_SOURCE_REF_ISSUANCE
+            ),
             input_digest=core.input_digest,
             execution_digest=envelope.execution_digest,
             law_set_digest=core.law_set_digest,
+            issuance=_SOURCE_REF_ISSUANCE,
         )
 
+    def kind_of(self, element_id: str) -> SourceElementKind | None:
+        """جنسُ عنصرٍ في المصدر، أو غيابُه؛ ولا يُستنتَج جنسٌ لعنصرٍ لم يحمله."""
+
+        return self.source_inventory.kind_of(element_id)
+
     def as_canonical_content(self) -> dict[str, object]:
-        """محتوى الإشارة للبصمة."""
+        """محتوى الإشارة للبصمة؛ ورمزُ الإصدار سلطةٌ لا محتوى."""
 
         return {
             "nisbah_id": self.nisbah_id,
@@ -245,6 +391,8 @@ class PassedNisbahSourceRef:
             "input_digest": self.input_digest,
             "execution_digest": self.execution_digest,
             "law_set_digest": self.law_set_digest,
+            "source_inventory": self.source_inventory.as_canonical_content(),
+            "source_inventory_content_id": self.source_inventory.content_id,
         }
 
 
@@ -281,7 +429,13 @@ class RealizationTargetAssignment:
 
 @dataclass(frozen=True, slots=True)
 class LexicalChoiceRef:
-    """اختيارٌ معجميّ: مرجعٌ مُبصَّمٌ إلى مدخلةٍ مُجمَّدة، لا صورةٌ سطحيّةٌ تُكتَب."""
+    """اختيارٌ معجميّ: مرجعٌ مُبصَّمٌ إلى مدخلةٍ مُجمَّدة، لا صورةٌ سطحيّةٌ تُكتَب.
+
+    وهو **دعوى** في `SPEC` لا شهادة (`LexicalChoiceRefIsAClaimUntilTheReadout`):
+    لا معجمَ مُجمَّدًا هنا يُطابَق به `entry_id` ولا `entry_content_id` ولا
+    `lexical_source_digest`، ولا سلطةَ تُثبِت أنّ صورةَ الرمز هي صورةُ هذه
+    المدخلة؛ وذلك مؤجَّلٌ إلى `GEN-0.DATA` ثمّ `GEN-0.READOUT`.
+    """
 
     choice_id: str
     element_id: str
@@ -312,6 +466,12 @@ class LexicalChoiceRef:
                 "معجميّةٌ مشهودةٌ مختارة، وادّعاءُ الاشتقاق يزعم إغلاقَ الوزن قبل قياسه؛ و"
                 + NO_LEXEME_OUTSIDE_A_FROZEN_LEXICAL_SOURCE
             )
+
+    @property
+    def is_a_claim_until_the_readout(self) -> str:
+        """هذا المرجعُ دعوى لا شهادة؛ ونصُّ ذلك مقروءٌ من النوع نفسه."""
+
+        return LEXICAL_CHOICE_REF_IS_A_CLAIM_UNTIL_THE_READOUT
 
     def as_canonical_content(self) -> dict[str, object]:
         """محتوى الاختيار للبصمة."""
@@ -440,6 +600,11 @@ class ProductionSpecification:
     """مواصفةُ إنتاج: إشارةٌ إلى مصدرٍ ناجح، ومواضعُ، واختياراتٌ، وقيود.
 
     ولا تحمل رتبةً ولا بقايا ولا نصًّا سطحيًّا، ولا تعيد كتابةَ نسبةِ المصدر.
+
+    **وكلُّ فحصٍ يلزم النوعَ لا المصنع** (`ContractMustBindClassNotFactory`):
+    وجودُ العنصر في جرد المصدر وجنسُه يُفحَصان في `__post_init__` نفسِه، لا في
+    `for_passed_execution` وحدَه، فلا يبلغ البناءُ المباشرُ ولا `replace` ما
+    يتجاوز المصدر. ورمزُ الإصدار يجعل المصنعَ الطريقَ الوحيد.
     """
 
     production_id: str
@@ -451,8 +616,14 @@ class ProductionSpecification:
     realization_targets: tuple[RealizationTargetAssignment, ...]
     lexical_choice_refs: tuple[LexicalChoiceRef, ...]
     realization_constraints: tuple[RealizationConstraint, ...]
+    issuance: _IssuanceToken
 
     def __post_init__(self) -> None:
+        if self.issuance is not _SPECIFICATION_ISSUANCE:
+            raise GenerationSpecificationError(
+                "المواصفةُ لا تُبنى إلّا من غلافٍ ناجحٍ عبر `for_passed_execution`؛ و"
+                + CONTRACT_MUST_BIND_CLASS_NOT_FACTORY
+            )
         _require_identifier(self.production_id, "مُعرِّفُ الإنتاج")
         if not isinstance(self.source_ref, PassedNisbahSourceRef):
             raise GenerationSpecificationError(
@@ -477,6 +648,9 @@ class ProductionSpecification:
         ):
             if not isinstance(value, tuple):
                 raise GenerationSpecificationError(f"{label} مجموعةٌ مُصرَّحٌ بها")
+        for assignment in self.realization_targets:
+            if not isinstance(assignment, RealizationTargetAssignment):
+                raise GenerationSpecificationError("موضعُ التحقّق إسنادٌ من نوعه")
         targets = tuple(assignment.target for assignment in self.realization_targets)
         if targets != family.surface_order:
             raise GenerationSpecificationError(
@@ -490,6 +664,7 @@ class ProductionSpecification:
             raise GenerationSpecificationError(
                 "عنصرُ مصدرٍ واحدٌ لا يتحقّق في موضعين؛ والمواضعُ مُتباينةٌ بعناصرها"
             )
+        self._refuse_every_element_outside_its_source()
         choices = tuple(choice.element_id for choice in self.lexical_choice_refs)
         if len(set(choices)) != len(choices) or set(choices) != set(elements):
             raise GenerationSpecificationError(
@@ -510,6 +685,33 @@ class ProductionSpecification:
                 "جنسُ قيدٍ واحدٍ لا يتكرّر على عنصرٍ واحدٍ بقيمتين"
             )
 
+    def _refuse_every_element_outside_its_source(self) -> None:
+        """كلُّ مُعرِّفِ عنصرٍ في المواصفة مقروءٌ من جرد المصدر لا مكتوبٌ فيها."""
+
+        source = self.source_ref
+        referenced: tuple[tuple[str, SourceElementKind | None], ...] = (
+            tuple(
+                (assignment.element_id, assignment.element_kind)
+                for assignment in self.realization_targets
+            )
+            + tuple((choice.element_id, None) for choice in self.lexical_choice_refs)
+            + tuple(
+                (constraint.element_id, None)
+                for constraint in self.realization_constraints
+            )
+        )
+        for element_id, declared_kind in referenced:
+            kind = source.kind_of(element_id)
+            if kind is None:
+                raise GenerationSpecificationError(
+                    "لا يتحقّق عنصرٌ لا يحمله المصدرُ المرخَّص؛ و"
+                    + NO_GENERATION_AUTHORITY_BEYOND_ITS_SOURCE
+                )
+            if declared_kind is not None and kind is not declared_kind:
+                raise GenerationSpecificationError(
+                    "جنسُ العنصر يُقرَأ من المصدر لا يُعلَن في المواصفة"
+                )
+
     @classmethod
     def for_passed_execution(
         cls,
@@ -524,31 +726,11 @@ class ProductionSpecification:
         lexical_choice_refs: tuple[LexicalChoiceRef, ...],
         realization_constraints: tuple[RealizationConstraint, ...],
     ) -> ProductionSpecification:
-        """كوِّن مواصفةً من غلافٍ ناجح، وتحقَّق أنّ كلَّ عنصرٍ مُشارٍ إليه في المصدر."""
+        """كوِّن مواصفةً من غلافٍ ناجح؛ والفحصُ في النوع نفسِه لا في هذا الطريق."""
 
-        source_ref = PassedNisbahSourceRef.from_envelope(envelope)
-        nisbah = envelope.declaration.nisbah
-        declared: dict[str, SourceElementKind] = {
-            nisbah.predicate.predicate_id: SourceElementKind.PREDICATE
-        }
-        for anchor in nisbah.anchors:
-            declared[anchor.anchor_id] = SourceElementKind.ANCHOR
-        for assignment in realization_targets:
-            if not isinstance(assignment, RealizationTargetAssignment):
-                raise GenerationSpecificationError("موضعُ التحقّق إسنادٌ من نوعه")
-            kind = declared.get(assignment.element_id)
-            if kind is None:
-                raise GenerationSpecificationError(
-                    "لا يتحقّق عنصرٌ لا يحمله المصدرُ المرخَّص؛ و"
-                    + NO_GENERATION_AUTHORITY_BEYOND_ITS_SOURCE
-                )
-            if kind is not assignment.element_kind:
-                raise GenerationSpecificationError(
-                    "جنسُ العنصر يُقرَأ من المصدر لا يُعلَن في المواصفة"
-                )
         return cls(
             production_id=production_id,
-            source_ref=source_ref,
+            source_ref=PassedNisbahSourceRef.from_envelope(envelope),
             production_family=production_family,
             requested_tense=requested_tense,
             requested_voice=requested_voice,
@@ -556,6 +738,7 @@ class ProductionSpecification:
             realization_targets=realization_targets,
             lexical_choice_refs=lexical_choice_refs,
             realization_constraints=realization_constraints,
+            issuance=_SPECIFICATION_ISSUANCE,
         )
 
     def target_of(self, element_id: str) -> SyntacticRealizationTarget:

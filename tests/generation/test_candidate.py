@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from dataclasses import replace
+from dataclasses import fields, replace
 
 import pytest
 from generation_cases import (
@@ -38,6 +38,7 @@ from alghanem.generation.trace import (
     GenerationResidualKind,
     GenerationStage,
     GenerationStep,
+    GenerationTrace,
 )
 
 
@@ -187,9 +188,47 @@ def test_a_withheld_stage_holds_no_payload_and_names_its_residual() -> None:
 def test_one_source_element_does_not_emit_two_tokens() -> None:
     specification = production_specification()
     utterance = generated_utterance(specification)
-    duplicated = utterance.tokens + (utterance.tokens[0],)
+    projection = utterance.orthographic_projection
+    duplicated = replace(projection, tokens=projection.tokens + (projection.tokens[0],))
     with pytest.raises(GenerationCandidateError):
-        replace(utterance, tokens=duplicated)
+        replace(utterance, orthographic_projection=duplicated)
+
+
+def test_an_utterance_reads_its_tokens_and_digest_from_its_projection() -> None:
+    utterance = generated_utterance(production_specification())
+    projection = utterance.orthographic_projection
+    assert utterance.tokens == projection.tokens
+    assert utterance.orthographic_content_id == projection.content_id
+    assert "tokens" not in {field.name for field in fields(utterance)}
+    assert "orthographic_content_id" not in {field.name for field in fields(utterance)}
+
+
+def test_an_utterance_whose_chain_does_not_end_at_its_projection_is_refused() -> None:
+    utterance = generated_utterance(production_specification())
+    steps = utterance.trace.steps
+    last = steps[-1]
+    strayed = GenerationTrace(
+        steps=steps[:-1]
+        + (
+            GenerationStep(
+                stage=last.stage,
+                rule_id=last.rule_id,
+                input_content_id=last.input_content_id,
+                output_content_id="d" * 64,
+                residuals=(),
+            ),
+        )
+    )
+    with pytest.raises(GenerationCandidateError):
+        replace(utterance, trace=strayed)
+
+
+def test_an_utterance_whose_chain_does_not_start_at_its_specification_is_refused() -> (
+    None
+):
+    utterance = generated_utterance(production_specification())
+    with pytest.raises(GenerationCandidateError):
+        replace(utterance, specification_content_id="e" * 64)
 
 
 def test_the_token_residuals_are_read_from_its_own_trace() -> None:

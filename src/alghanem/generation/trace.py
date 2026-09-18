@@ -66,7 +66,11 @@ class GenerationStage(Enum):
 
 
 class GenerationResidualKind(Enum):
-    """أجناسُ البقايا؛ مفردةٌ مغلقةٌ لا نصٌّ حرٌّ يُخفي حجبًا غيرَ مُسمًّى."""
+    """أجناسُ البقايا؛ مفردةٌ مغلقةٌ لا نصٌّ حرٌّ يُخفي حجبًا غيرَ مُسمًّى.
+
+    وكلُّها بقايا **مرصودةٌ من انتقالٍ جرى**؛ أمّا فجوةُ السلطة المعماريّةُ فليست
+    منها ولا تُسجَّل هنا — موضعُها `generation/authority_gaps.py`.
+    """
 
     UNMEASURED_PROSODIC_LAYER = "unmeasured_prosodic_layer"
     UNDERIVED_MORPHOLOGICAL_FORM = "underived_morphological_form"

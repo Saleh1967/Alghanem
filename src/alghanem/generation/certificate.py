@@ -1,6 +1,33 @@
 """رتبُ المنتَج وشهادتُه: ثلاثُ رتبٍ أنواعٌ لا قيمٌ، وشهادةٌ مُواصَفةٌ لا تُصدَر بعد.
 
-    SurfaceCandidate → StructurallyLicensedSurface → CertifiedGeneratedUtterance
+    SurfaceCandidate → SpecificationConformantSurface → CertifiedGeneratedUtterance
+
+**والرتبةُ الثانيةُ مطابقةٌ لا ترخيص** (`ConformanceIsNotLicensing`): البوّابةُ
+تقيس المنتَجَ على **مواصفته** — ترتيبُ السطح، وموضعُ كلِّ رمزٍ كما أسنده صاحبُ
+المواصفة، ومُعرِّفُ اختياره، وأثرُ إعراب عائلته، واتّصالُ سلسلته ببصماتها —
+فتُثبِت أنّ دعوى صاحب المواصفة حُفِظت، لا أنّها مرخَّصةٌ من المصدر:
+
+    CallerClaim → ConformsToCallerClaim  ⇏  Licensed
+
+فلا يُفتَح اسمُ `StructurallyLicensedSurface` هنا؛ وهو محجوزٌ بالنصّ لا مُعرَّفٌ
+بالنوع، ولا يُفتَح إلّا بعد `SyntacticBindingCertificate` التي تُثبِت
+`Anchor →evidence→ LicensedSyntacticPosition`. وذلك مُسمًّى بمُعرِّفه:
+`RES.GEN0.NoIndependentAnchorToSyntacticFunctionAuthority`.
+
+**ولذلك يحمل كلُّ قرارٍ مطابقٍ فجواتِ سلطته مفتوحةً** (`open_authority_gaps`):
+إسنادُ الفاعليّة والمفعوليّة غيرُ مرخَّص، ولا شهادةَ معجميّةً لصورة الرمز. وهي
+**ليست بقايا** — لم تُرصَد من انتقالٍ جرى — بل حدودُ سلطةٍ معماريّةٌ معلومةٌ قبل
+أيِّ تشغيل: `RuntimeResidual ≠ ArchitecturalAuthorityGap`. فالرتبةُ تحمل حدَّها
+معها:
+
+    ConformantSurface  =  ProvedConformance  +  ExplicitAuthorityBoundary
+
+**واتّصالُ السلسلة صار بنيةً لا فحصًا مكرَّرًا**: `GeneratedArabicUtterance`
+تحمل `OrthographicProjection` نفسَه، فرموزُها وبصمتُها الكتابيّةُ مُشتَقّتان منه
+لا دعويان متجاورتان، ويلزمها عند البناء أن يبدأ أثرُها من بصمة المواصفة وينتهيَ
+بخطوةِ إسقاطٍ كتابيٍّ مخرجُها بصمةُ إسقاطها. وتبقى للبوّابة قراءةُ اتّصال أثرِ
+كلِّ رمزٍ بسلسلة عبارته. وما وراء ذلك — أنّ `surface` صورةُ مدخلةٍ معجميّةٍ
+مشهودةٍ لا نصٌّ عربيٌّ مُلفَّق — فجوةٌ مُسمّاةٌ لا تُغلَق في `SPEC`.
 
 **والرتبةُ ليست حقلًا يكتبه المستدعي** (`CallerDoesNotOwnGenerationRank`): لا
 تُنشَأ الرتبتان العليا إلّا من بوّابةٍ تُصدِرهما، فلا يبلغ منتَجٌ رتبةً بأن
@@ -31,18 +58,25 @@ from enum import Enum
 from types import MappingProxyType
 from typing import Final
 
+from .authority_gaps import (
+    NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY,
+    NO_VERIFIED_LEXICAL_ATTESTATION,
+    GenerationAuthorityGap,
+)
 from .candidate import GeneratedArabicUtterance, specification_content_id
 from .laws import (
     CALLER_DOES_NOT_OWN_GENERATION_RANK,
+    CONFORMANCE_IS_NOT_LICENSING,
     NO_CERTIFIED_GENERATION_WITHOUT_ROUND_TRIP,
     NO_GENERATION_AUTHORITY_BEYOND_ITS_SOURCE,
     NO_INFLECTION_WITHOUT_LICENSED_SLOT,
     NO_SURFACE_WITHOUT_SOURCE_ANCHOR,
 )
 from .specification import ProductionSpecification
-from .trace import GenerationResidual
+from .trace import A_CHAIN_IS_READ_FROM_ITS_DIGESTS_NOT_ITS_ORDER, GenerationResidual
 
 __all__ = [
+    "CONFORMANCE_AUTHORITY_GAPS",
     "CertifiedGeneratedUtterance",
     "GEN0_PRESERVED_INVARIANTS",
     "GenerationRankError",
@@ -53,10 +87,10 @@ __all__ = [
     "RoundTripDecision",
     "RoundTripGate",
     "RoundTripStatus",
-    "StructuralLicensingDecision",
-    "StructuralLicensingGate",
-    "StructuralLicensingStatus",
-    "StructurallyLicensedSurface",
+    "SpecificationConformanceDecision",
+    "SpecificationConformanceGate",
+    "SpecificationConformanceStatus",
+    "SpecificationConformantSurface",
     "SurfaceCandidate",
 ]
 
@@ -78,7 +112,7 @@ class _IssuanceToken:
     __slots__ = ()
 
 
-_STRUCTURAL_ISSUANCE: Final[_IssuanceToken] = _IssuanceToken()
+_CONFORMANCE_ISSUANCE: Final[_IssuanceToken] = _IssuanceToken()
 _CERTIFICATE_ISSUANCE: Final[_IssuanceToken] = _IssuanceToken()
 
 
@@ -106,15 +140,19 @@ class SurfaceCandidate:
 
 
 @dataclass(frozen=True, slots=True)
-class StructurallyLicensedSurface:
-    """الرتبةُ الثانية: سطحٌ ثبت أنّه تابعٌ لمواصفته وعائلتها؛ لا تُنشَأ إلّا ببوّابة."""
+class SpecificationConformantSurface:
+    """الرتبةُ الثانية: سطحٌ ثبت أنّه تابعٌ لمواصفته وعائلتها، لا أنّه مرخَّصٌ نحويًّا.
+
+    ولا تُنشَأ إلّا ببوّابة؛ و`ConformanceIsNotLicensing` يمنع قراءةَ هذه الرتبة
+    ترخيصًا لإسناد الفاعليّة والمفعوليّة.
+    """
 
     candidate: SurfaceCandidate
     specification: ProductionSpecification
     issuance: _IssuanceToken
 
     def __post_init__(self) -> None:
-        if self.issuance is not _STRUCTURAL_ISSUANCE:
+        if self.issuance is not _CONFORMANCE_ISSUANCE:
             raise GenerationRankError(CALLER_DOES_NOT_OWN_GENERATION_RANK)
         if not isinstance(self.candidate, SurfaceCandidate):
             raise GenerationRankError("الرتبةُ الثانيةُ فوق مرشَّحٍ من نوعه")
@@ -124,7 +162,7 @@ class StructurallyLicensedSurface:
 class CertifiedGeneratedUtterance:
     """الرتبةُ الثالثة: منتَجٌ مُشهَدٌ بالذهاب والإياب؛ ولا تُصدَر في `GEN-0`."""
 
-    licensed: StructurallyLicensedSurface
+    conformant: SpecificationConformantSurface
     certificate: RoundTripCertificate
     issuance: _IssuanceToken
 
@@ -200,42 +238,62 @@ class RoundTripCertificate:
         )
 
 
-class StructuralLicensingStatus(Enum):
-    """حكمُ الترخيص البنيويّ؛ ولا عضوَ فيه لرتبةٍ أعلى."""
+class SpecificationConformanceStatus(Enum):
+    """حكمُ المطابقة؛ ولا عضوَ فيه لترخيصٍ ولا لرتبةٍ أعلى."""
 
-    LICENSED = "licensed"
+    CONFORMANT = "conformant"
     REFUSED = "refused"
 
 
-@dataclass(frozen=True, slots=True)
-class StructuralLicensingDecision:
-    """قرارُ بوّابةِ الترخيص البنيويّ: حكمُه وسببُه، والرتبةُ عند الترخيص وحدَه."""
+CONFORMANCE_AUTHORITY_GAPS: Final[tuple[GenerationAuthorityGap, ...]] = (
+    NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY,
+    NO_VERIFIED_LEXICAL_ATTESTATION,
+)
 
-    status: StructuralLicensingStatus
+
+@dataclass(frozen=True, slots=True)
+class SpecificationConformanceDecision:
+    """قرارُ بوّابةِ المطابقة: حكمُه وسببُه وفجواتُ سلطته، والرتبةُ عند المطابقة وحدَها.
+
+    و`open_authority_gaps` ليست بقايا: لم تخرج من انتقالٍ جرى، بل هي حدودُ
+    السلطة المعماريّةُ المعلومةُ قبل التشغيل، تُعلَن في كلِّ قرارٍ مطابقٍ حتى لا
+    يُقرأ النجاحُ أوسعَ من مداه.
+    """
+
+    status: SpecificationConformanceStatus
     reason: str
-    licensed: StructurallyLicensedSurface | None
+    conformant: SpecificationConformantSurface | None
+    open_authority_gaps: tuple[GenerationAuthorityGap, ...] = field(default=())
 
     def __post_init__(self) -> None:
-        if not isinstance(self.status, StructuralLicensingStatus):
-            raise GenerationRankError("حكمُ الترخيص عضوٌ في مفردته المغلقة")
+        if not isinstance(self.status, SpecificationConformanceStatus):
+            raise GenerationRankError("حكمُ المطابقة عضوٌ في مفردته المغلقة")
         if not isinstance(self.reason, str) or not self.reason.strip():
             raise GenerationRankError("سببُ القرار نصٌّ غير فارغ؛ ولا قرارَ صامت")
-        if (self.status is StructuralLicensingStatus.LICENSED) != (
-            self.licensed is not None
+        if (self.status is SpecificationConformanceStatus.CONFORMANT) != (
+            self.conformant is not None
         ):
             raise GenerationRankError(
-                "الترخيصُ وحدَه يبلغ الرتبةَ الثانية، ولا ترخيصَ بلا رتبةٍ "
-                "ولا رتبةَ بلا ترخيص"
+                "المطابقةُ وحدَها تبلغ الرتبةَ الثانية، ولا مطابقةَ بلا رتبةٍ "
+                "ولا رتبةَ بلا مطابقة"
+            )
+        if self.status is SpecificationConformanceStatus.CONFORMANT and (
+            self.open_authority_gaps != CONFORMANCE_AUTHORITY_GAPS
+        ):
+            raise GenerationRankError(
+                "قرارُ المطابقة يُعلِن فجواتِ سلطته كاملةً: إسنادُ الوظيفة "
+                "النحويّة غيرُ مرخَّص، ولا شهادةَ معجميّةً للصورة؛ و"
+                + CONFORMANCE_IS_NOT_LICENSING
             )
 
 
-class StructuralLicensingGate:
+class SpecificationConformanceGate:
     """البوّابةُ الوحيدةُ التي تُصدِر الرتبةَ الثانية؛ ولا تقبل من المستدعي حكمًا."""
 
     @staticmethod
     def assess(
         *, candidate: SurfaceCandidate, specification: ProductionSpecification
-    ) -> StructuralLicensingDecision:
+    ) -> SpecificationConformanceDecision:
         """قِس المرشَّحَ على مواصفته وعائلتها؛ ولا تُصدِر رتبةً إلّا عن قياس."""
 
         if not isinstance(candidate, SurfaceCandidate):
@@ -245,24 +303,24 @@ class StructuralLicensingGate:
         if candidate.specification_content_id != specification_content_id(
             specification
         ):
-            return StructuralLicensingDecision(
-                status=StructuralLicensingStatus.REFUSED,
+            return SpecificationConformanceDecision(
+                status=SpecificationConformanceStatus.REFUSED,
                 reason=(
                     "المرشَّحُ ليس من هذه المواصفة: بصمتُها لا تُطابِق البصمةَ التي "
                     "بُني عليها؛ و" + NO_GENERATION_AUTHORITY_BEYOND_ITS_SOURCE
                 ),
-                licensed=None,
+                conformant=None,
             )
         family = specification.production_family
         tokens = candidate.utterance.tokens
         if tuple(token.syntactic_target for token in tokens) != family.surface_order:
-            return StructuralLicensingDecision(
-                status=StructuralLicensingStatus.REFUSED,
+            return SpecificationConformanceDecision(
+                status=SpecificationConformanceStatus.REFUSED,
                 reason=(
                     "مواضعُ الرموز ليست مواضعَ العائلة بترتيب سطحها؛ و"
                     + NO_INFLECTION_WITHOUT_LICENSED_SLOT
                 ),
-                licensed=None,
+                conformant=None,
             )
         assigned = {
             assignment.element_id: assignment.target
@@ -275,47 +333,79 @@ class StructuralLicensingGate:
         for token in tokens:
             target = assigned.get(token.source_element_id)
             if target is None:
-                return StructuralLicensingDecision(
-                    status=StructuralLicensingStatus.REFUSED,
+                return SpecificationConformanceDecision(
+                    status=SpecificationConformanceStatus.REFUSED,
                     reason=(
                         "رمزٌ يُنسَب إلى عنصرٍ لا موضعَ له في المواصفة؛ و"
                         + NO_SURFACE_WITHOUT_SOURCE_ANCHOR
                     ),
-                    licensed=None,
+                    conformant=None,
                 )
             if target is not token.syntactic_target:
-                return StructuralLicensingDecision(
-                    status=StructuralLicensingStatus.REFUSED,
+                return SpecificationConformanceDecision(
+                    status=SpecificationConformanceStatus.REFUSED,
                     reason="رمزٌ تحقّق في موضعٍ غير الموضع المُسنَد إلى عنصره",
-                    licensed=None,
+                    conformant=None,
                 )
             if choices.get(token.source_element_id) != token.lexical_choice_id:
-                return StructuralLicensingDecision(
-                    status=StructuralLicensingStatus.REFUSED,
+                return SpecificationConformanceDecision(
+                    status=SpecificationConformanceStatus.REFUSED,
                     reason="اختيارُ الرمز المعجميُّ ليس اختيارَ عنصره في المواصفة",
-                    licensed=None,
+                    conformant=None,
                 )
             if token.case_effect is not family.case_effect_for(token.syntactic_target):
-                return StructuralLicensingDecision(
-                    status=StructuralLicensingStatus.REFUSED,
+                return SpecificationConformanceDecision(
+                    status=SpecificationConformanceStatus.REFUSED,
                     reason=(
                         "أثرُ إعراب الرمز ليس أثرَ موضعه في العائلة؛ و"
                         + NO_INFLECTION_WITHOUT_LICENSED_SLOT
                     ),
-                    licensed=None,
+                    conformant=None,
                 )
-        return StructuralLicensingDecision(
-            status=StructuralLicensingStatus.LICENSED,
+        chain_refusal = SpecificationConformanceGate._refuse_a_broken_chain(
+            candidate=candidate
+        )
+        if chain_refusal is not None:
+            return chain_refusal
+        return SpecificationConformanceDecision(
+            status=SpecificationConformanceStatus.CONFORMANT,
             reason=(
                 "كلُّ رمزٍ رُدَّ إلى عنصرٍ في المصدر، وتحقّق في موضعه المُسنَد، "
-                "بأثرِ إعراب عائلته، وبترتيب سطحها"
+                "بأثرِ إعراب عائلته، وبترتيب سطحها، وأثرُه سلسلةُ عبارته نفسُها؛ "
+                "ولا ترخيصَ نحويًّا في ذلك، و" + CONFORMANCE_IS_NOT_LICENSING
             ),
-            licensed=StructurallyLicensedSurface(
+            conformant=SpecificationConformantSurface(
                 candidate=candidate,
                 specification=specification,
-                issuance=_STRUCTURAL_ISSUANCE,
+                issuance=_CONFORMANCE_ISSUANCE,
             ),
+            open_authority_gaps=CONFORMANCE_AUTHORITY_GAPS,
         )
+
+    @staticmethod
+    def _refuse_a_broken_chain(
+        *, candidate: SurfaceCandidate
+    ) -> SpecificationConformanceDecision | None:
+        """اقرأ اتّصالَ أثرِ كلِّ رمزٍ بسلسلة عبارته؛ فالجوارُ ليس اشتقاقًا.
+
+        أمّا اتّصالُ العبارة بمواصفتها وبإسقاطها الكتابيِّ فشرطُ بناءٍ في
+        `GeneratedArabicUtterance` نفسِها، لا فحصٌ يُعاد هنا.
+        """
+
+        for token in candidate.utterance.tokens:
+            if token.generation_trace.input_content_id != (
+                candidate.specification_content_id
+            ):
+                return SpecificationConformanceDecision(
+                    status=SpecificationConformanceStatus.REFUSED,
+                    reason=(
+                        "أثرُ رمزٍ لا يبدأ من بصمة المواصفة نفسِها؛ فهو أثرٌ مجاورٌ "
+                        "لا سلسلةٌ واحدة؛ و"
+                        + A_CHAIN_IS_READ_FROM_ITS_DIGESTS_NOT_ITS_ORDER
+                    ),
+                    conformant=None,
+                )
+        return None
 
 
 class RoundTripStatus(Enum):
@@ -348,10 +438,10 @@ class RoundTripGate:
     """البوّابةُ الوحيدةُ للشهادة؛ ولا تُصدِر اليومَ إلّا تأجيلًا مُسبَّبًا."""
 
     @staticmethod
-    def assess(*, licensed: StructurallyLicensedSurface) -> RoundTripDecision:
-        """اقرأ سطحًا مُرخَّصًا بنيويًّا، وأجِّل الشهادةَ بسببها المُسمّى."""
+    def assess(*, conformant: SpecificationConformantSurface) -> RoundTripDecision:
+        """اقرأ سطحًا مطابقًا لمواصفته، وأجِّل الشهادةَ بسببها المُسمّى."""
 
-        if not isinstance(licensed, StructurallyLicensedSurface):
+        if not isinstance(conformant, SpecificationConformantSurface):
             raise GenerationRankError(
                 "المُقاسُ في بوّابة الشهادة سطحٌ بلغ الرتبةَ الثانية؛ و"
                 + NO_CERTIFIED_GENERATION_WITHOUT_ROUND_TRIP
