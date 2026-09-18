@@ -1,11 +1,7 @@
 {
   "corpus_id": "alghanem.execution.case_data.G0.CASE-0.DATA.corpus",
   "uncovered_requirement_ids": [
-    "LS.anchors_do_not_exceed_arity.violated",
-    "LS.argument_slot_ids_are_not_deferred_role_names.violated",
-    "LS.condition_sites_are_licensed_for_use.unresolved",
     "LS.condition_sites_are_licensed_for_use.violated",
-    "LS.condition_sites_share_the_lineage_base.unresolved",
     "LS.condition_sites_share_the_lineage_base.violated",
     "LS.declared_linguistic_identity_agrees.not_evaluated_by_prerequisite",
     "LS.declared_linguistic_identity_agrees.satisfied",
@@ -30,20 +26,11 @@
     "LS.no_self_derived_licensing_genus.violated",
     "LS.no_unread_condition_in_the_founding_base.unresolved",
     "LS.predicate_arity_license_permits_use.violated",
-    "LS.predicate_arity_matches_its_slots.violated",
     "LS.role_license_granted_for_the_function_read.not_evaluated_by_prerequisite",
     "LS.role_license_granted_for_the_function_read.unresolved",
-    "LS.role_license_granted_for_the_function_read.violated",
-    "LS.role_license_is_operative.not_evaluated_by_prerequisite",
     "LS.role_license_is_operative.unresolved",
     "LS.role_license_is_operative.violated",
     "LS.role_sites_share_the_lineage_ontology.unresolved",
-    "LS.role_sites_share_the_lineage_ontology.violated",
-    "OR.block",
-    "OR.defer",
-    "XS.block_has_no_materialized_identity",
-    "XS.blocked_dependent_has_no_residual",
-    "XS.defer_has_no_materialized_identity"
+    "LS.role_sites_share_the_lineage_ontology.violated"
   ]
 }
-

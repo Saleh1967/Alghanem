@@ -54,7 +54,7 @@ NO_DEFAULT_SUCCESS_AND_NO_DEFAULT_BLOCK: Final[str] = (
 
 
 class ExecutionOutcome(Enum):
-    """حكمُ التنفيذ؛ مفردةٌ مغلقةٌ ليس فيها عضوٌ لفساد الإدخال ألبتّة."""
+    """حكمُ التنفيذ؛ مفردةٌ مغلقةٌ ليس فيها عضوٌ لبطلان التكوين ألبتّة."""
 
     PASS = "pass"
     BLOCK = "block"

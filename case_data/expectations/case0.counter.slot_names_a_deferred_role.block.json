@@ -1,0 +1,204 @@
+{
+  "case_id": "case0.counter.slot_names_a_deferred_role.block",
+  "matrix_digest": "bedc47c9ae7302a5e88128feff29f3685e175fdbd4830c0518ae06b0dc3f92a1",
+  "law_set_digest": "7522397caf9cf65107ae42b5dcd551a24f643f76a25592afd3e1201bfac23639",
+  "expected_disposition": "block",
+  "expected_trace": [
+    {
+      "law": "no_self_derived_licensing_genus",
+      "subject_id": "license.predicate",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "no_self_derived_licensing_genus",
+      "subject_id": "license.term",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "no_unread_condition_in_the_founding_base",
+      "subject_id": "license.predicate",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "no_unread_condition_in_the_founding_base",
+      "subject_id": "license.term",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "general_ontology_founded_on_the_lineage_base",
+      "subject_id": "general.A",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "linguistic_licenses_name_registered_candidates",
+      "subject_id": "license.predicate",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "linguistic_licenses_name_registered_candidates",
+      "subject_id": "license.term",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "linguistic_licenses_share_the_founding_base",
+      "subject_id": "license.predicate",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "linguistic_licenses_share_the_founding_base",
+      "subject_id": "license.term",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "linguistic_ontology_founded_on_the_lineage_general",
+      "subject_id": "linguistic.A",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "existence_lineage_rederives",
+      "subject_id": "linguistic.A",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "condition_sites_share_the_lineage_base",
+      "subject_id": "site.first",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "condition_sites_share_the_lineage_base",
+      "subject_id": "site.patient",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "condition_sites_share_the_lineage_base",
+      "subject_id": "anchor.first",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "condition_sites_are_licensed_for_use",
+      "subject_id": "site.first",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "condition_sites_are_licensed_for_use",
+      "subject_id": "site.patient",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "condition_sites_are_licensed_for_use",
+      "subject_id": "anchor.first",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "role_sites_share_the_lineage_ontology",
+      "subject_id": "predicate.A",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "role_sites_share_the_lineage_ontology",
+      "subject_id": "anchor.first",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "role_license_granted_for_the_function_read",
+      "subject_id": "predicate.A",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "role_license_granted_for_the_function_read",
+      "subject_id": "anchor.first",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "role_license_is_operative",
+      "subject_id": "predicate.A",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "role_license_is_operative",
+      "subject_id": "anchor.first",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "predicate_arity_license_permits_use",
+      "subject_id": "predicate.A",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "predicate_arity_matches_its_slots",
+      "subject_id": "predicate.A",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "argument_slot_ids_are_not_deferred_role_names",
+      "subject_id": "site.first",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "argument_slot_ids_are_not_deferred_role_names",
+      "subject_id": "site.patient",
+      "standing": "violated",
+      "blocked_by": null
+    },
+    {
+      "law": "anchors_do_not_exceed_arity",
+      "subject_id": "nisbah.A",
+      "standing": "satisfied",
+      "blocked_by": null
+    },
+    {
+      "law": "declared_linguistic_identity_agrees",
+      "subject_id": "linguistic.A",
+      "standing": "not_applicable_no_claim",
+      "blocked_by": null
+    },
+    {
+      "law": "materialized_identity_agrees",
+      "subject_id": "nisbah.A",
+      "standing": "not_applicable_no_claim",
+      "blocked_by": null
+    }
+  ],
+  "expected_violations": [
+    {
+      "law": "argument_slot_ids_are_not_deferred_role_names",
+      "subject_id": "site.patient"
+    }
+  ],
+  "expected_residual_subject_ids": [],
+  "expected_materialized_identity_id": null,
+  "citations": [
+    {
+      "requirement_id": "LS.argument_slot_ids_are_not_deferred_role_names.violated",
+      "law": "argument_slot_ids_are_not_deferred_role_names",
+      "witness_subject_id": "site.patient",
+      "standing": "violated"
+    }
+  ]
+}

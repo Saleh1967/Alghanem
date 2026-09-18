@@ -1,0 +1,213 @@
+{
+  "case_id": "case0.counter.duplicate_anchor.block",
+  "document": {
+    "schema": "alghanem.execution.v1",
+    "nisbah_schema": "linguistic-nisbah.schema.v3",
+    "prior_bases": [
+      {
+        "base_id": "base.A",
+        "domain_note": "مجالُ base.A",
+        "declared_content_id": "68d13c30f794a1737406f9ffd33f46f5ec6c4ad51caf8b542cf7632e83289d4c",
+        "conditions": [
+          {
+            "condition_id": "base.A.domain",
+            "kind": "domain",
+            "statement": "بيانُ domain في base.A",
+            "what_it_forbids": "ما يمنعه domain في base.A",
+            "licensed_by": "stipulated_for_the_domain"
+          },
+          {
+            "condition_id": "base.A.unit_criterion",
+            "kind": "unit_criterion",
+            "statement": "بيانُ unit_criterion في base.A",
+            "what_it_forbids": "ما يمنعه unit_criterion في base.A",
+            "licensed_by": "stipulated_for_the_domain"
+          },
+          {
+            "condition_id": "base.A.identity_criterion",
+            "kind": "identity_criterion",
+            "statement": "بيانُ identity_criterion في base.A",
+            "what_it_forbids": "ما يمنعه identity_criterion في base.A",
+            "licensed_by": "stipulated_for_the_domain"
+          },
+          {
+            "condition_id": "base.A.attribute_possibility",
+            "kind": "attribute_possibility",
+            "statement": "بيانُ attribute_possibility في base.A",
+            "what_it_forbids": "ما يمنعه attribute_possibility في base.A",
+            "licensed_by": "stipulated_for_the_domain"
+          },
+          {
+            "condition_id": "base.A.relation_possibility",
+            "kind": "relation_possibility",
+            "statement": "بيانُ relation_possibility في base.A",
+            "what_it_forbids": "ما يمنعه relation_possibility في base.A",
+            "licensed_by": "stipulated_for_the_domain"
+          },
+          {
+            "condition_id": "base.A.transformation_conditions",
+            "kind": "transformation_conditions",
+            "statement": "بيانُ transformation_conditions في base.A",
+            "what_it_forbids": "ما يمنعه transformation_conditions في base.A",
+            "licensed_by": "stipulated_for_the_domain"
+          },
+          {
+            "condition_id": "base.A.conditions_and_preventers",
+            "kind": "conditions_and_preventers",
+            "statement": "بيانُ conditions_and_preventers في base.A",
+            "what_it_forbids": "ما يمنعه conditions_and_preventers في base.A",
+            "licensed_by": "stipulated_for_the_domain"
+          },
+          {
+            "condition_id": "base.A.preserved_trace",
+            "kind": "preserved_trace",
+            "statement": "بيانُ preserved_trace في base.A",
+            "what_it_forbids": "ما يمنعه preserved_trace في base.A",
+            "licensed_by": "stipulated_for_the_domain"
+          },
+          {
+            "condition_id": "base.A.closure_blocking_remainder",
+            "kind": "closure_blocking_remainder",
+            "statement": "بيانُ closure_blocking_remainder في base.A",
+            "what_it_forbids": "ما يمنعه closure_blocking_remainder في base.A",
+            "licensed_by": "stipulated_for_the_domain"
+          }
+        ]
+      }
+    ],
+    "general_ontologies": [
+      {
+        "ontology_id": "general.A",
+        "founded_on_base_id": "base.A",
+        "declared_content_id": "a1654ad860f8d4ead5547e3c873deffe22ebe77fdef24fba198c3dc7a1e4ccda",
+        "candidates": [
+          {
+            "candidate_id": "cand.predicate",
+            "kind": "relation",
+            "necessity_claim": "دعوى لزوم cand.predicate",
+            "irreducibility_claim": "دعوى عدم ارتداد cand.predicate",
+            "licensing_condition": "domain"
+          },
+          {
+            "candidate_id": "cand.term",
+            "kind": "thing",
+            "necessity_claim": "دعوى لزوم cand.term",
+            "irreducibility_claim": "دعوى عدم ارتداد cand.term",
+            "licensing_condition": "domain"
+          }
+        ]
+      }
+    ],
+    "linguistic_ontologies": [
+      {
+        "ontology_id": "linguistic.A",
+        "founded_on_general_id": "general.A",
+        "declared_content_id": null,
+        "licenses": [
+          {
+            "license_id": "license.predicate",
+            "candidate_id": "cand.predicate",
+            "function": "predicate_role",
+            "read_from": "قراءةٌ مُسجَّلة",
+            "condition_base_id": "base.A",
+            "condition_place": "relation_possibility"
+          },
+          {
+            "license_id": "license.term",
+            "candidate_id": "cand.term",
+            "function": "term_anchor_role",
+            "read_from": "قراءةٌ مُسجَّلة",
+            "condition_base_id": "base.A",
+            "condition_place": "unit_criterion"
+          }
+        ]
+      }
+    ],
+    "lineage": {
+      "base_id": "base.A",
+      "general_ontology_id": "general.A",
+      "linguistic_ontology_id": "linguistic.A"
+    },
+    "nisbah": {
+      "nisbah_id": "nisbah.A",
+      "declared_content_id": null,
+      "predicate": {
+        "predicate_id": "predicate.A",
+        "arity": 2,
+        "arity_license": "prior_specification",
+        "role_site": {
+          "linguistic_ontology_id": "linguistic.A",
+          "license_id": "license.predicate",
+          "function": "predicate_role"
+        },
+        "slots": [
+          {
+            "slot_id": "site.first",
+            "position": 1,
+            "condition_site": {
+              "base_id": "base.A",
+              "place": "attribute_possibility"
+            }
+          },
+          {
+            "slot_id": "site.second",
+            "position": 2,
+            "condition_site": {
+              "base_id": "base.A",
+              "place": "conditions_and_preventers"
+            }
+          }
+        ]
+      },
+      "anchors": [
+        {
+          "anchor_id": "anchor.first",
+          "role_site": {
+            "linguistic_ontology_id": "linguistic.A",
+            "license_id": "license.term",
+            "function": "term_anchor_role"
+          },
+          "condition_site": {
+            "base_id": "base.A",
+            "place": "identity_criterion"
+          }
+        },
+        {
+          "anchor_id": "anchor.first",
+          "role_site": {
+            "linguistic_ontology_id": "linguistic.A",
+            "license_id": "license.term",
+            "function": "term_anchor_role"
+          },
+          "condition_site": {
+            "base_id": "base.A",
+            "place": "identity_criterion"
+          }
+        }
+      ]
+    },
+    "unresolved_requirements": []
+  },
+  "baseline_case_id": "case0.baseline.pass",
+  "declared_differences": [
+    {
+      "operation": "add",
+      "path": "nisbah.anchors[1]",
+      "before": null,
+      "after": {
+        "anchor_id": "anchor.first",
+        "role_site": {
+          "linguistic_ontology_id": "linguistic.A",
+          "license_id": "license.term",
+          "function": "term_anchor_role"
+        },
+        "condition_site": {
+          "base_id": "base.A",
+          "place": "identity_criterion"
+        }
+      },
+      "statement": "مرساةٌ ثانيةٌ تحمل مُعرِّفَ الأولى نفسَه، فتتكرَّر المراسي بلا تمييز"
+    }
+  ],
+  "multiplicity_is_the_proof": null
+}

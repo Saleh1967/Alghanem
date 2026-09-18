@@ -3010,3 +3010,105 @@ Deferred here by name, not by omission: the counter-cases for the requirements
 listed in the manifest; the `JSON → CaseDeclaration` reader, which belongs to
 `G0.CASE-0.READOUT` as its first obligation; the readout itself; and the digest
 ledger that only a matching first reading may open.
+
+### G0.CASE-0.DATA-H — Immutable data, and a difference that is proved
+
+`G0.CASE-0.DATA-H` closes two structural gaps in the corpus layer before the
+remaining cases are written, so the order gains a stage of its own:
+
+    MATRIX  ≺  Immutable DATA  ≺  Verified Typed Structural Difference
+            ≺  READOUT  ≺  DIGEST LEDGER
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `AFrozenDocumentIsDeeplyImmutable` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. Freezing a dataclass never froze the dictionary inside it, so a golden case and an invalid-input witness hold their document as *transitively* frozen content — read-only mappings and tuples, with every value inside the `JSON` contract — and project a fresh tree on every read, exactly as the sealed envelope does with its declaration. `FrozenData ≺ Readout` would otherwise be nominal: a readout holding a reference into a "frozen" case could rewrite the evidence it is being measured against. |
+| `ADifferenceIsAnOperationNotAPath` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. A structural difference is `operation ∈ {ADD, REMOVE, REPLACE}` at a named path, with the content before and the content after. Adding an anchor is `ADD nisbah.anchors[1]`, dropping one is `REMOVE nisbah.anchors[1]`, and changing one that stands is `REPLACE` at the place that changed; a list never reports a bare change of length, and an element changed beside an element added is two differences, not one. An added subtree is one difference at its own root, not one per leaf. |
+| `ADeclaredDifferenceIsTheActualDifference` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `Diff(BaselineDocument, CounterDocument) = DeclaredDifferences`, operation, path, before and after alike — not merely `DeclaredPath = ActualPath`. The comparison is between two authored texts only: no engine is run, no digest is born, and `DATA ≺ READOUT` is untouched. `GoldenCounterCase = ValidBaseline + OneDeclaredDifference` is thereby an enforced invariant rather than an author's assertion: without a stated reason the actual difference must be exactly one, and where multiplicity is itself the proof it must be at least two. A counter-case that does not differ from its baseline at any place is refused. |
+| `ABaselineChainDoesNotTurnBackOnItself` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. The difference is measured one hop only, against the named baseline, and is never flattened to the root of a chain. Refusing a case that names itself as its baseline is not enough once a counter-case may itself be a baseline, so the whole baseline graph is walked and any cycle is refused: in a cycle every case is its own baseline by an intermediary, and no case is measured against anything. |
+
+`expected_fault_kinds` is read as `InputFaultKind`, the closed vocabulary that
+already existed, so a misspelt fault name is refused at `DATA` instead of
+surviving until the readout. And the Arabic constitutional register now keeps
+the distinction the structure requires: `INVALID_INPUT` is *constitutional
+invalidity* — the case never came into being, so nothing stands to be judged —
+while `BLOCK` belongs to the other side, where a case did stand and then broke a
+law. The public enum members are unchanged; only the register and the prose
+move, before the word settles into dozens of places.
+
+Deferred here by name, not by omission: the remaining counter-cases, which are
+written only after these gates are closed, so that no case is authored under a
+difference claim that was never verified.
+
+### G0.CASE-0.DATA-HH — The contract binds the class, and the diff stays strict
+
+`G0.CASE-0.DATA-HH` closes the three ways the previous gates could still be
+walked around, and records one piece of frozen legacy wording, before the
+remaining cases are authored.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `AContractBindsTheClassNotItsFactory` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. Freezing inside the `of(...)` reader is not enough: the general constructor is an equally lawful road in Python, so a caller could hand a live dictionary to `GoldenExecutionCase(...)`, `InvalidInputWitness(...)` or `DeclaredDifference(...)` and rewrite it afterwards. The document, and a declared difference's *before* and *after*, are therefore re-frozen inside `__post_init__` itself. `FrozenGoldenCase ⇒ DeeplyImmutableDocument` holds for every road into the class, not only for the one the author is expected to take. |
+| `AFrozenNumberIsAJsonNumber` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `NaN`, `Infinity` and `-Infinity` are not `JSON` numbers, and Python's reader admits them by default, so they could enter from a file that looks like `JSON`. A non-finite float is refused at the freeze, which is where the written law "what falls outside the `JSON` contract is returned" is actually kept — a value that is not equal to itself would otherwise sit inside a corpus whose whole method is comparison. |
+| `ASequenceEditWaitsForItsIdentityPolicy` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. The structural difference is positional and knows nothing of element identity, so an insertion or a removal in the middle of a list reads as a run of replacements followed by an addition or a removal — which is not the edit the author made. The open question is constitutional, not algorithmic: `ListIdentity = ElementIdentity` or `PositionIdentity`? In this project a position inside a list may itself be meaningful, so no `LCS` or edit distance is introduced to guess. Until an explicit `SequenceIdentityPolicy` is frozen, a list may either change its tail (`ADD`/`REMOVE`) or change a standing position (`REPLACE`) — never both at once — and anything else is refused. A diff that is less clever is safer than one that invents an identity the constitution has not granted. |
+
+The two occurrences of «فساد الإدخال» inside the `COVERAGE_MATRIX` content are
+**legacy frozen wording**. They are not corrected, because the matrix content
+enters `COVERAGE_MATRIX_DIGEST` and every expectation pins that digest; editing
+historical language by moving a frozen specification would breach
+`MATRIX ≺ DATA`. The later constitutional term for that state is «بطلان تكوين
+القضية» — *constitutional invalidity of the case*, recorded outside the matrix
+content as `INPUT_CONSTITUTION_FAILURE` — and the reader should take the matrix
+phrases in that sense.
+
+Deferred here by name, not by omission: `SequenceIdentityPolicy`, which must
+decide whether a list position is an identity or an order before mid-list edits
+are admitted into the corpus.
+
+### G0.CASE-0.DATA-1 — The first tranche of counter-cases
+
+With the immutability and difference gates closed, the corpus grows for the
+first time. Five counter-cases are authored against the single baseline, each
+one a *valid* input that stands as a case and is then judged, and each one
+measured one hop against `case0.baseline.pass` with its difference proved from
+the two texts rather than asserted:
+
+- `case0.counter.duplicate_anchor.block` — `ADD nisbah.anchors[1]`, a second
+  anchor carrying the first anchor's own id. Claims
+  `LS.anchors_do_not_exceed_arity.violated`, `OR.block` and
+  `XS.block_has_no_materialized_identity`.
+- `case0.counter.arity_exceeds_slots.block` — `REPLACE nisbah.predicate.arity`,
+  three declared and two written. Claims
+  `LS.predicate_arity_matches_its_slots.violated`.
+- `case0.counter.slot_names_a_deferred_role.block` —
+  `REPLACE nisbah.predicate.slots[1].slot_id`, an argument place named after a
+  deferred role. Claims
+  `LS.argument_slot_ids_are_not_deferred_role_names.violated`.
+- `case0.counter.absent_condition_site.defer` —
+  `REPLACE nisbah.predicate.slots[0].condition_site` together with
+  `ADD unresolved_requirements[0]`. Claims
+  `LS.condition_sites_share_the_lineage_base.unresolved`,
+  `LS.condition_sites_are_licensed_for_use.unresolved`, `OR.defer` and
+  `XS.defer_has_no_materialized_identity`.
+- `case0.counter.role_license_is_absent.block` —
+  `REPLACE nisbah.anchors[0].role_site.license_id`, a licence that is not in the
+  ontology. Claims `LS.role_license_granted_for_the_function_read.violated`,
+  `LS.role_license_is_operative.not_evaluated_by_prerequisite` and
+  `XS.blocked_dependent_has_no_residual`.
+
+The fourth case is the first in the corpus where multiplicity is itself the
+proof, and it is so for a constitutional reason rather than a convenience: an
+absent site that is not declared as a standing requirement is *constitutional
+invalidity*, not a deferral, so the removal of the site and the declaration of
+its unresolved requirement do not stand apart. Two structural operations, one
+authored difference in meaning — which is exactly the case
+`multiplicity_is_the_proof` exists to carry.
+
+The written corpus now reaches all three verdicts a standing case can reach.
+Every expected trace here is **authored from the frozen law set, not derived**:
+no engine was run to produce a row, and `A CitationIsAClaimUntilTheReadout`
+still holds of every cell claimed above. The residual falls from forty-three
+requirements to thirty-one, and `case_data/MANIFEST.json` names each remaining
+one.
+
+Deferred here by name, not by omission: the thirty-one remaining cells, and the
+readout that will either confirm or refute every row written in this tranche.
