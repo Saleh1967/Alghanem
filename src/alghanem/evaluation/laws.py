@@ -31,6 +31,7 @@ from ..prior_fiber import (
 
 __all__ = [
     "A_FIRST_RUN_HAPPENS_ONCE",
+    "A_RESIDUAL_IS_NAMED_NOT_STRINGLY",
     "A_REVEAL_RECORD_IS_NOT_A_VERDICT",
     "A_SERIALIZED_CONTRACT_IS_WHAT_THE_READER_RECEIVES",
     "A_SYSTEM_NAME_IS_NOT_A_SYSTEM_IDENTITY",
@@ -80,6 +81,12 @@ A_FIRST_RUN_HAPPENS_ONCE: Final[str] = (
     "تُرفَض وتُسجَّل مخالفةً ولا تُطوى"
 )
 
+A_RESIDUAL_IS_NAMED_NOT_STRINGLY: Final[str] = (
+    "AResidualIsNamedNotStringly: البقيّةُ عضوٌ مُسمًّى برمزٍ من مفردةٍ مغلقةٍ "
+    "وسببٍ وشاهدٍ وصفةِ إعاقة، لا نصٌّ حرٌّ تتغيّر دلالتُه بين طورٍ وطور؛ "
+    "وصفةُ الإعاقة تُسجَّل ولا يُبنى عليها حكمٌ في طورها"
+)
+
 A_REVEAL_RECORD_IS_NOT_A_VERDICT: Final[str] = (
     "ARevealRecordIsNotAVerdict: سجلُّ الفتح يُثبِت أنّ الالتزامَ فُتِح بعد "
     "تجميدٍ تامّ، ولا يقول أيُّ قارئٍ أصاب؛ فلا مقارنةَ في هذا الطور ولا حكمَ "
@@ -99,6 +106,7 @@ EVALUATION_LAWS: Final[tuple[str, ...]] = (
     A_SERIALIZED_CONTRACT_IS_WHAT_THE_READER_RECEIVES,
     STATIC_IMPORT_AUDIT_IS_NOT_PROCESS_ISOLATION,
     A_FIRST_RUN_HAPPENS_ONCE,
+    A_RESIDUAL_IS_NAMED_NOT_STRINGLY,
     NO_SYSTEM_DEFINES_THE_CONTRACT_IT_IS_READ_BY,
     A_REVEAL_RECORD_IS_NOT_A_VERDICT,
     NO_EVALUATION_VERDICT_BEFORE,

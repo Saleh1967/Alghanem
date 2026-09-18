@@ -20,6 +20,7 @@ from dataclasses import dataclass
 from ..canonical_content import canonical_bytes, canonical_digest, is_canonical_digest
 from .binding import BoundEvaluationRequest, EvaluationBinding
 from .laws import A_FIRST_RUN_HAPPENS_ONCE, EvaluationError
+from .residual import RunResidual
 
 __all__ = [
     "FrozenRunReport",
@@ -48,7 +49,7 @@ class FrozenRunReport:
     system_content_id: str
     payload_digest: str
     outputs: tuple[tuple[str, str], ...]
-    residuals: tuple[str, ...]
+    residuals: tuple[RunResidual, ...]
     trace: tuple[str, ...]
     run_ordinal: int
 
@@ -69,11 +70,14 @@ class FrozenRunReport:
             raise EvaluationError("عضوٌ مُصنَّفٌ مرّتين؛ والمكرّرُ يُرفَض لا يُطوى")
         if not isinstance(self.residuals, tuple):
             raise EvaluationError("البقايا صفٌّ مُجمَّد لا قائمة")
+        residual_members = []
         for residual in self.residuals:
-            _require_text(residual, "عضوٌ في البقايا")
-        if len(set(self.residuals)) != len(self.residuals):
+            if not isinstance(residual, RunResidual):
+                raise EvaluationError("البقيّةُ مُسمّاةٌ من نوعها لا نصٌّ حرّ")
+            residual_members.append(residual.member_id)
+        if len(set(residual_members)) != len(residual_members):
             raise EvaluationError("بقيّةٌ مُكرَّرة؛ والمكرّرُ يُرفَض لا يُطوى")
-        overlap = set(member_ids) & set(self.residuals)
+        overlap = set(member_ids) & set(residual_members)
         if overlap:
             raise EvaluationError("عضوٌ مُصنَّفٌ وبقيّةٌ معًا: " + "، ".join(sorted(overlap)))
         if not self.outputs and not self.residuals:
@@ -98,6 +102,23 @@ class FrozenRunReport:
         return A_FIRST_RUN_HAPPENS_ONCE
 
     @property
+    def residual_member_ids(self) -> tuple[str, ...]:
+        """أعضاءُ المجال المتروكون في هذا التشغيل، مُسمَّين ببقاياهم."""
+
+        return tuple(sorted(residual.member_id for residual in self.residuals))
+
+    @property
+    def blocking_residuals(self) -> tuple[RunResidual, ...]:
+        """البقايا المُعيقة؛ تُسجَّل ولا يُبنى عليها حكمٌ في هذا الطور."""
+
+        return tuple(
+            sorted(
+                (residual for residual in self.residuals if residual.blocking),
+                key=lambda item: item.member_id,
+            )
+        )
+
+    @property
     def classified_member_ids(self) -> tuple[str, ...]:
         """أعضاءُ المجال المُصنَّفون في هذا التشغيل."""
 
@@ -111,7 +132,10 @@ class FrozenRunReport:
             "system_content_id": self.system_content_id,
             "payload_digest": self.payload_digest,
             "outputs": [list(entry) for entry in sorted(self.outputs)],
-            "residuals": list(sorted(self.residuals)),
+            "residuals": [
+                residual.as_canonical_content()
+                for residual in sorted(self.residuals, key=lambda item: item.member_id)
+            ],
             "trace": list(self.trace),
         }
 
@@ -165,6 +189,16 @@ class RunLedger:
 
         return tuple(self._repeats)
 
+    @property
+    def blocking_residuals(self) -> tuple[RunResidual, ...]:
+        """البقايا المُعيقة في التقارير الأولى؛ تُسجَّل ولا تمنع فتحًا ولا تحكم."""
+
+        return tuple(
+            residual
+            for _, report in sorted(self._first.items())
+            for residual in report.blocking_residuals
+        )
+
     def first_report(self, system_content_id: str) -> FrozenRunReport:
         """تقريرُ التشغيل الأوّل لهذا القارئ؛ والغيابُ رفضٌ لا `None`."""
 
@@ -199,7 +233,7 @@ class RunLedger:
             raise EvaluationError("تقريرٌ على حمولةٍ غيرِ التي سُلِّمت؛ فهو عن غيرها")
 
     def _refuse_an_incomplete_coverage(self, report: FrozenRunReport) -> None:
-        declared = set(report.classified_member_ids) | set(report.residuals)
+        declared = set(report.classified_member_ids) | set(report.residual_member_ids)
         members = set(self._binding.contract.body.member_ids)
         stray = declared - members
         if stray:

@@ -50,6 +50,7 @@ from .identity import (
 )
 from .laws import (
     A_FIRST_RUN_HAPPENS_ONCE,
+    A_RESIDUAL_IS_NAMED_NOT_STRINGLY,
     A_REVEAL_RECORD_IS_NOT_A_VERDICT,
     A_SERIALIZED_CONTRACT_IS_WHAT_THE_READER_RECEIVES,
     A_SYSTEM_NAME_IS_NOT_A_SYSTEM_IDENTITY,
@@ -65,10 +66,12 @@ from .laws import (
 )
 from .protocol import EvaluationProtocolKind, FrozenEvaluationProtocol
 from .report import FrozenRunReport, RunLedger
+from .residual import ResidualCode, RunResidual
 from .reveal import GoldRevealAuthority, GoldRevealRecord
 
 __all__ = [
     "A_FIRST_RUN_HAPPENS_ONCE",
+    "A_RESIDUAL_IS_NAMED_NOT_STRINGLY",
     "A_REVEAL_RECORD_IS_NOT_A_VERDICT",
     "A_SERIALIZED_CONTRACT_IS_WHAT_THE_READER_RECEIVES",
     "A_SYSTEM_NAME_IS_NOT_A_SYSTEM_IDENTITY",
@@ -100,7 +103,9 @@ __all__ = [
     "GoldRevealRecord",
     "ProcessConfinementDeclaration",
     "ProcessConfinementStanding",
+    "ResidualCode",
     "RunLedger",
+    "RunResidual",
     "evaluation_import_isolation_audit",
     "freeze_system_identity",
     "issue_blind_payload",

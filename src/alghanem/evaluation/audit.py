@@ -68,6 +68,7 @@ _EVALUATION_MODULES = (
     "laws.py",
     "protocol.py",
     "report.py",
+    "residual.py",
     "reveal.py",
 )
 

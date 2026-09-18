@@ -32,7 +32,9 @@ from alghanem.evaluation import (
     GoldRevealRecord,
     ProcessConfinementDeclaration,
     ProcessConfinementStanding,
+    ResidualCode,
     RunLedger,
+    RunResidual,
     evaluation_import_isolation_audit,
     freeze_system_identity,
     reader_import_audit,
@@ -92,15 +94,32 @@ def _report(
     *,
     run_ordinal: int = 1,
     label: str = "قسمٌ مُصنَّف",
+    residual_member: str | None = None,
 ) -> FrozenRunReport:
     request = binding.request_for(identity)
     members = binding.contract.body.member_ids
+    classified = tuple(
+        member_id for member_id in members if member_id != residual_member
+    )
+    residuals = (
+        ()
+        if residual_member is None
+        else (
+            RunResidual(
+                member_id=residual_member,
+                residual_code=ResidualCode.UNCLASSIFIED_BY_READER,
+                blocking=True,
+                reason="لم يُصنِّفه القارئ",
+                evidence_ref="stdout:residuals[0]",
+            ),
+        )
+    )
     return FrozenRunReport(
         request_id=request.request_id,
         system_content_id=identity.content_id,
         payload_digest=binding.payload.payload_digest,
-        outputs=tuple((member_id, label) for member_id in members),
-        residuals=(),
+        outputs=tuple((member_id, label) for member_id in classified),
+        residuals=residuals,
         trace=("قرأ الحمولةَ المُسلسَلة", "صنَّف كلَّ عضوٍ بمدخلاته المرصودة"),
         run_ordinal=run_ordinal,
     )
@@ -351,6 +370,81 @@ def test_a_valid_reveal_issues_a_record_that_carries_no_gold_and_no_nonce() -> N
     for label in _GOLD.values():
         assert label not in content
     assert NO_EVALUATION_VERDICT_BEFORE in record.verdict_law
+
+
+def test_a_residual_is_named_and_covers_its_member_without_blocking_the_reveal() -> (
+    None
+):
+    binding = _binding()
+    ledger = RunLedger(binding)
+    left, right = binding.reader_identities
+    member = binding.contract.body.member_ids[0]
+    ledger.record(_report(binding, left, residual_member=member))
+    ledger.record(_report(binding, right))
+    record = GoldRevealAuthority(ledger).reveal(_GOLD, nonce=_NONCE)
+
+    assert ledger.blocking_residuals
+    assert ledger.blocking_residuals[0].member_id == member
+    assert ledger.blocking_residuals[0].residual_code is (
+        ResidualCode.UNCLASSIFIED_BY_READER
+    )
+    assert ledger.blocking_residuals[0].residual_digest
+    assert isinstance(record, GoldRevealRecord)
+
+
+def test_a_residual_refuses_a_free_string_and_an_empty_reason_or_evidence() -> None:
+    binding = _binding()
+    member = binding.contract.body.member_ids[0]
+    with pytest.raises(EvaluationError, match="سببُ البقيّة"):
+        RunResidual(
+            member_id=member,
+            residual_code=ResidualCode.REFUSED_BY_READER,
+            blocking=False,
+            reason="   ",
+            evidence_ref="stdout:residuals[0]",
+        )
+    with pytest.raises(EvaluationError, match="إحالةُ شاهد"):
+        RunResidual(
+            member_id=member,
+            residual_code=ResidualCode.REFUSED_BY_READER,
+            blocking=False,
+            reason="رفضه القارئ",
+            evidence_ref="",
+        )
+    with pytest.raises(EvaluationError, match="مفردته المغلقة"):
+        RunResidual(
+            member_id=member,
+            residual_code="unclassified_by_reader",  # type: ignore[arg-type]
+            blocking=False,
+            reason="رفضه القارئ",
+            evidence_ref="stdout:residuals[0]",
+        )
+
+
+def test_a_member_classified_and_left_as_a_residual_at_once_is_refused() -> None:
+    binding = _binding()
+    identity = binding.reader_identities[0]
+    full = _report(binding, identity)
+    member = binding.contract.body.member_ids[0]
+
+    with pytest.raises(EvaluationError, match="مُصنَّفٌ وبقيّةٌ معًا"):
+        FrozenRunReport(
+            request_id=full.request_id,
+            system_content_id=full.system_content_id,
+            payload_digest=full.payload_digest,
+            outputs=full.outputs,
+            residuals=(
+                RunResidual(
+                    member_id=member,
+                    residual_code=ResidualCode.REFUSED_BY_READER,
+                    blocking=False,
+                    reason="رفضه القارئ",
+                    evidence_ref="stdout:residuals[0]",
+                ),
+            ),
+            trace=full.trace,
+            run_ordinal=1,
+        )
 
 
 def test_no_verdict_or_dominance_function_is_exported_in_this_phase() -> None:
