@@ -4909,6 +4909,30 @@ ExpectedPassParent ≺ READOUT ≺ VerifiedPassParent ≺ LicensedPerturbation �
 DIGEST LEDGER`. For the same reason an authored case no longer calls its own
 input *standing*: `Authored ⇏ Valid`, exactly as `Declared ⇏ Licensed`.
 
+`G0.GEN-0.SPEC` opens the second direction over the same structure. Until now
+every layer read a surface and asked what licensed it; this one produces a
+surface from a structure that a previous execution already judged. It is a
+specification only — primitives, laws and gates, with synthetic tests and no
+Arabic datum. The first law is that the new direction is not the old one
+inverted: `Analysis ≠ Generation⁻¹`. The entry point is therefore not a
+structure but a verdict — a `PassedNisbahSourceRef` that can be minted only from
+an execution envelope whose outcome is `PASS` with a materialized identity —
+and the specification stays thin, restating neither the relation nor its
+anchors, and writing neither its own rank nor its own residuals. Roles are not
+opened: `فاعل ≠ Agent` and `مفعول به ≠ Patient` always, so generation binds an
+anchor identity to a syntactic *position* without redescribing it semantically.
+The unrealized layers branch rather than block — phonology is withheld while
+orthography may still be produced from a frozen lexical form — and `withheld` is
+a type, not a flag, so `GeneratedStage[T] ≠ WithheldStage` structurally. No
+morphology is claimed: only `LEXICALLY_ATTESTED_FORM_SELECTION`, never
+`DERIVED_FROM_ROOT`. Three ranks are separated as types, and the third is
+deliberately unreachable: the round-trip certificate requires an analyser that
+recovers function, which cannot exist while the corpus tags case rather than
+function, so `RoundTripGate` returns exactly one named deferral. The frozen
+first family is `PastActiveTransitiveVSO`, and the axis runs
+`SPEC ≺ DATA ≺ READOUT ≺ RT` under one highest law:
+`NoGenerationAuthorityBeyondItsSource`.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
