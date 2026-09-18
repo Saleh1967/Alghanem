@@ -5420,7 +5420,8 @@ example did exactly that. This milestone removes that path, in
   after construction; it does not prevent forged construction. A
   `BoundExecutionReceipt` refuses to exist without a module-private authority
   seal, so a harness cannot build one through the public API —
-  `AHarnessIsNotAnExecutionAuthority`.
+  `AHarnessIsNotAnExecutionAuthority`. The seal is an API barrier, not a
+  cryptographic one; see `G0.EXEC-0.HARDEN` below for what it is and is not.
 - **`ExecutedReaderIdentity == FrozenReaderIdentity`.** Before running, the
   authority re-measures all four identity components from scratch — source bytes,
   configuration, a fresh `reader_import_audit`, the contract interface version —
@@ -5466,9 +5467,9 @@ implementation bytes were executed against the bound blind payload under the
 declared separate-process execution mechanism, and the resulting bytes were
 captured in an authority-issued execution receipt.*
 
-Measured: 8 execution exit statuses, 11 execution laws, 15 evaluation laws, 5
-residual codes, 1 entry point (`read`), 1 wire protocol version, 0 comparison
-functions.
+Measured after `G0.EXEC-0.HARDEN`: 12 execution exit statuses, 16 execution laws,
+17 evaluation laws, 5 residual codes, 1 entry point (`read`), 1 wire protocol
+version (`v2`), 1 execution envelope protocol, 0 comparison functions.
 
 Not built here, deliberately: `G0.F2-0`, `G0.PARALLEL-0`, any second system, any
 comparison, any Pareto dominance, any `Ω_M` and any Arabic generalization claim —
@@ -5477,6 +5478,61 @@ comparison, any Pareto dominance, any `Ω_M` and any Arabic generalization claim
 ```bash
 python examples/evaluation/run_blind_evaluation.py
 ```
+
+### `G0.EXEC-0.HARDEN` — execution provenance and operational configuration
+
+`G0.EXEC-0` bound the report to a real execution event. Reading that code back
+found four places where the claim was still wider than the mechanism. This
+milestone closes those four and nothing else; no `F₂`, no metric layer, no
+comparison.
+
+- **`ReceiptIssuanceIsKeyedNotMerelySealed`.** The module-private seal stops the
+  public API, but code inside the same process can reach a private name. Each
+  `ExecutionAuthority` now holds a `ReceiptIssuanceKey` generated at construction
+  from `secrets.token_bytes(32)`; every receipt carries `issuer_key_id` and an
+  HMAC-SHA256 `issuance_signature` over its own canonical content, and
+  `authority.verify_issuance(receipt)` (or `verify_receipt_issuance(receipt,
+  key)`) answers whether *this* authority issued it. The key's secret is never a
+  field, never in `repr`, never in canonical content and never serialized.
+  The standing is `IN_PROCESS_KEYED_DECLARED` with `is_proven == False`, under
+  the explicit ceiling `AnInProcessSealIsNotUnforgeableProvenance`: this
+  distinguishes issuers within one process, it does not establish trust across
+  sessions or against an adversary already executing inside the process. Signing
+  by an isolated key-holding authority is deferred, not claimed.
+- **`ConfigurationIsExecutedNotOnlyIdentified`.** Configuration entered
+  `system_content_id` but never reached the subprocess, so the system proved a
+  *configuration identity* and not *the execution of that configuration*. The
+  authority now builds an `ExecutionEnvelope` — a length-framed
+  `length + canonical header + raw payload bytes` frame whose header carries the
+  envelope protocol, the sorted configuration, `configuration_digest`,
+  `payload_digest` and `payload_length` — and writes it to `stdin`. The payload
+  bytes cross verbatim, so `payload_digest` remains the digest of exactly what
+  the reader received. The entry point is now strictly
+  `read(payload_bytes, configuration)` with no legacy one-argument path: a reader
+  with the abandoned signature is refused under `REFUSED_ENTRYPOINT_SIGNATURE`.
+  The reader echoes the `envelope_digest` it parsed, and a mismatch is
+  `CONFIGURATION_DELIVERY_MISMATCH` rather than a silent success.
+- **`AWireValueIsRefusedNotCoerced`.** The runner had `str(...)` and `bool(...)`
+  normalizations, so `"false"` became `True` and any object became a label. A
+  closed wire format refuses a wrong type instead of converting it: field sets
+  are exact, `bool` is checked by identity of type, and every violation is
+  `REFUSED_OUTPUT_SHAPE`.
+- **`ATimeoutIsNamedNotFoldedIntoANonzeroExit`.** A timed-out run used to carry a
+  `-1` sentinel return code that collided with signal-killed processes and was
+  reported as `NONZERO_EXIT`. `SeparateProcessOutcome` now records
+  `timed_out` with `return_code=None` for a process that never exited, and the
+  status vocabulary names `TIMEOUT` and `SIGNALLED` separately from
+  `NONZERO_EXIT`. The trace carries `process.timed_out` and the declared
+  `process.timeout_seconds`.
+
+The claim after this milestone is the previous one plus: *the receipt was issued
+and signed by a named in-process issuance key, the declared configuration was
+delivered into the run inside the measured envelope and echoed back by the
+reader, every wire value was refused rather than coerced, and a run that never
+exited is named a timeout rather than a nonzero exit.*
+
+Not built here, deliberately: cross-session receipt trust, an isolated signing
+authority, any sandbox claim, and `G0.METRIC-0`.
 
 
 ```bash

@@ -74,6 +74,7 @@ _EXECUTION_MODULES = (
     "__init__.py",
     "audit.py",
     "authority.py",
+    "envelope.py",
     "laws.py",
     "runner.py",
     "workspace.py",

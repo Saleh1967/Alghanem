@@ -30,6 +30,7 @@ from ..prior_fiber import (
 )
 
 __all__ = [
+    "AN_IN_PROCESS_SEAL_IS_NOT_UNFORGEABLE_PROVENANCE",
     "A_FIRST_RUN_HAPPENS_ONCE",
     "A_RESIDUAL_IS_NAMED_NOT_STRINGLY",
     "A_REVEAL_RECORD_IS_NOT_A_VERDICT",
@@ -45,6 +46,7 @@ __all__ = [
     "NO_SYSTEM_DEFINES_THE_CONTRACT_IT_IS_READ_BY",
     "OBSERVED_DOMINANCE_IS_BOUNDED_BY_ITS_FROZEN_DOMAIN",
     "ONLY_EXECUTION_AUTHORITY_ISSUES_EXECUTION_RECEIPTS",
+    "RECEIPT_ISSUANCE_IS_KEYED_NOT_MERELY_SEALED",
     "STATIC_IMPORT_AUDIT_IS_NOT_PROCESS_ISOLATION",
     "EvaluationError",
     "ProcessConfinementStanding",
@@ -116,6 +118,22 @@ ONLY_EXECUTION_AUTHORITY_ISSUES_EXECUTION_RECEIPTS: Final[str] = (
     "ولا يصدُر إلّا عن سلطةِ تنفيذٍ تملك ختمَ إصداره"
 )
 
+RECEIPT_ISSUANCE_IS_KEYED_NOT_MERELY_SEALED: Final[str] = (
+    "ReceiptIssuanceIsKeyedNotMerelySealed: الختمُ الخاصُّ بوحدةٍ يمنع البناءَ من "
+    "الواجهة العامّة ولا يترك في المتن أثرًا يُتحقَّق منه بعد الإصدار؛ فالإيصالُ "
+    "يحمل مُعرِّفَ مفتاح سلطته وتوقيعَها على محتواه، فيُقارَن أثرُ الإصدار ولا "
+    "يُصدَّق بالحيازة وحدَها"
+)
+
+AN_IN_PROCESS_SEAL_IS_NOT_UNFORGEABLE_PROVENANCE: Final[str] = (
+    "AnInProcessSealIsNotUnforgeableProvenance: الختمُ والمفتاحُ يعيشان في عمليّة "
+    "السلطة نفسِها، فالشفرةُ الجاريةُ فيها تبلغهما؛ وهذا إصدارٌ مُفتَّحٌ داخل "
+    "عمليّةٍ واحدة لا إصدارٌ غيرُ قابلٍ للتزوير عبر حدِّ ثقة، وذاك يحتاج أمينَ "
+    "مفاتيحَ خارج العمليّة أو سجلَّ إصدارٍ تملكه سلطةٌ معزولة، وهو مؤجَّلٌ "
+    "مُعلَنًا لا مُنجَزٌ صمتًا؛ ولا ثقةَ عابرةً للجلسات، فالمفتاحُ لكلِّ سلطةٍ "
+    "ولا يعبُر إعادةَ تشغيل"
+)
+
 FAILURE_IS_RECEIPTED_BUT_NOT_PROMOTED_TO_REFERENCE_RUN: Final[str] = (
     "FailureIsReceiptedButNotPromotedToReferenceRun: ما بدأ تنفيذُه يُوصَل به "
     "إيصالٌ يشهد بما جرى وإن فشل، فلا يُطوى حدث؛ ولا يُرقّى إيصالٌ غيرُ تامٍّ "
@@ -141,6 +159,8 @@ EVALUATION_LAWS: Final[tuple[str, ...]] = (
     NO_RUN_REPORT_WITHOUT_BOUND_EXECUTION,
     A_HARNESS_IS_NOT_AN_EXECUTION_AUTHORITY,
     ONLY_EXECUTION_AUTHORITY_ISSUES_EXECUTION_RECEIPTS,
+    RECEIPT_ISSUANCE_IS_KEYED_NOT_MERELY_SEALED,
+    AN_IN_PROCESS_SEAL_IS_NOT_UNFORGEABLE_PROVENANCE,
     FAILURE_IS_RECEIPTED_BUT_NOT_PROMOTED_TO_REFERENCE_RUN,
     NO_EVALUATION_VERDICT_BEFORE,
     OBSERVED_DOMINANCE_IS_BOUNDED_BY_ITS_FROZEN_DOMAIN,

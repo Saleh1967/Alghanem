@@ -16,8 +16,13 @@ from collections.abc import Mapping
 from pathlib import Path
 
 from ..canonical_content import canonical_bytes, canonical_digest
+from .envelope import EXECUTION_ENVELOPE_PROTOCOL
 from .laws import MEASURED_BYTES_ARE_EXECUTED_BYTES, ExecutionError
-from .runner import READER_ENTRYPOINT_NAME, RUNNER_WIRE_PROTOCOL
+from .runner import (
+    READER_ENTRYPOINT_NAME,
+    READER_ENTRYPOINT_PARAMETERS,
+    RUNNER_WIRE_PROTOCOL,
+)
 
 __all__ = [
     "EXECUTION_WORKSPACE_PREFIX",
@@ -80,15 +85,17 @@ def materialize_measured_bytes(
 
 
 def execution_entrypoint_digest(*, contract_interface_version: str) -> str:
-    """بصمةُ المدخل: اسمُه، وإصدارُ الواجهة، وبايتاتُ المُشغِّل، وإصدارُ القناة."""
+    """بصمةُ المدخل: اسمُه وأرقامُه، والواجهةُ، والمُشغِّلُ، والقناةُ، والمغلّف."""
 
     return canonical_digest(
         canonical_bytes(
             {
                 "entrypoint_name": READER_ENTRYPOINT_NAME,
+                "entrypoint_parameters": list(READER_ENTRYPOINT_PARAMETERS),
                 "contract_interface_version": contract_interface_version,
                 "runner_digest": canonical_digest(runner_source_bytes()),
                 "wire_protocol": RUNNER_WIRE_PROTOCOL,
+                "envelope_protocol": EXECUTION_ENVELOPE_PROTOCOL,
             }
         )
     )

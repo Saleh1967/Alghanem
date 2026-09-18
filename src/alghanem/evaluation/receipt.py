@@ -12,6 +12,11 @@
 ولا يمنع تزويرَ الإنشاء، والدعوى المطلوبة هنا دعوى إصدارٍ لا دعوى ثبات. فالبناءُ
 مشروطٌ بختمٍ خاصٍّ بهذه الوحدة، تبلغه سلطةُ التنفيذ وحدَها عبر مصنعٍ خاصّ.
 
+ولا يقف الأمرُ عند الختم: `ReceiptIssuanceIsKeyedNotMerelySealed`. فالختمُ حيازةٌ
+لا تترك أثرًا في المتن، والإيصالُ يحمل مُعرِّفَ مفتاح سلطته وتوقيعَها على محتواه
+فيُقارَن. وسقفُ ذلك مُعلَنٌ لا مُدَّعًى:
+`AnInProcessSealIsNotUnforgeableProvenance`.
+
 والإيصالُ يشهد بما جرى وإن فشل:
 
     FailureIsReceiptedButNotPromotedToReferenceRun
@@ -25,9 +30,17 @@ from enum import Enum
 
 from ..canonical_content import canonical_bytes, canonical_digest, is_canonical_digest
 from .laws import (
+    AN_IN_PROCESS_SEAL_IS_NOT_UNFORGEABLE_PROVENANCE,
     FAILURE_IS_RECEIPTED_BUT_NOT_PROMOTED_TO_REFERENCE_RUN,
     ONLY_EXECUTION_AUTHORITY_ISSUES_EXECUTION_RECEIPTS,
+    RECEIPT_ISSUANCE_IS_KEYED_NOT_MERELY_SEALED,
     EvaluationError,
+)
+from .provenance import (
+    IssuanceProvenanceStanding,
+    ReceiptIssuanceKey,
+    issuance_signature,
+    verify_issuance_signature,
 )
 from .residual import RunResidual
 
@@ -35,6 +48,7 @@ __all__ = [
     "BoundExecutionReceipt",
     "ExecutionExitStatus",
     "ExecutionMode",
+    "verify_receipt_issuance",
 ]
 
 
@@ -56,8 +70,12 @@ class ExecutionExitStatus(Enum):
     COMPLETED = "completed"
     RAISED = "raised"
     NONZERO_EXIT = "nonzero_exit"
+    SIGNALLED = "signalled"
+    TIMEOUT = "timeout"
     REFUSED_OUTPUT_SHAPE = "refused_output_shape"
     REFUSED_UNKNOWN_MEMBER = "refused_unknown_member"
+    REFUSED_ENTRYPOINT_SIGNATURE = "refused_entrypoint_signature"
+    CONFIGURATION_DELIVERY_MISMATCH = "configuration_delivery_mismatch"
     IDENTITY_MISMATCH = "identity_mismatch"
     BOUNDARY_VIOLATION = "boundary_violation"
     IMPLEMENTATION_CHANGED_DURING_EXECUTION = "implementation_changed_during_execution"
@@ -127,10 +145,13 @@ class BoundExecutionReceipt:
     dependency_boundary_digest: str
     payload_digest: str
     execution_entrypoint_digest: str
+    execution_envelope_digest: str
     output_digest: str
     exit_status: ExecutionExitStatus
     trace_digest: str
     execution_mode: ExecutionMode
+    issuer_key_id: str
+    issuance_signature: str
     outputs: tuple[tuple[str, str], ...]
     residuals: tuple[RunResidual, ...]
     trace: tuple[str, ...]
@@ -147,6 +168,9 @@ class BoundExecutionReceipt:
             ("بصمةُ حدّ الاعتماد المُعاد قياسها", self.dependency_boundary_digest),
             ("بصمةُ الحمولة المُسلَّمة", self.payload_digest),
             ("بصمةُ مدخل التنفيذ", self.execution_entrypoint_digest),
+            ("بصمةُ مغلّف التنفيذ المُسلَّم", self.execution_envelope_digest),
+            ("مُعرِّفُ مفتاح الإصدار", self.issuer_key_id),
+            ("توقيعُ الإصدار", self.issuance_signature),
             ("بصمةُ المخرجات المُلتقَطة", self.output_digest),
             ("بصمةُ أثر السلطة", self.trace_digest),
         ):
@@ -202,6 +226,24 @@ class BoundExecutionReceipt:
         return ONLY_EXECUTION_AUTHORITY_ISSUES_EXECUTION_RECEIPTS
 
     @property
+    def issuance_provenance_law(self) -> str:
+        """قانونُ نسبِ الإصدار: مفتاحٌ يُوقِّع، لا ختمُ حيازةٍ وحدَه."""
+
+        return RECEIPT_ISSUANCE_IS_KEYED_NOT_MERELY_SEALED
+
+    @property
+    def issuance_provenance_standing(self) -> IssuanceProvenanceStanding:
+        """حالُ نسبِ الإصدار؛ مُعلَنٌ داخل عمليّة السلطة لا مُثبَتٌ عبر حدِّ ثقة."""
+
+        return IssuanceProvenanceStanding.IN_PROCESS_KEYED_DECLARED
+
+    @property
+    def issuance_provenance_ceiling(self) -> str:
+        """سقفُ ما يُدَّعى بتوقيعٍ بمفتاحٍ يعيش في عمليّة السلطة نفسِها."""
+
+        return AN_IN_PROCESS_SEAL_IS_NOT_UNFORGEABLE_PROVENANCE
+
+    @property
     def residual_member_ids(self) -> tuple[str, ...]:
         """أعضاءُ المجال المتروكون في هذا التنفيذ."""
 
@@ -218,10 +260,12 @@ class BoundExecutionReceipt:
             "dependency_boundary_digest": self.dependency_boundary_digest,
             "payload_digest": self.payload_digest,
             "execution_entrypoint_digest": self.execution_entrypoint_digest,
+            "execution_envelope_digest": self.execution_envelope_digest,
             "output_digest": self.output_digest,
             "exit_status": self.exit_status.value,
             "trace_digest": self.trace_digest,
             "execution_mode": self.execution_mode.value,
+            "issuer_key_id": self.issuer_key_id,
         }
 
     @property
@@ -231,8 +275,26 @@ class BoundExecutionReceipt:
         return canonical_digest(canonical_bytes(self.as_canonical_content()))
 
 
+def verify_receipt_issuance(
+    receipt: BoundExecutionReceipt, key: ReceiptIssuanceKey
+) -> bool:
+    """أتَشهدُ هذه السلطةُ بهذا الإيصال؟ يُقرأ الأثرُ في المتن ولا تُصدَّق حيازة.
+
+    والتحقّقُ سقفُه مُعلَن: `AnInProcessSealIsNotUnforgeableProvenance`.
+    """
+
+    if not isinstance(receipt, BoundExecutionReceipt):
+        raise EvaluationError("التحقّقُ يقع على إيصالٍ من نوعه")
+    if receipt.issuer_key_id != key.key_id:
+        return False
+    return verify_issuance_signature(
+        key, receipt.as_canonical_content(), receipt.issuance_signature
+    )
+
+
 def _issue_receipt(
     *,
+    issuance_key: ReceiptIssuanceKey,
     system_content_id: str,
     request_id: str,
     implementation_digest: str,
@@ -240,14 +302,36 @@ def _issue_receipt(
     dependency_boundary_digest: str,
     payload_digest: str,
     execution_entrypoint_digest: str,
+    execution_envelope_digest: str,
     exit_status: ExecutionExitStatus,
     execution_mode: ExecutionMode,
     outputs: tuple[tuple[str, str], ...],
     residuals: tuple[RunResidual, ...],
     trace: tuple[str, ...],
 ) -> BoundExecutionReceipt:
-    """أصدِر إيصالًا بختم هذه الوحدة؛ لا تبلغه إلّا سلطةُ التنفيذ."""
+    """أصدِر إيصالًا بختم هذه الوحدة وتوقيعِ مفتاح سلطته؛ ولا تبلغهما غيرُها.
 
+    والتوقيعُ يقع على محتوى الإيصال بعد اشتقاق بصماته، ولا يدخل هو ذلك المحتوى؛
+    فمن وقّع على توقيعه لم يوقّع على شيء.
+    """
+
+    if not isinstance(issuance_key, ReceiptIssuanceKey):
+        raise EvaluationError(ONLY_EXECUTION_AUTHORITY_ISSUES_EXECUTION_RECEIPTS)
+    content: dict[str, object] = {
+        "system_content_id": system_content_id,
+        "request_id": request_id,
+        "implementation_digest": implementation_digest,
+        "configuration_digest": configuration_digest,
+        "dependency_boundary_digest": dependency_boundary_digest,
+        "payload_digest": payload_digest,
+        "execution_entrypoint_digest": execution_entrypoint_digest,
+        "execution_envelope_digest": execution_envelope_digest,
+        "output_digest": executed_result_digest(outputs, residuals),
+        "exit_status": exit_status.value,
+        "trace_digest": execution_trace_digest(trace),
+        "execution_mode": execution_mode.value,
+        "issuer_key_id": issuance_key.key_id,
+    }
     return BoundExecutionReceipt(
         system_content_id=system_content_id,
         request_id=request_id,
@@ -256,10 +340,13 @@ def _issue_receipt(
         dependency_boundary_digest=dependency_boundary_digest,
         payload_digest=payload_digest,
         execution_entrypoint_digest=execution_entrypoint_digest,
+        execution_envelope_digest=execution_envelope_digest,
         output_digest=executed_result_digest(outputs, residuals),
         exit_status=exit_status,
         trace_digest=execution_trace_digest(trace),
         execution_mode=execution_mode,
+        issuer_key_id=issuance_key.key_id,
+        issuance_signature=issuance_signature(issuance_key, content),
         outputs=outputs,
         residuals=residuals,
         trace=trace,

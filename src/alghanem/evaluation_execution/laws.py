@@ -26,14 +26,20 @@ from typing import Final
 
 from ..evaluation import (
     A_HARNESS_IS_NOT_AN_EXECUTION_AUTHORITY,
+    AN_IN_PROCESS_SEAL_IS_NOT_UNFORGEABLE_PROVENANCE,
     FAILURE_IS_RECEIPTED_BUT_NOT_PROMOTED_TO_REFERENCE_RUN,
     NO_RUN_REPORT_WITHOUT_BOUND_EXECUTION,
     ONLY_EXECUTION_AUTHORITY_ISSUES_EXECUTION_RECEIPTS,
+    RECEIPT_ISSUANCE_IS_KEYED_NOT_MERELY_SEALED,
     STATIC_IMPORT_AUDIT_IS_NOT_PROCESS_ISOLATION,
 )
 
 __all__ = [
+    "AN_IN_PROCESS_SEAL_IS_NOT_UNFORGEABLE_PROVENANCE",
     "A_HARNESS_IS_NOT_AN_EXECUTION_AUTHORITY",
+    "A_TIMEOUT_IS_NAMED_NOT_FOLDED_INTO_A_NONZERO_EXIT",
+    "A_WIRE_VALUE_IS_REFUSED_NOT_COERCED",
+    "CONFIGURATION_IS_EXECUTED_NOT_ONLY_IDENTIFIED",
     "EVALUATION_BOUNDARY_IS_NOT_THE_EXECUTION_MECHANISM",
     "EXECUTED_READER_IDENTITY_EQUALS_FROZEN_READER_IDENTITY",
     "EXECUTION_LAWS",
@@ -43,6 +49,7 @@ __all__ = [
     "NO_COMPARISON_BEFORE_BOUND_EXECUTION",
     "NO_RUN_REPORT_WITHOUT_BOUND_EXECUTION",
     "ONLY_EXECUTION_AUTHORITY_ISSUES_EXECUTION_RECEIPTS",
+    "RECEIPT_ISSUANCE_IS_KEYED_NOT_MERELY_SEALED",
     "SEPARATE_PROCESS_IS_NOT_A_SANDBOX",
     "STATIC_IMPORT_AUDIT_IS_NOT_PROCESS_ISOLATION",
     "ExecutionError",
@@ -85,6 +92,25 @@ IMPLEMENTATION_CHANGED_DURING_EXECUTION_MEANS_NO_REFERENCE_RUN: Final[str] = (
     "أنتج المخرجات، فيُوصَل الحدثُ بإيصالٍ ولا يُرقّى إلى تشغيلٍ مرجعيّ"
 )
 
+CONFIGURATION_IS_EXECUTED_NOT_ONLY_IDENTIFIED: Final[str] = (
+    "ConfigurationIsExecutedNotOnlyIdentified: إعدادٌ يدخل تركيبَ الهويّة ولا "
+    "يبلغ نداءَ القارئ يُثبِت هويّةَ إعدادٍ لا تنفيذَه؛ فالإعدادُ الذي قيس هو "
+    "بعينه الذي يعبُر مغلّفَ التنفيذ إلى القارئ، ويشهد المُشغِّلُ ببصمة ما "
+    "استلمه فتُقارَن ببصمة ما كُتِب، والاختلافُ حالٌ مُسمّاةٌ لا ناتجٌ يُقرَأ"
+)
+
+A_WIRE_VALUE_IS_REFUSED_NOT_COERCED: Final[str] = (
+    'AWireValueIsRefusedNotCoerced: `"false"` ليست `False`، و`None` ليست '
+    '`"None"`، وعددٌ ليس مُعرِّفَ عضو؛ فالتطبيعُ المتسامح يُنتِج تقريرًا صادقَ '
+    "الشكل كاذبَ المعنى، والقناةُ المغلقةُ ترفض النوعَ الخاطئ ولا تُحوِّله"
+)
+
+A_TIMEOUT_IS_NAMED_NOT_FOLDED_INTO_A_NONZERO_EXIT: Final[str] = (
+    "ATimeoutIsNamedNotFoldedIntoANonzeroExit: تجاوزُ السقف الزمنيّ حدثٌ غيرُ "
+    "الخروج برمزٍ غيرِ صفر، والقتلُ بإشارةٍ غيرُهما؛ فلكلٍّ حالُ خروجٍ مُسمّاة، "
+    "ولا يُصطنَع رمزٌ حارسٌ يتصادم برمزِ عمليّةٍ قُتلت"
+)
+
 NO_COMPARISON_BEFORE_BOUND_EXECUTION: Final[str] = (
     "NoComparisonBeforeBoundExecution: لا مقارنةَ ولا سيطرةَ ولا `Ω_M` قبل أن "
     "تصير نسبةُ المخرجات إلى النظام حدثَ تنفيذٍ مُوثَّقًا؛ وهذا الطورُ يقف عند "
@@ -95,6 +121,11 @@ EXECUTION_LAWS: Final[tuple[str, ...]] = (
     NO_RUN_REPORT_WITHOUT_BOUND_EXECUTION,
     A_HARNESS_IS_NOT_AN_EXECUTION_AUTHORITY,
     ONLY_EXECUTION_AUTHORITY_ISSUES_EXECUTION_RECEIPTS,
+    RECEIPT_ISSUANCE_IS_KEYED_NOT_MERELY_SEALED,
+    AN_IN_PROCESS_SEAL_IS_NOT_UNFORGEABLE_PROVENANCE,
+    CONFIGURATION_IS_EXECUTED_NOT_ONLY_IDENTIFIED,
+    A_WIRE_VALUE_IS_REFUSED_NOT_COERCED,
+    A_TIMEOUT_IS_NAMED_NOT_FOLDED_INTO_A_NONZERO_EXIT,
     EXECUTED_READER_IDENTITY_EQUALS_FROZEN_READER_IDENTITY,
     MEASURED_BYTES_ARE_EXECUTED_BYTES,
     IMPLEMENTATION_CHANGED_DURING_EXECUTION_MEANS_NO_REFERENCE_RUN,
