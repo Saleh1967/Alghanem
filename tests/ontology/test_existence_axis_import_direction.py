@@ -101,7 +101,7 @@ def test_only_the_anchored_layer_reads_the_existence_axis() -> None:
             for module in _imported_modules(path)
         )
     )
-    assert readers == ("anchored.py",), readers
+    assert readers == ("anchored.py", "anchored_v3.py"), readers
 
 
 def test_the_anchored_layer_reads_both_existence_levels() -> None:
