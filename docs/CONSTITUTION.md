@@ -46,6 +46,7 @@ These are the initial laws of the language-agnostic kernel:
 | G0.BA.1b evidence-derived evaluator input provenance | ENFORCED_AT_DERIVATION_GATE | Closes exactly one of the three claims G0.BA.1a refused to make: `InputProvenance = DECLARED_DEFERRED`. The fix is structural, not a comparison added to the old gate. An `EvaluatorInputDerivation` receives exactly one argument -- the `canonical_bytes` of the request's own `AuthorizedEvidenceSnapshot` manifest -- and `EvaluatorInputDerivationGate.derive` accepts no `input_content` and no domain parameter at all (`CallerDoesNotOwnInputContent`): the caller chooses which authorized derivation runs, never what the evaluator sees, and the domain is read from the request's own frozen experiment. The same register -> seal -> gate shape applies: `EvaluatorInputDerivationRegistry.register` is the sole issuer of an `AuthorizedEvaluatorInputDerivationBinding`, `seal` alone produces a `SealedEvaluatorInputDerivationRegistry` resolving only by the exact three-part scope `(domain, derivation_id, implementation_identity)`, and only `EvaluatorInputDerivationGate.derive` issues an `EvidenceDerivedEvaluatorInput`. The gate re-verifies that the snapshot's bytes hash to the snapshot's own `EvidenceContentIdentity` before deriving, and rejects a derivation that returns non-text, blank content, or a different result for the same authorized bytes (`ObservedDeterminism != ProvenPurity`: this rejects observed nondeterminism, it does not prove purity). `CanonicalEvaluatorInputDerivationEncoder` digests the source evidence identity, the derivation id, the implementation identity, and the produced content together under length-prefixed canonical bytes, so the issued `EvaluatorInputContentIdentity` binds what was produced, from which exact evidence, and by which declared derivation (`OutputDigest != DerivationIdentity`). `ProvenanceBoundEvaluatorExecutionGate.execute` delegates the invocation itself to the unchanged `BirthEvaluatorExecutionGate` and then binds the issued record to the derivation that produced its input, requiring the same request object, the same evidence snapshot object, and exactly the derived content. G0.BA.1a is preserved completely unchanged and still accepts unrelated caller-supplied input by design: provenance is proven only for records issued by this stage. Three claims remain refused. `DerivationIdIsContentAuthenticated = DEFERRED`: `derivation_id` and `implementation_identity` are plain, caller-chosen strings with no manifest or digest of the derivation code (`DeclaredDerivationId != DerivationContentIdentity`), and `declared_transformation` is carried for audit and never verified against the callable (`DeclaredTransformation != VerifiedTransformation`). `AuthorizedDefinition != DefinitionAuthorizedForThisFrozenExperiment` is inherited unchanged: the execution boundary still matches only `domain`. `ProvenInputProvenance != AssessedEvidence`: `is_assessment` is `False` unconditionally, and the record carries no residual survival, weaker-model exhaustion, closure, `BirthCandidate`, `IndependentClosure`, `BirthVerdict`, or `Freeze` meaning -- `Derivation != ExecutionRecord != Assessment`. |
 | AIM.1 declared programme aims, stage two record | ENFORCED_AT_AIM_RECORD | `DeclaredAim != LicensedProgramme`, `Aim != Achievement`, `AimsDocument != Authority`. [`docs/AIMS.md`](AIMS.md) names the programme's aims, each with its question, what would count as reaching it, what would not count even though it resembles it, and its citation in this record; aims are *extracted* from the existing record rather than dictated from outside it. Indicators of progress are declared epistemic and never engineering, and the reason is named rather than left implicit: an engineering indicator answers "does the code run?", while this programme's indicators answer "is the judgment the code issues earned by its evidence?" — two independent questions, since an empty function that always returns `PASS` can hold full test coverage and a green CI, so merging the two axes reproduces that defect at the scale of the whole programme instead of one unit. `TestPassIsNotUniversalTruth` (Encyclopedia Self-Observation, below) is the same refusal stated from inside this constitution. Aims that have not started are kept distinct from aims blocked by a *named* obstacle (`NamedObstacle != SilentAbsence`), and two foreign aims imported from the `A0.PP.3` source project are recorded as declared only (`DeclaredForeignAim != AlghanemRecord`): nothing here verifies them, and they enter no indicator. Stage two has begun and is enforced at `alghanem.program.aims`, one milestone at a time: `AimRecord` carries each aim's question, both boundaries, and its citation, across two independent vocabularies (`AimEngagement`, `AttainmentStanding`) rather than one ordinal scale, with each refused merge justified in writing. `AttainmentStanding.REACHED` is declared and refused at construction itself, exactly like `QuestionStatus.CLOSED_BY_FROZEN_EXPERIMENT`: no authority here may issue an aim's attainment. Absence of classification is a vocabulary member (`UNCLASSIFIED_IN_RECORD`), never a silent blank read later as progress, and `DeclaredForeignAim != AlghanemRecord` is a type boundary (`ForeignDeclaredAim`) rather than a field value, so exclusion from every later derivation is structural rather than disciplined. The module cites the open audit question `DeclaredVersusDerivedRecurrenceNotExplained` as its direct design source, as §5 of that document requires, and a test enforces the citation rather than trusting prose. The next milestone adds exactly the two derivation readers §4 names and nothing more, at `alghanem.program.constitution_ledger`: the law-table rows of this document and its open and resolved audit questions are read into two separate ledgers whose counts are derived properties rather than written fields, so no recorded number can disagree with this document. A status outside the closed `DeclaredLawStatus` vocabulary halts the read with a named refusal rather than skipping the row, because a silently short count is read later as a complete table; a missing section or an unreadable document is a named refusal too, never an empty ledger. An open question whose status this record does not declare carries `NO_STATUS_DECLARED_IN_RECORD` instead of a blank, and a resolved one keeps its previous audit label and closure law. That reader binds to no aim and imports neither `AimId` nor `AimRecord`, and a test enforces it. The third and last reader §4 names follows at `alghanem.program.deferred_value_ledger`, and only it: the declared-but-unbuildable values that still hold an aim open (`BIRTH_IN_SCOPE`, `MORPHO_FUNCTIONAL`, `CLOSED_BY_FROZEN_EXPERIMENT`). Its source is the `src/` tree rather than a document: each member is imported live so a rename is a named refusal rather than a value read as released, and the holding module's own text is parsed so the hold's site and shape are *derived*. Coding it showed that "unbuildable" is not one shape but three, kept in a three-valued `DeferredValueShape` rather than merged: a guard that names the value and raises; a guard that names it nowhere at all and merely admits its only sibling in a two-valued vocabulary; and a value no guard refuses because its sole authority never writes it, so the authority's derived codomain does not reach it. Each row carries both its declared shape and the shape derived from the code, and a disagreement is refused at construction — the `DeclaredVersusDerivedRecurrenceNotExplained` form doing real work here, where the previous reader had no declared total to compare against. The refusal rule rises one more layer, from the table to the guard: every guard over a tracked vocabulary is recorded in a derived `GuardCensus`, and a declared site with no witness in its module's text halts the read by name instead of being skipped. What remains is named rather than hidden: `REFUSAL_SHAPE_IS_NOT_A_DECLARED_VOCABULARY` (nothing in this record obliges a hold to take one of the three observed shapes), `SIBLING_ADMISSION_REFUSAL_DEPENDS_ON_VOCABULARY_SIZE` (that hold is written nowhere and follows from an allow-list over a two-valued vocabulary, whose size is checked live), `CODOMAIN_DERIVED_FROM_LITERAL_WRITES_ONLY` (a codomain read from literal writes is *no reaching write was found*, not *no execution reaches it*), and `SECTION_4_NAMES_THREE_VALUES_ONLY` (other held values exist, and widening the list is a judgment this milestone does not hold). That reader binds to no aim either, importing neither `AimId` nor `AimRecord` nor `AttainmentStanding`, which a test enforces. The fourth milestone follows at `alghanem.program.aims_document_ledger`, and only it: the aims layer is subjected to the very rule it imposed on others. The three earlier readers checked declared against derived in *this* document and in the `src/` tree, while the aim record itself stayed a hand copy of `docs/AIMS.md` prose that nothing checked, so the layer exempted itself from its own law. Coding it showed that the record's prose is a paraphrase rather than a transcription — markup dropped, citations normalised — so verbatim comparison would have rejected the standing record or forced a shape the document never declared; what is derived instead is the structure the document does declare: aim identity and order, bullet labels, the §3 classification, and the partial-attainment remainder, with the untested remainder named (`RECORD_PROSE_IS_PARAPHRASE_NOT_TRANSCRIPTION`). The bullet vocabulary is six labels rather than four, because one aim carries two variant labels; dropping them would have silently dropped that aim, and merging them would have erased the partial-attainment distinction the record itself derives. The field-presence laws of `AimRecord` are now enforced against the document that is their source, not only against the record. `AimRecordCorrespondence` carries no pass/fail field: its construction *is* the correspondence, and disagreement is a named refusal rather than a recorded verdict. Importing `AimId` here is not the indicator, and the distinction is structural rather than promised: the indicator binds a derived *count* to an aim, while this reader binds an aim to its own source text, imports none of the three readers, and a test parses its imports to enforce that. Transcription fidelity is not an aim's truth (`TRANSCRIPTION_FIDELITY_IS_NOT_AIM_TRUTH`): a false aim faithfully copied passes this reader entirely. Still deferred and not present here: no indicator value is derived, and no field carries one — joining a derived count to a particular aim is the indicator itself and belongs to a later milestone under §4's conditions. The layer remains authority-inert: `AimRecord != BirthVerdict`, it issues no `Freeze`, no `E0`, no birth, and no verdict, it orders nothing by priority, and an automated scan asserts that no `kernel/` module reads it. |
 | G0.MA.0 no predetermined pattern architecture (law only) | DECLARED_LAW_ONLY | See **G0.MA — Meta-architecture law** below. No runtime type or gate exists yet; this is a constitutional constraint on all future pattern-discovery, factorization-search, or architecture-selection work, including any future G0.BA/G0.F stage. |
+| G0.LEX-0 necessary relation is not generative authority (law only) | DECLARED_LAW_ONLY | See **G0.LEX-0 — `NecessaryRelationIsNotGenerativeAuthority`** below. Constitutional scope is GENERAL; runtime enforcement scope is `G0.LEX-0` only (`src/alghanem/arabic/lexical_evidence_specification.py`); global runtime status is `NOT_YET_ESTABLISHED`. No kernel type or gate reads it, and none is added here. |
 
 
 ### G0.C.1 — Minimal claim constitution
@@ -3687,3 +3688,79 @@ The stage claims one thing and no more: **a witness may not be called structural
 support while a weaker model reaches the same result.** The question it leaves
 open is the real one — which transformation genuinely requires the fractal
 algebra, and cannot be reproduced by concatenation.
+
+## G0.LEX-0 — `NecessaryRelationIsNotGenerativeAuthority` (declared law, runtime scope is one milestone)
+
+`ConditionIsNotMujib`. That a relation *must hold* wherever the thing holds does
+not make that relation a licence to *produce* the thing. A condition rules out
+the cases in which the claim is false; it does not, by itself, generate a single
+true case. Reading a necessary relation as a generative authority is the general
+shape of which several separately named refusals in this document are instances:
+`FrozenExpectationIsNotGenerativeInput`, `IltizamConditionIsNotItsCause`,
+`StatisticsRaiseDirayaNeverMakeRiwaya`, and `TestPassIsNotUniversalTruth`.
+
+Two literal instances are enforced at `G0.LEX-0`:
+
+- `LazimIsConditionNotMujib` — a mental concomitant is a *condition* of an
+  `iltizam` signification, never its efficient cause; the concomitant alone
+  licenses no `iltizam` candidate.
+- `PartOfMeaningIsConditionNotGenerativeAuthority` — that something is part of a
+  meaning is a *condition* of a `tadammun` signification, never an authority
+  that generates one.
+
+**Three scopes, kept apart deliberately.** Its *constitutional scope* is
+GENERAL: it is stated here over the whole programme, not over one module. Its
+*runtime enforcement scope* is `G0.LEX-0` alone, declared in
+`GENERAL_TRANSITION_LAW_SCOPE` in
+`src/alghanem/arabic/lexical_evidence_specification.py`. Its *global runtime
+status* is `NOT_YET_ESTABLISHED`: no kernel gate enforces it, and no kernel
+module is touched by this milestone — a test scans every `kernel/` module to
+keep that true. Merging the three would itself be an instance of the law being
+declared: a general statement here would be read as a general enforcement in
+code, which is exactly the move from a necessary relation to an authority that
+this law refuses.
+
+## G0.LEX-0.APPLY — The layer applied to a root-indexed lexicon (registration only)
+
+`SurfaceIsNotRoot`. `Maqāyīs al-Lugha` is indexed by root; an occurrence is a
+surface. A lookup that matches a surface form directly against a root index has
+silently dropped the morphological layer and then reports the drop as a match.
+`src/alghanem/arabic/maqayis_lexical_evidence.py` therefore routes every match
+through a `DerivedMorphologicalCandidate` carrying a proposed root and a written
+`derivation_basis`, and refuses anything else at the boundary. The same
+asymmetry is why this lexicon compared against a surface-indexed comparator
+returns `NOT_COMPARABLE`: two different indexing units are not two competing
+results, and `NotComparableIsNotFailure` is what keeps the refusal from being
+scored as a loss.
+
+`QuotedNumberIsNotDerivedMeasure`. The `axes_count` column is a number the
+source wrote. It is kept as the source's own text and never parsed, summed, or
+compared, because a number this layer converts is a number this layer is
+afterwards read as having measured — the same move the candidate field guard
+refuses everywhere else. `ReportedRecordIsNotCoreCandidate` follows from it:
+`MaqayisRootEvidence` is deliberately *refused* by `refuse_numeric_or_verdict_fields`,
+and a test asserts that refusal, so its exclusion from the fifteen-member core
+ceiling is a declared boundary rather than an oversight. Its fields carry the
+`_as_reported` suffix because transmission is part of the field's name, not a
+comment on it.
+
+`OneDoorToFingerprintedBytes`. The adapter opens no file. It reads through
+`maqayis_root_table_deposit`, which verifies the declared length and SHA-256
+before yielding a row, and a test enforces that the adapter contains no reader
+of its own — a second reader would create a second door to bytes that are only
+assumed to be the fingerprinted ones. Every raised `LexicalEvidenceCandidate`
+carries that digest in its `source_trace`, so a witness can never be read later
+as coming from a different edition.
+
+`ThePriceIsNamedNotCounted`. Each hamza branch keeps a separate index, and each
+publishes the roots it fuses by name rather than as a total: `حدأ`/`حدا`,
+`دفأ`/`دفا` and `لمأ`/`لما` fuse under the bare-alif rule and nothing fuses
+under the carried-alif rule. Cross-branch matching is refused outright, since
+matching a signifier normalized by one rule against an index built by another
+attributes one rule's effect to the other. An ambiguity produced by a rule is
+recorded and never resolved.
+
+Boundaries unchanged: this is an *adapter*, not part of the core — the core
+imports nothing from it, which a test enforces — the ladder still stops at
+`LexicalEvidenceCandidate`, no meaning or signified is issued, and no `kernel/`
+module reads it.
