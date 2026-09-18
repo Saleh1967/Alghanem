@@ -3719,3 +3719,48 @@ keep that true. Merging the three would itself be an instance of the law being
 declared: a general statement here would be read as a general enforcement in
 code, which is exactly the move from a necessary relation to an authority that
 this law refuses.
+
+## G0.LEX-0.APPLY — The layer applied to a root-indexed lexicon (registration only)
+
+`SurfaceIsNotRoot`. `Maqāyīs al-Lugha` is indexed by root; an occurrence is a
+surface. A lookup that matches a surface form directly against a root index has
+silently dropped the morphological layer and then reports the drop as a match.
+`src/alghanem/arabic/maqayis_lexical_evidence.py` therefore routes every match
+through a `DerivedMorphologicalCandidate` carrying a proposed root and a written
+`derivation_basis`, and refuses anything else at the boundary. The same
+asymmetry is why this lexicon compared against a surface-indexed comparator
+returns `NOT_COMPARABLE`: two different indexing units are not two competing
+results, and `NotComparableIsNotFailure` is what keeps the refusal from being
+scored as a loss.
+
+`QuotedNumberIsNotDerivedMeasure`. The `axes_count` column is a number the
+source wrote. It is kept as the source's own text and never parsed, summed, or
+compared, because a number this layer converts is a number this layer is
+afterwards read as having measured — the same move the candidate field guard
+refuses everywhere else. `ReportedRecordIsNotCoreCandidate` follows from it:
+`MaqayisRootEvidence` is deliberately *refused* by `refuse_numeric_or_verdict_fields`,
+and a test asserts that refusal, so its exclusion from the fifteen-member core
+ceiling is a declared boundary rather than an oversight. Its fields carry the
+`_as_reported` suffix because transmission is part of the field's name, not a
+comment on it.
+
+`OneDoorToFingerprintedBytes`. The adapter opens no file. It reads through
+`maqayis_root_table_deposit`, which verifies the declared length and SHA-256
+before yielding a row, and a test enforces that the adapter contains no reader
+of its own — a second reader would create a second door to bytes that are only
+assumed to be the fingerprinted ones. Every raised `LexicalEvidenceCandidate`
+carries that digest in its `source_trace`, so a witness can never be read later
+as coming from a different edition.
+
+`ThePriceIsNamedNotCounted`. Each hamza branch keeps a separate index, and each
+publishes the roots it fuses by name rather than as a total: `حدأ`/`حدا`,
+`دفأ`/`دفا` and `لمأ`/`لما` fuse under the bare-alif rule and nothing fuses
+under the carried-alif rule. Cross-branch matching is refused outright, since
+matching a signifier normalized by one rule against an index built by another
+attributes one rule's effect to the other. An ambiguity produced by a rule is
+recorded and never resolved.
+
+Boundaries unchanged: this is an *adapter*, not part of the core — the core
+imports nothing from it, which a test enforces — the ladder still stops at
+`LexicalEvidenceCandidate`, no meaning or signified is issued, and no `kernel/`
+module reads it.

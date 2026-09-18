@@ -3537,6 +3537,44 @@ indicts the layer rather than the corpus. Maqayis is *not* retroactively
 preregistered — its bytes were already read, so the module is named a
 specification, never a preregistration.
 
+The layer is now *applied*, not only built:
+`src/alghanem/arabic/maqayis_lexical_evidence.py` runs it against Ibn Fāris's
+`Maqāyīs al-Lugha` root table, whose bytes are already in this tree and
+fingerprinted. The adapter opens no file of its own — it reads through
+`maqayis_root_table_deposit`, so there is exactly one door to those bytes and it
+is the one that verifies the digest and the length.
+
+Because `Maqāyīs` is indexed by *root* and an occurrence is a *surface*,
+matching is routed through `DerivedMorphologicalCandidate` and never through the
+raw form — `SurfaceIsNotRoot`. Matching a surface against a root index would
+drop a whole layer and then report the drop as a success. The same asymmetry is
+why comparing this lexicon against a surface-indexed comparator yields
+`NOT_COMPARABLE` rather than a loss.
+
+The quoted `axes_count` column stays source text and is never parsed into a
+number: `QuotedNumberIsNotDerivedMeasure`. A number this layer converts is a
+number this layer is then read as having measured. For the same reason
+`MaqayisRootEvidence` is *deliberately* refused by the candidate field guard —
+it is a reported record, not a core candidate (`ReportedRecordIsNotCoreCandidate`),
+and a test asserts the refusal so the exclusion is by design rather than by
+oversight.
+
+Each hamza branch keeps its own index and publishes its own price as *named*
+roots rather than a count. Under the bare-alif rule `حدأ`/`حدا`, `دفأ`/`دفا`
+and `لمأ`/`لما` fuse; under the carried-alif rule nothing fuses. So looking up
+`حَدَأَة` returns one entry under `EXACT` and two under the bare-alif rule — an
+ambiguity manufactured by the rule itself, recorded as a `LexicalAmbiguityRecord`
+and never resolved. Run it:
+
+```bash
+python examples/arabic/apply_lexical_layer_to_maqayis.py
+```
+
+The roots in that example are declared by hand with a written
+`derivation_basis`, because this tree has no morphological analyser and writing
+one inside an example would quietly make the example the measurement. What is
+measured there is the lookup, not the root proposal.
+
 ## Development
 
 The first measurement in this tree against an *externally* annotated corpus is
