@@ -4800,6 +4800,21 @@ than as missing evidence of its own. This last correction changes
 `execution_digest` for deferred cases that claim a nisbah identity, which is
 admissible only because hardening precedes the freezing of the golden corpus.
 
+`G0.CASE-0.MATRIX` is the constitution of the golden cases, written before any
+case exists. It freezes what must be covered along three independent axes: every
+one of the eighteen laws in every one of the five standings, ninety cells of
+which fifty-six are reachable and thirty-four are refused with a named reason;
+an independent reachability witness for each of `PASS`, `BLOCK`, `DEFER`,
+invalid input, and the internal `ExecutionInvariantError`; and seven separations
+between the stages, such as `BLOCK` never producing a materialized identity and
+a blocked dependent law never producing a residual. Each reachable cell also
+names the standings forbidden alongside it on the same subject, so exclusivity
+is proved rather than assumed. No cell names a case: `case_id` is `None`
+throughout, and no engine module may import the matrix. The order is
+deliberate — the specification precedes the cases, and the cases precede the
+first engine readout — so that a later agreement is evidence rather than an
+expectation edited after seeing the result.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
