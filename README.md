@@ -3462,6 +3462,81 @@ proves nothing. `w*` and `μ` held everywhere and are reported as analytic in
 this deposit rather than counted as evidence, and the five decision outcomes the
 corpus never triggered are listed as untested.
 
+`G0.LEX-0` is the Arabic lexical evidence layer, and it is built *before* any
+attempt to show yield on an external text, because the lexicon is what a text is
+read against. Its ceiling is named rather than discovered: fifteen core outputs
+and nothing beyond them, with `MorphologicalAgreementRecord` deliberately
+outside that ceiling as an audit artifact — `CoreOutput ≠ AuditRecord`.
+
+The layer stops at `LexicalEvidenceCandidate`. A dictionary entry retrieved for
+a surface form is a *witness*, never a meaning: `AMatchIsNotAMeaning`,
+`ALexiconIsAWitnessNotAnAuthority`, and `RootEvidenceIsNotSurfaceMeaning`.
+`LexicalSignifiedCandidate` is declared deferred, not forgotten.
+
+Three algebras are projected from one shared anchor and never from each other:
+`PrimarySignificationAnchor(L, M, E)` is built once, and the signifier axis
+(`MutabaqaCandidate`/`TadammunCandidate`/`IltizamCandidate`), the signified axis
+(`SignifiedKindCandidate`), and the relation axis
+(`SignifierSignifiedRelationCandidate`) each read it independently — a test
+enforces that no axis module imports another. That is
+`AxesAreIndependentInAuthorityNotInData`. Each axis imports an already-proven
+closed vocabulary as its codomain (`DalalaKind`, `MadlulSection`,
+`LafzMadlulRelation`) instead of re-spelling it, under
+`ProvenVocabularyIsNotProvenAssignment`: a candidate that carries a proven
+member is not thereby a proven occurrence.
+
+The general law this milestone declares is
+`NecessaryRelationIsNotGenerativeAuthority`, with `ConditionIsNotMujib` as its
+statement: a relation that must hold is not a licence to produce the thing. Two
+literal instances are enforced — `LazimIsConditionNotMujib` and
+`PartOfMeaningIsConditionNotGenerativeAuthority` — so neither an `iltizam` nor a
+`tadammun` candidate can be built without a prior licensed anchor. Its
+constitutional scope is GENERAL, its runtime enforcement scope is `G0.LEX-0`
+alone, and its global runtime status is `NOT_YET_ESTABLISHED`; no `kernel/`
+module is touched, which a test enforces by scanning every one of them.
+
+Every candidate has the same four-part shape, `Output = Trigger + Condition +
+Gate + Evidence`, and the trigger is checked to be the occurrence itself so that
+a condition cannot be written into the trigger slot. No candidate type may carry
+a measure field, and issuance words (`verdict`, `license`, `birth`, `freeze`,
+`proven`) are refused unless the field is an explicit `_ref` to a record some
+other authority issued — `ReferenceIsNotIssuance`.
+
+Orthography keeps three hamza branches with no winner: `EXACT`,
+`NORMALIZE_TO_ALIF`, `NORMALIZE_TO_HAMZA_ALIF`, where `EXACT` is a *named*
+branch rather than the absence of one, each normalized branch carries the name
+of the rule it applied and what that rule destroys, and the raw form survives
+under all three (`ExactFormIsPreservedUnderEveryNormalizedBranch`). Ambiguity is
+recorded, never resolved, and there is no field to resolve it into.
+
+Morphology is split by origin, not by field order:
+`DerivedMorphologicalCandidate` is what the system produces from the occurrence
+alone, `ReportedMorphologicalEvidence` is what an outside source says, and the
+latter is structurally blocked from generative input. Their comparison is a
+five-valued record (`AGREE`, `DISAGREE`, `ONLY_DERIVED`, `ONLY_REPORTED`,
+`NEITHER`) with no member that prefers a side.
+
+`LexicalPathCandidate` covers generation and history only — `WADH_HISTORY`,
+`DERIVATION`, `TARIB`, `TRANSMISSION`, `RESIDUAL` — and shares no member name
+with the relation vocabulary, because `RelationStateIsNotGenerationHistory`.
+`RESIDUAL` is a member, not a blank: `NoPathIsNotTheDefaultPath`. Four kinds of
+evidence are refused outright: a matching pattern is not a derivation history, a
+foreign look is not `tarib`, a semantic difference is not `naql`, and frequency
+is not `wadh`.
+
+Coverage and discrimination stay apart, as they did for the MASAQ witness:
+`LexicalTaskOutcome` answers whether the task succeeded, `LexicalComparativeStanding`
+answers how it stands against a weaker model, and comparing a root-indexed
+lexicon against a surface-indexed comparator returns `NOT_COMPARABLE` rather
+than a loss — `NotComparableIsNotFailure`.
+
+The core reads no corpus at all. Adapters are clients of the layer, in the
+declared order `SyntheticAdapter → MASAQAdapter → QuranAdapter`; only the
+synthetic one exists, with four hand-checked cases, so that a failing test
+indicts the layer rather than the corpus. Maqayis is *not* retroactively
+preregistered — its bytes were already read, so the module is named a
+specification, never a preregistration.
+
 ## Development
 
 The first measurement in this tree against an *externally* annotated corpus is
