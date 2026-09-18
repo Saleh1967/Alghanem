@@ -22,6 +22,7 @@ from alghanem.evaluation import (
     NO_EVALUATION_VERDICT_BEFORE,
     STATIC_IMPORT_AUDIT_IS_NOT_PROCESS_ISOLATION,
     BoundEvaluationRequest,
+    BoundExecutionReceipt,
     EvaluationBinding,
     EvaluationError,
     EvaluationProtocolKind,
@@ -32,11 +33,15 @@ from alghanem.evaluation import (
     GoldRevealRecord,
     ProcessConfinementDeclaration,
     ProcessConfinementStanding,
+    ResidualCode,
     RunLedger,
+    RunResidual,
     evaluation_import_isolation_audit,
     freeze_system_identity,
     reader_import_audit,
+    report_from_receipt,
 )
+from alghanem.evaluation_execution import ExecutionAuthority, ReaderExecutionRequest
 from alghanem.prior_fiber import SuccessCriterion, fiber_import_isolation_audit
 
 _READERS = Path(__file__).resolve().parent / "readers"
@@ -72,18 +77,49 @@ def _identity(
     files = (_READERS / name,)
     return freeze_system_identity(
         implementation_files=files,
-        configuration=configuration or {"mode": "declared"},
+        configuration=configuration or {"mode": name},
         boundary_report=reader_import_audit(files),
         contract_interface_version=MADLUL_CONTRACT_INTERFACE_VERSION,
     )
 
 
-def _binding() -> EvaluationBinding:
+def _binding(
+    names: tuple[str, ...] = ("reader_one.py", "reader_two.py"),
+) -> EvaluationBinding:
     return EvaluationBinding(
         contract=_contract(),
         protocol=_protocol(),
-        reader_identities=(_identity("reader_one.py"), _identity("reader_two.py")),
+        reader_identities=tuple(_identity(name) for name in names),
     )
+
+
+_RECEIPTS: dict[tuple[str, str], BoundExecutionReceipt] = {}
+
+
+def _reader_name(identity: FrozenSystemIdentity) -> str:
+    return identity.implementation_files[0].rsplit("/", 1)[-1]
+
+
+def _receipt(
+    binding: EvaluationBinding, identity: FrozenSystemIdentity
+) -> BoundExecutionReceipt:
+    """شغِّل بايتاتِ القارئ المُجمَّدةَ فعلًا؛ ولا تقريرَ إلّا من إيصال سلطته."""
+
+    key = (binding.payload.payload_digest, identity.content_id)
+    receipt = _RECEIPTS.get(key)
+    if receipt is None:
+        name = _reader_name(identity)
+        path = _READERS / name
+        receipt = ExecutionAuthority(binding).execute(
+            ReaderExecutionRequest(
+                identity=identity,
+                implementation_files=(path,),
+                entry_file=path,
+                configuration={"mode": name},
+            )
+        )
+        _RECEIPTS[key] = receipt
+    return receipt
 
 
 def _report(
@@ -91,19 +127,8 @@ def _report(
     identity: FrozenSystemIdentity,
     *,
     run_ordinal: int = 1,
-    label: str = "قسمٌ مُصنَّف",
 ) -> FrozenRunReport:
-    request = binding.request_for(identity)
-    members = binding.contract.body.member_ids
-    return FrozenRunReport(
-        request_id=request.request_id,
-        system_content_id=identity.content_id,
-        payload_digest=binding.payload.payload_digest,
-        outputs=tuple((member_id, label) for member_id in members),
-        residuals=(),
-        trace=("قرأ الحمولةَ المُسلسَلة", "صنَّف كلَّ عضوٍ بمدخلاته المرصودة"),
-        run_ordinal=run_ordinal,
-    )
+    return report_from_receipt(_receipt(binding, identity), run_ordinal=run_ordinal)
 
 
 def _complete_ledger() -> tuple[RunLedger, EvaluationBinding]:
@@ -239,42 +264,34 @@ def test_a_reader_outside_the_binding_gets_no_request() -> None:
         binding.request_for(_identity("reader_one.py", configuration={"mode": "x"}))
 
 
-def test_a_report_on_another_payload_is_refused() -> None:
+def test_a_report_bound_to_another_payload_is_refused() -> None:
     binding = _binding()
-    ledger = RunLedger(binding)
-    identity = binding.reader_identities[0]
-    report = _report(binding, identity)
-    stray = FrozenRunReport(
-        request_id=report.request_id,
-        system_content_id=report.system_content_id,
-        payload_digest="a" * 64,
-        outputs=report.outputs,
-        residuals=report.residuals,
-        trace=report.trace,
-        run_ordinal=1,
+    elsewhere = EvaluationBinding(
+        contract=build_madlul_fiber_contract(commit_madlul_gold(bytes(range(1, 33)))),
+        protocol=_protocol(),
+        reader_identities=binding.reader_identities,
     )
+    ledger = RunLedger(binding)
+    stray = _report(elsewhere, elsewhere.reader_identities[0])
 
-    with pytest.raises(EvaluationError, match="حمولةٍ غيرِ التي سُلِّمت"):
+    with pytest.raises(EvaluationError, match="خارج هذا الربط"):
         ledger.record(stray)
 
 
-def test_an_incomplete_coverage_is_refused() -> None:
+def test_no_report_is_written_beside_a_bound_execution() -> None:
     binding = _binding()
-    ledger = RunLedger(binding)
-    identity = binding.reader_identities[0]
-    full = _report(binding, identity)
-    partial = FrozenRunReport(
-        request_id=full.request_id,
-        system_content_id=full.system_content_id,
-        payload_digest=full.payload_digest,
-        outputs=full.outputs[:-1],
-        residuals=(),
-        trace=full.trace,
-        run_ordinal=1,
-    )
+    receipt = _receipt(binding, binding.reader_identities[0])
 
-    with pytest.raises(EvaluationError, match="التغطيةُ تامّة"):
-        ledger.record(partial)
+    with pytest.raises(TypeError):
+        FrozenRunReport(  # type: ignore[call-arg]
+            request_id=receipt.request_id,
+            system_content_id=receipt.system_content_id,
+            payload_digest=receipt.payload_digest,
+            outputs=receipt.outputs,
+            residuals=receipt.residuals,
+            trace=receipt.trace,
+            run_ordinal=1,
+        )
 
 
 def test_the_first_run_is_the_reference_and_an_identical_repeat_is_a_witness() -> None:
@@ -291,13 +308,26 @@ def test_the_first_run_is_the_reference_and_an_identical_repeat_is_a_witness() -
 
 
 def test_a_differing_repeat_under_the_same_identity_is_refused_and_recorded() -> None:
-    binding = _binding()
+    binding = _binding(("reader_nondeterministic.py", "reader_two.py"))
     ledger = RunLedger(binding)
     identity = binding.reader_identities[0]
-    ledger.record(_report(binding, identity))
+    authority = ExecutionAuthority(binding)
+    path = _READERS / "reader_nondeterministic.py"
 
+    def run(ordinal: int) -> FrozenRunReport:
+        receipt = authority.execute(
+            ReaderExecutionRequest(
+                identity=identity,
+                implementation_files=(path,),
+                entry_file=path,
+                configuration={"mode": "reader_nondeterministic.py"},
+            )
+        )
+        return report_from_receipt(receipt, run_ordinal=ordinal)
+
+    ledger.record(run(1))
     with pytest.raises(EvaluationError, match="AFirstRunHappensOnce|إعادةُ تشغيل"):
-        ledger.record(_report(binding, identity, run_ordinal=2, label="قسمٌ آخر"))
+        ledger.record(run(2))
 
     assert ledger.violations
 
@@ -351,6 +381,53 @@ def test_a_valid_reveal_issues_a_record_that_carries_no_gold_and_no_nonce() -> N
     for label in _GOLD.values():
         assert label not in content
     assert NO_EVALUATION_VERDICT_BEFORE in record.verdict_law
+
+
+def test_a_residual_is_named_and_covers_its_member_without_blocking_the_reveal() -> (
+    None
+):
+    binding = _binding(("reader_residual.py", "reader_two.py"))
+    ledger = RunLedger(binding)
+    left, right = binding.reader_identities
+    ledger.record(_report(binding, left))
+    ledger.record(_report(binding, right))
+    record = GoldRevealAuthority(ledger).reveal(_GOLD, nonce=_NONCE)
+
+    assert ledger.blocking_residuals
+    assert ledger.blocking_residuals[0].residual_code is (
+        ResidualCode.UNCLASSIFIED_BY_READER
+    )
+    assert ledger.blocking_residuals[0].residual_digest
+    assert isinstance(record, GoldRevealRecord)
+
+
+def test_a_residual_refuses_a_free_string_and_an_empty_reason_or_evidence() -> None:
+    binding = _binding()
+    member = binding.contract.body.member_ids[0]
+    with pytest.raises(EvaluationError, match="سببُ البقيّة"):
+        RunResidual(
+            member_id=member,
+            residual_code=ResidualCode.REFUSED_BY_READER,
+            blocking=False,
+            reason="   ",
+            evidence_ref="stdout:residuals[0]",
+        )
+    with pytest.raises(EvaluationError, match="إحالةُ شاهد"):
+        RunResidual(
+            member_id=member,
+            residual_code=ResidualCode.REFUSED_BY_READER,
+            blocking=False,
+            reason="رفضه القارئ",
+            evidence_ref="",
+        )
+    with pytest.raises(EvaluationError, match="مفردته المغلقة"):
+        RunResidual(
+            member_id=member,
+            residual_code="unclassified_by_reader",  # type: ignore[arg-type]
+            blocking=False,
+            reason="رفضه القارئ",
+            evidence_ref="stdout:residuals[0]",
+        )
 
 
 def test_no_verdict_or_dominance_function_is_exported_in_this_phase() -> None:

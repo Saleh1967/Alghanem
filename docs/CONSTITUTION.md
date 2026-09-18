@@ -3814,3 +3814,57 @@ neither of them. `AGoldRevealRecordIsNotAVerdict`: no comparison, no dominance
 and no `Ω_M` exists in this phase, and the ceiling of any later reading remains
 `ObservedDominanceWithinFrozenDomain`.
 
+## `G0.EXEC-0` — bound reader execution
+
+`NoRunReportWithoutBoundExecution`. A report that carries a system identity is a
+claim about a system; it becomes a proof only when the identity was re-measured
+at execution time, the frozen bytes themselves received the frozen payload, and
+the bytes that came out were captured by the authority that ran them. The chain
+is `FrozenSystemIdentity → BoundEvaluationRequest → BlindPayload(bytes) →
+ExecutionAuthority → BoundExecutionReceipt → FrozenRunReport → RunLedger →
+GoldRevealRecord`, and there is no parallel road to a `FrozenRunReport`.
+
+`OnlyExecutionAuthorityIssuesExecutionReceipts` and
+`AHarnessIsNotAnExecutionAuthority`. Immutability after construction is not
+unforgeability of construction. A receipt exists only when the execution
+authority seals it, and a report exists only when it is derived from such a
+receipt, field by field, with nothing supplied by the caller.
+
+`ExecutedReaderIdentity == FrozenReaderIdentity`. The four identity components
+are re-measured from the real source bytes, the real configuration and a fresh
+import audit before anything runs, and recomposed with the same primitive that
+froze them. A mismatch, or any boundary violation found at execution time, means
+no execution is attributed to that identity.
+
+`MeasuredBytesAreExecutedBytes`. Measuring a file and then running its path
+leaves a gap between the measurement and the run. The measured bytes are
+materialized into a temporary workspace outside the tree and that copy is
+executed, with the workspace alone on the import path.
+
+`ImplementationChangedDuringExecution -> NoReferenceRunReport`. The source is
+re-measured after the process exits; if it moved, the event is receipted and
+named, and never promoted to a reference run.
+
+`FailureIsReceiptedButNotPromotedToReferenceRun`. Once execution is attempted,
+the outcome is recorded under a closed status vocabulary rather than raised away.
+A receipt is a witness to what happened, not a certificate of success; only a
+`COMPLETED` receipt can become a reference run report.
+
+`AResidualIsNamedNotStringly`. A residual is `member_id`, a code from a closed
+vocabulary, a blocking flag, a reason and an evidence reference. A blocking
+residual is recorded and carried into the next phase; it does not block the
+reveal, because the reveal is not a verdict.
+
+`SeparateProcess != Sandbox`. Running the reader in another interpreter process
+with a pruned environment, a temporary workspace and bytes on `stdin` is a
+declared execution mechanism, recorded as `SEPARATE_PROCESS_DECLARED` and not
+proven confinement: there is no seccomp, no network isolation and no filesystem
+sandbox in this phase.
+
+`EvaluationBoundary != ExecutionMechanism`. The evaluation layer stays pure and
+non-operational and never imports the execution layer; the execution layer
+declares every operational access it takes under its own import policy.
+
+`NoComparisonBeforeBoundExecution`. No second system, no comparison, no Pareto
+dominance, no `Ω_M` and no verdict is built in this phase. The ceiling remains a
+`GoldRevealRecord` conditioned on receipt-derived first run reports.

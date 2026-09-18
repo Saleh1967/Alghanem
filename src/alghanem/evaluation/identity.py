@@ -32,7 +32,11 @@ from .laws import (
 __all__ = [
     "FrozenSystemIdentity",
     "SYSTEM_IDENTITY_COMPONENTS",
+    "compose_system_content_id",
     "freeze_system_identity",
+    "measure_configuration_digest",
+    "measure_dependency_boundary_digest",
+    "measure_implementation_digest",
 ]
 
 SYSTEM_IDENTITY_COMPONENTS: tuple[str, ...] = (
@@ -114,7 +118,12 @@ class FrozenSystemIdentity:
     def content_id(self) -> str:
         """بصمةُ الهويّة؛ مُشتَقّةٌ من المكوّنات الأربعة لا مكتوبةً ولا مُسمّاة."""
 
-        return canonical_digest(canonical_bytes(self.as_identity_content()))
+        return compose_system_content_id(
+            implementation_digest=self.implementation_digest,
+            configuration_digest=self.configuration_digest,
+            dependency_boundary_digest=self.dependency_boundary_digest,
+            contract_interface_version=self.contract_interface_version,
+        )
 
     def as_canonical_content(self) -> dict[str, object]:
         """محتوى الهويّة للعرض والسجلّ."""
@@ -126,22 +135,104 @@ class FrozenSystemIdentity:
         }
 
 
-def _implementation_digest(files: tuple[Path, ...]) -> tuple[str, tuple[str, ...]]:
+def measure_implementation_digest(
+    files: tuple[Path, ...],
+) -> tuple[str, tuple[str, ...], dict[str, bytes]]:
+    """اقرأ بايتاتِ ملفّات التنفيذ الآن، وأعِد بصمتَها وأسماءَها وبايتاتِها.
+
+    هذه هي بدائيّةُ القياس الوحيدة: يُجمِّد بها التجميدُ الهويّةَ، وتُعيد بها
+    سلطةُ التنفيذ القياسَ قبل التشغيل وبعده. ونسختان من خوارزميّة قياسٍ واحدة
+    قياسان ينحرفان بصمت.
+    """
+
     if not isinstance(files, tuple) or not files:
         raise EvaluationError("هويّةُ قارئٍ تُقاس على ملفّاتٍ مُسمّاةٍ غيرِ فارغة")
     rows: list[list[str]] = []
     displayed: list[str] = []
+    measured: dict[str, bytes] = {}
     for path in files:
         resolved = path.resolve()
         if not resolved.is_file():
             raise EvaluationError(f"ملفُّ تنفيذٍ غيرُ موجود: {path}")
         name = displayed_path(resolved)
-        rows.append([name, hashlib.sha256(resolved.read_bytes()).hexdigest()])
+        content = resolved.read_bytes()
+        rows.append([name, hashlib.sha256(content).hexdigest()])
         displayed.append(name)
+        measured[name] = content
     if len(set(displayed)) != len(displayed):
         raise EvaluationError("ملفُّ تنفيذٍ مُكرَّرُ الاسم؛ والمكرّرُ يُرفَض لا يُطوى")
     rows.sort()
-    return canonical_digest(canonical_bytes(rows)), tuple(sorted(displayed))
+    return (
+        canonical_digest(canonical_bytes(rows)),
+        tuple(sorted(displayed)),
+        measured,
+    )
+
+
+def measure_configuration_digest(configuration: Mapping[str, str]) -> str:
+    """اشتقَّ بصمةَ الإعداد من مطابقةٍ مُعلَنة؛ بدائيّةٌ واحدةٌ لا تُنسَخ."""
+
+    if not isinstance(configuration, Mapping):
+        raise EvaluationError("إعدادُ القارئ مطابقةٌ مُعلَنة")
+    for key, value in configuration.items():
+        _require_text(key, "مفتاحُ الإعداد")
+        _require_text(value, f"قيمةُ الإعداد `{key}`")
+    return canonical_digest(
+        canonical_bytes([[key, configuration[key]] for key in sorted(configuration)])
+    )
+
+
+def measure_dependency_boundary_digest(report: ImportBoundaryReport) -> str:
+    """اشتقَّ بصمةَ حدِّ الاعتماد من تقريرٍ مقيسٍ؛ بدائيّةٌ واحدةٌ لا تُنسَخ."""
+
+    if not isinstance(report, ImportBoundaryReport):
+        raise EvaluationError("حدُّ الاعتماد تقريرٌ مقيسٌ من نوعه لا دعوى")
+    return canonical_digest(
+        canonical_bytes(
+            {
+                "policy_id": report.policy_id,
+                "reached_modules": list(report.reached_modules),
+                "violations": list(report.violations),
+                "dynamic_accesses": list(report.dynamic_accesses),
+            }
+        )
+    )
+
+
+def compose_system_content_id(
+    *,
+    implementation_digest: str,
+    configuration_digest: str,
+    dependency_boundary_digest: str,
+    contract_interface_version: str,
+) -> str:
+    """ركِّب بصمةَ الهويّة من مكوّناتها الأربعة، بلا اسمٍ ولا ملفّات."""
+
+    return canonical_digest(
+        canonical_bytes(
+            {
+                "implementation_digest": _require_digest(
+                    implementation_digest, "بصمةُ التنفيذ"
+                ),
+                "configuration_digest": _require_digest(
+                    configuration_digest, "بصمةُ الإعداد"
+                ),
+                "dependency_boundary_digest": _require_digest(
+                    dependency_boundary_digest, "بصمةُ حدّ الاعتماد"
+                ),
+                "contract_interface_version": _require_text(
+                    contract_interface_version, "إصدارُ واجهة العقد"
+                ),
+            }
+        )
+    )
+
+
+def _implementation_digest(files: tuple[Path, ...]) -> tuple[str, tuple[str, ...]]:
+    if not isinstance(files, tuple) or not files:
+        raise EvaluationError("هويّةُ قارئٍ تُقاس على ملفّاتٍ مُسمّاةٍ غيرِ فارغة")
+    digest, displayed, _ = measure_implementation_digest(files)
+    return digest, displayed
 
 
 def freeze_system_identity(
@@ -160,29 +251,11 @@ def freeze_system_identity(
             "لا تُجمَّد هويّةُ قارئٍ خرق حدَّ مصدره المُصرَّح؛ والمخالفات: "
             + "، ".join(boundary_report.violations + boundary_report.dynamic_accesses)
         )
-    if not isinstance(configuration, Mapping):
-        raise EvaluationError("إعدادُ القارئ مطابقةٌ مُعلَنة")
-    for key, value in configuration.items():
-        _require_text(key, "مفتاحُ الإعداد")
-        _require_text(value, f"قيمةُ الإعداد `{key}`")
     implementation_digest, displayed = _implementation_digest(implementation_files)
     return FrozenSystemIdentity(
         implementation_digest=implementation_digest,
-        configuration_digest=canonical_digest(
-            canonical_bytes(
-                [[key, configuration[key]] for key in sorted(configuration)]
-            )
-        ),
-        dependency_boundary_digest=canonical_digest(
-            canonical_bytes(
-                {
-                    "policy_id": boundary_report.policy_id,
-                    "reached_modules": list(boundary_report.reached_modules),
-                    "violations": list(boundary_report.violations),
-                    "dynamic_accesses": list(boundary_report.dynamic_accesses),
-                }
-            )
-        ),
+        configuration_digest=measure_configuration_digest(configuration),
+        dependency_boundary_digest=measure_dependency_boundary_digest(boundary_report),
         contract_interface_version=_require_text(
             contract_interface_version, "إصدارُ واجهة العقد"
         ),

@@ -1,4 +1,4 @@
-"""Run the `G0.EVAL-0` blind evaluation boundary end to end, up to a reveal record.
+"""Run the `G0.EXEC-0` bound reader execution end to end, up to a reveal record.
 
 Run it::
 
@@ -21,6 +21,18 @@ claim is `blind-by-boundary + commitment binding`, not secret gold:
 `__import__` and dynamic file access in a reader's source strengthens the
 boundary; it does not prove confinement. Process confinement stands as
 `DECLARED_DEFERRED`: `StaticImportAudit != ProcessIsolation`.
+
+**The readers are really executed.** No output in this script is fabricated by the
+harness. The frozen implementation bytes were executed against the bound blind
+payload under the declared separate-process execution mechanism, and the
+resulting bytes were captured in an authority-issued execution receipt. Every
+run report here is derived from such a receipt and from nothing else:
+`NoRunReportWithoutBoundExecution` and `AHarnessIsNotAnExecutionAuthority`.
+
+**A separate process is not a sandbox.** The reader runs in another interpreter
+process with a pruned environment, a temporary out-of-tree workspace and bytes on
+`stdin`; that is a declared mechanism, not proven confinement:
+`SeparateProcess != Sandbox`.
 
 Nothing here compares the readers. There is no verdict, no dominance and no
 `Ω_M` in this phase: the ceiling is a `GoldRevealRecord` and nothing beyond it.
@@ -45,10 +57,12 @@ from alghanem.arabic.madlul_alone_formal import (
 from alghanem.evaluation import (
     EVALUATION_LAWS,
     NO_EVALUATION_VERDICT_BEFORE,
+    NO_RUN_REPORT_WITHOUT_BOUND_EXECUTION,
+    BoundExecutionReceipt,
     EvaluationBinding,
     EvaluationProtocolKind,
+    ExecutionExitStatus,
     FrozenEvaluationProtocol,
-    FrozenRunReport,
     FrozenSystemIdentity,
     GoldRevealAuthority,
     ProcessConfinementDeclaration,
@@ -56,10 +70,22 @@ from alghanem.evaluation import (
     evaluation_import_isolation_audit,
     freeze_system_identity,
     reader_import_audit,
+    report_from_receipt,
+)
+from alghanem.evaluation_execution import (
+    EXECUTION_LAWS,
+    ExecutionAuthority,
+    ReaderExecutionRequest,
+    execution_import_isolation_audit,
 )
 from alghanem.prior_fiber import SuccessCriterion
 
 READERS = Path(__file__).resolve().parents[2] / "tests" / "evaluation" / "readers"
+
+MODES = {
+    "reader_one.py": "first observed input",
+    "reader_two.py": "last observed input",
+}
 
 
 def read_nonce() -> bytes:
@@ -86,25 +112,19 @@ def freeze_reader(file_name: str, mode: str) -> FrozenSystemIdentity:
     )
 
 
-def run_reader(
-    binding: EvaluationBinding, identity: FrozenSystemIdentity
-) -> FrozenRunReport:
-    """Hand the reader serialized bytes only, and freeze what it returned."""
+def execute_reader(
+    authority: ExecutionAuthority, identity: FrozenSystemIdentity, file_name: str
+) -> BoundExecutionReceipt:
+    """Execute the frozen bytes themselves and take the authority's receipt."""
 
-    payload = binding.payload
-    request = binding.request_for(identity)
-    outputs = tuple(
-        (member_id, "قسمٌ مُقترَحٌ من المدخلات المرصودة")
-        for member_id in binding.contract.body.member_ids
-    )
-    return FrozenRunReport(
-        request_id=request.request_id,
-        system_content_id=identity.content_id,
-        payload_digest=payload.payload_digest,
-        outputs=outputs,
-        residuals=(),
-        trace=("received serialized bytes", "classified every declared member"),
-        run_ordinal=1,
+    path = READERS / file_name
+    return authority.execute(
+        ReaderExecutionRequest(
+            identity=identity,
+            implementation_files=(path,),
+            entry_file=path,
+            configuration={"mode": MODES[file_name]},
+        )
     )
 
 
@@ -121,10 +141,7 @@ def main() -> None:
         payload_scheme="scheme.blind.bytes",
         contract_interface_version=MADLUL_CONTRACT_INTERFACE_VERSION,
     )
-    readers = (
-        freeze_reader("reader_one.py", "first observed input"),
-        freeze_reader("reader_two.py", "last observed input"),
-    )
+    readers = tuple(freeze_reader(name, MODES[name]) for name in MODES)
     binding = EvaluationBinding(
         contract=contract, protocol=protocol, reader_identities=readers
     )
@@ -154,18 +171,37 @@ def main() -> None:
     for section in MadlulSection:
         print(f"  withheld({section.value:<24}) = {payload.withholds(section.value)}")
 
+    execution = ExecutionAuthority(binding)
     ledger = RunLedger(binding)
-    for identity in readers:
-        ledger.record(run_reader(binding, identity))
+    receipts = []
+    for identity, file_name in zip(readers, MODES):
+        receipt = execute_reader(execution, identity, file_name)
+        receipts.append(receipt)
+        if receipt.exit_status is not ExecutionExitStatus.COMPLETED:
+            raise SystemExit(f"execution did not complete: {receipt.exit_status.value}")
+        ledger.record(report_from_receipt(receipt, run_ordinal=1))
 
     print()
-    print("== the frozen run reports ==")
+    print("== the authority-issued execution receipts ==")
+    print(f"execution mechanism: {execution.execution_mode.value}")
+    print(f"confinement proven : {execution.confinement.is_proven}")
+    for receipt in receipts:
+        print(
+            f"  receipt {receipt.receipt_digest[:16]} "
+            f"status {receipt.exit_status.value} "
+            f"output {receipt.output_digest[:8]} "
+            f"trace {receipt.trace_digest[:8]}"
+        )
+
+    print()
+    print("== the frozen run reports, each derived from its receipt ==")
     for identity in readers:
         report = ledger.first_report(identity.content_id)
         print(
             f"  ordinal {report.run_ordinal} "
             f"report {report.report_digest[:16]} "
-            f"classified {len(report.classified_member_ids)}"
+            f"classified {len(report.classified_member_ids)} "
+            f"residuals {len(report.residuals)}"
         )
     print(f"violations         : {len(ledger.violations)}")
 
@@ -191,7 +227,13 @@ def main() -> None:
     print(f"layer isolated     : {audit.is_isolated}")
     print(f"confinement proven : {confinement.is_proven}")
     print(f"confinement stand  : {confinement.standing.value}")
-    print(f"laws               : {len(EVALUATION_LAWS)}")
+    execution_audit = execution_import_isolation_audit()
+    print(
+        f"execution isolated : {execution_audit.is_isolated_within_declared_accesses}"
+    )
+    print(f"evaluation laws    : {len(EVALUATION_LAWS)}")
+    print(f"execution laws     : {len(EXECUTION_LAWS)}")
+    print(f"bound run law      : {NO_RUN_REPORT_WITHOUT_BOUND_EXECUTION[:60]}…")
     print(f"verdict law        : {NO_EVALUATION_VERDICT_BEFORE[:60]}…")
 
 
