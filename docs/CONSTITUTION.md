@@ -2157,6 +2157,46 @@ be mixed into one structure.
 The anchored layer is `src/alghanem/linguistic/anchored.py`. `§G0.NSB-0` and
 `§G0.PK-0 / G0.ONT-0` both remain standing and unedited.
 
+## G0.ONT-2 — the origin chain closed (registration only)
+
+`G0.ONT-1` removed free prose from the conditions the algebra reads, but left
+two remainders. First, the prose did not disappear from the chain; it moved one
+step back, into `FunctionalLicense.condition_statement`, so a license could
+still be founded on an interpretive sentence rather than on a standing
+condition. Second, a nisbah bound its role references to one `O_L` digest, yet
+nothing forbade its *conditions* from coming out of a different prior base than
+the one that `O_L` was founded on. Digest unity inside the nisbah is not origin
+unity along the chain.
+
+This section closes both remainders, and it closes them **beside** `v2`, never
+inside it. Four modules are added — `prior/references.py`,
+`ontology/linguistic_v2.py`, `ontology/lineage.py`,
+`linguistic/anchored_v3.py` — and not one historical file is edited. Nothing
+here names a corpus, computes a score, or registers a threshold; the negative
+controls of `G0.NSB-0` remain suspended.
+
+The chain that becomes readable is `PK₀ → PriorConditionRef → O₀ → O_L² →
+ExistenceLineageRef → Nisbah_v3`, and every arrow in it answers two questions:
+by whom was it licensed, and what is the identity of the origin it was licensed
+from.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `AHistoricalLayerKeepsItsDependencySemantics` | ENFORCED_AT_ORIGIN_CHAIN | Preserving a layer is preserving its own bytes *and* the identity of everything it depends on. A file left untouched whose imports moved beneath it no longer means what it meant, and its preserved bytes then testify to something that is no longer there. A witness freezes the digest of every module in `anchored.py`'s transitive internal import closure, asserts the closure gained no new member, and asserts `v1` and `v2` schema digests did not move. This is why `ontology/linguistic.py` is not edited: `anchored.py` imports it, so editing it would silently rewrite what `v2` says. |
+| `AConditionReferenceBelongsToThePriorBase` | ENFORCED_AT_ORIGIN_CHAIN | The type that references a prior condition lives in `prior/`, not in the ontology that consumes it. Prior information is a condition of the mental operation, not a product of the layer built on it; a reference minted by the consumer would let the consumer decide what it is allowed to depend on. |
+| `ALicenseIsFoundedOnAStandingLicensedConditionNotOnProse` | ENFORCED_AT_ORIGIN_CHAIN | `ReferencedFunctionalLicense` has no `condition_statement` and no `licensing_condition`: it carries a `PriorConditionRef` naming the very condition that licensed it, its place, its base, and that base's digest. Every license can therefore answer *which condition licensed me, from which base, with what digest*. A condition whose own license genus does not permit use founds no license. |
+| `AReferenceIsDerivedNotConstructed` | ENFORCED_AT_ORIGIN_CHAIN | Authority is a condition of a reference coming into being, not a property attached to it afterwards. `PriorConditionRef`, `ExistenceLineageRef` and `BaseSchemaRefV3` are issuable only through their `of(...)` derivation; direct construction raises rather than yielding a structurally valid but non-standing reference. Permitting a forgeable twin of an authoritative type would make the type itself mean less. |
+| `ALicenseAndItsConditionShareOneBase` | ENFORCED_AT_ORIGIN_CHAIN | `LinguisticOntologyV2` carries the prior-base reference of its general ontology, and refuses any license whose condition reference names a different base id or a different base digest. A base of the same name and another digest is another base. All offending licenses are named, not only the first. |
+| `OriginUnityIsNotOntologyUnity` | ENFORCED_AT_ORIGIN_CHAIN | `ExistenceLineageRef` records the three levels the chain passed through — prior base, general ontology, linguistic ontology — with the id and digest of each, and is derivable only from a linguistic ontology actually founded on the given general ontology. `AnchoredNisbahSignatureV3` then refuses any role reference from another ontology *and* any condition reference from another base, naming every offender. `v2` admits the mixed case; `v3` refuses it, and a paired witness shows exactly that. |
+| `ALineageIsNotEditedItIsExtended` | ENFORCED_AT_ORIGIN_CHAIN | The lineage is a separate object standing beside the ontologies, not a field added inside them. A chain that can be extended in place by a later stage stops being evidence of what it was when it was read; a further level is a new type carrying this one, never a mutation of it. |
+| `V3StandsBesideV2NotOverIt` | ENFORCED_AT_ORIGIN_CHAIN | `linguistic-nisbah.schema.v3` is built on the *identity* of `ANCHORED_NISBAH_SCHEMA` read from the living parent, is refused if it reuses `v2`'s version name, and is refused if the parent's digest has moved. Reading the parent's identity is not using the parent's implementation: `anchored_v3.py` imports exactly one name from `anchored.py`, and builds nothing with `v2`'s constructors. |
+| `TheAlgebraReadsTheExistenceAxisFromNamedPlacesOnly` | ENFORCED_AT_ORIGIN_CHAIN | The reader set of the existence axis inside `src/alghanem/linguistic/` is now exactly `anchored.py` and `anchored_v3.py`, and a witness asserts that set literally. The seven `v1` modules stay as they were left, and `ontology/` still reads no algebra at all. |
+| `NoBirthLanguageAtThisStage` | ENFORCED_AT_ORIGIN_CHAIN | A `PK₀` condition is *registered*, *standing*, *usable*, *licensed* — never *born*. No birth gate exists at this stage, so calling a condition born would grant it a rank that nothing has yet conferred. The new modules and this section use the registration vocabulary only. |
+| `NoReadoutExistsForONT2Either` | ENFORCED_AT_ORIGIN_CHAIN | Structure only. No corpus, score, threshold, birth, verdict, freeze or `E0`, and no `kernel/` module reads the layer. Whether `O_M` can be founded above `O_L²` — and what minimum it must add before positing, parthood, externality and entailment can arise rather than be assumed — is open and unregistered. |
+
+`§G0.NSB-0`, `§G0.PK-0 / G0.ONT-0` and `§G0.ONT-1` all remain standing and
+unedited, including `G0.ONT-1`'s own description of `v2`.
+
 ## Encyclopedia Nucleus — Constitution
 
 The encyclopedia is an application consumer of the kernel, never a replacement
