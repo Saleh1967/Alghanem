@@ -75,8 +75,10 @@ _CAPABILITY_MODULES = (
     "maturity.py",
     "measure.py",
     "node.py",
+    "provenance.py",
     "universe.py",
     "universe_v1.py",
+    "weights.py",
 )
 
 

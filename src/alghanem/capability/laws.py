@@ -6,6 +6,10 @@
 المقامَ مُعلَنٌ من خارج التنفيذ، وأنّ القدرةَ غيرَ المبنيّة **صفٌّ لا فراغ**.
 
 ولا سلطةَ لهذه الوحدة: لا تقرؤها بوّابةٌ في `kernel/`، ولا تُولِد ولا تُجمِّد.
+
+و`G0.METRIC-0.HARDEN` يُغلِق ما بقي مفتوحًا بعد أوّل شهادة: لا حسابَ على رتب
+البوّابات بلا أوزانٍ مُعلَنة، ولا اسمَ مصدرٍ يُقرأ موضعًا محقَّقًا، ولا عدَّ
+أوراقٍ يُقرأ مقدارًا للعربية، ولا بوّابةَ أهليّةٍ مُصرَّحٍ بها تُقرأ مُشتَقّة.
 """
 
 from __future__ import annotations
@@ -18,13 +22,23 @@ __all__ = [
     "A_RATIO_CARRIES_ITS_DENOMINATOR",
     "BREADTH_IS_NOT_READINESS",
     "CAPABILITY_LAWS",
+    "CITATION_NAME_IS_NOT_A_VERIFIED_SOURCE_LOCUS",
+    "DECLARED_COVERAGE_IS_NOT_SYSTEM_CAPABILITY",
+    "DIFFERENT_MEASUREMENT_SEMANTICS_ARE_NOT_COMPARABLE_CERTIFICATES",
+    "EQUAL_DOMAIN_WEIGHTING_IS_STILL_A_WEIGHTING_PROTOCOL",
     "EVIDENCE_MUST_HAVE_AN_AUTHORITY_PATH",
+    "KEEPING_A_QUESTION_DOES_NOT_LICENSE_A_FALSE_CITATION",
     "MISSING_IMPLEMENTATION_DOES_NOT_REMOVE_A_CAPABILITY",
     "NO_KERNEL_MODULE_CONSUMES_THE_CAPABILITY_MAP",
+    "NO_ORDINAL_GATE_ARITHMETIC_WITHOUT_DECLARED_WEIGHTS",
+    "OUR_CONCEPTUAL_MAPPING_IS_NOT_A_SOURCE_TEXT_ANCHOR",
     "REPEATED_REFERENCE_IS_NOT_INDEPENDENT_EVIDENCE",
+    "SOURCE_CITATION_DOES_NOT_LICENSE_SYSTEM_CAPABILITY",
     "STANDINGS_ARE_GATES_NOT_EPISTEMIC_MAGNITUDES",
+    "TAXONOMY_GRANULARITY_IS_NOT_CAPABILITY_IMPORTANCE",
     "THE_DENOMINATOR_IS_CITED_NOT_INVENTED",
     "THE_METRIC_MUST_BE_ALLOWED_TO_GO_DOWN",
+    "UNIFORM_READINESS_GATE_IS_NOT_A_DERIVED_READINESS_REQUIREMENT",
     "UNIMPLEMENTED_CAPABILITY_MUST_REMAIN_VISIBLE",
 ]
 
@@ -96,6 +110,68 @@ NO_KERNEL_MODULE_CONSUMES_THE_CAPABILITY_MAP: Final[str] = (
     "`kernel/`، ولا تُولِد ولا تُجمِّد ولا تُصدِر حكمًا؛ وهي تقيس ما وقع"
 )
 
+NO_ORDINAL_GATE_ARITHMETIC_WITHOUT_DECLARED_WEIGHTS: Final[str] = (
+    "NoOrdinalGateArithmeticWithoutDeclaredWeights: موضعُ البوّابة في التسلسل "
+    "رتبةُ ترخيصٍ لا مقدار، فلا يُجمَع ولا يُتوسَّط `gate_index` ولا يُقسَم على "
+    "عدد البوّابات؛ ورقمٌ مركّبٌ لا يصدر إلّا عن بروتوكول أوزانٍ مُعلَنٍ مُجمَّد "
+    "يُبرِّر وزنَ كلِّ بوّابةٍ بعينها"
+)
+
+DECLARED_COVERAGE_IS_NOT_SYSTEM_CAPABILITY: Final[str] = (
+    "DeclaredCoverage != SystemCapability: بلوغُ `DeclaredCoverage` تمامَه يعني "
+    "أنّ أسئلةَ المقام كلَّها حاضرةٌ مُعلَنة، لا أنّ النظامَ يملك شيئًا لغويًّا؛ "
+    "فالإعلانُ إثباتُ سؤالٍ لا إثباتُ قدرة"
+)
+
+CITATION_NAME_IS_NOT_A_VERIFIED_SOURCE_LOCUS: Final[str] = (
+    "CitationName != VerifiedSourceLocus: تسميةُ المصدرِ ليست توثيقَ موضعٍ فيه، "
+    "وإعادةُ اسمِ القدرة موضعًا استشهادٌ اسميّ؛ فلكلّ استشهادٍ مرتبةٌ مُصرَّحٌ "
+    "بها تُظهِر ما تحقّق منه فعلًا وما لم يتحقّق بعد"
+)
+
+OUR_CONCEPTUAL_MAPPING_IS_NOT_A_SOURCE_TEXT_ANCHOR: Final[str] = (
+    "OurConceptualMapping != SourceTextAnchor: بصمةُ صياغتنا المفهوميّة شاهدٌ "
+    "على عملنا نحن لا مرساةٌ في نصّ المصدر؛ وخلطُهما يجعل تحليلَنا نفسَه يبدو "
+    "نقلًا من الكتاب القديم"
+)
+
+KEEPING_A_QUESTION_DOES_NOT_LICENSE_A_FALSE_CITATION: Final[str] = (
+    "KeepingAQuestionDoesNotLicenseAFalseCitation: بقاءُ البابِ في المقام واجبٌ "
+    "لأنّ حذفَه تحسينُ رقمٍ بحذف سؤاله، ولا يُبيح ذلك نسبتَه إلى مصدرٍ لم يثبت "
+    "فيه؛ فالسؤالُ يبقى والمرتبةُ تنزل"
+)
+
+SOURCE_CITATION_DOES_NOT_LICENSE_SYSTEM_CAPABILITY: Final[str] = (
+    "SourceCitationDoesNotLicenseSystemCapability: توثيقُ المصدر يُثبِت المقامَ "
+    "ومصدرَ السؤال، ولا يرفع درجةَ نضجٍ واحدة؛ فلا `MODELED` ولا `EXECUTABLE` "
+    "ولا `GOLD` تُنال بجودة الاستشهاد"
+)
+
+TAXONOMY_GRANULARITY_IS_NOT_CAPABILITY_IMPORTANCE: Final[str] = (
+    "TaxonomyGranularity != CapabilityImportance: عدُّ الأوراق يجعل بابًا "
+    "قسمناه عشرًا أثقلَ من بابٍ قسمناه اثنتين، لا لأنّ ذلك ثبت بل لأنّنا "
+    "فصّلناه أكثر؛ فلا يُقرأ `LeafCoverage` وحدَه مقدارًا للعربية"
+)
+
+EQUAL_DOMAIN_WEIGHTING_IS_STILL_A_WEIGHTING_PROTOCOL: Final[str] = (
+    "EqualDomainWeightingIsStillAWeightingProtocol: تسويةُ المجالات في الوزن "
+    "هندسةُ قياسٍ أخرى لا حقيقةٌ مُشتَقّة، كتسوية البوّابات سواءً بسواء؛ فتُعرَض "
+    "نسبُ المجالات منفصلةً، ويبقى الرقمُ الموحَّد غيرَ معرَّفٍ حتى يُعلَن بروتوكولُ "
+    "أوزان المجالات"
+)
+
+UNIFORM_READINESS_GATE_IS_NOT_A_DERIVED_READINESS_REQUIREMENT: Final[str] = (
+    "UniformReadinessGate != DerivedReadinessRequirement: بوّابةُ أهليّةٍ واحدةٌ "
+    "لكلّ العقد تصريحٌ أوّليّ لا نتيجةَ تحليلِ اعتماديّة؛ وتبقى مُعلَنةً بأصلها "
+    "حتى تُشتَقّ من دور كلّ قدرةٍ في الطبقة التالية"
+)
+
+DIFFERENT_MEASUREMENT_SEMANTICS_ARE_NOT_COMPARABLE_CERTIFICATES: Final[str] = (
+    "DifferentMeasurementSemanticsAreNotComparableCertificates: شهادتان على "
+    "دلاليّتَي قياسٍ مختلفتين ليستا مقارنةً رقميّة؛ فتحمل كلُّ شهادةٍ إصدارَ "
+    "مُخطَّطها، وتغيّرُ المُلخَّص بتغيّر العقد الدلاليّ ليس تراجعًا"
+)
+
 CAPABILITY_LAWS: Final[tuple[str, ...]] = (
     A_DENOMINATOR_DERIVED_FROM_THE_IMPLEMENTATION_IS_NOT_A_MEASURE,
     A_DECLARED_DENOMINATOR_IS_NOT_THE_COMPLETE_ONTOLOGY_OF_ARABIC,
@@ -103,6 +179,16 @@ CAPABILITY_LAWS: Final[tuple[str, ...]] = (
     UNIMPLEMENTED_CAPABILITY_MUST_REMAIN_VISIBLE,
     THE_DENOMINATOR_IS_CITED_NOT_INVENTED,
     STANDINGS_ARE_GATES_NOT_EPISTEMIC_MAGNITUDES,
+    NO_ORDINAL_GATE_ARITHMETIC_WITHOUT_DECLARED_WEIGHTS,
+    DECLARED_COVERAGE_IS_NOT_SYSTEM_CAPABILITY,
+    CITATION_NAME_IS_NOT_A_VERIFIED_SOURCE_LOCUS,
+    OUR_CONCEPTUAL_MAPPING_IS_NOT_A_SOURCE_TEXT_ANCHOR,
+    KEEPING_A_QUESTION_DOES_NOT_LICENSE_A_FALSE_CITATION,
+    SOURCE_CITATION_DOES_NOT_LICENSE_SYSTEM_CAPABILITY,
+    TAXONOMY_GRANULARITY_IS_NOT_CAPABILITY_IMPORTANCE,
+    EQUAL_DOMAIN_WEIGHTING_IS_STILL_A_WEIGHTING_PROTOCOL,
+    UNIFORM_READINESS_GATE_IS_NOT_A_DERIVED_READINESS_REQUIREMENT,
+    DIFFERENT_MEASUREMENT_SEMANTICS_ARE_NOT_COMPARABLE_CERTIFICATES,
     BREADTH_IS_NOT_READINESS,
     EVIDENCE_MUST_HAVE_AN_AUTHORITY_PATH,
     REPEATED_REFERENCE_IS_NOT_INDEPENDENT_EVIDENCE,

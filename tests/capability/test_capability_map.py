@@ -19,6 +19,7 @@ from alghanem.capability import (
     CapabilityNodeError,
     CapabilityUniverse,
     CapabilityUniverseError,
+    CitationStanding,
     DerivedRatio,
     EvidenceError,
     EvidenceLedger,
@@ -27,6 +28,7 @@ from alghanem.capability import (
     EvidenceScope,
     MaturityStage,
     NodeKind,
+    ReadinessGateOrigin,
     RefusalCode,
     Requirement,
     ResidualDisclosure,
@@ -126,14 +128,18 @@ def test_every_denominator_node_carries_a_citation() -> None:
     for node_id in _UNIVERSE.node_ids():
         node = _UNIVERSE.node(node_id)
         assert node.citation.source_id in declared
-        assert node.citation.locus.strip()
+        assert isinstance(node.citation.citation_standing, CitationStanding)
 
 
 def test_a_node_cannot_cite_an_undeclared_source() -> None:
     """المصدرُ المُخترَع يُرفَض عند البناء لا بعد ظهوره في رقم."""
 
     with pytest.raises(CapabilityNodeError):
-        CapabilityCitation(source_id="a_book_i_invented", locus="بابٌ ما")
+        CapabilityCitation(
+            source_id="a_book_i_invented",
+            citation_standing=CitationStanding.UNVERIFIED_LOCUS,
+            locus="بابٌ ما",
+        )
 
 
 def test_a_capability_node_has_no_status_field() -> None:
@@ -148,6 +154,7 @@ def test_a_capability_node_has_no_status_field() -> None:
         "requirement",
         "citation",
         "readiness_gate",
+        "readiness_gate_origin",
     }
     for forbidden in ("stage", "attained", "coverage", "percent", "done", "status"):
         assert forbidden not in fields
@@ -164,7 +171,11 @@ def test_the_manifest_freezes_the_denominator_content() -> None:
 def test_an_orphan_node_is_outside_the_denominator() -> None:
     """عقدةٌ لا تبلغ الجذرَ خارجُ المقام؛ تُرفَض ولا تُلحَق صمتًا."""
 
-    citation = CapabilityCitation(source_id="sharh_ibn_aqil", locus="بابٌ")
+    citation = CapabilityCitation(
+        source_id="sharh_ibn_aqil",
+        citation_standing=CitationStanding.UNVERIFIED_LOCUS,
+        locus="بابٌ",
+    )
     root = CapabilityNode(
         node_id="ROOT",
         title="جذر",
@@ -173,6 +184,7 @@ def test_an_orphan_node_is_outside_the_denominator() -> None:
         requirement=Requirement.REQUIRED,
         citation=citation,
         readiness_gate=MaturityStage.S4_TESTED,
+        readiness_gate_origin=ReadinessGateOrigin.DECLARED_UNIFORM_V1,
     )
     orphan = CapabilityNode(
         node_id="ORPHAN",
@@ -182,6 +194,7 @@ def test_an_orphan_node_is_outside_the_denominator() -> None:
         requirement=Requirement.REQUIRED,
         citation=citation,
         readiness_gate=MaturityStage.S4_TESTED,
+        readiness_gate_origin=ReadinessGateOrigin.DECLARED_UNIFORM_V1,
     )
     with pytest.raises(CapabilityUniverseError):
         CapabilityUniverse("u", (root, orphan))
@@ -558,11 +571,18 @@ def test_the_certificate_holds_no_hand_entered_field() -> None:
         _UNIVERSE, _seeded_ledger()
     ).as_canonical_content()
     assert set(content) == {
+        "certificate_schema_version",
+        "headline_statement",
         "universe_manifest",
-        "coverage",
+        "gate_profile",
         "readiness",
         "certified_completion",
-        "arabic_total_coverage",
+        "composite_coverage",
+        "domain_coverage_profile",
+        "domain_balanced_coverage",
+        "dependency_weighted_coverage",
+        "citation_provenance",
+        "readiness_gate_origins",
         "governance",
         "blockers",
         "next_gate",

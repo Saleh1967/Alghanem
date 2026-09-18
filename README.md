@@ -5551,8 +5551,9 @@ it. This milestone builds the denominator first and the number second.
   or `prior`. The denominator therefore cannot quietly shrink to whatever the
   repository happens to contain. Its first version carries 182 nodes across the
   seventeen declared domains `A0 SOUND_ENCODING` … `A16
-  SIGNIFIER_SIGNIFIED_FRACTAL`, of which 164 are leaves, under the digest
-  `ea5fb00c649f07d4ddb5ef4f992b76df971601b38ab60991bb1da9d2ff37e36e`.
+  SIGNIFIER_SIGNIFIED_FRACTAL`, of which 164 are leaves. (Its digest was
+  restated by `G0.METRIC-0.HARDEN` below, which changed what a citation and a
+  readiness gate declare; the node and leaf counts did not move.)
 - **`ADeclaredDenominatorIsNotTheCompleteOntologyOfArabic`.** That 164 is a
   declaration, not a census of Arabic. Every node carries a named classical
   source and a locus inside it (`TheDenominatorIsCitedNotInvented`), and the
@@ -5577,8 +5578,9 @@ it. This milestone builds the denominator first and the number second.
 - **`Breadth != Readiness`.** Nine coverage indicators are derived separately
   (`BlindVerifiedCoverage` and `TransferVerifiedCoverage` are never merged),
   beside `CertifiedCompletion` and `Readiness`, where a parent is capped by its
-  weakest `REQUIRED` child. `ArabicTotalCoverage` exists as a headline and is
-  never rendered without its nine components.
+  weakest `REQUIRED` child. A single composite headline was also derived here —
+  and `G0.METRIC-0.HARDEN` below removed it, because it had no declared weight
+  protocol behind it.
 - **`TheMetricMustBeAllowedToGoDown`.** Negative evidence revokes a gate rather
   than sitting beside it, and widening the universe lowers the ratio. Both are
   tested.
@@ -5586,9 +5588,9 @@ it. This milestone builds the denominator first and the number second.
 The baseline certificate, derived by
 `examples/capability/derive_baseline_certificate.py`, reads
 `DeclaredCoverage = 164/164`, every one of the other eight coverages `0/164`,
-`Readiness = 0/164`, `ArabicTotalCoverage = 164/1476 ≈ 0.1111`, the three
-zero-target governance indicators at zero, and a single ranked blocker:
-`MODEL_ABSENT`, blocking all 164 leaves across all 17 domains.
+`Readiness = 0/164`, the three zero-target governance indicators at zero, and a
+single ranked blocker: `MODEL_ABSENT`, blocking all 164 leaves across all 17
+domains.
 
 The claim after this milestone is: *there now exists a cited, implementation-
 independent denominator for Arabic capability, a typed evidence path for every
@@ -5599,6 +5601,103 @@ Not built here, deliberately: `G0.MASAQ-0` (the MASAQ column constitution and
 gold qualification), `G0.METRIC-1` (historical experiment recovery), and `F₂`.
 No MASAQ column is read, no gold contract is issued, and no historical
 experiment is replayed in this milestone.
+
+### `G0.METRIC-0.HARDEN` — measurement semantics, citation provenance, denominator geometry
+
+`G0.METRIC-0` built the denominator correctly and then read one number off it
+incorrectly. `ArabicTotalCoverage = 164/1476 ≈ 0.1111` was the sum of each
+leaf's attained `gate_index` over `leaves × 9` — which silently treats nine
+licensing ranks as nine equal magnitudes, in direct contradiction of
+`StandingsAreGatesNotEpistemicMagnitudes`. This milestone deletes that figure
+rather than restating it, and closes four more gaps of the same kind: a number
+that claims more than what was established.
+
+- **`NoOrdinalGateArithmeticWithoutDeclaredWeights`.** No `gate_index` is
+  summed, averaged or divided anywhere in `src/alghanem/capability/`; it is only
+  ever compared, and a test enforces exactly that over the package's syntax
+  tree. A composite figure now has one legal path only:
+  `MeasurementWeightProtocol`, which must weigh every one of the nine attestable
+  gates exactly once with a positive weight *and a written justification*, and
+  carries its own `protocol_digest`. Until such a protocol is declared and
+  frozen, `CompositeCoverage`, `DomainBalancedCoverage` and
+  `DependencyWeightedCoverage` are each an `UndeclaredScalar` — standing
+  `UNDECLARED`, `value = None`, and a sealed reason
+  (`NO_DECLARED_WEIGHT_PROTOCOL`, `NO_DECLARED_DOMAIN_WEIGHT_PROTOCOL`,
+  `NO_DECLARED_DEPENDENCY_GRAPH`). Undefined with a reason is a result; a
+  flattering estimate is not.
+- **`TaxonomyGranularity != CapabilityImportance`.** 164 equally weighted leaves
+  make how finely a domain was subdivided act as its weight: `A2` holds fifteen
+  leaves and `A7` holds four, so `A2` moves any leaf-counted ratio nearly four
+  times as much — because we split it more, not because that was shown. The
+  aggregate now names its geometry (`COVERAGE_GEOMETRY = "LeafCoverage"`) inside
+  its own canonical content, and the seventeen domains are published as a
+  `DomainCoverageProfile` — one row per domain, nine coverages and a readiness
+  figure each — never averaged into one number. Weighting the domains equally
+  would itself be a weighting protocol
+  (`EqualDomainWeightingIsStillAWeightingProtocol`), so the scalar stays
+  undefined.
+- **`CitationName != VerifiedSourceLocus`.** `CapabilityCitation` previously
+  carried a free-text `locus` that was, in most nodes, just the capability's own
+  Arabic name — a nominal citation read as documentation. Every citation now
+  declares a `CitationStanding`: `EXACT_TEXTUAL_LOCUS`, `SECTION_LEVEL_LOCUS`,
+  `CONCEPTUAL_CORRESPONDENCE`, `MODERN_FORMAL_EXTENSION` or `UNVERIFIED_LOCUS`,
+  with `edition_id`, `volume`, `page_range` and `chapter_bab` all nullable and
+  validated per standing. An `EXACT_TEXTUAL_LOCUS` requires an edition, a
+  locator, a chapter and a source anchor; a `MODERN_FORMAL_EXTENSION` may carry
+  no locator at all, so a modern formalisation can never be dressed as a
+  quotation from a classical book. `DeclaredSource` and `DeclaredEdition` are
+  separated, and `DECLARED_EDITIONS` is deliberately empty: no edition is
+  invented before it is verified.
+- **`OurConceptualMapping != SourceTextAnchor`.** Our own formalisation digest
+  lives in `conceptual_mapping_digest` and never in
+  `source_text_anchor_digest`; a citation whose two digests are equal is
+  rejected outright. `CitationProvenanceProfile` publishes the five standing
+  counts side by side — no standing is scored as a failure — plus one explicit
+  ratio, `TextuallyAnchoredCoverage`, which counts `EXACT_TEXTUAL_LOCUS` and
+  nothing else. On V1 it reads `0/164`.
+- **`KeepingAQuestionDoesNotLicenseAFalseCitation`.** `A7
+  SINGLE_WORD_COMPOSITION`, the `A14` speech/reference/event-time triad and the
+  `A11` agentivity/patientivity pair stay inside the declared universe — dropping
+  a question improves a denominator by deleting it — but their provenance is
+  corrected to `MODERN_FORMAL_EXTENSION` and `UNVERIFIED_LOCUS` respectively. A
+  test asserts both: that they remain, and that they remain honestly labelled.
+- **`SourceCitationDoesNotLicenseSystemCapability`.** Documenting a source
+  proves where the *question* came from, never that the system can answer it. No
+  citation standing moves any maturity stage, and a test holds the modern,
+  conceptual and unverified leaves all at `S1_DECLARED`.
+- **`UniformReadinessGate != DerivedReadinessRequirement`.** Every node declares
+  `S5_FROZEN_DOMAIN` as its readiness gate, which is a V1 convention and not an
+  analysis of what each capability actually needs. Each node now carries a
+  `ReadinessGateOrigin`, and `ReadinessGateOriginProfile` reports
+  `DECLARED_UNIFORM_V1 = 164` against `DerivedReadinessCoverage = 0/164`, so the
+  convention is visible as a convention.
+- **`DeclaredCoverage != SystemCapability`.** The certificate's headline now
+  reads *164/164 declared questions are present. No composite Arabic capability
+  percentage is currently defined.* — `164/164 DECLARED` means every V1 question
+  is on the table, not that the system holds all of anything.
+- **`DifferentMeasurementSemanticsAreNotComparableCertificates`.** The
+  certificate carries `certificate_schema_version =
+  "arabic-state-certificate.v2"` inside its own canonical content, so the digest
+  change is legible as a change of semantic contract rather than as a
+  regression, and a v1 figure is never compared to a v2 figure as if they
+  measured the same thing.
+
+The baseline now reads: 182 nodes and 164 leaves under
+`3303beaa77ab8ccf86f5c175077f8a3a667765f217b53dce946e5330f2a00c8e`,
+`DeclaredCoverage = 164/164` with the other eight coverages and `Readiness` at
+`0/164`, three undefined scalars each with their reason, a seventeen-row
+`DomainCoverageProfile`, `UnverifiedLocusCount = 6` with
+`TextuallyAnchoredCoverage = 0/164`, and `DerivedReadinessCoverage = 0/164`.
+
+The claim after this milestone is: *the system now knows it has no legitimate
+law for turning nine qualitative gates into one quantity, and says so in the
+certificate instead of printing a number it cannot justify.* The fall from
+`11.11%` to `UNDEFINED` is the result, not a loss of one.
+
+Not built here, deliberately: `G0.MASAQ-0`, `G0.METRIC-1` and `F₂`. No
+`MeasurementWeightProtocol`, `DomainWeightProtocol` or dependency graph is
+declared in this milestone — building the machinery that would make one legible
+is not the same as declaring one.
 
 
 ```bash

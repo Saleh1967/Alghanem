@@ -18,11 +18,16 @@ transfer is claimed here, and none is silently assumed. So the baseline reads
 ``0.0`` over the same denominator. That is the intended shape of a first
 certificate: a truthful floor, not a flattering estimate.
 
-``ArabicTotalCoverage`` is printed as a headline and is never printed alone: its
-nine components follow it, with ``BlindVerifiedCoverage`` and
-``TransferVerifiedCoverage`` kept apart, because collapsing them hides the very
-distinction this certificate exists to show. ``Coverage`` and ``Readiness`` are
-printed as two figures, never as one (``Breadth != Readiness``).
+No composite Arabic percentage is printed, because none is defined: nine
+qualitative gates do not become one number without a declared weight protocol
+(``NoOrdinalGateArithmeticWithoutDeclaredWeights``), so ``CompositeCoverage``,
+``DomainBalancedCoverage`` and ``DependencyWeightedCoverage`` each print as
+``UNDEFINED`` with the reason that keeps them undefined. The seventeen domains
+are printed one row at a time rather than averaged, because weighting them
+equally is itself a weighting protocol
+(``EqualDomainWeightingIsStillAWeightingProtocol``). ``Coverage`` and
+``Readiness`` are printed as two figures, never as one
+(``Breadth != Readiness``).
 
 This script issues no verdict, freezes nothing, and imports nothing from
 ``alghanem.kernel``.
@@ -33,10 +38,14 @@ from __future__ import annotations
 import sys
 
 from alghanem.capability import (
+    CITATION_STANDING_SEQUENCE,
     DECLARED_ARABIC_CAPABILITY_UNIVERSE_V1,
     ArabicStateCertificate,
     DerivedRatio,
     EvidenceLedger,
+    MaturityStage,
+    ReadinessGateOrigin,
+    UndeclaredScalar,
     derive_arabic_state_certificate,
     derive_declaration_evidence,
 )
@@ -49,6 +58,15 @@ def _render_ratio(name: str, ratio: DerivedRatio) -> str:
 
     value = "undefined" if ratio.value is None else f"{ratio.value:.4f}"
     return f"  {name:<28} {ratio.numerator:>4} / {ratio.denominator:<5} = {value}"
+
+
+def _render_undeclared(scalar: UndeclaredScalar) -> str:
+    """اعرض الرقمَ غيرَ المعرَّف بسببه؛ الامتناعُ مُفصَحٌ عنه لا مسكوتٌ عليه."""
+
+    return (
+        f"  {scalar.name:<28} {scalar.standing.value:<10} "
+        f"value: undefined   reason: {scalar.reason.value}"
+    )
 
 
 def _derive_baseline() -> ArabicStateCertificate:
@@ -72,16 +90,49 @@ def main() -> int:
     print(f"declared leaves     : {manifest.leaf_count}")
     print(f"certificate digest  : {certificate.certificate_digest}")
     print()
-    print("ArabicTotalCoverage (headline, never read alone):")
-    print(_render_ratio("ArabicTotalCoverage", certificate.arabic_total_coverage))
+    print(f"schema version      : {certificate.schema_version}")
     print()
-    print("Coverage indicators (nine, kept apart):")
-    for name, ratio in certificate.coverage.items():
+    print(certificate.headline_statement)
+    print()
+    print("Gate profile (nine, kept apart, never merged):")
+    for name, ratio in certificate.gate_profile.items():
         print(_render_ratio(name, ratio))
     print()
     print("Coverage is not readiness:")
     print(_render_ratio("CertifiedCompletion", certificate.certified_completion))
     print(_render_ratio("Readiness", certificate.readiness))
+    print()
+    print("Undefined scalars (no weighting protocol has been declared):")
+    print(_render_undeclared(certificate.composite_coverage))
+    print(_render_undeclared(certificate.domain_balanced_coverage))
+    print(_render_undeclared(certificate.dependency_weighted_coverage))
+    print()
+    print("DomainCoverageProfile (seventeen domains, never averaged):")
+    for row in certificate.domain_coverage_profile.rows:
+        declared = row.coverage[MaturityStage.S1_DECLARED]
+        modeled = row.coverage[MaturityStage.S2_MODELED]
+        print(
+            f"  {row.domain_id:<5} leaves {row.leaf_total:>3}"
+            f"   declared {declared.numerator:>3}/{declared.denominator:<3}"
+            f"   modeled {modeled.numerator:>3}/{modeled.denominator:<3}"
+            f"   readiness {row.readiness.numerator:>3}/{row.readiness.denominator}"
+        )
+    print()
+    print("CitationProvenanceProfile (documentation standings, not a score):")
+    provenance = certificate.citation_provenance
+    for standing in CITATION_STANDING_SEQUENCE:
+        print(f"  {standing.value:<28} {provenance.standing_counts[standing]:>4}")
+    print(
+        _render_ratio(
+            "TextuallyAnchoredCoverage", provenance.textually_anchored_coverage
+        )
+    )
+    print()
+    print("ReadinessGateOriginProfile:")
+    origins = certificate.readiness_gate_origins
+    for origin in ReadinessGateOrigin:
+        print(f"  {origin.value:<28} {origins.origin_counts[origin]:>4}")
+    print(_render_ratio("DerivedReadinessCoverage", origins.derived_readiness_coverage))
     print()
     print("Governance indicators:")
     governance = certificate.governance
@@ -110,12 +161,15 @@ def main() -> int:
     reproduced = _derive_baseline()
     outcomes = (
         reproduced.certificate_digest == certificate.certificate_digest,
-        certificate.coverage["DeclaredCoverage"].numerator == manifest.leaf_count,
+        certificate.gate_profile["DeclaredCoverage"].numerator == manifest.leaf_count,
         all(
             ratio.numerator == 0
-            for name, ratio in certificate.coverage.items()
+            for name, ratio in certificate.gate_profile.items()
             if name != "DeclaredCoverage"
         ),
+        certificate.composite_coverage.value is None,
+        certificate.domain_balanced_coverage.value is None,
+        certificate.dependency_weighted_coverage.value is None,
         governance.zero_targets_are_met,
     )
     if all(outcomes):

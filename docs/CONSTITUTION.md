@@ -3968,3 +3968,64 @@ denominator is undefined, neither zero nor complete.
 `NoKernelModuleConsumesTheCapabilityMap`. No gate in `kernel/` reads this
 package. It births nothing, freezes nothing and issues no verdict; it measures
 what has already happened and names what has not.
+
+## `G0.METRIC-0.HARDEN` — measurement semantics, citation provenance, denominator geometry
+
+`NoOrdinalGateArithmeticWithoutDeclaredWeights`. A gate index is a rank of
+permission, not a magnitude. Summing, averaging or dividing `gate_index` turns
+nine qualitative licences into nine equal quantities and contradicts
+`StandingsAreGatesNotEpistemicMagnitudes` inside the very figure that cites it. A
+composite number is licensed only by a declared, frozen weight protocol that
+weighs every attestable gate exactly once and justifies each weight. Absent such
+a protocol the number is **undefined with a named reason**, never zero, never an
+estimate, and never a default of equal weights.
+
+`EqualDomainWeightingIsStillAWeightingProtocol`. Choosing to weigh the domains
+equally is a choice of measurement geometry, not an escape from choosing. It may
+not be presented as the neutral or derived figure.
+
+`TaxonomyGranularity != CapabilityImportance`. Under leaf counting, how finely a
+domain was subdivided becomes its weight. A domain split into fifteen leaves
+moves the ratio nearly four times as much as one split into four, for reasons of
+drafting rather than of evidence. Every coverage figure therefore names the
+geometry that produced it, and domain figures are published as a profile of
+separate rows rather than collapsed into one number.
+
+`DeclaredCoverage != SystemCapability`. That every declared question is present
+is a statement about the question list, not about the system. A full declaration
+coverage means the denominator is complete as declared; it licenses no claim that
+anything linguistic has been built.
+
+`CitationName != VerifiedSourceLocus`. Naming a source and naming the capability
+inside that source's field is not a verified locus. Every citation declares the
+standing of its link — exact textual locus, section-level locus, conceptual
+correspondence, modern formal extension or unverified locus — and the locators
+proper to that standing are required for it and forbidden above it. A modern
+formalisation may carry no page or chapter, so that it can never be read as a
+quotation from a classical text. A source and an edition are distinct
+declarations, and no edition identifier is issued before that edition is
+verified.
+
+`OurConceptualMapping != SourceTextAnchor`. A digest of our own formalisation is
+evidence of what we wrote, not an anchor into a source text. The two are separate
+fields, and a citation in which they coincide is rejected.
+
+`KeepingAQuestionDoesNotLicenseAFalseCitation`. A question whose classical
+provenance is unproven stays in the denominator — removing it would improve the
+figure by deleting the question — but it is labelled for what it is. Retention
+and honest labelling are one obligation, not two alternatives.
+
+`SourceCitationDoesNotLicenseSystemCapability`. Documenting a source establishes
+where the question came from. It raises no maturity gate, because nothing about
+the system has been shown by it.
+
+`UniformReadinessGate != DerivedReadinessRequirement`. A single readiness gate
+declared uniformly across every node is a convention of the first version, not a
+requirement derived from each capability's role. The origin of every readiness
+gate is declared, and the share derived from capability role is reported
+separately so the convention cannot be read as an analysis.
+
+`DifferentMeasurementSemanticsAreNotComparableCertificates`. A certificate
+carries its schema version in its own content. When the semantics of measurement
+change, the digest changes as a change of contract, and figures from two schema
+versions are not compared as if they measured the same thing.

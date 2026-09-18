@@ -1,35 +1,58 @@
-"""`G0.METRIC-0`: `ArabicStateCertificate` — حالُ العربية مُشتَقّةً بالكامل.
+"""`G0.METRIC-0.HARDEN`: `ArabicStateCertificate` — حالُ العربية مُشتَقّةً بالكامل.
 
 ليس في هذه الشهادة حقلٌ يُملأ يدويًّا: كلُّ رقمٍ فيها له طريقٌ إلى شاهدٍ ذي
 مسارِ سلطة، أو إلى غيابٍ مقيسٍ في المقام المُعلَن. وهي تحمل سقفَها معها: مقامٌ
 مُعلَنٌ لا أنطولوجيا تامّة، وبوّاباتٌ لا مقاديرُ معرفيّة، وتغطيةٌ لا أهليّة.
 
-و`ArabicTotalCoverage` عنوانٌ رئيسٌ **لا يُقرأ وحدَه**: هو وسطُ درجاتِ الأوراق
-منسوبًا إلى آخر بوّابة، ويُعرَض دائمًا ومعه مكوّناتُه التسعةُ مستقلّةً، لأنّ
-دمجَ `Blind` و`Transfer` في رقمٍ واحدٍ يُخفي الفرقَ الذي أُنشئت الشهادةُ لإظهاره.
+ولم يعد فيها عنوانٌ مركّب: تسعُ بوّاباتٍ نوعيّةٍ لا تصير رقمًا واحدًا بلا
+بروتوكول أوزانٍ مُعلَن، فيبقى `CompositeCoverage` **غيرَ معرَّفٍ بسببه** لا
+مقدَّرًا (`NoOrdinalGateArithmeticWithoutDeclaredWeights`). وكذلك
+`DomainBalancedCoverage` و`DependencyWeightedCoverage`؛ وتُعرَض المجالاتُ صفًّا
+صفًّا في `DomainCoverageProfile` بدلًا من تسويتها في وسطٍ واحد.
+
+وتحمل الشهادةُ إصدارَ مُخطَّطها: شهادتان على دلاليّتَي قياسٍ مختلفتين ليستا
+مقارنةً رقميّة (`DifferentMeasurementSemanticsAreNotComparableCertificates`).
 """
 
 from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
+from typing import Final
 
 from ..canonical_content import canonical_bytes, canonical_digest
-from .aggregate import DerivedRatio, NodeAggregate, aggregate_universe
+from .aggregate import (
+    DerivedRatio,
+    DomainCoverageProfile,
+    NodeAggregate,
+    aggregate_universe,
+    derive_domain_coverage_profile,
+)
 from .blockers import BlockerRow, rank_blockers
 from .evidence import EvidenceLedger
 from .governance import GovernanceIndicators, derive_governance_indicators
-from .laws import CAPABILITY_LAWS
+from .laws import CAPABILITY_LAWS, DECLARED_COVERAGE_IS_NOT_SYSTEM_CAPABILITY
 from .maturity import GATE_SEQUENCE, MaturityStage
 from .measure import LeafMeasurement, measure_leaves
+from .provenance import (
+    CitationProvenanceProfile,
+    ReadinessGateOriginProfile,
+    derive_citation_provenance_profile,
+    derive_readiness_gate_origin_profile,
+)
 from .universe import CapabilityUniverse, UniverseManifest
+from .weights import UndeclaredScalar, UndeclaredScalarReason
 
 __all__ = [
+    "CERTIFICATE_SCHEMA_VERSION",
     "COVERAGE_INDICATOR_NAMES",
     "ArabicStateCertificate",
     "CertificateNodeRow",
     "derive_arabic_state_certificate",
 ]
+
+CERTIFICATE_SCHEMA_VERSION: Final[str] = "arabic-state-certificate.v2"
+"""إصدارُ مُخطَّط الشهادة؛ تغيّرُ الدلاليّة يُعلَن هنا ولا يُقرأ تراجعًا في رقم."""
 
 COVERAGE_INDICATOR_NAMES: Mapping[MaturityStage, str] = {
     MaturityStage.S1_DECLARED: "DeclaredCoverage",
@@ -96,13 +119,48 @@ class ArabicStateCertificate:
 
     universe_manifest: UniverseManifest
     rows: Mapping[str, CertificateNodeRow]
-    coverage: Mapping[str, DerivedRatio]
+    gate_profile: Mapping[str, DerivedRatio]
     readiness: DerivedRatio
     certified_completion: DerivedRatio
-    arabic_total_coverage: DerivedRatio
+    composite_coverage: UndeclaredScalar
+    domain_coverage_profile: DomainCoverageProfile
+    domain_balanced_coverage: UndeclaredScalar
+    dependency_weighted_coverage: UndeclaredScalar
+    citation_provenance: CitationProvenanceProfile
+    readiness_gate_origins: ReadinessGateOriginProfile
     governance: GovernanceIndicators
     blockers: tuple[BlockerRow, ...]
     laws: tuple[str, ...]
+
+    @property
+    def schema_version(self) -> str:
+        """إصدارُ مُخطَّط هذه الشهادة؛ يُقرأ قبل أن يُقارَن رقمٌ فيها بآخر."""
+
+        return CERTIFICATE_SCHEMA_VERSION
+
+    @property
+    def coverage(self) -> Mapping[str, DerivedRatio]:
+        """البوّاباتُ التسعُ منفصلةً؛ اسمٌ آخرُ لـ`gate_profile` لا رقمٌ ثانٍ."""
+
+        return self.gate_profile
+
+    @property
+    def declared_coverage_law(self) -> str:
+        """بلوغُ الإعلان تمامَه ليس تملّكًا لشيءٍ لغويّ؛ القانونُ محمولٌ معه."""
+
+        return DECLARED_COVERAGE_IS_NOT_SYSTEM_CAPABILITY
+
+    @property
+    def headline_statement(self) -> str:
+        """العنوانُ الصحيح: أسئلةٌ مُعلَنةٌ حاضرة، ولا نسبةَ عربيةٍ مركّبةٌ الآن."""
+
+        declared = self.gate_profile["DeclaredCoverage"]
+        return (
+            f"{self.universe_manifest.universe_id}: "
+            f"{declared.numerator}/{declared.denominator} declared questions are "
+            "present. No composite Arabic capability percentage is currently "
+            "defined."
+        )
 
     @property
     def next_gate(self) -> str | None:
@@ -116,15 +174,28 @@ class ArabicStateCertificate:
         """المحتوى القانونيّ للشهادة كاملةً."""
 
         return {
+            "certificate_schema_version": self.schema_version,
+            "headline_statement": self.headline_statement,
             "universe_manifest": self.universe_manifest.as_canonical_content(),
-            "coverage": {
+            "gate_profile": {
                 name: ratio.as_canonical_content()
-                for name, ratio in self.coverage.items()
+                for name, ratio in self.gate_profile.items()
             },
             "readiness": self.readiness.as_canonical_content(),
             "certified_completion": self.certified_completion.as_canonical_content(),
-            "arabic_total_coverage": (
-                self.arabic_total_coverage.as_canonical_content()
+            "composite_coverage": self.composite_coverage.as_canonical_content(),
+            "domain_coverage_profile": (
+                self.domain_coverage_profile.as_canonical_content()
+            ),
+            "domain_balanced_coverage": (
+                self.domain_balanced_coverage.as_canonical_content()
+            ),
+            "dependency_weighted_coverage": (
+                self.dependency_weighted_coverage.as_canonical_content()
+            ),
+            "citation_provenance": self.citation_provenance.as_canonical_content(),
+            "readiness_gate_origins": (
+                self.readiness_gate_origins.as_canonical_content()
             ),
             "governance": self.governance.as_canonical_content(),
             "blockers": [row.as_canonical_content() for row in self.blockers],
@@ -161,28 +232,31 @@ def derive_arabic_state_certificate(
         )
         for node_id in universe.node_ids()
     }
-    coverage = {
+    gate_profile = {
         COVERAGE_INDICATOR_NAMES[stage]: root.coverage[stage]
         for stage in GATE_SEQUENCE[1:]
     }
-    leaves = universe.leaf_ids()
-    last_gate_index = GATE_SEQUENCE[-1].gate_index
-    total_coverage = DerivedRatio(
-        numerator=sum(
-            measurements[leaf_id].attained_stage.gate_index for leaf_id in leaves
-        ),
-        denominator=len(leaves) * last_gate_index,
-        denominator_source=(
-            f"{universe.manifest.universe_id}.leaves × {GATE_SEQUENCE[-1].value}"
-        ),
-    )
     return ArabicStateCertificate(
         universe_manifest=universe.manifest,
         rows=rows,
-        coverage=coverage,
+        gate_profile=gate_profile,
         readiness=root.readiness,
         certified_completion=root.certified_completion,
-        arabic_total_coverage=total_coverage,
+        composite_coverage=UndeclaredScalar(
+            name="CompositeCoverage",
+            reason=UndeclaredScalarReason.NO_DECLARED_WEIGHT_PROTOCOL,
+        ),
+        domain_coverage_profile=derive_domain_coverage_profile(universe, aggregates),
+        domain_balanced_coverage=UndeclaredScalar(
+            name="DomainBalancedCoverage",
+            reason=UndeclaredScalarReason.NO_DECLARED_DOMAIN_WEIGHT_PROTOCOL,
+        ),
+        dependency_weighted_coverage=UndeclaredScalar(
+            name="DependencyWeightedCoverage",
+            reason=UndeclaredScalarReason.NO_DECLARED_DEPENDENCY_GRAPH,
+        ),
+        citation_provenance=derive_citation_provenance_profile(universe),
+        readiness_gate_origins=derive_readiness_gate_origin_profile(universe),
         governance=derive_governance_indicators(universe, ledger, measurements),
         blockers=rank_blockers(universe, measurements),
         laws=CAPABILITY_LAWS,
