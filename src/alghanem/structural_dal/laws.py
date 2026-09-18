@@ -127,8 +127,7 @@ THE_PART_KEEPS_ITS_PARENT_ANCHOR: Final[str] = (
 )
 
 A_NEW_ANCHOR_REQUIRES_PROVENANCE: Final[str] = (
-    "لا تُنشَأ مِرساةٌ جديدةٌ منفصلةٌ بلا نسب؛ وكلُّ كلٍّ مُرقًّى يحمل مصدرَه "
-    "ومِرساةَ أبيه."
+    "لا تُنشَأ مِرساةٌ جديدةٌ منفصلةٌ بلا نسب؛ وكلُّ كلٍّ مُرقًّى يحمل مصدرَه " "ومِرساةَ أبيه."
 )
 
 BLOCKING_RESIDUAL_FORBIDS_POSITIVE_PROMOTION: Final[str] = (
@@ -147,8 +146,7 @@ NO_LINGUISTIC_VOCABULARY_IN_THE_ZERO_ONE_ALGEBRA: Final[str] = (
 )
 
 NO_EXPECTED_COUNT_IS_FROZEN: Final[str] = (
-    "لا عددَ متوقَّعٌ يُجمَّد قبل التشغيل؛ والأعدادُ تُشتَقُّ من البنية وقتَ "
-    "القياس ولا تُكتَب يدًا."
+    "لا عددَ متوقَّعٌ يُجمَّد قبل التشغيل؛ والأعدادُ تُشتَقُّ من البنية وقتَ " "القياس ولا تُكتَب يدًا."
 )
 
 STRUCTURAL_DAL_LAWS: Final[tuple[str, ...]] = (
@@ -175,7 +173,11 @@ STRUCTURAL_TRANSITION_CONTRACT_FIELDS: Final[tuple[str, ...]] = (
     "residual",
     "trace",
 )
-"""`StructuralTransition = <Input, Difference, Invariant, Gate, Output, Residual, Trace>`."""
+"""حقولُ عقد الانتقال السبعة:
+
+    StructuralTransition =
+        <Input, Difference, Invariant, Gate, Output, Residual, Trace>
+"""
 
 
 @dataclass(frozen=True, slots=True)

@@ -39,7 +39,12 @@ from .laws import (
 )
 from .residual import PromotionStanding
 from .slots import StructuralWhole, origin_whole
-from .transition import PromotedWhole, ScaleAscent, ascend_one_slot, promote_part_to_whole
+from .transition import (
+    PromotedWhole,
+    ScaleAscent,
+    ascend_one_slot,
+    promote_part_to_whole,
+)
 
 __all__ = [
     "ComparativeStanding",
@@ -277,8 +282,7 @@ def prove_zero_one_algebra(
     ascent = ascend_one_slot(whole, added_token)
     one_hypotheses = enumerate_shape_partitions(ascent.after)
     decompositions = tuple(
-        decompose(ascent.after, hypothesis)
-        for hypothesis in one_hypotheses.hypotheses
+        decompose(ascent.after, hypothesis) for hypothesis in one_hypotheses.hypotheses
     )
     attempts: list[PromotionAttempt] = []
     for decomposition in decompositions:

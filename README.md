@@ -5170,6 +5170,59 @@ failure: it moves the question from «does the engine run?» to **which
 transformation actually needs the fractal algebra, and cannot be reproduced by a
 weaker model?**
 
+### Proving the algebra before letting a language define it
+
+`G0.SDAL-0` in `src/alghanem/structural_dal/` answers the question the lexical
+run left open — `RawSurface → RootCandidate` — by refusing to start there. The
+missing piece is not a stemmer but an *algebra of structural signifier parts*,
+and an algebra proved on Arabic examples would be defined by those examples. So
+this package is proved at `zero` and `one` on synthetic opaque slots (`SlotA`,
+`SlotB`) with no root, no weight, no augmentation, no lexicon and no meaning in
+it, and the Arabic projection is a later, separate stage.
+
+`zero` is not nothing: it is `ZeroStructuralState`, the smallest complete whole
+— one slot, all of it core, with an empty transformation projection and an empty
+residual projection. It establishes exact reconstruction, complete slot
+coverage, identity preservation and trace preservation, and it establishes
+nothing linguistic: `StructuralBaseCase != LinguisticRootProof`. `one` is the
+first real transition, and it does not pick a partition: it yields a
+`ShapePartitionHypothesisSet` — every role assignment, derived at measurement
+time rather than frozen — whose `forced_winner` is `None` by construction, under
+`ShapePartitionHypothesis != RootCandidate` and
+`ShapePartitionHypothesis != WeightCandidate`.
+
+The transition is not a second copy of a contract this tree already owns: the
+ascent runs through `fractal_generation`'s own conformance, adjudication and
+transition gates, and `StructuralTransition` *reads* the seven fields
+`<Input, Difference, Invariant, Gate, Output, Residual, Trace>` off the result
+instead of letting a caller write them. The output trace must extend the input
+trace exactly one step — `THE_TRACE_IS_CUMULATIVE_NOT_RECONSTRUCTED` — so a
+trace assembled after the fact is refused. Where a part becomes a whole at the
+next scale it keeps its lineage: `child.parent_anchor_id == parent.anchor_id`,
+and a new anchor without provenance is refused.
+
+Residuals are not a sink that makes every test pass. Each one is classified
+`BLOCKING` or `NON_BLOCKING`, read off the residual's own `blocking` flag rather
+than written beside it, and a partition that assigns no slot the core role still
+reconstructs the whole exactly *and is still refused promotion*:
+`BlockingResidual -> NoPositivePromotion`. On the run, four of the nine
+hypotheses at scale one are blocked for exactly this reason.
+
+Two audits are part of the output rather than claims about it. The import audit
+walks the package source and everything it reaches inside `alghanem`, and finds
+only `canonical_content` and `fractal_generation` — no `arabic`, no `kernel`, no
+`maqayis`, no `madlul`, no `signifier_algebra`. The vocabulary audit walks every
+exported type name, dataclass field and enum member and finds no `root`, no
+`weight`, no `meaning`, no `lexicon`. The comparison with the weaker model is on
+the *output contract*, not the output text: plain concatenation reaches the same
+symbols and reaches only one of the five contract components, so the standing is
+`STRUCTURAL_ONLY` rather than the `BOTH_SUCCEED` that comparing strings would
+have produced.
+
+```bash
+python examples/structural_dal/prove_zero_one_algebra.py
+```
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest

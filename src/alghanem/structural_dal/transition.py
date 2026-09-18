@@ -337,8 +337,7 @@ def promote_part_to_whole(
     standing = decomposition.promotion_standing
     if standing is PromotionStanding.PROMOTION_BLOCKED:
         raise StructuralDalError(
-            "ترقيةٌ مرفوضةٌ لبقيّةٍ حاجبة؛ و"
-            + BLOCKING_RESIDUAL_FORBIDS_POSITIVE_PROMOTION
+            "ترقيةٌ مرفوضةٌ لبقيّةٍ حاجبة؛ و" + BLOCKING_RESIDUAL_FORBIDS_POSITIVE_PROMOTION
         )
     part = decomposition.part_of(role)
     if part.is_empty:
@@ -346,8 +345,7 @@ def promote_part_to_whole(
     parent = decomposition.whole
     child_anchor = f"{parent.anchor_id}.{role.value}"
     content = tuple(
-        (f"slot.{position}", slot.token)
-        for position, slot in enumerate(part.slot_map)
+        (f"slot.{position}", slot.token) for position, slot in enumerate(part.slot_map)
     )
     node = FractalNode.from_seed(
         FractalSeed(

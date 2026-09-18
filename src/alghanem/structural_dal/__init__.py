@@ -127,6 +127,7 @@ __all__ = [
     "StructuralTransition",
     "StructuralWhole",
     "VocabularyAuditReport",
+    "WeakerModelObservation",
     "ZeroOneAlgebraReport",
     "ZeroStructuralState",
     "ascend_one_slot",

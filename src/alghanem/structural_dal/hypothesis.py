@@ -306,9 +306,7 @@ class StructuralDecomposition:
     def preserves_parent_anchor(self) -> bool:
         """هل حمل كلُّ جزءٍ مِرساةَ كلِّه؟"""
 
-        return all(
-            part.parent_anchor_id == self.whole.anchor_id for part in self.parts
-        )
+        return all(part.parent_anchor_id == self.whole.anchor_id for part in self.parts)
 
     @property
     def raw_residuals(self) -> tuple[FractalResidual, ...]:
@@ -450,9 +448,7 @@ def enumerate_shape_partitions(whole: StructuralWhole) -> ShapePartitionHypothes
         )
         for combination in product(tuple(SlotRole), repeat=whole.slot_count)
     )
-    return ShapePartitionHypothesisSet(
-        whole_id=whole.whole_id, hypotheses=hypotheses
-    )
+    return ShapePartitionHypothesisSet(whole_id=whole.whole_id, hypotheses=hypotheses)
 
 
 def decompose(
@@ -487,6 +483,4 @@ def zero_structural_state(whole: StructuralWhole) -> ZeroStructuralState:
         hypothesis_id=f"{whole.whole_id}.shape.{SlotRole.CORE.value}",
         roles=(SlotRole.CORE,),
     )
-    return ZeroStructuralState(
-        whole=whole, decomposition=decompose(whole, hypothesis)
-    )
+    return ZeroStructuralState(whole=whole, decomposition=decompose(whole, hypothesis))
