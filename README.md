@@ -4873,17 +4873,36 @@ language would breach `MATRIX ≺ DATA`.
 counter-cases are authored against the single baseline: a duplicated anchor id,
 an arity that exceeds its own slots, an argument place named after a deferred
 role, an absent condition site declared as a standing requirement, and a role
-site naming a licence the ontology never granted. Each is a valid input that
-stands as a case and is then judged; each is measured one hop against
+site naming a licence the ontology never granted. Each is an input that stands
+as a case and is then judged; each is measured one hop against
 `case0.baseline.pass`, with its difference proved from the two texts rather than
-asserted. The fourth is the first case where multiplicity is itself the proof,
-and for a constitutional reason: an absent site that is not declared as a
-standing requirement is constitutional invalidity rather than a deferral, so the
-removal and the declaration do not stand apart. The corpus now reaches all three
-verdicts a standing case can reach, and the residual falls from forty-three
-requirements to thirty-one. Every expected trace is authored from the frozen law
-set, not derived — no engine was run to write a row, and each cell claimed
-remains a claim until `G0.CASE-0.READOUT`.
+asserted. The corpus now reaches all three verdicts a standing case can reach,
+and the residual falls from forty-three requirements to thirty-one. Every
+expected trace is authored from the frozen law set, not derived — no engine was
+run to write a row, and each cell claimed remains a claim until
+`G0.CASE-0.READOUT`.
+
+`G0.CASE-0.DATA-1H` corrects that tranche before it grows further, without
+moving either frozen digest. The duplicated-anchor case was an impure witness:
+the frozen law computes a count bound *and* an identity-uniqueness clause under
+one name, and two anchors against `arity: 2` never exceeded the bound at all, so
+the case proved the unnamed half of the law. It is withdrawn and replaced by a
+clean chain — a second uniquely named anchor, expected to pass, and then a third
+that violates the bound at `3 > 2` — which also settles that `baseline_case_id`
+is the immediate structural parent, not the root. The conflation itself is kept
+as the named architectural residual
+`RES.RUN0.AnchorArityConflatesIdentityUniqueness`, with the withdrawn document
+preserved outside the corpus as its evidence. Second, the unit of the experiment
+is now the *perturbation* rather than the structural difference: one authored
+change of meaning may need more than one surface operation to keep the case well
+formed, so each counter-case carries a nested `perturbation` whose
+`atomicity_kind` is one of `SINGLE_OPERATION`,
+`COMPOUND_CONSTITUTION_PRESERVATION_CLAIM` or `MULTIPLICITY_IS_THE_PROOF` — the
+last reserved for cases where the multiplicity is itself what is proved. And
+third, the rank is kept behind its evidence: `DATA` declares a perturbation and
+names an *expected-pass* baseline, while only `READOUT` can license either, so
+the order reads `MATRIX ≺ Immutable DATA ≺ Declared Perturbation ≺ READOUT ≺
+Licensed Perturbation ≺ DIGEST LEDGER`.
 
 ```bash
 python -m pip install -e '.[dev]'
