@@ -3038,3 +3038,28 @@ move, before the word settles into dozens of places.
 Deferred here by name, not by omission: the remaining counter-cases, which are
 written only after these gates are closed, so that no case is authored under a
 difference claim that was never verified.
+
+### G0.CASE-0.DATA-HH — The contract binds the class, and the diff stays strict
+
+`G0.CASE-0.DATA-HH` closes the three ways the previous gates could still be
+walked around, and records one piece of frozen legacy wording, before the
+remaining cases are authored.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `AContractBindsTheClassNotItsFactory` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. Freezing inside the `of(...)` reader is not enough: the general constructor is an equally lawful road in Python, so a caller could hand a live dictionary to `GoldenExecutionCase(...)`, `InvalidInputWitness(...)` or `DeclaredDifference(...)` and rewrite it afterwards. The document, and a declared difference's *before* and *after*, are therefore re-frozen inside `__post_init__` itself. `FrozenGoldenCase ⇒ DeeplyImmutableDocument` holds for every road into the class, not only for the one the author is expected to take. |
+| `AFrozenNumberIsAJsonNumber` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `NaN`, `Infinity` and `-Infinity` are not `JSON` numbers, and Python's reader admits them by default, so they could enter from a file that looks like `JSON`. A non-finite float is refused at the freeze, which is where the written law "what falls outside the `JSON` contract is returned" is actually kept — a value that is not equal to itself would otherwise sit inside a corpus whose whole method is comparison. |
+| `ASequenceEditWaitsForItsIdentityPolicy` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. The structural difference is positional and knows nothing of element identity, so an insertion or a removal in the middle of a list reads as a run of replacements followed by an addition or a removal — which is not the edit the author made. The open question is constitutional, not algorithmic: `ListIdentity = ElementIdentity` or `PositionIdentity`? In this project a position inside a list may itself be meaningful, so no `LCS` or edit distance is introduced to guess. Until an explicit `SequenceIdentityPolicy` is frozen, a list may either change its tail (`ADD`/`REMOVE`) or change a standing position (`REPLACE`) — never both at once — and anything else is refused. A diff that is less clever is safer than one that invents an identity the constitution has not granted. |
+
+The two occurrences of «فساد الإدخال» inside the `COVERAGE_MATRIX` content are
+**legacy frozen wording**. They are not corrected, because the matrix content
+enters `COVERAGE_MATRIX_DIGEST` and every expectation pins that digest; editing
+historical language by moving a frozen specification would breach
+`MATRIX ≺ DATA`. The later constitutional term for that state is «بطلان تكوين
+القضية» — *constitutional invalidity of the case*, recorded outside the matrix
+content as `INPUT_CONSTITUTION_FAILURE` — and the reader should take the matrix
+phrases in that sense.
+
+Deferred here by name, not by omission: `SequenceIdentityPolicy`, which must
+decide whether a list position is an identity or an order before mid-list edits
+are admitted into the corpus.

@@ -21,11 +21,28 @@
 **وهذا الفرقُ يُقاس بين نصّين مؤلَّفين** لا يُنتِجه المحرّك؛ فلا يخرق
 `DATA ≺ READOUT` ولا يفتح بابًا إلى بصمة تنفيذ.
 
+**والعددُ المُجمَّدُ عددُ `JSON`** (`AFrozenNumberIsAJsonNumber`): `NaN`
+و`Infinity` و`-Infinity` ليست أعدادَ `JSON` المعياريّة، وقارئُ بايثون يقبلها
+افتراضيًّا؛ فلو مرَّت لكان القانونُ المكتوبُ «ما خرج عن العقد يُردّ» غيرَ محقَّق.
+
+**وهويّةُ عناصر القائمة لم تُثبَّت بعدُ**
+(`ASequenceEditWaitsForItsIdentityPolicy`): الفرقُ هنا موضعيٌّ محض، فلا يعرف
+أنّ عنصرًا انتقل من موضعٍ إلى موضع. فإدراجٌ أو حذفٌ في وسط القائمة يظهر سلسلةَ
+إبدالاتٍ ثمّ زيادةً أو نقصًا، وهو غيرُ ما فعل المؤلِّف. والسؤالُ المعلَّق:
+
+    ListIdentity  =  ElementIdentity   أم   PositionIdentity؟
+
+وفي هذا المشروع ليس السؤالُ لفظيًّا: الموضعُ في القائمة قد يكون دلاليًّا. فحتّى
+تُبنى `SequenceIdentityPolicy` صريحةٌ، يُقبَل في القائمة أحدُ أمرين لا يجتمعان:
+زيادةٌ أو حذفٌ في الذَّيل، أو إبدالٌ موضعيٌّ بطولٍ واحد؛ وما عداهما يُردّ. وردُّ
+ما لا نعرف هويّتَه أسلمُ من خوارزميّةٍ تخمّنها.
+
 تسجيلٌ لا سلطة: لا ولادةَ ولا حكمَ ولادةٍ ولا تجميدَ `E0`.
 """
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from enum import Enum
@@ -35,9 +52,12 @@ from typing import Any, Final, TypeAlias
 __all__ = [
     "A_DIFFERENCE_IS_AN_OPERATION_NOT_A_PATH",
     "A_FROZEN_DOCUMENT_IS_DEEPLY_IMMUTABLE",
+    "A_FROZEN_NUMBER_IS_A_JSON_NUMBER",
+    "A_SEQUENCE_EDIT_WAITS_FOR_ITS_IDENTITY_POLICY",
     "DiffOperation",
     "FrozenJson",
     "FrozenJsonError",
+    "SequenceIdentityPolicyError",
     "StructuralDiff",
     "freeze_json",
     "frozen_equal",
@@ -60,6 +80,19 @@ A_FROZEN_DOCUMENT_IS_DEEPLY_IMMUTABLE: Final[str] = (
     "ومن أمسك بقاموسٍ مشترَكٍ غيَّر البياناتِ بعد تجميدها"
 )
 
+A_FROZEN_NUMBER_IS_A_JSON_NUMBER: Final[str] = (
+    "العددُ المُجمَّدُ عددُ `JSON`: و`NaN` و`Infinity` ليسا منه وإن قبِلهما "
+    "القارئُ افتراضًا؛ فمن أدخلهما أدخل في المدوّنة ما لا يُكتَب `JSON` ولا "
+    "يُقارَن بنفسه"
+)
+
+A_SEQUENCE_EDIT_WAITS_FOR_ITS_IDENTITY_POLICY: Final[str] = (
+    "تحريرُ القائمة ينتظر سياسةَ هويّتها: الفرقُ موضعيٌّ لا يعرف انتقالَ عنصرٍ "
+    "من موضعٍ إلى موضع، فإدراجُ الوسط وحذفُه يظهران غيرَ ما وقع؛ فيُقبَل ذيلٌ "
+    "يُزاد أو يُحذَف، أو إبدالٌ موضعيٌّ بطولٍ واحد، ولا يجتمعان حتّى تُثبَّت "
+    "`SequenceIdentityPolicy`"
+)
+
 A_DIFFERENCE_IS_AN_OPERATION_NOT_A_PATH: Final[str] = (
     "الفرقُ عمليّةٌ لا موضع: زيادةٌ أو حذفٌ أو إبدالٌ في موضعٍ مُسمًّى، بحالته "
     "قبلَه وبعدَه؛ ومن اكتفى بالموضع وصف تغييرًا غيرَ الذي وقع"
@@ -68,6 +101,10 @@ A_DIFFERENCE_IS_AN_OPERATION_NOT_A_PATH: Final[str] = (
 
 class FrozenJsonError(ValueError):
     """رفضٌ عند تجميد قيمةٍ خارج عقد `JSON`؛ لا حملَ على أقرب صورةٍ مقبولة."""
+
+
+class SequenceIdentityPolicyError(FrozenJsonError):
+    """رفضُ تحريرٍ في وسط قائمةٍ قبل أن تُثبَّت هويّةُ عناصرها دستوريًّا."""
 
 
 class DiffOperation(Enum):
@@ -83,7 +120,11 @@ def freeze_json(value: object, label: str) -> FrozenJson:
 
     if value is None:
         return None
-    if isinstance(value, bool | int | float | str):
+    if isinstance(value, bool | int | str):
+        return value
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise FrozenJsonError(f"{label}: " + A_FROZEN_NUMBER_IS_A_JSON_NUMBER)
         return value
     if isinstance(value, Mapping):
         frozen: dict[str, FrozenJson] = {}
@@ -156,6 +197,12 @@ class StructuralDiff:
             raise FrozenJsonError("عمليّةُ الفرق عضوٌ في مفردتها المغلقة")
         if not isinstance(self.path, str) or not self.path.strip():
             raise FrozenJsonError("موضعُ الفرق نصٌّ غير فارغ")
+        object.__setattr__(
+            self, "before", freeze_json(self.before, f"{self.path}: ما كان")
+        )
+        object.__setattr__(
+            self, "after", freeze_json(self.after, f"{self.path}: ما صار")
+        )
 
 
 def structural_diff(
@@ -215,14 +262,15 @@ def _mapping_diff(
 def _sequence_diff(
     before: tuple[FrozenJson, ...], after: tuple[FrozenJson, ...], path: str
 ) -> tuple[StructuralDiff, ...]:
-    differences: list[StructuralDiff] = []
+    """فرقُ القائمة موضعيٌّ؛ ويُردّ ما لا يُميَّز عن إدراجٍ أو حذفٍ في الوسط."""
+
     shared = min(len(before), len(after))
+    within: list[StructuralDiff] = []
     for index in range(shared):
-        differences.extend(
-            structural_diff(before[index], after[index], f"{path}[{index}]")
-        )
+        within.extend(structural_diff(before[index], after[index], f"{path}[{index}]"))
+    tail: list[StructuralDiff] = []
     for index in range(shared, len(before)):
-        differences.append(
+        tail.append(
             StructuralDiff(
                 operation=DiffOperation.REMOVE,
                 path=f"{path}[{index}]",
@@ -231,7 +279,7 @@ def _sequence_diff(
             )
         )
     for index in range(shared, len(after)):
-        differences.append(
+        tail.append(
             StructuralDiff(
                 operation=DiffOperation.ADD,
                 path=f"{path}[{index}]",
@@ -239,4 +287,10 @@ def _sequence_diff(
                 after=after[index],
             )
         )
-    return tuple(differences)
+    if within and tail:
+        raise SequenceIdentityPolicyError(
+            f"{path or _ROOT_PATH}: قائمةٌ تغيَّر طولُها وتغيَّر فيها موضعٌ قائمٌ "
+            "معًا، وهذا عينُ صورةِ الإدراج أو الحذف في الوسط؛ و"
+            + A_SEQUENCE_EDIT_WAITS_FOR_ITS_IDENTITY_POLICY
+        )
+    return tuple(within) + tuple(tail)

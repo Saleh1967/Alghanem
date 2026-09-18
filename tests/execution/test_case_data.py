@@ -21,6 +21,7 @@ import pytest
 from alghanem.execution.case_data import (
     CORPUS_ROOT_NAME,
     CaseDataError,
+    DeclaredDifference,
     EngineSeamWitness,
     GoldenCaseCorpus,
     GoldenExecutionCase,
@@ -28,6 +29,7 @@ from alghanem.execution.case_data import (
     InvalidInputWitness,
 )
 from alghanem.execution.coverage import COVERAGE_MATRIX
+from alghanem.execution.frozen_json import DiffOperation
 from alghanem.execution.standing import InputFaultKind
 
 _CORPUS_ROOT = Path(__file__).resolve().parents[2] / CORPUS_ROOT_NAME
@@ -647,7 +649,33 @@ def test_a_removed_list_element_is_a_removal_at_its_own_index() -> None:
     assert "case0.counter.removed_slot" in {item.case_id for item in corpus.cases}
 
 
-def test_a_changed_element_beside_an_added_one_is_two_differences() -> None:
+def test_two_changed_places_beside_each_other_are_two_differences() -> None:
+    statement = (
+        "المطلوبُ إثباتُ أنّ قانونًا واحدًا يثبت على موضوعٍ ويُخالَف على آخر في "
+        "القراءة نفسِها؛ فالتعدُّدُ هو محلُّ البرهان لا اختصارُ ملفّات"
+    )
+    differences = [
+        _replace(
+            "nisbah.anchors[0].role_site.license_id",
+            "license.term",
+            "license.other",
+            "رخصةُ المرتكز الأوّل تبدَّلت",
+        ),
+        _replace("nisbah.predicate.arity", 2, 3, "رتبةُ المحمول تبدَّلت"),
+    ]
+    case = _counter_case("case0.counter.two_subjects", differences, statement)
+    case["document"]["nisbah"]["anchors"][0]["role_site"]["license_id"] = (
+        "license.other"
+    )
+    case["document"]["nisbah"]["predicate"]["arity"] = 3
+    corpus = _corpus_with(case)
+    assert "case0.counter.two_subjects" in {item.case_id for item in corpus.cases}
+    case["declared_differences"] = differences[:1]
+    with pytest.raises(CaseDataError):
+        _corpus_with(case)
+
+
+def test_a_list_edit_that_hides_its_identity_is_refused() -> None:
     statement = (
         "المطلوبُ إثباتُ أنّ قانونًا واحدًا يثبت على موضوعٍ ويُخالَف على آخر في "
         "القراءة نفسِها؛ فالتعدُّدُ هو محلُّ البرهان لا اختصارُ ملفّات"
@@ -661,14 +689,11 @@ def test_a_changed_element_beside_an_added_one_is_two_differences() -> None:
         ),
         _add("nisbah.anchors[1]", _second_anchor(), "زِيد مرتكزٌ ثانٍ"),
     ]
-    case = _counter_case("case0.counter.two_subjects", differences, statement)
+    case = _counter_case("case0.counter.list_edit", differences, statement)
     case["document"]["nisbah"]["anchors"][0]["role_site"]["license_id"] = (
         "license.other"
     )
     case["document"]["nisbah"]["anchors"].append(_second_anchor())
-    corpus = _corpus_with(case)
-    assert "case0.counter.two_subjects" in {item.case_id for item in corpus.cases}
-    case["declared_differences"] = differences[:1]
     with pytest.raises(CaseDataError):
         _corpus_with(case)
 
@@ -703,3 +728,58 @@ def test_an_expected_fault_kind_is_read_as_a_member_of_its_vocabulary() -> None:
     corpus = _corpus()
     witness = corpus.invalid_input_witnesses[0]
     assert witness.expected_fault_kinds == (InputFaultKind.UNKNOWN_KEY,)
+
+
+def _baseline_document() -> dict[str, Any]:
+    return deepcopy(_read(_CORPUS_ROOT / "cases" / "case0.baseline.pass.json"))
+
+
+def test_a_direct_constructor_does_not_share_the_document_it_was_given() -> None:
+    raw = _baseline_document()["document"]
+    case = GoldenExecutionCase(
+        case_id="case0.direct",
+        document_content=raw,
+        baseline_case_id=None,
+        declared_differences=(),
+        multiplicity_is_the_proof=None,
+    )
+    raw["nisbah"]["predicate"]["arity"] = 99
+    assert case.document["nisbah"]["predicate"]["arity"] != 99
+
+
+def test_a_direct_witness_does_not_share_the_document_it_was_given() -> None:
+    raw = _baseline_document()["document"]
+    witness = InvalidInputWitness(
+        witness_id="case0.direct.witness",
+        document_content=raw,
+        expected_fault_kinds=(InputFaultKind.UNKNOWN_KEY,),
+        citations=(),
+    )
+    raw["nisbah"]["predicate"]["arity"] = 99
+    assert witness.document["nisbah"]["predicate"]["arity"] != 99
+
+
+def test_a_direct_difference_does_not_share_the_states_it_was_given() -> None:
+    before: dict[str, Any] = {"slots": [1, 2]}
+    difference = DeclaredDifference(
+        operation=DiffOperation.REPLACE,
+        path="nisbah.predicate",
+        before=before,
+        after={"slots": [1, 2, 3]},
+        statement="المحمولُ تبدَّل",
+    )
+    before["slots"].append(9)
+    assert difference.before == {"slots": (1, 2)}
+
+
+def test_a_document_that_carries_a_non_finite_number_is_refused() -> None:
+    raw = _baseline_document()["document"]
+    raw["nisbah"]["predicate"]["arity"] = float("inf")
+    with pytest.raises(CaseDataError):
+        GoldenExecutionCase(
+            case_id="case0.direct.infinite",
+            document_content=raw,
+            baseline_case_id=None,
+            declared_differences=(),
+            multiplicity_is_the_proof=None,
+        )

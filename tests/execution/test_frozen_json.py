@@ -1,4 +1,4 @@
-"""`G0.CASE-0.DATA-H`: التجميدُ العميق، والفرقُ البنيويُّ بين نصّين مؤلَّفين.
+"""`G0.CASE-0.DATA-HH`: التجميدُ العميق، والفرقُ البنيويُّ بين نصّين مؤلَّفين.
 
     FrozenData  ≺  Readout
 
@@ -10,6 +10,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 import pytest
@@ -17,6 +18,7 @@ import pytest
 from alghanem.execution.frozen_json import (
     DiffOperation,
     FrozenJsonError,
+    SequenceIdentityPolicyError,
     freeze_json,
     frozen_equal,
     structural_diff,
@@ -91,16 +93,49 @@ def test_a_dropped_element_is_a_removal_at_its_index() -> None:
     assert differences[0].after is None
 
 
-def test_a_changed_element_beside_an_added_one_is_two_operations() -> None:
+def test_two_changed_elements_in_one_list_are_two_operations() -> None:
     differences = structural_diff(
-        _frozen({"anchors": [{"id": "first"}]}),
-        _frozen({"anchors": [{"id": "other"}, {"id": "second"}]}),
+        _frozen({"anchors": [{"id": "first"}, {"id": "second"}]}),
+        _frozen({"anchors": [{"id": "other"}, {"id": "third"}]}),
     )
-    assert [item.path for item in differences] == ["anchors[0].id", "anchors[1]"]
+    assert [item.path for item in differences] == ["anchors[0].id", "anchors[1].id"]
     assert [item.operation for item in differences] == [
         DiffOperation.REPLACE,
-        DiffOperation.ADD,
+        DiffOperation.REPLACE,
     ]
+
+
+def test_a_tail_addition_alone_is_one_operation() -> None:
+    differences = structural_diff(
+        _frozen({"anchors": [{"id": "first"}]}),
+        _frozen({"anchors": [{"id": "first"}, {"id": "second"}]}),
+    )
+    assert [item.path for item in differences] == ["anchors[1]"]
+    assert differences[0].operation is DiffOperation.ADD
+
+
+def test_a_length_change_beside_a_positional_change_is_refused() -> None:
+    with pytest.raises(SequenceIdentityPolicyError):
+        structural_diff(
+            _frozen({"anchors": [{"id": "first"}]}),
+            _frozen({"anchors": [{"id": "other"}, {"id": "second"}]}),
+        )
+
+
+def test_a_removal_from_the_middle_of_a_list_is_refused() -> None:
+    with pytest.raises(SequenceIdentityPolicyError):
+        structural_diff(_frozen({"a": [1, 2, 3]}), _frozen({"a": [1, 3]}))
+
+
+def test_a_non_finite_number_is_not_a_json_number() -> None:
+    for value in (float("nan"), float("inf"), float("-inf")):
+        with pytest.raises(FrozenJsonError):
+            freeze_json({"arity": value}, "وثيقة")
+
+
+def test_a_non_finite_number_is_refused_even_when_json_reads_it() -> None:
+    with pytest.raises(FrozenJsonError):
+        freeze_json(json.loads('{"arity": NaN}'), "وثيقة")
 
 
 def test_an_added_subtree_is_one_difference_not_one_per_leaf() -> None:

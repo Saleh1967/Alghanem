@@ -4855,6 +4855,20 @@ is refused. Expected input faults are read as members of the existing closed
 invalidity — the case never came into being — rather than as a corrupted
 process, which is where `BLOCK` belongs.
 
+`G0.CASE-0.DATA-HH` closes the remaining ways around those gates. Freezing now
+happens inside the classes themselves, not only inside their readers, so the
+general Python constructor cannot be handed a live dictionary and keep a handle
+on it. `NaN` and `±Infinity` are refused at the freeze, since they are not
+`JSON` numbers even though Python's reader accepts them. And the structural
+difference deliberately stays unclever: because it is positional and knows
+nothing of element identity, a list may change its tail or change a standing
+position, but not both at once, and a mid-list insertion or removal is refused
+until an explicit `SequenceIdentityPolicy` settles whether a list position is an
+identity or merely an order. Finally, the two Arabic phrases inside the frozen
+coverage matrix are recorded as legacy wording rather than corrected: they enter
+`COVERAGE_MATRIX_DIGEST`, and rewriting a frozen specification to improve its
+language would breach `MATRIX ≺ DATA`.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest

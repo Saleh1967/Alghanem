@@ -62,6 +62,12 @@
 إفادةً من المؤلِّف. وسلسلةُ الأصول تُقاس خطوةً واحدةً إلى الأصل المُسمّى، ولا
 تعود على نفسها حلقةً.
 
+**والعقدُ على الصنف لا على مصنعه** (`AContractBindsTheClassNotItsFactory`):
+المُنشئُ العامُّ في بايثون طريقٌ قانونيٌّ كمثل `of`، فلو اكتفى `of` بالتجميد بقي
+للحالة بابٌ تُبنى منه بقاموسٍ حيٍّ يُغيَّر بعد بنائها. ولذلك تُعاد الوثيقةُ — وما
+كان الفرقُ المُعلَنُ وما صار — مجمَّدةً في `__post_init__` نفسِه، فلا يُستثنى من
+العقد طريق.
+
 تسجيلٌ لا سلطة: لا ولادةَ ولا حكمَ ولادةٍ ولا تجميدَ `E0`.
 """
 
@@ -99,6 +105,7 @@ from .standing import InputFaultKind
 
 __all__ = [
     "A_BASELINE_CHAIN_DOES_NOT_TURN_BACK_ON_ITSELF",
+    "A_CONTRACT_BINDS_THE_CLASS_NOT_ITS_FACTORY",
     "A_CASE_IS_AUTHORED_NOT_GENERATED",
     "A_CITATION_IS_A_CLAIM_UNTIL_THE_READOUT",
     "A_DECLARED_DIFFERENCE_IS_THE_ACTUAL_DIFFERENCE",
@@ -151,6 +158,12 @@ A_DECLARED_DIFFERENCE_IS_THE_ACTUAL_DIFFERENCE: Final[str] = (
     "الفرقُ المُعلَن هو الفرقُ الواقع: يُقاس النصّان المؤلَّفان فيُستخرَج فرقُهما "
     "عمليّةً وموضعًا وحالةً قبلُ وبعدُ، ثمّ يُطابَق بالمُعلَن؛ ومن اكتفى بتصريح "
     "المؤلِّف جعل الفرقَ دعوًى لا شهادة"
+)
+
+A_CONTRACT_BINDS_THE_CLASS_NOT_ITS_FACTORY: Final[str] = (
+    "العقدُ على الصنف لا على مصنعه: المُنشئُ العامُّ طريقٌ قانونيٌّ كمثل مصنعه، "
+    "فتُعاد الوثيقةُ وحالتا الفرق مجمَّدةً في بناء الكائن نفسِه؛ ومن جمَّد في "
+    "المصنع وحدَه ترك للقاموس الحيِّ بابًا"
 )
 
 A_BASELINE_CHAIN_DOES_NOT_TURN_BACK_ON_ITSELF: Final[str] = (
@@ -273,6 +286,19 @@ def _frozen_mapping(value: object, label: str) -> Mapping[str, FrozenJson]:
     return frozen
 
 
+def _refrozen_document(value: object, label: str) -> Mapping[str, FrozenJson]:
+    """أعدْ تجميدَ وثيقةٍ بُنِيت بالمُنشئ العامّ؛ فالعقدُ على الصنف لا على مصنعه."""
+
+    if not isinstance(value, Mapping):
+        raise CaseDataError(
+            f"{label} محتوًى مجمَّدٌ متعدٍّ؛ و" + A_FROZEN_DOCUMENT_IS_DEEPLY_IMMUTABLE
+        )
+    frozen = _frozen(dict(value), label)
+    if not isinstance(frozen, Mapping):  # pragma: no cover - حارسُ نوع
+        raise CaseDataError(f"{label} كائنٌ مُصرَّحٌ به")
+    return frozen
+
+
 def _sequence(value: object, label: str) -> list[Any]:
     if not isinstance(value, list):
         raise CaseDataError(f"{label} قائمةٌ مرتَّبةٌ مُصرَّحٌ بها")
@@ -321,6 +347,8 @@ class DeclaredDifference:
             raise CaseDataError("عمليّةُ الفرق عضوٌ في مفردتها المغلقة")
         _text(self.path, "موضعُ الفرق")
         _text(self.statement, "بيانُ الفرق")
+        object.__setattr__(self, "before", _frozen(self.before, f"{self.path}: ما كان"))
+        object.__setattr__(self, "after", _frozen(self.after, f"{self.path}: ما صار"))
         if self.operation is DiffOperation.ADD and self.before is not None:
             raise CaseDataError("الزيادةُ لا حالةَ لها قبلَ وقوعها")
         if self.operation is DiffOperation.REMOVE and self.after is not None:
@@ -461,11 +489,11 @@ class GoldenExecutionCase:
 
     def __post_init__(self) -> None:
         _text(self.case_id, "مُعرِّفُ الحالة")
-        if not isinstance(self.document_content, Mapping):
-            raise CaseDataError(
-                "وثيقةُ الحالة محتوًى مجمَّدٌ متعدٍّ؛ و"
-                + A_FROZEN_DOCUMENT_IS_DEEPLY_IMMUTABLE
-            )
+        object.__setattr__(
+            self,
+            "document_content",
+            _refrozen_document(self.document_content, "وثيقةُ الحالة"),
+        )
         _exact_keys(
             self.document_content,
             DECLARATION_DOCUMENT_KEYS,
@@ -754,11 +782,11 @@ class InvalidInputWitness:
 
     def __post_init__(self) -> None:
         _text(self.witness_id, "مُعرِّفُ الشاهد")
-        if not isinstance(self.document_content, Mapping):
-            raise CaseDataError(
-                "وثيقةُ الشاهد محتوًى مجمَّدٌ متعدٍّ؛ و"
-                + A_FROZEN_DOCUMENT_IS_DEEPLY_IMMUTABLE
-            )
+        object.__setattr__(
+            self,
+            "document_content",
+            _refrozen_document(self.document_content, "وثيقةُ الشاهد"),
+        )
         if not self.expected_fault_kinds:
             raise CaseDataError("شاهدُ بطلانٍ بلا عيبٍ مُسمًّى دعوى بلا مادّة")
         for kind in self.expected_fault_kinds:
@@ -940,7 +968,15 @@ class GoldenCaseCorpus:
             if case.baseline_case_id is None:
                 continue
             baseline = by_id[case.baseline_case_id]
-            actual = structural_diff(baseline.document_content, case.document_content)
+            try:
+                actual = structural_diff(
+                    baseline.document_content, case.document_content
+                )
+            except FrozenJsonError as refusal:
+                raise CaseDataError(
+                    f"«{case.case_id}» لا يُقاس فرقُه إلى «{baseline.case_id}»: "
+                    + str(refusal)
+                ) from refusal
             self._refuse_a_case_that_matches_its_baseline(case, actual)
             self._refuse_a_declaration_that_is_not_the_difference(case, actual)
             self._refuse_a_multiplicity_that_the_documents_deny(case, actual)
