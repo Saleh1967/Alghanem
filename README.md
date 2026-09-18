@@ -4820,6 +4820,26 @@ deliberate — the specification precedes the cases, and the cases precede the
 first engine readout — so that a later agreement is evidence rather than an
 expectation edited after seeing the result.
 
+`G0.CASE-0.DATA` derives the corpus from that frozen matrix, one stage before
+the engine has run once: `MATRIX ≺ DATA ≺ READOUT ≺ DIGEST LEDGER`. The golden
+cases are reviewed `JSON` files under `case_data/`, never the output of Python
+builders, and no execution digest appears anywhere in them — a digest is born of
+the readout, and admitting it here, even as `None`, would merge two stages. Four
+independent types carry the corpus: a case holds its document alone; an
+expectation, frozen before any reading, holds the disposition, the trace, the
+residuals, the materialized identity and the coverage citations; an
+invalid-input witness holds a document from which no case is constituted; and an
+engine-seam witness, for the internal invariant error, holds no document at all,
+since that error is not in the space of user cases. A counter-case is a valid
+baseline plus exactly one declared difference, and two differences are admitted
+only where multiplicity is itself the proof — one law satisfied on one subject
+and violated on another. A citation is a *claim* of coverage: the data checker
+proves only that it is legitimate against the matrix and coherent with the
+case's own frozen expectation, and the readout alone will prove that the case
+actually reached the cell. What the first tranche does not yet cover is named in
+`case_data/MANIFEST.json`, and the checker refuses any drift between that
+declared residual and the residual derived from the citations.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest

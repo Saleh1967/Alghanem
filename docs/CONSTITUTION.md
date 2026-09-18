@@ -2960,3 +2960,53 @@ kind needs a new matrix, never a silent edit.
 
 Deferred here by name, not by omission: the golden cases themselves, their
 inputs, their expected verdicts, and every execution digest.
+
+### G0.CASE-0.DATA — The written cases, before the first readout
+
+`G0.CASE-0.DATA` derives an independent corpus from the frozen matrix. The
+governing order is now four stages long:
+
+    MATRIX  ≺  DATA  ≺  READOUT  ≺  DIGEST LEDGER
+
+`DATA` says, before the engine has run once: *this is the case, and this is what
+we expect of it*. `READOUT` runs the engine for the first time and compares.
+Only if the reading matches the frozen expectation is an execution digest
+recorded, in a ledger of its own that never flows back into `DATA`; from the
+second reading onward that digest is a witness of drift.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `ACaseIsAuthoredNotGenerated` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. The golden cases are reviewed `JSON` files under `case_data/`, never the output of Python builders: a program that constructs the evidence cannot be held to account by it. `case_data.py` carries the specification datatypes and the internal-consistency checker only — it opens no file, builds no document, and imports no engine module. Reading the files is the test layer's business, so no file path enters the specification. |
+| `AnExpectationCarriesNoExecutionDigest` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `execution_digest` is born of the readout; admitting it into `DATA` — even as `None` — merges two stages. The field is absent from every type, and any key born of the readout is refused wherever it hides in the expectation tree, at any depth. |
+| `AGoldenCounterCaseIsOneDeclaredDifference` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `GoldenCounterCase = ValidBaseline + OneDeclaredDifference`, for `UNRESOLVED` as much as for `VIOLATED`: a golden case answers one question with the least construction. Two differences in one document are admitted only when multiplicity is itself what is being proved — a single law satisfied on one subject and violated on another — and then the reason is stated by name, never as a shortcut on the number of files. |
+| `ACitationIsAClaimUntilTheReadout` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. A `CoverageCitation` in `DATA` is a *claim* of coverage. The `DATA` checker proves only that the citation is legitimate — that it names a required, reachable cell, that its law and standing are that cell's own, that a `SUBJECT`-scoped cell names its witness subject and a `CASE`-scoped cell names none, and that the case's own frozen expectation contains the row cited. `READOUT` alone proves that the case actually reached the cell, by matching the citation against a line of the real trace. This is what prevents paper coverage. |
+| `AnInvariantErrorIsNotInTheUserCaseSpace` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `INVARIANT_ERROR ∉ UserCaseSpace`, so it is not a golden case and is given no document: it is an `EngineSeamWitness` on an internal seam reached by handing the engine incomplete derived material after a provisional pass. Giving it a document would make an engine defect something a case author can request. Invalid input is likewise a separate identity — `InvalidInputWitness ≠ GoldenExecutionCase` — with no trace, no envelope and no verdict. |
+
+Four independent types carry the corpus. `GoldenExecutionCase` carries the
+document alone, with its baseline and its declared differences, and no verdict.
+`GoldenExpectation` carries what was expected before any reading: the
+disposition, the trace, the residuals, the materialized identity and the
+citations. `InvalidInputWitness` carries a document from which no case is
+constituted, with its expected input faults only. `EngineSeamWitness` carries no
+document at all. Both witnesses may cite the second- and third-axis cells that
+constrain their own disposition, and neither may claim a law-standing cell: a
+cell about a law in a standing is reached by a case that stood, not by a witness
+to something short of one.
+
+The expectation is checked for internal coherence without running the engine:
+any `VIOLATED` row forces `BLOCK`, `UNRESOLVED` defers only when no violation is
+present, `PASS` and a materialized identity imply each other, the declared
+violations are exactly the violated rows in their order, no law contradicts
+itself on one subject in one reading, and both `COVERAGE_MATRIX_DIGEST` and
+`LAW_SET_DIGEST` are pinned to the frozen values. A mis-authored expectation is
+therefore not caught here; it is caught at the readout, which is the point.
+
+What the corpus does not yet cover is named in `case_data/MANIFEST.json`, and
+the checker refuses any drift between that declared residual and the residual
+derived from the citations. Coverage is closed by adding cases, never by
+narrowing the list.
+
+Deferred here by name, not by omission: the counter-cases for the requirements
+listed in the manifest; the `JSON → CaseDeclaration` reader, which belongs to
+`G0.CASE-0.READOUT` as its first obligation; the readout itself; and the digest
+ledger that only a matching first reading may open.
