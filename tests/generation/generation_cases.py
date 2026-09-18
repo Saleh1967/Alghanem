@@ -142,6 +142,49 @@ def production_specification(
     )
 
 
+def inverted_production_specification(
+    envelope: ExecutionResultEnvelope | None = None,
+) -> ProductionSpecification:
+    """المواصفةُ نفسُها بتعيينٍ مقلوب: المرساةُ الأولى مفعولًا والثانيةُ فاعلًا.
+
+    ولا شيءَ في المصدر يمنع هذا القلب، لأنّه لا يحمل رابطةَ
+    `Anchor → SyntacticFunction`؛ وهذه مادّةُ شاهدٍ على بقيّةٍ مُسمّاة لا حلٌّ لها.
+    """
+
+    source = passing_envelope() if envelope is None else envelope
+    return ProductionSpecification.for_passed_execution(
+        envelope=source,
+        production_id="production.synthetic.inverted",
+        production_family=PAST_ACTIVE_TRANSITIVE_VSO,
+        requested_tense=RequestedTense.PAST,
+        requested_voice=RequestedVoice.ACTIVE,
+        requested_sentence_form=RequestedSentenceForm.VERBAL_VSO,
+        realization_targets=(
+            RealizationTargetAssignment(
+                element_kind=SourceElementKind.PREDICATE,
+                element_id=PREDICATE_ID,
+                target=SyntacticRealizationTarget.PREDICATE_POSITION,
+            ),
+            RealizationTargetAssignment(
+                element_kind=SourceElementKind.ANCHOR,
+                element_id=SECOND_ANCHOR_ID,
+                target=SyntacticRealizationTarget.FAA_IL_POSITION,
+            ),
+            RealizationTargetAssignment(
+                element_kind=SourceElementKind.ANCHOR,
+                element_id=FIRST_ANCHOR_ID,
+                target=SyntacticRealizationTarget.MAF_UL_BIH_POSITION,
+            ),
+        ),
+        lexical_choice_refs=(
+            lexical_choice(PREDICATE_ID, "entry.verb"),
+            lexical_choice(SECOND_ANCHOR_ID, "entry.agentive.noun"),
+            lexical_choice(FIRST_ANCHOR_ID, "entry.object.noun"),
+        ),
+        realization_constraints=(),
+    )
+
+
 SYNTHETIC_SURFACES: dict[str, str] = {
     PREDICATE_ID: "فعلَ",
     FIRST_ANCHOR_ID: "اسمٌ",

@@ -4933,6 +4933,37 @@ first family is `PastActiveTransitiveVSO`, and the axis runs
 `SPEC ≺ DATA ≺ READOUT ≺ RT` under one highest law:
 `NoGenerationAuthorityBeyondItsSource`.
 
+`G0.GEN-0.SPEC-H` reviews that specification and lowers three of its claims to
+the rank the evidence supports, changing no goal. First, a contract must bind
+the type and not the road that builds it: `PassedNisbahSourceRef` and
+`ProductionSpecification` were freely constructible, so the envelope check and
+the source-membership check could both be walked around; both are now closed by
+an issuance token, every source check moves into the constructor — covering the
+lexical choices and the realization constraints the factory never examined — and
+the reference carries a frozen inventory of its source's elements, under
+`ContractMustBindClassNotFactory`. Second, the second rank was named for a
+licence it never issued: the gate reads the realization targets the caller wrote
+and then verifies the product honours them, so `CallerClaim →
+ConformsToCallerClaim ⇏ Licensed`. It is renamed `SpecificationConformantSurface`
+behind a `SpecificationConformanceGate`, the name `StructurallyLicensedSurface`
+is reserved by text until an independent `SyntacticBindingCertificate` exists,
+and the gap is frozen by name as
+`RES.GEN0.NoIndependentAnchorToSyntacticFunctionAuthority` — nothing in the
+source binds an anchor to subjecthood or objecthood, so the gate grants
+conformance to an inverted assignment just as readily, and a test witnesses that
+rather than assuming it. Third, a lexical reference is a claim until the
+readout: `LexicalChoiceRef_SPEC ≠ VerifiedLexicalChoice_READOUT`, since no frozen
+lexicon exists yet to attest that a `surface` is an entry's form and not a
+well-formed fabrication. What can be closed without a lexicon is closed — the
+gate now measures the connection of the chain itself, that the trace begins at
+the specification's own content id, ends at the orthographic projection whose
+output is the utterance's, that no token's trace is merely adjacent, and that the
+projection digest recomputed from the tokens equals the claimed one — and every
+conformant decision carries two named residuals so its success is read no wider
+than its mandate. The order reads `GEN-SPEC ≺ GEN-DATA ≺ LexicalVerification ≺
+GenerationReadout ≺ SpecificationConformance ≺ SyntacticLicensing ≺
+RoundTripCertification`, under `ConformanceIsNotLicensing`.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest

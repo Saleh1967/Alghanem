@@ -3316,10 +3316,11 @@ to `GEN-MORPH-1`.
 **Three ranks, and the third is unreachable.** Not every output is «correct
 Arabic»:
 
-    SurfaceCandidate ≺ StructurallyLicensedSurface ≺ CertifiedGeneratedUtterance
+    SurfaceCandidate ≺ SpecificationConformantSurface ≺ CertifiedGeneratedUtterance
 
 The second is issued by a gate that checks every token against its specification
-— anchor, position, case effect, order, trace. The third requires a round trip:
+— anchor, position, case effect, order, trace — and it is named for exactly that
+and no more (see `G0.GEN-0.SPEC-H` below). The third requires a round trip:
 
     G(S) = U  ∧  A(U) = S′  ∧  S′ ≃ S       over  { relation, anchors, roles,
                                                     tense, voice, case relations }
@@ -3362,3 +3363,122 @@ minimal lexicon (`G0.GEN-0.DATA`), the orchestrating readout
 (`G0.GEN-0.READOUT`), the function-recovering analyser and the certificate it
 alone can license (`G0.GEN-0.RT`), and morphological derivation
 (`GEN-MORPH-1`).
+
+## G0.GEN-0.SPEC-H — Lowering every claim to its own rank
+
+`SPEC` was reviewed after it was merged, and the review found three places where
+the implementation claimed more authority than it held. Nothing in the shape
+above is withdrawn — `Analysis ≠ Generation⁻¹`, the withheld phonological layer,
+the sibling projections, the refusal of `DERIVED_FROM_ROOT`, the single deferral
+of `RoundTripGate`, and the separation of the first rank from the highest
+certificate all stand. `SPEC-H` changes no goal; it lowers three claims to the
+rank the evidence actually supports, and names what remains unproved.
+
+**A contract binds the type, not the road that builds it.** `SPEC` wrote
+`Outcome = PASS ⇒ PassedNisbahSourceRef` in this document, but left
+`PassedNisbahSourceRef` freely constructible: only the optional `from_envelope`
+factory ever saw an envelope. A caller could therefore write the digests by
+hand, so in fact
+
+    PassedNisbahSourceRef  ⇏  ActuallyPassedExecution
+
+The same hole ran one level up: `ProductionSpecification` checked its internal
+consistency in `__post_init__`, but checked *membership of its elements in the
+source* only inside `for_passed_execution` — so a direct construction, or a
+`dataclasses.replace`, could anchor a production on an element the source never
+carried. Both types are now closed by an issuance token on the pattern already
+used by `_IssuanceToken` in the certificate layer, and every source check is
+moved into the constructor, where it also covers the lexical choices and the
+realization constraints, which the factory never examined. The reference now
+carries a frozen inventory of its source's elements and their kinds, so the same
+check can be re-measured later without the envelope. The law:
+
+    ContractMustBindClassNotFactory
+
+An enforceable factory that can be walked around is not an enforceable contract.
+
+**Conformance is not licensing.** The second rank was called
+`StructurallyLicensedSurface`, and its gate `StructuralLicensingGate`. But the
+gate reads the realization targets *out of the specification the caller wrote*
+and then verifies that the produced tokens honour them. What it proves is that
+the product matches its author's own claim:
+
+    CallerClaim → ConformsToCallerClaim  ⇏  Licensed
+
+That is circular, and a claim is not evidence of itself. The rank, the gate, the
+decision, the status and the verdict member are renamed to say what is actually
+proved:
+
+    StructurallyLicensedSurface → SpecificationConformantSurface
+    StructuralLicensingGate     → SpecificationConformanceGate
+    LICENSED                    → CONFORMANT
+
+The name `StructurallyLicensedSurface` is reserved by text and defined by no
+type; it is not opened until an independent `SyntacticBindingCertificate`
+exists. The law:
+
+    ConformanceIsNotLicensing
+
+**`RES.GEN0.NoIndependentAnchorToSyntacticFunctionAuthority`** — an
+*architectural* residual, recorded here by name in the manner of
+`RES.RUN0.AnchorArityConflatesIdentityUniqueness`, and named in code in
+`generation/laws.py` outside the law set, since it is a gap, not a rule.
+Statement: nothing in the source establishes
+
+    anchor.first = فاعل        anchor.second = مفعول به
+
+`AnchoredNisbahSignatureV3` carries anchors and `predicate.slots` with no
+filling relation between them at all, and `ArgumentSlot` refuses role names
+outright. So the mapping is the caller's choice, and the gate grants conformance
+to an inverted assignment exactly as readily as to the intended one — a test
+witnesses this rather than assuming it. The condition that lifts the residual: a
+`SyntacticBindingCertificate` proving
+
+    Anchor  —evidence→  LicensedSyntacticPosition
+
+and only then may the word «licensed» be used. `Agent`/`Patient` are not opened,
+and `linguistic/nisbah.py` is not touched.
+
+**A lexical reference is a claim until the readout.** `LexicalChoiceRef` carries
+`entry_id`, `entry_content_id` and `lexical_source_digest`, but `SPEC` has no
+frozen lexicon to measure them against; in the tests they are synthetic strings.
+Nor can this layer prove that a token's `surface` is the form of an attested
+entry rather than a well-formed Arabic fabrication. So:
+
+    LexicalChoiceRef_SPEC  ≠  VerifiedLexicalChoice_READOUT
+    LexicalChoiceRefIsAClaimUntilTheReadout
+
+`GEN-0.DATA` freezes the lexicon; `GEN-0.READOUT` then proves that
+`entry_id + entry_content_id + lexical_source_digest + surface` agree.
+
+**Metadata conformance is not generation provenance**, and the half of that gap
+which can be closed without a lexicon is closed now. The gate no longer reads
+the utterance's descriptive fields alone; it measures the connection of the
+chain itself: that the trace's input is the specification's own content id; that
+the chain ends at the orthographic projection and that its output is the
+utterance's `orthographic_content_id`; that every token's own trace is the
+utterance's chain rather than an adjacent one; and that the orthographic
+projection's digest, recomputed from the tokens themselves, equals the digest
+the utterance claims. What remains open is named, not implied.
+
+**A success is read no wider than its mandate.** Every conformant decision now
+carries two named residuals — that the assignment of subjecthood and objecthood
+is not yet licensed, and that no lexical attestation is available — so the rank
+cannot be quoted as more than it is.
+
+The declared law set is revised here, not silently amended: three laws are added
+(`ContractMustBindClassNotFactory`, `ConformanceIsNotLicensing`,
+`LexicalChoiceRefIsAClaimUntilTheReadout`), nothing is removed or reworded, and
+`GENERATION_LAW_SET_DIGEST` moves accordingly under a declared revision that the
+tests hold to addition alone.
+
+With this, the order of the axis is stated more exactly than `SPEC ≺ DATA ≺
+READOUT ≺ RT`:
+
+    GEN-SPEC ≺ GEN-DATA ≺ LexicalVerification ≺ GenerationReadout
+             ≺ SpecificationConformance ≺ SyntacticLicensing
+             ≺ RoundTripCertification
+
+and this does not push the first real Arabic sentence far away: `GEN-0.READOUT`
+may produce one, at the rank `VerifiedGeneratedSurface` /
+`SpecificationConformantSurface` — never «syntactically licensed».
