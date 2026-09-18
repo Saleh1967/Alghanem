@@ -2053,6 +2053,110 @@ meeting point is `src/alghanem/arabic/nisbah_relativization.py`. Until the
 registered negative controls run on a named held-out corpus, nothing in this
 repository prefers the nisbah nucleus to the pair it ranks.
 
+## G0.PK-0 / G0.ONT-0 — The earlier origin: prior organized information, then ontology (deposit and registration only)
+
+`G0.NSB-0` remains standing, unedited and unrefuted. What this section adds is a
+level *beneath* it. The nisbah deposit answered "where does the relation sit
+between the general algebra and Arabic?" and opened `Σ_L`. A second question
+turned out to precede it: *what exists at all that could serve as a genus, an
+individual, an attribute, an event, a relation, a quantity or a reference — and
+by what criterion is its identity preserved?* That question is not answerable
+inside `Σ_L`, because `Σ_L`'s own `TermAnchorKind` already names `GENUS`,
+`INDIVIDUAL`, `REFERENCE`, `EVENT_ANCHOR` and `QUANTITY_ANCHOR` as branches of a
+linguistic primitive. Those are not purely linguistic sorts; they are
+ontological candidates that language *uses* after some earlier layer has fixed
+them.
+
+The correction is therefore not a deletion but an insertion, and it splits one
+chain into two axes. The existence axis:
+
+```
+PK₀ (prior organized information) → O₀ (general ontology)
+    → O_L (linguistic ontology) → O_AR (Arabic ontology, deferred)
+```
+
+and the algebra axis that operates *on* those objects:
+
+```
+Σ_M (representation) ⇝ Σ_L (relation) ⇝ Σ_AR (Arabic instantiation)
+```
+
+`Σ_M` is not promoted to an ontological layer here; its job is different. It is
+the language of representation, transition, closure, trace and residual in which
+these structures are described and checked. The load-bearing consequence is that
+`Σ_L` does not *create* `O_L`: it operates on objects that `O_L` has licensed.
+
+`PK₀` is deliberately narrower and stronger than a store of ready-made facts. It
+does not say "this thing is a genus"; it records the conditions under which it
+is legitimate for a kind called "genus" to be born at all — domain, unit
+criterion, identity criterion, attribute possibility, relation possibility,
+transformation conditions, conditions and preventers, preserved trace, and the
+remainder that blocks closure. Nine places, exact coverage, each naming what it
+forbids and the genus of its own license.
+
+This is a deposit, a testbed, and nothing more. It issues no birth, no verdict,
+no freeze and no `E0`; no `kernel/` module reads it; and — decisively — it does
+not touch `src/alghanem/linguistic/`. The `Σ_L` schema version, its digest, its
+frozen hypothesis text and its Arabic meeting point are byte-identical to what
+`G0.NSB-0` left. Re-anchoring `Σ_L` to `O_L`, and migrating `TermAnchorKind`
+into a licensing reference, are declared next steps, not steps taken here.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `TheAlgebraDoesNotCreateItsObjects` | ENFORCED_AT_EXISTENCE_AXIS | `Σ_L` operates on objects licensed by `O_L`; it does not generate them. An algebra that births its own sorts proves what it assumed. Enforced structurally rather than by prose: `prior/` imports only `canonical_content`, `ontology/` imports only `prior/` and `canonical_content`, neither reads `metaalgebra/`, `linguistic/`, `arabic/`, `kernel/` or the generated tree, and an import-sweep witness checks every direction in both packages. |
+| `PriorInformationOrdersPossibilityNotResult` | ENFORCED_AT_EXISTENCE_AXIS | `PK₀` orders the field of possibility and never selects the result in place of the proof. It records the conditions that make the birth of a kind legitimate, not the kind itself. Enforced on field *names* at import: no field in this level may carry a ready-made fact (`genus`, `individual`, `event`, `quantity`, `reference`, `term`, `predicate`, `nisbah`, `arabic`, `root`, `fact`), so depositing the answer where the argument belongs is unsayable rather than refused afterwards. |
+| `PriorCoverageIsExactNotBestEffort` | ENFORCED_AT_EXISTENCE_AXIS | The nine places are covered exactly: a missing place is refused with the absent place named, and a duplicated one is refused rather than folded. This reuses the discipline of the kernel's invariant gate and of `ClosureCoverageIsExactNotBestEffort` one axis over: an incompletely covered base would read as complete by inattention. |
+| `AConditionNamesWhatItForbids` | ENFORCED_AT_EXISTENCE_AXIS | A condition that forbids nothing constrains no possibility; it is a description read as a constraint by inattention. Every `PriorCondition` names what it forbids and the genus of its license, and `AnUnreadConditionIsNotASatisfiedOne` keeps `UNREAD` a declared member: an unread condition is recorded as unread and never read as met. A condition licensed by the very ontology it licenses is a declared, refused member, so circular licensing fails loudly instead of passing under a general name. |
+| `NecessityAndIrreducibilityAreBothRequired` | ENFORCED_AT_EXISTENCE_AXIS | Every `OntologicalCandidate` carries both a necessity claim (why it cannot be dispensed with) and an irreducibility claim (what it cannot be reduced to). Either alone is refused at construction: necessity without irreducibility admits a candidate something else already covers, irreducibility without necessity admits one nothing needs. |
+| `AnOntologicalCandidateIsNotABornKind` | DECLARED_LAW_ONLY | Thing, identity, attribute, state, event, relation, role, quantity, reference, transformation, condition, preventer, trace and remainder are *declared candidates awaiting a test*, on the pattern of `CandidateBranchIsNotABornKind` one axis over. Naming them registers what is to be examined; it births nothing and issues no verdict. `UNREAD` is a declared member of the vocabulary. |
+| `AnOntologyIsFoundedOnADigestNotAName` | ENFORCED_AT_EXISTENCE_AXIS | `O₀` is bound to the *digest* of the `PK₀` base that licensed it, exactly as `Σ_L` is bound to the digest of `Σ_M`. A base carrying any unlicensed condition cannot found an ontology, and a candidate naming a prior place absent from that base is refused rather than read charitably — an ontology pointing at prior information that no longer stands is an ontology of some other base. |
+| `OntologicalKindIsNotLinguisticRole` | ENFORCED_AT_EXISTENCE_AXIS | The counterpart of `RelationIsNotRepresentation` one level down, and enforced the same way — on field *types*, not field names. `OntologicalCandidateRef` and `LinguisticFunctionRef` are disjoint types, neither may hold a field of the other's type, and the separation is checked at import. `AnEventIsAKindAnEventAnchorIsARole` is the concrete case the current `TermAnchorKind` merges: "event" is an ontological kind, "event anchor inside a nisbah" is a linguistic role of that object, and no name may belong to both vocabularies except the declared `unread`. |
+| `LicensingIsADirectionNotAContainment` | ENFORCED_AT_EXISTENCE_AXIS | `Genus → TermAnchorRole` is a reasoned license; `Genus ⊆ TermAnchor` asserted as a primitive truth is not. A `FunctionalLicense` carries the registered candidate, the function licensed, the `PK₀` place that licenses it and a non-blank condition statement; `ALicenseWithoutAConditionIsAContainmentClaim` refuses the blank one at construction, because a license that nothing can defeat is containment under another name. A license naming a candidate absent from `O₀`, or disagreeing with that candidate's registered kind, is refused. |
+| `FreeTextConditionIsNotALicensedCondition` | DECLARED_DEFERRED | `TermAnchorSignature.identity_condition` and `ArgumentSlot.admissibility_condition` remain free text in `Σ_L`. That is an accepted recording stage, and it is not enough once an ontological proof is claimed, since the system can check neither the truth of free prose nor its relation to prior information. Their migration into references to born, licensed conditions is deferred by declaration, not by neglect. |
+| `ALayerThatFoundALayerBeneathItIsNotARefutedLayer` | ENFORCED_AT_EXISTENCE_AXIS | `G0.NSB-0` is a correct layer under which a missing layer was found. Its text, its digest, its schema version and its Arabic meeting point are untouched by this deposit, and a witness asserts that no module under `src/alghanem/linguistic/` imports `prior/` or `ontology/`. Preserving the earlier text preserves the history of the argument, which is worth more than demolishing it. |
+| `NoReadoutExistsForPK0Yet` | ENFORCED_AT_EXISTENCE_AXIS | Frozen text, formal structure and registration only. The registered negative controls of `G0.NSB-0` stay unrun and no held-out corpus is named — that question is now premature, because testing kinds born in a layer that is no longer the earliest would test something other than what is claimed. The deposit issues no birth, no verdict, no freeze and no `E0`, and no `kernel/` module reads it. |
+
+The existence axis is `src/alghanem/prior/` (`hypothesis`, `conditions`) and
+`src/alghanem/ontology/` (`general`, `linguistic`). It is a testbed: if it holds
+under experiment and witness, its adoption as a proof subordinate to the algebra
+is a separate, later question that this section does not settle.
+
+## G0.ONT-1 — `Σ_L` re-anchored to `O_L` (deposit and registration only)
+
+`G0.ONT-0` opened the existence axis and stopped there: it said `Σ_L` operates on
+objects `O_L` licenses, but `Σ_L` itself still named its own sorts. This section
+closes that gap on the algebra side, and it does so *beside* `v1`, not over it.
+
+The migration is structural, and it is deliberately **decoupled from any
+empirical threshold**. No measurement can correct a confusion of an object's
+nature with its function in language; that correction is carried by the types.
+Accordingly, nothing here names a corpus, computes a score, or registers an
+acceptance criterion, and the negative controls of `G0.NSB-0` remain suspended.
+
+Three things change in the anchored layer. A term anchor no longer *writes* its
+kind: it carries a `LicensedRoleRef` derived from a license in a standing `O_L`,
+so `GENUS`, `INDIVIDUAL`, `REFERENCE`, `EVENT_ANCHOR` and `QUANTITY_ANCHOR` stop
+being branches of a linguistic primitive and become ontological candidates
+licensed for a linguistic function. An identity condition and an admissibility
+condition are no longer free prose: each is a `LicensedConditionRef` bound to a
+born, licensed `PK₀` condition and to the digest of its base. And the whole
+nisbah is bound to a single `O_L` digest, so licenses from two ontologies cannot
+be mixed into one structure.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `AnAnchorRoleIsALicenseNotAPrimitive` | ENFORCED_AT_ANCHORED_NUCLEUS | An anchor carries a reference to a license, never a written kind. Enforced on field *types* at import, like `OntologicalKindIsNotLinguisticRole` one axis over: no field in the anchored layer may be typed `TermAnchorKind`, so writing the nature where the license belongs is unsayable rather than refused afterwards. A license granted for one function and read as another, and a license whose function is `UNREAD`, are both refused at construction — an unread license is recorded unread and never read as operative. |
+| `FreeTextConditionIsDischargedInV2Only` | ENFORCED_AT_ANCHORED_NUCLEUS | `FreeTextConditionIsNotALicensedCondition` (G0.ONT-0) is discharged here and only here. Every condition field in the anchored layer is typed `LicensedConditionRef` and derived from a standing base, and a condition whose own license genus does not permit use founds no anchor and no slot. `v1` keeps its free text and its `DECLARED_DEFERRED` row unchanged: that row is a true statement about `v1`, and editing it would hide what the earlier stage actually was. |
+| `ALicenseOfAnotherOntologyIsNotALicense` | ENFORCED_AT_ANCHORED_NUCLEUS | An anchored nisbah is bound to one `O_L` digest, and every role reference it holds — the predicate's included — must carry that same digest. Mixing licenses from two ontologies builds on a foundation that no longer stands, and identifier equality would let it pass unnoticed. |
+| `V2StandsBesideV1NotOverIt` | ENFORCED_AT_ANCHORED_NUCLEUS | `linguistic-nisbah.schema.v2` is built on the *digest* of `v1`, is refused if it reuses `v1`'s version name, and is refused if `v1`'s digest has moved. `v1` is a text that was read, and overwriting a text that was read erases the history of the argument instead of correcting it. An anchored schema that is not bound to an ontology is refused too: it would be `v1` under a new name. |
+| `TheAlgebraReadsTheExistenceAxisFromOnePlace` | ENFORCED_AT_ANCHORED_NUCLEUS | Exactly one module of `src/alghanem/linguistic/` reads `prior/` and `ontology/`, and a witness asserts that the reader set is exactly `anchored.py`. The seven `v1` modules stay as they were left. `ontology/` still reads no algebra at all, so the licensing layer is never born from what it licenses. |
+| `ArityLicensingIsReusedNotReinvented` | ENFORCED_AT_ANCHORED_NUCLEUS | The anchored predicate reuses `ArityLicenseGenus` and `DEFERRED_ARGUMENT_ROLE_NAMES` from `v1` rather than copying them. An arity read off the target state still licenses nothing, and a slot named for a deferred semantic role is still refused — one vocabulary, not two that drift apart. |
+| `NoReadoutExistsForONT1Either` | ENFORCED_AT_ANCHORED_NUCLEUS | Structure only. No corpus is named, no score computed, no acceptance threshold registered, no birth, verdict, freeze or `E0` issued, and no `kernel/` module reads the layer. The question of a threshold is open and unregistered: a figure is not derivable until the unit of count, the reference it is measured against, and the ruling on unread units are named. |
+| `AnAbsoluteThresholdIsNotAMargin` | DOCUMENTED_OPEN_QUESTION | Recorded so the open question is not lost. An absolute match level cannot on its own license an adoption, because `AWeakerRepresentationThatTiesDefeatsTheClaim` (G0.NSB-0) already holds: a weaker model that *ties* defeats the claim, so a high level reached alongside a tying null model is a defeat, and a lower level reached against four beaten null models is not. Any future criterion must carry both an absolute floor and a margin over each of the four registered null models separately — not over their best, and not over their mean. |
+
+The anchored layer is `src/alghanem/linguistic/anchored.py`. `§G0.NSB-0` and
+`§G0.PK-0 / G0.ONT-0` both remain standing and unedited.
+
 ## Encyclopedia Nucleus — Constitution
 
 The encyclopedia is an application consumer of the kernel, never a replacement
