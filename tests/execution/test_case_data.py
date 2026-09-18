@@ -1,0 +1,449 @@
+"""`G0.CASE-0.DATA`: المدوّنةُ المكتوبةُ تُقرَأ من ملفّاتها ويُفحَص اتّساقُها الداخليّ.
+
+    MATRIX  ≺  DATA  ≺  READOUT  ≺  DIGEST LEDGER
+
+**ولا يُشغَّل المحرّكُ هنا**: هذه الطبقةُ تثبت أنّ الحالةَ مكتوبةٌ مشروعةُ
+الاستشهاد متّسقةٌ مع نفسها ومع المصفوفة المجمَّدة؛ ولا تثبت أنّها بلغت الخليّةَ
+التي ادّعتها. تلك دعوًى تبقى دعوًى إلى `G0.CASE-0.READOUT`.
+
+تسجيلٌ لا سلطة: لا ولادةَ ولا حكمَ ولادةٍ ولا تجميدَ `E0`.
+"""
+
+from __future__ import annotations
+
+import json
+from copy import deepcopy
+from pathlib import Path
+from typing import Any
+
+import pytest
+
+from alghanem.execution.case_data import (
+    CORPUS_ROOT_NAME,
+    CaseDataError,
+    EngineSeamWitness,
+    GoldenCaseCorpus,
+    GoldenExecutionCase,
+    GoldenExpectation,
+    InvalidInputWitness,
+)
+from alghanem.execution.coverage import COVERAGE_MATRIX
+
+_CORPUS_ROOT = Path(__file__).resolve().parents[2] / CORPUS_ROOT_NAME
+
+
+def _read(path: Path) -> dict[str, Any]:
+    loaded = json.loads(path.read_text(encoding="utf-8"))
+    assert isinstance(loaded, dict), path.name
+    return loaded
+
+
+def _folder(name: str) -> tuple[tuple[str, dict[str, Any]], ...]:
+    directory = _CORPUS_ROOT / name
+    assert directory.is_dir(), name
+    return tuple((path.stem, _read(path)) for path in sorted(directory.glob("*.json")))
+
+
+def _corpus() -> GoldenCaseCorpus:
+    return GoldenCaseCorpus.of(
+        manifest=_read(_CORPUS_ROOT / "MANIFEST.json"),
+        cases=tuple(item for _, item in _folder("cases")),
+        expectations=tuple(item for _, item in _folder("expectations")),
+        invalid_input_witnesses=tuple(item for _, item in _folder("invalid")),
+        engine_seam_witnesses=tuple(item for _, item in _folder("seam")),
+    )
+
+
+def _expectation_document() -> dict[str, Any]:
+    return deepcopy(_read(_CORPUS_ROOT / "expectations" / "case0.baseline.pass.json"))
+
+
+def _case_document() -> dict[str, Any]:
+    return deepcopy(_read(_CORPUS_ROOT / "cases" / "case0.baseline.pass.json"))
+
+
+def test_the_written_corpus_is_read_and_is_internally_consistent() -> None:
+    corpus = _corpus()
+    assert corpus.cases
+    assert corpus.engine_seam_witnesses
+    assert corpus.invalid_input_witnesses
+
+
+def test_a_file_name_carries_the_identity_written_inside_it() -> None:
+    for stem, document in _folder("cases"):
+        assert stem == document["case_id"]
+    for stem, document in _folder("expectations"):
+        assert stem == document["case_id"]
+    for folder in ("invalid", "seam"):
+        for stem, document in _folder(folder):
+            assert stem == document["witness_id"]
+
+
+def test_what_is_not_covered_is_named_and_is_not_passed_over_in_silence() -> None:
+    corpus = _corpus()
+    coverage = corpus.coverage
+    assert not coverage.is_complete
+    assert coverage.uncovered_requirement_ids == (
+        corpus.declared_uncovered_requirement_ids
+    )
+    required = {item.requirement_id for item in COVERAGE_MATRIX.required_cases}
+    assert set(coverage.cited_requirement_ids) <= required
+    assert set(coverage.uncovered_requirement_ids) <= required
+
+
+def test_a_declared_residual_that_drifts_from_the_citations_is_refused() -> None:
+    manifest = _read(_CORPUS_ROOT / "MANIFEST.json")
+    manifest["uncovered_requirement_ids"] = []
+    with pytest.raises(CaseDataError):
+        GoldenCaseCorpus.of(
+            manifest=manifest,
+            cases=tuple(item for _, item in _folder("cases")),
+            expectations=tuple(item for _, item in _folder("expectations")),
+            invalid_input_witnesses=tuple(item for _, item in _folder("invalid")),
+            engine_seam_witnesses=tuple(item for _, item in _folder("seam")),
+        )
+
+
+def test_an_expectation_that_carries_an_execution_digest_is_refused() -> None:
+    document = _expectation_document()
+    document["expected_execution_digest"] = None
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_a_nested_readout_key_is_refused_wherever_it_hides() -> None:
+    document = _expectation_document()
+    document["expected_trace"][0]["execution_digest"] = "أيًّا كانت"
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_an_expectation_pinned_to_another_matrix_is_refused() -> None:
+    document = _expectation_document()
+    document["matrix_digest"] = "0" * 64
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_an_expectation_pinned_to_another_law_set_is_refused() -> None:
+    document = _expectation_document()
+    document["law_set_digest"] = "0" * 64
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_a_satisfied_row_does_not_carry_the_case_to_pass_by_itself() -> None:
+    document = _expectation_document()
+    document["expected_trace"].append(
+        {
+            "law": "role_license_is_operative",
+            "subject_id": "anchor.second",
+            "standing": "violated",
+            "blocked_by": None,
+        }
+    )
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_a_violation_forces_block_even_beside_every_other_standing() -> None:
+    document = _expectation_document()
+    document["expected_trace"].append(
+        {
+            "law": "role_license_is_operative",
+            "subject_id": "anchor.second",
+            "standing": "violated",
+            "blocked_by": None,
+        }
+    )
+    document["expected_trace"].append(
+        {
+            "law": "condition_sites_are_licensed_for_use",
+            "subject_id": "anchor.second",
+            "standing": "unresolved",
+            "blocked_by": None,
+        }
+    )
+    document["expected_disposition"] = "defer"
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_a_verdict_that_disagrees_with_its_own_trace_is_refused() -> None:
+    document = _expectation_document()
+    document["expected_disposition"] = "block"
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_a_violation_that_has_no_row_in_the_trace_is_refused() -> None:
+    document = _expectation_document()
+    document["expected_violations"] = [
+        {"law": "role_license_is_operative", "subject_id": "predicate.A"}
+    ]
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_two_contradicting_standings_for_one_law_on_one_subject_are_refused() -> None:
+    document = _expectation_document()
+    document["expected_trace"].append(
+        {
+            "law": "role_license_is_operative",
+            "subject_id": "predicate.A",
+            "standing": "unresolved",
+            "blocked_by": None,
+        }
+    )
+    document["expected_disposition"] = "defer"
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_one_law_may_stand_on_one_subject_and_be_violated_on_another() -> None:
+    document = _expectation_document()
+    document["expected_trace"].append(
+        {
+            "law": "role_license_is_operative",
+            "subject_id": "anchor.second",
+            "standing": "violated",
+            "blocked_by": None,
+        }
+    )
+    document["expected_violations"] = [
+        {"law": "role_license_is_operative", "subject_id": "anchor.second"}
+    ]
+    document["expected_disposition"] = "block"
+    document["expected_materialized_identity_id"] = None
+    document["citations"] = [
+        {
+            "requirement_id": "LS.role_license_is_operative.satisfied",
+            "law": "role_license_is_operative",
+            "witness_subject_id": "predicate.A",
+            "standing": "satisfied",
+        },
+        {
+            "requirement_id": "LS.role_license_is_operative.violated",
+            "law": "role_license_is_operative",
+            "witness_subject_id": "anchor.second",
+            "standing": "violated",
+        },
+    ]
+    expectation = GoldenExpectation.of(document)
+    assert expectation.expected_disposition.value == "block"
+
+
+def test_a_passing_case_that_reaches_no_materialized_identity_is_refused() -> None:
+    document = _expectation_document()
+    document["expected_materialized_identity_id"] = None
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_a_subject_scoped_citation_that_names_no_subject_is_refused() -> None:
+    document = _expectation_document()
+    document["citations"][0]["witness_subject_id"] = None
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_a_case_scoped_citation_that_names_a_subject_is_refused() -> None:
+    document = _expectation_document()
+    for citation in document["citations"]:
+        if citation["requirement_id"] == "LS.anchors_do_not_exceed_arity.satisfied":
+            citation["witness_subject_id"] = "nisbah.A"
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_a_citation_that_names_a_standing_other_than_its_cell_is_refused() -> None:
+    document = _expectation_document()
+    document["citations"][0]["standing"] = "violated"
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_a_citation_with_no_matching_row_in_the_frozen_trace_is_refused() -> None:
+    document = _expectation_document()
+    document["citations"][0]["witness_subject_id"] = "license.that.is.not.here"
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_a_citation_of_a_requirement_outside_the_matrix_is_refused() -> None:
+    document = _expectation_document()
+    document["citations"][0]["requirement_id"] = "LS.a_law_that_is_not_frozen.satisfied"
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_a_whole_case_citation_that_names_a_law_is_refused() -> None:
+    document = _expectation_document()
+    for citation in document["citations"]:
+        if citation["requirement_id"] == "OR.pass":
+            citation["law"] = "existence_lineage_rederives"
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_a_whole_case_citation_that_constrains_another_verdict_is_refused() -> None:
+    document = _expectation_document()
+    for citation in document["citations"]:
+        if citation["requirement_id"] == "OR.pass":
+            citation["requirement_id"] = "OR.block"
+    with pytest.raises(CaseDataError):
+        GoldenExpectation.of(document)
+
+
+def test_a_counter_case_with_no_declared_difference_is_refused() -> None:
+    document = _case_document()
+    document["case_id"] = "case0.counter.without_a_difference"
+    document["baseline_case_id"] = "case0.baseline.pass"
+    with pytest.raises(CaseDataError):
+        GoldenExecutionCase.of(document)
+
+
+def test_a_counter_case_with_two_undeclared_faults_is_refused() -> None:
+    document = _case_document()
+    document["case_id"] = "case0.counter.two_faults"
+    document["baseline_case_id"] = "case0.baseline.pass"
+    document["declared_differences"] = [
+        {"path": "nisbah.predicate.arity", "statement": "الرتبةُ صارت ثلاثًا"},
+        {"path": "nisbah.anchors", "statement": "زِيد مرتكزٌ ثانٍ"},
+    ]
+    with pytest.raises(CaseDataError):
+        GoldenExecutionCase.of(document)
+
+
+def test_two_faults_are_admitted_when_multiplicity_is_itself_the_proof() -> None:
+    document = _case_document()
+    document["case_id"] = "case0.counter.two_subjects"
+    document["baseline_case_id"] = "case0.baseline.pass"
+    document["declared_differences"] = [
+        {"path": "nisbah.anchors.0", "statement": "المرتكزُ الأوّلُ على حاله"},
+        {"path": "nisbah.anchors.1", "statement": "مرتكزٌ ثانٍ رخصتُه معطَّلة"},
+    ]
+    document["multiplicity_is_the_proof"] = (
+        "المطلوبُ إثباتُ أنّ قانونًا واحدًا يثبت على موضوعٍ ويُخالَف على آخر في "
+        "القراءة نفسِها؛ فالتعدُّدُ هو محلُّ البرهان لا اختصارُ ملفّات"
+    )
+    case = GoldenExecutionCase.of(document)
+    assert len(case.declared_differences) == 2
+
+
+def test_a_baseline_that_declares_a_difference_from_nothing_is_refused() -> None:
+    document = _case_document()
+    document["declared_differences"] = [
+        {"path": "nisbah.predicate.arity", "statement": "فرقٌ بلا أصلٍ يُقاس إليه"}
+    ]
+    with pytest.raises(CaseDataError):
+        GoldenExecutionCase.of(document)
+
+
+def test_a_case_document_that_is_not_shaped_as_a_declaration_is_refused() -> None:
+    document = _case_document()
+    document["document"]["a_key_outside_the_contract"] = True
+    with pytest.raises(CaseDataError):
+        GoldenExecutionCase.of(document)
+
+
+def test_a_case_measured_against_an_absent_baseline_is_refused() -> None:
+    case = _case_document()
+    case["case_id"] = "case0.counter.orphan"
+    case["baseline_case_id"] = "case0.a_baseline_that_is_not_written"
+    case["declared_differences"] = [
+        {"path": "nisbah.predicate.arity", "statement": "الرتبةُ صارت ثلاثًا"}
+    ]
+    expectation = _expectation_document()
+    expectation["case_id"] = "case0.counter.orphan"
+    with pytest.raises(CaseDataError):
+        GoldenCaseCorpus.of(
+            manifest=_read(_CORPUS_ROOT / "MANIFEST.json"),
+            cases=tuple(item for _, item in _folder("cases")) + (case,),
+            expectations=tuple(item for _, item in _folder("expectations"))
+            + (expectation,),
+            invalid_input_witnesses=tuple(item for _, item in _folder("invalid")),
+            engine_seam_witnesses=tuple(item for _, item in _folder("seam")),
+        )
+
+
+def test_a_case_without_a_frozen_expectation_is_refused() -> None:
+    case = _case_document()
+    case["case_id"] = "case0.without_an_expectation"
+    case["baseline_case_id"] = "case0.baseline.pass"
+    case["declared_differences"] = [
+        {"path": "nisbah.predicate.arity", "statement": "الرتبةُ صارت ثلاثًا"}
+    ]
+    with pytest.raises(CaseDataError):
+        GoldenCaseCorpus.of(
+            manifest=_read(_CORPUS_ROOT / "MANIFEST.json"),
+            cases=tuple(item for _, item in _folder("cases")) + (case,),
+            expectations=tuple(item for _, item in _folder("expectations")),
+            invalid_input_witnesses=tuple(item for _, item in _folder("invalid")),
+            engine_seam_witnesses=tuple(item for _, item in _folder("seam")),
+        )
+
+
+def test_an_invalid_input_witness_names_its_faults_and_claims_no_verdict() -> None:
+    corpus = _corpus()
+    witness = corpus.invalid_input_witnesses[0]
+    assert witness.expected_fault_kinds
+    cited = {citation.requirement_id for citation in witness.citations}
+    assert "OR.invalid_input" in cited
+    assert "OR.pass" not in cited
+
+
+def test_an_invalid_input_witness_that_claims_a_law_cell_is_refused() -> None:
+    document = deepcopy(
+        _read(_CORPUS_ROOT / "invalid" / "case0.invalid.unknown_key.json")
+    )
+    document["citations"].append(
+        {
+            "requirement_id": "LS.existence_lineage_rederives.satisfied",
+            "law": "existence_lineage_rederives",
+            "witness_subject_id": "linguistic.A",
+            "standing": "satisfied",
+        }
+    )
+    with pytest.raises(CaseDataError):
+        InvalidInputWitness.of(document)
+
+
+def test_an_engine_seam_witness_is_given_no_document_of_its_own() -> None:
+    corpus = _corpus()
+    witness = corpus.engine_seam_witnesses[0]
+    assert witness.seam
+    assert witness.refused_document_reason
+    cited = {citation.requirement_id for citation in witness.citations}
+    assert cited == {
+        "OR.invariant_error",
+        "XS.invariant_error_has_no_verdict_and_no_envelope",
+    }
+
+
+def test_an_engine_seam_witness_that_is_given_a_document_is_refused() -> None:
+    document = deepcopy(
+        _read(
+            _CORPUS_ROOT
+            / "seam"
+            / "case0.seam.materialized_identity_is_incomplete.json"
+        )
+    )
+    document["document"] = {}
+    with pytest.raises(CaseDataError):
+        EngineSeamWitness.of(document)
+
+
+def test_a_witness_that_takes_the_name_of_a_case_is_refused() -> None:
+    document = deepcopy(
+        _read(_CORPUS_ROOT / "invalid" / "case0.invalid.unknown_key.json")
+    )
+    document["witness_id"] = "case0.baseline.pass"
+    with pytest.raises(CaseDataError):
+        GoldenCaseCorpus.of(
+            manifest=_read(_CORPUS_ROOT / "MANIFEST.json"),
+            cases=tuple(item for _, item in _folder("cases")),
+            expectations=tuple(item for _, item in _folder("expectations")),
+            invalid_input_witnesses=(document,),
+            engine_seam_witnesses=tuple(item for _, item in _folder("seam")),
+        )

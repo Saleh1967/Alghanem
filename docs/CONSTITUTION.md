@@ -2903,9 +2903,11 @@ the expectations were edited after seeing the result.
 | Law | Status | Scope |
 | --- | --- | --- |
 | `CoverageRequirementIsFrozenBeforeCaseSelection` | ENFORCED_AT_COVERAGE_GATE | A requirement engine invariant, not an `ExecutionLaw`. Every `CoverageRequirement` carries `case_id = None`, enforced at construction. Thirty cases must be a consequence of the legal structure, never an arbitrary count that the matrix is later written to describe. |
-| `CaseExpectationIsFrozenBeforeFirstEngineReadout` | ENFORCED_AT_COVERAGE_GATE | A requirement engine invariant, not an `ExecutionLaw`. The matrix names the expected outcome of a standing, not the observed one; no engine call may occur in the same stage that fixes an expectation. |
-| `AnUnreachableCellIsJustifiedNotInvented` | ENFORCED_AT_COVERAGE_GATE | A requirement engine invariant, not an `ExecutionLaw`. A standing the constitution forbids is recorded `reachable = False`, `required = False`, with a named justification, an unconstrained outcome, no prerequisites and no forbidden co-standings. No case is fabricated to fill a table. |
+| `CaseExpectationIsFrozenBeforeFirstEngineReadout` | ENFORCED_AT_COVERAGE_GATE | A requirement engine invariant, not an `ExecutionLaw`. The matrix names what a requirement expects, not what was observed; no engine call may occur in the same stage that fixes an expectation. |
+| `AnUnreachableCellIsJustifiedNotInvented` | ENFORCED_AT_COVERAGE_GATE | A requirement engine invariant, not an `ExecutionLaw`. A standing the constitution forbids is recorded `reachable = False`, `required = False`, with a named justification, no verdict effect, no case disposition, no prerequisites and no forbidden co-standings. The absence is read from the fields themselves rather than from a member inside a vocabulary, so no enumeration carries a value that is not a state of anything. No case is fabricated to fill a table. |
 | `AMatrixNamesNoCaseAndNoDigest` | ENFORCED_AT_COVERAGE_GATE | A requirement engine invariant, not an `ExecutionLaw`. The matrix is unreadable by any engine module — a test asserts no execution module imports it — so a coverage requirement can never influence a verdict. |
+| `ALawStandingIsNotACaseVerdict` | ENFORCED_AT_COVERAGE_GATE | A requirement engine invariant, not an `ExecutionLaw`. A first-axis cell speaks of one law on one subject, so it may not carry a whole-case expectation at all: it carries `verdict_effect` only — `VIOLATED → FORCES_BLOCK`, `UNRESOLVED → FORCES_DEFER_UNLESS_BLOCKED`, and `SATISFIED`, `NOT_EVALUATED_BY_PREREQUISITE` and `NOT_APPLICABLE_NO_CLAIM` → `NO_VERDICT_EFFECT`. A satisfied law never forces `PASS`, because another law in the same case may be violated and `aggregate_outcome` reads `BLOCK > DEFER > PASS`. The three layers are separately typed: `CheckStanding → VerdictEffect → CaseDisposition`. `VerdictEffect` has exactly three members; a fourth effect would enter a new matrix with evidence, never as a reserved place. |
+| `AProhibitionIsReadInItsEvaluationScope` | ENFORCED_AT_COVERAGE_GATE | A requirement engine invariant, not an `ExecutionLaw`. Every law carries a frozen `EvaluationScope` — `SUBJECT` where the judgement is borne by a named licence, site, slot or ontology, `CASE` where it is borne by the structure itself, such as predicate shape or the materialized identity. The scope is the bearer of the judgement, not a count of sites, so it does not move when a case happens to have one site or ten. `forbidden_co_standings` is read in that scope: on a `SUBJECT` law the prohibition binds `(law, subject)` alone, so `SATISFIED(L, A)` and `VIOLATED(L, B)` may stand together while `SATISFIED(L, A)` and `VIOLATED(L, A)` may not. A cell may not redefine its law's scope, and `G0.CASE-0.DATA` must name `witness_subject_id` for every `SUBJECT`-scoped law even where only one subject exists. |
 | `AMatrixMeasuresTheEngineAsFrozen` | ENFORCED_AT_COVERAGE_GATE | A requirement engine invariant, not an `ExecutionLaw`. The matrix measures `PK₀ → O₀ → O_L² → Nisbah` as frozen. Any deeper ontological founding — redefining `PK₀` as a network of fibered nodes with existence, reality, properties, attributes, relations, conditions, causes and preventers — is a new layer above this contract with its own matrix and its own cases; it never alters this one retroactively. `G0.CASE-0` is thereby a historical witness of correct behaviour *before* that redesign. |
 
 The matrix has three independent axes; none substitutes for another.
@@ -2921,25 +2923,90 @@ evidence — either the nisbah is constructed and its identity compared, or an
 earlier law prevented its construction and the block is recorded under the name
 of its blocker.
 
+No first-axis cell carries a case disposition at all; each reachable one carries
+the effect of its standing on the aggregate, under `ALawStandingIsNotACaseVerdict`.
+
 Each reachable cell also carries `forbidden_co_standings`: proving that a law
 *can* reach `VIOLATED` does not prove that it cannot simultaneously be read
-`SATISFIED` or `UNRESOLVED`. The prohibition is read **per law and per subject**,
-not across a whole trace, because a law with many sites legitimately holds at
-one site and fails at another.
+`SATISFIED` or `UNRESOLVED`. The prohibition is read in the law's frozen
+`EvaluationScope`: on a `SUBJECT`-scoped law it binds `(law, subject)` alone,
+because such a law legitimately holds at one site and fails at another.
 
-**2. Outcome reachability.** Independent witnesses for `PASS`, `BLOCK`, `DEFER`,
-invalid input, and `ExecutionInvariantError`. The last is not an outcome and has
-no member in `ExecutionOutcome`; it nevertheless requires a reachability witness
-as an internal defect, and the matrix states explicitly that it is reached at the
-engine seam — by handing the engine incomplete derived material after a
-provisional pass — never by a document a case author could write.
+**2. Outcome reachability.** Independent witnesses for the five case
+dispositions: `PASS`, `BLOCK`, `DEFER`, `INVALID_INPUT` and `INVARIANT_ERROR`.
+The last two are not members of `ExecutionOutcome` — invalid input yields no
+verdict and an `ExecutionInvariantError` is an internal defect — but both are
+states the case as a whole can end in, so both belong in `CaseDisposition` and
+both require a reachability witness. The matrix states explicitly that the
+invariant error is reached at the engine seam — by handing the engine incomplete
+derived material after a provisional pass — never by a document a case author
+could write.
 
 **3. Cross-stage separation.** Seven boundaries between stages: invalid input
 produces no envelope; `BLOCK` produces no materialized identity; `DEFER`
 produces no materialized identity; `PASS` is never without one; an
 `ExecutionInvariantError` produces neither verdict nor envelope;
 `NOT_EVALUATED_BY_PREREQUISITE` produces no residual; and
-`NOT_APPLICABLE_NO_CLAIM` is never read as `SATISFIED`.
+`NOT_APPLICABLE_NO_CLAIM` is never read as `SATISFIED`. The last two constrain
+no case disposition and carry `None`: a blocked dependent or an absent claim can
+appear under `BLOCK` and under `DEFER` alike, and the requirement is exactly the
+separation it names, read on its own subject.
+
+`G0.CASE-0.MATRIX-H` corrected this specification before any golden case was
+written, and `COVERAGE_MATRIX_DIGEST` moved accordingly. The move is required,
+not incidental: it records that the requirement was repaired while it was still
+only a requirement. Once `G0.CASE-0.DATA` freezes the corpus, a change of this
+kind needs a new matrix, never a silent edit.
 
 Deferred here by name, not by omission: the golden cases themselves, their
 inputs, their expected verdicts, and every execution digest.
+
+### G0.CASE-0.DATA — The written cases, before the first readout
+
+`G0.CASE-0.DATA` derives an independent corpus from the frozen matrix. The
+governing order is now four stages long:
+
+    MATRIX  ≺  DATA  ≺  READOUT  ≺  DIGEST LEDGER
+
+`DATA` says, before the engine has run once: *this is the case, and this is what
+we expect of it*. `READOUT` runs the engine for the first time and compares.
+Only if the reading matches the frozen expectation is an execution digest
+recorded, in a ledger of its own that never flows back into `DATA`; from the
+second reading onward that digest is a witness of drift.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `ACaseIsAuthoredNotGenerated` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. The golden cases are reviewed `JSON` files under `case_data/`, never the output of Python builders: a program that constructs the evidence cannot be held to account by it. `case_data.py` carries the specification datatypes and the internal-consistency checker only — it opens no file, builds no document, and imports no engine module. Reading the files is the test layer's business, so no file path enters the specification. |
+| `AnExpectationCarriesNoExecutionDigest` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `execution_digest` is born of the readout; admitting it into `DATA` — even as `None` — merges two stages. The field is absent from every type, and any key born of the readout is refused wherever it hides in the expectation tree, at any depth. |
+| `AGoldenCounterCaseIsOneDeclaredDifference` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `GoldenCounterCase = ValidBaseline + OneDeclaredDifference`, for `UNRESOLVED` as much as for `VIOLATED`: a golden case answers one question with the least construction. Two differences in one document are admitted only when multiplicity is itself what is being proved — a single law satisfied on one subject and violated on another — and then the reason is stated by name, never as a shortcut on the number of files. |
+| `ACitationIsAClaimUntilTheReadout` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. A `CoverageCitation` in `DATA` is a *claim* of coverage. The `DATA` checker proves only that the citation is legitimate — that it names a required, reachable cell, that its law and standing are that cell's own, that a `SUBJECT`-scoped cell names its witness subject and a `CASE`-scoped cell names none, and that the case's own frozen expectation contains the row cited. `READOUT` alone proves that the case actually reached the cell, by matching the citation against a line of the real trace. This is what prevents paper coverage. |
+| `AnInvariantErrorIsNotInTheUserCaseSpace` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `INVARIANT_ERROR ∉ UserCaseSpace`, so it is not a golden case and is given no document: it is an `EngineSeamWitness` on an internal seam reached by handing the engine incomplete derived material after a provisional pass. Giving it a document would make an engine defect something a case author can request. Invalid input is likewise a separate identity — `InvalidInputWitness ≠ GoldenExecutionCase` — with no trace, no envelope and no verdict. |
+
+Four independent types carry the corpus. `GoldenExecutionCase` carries the
+document alone, with its baseline and its declared differences, and no verdict.
+`GoldenExpectation` carries what was expected before any reading: the
+disposition, the trace, the residuals, the materialized identity and the
+citations. `InvalidInputWitness` carries a document from which no case is
+constituted, with its expected input faults only. `EngineSeamWitness` carries no
+document at all. Both witnesses may cite the second- and third-axis cells that
+constrain their own disposition, and neither may claim a law-standing cell: a
+cell about a law in a standing is reached by a case that stood, not by a witness
+to something short of one.
+
+The expectation is checked for internal coherence without running the engine:
+any `VIOLATED` row forces `BLOCK`, `UNRESOLVED` defers only when no violation is
+present, `PASS` and a materialized identity imply each other, the declared
+violations are exactly the violated rows in their order, no law contradicts
+itself on one subject in one reading, and both `COVERAGE_MATRIX_DIGEST` and
+`LAW_SET_DIGEST` are pinned to the frozen values. A mis-authored expectation is
+therefore not caught here; it is caught at the readout, which is the point.
+
+What the corpus does not yet cover is named in `case_data/MANIFEST.json`, and
+the checker refuses any drift between that declared residual and the residual
+derived from the citations. Coverage is closed by adding cases, never by
+narrowing the list.
+
+Deferred here by name, not by omission: the counter-cases for the requirements
+listed in the manifest; the `JSON → CaseDeclaration` reader, which belongs to
+`G0.CASE-0.READOUT` as its first obligation; the readout itself; and the digest
+ledger that only a matching first reading may open.

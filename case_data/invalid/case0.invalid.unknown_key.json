@@ -1,0 +1,52 @@
+{
+  "witness_id": "case0.invalid.unknown_key",
+  "document": {
+    "schema": "alghanem.execution.v1",
+    "nisbah_schema": "linguistic-nisbah.schema.v3",
+    "prior_bases": [],
+    "general_ontologies": [],
+    "linguistic_ontologies": [],
+    "lineage": {
+      "base_id": "base.A",
+      "general_ontology_id": "general.A",
+      "linguistic_ontology_id": "linguistic.A"
+    },
+    "nisbah": {
+      "nisbah_id": "nisbah.A",
+      "declared_content_id": null,
+      "predicate": {
+        "predicate_id": "predicate.A",
+        "arity": 1,
+        "arity_license": "prior_specification",
+        "role_site": null,
+        "slots": [
+          {
+            "slot_id": "site.first",
+            "position": 1,
+            "condition_site": null
+          }
+        ]
+      },
+      "anchors": []
+    },
+    "unresolved_requirements": [],
+    "an_unknown_key": "مفتاحٌ ليس في عقد الوثيقة"
+  },
+  "expected_fault_kinds": [
+    "unknown_key"
+  ],
+  "citations": [
+    {
+      "requirement_id": "OR.invalid_input",
+      "law": null,
+      "witness_subject_id": null,
+      "standing": null
+    },
+    {
+      "requirement_id": "XS.invalid_input_has_no_envelope",
+      "law": null,
+      "witness_subject_id": null,
+      "standing": null
+    }
+  ]
+}
