@@ -4976,6 +4976,47 @@ and the next milestone is not `GEN-0.DATA` but `G0.FGEN-0.SPEC`, where this line
 becomes the base case of a fractal generation under `LinearGeneration ⊂
 FractalGeneration`.
 
+`G0.FGEN-EX-0` opens a *temporary experimental authority* over the fractal
+core in `src/alghanem/fractal_experiment/`, and changes nothing in
+`fractal_generation/`. The question it answers is not «do we hold a licence to
+experiment?» but «do we hold a freeze and a temporary run authority?», under one
+highest law, `ExperimentBeforeLicense`, and one separation,
+`TemporaryExperimentalAuthority ≠ LicensingAuthority`. A run reads a
+`FrozenExperimentBinding` — content frozen before the run, with the fields the
+generator may see named apart from the fields held out of it — receives an
+`ExperimentalRunPermit` bound to that one `run_id`, moves `ISSUED → ACTIVE →
+REVOKED`, and expires with its run rather than with a clock. Nothing in the layer
+is a rank: `ExperimentalFractalTransition` wraps a core `FractalTransition`
+without licensing it, `ExperimentalLiftGate` mints an `ExperimentalNextScaleSeed`
+that is not a `FractalSeed`, is not a `NextScaleSeed`, and carries no conversion
+into one — the sealed `ScaleNecessityCertificate` of the core stays unissuable,
+because `ExperimentalLiftTestsNecessity; ItDoesNotCertifyNecessity`. Every run
+ends in a `FractalExperimentalWitness`, and support, refutation, underpoweredness
+and run failure are four standings of witness, never a licence:
+`ExperimentalPASS → Witness`, not `→ License`. Witnesses accumulate into a
+`WitnessBundle` that aggregates and does not judge — no verdict, no rank, no
+score — and `WitnessSufficiencyContract` is shipped as a declaration with no
+evaluator, because `SufficiencyCriterionMustPrecedeItsMeasurement`. Authority
+gaps of this layer carry their own prefix, `RES.FGENEX0.`, so the core's
+`RES.FGEN0.` base is untouched.
+
+The first real run of that authority is on MASAQ, not on synthetic marks:
+`src/alghanem/arabic/masaq_fractal_experiment.py` resolves the deposited bytes
+through `ALGHANEM_MASAQ_PATH`, matches their length and SHA-256 before a record
+is parsed, and freezes one input per word key. The generator sees only the
+word's position and its stripped segment surfaces; `Morph_Tag`, `Morph_type`,
+`Syntactic_Role`, `Case_Mood` and `Lemma` are held out of it structurally — a
+leaked column is refused, not merely discouraged — so the annotation already in
+the corpus cannot become the answer the engine feeds itself
+(`FrozenExpectation ≠ GenerativeInput`); the tags enter the readout after the
+run, as observations. Each word is run through the core — seed, expansion,
+pattern conformance, adjudication, identity-preserving transition, trace,
+closure at `masaq.segment` — then lifted experimentally toward `masaq.word`, and
+turned into a witness carrying its residuals, its frozen-input identity, its
+permit identity and its full trace. `examples/arabic/run_masaq_fractal_experiment.py`
+runs it end to end and prints the bundle, its gaps and the revoked permit; it
+prints no licence, because there is none to print.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
