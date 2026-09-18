@@ -2850,3 +2850,35 @@ and no `E0` freeze.
 
 Deferred here by name, not by omission: the golden-case corpus, the command
 line interface, packaging, `O_M`, significations, and any Arabic material.
+
+### G0.RUN-0H — Hardening the sealed verdict
+
+`G0.RUN-0H` adds no theory and no linguistic law. It closes three gaps between
+the stated meaning of a verdict and what the engine actually did, and corrects
+the standing of one dependent law.
+
+The two invariants below are **invariants of the execution engine, not members
+of `ExecutionLaw`**. They are never evaluated against a case, never recorded as
+a line in a trace, and never enter `LAW_SET_DIGEST`; they live in
+`src/alghanem/execution/invariant.py` and are enforced at construction time.
+`LAW_SET`, `LAW_SET_ID` and `LAW_SET_DIGEST` are therefore unchanged by this
+milestone, and no earlier verdict is re-read under a different law set.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `AMaterializationFailureIsNotABlock` | ENFORCED_AT_EXECUTION_GATE | An engine invariant, not an `ExecutionLaw`. `BLOCK` is issued only because a declared law was evaluated and proved violated. If a case passes every pre-construction law and materialization then fails — the `v3` door refuses it, or a derived site the laws admitted is absent — the law set failed to cover a condition `v3` imposes, or the engine is defective. That is `ExecutionInvariantError`, outside `PASS`/`BLOCK`/`DEFER`; no envelope is sealed and the failure is never charged to the case. |
+| `PassIffMaterializedIdentity` | ENFORCED_AT_EXECUTION_GATE | An engine invariant, not an `ExecutionLaw`. The relation is biconditional: `PASS` requires a `materialized_identity`, and `BLOCK`/`DEFER` forbid one. Only success reaches authoritative material, and success is never without it. |
+| `AnEnvelopeHoldsAnUnalterableDeclaration` | ENFORCED_AT_EXECUTION_GATE | Freezing a dataclass does not freeze a dictionary it carries, nor the dictionaries nested inside it. The envelope therefore holds the frozen `CaseDeclaration` itself, and `declaration_document` is a read-only projection recomputed on every read, so the stored input cannot be altered after sealing while `input_digest` and `execution_digest` stay as they were. |
+
+Under `DEFER`, `MATERIALIZED_IDENTITY_AGREES` is recorded
+`NOT_EVALUATED_BY_PREREQUISITE` naming the first `UNRESOLVED` law as its
+blocker, not `UNRESOLVED`: the identity law's own evidence is not missing; the
+nisbah was never constructed because an earlier law lacked evidence. The
+distinction is the one `ABlockedDependentIsNotMissingEvidence` already draws, so
+the dependent law no longer contributes a residual of its own.
+
+This correction changes `execution_digest` for `DEFER` cases that claim a nisbah
+identity. That is admissible **now and not later**: the digests produced by
+`G0.RUN-0` are not a frozen historical contract over cases, and hardening
+precedes the freezing of golden data. After `G0.CASE-0` freezes the corpus, a
+digest change requires a new law set and new cases, never a silent edit.

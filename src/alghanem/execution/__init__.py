@@ -45,6 +45,11 @@ from .derivation import (
     derive_partial_authority,
 )
 from .engine import ExecutionReport, execute_declaration, execute_document
+from .invariant import (
+    A_MATERIALIZATION_FAILURE_IS_NOT_A_BLOCK,
+    PASS_IFF_MATERIALIZED_IDENTITY,
+    ExecutionInvariantError,
+)
 from .laws import (
     EVERY_LAW_IS_EVALUATED,
     aggregate_outcome,
@@ -81,6 +86,7 @@ from .requirement import (
 from .result import (
     A_DIGEST_DOES_NOT_CONTAIN_ITSELF,
     A_REPLAY_NEEDS_THE_DECLARATION_NOT_ITS_DIGEST,
+    AN_ENVELOPE_HOLDS_AN_UNALTERABLE_DECLARATION,
     EXECUTION_RESULT_SCHEMA,
     ExecutionResultCore,
     ExecutionResultEnvelope,
@@ -98,12 +104,14 @@ from .validation import DeclaredLevels, validate_declaration
 
 __all__ = [
     "AN_AUDIT_READS_THE_TRACE_IT_DOES_NOT_JUDGE_AGAIN",
+    "AN_ENVELOPE_HOLDS_AN_UNALTERABLE_DECLARATION",
     "AN_UNRESOLVED_REQUIREMENT_IS_NOT_A_FORGED_REFERENCE",
     "A_BLOCKED_DEPENDENT_IS_NOT_MISSING_EVIDENCE",
     "A_DECLARATION_IS_NOT_AN_AUTHORITY",
     "A_DERIVATION_IS_NOT_A_VERDICT",
     "A_DIGEST_DOES_NOT_CONTAIN_ITSELF",
     "A_LAW_SET_IS_NOT_REINTERPRETED_BY_A_LATER_ONE",
+    "A_MATERIALIZATION_FAILURE_IS_NOT_A_BLOCK",
     "A_REPLAY_NEEDS_THE_DECLARATION_NOT_ITS_DIGEST",
     "DEPENDENT_LAWS",
     "EVERY_LAW_IS_EVALUATED",
@@ -116,6 +124,7 @@ __all__ = [
     "LAW_SET_ID",
     "NO_CLAIM_IS_NOT_AN_AGREEMENT",
     "NO_DEFAULT_SUCCESS_AND_NO_DEFAULT_BLOCK",
+    "PASS_IFF_MATERIALIZED_IDENTITY",
     "SAME_INPUT_SAME_LAWS_SAME_RESULT",
     "UNRESOLVED_EVIDENCE_IS_NOT_INVALID_INPUT",
     "AnchorDeclaration",
@@ -126,6 +135,7 @@ __all__ = [
     "DecodedDocument",
     "DeclaredLevels",
     "DerivedSite",
+    "ExecutionInvariantError",
     "ExecutionLaw",
     "ExecutionOutcome",
     "ExecutionReport",
