@@ -353,8 +353,7 @@ class ClosureGate:
                 residuals=residuals,
             )
         moved = {
-            step.transition.movement.candidate_id
-            for step in candidate.horizontal_steps
+            step.transition.movement.candidate_id for step in candidate.horizontal_steps
         }
         admitted = set(candidate.adjudication.co_admissible_ids)
         if admitted - moved:
