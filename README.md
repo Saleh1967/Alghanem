@@ -4804,12 +4804,17 @@ admissible only because hardening precedes the freezing of the golden corpus.
 case exists. It freezes what must be covered along three independent axes: every
 one of the eighteen laws in every one of the five standings, ninety cells of
 which fifty-six are reachable and thirty-four are refused with a named reason;
-an independent reachability witness for each of `PASS`, `BLOCK`, `DEFER`,
-invalid input, and the internal `ExecutionInvariantError`; and seven separations
-between the stages, such as `BLOCK` never producing a materialized identity and
-a blocked dependent law never producing a residual. Each reachable cell also
-names the standings forbidden alongside it on the same subject, so exclusivity
-is proved rather than assumed. No cell names a case: `case_id` is `None`
+an independent reachability witness for each of the five case dispositions
+`PASS`, `BLOCK`, `DEFER`, `INVALID_INPUT` and `INVARIANT_ERROR`; and seven
+separations between the stages, such as `BLOCK` never producing a materialized
+identity and a blocked dependent law never producing a residual. The three
+layers are separately typed and never collapsed — `CheckStanding →
+VerdictEffect → CaseDisposition` — so a law read `SATISFIED` states only that it
+forces nothing on the aggregate, never that the case passes, since another law
+may be violated and the aggregate reads `BLOCK > DEFER > PASS`. Each reachable
+cell also names the standings forbidden alongside it, read in the law's frozen
+evaluation scope: a subject-scoped law may hold at one site and fail at another,
+but never both at the same site in the same reading. No cell names a case: `case_id` is `None`
 throughout, and no engine module may import the matrix. The order is
 deliberate — the specification precedes the cases, and the cases precede the
 first engine readout — so that a later agreement is evidence rather than an
