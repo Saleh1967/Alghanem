@@ -329,7 +329,6 @@ def generated_utterance(
     return GeneratedArabicUtterance(
         production_id=specification.production_id,
         specification_content_id=spec_content_id,
-        orthographic_content_id=orthographic.content_id,
-        tokens=tuple(tokens),
+        orthographic_projection=orthographic,
         trace=GenerationTrace(steps=steps),
     )

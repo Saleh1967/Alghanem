@@ -51,6 +51,7 @@ from .specification import (
     SyntacticRealizationTarget,
 )
 from .trace import (
+    A_CHAIN_IS_READ_FROM_ITS_DIGESTS_NOT_ITS_ORDER,
     GenerationResidual,
     GenerationResidualKind,
     GenerationStage,
@@ -67,6 +68,7 @@ __all__ = [
     "LexicalSelectionCandidate",
     "MorphologicalOperation",
     "OrthographicProjection",
+    "DO_NOT_STORE_DERIVABLE_IDENTITY_AS_A_SECOND_CLAIM",
     "PHONOLOGICAL_PROJECTION_IS_WITHHELD_IN_GEN0",
     "RelationSlotAssignment",
     "StageReadout",
@@ -77,6 +79,12 @@ __all__ = [
     "withheld_phonological_projection",
 ]
 
+
+DO_NOT_STORE_DERIVABLE_IDENTITY_AS_A_SECOND_CLAIM: Final[str] = (
+    "لا تُخزَّن هويّةٌ مُشتَقّةٌ دعوًى ثانية: ما يُحسَب من محتوًى محمولٍ في الكائن "
+    "يُقرأ منه لا يُكتَب بجانبه، لأنّ حقلين لشيءٍ واحدٍ يفتحان انحرافًا بينهما "
+    "لا يُغلِقه إلّا فحصٌ قد يُنسى"
+)
 
 PHONOLOGICAL_PROJECTION_IS_WITHHELD_IN_GEN0: Final[str] = (
     "الإسقاطُ الصوتيُّ محجوزٌ في `GEN-0`: المقطعُ والوزنُ طبقتان غيرُ مقيستين، "
@@ -517,20 +525,29 @@ def withheld_phonological_projection(
 
 @dataclass(frozen=True, slots=True)
 class GeneratedArabicUtterance:
-    """عبارةٌ عربيّةٌ منتَجة: رموزُها بترتيب سطحها، ومواصفتُها، وأثرُها كاملًا."""
+    """عبارةٌ عربيّةٌ منتَجة: إسقاطُها الكتابيُّ نفسُه، ومواصفتُها، وأثرُها كاملًا.
+
+    **ولا تُخزَّن هويّةٌ مُشتَقّةٌ دعوًى ثانية**
+    (`DoNotStoreDerivableIdentityAsASecondClaim`): الرموزُ والبصمةُ الكتابيّةُ
+    تُقرآن من `orthographic_projection` نفسِه، فلا يبقى موضعٌ لانحرافٍ بين
+    `orthographic_content_id` و`Digest(tokens)` لأنّهما صارا شيئًا واحدًا.
+
+    **واتّصالُ السلسلة شرطُ بناءٍ لا فحصُ بوّابة**: الأثرُ يبدأ من بصمة
+    المواصفة، وينتهي بخطوةِ إسقاطٍ كتابيٍّ مخرجُها بصمةُ الإسقاط الذي تحمله
+    العبارةُ بعينه. وما وراء ذلك — أنّ `surface` صورةُ مدخلةٍ معجميّةٍ مشهودة —
+    فجوةُ سلطةٍ مُسمّاةٌ لا تُغلَق هنا.
+    """
 
     production_id: str
     specification_content_id: str
-    orthographic_content_id: str
-    tokens: tuple[SurfaceToken, ...]
+    orthographic_projection: OrthographicProjection
     trace: GenerationTrace
 
     def __post_init__(self) -> None:
-        if not isinstance(self.tokens, tuple) or not self.tokens:
-            raise GenerationCandidateError("العبارةُ رمزٌ فأكثر")
-        for token in self.tokens:
-            if not isinstance(token, SurfaceToken):
-                raise GenerationCandidateError(NO_SURFACE_WITHOUT_SOURCE_ANCHOR)
+        if not isinstance(self.orthographic_projection, OrthographicProjection):
+            raise GenerationCandidateError(
+                "العبارةُ تحمل إسقاطَها الكتابيَّ نفسَه لا بصمتَه ورموزَه دعويين"
+            )
         if not isinstance(self.trace, GenerationTrace):
             raise GenerationCandidateError("أثرُ العبارة من نوعه لا وصفٌ حرّ")
         elements = tuple(token.source_element_id for token in self.tokens)
@@ -538,6 +555,34 @@ class GeneratedArabicUtterance:
             raise GenerationCandidateError(
                 "عنصرُ مصدرٍ واحدٌ لا يُخرِج رمزين في عبارةٍ واحدة"
             )
+        if self.trace.input_content_id != self.specification_content_id:
+            raise GenerationCandidateError(
+                "أثرُ العبارة يبدأ من بصمة مواصفتها؛ و"
+                + A_CHAIN_IS_READ_FROM_ITS_DIGESTS_NOT_ITS_ORDER
+            )
+        last = self.trace.steps[-1]
+        if last.stage is not GenerationStage.ORTHOGRAPHIC_PROJECTION:
+            raise GenerationCandidateError(
+                "آخرُ خطوةٍ في أثر العبارة إسقاطٌ كتابيّ؛ وعبارةٌ تنتهي بغيره صورةٌ "
+                "بلا مرحلةٍ أخرجتها"
+            )
+        if last.output_content_id != self.orthographic_projection.content_id:
+            raise GenerationCandidateError(
+                "مخرجُ آخرِ خطوةٍ هو بصمةُ إسقاط العبارة بعينها؛ و"
+                + A_CHAIN_IS_READ_FROM_ITS_DIGESTS_NOT_ITS_ORDER
+            )
+
+    @property
+    def tokens(self) -> tuple[SurfaceToken, ...]:
+        """رموزُ العبارة مُشتَقّةً من إسقاطها الكتابيّ؛ ولا قائمةَ ثانيةً بجانبه."""
+
+        return self.orthographic_projection.tokens
+
+    @property
+    def orthographic_content_id(self) -> str:
+        """بصمةُ الإسقاط الكتابيِّ مُشتَقّةً منه؛ ولا تُكتَب دعوًى مستقلّة."""
+
+        return self.orthographic_projection.content_id
 
     @property
     def surface(self) -> str:
@@ -557,8 +602,9 @@ class GeneratedArabicUtterance:
         return {
             "production_id": self.production_id,
             "specification_content_id": self.specification_content_id,
-            "orthographic_content_id": self.orthographic_content_id,
-            "tokens": [token.as_canonical_content() for token in self.tokens],
+            "orthographic_projection": (
+                self.orthographic_projection.as_canonical_content()
+            ),
             "trace": self.trace.as_canonical_content(),
         }
 

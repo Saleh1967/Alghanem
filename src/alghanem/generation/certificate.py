@@ -14,15 +14,20 @@
 `Anchor →evidence→ LicensedSyntacticPosition`. وذلك مُسمًّى بمُعرِّفه:
 `RES.GEN0.NoIndependentAnchorToSyntacticFunctionAuthority`.
 
-**ولذلك يحمل كلُّ قرار مطابقةٍ بقاياه**: إسنادُ الفاعليّة والمفعوليّة غيرُ
-مرخَّص، والمرجعُ المعجميُّ دعوى حتى `DATA` ثمّ `READOUT`. فلا يُقرأ نجاحُ
-البوّابة أوسعَ من مداه.
+**ولذلك يحمل كلُّ قرارٍ مطابقٍ فجواتِ سلطته مفتوحةً** (`open_authority_gaps`):
+إسنادُ الفاعليّة والمفعوليّة غيرُ مرخَّص، ولا شهادةَ معجميّةً لصورة الرمز. وهي
+**ليست بقايا** — لم تُرصَد من انتقالٍ جرى — بل حدودُ سلطةٍ معماريّةٌ معلومةٌ قبل
+أيِّ تشغيل: `RuntimeResidual ≠ ArchitecturalAuthorityGap`. فالرتبةُ تحمل حدَّها
+معها:
 
-**وما تُثبِته البوّابةُ من الأصل محدود** (`MetadataConformance ≠
-GenerationProvenance`): تشدُّ العبارةَ إلى سلسلتها بالبصمات — مدخلُ الأثر بصمةُ
-المواصفة، وآخرُ خطوةٍ إسقاطٌ كتابيٌّ مخرجُه بصمةُ الإسقاط، والبصمةُ تُعاد من
-الرموز نفسِها، وأثرُ كلِّ رمزٍ يبدأ من بصمة المواصفة — ولا سلطةَ لها اليومَ
-تُثبِت أنّ `surface` صورةُ مدخلةٍ معجميّةٍ مشهودةٍ لا نصًّا عربيًّا مُلفَّقًا.
+    ConformantSurface  =  ProvedConformance  +  ExplicitAuthorityBoundary
+
+**واتّصالُ السلسلة صار بنيةً لا فحصًا مكرَّرًا**: `GeneratedArabicUtterance`
+تحمل `OrthographicProjection` نفسَه، فرموزُها وبصمتُها الكتابيّةُ مُشتَقّتان منه
+لا دعويان متجاورتان، ويلزمها عند البناء أن يبدأ أثرُها من بصمة المواصفة وينتهيَ
+بخطوةِ إسقاطٍ كتابيٍّ مخرجُها بصمةُ إسقاطها. وتبقى للبوّابة قراءةُ اتّصال أثرِ
+كلِّ رمزٍ بسلسلة عبارته. وما وراء ذلك — أنّ `surface` صورةُ مدخلةٍ معجميّةٍ
+مشهودةٍ لا نصٌّ عربيٌّ مُلفَّق — فجوةٌ مُسمّاةٌ لا تُغلَق في `SPEC`.
 
 **والرتبةُ ليست حقلًا يكتبه المستدعي** (`CallerDoesNotOwnGenerationRank`): لا
 تُنشَأ الرتبتان العليا إلّا من بوّابةٍ تُصدِرهما، فلا يبلغ منتَجٌ رتبةً بأن
@@ -53,32 +58,25 @@ from enum import Enum
 from types import MappingProxyType
 from typing import Final
 
-from .candidate import (
-    GeneratedArabicUtterance,
-    OrthographicProjection,
-    specification_content_id,
+from .authority_gaps import (
+    NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY,
+    NO_VERIFIED_LEXICAL_ATTESTATION,
+    GenerationAuthorityGap,
 )
+from .candidate import GeneratedArabicUtterance, specification_content_id
 from .laws import (
     CALLER_DOES_NOT_OWN_GENERATION_RANK,
     CONFORMANCE_IS_NOT_LICENSING,
-    LEXICAL_CHOICE_REF_IS_A_CLAIM_UNTIL_THE_READOUT,
     NO_CERTIFIED_GENERATION_WITHOUT_ROUND_TRIP,
     NO_GENERATION_AUTHORITY_BEYOND_ITS_SOURCE,
-    NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY,
-    NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY_ID,
     NO_INFLECTION_WITHOUT_LICENSED_SLOT,
     NO_SURFACE_WITHOUT_SOURCE_ANCHOR,
 )
-from .specification import FormSelectionMode, ProductionSpecification
-from .trace import (
-    A_CHAIN_IS_READ_FROM_ITS_DIGESTS_NOT_ITS_ORDER,
-    GenerationResidual,
-    GenerationResidualKind,
-    GenerationStage,
-)
+from .specification import ProductionSpecification
+from .trace import A_CHAIN_IS_READ_FROM_ITS_DIGESTS_NOT_ITS_ORDER, GenerationResidual
 
 __all__ = [
-    "CONFORMANCE_RESIDUALS",
+    "CONFORMANCE_AUTHORITY_GAPS",
     "CertifiedGeneratedUtterance",
     "GEN0_PRESERVED_INVARIANTS",
     "GenerationRankError",
@@ -247,30 +245,25 @@ class SpecificationConformanceStatus(Enum):
     REFUSED = "refused"
 
 
-CONFORMANCE_RESIDUALS: Final[tuple[GenerationResidual, ...]] = (
-    GenerationResidual(
-        kind=GenerationResidualKind.UNLICENSED_SYNTACTIC_FUNCTION_ASSIGNMENT,
-        stage=GenerationStage.SPECIFICATION_CONFORMANCE,
-        subject_id=NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY_ID,
-        reason=NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY,
-    ),
-    GenerationResidual(
-        kind=GenerationResidualKind.UNATTESTED_LEXICAL_REFERENCE,
-        stage=GenerationStage.SPECIFICATION_CONFORMANCE,
-        subject_id="lexical_choice_refs",
-        reason=LEXICAL_CHOICE_REF_IS_A_CLAIM_UNTIL_THE_READOUT,
-    ),
+CONFORMANCE_AUTHORITY_GAPS: Final[tuple[GenerationAuthorityGap, ...]] = (
+    NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY,
+    NO_VERIFIED_LEXICAL_ATTESTATION,
 )
 
 
 @dataclass(frozen=True, slots=True)
 class SpecificationConformanceDecision:
-    """قرارُ بوّابةِ المطابقة: حكمُه وسببُه وبقاياه، والرتبةُ عند المطابقة وحدَها."""
+    """قرارُ بوّابةِ المطابقة: حكمُه وسببُه وفجواتُ سلطته، والرتبةُ عند المطابقة وحدَها.
+
+    و`open_authority_gaps` ليست بقايا: لم تخرج من انتقالٍ جرى، بل هي حدودُ
+    السلطة المعماريّةُ المعلومةُ قبل التشغيل، تُعلَن في كلِّ قرارٍ مطابقٍ حتى لا
+    يُقرأ النجاحُ أوسعَ من مداه.
+    """
 
     status: SpecificationConformanceStatus
     reason: str
     conformant: SpecificationConformantSurface | None
-    residuals: tuple[GenerationResidual, ...] = field(default=())
+    open_authority_gaps: tuple[GenerationAuthorityGap, ...] = field(default=())
 
     def __post_init__(self) -> None:
         if not isinstance(self.status, SpecificationConformanceStatus):
@@ -285,11 +278,11 @@ class SpecificationConformanceDecision:
                 "ولا رتبةَ بلا مطابقة"
             )
         if self.status is SpecificationConformanceStatus.CONFORMANT and (
-            self.residuals != CONFORMANCE_RESIDUALS
+            self.open_authority_gaps != CONFORMANCE_AUTHORITY_GAPS
         ):
             raise GenerationRankError(
-                "قرارُ المطابقة يحمل بقاياه المُسمّاة كاملةً: إسنادُ الوظيفة "
-                "النحويّة غيرُ مرخَّص، والمرجعُ المعجميُّ غيرُ مشهود؛ و"
+                "قرارُ المطابقة يُعلِن فجواتِ سلطته كاملةً: إسنادُ الوظيفة "
+                "النحويّة غيرُ مرخَّص، ولا شهادةَ معجميّةً للصورة؛ و"
                 + CONFORMANCE_IS_NOT_LICENSING
             )
 
@@ -378,60 +371,28 @@ class SpecificationConformanceGate:
             status=SpecificationConformanceStatus.CONFORMANT,
             reason=(
                 "كلُّ رمزٍ رُدَّ إلى عنصرٍ في المصدر، وتحقّق في موضعه المُسنَد، "
-                "بأثرِ إعراب عائلته، وبترتيب سطحها، وسلسلتُه متّصلةٌ ببصماتها "
-                "من المواصفة إلى الإسقاط الكتابيّ؛ ولا ترخيصَ نحويًّا في ذلك، و"
-                + CONFORMANCE_IS_NOT_LICENSING
+                "بأثرِ إعراب عائلته، وبترتيب سطحها، وأثرُه سلسلةُ عبارته نفسُها؛ "
+                "ولا ترخيصَ نحويًّا في ذلك، و" + CONFORMANCE_IS_NOT_LICENSING
             ),
             conformant=SpecificationConformantSurface(
                 candidate=candidate,
                 specification=specification,
                 issuance=_CONFORMANCE_ISSUANCE,
             ),
-            residuals=CONFORMANCE_RESIDUALS,
+            open_authority_gaps=CONFORMANCE_AUTHORITY_GAPS,
         )
 
     @staticmethod
     def _refuse_a_broken_chain(
         *, candidate: SurfaceCandidate
     ) -> SpecificationConformanceDecision | None:
-        """اقرأ اتّصالَ العبارة ببصماتها؛ فالوصفُ المطابقُ ليس أثرَ إنتاجٍ جرى."""
+        """اقرأ اتّصالَ أثرِ كلِّ رمزٍ بسلسلة عبارته؛ فالجوارُ ليس اشتقاقًا.
 
-        utterance = candidate.utterance
-        trace = utterance.trace
-        if trace.input_content_id != candidate.specification_content_id:
-            return SpecificationConformanceDecision(
-                status=SpecificationConformanceStatus.REFUSED,
-                reason=(
-                    "أثرُ العبارة لا يبدأ من بصمة مواصفتها؛ و"
-                    + A_CHAIN_IS_READ_FROM_ITS_DIGESTS_NOT_ITS_ORDER
-                ),
-                conformant=None,
-            )
-        last = trace.steps[-1]
-        if last.stage is not GenerationStage.ORTHOGRAPHIC_PROJECTION:
-            return SpecificationConformanceDecision(
-                status=SpecificationConformanceStatus.REFUSED,
-                reason=(
-                    "آخرُ خطوةٍ في أثر العبارة إسقاطٌ كتابيّ؛ وعبارةٌ تنتهي بغيره "
-                    "صورةٌ بلا مرحلةٍ أخرجتها"
-                ),
-                conformant=None,
-            )
-        if last.output_content_id != utterance.orthographic_content_id:
-            return SpecificationConformanceDecision(
-                status=SpecificationConformanceStatus.REFUSED,
-                reason=(
-                    "بصمةُ الإسقاط الكتابيِّ في العبارة ليست مخرجَ خطوته؛ و"
-                    + A_CHAIN_IS_READ_FROM_ITS_DIGESTS_NOT_ITS_ORDER
-                ),
-                conformant=None,
-            )
-        recomputed = OrthographicProjection(
-            case_effect_content_id=last.input_content_id,
-            tokens=utterance.tokens,
-            orthographic_source=FormSelectionMode.LEXICALLY_ATTESTED_FORM_SELECTION,
-        )
-        for token in utterance.tokens:
+        أمّا اتّصالُ العبارة بمواصفتها وبإسقاطها الكتابيِّ فشرطُ بناءٍ في
+        `GeneratedArabicUtterance` نفسِها، لا فحصٌ يُعاد هنا.
+        """
+
+        for token in candidate.utterance.tokens:
             if token.generation_trace.input_content_id != (
                 candidate.specification_content_id
             ):
@@ -444,15 +405,6 @@ class SpecificationConformanceGate:
                     ),
                     conformant=None,
                 )
-        if recomputed.content_id != utterance.orthographic_content_id:
-            return SpecificationConformanceDecision(
-                status=SpecificationConformanceStatus.REFUSED,
-                reason=(
-                    "رموزُ العبارة ليست رموزَ الإسقاط الكتابيِّ الذي تحمل بصمتَه؛ "
-                    "والبصمةُ تُعاد من الرموز لا تُؤخَذ دعوى"
-                ),
-                conformant=None,
-            )
         return None
 
 

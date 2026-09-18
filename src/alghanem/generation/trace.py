@@ -53,11 +53,7 @@ class GenerationTraceError(ValueError):
 
 
 class GenerationStage(Enum):
-    """مراحلُ الإنتاج المُسمّاة؛ والإسقاطان أخوان بعد التكوين لا سلسلةٌ واحدة.
-
-    و`SPECIFICATION_CONFORMANCE` مرحلةُ **حكمٍ** لا مرحلةُ إنتاج: لا تُخرِج
-    محتوًى ولا تدخل في سلسلة البصمات، وإنّما تُنسَب إليها بقايا بوّابةِ المطابقة.
-    """
+    """مراحلُ الإنتاج المُسمّاة؛ والإسقاطان أخوان بعد التكوين لا سلسلةٌ واحدة."""
 
     LEXICAL_SELECTION = "lexical_selection"
     WORD_FORM = "word_form"
@@ -67,21 +63,20 @@ class GenerationStage(Enum):
     PHONOLOGICAL_PROJECTION = "phonological_projection"
     ORTHOGRAPHIC_PROJECTION = "orthographic_projection"
     UTTERANCE = "utterance"
-    SPECIFICATION_CONFORMANCE = "specification_conformance"
 
 
 class GenerationResidualKind(Enum):
-    """أجناسُ البقايا؛ مفردةٌ مغلقةٌ لا نصٌّ حرٌّ يُخفي حجبًا غيرَ مُسمًّى."""
+    """أجناسُ البقايا؛ مفردةٌ مغلقةٌ لا نصٌّ حرٌّ يُخفي حجبًا غيرَ مُسمًّى.
+
+    وكلُّها بقايا **مرصودةٌ من انتقالٍ جرى**؛ أمّا فجوةُ السلطة المعماريّةُ فليست
+    منها ولا تُسجَّل هنا — موضعُها `generation/authority_gaps.py`.
+    """
 
     UNMEASURED_PROSODIC_LAYER = "unmeasured_prosodic_layer"
     UNDERIVED_MORPHOLOGICAL_FORM = "underived_morphological_form"
     UNEXPRESSED_CASE_EFFECT = "unexpressed_case_effect"
     UNRESOLVED_LEXICAL_CHOICE = "unresolved_lexical_choice"
     UNCERTIFIED_ROUND_TRIP = "uncertified_round_trip"
-    UNLICENSED_SYNTACTIC_FUNCTION_ASSIGNMENT = (
-        "unlicensed_syntactic_function_assignment"
-    )
-    UNATTESTED_LEXICAL_REFERENCE = "unattested_lexical_reference"
 
 
 @dataclass(frozen=True, slots=True)

@@ -3419,11 +3419,26 @@ exists. The law:
 
     ConformanceIsNotLicensing
 
-**`RES.GEN0.NoIndependentAnchorToSyntacticFunctionAuthority`** — an
-*architectural* residual, recorded here by name in the manner of
-`RES.RUN0.AnchorArityConflatesIdentityUniqueness`, and named in code in
-`generation/laws.py` outside the law set, since it is a gap, not a rule.
-Statement: nothing in the source establishes
+**An architectural authority gap is not a runtime residual.** A
+`GenerationResidual` is *observed*: a transition ran and named what it could not
+settle — `Transition → ObservedResidual`. What is missing here is known before
+anything runs, because the structure of the layer does not hold the authority at
+all. Conflating the two would let a gap be read as though some step had reported
+it. So they are separated by type, in `generation/authority_gaps.py`:
+
+    RuntimeResidual  ≠  ArchitecturalAuthorityGap
+
+    GenerationAuthorityGap = gap_id + claim + missing_authority
+                                    + discharge_condition
+
+Each gap names the claim that falls inside it, the authority that is absent, and
+— so that it is a door and not an open wound — the condition that discharges it.
+Two are frozen now.
+
+**`RES.GEN0.NoIndependentAnchorToSyntacticFunctionAuthority`** — recorded by name
+in the manner of `RES.RUN0.AnchorArityConflatesIdentityUniqueness`, and outside
+both law sets, since it is a gap and not a rule. Statement: nothing in the source
+establishes
 
     anchor.first = فاعل        anchor.second = مفعول به
 
@@ -3431,7 +3446,7 @@ Statement: nothing in the source establishes
 filling relation between them at all, and `ArgumentSlot` refuses role names
 outright. So the mapping is the caller's choice, and the gate grants conformance
 to an inverted assignment exactly as readily as to the intended one — a test
-witnesses this rather than assuming it. The condition that lifts the residual: a
+witnesses this rather than assuming it. Its discharge condition: a
 `SyntacticBindingCertificate` proving
 
     Anchor  —evidence→  LicensedSyntacticPosition
@@ -3439,7 +3454,7 @@ witnesses this rather than assuming it. The condition that lifts the residual: a
 and only then may the word «licensed» be used. `Agent`/`Patient` are not opened,
 and `linguistic/nisbah.py` is not touched.
 
-**A lexical reference is a claim until the readout.** `LexicalChoiceRef` carries
+**`RES.GEN0.NoVerifiedLexicalAttestation`** — `LexicalChoiceRef` carries
 `entry_id`, `entry_content_id` and `lexical_source_digest`, but `SPEC` has no
 frozen lexicon to measure them against; in the tests they are synthetic strings.
 Nor can this layer prove that a token's `surface` is the form of an attested
@@ -3448,29 +3463,44 @@ entry rather than a well-formed Arabic fabrication. So:
     LexicalChoiceRef_SPEC  ≠  VerifiedLexicalChoice_READOUT
     LexicalChoiceRefIsAClaimUntilTheReadout
 
-`GEN-0.DATA` freezes the lexicon; `GEN-0.READOUT` then proves that
-`entry_id + entry_content_id + lexical_source_digest + surface` agree.
+Its discharge condition: `GEN-0.DATA` freezes the lexicon, then `GEN-0.READOUT`
+proves that `entry_id + entry_content_id + lexical_source_digest + surface`
+agree.
 
-**Metadata conformance is not generation provenance**, and the half of that gap
-which can be closed without a lexicon is closed now. The gate no longer reads
-the utterance's descriptive fields alone; it measures the connection of the
-chain itself: that the trace's input is the specification's own content id; that
-the chain ends at the orthographic projection and that its output is the
-utterance's `orthographic_content_id`; that every token's own trace is the
-utterance's chain rather than an adjacent one; and that the orthographic
-projection's digest, recomputed from the tokens themselves, equals the digest
-the utterance claims. What remains open is named, not implied.
+**A success is read no wider than its mandate.** Every conformant decision
+carries `open_authority_gaps` — both of the above — explicitly. They are not
+called residuals, because nothing observed them; they are the boundary of the
+rank, carried with it:
 
-**A success is read no wider than its mandate.** Every conformant decision now
-carries two named residuals — that the assignment of subjecthood and objecthood
-is not yet licensed, and that no lexical attestation is available — so the rank
-cannot be quoted as more than it is.
+    ConformantSurface = ProvedConformance + ExplicitAuthorityBoundary
 
-The declared law set is revised here, not silently amended: three laws are added
-(`ContractMustBindClassNotFactory`, `ConformanceIsNotLicensing`,
-`LexicalChoiceRefIsAClaimUntilTheReadout`), nothing is removed or reworded, and
-`GENERATION_LAW_SET_DIGEST` moves accordingly under a declared revision that the
-tests hold to addition alone.
+**Metadata conformance is not generation provenance**, and what can be proved
+structurally is proved by structure, not by a repeated check. A
+`GeneratedArabicUtterance` used to carry `orthographic_content_id` and `tokens`
+as two independent claims, which permits `orthographic_content_id ≠
+Digest(tokens)` in principle. It now carries the `OrthographicProjection`
+itself, and both are read from it:
+
+    DoNotStoreDerivableIdentityAsASecondClaim
+
+and its construction requires that the trace begin at the specification's own
+content id and end at an orthographic-projection step whose output is that
+projection's digest. The gate is left with one connection the object cannot
+enforce for itself: that each token's own trace is the utterance's chain rather
+than an adjacent one. What cannot be proved at all here — that `surface` is an
+attested entry's form — is the second frozen gap, not an omission.
+
+**The historical law set is not edited.** `G0.GEN-0` froze
+`GENERATION_LAW_SET_DIGEST`, and preserving the record is worth more than a
+single unified name. The revision is therefore a *second* law set, with its own
+identifier and its own digest, containing the original laws verbatim plus
+`ContractMustBindClassNotFactory`, `ConformanceIsNotLicensing` and
+`LexicalChoiceRefIsAClaimUntilTheReadout`:
+
+    LawSet_GEN0  ≠  LawSet_GEN0.SPEC-H
+
+Anything after `SPEC-H` refers to the revision; the original stays a document
+that can still be rebuilt exactly.
 
 With this, the order of the axis is stated more exactly than `SPEC ≺ DATA ≺
 READOUT ≺ RT`:
@@ -3482,3 +3512,30 @@ READOUT ≺ RT`:
 and this does not push the first real Arabic sentence far away: `GEN-0.READOUT`
 may produce one, at the rank `VerifiedGeneratedSurface` /
 `SpecificationConformantSurface` — never «syntactically licensed».
+
+**And here the linear line stops being extended.** With `SPEC-H` closed, `GEN-0`
+witnesses six things in order —
+
+    SourceAuthority → Specification → Candidate → Provenance
+                    → Conformance → AuthorityGaps
+
+— and that is enough from one line. No large `GEN-0` corpus is built next.
+The next milestone is `G0.FGEN-0.SPEC`, which re-states this experience in more
+general primitives — seed, node, pattern, expansion, branch, closure, authority
+gap, trace, scale transition — so that `PastActiveTransitiveVSO` becomes *one
+pattern* inside a pattern space rather than the engine itself, and `GEN-0`
+becomes the base case of an inductive proof rather than a thing to enlarge. The
+law fixed from now:
+
+    LinearGeneration  ⊂  FractalGeneration
+
+and **not** `FractalGeneration = RepeatedLinearGeneration`, because the fractal
+adds what a repeated line cannot: branching multiplicity, change of scale, the
+requirement that a level be closed before the next may rise, preservation of the
+origin's identity, the birth of a branch or a transformation of the carrier, and
+horizontal alternatives at each node:
+
+    N_{i+1}  =  Close( Gate( Expand( N_i , P_i ) ) )
+
+with `Closure(N_i)` a condition of ascent. `GEN-0.DATA` is not opened before
+that.

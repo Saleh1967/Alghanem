@@ -24,8 +24,10 @@
 **وما لزم النوعَ لزمه في كلِّ طريقٍ إليه** (`ContractMustBindClassNotFactory`):
 `PassedNisbahSourceRef` و`ProductionSpecification` كلتاهما مُغلَقةٌ برمز إصدارٍ
 داخليّ، فلا تُبنى إحداهما بناءً مباشرًا يتجاوز فحصَ المصدر. وإشارةُ المصدر تحمل
-**جردَ عناصره** — مُعرِّفَ المحمول ومُعرِّفاتِ المراسي بأجناسها — فيُقاس عليه كلُّ
-مُعرِّفٍ في المواصفة عند كلِّ بناءٍ لا عند المصنع وحدَه.
+**جردَ عناصره** — `SourceInventorySnapshot`: مُعرِّفُ المحمول ومُعرِّفاتُ المراسي
+بأجناسها، ببصمةٍ مُشتَقّةٍ منها لا مكتوبةٍ بجانبها — فيُقاس عليه كلُّ مُعرِّفٍ في
+المواصفة عند كلِّ بناءٍ لا عند المصنع وحدَه. والبصمةُ وحدَها لا تكفي: هي تُثبِت
+هويّةَ الجرد ولا تُخبِر بما فيه، فيُحمَل الجردُ نفسُه إسقاطًا مشهودًا للمصدر.
 
 **والموقعُ التركيبيُّ ليس دورًا دلاليًّا** (`APositionIsNotASemanticRole`): لا
 يُفتَح هنا `Agent` ولا `Patient`، ولا تُعدَّل `linguistic/nisbah.py` لفتحهما.
@@ -50,6 +52,7 @@ from enum import Enum
 from types import MappingProxyType
 from typing import Final
 
+from ..canonical_content import canonical_bytes, canonical_digest
 from ..execution.outcome import ExecutionOutcome
 from ..execution.result import ExecutionResultEnvelope
 from .laws import (
@@ -80,6 +83,8 @@ __all__ = [
     "RequestedTense",
     "RequestedVoice",
     "SourceElementKind",
+    "SourceElementRef",
+    "SourceInventorySnapshot",
     "SyntacticRealizationTarget",
 ]
 
@@ -207,6 +212,90 @@ _LICENSED_CONSTRAINT_PAIRS: Final[
 
 
 @dataclass(frozen=True, slots=True)
+class SourceElementRef:
+    """عنصرٌ في المصدر المرخَّص: مُعرِّفُه وجنسُه، لا إعادةُ وصفٍ له."""
+
+    element_id: str
+    element_kind: SourceElementKind
+
+    def __post_init__(self) -> None:
+        _require_identifier(self.element_id, "مُعرِّفُ عنصر المصدر")
+        if not isinstance(self.element_kind, SourceElementKind):
+            raise GenerationSpecificationError("جنسُ عنصر المصدر عضوٌ في مفردته المغلقة")
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """محتوى العنصر للبصمة."""
+
+        return {
+            "element_id": self.element_id,
+            "element_kind": self.element_kind.value,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class SourceInventorySnapshot:
+    """إسقاطٌ مشهودٌ لجرد المصدر: عناصرُه بأجناسها، وبصمتُه مُشتَقّةٌ منها.
+
+    وهو `CertifiedProjectionOfSource` لا إعادةَ كتابةٍ حرّةٍ للنسبة: لا يحمل
+    نسبةً ولا محمولًا ولا حجّةً، وإنّما جردَ المُعرِّفات التي يُقاس عليها كلُّ
+    مُعرِّفٍ في المواصفة. والبصمةُ وحدَها لا تكفي لإعادة الفحص لاحقًا — فهي
+    تُثبِت هويّةَ الجرد ولا تُخبِر بما فيه — ولذلك يُحمَل الجردُ نفسُه.
+    """
+
+    elements: tuple[SourceElementRef, ...]
+    issuance: _IssuanceToken
+
+    def __post_init__(self) -> None:
+        if self.issuance is not _SOURCE_REF_ISSUANCE:
+            raise GenerationSpecificationError(
+                "جردُ المصدر لا يُنشَأ إلّا من غلافِ نتيجةٍ ناجحة؛ و"
+                + CONTRACT_MUST_BIND_CLASS_NOT_FACTORY
+            )
+        if not isinstance(self.elements, tuple) or not self.elements:
+            raise GenerationSpecificationError(
+                "جردُ عناصر المصدر عنصرٌ فأكثر؛ ومصدرٌ بلا جردٍ لا يُقاس عليه"
+            )
+        identifiers = []
+        predicates = 0
+        for element in self.elements:
+            if not isinstance(element, SourceElementRef):
+                raise GenerationSpecificationError("عنصرُ الجرد من نوعه لا وصفٌ حرّ")
+            identifiers.append(element.element_id)
+            if element.element_kind is SourceElementKind.PREDICATE:
+                predicates += 1
+        if len(set(identifiers)) != len(identifiers):
+            raise GenerationSpecificationError("مُعرِّفُ عنصرٍ واحدٌ لا يتكرّر في جردٍ واحد")
+        if predicates != 1:
+            raise GenerationSpecificationError(
+                "النسبةُ محمولٌ واحدٌ ومراسٍ؛ وجردٌ بمحمولين أو بلا محمولٍ ليس جردَها"
+            )
+
+    def kind_of(self, element_id: str) -> SourceElementKind | None:
+        """جنسُ عنصرٍ في الجرد، أو غيابُه؛ ولا يُستنتَج جنسٌ لعنصرٍ لم يحمله."""
+
+        for element in self.elements:
+            if element.element_id == element_id:
+                return element.element_kind
+        return None
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """محتوى الجرد للبصمة؛ ورمزُ الإصدار سلطةٌ لا محتوى."""
+
+        return {
+            "elements": [
+                element.as_canonical_content()
+                for element in sorted(self.elements, key=lambda ref: ref.element_id)
+            ]
+        }
+
+    @property
+    def content_id(self) -> str:
+        """بصمةُ الجرد مُشتَقّةً من عناصره."""
+
+        return canonical_digest(canonical_bytes(self.as_canonical_content()))
+
+
+@dataclass(frozen=True, slots=True)
 class PassedNisbahSourceRef:
     """إشارةٌ رفيعةٌ إلى بنيةٍ نجحت: مُعرِّفُها وبصماتُها وجردُ عناصرها، لا نسخةٌ منها.
 
@@ -217,10 +306,10 @@ class PassedNisbahSourceRef:
 
     nisbah_id: str
     materialized_content_id: str
+    source_inventory: SourceInventorySnapshot
     input_digest: str
     execution_digest: str
     law_set_digest: str
-    source_elements: Mapping[str, SourceElementKind]
     issuance: _IssuanceToken
 
     def __post_init__(self) -> None:
@@ -237,26 +326,10 @@ class PassedNisbahSourceRef:
             (self.law_set_digest, "بصمةُ قائمة القوانين"),
         ):
             _require_identifier(value, label)
-        if not isinstance(self.source_elements, Mapping) or not self.source_elements:
+        if not isinstance(self.source_inventory, SourceInventorySnapshot):
             raise GenerationSpecificationError(
-                "جردُ عناصر المصدر عنصرٌ فأكثر؛ ومصدرٌ بلا جردٍ لا يُقاس عليه"
+                "جردُ المصدر إسقاطٌ مشهودٌ من نوعه لا خريطةٌ تُكتَب بجانب الإشارة"
             )
-        predicates = 0
-        for element_id, kind in self.source_elements.items():
-            _require_identifier(element_id, "مُعرِّفُ عنصر المصدر")
-            if not isinstance(kind, SourceElementKind):
-                raise GenerationSpecificationError(
-                    "جنسُ عنصر المصدر عضوٌ في مفردته المغلقة"
-                )
-            if kind is SourceElementKind.PREDICATE:
-                predicates += 1
-        if predicates != 1:
-            raise GenerationSpecificationError(
-                "النسبةُ محمولٌ واحدٌ ومراسٍ؛ وجردٌ بمحمولين أو بلا محمولٍ ليس جردَها"
-            )
-        object.__setattr__(
-            self, "source_elements", MappingProxyType(dict(self.source_elements))
-        )
 
     @classmethod
     def from_envelope(cls, envelope: ExecutionResultEnvelope) -> PassedNisbahSourceRef:
@@ -279,25 +352,35 @@ class PassedNisbahSourceRef:
                 "النجاحُ يبلغ المادّةَ السلطويّة؛ ونجاحٌ بلا هويّةٍ مُتحقِّقةٍ لا يُبنى عليه"
             )
         nisbah = envelope.declaration.nisbah
-        source_elements: dict[str, SourceElementKind] = {
-            nisbah.predicate.predicate_id: SourceElementKind.PREDICATE
-        }
-        for anchor in nisbah.anchors:
-            source_elements[anchor.anchor_id] = SourceElementKind.ANCHOR
+        elements = (
+            SourceElementRef(
+                element_id=nisbah.predicate.predicate_id,
+                element_kind=SourceElementKind.PREDICATE,
+            ),
+            *(
+                SourceElementRef(
+                    element_id=anchor.anchor_id,
+                    element_kind=SourceElementKind.ANCHOR,
+                )
+                for anchor in nisbah.anchors
+            ),
+        )
         return cls(
             nisbah_id=nisbah.nisbah_id,
             materialized_content_id=materialized.content_id,
+            source_inventory=SourceInventorySnapshot(
+                elements=elements, issuance=_SOURCE_REF_ISSUANCE
+            ),
             input_digest=core.input_digest,
             execution_digest=envelope.execution_digest,
             law_set_digest=core.law_set_digest,
-            source_elements=source_elements,
             issuance=_SOURCE_REF_ISSUANCE,
         )
 
     def kind_of(self, element_id: str) -> SourceElementKind | None:
         """جنسُ عنصرٍ في المصدر، أو غيابُه؛ ولا يُستنتَج جنسٌ لعنصرٍ لم يحمله."""
 
-        return self.source_elements.get(element_id)
+        return self.source_inventory.kind_of(element_id)
 
     def as_canonical_content(self) -> dict[str, object]:
         """محتوى الإشارة للبصمة؛ ورمزُ الإصدار سلطةٌ لا محتوى."""
@@ -308,10 +391,8 @@ class PassedNisbahSourceRef:
             "input_digest": self.input_digest,
             "execution_digest": self.execution_digest,
             "law_set_digest": self.law_set_digest,
-            "source_elements": {
-                element_id: kind.value
-                for element_id, kind in sorted(self.source_elements.items())
-            },
+            "source_inventory": self.source_inventory.as_canonical_content(),
+            "source_inventory_content_id": self.source_inventory.content_id,
         }
 
 

@@ -21,6 +21,7 @@ from generation_cases import (
 from alghanem.execution.engine import execute_document
 from alghanem.execution.outcome import ExecutionOutcome
 from alghanem.generation.specification import (
+    _SOURCE_REF_ISSUANCE,
     PAST_ACTIVE_TRANSITIVE_VSO,
     FormSelectionMode,
     GenerationSpecificationError,
@@ -35,6 +36,7 @@ from alghanem.generation.specification import (
     RequestedTense,
     RequestedVoice,
     SourceElementKind,
+    SourceInventorySnapshot,
     SyntacticRealizationTarget,
 )
 
@@ -224,7 +226,7 @@ def test_a_source_ref_is_not_constructible_by_its_caller() -> None:
             input_digest=ref.input_digest,
             execution_digest=ref.execution_digest,
             law_set_digest=ref.law_set_digest,
-            source_elements=dict(ref.source_elements),
+            source_inventory=ref.source_inventory,
             issuance=object(),  # type: ignore[arg-type]
         )
 
@@ -235,8 +237,37 @@ def test_a_source_ref_carries_the_inventory_of_its_source_elements() -> None:
     assert ref.kind_of(FIRST_ANCHOR_ID) is SourceElementKind.ANCHOR
     assert ref.kind_of(SECOND_ANCHOR_ID) is SourceElementKind.ANCHOR
     assert ref.kind_of("anchor.never.declared") is None
-    assert "source_elements" in ref.as_canonical_content()
-    assert "issuance" not in ref.as_canonical_content()
+    content = ref.as_canonical_content()
+    assert content["source_inventory"] == ref.source_inventory.as_canonical_content()
+    assert content["source_inventory_content_id"] == ref.source_inventory.content_id
+    assert "issuance" not in content
+    assert "issuance" not in ref.source_inventory.as_canonical_content()
+
+
+def test_a_source_inventory_is_not_constructible_by_its_caller() -> None:
+    ref = PassedNisbahSourceRef.from_envelope(passing_envelope())
+    with pytest.raises(GenerationSpecificationError):
+        SourceInventorySnapshot(
+            elements=ref.source_inventory.elements,
+            issuance=object(),  # type: ignore[arg-type]
+        )
+
+
+def test_a_source_inventory_carries_its_elements_not_only_their_digest() -> None:
+    ref = PassedNisbahSourceRef.from_envelope(passing_envelope())
+    inventory = ref.source_inventory
+    assert {element.element_id for element in inventory.elements} == {
+        PREDICATE_ID,
+        FIRST_ANCHOR_ID,
+        SECOND_ANCHOR_ID,
+    }
+    assert (
+        inventory.content_id
+        == SourceInventorySnapshot(
+            elements=tuple(reversed(inventory.elements)),
+            issuance=_SOURCE_REF_ISSUANCE,
+        ).content_id
+    )
 
 
 def test_a_specification_is_not_constructible_beside_its_factory() -> None:

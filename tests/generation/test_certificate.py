@@ -18,8 +18,18 @@ from generation_cases import (
     token_trace,
 )
 
+from alghanem.generation.authority_gaps import (
+    NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY,
+    NO_VERIFIED_LEXICAL_ATTESTATION,
+)
+from alghanem.generation.candidate import (
+    GeneratedArabicUtterance,
+    GenerationCandidateError,
+    OrthographicProjection,
+    SurfaceToken,
+)
 from alghanem.generation.certificate import (
-    CONFORMANCE_RESIDUALS,
+    CONFORMANCE_AUTHORITY_GAPS,
     GEN0_PRESERVED_INVARIANTS,
     CertifiedGeneratedUtterance,
     GenerationRankError,
@@ -33,15 +43,13 @@ from alghanem.generation.certificate import (
     SpecificationConformantSurface,
     SurfaceCandidate,
 )
-from alghanem.generation.laws import (
-    NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY_ID,
-)
 from alghanem.generation.specification import (
     CaseEffect,
+    FormSelectionMode,
     ProductionSpecification,
     SyntacticRealizationTarget,
 )
-from alghanem.generation.trace import GenerationResidualKind, GenerationStage
+from alghanem.generation.trace import GenerationStep, GenerationTrace
 
 
 def _candidate() -> tuple[SurfaceCandidate, ProductionSpecification]:
@@ -52,6 +60,47 @@ def _candidate() -> tuple[SurfaceCandidate, ProductionSpecification]:
         specification_content_id=utterance.specification_content_id,
     )
     return candidate, specification
+
+
+def _projection_of(
+    utterance: GeneratedArabicUtterance, tokens: tuple[SurfaceToken, ...]
+) -> OrthographicProjection:
+    projection = utterance.orthographic_projection
+    return OrthographicProjection(
+        case_effect_content_id=projection.case_effect_content_id,
+        tokens=tokens,
+        orthographic_source=FormSelectionMode.LEXICALLY_ATTESTED_FORM_SELECTION,
+    )
+
+
+def _with_tokens(
+    candidate: SurfaceCandidate, tokens: tuple[SurfaceToken, ...]
+) -> SurfaceCandidate:
+    """أعِد بناءَ مرشَّحٍ برموزٍ أخرى مع سلسلةٍ متّصلةٍ بها؛ فالاتّصالُ شرطُ بناء."""
+
+    projection = _projection_of(candidate.utterance, tokens)
+    steps = candidate.utterance.trace.steps
+    last = steps[-1]
+    rebuilt = GenerationTrace(
+        steps=steps[:-1]
+        + (
+            GenerationStep(
+                stage=last.stage,
+                rule_id=last.rule_id,
+                input_content_id=last.input_content_id,
+                output_content_id=projection.content_id,
+                residuals=(),
+            ),
+        )
+    )
+    return replace(
+        candidate,
+        utterance=replace(
+            candidate.utterance,
+            orthographic_projection=projection,
+            trace=rebuilt,
+        ),
+    )
 
 
 def test_the_first_rank_carries_no_licence_claim() -> None:
@@ -90,10 +139,7 @@ def test_the_gate_refuses_a_case_effect_that_is_not_its_position_effect() -> Non
         else token
         for token in tokens
     )
-    broken = replace(
-        candidate,
-        utterance=replace(candidate.utterance, tokens=wrong),
-    )
+    broken = _with_tokens(candidate, wrong)
     decision = SpecificationConformanceGate.assess(
         candidate=broken,
         specification=specification,
@@ -174,30 +220,34 @@ def test_a_conformance_decision_names_what_it_did_not_prove() -> None:
         candidate=candidate,
         specification=specification,
     )
-    assert decision.residuals == CONFORMANCE_RESIDUALS
-    kinds = {residual.kind for residual in decision.residuals}
-    assert kinds == {
-        GenerationResidualKind.UNLICENSED_SYNTACTIC_FUNCTION_ASSIGNMENT,
-        GenerationResidualKind.UNATTESTED_LEXICAL_REFERENCE,
+    assert decision.open_authority_gaps == CONFORMANCE_AUTHORITY_GAPS
+    assert set(decision.open_authority_gaps) == {
+        NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY,
+        NO_VERIFIED_LEXICAL_ATTESTATION,
     }
-    assert all(
-        residual.stage is GenerationStage.SPECIFICATION_CONFORMANCE
-        for residual in decision.residuals
-    )
-    assert any(
-        residual.subject_id == NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY_ID
-        for residual in decision.residuals
-    )
+    assert all(gap.discharge_condition.strip() for gap in decision.open_authority_gaps)
 
 
-def test_a_conformant_rank_cannot_be_issued_without_its_residuals() -> None:
+def test_an_authority_gap_is_not_an_observed_residual() -> None:
+    candidate, specification = _candidate()
+    decision = SpecificationConformanceGate.assess(
+        candidate=candidate,
+        specification=specification,
+    )
+    observed = {residual.subject_id for residual in candidate.residuals}
+    for gap in decision.open_authority_gaps:
+        assert gap.gap_id not in observed
+        assert not hasattr(gap, "stage")
+
+
+def test_a_conformant_rank_cannot_be_issued_without_its_gaps() -> None:
     candidate, specification = _candidate()
     decision = SpecificationConformanceGate.assess(
         candidate=candidate,
         specification=specification,
     )
     with pytest.raises(GenerationRankError):
-        replace(decision, residuals=())
+        replace(decision, open_authority_gaps=())
 
 
 def test_the_gate_conforms_an_inverted_function_assignment() -> None:
@@ -226,50 +276,26 @@ def test_the_gate_conforms_an_inverted_function_assignment() -> None:
     )
 
 
-def test_the_gate_refuses_an_utterance_whose_tokens_are_not_its_projection() -> None:
-    candidate, specification = _candidate()
+def test_an_utterance_cannot_carry_tokens_its_chain_did_not_project() -> None:
+    candidate, _ = _candidate()
     tokens = candidate.utterance.tokens
     forged = (replace(tokens[0], surface="زعمٌ"),) + tokens[1:]
-    broken = replace(
-        candidate,
-        utterance=replace(candidate.utterance, tokens=forged),
-    )
-    decision = SpecificationConformanceGate.assess(
-        candidate=broken,
-        specification=specification,
-    )
-    assert decision.status is SpecificationConformanceStatus.REFUSED
-    assert decision.conformant is None
-    assert decision.residuals == ()
-
-
-def test_the_gate_refuses_an_utterance_that_claims_a_foreign_projection() -> None:
-    candidate, specification = _candidate()
-    broken = replace(
-        candidate,
-        utterance=replace(candidate.utterance, orthographic_content_id="c" * 64),
-    )
-    decision = SpecificationConformanceGate.assess(
-        candidate=broken,
-        specification=specification,
-    )
-    assert decision.status is SpecificationConformanceStatus.REFUSED
-    assert decision.conformant is None
+    with pytest.raises(GenerationCandidateError):
+        replace(
+            candidate.utterance,
+            orthographic_projection=_projection_of(candidate.utterance, forged),
+        )
 
 
 def test_the_gate_refuses_a_token_trace_that_is_merely_adjacent() -> None:
     candidate, specification = _candidate()
     tokens = candidate.utterance.tokens
-    stranger = inverted_production_specification()
-    stray_trace, _, _ = token_trace(stranger, PREDICATE_ID)
+    stray_trace, _, _ = token_trace(inverted_production_specification(), PREDICATE_ID)
     forged = (replace(tokens[0], generation_trace=stray_trace),) + tokens[1:]
-    broken = replace(
-        candidate,
-        utterance=replace(candidate.utterance, tokens=forged),
-    )
     decision = SpecificationConformanceGate.assess(
-        candidate=broken,
+        candidate=_with_tokens(candidate, forged),
         specification=specification,
     )
     assert decision.status is SpecificationConformanceStatus.REFUSED
     assert decision.conformant is None
+    assert decision.open_authority_gaps == ()

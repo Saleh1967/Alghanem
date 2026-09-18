@@ -18,14 +18,20 @@
 قانونٍ يُغيِّر البصمةَ فيسقط اختبارُها، لأنّ تحسينَ صياغةِ دستورٍ مُجمَّدٍ بعد
 الاعتماد عليه نقضٌ لترتيب المراحل.
 
-**ومراجعةُ `G0.GEN-0.SPEC-H` مُعلنة**: أُضيفت ثلاثةُ قوانينَ بأسمائها —
-`ContractMustBindClassNotFactory` و`ConformanceIsNotLicensing` و
-`LexicalChoiceRefIsAClaimUntilTheReadout` — فتغيّرت بصمةُ المجموعة تغيُّرَ
-مراجعةٍ مُصرَّحٍ بها لا تحسينَ صياغةٍ صامتًا. ولم يُحذَف نصُّ قانونٍ ولم يُبدَّل.
+**ومراجعةُ `G0.GEN-0.SPEC-H` مجموعةٌ ثانيةٌ لا تعديلٌ للأولى**: المجموعةُ
+الأصليّةُ `GENERATION_LAWS` ببصمتها `GENERATION_LAW_SET_DIGEST` تبقى كما
+جُمِّدت في `G0.GEN-0`، لأنّ حفظَ التاريخ أولى من توحيد الاسم. والمراجعةُ
+مجموعةٌ مستقلّةٌ بمُعرِّفها `GENERATION_SPEC_H_LAW_SET_ID` وبصمتها، تضمّ قوانينَ
+الأصل كلَّها مضافًا إليها `ContractMustBindClassNotFactory` و
+`ConformanceIsNotLicensing` و`LexicalChoiceRefIsAClaimUntilTheReadout`:
 
-**والبقايا المعماريّةُ ليست قوانين** (`GENERATION_ARCHITECTURAL_RESIDUALS`): ما
-لم تُثبِته هذه الطبقةُ يُسمّى بمُعرِّفه `RES.GEN0.…` خارج مجموعة القوانين، فلا
-يدخل في بصمتها ولا يُقرأ حكمًا.
+    LawSet_GEN0  ≠  LawSet_GEN0.SPEC-H
+
+فما بعد `SPEC-H` يُشير إلى المراجعة، ويبقى الأصلُ وثيقةً قابلةً لإعادة البناء.
+
+**وفجواتُ السلطة ليست قوانين ولا بقايا تشغيليّة**: ما لم تُثبِته هذه الطبقةُ
+يُسمّى في `generation/authority_gaps.py` بمُعرِّفه `RES.GEN0.…`، خارج
+مجموعتَي القوانين وخارج `GenerationResidual`.
 
 تسجيلٌ لا سلطة: لا ولادةَ، ولا حكمَ ولادةٍ، ولا تجميدَ `E0`، ولا تقرؤها بوّابةٌ
 في `kernel/`، ولا تدخل في `BirthExperimentSpecification`.
@@ -46,14 +52,14 @@ __all__ = [
     "CALLER_DOES_NOT_OWN_GENERATION_RANK",
     "CONFORMANCE_IS_NOT_LICENSING",
     "CONTRACT_MUST_BIND_CLASS_NOT_FACTORY",
-    "GENERATION_ARCHITECTURAL_RESIDUALS",
     "GENERATION_DOES_NOT_INVENT_INTENT",
     "GENERATION_LAWS",
     "GENERATION_LAW_SET_DIGEST",
     "GENERATION_LAW_SET_ID",
+    "GENERATION_SPEC_H_LAWS",
+    "GENERATION_SPEC_H_LAW_SET_DIGEST",
+    "GENERATION_SPEC_H_LAW_SET_ID",
     "LEXICAL_CHOICE_REF_IS_A_CLAIM_UNTIL_THE_READOUT",
-    "NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY",
-    "NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY_ID",
     "NO_CERTIFIED_GENERATION_WITHOUT_ROUND_TRIP",
     "NO_COMPOSITION_WITHOUT_RELATION",
     "NO_GENERATION_AUTHORITY_BEYOND_ITS_SOURCE",
@@ -159,30 +165,6 @@ LEXICAL_CHOICE_REF_IS_A_CLAIM_UNTIL_THE_READOUT: Final[str] = (
     "مُجمَّدٌ في `GEN-0.DATA` ثمّ مطابقةٌ في `GEN-0.READOUT`"
 )
 
-NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY_ID: Final[str] = (
-    "RES.GEN0.NoIndependentAnchorToSyntacticFunctionAuthority"
-)
-
-NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY: Final[str] = (
-    "لا سلطةَ مستقلّةً تربط المرساةَ بوظيفةٍ نحويّة: `Anchor ⇏ فاعل/مفعولٌ به` "
-    "باختيار المستدعي. والمصدرُ المرخَّصُ اليومَ — `AnchoredNisbahSignatureV3` — "
-    "يحمل مراسيَ ومحمولًا ومواضعَ حجج، ولا يحمل رابطةَ ملءٍ بين مرساةٍ وموضعِ "
-    "حجّة، بل يرفض `ArgumentSlot` أسماءَ الأدوار صراحةً. فإسنادُ الفاعليّة "
-    "والمفعوليّة في `ProductionSpecification` دعوى صاحبِ المواصفة، وبوّابةُ "
-    "المطابقة تُثبِت حفظَها لا ترخيصَها. ولا تُرفَع هذه البقيّةُ إلّا بشهادةِ "
-    "ربطٍ مستقلّةٍ — `SyntacticBindingCertificate` — تُثبِت "
-    "`Anchor →evidence→ LicensedSyntacticPosition`؛ وعندها وحدَها يُفتَح اسمُ "
-    "`StructurallyLicensedSurface`"
-)
-
-GENERATION_ARCHITECTURAL_RESIDUALS: Final[Mapping[str, str]] = MappingProxyType(
-    {
-        NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY_ID: (
-            NO_INDEPENDENT_ANCHOR_TO_SYNTACTIC_FUNCTION_AUTHORITY
-        ),
-    }
-)
-
 GENERATION_LAWS: Final[Mapping[str, str]] = MappingProxyType(
     {
         "NoGenerationAuthorityBeyondItsSource": (
@@ -209,11 +191,6 @@ GENERATION_LAWS: Final[Mapping[str, str]] = MappingProxyType(
         "AnUnrealizedLayerIsAWithheldStageNotANull": (
             AN_UNREALIZED_LAYER_IS_A_WITHHELD_STAGE_NOT_A_NULL
         ),
-        "ContractMustBindClassNotFactory": CONTRACT_MUST_BIND_CLASS_NOT_FACTORY,
-        "ConformanceIsNotLicensing": CONFORMANCE_IS_NOT_LICENSING,
-        "LexicalChoiceRefIsAClaimUntilTheReadout": (
-            LEXICAL_CHOICE_REF_IS_A_CLAIM_UNTIL_THE_READOUT
-        ),
     }
 )
 
@@ -222,6 +199,29 @@ GENERATION_LAW_SET_DIGEST: Final[str] = canonical_digest(
         {
             "law_set_id": GENERATION_LAW_SET_ID,
             "laws": dict(GENERATION_LAWS),
+        }
+    )
+)
+
+
+GENERATION_SPEC_H_LAW_SET_ID: Final[str] = "alghanem.generation.laws.G0.GEN-0.SPEC-H"
+
+GENERATION_SPEC_H_LAWS: Final[Mapping[str, str]] = MappingProxyType(
+    {
+        **GENERATION_LAWS,
+        "ContractMustBindClassNotFactory": CONTRACT_MUST_BIND_CLASS_NOT_FACTORY,
+        "ConformanceIsNotLicensing": CONFORMANCE_IS_NOT_LICENSING,
+        "LexicalChoiceRefIsAClaimUntilTheReadout": (
+            LEXICAL_CHOICE_REF_IS_A_CLAIM_UNTIL_THE_READOUT
+        ),
+    }
+)
+
+GENERATION_SPEC_H_LAW_SET_DIGEST: Final[str] = canonical_digest(
+    canonical_bytes(
+        {
+            "law_set_id": GENERATION_SPEC_H_LAW_SET_ID,
+            "laws": dict(GENERATION_SPEC_H_LAWS),
         }
     )
 )
