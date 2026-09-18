@@ -3539,3 +3539,77 @@ horizontal alternatives at each node:
 
 with `Closure(N_i)` a condition of ascent. `GEN-0.DATA` is not opened before
 that.
+
+## `G0.FGEN-EX-0` — temporary fractal experimental authority
+
+The core `G0.FGEN-0` is deliberately sealed at the top: `ScaleNecessityCertificate`
+cannot be issued, so `NextScaleSeed` is unreachable and no run may ascend a scale.
+That seal is correct for licensing and wrong as a precondition for *trying*.
+`G0.FGEN-EX-0` therefore does not open it. It opens a parallel authority beside
+it:
+
+    ExperimentalAuthority  ≠  LicensingAuthority
+
+under one highest law, `ExperimentBeforeLicense`, and one pipeline:
+
+    FrozenPreregistration → TemporaryExperimentalPermit → ExperimentalRun
+                          → ExperimentalWitness → WitnessBundle
+
+and there this stage stops. `WitnessBundle → SufficiencyAssessment →
+LicensingCandidate → License` belongs to a later, independent authority that is
+not written here.
+
+The layer lives in `src/alghanem/fractal_experiment/` and imports only
+`canonical_content` and `fractal_generation`; the core imports it never, and a
+test guards both directions. Its authority gaps are a distinct type with a
+distinct prefix, `RES.FGENEX0.`, so the core's `RES.FGEN0.` ledger is neither
+extended nor edited.
+
+Four separations are frozen as law texts, with their own law-set digest:
+
+    ExperimentalPermission      ≠  License
+    ExperimentalTransition      ≠  LicensedTransition
+    ExperimentalNextScaleSeed   ≠  NextScaleSeed
+    Witness                     ≠  Judgment
+
+The permit is scoped to its own `run_id`, names the frozen binding it was issued
+upon, enumerates the patterns, operations, source scales and target scales it
+allows, and moves `ISSUED → ACTIVE → REVOKED` with no reuse after revocation.
+Validity is a function of run identity and operational state, never of a clock:
+`ExperimentalAuthorityExpiresWithItsRun`.
+
+Experimental ascent is permitted and certification is not. A `ClosedFractalNode`
+plus an `ExperimentalLiftPermit` yields an `ExperimentalNextScaleSeed`, which is
+not a `FractalSeed`, inherits from nothing permanent, and carries no method that
+converts it into `NextScaleSeed`. The necessity claim travels with it as a claim
+*under test*: `ExperimentalLiftTestsNecessity; ItDoesNotCertifyNecessity`.
+
+A result is not a witness's rank. `ExperimentalPASS → Witness`, and refutation,
+underpoweredness and run failure are witnesses too — four standings, no licence —
+and a witness refuses the vocabulary of rank in its observation texts. Witnesses
+gather into a `WitnessBundle` that partitions by observation and carries no
+verdict, no rank and no score, and `SufficientWitnessesOpenLicensingCandidateNotLicense`
+is why the bundle names its own missing authority,
+`RES.FGENEX0.NoSufficiencyAssessmentAuthority`. `WitnessSufficiencyContract` is
+declared now and measured never here, because
+`SufficiencyCriterionMustPrecedeItsMeasurement`.
+
+Input is frozen before the run and split before it is read:
+
+    FrozenInput        ≠  ProvenStructure
+    FrozenExpectation  ≠  GenerativeInput
+
+`FrozenExperimentBinding` names the fields the generator may see and the fields
+held out for readout, and refuses any generator projection that carries a
+held-out or undeclared field. This is what makes the MASAQ run meaningful: the
+corpus already carries `Morph_Tag`, `Syntactic_Role` and `Case_Mood`, and letting
+them into the generator would make the engine recite its own answer. The Arabic
+adapter (`src/alghanem/arabic/masaq_fractal_experiment.py`) resolves the bytes
+through `ALGHANEM_MASAQ_PATH`, verifies their length and digest, shows the
+generator only positions and stripped segment surfaces, runs the core per word,
+lifts experimentally from `masaq.segment` toward `masaq.word`, and reads the tags
+afterwards as observations in the witness.
+
+The whole stage claims one thing and no more: **we can experimentally run what is
+not yet licensed, under a temporary scoped authority, and turn the run into
+auditable witnesses.**
