@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import pytest
+
 from alghanem.arabic.fiber_contracts import (
     MADLUL_CONTRACT_AUTHOR,
-    MADLUL_READING_SYSTEMS,
     build_madlul_fiber_contract,
     build_madlul_fiber_node,
+    commit_madlul_gold,
+    madlul_contract_body,
     madlul_domain_members,
     madlul_member_id,
     madlul_parallel_fibers,
@@ -18,7 +21,13 @@ from alghanem.arabic.madlul_alone_formal import (
     MadlulSection,
 )
 from alghanem.prior import PriorConditionKind
-from alghanem.prior_fiber import FiberAxis, SuccessCriterion
+from alghanem.prior_fiber import FiberAxis, PriorFiberError, SuccessCriterion
+
+_NONCE = bytes(range(32))
+
+
+def _contract():  # type: ignore[no-untyped-def]
+    return build_madlul_fiber_contract(commit_madlul_gold(_NONCE))
 
 
 def test_the_prior_base_covers_the_nine_possibility_conditions_and_is_licensed() -> (
@@ -76,34 +85,54 @@ def test_the_member_identity_is_derived_from_its_witness_not_from_source_order()
 
 
 def test_the_contract_withholds_every_attested_section() -> None:
-    contract = build_madlul_fiber_contract()
+    contract = _contract()
 
-    assert contract.gold_is_sealed_by_digest_only
+    assert contract.gold_is_committed_not_shipped
     for section in MadlulSection:
         assert contract.withholds(section.value)
+        assert madlul_contract_body().withholds(section.value)
 
 
-def test_the_contract_is_neutral_between_the_systems_that_will_read_it() -> None:
-    contract = build_madlul_fiber_contract()
+def test_the_contract_body_is_frozen_before_any_reader_exists() -> None:
+    body = madlul_contract_body()
 
-    assert contract.authored_by == MADLUL_CONTRACT_AUTHOR
-    assert contract.authored_by not in MADLUL_READING_SYSTEMS
-    assert contract.is_neutral_between_its_readers
-    assert len(contract.reading_systems) >= 2
+    assert body.authored_by == MADLUL_CONTRACT_AUTHOR
+    assert "reading_systems" not in tuple(type(body).__dataclass_fields__)
+    assert _contract().carries_no_reader_identity
+    assert body.body_digest == madlul_contract_body().body_digest
 
 
-def test_the_contract_covers_every_success_criterion_and_seals_every_member() -> None:
-    contract = build_madlul_fiber_contract()
+def test_the_contract_covers_every_criterion_and_commits_every_member() -> None:
+    contract = _contract()
 
     assert set(contract.success_criteria) == set(SuccessCriterion)
-    assert contract.gold_seal.sealed_member_count == len(contract.members)
+    assert contract.gold_commitment.committed_member_count == len(contract.members)
 
 
-def test_the_preregistration_digest_is_stable_across_rebuilds() -> None:
-    assert (
-        build_madlul_fiber_contract().preregistration_digest
-        == build_madlul_fiber_contract().preregistration_digest
+def test_the_commitment_binds_the_body_and_moves_with_the_nonce() -> None:
+    first = commit_madlul_gold(_NONCE)
+    second = commit_madlul_gold(bytes(range(1, 33)))
+
+    assert first.contract_body_digest == madlul_contract_body().body_digest
+    assert first.commitment_digest != second.commitment_digest
+
+
+def test_a_commitment_bound_to_another_body_is_refused_by_the_contract() -> None:
+    from alghanem.prior_fiber import commit_gold
+
+    stray = commit_gold(
+        {"member.one": "جواب"},
+        gold_scheme="صيغة",
+        nonce=_NONCE,
+        contract_body_digest="a" * 64,
     )
+
+    with pytest.raises(PriorFiberError, match="جسم عقدٍ آخر"):
+        build_madlul_fiber_contract(stray)
+
+
+def test_the_contract_digest_is_stable_across_rebuilds() -> None:
+    assert _contract().contract_digest == _contract().contract_digest
 
 
 def test_the_fiber_layer_does_not_import_the_arabic_domain() -> None:

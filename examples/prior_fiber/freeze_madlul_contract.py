@@ -14,10 +14,11 @@ slots start `UNASSIGNED` by declaration, never `None` by silence:
 and carrier-and-content-together are projected from the one node together. A
 fiber that declares itself derived from another fiber is refused by construction.
 
-**The contract is neutral between the systems that will read it.** Its author is
-the domain adapter, never one of the two fractal systems: whoever defines the
-exam wins the exam. The withheld answer is sealed as a digest only; the
-attested sections never enter the contract content.
+**The contract body is frozen before any reader exists.** It carries no reader
+identity at all: `FrozenContractBeforeReaders`. Binding readers to an exam is
+the job of the later evaluation layer, never of the contract. The withheld
+answer is bound by a `GoldCommitment` over an external nonce; the attested
+sections never enter the contract content.
 
 Nothing here is a comparison, a verdict, or a birth. The ceiling of any later
 reading is `ObservedDominanceWithinFrozenDomain`, and it is frozen here, before
@@ -27,8 +28,8 @@ any result exists.
 from __future__ import annotations
 
 from alghanem.arabic.fiber_contracts import (
-    build_madlul_fiber_contract,
     build_madlul_fiber_node,
+    madlul_contract_body,
     madlul_parallel_fibers,
 )
 from alghanem.arabic.madlul_alone_formal import MadlulSection
@@ -36,11 +37,11 @@ from alghanem.prior_fiber import PRIOR_FIBER_LAWS, fiber_import_isolation_audit
 
 
 def main() -> None:
-    """Freeze the contract and report its geometry, its parallelism and its seal."""
+    """Freeze the contract body and report its geometry, parallelism and silence."""
 
     node = build_madlul_fiber_node()
     bundle = madlul_parallel_fibers()
-    contract = build_madlul_fiber_contract()
+    body = madlul_contract_body()
 
     print("== the prior fiber node ==")
     print(f"origin             : {node.origin_id}")
@@ -62,19 +63,18 @@ def main() -> None:
         )
 
     print()
-    print("== the frozen contract ==")
-    print(f"members            : {len(contract.members)}")
-    print(f"success criteria   : {len(contract.success_criteria)}")
-    print(f"author             : {contract.authored_by}")
-    print(f"readers            : {', '.join(contract.reading_systems)}")
-    print(f"neutral            : {contract.is_neutral_between_its_readers}")
-    print(f"gold digest        : {contract.gold_seal.gold_digest[:16]}")
-    print(f"preregistration    : {contract.preregistration_digest[:16]}")
+    print("== the frozen contract body ==")
+    print(f"members            : {len(body.members)}")
+    print(f"success criteria   : {len(body.success_criteria)}")
+    print(f"author             : {body.authored_by}")
+    print("reader identities  : 0 (frozen before any reader exists)")
+    print(f"domain digest      : {body.domain_digest[:16]}")
+    print(f"body digest        : {body.body_digest[:16]}")
 
     print()
-    print("== what the contract does not carry ==")
+    print("== what the contract body does not carry ==")
     for section in MadlulSection:
-        print(f"  withheld({section.value:<24}) = {contract.withholds(section.value)}")
+        print(f"  withheld({section.value:<24}) = {body.withholds(section.value)}")
 
     report = fiber_import_isolation_audit()
     print()
@@ -82,7 +82,7 @@ def main() -> None:
     print(f"isolated           : {report.is_isolated}")
     print(f"reached packages   : {len(report.alghanem_imports)}")
     print(f"laws               : {len(PRIOR_FIBER_LAWS)}")
-    print(f"claim ceiling      : {contract.strength_claim_ceiling[:60]}…")
+    print(f"freezing law       : {body.freezing_law[:60]}…")
 
 
 if __name__ == "__main__":

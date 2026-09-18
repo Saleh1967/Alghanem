@@ -1,26 +1,37 @@
-"""`G0.FIBER-0.CONTRACT`: عقدُ المجال المحايد، بجوابٍ مختومٍ لا مشحون.
+"""`G0.FIBER-0.CONTRACT`: عقدُ المجال المحايد، بجوابٍ ملتزَمٍ به لا مشحون.
 
-العقدُ يُجمَّد **قبل** أن يُقرَأ بأيّ نظام، ويحمل:
+العقدُ يُجمَّد **قبل أن يوجد قارئٌ أصلًا**، لا قبل أن يُقرَأ فحسب. فهو يصف
+المجالَ والامتحان، ولا يحمل هويّةَ نظامٍ ولا اسمَه ولا ينتظر خصمًا:
+
+    FrozenContractBeforeReaders
+
+وهو يحمل:
 
 * مجالًا مُعلَنًا: أعضاءً بمدخلاتٍ مرصودةٍ فقط، لا أحكامَ فيها.
 * شروطَ نجاحٍ بتغطيةٍ تامّةٍ لمعاييرها المغلقة.
-* ختمَ جوابٍ: بصمةً وحدَها، لا الجوابَ ولا ما يُشتَقُّ منه.
+* التزامَ جوابٍ: بصمةً رابطةً بعشوائيّةٍ خارجيّةٍ وبجسم العقد، لا الجوابَ.
 * إحالةَ رتبةٍ وسياسةَ بقايا مأخوذتين من العقدة لا مُخترَعتين هنا.
 
-ولا يجوز أن يكون مؤلِّفُ العقد أحدَ النظامين اللذين سيُقرَأ بهما: فمن عرّف
-الامتحان فاز به، والمقارنةُ حينئذٍ صورةٌ لا حجّة.
+والبصماتُ تُشتَقُّ بلا دائرة:
+
+    contract_body_digest  =  H(جسمُ العقد بلا التزام)
+    commitment            =  H(gold ‖ nonce ‖ contract_body_digest ‖ scheme)
+    contract_digest       =  H(جسمُ العقد ‖ الالتزام)
+
+وربطُ القرّاء — ومعه شرطُ ألّا يكون مؤلِّفُ العقد أحدَهم — يقع في طبقة التقييم
+بعد هذا العقد، لا فيه.
 """
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import Enum
 
 from ..canonical_content import canonical_bytes, canonical_digest
+from .commitment import GoldCommitment
 from .laws import (
-    A_SEALED_GOLD_IS_A_DIGEST_NOT_AN_ANSWER,
-    NO_SYSTEM_DEFINES_THE_CONTRACT_IT_IS_READ_BY,
+    A_COMMITTED_GOLD_IS_BOUND_NOT_SHIPPED,
+    FROZEN_CONTRACT_BEFORE_READERS,
     OBSERVED_DOMINANCE_IS_BOUNDED_BY_ITS_FROZEN_DOMAIN,
     PriorFiberError,
 )
@@ -29,9 +40,8 @@ from .node import PriorFiberNode
 __all__ = [
     "DomainMember",
     "FiberContract",
-    "GoldSeal",
+    "FiberContractBody",
     "SuccessCriterion",
-    "seal_gold",
 ]
 
 
@@ -82,68 +92,14 @@ class DomainMember:
 
 
 @dataclass(frozen=True, slots=True)
-class GoldSeal:
-    """ختمُ الجواب: بصمةٌ وعدد، ولا جوابَ في العقد ولا أثرَ منه."""
-
-    gold_digest: str
-    gold_scheme: str
-    sealed_member_count: int
-
-    def __post_init__(self) -> None:
-        _require_text(self.gold_digest, "بصمةُ الجواب المختوم")
-        _require_text(self.gold_scheme, "بيانُ صيغة الجواب")
-        if (
-            not isinstance(self.sealed_member_count, int)
-            or self.sealed_member_count < 1
-        ):
-            raise PriorFiberError("عددُ الأعضاء المختومة عددٌ صحيحٌ موجب")
-
-    @property
-    def withholding_law(self) -> str:
-        """قانونُ حجب الجواب عن العقد."""
-
-        return A_SEALED_GOLD_IS_A_DIGEST_NOT_AN_ANSWER
-
-    def as_canonical_content(self) -> dict[str, object]:
-        """محتوى الختم للبصمة."""
-
-        return {
-            "gold_digest": self.gold_digest,
-            "gold_scheme": self.gold_scheme,
-            "sealed_member_count": self.sealed_member_count,
-        }
-
-
-def seal_gold(labels: Mapping[str, str], *, gold_scheme: str) -> GoldSeal:
-    """اختم جوابًا: احسب بصمتَه ثمّ لا تحتفظ به؛ يُمرَّر ولا يُخزَّن."""
-
-    if not isinstance(labels, Mapping) or not labels:
-        raise PriorFiberError("الجوابُ المختوم مطابقةٌ غيرُ فارغة")
-    for member_id, label in labels.items():
-        _require_text(member_id, "مُعرِّفُ العضو في الجواب")
-        _require_text(label, f"جوابُ `{member_id}`")
-    payload = {
-        "gold_scheme": _require_text(gold_scheme, "بيانُ صيغة الجواب"),
-        "labels": [[key, labels[key]] for key in sorted(labels)],
-    }
-    return GoldSeal(
-        gold_digest=canonical_digest(canonical_bytes(payload)),
-        gold_scheme=gold_scheme,
-        sealed_member_count=len(labels),
-    )
-
-
-@dataclass(frozen=True, slots=True)
-class FiberContract:
-    """عقدُ مجالٍ محايد: مُجمَّدٌ قبل القراءة، ومحايدٌ عن كلِّ نظامٍ سيقرؤه."""
+class FiberContractBody:
+    """جسمُ العقد: كلُّ ما يُجمَّد قبل الالتزام وقبل وجود قارئ."""
 
     contract_id: str
     node: PriorFiberNode
     members: tuple[DomainMember, ...]
     success_criteria: tuple[SuccessCriterion, ...]
-    gold_seal: GoldSeal
     authored_by: str
-    reading_systems: tuple[str, ...]
 
     def __post_init__(self) -> None:
         _require_text(self.contract_id, "مُعرِّفُ العقد")
@@ -160,22 +116,8 @@ class FiberContract:
         if len(set(member_ids)) != len(member_ids):
             raise PriorFiberError("مُعرِّفُ العضو لا يتكرّر؛ والمكرّرُ يُرفَض لا يُطوى")
         self._refuse_incomplete_criteria()
-        if not isinstance(self.gold_seal, GoldSeal):
-            raise PriorFiberError(A_SEALED_GOLD_IS_A_DIGEST_NOT_AN_ANSWER)
-        if self.gold_seal.sealed_member_count != len(self.members):
-            raise PriorFiberError(
-                "عددُ الأعضاء المختومة يطابق أعضاءَ المجال؛ وإلّا فالمجالُ غيرُ "
-                "مُغطًّى بالختم"
-            )
         _require_text(self.authored_by, "مؤلِّفُ العقد")
-        if not isinstance(self.reading_systems, tuple) or len(self.reading_systems) < 2:
-            raise PriorFiberError("العقدُ يُقرَأ بنظامين فأكثر؛ ونظامٌ واحدٌ لا يُقارَن")
-        for system in self.reading_systems:
-            _require_text(system, "اسمُ النظام القارئ")
-        if len(set(self.reading_systems)) != len(self.reading_systems):
-            raise PriorFiberError("نظامٌ قارئٌ مُكرَّر؛ والمكرّرُ يُرفَض لا يُطوى")
-        if self.authored_by in self.reading_systems:
-            raise PriorFiberError(NO_SYSTEM_DEFINES_THE_CONTRACT_IT_IS_READ_BY)
+        self._refuse_a_declared_reader()
 
     def _refuse_an_unlicensed_input(self, member: DomainMember) -> None:
         for distinction_id, value in member.observed_inputs:
@@ -185,6 +127,10 @@ class FiberContract:
                     f"قيمةُ `{value}` خارج قيم الفرق `{distinction_id}`؛ "
                     "والمجالُ لا يتّسع بالسهو"
                 )
+
+    def _refuse_a_declared_reader(self) -> None:
+        if "reading_systems" in tuple(FiberContractBody.__dataclass_fields__):
+            raise PriorFiberError(FROZEN_CONTRACT_BEFORE_READERS)
 
     def _refuse_incomplete_criteria(self) -> None:
         if not isinstance(self.success_criteria, tuple):
@@ -205,20 +151,161 @@ class FiberContract:
             )
 
     @property
-    def is_neutral_between_its_readers(self) -> bool:
-        """أمحايدٌ العقدُ عن كلِّ نظامٍ سيقرؤه؟"""
+    def member_ids(self) -> tuple[str, ...]:
+        """مُعرِّفاتُ أعضاء المجال مرتَّبةً."""
 
-        return self.authored_by not in self.reading_systems
+        return tuple(sorted(member.member_id for member in self.members))
 
     @property
-    def gold_is_sealed_by_digest_only(self) -> bool:
-        """أيحمل الختمُ بصمةً وعددًا فحسب؟ يُفحَص على الحقول لا بالدعوى."""
+    def freezing_law(self) -> str:
+        """قانونُ التجميد قبل القرّاء."""
 
-        declared = tuple(GoldSeal.__dataclass_fields__)
-        return declared == ("gold_digest", "gold_scheme", "sealed_member_count")
+        return FROZEN_CONTRACT_BEFORE_READERS
+
+    @property
+    def residual_policy(self) -> str:
+        """سياسةُ البقايا؛ تُقرَأ من العقدة ولا تُكتَب هنا ثانيةً."""
+
+        return self.node.residual_policy
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """محتوى الجسم للبصمة؛ ولا التزامَ فيه، فلا دائرةَ في الاشتقاق."""
+
+        return {
+            "contract_id": self.contract_id,
+            "node": self.node.as_canonical_content(),
+            "members": [
+                member.as_canonical_content()
+                for member in sorted(self.members, key=lambda item: item.member_id)
+            ],
+            "success_criteria": [
+                criterion.value
+                for criterion in sorted(
+                    self.success_criteria, key=lambda item: item.value
+                )
+            ],
+            "authored_by": self.authored_by,
+        }
+
+    @property
+    def body_digest(self) -> str:
+        """بصمةُ جسم العقد؛ يُلتزَم بالجواب عليها قبل أن يحملها العقدُ التامّ."""
+
+        return canonical_digest(canonical_bytes(self.as_canonical_content()))
+
+    @property
+    def domain_digest(self) -> str:
+        """بصمةُ المجال: أعضاؤه بمدخلاتها المرصودة وحدها، لا جوابَ فيها."""
+
+        return canonical_digest(
+            canonical_bytes(
+                [
+                    member.as_canonical_content()
+                    for member in sorted(self.members, key=lambda item: item.member_id)
+                ]
+            )
+        )
 
     def withholds(self, label: str) -> bool:
-        """أمحجوبٌ هذا الجوابُ عن محتوى العقد؟ يُسأَل به من يملك الجوابَ وحده."""
+        """أمحجوبٌ هذا الجوابُ عن محتوى الجسم؟ يُسأَل به من يملك الجوابَ وحده."""
+
+        _require_text(label, "الجوابُ المسؤولُ عنه")
+        content = canonical_bytes(self.as_canonical_content()).decode("utf-8")
+        return label not in content
+
+
+@dataclass(frozen=True, slots=True)
+class FiberContract:
+    """عقدُ مجالٍ مُجمَّد: جسمٌ مُجمَّدٌ قبل القرّاء، والتزامٌ مربوطٌ به."""
+
+    body: FiberContractBody
+    gold_commitment: GoldCommitment
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.body, FiberContractBody):
+            raise PriorFiberError("جسمُ العقد من نوعه لا نصًّا حرًّا")
+        if not isinstance(self.gold_commitment, GoldCommitment):
+            raise PriorFiberError(A_COMMITTED_GOLD_IS_BOUND_NOT_SHIPPED)
+        if self.gold_commitment.contract_body_digest != self.body.body_digest:
+            raise PriorFiberError(
+                "الالتزامُ مربوطٌ بجسم عقدٍ آخر؛ فليس التزامًا بهذا الامتحان"
+            )
+        if self.gold_commitment.committed_member_count != len(self.body.members):
+            raise PriorFiberError(
+                "عددُ الأعضاء الملتزَم بها يطابق أعضاءَ المجال؛ وإلّا فالمجالُ "
+                "غيرُ مُغطًّى بالالتزام"
+            )
+
+    @property
+    def contract_id(self) -> str:
+        """مُعرِّفُ العقد؛ يُقرَأ من جسمه ولا يُكتَب هنا ثانيةً."""
+
+        return self.body.contract_id
+
+    @property
+    def node(self) -> PriorFiberNode:
+        """عقدةُ العقد الليفيّة."""
+
+        return self.body.node
+
+    @property
+    def members(self) -> tuple[DomainMember, ...]:
+        """أعضاءُ المجال."""
+
+        return self.body.members
+
+    @property
+    def success_criteria(self) -> tuple[SuccessCriterion, ...]:
+        """معاييرُ النجاح المُغطّاة تغطيةً تامّة."""
+
+        return self.body.success_criteria
+
+    @property
+    def authored_by(self) -> str:
+        """مؤلِّفُ العقد؛ ويُمنَع لاحقًا أن يكون أحدَ قرّائه في طبقة الربط."""
+
+        return self.body.authored_by
+
+    @property
+    def contract_body_digest(self) -> str:
+        """بصمةُ الجسم التي التُزِم بالجواب عليها."""
+
+        return self.body.body_digest
+
+    @property
+    def domain_digest(self) -> str:
+        """بصمةُ المجال بمدخلاته المرصودة وحدها."""
+
+        return self.body.domain_digest
+
+    @property
+    def carries_no_reader_identity(self) -> bool:
+        """أيخلو العقدُ من هويّة قارئٍ؟ يُفحَص على الحقول لا بالدعوى."""
+
+        declared = tuple(FiberContract.__dataclass_fields__) + tuple(
+            FiberContractBody.__dataclass_fields__
+        )
+        return not any(
+            name in declared
+            for name in ("reading_systems", "readers", "system_identities")
+        )
+
+    @property
+    def gold_is_committed_not_shipped(self) -> bool:
+        """أيحمل الالتزامُ بصماتٍ وأعدادًا فحسب، بلا جوابٍ ولا عشوائيّة؟"""
+
+        declared = tuple(GoldCommitment.__dataclass_fields__)
+        return declared == (
+            "commitment_digest",
+            "commitment_scheme",
+            "gold_scheme",
+            "contract_body_digest",
+            "committed_member_count",
+            "nonce_length_bits",
+        )
+
+    def withholds(self, label: str) -> bool:
+        """أمحجوبٌ هذا الجوابُ عن محتوى العقد كلِّه؟"""
 
         _require_text(label, "الجوابُ المسؤولُ عنه")
         content = canonical_bytes(self.as_canonical_content()).decode("utf-8")
@@ -234,31 +321,18 @@ class FiberContract:
     def residual_policy(self) -> str:
         """سياسةُ البقايا؛ تُقرَأ من العقدة ولا تُكتَب هنا ثانيةً."""
 
-        return self.node.residual_policy
+        return self.body.residual_policy
 
     def as_canonical_content(self) -> dict[str, object]:
-        """محتوى العقد للبصمة."""
+        """محتوى العقد للبصمة: جسمُه والتزامُه معًا."""
 
         return {
-            "contract_id": self.contract_id,
-            "node": self.node.as_canonical_content(),
-            "members": [
-                member.as_canonical_content()
-                for member in sorted(self.members, key=lambda item: item.member_id)
-            ],
-            "success_criteria": [
-                criterion.value
-                for criterion in sorted(
-                    self.success_criteria, key=lambda item: item.value
-                )
-            ],
-            "gold_seal": self.gold_seal.as_canonical_content(),
-            "authored_by": self.authored_by,
-            "reading_systems": list(self.reading_systems),
+            "body": self.body.as_canonical_content(),
+            "gold_commitment": self.gold_commitment.as_canonical_content(),
         }
 
     @property
-    def preregistration_digest(self) -> str:
-        """بصمةُ التسجيل المسبق؛ مُشتَقّةٌ لا مكتوبة، وتُجمَّد قبل أيّ قراءة."""
+    def contract_digest(self) -> str:
+        """بصمةُ العقد التامّ؛ مُشتَقّةٌ من الجسم والالتزام بلا دائرة."""
 
         return canonical_digest(canonical_bytes(self.as_canonical_content()))

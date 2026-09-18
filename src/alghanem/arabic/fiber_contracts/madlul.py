@@ -8,6 +8,9 @@
 يقرأ هذا المُحوِّلُ `madlul_alone_formal` — وهو المصدرُ الوحيد للمادّة — ويبني
 منه عقدةً ليفيّةً وعقدَ مجالٍ مُجمَّدًا.
 
+والعقدُ يُجمَّد قبل أن يوجد قارئٌ أصلًا: لا يحمل هويّةَ نظامٍ ولا اسمَه، وربطُ
+القرّاء يقع في طبقة التقييم بعده لا فيه.
+
 وما يدخل العقدَ هو **المدخلُ المرصود وحده**: الحواملُ الثلاثة التي تُشتَقُّ منها
 الإجابات. وأمّا القسمُ المنصوص فجوابٌ محجوب: يُختَم ببصمةٍ ولا يُشحَن في العقد،
 فلا يقرؤه نظامٌ سيُمتحَن به. ولا تدخل ملاحظةُ خروج الفرع الخامس عن نطاق الوضع
@@ -15,6 +18,10 @@
 
 ومُعرِّفُ العضو بصمةُ هويّة شاهده لا رقمُ ترتيبه، لأنّ ترتيبَ المصدر ترتيبُ
 الأقسام نفسِها، فلو رُقّمت الأعضاءُ به لسُرِّب الجوابُ في المُعرِّف.
+
+والجوابُ هنا مربوطٌ لا مخفيٌّ تشفيريًّا: مادّتُه مقروءةٌ من `madlul_alone_formal`
+في هذا المستودع، فالتزامُه يمنع تبديلَه بعد رؤية المخرجات، وحجبُه عن القارئ
+يقع بحدِّ المصدر المُصرَّح لا بسرّيّة المادّة. ولا يُسمّى هذا إخفاءً تامًّا.
 
 سلطويًّا — تصريحٌ لا تفصيل لاحق: هذا عقدُ امتحانٍ مُجمَّد، لا حكمَ فيه ولا
 ولادةَ ولا مقارنة. ولا يُبنى هنا نظامٌ قارئٌ ولا تُقاس قوّةُ نظامٍ على آخر.
@@ -36,11 +43,13 @@ from ...prior_fiber import (
     DomainMember,
     ExternalRankReference,
     FiberContract,
+    FiberContractBody,
+    GoldCommitment,
     ParallelFiberBundle,
     PriorFiberNode,
     SuccessCriterion,
+    commit_gold,
     project_all_fibers,
-    seal_gold,
 )
 from ..madlul_alone_formal import (
     ATTESTED_SIGNIFIED_WITNESSES,
@@ -62,12 +71,14 @@ from ..madlul_alone_formal import (
 __all__ = [
     "MADLUL_ASSIGNMENT_DISTINCTION_ID",
     "MADLUL_CONTRACT_AUTHOR",
+    "MADLUL_CONTRACT_INTERFACE_VERSION",
     "MADLUL_GOLD_SCHEME",
     "MADLUL_NATURE_DISTINCTION_ID",
-    "MADLUL_READING_SYSTEMS",
     "MADLUL_STRUCTURE_DISTINCTION_ID",
     "build_madlul_fiber_contract",
     "build_madlul_fiber_node",
+    "commit_madlul_gold",
+    "madlul_contract_body",
     "madlul_domain_members",
     "madlul_member_id",
     "madlul_parallel_fibers",
@@ -82,11 +93,8 @@ MADLUL_ASSIGNMENT_DISTINCTION_ID: Final = "carrier.signified_assignment"
 
 MADLUL_CONTRACT_AUTHOR: Final = "alghanem.arabic.fiber_contracts.madlul"
 
-MADLUL_READING_SYSTEMS: Final[tuple[str, ...]] = (
-    "fractal_system_one",
-    "fractal_system_two",
-)
-"""النظامان اللذان سيقرآن هذا العقد؛ ولا واحدَ منهما مؤلِّفُه."""
+MADLUL_CONTRACT_INTERFACE_VERSION: Final = "g0_eval_0.contract_interface.1"
+"""إصدارُ واجهة العقد؛ يُطابَق عليه بروتوكولُ التقييم وهويّاتُ قرّائه لاحقًا."""
 
 MADLUL_GOLD_SCHEME: Final = (
     "قسمُ المدلول المنصوص في المصدر لكلِّ شاهد؛ محجوبٌ عن العقد، مختومٌ ببصمته"
@@ -306,28 +314,50 @@ def madlul_domain_members() -> tuple[DomainMember, ...]:
     )
 
 
-def build_madlul_fiber_contract() -> FiberContract:
-    """ابنِ عقدَ المجال المُجمَّد: مدخلاتٌ مرصودة، وجوابٌ مختومٌ ببصمته وحدها."""
+def madlul_contract_body() -> FiberContractBody:
+    """جمِّد جسمَ العقد؛ يُجمَّد قبل الالتزام وقبل أن يوجد قارئٌ أصلًا."""
 
-    return FiberContract(
+    return FiberContractBody(
         contract_id="contract.madlul_alone.g0_fiber_0",
         node=build_madlul_fiber_node(),
         members=madlul_domain_members(),
         success_criteria=tuple(SuccessCriterion),
-        gold_seal=seal_gold(
-            {
-                madlul_member_id(witness): witness.attested_section.value
-                for witness in ATTESTED_SIGNIFIED_WITNESSES
-            },
-            gold_scheme=MADLUL_GOLD_SCHEME,
-        ),
         authored_by=MADLUL_CONTRACT_AUTHOR,
-        reading_systems=MADLUL_READING_SYSTEMS,
     )
 
 
+def _madlul_gold_labels() -> dict[str, str]:
+    """الجوابُ المحجوب؛ يُقرَأ هنا ليُلتزَم به ولا يُخزَّن في عقدٍ ولا مخرَج."""
+
+    return {
+        madlul_member_id(witness): witness.attested_section.value
+        for witness in ATTESTED_SIGNIFIED_WITNESSES
+    }
+
+
+def commit_madlul_gold(nonce: bytes) -> GoldCommitment:
+    """التزِم بجواب هذا المجال بعشوائيّةٍ تُمرَّر من خارج المشروع.
+
+    لا قيمةَ افتراضيّة للـ`nonce` ولا اشتقاقَ له: من ولّده فهو مسؤولٌ عن إبقائه
+    خارج المستودع وخارج كلِّ مخرَج. ولا يعرف هذا المُحوِّلُ من أين جاء.
+    """
+
+    return commit_gold(
+        _madlul_gold_labels(),
+        gold_scheme=MADLUL_GOLD_SCHEME,
+        nonce=nonce,
+        contract_body_digest=madlul_contract_body().body_digest,
+    )
+
+
+def build_madlul_fiber_contract(gold_commitment: GoldCommitment) -> FiberContract:
+    """ابنِ العقدَ التامّ: جسمٌ مُجمَّدٌ قبل القرّاء، والتزامٌ مربوطٌ به."""
+
+    return FiberContract(body=madlul_contract_body(), gold_commitment=gold_commitment)
+
+
 def _refuse_a_leaked_answer() -> None:
-    """ارفض عند الاستيراد ظهورَ قسمٍ منصوصٍ في مدخلات أعضاء المجال."""
+    """ارفض عند الاستيراد ظهورَ قسمٍ منصوصٍ في مدخلات الأعضاء أو جسم العقد."""
 
     sections = tuple(section.value for section in MadlulSection)
     for member in madlul_domain_members():
@@ -337,6 +367,10 @@ def _refuse_a_leaked_answer() -> None:
                 raise MadlulAloneError(
                     "الجوابُ المحجوب ظهر في مدخلات عضوٍ من المجال: " + member.member_id
                 )
+    body = madlul_contract_body()
+    for section in sections:
+        if not body.withholds(section):
+            raise MadlulAloneError("الجوابُ المحجوب ظهر في جسم العقد: " + section)
     identifiers = tuple(
         madlul_member_id(witness) for witness in ATTESTED_SIGNIFIED_WITNESSES
     )

@@ -3764,3 +3764,53 @@ Boundaries unchanged: this is an *adapter*, not part of the core — the core
 imports nothing from it, which a test enforces — the ladder still stops at
 `LexicalEvidenceCandidate`, no meaning or signified is issued, and no `kernel/`
 module reads it.
+
+## `G0.EVAL-0` — the blind evaluation boundary
+
+`FrozenContractBeforeReaders`. A contract describes a domain and an exam; it
+never carries the identity of whoever will read it. `FiberContractBody` has no
+reader field, so an exam can be frozen before its opponent exists, and the
+binding of readers to an exam belongs to `EvaluationBinding` alone. An exam that
+waits for its second system is an exam designed after seeing one of them.
+
+`DigestOnly != CryptographicallyHiddenGold`. Storing a digest of the answer
+prevents shipping it; over a domain of five members and five sections it does not
+hide it, because the combinations can be enumerated and hashed. The commitment is
+therefore `H(canonical_gold ‖ nonce ‖ contract_body_digest ‖ scheme)` with a
+nonce of at least 256 bits that the core never generates, never derives and never
+stores. In the current madlul domain the claim is explicitly
+`blind-by-boundary + commitment binding`, because the answer key is still a file
+in this repository; the interface takes gold and nonce as arguments so that an
+external hidden gold can replace it without changing the law.
+
+`ASystemNameIsNotASystemIdentity`. `reading_systems = ("fractal_system_one", ...)`
+is a pair of strings, and a different program can adopt the same string. A reader
+identity is `implementation_digest + configuration_digest +
+dependency_boundary_digest + contract_interface_version`, and carries no name at
+all, so a reader cannot change after seeing the exam and keep its identity.
+
+`ASerializedContractIsWhatTheReaderReceives`. The reader is handed canonical
+bytes, never a Python object, never an adapter and never a module path. The
+payload refuses to carry the commitment, the author or the node trace.
+
+`StaticImportAudit != ProcessIsolation`. Refusing `importlib`, `__import__` and
+dynamic file access in a reader's declared source strengthens the boundary and is
+measured, not asserted. It does not prove the program cannot reach the repository
+by other means. This phase therefore names its boundary a *declared*,
+source-isolated reader boundary and records process confinement as
+`DECLARED_DEFERRED` rather than claiming a sandbox it has not built.
+
+`AFirstRunHappensOnce`. The first frozen report under a given system identity and
+request is the reference. A byte-identical repeat is admissible only as a
+determinism witness and never replaces the first; a differing repeat, or a second
+report claiming to be the first, is refused and recorded as a violation. Any
+recorded violation blocks the reveal.
+
+`NoEvaluationVerdictBefore(FrozenContract ∧ FrozenSystemIdentity ∧
+FrozenProtocol ∧ BoundRequest ∧ FrozenFirstRunReports ∧ ValidGoldReveal)`. The
+reveal authority holds neither gold nor nonce: both arrive at reveal time, are
+checked against the commitment, and produce a `GoldRevealRecord` that carries
+neither of them. `AGoldRevealRecordIsNotAVerdict`: no comparison, no dominance
+and no `Ω_M` exists in this phase, and the ceiling of any later reading remains
+`ObservedDominanceWithinFrozenDomain`.
+
