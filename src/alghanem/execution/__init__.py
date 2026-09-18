@@ -15,8 +15,10 @@ from __future__ import annotations
 
 from .audit import AN_AUDIT_READS_THE_TRACE_IT_DOES_NOT_JUDGE_AGAIN, audit_lines
 from .case_data import (
+    A_BASELINE_CHAIN_DOES_NOT_TURN_BACK_ON_ITSELF,
     A_CASE_IS_AUTHORED_NOT_GENERATED,
     A_CITATION_IS_A_CLAIM_UNTIL_THE_READOUT,
+    A_DECLARED_DIFFERENCE_IS_THE_ACTUAL_DIFFERENCE,
     A_GOLDEN_COUNTER_CASE_IS_ONE_DECLARED_DIFFERENCE,
     AN_EXPECTATION_CARRIES_NO_EXECUTION_DIGEST,
     AN_INVARIANT_ERROR_IS_NOT_IN_THE_USER_CASE_SPACE,
@@ -84,6 +86,18 @@ from .derivation import (
     derive_partial_authority,
 )
 from .engine import ExecutionReport, execute_declaration, execute_document
+from .frozen_json import (
+    A_DIFFERENCE_IS_AN_OPERATION_NOT_A_PATH,
+    A_FROZEN_DOCUMENT_IS_DEEPLY_IMMUTABLE,
+    DiffOperation,
+    FrozenJson,
+    FrozenJsonError,
+    StructuralDiff,
+    freeze_json,
+    frozen_equal,
+    structural_diff,
+    thaw_json,
+)
 from .invariant import (
     A_MATERIALIZATION_FAILURE_IS_NOT_A_BLOCK,
     PASS_IFF_MATERIALIZED_IDENTITY,
@@ -133,6 +147,7 @@ from .result import (
     LineageIdentity,
 )
 from .standing import (
+    INPUT_CONSTITUTION_FAILURE,
     INVALID_INPUT_IS_NOT_A_BLOCK,
     InputFault,
     InputFaultKind,
@@ -157,6 +172,10 @@ __all__ = [
     "A_GOLDEN_COUNTER_CASE_IS_ONE_DECLARED_DIFFERENCE",
     "A_LAW_SET_IS_NOT_REINTERPRETED_BY_A_LATER_ONE",
     "A_LAW_STANDING_IS_NOT_A_CASE_VERDICT",
+    "A_BASELINE_CHAIN_DOES_NOT_TURN_BACK_ON_ITSELF",
+    "A_DECLARED_DIFFERENCE_IS_THE_ACTUAL_DIFFERENCE",
+    "A_DIFFERENCE_IS_AN_OPERATION_NOT_A_PATH",
+    "A_FROZEN_DOCUMENT_IS_DEEPLY_IMMUTABLE",
     "A_MATERIALIZATION_FAILURE_IS_NOT_A_BLOCK",
     "A_MATRIX_MEASURES_THE_ENGINE_AS_FROZEN",
     "A_MATRIX_NAMES_NO_CASE_AND_NO_DIGEST",
@@ -184,6 +203,7 @@ __all__ = [
     "CoverageRequirement",
     "DEPENDENT_LAWS",
     "DeclaredDifference",
+    "DiffOperation",
     "DeclaredLevels",
     "DecodedDocument",
     "DerivedSite",
@@ -201,10 +221,13 @@ __all__ = [
     "ExecutionResultEnvelope",
     "ExecutionResultError",
     "ExpectedTraceRow",
+    "FrozenJson",
+    "FrozenJsonError",
     "GeneralOntologyDeclaration",
     "GoldenCaseCorpus",
     "GoldenExecutionCase",
     "GoldenExpectation",
+    "INPUT_CONSTITUTION_FAILURE",
     "INVALID_INPUT_IS_NOT_A_BLOCK",
     "Identity",
     "InputFault",
@@ -238,6 +261,7 @@ __all__ = [
     "SiteOwnerKind",
     "SiteStanding",
     "SlotDeclaration",
+    "StructuralDiff",
     "UNRESOLVED_EVIDENCE_IS_NOT_INVALID_INPUT",
     "UnresolvedRequirement",
     "VerdictEffect",
@@ -248,11 +272,15 @@ __all__ = [
     "derive_partial_authority",
     "encode_declaration",
     "evaluate_laws",
+    "freeze_json",
+    "frozen_equal",
     "execute_declaration",
     "execute_document",
     "is_reproducible",
     "replay",
     "residuals_of",
+    "structural_diff",
+    "thaw_json",
     "validate_declaration",
     "violations_of",
 ]

@@ -9,7 +9,7 @@
 `AnchoredNisbahSignatureV3` إلّا بعد `PASS` مبدئيّ؛ لأنّ بانيها يرفض اختلاطَ
 الأصل، فلو أُنشئت قبل الحكم لأصدر الباني الحكمَ بدل المحرّك ولَما بقي أثر.
 
-**وفسادُ الإدخال ليس حجبًا** (`InvalidInputIsNotABlock`): الوثيقةُ التي لا تقوم
+**وبطلانُ الإدخال ليس حجبًا** (`InvalidInputIsNotABlock`): الوثيقةُ التي لا تقوم
 منها قضيّةٌ لا تُصدِر `BLOCK`؛ إنّما تُصدِر `InputValidation` لا حكمَ معها.
 
 **وفشلُ التشييد بعد النجاح ليس حجبًا** (`AMaterializationFailureIsNotABlock`):
@@ -77,7 +77,7 @@ class ExecutionReport:
         if self.validation.is_valid != (self.envelope is not None):
             raise TypeError(
                 "إدخالٌ فاسدٌ لا حكمَ معه، وإدخالٌ قائمٌ لا يخلو من حكم؛ "
-                "وفسادُ الإدخال ليس حجبًا"
+                "وبطلانُ الإدخال ليس حجبًا"
             )
 
 

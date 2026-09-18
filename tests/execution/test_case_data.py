@@ -28,6 +28,7 @@ from alghanem.execution.case_data import (
     InvalidInputWitness,
 )
 from alghanem.execution.coverage import COVERAGE_MATRIX
+from alghanem.execution.standing import InputFaultKind
 
 _CORPUS_ROOT = Path(__file__).resolve().parents[2] / CORPUS_ROOT_NAME
 
@@ -60,6 +61,77 @@ def _expectation_document() -> dict[str, Any]:
 
 def _case_document() -> dict[str, Any]:
     return deepcopy(_read(_CORPUS_ROOT / "cases" / "case0.baseline.pass.json"))
+
+
+def _replace(path: str, before: Any, after: Any, statement: str) -> dict[str, Any]:
+    return {
+        "operation": "replace",
+        "path": path,
+        "before": before,
+        "after": after,
+        "statement": statement,
+    }
+
+
+def _add(path: str, after: Any, statement: str) -> dict[str, Any]:
+    return {
+        "operation": "add",
+        "path": path,
+        "before": None,
+        "after": after,
+        "statement": statement,
+    }
+
+
+def _remove(path: str, before: Any, statement: str) -> dict[str, Any]:
+    return {
+        "operation": "remove",
+        "path": path,
+        "before": before,
+        "after": None,
+        "statement": statement,
+    }
+
+
+def _second_anchor() -> dict[str, Any]:
+    return {
+        "anchor_id": "anchor.second",
+        "role_site": {
+            "linguistic_ontology_id": "linguistic.A",
+            "license_id": "license.term",
+            "function": "term_anchor_role",
+        },
+        "condition_site": {"base_id": "base.A", "place": "identity_criterion"},
+    }
+
+
+def _counter_case(
+    case_id: str,
+    differences: list[dict[str, Any]],
+    multiplicity: str | None = None,
+) -> dict[str, Any]:
+    case = _case_document()
+    case["case_id"] = case_id
+    case["baseline_case_id"] = "case0.baseline.pass"
+    case["declared_differences"] = differences
+    case["multiplicity_is_the_proof"] = multiplicity
+    return case
+
+
+def _corpus_with(*cases: dict[str, Any]) -> GoldenCaseCorpus:
+    expectations = []
+    for case in cases:
+        expectation = _expectation_document()
+        expectation["case_id"] = case["case_id"]
+        expectations.append(expectation)
+    return GoldenCaseCorpus.of(
+        manifest=_read(_CORPUS_ROOT / "MANIFEST.json"),
+        cases=tuple(item for _, item in _folder("cases")) + cases,
+        expectations=tuple(item for _, item in _folder("expectations"))
+        + tuple(expectations),
+        invalid_input_witnesses=tuple(item for _, item in _folder("invalid")),
+        engine_seam_witnesses=tuple(item for _, item in _folder("seam")),
+    )
 
 
 def test_the_written_corpus_is_read_and_is_internally_consistent() -> None:
@@ -308,8 +380,8 @@ def test_a_counter_case_with_two_undeclared_faults_is_refused() -> None:
     document["case_id"] = "case0.counter.two_faults"
     document["baseline_case_id"] = "case0.baseline.pass"
     document["declared_differences"] = [
-        {"path": "nisbah.predicate.arity", "statement": "الرتبةُ صارت ثلاثًا"},
-        {"path": "nisbah.anchors", "statement": "زِيد مرتكزٌ ثانٍ"},
+        _replace("nisbah.predicate.arity", 2, 3, "الرتبةُ صارت ثلاثًا"),
+        _add("nisbah.anchors[1]", _second_anchor(), "زِيد مرتكزٌ ثانٍ"),
     ]
     with pytest.raises(CaseDataError):
         GoldenExecutionCase.of(document)
@@ -320,8 +392,13 @@ def test_two_faults_are_admitted_when_multiplicity_is_itself_the_proof() -> None
     document["case_id"] = "case0.counter.two_subjects"
     document["baseline_case_id"] = "case0.baseline.pass"
     document["declared_differences"] = [
-        {"path": "nisbah.anchors.0", "statement": "المرتكزُ الأوّلُ على حاله"},
-        {"path": "nisbah.anchors.1", "statement": "مرتكزٌ ثانٍ رخصتُه معطَّلة"},
+        _replace(
+            "nisbah.anchors[0].role_site.license_id",
+            "license.term",
+            "license.other",
+            "رخصةُ المرتكز الأوّل تبدَّلت",
+        ),
+        _add("nisbah.anchors[1]", _second_anchor(), "مرتكزٌ ثانٍ رخصتُه معطَّلة"),
     ]
     document["multiplicity_is_the_proof"] = (
         "المطلوبُ إثباتُ أنّ قانونًا واحدًا يثبت على موضوعٍ ويُخالَف على آخر في "
@@ -334,7 +411,7 @@ def test_two_faults_are_admitted_when_multiplicity_is_itself_the_proof() -> None
 def test_a_baseline_that_declares_a_difference_from_nothing_is_refused() -> None:
     document = _case_document()
     document["declared_differences"] = [
-        {"path": "nisbah.predicate.arity", "statement": "فرقٌ بلا أصلٍ يُقاس إليه"}
+        _replace("nisbah.predicate.arity", 2, 3, "فرقٌ بلا أصلٍ يُقاس إليه")
     ]
     with pytest.raises(CaseDataError):
         GoldenExecutionCase.of(document)
@@ -352,7 +429,7 @@ def test_a_case_measured_against_an_absent_baseline_is_refused() -> None:
     case["case_id"] = "case0.counter.orphan"
     case["baseline_case_id"] = "case0.a_baseline_that_is_not_written"
     case["declared_differences"] = [
-        {"path": "nisbah.predicate.arity", "statement": "الرتبةُ صارت ثلاثًا"}
+        _replace("nisbah.predicate.arity", 2, 3, "الرتبةُ صارت ثلاثًا")
     ]
     expectation = _expectation_document()
     expectation["case_id"] = "case0.counter.orphan"
@@ -372,7 +449,7 @@ def test_a_case_without_a_frozen_expectation_is_refused() -> None:
     case["case_id"] = "case0.without_an_expectation"
     case["baseline_case_id"] = "case0.baseline.pass"
     case["declared_differences"] = [
-        {"path": "nisbah.predicate.arity", "statement": "الرتبةُ صارت ثلاثًا"}
+        _replace("nisbah.predicate.arity", 2, 3, "الرتبةُ صارت ثلاثًا")
     ]
     with pytest.raises(CaseDataError):
         GoldenCaseCorpus.of(
@@ -447,3 +524,182 @@ def test_a_witness_that_takes_the_name_of_a_case_is_refused() -> None:
             invalid_input_witnesses=(document,),
             engine_seam_witnesses=tuple(item for _, item in _folder("seam")),
         )
+
+
+def test_a_frozen_case_document_is_not_altered_through_the_copy_it_hands_out() -> None:
+    case = GoldenExecutionCase.of(_case_document())
+    read = case.document
+    read["nisbah"]["predicate"]["arity"] = 99
+    read["nisbah"]["anchors"].append({"anchor_id": "anchor.smuggled"})
+    assert case.document["nisbah"]["predicate"]["arity"] == 2
+    assert len(case.document["nisbah"]["anchors"]) == 1
+    assert case.document is not read
+
+
+def test_a_frozen_witness_document_is_not_altered_after_it_is_read() -> None:
+    corpus = _corpus()
+    witness = corpus.invalid_input_witnesses[0]
+    read = witness.document
+    read["an_unknown_key"] = "أيًّا كانت"
+    assert witness.document["an_unknown_key"] != "أيًّا كانت"
+
+
+def test_a_document_that_carries_a_value_outside_the_json_contract_is_refused() -> None:
+    document = _case_document()
+    document["document"]["nisbah"]["predicate"]["arity"] = {1, 2}
+    with pytest.raises(CaseDataError):
+        GoldenExecutionCase.of(document)
+
+
+def test_a_counter_case_whose_declared_difference_is_the_actual_one_is_read() -> None:
+    case = _counter_case(
+        "case0.counter.arity",
+        [_replace("nisbah.predicate.arity", 2, 3, "الرتبةُ صارت ثلاثًا")],
+    )
+    case["document"]["nisbah"]["predicate"]["arity"] = 3
+    corpus = _corpus_with(case)
+    read = {item.case_id for item in corpus.cases}
+    assert "case0.counter.arity" in read
+
+
+def test_a_counter_case_that_does_not_differ_from_its_baseline_is_refused() -> None:
+    case = _counter_case(
+        "case0.counter.identical",
+        [_replace("nisbah.predicate.arity", 2, 3, "فرقٌ مُدَّعًى لم يقع")],
+    )
+    with pytest.raises(CaseDataError):
+        _corpus_with(case)
+
+
+def test_a_second_undeclared_difference_is_refused_even_beside_a_true_one() -> None:
+    case = _counter_case(
+        "case0.counter.two_but_one_declared",
+        [_replace("nisbah.predicate.arity", 2, 3, "الرتبةُ صارت ثلاثًا")],
+    )
+    case["document"]["nisbah"]["predicate"]["arity"] = 3
+    case["document"]["nisbah"]["nisbah_id"] = "nisbah.B"
+    with pytest.raises(CaseDataError):
+        _corpus_with(case)
+
+
+def test_a_declared_difference_at_a_place_that_did_not_change_is_refused() -> None:
+    case = _counter_case(
+        "case0.counter.phantom",
+        [
+            _replace("nisbah.predicate.arity", 2, 3, "الرتبةُ صارت ثلاثًا"),
+            _replace("nisbah.nisbah_id", "nisbah.A", "nisbah.B", "الاسمُ تبدَّل"),
+        ],
+        "تعليلٌ لا يشفع لفرقٍ مُعلَنٍ لم يقع في الوثيقة المكتوبة",
+    )
+    case["document"]["nisbah"]["predicate"]["arity"] = 3
+    with pytest.raises(CaseDataError):
+        _corpus_with(case)
+
+
+def test_a_declared_difference_that_misstates_what_it_became_is_refused() -> None:
+    case = _counter_case(
+        "case0.counter.misstated_after",
+        [_replace("nisbah.predicate.arity", 2, 4, "الرتبةُ صارت أربعًا")],
+    )
+    case["document"]["nisbah"]["predicate"]["arity"] = 3
+    with pytest.raises(CaseDataError):
+        _corpus_with(case)
+
+
+def test_a_declared_difference_that_misstates_what_it_was_is_refused() -> None:
+    case = _counter_case(
+        "case0.counter.misstated_before",
+        [_replace("nisbah.predicate.arity", 1, 3, "الرتبةُ كانت واحدة")],
+    )
+    case["document"]["nisbah"]["predicate"]["arity"] = 3
+    with pytest.raises(CaseDataError):
+        _corpus_with(case)
+
+
+def test_an_added_list_element_is_an_addition_not_a_change_of_length() -> None:
+    case = _counter_case(
+        "case0.counter.added_anchor",
+        [_add("nisbah.anchors[1]", _second_anchor(), "زِيد مرتكزٌ ثانٍ")],
+    )
+    case["document"]["nisbah"]["anchors"].append(_second_anchor())
+    corpus = _corpus_with(case)
+    assert "case0.counter.added_anchor" in {item.case_id for item in corpus.cases}
+
+
+def test_an_added_list_element_declared_as_a_replacement_is_refused() -> None:
+    case = _counter_case(
+        "case0.counter.added_anchor_as_replacement",
+        [_replace("nisbah.anchors[1]", None, _second_anchor(), "زِيد مرتكزٌ ثانٍ")],
+    )
+    case["document"]["nisbah"]["anchors"].append(_second_anchor())
+    with pytest.raises(CaseDataError):
+        _corpus_with(case)
+
+
+def test_a_removed_list_element_is_a_removal_at_its_own_index() -> None:
+    removed = _case_document()["document"]["nisbah"]["predicate"]["slots"][1]
+    case = _counter_case(
+        "case0.counter.removed_slot",
+        [_remove("nisbah.predicate.slots[1]", removed, "حُذِف الموضعُ الثاني")],
+    )
+    case["document"]["nisbah"]["predicate"]["slots"].pop()
+    corpus = _corpus_with(case)
+    assert "case0.counter.removed_slot" in {item.case_id for item in corpus.cases}
+
+
+def test_a_changed_element_beside_an_added_one_is_two_differences() -> None:
+    statement = (
+        "المطلوبُ إثباتُ أنّ قانونًا واحدًا يثبت على موضوعٍ ويُخالَف على آخر في "
+        "القراءة نفسِها؛ فالتعدُّدُ هو محلُّ البرهان لا اختصارُ ملفّات"
+    )
+    differences = [
+        _replace(
+            "nisbah.anchors[0].role_site.license_id",
+            "license.term",
+            "license.other",
+            "رخصةُ المرتكز الأوّل تبدَّلت",
+        ),
+        _add("nisbah.anchors[1]", _second_anchor(), "زِيد مرتكزٌ ثانٍ"),
+    ]
+    case = _counter_case("case0.counter.two_subjects", differences, statement)
+    case["document"]["nisbah"]["anchors"][0]["role_site"]["license_id"] = (
+        "license.other"
+    )
+    case["document"]["nisbah"]["anchors"].append(_second_anchor())
+    corpus = _corpus_with(case)
+    assert "case0.counter.two_subjects" in {item.case_id for item in corpus.cases}
+    case["declared_differences"] = differences[:1]
+    with pytest.raises(CaseDataError):
+        _corpus_with(case)
+
+
+def test_a_baseline_chain_that_turns_back_on_itself_is_refused() -> None:
+    first = _counter_case(
+        "case0.counter.first",
+        [_replace("nisbah.predicate.arity", 2, 3, "الرتبةُ صارت ثلاثًا")],
+    )
+    first["document"]["nisbah"]["predicate"]["arity"] = 3
+    second = _counter_case(
+        "case0.counter.second",
+        [_replace("nisbah.nisbah_id", "nisbah.A", "nisbah.B", "الاسمُ تبدَّل")],
+    )
+    second["document"]["nisbah"]["nisbah_id"] = "nisbah.B"
+    first["baseline_case_id"] = "case0.counter.second"
+    second["baseline_case_id"] = "case0.counter.first"
+    with pytest.raises(CaseDataError):
+        _corpus_with(first, second)
+
+
+def test_an_expected_fault_kind_outside_the_closed_vocabulary_is_refused() -> None:
+    document = deepcopy(
+        _read(_CORPUS_ROOT / "invalid" / "case0.invalid.unknown_key.json")
+    )
+    document["expected_fault_kinds"] = ["unknown_keey"]
+    with pytest.raises(CaseDataError):
+        InvalidInputWitness.of(document)
+
+
+def test_an_expected_fault_kind_is_read_as_a_member_of_its_vocabulary() -> None:
+    corpus = _corpus()
+    witness = corpus.invalid_input_witnesses[0]
+    assert witness.expected_fault_kinds == (InputFaultKind.UNKNOWN_KEY,)
