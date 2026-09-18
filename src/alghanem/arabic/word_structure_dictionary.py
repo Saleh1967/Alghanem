@@ -77,6 +77,7 @@ __all__ = [
     "WordStructureDictionary",
     "WordStructureDictionaryError",
     "analyze_word",
+    "reverse_word_structure",
 ]
 
 
@@ -294,6 +295,53 @@ def analyze_word(surface: str) -> WordStructureDictionary:
         tanween_roles=tuple(tanween_roles),
         withheld=WITHHELD_LAYERS,
     )
+
+
+def reverse_word_structure(
+    dictionary: WordStructureDictionary,
+) -> tuple[CarrierStateUnit, ...]:
+    """أعِد وحداتِ المرماز من قراءةِ القاموس: دالّةُ تحليلٍ عكسيّةٌ تُنفَّذ.
+
+    `A_READING_THAT_CANNOT_BE_REVERSED_IS_NOT_A_STRUCTURE`: القراءةُ التي لا
+    تُعاد إلى مدخلها ليست بنيةً بل وصفًا؛ فهذه الدالّةُ تُعيد ما قُرِئ بمواضعه،
+    والمقروءُ `PASSTHROUGH` يعود مُمرَّرًا كما خرج ولا يُحذَف ولا يُقرأ حرفًا.
+
+    ولا تُخرِج هذه الدالّةُ طبقةً محجوبةً ولا تُلمِّح إليها: ما لم يُقَس لا
+    يُعاد بناؤه، وإعادةُ البناء هنا للمقيس وحدَه.
+    """
+
+    if not isinstance(dictionary, WordStructureDictionary):
+        raise WordStructureDictionaryError("العكسُ يُجرى على قاموسِ كلمةٍ مقروء")
+
+    placed: dict[int, CarrierStateUnit] = {}
+    for letter in dictionary.letters:
+        placed[letter.position] = CarrierStateUnit(
+            carrier=letter.carrier,
+            state=letter.state,
+            gemination=letter.gemination,
+            tanwin=letter.tanwin,
+            seat=letter.seat,
+            tanwin_alif_seat=letter.tanwin_alif_seat,
+            silent=letter.silent,
+            waw_madda=letter.waw_madda,
+        )
+    for segment in dictionary.unread:
+        placed[segment.position] = CarrierStateUnit(
+            carrier=segment.codepoint,
+            state=CarrierState.PASSTHROUGH,
+        )
+
+    if len(placed) != len(dictionary.letters) + len(dictionary.unread):
+        raise WordStructureDictionaryError(
+            "موضعٌ واحدٌ لوحدتين قراءةٌ لا تُعاد؛ والمواضعُ مفاتيحُ لا ترتيبٌ مُعاد"
+        )
+    if placed and sorted(placed) != list(range(len(placed))):
+        raise WordStructureDictionaryError(
+            "مواضعُ القراءة متّصلةٌ من الصفر؛ وفجوةٌ فيها تعني وحدةً سقطت عند "
+            "القراءة فلا تُسدّ عند العكس"
+        )
+
+    return tuple(placed[position] for position in sorted(placed))
 
 
 A_PASSTHROUGH_IS_NOT_A_LETTER_THAT_WAS_READ_NOTE: Final[str] = (

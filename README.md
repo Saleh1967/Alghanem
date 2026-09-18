@@ -5699,6 +5699,73 @@ Not built here, deliberately: `G0.MASAQ-0`, `G0.METRIC-1` and `F₂`. No
 declared in this milestone — building the machinery that would make one legible
 is not the same as declaring one.
 
+### `ArabicRoundTripV1` — the bridge between the two measured ends
+
+Every milestone above either built a law or measured one end of a wire. Two
+real, executed round trips already existed in this tree and were never
+connected: raw bytes ↔ raw bytes in the compression model, and Arabic surface ↔
+carrier/state in `CarrierStateCodec`. This milestone is not a constitution. It
+is one product: a single pipeline that takes raw Arabic bytes, walks up through
+the layers that actually exist, walks back down, and prints what each layer
+lost.
+
+```
+raw bytes → UTF-8 → NFC → carrier/state → syllable → word structure
+          → reverse word structure → desegment → retrieve → raw bytes
+```
+
+- **`ALayerEntersOnlyIfItCanBeReversedOrMeasureItsLoss`.** Each of the six
+  layers declares a forward function *and* an inverse function by name in
+  `LAYER_FUNCTIONS`, and a test holds the table to that vocabulary. A layer
+  that cannot take the output of the layer beneath it and give it back does not
+  enter because it is theoretically desirable: morphology, syntax, iʿrāb and
+  dalālah are absent, and their absence is read in
+  `LAYERS_NOT_IN_THIS_PIPELINE` with a named reason each, never in an empty
+  row.
+- **The reverse analyser now exists.** `reverse_word_structure` is the first
+  function in this tree that reconstructs `CarrierStateUnit`s from a
+  `WordStructureDictionary` reading — positions, seats, gemination, tanwīn and
+  passthroughs included — so *this* pipeline's word-structure layer is
+  invertible rather than descriptive. The generation layer's own
+  `RoundTripStatus.DEFERRED_NO_FUNCTION_RECOVERING_ANALYSER` is untouched: it
+  concerns a different artefact.
+- **A syllabifier that is a segmentation, not a wazn.**
+  `encoding/syllable_segmentation` splits the codec's own units into adjacent
+  spans, each opened by a moving carrier and closed by at most one sākin, and
+  `desegment` gives the exact unit tuple back. `SegmentationIsNotAWazn`: no
+  pattern is emitted, and the withheld `المقطع_والوزن` layer of
+  `word_structure_dictionary` stays withheld — a test asserts it.
+- **`NoLayerRepairsTheDamageBeneathIt`.** A token refused or mismatched at a
+  layer stops there. Denominators therefore shrink as you go up, which is the
+  report, not a defect: `REFUSAL_IS_NOT_A_ROUND_TRIP` keeps refusals outside
+  the rate instead of scoring them as zeros inside it, and a rate over an empty
+  denominator is `None` rather than `0`.
+- **`AReorderingIsAMismatchWithNothingLost`.** Loss is counted as a multiset
+  difference of that layer's own atoms — bytes, codepoints or units — so NFC
+  reordering marks, and the codec writing shadda before the vowel, both come
+  out as mismatches with `Lost = 0` and `Added = 0`, counted separately in
+  `Reorder`. The top of the pipeline is deliberately not normalised a second
+  time, because a layer that repairs the layer beneath it hides it.
+
+On the eighteen surfaces embedded in `carrier_state_candidate`, derived by
+`examples/arabic/measure_arabic_round_trip_v1.py`, the raw-bytes table reads
+`UTF8 18/18`, `NFC 9 mismatches (all reordering)`, `carrier/state 9/9`,
+`syllable 5 refusals`, `word structure 4/4`, `final bytes 4/4` — four of
+eighteen tokens survive byte-for-byte end to end. Feeding the same bytes
+NFC-normalised first, as a separate table that is never merged with the first,
+`carrier/state` reads `18/18`, the syllable layer refuses nine (every word
+opening on a bare alef, since hamzat al-waṣl is undecidable from the marks),
+and `final bytes` reads `4/9` with five reorderings and nothing lost.
+
+The claim after this milestone is: *there is now one executed path from Arabic
+bytes to a structure and back to bytes, with a per-layer number for what it
+refused and what it lost — and on the embedded surfaces the wall is the
+syllable layer, not the codec.*
+
+Not built here, deliberately: morphology, composition, syntax, iʿrāb, dalālah,
+MASAQ and any weight protocol. No layer above word structure has a forward and
+an inverse function yet, so none of them is in the table.
+
 
 ```bash
 python -m pip install -e '.[dev]'
