@@ -2776,3 +2776,77 @@ existing claim, and re-labels no row in any table above; the vocabulary that
 carries the blocker in code (`src/alghanem/metaalgebra/generalization.py`) is
 registration-only, refuses unwarranted extensions at construction, and issues
 no judgment on any claim already standing in this repository.
+
+## G0.RUN-0 — Minimal licensed execution: the first runnable vertical slice
+
+Everything above this heading either constitutes a level or refuses a shortcut.
+Nothing above it *runs*. `G0.RUN-0` closes that gap with the smallest slice that
+is still non-trivial: a fully declared case is carried through the real
+licensing chain and emits an auditable, replayable verdict.
+
+```
+PK₀ → O₀ → O_L² → ExistenceLineage → Nisbah_v3 → PASS | BLOCK | DEFER
+```
+
+The product of this milestone is a **licensing and audit engine**, not a model
+of language. No Arabic material, no `O_M`, no significations, no parser. The
+question it answers is exactly one: *is this whole nisbah traceable to a single
+licensed origin?*
+
+### Five epistemic standings, not three
+
+A verdict is aggregated only from standings that bear on it. The separation
+below is constitutional, not a rendering detail:
+
+```
+proved true ≠ proved violated ≠ evidence incomplete
+            ≠ check blocked by a prior law ≠ no claim was ever made
+```
+
+- `SATISFIED` — bears on the verdict. The law was evaluated and held.
+- `VIOLATED` — bears on the verdict. The law was evaluated and failed; produces
+  `BLOCK`.
+- `UNRESOLVED` — bears on the verdict. A checkable claim lacked evidence;
+  produces `DEFER` and a named residual.
+- `NOT_EVALUATED_BY_PREREQUISITE` — does not bear on the verdict. A claim existed
+  and was checkable, but a prior law blocked the material it needed. It names its
+  blocker and is never a residual.
+- `NOT_APPLICABLE_NO_CLAIM` — does not bear on the verdict. No claim was declared,
+  so there was nothing to compare. Never a residual, and never an agreement.
+
+### Stages, and what may exist at each
+
+```
+Declaration → Validation → PartialDerivation → LawEvaluation
+                   ↘ INVALID_INPUT (not a verdict)
+BLOCK | DEFER
+PASS → Materialization → MaterializedIdentity
+```
+
+Identities verifiable *before* judgment (`PK₀`, `O₀`) are recomputed in
+`Validation`; a false claim there is `INVALID_INPUT`, never `BLOCK`. Identities
+of objects that exist only *after* a licensing act (`O_L²`, the nisbah) are
+checked in the law layer, because demanding them earlier would reinstate the
+circularity this separation exists to break.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `ADeclarationIsNotAnAuthority` | ENFORCED_AT_EXECUTION_GATE | The input document is an inert candidate declaration. It may name identifiers, digests, and vocabulary members, but may not carry a derived reference, a licensed role, a lineage, or a verdict. Authority is re-derived from the declaration through the existing doors; it is never read out of the document. |
+| `InvalidInputIsNotABlock` | ENFORCED_AT_EXECUTION_GATE | A document from which no case can be constituted yields an `InputValidation`, not a verdict. `ExecutionOutcome` has no member for malformed input, so the confusion cannot be expressed. A false pre-judgment digest is `INVALID_INPUT`; a welded two-origin chain is `BLOCK`. |
+| `UnresolvedEvidenceIsNotInvalidInput` | ENFORCED_AT_EXECUTION_GATE | Missing evidence is declared as a closed, non-authoritative `UnresolvedRequirement` naming the authority and its subject. A missing field is a fault; a declared unresolved requirement is a residual. An absent site without a matching declared requirement is `UNDECLARED_ABSENT_SITE`, and a declared requirement for a site that is present is a contradiction. |
+| `JudgmentPrecedesConstruction` | ENFORCED_AT_EXECUTION_GATE | `AnchoredNisbahSignatureV3` is constructed only after a provisional `PASS`. Its constructor refuses origin mixture; building it earlier would let the constructor, not the engine, issue the verdict, and no readable trace would survive. |
+| `EveryLawIsEvaluated` | ENFORCED_AT_EXECUTION_GATE | Evaluation never short-circuits and never drops a law from the trace. A dependent law whose material a prior law blocked is recorded `NOT_EVALUATED_BY_PREREQUISITE` naming its blocker, so a blocked case is never displayed as an incomplete one. |
+| `NoClaimIsNotAnAgreement` | ENFORCED_AT_EXECUTION_GATE | An undeclared identity is not proof that the identity agrees. The absence of a claim is `NOT_APPLICABLE_NO_CLAIM`, a standing of its own, causally distinct from a check that a prior law blocked. |
+| `ADigestDoesNotContainItself` | ENFORCED_AT_EXECUTION_GATE | `ExecutionResultCore` is pure content and carries no digest of itself; `execution_digest` lives in the envelope and is recomputed from the core on construction. |
+| `AReplayNeedsTheDeclarationNotItsDigest` | ENFORCED_AT_EXECUTION_GATE | A digest cannot be inverted, so the envelope carries the full declaration document, bound by `Digest(declaration_document) == core.input_digest`. Replay runs from the stored declaration, never from the earlier verdict. |
+| `ALawSetIsNotReinterpretedByALaterOne` | ENFORCED_AT_EXECUTION_GATE | `law_set_digest` is derived from the frozen ordered law list. Changing, removing, or reordering a law changes the identity of every result judged under it, so an old verdict is never silently re-read under a newer set. |
+| `SameInputSameLawsSameResult` | ENFORCED_AT_EXECUTION_GATE | No clock, randomness, environment, or filesystem path enters the result content. The same declaration under the same law set reproduces the same verdict, the same trace, and the same `execution_digest`, byte for byte. |
+
+`G0.RUN-0` deposits `src/alghanem/execution/`, which sits above the existence
+axis and is imported by nothing below it. It reads the algebra at two named
+places only (`linguistic/anchored_v3.py`, `linguistic/nisbah.py`), canonicalizes
+solely through `canonical_content.py`, and issues no birth, no birth verdict,
+and no `E0` freeze.
+
+Deferred here by name, not by omission: the golden-case corpus, the command
+line interface, packaging, `O_M`, significations, and any Arabic material.
