@@ -851,6 +851,44 @@ def test_a_baseline_chain_that_turns_back_on_itself_is_refused() -> None:
         _corpus_with(first, second)
 
 
+def _child_of(parent_case_id: str, case_id: str) -> dict[str, Any]:
+    """فرعٌ بخطوةٍ واحدةٍ نظيفةٍ عن حالةٍ مكتوبةٍ في المدوّنة، أيًّا كان حكمُها المتوقَّع."""
+
+    case = deepcopy(_read(_CORPUS_ROOT / "cases" / f"{parent_case_id}.json"))
+    arity = case["document"]["nisbah"]["predicate"]["arity"]
+    case["document"]["nisbah"]["predicate"]["arity"] = arity + 1
+    case["case_id"] = case_id
+    case["baseline_case_id"] = parent_case_id
+    case["declared_differences"] = [
+        _replace("nisbah.predicate.arity", arity, arity + 1, "الرتبةُ ازدادت واحدًا")
+    ]
+    case["perturbation"] = _perturbation()
+    return case
+
+
+def test_a_counter_whose_baseline_is_expected_to_block_is_refused() -> None:
+    child = _child_of("case0.counter.arity_exceeds_slots.block", "case0.counter.child")
+    with pytest.raises(CaseDataError):
+        _corpus_with(child)
+
+
+def test_a_counter_whose_baseline_is_expected_to_defer_is_refused() -> None:
+    child = _child_of(
+        "case0.counter.absent_condition_site.defer", "case0.counter.child"
+    )
+    with pytest.raises(CaseDataError):
+        _corpus_with(child)
+
+
+def test_a_counter_whose_baseline_is_expected_to_pass_is_admitted() -> None:
+    child = _child_of("case0.baseline.two_anchors.pass", "case0.counter.child")
+    corpus = _corpus_with(child)
+    written = {case.case_id: case for case in corpus.cases}
+    assert written["case0.counter.child"].baseline_case_id == (
+        "case0.baseline.two_anchors.pass"
+    )
+
+
 def test_an_expected_fault_kind_outside_the_closed_vocabulary_is_refused() -> None:
     document = deepcopy(
         _read(_CORPUS_ROOT / "invalid" / "case0.invalid.unknown_key.json")

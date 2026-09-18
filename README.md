@@ -4900,9 +4900,14 @@ formed, so each counter-case carries a nested `perturbation` whose
 `COMPOUND_CONSTITUTION_PRESERVATION_CLAIM` or `MULTIPLICITY_IS_THE_PROOF` — the
 last reserved for cases where the multiplicity is itself what is proved. And
 third, the rank is kept behind its evidence: `DATA` declares a perturbation and
-names an *expected-pass* baseline, while only `READOUT` can license either, so
-the order reads `MATRIX ≺ Immutable DATA ≺ Declared Perturbation ≺ READOUT ≺
-Licensed Perturbation ≺ DIGEST LEDGER`.
+names an *expected-pass* baseline, while only `READOUT` can license either.
+That last law is now enforced rather than merely written — a case whose frozen
+expectation is `BLOCK` or `DEFER` can no longer serve as anyone's baseline — and
+what the gate establishes is bounded to the author's expectation, not to
+success, so the order reads `MATRIX ≺ Authored DATA ≺ DeclaredPerturbation ≺
+ExpectedPassParent ≺ READOUT ≺ VerifiedPassParent ≺ LicensedPerturbation ≺
+DIGEST LEDGER`. For the same reason an authored case no longer calls its own
+input *standing*: `Authored ⇏ Valid`, exactly as `Declared ⇏ Licensed`.
 
 ```bash
 python -m pip install -e '.[dev]'

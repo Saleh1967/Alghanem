@@ -22,16 +22,19 @@
     AuthoredCounterCase  =  ExpectedPassBaseline  +  OneDeclaredPerturbation
 
 فالحالةُ الذهبيّةُ تجيب عن سؤالٍ واحدٍ بأقلّ تركيب. **والاضطرابُ وحدةُ التجربة
-لا الفرقُ البنيويّ**: قد يحتاج تغيُّرٌ معرفيٌّ واحدٌ إلى أكثر من عمليّةٍ سطحيّةٍ
-كي تبقى القضيّةُ قائمةَ التكوين، فيكون:
+لا الفرقُ البنيويّ**: قد يُعلِن المؤلِّفُ أكثرَ من فرقٍ بنيويٍّ **بقصد** حفظ قيام
+التكوين، ولا تُثبت `DATA` أنّ هذا الحفظَ وقع، فيكون:
 
     Perturbation  =  1..n StructuralDiff  ×  atomicity_kind  ×  reason
 
 و`atomicity_kind` ثلاثةٌ لا رابعَ لها: `SINGLE_OPERATION` لعمليّةٍ واحدة،
 و`COMPOUND_CONSTITUTION_PRESERVATION_CLAIM` لعمليّاتٍ تخدم انتقالًا معرفيًّا
-واحدًا، و`MULTIPLICITY_IS_THE_PROOF` حين يكون التعدُّدُ نفسُه محلَّ البرهان —
-كقانونٍ واحدٍ يثبت على موضوعٍ ويُخالَف على آخر. والثاني غيرُ الثالث: ذاك تعدُّدُ
-وسائلِ تحقيق فرقٍ واحد، وهذا تعدُّدٌ هو موضوعُ القضيّة.
+واحدًا — دعوى مؤلِّفٍ لا شهادةَ نجاح — و`MULTIPLICITY_IS_THE_PROOF` حين يكون
+التعدُّدُ نفسُه محلَّ البرهان — كقانونٍ واحدٍ يثبت على موضوعٍ ويُخالَف على آخر.
+والثاني غيرُ الثالث: ذاك تعدُّدُ وسائلِ تحقيق فرقٍ واحد، وهذا تعدُّدٌ هو موضوعُ
+القضيّة. وعلى كلّ حال:
+
+    ClaimedConstitutionPreservation  ≠  VerifiedConstitutionPreservation
 
 **والرتبةُ لا تسبق دليلَها** (`ADeclaredPerturbationIsNotALicensedOne`):
 
@@ -182,8 +185,9 @@ AN_EXPECTATION_CARRIES_NO_EXECUTION_DIGEST: Final[str] = (
 
 A_COUNTER_CASE_IS_ONE_DECLARED_PERTURBATION: Final[str] = (
     "الحالةُ المضادّة أصلٌ متوقَّعُ النجاح واضطرابٌ واحدٌ مُعلَن: وحدةُ التجربة "
-    "اضطرابٌ له قصدٌ واحد، وقد يتحقَّق بأكثرَ من فرقٍ بنيويٍّ كي تبقى القضيّةُ "
-    "قائمةَ التكوين؛ ولا تُجمَع أعطالٌ إلّا أن يكون التعدُّدُ نفسُه محلَّ البرهان"
+    "اضطرابٌ له قصدٌ واحد، وقد يُعلِن المؤلِّفُ أكثرَ من فرقٍ بنيويٍّ بقصد حفظ قيام "
+    "التكوين، ولا تُثبت `DATA` أنّ الحفظَ وقع؛ ولا تُجمَع أعطالٌ إلّا أن يكون "
+    "التعدُّدُ نفسُه محلَّ البرهان"
 )
 
 A_DECLARED_PERTURBATION_IS_NOT_A_LICENSED_ONE: Final[str] = (
@@ -194,8 +198,10 @@ A_DECLARED_PERTURBATION_IS_NOT_A_LICENSED_ONE: Final[str] = (
 
 A_BASELINE_IS_THE_IMMEDIATE_STRUCTURAL_PARENT: Final[str] = (
     "الأصلُ هو الأبُ البنيويُّ المباشر لا أصلُ السلسلة: تُقاس كلُّ حالةٍ خطوةً "
-    "واحدةً إلى أبيها المُسمّى، ويجوز أن يكون الأبُ حالةً متفرِّعةً متوقَّعةَ "
-    "النجاح؛ وبذلك تُبنى مخالفةٌ صافيةٌ لا يختلط فيها سببان"
+    "واحدةً إلى أبيها المُسمّى، ويجوز أن يكون الأبُ حالةً متفرِّعةً؛ على أن يكون "
+    "حكمُه المتوقَّعُ المجمَّدُ نجاحًا، إذ لا يُبنى فرعٌ على محجوبٍ ولا مؤجَّل. "
+    "والنجاحُ المتوقَّعُ في `DATA` غيرُ النجاح المُتحقَّق في `READOUT`: المُثبَتُ "
+    "هنا أنّ المؤلِّفَ جمَّد توقُّعَ نجاح الأب، لا أنّ الأبَ نجح"
 )
 
 A_DECLARED_DIFFERENCE_IS_THE_ACTUAL_DIFFERENCE: Final[str] = (
@@ -589,7 +595,12 @@ class DeclaredPerturbation:
 
 @dataclass(frozen=True, slots=True)
 class GoldenExecutionCase:
-    """قضيّةٌ ذهبيّةٌ قائمةُ الإدخال: وثيقتُها وحدَها، ولا حكمَ فيها ولا توقُّع."""
+    """وثيقةُ حالةٍ ذهبيّةٍ مؤلَّفةٍ قبل القراءة؛ وقيامُ إدخالها مؤجَّلٌ إلى `READOUT`.
+
+    وثيقتُها وحدَها، ولا حكمَ فيها ولا توقُّع؛ فـ`Authored` لا يستلزم `Valid` كما
+    أنّ `Declared` لا يستلزم `Licensed`. والاسمُ التاريخيُّ `GoldenExecutionCase`
+    باقٍ، ومعناه المضبوط `AuthoredGoldenCase`.
+    """
 
     case_id: str
     document_content: Mapping[str, FrozenJson]
@@ -1044,6 +1055,7 @@ class GoldenCaseCorpus:
             if case.baseline_case_id == case.case_id:
                 raise CaseDataError("حالةٌ لا تكون أصلًا لنفسها")
         self._refuse_a_baseline_chain_that_turns_back()
+        self._refuse_a_baseline_that_is_not_expected_to_pass()
         self._refuse_a_difference_that_the_two_documents_deny()
         witness_ids = [item.witness_id for item in self.invalid_input_witnesses]
         witness_ids += [item.witness_id for item in self.engine_seam_witnesses]
@@ -1080,6 +1092,22 @@ class GoldenCaseCorpus:
                     )
                 seen.add(current)
                 current = baselines.get(current)
+
+    def _refuse_a_baseline_that_is_not_expected_to_pass(self) -> None:
+        """الأبُ المباشر مجمَّدُ توقُّعِ النجاح؛ ولا يُبنى فرعٌ على محجوبٍ ولا مؤجَّل."""
+
+        expectations = {item.case_id: item for item in self.expectations}
+        for case in self.cases:
+            if case.baseline_case_id is None:
+                continue
+            baseline = expectations[case.baseline_case_id]
+            if baseline.expected_disposition is not CaseDisposition.PASS:
+                raise CaseDataError(
+                    f"«{case.case_id}» تُقاس إلى أصلٍ حكمُه المتوقَّع "
+                    f"«{baseline.expected_disposition.value}» لا «pass»: "
+                    f"«{case.baseline_case_id}»؛ و"
+                    + A_BASELINE_IS_THE_IMMEDIATE_STRUCTURAL_PARENT
+                )
 
     def _refuse_a_difference_that_the_two_documents_deny(self) -> None:
         """الفرقُ المُعلَن يساوي الفرقَ المُستخرَج من الوثيقتين؛ مقارنةً بخطوةٍ واحدة."""

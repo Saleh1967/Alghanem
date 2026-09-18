@@ -2979,8 +2979,8 @@ second reading onward that digest is a witness of drift.
 | `ACaseIsAuthoredNotGenerated` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. The golden cases are reviewed `JSON` files under `case_data/`, never the output of Python builders: a program that constructs the evidence cannot be held to account by it. `case_data.py` carries the specification datatypes and the internal-consistency checker only — it opens no file, builds no document, and imports no engine module. Reading the files is the test layer's business, so no file path enters the specification. |
 | `AnExpectationCarriesNoExecutionDigest` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `execution_digest` is born of the readout; admitting it into `DATA` — even as `None` — merges two stages. The field is absent from every type, and any key born of the readout is refused wherever it hides in the expectation tree, at any depth. |
 | `ACounterCaseIsOneDeclaredPerturbation` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. In `DATA`: `AuthoredCounterCase = ExpectedPassBaseline + OneDeclaredPerturbation`, for `UNRESOLVED` as much as for `VIOLATED`. The unit of the experiment is the perturbation, not the structural difference: one authored change of meaning may need more than one surface operation for the case to remain constitutionally well formed, so `Perturbation = 1..n StructuralDiff × atomicity_kind × reason`. The kind is one of exactly three. `SINGLE_OPERATION` admits one operation and carries no reason. `COMPOUND_CONSTITUTION_PRESERVATION_CLAIM` admits several operations that serve a single epistemic transition, and is an *author's claim* in `DATA`: the gate can prove `|StructuralDiff| = 2` but cannot prove by itself that the two operations preserved well-formedness — only the input gate at `READOUT` can. `MULTIPLICITY_IS_THE_PROOF` is reserved for the different case where the multiplicity is itself the subject of the proof — a single law satisfied on one subject and violated on another — and is not a second name for a compound. |
-| `ADeclaredPerturbationIsNotALicensedOne` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. A name may not carry a rank higher than its evidence. `DATA: AuthoredCounterCase = ExpectedPassBaseline + OneDeclaredPerturbation`; `READOUT: VerifiedCounterCase = VerifiedPassBaseline + OneLicensedPerturbation`. So `DeclaredPerturbation_DATA ≠ LicensedPerturbation_READOUT`, exactly as `Citation_DATA ≠ ProvenCoverage`: a case whose expectation is `PASS` is an *expected-pass* baseline, never a verified one, and licensing is a rank the readout alone confers. The refined order is `MATRIX ≺ Immutable DATA ≺ Declared Perturbation ≺ READOUT ≺ Licensed Perturbation ≺ DIGEST LEDGER`. |
-| `ABaselineIsTheImmediateStructuralParent` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `baseline_case_id = ImmediateStructuralParent`, not necessarily the root baseline: each case is measured exactly one hop against the case it names, and that parent may itself be a derived, expected-pass case. This is what makes a clean violation possible — `B₀ →ADD anchor.second→ B₁ (expected PASS) →ADD anchor.third→ C (expected BLOCK)` isolates `3 > 2` with no second cause mixed in. The chain remains a tree: no case is its own parent, directly or through intermediaries. |
+| `ADeclaredPerturbationIsNotALicensedOne` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. A name may not carry a rank higher than its evidence. `DATA: AuthoredCounterCase = ExpectedPassBaseline + OneDeclaredPerturbation`; `READOUT: VerifiedCounterCase = VerifiedPassBaseline + OneLicensedPerturbation`. So `DeclaredPerturbation_DATA ≠ LicensedPerturbation_READOUT`, exactly as `Citation_DATA ≠ ProvenCoverage`: a case whose expectation is `PASS` is an *expected-pass* baseline, never a verified one, and licensing is a rank the readout alone confers. The refined order is `MATRIX ≺ Authored DATA ≺ DeclaredPerturbation ≺ ExpectedPassParent ≺ READOUT ≺ VerifiedPassParent ≺ LicensedPerturbation ≺ DIGEST LEDGER`. |
+| `ABaselineIsTheImmediateStructuralParent` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `baseline_case_id = ImmediateStructuralParent`, not necessarily the root baseline: each case is measured exactly one hop against the case it names, and that parent may itself be a derived, expected-pass case. This is what makes a clean violation possible — `B₀ →ADD anchor.second→ B₁ (expected PASS) →ADD anchor.third→ C (expected BLOCK)` isolates `3 > 2` with no second cause mixed in. The chain remains a tree: no case is its own parent, directly or through intermediaries. And the gate enforces the parent's rank, not merely its existence: `baseline_case_id ⇒ ExpectedDisposition(baseline) = PASS`, so no branch grows out of a case the author already expects to be blocked or deferred. What this proves is bounded — `ExpectedPASS_DATA ≠ VerifiedPASS_READOUT`: the gate establishes only that the author froze an expectation of success for the parent, never that the parent succeeded. |
 | `ACitationIsAClaimUntilTheReadout` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. A `CoverageCitation` in `DATA` is a *claim* of coverage. The `DATA` checker proves only that the citation is legitimate — that it names a required, reachable cell, that its law and standing are that cell's own, that a `SUBJECT`-scoped cell names its witness subject and a `CASE`-scoped cell names none, and that the case's own frozen expectation contains the row cited. `READOUT` alone proves that the case actually reached the cell, by matching the citation against a line of the real trace. This is what prevents paper coverage. |
 | `AnInvariantErrorIsNotInTheUserCaseSpace` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `INVARIANT_ERROR ∉ UserCaseSpace`, so it is not a golden case and is given no document: it is an `EngineSeamWitness` on an internal seam reached by handing the engine incomplete derived material after a provisional pass. Giving it a document would make an engine defect something a case author can request. Invalid input is likewise a separate identity — `InvalidInputWitness ≠ GoldenExecutionCase` — with no trace, no envelope and no verdict. |
 
@@ -3176,15 +3176,45 @@ licensing nor validity has been read yet:
     READOUT:  VerifiedCounterCase  =  VerifiedPassBaseline  +  OneLicensedPerturbation
 
 `COMPOUND_CONSTITUTION_PRESERVATION_CLAIM` is named a *claim* for the same
-reason: `DATA` can prove `|StructuralDiff| = 2`, but only the input gate at
-`READOUT` can prove that those two operations preserved the constitution of the
-case. The refined order of the whole layer is therefore
+reason: the author *declares* several structural differences *intending* to
+preserve the constitution of the case, and `DATA` does not prove that the
+preservation occurred —
 
-    MATRIX ≺ Immutable DATA ≺ Declared Perturbation ≺ READOUT
-           ≺ Licensed Perturbation ≺ DIGEST LEDGER
+    ClaimedConstitutionPreservation  ≠  VerifiedConstitutionPreservation
+
+`DATA` can prove `|StructuralDiff| = 2`; only the input gate at `READOUT` can
+prove that those two operations left the case well formed. For the same reason
+`GoldenExecutionCase` no longer describes itself as a case *whose input stands*:
+it is an authored document, and whether its input stands is a judgment reserved
+for `READOUT` —
+
+    Authored  ⇏  Valid          (as  Declared  ⇏  Licensed)
+
+**And the parent's rank is enforced, not merely assumed.** The written law said
+`ExpectedPassBaseline`, but the gate checked only that the named parent existed,
+that it was not the case itself, and that the chain did not turn back. A case
+expected to be blocked or deferred could therefore have served as a baseline,
+contradicting the law it was written under. A separate gate now enforces
+
+    baseline_case_id  ⇒  ExpectedDisposition(baseline) = PASS
+
+and it runs before the difference and atomicity checks, so an illicit parent is
+refused before its diff is even measured. What it establishes is bounded:
+
+    ExpectedPASS_DATA  ≠  VerifiedPASS_READOUT
+
+the author's frozen expectation of success, never success itself. The refined
+order of the whole layer is therefore
+
+    MATRIX ≺ Authored DATA ≺ DeclaredPerturbation ≺ ExpectedPassParent
+           ≺ READOUT ≺ VerifiedPassParent ≺ LicensedPerturbation
+           ≺ DIGEST LEDGER
 
 and `baseline_case_id = ImmediateStructuralParent`, not the root baseline, so a
-derived expected-pass case may itself be the parent of the next hop.
+derived expected-pass case may itself be the parent of the next hop. Even the
+parent-child relation inside the corpus now carries an epistemic rank: the
+parent in `DATA` is not a *valid* origin but an *expected-pass* one, and it is
+not a licensed origin until the readout.
 
 Finally, the one surviving use of «إدخال فاسد» outside the frozen matrix — in
 `ExecutionReport.__post_init__` — is corrected to «إدخال باطل التكوين», in
