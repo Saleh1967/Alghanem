@@ -3628,12 +3628,27 @@ demonstrates a correct output and not a necessary architecture:
 `SufficiencyAssessment`, no `LicensingCandidate` and no `License` is written, no
 permanent `NextScaleSeed` appears, and `ExperimentalLift` stays open. It corrects
 what the witness of `G0.FGEN-EX-0` is allowed to mean, before more of them
-accumulate. Four laws are added, all of them restrictions:
+accumulate. Five laws are added, all of them restrictions:
 
-    WeakerModelTieBlocksStructuralSupport
+    WeakerModelTieBlocksDistinctiveStructuralSupport
+    TaskOutcome     ≠  ComparativeStanding
     RawOccurrence   ≠  NormalizedProjection
     SourceWordNo    ≠  DerivedLocalPosition
     HeldOut         ≠  Dropped
+
+The tie law blocks the claim of *distinctive* support, not the success of the
+work. Those are two axes, and `G0.FGEN-EX-1` records both per word. A
+`MasaqWordReading`, bound to `word.input_id`, carries an
+`ExperimentalTaskOutcome` — did the algebra reach the target on this input? —
+alongside a `ComparativeStanding` — where does it stand against the weaker
+model? — and the `ExperimentalStanding` that governs only the distinctiveness
+claim. A word whose fractal run reconstructs correctly and whose concatenation
+ties reads `SUCCESS`, `BOTH_SUCCEED` and `UNDERPOWERED` at once, with no
+contradiction. Two correct methods covering the same region are two witnesses,
+not a problem; the only error would be to credit one with what it has not shown.
+`MasaqExperimentReport.coverage_tally` therefore counts task outcomes and
+comparative standings separately, so a full MASAQ run can answer *how much of the
+corpus the algebra closes* independently of *whether the fractal was distinctive*.
 
 Standing is no longer read off closure and reconstruction alone. It is derived
 from the preregistered conditions together — run failure, reconstruction,

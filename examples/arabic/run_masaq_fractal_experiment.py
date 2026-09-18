@@ -31,7 +31,8 @@ from alghanem.arabic.masaq_fractal_experiment import (
     HELD_OUT_READOUT_COLUMNS,
     MASAQ_PREREGISTRATION_CONTENT_ID,
     MASAQ_SUFFICIENCY_CONTRACT,
-    WEAKER_MODEL_TIE_BLOCKS_STRUCTURAL_SUPPORT,
+    TASK_OUTCOME_IS_NOT_COMPARATIVE_STANDING,
+    WEAKER_MODEL_TIE_BLOCKS_DISTINCTIVE_STRUCTURAL_SUPPORT,
     MasaqExperimentError,
     read_masaq_word_inputs,
     run_masaq_fractal_experiment,
@@ -74,7 +75,8 @@ def main() -> int:
         "sufficiency contract (declaration only): "
         f"{MASAQ_SUFFICIENCY_CONTRACT.content_id}"
     )
-    print(WEAKER_MODEL_TIE_BLOCKS_STRUCTURAL_SUPPORT)
+    print(WEAKER_MODEL_TIE_BLOCKS_DISTINCTIVE_STRUCTURAL_SUPPORT)
+    print(TASK_OUTCOME_IS_NOT_COMPARATIVE_STANDING)
     print(f"generator sees: {', '.join(GENERATOR_VISIBLE_COLUMNS)}")
     print(f"held out of the generator: {', '.join(HELD_OUT_READOUT_COLUMNS)}")
 
@@ -96,6 +98,11 @@ def main() -> int:
     print(f"[permit] final state={report.final_permit_state.value}")
     for standing, count in report.standings.items():
         print(f"    [{standing}] {count}")
+    print(f"[inputs] {len(report.readings)}")
+    for outcome, count in report.task_outcomes.items():
+        print(f"    [task {outcome}] {count}")
+    for comparative, count in report.comparative_standings.items():
+        print(f"    [comparative {comparative}] {count}")
     print(f"[experimental seeds] {len(report.experimental_seed_ids)}")
     tied = sum(
         1 for observation in report.weaker_model_observations if observation.ties
@@ -142,9 +149,11 @@ def main() -> int:
     print("the run produced witnesses under a temporary authority, and no license")
     if tied:
         print(
-            "a weaker model tied the fractal run on those words: this is an "
-            "informative result, not a failure — the open question is which "
-            "transformation concatenation cannot reproduce"
+            "a weaker model tied the fractal run on those words: the task "
+            "outcome stands on its own axis and remains a success where the "
+            "reconstruction passed; only the claim of distinctiveness is "
+            "underpowered — the open question is which transformation "
+            "concatenation cannot reproduce"
         )
     return 0
 

@@ -5023,13 +5023,22 @@ candidate appear, and experimental lift stays open. The first pattern we ran,
 `segment_accretion`, reaches a word by concatenating its segments in order —
 and the preregistered weaker model, plain textual concatenation, reaches exactly
 the same surface. A correct output is therefore not evidence that the
-architecture was necessary: `WeakerModelTieBlocksStructuralSupport`. Standing is
+architecture was necessary: `WeakerModelTieBlocksDistinctiveStructuralSupport`. Standing is
 now derived from its preregistered conditions together — reconstruction, closure,
 negative controls behaving as preregistered, no blocking residual, and *no
 weaker-model tie* — so closure plus reconstruction alone no longer buys
 `OBSERVED_SUPPORT`; a tie yields `UNDERPOWERED` with a named residual,
 `WEAKER_MODEL_TIES_FRACTAL_MODEL`, and never a refutation, because a tie does not
 falsify the reconstruction, it only forbids the claim of distinctive structure.
+That prohibition is scoped: `TaskOutcome ≠ ComparativeStanding`. Each word now
+carries a `MasaqWordReading` bound to its `input_id` with an
+`ExperimentalTaskOutcome` (did the algebra reach the target here?), a
+`ComparativeStanding` (`fractal_only`, `weaker_only`, `both_succeed`,
+`both_fail`, `not_comparable`) and its experimental standing, so a successful
+reconstruction that concatenation ties reads `SUCCESS`, `BOTH_SUCCEED` and
+`UNDERPOWERED` together without contradiction, and the report's coverage tally
+answers how much of MASAQ the algebra closes apart from whether the fractal was
+distinctive.
 The unmeasured `IRREDUCIBLE_AT_CURRENT_SCALE` residual the adapter used to author
 for every multi-segment word is gone; scale necessity is recorded as *unresolved
 and under test*, since the weaker model does reach the word by direct joining.

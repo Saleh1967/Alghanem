@@ -18,13 +18,20 @@
 **ولا ترخيصَ هنا**: النجاحُ شاهدٌ، والإخفاقُ شاهد، وضعفُ القوّة شاهد؛ وأقصى ما
 تبلغه الشواهدُ تجميعٌ في حزمةٍ بلا حكم (`ExperimentBeforeLicense`).
 
-**والشاهدُ لا يُسمّى دعمًا بنيويًّا ما دام نموذجٌ أضعفُ يبلغ المخرجَ عينَه**؛
-فصحّةُ المخرج ليست ضرورةَ البنية (`WeakerModelTieBlocksStructuralSupport`).
-والوقوفُ يُشتقّ من شروطه المُسجَّلة مجتمعةً، لا من الإغلاق وإعادة البناء وحدهما.
+**والشاهدُ لا يُسمّى دعمًا بنيويًّا مميِّزًا ما دام نموذجٌ أضعفُ يبلغ المخرجَ
+عينَه**؛ فصحّةُ المخرج ليست ضرورةَ البنية
+(`WeakerModelTieBlocksDistinctiveStructuralSupport`). والوقوفُ يُشتقّ من شروطه
+المُسجَّلة مجتمعةً، لا من الإغلاق وإعادة البناء وحدهما.
 
-وأربعةُ قيودٍ تحكم مادّةَ الشاهد:
+**ومع ذلك لا يُلغي التعادلُ نجاحَ المهمّة**: للكلمة الواحدة محوران مستقلّان،
+حالُ المهمّة (`ExperimentalTaskOutcome`) وموقعُ المقارنة (`ComparativeStanding`)؛
+فقد تكون إعادةُ البناء ناجحةً، والطريقتان متعادلتين، والوقوفُ التجريبيُّ
+`UNDERPOWERED` معًا بلا تناقض (`TaskOutcome != ComparativeStanding`).
 
-    WeakerModelTieBlocksStructuralSupport
+وخمسةُ قيودٍ تحكم مادّةَ الشاهد:
+
+    WeakerModelTieBlocksDistinctiveStructuralSupport
+    TaskOutcome     ≠  ComparativeStanding
     RawOccurrence   ≠  NormalizedProjection
     SourceWordNo    ≠  DerivedLocalPosition
     HeldOut         ≠  Dropped
@@ -42,6 +49,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
+from enum import Enum
 from typing import Final
 
 from ..canonical_content import canonical_bytes, canonical_digest
@@ -126,22 +134,28 @@ __all__ = [
     "SEGMENT_SCALE_REF",
     "SOURCE_WORD_NO_IS_NOT_DERIVED_LOCAL_POSITION",
     "STRIP_SURFACE_TRANSFORMATION",
+    "TASK_OUTCOME_IS_NOT_COMPARATIVE_STANDING",
     "UNRESOLVED_SCALE_NECESSITY_REASON",
     "WEAKER_MODEL_TIES_FRACTAL_MODEL",
-    "WEAKER_MODEL_TIE_BLOCKS_STRUCTURAL_SUPPORT",
+    "WEAKER_MODEL_TIE_BLOCKS_DISTINCTIVE_STRUCTURAL_SUPPORT",
     "WORD_SCALE",
     "WORD_SCALE_REF",
+    "ComparativeStanding",
+    "ExperimentalTaskOutcome",
     "HeldOutMASAQAnnotation",
     "MasaqExperimentError",
     "MasaqExperimentReport",
     "MasaqSegmentOccurrence",
     "MasaqWordInput",
+    "MasaqWordReading",
     "NegativeControlObservation",
     "NormalizationTrace",
     "StandingEvidence",
     "WeakerModelObservation",
     "build_frozen_binding",
     "build_word_inputs",
+    "derive_comparative_standing",
+    "derive_task_outcome",
     "derive_standing",
     "normalize_segment_surface",
     "read_masaq_word_inputs",
@@ -182,11 +196,18 @@ STRIP_SURFACE_TRANSFORMATION: Final[str] = "strip_surface"
 WEAKER_MODEL_TIES_FRACTAL_MODEL: Final[str] = "WEAKER_MODEL_TIES_FRACTAL_MODEL"
 """اسمُ البقيّة حين يبلغ النموذجُ الأضعفُ مخرجَ النموذج الفراكتاليِّ عينَه."""
 
-WEAKER_MODEL_TIE_BLOCKS_STRUCTURAL_SUPPORT: Final[str] = (
-    "WeakerModelTieBlocksStructuralSupport: إذا بلغ النموذجُ الأضعفُ المخرجَ "
-    "عينَه فلا تُسمَّ النتيجةُ دعمًا بنيويًّا؛ فصحّةُ المخرج ليست ضرورةَ البنية"
+WEAKER_MODEL_TIE_BLOCKS_DISTINCTIVE_STRUCTURAL_SUPPORT: Final[str] = (
+    "WeakerModelTieBlocksDistinctiveStructuralSupport: إذا بلغ النموذجُ الأضعفُ "
+    "المخرجَ عينَه فلا تُسمَّ النتيجةُ دعمًا بنيويًّا مميِّزًا؛ ويبقى نجاحُ المهمّة "
+    "نفسِه قائمًا، فالتعادلُ يمنع دعوى التمييز لا صحّةَ العمل"
 )
-"""قانونُ الوقوف: تعادلُ الأضعف يمنع الدعمَ ولا يُفنِّد إعادةَ البناء."""
+"""قانونُ الوقوف: تعادلُ الأضعف يمنع دعوى التمييز لا نجاحَ المهمّة."""
+
+TASK_OUTCOME_IS_NOT_COMPARATIVE_STANDING: Final[str] = (
+    "TaskOutcome != ComparativeStanding: بلوغُ الجبرِ غايتَه في المدخل محورٌ، "
+    "وموقعُه من نموذجٍ أضعفَ محورٌ آخر؛ ونجاحُ طريقتين صحيحتين ليس إخفاقًا"
+)
+"""قانونُ المحورين: التغطيةُ تُقاس على حدة، والتمييزُ يُقاس على حدة."""
 
 RAW_OCCURRENCE_IS_NOT_NORMALIZED_PROJECTION: Final[str] = (
     "RawOccurrence != NormalizedProjection: الصورةُ الخامُّ تبقى محفوظةً في "
@@ -238,11 +259,24 @@ MASAQ_PREREGISTRATION: Final[Mapping[str, object]] = {
         "إذا بلغ النموذجُ الأضعفُ مخرجَ النموذج الفراكتاليِّ عينَه فالوقوفُ "
         "underpowered لا observed_support، وتُسجَّل بقيّةٌ باسم "
         + WEAKER_MODEL_TIES_FRACTAL_MODEL
+        + "؛ والتعادلُ يمنع دعوى التمييز ولا يمنع نجاحَ المهمّة"
     ),
     "irreducibility_is_not_asserted": (
         "لا يُدَّعى في هذه المرحلة أنّ وحدةَ الكلمة لا تُردُّ إلى مقياس المقطع؛ "
         "والرفعُ التجريبيُّ يختبر الضرورةَ ولا يشهد بها"
     ),
+    "task_outcome_is_not_comparative_standing": (
+        TASK_OUTCOME_IS_NOT_COMPARATIVE_STANDING
+        + "؛ فتُسجَّل لكلِّ كلمةٍ حالُ مهمّةٍ وموقعُ مقارنةٍ ووقوفٌ تجريبيٌّ معًا"
+    ),
+    "task_outcome_vocabulary": ["success", "failure", "unresolved"],
+    "comparative_standing_vocabulary": [
+        "fractal_only",
+        "weaker_only",
+        "both_succeed",
+        "both_fail",
+        "not_comparable",
+    ],
     "raw_occurrence_is_preserved": RAW_OCCURRENCE_IS_NOT_NORMALIZED_PROJECTION,
     "source_word_no_is_preserved": SOURCE_WORD_NO_IS_NOT_DERIVED_LOCAL_POSITION,
     "held_out_is_not_dropped": HELD_OUT_IS_NOT_DROPPED,
@@ -745,26 +779,36 @@ def _conformant(
 
 @dataclass(frozen=True, slots=True)
 class WeakerModelObservation:
-    """تشغيلُ النموذج الأضعف على المدخل عينِه، ومقارنتُه بمخرج الفركتال."""
+    """تشغيلُ النموذج الأضعف على المدخل عينِه، ومقارنتُه بالمهمّة وبمخرج الفركتال."""
 
     model_id: str
     description: str
     output: str
     fractal_output: str
+    task_target: str
 
     @property
     def ties(self) -> bool:
-        """أبلَغ الأضعفُ مخرجَ الفركتال عينَه؟ فإن بلغه امتنع الدعمُ البنيويّ."""
+        """أبلَغ الأضعفُ مخرجَ الفركتال عينَه؟ فإن بلغه امتنعت دعوى التميُّز."""
 
         return self.output == self.fractal_output
+
+    @property
+    def succeeds_at_task(self) -> bool:
+        """أبلَغ الأضعفُ غايةَ المهمّة؟ سؤالٌ عن صحّة الطريق لا عن تميُّز غيره."""
+
+        return self.output == self.task_target
 
     def as_statement(self) -> str:
         """رصدُ النموذج الأضعف نصًّا يدخل الشاهد؛ تسجيلٌ لا حكم."""
 
         verdict = (
-            "بلغ المخرجَ عينَه فلم يتميّز الفركتال" if self.ties else "لم يبلغ المخرجَ عينَه"
+            "بلغ المخرجَ عينَه فلم تثبت دعوى تميُّز الفركتال"
+            if self.ties
+            else "لم يبلغ المخرجَ عينَه"
         )
-        return f"{self.description}: {verdict}"
+        task = "وبلغ غايةَ المهمّة" if self.succeeds_at_task else "ولم يبلغ غايةَ المهمّة"
+        return f"{self.description}: {verdict}؛ {task}"
 
 
 @dataclass(frozen=True, slots=True)
@@ -833,7 +877,7 @@ class StandingEvidence:
 
 
 def derive_standing(evidence: StandingEvidence) -> ExperimentalStanding:
-    """اشتقّ الوقوفَ من شروطه المُسجَّلة؛ ولا يكفي الإغلاقُ وإعادةُ البناء للدعم."""
+    """اشتقّ وقوفَ دعوى التميُّز من شروطها؛ ولا يكفي الإغلاقُ وإعادةُ البناء لها."""
 
     if evidence.run_failed:
         return ExperimentalStanding.RUN_FAILURE
@@ -849,6 +893,111 @@ def derive_standing(evidence: StandingEvidence) -> ExperimentalStanding:
     return ExperimentalStanding.OBSERVED_SUPPORT
 
 
+class ExperimentalTaskOutcome(Enum):
+    """حالُ المهمّة نفسِها: أبلغ الجبرُ غايتَه في هذا المدخل أم لا؟"""
+
+    SUCCESS = "success"
+    FAILURE = "failure"
+    UNRESOLVED = "unresolved"
+
+
+class ComparativeStanding(Enum):
+    """موقعُ الفركتال من النموذج الأضعف؛ محورٌ مستقلٌّ عن نجاح المهمّة."""
+
+    FRACTAL_ONLY = "fractal_only"
+    WEAKER_ONLY = "weaker_only"
+    BOTH_SUCCEED = "both_succeed"
+    BOTH_FAIL = "both_fail"
+    NOT_COMPARABLE = "not_comparable"
+
+
+def derive_task_outcome(
+    *, reconstruction_passed: bool, closure_passed: bool, run_failed: bool = False
+) -> ExperimentalTaskOutcome:
+    """اشتقّ حالَ المهمّة وحدَها؛ ولا يدخل فيه تعادلُ نموذجٍ أضعفَ ولا تميُّزُه."""
+
+    if run_failed:
+        return ExperimentalTaskOutcome.UNRESOLVED
+    if not reconstruction_passed:
+        return ExperimentalTaskOutcome.FAILURE
+    if not closure_passed:
+        return ExperimentalTaskOutcome.UNRESOLVED
+    return ExperimentalTaskOutcome.SUCCESS
+
+
+def derive_comparative_standing(
+    *,
+    task_outcome: ExperimentalTaskOutcome,
+    fractal_succeeded: bool,
+    weaker_model_succeeded: bool | None,
+) -> ComparativeStanding:
+    """قارِن الطريقين على غاية المهمّة؛ ونجاحُ طريقين صحيحين ليس مشكلة."""
+
+    if (
+        task_outcome is ExperimentalTaskOutcome.UNRESOLVED
+        or weaker_model_succeeded is None
+    ):
+        return ComparativeStanding.NOT_COMPARABLE
+    if fractal_succeeded and weaker_model_succeeded:
+        return ComparativeStanding.BOTH_SUCCEED
+    if fractal_succeeded:
+        return ComparativeStanding.FRACTAL_ONLY
+    if weaker_model_succeeded:
+        return ComparativeStanding.WEAKER_ONLY
+    return ComparativeStanding.BOTH_FAIL
+
+
+@dataclass(frozen=True, slots=True)
+class MasaqWordReading:
+    """قراءةُ كلمةٍ واحدةٍ على محورين: نجاحُ المهمّة، وموقعُها من النموذج الأضعف."""
+
+    input_id: str
+    reconstruction_passed: bool
+    closure_passed: bool
+    task_outcome: ExperimentalTaskOutcome
+    weaker_model_succeeded: bool | None
+    weaker_model_ties: bool
+    comparative_standing: ComparativeStanding
+    experimental_standing: ExperimentalStanding
+    residuals: tuple[FractalResidual, ...]
+    experimental_lift_issued: bool
+    negative_controls: tuple[NegativeControlObservation, ...] = ()
+    weaker_model_observation: WeakerModelObservation | None = None
+
+    def __post_init__(self) -> None:
+        if not self.input_id.strip():
+            raise MasaqExperimentError("مُعرِّفُ المدخل في القراءة نصٌّ غير فارغ")
+
+    @property
+    def undiscriminating_controls(self) -> tuple[NegativeControlObservation, ...]:
+        """الضوابطُ التي لم تُميِّز؛ تُعَدُّ ولا تُطوى."""
+
+        return tuple(
+            control for control in self.negative_controls if not control.discriminates
+        )
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """محتوى القراءة للبصمة؛ محوران مُسمّيان لا حكمٌ واحدٌ مُدمَج."""
+
+        return {
+            "input_id": self.input_id,
+            "reconstruction_passed": self.reconstruction_passed,
+            "closure_passed": self.closure_passed,
+            "task_outcome": self.task_outcome.value,
+            "weaker_model_succeeded": self.weaker_model_succeeded,
+            "weaker_model_ties": self.weaker_model_ties,
+            "comparative_standing": self.comparative_standing.value,
+            "experimental_standing": self.experimental_standing.value,
+            "residuals": [
+                residual.as_canonical_content() for residual in self.residuals
+            ],
+            "experimental_lift_issued": self.experimental_lift_issued,
+            "negative_controls": [
+                control.as_canonical_content() for control in self.negative_controls
+            ],
+        }
+
+
 @dataclass(frozen=True, slots=True)
 class MasaqExperimentReport:
     """قراءةُ تشغيلٍ تجريبيٍّ واحدٍ على MASAQ؛ شواهدُ وحزمةٌ، بلا ترخيصٍ ولا حكم."""
@@ -861,8 +1010,7 @@ class MasaqExperimentReport:
     witnesses: tuple[FractalExperimentalWitness, ...]
     experimental_seed_ids: tuple[str, ...]
     bundle: WitnessBundle
-    negative_controls: tuple[NegativeControlObservation, ...] = ()
-    weaker_model_observations: tuple[WeakerModelObservation, ...] = ()
+    readings: tuple[MasaqWordReading, ...] = ()
 
     @property
     def standings(self) -> dict[str, int]:
@@ -874,6 +1022,68 @@ class MasaqExperimentReport:
         for witness in self.witnesses:
             counted[witness.standing.value] += 1
         return counted
+
+    @property
+    def negative_controls(self) -> tuple[NegativeControlObservation, ...]:
+        """ضوابطُ التشغيل كلُّها مجموعةً من قراءات كلماته."""
+
+        return tuple(
+            control
+            for reading in self.readings
+            for control in reading.negative_controls
+        )
+
+    @property
+    def weaker_model_observations(self) -> tuple[WeakerModelObservation, ...]:
+        """تشغيلاتُ النموذج الأضعف كلُّها مجموعةً من قراءات كلماته."""
+
+        return tuple(
+            reading.weaker_model_observation
+            for reading in self.readings
+            if reading.weaker_model_observation is not None
+        )
+
+    def reading_for(self, input_id: str) -> MasaqWordReading:
+        """قراءةُ مدخلٍ بعينه؛ مربوطةٌ بـ``input_id`` لا بترتيبٍ عارض."""
+
+        for reading in self.readings:
+            if reading.input_id == input_id:
+                return reading
+        raise MasaqExperimentError(f"لا قراءةَ للمدخل «{input_id}» في هذا التشغيل")
+
+    @property
+    def task_outcomes(self) -> dict[str, int]:
+        """عددُ الكلمات بكلِّ حالِ مهمّة؛ محورٌ مستقلٌّ عن دعوى التميُّز."""
+
+        counted: dict[str, int] = {
+            outcome.value: 0 for outcome in ExperimentalTaskOutcome
+        }
+        for reading in self.readings:
+            counted[reading.task_outcome.value] += 1
+        return counted
+
+    @property
+    def comparative_standings(self) -> dict[str, int]:
+        """عددُ الكلمات بكلِّ موقعٍ من النموذج الأضعف؛ ونجاحُ الطريقين ليس فشلًا."""
+
+        counted: dict[str, int] = {
+            standing.value: 0 for standing in ComparativeStanding
+        }
+        for reading in self.readings:
+            counted[reading.comparative_standing.value] += 1
+        return counted
+
+    @property
+    def coverage_tally(self) -> dict[str, int]:
+        """جدولُ التغطية: المدخلاتُ، وحالُ المهمّة، وموقعُ المقارنة، والضوابطُ العاجزة."""
+
+        tally: dict[str, int] = {"total_inputs": len(self.readings)}
+        tally.update(self.task_outcomes)
+        tally.update(self.comparative_standings)
+        tally["undiscriminating_controls"] = sum(
+            len(reading.undiscriminating_controls) for reading in self.readings
+        )
+        return tally
 
 
 @dataclass(frozen=True, slots=True)
@@ -978,7 +1188,7 @@ def _accrete(
 
 
 def _weaker_model_run(
-    segments: Sequence[str], *, fractal_output: str
+    segments: Sequence[str], *, fractal_output: str, task_target: str
 ) -> WeakerModelObservation:
     """شغِّل النموذجَ الأضعف: وصلُ المقاطع نصًّا بلا حركاتٍ فراكتاليّة."""
 
@@ -987,6 +1197,7 @@ def _weaker_model_run(
         description="وصلُ المقاطع نصًّا بلا حركاتٍ فراكتاليّة",
         output="".join(segments),
         fractal_output=fractal_output,
+        task_target=task_target,
     )
 
 
@@ -1097,16 +1308,27 @@ def _run_one_word(
     permit: ExperimentalRunPermit,
     run_id: str,
     binding: FrozenExperimentBinding,
-) -> tuple[
-    FractalExperimentalWitness,
-    str | None,
-    tuple[NegativeControlObservation, ...],
-    tuple[WeakerModelObservation, ...],
-]:
+) -> tuple[FractalExperimentalWitness, str | None, MasaqWordReading]:
     entry = binding.entry_for(word.input_id)
     binding.refuse_held_out_fields(word.generator_projection())
     if len(word.segments) < 2:
-        return _witness_of_underpowered(word, permit=permit, entry=entry), None, (), ()
+        witness = _witness_of_underpowered(word, permit=permit, entry=entry)
+        return (
+            witness,
+            None,
+            MasaqWordReading(
+                input_id=word.input_id,
+                reconstruction_passed=False,
+                closure_passed=False,
+                task_outcome=ExperimentalTaskOutcome.UNRESOLVED,
+                weaker_model_succeeded=None,
+                weaker_model_ties=False,
+                comparative_standing=ComparativeStanding.NOT_COMPARABLE,
+                experimental_standing=witness.standing,
+                residuals=witness.residuals,
+                experimental_lift_issued=False,
+            ),
+        )
 
     identity = _identity_of(word)
     carrier_id = f"carrier.{word.input_id}"
@@ -1176,7 +1398,11 @@ def _run_one_word(
         gate_id="gate.closure.masaq.segment",
     )
     reconstructed = accretion.readout == word.joined_surface
-    weaker = _weaker_model_run(word.segments, fractal_output=accretion.readout)
+    weaker = _weaker_model_run(
+        word.segments,
+        fractal_output=accretion.readout,
+        task_target=word.joined_surface,
+    )
     controls = _negative_controls(
         word,
         identity=identity,
@@ -1222,7 +1448,7 @@ def _run_one_word(
                 subject_id=word.input_id,
                 reason=(
                     f"{WEAKER_MODEL_TIES_FRACTAL_MODEL}: "
-                    + WEAKER_MODEL_TIE_BLOCKS_STRUCTURAL_SUPPORT
+                    + WEAKER_MODEL_TIE_BLOCKS_DISTINCTIVE_STRUCTURAL_SUPPORT
                 ),
             ),
         )
@@ -1280,7 +1506,29 @@ def _run_one_word(
         ),
         trace=trace,
     )
-    return witness, seed_id, controls, (weaker,)
+    task_outcome = derive_task_outcome(
+        reconstruction_passed=reconstructed,
+        closure_passed=closed_node is not None,
+    )
+    reading = MasaqWordReading(
+        input_id=word.input_id,
+        reconstruction_passed=reconstructed,
+        closure_passed=closed_node is not None,
+        task_outcome=task_outcome,
+        weaker_model_succeeded=weaker.succeeds_at_task,
+        weaker_model_ties=weaker.ties,
+        comparative_standing=derive_comparative_standing(
+            task_outcome=task_outcome,
+            fractal_succeeded=reconstructed,
+            weaker_model_succeeded=weaker.succeeds_at_task,
+        ),
+        experimental_standing=standing,
+        residuals=residuals,
+        experimental_lift_issued=seed_id is not None,
+        negative_controls=controls,
+        weaker_model_observation=weaker,
+    )
+    return witness, seed_id, reading
 
 
 def run_masaq_fractal_experiment(
@@ -1312,11 +1560,10 @@ def run_masaq_fractal_experiment(
     permit = authority.activate(permit)
     witnesses: list[FractalExperimentalWitness] = []
     seed_ids: list[str] = []
-    controls: list[NegativeControlObservation] = []
-    weaker_models: list[WeakerModelObservation] = []
+    readings: list[MasaqWordReading] = []
     for word in words:
         try:
-            witness, seed_id, word_controls, word_weaker = _run_one_word(
+            witness, seed_id, reading = _run_one_word(
                 word,
                 authority=authority,
                 permit=permit,
@@ -1350,10 +1597,23 @@ def run_masaq_fractal_experiment(
                 authority_gaps=(NO_LICENSING_AUTHORITY,),
             )
             seed_id = None
-            word_controls = ()
-            word_weaker = ()
-        controls.extend(word_controls)
-        weaker_models.extend(word_weaker)
+            reading = MasaqWordReading(
+                input_id=word.input_id,
+                reconstruction_passed=False,
+                closure_passed=False,
+                task_outcome=derive_task_outcome(
+                    reconstruction_passed=False,
+                    closure_passed=False,
+                    run_failed=True,
+                ),
+                weaker_model_succeeded=None,
+                weaker_model_ties=False,
+                comparative_standing=ComparativeStanding.NOT_COMPARABLE,
+                experimental_standing=witness.standing,
+                residuals=witness.residuals,
+                experimental_lift_issued=False,
+            )
+        readings.append(reading)
         witnesses.append(witness)
         if seed_id is not None:
             seed_ids.append(seed_id)
@@ -1375,6 +1635,5 @@ def run_masaq_fractal_experiment(
         witnesses=tuple(witnesses),
         experimental_seed_ids=tuple(seed_ids),
         bundle=bundle,
-        negative_controls=tuple(controls),
-        weaker_model_observations=tuple(weaker_models),
+        readings=tuple(readings),
     )

@@ -24,6 +24,8 @@ from alghanem.arabic.masaq_fractal_experiment import (
     MASAQ_SUFFICIENCY_CONTRACT,
     SEGMENT_INDEX_COLUMN,
     WEAKER_MODEL_TIES_FRACTAL_MODEL,
+    ComparativeStanding,
+    ExperimentalTaskOutcome,
     MasaqExperimentError,
     MasaqSegmentOccurrence,
     StandingEvidence,
@@ -348,3 +350,41 @@ def test_an_experimental_seed_is_issued_while_the_standing_is_underpowered() -> 
         seed_id.startswith("experimental-seed.")
         for seed_id in report.experimental_seed_ids
     )
+
+
+def test_a_weaker_model_tie_blocks_distinction_without_blocking_task_success() -> None:
+    words = build_word_inputs(_ROWS)
+    report = run_masaq_fractal_experiment(words, run_id="run.two.axes")
+    reading = report.reading_for(words[0].input_id)
+    assert reading.reconstruction_passed
+    assert reading.closure_passed
+    assert reading.weaker_model_ties
+    assert reading.weaker_model_succeeded
+    assert reading.task_outcome is ExperimentalTaskOutcome.SUCCESS
+    assert reading.comparative_standing is ComparativeStanding.BOTH_SUCCEED
+    assert reading.experimental_standing is ExperimentalStanding.UNDERPOWERED
+    assert WEAKER_MODEL_TIES_FRACTAL_MODEL in tuple(
+        residual.reason for residual in reading.residuals
+    ) or any(
+        WEAKER_MODEL_TIES_FRACTAL_MODEL in residual.reason
+        for residual in reading.residuals
+    )
+    assert reading.experimental_lift_issued
+
+
+def test_the_report_counts_task_outcomes_apart_from_comparative_standings() -> None:
+    words = build_word_inputs(_ROWS)
+    report = run_masaq_fractal_experiment(words, run_id="run.tally")
+    tally = report.coverage_tally
+    assert tally["total_inputs"] == len(words)
+    assert report.task_outcomes["success"] == 1
+    assert report.task_outcomes["failure"] == 0
+    assert report.task_outcomes["unresolved"] == 1
+    assert report.comparative_standings["both_succeed"] == 1
+    assert report.comparative_standings["not_comparable"] == 1
+    assert report.comparative_standings["fractal_only"] == 0
+    assert report.comparative_standings["weaker_only"] == 0
+    assert sum(report.task_outcomes.values()) == tally["total_inputs"]
+    assert sum(report.comparative_standings.values()) == tally["total_inputs"]
+    assert report.standings["underpowered"] == len(words)
+    assert report.standings["observed_support"] == 0
