@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 
 
-def read(payload_bytes: bytes) -> tuple[tuple[str, str], ...]:
+def read(
+    payload_bytes: bytes, configuration: Mapping[str, str]
+) -> tuple[tuple[str, str], ...]:
     """صنِّف أعضاءَ الحمولة بقراءة مدخلاتها المرصودة وحدها."""
 
     payload = json.loads(payload_bytes.decode("utf-8"))

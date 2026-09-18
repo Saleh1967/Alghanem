@@ -59,6 +59,7 @@ from .laws import (
     A_REVEAL_RECORD_IS_NOT_A_VERDICT,
     A_SERIALIZED_CONTRACT_IS_WHAT_THE_READER_RECEIVES,
     A_SYSTEM_NAME_IS_NOT_A_SYSTEM_IDENTITY,
+    AN_IN_PROCESS_SEAL_IS_NOT_UNFORGEABLE_PROVENANCE,
     DIGEST_ONLY_IS_NOT_CRYPTOGRAPHICALLY_HIDDEN_GOLD,
     EVALUATION_LAWS,
     FAILURE_IS_RECEIPTED_BUT_NOT_PROMOTED_TO_REFERENCE_RUN,
@@ -68,17 +69,29 @@ from .laws import (
     NO_SYSTEM_DEFINES_THE_CONTRACT_IT_IS_READ_BY,
     OBSERVED_DOMINANCE_IS_BOUNDED_BY_ITS_FROZEN_DOMAIN,
     ONLY_EXECUTION_AUTHORITY_ISSUES_EXECUTION_RECEIPTS,
+    RECEIPT_ISSUANCE_IS_KEYED_NOT_MERELY_SEALED,
     STATIC_IMPORT_AUDIT_IS_NOT_PROCESS_ISOLATION,
     EvaluationError,
     ProcessConfinementStanding,
 )
 from .protocol import EvaluationProtocolKind, FrozenEvaluationProtocol
-from .receipt import BoundExecutionReceipt, ExecutionExitStatus, ExecutionMode
+from .provenance import (
+    ISSUANCE_SIGNATURE_ALGORITHM,
+    IssuanceProvenanceStanding,
+    ReceiptIssuanceKey,
+)
+from .receipt import (
+    BoundExecutionReceipt,
+    ExecutionExitStatus,
+    ExecutionMode,
+    verify_receipt_issuance,
+)
 from .report import FrozenRunReport, RunLedger, report_from_receipt
 from .residual import ResidualCode, RunResidual
 from .reveal import GoldRevealAuthority, GoldRevealRecord
 
 __all__ = [
+    "AN_IN_PROCESS_SEAL_IS_NOT_UNFORGEABLE_PROVENANCE",
     "A_FIRST_RUN_HAPPENS_ONCE",
     "A_HARNESS_IS_NOT_AN_EXECUTION_AUTHORITY",
     "A_RESIDUAL_IS_NAMED_NOT_STRINGLY",
@@ -93,11 +106,13 @@ __all__ = [
     "EVALUATION_PERMITTED_MODULES",
     "FAILURE_IS_RECEIPTED_BUT_NOT_PROMOTED_TO_REFERENCE_RUN",
     "FROZEN_CONTRACT_BEFORE_READERS",
+    "ISSUANCE_SIGNATURE_ALGORITHM",
     "NO_EVALUATION_VERDICT_BEFORE",
     "NO_RUN_REPORT_WITHOUT_BOUND_EXECUTION",
     "NO_SYSTEM_DEFINES_THE_CONTRACT_IT_IS_READ_BY",
     "OBSERVED_DOMINANCE_IS_BOUNDED_BY_ITS_FROZEN_DOMAIN",
     "ONLY_EXECUTION_AUTHORITY_ISSUES_EXECUTION_RECEIPTS",
+    "RECEIPT_ISSUANCE_IS_KEYED_NOT_MERELY_SEALED",
     "READER_FORBIDDEN_MODULES",
     "READER_FORBIDDEN_PACKAGES",
     "READER_IMPORT_POLICY",
@@ -117,8 +132,10 @@ __all__ = [
     "FrozenSystemIdentity",
     "GoldRevealAuthority",
     "GoldRevealRecord",
+    "IssuanceProvenanceStanding",
     "ProcessConfinementDeclaration",
     "ProcessConfinementStanding",
+    "ReceiptIssuanceKey",
     "ResidualCode",
     "RunLedger",
     "RunResidual",
@@ -131,4 +148,5 @@ __all__ = [
     "measure_implementation_digest",
     "reader_import_audit",
     "report_from_receipt",
+    "verify_receipt_issuance",
 ]

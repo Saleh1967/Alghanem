@@ -1,4 +1,4 @@
-"""قارئٌ صوريٌّ يترك عضوًا ويُسمّي بقيّتَه برمزٍ وسببٍ وشاهد، لا بنصٍّ حرّ."""
+"""قارئٌ صوريٌّ يكتب صفةَ الإعاقة نصًّا؛ و`"false"` ليست `False` فيُرفَض."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from collections.abc import Mapping
 
 
 def read(payload_bytes: bytes, configuration: Mapping[str, str]) -> dict[str, object]:
-    """صنِّف ما عدا أوّلَ عضو، واترك الأوّلَ بقيّةً مُعيقةً مُسمّاة."""
+    """يُعيد بقيّةً بصفةِ إعاقةٍ نصّيّة، وهي نوعٌ خاطئٌ يُرفَض ولا يُحوَّل."""
 
     payload = json.loads(payload_bytes.decode("utf-8"))
     members = payload["members"]
@@ -21,9 +21,9 @@ def read(payload_bytes: bytes, configuration: Mapping[str, str]) -> dict[str, ob
             {
                 "member_id": left["member_id"],
                 "residual_code": "unclassified_by_reader",
-                "blocking": True,
-                "reason": "مدخلاتُه المرصودةُ لا تُميِّز قسمًا واحدًا",
-                "evidence_ref": "payload:members[0].observed_inputs",
+                "blocking": "false",
+                "reason": "صفةُ إعاقةٍ مكتوبةٌ نصًّا",
+                "evidence_ref": "payload:members[0]",
             }
         ],
     }

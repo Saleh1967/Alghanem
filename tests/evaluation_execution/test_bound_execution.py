@@ -16,6 +16,7 @@ from alghanem.arabic.fiber_contracts import (
 )
 from alghanem.arabic.madlul_alone_formal import ATTESTED_SIGNIFIED_WITNESSES
 from alghanem.evaluation import (
+    AN_IN_PROCESS_SEAL_IS_NOT_UNFORGEABLE_PROVENANCE,
     BoundExecutionReceipt,
     EvaluationBinding,
     EvaluationError,
@@ -26,20 +27,27 @@ from alghanem.evaluation import (
     FrozenRunReport,
     FrozenSystemIdentity,
     GoldRevealAuthority,
+    ReceiptIssuanceKey,
     ResidualCode,
     RunLedger,
     evaluation_import_isolation_audit,
     freeze_system_identity,
     reader_import_audit,
     report_from_receipt,
+    verify_receipt_issuance,
 )
 from alghanem.evaluation_execution import (
+    A_TIMEOUT_IS_NAMED_NOT_FOLDED_INTO_A_NONZERO_EXIT,
+    A_WIRE_VALUE_IS_REFUSED_NOT_COERCED,
+    CONFIGURATION_IS_EXECUTED_NOT_ONLY_IDENTIFIED,
     EXECUTION_LAWS,
     NO_COMPARISON_BEFORE_BOUND_EXECUTION,
+    RECEIPT_ISSUANCE_IS_KEYED_NOT_MERELY_SEALED,
     SEPARATE_PROCESS_IS_NOT_A_SANDBOX,
     ExecutionAuthority,
     ExecutionError,
     ReaderExecutionRequest,
+    SeparateProcessOutcome,
     execution_import_isolation_audit,
 )
 from alghanem.prior_fiber import SuccessCriterion
@@ -122,6 +130,22 @@ def _run(name: str, *, nonce: bytes = _NONCE) -> BoundExecutionReceipt:
     binding = _binding((name,), nonce=nonce)
     authority = ExecutionAuthority(binding)
     return authority.execute(_request(_READERS / name))
+
+
+def _configured_request(
+    name: str, configuration: Mapping[str, str]
+) -> tuple[ExecutionAuthority, ReaderExecutionRequest]:
+    """سلطةٌ وطلبٌ بإعدادٍ مُعلَنٍ غيرِ اسمِ الملفّ، ليُقاس بلوغُ الإعداد للقارئ."""
+
+    path = _READERS / name
+    identity = _identity(path, configuration)
+    binding = _bound((identity,))
+    return ExecutionAuthority(binding), ReaderExecutionRequest(
+        identity=identity,
+        implementation_files=(path,),
+        entry_file=path,
+        configuration=configuration,
+    )
 
 
 def test_the_frozen_bytes_are_executed_and_their_outputs_are_receipted() -> None:
@@ -341,6 +365,9 @@ def test_a_harness_cannot_forge_a_receipt_through_the_public_api() -> None:
     with pytest.raises(EvaluationError):
         BoundExecutionReceipt(
             seal=object(),
+            execution_envelope_digest=receipt.execution_envelope_digest,
+            issuer_key_id=receipt.issuer_key_id,
+            issuance_signature=receipt.issuance_signature,
             system_content_id=receipt.system_content_id,
             request_id=receipt.request_id,
             implementation_digest=receipt.implementation_digest,
@@ -433,3 +460,155 @@ def test_an_execution_request_outside_its_frozen_files_is_refused() -> None:
             entry_file=_READERS / "reader_two.py",
             configuration={"mode": "reader_one.py"},
         )
+
+
+def test_the_receipt_is_signed_by_the_key_of_the_authority_that_issued_it() -> None:
+    binding = _binding(("reader_one.py",))
+    authority = ExecutionAuthority(binding)
+    receipt = authority.execute(_request(_READERS / "reader_one.py"))
+    assert receipt.issuer_key_id == authority.issuer_key_id
+    assert authority.verify_issuance(receipt) is True
+    assert receipt.issuance_provenance_law == (
+        RECEIPT_ISSUANCE_IS_KEYED_NOT_MERELY_SEALED
+    )
+
+
+def test_another_authority_does_not_vouch_for_a_receipt_it_did_not_issue() -> None:
+    binding = _binding(("reader_one.py",))
+    receipt = ExecutionAuthority(binding).execute(_request(_READERS / "reader_one.py"))
+    assert ExecutionAuthority(binding).verify_issuance(receipt) is False
+    assert verify_receipt_issuance(receipt, ReceiptIssuanceKey()) is False
+
+
+def test_a_signature_over_other_content_does_not_verify() -> None:
+    binding = _binding(("reader_one.py",))
+    authority = ExecutionAuthority(binding)
+    here = authority.execute(_request(_READERS / "reader_one.py"))
+    elsewhere = authority.execute(_request(_READERS / "reader_two.py"))
+    assert here.issuance_signature != elsewhere.issuance_signature
+    assert authority.verify_issuance(here) is True
+    assert authority.verify_issuance(elsewhere) is True
+
+
+def test_the_issuance_key_never_leaves_its_authority_as_content_or_text() -> None:
+    key = ReceiptIssuanceKey()
+    assert "secret" not in repr(key)
+    assert key.key_id in repr(key)
+    assert "secret" not in str(sorted(key.as_canonical_content()))
+    assert key.is_proven is False
+    assert key.ceiling == AN_IN_PROCESS_SEAL_IS_NOT_UNFORGEABLE_PROVENANCE
+    assert not hasattr(key, "secret")
+
+
+def test_the_issuance_provenance_ceiling_is_declared_not_claimed_as_proven() -> None:
+    authority = ExecutionAuthority(_binding(("reader_one.py",)))
+    assert authority.issuance_provenance_standing.is_proven is False
+    assert authority.issuance_provenance_ceiling == (
+        AN_IN_PROCESS_SEAL_IS_NOT_UNFORGEABLE_PROVENANCE
+    )
+
+
+def test_the_configuration_reaches_the_reader_call_and_moves_its_outputs() -> None:
+    first, first_request = _configured_request(
+        "reader_configured.py", {"observed_input_index": "0"}
+    )
+    last, last_request = _configured_request(
+        "reader_configured.py", {"observed_input_index": "-1"}
+    )
+    head = first.execute(first_request)
+    tail = last.execute(last_request)
+    assert head.exit_status is ExecutionExitStatus.COMPLETED
+    assert tail.exit_status is ExecutionExitStatus.COMPLETED
+    assert head.output_digest != tail.output_digest
+    assert head.execution_envelope_digest != tail.execution_envelope_digest
+
+
+def test_the_payload_bytes_cross_the_envelope_unchanged() -> None:
+    binding = _binding(("reader_one.py",))
+    authority = ExecutionAuthority(binding)
+    receipt = authority.execute(_request(_READERS / "reader_one.py"))
+    assert receipt.payload_digest == binding.payload.payload_digest
+    assert len(receipt.outputs) == len(_GOLD)
+
+
+def test_a_configuration_that_did_not_arrive_as_written_is_named_not_read() -> None:
+    binding = _binding(("reader_one.py",))
+
+    class _DeliveringSomethingElse(ExecutionAuthority):
+        def _run_in_a_separate_process(
+            self, measured: object, entry_displayed: object, envelope: object
+        ) -> SeparateProcessOutcome:
+            outcome = super()._run_in_a_separate_process(  # type: ignore[arg-type]
+                measured, entry_displayed, envelope
+            )
+            tampered = outcome.stdout.replace(
+                b'"envelope_digest":"' + envelope.envelope_digest.encode("ascii"),  # type: ignore[attr-defined]
+                b'"envelope_digest":"' + b"0" * 64,
+            )
+            return SeparateProcessOutcome(
+                timed_out=False,
+                return_code=outcome.return_code,
+                stdout=tampered,
+                stderr=outcome.stderr,
+            )
+
+    receipt = _DeliveringSomethingElse(binding).execute(
+        _request(_READERS / "reader_one.py")
+    )
+    assert receipt.exit_status is ExecutionExitStatus.CONFIGURATION_DELIVERY_MISMATCH
+    assert receipt.outputs == ()
+    assert any(
+        entry == "envelope.law=" + CONFIGURATION_IS_EXECUTED_NOT_ONLY_IDENTIFIED
+        for entry in receipt.trace
+    )
+
+
+def test_a_reader_with_the_abandoned_signature_is_refused_under_its_own_status() -> (
+    None
+):
+    receipt = _run("reader_legacy_signature.py")
+    assert receipt.exit_status is ExecutionExitStatus.REFUSED_ENTRYPOINT_SIGNATURE
+    assert receipt.outputs == ()
+    with pytest.raises(EvaluationError):
+        report_from_receipt(receipt, run_ordinal=1)
+
+
+def test_a_wire_value_of_the_wrong_type_is_refused_and_not_coerced() -> None:
+    receipt = _run("reader_coerced_residual.py")
+    assert receipt.exit_status is ExecutionExitStatus.REFUSED_OUTPUT_SHAPE
+    assert receipt.residuals == ()
+    assert A_WIRE_VALUE_IS_REFUSED_NOT_COERCED in EXECUTION_LAWS
+
+
+def test_a_run_that_exceeds_its_declared_ceiling_is_named_a_timeout() -> None:
+    configuration = {"sleep_seconds": "30"}
+    authority, request = _configured_request("reader_slow.py", configuration)
+    receipt = ExecutionAuthority(authority.binding, timeout_seconds=1).execute(request)
+    assert receipt.exit_status is ExecutionExitStatus.TIMEOUT
+    assert receipt.is_a_reference_run is False
+    assert "process.timed_out=true" in receipt.trace
+    assert "process.timeout_seconds=1" in receipt.trace
+    with pytest.raises(EvaluationError):
+        report_from_receipt(receipt, run_ordinal=1)
+
+
+def test_a_process_killed_by_a_signal_is_named_apart_from_a_nonzero_exit() -> None:
+    receipt = _run("reader_signalled.py")
+    assert receipt.exit_status is ExecutionExitStatus.SIGNALLED
+    assert receipt.exit_status is not ExecutionExitStatus.NONZERO_EXIT
+    assert A_TIMEOUT_IS_NAMED_NOT_FOLDED_INTO_A_NONZERO_EXIT in EXECUTION_LAWS
+
+
+def test_no_guard_return_code_is_invented_for_a_run_that_never_exited() -> None:
+    timed_out = SeparateProcessOutcome(
+        timed_out=True, return_code=None, stdout=b"", stderr=b""
+    )
+    assert timed_out.was_signalled is False
+    with pytest.raises(ExecutionError):
+        SeparateProcessOutcome(timed_out=True, return_code=-1, stdout=b"", stderr=b"")
+    assert (
+        SeparateProcessOutcome(
+            timed_out=False, return_code=-9, stdout=b"", stderr=b""
+        ).was_signalled
+        is True
+    )

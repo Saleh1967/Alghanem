@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 
 
-def read(payload_bytes: bytes) -> dict[str, object]:
+def read(payload_bytes: bytes, configuration: Mapping[str, str]) -> dict[str, object]:
     """يترك عضوًا برمزِ بقيّةٍ غيرِ مُصنَّف."""
 
     payload = json.loads(payload_bytes.decode("utf-8"))

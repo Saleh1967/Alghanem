@@ -185,12 +185,15 @@ def main() -> None:
     print("== the authority-issued execution receipts ==")
     print(f"execution mechanism: {execution.execution_mode.value}")
     print(f"confinement proven : {execution.confinement.is_proven}")
+    print(f"issuer key id      : {execution.issuer_key_id[:16]}")
+    print(f"issuance proven    : {execution.issuance_provenance_standing.is_proven}")
     for receipt in receipts:
         print(
             f"  receipt {receipt.receipt_digest[:16]} "
             f"status {receipt.exit_status.value} "
             f"output {receipt.output_digest[:8]} "
-            f"trace {receipt.trace_digest[:8]}"
+            f"envelope {receipt.execution_envelope_digest[:8]} "
+            f"signed {execution.verify_issuance(receipt)}"
         )
 
     print()

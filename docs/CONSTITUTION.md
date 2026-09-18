@@ -3828,7 +3828,9 @@ GoldRevealRecord`, and there is no parallel road to a `FrozenRunReport`.
 `AHarnessIsNotAnExecutionAuthority`. Immutability after construction is not
 unforgeability of construction. A receipt exists only when the execution
 authority seals it, and a report exists only when it is derived from such a
-receipt, field by field, with nothing supplied by the caller.
+receipt, field by field, with nothing supplied by the caller. The seal closes the
+public construction path; it is not a cryptographic barrier, and the qualified
+claim is stated under `G0.EXEC-0.HARDEN`.
 
 `ExecutedReaderIdentity == FrozenReaderIdentity`. The four identity components
 are re-measured from the real source bytes, the real configuration and a fresh
@@ -3868,3 +3870,36 @@ declares every operational access it takes under its own import policy.
 `NoComparisonBeforeBoundExecution`. No second system, no comparison, no Pareto
 dominance, no `Ω_M` and no verdict is built in this phase. The ceiling remains a
 `GoldRevealRecord` conditioned on receipt-derived first run reports.
+
+## `G0.EXEC-0.HARDEN` — execution provenance and operational configuration
+
+`ReceiptIssuanceIsKeyedNotMerelySealed` and
+`AnInProcessSealIsNotUnforgeableProvenance`. A module-private seal closes the
+public API; it does not close the process. Every execution authority therefore
+holds its own issuance key and signs each receipt over that receipt's canonical
+content, so a receipt answers *which* authority issued it and not merely *that*
+some authority did. The key's secret is never a field, never rendered and never
+serialized. The standing is declared, not proven: this distinguishes issuers
+inside one process and establishes neither trust across sessions nor resistance
+to code already executing within the process. An isolated signing authority and a
+verifiable authority-owned issuance record are deferred and are not claimed here.
+
+`ConfigurationIsExecutedNotOnlyIdentified`. A configuration that enters the
+system identity but never reaches the run proves a configuration identity, not
+the execution of that configuration. The declared configuration is therefore
+carried into the run inside the same measured envelope as the payload, the entry
+point receives it as a second argument, and the reader returns the envelope
+digest it parsed. A reader that does not accept the declared signature is refused
+under its own status, and a configuration that did not arrive as written is named
+a delivery mismatch rather than folded into a successful run.
+
+`AWireValueIsRefusedNotCoerced`. A closed wire format that converts a wrong type
+into an acceptable one is not closed. Every value crossing the boundary is
+checked against its declared type and refused when it does not match; no value is
+stringified, truthiness-tested or widened into validity.
+
+`ATimeoutIsNamedNotFoldedIntoANonzeroExit`. A run that never exited has no exit
+code, and inventing a sentinel for it both hides the event and collides with
+processes killed by a signal. A run stopped at its declared ceiling is named a
+timeout, a process killed by a signal is named as such, and neither is reported
+as a nonzero exit.

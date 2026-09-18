@@ -17,9 +17,17 @@
 وبعد التشغيل يُعاد قياسُ المصدر، فإن تغيّر لم يُعرَف أيُّ البايتات أنتج المخرجات:
 `ImplementationChangedDuringExecution -> NoReferenceRunReport`.
 
-والقارئُ لا يستلم كائنًا: يستلم بايتاتِ الحمولة على `stdin` في عمليّةٍ منفصلةٍ
+والقارئُ لا يستلم كائنًا: يستلم مغلّفًا مؤطَّرًا على `stdin` في عمليّةٍ منفصلةٍ
 ببيئةٍ مُقلَّمةٍ ومساحةِ عملٍ مؤقّتةٍ خارج الشجرة، وتُلتقَط بايتاتُ `stdout`
 و`stderr` وحالُ الخروج. وليس هذا حبسًا: `SeparateProcess != Sandbox`.
+
+والإعدادُ الذي ركّب الهويّةَ يعبُر ذلك المغلّفَ إلى نداء القارئ، ويشهد المُشغِّلُ
+ببصمة ما استلم فتُقارَن ببصمة ما كُتِب:
+`ConfigurationIsExecutedNotOnlyIdentified`.
+
+وكلُّ إيصالٍ يحمل مُعرِّفَ مفتاح سلطته وتوقيعَها على محتواه:
+`ReceiptIssuanceIsKeyedNotMerelySealed`، وسقفُه مُعلَنٌ لا مُدَّعًى:
+`AnInProcessSealIsNotUnforgeableProvenance`.
 
 وما بدأ تنفيذُه يُوصَل به إيصالٌ وإن فشل، ولا يُرقّى غيرُ التامِّ إلى تشغيلٍ
 مرجعيّ: `FailureIsReceiptedButNotPromotedToReferenceRun`.
@@ -44,7 +52,9 @@ from ..evaluation import (
     ExecutionExitStatus,
     ExecutionMode,
     FrozenSystemIdentity,
+    IssuanceProvenanceStanding,
     ProcessConfinementStanding,
+    ReceiptIssuanceKey,
     ResidualCode,
     RunResidual,
     compose_system_content_id,
@@ -52,10 +62,16 @@ from ..evaluation import (
     measure_dependency_boundary_digest,
     measure_implementation_digest,
     reader_import_audit,
+    verify_receipt_issuance,
 )
 from ..evaluation.receipt import _issue_receipt
 from ..import_boundary import displayed_path
+from .envelope import ExecutionEnvelope, build_execution_envelope
 from .laws import (
+    A_TIMEOUT_IS_NAMED_NOT_FOLDED_INTO_A_NONZERO_EXIT,
+    A_WIRE_VALUE_IS_REFUSED_NOT_COERCED,
+    AN_IN_PROCESS_SEAL_IS_NOT_UNFORGEABLE_PROVENANCE,
+    CONFIGURATION_IS_EXECUTED_NOT_ONLY_IDENTIFIED,
     EXECUTED_READER_IDENTITY_EQUALS_FROZEN_READER_IDENTITY,
     IMPLEMENTATION_CHANGED_DURING_EXECUTION_MEANS_NO_REFERENCE_RUN,
     SEPARATE_PROCESS_IS_NOT_A_SANDBOX,
@@ -64,8 +80,11 @@ from .laws import (
 from .runner import (
     EXIT_COMPLETED,
     EXIT_READER_RAISED,
+    EXIT_REFUSED_ENTRYPOINT_SIGNATURE,
+    EXIT_UNUSABLE_ENVELOPE,
     EXIT_UNUSABLE_RESULT,
     READER_ENTRYPOINT_NAME,
+    RESIDUAL_WIRE_FIELDS,
     RUNNER_WIRE_PROTOCOL,
 )
 from .workspace import (
@@ -80,6 +99,7 @@ __all__ = [
     "ExecutionAuthority",
     "ReaderExecutionRequest",
     "SeparateProcessConfinementDeclaration",
+    "SeparateProcessOutcome",
 ]
 
 DEFAULT_EXECUTION_TIMEOUT_SECONDS = 60
@@ -144,6 +164,42 @@ class ReaderExecutionRequest:
             raise ExecutionError("إعدادُ القارئ مطابقةٌ مُعلَنة")
 
 
+@dataclass(frozen=True, slots=True)
+class SeparateProcessOutcome:
+    """ما انتهت إليه العمليّةُ المنفصلة، مُسمًّى لا مطويًّا في رمزٍ حارس.
+
+    تجاوزُ السقف الزمنيّ حدثٌ غيرُ الخروج برمزٍ غيرِ صفر، والقتلُ بإشارةٍ غيرُهما؛
+    ورمزٌ حارسٌ مُصطنَعٌ مثل `-1` يتصادم برمزِ عمليّةٍ قُتلت بإشارة، فيُسمّى الحالُ
+    هنا ولا يُستدَلّ عليه من رقم: `ATimeoutIsNamedNotFoldedIntoANonzeroExit`.
+    """
+
+    timed_out: bool
+    return_code: int | None
+    stdout: bytes
+    stderr: bytes
+
+    def __post_init__(self) -> None:
+        if type(self.timed_out) is not bool:
+            raise ExecutionError("صفةُ تجاوز السقف قيمةٌ ثنائيّةٌ مُعلَنة")
+        if self.timed_out:
+            if self.return_code is not None:
+                raise ExecutionError("ما تجاوز السقفَ لا يُنسَب إليه رمزُ خروج")
+        elif not isinstance(self.return_code, int):
+            raise ExecutionError("رمزُ الخروج عددٌ صحيحٌ مقيس")
+
+    @property
+    def was_signalled(self) -> bool:
+        """أقُتِلت العمليّةُ بإشارة؟ يُقرَأ من رمزٍ سالبٍ مقيسٍ لا من حارس."""
+
+        return self.return_code is not None and self.return_code < 0
+
+    @property
+    def timeout_law(self) -> str:
+        """قانونُ تسمية المهلة والإشارة."""
+
+        return A_TIMEOUT_IS_NAMED_NOT_FOLDED_INTO_A_NONZERO_EXIT
+
+
 class _OutputShapeError(ExecutionError):
     """شكلُ ناتجٍ مرفوض؛ يُسمّى ولا يُحمَل على أقرب حالة."""
 
@@ -152,13 +208,36 @@ class _UnknownMemberError(ExecutionError):
     """عضوٌ خارج المجال في الناتج؛ يُسمّى ولا يُطوى."""
 
 
+class _ConfigurationDeliveryError(ExecutionError):
+    """إعدادٌ لم يبلغ القارئَ كما كُتِب؛ يُسمّى ولا يُقرَأ ناتجُه."""
+
+
+def _require_wire_text(value: object, label: str) -> str:
+    """اقبل نصًّا غيرَ فارغٍ ولا تُحوِّل نوعًا خاطئًا: `AWireValueIsRefusedNotCoerced`."""
+
+    if type(value) is not str or not value.strip():
+        raise _OutputShapeError(f"{label}: {A_WIRE_VALUE_IS_REFUSED_NOT_COERCED}")
+    return value
+
+
 def _residual_from_wire(entry: Mapping[str, Any]) -> RunResidual:
+    """اقرأ بقيّةً من القناة رفضًا للنوع الخاطئ، لا تطويعًا له."""
+
+    if tuple(sorted(entry)) != RESIDUAL_WIRE_FIELDS:
+        raise _OutputShapeError("حقولُ البقيّة مجموعةٌ مطابقة؛ ولا ناقصَ ولا زائد")
+    if type(entry["blocking"]) is not bool:
+        raise _OutputShapeError("صفةُ الإعاقة: " + A_WIRE_VALUE_IS_REFUSED_NOT_COERCED)
+    code = _require_wire_text(entry["residual_code"], "رمزُ البقيّة")
+    try:
+        residual_code = ResidualCode(code)
+    except ValueError as error:
+        raise _OutputShapeError(f"رمزُ بقيّةٍ خارج مفردته المغلقة: {code}") from error
     return RunResidual(
-        member_id=str(entry["member_id"]),
-        residual_code=ResidualCode(str(entry["residual_code"])),
-        blocking=bool(entry["blocking"]),
-        reason=str(entry["reason"]),
-        evidence_ref=str(entry["evidence_ref"]),
+        member_id=_require_wire_text(entry["member_id"], "عضوُ البقيّة"),
+        residual_code=residual_code,
+        blocking=entry["blocking"],
+        reason=_require_wire_text(entry["reason"], "سببُ البقيّة"),
+        evidence_ref=_require_wire_text(entry["evidence_ref"], "إحالةُ شاهد البقيّة"),
     )
 
 
@@ -180,6 +259,30 @@ class ExecutionAuthority:
         self._binding = binding
         self._timeout_seconds = timeout_seconds
         self._member_ids = frozenset(binding.contract.body.member_ids)
+        self._issuance_key = ReceiptIssuanceKey()
+
+    @property
+    def issuer_key_id(self) -> str:
+        """مُعرِّفُ مفتاح إصدار هذه السلطة؛ يدخل كلَّ إيصالٍ تُصدِره ويُقارَن."""
+
+        return self._issuance_key.key_id
+
+    @property
+    def issuance_provenance_standing(self) -> IssuanceProvenanceStanding:
+        """حالُ نسبِ الإصدار؛ مفتاحٌ داخل العمليّة، ولا ثقةَ عابرةً للجلسات."""
+
+        return self._issuance_key.standing
+
+    @property
+    def issuance_provenance_ceiling(self) -> str:
+        """سقفُ ما يُدَّعى بمفتاحٍ يعيش في عمليّة السلطة نفسِها."""
+
+        return AN_IN_PROCESS_SEAL_IS_NOT_UNFORGEABLE_PROVENANCE
+
+    def verify_issuance(self, receipt: BoundExecutionReceipt) -> bool:
+        """أصدَرَت هذه السلطةُ هذا الإيصال؟ يُقرَأ التوقيعُ في متنه لا في حيازته."""
+
+        return verify_receipt_issuance(receipt, self._issuance_key)
 
     @property
     def binding(self) -> EvaluationBinding:
@@ -218,6 +321,13 @@ class ExecutionAuthority:
         boundary_report = reader_import_audit(request.implementation_files)
         dependency_boundary_digest = measure_dependency_boundary_digest(boundary_report)
         configuration_digest = measure_configuration_digest(request.configuration)
+        envelope = build_execution_envelope(
+            configuration=request.configuration,
+            payload_bytes=payload.payload_bytes,
+            payload_digest=payload.payload_digest,
+        )
+        trace.append("envelope.digest=" + envelope.envelope_digest)
+        trace.append("envelope.configuration_digest=" + configuration_digest)
         composed = compose_system_content_id(
             implementation_digest=implementation_digest,
             configuration_digest=configuration_digest,
@@ -232,6 +342,7 @@ class ExecutionAuthority:
             residuals: tuple[RunResidual, ...] = (),
         ) -> BoundExecutionReceipt:
             return _issue_receipt(
+                issuance_key=self._issuance_key,
                 system_content_id=identity.content_id,
                 request_id=bound_request.request_id,
                 implementation_digest=implementation_digest,
@@ -239,6 +350,7 @@ class ExecutionAuthority:
                 dependency_boundary_digest=dependency_boundary_digest,
                 payload_digest=payload.payload_digest,
                 execution_entrypoint_digest=entrypoint_digest,
+                execution_envelope_digest=envelope.envelope_digest,
                 exit_status=status,
                 execution_mode=self.execution_mode,
                 outputs=outputs,
@@ -268,13 +380,12 @@ class ExecutionAuthority:
         entry_displayed = displayed_path(request.entry_file.resolve())
         if entry_displayed not in displayed:
             raise ExecutionError("ملفُّ المدخل ليس من ملفّات التنفيذ المقيسة")
-        completed = self._run_in_a_separate_process(
-            measured, entry_displayed, payload.payload_bytes
-        )
-        return_code, stdout, stderr = completed
-        trace.append("process.return_code=" + str(return_code))
-        trace.append("process.stdout_digest=" + canonical_digest(stdout))
-        trace.append("process.stderr_digest=" + canonical_digest(stderr))
+        outcome = self._run_in_a_separate_process(measured, entry_displayed, envelope)
+        trace.append("process.timed_out=" + ("true" if outcome.timed_out else "false"))
+        trace.append("process.timeout_seconds=" + str(self._timeout_seconds))
+        trace.append("process.return_code=" + str(outcome.return_code))
+        trace.append("process.stdout_digest=" + canonical_digest(outcome.stdout))
+        trace.append("process.stderr_digest=" + canonical_digest(outcome.stderr))
 
         after_digest, _, _ = measure_implementation_digest(request.implementation_files)
         trace.append("implementation.post_execution=" + after_digest)
@@ -285,15 +396,37 @@ class ExecutionAuthority:
             )
             return receipt(ExecutionExitStatus.IMPLEMENTATION_CHANGED_DURING_EXECUTION)
 
+        if outcome.timed_out:
+            trace.append("process.law=" + outcome.timeout_law)
+            return receipt(ExecutionExitStatus.TIMEOUT)
+        if outcome.was_signalled:
+            trace.append("process.law=" + outcome.timeout_law)
+            return receipt(ExecutionExitStatus.SIGNALLED)
+        return_code = outcome.return_code
         if return_code == EXIT_READER_RAISED:
             return receipt(ExecutionExitStatus.RAISED)
+        if return_code == EXIT_REFUSED_ENTRYPOINT_SIGNATURE:
+            return receipt(ExecutionExitStatus.REFUSED_ENTRYPOINT_SIGNATURE)
+        if return_code == EXIT_UNUSABLE_ENVELOPE:
+            trace.append(
+                "envelope.law=" + CONFIGURATION_IS_EXECUTED_NOT_ONLY_IDENTIFIED
+            )
+            return receipt(ExecutionExitStatus.CONFIGURATION_DELIVERY_MISMATCH)
         if return_code == EXIT_UNUSABLE_RESULT:
             return receipt(ExecutionExitStatus.REFUSED_OUTPUT_SHAPE)
         if return_code != EXIT_COMPLETED:
             return receipt(ExecutionExitStatus.NONZERO_EXIT)
 
         try:
-            outputs, residuals = self._validated_result(stdout)
+            outputs, residuals = self._validated_result(
+                outcome.stdout, envelope_digest=envelope.envelope_digest
+            )
+        except _ConfigurationDeliveryError as error:
+            trace.append("envelope.refused=" + str(error))
+            trace.append(
+                "envelope.law=" + CONFIGURATION_IS_EXECUTED_NOT_ONLY_IDENTIFIED
+            )
+            return receipt(ExecutionExitStatus.CONFIGURATION_DELIVERY_MISMATCH)
         except _UnknownMemberError as error:
             trace.append("outputs.refused=" + str(error))
             return receipt(ExecutionExitStatus.REFUSED_UNKNOWN_MEMBER)
@@ -307,8 +440,11 @@ class ExecutionAuthority:
         )
 
     def _run_in_a_separate_process(
-        self, measured: Mapping[str, bytes], entry_displayed: str, payload: bytes
-    ) -> tuple[int, bytes, bytes]:
+        self,
+        measured: Mapping[str, bytes],
+        entry_displayed: str,
+        envelope: ExecutionEnvelope,
+    ) -> SeparateProcessOutcome:
         with tempfile.TemporaryDirectory(
             prefix=EXECUTION_WORKSPACE_PREFIX
         ) as workspace:
@@ -333,19 +469,29 @@ class ExecutionAuthority:
                         module_name,
                         READER_ENTRYPOINT_NAME,
                     ],
-                    input=payload,
+                    input=envelope.framed_bytes,
                     cwd=str(root),
                     env=environment,
                     capture_output=True,
                     timeout=self._timeout_seconds,
                     check=False,
                 )
-            except subprocess.TimeoutExpired:
-                return -1, b"", b"timeout"
-            return completed.returncode, completed.stdout, completed.stderr
+            except subprocess.TimeoutExpired as expired:
+                return SeparateProcessOutcome(
+                    timed_out=True,
+                    return_code=None,
+                    stdout=expired.stdout or b"",
+                    stderr=expired.stderr or b"",
+                )
+            return SeparateProcessOutcome(
+                timed_out=False,
+                return_code=completed.returncode,
+                stdout=completed.stdout,
+                stderr=completed.stderr,
+            )
 
     def _validated_result(
-        self, stdout: bytes
+        self, stdout: bytes, *, envelope_digest: str
     ) -> tuple[tuple[tuple[str, str], ...], tuple[RunResidual, ...]]:
         try:
             decoded = json.loads(stdout.decode("utf-8"))
@@ -355,6 +501,11 @@ class ExecutionAuthority:
             raise _OutputShapeError("ناتجُ القناة بنيةٌ مغلقةٌ لا قيمةٌ حرّة")
         if decoded.get("protocol") != RUNNER_WIRE_PROTOCOL:
             raise _OutputShapeError("ناتجٌ بإصدارِ قناةٍ غيرِ المُعلَن")
+        if decoded.get("envelope_digest") != envelope_digest:
+            raise _ConfigurationDeliveryError(
+                "بصمةُ المغلّف المشهودُ باستلامه غيرُ بصمة ما كُتِب؛ "
+                "فالإعدادُ لم يبلغ القارئَ كما قيس"
+            )
         raw_outputs = decoded.get("outputs")
         raw_residuals = decoded.get("residuals")
         if not isinstance(raw_outputs, list) or not isinstance(raw_residuals, list):
@@ -363,11 +514,8 @@ class ExecutionAuthority:
         for entry in raw_outputs:
             if not isinstance(entry, list) or len(entry) != 2:
                 raise _OutputShapeError("المخرَجُ زوجٌ: عضوٌ وتصنيفُه")
-            member_id, label = entry
-            if not isinstance(member_id, str) or not isinstance(label, str):
-                raise _OutputShapeError("العضوُ وتصنيفُه نصّان")
-            if not label.strip():
-                raise _OutputShapeError(f"تصنيفٌ فارغٌ للعضو `{member_id}`")
+            member_id = _require_wire_text(entry[0], "مُعرِّفُ العضو في المخرَج")
+            label = _require_wire_text(entry[1], f"تصنيفُ `{entry[0]}`")
             if member_id not in self._member_ids:
                 raise _UnknownMemberError(f"عضوٌ خارج المجال: {member_id}")
             outputs.append((member_id, label))
