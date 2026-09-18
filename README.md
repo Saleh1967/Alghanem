@@ -5017,6 +5017,37 @@ permit identity and its full trace. `examples/arabic/run_masaq_fractal_experimen
 runs it end to end and prints the bundle, its gaps and the revoked permit; it
 prints no licence, because there is none to print.
 
+`G0.FGEN-EX-1` hardens what that witness is allowed to mean, and opens nothing:
+`fractal_generation/` is untouched, no sufficiency assessment and no licensing
+candidate appear, and experimental lift stays open. The first pattern we ran,
+`segment_accretion`, reaches a word by concatenating its segments in order —
+and the preregistered weaker model, plain textual concatenation, reaches exactly
+the same surface. A correct output is therefore not evidence that the
+architecture was necessary: `WeakerModelTieBlocksStructuralSupport`. Standing is
+now derived from its preregistered conditions together — reconstruction, closure,
+negative controls behaving as preregistered, no blocking residual, and *no
+weaker-model tie* — so closure plus reconstruction alone no longer buys
+`OBSERVED_SUPPORT`; a tie yields `UNDERPOWERED` with a named residual,
+`WEAKER_MODEL_TIES_FRACTAL_MODEL`, and never a refutation, because a tie does not
+falsify the reconstruction, it only forbids the claim of distinctive structure.
+The unmeasured `IRREDUCIBLE_AT_CURRENT_SCALE` residual the adapter used to author
+for every multi-segment word is gone; scale necessity is recorded as *unresolved
+and under test*, since the weaker model does reach the word by direct joining.
+Provenance is no longer overwritten: each segment keeps its raw MASAQ surface,
+its source `Word_No`, a separately named derived `LocalSegmentPosition`, and a
+replayable normalization trace naming the transformation and every character it
+removed — `RawOccurrence ≠ NormalizedProjection`, `SourceWordNo ≠
+DerivedLocalPosition`. All five held-out columns are frozen per segment, not just
+`Morph_Tag`: `HeldOut ≠ Dropped`. And the negative controls are runs, not side
+comparisons — reversed order and dropped segment pass through the same accretion
+gates and the same readout, recording control input identity, transformation,
+output and comparison; an inert control is recorded as a failure to discriminate
+and drives the standing to `UNDERPOWERED`. The result on `segment_accretion` is
+therefore a bundle of underpowered witnesses, and that is the finding, not a
+failure: it moves the question from «does the engine run?» to **which
+transformation actually needs the fractal algebra, and cannot be reproduced by a
+weaker model?**
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest

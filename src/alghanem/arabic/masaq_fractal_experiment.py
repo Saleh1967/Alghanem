@@ -18,6 +18,21 @@
 **ولا ترخيصَ هنا**: النجاحُ شاهدٌ، والإخفاقُ شاهد، وضعفُ القوّة شاهد؛ وأقصى ما
 تبلغه الشواهدُ تجميعٌ في حزمةٍ بلا حكم (`ExperimentBeforeLicense`).
 
+**والشاهدُ لا يُسمّى دعمًا بنيويًّا ما دام نموذجٌ أضعفُ يبلغ المخرجَ عينَه**؛
+فصحّةُ المخرج ليست ضرورةَ البنية (`WeakerModelTieBlocksStructuralSupport`).
+والوقوفُ يُشتقّ من شروطه المُسجَّلة مجتمعةً، لا من الإغلاق وإعادة البناء وحدهما.
+
+وأربعةُ قيودٍ تحكم مادّةَ الشاهد:
+
+    WeakerModelTieBlocksStructuralSupport
+    RawOccurrence   ≠  NormalizedProjection
+    SourceWordNo    ≠  DerivedLocalPosition
+    HeldOut         ≠  Dropped
+
+ولا يُدَّعى هنا أنّ وحدةَ الكلمة لا تُردُّ إلى مقياس المقطع؛ فتلك دعوى لم تُقَس،
+والنموذجُ الأضعفُ يبلغ الكلمةَ بالوصل المباشر. والرفعُ التجريبيُّ يبقى مفتوحًا
+لأنّه يختبر الضرورةَ ولا يشهد بها.
+
 الاتّجاه: `arabic → fractal_experiment → fractal_generation`، ولا عكس.
 
 تسجيلٌ لا سلطة: لا ترخيصَ، ولا رتبةَ دائمة، ولا حكمَ كفاية.
@@ -25,7 +40,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Final
 
@@ -51,6 +66,7 @@ from ..fractal_experiment import (
     issue_experimental_lift_permit,
 )
 from ..fractal_generation import (
+    BranchAdjudicationDecision,
     BranchAdjudicationGate,
     BranchAssessment,
     BranchStanding,
@@ -67,6 +83,7 @@ from ..fractal_generation import (
     FractalScaleContract,
     FractalSeed,
     FractalTrace,
+    FractalTransition,
     FractalTransitionGate,
     FractalTransitionTraceStep,
     IdentityPreservingTransformationCandidate,
@@ -95,21 +112,38 @@ __all__ = [
     "ACCRETION_OPERATION",
     "ACCRETION_PATTERN",
     "GENERATOR_VISIBLE_COLUMNS",
+    "HELD_OUT_MASAQ_COLUMN_ABSENT",
     "HELD_OUT_READOUT_COLUMNS",
+    "HELD_OUT_IS_NOT_DROPPED",
+    "LOCAL_SEGMENT_POSITION_FIELD",
     "MASAQ_EXPERIMENT_ID",
     "MASAQ_PREREGISTRATION",
     "MASAQ_PREREGISTRATION_CONTENT_ID",
     "MASAQ_SUFFICIENCY_CONTRACT",
+    "RAW_OCCURRENCE_IS_NOT_NORMALIZED_PROJECTION",
     "SEGMENT_CLOSURE_CONTRACT",
     "SEGMENT_SCALE",
     "SEGMENT_SCALE_REF",
+    "SOURCE_WORD_NO_IS_NOT_DERIVED_LOCAL_POSITION",
+    "STRIP_SURFACE_TRANSFORMATION",
+    "UNRESOLVED_SCALE_NECESSITY_REASON",
+    "WEAKER_MODEL_TIES_FRACTAL_MODEL",
+    "WEAKER_MODEL_TIE_BLOCKS_STRUCTURAL_SUPPORT",
     "WORD_SCALE",
     "WORD_SCALE_REF",
+    "HeldOutMASAQAnnotation",
     "MasaqExperimentError",
     "MasaqExperimentReport",
+    "MasaqSegmentOccurrence",
     "MasaqWordInput",
+    "NegativeControlObservation",
+    "NormalizationTrace",
+    "StandingEvidence",
+    "WeakerModelObservation",
     "build_frozen_binding",
     "build_word_inputs",
+    "derive_standing",
+    "normalize_segment_surface",
     "read_masaq_word_inputs",
     "run_masaq_fractal_experiment",
 ]
@@ -136,6 +170,47 @@ HELD_OUT_READOUT_COLUMNS: Final[tuple[str, ...]] = (
 )
 """الحقولُ المحجوبةُ عن المُولِّد؛ تُقرأ بعد التشغيل ولا تدخل فيه."""
 
+LOCAL_SEGMENT_POSITION_FIELD: Final[str] = "LocalSegmentPosition"
+"""اسمُ الموضع المحلّيِّ المشتقّ؛ ولا يُكتَب تحت اسم عمود المصدر."""
+
+HELD_OUT_MASAQ_COLUMN_ABSENT: Final[str] = "HELD_OUT_COLUMN_ABSENT"
+"""عَلَمُ غيابِ العمود عن السجلّ؛ يُفرَّق به الغيابُ عن القيمة الفارغة."""
+
+STRIP_SURFACE_TRANSFORMATION: Final[str] = "strip_surface"
+"""اسمُ التحويل المُعلَن بين الصورة الخام وصورة المُولِّد."""
+
+WEAKER_MODEL_TIES_FRACTAL_MODEL: Final[str] = "WEAKER_MODEL_TIES_FRACTAL_MODEL"
+"""اسمُ البقيّة حين يبلغ النموذجُ الأضعفُ مخرجَ النموذج الفراكتاليِّ عينَه."""
+
+WEAKER_MODEL_TIE_BLOCKS_STRUCTURAL_SUPPORT: Final[str] = (
+    "WeakerModelTieBlocksStructuralSupport: إذا بلغ النموذجُ الأضعفُ المخرجَ "
+    "عينَه فلا تُسمَّ النتيجةُ دعمًا بنيويًّا؛ فصحّةُ المخرج ليست ضرورةَ البنية"
+)
+"""قانونُ الوقوف: تعادلُ الأضعف يمنع الدعمَ ولا يُفنِّد إعادةَ البناء."""
+
+RAW_OCCURRENCE_IS_NOT_NORMALIZED_PROJECTION: Final[str] = (
+    "RawOccurrence != NormalizedProjection: الصورةُ الخامُّ تبقى محفوظةً في "
+    "الشاهد، والتطبيعُ تحويلٌ مُعلَنٌ قابلٌ للتدقيق لا محوٌ للمادّة"
+)
+"""قانونُ المادّة: التحويلُ لا يُسقِط أصلَه."""
+
+SOURCE_WORD_NO_IS_NOT_DERIVED_LOCAL_POSITION: Final[str] = (
+    "SourceWordNo != DerivedLocalPosition: موضعُ المصدر يُحفَظ بعينه، "
+    "والموضعُ المحلّيُّ المشتقُّ يُسمّى باسمه ولا ينتحل اسمَ عمود المصدر"
+)
+"""قانونُ الموضع: لا يُعاد اختراعُ ``Word_No``."""
+
+HELD_OUT_IS_NOT_DROPPED: Final[str] = (
+    "HeldOut != Dropped: الحقولُ المحجوبةُ تُجمَّد كاملةً في الشاهد ولا تنزل "
+    "في مدخل المُولِّد؛ فحجبُها عن التوليد ليس إسقاطًا لها عن القراءة"
+)
+"""قانونُ الحجب: مفتاحُ الإجابة يُخفى ولا يُمزَّق."""
+
+UNRESOLVED_SCALE_NECESSITY_REASON: Final[str] = (
+    "ضرورةُ المقياس الأعلى تحت الاختبار، ولم تثبت عدمُ قابليّة الرَّدِّ في " "المقياس الجاري"
+)
+"""بقيّةٌ غيرُ حاسمة تحلُّ محلَّ دعوى عدم القابليّة للرَّدِّ قبل قياسها."""
+
 MASAQ_EXPERIMENT_ID: Final[str] = "experiment.masaq.segment_accretion"
 
 MASAQ_PREREGISTRATION: Final[Mapping[str, object]] = {
@@ -153,7 +228,24 @@ MASAQ_PREREGISTRATION: Final[Mapping[str, object]] = {
     "negative_control": (
         "عكسُ ترتيب المقاطع يجب أن يُخالف إعادةَ البناء إن تعدّدت المقاطع"
     ),
+    "negative_controls_are_runs": [
+        "يُشغَّل ضابطُ عكس الترتيب عبر مسار إعادة البناء عينِه لا مقارنةً نصّيّةً جانبيّة",
+        "يُشغَّل ضابطُ إسقاط مقطعٍ عبر مسار إعادة البناء عينِه ويُسجَّل مدخلُه وتحويلُه ومخرجُه",
+        "ضابطٌ لا يُحدِث فرقًا يُسجَّل عاجزًا عن التمييز ويُفضي إلى underpowered",
+    ],
     "weaker_model": "وصلُ المقاطع نصًّا بلا حركاتٍ فراكتاليّةٍ يبلغ الصورةَ نفسَها",
+    "weaker_model_tie_rule": (
+        "إذا بلغ النموذجُ الأضعفُ مخرجَ النموذج الفراكتاليِّ عينَه فالوقوفُ "
+        "underpowered لا observed_support، وتُسجَّل بقيّةٌ باسم "
+        + WEAKER_MODEL_TIES_FRACTAL_MODEL
+    ),
+    "irreducibility_is_not_asserted": (
+        "لا يُدَّعى في هذه المرحلة أنّ وحدةَ الكلمة لا تُردُّ إلى مقياس المقطع؛ "
+        "والرفعُ التجريبيُّ يختبر الضرورةَ ولا يشهد بها"
+    ),
+    "raw_occurrence_is_preserved": RAW_OCCURRENCE_IS_NOT_NORMALIZED_PROJECTION,
+    "source_word_no_is_preserved": SOURCE_WORD_NO_IS_NOT_DERIVED_LOCAL_POSITION,
+    "held_out_is_not_dropped": HELD_OUT_IS_NOT_DROPPED,
     "standing_vocabulary": [
         "observed_support",
         "observed_refutation",
@@ -276,23 +368,202 @@ class MasaqExperimentError(ValueError):
 
 
 @dataclass(frozen=True, slots=True)
+class NormalizationTrace:
+    """أثرُ التطبيع: التحويلُ، والأصلُ، والناتجُ، وما حُذِف بمواضعه."""
+
+    transformation: str
+    raw: str
+    normalized: str
+    removed: tuple[tuple[int, str], ...]
+
+    def __post_init__(self) -> None:
+        if not self.transformation.strip():
+            raise MasaqExperimentError("اسمُ التحويل نصٌّ غير فارغ")
+
+    def replay(self) -> str:
+        """أعِد بناءَ الناتج من الأصل بحذف المواضع المُسجَّلة؛ تدقيقًا لا ثقة."""
+
+        removed_positions = {position for position, _ in self.removed}
+        return "".join(
+            character
+            for position, character in enumerate(self.raw)
+            if position not in removed_positions
+        )
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """محتوى الأثر للبصمة؛ الحذفُ مُسمًّى بمواضعه لا مطويّ."""
+
+        return {
+            "transformation": self.transformation,
+            "raw": self.raw,
+            "normalized": self.normalized,
+            "removed": [[position, character] for position, character in self.removed],
+        }
+
+
+def normalize_segment_surface(raw: str) -> NormalizationTrace:
+    """طبِّع صورةَ المقطع تحويلًا مُعلَنًا يحفظ أصلَه وما حُذِف منه بمواضعه."""
+
+    stripped = (raw or "").strip()
+    normalized = strip_surface(raw)
+    removed: list[tuple[int, str]] = []
+    cursor = 0
+    for position, character in enumerate(stripped):
+        if cursor < len(normalized) and normalized[cursor] == character:
+            cursor += 1
+            continue
+        removed.append((position, character))
+    if cursor != len(normalized):
+        raise MasaqExperimentError(
+            "التطبيعُ ليس حذفًا خالصًا؛ ولا يُطوى تحويلٌ لا يُعاد بناؤه"
+        )
+    return NormalizationTrace(
+        transformation=STRIP_SURFACE_TRANSFORMATION,
+        raw=stripped,
+        normalized=normalized,
+        removed=tuple(removed),
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class HeldOutMASAQAnnotation:
+    """وسومُ MASAQ المحجوبةُ عن المُولِّد، مُجمَّدةً كاملةً للقراءة بعد التشغيل."""
+
+    values: tuple[tuple[str, str], ...]
+
+    def __post_init__(self) -> None:
+        names = tuple(name for name, _ in self.values)
+        if names != HELD_OUT_READOUT_COLUMNS:
+            raise MasaqExperimentError(
+                "الوسومُ المحجوبةُ تُجمَّد بأعمدتها الخمسة بترتيبها؛ و"
+                + HELD_OUT_IS_NOT_DROPPED
+            )
+
+    @classmethod
+    def from_record(cls, record: Mapping[str, str]) -> HeldOutMASAQAnnotation:
+        """اقرأ الأعمدةَ الخمسةَ من سجلٍّ واحد؛ والغيابُ يُسمّى ولا يُخلَط بالفراغ."""
+
+        return cls(
+            values=tuple(
+                (
+                    name,
+                    record[name] if name in record else HELD_OUT_MASAQ_COLUMN_ABSENT,
+                )
+                for name in HELD_OUT_READOUT_COLUMNS
+            )
+        )
+
+    def value_of(self, column: str) -> str:
+        """قيمةُ عمودٍ محجوبٍ بعينه؛ قراءةٌ بعد التشغيل لا مدخلٌ فيه."""
+
+        for name, value in self.values:
+            if name == column:
+                return value
+        raise MasaqExperimentError(f"العمودُ «{column}» ليس من المحجوبة الخمسة")
+
+    def as_canonical_content(self) -> dict[str, str]:
+        """محتوى الوسوم المحجوبة للبصمة؛ مُجمَّدةٌ وإن حُجِبت."""
+
+        return {name: value for name, value in self.values}
+
+
+@dataclass(frozen=True, slots=True)
+class MasaqSegmentOccurrence:
+    """سجلُّ مقطعٍ واحدٍ من MASAQ: موضعُه الأصليُّ، وصورتُه الخامُّ، وتطبيعُها."""
+
+    source_word_no: str
+    local_segment_position: int
+    raw_segment_surface: str
+    normalization: NormalizationTrace
+    held_out: HeldOutMASAQAnnotation
+
+    def __post_init__(self) -> None:
+        if self.local_segment_position < 0:
+            raise MasaqExperimentError("الموضعُ المحلّيُّ عددٌ غيرُ سالب")
+        if not isinstance(self.normalization, NormalizationTrace):
+            raise MasaqExperimentError("أثرُ التطبيع من نوعه")
+        if not isinstance(self.held_out, HeldOutMASAQAnnotation):
+            raise MasaqExperimentError("الوسومُ المحجوبةُ من نوعها")
+
+    @property
+    def normalized_segment_surface(self) -> str:
+        """الصورةُ التي يراها المُولِّد؛ إسقاطٌ مُعلَنٌ لا أصلٌ مُنتحَل."""
+
+        return self.normalization.normalized
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """محتوى السجلّ كاملًا للبصمة: الخامُّ والمُطبَّعُ والموضعان والوسوم."""
+
+        return {
+            SEGMENT_INDEX_COLUMN: self.source_word_no,
+            LOCAL_SEGMENT_POSITION_FIELD: self.local_segment_position,
+            "raw_segment_surface": self.raw_segment_surface,
+            "normalized_segment_surface": self.normalized_segment_surface,
+            "normalization": self.normalization.as_canonical_content(),
+            "held_out": self.held_out.as_canonical_content(),
+        }
+
+
+@dataclass(frozen=True, slots=True)
 class MasaqWordInput:
-    """كلمةٌ مُجمَّدةٌ من MASAQ: موضعُها، ومقاطعُها، ووسومُها المحجوبةُ عن المُولِّد."""
+    """كلمةٌ مُجمَّدةٌ من MASAQ: موضعُها، وسجلّاتُ مقاطعها بخامِّها ووسومِها المحجوبة."""
 
     input_id: str
     sura_no: str
     verse_no: str
     word_key: str
-    segments: tuple[str, ...]
-    held_out_tags: tuple[str, ...]
+    occurrences: tuple[MasaqSegmentOccurrence, ...]
 
     def __post_init__(self) -> None:
         if not self.input_id.strip():
             raise MasaqExperimentError("مُعرِّفُ الكلمة نصٌّ غير فارغ")
-        if not self.segments:
+        if not self.occurrences:
             raise MasaqExperimentError("الكلمةُ مقطعٌ واحدٌ فأكثر")
-        if len(self.held_out_tags) != len(self.segments):
-            raise MasaqExperimentError("عددُ الوسوم المحجوبة عددُ المقاطع")
+        positions = tuple(
+            occurrence.local_segment_position for occurrence in self.occurrences
+        )
+        if positions != tuple(range(len(self.occurrences))):
+            raise MasaqExperimentError(
+                "المواضعُ المحلّيّةُ متتابعةٌ من الصفر؛ و"
+                + SOURCE_WORD_NO_IS_NOT_DERIVED_LOCAL_POSITION
+            )
+
+    @property
+    def segments(self) -> tuple[str, ...]:
+        """صورُ المقاطع مُطبَّعةً؛ مُشتَقّةٌ من السجلّات لا مكتوبةٌ بدلًا عنها."""
+
+        return tuple(
+            occurrence.normalized_segment_surface for occurrence in self.occurrences
+        )
+
+    @property
+    def raw_segments(self) -> tuple[str, ...]:
+        """صورُ المقاطع كما وردت في MASAQ قبل أيِّ تحويل."""
+
+        return tuple(occurrence.raw_segment_surface for occurrence in self.occurrences)
+
+    @property
+    def source_word_numbers(self) -> tuple[str, ...]:
+        """قيمُ ``Word_No`` الأصليّةُ بأعيانها؛ لا تُعاد صياغتُها."""
+
+        return tuple(occurrence.source_word_no for occurrence in self.occurrences)
+
+    @property
+    def local_segment_positions(self) -> tuple[int, ...]:
+        """المواضعُ المحلّيّةُ المشتقّة؛ حقلٌ باسمه لا انتحالٌ لاسم المصدر."""
+
+        return tuple(
+            occurrence.local_segment_position for occurrence in self.occurrences
+        )
+
+    @property
+    def held_out_tags(self) -> tuple[str, ...]:
+        """وسومُ ``Morph_Tag`` المحجوبة؛ مُشتَقّةٌ من الوسوم الخمسة المُجمَّدة."""
+
+        return tuple(
+            occurrence.held_out.value_of(MORPH_TAG_COLUMN)
+            for occurrence in self.occurrences
+        )
 
     @property
     def joined_surface(self) -> str:
@@ -301,15 +572,13 @@ class MasaqWordInput:
         return "".join(self.segments)
 
     def generator_projection(self) -> dict[str, object]:
-        """ما يراه المُولِّد: موضعُ الكلمة ومقاطعُها، ولا وَسْمَ فيه."""
+        """ما يراه المُولِّد: موضعُ الكلمة وصورُ مقاطعها بموضعها الأصليّ، ولا وَسْمَ فيه."""
 
         return {
             SURA_COLUMN: self.sura_no,
             VERSE_COLUMN: self.verse_no,
             WORD_KEY_COLUMN: self.word_key,
-            SEGMENT_INDEX_COLUMN: tuple(
-                str(index) for index in range(len(self.segments))
-            ),
+            SEGMENT_INDEX_COLUMN: self.source_word_numbers,
             SEGMENTED_WORD_COLUMN: self.segments,
         }
 
@@ -321,8 +590,9 @@ class MasaqWordInput:
             SURA_COLUMN: self.sura_no,
             VERSE_COLUMN: self.verse_no,
             WORD_KEY_COLUMN: self.word_key,
-            "segments": list(self.segments),
-            "held_out_tags": list(self.held_out_tags),
+            "occurrences": [
+                occurrence.as_canonical_content() for occurrence in self.occurrences
+            ],
         }
 
     @property
@@ -356,10 +626,19 @@ def build_word_inputs(
     words: list[MasaqWordInput] = []
     for key in order:
         rows = grouped[key]
-        segments = tuple(
-            strip_surface(row.get(SEGMENTED_WORD_COLUMN, "")) for row in rows
+        occurrences = tuple(
+            MasaqSegmentOccurrence(
+                source_word_no=row.get(SEGMENT_INDEX_COLUMN, ""),
+                local_segment_position=position,
+                raw_segment_surface=row.get(SEGMENTED_WORD_COLUMN, ""),
+                normalization=normalize_segment_surface(
+                    row.get(SEGMENTED_WORD_COLUMN, "")
+                ),
+                held_out=HeldOutMASAQAnnotation.from_record(row),
+            )
+            for position, row in enumerate(rows)
         )
-        if any(not segment for segment in segments):
+        if any(not occurrence.normalized_segment_surface for occurrence in occurrences):
             continue
         words.append(
             MasaqWordInput(
@@ -367,8 +646,7 @@ def build_word_inputs(
                 sura_no=key[0],
                 verse_no=key[1],
                 word_key=key[2],
-                segments=segments,
-                held_out_tags=tuple(row.get(MORPH_TAG_COLUMN, "") for row in rows),
+                occurrences=occurrences,
             )
         )
     return tuple(words)
@@ -434,10 +712,9 @@ def _identity_of(word: MasaqWordInput) -> FractalIdentity:
     )
 
 
-def _content_upto(word: MasaqWordInput, index: int) -> tuple[tuple[str, str], ...]:
+def _content_of(segments: Sequence[str], upto: int) -> tuple[tuple[str, str], ...]:
     return tuple(
-        (f"segment.{position}", word.segments[position])
-        for position in range(index + 1)
+        (f"segment.{position}", segments[position]) for position in range(upto + 1)
     )
 
 
@@ -458,6 +735,112 @@ def _conformant(
 
 
 @dataclass(frozen=True, slots=True)
+class WeakerModelObservation:
+    """تشغيلُ النموذج الأضعف على المدخل عينِه، ومقارنتُه بمخرج الفركتال."""
+
+    model_id: str
+    description: str
+    output: str
+    fractal_output: str
+
+    @property
+    def ties(self) -> bool:
+        """أبلَغ الأضعفُ مخرجَ الفركتال عينَه؟ فإن بلغه امتنع الدعمُ البنيويّ."""
+
+        return self.output == self.fractal_output
+
+    def as_statement(self) -> str:
+        """رصدُ النموذج الأضعف نصًّا يدخل الشاهد؛ تسجيلٌ لا حكم."""
+
+        verdict = (
+            "بلغ المخرجَ عينَه فلم يتميّز الفركتال" if self.ties else "لم يبلغ المخرجَ عينَه"
+        )
+        return f"{self.description}: {verdict}"
+
+
+@dataclass(frozen=True, slots=True)
+class NegativeControlObservation:
+    """ضابطٌ سالبٌ شُغِّل عبر مسار التشغيل عينِه؛ مدخلُه وتحويلُه ومخرجُه مُسجَّلة."""
+
+    control_id: str
+    transformation: str
+    control_input_content_id: str
+    control_input_description: str
+    output: str
+    reference_output: str
+    preregistered_expectation: str
+
+    @property
+    def differs(self) -> bool:
+        """أخالف مخرجُ الضابط مرجعَه؟"""
+
+        return self.output != self.reference_output
+
+    @property
+    def discriminates(self) -> bool:
+        """أميَّز الضابطُ فعلًا، أم كان عاجزًا عن التمييز في هذه الحال؟"""
+
+        return self.differs
+
+    def as_statement(self) -> str:
+        """رصدُ الضابط نصًّا يدخل الشاهد؛ شاهدُ تشغيلٍ لا مقارنةٌ جانبيّة."""
+
+        verdict = (
+            "خالف إعادةَ البناء كما سُجِّل مُسبَقًا"
+            if self.differs
+            else "لم يُحدِث فرقًا؛ فالضابطُ عاجزٌ عن التمييز هنا"
+        )
+        return (
+            f"{self.control_id} [{self.transformation}] "
+            f"على {self.control_input_description} "
+            f"(بصمةُ المدخل {self.control_input_content_id}): {verdict}"
+        )
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """محتوى الضابط للبصمة؛ مدخلٌ وتحويلٌ ومخرجٌ ومقارنة."""
+
+        return {
+            "control_id": self.control_id,
+            "transformation": self.transformation,
+            "control_input_content_id": self.control_input_content_id,
+            "control_input_description": self.control_input_description,
+            "output": self.output,
+            "reference_output": self.reference_output,
+            "preregistered_expectation": self.preregistered_expectation,
+            "differs": self.differs,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class StandingEvidence:
+    """شروطُ الوقوف المُسجَّلةُ مُسبَقًا، مرصودةً واحدًا واحدًا قبل اشتقاق الحكم."""
+
+    reconstruction_passed: bool
+    closure_passed: bool
+    negative_controls_behave_as_preregistered: bool
+    weaker_model_ties: bool
+    blocking_residual_present: bool
+    run_failed: bool = False
+
+
+def derive_standing(evidence: StandingEvidence) -> ExperimentalStanding:
+    """اشتقّ الوقوفَ من شروطه المُسجَّلة؛ ولا يكفي الإغلاقُ وإعادةُ البناء للدعم."""
+
+    if evidence.run_failed:
+        return ExperimentalStanding.RUN_FAILURE
+    if not evidence.reconstruction_passed:
+        return ExperimentalStanding.OBSERVED_REFUTATION
+    if (
+        not evidence.closure_passed
+        or not evidence.negative_controls_behave_as_preregistered
+        or evidence.weaker_model_ties
+        or evidence.blocking_residual_present
+    ):
+        return ExperimentalStanding.UNDERPOWERED
+    return ExperimentalStanding.OBSERVED_SUPPORT
+
+
+@dataclass(frozen=True, slots=True)
 class MasaqExperimentReport:
     """قراءةُ تشغيلٍ تجريبيٍّ واحدٍ على MASAQ؛ شواهدُ وحزمةٌ، بلا ترخيصٍ ولا حكم."""
 
@@ -469,6 +852,8 @@ class MasaqExperimentReport:
     witnesses: tuple[FractalExperimentalWitness, ...]
     experimental_seed_ids: tuple[str, ...]
     bundle: WitnessBundle
+    negative_controls: tuple[NegativeControlObservation, ...] = ()
+    weaker_model_observations: tuple[WeakerModelObservation, ...] = ()
 
     @property
     def standings(self) -> dict[str, int]:
@@ -482,6 +867,177 @@ class MasaqExperimentReport:
         return counted
 
 
+@dataclass(frozen=True, slots=True)
+class _AccretionRun:
+    """مخرجُ مسار الضمّ الواحد؛ يسلكه الفرعُ الأصليُّ والضوابطُ السالبةُ سواءً."""
+
+    first_content_id: str
+    node: FractalNode
+    trace: FractalTrace | None
+    adjudication: BranchAdjudicationDecision | None
+    readout: str
+
+
+_TransitionRecorder = Callable[[FractalTransition, FractalTrace], None]
+"""تسجيلُ الانتقال في السجلّ التجريبيّ؛ يُمرَّر للفرع الأصليِّ ويُمنَع عن الضوابط."""
+
+
+def _readout(node: FractalNode) -> str:
+    """قراءةُ مخرج العقدة صورةً موصولة؛ عقدُ قراءةٍ واحدٌ للأصل وللضوابط."""
+
+    return "".join(value for _, value in node.content)
+
+
+def _accrete(
+    *,
+    subject_id: str,
+    segments: Sequence[str],
+    identity: FractalIdentity,
+    carrier_id: str,
+    evidence_ref: str,
+    recorder: _TransitionRecorder | None,
+) -> _AccretionRun:
+    """شغِّل ضمَّ المقاطع بالترتيب عبر بوّاباتها؛ مسارٌ واحدٌ لا مسارٌ للضابط آخر."""
+
+    node = FractalNode.from_seed(
+        FractalSeed(
+            seed_id=f"seed.{subject_id}",
+            identity=identity,
+            carrier_id=carrier_id,
+            content=_content_of(segments, 0),
+        ),
+        node_id=f"node.{subject_id}.0",
+    )
+    first_content_id = node.content_id
+    steps: list[FractalTransitionTraceStep] = []
+    adjudication: BranchAdjudicationDecision | None = None
+    for index in range(1, len(segments)):
+        candidate_id = f"accretion.{subject_id}.{index}"
+        candidate = ExpansionCandidate(
+            candidate_id=candidate_id,
+            source=node.as_ref(),
+            pattern_ref=PATTERN_REF,
+            declared_difference=DeclaredDifference(
+                difference_id=f"difference.{candidate_id}",
+                dimension="segment_accretion",
+                description=f"ضمُّ المقطع رقم {index} إلى محتوى الكلمة",
+                preserved_invariants=PRESERVED,
+            ),
+            proposal_provenance=PROVENANCE,
+        )
+        movement = IdentityPreservingTransformationCandidate(
+            conformant=_conformant(candidate, node),
+            carrier_id=carrier_id,
+            identity_before=identity,
+            identity_after=identity,
+            preserved_invariants=PRESERVED,
+            output_content=_content_of(segments, index),
+        )
+        adjudication = BranchAdjudicationGate.adjudicate(
+            expansion_set=ExpansionSet(source=node.as_ref(), candidates=(candidate,)),
+            assessments=(
+                BranchAssessment(
+                    candidate_id=candidate_id,
+                    standing=BranchStanding.ADMITTED,
+                    reason="ضمُّ المقطع التالي مُطابِقٌ لعقد النمط مع حفظ عين الهويّة",
+                    residuals=(),
+                    movement=movement,
+                ),
+            ),
+            gate_id="gate.adjudication.masaq.segment",
+        )
+        decision = FractalTransitionGate.open_transition(
+            adjudication=adjudication,
+            candidate_id=candidate_id,
+            source_node=node,
+            transition_id=f"transition.{candidate_id}",
+            gate_id="gate.transition.masaq.segment",
+            evidence_ref=evidence_ref,
+            output_node_id=f"node.{subject_id}.{index}",
+        )
+        steps.append(decision.trace_step)
+        if recorder is not None:
+            recorder(decision.transition, FractalTrace(steps=tuple(steps)))
+        node = decision.output_node
+    return _AccretionRun(
+        first_content_id=first_content_id,
+        node=node,
+        trace=FractalTrace(steps=tuple(steps)) if steps else None,
+        adjudication=adjudication,
+        readout=_readout(node),
+    )
+
+
+def _weaker_model_run(
+    segments: Sequence[str], *, fractal_output: str
+) -> WeakerModelObservation:
+    """شغِّل النموذجَ الأضعف: وصلُ المقاطع نصًّا بلا حركاتٍ فراكتاليّة."""
+
+    return WeakerModelObservation(
+        model_id="weaker_model.direct_concatenation",
+        description="وصلُ المقاطع نصًّا بلا حركاتٍ فراكتاليّة",
+        output="".join(segments),
+        fractal_output=fractal_output,
+    )
+
+
+def _control_input_content_id(segments: Sequence[str]) -> str:
+    return canonical_digest(canonical_bytes(list(segments)))
+
+
+def _negative_controls(
+    word: MasaqWordInput,
+    *,
+    identity: FractalIdentity,
+    carrier_id: str,
+    evidence_ref: str,
+    reference_output: str,
+) -> tuple[NegativeControlObservation, ...]:
+    """شغِّل الضوابطَ السالبةَ عبر مسار الضمّ عينِه، لا مقارنةً نصّيّةً جانبيّة."""
+
+    controls: list[NegativeControlObservation] = []
+    reversed_segments = tuple(reversed(word.segments))
+    dropped_segments = word.segments[:-1]
+    for suffix, transformation, transformed, description, expectation in (
+        (
+            "reversed",
+            "reversed_order",
+            reversed_segments,
+            "المقاطعُ معكوسةَ الترتيب",
+            "يُتوقَّع أن يُخالف مخرجُه إعادةَ البناء",
+        ),
+        (
+            "dropped",
+            "dropped_segment",
+            dropped_segments,
+            "المقاطعُ بإسقاط آخرها",
+            "يُتوقَّع أن يُخالف مخرجُه إعادةَ البناء",
+        ),
+    ):
+        if not transformed:
+            continue
+        control_run = _accrete(
+            subject_id=f"{word.input_id}.control.{suffix}",
+            segments=transformed,
+            identity=identity,
+            carrier_id=carrier_id,
+            evidence_ref=evidence_ref,
+            recorder=None,
+        )
+        controls.append(
+            NegativeControlObservation(
+                control_id=f"control.{word.input_id}.{suffix}",
+                transformation=transformation,
+                control_input_content_id=_control_input_content_id(transformed),
+                control_input_description=description,
+                output=control_run.readout,
+                reference_output=reference_output,
+                preregistered_expectation=expectation,
+            )
+        )
+    return tuple(controls)
+
+
 def _witness_of_underpowered(
     word: MasaqWordInput, *, permit: ExperimentalRunPermit, entry: FrozenInputEntry
 ) -> FractalExperimentalWitness:
@@ -490,7 +1046,7 @@ def _witness_of_underpowered(
             seed_id=f"seed.{word.input_id}",
             identity=_identity_of(word),
             carrier_id=f"carrier.{word.input_id}",
-            content=_content_upto(word, 0),
+            content=_content_of(word.segments, 0),
         ),
         node_id=f"node.{word.input_id}.0",
     )
@@ -532,71 +1088,21 @@ def _run_one_word(
     permit: ExperimentalRunPermit,
     run_id: str,
     binding: FrozenExperimentBinding,
-) -> tuple[FractalExperimentalWitness, str | None]:
+) -> tuple[
+    FractalExperimentalWitness,
+    str | None,
+    tuple[NegativeControlObservation, ...],
+    tuple[WeakerModelObservation, ...],
+]:
     entry = binding.entry_for(word.input_id)
     binding.refuse_held_out_fields(word.generator_projection())
     if len(word.segments) < 2:
-        return _witness_of_underpowered(word, permit=permit, entry=entry), None
+        return _witness_of_underpowered(word, permit=permit, entry=entry), None, (), ()
 
     identity = _identity_of(word)
     carrier_id = f"carrier.{word.input_id}"
-    node = FractalNode.from_seed(
-        FractalSeed(
-            seed_id=f"seed.{word.input_id}",
-            identity=identity,
-            carrier_id=carrier_id,
-            content=_content_upto(word, 0),
-        ),
-        node_id=f"node.{word.input_id}.0",
-    )
-    first_content_id = node.content_id
-    steps: list[FractalTransitionTraceStep] = []
-    adjudication = None
-    for index in range(1, len(word.segments)):
-        candidate_id = f"accretion.{word.input_id}.{index}"
-        candidate = ExpansionCandidate(
-            candidate_id=candidate_id,
-            source=node.as_ref(),
-            pattern_ref=PATTERN_REF,
-            declared_difference=DeclaredDifference(
-                difference_id=f"difference.{candidate_id}",
-                dimension="segment_accretion",
-                description=f"ضمُّ المقطع رقم {index} إلى محتوى الكلمة",
-                preserved_invariants=PRESERVED,
-            ),
-            proposal_provenance=PROVENANCE,
-        )
-        movement = IdentityPreservingTransformationCandidate(
-            conformant=_conformant(candidate, node),
-            carrier_id=carrier_id,
-            identity_before=identity,
-            identity_after=identity,
-            preserved_invariants=PRESERVED,
-            output_content=_content_upto(word, index),
-        )
-        adjudication = BranchAdjudicationGate.adjudicate(
-            expansion_set=ExpansionSet(source=node.as_ref(), candidates=(candidate,)),
-            assessments=(
-                BranchAssessment(
-                    candidate_id=candidate_id,
-                    standing=BranchStanding.ADMITTED,
-                    reason="ضمُّ المقطع التالي مُطابِقٌ لعقد النمط مع حفظ عين الهويّة",
-                    residuals=(),
-                    movement=movement,
-                ),
-            ),
-            gate_id="gate.adjudication.masaq.segment",
-        )
-        decision = FractalTransitionGate.open_transition(
-            adjudication=adjudication,
-            candidate_id=candidate_id,
-            source_node=node,
-            transition_id=f"transition.{candidate_id}",
-            gate_id="gate.transition.masaq.segment",
-            evidence_ref=entry.content_id,
-            output_node_id=f"node.{word.input_id}.{index}",
-        )
-        steps.append(decision.trace_step)
+
+    def recorder(transition: FractalTransition, trace: FractalTrace) -> None:
         ExperimentalTransitionGate.record(
             authority=authority,
             permit=permit,
@@ -604,20 +1110,29 @@ def _run_one_word(
             binding=binding,
             frozen_input=entry,
             operation=ACCRETION_OPERATION,
-            transition=decision.transition,
-            trace=FractalTrace(steps=tuple(steps)),
+            transition=transition,
+            trace=trace,
             open_authority_gaps=(NO_LICENSING_AUTHORITY,),
         )
-        node = decision.output_node
 
-    trace = FractalTrace(steps=tuple(steps))
-    assert adjudication is not None
+    accretion = _accrete(
+        subject_id=word.input_id,
+        segments=word.segments,
+        identity=identity,
+        carrier_id=carrier_id,
+        evidence_ref=entry.content_id,
+        recorder=recorder,
+    )
+    node = accretion.node
+    trace = accretion.trace
+    assert trace is not None
+    assert accretion.adjudication is not None
     closure = ClosureGate.assess(
         candidate=ClosureCandidate(
             node=node,
             trace=trace,
-            adjudication=adjudication,
-            branch_transitions=(steps[-1],),
+            adjudication=accretion.adjudication,
+            branch_transitions=(trace.steps[-1],),
             contract=SEGMENT_CLOSURE_CONTRACT,
             coverage=(
                 ClosureRequirement(
@@ -632,7 +1147,7 @@ def _run_one_word(
                 ),
                 ClosureRequirement(
                     requirement_id="MRK.masaq.segment.branches",
-                    satisfied_by_content_id=first_content_id,
+                    satisfied_by_content_id=accretion.first_content_id,
                     reason="سجلُّ الفروع تامٌّ بأحكامه وبقاياه",
                 ),
             ),
@@ -643,17 +1158,23 @@ def _run_one_word(
             ),
             residuals=(
                 FractalResidual(
-                    kind=FractalResidualKind.IRREDUCIBLE_AT_CURRENT_SCALE,
+                    kind=FractalResidualKind.UNRESOLVED_DIFFERENCE,
                     subject_id=word.input_id,
-                    reason="وحدةُ الكلمة لا تُردّ إلى مقياس المقطع",
+                    reason=UNRESOLVED_SCALE_NECESSITY_REASON,
                 ),
             ),
         ),
         gate_id="gate.closure.masaq.segment",
     )
-    rebuilt = "".join(value for _, value in node.content)
-    reconstructed = rebuilt == word.joined_surface
-    reversed_surface = "".join(reversed(word.segments))
+    reconstructed = accretion.readout == word.joined_surface
+    weaker = _weaker_model_run(word.segments, fractal_output=accretion.readout)
+    controls = _negative_controls(
+        word,
+        identity=identity,
+        carrier_id=carrier_id,
+        evidence_ref=entry.content_id,
+        reference_output=accretion.readout,
+    )
     closed_node = closure.closed
     seed_id: str | None = None
     if closed_node is not None:
@@ -683,10 +1204,29 @@ def _run_one_word(
             and lift.experimental_seed is not None
         ):
             seed_id = lift.experimental_seed.seed_id
-    if closed_node is not None and reconstructed:
-        standing = ExperimentalStanding.OBSERVED_SUPPORT
-    else:
-        standing = ExperimentalStanding.OBSERVED_REFUTATION
+    base_residuals = closure.residuals if closed_node is None else closed_node.residuals
+    residuals = tuple(base_residuals)
+    if weaker.ties:
+        residuals += (
+            FractalResidual(
+                kind=FractalResidualKind.UNRESOLVED_DIFFERENCE,
+                subject_id=word.input_id,
+                reason=(
+                    f"{WEAKER_MODEL_TIES_FRACTAL_MODEL}: "
+                    + WEAKER_MODEL_TIE_BLOCKS_STRUCTURAL_SUPPORT
+                ),
+            ),
+        )
+    standing = derive_standing(
+        StandingEvidence(
+            reconstruction_passed=reconstructed,
+            closure_passed=closed_node is not None,
+            negative_controls_behave_as_preregistered=bool(controls)
+            and all(control.discriminates for control in controls),
+            weaker_model_ties=weaker.ties,
+            blocking_residual_present=any(residual.blocking for residual in residuals),
+        )
+    )
     witness = FractalExperimentalWitness(
         witness_id=f"witness.{run_id}.{word.input_id}",
         experiment_id=permit.experiment_id,
@@ -698,7 +1238,7 @@ def _run_one_word(
         source_scale=SEGMENT_SCALE_REF,
         pattern_ref=PATTERN_REF,
         target_scale=WORD_SCALE_REF if seed_id is not None else None,
-        identity_before=first_content_id,
+        identity_before=accretion.first_content_id,
         identity_after=node.content_id,
         movement_kind="identity_preserving_transformation",
         observed_difference=f"ضُمَّ {len(word.segments) - 1} مقطعًا بحركاتٍ متتابعة",
@@ -707,20 +1247,23 @@ def _run_one_word(
             if reconstructed
             else "إعادةُ البناء خالفت الصورةَ المُجمَّدة"
         ),
-        closure_observation=(f"حالُ الإغلاق عند مقياس المقطع: {closure.status.value}"),
-        preserved_invariants_observed=PRESERVED,
-        weaker_model_observations=(
-            "وصلُ المقاطع نصًّا بلا حركاتٍ فراكتاليّةٍ يبلغ الصورةَ عينَها",
+        closure_observation=(
+            f"حالُ الإغلاق عند مقياس المقطع: {closure.status.value}"
+            + (
+                "؛ والرفعُ التجريبيُّ وقع لاختبار ضرورة مقياس الكلمة لا لإثباتها"
+                if seed_id is not None
+                else ""
+            )
         ),
-        negative_control_observations=(
-            "عكسُ ترتيب المقاطع خالف الصورةَ المُجمَّدة"
-            if reversed_surface != word.joined_surface
-            else "عكسُ ترتيب المقاطع لم يُحدِث فرقًا؛ فالضابطُ السالبُ غيرُ فعّالٍ هنا",
+        preserved_invariants_observed=PRESERVED,
+        weaker_model_observations=(weaker.as_statement(),),
+        negative_control_observations=tuple(
+            control.as_statement() for control in controls
         ),
         counterexample_observations=(
             () if reconstructed else (f"كلمةٌ خالفت إعادةُ بناؤها: {word.input_id}",)
         ),
-        residuals=closure.residuals if closed_node is None else closed_node.residuals,
+        residuals=residuals,
         authority_gaps=(
             NO_LICENSING_AUTHORITY,
             NO_SEMANTIC_AUTHORITY_IN_EXPERIMENT,
@@ -728,7 +1271,7 @@ def _run_one_word(
         ),
         trace=trace,
     )
-    return witness, seed_id
+    return witness, seed_id, controls, (weaker,)
 
 
 def run_masaq_fractal_experiment(
@@ -760,9 +1303,11 @@ def run_masaq_fractal_experiment(
     permit = authority.activate(permit)
     witnesses: list[FractalExperimentalWitness] = []
     seed_ids: list[str] = []
+    controls: list[NegativeControlObservation] = []
+    weaker_models: list[WeakerModelObservation] = []
     for word in words:
         try:
-            witness, seed_id = _run_one_word(
+            witness, seed_id, word_controls, word_weaker = _run_one_word(
                 word,
                 authority=authority,
                 permit=permit,
@@ -796,6 +1341,10 @@ def run_masaq_fractal_experiment(
                 authority_gaps=(NO_LICENSING_AUTHORITY,),
             )
             seed_id = None
+            word_controls = ()
+            word_weaker = ()
+        controls.extend(word_controls)
+        weaker_models.extend(word_weaker)
         witnesses.append(witness)
         if seed_id is not None:
             seed_ids.append(seed_id)
@@ -817,4 +1366,6 @@ def run_masaq_fractal_experiment(
         witnesses=tuple(witnesses),
         experimental_seed_ids=tuple(seed_ids),
         bundle=bundle,
+        negative_controls=tuple(controls),
+        weaker_model_observations=tuple(weaker_models),
     )

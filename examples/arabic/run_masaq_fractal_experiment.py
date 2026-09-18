@@ -31,6 +31,7 @@ from alghanem.arabic.masaq_fractal_experiment import (
     HELD_OUT_READOUT_COLUMNS,
     MASAQ_PREREGISTRATION_CONTENT_ID,
     MASAQ_SUFFICIENCY_CONTRACT,
+    WEAKER_MODEL_TIE_BLOCKS_STRUCTURAL_SUPPORT,
     MasaqExperimentError,
     read_masaq_word_inputs,
     run_masaq_fractal_experiment,
@@ -73,6 +74,7 @@ def main() -> int:
         "sufficiency contract (declaration only): "
         f"{MASAQ_SUFFICIENCY_CONTRACT.content_id}"
     )
+    print(WEAKER_MODEL_TIE_BLOCKS_STRUCTURAL_SUPPORT)
     print(f"generator sees: {', '.join(GENERATOR_VISIBLE_COLUMNS)}")
     print(f"held out of the generator: {', '.join(HELD_OUT_READOUT_COLUMNS)}")
 
@@ -95,6 +97,15 @@ def main() -> int:
     for standing, count in report.standings.items():
         print(f"    [{standing}] {count}")
     print(f"[experimental seeds] {len(report.experimental_seed_ids)}")
+    tied = sum(
+        1 for observation in report.weaker_model_observations if observation.ties
+    )
+    print(f"[weaker model] runs={len(report.weaker_model_observations)} tied={tied}")
+    inert = sum(1 for control in report.negative_controls if not control.discriminates)
+    print(
+        f"[negative controls] runs={len(report.negative_controls)} "
+        f"failed to discriminate={inert}"
+    )
     for witness in report.witnesses[:8]:
         print(
             f"    {witness.witness_id}: {witness.standing.value} — "
@@ -129,6 +140,12 @@ def main() -> int:
         print("error: a permanent next scale seed appeared", file=sys.stderr)
         return 1
     print("the run produced witnesses under a temporary authority, and no license")
+    if tied:
+        print(
+            "a weaker model tied the fractal run on those words: this is an "
+            "informative result, not a failure — the open question is which "
+            "transformation concatenation cannot reproduce"
+        )
     return 0
 
 
