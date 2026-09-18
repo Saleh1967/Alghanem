@@ -4755,6 +4755,37 @@ identity, not its implementation: one imported name, no construction through
 since no birth gate exists at this stage. The named laws are collected in
 `docs/CONSTITUTION.md` under `G0.ONT-2`.
 
+Up to that point nothing in the repository *runs*. `src/alghanem/execution/`
+closes the smallest gap that is still non-trivial: a fully declared case is
+carried through the real chain `PK₀ → O₀ → O_L² → ExistenceLineage → Nisbah_v3`
+and emits an auditable, replayable `PASS`, `BLOCK` or `DEFER`. The product is a
+licensing and audit engine, not a model of language — there is no Arabic
+material here, no parser, and nothing that turns prose into meaning. The input
+document is an inert *candidate declaration*: it may name identifiers, digests
+and closed-vocabulary members, but it may not carry a derived reference, a
+licensed role, a lineage or a verdict. All authority is re-derived through the
+existing `of(...)` doors, and a document from which no case can be constituted
+yields an `InputValidation` rather than a verdict, because a malformed input is
+not a judgment against the case.
+
+Three separations make the verdict readable. A standing is five-valued, not
+three: proved true, proved violated, evidence incomplete, *check blocked by a
+prior law*, and *no claim was ever made*. The last two do not bear on the
+verdict, and they differ causally — a case blocked by origin mixture must not be
+displayed as one with missing evidence, and an undeclared identity is never read
+as an identity that agreed. Judgment also precedes construction: the `v3`
+signature is built only after a provisional `PASS`, since its constructor
+refuses origin mixture and would otherwise issue the verdict itself with no
+readable trace. And replay runs from the declaration, not from a digest — a
+digest cannot be inverted, so the envelope carries the full document bound by
+`Digest(document) == core.input_digest`, while `execution_digest` lives outside
+the core it measures. The law set is frozen and ordered, and its digest is part
+of every result's identity, so an old verdict is never silently re-read under a
+newer set. No clock, randomness or filesystem path enters the result: the same
+declaration under the same laws reproduces the same verdict and the same trace,
+byte for byte. The named laws are collected in `docs/CONSTITUTION.md` under
+`G0.RUN-0`.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest

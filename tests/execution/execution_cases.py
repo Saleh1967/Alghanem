@@ -155,7 +155,9 @@ def valid_document(base_id: str = "base.A", general_id: str = "general.A") -> Do
                         "function": "predicate_role",
                         "read_from": "قراءةٌ مُسجَّلة",
                         "condition_base_id": base_id,
-                        "condition_place": PriorConditionKind.RELATION_POSSIBILITY.value,
+                        "condition_place": (
+                            PriorConditionKind.RELATION_POSSIBILITY.value
+                        ),
                     },
                     {
                         "license_id": "license.term",
@@ -191,9 +193,7 @@ def valid_document(base_id: str = "base.A", general_id: str = "general.A") -> Do
                         "position": 1,
                         "condition_site": {
                             "base_id": base_id,
-                            "place": (
-                                PriorConditionKind.ATTRIBUTE_POSSIBILITY.value
-                            ),
+                            "place": (PriorConditionKind.ATTRIBUTE_POSSIBILITY.value),
                         },
                     },
                     {
