@@ -24,11 +24,13 @@ from alghanem.fractal_generation import FractalResidual
 
 from .laws import (
     NO_FORCED_WINNER_AMONG_SHAPE_PARTITIONS,
+    NO_POSITIVE_STRUCTURE_FROM_NEUTRAL_INPUT,
     NO_SILENT_DROPPED_SLOT,
     SHAPE_PARTITION_HYPOTHESIS_IS_NOT_A_ROOT_CANDIDATE,
     SHAPE_PARTITION_HYPOTHESIS_IS_NOT_A_WEIGHT_CANDIDATE,
     STRUCTURAL_BASE_CASE_IS_NOT_A_LINGUISTIC_ROOT_PROOF,
     STRUCTURAL_PART_IS_NOT_A_SUBSTRING,
+    THE_PART_HAS_ITS_OWN_IDENTITY,
     ZERO_ONE_BOUND,
     OutputContractComponent,
     StructuralDalError,
@@ -36,6 +38,7 @@ from .laws import (
 from .residual import (
     PromotionStanding,
     ResidualReading,
+    neutral_start_residual,
     promotion_standing_of,
     read_residuals,
     unassigned_role_basis_residual,
@@ -58,11 +61,22 @@ __all__ = [
 
 
 class SlotRole(Enum):
-    """أدوارُ الخانات؛ مفردةٌ مغلقةٌ لا تُزاد إلّا بسلطةٍ تُفتَح."""
+    """أدوارُ الخانات؛ مفردةٌ مغلقةٌ لا تُزاد إلّا بسلطةٍ تُفتَح.
 
+    و`UNASSIGNED` ليست دورًا رابعًا بل غيابُ الدور مُصرَّحًا: بها يكون المدخلُ
+    محايدًا فعلًا، ولا يُنتِج الحيادُ دورًا إيجابيًّا من نفسه.
+    """
+
+    UNASSIGNED = "unassigned"
     CORE = "core"
     TRANSFORM = "transform"
     RESIDUAL = "residual"
+
+    @property
+    def is_positive(self) -> bool:
+        """هل هذا الدورُ إيجابيٌّ يحتاج أساسًا مُبرهنًا؟"""
+
+        return self is not SlotRole.UNASSIGNED
 
 
 class PartWholeRelation(Enum):
@@ -94,6 +108,12 @@ class ShapePartitionHypothesis:
         """عددُ الخانات التي تُسنِد إليها الفرضيّةُ أدوارًا."""
 
         return len(self.roles)
+
+    @property
+    def assigns_a_positive_role(self) -> bool:
+        """هل أسندت الفرضيّةُ دورًا إيجابيًّا إلى خانةٍ واحدةٍ فأكثر؟"""
+
+        return any(role.is_positive for role in self.roles)
 
     def indices_of(self, role: SlotRole) -> tuple[int, ...]:
         """مواضعُ الخانات التي أخذت دورًا بعينه."""
@@ -160,9 +180,14 @@ class ShapePartitionHypothesisSet:
 
 @dataclass(frozen=True, slots=True)
 class StructuralPart:
-    """جزءٌ بنيويّ: دورٌ، وإسقاطٌ مرتّبٌ على خانات، ومِرساةُ أبٍ محفوظة."""
+    """جزءٌ بنيويّ: دورٌ، وإسقاطٌ مرتّب، ومِرساتُه الخاصّة، ومِرساةُ أبٍ محفوظة.
+
+    والمِرساتان لا تُخلَطان: `part_anchor_id` هويّةٌ، و`parent_anchor_id` نسبٌ؛
+    و`LineagePreservation != PartIdentityPreservation`.
+    """
 
     part_id: str
+    part_anchor_id: str
     parent_anchor_id: str
     role: SlotRole
     slot_map: tuple[StructuralSlot, ...]
@@ -170,10 +195,18 @@ class StructuralPart:
     def __post_init__(self) -> None:
         if not isinstance(self.part_id, str) or not self.part_id.strip():
             raise StructuralDalError("مُعرِّفُ الجزء نصٌّ غيرُ فارغ")
+        if not isinstance(self.part_anchor_id, str) or not (
+            self.part_anchor_id.strip()
+        ):
+            raise StructuralDalError("الجزءُ يحمل مِرساتَه الخاصّة نصًّا غيرَ فارغ")
         if not isinstance(self.parent_anchor_id, str) or not (
             self.parent_anchor_id.strip()
         ):
             raise StructuralDalError("الجزءُ يحمل مِرساةَ أبيه نصًّا غيرَ فارغ")
+        if self.part_anchor_id == self.parent_anchor_id:
+            raise StructuralDalError(
+                "مِرساةُ الجزء ليست عينَ مِرساة أبيه؛ و" + THE_PART_HAS_ITS_OWN_IDENTITY
+            )
         if not isinstance(self.role, SlotRole):
             raise StructuralDalError("دورُ الجزء عضوٌ في مفردته المغلقة")
         if not isinstance(self.slot_map, tuple):
@@ -197,6 +230,12 @@ class StructuralPart:
         """رموزُ خانات الجزء بترتيبها."""
 
         return tuple(slot.token for slot in self.slot_map)
+
+    @property
+    def identity_is_distinct_from_lineage(self) -> bool:
+        """هل تميّزت هويّةُ الجزء عن نسبه؟"""
+
+        return self.part_anchor_id != self.parent_anchor_id
 
     @property
     def is_empty(self) -> bool:
@@ -227,6 +266,7 @@ class StructuralPart:
 
         return {
             "part_id": self.part_id,
+            "part_anchor_id": self.part_anchor_id,
             "parent_anchor_id": self.parent_anchor_id,
             "role": self.role.value,
             "slot_map": [[slot.index, slot.token] for slot in self.slot_map],
@@ -258,10 +298,16 @@ class StructuralDecomposition:
         if roles != tuple(SlotRole):
             raise StructuralDalError("التفكيكُ جزءٌ واحدٌ لكلِّ دورٍ بترتيب مفردته")
         covered: list[int] = []
+        anchors: list[str] = []
         for part in self.parts:
             if part.parent_anchor_id != self.whole.anchor_id:
                 raise StructuralDalError("جزءٌ لا يحمل مِرساةَ كلِّه")
+            anchors.append(part.part_anchor_id)
             covered.extend(part.indices)
+        if len(set(anchors)) != len(anchors):
+            raise StructuralDalError(
+                "جزآن بمِرساةٍ واحدة؛ و" + THE_PART_HAS_ITS_OWN_IDENTITY
+            )
         if sorted(covered) != list(range(self.whole.slot_count)):
             raise StructuralDalError(
                 "تغطيةٌ ناقصةٌ أو مُكرَّرةٌ للخانات؛ و" + NO_SILENT_DROPPED_SLOT
@@ -309,10 +355,28 @@ class StructuralDecomposition:
         return all(part.parent_anchor_id == self.whole.anchor_id for part in self.parts)
 
     @property
-    def raw_residuals(self) -> tuple[FractalResidual, ...]:
-        """البقايا بأعيانها: أساسُ الأدوار غيرُ مُبرهن، وغيابُ الأساس حاجب."""
+    def parts_carry_distinct_identity(self) -> bool:
+        """هل حمل كلُّ جزءٍ مِرساتَه المتميّزةَ عن نسبه وعن إخوته؟"""
 
-        residuals = [unassigned_role_basis_residual(self.decomposition_id)]
+        anchors = [part.part_anchor_id for part in self.parts]
+        return len(set(anchors)) == len(anchors) and all(
+            part.identity_is_distinct_from_lineage for part in self.parts
+        )
+
+    @property
+    def raw_residuals(self) -> tuple[FractalResidual, ...]:
+        """البقايا بأعيانها؛ وكلُّها حاجبةٌ في هذا الطور بأسبابها المُسمّاة.
+
+        فإسنادُ دورٍ إيجابيٍّ بلا مُرجِّحٍ مُبرهنٍ حاجب، وبقاءُ المدخل محايدًا
+        حاجبٌ أيضًا، وغيابُ الأساس حاجبٌ ثالث. ولا سلطةَ في هذه الطبقة ترفع
+        شيئًا من ذلك عن نفسها.
+        """
+
+        residuals: list[FractalResidual] = []
+        if self.hypothesis.assigns_a_positive_role:
+            residuals.append(unassigned_role_basis_residual(self.decomposition_id))
+        else:
+            residuals.append(neutral_start_residual(self.decomposition_id))
         if self.part_of(SlotRole.CORE).is_empty:
             residuals.append(uncovered_core_residual(self.decomposition_id))
         return tuple(residuals)
@@ -338,7 +402,7 @@ class StructuralDecomposition:
             satisfied.append(OutputContractComponent.WHOLE_RECONSTRUCTION)
         if self.covers_every_slot_once:
             satisfied.append(OutputContractComponent.TYPED_SLOT_PARTITION)
-        if self.preserves_parent_anchor:
+        if self.preserves_parent_anchor and self.parts_carry_distinct_identity:
             satisfied.append(OutputContractComponent.PART_WHOLE_IDENTITY)
         if self.residuals:
             satisfied.append(OutputContractComponent.EXPLICIT_RESIDUALS)
@@ -356,6 +420,7 @@ class StructuralDecomposition:
             "parts": [part.as_canonical_content() for part in self.parts],
             "reconstruction": list(self.reconstruction),
             "reconstructs_whole": self.reconstructs_whole,
+            "parts_carry_distinct_identity": self.parts_carry_distinct_identity,
             "residuals": [reading.as_canonical_content() for reading in self.residuals],
             "promotion_standing": self.promotion_standing.value,
         }
@@ -363,7 +428,13 @@ class StructuralDecomposition:
 
 @dataclass(frozen=True, slots=True)
 class ZeroStructuralState:
-    """`ZeroStructuralState`: أصغرُ كلٍّ مكتملٍ بخانةٍ واحدةٍ كلُّها أساس."""
+    """`ZeroStructuralState`: أصغرُ كلٍّ مكتملٍ بخانةٍ واحدةٍ غيرِ مُسنَدةٍ بالتصريح.
+
+    وليست الخانةُ أساسًا لمجرّد كونها وحدَها: `NeutralFiberInput ↛
+    PositiveStructuralRole`. فالحالةُ تُثبِت إعادةَ البناء والتغطيةَ وحفظَ
+    الهويّة والأثر، وتُخرِج بقيّةً حاجبةً تمنع كلَّ ترقيةٍ حتّى يأتي أساسُ دورٍ
+    مُبرهنٌ من سلطةٍ خارج هذه الطبقة.
+    """
 
     whole: StructuralWhole
     decomposition: StructuralDecomposition
@@ -373,12 +444,17 @@ class ZeroStructuralState:
             raise StructuralDalError("حالةُ الصفر خانةٌ واحدةٌ لا أكثر")
         if self.decomposition.whole is not self.whole:
             raise StructuralDalError("تفكيكُ حالة الصفر يقع على كلِّها بعينه")
-        if self.decomposition.hypothesis.roles != (SlotRole.CORE,):
-            raise StructuralDalError("حالةُ الصفر خانتُها أساسٌ لا غير")
-        if not self.decomposition.part_of(SlotRole.TRANSFORM).is_empty:
-            raise StructuralDalError("تحويلُ حالة الصفر خالٍ")
-        if not self.decomposition.part_of(SlotRole.RESIDUAL).is_empty:
-            raise StructuralDalError("إسقاطُ بقيّة حالة الصفر خالٍ")
+        if self.decomposition.hypothesis.roles != (SlotRole.UNASSIGNED,):
+            raise StructuralDalError(
+                "حالةُ الصفر غيرُ مُسنَدةٍ بالتصريح؛ و"
+                + NO_POSITIVE_STRUCTURE_FROM_NEUTRAL_INPUT
+            )
+        for role in SlotRole:
+            if role.is_positive and not self.decomposition.part_of(role).is_empty:
+                raise StructuralDalError(
+                    f"حالةُ الصفر لا تُسنِد دورَ {role.value}؛ و"
+                    + NO_POSITIVE_STRUCTURE_FROM_NEUTRAL_INPUT
+                )
 
     @property
     def reconstructs_exactly(self) -> bool:
@@ -393,13 +469,38 @@ class ZeroStructuralState:
         return self.decomposition.covers_every_slot_once
 
     @property
-    def preserves_identity(self) -> bool:
-        """`anchor(W_0) = anchor(Core(W_0))`."""
+    def neutral_part(self) -> StructuralPart:
+        """الجزءُ غيرُ المُسنَد الذي يحمل خانةَ حالة الصفر."""
 
+        return self.decomposition.part_of(SlotRole.UNASSIGNED)
+
+    @property
+    def assigns_no_positive_role(self) -> bool:
+        """هل بقي المدخلُ محايدًا بلا دورٍ إيجابيٍّ مُسنَد؟"""
+
+        return not self.decomposition.hypothesis.assigns_a_positive_role
+
+    @property
+    def preserves_identity(self) -> bool:
+        """نسبُ الجزء إلى كلِّه محفوظ، وهويّتُه متميّزةٌ عن نسبه."""
+
+        part = self.neutral_part
         return (
-            self.decomposition.part_of(SlotRole.CORE).parent_anchor_id
-            == self.whole.anchor_id
+            part.parent_anchor_id == self.whole.anchor_id
+            and part.identity_is_distinct_from_lineage
         )
+
+    @property
+    def residuals(self) -> tuple[ResidualReading, ...]:
+        """بقايا حالة الصفر مُصنَّفة."""
+
+        return self.decomposition.residuals
+
+    @property
+    def promotion_standing(self) -> PromotionStanding:
+        """موقفُ ترقية حالة الصفر؛ محجوبٌ ما لم يأتِ أساسُ دورٍ مُبرهن."""
+
+        return self.decomposition.promotion_standing
 
     @property
     def preserves_trace(self) -> bool:
@@ -420,6 +521,8 @@ class ZeroStructuralState:
             established.append("identity_preservation")
         if self.preserves_trace:
             established.append("trace_preservation")
+        if self.assigns_no_positive_role:
+            established.append("neutral_start")
         return tuple(established)
 
     @property
@@ -460,6 +563,7 @@ def decompose(
     parts = tuple(
         StructuralPart(
             part_id=f"{hypothesis.hypothesis_id}.part.{role.value}",
+            part_anchor_id=(f"anchor.{hypothesis.hypothesis_id}.part.{role.value}"),
             parent_anchor_id=whole.anchor_id,
             role=role,
             slot_map=tuple(slots[index] for index in hypothesis.indices_of(role)),
@@ -475,12 +579,12 @@ def decompose(
 
 
 def zero_structural_state(whole: StructuralWhole) -> ZeroStructuralState:
-    """حالةُ الصفر لكلٍّ بخانةٍ واحدة: أساسٌ كلُّه، وتحويلٌ وبقيّةٌ خاليان."""
+    """حالةُ الصفر لكلٍّ بخانةٍ واحدة: محايدةٌ بالتصريح، وأدوارُها الإيجابيّةُ خالية."""
 
     if whole.slot_count != 1:
         raise StructuralDalError("حالةُ الصفر لا تُبنى إلّا على خانةٍ واحدة")
     hypothesis = ShapePartitionHypothesis(
-        hypothesis_id=f"{whole.whole_id}.shape.{SlotRole.CORE.value}",
-        roles=(SlotRole.CORE,),
+        hypothesis_id=f"{whole.whole_id}.shape.{SlotRole.UNASSIGNED.value}",
+        roles=(SlotRole.UNASSIGNED,),
     )
     return ZeroStructuralState(whole=whole, decomposition=decompose(whole, hypothesis))

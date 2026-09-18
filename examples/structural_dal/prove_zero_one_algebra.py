@@ -7,23 +7,31 @@ Run it::
 **No language enters this proof.** The slots are opaque symbols (`SlotA`,
 `SlotB`). There is no root, no weight, no augmentation, no lexicon and no
 meaning here, and the layer refuses to import any package that carries them.
-The Arabic projection is a later stage: the algebra is proved first, and
-linguistic examples are applied *to* it — they never define it.
+The claim is lowered to its purpose: `StructuralOperatorProof ->
+EligibleForFiberIntegration`, nothing more.
 
-**`zero` is not nothing.** It is the smallest complete whole, one slot, all of
-it core, with an empty transformation projection and an empty residual
-projection. It establishes exact reconstruction, complete coverage, identity
-preservation and trace preservation — and nothing linguistic:
-`StructuralBaseCase != LinguisticRootProof`.
+**`zero` is not nothing, and it is not a core either.** It is the smallest
+complete whole, one slot, declared `UNASSIGNED`, with every positive role empty:
+`NeutralFiberInput -/-> PositiveStructuralRole`. It establishes exact
+reconstruction, complete coverage, identity preservation and trace preservation
+— and it carries a blocking residual that refuses every promotion until a proved
+role basis arrives from outside this layer.
 
 **`one` does not pick a partition.** Adding a slot yields a
 `ShapePartitionHypothesisSet` with no forced winner:
 `ShapePartitionHypothesis != RootCandidate` and
 `ShapePartitionHypothesis != WeightCandidate`.
 
-**Residuals are classified, not a sink.** A partition that assigns no slot the
-core role still reconstructs the whole exactly — and is still refused
-promotion, because `BlockingResidual -> NoPositivePromotion`.
+**Residuals are classified, not a sink.** An unproved role basis is *blocking*,
+so every partition at `one` reconstructs the whole exactly and is still refused
+promotion: `UnprovedRoleBasis -> BlockingResidual`.
+
+**Identity mode is declared, never defaulted.** Only `SameEntityRescaling` is
+open here; `CertifiedBranchBirth` is named and deferred, because this layer may
+not issue its own birth certificate.
+
+**The output-contract reading is not a strength claim.** The contract is defined
+by this layer, so `SelfDefinedContract -/-> ComparativeStrength`.
 """
 
 from __future__ import annotations
@@ -48,7 +56,7 @@ def main() -> None:
     print()
 
     print("-" * 72)
-    print("1) ZeroStructuralState — أصغرُ كلٍّ مكتمل")
+    print("1) ZeroStructuralState — أصغرُ كلٍّ مكتملٍ محايد")
     print("-" * 72)
     zero = report.zero
     print(f"الكلّ             : {zero.whole.whole_id}")
@@ -63,13 +71,18 @@ def main() -> None:
     print(f"إعادةُ البناء      : {list(zero.decomposition.reconstruction)}")
     print(f"تُطابق الكلَّ      : {zero.reconstructs_exactly}")
     print(f"ما يُثبِته         : {list(zero.establishes)}")
+    print(f"دورٌ إيجابيٌّ مُسنَد : {not zero.assigns_no_positive_role}")
+    print(f"موقفُ الترقية      : {zero.promotion_standing.value}")
+    for reading in zero.residuals:
+        print(f"  residual (حاجبة): {reading.reason}")
     print(f"ما لا يُثبِته      : {zero.does_not_establish}")
     print()
 
     print("-" * 72)
-    print("2) الانتقال zero → one — العقدُ السباعيّ")
+    print("2) الانتقال zero → one — العقدُ السباعيُّ بنمطٍ مُصرَّح")
     print("-" * 72)
     transition = report.ascent.transition
+    print(f"نمطُ الهويّة       : {report.ascent.mode.value} (مُصرَّحٌ لا مفترَض)")
     print(f"Input      : {transition.input_identity}")
     print(f"Difference : {transition.difference.description}")
     print(f"Invariant  : {list(transition.invariant)}")
@@ -116,7 +129,7 @@ def main() -> None:
             )
             print(
                 f"    {role.value:<10}: indices={list(part.indices)} "
-                f"tokens={list(part.tokens)} "
+                f"tokens={list(part.tokens)} anchor={part.part_anchor_id} "
                 f"relation={part.relation_to_whole.value}{marker}"
             )
         print(f"    reconstruction : {list(decomposition.reconstruction)}")
@@ -130,19 +143,17 @@ def main() -> None:
             )
             print(f"    residual ({mark}): {reading.reason}")
         attempt = attempts[decomposition.decomposition_id]
-        if attempt.promoted is None:
-            print(f"    الترقية        : {attempt.standing.value} — {attempt.refusal}")
-        else:
-            child = attempt.promoted.whole
+        print(f"    الترقية        : {attempt.standing.value} — {attempt.refusal}")
+        if attempt.deferred_birth is not None:
+            birth = attempt.deferred_birth
             print(
-                f"    الترقية        : {attempt.standing.value} → {child.whole_id} "
-                f"(anchor={child.anchor_id}, parent={child.parent_anchor_id}, "
-                f"depth={child.descent_depth})"
+                f"    ولادةُ الفرع    : {birth.availability.value} — "
+                f"{birth.requested_anchor_id}"
             )
         print()
 
     print("-" * 72)
-    print("5) المقارنةُ على عقد المخرج لا على نصّه")
+    print("5) قراءةُ عقد المخرج الذاتيِّ — وصفٌ لا حكمُ قوّة")
     print("-" * 72)
     print(f"النموذجُ الأضعف    : {report.weaker.model_id} — {report.weaker.description}")
     print(f"مخرجُه            : {list(report.weaker.output)}")
@@ -156,7 +167,9 @@ def main() -> None:
         f"{[component.value for component in report.structural_satisfied]}"
     )
     print(f"حالُ الجبر         : {report.structural_outcome.value}")
-    print(f"الموقفُ المقارن    : {report.standing.value}")
+    reading = report.self_defined_contract_reading
+    print(f"قراءةُ العقد الذاتيّ: {reading.value}")
+    print(f"ما لا تُثبِته      : {reading.does_not_establish}")
     print()
 
     print("-" * 72)
@@ -172,7 +185,7 @@ def main() -> None:
     print()
 
     print("=" * 72)
-    print("7) بنودُ القبول الثمانية")
+    print("7) بنودُ القبول (مُشتَقّةٌ لا مُجمَّدةُ العدد)")
     print("=" * 72)
     for item, held in report.findings.items():
         print(f"  [{'x' if held else ' '}] {item.value}")

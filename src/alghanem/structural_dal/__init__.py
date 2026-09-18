@@ -1,6 +1,6 @@
 """`G0.SDAL-0`: جبرُ `StructuralDal` عند `zero-one`، على خاناتٍ مُصطنَعةٍ وحدَها.
 
-    ZeroStructuralState  →  ShapePartitionHypothesisSet  →  (مؤجَّل)
+    StructuralOperatorProof  →  EligibleForFiberIntegration  →  (مؤجَّل)
 
 هذه الطبقةُ أسبقُ من `DalAsIndicator`: لا مِرساةَ دلالةٍ أُولى، ولا مطابقةَ،
 ولا تضمُّنَ، ولا التزامَ، ولا `signified_ref`، ولا `license_ref`. والحدودُ
@@ -41,9 +41,9 @@ from .hypothesis import (
     zero_structural_state,
 )
 from .induction import (
-    ComparativeStanding,
     ContractOutcome,
     PromotionAttempt,
+    SelfDefinedContractReading,
     WeakerModelObservation,
     ZeroOneAlgebraReport,
     prove_zero_one_algebra,
@@ -51,17 +51,24 @@ from .induction import (
 )
 from .laws import (
     BLOCKING_RESIDUAL_FORBIDS_POSITIVE_PROMOTION,
+    NO_BRANCH_BIRTH_WITHOUT_EXTERNAL_CERTIFICATE,
     NO_FORCED_WINNER_AMONG_SHAPE_PARTITIONS,
+    NO_IMPLICIT_IDENTITY_MODE,
+    NO_POSITIVE_STRUCTURE_FROM_NEUTRAL_INPUT,
     NO_SILENT_DROPPED_SLOT,
     PREREGISTRATION_DIGEST,
+    SELF_DEFINED_CONTRACT_DOES_NOT_ESTABLISH_COMPARATIVE_STRENGTH,
     SHAPE_PARTITION_HYPOTHESIS_IS_NOT_A_ROOT_CANDIDATE,
     SHAPE_PARTITION_HYPOTHESIS_IS_NOT_A_WEIGHT_CANDIDATE,
     STRUCTURAL_ACCEPTANCE_CONDITIONS,
     STRUCTURAL_BASE_CASE_IS_NOT_A_LINGUISTIC_ROOT_PROOF,
     STRUCTURAL_DAL_LAWS,
+    STRUCTURAL_OPERATOR_PROOF_IS_ONLY_ELIGIBLE_FOR_FIBER_INTEGRATION,
     STRUCTURAL_TRANSITION_CONTRACT_FIELDS,
+    THE_PART_HAS_ITS_OWN_IDENTITY,
     THE_PART_KEEPS_ITS_PARENT_ANCHOR,
     THE_TRACE_IS_CUMULATIVE_NOT_RECONSTRUCTED,
+    UNPROVED_ROLE_BASIS_IS_BLOCKING,
     ZERO_ONE_BOUND,
     AcceptanceItem,
     OutputContractComponent,
@@ -79,15 +86,25 @@ from .residual import (
 )
 from .slots import StructuralSlot, StructuralWhole, origin_whole
 from .transition import (
-    PromotedWhole,
+    DeferredBranchBirth,
+    IdentityTransitionAvailability,
+    IdentityTransitionMode,
     ScaleAscent,
     StructuralTransition,
     ascend_one_slot,
-    promote_part_to_whole,
+    availability_of,
+    request_part_branch_birth,
 )
 
 __all__ = [
     "BLOCKING_RESIDUAL_FORBIDS_POSITIVE_PROMOTION",
+    "NO_BRANCH_BIRTH_WITHOUT_EXTERNAL_CERTIFICATE",
+    "NO_IMPLICIT_IDENTITY_MODE",
+    "NO_POSITIVE_STRUCTURE_FROM_NEUTRAL_INPUT",
+    "SELF_DEFINED_CONTRACT_DOES_NOT_ESTABLISH_COMPARATIVE_STRENGTH",
+    "STRUCTURAL_OPERATOR_PROOF_IS_ONLY_ELIGIBLE_FOR_FIBER_INTEGRATION",
+    "THE_PART_HAS_ITS_OWN_IDENTITY",
+    "UNPROVED_ROLE_BASIS_IS_BLOCKING",
     "FORBIDDEN_ALGHANEM_PACKAGES",
     "FORBIDDEN_NAME_FRAGMENTS",
     "NO_FORCED_WINNER_AMONG_SHAPE_PARTITIONS",
@@ -104,18 +121,20 @@ __all__ = [
     "THE_TRACE_IS_CUMULATIVE_NOT_RECONSTRUCTED",
     "ZERO_ONE_BOUND",
     "AcceptanceItem",
-    "ComparativeStanding",
     "ContractOutcome",
+    "DeferredBranchBirth",
+    "IdentityTransitionAvailability",
+    "IdentityTransitionMode",
     "ImportIsolationReport",
     "OutputContractComponent",
     "PartWholeRelation",
-    "PromotedWhole",
     "PromotionAttempt",
     "PromotionStanding",
     "ResidualClass",
     "ResidualReading",
     "Scale",
     "ScaleAscent",
+    "SelfDefinedContractReading",
     "ShapePartitionHypothesis",
     "ShapePartitionHypothesisSet",
     "SlotRole",
@@ -131,15 +150,16 @@ __all__ = [
     "ZeroOneAlgebraReport",
     "ZeroStructuralState",
     "ascend_one_slot",
+    "availability_of",
     "condition_named",
     "decompose",
     "enumerate_shape_partitions",
     "import_isolation_audit",
     "origin_whole",
-    "promote_part_to_whole",
     "promotion_standing_of",
     "prove_zero_one_algebra",
     "read_residuals",
+    "request_part_branch_birth",
     "run_weaker_model",
     "vocabulary_audit",
     "zero_structural_state",

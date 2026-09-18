@@ -5181,10 +5181,10 @@ this package is proved at `zero` and `one` on synthetic opaque slots (`SlotA`,
 it, and the Arabic projection is a later, separate stage.
 
 `zero` is not nothing: it is `ZeroStructuralState`, the smallest complete whole
-— one slot, all of it core, with an empty transformation projection and an empty
-residual projection. It establishes exact reconstruction, complete slot
-coverage, identity preservation and trace preservation, and it establishes
-nothing linguistic: `StructuralBaseCase != LinguisticRootProof`. `one` is the
+— one slot, declared `UNASSIGNED`, with every positive role empty. It
+establishes exact reconstruction, complete slot coverage, identity preservation
+and trace preservation, and it establishes nothing linguistic:
+`StructuralBaseCase != LinguisticRootProof`. `one` is the
 first real transition, and it does not pick a partition: it yields a
 `ShapePartitionHypothesisSet` — every role assignment, derived at measurement
 time rather than frozen — whose `forced_winner` is `None` by construction, under
@@ -5205,19 +5205,53 @@ Residuals are not a sink that makes every test pass. Each one is classified
 `BLOCKING` or `NON_BLOCKING`, read off the residual's own `blocking` flag rather
 than written beside it, and a partition that assigns no slot the core role still
 reconstructs the whole exactly *and is still refused promotion*:
-`BlockingResidual -> NoPositivePromotion`. On the run, four of the nine
-hypotheses at scale one are blocked for exactly this reason.
+`BlockingResidual -> NoPositivePromotion`.
 
 Two audits are part of the output rather than claims about it. The import audit
 walks the package source and everything it reaches inside `alghanem`, and finds
 only `canonical_content` and `fractal_generation` — no `arabic`, no `kernel`, no
 `maqayis`, no `madlul`, no `signifier_algebra`. The vocabulary audit walks every
 exported type name, dataclass field and enum member and finds no `root`, no
-`weight`, no `meaning`, no `lexicon`. The comparison with the weaker model is on
+`weight`, no `meaning`, no `lexicon`. The reading against the weaker model is on
 the *output contract*, not the output text: plain concatenation reaches the same
-symbols and reaches only one of the five contract components, so the standing is
-`STRUCTURAL_ONLY` rather than the `BOTH_SUCCEED` that comparing strings would
-have produced.
+symbols and reaches only one of the five contract components. That reading is
+named for what it is — `THIS_LAYER_MEETS_ITS_OWN_CONTRACT_ALONE` — and it is
+explicitly **not** a strength claim, because this layer wrote the contract:
+`SelfDefinedContract ⇏ ComparativeStrength`.
+
+#### `G0.SDAL-0.HARDEN` — lowering the layer to an operator algebra
+
+The first run of `G0.SDAL-0` granted the neutral input a positive role, recorded
+the missing role justification as a *non-blocking* note, treated lineage as if
+it were part identity, and read its own output contract as a comparative
+result. Hardening removes all four, without extending the layer:
+
+- **No positive structure from a neutral input.** `SlotRole.UNASSIGNED` is the
+  declared absence of a role, and `zero_structural_state` no longer promotes the
+  single slot to `CORE`: `NeutralFiberInput ↛ PositiveStructuralRole`. Role
+  licensing is *not* added here — that authority belongs to the fiber layer that
+  does not exist yet, and a layer may not license itself.
+- **An unproved role basis blocks.** `unassigned_role_basis_residual` is now
+  `blocking=True` (`UnprovedRoleBasis -> BlockingResidual`), so every one of the
+  sixteen hypotheses at scale one reconstructs the whole exactly and is still
+  refused promotion. Zero permitted promotions is the honest count.
+- **A part has its own identity.** `StructuralPart` carries `part_anchor_id`
+  alongside `parent_anchor_id`, distinct by construction and unique among
+  siblings: `LineagePreservation != PartIdentityPreservation`.
+- **The identity mode is declared, never defaulted.** `ascend_one_slot` requires
+  an explicit `IdentityTransitionMode`; only `SameEntityRescaling` is `OPEN`.
+  `CertifiedBranchBirth` is typed and `DEFERRED`, and `request_part_branch_birth`
+  returns a named refusal instead of a promoted whole:
+  `NoBranchBirthWithoutExternalCertificate`. Nothing in this package issues its
+  own birth certificate.
+- **The claim is lowered.** `laws.py` no longer points at `ArabicProjection` or
+  `RootCandidate`; its declared destination is `StructuralOperatorProof →
+  EligibleForFiberIntegration`, and eligibility is not integration.
+
+No parallel comparison is built here. The neutral fiber contract, the second
+fractal system and the evaluation protocol are later, separate stages, and they
+must be frozen before any gold is opened — otherwise the exam and the opponent
+would be designed after seeing this layer's results.
 
 ```bash
 python examples/structural_dal/prove_zero_one_algebra.py
