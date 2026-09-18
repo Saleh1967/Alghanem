@@ -5181,10 +5181,10 @@ this package is proved at `zero` and `one` on synthetic opaque slots (`SlotA`,
 it, and the Arabic projection is a later, separate stage.
 
 `zero` is not nothing: it is `ZeroStructuralState`, the smallest complete whole
-— one slot, all of it core, with an empty transformation projection and an empty
-residual projection. It establishes exact reconstruction, complete slot
-coverage, identity preservation and trace preservation, and it establishes
-nothing linguistic: `StructuralBaseCase != LinguisticRootProof`. `one` is the
+— one slot, declared `UNASSIGNED`, with every positive role empty. It
+establishes exact reconstruction, complete slot coverage, identity preservation
+and trace preservation, and it establishes nothing linguistic:
+`StructuralBaseCase != LinguisticRootProof`. `one` is the
 first real transition, and it does not pick a partition: it yields a
 `ShapePartitionHypothesisSet` — every role assignment, derived at measurement
 time rather than frozen — whose `forced_winner` is `None` by construction, under
@@ -5205,23 +5205,124 @@ Residuals are not a sink that makes every test pass. Each one is classified
 `BLOCKING` or `NON_BLOCKING`, read off the residual's own `blocking` flag rather
 than written beside it, and a partition that assigns no slot the core role still
 reconstructs the whole exactly *and is still refused promotion*:
-`BlockingResidual -> NoPositivePromotion`. On the run, four of the nine
-hypotheses at scale one are blocked for exactly this reason.
+`BlockingResidual -> NoPositivePromotion`.
 
 Two audits are part of the output rather than claims about it. The import audit
 walks the package source and everything it reaches inside `alghanem`, and finds
 only `canonical_content` and `fractal_generation` — no `arabic`, no `kernel`, no
 `maqayis`, no `madlul`, no `signifier_algebra`. The vocabulary audit walks every
 exported type name, dataclass field and enum member and finds no `root`, no
-`weight`, no `meaning`, no `lexicon`. The comparison with the weaker model is on
+`weight`, no `meaning`, no `lexicon`. The reading against the weaker model is on
 the *output contract*, not the output text: plain concatenation reaches the same
-symbols and reaches only one of the five contract components, so the standing is
-`STRUCTURAL_ONLY` rather than the `BOTH_SUCCEED` that comparing strings would
-have produced.
+symbols and reaches only one of the five contract components. That reading is
+named for what it is — `THIS_LAYER_MEETS_ITS_OWN_CONTRACT_ALONE` — and it is
+explicitly **not** a strength claim, because this layer wrote the contract:
+`SelfDefinedContract ⇏ ComparativeStrength`.
+
+#### `G0.SDAL-0.HARDEN` — lowering the layer to an operator algebra
+
+The first run of `G0.SDAL-0` granted the neutral input a positive role, recorded
+the missing role justification as a *non-blocking* note, treated lineage as if
+it were part identity, and read its own output contract as a comparative
+result. Hardening removes all four, without extending the layer:
+
+- **No positive structure from a neutral input.** `SlotRole.UNASSIGNED` is the
+  declared absence of a role, and `zero_structural_state` no longer promotes the
+  single slot to `CORE`: `NeutralFiberInput ↛ PositiveStructuralRole`. Role
+  licensing is *not* added here — that authority belongs to the fiber layer that
+  does not exist yet, and a layer may not license itself.
+- **An unproved role basis blocks.** `unassigned_role_basis_residual` is now
+  `blocking=True` (`UnprovedRoleBasis -> BlockingResidual`), so every one of the
+  sixteen hypotheses at scale one reconstructs the whole exactly and is still
+  refused promotion. Zero permitted promotions is the honest count.
+- **A part has its own identity.** `StructuralPart` carries `part_anchor_id`
+  alongside `parent_anchor_id`, distinct by construction and unique among
+  siblings: `LineagePreservation != PartIdentityPreservation`.
+- **The identity mode is declared, never defaulted.** `ascend_one_slot` requires
+  an explicit `IdentityTransitionMode`; only `SameEntityRescaling` is `OPEN`.
+  `CertifiedBranchBirth` is typed and `DEFERRED`, and `request_part_branch_birth`
+  returns a named refusal instead of a promoted whole:
+  `NoBranchBirthWithoutExternalCertificate`. Nothing in this package issues its
+  own birth certificate.
+- **The claim is lowered.** `laws.py` no longer points at `ArabicProjection` or
+  `RootCandidate`; its declared destination is `StructuralOperatorProof →
+  EligibleForFiberIntegration`, and eligibility is not integration.
+
+No parallel comparison is built here. The neutral fiber contract, the second
+fractal system and the evaluation protocol are later, separate stages, and they
+must be frozen before any gold is opened — otherwise the exam and the opponent
+would be designed after seeing this layer's results.
 
 ```bash
 python examples/structural_dal/prove_zero_one_algebra.py
 ```
+
+### `G0.FIBER-0` — prior organized information as a licensed fiber node
+
+The hardened operator algebra was only *eligible* for fiber integration. This
+milestone builds the fiber it defers to: `src/alghanem/prior_fiber/`, an isolated
+layer that carries no domain, no system and no answer.
+
+- **Prior organized information is a licensed geometry, not a slot.**
+  `PriorFiberNode` declares twelve positions — origin, instance, the prior base,
+  slot geometry, admissible distinctions, relations, capabilities, evidence
+  requirements, gates, an external rank reference, a residual policy and a trace.
+  It is built *on top of* the existing nine possibility conditions
+  (`PriorInformationBase`), never a copy of them: a base holding one unlicensed
+  condition refuses the node and names the offending conditions.
+- **The node starts neutral.** Every slot is `UNASSIGNED` by declaration, not
+  `None` by silence, and `assigns_no_positive_role` is checked on the state, not
+  promised in prose: `NeutralFiberInput -/-> PositiveStructuralRole`.
+- **The fiber does not invent a second rank ladder.** `ExternalRankReference`
+  carries `evidence_ref`, `rank_ceiling_ref` and the issuing authority as
+  references; rank remains the kernel's authority.
+- **The three fibers are parallel, not sequential.** `project_all_fibers` derives
+  carrier-alone, content-alone and carrier-and-content-together from the one node
+  together. A fiber declaring itself derived from another fiber is refused by
+  construction, and a bundle missing an axis is refused for incomplete coverage.
+- **No system defines the exam it sits.** `FiberContract` refuses a contract whose
+  author is one of the systems that will read it, and refuses a contract read by
+  fewer than two systems. Its members carry observed inputs only, validated
+  against the node's declared options; its success criteria must cover
+  `SuccessCriterion` exactly.
+- **The gold is sealed, not shipped.** `seal_gold` computes a digest and keeps
+  nothing else; `GoldSeal` structurally holds a digest, a scheme and a count.
+  `contract.withholds(label)` lets whoever *owns* the answer verify the answer is
+  absent from the contract content.
+- **The strength ceiling is frozen before any result.**
+  `ObservedDominanceWithinFrozenDomain` is declared now, so no later run can be
+  read as an absolute claim that one system is stronger.
+
+#### `G0.FIBER-0.ADAPTER.MADLUL` — the first Arabic domain entering the fiber
+
+Direction is one-way: `ArabicDomainAdapter → PriorFiber`. The neutral layer
+refuses to import `arabic`, `kernel`, `structural_dal`, `fractal_generation`,
+`fractal_experiment` or `metaalgebra`, and the audit resolves relative imports
+before judging them, so isolation is measured rather than asserted.
+
+`src/alghanem/arabic/fiber_contracts/madlul.py` reads the single existing source
+of the domain — `madlul_alone_formal.py` — and derives from it nine licensed
+possibility conditions, one fiber node, three parallel fibers and one frozen
+contract over the five attested witnesses. What enters the contract is the
+observed input alone: the three carriers from which the answers are derived. What
+stays out is the attested section, the fifth-branch scope note (it names its own
+branch) and the source ordering — member identity is a digest of the witness
+identity, because the source order *is* the section order and numbering by it
+would leak the answer in the identifier. An import-time guard refuses any leak,
+and the tests assert every one of the five sections is withheld from the whole
+contract content.
+
+Measured: 9 licensed conditions, 3 slots, 0 positive roles, 3 parallel axes, 5
+members, 5 success criteria, 5 sections withheld, isolation clean.
+
+Not built here, deliberately: the second fractal system, any reading of this
+contract, and any comparison. The opponent and the evaluation protocol must be
+frozen *after* this contract and *independently* of it.
+
+```bash
+python examples/prior_fiber/freeze_madlul_contract.py
+```
+
 
 ```bash
 python -m pip install -e '.[dev]'

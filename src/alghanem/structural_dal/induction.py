@@ -6,9 +6,13 @@
 هويّته وأثره ونسبه، وأنّ التقسيمَ يُعرَض بلا فائزٍ مفروض، وأنّ بقيّةً حاجبةً
 تمنع الترقيةَ ولو صحّت إعادةُ البناء.
 
-والمقارنةُ مع النموذج الأضعف تقع على **عقد المخرج** لا على نصِّ المخرج؛ فإنّ
+والقراءةُ مع النموذج الأضعف تقع على **عقد المخرج** لا على نصِّ المخرج؛ فإنّ
 الوصلَ البسيط يبلغ الرموزَ عينَها ولا يبلغ تقسيمًا مُصنَّفًا ولا بقيّةً مُسمّاةً
 ولا أثرًا متّصلًا.
+
+ولا تُقرَأ هذه القراءةُ حكمَ قوّة: عقدُ المخرج مُعرَّفٌ من هذه الطبقة نفسِها،
+و`SelfDefinedContract ⇏ ComparativeStrength`؛ فالمقارنةُ الحقيقيّةُ موقوفةٌ على
+عقدٍ محايدٍ لا يملك أيُّ نظامٍ تعريفَه، ولا يُفتَح في هذا الطور.
 """
 
 from __future__ import annotations
@@ -33,23 +37,27 @@ from .hypothesis import (
 )
 from .laws import (
     PREREGISTRATION_DIGEST,
+    SELF_DEFINED_CONTRACT_DOES_NOT_ESTABLISH_COMPARATIVE_STRENGTH,
+    STRUCTURAL_OPERATOR_PROOF_IS_ONLY_ELIGIBLE_FOR_FIBER_INTEGRATION,
     AcceptanceItem,
     OutputContractComponent,
     StructuralDalError,
 )
-from .residual import PromotionStanding
+from .residual import PromotionStanding, ResidualClass
 from .slots import StructuralWhole, origin_whole
 from .transition import (
-    PromotedWhole,
+    DeferredBranchBirth,
+    IdentityTransitionAvailability,
+    IdentityTransitionMode,
     ScaleAscent,
     ascend_one_slot,
-    promote_part_to_whole,
+    request_part_branch_birth,
 )
 
 __all__ = [
-    "ComparativeStanding",
     "ContractOutcome",
     "PromotionAttempt",
+    "SelfDefinedContractReading",
     "WeakerModelObservation",
     "ZeroOneAlgebraReport",
     "prove_zero_one_algebra",
@@ -65,13 +73,21 @@ class ContractOutcome(Enum):
     CONTRACT_UNMET = "contract_unmet"
 
 
-class ComparativeStanding(Enum):
-    """موقفُ المقارنة بين البنية والنموذج الأضعف."""
+class SelfDefinedContractReading(Enum):
+    """قراءةُ عقدِ مخرجٍ عرّفته هذه الطبقةُ لنفسها؛ وصفٌ داخلَه لا حكمُ قوّة."""
 
-    STRUCTURAL_ONLY = "structural_only"
-    BOTH_MEET = "both_meet"
-    WEAKER_ONLY = "weaker_only"
-    NEITHER_MEETS = "neither_meets"
+    THIS_LAYER_MEETS_ITS_OWN_CONTRACT_ALONE = "this_layer_meets_its_own_contract_alone"
+    BOTH_MEET_THIS_LAYERS_CONTRACT = "both_meet_this_layers_contract"
+    ONLY_THE_WEAKER_MEETS_THIS_LAYERS_CONTRACT = (
+        "only_the_weaker_meets_this_layers_contract"
+    )
+    NEITHER_MEETS_THIS_LAYERS_CONTRACT = "neither_meets_this_layers_contract"
+
+    @property
+    def does_not_establish(self) -> str:
+        """ما لا تُثبِته هذه القراءةُ مهما مالت."""
+
+        return SELF_DEFINED_CONTRACT_DOES_NOT_ESTABLISH_COMPARATIVE_STRENGTH
 
 
 @dataclass(frozen=True, slots=True)
@@ -92,20 +108,24 @@ class WeakerModelObservation:
 
 @dataclass(frozen=True, slots=True)
 class PromotionAttempt:
-    """محاولةُ ترقيةِ جزءٍ إلى كلّ: موقفُها، وناتجُها أو سببُ رفضها."""
+    """محاولةُ ترقيةِ جزءٍ إلى كلّ: موقفُها، وسببُ رفضها مُسمًّى.
+
+    ولا حقلَ فيها لناتجٍ مُرقًّى: لا ترقيةَ مع بقيّةٍ حاجبة، ولا ولادةَ فرعٍ
+    بشهادةٍ تُصدِرها هذه الطبقةُ لنفسها.
+    """
 
     decomposition_id: str
     standing: PromotionStanding
-    promoted: PromotedWhole | None
-    refusal: str | None
+    refusal: str
+    deferred_birth: DeferredBranchBirth | None = None
 
     def __post_init__(self) -> None:
-        if (self.promoted is None) == (self.refusal is None):
-            raise StructuralDalError("المحاولةُ إمّا ناتجٌ وإمّا سببُ رفضٍ مُسمًّى")
-        if self.standing is PromotionStanding.PROMOTION_BLOCKED and (
-            self.promoted is not None
+        if not isinstance(self.refusal, str) or not self.refusal.strip():
+            raise StructuralDalError("سببُ رفض المحاولة نصٌّ غيرُ فارغ")
+        if self.deferred_birth is not None and not isinstance(
+            self.deferred_birth, DeferredBranchBirth
         ):
-            raise StructuralDalError("ترقيةٌ وقعت مع بقيّةٍ حاجبة")
+            raise StructuralDalError("الطلبُ المؤجَّلُ من نوعه أو لا طلبَ")
 
 
 def _outcome_of(
@@ -169,18 +189,18 @@ class ZeroOneAlgebraReport:
         return _outcome_of(self.structural_satisfied)
 
     @property
-    def standing(self) -> ComparativeStanding:
-        """موقفُ المقارنة؛ مُشتَقٌّ من الحالين لا مكتوبٌ بينهما."""
+    def self_defined_contract_reading(self) -> SelfDefinedContractReading:
+        """قراءةُ العقد الذاتيِّ؛ مُشتَقّةٌ من الحالين ولا تُثبِت قوّةً مقارنة."""
 
         structural = self.structural_outcome is ContractOutcome.CONTRACT_MET
         weaker = self.weaker.outcome is ContractOutcome.CONTRACT_MET
         if structural and weaker:
-            return ComparativeStanding.BOTH_MEET
+            return SelfDefinedContractReading.BOTH_MEET_THIS_LAYERS_CONTRACT
         if structural:
-            return ComparativeStanding.STRUCTURAL_ONLY
+            return SelfDefinedContractReading.THIS_LAYER_MEETS_ITS_OWN_CONTRACT_ALONE
         if weaker:
-            return ComparativeStanding.WEAKER_ONLY
-        return ComparativeStanding.NEITHER_MEETS
+            return SelfDefinedContractReading.ONLY_THE_WEAKER_MEETS_THIS_LAYERS_CONTRACT
+        return SelfDefinedContractReading.NEITHER_MEETS_THIS_LAYERS_CONTRACT
 
     @property
     def blocked_attempts(self) -> tuple[PromotionAttempt, ...]:
@@ -194,12 +214,22 @@ class ZeroOneAlgebraReport:
 
     @property
     def permitted_attempts(self) -> tuple[PromotionAttempt, ...]:
-        """محاولاتُ ترقيةٍ وقعت بلا حاجب."""
+        """محاولاتُ ترقيةٍ ارتفع عنها الحاجب؛ وهي في هذا الطور خاليةٌ بحكم قانونها."""
 
         return tuple(
             attempt
             for attempt in self.promotion_attempts
             if attempt.standing is PromotionStanding.PROMOTION_PERMITTED
+        )
+
+    @property
+    def deferred_births(self) -> tuple[DeferredBranchBirth, ...]:
+        """طلباتُ ولادةِ فرعٍ المؤجَّلةُ لانعدام سلطةِ شهادتها."""
+
+        return tuple(
+            attempt.deferred_birth
+            for attempt in self.promotion_attempts
+            if attempt.deferred_birth is not None
         )
 
     @property
@@ -212,6 +242,30 @@ class ZeroOneAlgebraReport:
             and self.zero.preserves_identity
             and self.zero.preserves_trace
         )
+        zero_is_neutral = (
+            self.zero.assigns_no_positive_role
+            and self.zero.promotion_standing is PromotionStanding.PROMOTION_BLOCKED
+        )
+        distinct_identity = bool(self.one_decompositions) and all(
+            decomposition.parts_carry_distinct_identity
+            for decomposition in self.one_decompositions
+        )
+        rescaling_preserves = (
+            self.ascent.mode is IdentityTransitionMode.SAME_ENTITY_RESCALING
+            and self.ascent.preserves_instance_identity
+        )
+        births_deferred = bool(self.deferred_births) and all(
+            birth.availability is IdentityTransitionAvailability.DEFERRED
+            for birth in self.deferred_births
+        )
+        role_basis_blocks = bool(self.one_decompositions) and all(
+            any(
+                reading.residual_class is ResidualClass.BLOCKING
+                for reading in decomposition.residuals
+            )
+            and decomposition.promotion_standing is PromotionStanding.PROMOTION_BLOCKED
+            for decomposition in self.one_decompositions
+        )
         multiple = (
             self.one_hypotheses.count > 1 and self.one_hypotheses.forced_winner is None
         )
@@ -219,22 +273,18 @@ class ZeroOneAlgebraReport:
             decomposition.covers_every_slot_once and decomposition.reconstructs_whole
             for decomposition in self.one_decompositions
         )
-        parent_survives = (
-            self.ascent.after.anchor_id == self.ascent.before.anchor_id
-            and bool(self.permitted_attempts)
-            and all(
-                attempt.promoted is not None and attempt.promoted.keeps_parent_anchor
-                for attempt in self.permitted_attempts
-            )
-        )
-        blocking_works = bool(self.blocked_attempts) and all(
-            attempt.promoted is None for attempt in self.blocked_attempts
-        )
+        blocking_works = bool(self.blocked_attempts) and not self.permitted_attempts
         return {
             AcceptanceItem.ZERO_RECONSTRUCTS_EXACTLY: zero_holds,
+            AcceptanceItem.ZERO_ASSIGNS_NO_POSITIVE_ROLE: zero_is_neutral,
             AcceptanceItem.ONE_PRODUCES_MULTIPLE_HYPOTHESES: multiple,
             AcceptanceItem.NO_SLOT_SILENTLY_DROPPED: no_dropped,
-            AcceptanceItem.PARENT_IDENTITY_SURVIVES_SCALE_TRANSITION: parent_survives,
+            AcceptanceItem.PART_IDENTITY_IS_DISTINCT_FROM_LINEAGE: distinct_identity,
+            AcceptanceItem.SAME_ENTITY_RESCALING_PRESERVES_IDENTITY: (
+                rescaling_preserves
+            ),
+            AcceptanceItem.BRANCH_BIRTH_IS_UNAVAILABLE_HERE: births_deferred,
+            AcceptanceItem.UNPROVED_ROLE_BASIS_BLOCKS_PROMOTION: role_basis_blocks,
             AcceptanceItem.BLOCKING_RESIDUAL_PREVENTS_PROMOTION: blocking_works,
             AcceptanceItem.TRACE_IS_CUMULATIVE: self.ascent.trace_is_cumulative,
             AcceptanceItem.LAYER_IS_STRUCTURALLY_ISOLATED: self.isolation.is_isolated,
@@ -260,6 +310,8 @@ class ZeroOneAlgebraReport:
         return (
             self.zero.does_not_establish,
             *self.one_hypotheses.what_it_is_not,
+            self.self_defined_contract_reading.does_not_establish,
+            STRUCTURAL_OPERATOR_PROOF_IS_ONLY_ELIGIBLE_FOR_FIBER_INTEGRATION,
         )
 
 
@@ -279,30 +331,34 @@ def prove_zero_one_algebra(
     )
     zero = zero_structural_state(whole)
     zero_hypotheses = enumerate_shape_partitions(whole)
-    ascent = ascend_one_slot(whole, added_token)
+    ascent = ascend_one_slot(
+        whole,
+        added_token,
+        mode=IdentityTransitionMode.SAME_ENTITY_RESCALING,
+    )
     one_hypotheses = enumerate_shape_partitions(ascent.after)
     decompositions = tuple(
         decompose(ascent.after, hypothesis) for hypothesis in one_hypotheses.hypotheses
     )
     attempts: list[PromotionAttempt] = []
     for decomposition in decompositions:
-        standing = decomposition.promotion_standing
-        if standing is PromotionStanding.PROMOTION_BLOCKED:
-            attempts.append(
-                PromotionAttempt(
-                    decomposition_id=decomposition.decomposition_id,
-                    standing=standing,
-                    promoted=None,
-                    refusal="بقيّةٌ حاجبةٌ تمنع الترقية",
-                )
-            )
-            continue
+        core = decomposition.part_of(SlotRole.CORE)
+        deferred = (
+            None
+            if core.is_empty
+            else request_part_branch_birth(decomposition, SlotRole.CORE)
+        )
         attempts.append(
             PromotionAttempt(
                 decomposition_id=decomposition.decomposition_id,
-                standing=standing,
-                promoted=promote_part_to_whole(decomposition, SlotRole.CORE),
-                refusal=None,
+                standing=decomposition.promotion_standing,
+                refusal=(
+                    "بقيّةٌ حاجبةٌ تمنع الترقية"
+                    if decomposition.promotion_standing
+                    is PromotionStanding.PROMOTION_BLOCKED
+                    else "لا ترقيةَ في هذا الطور بلا شهادةٍ خارجيّة"
+                ),
+                deferred_birth=deferred,
             )
         )
     return ZeroOneAlgebraReport(

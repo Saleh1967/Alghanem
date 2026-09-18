@@ -6,16 +6,19 @@
 حقولُه السبعةُ من نتيجتها. وأثرُ المخرج يمتدُّ على أثر المدخل بعينه، فلا يُعاد
 بناؤه بعد وقوعه.
 
-والفركتاليّةُ هنا ليست `1 → 2`، بل أن يدخل ناتجُ المستوى السابق في اللاحق مع
-حفظ نسبه:
+ونمطُ انتقال الهويّة مُصرَّحٌ لا مفترَض:
 
-    PartAtScaleN  ->  WholeAtScaleNPlus1
-    child.parent_anchor_id == parent.anchor_id
+    SameEntityRescaling      → مفتوحٌ في هذا الطور، وعينُ الهويّة محفوظة
+    CertifiedBranchBirth     → مُسمًّى مؤجَّلٌ حتّى تُصدِر سلطةٌ خارجيّةٌ شهادتَه
+
+فلا تمنح هذه الطبقةُ نفسَها رخصةَ فرعٍ ولا شهادةَ ولادة، وعدمُ التصريح رفضٌ لا
+حملٌ على أقرب نمط.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import Enum
 
 from alghanem.fractal_generation import (
     BranchAdjudicationGate,
@@ -24,9 +27,7 @@ from alghanem.fractal_generation import (
     DeclaredDifference,
     ExpansionCandidate,
     ExpansionSet,
-    FractalIdentity,
     FractalNode,
-    FractalSeed,
     FractalTrace,
     FractalTransition,
     FractalTransitionGate,
@@ -38,14 +39,14 @@ from alghanem.fractal_generation import (
 
 from .hypothesis import SlotRole, StructuralDecomposition, StructuralPart
 from .laws import (
-    BLOCKING_RESIDUAL_FORBIDS_POSITIVE_PROMOTION,
+    NO_BRANCH_BIRTH_WITHOUT_EXTERNAL_CERTIFICATE,
+    NO_IMPLICIT_IDENTITY_MODE,
     STRUCTURAL_TRANSITION_CONTRACT_FIELDS,
-    THE_PART_KEEPS_ITS_PARENT_ANCHOR,
     THE_TRACE_IS_CUMULATIVE_NOT_RECONSTRUCTED,
     ZERO_ONE_BOUND,
     StructuralDalError,
 )
-from .residual import PromotionStanding, ResidualReading, read_residuals
+from .residual import ResidualReading, read_residuals
 from .slots import StructuralWhole
 from .space import (
     ACCRETION_PATTERN,
@@ -53,20 +54,46 @@ from .space import (
     PRESERVED_INVARIANTS,
     PROPOSAL_PROVENANCE,
     SCALE_SPACE,
-    SLOT_SCALE_REF,
 )
 
 __all__ = [
-    "PromotedWhole",
+    "DeferredBranchBirth",
+    "IdentityTransitionAvailability",
+    "IdentityTransitionMode",
     "ScaleAscent",
     "StructuralTransition",
     "ascend_one_slot",
-    "promote_part_to_whole",
+    "availability_of",
+    "request_part_branch_birth",
 ]
+
+
+class IdentityTransitionMode(Enum):
+    """نمطا انتقال الهويّة؛ مفردةٌ مغلقةٌ يُصرَّح بأحدها ولا يُفترَض."""
+
+    SAME_ENTITY_RESCALING = "same_entity_rescaling"
+    CERTIFIED_BRANCH_BIRTH = "certified_branch_birth"
+
+
+class IdentityTransitionAvailability(Enum):
+    """إتاحةُ النمط في هذا الطور؛ مفتوحٌ أو مؤجَّلٌ لانعدام سلطته."""
+
+    OPEN = "open"
+    DEFERRED = "deferred"
+
+
+def availability_of(mode: IdentityTransitionMode) -> IdentityTransitionAvailability:
+    """إتاحةُ نمطٍ بعينه؛ والولادةُ المشهودةُ مؤجَّلةٌ بلا سلطةٍ خارجيّة."""
+
+    if not isinstance(mode, IdentityTransitionMode):
+        raise StructuralDalError("نمطُ انتقال الهويّة عضوٌ في مفردته المغلقة")
+    if mode is IdentityTransitionMode.SAME_ENTITY_RESCALING:
+        return IdentityTransitionAvailability.OPEN
+    return IdentityTransitionAvailability.DEFERRED
+
 
 _ADJUDICATION_GATE = "gate.adjudication.structural_dal.slot"
 _TRANSITION_GATE = "gate.transition.structural_dal.slot"
-_IDENTITY_CRITERION = "criterion.structural_dal.whole_instance"
 
 
 @dataclass(frozen=True, slots=True)
@@ -170,13 +197,23 @@ class StructuralTransition:
 
 @dataclass(frozen=True, slots=True)
 class ScaleAscent:
-    """صعودُ خانةٍ واحدة: كلٌّ قبل، وكلٌّ بعد، وعقدُ انتقالٍ يربطهما."""
+    """صعودُ خانةٍ واحدة: كلٌّ قبل، وكلٌّ بعد، ونمطُ هويّةٍ مُصرَّح، وعقدٌ يربطهما."""
 
     before: StructuralWhole
     after: StructuralWhole
     transition: StructuralTransition
+    mode: IdentityTransitionMode
 
     def __post_init__(self) -> None:
+        if not isinstance(self.mode, IdentityTransitionMode):
+            raise StructuralDalError(
+                "نمطُ انتقال الهويّة مُصرَّح؛ و" + NO_IMPLICIT_IDENTITY_MODE
+            )
+        if self.mode is not IdentityTransitionMode.SAME_ENTITY_RESCALING:
+            raise StructuralDalError(
+                "الصعودُ إعادةُ مقياسٍ لعين الكيان؛ و"
+                + NO_BRANCH_BIRTH_WITHOUT_EXTERNAL_CERTIFICATE
+            )
         if self.after.slot_count != self.before.slot_count + 1:
             raise StructuralDalError("الصعودُ خانةٌ واحدةٌ لا أكثر")
         if self.after.anchor_id != self.before.anchor_id:
@@ -196,6 +233,15 @@ class ScaleAscent:
         """رمزُ الخانة المُضافة."""
 
         return self.after.tokens[-1]
+
+    @property
+    def preserves_instance_identity(self) -> bool:
+        """هل بقيت عينُ الهويّة عبر إعادة المقياس؟"""
+
+        return (
+            self.after.anchor_id == self.before.anchor_id
+            and self.transition.preserves_instance_identity
+        )
 
     @property
     def trace_is_cumulative(self) -> bool:
@@ -224,10 +270,24 @@ def ascend_one_slot(
     before: StructuralWhole,
     added_token: str,
     *,
+    mode: IdentityTransitionMode,
     evidence_ref: str = "evidence.structural_dal.zero_one",
 ) -> ScaleAscent:
-    """اصعد خانةً واحدةً عبر بوّاباتها؛ والمِرساةُ والأثرُ يُحفظان."""
+    """اصعد خانةً واحدةً بنمطٍ مُصرَّح؛ والمِرساةُ والأثرُ يُحفظان.
 
+    ولا افتراضَ للنمط: من لم يُصرِّح رُفض، ومن طلب ولادةَ فرعٍ رُفض لانعدام
+    السلطة التي تُصدِر شهادتَه.
+    """
+
+    if not isinstance(mode, IdentityTransitionMode):
+        raise StructuralDalError(
+            "نمطُ انتقال الهويّة مُصرَّح؛ و" + NO_IMPLICIT_IDENTITY_MODE
+        )
+    if availability_of(mode) is IdentityTransitionAvailability.DEFERRED:
+        raise StructuralDalError(
+            f"نمطٌ مؤجَّلٌ في هذا الطور: {mode.value}؛ و"
+            + NO_BRANCH_BIRTH_WITHOUT_EXTERNAL_CERTIFICATE
+        )
     if not isinstance(before, StructuralWhole):
         raise StructuralDalError("الصعودُ يقع على كلٍّ من نوعه")
     if not isinstance(added_token, str) or not added_token.strip():
@@ -295,6 +355,7 @@ def ascend_one_slot(
     return ScaleAscent(
         before=before,
         after=after,
+        mode=mode,
         transition=StructuralTransition(
             fractal_transition=decision.transition,
             cumulative_trace=cumulative,
@@ -305,73 +366,75 @@ def ascend_one_slot(
 
 
 @dataclass(frozen=True, slots=True)
-class PromotedWhole:
-    """جزءٌ صار كلًّا في المقياس التالي، ونسبُه محفوظٌ بمِرساة أبيه."""
+class DeferredBranchBirth:
+    """طلبُ ولادةِ فرعٍ مرفوعٌ ومؤجَّل: جزؤُه، ومِرساتُه المطلوبة، وسببُ تأجيله.
+
+    فالجزءُ لا يصير كلًّا مستقلًّا في هذا الطور: مِرساتُه غيرُ مِرساة أبيه،
+    وإصدارُ شهادةِ الولادة سلطةٌ خارج هذه الطبقة لم تَقُم بعد.
+    """
 
     source_part: StructuralPart
-    whole: StructuralWhole
+    requested_mode: IdentityTransitionMode
+    refusal: str
 
     def __post_init__(self) -> None:
-        if self.whole.parent_anchor_id != self.source_part.parent_anchor_id:
+        if not isinstance(self.source_part, StructuralPart):
+            raise StructuralDalError("الطلبُ يقع على جزءٍ من نوعه")
+        if self.requested_mode is not IdentityTransitionMode.CERTIFIED_BRANCH_BIRTH:
             raise StructuralDalError(
-                "الكلُّ المُرقّى فقد نسبَه؛ و" + THE_PART_KEEPS_ITS_PARENT_ANCHOR
+                "طلبُ صيرورة الجزء كلًّا ولادةُ فرعٍ لا إعادةُ مقياس؛ و"
+                + NO_BRANCH_BIRTH_WITHOUT_EXTERNAL_CERTIFICATE
             )
-        if self.whole.tokens != self.source_part.tokens:
-            raise StructuralDalError("الكلُّ المُرقّى يحمل رموزَ جزئه بعينها")
+        if not isinstance(self.refusal, str) or not self.refusal.strip():
+            raise StructuralDalError("سببُ التأجيل نصٌّ غيرُ فارغ")
 
     @property
-    def keeps_parent_anchor(self) -> bool:
-        """هل بقيت مِرساةُ الأب في الابن؟"""
+    def availability(self) -> IdentityTransitionAvailability:
+        """إتاحةُ النمط المطلوب؛ مؤجَّلةٌ بحكم انعدام سلطته."""
 
-        return self.whole.parent_anchor_id == self.source_part.parent_anchor_id
+        return availability_of(self.requested_mode)
+
+    @property
+    def requested_anchor_id(self) -> str:
+        """المِرساةُ التي كانت ستُطلَب للفرع؛ مُعلَنةٌ ولا تُصدَر."""
+
+        return self.source_part.part_anchor_id
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """محتوى الطلب المؤجَّل للعرض."""
+
+        return {
+            "part_id": self.source_part.part_id,
+            "requested_mode": self.requested_mode.value,
+            "availability": self.availability.value,
+            "requested_anchor_id": self.requested_anchor_id,
+            "refusal": self.refusal,
+        }
 
 
-def promote_part_to_whole(
+def request_part_branch_birth(
     decomposition: StructuralDecomposition,
     role: SlotRole,
-) -> PromotedWhole:
-    """رقِّ جزءًا إلى كلٍّ في المقياس التالي، ما لم تحجب بقيّةٌ حاجبة."""
+) -> DeferredBranchBirth:
+    """اطلب صيرورةَ جزءٍ كلًّا؛ والجوابُ تأجيلٌ مُسمًّى لا ترقيةٌ تقع.
+
+    ولا يُقاس التأجيلُ ببقايا التفكيك وحدَها: حتّى لو ارتفع كلُّ حاجب، تبقى
+    ولادةُ الفرع موقوفةً على شهادةٍ من خارج هذه الطبقة.
+    """
 
     if not isinstance(decomposition, StructuralDecomposition):
-        raise StructuralDalError("الترقيةُ تقع على تفكيكٍ من نوعه")
-    standing = decomposition.promotion_standing
-    if standing is PromotionStanding.PROMOTION_BLOCKED:
-        raise StructuralDalError(
-            "ترقيةٌ مرفوضةٌ لبقيّةٍ حاجبة؛ و" + BLOCKING_RESIDUAL_FORBIDS_POSITIVE_PROMOTION
-        )
+        raise StructuralDalError("الطلبُ يقع على تفكيكٍ من نوعه")
     part = decomposition.part_of(role)
     if part.is_empty:
-        raise StructuralDalError("جزءٌ خالٍ لا يصير كلًّا مكتملًا")
-    parent = decomposition.whole
-    child_anchor = f"{parent.anchor_id}.{role.value}"
-    content = tuple(
-        (f"slot.{position}", slot.token) for position, slot in enumerate(part.slot_map)
-    )
-    node = FractalNode.from_seed(
-        FractalSeed(
-            seed_id=f"seed.{part.part_id}",
-            identity=FractalIdentity(
-                identity_id=child_anchor,
-                scale_ref=SLOT_SCALE_REF,
-                identity_criterion_id=_IDENTITY_CRITERION,
-            ),
-            carrier_id=parent.node.carrier_id,
-            content=content,
+        raise StructuralDalError("جزءٌ خالٍ لا يُطلَب له ولادةٌ أصلًا")
+    return DeferredBranchBirth(
+        source_part=part,
+        requested_mode=IdentityTransitionMode.CERTIFIED_BRANCH_BIRTH,
+        refusal=(
+            f"ولادةُ فرعٍ عن الجزء {part.part_id} مؤجَّلة؛ و"
+            + NO_BRANCH_BIRTH_WITHOUT_EXTERNAL_CERTIFICATE
         ),
-        node_id=f"node.{part.part_id}",
     )
-    child = StructuralWhole(
-        whole_id=f"{part.part_id}.whole",
-        node=node,
-        provenance=(
-            f"مُرقًّى عن الجزء {part.part_id} في التفكيك "
-            f"{decomposition.decomposition_id}"
-        ),
-        parent_anchor_id=parent.anchor_id,
-        descent_depth=parent.descent_depth + 1,
-        trace=parent.trace,
-    )
-    return PromotedWhole(source_part=part, whole=child)
 
 
 def _refuse_a_contract_with_missing_fields() -> None:

@@ -1,12 +1,14 @@
 """`G0.SDAL-0.LAWS`: قوانينُ جبرِ `StructuralDal` عند `zero-one`، مُجمَّدةً قبل القياس.
 
 هذه الطبقةُ أسبقُ من كلِّ دعوى لغويّة: لا جذرَ، ولا وزنَ، ولا زيادةَ، ولا معنى،
-ولا معجم. خاناتٌ مُصطنَعةٌ وحدَها تُبنى عليها صحّةُ الجبر، ثمّ يأتي الإسقاطُ
-العربيُّ في طورٍ لاحقٍ لم يُفتَح بعد.
+ولا معجم. خاناتٌ مُصطنَعةٌ وحدَها تُبنى عليها صحّةُ عملياتها، ودعوى هذه الطبقة
+مخفوضةٌ إلى غايتها:
 
-    ZeroOneStructuralAlgebra  →  ArabicProjection  →  RootCandidate
+    StructuralOperatorProof  →  EligibleForFiberIntegration
 
-والاتّجاهُ عكسَ ذلك ممنوع: لا تُعرِّف الأمثلةُ العربيّةُ الجبرَ.
+فليس في هذا الطور إسقاطٌ على لسانٍ بعينه، ولا ترشيحُ أصلٍ، ولا سلطةُ مقارنةٍ
+بين نظامين. وأهليّةُ الاندماج في ليفٍ لاحقٍ ليست اندماجًا، ولا تُصدَّق عملياتُ
+هذه الطبقة نفسَها.
 """
 
 from __future__ import annotations
@@ -19,6 +21,13 @@ from alghanem.canonical_content import canonical_bytes, canonical_digest
 
 __all__ = [
     "A_NEW_ANCHOR_REQUIRES_PROVENANCE",
+    "NO_BRANCH_BIRTH_WITHOUT_EXTERNAL_CERTIFICATE",
+    "NO_IMPLICIT_IDENTITY_MODE",
+    "NO_POSITIVE_STRUCTURE_FROM_NEUTRAL_INPUT",
+    "SELF_DEFINED_CONTRACT_DOES_NOT_ESTABLISH_COMPARATIVE_STRENGTH",
+    "STRUCTURAL_OPERATOR_PROOF_IS_ONLY_ELIGIBLE_FOR_FIBER_INTEGRATION",
+    "THE_PART_HAS_ITS_OWN_IDENTITY",
+    "UNPROVED_ROLE_BASIS_IS_BLOCKING",
     "BLOCKING_RESIDUAL_FORBIDS_POSITIVE_PROMOTION",
     "NO_EXPECTED_COUNT_IS_FROZEN",
     "NO_FORCED_WINNER_AMONG_SHAPE_PARTITIONS",
@@ -77,14 +86,18 @@ class OutputContractComponent(Enum):
 
 
 class AcceptanceItem(Enum):
-    """بنودُ القبول الثمانيةُ المطلوبةُ من هذا التشغيل بأعيانها."""
+    """بنودُ القبول المطلوبةُ من هذا التشغيل بأعيانها؛ ولا عددَ لها مُجمَّد."""
 
     ZERO_RECONSTRUCTS_EXACTLY = "zero_reconstructs_exactly"
+    ZERO_ASSIGNS_NO_POSITIVE_ROLE = "zero_assigns_no_positive_role"
     ONE_PRODUCES_MULTIPLE_HYPOTHESES = "one_produces_multiple_hypotheses"
     NO_SLOT_SILENTLY_DROPPED = "no_slot_silently_dropped"
-    PARENT_IDENTITY_SURVIVES_SCALE_TRANSITION = (
-        "parent_identity_survives_scale_transition"
+    PART_IDENTITY_IS_DISTINCT_FROM_LINEAGE = "part_identity_is_distinct_from_lineage"
+    SAME_ENTITY_RESCALING_PRESERVES_IDENTITY = (
+        "same_entity_rescaling_preserves_identity"
     )
+    BRANCH_BIRTH_IS_UNAVAILABLE_HERE = "branch_birth_is_unavailable_here"
+    UNPROVED_ROLE_BASIS_BLOCKS_PROMOTION = "unproved_role_basis_blocks_promotion"
     BLOCKING_RESIDUAL_PREVENTS_PROMOTION = "blocking_residual_prevents_promotion"
     TRACE_IS_CUMULATIVE = "trace_is_cumulative"
     LAYER_IS_STRUCTURALLY_ISOLATED = "layer_is_structurally_isolated"
@@ -149,6 +162,46 @@ NO_EXPECTED_COUNT_IS_FROZEN: Final[str] = (
     "لا عددَ متوقَّعٌ يُجمَّد قبل التشغيل؛ والأعدادُ تُشتَقُّ من البنية وقتَ " "القياس ولا تُكتَب يدًا."
 )
 
+NO_POSITIVE_STRUCTURE_FROM_NEUTRAL_INPUT: Final[str] = (
+    "NeutralFiberInput ↛ PositiveStructuralRole: المدخلُ المحايد لا يُنتِج دورًا "
+    "إيجابيًّا من نفسه؛ فحالةُ الابتداء غيرُ مُسنَدةٍ بالتصريح، ولا تُقلَب أساسًا "
+    "بمجرّد كونها الخانةَ الوحيدة."
+)
+
+UNPROVED_ROLE_BASIS_IS_BLOCKING: Final[str] = (
+    "UnprovedRoleBasis -> BlockingResidual: إسنادُ دورٍ إيجابيٍّ بلا مُرجِّحٍ "
+    "مُبرهنٍ بقيّةٌ حاجبةٌ لا مُلاحظةٌ جانبيّة؛ ولا ترقيةَ حتّى يأتي الدليلُ من "
+    "سلطةٍ خارج هذه الطبقة."
+)
+
+THE_PART_HAS_ITS_OWN_IDENTITY: Final[str] = (
+    "LineagePreservation != PartIdentityPreservation: للجزء مِرساتُه الخاصّة، "
+    "و`parent_anchor_id` نسبٌ لا هويّة؛ فمن جعل النسبَ هويّةً أسقط الجزءَ في أبيه."
+)
+
+NO_IMPLICIT_IDENTITY_MODE: Final[str] = (
+    "NoImplicitIdentityMode: نمطُ انتقال الهويّة مُصرَّحٌ في كلِّ انتقال، ولا "
+    "افتراضَ بين `SameEntityRescaling` و`CertifiedBranchBirth`؛ وعدمُ التصريح رفضٌ."
+)
+
+NO_BRANCH_BIRTH_WITHOUT_EXTERNAL_CERTIFICATE: Final[str] = (
+    "NoBranchBirthWithoutExternalCertificate: لا تُصدِر هذه الطبقةُ لنفسها شهادةَ "
+    "ولادةِ فرعٍ ولا رخصتَه؛ ومسارُ `CertifiedBranchBirth` مُسمًّى مؤجَّلٌ حتّى "
+    "تقوم سلطةٌ خارجيّةٌ تُصدِر شهادتَه."
+)
+
+SELF_DEFINED_CONTRACT_DOES_NOT_ESTABLISH_COMPARATIVE_STRENGTH: Final[str] = (
+    "SelfDefinedContract ⇏ ComparativeStrength: عقدُ المخرج هنا مُعرَّفٌ من هذه "
+    "الطبقة نفسِها، فقراءتُه وصفٌ داخلَ عقدِها لا حكمَ قوّةٍ على نموذجٍ آخر؛ "
+    "والمقارنةُ الحقيقيّةُ تأتي من عقدٍ محايدٍ لا يملك أيُّ نظامٍ تعريفَه."
+)
+
+STRUCTURAL_OPERATOR_PROOF_IS_ONLY_ELIGIBLE_FOR_FIBER_INTEGRATION: Final[str] = (
+    "StructuralOperatorProof -> EligibleForFiberIntegration: غايةُ هذا الطور "
+    "أهليّةُ عملياته للاندماج في ليفٍ لاحق، لا إسقاطٌ على لسانٍ بعينه ولا ترشيحُ "
+    "أصلٍ ولا سلطةُ مقارنة."
+)
+
 STRUCTURAL_DAL_LAWS: Final[tuple[str, ...]] = (
     STRUCTURAL_BASE_CASE_IS_NOT_A_LINGUISTIC_ROOT_PROOF,
     SHAPE_PARTITION_HYPOTHESIS_IS_NOT_A_ROOT_CANDIDATE,
@@ -162,6 +215,13 @@ STRUCTURAL_DAL_LAWS: Final[tuple[str, ...]] = (
     THE_TRACE_IS_CUMULATIVE_NOT_RECONSTRUCTED,
     NO_LINGUISTIC_VOCABULARY_IN_THE_ZERO_ONE_ALGEBRA,
     NO_EXPECTED_COUNT_IS_FROZEN,
+    NO_POSITIVE_STRUCTURE_FROM_NEUTRAL_INPUT,
+    UNPROVED_ROLE_BASIS_IS_BLOCKING,
+    THE_PART_HAS_ITS_OWN_IDENTITY,
+    NO_IMPLICIT_IDENTITY_MODE,
+    NO_BRANCH_BIRTH_WITHOUT_EXTERNAL_CERTIFICATE,
+    SELF_DEFINED_CONTRACT_DOES_NOT_ESTABLISH_COMPARATIVE_STRENGTH,
+    STRUCTURAL_OPERATOR_PROOF_IS_ONLY_ELIGIBLE_FOR_FIBER_INTEGRATION,
 )
 
 STRUCTURAL_TRANSITION_CONTRACT_FIELDS: Final[tuple[str, ...]] = (
@@ -252,6 +312,31 @@ STRUCTURAL_ACCEPTANCE_CONDITIONS: Final[tuple[StructuralAcceptanceCondition, ...
         condition_id="SDAL0.NO_LINGUISTIC_CLAIM",
         statement="مفرداتُ المخرج بنيويّةٌ لا لغويّة",
         disqualifier="اسمُ حقلٍ أو عضوِ مفردةٍ لغويٌّ يُبطِل الشرط",
+    ),
+    StructuralAcceptanceCondition(
+        condition_id="SDAL0.NEUTRAL_START",
+        statement="حالةُ الابتداء غيرُ مُسنَدةٍ بالتصريح، ولا دورَ إيجابيَّ فيها",
+        disqualifier="منحُ الخانة الوحيدة دورَ الأساس تلقائيًّا يُبطِل الحياد",
+    ),
+    StructuralAcceptanceCondition(
+        condition_id="SDAL0.UNPROVED_ROLE_BASIS_BLOCKS",
+        statement="أساسُ الدور غيرُ المُبرهن بقيّةٌ حاجبةٌ تمنع الترقية",
+        disqualifier="تسجيلُ عدم البرهان بقيّةً غيرَ حاجبةٍ يُجيز الترقيةَ بلا دليل",
+    ),
+    StructuralAcceptanceCondition(
+        condition_id="SDAL0.PART_IDENTITY",
+        statement="للجزء مِرساتُه الخاصّةُ المتميّزةُ عن مِرساة أبيه",
+        disqualifier="حفظُ النسب وحدَه ليس حفظًا لهويّة الجزء",
+    ),
+    StructuralAcceptanceCondition(
+        condition_id="SDAL0.EXPLICIT_IDENTITY_MODE",
+        statement="نمطُ انتقال الهويّة مُصرَّحٌ، والمفتوحُ منه هنا إعادةُ المقياس وحدَها",
+        disqualifier="نمطٌ ضمنيٌّ أو شهادةُ ولادةٍ تُصدِرها الطبقةُ لنفسها يُبطِل الشرط",
+    ),
+    StructuralAcceptanceCondition(
+        condition_id="SDAL0.NO_SELF_DEFINED_STRENGTH",
+        statement="قراءةُ عقد المخرج وصفٌ داخلَ عقدِ هذه الطبقة لا حكمُ قوّة",
+        disqualifier="قراءةُ تفوّقٍ على نموذجٍ آخر من عقدٍ عرّفته الطبقةُ نفسُها",
     ),
     StructuralAcceptanceCondition(
         condition_id="SDAL0.NO_PRESET_COUNT",

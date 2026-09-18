@@ -18,13 +18,19 @@ from enum import Enum
 
 from alghanem.fractal_generation import FractalResidual, FractalResidualKind
 
-from .laws import BLOCKING_RESIDUAL_FORBIDS_POSITIVE_PROMOTION, StructuralDalError
+from .laws import (
+    BLOCKING_RESIDUAL_FORBIDS_POSITIVE_PROMOTION,
+    NO_POSITIVE_STRUCTURE_FROM_NEUTRAL_INPUT,
+    UNPROVED_ROLE_BASIS_IS_BLOCKING,
+    StructuralDalError,
+)
 
 __all__ = [
     "PromotionStanding",
     "ResidualClass",
     "ResidualReading",
     "promotion_standing_of",
+    "neutral_start_residual",
     "read_residuals",
     "unassigned_role_basis_residual",
     "uncovered_core_residual",
@@ -122,14 +128,28 @@ def uncovered_core_residual(subject_id: str) -> FractalResidual:
 
 
 def unassigned_role_basis_residual(subject_id: str) -> FractalResidual:
-    """بقيّةٌ غيرُ حاجبة: أساسُ إسناد الأدوار غيرُ مُبرهنٍ عند هذا المقياس."""
+    """بقيّةٌ حاجبة: أساسُ إسناد الأدوار غيرُ مُبرهنٍ عند هذا المقياس."""
 
     return FractalResidual(
         kind=FractalResidualKind.UNRESOLVED_DIFFERENCE,
         subject_id=subject_id,
         reason=(
             "الدورُ مُصرَّحٌ لا مُستنبَط: لا مُرجِّحَ عند هذا المقياس يُبيِّن لماذا "
-            "أخذت هذه الخانةُ دورَها دون غيره"
+            "أخذت هذه الخانةُ دورَها دون غيره؛ و" + UNPROVED_ROLE_BASIS_IS_BLOCKING
         ),
-        blocking=False,
+        blocking=True,
+    )
+
+
+def neutral_start_residual(subject_id: str) -> FractalResidual:
+    """بقيّةٌ حاجبة: مدخلٌ محايدٌ لم يُسنَد إليه دورٌ إيجابيٌّ بترخيص."""
+
+    return FractalResidual(
+        kind=FractalResidualKind.UNCOVERED_MINIMUM_REQUIREMENT,
+        subject_id=subject_id,
+        reason=(
+            "حالةُ ابتداءٍ غيرُ مُسنَدة: لا دورَ إيجابيًّا ولا سلطةَ ترخيصٍ في هذه "
+            "الطبقة تمنحه؛ و" + NO_POSITIVE_STRUCTURE_FROM_NEUTRAL_INPUT
+        ),
+        blocking=True,
     )
