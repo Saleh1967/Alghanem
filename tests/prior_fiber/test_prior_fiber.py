@@ -18,18 +18,21 @@ from alghanem.prior_fiber import (
     ExternalRankReference,
     FiberAxis,
     FiberContract,
+    FiberContractBody,
+    GoldCommitment,
     ParallelFiberBundle,
     PriorFiberError,
     PriorFiberNode,
     SlotStanding,
     SuccessCriterion,
+    commit_gold,
     fiber_import_isolation_audit,
     fiber_vocabulary_audit,
     project_all_fibers,
     project_fiber,
-    seal_gold,
 )
 from alghanem.prior_fiber import audit as audit_module
+from alghanem.prior_fiber import commitment as commitment_module
 from alghanem.prior_fiber import contract as contract_module
 from alghanem.prior_fiber import fibers as fibers_module
 from alghanem.prior_fiber import node as node_module
@@ -92,26 +95,42 @@ def _node(**overrides: object) -> PriorFiberNode:
     return PriorFiberNode(**fields)  # type: ignore[arg-type]
 
 
-def _contract(**overrides: object) -> FiberContract:
-    node = _node()
+_NONCE = bytes(range(32))
+
+_GOLD = {"member.one": "جوابٌ أوّل", "member.two": "جوابٌ ثانٍ"}
+
+
+def _body(**overrides: object) -> FiberContractBody:
     members = (
         DomainMember(member_id="member.one", observed_inputs=(("d.one", "أ"),)),
         DomainMember(member_id="member.two", observed_inputs=(("d.one", "ب"),)),
     )
     fields: dict[str, object] = {
         "contract_id": "contract.test",
-        "node": node,
+        "node": _node(),
         "members": members,
         "success_criteria": tuple(SuccessCriterion),
-        "gold_seal": seal_gold(
-            {"member.one": "جوابٌ أوّل", "member.two": "جوابٌ ثانٍ"},
-            gold_scheme="جوابٌ مختومٌ للاختبار",
-        ),
         "authored_by": "author.neutral",
-        "reading_systems": ("system.one", "system.two"),
     }
     fields.update(overrides)
-    return FiberContract(**fields)  # type: ignore[arg-type]
+    return FiberContractBody(**fields)  # type: ignore[arg-type]
+
+
+def _commitment(body: FiberContractBody, **overrides: object) -> GoldCommitment:
+    fields: dict[str, object] = {
+        "labels": dict(_GOLD),
+        "gold_scheme": "جوابٌ ملتزَمٌ به للاختبار",
+        "nonce": _NONCE,
+        "contract_body_digest": body.body_digest,
+    }
+    fields.update(overrides)
+    labels = fields.pop("labels")
+    return commit_gold(labels, **fields)  # type: ignore[arg-type]
+
+
+def _contract(**overrides: object) -> FiberContract:
+    body = _body(**overrides)
+    return FiberContract(body=body, gold_commitment=_commitment(body))
 
 
 def test_the_node_declares_its_twelve_positions_as_its_own_fields() -> None:
@@ -197,14 +216,12 @@ def test_each_axis_declares_what_it_reads() -> None:
     assert FiberAxis.CARRIER_AND_CONTENT_TOGETHER.reads_the_content
 
 
-def test_a_system_may_not_author_the_contract_it_is_read_by() -> None:
-    with pytest.raises(PriorFiberError, match="NoSystemDefinesTheContractItIsReadBy"):
-        _contract(authored_by="system.one")
+def test_the_contract_is_frozen_before_any_reader_exists() -> None:
+    contract = _contract()
 
-
-def test_a_contract_read_by_one_system_alone_is_refused() -> None:
-    with pytest.raises(PriorFiberError, match="بنظامين فأكثر"):
-        _contract(reading_systems=("system.one",))
+    assert contract.carries_no_reader_identity
+    assert "reading_systems" not in tuple(FiberContractBody.__dataclass_fields__)
+    assert "FrozenContractBeforeReaders" in contract.body.freezing_law
 
 
 def test_the_contract_covers_every_success_criterion_exactly() -> None:
@@ -228,35 +245,84 @@ def test_a_member_input_outside_the_declared_options_is_refused() -> None:
         _contract(members=stray)
 
 
-def test_the_gold_is_sealed_as_a_digest_and_withheld_from_the_contract() -> None:
+def test_the_gold_is_committed_and_withheld_from_the_contract() -> None:
     contract = _contract()
 
-    assert contract.gold_is_sealed_by_digest_only
+    assert contract.gold_is_committed_not_shipped
+    assert contract.gold_commitment.withholds_its_nonce
     assert contract.withholds("جوابٌ أوّل")
     assert contract.withholds("جوابٌ ثانٍ")
-    assert contract.gold_seal.sealed_member_count == len(contract.members)
+    assert contract.gold_commitment.committed_member_count == len(contract.members)
 
 
-def test_the_seal_changes_when_the_withheld_answer_changes() -> None:
-    first = seal_gold({"member.one": "أ"}, gold_scheme="صيغة")
-    second = seal_gold({"member.one": "ب"}, gold_scheme="صيغة")
+def test_the_commitment_moves_with_the_nonce_alone() -> None:
+    body = _body()
 
-    assert first.gold_digest != second.gold_digest
+    first = _commitment(body)
+    second = _commitment(body, nonce=bytes(range(1, 33)))
 
-
-def test_a_seal_that_does_not_cover_the_domain_is_refused() -> None:
-    with pytest.raises(PriorFiberError, match="عددُ الأعضاء المختومة"):
-        _contract(gold_seal=seal_gold({"member.one": "جوابٌ أوّل"}, gold_scheme="صيغة"))
+    assert first.commitment_digest != second.commitment_digest
+    assert first.contract_body_digest == second.contract_body_digest
 
 
-def test_the_preregistration_digest_is_derived_from_the_frozen_content() -> None:
+def test_a_nonce_below_the_declared_entropy_is_refused() -> None:
+    with pytest.raises(PriorFiberError, match="أقصرُ من"):
+        _commitment(_body(), nonce=b"\x01\x02\x03")
+
+
+def test_a_nonce_that_is_not_bytes_is_refused_with_no_default() -> None:
+    with pytest.raises(PriorFiberError, match="بايتاتٌ صريحة"):
+        _commitment(_body(), nonce="0" * 64)
+
+
+def test_the_commitment_opens_only_with_its_own_gold_and_nonce() -> None:
+    body = _body()
+    commitment = _commitment(body)
+
+    assert commitment.opens_with(
+        _GOLD, nonce=_NONCE, contract_body_digest=body.body_digest
+    )
+    assert not commitment.opens_with(
+        {"member.one": "جوابٌ آخر", "member.two": "جوابٌ ثانٍ"},
+        nonce=_NONCE,
+        contract_body_digest=body.body_digest,
+    )
+    assert not commitment.opens_with(
+        _GOLD, nonce=bytes(range(1, 33)), contract_body_digest=body.body_digest
+    )
+
+
+def test_a_commitment_that_does_not_cover_the_domain_is_refused() -> None:
+    body = _body()
+
+    with pytest.raises(PriorFiberError, match="عددُ الأعضاء الملتزَم بها"):
+        FiberContract(
+            body=body,
+            gold_commitment=_commitment(body, labels={"member.one": "جوابٌ أوّل"}),
+        )
+
+
+def test_a_commitment_bound_to_another_body_is_refused() -> None:
+    body = _body()
+
+    with pytest.raises(PriorFiberError, match="جسم عقدٍ آخر"):
+        FiberContract(
+            body=body,
+            gold_commitment=_commitment(
+                _body(contract_id="contract.other"),
+            ),
+        )
+
+
+def test_the_contract_digest_is_derived_from_the_body_and_its_commitment() -> None:
     contract = _contract()
 
-    assert contract.preregistration_digest == _contract().preregistration_digest
+    assert contract.contract_digest == _contract().contract_digest
     assert (
-        contract.preregistration_digest
-        != _contract(contract_id="contract.other").preregistration_digest
+        contract.contract_digest
+        != _contract(contract_id="contract.other").contract_digest
     )
+    assert contract.contract_body_digest == contract.body.body_digest
 
 
 def test_the_contract_ceiling_is_dominance_within_a_frozen_domain() -> None:
@@ -270,12 +336,17 @@ def test_the_layer_is_import_isolated_from_domains_and_systems() -> None:
     assert report.alghanem_imports
     for reached in report.alghanem_imports:
         head = reached.split(".")[1]
-        assert head in {"canonical_content", "prior", "prior_fiber"}
+        assert head in {
+            "canonical_content",
+            "import_boundary",
+            "prior",
+            "prior_fiber",
+        }
 
 
 def test_the_layer_names_stay_neutral_between_domains() -> None:
     report = fiber_vocabulary_audit(
-        audit_module, contract_module, fibers_module, node_module
+        audit_module, commitment_module, contract_module, fibers_module, node_module
     )
 
     assert report.is_neutral, report.violations

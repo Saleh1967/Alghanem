@@ -5323,6 +5323,84 @@ frozen *after* this contract and *independently* of it.
 python examples/prior_fiber/freeze_madlul_contract.py
 ```
 
+### `G0.EVAL-0` — a blind-by-boundary, re-auditable evaluation boundary
+
+`G0.FIBER-0` froze a neutral contract but left the exam reachable: gold was a
+bare digest, and the readers were *strings*. This milestone closes both gaps
+before any second system exists, in `src/alghanem/evaluation/` plus one shared
+primitive, `src/alghanem/import_boundary.py`.
+
+- **The contract is frozen before its readers exist.** `FiberContractBody` holds
+  the domain, the members, the success criteria and the author, and nothing else;
+  it has no reader field at all. `FrozenContractBeforeReaders` is therefore a
+  structural law, not a scheduling convention: binding readers to an exam is the
+  evaluation layer's job, and an exam cannot wait for its opponent.
+- **The gold is committed, not sealed.** `GoldSeal` is gone; there is one gold
+  path. `commit_gold(labels, *, gold_scheme, nonce, contract_body_digest)` has no
+  default nonce, no derived nonce and no knowledge of where the nonce came from —
+  a nonce shorter than 256 bits, or one that is not `bytes`, is refused. The
+  commitment is `H(canonical_gold ‖ nonce ‖ contract_body_digest ‖ scheme)`, and
+  the cycle is broken by computing `body_digest` on a body that has no commitment
+  in it, then deriving `contract_digest` from the body *and* its commitment.
+- **What is claimed is binding, not secrecy.** In the current madlul domain the
+  answer key already lives in `madlul_alone_formal.py`, so the honest claim is
+  `blind-by-boundary + commitment binding`. `DigestOnly != CryptographicallyHiddenGold`
+  is recorded as a law, and the API takes gold and nonce as *arguments* so a
+  genuinely external hidden gold can be used later without changing the interface.
+- **A system name is not a system identity.** `FrozenSystemIdentity.content_id` is
+  derived from four components only — `implementation_digest`,
+  `configuration_digest`, `dependency_boundary_digest` and
+  `contract_interface_version`. There is no name field; one changed source byte
+  changes the identity, so a reader cannot be edited after seeing the exam and
+  still present the same identity.
+- **A reader that can reach the answer is not frozen at all.**
+  `reader_import_audit` refuses `alghanem.arabic.madlul_alone_formal`,
+  `alghanem.arabic.fiber_contracts`, `alghanem.prior_fiber.commitment` and
+  `alghanem.evaluation.reveal`, transitively and including relative imports, and
+  refuses `importlib`, `__import__` and dynamic file access.
+- **The reader receives bytes, not objects.** `issue_blind_payload` emits a
+  canonical serialization carrying the geometry, the distinctions and the members'
+  observed inputs — and refuses to emit anything containing the commitment or the
+  author. The node trace stays out because it names the fifth branch.
+- **Four digests bind every request.** `BoundEvaluationRequest` binds
+  `system_content_id`, `contract_digest`, `domain_digest` and
+  `evaluation_protocol_digest`; a report whose request, identity or payload digest
+  does not match is refused, as is one whose coverage of the domain is partial.
+- **A first run happens once.** `RunLedger` fixes the first report as the
+  reference. A byte-identical repeat at ordinal ≥ 2 is accepted as a determinism
+  witness and never replaces the first; a differing repeat, or a second claim to
+  be the first run under the same identity, is refused *and* recorded as a
+  violation, and any recorded violation blocks the reveal.
+- **The reveal authority owns nothing.** `GoldRevealAuthority.reveal(labels, nonce=...)`
+  reads no gold and no nonce from the repository: both are passed at reveal time,
+  checked against the commitment, and only then — with a first frozen report for
+  every required reader — does it issue a `GoldRevealRecord` that carries neither
+  the gold nor the nonce.
+- **`EvaluationProtocolKind`** distinguishes `FORMAL_CLASSIFICATION` from
+  `RULE_DISCOVERY` as part of the protocol digest only; the two experiments
+  themselves are *not* built here.
+- **The audit is not a sandbox.** `StaticImportAudit != ProcessIsolation`:
+  refusing dynamic access in a reader's source strengthens the boundary but proves
+  no confinement, so `ProcessConfinementDeclaration` stands at `DECLARED_DEFERRED`
+  instead of claiming what has not been shown.
+
+One deliberate placement deviation: `GoldCommitment` lives in
+`src/alghanem/prior_fiber/commitment.py`, not in `evaluation/`, because the
+contract carries the commitment and `prior_fiber` must never import `evaluation`.
+The reader boundary compensates by naming `alghanem.prior_fiber.commitment` in
+its forbidden-module list.
+
+Measured: 4 identity components, 256-bit minimum nonce, 10 evaluation laws, 5
+members covered per report, 2 reader identities bound, 0 verdict functions.
+
+Not built here, deliberately: `G0.F2-0`, `G0.PARALLEL-0`, any comparison, any
+`Ω_M` evaluation and any dominance verdict. The ceiling of this milestone is a
+re-auditable blind evaluation machine plus a `GoldRevealRecord`.
+
+```bash
+python examples/evaluation/run_blind_evaluation.py
+```
+
 
 ```bash
 python -m pip install -e '.[dev]'

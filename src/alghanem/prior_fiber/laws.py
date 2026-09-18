@@ -20,7 +20,9 @@ from typing import Final
 
 __all__ = [
     "AN_ADAPTER_FLOWS_INTO_THE_FIBER_NOT_THE_REVERSE",
-    "A_SEALED_GOLD_IS_A_DIGEST_NOT_AN_ANSWER",
+    "A_COMMITTED_GOLD_IS_BOUND_NOT_SHIPPED",
+    "DIGEST_ONLY_IS_NOT_CRYPTOGRAPHICALLY_HIDDEN_GOLD",
+    "FROZEN_CONTRACT_BEFORE_READERS",
     "NO_POSITIVE_ROLE_FROM_A_NEUTRAL_FIBER_INPUT",
     "NO_SYSTEM_DEFINES_THE_CONTRACT_IT_IS_READ_BY",
     "OBSERVED_DOMINANCE_IS_BOUNDED_BY_ITS_FROZEN_DOMAIN",
@@ -52,9 +54,22 @@ NO_SYSTEM_DEFINES_THE_CONTRACT_IT_IS_READ_BY: Final[str] = (
     "سيُقرَأ به؛ فمن عرّف الامتحانَ فاز به، والمقارنةُ حينئذٍ صورةٌ لا حجّة"
 )
 
-A_SEALED_GOLD_IS_A_DIGEST_NOT_AN_ANSWER: Final[str] = (
-    "SealedGoldIsADigestNotAnAnswer: العقدُ يحمل بصمةَ الجواب المحجوب ولا يحمل "
+A_COMMITTED_GOLD_IS_BOUND_NOT_SHIPPED: Final[str] = (
+    "CommittedGoldIsBoundNotShipped: العقدُ يحمل التزامَ الجواب المحجوب ولا يحمل "
     "الجوابَ؛ ولا يكفي أن يُسمّى محجوبًا وهو مقروءٌ من محتواه"
+)
+
+DIGEST_ONLY_IS_NOT_CRYPTOGRAPHICALLY_HIDDEN_GOLD: Final[str] = (
+    "DigestOnly != CryptographicallyHiddenGold: بصمةُ الجواب وحدَها التزامٌ "
+    "يُجرَّب في مجالٍ صغير؛ فالالتزامُ يُربَط بعشوائيّةٍ عاليةٍ وبجسم العقد، "
+    "ويبقى سقفُ الدعوى ربطًا يمنع التبديل، لا إخفاءً تشفيريًّا لمادّةٍ مقروءةٍ "
+    "من موضعٍ آخر"
+)
+
+FROZEN_CONTRACT_BEFORE_READERS: Final[str] = (
+    "FrozenContractBeforeReaders: العقدُ يصف المجالَ والامتحانَ ويُجمَّد قبل أن "
+    "يوجد خصمٌ أصلًا؛ فلا يحمل هويّةَ قارئٍ ولا ينتظره، وربطُ القرّاء يقع في "
+    "طبقة التقييم بعده لا فيه"
 )
 
 THE_FIBER_DEFERS_ITS_RANK_TO_AN_EXTERNAL_AUTHORITY: Final[str] = (
@@ -79,7 +94,9 @@ PRIOR_FIBER_LAWS: Final[tuple[str, ...]] = (
     NO_POSITIVE_ROLE_FROM_A_NEUTRAL_FIBER_INPUT,
     THE_THREE_FIBERS_ARE_PARALLEL_NOT_SEQUENTIAL,
     NO_SYSTEM_DEFINES_THE_CONTRACT_IT_IS_READ_BY,
-    A_SEALED_GOLD_IS_A_DIGEST_NOT_AN_ANSWER,
+    A_COMMITTED_GOLD_IS_BOUND_NOT_SHIPPED,
+    DIGEST_ONLY_IS_NOT_CRYPTOGRAPHICALLY_HIDDEN_GOLD,
+    FROZEN_CONTRACT_BEFORE_READERS,
     THE_FIBER_DEFERS_ITS_RANK_TO_AN_EXTERNAL_AUTHORITY,
     AN_ADAPTER_FLOWS_INTO_THE_FIBER_NOT_THE_REVERSE,
     OBSERVED_DOMINANCE_IS_BOUNDED_BY_ITS_FROZEN_DOMAIN,
