@@ -12,6 +12,11 @@
 **وفسادُ الإدخال ليس حجبًا** (`InvalidInputIsNotABlock`): الوثيقةُ التي لا تقوم
 منها قضيّةٌ لا تُصدِر `BLOCK`؛ إنّما تُصدِر `InputValidation` لا حكمَ معها.
 
+**وفشلُ التشييد بعد النجاح ليس حجبًا** (`AMaterializationFailureIsNotABlock`):
+إن أجازت القوانينُ كلُّها القضيّةَ ثمّ تعذّر تشييدُ النسبة، فذلك عطبُ محرّكٍ أو
+نقصٌ في قائمة القوانين؛ فيُرفَع `ExecutionInvariantError` ولا يُختَم غلاف. وهو
+الاستثناءُ الوحيدُ الذي يخرج من هذا الباب، وليس حكمًا.
+
 تسجيلٌ لا سلطة: لا ولادةَ ولا حكمَ ولادةٍ ولا تجميدَ `E0`.
 """
 
@@ -35,6 +40,10 @@ from .derivation import (
     SiteKey,
     SiteOwnerKind,
     derive_partial_authority,
+)
+from .invariant import (
+    A_MATERIALIZATION_FAILURE_IS_NOT_A_BLOCK,
+    ExecutionInvariantError,
 )
 from .laws import aggregate_outcome, evaluate_laws, residuals_of, violations_of
 from .lawset import LAW_SET_DIGEST, LAW_SET_ID, ExecutionLaw
@@ -93,23 +102,33 @@ def _lineage_identity(
 
 def _materialize(
     declaration: CaseDeclaration, derivation: PartialAuthorityDerivation
-) -> AnchoredNisbahSignatureV3 | None:
-    """أنشئ النسبةَ السلطويّةَ بعد النجاح؛ ورفضُ بابها يُقرَأ مخالفةً لا عطبًا."""
+) -> AnchoredNisbahSignatureV3:
+    """أنشئ النسبةَ السلطويّةَ بعد النجاح؛ وتعذُّرُ الإنشاء عطبُ محرّكٍ لا حجب."""
 
     lineage = derivation.lineage.subject
     declared_predicate = declaration.nisbah.predicate
     predicate_role = derivation.role_sites.get(
         SiteKey(SiteOwnerKind.PREDICATE, declared_predicate.predicate_id)
     )
-    if lineage is None or predicate_role is None or predicate_role.subject is None:
-        return None
+    if lineage is None:
+        raise ExecutionInvariantError(
+            "نجاحٌ مبدئيٌّ بلا سلسلةٍ مُشتَقّة؛ و" + A_MATERIALIZATION_FAILURE_IS_NOT_A_BLOCK
+        )
+    if predicate_role is None or predicate_role.subject is None:
+        raise ExecutionInvariantError(
+            f"نجاحٌ مبدئيٌّ بلا دورٍ مُرخَّصٍ للمحمول `{declared_predicate.predicate_id}`؛ و"
+            + A_MATERIALIZATION_FAILURE_IS_NOT_A_BLOCK
+        )
     slots: list[AnchoredArgumentSlotV3] = []
     for declared_slot in declared_predicate.slots:
         site = derivation.condition_sites.get(
             SiteKey(SiteOwnerKind.SLOT, declared_slot.slot_id)
         )
         if site is None or site.subject is None:
-            return None
+            raise ExecutionInvariantError(
+                f"نجاحٌ مبدئيٌّ بلا شرطِ قبولٍ للخانة `{declared_slot.slot_id}`؛ و"
+                + A_MATERIALIZATION_FAILURE_IS_NOT_A_BLOCK
+            )
         slots.append(
             AnchoredArgumentSlotV3(
                 slot_id=declared_slot.slot_id,
@@ -123,9 +142,15 @@ def _materialize(
         role = derivation.role_sites.get(key)
         condition = derivation.condition_sites.get(key)
         if role is None or role.subject is None:
-            return None
+            raise ExecutionInvariantError(
+                f"نجاحٌ مبدئيٌّ بلا دورٍ مُرخَّصٍ للمرتكز `{declared_anchor.anchor_id}`؛ و"
+                + A_MATERIALIZATION_FAILURE_IS_NOT_A_BLOCK
+            )
         if condition is None or condition.subject is None:
-            return None
+            raise ExecutionInvariantError(
+                f"نجاحٌ مبدئيٌّ بلا شرطِ هويّةٍ للمرتكز `{declared_anchor.anchor_id}`؛ و"
+                + A_MATERIALIZATION_FAILURE_IS_NOT_A_BLOCK
+            )
         anchors.append(
             AnchoredTermAnchorV3(
                 anchor_id=declared_anchor.anchor_id,
@@ -140,17 +165,25 @@ def _materialize(
         arity_license=ArityLicenseGenus(declared_predicate.arity_license_name),
         slots=tuple(slots),
     )
-    return AnchoredNisbahSignatureV3.in_lineage(
-        nisbah_id=declaration.nisbah.nisbah_id,
-        lineage=lineage,
-        predicate=predicate,
-        anchors=tuple(anchors),
-    )
+    try:
+        return AnchoredNisbahSignatureV3.in_lineage(
+            nisbah_id=declaration.nisbah.nisbah_id,
+            lineage=lineage,
+            predicate=predicate,
+            anchors=tuple(anchors),
+        )
+    except AnchoredV3Error as refusal:
+        raise ExecutionInvariantError(
+            f"بابُ `v3` ردّ ما أجازته القوانينُ كلُّها: {refusal}؛ و"
+            + A_MATERIALIZATION_FAILURE_IS_NOT_A_BLOCK
+        ) from refusal
 
 
-def _first_violated_law(trace: tuple[LawCheckEntry, ...]) -> str | None:
+def _first_law_with(
+    trace: tuple[LawCheckEntry, ...], standing: CheckStanding
+) -> str | None:
     for entry in trace:
-        if entry.standing is CheckStanding.VIOLATED:
+        if entry.standing is standing:
             return entry.law
     return None
 
@@ -169,10 +202,7 @@ def _materialized_identity_entry(
     expected = None if claimed is None else Identity(id=subject, content_id=claimed)
     materialized: AnchoredNisbahSignatureV3 | None = None
     if provisional is ExecutionOutcome.PASS:
-        try:
-            materialized = _materialize(declaration, derivation)
-        except AnchoredV3Error:
-            materialized = None
+        materialized = _materialize(declaration, derivation)
     observed = (
         None
         if materialized is None
@@ -180,15 +210,14 @@ def _materialized_identity_entry(
     )
     standing = CheckStanding.SATISFIED
     blocked_by: str | None = None
-    if provisional is ExecutionOutcome.PASS and materialized is None:
-        standing = CheckStanding.VIOLATED
-    elif claimed is None:
+    if claimed is None:
         standing = CheckStanding.NOT_APPLICABLE_NO_CLAIM
     elif provisional is ExecutionOutcome.BLOCK:
         standing = CheckStanding.NOT_EVALUATED_BY_PREREQUISITE
-        blocked_by = _first_violated_law(trace)
+        blocked_by = _first_law_with(trace, CheckStanding.VIOLATED)
     elif provisional is ExecutionOutcome.DEFER:
-        standing = CheckStanding.UNRESOLVED
+        standing = CheckStanding.NOT_EVALUATED_BY_PREREQUISITE
+        blocked_by = _first_law_with(trace, CheckStanding.UNRESOLVED)
     elif observed != expected:
         standing = CheckStanding.VIOLATED
     entry = LawCheckEntry(
@@ -201,8 +230,6 @@ def _materialized_identity_entry(
         observed=observed,
         blocked_by=blocked_by,
     )
-    if standing is CheckStanding.VIOLATED:
-        return entry, None
     return entry, materialized
 
 
@@ -237,9 +264,7 @@ def execute_declaration(declaration: CaseDeclaration) -> ExecutionReport:
             else Identity(id=materialized.nisbah_id, content_id=materialized.content_id)
         ),
     )
-    envelope = ExecutionResultEnvelope.sealing(
-        declaration_document=declaration.as_canonical_content(), core=core
-    )
+    envelope = ExecutionResultEnvelope.sealing(declaration=declaration, core=core)
     return ExecutionReport(validation=validation, envelope=envelope)
 
 

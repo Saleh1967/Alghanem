@@ -8,6 +8,8 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 from execution_cases import (
     base_declaration,
@@ -21,6 +23,7 @@ from alghanem.execution import (
     LAW_SET,
     LAW_SET_DIGEST,
     CheckStanding,
+    ExecutionInvariantError,
     ExecutionLaw,
     ExecutionOutcome,
     ExecutionResultEnvelope,
@@ -29,10 +32,15 @@ from alghanem.execution import (
     InputStanding,
     RequiredAuthority,
     audit_lines,
+    decode_document,
+    derive_partial_authority,
+    evaluate_laws,
     execute_document,
     is_reproducible,
     replay,
+    validate_declaration,
 )
+from alghanem.execution.engine import _materialized_identity_entry
 from alghanem.prior.conditions import PriorConditionKind, PriorLicenseGenus
 
 
@@ -337,6 +345,33 @@ def test_a_blocked_dependent_law_is_not_read_as_missing_evidence() -> None:
     assert core.residuals == ()
 
 
+def test_a_deferred_case_does_not_read_the_dependent_law_as_missing_evidence() -> None:
+    document = mutate(valid_document())
+    document["nisbah"]["declared_content_id"] = "0" * 64
+    document["nisbah"]["anchors"][0]["role_site"] = None
+    document["unresolved_requirements"] = [
+        {
+            "required_authority": RequiredAuthority.ROLE_LICENSE.value,
+            "subject_id": "anchor.first",
+            "standing": "unresolved",
+        }
+    ]
+    report = execute_document(document)
+    assert report.envelope is not None
+    core = report.envelope.core
+    assert core.outcome is ExecutionOutcome.DEFER
+    assert core.materialized_identity is None
+    entry = _entry(report.envelope, ExecutionLaw.MATERIALIZED_IDENTITY_AGREES)
+    assert entry.standing is CheckStanding.NOT_EVALUATED_BY_PREREQUISITE  # type: ignore[attr-defined]
+    unresolved = tuple(
+        line.law for line in core.trace if line.standing is CheckStanding.UNRESOLVED
+    )
+    assert unresolved
+    assert entry.blocked_by == unresolved[0]  # type: ignore[attr-defined]
+    assert core.residuals
+    assert all(residual.subject_id != "nisbah.A" for residual in core.residuals)
+
+
 def test_an_absent_identity_claim_is_not_read_as_an_agreement() -> None:
     report = execute_document(valid_document())
     assert report.envelope is not None
@@ -423,11 +458,13 @@ def test_a_replay_runs_from_the_stored_declaration() -> None:
 def test_an_envelope_is_bound_to_the_declaration_it_judged() -> None:
     report = execute_document(valid_document())
     assert report.envelope is not None
-    tampered = mutate(report.envelope.declaration_document)
-    tampered["schema"] = "alghanem.execution.v0"
+    tampered_document = mutate(report.envelope.declaration_document)
+    tampered_document["nisbah"]["nisbah_id"] = "nisbah.B"
+    tampered = decode_document(tampered_document).declaration
+    assert tampered is not None
     with pytest.raises(ExecutionResultError):
         ExecutionResultEnvelope(
-            declaration_document=tampered,
+            declaration=tampered,
             core=report.envelope.core,
             execution_digest=report.envelope.execution_digest,
         )
@@ -438,11 +475,66 @@ def test_an_execution_digest_is_derived_not_written() -> None:
     assert report.envelope is not None
     with pytest.raises(ExecutionResultError):
         ExecutionResultEnvelope(
-            declaration_document=report.envelope.declaration_document,
+            declaration=report.envelope.declaration,
             core=report.envelope.core,
             execution_digest="0" * 64,
         )
     assert "execution_digest" not in report.envelope.core.as_canonical_content()
+
+
+def test_a_sealed_envelope_holds_a_declaration_that_cannot_be_altered() -> None:
+    report = execute_document(valid_document())
+    assert report.envelope is not None
+    envelope = report.envelope
+    sealed_digest = envelope.execution_digest
+    with pytest.raises(AttributeError):
+        envelope.declaration = envelope.declaration  # type: ignore[misc]
+    with pytest.raises(AttributeError):
+        envelope.declaration.nisbah.nisbah_id = "nisbah.B"  # type: ignore[misc]
+    with pytest.raises(AttributeError):
+        envelope.declaration.nisbah.predicate.arity = 3  # type: ignore[misc]
+    assert envelope.execution_digest == sealed_digest
+    assert envelope.declaration.input_digest == envelope.core.input_digest
+    assert is_reproducible(envelope)
+
+
+def test_an_exported_declaration_document_is_a_fresh_copy_each_time() -> None:
+    report = execute_document(valid_document())
+    assert report.envelope is not None
+    envelope = report.envelope
+    first = envelope.declaration_document
+    assert first is not envelope.declaration_document
+    first["nisbah"]["nisbah_id"] = "nisbah.B"
+    assert envelope.declaration_document["nisbah"]["nisbah_id"] == "nisbah.A"
+    assert envelope.core.input_digest == canonical_digest(
+        canonical_bytes(envelope.declaration_document)
+    )
+    assert is_reproducible(envelope)
+
+
+def test_a_materialization_failure_after_a_provisional_pass_is_not_a_block() -> None:
+    declaration = decode_document(valid_document()).declaration
+    assert declaration is not None
+    validation, levels = validate_declaration(declaration)
+    assert validation.is_valid
+    derivation = derive_partial_authority(declaration, levels)
+    emptied = replace(derivation, role_sites={}, condition_sites={})
+    with pytest.raises(ExecutionInvariantError):
+        _materialized_identity_entry(
+            declaration,
+            emptied,
+            ExecutionOutcome.PASS,
+            evaluate_laws(declaration, derivation),
+        )
+
+
+def test_a_pass_without_a_materialized_identity_is_not_a_result() -> None:
+    report = execute_document(valid_document())
+    assert report.envelope is not None
+    core = report.envelope.core
+    assert core.outcome is ExecutionOutcome.PASS
+    with pytest.raises(ExecutionResultError):
+        replace(core, materialized_identity=None)
 
 
 def test_the_law_set_digest_changes_when_the_order_changes() -> None:

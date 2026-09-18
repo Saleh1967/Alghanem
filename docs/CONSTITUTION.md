@@ -2850,3 +2850,96 @@ and no `E0` freeze.
 
 Deferred here by name, not by omission: the golden-case corpus, the command
 line interface, packaging, `O_M`, significations, and any Arabic material.
+
+### G0.RUN-0H — Hardening the sealed verdict
+
+`G0.RUN-0H` adds no theory and no linguistic law. It closes three gaps between
+the stated meaning of a verdict and what the engine actually did, and corrects
+the standing of one dependent law.
+
+The two invariants below are **invariants of the execution engine, not members
+of `ExecutionLaw`**. They are never evaluated against a case, never recorded as
+a line in a trace, and never enter `LAW_SET_DIGEST`; they live in
+`src/alghanem/execution/invariant.py` and are enforced at construction time.
+`LAW_SET`, `LAW_SET_ID` and `LAW_SET_DIGEST` are therefore unchanged by this
+milestone, and no earlier verdict is re-read under a different law set.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `AMaterializationFailureIsNotABlock` | ENFORCED_AT_EXECUTION_GATE | An engine invariant, not an `ExecutionLaw`. `BLOCK` is issued only because a declared law was evaluated and proved violated. If a case passes every pre-construction law and materialization then fails — the `v3` door refuses it, or a derived site the laws admitted is absent — the law set failed to cover a condition `v3` imposes, or the engine is defective. That is `ExecutionInvariantError`, outside `PASS`/`BLOCK`/`DEFER`; no envelope is sealed and the failure is never charged to the case. |
+| `PassIffMaterializedIdentity` | ENFORCED_AT_EXECUTION_GATE | An engine invariant, not an `ExecutionLaw`. The relation is biconditional: `PASS` requires a `materialized_identity`, and `BLOCK`/`DEFER` forbid one. Only success reaches authoritative material, and success is never without it. |
+| `AnEnvelopeHoldsAnUnalterableDeclaration` | ENFORCED_AT_EXECUTION_GATE | Freezing a dataclass does not freeze a dictionary it carries, nor the dictionaries nested inside it. The envelope therefore holds the frozen `CaseDeclaration` itself, and `declaration_document` is a read-only projection recomputed on every read, so the stored input cannot be altered after sealing while `input_digest` and `execution_digest` stay as they were. |
+
+Under `DEFER`, `MATERIALIZED_IDENTITY_AGREES` is recorded
+`NOT_EVALUATED_BY_PREREQUISITE` naming the first `UNRESOLVED` law as its
+blocker, not `UNRESOLVED`: the identity law's own evidence is not missing; the
+nisbah was never constructed because an earlier law lacked evidence. The
+distinction is the one `ABlockedDependentIsNotMissingEvidence` already draws, so
+the dependent law no longer contributes a residual of its own.
+
+This correction changes `execution_digest` for `DEFER` cases that claim a nisbah
+identity. That is admissible **now and not later**: the digests produced by
+`G0.RUN-0` are not a frozen historical contract over cases, and hardening
+precedes the freezing of golden data. After `G0.CASE-0` freezes the corpus, a
+digest change requires a new law set and new cases, never a silent edit.
+
+### G0.CASE-0.MATRIX — The constitution of the cases, before the cases
+
+`G0.CASE-0.MATRIX` freezes *what must be covered* before a single golden case
+exists. It contains no case, no JSON input, no expected verdict of any concrete
+case, and no `execution_digest`. Its own digest, `COVERAGE_MATRIX_DIGEST`, is a
+digest of the requirement — not of an execution.
+
+The order it establishes is historical, not merely stylistic:
+
+    Specification  ≺  Cases  ≺  Readout
+
+`MATRIX` states the requirement; `G0.CASE-0.DATA` freezes inputs and
+expectations **without running the engine against them**; `G0.CASE-0.READOUT`
+runs the engine for the first time and exposes agreement or failure. Were the
+cases written, run and adjusted inside one change, success would prove only that
+the expectations were edited after seeing the result.
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `CoverageRequirementIsFrozenBeforeCaseSelection` | ENFORCED_AT_COVERAGE_GATE | A requirement engine invariant, not an `ExecutionLaw`. Every `CoverageRequirement` carries `case_id = None`, enforced at construction. Thirty cases must be a consequence of the legal structure, never an arbitrary count that the matrix is later written to describe. |
+| `CaseExpectationIsFrozenBeforeFirstEngineReadout` | ENFORCED_AT_COVERAGE_GATE | A requirement engine invariant, not an `ExecutionLaw`. The matrix names the expected outcome of a standing, not the observed one; no engine call may occur in the same stage that fixes an expectation. |
+| `AnUnreachableCellIsJustifiedNotInvented` | ENFORCED_AT_COVERAGE_GATE | A requirement engine invariant, not an `ExecutionLaw`. A standing the constitution forbids is recorded `reachable = False`, `required = False`, with a named justification, an unconstrained outcome, no prerequisites and no forbidden co-standings. No case is fabricated to fill a table. |
+| `AMatrixNamesNoCaseAndNoDigest` | ENFORCED_AT_COVERAGE_GATE | A requirement engine invariant, not an `ExecutionLaw`. The matrix is unreadable by any engine module — a test asserts no execution module imports it — so a coverage requirement can never influence a verdict. |
+| `AMatrixMeasuresTheEngineAsFrozen` | ENFORCED_AT_COVERAGE_GATE | A requirement engine invariant, not an `ExecutionLaw`. The matrix measures `PK₀ → O₀ → O_L² → Nisbah` as frozen. Any deeper ontological founding — redefining `PK₀` as a network of fibered nodes with existence, reality, properties, attributes, relations, conditions, causes and preventers — is a new layer above this contract with its own matrix and its own cases; it never alters this one retroactively. `G0.CASE-0` is thereby a historical witness of correct behaviour *before* that redesign. |
+
+The matrix has three independent axes; none substitutes for another.
+
+**1. Law-standing coverage.** Every `ExecutionLaw` × every `CheckStanding`: 18 ×
+5 = 90 cells, each present exactly once. 56 are reachable and required; 34 are
+refused with a named reason. The refusals are themselves claims about the
+engine's meaning, and the sharpest are: `VIOLATED` is unreachable for
+`NoUnreadConditionInTheFoundingBase`, because an unread condition is missing
+evidence and never a proved breach; and `UNRESOLVED` is unreachable for
+`MaterializedIdentityAgrees`, because a nisbah identity is not itself missing
+evidence — either the nisbah is constructed and its identity compared, or an
+earlier law prevented its construction and the block is recorded under the name
+of its blocker.
+
+Each reachable cell also carries `forbidden_co_standings`: proving that a law
+*can* reach `VIOLATED` does not prove that it cannot simultaneously be read
+`SATISFIED` or `UNRESOLVED`. The prohibition is read **per law and per subject**,
+not across a whole trace, because a law with many sites legitimately holds at
+one site and fails at another.
+
+**2. Outcome reachability.** Independent witnesses for `PASS`, `BLOCK`, `DEFER`,
+invalid input, and `ExecutionInvariantError`. The last is not an outcome and has
+no member in `ExecutionOutcome`; it nevertheless requires a reachability witness
+as an internal defect, and the matrix states explicitly that it is reached at the
+engine seam — by handing the engine incomplete derived material after a
+provisional pass — never by a document a case author could write.
+
+**3. Cross-stage separation.** Seven boundaries between stages: invalid input
+produces no envelope; `BLOCK` produces no materialized identity; `DEFER`
+produces no materialized identity; `PASS` is never without one; an
+`ExecutionInvariantError` produces neither verdict nor envelope;
+`NOT_EVALUATED_BY_PREREQUISITE` produces no residual; and
+`NOT_APPLICABLE_NO_CLAIM` is never read as `SATISFIED`.
+
+Deferred here by name, not by omission: the golden cases themselves, their
+inputs, their expected verdicts, and every execution digest.

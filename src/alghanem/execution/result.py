@@ -13,6 +13,14 @@
 
     Digest(declaration_document) == core.input_digest
 
+**والغلافُ لا يُحوَّر بعد ختمه** (`AnEnvelopeHoldsAnUnalterableDeclaration`):
+تجميدُ الغلاف لا يجمّد قاموسًا محمولًا فيه، فيحمل الغلافُ `CaseDeclaration`
+مجمَّدةَ الشجرة وتُشتَقّ منها الوثيقةُ عند كلّ قراءة.
+
+**والنجاحُ وحدَه يصل إلى المادّة السلطويّة ولا يخلو منها**
+(`PassIffMaterializedIdentity`): العلاقةُ ثنائيّةُ الاتّجاه، وموضعُها
+`execution/invariant.py`.
+
 تسجيلٌ لا سلطة: لا ولادةَ ولا حكمَ ولادةٍ ولا تجميدَ `E0`.
 """
 
@@ -22,10 +30,13 @@ from dataclasses import dataclass
 from typing import Final
 
 from ..canonical_content import canonical_bytes, canonical_digest
+from .declaration import CaseDeclaration
+from .invariant import PASS_IFF_MATERIALIZED_IDENTITY
 from .outcome import CheckStanding, ExecutionOutcome, Identity, LawCheckEntry, Violation
 from .requirement import UnresolvedRequirement
 
 __all__ = [
+    "AN_ENVELOPE_HOLDS_AN_UNALTERABLE_DECLARATION",
     "A_DIGEST_DOES_NOT_CONTAIN_ITSELF",
     "A_REPLAY_NEEDS_THE_DECLARATION_NOT_ITS_DIGEST",
     "EXECUTION_RESULT_SCHEMA",
@@ -46,6 +57,12 @@ A_DIGEST_DOES_NOT_CONTAIN_ITSELF: Final[str] = (
 A_REPLAY_NEEDS_THE_DECLARATION_NOT_ITS_DIGEST: Final[str] = (
     "إعادةُ التشغيل تحتاج التصريحَ لا بصمتَه: البصمةُ لا تُعكَس، فيحمل الغلافُ "
     "وثيقةَ التصريح كاملةً وتُشَدّ إليها ببصمة الإدخال"
+)
+
+AN_ENVELOPE_HOLDS_AN_UNALTERABLE_DECLARATION: Final[str] = (
+    "الغلافُ يحمل تصريحًا لا يُحوَّر: تجميدُ الغلاف لا يجمّد قاموسًا داخله ولا "
+    "قواميسَه المتداخلة، فيحمل الغلافُ `CaseDeclaration` مجمَّدةً وتُشتَقّ منها "
+    "الوثيقةُ عند كلّ قراءة؛ فلا يتغيّر المدخلُ المحفوظُ بعد الختم"
 )
 
 
@@ -126,12 +143,10 @@ class ExecutionResultCore:
             )
         if self.outcome is ExecutionOutcome.DEFER and not self.residuals:
             raise ExecutionResultError("التأجيلُ بقيّةٌ مُسمّاةٌ لا صمت")
-        if self.outcome is not ExecutionOutcome.PASS and (
+        if (self.outcome is ExecutionOutcome.PASS) != (
             self.materialized_identity is not None
         ):
-            raise ExecutionResultError(
-                "المادّةُ السلطويّةُ لا تُنشَأ إلّا بعد النجاح؛ والحكمُ يسبق الإنشاء"
-            )
+            raise ExecutionResultError(PASS_IFF_MATERIALIZED_IDENTITY)
 
     @property
     def not_evaluated(self) -> tuple[LawCheckEntry, ...]:
@@ -173,17 +188,16 @@ class ExecutionResultCore:
 class ExecutionResultEnvelope:
     """الغلاف: التصريحُ الذي حكم به، ونواةُ الحكم، وبصمتُها عنها لا فيها."""
 
-    declaration_document: dict[str, object]
+    declaration: CaseDeclaration
     core: ExecutionResultCore
     execution_digest: str
 
     def __post_init__(self) -> None:
         if not isinstance(self.core, ExecutionResultCore):
             raise ExecutionResultError("نواةُ النتيجة من نوعها لا من وصفٍ حرّ")
-        if not isinstance(self.declaration_document, dict):
-            raise ExecutionResultError(A_REPLAY_NEEDS_THE_DECLARATION_NOT_ITS_DIGEST)
-        recomputed_input = canonical_digest(canonical_bytes(self.declaration_document))
-        if recomputed_input != self.core.input_digest:
+        if not isinstance(self.declaration, CaseDeclaration):
+            raise ExecutionResultError(AN_ENVELOPE_HOLDS_AN_UNALTERABLE_DECLARATION)
+        if self.declaration.input_digest != self.core.input_digest:
             raise ExecutionResultError(
                 "وثيقةُ التصريح في الغلاف مشدودةٌ إلى بصمة الإدخال؛ و"
                 + A_REPLAY_NEEDS_THE_DECLARATION_NOT_ITS_DIGEST
@@ -195,14 +209,20 @@ class ExecutionResultEnvelope:
                 + A_DIGEST_DOES_NOT_CONTAIN_ITSELF
             )
 
+    @property
+    def declaration_document(self) -> dict[str, object]:
+        """وثيقةُ التصريح مُشتَقّةً من جديدٍ في كلّ قراءة؛ فلا نسخةَ مشتركةٌ تُعدَّل."""
+
+        return self.declaration.as_canonical_content()
+
     @classmethod
     def sealing(
-        cls, declaration_document: dict[str, object], core: ExecutionResultCore
+        cls, declaration: CaseDeclaration, core: ExecutionResultCore
     ) -> ExecutionResultEnvelope:
         """اختم نتيجةً ببصمتها المُشتَقّة؛ ولا تُكتَب البصمةُ من خارجها."""
 
         return cls(
-            declaration_document=declaration_document,
+            declaration=declaration,
             core=core,
             execution_digest=canonical_digest(
                 canonical_bytes(core.as_canonical_content())
