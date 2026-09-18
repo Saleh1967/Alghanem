@@ -13,18 +13,30 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
+from typing import Final
 
-from .laws import A_RATIO_CARRIES_ITS_DENOMINATOR, BREADTH_IS_NOT_READINESS
+from .laws import (
+    A_RATIO_CARRIES_ITS_DENOMINATOR,
+    BREADTH_IS_NOT_READINESS,
+    TAXONOMY_GRANULARITY_IS_NOT_CAPABILITY_IMPORTANCE,
+)
 from .maturity import GATE_SEQUENCE, MaturityStage
 from .measure import LeafMeasurement
 from .universe import CapabilityUniverse
 
 __all__ = [
+    "COVERAGE_GEOMETRY",
     "AggregationError",
     "DerivedRatio",
+    "DomainCoverageProfile",
+    "DomainCoverageRow",
     "NodeAggregate",
     "aggregate_universe",
+    "derive_domain_coverage_profile",
 ]
+
+COVERAGE_GEOMETRY: Final[str] = "LeafCoverage"
+"""هندسةُ التغطية المُشتَقّة هنا: عدُّ الأوراق، مُسمًّى لا مضمرًا."""
 
 
 class AggregationError(ValueError):
@@ -98,12 +110,25 @@ class NodeAggregate:
 
         return BREADTH_IS_NOT_READINESS
 
+    @property
+    def coverage_geometry(self) -> str:
+        """هندسةُ هذه التغطية: عدُّ الأوراق، مُسمّاةً كي لا تُقرأ مقدارَ العربية."""
+
+        return COVERAGE_GEOMETRY
+
+    @property
+    def granularity_law(self) -> str:
+        """سقفُ قراءة عدّ الأوراق، محمولًا مع التجميع لا مفصولًا عنه."""
+
+        return TAXONOMY_GRANULARITY_IS_NOT_CAPABILITY_IMPORTANCE
+
     def as_canonical_content(self) -> dict[str, object]:
         """المحتوى القانونيّ للتجميع."""
 
         return {
             "node_id": self.node_id,
             "leaf_total": self.leaf_total,
+            "coverage_geometry": self.coverage_geometry,
             "stage_counts": {
                 stage.value: self.stage_counts[stage] for stage in GATE_SEQUENCE
             },
@@ -222,3 +247,87 @@ def _cap_readiness_by_required_children(
             blocking_leaf_ids=current.blocking_leaf_ids,
         )
     return capped
+
+
+@dataclass(frozen=True)
+class DomainCoverageRow:
+    """صفُّ مجالٍ واحدٍ في اتّجاه المجالات: أوراقُه، وتغطيتُه، وأهليّتُه."""
+
+    domain_id: str
+    title: str
+    leaf_total: int
+    coverage: Mapping[MaturityStage, DerivedRatio]
+    readiness: DerivedRatio
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """المحتوى القانونيّ لصفّ المجال."""
+
+        return {
+            "domain_id": self.domain_id,
+            "title": self.title,
+            "leaf_total": self.leaf_total,
+            "coverage": {
+                stage.value: self.coverage[stage].as_canonical_content()
+                for stage in GATE_SEQUENCE[1:]
+            },
+            "readiness": self.readiness.as_canonical_content(),
+        }
+
+
+@dataclass(frozen=True)
+class DomainCoverageProfile:
+    """اتّجاهُ المجالات السبعةَ عشرَ منفصلةً؛ لا رقمَ واحدٌ يُغني عن قراءتها.
+
+    عرضُ المجالات صفًّا صفًّا هو البديلُ الأمين عن تسويتها في وسطٍ واحد: تسويةُ
+    الأوزان هندسةُ قياسٍ أخرى لا حقيقةٌ مُشتَقّة، وعدُّ الأوراق وحدَه يجعل بابًا
+    فصّلناه أكثرَ أثقلَ من بابٍ لم نفصّله
+    (`TaxonomyGranularity != CapabilityImportance`).
+    """
+
+    rows: tuple[DomainCoverageRow, ...]
+
+    def row(self, domain_id: str) -> DomainCoverageRow:
+        """صفُّ مجالٍ بعينه؛ ومعرّفٌ غيرُ معلومٍ رفضٌ لا `None` صامت."""
+
+        for row in self.rows:
+            if row.domain_id == domain_id:
+                return row
+        raise AggregationError(f"«{domain_id}» is not a declared domain")
+
+    @property
+    def granularity_law(self) -> str:
+        """سقفُ قراءة الاتّجاه، محمولًا معه لا مفصولًا عنه."""
+
+        return TAXONOMY_GRANULARITY_IS_NOT_CAPABILITY_IMPORTANCE
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """المحتوى القانونيّ لاتّجاه المجالات."""
+
+        return {
+            "coverage_geometry": COVERAGE_GEOMETRY,
+            "rows": [row.as_canonical_content() for row in self.rows],
+        }
+
+
+def _natural_key(node_id: str) -> tuple[int, str]:
+    """ترتيبُ عرضٍ طبيعيٌّ للمعرّفات المرقّمة؛ ترتيبُ قراءةٍ لا ترتيبُ أهمّيّة."""
+
+    return (len(node_id), node_id)
+
+
+def derive_domain_coverage_profile(
+    universe: CapabilityUniverse, aggregates: Mapping[str, NodeAggregate]
+) -> DomainCoverageProfile:
+    """اعرض المجالات السبعةَ عشرَ منفصلةً بدل أن تُسوَّى في رقمٍ واحد."""
+
+    rows = tuple(
+        DomainCoverageRow(
+            domain_id=domain_id,
+            title=universe.node(domain_id).title,
+            leaf_total=aggregates[domain_id].leaf_total,
+            coverage=aggregates[domain_id].coverage,
+            readiness=aggregates[domain_id].readiness,
+        )
+        for domain_id in sorted(universe.domain_ids(), key=_natural_key)
+    )
+    return DomainCoverageProfile(rows=rows)

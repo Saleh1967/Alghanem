@@ -7,6 +7,13 @@
 وكلُّ عقدةٍ تحمل استشهادَها: مصدرًا مُعلَنًا وموضعًا فيه
 (`TheDenominatorIsCitedNotInvented`). والمصدرُ لا يُقرأ تصديقًا لعقدةٍ ولا
 تكفيرًا لأخرى، وإنّما يُثبِت أنّ البابَ مُصطلَحٌ عليه في فنّه لا مُخترَعٌ هنا.
+
+و`G0.METRIC-0.HARDEN` يفصل تسميةَ المصدر عن توثيق الموضع
+(`CitationName != VerifiedSourceLocus`): لكلّ استشهادٍ **مرتبةٌ** مُصرَّحٌ بها،
+ومرساةُ نصِّ المصدر غيرُ بصمةِ صياغتنا نحن
+(`OurConceptualMapping != SourceTextAnchor`). والمصطلحُ الحديثُ لا يحمل صفحةً
+ولا بابًا يُوهم أنّه منقولٌ من الكتاب القديم، والبابُ يبقى في المقام بمرتبةٍ
+نازلةٍ ولا يُنسَب زورًا (`KeepingAQuestionDoesNotLicenseAFalseCitation`).
 """
 
 from __future__ import annotations
@@ -15,16 +22,21 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Final
 
-from ..canonical_content import canonical_bytes, canonical_digest
+from ..canonical_content import canonical_bytes, canonical_digest, is_canonical_digest
 from .maturity import MaturityStage
 
 __all__ = [
+    "CITATION_STANDING_SEQUENCE",
+    "DECLARED_EDITIONS",
     "DECLARED_SOURCES",
     "CapabilityCitation",
     "CapabilityNode",
     "CapabilityNodeError",
+    "CitationStanding",
+    "DeclaredEdition",
     "DeclaredSource",
     "NodeKind",
+    "ReadinessGateOrigin",
     "Requirement",
 ]
 
@@ -120,24 +132,234 @@ _SOURCE_IDS: Final[frozenset[str]] = frozenset(
 
 
 @dataclass(frozen=True)
+class DeclaredEdition:
+    """طبعةٌ بعينها من مصدرٍ مُعلَن؛ الكتابُ ليس الطبعة، والموضعُ يتبع الطبعة."""
+
+    edition_id: str
+    source_id: str
+    description: str
+
+    def __post_init__(self) -> None:
+        for name in ("edition_id", "description"):
+            value = getattr(self, name)
+            if type(value) is not str or not value.strip():
+                raise CapabilityNodeError(
+                    f"a declared edition requires a non-empty «{name}»"
+                )
+        if type(self.source_id) is not str or self.source_id not in _SOURCE_IDS:
+            raise CapabilityNodeError(
+                "a declared edition belongs to one of the declared sources"
+            )
+
+    def as_canonical_content(self) -> dict[str, str]:
+        """المحتوى القانونيّ للطبعة؛ لا نقلَ نصٍّ ولا بايتاتِ مصدر."""
+
+        return {
+            "edition_id": self.edition_id,
+            "source_id": self.source_id,
+            "description": self.description,
+        }
+
+
+DECLARED_EDITIONS: Final[tuple[DeclaredEdition, ...]] = ()
+"""سِجِلُّ الطبعات المُحقَّقة؛ فارغٌ في V1 لأنّنا لم نتحقّق من طبعةٍ بعينها بعد."""
+
+_EDITION_IDS: Final[frozenset[str]] = frozenset(
+    edition.edition_id for edition in DECLARED_EDITIONS
+)
+
+
+class CitationStanding(Enum):
+    """مرتبةُ الاستشهاد: ما تحقّق منه فعلًا، لا ما نودّ أن يكون."""
+
+    EXACT_TEXTUAL_LOCUS = "EXACT_TEXTUAL_LOCUS"
+    SECTION_LEVEL_LOCUS = "SECTION_LEVEL_LOCUS"
+    CONCEPTUAL_CORRESPONDENCE = "CONCEPTUAL_CORRESPONDENCE"
+    MODERN_FORMAL_EXTENSION = "MODERN_FORMAL_EXTENSION"
+    UNVERIFIED_LOCUS = "UNVERIFIED_LOCUS"
+
+
+CITATION_STANDING_SEQUENCE: Final[tuple[CitationStanding, ...]] = (
+    CitationStanding.EXACT_TEXTUAL_LOCUS,
+    CitationStanding.SECTION_LEVEL_LOCUS,
+    CitationStanding.CONCEPTUAL_CORRESPONDENCE,
+    CitationStanding.MODERN_FORMAL_EXTENSION,
+    CitationStanding.UNVERIFIED_LOCUS,
+)
+"""ترتيبُ عرضِ المراتب؛ ترتيبُ توثيقٍ لا ترتيبُ صحّةٍ علميّة ولا درجةُ نضج."""
+
+
+class ReadinessGateOrigin(Enum):
+    """أصلُ بوّابة الأهليّة: تصريحٌ موحَّدٌ أوّليّ، أم اشتقاقٌ من دور القدرة؟"""
+
+    DECLARED_UNIFORM_V1 = "DECLARED_UNIFORM_V1"
+    DERIVED_FROM_CAPABILITY_ROLE = "DERIVED_FROM_CAPABILITY_ROLE"
+
+
+@dataclass(frozen=True)
 class CapabilityCitation:
-    """استشهادُ العقدة: مصدرٌ من المُعلَنين، وموضعٌ فيه باسم البابِ المصطلَح."""
+    """استشهادُ العقدة: مصدرٌ مُعلَن، ومرتبةٌ مُصرَّحٌ بها، وموضعٌ بقدر ما تحقّق.
+
+    الحقولُ المجهولةُ تبقى `None` ولا تُملأ بقيمٍ وهميّة: موضعٌ مُختلَقٌ أسوأُ
+    من موضعٍ غائب، لأنّه يُقرأ توثيقًا.
+    """
 
     source_id: str
-    locus: str
+    citation_standing: CitationStanding
+    locus: str | None = None
+    edition_id: str | None = None
+    volume: str | None = None
+    page_range: str | None = None
+    chapter_bab: str | None = None
+    source_text_anchor_digest: str | None = None
+    conceptual_mapping_digest: str | None = None
 
     def __post_init__(self) -> None:
         if type(self.source_id) is not str or self.source_id not in _SOURCE_IDS:
             raise CapabilityNodeError(
                 "a citation names one of the declared sources and no other"
             )
-        if type(self.locus) is not str or not self.locus.strip():
-            raise CapabilityNodeError("a citation requires a non-empty locus")
+        if not isinstance(self.citation_standing, CitationStanding):
+            raise CapabilityNodeError(
+                "a citation declares its standing: naming a source is not "
+                "verifying a locus"
+            )
+        self._assert_optional_text()
+        self._assert_digests()
+        self._assert_edition()
+        self._assert_standing_requirements()
 
-    def as_canonical_content(self) -> dict[str, str]:
-        """المحتوى القانونيّ للاستشهاد."""
+    def _assert_optional_text(self) -> None:
+        for name in (
+            "locus",
+            "volume",
+            "page_range",
+            "chapter_bab",
+        ):
+            value = getattr(self, name)
+            if value is None:
+                continue
+            if type(value) is not str or not value.strip():
+                raise CapabilityNodeError(
+                    f"«{name}» is either absent or a non-empty string; an empty "
+                    "locator is not a locator"
+                )
 
-        return {"source_id": self.source_id, "locus": self.locus}
+    def _assert_digests(self) -> None:
+        for name in ("source_text_anchor_digest", "conceptual_mapping_digest"):
+            value = getattr(self, name)
+            if value is None:
+                continue
+            if not is_canonical_digest(value):
+                raise CapabilityNodeError(f"«{name}» requires a canonical digest")
+        if (
+            self.source_text_anchor_digest is not None
+            and self.source_text_anchor_digest == self.conceptual_mapping_digest
+        ):
+            raise CapabilityNodeError(
+                "our conceptual mapping is not a source text anchor: one digest "
+                "cannot stand as both"
+            )
+
+    def _assert_edition(self) -> None:
+        if self.edition_id is None:
+            return
+        if type(self.edition_id) is not str or self.edition_id not in _EDITION_IDS:
+            raise CapabilityNodeError(
+                "a citation names a verified edition from the edition registry, "
+                "never an invented edition identifier"
+            )
+        if _edition_source(self.edition_id) != self.source_id:
+            raise CapabilityNodeError(
+                "a citation's edition belongs to the cited source itself"
+            )
+
+    def _assert_standing_requirements(self) -> None:
+        standing = self.citation_standing
+        if standing is CitationStanding.EXACT_TEXTUAL_LOCUS:
+            if self.edition_id is None:
+                raise CapabilityNodeError(
+                    "an exact textual locus requires a verified edition"
+                )
+            if self.volume is None and self.page_range is None:
+                raise CapabilityNodeError(
+                    "an exact textual locus requires a volume or a page range"
+                )
+            if self.chapter_bab is None:
+                raise CapabilityNodeError(
+                    "an exact textual locus requires the chapter or bab it sits in"
+                )
+            if self.source_text_anchor_digest is None:
+                raise CapabilityNodeError(
+                    "an exact textual locus requires a source text anchor digest"
+                )
+            return
+        if standing is CitationStanding.SECTION_LEVEL_LOCUS:
+            if self.chapter_bab is None:
+                raise CapabilityNodeError(
+                    "a section level locus requires a real chapter or bab"
+                )
+            if self.page_range is not None and self.edition_id is None:
+                raise CapabilityNodeError(
+                    "a page range depends on an edition: name the edition or drop "
+                    "the page"
+                )
+            return
+        if standing is CitationStanding.CONCEPTUAL_CORRESPONDENCE:
+            if self.conceptual_mapping_digest is None and self.locus is None:
+                raise CapabilityNodeError(
+                    "a conceptual correspondence states the mapping it claims"
+                )
+            if self.source_text_anchor_digest is not None:
+                raise CapabilityNodeError(
+                    "a conceptual correspondence carries no source text anchor; "
+                    "an anchored locus is not a correspondence"
+                )
+            return
+        if standing is CitationStanding.MODERN_FORMAL_EXTENSION:
+            if (
+                self.page_range is not None
+                or self.chapter_bab is not None
+                or self.volume is not None
+                or self.source_text_anchor_digest is not None
+            ):
+                raise CapabilityNodeError(
+                    "a modern formal extension carries no page, volume, bab or "
+                    "source anchor: the modern formulation is not in the old text"
+                )
+            return
+        if self.source_text_anchor_digest is not None:
+            raise CapabilityNodeError(
+                "an unverified locus cannot carry a source text anchor"
+            )
+
+    @property
+    def is_textually_anchored(self) -> bool:
+        """هل هذا الاستشهادُ مرسًى في نصّ طبعةٍ مُحقَّقة؟"""
+
+        return self.citation_standing is CitationStanding.EXACT_TEXTUAL_LOCUS
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """المحتوى القانونيّ للاستشهاد، بمرتبته وبما تحقّق من موضعه."""
+
+        return {
+            "source_id": self.source_id,
+            "citation_standing": self.citation_standing.value,
+            "locus": self.locus,
+            "edition_id": self.edition_id,
+            "volume": self.volume,
+            "page_range": self.page_range,
+            "chapter_bab": self.chapter_bab,
+            "source_text_anchor_digest": self.source_text_anchor_digest,
+            "conceptual_mapping_digest": self.conceptual_mapping_digest,
+        }
+
+
+def _edition_source(edition_id: str) -> str | None:
+    for edition in DECLARED_EDITIONS:
+        if edition.edition_id == edition_id:
+            return edition.source_id
+    return None
 
 
 @dataclass(frozen=True)
@@ -151,6 +373,7 @@ class CapabilityNode:
     requirement: Requirement
     citation: CapabilityCitation
     readiness_gate: MaturityStage
+    readiness_gate_origin: ReadinessGateOrigin
 
     def __post_init__(self) -> None:
         if type(self.node_id) is not str or not self.node_id.strip():
@@ -173,6 +396,11 @@ class CapabilityNode:
         if not self.readiness_gate.is_an_attestable_gate:
             raise CapabilityNodeError(
                 f"«{self.node_id}» cannot declare absence as its readiness gate"
+            )
+        if not isinstance(self.readiness_gate_origin, ReadinessGateOrigin):
+            raise CapabilityNodeError(
+                f"«{self.node_id}» declares where its readiness gate came from: a "
+                "uniform declaration is not a derived requirement"
             )
         if self.kind is NodeKind.TOTAL:
             if self.parent_id is not None:
@@ -200,6 +428,7 @@ class CapabilityNode:
             "requirement": self.requirement.value,
             "citation": self.citation.as_canonical_content(),
             "readiness_gate": self.readiness_gate.value,
+            "readiness_gate_origin": self.readiness_gate_origin.value,
         }
 
     @property

@@ -8,20 +8,36 @@
 
 وتوسعةُ هذا الملفّ تُنقِص النسبَ، وهو المقصود: الرقمُ المنخفضُ المُشتَقُّ أصدقُ
 من الرقم المرتفع المُقدَّر.
+
+وبعد `G0.METRIC-0.HARDEN` صار لكلّ استشهادٍ **مرتبةٌ** تُصرِّح بما تحقّق منه: لا
+طبعةَ مُحقَّقةً في V1، فلا استشهادَ واحدًا بمرتبة `EXACT_TEXTUAL_LOCUS`. وما صيغ
+من هندسة المشروع لا من بابٍ كلاسيكيٍّ مطابق — `A7` كلُّه، وصدرُ `A14` الزمنيّ —
+مُعلَنٌ `MODERN_FORMAL_EXTENSION`؛ وما لم يُتحقَّق ربطُه بعد — عجزُ `A14`،
+وفاعليّةُ `A11` ومفعوليّتُها — مُعلَنٌ `UNVERIFIED_LOCUS`. ولم يُحذَف منها بابٌ
+واحد: `KeepingAQuestionDoesNotLicenseAFalseCitation`.
 """
 
 from __future__ import annotations
 
 from typing import Final
 
+from ..canonical_content import canonical_bytes, canonical_digest
 from .maturity import MaturityStage
-from .node import CapabilityCitation, CapabilityNode, NodeKind, Requirement
+from .node import (
+    CapabilityCitation,
+    CapabilityNode,
+    CitationStanding,
+    NodeKind,
+    ReadinessGateOrigin,
+    Requirement,
+)
 from .universe import CapabilityUniverse
 
 __all__ = [
     "ARABIC_TOTAL_ID",
     "DECLARED_ARABIC_CAPABILITY_UNIVERSE_V1",
     "DECLARED_READINESS_GATE",
+    "DECLARED_READINESS_GATE_ORIGIN",
     "UNIVERSE_V1_ID",
     "build_declared_universe_v1",
 ]
@@ -31,6 +47,11 @@ ARABIC_TOTAL_ID: Final[str] = "ARABIC_TOTAL"
 
 DECLARED_READINESS_GATE: Final[MaturityStage] = MaturityStage.S5_FROZEN_DOMAIN
 """بوّابةُ الأهليّة المُعلَنة: بوّابةٌ مُصرَّحٌ بها لا مُشتَقّةٌ من خاصّةٍ للعربية."""
+
+DECLARED_READINESS_GATE_ORIGIN: Final[ReadinessGateOrigin] = (
+    ReadinessGateOrigin.DECLARED_UNIFORM_V1
+)
+"""أصلُ تلك البوّابة: تصريحٌ موحَّدٌ أوّليّ، لا نتيجةَ تحليلِ اعتماديّةٍ بين الأبواب."""
 
 _C = Requirement.CONTRIBUTING
 _R = Requirement.REQUIRED
@@ -324,6 +345,77 @@ _DOMAINS: Final[tuple[_DomainSpec, ...]] = (
 )
 
 
+_MODERN_FORMAL_EXTENSIONS: Final[frozenset[str]] = frozenset(
+    {
+        "A7",
+        "A7.ROOT_PATTERN_COMPOSITION",
+        "A7.AFFIX_COMPOSITION",
+        "A7.DEFINITE_ARTICLE_ATTACHMENT",
+        "A7.SEGMENT_BOUNDARY",
+        "A14.SPEECH_TIME",
+        "A14.REFERENCE_TIME",
+        "A14.EVENT_TIME",
+        "A14.EVENT_REFERENCE_TIME_RELATION",
+    }
+)
+"""ما صيغ من هندسة المشروع لا من بابٍ كلاسيكيٍّ مطابق؛ لا صفحةَ له ولا بابَ يُنسَب."""
+
+_UNVERIFIED_LOCI: Final[frozenset[str]] = frozenset(
+    {
+        "A14.CONTINUITY",
+        "A14.DISCONTINUITY",
+        "A14.NARRATIVE_TIME",
+        "A14.REPORTED_SPEECH",
+        "A11.AGENTIVITY",
+        "A11.PATIENTIVITY",
+    }
+)
+"""ما لم يُعثَر بعدُ على بابٍ موثَّقٍ له في مصدره؛ السؤالُ يبقى والمرتبةُ تنزل."""
+
+
+def _citation_standing(node_id: str) -> CitationStanding:
+    """مرتبةُ الاستشهاد بالعقدة؛ مُصرَّحٌ بها لا مُستنبَطةٌ من حسن الظنّ."""
+
+    if node_id in _MODERN_FORMAL_EXTENSIONS:
+        return CitationStanding.MODERN_FORMAL_EXTENSION
+    if node_id in _UNVERIFIED_LOCI:
+        return CitationStanding.UNVERIFIED_LOCUS
+    return CitationStanding.CONCEPTUAL_CORRESPONDENCE
+
+
+def _conceptual_mapping_digest(node_id: str, title: str, source_id: str) -> str:
+    """بصمةُ الربط المفهوميّ الذي أجريناه نحن؛ ليست مرساةً في نصّ المصدر."""
+
+    return canonical_digest(
+        canonical_bytes(
+            {
+                "mapping_protocol": "alghanem.g0_metric_0_harden.conceptual_mapping.v1",
+                "node_id": node_id,
+                "title": title,
+                "source_id": source_id,
+            }
+        )
+    )
+
+
+def _citation(node_id: str, title: str, source_id: str) -> CapabilityCitation:
+    """ابنِ استشهادَ العقدة بمرتبته، ولا تملأ حقلًا مجهولًا بقيمةٍ وهميّة."""
+
+    standing = _citation_standing(node_id)
+    if standing is CitationStanding.UNVERIFIED_LOCUS:
+        return CapabilityCitation(
+            source_id=source_id,
+            citation_standing=standing,
+            locus=title,
+        )
+    return CapabilityCitation(
+        source_id=source_id,
+        citation_standing=standing,
+        locus=title,
+        conceptual_mapping_digest=_conceptual_mapping_digest(node_id, title, source_id),
+    )
+
+
 def build_declared_universe_v1() -> CapabilityUniverse:
     """ابنِ المقامَ المُعلَن من إعلانه وحدَه؛ لا يُقرأ هنا ملفٌّ من `src/`."""
 
@@ -334,10 +426,9 @@ def build_declared_universe_v1() -> CapabilityUniverse:
             kind=NodeKind.TOTAL,
             parent_id=None,
             requirement=Requirement.REQUIRED,
-            citation=CapabilityCitation(
-                source_id="sharh_ibn_aqil", locus="مقدّمة علم العربية"
-            ),
+            citation=_citation(ARABIC_TOTAL_ID, "مقدّمة علم العربية", "sharh_ibn_aqil"),
             readiness_gate=DECLARED_READINESS_GATE,
+            readiness_gate_origin=DECLARED_READINESS_GATE_ORIGIN,
         )
     ]
     for domain_id, domain_title, source_id, capabilities in _DOMAINS:
@@ -348,22 +439,25 @@ def build_declared_universe_v1() -> CapabilityUniverse:
                 kind=NodeKind.DOMAIN,
                 parent_id=ARABIC_TOTAL_ID,
                 requirement=Requirement.REQUIRED,
-                citation=CapabilityCitation(
-                    source_id=source_id, locus=domain_title.split("—")[-1].strip()
+                citation=_citation(
+                    domain_id, domain_title.split("—")[-1].strip(), source_id
                 ),
                 readiness_gate=DECLARED_READINESS_GATE,
+                readiness_gate_origin=DECLARED_READINESS_GATE_ORIGIN,
             )
         )
         for local_id, title, requirement in capabilities:
+            node_id = f"{domain_id}.{local_id}"
             nodes.append(
                 CapabilityNode(
-                    node_id=f"{domain_id}.{local_id}",
+                    node_id=node_id,
                     title=title,
                     kind=NodeKind.CAPABILITY,
                     parent_id=domain_id,
                     requirement=requirement,
-                    citation=CapabilityCitation(source_id=source_id, locus=title),
+                    citation=_citation(node_id, title, source_id),
                     readiness_gate=DECLARED_READINESS_GATE,
+                    readiness_gate_origin=DECLARED_READINESS_GATE_ORIGIN,
                 )
             )
     return CapabilityUniverse(UNIVERSE_V1_ID, nodes)
