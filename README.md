@@ -4725,6 +4725,36 @@ the claim, so any future criterion must carry both an absolute floor and a
 margin over each registered null model separately. The named laws are collected
 in `docs/CONSTITUTION.md` under `G0.ONT-1`.
 
+Two remainders stayed open after that. The prose did not leave the chain, it
+moved one step back into `FunctionalLicense.condition_statement`, so a license
+could still be founded on an interpretive sentence; and a nisbah bound its role
+references to one `O_L` digest while nothing stopped its *conditions* from
+coming out of a different prior base. Digest unity inside a nisbah is not origin
+unity along the chain. `src/alghanem/prior/references.py`,
+`src/alghanem/ontology/linguistic_v2.py`,
+`src/alghanem/ontology/lineage.py` and
+`src/alghanem/linguistic/anchored_v3.py` close both, standing beside `v2`
+without editing a single historical file. A `ReferencedFunctionalLicense`
+carries no statement at all but a `PriorConditionRef` naming the very condition
+that licensed it and the digest of its base; an `ExistenceLineageRef` records
+the chain `PK₀ → O₀ → O_L²`; and `linguistic-nisbah.schema.v3` refuses any role
+from another ontology and any condition from another base, naming every
+offender. A paired witness shows the mixed-origin case being admitted by `v2`
+and refused by `v3`.
+
+Two disciplines make that claim honest. References are derived, never
+constructed: `of(...)` is the only door, because authority is a condition of a
+reference coming into being and not a property attached to it afterwards — a
+forgeable twin would make the type mean less. And preserving a historical layer
+means its own bytes *plus* the identity of everything it depends on: a file left
+untouched whose imports moved beneath it no longer means what it meant, so a
+witness freezes the digest of every module in `anchored.py`'s transitive import
+closure and asserts the closure gained no new member. `v3` reads its parent's
+identity, not its implementation: one imported name, no construction through
+`v2`. Conditions here are registered, standing, usable, licensed — never *born*,
+since no birth gate exists at this stage. The named laws are collected in
+`docs/CONSTITUTION.md` under `G0.ONT-2`.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
