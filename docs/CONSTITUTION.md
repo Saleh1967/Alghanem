@@ -3010,3 +3010,31 @@ Deferred here by name, not by omission: the counter-cases for the requirements
 listed in the manifest; the `JSON → CaseDeclaration` reader, which belongs to
 `G0.CASE-0.READOUT` as its first obligation; the readout itself; and the digest
 ledger that only a matching first reading may open.
+
+### G0.CASE-0.DATA-H — Immutable data, and a difference that is proved
+
+`G0.CASE-0.DATA-H` closes two structural gaps in the corpus layer before the
+remaining cases are written, so the order gains a stage of its own:
+
+    MATRIX  ≺  Immutable DATA  ≺  Verified Typed Structural Difference
+            ≺  READOUT  ≺  DIGEST LEDGER
+
+| Law | Status | Scope |
+| --- | --- | --- |
+| `AFrozenDocumentIsDeeplyImmutable` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. Freezing a dataclass never froze the dictionary inside it, so a golden case and an invalid-input witness hold their document as *transitively* frozen content — read-only mappings and tuples, with every value inside the `JSON` contract — and project a fresh tree on every read, exactly as the sealed envelope does with its declaration. `FrozenData ≺ Readout` would otherwise be nominal: a readout holding a reference into a "frozen" case could rewrite the evidence it is being measured against. |
+| `ADifferenceIsAnOperationNotAPath` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. A structural difference is `operation ∈ {ADD, REMOVE, REPLACE}` at a named path, with the content before and the content after. Adding an anchor is `ADD nisbah.anchors[1]`, dropping one is `REMOVE nisbah.anchors[1]`, and changing one that stands is `REPLACE` at the place that changed; a list never reports a bare change of length, and an element changed beside an element added is two differences, not one. An added subtree is one difference at its own root, not one per leaf. |
+| `ADeclaredDifferenceIsTheActualDifference` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. `Diff(BaselineDocument, CounterDocument) = DeclaredDifferences`, operation, path, before and after alike — not merely `DeclaredPath = ActualPath`. The comparison is between two authored texts only: no engine is run, no digest is born, and `DATA ≺ READOUT` is untouched. `GoldenCounterCase = ValidBaseline + OneDeclaredDifference` is thereby an enforced invariant rather than an author's assertion: without a stated reason the actual difference must be exactly one, and where multiplicity is itself the proof it must be at least two. A counter-case that does not differ from its baseline at any place is refused. |
+| `ABaselineChainDoesNotTurnBackOnItself` | ENFORCED_AT_CASE_DATA_GATE | A corpus invariant, not an `ExecutionLaw`. The difference is measured one hop only, against the named baseline, and is never flattened to the root of a chain. Refusing a case that names itself as its baseline is not enough once a counter-case may itself be a baseline, so the whole baseline graph is walked and any cycle is refused: in a cycle every case is its own baseline by an intermediary, and no case is measured against anything. |
+
+`expected_fault_kinds` is read as `InputFaultKind`, the closed vocabulary that
+already existed, so a misspelt fault name is refused at `DATA` instead of
+surviving until the readout. And the Arabic constitutional register now keeps
+the distinction the structure requires: `INVALID_INPUT` is *constitutional
+invalidity* — the case never came into being, so nothing stands to be judged —
+while `BLOCK` belongs to the other side, where a case did stand and then broke a
+law. The public enum members are unchanged; only the register and the prose
+move, before the word settles into dozens of places.
+
+Deferred here by name, not by omission: the remaining counter-cases, which are
+written only after these gates are closed, so that no case is authored under a
+difference claim that was never verified.

@@ -4840,6 +4840,21 @@ actually reached the cell. What the first tranche does not yet cover is named in
 `case_data/MANIFEST.json`, and the checker refuses any drift between that
 declared residual and the residual derived from the citations.
 
+`G0.CASE-0.DATA-H` hardens that layer before the remaining cases are written.
+The documents are now frozen transitively rather than nominally — read-only
+mappings and tuples, projected afresh on every read — so a later readout cannot
+rewrite the evidence it is measured against. And a declared difference is no
+longer the author's word: the two authored documents are compared directly and
+the difference is typed — `ADD`, `REMOVE` or `REPLACE` at a named path, with the
+content before and after — so an added anchor is `ADD nisbah.anchors[1]` rather
+than a vague change of length, and an element changed beside an element added is
+two differences. The declaration must equal that actual difference exactly, the
+comparison is one hop to the named baseline, and any cycle in the baseline graph
+is refused. Expected input faults are read as members of the existing closed
+`InputFaultKind` vocabulary, and `INVALID_INPUT` is now named as constitutional
+invalidity — the case never came into being — rather than as a corrupted
+process, which is where `BLOCK` belongs.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
