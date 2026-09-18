@@ -60,9 +60,7 @@ class CertificateNodeRow:
         """جوابُ كلّ بوّابةٍ بنعم أو لا، للورقة وللأب على سواء."""
 
         floor = (
-            self.measurement.attained_stage
-            if self.measurement is not None
-            else None
+            self.measurement.attained_stage if self.measurement is not None else None
         )
         answers: dict[str, bool] = {}
         for stage in GATE_SEQUENCE[1:]:

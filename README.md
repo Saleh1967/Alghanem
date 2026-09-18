@@ -5535,6 +5535,72 @@ Not built here, deliberately: cross-session receipt trust, an isolated signing
 authority, any sandbox claim, and `G0.METRIC-0`.
 
 
+### `G0.METRIC-0` — the fractal Arabic capability map
+
+Every milestone above answers *what was built*. None of them answers *how much
+Arabic the system has*, and the reason is that the obvious way to answer it is
+wrong: a denominator read off the built tree measures the build against itself,
+so finishing whatever was chosen reaches one hundred percent while the Arabic
+that was never attempted falls outside the ratio instead of scoring zero inside
+it. This milestone builds the denominator first and the number second.
+
+- **`ADenominatorDerivedFromTheImplementationIsNotAMeasure`.**
+  `DeclaredArabicCapabilityUniverseV1` is declared in `src/alghanem/capability/`
+  as data, with an import policy (`capability_import_isolation_audit`) that
+  forbids the package from importing `arabic`, `kernel`, `evaluation`, `program`
+  or `prior`. The denominator therefore cannot quietly shrink to whatever the
+  repository happens to contain. Its first version carries 182 nodes across the
+  seventeen declared domains `A0 SOUND_ENCODING` … `A16
+  SIGNIFIER_SIGNIFIED_FRACTAL`, of which 164 are leaves, under the digest
+  `ea5fb00c649f07d4ddb5ef4f992b76df971601b38ab60991bb1da9d2ff37e36e`.
+- **`ADeclaredDenominatorIsNotTheCompleteOntologyOfArabic`.** That 164 is a
+  declaration, not a census of Arabic. Every node carries a named classical
+  source and a locus inside it (`TheDenominatorIsCitedNotInvented`), and the
+  universe is versioned precisely so it can be widened — which lowers every
+  ratio derived before the widening, by design.
+- **`UnimplementedCapabilityMustRemainVisible`.** A leaf with no evidence is not
+  a construction error. `measure_leaves` returns it as a row at `S0_ABSENT` with
+  its blocking reason and its next gate, so the tree keeps showing the Arabic
+  nobody has built yet.
+- **`StandingsAreGatesNotEpistemicMagnitudes`.** Ten gates, `S0_ABSENT` through
+  `S9_REPRODUCED`, are licensing steps, not quantities. A stage is attained only
+  through the contiguous gates beneath it; an attested gate sitting above a
+  missing one is recorded in `jumped_gates` and raises nothing.
+- **`EvidenceMustHaveAnAuthorityPath`.** Eleven typed authority paths — bound
+  execution receipt, measurement run manifest, frozen formal proof, corpus
+  witness, preregistered measurement, gold contract result, blind evaluation
+  report, transfer result, reproduced historical experiment, declaration record
+  and `IN_PROCESS_MEASUREMENT_REPLAY` — each license only the gates proper to
+  them. A replay never licenses gold, blind, transfer or reproduction. Evidence
+  that overreaches is not dropped but recorded as an `EvidenceRefusal`, which is
+  what gives the governance indicators a real denominator.
+- **`Breadth != Readiness`.** Nine coverage indicators are derived separately
+  (`BlindVerifiedCoverage` and `TransferVerifiedCoverage` are never merged),
+  beside `CertifiedCompletion` and `Readiness`, where a parent is capped by its
+  weakest `REQUIRED` child. `ArabicTotalCoverage` exists as a headline and is
+  never rendered without its nine components.
+- **`TheMetricMustBeAllowedToGoDown`.** Negative evidence revokes a gate rather
+  than sitting beside it, and widening the universe lowers the ratio. Both are
+  tested.
+
+The baseline certificate, derived by
+`examples/capability/derive_baseline_certificate.py`, reads
+`DeclaredCoverage = 164/164`, every one of the other eight coverages `0/164`,
+`Readiness = 0/164`, `ArabicTotalCoverage = 164/1476 ≈ 0.1111`, the three
+zero-target governance indicators at zero, and a single ranked blocker:
+`MODEL_ABSENT`, blocking all 164 leaves across all 17 domains.
+
+The claim after this milestone is: *there now exists a cited, implementation-
+independent denominator for Arabic capability, a typed evidence path for every
+gate, and a fully derived certificate over them — and on that denominator the
+system currently holds declaration and nothing above it.*
+
+Not built here, deliberately: `G0.MASAQ-0` (the MASAQ column constitution and
+gold qualification), `G0.METRIC-1` (historical experiment recovery), and `F₂`.
+No MASAQ column is read, no gold contract is issued, and no historical
+experiment is replayed in this milestone.
+
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest

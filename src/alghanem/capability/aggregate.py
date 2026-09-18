@@ -50,7 +50,9 @@ class DerivedRatio:
             type(self.denominator_source) is not str
             or not self.denominator_source.strip()
         ):
-            raise AggregationError("a derived ratio names the source of its denominator")
+            raise AggregationError(
+                "a derived ratio names the source of its denominator"
+            )
 
     @property
     def value(self) -> float | None:

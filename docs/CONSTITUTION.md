@@ -3903,3 +3903,68 @@ code, and inventing a sentinel for it both hides the event and collides with
 processes killed by a signal. A run stopped at its declared ceiling is named a
 timeout, a process killed by a signal is named as such, and neither is reported
 as a nonzero exit.
+
+## `G0.METRIC-0` — the fractal Arabic capability map
+
+`ADenominatorDerivedFromTheImplementationIsNotAMeasure`. A denominator read off
+the built tree measures the build against itself and reaches its own completion
+the moment it finishes representing whatever it chose to represent. The
+denominator of this phase is therefore declared outside the implementation, in a
+package whose import policy forbids it from reading `arabic/`, `kernel/`,
+`evaluation/`, `program/` or any other implementation module.
+
+`ADeclaredDenominatorIsNotTheCompleteOntologyOfArabic`. One hundred percent here
+is one hundred percent of what has been declared, not one hundred percent of
+Arabic. `DeclaredArabicCapabilityUniverseV1` is an extensible declaration with a
+frozen digest and a version identity; reading it as a finished ontology
+attributes to the measure a claim it does not make.
+
+`MissingImplementationDoesNotRemoveACapabilityFromTheDenominator` and
+`UnimplementedCapabilityMustRemainVisible`. A capability nobody built stays in
+the tree and lowers coverage truthfully. A leaf without evidence is not a
+construction error but a **measured absence**, carried as a row with its stage,
+its blocking reason and its next gate. Dropping it from the count would improve a
+figure by deleting its question.
+
+`TheDenominatorIsCitedNotInvented`. Every node in the declared universe carries a
+named classical source and a locus within it. A node without a citation is an
+opinion, not a denominator.
+
+`StandingsAreGatesNotEpistemicMagnitudes`. The ten stages `S0_ABSENT` through
+`S9_REPRODUCED` are licensing gates ordered by permission, not epistemic
+magnitudes that may be summed or averaged as quantities. A stage is attained only
+through the contiguous gates below it; an attested gate reached over a missing
+one is recorded as a jump and does not raise the stage.
+
+`Breadth != Readiness`. Coverage is how much of the declared domain was built;
+readiness is how far the built part qualifies to carry the next layer. A parent
+never exceeds the readiness of its weakest `REQUIRED` child, and the two figures
+are never merged into one.
+
+`EvidenceMustHaveAnAuthorityPath`. Every piece of evidence names a typed
+authority path that issued it, and that path need not be an execution receipt: a
+bound execution receipt, a measurement run manifest, a frozen formal proof, a
+corpus witness, a preregistered measurement, a gold contract result, a blind
+evaluation report, a transfer result and a reproduced historical experiment are
+distinct genera. Forcing a census or a proof through a reader process to make it
+admissible falsifies its genus instead of strengthening it. Each path licenses
+only the gates proper to it; `IN_PROCESS_MEASUREMENT_REPLAY` never licenses gold,
+blind, transfer or reproduction.
+
+`RepeatedReference != IndependentEvidence`. Evidence is canonicalized on
+capability, scope digest, experiment content digest, gold contract digest and
+protocol digest. Citing the same experiment twice is one piece of evidence, and
+the duplicate is recorded as a refusal rather than silently dropped.
+
+`TheMetricMustBeAllowedToGoDown`. Expanding the denominator, withdrawing
+evidence, or failing to reproduce a historical experiment lowers the figure. A
+measure that can only rise is an announcement, not a measure. Negative evidence
+therefore revokes a gate rather than being filed beside it.
+
+`ARatioCarriesItsDenominator`. No ratio is rendered apart from its numerator, its
+denominator and the source that froze that denominator. A ratio over an empty
+denominator is undefined, neither zero nor complete.
+
+`NoKernelModuleConsumesTheCapabilityMap`. No gate in `kernel/` reads this
+package. It births nothing, freezes nothing and issues no verdict; it measures
+what has already happened and names what has not.

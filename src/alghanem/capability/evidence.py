@@ -353,7 +353,9 @@ class EvidenceLedger:
 
         return len(self._admitted) + len(self._refusals)
 
-    def for_capability(self, capability_id: str) -> tuple[ScopedCapabilityEvidence, ...]:
+    def for_capability(
+        self, capability_id: str
+    ) -> tuple[ScopedCapabilityEvidence, ...]:
         """شواهدُ قدرةٍ بعينها من المقبول وحدَه."""
 
         return tuple(
