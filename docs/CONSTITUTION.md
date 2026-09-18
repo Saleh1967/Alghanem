@@ -3226,3 +3226,139 @@ specification to improve its language.
 Deferred here by name, not by omission: the separation of the arity bound from
 identity uniqueness, the first genuine `MULTIPLICITY_IS_THE_PROOF` case, and the
 readout that alone can turn a declared perturbation into a licensed one.
+
+## G0.GEN-0 — Minimal licensed Arabic production (specification only)
+
+Every layer until now read a surface and asked what licensed it. This one turns
+the arrow around, and the first thing the constitution must forbid is the
+assumption that turning the arrow is free:
+
+    Analysis  ≠  Generation⁻¹
+
+Generation is not the inverse of the analyser; it is a *licensed* transformation
+from a closed internal structure into an Arabic signifier:
+
+    Generation :  LicensedStructure  →  SurfaceCandidate
+
+**The source of a production is a passed execution, not a structure.** An
+`AnchoredNisbahSignatureV3` merely *exists*; existence is not judgment. So the
+only admissible entry point is a reference minted from an execution envelope
+that actually carried a verdict:
+
+    Outcome = PASS  ∧  MaterializedIdentity ≠ ∅   ⇒   PassedNisbahSourceRef
+
+and nothing else may construct that reference. Generation does not run the
+engine; it reads a certificate the engine already issued, and carries its
+`input_digest`, `execution_digest` and `law_set_digest` forward so that the
+authority of any produced word can be traced back to the judgment that licensed
+its structure. This is the layer's highest law:
+
+    NoGenerationAuthorityBeyondItsSource
+
+**The specification is thin, and it does not restate its source.** Relation
+kind, predicate anchor and argument anchors live in the licensed source; copying
+them into the request would open a drift between `SourceStructure` and
+`ProductionSpecification`, and drift is exactly what a content identity is meant
+to close. For the same reason the caller may not write a rank or a residual:
+
+    CallerDoesNotOwnGenerationRank
+    ResidualsAreObservedNotAuthored
+
+A rank is issued by a gate; a residual is read off the trace of the step that
+failed to close. Evidence enters as closed references, never as free text, and
+no identifier field may contain a single Arabic character — a specification that
+carries its own answer has stopped being a specification.
+
+**A position is not a semantic role.** The first family needs a subject and an
+object *slot*, and it is tempting to reach for `Agent` and `Patient`. The
+constitution refuses, permanently:
+
+    فاعل  ≠  Agent          مفعول به  ≠  Patient
+
+so generation opens its own closed vocabulary — `FAA_IL_POSITION`,
+`MAF_UL_BIH_POSITION`, and `PREDICATE_POSITION` for the verb, which would
+otherwise be a surface without a licensed slot — and binds an anchor *identity*
+to a position without ever redescribing that anchor semantically:
+
+    AnchorIdentity → SyntacticRealizationTarget      not      Anchor = Agent
+
+**The unrealized layers branch, they do not block.** The earlier sketch made
+orthography a child of phonology, which would have made the whole axis
+unreachable, since this project has measured no phonological layer. After
+composition the projections are siblings:
+
+    Composition  →  { PhonologicalProjection , OrthographicProjection }
+
+In `GEN-0` the phonological projection is withheld, and the orthographic one may
+still be produced — but only from a frozen lexical form, never claimed as
+derived from a sound layer nobody measured:
+
+    OrthographyNeedNotClaimPhonologicalDerivation
+
+**And withheld is a type, not a flag.** A field reading `GENERATED | WITHHELD`
+puts both states in one shape and lets a consumer read a withheld stage as
+though it held a value. The separation is structural:
+
+    StageReadout  =  GeneratedStage[T]  |  WithheldStage
+
+so `Generated ≠ Withheld` by construction, not by an enum comparison a caller
+may forget to make.
+
+**No morphology is claimed.** `فَعَلَ` is not derived from `ك ت ب` here; that
+would announce the closure of the pattern system before it is built. The only
+licensed operation is
+
+    LEXICALLY_ATTESTED_FORM_SELECTION       not      DERIVED_FROM_ROOT
+
+and the refusal is enforced, not merely documented; real derivation is deferred
+to `GEN-MORPH-1`.
+
+**Three ranks, and the third is unreachable.** Not every output is «correct
+Arabic»:
+
+    SurfaceCandidate ≺ StructurallyLicensedSurface ≺ CertifiedGeneratedUtterance
+
+The second is issued by a gate that checks every token against its specification
+— anchor, position, case effect, order, trace. The third requires a round trip:
+
+    G(S) = U  ∧  A(U) = S′  ∧  S′ ≃ S       over  { relation, anchors, roles,
+                                                    tense, voice, case relations }
+
+and the analyser that would compute `A` does not exist, because the corpus tags
+case, not function (`ACCUSATIVE_IS_NOT_OBJECTHOOD`). So `RoundTripGate` has
+exactly one outcome — a named deferral — and `RoundTripCertificate` cannot be
+constructed at all:
+
+    RoundTripIsSpecifiedNotIssuable
+    NoCertifiedGenerationWithoutRoundTrip
+
+**And the generator invents nothing.** It never asks what the speaker wishes to
+say:
+
+    IntentCreation  ≠  LanguageRealization
+    GenerationDoesNotInventIntent
+
+What is being built here is a language realizer, not a mind that authors
+purposes. Python, the lexicon, the rules and the search are means; none of them
+is the source of a sentence's correctness.
+
+The frozen first family is
+
+    PastActiveTransitiveVSO
+
+a past active verb in a lexically attested form, one explicit singular subject,
+one explicit singular object, `VSO` order only — no pronoun, no ellipsis, no
+fronting, no passive, no augmentation, no dual or plural.
+
+The order of the axis is
+
+    SPEC ≺ DATA ≺ READOUT ≺ RT
+
+and this milestone is `SPEC` alone: primitives, laws and gates with synthetic
+tests only. No frozen lexicon and no golden specification enter here — a
+reviewed Arabic datum inside `SPEC` would conflate the milestone that *names*
+the shape with the one that *fills* it. Deferred here by name: the frozen
+minimal lexicon (`G0.GEN-0.DATA`), the orchestrating readout
+(`G0.GEN-0.READOUT`), the function-recovering analyser and the certificate it
+alone can license (`G0.GEN-0.RT`), and morphological derivation
+(`GEN-MORPH-1`).
