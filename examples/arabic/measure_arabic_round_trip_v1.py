@@ -8,42 +8,56 @@ raw bytes → UTF-8 → NFC → carrier/state → syllable → word structure
           → reverse → desegment → retrieve → raw bytes
 ```
 
-بلا مسارٍ يعمل على الحالات المُضمَّنة في `carrier_state_candidate`:
+ثلاثةُ أوجهٍ للتشغيل، ولا يُدمَج مخرجُ أحدها في الآخر:
 
-    python examples/arabic/measure_arabic_round_trip_v1.py
+* على الحالات المُضمَّنة في `carrier_state_candidate`، وهي حالاتُ اختبارٍ لا
+  مدوّنة::
 
-وبمسارِ ملفٍّ نصّيٍّ يُقاس على كلماته بعد تقسيمها على البياض:
+      python examples/arabic/measure_arabic_round_trip_v1.py
 
-    python examples/arabic/measure_arabic_round_trip_v1.py path/to/file.txt
+* على إيداع الفاتحة المُبصَّم في الشجرة، فيُعاد اشتقاقُ `FATIHA_ROUND_TRIP`
+  بأعداده وببصمة جدوله، ويفشل التشغيلُ إن انحرف::
 
-ويُطبع جدولان لا يُدمجان: الأوّلُ على البايتات كما وردت، والثاني على البايتات
-بعد تسويةِ `NFC` قبل الخطّ. والثاني ليس تصحيحًا للأوّل بل قياسٌ لمدخلٍ آخر،
-فمن قرأهما رقمًا واحدًا خلط مُدخلين.
+      python examples/arabic/measure_arabic_round_trip_v1.py --deposit
+
+* على ملفٍّ نصّيٍّ خارجيٍّ يُقسَّم على البياض، ولا يُجمَّد لمخرجه رقمٌ في
+  الشجرة ما دامت بايتاتُه خارجَها::
+
+      python examples/arabic/measure_arabic_round_trip_v1.py path/to/file.txt
+
+ومع المدخلِ غيرِ المُجمَّد يُطبع جدولان لا يُدمجان: الأوّلُ على البايتات كما
+وردت، والثاني على البايتات بعد تسويةِ `NFC` قبل الخطّ. والثاني ليس تصحيحًا
+للأوّل بل قياسٌ لمدخلٍ آخر، فمن قرأهما رقمًا واحدًا خلط مُدخلين.
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import sys
 import unicodedata
 from pathlib import Path
 
+from alghanem.arabic.arabic_round_trip_corpus import (
+    FATIHA_ROUND_TRIP,
+    UNMEASURED_ROUND_TRIP_SOURCES,
+    measure_deposited_text,
+)
 from alghanem.arabic.arabic_round_trip_v1 import (
     LAYER_FUNCTIONS,
     LAYERS_NOT_IN_THIS_PIPELINE,
-    LayerOutcome,
     RoundTripTable,
     measure_round_trip,
     render_table,
     tokens_from_text,
 )
 from alghanem.arabic.encoding.carrier_state_candidate import EMBEDDED_ROUND_TRIP_CASES
-
-
-def _read_tokens(path: Path | None) -> tuple[bytes, ...]:
-    if path is None:
-        return tuple(case.encode("utf-8") for case in EMBEDDED_ROUND_TRIP_CASES)
-    return tokens_from_text(path.read_text(encoding="utf-8"))
+from alghanem.arabic.fatiha_source_text import (
+    FATIHA_SOURCE_ID,
+    FATIHA_SOURCE_TEXT,
+    source_byte_length,
+    source_sha256,
+)
 
 
 def _normalised(tokens: tuple[bytes, ...]) -> tuple[bytes, ...]:
@@ -61,21 +75,91 @@ def _normalised(tokens: tuple[bytes, ...]) -> tuple[bytes, ...]:
 def _report(title: str, table: RoundTripTable) -> None:
     print(title)
     print(render_table(table))
-    halted: dict[str, int] = {}
-    for trace in table.traces:
-        if trace.outcome is LayerOutcome.RECONSTRUCTED:
-            continue
-        key = f"{trace.reached.value}/{trace.outcome.value}"
-        if trace.refusal is not None:
-            key = f"{key}/{trace.refusal.value}"
-        halted[key] = halted.get(key, 0) + 1
-    for key in sorted(halted):
-        print(f"  {key}: {halted[key]}")
+    for halt in table.halt_profile:
+        reason = "" if halt.refusal is None else f"/{halt.refusal.value}"
+        print(f"  {halt.layer.value}/{halt.outcome.value}{reason}: {halt.count}")
     print(
         f"  end-to-end reconstructed: {table.end_to_end_reconstructed}"
         f"/{table.token_total}"
     )
+    print(f"  table digest: {table.digest}")
     print()
+
+
+def _declared_functions() -> None:
+    print("declared functions, layer by layer:")
+    for functions in LAYER_FUNCTIONS:
+        print(f"  {functions.layer.value}: {functions.forward} ↔ {functions.inverse}")
+    print()
+    print("not in this pipeline:")
+    for absent in LAYERS_NOT_IN_THIS_PIPELINE:
+        print(f"  - {absent}")
+
+
+def _run_deposit() -> int:
+    """أعِد اشتقاقَ القياس المُجمَّد على إيداع الفاتحة، وافشل عند أيّ انحراف."""
+
+    measurement = measure_deposited_text(
+        FATIHA_SOURCE_TEXT,
+        source_id=FATIHA_SOURCE_ID,
+        source_sha256=source_sha256(),
+        source_byte_length=source_byte_length(),
+    )
+    _report(
+        f"deposited text: {measurement.source_id} "
+        f"sha256={measurement.source_sha256} bytes={measurement.source_byte_length}",
+        measure_round_trip(tokens_from_text(FATIHA_SOURCE_TEXT)),
+    )
+    rate = measurement.reconstruction_rate
+    rendered = "—" if rate is None else f"{rate:.6f}"
+    print(
+        f"  reconstruction over everything that entered: "
+        f"{measurement.end_to_end_reconstructed}/{measurement.token_total} = {rendered}"
+    )
+    if measurement.digest != FATIHA_ROUND_TRIP.digest:
+        print(
+            "error: the re-derived measurement does not match the frozen "
+            f"FATIHA_ROUND_TRIP digest {FATIHA_ROUND_TRIP.digest}",
+            file=sys.stderr,
+        )
+        return 1
+    print(f"  matches the frozen FATIHA_ROUND_TRIP digest {measurement.digest}")
+    return 0
+
+
+def _run_external(path: Path) -> int:
+    raw = path.read_bytes()
+    digest = hashlib.sha256(raw).hexdigest()
+    print(f"external file: {path} sha256={digest} bytes={len(raw)}")
+    for source in UNMEASURED_ROUND_TRIP_SOURCES:
+        if digest == source.source_sha256:
+            print(f"  recognised as: {source.source_id}")
+            print(f"  no figure is frozen for it: {source.why_no_figure_is_frozen}")
+    print()
+
+    tokens = tokens_from_text(raw.decode("utf-8", errors="replace"))
+    if not tokens:
+        print("لا كلمةَ واحدةَ في المدخل، فلا جدولَ يُطبع.", file=sys.stderr)
+        return 1
+    _report("raw bytes as they arrived", measure_round_trip(tokens))
+    _report(
+        "the same bytes, NFC before the pipeline",
+        measure_round_trip(_normalised(tokens)),
+    )
+    return 0
+
+
+def _run_embedded() -> int:
+    embedded = tuple(case.encode("utf-8") for case in EMBEDDED_ROUND_TRIP_CASES)
+    if not embedded:
+        print("لا كلمةَ واحدةَ في المدخل، فلا جدولَ يُطبع.", file=sys.stderr)
+        return 1
+    _report("embedded test surfaces, not a corpus", measure_round_trip(embedded))
+    _report(
+        "the same surfaces, NFC before the pipeline",
+        measure_round_trip(_normalised(embedded)),
+    )
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -86,26 +170,31 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         help="ملفٌّ نصّيٌّ يُقسَّم على البياض؛ وبلا مسارٍ تُقاس الحالاتُ المُضمَّنة",
     )
+    parser.add_argument(
+        "--deposit",
+        action="store_true",
+        help="أعِد اشتقاقَ القياس المُجمَّد على إيداع الفاتحة المُبصَّم في الشجرة",
+    )
     args = parser.parse_args(argv)
 
-    tokens = _read_tokens(args.path)
-    if not tokens:
-        print("لا كلمةَ واحدةَ في المدخل، فلا جدولَ يُطبع.", file=sys.stderr)
+    if args.deposit and args.path is not None:
+        print(
+            "error: a deposited measurement and an external file are two "
+            "different measurements; run them separately",
+            file=sys.stderr,
+        )
         return 1
 
-    _report("raw bytes as they arrived", measure_round_trip(tokens))
-    _report(
-        "the same bytes, NFC before the pipeline",
-        measure_round_trip(_normalised(tokens)),
-    )
-
-    print("declared functions, layer by layer:")
-    for functions in LAYER_FUNCTIONS:
-        print(f"  {functions.layer.value}: {functions.forward} ↔ {functions.inverse}")
+    if args.deposit:
+        status = _run_deposit()
+    elif args.path is not None:
+        status = _run_external(args.path)
+    else:
+        status = _run_embedded()
+    if status != 0:
+        return status
     print()
-    print("not in this pipeline:")
-    for absent in LAYERS_NOT_IN_THIS_PIPELINE:
-        print(f"  - {absent}")
+    _declared_functions()
     return 0
 
 

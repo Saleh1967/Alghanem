@@ -5757,10 +5757,50 @@ NFC-normalised first, as a separate table that is never merged with the first,
 opening on a bare alef, since hamzat al-waṣl is undecidable from the marks),
 and `final bytes` reads `4/9` with five reorderings and nothing lost.
 
+### The corpus table — a real text, not a test surface
+
+Eighteen hand-picked surfaces are a fixture, not a corpus. `arabic_round_trip_corpus`
+therefore runs the same pipeline over the fingerprinted, fully vocalised
+al-Fātiḥah deposit already in this tree (`fatiha_source_text`, sha256
+`d435d63a…`, 552 bytes), and freezes the result as `FATIHA_ROUND_TRIP`.
+`measure_deposited_text` re-hashes the text it is given and refuses to measure
+anything whose bytes do not match the fingerprint it was handed, so the figure
+belongs to that exact deposit and no other.
+
+| Layer | In | Accepted | Refused | Mismatch | Reorder | Lost | Added | RoundTrip |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `UTF8_BYTES` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
+| `UNICODE_NFC` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
+| `CARRIER_STATE` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
+| `SYLLABLE` | 29 | 15 | 14 | 0 | 0 | 0 | 0 | 100.0000% |
+| `WORD_STRUCTURE` | 15 | 15 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
+| `FINAL_BYTES` | 15 | 15 | 0 | 4 | 4 | 0 | 0 | 73.3333% |
+
+Eleven of twenty-nine tokens come back byte-for-byte identical. The other
+eighteen are accounted for by name, never by silence, in `halt_profile`, which
+a test holds to summing to the token total:
+
+- **14 × `SYLLABLE / REFUSED / SEGMENTATION_ONSETLESS_INITIAL_SAKIN`** — every
+  one of them a word opening on a bare alef, i.e. hamzat al-waṣl, already ruled
+  undecidable from the written marks by
+  `HAMZAT_WASL_IS_NOT_DECIDABLE_FROM_THE_WRITTEN_MARKS`. The wall is not
+  vague: it is one refusal code, and it is the *same* one fourteen times.
+- **4 × `FINAL_BYTES / MISMATCHED`**, all four reordering-only — `Lost = 0`,
+  `Added = 0` — because NFC sorts shadda after the vowel while the codec writes
+  it before. Nothing was destroyed; the byte order differs.
+
+The whole table is content-addressed: `RoundTripTable.digest` is
+`7025007494c12056…`, and `python examples/arabic/measure_arabic_round_trip_v1.py
+--deposit` re-derives it from the deposited bytes and exits non-zero if a single
+row moves. `UNMEASURED_ROUND_TRIP_SOURCES` names the 77,429-token Quranic
+morphology corpus that this tree deliberately does not vendor, and gives it no
+number at all rather than a placeholder.
+
 The claim after this milestone is: *there is now one executed path from Arabic
-bytes to a structure and back to bytes, with a per-layer number for what it
-refused and what it lost — and on the embedded surfaces the wall is the
-syllable layer, not the codec.*
+bytes to a structure and back to bytes, measured on a real fingerprinted text —
+11/29 tokens reconstructed exactly, and the place where it stops is a single
+named refusal at the syllable layer, fourteen times over, not the codec and not
+the encoding.*
 
 Not built here, deliberately: morphology, composition, syntax, iʿrāb, dalālah,
 MASAQ and any weight protocol. No layer above word structure has a forward and

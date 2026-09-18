@@ -1,0 +1,164 @@
+"""اختباراتُ قياسِ الخطّ على مدوّنةٍ مُبصَّمة: كلُّ رقمٍ مُجمَّدٍ يُعاد تشغيلُه."""
+
+from __future__ import annotations
+
+import pytest
+
+from alghanem.arabic.arabic_round_trip_corpus import (
+    FATIHA_ROUND_TRIP,
+    MEASURED_ROUND_TRIP_SOURCES,
+    UNMEASURED_ROUND_TRIP_SOURCES,
+    RoundTripCorpusError,
+    RoundTripCorpusMeasurement,
+    measure_deposited_text,
+)
+from alghanem.arabic.arabic_round_trip_v1 import (
+    HaltCount,
+    LayerOutcome,
+    RoundTripLayer,
+    RoundTripRefusal,
+    measure_round_trip,
+    tokens_from_text,
+)
+from alghanem.arabic.fatiha_source_text import (
+    FATIHA_SOURCE_ID,
+    FATIHA_SOURCE_TEXT,
+    source_byte_length,
+    source_sha256,
+)
+
+
+def _rerun() -> RoundTripCorpusMeasurement:
+    return measure_deposited_text(
+        FATIHA_SOURCE_TEXT,
+        source_id=FATIHA_SOURCE_ID,
+        source_sha256=source_sha256(),
+        source_byte_length=source_byte_length(),
+    )
+
+
+def test_the_frozen_corpus_figure_is_re_derived_by_running_the_pipeline() -> None:
+    """الرقمُ المُجمَّد يُكذَّب بتشغيلٍ لا يُصدَّق بقراءةِ سطر."""
+
+    rerun = _rerun()
+    assert rerun.table_digest == FATIHA_ROUND_TRIP.table_digest
+    assert rerun.digest == FATIHA_ROUND_TRIP.digest
+    assert rerun.halt_profile == FATIHA_ROUND_TRIP.halt_profile
+
+
+def test_the_halt_profile_accounts_for_every_token_exactly_once() -> None:
+    assert (
+        sum(halt.count for halt in FATIHA_ROUND_TRIP.halt_profile)
+        == FATIHA_ROUND_TRIP.token_total
+    )
+
+
+def test_the_wall_is_the_syllable_layer_and_it_is_named() -> None:
+    """موضعُ التوقّف مُسمًّى بسببه بعينه، لا برمزٍ جامعٍ للطبقة."""
+
+    onsetless = FATIHA_ROUND_TRIP.halts_at(
+        RoundTripLayer.SYLLABLE,
+        RoundTripRefusal.SEGMENTATION_ONSETLESS_INITIAL_SAKIN,
+    )
+    assert onsetless == 14
+    assert FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.SYLLABLE) == onsetless
+    assert FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.CARRIER_STATE) == 0
+    assert FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.UTF8_BYTES) == 0
+
+
+def test_the_rate_is_over_everything_that_entered_the_pipeline() -> None:
+    assert FATIHA_ROUND_TRIP.end_to_end_reconstructed == 11
+    assert FATIHA_ROUND_TRIP.token_total == 29
+    assert FATIHA_ROUND_TRIP.reconstruction_rate == 11 / 29
+
+
+def test_every_halt_reason_in_the_profile_is_a_sealed_member() -> None:
+    for halt in FATIHA_ROUND_TRIP.halt_profile:
+        assert isinstance(halt.layer, RoundTripLayer)
+        assert isinstance(halt.outcome, LayerOutcome)
+        if halt.outcome is LayerOutcome.REFUSED:
+            assert isinstance(halt.refusal, RoundTripRefusal)
+        else:
+            assert halt.refusal is None
+
+
+def test_a_text_that_does_not_match_its_digest_is_refused() -> None:
+    with pytest.raises(RoundTripCorpusError):
+        measure_deposited_text(
+            FATIHA_SOURCE_TEXT + "\u0628\u064e",
+            source_id=FATIHA_SOURCE_ID,
+            source_sha256=source_sha256(),
+            source_byte_length=source_byte_length(),
+        )
+
+
+def test_a_measurement_cannot_claim_more_reconstruction_than_it_holds() -> None:
+    with pytest.raises(RoundTripCorpusError):
+        RoundTripCorpusMeasurement(
+            source_id=FATIHA_SOURCE_ID,
+            source_sha256=source_sha256(),
+            source_byte_length=source_byte_length(),
+            normalization_form="NFC",
+            unicode_database_version="15.0.0",
+            token_total=2,
+            end_to_end_reconstructed=2,
+            halt_profile=(
+                HaltCount(
+                    layer=RoundTripLayer.FINAL_BYTES,
+                    outcome=LayerOutcome.RECONSTRUCTED,
+                    refusal=None,
+                    count=1,
+                ),
+                HaltCount(
+                    layer=RoundTripLayer.SYLLABLE,
+                    outcome=LayerOutcome.REFUSED,
+                    refusal=RoundTripRefusal.SEGMENTATION_TWO_ADJACENT_SAKINS,
+                    count=1,
+                ),
+            ),
+            table_digest=FATIHA_ROUND_TRIP.table_digest,
+        )
+
+
+def test_a_halt_profile_that_drops_a_token_is_refused() -> None:
+    with pytest.raises(RoundTripCorpusError):
+        RoundTripCorpusMeasurement(
+            source_id=FATIHA_SOURCE_ID,
+            source_sha256=source_sha256(),
+            source_byte_length=source_byte_length(),
+            normalization_form="NFC",
+            unicode_database_version="15.0.0",
+            token_total=5,
+            end_to_end_reconstructed=1,
+            halt_profile=(
+                HaltCount(
+                    layer=RoundTripLayer.FINAL_BYTES,
+                    outcome=LayerOutcome.RECONSTRUCTED,
+                    refusal=None,
+                    count=1,
+                ),
+            ),
+            table_digest=FATIHA_ROUND_TRIP.table_digest,
+        )
+
+
+def test_the_unmeasured_corpus_carries_no_figure_at_all() -> None:
+    """المدوّنةُ التي لم تُشغَّل بايتاتُها تبقى بلا عددٍ واحد."""
+
+    assert UNMEASURED_ROUND_TRIP_SOURCES
+    for source in UNMEASURED_ROUND_TRIP_SOURCES:
+        assert source.why_no_figure_is_frozen.strip()
+        assert not hasattr(source, "token_total")
+        assert not hasattr(source, "reconstruction_rate")
+    measured_ids = {entry.source_id for entry in MEASURED_ROUND_TRIP_SOURCES}
+    unmeasured_ids = {entry.source_id for entry in UNMEASURED_ROUND_TRIP_SOURCES}
+    assert not measured_ids & unmeasured_ids
+
+
+def test_the_table_digest_moves_when_any_row_moves() -> None:
+    """البصمةُ تُمسِك الجدولَ كلَّه، فتغيّرُ كلمةٍ واحدةٍ يُسقِط المطابقة."""
+
+    widened = measure_round_trip(
+        tokens_from_text(FATIHA_SOURCE_TEXT + "\n\u0628\u0650\u0633\u0652\u0645\u0650")
+    )
+    assert widened.digest != FATIHA_ROUND_TRIP.table_digest

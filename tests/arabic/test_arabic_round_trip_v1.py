@@ -99,7 +99,7 @@ def test_a_word_opening_with_a_bare_alef_is_refused_at_the_syllable_layer() -> N
     trace = run_token("\u0627\u0644\u0644\u064e\u0651\u0647\u0650".encode())
     assert trace.reached is RoundTripLayer.SYLLABLE
     assert trace.outcome is LayerOutcome.REFUSED
-    assert trace.refusal is RoundTripRefusal.SEGMENTATION_REFUSED_THE_UNITS
+    assert trace.refusal is RoundTripRefusal.SEGMENTATION_ONSETLESS_INITIAL_SAKIN
 
 
 def test_no_layer_counts_a_token_that_never_reached_it() -> None:

@@ -46,12 +46,14 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Final
 
+from ..canonical_content import canonical_bytes, canonical_digest
 from .encoding.carrier_state_candidate import (
     CarrierStateCodec,
     CarrierStateEncodingError,
     CarrierStateUnit,
 )
 from .encoding.syllable_segmentation import (
+    SyllableRefusal,
     SyllableSegmentationError,
     desegment,
     segment,
@@ -71,6 +73,7 @@ __all__ = [
     "LayerAtom",
     "LayerFunctions",
     "LayerOutcome",
+    "HaltCount",
     "LayerRow",
     "RoundTripLayer",
     "RoundTripRefusal",
@@ -122,8 +125,28 @@ class RoundTripRefusal(Enum):
     NOT_VALID_UTF8 = "NOT_VALID_UTF8"
     EMPTY_TOKEN = "EMPTY_TOKEN"
     CODEC_REFUSED_THE_SURFACE = "CODEC_REFUSED_THE_SURFACE"
-    SEGMENTATION_REFUSED_THE_UNITS = "SEGMENTATION_REFUSED_THE_UNITS"
+    SEGMENTATION_ONSETLESS_INITIAL_SAKIN = "SEGMENTATION_ONSETLESS_INITIAL_SAKIN"
+    SEGMENTATION_TWO_ADJACENT_SAKINS = "SEGMENTATION_TWO_ADJACENT_SAKINS"
+    SEGMENTATION_PASSTHROUGH_IS_NOT_SYLLABIFIED = (
+        "SEGMENTATION_PASSTHROUGH_IS_NOT_SYLLABIFIED"
+    )
+    SEGMENTATION_NO_UNIT_AT_ALL = "SEGMENTATION_NO_UNIT_AT_ALL"
     DICTIONARY_REFUSED_THE_SURFACE = "DICTIONARY_REFUSED_THE_SURFACE"
+
+
+_SEGMENTATION_REFUSALS: Final[dict[SyllableRefusal, RoundTripRefusal]] = {
+    SyllableRefusal.ONSETLESS_INITIAL_SAKIN: (
+        RoundTripRefusal.SEGMENTATION_ONSETLESS_INITIAL_SAKIN
+    ),
+    SyllableRefusal.TWO_ADJACENT_SAKINS: (
+        RoundTripRefusal.SEGMENTATION_TWO_ADJACENT_SAKINS
+    ),
+    SyllableRefusal.PASSTHROUGH_IS_NOT_SYLLABIFIED: (
+        RoundTripRefusal.SEGMENTATION_PASSTHROUGH_IS_NOT_SYLLABIFIED
+    ),
+    SyllableRefusal.NO_UNIT_AT_ALL: RoundTripRefusal.SEGMENTATION_NO_UNIT_AT_ALL,
+}
+"""كلُّ سببِ رفضٍ في التقطيع يُرفَع بعينه؛ ولا يُطوى أربعةٌ في رمزٍ جامعٍ واحد."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -275,6 +298,20 @@ class LayerRow:
                 "اختلافُ ترتيبٍ أكثرُ من الاختلاف كلِّه دعوَيان متناقضتان في صفٍّ " "واحد"
             )
 
+    def as_canonical_content(self) -> dict[str, object]:
+        """المحتوى القانونيّ لصفّ الطبقة؛ والنسبةُ ليست فيه لأنّها مشتقّة."""
+
+        return {
+            "layer": self.layer.value,
+            "atom": self.atom.value,
+            "input_count": self.input_count,
+            "refused_count": self.refused_count,
+            "mismatch_count": self.mismatch_count,
+            "ordering_only_count": self.ordering_only_count,
+            "information_lost": self.information_lost,
+            "information_added": self.information_added,
+        }
+
     @property
     def accepted_count(self) -> int:
         """ما قرأته الطبقةُ فعلًا؛ والمرفوضُ ليس منه."""
@@ -298,6 +335,38 @@ class LayerRow:
         if self.accepted_count == 0:
             return None
         return self.reconstructed_count / self.accepted_count
+
+
+@dataclass(frozen=True, slots=True)
+class HaltCount:
+    """صفٌّ واحدٌ في موضع التوقّف: طبقةٌ وحكمٌ وسببٌ مُسنونٌ وعددٌ مقيس."""
+
+    layer: RoundTripLayer
+    outcome: LayerOutcome
+    refusal: RoundTripRefusal | None
+    count: int
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.layer, RoundTripLayer):
+            raise RoundTripV1Error("الطبقةُ عضوٌ في مفردتها المغلقة")
+        if not isinstance(self.outcome, LayerOutcome):
+            raise RoundTripV1Error("الحكمُ عضوٌ في مفردته المغلقة")
+        if (self.outcome is LayerOutcome.REFUSED) != (self.refusal is not None):
+            raise RoundTripV1Error(
+                "الرفضُ يحمل سببَه المُسنون، وغيرُ المرفوض لا يحمل سببَ رفض"
+            )
+        if not isinstance(self.count, int) or self.count < 1:
+            raise RoundTripV1Error("صفُّ توقّفٍ بعددٍ غيرِ موجبٍ صفٌّ بلا واقعة")
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """المحتوى القانونيّ لصفّ التوقّف."""
+
+        return {
+            "layer": self.layer.value,
+            "outcome": self.outcome.value,
+            "refusal": None if self.refusal is None else self.refusal.value,
+            "count": self.count,
+        }
 
 
 @dataclass(frozen=True, slots=True)
@@ -334,6 +403,48 @@ class RoundTripTable:
         """الكلماتُ التي خرجت بايتاتُها كما دخلت، من أعلى الخطّ لا من أدناه."""
 
         return self.row(RoundTripLayer.FINAL_BYTES).reconstructed_count
+
+    @property
+    def halt_profile(self) -> tuple[HaltCount, ...]:
+        """أين وقفت الكلماتُ بالضبط: طبقةٌ وحكمٌ وسببُ رفضٍ بعينه، وعددُها.
+
+        `THE_HALT_IS_NAMED_NOT_SUMMARISED`: لا يُطوى سببان في رمزٍ جامع، ولا
+        يُقرأ التوقّفُ «فشلًا»؛ والصفوفُ مرتّبةٌ بترتيب الطبقات ثمّ بالاسم،
+        فالبصمةُ لا تتغيّر بتغيّر ترتيب المرور.
+        """
+
+        counts: dict[tuple[RoundTripLayer, LayerOutcome, RoundTripRefusal | None], int]
+        counts = {}
+        for trace in self.traces:
+            key = (trace.reached, trace.outcome, trace.refusal)
+            counts[key] = counts.get(key, 0) + 1
+        ordered = tuple(RoundTripLayer)
+        return tuple(
+            HaltCount(layer=layer, outcome=outcome, refusal=refusal, count=count)
+            for (layer, outcome, refusal), count in sorted(
+                counts.items(),
+                key=lambda item: (
+                    ordered.index(item[0][0]),
+                    item[0][1].value,
+                    "" if item[0][2] is None else item[0][2].value,
+                ),
+            )
+        )
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """المحتوى القانونيُّ للجدول: صفوفُه وموضعُ توقّفه، لا نصُّ عرضه."""
+
+        return {
+            "token_total": self.token_total,
+            "rows": [row.as_canonical_content() for row in self.rows],
+            "halt_profile": [halt.as_canonical_content() for halt in self.halt_profile],
+        }
+
+    @property
+    def digest(self) -> str:
+        """بصمةُ الجدول، مُشتقّةٌ من محتواه القانونيّ لا مكتوبةٌ فيه."""
+
+        return canonical_digest(canonical_bytes(self.as_canonical_content()))
 
 
 @dataclass
@@ -439,12 +550,12 @@ def run_token(token: bytes, *, token_index: int = 0) -> TokenTrace:
     try:
         parse = segment(units)
         desegmented = desegment(parse.syllables)
-    except SyllableSegmentationError:
+    except SyllableSegmentationError as refused:
         return TokenTrace(
             token_index=token_index,
             reached=RoundTripLayer.SYLLABLE,
             outcome=LayerOutcome.REFUSED,
-            refusal=RoundTripRefusal.SEGMENTATION_REFUSED_THE_UNITS,
+            refusal=_SEGMENTATION_REFUSALS[refused.refusal],
         )
     if desegmented != units:
         lost, added = _atom_delta(units, desegmented)
