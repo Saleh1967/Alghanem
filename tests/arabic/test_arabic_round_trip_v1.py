@@ -93,13 +93,22 @@ def test_an_empty_token_is_refused_rather_than_counted_clean() -> None:
     assert trace.refusal is RoundTripRefusal.EMPTY_TOKEN
 
 
-def test_a_word_opening_with_a_bare_alef_is_refused_at_the_syllable_layer() -> None:
-    """ألفُ الوصل متعذّرةٌ من العلامات، فالتقطيعُ يرفع رفضًا ولا يُخمّن حركةً."""
+def test_a_word_opening_on_a_bare_alef_crosses_the_syllable_layer() -> None:
+    """الألفُ عنصرٌ محايد، فالكلمةُ تعبر طبقةَ المقطع بلا حركةٍ مُخمَّنة."""
+
+    trace = run_token("\u0627\u0644\u0652\u062d\u064e\u0645\u0652\u062f\u064f".encode())
+    assert trace.reached is RoundTripLayer.FINAL_BYTES
+    assert trace.outcome is LayerOutcome.RECONSTRUCTED
+    assert trace.refusal is None
+
+
+def test_an_assimilated_article_lam_still_halts_at_the_syllable_layer() -> None:
+    """الحيادُ لا يُصلِح ما بعده: لامٌ مكتوبةٌ قبل مشدَّدٍ ساكنان متجاوران."""
 
     trace = run_token("\u0627\u0644\u0644\u064e\u0651\u0647\u0650".encode())
     assert trace.reached is RoundTripLayer.SYLLABLE
     assert trace.outcome is LayerOutcome.REFUSED
-    assert trace.refusal is RoundTripRefusal.SEGMENTATION_ONSETLESS_INITIAL_SAKIN
+    assert trace.refusal is RoundTripRefusal.SEGMENTATION_TWO_ADJACENT_SAKINS
 
 
 def test_no_layer_counts_a_token_that_never_reached_it() -> None:

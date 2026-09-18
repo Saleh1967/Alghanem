@@ -10,8 +10,10 @@ from alghanem.arabic.encoding.carrier_state_candidate import (
     CarrierStateEncodingError,
 )
 from alghanem.arabic.encoding.syllable_segmentation import (
+    NEUTRAL_ALEF_CARRIER,
     NUCLEUS_STATES,
     Syllable,
+    SyllableOnset,
     SyllableRefusal,
     SyllableSegmentationError,
     desegment,
@@ -40,11 +42,52 @@ def test_the_segmentation_covers_every_unit_exactly_once() -> None:
         assert starts == sorted(starts)
 
 
-def test_an_initial_sakin_is_refused_by_name() -> None:
-    units = _CODEC.generate("\u0627\u0644\u0644\u064e\u0651\u0647\u0650")
+def test_an_initial_sakin_that_is_not_an_alef_is_refused_by_name() -> None:
+    """الحيادُ للألف العاري وحدَه؛ وساكنٌ آخرُ في الصدر يبقى رفضًا باسمه."""
+
+    units = _CODEC.generate("\u0628\u0652\u062a\u064e")
     with pytest.raises(SyllableSegmentationError) as caught:
         segment(units)
     assert caught.value.refusal is SyllableRefusal.ONSETLESS_INITIAL_SAKIN
+
+
+def test_a_word_opening_on_a_bare_alef_is_segmented_with_a_neutral_onset() -> None:
+    """ألفُ الوصل تفتح مقطعًا ولا تدّعي نواةً، والعكسُ يردّها بعينها."""
+
+    units = _CODEC.generate("\u0627\u0644\u0652\u062d\u064e\u0645\u0652\u062f\u064f")
+    parse = segment(units)
+    assert desegment(parse.syllables) == units
+    assert parse.neutral_onset_count == 1
+    first = parse.syllables[0]
+    assert first.onset is SyllableOnset.NEUTRAL_ALEF
+    assert first.claims_a_nucleus is False
+    assert first.units[0].carrier == NEUTRAL_ALEF_CARRIER
+    for later in parse.syllables[1:]:
+        assert later.onset is SyllableOnset.MOVING_CARRIER
+        assert later.claims_a_nucleus is True
+
+
+def test_the_neutral_onset_does_not_repair_what_lies_after_it() -> None:
+    """لامُ التعريف قبل مشدَّدٍ ساكنان متجاوران؛ والحيادُ لا يُصلِحهما."""
+
+    units = _CODEC.generate("\u0627\u0644\u0644\u064e\u0651\u0647\u0650")
+    with pytest.raises(SyllableSegmentationError) as caught:
+        segment(units)
+    assert caught.value.refusal is SyllableRefusal.TWO_ADJACENT_SAKINS
+
+
+def test_the_neutral_onset_is_not_available_in_the_middle_of_a_word() -> None:
+    """مدى الحياد مُعلَن: أوّلُ الكلمة وحدَه، ولا يُفتعَل في وسطها."""
+
+    units = _CODEC.generate("\u0628\u064e\u0627")
+    with pytest.raises(SyllableSegmentationError):
+        Syllable(start=1, units=(units[1],), onset=SyllableOnset.NEUTRAL_ALEF)
+
+
+def test_a_neutral_onset_is_refused_for_any_carrier_but_the_bare_alef() -> None:
+    units = _CODEC.generate("\u0628\u064e\u062a\u064e")
+    with pytest.raises(SyllableSegmentationError):
+        Syllable(start=0, units=(units[0],), onset=SyllableOnset.NEUTRAL_ALEF)
 
 
 def test_a_passthrough_symbol_is_refused_rather_than_swallowed() -> None:

@@ -5772,35 +5772,67 @@ belongs to that exact deposit and no other.
 | `UTF8_BYTES` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
 | `UNICODE_NFC` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
 | `CARRIER_STATE` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
-| `SYLLABLE` | 29 | 15 | 14 | 0 | 0 | 0 | 0 | 100.0000% |
-| `WORD_STRUCTURE` | 15 | 15 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
-| `FINAL_BYTES` | 15 | 15 | 0 | 4 | 4 | 0 | 0 | 73.3333% |
+| `SYLLABLE` | 29 | 21 | 8 | 0 | 0 | 0 | 0 | 100.0000% |
+| `WORD_STRUCTURE` | 21 | 21 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
+| `FINAL_BYTES` | 21 | 21 | 0 | 5 | 5 | 0 | 0 | 76.1905% |
 
-Eleven of twenty-nine tokens come back byte-for-byte identical. The other
-eighteen are accounted for by name, never by silence, in `halt_profile`, which
+Sixteen of twenty-nine tokens come back byte-for-byte identical. The other
+thirteen are accounted for by name, never by silence, in `halt_profile`, which
 a test holds to summing to the token total:
 
-- **14 × `SYLLABLE / REFUSED / SEGMENTATION_ONSETLESS_INITIAL_SAKIN`** — every
-  one of them a word opening on a bare alef, i.e. hamzat al-waṣl, already ruled
-  undecidable from the written marks by
-  `HAMZAT_WASL_IS_NOT_DECIDABLE_FROM_THE_WRITTEN_MARKS`. The wall is not
-  vague: it is one refusal code, and it is the *same* one fourteen times.
-- **4 × `FINAL_BYTES / MISMATCHED`**, all four reordering-only — `Lost = 0`,
+- **8 × `SYLLABLE / REFUSED / SEGMENTATION_TWO_ADJACENT_SAKINS`** — every one of
+  them the definite article's lām written before a geminated consonant, i.e.
+  the assimilated lām. The wall is not vague: it is one refusal code, and it is
+  the *same* one eight times.
+- **5 × `FINAL_BYTES / MISMATCHED`**, all five reordering-only — `Lost = 0`,
   `Added = 0` — because NFC sorts shadda after the vowel while the codec writes
   it before. Nothing was destroyed; the byte order differs.
 
 The whole table is content-addressed: `RoundTripTable.digest` is
-`7025007494c12056…`, and `python examples/arabic/measure_arabic_round_trip_v1.py
+`1e659c20b67fda9e…`, and `python examples/arabic/measure_arabic_round_trip_v1.py
 --deposit` re-derives it from the deposited bytes and exits non-zero if a single
 row moves. `UNMEASURED_ROUND_TRIP_SOURCES` names the 77,429-token Quranic
 morphology corpus that this tree deliberately does not vendor, and gives it no
 number at all rather than a placeholder.
 
+### `TheAlefIsANeutralElement` — the first change made to move a number
+
+From here on, the stated priority is narrow: **a change earns its place by
+moving a number in `ArabicRoundTripV1`** — a production, a refusal, a mismatch,
+or a layer that becomes invertible. Anything that moves none of them is not a
+priority now, however well argued.
+
+The first change made under that rule is the bare alef. A word-initial unmarked
+alef — hamzat al-waṣl — is now read as a **neutral element**: a
+`SyllableOnset.NEUTRAL_ALEF` that opens a syllable and *claims no nucleus*
+(`claims_a_nucleus` is `False`). Nothing is guessed: the undecidability recorded
+in `HAMZAT_WASL_IS_NOT_DECIDABLE_FROM_THE_WRITTEN_MARKS` stands untouched, no
+fatḥa, ḍamma or kasra is invented, the unit is preserved verbatim, and
+`desegment` hands it back exactly. The scope is declared and narrow: word-initial
+only, because a medial bare alef already round-trips as a coda and needed no
+change. And neutrality repairs nothing beneath it — a second sakin after a
+neutral onset is still refused by its own name.
+
+What the number did, on the same fingerprinted deposit:
+
+| | before | after |
+| --- | --- | --- |
+| tokens reconstructed end to end | 11/29 | **16/29** |
+| syllable-layer refusals | 14 | **8** |
+| `SEGMENTATION_ONSETLESS_INITIAL_SAKIN` | 14 | **0** |
+| `SEGMENTATION_TWO_ADJACENT_SAKINS` | 0 | **8** |
+| reordering-only mismatches at final bytes | 4 | 5 |
+| table digest | `7025007494c12056…` | `1e659c20b67fda9e…` |
+
+The wall did not fall; it moved and was renamed. The measured stopping point of
+Alghanem is now the assimilated article lām, eight times over, and the next
+change will be judged by whether it moves that eight.
+
 The claim after this milestone is: *there is now one executed path from Arabic
 bytes to a structure and back to bytes, measured on a real fingerprinted text —
-11/29 tokens reconstructed exactly, and the place where it stops is a single
-named refusal at the syllable layer, fourteen times over, not the codec and not
-the encoding.*
+16/29 tokens reconstructed exactly, and the place where it stops is a single
+named refusal at the syllable layer, eight times over, not the codec and not the
+encoding.*
 
 Not built here, deliberately: morphology, composition, syntax, iʿrāb, dalālah,
 MASAQ and any weight protocol. No layer above word structure has a forward and

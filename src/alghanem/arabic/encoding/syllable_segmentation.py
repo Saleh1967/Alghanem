@@ -18,6 +18,18 @@
 
 `THE_INVERSE_IS_RUN_NOT_ASSERTED`: `desegment` تُنفَّذ فعلًا ويُقارَن ناتجُها
 بالوحدات الداخلة؛ ولا تُكتب هنا نسبةُ استرجاعٍ واحدة.
+
+`THE_ALEF_IS_A_NEUTRAL_ELEMENT`: الألفُ العاري في أوّل الكلمة — ألفُ الوصل —
+حركتُه متعذّرةٌ من العلامات المكتوبة، وهذا التعذّرُ باقٍ. فلا يُخمَّن له فتحٌ
+ولا ضمٌّ ولا كسر، وإنّما يُعامَل **عنصرًا محايدًا**: صدرٌ يفتح مقطعًا ولا يدّعي
+نواةً. ومقطعُه يُقرأ `onset=NEUTRAL_ALEF` و`claims_a_nucleus=False`، فمن عدَّه
+مقطعًا موصوفًا فقد قرأ ما لم يُكتَب. والحيادُ **لا يُصلح** شيئًا تحته: الوحدةُ
+تُحفَظ بعينها ويردّها `desegment` كما دخلت، والساكنُ الثاني بعد صدرٍ محايدٍ
+يبقى رفضًا باسمه.
+
+ومدى الحياد مُعلَن: **أوّلُ الكلمة وحدَه**. فالألفُ العاري في وسطها أو آخرها
+يبقى على قراءته الحالية ساكنًا يُغلِق مقطعًا، لأنّ تلك القراءةَ تُشغَّل وترجع
+بالبايتات، فلا موجبَ لتغييرها.
 """
 
 from __future__ import annotations
@@ -31,10 +43,14 @@ from .carrier_state_candidate import CarrierState, CarrierStateUnit
 
 __all__ = [
     "A_REFUSAL_IS_NOT_A_SEGMENTATION_NOTE",
+    "NEUTRAL_ALEF_CARRIER",
+    "NEUTRAL_ONSET_STATES",
     "NUCLEUS_STATES",
     "SEGMENTATION_IS_NOT_A_WAZN_NOTE",
+    "THE_ALEF_IS_A_NEUTRAL_ELEMENT_NOTE",
     "THE_INVERSE_IS_RUN_NOT_ASSERTED_NOTE",
     "Syllable",
+    "SyllableOnset",
     "SyllableParse",
     "SyllableRefusal",
     "SyllableSegmentationError",
@@ -74,6 +90,27 @@ _SAKIN_STATES: Final[frozenset[CarrierState]] = frozenset(
     {CarrierState.SUKUN_EXPLICIT, CarrierState.SUKUN_IMPLICIT}
 )
 
+NEUTRAL_ALEF_CARRIER: Final[str] = "\u0627"
+"""الحاملُ الذي يُعامَل محايدًا في أوّل الكلمة: الألفُ العاري لا سواه."""
+
+NEUTRAL_ONSET_STATES: Final[frozenset[CarrierState]] = frozenset(
+    {CarrierState.SUKUN_IMPLICIT}
+)
+"""الحالةُ الوحيدةُ التي يُقبَل معها الحياد: ألفٌ لم تُكتَب عليه علامةٌ أصلًا."""
+
+
+class SyllableOnset(Enum):
+    """صدرُ المقطع: حاملٌ متحرّكٌ موصوف، أو ألفٌ محايدٌ لا نواةَ يدّعيها."""
+
+    MOVING_CARRIER = "moving_carrier"
+    NEUTRAL_ALEF = "neutral_alef"
+
+
+def _is_neutral_alef(unit: CarrierStateUnit) -> bool:
+    """أهذه الوحدةُ ألفٌ عارٍ؟ مقروءٌ من الحامل والحالة لا من موضعٍ وحدَه."""
+
+    return unit.carrier == NEUTRAL_ALEF_CARRIER and unit.state in NEUTRAL_ONSET_STATES
+
 
 @dataclass(frozen=True, slots=True)
 class Syllable:
@@ -81,6 +118,7 @@ class Syllable:
 
     start: int
     units: tuple[CarrierStateUnit, ...]
+    onset: SyllableOnset = SyllableOnset.MOVING_CARRIER
 
     def __post_init__(self) -> None:
         if not isinstance(self.start, int) or self.start < 0:
@@ -93,7 +131,23 @@ class Syllable:
                 SyllableRefusal.NO_UNIT_AT_ALL,
                 "مقطعٌ بلا وحدةٍ واحدةٍ ليس مقطعًا قصيرًا بل لا مقطعَ أصلًا",
             )
-        if self.units[0].state not in NUCLEUS_STATES:
+        if not isinstance(self.onset, SyllableOnset):
+            raise SyllableSegmentationError(
+                SyllableRefusal.NO_UNIT_AT_ALL,
+                "صدرُ المقطع مفردةٌ مغلقةٌ لا نصٌّ حُرّ",
+            )
+        if self.onset is SyllableOnset.NEUTRAL_ALEF:
+            if not _is_neutral_alef(self.units[0]):
+                raise SyllableSegmentationError(
+                    SyllableRefusal.ONSETLESS_INITIAL_SAKIN,
+                    "الحيادُ للألف العاري وحدَه؛ ولا يُوسَّع إلى حاملٍ آخر",
+                )
+            if self.start != 0:
+                raise SyllableSegmentationError(
+                    SyllableRefusal.ONSETLESS_INITIAL_SAKIN,
+                    "الحيادُ مدًى مُعلَنٌ: أوّلُ الكلمة وحدَه لا وسطُها",
+                )
+        elif self.units[0].state not in NUCLEUS_STATES:
             raise SyllableSegmentationError(
                 SyllableRefusal.ONSETLESS_INITIAL_SAKIN,
                 "المقطعُ يبدأ بحاملٍ متحرّك؛ والساكنُ لا يفتح مقطعًا",
@@ -115,6 +169,12 @@ class Syllable:
         """أفي المقطع ساكنٌ بعد متحرّكه؟ مقروءٌ من الوحدات لا من اسمٍ."""
 
         return len(self.units) == 2
+
+    @property
+    def claims_a_nucleus(self) -> bool:
+        """أيدّعي هذا المقطعُ نواةً موصوفة؟ المحايدُ لا يدّعيها ولا يُخمّنها."""
+
+        return self.onset is not SyllableOnset.NEUTRAL_ALEF
 
 
 @dataclass(frozen=True, slots=True)
@@ -145,6 +205,22 @@ class SyllableParse:
                     "المقاطعُ متجاورةٌ بمواضعها؛ وفجوةٌ بينها تقطيعٌ لغير ما قُرِئ",
                 )
             expected += syllable.length
+        for syllable in self.syllables[1:]:
+            if syllable.onset is SyllableOnset.NEUTRAL_ALEF:
+                raise SyllableSegmentationError(
+                    SyllableRefusal.ONSETLESS_INITIAL_SAKIN,
+                    "الصدرُ المحايدُ واحدٌ في أوّل الكلمة؛ ولا يتكرّر في وسطها",
+                )
+
+    @property
+    def neutral_onset_count(self) -> int:
+        """كم مقطعًا افتُتح بصدرٍ محايدٍ لا نواةَ يدّعيها؟ مشتقٌّ لا مكتوب."""
+
+        return sum(
+            1
+            for syllable in self.syllables
+            if syllable.onset is SyllableOnset.NEUTRAL_ALEF
+        )
 
 
 def segment(units: Sequence[CarrierStateUnit]) -> SyllableParse:
@@ -170,7 +246,10 @@ def segment(units: Sequence[CarrierStateUnit]) -> SyllableParse:
                 SyllableRefusal.PASSTHROUGH_IS_NOT_SYLLABIFIED,
                 "رمزٌ خارج الحوامل المُعلَنة لا يُقطَّع مقطعًا ولا يُحذَف",
             )
-        if unit.state in _SAKIN_STATES:
+        onset = SyllableOnset.MOVING_CARRIER
+        if index == 0 and _is_neutral_alef(unit):
+            onset = SyllableOnset.NEUTRAL_ALEF
+        elif unit.state in _SAKIN_STATES:
             raise SyllableSegmentationError(
                 SyllableRefusal.ONSETLESS_INITIAL_SAKIN
                 if index == 0
@@ -184,7 +263,7 @@ def segment(units: Sequence[CarrierStateUnit]) -> SyllableParse:
             if candidate.state in _SAKIN_STATES:
                 span.append(candidate)
                 following += 1
-        syllables.append(Syllable(start=index, units=tuple(span)))
+        syllables.append(Syllable(start=index, units=tuple(span), onset=onset))
         index = following
 
     return SyllableParse(syllables=tuple(syllables), unit_total=total)
@@ -219,4 +298,11 @@ A_REFUSAL_IS_NOT_A_SEGMENTATION_NOTE: Final[str] = (
 THE_INVERSE_IS_RUN_NOT_ASSERTED_NOTE: Final[str] = (
     "TheInverseIsRunNotAsserted: `desegment` تُنفَّذ ويُقارَن ناتجُها بالوحدات "
     "الداخلة في كلّ قياس؛ ولا تُكتَب في هذه الوحدة نسبةُ استرجاعٍ واحدة"
+)
+
+THE_ALEF_IS_A_NEUTRAL_ELEMENT_NOTE: Final[str] = (
+    "TheAlefIsANeutralElement: الألفُ العاري في أوّل الكلمة صدرٌ محايدٌ يفتح "
+    "مقطعًا ولا يدّعي نواةً؛ فلا حركةَ تُخمَّن له، ولا يُعَدُّ مقطعًا موصوفًا "
+    "(`claims_a_nucleus=False`)، ومداهُ أوّلُ الكلمة وحدَه، والوحدةُ تُردّ "
+    "بعينها في العكس"
 )

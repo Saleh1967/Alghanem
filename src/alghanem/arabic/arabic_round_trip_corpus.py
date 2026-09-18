@@ -223,40 +223,41 @@ FATIHA_ROUND_TRIP: Final[RoundTripCorpusMeasurement] = RoundTripCorpusMeasuremen
     normalization_form="NFC",
     unicode_database_version="15.0.0",
     token_total=29,
-    end_to_end_reconstructed=11,
+    end_to_end_reconstructed=16,
     halt_profile=(
         HaltCount(
             layer=RoundTripLayer.SYLLABLE,
             outcome=LayerOutcome.REFUSED,
-            refusal=RoundTripRefusal.SEGMENTATION_ONSETLESS_INITIAL_SAKIN,
-            count=14,
+            refusal=RoundTripRefusal.SEGMENTATION_TWO_ADJACENT_SAKINS,
+            count=8,
         ),
         HaltCount(
             layer=RoundTripLayer.FINAL_BYTES,
             outcome=LayerOutcome.MISMATCHED,
             refusal=None,
-            count=4,
+            count=5,
         ),
         HaltCount(
             layer=RoundTripLayer.FINAL_BYTES,
             outcome=LayerOutcome.RECONSTRUCTED,
             refusal=None,
-            count=11,
+            count=16,
         ),
     ),
-    table_digest="7025007494c12056566167d9712e8e5701122769cefbdbe488aa082ba2aa948b",
+    table_digest="1e659c20b67fda9e0000db3a4281cc938656ac76e33839327fa9296845a7e8e1",
 )
 """تسعٌ وعشرون كلمةً من إيداع الفاتحة، وموضعُ التوقّف واحدٌ مُسمًّى.
 
-أربعَ عشرةَ كلمةً تقف عند طبقة المقطع بسببٍ واحدٍ بعينه: ساكنٌ لا متحرّكَ يفتح
-له مقطعًا — وهو في كلِّ واقعةٍ منها ألفٌ عاريةٌ في أوّل الكلمة، أي همزةُ الوصل
-التي سبق أن قرّرت الشجرةُ تعذُّرَها من العلامات المكتوبة
-(`ibtida_wasl_waqf_registration.HAMZAT_WASL_IS_NOT_DECIDABLE_FROM_THE_WRITTEN_MARKS`).
-فليس هذا عطبًا في التقطيع بل بلوغُه حدًّا قرّرته الشجرةُ قبله بجلسات.
+بعد أن صار الألفُ العاري في أوّل الكلمة **عنصرًا محايدًا** — صدرًا يفتح مقطعًا
+ولا يدّعي نواةً — لم يبقَ في هذا الإيداع وقوفٌ واحدٌ عند
+`SEGMENTATION_ONSETLESS_INITIAL_SAKIN` بعد أن كانت أربعَ عشرةَ كلمة. وموضعُ
+التوقّف انتقل إلى سببٍ آخرَ مُسمًّى: ثماني كلماتٍ فيها **ساكنان متجاوران**، وهي
+في كلِّ واقعةٍ منها لامُ التعريف مكتوبةً قبل حرفٍ مشدَّد، أي اللامُ المُدغَمة.
+فالجدارُ لم يُهدَم بل تحرّك، وصار له اسمٌ آخر وعددٌ أصغر.
 
-وأربعُ كلماتٍ تصل أعلى الخطّ ثمّ تخرج بايتاتُها بترتيبٍ آخر — الشدّةُ قبل
-الحركة في كتابة المرماز — بفقدٍ صفرٍ وزيادةٍ صفر. وإحدى عشرةَ كلمةً تعود
-بايتاتُها كما دخلت.
+وخمسُ كلماتٍ تصل أعلى الخطّ ثمّ تخرج بايتاتُها بترتيبٍ آخر — الشدّةُ قبل
+الحركة في كتابة المرماز — بفقدٍ صفرٍ وزيادةٍ صفر. وستَّ عشرةَ كلمةً تعود
+بايتاتُها كما دخلت، بعد إحدى عشرةَ قبل الحياد.
 
 ويُعاد اشتقاقُ هذه الأعداد كلِّها من
 `examples/arabic/measure_arabic_round_trip_v1.py --deposit`، ويقارنها اختبارٌ

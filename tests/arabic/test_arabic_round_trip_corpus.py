@@ -56,20 +56,32 @@ def test_the_halt_profile_accounts_for_every_token_exactly_once() -> None:
 def test_the_wall_is_the_syllable_layer_and_it_is_named() -> None:
     """موضعُ التوقّف مُسمًّى بسببه بعينه، لا برمزٍ جامعٍ للطبقة."""
 
-    onsetless = FATIHA_ROUND_TRIP.halts_at(
+    adjacent = FATIHA_ROUND_TRIP.halts_at(
         RoundTripLayer.SYLLABLE,
-        RoundTripRefusal.SEGMENTATION_ONSETLESS_INITIAL_SAKIN,
+        RoundTripRefusal.SEGMENTATION_TWO_ADJACENT_SAKINS,
     )
-    assert onsetless == 14
-    assert FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.SYLLABLE) == onsetless
+    assert adjacent == 8
+    assert FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.SYLLABLE) == adjacent
     assert FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.CARRIER_STATE) == 0
     assert FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.UTF8_BYTES) == 0
 
 
+def test_the_neutral_alef_left_no_onsetless_halt_in_this_deposit() -> None:
+    """بعد الحياد لم يبقَ في هذا الإيداع وقوفٌ واحدٌ على ألفٍ عارية."""
+
+    assert (
+        FATIHA_ROUND_TRIP.halts_at(
+            RoundTripLayer.SYLLABLE,
+            RoundTripRefusal.SEGMENTATION_ONSETLESS_INITIAL_SAKIN,
+        )
+        == 0
+    )
+
+
 def test_the_rate_is_over_everything_that_entered_the_pipeline() -> None:
-    assert FATIHA_ROUND_TRIP.end_to_end_reconstructed == 11
+    assert FATIHA_ROUND_TRIP.end_to_end_reconstructed == 16
     assert FATIHA_ROUND_TRIP.token_total == 29
-    assert FATIHA_ROUND_TRIP.reconstruction_rate == 11 / 29
+    assert FATIHA_ROUND_TRIP.reconstruction_rate == 16 / 29
 
 
 def test_every_halt_reason_in_the_profile_is_a_sealed_member() -> None:
