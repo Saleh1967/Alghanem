@@ -18,10 +18,20 @@
 (`AnUnreachableCellIsJustifiedNotInvented`): منزلةٌ يمنع الدستورُ بلوغَها
 تُسجَّل `reachable=False` بتعليلٍ مُسمًّى، ولا تُخترَع لها حالةٌ مصطنعةٌ لملء جدول.
 
-**وإثباتُ البلوغ لا يُغني عن إثبات المنع** (`forbidden_co_standings`): أن يبلغ
-قانونٌ `VIOLATED` لا يكفي؛ يجب أن يثبت معه أنّه **على الموضوع نفسه** لا يكون في
-الوقت نفسه `SATISFIED` أو `UNRESOLVED`. والمنعُ هنا لموضوعٍ واحدٍ لا للأثر
-كلِّه؛ فقانونٌ ذو مواضعَ كثيرةٍ يصحّ أن يثبت في موضعٍ ويُخالَف في آخر.
+**ومنزلةُ قانونٍ ليست حكمَ القضيّة** (`ALawStandingIsNotACaseVerdict`): الخليّةُ
+في المحور الأوّل تُخبر عن قانونٍ واحدٍ على موضوعٍ واحد، فلا تُسنَد إليها حالةُ
+القضيّة كلِّها؛ إنّما تُسنَد إليها **أثرُها في جمع الحكم** وحدَه. فقانونٌ
+`SATISFIED` لا يُنتِج `PASS` ما دام قانونٌ آخر في القضيّة نفسِها `VIOLATED`،
+والجمعُ رتبتُه `BLOCK > DEFER > PASS`. فالطبقاتُ ثلاثٌ لا تُخلَط:
+
+    CheckStanding  →  VerdictEffect  →  CaseDisposition
+
+**والمنعُ يُقرَأ في نطاق تقييمه** (`AProhibitionIsReadInItsEvaluationScope`): أن
+يبلغ قانونٌ `VIOLATED` لا يكفي؛ يجب أن يثبت معه امتناعُ سائر المنازل. وقانونٌ
+نطاقُه `SUBJECT` يُقرَأ منعُه على `(law, subject)` نفسِه لا على كلِّ مواضعه؛
+فيصحّ أن يثبت في موضعٍ ويُخالَف في آخر، ويمتنع أن يثبت ويُخالَف في الموضع نفسِه
+في القراءة نفسِها. وعلى `DATA` بعدُ أن تُسمّي `witness_subject_id` في كلِّ قانونٍ
+نطاقُه `SUBJECT`، ولو لم يكن في القضيّة إلّا موضوعٌ واحد.
 
 **ولا تسمّي المصفوفةُ حالةً ولا بصمة** (`AMatrixNamesNoCaseAndNoDigest`): لا
 `JSON` ولا `execution_digest` في هذه المرحلة ألبتّة.
@@ -46,18 +56,23 @@ from .outcome import CheckStanding
 
 __all__ = [
     "AN_UNREACHABLE_CELL_IS_JUSTIFIED_NOT_INVENTED",
+    "A_LAW_STANDING_IS_NOT_A_CASE_VERDICT",
     "A_MATRIX_MEASURES_THE_ENGINE_AS_FROZEN",
     "A_MATRIX_NAMES_NO_CASE_AND_NO_DIGEST",
+    "A_PROHIBITION_IS_READ_IN_ITS_EVALUATION_SCOPE",
     "CASE_EXPECTATION_IS_FROZEN_BEFORE_FIRST_ENGINE_READOUT",
     "COVERAGE_MATRIX",
     "COVERAGE_MATRIX_DIGEST",
     "COVERAGE_MATRIX_ID",
     "COVERAGE_REQUIREMENT_IS_FROZEN_BEFORE_CASE_SELECTION",
+    "EVALUATION_SCOPE_OF_LAW",
+    "CaseDisposition",
     "CoverageAxis",
     "CoverageMatrix",
     "CoverageMatrixError",
     "CoverageRequirement",
-    "ExpectedOutcome",
+    "EvaluationScope",
+    "VerdictEffect",
 ]
 
 
@@ -86,6 +101,18 @@ A_MATRIX_MEASURES_THE_ENGINE_AS_FROZEN: Final[str] = (
     "تأسيسٍ أنطولوجيٍّ أعمقَ لاحقٍ طبقةٌ جديدةٌ لها مصفوفتُها، ولا يُغيّر ما مضى"
 )
 
+A_LAW_STANDING_IS_NOT_A_CASE_VERDICT: Final[str] = (
+    "منزلةُ قانونٍ ليست حكمَ القضيّة: الخليّةُ تُسنِد أثرًا في الجمع لا حالةً كلّيّة؛ "
+    "فـ`SATISFIED` لا تُنتِج `PASS` ما دام قانونٌ آخر `VIOLATED`، والرتبةُ "
+    "`BLOCK > DEFER > PASS`"
+)
+
+A_PROHIBITION_IS_READ_IN_ITS_EVALUATION_SCOPE: Final[str] = (
+    "المنعُ يُقرَأ في نطاق تقييمه: قانونٌ نطاقُه موضوعٌ يُمنَع اجتماعُ منازله على "
+    "`(law, subject)` نفسِه لا على كلِّ مواضعه؛ وقانونٌ نطاقُه القضيّةُ يُقرَأ منعُه "
+    "على الأثر كلِّه"
+)
+
 
 class CoverageMatrixError(ValueError):
     """رفضٌ عند تكوين مطلبٍ أو مصفوفة؛ لا حملَ على أقرب حالةٍ مقبولة."""
@@ -99,26 +126,70 @@ class CoverageAxis(Enum):
     CROSS_STAGE_SEPARATION = "cross_stage_separation"
 
 
-class ExpectedOutcome(Enum):
-    """ما يجب أن تُنتِجه الحالةُ الشاهدة؛ وفيه ما ليس حكمًا أصلًا."""
+class EvaluationScope(Enum):
+    """جهةُ حمل الحكم: القضيّةُ كلُّها أو موضوعٌ بعينه؛ لا عددُ المواضع."""
+
+    CASE = "case"
+    SUBJECT = "subject"
+
+
+class VerdictEffect(Enum):
+    """أثرُ منزلةٍ واحدةٍ في جمع الحكم؛ لا الحكمُ نفسُه."""
+
+    FORCES_BLOCK = "forces_block"
+    FORCES_DEFER_UNLESS_BLOCKED = "forces_defer_unless_blocked"
+    NO_VERDICT_EFFECT = "no_verdict_effect"
+
+
+class CaseDisposition(Enum):
+    """ما تصير إليه القضيّةُ كلُّها؛ وما ليس حالةً كلّيّةً لا عضوَ له هنا."""
 
     PASS = "pass"
     BLOCK = "block"
     DEFER = "defer"
-    INHERITED = "inherited"
-    NO_VERDICT_INVALID_INPUT = "no_verdict_invalid_input"
-    NO_VERDICT_INVARIANT_ERROR = "no_verdict_invariant_error"
-    NOT_CONSTRAINED = "not_constrained"
+    INVALID_INPUT = "invalid_input"
+    INVARIANT_ERROR = "invariant_error"
 
 
-_OUTCOME_OF_STANDING: Final[dict[CheckStanding, ExpectedOutcome]] = {
-    CheckStanding.SATISFIED: ExpectedOutcome.PASS,
-    CheckStanding.VIOLATED: ExpectedOutcome.BLOCK,
-    CheckStanding.UNRESOLVED: ExpectedOutcome.DEFER,
-    CheckStanding.NOT_EVALUATED_BY_PREREQUISITE: ExpectedOutcome.INHERITED,
-    CheckStanding.NOT_APPLICABLE_NO_CLAIM: ExpectedOutcome.PASS,
+_VERDICT_EFFECT_OF_STANDING: Final[dict[CheckStanding, VerdictEffect]] = {
+    CheckStanding.SATISFIED: VerdictEffect.NO_VERDICT_EFFECT,
+    CheckStanding.VIOLATED: VerdictEffect.FORCES_BLOCK,
+    CheckStanding.UNRESOLVED: VerdictEffect.FORCES_DEFER_UNLESS_BLOCKED,
+    CheckStanding.NOT_EVALUATED_BY_PREREQUISITE: VerdictEffect.NO_VERDICT_EFFECT,
+    CheckStanding.NOT_APPLICABLE_NO_CLAIM: VerdictEffect.NO_VERDICT_EFFECT,
 }
-"""الحكمُ المتوقَّعُ من منزلةٍ مطلوبة؛ مُعلَنٌ لا مُستنتَجٌ عند القراءة."""
+"""أثرُ كلِّ منزلةٍ في الجمع؛ مُعلَنٌ لا مُستنتَجٌ عند القراءة، ولا حالةَ قضيّةٍ فيه."""
+
+
+EVALUATION_SCOPE_OF_LAW: Final[dict[ExecutionLaw, EvaluationScope]] = {
+    ExecutionLaw.NO_SELF_DERIVED_LICENSING_GENUS: EvaluationScope.SUBJECT,
+    ExecutionLaw.NO_UNREAD_CONDITION_IN_THE_FOUNDING_BASE: EvaluationScope.SUBJECT,
+    ExecutionLaw.GENERAL_ONTOLOGY_FOUNDED_ON_THE_LINEAGE_BASE: EvaluationScope.SUBJECT,
+    ExecutionLaw.LINGUISTIC_LICENSES_NAME_REGISTERED_CANDIDATES: (
+        EvaluationScope.SUBJECT
+    ),
+    ExecutionLaw.LINGUISTIC_LICENSES_SHARE_THE_FOUNDING_BASE: EvaluationScope.SUBJECT,
+    ExecutionLaw.LINGUISTIC_ONTOLOGY_FOUNDED_ON_THE_LINEAGE_GENERAL: (
+        EvaluationScope.SUBJECT
+    ),
+    ExecutionLaw.EXISTENCE_LINEAGE_REDERIVES: EvaluationScope.SUBJECT,
+    ExecutionLaw.CONDITION_SITES_SHARE_THE_LINEAGE_BASE: EvaluationScope.SUBJECT,
+    ExecutionLaw.CONDITION_SITES_ARE_LICENSED_FOR_USE: EvaluationScope.SUBJECT,
+    ExecutionLaw.ROLE_SITES_SHARE_THE_LINEAGE_ONTOLOGY: EvaluationScope.SUBJECT,
+    ExecutionLaw.ROLE_LICENSE_GRANTED_FOR_THE_FUNCTION_READ: EvaluationScope.SUBJECT,
+    ExecutionLaw.ROLE_LICENSE_IS_OPERATIVE: EvaluationScope.SUBJECT,
+    ExecutionLaw.PREDICATE_ARITY_LICENSE_PERMITS_USE: EvaluationScope.CASE,
+    ExecutionLaw.PREDICATE_ARITY_MATCHES_ITS_SLOTS: EvaluationScope.CASE,
+    ExecutionLaw.ARGUMENT_SLOT_IDS_ARE_NOT_DEFERRED_ROLE_NAMES: (
+        EvaluationScope.SUBJECT
+    ),
+    ExecutionLaw.ANCHORS_DO_NOT_EXCEED_ARITY: EvaluationScope.CASE,
+    ExecutionLaw.DECLARED_LINGUISTIC_IDENTITY_AGREES: EvaluationScope.SUBJECT,
+    ExecutionLaw.MATERIALIZED_IDENTITY_AGREES: EvaluationScope.CASE,
+}
+"""نطاقُ تقييم كلِّ قانون: على كيانٍ مُسمًّى أم على بنية القضيّة؛ وهو ثابتٌ لا
+يتغيّر بتغيّر عدد المواضع في قضيّةٍ بعينها. وما نطاقُه `SUBJECT` تُسمّي `DATA`
+موضوعَه بعدُ ولو لم يكن في القضيّة إلّا موضوعٌ واحد."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -132,9 +203,11 @@ class CoverageRequirement:
     claim: str | None
     required: bool
     reachable: bool
+    evaluation_scope: EvaluationScope
     prerequisite_laws: tuple[ExecutionLaw, ...]
     forbidden_co_standings: tuple[CheckStanding, ...]
-    expected_outcome: ExpectedOutcome
+    verdict_effect: VerdictEffect | None
+    expected_disposition: CaseDisposition | None
     case_id: None
     justification_if_unreachable: str | None
 
@@ -143,8 +216,16 @@ class CoverageRequirement:
             raise CoverageMatrixError("مُعرِّفُ المطلب نصٌّ غير فارغ")
         if not isinstance(self.axis, CoverageAxis):
             raise CoverageMatrixError("محورُ التغطية عضوٌ في مفردته المغلقة")
-        if not isinstance(self.expected_outcome, ExpectedOutcome):
-            raise CoverageMatrixError("الحكمُ المتوقَّع عضوٌ في مفردته المغلقة")
+        if not isinstance(self.evaluation_scope, EvaluationScope):
+            raise CoverageMatrixError("نطاقُ التقييم عضوٌ في مفردته المغلقة")
+        if self.verdict_effect is not None and not isinstance(
+            self.verdict_effect, VerdictEffect
+        ):
+            raise CoverageMatrixError("أثرُ المنزلة في الجمع عضوٌ في مفردته المغلقة")
+        if self.expected_disposition is not None and not isinstance(
+            self.expected_disposition, CaseDisposition
+        ):
+            raise CoverageMatrixError("حالةُ القضيّة المتوقَّعة عضوٌ في مفردتها المغلقة")
         if self.case_id is not None:
             raise CoverageMatrixError(A_MATRIX_NAMES_NO_CASE_AND_NO_DIGEST)
         if self.axis is CoverageAxis.LAW_STANDING:
@@ -158,6 +239,12 @@ class CoverageRequirement:
                 raise CoverageMatrixError(
                     "خليّةُ المحور الأوّل يُغني فيها القانونُ ومنزلتُه عن نثرٍ يعيدهما"
                 )
+            if self.expected_disposition is not None:
+                raise CoverageMatrixError(A_LAW_STANDING_IS_NOT_A_CASE_VERDICT)
+            if self.evaluation_scope is not EVALUATION_SCOPE_OF_LAW[self.law]:
+                raise CoverageMatrixError(
+                    "نطاقُ تقييم القانون مُجمَّدٌ في جدوله؛ ولا يُعاد تعريفُه في خليّة"
+                )
         else:
             if self.law is not None or self.target_standing is not None:
                 raise CoverageMatrixError(
@@ -165,6 +252,10 @@ class CoverageRequirement:
                 )
             if not isinstance(self.claim, str) or not self.claim.strip():
                 raise CoverageMatrixError("مطلبٌ خارج المحور الأوّل يُسمّي دعواه نصًّا")
+            if self.verdict_effect is not None:
+                raise CoverageMatrixError(
+                    "أثرُ الجمع لمنزلةِ قانونٍ؛ ومطلبٌ عن القضيّة كلِّها لا منزلةَ له"
+                )
         for value, label in (
             (self.prerequisite_laws, "القوانينُ السابقة"),
             (self.forbidden_co_standings, "المنازلُ الممنوعةُ معه"),
@@ -183,9 +274,12 @@ class CoverageRequirement:
                 raise CoverageMatrixError(
                     "التعليلُ لِما امتنع؛ وخليّةٌ قابلةٌ للوصول لا تُعلَّل بامتناع"
                 )
-            if self.expected_outcome is ExpectedOutcome.NOT_CONSTRAINED:
+            if self.target_standing is not None and (
+                self.verdict_effect
+                is not _VERDICT_EFFECT_OF_STANDING[self.target_standing]
+            ):
                 raise CoverageMatrixError(
-                    "خليّةٌ مطلوبةٌ بلا حكمٍ متوقَّعٍ مطلبٌ لا يُحاسَب عليه"
+                    "خليّةٌ مطلوبةٌ في المحور الأوّل تُسمّي أثرَ منزلتها في الجمع كما جُمِّد"
                 )
         else:
             if self.required:
@@ -195,8 +289,10 @@ class CoverageRequirement:
                 or not self.justification_if_unreachable.strip()
             ):
                 raise CoverageMatrixError(AN_UNREACHABLE_CELL_IS_JUSTIFIED_NOT_INVENTED)
-            if self.expected_outcome is not ExpectedOutcome.NOT_CONSTRAINED:
-                raise CoverageMatrixError("ما لا يُبلَغ لا يُتوقَّع منه حكم؛ فحكمُه غيرُ مُقيَّد")
+            if self.verdict_effect is not None or self.expected_disposition is not None:
+                raise CoverageMatrixError(
+                    "ما لا يُبلَغ لا أثرَ له في جمعٍ ولا حالةَ قضيّةٍ يقيّدها"
+                )
             if self.prerequisite_laws or self.forbidden_co_standings:
                 raise CoverageMatrixError(
                     "ما لا يُبلَغ لا شرطَ سابقٌ له ولا منزلةَ تُمنَع معه"
@@ -223,11 +319,19 @@ class CoverageRequirement:
             "claim": self.claim,
             "required": self.required,
             "reachable": self.reachable,
+            "evaluation_scope": self.evaluation_scope.value,
             "prerequisite_laws": [law.value for law in self.prerequisite_laws],
             "forbidden_co_standings": [
                 standing.value for standing in self.forbidden_co_standings
             ],
-            "expected_outcome": self.expected_outcome.value,
+            "verdict_effect": (
+                None if self.verdict_effect is None else self.verdict_effect.value
+            ),
+            "expected_disposition": (
+                None
+                if self.expected_disposition is None
+                else self.expected_disposition.value
+            ),
             "case_id": None,
             "justification_if_unreachable": self.justification_if_unreachable,
         }
@@ -527,11 +631,13 @@ def _law_standing_requirements() -> tuple[CoverageRequirement, ...]:
                         claim=None,
                         required=True,
                         reachable=True,
+                        evaluation_scope=EVALUATION_SCOPE_OF_LAW[law],
                         prerequisite_laws=reachable[standing],
                         forbidden_co_standings=tuple(
                             other for other in CheckStanding if other is not standing
                         ),
-                        expected_outcome=_OUTCOME_OF_STANDING[standing],
+                        verdict_effect=_VERDICT_EFFECT_OF_STANDING[standing],
+                        expected_disposition=None,
                         case_id=None,
                         justification_if_unreachable=None,
                     )
@@ -546,9 +652,11 @@ def _law_standing_requirements() -> tuple[CoverageRequirement, ...]:
                     claim=None,
                     required=False,
                     reachable=False,
+                    evaluation_scope=EVALUATION_SCOPE_OF_LAW[law],
                     prerequisite_laws=(),
                     forbidden_co_standings=(),
-                    expected_outcome=ExpectedOutcome.NOT_CONSTRAINED,
+                    verdict_effect=None,
+                    expected_disposition=None,
                     case_id=None,
                     justification_if_unreachable=refused[standing],
                 )
@@ -560,8 +668,9 @@ def _beyond_the_first_axis(
     requirement_id: str,
     axis: CoverageAxis,
     claim: str,
-    expected_outcome: ExpectedOutcome,
+    expected_disposition: CaseDisposition | None,
     forbidden_co_standings: tuple[CheckStanding, ...] = (),
+    evaluation_scope: EvaluationScope = EvaluationScope.CASE,
 ) -> CoverageRequirement:
     return CoverageRequirement(
         requirement_id=requirement_id,
@@ -571,9 +680,11 @@ def _beyond_the_first_axis(
         claim=claim,
         required=True,
         reachable=True,
+        evaluation_scope=evaluation_scope,
         prerequisite_laws=(),
         forbidden_co_standings=forbidden_co_standings,
-        expected_outcome=expected_outcome,
+        verdict_effect=None,
+        expected_disposition=expected_disposition,
         case_id=None,
         justification_if_unreachable=None,
     )
@@ -584,20 +695,20 @@ _OUTCOME_REACHABILITY: Final[tuple[CoverageRequirement, ...]] = (
         "OR.pass",
         CoverageAxis.OUTCOME_REACHABILITY,
         "حالةٌ واحدةُ الأصل كاملةُ العناصر تبلغ `PASS` وتُنشئ الهويّةَ السلطويّة",
-        ExpectedOutcome.PASS,
+        CaseDisposition.PASS,
         (CheckStanding.VIOLATED, CheckStanding.UNRESOLVED),
     ),
     _beyond_the_first_axis(
         "OR.block",
         CoverageAxis.OUTCOME_REACHABILITY,
         "حالةٌ يُخالَف فيها قانونٌ مُعلَنٌ فيثبت خرقُه، فتبلغ `BLOCK` بمخالفةٍ مُسمّاة",
-        ExpectedOutcome.BLOCK,
+        CaseDisposition.BLOCK,
     ),
     _beyond_the_first_axis(
         "OR.defer",
         CoverageAxis.OUTCOME_REACHABILITY,
         "حالةٌ ينقص فيها دليلٌ مُصرَّحٌ به بلا مخالفةٍ ثابتة، فتبلغ `DEFER` ببقيّةٍ مُسمّاة",
-        ExpectedOutcome.DEFER,
+        CaseDisposition.DEFER,
         (CheckStanding.VIOLATED,),
     ),
     _beyond_the_first_axis(
@@ -605,7 +716,7 @@ _OUTCOME_REACHABILITY: Final[tuple[CoverageRequirement, ...]] = (
         CoverageAxis.OUTCOME_REACHABILITY,
         "وثيقةٌ لا تقوم منها قضيّةٌ تُنتِج `InputValidation` فاسدةً ولا حكمَ معها؛ "
         "و`ExecutionOutcome` ليس فيها عضوٌ لفساد الإدخال",
-        ExpectedOutcome.NO_VERDICT_INVALID_INPUT,
+        CaseDisposition.INVALID_INPUT,
     ),
     _beyond_the_first_axis(
         "OR.invariant_error",
@@ -613,7 +724,7 @@ _OUTCOME_REACHABILITY: Final[tuple[CoverageRequirement, ...]] = (
         "شاهدُ وصولٍ لـ`ExecutionInvariantError`: ليس حكمًا ولا حالةَ مستخدم، بل عطبٌ "
         "داخليّ؛ فيُبلَغ عند وصل المحرّك بمادّةٍ مُشتَقّةٍ ناقصةٍ بعد نجاحٍ مبدئيّ، لا "
         "بوثيقةٍ يكتبها صاحبُ قضيّة",
-        ExpectedOutcome.NO_VERDICT_INVARIANT_ERROR,
+        CaseDisposition.INVARIANT_ERROR,
     ),
 )
 
@@ -623,46 +734,51 @@ _CROSS_STAGE_SEPARATION: Final[tuple[CoverageRequirement, ...]] = (
         "XS.invalid_input_has_no_envelope",
         CoverageAxis.CROSS_STAGE_SEPARATION,
         "فسادُ الإدخال لا يُنتِج `ExecutionResultEnvelope` ألبتّة",
-        ExpectedOutcome.NO_VERDICT_INVALID_INPUT,
+        CaseDisposition.INVALID_INPUT,
     ),
     _beyond_the_first_axis(
         "XS.block_has_no_materialized_identity",
         CoverageAxis.CROSS_STAGE_SEPARATION,
         "`BLOCK` لا يُنتِج هويّةً سلطويّةً مُشيَّدة",
-        ExpectedOutcome.BLOCK,
+        CaseDisposition.BLOCK,
     ),
     _beyond_the_first_axis(
         "XS.defer_has_no_materialized_identity",
         CoverageAxis.CROSS_STAGE_SEPARATION,
         "`DEFER` لا يُنتِج هويّةً سلطويّةً مُشيَّدة",
-        ExpectedOutcome.DEFER,
+        CaseDisposition.DEFER,
         (CheckStanding.VIOLATED,),
     ),
     _beyond_the_first_axis(
         "XS.pass_has_a_materialized_identity",
         CoverageAxis.CROSS_STAGE_SEPARATION,
         "`PASS` لا يخلو من هويّةٍ سلطويّةٍ مُشيَّدة؛ والعلاقةُ ثنائيّةُ الاتّجاه",
-        ExpectedOutcome.PASS,
+        CaseDisposition.PASS,
         (CheckStanding.VIOLATED, CheckStanding.UNRESOLVED),
     ),
     _beyond_the_first_axis(
         "XS.invariant_error_has_no_verdict_and_no_envelope",
         CoverageAxis.CROSS_STAGE_SEPARATION,
         "`ExecutionInvariantError` لا يُنتِج حكمًا ولا غلافًا مختومًا",
-        ExpectedOutcome.NO_VERDICT_INVARIANT_ERROR,
+        CaseDisposition.INVARIANT_ERROR,
     ),
     _beyond_the_first_axis(
         "XS.blocked_dependent_has_no_residual",
         CoverageAxis.CROSS_STAGE_SEPARATION,
-        "`NOT_EVALUATED_BY_PREREQUISITE` لا يُنتِج بقيّةً؛ فالمحجوبُ ليس دليلًا ناقصًا",
-        ExpectedOutcome.INHERITED,
+        "`NOT_EVALUATED_BY_PREREQUISITE` لا يُنتِج بقيّةً؛ فالمحجوبُ ليس دليلًا ناقصًا "
+        "ولا يقيّد حالةَ القضيّة، فقد يقع في `BLOCK` وفي `DEFER` معًا",
+        None,
+        (),
+        EvaluationScope.SUBJECT,
     ),
     _beyond_the_first_axis(
         "XS.no_claim_is_not_read_as_satisfied",
         CoverageAxis.CROSS_STAGE_SEPARATION,
-        "`NOT_APPLICABLE_NO_CLAIM` لا يُقرَأ `SATISFIED`؛ وغيابُ الدعوى ليس تصديقًا لها",
-        ExpectedOutcome.PASS,
+        "`NOT_APPLICABLE_NO_CLAIM` لا يُقرَأ `SATISFIED`؛ وغيابُ الدعوى ليس تصديقًا لها، "
+        "والمنعُ على الموضوع نفسِه لا على القضيّة",
+        None,
         (CheckStanding.SATISFIED,),
+        EvaluationScope.SUBJECT,
     ),
 )
 
