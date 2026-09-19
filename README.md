@@ -6344,6 +6344,54 @@ bear it. The alif may look neutral precisely because the one axis on which it
 varies was not read. No count from this deposit lifts that preventer. And all
 of it is neutrality *in writing*, as the claim itself stipulated.
 
+## The linear order between a carrier and its mark carries zero bits
+
+`linearization_artifact.py` tests the claim that Unicode imposes a linear order
+on something non-linear, and that the resulting 100% is an artifact of
+flattening two dimensions into one. Four of the five readings resolve
+decisively, and two of them against the claim as stated.
+
+**The 100% is real and empty.** Every one of the six marks has a non-zero
+combining class, and a non-zero-class codepoint follows its base *by
+definition* of the encoding model. So the figure is a theorem about Unicode,
+not an observation about Arabic: it holds for any text whatsoever, and it holds
+vacuously for the empty text. `AHundredPercentForcedByTheEncodingCarriesNoBits`
+records that nothing true-by-emptiness yields information about the language. A
+violation would be a bug in the reader, not a fact about writing.
+
+**But the mark order was never a free choice that got flattened.** All six
+combining classes are pairwise distinct, so canonical ordering forces exactly
+one form per mark multiset — 57 of 57 multisets examined admit a single
+canonical form. There was no degree of freedom to lose.
+`TheMarkOrderWasNeverFreeToBegin` also names what the verdict hangs on: were
+two classes ever equal, the freedom would return and the order would carry
+information.
+
+**The two-dimensional reading is exactly sufficient — proved by inversion.**
+All 29 words of the deposit rebuild character-for-character from the carrier
+sequence plus each carrier's *unordered* mark set. Order within a carrier
+carries not one bit. The inversion is lossless only when the deferred and
+unread marks ride along in the set; drop them and two words break on the
+superscript alef — which is a loss of an *axis*, not of order. And the carrier
+sequence itself remains linear and informative: what is denied is order between
+a carrier and its own mark, not order among carriers.
+
+**The flattening loses nothing.** This corrects the claim rather than
+confirming it. The linearization is a bijection, so no dimension was lost. What
+the two-dimensional reading removes is a *false* degree of freedom: 65,536
+orderings — exactly 16 bits, one per carrier bearing more than one mark — all
+denoting the same point. `TheFlatteningLosesNothingItRemovesAFalseFreedom`. The
+argument is stronger this way: it eliminates a spurious freedom rather than
+recovering lost information.
+
+**And the second axis is independent of the corpus, not of Unicode.** The
+combining-class argument genuinely owes nothing to the deposit — it holds with
+zero occurrences. But it still runs through Unicode, and the fiber structure it
+is said to corroborate was also read through Unicode.
+`TheSecondAxisIsIndependentOfTheCorpusNotOfUnicode` keeps the two apart, and
+names what would lift the shared dependence: a measurement that does not pass
+through character encoding at all, such as manuscript letterforms.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
