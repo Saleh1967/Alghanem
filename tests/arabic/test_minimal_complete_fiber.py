@@ -93,9 +93,9 @@ def test_the_minimal_complete_fiber_module_reaches_no_kernel_module() -> None:
     ]
 
 
-def test_there_are_twenty_one_named_residuals_all_distinct_and_non_blank() -> None:
-    assert len(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS) == 21
-    assert len(set(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)) == 21
+def test_there_are_twenty_two_named_residuals_all_distinct_and_non_blank() -> None:
+    assert len(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS) == 22
+    assert len(set(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)) == 22
     assert all(note.strip() for note in MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
 
 
@@ -1103,8 +1103,14 @@ def test_an_audited_holdout_is_the_only_route_and_no_reader_here_travels_it() ->
     assert "NoReaderInThisTreeClosesTheRebuildingRequirement" in joined
 
 
-def test_a_shared_target_refuses_the_holdout_though_the_cases_differ() -> None:
-    """اختلافُ معرّفات الحالات وحدَه ليس دليلَ استقلال: الهدفُ نفسُه مشترك."""
+def test_a_shared_target_vocabulary_is_recorded_and_does_not_break_the_holdout() -> (
+    None
+):
+    """الاشتراكُ في مفردة الأهداف مشروعٌ: يُسجَّل قيدًا، ولا يُقرَأ تسريبًا.
+
+    فلو عُدَّ تسريبًا لَما اجتاز البوّابةَ قارئٌ صحيحٌ قطّ، إذ لا يُصيب الجوابَ
+    إلّا من مفردةٍ رآها؛ فيُغلَق الشرطُ بالبناء لا بالدليل.
+    """
 
     shared_content = THE_DECLARED_DOMAIN.cases[0].content
     borrowed = DomainCase(
@@ -1122,7 +1128,35 @@ def test_a_shared_target_refuses_the_holdout_though_the_cases_differ() -> None:
         full_representation,
     )
     assert reader.leaked_elements == frozenset()
-    assert reader.leaked_contents == frozenset({shared_content})
+    assert reader.leaked_outputs == frozenset()
+    assert reader.shared_contents == frozenset({shared_content})
+    assert reader.is_held_out is True
+    assert reader.holdout_is_constructive is True
+    assert reader.provenance is ReaderProvenance.FIXED_BEFORE_THE_EVALUATION_DATA
+    joined = "\n".join(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
+    assert "ASharedTargetVocabularyIsLegitimateNotALeak" in joined
+
+
+def test_a_shared_representation_output_is_a_leak_though_the_cases_differ() -> None:
+    """مخرجُ تمثيلٍ رآه التدريبُ يُسترجَع جوابُه؛ فالتسريبُ قائمٌ باختلاف الحالات."""
+
+    repeated = DomainCase(
+        element=THE_DECLARED_DOMAIN.cases[0].element,
+        content=THE_DECLARED_DOMAIN.cases[0].content,
+        context="مقامٌ آخرُ مكتوبٌ لحالةٍ تشترك في مخرج التمثيل نفسِه",
+    )
+    training = _a_split_of_the_declared_domain(
+        "شطرُ تدريبٍ مُسمًّى", THE_DECLARED_DOMAIN.cases[:2]
+    )
+    evaluation = _a_split_of_the_declared_domain("شطرُ تقييمٍ يشارك المخرج", (repeated,))
+    reader = hold_out_reader(
+        a_rule_trained_on(training, full_representation, "جدولٌ من شطر التدريب"),
+        evaluation,
+        full_representation,
+    )
+    assert reader.leaked_outputs == frozenset(
+        {full_representation(THE_DECLARED_DOMAIN.cases[0].element)}
+    )
     assert reader.is_held_out is False
     assert reader.holdout_is_constructive is False
     assert reader.provenance is ReaderProvenance.BUILT_FROM_THE_DOMAIN_TARGET_TABLE

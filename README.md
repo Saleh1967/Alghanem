@@ -6804,9 +6804,18 @@ closure. Two things changed. First, a hand-sealed rule reports
 `SEALED_BY_HAND_AND_NOT_STRUCTURALLY_AUDITABLE` — its empty disclosure tables
 are given by construction rather than audited — and no manual callable can
 close the requirement however well the run goes. Second, the holdout is audited
-on three levels, not on case identity alone: the elements, the representation
-outputs, and the **target contents**, so a split that reuses an answer string
-leaks even when every `FiberElement` differs. When the run holds but no
+on the representation **outputs** as well as on case identity, so a split that
+repeats an output the training half already answered leaks even when every
+`FiberElement` differs.
+
+Sharing the *target vocabulary*, by contrast, is legitimate and is recorded
+rather than punished. Counting a repeated answer string as a leak would make
+the gate vacuous: a reader can only ever emit an answer it has seen, so
+requiring disjoint contents would close the requirement by construction instead
+of by evidence. `shared_contents` therefore bounds the claim — the narrower the
+shared vocabulary, the closer a success sits to retrieval and the further from
+generalization — while `leaked_elements` and `leaked_outputs` alone decide
+whether the reader was held out at all. When the run holds but no
 structurally auditable reader exists, the decision is
 `DEFERRED_FOR_WANT_OF_AN_AUDITABLE_READER` and the condition stays open rather
 than closing on an undiscriminating pass.

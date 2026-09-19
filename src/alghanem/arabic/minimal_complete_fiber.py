@@ -126,6 +126,7 @@ __all__ = [
     "A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING_NOTE",
     "A_SEALED_RULE_IS_CHECKED_FOR_OVERLAP_NOT_FOR_MEMORY_NOTE",
     "A_HOLDOUT_IS_AUDITED_ON_OUTPUTS_AND_TARGETS_NOT_ON_CASE_IDENTITY_NOTE",
+    "A_SHARED_TARGET_VOCABULARY_IS_LEGITIMATE_NOT_A_LEAK_NOTE",
     "A_HELD_RECONSTRUCTION_IS_NOT_AN_INDEPENDENT_READER_NOTE",
     "AN_AUDITED_HOLDOUT_PROVES_RETRIEVAL_NOT_A_LINGUISTIC_RULE_NOTE",
     "NO_READER_IN_THIS_TREE_CLOSES_THE_REBUILDING_REQUIREMENT_NOTE",
@@ -753,21 +754,30 @@ class ProvenancedReader:
         return self.rule.disclosed_outputs & self.evaluation_outputs
 
     @property
-    def leaked_contents(self) -> frozenset[str]:
-        """الأهدافُ المشتركة؛ فقاعدةٌ رأت جوابَ التقييم ليست محجوبةً عنه."""
+    def shared_contents(self) -> frozenset[str]:
+        """الأهدافُ المشتركةُ بين الشطرين، **اشتراكًا مشروعًا** لا تسريبًا.
+
+        فمفردةُ الأهداف مشتركةٌ بطبيعة المسألة: القارئُ لا يُصيب جوابًا إلّا من
+        مفردةٍ رآها، فاشتراطُ انفصالها يجعل البوّابةَ خاويةً لا يجتازها قارئٌ
+        صحيح. ولذلك يُسجَّل هذا الاشتراكُ **قيدًا على الدعوى** — وسعةُ المفردة
+        تحدّ ما يُنسَب إلى النجاح — ولا يُقرَأ تسريبًا
+        (`A_SHARED_TARGET_VOCABULARY_IS_LEGITIMATE_NOT_A_LEAK`).
+        """
 
         return self.rule.disclosed_contents & self.evaluation_contents
 
     @property
     def is_held_out(self) -> bool:
-        """أحُجِب عن مجال تقييمه؟ يُقرَأ من خلوّ التقاطعات الثلاثة مجتمعةً.
+        """أحُجِب عن مجال تقييمه؟ يُقرَأ من خلوّ تقاطع الحالات ومخرجات التمثيل.
 
         فلا يُقاس الحجبُ بمعرّفات `FiberElement` وحدَها: يُدقَّق كذلك على
-        مخرجات التمثيل وعلى الأهداف نفسِها
+        مخرجات `T`، إذ مخرجٌ رآه التدريبُ يُستَرجَع جوابُه بلا تعميمٍ ولو
+        اختلف معرّفُ الحالة
         (`A_HOLDOUT_IS_AUDITED_ON_OUTPUTS_AND_TARGETS_NOT_ON_CASE_IDENTITY`).
+        أمّا اشتراكُ مفردة الأهداف فمشروعٌ، يُسجَّل ولا يمنع الحجب.
         """
 
-        return not (self.leaked_elements or self.leaked_outputs or self.leaked_contents)
+        return not (self.leaked_elements or self.leaked_outputs)
 
     @property
     def holdout_is_constructive(self) -> bool:
@@ -1733,9 +1743,19 @@ A_SEALED_RULE_IS_CHECKED_FOR_OVERLAP_NOT_FOR_MEMORY_NOTE: Final[str] = (
 
 A_HOLDOUT_IS_AUDITED_ON_OUTPUTS_AND_TARGETS_NOT_ON_CASE_IDENTITY_NOTE: Final[str] = (
     "AHoldoutIsAuditedOnOutputsAndTargetsNotOnCaseIdentity: اختلافُ معرّفات "
-    "`FiberElement` وحدَه ليس دليلَ استقلال؛ فقد يتطابق مخرجُ التمثيل أو يتكرّر "
-    "الهدفُ نفسُه بين الشطرين فيُسترجَع الجوابُ بلا تعميم. ولذلك يُدقَّق "
-    "التداخلُ على ثلاثة مستويات: الحالات، ومخرجات `T`، والمضامين الهدف"
+    "`FiberElement` وحدَه ليس دليلَ استقلال؛ فمخرجُ تمثيلٍ رآه التدريبُ "
+    "يُسترجَع جوابُه بلا تعميمٍ ولو اختلف معرّفُ الحالة. ولذلك يُدقَّق "
+    "التداخلُ على الحالات وعلى مخرجات `T` معًا، وتُسجَّل المضامينُ المشتركةُ "
+    "إلى جانبهما بوصفها اشتراكًا مشروعًا يُقيّد الدعوى لا تسريبًا يمنع الحجب"
+)
+
+A_SHARED_TARGET_VOCABULARY_IS_LEGITIMATE_NOT_A_LEAK_NOTE: Final[str] = (
+    "ASharedTargetVocabularyIsLegitimateNotALeak: عَدُّ اشتراكِ المضامين "
+    "تسريبًا يجعل البوّابةَ خاويةً: القارئُ لا يُصيب جوابًا إلّا من مفردةٍ "
+    "رآها، فاشتراطُ انفصال المفردة يمنع كلَّ قارئٍ صحيحٍ من الاجتياز ويُغلِق "
+    "الشرطَ بالبناء لا بالدليل. فالاشتراكُ في مفردة الأهداف مشروعٌ، ويُسجَّل "
+    "في `shared_contents` قيدًا على ما يُنسَب إلى النجاح: كلّما ضاقت المفردةُ "
+    "قرُب النجاحُ من الاسترجاع وبعُد عن التعميم"
 )
 
 A_HELD_RECONSTRUCTION_IS_NOT_AN_INDEPENDENT_READER_NOTE: Final[str] = (
@@ -1772,6 +1792,7 @@ MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     READER_INDEPENDENCE_IS_A_MECHANISM_NOT_A_LABEL_NOTE,
     A_SEALED_RULE_IS_CHECKED_FOR_OVERLAP_NOT_FOR_MEMORY_NOTE,
     A_HOLDOUT_IS_AUDITED_ON_OUTPUTS_AND_TARGETS_NOT_ON_CASE_IDENTITY_NOTE,
+    A_SHARED_TARGET_VOCABULARY_IS_LEGITIMATE_NOT_A_LEAK_NOTE,
     A_HELD_RECONSTRUCTION_IS_NOT_AN_INDEPENDENT_READER_NOTE,
     AN_AUDITED_HOLDOUT_PROVES_RETRIEVAL_NOT_A_LINGUISTIC_RULE_NOTE,
     NO_READER_IN_THIS_TREE_CLOSES_THE_REBUILDING_REQUIREMENT_NOTE,
@@ -1783,4 +1804,4 @@ MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     THE_RELATION_VOCABULARY_IS_NOT_CLAIMED_EXHAUSTIVE_NOTE,
     THE_MINIMUM_IS_RELATIVE_TO_THE_TESTED_ALTERNATIVES_NOTE,
 )
-"""إحدى وعشرون بقيّةً مُسمّاةً تُقابَل بها أيُّ إحالةٍ إلى «الحدّ الأدنى المكتمل»."""
+"""اثنتان وعشرون بقيّةً مُسمّاةً تُقابَل بها أيُّ إحالةٍ إلى «الحدّ الأدنى المكتمل»."""
