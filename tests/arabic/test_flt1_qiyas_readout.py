@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+from pathlib import Path
+
 import pytest
 
+from alghanem.arabic import flt1_qiyas_readout
 from alghanem.arabic.flt1_qiyas_preregistration import (
     HigherCenterStanding,
     QiyasOutcome,
@@ -156,8 +160,97 @@ def test_the_unfired_branches_of_the_decision_machine_are_named_not_hidden(run) 
 
 
 def test_the_readout_names_its_own_limits_as_residuals() -> None:
-    assert len(QIYAS_READOUT_NAMED_RESIDUALS) == 3
+    assert len(QIYAS_READOUT_NAMED_RESIDUALS) == 6
     assert any("مضمونٌ بالبناء" in note for note in QIYAS_READOUT_NAMED_RESIDUALS)
+    assert any(
+        "AHigherCenterStandingIsNotAKernelBirthVerdict" in note
+        for note in QIYAS_READOUT_NAMED_RESIDUALS
+    )
+    assert any(
+        "ThisReadingIssuesNoIndependentTarget" in note
+        for note in QIYAS_READOUT_NAMED_RESIDUALS
+    )
+
+
+def test_this_reading_never_issues_an_independent_target(run) -> None:  # type: ignore[no-untyped-def]
+    from alghanem.arabic.flt1_qiyas_readout import TargetProvenance
+
+    assert (
+        run.minimality.target_provenance is TargetProvenance.THE_LICENSED_READER_ITSELF
+    )
+    assert run.minimality.what_makes_the_target_independent == ""
+
+
+def test_an_independent_target_would_raise_the_four_conditions_to_born() -> None:
+    from alghanem.arabic.flt1_qiyas_readout import (
+        MinimalityReading,
+        TargetProvenance,
+        WeakerModelScore,
+    )
+
+    independent = MinimalityReading(
+        licensed_hits=18,
+        target_size=18,
+        weaker_scores=(
+            WeakerModelScore(
+                model_id="carrier-alone",
+                hits=12,
+                attempts=18,
+                what_generosity_it_was_given="سعةٌ مُعلَنة",
+            ),
+        ),
+        target_provenance=TargetProvenance.AN_INDEPENDENT_DEPOSIT,
+        what_makes_the_target_independent="إيداعٌ مُبصَّمٌ لا يمرّ بالمُقطِّع المُرخَّص",
+    )
+    run = replace(read_qiyas(seal_qiyas_preregistration()), minimality=independent)
+
+    assert independent.standing is MinimalityStanding.HELD_ON_AN_INDEPENDENT_TARGET
+    assert run.standing_for("يَكْتُبُ") is HigherCenterStanding.BORN
+    assert run.standing_for("فَتَحَ") is HigherCenterStanding.WITHHELD
+
+
+def test_an_independence_claim_without_a_written_reason_is_refused() -> None:
+    from alghanem.arabic.flt1_qiyas_readout import MinimalityReading, TargetProvenance
+
+    with pytest.raises(QiyasReadoutError):
+        MinimalityReading(
+            licensed_hits=18,
+            target_size=18,
+            weaker_scores=(),
+            target_provenance=TargetProvenance.AN_INDEPENDENT_DEPOSIT,
+        )
+
+
+def test_a_reason_without_an_independence_claim_is_refused() -> None:
+    from alghanem.arabic.flt1_qiyas_readout import MinimalityReading
+
+    with pytest.raises(QiyasReadoutError):
+        MinimalityReading(
+            licensed_hits=18,
+            target_size=18,
+            weaker_scores=(),
+            what_makes_the_target_independent="سببٌ بلا دعوى",
+        )
+
+
+def test_this_readout_reaches_no_kernel_module() -> None:
+    from alghanem.import_boundary import ImportBoundaryPolicy, audit_import_boundary
+
+    module = Path(flt1_qiyas_readout.__file__)
+    report = audit_import_boundary(
+        (module,),
+        ImportBoundaryPolicy(
+            policy_id="flt1-qiyas-readout-is-not-wired-to-the-kernel",
+            permitted_modules=(),
+            forbidden_packages=("alghanem.kernel",),
+        ),
+    )
+
+    assert not any(
+        reached == "alghanem.kernel" or reached.startswith("alghanem.kernel.")
+        for reached in report.reached_modules
+    ), report.reached_modules
+    assert not any("alghanem.kernel" in violation for violation in report.violations)
 
 
 def test_an_unknown_surface_is_refused_not_invented(run) -> None:  # type: ignore[no-untyped-def]

@@ -6116,10 +6116,382 @@ rather than scored in it. The next number to move is therefore the corpus, not
 the rate: `UNMEASURED_ROUND_TRIP_SOURCES` still names the 77,429-token corpus
 this tree does not vendor, and gives it no figure at all.
 
+### The population moved on bytes this tree already has
+
+Waiting for the 77,429-token corpus is not the only way to widen a population,
+because a second fingerprinted Arabic deposit is **already in this tree**:
+`maqayis_by_root_csv_999.csv`. So `maqayis_root_round_trip` runs the same six
+layers over the 4,087 distinct trilateral root strings of that deposit —
+population derived from the bytes under the deposit's own frozen counting rule,
+ordered by a written ordering rule, never a list typed by hand.
+
+Run: **4,087 strings, 0 returned byte-identical**, and the whole of the halt
+profile is a single row. UTF-8, NFC and carrier/state each accept 4,087 of
+4,087 with no refusal, no mismatch and no atom lost or added; the line then
+stops at the syllable layer for every string under one named cause,
+`SEGMENTATION_ONSETLESS_INITIAL_SAKIN`. That is the first measurement of this
+line on **unvocalised** strings, and what it measures is exactly where the
+limit sits: not in the bytes, not in the codec, but in a segmentation function
+that requires a written vowel.
+
+**A zero is a measured number.** It keeps its full denominator — the rate is
+not lifted by re-basing it on the layers that did accept — and the two layers
+above the syllable report an input count of 0 because nothing reached them,
+which is disclosure of the halt beneath, not a second result.
+
+**And a limit on this function is not a law about Arabic.** That this pipeline
+does not syllabify an unvocalised string says what *this* function does; it was
+not built for unvocalised text, and its refusal is not a claim that unvocalised
+Arabic cannot be syllabified. Likewise 4,087 is a count of distinct entries in
+one file, under one counting rule and that lexicon's own spelling — not a count
+of trilateral roots in Arabic. A root string is not a word in a context either,
+so nothing here is a figure about running text.
+
+Re-derived, never quoted: `python
+examples/arabic/measure_maqayis_root_round_trip.py` rebuilds every number from
+the fingerprinted bytes and fails if `figures_digest` moves.
+
 Not built here, deliberately: morphology, composition, syntax, iʿrāb, dalālah,
 MASAQ and any weight protocol. No layer above word structure has a forward and
 an inverse function yet, so none of them is in the table.
 
+### The standing that may be reached, and the gate it is not wired to
+
+The G0.FLT-1 qiyās readout now derives the whole verdict instead of stopping
+short of it. `standing_for` returns `BORN` when the four conditions hold
+together — reconstruction, no bypass, closure, identity — **and** minimality
+holds on a target that did not come from the licensed reader. Minimality gained
+a third standing, `HELD_ON_AN_INDEPENDENT_TARGET`, alongside the tie defeat and
+the provenance underpowering.
+
+**The provenance is declared, not inferred.** A `MinimalityReading` now carries
+a `TargetProvenance` and, when it claims `AN_INDEPENDENT_DEPOSIT`, a written
+reason why the target is independent. Claiming independence with no reason is
+refused at construction, and writing a reason without claiming independence is
+refused too, so the strongest branch can never be entered by silence.
+
+**And `BORN` is derivable, not issuable.** `read_qiyas` only ever declares
+`THE_LICENSED_READER_ITSELF`, so no run in this tree reaches `BORN` today. The
+unreached branch is written and its preventer named, exactly as the kernel does
+with `BirthVerdictGate`: the standing is not deleted because it has not been
+reached. What unblocks it is an independent target *deposit*, not a softened
+rule.
+
+**Birth authority stays where it is.** A higher-centre standing here is a
+standing inside this reading, not a kernel birth verdict. This module issues no
+`BirthVerdictDecision`, no `IndependentClosureAssessment` and no `E0` freeze;
+`BirthVerdictGate` is deliberately not wired to it, and a static import audit
+witnesses that the readout reaches no `alghanem.kernel` module at all.
+
+### A contract for the letter and the haraka, element by element
+
+`letter_haraka_fiber_contract.py` is the next test the tree asked for. It
+enumerates eight elements, and each one must carry four things together: what
+is claimed, the genus and object of its evidence, the preventers standing
+against it, and the residuals it does not carry. An element with no named
+residual is refused at construction, and so is a duplicated preventer.
+
+**The written letter is kept apart from sound, structurally.** Every element
+declares an `EvidenceGenus`, and an element whose evidence is `RECORDED_SOUND`
+cannot hold in this tree at all, because `UnicodeIsNotRecordedSound` still
+stands — nothing here is a recording. The three phonetic elements are therefore
+*written into the contract and withheld by their named preventer*, not deleted
+for being untestable: the letter's sound value, the haraka's sound value, and
+the claim that a written sukūn is the absence of a vowel sound. Five elements
+hold on the deposit; three are withheld, and the run says which and why.
+
+**The written sukūn is kept apart from the absence of a diacritic, and the
+separation is measured rather than assumed.** They are two distinct subjects
+that no single element may carry, and a contract that folds one into the other
+is refused before any counting. Over the fingerprinted Fātiḥa deposit
+(`d435d63a…`) the two classes come out at 21 occurrences bearing the sukūn mark
+on its own axis against 40 bearing no mark on any measured axis, and a run in
+which those two numbers coincided would be refused rather than reported. No
+occurrence carries a haraka and a sukūn together, while 14 carry a haraka and a
+shadda together — which is what shows the haraka is not a value inside the
+letter, and the axes are not one axis.
+
+Every figure is re-derived from the deposited bytes at run time; none is
+written by hand, and the deposit's digest travels in the report.
+`python examples/arabic/run_letter_haraka_fiber_contract.py` prints each
+element with its standing, its count or its preventer, and its residuals.
+
+**And running it waits on nothing.** `RunningTheContractIsNotBlockedOnACertificate`:
+the contract is exercised today while the `CV` birth certificate remains
+unissued with its four lacks enumerated. An element holding here is a standing
+on one deposit — not a birth, not a kernel verdict, not an `E0` freeze — and a
+static import audit witnesses that this module too reaches no `alghanem.kernel`
+module.
+
+### Nothing crosses between two tracks without a written contract
+
+A minimality result in `G0.FLT-1` does not travel to `G0.VV-BIRTH-1` on its
+own, and it does not complete a birth certificate for `CV`.
+`fiber_transfer_contracts.py` makes the crossing a thing that must be written
+and checked. A `FiberTransferContract` names five parts together — the origin
+track and anchor, a *distinct* branch track and anchor, the identity claimed to
+be preserved, the evidence, and the residuals — and refuses construction if any
+of them is empty, duplicated, or self-contradictory. A contract licenses only
+the conclusions enumerated inside it, by exact match; there is no implication
+and no inheritance, and a conclusion cannot be listed as both licensed and
+withheld.
+
+**Evidence cannot be borrowed.** `TheEvidenceIsBoundToItsOrigin`: a
+`TransferEvidence` carrying a different track or a different anchor than the
+contract it sits in is refused at construction, so one experiment's witness
+cannot be spent in another. The digest must have canonical shape, so an
+unfingerprinted attestation is refused too.
+
+**And transfers do not compose.** `ATransferDoesNotCompose`: `compose` exists
+only to refuse. Chaining `A → B` with `B → C` would produce a crossing nobody
+examined, which is exactly the automatic transfer the contract is there to
+prevent.
+
+The ledger is empty. `AnEmptyLedgerIsNotARefutation` says what that means: no
+contract from `G0.FLT-1` to `G0.VV-BIRTH-1` has been written, so the crossing
+is *unlicensed today* — not refuted. `contract_for` raises with that name
+rather than returning silence. And `CV_BIRTH_CERTIFICATE_STANDING` records the
+certificate as unissued with its four lacks enumerated: an independent
+reconstruction target, the transfer contract itself, a `G0.VV-BIRTH-1` readout
+that does not exist in this tree, and a kernel birth verdict that this layer
+has no authority to issue at all.
+
+## «لا صامت بلا صائت» — four claims wearing one sentence
+
+`no_consonant_without_a_vowel.py` takes the sentence *no consonant without a
+vowel, mathematically* and refuses to give it a single verdict. Stated
+absolutely it bundles four claims whose answers disagree, and bundling them
+lets one reading's success hide another's refutation
+(`AnAbsoluteReadingHidesADividedVerdict`). Split, each gets its own standing,
+measured live from the fingerprinted deposit and the frozen template algebra.
+
+**No syllable without a nucleus — holds by construction.** All six frozen
+templates are `CV…`, and `template_of` refuses any onset other than exactly one
+and any nucleus outside `{1, 2}`. The nucleus is not observed to be present; it
+is definitionally unavoidable. The corpus agrees — 42 syllables, none without a
+nucleus — but `ThisHoldsByTheFrozenAlgebraNotByTheCorpus` records that
+agreement as corroboration, not proof. The reader embodies the model it would
+be testing.
+
+**No onset without a vowel — holds as a refusal.** The syllabifier never
+asserts this; it simply stops. Meeting a quiescent consonant that carries no
+vowel and closes no preceding nucleus, it halts and names the position. It did
+so 14 times across 14 of the 29 words. The claim is read off the refusal, and
+`AnUnsegmentedWordIsCarriedNotDropped` keeps those 14 words in the denominator
+with their reasons attached — dropping them would raise a ratio by hiding what
+was never read. Most halt at a bare alif that carries no mark distinguishing a
+connecting hamza, which is a limit on this tree's reader, not a claim about the
+language.
+
+**No consonant without a vowel, absolutely — refuted.** A coda *is* a
+consonant with no vowel of its own, and `CVC`, `CVCC`, `CVVC`, `CVVCC` all sit
+in the frozen algebra. The deposit shows 15 codas in 42 syllables, and 21 of
+143 written carriers bear a sukūn. The refutation lands on the templates before
+it lands on the count: were the deposit free of every last coda, `CVC`'s mere
+existence would still refute it.
+
+**No pronounced consonant without a pronounced vowel — untestable here.**
+`UnicodeIsNotRecordedSound` blocks it outright; no codepoint in this tree is
+recorded sound. The reading stays written and blocked rather than deleted
+(`AnUntestableReadingIsWrittenNotDropped`), because being unable to test a
+claim is neither denying it nor granting it.
+
+And the whole readout carries its own ceiling:
+`AVerdictHereIsAVerdictOnThisDepositUnderTheseTemplates`. One text, one
+scribe's pointing, one frozen template set. Nothing here is a verdict on Arabic
+or on the syllable as such, and nothing here is a birth.
+
+## The alif's neutrality — measured, chosen, and refuted in three parts
+
+`alif_neutrality.py` takes the claim that the alif does not participate in the
+fiber — that it accepts one combination only, and is therefore a neutral
+element of the operation rather than a member of `C` — and separates what the
+deposit can decide from what it cannot.
+
+**The alif does accept exactly one combination, and that survives a scarcity
+control.** Capacity 1 alone proves nothing: eight carriers in this deposit have
+capacity 1, and most are simply rare. `ScarcityExplainsASmallFiber` forces the
+distinction, and `constancy_exponent` measures it — the probability of that
+much constancy if the carrier drew its states from the pooled distribution of
+*all other* carriers. The alif is constant across 23 occurrences at an exponent
+of 3×10⁻²⁰. Its nearest rival sits at 2×10⁻³ on three occurrences. Only the
+alif survives.
+
+**And the combination it rests on is the identity.** This is sharper than the
+claim as stated. The alif does not merely accept one state; it accepts the
+*zero* state — absence on every one of the four measured axes, which is the
+identity of the product. It is the only carrier whose entire fiber is that
+identity. Every other constant carrier rests somewhere non-trivial: a sukūn, a
+fatḥa, a kasra.
+
+**But "not an element of `C`" is a modelling decision, not a finding.** The
+measurement is equally consistent with *a carrier whose fiber happens to be the
+identity* and with *a neutral element living outside `C`*. No count from this
+deposit separates them. `NeutralityIsMeasuredButExclusionFromCIsChosen` keeps
+the two apart so the choice is declared rather than attributed to observation.
+
+**And the product claim is refuted.** Nothing was broken by the alif's presence
+and nothing is restored by its absence. The rectangle is 54 of 161 filled with
+the alif and 53 of 154 without it, and the capacities stay ragged from 1 to 6
+either way. Removing the alif deletes one cell; it does not rebuild a product.
+`RemovingAlifRestoresNoRectangle` records that the break precedes the alif and
+outlives it.
+
+The strongest rival explanation is named rather than argued away:
+`AlifsNeutralityMayBeAnArtifactOfTheDeferredMaddAxis`. The madd axis is frozen
+as `DEFERRED_NOT_READ_AS_A_STATE`, and the alif is the carrier most likely to
+bear it. The alif may look neutral precisely because the one axis on which it
+varies was not read. No count from this deposit lifts that preventer. And all
+of it is neutrality *in writing*, as the claim itself stipulated.
+
+## The linear order between a carrier and its mark carries zero bits
+
+`linearization_artifact.py` tests the claim that Unicode imposes a linear order
+on something non-linear, and that the resulting 100% is an artifact of
+flattening two dimensions into one. Four of the five readings resolve
+decisively, and two of them against the claim as stated.
+
+**The 100% is real and empty.** Every one of the six marks has a non-zero
+combining class, and a non-zero-class codepoint follows its base *by
+definition* of the encoding model. So the figure is a theorem about Unicode,
+not an observation about Arabic: it holds for any text whatsoever, and it holds
+vacuously for the empty text. `AHundredPercentForcedByTheEncodingCarriesNoBits`
+records that nothing true-by-emptiness yields information about the language. A
+violation would be a bug in the reader, not a fact about writing.
+
+**But the mark order was never a free choice that got flattened.** All six
+combining classes are pairwise distinct, so canonical ordering forces exactly
+one form per mark multiset — 57 of 57 multisets examined admit a single
+canonical form. There was no degree of freedom to lose.
+`TheMarkOrderWasNeverFreeToBegin` also names what the verdict hangs on: were
+two classes ever equal, the freedom would return and the order would carry
+information.
+
+**The two-dimensional reading is exactly sufficient — proved by inversion.**
+All 29 words of the deposit rebuild character-for-character from the carrier
+sequence plus each carrier's *unordered* mark set. Order within a carrier
+carries not one bit. The inversion is lossless only when the deferred and
+unread marks ride along in the set; drop them and two words break on the
+superscript alef — which is a loss of an *axis*, not of order. And the carrier
+sequence itself remains linear and informative: what is denied is order between
+a carrier and its own mark, not order among carriers.
+
+**The flattening loses nothing.** This corrects the claim rather than
+confirming it. The linearization is a bijection, so no dimension was lost. What
+the two-dimensional reading removes is a *false* degree of freedom: 65,536
+orderings — exactly 16 bits, one per carrier bearing more than one mark — all
+denoting the same point. `TheFlatteningLosesNothingItRemovesAFalseFreedom`. The
+argument is stronger this way: it eliminates a spurious freedom rather than
+recovering lost information.
+
+**And the second axis is independent of the corpus, not of Unicode.** The
+combining-class argument genuinely owes nothing to the deposit — it holds with
+zero occurrences. But it still runs through Unicode, and the fiber structure it
+is said to corroborate was also read through Unicode.
+`TheSecondAxisIsIndependentOfTheCorpusNotOfUnicode` keeps the two apart, and
+names what would lift the shared dependence: a measurement that does not pass
+through character encoding at all, such as manuscript letterforms.
+
+## An operational letter/haraka algebra whose output is a licensed CV input
+
+The next thing the CV experiment needs is not a bigger table. It is an
+*operation*: something that takes measured writing and produces typed elements
+of `X_C` and `X_V` that the frozen join `J` could legally consume.
+`src/alghanem/arabic/letter_haraka_operational_algebra.py` is that operation,
+and it deliberately stops one step short of running `J`.
+
+**An element is an occurrence, not an alphabet cell.** Nothing here enumerates
+twenty-nine letters or four marks. Every element is built from one measured
+`(carrier, state)` unit, carries the word and unit index that produced it, and
+carries the written reason it was admitted. A letter that never occurs gets no
+element. `AnElementIsAnOccurrenceNotAnAlphabetCell` says so.
+
+**The algebra splits; it does not sequence.** A haraka does not follow its
+carrier as a second element — it sits in the same unit. So the constructor
+divides one unit into a consonant position and a vowel position that share an
+index, rather than ordering them. This is the same thing `linearization_artifact`
+proved: the order between a carrier and its mark carries zero bits.
+
+**And that split has a price, which is stated rather than pocketed.** The join's
+first definedness condition — *the consonant precedes the vowel with no gap* —
+becomes true **by construction** under this decomposition, because the splitter
+is what put them adjacent. So the CV test may not count its satisfaction as
+evidence; the burden falls entirely on the other two conditions. Every
+admissible input is *required* to name this debt: an `ADMISSIBLE` result with an
+empty `conditions_true_by_construction` is refused at construction, because
+silence there would look like a passed test.
+
+Over the fingerprinted Fātiḥa, the 159 units partition as **80 admissible
+inputs**, **77 undefined**, and **2 outside both spaces**. The undefined are not
+discarded — they are carried with their reasons, including 14 first halves of a
+shadda, which are elements of `X_C` with no vowel in their unit and therefore
+never admissible.
+
+**Quantity is derived, and twice it refuses to be.** `π_Q` counts vowel
+positions — one short, two when a matching silent extension position follows —
+and never reads duration, `carrier_codepoint`, `letter_index`, `slot_position`,
+or `surface_offset`. The census comes out 62 short against 18 long. But in
+`الرَّحْمَٰنِ` the fatha is followed by a **dagger alif**, and the madd axis is
+frozen `DEFERRED_NOT_READ_AS_A_STATE` in the measured fiber. Whether that is an
+extension position is *not known*. So those two emit quantity `UNDEFINED` with
+the deferred axis named, rather than quietly defaulting to 1 — which is exactly
+the `UNDEFINED` outcome `LICENSED_JOIN_SPECIFICATION` already demands. This is
+now the fourth separate claim the deferred madd axis has capped.
+
+**And licensing an input is not a birth.** The bundle carries a content digest
+so a future CV readout can bind to exactly these inputs and no others. It does
+not run `J`, produce an `X_S` element, import the excluded `syllabifier`, or
+reach `alghanem.kernel`. The ceiling frozen in `vv_birth_preregistration` —
+`CONDITIONAL_STRUCTURAL_BIRTH`, with full constitutional birth unissuable from
+this experiment — is untouched.
+
+## Two populations, two instruments, and a theorem that actually closes
+
+You were right to stop at the numbers. The earlier observed-fiber report gave
+ragged capacities and I described them as running "1..6"; a later formulation
+spoke of "the 27 carriers". Checked against the tree, **neither figure survives
+unqualified**, and the discrepancy is not arithmetic — it is two different
+things being given one name.
+
+`src/alghanem/arabic/decomposition_reconstruction_theorem.py` separates them.
+
+**The declared vocabulary is 37 carriers, not 27**, against 7 states, giving an
+upper bound of **259** — a product, never an occurrence count. The observed
+deposit is far smaller. `ObservedPopulationCensus` refuses the declared label,
+`DeclaredPopulationCensus` refuses the observed one, and `PopulationSubstitution
+Error` fires if a carrier count exceeds the declared vocabulary. Substitution
+mid-proof is an error here, not a rounding.
+
+**And the same deposit measured twice gives two legitimate numbers.** This was
+the sharper finding. The codec and the observed fiber disagree three times over
+identical bytes: **22 vs 23** distinct carriers, **159 vs 143** positions, and a
+maximum capacity of **4 vs 6**. The cause is concrete — the codec folds `أ` and
+`إ` into one hamza and records the seat as a *field*, while the fiber keeps them
+as written; and the codec counts distinct `CarrierState` values where the fiber
+counts multi-axis state vectors. So "capacity 6" in one instrument is not
+"capacity 6" in the other. `INSTRUMENT_DIVERGENCES` records each with its cause,
+refuses a blank explanation, refuses to record an agreement, and every entry is
+checked against **both instruments live** so the written numbers cannot drift.
+
+**Also: the fiber's capacity range has a hole.** The values are {1, 2, 3, 4, 6}
+— there is no carrier of capacity 5. Saying "1 to 6" implies a contiguous range
+that was never measured, so `capacity_range_is_contiguous` answers that by
+counting rather than by description.
+
+**The theorem that closes is decomposition and reconstruction, not CV birth.**
+Typed elements alone do *not* rebuild the surface: they carry neither the sukūn
+kind, nor the seat, nor the purely structural states. So decomposition emits
+`(elements, residue)` and reconstruction consumes both. Over the deposit it
+closes **29/29, character for character** — an exact closure, not a success
+rate. And the residue is proved load-bearing by failure: dropping it rebuilds
+only **12/29**, breaking 17 words. `with_residue=False` exists solely as that
+counter-witness.
+
+**RefineSlot is not added, and that is deliberate.** Adding a refinement
+operation to the algebra requires proving its *necessity for an independent
+function*, which has not been done. A success rate over a corpus is not a proof
+of necessity. `RefinementNecessityIsUnprovenSoRefineSlotIsUnlicensed` holds the
+place, and a test asserts no refinement operation is exported yet.
 
 ```bash
 python -m pip install -e '.[dev]'
