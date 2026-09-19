@@ -30,6 +30,21 @@
 ومدى الحياد مُعلَن: **أوّلُ الكلمة وحدَه**. فالألفُ العاري في وسطها أو آخرها
 يبقى على قراءته الحالية ساكنًا يُغلِق مقطعًا، لأنّ تلك القراءةَ تُشغَّل وترجع
 بالبايتات، فلا موجبَ لتغييرها.
+
+`THE_OPENING_BEFORE_THE_FIRST_VOWEL_IS_NOT_WRITTEN`: قوانينُ الابتداء والوصل
+والوقف — المُسجَّلةُ في `ibtida_wasl_waqf_registration` بلا قراءة — تتّفق على
+أنّ ما يجري في **مفتتح الكلمة قبل أوّل حركةٍ مكتوبة** لا تُقرّره العلاماتُ
+وحدَها: الابتداءُ يُحرِّك همزةَ الوصل بحركةٍ غيرِ مكتوبة، والوصلُ يُسقطها
+ويستمدّ الحركةَ من آخر ما قبلها، والوقفُ لا يمسّ المفتتحَ أصلًا. فالوحدةُ
+تُعمِّم الحيادَ على هذا المفتتح كلِّه لا على الألف وحدَه: **مدًى متّصلٌ من
+وحداتٍ لم تُكتَب عليها علامةٌ ألبتّة** — لا حركةً ولا سكونًا ولا شدّة — يفتتحه
+الألفُ العاري، ويُغلَق بساكنٍ واحدٍ على الأكثر.
+
+وهذا **توسيعُ امتناعٍ لا استيرادُ قراءة**: لا يُقال إنّ اللام لامُ تعريفٍ، ولا
+إنّها مُدغَمة، ولا يُخمَّن لها لفظ؛ إنّما يُقال إنّ حالتَها غيرُ مكتوبة فلا
+تُحاسَب حسابَ الساكن المكتوب. والوحداتُ تُحفَظ بأعيانها ويردّها `desegment` كما
+دخلت. وما بعد أوّلِ حركةٍ مكتوبةٍ خارجٌ عن هذا المدى بتمامه، فالتقاءُ ساكنَين
+في وسط الكلمة — كالمدّ قبل مُشدَّدٍ — يبقى رفضًا باسمه.
 """
 
 from __future__ import annotations
@@ -49,6 +64,7 @@ __all__ = [
     "SEGMENTATION_IS_NOT_A_WAZN_NOTE",
     "THE_ALEF_IS_A_NEUTRAL_ELEMENT_NOTE",
     "THE_INVERSE_IS_RUN_NOT_ASSERTED_NOTE",
+    "THE_OPENING_BEFORE_THE_FIRST_VOWEL_IS_NOT_WRITTEN_NOTE",
     "Syllable",
     "SyllableOnset",
     "SyllableParse",
@@ -112,6 +128,16 @@ def _is_neutral_alef(unit: CarrierStateUnit) -> bool:
     return unit.carrier == NEUTRAL_ALEF_CARRIER and unit.state in NEUTRAL_ONSET_STATES
 
 
+def _is_unwritten(unit: CarrierStateUnit) -> bool:
+    """أخلت هذه الوحدةُ من كلّ علامةٍ مكتوبة؟ لا حركةَ ولا سكونَ ولا شدّة.
+
+    هذا هو الشرطُ الوحيدُ لامتداد المفتتح المحايد؛ فوحدةٌ عليها سكونٌ مكتوبٌ أو
+    شدّةٌ حالتُها **مقروءةٌ من الخطّ**، فلا تدخل فيما لم يُكتَب.
+    """
+
+    return unit.state is CarrierState.SUKUN_IMPLICIT and unit.gemination is None
+
+
 @dataclass(frozen=True, slots=True)
 class Syllable:
     """مقطعٌ واحد: مدًى متّصلٌ على الوحدات، بموضعِ بدايته ووحداته بأعيانها."""
@@ -147,15 +173,33 @@ class Syllable:
                     SyllableRefusal.ONSETLESS_INITIAL_SAKIN,
                     "الحيادُ مدًى مُعلَنٌ: أوّلُ الكلمة وحدَه لا وسطُها",
                 )
+            self._refuse_a_written_state_inside_the_opening()
         elif self.units[0].state not in NUCLEUS_STATES:
             raise SyllableSegmentationError(
                 SyllableRefusal.ONSETLESS_INITIAL_SAKIN,
                 "المقطعُ يبدأ بحاملٍ متحرّك؛ والساكنُ لا يفتح مقطعًا",
             )
-        if len(self.units) > 2:
+        elif len(self.units) > 2:
             raise SyllableSegmentationError(
                 SyllableRefusal.TWO_ADJACENT_SAKINS,
                 "المقطعُ حاملٌ متحرّكٌ ومعه ساكنٌ واحدٌ على الأكثر",
+            )
+
+    def _refuse_a_written_state_inside_the_opening(self) -> None:
+        """المفتتحُ المحايد: وحداتٌ بلا علامةٍ مكتوبة، وساكنٌ واحدٌ يُغلِقه."""
+
+        for unit in self.units[:-1]:
+            if not _is_unwritten(unit):
+                raise SyllableSegmentationError(
+                    SyllableRefusal.TWO_ADJACENT_SAKINS,
+                    "المفتتحُ المحايدُ لا يبتلع وحدةً حالتُها مكتوبة",
+                )
+        last = self.units[-1]
+        if not _is_unwritten(last) and last.state not in _SAKIN_STATES:
+            raise SyllableSegmentationError(
+                SyllableRefusal.TWO_ADJACENT_SAKINS,
+                "المفتتحُ المحايدُ يُغلَق بساكنٍ واحدٍ على الأكثر؛ "
+                "والمتحرّكُ يفتح مقطعًا موصوفًا لا يدخل فيه",
             )
 
     @property
@@ -165,9 +209,24 @@ class Syllable:
         return len(self.units)
 
     @property
-    def has_coda(self) -> bool:
-        """أفي المقطع ساكنٌ بعد متحرّكه؟ مقروءٌ من الوحدات لا من اسمٍ."""
+    def undecided_opening(self) -> tuple[CarrierStateUnit, ...]:
+        """وحداتُ المفتتح التي لم تُكتَب عليها علامة؛ فارغةٌ في المقطع الموصوف."""
 
+        if self.onset is not SyllableOnset.NEUTRAL_ALEF:
+            return ()
+        opening: list[CarrierStateUnit] = []
+        for unit in self.units:
+            if not _is_unwritten(unit):
+                break
+            opening.append(unit)
+        return tuple(opening)
+
+    @property
+    def has_coda(self) -> bool:
+        """أفي المقطع ساكنٌ بعد صدره؟ مقروءٌ من الوحدات لا من اسمٍ."""
+
+        if self.onset is SyllableOnset.NEUTRAL_ALEF:
+            return len(self.units) > len(self.undecided_opening)
         return len(self.units) == 2
 
     @property
@@ -222,6 +281,12 @@ class SyllableParse:
             if syllable.onset is SyllableOnset.NEUTRAL_ALEF
         )
 
+    @property
+    def undecided_opening_length(self) -> int:
+        """كم وحدةً في مفتتح الكلمة لم تُكتَب عليها علامة؟ مشتقٌّ لا مكتوب."""
+
+        return sum(len(syllable.undecided_opening) for syllable in self.syllables)
+
 
 def segment(units: Sequence[CarrierStateUnit]) -> SyllableParse:
     """قطِّع وحداتِ الحامل/الحالة إلى مقاطعَ متجاورة، أو ارفع رفضًا مُسمًّى.
@@ -258,6 +323,10 @@ def segment(units: Sequence[CarrierStateUnit]) -> SyllableParse:
             )
         span = [unit]
         following = index + 1
+        if onset is SyllableOnset.NEUTRAL_ALEF:
+            while following < total and _is_unwritten(units[following]):
+                span.append(units[following])
+                following += 1
         if following < total:
             candidate = units[following]
             if candidate.state in _SAKIN_STATES:
@@ -305,4 +374,12 @@ THE_ALEF_IS_A_NEUTRAL_ELEMENT_NOTE: Final[str] = (
     "مقطعًا ولا يدّعي نواةً؛ فلا حركةَ تُخمَّن له، ولا يُعَدُّ مقطعًا موصوفًا "
     "(`claims_a_nucleus=False`)، ومداهُ أوّلُ الكلمة وحدَه، والوحدةُ تُردّ "
     "بعينها في العكس"
+)
+
+THE_OPENING_BEFORE_THE_FIRST_VOWEL_IS_NOT_WRITTEN_NOTE: Final[str] = (
+    "TheOpeningBeforeTheFirstVowelIsNotWritten: قوانينُ الابتداء والوصل والوقف "
+    "لا تُكتَب في الخطّ، فما في مفتتح الكلمة من وحداتٍ بلا علامةٍ ألبتّة — "
+    "يفتتحها الألفُ العاري — يُعامَل مدًى محايدًا واحدًا يُغلَق بساكنٍ واحدٍ "
+    "على الأكثر؛ وهذا توسيعُ امتناعٍ لا قراءةُ إدغامٍ ولا تسميةُ لامِ تعريف، "
+    "والوحداتُ تُردّ بأعيانها، وما بعد أوّلِ حركةٍ مكتوبةٍ خارجٌ عنه بتمامه"
 )

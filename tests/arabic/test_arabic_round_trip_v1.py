@@ -102,10 +102,22 @@ def test_a_word_opening_on_a_bare_alef_crosses_the_syllable_layer() -> None:
     assert trace.refusal is None
 
 
-def test_an_assimilated_article_lam_still_halts_at_the_syllable_layer() -> None:
-    """الحيادُ لا يُصلِح ما بعده: لامٌ مكتوبةٌ قبل مشدَّدٍ ساكنان متجاوران."""
+def test_an_unmarked_article_lam_now_crosses_the_syllable_layer() -> None:
+    """حالةُ تلك اللام غيرُ مكتوبة، فتدخل المفتتحَ ولا تُرفَع رفضًا."""
 
     trace = run_token("\u0627\u0644\u0644\u064e\u0651\u0647\u0650".encode())
+    assert trace.reached is RoundTripLayer.FINAL_BYTES
+    assert trace.refusal is None
+    assert trace.lost == 0
+    assert trace.added == 0
+
+
+def test_a_madd_before_a_shadda_still_halts_at_the_syllable_layer() -> None:
+    """المفتتحُ لا يُصلِح ما بعد أوّلِ حركةٍ مكتوبة؛ والمدُّ قبل مشدَّدٍ رفضٌ."""
+
+    trace = run_token(
+        "\u0627\u0644\u0636\u064e\u0651\u0627\u0644\u0650\u0651\u064a\u0646\u064e".encode()
+    )
     assert trace.reached is RoundTripLayer.SYLLABLE
     assert trace.outcome is LayerOutcome.REFUSED
     assert trace.refusal is RoundTripRefusal.SEGMENTATION_TWO_ADJACENT_SAKINS

@@ -5772,24 +5772,23 @@ belongs to that exact deposit and no other.
 | `UTF8_BYTES` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
 | `UNICODE_NFC` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
 | `CARRIER_STATE` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
-| `SYLLABLE` | 29 | 21 | 8 | 0 | 0 | 0 | 0 | 100.0000% |
-| `WORD_STRUCTURE` | 21 | 21 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
-| `FINAL_BYTES` | 21 | 21 | 0 | 5 | 5 | 0 | 0 | 76.1905% |
+| `SYLLABLE` | 29 | 28 | 1 | 0 | 0 | 0 | 0 | 100.0000% |
+| `WORD_STRUCTURE` | 28 | 28 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
+| `FINAL_BYTES` | 28 | 28 | 0 | 12 | 12 | 0 | 0 | 57.1429% |
 
 Sixteen of twenty-nine tokens come back byte-for-byte identical. The other
 thirteen are accounted for by name, never by silence, in `halt_profile`, which
 a test holds to summing to the token total:
 
-- **8 × `SYLLABLE / REFUSED / SEGMENTATION_TWO_ADJACENT_SAKINS`** — every one of
-  them the definite article's lām written before a geminated consonant, i.e.
-  the assimilated lām. The wall is not vague: it is one refusal code, and it is
-  the *same* one eight times.
-- **5 × `FINAL_BYTES / MISMATCHED`**, all five reordering-only — `Lost = 0`,
+- **1 × `SYLLABLE / REFUSED / SEGMENTATION_TWO_ADJACENT_SAKINS`** — a long vowel
+  written before a geminated consonant inside the word (`الضَّالِّينَ`). One
+  refusal code, one occurrence, named.
+- **12 × `FINAL_BYTES / MISMATCHED`**, all twelve reordering-only — `Lost = 0`,
   `Added = 0` — because NFC sorts shadda after the vowel while the codec writes
   it before. Nothing was destroyed; the byte order differs.
 
 The whole table is content-addressed: `RoundTripTable.digest` is
-`1e659c20b67fda9e…`, and `python examples/arabic/measure_arabic_round_trip_v1.py
+`c34c24d5f8a09058…`, and `python examples/arabic/measure_arabic_round_trip_v1.py
 --deposit` re-derives it from the deposited bytes and exits non-zero if a single
 row moves. `UNMEASURED_ROUND_TRIP_SOURCES` names the 77,429-token Quranic
 morphology corpus that this tree deliberately does not vendor, and gives it no
@@ -5835,15 +5834,54 @@ What the number did, on the same fingerprinted deposit:
 | reordering-only mismatches at final bytes | 4 | 5 |
 | table digest | `7025007494c12056…` | `1e659c20b67fda9e…` |
 
-The wall did not fall; it moved and was renamed. The measured stopping point of
-Alghanem is now the assimilated article lām, eight times over, and the next
-change will be judged by whether it moves that eight.
+The wall did not fall; it moved and was renamed. The measured stopping point
+became the assimilated article lām, eight times over — and the next change was
+judged by whether it moved that eight.
+
+### `TheOpeningBeforeTheFirstVowelIsNotWritten` — the three laws, applied as a refusal
+
+The prompt was three law names: **قانون الابتداء، قانون الوصل، قانون الوقف**.
+They are already registered in `ibtida_wasl_waqf_registration` as transcribed
+text *without a reading*, and that registration says plainly that hamzat al-waṣl
+is not decidable from the written marks. Read together, the three laws agree on
+one thing that can be acted on without reading any of them: **what happens at
+the opening of a word, before its first written vowel, is not written down.**
+Ibtidāʾ supplies a vowel that is not in the text; waṣl deletes the hamza and
+draws the crossing vowel from the end of the previous word; waqf does not touch
+the opening at all.
+
+So the neutral element was widened from the alef alone to that whole opening: a
+contiguous run of word-initial units that carry **no written mark whatsoever** —
+no vowel, no sukūn, no shadda — headed by the bare alef, closed by at most one
+sakin. This is a *widened refusal, not an imported reading*: nothing is called a
+definite article, no assimilation is asserted, no pronunciation is guessed. The
+only claim is that a lām with nothing written on it is not a written sakin and
+must not be counted as one. Units are preserved verbatim; `desegment` returns
+them unchanged. Everything after the first written vowel is outside the span, so
+a medial long vowel before a geminate is still refused by its own name.
+
+| | before | after |
+| --- | --- | --- |
+| tokens reconstructed end to end | 16/29 | 16/29 |
+| syllable-layer refusals | 8 | **1** |
+| `SEGMENTATION_TWO_ADJACENT_SAKINS` | 8 | **1** |
+| reordering-only mismatches at final bytes | 5 | **12** |
+| table digest | `1e659c20b67fda9e…` | `c34c24d5f8a09058…` |
+
+The result is reported as it came out, not as it was hoped: **reconstruction did
+not rise.** Seven tokens moved from a refusal at the syllable layer to a
+reordering mismatch at the top — `Lost = 0`, `Added = 0` in every one. That is
+itself the finding. The article lām was never what stopped Alghanem from
+returning its bytes; the shadda/vowel ordering between the codec and NFC was,
+and it had simply been hidden behind an earlier refusal. The wall is now one
+madd-before-shadda refusal and twelve ordering mismatches, and the next change
+is judged by whether it moves the twelve.
 
 The claim after this milestone is: *there is now one executed path from Arabic
 bytes to a structure and back to bytes, measured on a real fingerprinted text —
-16/29 tokens reconstructed exactly, and the place where it stops is a single
-named refusal at the syllable layer, eight times over, not the codec and not the
-encoding.*
+16/29 tokens reconstructed exactly, one named refusal left at the syllable
+layer, and the remaining thirteen failures are an ordering difference with zero
+loss, not an encoding or a codec failure.*
 
 Not built here, deliberately: morphology, composition, syntax, iʿrāb, dalālah,
 MASAQ and any weight protocol. No layer above word structure has a forward and

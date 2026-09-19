@@ -102,7 +102,7 @@ def test_the_wall_is_the_syllable_layer_and_it_is_named() -> None:
         RoundTripLayer.SYLLABLE,
         RoundTripRefusal.SEGMENTATION_TWO_ADJACENT_SAKINS,
     )
-    assert adjacent == 8
+    assert adjacent == 1
     assert FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.SYLLABLE) == adjacent
     assert FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.CARRIER_STATE) == 0
     assert FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.UTF8_BYTES) == 0
@@ -216,3 +216,22 @@ def test_the_table_digest_moves_when_any_row_moves() -> None:
         tokens_from_text(FATIHA_SOURCE_TEXT + "\n\u0628\u0650\u0633\u0652\u0645\u0650")
     )
     assert widened.digest != FATIHA_ROUND_TRIP.table_digest
+
+
+def test_the_wider_opening_moved_the_wall_without_raising_reconstruction() -> None:
+    """النتيجةُ تُقال بلا تجميل: الرفضُ نزل، والمُخالفةُ صعدت، والاسترجاعُ ثابت."""
+
+    assert FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.SYLLABLE) == 1
+    mismatched = sum(
+        halt.count
+        for halt in FATIHA_ROUND_TRIP.halt_profile
+        if halt.outcome is LayerOutcome.MISMATCHED
+    )
+    assert mismatched == 12
+    assert FATIHA_ROUND_TRIP.end_to_end_reconstructed == 16
+    assert (
+        FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.SYLLABLE)
+        + mismatched
+        + FATIHA_ROUND_TRIP.end_to_end_reconstructed
+        == FATIHA_ROUND_TRIP.token_total
+    )

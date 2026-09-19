@@ -67,13 +67,53 @@ def test_a_word_opening_on_a_bare_alef_is_segmented_with_a_neutral_onset() -> No
         assert later.claims_a_nucleus is True
 
 
-def test_the_neutral_onset_does_not_repair_what_lies_after_it() -> None:
-    """لامُ التعريف قبل مشدَّدٍ ساكنان متجاوران؛ والحيادُ لا يُصلِحهما."""
+def test_the_undecided_opening_extends_past_the_alef_to_an_unmarked_lam() -> None:
+    """لامٌ بلا علامةٍ في المفتتح تدخل المدى المحايد، والعكسُ يردّها بعينها."""
 
     units = _CODEC.generate("\u0627\u0644\u0644\u064e\u0651\u0647\u0650")
+    parse = segment(units)
+    assert desegment(parse.syllables) == units
+    first = parse.syllables[0]
+    assert first.onset is SyllableOnset.NEUTRAL_ALEF
+    assert first.claims_a_nucleus is False
+    assert parse.undecided_opening_length == 2
+    assert tuple(unit.carrier for unit in first.undecided_opening) == (
+        "\u0627",
+        "\u0644",
+    )
+    assert first.has_coda is True
+
+
+def test_the_undecided_opening_stops_at_the_first_written_state() -> None:
+    """سكونٌ مكتوبٌ حالتُه مقروءة، فلا يُبتلَع في المدى المحايد بل يُغلِقه."""
+
+    units = _CODEC.generate("\u0627\u0644\u0652\u062d\u064e\u0645\u0652\u062f\u064f")
+    parse = segment(units)
+    assert parse.undecided_opening_length == 1
+    assert parse.syllables[0].has_coda is True
+
+
+def test_the_opening_does_not_repair_a_madd_before_a_shadda() -> None:
+    """المدُّ قبل مشدَّدٍ في وسط الكلمة خارجُ المفتتح، فيبقى رفضًا باسمه."""
+
+    units = _CODEC.generate(
+        "\u0627\u0644\u0636\u064e\u0651\u0627\u0644\u0650\u0651\u064a\u0646\u064e"
+    )
     with pytest.raises(SyllableSegmentationError) as caught:
         segment(units)
     assert caught.value.refusal is SyllableRefusal.TWO_ADJACENT_SAKINS
+
+
+def test_a_neutral_span_refuses_a_written_state_in_its_middle() -> None:
+    """المفتتحُ لا يُبنى بوحدةٍ مكتوبةِ الحالة في وسطه؛ والساكنُ يُغلِقه فقط."""
+
+    units = _CODEC.generate("\u0627\u0644\u0652\u062d\u064e\u0645\u0652\u062f\u064f")
+    with pytest.raises(SyllableSegmentationError):
+        Syllable(
+            start=0,
+            units=(units[0], units[1], units[2]),
+            onset=SyllableOnset.NEUTRAL_ALEF,
+        )
 
 
 def test_the_neutral_onset_is_not_available_in_the_middle_of_a_word() -> None:
