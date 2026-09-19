@@ -6785,6 +6785,44 @@ axes where madd is frozen as deferred, and the alif is the likeliest carrier of
 madd; so the neutrality may be an artifact of the deferral. It may not be used
 to close the birth of the syllable.
 
+## The order of disambiguation, and the authority a separation does not confer
+
+`src/alghanem/arabic/disambiguation_layer_order.py` declares the execution
+order once — carrier identity, then rasm against sound, then licensed features,
+then syllabic and morphological relations, then ifada in its own layer — and
+derives every rank from position in that declaration rather than writing it
+beside the name.
+
+**The central law is a function, not a comment.**
+`authority_after_separating` takes the number of pairs a layer separated and
+*does not read it*, returning the layer itself; if separating states promoted a
+layer, the effect would have to show up there. `claim_is_licensed_at` refuses a
+higher layer's claim to a lower layer's worker: separating rasm licenses no
+feature claim, and separating a feature licenses no syllabic one.
+
+**Ambiguity is lifted without inventing distinctions.** Every layer cites the
+names of fields **recorded on the item itself with written sources**; citing
+anything unrecorded is a refusal, not a silent zero. One field may not be cited
+in two layers, since that launders one layer's difference into another under a
+new name.
+
+**The original measurement is not corrupted.** A layer's value accumulates the
+fields below it rather than replacing them, and the bottom of the ladder is
+compared against the item's stored original measurement, so recoverability is
+*measured*: a ladder whose bottom layer cites something else is caught.
+
+**Run over the `10` declared hamza occurrences**, the ladder separates at the
+carrier, the seat, the licensed features, and the realization — and the ifada
+layer separates **nothing**, because the two qat' occurrences on the alef seat
+carry the same recorded content. That pair stays openly unresolved. Lifting it
+would need a newly recorded field with its own source, which is a new
+measurement, not a new distinction. A layer that separates nothing is neither
+promoted nor deleted for it.
+
+**And no layer declares the syllable born.** The fourth layer measures syllabic
+relations; `refuse_syllable_birth_claim` refuses the claim from every layer
+without exception, the fourth included.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
