@@ -19,12 +19,18 @@
 
 **والثغرةُ تُقاضى بثلاثة أحكامٍ لا بحكمين:**
 
-* `BARRED_BY_A_MEASURED_RULE`: ممتنعةٌ بقاعدةٍ قائمةٍ في الشجرة تُفحَص حيّةً.
-  وواحدةٌ فقط كذلك: المجموعةُ الخالية، إذ يردُّ `ObservedFiber` تركيبًا فارغًا
-  عند الإنشاء. وما عداها **لا قاعدةَ تمنعه اليوم**
-  (`ONLY_ONE_GAP_IS_BARRED_BY_A_MEASURED_RULE`).
-* `JOINTLY_ATTESTED_ON_ONE_CARRIER`: كلُّ حالاتها اجتمعت فعلًا على حاملٍ واحدٍ
-  مُسمًّى في هذا الإيداع. فاجتماعُها **مقيسٌ لا مُقدَّر**، ولا يمتنع بنيويًّا.
+* `BARRED_BY_THE_CURRENT_REPRESENTATION_CONTRACT`: ممنوعةٌ **بعقد التمثيل
+  الحاليّ** لا بامتناعٍ مطلق. وواحدةٌ فقط كذلك: المجموعةُ الخالية، إذ يردُّ
+  `ObservedFiber` تركيبًا فارغًا عند الإنشاء، والقاعدةُ تُفحَص حيّةً. ويُقرَأ
+  الحكمُ بحدّه: نوعُ البيانات الحاليُّ لا يسمح بليفٍ فارغ، ولا يُبرهَن بذلك
+  امتناعُ الخلوّ في كلّ نموذجٍ رياضيٍّ أو لغويٍّ بديل. وما عداها **لا قاعدةَ
+  تمنعه اليوم**
+  (`ONLY_ONE_GAP_IS_BARRED_BY_THE_CURRENT_REPRESENTATION_CONTRACT`).
+* `AN_AMBIENT_MEMBER_JOINTLY_ATTESTED`: عضوٌ في **المحيط المختار** اجتمعت كلُّ
+  حالاته فعلًا على حاملٍ واحدٍ مُسمًّى في هذا الإيداع. فاجتماعُها **مقيسٌ لا
+  مُقدَّر**، ولا يمتنع بعقدٍ قائم؛ وليس هو بذلك **ليفًا عربيًّا مرخَّصًا**، بل
+  عنصرٌ ولّده الإغلاقُ المُسمّى
+  (`AN_AMBIENT_MEMBER_IS_NOT_A_LICENSED_FIBER`).
 * `NOT_JOINTLY_ATTESTED_UNDECIDED`: لم تجتمع حالاتُها على حاملٍ واحدٍ قطّ. ولا
   يُقرأ هذا منعًا: غيابُ حالةٍ عن ليفٍ مرصودٍ قد يكون منعًا أو ندرةً أو تعذّرًا
   بالموضع، ولا يفصل بينها رصدٌ وحدَه — وهو نصُّ
@@ -62,11 +68,12 @@ from .decomposition_reconstruction_theorem import MeasurementInstrument, Populat
 from .fiber_rank_function import Fiber, FiberRankError, StateVector, observed_fibers
 
 __all__ = [
+    "AN_AMBIENT_MEMBER_IS_NOT_A_LICENSED_FIBER_NOTE",
     "AN_UNDECIDED_GAP_IS_NOT_A_BARRED_ONE_NOTE",
     "ATTESTATION_IS_NOT_A_CORPUS_CONSTRUCTION_NOTE",
     "FIBER_AMBIENT_CHOICE_NAMED_RESIDUALS",
     "INDIVIDUAL_ATTESTATION_IS_NOT_JOINT_ATTESTATION_NOTE",
-    "ONLY_ONE_GAP_IS_BARRED_BY_A_MEASURED_RULE_NOTE",
+    "ONLY_ONE_GAP_IS_BARRED_BY_THE_CURRENT_REPRESENTATION_CONTRACT_NOTE",
     "THE_AMBIENT_IS_A_CHOICE_NOT_A_MEASUREMENT_NOTE",
     "THE_GAP_COUNT_IS_OPERATOR_RELATIVE_NOTE",
     "AmbientChoiceError",
@@ -266,8 +273,8 @@ def gap_counts_by_operator(
 class GapStatus(Enum):
     """حكمُ ثغرةٍ واحدة؛ ثلاثةٌ لا اثنان، والثالثُ ليس تلطيفًا للثاني."""
 
-    BARRED_BY_A_MEASURED_RULE = "ممتنعةٌ_بقاعدةٍ_تُفحَص_حيّة"
-    JOINTLY_ATTESTED_ON_ONE_CARRIER = "اجتمعت_حالاتُها_على_حاملٍ_مُسمًّى"
+    BARRED_BY_THE_CURRENT_REPRESENTATION_CONTRACT = "ممنوعةٌ_بعقد_التمثيل_الحاليّ"
+    AN_AMBIENT_MEMBER_JOINTLY_ATTESTED = "عضوُ_محيطٍ_اجتمعت_حالاتُه_على_حامل"
     NOT_JOINTLY_ATTESTED_UNDECIDED = "لم_تجتمع_قطُّ_ولا_يحسمها_هذا_الإيداع"
 
 
@@ -293,7 +300,7 @@ class GapAdjudication:
     def __post_init__(self) -> None:
         if not self.grounds.strip():
             raise AmbientChoiceError("حكمٌ بلا علّةٍ مكتوبةٍ يُغري بالتعميم")
-        if self.status is GapStatus.JOINTLY_ATTESTED_ON_ONE_CARRIER:
+        if self.status is GapStatus.AN_AMBIENT_MEMBER_JOINTLY_ATTESTED:
             if self.witness_carrier is None:
                 raise AmbientChoiceError(
                     "شهادةُ الاجتماع تلزمها تسميةُ حاملها؛ وشهادةٌ بلا شاهدٍ دعوى"
@@ -310,6 +317,16 @@ class GapAdjudication:
         """حجمُ الثغرة، أي الرتبةُ التي كانت ستُشغَل لو سُدّت."""
 
         return len(self.states)
+
+    @property
+    def is_a_licensed_arabic_fiber(self) -> bool:
+        """أهذه حالةٌ عربيّةٌ مرخَّصة؟ لا — والجوابُ ثابتٌ بالبناء لا بالحال.
+
+        فالعضوُ ولّده الإغلاقُ المختار، وشهادةُ الاجتماع تنفي عنه المنعَ ولا
+        تُرخِّصه ليفًا؛ وهو نصُّ `OBSERVED_FIBER_IS_NOT_LICENSED_FIBER`.
+        """
+
+        return False
 
 
 @dataclass(frozen=True, slots=True)
@@ -342,7 +359,7 @@ class GapCensus:
         return tuple(
             item
             for item in self.adjudications
-            if item.status is GapStatus.BARRED_BY_A_MEASURED_RULE
+            if item.status is GapStatus.BARRED_BY_THE_CURRENT_REPRESENTATION_CONTRACT
         )
 
     @property
@@ -374,11 +391,13 @@ def adjudicate_gaps(
             adjudications.append(
                 GapAdjudication(
                     states=member,
-                    status=GapStatus.BARRED_BY_A_MEASURED_RULE,
+                    status=GapStatus.BARRED_BY_THE_CURRENT_REPRESENTATION_CONTRACT,
                     witness_carrier=None,
                     grounds=(
                         "يردُّ `ObservedFiber` تركيبًا فارغًا عند الإنشاء، "
-                        "والقاعدةُ مفحوصةٌ حيّةً لا منقولةً"
+                        "والقاعدةُ مفحوصةٌ حيّةً لا منقولةً؛ فهذا منعٌ بعقد "
+                        "التمثيل الحاليِّ في هذه الشجرة، ولا يُبرهَن به "
+                        "امتناعُ الخلوّ في نموذجٍ رياضيٍّ أو لغويٍّ بديل"
                     ),
                 )
             )
@@ -391,11 +410,13 @@ def adjudicate_gaps(
             adjudications.append(
                 GapAdjudication(
                     states=member,
-                    status=GapStatus.JOINTLY_ATTESTED_ON_ONE_CARRIER,
+                    status=GapStatus.AN_AMBIENT_MEMBER_JOINTLY_ATTESTED,
                     witness_carrier=witness,
                     grounds=(
                         f"اجتمعت حالاتُها كلُّها على الحامل {witness!r} في هذا "
-                        "الإيداع، فاجتماعُها مقيسٌ ولا تمنعه قاعدةٌ قائمة"
+                        "الإيداع، فاجتماعُها مقيسٌ ولا يمنعه عقدٌ قائم؛ وهي "
+                        f"عضوٌ في المحيط المبنيِّ بـ{operator.value} لا ليفٌ "
+                        "عربيٌّ مرخَّص"
                     ),
                 )
             )
@@ -441,10 +462,18 @@ INDIVIDUAL_ATTESTATION_IS_NOT_JOINT_ATTESTATION_NOTE: Final[str] = (
     "الذي لا يردّ شيئًا لا يقيس شيئًا، فالمعتبَرُ شهادةُ الاجتماع على حامل"
 )
 
-ONLY_ONE_GAP_IS_BARRED_BY_A_MEASURED_RULE_NOTE: Final[str] = (
-    "OnlyOneGapIsBarredByAMeasuredRule: القاعدةُ الوحيدةُ القائمةُ في هذه "
-    "الشجرة ترُدُّ الليفَ الخالي وحدَه؛ وما عداه لا قاعدةَ تمنعه اليوم، "
-    "فالامتناعُ البنيويُّ المُدَّعى لسواه يلزمه قانونٌ يُكتَب لا حدسٌ يُقال"
+AN_AMBIENT_MEMBER_IS_NOT_A_LICENSED_FIBER_NOTE: Final[str] = (
+    "AnAmbientMemberIsNotALicensedFiber: ما ولّده الإغلاقُ المُسمّى عنصرٌ في "
+    "المحيط المختار؛ وشهادةُ اجتماع حالاته على حاملٍ تنفي عنه المنعَ ولا "
+    "تجعله حالةً عربيّةً مرخَّصةً بالتلقائيّة، فالترخيصُ حكمٌ آخرُ لم يُطلَب ههنا"
+)
+
+ONLY_ONE_GAP_IS_BARRED_BY_THE_CURRENT_REPRESENTATION_CONTRACT_NOTE: Final[str] = (
+    "OnlyOneGapIsBarredByTheCurrentRepresentationContract: القاعدةُ الوحيدةُ "
+    "القائمةُ في هذه الشجرة ترُدُّ الليفَ الخالي وحدَه، ومنعُها منعُ **عقد "
+    "التمثيل الحاليّ**: نوعُ البيانات لا يسمح بليفٍ فارغ، ولا يُبرهَن بذلك "
+    "امتناعُ الخلوّ في نموذجٍ رياضيٍّ أو لغويٍّ بديل؛ وما عداه لا قاعدةَ تمنعه "
+    "اليوم، والامتناعُ المُدَّعى لسواه يلزمه قانونٌ يُكتَب لا حدسٌ يُقال"
 )
 
 THE_AMBIENT_IS_A_CHOICE_NOT_A_MEASUREMENT_NOTE: Final[str] = (
@@ -462,9 +491,10 @@ THE_GAP_COUNT_IS_OPERATOR_RELATIVE_NOTE: Final[str] = (
 FIBER_AMBIENT_CHOICE_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     THE_AMBIENT_IS_A_CHOICE_NOT_A_MEASUREMENT_NOTE,
     THE_GAP_COUNT_IS_OPERATOR_RELATIVE_NOTE,
-    ONLY_ONE_GAP_IS_BARRED_BY_A_MEASURED_RULE_NOTE,
+    ONLY_ONE_GAP_IS_BARRED_BY_THE_CURRENT_REPRESENTATION_CONTRACT_NOTE,
     AN_UNDECIDED_GAP_IS_NOT_A_BARRED_ONE_NOTE,
     INDIVIDUAL_ATTESTATION_IS_NOT_JOINT_ATTESTATION_NOTE,
     ATTESTATION_IS_NOT_A_CORPUS_CONSTRUCTION_NOTE,
+    AN_AMBIENT_MEMBER_IS_NOT_A_LICENSED_FIBER_NOTE,
 )
-"""ستُّ بقايا مُسمّاةٍ تُقابَل بها أيُّ إحالةٍ إلى «المحيط» أو «عدد الثغرات»."""
+"""سبعُ بقايا مُسمّاةٍ تُقابَل بها أيُّ إحالةٍ إلى «المحيط» أو «عدد الثغرات»."""

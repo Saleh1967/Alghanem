@@ -20,6 +20,7 @@ from alghanem.arabic.fiber_bundle_verdict import (
     FIBER_BUNDLE_NAMED_RESIDUALS,
     WIDER_CORPUS_CLAIMS,
     Axis,
+    BundleVerdict,
     FiberBundleError,
     PairStepVerdict,
     StepCensus,
@@ -49,9 +50,9 @@ def test_the_bundle_module_reaches_no_kernel_module() -> None:
     ]
 
 
-def test_there_are_six_named_residuals_all_distinct_and_non_blank() -> None:
-    assert len(FIBER_BUNDLE_NAMED_RESIDUALS) == 6
-    assert len(set(FIBER_BUNDLE_NAMED_RESIDUALS)) == 6
+def test_there_are_seven_named_residuals_all_distinct_and_non_blank() -> None:
+    assert len(FIBER_BUNDLE_NAMED_RESIDUALS) == 7
+    assert len(set(FIBER_BUNDLE_NAMED_RESIDUALS)) == 7
     assert all(note.strip() for note in FIBER_BUNDLE_NAMED_RESIDUALS)
 
 
@@ -96,6 +97,58 @@ def test_the_base_is_neither_graded_nor_connected() -> None:
     assert verdict.base_component_count == 2
 
 
+def test_the_fallen_base_rank_is_witnessed_by_chains_not_by_capacity_jumps() -> None:
+    verdict = measure_the_bundle()
+    assert verdict.base_grading_is_settled_by_chains is True
+    assert len(verdict.base_grading_counterexamples) == 4
+    lengths = {
+        witness.chain_lengths for witness in verdict.base_grading_counterexamples
+    }
+    assert lengths == {(2, 3), (3, 4)}
+    assert all(
+        len(set(witness.chain_lengths)) > 1
+        for witness in verdict.base_grading_counterexamples
+    )
+
+
+def test_the_capacity_jumps_are_recorded_beside_the_verdict_not_as_its_ground() -> None:
+    verdict = measure_the_bundle()
+    assert verdict.base_cover_capacity_jumps == 5
+    joined = "\n".join(FIBER_BUNDLE_NAMED_RESIDUALS)
+    assert "ACapacityJumpIsNotAFallenRank" in joined
+
+
+def test_an_ungraded_base_without_a_chain_witness_is_refused() -> None:
+    with pytest.raises(FiberBundleError):
+        BundleVerdict(
+            carrier_count=23,
+            distinct_fiber_count=16,
+            state_count=7,
+            fibers_graded=23,
+            base_is_graded=False,
+            base_component_count=2,
+            observed_depths=(1, 2, 3, 4, 6),
+            base_grading_counterexamples=(),
+            base_cover_capacity_jumps=5,
+        )
+
+
+def test_a_graded_base_carrying_a_counter_witness_is_refused() -> None:
+    witness = measure_the_bundle().base_grading_counterexamples[0]
+    with pytest.raises(FiberBundleError):
+        BundleVerdict(
+            carrier_count=23,
+            distinct_fiber_count=16,
+            state_count=7,
+            fibers_graded=23,
+            base_is_graded=True,
+            base_component_count=2,
+            observed_depths=(1, 2, 3, 4, 6),
+            base_grading_counterexamples=(witness,),
+            base_cover_capacity_jumps=0,
+        )
+
+
 def test_a_rank_question_without_a_named_axis_is_refused() -> None:
     verdict = measure_the_bundle()
     with pytest.raises(FiberBundleError):
@@ -108,6 +161,13 @@ def test_the_residuals_name_the_axis_confusion_that_produced_two_verdicts() -> N
 
 
 # --- المقياسُ الجمعيّ ---------------------------------------------------------
+
+
+def test_the_additive_law_is_named_a_capacity_measure_not_a_linguistic_necessity() -> (
+    None
+):
+    joined = "\n".join(FIBER_BUNDLE_NAMED_RESIDUALS)
+    assert "مقياسُ سعةٍ" in joined
 
 
 def test_the_measure_is_additive_with_zero_breaches_over_every_pair() -> None:

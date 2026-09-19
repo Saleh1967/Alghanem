@@ -6537,7 +6537,11 @@ bytes.
 replace it.** The premise was right that no internal split was measured; that
 does not license a splitting operation, and it does not license the rank
 function either, because on the population in question the rank function does
-not exist. Two unlicensed operations, two different written reasons.
+not exist. Two unlicensed operations, two different written reasons. **Not
+licensed is not refuted**: the general necessity of `RefineSlot` stands
+*unproven*, and only the narrow claim — that the capacity function suffices
+where a splitting operation was proposed, *on this fingerprinted deposit* — is
+deposited with the observation that would falsify it.
 
 ## The ambient was a choice, and the gaps were never adjudicated
 
@@ -6562,12 +6566,17 @@ lattice. The count is about an operator, so the operator is named beside it
 every time.
 
 **Each gap is judged one by one, with three verdicts, not two.** Exactly
-**one** is `BARRED_BY_A_MEASURED_RULE`: the empty fiber, because `ObservedFiber`
-refuses an empty composition — and that bar is checked *live*, by constructing
-one and catching the refusal, not by citing it. Nothing else in the tree bars
-anything. A gap is `JOINTLY_ATTESTED_ON_ONE_CARRIER` when all of its states
-were in fact seen together on one named carrier: **41** under `∪∩`, **58** under
-the full lattice, each carrying its witness. The rest —
+**one** is `BARRED_BY_THE_CURRENT_REPRESENTATION_CONTRACT`: the empty fiber,
+because `ObservedFiber` refuses an empty composition — and that bar is checked
+*live*, by constructing one and catching the refusal, not by citing it. It is
+named for what it is: the current data type forbids an empty fiber; that does
+not prove emptiness is barred in some alternative mathematical or linguistic
+model. Nothing else in the tree bars anything. A gap is
+`AN_AMBIENT_MEMBER_JOINTLY_ATTESTED` when all of its states were in fact seen
+together on one named carrier: **41** under `∪∩`, **58** under the full lattice,
+each carrying its witness and its operator. Such a member is an element of the
+*chosen ambient*, not an automatically licensed Arabic state —
+`is_a_licensed_arabic_fiber` is false by construction. The rest —
 **38** and **53** — are `NOT_JOINTLY_ATTESTED_UNDECIDED`, and that is not a
 softer way of saying barred: absence may be prohibition, rarity, or positional
 impossibility, and observation alone does not separate them.
@@ -6594,16 +6603,24 @@ stated once:
 
 **Vertically the grading is exceptionless.** For every carrier the interval
 `[∅, E_b]` is graded by cardinality — **23 of 23**, zero exceptions, at observed
-depths `{1, 2, 3, 4, 6}`. **Horizontally it fails**: the order on the 16 distinct
-fibers is not graded and splits into **2** components, so there is no rank
-function on the base. Asking `rank_exists_on(...)` without naming an axis is
+depths `{1, 2, 3, 4, 6}`. **Horizontally it fails**, and the failure is now
+proved the way it should be: an actual rank assignment is attempted along the
+cover edges and *contradicts itself*, and the failure is recorded with **4**
+chain counter-witnesses of unequal length (`{2,3}` and `{3,4}`) between the same
+endpoints. The **5** cover edges where capacity jumps by more than one are
+recorded *beside* the verdict as a descriptive number, never as its ground — a
+capacity jump is not a fallen rank. The base also splits into **2** components,
+so there is no rank function on the base. Asking `rank_exists_on(...)` without naming an axis is
 refused, because the axis confusion is what produced the two verdicts in the
 first place.
 
 **What survives is a measure, not a rank.** `μ(X) = |X|` satisfies
 `μ(X∪Y) + μ(X∩Y) = μ(X) + μ(Y)` with **0** breaches over all **9,216** pairs of
-the `∪∩` closure, and 0 over all 16,384 pairs of the Boolean one. A measure
-weighs differences; a rank counts steps. They are two questions.
+the `∪∩` closure, and 0 over all 16,384 pairs of the Boolean one. That is a law
+about finite sets and a measure of *capacity*: the tests confirm the
+implementation respects it in the two examined ambients, and it measures neither
+the necessity of a linguistic state nor a rank on any order. A measure weighs
+differences; a rank counts steps. They are two questions.
 
 **And the step question fails globally, not pairwise.** Of **46** comparable
 pairs, the step count is single-valued for **42** and ambiguous for **4**. So
@@ -6656,7 +6673,9 @@ article's lam is recorded as an observation and explicitly not explained here.
 
 **The four obligations stand four different ways**, each with a written
 discharge condition. Generality: attempted, undischarged. `RefineSlot`
-necessity: refuted as stated. End-to-end utility: not attempted, because the
+necessity: **unproven, not refuted** — carrying the narrow, still-falsifiable
+claim that the capacity function suffices on this deposit, together with the
+observation that would refute it. End-to-end utility: not attempted, because the
 decomposition theorem reads the codec it rebuilds through. CV birth: **barred**,
 not deferred — the import guard in `vv_birth_preregistration` rejects the
 pre-registration whenever the readout module merely *exists*, so the readout
