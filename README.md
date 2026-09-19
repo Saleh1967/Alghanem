@@ -6682,6 +6682,51 @@ pre-registration whenever the readout module merely *exists*, so the readout
 cannot be written while the guard stands. That is a structure in the tree, not a
 gap in the evidence.
 
+## The minimal complete fiber, as a conditional theorem
+
+If a fiber is a candidate organizing principle, the next question is what a
+fiber must *carry* before it can convey anything at all.
+`src/alghanem/arabic/minimal_complete_fiber.py` deposits the candidate equation
+`E(a,g) = ⨆ over p in P(g) of R(a,p)`, its element `u = (a, g, p, r)`, and the
+criterion that would settle it — a criterion, not a certificate.
+
+**Four representation fields carry three structural functions.** Counted live:
+`4` fields, `3` functions. Identity and classification answer *about whom, and
+in which domain*; the predicate answers *what may be carried*; the relation
+answers *in what manner the two are joined*. When the genus is uniquely and
+licensedly derivable from the anchor, the classification *information* is still
+required while a separate genus *field* is not.
+
+**Minimality is proved by collision, not by assertion.** A component may not be
+dropped when two witnesses survive its deletion identically yet demand different
+content. The three Arabic designs — `عين`/`عين`, `زيد طويل`/`زيد قصير`,
+`الرجل الطويل`/`الرجل طويل` — are checked live: each pair really does collapse
+under its own deletion and really does differ in content, or construction is
+refused. They remain **designs for counter-witnesses**, not a report that any
+codec test was executed, and a collision in the representation is not a
+collision in a context that may still recover the deleted information.
+
+**Sufficiency is untested, so the criterion is not established.** The criterion
+is `Sufficient ∧ ⋀ Necessary`. Every component's necessity is witnessed on the
+designed pairs, yet no independent reader `D` and no declared domain `𝒟` exist
+in this tree, so `is_established` is false while `every_component_is_witnessed`
+is true. And the minimum proved is relative to the candidate components and the
+class of alternatives actually tested; another encoding may carry the same
+necessary information in a different shape.
+
+**`zero` and `one` are shapes, not operations.** `zero` is `(a, g, p, ⊥)`: a
+relation not yet named — neither an empty fiber nor a denied attribute. `one`
+adds the named relation with its evidence and residues, and explicitly does
+*not* assert that the proposition is true. `RefineSlot` is written as the
+transition between them and is **not exported**; no callable in this deposit
+performs it.
+
+**The closure checklist stands at 0 / 7**, and the zero is derived by counting
+satisfied conditions, not written beside the list. Each of the seven conditions
+carries what would satisfy it and why it is still open, so the candidate's rank
+is not raised to a completed certificate merely because the equation has been
+written down.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
