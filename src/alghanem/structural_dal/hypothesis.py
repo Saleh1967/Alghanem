@@ -27,7 +27,9 @@ from .laws import (
     NO_POSITIVE_STRUCTURE_FROM_NEUTRAL_INPUT,
     NO_SILENT_DROPPED_SLOT,
     SHAPE_PARTITION_HYPOTHESIS_IS_NOT_A_ROOT_CANDIDATE,
+    SHAPE_PARTITION_HYPOTHESIS_IS_NOT_A_SIGNIFIED_CANDIDATE,
     SHAPE_PARTITION_HYPOTHESIS_IS_NOT_A_WEIGHT_CANDIDATE,
+    SHAPE_PARTITION_HYPOTHESIS_IS_NOT_AN_UTTERANCE_BENEFIT_CANDIDATE,
     STRUCTURAL_BASE_CASE_IS_NOT_A_LINGUISTIC_ROOT_PROOF,
     STRUCTURAL_PART_IS_NOT_A_SUBSTRING,
     THE_PART_HAS_ITS_OWN_IDENTITY,
@@ -58,6 +60,15 @@ __all__ = [
     "enumerate_shape_partitions",
     "zero_structural_state",
 ]
+
+
+_WHAT_A_SHAPE_PARTITION_IS_NOT: tuple[str, ...] = (
+    SHAPE_PARTITION_HYPOTHESIS_IS_NOT_A_ROOT_CANDIDATE,
+    SHAPE_PARTITION_HYPOTHESIS_IS_NOT_A_WEIGHT_CANDIDATE,
+    SHAPE_PARTITION_HYPOTHESIS_IS_NOT_A_SIGNIFIED_CANDIDATE,
+    SHAPE_PARTITION_HYPOTHESIS_IS_NOT_AN_UTTERANCE_BENEFIT_CANDIDATE,
+)
+"""الأجناسُ الأربعةُ التي لا تُرفَع إليها فرضيّةُ التقسيم في هذا الطور ولا في نتيجته."""
 
 
 class SlotRole(Enum):
@@ -122,6 +133,12 @@ class ShapePartitionHypothesis:
             position for position, value in enumerate(self.roles) if value is role
         )
 
+    @property
+    def what_it_is_not(self) -> tuple[str, ...]:
+        """ما لا تكونه الفرضيّةُ الواحدة: لا جذرًا، ولا وزنًا، ولا مدلولًا، ولا إفادة."""
+
+        return _WHAT_A_SHAPE_PARTITION_IS_NOT
+
     def as_canonical_content(self) -> dict[str, object]:
         """محتوى الفرضيّة للعرض والبصمة."""
 
@@ -172,10 +189,7 @@ class ShapePartitionHypothesisSet:
     def what_it_is_not(self) -> tuple[str, ...]:
         """ما لا تكونه الفرضيّةُ مهما كثرت."""
 
-        return (
-            SHAPE_PARTITION_HYPOTHESIS_IS_NOT_A_ROOT_CANDIDATE,
-            SHAPE_PARTITION_HYPOTHESIS_IS_NOT_A_WEIGHT_CANDIDATE,
-        )
+        return _WHAT_A_SHAPE_PARTITION_IS_NOT
 
 
 @dataclass(frozen=True, slots=True)
