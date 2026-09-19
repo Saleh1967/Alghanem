@@ -5994,6 +5994,46 @@ they keep zero rows with a refused rate rather than being dropped or scored
 100%. That emptiness is the measured argument for the next step: widen the
 corpus, since al-Fātiḥah is narrower than these criteria.
 
+### MAQAYIS becomes the reference of lexical origin — and only that
+
+The origin axis had no settled check, because no analytic reference was
+deposited. But one *is*: the bytes of *Maqāyīs al-Lugha* are in this tree,
+fingerprinted, in `maqayis_root_table_deposit`. So `maqayis_lexical_origin`
+makes MAQAYIS the reference for one question and one only: **is this declared
+root an entry in that deposited lexicon?** The answer is produced by lookup in
+the frozen bytes, so it is a number that can be re-derived.
+
+Run: 5 words, **4 searched, 3 attested, 1 unattested, 1 not licensed**,
+attestation rate 75%. This is the first *linguistic* figure in the tree that is
+neither a byte count nor a shape comparison.
+
+**Attestation is not binding.** MAQAYIS attesting that `ضلل` is an entry does
+not say that `الضَّالِّينَ` derives from it. The first is an occurrence in a
+fingerprinted table; the second is a derivation claim about a particular word,
+and the second does not follow from the first. So every row carries
+`BindingStanding.NOT_ESTABLISHED_NO_MORPHOLOGY_RAN`, and the established
+member cannot be written — the dataclass refuses it.
+
+**Finding a root is not understanding a word.** Even if every declared root
+were attested, nothing would yet be known about whether the word is jāmid,
+maṣdar or mushtaqq, nor its pattern, nor its iʿrāb. Establishing form and
+classification is morphological work that has not run, and it is enumerated —
+not deferred vaguely — in `MORPHOLOGICAL_WORK_STILL_OWED`: 4 questions per
+searched word, **16 outstanding**.
+
+**The candidate roots are declared, not derived.** There is no root extractor
+in this pipeline. Deriving a root here and then checking it against the lexicon
+would be measuring the tree against itself, so the roots are written by hand as
+test targets and only their *occurrence* is measured.
+
+**The one miss is reported as it came out.** `هدي` written with yāʾ is not an
+entry; the lexicon writes that root `هدى` with alif maqṣūra. The declared string
+was not swapped after seeing the result. The cause is named instead:
+attestation is sensitive to how the *reference itself* spells its roots — a
+limit on the measurement, written down rather than absorbed into the rate. And
+a word with no licensed root analysis, `الَّذِينَ`, leaves the denominator by
+declaration rather than by omission, so it is never scored as a failed search.
+
 ### The next number is the population, not the rate
 
 29 tokens is a small population, and raising a saturated rate produces no

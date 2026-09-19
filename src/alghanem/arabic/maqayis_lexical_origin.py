@@ -311,9 +311,7 @@ class LexicalOriginReport:
         owed = {debt.word_key for debt in self.debts}
         searched = {row.item.key for row in self.rows if row.searched}
         if owed != searched:
-            raise LexicalOriginError(
-                "كلُّ كلمةٍ بُحث عن جذرها يبقى عليها دَينٌ صرفيٌّ مكتوب"
-            )
+            raise LexicalOriginError("كلُّ كلمةٍ بُحث عن جذرها يبقى عليها دَينٌ صرفيٌّ مكتوب")
 
     @property
     def searched_total(self) -> int:
@@ -352,8 +350,7 @@ class LexicalOriginReport:
         return sum(
             1
             for row in self.rows
-            if row.binding
-            is BindingStanding.ESTABLISHED_BY_A_MORPHOLOGICAL_DERIVATION
+            if row.binding is BindingStanding.ESTABLISHED_BY_A_MORPHOLOGICAL_DERIVATION
         )
 
     @property
@@ -369,9 +366,7 @@ class LexicalOriginReport:
         raise LexicalOriginError(f"لا صفَّ للكلمة {word_key!r}")
 
 
-def attested_root_types(
-    root_string: str, root: Path | None = None
-) -> tuple[str, ...]:
+def attested_root_types(root_string: str, root: Path | None = None) -> tuple[str, ...]:
     """أنواعُ الجذر كما كتبها الملفُّ لهذه السلسلة، أو لا شيءَ إن لم تقع فيه."""
 
     if not root_string.strip():
