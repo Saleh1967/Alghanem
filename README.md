@@ -6973,6 +6973,62 @@ refutation holds on a designed domain of chosen words, so it disposes of the
 determination claim without proving that no other ladder, built from other
 recorded fields, could determine the syllable.
 
+## A carrier-state laboratory under all three contextual laws
+
+`src/alghanem/arabic/carrier_state_birth_experiment.py` runs ibtida, wasl and
+waqf as **partial operations**, not as properties of a single occurrence. Ibtida
+regulates *entry* into the structure, wasl regulates *transition* across the
+boundary between two structures, and waqf regulates *closure* at the last
+boundary. Every application row carries its entry state, exit state, **site of
+change**, preserved invariant, discriminating difference, effect, evidence and
+residue; a row missing its site of change or its preserved invariant is refused
+at construction.
+
+**The laws are a reference, not a proof.** `THE_THREE_LAWS` is imported from
+`ibtida_wasl_waqf_registration` by identity — a copied text is refused — and the
+import leaves the deposited standing `مُورَدة_بلا_مصدرٍ_مُسمًّى` untouched.
+
+**Required laws are separated from laws that have witnesses.** `REQUIRED_LAWS`
+is frozen before the run and always holds all three. A law with no witness is
+not dropped from the completeness criterion; it is recorded `DEFER` **under a
+named blocker**. Dropping it would narrow the question rather than answer it.
+
+**No pass on a poor domain.** `∀k: ker T_k ⊆ ker F_k` is vacuously true on an
+empty domain, and equally vacuous on a domain where the independent target never
+separates two contexts. So a falsifiability gate precedes the verdict: an empty
+domain and an undiscriminating domain both yield `DEFER`, and a pass is recorded
+together with the number of discriminating pairs it actually survived, so a thin
+pass is not read as a wide one.
+
+**Target independence is set by the kind of claim.** An orthographic claim takes
+a target measured from the digested source by an instrument separate from the
+candidate representation — no gloss registry is required for it. A phonetic
+claim requires a performance witness naming reading, dialect and context. A
+semantic claim requires an independent gloss. The representation itself and the
+in-tree syllabifier are refused as target provenances at construction.
+
+**Genus, attribute and attribution are pre-syllable only.** Genus is the written
+carrier class, attribute is its measured state on the frozen axes, and
+attribution is the attachment of the state to the carrier. `StateAttribution`
+has no predicate field at all, so no grammatical or semantic attribution can be
+imported into this layer from `minimal_complete_fiber`.
+
+**Completeness is conditioned on coverage.** On the deposited Fatiha the run
+passes ibtida over `29` entry contexts and `210` discriminating pairs, and
+defers wasl and waqf for want of an independent target — so the aggregate is
+`DEFER`, not `PASS`, and no complete certificate is granted. The run also
+records that the **weaker alternatives also pass**: carrier identity alone, and
+measured state alone, each separate every discriminating pair on this domain, so
+neither part of the attribution is necessary here. That is a recorded outcome,
+not a defect engineered away; and both instruments read the same written marks,
+so the containment is closer to analysis than to prediction.
+
+**Three outputs, separated by type.** A *candidate* orthographic carrier-state
+that is not born, a phonetic carrier-state **deferred by construction** — its
+only constructor takes a `PerformanceWitness`, and none is deposited — and a
+syllable with no birth certificate. There is no promotion path between them, and
+no authority is inherited by the syllable or by the syntax.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
