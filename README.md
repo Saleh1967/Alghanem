@@ -6625,6 +6625,44 @@ corpus is *not* undeposited. Its name, byte length, SHA-256 and its explicit
 `compression_model_preregistration`. It is unnormalized **by declaration**, and
 what is missing is the bytes, on purpose — not the fingerprint.
 
+## From encoding geometry to a candidate, and not one step further
+
+The deeper proposal is that the fiber may be a *principle* organizing identity
+and transformation across levels of the algebra, rather than a technique for
+encoding vowel marks — a move from encoding geometry to a candidate
+transformation algebra, without promoting a measurement to a birth certificate
+before the proof is complete.
+`src/alghanem/arabic/fiber_organizing_principle.py` deposits exactly that, and
+nothing above it.
+
+**Candidacy is the only standing the vocabulary offers.** `HypothesisStanding`
+has one member; `is_born` returns false by construction, not by current state;
+and dropping or repeating one of the four obligations is refused, because a
+silently missing obligation reads as a discharged one.
+
+**The alif result is a witness of four readings, not one.** Read live: two hold
+by measurement, one is *admissible but chosen* — a modelling decision, not a
+measurement — and one is **refuted**. Citing "the alif" wholesale imports a
+refuted reading into the evidence. And the witness carries its own blocker: the
+madd axis is frozen as deferred, and the alif is the carrier most likely to bear
+it, so its neutrality may be an artifact of deferring the one axis on which it
+alone varies.
+
+**Generality is checked, not assumed.** The alif's property — fiber = {identity}
+— holds for **1 of 23** carriers. But the identity state itself participates in
+the fibers of **4 of 23**: `ا`, `ل`, `و`, `ي`. That is neither a single case nor
+a general law. That those four are exactly the weak letters plus the definite
+article's lam is recorded as an observation and explicitly not explained here.
+
+**The four obligations stand four different ways**, each with a written
+discharge condition. Generality: attempted, undischarged. `RefineSlot`
+necessity: refuted as stated. End-to-end utility: not attempted, because the
+decomposition theorem reads the codec it rebuilds through. CV birth: **barred**,
+not deferred — the import guard in `vv_birth_preregistration` rejects the
+pre-registration whenever the readout module merely *exists*, so the readout
+cannot be written while the guard stands. That is a structure in the tree, not a
+gap in the evidence.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
