@@ -14,6 +14,11 @@ from pathlib import Path
 
 import pytest
 
+from alghanem.structural_bridge import (
+    BitPosition,
+    bridge_two_bits,
+    compare_with_the_path,
+)
 from alghanem.structural_dal import (
     FORBIDDEN_NAME_FRAGMENTS,
     SHAPE_PARTITION_HYPOTHESIS_IS_NOT_A_ROOT_CANDIDATE,
@@ -396,20 +401,37 @@ def test_no_arabic_module_reads_the_zero_one_structural_algebra() -> None:
     assert readers == []
 
 
-def test_no_module_outside_the_algebra_joins_it_to_a_benefit() -> None:
-    """لا وحدةَ خارج الجبر تجمع بينه وبين الإفادة، فلا تُدَّعى إفادةٌ مُشتَقّةٌ منه."""
+def test_only_the_named_bridge_joins_this_algebra_to_a_benefit() -> None:
+    """جسرٌ واحدٌ مُسمًّى يجمع الجبرَ بالإفادة، وهو نفسُه يُثبِت أنّه لا يمسُّها."""
 
     source = Path("src/alghanem").resolve()
     algebra = source / "structural_dal"
-    offenders = sorted(
-        path.name
+    joiners = sorted(
+        str(path.relative_to(source))
         for path in source.rglob("*.py")
         if algebra not in path.parents
         and "structural_dal" in (text := path.read_text(encoding="utf-8")).lower()
         and "ifada" in text.lower()
     )
 
-    assert offenders == []
+    assert joiners == ["structural_bridge/byte_slot_bridge.py"]
+
+
+def test_the_named_bridge_derives_no_benefit_of_its_own() -> None:
+    """الجسرُ المُسمّى لا يشتقُّ إفادةً: يُساق المصدرُ قبله وبعده فلا يتغيّر شيء."""
+
+    bridge = bridge_two_bits(
+        "اللَّهُ نُورٌ".encode(),
+        BitPosition(byte_index=0, bit_index=0),
+        BitPosition(byte_index=1, bit_index=7),
+    )
+    comparison = compare_with_the_path(bridge)
+
+    assert comparison.the_whole_run_is_unchanged
+    assert not hasattr(bridge, "ifada")
+    assert SHAPE_PARTITION_HYPOTHESIS_IS_NOT_AN_UTTERANCE_BENEFIT_CANDIDATE in (
+        bridge.what_it_is_not
+    )
 
 
 def test_inside_the_algebra_a_benefit_is_named_only_to_be_refused() -> None:
