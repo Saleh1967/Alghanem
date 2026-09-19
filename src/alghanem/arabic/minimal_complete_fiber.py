@@ -30,13 +30,19 @@
 يملك ما يفرّق به بين حالتين دمجهما التمثيل. والضرورةُ تُقاس بإجراء التجربة
 نفسِها على `T_{-i}` بأفضلِ قارئٍ ممكنٍ على مخرجاتها. وجنسُ المجال **مُشتَقٌّ لا مكتوب**:
 لا حقلَ يُعلِن فيه صاحبُ المجال أنّه «لغويٌّ مُعلَن»؛ بل يُرفَع إلى ذلك متى
-وُثِّقت كلُّ حالةٍ فيه بمدوّنةٍ مُسجَّلةٍ في الشجرة **تُعاد حوسبةُ بصمتها عند
-كلّ فحص**، وإلّا فهو مصمَّم. فبوّابةُ الشهادة لا تُفتَح بالتسمية
-(`A_DOMAIN_KIND_IS_DERIVED_FROM_ATTESTATIONS_NOT_WRITTEN`). والمجالُ المُجرَى
-عليه ههنا مصمَّمٌ لاختبار التمثيل — صفرٌ من حالاته موثَّق — فقيامُ المعيار
-عليه حكمٌ على مجاله وحدَه
+وُثِّقت كلُّ حالةٍ فيه توثيقًا يتحقّق من **ثلاث جهاتٍ مترابطة**: تطابقُ بصمة
+مصدرٍ مُسجَّلٍ تُعاد حوسبتُها عند كلّ فحص، ووقوعٌ **يُحَلّ** عند محدِّد موضعٍ
+صالحٍ فيطابق مرساةَ الحالة، ووسمٌ من **جهةٍ غيرِ مُعلِن المجال** يربط ذلك
+الوقوعَ بالجنس والمحمول والمضمون المقصود. وسقوطُ جهةٍ منها يُبقي المجالَ
+مصمَّمًا أو **غيرَ محسوم**، ولا تُجبَر جهةٌ بأخرى: فشهادةُ ورود اللفظ ليست
+شهادةَ صحّةِ تفسيره (`AN_OCCURRENCE_IS_NOT_A_GLOSS`)، ووسمٌ يكتبه صاحبُ الدعوى
+على دعواه مردودٌ بالبناء (`A_SELF_AUTHORED_GLOSS_IS_REFUSED`). فبوّابةُ الشهادة
+لا تُفتَح بالتسمية (`A_DOMAIN_KIND_IS_DERIVED_FROM_ATTESTATIONS_NOT_WRITTEN`).
+والمجالُ المُجرَى عليه ههنا مصمَّمٌ لاختبار التمثيل — صفرٌ من حالاته موثَّق —
+فقيامُ المعيار عليه حكمٌ على مجاله وحدَه
 (`A_DESIGNED_DOMAIN_IS_NOT_A_LINGUISTIC_CERTIFICATE`)، وقارئُ الجدول يثبت
-تباينَ التمثيل لا فهمَه (`A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING`).
+تباينَ التمثيل لا فهمَه (`A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING`)
+فلا يُغلِق شرطَ القارئ المستقلّ ولو قامت به الكفاية.
 
 **والشواهدُ العربيّةُ الثلاثةُ تُجرى بمقامٍ مثبَّتٍ وتوافقٍ نوعيٍّ مفحوص**:
 «عينٌ غائرة» بجنسَي البصر والماء لحذف التصنيف، و«زيد طويل/قصير» لحذف المحمول،
@@ -59,9 +65,13 @@
 (`ZERO_IS_AN_UNNAMED_RELATION_NOT_AN_EMPTY_FIBER`).
 
 **والإغلاقُ لا يُعلَن**: قائمةُ التدقيق سبعةُ شروطٍ، وكلُّ شرطٍ يُقرَأ من
-شاهدٍ موثَّقٍ لا من إرجاعٍ ثابت؛ فما أُجري منها على مجالٍ مصمَّمٍ يُعَدّ
-**محاولةً مُجراةً** ولا يستوفي شرطًا، ولا يُستوفى شرطٌ إلّا بشاهدٍ على مجالٍ
-لغويٍّ مُعلَن. فالمستوفى **صفرٌ** مُشتقًّا بقراءة الشواهد لا مكتوبًا. وما
+**نتيجة تجربته المعيّنة** وسندِها معًا: شاهدٌ مُجرًى، ونتيجةٌ تُغلِق ذلك الشرطَ
+بعينه، ومجالٌ لغويٌّ مُعلَنٌ مفحوصُ التوثيق. فلا يُستوفى شرطٌ بمجالٍ موثَّقٍ
+وتجربةٍ فاشلة، ولا بتجربةٍ ناجحةٍ على مجالٍ مصمَّم، ولا بشاهدٍ نجح في تجربةِ
+مكوّنٍ غيرِ المكوّن الذي يُسأل عنه الشرط. فالمستوفى **صفرٌ** مُشتقًّا بالتشغيل
+لا مكتوبًا. واستيفاؤها جميعًا — لو وقع — فحصٌ مسجَّلٌ لا شهادةٌ صادرة؛ فإصدارُ
+الشهادة تفويضٌ إلى جهةٍ حاكمةٍ خطوةً مستقلّة
+(`A_RECORDED_CONDITION_IS_NOT_AN_ISSUED_CERTIFICATE`). وما
 يثبت — لو ثبت — حدٌّ أدنى **بالنسبة إلى**
 المكوّنات المرشَّحة وصنفِ البدائل المختبَر، لا إلزامٌ لكلّ ترميزٍ بثلاثة حقولٍ
 منفصلة (`THE_MINIMUM_IS_RELATIVE_TO_THE_TESTED_ALTERNATIVES`).
@@ -79,9 +89,35 @@ from typing import Final
 
 from .fatiha_source_text import FATIHA_SOURCE_ID
 from .fatiha_source_text import source_sha256 as fatiha_source_sha256
+from .gloss_registry import (
+    GlossEntry,
+    GlossRegistry,
+    SourceLocator,
+    in_tree_gloss_registry,
+    normalize,
+    resolve_locator,
+)
 
 __all__ = [
     "AN_ATTESTED_CORPUS_IS_NOT_A_SUFFICIENT_SAMPLE",
+    "AN_OCCURRENCE_IS_NOT_A_GLOSS_NOTE",
+    "A_RECORDED_CONDITION_IS_NOT_AN_ISSUED_CERTIFICATE_NOTE",
+    "A_SELF_AUTHORED_GLOSS_IS_REFUSED_NOTE",
+    "AttestationStanding",
+    "ConditionRunKind",
+    "ProvenancedReader",
+    "ReaderRuleOrigin",
+    "SealedReaderRule",
+    "a_rule_sealed_before_any_case",
+    "a_rule_trained_on",
+    "hold_out_reader",
+    "ReaderProvenance",
+    "the_deposited_gloss_registry",
+    "NO_EVIDENCE_KIND_HERE_CLOSES",
+    "THE_DOMAIN_DECLARER_ID",
+    "assess_attestation",
+    "reader_provenance_of",
+    "requirement_is_closed_by",
     "A_DOMAIN_KIND_IS_DERIVED_FROM_ATTESTATIONS_NOT_WRITTEN",
     "A_COLLISION_IN_THE_REPRESENTATION_IS_NOT_A_COLLISION_IN_CONTEXT_NOTE",
     "A_DESIGNED_DOMAIN_IS_NOT_A_LINGUISTIC_CERTIFICATE_NOTE",
@@ -316,7 +352,22 @@ class DomainKind(Enum):
     """جنسُ المجال، **مُشتقًّا** من شواهد حالاته لا مكتوبًا عليه."""
 
     DESIGNED_DOMAIN = "مجالٌ_مصمَّمٌ_لاختبار_التمثيل"
+    UNDECIDED_DOMAIN = "مجالٌ_ادُّعي_توثيقُه_ولم_يُحسَم"
     DECLARED_LINGUISTIC_DOMAIN = "مجالٌ_لغويٌّ_مُعلَنٌ_ومُبصَّم"
+
+
+class AttestationStanding(Enum):
+    """حالُ توثيق حالةٍ بعد **فحصٍ مُجرًى** على ثلاث جهاتٍ مترابطة."""
+
+    NO_ATTESTATION_OFFERED = "لا_شاهدَ_ورودٍ_مُقدَّم"
+    SOURCE_IS_NOT_REGISTERED = "مصدرٌ_ليس_مُسجَّلًا_في_الشجرة"
+    SOURCE_DIGEST_DOES_NOT_MATCH = "بصمةُ_المصدر_لا_تُطابِق"
+    LOCATOR_DOES_NOT_RESOLVE = "محدِّدُ_الموضع_لا_يُحَلّ"
+    OCCURRENCE_DOES_NOT_MATCH_THE_ANCHOR = "الوقوعُ_لا_يُطابِق_المرساة"
+    NO_GLOSS_AT_THIS_LOCATOR = "لا_وسمَ_عند_هذا_الموضع"
+    THE_GLOSS_IS_AUTHORED_BY_THE_DOMAIN_DECLARER = "الوسمُ_كتبه_مُعلِنُ_المجال"
+    THE_GLOSS_DISAGREES_WITH_THE_CASE = "الوسمُ_يخالف_جنسَ_الحالة_أو_محمولَها_أو_مضمونَها"
+    ATTESTED_BY_AN_INDEPENDENT_GLOSS = "موثَّقةٌ_بوسمٍ_من_جهةٍ_غيرِ_مُعلِن_المجال"
 
 
 def registered_corpus_digests() -> dict[str, str]:
@@ -331,17 +382,23 @@ def registered_corpus_digests() -> dict[str, str]:
 
 @dataclass(frozen=True, slots=True)
 class CaseAttestation:
-    """شاهدُ ورودٍ لحالة: مدوّنةٌ مُسجَّلةٌ، وبصمتُها، وموضعُ الورود فيها."""
+    """شاهدُ ورودٍ لحالة: مدوّنةٌ مُسجَّلةٌ، وبصمتُها، وموضعُ الورود فيها.
+
+    وموضعُه **محدِّدٌ يُحَلّ** لا نصٌّ يُقرَأ: سطرٌ ومجالٌ نصفُ مفتوحٍ بنقاط
+    الشفرة بعد التسوية المُعلَنة؛ فلا يُكتفى بكون الموضع نصًّا غيرَ فارغ.
+    """
 
     source_id: str
     source_sha256: str
-    locator: str
+    locator: SourceLocator
 
     def __post_init__(self) -> None:
         if not self.source_id.strip():
             raise MinimalCompleteFiberError("شاهدُ ورودٍ بلا مصدرٍ مُسمًّى")
-        if not self.locator.strip():
-            raise MinimalCompleteFiberError("شاهدُ ورودٍ بلا موضعٍ في مصدره لا يُراجَع")
+        if not isinstance(self.locator, SourceLocator):
+            raise MinimalCompleteFiberError(
+                "شاهدُ ورودٍ بموضعٍ لا يُحَلّ؛ والموضعُ محدِّدٌ مفحوصٌ لا عبارةٌ مكتوبة"
+            )
         if len(self.source_sha256) != 64 or any(
             character not in "0123456789abcdef" for character in self.source_sha256
         ):
@@ -350,10 +407,22 @@ class CaseAttestation:
             )
 
     @property
-    def is_verified_against_the_tree(self) -> bool:
+    def digest_matches_the_tree(self) -> bool:
         """أوافقت بصمتُه بصمةَ مدوّنةٍ مُسجَّلةٍ محسوبةً الآن؟ لا يُقرَأ من اسمه."""
 
         return registered_corpus_digests().get(self.source_id) == self.source_sha256
+
+    @property
+    def source_is_registered(self) -> bool:
+        """أهذا المصدرُ مُسجَّلٌ في الشجرة أصلًا؟ يُفحَص قبل البصمة."""
+
+        return self.source_id in registered_corpus_digests()
+
+    @property
+    def resolved_surface(self) -> str | None:
+        """السطحُ الواقعُ عند الموضع، محلولًا الآن؛ وتعذُّرُ الحلّ `None` مُسمًّى."""
+
+        return resolve_locator(self.source_id, self.locator)
 
 
 @dataclass(frozen=True, slots=True)
@@ -377,26 +446,75 @@ class DomainCase:
                 "محمولٌ خارجَ `P(g)`؛ والتوافقُ النوعيُّ شرطُ دخولِ المجال"
             )
 
-    @property
-    def is_attested_in_the_tree(self) -> bool:
-        """أهي واردةٌ في مدوّنةٍ مُسجَّلةٍ ببصمةٍ مُوافِقة؟ يُفحَص ولا يُعلَن."""
+    def gloss_agrees(self, gloss: GlossEntry) -> bool:
+        """أيوافق الوسمُ جنسَ الحالة ومحمولَها ومضمونَ إفادتها جميعًا؟"""
 
         return (
-            self.attestation is not None
-            and self.attestation.is_verified_against_the_tree
+            normalize(gloss.genus.strip()) == normalize(self.element.genus.strip())
+            and normalize(gloss.predicate.strip())
+            == normalize(self.element.predicate.strip())
+            and normalize(gloss.content.strip()) == normalize(self.content.strip())
         )
+
+
+def assess_attestation(
+    case: DomainCase, declarer_id: str, registry: GlossRegistry
+) -> AttestationStanding:
+    """افحص توثيقَ حالةٍ على ثلاث جهاتٍ مترابطة، وسمِّ أوّلَ ما تخلّف منها.
+
+    الجهاتُ: تطابقُ بصمة المصدر المُسجَّل، ووقوعٌ **يُحَلّ** عند محدِّد موضعٍ
+    صالحٍ يطابق مرساةَ الحالة، ووسمٌ مستقلٌّ عن مُعلِن المجال يربط ذلك الوقوعَ
+    بالجنس والمحمول والمضمون المقصود. وسقوطُ واحدةٍ يمنع الرفعَ إلى موثَّقة،
+    ولا تُجبَر جهةٌ بأخرى (`AN_OCCURRENCE_IS_NOT_A_GLOSS`).
+    """
+
+    attestation = case.attestation
+    if attestation is None:
+        return AttestationStanding.NO_ATTESTATION_OFFERED
+    if not attestation.source_is_registered:
+        return AttestationStanding.SOURCE_IS_NOT_REGISTERED
+    if not attestation.digest_matches_the_tree:
+        return AttestationStanding.SOURCE_DIGEST_DOES_NOT_MATCH
+    surface = attestation.resolved_surface
+    if surface is None:
+        return AttestationStanding.LOCATOR_DOES_NOT_RESOLVE
+    if normalize(surface) != normalize(case.element.anchor):
+        return AttestationStanding.OCCURRENCE_DOES_NOT_MATCH_THE_ANCHOR
+    gloss = registry.lookup(attestation.source_id, attestation.locator)
+    if gloss is None:
+        return AttestationStanding.NO_GLOSS_AT_THIS_LOCATOR
+    if registry.authority_id.strip() == declarer_id.strip():
+        return AttestationStanding.THE_GLOSS_IS_AUTHORED_BY_THE_DOMAIN_DECLARER
+    if not case.gloss_agrees(gloss):
+        return AttestationStanding.THE_GLOSS_DISAGREES_WITH_THE_CASE
+    return AttestationStanding.ATTESTED_BY_AN_INDEPENDENT_GLOSS
+
+
+def the_deposited_gloss_registry() -> GlossRegistry:
+    """سجلُّ الوسم المُودَع في الشجرة، مقروءًا الآن ببصمةٍ مُعادةِ الحوسبة."""
+
+    return in_tree_gloss_registry()
 
 
 @dataclass(frozen=True, slots=True)
 class DeclaredDomain:
-    """`𝒟` مع `F`: مجالٌ مُعلَنٌ قبل التجربة، وجنسُه **مُشتَقٌّ** لا مكتوب."""
+    """`𝒟` مع `F`: مجالٌ مُعلَنٌ قبل التجربة، وجنسُه **مُشتَقٌّ** لا مكتوب.
+
+    و`declarer_id` هويّةُ مُعلِن المجال؛ تُكتَب لتُقارَن بجهة الوسم، فيُردّ وسمٌ
+    كتبه صاحبُ الدعوى على دعواه (`A_SELF_AUTHORED_GLOSS_IS_REFUSED`).
+    """
 
     identifier: str
+    declarer_id: str
     cases: tuple[DomainCase, ...]
 
     def __post_init__(self) -> None:
         if not self.identifier.strip():
             raise MinimalCompleteFiberError("مجالٌ بلا اسمٍ لا يُحال عليه")
+        if not self.declarer_id.strip():
+            raise MinimalCompleteFiberError(
+                "مجالٌ بلا مُعلِنٍ مُسمًّى لا تُقارَن جهةُ وسمه به فيُقرَأ مستقلًّا"
+            )
         if not self.cases:
             raise MinimalCompleteFiberError("مجالٌ خالٍ تُثبَت عليه كلُّ دعوى")
         elements = tuple(item.element for item in self.cases)
@@ -405,23 +523,57 @@ class DeclaredDomain:
                 "عنصرٌ تكرّر في المجال؛ والتكرارُ يُخفي تعارضَ المضمون"
             )
 
-    @property
-    def kind(self) -> DomainKind:
-        """جنسُ المجال، مُشتقًّا: لغويٌّ مُعلَنٌ إن وُثِّقت **كلُّ** حالةٍ بمدوّنة.
+    def attestation_standings(
+        self, registry: GlossRegistry | None = None
+    ) -> tuple[AttestationStanding, ...]:
+        """حالُ توثيق كلّ حالةٍ، مفحوصًا الآن على سجلّ وسمٍ مُسمًّى."""
+
+        book = the_deposited_gloss_registry() if registry is None else registry
+        return tuple(
+            assess_attestation(case, self.declarer_id, book) for case in self.cases
+        )
+
+    def kind_against(self, registry: GlossRegistry | None = None) -> DomainKind:
+        """جنسُ المجال على سجلّ وسمٍ مُسمًّى؛ مُشتقًّا بالفحص لا مكتوبًا.
 
         ولا حقلَ يكتب فيه صاحبُ المجال جنسَه؛ فالتسميةُ الكاذبة ليست مرفوضةً
-        بعد وقوعها بل **غيرُ قابلةٍ للقول**.
+        بعد وقوعها بل **غيرُ قابلةٍ للقول**. وما بين المصمَّم واللغويّ المُعلَن
+        منزلةٌ ثالثةٌ مُسمّاة: مجالٌ ادُّعي توثيقُه ولم يُحسَم، فلا يُقرَأ
+        تخلُّفُ جهةٍ من جهات التوثيق تصميمًا يُطمئَنّ إليه.
         """
 
-        if all(case.is_attested_in_the_tree for case in self.cases):
+        standings = self.attestation_standings(registry)
+        if all(
+            item is AttestationStanding.ATTESTED_BY_AN_INDEPENDENT_GLOSS
+            for item in standings
+        ):
             return DomainKind.DECLARED_LINGUISTIC_DOMAIN
-        return DomainKind.DESIGNED_DOMAIN
+        if all(
+            item is AttestationStanding.NO_ATTESTATION_OFFERED for item in standings
+        ):
+            return DomainKind.DESIGNED_DOMAIN
+        return DomainKind.UNDECIDED_DOMAIN
+
+    @property
+    def kind(self) -> DomainKind:
+        """جنسُ المجال على سجلّ الوسم المُودَع في الشجرة."""
+
+        return self.kind_against()
+
+    def attested_case_count_against(self, registry: GlossRegistry | None = None) -> int:
+        """عددُ الحالات الموثَّقة بوسمٍ مستقلٍّ، مُشتقًّا بالعدّ."""
+
+        return sum(
+            1
+            for item in self.attestation_standings(registry)
+            if item is AttestationStanding.ATTESTED_BY_AN_INDEPENDENT_GLOSS
+        )
 
     @property
     def attested_case_count(self) -> int:
-        """عددُ الحالات الموثَّقة بمدوّنةٍ مُسجَّلة، مُشتقًّا بالعدّ."""
+        """عددُ الحالات الموثَّقة على سجلّ الوسم المُودَع."""
 
-        return sum(1 for case in self.cases if case.is_attested_in_the_tree)
+        return self.attested_case_count_against()
 
     @property
     def case_count(self) -> int:
@@ -461,12 +613,167 @@ class SufficiencyStanding(Enum):
     REFUTED_ON_A_DECLARED_DOMAIN = "منتقضةٌ_على_مجالٍ_مُعلَن"
 
 
+class ReaderProvenance(Enum):
+    """منشأُ القارئ، **مُشتقًّا من آليّةٍ** لا موسومًا بيدِ مستدعيه."""
+
+    BUILT_FROM_THE_DOMAIN_TARGET_TABLE = "مبنيٌّ_من_جدول_أهداف_المجال"
+    FIXED_BEFORE_THE_EVALUATION_DATA = "قاعدتُه_مثبَّتةٌ_قبل_بيانات_التقييم"
+    UNDECLARED_PROVENANCE = "منشأٌ_غيرُ_مُعلَن"
+
+
+class ReaderRuleOrigin(Enum):
+    """من أين جاءت قاعدةُ القارئ: من ختمٍ سابقٍ لكلّ حالة، أم من جدولِ حالات."""
+
+    SEALED_BEFORE_ANY_CASE = "مختومةٌ_قبل_كلّ_حالة"
+    A_TABLE_BUILT_FROM_CASES = "جدولٌ_مبنيٌّ_من_حالات"
+
+
+@dataclass(frozen=True, slots=True)
+class SealedReaderRule:
+    """قاعدةُ قراءةٍ مختومةٌ مع **ما رأته من حالات**، محسوبًا لا مُصرَّحًا به.
+
+    ولا يُمرَّر إلى هذه البنية جدولُ ما رآه القارئُ من خارجها: إمّا أن تُختَم
+    قاعدةٌ مغلقةٌ لم تُعطَ حالةً قطّ، وإمّا أن يبنيَ هذا الإيداعُ الجدولَ من
+    شطرِ تدريبٍ مُسمًّى فيعرف بالبناء ما رآه.
+    """
+
+    rule_note: str
+    origin: ReaderRuleOrigin
+    disclosed_elements: frozenset[FiberElement]
+    _rule: Reader
+
+    def __post_init__(self) -> None:
+        if not self.rule_note.strip():
+            raise MinimalCompleteFiberError("قاعدةٌ بلا بيانٍ مكتوبٍ لا تُراجَع")
+        if (
+            self.origin is ReaderRuleOrigin.SEALED_BEFORE_ANY_CASE
+            and self.disclosed_elements
+        ):
+            raise MinimalCompleteFiberError(
+                "قاعدةٌ يُدّعى ختمُها قبل الحالات وقد رأت حالاتٍ؛ والدعوى تناقض بناءها"
+            )
+
+
+def a_rule_sealed_before_any_case(rule: Reader, rule_note: str) -> SealedReaderRule:
+    """اختِم قاعدةً مغلقةً لم تُعطَ حالةً قطّ؛ فما رأته من الحالات خالٍ بالبناء.
+
+    وهذا الختمُ يضبط **مدخلَ** القاعدة لا ذاكرتَها: لا سبيل لهذه الوحدة أن تفحص
+    جوفَ دالّةٍ مكتوبةٍ بلغة البرمجة، فتبقى صحّةُ كونِها مغلقةً مقروءةً من
+    شفرتها لا مبرهنةً ههنا (`A_SEALED_RULE_IS_CHECKED_FOR_OVERLAP_NOT_FOR_MEMORY`).
+    """
+
+    return SealedReaderRule(
+        rule_note=rule_note,
+        origin=ReaderRuleOrigin.SEALED_BEFORE_ANY_CASE,
+        disclosed_elements=frozenset(),
+        _rule=rule,
+    )
+
+
+def a_rule_trained_on(
+    training_domain: DeclaredDomain, representation: Representation, rule_note: str
+) -> SealedReaderRule:
+    """ابنِ جدولَ قراءةٍ من شطر تدريبٍ مُسمًّى؛ وما رآه يُحسَب من بنائه لا يُعلَن.
+
+    والمخرجُ المدموجُ في شطر التدريب يُترَك بلا جواب، فيُردّ عنه نصٌّ فارغٌ
+    يُخالف كلَّ مضمون.
+    """
+
+    table: dict[tuple[str | None, ...], set[str]] = {}
+    for case in training_domain.cases:
+        table.setdefault(representation(case.element), set()).add(case.content)
+    answers = {
+        output: next(iter(contents))
+        for output, contents in table.items()
+        if len(contents) == 1
+    }
+
+    def rule(output: tuple[str | None, ...]) -> str:
+        return answers.get(output, "")
+
+    return SealedReaderRule(
+        rule_note=rule_note,
+        origin=ReaderRuleOrigin.A_TABLE_BUILT_FROM_CASES,
+        disclosed_elements=frozenset(case.element for case in training_domain.cases),
+        _rule=rule,
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class ProvenancedReader:
+    """قارئٌ حُجِب عن مجالِ تقييمٍ مُسمًّى؛ ومنشؤه **مُشتَقٌّ** من الحجب نفسِه.
+
+    فلا حقلَ يُكتَب فيه «مستقلّ»: يُقارَن ما رأته القاعدةُ من حالاتٍ بحالات
+    مجال التقييم، فإن تقاطعا فالقارئُ مبنيٌّ ممّا يُقيَّم عليه، وإن انفصلا
+    فقاعدتُه سابقةٌ لبيانات التقييم بالبناء.
+    """
+
+    rule: SealedReaderRule
+    evaluation_elements: frozenset[FiberElement]
+
+    @property
+    def leaked_elements(self) -> frozenset[FiberElement]:
+        """حالاتُ التقييم التي رأتها القاعدةُ قبلها، مُشتقّةً بالتقاطع."""
+
+        return self.rule.disclosed_elements & self.evaluation_elements
+
+    @property
+    def is_held_out(self) -> bool:
+        """أحُجِب عن مجال تقييمه؟ يُقرَأ من خلوّ التقاطع لا من وصفٍ مكتوب."""
+
+        return not self.leaked_elements
+
+    @property
+    def rule_note(self) -> str:
+        """بيانُ قاعدة القارئ، مقروءًا من ختمها."""
+
+        return self.rule.rule_note
+
+    @property
+    def provenance(self) -> ReaderProvenance:
+        """منشأُ القارئ، مُشتقًّا من آليّة الختم والحجب لا من وسمٍ يُعطى."""
+
+        if not self.is_held_out:
+            return ReaderProvenance.BUILT_FROM_THE_DOMAIN_TARGET_TABLE
+        return ReaderProvenance.FIXED_BEFORE_THE_EVALUATION_DATA
+
+    def __call__(self, output: tuple[str | None, ...]) -> str:
+        return self.rule._rule(output)
+
+
+def reader_provenance_of(reader: Reader) -> ReaderProvenance:
+    """منشأُ القارئ، مُشتقًّا من نوعه؛ وقارئٌ لا يُعلِن منشأه لا يُفترَض مستقلًّا."""
+
+    if isinstance(reader, ProvenancedReader):
+        return reader.provenance
+    return ReaderProvenance.UNDECLARED_PROVENANCE
+
+
+def hold_out_reader(
+    rule: SealedReaderRule, evaluation_domain: DeclaredDomain
+) -> ProvenancedReader:
+    """احجِب قاعدةً مختومةً عن مجال تقييمٍ مُسمًّى، ثمّ اقرأ منشأها من الحجب.
+
+    وهذه هي السبيلُ الوحيدةُ إلى `FIXED_BEFORE_THE_EVALUATION_DATA`: لا تُعطى
+    بالتسمية، وإنّما تُشتَقّ من انفصال ما رأته القاعدةُ عمّا تُقيَّم عليه
+    (`READER_INDEPENDENCE_IS_A_MECHANISM_NOT_A_LABEL`).
+    """
+
+    return ProvenancedReader(
+        rule=rule,
+        evaluation_elements=frozenset(
+            case.element for case in evaluation_domain.cases
+        ),
+    )
+
+
 @dataclass(frozen=True, slots=True)
 class SufficiencyExperimentResult:
     """نتيجةُ تجربةٍ مُجراةٍ: مخرجاتٌ مدموجة، ومواضعُ اختلافِ القارئ عن الهدف."""
 
     domain_identifier: str
     domain_kind: DomainKind
+    reader_provenance: ReaderProvenance
     distinct_output_count: int
     merged_contents: tuple[tuple[str, ...], ...]
     mismatched_contents: tuple[str, ...]
@@ -513,6 +820,7 @@ def run_sufficiency_experiment(
     return SufficiencyExperimentResult(
         domain_identifier=domain.identifier,
         domain_kind=domain.kind,
+        reader_provenance=reader_provenance_of(reader),
         distinct_output_count=len(grouped),
         merged_contents=tuple(merged),
         mismatched_contents=tuple(mismatched),
@@ -528,20 +836,15 @@ def lookup_reader(domain: DeclaredDomain, representation: Representation) -> Rea
     (`A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING`).
     """
 
-    table: dict[tuple[str | None, ...], set[str]] = {}
-    for case in domain.cases:
-        table.setdefault(representation(case.element), set()).add(case.content)
-
-    answers = {
-        output: next(iter(contents))
-        for output, contents in table.items()
-        if len(contents) == 1
-    }
-
-    def reader(output: tuple[str | None, ...]) -> str:
-        return answers.get(output, "")
-
-    return reader
+    return hold_out_reader(
+        a_rule_trained_on(
+            domain,
+            representation,
+            "جدولٌ من مخرجات التمثيل إلى مضمون المجال نفسِه؛ يثبت تباينَ `T` "
+            "ولا يُغلِق شرطَ القارئ المستقلّ بحال",
+        ),
+        domain,
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -686,8 +989,13 @@ THE_DESIGNED_WITNESSES: Final[tuple[NecessityWitnessPair, ...]] = (
 """ثلاثةُ أزواجٍ مصمَّمةٍ، تصادمُها مفحوصٌ عند الإنشاء؛ وهي تصميمٌ لا تنفيذ."""
 
 
+THE_DOMAIN_DECLARER_ID: Final[str] = "alghanem-in-tree-deposit"
+"""مُعلِنُ المجالات المكتوبة ههنا؛ يُسمّى ليُقارَن بجهة الوسم فيُردّ اتّحادُهما."""
+
+
 THE_DECLARED_DOMAIN: Final[DeclaredDomain] = DeclaredDomain(
     identifier="المجالُ المصمَّم لشواهد الحذف الثلاثة",
+    declarer_id=THE_DOMAIN_DECLARER_ID,
     cases=tuple(case for item in THE_DESIGNED_WITNESSES for case in item.cases),
 )
 """`𝒟` مُعلَنٌ بحالاته ومقاماته؛ وهو **مصمَّمٌ** لاختبار التمثيل لا مدوّنةٌ عربيّة."""
@@ -790,18 +1098,25 @@ class MinimalCompleteFiberVerdict:
         )
 
     @property
-    def is_a_linguistic_certificate(self) -> bool:
-        """أهو شهادةٌ لغويّة؟ لا ما دام المجالُ مصمَّمًا لاختبار التمثيل.
+    def meets_the_recorded_certificate_conditions(self) -> bool:
+        """أاستوفى ما سُجِّل ههنا من شروط الشهادة؟ لا ما دام المجالُ مصمَّمًا.
 
-        فالمجالُ المصمَّم يثبت قانونَ التمثيل على ما صُمِّم له، ولا يقوم مقامَ
-        مدوّنةٍ عربيّةٍ مُعلَنةٍ مُبصَّمة
-        (`A_DESIGNED_DOMAIN_IS_NOT_A_LINGUISTIC_CERTIFICATE`).
+        وهذا الجوابُ **تسجيلُ فحصٍ لا إصدارُ شهادة**: استيفاءُ الشروط المسجّلة
+        ههنا لا يُنشئ شهادةً لغويّة، وإصدارُها تفويضٌ إلى جهةٍ حاكمةٍ خطوةً
+        مستقلّةً عن تسجيل الأدلّة وفحصها
+        (`A_RECORDED_CONDITION_IS_NOT_AN_ISSUED_CERTIFICATE`).
         """
 
         return (
             self.domain_kind is DomainKind.DECLARED_LINGUISTIC_DOMAIN
             and self.is_established_on_its_domain
         )
+
+    @property
+    def certificate_issuance_is_delegated(self) -> bool:
+        """أتُصدِر هذه الوحدةُ شهادةً؟ لا — والجوابُ ثابتٌ بالبناء."""
+
+        return True
 
     @property
     def minimality_is_relative_to_the_tested_alternatives(self) -> bool:
@@ -841,13 +1156,27 @@ class ClosureRequirement(Enum):
     EVIDENCE_RANK_AND_RESIDUE_CLOSED = "فحصُ_الدليل_والرتبة_والبقايا_وإغلاقُ_الفشل"
 
 
+class ConditionRunKind(Enum):
+    """جنسُ التجربة التي يُجريها الشاهد؛ ومنها تُقرَأ نتيجتُه لا من جنس مجاله."""
+
+    SUFFICIENCY_ON_THE_FULL_REPRESENTATION = "كفايةٌ_على_التمثيل_الكامل"
+    DELETION_OF_A_NAMED_COMPONENT = "حذفُ_مكوّنٍ_مُسمًّى"
+
+
 @dataclass(frozen=True, slots=True)
 class ConditionEvidence:
-    """شاهدٌ موثَّقٌ لشرطٍ: ما أُجري، وأين سُجِّل، وعلى أيّ جنسٍ من المجالات."""
+    """شاهدٌ موثَّقٌ لشرطٍ: ما أُجري، وأين سُجِّل، وعلى أيّ مجالٍ، وبأيّ تجربة.
+
+    ونتيجتُه **تُجرى عند كلّ قراءة** ولا تُكتَب في حقلٍ بجانبها؛ فشاهدٌ يُعلِن
+    نجاحًا لا يُنتجه تشغيلُه ليس شاهدًا.
+    """
 
     what_was_run: str
     where_it_is_recorded: str
     domain: DeclaredDomain
+    run_kind: ConditionRunKind
+    component: DeletedComponent | None = None
+    reader: Reader | None = None
 
     def __post_init__(self) -> None:
         if not self.what_was_run.strip():
@@ -856,16 +1185,93 @@ class ConditionEvidence:
             raise MinimalCompleteFiberError(
                 "شاهدٌ بلا موضعِ تسجيلٍ لا يُراجَع؛ والمراجعةُ شرطُ التوثيق"
             )
+        if self.run_kind is ConditionRunKind.DELETION_OF_A_NAMED_COMPONENT:
+            if self.component is None:
+                raise MinimalCompleteFiberError(
+                    "تجربةُ حذفٍ بلا مكوّنٍ مُسمًّى لا يُعرَف أيَّ شرطٍ تُغلِق"
+                )
+            if self.reader is not None:
+                raise MinimalCompleteFiberError(
+                    "تجربةُ الحذف تُجرى بأفضلِ قارئٍ على مخرجاتها، فلا يُمرَّر إليها قارئ"
+                )
+        else:
+            if self.component is not None:
+                raise MinimalCompleteFiberError(
+                    "تجربةُ كفايةٍ على التمثيل الكامل لا تُسمّي مكوّنًا محذوفًا"
+                )
+            if self.reader is None:
+                raise MinimalCompleteFiberError(
+                    "تجربةُ كفايةٍ بلا قارئٍ مُسمًّى لا تُقرَأ إعادةَ بناء"
+                )
 
     @property
     def domain_kind(self) -> DomainKind:
         """جنسُ مجال الشاهد، مُشتقًّا من مجاله نفسِه لا مكتوبًا في الشاهد.
 
         فلا يُرفَع شاهدٌ إلى «لغويٍّ مُعلَن» بكتابة جنسه؛ يُرفَع بتوثيق كلّ
-        حالةٍ من حالات مجاله بمدوّنةٍ مُسجَّلةٍ في الشجرة ببصمةٍ مُوافِقة.
+        حالةٍ من حالات مجاله توثيقًا مفحوصَ البصمة والموضع والوسم.
         """
 
         return self.domain.kind
+
+    @property
+    def outcome(self) -> SufficiencyExperimentResult:
+        """نتيجةُ التجربة، **مُجراةً الآن** لا مقروءةً من حقلٍ مكتوب."""
+
+        if self.run_kind is ConditionRunKind.DELETION_OF_A_NAMED_COMPONENT:
+            assert self.component is not None
+            return necessity_deletion_experiment(self.component, self.domain)
+        assert self.reader is not None
+        return run_sufficiency_experiment(self.domain, full_representation, self.reader)
+
+
+_NECESSITY_REQUIREMENTS: Final[dict[ClosureRequirement, DeletedComponent]] = {
+    ClosureRequirement.CLASSIFICATION_NECESSARY_OR_DERIVABLE: (
+        DeletedComponent.CLASSIFICATION
+    ),
+    ClosureRequirement.PREDICATE_NECESSARY: DeletedComponent.PREDICATE,
+    ClosureRequirement.ATTRIBUTION_NECESSARY_WITH_ITS_SCOPE: DeletedComponent.RELATION,
+}
+"""أيُّ شرطِ ضرورةٍ يُغلَق بتجربة حذفِ أيِّ مكوّنٍ بعينه؛ ولا يُغلِقه سواه."""
+
+
+NO_EVIDENCE_KIND_HERE_CLOSES: Final[frozenset[ClosureRequirement]] = frozenset(
+    {
+        ClosureRequirement.FUNCTION_AND_DOMAIN_FIXED_BEFOREHAND,
+        ClosureRequirement.WEAKER_ALTERNATIVES_EXHAUSTED,
+        ClosureRequirement.EVIDENCE_RANK_AND_RESIDUE_CLOSED,
+    }
+)
+"""شروطٌ لا يُغلِقها جنسُ شاهدٍ مُعرَّفٌ في هذه الوحدة، فتبقى مفتوحةً بالبناء."""
+
+
+def requirement_is_closed_by(
+    requirement: ClosureRequirement, evidence: ConditionEvidence
+) -> bool:
+    """أتُغلِق نتيجةُ هذا الشاهد هذا الشرطَ بعينه؟ يُقرَأ من التشغيل لا من المجال.
+
+    * شرطُ إعادة البناء: كفايةٌ **قائمة** بقارئٍ مثبَّتةٍ قاعدتُه قبل البيانات؛
+      وقارئُ الجدول لا يُغلِقه ولو قامت به الكفاية.
+    * شروطُ الضرورة الثلاثة: نقضٌ في تجربة حذفِ **ذلك المكوّن بعينه**.
+    * ما عداها: لا يُغلِقه جنسُ شاهدٍ ههنا.
+    """
+
+    if requirement in NO_EVIDENCE_KIND_HERE_CLOSES:
+        return False
+    outcome = evidence.outcome
+    if requirement is ClosureRequirement.CONTENT_REBUILT_FROM_THE_OUTPUT_ALONE:
+        return (
+            evidence.run_kind is ConditionRunKind.SUFFICIENCY_ON_THE_FULL_REPRESENTATION
+            and outcome.standing is SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN
+            and outcome.reader_provenance
+            is ReaderProvenance.FIXED_BEFORE_THE_EVALUATION_DATA
+        )
+    expected = _NECESSITY_REQUIREMENTS[requirement]
+    return (
+        evidence.run_kind is ConditionRunKind.DELETION_OF_A_NAMED_COMPONENT
+        and evidence.component is expected
+        and outcome.standing is SufficiencyStanding.REFUTED_ON_A_DECLARED_DOMAIN
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -893,15 +1299,19 @@ class ChecklistCondition:
 
     @property
     def is_satisfied(self) -> bool:
-        """أاستُوفي؟ يُقرَأ من الشاهد الموثَّق: مجالٌ لغويٌّ مُعلَنٌ لا مصمَّم.
+        """أاستُوفي؟ يُقرَأ من **نتيجة تجربته** وسندِها معًا لا من جنس المجال.
 
-        فالجوابُ مُشتقٌّ من البيانات، ولا يُرجَع `False` دائمًا؛ وشاهدٌ على مجالٍ
-        مصمَّمٍ يُسجَّل محاولةً مُجراةً، ولا يُرقّى شهادةً لغويّة.
+        فيلزم ثلاثةٌ مجتمعة: شاهدٌ مُجرًى، ونتيجةٌ تُغلِق هذا الشرطَ بعينه،
+        ومجالٌ لغويٌّ مُعلَنٌ مفحوصُ التوثيق. وسقوطُ واحدةٍ يُبقي الشرطَ مفتوحًا،
+        فلا يُستوفى شرطٌ بمجالٍ موثَّقٍ وتجربةٍ فاشلة، ولا بتجربةٍ ناجحةٍ على
+        مجالٍ مصمَّم.
         """
 
+        evidence = self.evidence
         return (
-            self.evidence is not None
-            and self.evidence.domain_kind is DomainKind.DECLARED_LINGUISTIC_DOMAIN
+            evidence is not None
+            and evidence.domain_kind is DomainKind.DECLARED_LINGUISTIC_DOMAIN
+            and requirement_is_closed_by(self.requirement, evidence)
         )
 
 
@@ -957,6 +1367,8 @@ A_DESIGNED_RUN: Final[ConditionEvidence] = ConditionEvidence(
     ),
     where_it_is_recorded="`run_sufficiency_experiment` و`THE_DECLARED_DOMAIN`",
     domain=THE_DECLARED_DOMAIN,
+    run_kind=ConditionRunKind.SUFFICIENCY_ON_THE_FULL_REPRESENTATION,
+    reader=THE_REFERENCE_READER,
 )
 """شاهدُ إجراءٍ على المجال المُعلَن؛ وجنسُه مُشتَقٌّ منه، لا مكتوبٌ فيه."""
 
@@ -973,6 +1385,8 @@ def _deletion_run(component: DeletedComponent) -> ConditionEvidence:
             "`necessity_deletion_experiment` و`THE_DESIGNED_WITNESSES`"
         ),
         domain=THE_DECLARED_DOMAIN,
+        run_kind=ConditionRunKind.DELETION_OF_A_NAMED_COMPONENT,
+        component=component,
     )
 
 
@@ -1143,9 +1557,32 @@ AN_ATTESTED_CORPUS_IS_NOT_A_SUFFICIENT_SAMPLE: Final[str] = (
     "فالفاتحةُ نصٌّ واحدٌ قصير، وقيامُ المعيار عليها حكمٌ عليها لا على العربية"
 )
 
+AN_OCCURRENCE_IS_NOT_A_GLOSS_NOTE: Final[str] = (
+    "AnOccurrenceIsNotAGloss: شهادةُ ورودِ اللفظ ليست شهادةَ صحّةِ تفسيره. "
+    "فقد يُثبَت أنّ «عين» وقعت في موضعٍ مُحدَّدٍ من مدوّنةٍ مُبصَّمة، ويبقى "
+    "تعيينُ جنسها ومحمولها ومضمونها محتاجًا إلى وسمٍ من جهةٍ غيرِ صاحب الدعوى؛ "
+    "ولا تصلح مدوّنةُ الفاتحة سندًا لحالة «زيد طويل» بإلحاق بصمتها بها"
+)
+
+A_SELF_AUTHORED_GLOSS_IS_REFUSED_NOTE: Final[str] = (
+    "ASelfAuthoredGlossIsRefused: وسمٌ جهتُه هي مُعلِنُ المجال نفسُه يُردّ "
+    "بالبناء، ولا يُرقّى مجالُه إلى لغويٍّ مُعلَن؛ وفصلُ ملفّ الوسم وإبصامُه "
+    "يمنعان التبدّلَ الصامت ولا يُنشئان جهةً مستقلّة. وإذا تعذّر وسمٌ مرجعيٌّ "
+    "صحيحٌ بقي المجالُ مصمَّمًا أو غيرَ محسوم، ولا يُصطنَع شاهدٌ لاستيفاء شرط"
+)
+
+A_RECORDED_CONDITION_IS_NOT_AN_ISSUED_CERTIFICATE_NOTE: Final[str] = (
+    "ARecordedConditionIsNotAnIssuedCertificate: استيفاءُ الشروط السبعة "
+    "المسجّلة ههنا فحصٌ مُجرًى لا شهادةٌ صادرة؛ وإصدارُ الشهادة تفويضٌ إلى جهةٍ "
+    "حاكمةٍ خطوةً مستقلّةً عن تسجيل الأدلّة وفحصها، ولا تملكه هذه الوحدة"
+)
+
 MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     A_DOMAIN_KIND_IS_DERIVED_FROM_ATTESTATIONS_NOT_WRITTEN,
     AN_ATTESTED_CORPUS_IS_NOT_A_SUFFICIENT_SAMPLE,
+    AN_OCCURRENCE_IS_NOT_A_GLOSS_NOTE,
+    A_SELF_AUTHORED_GLOSS_IS_REFUSED_NOTE,
+    A_RECORDED_CONDITION_IS_NOT_AN_ISSUED_CERTIFICATE_NOTE,
     FOUR_FIELDS_CARRY_THREE_FUNCTIONS_NOTE,
     THE_PREDICATE_SPACE_IS_DECLARED_NOT_MEASURED_NOTE,
     A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING_NOTE,
@@ -1157,4 +1594,4 @@ MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     THE_RELATION_VOCABULARY_IS_NOT_CLAIMED_EXHAUSTIVE_NOTE,
     THE_MINIMUM_IS_RELATIVE_TO_THE_TESTED_ALTERNATIVES_NOTE,
 )
-"""ثماني بقايا مُسمّاةٍ تُقابَل بها أيُّ إحالةٍ إلى «الحدّ الأدنى المكتمل»."""
+"""خمسَ عشرةَ بقيّةً مُسمّاةً تُقابَل بها أيُّ إحالةٍ إلى «الحدّ الأدنى المكتمل»."""
