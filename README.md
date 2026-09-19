@@ -6493,6 +6493,176 @@ function*, which has not been done. A success rate over a corpus is not a proof
 of necessity. `RefinementNecessityIsUnprovenSoRefineSlotIsUnlicensed` holds the
 place, and a test asserts no refinement operation is exported yet.
 
+## A rank function: sufficient and unique on the lattice, absent on the deposit
+
+The proposal was that nothing measured looks like an internal split inside a
+slot — so `RefineSlot` is the wrong shape — and that what the fiber actually
+shows is a continuous gradation in size, which wants a *rank function* instead.
+`src/alghanem/arabic/fiber_rank_function.py` takes that seriously enough to
+test it, and the answer splits cleanly in two.
+
+**A rank function has to be asked about an order, not about a set.** There are
+two orders here, and the claim is true on one and false on the other. On the
+**ambient lattice** `2^{S_obs}` — every subset of the 7 measured state vectors,
+ordered by inclusion — cardinality *is* a rank function, and it is the only
+one. Both halves are checked by exhaustion over all 128 subsets: all **448**
+covering pairs raise the size by exactly one, the Hasse diagram is connected,
+and the modular law `ρ(A∪B) + ρ(A∩B) = ρ(A) + ρ(B)` with `ρ(∅)=0` and
+`ρ({s})=1` *forces* every value, with all decompositions of every subset
+agreeing. So on the lattice: **sufficiency and uniqueness, both proven.**
+
+**On the observed sub-poset the existence fails first, so uniqueness is never
+reached.** Restricted to the fibers that actually occurred, the order is not
+graded. Between the fiber of `س` and the fiber of `ل` there are maximal chains
+of length **3 and 4** — `س ⋖ ه ⋖ ح ⋖ ل` against `س ⋖ غ ⋖ و ⋖ ي ⋖ ل` — and
+`ρ(y) = ρ(x)+1` cannot hold along both. Four such pairs are recorded with their
+chains named carrier by carrier. `uniqueness` therefore returns
+`NOT_ASKED_BECAUSE_EXISTENCE_FAILED`, which is a different answer from "not
+unique".
+
+**And even if it existed it would not be unique up to one constant.** The
+comparability graph has **two** components — the fiber of `ض` is comparable to
+nothing — so there is one free constant per component, not one overall.
+
+**The gradation is not continuous, and it loses what it ranks.** The observed
+ranks are `{1, 2, 3, 4, 6}`: there is no carrier of size 5, so "1 to 6" asserts
+a contiguity that was never measured. And 23 carriers give **16** distinct
+fibers mapped onto **5** rank values; `م` and `ي` share rank 4 with
+incomparable fibers overlapping in 2 states. A rank is not injective, so
+nothing downstream can recover a fiber from it. Also, rank is
+instrument-relative: maximum 6 by the fiber, **4** by the codec, on the same
+bytes.
+
+**So `RefineSlot` stays unlicensed — and so does the rank function proposed to
+replace it.** The premise was right that no internal split was measured; that
+does not license a splitting operation, and it does not license the rank
+function either, because on the population in question the rank function does
+not exist. Two unlicensed operations, two different written reasons.
+
+## The ambient was a choice, and the gaps were never adjudicated
+
+Two things in that proof were taken rather than measured. The ambient lattice
+was built by closing the observed fibers under `∪` and `∩` — an operation
+*chosen*; closing under difference gives a different lattice. And the resulting
+gaps were counted, never judged: which of them could be filled by something
+observed in a wider corpus, and which are structurally barred, was not asked.
+`src/alghanem/arabic/fiber_ambient_choice.py` names both.
+
+**The ambient is operator-relative; the verdict is not.** Five named closures
+over the same 16 observed fibers give **16 / 75 / 96 / 128 / 128** members —
+closing under difference adds **32** subsets the `∪∩` closure never reaches. But
+every closure that exceeds the observed is graded and connected, so a rank
+function exists and is unique up to one constant in all of them; only the
+observed population alone fails, with 20 covers, non-graded, **2** components.
+What the choice moves is the home of the proof, not its result.
+
+**So "the number of gaps" is not a number.** It is **59** under downward
+closure, **80** under `∪∩`, **112** under difference and under the full Boolean
+lattice. The count is about an operator, so the operator is named beside it
+every time.
+
+**Each gap is judged one by one, with three verdicts, not two.** Exactly
+**one** is `BARRED_BY_A_MEASURED_RULE`: the empty fiber, because `ObservedFiber`
+refuses an empty composition — and that bar is checked *live*, by constructing
+one and catching the refusal, not by citing it. Nothing else in the tree bars
+anything. A gap is `JOINTLY_ATTESTED_ON_ONE_CARRIER` when all of its states
+were in fact seen together on one named carrier: **41** under `∪∩`, **58** under
+the full lattice, each carrying its witness. The rest —
+**38** and **53** — are `NOT_JOINTLY_ATTESTED_UNDECIDED`, and that is not a
+softer way of saying barred: absence may be prohibition, rarity, or positional
+impossibility, and observation alone does not separate them.
+
+**Two limits close the second verdict.** Individual attestation is free — all
+7 states are attested singly, so "every state of it was observed" rejects no
+gap at all, and a criterion that rejects nothing measures nothing; the criterion
+that counts is joint attestation on one carrier. And attestation is not corpus
+construction: that a gap's states co-occur on some carrier proves it is not
+barred, but does not produce a corpus in which some carrier's fiber is *exactly*
+that gap and no wider. Under downward closure this is sharpest — **0** gaps are
+undecided, because every member is by construction a subset of something
+observed.
+
+## Rank is vertical, not horizontal — and what is left is a measure
+
+The two verdicts above look contradictory: sufficiency and uniqueness *proven*,
+then existence *refuted*. They are not. They were asked on two different axes,
+and `src/alghanem/arabic/fiber_bundle_verdict.py` names both, with the shape
+stated once:
+
+> a fiber bundle whose base is not graded, whose fibers are all graded, carrying
+> a complete additive measure.
+
+**Vertically the grading is exceptionless.** For every carrier the interval
+`[∅, E_b]` is graded by cardinality — **23 of 23**, zero exceptions, at observed
+depths `{1, 2, 3, 4, 6}`. **Horizontally it fails**: the order on the 16 distinct
+fibers is not graded and splits into **2** components, so there is no rank
+function on the base. Asking `rank_exists_on(...)` without naming an axis is
+refused, because the axis confusion is what produced the two verdicts in the
+first place.
+
+**What survives is a measure, not a rank.** `μ(X) = |X|` satisfies
+`μ(X∪Y) + μ(X∩Y) = μ(X) + μ(Y)` with **0** breaches over all **9,216** pairs of
+the `∪∩` closure, and 0 over all 16,384 pairs of the Boolean one. A measure
+weighs differences; a rank counts steps. They are two questions.
+
+**And the step question fails globally, not pairwise.** Of **46** comparable
+pairs, the step count is single-valued for **42** and ambiguous for **4**. So
+"how many degrees from `ا` to `ل`?" *does* have an answer here — **3**, along
+one chain — while `س` to `ل` has two, `{3, 4}`. What collapses is a *total* step
+function on the base, not every count of steps; the difference `μ(ل) − μ(ا) = 5`
+is defined for all 46.
+
+**Downward closure fails for 10 of 23 carriers**, and that is left undecided
+rather than read as prohibition: the alternative is that the absence is a
+sampling zero, and no instrument in this tree measures that yet.
+
+**The wider-corpus numbers are recorded as claims, not measurements.** `|B|=36`,
+`|A|=8`, `8,464`, `89`, `13/36`, `76.9%` and the rest are bound to a corpus
+whose bytes are deliberately absent from the tree, so each is deposited with the
+written reason it cannot be re-derived here. But one limit is overstated: that
+corpus is *not* undeposited. Its name, byte length, SHA-256 and its explicit
+"no normalization whatsoever" policy are frozen in
+`compression_model_preregistration`. It is unnormalized **by declaration**, and
+what is missing is the bytes, on purpose — not the fingerprint.
+
+## From encoding geometry to a candidate, and not one step further
+
+The deeper proposal is that the fiber may be a *principle* organizing identity
+and transformation across levels of the algebra, rather than a technique for
+encoding vowel marks — a move from encoding geometry to a candidate
+transformation algebra, without promoting a measurement to a birth certificate
+before the proof is complete.
+`src/alghanem/arabic/fiber_organizing_principle.py` deposits exactly that, and
+nothing above it.
+
+**Candidacy is the only standing the vocabulary offers.** `HypothesisStanding`
+has one member; `is_born` returns false by construction, not by current state;
+and dropping or repeating one of the four obligations is refused, because a
+silently missing obligation reads as a discharged one.
+
+**The alif result is a witness of four readings, not one.** Read live: two hold
+by measurement, one is *admissible but chosen* — a modelling decision, not a
+measurement — and one is **refuted**. Citing "the alif" wholesale imports a
+refuted reading into the evidence. And the witness carries its own blocker: the
+madd axis is frozen as deferred, and the alif is the carrier most likely to bear
+it, so its neutrality may be an artifact of deferring the one axis on which it
+alone varies.
+
+**Generality is checked, not assumed.** The alif's property — fiber = {identity}
+— holds for **1 of 23** carriers. But the identity state itself participates in
+the fibers of **4 of 23**: `ا`, `ل`, `و`, `ي`. That is neither a single case nor
+a general law. That those four are exactly the weak letters plus the definite
+article's lam is recorded as an observation and explicitly not explained here.
+
+**The four obligations stand four different ways**, each with a written
+discharge condition. Generality: attempted, undischarged. `RefineSlot`
+necessity: refuted as stated. End-to-end utility: not attempted, because the
+decomposition theorem reads the codec it rebuilds through. CV birth: **barred**,
+not deferred — the import guard in `vv_birth_preregistration` rejects the
+pre-registration whenever the readout module merely *exists*, so the readout
+cannot be written while the guard stands. That is a structure in the tree, not a
+gap in the evidence.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
