@@ -6493,6 +6493,52 @@ function*, which has not been done. A success rate over a corpus is not a proof
 of necessity. `RefinementNecessityIsUnprovenSoRefineSlotIsUnlicensed` holds the
 place, and a test asserts no refinement operation is exported yet.
 
+## A rank function: sufficient and unique on the lattice, absent on the deposit
+
+The proposal was that nothing measured looks like an internal split inside a
+slot — so `RefineSlot` is the wrong shape — and that what the fiber actually
+shows is a continuous gradation in size, which wants a *rank function* instead.
+`src/alghanem/arabic/fiber_rank_function.py` takes that seriously enough to
+test it, and the answer splits cleanly in two.
+
+**A rank function has to be asked about an order, not about a set.** There are
+two orders here, and the claim is true on one and false on the other. On the
+**ambient lattice** `2^{S_obs}` — every subset of the 7 measured state vectors,
+ordered by inclusion — cardinality *is* a rank function, and it is the only
+one. Both halves are checked by exhaustion over all 128 subsets: all **448**
+covering pairs raise the size by exactly one, the Hasse diagram is connected,
+and the modular law `ρ(A∪B) + ρ(A∩B) = ρ(A) + ρ(B)` with `ρ(∅)=0` and
+`ρ({s})=1` *forces* every value, with all decompositions of every subset
+agreeing. So on the lattice: **sufficiency and uniqueness, both proven.**
+
+**On the observed sub-poset the existence fails first, so uniqueness is never
+reached.** Restricted to the fibers that actually occurred, the order is not
+graded. Between the fiber of `س` and the fiber of `ل` there are maximal chains
+of length **3 and 4** — `س ⋖ ه ⋖ ح ⋖ ل` against `س ⋖ غ ⋖ و ⋖ ي ⋖ ل` — and
+`ρ(y) = ρ(x)+1` cannot hold along both. Four such pairs are recorded with their
+chains named carrier by carrier. `uniqueness` therefore returns
+`NOT_ASKED_BECAUSE_EXISTENCE_FAILED`, which is a different answer from "not
+unique".
+
+**And even if it existed it would not be unique up to one constant.** The
+comparability graph has **two** components — the fiber of `ض` is comparable to
+nothing — so there is one free constant per component, not one overall.
+
+**The gradation is not continuous, and it loses what it ranks.** The observed
+ranks are `{1, 2, 3, 4, 6}`: there is no carrier of size 5, so "1 to 6" asserts
+a contiguity that was never measured. And 23 carriers give **16** distinct
+fibers mapped onto **5** rank values; `م` and `ي` share rank 4 with
+incomparable fibers overlapping in 2 states. A rank is not injective, so
+nothing downstream can recover a fiber from it. Also, rank is
+instrument-relative: maximum 6 by the fiber, **4** by the codec, on the same
+bytes.
+
+**So `RefineSlot` stays unlicensed — and so does the rank function proposed to
+replace it.** The premise was right that no internal split was measured; that
+does not license a splitting operation, and it does not license the rank
+function either, because on the population in question the rank function does
+not exist. Two unlicensed operations, two different written reasons.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
