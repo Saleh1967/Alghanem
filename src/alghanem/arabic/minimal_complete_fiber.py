@@ -124,6 +124,8 @@ __all__ = [
     "A_DESIGNED_RUN",
     "A_DESIGNED_WITNESS_IS_NOT_AN_EXECUTED_CODEC_TEST_NOTE",
     "A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING_NOTE",
+    "A_SEALED_RULE_IS_CHECKED_FOR_OVERLAP_NOT_FOR_MEMORY_NOTE",
+    "READER_INDEPENDENCE_IS_A_MECHANISM_NOT_A_LABEL_NOTE",
     "FOUR_FIELDS_CARRY_THREE_FUNCTIONS_NOTE",
     "MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS",
     "ONE_IS_A_NAMED_ATTRIBUTION_NOT_A_TRUE_PROPOSITION_NOTE",
@@ -761,9 +763,7 @@ def hold_out_reader(
 
     return ProvenancedReader(
         rule=rule,
-        evaluation_elements=frozenset(
-            case.element for case in evaluation_domain.cases
-        ),
+        evaluation_elements=frozenset(case.element for case in evaluation_domain.cases),
     )
 
 
@@ -1577,6 +1577,21 @@ A_RECORDED_CONDITION_IS_NOT_AN_ISSUED_CERTIFICATE_NOTE: Final[str] = (
     "حاكمةٍ خطوةً مستقلّةً عن تسجيل الأدلّة وفحصها، ولا تملكه هذه الوحدة"
 )
 
+READER_INDEPENDENCE_IS_A_MECHANISM_NOT_A_LABEL_NOTE: Final[str] = (
+    "ReaderIndependenceIsAMechanismNotALabel: لا يُرفَع قارئٌ إلى "
+    "`FIXED_BEFORE_THE_EVALUATION_DATA` بوسمٍ يُكتَب له؛ يُرفَع بحجبِ قاعدةٍ "
+    "مختومةٍ عن مجال تقييمٍ مُسمًّى، ثمّ قراءةِ منشئه من خلوّ تقاطع ما رأته "
+    "القاعدةُ بحالات ذلك المجال"
+)
+
+A_SEALED_RULE_IS_CHECKED_FOR_OVERLAP_NOT_FOR_MEMORY_NOTE: Final[str] = (
+    "ASealedRuleIsCheckedForOverlapNotForMemory: فحصُ التقاطع ينفي التسريبَ "
+    "عبر المسار المسجَّل وحدَه؛ ولا تبلغ هذه الوحدةُ جوفَ دالّةٍ مكتوبةٍ بلغة "
+    "البرمجة. فقاعدةٌ مختومةٌ تحمل أهدافَ التقييم في إغلاقها تجتاز البوّابةَ "
+    "وتُغلِق شرطَ إعادة البناء، وقد أُجريت هذه التجربةُ الخصميّةُ وسُجّلت؛ "
+    "فالاجتيازُ بختمٍ يدويٍّ دعوى مقروءةٌ من الشفرة لا مبرهنةٌ ههنا"
+)
+
 MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     A_DOMAIN_KIND_IS_DERIVED_FROM_ATTESTATIONS_NOT_WRITTEN,
     AN_ATTESTED_CORPUS_IS_NOT_A_SUFFICIENT_SAMPLE,
@@ -1586,6 +1601,8 @@ MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     FOUR_FIELDS_CARRY_THREE_FUNCTIONS_NOTE,
     THE_PREDICATE_SPACE_IS_DECLARED_NOT_MEASURED_NOTE,
     A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING_NOTE,
+    READER_INDEPENDENCE_IS_A_MECHANISM_NOT_A_LABEL_NOTE,
+    A_SEALED_RULE_IS_CHECKED_FOR_OVERLAP_NOT_FOR_MEMORY_NOTE,
     A_DESIGNED_DOMAIN_IS_NOT_A_LINGUISTIC_CERTIFICATE_NOTE,
     A_DESIGNED_WITNESS_IS_NOT_AN_EXECUTED_CODEC_TEST_NOTE,
     A_COLLISION_IN_THE_REPRESENTATION_IS_NOT_A_COLLISION_IN_CONTEXT_NOTE,
@@ -1594,4 +1611,4 @@ MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     THE_RELATION_VOCABULARY_IS_NOT_CLAIMED_EXHAUSTIVE_NOTE,
     THE_MINIMUM_IS_RELATIVE_TO_THE_TESTED_ALTERNATIVES_NOTE,
 )
-"""خمسَ عشرةَ بقيّةً مُسمّاةً تُقابَل بها أيُّ إحالةٍ إلى «الحدّ الأدنى المكتمل»."""
+"""سبعَ عشرةَ بقيّةً مُسمّاةً تُقابَل بها أيُّ إحالةٍ إلى «الحدّ الأدنى المكتمل»."""

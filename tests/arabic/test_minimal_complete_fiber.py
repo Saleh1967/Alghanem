@@ -43,10 +43,13 @@ from alghanem.arabic.minimal_complete_fiber import (
     NecessityStanding,
     NecessityWitnessPair,
     ReaderProvenance,
+    ReaderRuleOrigin,
     RelationKind,
+    SealedReaderRule,
     StructuralFunction,
     SufficiencyStanding,
-    a_reader_fixed_before_the_data,
+    a_rule_sealed_before_any_case,
+    a_rule_trained_on,
     a_separate_genus_field_is_required,
     assess_attestation,
     assess_minimal_complete_fiber,
@@ -57,6 +60,7 @@ from alghanem.arabic.minimal_complete_fiber import (
     deleting_representation,
     full_representation,
     genus_is_declared,
+    hold_out_reader,
     licensed_predicates,
     lookup_reader,
     necessity_deletion_experiment,
@@ -87,9 +91,9 @@ def test_the_minimal_complete_fiber_module_reaches_no_kernel_module() -> None:
     ]
 
 
-def test_there_are_fifteen_named_residuals_all_distinct_and_non_blank() -> None:
-    assert len(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS) == 15
-    assert len(set(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)) == 15
+def test_there_are_seventeen_named_residuals_all_distinct_and_non_blank() -> None:
+    assert len(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS) == 17
+    assert len(set(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)) == 17
     assert all(note.strip() for note in MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
 
 
@@ -919,21 +923,106 @@ def test_an_unprovenanced_reader_never_closes_the_rebuilding_requirement() -> No
     )
 
 
-def test_a_reader_fixed_before_the_data_records_a_claim_it_does_not_prove() -> None:
-    table = lookup_reader(THE_DECLARED_DOMAIN, full_representation)
-    declared = a_reader_fixed_before_the_data(
-        lambda output: table(output), "قاعدةٌ يُدّعى سبقُها، وتُختبر على محجوب"
+def _a_split_of_the_declared_domain(
+    identifier: str, cases: tuple[DomainCase, ...]
+) -> DeclaredDomain:
+    return DeclaredDomain(
+        identifier=identifier,
+        declarer_id=THE_DECLARED_DOMAIN.declarer_id,
+        cases=cases,
     )
-    assert reader_provenance_of(declared) is (
+
+
+def test_a_rule_trained_on_its_own_evaluation_domain_leaks_every_case() -> None:
+    rule = a_rule_trained_on(
+        THE_DECLARED_DOMAIN, full_representation, "جدولٌ مبنيٌّ من حالات التقييم نفسِها"
+    )
+    reader = hold_out_reader(rule, THE_DECLARED_DOMAIN)
+    assert reader.leaked_elements == frozenset(
+        case.element for case in THE_DECLARED_DOMAIN.cases
+    )
+    assert reader.is_held_out is False
+    assert reader.provenance is ReaderProvenance.BUILT_FROM_THE_DOMAIN_TARGET_TABLE
+
+
+def test_a_rule_trained_on_a_disjoint_split_is_held_out_by_construction() -> None:
+    training = _a_split_of_the_declared_domain(
+        "شطرُ تدريبٍ مُسمًّى", THE_DECLARED_DOMAIN.cases[:2]
+    )
+    evaluation = _a_split_of_the_declared_domain(
+        "شطرُ تقييمٍ منفصل", THE_DECLARED_DOMAIN.cases[2:]
+    )
+    reader = hold_out_reader(
+        a_rule_trained_on(training, full_representation, "جدولٌ من شطر التدريب"),
+        evaluation,
+    )
+    assert reader.leaked_elements == frozenset()
+    assert reader.is_held_out is True
+    assert reader.provenance is ReaderProvenance.FIXED_BEFORE_THE_EVALUATION_DATA
+
+
+def test_an_overlapping_split_leaks_exactly_the_shared_cases() -> None:
+    training = _a_split_of_the_declared_domain(
+        "شطرُ تدريبٍ يتقاطع", THE_DECLARED_DOMAIN.cases[:3]
+    )
+    evaluation = _a_split_of_the_declared_domain(
+        "شطرُ تقييمٍ يتقاطع", THE_DECLARED_DOMAIN.cases[2:]
+    )
+    reader = hold_out_reader(
+        a_rule_trained_on(training, full_representation, "جدولٌ متقاطع"), evaluation
+    )
+    assert reader.leaked_elements == frozenset({THE_DECLARED_DOMAIN.cases[2].element})
+    assert reader.is_held_out is False
+
+
+def test_a_rule_claiming_a_seal_while_disclosing_cases_is_refused() -> None:
+    with pytest.raises(MinimalCompleteFiberError):
+        SealedReaderRule(
+            rule_note="قاعدةٌ تدّعي الختمَ وقد رأت",
+            origin=ReaderRuleOrigin.SEALED_BEFORE_ANY_CASE,
+            disclosed_elements=frozenset({THE_DECLARED_DOMAIN.cases[0].element}),
+            _rule=lambda output: "",
+        )
+
+
+def test_a_sealed_rule_without_a_written_note_is_refused() -> None:
+    with pytest.raises(MinimalCompleteFiberError):
+        a_rule_sealed_before_any_case(lambda output: "", "   ")
+
+
+def test_a_sealed_rule_carrying_the_targets_in_its_closure_passes_the_gate() -> None:
+    """تجربةٌ خصميّة: القارئُ يحفظ أهدافَ التقييم في إغلاقه، ويجتاز البوّابة.
+
+    وهذا هو حدُّ الآليّة معروضًا لا مستورًا: فحصُ التقاطع ينفي التسريبَ عبر
+    المسار المسجَّل وحدَه (`disclosed_elements`)، ولا يبلغ جوفَ دالّةٍ مكتوبةٍ
+    بلغة البرمجة. فالاجتيازُ ههنا ليس شهادةَ استقلالٍ، بل بيانُ ما لا تفحصه.
+    """
+
+    memorized = {
+        full_representation(case.element): case.content
+        for case in THE_DECLARED_DOMAIN.cases
+    }
+
+    def rule(output: tuple[str | None, ...]) -> str:
+        return memorized.get(output, "")
+
+    reader = hold_out_reader(
+        a_rule_sealed_before_any_case(rule, "قاعدةٌ تحمل الأهدافَ في إغلاقها"),
+        THE_DECLARED_DOMAIN,
+    )
+    assert reader.leaked_elements == frozenset()
+    assert reader.is_held_out is True
+    assert reader_provenance_of(reader) is (
         ReaderProvenance.FIXED_BEFORE_THE_EVALUATION_DATA
     )
     evidence = ConditionEvidence(
-        what_was_run="تجربةُ كفايةٍ بقارئٍ مُدَّعى السبق",
+        what_was_run="تجربةُ كفايةٍ بقارئٍ مختومٍ حافظٍ لأهدافه",
         where_it_is_recorded="هذا الاختبار",
         domain=THE_DECLARED_DOMAIN,
         run_kind=ConditionRunKind.SUFFICIENCY_ON_THE_FULL_REPRESENTATION,
-        reader=declared,
+        reader=reader,
     )
+    assert evidence.outcome.standing is SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN
     assert (
         requirement_is_closed_by(
             ClosureRequirement.CONTENT_REBUILT_FROM_THE_OUTPUT_ALONE, evidence
@@ -943,10 +1032,13 @@ def test_a_reader_fixed_before_the_data_records_a_claim_it_does_not_prove() -> N
     condition = ChecklistCondition(
         requirement=ClosureRequirement.CONTENT_REBUILT_FROM_THE_OUTPUT_ALONE,
         what_would_satisfy_it="إعادةُ بناءٍ بقارئٍ مستقلّ",
-        why_it_is_open="المجالُ مصمَّم",
+        why_it_is_open="المجالُ مصمَّم، والاستقلالُ مفحوصٌ بالتقاطع لا بالذاكرة",
         evidence=evidence,
     )
     assert condition.is_satisfied is False
+    joined = "\n".join(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
+    assert "ASealedRuleIsCheckedForOverlapNotForMemory" in joined
+    assert "ReaderIndependenceIsAMechanismNotALabel" in joined
 
 
 def test_three_requirements_are_closed_by_no_evidence_kind_defined_here() -> None:
