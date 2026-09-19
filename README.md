@@ -6301,6 +6301,49 @@ And the whole readout carries its own ceiling:
 scribe's pointing, one frozen template set. Nothing here is a verdict on Arabic
 or on the syllable as such, and nothing here is a birth.
 
+## The alif's neutrality — measured, chosen, and refuted in three parts
+
+`alif_neutrality.py` takes the claim that the alif does not participate in the
+fiber — that it accepts one combination only, and is therefore a neutral
+element of the operation rather than a member of `C` — and separates what the
+deposit can decide from what it cannot.
+
+**The alif does accept exactly one combination, and that survives a scarcity
+control.** Capacity 1 alone proves nothing: eight carriers in this deposit have
+capacity 1, and most are simply rare. `ScarcityExplainsASmallFiber` forces the
+distinction, and `constancy_exponent` measures it — the probability of that
+much constancy if the carrier drew its states from the pooled distribution of
+*all other* carriers. The alif is constant across 23 occurrences at an exponent
+of 3×10⁻²⁰. Its nearest rival sits at 2×10⁻³ on three occurrences. Only the
+alif survives.
+
+**And the combination it rests on is the identity.** This is sharper than the
+claim as stated. The alif does not merely accept one state; it accepts the
+*zero* state — absence on every one of the four measured axes, which is the
+identity of the product. It is the only carrier whose entire fiber is that
+identity. Every other constant carrier rests somewhere non-trivial: a sukūn, a
+fatḥa, a kasra.
+
+**But "not an element of `C`" is a modelling decision, not a finding.** The
+measurement is equally consistent with *a carrier whose fiber happens to be the
+identity* and with *a neutral element living outside `C`*. No count from this
+deposit separates them. `NeutralityIsMeasuredButExclusionFromCIsChosen` keeps
+the two apart so the choice is declared rather than attributed to observation.
+
+**And the product claim is refuted.** Nothing was broken by the alif's presence
+and nothing is restored by its absence. The rectangle is 54 of 161 filled with
+the alif and 53 of 154 without it, and the capacities stay ragged from 1 to 6
+either way. Removing the alif deletes one cell; it does not rebuild a product.
+`RemovingAlifRestoresNoRectangle` records that the break precedes the alif and
+outlives it.
+
+The strongest rival explanation is named rather than argued away:
+`AlifsNeutralityMayBeAnArtifactOfTheDeferredMaddAxis`. The madd axis is frozen
+as `DEFERRED_NOT_READ_AS_A_STATE`, and the alif is the carrier most likely to
+bear it. The alif may look neutral precisely because the one axis on which it
+varies was not read. No count from this deposit lifts that preventer. And all
+of it is neutrality *in writing*, as the claim itself stipulated.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
