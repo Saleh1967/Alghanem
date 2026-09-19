@@ -7029,6 +7029,57 @@ only constructor takes a `PerformanceWitness`, and none is deposited — and a
 syllable with no birth certificate. There is no promotion path between them, and
 no authority is inherited by the syllable or by the syntax.
 
+## A reference articulation layer, and the law it did not produce
+
+`src/alghanem/arabic/reference_articulation_layer.py` asks whether the deposited
+material yields a **minimal internal law** over articulation, and answers from
+its own run: **no**. What the run does produce is weaker and more sharply
+bounded — a *relative necessity of a chosen coding*.
+
+**The material is deposited before it is measured.** Al-Fath 48:29 is
+transcribed in `fath_ayah_source_text.py` at the same standing as the Fatiha
+deposit: a simplified, in-tree transcription, not an edition, with its digest
+re-derived from the bytes. An external session reported a digest for its own
+transcription of the same verse; those bytes were never carried here, so the two
+are not compared and no agreement is claimed.
+
+**The four axes are an imported coding, not a measured basis.** Manner, place,
+voicing and emphasis are chosen before the measurement; they were not derived
+from the verse without premises. Every necessity measured here is a necessity
+*for that choice*. The feature table itself is **born in this module**, not
+imported through `gflk_feature_table_import_barrier`, so it carries no foreign
+warrant and the tree owns it.
+
+**Resolution is by a declared rule, never by hand.** Diacritics are dropped,
+hamza seats resolve to hamza, and a graphic ambiguous between consonant and
+madd is left **unresolved**. On this deposit the rule resolves 179 of 249
+written occurrences and leaves 70 unresolved; `و` and `ي` are therefore never
+observed as unambiguous candidates, and 26 of the 28 reference patterns appear.
+
+**Deleting any one axis merges distinct patterns.** Manner merges ب/م, voicing
+merges ت/د, emphasis merges س/ص, place merges ت/ك. All four axes are necessary —
+relative to this table, and to nothing larger.
+
+**The strongest result is the negative one.** The emphatic counterpart pairs are
+not a property of the material: under the fine place classification, deleting
+emphasis merges four pairs; under the coarser one it merges six heterogeneous
+groups and ت/ط survives while س/ص does not. Granularity is a knob on the
+instrument, so the pairs are a reading of the knob.
+
+**98 adjacent pairs are counted, and wasl and waqf stay `DEFER`.** The census is
+over transitions between *expected coding values*, with no time and no measured
+articulator motion in it. `PhoneticWaslAndWaqfRemainDeferred` has exactly one
+member, so no count can promote it.
+
+**The neutral element is analytic.** `e = ∅` and `e ⊕ p = p` hold by the
+construction of `⊕`; verifying them is a consistency check on the code, not a
+discovery about Arabic. Real air is an operating condition, the empty constraint
+is an identity, and a written alif is automatically neither.
+
+**What was not obtained is written down.** No mechanical fiber is born here, and
+no Fibonacci law is extracted — the latter negation is deposited explicitly so
+that the code's silence is not read as an open possibility.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
