@@ -6183,6 +6183,39 @@ standing inside this reading, not a kernel birth verdict. This module issues no
 `BirthVerdictGate` is deliberately not wired to it, and a static import audit
 witnesses that the readout reaches no `alghanem.kernel` module at all.
 
+### Nothing crosses between two tracks without a written contract
+
+A minimality result in `G0.FLT-1` does not travel to `G0.VV-BIRTH-1` on its
+own, and it does not complete a birth certificate for `CV`.
+`fiber_transfer_contracts.py` makes the crossing a thing that must be written
+and checked. A `FiberTransferContract` names five parts together — the origin
+track and anchor, a *distinct* branch track and anchor, the identity claimed to
+be preserved, the evidence, and the residuals — and refuses construction if any
+of them is empty, duplicated, or self-contradictory. A contract licenses only
+the conclusions enumerated inside it, by exact match; there is no implication
+and no inheritance, and a conclusion cannot be listed as both licensed and
+withheld.
+
+**Evidence cannot be borrowed.** `TheEvidenceIsBoundToItsOrigin`: a
+`TransferEvidence` carrying a different track or a different anchor than the
+contract it sits in is refused at construction, so one experiment's witness
+cannot be spent in another. The digest must have canonical shape, so an
+unfingerprinted attestation is refused too.
+
+**And transfers do not compose.** `ATransferDoesNotCompose`: `compose` exists
+only to refuse. Chaining `A → B` with `B → C` would produce a crossing nobody
+examined, which is exactly the automatic transfer the contract is there to
+prevent.
+
+The ledger is empty. `AnEmptyLedgerIsNotARefutation` says what that means: no
+contract from `G0.FLT-1` to `G0.VV-BIRTH-1` has been written, so the crossing
+is *unlicensed today* — not refuted. `contract_for` raises with that name
+rather than returning silence. And `CV_BIRTH_CERTIFICATE_STANDING` records the
+certificate as unissued with its four lacks enumerated: an independent
+reconstruction target, the transfer contract itself, a `G0.VV-BIRTH-1` readout
+that does not exist in this tree, and a kernel birth verdict that this layer
+has no authority to issue at all.
+
 
 ```bash
 python -m pip install -e '.[dev]'
