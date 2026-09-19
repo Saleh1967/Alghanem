@@ -19,6 +19,20 @@
 (`AnUnfiredRuleIsAnUntestedRule`): يُعَدّ في المُخرَج أيُّ مخرجٍ مُسجَّلٍ لم
 تُطلِقه المدوّنةُ المُجمَّدة، ولا يُعَدّ سكوتُه نجاحًا.
 
+**وسلطةُ الولادة باقيةٌ حيث هي**
+(`AHigherCenterStandingIsNotAKernelBirthVerdict`): `standing_for` تُخرِج `BORN`
+متى انعقدت الشروطُ الأربعةُ معًا وانعقدت الأدنويّةُ على هدفٍ مستقلّ؛ وهي
+**منزلةٌ في هذه القراءة** لا حكمُ ولادة. فلا يصدر من هذه الوحدة
+`BirthVerdictDecision`، ولا `IndependentClosureAssessment`، ولا تجميدُ `E0`،
+ولا تُوصَل `BirthVerdictGate` بها، ولا تستورد من `kernel/` شيئًا.
+
+**وهذه القراءةُ لا تُصدِر هدفًا مستقلًّا**
+(`ThisReadingIssuesNoIndependentTarget`): `read_qiyas` لا يُعلِن إلّا
+`THE_LICENSED_READER_ITSELF`، فـ`BORN` غيرُ بالغةٍ في أيّ تشغيلٍ اليوم.
+وبلوغُها موقوفٌ على **إيداع هدفٍ** مستقلٍّ عن النموذجين، لا على تعديل حكمٍ
+ولا على تليينِ شرط. وهذا عينُ ما جرى عليه `BirthVerdictGate` في النواة: تُكتَب
+المنزلةُ ويُسمّى المانعُ من بلوغها، ولا تُحذَف لأنّها لم تُبلَغ بعد.
+
 **ولا تُعدَّل الفرضيّةُ بعد النتيجة**: `PostHocSimilarity != FractalEvidence`.
 """
 
@@ -46,11 +60,14 @@ from .syllabifier import SlotKind, Syllable, expand_slots, syllabify_reading
 
 __all__ = [
     "ANALYTIC_GATES_CARRY_NO_DISCRIMINATING_WEIGHT_NOTE",
+    "AN_INDEPENDENCE_CLAIM_IS_WRITTEN_NOT_IMPLIED_NOTE",
     "AN_UNFIRED_RULE_IS_AN_UNTESTED_RULE_NOTE",
+    "A_HIGHER_CENTER_STANDING_IS_NOT_A_KERNEL_BIRTH_VERDICT_NOTE",
     "ANALYTIC_GATE_SYMBOLS",
     "PREVENTER_ROLES",
     "QIYAS_READOUT_NAMED_RESIDUALS",
     "THE_TARGET_COMES_FROM_THE_SAME_READER_NOTE",
+    "THIS_READING_ISSUES_NO_INDEPENDENT_TARGET_NOTE",
     "BranchReading",
     "GateReading",
     "MinimalityReading",
@@ -59,6 +76,7 @@ __all__ = [
     "QiyasRun",
     "SealedQiyasPreregistration",
     "SurfaceReading",
+    "TargetProvenance",
     "WeakerModelScore",
     "read_qiyas",
     "seal_qiyas_preregistration",
@@ -158,10 +176,18 @@ class BranchReading:
 
 
 class MinimalityStanding(Enum):
-    """منزلةُ شرط الأدنويّة؛ غيرُ متماثلةٍ لأنّ الهدفَ غيرُ مستقلٍّ عن المُرخَّص."""
+    """منزلةُ شرط الأدنويّة؛ غيرُ متماثلةٍ لأنّ الهدفَ قد لا يستقلّ عن المُرخَّص."""
 
     DEFEATED_BY_A_TIE = "أسقطَه_تساوي_نموذجٍ_أضعف"
     UNDERPOWERED_BY_TARGET_PROVENANCE = "قاصرٌ_لأنّ_الهدفَ_من_قارئ_المُرخَّص_نفسِه"
+    HELD_ON_AN_INDEPENDENT_TARGET = "انعقد_على_هدفٍ_مستقلٍّ_عن_النموذجين"
+
+
+class TargetProvenance(Enum):
+    """مصدرُ هدف إعادة البناء؛ وعليه وحدَه يدور فرقُ القصور عن الانعقاد."""
+
+    THE_LICENSED_READER_ITSELF = "من_قارئ_النموذج_المُرخَّص_نفسِه"
+    AN_INDEPENDENT_DEPOSIT = "من_إيداعٍ_مستقلٍّ_عن_النموذجين"
 
 
 @dataclass(frozen=True, slots=True)
@@ -176,19 +202,45 @@ class WeakerModelScore:
 
 @dataclass(frozen=True, slots=True)
 class MinimalityReading:
-    """قراءةُ الأدنويّة: درجةُ المُرخَّص، ودرجاتُ الأضعف، والمنزلةُ المُشتقّة."""
+    """قراءةُ الأدنويّة: درجةُ المُرخَّص، ودرجاتُ الأضعف، ومصدرُ الهدف، والمنزلةُ.
+
+    ومصدرُ الهدف **حقلٌ لازمٌ لا زينة**: المنزلةُ تدور عليه، فدعوى الاستقلال
+    تُكتَب بسببها المُسمّى أو تُرَدّ عند الإنشاء
+    (`AnIndependenceClaimIsWrittenNotImplied`).
+    """
 
     licensed_hits: int
     target_size: int
     weaker_scores: tuple[WeakerModelScore, ...]
+    target_provenance: TargetProvenance = TargetProvenance.THE_LICENSED_READER_ITSELF
+    what_makes_the_target_independent: str = ""
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.target_provenance, TargetProvenance):
+            raise QiyasReadoutError("مصدرُ الهدف عضوٌ في مفردةٍ مغلقةٍ لا نصٌّ مُرسَل")
+        claims_independence = (
+            self.target_provenance is TargetProvenance.AN_INDEPENDENT_DEPOSIT
+        )
+        if claims_independence and not self.what_makes_the_target_independent.strip():
+            raise QiyasReadoutError(
+                "دعوى استقلالِ الهدف تُكتَب بسببها المُسمّى؛ ودعوًى بلا سببٍ "
+                "مكتوبٍ تُقرأ بعد جلساتٍ شاهدًا لم يُفحَص"
+            )
+        if not claims_independence and self.what_makes_the_target_independent.strip():
+            raise QiyasReadoutError(
+                "هدفٌ من قارئ المُرخَّص لا يُكتَب له سببُ استقلال؛ وكتابتُه "
+                "تُوهِم استقلالًا لم يُعلَن"
+            )
 
     @property
     def standing(self) -> MinimalityStanding:
-        """المنزلةُ مُشتقّةٌ لا مُخزَّنة؛ والتساوي يُسقِط والتفوّقُ لا يرفع."""
+        """المنزلةُ مُشتقّةٌ لا مُخزَّنة؛ والتساوي يُسقِط، والتفوّقُ لا يرفع وحدَه."""
 
         if any(score.hits >= self.licensed_hits for score in self.weaker_scores):
             return MinimalityStanding.DEFEATED_BY_A_TIE
-        return MinimalityStanding.UNDERPOWERED_BY_TARGET_PROVENANCE
+        if self.target_provenance is TargetProvenance.THE_LICENSED_READER_ITSELF:
+            return MinimalityStanding.UNDERPOWERED_BY_TARGET_PROVENANCE
+        return MinimalityStanding.HELD_ON_AN_INDEPENDENT_TARGET
 
 
 @dataclass(frozen=True, slots=True)
@@ -222,7 +274,12 @@ class QiyasRun:
         raise QiyasReadoutError(f"الصورة «{surface}» ليست في هذا التشغيل")
 
     def standing_for(self, surface: str) -> HigherCenterStanding:
-        """منزلةُ المركز الأعلى لصورةٍ بعينها، مُشتقّةً من الشروط الأربعة معًا."""
+        """منزلةُ المركز الأعلى لصورةٍ بعينها، مُشتقّةً من الشروط الأربعة معًا.
+
+        و`BORN` ههنا **منزلةٌ في هذه القراءة** لا حكمُ ولادةٍ كرنليّ
+        (`AHigherCenterStandingIsNotAKernelBirthVerdict`): لا تجميدَ `E0`، ولا
+        إصدارَ `BirthVerdictDecision`، ولا وصلَ لـ`BirthVerdictGate` من هنا.
+        """
 
         reading = self.surface_named(surface)
         local = (
@@ -233,9 +290,12 @@ class QiyasRun:
         )
         if not local:
             return HigherCenterStanding.WITHHELD
-        if self.minimality.standing is MinimalityStanding.DEFEATED_BY_A_TIE:
+        standing = self.minimality.standing
+        if standing is MinimalityStanding.DEFEATED_BY_A_TIE:
             return HigherCenterStanding.WITHHELD
-        return HigherCenterStanding.UNDERPOWERED
+        if standing is MinimalityStanding.UNDERPOWERED_BY_TARGET_PROVENANCE:
+            return HigherCenterStanding.UNDERPOWERED
+        return HigherCenterStanding.BORN
 
 
 def _template_of_shape(nucleus_length: int, coda_count: int) -> str:
@@ -562,6 +622,7 @@ def read_qiyas(sealed: SealedQiyasPreregistration) -> QiyasRun:
             licensed_hits=licensed_hits,
             target_size=target_size,
             weaker_scores=scores,
+            target_provenance=TargetProvenance.THE_LICENSED_READER_ITSELF,
         ),
         unfired_outcomes=unfired,
         analytic_gates=ANALYTIC_GATE_SYMBOLS,
@@ -584,10 +645,32 @@ AN_UNFIRED_RULE_IS_AN_UNTESTED_RULE_NOTE: Final[str] = (
     "المُجمَّدة يُعَدّ غيرَ مُختبَر، ولا يُعَدّ سكوتُه نجاحًا"
 )
 
+A_HIGHER_CENTER_STANDING_IS_NOT_A_KERNEL_BIRTH_VERDICT_NOTE: Final[str] = (
+    "AHigherCenterStandingIsNotAKernelBirthVerdict: `BORN` منزلةٌ في هذه "
+    "القراءة على شروطها الأربعة، لا حكمُ ولادةٍ كرنليّ؛ فلا `BirthVerdictDecision` "
+    "ولا `IndependentClosureAssessment` ولا تجميدَ `E0` يصدر من هنا، ولا تُوصَل "
+    "`BirthVerdictGate` بهذه الوحدة، ولا تستورد هذه الوحدةُ من `kernel/` شيئًا"
+)
+
+THIS_READING_ISSUES_NO_INDEPENDENT_TARGET_NOTE: Final[str] = (
+    "ThisReadingIssuesNoIndependentTarget: `read_qiyas` لا يُصدِر إلّا "
+    "`THE_LICENSED_READER_ITSELF`؛ فـ`BORN` غيرُ بالغةٍ في أيّ تشغيلٍ اليوم، "
+    "وبلوغُها موقوفٌ على إيداع هدفٍ مستقلٍّ عن النموذجين لا على تعديلِ حكم"
+)
+
+AN_INDEPENDENCE_CLAIM_IS_WRITTEN_NOT_IMPLIED_NOTE: Final[str] = (
+    "AnIndependenceClaimIsWrittenNotImplied: قراءةٌ تدّعي هدفًا مستقلًّا بلا "
+    "سببٍ مكتوبٍ تُرَدّ عند الإنشاء، وقراءةٌ من قارئ المُرخَّص لا يُكتَب لها "
+    "سببُ استقلالٍ يُوهِم ما لم يُعلَن"
+)
+
 QIYAS_READOUT_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     THE_TARGET_COMES_FROM_THE_SAME_READER_NOTE,
     ANALYTIC_GATES_CARRY_NO_DISCRIMINATING_WEIGHT_NOTE,
     AN_UNFIRED_RULE_IS_AN_UNTESTED_RULE_NOTE,
+    A_HIGHER_CENTER_STANDING_IS_NOT_A_KERNEL_BIRTH_VERDICT_NOTE,
+    THIS_READING_ISSUES_NO_INDEPENDENT_TARGET_NOTE,
+    AN_INDEPENDENCE_CLAIM_IS_WRITTEN_NOT_IMPLIED_NOTE,
 )
 
 

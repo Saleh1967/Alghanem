@@ -6155,6 +6155,34 @@ Not built here, deliberately: morphology, composition, syntax, iʿrāb, dalālah
 MASAQ and any weight protocol. No layer above word structure has a forward and
 an inverse function yet, so none of them is in the table.
 
+### The standing that may be reached, and the gate it is not wired to
+
+The G0.FLT-1 qiyās readout now derives the whole verdict instead of stopping
+short of it. `standing_for` returns `BORN` when the four conditions hold
+together — reconstruction, no bypass, closure, identity — **and** minimality
+holds on a target that did not come from the licensed reader. Minimality gained
+a third standing, `HELD_ON_AN_INDEPENDENT_TARGET`, alongside the tie defeat and
+the provenance underpowering.
+
+**The provenance is declared, not inferred.** A `MinimalityReading` now carries
+a `TargetProvenance` and, when it claims `AN_INDEPENDENT_DEPOSIT`, a written
+reason why the target is independent. Claiming independence with no reason is
+refused at construction, and writing a reason without claiming independence is
+refused too, so the strongest branch can never be entered by silence.
+
+**And `BORN` is derivable, not issuable.** `read_qiyas` only ever declares
+`THE_LICENSED_READER_ITSELF`, so no run in this tree reaches `BORN` today. The
+unreached branch is written and its preventer named, exactly as the kernel does
+with `BirthVerdictGate`: the standing is not deleted because it has not been
+reached. What unblocks it is an independent target *deposit*, not a softened
+rule.
+
+**Birth authority stays where it is.** A higher-centre standing here is a
+standing inside this reading, not a kernel birth verdict. This module issues no
+`BirthVerdictDecision`, no `IndependentClosureAssessment` and no `E0` freeze;
+`BirthVerdictGate` is deliberately not wired to it, and a static import audit
+witnesses that the readout reaches no `alghanem.kernel` module at all.
+
 
 ```bash
 python -m pip install -e '.[dev]'
