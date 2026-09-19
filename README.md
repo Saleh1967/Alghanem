@@ -6256,6 +6256,50 @@ reconstruction target, the transfer contract itself, a `G0.VV-BIRTH-1` readout
 that does not exist in this tree, and a kernel birth verdict that this layer
 has no authority to issue at all.
 
+## «لا صامت بلا صائت» — four claims wearing one sentence
+
+`no_consonant_without_a_vowel.py` takes the sentence *no consonant without a
+vowel, mathematically* and refuses to give it a single verdict. Stated
+absolutely it bundles four claims whose answers disagree, and bundling them
+lets one reading's success hide another's refutation
+(`AnAbsoluteReadingHidesADividedVerdict`). Split, each gets its own standing,
+measured live from the fingerprinted deposit and the frozen template algebra.
+
+**No syllable without a nucleus — holds by construction.** All six frozen
+templates are `CV…`, and `template_of` refuses any onset other than exactly one
+and any nucleus outside `{1, 2}`. The nucleus is not observed to be present; it
+is definitionally unavoidable. The corpus agrees — 42 syllables, none without a
+nucleus — but `ThisHoldsByTheFrozenAlgebraNotByTheCorpus` records that
+agreement as corroboration, not proof. The reader embodies the model it would
+be testing.
+
+**No onset without a vowel — holds as a refusal.** The syllabifier never
+asserts this; it simply stops. Meeting a quiescent consonant that carries no
+vowel and closes no preceding nucleus, it halts and names the position. It did
+so 14 times across 14 of the 29 words. The claim is read off the refusal, and
+`AnUnsegmentedWordIsCarriedNotDropped` keeps those 14 words in the denominator
+with their reasons attached — dropping them would raise a ratio by hiding what
+was never read. Most halt at a bare alif that carries no mark distinguishing a
+connecting hamza, which is a limit on this tree's reader, not a claim about the
+language.
+
+**No consonant without a vowel, absolutely — refuted.** A coda *is* a
+consonant with no vowel of its own, and `CVC`, `CVCC`, `CVVC`, `CVVCC` all sit
+in the frozen algebra. The deposit shows 15 codas in 42 syllables, and 21 of
+143 written carriers bear a sukūn. The refutation lands on the templates before
+it lands on the count: were the deposit free of every last coda, `CVC`'s mere
+existence would still refute it.
+
+**No pronounced consonant without a pronounced vowel — untestable here.**
+`UnicodeIsNotRecordedSound` blocks it outright; no codepoint in this tree is
+recorded sound. The reading stays written and blocked rather than deleted
+(`AnUntestableReadingIsWrittenNotDropped`), because being unable to test a
+claim is neither denying it nor granting it.
+
+And the whole readout carries its own ceiling:
+`AVerdictHereIsAVerdictOnThisDepositUnderTheseTemplates`. One text, one
+scribe's pointing, one frozen template set. Nothing here is a verdict on Arabic
+or on the syllable as such, and nothing here is a birth.
 
 ```bash
 python -m pip install -e '.[dev]'
