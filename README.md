@@ -7129,6 +7129,61 @@ the attribution relation under data separation — not an independent triple of
 three fields, and not a complete linguistic fiber law. Both negations are
 deposited by name.
 
+## A gloss for dal alone, and the whole it only half resembles
+
+`src/alghanem/arabic/dal_alone_gloss.py` builds a gloss for the letter dal
+alone and then tests — rather than asserts — the claim that it is the structure
+of the whole structure.
+
+**The partition is given by the source, not cut by the reader.** "Dal alone" is
+not a predicate written over the root column; it is a chapter that already
+exists in the lexicon's own bytes under the header `كتاب الدّال`. That the
+chapter and the letter coincide is re-derived, not assumed: every row under the
+header opens with dal, and no dal-initial root lies outside it. A neighbouring
+finding falls out of the same reading — twelve rows belong to no named chapter
+at all, so the source's partition is not a total one, and those rows are counted
+rather than folded into a residue.
+
+**The axis count is derived from the axis text, never read from the count
+column.** Of the 179 dal rows, the written `axes_count` agrees with the
+re-derivation in 123, disagrees in 21, and says nothing in 35. Silence is kept
+apart from disagreement: a row that declared nothing did not contradict
+anything, and merging the two would inflate a disagreement that never occurred.
+
+**The claim is refuted on a named axis, and the refutation is recorded rather
+than engineered around.** Against a tolerance declared before the measurement
+(five percentage points, absolute) across five declared shares:
+
+| Axis | Dal chapter | Whole table | Gap | Within band |
+| --- | --- | --- | --- | --- |
+| doubled roots | 0.0894 | 0.0935 | 0.0041 | yes |
+| trilateral | 0.8994 | 0.8936 | 0.0059 | yes |
+| weak trilateral | 0.0112 | 0.0122 | 0.0011 | yes |
+| carries poetic evidence | 0.2961 | 0.4248 | **0.1287** | **no** |
+| carries any axis | 0.6089 | 0.6434 | 0.0344 | yes |
+
+The part resembles the whole in composition and not in the density of its
+citation. The divergence stands despite a bias in its favour: the dal chapter is
+itself inside the whole it is compared against, which pulls the two shares
+together. And the band is a knob — widening it to 0.5 makes the divergence
+vanish — so the verdict is a function of the declared tolerance, not an absolute.
+
+**Matching every axis would still not have closed it.** Refutation is cheaper
+than confirmation here: one axis outside the band refutes on a single source,
+but agreement on all five reads as `DEFERRED_FOR_WANT_OF_A_SECOND_SOURCE` unless
+a second, independent source corroborates it.
+
+**The MASAQ half does not stand today, under two blockers rather than one.** The
+first is contingent: MASAQ's bytes are neither deposited in this tree nor
+declared by path. The second survives their arrival — MASAQ has no root column,
+so "dal alone" there is a surface segment, not a chapter of roots, and pairing
+the two would pair two kinds rather than two glosses of one thing.
+
+**This is not a deposit into `gloss_data`.** That registry glosses *positions*
+in a registered text and checks its authority against the domain declarer; this
+glosses a *root* in a digested lexicon. Carrying one into the other would open a
+gate whose conditions were never met.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
