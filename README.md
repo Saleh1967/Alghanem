@@ -6116,6 +6116,41 @@ rather than scored in it. The next number to move is therefore the corpus, not
 the rate: `UNMEASURED_ROUND_TRIP_SOURCES` still names the 77,429-token corpus
 this tree does not vendor, and gives it no figure at all.
 
+### The population moved on bytes this tree already has
+
+Waiting for the 77,429-token corpus is not the only way to widen a population,
+because a second fingerprinted Arabic deposit is **already in this tree**:
+`maqayis_by_root_csv_999.csv`. So `maqayis_root_round_trip` runs the same six
+layers over the 4,087 distinct trilateral root strings of that deposit —
+population derived from the bytes under the deposit's own frozen counting rule,
+ordered by a written ordering rule, never a list typed by hand.
+
+Run: **4,087 strings, 0 returned byte-identical**, and the whole of the halt
+profile is a single row. UTF-8, NFC and carrier/state each accept 4,087 of
+4,087 with no refusal, no mismatch and no atom lost or added; the line then
+stops at the syllable layer for every string under one named cause,
+`SEGMENTATION_ONSETLESS_INITIAL_SAKIN`. That is the first measurement of this
+line on **unvocalised** strings, and what it measures is exactly where the
+limit sits: not in the bytes, not in the codec, but in a segmentation function
+that requires a written vowel.
+
+**A zero is a measured number.** It keeps its full denominator — the rate is
+not lifted by re-basing it on the layers that did accept — and the two layers
+above the syllable report an input count of 0 because nothing reached them,
+which is disclosure of the halt beneath, not a second result.
+
+**And a limit on this function is not a law about Arabic.** That this pipeline
+does not syllabify an unvocalised string says what *this* function does; it was
+not built for unvocalised text, and its refusal is not a claim that unvocalised
+Arabic cannot be syllabified. Likewise 4,087 is a count of distinct entries in
+one file, under one counting rule and that lexicon's own spelling — not a count
+of trilateral roots in Arabic. A root string is not a word in a context either,
+so nothing here is a figure about running text.
+
+Re-derived, never quoted: `python
+examples/arabic/measure_maqayis_root_round_trip.py` rebuilds every number from
+the fingerprinted bytes and fails if `figures_digest` moves.
+
 Not built here, deliberately: morphology, composition, syntax, iʿrāb, dalālah,
 MASAQ and any weight protocol. No layer above word structure has a forward and
 an inverse function yet, so none of them is in the table.
