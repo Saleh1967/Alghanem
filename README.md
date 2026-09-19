@@ -6859,6 +6859,38 @@ measures what the lookup table added, not what the ladder proved.
 relations; `refuse_syllable_birth_claim` refuses the claim from every layer
 without exception, the fourth included.
 
+## The transition to the syllable, tested and refuted
+
+`src/alghanem/arabic/syllable_transition_experiment.py` asks the next question
+directly: having climbed to the fourth layer, does the ladder's value determine
+the **syllable shape** of the word in which the hamza occurs?
+
+**The target is measured by another component, not declared.** Each of the `10`
+declared host words — `أَكَلَ`, `أُمٌّ`, `سَأَلَ`, `رَأْسٌ`, `سُؤَالٌ`,
+`بِئْرٌ`, `مَاءٌ`, `آمَنَ`, `اِبْنٌ`, `اُكْتُبْ` — has its shape read off by
+running `syllabify_surface` on its surface, recomputed on every request. A word
+the syllabifier cannot segment is a **named refusal**, never a third shape that
+would silently count as a difference.
+
+**The answer is held out and the reader is blind.** The shape is the item's
+`target`, so it is neither recorded among the item's fields nor citable by any
+layer, and the experiment reuses the same once-per-distinct-value reader.
+
+**The result is negative, and it is measured.** The ladder's value collapses to
+`6` distinct values over `10` items, and `4` pairs share a value while carrying
+different measured shapes — `أَكَلَ` (`CV-CV-CV`) against `أُمٌّ` (`CVC-CVC`),
+and `سَأَلَ` against `رَأْسٌ`. The experiment therefore refutes determination
+**before the reader is consulted at all**: `0` reader calls, and
+`the_transition_to_the_syllable_is_established()` is false. No reader, however
+strong, can separate what was never separated for it.
+
+**And this settles nothing about birth.** A failed transition is not a denied
+birth, and a successful one would not have been a proof of birth;
+`refuse_a_syllable_birth_claim_from_this_run` refuses both readings. The
+refutation holds on a designed domain of chosen words, so it disposes of the
+determination claim without proving that no other ladder, built from other
+recorded fields, could determine the syllable.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
