@@ -26,6 +26,7 @@ from alghanem.kernel.birth import (
     ResidualSurvivalStatus,
 )
 from alghanem.kernel.birth_certificate import (
+    _CERTIFICATE_TOKEN,
     BIRTH_CERTIFICATE_NAMED_LAWS,
     BirthCertificate,
     BirthCertificateAuthorityError,
@@ -500,6 +501,129 @@ def test_held_and_cleared_findings_partition_the_vocabulary() -> None:
     cleared = {finding.preventer for finding in assessment.preventers_cleared}
     assert held | cleared == set(BirthPreventer)
     assert not held & cleared
+
+
+# --- the construction guards, woken on synthetic readings ----------------------
+#
+# No reading this tree can issue clears every preventer, so the guards inside
+# `BirthCertificate.__post_init__` are unreachable through the licensed chain and
+# would otherwise stand untested. They are woken here by constructing the
+# dataclass directly with the module's issuing token, imported into this test
+# file alone: no public entry point is added, nothing in `src/` changes, and this
+# asserts refusal behaviour rather than any security property of Python's private
+# names -- a determined caller can always reach `_CERTIFICATE_TOKEN` itself.
+
+
+def synthetic_cleared_findings() -> tuple[PreventerFinding, ...]:
+    """One cleared finding per preventer: a reading no gate in this tree issues."""
+
+    return tuple(
+        PreventerFinding(
+            preventer=preventer,
+            holds=False,
+            reason="synthetic test reading; no authority issues this",
+        )
+        for preventer in BirthPreventer
+    )
+
+
+def issue_certificate(**overrides: object) -> BirthCertificate:
+    closure = closure_decision()
+    fields: dict[str, object] = {
+        "certificate_id": "certificate",
+        "issuing_authority_id": "authority",
+        "verdict": verdict_for(closure),
+        "closure": closure,
+        "findings": synthetic_cleared_findings(),
+        "trace": Trace(("synthetic",)),
+        "_token": _CERTIFICATE_TOKEN,
+    }
+    fields.update(overrides)
+    return BirthCertificate(**fields)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize(
+    ("overrides", "refusal"),
+    [
+        pytest.param(
+            {"certificate_id": "  "},
+            BirthExperimentSpecificationError,
+            id="blank certificate id",
+        ),
+        pytest.param(
+            {"issuing_authority_id": ""},
+            BirthExperimentSpecificationError,
+            id="blank authority id",
+        ),
+        pytest.param(
+            {"verdict": "a verdict, honestly"},
+            BirthCertificateAuthorityError,
+            id="verdict is not a decision",
+        ),
+        pytest.param(
+            {"closure": "a closure, honestly"},
+            BirthCertificateAuthorityError,
+            id="closure is not a decision",
+        ),
+        pytest.param(
+            {"trace": ("synthetic",)},
+            BirthCertificateAuthorityError,
+            id="trace is not a Trace",
+        ),
+        pytest.param(
+            {"findings": ("cleared",)},
+            BirthCertificateAuthorityError,
+            id="findings are not findings",
+        ),
+        pytest.param(
+            {"findings": ()},
+            BirthCertificateAuthorityError,
+            id="no finding at all",
+        ),
+    ],
+)
+def test_a_guard_refuses_each_malformed_certificate(
+    overrides: dict[str, object], refusal: type[Exception]
+) -> None:
+    """The blank-text guards refuse under the shared text error, and are recorded
+    here under the class they actually raise rather than the one this module
+    names -- a measured difference, not a defect this milestone rewrites."""
+
+    with pytest.raises(refusal):
+        issue_certificate(**overrides)
+
+
+def test_a_certificate_missing_one_preventer_is_refused_not_completed() -> None:
+    findings = synthetic_cleared_findings()
+    with pytest.raises(BirthCertificateAuthorityError):
+        issue_certificate(findings=findings[1:])
+
+
+def test_a_certificate_naming_one_preventer_twice_is_refused() -> None:
+    findings = synthetic_cleared_findings()
+    with pytest.raises(BirthCertificateAuthorityError):
+        issue_certificate(findings=findings[:-1] + (findings[0],))
+
+
+def test_a_single_held_preventer_refuses_the_whole_certificate() -> None:
+    for index in range(len(BirthPreventer)):
+        findings = list(synthetic_cleared_findings())
+        findings[index] = PreventerFinding(
+            preventer=findings[index].preventer,
+            holds=True,
+            reason="synthetic held reading",
+        )
+        with pytest.raises(BirthCertificateAuthorityError):
+            issue_certificate(findings=tuple(findings))
+
+
+def test_every_preventer_cleared_is_still_not_enough_without_a_birth_verdict() -> None:
+    """The last standing refusal: this tree issues DEFER_IN_SCOPE and nothing else."""
+
+    closure = closure_decision()
+    assert verdict_for(closure).status is BirthVerdictStatus.DEFER_IN_SCOPE
+    with pytest.raises(BirthCertificateAuthorityError):
+        issue_certificate()
 
 
 # --- the named limits ----------------------------------------------------------
