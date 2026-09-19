@@ -7080,6 +7080,55 @@ is an identity, and a written alif is automatically neither.
 no Fibonacci law is extracted — the latter negation is deposited explicitly so
 that the code's silence is not read as an open possibility.
 
+## Retrieval passes, the relation is necessary, and the certificate still defers
+
+`src/alghanem/arabic/occurrence_attribution_encoding.py` asks two questions and
+answers both by running them: can the measured written occurrences be retrieved
+from a binary encoding over shared ordered registers, and does that retrieval
+need a third, separate attribution field?
+
+**Retrieval holds in the measured scope.** The 249 occurrences read by the
+reference layer encode into 2987 bits over a 34-entry carrier register and a
+27-entry state register, and decode back identical — word boundaries included.
+Boundaries are carried by a declared length before each word, not by a separator
+code: a separator would occupy a value in the symbol space and could be confused
+with a carrier, while a length cannot.
+
+**The scope is the deposit, not the language.** An occurrence the articulation
+rule left unresolved is encoded *as unresolved* and retrieved as such. Encoding
+it with a guessed state would raise the retrieval rate by inventing what was
+never measured.
+
+**The attribution relation is necessary once the data is separated.** The two
+mims — one sukun-bearing, one vowelled, sharing one written carrier — are split
+into an unlinked carrier set and state set, and the consistent reassemblies are
+enumerated: there are two, and the swap is exactly as consistent as the
+original. The position is lost, not tied. The witness is chosen to be sharp:
+had the carriers differed, carrier identity alone would have recovered the
+pairing and the experiment would have proved nothing. A negative control is run
+too — separating occurrences whose states are identical loses nothing, so the
+gate is not vacuous.
+
+**A third field is not necessary for the declared target.** The extra field is a
+function of the record already encoded, so it cannot separate two states the
+record does not separate. Measured, it costs 1494 bits and returns nothing: the
+decode is identical with it and without it. That negation is scoped — it is a
+statement about the target *retrieve the occurrence in its place*, not a claim
+that the field is meaningless for some other target never tested here.
+
+**The linguistic and phonetic certificate stays `DEFER`, under three named
+blockers.** No independent linguistic target was tested, no reader qualified to
+close the reconstruction requirement of `minimal_complete_fiber` exists in this
+tree, and wasl and waqf have no performance measurement. The passing round-trip
+does not touch any of the three: it is evidence of a different kind from the
+claim, and promoting a verdict by out-of-kind evidence is precisely what this
+tree refuses.
+
+**What was born is narrower than what was hoped.** The necessity of preserving
+the attribution relation under data separation — not an independent triple of
+three fields, and not a complete linguistic fiber law. Both negations are
+deposited by name.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
