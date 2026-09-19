@@ -29,6 +29,8 @@ from alghanem.structural_dal import (
 __all__ = [
     "A_BIT_SLOT_IS_NOT_A_LINGUISTIC_ROLE",
     "A_BIT_VALUE_IS_NOT_A_STRUCTURAL_SCALE",
+    "TWO_SLOTS_ARE_NOT_THE_SCALE_COMPOSITION",
+    "UNPROVEN_SCALE_LADDER",
     "A_REPEATED_VALUE_IS_NOT_A_PRESERVED_OCCURRENCE",
     "STRUCTURAL_BRIDGE_NAMED_LAWS",
     "THE_BRIDGE_DOES_NOT_TOUCH_THE_BENEFIT",
@@ -81,11 +83,28 @@ A_BIT_VALUE_IS_NOT_A_STRUCTURAL_SCALE: Final[str] = (
     "ولا يُقرَأ بلوغُ المقياس من قيمة البتّ."
 )
 
+TWO_SLOTS_ARE_NOT_THE_SCALE_COMPOSITION: Final[str] = (
+    "TwoSlotsAreNotTheScaleComposition: نجاحُ خانتين على مصدرٍ واحدٍ شاهدٌ في "
+    "نطاق خانتين لا غير. ولا يُركَّب صعودًا إلى البايتات كلِّها ولا إلى الوحدات "
+    "الكتابيّة ولا اللغويّة؛ فبرهانُ كلِّ مقياسٍ يُطلَب على حدته، ولا يُفترَض "
+    "من نجاح الحالة الصغرى. فمن سمّى هذا الجسرَ اتّصالًا بين جبر التعقّل واللغة "
+    "كلِّها فقد عبَر انتقالًا لم يُقَس هنا."
+)
+
+UNPROVEN_SCALE_LADDER: Final[tuple[str, ...]] = (
+    "bits → octets",
+    "octets → graphemes",
+    "graphemes → linguistic_units",
+    "linguistic_units → ifada",
+)
+"""مقاييسُ التركيب التي لم يُطلَب برهانُها بعد؛ تُعَدّ ولا يُفترَض قطعُها."""
+
 STRUCTURAL_BRIDGE_NAMED_LAWS: Final[tuple[str, ...]] = (
     THE_WITNESS_IS_BOUND_TO_ITS_SOURCE_AND_POSITIONS,
     A_BIT_SLOT_IS_NOT_A_LINGUISTIC_ROLE,
     A_REPEATED_VALUE_IS_NOT_A_PRESERVED_OCCURRENCE,
     A_BIT_VALUE_IS_NOT_A_STRUCTURAL_SCALE,
+    TWO_SLOTS_ARE_NOT_THE_SCALE_COMPOSITION,
     THE_BRIDGE_DOES_NOT_TOUCH_THE_BENEFIT,
 )
 """قوانينُ هذا الطور المُسمّاةُ؛ وكلٌّ منها مقيسٌ باختبارٍ لا مُصرَّحٌ وحسب."""
@@ -296,6 +315,24 @@ class ByteSlotBridge:
         )
 
     @property
+    def proven_scale_span(self) -> int:
+        """مدى البرهان بالخانات؛ وهو حدُّ الطور لا اختيارَ هذا الجسر."""
+
+        return self.whole.slot_count
+
+    @property
+    def unreached_scales(self) -> tuple[str, ...]:
+        """المقاييسُ التي لم يبلغها هذا الشاهد؛ مُسمّاةً معدودةً لا مطويّة."""
+
+        return UNPROVEN_SCALE_LADDER
+
+    @property
+    def reaches_the_whole_source(self) -> bool:
+        """أيبلغ الشاهدُ بايتاتِ المصدر كلَّها؟ والجواب مقيسٌ لا مُصرَّح."""
+
+        return self.proven_scale_span == len(self.source) * BITS_IN_A_BYTE
+
+    @property
     def occurrence_ids(self) -> tuple[str, ...]:
         """هويّتا الوقوعين بترتيبهما؛ موضعان لا قيمتان."""
 
@@ -355,9 +392,13 @@ class ByteSlotBridge:
 
     @property
     def what_it_is_not(self) -> tuple[str, ...]:
-        """ما لا يُثبِته الجسرُ مهما صحّ: دورٌ لغويّ، ثمّ أجناسُ التقسيم الأربعة."""
+        """ما لا يُثبِته الجسرُ: دورٌ لغويّ، وتركيبُ المقاييس، وأجناسُ التقسيم."""
 
-        return (A_BIT_SLOT_IS_NOT_A_LINGUISTIC_ROLE, *self.hypotheses.what_it_is_not)
+        return (
+            A_BIT_SLOT_IS_NOT_A_LINGUISTIC_ROLE,
+            TWO_SLOTS_ARE_NOT_THE_SCALE_COMPOSITION,
+            *self.hypotheses.what_it_is_not,
+        )
 
     def rebuilds_from(self, source: bytes) -> bool:
         """أتُعاد قراءةُ الخانتين من مصدرٍ بعينه فتُطابق هذا الشاهدَ كلَّه؟"""
@@ -489,6 +530,9 @@ def render_bridge(bridge: ByteSlotBridge) -> str:
             f"البقايا الحاجبة: {len(bridge.residuals)} — كلُّ تقسيمٍ محجوب: "
             f"{bridge.every_partition_is_blocked}",
             f"عددُ التقسيمات: {bridge.hypotheses.count} بلا فائزٍ مفروض",
+            f"مدى البرهان: {bridge.proven_scale_span} خانةً — يبلغ المصدرَ "
+            f"كلَّه: {bridge.reaches_the_whole_source}",
+            "مقاييسُ لم تُبلَغ: " + "، ".join(bridge.unreached_scales),
             "",
             "ما لا يُثبِته هذا الجسر:",
         ]

@@ -654,3 +654,42 @@ def test_the_rendered_census_publishes_the_raw_byte_identities() -> None:
     for case in census.cases:
         assert case.case_id in rendered
         assert case.source_digest[:12] in rendered
+
+
+# ————— قراءةُ العلامتين ليست برهانَ إفادة —————
+
+
+def test_a_reached_benefit_is_a_candidate_not_a_proof() -> None:
+    """بلوغُ `مُفيد` مرشَّحٌ على القناة المكتوبة، ويحمل حدودَه مُسمّاةً معه."""
+
+    run = run_bytes("اللَّهُ نُورٌ".encode())
+    assert run.ifada is IfadaStanding.مُفيد
+    assert run.the_benefit_is_a_candidate_not_a_proof is True
+    assert len(run.what_the_benefit_reading_does_not_prove) == 4
+    assert (
+        COMPOSITION_IFADA_PATH_NAMED_LAWS["AMarkReadingIsNotAProofOfBenefit"]
+        in run.what_the_benefit_reading_does_not_prove
+    )
+
+
+def test_the_refusal_holds_for_a_run_that_did_not_reach_a_benefit() -> None:
+    """والحدُّ لازمٌ لكلِّ سَوق؛ فلا يُرفَع عمّن لم يبلغ إفادةً ولا عمّن بلغها."""
+
+    for source in ("اللَّهُ نُورٌ".encode(), "بيتُ اللَّهِ".encode()):
+        run = run_bytes(source)
+        assert run.the_benefit_is_a_candidate_not_a_proof is True
+        assert run.what_the_benefit_reading_does_not_prove
+
+
+def test_the_path_module_names_no_proof_of_benefit() -> None:
+    """لا موضعَ في الوحدة يُسمّي قراءةَ العلامتين برهانًا على الإفادة."""
+
+    text = (
+        Path(__file__)
+        .resolve()
+        .parents[2]
+        .joinpath("src/alghanem/arabic/composition_ifada_path.py")
+        .read_text(encoding="utf-8")
+    )
+    for claim in ("proves_benefit", "benefit_is_proven", "proof_of_benefit"):
+        assert claim not in text

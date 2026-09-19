@@ -16,6 +16,8 @@ from alghanem.structural_bridge import (
     STRUCTURAL_BRIDGE_NAMED_LAWS,
     THE_BRIDGE_DOES_NOT_TOUCH_THE_BENEFIT,
     THE_WITNESS_IS_BOUND_TO_ITS_SOURCE_AND_POSITIONS,
+    TWO_SLOTS_ARE_NOT_THE_SCALE_COMPOSITION,
+    UNPROVEN_SCALE_LADDER,
     BitPosition,
     BitSlotReading,
     ByteSlotBridge,
@@ -313,15 +315,15 @@ def test_the_bridge_exposes_no_benefit_and_no_certificate() -> None:
 # ————— ما لا يُثبِته الجسر —————
 
 
-def test_the_bridge_names_the_five_genera_it_does_not_reach() -> None:
+def test_the_bridge_names_the_six_genera_it_does_not_reach() -> None:
     """الجسرُ يُسمّي ما لا يبلغه: دورًا لغويًّا، وجذرًا، ووزنًا، ومدلولًا، وإفادة."""
 
     bridge = bridge_two_bits(_ISNAD, _FIRST, _SECOND)
     refusals = bridge.what_it_is_not
 
     assert refusals[0] == A_BIT_SLOT_IS_NOT_A_LINGUISTIC_ROLE
-    assert len(refusals) == 5
-    assert len(set(refusals)) == 5
+    assert len(refusals) == 6
+    assert len(set(refusals)) == 6
     for refusal in refusals:
         assert refusal.strip()
 
@@ -522,3 +524,47 @@ def test_running_both_lines_without_a_bridge_changes_neither() -> None:
     assert after.ifada == before.ifada
     assert after.reached is before.reached
     assert after.trace == before.trace
+
+
+# ————— انتقالان لا يقطعهما هذا الشاهد —————
+
+
+def test_the_bridge_names_the_scales_it_did_not_reach() -> None:
+    """الجسرُ يَعُدّ المقاييسَ التي لم يبلغها؛ فلا تُطوى في نجاح خانتين."""
+
+    bridge = bridge_two_bits(_ISNAD, _FIRST, _SECOND)
+    assert bridge.unreached_scales == UNPROVEN_SCALE_LADDER
+    assert len(bridge.unreached_scales) == 4
+    assert TWO_SLOTS_ARE_NOT_THE_SCALE_COMPOSITION in bridge.what_it_is_not
+    assert TWO_SLOTS_ARE_NOT_THE_SCALE_COMPOSITION in STRUCTURAL_BRIDGE_NAMED_LAWS
+
+
+def test_the_proof_span_is_two_slots_and_falls_short_of_the_source() -> None:
+    """مدى البرهان خانتان، ومصدرُ خمسٍ وعشرين بايتًا أبعدُ منهما بمقياسه."""
+
+    bridge = bridge_two_bits(_ISNAD, _FIRST, _SECOND)
+    assert bridge.proven_scale_span == DECLARED_SLOT_COUNT
+    assert bridge.reaches_the_whole_source is False
+    assert bridge.proven_scale_span < len(_ISNAD) * 8
+
+
+def test_no_bridge_of_any_source_reaches_its_whole_source() -> None:
+    """ولا مصدرَ واحدٌ يبلغه الجسرُ كلَّه؛ فالحدُّ طورٌ لا اختيارَ عيّنة."""
+
+    for source in (_ISNAD, _IDAFA):
+        bridge = bridge_two_bits(source, _FIRST, _SECOND)
+        assert bridge.reaches_the_whole_source is False
+
+
+def test_the_bridge_module_claims_no_proof_of_connection() -> None:
+    """لا موضعَ في الوحدة يُسمّي هذا الجسرَ اتّصالًا مبرهَنًا بجبر التعقّل."""
+
+    text = (
+        Path(__file__)
+        .resolve()
+        .parents[2]
+        .joinpath("src/alghanem/structural_bridge/byte_slot_bridge.py")
+        .read_text(encoding="utf-8")
+    )
+    for claim in ("proves_the_connection", "reaches_language", "proves_ifada"):
+        assert claim not in text

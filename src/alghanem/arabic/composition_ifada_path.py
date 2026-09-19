@@ -225,6 +225,14 @@ COMPOSITION_IFADA_PATH_NAMED_LAWS: Final[dict[str, str]] = {
         "مفتوحة. ولذلك لا يُخرِج قراءةً ولا نفيَها، بل تأجيلًا مُسمًّى يُعَدّ "
         "في مقامه"
     ),
+    "AMarkReadingIsNotAProofOfBenefit": (
+        "AMarkReadingIsNotAProofOfBenefit: المقروءُ علامتان مكتوبتان على آخِرَي "
+        "لفظين، ومنهما تُقرأ صورةُ التركيب. والانتقالُ من صورة التركيب المكتوبة "
+        "إلى كون الكلام مُفيدًا في نفس الأمر انتقالٌ لا يقطعه هذا الشاهد: فهو "
+        "لا يقرأ قصدًا ولا سياقًا ولا مقامًا ولا صدقًا، ولا يميّز مُفيدًا من "
+        "مُحاكٍ لصورته. فالمخرجُ `IfadaStanding` مرشَّحٌ على القناة المكتوبة "
+        "وحدها، لا برهانَ إفادة"
+    ),
     "NoLaterLayerRepairsAnEarlierLoss": (
         "NoLaterLayerRepairsAnEarlierLoss: كلمةٌ وقفت في الطبقات المكتوبة لا "
         "تُستأنَف من طبقةٍ أعلى بتقديرٍ يسدّ فقدَها، بل يقف المسارُ كلُّه عند "
@@ -232,6 +240,14 @@ COMPOSITION_IFADA_PATH_NAMED_LAWS: Final[dict[str, str]] = {
     ),
 }
 """القيودُ المُسمّاةُ التي تُجمّدها هذه الوحدة؛ كلُّ نصٍّ يفتتح باسم قانونه."""
+
+_WHAT_A_MARK_READING_DOES_NOT_PROVE: Final[tuple[str, ...]] = (
+    "AMarkReadingIsNotAProofOfBenefit",
+    "CaseMarkIsNotIrab",
+    "NoLexiconIsConsulted",
+    "ARunRecordIsNotABirthCertificate",
+)
+"""أسماءُ القوانين التي تحدّ قراءةَ العلامتين عن أن تُسمّى برهانَ إفادة."""
 
 
 def _digest_of(content: object) -> str:
@@ -387,6 +403,24 @@ class PathRun:
         """أبلغ السَّوقُ إفادةً مقروءة؟ فبلوغُ الطبقة ليس قراءةَ الفائدة."""
 
         return self.ifada.is_read
+
+    @property
+    def what_the_benefit_reading_does_not_prove(self) -> tuple[str, ...]:
+        """ما لا تقطعه قراءةُ العلامتين؛ مُشتقٌّ من القوانين المُسمّاة لا مُنشَأ.
+
+        فمن سمّى هذا المخرجَ برهانَ إفادةٍ فقد عبَر انتقالًا لم يُقَس هنا.
+        """
+
+        return tuple(
+            COMPOSITION_IFADA_PATH_NAMED_LAWS[name]
+            for name in _WHAT_A_MARK_READING_DOES_NOT_PROVE
+        )
+
+    @property
+    def the_benefit_is_a_candidate_not_a_proof(self) -> bool:
+        """أمرشَّحٌ هذا المخرجُ لا برهان؟ وهو ثابتٌ لكلِّ سَوقٍ بلا استثناء."""
+
+        return True
 
     @property
     def trace(self) -> Trace:
