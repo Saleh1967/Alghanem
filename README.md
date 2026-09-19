@@ -6741,6 +6741,20 @@ domain can satisfy a condition, and none exists. So the zero is derived by
 reading evidence, and the candidate's rank is not raised to a completed
 certificate merely because experiments now run.
 
+**The certificate gate is derived, not written.** Until now the domain's kind
+was a *field*: anyone could write `DECLARED_LINGUISTIC_DOMAIN` beside a designed
+case and collect `is_a_linguistic_certificate` for free. That field is now gone
+from `DeclaredDomain`, from `ConditionEvidence`, and from the verdict; passing
+`kind=` or `domain_kind=` raises `TypeError`, so the false name is unsayable
+rather than merely rejected. A domain counts as linguistic only when *every* one
+of its cases carries a `CaseAttestation` — a source identifier, a 64-hex digest,
+and a locator — whose digest matches a registry recomputed from the bytes in the
+tree at the moment of the check. The registry currently holds one source, so the
+declared domain is measured at `0` attested of `6` cases and stays **designed**;
+the verdict's kind and identifier are both read off the domain it carries. An
+attested corpus would still not be a sufficient sample, and that limit is named
+among the residuals.
+
 ## The hamza fiber keeps some rasm, and is not a phonetic fiber
 
 The carrier/state codec records a hamza's carrier and its **seat**, and nothing

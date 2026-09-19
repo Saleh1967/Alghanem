@@ -28,8 +28,13 @@
 يُمرَّر إليه إلّا `T(x)`؛ والحجبُ بنيويٌّ: يُنادى القارئُ مرّةً واحدةً لكلّ
 مخرجٍ متمايز، ثمّ يُقابَل جوابُه بمضمون كلّ حالةٍ تشترك في ذلك المخرج، فلا
 يملك ما يفرّق به بين حالتين دمجهما التمثيل. والضرورةُ تُقاس بإجراء التجربة
-نفسِها على `T_{-i}` بأفضلِ قارئٍ ممكنٍ على مخرجاتها. والمجالُ المُجرَى عليه
-**مصمَّمٌ** لاختبار التمثيل، فقيامُ المعيار عليه حكمٌ على مجاله وحدَه
+نفسِها على `T_{-i}` بأفضلِ قارئٍ ممكنٍ على مخرجاتها. وجنسُ المجال **مُشتَقٌّ لا مكتوب**:
+لا حقلَ يُعلِن فيه صاحبُ المجال أنّه «لغويٌّ مُعلَن»؛ بل يُرفَع إلى ذلك متى
+وُثِّقت كلُّ حالةٍ فيه بمدوّنةٍ مُسجَّلةٍ في الشجرة **تُعاد حوسبةُ بصمتها عند
+كلّ فحص**، وإلّا فهو مصمَّم. فبوّابةُ الشهادة لا تُفتَح بالتسمية
+(`A_DOMAIN_KIND_IS_DERIVED_FROM_ATTESTATIONS_NOT_WRITTEN`). والمجالُ المُجرَى
+عليه ههنا مصمَّمٌ لاختبار التمثيل — صفرٌ من حالاته موثَّق — فقيامُ المعيار
+عليه حكمٌ على مجاله وحدَه
 (`A_DESIGNED_DOMAIN_IS_NOT_A_LINGUISTIC_CERTIFICATE`)، وقارئُ الجدول يثبت
 تباينَ التمثيل لا فهمَه (`A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING`).
 
@@ -72,7 +77,12 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Final
 
+from .fatiha_source_text import FATIHA_SOURCE_ID
+from .fatiha_source_text import source_sha256 as fatiha_source_sha256
+
 __all__ = [
+    "AN_ATTESTED_CORPUS_IS_NOT_A_SUFFICIENT_SAMPLE",
+    "A_DOMAIN_KIND_IS_DERIVED_FROM_ATTESTATIONS_NOT_WRITTEN",
     "A_COLLISION_IN_THE_REPRESENTATION_IS_NOT_A_COLLISION_IN_CONTEXT_NOTE",
     "A_DESIGNED_DOMAIN_IS_NOT_A_LINGUISTIC_CERTIFICATE_NOTE",
     "A_DESIGNED_RUN",
@@ -98,6 +108,7 @@ __all__ = [
     "DeclaredDomain",
     "DeletedComponent",
     "DomainCase",
+    "CaseAttestation",
     "DomainKind",
     "FiberElement",
     "MinimalCompleteFiberError",
@@ -121,6 +132,7 @@ __all__ = [
     "genus_is_declared",
     "licensed_predicates",
     "lookup_reader",
+    "registered_corpus_digests",
     "necessity_deletion_experiment",
     "necessity_standing_of",
     "predicate_is_licensed_for",
@@ -301,19 +313,57 @@ def delete(
 
 
 class DomainKind(Enum):
-    """جنسُ المجال الذي تُجرى عليه التجربة؛ والمصمَّمُ ليس مدوّنةً لغويّة."""
+    """جنسُ المجال، **مُشتقًّا** من شواهد حالاته لا مكتوبًا عليه."""
 
     DESIGNED_DOMAIN = "مجالٌ_مصمَّمٌ_لاختبار_التمثيل"
     DECLARED_LINGUISTIC_DOMAIN = "مجالٌ_لغويٌّ_مُعلَنٌ_ومُبصَّم"
 
 
+def registered_corpus_digests() -> dict[str, str]:
+    """بصماتُ المدوّنات المُسجَّلةِ في الشجرة، **محسوبةً الآن** من بايتاتها.
+
+    فالمصدرُ لا يُصدَّق باسمه: إن لم يكن في هذه المقابلة فليس مدوّنةً في هذه
+    الشجرة، وإن كان فبصمتُه تُعاد حوسبتُها عند كلّ فحص.
+    """
+
+    return {FATIHA_SOURCE_ID: fatiha_source_sha256()}
+
+
+@dataclass(frozen=True, slots=True)
+class CaseAttestation:
+    """شاهدُ ورودٍ لحالة: مدوّنةٌ مُسجَّلةٌ، وبصمتُها، وموضعُ الورود فيها."""
+
+    source_id: str
+    source_sha256: str
+    locator: str
+
+    def __post_init__(self) -> None:
+        if not self.source_id.strip():
+            raise MinimalCompleteFiberError("شاهدُ ورودٍ بلا مصدرٍ مُسمًّى")
+        if not self.locator.strip():
+            raise MinimalCompleteFiberError("شاهدُ ورودٍ بلا موضعٍ في مصدره لا يُراجَع")
+        if len(self.source_sha256) != 64 or any(
+            character not in "0123456789abcdef" for character in self.source_sha256
+        ):
+            raise MinimalCompleteFiberError(
+                "بصمةٌ ليست `sha256` سداسيًّا صغيرًا بأربعٍ وستّين خانة"
+            )
+
+    @property
+    def is_verified_against_the_tree(self) -> bool:
+        """أوافقت بصمتُه بصمةَ مدوّنةٍ مُسجَّلةٍ محسوبةً الآن؟ لا يُقرَأ من اسمه."""
+
+        return registered_corpus_digests().get(self.source_id) == self.source_sha256
+
+
 @dataclass(frozen=True, slots=True)
 class DomainCase:
-    """حالةٌ واحدة `x`: عنصرُها، ومضمونُ إفادتها `F(x)`، ومقامُها المحدَّد."""
+    """حالةٌ واحدة `x`: عنصرُها، ومضمونُ إفادتها `F(x)`، ومقامُها، وشاهدُ ورودها."""
 
     element: FiberElement
     content: str
     context: str
+    attestation: CaseAttestation | None = None
 
     def __post_init__(self) -> None:
         if not self.content.strip():
@@ -327,13 +377,21 @@ class DomainCase:
                 "محمولٌ خارجَ `P(g)`؛ والتوافقُ النوعيُّ شرطُ دخولِ المجال"
             )
 
+    @property
+    def is_attested_in_the_tree(self) -> bool:
+        """أهي واردةٌ في مدوّنةٍ مُسجَّلةٍ ببصمةٍ مُوافِقة؟ يُفحَص ولا يُعلَن."""
+
+        return (
+            self.attestation is not None
+            and self.attestation.is_verified_against_the_tree
+        )
+
 
 @dataclass(frozen=True, slots=True)
 class DeclaredDomain:
-    """`𝒟` مع `F`: مجالٌ مُعلَنٌ قبل التجربة، ومضمونُ كلِّ حالةٍ مكتوبٌ فيه."""
+    """`𝒟` مع `F`: مجالٌ مُعلَنٌ قبل التجربة، وجنسُه **مُشتَقٌّ** لا مكتوب."""
 
     identifier: str
-    kind: DomainKind
     cases: tuple[DomainCase, ...]
 
     def __post_init__(self) -> None:
@@ -346,6 +404,24 @@ class DeclaredDomain:
             raise MinimalCompleteFiberError(
                 "عنصرٌ تكرّر في المجال؛ والتكرارُ يُخفي تعارضَ المضمون"
             )
+
+    @property
+    def kind(self) -> DomainKind:
+        """جنسُ المجال، مُشتقًّا: لغويٌّ مُعلَنٌ إن وُثِّقت **كلُّ** حالةٍ بمدوّنة.
+
+        ولا حقلَ يكتب فيه صاحبُ المجال جنسَه؛ فالتسميةُ الكاذبة ليست مرفوضةً
+        بعد وقوعها بل **غيرُ قابلةٍ للقول**.
+        """
+
+        if all(case.is_attested_in_the_tree for case in self.cases):
+            return DomainKind.DECLARED_LINGUISTIC_DOMAIN
+        return DomainKind.DESIGNED_DOMAIN
+
+    @property
+    def attested_case_count(self) -> int:
+        """عددُ الحالات الموثَّقة بمدوّنةٍ مُسجَّلة، مُشتقًّا بالعدّ."""
+
+        return sum(1 for case in self.cases if case.is_attested_in_the_tree)
 
     @property
     def case_count(self) -> int:
@@ -612,7 +688,6 @@ THE_DESIGNED_WITNESSES: Final[tuple[NecessityWitnessPair, ...]] = (
 
 THE_DECLARED_DOMAIN: Final[DeclaredDomain] = DeclaredDomain(
     identifier="المجالُ المصمَّم لشواهد الحذف الثلاثة",
-    kind=DomainKind.DESIGNED_DOMAIN,
     cases=tuple(case for item in THE_DESIGNED_WITNESSES for case in item.cases),
 )
 """`𝒟` مُعلَنٌ بحالاته ومقاماته؛ وهو **مصمَّمٌ** لاختبار التمثيل لا مدوّنةٌ عربيّة."""
@@ -671,16 +746,11 @@ def necessity_standing_of(
 class MinimalCompleteFiberVerdict:
     """حكمُ المعيار بشطريه على مجالٍ مُسمًّى؛ ولا يُرفَع الحكمُ فوق مجاله."""
 
-    domain_identifier: str
-    domain_kind: DomainKind
+    domain: DeclaredDomain
     sufficiency: SufficiencyStanding
     necessity: tuple[tuple[DeletedComponent, NecessityStanding], ...]
 
     def __post_init__(self) -> None:
-        if not self.domain_identifier.strip():
-            raise MinimalCompleteFiberError(
-                "حكمٌ بلا مجالٍ مُسمًّى يُقرَأ حكمًا مطلقًا؛ والمعيارُ مُقيَّدٌ بمجاله"
-            )
         components = tuple(item for item, _ in self.necessity)
         if len(set(components)) != len(components):
             raise MinimalCompleteFiberError("مكوّنٌ تكرّر في الحكم؛ والتكرارُ يُخفي نقصًا")
@@ -688,6 +758,18 @@ class MinimalCompleteFiberVerdict:
             raise MinimalCompleteFiberError(
                 "المكوّناتُ تُحكَم كلُّها أو لا تُحكَم؛ وإسقاطُ واحدٍ إثباتٌ صامتٌ لضرورته"
             )
+
+    @property
+    def domain_identifier(self) -> str:
+        """اسمُ المجال، مُشتقًّا من المجال نفسِه؛ فلا يُحكَم بلا مجالٍ يُحال عليه."""
+
+        return self.domain.identifier
+
+    @property
+    def domain_kind(self) -> DomainKind:
+        """جنسُ المجال، مُشتقًّا من شواهده؛ ولا يُكتَب في الحكم فيُفتَح به الباب."""
+
+        return self.domain.kind
 
     @property
     def every_component_is_witnessed(self) -> bool:
@@ -735,8 +817,7 @@ def assess_minimal_complete_fiber(
 
     reader = lookup_reader(domain, full_representation)
     return MinimalCompleteFiberVerdict(
-        domain_identifier=domain.identifier,
-        domain_kind=domain.kind,
+        domain=domain,
         sufficiency=assess_sufficiency(domain, full_representation, reader),
         necessity=tuple(
             (component, necessity_standing_of(component, domain))
@@ -766,7 +847,7 @@ class ConditionEvidence:
 
     what_was_run: str
     where_it_is_recorded: str
-    domain_kind: DomainKind
+    domain: DeclaredDomain
 
     def __post_init__(self) -> None:
         if not self.what_was_run.strip():
@@ -775,6 +856,16 @@ class ConditionEvidence:
             raise MinimalCompleteFiberError(
                 "شاهدٌ بلا موضعِ تسجيلٍ لا يُراجَع؛ والمراجعةُ شرطُ التوثيق"
             )
+
+    @property
+    def domain_kind(self) -> DomainKind:
+        """جنسُ مجال الشاهد، مُشتقًّا من مجاله نفسِه لا مكتوبًا في الشاهد.
+
+        فلا يُرفَع شاهدٌ إلى «لغويٍّ مُعلَن» بكتابة جنسه؛ يُرفَع بتوثيق كلّ
+        حالةٍ من حالات مجاله بمدوّنةٍ مُسجَّلةٍ في الشجرة ببصمةٍ مُوافِقة.
+        """
+
+        return self.domain.kind
 
 
 @dataclass(frozen=True, slots=True)
@@ -865,9 +956,9 @@ A_DESIGNED_RUN: Final[ConditionEvidence] = ConditionEvidence(
         "مخرجٍ متمايز، ثمّ يُقابَل جوابُه بمضمون كلّ حالةٍ تشترك في ذلك المخرج"
     ),
     where_it_is_recorded="`run_sufficiency_experiment` و`THE_DECLARED_DOMAIN`",
-    domain_kind=DomainKind.DESIGNED_DOMAIN,
+    domain=THE_DECLARED_DOMAIN,
 )
-"""شاهدُ إجراءٍ على مجالٍ مصمَّم؛ يُعَدّ محاولةً مُجراةً ولا يستوفي شرطًا."""
+"""شاهدُ إجراءٍ على المجال المُعلَن؛ وجنسُه مُشتَقٌّ منه، لا مكتوبٌ فيه."""
 
 
 def _deletion_run(component: DeletedComponent) -> ConditionEvidence:
@@ -881,7 +972,7 @@ def _deletion_run(component: DeletedComponent) -> ConditionEvidence:
         where_it_is_recorded=(
             "`necessity_deletion_experiment` و`THE_DESIGNED_WITNESSES`"
         ),
-        domain_kind=DomainKind.DESIGNED_DOMAIN,
+        domain=THE_DECLARED_DOMAIN,
     )
 
 
@@ -1039,7 +1130,22 @@ ZERO_IS_AN_UNNAMED_RELATION_NOT_AN_EMPTY_FIBER_NOTE: Final[str] = (
     "منفيّة، والخلطُ بينهما يجعل عدمَ التعيين نفيًا"
 )
 
+A_DOMAIN_KIND_IS_DERIVED_FROM_ATTESTATIONS_NOT_WRITTEN: Final[str] = (
+    "ADomainKindIsDerivedFromAttestationsNotWritten: لا حقلَ يُكتَب فيه جنسُ "
+    "المجال؛ يُشتَقّ من توثيق **كلّ** حالةٍ بمدوّنةٍ مُسجَّلةٍ في الشجرة "
+    "تُحسَب بصمتُها عند كلّ فحص. فبوّابةُ الشهادة لا تُفتَح بتسميةِ مجالٍ "
+    "مصمَّمٍ «لغويًّا مُعلَنًا»، وشاهدُ الشرط كذلك يستمدّ جنسَه من مجاله"
+)
+
+AN_ATTESTED_CORPUS_IS_NOT_A_SUFFICIENT_SAMPLE: Final[str] = (
+    "AnAttestedCorpusIsNotASufficientSample: توثيقُ الحالات بمدوّنةٍ مُبصَّمةٍ "
+    "يرفع تهمةَ الاختلاق، ولا يُثبِت أنّ المدوّنةَ عيّنةٌ كافيةٌ ولا ممثِّلة؛ "
+    "فالفاتحةُ نصٌّ واحدٌ قصير، وقيامُ المعيار عليها حكمٌ عليها لا على العربية"
+)
+
 MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
+    A_DOMAIN_KIND_IS_DERIVED_FROM_ATTESTATIONS_NOT_WRITTEN,
+    AN_ATTESTED_CORPUS_IS_NOT_A_SUFFICIENT_SAMPLE,
     FOUR_FIELDS_CARRY_THREE_FUNCTIONS_NOTE,
     THE_PREDICATE_SPACE_IS_DECLARED_NOT_MEASURED_NOTE,
     A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING_NOTE,

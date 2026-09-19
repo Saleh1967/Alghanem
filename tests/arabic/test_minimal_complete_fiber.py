@@ -7,12 +7,15 @@ from pathlib import Path
 import pytest
 
 from alghanem.arabic import minimal_complete_fiber as mcm_module
+from alghanem.arabic.fatiha_source_text import FATIHA_SOURCE_ID
+from alghanem.arabic.fatiha_source_text import source_sha256 as fatiha_source_sha256
 from alghanem.arabic.minimal_complete_fiber import (
     MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS,
     THE_CLOSURE_CHECKLIST,
     THE_DECLARED_DOMAIN,
     THE_DESIGNED_WITNESSES,
     AttributionCandidate,
+    CaseAttestation,
     ChecklistCondition,
     ClosureChecklist,
     ClosureRequirement,
@@ -43,6 +46,7 @@ from alghanem.arabic.minimal_complete_fiber import (
     necessity_deletion_experiment,
     necessity_standing_of,
     predicate_is_licensed_for,
+    registered_corpus_digests,
     run_sufficiency_experiment,
 )
 from alghanem.import_boundary import ImportBoundaryPolicy, audit_import_boundary
@@ -64,9 +68,9 @@ def test_the_minimal_complete_fiber_module_reaches_no_kernel_module() -> None:
     ]
 
 
-def test_there_are_eight_named_residuals_all_distinct_and_non_blank() -> None:
-    assert len(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS) == 10
-    assert len(set(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)) == 10
+def test_there_are_twelve_named_residuals_all_distinct_and_non_blank() -> None:
+    assert len(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS) == 12
+    assert len(set(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)) == 12
     assert all(note.strip() for note in MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
 
 
@@ -249,10 +253,139 @@ def test_every_deletion_is_actually_run_and_merges_two_contents() -> None:
         assert len(result.merged_contents[0]) == 2
 
 
+def _attested_case(predicate: str, content: str) -> DomainCase:
+    """حالةٌ موثَّقةٌ بمدوّنةٍ مُسجَّلةٍ في الشجرة، ببصمةٍ محسوبةٍ الآن."""
+
+    return DomainCase(
+        element=FiberElement(
+            anchor="زيد",
+            genus="شخصٌ مُعيَّن",
+            predicate=predicate,
+            relation=RelationKind.PREDICATION,
+        ),
+        content=content,
+        context="مقامٌ مثبَّت",
+        attestation=CaseAttestation(
+            source_id=FATIHA_SOURCE_ID,
+            source_sha256=fatiha_source_sha256(),
+            locator="السطرُ الأوّل",
+        ),
+    )
+
+
+def _attested_domain() -> DeclaredDomain:
+    """مجالٌ كلُّ حالاته موثَّقة؛ فجنسُه يُشتَقّ لغويًّا مُعلَنًا لا يُكتَب."""
+
+    return DeclaredDomain(
+        identifier="مجالٌ موثَّق",
+        cases=(_attested_case("طويل", "الإخبارُ بطول زيد"),),
+    )
+
+
+def test_a_domain_kind_is_derived_from_its_attestations_not_written() -> None:
+    assert THE_DECLARED_DOMAIN.kind is DomainKind.DESIGNED_DOMAIN
+    assert THE_DECLARED_DOMAIN.attested_case_count == 0
+    assert _attested_domain().kind is DomainKind.DECLARED_LINGUISTIC_DOMAIN
+
+
+def test_no_field_lets_a_domain_write_its_own_kind() -> None:
+    with pytest.raises(TypeError):
+        DeclaredDomain(  # type: ignore[call-arg]
+            identifier="مجالٌ يُسمّي نفسَه",
+            kind=DomainKind.DECLARED_LINGUISTIC_DOMAIN,
+            cases=(_attested_case("طويل", "مضمون"),),
+        )
+
+
+def test_one_unattested_case_keeps_the_whole_domain_designed() -> None:
+    mixed = DeclaredDomain(
+        identifier="مجالٌ مختلط",
+        cases=(
+            _attested_case("طويل", "الإخبارُ بطول زيد"),
+            DomainCase(
+                element=FiberElement(
+                    anchor="زيد",
+                    genus="شخصٌ مُعيَّن",
+                    predicate="قصير",
+                    relation=RelationKind.PREDICATION,
+                ),
+                content="الإخبارُ بقِصَر زيد",
+                context="مقامٌ مثبَّت",
+            ),
+        ),
+    )
+    assert mixed.attested_case_count == 1
+    assert mixed.case_count == 2
+    assert mixed.kind is DomainKind.DESIGNED_DOMAIN
+
+
+def test_an_attestation_to_an_unregistered_source_is_not_verified() -> None:
+    attestation = CaseAttestation(
+        source_id="مدوّنةٌ ليست في هذه الشجرة",
+        source_sha256=fatiha_source_sha256(),
+        locator="موضع",
+    )
+    assert not attestation.is_verified_against_the_tree
+
+
+def test_an_attestation_whose_digest_does_not_match_is_not_verified() -> None:
+    attestation = CaseAttestation(
+        source_id=FATIHA_SOURCE_ID,
+        source_sha256="0" * 64,
+        locator="موضع",
+    )
+    assert not attestation.is_verified_against_the_tree
+
+
+def test_a_malformed_digest_is_refused_outright() -> None:
+    for digest in ("", "ABC", "0" * 63, "g" * 64, fatiha_source_sha256().upper()):
+        with pytest.raises(MinimalCompleteFiberError):
+            CaseAttestation(
+                source_id=FATIHA_SOURCE_ID, source_sha256=digest, locator="موضع"
+            )
+
+
+def test_an_attestation_without_a_source_or_a_locator_is_refused() -> None:
+    with pytest.raises(MinimalCompleteFiberError):
+        CaseAttestation(
+            source_id=" ", source_sha256=fatiha_source_sha256(), locator="موضع"
+        )
+    with pytest.raises(MinimalCompleteFiberError):
+        CaseAttestation(
+            source_id=FATIHA_SOURCE_ID, source_sha256=fatiha_source_sha256(), locator=""
+        )
+
+
+def test_the_registered_digests_are_recomputed_from_the_tree() -> None:
+    registry = registered_corpus_digests()
+    assert registry[FATIHA_SOURCE_ID] == fatiha_source_sha256()
+    assert all(len(digest) == 64 for digest in registry.values())
+
+
+def test_the_certificate_gate_cannot_be_opened_by_naming_the_domain() -> None:
+    designed = assess_minimal_complete_fiber(THE_DECLARED_DOMAIN)
+    assert designed.is_established_on_its_domain is True
+    assert designed.is_a_linguistic_certificate is False
+
+
+def test_evidence_takes_its_kind_from_its_domain_not_from_a_written_field() -> None:
+    evidence = ConditionEvidence(
+        what_was_run="تجربةُ حذف",
+        where_it_is_recorded="هذا الاختبار",
+        domain=THE_DECLARED_DOMAIN,
+    )
+    assert evidence.domain_kind is THE_DECLARED_DOMAIN.kind
+    with pytest.raises(TypeError):
+        ConditionEvidence(  # type: ignore[call-arg]
+            what_was_run="تجربةُ حذف",
+            where_it_is_recorded="هذا الاختبار",
+            domain_kind=DomainKind.DECLARED_LINGUISTIC_DOMAIN,
+        )
+
+
 def test_necessity_is_not_witnessed_on_a_domain_that_does_not_separate() -> None:
     domain = DeclaredDomain(
         identifier="مجالٌ بحالةٍ واحدة",
-        kind=DomainKind.DESIGNED_DOMAIN,
         cases=(
             DomainCase(
                 element=FiberElement(
@@ -340,12 +473,19 @@ def test_the_criterion_holds_on_its_designed_domain_and_is_no_certificate() -> N
     assert "ADesignedDomainIsNotALinguisticCertificate" in joined
 
 
-def test_a_verdict_without_a_named_domain_is_refused() -> None:
+def test_a_verdict_names_its_domain_by_carrying_it_not_by_writing_it() -> None:
     standing = NecessityStanding.WITNESSED_ON_THE_DESIGNED_PAIRS
-    with pytest.raises(MinimalCompleteFiberError):
-        MinimalCompleteFiberVerdict(
-            domain_identifier="  ",
-            domain_kind=DomainKind.DESIGNED_DOMAIN,
+    verdict = MinimalCompleteFiberVerdict(
+        domain=THE_DECLARED_DOMAIN,
+        sufficiency=SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN,
+        necessity=tuple((item, standing) for item in DeletedComponent),
+    )
+    assert verdict.domain_identifier == THE_DECLARED_DOMAIN.identifier
+    assert verdict.domain_kind is THE_DECLARED_DOMAIN.kind
+    with pytest.raises(TypeError):
+        MinimalCompleteFiberVerdict(  # type: ignore[call-arg]
+            domain_identifier="مجالٌ يُسمّي نفسَه",
+            domain_kind=DomainKind.DECLARED_LINGUISTIC_DOMAIN,
             sufficiency=SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN,
             necessity=tuple((item, standing) for item in DeletedComponent),
         )
@@ -355,15 +495,13 @@ def test_a_verdict_that_drops_or_repeats_a_component_is_refused() -> None:
     standing = NecessityStanding.WITNESSED_ON_THE_DESIGNED_PAIRS
     with pytest.raises(MinimalCompleteFiberError):
         MinimalCompleteFiberVerdict(
-            domain_identifier="مجالٌ مصمَّم",
-            domain_kind=DomainKind.DESIGNED_DOMAIN,
+            domain=THE_DECLARED_DOMAIN,
             sufficiency=SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN,
             necessity=((DeletedComponent.PREDICATE, standing),),
         )
     with pytest.raises(MinimalCompleteFiberError):
         MinimalCompleteFiberVerdict(
-            domain_identifier="مجالٌ مصمَّم",
-            domain_kind=DomainKind.DESIGNED_DOMAIN,
+            domain=THE_DECLARED_DOMAIN,
             sufficiency=SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN,
             necessity=(
                 (DeletedComponent.PREDICATE, standing),
@@ -456,7 +594,7 @@ def test_a_condition_reads_its_standing_from_the_evidence_it_carries() -> None:
         evidence=ConditionEvidence(
             what_was_run="تجربةُ حذف",
             where_it_is_recorded="هذا الاختبار",
-            domain_kind=DomainKind.DESIGNED_DOMAIN,
+            domain=THE_DECLARED_DOMAIN,
         ),
     )
     linguistic = ChecklistCondition(
@@ -466,7 +604,7 @@ def test_a_condition_reads_its_standing_from_the_evidence_it_carries() -> None:
         evidence=ConditionEvidence(
             what_was_run="تجربةُ حذف",
             where_it_is_recorded="هذا الاختبار",
-            domain_kind=DomainKind.DECLARED_LINGUISTIC_DOMAIN,
+            domain=_attested_domain(),
         ),
     )
     assert designed.is_attempted is True
@@ -479,13 +617,13 @@ def test_evidence_without_what_was_run_or_where_it_is_recorded_is_refused() -> N
         ConditionEvidence(
             what_was_run="  ",
             where_it_is_recorded="موضع",
-            domain_kind=DomainKind.DESIGNED_DOMAIN,
+            domain=THE_DECLARED_DOMAIN,
         )
     with pytest.raises(MinimalCompleteFiberError):
         ConditionEvidence(
             what_was_run="ما أُجري",
             where_it_is_recorded="  ",
-            domain_kind=DomainKind.DESIGNED_DOMAIN,
+            domain=THE_DECLARED_DOMAIN,
         )
 
 
@@ -596,10 +734,9 @@ def test_every_domain_case_carries_a_written_context() -> None:
 def test_an_empty_or_repeating_domain_is_refused() -> None:
     case = THE_DECLARED_DOMAIN.cases[0]
     with pytest.raises(MinimalCompleteFiberError):
-        DeclaredDomain(identifier="مجالٌ خالٍ", kind=DomainKind.DESIGNED_DOMAIN, cases=())
+        DeclaredDomain(identifier="مجالٌ خالٍ", cases=())
     with pytest.raises(MinimalCompleteFiberError):
         DeclaredDomain(
             identifier="مجالٌ مكرَّر",
-            kind=DomainKind.DESIGNED_DOMAIN,
             cases=(case, case),
         )
