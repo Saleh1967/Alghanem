@@ -1,15 +1,17 @@
-"""اختباراتُ جدول التغطية: محاورُ لا تُخلَط، وتحليلٌ لا يُحسَم بلا مرجع."""
+"""اختباراتُ جدول التغطية: محاورُ لا تُخلَط، وفحصٌ يُسمّى بعلّته لا يُطوى."""
 
 from __future__ import annotations
 
-from dataclasses import replace
+from pathlib import Path
 
 import pytest
 
 from alghanem.arabic.classification_coverage_scheme import (
     ANALYSIS_REFERENCE,
     AXIS_REFERENCE_REQUIREMENTS,
+    CATEGORY_TAGS,
     COVERAGE_ITEMS,
+    TAGS_NOT_ASSIGNED_TO_A_CATEGORY,
     AnalysisCheck,
     AnalysisOutcome,
     AnalysisQuestion,
@@ -19,13 +21,22 @@ from alghanem.arabic.classification_coverage_scheme import (
     ClassificationCategory,
     ClassificationCoverageError,
     CoverageItem,
+    ReferenceAddress,
     ReferenceStanding,
     RootRecord,
     RootStanding,
     axis_of,
     deposit_tokens,
+    letters_only,
+    masaq_reference,
     render_coverage,
     run_coverage,
+    word_tags,
+)
+from alghanem.arabic.masaq_corpus_deposit import (
+    DERIVED_NOUN_TAGS,
+    MASAQ_PATH_VARIABLE,
+    MASAQ_SHA256,
 )
 
 _REPORT = run_coverage()
@@ -126,6 +137,7 @@ def test_a_word_is_not_placed_in_two_categories_of_one_axis() -> None:
                 why="سبب",
             ),
             why_it_is_here="محاولةُ جمعِ البناء والإعراب في كلمةٍ واحدة",
+            reference_address=ReferenceAddress(sura="1", verse="7"),
         )
 
 
@@ -180,12 +192,11 @@ def test_the_surfaces_come_from_the_deposit_and_are_not_retyped() -> None:
     assert _row("ad_dallina").item.surface == "الضَّالِّينَ"
 
 
-def test_no_analysis_is_resolved_and_none_is_counted_correct() -> None:
-    """كلُّ فحصٍ غيرُ محسوم، ولا يُحسَب صحيحًا، والدقّةُ ممتنعةٌ لا صفر."""
+def test_no_analysis_is_resolved_while_the_reference_bytes_are_absent() -> None:
+    """لا فحصَ محسومًا ما دامت البايتاتُ غائبة، ولا يُحسَب غيرُ المحسوم صحيحًا."""
 
     for row in _REPORT.rows:
         for check in row.checks:
-            assert check.outcome is AnalysisOutcome.UNRESOLVED_NO_ANALYZER_RAN
             assert check.is_resolved is False
     assert _REPORT.unresolved_total == sum(len(row.checks) for row in _REPORT.rows)
     for coverage in _REPORT.coverages:
@@ -194,14 +205,43 @@ def test_no_analysis_is_resolved_and_none_is_counted_correct() -> None:
         assert coverage.analysis_accuracy is None
 
 
-def test_a_settled_analysis_cannot_be_written_while_no_reference_is_deposited() -> None:
-    check = _row("nabudu").checks[0]
-    for outcome in (
-        AnalysisOutcome.MATCHED_THE_REFERENCE,
-        AnalysisOutcome.CONTRADICTED_THE_REFERENCE,
-    ):
-        with pytest.raises(ClassificationCoverageError):
-            replace(check, outcome=outcome)
+def test_every_unresolved_check_names_its_own_cause() -> None:
+    """العلّةُ تُسمّى واحدةً واحدة، ولا تُجمَع تحت «لم يجرِ تحليل»."""
+
+    causes = _REPORT.unresolved_by_cause
+    assert sum(causes.values()) == _REPORT.unresolved_total == 26
+    assert causes == {
+        AnalysisOutcome.UNRESOLVED_NO_ATTESTED_TAG_FOR_THIS_CATEGORY: 9,
+        AnalysisOutcome.UNRESOLVED_REFERENCE_BYTES_NOT_RESOLVED: 1,
+        AnalysisOutcome.UNRESOLVED_THE_REFERENCE_HAS_NO_COLUMN_FOR_THIS_QUESTION: 16,
+    }
+
+
+def test_the_marker_and_evidence_questions_fail_in_the_reference_not_the_bytes() -> (
+    None
+):
+    """عجزُ المرجع عن سؤالٍ يُقال قبل طلب بايتاته، فلا يُحمَل على غيابٍ عارض."""
+
+    for row in _REPORT.rows:
+        for check in row.checks:
+            if check.question is AnalysisQuestion.CATEGORY:
+                continue
+            assert check.outcome is (
+                AnalysisOutcome.UNRESOLVED_THE_REFERENCE_HAS_NO_COLUMN_FOR_THIS_QUESTION
+            )
+
+
+def test_only_the_categories_with_an_attested_tag_wait_on_the_bytes() -> None:
+    """ما لا وَسْمَ مُثبَتًا له لا ينتظر البايتات؛ علّتُه غيرُ علّتها."""
+
+    for row in _REPORT.rows:
+        for check in row.checks:
+            if check.question is not AnalysisQuestion.CATEGORY:
+                continue
+            waits = check.outcome is (
+                AnalysisOutcome.UNRESOLVED_REFERENCE_BYTES_NOT_RESOLVED
+            )
+            assert waits is (check.category in CATEGORY_TAGS)
 
 
 def test_round_trip_success_does_not_produce_any_analysis_accuracy() -> None:
@@ -253,43 +293,158 @@ def test_a_category_counts_only_the_checks_declared_for_it() -> None:
     assert len(jamid.checks) == 1
 
 
-def test_the_named_reference_is_not_deposited_and_cannot_settle_a_check() -> None:
-    """`MAQSAD` مُسمًّى يُطبَع يدويًّا، ولا بصمةَ له، فلا يحسم فحصًا."""
+def test_the_reference_is_masaq_and_its_digest_is_read_not_copied() -> None:
+    """اسمُ المرجع `MASAQ`، وبصمتُه مقروءةٌ من الإيداع لا منسوخةً باليد."""
 
-    assert ANALYSIS_REFERENCE.name == "MAQSAD"
-    assert ANALYSIS_REFERENCE.standing is ReferenceStanding.BEING_TRANSCRIBED_BY_HAND
-    assert ANALYSIS_REFERENCE.digest is None
+    assert ANALYSIS_REFERENCE.name == "MASAQ"
+    assert ANALYSIS_REFERENCE.digest == MASAQ_SHA256
     assert ANALYSIS_REFERENCE.can_settle_an_analysis is False
 
 
-def test_a_deposited_reference_needs_a_digest_and_a_digest_needs_a_deposit() -> None:
+def test_the_reference_standing_is_run_on_the_bytes_not_written(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """ثلاثُ حالاتٍ تُفرَّق بالتشغيل: لا تُحَلّ، وحُلَّت فخالفت، وحُلَّت فطابقت."""
+
+    monkeypatch.delenv(MASAQ_PATH_VARIABLE, raising=False)
+    absent = tmp_path / "لا_ملفّ.csv"
+    assert (
+        masaq_reference(absent).standing
+        is ReferenceStanding.FINGERPRINTED_BUT_BYTES_NOT_RESOLVED
+    )
+    wrong = tmp_path / "MASAQ.csv"
+    wrong.write_bytes(b"\xd8\xa8\xd8\xa7\xd9\x8a\xd8\xaa")
+    reference = masaq_reference(wrong)
+    assert reference.standing is ReferenceStanding.BYTES_PRESENT_BUT_DIGEST_MISMATCHED
+    assert reference.can_settle_an_analysis is False
+
+
+def test_a_fingerprinted_standing_needs_a_digest_and_a_named_one_refuses_it() -> None:
     with pytest.raises(ClassificationCoverageError):
         AnalysisReference(
-            name="MAQSAD",
+            name="MASAQ",
             standing=ReferenceStanding.DEPOSITED_AND_FINGERPRINTED,
             digest=None,
             how_it_is_being_obtained="دعوى إيداع",
         )
     with pytest.raises(ClassificationCoverageError):
         AnalysisReference(
-            name="MAQSAD",
+            name="MASAQ",
             standing=ReferenceStanding.NAMED_ONLY,
             digest="0" * 64,
             how_it_is_being_obtained="بصمةٌ بلا بايتات",
         )
 
 
-def test_this_table_refuses_to_run_against_a_reference_it_does_not_read() -> None:
-    """لو أُعلن المرجعُ مُودَعًا لم يُشغَّل هذا الجدول، فهو لا يقرأ مرجعًا."""
+def _synthetic_records(tag: str) -> tuple[dict[str, str], ...]:
+    """سجلّاتٌ **مُصطنَعةٌ مُصرَّحٌ بجنسها**، تُحاكي بنيةَ الصفّ ولا تُقرأ رقمًا."""
 
-    deposited = AnalysisReference(
-        name="MAQSAD",
-        standing=ReferenceStanding.DEPOSITED_AND_FINGERPRINTED,
-        digest="a" * 64,
-        how_it_is_being_obtained="مُودَعٌ مُبصَّم",
+    return (
+        {
+            "Sura_No": "1",
+            "Verse_No": "7",
+            "Column5": "9",
+            "Word_No": "1",
+            "Segmented_Word": "ال",
+            "Morph_Tag": "DET",
+        },
+        {
+            "Sura_No": "1",
+            "Verse_No": "7",
+            "Column5": "9",
+            "Word_No": "2",
+            "Segmented_Word": "ضالين",
+            "Morph_Tag": tag,
+        },
     )
-    with pytest.raises(ClassificationCoverageError):
-        run_coverage(COVERAGE_ITEMS, deposited)
+
+
+def _deposited_reference() -> AnalysisReference:
+    return AnalysisReference(
+        name="MASAQ",
+        standing=ReferenceStanding.DEPOSITED_AND_FINGERPRINTED,
+        digest=MASAQ_SHA256,
+        how_it_is_being_obtained="سجلّاتٌ مُصطنَعةٌ مُصرَّحٌ بجنسها في الاختبار",
+    )
+
+
+def _dallina() -> CoverageItem:
+    return next(item for item in COVERAGE_ITEMS if item.key == "ad_dallina")
+
+
+def test_a_word_is_found_by_its_letters_under_the_word_key_not_the_segment_index() -> (
+    None
+):
+    """المقاطعُ تُجمَع بـ`Column5`، وتُطابَق بحروف الكلمة لا بشكلها."""
+
+    item = _dallina()
+    found = word_tags(
+        _synthetic_records("NOUN_ACTIVE_PART"), item.reference_address, item.surface
+    )
+    assert found == ("DET", "NOUN_ACTIVE_PART")
+    assert letters_only(item.surface) == "الضالين"
+
+
+def test_the_reader_settles_the_category_question_when_the_tag_agrees() -> None:
+    """الوصلُ يعمل: وَسْمٌ من وسوم المشتقّ يُخرِج دقّةً مئةً بالمئة في فئته."""
+
+    report = run_coverage(
+        items=(_dallina(),),
+        reference=_deposited_reference(),
+        records=_synthetic_records("NOUN_ACTIVE_PART"),
+    )
+    coverage = report.coverage(ClassificationCategory.MUSHTAQQ)
+    assert coverage.resolved_total == 1
+    assert coverage.matched_total == 1
+    assert coverage.analysis_accuracy == 1.0
+
+
+def test_a_contradicting_tag_is_counted_against_the_claim_not_hidden() -> None:
+    """وَسْمٌ من بابٍ آخرَ يُخرِج مخالفةً محسومة، ودقّةً صفرًا لا امتناعًا."""
+
+    report = run_coverage(
+        items=(_dallina(),),
+        reference=_deposited_reference(),
+        records=_synthetic_records("GERUND"),
+    )
+    coverage = report.coverage(ClassificationCategory.MUSHTAQQ)
+    assert coverage.resolved_total == 1
+    assert coverage.matched_total == 0
+    assert coverage.analysis_accuracy == 0.0
+
+
+def test_a_word_absent_from_the_reference_is_named_absent_not_contradicted() -> None:
+    report = run_coverage(
+        items=(_dallina(),),
+        reference=_deposited_reference(),
+        records=(),
+    )
+    causes = report.unresolved_by_cause
+    assert causes[AnalysisOutcome.UNRESOLVED_WORD_NOT_FOUND_IN_THE_REFERENCE] == 1
+    assert report.coverage(ClassificationCategory.MUSHTAQQ).analysis_accuracy is None
+
+
+def test_every_tag_written_here_is_attested_in_the_deposit() -> None:
+    """لا يُكتَب وَسْمٌ لم يُقرأ في هذه الشجرة، ولو كان مُرجَّحًا."""
+
+    attested = {item.tag for item in DERIVED_NOUN_TAGS}
+    for tags in CATEGORY_TAGS.values():
+        assert tags <= attested
+    assert set(TAGS_NOT_ASSIGNED_TO_A_CATEGORY) <= attested
+    assert set(TAGS_NOT_ASSIGNED_TO_A_CATEGORY).isdisjoint(
+        tag for tags in CATEGORY_TAGS.values() for tag in tags
+    )
+    for reason in TAGS_NOT_ASSIGNED_TO_A_CATEGORY.values():
+        assert reason.strip()
+
+
+def test_nine_of_eleven_categories_have_no_attested_tag_in_this_tree() -> None:
+    """المرجعُ يحسم بابَي البنية المُثبَتَين، وما عداهما يُقال بعلّته لا بتخمين."""
+
+    assert set(CATEGORY_TAGS) == {
+        ClassificationCategory.MASDAR,
+        ClassificationCategory.MUSHTAQQ,
+    }
 
 
 def test_every_axis_names_what_a_reference_must_supply_to_lift_it() -> None:
@@ -315,13 +470,21 @@ def test_the_rendered_table_shows_the_columns_the_measurement_requires() -> None
         assert column in rendered
     assert "bytes returned: 5/5" in rendered
     assert "unresolved analyses: 26" in rendered
-    assert "MAQSAD" in rendered
+    assert "MASAQ" in rendered
+    for outcome in _REPORT.unresolved_by_cause:
+        assert outcome.name in rendered
 
 
-def test_a_check_outside_the_closed_outcome_is_refused() -> None:
+def test_a_check_outside_the_closed_vocabulary_is_refused() -> None:
     with pytest.raises(ClassificationCoverageError):
         AnalysisCheck(
             category=ClassificationCategory.MABNI,
             question=AnalysisQuestion.CATEGORY,
+            outcome="طابق_المرجع",  # type: ignore[arg-type]
+        )
+    with pytest.raises(ClassificationCoverageError):
+        AnalysisCheck(
+            category=ClassificationCategory.MABNI,
+            question="CATEGORY",  # type: ignore[arg-type]
             outcome=AnalysisOutcome.MATCHED_THE_REFERENCE,
         )

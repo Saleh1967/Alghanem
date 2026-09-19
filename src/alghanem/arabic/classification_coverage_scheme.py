@@ -26,13 +26,25 @@
 الوحدة يحمل تصنيفًا أخرجه الخطُّ، لأنّ الخطَّ لا يُخرِج تصنيفًا: الصرفُ والنحوُ
 خارجُ طبقاته كما يُقرأ في `LAYERS_NOT_IN_THIS_PIPELINE`.
 
-`AN_UNRESOLVED_ANALYSIS_IS_NOT_A_CORRECT_ONE`: كلُّ فحصٍ تحليليٍّ ههنا يخرج
-`غير_محسوم_لم_يجرِ_تحليل`، ولا يُحسَب صحيحًا. ولذلك `AnalysisAccuracy` ليست
-صفرًا ولا واحدًا بل **ممتنعةٌ** لانعدام مقسومٍ عليه، وتُعرَض شرطةً باسم سببها.
+`AN_UNRESOLVED_ANALYSIS_IS_NOT_A_CORRECT_ONE`: الفحصُ غيرُ المحسوم لا يُحسَب
+صحيحًا. ولذلك `AnalysisAccuracy` ليست صفرًا ولا واحدًا بل **ممتنعةٌ** لانعدام
+مقسومٍ عليه، وتُعرَض شرطةً باسم سببها. وغيرُ المحسوم ههنا **يُسمّى بعلّته**
+واحدةً واحدة: لا وَسْمَ مُثبَتًا لهذه الفئة، أو لا عمودَ في المرجع لهذا
+السؤال، أو بايتاتُ المرجع غيرُ محلولة، أو لم تُوجَد الكلمةُ في المرجع.
 
-`THE_ANALYTIC_REFERENCE_IS_NAMED_AND_NOT_YET_DEPOSITED`: المرجعُ المُسمّى
-`MAQSAD` يُطبَع يدويًّا ولم تُودَع بايتاتُه في هذه الشجرة ولا بصمتُه. فمرتبتُه
-`يُطبَع_يدويًّا`، ولا تُحسَب دقّةٌ تحليليّةٌ إلّا إذا صار `مُودَعًا_مُبصَّمًا`.
+`THE_ANALYTIC_REFERENCE_IS_MASAQ_AND_ITS_STANDING_IS_RUN_NOT_WRITTEN`: المرجعُ
+`MASAQ`، وبصمتُه مقروءةٌ من `masaq_corpus_deposit`، ومنزلتُه تُشتَقُّ بتشغيل
+`masaq_reference()` لا تُكتَب في حقل. وقد كان اسمُ المرجع ههنا `MAQSAD`،
+فصُحِّح إلى المرجع الموجود فعلًا في هذه الشجرة.
+
+`THE_REFERENCE_ANSWERS_ONE_QUESTION_OF_THREE`: MASAQ تَسِم البنيةَ في عمود
+`Morph_Tag`، ولا عمودَ فيها لعلامة الإعراب على وجهها المطلوب ههنا ولا لدليلها؛
+فسؤالُ الفئة وحدَه قابلٌ للحسم، وسؤالا العلامة والدليل يخرجان بعلّةٍ في المرجع
+نفسِه تُقال قبل أن تُطلَب بايتاتُه.
+
+`A_TAGGED_SEGMENT_COUNT_IS_NOT_A_WORD_COUNT_NOR_AN_ACCURACY`: ٤٬٢١٦ بوَسْم
+`GERUND` و٣٬١٥٦ بوَسْم `NOUN_ACTIVE_PART` أعدادُ **سجلّاتٍ موسومة**، والسجلُّ
+مقطعٌ لا كلمة؛ فليست أعدادَ كلماتٍ فريدة ولا نتيجةَ دقّةٍ للغانم.
 
 `AN_EMPTY_CATEGORY_HAS_NO_RATE`: الفئةُ التي لا كلمةَ لها في هذا الإيداع تبقى
 في الجدول صفًّا بصفرٍ ولا تُحذَف، ونسبتُها ممتنعةٌ لا مئةٌ بالمئة. وخلوُّ
@@ -42,8 +54,10 @@
 
 from __future__ import annotations
 
+import unicodedata
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
 from typing import Final
 
 from .arabic_round_trip_v1 import (
@@ -54,6 +68,21 @@ from .arabic_round_trip_v1 import (
     tokens_from_text,
 )
 from .fatiha_source_text import FATIHA_SOURCE_TEXT
+from .masaq_corpus_deposit import (
+    DERIVED_NOUN_TAGS,
+    MASAQ_SHA256,
+    MORPH_TAG_COLUMN,
+    WORD_KEY_COLUMN,
+    MasaqDepositError,
+    masaq_bytes_are_resolvable,
+    masaq_records,
+    read_masaq_bytes,
+)
+from .masaq_fractal_experiment import (
+    SEGMENTED_WORD_COLUMN,
+    SURA_COLUMN,
+    VERSE_COLUMN,
+)
 
 __all__ = [
     "ANALYSIS_REFERENCE",
@@ -61,11 +90,15 @@ __all__ = [
     "AN_UNRESOLVED_ANALYSIS_IS_NOT_A_CORRECT_ONE_NOTE",
     "A_DECLARED_TARGET_IS_NOT_A_RESULT_NOTE",
     "A_MASDAR_IS_ITS_OWN_CATEGORY_WITHOUT_A_PRESUPPOSED_DERIVATION_NOTE",
+    "A_TAGGED_SEGMENT_COUNT_IS_NOT_A_WORD_COUNT_NOR_AN_ACCURACY_NOTE",
     "AXIS_REFERENCE_REQUIREMENTS",
+    "CATEGORY_TAGS",
     "COVERAGE_ITEMS",
     "ROOT_IS_NOT_A_CATEGORY_BESIDE_JAMID_AND_MASDAR_AND_MUSHTAQQ_NOTE",
-    "THE_ANALYTIC_REFERENCE_IS_NAMED_AND_NOT_YET_DEPOSITED_NOTE",
+    "TAGS_NOT_ASSIGNED_TO_A_CATEGORY",
+    "THE_ANALYTIC_REFERENCE_IS_MASAQ_AND_ITS_STANDING_IS_RUN_NOT_WRITTEN_NOTE",
     "THE_AXES_ARE_MEASURED_APART_NOT_MERGED_NOTE",
+    "THE_REFERENCE_ANSWERS_ONE_QUESTION_OF_THREE_NOTE",
     "AnalysisCheck",
     "AnalysisOutcome",
     "AnalysisQuestion",
@@ -79,13 +112,18 @@ __all__ = [
     "CoverageItem",
     "CoverageReport",
     "CoverageRow",
+    "ReferenceAddress",
     "ReferenceStanding",
     "RootRecord",
     "RootStanding",
     "axis_of",
     "deposit_tokens",
+    "letters_only",
+    "masaq_reference",
     "render_coverage",
     "run_coverage",
+    "settle_question",
+    "word_tags",
 ]
 
 
@@ -162,6 +200,127 @@ _MARKER_BEARING_AXES: Final[frozenset[ClassificationAxis]] = frozenset(
 """المحاورُ التي يسأل سؤالُها عن علامةٍ ودليل؛ ومحورُ البنية ليس منها."""
 
 
+_ATTESTED_TAGS: Final[frozenset[str]] = frozenset(
+    item.tag for item in DERIVED_NOUN_TAGS
+)
+"""الوسومُ المُثبَتةُ في هذه الشجرة؛ ولا يُكتَب وَسْمٌ لم يُقرأ في إيداعٍ."""
+
+
+CATEGORY_TAGS: Final[dict[ClassificationCategory, frozenset[str]]] = {
+    ClassificationCategory.MASDAR: frozenset(
+        {
+            "GERUND",
+            "GERUND_MEEM",
+            "GERUND_INSTANT",
+            "GERUND_PROFESSION",
+            "GERUND_STATE",
+        }
+    ),
+    ClassificationCategory.MUSHTAQQ: frozenset(
+        {
+            "NOUN_ACTIVE_PART",
+            "NOUN_PASSIVE_PART",
+            "ADJ_QUALIT",
+            "ADJ_INTENS",
+            "ADJ_COMP",
+            "NOUN_TIME_PLACE",
+            "NOUN_INSTRUMENT",
+        }
+    ),
+}
+"""ربطُ الفئة بوسوم MASAQ؛ وما لا وَسْمَ له ليس له مدخلٌ ههنا فيُقال بعلّته.
+
+ولا يُكتَب في هذا الجدول وَسْمٌ لم يُقرأ في هذه الشجرة: تسعٌ من إحدى عشرة
+فئةً بلا مدخل، لا لأنّ MASAQ لا تسمها، بل لأنّ أسماءَ وسومها لتلك الأبواب
+**لم تُقرأ ههنا**، وكتابتُها تخمينًا وَسْمٌ مُفتعَلٌ لا قراءةٌ من مرجع.
+"""
+
+TAGS_NOT_ASSIGNED_TO_A_CATEGORY: Final[dict[str, str]] = {
+    "NOUN_RELATIVE": "المنسوبُ ليس من المشتقّات السبعة، فلا يُضَمُّ إليها تكثيرًا للمطابقة",
+    "NOUN_DIMINUTIVE": "المصغَّرُ ليس من المشتقّات السبعة، وإلحاقُه بها توسيعٌ بلا دليل",
+}
+"""وسومٌ مُثبَتةٌ تُرِكت بلا فئة عمدًا، وسببُ تركها مكتوبٌ لا مطويّ."""
+
+
+def _tags_are_attested() -> None:
+    unknown = sorted(
+        tag
+        for tags in CATEGORY_TAGS.values()
+        for tag in tags
+        if tag not in _ATTESTED_TAGS
+    ) + sorted(
+        tag for tag in TAGS_NOT_ASSIGNED_TO_A_CATEGORY if tag not in _ATTESTED_TAGS
+    )
+    if unknown:
+        raise ClassificationCoverageError(
+            f"وسومٌ غيرُ مُثبَتةٍ في الإيداع كُتِبت ههنا: {unknown}"
+        )
+
+
+_tags_are_attested()
+
+
+def letters_only(surface: str) -> str:
+    """الحروفُ وحدَها بلا حركةٍ ولا تطويل؛ محاذاةُ الموضع لا تُقاس بالشكل.
+
+    وهذا تحويلٌ **للمقارنة** لا للاسترجاع: خطُّ `ArabicRoundTripV1` يُعيد
+    البايتات كما دخلت، وهذه الدالّةُ لا تمسّه ولا تدخل فيه.
+    """
+
+    return "".join(
+        character
+        for character in unicodedata.normalize("NFC", surface)
+        if unicodedata.category(character) != "Mn" and character != "\u0640"
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class ReferenceAddress:
+    """موضعُ الكلمة في المرجع: سورةٌ وآية؛ والكلمةُ تُلتَمس بحروفها لا برقمها.
+
+    وترقيمُ الآي في MASAQ لم يُقرأ ههنا، فهذا العنوانُ **مُرشَّحٌ مُعلَن**:
+    إن لم تُوجَد الكلمةُ في موضعه خرج الفحصُ
+    `UNRESOLVED_WORD_NOT_FOUND_IN_THE_REFERENCE` ولم يُحمَل على أقرب موضع.
+    """
+
+    sura: str
+    verse: str
+
+    def __post_init__(self) -> None:
+        for value, label in ((self.sura, "رقمُ السورة"), (self.verse, "رقمُ الآية")):
+            if not value.strip():
+                raise ClassificationCoverageError(f"{label} يُكتَب ولا يُترَك فارغًا")
+
+
+def word_tags(
+    records: tuple[dict[str, str], ...],
+    address: ReferenceAddress,
+    surface: str,
+) -> tuple[str, ...] | None:
+    """وسومُ مقاطع كلمةٍ واحدةٍ في المرجع، أو `None` إن لم تُوجَد الكلمة.
+
+    المقاطعُ تُجمَع بمفتاح الكلمة `Column5` — لا بـ`Word_No` فهو فهرسُ مقطع —
+    ثمّ تُقارَن صورتُها المجموعةُ بحروف الكلمة. ولا تُلتَمس كلمةٌ بالتقريب:
+    مجموعةٌ لا تطابق حروفَها ليست هي.
+    """
+
+    groups: dict[str, list[str]] = {}
+    tags: dict[str, list[str]] = {}
+    for record in records:
+        if record.get(SURA_COLUMN) != address.sura:
+            continue
+        if record.get(VERSE_COLUMN) != address.verse:
+            continue
+        key = record.get(WORD_KEY_COLUMN, "")
+        groups.setdefault(key, []).append(record.get(SEGMENTED_WORD_COLUMN, ""))
+        tags.setdefault(key, []).append(record.get(MORPH_TAG_COLUMN, ""))
+    wanted = letters_only(surface)
+    for key, segments in groups.items():
+        if letters_only("".join(segments)) == wanted:
+            return tuple(tags[key])
+    return None
+
+
 class RootStanding(Enum):
     """منزلةُ الجذر؛ والعليا بلا مدخلٍ حتى يُودَع مرجعٌ يُقرأ منه."""
 
@@ -171,9 +330,11 @@ class RootStanding(Enum):
 
 
 class ReferenceStanding(Enum):
-    """منزلةُ المرجع التحليليّ؛ ولا تُحسَب دقّةٌ إلّا في العليا."""
+    """منزلةُ المرجع التحليليّ؛ وتُشتَقُّ بالتشغيل على البايتات لا تُكتَب."""
 
     DEPOSITED_AND_FINGERPRINTED = "مُودَع_مُبصَّم"
+    FINGERPRINTED_BUT_BYTES_NOT_RESOLVED = "مُبصَّم_بايتاتُه_غيرُ_محلولة"
+    BYTES_PRESENT_BUT_DIGEST_MISMATCHED = "بايتاتٌ_حاضرةٌ_خالفت_البصمة"
     BEING_TRANSCRIBED_BY_HAND = "يُطبَع_يدويًّا"
     NAMED_ONLY = "مُسمًّى_فقط"
 
@@ -187,11 +348,26 @@ class AnalysisQuestion(Enum):
 
 
 class AnalysisOutcome(Enum):
-    """حكمُ الفحص التحليليّ؛ واثنان منه بلا مدخلٍ حتى يُودَع المرجع."""
+    """حكمُ الفحص التحليليّ؛ وغيرُ المحسوم يُسمّى بعلّته لا بعلّةٍ واحدةٍ جامعة."""
 
     MATCHED_THE_REFERENCE = "طابق_المرجع"
     CONTRADICTED_THE_REFERENCE = "خالف_المرجع"
-    UNRESOLVED_NO_ANALYZER_RAN = "غير_محسوم_لم_يجرِ_تحليل"
+    UNRESOLVED_NO_ATTESTED_TAG_FOR_THIS_CATEGORY = "غير_محسوم_لا_وَسْمَ_مُثبَتًا_لهذه_الفئة"
+    UNRESOLVED_THE_REFERENCE_HAS_NO_COLUMN_FOR_THIS_QUESTION = (
+        "غير_محسوم_لا_عمودَ_في_المرجع_لهذا_السؤال"
+    )
+    UNRESOLVED_REFERENCE_BYTES_NOT_RESOLVED = "غير_محسوم_بايتاتُ_المرجع_غيرُ_محلولة"
+    UNRESOLVED_WORD_NOT_FOUND_IN_THE_REFERENCE = "غير_محسوم_لم_تُوجَد_الكلمةُ_في_المرجع"
+
+
+_FINGERPRINTED_STANDINGS: Final[frozenset[ReferenceStanding]] = frozenset(
+    {
+        ReferenceStanding.DEPOSITED_AND_FINGERPRINTED,
+        ReferenceStanding.FINGERPRINTED_BUT_BYTES_NOT_RESOLVED,
+        ReferenceStanding.BYTES_PRESENT_BUT_DIGEST_MISMATCHED,
+    }
+)
+"""المنازلُ التي تحمل بصمةً مكتوبة؛ والبصمةُ هويّةٌ لا حضورُ بايتات."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -267,6 +443,7 @@ class CoverageItem:
     claims: tuple[CategoryClaim, ...]
     root_record: RootRecord
     why_it_is_here: str
+    reference_address: ReferenceAddress
 
     def __post_init__(self) -> None:
         if not self.key.strip():
@@ -285,6 +462,10 @@ class CoverageItem:
             )
         if not self.why_it_is_here.strip():
             raise ClassificationCoverageError("لا تدخل كلمةٌ الجدولَ بلا سببٍ مكتوب")
+        if not isinstance(self.reference_address, ReferenceAddress):
+            raise ClassificationCoverageError(
+                "لكلّ كلمةٍ عنوانٌ مُعلَنٌ في المرجع، ولا يُلتَمس موضعُها بالتخمين"
+            )
 
     @property
     def raw_bytes(self) -> bytes:
@@ -312,10 +493,10 @@ class AnalysisCheck:
     outcome: AnalysisOutcome
 
     def __post_init__(self) -> None:
-        if self.outcome is not AnalysisOutcome.UNRESOLVED_NO_ANALYZER_RAN:
-            raise ClassificationCoverageError(
-                "لا محلّلَ صرفيًّا ولا إعرابيًّا في هذا الخطّ، فلا يُكتَب حكمٌ محسوم"
-            )
+        if not isinstance(self.outcome, AnalysisOutcome):
+            raise ClassificationCoverageError("حكمُ الفحص عضوٌ في مفردته المغلقة")
+        if not isinstance(self.question, AnalysisQuestion):
+            raise ClassificationCoverageError("سؤالُ الفحص عضوٌ في مفردته المغلقة")
 
     @property
     def is_resolved(self) -> bool:
@@ -460,7 +641,7 @@ class AxisReferenceRequirement:
 
 @dataclass(frozen=True, slots=True)
 class AnalysisReference:
-    """المرجعُ التحليليُّ المُسمّى: اسمُه، ومنزلتُه، وبصمتُه إن أُودع."""
+    """المرجعُ التحليليُّ المُسمّى: اسمُه، ومنزلتُه، وبصمتُه إن بُصِّم."""
 
     name: str
     standing: ReferenceStanding
@@ -472,17 +653,17 @@ class AnalysisReference:
             raise ClassificationCoverageError("المرجعُ يُسمّى باسمه لا بوصفه")
         if not isinstance(self.standing, ReferenceStanding):
             raise ClassificationCoverageError("منزلةُ المرجع عضوٌ في مفردتها المغلقة")
-        deposited = self.standing is ReferenceStanding.DEPOSITED_AND_FINGERPRINTED
-        if deposited and not (self.digest and self.digest.strip()):
-            raise ClassificationCoverageError("لا يُقال مُودَعٌ مُبصَّمٌ بلا بصمةٍ مكتوبة")
-        if not deposited and self.digest is not None:
-            raise ClassificationCoverageError("بصمةٌ بلا بايتاتٍ مُودَعةٍ دعوى إيداعٍ لم يقع")
+        fingerprinted = self.standing in _FINGERPRINTED_STANDINGS
+        if fingerprinted and not (self.digest and self.digest.strip()):
+            raise ClassificationCoverageError("لا يُقال مُبصَّمٌ بلا بصمةٍ مكتوبة")
+        if not fingerprinted and self.digest is not None:
+            raise ClassificationCoverageError("بصمةٌ بلا بايتاتٍ مُبصَّمةٍ دعوى لم تقع")
         if not self.how_it_is_being_obtained.strip():
             raise ClassificationCoverageError("طريقُ تحصيل المرجع يُكتَب ولا يُطوى")
 
     @property
     def can_settle_an_analysis(self) -> bool:
-        """أيصلح هذا المرجعُ لحسم فحص؟ لا يصلح حتى تُودَع بايتاتُه وتُبصَّم."""
+        """أيصلح هذا المرجعُ لحسم فحص؟ لا يصلح حتى تُحَلَّ بايتاتُه وتُطابِق."""
 
         return self.standing is ReferenceStanding.DEPOSITED_AND_FINGERPRINTED
 
@@ -541,6 +722,18 @@ class CoverageReport:
         )
 
     @property
+    def unresolved_by_cause(self) -> dict[AnalysisOutcome, int]:
+        """الفحوصُ غيرُ المحسومة موزَّعةً على عللها؛ فالعلّةُ الواحدةُ لا تجمعها."""
+
+        counts: dict[AnalysisOutcome, int] = {}
+        for row in self.rows:
+            for check in row.checks:
+                if check.is_resolved:
+                    continue
+                counts[check.outcome] = counts.get(check.outcome, 0) + 1
+        return counts
+
+    @property
     def empty_categories(self) -> tuple[ClassificationCategory, ...]:
         """الفئاتُ الخاليةُ من الكلمات؛ وهي قياسُ ضيقِ هذا المجتمع لا عيبُه."""
 
@@ -550,15 +743,74 @@ class CoverageReport:
 
 
 ANALYSIS_REFERENCE: Final[AnalysisReference] = AnalysisReference(
-    name="MAQSAD",
-    standing=ReferenceStanding.BEING_TRANSCRIBED_BY_HAND,
-    digest=None,
+    name="MASAQ",
+    standing=ReferenceStanding.FINGERPRINTED_BUT_BYTES_NOT_RESOLVED,
+    digest=MASAQ_SHA256,
     how_it_is_being_obtained=(
-        "يُطبَع يدويًّا ولم تُودَع بايتاتُه في هذه الشجرة، فلا بصمةَ له بعد؛ "
-        "ومتى أُودع وبُصِّم صار حسمُ الفحوص ممكنًا بالتشغيل لا بالقول"
+        "بصمةُ `MASAQ.csv` وطولُها مُودَعان في `masaq_corpus_deposit`، "
+        "والبايتاتُ خارجَ الشجرة تُحَلُّ بـ`corpora/MASAQ.csv` أو "
+        "بـ`ALGHANEM_MASAQ_PATH`؛ ولا يُقرأ منها رقمٌ قبل مطابقة الطول والبصمة"
     ),
 )
-"""المرجعُ التحليليُّ المُسمّى؛ ومنزلتُه تمنع حسمَ فحصٍ واحدٍ حتى اليوم."""
+"""المرجعُ التحليليُّ المكتوب؛ والمُعوَّلُ عليه ما تُخرِجه `masaq_reference()`."""
+
+
+def masaq_reference(path: Path | str | None = None) -> AnalysisReference:
+    """منزلةُ MASAQ **مشتقّةً بالتشغيل** على البايتات، لا مكتوبةً في حقل.
+
+    ثلاثُ حالاتٍ تُفرَّق ولا تُجمَع: بايتاتٌ لا تُحَلّ، وبايتاتٌ حاضرةٌ خالفت
+    البصمةَ أو الطول، وبايتاتٌ طابقت فصار حسمُ الفحص ممكنًا.
+    """
+
+    if not masaq_bytes_are_resolvable(path):
+        return ANALYSIS_REFERENCE
+    try:
+        read_masaq_bytes(path)
+    except MasaqDepositError as error:
+        return AnalysisReference(
+            name="MASAQ",
+            standing=ReferenceStanding.BYTES_PRESENT_BUT_DIGEST_MISMATCHED,
+            digest=MASAQ_SHA256,
+            how_it_is_being_obtained=(f"حُلَّ مسارٌ إلى ملفٍّ موجودٍ وخالف المُودَع: {error}"),
+        )
+    return AnalysisReference(
+        name="MASAQ",
+        standing=ReferenceStanding.DEPOSITED_AND_FINGERPRINTED,
+        digest=MASAQ_SHA256,
+        how_it_is_being_obtained=(
+            "حُلَّت البايتاتُ وطابقت الطولَ والبصمةَ المُودَعَين، فتُقرأ منها " "الوسومُ بقاعدتها"
+        ),
+    )
+
+
+def settle_question(
+    claim: CategoryClaim,
+    question: AnalysisQuestion,
+    item: CoverageItem,
+    reference: AnalysisReference,
+    records: tuple[dict[str, str], ...] | None,
+) -> AnalysisOutcome:
+    """احسم فحصًا واحدًا بالقراءة من المرجع، أو سمِّ علّةَ تعذُّرِ حسمه.
+
+    والترتيبُ مقصود: ما يعجز عنه المرجعُ **في ذاته** يُقال قبل أن تُطلَب
+    بايتاتُه، فلا يُحمَل عجزُ عمودٍ غائبٍ على غيابٍ عارضٍ للملفّ.
+    """
+
+    if question is AnalysisQuestion.MARKER:
+        return AnalysisOutcome.UNRESOLVED_THE_REFERENCE_HAS_NO_COLUMN_FOR_THIS_QUESTION
+    if question is AnalysisQuestion.EVIDENCE:
+        return AnalysisOutcome.UNRESOLVED_THE_REFERENCE_HAS_NO_COLUMN_FOR_THIS_QUESTION
+    tags = CATEGORY_TAGS.get(claim.category)
+    if not tags:
+        return AnalysisOutcome.UNRESOLVED_NO_ATTESTED_TAG_FOR_THIS_CATEGORY
+    if not reference.can_settle_an_analysis or records is None:
+        return AnalysisOutcome.UNRESOLVED_REFERENCE_BYTES_NOT_RESOLVED
+    found = word_tags(records, item.reference_address, item.surface)
+    if found is None:
+        return AnalysisOutcome.UNRESOLVED_WORD_NOT_FOUND_IN_THE_REFERENCE
+    if any(tag in tags for tag in found):
+        return AnalysisOutcome.MATCHED_THE_REFERENCE
+    return AnalysisOutcome.CONTRADICTED_THE_REFERENCE
 
 
 AXIS_REFERENCE_REQUIREMENTS: Final[tuple[AxisReferenceRequirement, ...]] = (
@@ -604,6 +856,7 @@ AXIS_REFERENCE_REQUIREMENTS: Final[tuple[AxisReferenceRequirement, ...]] = (
 COVERAGE_ITEMS: Final[tuple[CoverageItem, ...]] = (
     CoverageItem(
         key="allathina",
+        reference_address=ReferenceAddress(sura="1", verse="7"),
         token_index=21,
         claims=(
             CategoryClaim(
@@ -629,6 +882,7 @@ COVERAGE_ITEMS: Final[tuple[CoverageItem, ...]] = (
     ),
     CoverageItem(
         key="ad_dallina",
+        reference_address=ReferenceAddress(sura="1", verse="7"),
         token_index=28,
         claims=(
             CategoryClaim(
@@ -651,6 +905,7 @@ COVERAGE_ITEMS: Final[tuple[CoverageItem, ...]] = (
     ),
     CoverageItem(
         key="ihdina",
+        reference_address=ReferenceAddress(sura="1", verse="6"),
         token_index=17,
         claims=(
             CategoryClaim(
@@ -673,6 +928,7 @@ COVERAGE_ITEMS: Final[tuple[CoverageItem, ...]] = (
     ),
     CoverageItem(
         key="nabudu",
+        reference_address=ReferenceAddress(sura="1", verse="5"),
         token_index=14,
         claims=(
             CategoryClaim(
@@ -695,6 +951,7 @@ COVERAGE_ITEMS: Final[tuple[CoverageItem, ...]] = (
     ),
     CoverageItem(
         key="anamta",
+        reference_address=ReferenceAddress(sura="1", verse="7"),
         token_index=22,
         claims=(
             CategoryClaim(
@@ -721,16 +978,22 @@ COVERAGE_ITEMS: Final[tuple[CoverageItem, ...]] = (
 
 def run_coverage(
     items: tuple[CoverageItem, ...] = COVERAGE_ITEMS,
-    reference: AnalysisReference = ANALYSIS_REFERENCE,
+    reference: AnalysisReference | None = None,
+    records: tuple[dict[str, str], ...] | None = None,
+    path: Path | str | None = None,
 ) -> CoverageReport:
-    """شغِّل التغطية: استرجاعٌ بالتشغيل، وفحوصٌ تحليليّةٌ لا تُحسَم بلا مرجع."""
+    """شغِّل التغطية: استرجاعٌ بالتشغيل، وفحوصٌ تُقرأ من MASAQ أو تُسمّى علّتُها.
+
+    والمرجعُ إن لم يُمرَّر اشتُقَّت منزلتُه بالتشغيل على البايتات؛ والسجلّاتُ
+    لا تُقرأ إلّا إذا صار المرجعُ حاسمًا، فلا تُفتَح بايتاتٌ لم تُطابَق.
+    """
 
     if not items:
         raise ClassificationCoverageError("جدولٌ بلا كلمةٍ واحدةٍ لا يُشغَّل")
-    if reference.can_settle_an_analysis:
-        raise ClassificationCoverageError(
-            "أُعلن المرجعُ مُودَعًا، فلا يُشغَّل هذا الجدولُ الذي لا يقرأ مرجعًا"
-        )
+    resolved_reference = masaq_reference(path) if reference is None else reference
+    resolved_records = records
+    if resolved_reference.can_settle_an_analysis and resolved_records is None:
+        resolved_records = masaq_records(read_masaq_bytes(path))
     rows: list[CoverageRow] = []
     for item in items:
         trace = run_token(item.raw_bytes)
@@ -738,7 +1001,9 @@ def run_coverage(
             AnalysisCheck(
                 category=claim.category,
                 question=question,
-                outcome=AnalysisOutcome.UNRESOLVED_NO_ANALYZER_RAN,
+                outcome=settle_question(
+                    claim, question, item, resolved_reference, resolved_records
+                ),
             )
             for claim in item.claims
             for question in claim.questions
@@ -759,7 +1024,9 @@ def run_coverage(
         )
         for category in ClassificationCategory
     )
-    return CoverageReport(rows=tuple(rows), coverages=coverages, reference=reference)
+    return CoverageReport(
+        rows=tuple(rows), coverages=coverages, reference=resolved_reference
+    )
 
 
 def _rate(value: float | None) -> str:
@@ -799,10 +1066,15 @@ def render_coverage(report: CoverageReport) -> str:
         f"empty categories: {len(report.empty_categories)}/"
         f"{len(ClassificationCategory)} — مجتمعُ الفاتحة أضيقُ من هذه المعايير"
     )
+    lines.append("unresolved analyses, by named cause:")
+    for outcome, count in sorted(
+        report.unresolved_by_cause.items(), key=lambda pair: pair[0].name
+    ):
+        lines.append(f"  {outcome.name:<52}{count:>4}")
     lines.append(
         f"analytic reference: {report.reference.name} "
         f"({report.reference.standing.value}) — "
-        "ولا تُحسَب دقّةُ تحليلٍ قبل إيداعه وتبصيمه"
+        "ولا تُحسَب دقّةُ تحليلٍ قبل أن تُحَلَّ بايتاتُه وتُطابِق بصمتَه"
     )
     return "\n".join(lines)
 
@@ -838,10 +1110,28 @@ AN_UNRESOLVED_ANALYSIS_IS_NOT_A_CORRECT_ONE_NOTE: Final[str] = (
     "وتُعرَض شرطةً باسم سببها"
 )
 
-THE_ANALYTIC_REFERENCE_IS_NAMED_AND_NOT_YET_DEPOSITED_NOTE: Final[str] = (
-    "TheAnalyticReferenceIsNamedAndNotYetDeposited: `MAQSAD` مرجعٌ مُسمًّى "
-    "يُطبَع يدويًّا، ولم تُودَع بايتاتُه ولا بصمتُه؛ فمنزلتُه `يُطبَع_يدويًّا` "
-    "ولا يحسم فحصًا حتى يصير `مُودَعًا_مُبصَّمًا`"
+THE_ANALYTIC_REFERENCE_IS_MASAQ_AND_ITS_STANDING_IS_RUN_NOT_WRITTEN_NOTE: Final[str] = (
+    "TheAnalyticReferenceIsMasaqAndItsStandingIsRunNotWritten: المرجعُ "
+    "التحليليُّ `MASAQ`، وبصمتُه مقروءةٌ من `masaq_corpus_deposit` لا منسوخةً "
+    "باليد؛ ومنزلتُه تُشتَقُّ بتشغيل `masaq_reference()` على البايتات، فتُفرَّق "
+    "ثلاثُ حالاتٍ لا تُجمَع: بايتاتٌ لا تُحَلّ، وبايتاتٌ حاضرةٌ خالفت البصمةَ، "
+    "وبايتاتٌ طابقت فصار الحسمُ ممكنًا"
+)
+
+THE_REFERENCE_ANSWERS_ONE_QUESTION_OF_THREE_NOTE: Final[str] = (
+    "TheReferenceAnswersOneQuestionOfThree: MASAQ تَسِم البنيةَ في عمود "
+    f"«{MORPH_TAG_COLUMN}»، فتحسم سؤالَ الفئة حيث لها وَسْمٌ مُثبَتٌ ههنا. ولا "
+    "عمودَ فيها لعلامة الإعراب على وجهها المطلوب ههنا ولا لدليلها، فسؤالا "
+    "العلامة والدليل يخرجان `لا_عمودَ_في_المرجع_لهذا_السؤال` — وهي علّةٌ في "
+    "المرجع لا في البايتات، فتُقال قبل أن تُطلَب البايتاتُ أصلًا"
+)
+
+A_TAGGED_SEGMENT_COUNT_IS_NOT_A_WORD_COUNT_NOR_AN_ACCURACY_NOTE: Final[str] = (
+    "ATaggedSegmentCountIsNotAWordCountNorAnAccuracy: ٤٬٢١٦ بوَسْم `GERUND` "
+    "و٣٬١٥٦ بوَسْم `NOUN_ACTIVE_PART` أعدادُ **سجلّاتٍ موسومة** في بايتات "
+    "MASAQ تحت قاعدة عدّها؛ والسجلُّ مقطعٌ لا كلمة، فليست أعدادَ كلماتٍ "
+    "فريدة، وليست بحالٍ نتيجةَ دقّةٍ للغانم: الغانمُ لم يُخرِج منها تصنيفًا "
+    "واحدًا، وإنّما تُقارَن دعاواه بها"
 )
 
 AN_EMPTY_CATEGORY_HAS_NO_RATE_NOTE: Final[str] = (

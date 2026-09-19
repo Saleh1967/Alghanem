@@ -5979,13 +5979,10 @@ rather than retyped, and their surfaces are read back from those bytes.
 **What those five declarations are.** They are *test targets*, not results the
 engine produced. The pipeline emits no classification at all — morphology and
 syntax are outside its layers, as `LAYERS_NOT_IN_THIS_PIPELINE` already states
-— so every analytic check comes back `غير_محسوم_لم_يجرِ_تحليل`, and an
-unresolved check is **not counted correct**. `AnalysisAccuracy` therefore has
-no value: it is neither 0 nor 1 but refused, because its denominator is the
-number of *settled* checks, which is zero. The named reference, `MAQSAD`, is
-registered at standing `يُطبَع_يدويًّا` with no bytes and no digest in this
-tree, and the table refuses to run at all against a reference declared
-deposited, since it reads none.
+— so a check is settled only by reading an independent reference, and an
+unresolved check is **not counted correct**. `AnalysisAccuracy` is therefore
+neither 0 nor 1 but refused whenever its denominator, the number of *settled*
+checks, is zero.
 
 Run: 5 words, 5/5 bytes returned, 26 analytic checks, 0 settled,
 `AnalysisAccuracy` refused in every one of the eleven categories. **Four of the
@@ -6033,6 +6030,70 @@ attestation is sensitive to how the *reference itself* spells its roots — a
 limit on the measurement, written down rather than absorbed into the rate. And
 a word with no licensed root analysis, `الَّذِينَ`, leaves the denominator by
 declaration rather than by omission, so it is never scored as a failed search.
+
+### The analytic reference is MASAQ, and the refusal is now itemised
+
+The analytic reference in this table was written `MAQSAD`. There is no such
+thing in this tree. The reference that *does* exist is **MASAQ**
+(`masaq_corpus_deposit`): its digest and byte length are frozen, its licence
+and attribution are recorded, and it tags exactly the morphological doors the
+Quranic morphology corpus stops short of. So the name was corrected, and the
+digest is now read from `MASAQ_SHA256` rather than copied by hand.
+
+**The standing is run, not written.** `masaq_reference()` resolves the bytes
+and reports one of three separate states: `مُبصَّم_بايتاتُه_غيرُ_محلولة`,
+`بايتاتٌ_حاضرةٌ_خالفت_البصمة`, or `مُودَع_مُبصَّم`. In this environment the
+bytes are **not resolvable** — there is no `corpora/MASAQ.csv` and no
+`ALGHANEM_MASAQ_PATH` — so the run reports the first state. That is a measured
+result, not an assumption; a file sitting at the sanctioned path would still
+have to match the length *and* the digest before a single tag was read from it.
+
+**`masaq_records()` is now wired in.** Each word carries a declared
+`ReferenceAddress` (sura, verse); segments are grouped by the word key
+`Column5` — not by `Word_No`, which is a *segment* index — and the group is
+matched by the word's letters, diacritics stripped for the comparison only.
+The `Morph_Tag` of the matched group is compared against a declared tag set.
+A word that is not found is named absent, never treated as a contradiction.
+
+**Only tags actually attested in this tree are written.** `CATEGORY_TAGS` maps
+maṣdar to the five `GERUND*` tags and mushtaqq to the seven classical derived
+forms; `NOUN_RELATIVE` and `NOUN_DIMINUTIVE` are attested but deliberately left
+unassigned, with the reason recorded, because the nisba and the diminutive are
+not among the seven. A module-level check refuses any tag not present in the
+deposit. **Nine of the eleven categories have no attested tag here** — not
+because MASAQ fails to tag them, but because their tag names have not been read
+in this tree, and writing a guessed tag would be an invented reference.
+
+**The single blanket refusal is gone.** `UNRESOLVED_NO_ANALYZER_RAN` has been
+replaced by four named causes, and the 26 checks now decompose:
+
+| Cause | Checks |
+| --- | --- |
+| `UNRESOLVED_THE_REFERENCE_HAS_NO_COLUMN_FOR_THIS_QUESTION` | 16 |
+| `UNRESOLVED_NO_ATTESTED_TAG_FOR_THIS_CATEGORY` | 9 |
+| `UNRESOLVED_REFERENCE_BYTES_NOT_RESOLVED` | 1 |
+
+The order of these causes matters. What the reference cannot answer *in
+itself* is said **before** its bytes are requested: MASAQ tags structure in
+`Morph_Tag`, but it has no column for the iʿrāb marker in the form asked here,
+and none for its evidence, so the 16 marker and evidence checks fail in the
+reference, not in a missing file. Exactly **one** check — the mushtaqq claim on
+`الضَّالِّينَ` — is blocked solely by the bytes being absent. That is the
+measured size of the step remaining: one settleable check out of twenty-six,
+waiting on one file.
+
+**The reader is verified working, not just written.** Against declared
+synthetic records the analyser returns `NOUN_ACTIVE_PART` for the word and
+scores mushtaqq at 100%; swap the tag to `GERUND` and the same check settles as
+a contradiction, scoring 0% rather than quietly refusing. So the wiring
+genuinely settles, and a wrong claim is counted against itself.
+
+**A tagged-segment count is not a word count, nor an accuracy.** The 4,216
+records tagged `GERUND` and 3,156 tagged `NOUN_ACTIVE_PART` are counts of
+*tagged segments* in MASAQ's bytes under its counting rule. A record is a
+segment, not a word, so these are not counts of unique words; and they are
+certainly not an accuracy of Alghanem, which has produced no classification of
+its own. They are what its declared claims will be compared *against*.
 
 ### The next number is the population, not the rate
 
