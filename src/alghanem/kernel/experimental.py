@@ -177,6 +177,19 @@ EXPERIMENTAL_NAMED_LAWS: dict[str, str] = {
         "one. Running in the laboratory and using what was born are two acts "
         "under two authorities"
     ),
+    "PermissionToExperimentAndCertificationAreIndependent": (
+        "PermissionToExperimentAndCertificationAreIndependent: read together, "
+        "ExperimentalSuccessIsNotBirth, ExperimentalFailureIsNotNoBirth, "
+        "NoBornEntityIsRequiredToRunAnExperiment and "
+        "ExperimentalRunIsNotExecutionOfABornEntity say two separable things: "
+        "permitting a run does not entail certifying what was run, and "
+        "withholding certification does not entail forbidding the run. This is "
+        "a derivation of those four laws, not a fifth authority and not a gate: "
+        "it adds no argument to `ExperimentalAuthority.run` and no branch to "
+        "any verdict. It does not say a run is inert afterwards -- an offer may "
+        "still travel G0.EX.1c and the acquisition chain into a new licensed "
+        "assessment, where readings are re-derived rather than carried over"
+    ),
     "UnpermittedOperationCannotExecute": (
         "UnpermittedOperationCannotExecute: an operation is reachable only "
         "through the authority-issued capability of the case being run, which "
