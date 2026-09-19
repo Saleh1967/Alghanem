@@ -48,9 +48,9 @@ from .arabic_round_trip_v1 import (
     run_token,
 )
 from .encoding.carrier_state_candidate import (
+    CarrierState,
     CarrierStateCodec,
     CarrierStateUnit,
-    CarrierState,
 )
 from .mantuq_mafhum_ifada import (
     DalalaChannel,
@@ -466,7 +466,10 @@ def _read_composition(
 ) -> tuple[CompositionReading | None, PathStop | None, str]:
     """اقرأ التركيبَ من علامتَي الطرفين وحدَهما، أو قف بجنسٍ مُسمًّى."""
 
-    marks = f"{first.surface}:{first.final_mark.value}/{second.surface}:{second.final_mark.value}"
+    marks = (
+        f"{first.surface}:{first.final_mark.value}"
+        f"/{second.surface}:{second.final_mark.value}"
+    )
     if not first.final_mark.is_written or not second.final_mark.is_written:
         return None, PathStop.FINAL_MARK_NOT_WRITTEN, marks
     if second.has_jarr_proclitic:
@@ -514,7 +517,9 @@ def run_text(text: str) -> PathRun:
         )
     )
     if len(words) != 2:
-        return PathRun(text=text, stages=tuple(stages), words=(), composition=None, record=None)
+        return PathRun(
+            text=text, stages=tuple(stages), words=(), composition=None, record=None
+        )
 
     stages.append(
         _stage(
@@ -528,9 +533,7 @@ def run_text(text: str) -> PathRun:
         )
     )
 
-    readings = tuple(
-        _read_word(index, surface) for index, surface in enumerate(words)
-    )
+    readings = tuple(_read_word(index, surface) for index, surface in enumerate(words))
     halted = tuple(
         reading for reading in readings if not reading.crossed_the_written_chain
     )
@@ -653,9 +656,7 @@ def run_text(text: str) -> PathRun:
         benefit_witness=benefit_witness,
         declared_channel=DalalaChannel.منطوق,
         declared_mafhum_kind=MafhumKind.لا_ينطبق,
-        declared_ifada=(
-            IfadaStanding.مُفيد if benefits else IfadaStanding.غير_مُفيد
-        ),
+        declared_ifada=(IfadaStanding.مُفيد if benefits else IfadaStanding.غير_مُفيد),
     )
     stages.append(
         _stage(
