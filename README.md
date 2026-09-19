@@ -7184,6 +7184,60 @@ in a registered text and checks its authority against the domain declarer; this
 glosses a *root* in a digested lexicon. Carrying one into the other would open a
 gate whose conditions were never met.
 
+## A leak from form into meaning, and what survived removing it
+
+`alghanem.arabic.maqayis_semantic_leak_audit` measures whether roots that share
+letters also share meaning, on Ibn Faris's *Maqayis al-Lugha* as deposited in
+this tree. Similarity is cosine over a hand-rolled TF-IDF of each entry's body;
+the null is a label shuffle that preserves the family sizes; and the domain is
+the 2,916 roots of three distinct letters whose body exceeds 200 characters.
+
+**The audit exists because of its control, not because of its effect.** Every
+entry in Maqayis opens by naming its own root letters — «وأما الهمزة والجيم
+فلها أصلان». Two roots sharing a letter therefore share that letter's *name* as
+a literal token, so form leaks into the text that is supposed to measure
+meaning. Removing those tokens halves every effect:
+
+| Family | With the letter names | Without them |
+| --- | --- | --- |
+| shares C2 and C3 | 1.8422 | 1.2515 |
+| shares C1 only | 1.9352 | 1.2801 |
+| permutation, 0 positions agreeing | 1.3939 | 1.1218 |
+| permutation, 1 position agreeing | 1.8783 | 1.2751 |
+
+Roughly half of the uncleaned signal was the artefact. The four registered
+predictions are read only against the cleaned column: the minor-derivation
+threshold **holds** (1.2515 at Z = +20.8); the positional ordering
+C1C2 > C2C3 > C1C3 is **refuted**, the observed order being
+C1C2 > C1C3 > C2C3; the major-derivation threshold **splits**, clearing 1.20 at
+one agreeing position (1.2751) and failing it at zero (1.1218), which is the
+purer form of permutation; and the fourth prediction compares two families of
+unequal construction, so it is returned `ILL_POSED_SO_NOT_TESTABLE` rather than
+scored.
+
+**The fair test of the major-derivation claim is posterior and declared so.**
+Matching permutations against non-permutations at the *same* number of agreeing
+positions isolates the unordered letter set: +15.3 % excess at zero agreeing
+positions and +13.6 % at one. Small, consistent across both strata, and far
+below what the uncleaned numbers suggested.
+
+**The removal list is a knob, so it is measured as one.** The mechanical prefix
+expansion over-removes — it catches `كلام`, `وراء`, `لام`, and `ألف` in its
+sense of "a thousand". Hand-pruning that list after seeing the results would be
+fitting, so instead a narrower `CONSERVATIVE` list of the forms the opening
+formula actually uses is run beside it. The two agree to three decimal places
+and return identical verdicts, which is what licenses reading the mechanical
+column at all.
+
+**Every verdict here is posterior.** The pre-registration `PREREG-6.md` is named
+with a digest but is not deposited in this tree, so `assess_preregistration`
+returns `POSTERIOR_FOR_WANT_OF_A_DEPOSITED_DOCUMENT` and no S-verdict may be
+read as pre-registered until those bytes arrive and match. Two further limits
+are named rather than argued away: the measured thing is agreement between a
+root's shape and Ibn Faris's prose about it, not "meaning"; and a single
+author's single style inflates TF-IDF similarity everywhere, an inflation this
+run does not separate out.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
