@@ -6755,6 +6755,52 @@ the verdict's kind and identifier are both read off the domain it carries. An
 attested corpus would still not be a sufficient sample, and that limit is named
 among the residuals.
 
+## An occurrence is not a gloss, and a recorded condition is not a certificate
+
+The previous gate was still too generous in two places, and both are now shut.
+
+**Attestation is checked from three sides at once.** A `CaseAttestation` used to
+pair a digest with a free-text locator; a matching digest and any string at all
+made the case "attested". A locator is now a `SourceLocator` — a line number and
+a half-open `[start, end)` range in Unicode code points **after** a declared
+normalization form, with an optional word number carried for human reading only
+and never usable as an alternative reference. The gate demands, in order: the
+source is registered in the tree, its digest matches bytes recomputed now, the
+locator actually resolves inside the normalized source, the resolved surface
+equals the case's anchor, and an **independent gloss** at that exact place
+agrees with the case's genus, predicate and content. Each failure is named by
+its own `AttestationStanding` rather than collapsing into a bare `False`.
+
+**A gloss authored by the domain's declarer is refused.** `DeclaredDomain` now
+requires a `declarer_id`, and a gloss registry whose `authority_id` equals it
+cannot attest that domain's own cases — proving a word *occurs* somewhere is not
+proving what it *means* there. The deposited registry `gloss_data/` is digested,
+read by a strict reader that rejects unknown fields, and is **deliberately
+empty**: this tree holds no independent glossing authority, so every real case
+resolves to `UNDECIDED_DOMAIN` and the declared domain stays designed. The gap
+is recorded rather than filled with a manufactured witness.
+
+**Every closure condition now reads its own run.** `ChecklistCondition` used to
+be satisfied by the mere presence of evidence from a linguistically labelled
+domain, whatever that evidence actually did. `ConditionEvidence` now names the
+kind of run it performs and re-executes it on every read, and
+`requirement_is_closed_by` asks each requirement for *its* result: a necessity
+condition is closed only by a refuting deletion of **that** component, and the
+rebuilding condition only by a sufficiency run that held under a reader whose
+rule was fixed before the evaluation data. `lookup_reader` is tagged
+`BUILT_FROM_THE_DOMAIN_TARGET_TABLE` and can never close it; an unprovenanced
+callable is `UNDECLARED_PROVENANCE` and cannot either. A successful run on a
+designed domain and a failed run on an attested one both leave the condition
+open.
+
+**Issuance is delegated.** `is_a_linguistic_certificate` is gone. The verdict
+reports `meets_the_recorded_certificate_conditions` — a reading of the recorded
+checklist — beside `certificate_issuance_is_delegated`, which is always true:
+this deposit records and checks evidence, and does not hold the authority to
+issue the certificate even if all seven conditions were met. The carrier–state
+birth experiment remains a separate, later piece of work; no phonetic or
+syllabic birth is claimed here.
+
 ## The hamza fiber keeps some rasm, and is not a phonetic fiber
 
 The carrier/state codec records a hamza's carrier and its **seat**, and nothing

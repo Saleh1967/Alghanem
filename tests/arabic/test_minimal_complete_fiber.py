@@ -3,23 +3,36 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Final
 
 import pytest
 
 from alghanem.arabic import minimal_complete_fiber as mcm_module
-from alghanem.arabic.fatiha_source_text import FATIHA_SOURCE_ID
+from alghanem.arabic.fatiha_source_text import FATIHA_LINES, FATIHA_SOURCE_ID
 from alghanem.arabic.fatiha_source_text import source_sha256 as fatiha_source_sha256
+from alghanem.arabic.gloss_registry import (
+    GlossEntry,
+    GlossRegistry,
+    SourceLocator,
+    an_empty_registry,
+    in_tree_gloss_registry,
+    normalize,
+    resolve_locator,
+)
 from alghanem.arabic.minimal_complete_fiber import (
     MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS,
+    NO_EVIDENCE_KIND_HERE_CLOSES,
     THE_CLOSURE_CHECKLIST,
     THE_DECLARED_DOMAIN,
     THE_DESIGNED_WITNESSES,
+    AttestationStanding,
     AttributionCandidate,
     CaseAttestation,
     ChecklistCondition,
     ClosureChecklist,
     ClosureRequirement,
     ConditionEvidence,
+    ConditionRunKind,
     DeclaredDomain,
     DeletedComponent,
     DomainCase,
@@ -29,10 +42,13 @@ from alghanem.arabic.minimal_complete_fiber import (
     MinimalCompleteFiberVerdict,
     NecessityStanding,
     NecessityWitnessPair,
+    ReaderProvenance,
     RelationKind,
     StructuralFunction,
     SufficiencyStanding,
+    a_reader_fixed_before_the_data,
     a_separate_genus_field_is_required,
+    assess_attestation,
     assess_minimal_complete_fiber,
     assess_sufficiency,
     carried_functions,
@@ -46,8 +62,11 @@ from alghanem.arabic.minimal_complete_fiber import (
     necessity_deletion_experiment,
     necessity_standing_of,
     predicate_is_licensed_for,
+    reader_provenance_of,
     registered_corpus_digests,
+    requirement_is_closed_by,
     run_sufficiency_experiment,
+    the_deposited_gloss_registry,
 )
 from alghanem.import_boundary import ImportBoundaryPolicy, audit_import_boundary
 
@@ -68,9 +87,9 @@ def test_the_minimal_complete_fiber_module_reaches_no_kernel_module() -> None:
     ]
 
 
-def test_there_are_twelve_named_residuals_all_distinct_and_non_blank() -> None:
-    assert len(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS) == 12
-    assert len(set(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)) == 12
+def test_there_are_fifteen_named_residuals_all_distinct_and_non_blank() -> None:
+    assert len(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS) == 15
+    assert len(set(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)) == 15
     assert all(note.strip() for note in MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
 
 
@@ -253,12 +272,58 @@ def test_every_deletion_is_actually_run_and_merges_two_contents() -> None:
         assert len(result.merged_contents[0]) == 2
 
 
-def _attested_case(predicate: str, content: str) -> DomainCase:
-    """حالةٌ موثَّقةٌ بمدوّنةٍ مُسجَّلةٍ في الشجرة، ببصمةٍ محسوبةٍ الآن."""
+_AN_INDEPENDENT_AUTHORITY: Final[str] = "جهةٌ واسمةٌ غيرُ مُعلِن المجال"
+_A_FATIHA_ANCHOR_LINE: Final[int] = 4
 
+
+def _fatiha_word_locator(line_number: int, word_number: int) -> SourceLocator:
+    """محدِّدُ موضعِ كلمةٍ في سطرٍ من المُودَع، محسوبًا من نصّه لا مكتوبًا."""
+
+    line = normalize(FATIHA_LINES[line_number - 1])
+    words = line.split(" ")
+    start = 0
+    for word in words[: word_number - 1]:
+        start += len(word) + 1
+    return SourceLocator(
+        line=line_number,
+        start=start,
+        end=start + len(words[word_number - 1]),
+        word_number=word_number,
+    )
+
+
+def _fatiha_word(line_number: int, word_number: int) -> str:
+    """سطحُ الكلمة كما يُحَلّ من المُودَع نفسِه."""
+
+    surface = resolve_locator(
+        FATIHA_SOURCE_ID, _fatiha_word_locator(line_number, word_number)
+    )
+    assert surface is not None
+    return surface
+
+
+def _attested_case(
+    predicate: str,
+    content: str,
+    *,
+    word_number: int = 1,
+    locator: SourceLocator | None = None,
+    anchor: str | None = None,
+    source_id: str = FATIHA_SOURCE_ID,
+    source_sha256: str | None = None,
+) -> DomainCase:
+    """حالةٌ تدّعي التوثيق؛ وكلُّ جهةٍ من جهاته تُفحَص لا تُصدَّق."""
+
+    place = (
+        _fatiha_word_locator(_A_FATIHA_ANCHOR_LINE, word_number)
+        if locator is None
+        else locator
+    )
     return DomainCase(
         element=FiberElement(
-            anchor="زيد",
+            anchor=_fatiha_word(_A_FATIHA_ANCHOR_LINE, word_number)
+            if anchor is None
+            else anchor,
             genus="شخصٌ مُعيَّن",
             predicate=predicate,
             relation=RelationKind.PREDICATION,
@@ -266,42 +331,101 @@ def _attested_case(predicate: str, content: str) -> DomainCase:
         content=content,
         context="مقامٌ مثبَّت",
         attestation=CaseAttestation(
-            source_id=FATIHA_SOURCE_ID,
-            source_sha256=fatiha_source_sha256(),
-            locator="السطرُ الأوّل",
+            source_id=source_id,
+            source_sha256=(
+                fatiha_source_sha256() if source_sha256 is None else source_sha256
+            ),
+            locator=place,
         ),
     )
 
 
-def _attested_domain() -> DeclaredDomain:
-    """مجالٌ كلُّ حالاته موثَّقة؛ فجنسُه يُشتَقّ لغويًّا مُعلَنًا لا يُكتَب."""
+def _a_gloss_registry_for(
+    cases: tuple[DomainCase, ...],
+    *,
+    authority_id: str = _AN_INDEPENDENT_AUTHORITY,
+    genus: str | None = None,
+    predicate: str | None = None,
+    content: str | None = None,
+) -> GlossRegistry:
+    """سجلُّ وسمٍ **مصنوعٌ لهذا الاختبار** ليُفحَص به سلوكُ البوّابة وحدَه.
 
-    return DeclaredDomain(
-        identifier="مجالٌ موثَّق",
-        cases=(_attested_case("طويل", "الإخبارُ بطول زيد"),),
+    وهو آلةُ اختبارٍ لا إيداعُ شاهد: لا يُقرَأ دعوى تفسيرٍ لألفاظ المُودَع، ولا
+    يدخل الشجرةَ سندًا لحالةٍ من حالاتها.
+    """
+
+    entries = []
+    for case in cases:
+        attestation = case.attestation
+        assert attestation is not None
+        entries.append(
+            GlossEntry(
+                source_id=attestation.source_id,
+                locator=attestation.locator,
+                genus=case.element.genus if genus is None else genus,
+                predicate=case.element.predicate if predicate is None else predicate,
+                content=case.content if content is None else content,
+            )
+        )
+    return GlossRegistry(
+        registry_id="سجلُّ اختبار",
+        authority_id=authority_id,
+        authority_note="جهةٌ مكتوبةٌ لهذا الاختبار",
+        version="v1",
+        payload_sha256="0" * 64,
+        entries=tuple(entries),
     )
+
+
+def _attested_domain(
+    *, declarer_id: str = "مُعلِنُ المجال"
+) -> tuple[DeclaredDomain, GlossRegistry]:
+    """مجالٌ كلُّ حالاته موثَّقةٌ بوسمٍ من جهةٍ غيرِ مُعلِنه، وسجلُّ وسمه معه."""
+
+    cases = (
+        _attested_case("طويل", "الإخبارُ بطول الأوّل", word_number=1),
+        _attested_case("قصير", "الإخبارُ بقِصَر الثاني", word_number=2),
+    )
+    domain = DeclaredDomain(
+        identifier="مجالٌ موثَّق", declarer_id=declarer_id, cases=cases
+    )
+    return domain, _a_gloss_registry_for(cases)
 
 
 def test_a_domain_kind_is_derived_from_its_attestations_not_written() -> None:
     assert THE_DECLARED_DOMAIN.kind is DomainKind.DESIGNED_DOMAIN
     assert THE_DECLARED_DOMAIN.attested_case_count == 0
-    assert _attested_domain().kind is DomainKind.DECLARED_LINGUISTIC_DOMAIN
+    domain, registry = _attested_domain()
+    assert domain.kind_against(registry) is DomainKind.DECLARED_LINGUISTIC_DOMAIN
+    assert domain.attested_case_count_against(registry) == domain.case_count
 
 
 def test_no_field_lets_a_domain_write_its_own_kind() -> None:
     with pytest.raises(TypeError):
         DeclaredDomain(  # type: ignore[call-arg]
             identifier="مجالٌ يُسمّي نفسَه",
+            declarer_id="مُعلِن",
             kind=DomainKind.DECLARED_LINGUISTIC_DOMAIN,
             cases=(_attested_case("طويل", "مضمون"),),
         )
 
 
-def test_one_unattested_case_keeps_the_whole_domain_designed() -> None:
+def test_a_domain_without_a_named_declarer_is_refused() -> None:
+    with pytest.raises(MinimalCompleteFiberError):
+        DeclaredDomain(
+            identifier="مجالٌ بلا مُعلِن",
+            declarer_id="   ",
+            cases=(_attested_case("طويل", "مضمون"),),
+        )
+
+
+def test_one_unattested_case_leaves_the_whole_domain_undecided() -> None:
+    attested = _attested_case("طويل", "الإخبارُ بطول الأوّل", word_number=1)
     mixed = DeclaredDomain(
         identifier="مجالٌ مختلط",
+        declarer_id="مُعلِنُ المجال",
         cases=(
-            _attested_case("طويل", "الإخبارُ بطول زيد"),
+            attested,
             DomainCase(
                 element=FiberElement(
                     anchor="زيد",
@@ -314,45 +438,140 @@ def test_one_unattested_case_keeps_the_whole_domain_designed() -> None:
             ),
         ),
     )
-    assert mixed.attested_case_count == 1
+    registry = _a_gloss_registry_for((attested,))
+    assert mixed.attested_case_count_against(registry) == 1
     assert mixed.case_count == 2
-    assert mixed.kind is DomainKind.DESIGNED_DOMAIN
+    assert mixed.kind_against(registry) is DomainKind.UNDECIDED_DOMAIN
 
 
-def test_an_attestation_to_an_unregistered_source_is_not_verified() -> None:
-    attestation = CaseAttestation(
-        source_id="مدوّنةٌ ليست في هذه الشجرة",
-        source_sha256=fatiha_source_sha256(),
-        locator="موضع",
+def test_a_case_that_offers_no_attestation_at_all_is_named_as_such() -> None:
+    case = DomainCase(
+        element=FiberElement(
+            anchor="زيد",
+            genus="شخصٌ مُعيَّن",
+            predicate="طويل",
+            relation=RelationKind.PREDICATION,
+        ),
+        content="الإخبارُ بطول زيد",
+        context="مقامٌ مثبَّت",
     )
-    assert not attestation.is_verified_against_the_tree
+    standing = assess_attestation(case, "مُعلِنُ المجال", an_empty_registry())
+    assert standing is AttestationStanding.NO_ATTESTATION_OFFERED
 
 
-def test_an_attestation_whose_digest_does_not_match_is_not_verified() -> None:
-    attestation = CaseAttestation(
-        source_id=FATIHA_SOURCE_ID,
-        source_sha256="0" * 64,
-        locator="موضع",
+# --- شواهدُ خصمٍ على جهات التوثيق الثلاث ---------------------------------------
+
+
+def test_a_forged_source_name_does_not_attest_a_case() -> None:
+    case = _attested_case("طويل", "مضمون", source_id="مدوّنةٌ ليست في هذه الشجرة")
+    registry = _a_gloss_registry_for((case,))
+    assert (
+        assess_attestation(case, "مُعلِنُ المجال", registry)
+        is AttestationStanding.SOURCE_IS_NOT_REGISTERED
     )
-    assert not attestation.is_verified_against_the_tree
+
+
+def test_a_digest_that_does_not_match_the_tree_does_not_attest_a_case() -> None:
+    case = _attested_case("طويل", "مضمون", source_sha256="0" * 64)
+    registry = _a_gloss_registry_for((case,))
+    assert (
+        assess_attestation(case, "مُعلِنُ المجال", registry)
+        is AttestationStanding.SOURCE_DIGEST_DOES_NOT_MATCH
+    )
+
+
+def test_a_locator_that_does_not_resolve_does_not_attest_a_case() -> None:
+    case = _attested_case(
+        "طويل", "مضمون", locator=SourceLocator(line=99, start=0, end=4)
+    )
+    registry = _a_gloss_registry_for((case,))
+    assert (
+        assess_attestation(case, "مُعلِنُ المجال", registry)
+        is AttestationStanding.LOCATOR_DOES_NOT_RESOLVE
+    )
+
+
+def test_an_occurrence_that_does_not_match_the_anchor_does_not_attest_a_case() -> None:
+    case = _attested_case("طويل", "مضمون", anchor="زيد")
+    registry = _a_gloss_registry_for((case,))
+    assert (
+        assess_attestation(case, "مُعلِنُ المجال", registry)
+        is AttestationStanding.OCCURRENCE_DOES_NOT_MATCH_THE_ANCHOR
+    )
+    joined = "\n".join(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
+    assert "AnOccurrenceIsNotAGloss" in joined
+
+
+def test_an_occurrence_without_a_gloss_is_an_occurrence_not_a_reading() -> None:
+    case = _attested_case("طويل", "مضمون")
+    assert (
+        assess_attestation(case, "مُعلِنُ المجال", an_empty_registry())
+        is AttestationStanding.NO_GLOSS_AT_THIS_LOCATOR
+    )
+
+
+def test_a_gloss_authored_by_the_domain_declarer_is_refused() -> None:
+    declarer = "مُعلِنُ المجال"
+    case = _attested_case("طويل", "مضمون")
+    registry = _a_gloss_registry_for((case,), authority_id=declarer)
+    assert (
+        assess_attestation(case, declarer, registry)
+        is AttestationStanding.THE_GLOSS_IS_AUTHORED_BY_THE_DOMAIN_DECLARER
+    )
+    domain = DeclaredDomain(
+        identifier="مجالٌ يُوثِّق نفسَه", declarer_id=declarer, cases=(case,)
+    )
+    assert domain.kind_against(registry) is DomainKind.UNDECIDED_DOMAIN
+    joined = "\n".join(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
+    assert "ASelfAuthoredGlossIsRefused" in joined
+
+
+def test_a_gloss_that_disagrees_with_the_case_does_not_attest_it() -> None:
+    case = _attested_case("طويل", "مضمون")
+    for override in (
+        {"genus": "نبعُ الماء"},
+        {"predicate": "قصير"},
+        {"content": "غيرُه"},
+    ):
+        registry = _a_gloss_registry_for((case,), **override)
+        assert (
+            assess_attestation(case, "مُعلِنُ المجال", registry)
+            is AttestationStanding.THE_GLOSS_DISAGREES_WITH_THE_CASE
+        )
+
+
+def test_a_gloss_at_another_place_does_not_attest_this_occurrence() -> None:
+    case = _attested_case("طويل", "مضمون", word_number=1)
+    elsewhere = _attested_case("طويل", "مضمون", word_number=2)
+    registry = _a_gloss_registry_for((elsewhere,))
+    assert (
+        assess_attestation(case, "مُعلِنُ المجال", registry)
+        is AttestationStanding.NO_GLOSS_AT_THIS_LOCATOR
+    )
 
 
 def test_a_malformed_digest_is_refused_outright() -> None:
     for digest in ("", "ABC", "0" * 63, "g" * 64, fatiha_source_sha256().upper()):
         with pytest.raises(MinimalCompleteFiberError):
             CaseAttestation(
-                source_id=FATIHA_SOURCE_ID, source_sha256=digest, locator="موضع"
+                source_id=FATIHA_SOURCE_ID,
+                source_sha256=digest,
+                locator=SourceLocator(1, 0, 3),
             )
 
 
-def test_an_attestation_without_a_source_or_a_locator_is_refused() -> None:
+def test_an_attestation_without_a_source_or_a_resolvable_locator_is_refused() -> None:
     with pytest.raises(MinimalCompleteFiberError):
         CaseAttestation(
-            source_id=" ", source_sha256=fatiha_source_sha256(), locator="موضع"
+            source_id=" ",
+            source_sha256=fatiha_source_sha256(),
+            locator=SourceLocator(1, 0, 3),
         )
     with pytest.raises(MinimalCompleteFiberError):
         CaseAttestation(
-            source_id=FATIHA_SOURCE_ID, source_sha256=fatiha_source_sha256(), locator=""
+            source_id=FATIHA_SOURCE_ID,
+            source_sha256=fatiha_source_sha256(),
+            locator="السطرُ الأوّل",  # type: ignore[arg-type]
         )
 
 
@@ -362,10 +581,19 @@ def test_the_registered_digests_are_recomputed_from_the_tree() -> None:
     assert all(len(digest) == 64 for digest in registry.values())
 
 
+def test_the_deposited_gloss_registry_is_read_from_the_tree() -> None:
+    assert the_deposited_gloss_registry().payload_sha256 == (
+        in_tree_gloss_registry().payload_sha256
+    )
+
+
 def test_the_certificate_gate_cannot_be_opened_by_naming_the_domain() -> None:
     designed = assess_minimal_complete_fiber(THE_DECLARED_DOMAIN)
     assert designed.is_established_on_its_domain is True
-    assert designed.is_a_linguistic_certificate is False
+    assert designed.meets_the_recorded_certificate_conditions is False
+    assert designed.certificate_issuance_is_delegated is True
+    joined = "\n".join(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
+    assert "ARecordedConditionIsNotAnIssuedCertificate" in joined
 
 
 def test_evidence_takes_its_kind_from_its_domain_not_from_a_written_field() -> None:
@@ -373,6 +601,8 @@ def test_evidence_takes_its_kind_from_its_domain_not_from_a_written_field() -> N
         what_was_run="تجربةُ حذف",
         where_it_is_recorded="هذا الاختبار",
         domain=THE_DECLARED_DOMAIN,
+        run_kind=ConditionRunKind.DELETION_OF_A_NAMED_COMPONENT,
+        component=DeletedComponent.PREDICATE,
     )
     assert evidence.domain_kind is THE_DECLARED_DOMAIN.kind
     with pytest.raises(TypeError):
@@ -386,6 +616,7 @@ def test_evidence_takes_its_kind_from_its_domain_not_from_a_written_field() -> N
 def test_necessity_is_not_witnessed_on_a_domain_that_does_not_separate() -> None:
     domain = DeclaredDomain(
         identifier="مجالٌ بحالةٍ واحدة",
+        declarer_id="مُعلِنُ المجال",
         cases=(
             DomainCase(
                 element=FiberElement(
@@ -465,7 +696,8 @@ def test_the_criterion_holds_on_its_designed_domain_and_is_no_certificate() -> N
     verdict = assess_minimal_complete_fiber()
     assert verdict.every_component_is_witnessed is True
     assert verdict.is_established_on_its_domain is True
-    assert verdict.is_a_linguistic_certificate is False
+    assert verdict.meets_the_recorded_certificate_conditions is False
+    assert verdict.certificate_issuance_is_delegated is True
     assert verdict.domain_kind is DomainKind.DESIGNED_DOMAIN
     assert verdict.minimality_is_relative_to_the_tested_alternatives is True
     joined = "\n".join(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
@@ -585,31 +817,142 @@ def test_the_checklist_is_a_live_audit_that_counts_attempted_runs() -> None:
     )
 
 
-def test_a_condition_reads_its_standing_from_the_evidence_it_carries() -> None:
+def _a_deletion_evidence(component: DeletedComponent) -> ConditionEvidence:
+    return ConditionEvidence(
+        what_was_run="تجربةُ حذف",
+        where_it_is_recorded="هذا الاختبار",
+        domain=THE_DECLARED_DOMAIN,
+        run_kind=ConditionRunKind.DELETION_OF_A_NAMED_COMPONENT,
+        component=component,
+    )
+
+
+def test_a_condition_reads_the_outcome_of_its_own_run_not_the_genus_of_its_domain() -> (
+    None
+):
     requirement = ClosureRequirement.PREDICATE_NECESSARY
-    designed = ChecklistCondition(
+    right = _a_deletion_evidence(DeletedComponent.PREDICATE)
+    assert requirement_is_closed_by(requirement, right) is True
+    condition = ChecklistCondition(
         requirement=requirement,
         what_would_satisfy_it="شاهدان متصادمان",
         why_it_is_open="المجالُ مصمَّم",
-        evidence=ConditionEvidence(
-            what_was_run="تجربةُ حذف",
-            where_it_is_recorded="هذا الاختبار",
-            domain=THE_DECLARED_DOMAIN,
-        ),
+        evidence=right,
     )
-    linguistic = ChecklistCondition(
-        requirement=requirement,
-        what_would_satisfy_it="شاهدان متصادمان",
-        why_it_is_open="يبقى مكتوبًا حتّى بعد الاستيفاء",
-        evidence=ConditionEvidence(
-            what_was_run="تجربةُ حذف",
-            where_it_is_recorded="هذا الاختبار",
-            domain=_attested_domain(),
-        ),
+    assert condition.is_attempted is True
+    assert condition.is_satisfied is False
+    joined = "\n".join(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
+    assert "ADesignedDomainIsNotALinguisticCertificate" in joined
+
+
+def test_a_deletion_of_another_component_does_not_close_this_requirement() -> None:
+    wrong = _a_deletion_evidence(DeletedComponent.RELATION)
+    assert requirement_is_closed_by(ClosureRequirement.PREDICATE_NECESSARY, wrong) is (
+        False
     )
-    assert designed.is_attempted is True
-    assert designed.is_satisfied is False
-    assert linguistic.is_satisfied is True
+
+
+def test_a_failed_run_closes_nothing_however_its_domain_is_glossed() -> None:
+    single = DeclaredDomain(
+        identifier="مجالٌ لا يفصِل",
+        declarer_id="مُعلِنُ المجال",
+        cases=(THE_DECLARED_DOMAIN.cases[0],),
+    )
+    evidence = ConditionEvidence(
+        what_was_run="تجربةُ حذفٍ على مجالٍ لا يفصِل",
+        where_it_is_recorded="هذا الاختبار",
+        domain=single,
+        run_kind=ConditionRunKind.DELETION_OF_A_NAMED_COMPONENT,
+        component=DeletedComponent.PREDICATE,
+    )
+    assert (
+        evidence.outcome.standing
+        is not SufficiencyStanding.REFUTED_ON_A_DECLARED_DOMAIN
+    )
+    assert (
+        requirement_is_closed_by(ClosureRequirement.PREDICATE_NECESSARY, evidence)
+        is False
+    )
+
+
+def test_a_lookup_reader_never_closes_the_rebuilding_requirement() -> None:
+    evidence = ConditionEvidence(
+        what_was_run="تجربةُ كفايةٍ بقارئ الجدول",
+        where_it_is_recorded="هذا الاختبار",
+        domain=THE_DECLARED_DOMAIN,
+        run_kind=ConditionRunKind.SUFFICIENCY_ON_THE_FULL_REPRESENTATION,
+        reader=lookup_reader(THE_DECLARED_DOMAIN, full_representation),
+    )
+    assert evidence.outcome.standing is SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN
+    assert evidence.outcome.reader_provenance is (
+        ReaderProvenance.BUILT_FROM_THE_DOMAIN_TARGET_TABLE
+    )
+    assert (
+        requirement_is_closed_by(
+            ClosureRequirement.CONTENT_REBUILT_FROM_THE_OUTPUT_ALONE, evidence
+        )
+        is False
+    )
+    joined = "\n".join(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
+    assert "ALookupReaderProvesInjectivityNotUnderstanding" in joined
+
+
+def test_an_unprovenanced_reader_never_closes_the_rebuilding_requirement() -> None:
+    table = lookup_reader(THE_DECLARED_DOMAIN, full_representation)
+
+    def bare(output: tuple[str | None, ...]) -> str:
+        return table(output)
+
+    assert reader_provenance_of(bare) is ReaderProvenance.UNDECLARED_PROVENANCE
+    evidence = ConditionEvidence(
+        what_was_run="تجربةُ كفايةٍ بقارئٍ بلا سند",
+        where_it_is_recorded="هذا الاختبار",
+        domain=THE_DECLARED_DOMAIN,
+        run_kind=ConditionRunKind.SUFFICIENCY_ON_THE_FULL_REPRESENTATION,
+        reader=bare,
+    )
+    assert (
+        requirement_is_closed_by(
+            ClosureRequirement.CONTENT_REBUILT_FROM_THE_OUTPUT_ALONE, evidence
+        )
+        is False
+    )
+
+
+def test_a_reader_fixed_before_the_data_records_a_claim_it_does_not_prove() -> None:
+    table = lookup_reader(THE_DECLARED_DOMAIN, full_representation)
+    declared = a_reader_fixed_before_the_data(
+        lambda output: table(output), "قاعدةٌ يُدّعى سبقُها، وتُختبر على محجوب"
+    )
+    assert reader_provenance_of(declared) is (
+        ReaderProvenance.FIXED_BEFORE_THE_EVALUATION_DATA
+    )
+    evidence = ConditionEvidence(
+        what_was_run="تجربةُ كفايةٍ بقارئٍ مُدَّعى السبق",
+        where_it_is_recorded="هذا الاختبار",
+        domain=THE_DECLARED_DOMAIN,
+        run_kind=ConditionRunKind.SUFFICIENCY_ON_THE_FULL_REPRESENTATION,
+        reader=declared,
+    )
+    assert (
+        requirement_is_closed_by(
+            ClosureRequirement.CONTENT_REBUILT_FROM_THE_OUTPUT_ALONE, evidence
+        )
+        is True
+    )
+    condition = ChecklistCondition(
+        requirement=ClosureRequirement.CONTENT_REBUILT_FROM_THE_OUTPUT_ALONE,
+        what_would_satisfy_it="إعادةُ بناءٍ بقارئٍ مستقلّ",
+        why_it_is_open="المجالُ مصمَّم",
+        evidence=evidence,
+    )
+    assert condition.is_satisfied is False
+
+
+def test_three_requirements_are_closed_by_no_evidence_kind_defined_here() -> None:
+    evidence = _a_deletion_evidence(DeletedComponent.PREDICATE)
+    for requirement in NO_EVIDENCE_KIND_HERE_CLOSES:
+        assert requirement_is_closed_by(requirement, evidence) is False
 
 
 def test_evidence_without_what_was_run_or_where_it_is_recorded_is_refused() -> None:
@@ -618,12 +961,30 @@ def test_evidence_without_what_was_run_or_where_it_is_recorded_is_refused() -> N
             what_was_run="  ",
             where_it_is_recorded="موضع",
             domain=THE_DECLARED_DOMAIN,
+            run_kind=ConditionRunKind.DELETION_OF_A_NAMED_COMPONENT,
+            component=DeletedComponent.PREDICATE,
         )
     with pytest.raises(MinimalCompleteFiberError):
         ConditionEvidence(
             what_was_run="ما أُجري",
             where_it_is_recorded="  ",
             domain=THE_DECLARED_DOMAIN,
+            run_kind=ConditionRunKind.DELETION_OF_A_NAMED_COMPONENT,
+            component=DeletedComponent.PREDICATE,
+        )
+    with pytest.raises(MinimalCompleteFiberError):
+        ConditionEvidence(
+            what_was_run="تجربةُ حذفٍ بلا مكوّن",
+            where_it_is_recorded="موضع",
+            domain=THE_DECLARED_DOMAIN,
+            run_kind=ConditionRunKind.DELETION_OF_A_NAMED_COMPONENT,
+        )
+    with pytest.raises(MinimalCompleteFiberError):
+        ConditionEvidence(
+            what_was_run="تجربةُ كفايةٍ بلا قارئ",
+            where_it_is_recorded="موضع",
+            domain=THE_DECLARED_DOMAIN,
+            run_kind=ConditionRunKind.SUFFICIENCY_ON_THE_FULL_REPRESENTATION,
         )
 
 
@@ -734,9 +1095,10 @@ def test_every_domain_case_carries_a_written_context() -> None:
 def test_an_empty_or_repeating_domain_is_refused() -> None:
     case = THE_DECLARED_DOMAIN.cases[0]
     with pytest.raises(MinimalCompleteFiberError):
-        DeclaredDomain(identifier="مجالٌ خالٍ", cases=())
+        DeclaredDomain(identifier="مجالٌ خالٍ", declarer_id="مُعلِن", cases=())
     with pytest.raises(MinimalCompleteFiberError):
         DeclaredDomain(
             identifier="مجالٌ مكرَّر",
+            declarer_id="مُعلِن",
             cases=(case, case),
         )
