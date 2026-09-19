@@ -10,6 +10,9 @@ import pytest
 from alghanem.arabic.composition_ifada_path import IfadaStanding, PathStage, run_bytes
 from alghanem.structural_bridge import (
     A_BIT_SLOT_IS_NOT_A_LINGUISTIC_ROLE,
+    A_BIT_VALUE_IS_NOT_A_STRUCTURAL_SCALE,
+    A_REPEATED_VALUE_IS_NOT_A_PRESERVED_OCCURRENCE,
+    DECLARED_SLOT_COUNT,
     STRUCTURAL_BRIDGE_NAMED_LAWS,
     THE_BRIDGE_DOES_NOT_TOUCH_THE_BENEFIT,
     THE_WITNESS_IS_BOUND_TO_ITS_SOURCE_AND_POSITIONS,
@@ -20,6 +23,12 @@ from alghanem.structural_bridge import (
     bridge_two_bits,
     compare_with_the_path,
     render_bridge,
+)
+from alghanem.structural_dal import (
+    IdentityTransitionMode,
+    PromotionStanding,
+    Scale,
+    prove_zero_one_algebra,
 )
 
 _ISNAD = "اللَّهُ نُورٌ".encode()
@@ -127,7 +136,7 @@ def test_a_reading_that_contradicts_its_source_is_refused() -> None:
         ByteSlotBridge(
             source=_ISNAD,
             readings=(lying, bridge.readings[1]),
-            whole=bridge.whole,
+            ascent=bridge.ascent,
         )
 
 
@@ -192,7 +201,7 @@ def test_one_position_declared_twice_is_not_two_slots() -> None:
     doubled = (bridge.readings[0], bridge.readings[0])
 
     with pytest.raises(StructuralBridgeError):
-        ByteSlotBridge(source=_ISNAD, readings=doubled, whole=bridge.whole)
+        ByteSlotBridge(source=_ISNAD, readings=doubled, ascent=bridge.ascent)
 
 
 def test_a_bridge_of_one_or_three_slots_is_refused() -> None:
@@ -206,11 +215,11 @@ def test_a_bridge_of_one_or_three_slots_is_refused() -> None:
 
     with pytest.raises(StructuralBridgeError):
         ByteSlotBridge(
-            source=_ISNAD, readings=(bridge.readings[0],), whole=bridge.whole
+            source=_ISNAD, readings=(bridge.readings[0],), ascent=bridge.ascent
         )
     with pytest.raises(StructuralBridgeError):
         ByteSlotBridge(
-            source=_ISNAD, readings=(*bridge.readings, third), whole=bridge.whole
+            source=_ISNAD, readings=(*bridge.readings, third), ascent=bridge.ascent
         )
 
 
@@ -223,7 +232,7 @@ def test_a_witness_of_one_source_is_refused_over_another() -> None:
     first = bridge_two_bits(_ISNAD, _FIRST, _SECOND)
 
     with pytest.raises(StructuralBridgeError):
-        ByteSlotBridge(source=_IDAFA, readings=first.readings, whole=first.whole)
+        ByteSlotBridge(source=_IDAFA, readings=first.readings, ascent=first.ascent)
 
 
 def test_two_sources_that_agree_on_two_bits_keep_distinct_witnesses() -> None:
@@ -390,4 +399,126 @@ def test_the_structural_whole_is_anchored_in_the_source_digest() -> None:
     assert left.whole.anchor_id != right.whole.anchor_id
     assert left.source_digest[:16] in left.whole.anchor_id
     with pytest.raises(StructuralBridgeError):
-        ByteSlotBridge(source=twin, readings=right.readings, whole=left.whole)
+        ByteSlotBridge(source=twin, readings=right.readings, ascent=left.ascent)
+
+
+# ————— ثلاثُ هويّاتٍ لا تُخلَط: القيمةُ والموضعُ والكلّ —————
+
+
+def test_a_repeated_value_is_not_a_repeated_occurrence() -> None:
+    """وقوعان متطابقا القيمة في موضعين مختلفين وقوعان اثنان لا وقوعٌ واحد."""
+
+    other = BitPosition(byte_index=0, bit_index=1)
+    bridge = bridge_two_bits(_ISNAD, _FIRST, other)
+    first, second = bridge.readings
+    assert first.value == second.value == 0
+    assert first.occurrence_id != second.occurrence_id
+    assert first.token != second.token
+    assert bridge.whole.slot_count == 2
+
+
+def test_the_occurrence_identity_carries_no_value() -> None:
+    """هويّةُ الوقوع موضعٌ وحدَه؛ فلا تتغيّر بتغيّر القيمة عند ذلك الموضع."""
+
+    bridge = bridge_two_bits(_ISNAD, _FIRST, _SECOND)
+    flipped = bridge_two_bits(_flip(_ISNAD, _FIRST), _FIRST, _SECOND)
+    assert bridge.occurrence_ids == flipped.occurrence_ids
+    assert bridge.readings[0].value != flipped.readings[0].value
+    assert bridge.whole.content_id != flipped.whole.content_id
+
+
+def test_one_occurrence_declared_twice_is_refused() -> None:
+    """الوقوعُ الواحد مُصرَّحًا مرّتين ليس خانتين، ويُرفض بقانونه المُسمّى."""
+
+    with pytest.raises(StructuralBridgeError) as raised:
+        bridge_two_bits(_ISNAD, _FIRST, _FIRST)
+    assert A_REPEATED_VALUE_IS_NOT_A_PRESERVED_OCCURRENCE in str(raised.value)
+
+
+def test_the_same_offsets_in_two_sources_belong_to_two_wholes() -> None:
+    """عينُ الموضعين في مصدرين اثنين كلّان اثنان؛ فالكلُّ هويّةٌ ثالثةٌ مستقلّة."""
+
+    left = bridge_two_bits(_ISNAD, _FIRST, _SECOND)
+    right = bridge_two_bits(_IDAFA, _FIRST, _SECOND)
+    assert left.occurrence_ids == right.occurrence_ids
+    assert left.whole.anchor_id != right.whole.anchor_id
+    assert left.witness_id != right.witness_id
+
+
+def test_a_bit_value_is_not_a_structural_scale() -> None:
+    """قيمةُ البتّ ليست مقياسًا بنيويًّا؛ ولا يُقرَأ بلوغُ خانةٍ من قيمة صفرٍ أو واحد."""
+
+    bridge = bridge_two_bits(_ISNAD, _FIRST, _SECOND)
+    assert A_BIT_VALUE_IS_NOT_A_STRUCTURAL_SCALE in STRUCTURAL_BRIDGE_NAMED_LAWS
+    assert bridge.readings[0].value_is_not_a_scale == (
+        A_BIT_VALUE_IS_NOT_A_STRUCTURAL_SCALE
+    )
+    assert {reading.value for reading in bridge.readings} == {0, 1}
+    assert bridge.whole.slot_count == DECLARED_SLOT_COUNT
+    assert [scale.value for scale in Scale] == ["zero", "one"]
+    assert [scale.slot_count for scale in Scale] == [1, 2]
+    assert {reading.value for reading in bridge.readings} != {
+        scale.slot_count for scale in Scale
+    }
+
+
+# ————— الصعودُ مقيسٌ: أثرٌ متراكمٌ وبقايا حاجبة —————
+
+
+def test_the_whole_is_reached_by_one_measured_ascent() -> None:
+    """الخانةُ الثانية بلغت بصعودٍ واحدٍ عن الأولى، لا بتصريحِ كلٍّ جاهز."""
+
+    bridge = bridge_two_bits(_ISNAD, _FIRST, _SECOND)
+    assert bridge.ascent.before.slot_count == 1
+    assert bridge.ascent.before.tokens == (bridge.readings[0].token,)
+    assert bridge.ascent.added_token == bridge.readings[1].token
+    assert bridge.ascent.mode is IdentityTransitionMode.SAME_ENTITY_RESCALING
+
+
+def test_the_ascent_preserves_the_anchor_and_accumulates_its_trace() -> None:
+    """الصعودُ يحفظ عينَ المِرساة، وأثرُه يمتدّ خطوةً واحدةً لا يُعاد بناؤه."""
+
+    bridge = bridge_two_bits(_ISNAD, _FIRST, _SECOND)
+    assert bridge.preserves_instance_identity is True
+    assert bridge.trace_is_cumulative is True
+    assert bridge.trace_steps == 1
+    assert bridge.ascent.after.anchor_id == bridge.ascent.before.anchor_id
+
+
+def test_the_bridge_keeps_its_blocking_residuals() -> None:
+    """الجسرُ يحتفظ ببقايا تفكيكاته، وكلُّ تقسيمٍ محجوبٌ عن الترقية."""
+
+    bridge = bridge_two_bits(_ISNAD, _FIRST, _SECOND)
+    assert bridge.residuals
+    assert bridge.every_partition_is_blocked is True
+    assert all(
+        decomposition.promotion_standing is PromotionStanding.PROMOTION_BLOCKED
+        for decomposition in bridge.decompositions
+    )
+
+
+# ————— خطُّ الأساس وخطُّ الجبر قبل الجسر —————
+
+
+def test_the_baseline_arabic_run_carries_no_structural_witness() -> None:
+    """خطُّ الأساس مخرجُه وأثرُه وبصماتُه بلا أيِّ شاهدٍ من الجبر البنيويّ."""
+
+    run = run_bytes(_ISNAD)
+    rendered = repr(run)
+    assert run.reached_ifada is True
+    assert "anchor.zero_one" not in rendered
+    assert "slot." not in rendered
+    assert not hasattr(run, "whole")
+    assert not hasattr(run, "structural_witness")
+
+
+def test_running_both_lines_without_a_bridge_changes_neither() -> None:
+    """تشغيلُ الخطّين معًا بلا جسرٍ لا يُدخِل برهانَ الجبر في مخرجات العربيّة."""
+
+    before = run_bytes(_ISNAD)
+    proof = prove_zero_one_algebra()
+    after = run_bytes(_ISNAD)
+    assert proof.algebra_holds is True
+    assert after.ifada == before.ifada
+    assert after.reached is before.reached
+    assert after.trace == before.trace

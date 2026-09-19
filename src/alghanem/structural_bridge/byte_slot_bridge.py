@@ -13,14 +13,23 @@ from typing import Final
 from alghanem.arabic.composition_ifada_path import PathRun, run_bytes
 from alghanem.canonical_content import canonical_digest
 from alghanem.structural_dal import (
+    IdentityTransitionMode,
+    PromotionStanding,
+    ResidualReading,
+    ScaleAscent,
     ShapePartitionHypothesisSet,
+    StructuralDecomposition,
     StructuralWhole,
+    ascend_one_slot,
+    decompose,
     enumerate_shape_partitions,
     origin_whole,
 )
 
 __all__ = [
     "A_BIT_SLOT_IS_NOT_A_LINGUISTIC_ROLE",
+    "A_BIT_VALUE_IS_NOT_A_STRUCTURAL_SCALE",
+    "A_REPEATED_VALUE_IS_NOT_A_PRESERVED_OCCURRENCE",
     "STRUCTURAL_BRIDGE_NAMED_LAWS",
     "THE_BRIDGE_DOES_NOT_TOUCH_THE_BENEFIT",
     "THE_WITNESS_IS_BOUND_TO_ITS_SOURCE_AND_POSITIONS",
@@ -60,9 +69,23 @@ THE_BRIDGE_DOES_NOT_TOUCH_THE_BENEFIT: Final[str] = (
     "اشتقاق الإفادة؛ والسَّوقُ قبله وبعده واحدٌ حكمًا وطبقةً ومانعًا وأثرًا."
 )
 
+A_REPEATED_VALUE_IS_NOT_A_PRESERVED_OCCURRENCE: Final[str] = (
+    "ARepeatedValueIsNotAPreservedOccurrence: القيمةُ قد تتكرّر مئاتِ المرّات، "
+    "ولكلِّ وقوعٍ موضعُه المستقلّ؛ فتكرارُ القيمة ليس حفظًا لهويّة الوقوع. "
+    "وثلاثُ هويّاتٍ لا تُخلَط: قيمةُ البتّ، وموضعُه، والكلُّ الذي ينتمي إليه."
+)
+
+A_BIT_VALUE_IS_NOT_A_STRUCTURAL_SCALE: Final[str] = (
+    "ABitValueIsNotAStructuralScale: بتّا `0` و`1` قيمتان في مصدرٍ بايتيّ، "
+    "ومقياسا `zero` و`one` عددُ خاناتٍ في جبرٍ بنيويّ؛ فلا يُساوى بينهما، "
+    "ولا يُقرَأ بلوغُ المقياس من قيمة البتّ."
+)
+
 STRUCTURAL_BRIDGE_NAMED_LAWS: Final[tuple[str, ...]] = (
     THE_WITNESS_IS_BOUND_TO_ITS_SOURCE_AND_POSITIONS,
     A_BIT_SLOT_IS_NOT_A_LINGUISTIC_ROLE,
+    A_REPEATED_VALUE_IS_NOT_A_PRESERVED_OCCURRENCE,
+    A_BIT_VALUE_IS_NOT_A_STRUCTURAL_SCALE,
     THE_BRIDGE_DOES_NOT_TOUCH_THE_BENEFIT,
 )
 """قوانينُ هذا الطور المُسمّاةُ؛ وكلٌّ منها مقيسٌ باختبارٍ لا مُصرَّحٌ وحسب."""
@@ -114,6 +137,12 @@ class BitPosition:
         return f"bit.{self.byte_index}.{self.bit_index}"
 
     @property
+    def bit_offset(self) -> int:
+        """إزاحةُ البتّ في السلسلة كلِّها؛ مُشتَقّةٌ من البايت والبتّ معًا."""
+
+        return self.byte_index * BITS_IN_A_BYTE + self.bit_index
+
+    @property
     def mask(self) -> int:
         """قناعُ البتّ داخل بايته."""
 
@@ -146,10 +175,22 @@ class BitSlotReading:
             raise StructuralBridgeError("قيمةُ البتّ صفرٌ أو واحد.")
 
     @property
-    def token(self) -> str:
-        """رمزُ الخانة البنيويّ؛ موضعٌ وقيمةٌ لا حرفَ فيهما."""
+    def occurrence_id(self) -> str:
+        """هويّةُ الوقوع؛ موضعٌ وحدَه لا قيمةَ فيه، فلا يُوحِّدها تكرارُ القيمة."""
 
-        return f"{self.position.position_id}={self.value}"
+        return f"occurrence@{self.position.bit_offset}"
+
+    @property
+    def token(self) -> str:
+        """رمزُ الخانة البنيويّ؛ وقوعٌ وقيمةٌ مفصولان لا حرفَ فيهما."""
+
+        return f"{self.occurrence_id}:{self.position.position_id}={self.value}"
+
+    @property
+    def value_is_not_a_scale(self) -> str:
+        """قانونُ نفي مساواة قيمة البتّ بمقياسٍ بنيويّ."""
+
+        return A_BIT_VALUE_IS_NOT_A_STRUCTURAL_SCALE
 
     @property
     def what_it_is_not(self) -> str:
@@ -172,7 +213,13 @@ class ByteSlotBridge:
 
     source: bytes
     readings: tuple[BitSlotReading, ...]
-    whole: StructuralWhole
+    ascent: ScaleAscent
+
+    @property
+    def whole(self) -> StructuralWhole:
+        """الكلُّ البنيويُّ بعد الصعود؛ مُشتَقٌّ من الصعود لا مُصرَّحٌ بجانبه."""
+
+        return self.ascent.after
 
     def __post_init__(self) -> None:
         if type(self.source) is not bytes or not self.source:
@@ -183,22 +230,27 @@ class ByteSlotBridge:
             raise StructuralBridgeError(
                 f"الجسرُ {DECLARED_SLOT_COUNT} خانتين لا أقلَّ ولا أكثر."
             )
-        positions = [reading.position.position_id for reading in self.readings]
-        if len(set(positions)) != len(positions):
-            raise StructuralBridgeError("موضعٌ واحدٌ مُصرَّحٌ مرّتين ليس خانتين.")
+        occurrences = [reading.occurrence_id for reading in self.readings]
+        if len(set(occurrences)) != len(occurrences):
+            raise StructuralBridgeError(
+                "وقوعٌ واحدٌ مُصرَّحٌ مرّتين ليس خانتين؛ و"
+                + A_REPEATED_VALUE_IS_NOT_A_PRESERVED_OCCURRENCE
+            )
         for reading in self.readings:
             if not reading.agrees_with(self.source):
                 raise StructuralBridgeError(
                     f"قيمةُ {reading.position.position_id} لا تُستخرَج من هذا "
                     "المصدر؛ و" + THE_WITNESS_IS_BOUND_TO_ITS_SOURCE_AND_POSITIONS
                 )
-        if type(self.whole) is not StructuralWhole:
-            raise StructuralBridgeError("كلُّ الجسر كلٌّ بنيويٌّ من نوعه.")
+        if type(self.ascent) is not ScaleAscent:
+            raise StructuralBridgeError("كلُّ الجسر يُبنى بصعودٍ مقيسٍ من نوعه.")
+        if self.ascent.before.tokens != (self.readings[0].token,):
+            raise StructuralBridgeError("كلُّ ما قبل الصعود خانةُ الوقوع الأوّل.")
         if self.whole.tokens != tuple(reading.token for reading in self.readings):
             raise StructuralBridgeError("رموزُ الكلّ هي رموزُ قراءاته بترتيبها.")
         stamp = _source_stamp(self.source)
         if self.whole.anchor_id != _anchor_id(stamp) or (
-            self.whole.whole_id != _whole_id(stamp)
+            self.ascent.before.whole_id != _whole_id(stamp)
         ):
             raise StructuralBridgeError(
                 "مِرساةُ الكلّ مشدودةٌ إلى بصمة مصدره؛ و"
@@ -244,6 +296,58 @@ class ByteSlotBridge:
         )
 
     @property
+    def occurrence_ids(self) -> tuple[str, ...]:
+        """هويّتا الوقوعين بترتيبهما؛ موضعان لا قيمتان."""
+
+        return tuple(reading.occurrence_id for reading in self.readings)
+
+    @property
+    def preserves_instance_identity(self) -> bool:
+        """أبقيت عينُ المِرساة عبر الصعود من خانةٍ إلى خانتين؟"""
+
+        return self.ascent.preserves_instance_identity
+
+    @property
+    def trace_is_cumulative(self) -> bool:
+        """أزاد أثرُ الصعود خطوةً واحدةً فوق سابقه بلا إعادة بناء؟"""
+
+        return self.ascent.trace_is_cumulative
+
+    @property
+    def trace_steps(self) -> int:
+        """عددُ خطوات أثر الكلّ بعد الصعود."""
+
+        return self.whole.trace_steps
+
+    @property
+    def decompositions(self) -> tuple[StructuralDecomposition, ...]:
+        """تفكيكُ الكلّ على كلِّ فرضيّاته؛ بلا ترجيحٍ ولا حذف."""
+
+        return tuple(
+            decompose(self.whole, hypothesis)
+            for hypothesis in self.hypotheses.hypotheses
+        )
+
+    @property
+    def residuals(self) -> tuple[ResidualReading, ...]:
+        """بقايا التفكيكات مجموعةً؛ وهي التي تحجب كلَّ ترقية."""
+
+        return tuple(
+            reading
+            for decomposition in self.decompositions
+            for reading in decomposition.residuals
+        )
+
+    @property
+    def every_partition_is_blocked(self) -> bool:
+        """أمحجوبٌ كلُّ تقسيمٍ عن الترقية؟ فلا يُرفَع واحدٌ منها إلى دور."""
+
+        return all(
+            decomposition.promotion_standing is PromotionStanding.PROMOTION_BLOCKED
+            for decomposition in self.decompositions
+        )
+
+    @property
     def hypotheses(self) -> ShapePartitionHypothesisSet:
         """تقسيماتُ الكلّ كاملةً بلا فائزٍ مفروض."""
 
@@ -271,7 +375,9 @@ class ByteSlotBridge:
                 [reading.position.position_id, reading.value]
                 for reading in self.readings
             ],
+            "occurrence_ids": list(self.occurrence_ids),
             "tokens": list(self.whole.tokens),
+            "trace_steps": self.trace_steps,
             "content_id": self.whole.content_id,
             "hypothesis_count": self.hypotheses.count,
         }
@@ -289,13 +395,18 @@ def bridge_two_bits(
         for position in (first, second)
     )
     stamp = _source_stamp(source)
-    whole = origin_whole(
+    zero = origin_whole(
         whole_id=_whole_id(stamp),
         anchor_id=_anchor_id(stamp),
         carrier_id=f"carrier.bridge.{stamp}",
-        tokens=tuple(reading.token for reading in readings),
+        tokens=(readings[0].token,),
     )
-    return ByteSlotBridge(source=source, readings=readings, whole=whole)
+    ascent = ascend_one_slot(
+        zero,
+        readings[1].token,
+        mode=IdentityTransitionMode.SAME_ENTITY_RESCALING,
+    )
+    return ByteSlotBridge(source=source, readings=readings, ascent=ascent)
 
 
 @dataclass(frozen=True, slots=True)
@@ -373,6 +484,10 @@ def render_bridge(bridge: ByteSlotBridge) -> str:
         [
             "",
             f"بصمةُ الكلّ البنيويّ: {bridge.whole.content_id}",
+            f"خطواتُ الأثر: {bridge.trace_steps} — متراكمٌ: "
+            f"{bridge.trace_is_cumulative}",
+            f"البقايا الحاجبة: {len(bridge.residuals)} — كلُّ تقسيمٍ محجوب: "
+            f"{bridge.every_partition_is_blocked}",
             f"عددُ التقسيمات: {bridge.hypotheses.count} بلا فائزٍ مفروض",
             "",
             "ما لا يُثبِته هذا الجسر:",
