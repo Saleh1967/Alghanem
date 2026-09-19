@@ -6793,6 +6793,42 @@ callable is `UNDECLARED_PROVENANCE` and cannot either. A successful run on a
 designed domain and a failed run on an attested one both leave the condition
 open.
 
+**Passing the sufficiency run is now separated from earning the closure.**
+`CloseReconstruction = SufficiencyHeld ∧ ConstructiveHoldout ∧
+VerifiedRuleProvenance`, evaluated by `assess_reconstruction_closure`. An
+earlier mechanism derived independence from the empty intersection of a rule's
+`disclosed_elements` with the evaluation domain, which a hand-sealed callable
+could satisfy while memorizing the evaluation targets in its Python closure;
+that adversarial reader is kept as a **negative** test, and is now refused the
+closure. Two things changed. First, a hand-sealed rule reports
+`SEALED_BY_HAND_AND_NOT_STRUCTURALLY_AUDITABLE` — its empty disclosure tables
+are given by construction rather than audited — and no manual callable can
+close the requirement however well the run goes. Second, the holdout is audited
+on the representation **outputs** as well as on case identity, so a split that
+repeats an output the training half already answered leaks even when every
+`FiberElement` differs.
+
+Sharing the *target vocabulary*, by contrast, is legitimate and is recorded
+rather than punished. Counting a repeated answer string as a leak would make
+the gate vacuous: a reader can only ever emit an answer it has seen, so
+requiring disjoint contents would close the requirement by construction instead
+of by evidence. `shared_contents` therefore bounds the claim — the narrower the
+shared vocabulary, the closer a success sits to retrieval and the further from
+generalization — while `leaked_elements` and `leaked_outputs` alone decide
+whether the reader was held out at all. When the run holds but no
+structurally auditable reader exists, the decision is
+`DEFERRED_FOR_WANT_OF_AN_AUDITABLE_READER` and the condition stays open rather
+than closing on an undiscriminating pass.
+
+The consequence is recorded rather than engineered around: **no reader in this
+tree closes the rebuilding requirement.** A table trained on its own domain
+holds the run but is not held out; a table trained on a disjoint split is
+audited as held out and then *refutes* the run, because it has no answer for an
+output it never saw; a hand-sealed rule is not auditable at all. And even a
+future audited holdout that held would prove retrieval within that partition —
+not a generalizing linguistic rule. Held reconstruction, reader independence,
+and linguistic correctness stay three separate claims.
+
 **Issuance is delegated.** `is_a_linguistic_certificate` is gone. The verdict
 reports `meets_the_recorded_certificate_conditions` — a reading of the recorded
 checklist — beside `certificate_issuance_is_delegated`, which is always true:
@@ -6936,6 +6972,62 @@ birth, and a successful one would not have been a proof of birth;
 refutation holds on a designed domain of chosen words, so it disposes of the
 determination claim without proving that no other ladder, built from other
 recorded fields, could determine the syllable.
+
+## A carrier-state laboratory under all three contextual laws
+
+`src/alghanem/arabic/carrier_state_birth_experiment.py` runs ibtida, wasl and
+waqf as **partial operations**, not as properties of a single occurrence. Ibtida
+regulates *entry* into the structure, wasl regulates *transition* across the
+boundary between two structures, and waqf regulates *closure* at the last
+boundary. Every application row carries its entry state, exit state, **site of
+change**, preserved invariant, discriminating difference, effect, evidence and
+residue; a row missing its site of change or its preserved invariant is refused
+at construction.
+
+**The laws are a reference, not a proof.** `THE_THREE_LAWS` is imported from
+`ibtida_wasl_waqf_registration` by identity — a copied text is refused — and the
+import leaves the deposited standing `مُورَدة_بلا_مصدرٍ_مُسمًّى` untouched.
+
+**Required laws are separated from laws that have witnesses.** `REQUIRED_LAWS`
+is frozen before the run and always holds all three. A law with no witness is
+not dropped from the completeness criterion; it is recorded `DEFER` **under a
+named blocker**. Dropping it would narrow the question rather than answer it.
+
+**No pass on a poor domain.** `∀k: ker T_k ⊆ ker F_k` is vacuously true on an
+empty domain, and equally vacuous on a domain where the independent target never
+separates two contexts. So a falsifiability gate precedes the verdict: an empty
+domain and an undiscriminating domain both yield `DEFER`, and a pass is recorded
+together with the number of discriminating pairs it actually survived, so a thin
+pass is not read as a wide one.
+
+**Target independence is set by the kind of claim.** An orthographic claim takes
+a target measured from the digested source by an instrument separate from the
+candidate representation — no gloss registry is required for it. A phonetic
+claim requires a performance witness naming reading, dialect and context. A
+semantic claim requires an independent gloss. The representation itself and the
+in-tree syllabifier are refused as target provenances at construction.
+
+**Genus, attribute and attribution are pre-syllable only.** Genus is the written
+carrier class, attribute is its measured state on the frozen axes, and
+attribution is the attachment of the state to the carrier. `StateAttribution`
+has no predicate field at all, so no grammatical or semantic attribution can be
+imported into this layer from `minimal_complete_fiber`.
+
+**Completeness is conditioned on coverage.** On the deposited Fatiha the run
+passes ibtida over `29` entry contexts and `210` discriminating pairs, and
+defers wasl and waqf for want of an independent target — so the aggregate is
+`DEFER`, not `PASS`, and no complete certificate is granted. The run also
+records that the **weaker alternatives also pass**: carrier identity alone, and
+measured state alone, each separate every discriminating pair on this domain, so
+neither part of the attribution is necessary here. That is a recorded outcome,
+not a defect engineered away; and both instruments read the same written marks,
+so the containment is closer to analysis than to prediction.
+
+**Three outputs, separated by type.** A *candidate* orthographic carrier-state
+that is not born, a phonetic carrier-state **deferred by construction** — its
+only constructor takes a `PerformanceWitness`, and none is deposited — and a
+syllable with no birth certificate. There is no promotion path between them, and
+no authority is inherited by the syllable or by the syntax.
 
 ```bash
 python -m pip install -e '.[dev]'
