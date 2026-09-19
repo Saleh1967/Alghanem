@@ -91,7 +91,7 @@ freeze, no birth, and no rank, and nothing in `kernel/` reads it.
 from __future__ import annotations
 
 import unicodedata
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from enum import Enum
 from typing import Final
@@ -635,8 +635,10 @@ class CarrierStateCodec:
                         "a gemination pair start is not followed by its own "
                         "carrier, so the pair cannot be written back"
                     )
-                out.append(unit.written_form + _SHADDA)
-                out.append(self._tail(ordered[index + 1], seated=False))
+                out.append(unit.written_form)
+                out.append(
+                    self._tail(ordered[index + 1], seated=False, geminated=True)
+                )
                 index += 2
                 continue
             out.append(self._tail(unit, seated=True))
@@ -644,7 +646,18 @@ class CarrierStateCodec:
         return "".join(out)
 
     @staticmethod
-    def _tail(unit: CarrierStateUnit, *, seated: bool) -> str:
+    def _canonically_ordered(marks: Sequence[str]) -> str:
+        """رتّب علاماتِ التشكيل ترتيبَ يونيكود القانونيّ: فرزٌ ثابتٌ بالصنف.
+
+        `generate` تقرأ سطحًا مُسوًّى بـ`NFC`، فلا يستقيم أن تكتب `retrieve`
+        العلاماتِ بترتيبٍ آخر ثمّ يُحسَب الفرقُ ظاهرةً في النصّ. والفرزُ ثابتٌ،
+        فالعلامتان المتساويتان في الصنف تبقيان على ترتيب كتابتهما.
+        """
+
+        return "".join(sorted(marks, key=unicodedata.combining))
+
+    @staticmethod
+    def _tail(unit: CarrierStateUnit, *, seated: bool, geminated: bool = False) -> str:
         marks = {
             CarrierState.FATHA: "\u064e",
             CarrierState.DAMMA: "\u064f",
@@ -657,24 +670,33 @@ class CarrierStateCodec:
             CarrierState.KASRA: "\u064d",
         }
         out = unit.written_form if seated else ""
+        run: list[str] = []
+        if geminated:
+            run.append(_SHADDA)
         if unit.tanwin_alif_seat:
             # `generate` reads the explicit waw madda before it looks ahead for
             # the tanwin's alef seat, so the two are written back in that same
             # order; emitting the madda last would let NFC compose it onto the
             # seat alef and return a different surface.
             if unit.waw_madda:
-                out += _WAW_MADDA
-            out += "\u0627" + tanwin_marks[unit.state]
+                run.append(_WAW_MADDA)
+            out += CarrierStateCodec._canonically_ordered(run)
+            out += "\u0627"
+            seat_run = [tanwin_marks[unit.state]]
+            if unit.silent:
+                seat_run.append(_SILENT_ZERO)
+            return out + CarrierStateCodec._canonically_ordered(seat_run)
+        if unit.tanwin:
+            run.append(tanwin_marks[unit.state])
         else:
-            if unit.tanwin:
-                out += tanwin_marks[unit.state]
-            else:
-                out += marks.get(unit.state, "")
-            if unit.waw_madda:
-                out += _WAW_MADDA
+            written = marks.get(unit.state, "")
+            if written:
+                run.append(written)
+        if unit.waw_madda:
+            run.append(_WAW_MADDA)
         if unit.silent:
-            out += _SILENT_ZERO
-        return out
+            run.append(_SILENT_ZERO)
+        return out + CarrierStateCodec._canonically_ordered(run)
 
 
 _CODEC: Final = CarrierStateCodec()

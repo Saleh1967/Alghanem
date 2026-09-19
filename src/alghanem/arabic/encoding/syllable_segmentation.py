@@ -58,12 +58,14 @@ from .carrier_state_candidate import CarrierState, CarrierStateUnit
 
 __all__ = [
     "A_REFUSAL_IS_NOT_A_SEGMENTATION_NOTE",
+    "MADD_PARTNERS",
     "NEUTRAL_ALEF_CARRIER",
     "NEUTRAL_ONSET_STATES",
     "NUCLEUS_STATES",
     "SEGMENTATION_IS_NOT_A_WAZN_NOTE",
     "THE_ALEF_IS_A_NEUTRAL_ELEMENT_NOTE",
     "THE_INVERSE_IS_RUN_NOT_ASSERTED_NOTE",
+    "THE_MADD_IS_A_PROLONGED_NUCLEUS_NOT_A_CODA_NOTE",
     "THE_OPENING_BEFORE_THE_FIRST_VOWEL_IS_NOT_WRITTEN_NOTE",
     "Syllable",
     "SyllableOnset",
@@ -128,6 +130,28 @@ def _is_neutral_alef(unit: CarrierStateUnit) -> bool:
     return unit.carrier == NEUTRAL_ALEF_CARRIER and unit.state in NEUTRAL_ONSET_STATES
 
 
+MADD_PARTNERS: Final[dict[CarrierState, str]] = {
+    CarrierState.FATHA: "\u0627",
+    CarrierState.DAMMA: "\u0648",
+    CarrierState.KASRA: "\u064a",
+}
+"""الحاملُ الذي يُطيل كلَّ حركةٍ إن جاء بعدها عاريًا: ألفٌ، فواوٌ، فياء."""
+
+
+def _is_madd_after(nucleus: CarrierStateUnit, following: CarrierStateUnit) -> bool:
+    """أهذا الحاملُ إطالةً للحركة التي قبله؟ مقروءٌ من الحركة المكتوبة لا الشكل.
+
+    الشرطُ مُعلَنٌ وضيّق: حاملٌ مُجانِسٌ للحركة المكتوبة على ما قبله، عارٍ من كلّ
+    علامة. فليست الألفُ ههنا مقروءةً من صورتها وحدَها — وذلك ما امتنع عنه
+    `THE_SHAPE_DOES_NOT_SEPARATE_THE_ARTICLE_LAM_FROM_THE_MADD_ALIF` — وإنّما
+    من الحركة المكتوبة قبلها، وهي العلامةُ التي يفتقدها الشكلُ المجرَّد.
+    """
+
+    if nucleus.state not in MADD_PARTNERS:
+        return False
+    return following.carrier == MADD_PARTNERS[nucleus.state] and _is_unwritten(following)
+
+
 def _is_unwritten(unit: CarrierStateUnit) -> bool:
     """أخلت هذه الوحدةُ من كلّ علامةٍ مكتوبة؟ لا حركةَ ولا سكونَ ولا شدّة.
 
@@ -179,10 +203,10 @@ class Syllable:
                 SyllableRefusal.ONSETLESS_INITIAL_SAKIN,
                 "المقطعُ يبدأ بحاملٍ متحرّك؛ والساكنُ لا يفتح مقطعًا",
             )
-        elif len(self.units) > 2:
+        elif len(self.units) > 2 + int(self.carries_a_madd):
             raise SyllableSegmentationError(
                 SyllableRefusal.TWO_ADJACENT_SAKINS,
-                "المقطعُ حاملٌ متحرّكٌ ومعه ساكنٌ واحدٌ على الأكثر",
+                "المقطعُ حاملٌ متحرّكٌ ومعه إطالةٌ مُجانِسةٌ وساكنٌ واحدٌ على الأكثر",
             )
 
     def _refuse_a_written_state_inside_the_opening(self) -> None:
@@ -209,6 +233,14 @@ class Syllable:
         return len(self.units)
 
     @property
+    def carries_a_madd(self) -> bool:
+        """أفي المقطع إطالةٌ مُجانِسةٌ لنواته؟ مقروءةٌ من الحركة المكتوبة قبلها."""
+
+        if self.onset is SyllableOnset.NEUTRAL_ALEF or len(self.units) < 2:
+            return False
+        return _is_madd_after(self.units[0], self.units[1])
+
+    @property
     def undecided_opening(self) -> tuple[CarrierStateUnit, ...]:
         """وحداتُ المفتتح التي لم تُكتَب عليها علامة؛ فارغةٌ في المقطع الموصوف."""
 
@@ -227,7 +259,7 @@ class Syllable:
 
         if self.onset is SyllableOnset.NEUTRAL_ALEF:
             return len(self.units) > len(self.undecided_opening)
-        return len(self.units) == 2
+        return len(self.units) == 2 + int(self.carries_a_madd)
 
     @property
     def claims_a_nucleus(self) -> bool:
@@ -323,6 +355,13 @@ def segment(units: Sequence[CarrierStateUnit]) -> SyllableParse:
             )
         span = [unit]
         following = index + 1
+        if (
+            onset is SyllableOnset.MOVING_CARRIER
+            and following < total
+            and _is_madd_after(unit, units[following])
+        ):
+            span.append(units[following])
+            following += 1
         if onset is SyllableOnset.NEUTRAL_ALEF:
             while following < total and _is_unwritten(units[following]):
                 span.append(units[following])
@@ -382,4 +421,12 @@ THE_OPENING_BEFORE_THE_FIRST_VOWEL_IS_NOT_WRITTEN_NOTE: Final[str] = (
     "يفتتحها الألفُ العاري — يُعامَل مدًى محايدًا واحدًا يُغلَق بساكنٍ واحدٍ "
     "على الأكثر؛ وهذا توسيعُ امتناعٍ لا قراءةُ إدغامٍ ولا تسميةُ لامِ تعريف، "
     "والوحداتُ تُردّ بأعيانها، وما بعد أوّلِ حركةٍ مكتوبةٍ خارجٌ عنه بتمامه"
+)
+
+
+THE_MADD_IS_A_PROLONGED_NUCLEUS_NOT_A_CODA_NOTE: Final[str] = (
+    "TheMaddIsAProlongedNucleusNotACoda: الحاملُ العاري المُجانِسُ للحركة "
+    "المكتوبة قبله — ألفٌ بعد فتحةٍ، وواوٌ بعد ضمّةٍ، وياءٌ بعد كسرة — إطالةٌ "
+    "لنواة المقطع لا ساكنٌ يُغلِقه، فلا يُحسَب في التقاء الساكنَين؛ وقراءتُه من "
+    "الحركة المكتوبة قبله لا من صورته وحدَها، والوحدةُ تُردّ بعينها في العكس"
 )
