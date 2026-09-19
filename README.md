@@ -5699,6 +5699,427 @@ Not built here, deliberately: `G0.MASAQ-0`, `G0.METRIC-1` and `F₂`. No
 declared in this milestone — building the machinery that would make one legible
 is not the same as declaring one.
 
+### `ArabicRoundTripV1` — the bridge between the two measured ends
+
+Every milestone above either built a law or measured one end of a wire. Two
+real, executed round trips already existed in this tree and were never
+connected: raw bytes ↔ raw bytes in the compression model, and Arabic surface ↔
+carrier/state in `CarrierStateCodec`. This milestone is not a constitution. It
+is one product: a single pipeline that takes raw Arabic bytes, walks up through
+the layers that actually exist, walks back down, and prints what each layer
+lost.
+
+```
+raw bytes → UTF-8 → NFC → carrier/state → syllable → word structure
+          → reverse word structure → desegment → retrieve → raw bytes
+```
+
+- **`ALayerEntersOnlyIfItCanBeReversedOrMeasureItsLoss`.** Each of the six
+  layers declares a forward function *and* an inverse function by name in
+  `LAYER_FUNCTIONS`, and a test holds the table to that vocabulary. A layer
+  that cannot take the output of the layer beneath it and give it back does not
+  enter because it is theoretically desirable: morphology, syntax, iʿrāb and
+  dalālah are absent, and their absence is read in
+  `LAYERS_NOT_IN_THIS_PIPELINE` with a named reason each, never in an empty
+  row.
+- **The reverse analyser now exists.** `reverse_word_structure` is the first
+  function in this tree that reconstructs `CarrierStateUnit`s from a
+  `WordStructureDictionary` reading — positions, seats, gemination, tanwīn and
+  passthroughs included — so *this* pipeline's word-structure layer is
+  invertible rather than descriptive. The generation layer's own
+  `RoundTripStatus.DEFERRED_NO_FUNCTION_RECOVERING_ANALYSER` is untouched: it
+  concerns a different artefact.
+- **A syllabifier that is a segmentation, not a wazn.**
+  `encoding/syllable_segmentation` splits the codec's own units into adjacent
+  spans, each opened by a moving carrier and closed by at most one sākin, and
+  `desegment` gives the exact unit tuple back. `SegmentationIsNotAWazn`: no
+  pattern is emitted, and the withheld `المقطع_والوزن` layer of
+  `word_structure_dictionary` stays withheld — a test asserts it.
+- **`NoLayerRepairsTheDamageBeneathIt`.** A token refused or mismatched at a
+  layer stops there. Denominators therefore shrink as you go up, which is the
+  report, not a defect: `REFUSAL_IS_NOT_A_ROUND_TRIP` keeps refusals outside
+  the rate instead of scoring them as zeros inside it, and a rate over an empty
+  denominator is `None` rather than `0`.
+- **`AReorderingIsAMismatchWithNothingLost`.** Loss is counted as a multiset
+  difference of that layer's own atoms — bytes, codepoints or units — so NFC
+  reordering marks, and the codec writing shadda before the vowel, both come
+  out as mismatches with `Lost = 0` and `Added = 0`, counted separately in
+  `Reorder`. The top of the pipeline is deliberately not normalised a second
+  time, because a layer that repairs the layer beneath it hides it.
+
+On the eighteen surfaces embedded in `carrier_state_candidate`, derived by
+`examples/arabic/measure_arabic_round_trip_v1.py`, the raw-bytes table reads
+`UTF8 18/18`, `NFC 9 mismatches (all reordering)`, `carrier/state 9/9`,
+`syllable 5 refusals`, `word structure 4/4`, `final bytes 4/4` — four of
+eighteen tokens survive byte-for-byte end to end. Feeding the same bytes
+NFC-normalised first, as a separate table that is never merged with the first,
+`carrier/state` reads `18/18`, the syllable layer refuses nine (every word
+opening on a bare alef, since hamzat al-waṣl is undecidable from the marks),
+and `final bytes` reads `4/9` with five reorderings and nothing lost.
+
+### The corpus table — a real text, not a test surface
+
+Eighteen hand-picked surfaces are a fixture, not a corpus. `arabic_round_trip_corpus`
+therefore runs the same pipeline over the fingerprinted, fully vocalised
+al-Fātiḥah deposit already in this tree (`fatiha_source_text`, sha256
+`d435d63a…`, 552 bytes), and freezes the result as `FATIHA_ROUND_TRIP`.
+`measure_deposited_text` re-hashes the text it is given and refuses to measure
+anything whose bytes do not match the fingerprint it was handed, so the figure
+belongs to that exact deposit and no other.
+
+| Layer | In | Accepted | Refused | Mismatch | Reorder | Lost | Added | RoundTrip |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `UTF8_BYTES` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
+| `UNICODE_NFC` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
+| `CARRIER_STATE` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
+| `SYLLABLE` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
+| `WORD_STRUCTURE` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
+| `FINAL_BYTES` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
+
+All twenty-nine tokens come back byte-for-byte identical. `halt_profile` is a
+single row — 29 × `FINAL_BYTES / RECONSTRUCTED` — with no refusal and no
+mismatch left in it, and a test still holds the profile to summing to the token
+total so that a future regression has to be reported rather than absorbed.
+
+This is the figure for **this deposit**: one fingerprinted, fully vocalised
+29-token text, over six declared layers that stop at word structure. It is not
+a claim about Arabic, and nothing above word structure is in the table at all.
+
+The whole table is content-addressed: `RoundTripTable.digest` is
+`0bdc8e9845fec582…`, and `python examples/arabic/measure_arabic_round_trip_v1.py
+--deposit` re-derives it from the deposited bytes and exits non-zero if a single
+row moves. `UNMEASURED_ROUND_TRIP_SOURCES` names the 77,429-token Quranic
+morphology corpus that this tree deliberately does not vendor, and gives it no
+number at all rather than a placeholder.
+
+`TheFiguresAreOneContentAndTheEnvironmentIsAnother`: a measurement carries two
+separable contents. `figures_digest` covers the figures alone — source
+fingerprint, token total, reconstructed count, halt profile, table digest — and
+**every** environment must re-derive it byte-identically or the run stops.
+`digest` additionally binds the normalisation form and the Unicode database
+version, deliberately, because NFC is read out of that database and a future
+release could move the numbers. Running the deposit under Unicode 13.0.0 and
+15.0.0 gives the same `figures_digest` and a different `digest`: that is a
+result about this deposit — its figures do not depend on the Unicode release —
+reported rather than hidden by loosening the comparison.
+
+### `TheAlefIsANeutralElement` — the first change made to move a number
+
+From here on, the stated priority is narrow: **a change earns its place by
+moving a number in `ArabicRoundTripV1`** — a production, a refusal, a mismatch,
+or a layer that becomes invertible. Anything that moves none of them is not a
+priority now, however well argued.
+
+The first change made under that rule is the bare alef. A word-initial unmarked
+alef — hamzat al-waṣl — is now read as a **neutral element**: a
+`SyllableOnset.NEUTRAL_ALEF` that opens a syllable and *claims no nucleus*
+(`claims_a_nucleus` is `False`). Nothing is guessed: the undecidability recorded
+in `HAMZAT_WASL_IS_NOT_DECIDABLE_FROM_THE_WRITTEN_MARKS` stands untouched, no
+fatḥa, ḍamma or kasra is invented, the unit is preserved verbatim, and
+`desegment` hands it back exactly. The scope is declared and narrow: word-initial
+only, because a medial bare alef already round-trips as a coda and needed no
+change. And neutrality repairs nothing beneath it — a second sakin after a
+neutral onset is still refused by its own name.
+
+What the number did, on the same fingerprinted deposit:
+
+| | before | after |
+| --- | --- | --- |
+| tokens reconstructed end to end | 11/29 | **16/29** |
+| syllable-layer refusals | 14 | **8** |
+| `SEGMENTATION_ONSETLESS_INITIAL_SAKIN` | 14 | **0** |
+| `SEGMENTATION_TWO_ADJACENT_SAKINS` | 0 | **8** |
+| reordering-only mismatches at final bytes | 4 | 5 |
+| table digest | `7025007494c12056…` | `1e659c20b67fda9e…` |
+
+The wall did not fall; it moved and was renamed. The measured stopping point
+became the assimilated article lām, eight times over — and the next change was
+judged by whether it moved that eight.
+
+### `TheOpeningBeforeTheFirstVowelIsNotWritten` — the three laws, applied as a refusal
+
+The prompt was three law names: **قانون الابتداء، قانون الوصل، قانون الوقف**.
+They are already registered in `ibtida_wasl_waqf_registration` as transcribed
+text *without a reading*, and that registration says plainly that hamzat al-waṣl
+is not decidable from the written marks. Read together, the three laws agree on
+one thing that can be acted on without reading any of them: **what happens at
+the opening of a word, before its first written vowel, is not written down.**
+Ibtidāʾ supplies a vowel that is not in the text; waṣl deletes the hamza and
+draws the crossing vowel from the end of the previous word; waqf does not touch
+the opening at all.
+
+So the neutral element was widened from the alef alone to that whole opening: a
+contiguous run of word-initial units that carry **no written mark whatsoever** —
+no vowel, no sukūn, no shadda — headed by the bare alef, closed by at most one
+sakin. This is a *widened refusal, not an imported reading*: nothing is called a
+definite article, no assimilation is asserted, no pronunciation is guessed. The
+only claim is that a lām with nothing written on it is not a written sakin and
+must not be counted as one. Units are preserved verbatim; `desegment` returns
+them unchanged. Everything after the first written vowel is outside the span, so
+a medial long vowel before a geminate is still refused by its own name.
+
+| | before | after |
+| --- | --- | --- |
+| tokens reconstructed end to end | 16/29 | 16/29 |
+| syllable-layer refusals | 8 | **1** |
+| `SEGMENTATION_TWO_ADJACENT_SAKINS` | 8 | **1** |
+| reordering-only mismatches at final bytes | 5 | **12** |
+| table digest | `1e659c20b67fda9e…` | `c34c24d5f8a09058…` |
+
+The result is reported as it came out, not as it was hoped: **reconstruction did
+not rise.** Seven tokens moved from a refusal at the syllable layer to a
+reordering mismatch at the top — `Lost = 0`, `Added = 0` in every one. That is
+itself the finding. The article lām was never what stopped Alghanem from
+returning its bytes; the shadda/vowel ordering between the codec and NFC was,
+and it had simply been hidden behind an earlier refusal.
+
+### The writing inverse was broken, and that was a bug — not a phenomenon
+
+`CarrierStateCodec.generate` reads a surface it has already normalised with NFC,
+so NFC's canonical ordering is the order it was read in. `retrieve` nonetheless
+wrote a geminated carrier as `carrier + shadda + vowel`, while canonical
+ordering puts the vowel (ccc 30) before the shadda (ccc 33). Every one of the
+twelve "mismatches" was that, and calling them a property of the text would have
+been wrong. `retrieve` now emits the combining run after each carrier in
+canonical order — a stable sort on `unicodedata.combining`, so marks of equal
+class keep the order they were written in, and the seat alef of a tanwīn still
+breaks the run exactly as before.
+
+| | before | after |
+| --- | --- | --- |
+| reordering-only mismatches at final bytes | 12 | **0** |
+| tokens reconstructed end to end | 16/29 | **28/29** |
+
+### `TheMaddIsAProlongedNucleusNotACoda` — the last phonetic case
+
+One refusal was left: `الضَّالِّينَ`, a madd alif written before a geminated
+lām, counted as two adjacent sakins. It is not one. A bare carrier homogeneous
+with the ḥarakah written before it — alif after fatḥa, wāw after ḍamma, yāʾ
+after kasra — prolongs the syllable's nucleus; it does not close it, so it does
+not participate in a sakin collision. The syllable may therefore hold
+`onset + nucleus + prolongation + one coda`.
+
+The criterion is stated and narrow, and it does **not** overrule
+`THE_SHAPE_DOES_NOT_SEPARATE_THE_ARTICLE_LAM_FROM_THE_MADD_ALIF`: that refusal
+is about reading the alif from its *shape alone*. This rule reads it from the
+written ḥarakah on the carrier before it — precisely the mark the bare shape
+lacks. A marked wāw or yāʾ is a carrier opening its own syllable, not a
+prolongation, and a heterogeneous pairing (alif after kasra) is not one either.
+
+| | before | after |
+| --- | --- | --- |
+| syllable-layer refusals | 1 | **0** |
+| tokens reconstructed end to end | 28/29 | **29/29** |
+| table digest | `c34c24d5f8a09058…` | `0bdc8e9845fec582…` |
+
+### Reconstruction is not classification — the two are measured apart
+
+29/29 is a **reconstruction** figure, not a comprehension figure. The identity
+function returns every text perfectly and understands none of it, so a perfect
+round trip licenses no claim about what the pipeline understood. The obvious
+test case makes this concrete: does `الَّذِينَ` come back byte-for-byte *and*
+keep its identity as a relative noun, without being conflated with the definite
+article's lām in `الضَّالِّينَ`? Those are two questions, and
+`segmentation_discrimination_probe` answers them in two separate columns.
+
+**What is measured.** Eight probe words — `الَّذِينَ`, `الضَّالِّينَ`,
+`الشَّمْسِ`, `الْقَمَرِ`, `قَالَ`, `يَقُولُ`, `بَيْتِ`, `رَبُّكَ` — each stated
+with the reason it is in the probe. For each, two independent results: whether
+its bytes returned (run), and a derived **shape signature** read off the parse
+(onset kind, length of the unwritten opening, gemination positions, madd, coda).
+Five pairs are declared *before* the run and compared by signature only.
+
+Result: 8/8 bytes returned, 8/8 distinct shapes, no declared pair conflated.
+`الَّذِينَ` and `الضَّالِّينَ` differ where it matters — the unwritten opening
+is **1** unit in the first and **2** in the second, because `الَّذِينَ` writes
+its shadda on the lām itself, which is a written state and therefore stops the
+opening, while `الضَّالِّينَ` writes it on the ḍād, leaving the lām bare.
+
+**What is not measured, and is named as such.** A shape difference is not an
+identity. Nothing here calls one word a relative noun or the other a definite
+article; the probe only shows the pipeline did not emit them as the same thing.
+`ClassificationStanding` has three members and only the lowest is reachable —
+`لم_تُقَس_لانعدام_المرجع` — because **no independent reference segmentation is
+deposited in this tree**. That standing is enforced, not merely documented: the
+dataclass refuses construction with either higher member, so no future edit can
+promote it by writing rather than by depositing a reference.
+`INDEPENDENT_REFERENCE_REQUIREMENTS` states, class by class, exactly what a
+reference would have to supply to lift it.
+
+### Four classification axes, measured apart from each other
+
+`29/29` is a **writing** figure and stays the base; nothing morphological or
+syntactic is read off it. What is added is a *coverage* table with four axes
+that are deliberately not merged, because merging them is how a word's origin
+gets confused with its structure, binding with inflection, or a verb's state
+with a noun's:
+
+| Axis | Categories | The question |
+| --- | --- | --- |
+| Origin and morphological structure | jāmid, maṣdar, mushtaqq | What is the word's origin, what kind of structure, and is derivation established by evidence? |
+| General iʿrāb standing | mabnī, muʿrab | Does the ending keep one form, or change with the operator? |
+| Built verb forms | past, imperative, built present | Did the system identify the verb kind and its binding marker? |
+| Inflected verb cases | marfūʿ, manṣūb, majzūm | Did it identify the case, its marker, and its evidence? |
+
+**The root is not a category beside jāmid/maṣdar/mushtaqq.** A root is a
+possible morphological origin; jāmid, maṣdar and mushtaqq describe a word's
+structure. So `ClassificationCategory` has no root member at all — the root is
+recorded in a `RootRecord` *alongside* the structural description, and no root
+is forced out of a word that has no licensed root analysis: `الَّذِينَ` is
+recorded `غير_مُرخَّصٍ_لهذه_الكلمة`, not given an invented triliteral. The
+maṣdar is its own measured category, with no presupposition that every maṣdar
+derives from a verb.
+
+Each category gets its own word count, its own `RoundTrip`, its own `REFUSED`,
+`MISMATCH` and `UNRESOLVED` counts, and its own failure position. Five words
+from the deposit are declared — `الَّذِينَ`, `الضَّالِّينَ`, `اهْدِنَا`,
+`نَعْبُدُ`, `أَنْعَمْتَ` — taken by index out of the fingerprinted deposit
+rather than retyped, and their surfaces are read back from those bytes.
+
+**What those five declarations are.** They are *test targets*, not results the
+engine produced. The pipeline emits no classification at all — morphology and
+syntax are outside its layers, as `LAYERS_NOT_IN_THIS_PIPELINE` already states
+— so a check is settled only by reading an independent reference, and an
+unresolved check is **not counted correct**. `AnalysisAccuracy` is therefore
+neither 0 nor 1 but refused whenever its denominator, the number of *settled*
+checks, is zero.
+
+Run: 5 words, 5/5 bytes returned, 26 analytic checks, 0 settled,
+`AnalysisAccuracy` refused in every one of the eleven categories. **Four of the
+eleven categories are empty** — maṣdar, built present, manṣūb, majzūm — and
+they keep zero rows with a refused rate rather than being dropped or scored
+100%. That emptiness is the measured argument for the next step: widen the
+corpus, since al-Fātiḥah is narrower than these criteria.
+
+### MAQAYIS becomes the reference of lexical origin — and only that
+
+The origin axis had no settled check, because no analytic reference was
+deposited. But one *is*: the bytes of *Maqāyīs al-Lugha* are in this tree,
+fingerprinted, in `maqayis_root_table_deposit`. So `maqayis_lexical_origin`
+makes MAQAYIS the reference for one question and one only: **is this declared
+root an entry in that deposited lexicon?** The answer is produced by lookup in
+the frozen bytes, so it is a number that can be re-derived.
+
+Run: 5 words, **4 searched, 3 attested, 1 unattested, 1 not licensed**,
+attestation rate 75%. This is the first *linguistic* figure in the tree that is
+neither a byte count nor a shape comparison.
+
+**Attestation is not binding.** MAQAYIS attesting that `ضلل` is an entry does
+not say that `الضَّالِّينَ` derives from it. The first is an occurrence in a
+fingerprinted table; the second is a derivation claim about a particular word,
+and the second does not follow from the first. So every row carries
+`BindingStanding.NOT_ESTABLISHED_NO_MORPHOLOGY_RAN`, and the established
+member cannot be written — the dataclass refuses it.
+
+**Finding a root is not understanding a word.** Even if every declared root
+were attested, nothing would yet be known about whether the word is jāmid,
+maṣdar or mushtaqq, nor its pattern, nor its iʿrāb. Establishing form and
+classification is morphological work that has not run, and it is enumerated —
+not deferred vaguely — in `MORPHOLOGICAL_WORK_STILL_OWED`: 4 questions per
+searched word, **16 outstanding**.
+
+**The candidate roots are declared, not derived.** There is no root extractor
+in this pipeline. Deriving a root here and then checking it against the lexicon
+would be measuring the tree against itself, so the roots are written by hand as
+test targets and only their *occurrence* is measured.
+
+**The one miss is reported as it came out.** `هدي` written with yāʾ is not an
+entry; the lexicon writes that root `هدى` with alif maqṣūra. The declared string
+was not swapped after seeing the result. The cause is named instead:
+attestation is sensitive to how the *reference itself* spells its roots — a
+limit on the measurement, written down rather than absorbed into the rate. And
+a word with no licensed root analysis, `الَّذِينَ`, leaves the denominator by
+declaration rather than by omission, so it is never scored as a failed search.
+
+### The analytic reference is MASAQ, and the refusal is now itemised
+
+The analytic reference in this table was written `MAQSAD`. There is no such
+thing in this tree. The reference that *does* exist is **MASAQ**
+(`masaq_corpus_deposit`): its digest and byte length are frozen, its licence
+and attribution are recorded, and it tags exactly the morphological doors the
+Quranic morphology corpus stops short of. So the name was corrected, and the
+digest is now read from `MASAQ_SHA256` rather than copied by hand.
+
+**The standing is run, not written.** `masaq_reference()` resolves the bytes
+and reports one of three separate states: `مُبصَّم_بايتاتُه_غيرُ_محلولة`,
+`بايتاتٌ_حاضرةٌ_خالفت_البصمة`, or `مُودَع_مُبصَّم`. In this environment the
+bytes are **not resolvable** — there is no `corpora/MASAQ.csv` and no
+`ALGHANEM_MASAQ_PATH` — so the run reports the first state. That is a measured
+result, not an assumption; a file sitting at the sanctioned path would still
+have to match the length *and* the digest before a single tag was read from it.
+
+**`masaq_records()` is now wired in.** Each word carries a declared
+`ReferenceAddress` (sura, verse); segments are grouped by the word key
+`Column5` — not by `Word_No`, which is a *segment* index — and the group is
+matched by the word's letters, diacritics stripped for the comparison only.
+The `Morph_Tag` of the matched group is compared against a declared tag set.
+A word that is not found is named absent, never treated as a contradiction.
+
+**Only tags actually attested in this tree are written.** `CATEGORY_TAGS` maps
+maṣdar to the five `GERUND*` tags and mushtaqq to the seven classical derived
+forms; `NOUN_RELATIVE` and `NOUN_DIMINUTIVE` are attested but deliberately left
+unassigned, with the reason recorded, because the nisba and the diminutive are
+not among the seven. A module-level check refuses any tag not present in the
+deposit. **Nine of the eleven categories have no attested tag here** — not
+because MASAQ fails to tag them, but because their tag names have not been read
+in this tree, and writing a guessed tag would be an invented reference.
+
+**The single blanket refusal is gone.** `UNRESOLVED_NO_ANALYZER_RAN` has been
+replaced by four named causes, and the 26 checks now decompose:
+
+| Cause | Checks |
+| --- | --- |
+| `UNRESOLVED_THE_REFERENCE_HAS_NO_COLUMN_FOR_THIS_QUESTION` | 16 |
+| `UNRESOLVED_NO_ATTESTED_TAG_FOR_THIS_CATEGORY` | 9 |
+| `UNRESOLVED_REFERENCE_BYTES_NOT_RESOLVED` | 1 |
+
+The order of these causes matters. What the reference cannot answer *in
+itself* is said **before** its bytes are requested: MASAQ tags structure in
+`Morph_Tag`, but it has no column for the iʿrāb marker in the form asked here,
+and none for its evidence, so the 16 marker and evidence checks fail in the
+reference, not in a missing file. Exactly **one** check — the mushtaqq claim on
+`الضَّالِّينَ` — is blocked solely by the bytes being absent. That is the
+measured size of the step remaining: one settleable check out of twenty-six,
+waiting on one file.
+
+**The reader is verified working, not just written.** Against declared
+synthetic records the analyser returns `NOUN_ACTIVE_PART` for the word and
+scores mushtaqq at 100%; swap the tag to `GERUND` and the same check settles as
+a contradiction, scoring 0% rather than quietly refusing. So the wiring
+genuinely settles, and a wrong claim is counted against itself.
+
+**A tagged-segment count is not a word count, nor an accuracy.** The 4,216
+records tagged `GERUND` and 3,156 tagged `NOUN_ACTIVE_PART` are counts of
+*tagged segments* in MASAQ's bytes under its counting rule. A record is a
+segment, not a word, so these are not counts of unique words; and they are
+certainly not an accuracy of Alghanem, which has produced no classification of
+its own. They are what its declared claims will be compared *against*.
+
+### The next number is the population, not the rate
+
+29 tokens is a small population, and raising a saturated rate produces no
+number. `UNMEASURED_ROUND_TRIP_SOURCES` still names the 77,429-token corpus by
+fingerprint with no figure attached, and
+`python examples/arabic/measure_arabic_round_trip_v1.py <path>` runs the full
+pipeline over it the moment its bytes are present. That path now prints, under
+every halting class, **example tokens from that class** rather than a count
+alone — so a wider run reports what refused and what differed, not just how
+much.
+
+The claim after this milestone is: *there is one executed path from Arabic bytes
+to a structure and back to bytes, and on the fingerprinted al-Fātiḥah deposit it
+returns all 29 tokens byte-identical, with an empty refusal profile.* What it is
+**not**: a claim about Arabic, about unvocalised text, about any longer corpus,
+or about any layer above word structure — morphology, syntax, iʿrāb and dalālah
+still have no forward function and no inverse, so they are absent from the table
+rather than scored in it. The next number to move is therefore the corpus, not
+the rate: `UNMEASURED_ROUND_TRIP_SOURCES` still names the 77,429-token corpus
+this tree does not vendor, and gives it no figure at all.
+
+Not built here, deliberately: morphology, composition, syntax, iʿrāb, dalālah,
+MASAQ and any weight protocol. No layer above word structure has a forward and
+an inverse function yet, so none of them is in the table.
+
 
 ```bash
 python -m pip install -e '.[dev]'
