@@ -6183,6 +6183,46 @@ standing inside this reading, not a kernel birth verdict. This module issues no
 `BirthVerdictGate` is deliberately not wired to it, and a static import audit
 witnesses that the readout reaches no `alghanem.kernel` module at all.
 
+### A contract for the letter and the haraka, element by element
+
+`letter_haraka_fiber_contract.py` is the next test the tree asked for. It
+enumerates eight elements, and each one must carry four things together: what
+is claimed, the genus and object of its evidence, the preventers standing
+against it, and the residuals it does not carry. An element with no named
+residual is refused at construction, and so is a duplicated preventer.
+
+**The written letter is kept apart from sound, structurally.** Every element
+declares an `EvidenceGenus`, and an element whose evidence is `RECORDED_SOUND`
+cannot hold in this tree at all, because `UnicodeIsNotRecordedSound` still
+stands — nothing here is a recording. The three phonetic elements are therefore
+*written into the contract and withheld by their named preventer*, not deleted
+for being untestable: the letter's sound value, the haraka's sound value, and
+the claim that a written sukūn is the absence of a vowel sound. Five elements
+hold on the deposit; three are withheld, and the run says which and why.
+
+**The written sukūn is kept apart from the absence of a diacritic, and the
+separation is measured rather than assumed.** They are two distinct subjects
+that no single element may carry, and a contract that folds one into the other
+is refused before any counting. Over the fingerprinted Fātiḥa deposit
+(`d435d63a…`) the two classes come out at 21 occurrences bearing the sukūn mark
+on its own axis against 40 bearing no mark on any measured axis, and a run in
+which those two numbers coincided would be refused rather than reported. No
+occurrence carries a haraka and a sukūn together, while 14 carry a haraka and a
+shadda together — which is what shows the haraka is not a value inside the
+letter, and the axes are not one axis.
+
+Every figure is re-derived from the deposited bytes at run time; none is
+written by hand, and the deposit's digest travels in the report.
+`python examples/arabic/run_letter_haraka_fiber_contract.py` prints each
+element with its standing, its count or its preventer, and its residuals.
+
+**And running it waits on nothing.** `RunningTheContractIsNotBlockedOnACertificate`:
+the contract is exercised today while the `CV` birth certificate remains
+unissued with its four lacks enumerated. An element holding here is a standing
+on one deposit — not a birth, not a kernel verdict, not an `E0` freeze — and a
+static import audit witnesses that this module too reaches no `alghanem.kernel`
+module.
+
 ### Nothing crosses between two tracks without a written contract
 
 A minimality result in `G0.FLT-1` does not travel to `G0.VV-BIRTH-1` on its
