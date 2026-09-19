@@ -95,17 +95,21 @@ def test_the_halt_profile_accounts_for_every_token_exactly_once() -> None:
     )
 
 
-def test_the_wall_is_the_syllable_layer_and_it_is_named() -> None:
-    """موضعُ التوقّف مُسمًّى بسببه بعينه، لا برمزٍ جامعٍ للطبقة."""
+def test_no_layer_halts_a_token_in_this_deposit() -> None:
+    """لم يبقَ في هذا الإيداع وقوفٌ عند طبقةٍ واحدة؛ والعددُ مُشتَقٌّ لا مكتوب."""
 
-    adjacent = FATIHA_ROUND_TRIP.halts_at(
-        RoundTripLayer.SYLLABLE,
-        RoundTripRefusal.SEGMENTATION_TWO_ADJACENT_SAKINS,
+    for layer in RoundTripLayer:
+        if layer is RoundTripLayer.FINAL_BYTES:
+            continue
+        assert FATIHA_ROUND_TRIP.halts_at(layer) == 0
+    assert FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.FINAL_BYTES) == 29
+    assert (
+        FATIHA_ROUND_TRIP.halts_at(
+            RoundTripLayer.SYLLABLE,
+            RoundTripRefusal.SEGMENTATION_TWO_ADJACENT_SAKINS,
+        )
+        == 0
     )
-    assert adjacent == 1
-    assert FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.SYLLABLE) == adjacent
-    assert FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.CARRIER_STATE) == 0
-    assert FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.UTF8_BYTES) == 0
 
 
 def test_the_neutral_alef_left_no_onsetless_halt_in_this_deposit() -> None:
@@ -121,9 +125,9 @@ def test_the_neutral_alef_left_no_onsetless_halt_in_this_deposit() -> None:
 
 
 def test_the_rate_is_over_everything_that_entered_the_pipeline() -> None:
-    assert FATIHA_ROUND_TRIP.end_to_end_reconstructed == 16
+    assert FATIHA_ROUND_TRIP.end_to_end_reconstructed == 29
     assert FATIHA_ROUND_TRIP.token_total == 29
-    assert FATIHA_ROUND_TRIP.reconstruction_rate == 16 / 29
+    assert FATIHA_ROUND_TRIP.reconstruction_rate == 1.0
 
 
 def test_every_halt_reason_in_the_profile_is_a_sealed_member() -> None:
@@ -218,20 +222,27 @@ def test_the_table_digest_moves_when_any_row_moves() -> None:
     assert widened.digest != FATIHA_ROUND_TRIP.table_digest
 
 
-def test_the_wider_opening_moved_the_wall_without_raising_reconstruction() -> None:
-    """النتيجةُ تُقال بلا تجميل: الرفضُ نزل، والمُخالفةُ صعدت، والاسترجاعُ ثابت."""
+def test_the_profile_is_one_row_and_no_mismatch_is_left_in_it() -> None:
+    """صفٌّ واحدٌ في السجلّ: لا رفضَ ولا مخالفةَ ترتيبٍ في هذا الإيداع."""
 
-    assert FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.SYLLABLE) == 1
-    mismatched = sum(
-        halt.count
+    assert len(FATIHA_ROUND_TRIP.halt_profile) == 1
+    only = FATIHA_ROUND_TRIP.halt_profile[0]
+    assert only.outcome is LayerOutcome.RECONSTRUCTED
+    assert only.layer is RoundTripLayer.FINAL_BYTES
+    assert only.count == FATIHA_ROUND_TRIP.token_total
+    assert not [
+        halt
         for halt in FATIHA_ROUND_TRIP.halt_profile
         if halt.outcome is LayerOutcome.MISMATCHED
-    )
-    assert mismatched == 12
-    assert FATIHA_ROUND_TRIP.end_to_end_reconstructed == 16
-    assert (
-        FATIHA_ROUND_TRIP.halts_at(RoundTripLayer.SYLLABLE)
-        + mismatched
-        + FATIHA_ROUND_TRIP.end_to_end_reconstructed
-        == FATIHA_ROUND_TRIP.token_total
-    )
+    ]
+
+
+def test_completeness_here_is_this_deposit_not_a_claim_about_arabic() -> None:
+    """التمامُ عددُ إيداعٍ واحدٍ مُبصَّم، ولا يُقرأ دعوى تمامٍ في العربية."""
+
+    assert FATIHA_ROUND_TRIP.source_id == FATIHA_SOURCE_ID
+    assert FATIHA_ROUND_TRIP.source_sha256 == source_sha256()
+    assert FATIHA_ROUND_TRIP.token_total == 29
+    assert UNMEASURED_ROUND_TRIP_SOURCES
+    for unmeasured in UNMEASURED_ROUND_TRIP_SOURCES:
+        assert unmeasured.why_no_figure_is_frozen.strip()

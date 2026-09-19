@@ -636,9 +636,7 @@ class CarrierStateCodec:
                         "carrier, so the pair cannot be written back"
                     )
                 out.append(unit.written_form)
-                out.append(
-                    self._tail(ordered[index + 1], seated=False, geminated=True)
-                )
+                out.append(self._tail(ordered[index + 1], seated=False, geminated=True))
                 index += 2
                 continue
             out.append(self._tail(unit, seated=True))

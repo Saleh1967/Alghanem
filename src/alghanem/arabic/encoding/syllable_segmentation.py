@@ -149,7 +149,9 @@ def _is_madd_after(nucleus: CarrierStateUnit, following: CarrierStateUnit) -> bo
 
     if nucleus.state not in MADD_PARTNERS:
         return False
-    return following.carrier == MADD_PARTNERS[nucleus.state] and _is_unwritten(following)
+    if following.carrier != MADD_PARTNERS[nucleus.state]:
+        return False
+    return _is_unwritten(following)
 
 
 def _is_unwritten(unit: CarrierStateUnit) -> bool:

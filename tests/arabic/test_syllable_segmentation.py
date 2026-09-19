@@ -6,6 +6,7 @@ import pytest
 
 from alghanem.arabic.encoding.carrier_state_candidate import (
     EMBEDDED_ROUND_TRIP_CASES,
+    CarrierState,
     CarrierStateCodec,
     CarrierStateEncodingError,
 )
@@ -93,15 +94,35 @@ def test_the_undecided_opening_stops_at_the_first_written_state() -> None:
     assert parse.syllables[0].has_coda is True
 
 
-def test_the_opening_does_not_repair_a_madd_before_a_shadda() -> None:
-    """المدُّ قبل مشدَّدٍ في وسط الكلمة خارجُ المفتتح، فيبقى رفضًا باسمه."""
+def test_a_madd_prolongs_the_nucleus_instead_of_closing_the_syllable() -> None:
+    """ألفُ المدّ بعد فتحةٍ إطالةُ نواةٍ، فالمشدَّدُ بعدها ليس التقاءَ ساكنَين."""
 
     units = _CODEC.generate(
         "\u0627\u0644\u0636\u064e\u0651\u0627\u0644\u0650\u0651\u064a\u0646\u064e"
     )
-    with pytest.raises(SyllableSegmentationError) as caught:
-        segment(units)
-    assert caught.value.refusal is SyllableRefusal.TWO_ADJACENT_SAKINS
+    parse = segment(units)
+    assert desegment(parse.syllables) == units
+    madd = [syllable for syllable in parse.syllables if syllable.carries_a_madd]
+    assert len(madd) == 2
+    assert madd[0].units[0].state is CarrierState.FATHA
+    assert madd[0].units[1].carrier == "\u0627"
+    assert madd[0].has_coda is True
+
+
+def test_a_madd_is_read_from_the_written_harakah_not_from_the_shape() -> None:
+    """ألفٌ بعد كسرةٍ ليست إطالةً؛ فالمُجانَسةُ شرطٌ مقروءٌ لا صورةٌ مجرّدة."""
+
+    homogeneous = _CODEC.generate("\u0628\u064e\u0627\u0628\u064f")
+    assert segment(homogeneous).syllables[0].carries_a_madd is True
+    heterogeneous = _CODEC.generate("\u0628\u0650\u0627\u0628\u064f")
+    assert segment(heterogeneous).syllables[0].carries_a_madd is False
+
+
+def test_a_marked_partner_carrier_is_not_a_prolongation() -> None:
+    """الواوُ الموصوفةُ بحركةٍ حاملٌ يفتح مقطعَه، ولا تُبتلَع إطالةً للضمّة."""
+
+    units = _CODEC.generate("\u0642\u064f\u0648\u064e\u0629\u064f")
+    assert segment(units).syllables[0].carries_a_madd is False
 
 
 def test_a_neutral_span_refuses_a_written_state_in_its_middle() -> None:

@@ -112,15 +112,15 @@ def test_an_unmarked_article_lam_now_crosses_the_syllable_layer() -> None:
     assert trace.added == 0
 
 
-def test_a_madd_before_a_shadda_still_halts_at_the_syllable_layer() -> None:
-    """المفتتحُ لا يُصلِح ما بعد أوّلِ حركةٍ مكتوبة؛ والمدُّ قبل مشدَّدٍ رفضٌ."""
+def test_a_madd_before_a_shadda_now_returns_its_own_bytes() -> None:
+    """المدُّ إطالةُ نواةٍ لا ساكنٌ، فالكلمةُ تعبر وتعود بايتاتُها كما دخلت."""
 
     trace = run_token(
         "\u0627\u0644\u0636\u064e\u0651\u0627\u0644\u0650\u0651\u064a\u0646\u064e".encode()
     )
-    assert trace.reached is RoundTripLayer.SYLLABLE
-    assert trace.outcome is LayerOutcome.REFUSED
-    assert trace.refusal is RoundTripRefusal.SEGMENTATION_TWO_ADJACENT_SAKINS
+    assert trace.reached is RoundTripLayer.FINAL_BYTES
+    assert trace.outcome is LayerOutcome.RECONSTRUCTED
+    assert trace.refusal is None
 
 
 def test_no_layer_counts_a_token_that_never_reached_it() -> None:
@@ -243,17 +243,38 @@ def test_the_pipeline_refuses_a_text_input_and_reads_bytes_only() -> None:
         run_token("\u0628\u064e")  # type: ignore[arg-type]
 
 
-def test_a_reordering_is_a_mismatch_with_nothing_lost() -> None:
-    """المرمازُ يكتب الشدّةَ قبل الحركة، فيُقرأ الاختلافُ ترتيبًا لا فقدًا."""
+def test_a_geminated_token_no_longer_comes_back_reordered() -> None:
+    """العكسُ الكتابيُّ يكتب بالترتيب القانونيّ، فذهب اختلافُ الترتيب بتمامه."""
 
     token = unicodedata.normalize("NFC", "\u0631\u064e\u0628\u0651\u064f\u0643\u064e")
     table = measure_round_trip([token.encode("utf-8")])
     row = table.row(RoundTripLayer.FINAL_BYTES)
-    assert row.mismatch_count == 1
-    assert row.ordering_only_count == 1
-    assert row.information_lost == 0
-    assert row.information_added == 0
-    assert table.traces[0].is_ordering_only
+    assert row.mismatch_count == 0
+    assert row.ordering_only_count == 0
+    assert table.traces[0].outcome is LayerOutcome.RECONSTRUCTED
+
+
+def test_an_ordering_only_mismatch_is_still_readable_as_such() -> None:
+    """بابُ «اختلافِ ترتيبٍ بلا فقد» يبقى مقروءًا وإن خلا منه هذا الإيداع."""
+
+    reordered = TokenTrace(
+        token_index=0,
+        reached=RoundTripLayer.FINAL_BYTES,
+        outcome=LayerOutcome.MISMATCHED,
+        refusal=None,
+        lost=0,
+        added=0,
+    )
+    assert reordered.is_ordering_only is True
+    lossy = TokenTrace(
+        token_index=1,
+        reached=RoundTripLayer.FINAL_BYTES,
+        outcome=LayerOutcome.MISMATCHED,
+        refusal=None,
+        lost=1,
+        added=0,
+    )
+    assert lossy.is_ordering_only is False
 
 
 def test_ordering_only_can_never_exceed_the_mismatches_it_is_part_of() -> None:

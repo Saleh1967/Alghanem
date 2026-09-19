@@ -5772,23 +5772,21 @@ belongs to that exact deposit and no other.
 | `UTF8_BYTES` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
 | `UNICODE_NFC` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
 | `CARRIER_STATE` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
-| `SYLLABLE` | 29 | 28 | 1 | 0 | 0 | 0 | 0 | 100.0000% |
-| `WORD_STRUCTURE` | 28 | 28 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
-| `FINAL_BYTES` | 28 | 28 | 0 | 12 | 12 | 0 | 0 | 57.1429% |
+| `SYLLABLE` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
+| `WORD_STRUCTURE` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
+| `FINAL_BYTES` | 29 | 29 | 0 | 0 | 0 | 0 | 0 | 100.0000% |
 
-Sixteen of twenty-nine tokens come back byte-for-byte identical. The other
-thirteen are accounted for by name, never by silence, in `halt_profile`, which
-a test holds to summing to the token total:
+All twenty-nine tokens come back byte-for-byte identical. `halt_profile` is a
+single row — 29 × `FINAL_BYTES / RECONSTRUCTED` — with no refusal and no
+mismatch left in it, and a test still holds the profile to summing to the token
+total so that a future regression has to be reported rather than absorbed.
 
-- **1 × `SYLLABLE / REFUSED / SEGMENTATION_TWO_ADJACENT_SAKINS`** — a long vowel
-  written before a geminated consonant inside the word (`الضَّالِّينَ`). One
-  refusal code, one occurrence, named.
-- **12 × `FINAL_BYTES / MISMATCHED`**, all twelve reordering-only — `Lost = 0`,
-  `Added = 0` — because NFC sorts shadda after the vowel while the codec writes
-  it before. Nothing was destroyed; the byte order differs.
+This is the figure for **this deposit**: one fingerprinted, fully vocalised
+29-token text, over six declared layers that stop at word structure. It is not
+a claim about Arabic, and nothing above word structure is in the table at all.
 
 The whole table is content-addressed: `RoundTripTable.digest` is
-`c34c24d5f8a09058…`, and `python examples/arabic/measure_arabic_round_trip_v1.py
+`0bdc8e9845fec582…`, and `python examples/arabic/measure_arabic_round_trip_v1.py
 --deposit` re-derives it from the deposited bytes and exits non-zero if a single
 row moves. `UNMEASURED_ROUND_TRIP_SOURCES` names the 77,429-token Quranic
 morphology corpus that this tree deliberately does not vendor, and gives it no
@@ -5873,15 +5871,56 @@ not rise.** Seven tokens moved from a refusal at the syllable layer to a
 reordering mismatch at the top — `Lost = 0`, `Added = 0` in every one. That is
 itself the finding. The article lām was never what stopped Alghanem from
 returning its bytes; the shadda/vowel ordering between the codec and NFC was,
-and it had simply been hidden behind an earlier refusal. The wall is now one
-madd-before-shadda refusal and twelve ordering mismatches, and the next change
-is judged by whether it moves the twelve.
+and it had simply been hidden behind an earlier refusal.
 
-The claim after this milestone is: *there is now one executed path from Arabic
-bytes to a structure and back to bytes, measured on a real fingerprinted text —
-16/29 tokens reconstructed exactly, one named refusal left at the syllable
-layer, and the remaining thirteen failures are an ordering difference with zero
-loss, not an encoding or a codec failure.*
+### The writing inverse was broken, and that was a bug — not a phenomenon
+
+`CarrierStateCodec.generate` reads a surface it has already normalised with NFC,
+so NFC's canonical ordering is the order it was read in. `retrieve` nonetheless
+wrote a geminated carrier as `carrier + shadda + vowel`, while canonical
+ordering puts the vowel (ccc 30) before the shadda (ccc 33). Every one of the
+twelve "mismatches" was that, and calling them a property of the text would have
+been wrong. `retrieve` now emits the combining run after each carrier in
+canonical order — a stable sort on `unicodedata.combining`, so marks of equal
+class keep the order they were written in, and the seat alef of a tanwīn still
+breaks the run exactly as before.
+
+| | before | after |
+| --- | --- | --- |
+| reordering-only mismatches at final bytes | 12 | **0** |
+| tokens reconstructed end to end | 16/29 | **28/29** |
+
+### `TheMaddIsAProlongedNucleusNotACoda` — the last phonetic case
+
+One refusal was left: `الضَّالِّينَ`, a madd alif written before a geminated
+lām, counted as two adjacent sakins. It is not one. A bare carrier homogeneous
+with the ḥarakah written before it — alif after fatḥa, wāw after ḍamma, yāʾ
+after kasra — prolongs the syllable's nucleus; it does not close it, so it does
+not participate in a sakin collision. The syllable may therefore hold
+`onset + nucleus + prolongation + one coda`.
+
+The criterion is stated and narrow, and it does **not** overrule
+`THE_SHAPE_DOES_NOT_SEPARATE_THE_ARTICLE_LAM_FROM_THE_MADD_ALIF`: that refusal
+is about reading the alif from its *shape alone*. This rule reads it from the
+written ḥarakah on the carrier before it — precisely the mark the bare shape
+lacks. A marked wāw or yāʾ is a carrier opening its own syllable, not a
+prolongation, and a heterogeneous pairing (alif after kasra) is not one either.
+
+| | before | after |
+| --- | --- | --- |
+| syllable-layer refusals | 1 | **0** |
+| tokens reconstructed end to end | 28/29 | **29/29** |
+| table digest | `c34c24d5f8a09058…` | `0bdc8e9845fec582…` |
+
+The claim after this milestone is: *there is one executed path from Arabic bytes
+to a structure and back to bytes, and on the fingerprinted al-Fātiḥah deposit it
+returns all 29 tokens byte-identical, with an empty refusal profile.* What it is
+**not**: a claim about Arabic, about unvocalised text, about any longer corpus,
+or about any layer above word structure — morphology, syntax, iʿrāb and dalālah
+still have no forward function and no inverse, so they are absent from the table
+rather than scored in it. The next number to move is therefore the corpus, not
+the rate: `UNMEASURED_ROUND_TRIP_SOURCES` still names the 77,429-token corpus
+this tree does not vendor, and gives it no figure at all.
 
 Not built here, deliberately: morphology, composition, syntax, iʿrāb, dalālah,
 MASAQ and any weight protocol. No layer above word structure has a forward and
