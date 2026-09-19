@@ -6539,6 +6539,49 @@ does not license a splitting operation, and it does not license the rank
 function either, because on the population in question the rank function does
 not exist. Two unlicensed operations, two different written reasons.
 
+## The ambient was a choice, and the gaps were never adjudicated
+
+Two things in that proof were taken rather than measured. The ambient lattice
+was built by closing the observed fibers under `∪` and `∩` — an operation
+*chosen*; closing under difference gives a different lattice. And the resulting
+gaps were counted, never judged: which of them could be filled by something
+observed in a wider corpus, and which are structurally barred, was not asked.
+`src/alghanem/arabic/fiber_ambient_choice.py` names both.
+
+**The ambient is operator-relative; the verdict is not.** Five named closures
+over the same 16 observed fibers give **16 / 75 / 96 / 128 / 128** members —
+closing under difference adds **32** subsets the `∪∩` closure never reaches. But
+every closure that exceeds the observed is graded and connected, so a rank
+function exists and is unique up to one constant in all of them; only the
+observed population alone fails, with 20 covers, non-graded, **2** components.
+What the choice moves is the home of the proof, not its result.
+
+**So "the number of gaps" is not a number.** It is **59** under downward
+closure, **80** under `∪∩`, **112** under difference and under the full Boolean
+lattice. The count is about an operator, so the operator is named beside it
+every time.
+
+**Each gap is judged one by one, with three verdicts, not two.** Exactly
+**one** is `BARRED_BY_A_MEASURED_RULE`: the empty fiber, because `ObservedFiber`
+refuses an empty composition — and that bar is checked *live*, by constructing
+one and catching the refusal, not by citing it. Nothing else in the tree bars
+anything. A gap is `JOINTLY_ATTESTED_ON_ONE_CARRIER` when all of its states
+were in fact seen together on one named carrier: **41** under `∪∩`, **58** under
+the full lattice, each carrying its witness. The rest —
+**38** and **53** — are `NOT_JOINTLY_ATTESTED_UNDECIDED`, and that is not a
+softer way of saying barred: absence may be prohibition, rarity, or positional
+impossibility, and observation alone does not separate them.
+
+**Two limits close the second verdict.** Individual attestation is free — all
+7 states are attested singly, so "every state of it was observed" rejects no
+gap at all, and a criterion that rejects nothing measures nothing; the criterion
+that counts is joint attestation on one carrier. And attestation is not corpus
+construction: that a gap's states co-occur on some carrier proves it is not
+barred, but does not produce a corpus in which some carrier's fiber is *exactly*
+that gap and no wider. Under downward closure this is sharpest — **0** gaps are
+undecided, because every member is by construction a subset of something
+observed.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
