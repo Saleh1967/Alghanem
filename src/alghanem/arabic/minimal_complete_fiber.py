@@ -106,8 +106,12 @@ __all__ = [
     "AttestationStanding",
     "ConditionRunKind",
     "ProvenancedReader",
+    "ReaderRuleOrigin",
+    "SealedReaderRule",
+    "a_rule_sealed_before_any_case",
+    "a_rule_trained_on",
+    "hold_out_reader",
     "ReaderProvenance",
-    "a_reader_fixed_before_the_data",
     "the_deposited_gloss_registry",
     "NO_EVIDENCE_KIND_HERE_CLOSES",
     "THE_DOMAIN_DECLARER_ID",
@@ -610,32 +614,131 @@ class SufficiencyStanding(Enum):
 
 
 class ReaderProvenance(Enum):
-    """منشأُ القارئ؛ وهو شرطُ قراءةٍ لا وصفُ جودة."""
+    """منشأُ القارئ، **مُشتقًّا من آليّةٍ** لا موسومًا بيدِ مستدعيه."""
 
     BUILT_FROM_THE_DOMAIN_TARGET_TABLE = "مبنيٌّ_من_جدول_أهداف_المجال"
     FIXED_BEFORE_THE_EVALUATION_DATA = "قاعدتُه_مثبَّتةٌ_قبل_بيانات_التقييم"
     UNDECLARED_PROVENANCE = "منشأٌ_غيرُ_مُعلَن"
 
 
-@dataclass(frozen=True, slots=True)
-class ProvenancedReader:
-    """قارئٌ يحمل منشأه معه؛ فلا يُسأل عن منشئه بعد أن يُجاب به.
+class ReaderRuleOrigin(Enum):
+    """من أين جاءت قاعدةُ القارئ: من ختمٍ سابقٍ لكلّ حالة، أم من جدولِ حالات."""
 
-    والمنشأُ **لا يرفع** قارئَ جدولٍ إلى مستقلّ: `lookup_reader` يُبنى من
-    أهداف المجال نفسِه، ويُوسَم بذلك بنيويًّا
-    (`A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING`).
+    SEALED_BEFORE_ANY_CASE = "مختومةٌ_قبل_كلّ_حالة"
+    A_TABLE_BUILT_FROM_CASES = "جدولٌ_مبنيٌّ_من_حالات"
+
+
+@dataclass(frozen=True, slots=True)
+class SealedReaderRule:
+    """قاعدةُ قراءةٍ مختومةٌ مع **ما رأته من حالات**، محسوبًا لا مُصرَّحًا به.
+
+    ولا يُمرَّر إلى هذه البنية جدولُ ما رآه القارئُ من خارجها: إمّا أن تُختَم
+    قاعدةٌ مغلقةٌ لم تُعطَ حالةً قطّ، وإمّا أن يبنيَ هذا الإيداعُ الجدولَ من
+    شطرِ تدريبٍ مُسمًّى فيعرف بالبناء ما رآه.
     """
 
-    provenance: ReaderProvenance
     rule_note: str
-    _answer: Reader
+    origin: ReaderRuleOrigin
+    disclosed_elements: frozenset[FiberElement]
+    _rule: Reader
 
     def __post_init__(self) -> None:
         if not self.rule_note.strip():
-            raise MinimalCompleteFiberError("قارئٌ بلا بيانِ قاعدةٍ مكتوبٍ لا يُراجَع")
+            raise MinimalCompleteFiberError("قاعدةٌ بلا بيانٍ مكتوبٍ لا تُراجَع")
+        if (
+            self.origin is ReaderRuleOrigin.SEALED_BEFORE_ANY_CASE
+            and self.disclosed_elements
+        ):
+            raise MinimalCompleteFiberError(
+                "قاعدةٌ يُدّعى ختمُها قبل الحالات وقد رأت حالاتٍ؛ والدعوى تناقض بناءها"
+            )
+
+
+def a_rule_sealed_before_any_case(rule: Reader, rule_note: str) -> SealedReaderRule:
+    """اختِم قاعدةً مغلقةً لم تُعطَ حالةً قطّ؛ فما رأته من الحالات خالٍ بالبناء.
+
+    وهذا الختمُ يضبط **مدخلَ** القاعدة لا ذاكرتَها: لا سبيل لهذه الوحدة أن تفحص
+    جوفَ دالّةٍ مكتوبةٍ بلغة البرمجة، فتبقى صحّةُ كونِها مغلقةً مقروءةً من
+    شفرتها لا مبرهنةً ههنا (`A_SEALED_RULE_IS_CHECKED_FOR_OVERLAP_NOT_FOR_MEMORY`).
+    """
+
+    return SealedReaderRule(
+        rule_note=rule_note,
+        origin=ReaderRuleOrigin.SEALED_BEFORE_ANY_CASE,
+        disclosed_elements=frozenset(),
+        _rule=rule,
+    )
+
+
+def a_rule_trained_on(
+    training_domain: DeclaredDomain, representation: Representation, rule_note: str
+) -> SealedReaderRule:
+    """ابنِ جدولَ قراءةٍ من شطر تدريبٍ مُسمًّى؛ وما رآه يُحسَب من بنائه لا يُعلَن.
+
+    والمخرجُ المدموجُ في شطر التدريب يُترَك بلا جواب، فيُردّ عنه نصٌّ فارغٌ
+    يُخالف كلَّ مضمون.
+    """
+
+    table: dict[tuple[str | None, ...], set[str]] = {}
+    for case in training_domain.cases:
+        table.setdefault(representation(case.element), set()).add(case.content)
+    answers = {
+        output: next(iter(contents))
+        for output, contents in table.items()
+        if len(contents) == 1
+    }
+
+    def rule(output: tuple[str | None, ...]) -> str:
+        return answers.get(output, "")
+
+    return SealedReaderRule(
+        rule_note=rule_note,
+        origin=ReaderRuleOrigin.A_TABLE_BUILT_FROM_CASES,
+        disclosed_elements=frozenset(case.element for case in training_domain.cases),
+        _rule=rule,
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class ProvenancedReader:
+    """قارئٌ حُجِب عن مجالِ تقييمٍ مُسمًّى؛ ومنشؤه **مُشتَقٌّ** من الحجب نفسِه.
+
+    فلا حقلَ يُكتَب فيه «مستقلّ»: يُقارَن ما رأته القاعدةُ من حالاتٍ بحالات
+    مجال التقييم، فإن تقاطعا فالقارئُ مبنيٌّ ممّا يُقيَّم عليه، وإن انفصلا
+    فقاعدتُه سابقةٌ لبيانات التقييم بالبناء.
+    """
+
+    rule: SealedReaderRule
+    evaluation_elements: frozenset[FiberElement]
+
+    @property
+    def leaked_elements(self) -> frozenset[FiberElement]:
+        """حالاتُ التقييم التي رأتها القاعدةُ قبلها، مُشتقّةً بالتقاطع."""
+
+        return self.rule.disclosed_elements & self.evaluation_elements
+
+    @property
+    def is_held_out(self) -> bool:
+        """أحُجِب عن مجال تقييمه؟ يُقرَأ من خلوّ التقاطع لا من وصفٍ مكتوب."""
+
+        return not self.leaked_elements
+
+    @property
+    def rule_note(self) -> str:
+        """بيانُ قاعدة القارئ، مقروءًا من ختمها."""
+
+        return self.rule.rule_note
+
+    @property
+    def provenance(self) -> ReaderProvenance:
+        """منشأُ القارئ، مُشتقًّا من آليّة الختم والحجب لا من وسمٍ يُعطى."""
+
+        if not self.is_held_out:
+            return ReaderProvenance.BUILT_FROM_THE_DOMAIN_TARGET_TABLE
+        return ReaderProvenance.FIXED_BEFORE_THE_EVALUATION_DATA
 
     def __call__(self, output: tuple[str | None, ...]) -> str:
-        return self._answer(output)
+        return self.rule._rule(output)
 
 
 def reader_provenance_of(reader: Reader) -> ReaderProvenance:
@@ -646,19 +749,21 @@ def reader_provenance_of(reader: Reader) -> ReaderProvenance:
     return ReaderProvenance.UNDECLARED_PROVENANCE
 
 
-def a_reader_fixed_before_the_data(
-    rule: Callable[[tuple[str | None, ...]], str], rule_note: str
+def hold_out_reader(
+    rule: SealedReaderRule, evaluation_domain: DeclaredDomain
 ) -> ProvenancedReader:
-    """قارئٌ قاعدتُه مثبَّتةٌ قبل بيانات التقييم، لا يُبنى من جدول أهدافها.
+    """احجِب قاعدةً مختومةً عن مجال تقييمٍ مُسمًّى، ثمّ اقرأ منشأها من الحجب.
 
-    وهذه الدالّةُ **تُسجِّل** الدعوى ولا تبرهنها: سبقُ القاعدة للبيانات يُثبَت
-    بتشغيلها على وقوعاتٍ محجوبة، لا بتسميتها ههنا.
+    وهذه هي السبيلُ الوحيدةُ إلى `FIXED_BEFORE_THE_EVALUATION_DATA`: لا تُعطى
+    بالتسمية، وإنّما تُشتَقّ من انفصال ما رأته القاعدةُ عمّا تُقيَّم عليه
+    (`READER_INDEPENDENCE_IS_A_MECHANISM_NOT_A_LABEL`).
     """
 
     return ProvenancedReader(
-        provenance=ReaderProvenance.FIXED_BEFORE_THE_EVALUATION_DATA,
-        rule_note=rule_note,
-        _answer=rule,
+        rule=rule,
+        evaluation_elements=frozenset(
+            case.element for case in evaluation_domain.cases
+        ),
     )
 
 
@@ -731,26 +836,14 @@ def lookup_reader(domain: DeclaredDomain, representation: Representation) -> Rea
     (`A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING`).
     """
 
-    table: dict[tuple[str | None, ...], set[str]] = {}
-    for case in domain.cases:
-        table.setdefault(representation(case.element), set()).add(case.content)
-
-    answers = {
-        output: next(iter(contents))
-        for output, contents in table.items()
-        if len(contents) == 1
-    }
-
-    def reader(output: tuple[str | None, ...]) -> str:
-        return answers.get(output, "")
-
-    return ProvenancedReader(
-        provenance=ReaderProvenance.BUILT_FROM_THE_DOMAIN_TARGET_TABLE,
-        rule_note=(
+    return hold_out_reader(
+        a_rule_trained_on(
+            domain,
+            representation,
             "جدولٌ من مخرجات التمثيل إلى مضمون المجال نفسِه؛ يثبت تباينَ `T` "
-            "ولا يُغلِق شرطَ القارئ المستقلّ بحال"
+            "ولا يُغلِق شرطَ القارئ المستقلّ بحال",
         ),
-        _answer=reader,
+        domain,
     )
 
 
