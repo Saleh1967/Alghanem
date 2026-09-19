@@ -23,6 +23,19 @@
 `NO_FIGURE_IS_FROZEN_FOR_A_CORPUS_THIS_TREE_HAS_NOT_RUN`: ما لم تُشغَّل بايتاتُه
 لا يُكتَب له عددٌ هنا ولو كان مُبصَّمًا في الشجرة؛ والبصمةُ تُعرِّف المصدرَ ولا
 تُنتِج قياسًا.
+
+`THE_FIGURES_ARE_ONE_CONTENT_AND_THE_ENVIRONMENT_IS_ANOTHER`: في القياس محتويان
+لا يُخلطان. الأوّلُ **الأرقامُ نفسُها**: بصمةُ المصدر وطولُه، وعددُ الكلمات، وما
+رجع منها كما دخل، ومواضعُ التوقّف، وبصمةُ الجدول — وتُجمَع في
+`figures_digest`. والثاني **بيئةُ التشغيل**: صيغةُ التسوية ونسخةُ قاعدة بيانات
+يونيكود — ويجمعهما معًا `digest`.
+
+وهذا الفصلُ ليس تسهيلًا: تسويةُ `NFC` تُقرأ من قاعدة يونيكود، فقد تتغيّر الأرقامُ
+بتغيّر نسختها، ولذلك تبقى النسخةُ مسجَّلةً في القياس ومربوطةً ببصمته الكاملة.
+لكنّ الواجبَ على كلِّ تشغيلٍ هو **إعادةُ اشتقاق `figures_digest` بعينه**؛ فإن
+تطابقت الأرقامُ واختلفت البيئة فقد ثبت أنّ هذه الأرقام لا تتعلّق بتلك النسخة،
+وهذه نتيجةٌ تُقال لا انحرافٌ يُخفى. وإن اختلف `figures_digest` فهو انحرافٌ
+يُوقِف التشغيل مهما تطابقت البيئة.
 """
 
 from __future__ import annotations
@@ -53,6 +66,7 @@ __all__ = [
     "FATIHA_ROUND_TRIP",
     "MEASURED_ROUND_TRIP_SOURCES",
     "NO_FIGURE_IS_FROZEN_FOR_A_CORPUS_THIS_TREE_HAS_NOT_RUN_NOTE",
+    "THE_FIGURES_ARE_ONE_CONTENT_AND_THE_ENVIRONMENT_IS_ANOTHER_NOTE",
     "THE_MEASURED_TEXT_IS_A_TRANSCRIPTION_NOT_AN_EDITION_NOTE",
     "UNMEASURED_ROUND_TRIP_SOURCES",
     "RoundTripCorpusMeasurement",
@@ -143,14 +157,20 @@ class RoundTripCorpusMeasurement:
         )
 
     def as_canonical_content(self) -> dict[str, object]:
-        """المحتوى القانونيُّ للقياس، ومنه تُشتقّ بصمتُه."""
+        """المحتوى القانونيُّ للقياس كلِّه: أرقامُه وبيئةُ تشغيله معًا."""
+
+        content: dict[str, object] = dict(self.as_canonical_figures())
+        content["normalization_form"] = self.normalization_form
+        content["unicode_database_version"] = self.unicode_database_version
+        return content
+
+    def as_canonical_figures(self) -> dict[str, object]:
+        """الأرقامُ وحدَها، بلا بيئةِ التشغيل؛ ومنها تُشتقّ `figures_digest`."""
 
         return {
             "source_id": self.source_id,
             "source_sha256": self.source_sha256,
             "source_byte_length": self.source_byte_length,
-            "normalization_form": self.normalization_form,
-            "unicode_database_version": self.unicode_database_version,
             "token_total": self.token_total,
             "end_to_end_reconstructed": self.end_to_end_reconstructed,
             "halt_profile": [halt.as_canonical_content() for halt in self.halt_profile],
@@ -158,10 +178,33 @@ class RoundTripCorpusMeasurement:
         }
 
     @property
+    def figures_digest(self) -> str:
+        """بصمةُ الأرقام وحدَها؛ وهي الواجبُ إعادةُ اشتقاقه في كلّ بيئة."""
+
+        return canonical_digest(canonical_bytes(self.as_canonical_figures()))
+
+    @property
     def digest(self) -> str:
-        """بصمةُ القياس كلِّه، مُشتقّةٌ لا مكتوبة."""
+        """بصمةُ القياس كلِّه بأرقامه وبيئته، مُشتقّةٌ لا مكتوبة."""
 
         return canonical_digest(canonical_bytes(self.as_canonical_content()))
+
+    def agrees_in_figures_with(self, other: RoundTripCorpusMeasurement) -> bool:
+        """أتطابق الأرقامُ مع قياسٍ آخر، أيًّا كانت البيئةُ التي شغّلته؟"""
+
+        if not isinstance(other, RoundTripCorpusMeasurement):
+            raise RoundTripCorpusError("المقارنةُ تجري بين قياسين لا بين رقمٍ وقياس")
+        return self.figures_digest == other.figures_digest
+
+    def ran_in_the_same_environment_as(self, other: RoundTripCorpusMeasurement) -> bool:
+        """أشُغِّل القياسان في بيئةٍ واحدة؟ يُقال ولا يُخفى تحت تطابق الأرقام."""
+
+        if not isinstance(other, RoundTripCorpusMeasurement):
+            raise RoundTripCorpusError("المقارنةُ تجري بين قياسين لا بين رقمٍ وقياس")
+        return (
+            self.normalization_form == other.normalization_form
+            and self.unicode_database_version == other.unicode_database_version
+        )
 
     @classmethod
     def from_table(
@@ -262,6 +305,12 @@ FATIHA_ROUND_TRIP: Final[RoundTripCorpusMeasurement] = RoundTripCorpusMeasuremen
 ويُعاد اشتقاقُ هذه الأعداد كلِّها من
 `examples/arabic/measure_arabic_round_trip_v1.py --deposit`، ويقارنها اختبارٌ
 ببصمة الجدول لا بعددٍ واحدٍ منه.
+
+و`unicode_database_version` هنا تسجيلٌ للبيئة التي جُمِّد فيها هذا القياس، لا
+شرطٌ على من يُعيد تشغيله. فالواجبُ على كلِّ بيئةٍ إعادةُ اشتقاق `figures_digest`
+بعينه؛ وقد شُغِّل على `13.0.0` و`15.0.0` فخرجت الأرقامُ واحدةً، وهذه نتيجةٌ
+تُقال: أعدادُ هذا الإيداع لا تتعلّق بنسخة قاعدة يونيكود. و`digest` الكاملُ يبقى
+مربوطًا بالبيئة عمدًا لأنّ تسوية `NFC` تُقرأ منها.
 """
 
 
@@ -319,6 +368,13 @@ A_FROZEN_FIGURE_IS_A_RE_RUN_NOT_A_QUOTATION_NOTE: Final[str] = (
 A_MEASURED_TEXT_IS_NOT_A_MEASURED_LANGUAGE_NOTE: Final[str] = (
     "AMeasuredTextIsNotAMeasuredLanguage: نصٌّ واحدٌ مقيسٌ لا يُقرأ حكمًا على "
     "العربيّة؛ والاستقراءُ على نصٍّ مغلقٍ محدودٌ به"
+)
+
+THE_FIGURES_ARE_ONE_CONTENT_AND_THE_ENVIRONMENT_IS_ANOTHER_NOTE: Final[str] = (
+    "TheFiguresAreOneContentAndTheEnvironmentIsAnother: `figures_digest` يجمع "
+    "الأرقامَ وحدَها ويجب إعادةُ اشتقاقه في كلّ بيئة، و`digest` يجمعها مع صيغة "
+    "التسوية ونسخةِ قاعدة يونيكود؛ فتطابقُ الأرقام مع اختلاف النسخة نتيجةٌ "
+    "تُقال، واختلافُ الأرقام انحرافٌ يُوقِف التشغيل"
 )
 
 THE_MEASURED_TEXT_IS_A_TRANSCRIPTION_NOT_AN_EDITION_NOTE: Final[str] = (

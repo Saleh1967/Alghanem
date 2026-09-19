@@ -5795,6 +5795,17 @@ row moves. `UNMEASURED_ROUND_TRIP_SOURCES` names the 77,429-token Quranic
 morphology corpus that this tree deliberately does not vendor, and gives it no
 number at all rather than a placeholder.
 
+`TheFiguresAreOneContentAndTheEnvironmentIsAnother`: a measurement carries two
+separable contents. `figures_digest` covers the figures alone — source
+fingerprint, token total, reconstructed count, halt profile, table digest — and
+**every** environment must re-derive it byte-identically or the run stops.
+`digest` additionally binds the normalisation form and the Unicode database
+version, deliberately, because NFC is read out of that database and a future
+release could move the numbers. Running the deposit under Unicode 13.0.0 and
+15.0.0 gives the same `figures_digest` and a different `digest`: that is a
+result about this deposit — its figures do not depend on the Unicode release —
+reported rather than hidden by loosening the comparison.
+
 ### `TheAlefIsANeutralElement` — the first change made to move a number
 
 From here on, the stated priority is narrow: **a change earns its place by

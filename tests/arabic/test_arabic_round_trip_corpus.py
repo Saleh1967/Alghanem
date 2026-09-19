@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import unicodedata
+from dataclasses import replace
+
 import pytest
 
 from alghanem.arabic.arabic_round_trip_corpus import (
@@ -42,8 +45,47 @@ def test_the_frozen_corpus_figure_is_re_derived_by_running_the_pipeline() -> Non
 
     rerun = _rerun()
     assert rerun.table_digest == FATIHA_ROUND_TRIP.table_digest
-    assert rerun.digest == FATIHA_ROUND_TRIP.digest
     assert rerun.halt_profile == FATIHA_ROUND_TRIP.halt_profile
+    assert rerun.figures_digest == FATIHA_ROUND_TRIP.figures_digest
+    assert rerun.agrees_in_figures_with(FATIHA_ROUND_TRIP)
+
+
+def test_the_full_digest_binds_the_environment_and_says_so() -> None:
+    """البصمةُ الكاملةُ تشمل البيئة؛ فتطابقُها مشروطٌ بها ولا يُخفى الشرط."""
+
+    rerun = _rerun()
+    if rerun.ran_in_the_same_environment_as(FATIHA_ROUND_TRIP):
+        assert rerun.digest == FATIHA_ROUND_TRIP.digest
+    else:
+        assert rerun.unicode_database_version == unicodedata.unidata_version
+        assert rerun.digest != FATIHA_ROUND_TRIP.digest
+        assert rerun.figures_digest == FATIHA_ROUND_TRIP.figures_digest
+
+
+def test_the_environment_alone_moves_the_full_digest_and_not_the_figures() -> None:
+    """نسخةُ يونيكود تُحرّك `digest` وحدَه؛ والأرقامُ لا تتحرّك بها."""
+
+    elsewhere = replace(FATIHA_ROUND_TRIP, unicode_database_version="0.0.0-not-a-run")
+    assert elsewhere.digest != FATIHA_ROUND_TRIP.digest
+    assert elsewhere.figures_digest == FATIHA_ROUND_TRIP.figures_digest
+    assert elsewhere.agrees_in_figures_with(FATIHA_ROUND_TRIP)
+    assert not elsewhere.ran_in_the_same_environment_as(FATIHA_ROUND_TRIP)
+
+
+def test_a_moved_figure_moves_both_digests() -> None:
+    """وتغيّرُ رقمٍ واحدٍ يُسقِط البصمتين معًا، فلا تستر البيئةُ انحرافًا."""
+
+    moved = replace(FATIHA_ROUND_TRIP, source_byte_length=1 + source_byte_length())
+    assert moved.figures_digest != FATIHA_ROUND_TRIP.figures_digest
+    assert moved.digest != FATIHA_ROUND_TRIP.digest
+    assert not moved.agrees_in_figures_with(FATIHA_ROUND_TRIP)
+
+
+def test_figures_are_compared_against_a_measurement_not_against_a_number() -> None:
+    with pytest.raises(RoundTripCorpusError):
+        FATIHA_ROUND_TRIP.agrees_in_figures_with(FATIHA_ROUND_TRIP.figures_digest)  # type: ignore[arg-type]
+    with pytest.raises(RoundTripCorpusError):
+        FATIHA_ROUND_TRIP.ran_in_the_same_environment_as("15.0.0")  # type: ignore[arg-type]
 
 
 def test_the_halt_profile_accounts_for_every_token_exactly_once() -> None:

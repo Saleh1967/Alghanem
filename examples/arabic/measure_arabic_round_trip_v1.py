@@ -116,14 +116,26 @@ def _run_deposit() -> int:
         f"  reconstruction over everything that entered: "
         f"{measurement.end_to_end_reconstructed}/{measurement.token_total} = {rendered}"
     )
-    if measurement.digest != FATIHA_ROUND_TRIP.digest:
+    if not measurement.agrees_in_figures_with(FATIHA_ROUND_TRIP):
         print(
-            "error: the re-derived measurement does not match the frozen "
-            f"FATIHA_ROUND_TRIP digest {FATIHA_ROUND_TRIP.digest}",
+            "error: the re-derived figures do not match the frozen "
+            f"FATIHA_ROUND_TRIP figures digest {FATIHA_ROUND_TRIP.figures_digest}",
             file=sys.stderr,
         )
         return 1
-    print(f"  matches the frozen FATIHA_ROUND_TRIP digest {measurement.digest}")
+    print(
+        f"  matches the frozen FATIHA_ROUND_TRIP figures {measurement.figures_digest}"
+    )
+    if measurement.ran_in_the_same_environment_as(FATIHA_ROUND_TRIP):
+        print(f"  same environment, so the full digest holds too: {measurement.digest}")
+    else:
+        print(
+            "  a different environment ran it — "
+            f"unicode database {measurement.unicode_database_version} against the "
+            f"frozen {FATIHA_ROUND_TRIP.unicode_database_version} — so the full "
+            f"digest reads {measurement.digest}; the figures are unchanged, which "
+            "is a result, not a drift"
+        )
     return 0
 
 
