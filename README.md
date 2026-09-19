@@ -5946,6 +5946,54 @@ promote it by writing rather than by depositing a reference.
 `INDEPENDENT_REFERENCE_REQUIREMENTS` states, class by class, exactly what a
 reference would have to supply to lift it.
 
+### Four classification axes, measured apart from each other
+
+`29/29` is a **writing** figure and stays the base; nothing morphological or
+syntactic is read off it. What is added is a *coverage* table with four axes
+that are deliberately not merged, because merging them is how a word's origin
+gets confused with its structure, binding with inflection, or a verb's state
+with a noun's:
+
+| Axis | Categories | The question |
+| --- | --- | --- |
+| Origin and morphological structure | jāmid, maṣdar, mushtaqq | What is the word's origin, what kind of structure, and is derivation established by evidence? |
+| General iʿrāb standing | mabnī, muʿrab | Does the ending keep one form, or change with the operator? |
+| Built verb forms | past, imperative, built present | Did the system identify the verb kind and its binding marker? |
+| Inflected verb cases | marfūʿ, manṣūb, majzūm | Did it identify the case, its marker, and its evidence? |
+
+**The root is not a category beside jāmid/maṣdar/mushtaqq.** A root is a
+possible morphological origin; jāmid, maṣdar and mushtaqq describe a word's
+structure. So `ClassificationCategory` has no root member at all — the root is
+recorded in a `RootRecord` *alongside* the structural description, and no root
+is forced out of a word that has no licensed root analysis: `الَّذِينَ` is
+recorded `غير_مُرخَّصٍ_لهذه_الكلمة`, not given an invented triliteral. The
+maṣdar is its own measured category, with no presupposition that every maṣdar
+derives from a verb.
+
+Each category gets its own word count, its own `RoundTrip`, its own `REFUSED`,
+`MISMATCH` and `UNRESOLVED` counts, and its own failure position. Five words
+from the deposit are declared — `الَّذِينَ`, `الضَّالِّينَ`, `اهْدِنَا`,
+`نَعْبُدُ`, `أَنْعَمْتَ` — taken by index out of the fingerprinted deposit
+rather than retyped, and their surfaces are read back from those bytes.
+
+**What those five declarations are.** They are *test targets*, not results the
+engine produced. The pipeline emits no classification at all — morphology and
+syntax are outside its layers, as `LAYERS_NOT_IN_THIS_PIPELINE` already states
+— so every analytic check comes back `غير_محسوم_لم_يجرِ_تحليل`, and an
+unresolved check is **not counted correct**. `AnalysisAccuracy` therefore has
+no value: it is neither 0 nor 1 but refused, because its denominator is the
+number of *settled* checks, which is zero. The named reference, `MAQSAD`, is
+registered at standing `يُطبَع_يدويًّا` with no bytes and no digest in this
+tree, and the table refuses to run at all against a reference declared
+deposited, since it reads none.
+
+Run: 5 words, 5/5 bytes returned, 26 analytic checks, 0 settled,
+`AnalysisAccuracy` refused in every one of the eleven categories. **Four of the
+eleven categories are empty** — maṣdar, built present, manṣūb, majzūm — and
+they keep zero rows with a refused rate rather than being dropped or scored
+100%. That emptiness is the measured argument for the next step: widen the
+corpus, since al-Fātiḥah is narrower than these criteria.
+
 ### The next number is the population, not the rate
 
 29 tokens is a small population, and raising a saturated rate produces no

@@ -436,7 +436,9 @@ class CategoryCoverage:
     def failure_positions(self) -> tuple[str, ...]:
         """مواضعُ الفشل في هذه الفئة؛ لكلّ فئةٍ موضعُها مستقلًّا."""
 
-        return tuple(row.failure_position for row in self.rows if not row.bytes_returned)
+        return tuple(
+            row.failure_position for row in self.rows if not row.bytes_returned
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -474,9 +476,7 @@ class AnalysisReference:
         if deposited and not (self.digest and self.digest.strip()):
             raise ClassificationCoverageError("لا يُقال مُودَعٌ مُبصَّمٌ بلا بصمةٍ مكتوبة")
         if not deposited and self.digest is not None:
-            raise ClassificationCoverageError(
-                "بصمةٌ بلا بايتاتٍ مُودَعةٍ دعوى إيداعٍ لم يقع"
-            )
+            raise ClassificationCoverageError("بصمةٌ بلا بايتاتٍ مُودَعةٍ دعوى إيداعٍ لم يقع")
         if not self.how_it_is_being_obtained.strip():
             raise ClassificationCoverageError("طريقُ تحصيل المرجع يُكتَب ولا يُطوى")
 
@@ -502,7 +502,9 @@ class CoverageReport:
         if len(set(keys)) != len(keys):
             raise ClassificationCoverageError("مفاتيحُ الجدول لا تتكرّر")
         listed = [coverage.category for coverage in self.coverages]
-        if set(listed) != set(ClassificationCategory) or len(listed) != len(set(listed)):
+        if set(listed) != set(ClassificationCategory) or len(listed) != len(
+            set(listed)
+        ):
             raise ClassificationCoverageError(
                 "كلُّ فئةٍ تُعرَض ولو خلت من الكلمات؛ والخاليةُ لا تُحذَف من الجدول"
             )
@@ -515,16 +517,12 @@ class CoverageReport:
                 return coverage
         raise ClassificationCoverageError(f"لا صفَّ للفئة {category!r}")
 
-    def axis_coverages(
-        self, axis: ClassificationAxis
-    ) -> tuple[CategoryCoverage, ...]:
+    def axis_coverages(self, axis: ClassificationAxis) -> tuple[CategoryCoverage, ...]:
         """تغطياتُ محورٍ واحد؛ ولا تُخلَط بتغطيات محورٍ آخر."""
 
         if not isinstance(axis, ClassificationAxis):
             raise ClassificationCoverageError("المحورُ عضوٌ في مفردته المغلقة")
-        return tuple(
-            coverage for coverage in self.coverages if coverage.axis is axis
-        )
+        return tuple(coverage for coverage in self.coverages if coverage.axis is axis)
 
     @property
     def word_total(self) -> int:
@@ -547,9 +545,7 @@ class CoverageReport:
         """الفئاتُ الخاليةُ من الكلمات؛ وهي قياسُ ضيقِ هذا المجتمع لا عيبُه."""
 
         return tuple(
-            coverage.category
-            for coverage in self.coverages
-            if coverage.word_total == 0
+            coverage.category for coverage in self.coverages if coverage.word_total == 0
         )
 
 
@@ -579,9 +575,7 @@ AXIS_REFERENCE_REQUIREMENTS: Final[tuple[AxisReferenceRequirement, ...]] = (
     ),
     AxisReferenceRequirement(
         axis=ClassificationAxis.GENERAL_IRAB_STANDING,
-        question_the_axis_asks=(
-            "هل يلزم آخرُ الكلمة صورةً واحدة، أم يتغيّر بحسب العامل؟"
-        ),
+        question_the_axis_asks=("هل يلزم آخرُ الكلمة صورةً واحدة، أم يتغيّر بحسب العامل؟"),
         what_the_reference_must_supply=(
             "حكمُ بناءٍ أو إعرابٍ لكلّ كلمةٍ موضعًا موضعًا، لا قاعدةٌ عامّةٌ "
             "تُطبَّق، لأنّ الحكمَ ههنا سياقيٌّ لا صُوَريّ"
@@ -765,9 +759,7 @@ def run_coverage(
         )
         for category in ClassificationCategory
     )
-    return CoverageReport(
-        rows=tuple(rows), coverages=coverages, reference=reference
-    )
+    return CoverageReport(rows=tuple(rows), coverages=coverages, reference=reference)
 
 
 def _rate(value: float | None) -> str:
