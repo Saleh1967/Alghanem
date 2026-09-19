@@ -6445,6 +6445,54 @@ reach `alghanem.kernel`. The ceiling frozen in `vv_birth_preregistration` —
 `CONDITIONAL_STRUCTURAL_BIRTH`, with full constitutional birth unissuable from
 this experiment — is untouched.
 
+## Two populations, two instruments, and a theorem that actually closes
+
+You were right to stop at the numbers. The earlier observed-fiber report gave
+ragged capacities and I described them as running "1..6"; a later formulation
+spoke of "the 27 carriers". Checked against the tree, **neither figure survives
+unqualified**, and the discrepancy is not arithmetic — it is two different
+things being given one name.
+
+`src/alghanem/arabic/decomposition_reconstruction_theorem.py` separates them.
+
+**The declared vocabulary is 37 carriers, not 27**, against 7 states, giving an
+upper bound of **259** — a product, never an occurrence count. The observed
+deposit is far smaller. `ObservedPopulationCensus` refuses the declared label,
+`DeclaredPopulationCensus` refuses the observed one, and `PopulationSubstitution
+Error` fires if a carrier count exceeds the declared vocabulary. Substitution
+mid-proof is an error here, not a rounding.
+
+**And the same deposit measured twice gives two legitimate numbers.** This was
+the sharper finding. The codec and the observed fiber disagree three times over
+identical bytes: **22 vs 23** distinct carriers, **159 vs 143** positions, and a
+maximum capacity of **4 vs 6**. The cause is concrete — the codec folds `أ` and
+`إ` into one hamza and records the seat as a *field*, while the fiber keeps them
+as written; and the codec counts distinct `CarrierState` values where the fiber
+counts multi-axis state vectors. So "capacity 6" in one instrument is not
+"capacity 6" in the other. `INSTRUMENT_DIVERGENCES` records each with its cause,
+refuses a blank explanation, refuses to record an agreement, and every entry is
+checked against **both instruments live** so the written numbers cannot drift.
+
+**Also: the fiber's capacity range has a hole.** The values are {1, 2, 3, 4, 6}
+— there is no carrier of capacity 5. Saying "1 to 6" implies a contiguous range
+that was never measured, so `capacity_range_is_contiguous` answers that by
+counting rather than by description.
+
+**The theorem that closes is decomposition and reconstruction, not CV birth.**
+Typed elements alone do *not* rebuild the surface: they carry neither the sukūn
+kind, nor the seat, nor the purely structural states. So decomposition emits
+`(elements, residue)` and reconstruction consumes both. Over the deposit it
+closes **29/29, character for character** — an exact closure, not a success
+rate. And the residue is proved load-bearing by failure: dropping it rebuilds
+only **12/29**, breaking 17 words. `with_residue=False` exists solely as that
+counter-witness.
+
+**RefineSlot is not added, and that is deliberate.** Adding a refinement
+operation to the algebra requires proving its *necessity for an independent
+function*, which has not been done. A success rate over a corpus is not a proof
+of necessity. `RefinementNecessityIsUnprovenSoRefineSlotIsUnlicensed` holds the
+place, and a test asserts no refinement operation is exported yet.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
