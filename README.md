@@ -6392,6 +6392,59 @@ is said to corroborate was also read through Unicode.
 names what would lift the shared dependence: a measurement that does not pass
 through character encoding at all, such as manuscript letterforms.
 
+## An operational letter/haraka algebra whose output is a licensed CV input
+
+The next thing the CV experiment needs is not a bigger table. It is an
+*operation*: something that takes measured writing and produces typed elements
+of `X_C` and `X_V` that the frozen join `J` could legally consume.
+`src/alghanem/arabic/letter_haraka_operational_algebra.py` is that operation,
+and it deliberately stops one step short of running `J`.
+
+**An element is an occurrence, not an alphabet cell.** Nothing here enumerates
+twenty-nine letters or four marks. Every element is built from one measured
+`(carrier, state)` unit, carries the word and unit index that produced it, and
+carries the written reason it was admitted. A letter that never occurs gets no
+element. `AnElementIsAnOccurrenceNotAnAlphabetCell` says so.
+
+**The algebra splits; it does not sequence.** A haraka does not follow its
+carrier as a second element — it sits in the same unit. So the constructor
+divides one unit into a consonant position and a vowel position that share an
+index, rather than ordering them. This is the same thing `linearization_artifact`
+proved: the order between a carrier and its mark carries zero bits.
+
+**And that split has a price, which is stated rather than pocketed.** The join's
+first definedness condition — *the consonant precedes the vowel with no gap* —
+becomes true **by construction** under this decomposition, because the splitter
+is what put them adjacent. So the CV test may not count its satisfaction as
+evidence; the burden falls entirely on the other two conditions. Every
+admissible input is *required* to name this debt: an `ADMISSIBLE` result with an
+empty `conditions_true_by_construction` is refused at construction, because
+silence there would look like a passed test.
+
+Over the fingerprinted Fātiḥa, the 159 units partition as **80 admissible
+inputs**, **77 undefined**, and **2 outside both spaces**. The undefined are not
+discarded — they are carried with their reasons, including 14 first halves of a
+shadda, which are elements of `X_C` with no vowel in their unit and therefore
+never admissible.
+
+**Quantity is derived, and twice it refuses to be.** `π_Q` counts vowel
+positions — one short, two when a matching silent extension position follows —
+and never reads duration, `carrier_codepoint`, `letter_index`, `slot_position`,
+or `surface_offset`. The census comes out 62 short against 18 long. But in
+`الرَّحْمَٰنِ` the fatha is followed by a **dagger alif**, and the madd axis is
+frozen `DEFERRED_NOT_READ_AS_A_STATE` in the measured fiber. Whether that is an
+extension position is *not known*. So those two emit quantity `UNDEFINED` with
+the deferred axis named, rather than quietly defaulting to 1 — which is exactly
+the `UNDEFINED` outcome `LICENSED_JOIN_SPECIFICATION` already demands. This is
+now the fourth separate claim the deferred madd axis has capped.
+
+**And licensing an input is not a birth.** The bundle carries a content digest
+so a future CV readout can bind to exactly these inputs and no others. It does
+not run `J`, produce an `X_S` element, import the excluded `syllabifier`, or
+reach `alghanem.kernel`. The ceiling frozen in `vv_birth_preregistration` —
+`CONDITIONAL_STRUCTURAL_BIRTH`, with full constitutional birth unissuable from
+this experiment — is untouched.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
