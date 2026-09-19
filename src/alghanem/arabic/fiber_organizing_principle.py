@@ -28,7 +28,11 @@
 (`FOUR_CARRIERS_IS_NEITHER_ONE_NOR_GENERAL`).
 
 **والمسائلُ الأربعُ متمايزةٌ حكمًا ولا تُطوى في واحدة**: العموم، وضرورةُ
-`RefineSlot`، وولادةُ CV، والإفادةُ من الطرف إلى الطرف. لكلٍّ شرطُ إبراءٍ
+`RefineSlot`، وولادةُ CV، والإفادةُ من الطرف إلى الطرف. وضرورةُ `RefineSlot`
+**غيرُ مبرهنةٍ لا منتقضة**: سقوطُ ترخيصها لا يساوي تفنيدَ الضرورة عمومًا؛
+وتبقى معها دعوى خاصّةٌ مكتوبةٌ بمُكذِّبها — كفايةُ دالّة السعة في موضع
+التقسيم **على هذا الإيداع وحدَه**
+(`REFINE_SLOT_NECESSITY_IS_UNPROVEN_NOT_REFUTED`). لكلٍّ شرطُ إبراءٍ
 مكتوب، وحالٌ مُسمّاة، وسببٌ لحالها — وإحداها **ممتنعةٌ بنيويًّا** لا مؤجَّلة:
 حارسُ الاستيراد في `vv_birth_preregistration` يرفض التسجيلَ القبليَّ كلَّما
 **وُجدت** وحدةُ القراءة، فلا تُكتَب وحدةُ قراءةِ CV ما دام الحارسُ قائمًا
@@ -50,6 +54,7 @@ from .fiber_rank_function import Fiber, observed_fibers
 
 __all__ = [
     "A_MEASUREMENT_IS_NOT_A_BIRTH_CERTIFICATE_NOTE",
+    "REFINE_SLOT_NECESSITY_IS_UNPROVEN_NOT_REFUTED_NOTE",
     "FOUR_CARRIERS_IS_NEITHER_ONE_NOR_GENERAL_NOTE",
     "ONE_OBLIGATION_IS_BARRED_NOT_MERELY_DEFERRED_NOTE",
     "ORGANIZING_PRINCIPLE_NAMED_RESIDUALS",
@@ -102,10 +107,15 @@ class ProofObligation(Enum):
 
 
 class DischargeStanding(Enum):
-    """حالُ الالتزام؛ والممتنعُ غيرُ المؤجَّل، والمنتقضُ غيرُ غيرِ المُبرَأ."""
+    """حالُ الالتزام؛ والممتنعُ غيرُ المؤجَّل، والمنتقضُ غيرُ غيرِ المُبرَأ.
+
+    و«غيرُ المبرهنة» ليست منتقضة: يُفصَل الحكمان كي لا يُقرَأ سقوطُ ترخيصٍ
+    تفنيدًا لضرورةٍ عامّة.
+    """
 
     NOT_ATTEMPTED = "لم_يُطرَق_بعد"
     ATTEMPTED_AND_UNDISCHARGED = "طُرِق_ولم_يُبرَأ"
+    UNPROVEN_WITH_A_REFUTABLE_SUB_CLAIM = "غيرُ_مبرهنةٍ_ومعها_دعوى_قابلةٌ_للتفنيد"
     REFUTED_AS_STATED = "منتقضٌ_بصيغته_المعروضة"
     BARRED_BY_A_STANDING_GUARD = "ممتنعٌ_بحارسٍ_قائم"
 
@@ -118,6 +128,8 @@ class ObligationRecord:
     standing: DischargeStanding
     what_would_discharge_it: str
     why_it_stands_there: str
+    refutable_sub_claim: str = ""
+    what_would_refute_the_sub_claim: str = ""
 
     def __post_init__(self) -> None:
         if not self.what_would_discharge_it.strip():
@@ -126,12 +138,25 @@ class ObligationRecord:
             )
         if not self.why_it_stands_there.strip():
             raise OrganizingPrincipleError("حالٌ بلا سببٍ مكتوبٍ تُقرَأ حكمًا بعد حين")
+        if bool(self.refutable_sub_claim.strip()) != bool(
+            self.what_would_refute_the_sub_claim.strip()
+        ):
+            raise OrganizingPrincipleError(
+                "دعوى فرعيّةٌ بلا مُكذِّبٍ مكتوب، أو مُكذِّبٌ بلا دعوى، لا يُودَع "
+                "واحدُهما وحدَه؛ فالقابليّةُ للتفنيد تُكتَب مقرونةً بنصّها"
+            )
 
     @property
     def is_discharged(self) -> bool:
         """أأُبرئ هذا الالتزام؟ لا — ولا حالَ في المفردة تعني الإبراء."""
 
         return False
+
+    @property
+    def carries_a_refutable_sub_claim(self) -> bool:
+        """أمعه دعوى فرعيّةٌ قابلةٌ للتفنيد؟ يُقرَأ من نصّها لا من حال الالتزام."""
+
+        return bool(self.refutable_sub_claim.strip())
 
 
 THE_OBLIGATIONS: Final[tuple[ObligationRecord, ...]] = (
@@ -149,14 +174,23 @@ THE_OBLIGATIONS: Final[tuple[ObligationRecord, ...]] = (
     ),
     ObligationRecord(
         obligation=ProofObligation.REFINE_SLOT_NECESSITY,
-        standing=DischargeStanding.REFUTED_AS_STATED,
+        standing=DischargeStanding.UNPROVEN_WITH_A_REFUTABLE_SUB_CLAIM,
         what_would_discharge_it=(
             "انقسامٌ داخليٌّ مرصودٌ في خانةٍ واحدة لا تردُّه دالّةُ حجمٍ على "
             "الليف، أو دالّةٌ مستقلّةٌ يتعذّر التعبيرُ عنها بغير عمليّة تقسيم"
         ),
         why_it_stands_there=(
-            "لا انقسامَ داخليًّا مرصودٌ، بل تدرّجٌ في حجم الليف؛ والرتبةُ "
-            "المقترحةُ بديلًا لا وجودَ لها على القاعدة، فسقطت العمليّتان معًا"
+            "لم يُرصَد انقسامٌ داخليٌّ في هذا الإيداع، والرتبةُ المقترحةُ بديلًا "
+            "لا وجودَ لها على القاعدة؛ فسقطتِ العمليّتان ترخيصًا، ولا يلزم من "
+            "ذلك تفنيدُ الضرورة عمومًا، فهي غيرُ مبرهنةٍ لا منتقضة"
+        ),
+        refutable_sub_claim=(
+            "دعوى خاصّة: تكفي دالّةُ السعة `μ(X)=|X|` في موضع عمليّة التقسيم "
+            "**على هذا الإيداع المُبصَّم وحدَه**"
+        ),
+        what_would_refute_the_sub_claim=(
+            "رصدُ انقسامٍ داخليٍّ في خانةٍ واحدة لا تردُّه دالّةُ السعة على "
+            "الليف، في هذا الإيداع نفسِه"
         ),
     ),
     ObligationRecord(
@@ -347,11 +381,19 @@ THE_WITNESS_CARRIES_ITS_OWN_BLOCKER_NOTE: Final[str] = (
     "وحدَها تتغيّر، ولا يرفع هذا المانعَ عددٌ من هذا الإيداع"
 )
 
+REFINE_SLOT_NECESSITY_IS_UNPROVEN_NOT_REFUTED_NOTE: Final[str] = (
+    "RefineSlotNecessityIsUnprovenNotRefuted: عدمُ ترخيص `RefineSlot` ههنا "
+    "سقوطُ ترخيصٍ لا تفنيدٌ لضرورتها العامّة؛ فحكمُها «غيرُ مبرهنة»، وتبقى "
+    "الدعوى الخاصّةُ بكفاية دالّة السعة على هذا الإيداع مكتوبةً بمُكذِّبها "
+    "لتُفنَّد إن رُصد انقسامٌ داخليٌّ لا تردُّه"
+)
+
 ORGANIZING_PRINCIPLE_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     A_MEASUREMENT_IS_NOT_A_BIRTH_CERTIFICATE_NOTE,
     THE_ALIF_WITNESS_IS_FOUR_READINGS_NOT_ONE_NOTE,
     THE_WITNESS_CARRIES_ITS_OWN_BLOCKER_NOTE,
     FOUR_CARRIERS_IS_NEITHER_ONE_NOR_GENERAL_NOTE,
     ONE_OBLIGATION_IS_BARRED_NOT_MERELY_DEFERRED_NOTE,
+    REFINE_SLOT_NECESSITY_IS_UNPROVEN_NOT_REFUTED_NOTE,
 )
-"""خمسُ بقايا مُسمّاةٍ تُقابَل بها أيُّ إحالةٍ إلى «المبدأ» أو «الشاهد»."""
+"""ستُّ بقايا مُسمّاةٍ تُقابَل بها أيُّ إحالةٍ إلى «المبدأ» أو «الشاهد»."""

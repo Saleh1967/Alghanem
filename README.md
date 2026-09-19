@@ -6537,7 +6537,11 @@ bytes.
 replace it.** The premise was right that no internal split was measured; that
 does not license a splitting operation, and it does not license the rank
 function either, because on the population in question the rank function does
-not exist. Two unlicensed operations, two different written reasons.
+not exist. Two unlicensed operations, two different written reasons. **Not
+licensed is not refuted**: the general necessity of `RefineSlot` stands
+*unproven*, and only the narrow claim — that the capacity function suffices
+where a splitting operation was proposed, *on this fingerprinted deposit* — is
+deposited with the observation that would falsify it.
 
 ## The ambient was a choice, and the gaps were never adjudicated
 
@@ -6562,12 +6566,17 @@ lattice. The count is about an operator, so the operator is named beside it
 every time.
 
 **Each gap is judged one by one, with three verdicts, not two.** Exactly
-**one** is `BARRED_BY_A_MEASURED_RULE`: the empty fiber, because `ObservedFiber`
-refuses an empty composition — and that bar is checked *live*, by constructing
-one and catching the refusal, not by citing it. Nothing else in the tree bars
-anything. A gap is `JOINTLY_ATTESTED_ON_ONE_CARRIER` when all of its states
-were in fact seen together on one named carrier: **41** under `∪∩`, **58** under
-the full lattice, each carrying its witness. The rest —
+**one** is `BARRED_BY_THE_CURRENT_REPRESENTATION_CONTRACT`: the empty fiber,
+because `ObservedFiber` refuses an empty composition — and that bar is checked
+*live*, by constructing one and catching the refusal, not by citing it. It is
+named for what it is: the current data type forbids an empty fiber; that does
+not prove emptiness is barred in some alternative mathematical or linguistic
+model. Nothing else in the tree bars anything. A gap is
+`AN_AMBIENT_MEMBER_JOINTLY_ATTESTED` when all of its states were in fact seen
+together on one named carrier: **41** under `∪∩`, **58** under the full lattice,
+each carrying its witness and its operator. Such a member is an element of the
+*chosen ambient*, not an automatically licensed Arabic state —
+`is_a_licensed_arabic_fiber` is false by construction. The rest —
 **38** and **53** — are `NOT_JOINTLY_ATTESTED_UNDECIDED`, and that is not a
 softer way of saying barred: absence may be prohibition, rarity, or positional
 impossibility, and observation alone does not separate them.
@@ -6594,16 +6603,24 @@ stated once:
 
 **Vertically the grading is exceptionless.** For every carrier the interval
 `[∅, E_b]` is graded by cardinality — **23 of 23**, zero exceptions, at observed
-depths `{1, 2, 3, 4, 6}`. **Horizontally it fails**: the order on the 16 distinct
-fibers is not graded and splits into **2** components, so there is no rank
-function on the base. Asking `rank_exists_on(...)` without naming an axis is
+depths `{1, 2, 3, 4, 6}`. **Horizontally it fails**, and the failure is now
+proved the way it should be: an actual rank assignment is attempted along the
+cover edges and *contradicts itself*, and the failure is recorded with **4**
+chain counter-witnesses of unequal length (`{2,3}` and `{3,4}`) between the same
+endpoints. The **5** cover edges where capacity jumps by more than one are
+recorded *beside* the verdict as a descriptive number, never as its ground — a
+capacity jump is not a fallen rank. The base also splits into **2** components,
+so there is no rank function on the base. Asking `rank_exists_on(...)` without naming an axis is
 refused, because the axis confusion is what produced the two verdicts in the
 first place.
 
 **What survives is a measure, not a rank.** `μ(X) = |X|` satisfies
 `μ(X∪Y) + μ(X∩Y) = μ(X) + μ(Y)` with **0** breaches over all **9,216** pairs of
-the `∪∩` closure, and 0 over all 16,384 pairs of the Boolean one. A measure
-weighs differences; a rank counts steps. They are two questions.
+the `∪∩` closure, and 0 over all 16,384 pairs of the Boolean one. That is a law
+about finite sets and a measure of *capacity*: the tests confirm the
+implementation respects it in the two examined ambients, and it measures neither
+the necessity of a linguistic state nor a rank on any order. A measure weighs
+differences; a rank counts steps. They are two questions.
 
 **And the step question fails globally, not pairwise.** Of **46** comparable
 pairs, the step count is single-valued for **42** and ambiguous for **4**. So
@@ -6656,12 +6673,223 @@ article's lam is recorded as an observation and explicitly not explained here.
 
 **The four obligations stand four different ways**, each with a written
 discharge condition. Generality: attempted, undischarged. `RefineSlot`
-necessity: refuted as stated. End-to-end utility: not attempted, because the
+necessity: **unproven, not refuted** — carrying the narrow, still-falsifiable
+claim that the capacity function suffices on this deposit, together with the
+observation that would refute it. End-to-end utility: not attempted, because the
 decomposition theorem reads the codec it rebuilds through. CV birth: **barred**,
 not deferred — the import guard in `vv_birth_preregistration` rejects the
 pre-registration whenever the readout module merely *exists*, so the readout
 cannot be written while the guard stands. That is a structure in the tree, not a
 gap in the evidence.
+
+## The minimal complete fiber, as a conditional theorem
+
+If a fiber is a candidate organizing principle, the next question is what a
+fiber must *carry* before it can convey anything at all.
+`src/alghanem/arabic/minimal_complete_fiber.py` deposits the candidate equation
+`E(a,g) = ⨆ over p in P(g) of R(a,p)`, its element `u = (a, g, p, r)`, and the
+criterion that would settle it — a criterion, not a certificate.
+
+**Four representation fields carry three structural functions.** Counted live:
+`4` fields, `3` functions. Identity and classification answer *about whom, and
+in which domain*; the predicate answers *what may be carried*; the relation
+answers *in what manner the two are joined*. When the genus is uniquely and
+licensedly derivable from the anchor, the classification *information* is still
+required while a separate genus *field* is not.
+
+**Minimality is proved by a run, not by assertion.** A component may not be
+dropped when two cases survive its deletion identically yet demand different
+content. All three Arabic designs — `عينٌ غائرة` under two genera,
+`زيد طويل`/`زيد قصير`, `الرجل الطويل`/`الرجل طويل` — are now *executed* against
+a declared domain of `6` cases, each carrying its own written context, and each
+deletion is refuted by an actual merge of two contents. They remain runs on a
+**designed** domain, not on the codec and not on a fingerprinted corpus.
+
+**The reader is structurally blind to the original.** `D` receives only `T(x)`,
+and it is called **once per distinct output**; its single answer is then
+compared against the content of every case sharing that output. A reader cannot
+cheat by recognising which case it is looking at, because it is never told.
+When the representation merges two contents, the experiment records the refusal
+*before* the reader is consulted at all: no reader can exist.
+
+**Genus and predicate are checked for compatibility.** `P(g)` is a declared
+table, and a predicate outside its genus's space cannot enter a domain case or
+a witness pair. An undeclared genus is refused rather than treated as an empty
+space. The table is declared here, not measured from a corpus.
+
+**The criterion holds on its domain and is not a certificate.** Sufficiency now
+returns `HELD_ON_A_DECLARED_DOMAIN` from an executed experiment rather than from
+inspecting interface names, and every component's necessity is witnessed. So
+`is_established_on_its_domain` is true — and `is_a_linguistic_certificate` is
+false, because the domain is designed. The lookup reader proves `T` is injective
+on that domain, not that content is recovered by linguistic rule. And the
+minimum proved is relative to the candidate components and the class of
+alternatives actually tested.
+
+**`zero` and `one` are shapes, not operations.** `zero` is `(a, g, p, ⊥)`: a
+relation not yet named — neither an empty fiber nor a denied attribute. `one`
+adds the named relation with its evidence and residues, and explicitly does
+*not* assert that the proposition is true. `RefineSlot` is written as the
+transition between them and is **not exported**; no callable in this deposit
+performs it.
+
+**The closure checklist stands at 0 / 7, with 5 attempted.** It is a live
+audit: each condition reads a documented evidence record rather than returning
+false by construction. Evidence gathered on a designed domain counts as an
+attempted run and satisfies nothing; only evidence on a declared linguistic
+domain can satisfy a condition, and none exists. So the zero is derived by
+reading evidence, and the candidate's rank is not raised to a completed
+certificate merely because experiments now run.
+
+**The certificate gate is derived, not written.** Until now the domain's kind
+was a *field*: anyone could write `DECLARED_LINGUISTIC_DOMAIN` beside a designed
+case and collect `is_a_linguistic_certificate` for free. That field is now gone
+from `DeclaredDomain`, from `ConditionEvidence`, and from the verdict; passing
+`kind=` or `domain_kind=` raises `TypeError`, so the false name is unsayable
+rather than merely rejected. A domain counts as linguistic only when *every* one
+of its cases carries a `CaseAttestation` — a source identifier, a 64-hex digest,
+and a locator — whose digest matches a registry recomputed from the bytes in the
+tree at the moment of the check. The registry currently holds one source, so the
+declared domain is measured at `0` attested of `6` cases and stays **designed**;
+the verdict's kind and identifier are both read off the domain it carries. An
+attested corpus would still not be a sufficient sample, and that limit is named
+among the residuals.
+
+## The hamza fiber keeps some rasm, and is not a phonetic fiber
+
+The carrier/state codec records a hamza's carrier and its **seat**, and nothing
+else. `src/alghanem/arabic/hamza_contract.py` separates what the seat conflates
+into four fields answering four different questions: **identity** (is this a
+hamza at all, or a madd alif with no hamza in it), **seat** (how it is drawn),
+**function** (qat' or wasl in the structure), and **contextual realization**
+(how it came out in this position).
+
+**The seat is checked, not believed.** Every `HamzaOccurrence` runs
+`CarrierStateCodec` over its own surface and refuses a recorded seat that
+disagrees with what the codec actually reads. Function and realization, by
+contrast, are **declared per occurrence with a written source**, because
+wasl-hood is not decidable from the written marks — the bare alif of
+`الْحَمْدُ` carries no mark that says so, as
+`ibtida_wasl_waqf_registration` already names.
+
+**Contradictory combinations are refused structurally.** A wasl is not drawn on
+a hamza seat; elision in `darj` and ibtida-only realization belong to wasl, not
+qat'; lengthening and the madda seat do not come apart; and what is not a hamza
+carries neither a hamza function nor a hamza realization.
+
+**Each field is tested twice, not once.** Necessity asks whether deleting it
+merges two occurrences demanding different content. Derivability asks whether
+the remaining three fields *functionally determine* it over the declared domain.
+On the `10` declared occurrences the seat and the realization are necessary and
+undetermined; identity and function are determined by the rest — which means
+their *information* is carried, while a separate stored *field* is not forced on
+this domain. Determination on a finite designed domain is not a derivation rule
+in Arabic, and it may be an artifact of the contract's own refusals rather than
+of the language; both are named residuals.
+
+**The codec's merge is exhibited, not asserted.** Running the codec over the
+same domain yields fewer distinct outputs than the contract does, and the merged
+rows are kept **with their contents** rather than summarised as a rate. The wasl
+alif, the ibtida-only alif, and the madd alif of `قَالَ` all collapse into one
+codec output. So the present fiber preserves some differences of rasm — the
+seats stay apart — and is not a complete phonetic fiber.
+
+**And the alif's neutrality closes nothing.** That neutrality was measured on
+axes where madd is frozen as deferred, and the alif is the likeliest carrier of
+madd; so the neutrality may be an artifact of the deferral. It may not be used
+to close the birth of the syllable.
+
+## The order of disambiguation, and the authority a separation does not confer
+
+`src/alghanem/arabic/disambiguation_layer_order.py` declares the execution
+order once — carrier identity, then rasm against sound, then licensed features,
+then syllabic and morphological relations, then ifada in its own layer — and
+derives every rank from position in that declaration rather than writing it
+beside the name.
+
+**The central law is a function, not a comment.**
+`authority_after_separating` takes the number of pairs a layer separated and
+*does not read it*, returning the layer itself; if separating states promoted a
+layer, the effect would have to show up there. `claim_is_licensed_at` refuses a
+higher layer's claim to a lower layer's worker: separating rasm licenses no
+feature claim, and separating a feature licenses no syllabic one.
+
+**Ambiguity is lifted without inventing distinctions.** Every layer cites the
+names of fields **recorded on the item itself with written sources**; citing
+anything unrecorded is a refusal, not a silent zero. One field may not be cited
+in two layers, since that launders one layer's difference into another under a
+new name.
+
+**The original measurement is not corrupted.** A layer's value accumulates the
+fields below it rather than replacing them, and the bottom of the ladder is
+compared against the item's stored original measurement, so recoverability is
+*measured*: a ladder whose bottom layer cites something else is caught.
+
+**Run over the `10` declared hamza occurrences**, the ladder separates at the
+carrier, the seat, the licensed features, and the realization. One pair — the
+two qat' occurrences on the alef seat — stays openly unresolved. Lifting it
+would need a newly recorded field with its own source, which is a new
+measurement, not a new distinction.
+
+**The ladder no longer reads its own answer.** Previously the ifada layer cited
+the content field itself, so the ladder was handed the very thing it was meant
+to recover. The content is now a held-out `target` on each item: `ObservedItem`
+refuses to record the target among its own fields, and
+`refuse_a_ladder_that_reads_its_target` refuses a ladder that cites it. The
+declared ladder therefore stops at the fourth layer, and ifada is the target
+rather than a rung.
+
+**The reader is blind and is asked once per distinct value.**
+`run_target_recovery_experiment` gives the reader nothing but the ladder's
+accumulated value — no identifier, no target — and asks it **once per distinct
+value**, comparing its single answer against the target of every item sharing
+that value. When one value merges two different targets, the experiment records
+the refusal **before the reader is consulted at all**.
+
+**Two readers, measured against each other.** The lookup reader, built from the
+declared items themselves, recovers the target: `9` distinct values over `10`
+items, `0` merged targets, `0` mistakes. That proves the ladder's value
+distinguishes these items; it is not a linguistic rule, and
+`is_a_linguistic_rule` is false by construction. The independent reader — the
+rule *"content follows from function alone"*, written down before the run — is
+**refuted**: it errs on `6` of the `10` items. The gap between the two readers
+measures what the lookup table added, not what the ladder proved.
+
+**And no layer declares the syllable born.** The fourth layer measures syllabic
+relations; `refuse_syllable_birth_claim` refuses the claim from every layer
+without exception, the fourth included.
+
+## The transition to the syllable, tested and refuted
+
+`src/alghanem/arabic/syllable_transition_experiment.py` asks the next question
+directly: having climbed to the fourth layer, does the ladder's value determine
+the **syllable shape** of the word in which the hamza occurs?
+
+**The target is measured by another component, not declared.** Each of the `10`
+declared host words — `أَكَلَ`, `أُمٌّ`, `سَأَلَ`, `رَأْسٌ`, `سُؤَالٌ`,
+`بِئْرٌ`, `مَاءٌ`, `آمَنَ`, `اِبْنٌ`, `اُكْتُبْ` — has its shape read off by
+running `syllabify_surface` on its surface, recomputed on every request. A word
+the syllabifier cannot segment is a **named refusal**, never a third shape that
+would silently count as a difference.
+
+**The answer is held out and the reader is blind.** The shape is the item's
+`target`, so it is neither recorded among the item's fields nor citable by any
+layer, and the experiment reuses the same once-per-distinct-value reader.
+
+**The result is negative, and it is measured.** The ladder's value collapses to
+`6` distinct values over `10` items, and `4` pairs share a value while carrying
+different measured shapes — `أَكَلَ` (`CV-CV-CV`) against `أُمٌّ` (`CVC-CVC`),
+and `سَأَلَ` against `رَأْسٌ`. The experiment therefore refutes determination
+**before the reader is consulted at all**: `0` reader calls, and
+`the_transition_to_the_syllable_is_established()` is false. No reader, however
+strong, can separate what was never separated for it.
+
+**And this settles nothing about birth.** A failed transition is not a denied
+birth, and a successful one would not have been a proof of birth;
+`refuse_a_syllable_birth_claim_from_this_run` refuses both readings. The
+refutation holds on a designed domain of chosen words, so it disposes of the
+determination claim without proving that no other ladder, built from other
+recorded fields, could determine the syllable.
 
 ```bash
 python -m pip install -e '.[dev]'

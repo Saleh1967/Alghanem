@@ -12,13 +12,18 @@
 
 * **عموديًّا**: الفترةُ `[∅, E_b]` مُدرَّجةٌ بـ`|·|` في **٢٣ من ٢٣**، صفرُ
   استثناء. والأعماقُ المرصودةُ `{1,2,3,4,6}`.
-* **أفقيًّا**: ترتيبُ الألياف غيرُ مُدرَّجٍ (أزواجٌ بسلاسلَ متفاوتة) وغيرُ
-  متّصلٍ (مركّبتان)، فلا دالّةَ رتبةٍ على `B`
-  (`RANK_IS_VERTICAL_NOT_HORIZONTAL`).
+* **أفقيًّا**: محاولةُ إسنادِ رتبةٍ فعليّةٍ على حوافّ التغطية **تفشل**، وشاهدُها
+  سلسلتان تامّتان مختلفتا الطول بين الطرفين نفسيهما؛ فلا دالّةَ رتبةٍ على `B`
+  (`RANK_IS_VERTICAL_NOT_HORIZONTAL`). والقاعدةُ مع ذلك غيرُ متّصلةٍ
+  (مركّبتان). **ولا يُستنتَج السقوطُ من قفزةٍ في السعة**: القفزةُ رقمٌ وصفيٌّ
+  يُسجَّل بجانب الحكم لا حجّةً له
+  (`A_CAPACITY_JUMP_IS_NOT_A_FALLEN_RANK`).
 
 **والمرخَّصُ فعلًا مقياسٌ لا رتبة.** `μ(X) = |X|` جمعيٌّ تامّ: القانونُ
 الموجِّهُ `μ(X∪Y) + μ(X∩Y) = μ(X) + μ(Y)` يصدق على **٩٢١٦** زوجًا من أزواج
-الإغلاق تحت `∪∩` بلا خرقٍ واحد. والمقياسُ يقيس الفرقَ ولا يُرتِّب بخطوات
+الإغلاق تحت `∪∩` بلا خرقٍ واحد. وهو **قانونُ مجموعاتٍ منتهيةٍ ومقياسُ سعة**:
+تؤكّد الاختباراتُ أنّ التنفيذَ يحترمه في المحيطين المفحوصين، ولا يقيس ضرورةَ
+حالةٍ لغويّةٍ ولا يرتّب بخطوات
 (`AN_ADDITIVE_MEASURE_IS_NOT_A_RANK_FUNCTION`).
 
 **والسؤالان ليسا سؤالًا واحدًا، ولا يسقطان معًا.** «كم يزيد ليفُ `ل` على ليف
@@ -57,10 +62,16 @@ from .carrier_state_observed_fiber import ObservedFiberTable
 from .compression_model_preregistration import FROZEN_CORPUS
 from .decomposition_reconstruction_theorem import MeasurementInstrument, Population
 from .fiber_ambient_choice import ClosureOperator, build_ambient
-from .fiber_rank_function import Fiber, observed_fibers
+from .fiber_rank_function import (
+    Fiber,
+    UnequalChainWitness,
+    observed_fibers,
+    refute_rank_on_the_observed_population,
+)
 
 __all__ = [
     "AN_ADDITIVE_MEASURE_IS_NOT_A_RANK_FUNCTION_NOTE",
+    "A_CAPACITY_JUMP_IS_NOT_A_FALLEN_RANK_NOTE",
     "A_DOWNWARD_GAP_MAY_BE_A_SAMPLING_ZERO_NOTE",
     "A_WIDER_CORPUS_NUMBER_IS_A_CLAIM_HERE_NOTE",
     "FIBER_BUNDLE_NAMED_RESIDUALS",
@@ -107,6 +118,8 @@ class BundleVerdict:
     base_is_graded: bool
     base_component_count: int
     observed_depths: tuple[int, ...]
+    base_grading_counterexamples: tuple[UnequalChainWitness, ...]
+    base_cover_capacity_jumps: int
 
     def __post_init__(self) -> None:
         if self.fibers_graded > self.carrier_count:
@@ -115,12 +128,27 @@ class BundleVerdict:
             raise FiberBundleError("أليافٌ متمايزةٌ أكثرُ من حواملها")
         if not self.observed_depths:
             raise FiberBundleError("حزمةٌ بلا عمقٍ مرصودٍ لا تُحكَم")
+        if self.base_cover_capacity_jumps < 0:
+            raise FiberBundleError("قفزاتُ السعة عددٌ غيرُ سالبٍ بالبناء")
+        if not self.base_is_graded and not self.base_grading_counterexamples:
+            raise FiberBundleError(
+                "قاعدةٌ غيرُ مُدرَّجةٍ بلا شاهدِ سلسلتين مختلفتَي الطول حكمٌ "
+                "مستنتَجٌ من السعة؛ ولا يُكتَب سقوطُ الرتبة بلا شاهده"
+            )
+        if self.base_is_graded and self.base_grading_counterexamples:
+            raise FiberBundleError("قاعدةٌ مُدرَّجةٌ ومعها شاهدٌ مضادّ؛ حكمٌ متناقض")
 
     @property
     def vertical_grading_is_exceptionless(self) -> bool:
         """أمُدرَّجةٌ الأليافُ كلُّها بلا استثناء؟ يُعَدّ ولا يُصرَّح."""
 
         return self.fibers_graded == self.carrier_count
+
+    @property
+    def base_grading_is_settled_by_chains(self) -> bool:
+        """أسقطتِ الرتبةُ بشاهدِ سلاسلَ مختلفةِ الطول؟ يُقرَأ من الشاهد لا من السعة."""
+
+        return bool(self.base_grading_counterexamples)
 
     def rank_exists_on(self, axis: Axis) -> bool:
         """أتوجد دالّةُ رتبةٍ على هذا المحور؟ والسؤالُ لا يُطرَح بلا محور."""
@@ -154,17 +182,63 @@ def vertical_grading_census(table: ObservedFiberTable | None = None) -> tuple[in
     return graded, len(fibers)
 
 
+def _base_covers(distinct: tuple[Fiber, ...]) -> tuple[tuple[Fiber, Fiber], ...]:
+    """حوافُّ التغطية على ترتيب الألياف المرصودة؛ وعليها وحدَها تُسأل الرتبة."""
+
+    return tuple(
+        (lower, upper)
+        for lower in distinct
+        for upper in distinct
+        if lower < upper and not any(lower < middle < upper for middle in distinct)
+    )
+
+
+def _a_rank_assignment_exists(
+    distinct: tuple[Fiber, ...], covers: tuple[tuple[Fiber, Fiber], ...]
+) -> bool:
+    """أتُسنَد رتبةٌ فعليّةٌ تُرضي `ρ(y) = ρ(x) + 1` على كلّ تغطية؟ تُجرَّب لا تُستنتَج.
+
+    والإسنادُ ينتشر في كلّ مركّبةٍ من بيان هاسه؛ فإن التقى طريقان على قيمتين
+    مختلفتين سقط الوجود. وهذا فحصُ الرتبة نفسِها، لا قياسُ قفزةٍ في السعة.
+    """
+
+    neighbours: dict[Fiber, list[tuple[Fiber, int]]] = {node: [] for node in distinct}
+    for lower, upper in covers:
+        neighbours[lower].append((upper, 1))
+        neighbours[upper].append((lower, -1))
+    assigned: dict[Fiber, int] = {}
+    for start in distinct:
+        if start in assigned:
+            continue
+        assigned[start] = 0
+        stack = [start]
+        while stack:
+            node = stack.pop()
+            for adjacent, step in neighbours[node]:
+                value = assigned[node] + step
+                if adjacent not in assigned:
+                    assigned[adjacent] = value
+                    stack.append(adjacent)
+                elif assigned[adjacent] != value:
+                    return False
+    return True
+
+
 def measure_the_bundle(table: ObservedFiberTable | None = None) -> BundleVerdict:
     """قِس الحزمةَ بمحوريها معًا؛ فالحكمُ الواحدُ على محورٍ واحدٍ مُضلِّل."""
 
     fibers = observed_fibers(table)
-    distinct = sorted(set(fibers.values()), key=lambda item: (len(item), sorted(item)))
+    distinct = tuple(
+        sorted(set(fibers.values()), key=lambda item: (len(item), sorted(item)))
+    )
     graded, total = vertical_grading_census(table)
-    base_graded = all(
-        len(upper) - len(lower) == 1
-        for lower in distinct
-        for upper in distinct
-        if lower < upper and not any(lower < middle < upper for middle in distinct)
+    covers = _base_covers(distinct)
+    base_graded = _a_rank_assignment_exists(distinct, covers)
+    capacity_jumps = sum(1 for lower, upper in covers if len(upper) - len(lower) != 1)
+    counterexamples = (
+        ()
+        if base_graded
+        else refute_rank_on_the_observed_population(table).unequal_chain_witnesses
     )
     parent = {node: node for node in distinct}
 
@@ -187,6 +261,8 @@ def measure_the_bundle(table: ObservedFiberTable | None = None) -> BundleVerdict
         base_is_graded=base_graded,
         base_component_count=len({find(node) for node in distinct}),
         observed_depths=tuple(sorted({len(fiber) for fiber in fibers.values()})),
+        base_grading_counterexamples=counterexamples,
+        base_cover_capacity_jumps=capacity_jumps,
     )
 
 
@@ -382,9 +458,17 @@ WIDER_CORPUS_CLAIMS: Final[tuple[WiderCorpusClaim, ...]] = (
 # --- البواقي المُسمّاة --------------------------------------------------------
 
 
+A_CAPACITY_JUMP_IS_NOT_A_FALLEN_RANK_NOTE: Final[str] = (
+    "ACapacityJumpIsNotAFallenRank: قفزةُ السعة على تغطيةٍ واحدةٍ رقمٌ وصفيٌّ "
+    "لا حجّة؛ وسقوطُ الرتبة على القاعدة يُبرهَن بمحاولةِ إسنادٍ فعليٍّ تفشل، "
+    "وبشاهدِ سلسلتين تامّتين مختلفتَي الطول بين الطرفين نفسيهما، لا باستنتاجه "
+    "من كلّ قفزةٍ في السعة"
+)
+
 AN_ADDITIVE_MEASURE_IS_NOT_A_RANK_FUNCTION_NOTE: Final[str] = (
     "AnAdditiveMeasureIsNotARankFunction: `μ(X)=|X|` جمعيٌّ تامٌّ بلا خرقٍ "
-    "واحدٍ على المُغلَق، ويقيس الفرقَ بين ليفين؛ ولا يجعله ذلك رتبةً، إذ "
+    "واحدٍ على المُغلَق، ويقيس الفرقَ بين ليفين؛ وهو قانونُ مجموعاتٍ منتهيةٍ "
+    "ومقياسُ سعةٍ لا قياسُ ضرورةٍ لحالةٍ لغويّة، ولا يجعله ذلك رتبةً، إذ "
     "الرتبةُ تعِد الخطواتِ والمقياسُ يزِن الفرق، وهما سؤالان لا سؤال"
 )
 
@@ -421,10 +505,11 @@ THE_STEP_COUNT_FAILS_GLOBALLY_NOT_PAIRWISE_NOTE: Final[str] = (
 
 FIBER_BUNDLE_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     RANK_IS_VERTICAL_NOT_HORIZONTAL_NOTE,
+    A_CAPACITY_JUMP_IS_NOT_A_FALLEN_RANK_NOTE,
     AN_ADDITIVE_MEASURE_IS_NOT_A_RANK_FUNCTION_NOTE,
     THE_STEP_COUNT_FAILS_GLOBALLY_NOT_PAIRWISE_NOTE,
     A_DOWNWARD_GAP_MAY_BE_A_SAMPLING_ZERO_NOTE,
     A_WIDER_CORPUS_NUMBER_IS_A_CLAIM_HERE_NOTE,
     THE_CORPUS_IS_FINGERPRINTED_THOUGH_ITS_BYTES_ARE_ABSENT_NOTE,
 )
-"""ستُّ بقايا مُسمّاةٍ تُقابَل بها أيُّ إحالةٍ إلى «الرتبة» أو «المقياس» بعدُ."""
+"""سبعُ بقايا مُسمّاةٍ تُقابَل بها أيُّ إحالةٍ إلى «الرتبة» أو «المقياس» بعدُ."""

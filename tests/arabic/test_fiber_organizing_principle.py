@@ -45,9 +45,9 @@ def test_the_principle_module_reaches_no_kernel_module() -> None:
     ]
 
 
-def test_there_are_five_named_residuals_all_distinct_and_non_blank() -> None:
-    assert len(ORGANIZING_PRINCIPLE_NAMED_RESIDUALS) == 5
-    assert len(set(ORGANIZING_PRINCIPLE_NAMED_RESIDUALS)) == 5
+def test_there_are_six_named_residuals_all_distinct_and_non_blank() -> None:
+    assert len(ORGANIZING_PRINCIPLE_NAMED_RESIDUALS) == 6
+    assert len(set(ORGANIZING_PRINCIPLE_NAMED_RESIDUALS)) == 6
     assert all(note.strip() for note in ORGANIZING_PRINCIPLE_NAMED_RESIDUALS)
 
 
@@ -165,13 +165,41 @@ def test_cv_birth_is_barred_by_a_standing_guard_not_merely_deferred() -> None:
     assert "OneObligationIsBarredNotMerelyDeferred" in joined
 
 
-def test_refine_slot_necessity_stands_refuted_as_stated() -> None:
+def test_refine_slot_necessity_stands_unproven_not_refuted() -> None:
     (record,) = (
         item
         for item in THE_OBLIGATIONS
         if item.obligation is ProofObligation.REFINE_SLOT_NECESSITY
     )
-    assert record.standing is DischargeStanding.REFUTED_AS_STATED
+    assert record.standing is DischargeStanding.UNPROVEN_WITH_A_REFUTABLE_SUB_CLAIM
+    assert record.standing is not DischargeStanding.REFUTED_AS_STATED
+    joined = "\n".join(ORGANIZING_PRINCIPLE_NAMED_RESIDUALS)
+    assert "RefineSlotNecessityIsUnprovenNotRefuted" in joined
+
+
+def test_the_capacity_sufficiency_sub_claim_stays_refutable_with_its_falsifier() -> (
+    None
+):
+    (record,) = (
+        item
+        for item in THE_OBLIGATIONS
+        if item.obligation is ProofObligation.REFINE_SLOT_NECESSITY
+    )
+    assert record.carries_a_refutable_sub_claim is True
+    assert record.what_would_refute_the_sub_claim.strip()
+    assert record.is_discharged is False
+
+
+def test_a_sub_claim_without_a_written_falsifier_is_refused() -> None:
+    with pytest.raises(OrganizingPrincipleError):
+        ObligationRecord(
+            obligation=ProofObligation.REFINE_SLOT_NECESSITY,
+            standing=DischargeStanding.UNPROVEN_WITH_A_REFUTABLE_SUB_CLAIM,
+            what_would_discharge_it="انقسامٌ داخليٌّ مرصود",
+            why_it_stands_there="لم يُرصَد",
+            refutable_sub_claim="تكفي دالّةُ السعة",
+            what_would_refute_the_sub_claim="   ",
+        )
 
 
 def test_end_to_end_utility_was_not_even_attempted() -> None:

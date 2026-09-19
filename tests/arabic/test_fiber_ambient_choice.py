@@ -47,9 +47,9 @@ def test_the_ambient_choice_module_reaches_no_kernel_module() -> None:
     ]
 
 
-def test_there_are_six_named_residuals_all_distinct_and_non_blank() -> None:
-    assert len(FIBER_AMBIENT_CHOICE_NAMED_RESIDUALS) == 6
-    assert len(set(FIBER_AMBIENT_CHOICE_NAMED_RESIDUALS)) == 6
+def test_there_are_seven_named_residuals_all_distinct_and_non_blank() -> None:
+    assert len(FIBER_AMBIENT_CHOICE_NAMED_RESIDUALS) == 7
+    assert len(set(FIBER_AMBIENT_CHOICE_NAMED_RESIDUALS)) == 7
     assert all(note.strip() for note in FIBER_AMBIENT_CHOICE_NAMED_RESIDUALS)
 
 
@@ -172,7 +172,7 @@ def test_the_empty_fiber_bar_is_verified_live_not_asserted() -> None:
     assert the_empty_fiber_is_refused_live() is True
 
 
-def test_exactly_one_gap_is_barred_by_a_measured_rule_under_every_closure() -> None:
+def test_exactly_one_gap_is_barred_by_the_representation_contract() -> None:
     for operator in ClosureOperator:
         census = adjudicate_gaps(operator)
         barred = census.barred
@@ -188,23 +188,23 @@ def test_the_union_intersection_census_splits_one_and_forty_one_and_thirty_eight
 ):
     census = adjudicate_gaps(ClosureOperator.UNION_INTERSECTION)
     assert len(census.adjudications) == 80
-    assert census.count_of(GapStatus.BARRED_BY_A_MEASURED_RULE) == 1
-    assert census.count_of(GapStatus.JOINTLY_ATTESTED_ON_ONE_CARRIER) == 41
+    assert census.count_of(GapStatus.BARRED_BY_THE_CURRENT_REPRESENTATION_CONTRACT) == 1
+    assert census.count_of(GapStatus.AN_AMBIENT_MEMBER_JOINTLY_ATTESTED) == 41
     assert census.count_of(GapStatus.NOT_JOINTLY_ATTESTED_UNDECIDED) == 38
 
 
 def test_the_power_set_census_splits_one_and_fifty_eight_and_fifty_three() -> None:
     census = adjudicate_gaps(ClosureOperator.POWER_SET)
     assert len(census.adjudications) == 112
-    assert census.count_of(GapStatus.BARRED_BY_A_MEASURED_RULE) == 1
-    assert census.count_of(GapStatus.JOINTLY_ATTESTED_ON_ONE_CARRIER) == 58
+    assert census.count_of(GapStatus.BARRED_BY_THE_CURRENT_REPRESENTATION_CONTRACT) == 1
+    assert census.count_of(GapStatus.AN_AMBIENT_MEMBER_JOINTLY_ATTESTED) == 58
     assert census.count_of(GapStatus.NOT_JOINTLY_ATTESTED_UNDECIDED) == 53
 
 
 def test_the_downward_closure_leaves_no_gap_undecided() -> None:
     census = adjudicate_gaps(ClosureOperator.DOWNWARD)
     assert census.count_of(GapStatus.NOT_JOINTLY_ATTESTED_UNDECIDED) == 0
-    assert census.count_of(GapStatus.JOINTLY_ATTESTED_ON_ONE_CARRIER) == 58
+    assert census.count_of(GapStatus.AN_AMBIENT_MEMBER_JOINTLY_ATTESTED) == 58
 
 
 def test_every_census_count_sums_to_the_gap_count_of_its_operator() -> None:
@@ -220,7 +220,7 @@ def test_every_attested_gap_names_a_carrier_that_really_contains_it() -> None:
     attested = [
         item
         for item in census.adjudications
-        if item.status is GapStatus.JOINTLY_ATTESTED_ON_ONE_CARRIER
+        if item.status is GapStatus.AN_AMBIENT_MEMBER_JOINTLY_ATTESTED
     ]
     assert attested
     for item in attested:
@@ -233,7 +233,7 @@ def test_an_attested_adjudication_without_a_witness_is_refused() -> None:
     with pytest.raises(AmbientChoiceError):
         GapAdjudication(
             states=frozenset({("a", "b")}),
-            status=GapStatus.JOINTLY_ATTESTED_ON_ONE_CARRIER,
+            status=GapStatus.AN_AMBIENT_MEMBER_JOINTLY_ATTESTED,
             witness_carrier=None,
             grounds="اجتماعٌ مُدَّعًى",
         )
@@ -253,7 +253,7 @@ def test_an_adjudication_refuses_a_blank_ground() -> None:
     with pytest.raises(AmbientChoiceError):
         GapAdjudication(
             states=frozenset(),
-            status=GapStatus.BARRED_BY_A_MEASURED_RULE,
+            status=GapStatus.BARRED_BY_THE_CURRENT_REPRESENTATION_CONTRACT,
             witness_carrier=None,
             grounds="   ",
         )
@@ -268,10 +268,36 @@ def test_the_undecided_gaps_are_not_read_as_structurally_barred() -> None:
     ]
     assert undecided
     assert all(
-        item.status is not GapStatus.BARRED_BY_A_MEASURED_RULE for item in undecided
+        item.status is not GapStatus.BARRED_BY_THE_CURRENT_REPRESENTATION_CONTRACT
+        for item in undecided
     )
     joined = "\n".join(FIBER_AMBIENT_CHOICE_NAMED_RESIDUALS)
     assert "AnUndecidedGapIsNotABarredOne" in joined
+
+
+def test_the_empty_gap_bar_is_named_a_representation_contract_not_an_absolute() -> None:
+    census = adjudicate_gaps(ClosureOperator.UNION_INTERSECTION)
+    (barred,) = census.barred
+    assert "عقد التمثيل" in barred.grounds
+    assert "بديل" in barred.grounds
+    joined = "\n".join(FIBER_AMBIENT_CHOICE_NAMED_RESIDUALS)
+    assert "OnlyOneGapIsBarredByTheCurrentRepresentationContract" in joined
+
+
+def test_an_attested_ambient_member_is_not_a_licensed_arabic_fiber() -> None:
+    census = adjudicate_gaps(ClosureOperator.UNION_INTERSECTION)
+    attested = [
+        item
+        for item in census.adjudications
+        if item.status is GapStatus.AN_AMBIENT_MEMBER_JOINTLY_ATTESTED
+    ]
+    assert attested
+    assert all(item.is_a_licensed_arabic_fiber is False for item in attested)
+    assert all(
+        ClosureOperator.UNION_INTERSECTION.value in item.grounds for item in attested
+    )
+    joined = "\n".join(FIBER_AMBIENT_CHOICE_NAMED_RESIDUALS)
+    assert "AnAmbientMemberIsNotALicensedFiber" in joined
 
 
 def test_individual_attestation_is_recorded_as_a_refused_criterion() -> None:
