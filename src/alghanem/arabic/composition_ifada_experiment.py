@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Final
 
+from alghanem.canonical_content import canonical_digest
 from alghanem.kernel.birth import (
     BirthExperimentSpecification,
     BirthQuery,
@@ -61,10 +62,12 @@ from .mantuq_mafhum_ifada import IfadaStanding
 __all__ = [
     "ACCOUNTED_TOKEN",
     "COMPOSITION_IFADA_EXPERIMENT_NAMED_LAWS",
+    "DECLARED_CASES",
     "DECLARED_INPUTS",
     "EXPERIMENT_DOMAIN",
     "UNACCOUNTED_TOKEN",
     "CompositionIfadaExperimentError",
+    "DeclaredCase",
     "PathCensus",
     "measure",
     "render_census",
@@ -78,32 +81,130 @@ class CompositionIfadaExperimentError(ValueError):
 
 EXPERIMENT_DOMAIN: Final[str] = "arabic-two-word-composition"
 
+
+@dataclass(frozen=True, slots=True)
+class DeclaredCase:
+    """حالةٌ مُعلَنة: معرّفُها، وبايتاتُها الخام، وسببُ إدخالها.
+
+    والمحفوظُ بايتاتٌ لا نصّ، ليدخل الترميزُ غيرُ الصالح والتغييرُ البايتيُّ
+    في العيّنة كما يدخل النصُّ السليم (`ACaseIsRawBytesNotAString`).
+    """
+
+    case_id: str
+    source: bytes
+    why: str
+
+    def __post_init__(self) -> None:
+        if not self.case_id.strip():
+            raise CompositionIfadaExperimentError("للحالة معرّفٌ غيرُ فارغ.")
+        if type(self.source) is not bytes or not self.source:
+            raise CompositionIfadaExperimentError("مدخلُ الحالة بايتاتٌ غيرُ فارغة.")
+        if not self.why.strip():
+            raise CompositionIfadaExperimentError("لكلّ حالةٍ سببُ إدخالها مكتوبًا.")
+
+    @property
+    def hex_content(self) -> str:
+        """البايتاتُ الخامُ مكتوبةً ستَّ عشريّةً، وهو محتوى الحالة في الطلب."""
+
+        return self.source.hex()
+
+    @property
+    def source_digest(self) -> str:
+        """بصمةُ البايتات الخام كما وردت، بلا ترميزٍ وسيطٍ ولا تسوية."""
+
+        return canonical_digest(self.source)
+
+    @property
+    def byte_length(self) -> int:
+        """طولُ البايتات الخام، عدًّا للبايتات لا للمحارف."""
+
+        return len(self.source)
+
+
+def _WITH_BYTE_CHANGED(source: bytes, old: bytes, new: bytes) -> bytes:
+    """أبدِل أوّلَ وقوعٍ لسلسلةِ بايتاتٍ بأخرى، تغييرًا بايتيًّا مُعلَنًا."""
+
+    if old not in source:
+        raise CompositionIfadaExperimentError(
+            "التغييرُ البايتيُّ يُعلَن على بايتاتٍ موجودةٍ فعلًا في المدخل."
+        )
+    return source.replace(old, new, 1)
+
+
 ACCOUNTED_TOKEN: Final[str] = "ACCOUNTED:بلغ النصُّ إفادةً مقروءة"
 UNACCOUNTED_TOKEN: Final[str] = "UNACCOUNTED:وقف النصُّ دون إفادةٍ مقروءة"
 
-DECLARED_INPUTS: Final[tuple[tuple[str, str], ...]] = (
-    ("isnad-1", "اللَّهُ نُورٌ"),
-    ("isnad-2", "مُحَمَّدٌ رَسُولٌ"),
-    ("idafa-1", "نُورُ السَّمَاوَاتِ"),
-    ("idafa-2", "نُورُ كِتَابٍ"),
-    ("proclitic-1", "الْحَمْدُ لِلَّهِ"),
-    ("unwritten-1", "قُلْ هُوَ"),
-    ("tanwin-conflict-1", "كِتَابٌ الْبَيْتِ"),
-    ("first-not-raf-1", "الْعَالَمِينَ نُورٌ"),
-    ("second-nasb-1", "رَبُّ الْعَالَمِينَ"),
-    ("not-two-words-1", "اللَّهُ"),
+DECLARED_CASES: Final[tuple[DeclaredCase, ...]] = (
+    DeclaredCase("isnad-1", "اللَّهُ نُورٌ".encode(), "موجب: ضمّتان تُقرآن إسنادًا"),
+    DeclaredCase("isnad-2", "مُحَمَّدٌ رَسُولٌ".encode(), "موجب: ضمّتان مع تنوين الثاني"),
+    DeclaredCase("idafa-1", "نُورُ السَّمَاوَاتِ".encode(), "سالب: تركيبٌ قائمٌ لا يُفيد"),
+    DeclaredCase("idafa-2", "نُورُ كِتَابٍ".encode(), "سالب: إضافةٌ بتنوين الثاني"),
+    DeclaredCase("proclitic-1", "الْحَمْدُ لِلَّهِ".encode(), "ملتبس: لامٌ مكسورةٌ قد تكون جارّة"),
+    DeclaredCase("unwritten-1", "قُلْ هُوَ".encode(), "غيرُ مقروءٍ: لا علامةَ آخِرٍ مكتوبة"),
+    DeclaredCase("tanwin-conflict-1", "كِتَابٌ الْبَيْتِ".encode(), "ممنوع: المضافُ لا يُنوَّن"),
+    DeclaredCase(
+        "first-not-raf-1", "الْعَالَمِينَ نُورٌ".encode(), "غيرُ مقروءٍ: أوّلُه ليس مرفوعًا"
+    ),
+    DeclaredCase(
+        "second-nasb-1", "رَبُّ الْعَالَمِينَ".encode(), "غيرُ مقروءٍ: ثانيه منصوبُ العلامة"
+    ),
+    DeclaredCase("not-two-words-1", "اللَّهُ".encode(), "خارجُ النطاق: كلمةٌ واحدة"),
+    DeclaredCase(
+        "byte-mutation-vowel",
+        _WITH_BYTE_CHANGED("اللَّهُ نُورٌ".encode(), "\u064f".encode(), "\u0650".encode()),
+        "تغييرٌ بايتيّ: ضمّةُ الأوّل تُبدَّل كسرةً، فيتغيّر الحكم",
+    ),
+    DeclaredCase(
+        "byte-mutation-space",
+        "اللَّهُ نُورٌ".encode().replace(b" ", b""),
+        "تغييرٌ بايتيّ: يُحذَف البياض، فتصير كلمةً واحدة",
+    ),
+    DeclaredCase(
+        "byte-truncated-utf8",
+        "اللَّهُ نُورٌ".encode()[:-1],
+        "ترميزٌ غيرُ صالح: بايتاتٌ مبتورةٌ في منتصف حرف",
+    ),
+    DeclaredCase(
+        "byte-invalid-lead",
+        b"\xff\xfe" + "اللَّهُ نُورٌ".encode(),
+        "ترميزٌ غيرُ صالح: بايتُ بدءٍ لا يقع في UTF-8",
+    ),
+    DeclaredCase(
+        "byte-lone-continuation",
+        "اللَّهُ".encode() + b"\x80\x80" + " نُورٌ".encode(),
+        "ترميزٌ غيرُ صالح: بايتا استمرارٍ بلا بادئة",
+    ),
 )
-"""العيّنةُ المُعلَنةُ قبل التشغيل: موجبةٌ وسالبةٌ وملتبسة، وكلُّها في المقام.
+"""العيّنةُ المُعلَنةُ قبل التشغيل، ببايتاتها الخام لا بنصوصها.
 
+وفيها الموجبُ والسالبُ والملتبس، وتغييراتٌ بايتيّةٌ تُغيّر الحكم، وترميزٌ غيرُ
+صالحٍ بثلاث صورٍ متمايزة، وحالاتٌ يبقى فيها التركيبُ أو الإفادةُ غيرَ مقروءَين.
 وهي مُجمَّدةٌ قبل قراءة أيّ نتيجة، فلا تُوسَّع ولا تُضيَّق بعد رؤية ما بلغ
 الإفادةَ منها.
 """
+
+DECLARED_INPUTS: Final[tuple[tuple[str, str], ...]] = tuple(
+    (case.case_id, case.hex_content) for case in DECLARED_CASES
+)
+"""مدخلاتُ الطلب: لكلّ حالةٍ معرّفُها ومحتواها السُّتّ عشريّ لا نصُّها."""
 
 COMPOSITION_IFADA_EXPERIMENT_NAMED_LAWS: Final[dict[str, str]] = {
     "AStopStaysInTheDenominator": (
         "AStopStaysInTheDenominator: الواقفُ والمؤجَّلُ والممنوع يُعَدّون في "
         "المقام كلِّه، ولا يُحذَف أحدُهم ليرتفع ما بلغ الإفادة. وكلُّ توقّفٍ "
         "يُنسَب إلى طبقته وجنسه لا إلى «فشل»"
+    ),
+    "ACaseIsRawBytesNotAString": (
+        "ACaseIsRawBytesNotAString: الحالةُ المُعلَنةُ بايتاتٌ خامٌّ تُكتَب في "
+        "الطلب ستَّ عشريّة، لا نصًّا مفكوكَ الترميز. وبذلك يدخل الترميزُ غيرُ "
+        "الصالح والتغييرُ البايتيُّ في العيّنة كما يدخل النصُّ السليم، ولا "
+        "يُستثنى ما لا يُفَكّ"
+    ),
+    "TheCensusIsBoundToItsRunRecord": (
+        "TheCensusIsBoundToItsRunRecord: الإحصاءُ لا يُقرأ إلّا من سجلِّ تشغيلٍ "
+        "تامٍّ صادرٍ عن السلطة، ويحمل بصمةَ محتوى طلبه. وموافقةُ الإحصاء "
+        "للسجلّ **تُقاس** في `agrees_with_the_run_record` حالةً حالةً، ولا "
+        "تُفترَض بكونهما شُغّلا في دالّةٍ واحدة"
     ),
     "TheRunIsNotTheOffer": (
         "TheRunIsNotTheOffer: سَوقُ المسار داخل السلطة التجريبية يُنتج سجلَّ "
@@ -179,7 +280,7 @@ def _implementation(
 ) -> tuple[str, Trace]:
     """شغِّل المسارَ على نصّ حالةٍ واحدة، واقرأ مخرجَه بالمفردة المجمّدة."""
 
-    source = input_content.encode("utf-8")
+    source = bytes.fromhex(input_content)
     run = context.invoke("run_bytes", lambda: run_bytes(source))
     token = ACCOUNTED_TOKEN if run.reached_ifada else UNACCOUNTED_TOKEN
     return token, run.trace
@@ -204,14 +305,58 @@ def run_under_the_experimental_authority(
 class PathCensus:
     """إحصاءُ سَوقٍ واحدٍ للعيّنة: ما بلغ كلَّ طبقة، وما وقف فيها، ولماذا."""
 
+    record: ExperimentalRunRecord
+    cases: tuple[DeclaredCase, ...]
     runs: tuple[PathRun, ...]
 
     def __post_init__(self) -> None:
+        if type(self.record) is not ExperimentalRunRecord:
+            raise CompositionIfadaExperimentError(
+                "الإحصاءُ مربوطٌ بسجلِّ تشغيلٍ صادرٍ عن السلطة، لا بقياسٍ حرّ."
+            )
+        if self.record.outcome_status is not ExperimentalOutcomeStatus.COMPLETED:
+            raise CompositionIfadaExperimentError(
+                "لا يُقرأ إحصاءٌ من سجلٍّ لم يتمّ؛ وسببُ عدم تمامه يُقرأ في موضعه."
+            )
         if type(self.runs) is not tuple or not self.runs:
             raise CompositionIfadaExperimentError("إحصاءٌ بلا سَوقٍ واحدٍ لا يُقرأ.")
-        for run in self.runs:
-            if type(run) is not PathRun:
-                raise CompositionIfadaExperimentError("كلُّ مقروءٍ سَوقٌ مُصاغ.")
+        if len(self.cases) != len(self.runs):
+            raise CompositionIfadaExperimentError("لكلّ حالةٍ مُعلَنةٍ سَوقُها.")
+        for case, run in zip(self.cases, self.runs, strict=True):
+            if type(run) is not PathRun or type(case) is not DeclaredCase:
+                raise CompositionIfadaExperimentError("كلُّ مقروءٍ حالةٌ وسَوقُها.")
+            if run.source != case.source:
+                raise CompositionIfadaExperimentError(
+                    "سَوقُ الحالة يُقرأ من بايتاتها نفسِها لا من بايتاتٍ أخرى."
+                )
+
+    @property
+    def record_tokens(self) -> MappingProxyType[str, str]:
+        """مفرداتُ الجواب كما كتبها سجلُّ التشغيل نفسُه، لا كما أعدناها."""
+
+        content = self.record.output_content or ""
+        tokens: dict[str, str] = {}
+        for line in content.splitlines():
+            case_id, _, token = line.partition("=")
+            tokens[case_id] = token
+        return MappingProxyType(tokens)
+
+    @property
+    def agrees_with_the_run_record(self) -> bool:
+        """أيوافق ما أحصيناه ما كتبه السجلُّ لكلّ حالةٍ بعينها؟
+
+        وهذا ربطُ الإحصاء بالسجلّ قياسًا لا دعوى: لو أحصينا سَوقًا غيرَ الذي
+        شغّلته السلطةُ لَظهر الخُلفُ ههنا ولم يُطوَ.
+        """
+
+        tokens = self.record_tokens
+        if set(tokens) != {case.case_id for case in self.cases}:
+            return False
+        for case, run in zip(self.cases, self.runs, strict=True):
+            expected = ACCOUNTED_TOKEN if run.reached_ifada else UNACCOUNTED_TOKEN
+            if tokens[case.case_id] != expected:
+                return False
+        return True
 
     @property
     def input_total(self) -> int:
@@ -292,11 +437,19 @@ class PathCensus:
         return sum(1 for run in self.runs if run.reached_ifada)
 
 
-def measure() -> PathCensus:
-    """سُق العيّنةَ المُعلَنةَ كلَّها في المسار، واقرأ إحصاءَها."""
+def measure(*, run_id: str = "composition-ifada-run") -> PathCensus:
+    """سُق العيّنةَ تحت السلطة، ثمّ اقرأ إحصاءَها مربوطًا بسجلِّ تشغيلها.
 
+    ولا إحصاءَ ههنا خارجَ سلطة: السجلُّ يُشتَقّ أوّلًا، ثمّ تُعاد قراءةُ كلّ
+    حالةٍ من بايتاتها نفسِها، ويُقاس توافقُ القراءتين في
+    `agrees_with_the_run_record` ولا يُفترَض.
+    """
+
+    record = run_under_the_experimental_authority(run_id=run_id)
     return PathCensus(
-        tuple(run_bytes(text.encode("utf-8")) for _, text in DECLARED_INPUTS)
+        record=record,
+        cases=DECLARED_CASES,
+        runs=tuple(run_bytes(case.source) for case in DECLARED_CASES),
     )
 
 
@@ -304,6 +457,11 @@ def render_census(census: PathCensus) -> str:
     """اعرض الإحصاءَ نصًّا، بلا نسبةٍ تُكتَب على مقامٍ لم يُسمَّ."""
 
     lines = [
+        f"سجلُّ التشغيل: {census.record.run_id}"
+        f" ({census.record.outcome_status.value})",
+        f"بصمةُ محتوى الطلب: {census.record.request_content_digest[:16]}…",
+        f"الإحصاءُ يوافق السجلَّ: {census.agrees_with_the_run_record}",
+        "",
         f"المدخلاتُ المُعلَنة: {census.input_total}",
         f"الكلماتُ المقروءة: {census.word_total}"
         f" — استرجاعًا كتابيًّا: {census.word_retrieved}",
@@ -320,6 +478,20 @@ def render_census(census: PathCensus) -> str:
     lines.extend(["", "| حالُ الإفادة | العدد |", "| --- | --- |"])
     for standing, count in census.ifada_counts.items():
         lines.append(f"| {standing.value} | {count} |")
+    lines.extend(
+        [
+            "",
+            "| الحالة | بايتاتٌ | بصمتُها | بلغ | الجواب |",
+            "| --- | --- | --- | --- | --- |",
+        ]
+    )
+    tokens = census.record_tokens
+    for case, run in zip(census.cases, census.runs, strict=True):
+        answer = tokens[case.case_id].split(":", 1)[0]
+        lines.append(
+            f"| {case.case_id} | {case.byte_length} | {case.source_digest[:12]}…"
+            f" | {run.reached.value} | {answer} |"
+        )
     return "\n".join(lines)
 
 
