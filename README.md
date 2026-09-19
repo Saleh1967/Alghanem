@@ -6582,6 +6582,49 @@ that gap and no wider. Under downward closure this is sharpest — **0** gaps ar
 undecided, because every member is by construction a subset of something
 observed.
 
+## Rank is vertical, not horizontal — and what is left is a measure
+
+The two verdicts above look contradictory: sufficiency and uniqueness *proven*,
+then existence *refuted*. They are not. They were asked on two different axes,
+and `src/alghanem/arabic/fiber_bundle_verdict.py` names both, with the shape
+stated once:
+
+> a fiber bundle whose base is not graded, whose fibers are all graded, carrying
+> a complete additive measure.
+
+**Vertically the grading is exceptionless.** For every carrier the interval
+`[∅, E_b]` is graded by cardinality — **23 of 23**, zero exceptions, at observed
+depths `{1, 2, 3, 4, 6}`. **Horizontally it fails**: the order on the 16 distinct
+fibers is not graded and splits into **2** components, so there is no rank
+function on the base. Asking `rank_exists_on(...)` without naming an axis is
+refused, because the axis confusion is what produced the two verdicts in the
+first place.
+
+**What survives is a measure, not a rank.** `μ(X) = |X|` satisfies
+`μ(X∪Y) + μ(X∩Y) = μ(X) + μ(Y)` with **0** breaches over all **9,216** pairs of
+the `∪∩` closure, and 0 over all 16,384 pairs of the Boolean one. A measure
+weighs differences; a rank counts steps. They are two questions.
+
+**And the step question fails globally, not pairwise.** Of **46** comparable
+pairs, the step count is single-valued for **42** and ambiguous for **4**. So
+"how many degrees from `ا` to `ل`?" *does* have an answer here — **3**, along
+one chain — while `س` to `ل` has two, `{3, 4}`. What collapses is a *total* step
+function on the base, not every count of steps; the difference `μ(ل) − μ(ا) = 5`
+is defined for all 46.
+
+**Downward closure fails for 10 of 23 carriers**, and that is left undecided
+rather than read as prohibition: the alternative is that the absence is a
+sampling zero, and no instrument in this tree measures that yet.
+
+**The wider-corpus numbers are recorded as claims, not measurements.** `|B|=36`,
+`|A|=8`, `8,464`, `89`, `13/36`, `76.9%` and the rest are bound to a corpus
+whose bytes are deliberately absent from the tree, so each is deposited with the
+written reason it cannot be re-derived here. But one limit is overstated: that
+corpus is *not* undeposited. Its name, byte length, SHA-256 and its explicit
+"no normalization whatsoever" policy are frozen in
+`compression_model_preregistration`. It is unnormalized **by declaration**, and
+what is missing is the bytes, on purpose — not the fingerprint.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
