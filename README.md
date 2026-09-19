@@ -6741,6 +6741,50 @@ domain can satisfy a condition, and none exists. So the zero is derived by
 reading evidence, and the candidate's rank is not raised to a completed
 certificate merely because experiments now run.
 
+## The hamza fiber keeps some rasm, and is not a phonetic fiber
+
+The carrier/state codec records a hamza's carrier and its **seat**, and nothing
+else. `src/alghanem/arabic/hamza_contract.py` separates what the seat conflates
+into four fields answering four different questions: **identity** (is this a
+hamza at all, or a madd alif with no hamza in it), **seat** (how it is drawn),
+**function** (qat' or wasl in the structure), and **contextual realization**
+(how it came out in this position).
+
+**The seat is checked, not believed.** Every `HamzaOccurrence` runs
+`CarrierStateCodec` over its own surface and refuses a recorded seat that
+disagrees with what the codec actually reads. Function and realization, by
+contrast, are **declared per occurrence with a written source**, because
+wasl-hood is not decidable from the written marks — the bare alif of
+`الْحَمْدُ` carries no mark that says so, as
+`ibtida_wasl_waqf_registration` already names.
+
+**Contradictory combinations are refused structurally.** A wasl is not drawn on
+a hamza seat; elision in `darj` and ibtida-only realization belong to wasl, not
+qat'; lengthening and the madda seat do not come apart; and what is not a hamza
+carries neither a hamza function nor a hamza realization.
+
+**Each field is tested twice, not once.** Necessity asks whether deleting it
+merges two occurrences demanding different content. Derivability asks whether
+the remaining three fields *functionally determine* it over the declared domain.
+On the `10` declared occurrences the seat and the realization are necessary and
+undetermined; identity and function are determined by the rest — which means
+their *information* is carried, while a separate stored *field* is not forced on
+this domain. Determination on a finite designed domain is not a derivation rule
+in Arabic, and it may be an artifact of the contract's own refusals rather than
+of the language; both are named residuals.
+
+**The codec's merge is exhibited, not asserted.** Running the codec over the
+same domain yields fewer distinct outputs than the contract does, and the merged
+rows are kept **with their contents** rather than summarised as a rate. The wasl
+alif, the ibtida-only alif, and the madd alif of `قَالَ` all collapse into one
+codec output. So the present fiber preserves some differences of rasm — the
+seats stay apart — and is not a complete phonetic fiber.
+
+**And the alif's neutrality closes nothing.** That neutrality was measured on
+axes where madd is frozen as deferred, and the alif is the likeliest carrier of
+madd; so the neutrality may be an artifact of the deferral. It may not be used
+to close the birth of the syllable.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
