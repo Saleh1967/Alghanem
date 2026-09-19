@@ -63,6 +63,26 @@ COMPOSITION_IFADA_CONSUMPTION_NAMED_LAWS: Final[dict[str, str]] = {
         "الصيغة المجرّدة للوحدات نفسِها، فلا تُكتَب قائمةٌ يدويّةٌ تُصدَّق. وكلُّ "
         "عددٍ في هذا الإحصاء مخرجُ قياسٍ لا رقمٌ مُصرَّح"
     ),
+    "EveryDerivedEdgeMustResolveToAFile": (
+        "EveryDerivedEdgeMustResolveToAFile: كلُّ حافّةٍ مُشتَقّةٍ تُسمّي وحدةً "
+        "قائمةً على القرص. فاسمٌ لا يُحَلّ إلى ملفٍ خللٌ في المطابقة لا غيابُ "
+        "اتّصال، ويُكشَف بتدقيقٍ يمرّ على الحوافّ كلِّها قبل أن يُقرأ الإحصاء"
+    ),
+    "AnImportIsNotACall": (
+        "AnImportIsNotACall: استيرادُ اسمٍ ليس استدعاءَه. فقد يُستورَد ما لا "
+        "يُستعمَل، فيُعَدّ الاستيرادُ وحدَه اعتمادًا وهو جوارٌ ساكن؛ ولذلك "
+        "يُفصَل عدُّ المستورَد عن عدِّ المُستدعى، ولا يُطوى أحدُهما في الآخر"
+    ),
+    "ACallIsNotAnOutput": (
+        "ACallIsNotAnOutput: استدعاءُ دالّةٍ ليس بلوغَ مخرجها سجلَّ السَّوق. "
+        "فقد يُستدعى ما يُتحقَّق به أو يُسجَّل به ثمّ لا يدخل في المخرج؛ "
+        "وبلوغُ المخرج يُقاس على حِدة أو يُسمّى بقيّة"
+    ),
+    "TheCallTraceIsStaticNotDynamic": (
+        "TheCallTraceIsStaticNotDynamic: تتبُّعُ الاستدعاء يقرأ شجرةَ الصيغة "
+        "المجرّدة، فلا يرى استيرادًا يقع زمنَ التشغيل ولا إرسالًا غيرَ مباشرٍ "
+        "عبر متغيّرٍ أو جدول. وهذه بقيّةٌ مُسمّاةٌ لازمةٌ للمقياس لا عيبٌ عارض"
+    ),
     "ACountIsNotAChain": (
         "ACountIsNotAChain: اجتماعُ أعدادٍ في مستودعٍ واحدٍ لا يجعلها سلسلةَ "
         "انتقالٍ مغلقة. فيلزم لكلِّ حافّةٍ مصدرٌ ومقصدٌ وهويّةٌ محفوظةٌ وبقيّةٌ "
@@ -139,15 +159,34 @@ def _module_file(module: str) -> Path | None:
     return package if package.is_file() else None
 
 
-def _imports_of(path: Path, module: str) -> frozenset[str]:
-    """اقرأ وحداتِ `alghanem` المستورَدةَ في ملفٍ واحد، والنسبيُّ يُحَلّ لمطلقه."""
-
+def _parse(path: Path, module: str) -> ast.Module:
     try:
-        tree = ast.parse(path.read_text(encoding="utf-8"))
+        return ast.parse(path.read_text(encoding="utf-8"))
     except (OSError, SyntaxError) as error:  # pragma: no cover - حارسُ قراءة
         raise IfadaConsumptionError(f"تعذّرت قراءةُ {module}: {error}") from error
+
+
+def _containing_package(path: Path, module: str) -> str:
+    """الحزمةُ التي يُحَلّ إليها الاستيرادُ النسبيّ؛ و`__init__` حزمتُه نفسُها.
+
+    وهذا موضعُ خللٍ مقصودِ التصحيح: مَن حَلَّ نسبيَّ `__init__.py` إلى حزمته
+    الأمّ أخرج أسماءَ وحداتٍ لا وجودَ لها، فأسقط حوافَّ إعادة التصدير كلَّها
+    صامتًا (`EveryDerivedEdgeMustResolveToAFile`).
+    """
+
+    return module if path.name == "__init__.py" else module.rsplit(".", 1)[0]
+
+
+def _imports_of(path: Path, module: str) -> frozenset[str]:
+    """اقرأ وحداتِ `alghanem` المستورَدةَ في ملفٍ واحد، والنسبيُّ يُحَلّ لمطلقه.
+
+    و`from حزمة import وحدة` حافّةٌ إلى الوحدة لا إلى حزمتها وحدَها؛ فمن عدَّها
+    حافّةً واحدةً أسقط المقصودَ وأبقى وسيطَه.
+    """
+
+    tree = _parse(path, module)
     found: set[str] = set()
-    package = module.rsplit(".", 1)[0]
+    package = _containing_package(path, module)
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             found.update(
@@ -160,9 +199,17 @@ def _imports_of(path: Path, module: str) -> frozenset[str]:
                 base = package
                 for _ in range(node.level - 1):
                     base = base.rsplit(".", 1)[0]
-                found.add(f"{base}.{node.module}" if node.module else base)
+                target = f"{base}.{node.module}" if node.module else base
             elif node.module and node.module.split(".")[0] == "alghanem":
-                found.add(node.module)
+                target = node.module
+            else:
+                continue
+            found.add(target)
+            found.update(
+                candidate
+                for alias in node.names
+                if _module_file(candidate := f"{target}.{alias.name}") is not None
+            )
     return frozenset(found)
 
 
@@ -187,12 +234,51 @@ def derive_import_closure() -> tuple[str, ...]:
     return tuple(sorted(seen))
 
 
+def _bound_names_from(module_path: Path, module: str, prefix: str) -> set[str]:
+    """الأسماءُ التي تُربَط في هذه الوحدة من جبرٍ بعينه، لا أسماءُ وحداته."""
+
+    package = _containing_package(module_path, module)
+    bound: set[str] = set()
+    for node in ast.walk(_parse(module_path, module)):
+        if not isinstance(node, ast.ImportFrom):
+            continue
+        if node.level:
+            base = package
+            for _ in range(node.level - 1):
+                base = base.rsplit(".", 1)[0]
+            target = f"{base}.{node.module}" if node.module else base
+        elif node.module:
+            target = node.module
+        else:  # pragma: no cover - حارسُ قراءة
+            continue
+        if target == prefix or target.startswith(f"{prefix}."):
+            bound.update(alias.asname or alias.name for alias in node.names)
+    return bound
+
+
+def _called_names(module_path: Path, module: str) -> set[str]:
+    """الأسماءُ الواقعةُ في موضع الاستدعاء؛ والمنقوطُ يُرَدّ إلى جذره."""
+
+    called: set[str] = set()
+    for node in ast.walk(_parse(module_path, module)):
+        if not isinstance(node, ast.Call):
+            continue
+        func = node.func
+        while isinstance(func, ast.Attribute):
+            func = func.value
+        if isinstance(func, ast.Name):
+            called.add(func.id)
+    return called
+
+
 @dataclass(frozen=True, slots=True)
 class ConsumptionRow:
     """صفُّ جبرٍ واحد: أهو داخلَ الإغلاقة، وبأيِّ وحداتٍ إن كان؟"""
 
     algebra: CandidateAlgebra
     reached_modules: tuple[str, ...]
+    bound_names: tuple[str, ...] = ()
+    called_names: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if type(self.algebra) is not CandidateAlgebra:
@@ -201,12 +287,39 @@ class ConsumptionRow:
             raise IfadaConsumptionError("الوحداتُ المبلوغةُ صفٌّ مرتَّب.")
         if tuple(sorted(self.reached_modules)) != self.reached_modules:
             raise IfadaConsumptionError("الوحداتُ المبلوغةُ مرتَّبةٌ ترتيبًا واحدًا.")
+        for field_name in ("bound_names", "called_names"):
+            names = getattr(self, field_name)
+            if not isinstance(names, tuple):
+                raise IfadaConsumptionError(f"{field_name} صفٌّ مرتَّب.")
+            if tuple(sorted(names)) != names:
+                raise IfadaConsumptionError(f"{field_name} مرتَّبٌ ترتيبًا واحدًا.")
+        if not set(self.called_names) <= set(self.bound_names):
+            raise IfadaConsumptionError(
+                "المُستدعى من هذا الجبر جزءٌ من المربوط منه؛ و"
+                + COMPOSITION_IFADA_CONSUMPTION_NAMED_LAWS["AnImportIsNotACall"]
+            )
+        if self.bound_names and not self.reached_modules:
+            raise IfadaConsumptionError("أسماءٌ مربوطةٌ بلا وحدةٍ مبلوغةٍ تناقض.")
 
     @property
     def is_consumed(self) -> bool:
         """أيستهلك مسارُ الإفادة هذا الجبرَ بحافّةِ استيرادٍ مقروءة؟"""
 
         return bool(self.reached_modules)
+
+    @property
+    def is_called(self) -> bool:
+        """أيُستدعى من هذا الجبر اسمٌ واحدٌ؟ فالاستيرادُ وحدَه جوارٌ ساكن."""
+
+        return bool(self.called_names)
+
+    @property
+    def imported_but_unused(self) -> tuple[str, ...]:
+        """ما استُورِد من هذا الجبر ولم يقع في موضع استدعاء."""
+
+        return tuple(
+            name for name in self.bound_names if name not in set(self.called_names)
+        )
 
     @property
     def residual(self) -> str | None:
@@ -261,6 +374,32 @@ class ConsumptionCensus:
         return bool(self.consumed)
 
     @property
+    def called(self) -> tuple[ConsumptionRow, ...]:
+        """الجبورُ التي استُدعي منها اسمٌ واحدٌ على الأقلّ داخل الإغلاقة."""
+
+        return tuple(row for row in self.rows if row.is_called)
+
+    @property
+    def any_wider_algebra_is_called(self) -> bool:
+        """أيُستدعى من جبرٍ أوسعَ شيءٌ؟ وهو سؤالٌ وراء الاستيراد لا عينُه."""
+
+        return bool(self.called)
+
+    @property
+    def output_reach_is_measured(self) -> bool:
+        """أيمكن أصلًا قياسُ بلوغ المخرج؟ ولا مخرجَ يُتتبَّع حيث لا استدعاء."""
+
+        return self.any_wider_algebra_is_called
+
+    @property
+    def what_the_call_trace_cannot_see(self) -> str:
+        """البقيّةُ اللازمةُ للمقياس: ما لا تراه القراءةُ الساكنةُ بحال."""
+
+        return COMPOSITION_IFADA_CONSUMPTION_NAMED_LAWS[
+            "TheCallTraceIsStaticNotDynamic"
+        ]
+
+    @property
     def census_digest(self) -> str:
         """بصمةُ الإحصاء؛ تتغيّر بتغيّر الإغلاقة أو صفوفها."""
 
@@ -269,6 +408,7 @@ class ConsumptionCensus:
                 {
                     "closure": list(self.closure),
                     "consumed": [row.algebra.module_prefix for row in self.consumed],
+                    "called": [row.algebra.module_prefix for row in self.called],
                 }
             )
         )
@@ -278,19 +418,36 @@ def derive_consumption_census() -> ConsumptionCensus:
     """اشتقّ الإحصاءَ كلَّه من الشيفرة؛ ولا يُصرَّح فيه عددٌ ولا عضويّة."""
 
     closure = derive_import_closure()
-    rows = tuple(
-        ConsumptionRow(
-            algebra=algebra,
-            reached_modules=tuple(
-                module
-                for module in closure
-                if module == algebra.module_prefix
-                or module.startswith(f"{algebra.module_prefix}.")
-            ),
-        )
-        for algebra in CANDIDATE_ALGEBRAS
+    members = tuple(
+        (module, path)
+        for module in closure
+        if (path := _module_file(module)) is not None
     )
-    return ConsumptionCensus(closure=closure, rows=rows)
+    rows: list[ConsumptionRow] = []
+    for algebra in CANDIDATE_ALGEBRAS:
+        prefix = algebra.module_prefix
+        reached = tuple(
+            module
+            for module in closure
+            if module == prefix or module.startswith(f"{prefix}.")
+        )
+        bound: set[str] = set()
+        called: set[str] = set()
+        for module, path in members:
+            names = _bound_names_from(path, module, prefix)
+            if not names:
+                continue
+            bound |= names
+            called |= names & _called_names(path, module)
+        rows.append(
+            ConsumptionRow(
+                algebra=algebra,
+                reached_modules=reached,
+                bound_names=tuple(sorted(bound)),
+                called_names=tuple(sorted(called)),
+            )
+        )
+    return ConsumptionCensus(closure=closure, rows=tuple(rows))
 
 
 def render_consumption_census(census: ConsumptionCensus) -> str:
@@ -301,18 +458,22 @@ def render_consumption_census(census: ConsumptionCensus) -> str:
         f"وحداتُ الإغلاقة: {census.closure_size}",
         f"بصمةُ الإحصاء: {census.census_digest}",
         "",
-        "| الجبرُ المرشَّح | مستهلَك | وحداتٌ مبلوغة |",
-        "| --- | --- | --- |",
+        "| الجبرُ المرشَّح | مستورَد | مُستدعى | وحداتٌ مبلوغة |",
+        "| --- | --- | --- | --- |",
     ]
     lines.extend(
         f"| {row.algebra.name} | {'نعم' if row.is_consumed else 'لا'} "
-        f"| {len(row.reached_modules)} |"
+        f"| {'نعم' if row.is_called else 'لا'} | {len(row.reached_modules)} |"
         for row in census.rows
     )
     lines.extend(
         [
             "",
-            f"أيستهلك المسارُ جبرًا أوسعَ: {census.any_wider_algebra_is_consumed}",
+            f"أيستورد المسارُ جبرًا أوسعَ: {census.any_wider_algebra_is_consumed}",
+            f"أيستدعي منه شيئًا: {census.any_wider_algebra_is_called}",
+            f"أيمكن قياسُ بلوغ المخرج: {census.output_reach_is_measured}",
+            "",
+            f"ما لا يراه التتبّع: {census.what_the_call_trace_cannot_see}",
             "",
             "البقايا المُسمّاةُ عند الفجوات:",
         ]
