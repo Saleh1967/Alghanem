@@ -125,7 +125,15 @@ __all__ = [
     "A_DESIGNED_WITNESS_IS_NOT_AN_EXECUTED_CODEC_TEST_NOTE",
     "A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING_NOTE",
     "A_SEALED_RULE_IS_CHECKED_FOR_OVERLAP_NOT_FOR_MEMORY_NOTE",
+    "A_HOLDOUT_IS_AUDITED_ON_OUTPUTS_AND_TARGETS_NOT_ON_CASE_IDENTITY_NOTE",
+    "A_HELD_RECONSTRUCTION_IS_NOT_AN_INDEPENDENT_READER_NOTE",
+    "AN_AUDITED_HOLDOUT_PROVES_RETRIEVAL_NOT_A_LINGUISTIC_RULE_NOTE",
+    "NO_READER_IN_THIS_TREE_CLOSES_THE_REBUILDING_REQUIREMENT_NOTE",
     "READER_INDEPENDENCE_IS_A_MECHANISM_NOT_A_LABEL_NOTE",
+    "VERIFIED_RULE_PROVENANCES",
+    "ReconstructionClosureDecision",
+    "ReconstructionClosureStanding",
+    "assess_reconstruction_closure",
     "FOUR_FIELDS_CARRY_THREE_FUNCTIONS_NOTE",
     "MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS",
     "ONE_IS_A_NAMED_ATTRIBUTION_NOT_A_TRUE_PROPOSITION_NOTE",
@@ -619,8 +627,15 @@ class ReaderProvenance(Enum):
     """منشأُ القارئ، **مُشتقًّا من آليّةٍ** لا موسومًا بيدِ مستدعيه."""
 
     BUILT_FROM_THE_DOMAIN_TARGET_TABLE = "مبنيٌّ_من_جدول_أهداف_المجال"
+    SEALED_BY_HAND_AND_NOT_STRUCTURALLY_AUDITABLE = "مختومٌ_بيدٍ_لا_يُدقَّق_بنيويًّا"
     FIXED_BEFORE_THE_EVALUATION_DATA = "قاعدتُه_مثبَّتةٌ_قبل_بيانات_التقييم"
     UNDECLARED_PROVENANCE = "منشأٌ_غيرُ_مُعلَن"
+
+
+VERIFIED_RULE_PROVENANCES: Final[frozenset[ReaderProvenance]] = frozenset(
+    {ReaderProvenance.FIXED_BEFORE_THE_EVALUATION_DATA}
+)
+"""المناشئُ التي تُدقَّق بنيويًّا؛ وما عداها لا يُغلِق شرطَ إعادة البناء."""
 
 
 class ReaderRuleOrigin(Enum):
@@ -642,14 +657,15 @@ class SealedReaderRule:
     rule_note: str
     origin: ReaderRuleOrigin
     disclosed_elements: frozenset[FiberElement]
+    disclosed_outputs: frozenset[tuple[str | None, ...]]
+    disclosed_contents: frozenset[str]
     _rule: Reader
 
     def __post_init__(self) -> None:
         if not self.rule_note.strip():
             raise MinimalCompleteFiberError("قاعدةٌ بلا بيانٍ مكتوبٍ لا تُراجَع")
-        if (
-            self.origin is ReaderRuleOrigin.SEALED_BEFORE_ANY_CASE
-            and self.disclosed_elements
+        if self.origin is ReaderRuleOrigin.SEALED_BEFORE_ANY_CASE and (
+            self.disclosed_elements or self.disclosed_outputs or self.disclosed_contents
         ):
             raise MinimalCompleteFiberError(
                 "قاعدةٌ يُدّعى ختمُها قبل الحالات وقد رأت حالاتٍ؛ والدعوى تناقض بناءها"
@@ -662,12 +678,17 @@ def a_rule_sealed_before_any_case(rule: Reader, rule_note: str) -> SealedReaderR
     وهذا الختمُ يضبط **مدخلَ** القاعدة لا ذاكرتَها: لا سبيل لهذه الوحدة أن تفحص
     جوفَ دالّةٍ مكتوبةٍ بلغة البرمجة، فتبقى صحّةُ كونِها مغلقةً مقروءةً من
     شفرتها لا مبرهنةً ههنا (`A_SEALED_RULE_IS_CHECKED_FOR_OVERLAP_NOT_FOR_MEMORY`).
+    ولذلك **لا يُغلِق** قارئُها شرطَ إعادة البناء ولو قامت به الكفاية: خلوُّ
+    جداول الإفصاح ههنا مُعطًى بالبناء لا مُدقَّقٌ، فمنشؤه
+    `SEALED_BY_HAND_AND_NOT_STRUCTURALLY_AUDITABLE`.
     """
 
     return SealedReaderRule(
         rule_note=rule_note,
         origin=ReaderRuleOrigin.SEALED_BEFORE_ANY_CASE,
         disclosed_elements=frozenset(),
+        disclosed_outputs=frozenset(),
+        disclosed_contents=frozenset(),
         _rule=rule,
     )
 
@@ -697,6 +718,10 @@ def a_rule_trained_on(
         rule_note=rule_note,
         origin=ReaderRuleOrigin.A_TABLE_BUILT_FROM_CASES,
         disclosed_elements=frozenset(case.element for case in training_domain.cases),
+        disclosed_outputs=frozenset(
+            representation(case.element) for case in training_domain.cases
+        ),
+        disclosed_contents=frozenset(case.content for case in training_domain.cases),
         _rule=rule,
     )
 
@@ -712,6 +737,8 @@ class ProvenancedReader:
 
     rule: SealedReaderRule
     evaluation_elements: frozenset[FiberElement]
+    evaluation_outputs: frozenset[tuple[str | None, ...]]
+    evaluation_contents: frozenset[str]
 
     @property
     def leaked_elements(self) -> frozenset[FiberElement]:
@@ -720,10 +747,36 @@ class ProvenancedReader:
         return self.rule.disclosed_elements & self.evaluation_elements
 
     @property
-    def is_held_out(self) -> bool:
-        """أحُجِب عن مجال تقييمه؟ يُقرَأ من خلوّ التقاطع لا من وصفٍ مكتوب."""
+    def leaked_outputs(self) -> frozenset[tuple[str | None, ...]]:
+        """مخرجاتُ التمثيل المشتركة؛ فاختلافُ معرّفات الحالات لا يكفي دليلًا."""
 
-        return not self.leaked_elements
+        return self.rule.disclosed_outputs & self.evaluation_outputs
+
+    @property
+    def leaked_contents(self) -> frozenset[str]:
+        """الأهدافُ المشتركة؛ فقاعدةٌ رأت جوابَ التقييم ليست محجوبةً عنه."""
+
+        return self.rule.disclosed_contents & self.evaluation_contents
+
+    @property
+    def is_held_out(self) -> bool:
+        """أحُجِب عن مجال تقييمه؟ يُقرَأ من خلوّ التقاطعات الثلاثة مجتمعةً.
+
+        فلا يُقاس الحجبُ بمعرّفات `FiberElement` وحدَها: يُدقَّق كذلك على
+        مخرجات التمثيل وعلى الأهداف نفسِها
+        (`A_HOLDOUT_IS_AUDITED_ON_OUTPUTS_AND_TARGETS_NOT_ON_CASE_IDENTITY`).
+        """
+
+        return not (self.leaked_elements or self.leaked_outputs or self.leaked_contents)
+
+    @property
+    def holdout_is_constructive(self) -> bool:
+        """أبُني الحجبُ بناءً يُدقَّق، أم خُتِم بيدٍ لا تُفحَص ذاكرتُها؟"""
+
+        return (
+            self.rule.origin is ReaderRuleOrigin.A_TABLE_BUILT_FROM_CASES
+            and self.is_held_out
+        )
 
     @property
     def rule_note(self) -> str:
@@ -733,8 +786,16 @@ class ProvenancedReader:
 
     @property
     def provenance(self) -> ReaderProvenance:
-        """منشأُ القارئ، مُشتقًّا من آليّة الختم والحجب لا من وسمٍ يُعطى."""
+        """منشأُ القارئ، مُشتقًّا من آليّة الختم والحجب لا من وسمٍ يُعطى.
 
+        و`FIXED_BEFORE_THE_EVALUATION_DATA` مقصورةٌ على حجبٍ **بنائيٍّ**
+        مُدقَّق: جدولٌ مبنيٌّ من شطر تدريبٍ مُسمًّى، انفصلت حالاتُه ومخرجاتُه
+        وأهدافُه عن شطر التقييم. أمّا الختمُ اليدويُّ فمنشؤه يُسمّى باسمه، ولا
+        يُرقّى بمجرّد خلوّ جداولَ لم تُملأ أصلًا.
+        """
+
+        if self.rule.origin is ReaderRuleOrigin.SEALED_BEFORE_ANY_CASE:
+            return ReaderProvenance.SEALED_BY_HAND_AND_NOT_STRUCTURALLY_AUDITABLE
         if not self.is_held_out:
             return ReaderProvenance.BUILT_FROM_THE_DOMAIN_TARGET_TABLE
         return ReaderProvenance.FIXED_BEFORE_THE_EVALUATION_DATA
@@ -752,18 +813,25 @@ def reader_provenance_of(reader: Reader) -> ReaderProvenance:
 
 
 def hold_out_reader(
-    rule: SealedReaderRule, evaluation_domain: DeclaredDomain
+    rule: SealedReaderRule,
+    evaluation_domain: DeclaredDomain,
+    representation: Representation,
 ) -> ProvenancedReader:
     """احجِب قاعدةً مختومةً عن مجال تقييمٍ مُسمًّى، ثمّ اقرأ منشأها من الحجب.
 
     وهذه هي السبيلُ الوحيدةُ إلى `FIXED_BEFORE_THE_EVALUATION_DATA`: لا تُعطى
     بالتسمية، وإنّما تُشتَقّ من انفصال ما رأته القاعدةُ عمّا تُقيَّم عليه
-    (`READER_INDEPENDENCE_IS_A_MECHANISM_NOT_A_LABEL`).
+    (`READER_INDEPENDENCE_IS_A_MECHANISM_NOT_A_LABEL`). ويُطلَب التمثيلُ ههنا
+    ليُدقَّق التداخلُ على مخرجاته كما يُدقَّق على الحالات والأهداف.
     """
 
     return ProvenancedReader(
         rule=rule,
         evaluation_elements=frozenset(case.element for case in evaluation_domain.cases),
+        evaluation_outputs=frozenset(
+            representation(case.element) for case in evaluation_domain.cases
+        ),
+        evaluation_contents=frozenset(case.content for case in evaluation_domain.cases),
     )
 
 
@@ -844,6 +912,7 @@ def lookup_reader(domain: DeclaredDomain, representation: Representation) -> Rea
             "ولا يُغلِق شرطَ القارئ المستقلّ بحال",
         ),
         domain,
+        representation,
     )
 
 
@@ -1245,27 +1314,94 @@ NO_EVIDENCE_KIND_HERE_CLOSES: Final[frozenset[ClosureRequirement]] = frozenset(
 """شروطٌ لا يُغلِقها جنسُ شاهدٍ مُعرَّفٌ في هذه الوحدة، فتبقى مفتوحةً بالبناء."""
 
 
+class ReconstructionClosureStanding(Enum):
+    """حالُ شرط إعادة البناء بعد فصل الاجتياز عن استحقاق الإغلاق."""
+
+    CLOSED_BY_AN_AUDITED_HOLDOUT = "مُغلَقٌ_بحجبٍ_مُدقَّق"
+    DEFERRED_FOR_WANT_OF_AN_AUDITABLE_READER = "مُرجأٌ_لانتفاء_قارئٍ_يُدقَّق"
+    REFUTED_BY_ITS_OWN_RUN = "منتقضٌ_بتشغيله"
+
+
+@dataclass(frozen=True, slots=True)
+class ReconstructionClosureDecision:
+    """قرارُ إغلاقِ شرط إعادة البناء، مع أجزاء الاقتران الثلاثة مفصولةً.
+
+    فنجاحُ إعادة البناء على المجال شيءٌ، واستقلالُ القارئ شيءٌ آخر، وصحّةُ
+    القاعدة اللغويّة شيءٌ ثالثٌ لا يُدّعى ههنا بحال
+    (`A_HELD_RECONSTRUCTION_IS_NOT_AN_INDEPENDENT_READER`).
+    """
+
+    standing: ReconstructionClosureStanding
+    sufficiency_held: bool
+    constructive_holdout: bool
+    verified_rule_provenance: bool
+    reader_provenance: ReaderProvenance
+
+    @property
+    def closes_the_requirement(self) -> bool:
+        """`CloseReconstruction` اقترانًا للثلاثة، لا اجتيازًا للكفاية وحدَها."""
+
+        return (
+            self.sufficiency_held
+            and self.constructive_holdout
+            and self.verified_rule_provenance
+        )
+
+
+def assess_reconstruction_closure(
+    evidence: ConditionEvidence,
+) -> ReconstructionClosureDecision:
+    """افصِل اجتيازَ الكفاية عن استحقاق إغلاق شرط القارئ المستقلّ.
+
+    `CloseReconstruction = SufficiencyHeld ∧ ConstructiveHoldout ∧
+    VerifiedRuleProvenance`. فإن قامت الكفايةُ ولم يوجد قارئٌ مُدقَّقٌ بنيويًّا
+    فالمُخرَجُ إرجاءٌ والشرطُ باقٍ مفتوحًا، لا نقضٌ للتجربة ولا إغلاقٌ لها.
+    """
+
+    outcome = evidence.outcome
+    reader = evidence.reader
+    sufficiency_held = (
+        evidence.run_kind is ConditionRunKind.SUFFICIENCY_ON_THE_FULL_REPRESENTATION
+        and outcome.standing is SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN
+    )
+    constructive_holdout = (
+        isinstance(reader, ProvenancedReader) and reader.holdout_is_constructive
+    )
+    verified_provenance = outcome.reader_provenance in VERIFIED_RULE_PROVENANCES
+    if not sufficiency_held:
+        standing = ReconstructionClosureStanding.REFUTED_BY_ITS_OWN_RUN
+    elif constructive_holdout and verified_provenance:
+        standing = ReconstructionClosureStanding.CLOSED_BY_AN_AUDITED_HOLDOUT
+    else:
+        standing = (
+            ReconstructionClosureStanding.DEFERRED_FOR_WANT_OF_AN_AUDITABLE_READER
+        )
+    return ReconstructionClosureDecision(
+        standing=standing,
+        sufficiency_held=sufficiency_held,
+        constructive_holdout=constructive_holdout,
+        verified_rule_provenance=verified_provenance,
+        reader_provenance=outcome.reader_provenance,
+    )
+
+
 def requirement_is_closed_by(
     requirement: ClosureRequirement, evidence: ConditionEvidence
 ) -> bool:
     """أتُغلِق نتيجةُ هذا الشاهد هذا الشرطَ بعينه؟ يُقرَأ من التشغيل لا من المجال.
 
-    * شرطُ إعادة البناء: كفايةٌ **قائمة** بقارئٍ مثبَّتةٍ قاعدتُه قبل البيانات؛
-      وقارئُ الجدول لا يُغلِقه ولو قامت به الكفاية.
+    * شرطُ إعادة البناء: اقترانُ `assess_reconstruction_closure` الثلاثيّ؛
+      فقارئُ الجدول المدرَّب على مجاله لا يُغلِقه، ولا يُغلِقه ختمٌ يدويٌّ ولا
+      دالّةٌ بلا سندٍ ولو قامت بها الكفاية، وإنّما يُرجأ الشرطُ مفتوحًا.
     * شروطُ الضرورة الثلاثة: نقضٌ في تجربة حذفِ **ذلك المكوّن بعينه**.
     * ما عداها: لا يُغلِقه جنسُ شاهدٍ ههنا.
     """
 
     if requirement in NO_EVIDENCE_KIND_HERE_CLOSES:
         return False
-    outcome = evidence.outcome
     if requirement is ClosureRequirement.CONTENT_REBUILT_FROM_THE_OUTPUT_ALONE:
-        return (
-            evidence.run_kind is ConditionRunKind.SUFFICIENCY_ON_THE_FULL_REPRESENTATION
-            and outcome.standing is SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN
-            and outcome.reader_provenance
-            is ReaderProvenance.FIXED_BEFORE_THE_EVALUATION_DATA
-        )
+        return assess_reconstruction_closure(evidence).closes_the_requirement
+    outcome = evidence.outcome
     expected = _NECESSITY_REQUIREMENTS[requirement]
     return (
         evidence.run_kind is ConditionRunKind.DELETION_OF_A_NAMED_COMPONENT
@@ -1410,7 +1546,9 @@ THE_CLOSURE_CHECKLIST: Final[ClosureChecklist] = ClosureChecklist(
             ),
             why_it_is_open=(
                 "القارئُ مُجرًّى على المجال المصمَّم وحدَه، وهو قارئُ جدولٍ يثبت "
-                "تباينَ التمثيل لا فهمَه؛ ولا مدوّنةَ عربيّةً مُبصَّمةً يُقاس عليها"
+                "تباينَ التمثيل لا فهمَه؛ ولا مدوّنةَ عربيّةً مُبصَّمةً يُقاس عليها. "
+                "ولا قارئَ في هذه الشجرة يجمع قيامَ الكفاية إلى حجبٍ بنائيٍّ "
+                "مُدقَّق، فيُرجأ الشرطُ ولا يُغلَق"
             ),
             evidence=A_DESIGNED_RUN,
         ),
@@ -1587,9 +1725,39 @@ READER_INDEPENDENCE_IS_A_MECHANISM_NOT_A_LABEL_NOTE: Final[str] = (
 A_SEALED_RULE_IS_CHECKED_FOR_OVERLAP_NOT_FOR_MEMORY_NOTE: Final[str] = (
     "ASealedRuleIsCheckedForOverlapNotForMemory: فحصُ التقاطع ينفي التسريبَ "
     "عبر المسار المسجَّل وحدَه؛ ولا تبلغ هذه الوحدةُ جوفَ دالّةٍ مكتوبةٍ بلغة "
-    "البرمجة. فقاعدةٌ مختومةٌ تحمل أهدافَ التقييم في إغلاقها تجتاز البوّابةَ "
-    "وتُغلِق شرطَ إعادة البناء، وقد أُجريت هذه التجربةُ الخصميّةُ وسُجّلت؛ "
-    "فالاجتيازُ بختمٍ يدويٍّ دعوى مقروءةٌ من الشفرة لا مبرهنةٌ ههنا"
+    "البرمجة. فقاعدةٌ مختومةٌ بيدٍ قد تحمل أهدافَ التقييم في إغلاقها وتجتاز "
+    "تجربةَ الكفاية، وقد أُجريت هذه التجربةُ الخصميّةُ وسُجّلت؛ ولذلك مُنِع "
+    "الختمُ اليدويُّ من إغلاق شرط إعادة البناء، ويُرجأ الشرطُ مفتوحًا بدلَ أن "
+    "يُغلَق بدعوى منشأٍ لا تُدقَّق"
+)
+
+A_HOLDOUT_IS_AUDITED_ON_OUTPUTS_AND_TARGETS_NOT_ON_CASE_IDENTITY_NOTE: Final[str] = (
+    "AHoldoutIsAuditedOnOutputsAndTargetsNotOnCaseIdentity: اختلافُ معرّفات "
+    "`FiberElement` وحدَه ليس دليلَ استقلال؛ فقد يتطابق مخرجُ التمثيل أو يتكرّر "
+    "الهدفُ نفسُه بين الشطرين فيُسترجَع الجوابُ بلا تعميم. ولذلك يُدقَّق "
+    "التداخلُ على ثلاثة مستويات: الحالات، ومخرجات `T`، والمضامين الهدف"
+)
+
+A_HELD_RECONSTRUCTION_IS_NOT_AN_INDEPENDENT_READER_NOTE: Final[str] = (
+    "AHeldReconstructionIsNotAnIndependentReader: قيامُ إعادة البناء على "
+    "المجال، واستقلالُ القارئ، وصحّةُ القاعدة اللغويّة ثلاثةٌ لا يُستدَلّ "
+    "بأحدها على الآخر. ولذلك فُصِل اجتيازُ تجربة الكفاية عن استحقاق إغلاق "
+    "الشرط: `CloseReconstruction` اقترانُ الثلاثة، وما دونه إرجاءٌ لا إغلاق"
+)
+
+NO_READER_IN_THIS_TREE_CLOSES_THE_REBUILDING_REQUIREMENT_NOTE: Final[str] = (
+    "NoReaderInThisTreeClosesTheRebuildingRequirement: بعد فصل الاجتياز عن "
+    "الاستحقاق لم يبقَ في الشجرة قارئٌ يجمع الثلاثة: قارئُ الجدول المدرَّب على "
+    "مجاله تقوم به الكفايةُ ولا يُحجَب، والمدرَّبُ على شطرٍ منفصلٍ يُحجَب "
+    "وتُنتقَض به الكفايةُ إذ لا جوابَ عنده لمخرجٍ لم يره، والمختومُ بيدٍ لا "
+    "يُدقَّق. فالشرطُ مُرجأٌ مفتوحًا، وهذا خبرٌ عن حال الشجرة لا عن استحالةٍ"
+)
+
+AN_AUDITED_HOLDOUT_PROVES_RETRIEVAL_NOT_A_LINGUISTIC_RULE_NOTE: Final[str] = (
+    "AnAuditedHoldoutProvesRetrievalNotALinguisticRule: حتّى نجاحُ جدولٍ "
+    "مدرَّبٍ على شطرٍ منفصلٍ مُدقَّقٍ لا يُثبِت فهمًا لغويًّا ولا قاعدةً "
+    "تعميميّة؛ قد لا يُثبِت إلّا نجاحَ الاسترجاع ضمن ذلك التقسيم بعينه، "
+    "والانتقالُ منه إلى قاعدةٍ عربيّةٍ يلزمه إغلاقٌ مستقلٌّ لم يُفتَح بعد"
 )
 
 MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
@@ -1603,6 +1771,10 @@ MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING_NOTE,
     READER_INDEPENDENCE_IS_A_MECHANISM_NOT_A_LABEL_NOTE,
     A_SEALED_RULE_IS_CHECKED_FOR_OVERLAP_NOT_FOR_MEMORY_NOTE,
+    A_HOLDOUT_IS_AUDITED_ON_OUTPUTS_AND_TARGETS_NOT_ON_CASE_IDENTITY_NOTE,
+    A_HELD_RECONSTRUCTION_IS_NOT_AN_INDEPENDENT_READER_NOTE,
+    AN_AUDITED_HOLDOUT_PROVES_RETRIEVAL_NOT_A_LINGUISTIC_RULE_NOTE,
+    NO_READER_IN_THIS_TREE_CLOSES_THE_REBUILDING_REQUIREMENT_NOTE,
     A_DESIGNED_DOMAIN_IS_NOT_A_LINGUISTIC_CERTIFICATE_NOTE,
     A_DESIGNED_WITNESS_IS_NOT_AN_EXECUTED_CODEC_TEST_NOTE,
     A_COLLISION_IN_THE_REPRESENTATION_IS_NOT_A_COLLISION_IN_CONTEXT_NOTE,
@@ -1611,4 +1783,4 @@ MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     THE_RELATION_VOCABULARY_IS_NOT_CLAIMED_EXHAUSTIVE_NOTE,
     THE_MINIMUM_IS_RELATIVE_TO_THE_TESTED_ALTERNATIVES_NOTE,
 )
-"""سبعَ عشرةَ بقيّةً مُسمّاةً تُقابَل بها أيُّ إحالةٍ إلى «الحدّ الأدنى المكتمل»."""
+"""إحدى وعشرون بقيّةً مُسمّاةً تُقابَل بها أيُّ إحالةٍ إلى «الحدّ الأدنى المكتمل»."""

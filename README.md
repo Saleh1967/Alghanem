@@ -6793,6 +6793,33 @@ callable is `UNDECLARED_PROVENANCE` and cannot either. A successful run on a
 designed domain and a failed run on an attested one both leave the condition
 open.
 
+**Passing the sufficiency run is now separated from earning the closure.**
+`CloseReconstruction = SufficiencyHeld ∧ ConstructiveHoldout ∧
+VerifiedRuleProvenance`, evaluated by `assess_reconstruction_closure`. An
+earlier mechanism derived independence from the empty intersection of a rule's
+`disclosed_elements` with the evaluation domain, which a hand-sealed callable
+could satisfy while memorizing the evaluation targets in its Python closure;
+that adversarial reader is kept as a **negative** test, and is now refused the
+closure. Two things changed. First, a hand-sealed rule reports
+`SEALED_BY_HAND_AND_NOT_STRUCTURALLY_AUDITABLE` — its empty disclosure tables
+are given by construction rather than audited — and no manual callable can
+close the requirement however well the run goes. Second, the holdout is audited
+on three levels, not on case identity alone: the elements, the representation
+outputs, and the **target contents**, so a split that reuses an answer string
+leaks even when every `FiberElement` differs. When the run holds but no
+structurally auditable reader exists, the decision is
+`DEFERRED_FOR_WANT_OF_AN_AUDITABLE_READER` and the condition stays open rather
+than closing on an undiscriminating pass.
+
+The consequence is recorded rather than engineered around: **no reader in this
+tree closes the rebuilding requirement.** A table trained on its own domain
+holds the run but is not held out; a table trained on a disjoint split is
+audited as held out and then *refutes* the run, because it has no answer for an
+output it never saw; a hand-sealed rule is not auditable at all. And even a
+future audited holdout that held would prove retrieval within that partition —
+not a generalizing linguistic rule. Held reconstruction, reader independence,
+and linguistic correctness stay three separate claims.
+
 **Issuance is delegated.** `is_a_linguistic_certificate` is gone. The verdict
 reports `meets_the_recorded_certificate_conditions` — a reading of the recorded
 checklist — beside `certificate_issuance_is_delegated`, which is always true:

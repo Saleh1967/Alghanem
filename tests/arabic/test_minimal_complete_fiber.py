@@ -44,6 +44,7 @@ from alghanem.arabic.minimal_complete_fiber import (
     NecessityWitnessPair,
     ReaderProvenance,
     ReaderRuleOrigin,
+    ReconstructionClosureStanding,
     RelationKind,
     SealedReaderRule,
     StructuralFunction,
@@ -53,6 +54,7 @@ from alghanem.arabic.minimal_complete_fiber import (
     a_separate_genus_field_is_required,
     assess_attestation,
     assess_minimal_complete_fiber,
+    assess_reconstruction_closure,
     assess_sufficiency,
     carried_functions,
     classification_information_is_required,
@@ -91,9 +93,9 @@ def test_the_minimal_complete_fiber_module_reaches_no_kernel_module() -> None:
     ]
 
 
-def test_there_are_seventeen_named_residuals_all_distinct_and_non_blank() -> None:
-    assert len(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS) == 17
-    assert len(set(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)) == 17
+def test_there_are_twenty_one_named_residuals_all_distinct_and_non_blank() -> None:
+    assert len(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS) == 21
+    assert len(set(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)) == 21
     assert all(note.strip() for note in MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
 
 
@@ -937,7 +939,7 @@ def test_a_rule_trained_on_its_own_evaluation_domain_leaks_every_case() -> None:
     rule = a_rule_trained_on(
         THE_DECLARED_DOMAIN, full_representation, "جدولٌ مبنيٌّ من حالات التقييم نفسِها"
     )
-    reader = hold_out_reader(rule, THE_DECLARED_DOMAIN)
+    reader = hold_out_reader(rule, THE_DECLARED_DOMAIN, full_representation)
     assert reader.leaked_elements == frozenset(
         case.element for case in THE_DECLARED_DOMAIN.cases
     )
@@ -955,6 +957,7 @@ def test_a_rule_trained_on_a_disjoint_split_is_held_out_by_construction() -> Non
     reader = hold_out_reader(
         a_rule_trained_on(training, full_representation, "جدولٌ من شطر التدريب"),
         evaluation,
+        full_representation,
     )
     assert reader.leaked_elements == frozenset()
     assert reader.is_held_out is True
@@ -969,7 +972,9 @@ def test_an_overlapping_split_leaks_exactly_the_shared_cases() -> None:
         "شطرُ تقييمٍ يتقاطع", THE_DECLARED_DOMAIN.cases[2:]
     )
     reader = hold_out_reader(
-        a_rule_trained_on(training, full_representation, "جدولٌ متقاطع"), evaluation
+        a_rule_trained_on(training, full_representation, "جدولٌ متقاطع"),
+        evaluation,
+        full_representation,
     )
     assert reader.leaked_elements == frozenset({THE_DECLARED_DOMAIN.cases[2].element})
     assert reader.is_held_out is False
@@ -981,6 +986,8 @@ def test_a_rule_claiming_a_seal_while_disclosing_cases_is_refused() -> None:
             rule_note="قاعدةٌ تدّعي الختمَ وقد رأت",
             origin=ReaderRuleOrigin.SEALED_BEFORE_ANY_CASE,
             disclosed_elements=frozenset({THE_DECLARED_DOMAIN.cases[0].element}),
+            disclosed_outputs=frozenset(),
+            disclosed_contents=frozenset(),
             _rule=lambda output: "",
         )
 
@@ -990,12 +997,13 @@ def test_a_sealed_rule_without_a_written_note_is_refused() -> None:
         a_rule_sealed_before_any_case(lambda output: "", "   ")
 
 
-def test_a_sealed_rule_carrying_the_targets_in_its_closure_passes_the_gate() -> None:
-    """تجربةٌ خصميّة: القارئُ يحفظ أهدافَ التقييم في إغلاقه، ويجتاز البوّابة.
+def test_a_sealed_rule_carrying_the_targets_in_its_closure_is_refused_closure() -> None:
+    """تجربةٌ خصميّةٌ سالبة: القارئُ يحفظ أهدافَ التقييم، فتقوم الكفايةُ ويُمنَع الإغلاق.
 
-    وهذا هو حدُّ الآليّة معروضًا لا مستورًا: فحصُ التقاطع ينفي التسريبَ عبر
-    المسار المسجَّل وحدَه (`disclosed_elements`)، ولا يبلغ جوفَ دالّةٍ مكتوبةٍ
-    بلغة البرمجة. فالاجتيازُ ههنا ليس شهادةَ استقلالٍ، بل بيانُ ما لا تفحصه.
+    وهي تُثبِت الأمرين معًا: أنّ الآليّةَ القديمة كانت تُجيز اجتيازَ بوّابة
+    الاستقلال بختمٍ يدويٍّ لا يُدقَّق، وأنّ الإغلاقَ اليومَ مرفوضٌ بعد فصل
+    الاجتياز عن الاستحقاق. فالشرطُ يُرجأ مفتوحًا، ولا يُنتَقض المجالُ ولا
+    يُغلَق الشرطُ بدعوى منشأ.
     """
 
     memorized = {
@@ -1009,11 +1017,13 @@ def test_a_sealed_rule_carrying_the_targets_in_its_closure_passes_the_gate() -> 
     reader = hold_out_reader(
         a_rule_sealed_before_any_case(rule, "قاعدةٌ تحمل الأهدافَ في إغلاقها"),
         THE_DECLARED_DOMAIN,
+        full_representation,
     )
     assert reader.leaked_elements == frozenset()
     assert reader.is_held_out is True
+    assert reader.holdout_is_constructive is False
     assert reader_provenance_of(reader) is (
-        ReaderProvenance.FIXED_BEFORE_THE_EVALUATION_DATA
+        ReaderProvenance.SEALED_BY_HAND_AND_NOT_STRUCTURALLY_AUDITABLE
     )
     evidence = ConditionEvidence(
         what_was_run="تجربةُ كفايةٍ بقارئٍ مختومٍ حافظٍ لأهدافه",
@@ -1023,22 +1033,112 @@ def test_a_sealed_rule_carrying_the_targets_in_its_closure_passes_the_gate() -> 
         reader=reader,
     )
     assert evidence.outcome.standing is SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN
+    decision = assess_reconstruction_closure(evidence)
+    assert decision.sufficiency_held is True
+    assert decision.constructive_holdout is False
+    assert decision.verified_rule_provenance is False
+    assert decision.standing is (
+        ReconstructionClosureStanding.DEFERRED_FOR_WANT_OF_AN_AUDITABLE_READER
+    )
     assert (
         requirement_is_closed_by(
             ClosureRequirement.CONTENT_REBUILT_FROM_THE_OUTPUT_ALONE, evidence
         )
-        is True
+        is False
     )
     condition = ChecklistCondition(
         requirement=ClosureRequirement.CONTENT_REBUILT_FROM_THE_OUTPUT_ALONE,
         what_would_satisfy_it="إعادةُ بناءٍ بقارئٍ مستقلّ",
-        why_it_is_open="المجالُ مصمَّم، والاستقلالُ مفحوصٌ بالتقاطع لا بالذاكرة",
+        why_it_is_open="المجالُ مصمَّم، والختمُ اليدويُّ لا يُدقَّق بنيويًّا",
         evidence=evidence,
     )
     assert condition.is_satisfied is False
     joined = "\n".join(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
     assert "ASealedRuleIsCheckedForOverlapNotForMemory" in joined
     assert "ReaderIndependenceIsAMechanismNotALabel" in joined
+
+
+def test_an_audited_holdout_is_the_only_route_and_no_reader_here_travels_it() -> None:
+    """الحجبُ البنائيُّ مُدقَّقٌ ومنشؤه مُصدَّق، ومع ذلك تُنتقَض الكفايةُ عليه.
+
+    وهذا هو الثمنُ الحقيقيُّ للفصل: جدولٌ لم يرَ مخرجاتِ التقييم لا يملك عنها
+    جوابًا، فلا يُعيد بناءَ مضمونها. فلا قارئَ في هذه الشجرة يجمع الثلاثةَ
+    معًا، ويبقى شرطُ إعادة البناء مفتوحًا بلا ادّعاءِ إغلاق.
+    """
+    training = _a_split_of_the_declared_domain(
+        "شطرُ تدريبٍ مُسمًّى", THE_DECLARED_DOMAIN.cases[:2]
+    )
+    evaluation = _a_split_of_the_declared_domain(
+        "شطرُ تقييمٍ منفصل", THE_DECLARED_DOMAIN.cases[2:]
+    )
+    reader = hold_out_reader(
+        a_rule_trained_on(training, full_representation, "جدولٌ من شطر التدريب"),
+        evaluation,
+        full_representation,
+    )
+    assert reader.holdout_is_constructive is True
+    evidence = ConditionEvidence(
+        what_was_run="تجربةُ كفايةٍ بقارئٍ مُدقَّق الحجب",
+        where_it_is_recorded="هذا الاختبار",
+        domain=evaluation,
+        run_kind=ConditionRunKind.SUFFICIENCY_ON_THE_FULL_REPRESENTATION,
+        reader=reader,
+    )
+    decision = assess_reconstruction_closure(evidence)
+    assert decision.verified_rule_provenance is True
+    assert decision.constructive_holdout is True
+    assert decision.sufficiency_held is False
+    assert decision.standing is ReconstructionClosureStanding.REFUTED_BY_ITS_OWN_RUN
+    assert decision.closes_the_requirement is False
+    condition = ChecklistCondition(
+        requirement=ClosureRequirement.CONTENT_REBUILT_FROM_THE_OUTPUT_ALONE,
+        what_would_satisfy_it="إعادةُ بناءٍ بقارئٍ مُدقَّق الحجب",
+        why_it_is_open="لا قارئَ ههنا يجمع الكفايةَ والحجبَ البنائيَّ معًا",
+        evidence=evidence,
+    )
+    assert condition.is_satisfied is False
+    joined = "\n".join(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
+    assert "AnAuditedHoldoutProvesRetrievalNotALinguisticRule" in joined
+    assert "AHeldReconstructionIsNotAnIndependentReader" in joined
+    assert "NoReaderInThisTreeClosesTheRebuildingRequirement" in joined
+
+
+def test_a_shared_target_refuses_the_holdout_though_the_cases_differ() -> None:
+    """اختلافُ معرّفات الحالات وحدَه ليس دليلَ استقلال: الهدفُ نفسُه مشترك."""
+
+    shared_content = THE_DECLARED_DOMAIN.cases[0].content
+    borrowed = DomainCase(
+        element=THE_DECLARED_DOMAIN.cases[4].element,
+        content=shared_content,
+        context=THE_DECLARED_DOMAIN.cases[4].context,
+    )
+    training = _a_split_of_the_declared_domain(
+        "شطرُ تدريبٍ يحمل الهدف", THE_DECLARED_DOMAIN.cases[:2]
+    )
+    evaluation = _a_split_of_the_declared_domain("شطرُ تقييمٍ يشاركه الهدف", (borrowed,))
+    reader = hold_out_reader(
+        a_rule_trained_on(training, full_representation, "جدولٌ من شطر التدريب"),
+        evaluation,
+        full_representation,
+    )
+    assert reader.leaked_elements == frozenset()
+    assert reader.leaked_contents == frozenset({shared_content})
+    assert reader.is_held_out is False
+    assert reader.holdout_is_constructive is False
+    assert reader.provenance is ReaderProvenance.BUILT_FROM_THE_DOMAIN_TARGET_TABLE
+
+
+def test_a_refuted_sufficiency_run_is_refuted_and_not_deferred() -> None:
+    evidence = ConditionEvidence(
+        what_was_run="تجربةُ كفايةٍ بقارئٍ بلا سند",
+        where_it_is_recorded="هذا الاختبار",
+        domain=THE_DECLARED_DOMAIN,
+        run_kind=ConditionRunKind.DELETION_OF_A_NAMED_COMPONENT,
+        component=DeletedComponent.PREDICATE,
+    )
+    decision = assess_reconstruction_closure(evidence)
+    assert decision.standing is ReconstructionClosureStanding.REFUTED_BY_ITS_OWN_RUN
+    assert decision.closes_the_requirement is False
 
 
 def test_three_requirements_are_closed_by_no_evidence_kind_defined_here() -> None:
