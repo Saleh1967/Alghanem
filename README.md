@@ -6826,12 +6826,34 @@ compared against the item's stored original measurement, so recoverability is
 *measured*: a ladder whose bottom layer cites something else is caught.
 
 **Run over the `10` declared hamza occurrences**, the ladder separates at the
-carrier, the seat, the licensed features, and the realization — and the ifada
-layer separates **nothing**, because the two qat' occurrences on the alef seat
-carry the same recorded content. That pair stays openly unresolved. Lifting it
+carrier, the seat, the licensed features, and the realization. One pair — the
+two qat' occurrences on the alef seat — stays openly unresolved. Lifting it
 would need a newly recorded field with its own source, which is a new
-measurement, not a new distinction. A layer that separates nothing is neither
-promoted nor deleted for it.
+measurement, not a new distinction.
+
+**The ladder no longer reads its own answer.** Previously the ifada layer cited
+the content field itself, so the ladder was handed the very thing it was meant
+to recover. The content is now a held-out `target` on each item: `ObservedItem`
+refuses to record the target among its own fields, and
+`refuse_a_ladder_that_reads_its_target` refuses a ladder that cites it. The
+declared ladder therefore stops at the fourth layer, and ifada is the target
+rather than a rung.
+
+**The reader is blind and is asked once per distinct value.**
+`run_target_recovery_experiment` gives the reader nothing but the ladder's
+accumulated value — no identifier, no target — and asks it **once per distinct
+value**, comparing its single answer against the target of every item sharing
+that value. When one value merges two different targets, the experiment records
+the refusal **before the reader is consulted at all**.
+
+**Two readers, measured against each other.** The lookup reader, built from the
+declared items themselves, recovers the target: `9` distinct values over `10`
+items, `0` merged targets, `0` mistakes. That proves the ladder's value
+distinguishes these items; it is not a linguistic rule, and
+`is_a_linguistic_rule` is false by construction. The independent reader — the
+rule *"content follows from function alone"*, written down before the run — is
+**refuted**: it errs on `6` of the `10` items. The gap between the two readers
+measures what the lookup table added, not what the ladder proved.
 
 **And no layer declares the syllable born.** The fourth layer measures syllabic
 relations; `refuse_syllable_birth_claim` refuses the claim from every layer

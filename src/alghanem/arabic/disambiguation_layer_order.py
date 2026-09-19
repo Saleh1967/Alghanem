@@ -25,6 +25,15 @@
 القطعة، فإن لم يُسترجَع منه رُدَّ `the_original_measurement_is_recoverable`
 كاذبًا بالقياس لا بالإعلان (`THE_LADDER_ADDS_AND_DOES_NOT_REPLACE`).
 
+**والهدفُ محجوبٌ عن السلّم، والقارئُ أعمى عن الأصل**: المضمونُ المُفاد ليس حقلًا
+من حقول القطعة بل `target` مستقلٌّ، و`ObservedItem` ترفض تسجيلَه في حقولها،
+و`refuse_a_ladder_that_reads_its_target` ترفض سلّمًا يستشهد به. ثمّ
+`run_target_recovery_experiment` تسأل: أيكفي ما بلغه السلّمُ لاسترجاعه؟ فتُعطي
+القارئَ قيمةَ السلّم وحدها، وتسألُه **مرّةً واحدةً لكلّ قيمةٍ متمايزة**، وتردُّ
+التجربةَ **قبل سؤاله** إن دمجت قيمةٌ واحدةٌ هدفين مختلفين
+(`A_LADDER_THAT_CITES_ITS_TARGET_PROVES_NOTHING`,
+`THE_READER_IS_ASKED_ONCE_PER_DISTINCT_VALUE`).
+
 **ولا تُعلَن ولادةُ المقطع قبل برهانها**: `refuse_syllable_birth_claim` ترفض
 دعوى الولادة من أيّ طبقة، والرابعةُ داخلةٌ في ذلك؛ فقياسُ العلاقات المقطعيّة
 ليس ولادةً لها (`SYLLABLE_BIRTH_IS_NOT_DECLARED_BY_ANY_LAYER`).
@@ -35,6 +44,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 from itertools import combinations
@@ -43,20 +53,26 @@ from typing import Final
 from .hamza_contract import THE_DECLARED_OCCURRENCES, codec_projection
 
 __all__ = [
+    "AN_INDEPENDENT_READER_FAILED_WHERE_A_LOOKUP_SUCCEEDED_NOTE",
     "AN_UNRESOLVED_PAIR_IS_NOT_LIFTED_BY_INVENTING_A_FIELD_NOTE",
     "A_DISTINCTION_WITHOUT_A_RECORDED_FIELD_IS_AN_INVENTION_NOTE",
+    "A_LADDER_THAT_CITES_ITS_TARGET_PROVES_NOTHING_NOTE",
+    "A_LOOKUP_READER_IS_NOT_A_LINGUISTIC_RULE_NOTE",
     "A_FIELD_BELONGS_TO_EXACTLY_ONE_LAYER_NOTE",
     "A_SEPARATION_IS_A_ROW_NOT_A_RANK_NOTE",
     "DISAMBIGUATION_LAYER_ORDER_NAMED_RESIDUALS",
     "SEPARATING_TWO_STATES_GRANTS_NO_UPPER_AUTHORITY_NOTE",
     "SYLLABLE_BIRTH_IS_NOT_DECLARED_BY_ANY_LAYER_NOTE",
+    "THE_DECLARED_FUNCTION_ONLY_TABLE",
     "THE_DECLARED_HAMZA_LADDER",
     "THE_DECLARED_HAMZA_ITEMS",
     "THE_DECLARED_ORDER",
     "THE_LADDER_ADDS_AND_DOES_NOT_REPLACE_NOTE",
     "THE_ORDER_IS_DECLARED_NOT_MEASURED_NOTE",
     "THE_PLACEMENT_OF_A_FIELD_IN_A_LAYER_IS_DECLARED_NOT_DERIVED_NOTE",
+    "THE_READER_IS_ASKED_ONCE_PER_DISTINCT_VALUE_NOTE",
     "DisambiguationLayer",
+    "LadderReader",
     "LadderReport",
     "LayerOrderError",
     "LayerReading",
@@ -64,11 +80,16 @@ __all__ = [
     "ObservedItem",
     "OrderedLadder",
     "RecordedField",
+    "TargetRecoveryReport",
+    "a_declared_function_only_reader",
+    "a_lookup_reader",
     "authority_after_separating",
     "claim_is_licensed_at",
     "rank_of",
+    "refuse_a_ladder_that_reads_its_target",
     "refuse_syllable_birth_claim",
     "run_ladder",
+    "run_target_recovery_experiment",
     "syllable_birth_is_declared",
     "value_at",
 ]
@@ -167,11 +188,12 @@ class RecordedField:
 
 @dataclass(frozen=True, slots=True)
 class ObservedItem:
-    """قطعةٌ مرصودة: قياسُها الأصليُّ المحفوظ، وحقولُها المُسجَّلةُ بمصادرها."""
+    """قطعةٌ مرصودة: قياسُها الأصليُّ، وحقولُها المُسجَّلة، وهدفُها المحجوب عنها."""
 
     item_id: str
     original_measurement: str
     recorded: tuple[RecordedField, ...]
+    target: RecordedField
 
     def __post_init__(self) -> None:
         if not self.item_id.strip():
@@ -183,6 +205,11 @@ class ObservedItem:
             raise LayerOrderError("حقلٌ مُسجَّلٌ مرّتين في قطعةٍ واحدة؛ وأيُّهما يُقرَأ؟")
         if not self.recorded:
             raise LayerOrderError("قطعةٌ بلا حقلٍ مُسجَّلٍ لا تدخل سلّمًا")
+        if self.target.name in names:
+            raise LayerOrderError(
+                f"الهدفُ «{self.target.name}» مُسجَّلٌ في حقول القطعة نفسِها؛ "
+                "وسلّمٌ يقرأ هدفَه لا يرفع التباسًا بل ينقله"
+            )
 
     @property
     def recorded_names(self) -> frozenset[str]:
@@ -376,6 +403,139 @@ def run_ladder(ladder: OrderedLadder, items: tuple[ObservedItem, ...]) -> Ladder
     )
 
 
+# --- تجربةُ استرجاع الهدف بدليلٍ وهدفٍ مستقلَّين -------------------------------
+
+
+LadderReader = Callable[[tuple[tuple[str, str], ...]], str]
+"""قارئٌ لا يرى إلّا قيمةَ السلّم: لا مُعرِّفَ القطعة، ولا هدفَها."""
+
+
+def refuse_a_ladder_that_reads_its_target(
+    ladder: OrderedLadder, items: tuple[ObservedItem, ...]
+) -> None:
+    """ارفض سلّمًا يستشهد بحقل الهدف؛ فذلك قراءةٌ للجواب لا استرجاعٌ له."""
+
+    cited = frozenset(ladder.cited_fields)
+    for item in items:
+        if item.target.name in cited:
+            raise LayerOrderError(
+                f"السلّمُ يستشهد بحقل الهدف «{item.target.name}» في «{item.item_id}»؛ "
+                "والاستشهادُ بالجواب ليس برهانًا على استرجاعه"
+            )
+
+
+@dataclass(frozen=True, slots=True)
+class TargetRecoveryReport:
+    """حصادُ التجربة: ما دُمِج، وكم سُئل القارئ، وأين أخطأ. كلُّه بالتشغيل."""
+
+    target_name: str
+    merged_targets: tuple[tuple[str, str], ...]
+    distinct_values: int
+    reader_calls: int
+    mistaken_items: tuple[str, ...]
+
+    def __post_init__(self) -> None:
+        if not self.target_name.strip():
+            raise LayerOrderError("تجربةٌ بلا هدفٍ مُسمًّى لا تُقرأ نتيجتُها")
+        if self.reader_calls < 0 or self.distinct_values < 0:
+            raise LayerOrderError("عددُ ما أُحصي لا يكون سالبًا")
+
+    @property
+    def the_reader_was_consulted(self) -> bool:
+        """أسُئل القارئُ أصلًا؟ الدمجُ يُبطل التجربةَ قبل السؤال."""
+
+        return self.reader_calls > 0
+
+    @property
+    def the_ladder_determines_the_target(self) -> bool:
+        """أيُحدِّد السلّمُ الهدف؟ لا دمجَ، ولا خطأَ، وقد سُئل القارئُ فعلًا."""
+
+        return (
+            not self.merged_targets
+            and not self.mistaken_items
+            and self.the_reader_was_consulted
+        )
+
+    @property
+    def is_a_linguistic_rule(self) -> bool:
+        """أهذا حكمٌ لغويّ؟ لا — نجاحُ قارئٍ على قطعٍ مُعلَنةٍ ليس قاعدةً."""
+
+        return False
+
+
+def run_target_recovery_experiment(
+    ladder: OrderedLadder,
+    items: tuple[ObservedItem, ...],
+    reader: LadderReader,
+) -> TargetRecoveryReport:
+    """اسأل: أيكفي ما بلغه السلّمُ لاسترجاع هدفٍ محجوبٍ عنه؟ بالتشغيل لا بالإعلان.
+
+    والقارئُ **أعمى عن الأصل**: لا يُعطى إلّا قيمةَ السلّم، ويُسأل **مرّةً واحدةً
+    لكلِّ قيمةٍ متمايزة**، ثمّ يُقابَل جوابُه بأهداف كلِّ القطع المشترِكة فيها.
+    فإن دمجت القيمةُ الواحدةُ هدفين مختلفين رُدَّت التجربةُ **قبل سؤاله**.
+    """
+
+    if not items:
+        raise LayerOrderError("قطعٌ خاليةٌ يُثبَت عليها كلُّ شيء")
+    target_names = {item.target.name for item in items}
+    if len(target_names) != 1:
+        raise LayerOrderError("أهدافٌ بأسماءٍ مختلفةٍ في تجربةٍ واحدة؛ وأيُّها يُسترجَع؟")
+    refuse_a_ladder_that_reads_its_target(ladder, items)
+
+    top = ladder.highest_layer
+    grouped: dict[tuple[tuple[str, str], ...], list[ObservedItem]] = {}
+    for item in items:
+        grouped.setdefault(value_at(item, ladder, top), []).append(item)
+
+    merged = tuple(
+        (left.item_id, right.item_id)
+        for shared in grouped.values()
+        for left, right in combinations(shared, 2)
+        if left.target.value != right.target.value
+    )
+    if merged:
+        return TargetRecoveryReport(
+            target_name=target_names.pop(),
+            merged_targets=merged,
+            distinct_values=len(grouped),
+            reader_calls=0,
+            mistaken_items=(),
+        )
+
+    calls = 0
+    mistaken: list[str] = []
+    for value, shared in grouped.items():
+        answer = reader(value)
+        calls += 1
+        mistaken.extend(item.item_id for item in shared if item.target.value != answer)
+
+    return TargetRecoveryReport(
+        target_name=target_names.pop(),
+        merged_targets=(),
+        distinct_values=len(grouped),
+        reader_calls=calls,
+        mistaken_items=tuple(mistaken),
+    )
+
+
+def a_lookup_reader(
+    ladder: OrderedLadder, items: tuple[ObservedItem, ...]
+) -> LadderReader:
+    """قارئٌ بجدولٍ مبنيٍّ من القطع نفسِها: يُثبت التمايز، ولا يُثبت قاعدةً."""
+
+    table: dict[tuple[tuple[str, str], ...], str] = {}
+    top = ladder.highest_layer
+    for item in items:
+        table.setdefault(value_at(item, ladder, top), item.target.value)
+
+    def read(value: tuple[tuple[str, str], ...]) -> str:
+        if value not in table:
+            raise LayerOrderError("قيمةٌ خارجَ الجدول؛ والقارئُ لا يخمّن")
+        return table[value]
+
+    return read
+
+
 # --- السلّمُ المُعلَنُ على وقوعات الهمزة ----------------------------------------
 
 
@@ -418,7 +578,9 @@ def _hamza_items() -> tuple[ObservedItem, ...]:
                         occurrence.realization.value,
                         occurrence.declared_source,
                     ),
-                    RecordedField(_CONTENT_FIELD, occurrence.content, _DECLARED_SOURCE),
+                ),
+                target=RecordedField(
+                    _CONTENT_FIELD, occurrence.content, _DECLARED_SOURCE
                 ),
             )
         )
@@ -440,10 +602,34 @@ THE_DECLARED_HAMZA_LADDER: Final[OrderedLadder] = OrderedLadder(
             DisambiguationLayer.SYLLABIC_AND_MORPHOLOGICAL_RELATIONS,
             (_REALIZATION_FIELD,),
         ),
-        LayerReading(DisambiguationLayer.IFADA, (_CONTENT_FIELD,)),
     )
 )
-"""سلّمٌ مُعلَنٌ يوزّع حقولَ عقد الهمزة على الطبقات الخمس؛ والتوزيعُ اختيار."""
+"""سلّمٌ مُعلَنٌ يوزّع حقولَ عقد الهمزة على أربع طبقات؛ والإفادةُ هدفٌ محجوبٌ عنه."""
+
+THE_DECLARED_FUNCTION_ONLY_TABLE: Final[tuple[tuple[str, str], ...]] = (
+    ("قطع", "همزةُ قطعٍ محقَّقةٌ على كرسيّ الألف"),
+    ("وصل", "همزةُ وصلٍ ساقطةٌ في الدرج"),
+    ("لا_وظيفةَ_همزةٍ", "ألفُ مدٍّ لا همزَ فيها"),
+)
+"""قاعدةٌ مُعلَنةٌ قبل التشغيل: مضمونُ الوقوع من وظيفته وحدَها. تُختبَر ولا تُصدَّق."""
+
+
+def a_declared_function_only_reader() -> LadderReader:
+    """قارئٌ مستقلٌّ عن القطع: يقرأ الوظيفةَ وحدَها ويُجيب بجدولٍ مُعلَنٍ سلفًا."""
+
+    table = dict(THE_DECLARED_FUNCTION_ONLY_TABLE)
+
+    def read(value: tuple[tuple[str, str], ...]) -> str:
+        for name, held in value:
+            if name == _FUNCTION_FIELD:
+                if held not in table:
+                    raise LayerOrderError(
+                        f"وظيفةٌ «{held}» خارجَ الجدول المُعلَن؛ والقارئُ لا يخمّن"
+                    )
+                return table[held]
+        raise LayerOrderError("قيمةُ السلّم لا تبلغ حقلَ الوظيفة؛ ولا يقرأ هذا القارئ")
+
+    return read
 
 
 # --- البواقي المُسمّاة --------------------------------------------------------
@@ -503,6 +689,34 @@ THE_PLACEMENT_OF_A_FIELD_IN_A_LAYER_IS_DECLARED_NOT_DERIVED_NOTE: Final[str] = (
     "كلُّ طبقةٍ دون أن يتغيّر ما ارتفع من الالتباس جملةً"
 )
 
+A_LADDER_THAT_CITES_ITS_TARGET_PROVES_NOTHING_NOTE: Final[str] = (
+    "ALadderThatCitesItsTargetProvesNothing: كان السلّمُ يستشهد بحقل المضمون "
+    "نفسِه في طبقة الإفادة، فكان يقرأ جوابَه ثمّ يُحسَب له استرجاعًا؛ والمضمونُ "
+    "الآن هدفٌ محجوزٌ خارجَ حقول القطعة، و`ObservedItem` ترفض تسجيلَه فيها، "
+    "و`refuse_a_ladder_that_reads_its_target` ترفض الاستشهادَ به"
+)
+
+A_LOOKUP_READER_IS_NOT_A_LINGUISTIC_RULE_NOTE: Final[str] = (
+    "ALookupReaderIsNotALinguisticRule: `a_lookup_reader` جدولٌ مبنيٌّ من القطع "
+    "المُعلَنة نفسِها؛ فنجاحُه يُثبت أنّ قيمةَ السلّم تُميّز هذه القطع، ولا "
+    "يُثبت قاعدةً لغويّةً تستخرج المضمون — ولذلك `is_a_linguistic_rule` كاذبةٌ "
+    "بالبناء لا بالقياس"
+)
+
+THE_READER_IS_ASKED_ONCE_PER_DISTINCT_VALUE_NOTE: Final[str] = (
+    "TheReaderIsAskedOncePerDistinctValue: القارئُ لا يرى إلّا قيمةَ السلّم، "
+    "ويُسأل مرّةً واحدةً لكلّ قيمةٍ متمايزة، ثمّ يُقابَل جوابُه بأهداف كلّ "
+    "القطع المشترِكة فيها؛ فإن دمجت قيمةٌ هدفين مختلفين رُدَّت التجربةُ قبل "
+    "سؤاله أصلًا، ولا يستطيع قارئٌ أن يميّز ما لم يُميَّز له"
+)
+
+AN_INDEPENDENT_READER_FAILED_WHERE_A_LOOKUP_SUCCEEDED_NOTE: Final[str] = (
+    "AnIndependentReaderFailedWhereALookupSucceeded: قارئُ الجدول المبنيِّ من "
+    "القطع يُصيب، وقارئُ القاعدة المُعلَنة سلفًا «المضمونُ من الوظيفة وحدَها» "
+    "يُخطئ في قطعٍ مُحصاةٍ بالتشغيل؛ فالفرقُ بينهما قياسٌ لقدر ما أضافه الجدولُ "
+    "لا لقدر ما أضافه السلّم، والقاعدةُ المُعلَنة مُفنَّدةٌ على هذه القطع"
+)
+
 DISAMBIGUATION_LAYER_ORDER_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     THE_ORDER_IS_DECLARED_NOT_MEASURED_NOTE,
     SEPARATING_TWO_STATES_GRANTS_NO_UPPER_AUTHORITY_NOTE,
@@ -513,5 +727,9 @@ DISAMBIGUATION_LAYER_ORDER_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     A_SEPARATION_IS_A_ROW_NOT_A_RANK_NOTE,
     THE_PLACEMENT_OF_A_FIELD_IN_A_LAYER_IS_DECLARED_NOT_DERIVED_NOTE,
     SYLLABLE_BIRTH_IS_NOT_DECLARED_BY_ANY_LAYER_NOTE,
+    A_LADDER_THAT_CITES_ITS_TARGET_PROVES_NOTHING_NOTE,
+    THE_READER_IS_ASKED_ONCE_PER_DISTINCT_VALUE_NOTE,
+    A_LOOKUP_READER_IS_NOT_A_LINGUISTIC_RULE_NOTE,
+    AN_INDEPENDENT_READER_FAILED_WHERE_A_LOOKUP_SUCCEEDED_NOTE,
 )
 """البواقي المُسمّاة؛ تُعَدّ في الاختبار ولا يُكتَب عددُها بجانبها."""

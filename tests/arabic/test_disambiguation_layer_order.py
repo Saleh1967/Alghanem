@@ -9,6 +9,7 @@ import pytest
 from alghanem.arabic import disambiguation_layer_order as ladder_module
 from alghanem.arabic.disambiguation_layer_order import (
     DISAMBIGUATION_LAYER_ORDER_NAMED_RESIDUALS,
+    THE_DECLARED_FUNCTION_ONLY_TABLE,
     THE_DECLARED_HAMZA_ITEMS,
     THE_DECLARED_HAMZA_LADDER,
     THE_DECLARED_ORDER,
@@ -18,11 +19,16 @@ from alghanem.arabic.disambiguation_layer_order import (
     ObservedItem,
     OrderedLadder,
     RecordedField,
+    TargetRecoveryReport,
+    a_declared_function_only_reader,
+    a_lookup_reader,
     authority_after_separating,
     claim_is_licensed_at,
     rank_of,
+    refuse_a_ladder_that_reads_its_target,
     refuse_syllable_birth_claim,
     run_ladder,
+    run_target_recovery_experiment,
     syllable_birth_is_declared,
     value_at,
 )
@@ -33,11 +39,14 @@ def _field(name: str, value: str) -> RecordedField:
     return RecordedField(name=name, value=value, declared_source="إعلانُ الاختبار")
 
 
-def _item(item_id: str, carrier: str, mark: str) -> ObservedItem:
+def _item(
+    item_id: str, carrier: str, mark: str, content: str = "مضمون"
+) -> ObservedItem:
     return ObservedItem(
         item_id=item_id,
         original_measurement=carrier,
         recorded=(_field("حامل", carrier), _field("علامة", mark)),
+        target=_field("مضمون", content),
     )
 
 
@@ -73,9 +82,9 @@ def test_no_refine_slot_operation_is_exported_by_this_deposit() -> None:
         assert "split" not in name.lower()
 
 
-def test_there_are_nine_named_residuals_all_distinct_and_non_blank() -> None:
-    assert len(DISAMBIGUATION_LAYER_ORDER_NAMED_RESIDUALS) == 9
-    assert len(set(DISAMBIGUATION_LAYER_ORDER_NAMED_RESIDUALS)) == 9
+def test_there_are_thirteen_named_residuals_all_distinct_and_non_blank() -> None:
+    assert len(DISAMBIGUATION_LAYER_ORDER_NAMED_RESIDUALS) == 13
+    assert len(set(DISAMBIGUATION_LAYER_ORDER_NAMED_RESIDUALS)) == 13
     assert all(note.strip() for note in DISAMBIGUATION_LAYER_ORDER_NAMED_RESIDUALS)
 
 
@@ -196,22 +205,34 @@ def test_an_item_with_a_duplicated_recorded_field_is_refused() -> None:
             item_id="أ",
             original_measurement="ء",
             recorded=(_field("حامل", "ء"), _field("حامل", "ا")),
+            target=_field("مضمون", "م"),
         )
 
 
 def test_an_item_without_an_identifier_or_a_record_is_refused() -> None:
     with pytest.raises(LayerOrderError):
         ObservedItem(
-            item_id=" ", original_measurement="ء", recorded=(_field("حامل", "ء"),)
+            item_id=" ",
+            original_measurement="ء",
+            recorded=(_field("حامل", "ء"),),
+            target=_field("مضمون", "م"),
         )
     with pytest.raises(LayerOrderError):
-        ObservedItem(item_id="أ", original_measurement="ء", recorded=())
+        ObservedItem(
+            item_id="أ",
+            original_measurement="ء",
+            recorded=(),
+            target=_field("مضمون", "م"),
+        )
 
 
 def test_an_item_without_an_original_measurement_is_refused() -> None:
     with pytest.raises(LayerOrderError):
         ObservedItem(
-            item_id="أ", original_measurement="", recorded=(_field("حامل", "ء"),)
+            item_id="أ",
+            original_measurement="",
+            recorded=(_field("حامل", "ء"),),
+            target=_field("مضمون", "م"),
         )
 
 
@@ -301,7 +322,10 @@ def test_one_field_may_not_be_cited_in_two_layers() -> None:
 
 
 def test_the_ladder_derives_its_highest_layer_and_its_citations() -> None:
-    assert THE_DECLARED_HAMZA_LADDER.highest_layer is DisambiguationLayer.IFADA
+    assert (
+        THE_DECLARED_HAMZA_LADDER.highest_layer
+        is DisambiguationLayer.SYLLABIC_AND_MORPHOLOGICAL_RELATIONS
+    )
     cited = THE_DECLARED_HAMZA_LADDER.cited_fields
     assert len(cited) == len(set(cited))
 
@@ -388,11 +412,13 @@ def test_the_lower_layers_carry_the_bulk_of_the_separation() -> None:
     assert counts[DisambiguationLayer.SYLLABIC_AND_MORPHOLOGICAL_RELATIONS] > 0
 
 
-def test_the_ifada_layer_separates_nothing_on_this_domain() -> None:
+def test_the_ifada_layer_is_not_in_the_ladder_because_it_is_the_target() -> None:
     report = run_ladder(THE_DECLARED_HAMZA_LADDER, THE_DECLARED_HAMZA_ITEMS)
-    counts = {item.layer: item.separated_count for item in report.separations}
-    assert counts[DisambiguationLayer.IFADA] == 0
-    assert not report.every_layer_separated_something
+    layers = {item.layer for item in report.separations}
+    assert DisambiguationLayer.IFADA not in layers
+    assert report.every_layer_separated_something
+    targets = {item.target.name for item in THE_DECLARED_HAMZA_ITEMS}
+    assert targets.isdisjoint(set(THE_DECLARED_HAMZA_LADDER.cited_fields))
 
 
 def test_an_unresolved_pair_remains_and_is_not_lifted_by_invention() -> None:
@@ -410,3 +436,184 @@ def test_the_ladder_lifts_every_other_pair() -> None:
     total = len(THE_DECLARED_HAMZA_ITEMS) * (len(THE_DECLARED_HAMZA_ITEMS) - 1) // 2
     separated = sum(item.separated_count for item in report.separations)
     assert separated + len(report.unresolved_pairs) == total
+
+
+# --- الهدفُ المحجوب والقارئُ الأعمى -------------------------------------------
+
+
+def test_the_target_may_not_be_recorded_among_the_cited_fields() -> None:
+    with pytest.raises(LayerOrderError):
+        ObservedItem(
+            item_id="أ",
+            original_measurement="ء",
+            recorded=(_field("حامل", "ء"), _field("مضمون", "م")),
+            target=_field("مضمون", "م"),
+        )
+
+
+def test_a_ladder_that_cites_the_target_field_is_refused() -> None:
+    items = (_item("أ", "ء", "فتحة"), _item("ب", "ا", "سكون"))
+    reading = LayerReading(DisambiguationLayer.CARRIER_IDENTITY, ("مضمون",))
+    ladder = OrderedLadder(readings=(reading,))
+    with pytest.raises(LayerOrderError):
+        refuse_a_ladder_that_reads_its_target(ladder, items)
+    with pytest.raises(LayerOrderError):
+        run_target_recovery_experiment(
+            ladder, items, a_lookup_reader(_TWO_LAYERS, items)
+        )
+
+
+def test_the_declared_ladder_does_not_cite_its_target() -> None:
+    refuse_a_ladder_that_reads_its_target(
+        THE_DECLARED_HAMZA_LADDER, THE_DECLARED_HAMZA_ITEMS
+    )
+
+
+def test_targets_with_different_names_are_refused_in_one_experiment() -> None:
+    left = _item("أ", "ء", "فتحة")
+    right = ObservedItem(
+        item_id="ب",
+        original_measurement="ا",
+        recorded=(_field("حامل", "ا"), _field("علامة", "سكون")),
+        target=_field("إفادة", "م"),
+    )
+    with pytest.raises(LayerOrderError):
+        run_target_recovery_experiment(
+            _TWO_LAYERS, (left, right), a_lookup_reader(_TWO_LAYERS, (left,))
+        )
+
+
+def test_an_empty_domain_proves_no_recovery() -> None:
+    with pytest.raises(LayerOrderError):
+        run_target_recovery_experiment(
+            _TWO_LAYERS, (), a_lookup_reader(_TWO_LAYERS, ())
+        )
+
+
+def test_merged_targets_refute_before_the_reader_is_consulted() -> None:
+    items = (
+        _item("أ", "ء", "فتحة", content="الأوّل"),
+        _item("ب", "ء", "فتحة", content="الثاني"),
+    )
+
+    def _never(value: tuple[tuple[str, str], ...]) -> str:
+        raise AssertionError("سُئل القارئُ بعد الدمج")
+
+    report = run_target_recovery_experiment(_TWO_LAYERS, items, _never)
+    assert report.merged_targets == (("أ", "ب"),)
+    assert report.reader_calls == 0
+    assert not report.the_reader_was_consulted
+    assert not report.the_ladder_determines_the_target
+
+
+def test_the_reader_is_asked_once_per_distinct_value() -> None:
+    items = (
+        _item("أ", "ء", "فتحة", content="مضمون"),
+        _item("ب", "ء", "فتحة", content="مضمون"),
+        _item("ج", "ا", "سكون", content="آخر"),
+    )
+    seen: list[tuple[tuple[str, str], ...]] = []
+
+    def _counting(value: tuple[tuple[str, str], ...]) -> str:
+        seen.append(value)
+        return a_lookup_reader(_TWO_LAYERS, items)(value)
+
+    report = run_target_recovery_experiment(_TWO_LAYERS, items, _counting)
+    assert report.distinct_values == 2
+    assert report.reader_calls == 2
+    assert len(seen) == len(set(seen))
+    assert report.the_ladder_determines_the_target
+
+
+def test_the_reader_never_sees_the_identifier_or_the_target() -> None:
+    items = THE_DECLARED_HAMZA_ITEMS
+    forbidden = {item.item_id for item in items} | {item.target.value for item in items}
+    observed: list[str] = []
+
+    def _watching(value: tuple[tuple[str, str], ...]) -> str:
+        observed.extend(held for _, held in value)
+        observed.extend(name for name, _ in value)
+        return a_lookup_reader(THE_DECLARED_HAMZA_LADDER, items)(value)
+
+    run_target_recovery_experiment(THE_DECLARED_HAMZA_LADDER, items, _watching)
+    assert forbidden.isdisjoint(set(observed))
+
+
+def test_a_wrong_answer_is_recorded_against_the_items_that_share_the_value() -> None:
+    items = (
+        _item("أ", "ء", "فتحة", content="مضمون"),
+        _item("ب", "ا", "سكون", content="آخر"),
+    )
+    report = run_target_recovery_experiment(
+        _TWO_LAYERS, items, lambda value: "جوابٌ لا يُطابق"
+    )
+    assert set(report.mistaken_items) == {"أ", "ب"}
+    assert not report.the_ladder_determines_the_target
+
+
+def test_a_lookup_reader_refuses_a_value_outside_its_table() -> None:
+    items = (_item("أ", "ء", "فتحة"),)
+    reader = a_lookup_reader(_TWO_LAYERS, items)
+    with pytest.raises(LayerOrderError):
+        reader((("حامل", "ا"), ("علامة", "سكون")))
+
+
+def test_the_lookup_reader_recovers_the_target_on_the_declared_items() -> None:
+    report = run_target_recovery_experiment(
+        THE_DECLARED_HAMZA_LADDER,
+        THE_DECLARED_HAMZA_ITEMS,
+        a_lookup_reader(THE_DECLARED_HAMZA_LADDER, THE_DECLARED_HAMZA_ITEMS),
+    )
+    assert report.merged_targets == ()
+    assert report.mistaken_items == ()
+    assert report.the_ladder_determines_the_target
+    assert report.distinct_values == report.reader_calls
+
+
+def test_the_lookup_reader_is_not_a_linguistic_rule() -> None:
+    report = run_target_recovery_experiment(
+        THE_DECLARED_HAMZA_LADDER,
+        THE_DECLARED_HAMZA_ITEMS,
+        a_lookup_reader(THE_DECLARED_HAMZA_LADDER, THE_DECLARED_HAMZA_ITEMS),
+    )
+    assert not report.is_a_linguistic_rule
+
+
+def test_the_independent_declared_reader_is_refuted_on_the_declared_items() -> None:
+    report = run_target_recovery_experiment(
+        THE_DECLARED_HAMZA_LADDER,
+        THE_DECLARED_HAMZA_ITEMS,
+        a_declared_function_only_reader(),
+    )
+    assert report.mistaken_items
+    assert not report.the_ladder_determines_the_target
+    assert report.the_reader_was_consulted
+
+
+def test_the_declared_function_table_is_built_before_the_run() -> None:
+    functions = {name for name, _ in THE_DECLARED_FUNCTION_ONLY_TABLE}
+    assert len(functions) == len(THE_DECLARED_FUNCTION_ONLY_TABLE)
+    reader = a_declared_function_only_reader()
+    with pytest.raises(LayerOrderError):
+        reader((("الوظيفةُ_المُعلَنة", "وظيفةٌ لا في الجدول"),))
+    with pytest.raises(LayerOrderError):
+        reader((("حامل", "ء"),))
+
+
+def test_a_report_without_a_named_target_or_with_negative_counts_is_refused() -> None:
+    with pytest.raises(LayerOrderError):
+        TargetRecoveryReport(
+            target_name=" ",
+            merged_targets=(),
+            distinct_values=1,
+            reader_calls=1,
+            mistaken_items=(),
+        )
+    with pytest.raises(LayerOrderError):
+        TargetRecoveryReport(
+            target_name="مضمون",
+            merged_targets=(),
+            distinct_values=1,
+            reader_calls=-1,
+            mistaken_items=(),
+        )
