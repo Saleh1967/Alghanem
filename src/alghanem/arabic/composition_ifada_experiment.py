@@ -54,7 +54,7 @@ from .composition_ifada_path import (
     PathStage,
     PathStop,
     StageOutcome,
-    run_text,
+    run_bytes,
 )
 from .mantuq_mafhum_ifada import IfadaStanding
 
@@ -167,7 +167,7 @@ def _request() -> ExperimentalRunRequest:
             case_ids=tuple(case_id for case_id, _ in DECLARED_INPUTS),
         ),
         inputs=DECLARED_INPUTS,
-        permitted_operations=(ExperimentalOperationRef("run_text"),),
+        permitted_operations=(ExperimentalOperationRef("run_bytes"),),
         case_outcome_vocabulary=ExperimentalCaseOutcomeVocabulary(
             accounted_token=ACCOUNTED_TOKEN, unaccounted_token=UNACCOUNTED_TOKEN
         ),
@@ -179,7 +179,8 @@ def _implementation(
 ) -> tuple[str, Trace]:
     """شغِّل المسارَ على نصّ حالةٍ واحدة، واقرأ مخرجَه بالمفردة المجمّدة."""
 
-    run = context.invoke("run_text", lambda: run_text(input_content))
+    source = input_content.encode("utf-8")
+    run = context.invoke("run_bytes", lambda: run_bytes(source))
     token = ACCOUNTED_TOKEN if run.reached_ifada else UNACCOUNTED_TOKEN
     return token, run.trace
 
@@ -294,7 +295,9 @@ class PathCensus:
 def measure() -> PathCensus:
     """سُق العيّنةَ المُعلَنةَ كلَّها في المسار، واقرأ إحصاءَها."""
 
-    return PathCensus(tuple(run_text(text) for _, text in DECLARED_INPUTS))
+    return PathCensus(
+        tuple(run_bytes(text.encode("utf-8")) for _, text in DECLARED_INPUTS)
+    )
 
 
 def render_census(census: PathCensus) -> str:

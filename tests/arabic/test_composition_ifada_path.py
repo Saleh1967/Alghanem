@@ -7,9 +7,11 @@
 from __future__ import annotations
 
 import inspect
+from pathlib import Path
 
 import pytest
 
+from alghanem.arabic import composition_ifada_path
 from alghanem.arabic.composition_ifada_experiment import (
     ACCOUNTED_TOKEN,
     COMPOSITION_IFADA_EXPERIMENT_NAMED_LAWS,
@@ -20,6 +22,12 @@ from alghanem.arabic.composition_ifada_experiment import (
     render_census,
     run_under_the_experimental_authority,
 )
+from alghanem.arabic.composition_ifada_interpretation import (
+    DeclaredRootAnnotation,
+    MasaqStanding,
+    interpret,
+    render_interpretation,
+)
 from alghanem.arabic.composition_ifada_path import (
     COMPOSITION_IFADA_PATH_NAMED_LAWS,
     CaseMark,
@@ -27,9 +35,12 @@ from alghanem.arabic.composition_ifada_path import (
     PathStage,
     PathStop,
     StageOutcome,
+    run_bytes,
     run_text,
 )
 from alghanem.arabic.mantuq_mafhum_ifada import IfadaStanding
+from alghanem.arabic.maqayis_lexical_origin import RootAttestation
+from alghanem.arabic.maqayis_root_table_deposit import FROZEN_ROOT_TABLE
 from alghanem.kernel.experimental import (
     ExperimentalAuthority,
     ExperimentalOutcomeStatus,
@@ -186,7 +197,7 @@ def test_the_run_completes_under_the_experimental_authority() -> None:
     assert type(record) is ExperimentalRunRecord
     assert record.outcome_status is ExperimentalOutcomeStatus.COMPLETED
     assert record.failure is None
-    assert record.operations_used == ("run_text",)
+    assert record.operations_used == ("run_bytes",)
     assert record.request_content_digest.strip()
 
 
@@ -270,3 +281,195 @@ def test_every_named_law_opens_with_its_own_name(laws: dict[str, str]) -> None:
     assert laws
     for name, statement in laws.items():
         assert statement.startswith(f"{name}:")
+
+
+# ————— المدخلُ بايتاتٌ، وفكُّ ترميزها انتقالٌ مقيس —————
+
+
+def test_the_entry_is_bytes_and_the_decode_is_a_measured_transition() -> None:
+    """أوّلُ انتقالٍ فكُّ ترميزٍ صارمٍ، ببصمة البايتات مدخلًا ونصًّا مخرجًا."""
+
+    source = "اللَّهُ نُورٌ".encode()
+    run = run_bytes(source)
+    first = run.stages[0]
+
+    assert run.source == source
+    assert first.stage is PathStage.UTF8_BYTES
+    assert first.rank == 1
+    assert first.operation == "decode the declared bytes as strict UTF-8"
+    assert first.outcome is StageOutcome.ADVANCED
+    assert first.output_digest is not None
+    assert first.input_digest != first.output_digest
+
+
+def test_bytes_that_are_not_utf8_are_blocked_by_a_named_preventer() -> None:
+    """بايتاتٌ ليست UTF-8 تقف بمانعها، ولا تُصلَح ولا تُقرأ بإبدال."""
+
+    run = run_bytes(b"\xff\xfe \xd8")
+
+    assert run.reached is PathStage.UTF8_BYTES
+    assert run.outcome is StageOutcome.BLOCKED
+    assert run.stop is PathStop.BYTES_ARE_NOT_UTF8
+    assert run.text == ""
+    assert run.words == ()
+    assert run.ifada is IfadaStanding.غير_مقروء
+
+
+def test_the_text_entry_only_encodes_and_delegates_to_the_bytes_entry() -> None:
+    """`run_text` تُرمِّز وتُسلِّم، ولا تتخطّى بها طبقةُ الترميز."""
+
+    text = "نُورُ السَّمَاوَاتِ"
+
+    by_text = run_text(text)
+    by_bytes = run_bytes(text.encode())
+
+    assert by_text.source == text.encode()
+    assert by_text.trace.events == by_bytes.trace.events
+    assert by_text.ifada is by_bytes.ifada
+
+
+def test_the_word_split_reads_the_normalized_text_not_the_raw_one() -> None:
+    """القسمةُ تقع على النصّ المُسوَّى، فالتسويةُ تسبق كلَّ قراءة."""
+
+    run = run_text("اللَّهُ نُورٌ")
+    split = next(
+        record for record in run.stages if record.stage is PathStage.WORD_SPLIT
+    )
+    normalized = next(
+        record for record in run.stages if record.stage is PathStage.UNICODE_NFC
+    )
+
+    assert split.input_digest == normalized.output_digest
+    assert split.rank > normalized.rank
+
+
+# ————— التفسيرُ يعلو الاشتقاقَ ولا يدخل فيه —————
+
+
+def test_the_interpretation_changes_neither_the_stages_nor_the_standing() -> None:
+    """التعليقُ لا يُبدّل حكمَ انتقالٍ ولا حالَ إفادة، وذلك مقيسٌ لا موعود."""
+
+    run = run_text("اللَّهُ نُورٌ")
+    before = (run.reached, run.outcome, run.stop, run.ifada, run.trace.events)
+
+    interpretation = interpret(
+        run,
+        (
+            DeclaredRootAnnotation(
+                word_index=1,
+                root="نور",
+                declared_by="يدُ المحرِّر",
+                why="تعليقٌ مكتوبٌ بيدٍ لقياس طبقة التفسير",
+            ),
+        ),
+    )
+
+    assert interpretation.derivation_is_unchanged
+    assert (run.reached, run.outcome, run.stop, run.ifada, run.trace.events) == before
+
+
+def test_an_attested_declared_root_carries_a_quoted_gloss() -> None:
+    """الجذرُ المُعلَنُ المشهودُ يُنقَل عنه محورُ المعجم كما ورد، لا معنًى مُثبَتًا."""
+
+    run = run_text("اللَّهُ نُورٌ")
+
+    gloss = interpret(
+        run,
+        (
+            DeclaredRootAnnotation(
+                word_index=1,
+                root="نور",
+                declared_by="يدُ المحرِّر",
+                why="تعليقٌ مكتوبٌ بيدٍ لقياس طبقة التفسير",
+            ),
+        ),
+    ).glosses[1]
+
+    assert gloss.attestation is RootAttestation.ATTESTED
+    assert gloss.quoted_axes
+    assert gloss.carries_a_quoted_gloss
+
+
+def test_an_unattested_declared_root_is_a_finding_not_a_hidden_failure() -> None:
+    """غيرُ المشهودِ يخرج كما خرج، ولا يُنقَل عنه محورٌ ولا نوع."""
+
+    run = run_text("اللَّهُ نُورٌ")
+
+    gloss = interpret(
+        run,
+        (
+            DeclaredRootAnnotation(
+                word_index=1,
+                root="سلسلةٌ_ليست_مدخلًا_في_المعجم",
+                declared_by="يدُ المحرِّر",
+                why="قياسُ عدم الشهادة بعينه",
+            ),
+        ),
+    ).glosses[1]
+
+    assert gloss.attestation is RootAttestation.NOT_ATTESTED
+    assert gloss.quoted_axes == ()
+    assert gloss.root_types == ()
+    assert not gloss.carries_a_quoted_gloss
+
+
+def test_a_word_without_an_annotation_declares_its_own_abstention() -> None:
+    """كلمةٌ بلا تعليقٍ تخرج بامتناعٍ مُصرَّحٍ به، لا بإهمالٍ صامت."""
+
+    interpretation = interpret(run_text("اللَّهُ نُورٌ"))
+
+    assert len(interpretation.glosses) == 2
+    for gloss in interpretation.glosses:
+        assert gloss.annotation is None
+        assert gloss.attestation is RootAttestation.NOT_LICENSED_FOR_THIS_WORD
+    assert interpretation.glossed_words == 0
+
+
+def test_the_masaq_bytes_are_named_absent_and_nothing_is_invented() -> None:
+    """غيابُ بايتات MASAQ يُعرَض غيابًا مُسمًّى بموضعه وبصمته، بلا وسمٍ مختلَق."""
+
+    interpretation = interpret(run_text("اللَّهُ نُورٌ"))
+
+    assert interpretation.masaq in set(MasaqStanding)
+    if interpretation.masaq is MasaqStanding.BYTES_ABSENT:
+        rendered = render_interpretation(interpretation)
+        assert "corpora/MASAQ.csv" in rendered
+        assert "ALGHANEM_MASAQ_PATH" in rendered
+
+
+def test_the_interpretation_reads_the_digest_verified_lexicon_bytes() -> None:
+    """سندُ التفسير بصمةُ بايتاتٍ مُجمَّدةٍ في الشجرة، لا اسمُ معجمٍ مذكور."""
+
+    interpretation = interpret(run_text("اللَّهُ نُورٌ"))
+
+    assert interpretation.lexicon_digest == FROZEN_ROOT_TABLE.sha256_hex
+    assert len(interpretation.lexicon_digest) == 64
+
+
+def test_the_interpretation_refuses_an_annotation_outside_the_run() -> None:
+    """تعليقٌ على كلمةٍ لم يقرأها السَّوق مردودٌ، فلا يُفسَّر ما لم يُشتَقّ."""
+
+    stopped = run_text("اللَّهُ")
+
+    with pytest.raises(ValueError):
+        interpret(
+            stopped,
+            (
+                DeclaredRootAnnotation(
+                    word_index=0,
+                    root="اله",
+                    declared_by="يدُ المحرِّر",
+                    why="قياسُ ردّ التعليق على سَوقٍ لم يبلغ الكلمات",
+                ),
+            ),
+        )
+
+
+def test_the_path_module_never_imports_the_interpretation_layer() -> None:
+    """الاتّجاهُ مقطوعٌ بنيويًّا: التفسيرُ يستورد المسار ولا يستورده."""
+
+    source = Path(composition_ifada_path.__file__).read_text(encoding="utf-8")
+
+    assert "composition_ifada_interpretation" not in source
+    assert "maqayis" not in source
+    assert "masaq" not in source.lower()

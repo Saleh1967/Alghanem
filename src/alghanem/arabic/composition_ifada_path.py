@@ -61,6 +61,7 @@ from .mantuq_mafhum_ifada import (
 
 __all__ = [
     "BENEFIT_IS_DERIVED_NOT_SUPPLIED_NOTE",
+    "THE_ENTRY_IS_BYTES_NOT_A_STRING_NOTE",
     "CASE_MARK_IS_NOT_IRAB_NOTE",
     "COMPOSITION_IFADA_PATH_NAMED_LAWS",
     "DECLARED_SCOPE",
@@ -94,6 +95,7 @@ class PathStage(Enum):
 
     UTF8_BYTES = "UTF8_BYTES"
     UNICODE_NFC = "UNICODE_NFC"
+    WORD_SPLIT = "WORD_SPLIT"
     CARRIER_STATE = "CARRIER_STATE"
     SYLLABLE = "SYLLABLE"
     WORD_STRUCTURE = "WORD_STRUCTURE"
@@ -119,6 +121,7 @@ class StageOutcome(Enum):
 class PathStop(Enum):
     """أجناسُ التوقّف؛ كلٌّ يُرفَع بعينه ولا تُطوى في «لم يُقرأ»."""
 
+    BYTES_ARE_NOT_UTF8 = "BYTES_ARE_NOT_UTF8"
     NOT_TWO_WORDS = "NOT_TWO_WORDS"
     WORD_HALTED_IN_THE_WRITTEN_CHAIN = "WORD_HALTED_IN_THE_WRITTEN_CHAIN"
     FINAL_MARK_NOT_WRITTEN = "FINAL_MARK_NOT_WRITTEN"
@@ -192,7 +195,15 @@ BENEFIT_IS_DERIVED_NOT_SUPPLIED_NOTE: Final[str] = (
     "مُسمًّى لا `True` تُكتَب لإنهاء التجربة."
 )
 
+THE_ENTRY_IS_BYTES_NOT_A_STRING_NOTE: Final[str] = (
+    "TheEntryIsBytesNotAString: مدخلُ المسار بايتاتٌ، وفكُّ ترميزها انتقالٌ "
+    "مقيسٌ له شرطُه ومانعُه وبصمتا طرفيه، لا شرطٌ صامتٌ يقع قبل القياس. "
+    "و`run_text` تيسيرٌ يُرمِّز ثمّ يُسلِّم إلى `run_bytes`، فلا تُتخطّى بها "
+    "طبقةُ الترميز ولا تُقرأ نصًّا بلا بايتات."
+)
+
 COMPOSITION_IFADA_PATH_NAMED_LAWS: Final[dict[str, str]] = {
+    "TheEntryIsBytesNotAString": THE_ENTRY_IS_BYTES_NOT_A_STRING_NOTE,
     "CaseMarkIsNotIrab": CASE_MARK_IS_NOT_IRAB_NOTE,
     "NoLexiconIsConsulted": NO_LEXICON_IS_CONSULTED_NOTE,
     "BenefitIsDerivedFromTheCompositionNotSupplied": (
@@ -225,6 +236,12 @@ COMPOSITION_IFADA_PATH_NAMED_LAWS: Final[dict[str, str]] = {
 
 def _digest_of(content: object) -> str:
     return canonical_digest(canonical_bytes(content))
+
+
+def _digest_of_bytes(content: bytes) -> str:
+    """بصمةُ بايتاتٍ كما وردت، بلا ترميزٍ وسيطٍ ولا تحويلٍ إلى نصّ."""
+
+    return canonical_digest(content)
 
 
 @dataclass(frozen=True, slots=True)
@@ -306,6 +323,7 @@ class WordReading:
 class PathRun:
     """سَوقُ نصٍّ واحدٍ في المسار كلِّه: سجلّاتُه، وقراءاتُه، وأين وقف."""
 
+    source: bytes
     text: str
     stages: tuple[StageRecord, ...]
     words: tuple[WordReading, ...]
@@ -313,8 +331,14 @@ class PathRun:
     record: DalalaRecord | None
 
     def __post_init__(self) -> None:
-        if not isinstance(self.text, str) or not self.text.strip():
-            raise CompositionIfadaPathError("نصُّ السَّوق نصٌّ غير فارغ.")
+        if type(self.source) is not bytes or not self.source:
+            raise CompositionIfadaPathError("مدخلُ السَّوق بايتاتٌ غيرُ فارغة.")
+        if not isinstance(self.text, str):
+            raise CompositionIfadaPathError("نصُّ السَّوق نصٌّ مقروء.")
+        if self.text and self.text.encode("utf-8") != self.source:
+            raise CompositionIfadaPathError(
+                "نصُّ السَّوق هو فكُّ ترميز بايتاته نفسِها، لا نصٌّ آخر."
+            )
         if type(self.stages) is not tuple or not self.stages:
             raise CompositionIfadaPathError("سَوقٌ بلا سجلٍّ واحدٍ لا يُقرأ.")
         ranks = tuple(record.rank for record in self.stages)
@@ -368,7 +392,7 @@ class PathRun:
     def trace(self) -> Trace:
         """أثرُ السَّوق كلِّه، مجموعًا من آثار انتقالاته بترتيبها."""
 
-        events: list[str] = [f"text:{_digest_of(self.text)}"]
+        events: list[str] = [f"source_bytes:{_digest_of_bytes(self.source)}"]
         for record in self.stages:
             events.extend(record.trace.events)
         return Trace(tuple(events))
@@ -494,44 +518,102 @@ def _benefit_of(reading: CompositionReading, witness_marks: str) -> tuple[bool, 
 
 
 def run_text(text: str) -> PathRun:
-    """سُق نصًّا واحدًا في المسار كلِّه، وسجِّل كلَّ انتقالٍ بحكمه وسببه."""
+    """سُق نصًّا مقروءًا بترميزه: يُرمَّز بـUTF-8 ثمّ يُساق من بايتاته.
+
+    والمدخلُ الأصليُّ للمسار بايتاتٌ لا نصّ (`TheEntryIsBytesNotAString`)؛
+    وهذه الدالّةُ تيسيرٌ لمن بيده نصٌّ مفكوكُ الترميز، فتُرمِّزه ثمّ تُسلِّمه
+    إلى `run_bytes`، ولا تتخطّى بها طبقةُ الترميز.
+    """
 
     if not isinstance(text, str) or not text.strip():
         raise CompositionIfadaPathError("مدخلُ المسار نصٌّ غير فارغ.")
+    return run_bytes(text.encode("utf-8"))
 
-    text_digest = _digest_of(text)
+
+def run_bytes(source: bytes) -> PathRun:
+    """سُق بايتاتٍ في المسار كلِّه، من فكِّ الترميز إلى مرشّح الإفادة.
+
+    وفكُّ الترميز انتقالٌ مقيسٌ له حكمُه ومانعُه، لا شرطًا صامتًا قبل المسار؛
+    فبايتاتٌ ليست UTF-8 تقف عند `BYTES_ARE_NOT_UTF8` ولا تُصلَح ولا تُتخطّى.
+    """
+
+    if type(source) is not bytes or not source.strip():
+        raise CompositionIfadaPathError("مدخلُ المسار بايتاتٌ غيرُ فارغة.")
+
+    source_digest = _digest_of_bytes(source)
     stages: list[StageRecord] = []
-    words: tuple[str, ...] = tuple(text.split())
+    decode_condition = "بايتاتُ المدخل UTF-8 صحيحةٌ تُفَكّ بلا إبدالٍ ولا إسقاط"
+    try:
+        text = source.decode("utf-8")
+    except UnicodeDecodeError as error:
+        stages.append(
+            _stage(
+                PathStage.UTF8_BYTES,
+                StageOutcome.BLOCKED,
+                operation="decode the declared bytes as strict UTF-8",
+                condition=decode_condition,
+                evidence=f"utf8_decode_error:{error.reason}@{error.start}",
+                input_digest=source_digest,
+                output_digest=None,
+                preventer=PathStop.BYTES_ARE_NOT_UTF8,
+            )
+        )
+        return PathRun(
+            source=source,
+            text="",
+            stages=tuple(stages),
+            words=(),
+            composition=None,
+            record=None,
+        )
+
+    stages.append(
+        _stage(
+            PathStage.UTF8_BYTES,
+            StageOutcome.ADVANCED,
+            operation="decode the declared bytes as strict UTF-8",
+            condition=decode_condition,
+            evidence=f"decoded_characters:{len(text)}",
+            input_digest=source_digest,
+            output_digest=_digest_of(text),
+        )
+    )
 
     normalized = unicodedata.normalize("NFC", text)
     stages.append(
         _stage(
-            PathStage.UTF8_BYTES,
+            PathStage.UNICODE_NFC,
+            StageOutcome.ADVANCED,
+            operation="normalize the decoded text to NFC before any reading",
+            condition="التسويةُ تسبق كلَّ قراءةٍ، ولا تُقرأ صورتان لنصٍّ واحد",
+            evidence=f"nfc_identical:{normalized == text}",
+            input_digest=_digest_of(text),
+            output_digest=_digest_of(normalized),
+        )
+    )
+
+    words: tuple[str, ...] = tuple(normalized.split())
+    stages.append(
+        _stage(
+            PathStage.WORD_SPLIT,
             StageOutcome.ADVANCED if len(words) == 2 else StageOutcome.DEFERRED,
-            operation="split the declared text into whitespace-separated words",
+            operation="split the normalized text into whitespace-separated words",
             condition=DECLARED_SCOPE,
             evidence=f"words:{len(words)}",
-            input_digest=text_digest,
+            input_digest=_digest_of(normalized),
             output_digest=_digest_of(words) if len(words) == 2 else None,
             preventer=None if len(words) == 2 else PathStop.NOT_TWO_WORDS,
         )
     )
     if len(words) != 2:
         return PathRun(
-            text=text, stages=tuple(stages), words=(), composition=None, record=None
+            source=source,
+            text=text,
+            stages=tuple(stages),
+            words=(),
+            composition=None,
+            record=None,
         )
-
-    stages.append(
-        _stage(
-            PathStage.UNICODE_NFC,
-            StageOutcome.ADVANCED,
-            operation="normalize the declared text to NFC before any reading",
-            condition="التسويةُ تسبق كلَّ قراءةٍ، ولا تُقرأ صورتان لنصٍّ واحد",
-            evidence=f"nfc_identical:{normalized == text}",
-            input_digest=text_digest,
-            output_digest=_digest_of(normalized),
-        )
-    )
 
     readings = tuple(_read_word(index, surface) for index, surface in enumerate(words))
     halted = tuple(
@@ -565,6 +647,7 @@ def run_text(text: str) -> PathRun:
                 )
             )
             return PathRun(
+                source=source,
                 text=text,
                 stages=tuple(stages),
                 words=readings,
@@ -607,6 +690,7 @@ def run_text(text: str) -> PathRun:
     )
     if unwritten:
         return PathRun(
+            source=source,
             text=text,
             stages=tuple(stages),
             words=readings,
@@ -639,6 +723,7 @@ def run_text(text: str) -> PathRun:
     )
     if reading is None:
         return PathRun(
+            source=source,
             text=text,
             stages=tuple(stages),
             words=readings,
@@ -671,6 +756,7 @@ def run_text(text: str) -> PathRun:
         )
     )
     return PathRun(
+        source=source,
         text=text,
         stages=tuple(stages),
         words=readings,
@@ -679,8 +765,10 @@ def run_text(text: str) -> PathRun:
     )
 
 
-if len(PathStage) != 8:
-    raise RuntimeError("طبقاتُ المسار ثمانٍ مُعلَنة.")
+if len(PathStage) != 9:
+    raise RuntimeError("طبقاتُ المسار تسعٌ مُعلَنة.")
+if tuple(PathStage)[0] is not PathStage.UTF8_BYTES:
+    raise RuntimeError("أوّلُ الطبقات بايتاتُ المدخل، فالمسارُ يبدأ منها.")
 if len(StageOutcome) != 3:
     raise RuntimeError("نتائجُ الانتقال ثلاثٌ لا رابعَ لها.")
 for _law_name, _law_text in COMPOSITION_IFADA_PATH_NAMED_LAWS.items():
