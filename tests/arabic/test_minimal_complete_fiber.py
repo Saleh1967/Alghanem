@@ -10,12 +10,17 @@ from alghanem.arabic import minimal_complete_fiber as mcm_module
 from alghanem.arabic.minimal_complete_fiber import (
     MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS,
     THE_CLOSURE_CHECKLIST,
+    THE_DECLARED_DOMAIN,
     THE_DESIGNED_WITNESSES,
     AttributionCandidate,
     ChecklistCondition,
     ClosureChecklist,
     ClosureRequirement,
+    ConditionEvidence,
+    DeclaredDomain,
     DeletedComponent,
+    DomainCase,
+    DomainKind,
     FiberElement,
     MinimalCompleteFiberError,
     MinimalCompleteFiberVerdict,
@@ -30,7 +35,15 @@ from alghanem.arabic.minimal_complete_fiber import (
     carried_functions,
     classification_information_is_required,
     delete,
+    deleting_representation,
+    full_representation,
+    genus_is_declared,
+    licensed_predicates,
+    lookup_reader,
+    necessity_deletion_experiment,
     necessity_standing_of,
+    predicate_is_licensed_for,
+    run_sufficiency_experiment,
 )
 from alghanem.import_boundary import ImportBoundaryPolicy, audit_import_boundary
 
@@ -52,8 +65,8 @@ def test_the_minimal_complete_fiber_module_reaches_no_kernel_module() -> None:
 
 
 def test_there_are_eight_named_residuals_all_distinct_and_non_blank() -> None:
-    assert len(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS) == 8
-    assert len(set(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)) == 8
+    assert len(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS) == 10
+    assert len(set(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)) == 10
     assert all(note.strip() for note in MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
 
 
@@ -161,6 +174,7 @@ def test_a_pair_that_does_not_collide_under_deletion_is_refused() -> None:
             ),
             first_content="الأوّل",
             second_content="الثاني",
+            context="مقامٌ مثبَّت",
             scope_note="تصميم",
         )
 
@@ -183,6 +197,7 @@ def test_a_pair_whose_content_agrees_proves_no_deletion_wrong() -> None:
             ),
             first_content="مضمونٌ واحد",
             second_content="مضمونٌ واحد",
+            context="مقامٌ مثبَّت",
             scope_note="تصميم",
         )
 
@@ -205,6 +220,7 @@ def test_a_witness_without_a_written_scope_is_refused() -> None:
             ),
             first_content="تقييد",
             second_content="إخبار",
+            context="مقامٌ مثبَّت",
             scope_note="   ",
         )
 
@@ -224,8 +240,33 @@ def test_necessity_is_witnessed_for_each_component_on_the_designed_pairs() -> No
         )
 
 
-def test_necessity_is_not_witnessed_when_no_pair_is_supplied() -> None:
-    assert necessity_standing_of(DeletedComponent.RELATION, ()) is (
+def test_every_deletion_is_actually_run_and_merges_two_contents() -> None:
+    for component in DeletedComponent:
+        result = necessity_deletion_experiment(component)
+        assert result.standing is SufficiencyStanding.REFUTED_ON_A_DECLARED_DOMAIN
+        assert result.no_reader_can_exist is True
+        assert len(result.merged_contents) == 1
+        assert len(result.merged_contents[0]) == 2
+
+
+def test_necessity_is_not_witnessed_on_a_domain_that_does_not_separate() -> None:
+    domain = DeclaredDomain(
+        identifier="مجالٌ بحالةٍ واحدة",
+        kind=DomainKind.DESIGNED_DOMAIN,
+        cases=(
+            DomainCase(
+                element=FiberElement(
+                    anchor="زيد",
+                    genus="شخصٌ مُعيَّن",
+                    predicate="طويل",
+                    relation=RelationKind.PREDICATION,
+                ),
+                content="الإخبارُ بطول زيد",
+                context="مقامٌ مثبَّت",
+            ),
+        ),
+    )
+    assert necessity_standing_of(DeletedComponent.PREDICATE, domain) is (
         NecessityStanding.NOT_WITNESSED
     )
 
@@ -233,35 +274,97 @@ def test_necessity_is_not_witnessed_when_no_pair_is_supplied() -> None:
 # --- المعيارُ بشطريه ----------------------------------------------------------
 
 
-def test_sufficiency_is_untested_because_no_independent_reader_exists_here() -> None:
-    assert assess_sufficiency() is (
-        SufficiencyStanding.NO_INDEPENDENT_READER_IN_THIS_TREE
+def test_sufficiency_is_run_not_inferred_from_the_interface_names() -> None:
+    assert assess_sufficiency() is SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN
+    result = run_sufficiency_experiment(
+        THE_DECLARED_DOMAIN,
+        full_representation,
+        lookup_reader(THE_DECLARED_DOMAIN, full_representation),
     )
+    assert result.merged_contents == ()
+    assert result.mismatched_contents == ()
+    assert result.distinct_output_count == THE_DECLARED_DOMAIN.case_count
     joined = "\n".join(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
-    assert "WithoutAnIndependentReaderSufficiencyIsUntested" in joined
+    assert "ALookupReaderProvesInjectivityNotUnderstanding" in joined
 
 
-def test_the_criterion_is_not_established_although_every_necessity_is_witnessed() -> (
+def test_the_reader_never_receives_the_original_element() -> None:
+    seen: list[object] = []
+
+    def recording_reader(output: tuple[str | None, ...]) -> str:
+        seen.append(output)
+        return ""
+
+    run_sufficiency_experiment(
+        THE_DECLARED_DOMAIN, full_representation, recording_reader
+    )
+    assert seen
+    assert all(isinstance(item, tuple) for item in seen)
+    assert all(
+        isinstance(part, str) or part is None
+        for item in seen
+        if isinstance(item, tuple)
+        for part in item
+    )
+
+
+def test_a_merging_representation_refutes_sufficiency_before_any_reader_is_asked() -> (
     None
 ):
+    asked = 0
+
+    def counting_reader(output: tuple[str | None, ...]) -> str:
+        nonlocal asked
+        asked += 1
+        return ""
+
+    result = run_sufficiency_experiment(
+        THE_DECLARED_DOMAIN,
+        deleting_representation(DeletedComponent.PREDICATE),
+        counting_reader,
+    )
+    assert result.no_reader_can_exist is True
+    assert result.standing is SufficiencyStanding.REFUTED_ON_A_DECLARED_DOMAIN
+    assert asked < THE_DECLARED_DOMAIN.case_count
+
+
+def test_the_criterion_holds_on_its_designed_domain_and_is_no_certificate() -> None:
     verdict = assess_minimal_complete_fiber()
     assert verdict.every_component_is_witnessed is True
-    assert verdict.is_established is False
+    assert verdict.is_established_on_its_domain is True
+    assert verdict.is_a_linguistic_certificate is False
+    assert verdict.domain_kind is DomainKind.DESIGNED_DOMAIN
     assert verdict.minimality_is_relative_to_the_tested_alternatives is True
     joined = "\n".join(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
     assert "TheMinimumIsRelativeToTheTestedAlternatives" in joined
+    assert "ADesignedDomainIsNotALinguisticCertificate" in joined
+
+
+def test_a_verdict_without_a_named_domain_is_refused() -> None:
+    standing = NecessityStanding.WITNESSED_ON_THE_DESIGNED_PAIRS
+    with pytest.raises(MinimalCompleteFiberError):
+        MinimalCompleteFiberVerdict(
+            domain_identifier="  ",
+            domain_kind=DomainKind.DESIGNED_DOMAIN,
+            sufficiency=SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN,
+            necessity=tuple((item, standing) for item in DeletedComponent),
+        )
 
 
 def test_a_verdict_that_drops_or_repeats_a_component_is_refused() -> None:
     standing = NecessityStanding.WITNESSED_ON_THE_DESIGNED_PAIRS
     with pytest.raises(MinimalCompleteFiberError):
         MinimalCompleteFiberVerdict(
-            sufficiency=SufficiencyStanding.NO_INDEPENDENT_READER_IN_THIS_TREE,
+            domain_identifier="مجالٌ مصمَّم",
+            domain_kind=DomainKind.DESIGNED_DOMAIN,
+            sufficiency=SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN,
             necessity=((DeletedComponent.PREDICATE, standing),),
         )
     with pytest.raises(MinimalCompleteFiberError):
         MinimalCompleteFiberVerdict(
-            sufficiency=SufficiencyStanding.NO_INDEPENDENT_READER_IN_THIS_TREE,
+            domain_identifier="مجالٌ مصمَّم",
+            domain_kind=DomainKind.DESIGNED_DOMAIN,
+            sufficiency=SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN,
             necessity=(
                 (DeletedComponent.PREDICATE, standing),
                 (DeletedComponent.PREDICATE, standing),
@@ -332,6 +435,60 @@ def test_the_checklist_has_seven_conditions_and_zero_are_satisfied() -> None:
     assert len(ClosureRequirement) == 7
 
 
+def test_the_checklist_is_a_live_audit_that_counts_attempted_runs() -> None:
+    assert THE_CLOSURE_CHECKLIST.is_a_live_audit is True
+    assert THE_CLOSURE_CHECKLIST.attempted_count == 5
+    attempted = [item for item in THE_CLOSURE_CHECKLIST.conditions if item.is_attempted]
+    assert all(item.is_satisfied is False for item in attempted)
+    assert all(
+        item.evidence is not None
+        and item.evidence.domain_kind is DomainKind.DESIGNED_DOMAIN
+        for item in attempted
+    )
+
+
+def test_a_condition_reads_its_standing_from_the_evidence_it_carries() -> None:
+    requirement = ClosureRequirement.PREDICATE_NECESSARY
+    designed = ChecklistCondition(
+        requirement=requirement,
+        what_would_satisfy_it="شاهدان متصادمان",
+        why_it_is_open="المجالُ مصمَّم",
+        evidence=ConditionEvidence(
+            what_was_run="تجربةُ حذف",
+            where_it_is_recorded="هذا الاختبار",
+            domain_kind=DomainKind.DESIGNED_DOMAIN,
+        ),
+    )
+    linguistic = ChecklistCondition(
+        requirement=requirement,
+        what_would_satisfy_it="شاهدان متصادمان",
+        why_it_is_open="يبقى مكتوبًا حتّى بعد الاستيفاء",
+        evidence=ConditionEvidence(
+            what_was_run="تجربةُ حذف",
+            where_it_is_recorded="هذا الاختبار",
+            domain_kind=DomainKind.DECLARED_LINGUISTIC_DOMAIN,
+        ),
+    )
+    assert designed.is_attempted is True
+    assert designed.is_satisfied is False
+    assert linguistic.is_satisfied is True
+
+
+def test_evidence_without_what_was_run_or_where_it_is_recorded_is_refused() -> None:
+    with pytest.raises(MinimalCompleteFiberError):
+        ConditionEvidence(
+            what_was_run="  ",
+            where_it_is_recorded="موضع",
+            domain_kind=DomainKind.DESIGNED_DOMAIN,
+        )
+    with pytest.raises(MinimalCompleteFiberError):
+        ConditionEvidence(
+            what_was_run="ما أُجري",
+            where_it_is_recorded="  ",
+            domain_kind=DomainKind.DESIGNED_DOMAIN,
+        )
+
+
 def test_every_condition_writes_what_would_satisfy_it_and_why_it_is_open() -> None:
     for item in THE_CLOSURE_CHECKLIST.conditions:
         assert item.what_would_satisfy_it.strip()
@@ -360,3 +517,89 @@ def test_a_checklist_that_drops_or_repeats_a_condition_is_refused() -> None:
         ClosureChecklist(conditions=(condition,))
     with pytest.raises(MinimalCompleteFiberError):
         ClosureChecklist(conditions=(condition,) * 7)
+
+
+# --- فاحصُ التوافق النوعيّ والمجالُ المُعلَن -----------------------------------
+
+
+def test_the_predicate_space_licenses_a_shared_predicate_across_two_genera() -> None:
+    assert predicate_is_licensed_for("عضوُ الإبصار", "غائرة") is True
+    assert predicate_is_licensed_for("نبعُ الماء", "غائرة") is True
+    assert predicate_is_licensed_for("نبعُ الماء", "مُبصِرة") is False
+    assert "غائرة" in licensed_predicates("عضوُ الإبصار")
+
+
+def test_an_undeclared_genus_is_refused_and_not_read_as_an_empty_space() -> None:
+    assert genus_is_declared("جنسٌ لم يُعلَن") is False
+    with pytest.raises(MinimalCompleteFiberError):
+        licensed_predicates("جنسٌ لم يُعلَن")
+    with pytest.raises(MinimalCompleteFiberError):
+        predicate_is_licensed_for("جنسٌ لم يُعلَن", "طويل")
+    joined = "\n".join(MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS)
+    assert "ThePredicateSpaceIsDeclaredNotMeasured" in joined
+
+
+def test_a_case_outside_the_predicate_space_or_without_a_context_is_refused() -> None:
+    with pytest.raises(MinimalCompleteFiberError):
+        DomainCase(
+            element=FiberElement(
+                anchor="عين",
+                genus="نبعُ الماء",
+                predicate="مُبصِرة",
+                relation=RelationKind.PREDICATION,
+            ),
+            content="مضمون",
+            context="مقامٌ مثبَّت",
+        )
+    with pytest.raises(MinimalCompleteFiberError):
+        DomainCase(
+            element=FiberElement(
+                anchor="زيد",
+                genus="شخصٌ مُعيَّن",
+                predicate="طويل",
+                relation=RelationKind.PREDICATION,
+            ),
+            content="مضمون",
+            context="   ",
+        )
+
+
+def test_a_witness_whose_predicate_is_outside_its_genus_space_is_refused() -> None:
+    with pytest.raises(MinimalCompleteFiberError):
+        NecessityWitnessPair(
+            component=DeletedComponent.CLASSIFICATION,
+            first=FiberElement(
+                anchor="عين",
+                genus="عضوُ الإبصار",
+                predicate="مُبصِرة",
+                relation=RelationKind.PREDICATION,
+            ),
+            second=FiberElement(
+                anchor="عين",
+                genus="نبعُ الماء",
+                predicate="مُبصِرة",
+                relation=RelationKind.PREDICATION,
+            ),
+            first_content="الأوّل",
+            second_content="الثاني",
+            context="مقامٌ مثبَّت",
+            scope_note="تصميم",
+        )
+
+
+def test_every_domain_case_carries_a_written_context() -> None:
+    assert THE_DECLARED_DOMAIN.case_count == 6
+    assert THE_DECLARED_DOMAIN.kind is DomainKind.DESIGNED_DOMAIN
+    assert all(case.context.strip() for case in THE_DECLARED_DOMAIN.cases)
+
+
+def test_an_empty_or_repeating_domain_is_refused() -> None:
+    case = THE_DECLARED_DOMAIN.cases[0]
+    with pytest.raises(MinimalCompleteFiberError):
+        DeclaredDomain(identifier="مجالٌ خالٍ", kind=DomainKind.DESIGNED_DOMAIN, cases=())
+    with pytest.raises(MinimalCompleteFiberError):
+        DeclaredDomain(
+            identifier="مجالٌ مكرَّر",
+            kind=DomainKind.DESIGNED_DOMAIN,
+            cases=(case, case),
+        )

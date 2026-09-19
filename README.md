@@ -6697,22 +6697,34 @@ answers *in what manner the two are joined*. When the genus is uniquely and
 licensedly derivable from the anchor, the classification *information* is still
 required while a separate genus *field* is not.
 
-**Minimality is proved by collision, not by assertion.** A component may not be
-dropped when two witnesses survive its deletion identically yet demand different
-content. The three Arabic designs — `عين`/`عين`, `زيد طويل`/`زيد قصير`,
-`الرجل الطويل`/`الرجل طويل` — are checked live: each pair really does collapse
-under its own deletion and really does differ in content, or construction is
-refused. They remain **designs for counter-witnesses**, not a report that any
-codec test was executed, and a collision in the representation is not a
-collision in a context that may still recover the deleted information.
+**Minimality is proved by a run, not by assertion.** A component may not be
+dropped when two cases survive its deletion identically yet demand different
+content. All three Arabic designs — `عينٌ غائرة` under two genera,
+`زيد طويل`/`زيد قصير`, `الرجل الطويل`/`الرجل طويل` — are now *executed* against
+a declared domain of `6` cases, each carrying its own written context, and each
+deletion is refuted by an actual merge of two contents. They remain runs on a
+**designed** domain, not on the codec and not on a fingerprinted corpus.
 
-**Sufficiency is untested, so the criterion is not established.** The criterion
-is `Sufficient ∧ ⋀ Necessary`. Every component's necessity is witnessed on the
-designed pairs, yet no independent reader `D` and no declared domain `𝒟` exist
-in this tree, so `is_established` is false while `every_component_is_witnessed`
-is true. And the minimum proved is relative to the candidate components and the
-class of alternatives actually tested; another encoding may carry the same
-necessary information in a different shape.
+**The reader is structurally blind to the original.** `D` receives only `T(x)`,
+and it is called **once per distinct output**; its single answer is then
+compared against the content of every case sharing that output. A reader cannot
+cheat by recognising which case it is looking at, because it is never told.
+When the representation merges two contents, the experiment records the refusal
+*before* the reader is consulted at all: no reader can exist.
+
+**Genus and predicate are checked for compatibility.** `P(g)` is a declared
+table, and a predicate outside its genus's space cannot enter a domain case or
+a witness pair. An undeclared genus is refused rather than treated as an empty
+space. The table is declared here, not measured from a corpus.
+
+**The criterion holds on its domain and is not a certificate.** Sufficiency now
+returns `HELD_ON_A_DECLARED_DOMAIN` from an executed experiment rather than from
+inspecting interface names, and every component's necessity is witnessed. So
+`is_established_on_its_domain` is true — and `is_a_linguistic_certificate` is
+false, because the domain is designed. The lookup reader proves `T` is injective
+on that domain, not that content is recovered by linguistic rule. And the
+minimum proved is relative to the candidate components and the class of
+alternatives actually tested.
 
 **`zero` and `one` are shapes, not operations.** `zero` is `(a, g, p, ⊥)`: a
 relation not yet named — neither an empty fiber nor a denied attribute. `one`
@@ -6721,11 +6733,13 @@ adds the named relation with its evidence and residues, and explicitly does
 transition between them and is **not exported**; no callable in this deposit
 performs it.
 
-**The closure checklist stands at 0 / 7**, and the zero is derived by counting
-satisfied conditions, not written beside the list. Each of the seven conditions
-carries what would satisfy it and why it is still open, so the candidate's rank
-is not raised to a completed certificate merely because the equation has been
-written down.
+**The closure checklist stands at 0 / 7, with 5 attempted.** It is a live
+audit: each condition reads a documented evidence record rather than returning
+false by construction. Evidence gathered on a designed domain counts as an
+attempted run and satisfies nothing; only evidence on a declared linguistic
+domain can satisfy a condition, and none exists. So the zero is derived by
+reading evidence, and the candidate's rank is not raised to a completed
+certificate merely because experiments now run.
 
 ```bash
 python -m pip install -e '.[dev]'

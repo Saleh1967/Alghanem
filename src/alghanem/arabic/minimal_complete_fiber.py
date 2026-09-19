@@ -24,14 +24,22 @@
 
     MCM(T) ⟺ Sufficient(T) ∧ ⋀_{i ∈ I} Necessary(i)
 
-**ولا قارئَ مستقلًّا في هذه الشجرة بعدُ**، فالكفايةُ **غيرُ مختبَرة**، وشطرُ
-المعيار الأوّلُ مفتوح؛ ولا يُرفَع المرشَّحُ بشطرٍ واحد
-(`WITHOUT_AN_INDEPENDENT_READER_SUFFICIENCY_IS_UNTESTED`).
+**والشطران يُجرَيان تجربةً لا يُفحَصان بالأسماء**. فالكفايةُ تُقاس بقارئٍ لا
+يُمرَّر إليه إلّا `T(x)`؛ والحجبُ بنيويٌّ: يُنادى القارئُ مرّةً واحدةً لكلّ
+مخرجٍ متمايز، ثمّ يُقابَل جوابُه بمضمون كلّ حالةٍ تشترك في ذلك المخرج، فلا
+يملك ما يفرّق به بين حالتين دمجهما التمثيل. والضرورةُ تُقاس بإجراء التجربة
+نفسِها على `T_{-i}` بأفضلِ قارئٍ ممكنٍ على مخرجاتها. والمجالُ المُجرَى عليه
+**مصمَّمٌ** لاختبار التمثيل، فقيامُ المعيار عليه حكمٌ على مجاله وحدَه
+(`A_DESIGNED_DOMAIN_IS_NOT_A_LINGUISTIC_CERTIFICATE`)، وقارئُ الجدول يثبت
+تباينَ التمثيل لا فهمَه (`A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING`).
 
-**والشواهدُ العربيّةُ الثلاثةُ تُفحَص حيّةً بوصفها تصميمًا**: «عين» البصر
-و«عين» الماء لحذف التصنيف، و«زيد طويل» و«زيد قصير» لحذف المحمول، و«الرجل
-الطويل» و«الرجل طويل» لحذف نوع الربط. تصادمُها تحت الإسقاط مفحوصٌ بالبناء، وهي
-**تصميمُ شواهدَ مضادّة لا شهادةٌ بأنّ اختبارًا نُفِّذ على المِرماز**
+**والشواهدُ العربيّةُ الثلاثةُ تُجرى بمقامٍ مثبَّتٍ وتوافقٍ نوعيٍّ مفحوص**:
+«عينٌ غائرة» بجنسَي البصر والماء لحذف التصنيف، و«زيد طويل/قصير» لحذف المحمول،
+و«الرجل الطويل»/«الرجل طويل» لحذف نوع الربط. ويُشترَط في كلّ عنصرٍ انتماءُ
+محموله إلى `P(g)` المُعلَن (`THE_PREDICATE_SPACE_IS_DECLARED_NOT_MEASURED`)،
+ويُكتَب مقامُه قبل الحذف. وكلُّ تجربةٍ من الثلاث تدمج مضمونين فتنقض الكفاية،
+لكنّ المُجرَى عليه أزواجٌ مكتوبةٌ ههنا، **لا شهادةٌ بأنّ اختبارًا نُفِّذ على
+المِرماز**
 (`A_DESIGNED_WITNESS_IS_NOT_AN_EXECUTED_CODEC_TEST`). وتصادمُها تصادمٌ **في
 التمثيل**: يمنع أن يُنسَخ المحذوفُ في حقلٍ آخر ههنا، ولا يُغني عن تثبيت المجال
 والسياق ومنعِ استعادته من الأصل
@@ -45,8 +53,11 @@
 ولا تعني `zero` ليفًا خاليًا ولا صفةً منفيّة، بل عدمَ تعيينِ رابطة
 (`ZERO_IS_AN_UNNAMED_RELATION_NOT_AN_EMPTY_FIBER`).
 
-**والإغلاقُ لا يُعلَن**: قائمةُ التدقيق سبعةُ شروطٍ، والمستوفى منها **صفرٌ**
-مُشتقًّا بالعدّ لا مكتوبًا. وما يثبت — لو ثبت — حدٌّ أدنى **بالنسبة إلى**
+**والإغلاقُ لا يُعلَن**: قائمةُ التدقيق سبعةُ شروطٍ، وكلُّ شرطٍ يُقرَأ من
+شاهدٍ موثَّقٍ لا من إرجاعٍ ثابت؛ فما أُجري منها على مجالٍ مصمَّمٍ يُعَدّ
+**محاولةً مُجراةً** ولا يستوفي شرطًا، ولا يُستوفى شرطٌ إلّا بشاهدٍ على مجالٍ
+لغويٍّ مُعلَن. فالمستوفى **صفرٌ** مُشتقًّا بقراءة الشواهد لا مكتوبًا. وما
+يثبت — لو ثبت — حدٌّ أدنى **بالنسبة إلى**
 المكوّنات المرشَّحة وصنفِ البدائل المختبَر، لا إلزامٌ لكلّ ترميزٍ بثلاثة حقولٍ
 منفصلة (`THE_MINIMUM_IS_RELATIVE_TO_THE_TESTED_ALTERNATIVES`).
 
@@ -56,34 +67,48 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 from typing import Final
 
 __all__ = [
     "A_COLLISION_IN_THE_REPRESENTATION_IS_NOT_A_COLLISION_IN_CONTEXT_NOTE",
+    "A_DESIGNED_DOMAIN_IS_NOT_A_LINGUISTIC_CERTIFICATE_NOTE",
+    "A_DESIGNED_RUN",
     "A_DESIGNED_WITNESS_IS_NOT_AN_EXECUTED_CODEC_TEST_NOTE",
+    "A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING_NOTE",
     "FOUR_FIELDS_CARRY_THREE_FUNCTIONS_NOTE",
     "MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS",
     "ONE_IS_A_NAMED_ATTRIBUTION_NOT_A_TRUE_PROPOSITION_NOTE",
     "THE_CLOSURE_CHECKLIST",
+    "THE_DECLARED_DOMAIN",
+    "THE_DECLARED_PREDICATE_SPACE",
     "THE_DESIGNED_WITNESSES",
+    "THE_PREDICATE_SPACE_IS_DECLARED_NOT_MEASURED_NOTE",
+    "THE_REFERENCE_READER",
     "THE_MINIMUM_IS_RELATIVE_TO_THE_TESTED_ALTERNATIVES_NOTE",
     "THE_RELATION_VOCABULARY_IS_NOT_CLAIMED_EXHAUSTIVE_NOTE",
-    "WITHOUT_AN_INDEPENDENT_READER_SUFFICIENCY_IS_UNTESTED_NOTE",
     "ZERO_IS_AN_UNNAMED_RELATION_NOT_AN_EMPTY_FIBER_NOTE",
     "AttributionCandidate",
     "ChecklistCondition",
     "ClosureChecklist",
     "ClosureRequirement",
+    "ConditionEvidence",
+    "DeclaredDomain",
     "DeletedComponent",
+    "DomainCase",
+    "DomainKind",
     "FiberElement",
     "MinimalCompleteFiberError",
     "MinimalCompleteFiberVerdict",
     "NecessityStanding",
     "NecessityWitnessPair",
+    "Reader",
     "RelationKind",
+    "Representation",
     "StructuralFunction",
+    "SufficiencyExperimentResult",
     "SufficiencyStanding",
     "a_separate_genus_field_is_required",
     "assess_minimal_complete_fiber",
@@ -91,7 +116,15 @@ __all__ = [
     "carried_functions",
     "classification_information_is_required",
     "delete",
+    "deleting_representation",
+    "full_representation",
+    "genus_is_declared",
+    "licensed_predicates",
+    "lookup_reader",
+    "necessity_deletion_experiment",
     "necessity_standing_of",
+    "predicate_is_licensed_for",
+    "run_sufficiency_experiment",
 ]
 
 
@@ -152,6 +185,40 @@ def a_separate_genus_field_is_required(genus_is_uniquely_derivable: bool) -> boo
     """أيلزم حقلٌ مستقلٌّ للجنس؟ لا، متى اشتُقَّ بصورةٍ وحيدةٍ مرخَّصة."""
 
     return not genus_is_uniquely_derivable
+
+
+THE_DECLARED_PREDICATE_SPACE: Final[dict[str, frozenset[str]]] = {
+    "عضوُ الإبصار": frozenset({"مُبصِرة", "غائرة", "كحلاء"}),
+    "نبعُ الماء": frozenset({"غائرة", "عذبة", "جارية"}),
+    "شخصٌ مُعيَّن": frozenset({"طويل", "قصير", "قائم"}),
+}
+"""`P(g)`: فضاءُ المحمولات الممكنة لكلّ جنسٍ مُعلَن؛ **مُعلَنٌ ههنا لا مقيسٌ**."""
+
+
+def genus_is_declared(genus: str) -> bool:
+    """أهذا الجنسُ مُعلَنٌ في `P`؟ فما لم يُعلَن لا يُفحَص توافقُه بل يُردّ."""
+
+    return genus in THE_DECLARED_PREDICATE_SPACE
+
+
+def licensed_predicates(genus: str) -> frozenset[str]:
+    """`P(g)` لجنسٍ مُعلَن؛ وجنسٌ غيرُ مُعلَنٍ يُرفَض ولا يُعامَل فضاءً خاليًا."""
+
+    if not genus_is_declared(genus):
+        raise MinimalCompleteFiberError(
+            "جنسٌ غيرُ مُعلَنٍ في `P`؛ ولا يُقرَأ عدمُ الإعلان فضاءً خاليًا"
+        )
+    return THE_DECLARED_PREDICATE_SPACE[genus]
+
+
+def predicate_is_licensed_for(genus: str, predicate: str) -> bool:
+    """أينتمي المحمولُ إلى `P(g)`؟ فاحصُ التوافق النوعيّ بين الجنس والمحمول.
+
+    ولا يقيس هذا الفاحصُ عربيّةَ التركيب، بل ينظر في جدولٍ **مُعلَنٍ** ههنا
+    (`THE_PREDICATE_SPACE_IS_DECLARED_NOT_MEASURED`).
+    """
+
+    return predicate.strip() in licensed_predicates(genus)
 
 
 @dataclass(frozen=True, slots=True)
@@ -233,6 +300,174 @@ def delete(
     raise MinimalCompleteFiberError("مكوّنٌ غيرُ مُسمًّى؛ ولا يُسقَط ما لا يُسمّى")
 
 
+class DomainKind(Enum):
+    """جنسُ المجال الذي تُجرى عليه التجربة؛ والمصمَّمُ ليس مدوّنةً لغويّة."""
+
+    DESIGNED_DOMAIN = "مجالٌ_مصمَّمٌ_لاختبار_التمثيل"
+    DECLARED_LINGUISTIC_DOMAIN = "مجالٌ_لغويٌّ_مُعلَنٌ_ومُبصَّم"
+
+
+@dataclass(frozen=True, slots=True)
+class DomainCase:
+    """حالةٌ واحدة `x`: عنصرُها، ومضمونُ إفادتها `F(x)`، ومقامُها المحدَّد."""
+
+    element: FiberElement
+    content: str
+    context: str
+
+    def __post_init__(self) -> None:
+        if not self.content.strip():
+            raise MinimalCompleteFiberError("حالةٌ بلا مضمونِ إفادةٍ مكتوبٍ لا تُقابَل")
+        if not self.context.strip():
+            raise MinimalCompleteFiberError(
+                "حالةٌ بلا مقامٍ محدَّدٍ لا تُختبَر؛ فالمقامُ شرطُ تثبيت المجال"
+            )
+        if not predicate_is_licensed_for(self.element.genus, self.element.predicate):
+            raise MinimalCompleteFiberError(
+                "محمولٌ خارجَ `P(g)`؛ والتوافقُ النوعيُّ شرطُ دخولِ المجال"
+            )
+
+
+@dataclass(frozen=True, slots=True)
+class DeclaredDomain:
+    """`𝒟` مع `F`: مجالٌ مُعلَنٌ قبل التجربة، ومضمونُ كلِّ حالةٍ مكتوبٌ فيه."""
+
+    identifier: str
+    kind: DomainKind
+    cases: tuple[DomainCase, ...]
+
+    def __post_init__(self) -> None:
+        if not self.identifier.strip():
+            raise MinimalCompleteFiberError("مجالٌ بلا اسمٍ لا يُحال عليه")
+        if not self.cases:
+            raise MinimalCompleteFiberError("مجالٌ خالٍ تُثبَت عليه كلُّ دعوى")
+        elements = tuple(item.element for item in self.cases)
+        if len(set(elements)) != len(elements):
+            raise MinimalCompleteFiberError(
+                "عنصرٌ تكرّر في المجال؛ والتكرارُ يُخفي تعارضَ المضمون"
+            )
+
+    @property
+    def case_count(self) -> int:
+        """عددُ حالات المجال، مُشتقًّا بالعدّ."""
+
+        return len(self.cases)
+
+
+Representation = Callable[[FiberElement], tuple[str | None, ...]]
+"""`T`: تمثيلٌ يُرجِع مخرجًا مجرَّدًا؛ ولا يُمرَّر العنصرُ نفسُه إلى القارئ."""
+
+Reader = Callable[[tuple[str | None, ...]], str]
+"""`D`: قارئٌ لا يرى إلّا `T(x)`؛ والحجبُ بنيويٌّ في شكل النداء لا بالوصيّة."""
+
+
+def full_representation(element: FiberElement) -> tuple[str | None, ...]:
+    """`T`: المخرجُ الكامل `(a, g, p, r)` بلا إسقاطِ مكوّن."""
+
+    relation = None if element.relation is None else element.relation.value
+    return (element.anchor, element.genus, element.predicate, relation)
+
+
+def deleting_representation(component: DeletedComponent) -> Representation:
+    """`T_{-i}`: تمثيلٌ يُسقِط معلوماتِ المكوّن المُسمّى وحدَه."""
+
+    def representation(element: FiberElement) -> tuple[str | None, ...]:
+        return delete(element, component)
+
+    return representation
+
+
+class SufficiencyStanding(Enum):
+    """حالُ شطر الكفاية بعد **إجراء** التجربة، لا بعد فحص الأسماء."""
+
+    NO_INDEPENDENT_READER_IN_THIS_TREE = "لا_قارئَ_مستقلًّا_في_هذه_الشجرة"
+    HELD_ON_A_DECLARED_DOMAIN = "قائمةٌ_على_مجالٍ_مُعلَن"
+    REFUTED_ON_A_DECLARED_DOMAIN = "منتقضةٌ_على_مجالٍ_مُعلَن"
+
+
+@dataclass(frozen=True, slots=True)
+class SufficiencyExperimentResult:
+    """نتيجةُ تجربةٍ مُجراةٍ: مخرجاتٌ مدموجة، ومواضعُ اختلافِ القارئ عن الهدف."""
+
+    domain_identifier: str
+    domain_kind: DomainKind
+    distinct_output_count: int
+    merged_contents: tuple[tuple[str, ...], ...]
+    mismatched_contents: tuple[str, ...]
+    standing: SufficiencyStanding
+
+    @property
+    def no_reader_can_exist(self) -> bool:
+        """أيستحيل قارئٌ أصلًا؟ نعم متى دمج التمثيلُ مضمونين مختلفين."""
+
+        return bool(self.merged_contents)
+
+
+def run_sufficiency_experiment(
+    domain: DeclaredDomain, representation: Representation, reader: Reader
+) -> SufficiencyExperimentResult:
+    """أجرِ `D(T(x)) ≟ F(x)` على `𝒟`، ولا يُمرَّر إلى `D` إلّا `T(x)`.
+
+    والحجبُ ليس وصيّةً: يُنادى القارئُ **مرّةً واحدةً لكلّ مخرجٍ متمايز**، ثمّ
+    تُقابَل قيمتُه بمضمون كلّ حالةٍ تشترك في ذلك المخرج. فلو دمج التمثيلُ
+    حالتين مختلفتَي المضمون لَعجز أيُّ قارئٍ عن ردّهما، إذ لا يملك ما يفرّق به؛
+    فالدمجُ يُسجَّل نقضًا للكفاية قبل سؤال القارئ أصلًا.
+    """
+
+    grouped: dict[tuple[str | None, ...], list[DomainCase]] = {}
+    for case in domain.cases:
+        grouped.setdefault(representation(case.element), []).append(case)
+
+    merged: list[tuple[str, ...]] = []
+    mismatched: list[str] = []
+    for output, cases in grouped.items():
+        contents = tuple(sorted({case.content for case in cases}))
+        if len(contents) > 1:
+            merged.append(contents)
+            continue
+        answer = reader(output)
+        if answer != cases[0].content:
+            mismatched.append(cases[0].content)
+
+    if merged or mismatched:
+        standing = SufficiencyStanding.REFUTED_ON_A_DECLARED_DOMAIN
+    else:
+        standing = SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN
+
+    return SufficiencyExperimentResult(
+        domain_identifier=domain.identifier,
+        domain_kind=domain.kind,
+        distinct_output_count=len(grouped),
+        merged_contents=tuple(merged),
+        mismatched_contents=tuple(mismatched),
+        standing=standing,
+    )
+
+
+def lookup_reader(domain: DeclaredDomain, representation: Representation) -> Reader:
+    """قارئٌ مُعلَنٌ بجدولٍ من مخرجات التمثيل إلى المضمون؛ ولا يرى الأصل.
+
+    والمخرجُ المدموجُ يُترَك بلا جواب، فيُردّ عنه نصٌّ فارغٌ يُخالف كلَّ مضمون؛
+    وهذا قارئٌ **أفضلُ ما يمكن** على هذا الجدول، ويثبت تباينَ التمثيل لا فهمَه
+    (`A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING`).
+    """
+
+    table: dict[tuple[str | None, ...], set[str]] = {}
+    for case in domain.cases:
+        table.setdefault(representation(case.element), set()).add(case.content)
+
+    answers = {
+        output: next(iter(contents))
+        for output, contents in table.items()
+        if len(contents) == 1
+    }
+
+    def reader(output: tuple[str | None, ...]) -> str:
+        return answers.get(output, "")
+
+    return reader
+
+
 @dataclass(frozen=True, slots=True)
 class NecessityWitnessPair:
     """شاهدا ضرورةٍ: يتصادمان تحت `T_{-i}` ويختلف مضمونُ إفادتهما.
@@ -246,15 +481,25 @@ class NecessityWitnessPair:
     second: FiberElement
     first_content: str
     second_content: str
+    context: str
     scope_note: str
 
     def __post_init__(self) -> None:
         if not self.first_content.strip() or not self.second_content.strip():
             raise MinimalCompleteFiberError("شاهدٌ بلا مضمونِ إفادةٍ مكتوبٍ لا يُقابَل")
+        if not self.context.strip():
+            raise MinimalCompleteFiberError(
+                "شاهدٌ بلا مقامٍ محدَّدٍ لا يُختبَر؛ فالمقامُ يُثبَّت قبل الحذف"
+            )
         if not self.scope_note.strip():
             raise MinimalCompleteFiberError(
                 "شاهدٌ بلا نطاقٍ مكتوبٍ يُقرَأ بعد حين شهادةَ تنفيذٍ على المِرماز"
             )
+        for element in (self.first, self.second):
+            if not predicate_is_licensed_for(element.genus, element.predicate):
+                raise MinimalCompleteFiberError(
+                    "محمولٌ خارجَ `P(g)`؛ وشاهدٌ غيرُ متوافقٍ نوعيًّا لا يُقابِل مثلَه"
+                )
         if self.first == self.second:
             raise MinimalCompleteFiberError("عنصرٌ لا يشهد على نفسه")
         if delete(self.first, self.component) != delete(self.second, self.component):
@@ -279,6 +524,19 @@ class NecessityWitnessPair:
 
         return False
 
+    @property
+    def cases(self) -> tuple[DomainCase, ...]:
+        """حالتا الشاهد داخلتين في مجالٍ مُعلَن، بمقامٍ واحدٍ مثبَّتٍ لهما."""
+
+        return (
+            DomainCase(
+                element=self.first, content=self.first_content, context=self.context
+            ),
+            DomainCase(
+                element=self.second, content=self.second_content, context=self.context
+            ),
+        )
+
 
 THE_DESIGNED_WITNESSES: Final[tuple[NecessityWitnessPair, ...]] = (
     NecessityWitnessPair(
@@ -286,17 +544,18 @@ THE_DESIGNED_WITNESSES: Final[tuple[NecessityWitnessPair, ...]] = (
         first=FiberElement(
             anchor="عين",
             genus="عضوُ الإبصار",
-            predicate="مُبصِرة",
+            predicate="غائرة",
             relation=RelationKind.PREDICATION,
         ),
         second=FiberElement(
             anchor="عين",
             genus="نبعُ الماء",
-            predicate="مُبصِرة",
+            predicate="غائرة",
             relation=RelationKind.PREDICATION,
         ),
-        first_content="حديثٌ عن عضو الإبصار",
-        second_content="حديثٌ عن نبع الماء",
+        first_content="الإخبارُ بغؤور عضو الإبصار",
+        second_content="الإخبارُ بغؤور نبع الماء",
+        context="«عينٌ غائرة» مُفرَدةً، بلا قرينةٍ سابقةٍ تعيّن المجالَ المفهوميّ",
         scope_note=(
             "تصميمُ شاهدٍ مضادٍّ لحذف التصنيف: تطابقُ الدالّ لا يعيّن المجالَ "
             "المفهوميّ؛ ويلزم عند التنفيذ تثبيتُ المجال والسياق ومنعُ استعادة "
@@ -319,6 +578,7 @@ THE_DESIGNED_WITNESSES: Final[tuple[NecessityWitnessPair, ...]] = (
         ),
         first_content="الإخبارُ بطول زيد",
         second_content="الإخبارُ بقِصَر زيد",
+        context="خبرٌ عن مرجعٍ مثبَّتٍ واحدٍ، ونوعُ الإسناد مثبَّتٌ إخبارًا",
         scope_note=(
             "تصميمُ شاهدٍ مضادٍّ لحذف المحمول مع تثبيت المرجع ونوع الإسناد؛ "
             "فحذفُ الفرق بين المحمولين يدمج مضمونين مختلفين"
@@ -338,8 +598,9 @@ THE_DESIGNED_WITNESSES: Final[tuple[NecessityWitnessPair, ...]] = (
             predicate="طويل",
             relation=RelationKind.PREDICATION,
         ),
-        first_content="تركيبٌ تقييديّ: «الرجل الطويل»",
-        second_content="إخبارٌ: «الرجل طويل»",
+        first_content="تعيينُ رجلٍ بوصفه: «الرجل الطويل»",
+        second_content="الإخبارُ عن الرجل بالطول: «الرجل طويل»",
+        context="مرجعٌ ومحمولٌ مثبَّتان، والفرقُ في وجه الربط وحدَه",
         scope_note=(
             "تصميمُ شاهدٍ مضادٍّ لحذف نوع الربط: تشترك العبارتان في المفهومين "
             "ويفترقان في التقييد والإخبار، فحذفُ الفرق يُفقِد معلومةً لازمة"
@@ -349,56 +610,77 @@ THE_DESIGNED_WITNESSES: Final[tuple[NecessityWitnessPair, ...]] = (
 """ثلاثةُ أزواجٍ مصمَّمةٍ، تصادمُها مفحوصٌ عند الإنشاء؛ وهي تصميمٌ لا تنفيذ."""
 
 
+THE_DECLARED_DOMAIN: Final[DeclaredDomain] = DeclaredDomain(
+    identifier="المجالُ المصمَّم لشواهد الحذف الثلاثة",
+    kind=DomainKind.DESIGNED_DOMAIN,
+    cases=tuple(case for item in THE_DESIGNED_WITNESSES for case in item.cases),
+)
+"""`𝒟` مُعلَنٌ بحالاته ومقاماته؛ وهو **مصمَّمٌ** لاختبار التمثيل لا مدوّنةٌ عربيّة."""
+
+
+THE_REFERENCE_READER: Final[Reader] = lookup_reader(
+    THE_DECLARED_DOMAIN, full_representation
+)
+"""`D` مُعلَنٌ على المخرج الكامل؛ لا يرى إلّا `T(x)`، ولا يُمرَّر إليه الأصل."""
+
+
+def assess_sufficiency(
+    domain: DeclaredDomain = THE_DECLARED_DOMAIN,
+    representation: Representation = full_representation,
+    reader: Reader = THE_REFERENCE_READER,
+) -> SufficiencyStanding:
+    """أثبتت `D(T(x)) = F(x)`؟ يُجاب بإجراء التجربة لا بفحص أسماء الواجهة."""
+
+    return run_sufficiency_experiment(domain, representation, reader).standing
+
+
 class NecessityStanding(Enum):
-    """حالُ ضرورةِ مكوّن؛ والمشهودُ على التصميم غيرُ المشهود على المِرماز."""
+    """حالُ ضرورةِ مكوّن؛ والمشهودُ على مجالٍ مصمَّمٍ غيرُ المشهود على المِرماز."""
 
     WITNESSED_ON_THE_DESIGNED_PAIRS = "مشهودةٌ_على_الأزواج_المصمَّمة"
     NOT_WITNESSED = "لا_شاهدَ_لها_ههنا"
 
 
-def necessity_standing_of(
-    component: DeletedComponent,
-    witnesses: tuple[NecessityWitnessPair, ...] = THE_DESIGNED_WITNESSES,
-) -> NecessityStanding:
-    """أمشهودةٌ ضرورةُ هذا المكوّن؟ يُقرَأ من وجود زوجٍ متصادمٍ لا من دعوى."""
+def necessity_deletion_experiment(
+    component: DeletedComponent, domain: DeclaredDomain = THE_DECLARED_DOMAIN
+) -> SufficiencyExperimentResult:
+    """أجرِ تجربةَ الكفاية على `T_{-i}` بأفضلِ قارئٍ ممكنٍ على ذلك التمثيل.
 
-    if any(item.component is component for item in witnesses):
+    فلو انتقضت الكفايةُ بعد الإسقاط، وكان القارئُ المُقابَلُ هو **أفضلَ** ما
+    يمكن بناؤه على مخرجات `T_{-i}` نفسِها، لم يبقَ للنقض سببٌ إلّا الإسقاط.
+    """
+
+    representation = deleting_representation(component)
+    return run_sufficiency_experiment(
+        domain, representation, lookup_reader(domain, representation)
+    )
+
+
+def necessity_standing_of(
+    component: DeletedComponent, domain: DeclaredDomain = THE_DECLARED_DOMAIN
+) -> NecessityStanding:
+    """أمشهودةٌ ضرورةُ هذا المكوّن؟ تُقرَأ من نقضِ تجربةٍ مُجراةٍ لا من وجود زوج."""
+
+    result = necessity_deletion_experiment(component, domain)
+    if result.standing is SufficiencyStanding.REFUTED_ON_A_DECLARED_DOMAIN:
         return NecessityStanding.WITNESSED_ON_THE_DESIGNED_PAIRS
     return NecessityStanding.NOT_WITNESSED
 
 
-# --- الكفاية: لا قارئَ مستقلًّا ههنا ------------------------------------------
-
-
-class SufficiencyStanding(Enum):
-    """حالُ شطر الكفاية؛ ولا يُقرَأ غيابُ القارئ سقوطًا ولا ثبوتًا."""
-
-    NO_INDEPENDENT_READER_IN_THIS_TREE = "لا_قارئَ_مستقلًّا_في_هذه_الشجرة"
-    HELD_ON_A_DECLARED_DOMAIN = "قائمةٌ_على_مجالٍ_مُعلَن"
-    REFUTED_ON_A_DECLARED_DOMAIN = "منتقضةٌ_على_مجالٍ_مُعلَن"
-
-
-def assess_sufficiency() -> SufficiencyStanding:
-    """أثبتت `D(T(x)) = F(x)`؟ يُجاب بفحص وجود القارئ لا بترجيحه.
-
-    ولا تُصدِّر هذه الوحدةُ قارئًا ولا دالّةَ إفادةٍ على مجالٍ مُعلَن، فالشطرُ
-    الأوّلُ من المعيار **غيرُ مختبَر**؛ وهذا فحصٌ حيٌّ لواجهة الوحدة نفسِها.
-    """
-
-    reader_names = {"D", "read_content", "reconstruct_content", "independent_reader"}
-    if reader_names & set(__all__):
-        return SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN
-    return SufficiencyStanding.NO_INDEPENDENT_READER_IN_THIS_TREE
-
-
 @dataclass(frozen=True, slots=True)
 class MinimalCompleteFiberVerdict:
-    """حكمُ المعيار بشطريه؛ ولا يُرفَع بشطرٍ واحدٍ ولو تمّ الآخرُ كلُّه."""
+    """حكمُ المعيار بشطريه على مجالٍ مُسمًّى؛ ولا يُرفَع الحكمُ فوق مجاله."""
 
+    domain_identifier: str
+    domain_kind: DomainKind
     sufficiency: SufficiencyStanding
     necessity: tuple[tuple[DeletedComponent, NecessityStanding], ...]
 
     def __post_init__(self) -> None:
+        if not self.domain_identifier.strip():
+            raise MinimalCompleteFiberError(
+                "حكمٌ بلا مجالٍ مُسمًّى يُقرَأ حكمًا مطلقًا؛ والمعيارُ مُقيَّدٌ بمجاله"
+            )
         components = tuple(item for item, _ in self.necessity)
         if len(set(components)) != len(components):
             raise MinimalCompleteFiberError("مكوّنٌ تكرّر في الحكم؛ والتكرارُ يُخفي نقصًا")
@@ -409,7 +691,7 @@ class MinimalCompleteFiberVerdict:
 
     @property
     def every_component_is_witnessed(self) -> bool:
-        """أمشهودةٌ ضرورةُ المكوّنات كلِّها على الأزواج المصمَّمة؟ يُعَدّ ولا يُدَّعى."""
+        """أمشهودةٌ ضرورةُ المكوّنات كلِّها على هذا المجال؟ يُعَدّ ولا يُدَّعى."""
 
         return all(
             standing is NecessityStanding.WITNESSED_ON_THE_DESIGNED_PAIRS
@@ -417,12 +699,26 @@ class MinimalCompleteFiberVerdict:
         )
 
     @property
-    def is_established(self) -> bool:
-        """أثبت المعيار؟ يلزمه الشطران معًا، والكفايةُ ههنا غيرُ مختبَرة."""
+    def is_established_on_its_domain(self) -> bool:
+        """أثبت شطرا المعيار على هذا المجال وحدَه؟ يُقرَأ من نتيجتي التجربتين."""
 
         return (
             self.sufficiency is SufficiencyStanding.HELD_ON_A_DECLARED_DOMAIN
             and self.every_component_is_witnessed
+        )
+
+    @property
+    def is_a_linguistic_certificate(self) -> bool:
+        """أهو شهادةٌ لغويّة؟ لا ما دام المجالُ مصمَّمًا لاختبار التمثيل.
+
+        فالمجالُ المصمَّم يثبت قانونَ التمثيل على ما صُمِّم له، ولا يقوم مقامَ
+        مدوّنةٍ عربيّةٍ مُعلَنةٍ مُبصَّمة
+        (`A_DESIGNED_DOMAIN_IS_NOT_A_LINGUISTIC_CERTIFICATE`).
+        """
+
+        return (
+            self.domain_kind is DomainKind.DECLARED_LINGUISTIC_DOMAIN
+            and self.is_established_on_its_domain
         )
 
     @property
@@ -433,14 +729,17 @@ class MinimalCompleteFiberVerdict:
 
 
 def assess_minimal_complete_fiber(
-    witnesses: tuple[NecessityWitnessPair, ...] = THE_DESIGNED_WITNESSES,
+    domain: DeclaredDomain = THE_DECLARED_DOMAIN,
 ) -> MinimalCompleteFiberVerdict:
-    """قِس المعيارَ بشطريه: كفايةٌ تُفحَص، وضرورةٌ تُشتَقّ من الشواهد المصمَّمة."""
+    """قِس المعيارَ بشطريه بإجراء تجربتين: كفايةٌ على `T`، ونقضٌ على كلّ `T_{-i}`."""
 
+    reader = lookup_reader(domain, full_representation)
     return MinimalCompleteFiberVerdict(
-        sufficiency=assess_sufficiency(),
+        domain_identifier=domain.identifier,
+        domain_kind=domain.kind,
+        sufficiency=assess_sufficiency(domain, full_representation, reader),
         necessity=tuple(
-            (component, necessity_standing_of(component, witnesses))
+            (component, necessity_standing_of(component, domain))
             for component in DeletedComponent
         ),
     )
@@ -462,12 +761,30 @@ class ClosureRequirement(Enum):
 
 
 @dataclass(frozen=True, slots=True)
+class ConditionEvidence:
+    """شاهدٌ موثَّقٌ لشرطٍ: ما أُجري، وأين سُجِّل، وعلى أيّ جنسٍ من المجالات."""
+
+    what_was_run: str
+    where_it_is_recorded: str
+    domain_kind: DomainKind
+
+    def __post_init__(self) -> None:
+        if not self.what_was_run.strip():
+            raise MinimalCompleteFiberError("شاهدٌ بلا بيانِ ما أُجري ليس شاهدًا")
+        if not self.where_it_is_recorded.strip():
+            raise MinimalCompleteFiberError(
+                "شاهدٌ بلا موضعِ تسجيلٍ لا يُراجَع؛ والمراجعةُ شرطُ التوثيق"
+            )
+
+
+@dataclass(frozen=True, slots=True)
 class ChecklistCondition:
-    """شرطٌ واحد: ما يستوفيه، ولمَ لم يُستوفَ بعد — ولا يُكتَب أحدُهما فارغًا."""
+    """شرطٌ واحد: ما يستوفيه، ولمَ لم يُستوفَ بعد، وشاهدُه الموثَّقُ إن وُجد."""
 
     requirement: ClosureRequirement
     what_would_satisfy_it: str
     why_it_is_open: str
+    evidence: ConditionEvidence | None = None
 
     def __post_init__(self) -> None:
         if not self.what_would_satisfy_it.strip():
@@ -478,15 +795,28 @@ class ChecklistCondition:
             raise MinimalCompleteFiberError("شرطٌ بلا سببٍ مكتوبٍ لانفتاحه يُقرَأ مستوفًى")
 
     @property
-    def is_satisfied(self) -> bool:
-        """أاستُوفي؟ لا — والجوابُ ثابتٌ بالبناء لا بالحال الراهنة."""
+    def is_attempted(self) -> bool:
+        """أأُجري لهذا الشرط شيءٌ موثَّق؟ يُقرَأ من وجود الشاهد لا من الدعوى."""
 
-        return False
+        return self.evidence is not None
+
+    @property
+    def is_satisfied(self) -> bool:
+        """أاستُوفي؟ يُقرَأ من الشاهد الموثَّق: مجالٌ لغويٌّ مُعلَنٌ لا مصمَّم.
+
+        فالجوابُ مُشتقٌّ من البيانات، ولا يُرجَع `False` دائمًا؛ وشاهدٌ على مجالٍ
+        مصمَّمٍ يُسجَّل محاولةً مُجراةً، ولا يُرقّى شهادةً لغويّة.
+        """
+
+        return (
+            self.evidence is not None
+            and self.evidence.domain_kind is DomainKind.DECLARED_LINGUISTIC_DOMAIN
+        )
 
 
 @dataclass(frozen=True, slots=True)
 class ClosureChecklist:
-    """قائمةُ التدقيق كاملةً؛ والمستوفى يُعَدّ ولا يُكتَب بجانبها."""
+    """قائمةُ التدقيق كاملةً؛ والمستوفى والمُجرى يُعَدّان ولا يُكتَبان بجانبها."""
 
     conditions: tuple[ChecklistCondition, ...]
 
@@ -500,9 +830,15 @@ class ClosureChecklist:
 
     @property
     def satisfied_count(self) -> int:
-        """المستوفى في القائمة، مُشتقًّا بالعدّ."""
+        """المستوفى في القائمة، مُشتقًّا بقراءة الشواهد."""
 
         return sum(1 for item in self.conditions if item.is_satisfied)
+
+    @property
+    def attempted_count(self) -> int:
+        """ما أُجري له شيءٌ موثَّقٌ ولمّا يُستوفَ، مُشتقًّا بالعدّ."""
+
+        return sum(1 for item in self.conditions if item.is_attempted)
 
     @property
     def total_count(self) -> int:
@@ -516,6 +852,38 @@ class ClosureChecklist:
 
         return self.satisfied_count == self.total_count
 
+    @property
+    def is_a_live_audit(self) -> bool:
+        """أهي تدقيقٌ حيّ؟ نعم — تُقرَأ من شواهد الشروط لا من إعلانٍ ثابت."""
+
+        return True
+
+
+A_DESIGNED_RUN: Final[ConditionEvidence] = ConditionEvidence(
+    what_was_run=(
+        "تجربةُ كفايةٍ مُجراةٌ على المجال المصمَّم: يُنادى القارئُ مرّةً لكلّ "
+        "مخرجٍ متمايز، ثمّ يُقابَل جوابُه بمضمون كلّ حالةٍ تشترك في ذلك المخرج"
+    ),
+    where_it_is_recorded="`run_sufficiency_experiment` و`THE_DECLARED_DOMAIN`",
+    domain_kind=DomainKind.DESIGNED_DOMAIN,
+)
+"""شاهدُ إجراءٍ على مجالٍ مصمَّم؛ يُعَدّ محاولةً مُجراةً ولا يستوفي شرطًا."""
+
+
+def _deletion_run(component: DeletedComponent) -> ConditionEvidence:
+    """شاهدُ إجراءٍ لتجربة حذفِ مكوّنٍ على المجال المصمَّم، بمقاماتٍ مثبَّتة."""
+
+    return ConditionEvidence(
+        what_was_run=(
+            f"تجربةُ حذفِ «{component.value}» على المجال المصمَّم بأفضلِ قارئٍ "
+            "ممكنٍ على مخرجات التمثيل الناقص، ومقامُ كلّ حالةٍ مثبَّتٌ فيه"
+        ),
+        where_it_is_recorded=(
+            "`necessity_deletion_experiment` و`THE_DESIGNED_WITNESSES`"
+        ),
+        domain_kind=DomainKind.DESIGNED_DOMAIN,
+    )
+
 
 THE_CLOSURE_CHECKLIST: Final[ClosureChecklist] = ClosureChecklist(
     conditions=(
@@ -525,9 +893,10 @@ THE_CLOSURE_CHECKLIST: Final[ClosureChecklist] = ClosureChecklist(
                 "تسجيلٌ قبليٌّ مُجمَّدٌ يحدّد `F` و`𝒟` قبل أيّ تجربة، بترتيبٍ " "تاريخيٍّ يُتحقَّق منه"
             ),
             why_it_is_open=(
-                "لم يُجمَّد ههنا مجالٌ ولا دالّةُ إفادة؛ والمعادلةُ مُودَعةٌ نصًّا "
-                "لا تجربةً مُسجَّلةً قبلًا"
+                "المجالُ ودالّةُ الإفادة مُعلَنان ههنا نصًّا في `THE_DECLARED_DOMAIN`، "
+                "ولا تسجيلَ قبليًّا مُجمَّدًا يُثبِت سبقَهما للتجربة"
             ),
+            evidence=A_DESIGNED_RUN,
         ),
         ChecklistCondition(
             requirement=ClosureRequirement.CONTENT_REBUILT_FROM_THE_OUTPUT_ALONE,
@@ -535,9 +904,10 @@ THE_CLOSURE_CHECKLIST: Final[ClosureChecklist] = ClosureChecklist(
                 "قارئٌ مستقلٌّ `D` يُرجِع `F(x)` من `T(x)` وحدَه، بلا قراءةِ الأصل"
             ),
             why_it_is_open=(
-                "لا قارئَ مستقلًّا في هذه الوحدة ولا في الشجرة لهذا المخرج، "
-                "فالكفايةُ غيرُ مختبَرة"
+                "القارئُ مُجرًّى على المجال المصمَّم وحدَه، وهو قارئُ جدولٍ يثبت "
+                "تباينَ التمثيل لا فهمَه؛ ولا مدوّنةَ عربيّةً مُبصَّمةً يُقاس عليها"
             ),
+            evidence=A_DESIGNED_RUN,
         ),
         ChecklistCondition(
             requirement=ClosureRequirement.CLASSIFICATION_NECESSARY_OR_DERIVABLE,
@@ -546,9 +916,10 @@ THE_CLOSURE_CHECKLIST: Final[ClosureChecklist] = ClosureChecklist(
                 "الجنس اشتقاقًا وحيدًا مرخَّصًا من المرساة"
             ),
             why_it_is_open=(
-                "الشاهدُ المُودَع مُصمَّمٌ على زوجٍ مكتوبٍ ههنا، ولم يُنفَّذ على "
-                "مجالٍ مُعلَنٍ ولا على المِرماز"
+                "تجربةُ الحذف مُجراةٌ، لكنّها على مجالٍ مصمَّمٍ مكتوبٍ ههنا؛ "
+                "ولم تُجرَ على مدوّنةٍ عربيّةٍ مُعلَنةٍ ولا على المِرماز"
             ),
+            evidence=_deletion_run(DeletedComponent.CLASSIFICATION),
         ),
         ChecklistCondition(
             requirement=ClosureRequirement.PREDICATE_NECESSARY,
@@ -557,9 +928,10 @@ THE_CLOSURE_CHECKLIST: Final[ClosureChecklist] = ClosureChecklist(
                 "ونوع الإسناد"
             ),
             why_it_is_open=(
-                "زوجُ «زيد طويل/قصير» تصميمٌ مفحوصُ التصادم في التمثيل، لا تنفيذٌ "
-                "على مجالٍ مُعلَن"
+                "زوجُ «زيد طويل/قصير» تجربةٌ مُجراةٌ على مجالٍ مصمَّمٍ بمقامٍ "
+                "مثبَّت، لا على مدوّنةٍ عربيّةٍ مُعلَنة"
             ),
+            evidence=_deletion_run(DeletedComponent.PREDICATE),
         ),
         ChecklistCondition(
             requirement=ClosureRequirement.ATTRIBUTION_NECESSARY_WITH_ITS_SCOPE,
@@ -568,9 +940,10 @@ THE_CLOSURE_CHECKLIST: Final[ClosureChecklist] = ClosureChecklist(
                 "نوعه من حقلٍ آخرَ أو من الأصل"
             ),
             why_it_is_open=(
-                "زوجُ «الرجل الطويل/الرجل طويل» يمنع النسخَ داخل التمثيل، ولا "
-                "يُغني عن تثبيت السياق ومنع الاستعادة من الأصل"
+                "زوجُ «الرجل الطويل/الرجل طويل» مُجرًّى بمقامٍ مثبَّتٍ يمنع النسخَ "
+                "داخل التمثيل، ولا يُغني عن مدوّنةٍ تمنع الاستعادة من الأصل"
             ),
+            evidence=_deletion_run(DeletedComponent.RELATION),
         ),
         ChecklistCondition(
             requirement=ClosureRequirement.WEAKER_ALTERNATIVES_EXHAUSTED,
@@ -609,9 +982,10 @@ A_COLLISION_IN_THE_REPRESENTATION_IS_NOT_A_COLLISION_IN_CONTEXT_NOTE: Final[str]
 )
 
 A_DESIGNED_WITNESS_IS_NOT_AN_EXECUTED_CODEC_TEST_NOTE: Final[str] = (
-    "ADesignedWitnessIsNotAnExecutedCodecTest: الأزواجُ الثلاثةُ تصميمُ شواهدَ "
-    "مضادّة مفحوصُ التصادم بالبناء؛ وليست شهادةً بأنّ اختبارَ حذفٍ نُفِّذ على "
-    "المِرماز أو على مدوّنةٍ مُبصَّمة، والفرقُ فرقُ جنسٍ لا فرقُ درجة"
+    "ADesignedWitnessIsNotAnExecutedCodecTest: تجاربُ الحذف الثلاثُ مُجراةٌ "
+    "فعلًا على المجال المصمَّم، وكلُّ واحدةٍ تدمج مضمونين فتنقض الكفاية؛ ومع "
+    "ذلك فالمُجرَى عليه أزواجٌ مكتوبةٌ ههنا، لا المِرماز ولا مدوّنةٌ مُبصَّمة، "
+    "والفرقُ فرقُ جنسٍ لا فرقُ درجة"
 )
 
 FOUR_FIELDS_CARRY_THREE_FUNCTIONS_NOTE: Final[str] = (
@@ -640,10 +1014,23 @@ THE_RELATION_VOCABULARY_IS_NOT_CLAIMED_EXHAUSTIVE_NOTE: Final[str] = (
     "الثلاثةُ حصرًا، وتوسيعُ المفردة يلزمه شاهدٌ لا إضافةٌ صامتة"
 )
 
-WITHOUT_AN_INDEPENDENT_READER_SUFFICIENCY_IS_UNTESTED_NOTE: Final[str] = (
-    "WithoutAnIndependentReaderSufficiencyIsUntested: `D(T(x)) = F(x)` شطرٌ لا "
-    "يُفحَص بلا قارئٍ مستقلٍّ ودالّةِ إفادةٍ على مجالٍ مُعلَن؛ وغيابُه ليس سقوطَ "
-    "الكفاية ولا ثبوتَها، بل عدمُ اختبارها — ولا يُرفَع المعيارُ بشطر الضرورة وحدَه"
+A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING_NOTE: Final[str] = (
+    "ALookupReaderProvesInjectivityNotUnderstanding: القارئُ المُجرّى ههنا "
+    "جدولٌ من مخرجات التمثيل إلى المضمون؛ فنجاحُه يثبت أنّ `T` مُتباينٌ على "
+    "المجال المُعلَن، لا أنّ مضمونَ الإفادة مُستخرَجٌ بقواعدَ لغويّة"
+)
+
+A_DESIGNED_DOMAIN_IS_NOT_A_LINGUISTIC_CERTIFICATE_NOTE: Final[str] = (
+    "ADesignedDomainIsNotALinguisticCertificate: `𝒟` المُجرَى عليه مصمَّمٌ "
+    "لاختبار التمثيل، بستّ حالاتٍ مكتوبةٍ ههنا ومقاماتٍ مثبَّتة؛ فقيامُ المعيار "
+    "عليه حكمٌ على مجاله وحدَه، ولا يُرقّى شهادةً لغويّةً بلا مدوّنةٍ مُعلَنةٍ "
+    "مُبصَّمةٍ وتسجيلٍ قبليٍّ مُجمَّد"
+)
+
+THE_PREDICATE_SPACE_IS_DECLARED_NOT_MEASURED_NOTE: Final[str] = (
+    "ThePredicateSpaceIsDeclaredNotMeasured: `P(g)` جدولٌ مُعلَنٌ في هذه الوحدة؛ "
+    "وفاحصُ التوافق النوعيّ يمنع دخولَ محمولٍ خارجَه، ولا يقيس عربيّةَ التركيب "
+    "ولا يُثبِت أنّ الجدولَ مستوعِبٌ لمحمولات الجنس"
 )
 
 ZERO_IS_AN_UNNAMED_RELATION_NOT_AN_EMPTY_FIBER_NOTE: Final[str] = (
@@ -654,7 +1041,9 @@ ZERO_IS_AN_UNNAMED_RELATION_NOT_AN_EMPTY_FIBER_NOTE: Final[str] = (
 
 MINIMAL_COMPLETE_FIBER_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     FOUR_FIELDS_CARRY_THREE_FUNCTIONS_NOTE,
-    WITHOUT_AN_INDEPENDENT_READER_SUFFICIENCY_IS_UNTESTED_NOTE,
+    THE_PREDICATE_SPACE_IS_DECLARED_NOT_MEASURED_NOTE,
+    A_LOOKUP_READER_PROVES_INJECTIVITY_NOT_UNDERSTANDING_NOTE,
+    A_DESIGNED_DOMAIN_IS_NOT_A_LINGUISTIC_CERTIFICATE_NOTE,
     A_DESIGNED_WITNESS_IS_NOT_AN_EXECUTED_CODEC_TEST_NOTE,
     A_COLLISION_IN_THE_REPRESENTATION_IS_NOT_A_COLLISION_IN_CONTEXT_NOTE,
     ZERO_IS_AN_UNNAMED_RELATION_NOT_AN_EMPTY_FIBER_NOTE,
