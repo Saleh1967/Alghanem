@@ -37,6 +37,7 @@ import hashlib
 import sys
 import unicodedata
 from pathlib import Path
+from typing import Final
 
 from alghanem.arabic.arabic_round_trip_corpus import (
     FATIHA_ROUND_TRIP,
@@ -46,6 +47,7 @@ from alghanem.arabic.arabic_round_trip_corpus import (
 from alghanem.arabic.arabic_round_trip_v1 import (
     LAYER_FUNCTIONS,
     LAYERS_NOT_IN_THIS_PIPELINE,
+    LayerOutcome,
     RoundTripTable,
     measure_round_trip,
     render_table,
@@ -72,12 +74,42 @@ def _normalised(tokens: tuple[bytes, ...]) -> tuple[bytes, ...]:
     return tuple(normalised)
 
 
-def _report(title: str, table: RoundTripTable) -> None:
+_EXAMPLES_PER_CLASS: Final[int] = 5
+
+
+def _class_examples(
+    table: RoundTripTable, tokens: tuple[bytes, ...]
+) -> dict[tuple[str, str, str], list[str]]:
+    """اجمع أمثلةَ كلِّ صنفِ رفضٍ أو اختلافٍ بعينها؛ فالعددُ وحدَه لا يُفحَص."""
+
+    examples: dict[tuple[str, str, str], list[str]] = {}
+    for trace in table.traces:
+        if trace.outcome is LayerOutcome.RECONSTRUCTED:
+            continue
+        reason = "—" if trace.refusal is None else trace.refusal.value
+        key = (trace.reached.value, trace.outcome.value, reason)
+        bucket = examples.setdefault(key, [])
+        if len(bucket) >= _EXAMPLES_PER_CLASS:
+            continue
+        if trace.token_index >= len(tokens):  # pragma: no cover - defensive
+            continue
+        bucket.append(tokens[trace.token_index].decode("utf-8", errors="replace"))
+    return examples
+
+
+def _report(title: str, table: RoundTripTable, tokens: tuple[bytes, ...] = ()) -> None:
     print(title)
     print(render_table(table))
     for halt in table.halt_profile:
         reason = "" if halt.refusal is None else f"/{halt.refusal.value}"
         print(f"  {halt.layer.value}/{halt.outcome.value}{reason}: {halt.count}")
+    if tokens:
+        examples = _class_examples(table, tokens)
+        if examples:
+            print("  examples of each halting class, not counts alone:")
+            for layer, outcome, reason in sorted(examples):
+                shown = " ".join(examples[(layer, outcome, reason)])
+                print(f"    {layer}/{outcome}/{reason}: {shown}")
     print(
         f"  end-to-end reconstructed: {table.end_to_end_reconstructed}"
         f"/{table.token_total}"
@@ -153,10 +185,12 @@ def _run_external(path: Path) -> int:
     if not tokens:
         print("لا كلمةَ واحدةَ في المدخل، فلا جدولَ يُطبع.", file=sys.stderr)
         return 1
-    _report("raw bytes as they arrived", measure_round_trip(tokens))
+    _report("raw bytes as they arrived", measure_round_trip(tokens), tokens)
+    normalised = _normalised(tokens)
     _report(
         "the same bytes, NFC before the pipeline",
-        measure_round_trip(_normalised(tokens)),
+        measure_round_trip(normalised),
+        normalised,
     )
     return 0
 
@@ -166,10 +200,14 @@ def _run_embedded() -> int:
     if not embedded:
         print("لا كلمةَ واحدةَ في المدخل، فلا جدولَ يُطبع.", file=sys.stderr)
         return 1
-    _report("embedded test surfaces, not a corpus", measure_round_trip(embedded))
+    _report(
+        "embedded test surfaces, not a corpus", measure_round_trip(embedded), embedded
+    )
+    normalised = _normalised(embedded)
     _report(
         "the same surfaces, NFC before the pipeline",
-        measure_round_trip(_normalised(embedded)),
+        measure_round_trip(normalised),
+        normalised,
     )
     return 0
 

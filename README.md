@@ -5912,6 +5912,51 @@ prolongation, and a heterogeneous pairing (alif after kasra) is not one either.
 | tokens reconstructed end to end | 28/29 | **29/29** |
 | table digest | `c34c24d5f8a09058…` | `0bdc8e9845fec582…` |
 
+### Reconstruction is not classification — the two are measured apart
+
+29/29 is a **reconstruction** figure, not a comprehension figure. The identity
+function returns every text perfectly and understands none of it, so a perfect
+round trip licenses no claim about what the pipeline understood. The obvious
+test case makes this concrete: does `الَّذِينَ` come back byte-for-byte *and*
+keep its identity as a relative noun, without being conflated with the definite
+article's lām in `الضَّالِّينَ`? Those are two questions, and
+`segmentation_discrimination_probe` answers them in two separate columns.
+
+**What is measured.** Eight probe words — `الَّذِينَ`, `الضَّالِّينَ`,
+`الشَّمْسِ`, `الْقَمَرِ`, `قَالَ`, `يَقُولُ`, `بَيْتِ`, `رَبُّكَ` — each stated
+with the reason it is in the probe. For each, two independent results: whether
+its bytes returned (run), and a derived **shape signature** read off the parse
+(onset kind, length of the unwritten opening, gemination positions, madd, coda).
+Five pairs are declared *before* the run and compared by signature only.
+
+Result: 8/8 bytes returned, 8/8 distinct shapes, no declared pair conflated.
+`الَّذِينَ` and `الضَّالِّينَ` differ where it matters — the unwritten opening
+is **1** unit in the first and **2** in the second, because `الَّذِينَ` writes
+its shadda on the lām itself, which is a written state and therefore stops the
+opening, while `الضَّالِّينَ` writes it on the ḍād, leaving the lām bare.
+
+**What is not measured, and is named as such.** A shape difference is not an
+identity. Nothing here calls one word a relative noun or the other a definite
+article; the probe only shows the pipeline did not emit them as the same thing.
+`ClassificationStanding` has three members and only the lowest is reachable —
+`لم_تُقَس_لانعدام_المرجع` — because **no independent reference segmentation is
+deposited in this tree**. That standing is enforced, not merely documented: the
+dataclass refuses construction with either higher member, so no future edit can
+promote it by writing rather than by depositing a reference.
+`INDEPENDENT_REFERENCE_REQUIREMENTS` states, class by class, exactly what a
+reference would have to supply to lift it.
+
+### The next number is the population, not the rate
+
+29 tokens is a small population, and raising a saturated rate produces no
+number. `UNMEASURED_ROUND_TRIP_SOURCES` still names the 77,429-token corpus by
+fingerprint with no figure attached, and
+`python examples/arabic/measure_arabic_round_trip_v1.py <path>` runs the full
+pipeline over it the moment its bytes are present. That path now prints, under
+every halting class, **example tokens from that class** rather than a count
+alone — so a wider run reports what refused and what differed, not just how
+much.
+
 The claim after this milestone is: *there is one executed path from Arabic bytes
 to a structure and back to bytes, and on the fingerprinted al-Fātiḥah deposit it
 returns all 29 tokens byte-identical, with an empty refusal profile.* What it is
