@@ -401,8 +401,30 @@ def test_no_arabic_module_reads_the_zero_one_structural_algebra() -> None:
     assert readers == []
 
 
+def _imported_module_names(path: Path) -> set[str]:
+    """أسماءُ الوحدات المستورَدةِ كاملةً؛ فالنسبيُّ يُحَلّ بحزمته قبل السؤال."""
+
+    text = path.read_text(encoding="utf-8")
+    package = ".".join(
+        ["alghanem", *path.relative_to(Path("src/alghanem").resolve()).parts[:-1]]
+    )
+    names: set[str] = set()
+    for node in ast.walk(ast.parse(text)):
+        if isinstance(node, ast.ImportFrom):
+            if node.level:
+                base = package
+                for _ in range(node.level - 1):
+                    base = base.rsplit(".", 1)[0]
+                names.add(f"{base}.{node.module}" if node.module else base)
+            elif node.module:
+                names.add(node.module)
+        elif isinstance(node, ast.Import):
+            names.update(alias.name for alias in node.names)
+    return names
+
+
 def test_only_the_named_bridge_joins_this_algebra_to_a_benefit() -> None:
-    """جسرٌ واحدٌ مُسمًّى يجمع الجبرَ بالإفادة، وهو نفسُه يُثبِت أنّه لا يمسُّها."""
+    """جسرٌ واحدٌ مُسمًّى يستورد الجبرَ والإفادةَ معًا؛ والذكرُ نصًّا ليس وصلًا."""
 
     source = Path("src/alghanem").resolve()
     algebra = source / "structural_dal"
@@ -410,8 +432,9 @@ def test_only_the_named_bridge_joins_this_algebra_to_a_benefit() -> None:
         str(path.relative_to(source))
         for path in source.rglob("*.py")
         if algebra not in path.parents
-        and "structural_dal" in (text := path.read_text(encoding="utf-8")).lower()
-        and "ifada" in text.lower()
+        and (names := _imported_module_names(path))
+        and any(name.startswith("alghanem.structural_dal") for name in names)
+        and any("ifada" in name for name in names)
     )
 
     assert joiners == ["structural_bridge/byte_slot_bridge.py"]

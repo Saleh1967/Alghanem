@@ -356,16 +356,28 @@ def test_the_rendered_bridge_publishes_its_bindings_and_its_limits() -> None:
         assert refusal in rendered
 
 
+def _imported_names(path: Path) -> set[str]:
+    """أسماءُ الوحدات المستورَدةِ في ملفٍ واحد؛ فذكرُ الاسم نصًّا ليس استيرادًا."""
+
+    imported: set[str] = set()
+    for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+        if isinstance(node, ast.ImportFrom) and node.module:
+            imported.update(node.module.split("."))
+        elif isinstance(node, ast.Import):
+            for alias in node.names:
+                imported.update(alias.name.split("."))
+    return imported
+
+
 def test_the_bridge_is_the_only_module_joining_the_algebra_to_the_path() -> None:
-    """الجسرُ وحدَه يجمع الجبرَ بالمسار؛ ولا وحدةَ أخرى تفعل ذلك في الشجرة."""
+    """الجسرُ وحدَه يجمع الجبرَ بالمسار؛ والجمعُ استيرادٌ مقروءٌ لا ذكرُ اسم."""
 
     source = Path("src/alghanem").resolve()
     bridge_dir = source / "structural_bridge"
     joiners = sorted(
         str(path.relative_to(source))
         for path in source.rglob("*.py")
-        if "structural_dal" in (text := path.read_text(encoding="utf-8"))
-        and "composition_ifada_path" in text
+        if _imported_names(path) >= {"structural_dal", "composition_ifada_path"}
     )
 
     assert joiners
