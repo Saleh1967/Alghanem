@@ -7896,6 +7896,70 @@ interpolation is read off these two numbers
 python examples/arabic/read_sukun_second_scope.py
 ```
 
+## A predicate the bits decide on their own
+
+Every Arabic figure published here so far has rested on an imported phonetic
+theory: twenty-nine letters, eleven points of articulation, a carrier/vowel
+split. That import is real and has always been declared. This milestone asks a
+narrower question that does not need it: **does this position carry a written
+haraka mark?** — `HasWrittenHarakaMark`.
+
+*Position* is not stipulated. Both deposited texts partition exactly and
+without remainder into Unicode `Lo` (34 distinct letters) and `Mn` (9 distinct
+combining marks); there is no third category to argue about, so a position is
+an `Lo` with the `Mn` run that follows it, read straight from
+`General_Category`.
+
+**The import is weighed, not merely named.** Unicode has no "haraka" property,
+so the seven codepoints must be chosen by hand. But Unicode *does* derive the
+superset they are chosen from: the combining marks of the Arabic blocks, which
+number **105** at Unicode 15.0.0. The import is therefore a selection of 7 out
+of 105 — **6.667%** — and its complement is enumerable rather than vague. Two
+of the 98 rejected marks are genuinely contestable, shadda (U+0651) and the
+dagger alif (U+0670), and they are excluded by the import, not by Unicode.
+
+**And the contested part moves nothing at all here.** Admitting shadda, the
+dagger, or both was run as an experiment over the two deposits: in all four
+combinations, **zero** positions changed verdict. The cause is measured, not
+assumed — neither text contains a single position bearing shadda or dagger
+*without* a haraka beside it, so the position is already marked before the
+question is asked. The published figures thus do not depend on the arguable
+part of the import. This is a fact about these two texts and not about the
+rule: a bare `بّ` does change verdict, and that is exercised in the tests.
+
+**The guarantee is proved by exhaustion, and its boundary is exact.** All
+1,114,112 codepoints were scanned: zero introduce one of the seven under NFD,
+zero destroy one, and zero Arabic codepoint splits into more than one position
+— so the verdict is invariant under NFC and NFD for *every possible input*,
+not merely for the deposits. Under compatibility normalization it breaks, in
+exactly **22** enumerable codepoints (`U+FC5E` decomposes to SPACE + DAMMATAN
++ SHADDA, and so on), so `positions_of` refuses NFKC and NFKD rather than
+silently correcting them.
+
+The predicate also reconciles exactly with the previous milestone, and the
+reconciliation is a subtraction with no remainder: unmarked positions equal
+the earlier implicit sukūn minus the gemination pair-starts — **40 = 54 − 14**
+on al-Fātiḥa, **61 = 77 − 16** on Fatḥ 48:29. The category the earlier work
+had to flag by hand as "not a sukūn at all" is the one this predicate excludes
+structurally. On al-Fātiḥa 103 of 143 positions are marked (**72.028%**); on
+Fatḥ 48:29, 188 of 249 (**75.502%**).
+
+**What certainty this is** is named rather than inflated. It is certainty
+about the script and not about the sound: a written mark is not a pronounced
+vowel (`A_WRITTEN_MARK_IS_NOT_A_PRONOUNCED_VOWEL`). Above all the negative
+carries no phonetic content — an unmarked position is a *missing mark*, and
+calling it a sukūn would re-import the whole theory this predicate was built
+to avoid (`THE_NEGATIVE_IS_AN_ABSENT_MARK_NOT_A_SUKUN`). The selection of the
+seven remains a choice and not a derivation
+(`THE_IMPORT_IS_A_SELECTION_NOT_A_DERIVATION`), the invariance is canonical
+and not compatibility (`THE_INVARIANCE_IS_CANONICAL_AND_NOT_COMPATIBILITY`),
+and the 105 is read from a Unicode version that will move
+(`A_UNICODE_VERSION_IS_A_DEPENDENCY`).
+
+```bash
+python examples/arabic/read_written_haraka_mark.py
+```
+
 ```bash
 python examples/arabic/read_quran_word_total_standing.py
 ```
