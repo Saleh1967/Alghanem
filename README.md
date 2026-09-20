@@ -7960,6 +7960,59 @@ and the 105 is read from a Unicode version that will move
 python examples/arabic/read_written_haraka_mark.py
 ```
 
+## The fiber structure, read from the bits
+
+This tree has a long fiber apparatus already — `carrier_state_observed_fiber`,
+`fiber_bundle_verdict`, `position_bundle_sections` — and all of it runs on the
+`CarrierStateCodec` and on an axis scheme registered before any counting. This
+milestone asks the same structural question along the other road: `π: E → B`
+read from Unicode alone, over the predicate of the previous section, with no
+codec and no preregistered scheme.
+
+**It is not a fiber bundle.** A bundle requires its fibers to match, and two
+sizes are measured, not one: empty and singleton. On al-Fātiḥa 40 empty and
+103 singleton; on Fatḥ 48:29, 61 and 188. What actually stands is a *partial
+section* — and there is **no total section at all**, because a section needs a
+point over every base point and the empty fibers have none. The count of total
+sections is 0, not 1. Over the marked sub-base alone it is exactly 1, since a
+singleton fiber leaves nothing to choose.
+
+**And here is the result worth having.** The previous section measured that
+admitting shadda and the dagger alif moves **zero** verdicts. That is true —
+*of the binary question*. Ask the fiber question instead, how many are in this
+fiber, and the same widening is not inert at all:
+
+| | al-Fātiḥa | Fatḥ 48:29 |
+|---|---|---|
+| binary verdicts moved | 0 | 0 |
+| fibers going from singleton to pair | **16** | **16** |
+
+So "the fiber is a singleton" is **not a property of Arabic script**; it is a
+direct artifact of restricting the selection to seven. The general lesson is
+larger than the number: **inertness is not a property of an import, it is a
+property of the question put to it.** An import that is inert in a binary
+projection can be decisive in the structure built over it. The earlier residual
+has been amended in place to carry that bound rather than left to be read too
+widely.
+
+**The two sixteens are not one number twice.** They are split by cause rather
+than left as a coincidence: al-Fātiḥa is 14 shadda + 2 dagger, Fatḥ is 16
+shadda + 0 dagger. Equal totals, different causes, and no pattern is read off
+them.
+
+**The bundle can be restored, at a stated price.** Adjoin "absence" as a fiber
+member and the fibers all become 8, the bundle becomes trivially `B × 8`, and a
+total section exists. That is exactly what the deposited scheme did when it
+made the absence value a member of every axis. But absence is not a codepoint:
+the eighth member is brought in from outside the table. So whether this is a
+bundle turns on a **stipulation, not a measurement**, and that is named rather
+than folded away. Nor is there local triviality over the letters: the realized
+sets range 0–4 on al-Fātiḥa and 0–5 on Fatḥ, and no letter carries all seven.
+
+```bash
+python examples/arabic/read_haraka_fiber_structure.py
+```
+
 ```bash
 python examples/arabic/read_quran_word_total_standing.py
 ```
