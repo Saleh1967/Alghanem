@@ -7471,6 +7471,357 @@ sanity check on the extraction, not a discovery. And a constraint on *who may
 stand next to whom* is not an account of *how often a letter occurs*, so it does
 not close the frequency question it was offered to close.
 
+## Three sections, counted — and none of them was one of the three laws
+
+A construction arrived that ascends from the binary distinction between
+quiescent and moving, `B = {0,1}`, through a fibre of sizes 1 and 3, to a level
+4 whose content is that the law of inchoation, the law of pause, and the general
+law of connection are *exactly three sections of the same bundle*.
+`position_bundle_sections` counts the sections instead of describing them, and
+separates four things the incoming table had placed in one column.
+
+**The count matches and the members do not.** A section is `s: B → E` with
+`π∘s = id_B`, so it must assign a point over *every* base point; the count is the
+product of the fibre sizes, `1 × 3 = 3`. The module enumerates all three, and
+every one of them takes the sukūn over `b=0` and differs only in which of the
+three vowels it takes over `b=1`. The three laws are not distinguished by a
+vowel choice at all, so the agreement of 3 with 3 is arithmetic and not
+structural, and it is recorded as exactly that.
+
+**Two of the rows are not sections and the third is not an object.**
+`s(every word) = 1` has words for its domain and `B` for its codomain — it names
+which fibre, never a point in one, and there is no projection `E → W` over which
+it could be a section. It is an occurrence labelling, and the `Section` type
+refuses it at construction. The measured distribution is the pushforward of one
+such labelling along `π`, so what the table presents as a third object beside
+the other two is a derived measure of the same single function.
+
+**Both declared constants are refuted by the columns sent with them.** "b=1
+always" at the first position meets 10,339 sukūn — **13.2187%**, entropy
+**0.563405 bits**. "b=0 always, H=0" at the final position meets 68,576
+non-sukūn — **87.8324%**, entropy **0.534160 bits**. The second refutation is
+internal: the 12.17% written in the table's own third row *is* the sukūn column
+that its second row says exhausts the position. The full four-cell entropy at
+the final position is **1.876082 bits** against a ceiling of 2 — the freest of
+the three readings, which is the opposite of a deterministic law.
+
+**The ascent chain is recomputed rather than copied.** The first two steps
+agree. The third does not: `116 × 734/29 = 2936`, while the written 21,286 is
+`734 × 29`. The ratio of written to computed is exactly `29/4`, which names the
+substitution — the dropped factor 4 is `|E₁|`, the entire state space the chain
+claims to derive everything from, so the last step of an ascent founded on
+`{0,1}` contains no `{0,1}`.
+
+What it does not establish: any of the columns. Their bytes are not in this
+tree, so nothing here re-derives them, and a share computed from a recorded
+count inherits that standing rather than lifting it. Two further limits are
+named rather than handled: `{1,3}` and 29 are declared inputs, not consequences
+of the binary distinction; and the two grids read two different positions under
+two different denominators, so they were never two sections over one base. The
+construction's own naming caveat is corrected in passing — over a finite
+discrete base local triviality holds vacuously, and what actually varies is the
+typical fibre, which is permitted over a disconnected base.
+
+```bash
+python examples/arabic/run_position_bundle_sections.py
+```
+
+## A gate that stood on no door, and a thirty that no download option explains
+
+One quoted corpus total has been carried in this tree without a derivation:
+**78,215**, attributed in `docs/reference/word_hierarchy_rebuild.md` to
+`quran-simple-enhanced.txt`. The corpus was already frozen — `FROZEN_CORPUS`
+pins the byte length 1,319,901, a SHA-256, and the encoding — and
+`decode_corpus_bytes` matched both before decoding anything. What was missing
+was the door: **no function in this tree resolved a path to those bytes**, no
+place in `corpora/` was sanctioned for them, and no script ran the check. The
+digest gate was mounted on an opening that could not be entered, so the absence
+of the bytes was not measured, merely unmentioned
+(`ADigestWithoutAResolverIsAGateOnNoDoor`).
+
+`quran_corpus_word_total.py` builds that door on MASAQ's three-source order —
+passed path, then `ALGHANEM_QURAN_CORPUS_PATH`, then
+`corpora/quran-simple-enhanced.txt` **if it actually exists**, and no fourth.
+Absence is an explicit refusal rather than a default, a resolvable path with no
+file is not resolvable bytes, and a resolved file with the wrong digest fails
+instead of being skipped. No total leaves the module without a length *and*
+digest match, and none leaves it without naming its rule: `WordCountingRule`
+declares three, because "the number of words in the corpus" is not a
+determinate description — it moves with what counts as a line, what is cut as a
+field, and what is read as a comment.
+
+**The survey produced a result, not a shortfall.** No public copy matching
+1,319,901 bytes was found among the mirrors examined — a limit of the survey,
+not a finding of non-existence, since GitHub's code index drops files this
+large. Five mirrors were then measured directly, all declared as differing from
+the frozen bytes in length and digest. Four of them — spanning 1,160,550 to
+1,337,820 bytes, differing in mark options and in line endings — produced the
+**same** whitespace-token total, 78,245. The Uthmani text produced 77,878. So
+the token total is invariant under exactly the axis that moves the byte length,
+which means the 30 separating 78,215 from 78,245 **cannot** be explained by a
+download option (`TheTokenTotalIsInvariantUnderTheMarkOptions`).
+
+What this does not establish. It does not re-derive 78,215, and it does not
+refute it: with no matching bytes the figure stands `WITHHELD_FOR_WANT_OF_THE_BYTES`,
+and that standing is read from the bytes rather than declared over them. The
+mirrors are corroboration of a counting rule's stability across versions, never
+a substitute for the corpus — `MirrorMeasurement` refuses at construction any
+entry carrying the frozen length or digest prefix, so the intended bytes cannot
+enter through the mirror door. And the 30 is **not** merged with the 134 already
+recorded in `gflk_specification_deposit` between 78,215 and the four deposited
+counts summing to 78,081: the two gaps fall on opposite sides of the quoted
+figure, and neither explains the other until the bytes arrive. When they do,
+the reading moves without a line of edit.
+
+## The thirty, named
+
+The thirty were then found, and they are not a rounding: they are the
+**disjoined letters** that open twenty-nine sūras — الم, حم, الر, كهيعص, طه,
+يس, ص, ق, ن, and the rest. Twenty-nine sūras, but **thirty tokens**, because
+Sūra 42 carries two: `حم` as āya 1 and `عسق` as āya 2. 78,245 − 30 = 78,215,
+exactly, with no remainder to absorb (`TheThirtyAreTheDisjoinedLetters`).
+
+**The rule was not fitted to its result.** `muqattaat_occurrences` matches the
+fourteen declared forms against *every* token in the corpus with no positional
+restriction whatsoever — it is free to strike anywhere, in any sūra, at any
+index — and it still strikes exactly thirty times, all of them at the head of a
+sūra's first or second āya, with **zero** false positives in 78,245 tokens.
+Nor is the form list padded: all fourteen are live, none occurs zero times.
+The near-collision that would have broken this does not occur, because bare
+`أَلَمْ` keeps its hamza (`أل م`) and never becomes `الم`
+(`TheRuleIsNotFittedToItsResult`). A falsification sweep over competing natural
+classes — bare token length, tokens free of weak letters, hapax occurrences,
+single-token āyāt, and every vocabulary-frequency stratum — found no other
+class of exactly thirty.
+
+**Where it breaks, stated.** The account is tied to this orthography. On the
+Uthmani text only **one** of the fourteen forms matches at all, because the
+rasm and the marks differ; that mirror does not reach 78,215 and the module
+records it as a break rather than dropping it from the survey
+(`TheAccountIsTiedToTheOrthography`).
+
+**What an exact match still is not.** Reaching the figure on four mirrors is an
+account *of the gap*, not a re-derivation *of the total*: `GapAccountStanding`
+is a separate field from `QuotedTotalStanding` precisely so that a measurement
+on mirrors can never be read as a count from the frozen bytes, which remain
+unresolved and keep the figure `WITHHELD_FOR_WANT_OF_THE_BYTES`
+(`AnAccountOfTheGapIsNotARederivation`). And an exact match is not a unique
+one — it is not established that whoever wrote 78,215 applied this rule, only
+that this rule reaches it reproducibly (`AnExactMatchIsNotAUniqueAccount`).
+
+One structural fact surfaced on the way and is recorded because any future
+count will trip on it: in this corpus the **basmala is inline** in āya 1 of
+every sūra except al-Fātiḥa, where it *is* āya 1, and at-Tawba, where it is
+absent — 112 inline basmalas, 448 tokens, already inside the 78,245. A count
+that assumes them separate is comparing on a different denominator
+(`TheBasmalaIsInlineInThisCorpus`).
+
+## Two tables, one of which does not add up
+
+Two 29×4 tables arrived from outside the tree: the vowel on the **first
+position** (the law of onset), quoted against 78,215, and the vowel on the
+**last position** (the shape of liaison), quoted against 78,076. The question
+put to them was a bit question — how many bits does the vowel actually carry,
+and how much of that is redundant given the letter.
+
+The first thing to do with a table is add it up. The second table closes
+exactly: every row agrees with its own total, every column agrees, and the
+grand total is 78,076 with no remainder. **The first table does not close.**
+Its rows are each internally consistent, but the printed cells sum to
+**66,076**, not 78,215 — leaving **12,139 occurrences (15.520%) with no row at
+all**, distributed across the columns as (7231, 4084, 667, 157). The document
+states "تحقّق المجموع تام: 78,215"; that statement is refuted by addition.
+The document also says the hamza was "folded into the letters above" — but had
+it been folded in, the table would close. So the fold is refuted too, and where
+the twelve thousand went is a residue with no answer
+(`THE_STATED_GRAND_TOTAL_OF_THE_FIRST_TABLE_IS_REFUTED`).
+
+The tables are **deposited, not measured**. Neither `MASAQ.csv` nor the
+fingerprinted Qur'ān bytes are in this tree, so not one cell can be recounted
+here; their standing is `QUOTED_NOT_REDERIVED`. But the arithmetic above them
+is a different standing: every entropy and mutual information is a function of
+the deposited integers alone, recomputed at read time and written into no field
+(`THE_ARITHMETIC_ABOVE_A_QUOTED_TABLE_IS_STILL_DERIVED`).
+
+**The bit account.** On the cells that exist:
+
+| | first position | last position |
+|---|---|---|
+| occurrences counted | 66,076 | 78,076 |
+| H(vowel) | 1.579090 bit | 1.876082 bit |
+| slack below 2 bits | 0.420910 | 0.123918 |
+| H(letter) | 4.246270 | 3.922882 |
+| H(vowel \| letter) | 1.282838 | 1.682363 |
+| I(letter;vowel) | 0.296253 | 0.193719 |
+| share of H(vowel) explained | **18.761%** | **10.326%** |
+| above chance floor | 348× | 250× |
+
+So the liaison vowel carries 1.876 of a possible 2 bits — it is nearly
+uniform — and knowing the letter removes only a tenth of that. The onset vowel
+is far more skewed (0.42 bit below uniform) and the letter explains nearly a
+fifth. Both dependences sit hundreds of times above the chance floor and both
+are small: **significant and weak are two measurements, not one**
+(`A_SIGNIFICANT_DEPENDENCE_IS_NOT_A_DETERMINING_ONE`). And I is symmetric by
+construction, so nothing here says the letter *determines* the vowel
+(`NO_DIRECTION_OF_DETERMINATION_IS_MEASURED_HERE`).
+
+Decomposed per letter, the information does not sit where the mass sits: on the
+liaison table **yā' carries the most** (0.02663 bit, n=2,316) while **mīm is
+the commonest letter** (n=13,172) and carries less. Frequency and
+informativeness come apart.
+
+**Exclusions are recorded, not erased.** Erasure was asked for; erasure would
+take the tree out of its own law. Three exclusions are held in
+`THE_DECLARED_EXCLUSIONS` with their counts, reasons and places: the 139 forms
+ending in a bare diacritic (removed before the deposit), the 17 alif-fatḥa
+cells (inside the table), and the newly found 12,139 (inside the table, never
+declared in the document). The effect of dropping the 17 is *run*, not
+asserted: the vowel quantities move by under 4×10⁻⁴ bit, while H(letter) moves
+2.1×10⁻³ — because a row was removed, not because seventeen occurrences left.
+No conclusion changes, and the bound is stated with its size rather than
+generalised (`AN_EXCLUDED_CASE_IS_RECORDED_AND_NOT_ERASED`).
+
+Finally, the two tables share no denominator — 78,215 stated, 66,076 actual,
+78,076 — so their total bit figures are never subtracted from one another; only
+the normalised quantities are compared
+(`THE_TWO_TABLES_DO_NOT_SHARE_A_DENOMINATOR`).
+
+```bash
+python examples/arabic/read_position_haraka_bit_account.py
+```
+
+## The letter that carries no vowel, and the hamza that has no cell
+
+Two things were asked of the same two tables: what the **alif** does as a
+neutral element, and where **hamzat al-waṣl** is counted.
+
+**The alif's onset row is four zeros.** Of the twenty-eight printed rows in the
+first-position table, the alif alone is (0,0,0,0); the other twenty-seven are
+live. That is an observation over 66,076 occurrences — against the twenty-three
+Fatiha occurrences on which `alif_neutrality` measures the same neutrality. The
+scope is nearly three thousand times larger and **the standing is lower**: that
+one is measured from fingerprinted bytes, this one is quoted from a document
+whose bytes are not in the tree (`A_LARGER_SCOPE_IS_NOT_A_HIGHER_STANDING`).
+
+**And the zero is bounded, not established.** The same table leaves 12,139
+occurrences with no row, and nobody knows what is in them. So the most that can
+be said is that the alif's share of onset positions is **between 0 and
+15.520%** — not that it is zero. `zero_is_established()` returns `False` here
+and would return `True` only over a table that closes
+(`A_PRINTED_ZERO_UNDER_AN_OPEN_SHORTFALL_IS_A_BOUND_NOT_A_ZERO`).
+
+**Hamzat al-waṣl has no cell in either table** — no row, no column. So it is
+counted not by its cells but by **what it leaves behind**: 10,182 onset
+positions bearing sukūn, 15.410% of the printed cells. Arabic does not begin a
+word with a sākin — the very mechanism the waṣl-alif exists to serve, a
+standing grammatical claim already measured in this tree on fingerprinted bytes
+(`imperative_wasla_census`), not a discovery here
+(`THE_ONSET_LAW_IS_A_STANDING_CLAIM_NOT_A_FINDING_HERE`). Those ten thousand
+cells are only coherent if the waṣl-alif was lifted out of the representation
+before the position was read. Alif neutrality is therefore not decorative: it
+**manufactures** these otherwise-impossible onsets. But counting a trace is not
+counting its cause — not every onset sukūn need be a waṣl, and this table
+cannot say how many are (`THE_ONSET_SUKUN_IS_THE_TRACE_NOT_THE_HAMZA_ITSELF`).
+
+**A share moves with its denominator.** The document reports (ل,sukūn) and
+(م,sukūn) as 52.4% of onset sukūn. Their sum, 5,418, is **53.212%** of the
+sukūn derived from the rows (10,182) and **52.404%** of the stated sukūn
+(10,339). The quoted figure used the denominator the rows do not reproduce;
+both are printed here, neither alone (`A_SHARE_MOVES_WITH_ITS_DENOMINATOR`).
+
+**The shortfall carries a hamza signature and is still not a row.** Sukūn is
+**1.293%** of the missing 12,139, and **1.312%** of the hamza row in the
+liaison table — two hundredths of a point apart — against **15.410%** in the
+printed onset table, twelve times higher. That is a fingerprint, not a
+coincidence. It is still refused as an account: the other three columns sit
+eleven points apart on fatḥa and nine on ḍamma, and the two positions are
+different positions anyway. So it is a **named candidate** that directly
+contradicts the document's own "the hamza was folded in" note — had it been
+folded, the table would close — and both accounts are recorded, neither adopted
+(`THE_SHORTFALL_CARRIES_A_HAMZA_SIGNATURE_AND_IS_STILL_NOT_A_ROW`).
+
+The alif's row in the *liaison* table is (17,0,0,0): seventeen fatḥas and
+nothing else. Fatḥa alone is the shape of a written tanwīn-fatḥ alif recorded
+as a cell — a **match of form**, not an attribution, since the seventeen words
+cannot be inspected from a table
+(`THE_ALIF_ROW_AT_THE_END_IS_THE_TANWIN_ARTEFACT`). And nothing here measures
+sound: the claim is that the alif occupies no vowel cell in this writing, never
+that it "is not pronounced" (`NO_SOUND_IS_MEASURED_HERE`).
+
+```bash
+python examples/arabic/read_wasl_alif_neutrality.py
+```
+
+## The sukūn the text does not write
+
+Of the four vowels, **sukūn alone is not necessarily a character**. Fatḥa,
+kasra and ḍamma each have a codepoint and cannot be read without it. Sukūn is
+read sometimes from a written mark (U+0652) and sometimes from **nothing at
+all** — from a bare carrier. So any table that gives sukūn one column has
+merged two things of different standing into one cell: one observed, one
+inferred.
+
+This is measurable, and it was measured — on the Fatiha bytes deposited in this
+tree (`fatiha_source_text`), through the round-tripping state codec
+(`carrier_state_candidate`):
+
+| | count | share |
+|---|---|---|
+| sukūn-bearing carriers | 75 | |
+| **written** (U+0652) | 21 | **28.000%** |
+| **unwritten** | 54 | **72.000%** |
+
+Fewer than a third of the sukūns are visible. The rest are inferred from
+absence, and absence has no fingerprint
+(`WHAT_IS_READ_FROM_ABSENCE_IS_NOT_READ_FROM_BYTES`).
+
+**And the unwritten is not one thing either.** The fifty-four split by cause:
+
+| cause | count | share of the unwritten |
+|---|---|---|
+| an alif, which never carries a mark | 23 | 42.593% |
+| the first half of a shadda pair | 14 | 25.926% |
+| a bare carrier otherwise | 17 | 31.481% |
+
+The pair-start **is not a sukūn at all** — it is half of a geminate, counted as
+a sukūn because the script writes nothing for it. So roughly a quarter of the
+unwritten sukūn is a different category that has entered the column, and no
+table without a shadda column can tell them apart
+(`A_GEMINATION_HALF_IS_NOT_A_SUKUN_AND_STILL_COUNTS_AS_ONE`).
+
+**The alif is the extreme case.** All twenty-three bare alifs in the Fatiha
+hold an unmarked sukūn; not one carries a written mark and not one carries a
+vowel. So the alif neutrality measured in `alif_neutrality` and bounded in
+`wasl_alif_neutrality` rests **entirely on an absence**: no byte anywhere says
+the alif is sākin — the bytes say it is *unmarked*
+(`THE_ALIFS_NEUTRALITY_RESTS_ENTIRELY_ON_AN_ABSENCE`).
+
+**And this reaches the deposited table.** Neutralising the alif, fourteen
+Fatiha words begin with a sukūn: **five marked (35.714%)** and nine with
+nothing written. So the onset sukūn column — the 10,182 counted in
+`position_haraka_bit_account` — is **two columns collapsed**, and on this
+measurement two thirds of it was never written. It cannot be split where it
+lives: that table is quoted and has no bytes in the tree
+(`THE_DEPOSITED_ONSET_SUKUN_CANNOT_BE_SPLIT_WHERE_IT_LIVES`).
+
+**The treatment is a split, not an edit.** No sukūn was written into any text,
+no carrier was altered, nothing was added to the source. `SukunCensus` simply
+refuses to hand back a bare total: `split()` is the intended output, the
+written share accompanies every count, and the source of each sukūn is named.
+Writing the marks into the text would have been editing a source rather than
+measuring one (`THE_TREATMENT_IS_A_SPLIT_NOT_AN_EDIT_OF_THE_SOURCE`). And every
+rate here is measured over twenty-nine words of one sūra — true of what it was
+measured on, and never multiplied into 78,215
+(`A_RATE_MEASURED_ON_ONE_SURA_IS_NOT_A_CORPUS_RATE`).
+
+```bash
+python examples/arabic/read_implicit_sukun_treatment.py
+```
+
+```bash
+python examples/arabic/read_quran_word_total_standing.py
+```
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
