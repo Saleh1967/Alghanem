@@ -7422,6 +7422,55 @@ they reported may be that mixture rather than the material. And invariance acros
 two depths would not be fractality even if it were recovered: fractality needs
 many levels, and the source affords at most two.
 
+## A constraint that is real, an asymmetry that was a spelling convention
+
+A separate reading of the same deposit asked whether Arabic avoids putting two
+consonants of the same place of articulation next to each other inside a root,
+and reported that the avoidance is near-total between C1 and C2 but only slight
+between C2 and C3 — a positional asymmetry, with the qaf singled out as an
+especially constrained letter. `maqayis_adjacency_constraint` re-measures all
+three claims on the deposited roots. The first survives; the other two do not.
+
+The constraint itself is there and is not marginal. Across 4,562 distinct
+triliteral roots, folded onto eleven declared places of articulation, same-place
+adjacency runs at **2.57% observed against 8.29% expected** at C1–C2 and **3.09%
+against 9.03%** at C2–C3, each about z = −14 against a column-permutation null
+that holds each position's letter frequencies fixed. Both survive Holm
+correction over the three declared tests.
+
+The asymmetry does not survive, and the reason is a property of the deposit
+rather than of the language. Geminate roots are stored **with the doubling
+written out** — `root_full` is `أجج` where `root_display` is `أج` — so in 449 of
+4,562 roots the second and third letters are literally the same letter. Counting
+those as same-place agreement inflates C2–C3 from 3.09% to 12.63% and
+manufactures the whole effect. Dropping pairs of one letter — whose place
+agreement is given by identity, not measured in the material — leaves 2.57% and
+3.09%, and the difference between the two positions, **tested directly against a
+single null rather than by comparing two separately computed z-scores**, comes
+back at p = 0.71. The two positions are not distinguished. Comparing two
+z-values is not a test of the difference between them: z grows with sample size
+alone, and the two positions have different denominators once identical pairs
+are dropped.
+
+Nor is the qaf singled out. Ranking every letter by observed-over-expected
+same-place adjacency at C1–C2 — with the expectation computed exactly from the
+margins, so no seed enters the ranking — the qaf has **0 same-place neighbours
+out of 360 against an expectation of 11.8**. That is a real constraint, but it is
+a **fifteen-way tie at the floor**: ت ث ح خ د ذ ز س ص ط ظ ع غ ق ك all sit at
+zero. A letter is singled out only if it is alone at the floor, and this one is
+not. The letters that do tolerate same-place neighbours are ش, ج, ي, و, ء and ه,
+and most of the 117 surviving C1–C2 violations have a glide in them — so the
+tail of this table is partly a consequence of assigning و and ي to the labial
+and palatal classes, an assignment that is contested and not resolved here.
+
+Three things are stated rather than assumed. The eleven places are a declared
+grouping, not a forced one: Sibawayh counts sixteen, and a coarser grouping
+raises the expected baseline and inflates every depression ratio. Root-cooccurrence
+avoidance is a standing claim since Greenberg 1950, so finding it here is a
+sanity check on the extraction, not a discovery. And a constraint on *who may
+stand next to whom* is not an account of *how often a letter occurs*, so it does
+not close the frequency question it was offered to close.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
