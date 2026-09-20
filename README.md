@@ -7690,6 +7690,68 @@ the normalised quantities are compared
 python examples/arabic/read_position_haraka_bit_account.py
 ```
 
+## The letter that carries no vowel, and the hamza that has no cell
+
+Two things were asked of the same two tables: what the **alif** does as a
+neutral element, and where **hamzat al-waṣl** is counted.
+
+**The alif's onset row is four zeros.** Of the twenty-eight printed rows in the
+first-position table, the alif alone is (0,0,0,0); the other twenty-seven are
+live. That is an observation over 66,076 occurrences — against the twenty-three
+Fatiha occurrences on which `alif_neutrality` measures the same neutrality. The
+scope is nearly three thousand times larger and **the standing is lower**: that
+one is measured from fingerprinted bytes, this one is quoted from a document
+whose bytes are not in the tree (`A_LARGER_SCOPE_IS_NOT_A_HIGHER_STANDING`).
+
+**And the zero is bounded, not established.** The same table leaves 12,139
+occurrences with no row, and nobody knows what is in them. So the most that can
+be said is that the alif's share of onset positions is **between 0 and
+15.520%** — not that it is zero. `zero_is_established()` returns `False` here
+and would return `True` only over a table that closes
+(`A_PRINTED_ZERO_UNDER_AN_OPEN_SHORTFALL_IS_A_BOUND_NOT_A_ZERO`).
+
+**Hamzat al-waṣl has no cell in either table** — no row, no column. So it is
+counted not by its cells but by **what it leaves behind**: 10,182 onset
+positions bearing sukūn, 15.410% of the printed cells. Arabic does not begin a
+word with a sākin — the very mechanism the waṣl-alif exists to serve, a
+standing grammatical claim already measured in this tree on fingerprinted bytes
+(`imperative_wasla_census`), not a discovery here
+(`THE_ONSET_LAW_IS_A_STANDING_CLAIM_NOT_A_FINDING_HERE`). Those ten thousand
+cells are only coherent if the waṣl-alif was lifted out of the representation
+before the position was read. Alif neutrality is therefore not decorative: it
+**manufactures** these otherwise-impossible onsets. But counting a trace is not
+counting its cause — not every onset sukūn need be a waṣl, and this table
+cannot say how many are (`THE_ONSET_SUKUN_IS_THE_TRACE_NOT_THE_HAMZA_ITSELF`).
+
+**A share moves with its denominator.** The document reports (ل,sukūn) and
+(م,sukūn) as 52.4% of onset sukūn. Their sum, 5,418, is **53.212%** of the
+sukūn derived from the rows (10,182) and **52.404%** of the stated sukūn
+(10,339). The quoted figure used the denominator the rows do not reproduce;
+both are printed here, neither alone (`A_SHARE_MOVES_WITH_ITS_DENOMINATOR`).
+
+**The shortfall carries a hamza signature and is still not a row.** Sukūn is
+**1.293%** of the missing 12,139, and **1.312%** of the hamza row in the
+liaison table — two hundredths of a point apart — against **15.410%** in the
+printed onset table, twelve times higher. That is a fingerprint, not a
+coincidence. It is still refused as an account: the other three columns sit
+eleven points apart on fatḥa and nine on ḍamma, and the two positions are
+different positions anyway. So it is a **named candidate** that directly
+contradicts the document's own "the hamza was folded in" note — had it been
+folded, the table would close — and both accounts are recorded, neither adopted
+(`THE_SHORTFALL_CARRIES_A_HAMZA_SIGNATURE_AND_IS_STILL_NOT_A_ROW`).
+
+The alif's row in the *liaison* table is (17,0,0,0): seventeen fatḥas and
+nothing else. Fatḥa alone is the shape of a written tanwīn-fatḥ alif recorded
+as a cell — a **match of form**, not an attribution, since the seventeen words
+cannot be inspected from a table
+(`THE_ALIF_ROW_AT_THE_END_IS_THE_TANWIN_ARTEFACT`). And nothing here measures
+sound: the claim is that the alif occupies no vowel cell in this writing, never
+that it "is not pronounced" (`NO_SOUND_IS_MEASURED_HERE`).
+
+```bash
+python examples/arabic/read_wasl_alif_neutrality.py
+```
+
 ```bash
 python examples/arabic/read_quran_word_total_standing.py
 ```
