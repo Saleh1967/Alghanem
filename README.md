@@ -7616,6 +7616,80 @@ absent — 112 inline basmalas, 448 tokens, already inside the 78,245. A count
 that assumes them separate is comparing on a different denominator
 (`TheBasmalaIsInlineInThisCorpus`).
 
+## Two tables, one of which does not add up
+
+Two 29×4 tables arrived from outside the tree: the vowel on the **first
+position** (the law of onset), quoted against 78,215, and the vowel on the
+**last position** (the shape of liaison), quoted against 78,076. The question
+put to them was a bit question — how many bits does the vowel actually carry,
+and how much of that is redundant given the letter.
+
+The first thing to do with a table is add it up. The second table closes
+exactly: every row agrees with its own total, every column agrees, and the
+grand total is 78,076 with no remainder. **The first table does not close.**
+Its rows are each internally consistent, but the printed cells sum to
+**66,076**, not 78,215 — leaving **12,139 occurrences (15.520%) with no row at
+all**, distributed across the columns as (7231, 4084, 667, 157). The document
+states "تحقّق المجموع تام: 78,215"; that statement is refuted by addition.
+The document also says the hamza was "folded into the letters above" — but had
+it been folded in, the table would close. So the fold is refuted too, and where
+the twelve thousand went is a residue with no answer
+(`THE_STATED_GRAND_TOTAL_OF_THE_FIRST_TABLE_IS_REFUTED`).
+
+The tables are **deposited, not measured**. Neither `MASAQ.csv` nor the
+fingerprinted Qur'ān bytes are in this tree, so not one cell can be recounted
+here; their standing is `QUOTED_NOT_REDERIVED`. But the arithmetic above them
+is a different standing: every entropy and mutual information is a function of
+the deposited integers alone, recomputed at read time and written into no field
+(`THE_ARITHMETIC_ABOVE_A_QUOTED_TABLE_IS_STILL_DERIVED`).
+
+**The bit account.** On the cells that exist:
+
+| | first position | last position |
+|---|---|---|
+| occurrences counted | 66,076 | 78,076 |
+| H(vowel) | 1.579090 bit | 1.876082 bit |
+| slack below 2 bits | 0.420910 | 0.123918 |
+| H(letter) | 4.246270 | 3.922882 |
+| H(vowel \| letter) | 1.282838 | 1.682363 |
+| I(letter;vowel) | 0.296253 | 0.193719 |
+| share of H(vowel) explained | **18.761%** | **10.326%** |
+| above chance floor | 348× | 250× |
+
+So the liaison vowel carries 1.876 of a possible 2 bits — it is nearly
+uniform — and knowing the letter removes only a tenth of that. The onset vowel
+is far more skewed (0.42 bit below uniform) and the letter explains nearly a
+fifth. Both dependences sit hundreds of times above the chance floor and both
+are small: **significant and weak are two measurements, not one**
+(`A_SIGNIFICANT_DEPENDENCE_IS_NOT_A_DETERMINING_ONE`). And I is symmetric by
+construction, so nothing here says the letter *determines* the vowel
+(`NO_DIRECTION_OF_DETERMINATION_IS_MEASURED_HERE`).
+
+Decomposed per letter, the information does not sit where the mass sits: on the
+liaison table **yā' carries the most** (0.02663 bit, n=2,316) while **mīm is
+the commonest letter** (n=13,172) and carries less. Frequency and
+informativeness come apart.
+
+**Exclusions are recorded, not erased.** Erasure was asked for; erasure would
+take the tree out of its own law. Three exclusions are held in
+`THE_DECLARED_EXCLUSIONS` with their counts, reasons and places: the 139 forms
+ending in a bare diacritic (removed before the deposit), the 17 alif-fatḥa
+cells (inside the table), and the newly found 12,139 (inside the table, never
+declared in the document). The effect of dropping the 17 is *run*, not
+asserted: the vowel quantities move by under 4×10⁻⁴ bit, while H(letter) moves
+2.1×10⁻³ — because a row was removed, not because seventeen occurrences left.
+No conclusion changes, and the bound is stated with its size rather than
+generalised (`AN_EXCLUDED_CASE_IS_RECORDED_AND_NOT_ERASED`).
+
+Finally, the two tables share no denominator — 78,215 stated, 66,076 actual,
+78,076 — so their total bit figures are never subtracted from one another; only
+the normalised quantities are compared
+(`THE_TWO_TABLES_DO_NOT_SHARE_A_DENOMINATOR`).
+
+```bash
+python examples/arabic/read_position_haraka_bit_account.py
+```
+
 ```bash
 python examples/arabic/read_quran_word_total_standing.py
 ```
