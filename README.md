@@ -7752,6 +7752,72 @@ that it "is not pronounced" (`NO_SOUND_IS_MEASURED_HERE`).
 python examples/arabic/read_wasl_alif_neutrality.py
 ```
 
+## The sukūn the text does not write
+
+Of the four vowels, **sukūn alone is not necessarily a character**. Fatḥa,
+kasra and ḍamma each have a codepoint and cannot be read without it. Sukūn is
+read sometimes from a written mark (U+0652) and sometimes from **nothing at
+all** — from a bare carrier. So any table that gives sukūn one column has
+merged two things of different standing into one cell: one observed, one
+inferred.
+
+This is measurable, and it was measured — on the Fatiha bytes deposited in this
+tree (`fatiha_source_text`), through the round-tripping state codec
+(`carrier_state_candidate`):
+
+| | count | share |
+|---|---|---|
+| sukūn-bearing carriers | 75 | |
+| **written** (U+0652) | 21 | **28.000%** |
+| **unwritten** | 54 | **72.000%** |
+
+Fewer than a third of the sukūns are visible. The rest are inferred from
+absence, and absence has no fingerprint
+(`WHAT_IS_READ_FROM_ABSENCE_IS_NOT_READ_FROM_BYTES`).
+
+**And the unwritten is not one thing either.** The fifty-four split by cause:
+
+| cause | count | share of the unwritten |
+|---|---|---|
+| an alif, which never carries a mark | 23 | 42.593% |
+| the first half of a shadda pair | 14 | 25.926% |
+| a bare carrier otherwise | 17 | 31.481% |
+
+The pair-start **is not a sukūn at all** — it is half of a geminate, counted as
+a sukūn because the script writes nothing for it. So roughly a quarter of the
+unwritten sukūn is a different category that has entered the column, and no
+table without a shadda column can tell them apart
+(`A_GEMINATION_HALF_IS_NOT_A_SUKUN_AND_STILL_COUNTS_AS_ONE`).
+
+**The alif is the extreme case.** All twenty-three bare alifs in the Fatiha
+hold an unmarked sukūn; not one carries a written mark and not one carries a
+vowel. So the alif neutrality measured in `alif_neutrality` and bounded in
+`wasl_alif_neutrality` rests **entirely on an absence**: no byte anywhere says
+the alif is sākin — the bytes say it is *unmarked*
+(`THE_ALIFS_NEUTRALITY_RESTS_ENTIRELY_ON_AN_ABSENCE`).
+
+**And this reaches the deposited table.** Neutralising the alif, fourteen
+Fatiha words begin with a sukūn: **five marked (35.714%)** and nine with
+nothing written. So the onset sukūn column — the 10,182 counted in
+`position_haraka_bit_account` — is **two columns collapsed**, and on this
+measurement two thirds of it was never written. It cannot be split where it
+lives: that table is quoted and has no bytes in the tree
+(`THE_DEPOSITED_ONSET_SUKUN_CANNOT_BE_SPLIT_WHERE_IT_LIVES`).
+
+**The treatment is a split, not an edit.** No sukūn was written into any text,
+no carrier was altered, nothing was added to the source. `SukunCensus` simply
+refuses to hand back a bare total: `split()` is the intended output, the
+written share accompanies every count, and the source of each sukūn is named.
+Writing the marks into the text would have been editing a source rather than
+measuring one (`THE_TREATMENT_IS_A_SPLIT_NOT_AN_EDIT_OF_THE_SOURCE`). And every
+rate here is measured over twenty-nine words of one sūra — true of what it was
+measured on, and never multiplied into 78,215
+(`A_RATE_MEASURED_ON_ONE_SURA_IS_NOT_A_CORPUS_RATE`).
+
+```bash
+python examples/arabic/read_implicit_sukun_treatment.py
+```
+
 ```bash
 python examples/arabic/read_quran_word_total_standing.py
 ```
