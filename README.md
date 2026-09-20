@@ -7471,6 +7471,61 @@ sanity check on the extraction, not a discovery. And a constraint on *who may
 stand next to whom* is not an account of *how often a letter occurs*, so it does
 not close the frequency question it was offered to close.
 
+## Three sections, counted — and none of them was one of the three laws
+
+A construction arrived that ascends from the binary distinction between
+quiescent and moving, `B = {0,1}`, through a fibre of sizes 1 and 3, to a level
+4 whose content is that the law of inchoation, the law of pause, and the general
+law of connection are *exactly three sections of the same bundle*.
+`position_bundle_sections` counts the sections instead of describing them, and
+separates four things the incoming table had placed in one column.
+
+**The count matches and the members do not.** A section is `s: B → E` with
+`π∘s = id_B`, so it must assign a point over *every* base point; the count is the
+product of the fibre sizes, `1 × 3 = 3`. The module enumerates all three, and
+every one of them takes the sukūn over `b=0` and differs only in which of the
+three vowels it takes over `b=1`. The three laws are not distinguished by a
+vowel choice at all, so the agreement of 3 with 3 is arithmetic and not
+structural, and it is recorded as exactly that.
+
+**Two of the rows are not sections and the third is not an object.**
+`s(every word) = 1` has words for its domain and `B` for its codomain — it names
+which fibre, never a point in one, and there is no projection `E → W` over which
+it could be a section. It is an occurrence labelling, and the `Section` type
+refuses it at construction. The measured distribution is the pushforward of one
+such labelling along `π`, so what the table presents as a third object beside
+the other two is a derived measure of the same single function.
+
+**Both declared constants are refuted by the columns sent with them.** "b=1
+always" at the first position meets 10,339 sukūn — **13.2187%**, entropy
+**0.563405 bits**. "b=0 always, H=0" at the final position meets 68,576
+non-sukūn — **87.8324%**, entropy **0.534160 bits**. The second refutation is
+internal: the 12.17% written in the table's own third row *is* the sukūn column
+that its second row says exhausts the position. The full four-cell entropy at
+the final position is **1.876082 bits** against a ceiling of 2 — the freest of
+the three readings, which is the opposite of a deterministic law.
+
+**The ascent chain is recomputed rather than copied.** The first two steps
+agree. The third does not: `116 × 734/29 = 2936`, while the written 21,286 is
+`734 × 29`. The ratio of written to computed is exactly `29/4`, which names the
+substitution — the dropped factor 4 is `|E₁|`, the entire state space the chain
+claims to derive everything from, so the last step of an ascent founded on
+`{0,1}` contains no `{0,1}`.
+
+What it does not establish: any of the columns. Their bytes are not in this
+tree, so nothing here re-derives them, and a share computed from a recorded
+count inherits that standing rather than lifting it. Two further limits are
+named rather than handled: `{1,3}` and 29 are declared inputs, not consequences
+of the binary distinction; and the two grids read two different positions under
+two different denominators, so they were never two sections over one base. The
+construction's own naming caveat is corrected in passing — over a finite
+discrete base local triviality holds vacuously, and what actually varies is the
+typical fibre, which is permitted over a disconnected base.
+
+```bash
+python examples/arabic/run_position_bundle_sections.py
+```
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
