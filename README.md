@@ -7238,6 +7238,65 @@ root's shape and Ibn Faris's prose about it, not "meaning"; and a single
 author's single style inflates TF-IDF similarity everywhere, an inflation this
 run does not separate out.
 
+## The same test on all forty chapters, and what it did to the first verdict
+
+`alghanem.arabic.maqayis_chapter_census` repeats the five-axis part-mirrors-whole
+test of `dal_alone_gloss` on every chapter of the deposited Maqayis table, to
+settle one narrow question: is the dal chapter's poetry-evidence divergence an
+anomaly of that chapter, or a deviation spread across all of them?
+
+**It is spread, and the framing of the first result was wrong.** The dal
+chapter's gap on that axis ranks **15th of 40**; fourteen chapters exceed it.
+Far from being an outlier, dal is one of the chapters *closest* to the whole —
+it clears four of five axes, and only **two chapters of forty** clear all five.
+So the earlier refutation was a verdict about the claim, never a property of the
+chapter, and reading it as "the dal chapter is unusual" generalises from a
+sample of one.
+
+**The inclusion bias is now measured, not merely named.** A chapter sits inside
+the whole it is compared against, which pulls the two shares together. Comparing
+each chapter to its *complement* instead makes the comparison disjoint — and
+across all 200 measurements it widens every gap and narrows none. The bias has a
+proven direction, so the complement comparison is a tightening that can never
+rescue a chapter that already failed.
+
+**The tolerance is a knob, so the module returns the curve, not a point.**
+
+| Tolerance | Chapters mirroring the whole |
+| --- | --- |
+| 0.05 | 2 / 40 |
+| 0.10 | 11 / 40 |
+| 0.15 | 19 / 40 |
+| 0.20 | 25 / 40 |
+| 0.25 | 27 / 40 |
+| 0.50 | 39 / 40 |
+
+Each chapter also reports the smallest tolerance at which it would pass, so two
+chapters can be compared without any threshold being imposed on the comparison.
+The dal chapter needs 0.1287, and the median chapter needs 0.1562.
+
+**Not every pass is evidence of resemblance.** Twenty-seven of forty chapters
+contain no weak-trilateral root at all; their share is zero, their gap is just
+the whole's own share, and clearing the band there is given by construction
+rather than measured. Those 45 `PowerlessPass` instances are counted separately.
+Fourteen chapters hold fewer than thirty entries, where one entry moves a share
+further than the entire band — declared as a reported stratum, never applied as
+a filter after the results were seen.
+
+**The source partition is polluted, and is not cleaned here.** The header column
+carries lines that are not chapter headers at all — a letter of the Prophet, the
+opening of a gloss that fell into the header slot. Hand-pruning them after seeing
+the results would be fitting, so they are counted, named, and left in. "Forty
+chapters" therefore means forty distinct headers, not forty chapters of the
+lexicon. Twelve rows carry no header at all, so the partition does not cover the
+table.
+
+**Showing a deviation is distributed does not explain it.** It rules out one
+account — that it belongs to a particular chapter — without establishing any
+other. Whether the spread reflects Ibn Faris's uneven composition, uneven
+extraction into this file, or simply the many small chapters whose gaps are
+inflated by their size is not separated here.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
