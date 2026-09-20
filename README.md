@@ -7297,6 +7297,54 @@ other. Whether the spread reflects Ibn Faris's uneven composition, uneven
 extraction into this file, or simply the many small chapters whose gaps are
 inflated by their size is not separated here.
 
+## Separating three accounts of one distributed deviation
+
+`maqayis_chapter_census` showed the poetry-share deviation is spread across the
+chapters rather than belonging to any one of them, and recorded that this rules
+out one account without establishing another. Three candidates were named and
+left unseparated: many small chapters inflating their own gaps, uneven
+extraction into this file, and uneven composition by Ibn Faris.
+`alghanem.arabic.maqayis_deviation_attribution` separates them on the deposited
+bytes.
+
+**The three are not evidentially equal, and that is declared before the result.**
+Size has a null model built from the table itself, so it can be tested.
+Extraction has two probes that never touch the poetry column. Authorial
+unevenness has no probe here at all — nothing in these bytes witnesses Ibn
+Faris's habit independently of this extraction — so it can only ever be a named
+residual.
+
+**Size is refuted as the account.** For each chapter, *n* entries are drawn from
+the table repeatedly and the poetry gap read on each draw; a chapter is in
+excess when its observed gap clears the 95th percentile of its own draws.
+Smallness genuinely widens gaps — the null threshold for the smallest chapter is
+an order of magnitude above the largest — but the excess sits with the **large**
+chapters, ten above the median size against four at or below it. If noise were
+producing the excess it would appear where noise is loudest, and it does not.
+
+**Extraction is a real contributor and an insufficient one.** Classifying
+headers by their own form finds a malformed stratum that is not chapter headers
+at all — a letter of the Prophet, an edition imprint, a gloss that fell into the
+header slot. Those 284 rows carry a poetry share of **0.6127** against the
+table's 0.4248, four times the declared tolerance away: a contaminant proven by
+counting. But removing them and re-running the whole measurement still leaves
+**13 of 37 chapters in excess, covering 2,774 of 4,280 rows**. Cleaning the
+contaminant moves the baseline and does not close the question.
+
+The cleaning rule is not fitting-after-the-fact: it reads the header column and
+never looks at the poetry column it is used to measure. Both measurements — on
+the whole domain and on the cleaned one — are returned together, so neither can
+be read alone. A second extraction probe, the rate at which the `axes_count`
+column falls silent, correlates with the poetry gap at ρ = 0.28 across 24
+chapters; that figure is reported and deliberately carries no verdict, since 24
+chapters cannot power such a test.
+
+**The authorial account remains a residual, and stays one by construction.** Its
+standing does not depend on the other two: a synthetic reading in which both
+probes come back negative returns exactly the same standing for it. Ruling out
+two accounts does not establish a third, and the true account may be a fourth
+that was never named.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
