@@ -172,8 +172,17 @@ def vendored_masaq_path() -> Path:
 DEPOSIT_DIRECTORY: Final[str] = "corpora"
 """مجلَّدُ الإيداع؛ يُقرأ من موضع هذه الوحدة لا من `cwd`."""
 
-SANCTIONED_DEPOSIT_FILENAMES: Final[tuple[str, ...]] = ("README.md", "MASAQ.csv")
-"""ما يجوز أن يسكن مجلَّدَ الإيداع: بيانُه، وبايتاتُه باسمها المسنون، ولا ثالثَ."""
+SANCTIONED_DEPOSIT_FILENAMES: Final[tuple[str, ...]] = (
+    "README.md",
+    "MASAQ.csv",
+    "quran-simple-enhanced.txt",
+)
+"""ما يجوز أن يسكن مجلَّدَ الإيداع: بيانُه، وبايتاتُ مدوّنتَيه بأسمائها المسنونة.
+
+والثالثُ مسنونٌ في `quran_corpus_word_total.QURAN_CORPUS_RELATIVE_PATH`
+وبايتاتُه ليست في الشجرة بعدُ كبايتات MASAQ؛ وسَنُّ الموضع ليس إيداعًا، لكنّ
+تركَه خارجَ المأذون كان يجعل نزولَ البايتات الصحيحةِ يُقرَأ رفعًا فاشلًا.
+"""
 
 A_FAILED_UPLOAD_IS_NOT_A_DEPOSIT_NOTE: Final[str] = (
     "AFailedUploadIsNotADeposit: ملفٌّ يصل إلى مجلَّد الإيداع باسمٍ غيرِ "

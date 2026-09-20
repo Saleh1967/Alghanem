@@ -7526,6 +7526,57 @@ typical fibre, which is permitted over a disconnected base.
 python examples/arabic/run_position_bundle_sections.py
 ```
 
+## A gate that stood on no door, and a thirty that no download option explains
+
+One quoted corpus total has been carried in this tree without a derivation:
+**78,215**, attributed in `docs/reference/word_hierarchy_rebuild.md` to
+`quran-simple-enhanced.txt`. The corpus was already frozen — `FROZEN_CORPUS`
+pins the byte length 1,319,901, a SHA-256, and the encoding — and
+`decode_corpus_bytes` matched both before decoding anything. What was missing
+was the door: **no function in this tree resolved a path to those bytes**, no
+place in `corpora/` was sanctioned for them, and no script ran the check. The
+digest gate was mounted on an opening that could not be entered, so the absence
+of the bytes was not measured, merely unmentioned
+(`ADigestWithoutAResolverIsAGateOnNoDoor`).
+
+`quran_corpus_word_total.py` builds that door on MASAQ's three-source order —
+passed path, then `ALGHANEM_QURAN_CORPUS_PATH`, then
+`corpora/quran-simple-enhanced.txt` **if it actually exists**, and no fourth.
+Absence is an explicit refusal rather than a default, a resolvable path with no
+file is not resolvable bytes, and a resolved file with the wrong digest fails
+instead of being skipped. No total leaves the module without a length *and*
+digest match, and none leaves it without naming its rule: `WordCountingRule`
+declares three, because "the number of words in the corpus" is not a
+determinate description — it moves with what counts as a line, what is cut as a
+field, and what is read as a comment.
+
+**The survey produced a result, not a shortfall.** No public copy matching
+1,319,901 bytes was found among the mirrors examined — a limit of the survey,
+not a finding of non-existence, since GitHub's code index drops files this
+large. Five mirrors were then measured directly, all declared as differing from
+the frozen bytes in length and digest. Four of them — spanning 1,160,550 to
+1,337,820 bytes, differing in mark options and in line endings — produced the
+**same** whitespace-token total, 78,245. The Uthmani text produced 77,878. So
+the token total is invariant under exactly the axis that moves the byte length,
+which means the 30 separating 78,215 from 78,245 **cannot** be explained by a
+download option (`TheTokenTotalIsInvariantUnderTheMarkOptions`).
+
+What this does not establish. It does not re-derive 78,215, and it does not
+refute it: with no matching bytes the figure stands `WITHHELD_FOR_WANT_OF_THE_BYTES`,
+and that standing is read from the bytes rather than declared over them. The
+mirrors are corroboration of a counting rule's stability across versions, never
+a substitute for the corpus — `MirrorMeasurement` refuses at construction any
+entry carrying the frozen length or digest prefix, so the intended bytes cannot
+enter through the mirror door. And the 30 is **not** merged with the 134 already
+recorded in `gflk_specification_deposit` between 78,215 and the four deposited
+counts summing to 78,081: the two gaps fall on opposite sides of the quoted
+figure, and neither explains the other until the bytes arrive. When they do,
+the reading moves without a line of edit.
+
+```bash
+python examples/arabic/read_quran_word_total_standing.py
+```
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
