@@ -14,17 +14,22 @@ from alghanem.arabic.quran_corpus_word_total import (
     QURAN_CORPUS_PATH_VARIABLE,
     QURAN_CORPUS_RELATIVE_PATH,
     SURVEYED_MIRRORS,
+    THE_MUQATTAAT_FORMS,
     THE_QUOTED_WORD_TOTAL,
+    GapAccountStanding,
     MirrorMeasurement,
     QuotedTotalStanding,
     QuranCorpusError,
     WordCountingRule,
+    assess_gap_account,
     ayah_texts,
     count_words,
+    muqattaat_occurrences,
     quran_corpus_bytes_are_resolvable,
     quran_corpus_path,
     read_quran_corpus_bytes,
     run_quoted_total_survey,
+    strip_diacritics,
     vendored_quran_corpus_path,
     word_total,
 )
@@ -143,6 +148,7 @@ def test_every_surveyed_mirror_differs_from_the_frozen_bytes() -> None:
             mirror_sha256_prefix="deadbeef",
             ayah_lines=6_236,
             whitespace_tokens=78_245,
+            muqattaat_tokens=30,
         )
     with pytest.raises(QuranCorpusError):
         MirrorMeasurement(
@@ -151,6 +157,7 @@ def test_every_surveyed_mirror_differs_from_the_frozen_bytes() -> None:
             mirror_sha256_prefix=FROZEN_CORPUS.sha256_hex[:8],
             ayah_lines=6_236,
             whitespace_tokens=78_245,
+            muqattaat_tokens=30,
         )
 
 
@@ -202,3 +209,101 @@ def test_every_named_residual_starts_with_its_own_key() -> None:
     assert QURAN_CORPUS_NAMED_RESIDUALS
     for key, value in QURAN_CORPUS_NAMED_RESIDUALS.items():
         assert value.startswith(f"{key}: ")
+
+
+_MUQATTAAT_SAMPLE = "2|1|الم\n" "2|2|ذَلِكَ الْكِتَابُ\n" "42|1|حم\n" "42|2|عسق\n" "# رخصة\n"
+
+
+def test_the_fourteen_forms_are_declared_and_none_is_dead() -> None:
+    """الصورُ أربعَ عشرةَ، وكلُّها واقعةٌ في المدوّنة، فلا مدخلَ ميّتٌ يُوهِم ضبطًا."""
+
+    assert len(THE_MUQATTAAT_FORMS) == 14
+    assert "الم" in THE_MUQATTAAT_FORMS
+    assert "عسق" in THE_MUQATTAAT_FORMS
+    for form in THE_MUQATTAAT_FORMS:
+        assert strip_diacritics(form) == form
+
+
+def test_stripping_touches_diacritics_and_no_letter() -> None:
+    """التجريدُ يرفع التشكيلَ وحدَه، ولا يُبدِّل حرفًا ولا يطوي همزةً في ألف."""
+
+    assert strip_diacritics("الٓمٓ".replace("\u0653", "")) == "الم"
+    assert strip_diacritics("بِسْمِ") == "بسم"
+    assert strip_diacritics("أَلَمْ") == "ألم"
+    assert strip_diacritics("أَلَمْ") not in THE_MUQATTAAT_FORMS
+
+
+def test_the_matching_is_swept_corpus_wide_not_fitted_by_position() -> None:
+    """المسحُ في المدوّنة كلِّها، ومع ذلك لا يُصيب إلّا صدورَ السور."""
+
+    found = muqattaat_occurrences(_MUQATTAAT_SAMPLE)
+    assert [item.form for item in found] == ["الم", "حم", "عسق"]
+    assert all(item.index_in_ayah == 0 for item in found)
+    assert found[-1].sura == 42
+    assert found[-1].ayah == 2
+
+
+def test_the_excluding_rule_subtracts_exactly_what_was_matched() -> None:
+    """قاعدةُ الاستثناء تطرح المُصابَ نفسَه، لا عددًا مُقحَمًا."""
+
+    plain = count_words(
+        _MUQATTAAT_SAMPLE, WordCountingRule.WHITESPACE_TOKENS_IN_AYAH_TEXT
+    )
+    excluded = count_words(
+        _MUQATTAAT_SAMPLE, WordCountingRule.WHITESPACE_TOKENS_EXCLUDING_MUQATTAAT
+    )
+    assert plain == 5
+    assert excluded == plain - len(muqattaat_occurrences(_MUQATTAAT_SAMPLE)) == 2
+
+
+def test_the_thirty_are_the_disjoined_letters_on_every_simple_mirror() -> None:
+    """أربعُ مرايا تختلف طولًا وبصمةً تبلغ 78,215 بالقاعدة نفسِها."""
+
+    account = assess_gap_account()
+    assert account.standing is GapAccountStanding.REPRODUCED_ON_EVERY_SIMPLE_MIRROR
+    assert account.mirrors_reaching_the_quoted_total == 4
+    assert account.simple_family_mirrors == 4
+    assert account.muqattaat_token_count == 30
+    for mirror in SURVEYED_MIRRORS:
+        if "uthmani" in mirror.mirror_name:
+            continue
+        assert mirror.muqattaat_tokens == 30
+        assert mirror.tokens_excluding_muqattaat() == THE_QUOTED_WORD_TOTAL
+        assert 78_245 - 30 == THE_QUOTED_WORD_TOTAL
+
+
+def test_the_account_breaks_on_the_uthmani_text_and_says_so() -> None:
+    """الانكسارُ مُسجَّلٌ لا مُلطَّف: العثمانيُّ لا يُخرِج الرقمَ."""
+
+    account = assess_gap_account()
+    assert account.mirrors_where_the_rule_breaks == (
+        "drnesr/QuranDataset — quran-uthmani.txt",
+    )
+    uthmani = next(m for m in SURVEYED_MIRRORS if "uthmani" in m.mirror_name)
+    assert uthmani.muqattaat_tokens == 1
+    assert uthmani.tokens_excluding_muqattaat() != THE_QUOTED_WORD_TOTAL
+
+
+def test_an_account_of_the_gap_is_not_a_rederivation() -> None:
+    """بلوغُ القاعدةِ الرقمَ على المرايا لا ينقل منزلةَ الرقم عن الوقف."""
+
+    reading = run_quoted_total_survey()
+    assert reading.gap_account.standing is (
+        GapAccountStanding.REPRODUCED_ON_EVERY_SIMPLE_MIRROR
+    )
+    if not reading.bytes_are_resolvable:
+        assert reading.standing is (QuotedTotalStanding.WITHHELD_FOR_WANT_OF_THE_BYTES)
+
+
+def test_a_mirror_count_may_not_exceed_its_tokens() -> None:
+    """عددُ الفواتح لا يتجاوز عددَ الرموز ولا يكون سالبًا."""
+
+    with pytest.raises(QuranCorpusError):
+        MirrorMeasurement(
+            mirror_name="فواتحُ أكثرُ من الرموز",
+            mirror_byte_length=1_000,
+            mirror_sha256_prefix="abcdef01",
+            ayah_lines=6_236,
+            whitespace_tokens=10,
+            muqattaat_tokens=11,
+        )

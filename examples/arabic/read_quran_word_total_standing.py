@@ -44,6 +44,7 @@ from alghanem.arabic.quran_corpus_word_total import (
     QURAN_CORPUS_PATH_VARIABLE,
     QURAN_CORPUS_RELATIVE_PATH,
     SURVEYED_MIRRORS,
+    THE_MUQATTAAT_FORMS,
     QuotedTotalStanding,
     WordCountingRule,
     quran_corpus_bytes_are_resolvable,
@@ -88,6 +89,23 @@ def main() -> int:
         print("\nالعددُ من البايتات المبصومة، بقاعدةٍ مُعلَنة")
         for rule in WordCountingRule:
             print(f"  {rule.value}: {word_total(rule):,}")
+
+    account = reading.gap_account
+    print("\nحسابُ الثلاثين")
+    print(f"  المنزلة               : {account.standing.value}")
+    print(f"  الفواتحُ المقطَّعة       : {account.muqattaat_token_count}")
+    print(f"  صورُها المُصرَّح بها     : {len(THE_MUQATTAAT_FORMS)}")
+    print(
+        f"  مراياها البالغة       : "
+        f"{account.mirrors_reaching_the_quoted_total}"
+        f"/{account.simple_family_mirrors}"
+    )
+    for broken in account.mirrors_where_the_rule_breaks:
+        print(f"  تنكسر على             : {broken}")
+    print(
+        "  وبلوغُ القاعدةِ الرقمَ على المرايا حسابٌ للفجوة، "
+        "لا استخراجًا له من البايتات المبصومة."
+    )
 
     print("\nما لم يُحسَم، مُسمًّى")
     for key in QURAN_CORPUS_NAMED_RESIDUALS:

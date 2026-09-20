@@ -7573,6 +7573,49 @@ counts summing to 78,081: the two gaps fall on opposite sides of the quoted
 figure, and neither explains the other until the bytes arrive. When they do,
 the reading moves without a line of edit.
 
+## The thirty, named
+
+The thirty were then found, and they are not a rounding: they are the
+**disjoined letters** that open twenty-nine sūras — الم, حم, الر, كهيعص, طه,
+يس, ص, ق, ن, and the rest. Twenty-nine sūras, but **thirty tokens**, because
+Sūra 42 carries two: `حم` as āya 1 and `عسق` as āya 2. 78,245 − 30 = 78,215,
+exactly, with no remainder to absorb (`TheThirtyAreTheDisjoinedLetters`).
+
+**The rule was not fitted to its result.** `muqattaat_occurrences` matches the
+fourteen declared forms against *every* token in the corpus with no positional
+restriction whatsoever — it is free to strike anywhere, in any sūra, at any
+index — and it still strikes exactly thirty times, all of them at the head of a
+sūra's first or second āya, with **zero** false positives in 78,245 tokens.
+Nor is the form list padded: all fourteen are live, none occurs zero times.
+The near-collision that would have broken this does not occur, because bare
+`أَلَمْ` keeps its hamza (`أل م`) and never becomes `الم`
+(`TheRuleIsNotFittedToItsResult`). A falsification sweep over competing natural
+classes — bare token length, tokens free of weak letters, hapax occurrences,
+single-token āyāt, and every vocabulary-frequency stratum — found no other
+class of exactly thirty.
+
+**Where it breaks, stated.** The account is tied to this orthography. On the
+Uthmani text only **one** of the fourteen forms matches at all, because the
+rasm and the marks differ; that mirror does not reach 78,215 and the module
+records it as a break rather than dropping it from the survey
+(`TheAccountIsTiedToTheOrthography`).
+
+**What an exact match still is not.** Reaching the figure on four mirrors is an
+account *of the gap*, not a re-derivation *of the total*: `GapAccountStanding`
+is a separate field from `QuotedTotalStanding` precisely so that a measurement
+on mirrors can never be read as a count from the frozen bytes, which remain
+unresolved and keep the figure `WITHHELD_FOR_WANT_OF_THE_BYTES`
+(`AnAccountOfTheGapIsNotARederivation`). And an exact match is not a unique
+one — it is not established that whoever wrote 78,215 applied this rule, only
+that this rule reaches it reproducibly (`AnExactMatchIsNotAUniqueAccount`).
+
+One structural fact surfaced on the way and is recorded because any future
+count will trip on it: in this corpus the **basmala is inline** in āya 1 of
+every sūra except al-Fātiḥa, where it *is* āya 1, and at-Tawba, where it is
+absent — 112 inline basmalas, 448 tokens, already inside the 78,245. A count
+that assumes them separate is comparing on a different denominator
+(`TheBasmalaIsInlineInThisCorpus`).
+
 ```bash
 python examples/arabic/read_quran_word_total_standing.py
 ```

@@ -62,6 +62,19 @@ from .compression_model_preregistration import FROZEN_CORPUS
 from .pipeline_stations import repository_root_path
 
 __all__ = [
+    "strip_diacritics",
+    "muqattaat_occurrences",
+    "assess_gap_account",
+    "MuqattaatOccurrence",
+    "GapAccountStanding",
+    "GapAccountReading",
+    "THE_THIRTY_ARE_THE_DISJOINED_LETTERS_NOTE",
+    "THE_RULE_IS_NOT_FITTED_TO_ITS_RESULT_NOTE",
+    "THE_MUQATTAAT_FORMS",
+    "THE_BASMALA_IS_INLINE_IN_THIS_CORPUS_NOTE",
+    "THE_ACCOUNT_IS_TIED_TO_THE_ORTHOGRAPHY_NOTE",
+    "AN_EXACT_MATCH_IS_NOT_A_UNIQUE_ACCOUNT_NOTE",
+    "AN_ACCOUNT_OF_THE_GAP_IS_NOT_A_REDERIVATION_NOTE",
     "AYAH_FIELD_SEPARATOR",
     "A_COUNT_WITHOUT_A_DECLARED_RULE_IS_NOT_A_COUNT_NOTE",
     "A_DIGEST_WITHOUT_A_RESOLVER_IS_A_GATE_ON_NO_DOOR_NOTE",
@@ -187,6 +200,93 @@ class WordCountingRule(Enum):
     AYAH_LINES = "أسطرُ الآيات: ما فيه فاصلا حقلٍ وليس بتعليق"
     """ليس عدَّ كلماتٍ أصلًا، وإنّما مقامُ العدّ؛ ويُسجَّل معه ليُفحَص."""
 
+    WHITESPACE_TOKENS_EXCLUDING_MUQATTAAT = (
+        "رموزٌ يفصلها بياضٌ في حقل النصّ، مطروحًا منها فواتحُ السور المقطَّعة"
+    )
+    """القاعدةُ التي تُخرِج الثلاثين؛ وليست حذفًا بل تمييزُ ما ليس بكلمة.
+
+    فالحروفُ المقطَّعةُ لا جذرَ لها ولا وزنَ ولا بِنيةَ صرفيّة، فخروجُها من
+    عدّ الكلمات مقتضى بابها لا معالجةً للفرق.
+    """
+
+
+THE_MUQATTAAT_FORMS: Final[frozenset[str]] = frozenset(
+    {
+        "الم",
+        "المص",
+        "الر",
+        "المر",
+        "كهيعص",
+        "طه",
+        "طسم",
+        "طس",
+        "يس",
+        "ص",
+        "حم",
+        "عسق",
+        "ق",
+        "ن",
+    }
+)
+"""صورُ فواتح السور المقطَّعة الأربعَ عشرةَ، مجرّدةً من التشكيل.
+
+وهي القائمةُ المعروفةُ قبل هذا القياس لا مُستخرَجةٌ منه؛ وكلُّ صورةٍ منها
+واقعةٌ في المدوّنة فعلًا، فلا مدخلَ ميّتٌ يُوهِم ضبطًا.
+"""
+
+_DIACRITICS: Final[frozenset[str]] = frozenset(
+    chr(point) for point in range(0x64B, 0x653)
+)
+
+
+def strip_diacritics(token: str) -> str:
+    """صورةُ الرمز مجرّدةً من التشكيل، ولا يُمَسّ منها حرفٌ."""
+
+    return "".join(char for char in token if char not in _DIACRITICS)
+
+
+@dataclass(frozen=True)
+class MuqattaatOccurrence:
+    """موقعُ فاتحةٍ مقطَّعةٍ بعينه: سورتُها وآيتُها وصورتُها ورتبتُها في الآية."""
+
+    sura: int
+    ayah: int
+    index_in_ayah: int
+    form: str
+
+
+def muqattaat_occurrences(text: str) -> tuple[MuqattaatOccurrence, ...]:
+    """مواقعُ الفواتح المقطَّعة في المدوّنة كلِّها، **بلا تقييدٍ موضعيّ**.
+
+    ولا تُقيَّد المطابقةُ بصدر السورة ولا بالآيتين الأوليين: تُمسَح المدوّنةُ
+    كلُّها، فإن لم تُصِب المطابقةُ إلّا الفواتحَ فذلك **نتيجةُ قياسٍ** لا
+    شرطٌ وُضِع ليُخرِجها. وتقييدُها بالموضع كان يجعل القاعدةَ مُفصَّلةً على
+    ما تُراد له (`THE_RULE_IS_NOT_FITTED_TO_ITS_RESULT`).
+    """
+
+    found: list[MuqattaatOccurrence] = []
+    for line in text.split("\n"):
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if stripped.count(AYAH_FIELD_SEPARATOR) < 2:
+            continue
+        sura_field, ayah_field, body = stripped.split(AYAH_FIELD_SEPARATOR, 2)
+        if not (sura_field.isdigit() and ayah_field.isdigit()):
+            continue
+        for index, token in enumerate(body.split()):
+            form = strip_diacritics(token)
+            if form in THE_MUQATTAAT_FORMS:
+                found.append(
+                    MuqattaatOccurrence(
+                        sura=int(sura_field),
+                        ayah=int(ayah_field),
+                        index_in_ayah=index,
+                        form=form,
+                    )
+                )
+    return tuple(found)
+
 
 def ayah_texts(text: str) -> tuple[str, ...]:
     """نصوصُ الآيات وحدَها: ما كان فيه فاصلا حقلٍ وليس سطرَ تعليقٍ ولا خاليًا.
@@ -218,6 +318,10 @@ def count_words(text: str, rule: WordCountingRule) -> int:
             for line in text.split("\n")
             if line.strip() and not line.strip().startswith("#")
         )
+    if rule is WordCountingRule.WHITESPACE_TOKENS_EXCLUDING_MUQATTAAT:
+        return sum(len(item.split()) for item in ayah_texts(text)) - len(
+            muqattaat_occurrences(text)
+        )
     return len(ayah_texts(text))
 
 
@@ -243,8 +347,13 @@ class MirrorMeasurement:
     mirror_sha256_prefix: str
     ayah_lines: int
     whitespace_tokens: int
+    muqattaat_tokens: int
 
     def __post_init__(self) -> None:
+        if not 0 <= self.muqattaat_tokens <= self.whitespace_tokens:
+            raise QuranCorpusError(
+                "عددُ الفواتح المقطَّعة لا يكون سالبًا ولا يتجاوز عددَ الرموز."
+            )
         if self.mirror_byte_length == FROZEN_CORPUS.byte_length:
             raise QuranCorpusError(
                 f"مرآةٌ بطول المُجمَّد ({self.mirror_byte_length}) ليست مرآةً "
@@ -256,9 +365,19 @@ class MirrorMeasurement:
             raise QuranCorpusError("مرآةٌ ببادئة بصمة المُجمَّد لا تُسجَّل مرآةً.")
 
     def matches_quoted_total(self) -> bool:
-        """أيُخرِج عددُ رموز هذه المرآة الرقمَ المنقول؟"""
+        """أيُخرِج عددُ رموز هذه المرآة الرقمَ المنقول بلا استثناءِ شيء؟"""
 
         return self.whitespace_tokens == THE_QUOTED_WORD_TOTAL
+
+    def tokens_excluding_muqattaat(self) -> int:
+        """عددُ الرموز بعد تمييز ما ليس بكلمةٍ من فواتح السور."""
+
+        return self.whitespace_tokens - self.muqattaat_tokens
+
+    def account_reaches_the_quoted_total(self) -> bool:
+        """أتبلغ هذه المرآةُ الرقمَ المنقولَ تحت قاعدة استثناء الفواتح؟"""
+
+        return self.tokens_excluding_muqattaat() == THE_QUOTED_WORD_TOTAL
 
 
 SURVEYED_MIRRORS: Final[tuple[MirrorMeasurement, ...]] = (
@@ -268,6 +387,7 @@ SURVEYED_MIRRORS: Final[tuple[MirrorMeasurement, ...]] = (
         mirror_sha256_prefix="31a71ecae9273530",
         ayah_lines=6_236,
         whitespace_tokens=78_245,
+        muqattaat_tokens=30,
     ),
     MirrorMeasurement(
         mirror_name="rizaumami/quran-epub — quran-simple-enhanced.txt (CRLF)",
@@ -275,6 +395,7 @@ SURVEYED_MIRRORS: Final[tuple[MirrorMeasurement, ...]] = (
         mirror_sha256_prefix="8a22d96de8351a2e",
         ayah_lines=6_236,
         whitespace_tokens=78_245,
+        muqattaat_tokens=30,
     ),
     MirrorMeasurement(
         mirror_name="drnesr/QuranDataset — quran-simple.txt",
@@ -282,6 +403,7 @@ SURVEYED_MIRRORS: Final[tuple[MirrorMeasurement, ...]] = (
         mirror_sha256_prefix="7b2b601fa5e9b825",
         ayah_lines=6_236,
         whitespace_tokens=78_245,
+        muqattaat_tokens=30,
     ),
     MirrorMeasurement(
         mirror_name="drnesr/QuranDataset — quran-simple-min.txt",
@@ -289,6 +411,7 @@ SURVEYED_MIRRORS: Final[tuple[MirrorMeasurement, ...]] = (
         mirror_sha256_prefix="9afe44e4717223c1",
         ayah_lines=6_236,
         whitespace_tokens=78_245,
+        muqattaat_tokens=30,
     ),
     MirrorMeasurement(
         mirror_name="drnesr/QuranDataset — quran-uthmani.txt",
@@ -296,9 +419,77 @@ SURVEYED_MIRRORS: Final[tuple[MirrorMeasurement, ...]] = (
         mirror_sha256_prefix="9cae2cb7e075379e",
         ayah_lines=6_236,
         whitespace_tokens=77_878,
+        muqattaat_tokens=1,
     ),
 )
 """خمسُ مرايا قِيست بأنفسها، أطوالُها وبصماتُها مخالفةٌ للمُجمَّد كلُّها."""
+
+
+class GapAccountStanding(Enum):
+    """منزلةُ حسابِ الثلاثين، وهي غيرُ منزلة الرقم المنقول نفسِه."""
+
+    REPRODUCED_ON_EVERY_SIMPLE_MIRROR = "بلغت الرقمَ كلُّ مرايا أسرة «simple»"
+    """قاعدةُ استثناء الفواتح أخرجت 78,215 من كلّ مرآةٍ من الأسرة، بلا استثناء."""
+
+    REPRODUCED_ON_SOME_MIRRORS = "بلغته بعضُ المرايا دون بعض"
+    """بلوغٌ جزئيّ؛ وهو أضعفُ من الأوّل ولا يُقرأ مكانَه."""
+
+    NOT_REPRODUCED = "لم تبلغه مرآةٌ"
+    """لا تُخرِج القاعدةُ الرقمَ من شيءٍ مقيس، فالحسابُ ساقط."""
+
+
+@dataclass(frozen=True)
+class GapAccountReading:
+    """قراءةُ حسابِ الثلاثين: ما بلغ، وما انكسر، وما بقي غيرَ مُثبَت."""
+
+    standing: GapAccountStanding
+    mirrors_reaching_the_quoted_total: int
+    simple_family_mirrors: int
+    mirrors_where_the_rule_breaks: tuple[str, ...]
+    muqattaat_token_count: int
+
+    def __post_init__(self) -> None:
+        if self.mirrors_reaching_the_quoted_total > self.simple_family_mirrors:
+            raise QuranCorpusError(
+                "بالغُ الرقمِ لا يتجاوز عددَ مرايا الأسرة؛ وعدٌّ يتجاوز مقامَه "
+                "خطأُ قياسٍ لا نتيجة."
+            )
+
+
+def assess_gap_account() -> GapAccountReading:
+    """يقرأ حسابَ الثلاثين على المرايا المقيسة، ويُسمّي حيث ينكسر.
+
+    والانكسارُ مقصودُ التسجيل: العثمانيُّ لا يُخرِج الرقمَ لأنّ فواتحَه
+    مرسومةٌ بعلاماتٍ أُخَر، فتُصيبها صورةٌ واحدةٌ من أربعَ عشرة. وذلك يُثبت
+    أنّ القاعدةَ **معلَّقةٌ برسم النصّ** لا بالنصّ نفسِه
+    (`THE_ACCOUNT_IS_TIED_TO_THE_ORTHOGRAPHY`).
+    """
+
+    family = tuple(
+        mirror for mirror in SURVEYED_MIRRORS if "uthmani" not in mirror.mirror_name
+    )
+    reaching = tuple(
+        mirror for mirror in family if mirror.account_reaches_the_quoted_total()
+    )
+    broken = tuple(
+        mirror.mirror_name
+        for mirror in SURVEYED_MIRRORS
+        if not mirror.account_reaches_the_quoted_total()
+    )
+    if not reaching:
+        standing = GapAccountStanding.NOT_REPRODUCED
+    elif len(reaching) == len(family):
+        standing = GapAccountStanding.REPRODUCED_ON_EVERY_SIMPLE_MIRROR
+    else:
+        standing = GapAccountStanding.REPRODUCED_ON_SOME_MIRRORS
+    counts = {mirror.muqattaat_tokens for mirror in family}
+    return GapAccountReading(
+        standing=standing,
+        mirrors_reaching_the_quoted_total=len(reaching),
+        simple_family_mirrors=len(family),
+        mirrors_where_the_rule_breaks=broken,
+        muqattaat_token_count=counts.pop() if len(counts) == 1 else -1,
+    )
 
 
 class QuotedTotalStanding(Enum):
@@ -324,6 +515,7 @@ class SurveyReading:
     mirror_invariant_total: int | None
     distance_from_mirror_invariant: int | None
     mirrors_matching_the_quoted_total: int
+    gap_account: GapAccountReading
 
     def __post_init__(self) -> None:
         if self.standing is QuotedTotalStanding.WITHHELD_FOR_WANT_OF_THE_BYTES:
@@ -348,7 +540,13 @@ def _mirror_invariant() -> int | None:
 
 
 def run_quoted_total_survey(path: Path | str | None = None) -> SurveyReading:
-    """يقرأ منزلةَ 78,215 الآن: من البايتات إن حضرت، ومن المسح وإلّا."""
+    """يقرأ منزلةَ 78,215 الآن: من البايتات إن حضرت، ومن المسح وإلّا.
+
+    ومنزلةُ الرقم غيرُ منزلةِ حسابِ فرقِه: `standing` تُقرأ من البايتات
+    المبصومة وحدَها فتبقى موقوفةً حتى تصل، و`gap_account` تُقرأ من المرايا
+    فتبلغ ما تبلغ. وخلطُهما كان يجعل حسابًا على مرآةٍ يُقرأ اشتقاقًا من
+    المُجمَّد (`AN_ACCOUNT_OF_THE_GAP_IS_NOT_A_REDERIVATION`).
+    """
 
     resolvable = quran_corpus_bytes_are_resolvable(path)
     invariant = _mirror_invariant()
@@ -370,8 +568,55 @@ def run_quoted_total_survey(path: Path | str | None = None) -> SurveyReading:
         mirror_invariant_total=invariant,
         distance_from_mirror_invariant=distance,
         mirrors_matching_the_quoted_total=matching,
+        gap_account=assess_gap_account(),
     )
 
+
+THE_THIRTY_ARE_THE_DISJOINED_LETTERS_NOTE: Final[str] = (
+    "TheThirtyAreTheDisjoinedLetters: الفرقُ بين 78,245 و78,215 مُعيَّنٌ "
+    "بأعيانه — ثلاثون رمزًا صورتُها المجرّدةُ إحدى فواتح السور المقطَّعة "
+    "الأربعَ عشرة، في تسعٍ وعشرين سورةً تُسهِم الشورى فيها باثنين (حم آيةً "
+    "١، عسق آيةً ٢). وهي الرموزُ التي **ليست بكلمات** أصلًا: لا جذرَ لها ولا "
+    "وزنَ ولا بِنيةَ صرفيّة، فخروجُها من عدّ الكلمات مقتضى بابها"
+)
+
+THE_RULE_IS_NOT_FITTED_TO_ITS_RESULT_NOTE: Final[str] = (
+    "TheRuleIsNotFittedToItsResult: المطابقةُ تُمسَح في المدوّنة كلِّها بلا "
+    "تقييدٍ بصدر سورةٍ ولا بآيةٍ أولى، فتُصيب الثلاثين نفسَها وصفرَ إيجابٍ "
+    "كاذبٍ خارجَ الفواتح؛ وكونُها لا تُصيب سواها **نتيجةُ قياسٍ** لا شرطٌ "
+    "وُضِع ليُخرِجها. والصورُ الأربعَ عشرةَ معروفةٌ قبل القياس وكلُّها واقعةٌ "
+    "في المدوّنة، فلا مدخلَ ميّتٌ يُوهِم ضبطًا"
+)
+
+AN_ACCOUNT_OF_THE_GAP_IS_NOT_A_REDERIVATION_NOTE: Final[str] = (
+    "AnAccountOfTheGapIsNotARederivation: بلوغُ القاعدةِ الرقمَ على المرايا "
+    "**لا يُعيد اشتقاقَه** من البايتات المبصومة، ولا ينقل `standing` عن "
+    "الوقف. فالمقيسُ ما في المرايا، والمنقولُ منسوبٌ إلى بصمةٍ أخرى لم تصل؛ "
+    "وحقلا القراءة منفصلان لهذا السبب عينِه"
+)
+
+THE_ACCOUNT_IS_TIED_TO_THE_ORTHOGRAPHY_NOTE: Final[str] = (
+    "TheAccountIsTiedToTheOrthography: القاعدةُ تبلغ الرقمَ في مرايا أسرة "
+    "«simple» الأربع، و**تنكسر** في العثمانيّ: فواتحُه مرسومةٌ بعلاماتٍ أُخَر "
+    "فلا تُصيبها إلّا صورةٌ واحدةٌ من أربعَ عشرة، ولا يخرج منه 78,215. فما "
+    "قِيس معلَّقٌ برسم النصّ لا بالنصّ، وذلك مُسجَّلٌ لا مُلطَّف"
+)
+
+AN_EXACT_MATCH_IS_NOT_A_UNIQUE_ACCOUNT_NOTE: Final[str] = (
+    "AnExactMatchIsNotAUniqueAccount: مُسِحت أصنافٌ أُخَر من الرموز طلبًا "
+    "لمنافسٍ عدّتُه ثلاثون — الأحاديّةُ، والثنائيّة، وما لا حرفَ علّةٍ فيه، "
+    "والفريدةُ، وطبقاتُ التردّد كلُّها — فلم يُصَب صنفٌ واحد. وذلك يُقوّي "
+    "الحسابَ ولا يُفرِده: المسحُ محدودٌ بما خطر، وقاعدةٌ أخرى تُخرِج ثلاثين "
+    "تبقى ممكنةً حتى تصل البايتاتُ فتَحكُم"
+)
+
+THE_BASMALA_IS_INLINE_IN_THIS_CORPUS_NOTE: Final[str] = (
+    "TheBasmalaIsInlineInThisCorpus: في هذه المدوّنة البسملةُ **مُدرَجةٌ في "
+    "الآية الأولى** من كلّ سورةٍ سوى الفاتحة والتوبة — ١١٢ بسملةً هي ٤٤٨ "
+    "رمزًا داخلةٌ في 78,245. وهذه بنيةٌ في النصّ لا في القاعدة، ومن عدّ "
+    "ظانًّا أنّ البسملة خارجُ الآيات عدّ غيرَ ما عدّت هذه الوحدة؛ فتُسجَّل "
+    "كيلا يُقارَن رقمٌ برقمٍ على مقامين"
+)
 
 A_DIGEST_WITHOUT_A_RESOLVER_IS_A_GATE_ON_NO_DOOR_NOTE: Final[str] = (
     "ADigestWithoutAResolverIsAGateOnNoDoor: `FROZEN_CORPUS` كان يحمل الطولَ "
@@ -444,6 +689,14 @@ QURAN_CORPUS_NAMED_RESIDUALS: Final[dict[str, str]] = {
         A_MIRROR_IS_A_CORROBORATION_NOT_A_SUBSTITUTE_NOTE
     ),
     "ASurveyIsNotAProhibition": A_SURVEY_IS_NOT_A_PROHIBITION_NOTE,
+    "TheThirtyAreTheDisjoinedLetters": THE_THIRTY_ARE_THE_DISJOINED_LETTERS_NOTE,
+    "TheRuleIsNotFittedToItsResult": THE_RULE_IS_NOT_FITTED_TO_ITS_RESULT_NOTE,
+    "AnAccountOfTheGapIsNotARederivation": (
+        AN_ACCOUNT_OF_THE_GAP_IS_NOT_A_REDERIVATION_NOTE
+    ),
+    "TheAccountIsTiedToTheOrthography": (THE_ACCOUNT_IS_TIED_TO_THE_ORTHOGRAPHY_NOTE),
+    "AnExactMatchIsNotAUniqueAccount": AN_EXACT_MATCH_IS_NOT_A_UNIQUE_ACCOUNT_NOTE,
+    "TheBasmalaIsInlineInThisCorpus": THE_BASMALA_IS_INLINE_IN_THIS_CORPUS_NOTE,
     "TheOneHundredAndThirtyFourIsNotTheThirty": (
         THE_ONE_HUNDRED_AND_THIRTY_FOUR_IS_NOT_THE_THIRTY_NOTE
     ),
@@ -463,7 +716,12 @@ _FORBIDDEN_FIELD_TOKENS: Final[tuple[str, ...]] = (
 def _assert_no_authority_field() -> None:
     """حارسُ استيراد: لا حقلَ سلطةٍ ولا رتبةٍ يتسلّل إلى قراءةٍ لا سلطةَ فيها."""
 
-    for dataclass_type in (MirrorMeasurement, SurveyReading):
+    for dataclass_type in (
+        GapAccountReading,
+        MirrorMeasurement,
+        MuqattaatOccurrence,
+        SurveyReading,
+    ):
         for declared in fields(dataclass_type):
             lowered = declared.name.lower()
             for token in _FORBIDDEN_FIELD_TOKENS:
