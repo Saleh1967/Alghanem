@@ -136,6 +136,7 @@ def test_what_this_second_scope_does_not_establish_is_named() -> None:
         "A_SHARED_CODEC_IS_A_SHARED_LIMIT",
         "THE_ALIF_REPLICATION_IS_STILL_READ_FROM_ABSENCE",
         "A_GAP_BETWEEN_TWO_SCOPES_IS_NOT_A_TREND",
+        "THE_ALIF_AGREEMENT_MOVES_WITH_THE_CARRIER_CONVENTION",
     }
     for key, text in SECOND_SCOPE_NAMED_RESIDUALS.items():
         assert text.startswith(f"{key}: ")

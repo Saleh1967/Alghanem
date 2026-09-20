@@ -48,6 +48,22 @@
 ليستا اتّجاهًا: نقطتان تصنعان خطًّا مهما كان موضعُهما
 (`A_GAP_BETWEEN_TWO_SCOPES_IS_NOT_A_TREND`).
 
+**وقُوبلت هذه الأرقامُ بقاعدةٍ ثانيةٍ لا تعرف المولّد.** كُتبت في
+`tests/arabic/test_sukun_second_scope_independent_check.py` قاعدةٌ مستقلّةٌ
+تقرأ البايتاتِ نفسَها، فأعادت اشتقاقَ كلِّ رقمٍ ههنا بلا فرق، ووافقت **كلمةً
+بكلمة** لا مجموعًا بمجموع — فلا خطأين متعاوضين. وظهر في المقابلة أنّ الأداتين
+ليستا تنفيذًا واحدًا: المولّدُ يطوي «ى» في «ي» و«آ» في «ء»، فتفترق تسميةُ
+الحامل في خمس كلماتٍ ويتّفق الحكمُ في كلّها. وما رُفع بهذا محدودٌ: **احتمالُ
+خطأِ التنفيذ** لا اشتراكُ القاعدة؛ فالقاعدتان تقرآن معًا «حاملٌ بلا علامةٍ =
+ساكن»، وهو اصطلاحٌ لم تقسه واحدةٌ منهما، فيبقى
+`A_SHARED_CODEC_IS_A_SHARED_LIMIT` قائمًا في شطره الأهمّ.
+
+**وأقربُ اتّفاقٍ ههنا أشدُّها تعلّقًا باصطلاح.** ربعُ النقطة في باب الألف
+مشروطٌ بأن يكون «الألف» هو U+0627 وحدَه. ولأنّ المولّدَ يطوي «ى» في «ي» فهذا
+الحدُّ **لا يُفحَص من مخرَجه أصلًا**؛ وحين فُحص بالقاعدة الثانية تحرّك
+الفرق: ربعُ نقطةٍ بالحدّ الضيّق، و4.161 نقطة لو عُدَّت «ى» ألفًا، و6.758 لو
+عُدَّت معها «آ» (`THE_ALIF_AGREEMENT_MOVES_WITH_THE_CARRIER_CONVENTION`).
+
 **خمولٌ سلطويّ**: لا ولادةَ ولا حكمَ ولا تجميد، ولا استيرادَ من `kernel/`.
 """
 
@@ -79,6 +95,7 @@ from .implicit_sukun_treatment import (
 __all__ = [
     "A_GAP_BETWEEN_TWO_SCOPES_IS_NOT_A_TREND",
     "A_SHARED_CODEC_IS_A_SHARED_LIMIT",
+    "THE_ALIF_AGREEMENT_MOVES_WITH_THE_CARRIER_CONVENTION",
     "FATH_AYAH_LINES",
     "SECOND_SCOPE_NAMED_RESIDUALS",
     "THE_ALIF_REPLICATION_IS_STILL_READ_FROM_ABSENCE",
@@ -285,6 +302,16 @@ A_GAP_BETWEEN_TWO_SCOPES_IS_NOT_A_TREND: Final[str] = (
     "من المجموع."
 )
 
+THE_ALIF_AGREEMENT_MOVES_WITH_THE_CARRIER_CONVENTION: Final[str] = (
+    "THE_ALIF_AGREEMENT_MOVES_WITH_THE_CARRIER_CONVENTION: ربعُ النقطة بين "
+    "نصيبَي الألف أقربُ اتّفاقٍ ههنا، وهو مشروطٌ بأن يكون «الألف» U+0627 "
+    "وحدَه. ولا يُفحَص هذا الحدُّ من مخرَج المولّد لأنّه يطوي «ى» في «ي»؛ "
+    "وفُحص بالقاعدة الثانية في "
+    "`test_the_closest_agreement_moves_with_a_convention_neither_rule_tested`، "
+    "فصار الفرقُ 4.161 نقطة بعدِّ «ى» ألفًا و6.758 بعدِّ «آ» معها. فالاتّفاقُ "
+    "صادقٌ على حدِّه، ولا يُقرأ خاصّةً للألف قبل أن يُقاس الحدّ."
+)
+
 SECOND_SCOPE_NAMED_RESIDUALS: Final[dict[str, str]] = {
     "TWO_TEXTS_ARE_STILL_NOT_A_CORPUS": TWO_TEXTS_ARE_STILL_NOT_A_CORPUS,
     "TWO_TRANSCRIPTIONS_OF_ONE_HAND_ARE_NOT_TWO_WITNESSES": (
@@ -295,6 +322,9 @@ SECOND_SCOPE_NAMED_RESIDUALS: Final[dict[str, str]] = {
         THE_ALIF_REPLICATION_IS_STILL_READ_FROM_ABSENCE
     ),
     "A_GAP_BETWEEN_TWO_SCOPES_IS_NOT_A_TREND": A_GAP_BETWEEN_TWO_SCOPES_IS_NOT_A_TREND,
+    "THE_ALIF_AGREEMENT_MOVES_WITH_THE_CARRIER_CONVENTION": (
+        THE_ALIF_AGREEMENT_MOVES_WITH_THE_CARRIER_CONVENTION
+    ),
 }
 """ما لا يُثبِته هذا الموضعُ الثاني مُسمًّى باسمه، لا مطويًّا في اتّفاقٍ قريب."""
 

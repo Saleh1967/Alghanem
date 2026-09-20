@@ -7839,6 +7839,27 @@ the two shares sit two points apart. The alif's door is closer still —
 42.593% of the unwritten there, 42.857% here, **a quarter of a point** — and
 the gemination pair-start is the furthest, 25.926% against 20.779%.
 
+**Every figure above was re-derived by a second rule that does not know the
+codec.** `tests/arabic/test_sukun_second_scope_independent_check.py` writes the
+reading rule out from scratch, over the same deposited bytes, and reproduces
+all of it — not only the totals but **word by word**, so no pair of
+compensating errors can hide inside an equal sum. The two rules are visibly not
+the same implementation: the codec folds `ى` into `ي` and `آ` into `ء`, so the
+carrier is named differently in five words of Fatḥ 29 while the verdict is
+identical in all of them. What that lifts is **the chance of an implementation
+error**, and no more: both rules read "an unmarked carrier is sākin" and
+neither one measured that, so `A_SHARED_CODEC_IS_A_SHARED_LIMIT` stands in its
+larger half.
+
+**And the closest agreement turned out to be the most convention-bound.** The
+quarter of a point holds only while "alif" means U+0627 alone. Because the
+codec folds `ى` into `ي`, that boundary cannot be examined from its output at
+all; examined by the second rule, the gap moves to **4.161 points** if `ى`
+counts as an alif and **6.758** if `آ` counts too. The agreement is true of its
+boundary, and no property of the alif is read from it until the boundary itself
+is measured
+(`THE_ALIF_AGREEMENT_MOVES_WITH_THE_CARRIER_CONVENTION`).
+
 **The alif replicated exactly.** Thirty-three written alifs in Fatḥ 29, **all**
 holding an unmarked sukūn, not one with a mark and not one with a vowel —
 exactly as the twenty-three in the Fātiḥa. Fifty-six written alifs across two
