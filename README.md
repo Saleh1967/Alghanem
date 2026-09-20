@@ -7029,6 +7029,448 @@ only constructor takes a `PerformanceWitness`, and none is deposited — and a
 syllable with no birth certificate. There is no promotion path between them, and
 no authority is inherited by the syllable or by the syntax.
 
+## A reference articulation layer, and the law it did not produce
+
+`src/alghanem/arabic/reference_articulation_layer.py` asks whether the deposited
+material yields a **minimal internal law** over articulation, and answers from
+its own run: **no**. What the run does produce is weaker and more sharply
+bounded — a *relative necessity of a chosen coding*.
+
+**The material is deposited before it is measured.** Al-Fath 48:29 is
+transcribed in `fath_ayah_source_text.py` at the same standing as the Fatiha
+deposit: a simplified, in-tree transcription, not an edition, with its digest
+re-derived from the bytes. An external session reported a digest for its own
+transcription of the same verse; those bytes were never carried here, so the two
+are not compared and no agreement is claimed.
+
+**The four axes are an imported coding, not a measured basis.** Manner, place,
+voicing and emphasis are chosen before the measurement; they were not derived
+from the verse without premises. Every necessity measured here is a necessity
+*for that choice*. The feature table itself is **born in this module**, not
+imported through `gflk_feature_table_import_barrier`, so it carries no foreign
+warrant and the tree owns it.
+
+**Resolution is by a declared rule, never by hand.** Diacritics are dropped,
+hamza seats resolve to hamza, and a graphic ambiguous between consonant and
+madd is left **unresolved**. On this deposit the rule resolves 179 of 249
+written occurrences and leaves 70 unresolved; `و` and `ي` are therefore never
+observed as unambiguous candidates, and 26 of the 28 reference patterns appear.
+
+**Deleting any one axis merges distinct patterns.** Manner merges ب/م, voicing
+merges ت/د, emphasis merges س/ص, place merges ت/ك. All four axes are necessary —
+relative to this table, and to nothing larger.
+
+**The strongest result is the negative one.** The emphatic counterpart pairs are
+not a property of the material: under the fine place classification, deleting
+emphasis merges four pairs; under the coarser one it merges six heterogeneous
+groups and ت/ط survives while س/ص does not. Granularity is a knob on the
+instrument, so the pairs are a reading of the knob.
+
+**98 adjacent pairs are counted, and wasl and waqf stay `DEFER`.** The census is
+over transitions between *expected coding values*, with no time and no measured
+articulator motion in it. `PhoneticWaslAndWaqfRemainDeferred` has exactly one
+member, so no count can promote it.
+
+**The neutral element is analytic.** `e = ∅` and `e ⊕ p = p` hold by the
+construction of `⊕`; verifying them is a consistency check on the code, not a
+discovery about Arabic. Real air is an operating condition, the empty constraint
+is an identity, and a written alif is automatically neither.
+
+**What was not obtained is written down.** No mechanical fiber is born here, and
+no Fibonacci law is extracted — the latter negation is deposited explicitly so
+that the code's silence is not read as an open possibility.
+
+## Retrieval passes, the relation is necessary, and the certificate still defers
+
+`src/alghanem/arabic/occurrence_attribution_encoding.py` asks two questions and
+answers both by running them: can the measured written occurrences be retrieved
+from a binary encoding over shared ordered registers, and does that retrieval
+need a third, separate attribution field?
+
+**Retrieval holds in the measured scope.** The 249 occurrences read by the
+reference layer encode into 2987 bits over a 34-entry carrier register and a
+27-entry state register, and decode back identical — word boundaries included.
+Boundaries are carried by a declared length before each word, not by a separator
+code: a separator would occupy a value in the symbol space and could be confused
+with a carrier, while a length cannot.
+
+**The scope is the deposit, not the language.** An occurrence the articulation
+rule left unresolved is encoded *as unresolved* and retrieved as such. Encoding
+it with a guessed state would raise the retrieval rate by inventing what was
+never measured.
+
+**The attribution relation is necessary once the data is separated.** The two
+mims — one sukun-bearing, one vowelled, sharing one written carrier — are split
+into an unlinked carrier set and state set, and the consistent reassemblies are
+enumerated: there are two, and the swap is exactly as consistent as the
+original. The position is lost, not tied. The witness is chosen to be sharp:
+had the carriers differed, carrier identity alone would have recovered the
+pairing and the experiment would have proved nothing. A negative control is run
+too — separating occurrences whose states are identical loses nothing, so the
+gate is not vacuous.
+
+**A third field is not necessary for the declared target.** The extra field is a
+function of the record already encoded, so it cannot separate two states the
+record does not separate. Measured, it costs 1494 bits and returns nothing: the
+decode is identical with it and without it. That negation is scoped — it is a
+statement about the target *retrieve the occurrence in its place*, not a claim
+that the field is meaningless for some other target never tested here.
+
+**The linguistic and phonetic certificate stays `DEFER`, under three named
+blockers.** No independent linguistic target was tested, no reader qualified to
+close the reconstruction requirement of `minimal_complete_fiber` exists in this
+tree, and wasl and waqf have no performance measurement. The passing round-trip
+does not touch any of the three: it is evidence of a different kind from the
+claim, and promoting a verdict by out-of-kind evidence is precisely what this
+tree refuses.
+
+**What was born is narrower than what was hoped.** The necessity of preserving
+the attribution relation under data separation — not an independent triple of
+three fields, and not a complete linguistic fiber law. Both negations are
+deposited by name.
+
+## A gloss for dal alone, and the whole it only half resembles
+
+`src/alghanem/arabic/dal_alone_gloss.py` builds a gloss for the letter dal
+alone and then tests — rather than asserts — the claim that it is the structure
+of the whole structure.
+
+**The partition is given by the source, not cut by the reader.** "Dal alone" is
+not a predicate written over the root column; it is a chapter that already
+exists in the lexicon's own bytes under the header `كتاب الدّال`. That the
+chapter and the letter coincide is re-derived, not assumed: every row under the
+header opens with dal, and no dal-initial root lies outside it. A neighbouring
+finding falls out of the same reading — twelve rows belong to no named chapter
+at all, so the source's partition is not a total one, and those rows are counted
+rather than folded into a residue.
+
+**The axis count is derived from the axis text, never read from the count
+column.** Of the 179 dal rows, the written `axes_count` agrees with the
+re-derivation in 123, disagrees in 21, and says nothing in 35. Silence is kept
+apart from disagreement: a row that declared nothing did not contradict
+anything, and merging the two would inflate a disagreement that never occurred.
+
+**The claim is refuted on a named axis, and the refutation is recorded rather
+than engineered around.** Against a tolerance declared before the measurement
+(five percentage points, absolute) across five declared shares:
+
+| Axis | Dal chapter | Whole table | Gap | Within band |
+| --- | --- | --- | --- | --- |
+| doubled roots | 0.0894 | 0.0935 | 0.0041 | yes |
+| trilateral | 0.8994 | 0.8936 | 0.0059 | yes |
+| weak trilateral | 0.0112 | 0.0122 | 0.0011 | yes |
+| carries poetic evidence | 0.2961 | 0.4248 | **0.1287** | **no** |
+| carries any axis | 0.6089 | 0.6434 | 0.0344 | yes |
+
+The part resembles the whole in composition and not in the density of its
+citation. The divergence stands despite a bias in its favour: the dal chapter is
+itself inside the whole it is compared against, which pulls the two shares
+together. And the band is a knob — widening it to 0.5 makes the divergence
+vanish — so the verdict is a function of the declared tolerance, not an absolute.
+
+**Matching every axis would still not have closed it.** Refutation is cheaper
+than confirmation here: one axis outside the band refutes on a single source,
+but agreement on all five reads as `DEFERRED_FOR_WANT_OF_A_SECOND_SOURCE` unless
+a second, independent source corroborates it.
+
+**The MASAQ half does not stand today, under two blockers rather than one.** The
+first is contingent: MASAQ's bytes are neither deposited in this tree nor
+declared by path. The second survives their arrival — MASAQ has no root column,
+so "dal alone" there is a surface segment, not a chapter of roots, and pairing
+the two would pair two kinds rather than two glosses of one thing.
+
+**This is not a deposit into `gloss_data`.** That registry glosses *positions*
+in a registered text and checks its authority against the domain declarer; this
+glosses a *root* in a digested lexicon. Carrying one into the other would open a
+gate whose conditions were never met.
+
+## A leak from form into meaning, and what survived removing it
+
+`alghanem.arabic.maqayis_semantic_leak_audit` measures whether roots that share
+letters also share meaning, on Ibn Faris's *Maqayis al-Lugha* as deposited in
+this tree. Similarity is cosine over a hand-rolled TF-IDF of each entry's body;
+the null is a label shuffle that preserves the family sizes; and the domain is
+the 2,916 roots of three distinct letters whose body exceeds 200 characters.
+
+**The audit exists because of its control, not because of its effect.** Every
+entry in Maqayis opens by naming its own root letters — «وأما الهمزة والجيم
+فلها أصلان». Two roots sharing a letter therefore share that letter's *name* as
+a literal token, so form leaks into the text that is supposed to measure
+meaning. Removing those tokens halves every effect:
+
+| Family | With the letter names | Without them |
+| --- | --- | --- |
+| shares C2 and C3 | 1.8422 | 1.2515 |
+| shares C1 only | 1.9352 | 1.2801 |
+| permutation, 0 positions agreeing | 1.3939 | 1.1218 |
+| permutation, 1 position agreeing | 1.8783 | 1.2751 |
+
+Roughly half of the uncleaned signal was the artefact. The four registered
+predictions are read only against the cleaned column: the minor-derivation
+threshold **holds** (1.2515 at Z = +20.8); the positional ordering
+C1C2 > C2C3 > C1C3 is **refuted**, the observed order being
+C1C2 > C1C3 > C2C3; the major-derivation threshold **splits**, clearing 1.20 at
+one agreeing position (1.2751) and failing it at zero (1.1218), which is the
+purer form of permutation; and the fourth prediction compares two families of
+unequal construction, so it is returned `ILL_POSED_SO_NOT_TESTABLE` rather than
+scored.
+
+**The fair test of the major-derivation claim is posterior and declared so.**
+Matching permutations against non-permutations at the *same* number of agreeing
+positions isolates the unordered letter set: +15.3 % excess at zero agreeing
+positions and +13.6 % at one. Small, consistent across both strata, and far
+below what the uncleaned numbers suggested.
+
+**The removal list is a knob, so it is measured as one.** The mechanical prefix
+expansion over-removes — it catches `كلام`, `وراء`, `لام`, and `ألف` in its
+sense of "a thousand". Hand-pruning that list after seeing the results would be
+fitting, so instead a narrower `CONSERVATIVE` list of the forms the opening
+formula actually uses is run beside it. The two agree to three decimal places
+and return identical verdicts, which is what licenses reading the mechanical
+column at all.
+
+**Every verdict here is posterior.** The pre-registration `PREREG-6.md` is named
+with a digest but is not deposited in this tree, so `assess_preregistration`
+returns `POSTERIOR_FOR_WANT_OF_A_DEPOSITED_DOCUMENT` and no S-verdict may be
+read as pre-registered until those bytes arrive and match. Two further limits
+are named rather than argued away: the measured thing is agreement between a
+root's shape and Ibn Faris's prose about it, not "meaning"; and a single
+author's single style inflates TF-IDF similarity everywhere, an inflation this
+run does not separate out.
+
+## The same test on all forty chapters, and what it did to the first verdict
+
+`alghanem.arabic.maqayis_chapter_census` repeats the five-axis part-mirrors-whole
+test of `dal_alone_gloss` on every chapter of the deposited Maqayis table, to
+settle one narrow question: is the dal chapter's poetry-evidence divergence an
+anomaly of that chapter, or a deviation spread across all of them?
+
+**It is spread, and the framing of the first result was wrong.** The dal
+chapter's gap on that axis ranks **15th of 40**; fourteen chapters exceed it.
+Far from being an outlier, dal is one of the chapters *closest* to the whole —
+it clears four of five axes, and only **two chapters of forty** clear all five.
+So the earlier refutation was a verdict about the claim, never a property of the
+chapter, and reading it as "the dal chapter is unusual" generalises from a
+sample of one.
+
+**The inclusion bias is now measured, not merely named.** A chapter sits inside
+the whole it is compared against, which pulls the two shares together. Comparing
+each chapter to its *complement* instead makes the comparison disjoint — and
+across all 200 measurements it widens every gap and narrows none. The bias has a
+proven direction, so the complement comparison is a tightening that can never
+rescue a chapter that already failed.
+
+**The tolerance is a knob, so the module returns the curve, not a point.**
+
+| Tolerance | Chapters mirroring the whole |
+| --- | --- |
+| 0.05 | 2 / 40 |
+| 0.10 | 11 / 40 |
+| 0.15 | 19 / 40 |
+| 0.20 | 25 / 40 |
+| 0.25 | 27 / 40 |
+| 0.50 | 39 / 40 |
+
+Each chapter also reports the smallest tolerance at which it would pass, so two
+chapters can be compared without any threshold being imposed on the comparison.
+The dal chapter needs 0.1287, and the median chapter needs 0.1562.
+
+**Not every pass is evidence of resemblance.** Twenty-seven of forty chapters
+contain no weak-trilateral root at all; their share is zero, their gap is just
+the whole's own share, and clearing the band there is given by construction
+rather than measured. Those 45 `PowerlessPass` instances are counted separately.
+Fourteen chapters hold fewer than thirty entries, where one entry moves a share
+further than the entire band — declared as a reported stratum, never applied as
+a filter after the results were seen.
+
+**The source partition is polluted, and is not cleaned here.** The header column
+carries lines that are not chapter headers at all — a letter of the Prophet, the
+opening of a gloss that fell into the header slot. Hand-pruning them after seeing
+the results would be fitting, so they are counted, named, and left in. "Forty
+chapters" therefore means forty distinct headers, not forty chapters of the
+lexicon. Twelve rows carry no header at all, so the partition does not cover the
+table.
+
+**Showing a deviation is distributed does not explain it.** It rules out one
+account — that it belongs to a particular chapter — without establishing any
+other. Whether the spread reflects Ibn Faris's uneven composition, uneven
+extraction into this file, or simply the many small chapters whose gaps are
+inflated by their size is not separated here.
+
+## Separating three accounts of one distributed deviation
+
+`maqayis_chapter_census` showed the poetry-share deviation is spread across the
+chapters rather than belonging to any one of them, and recorded that this rules
+out one account without establishing another. Three candidates were named and
+left unseparated: many small chapters inflating their own gaps, uneven
+extraction into this file, and uneven composition by Ibn Faris.
+`alghanem.arabic.maqayis_deviation_attribution` separates them on the deposited
+bytes.
+
+**The three are not evidentially equal, and that is declared before the result.**
+Size has a null model built from the table itself, so it can be tested.
+Extraction has two probes that never touch the poetry column. Authorial
+unevenness has no probe here at all — nothing in these bytes witnesses Ibn
+Faris's habit independently of this extraction — so it can only ever be a named
+residual.
+
+**Size is refuted as the account.** For each chapter, *n* entries are drawn from
+the table repeatedly and the poetry gap read on each draw; a chapter is in
+excess when its observed gap clears the 95th percentile of its own draws.
+Smallness genuinely widens gaps — the null threshold for the smallest chapter is
+an order of magnitude above the largest — but the excess sits with the **large**
+chapters, ten above the median size against four at or below it. If noise were
+producing the excess it would appear where noise is loudest, and it does not.
+
+**Extraction is a real contributor and an insufficient one.** Classifying
+headers by their own form finds a malformed stratum that is not chapter headers
+at all — a letter of the Prophet, an edition imprint, a gloss that fell into the
+header slot. Those 284 rows carry a poetry share of **0.6127** against the
+table's 0.4248, four times the declared tolerance away: a contaminant proven by
+counting. But removing them and re-running the whole measurement still leaves
+**13 of 37 chapters in excess, covering 2,774 of 4,280 rows**. Cleaning the
+contaminant moves the baseline and does not close the question.
+
+The cleaning rule is not fitting-after-the-fact: it reads the header column and
+never looks at the poetry column it is used to measure. Both measurements — on
+the whole domain and on the cleaned one — are returned together, so neither can
+be read alone. A second extraction probe, the rate at which the `axes_count`
+column falls silent, correlates with the poetry gap at ρ = 0.28 across 24
+chapters; that figure is reported and deliberately carries no verdict, since 24
+chapters cannot power such a test.
+
+**The authorial account remains a residual, and stays one by construction.** Its
+standing does not depend on the other two: a synthetic reading in which both
+probes come back negative returns exactly the same standing for it. Ruling out
+two accounts does not establish a third, and the true account may be a fourth
+that was never named.
+
+## A measure with no knob, and the depth it could not reach
+
+Every earlier reading of "the part mirrors the whole" on this deposit was settled
+by a number somebody chose: a 5% tolerance, a "practically negligible" gap, an
+n ≥ 30 cutoff. `maqayis_structure_of_structure` rebuilds the claim so that no
+number in it is chosen after seeing a result.
+
+The raw gap is replaced by a **normalised structure function**
+
+```
+D_a(c) = Î_MM(1[x ∈ c] ; a) / min(H(1_c), H(a))   ∈ [0, 1]
+```
+
+— bias-corrected mutual information divided by its own structural ceiling. The
+denominator is what every prior measurement lacked, and it retires three
+objections at once: it removes the effect of cell size, it removes the effect of
+the axis alphabet, and it makes a nearly-constant axis and a balanced one
+comparable instead of making the second win by definition. Where the ceiling is
+zero, D returns nothing at all; such a reading is **counted as powerless, never
+read as a perfect match**. On this deposit none of the 200 readings is powerless
+in that sense.
+
+The tolerance is likewise not chosen but **derived per cell**. With both margins
+fixed, the permutation null of a cell-by-axis intersection is exactly
+hypergeometric, so the null is enumerated term by term rather than sampled: every
+attainable intersection count, with its log-gamma weight, mapped through the same
+D. This removes the seed, the replicate count, and — decisively — the resolution
+floor. A first implementation sampled 400 permutations, whose smallest reachable
+p-value is 1/401 ≈ 0.0025, while Holm's tightest threshold over 200 tests is
+0.05/200 = 0.00025. Rejection was impossible by construction; the test was dead
+and would have reported universal self-similarity as a finding. The exact
+enumeration reaches p = 6.4 × 10⁻²¹ on the strongest cell, and the whole run
+takes under a second.
+
+The allowance is therefore *derived from cell size*, wide for small cells and
+narrow for large ones, and no gap threshold appears anywhere. What can still go
+wrong is powerlessness of a different kind, so it is measured too: for each
+reading the smallest p-value it could attain at maximum possible separation is
+computed, and **17 of 200 readings cannot reach the corrected threshold whatever
+the material holds**. All 17 sit in cells of nine rows or fewer. No cell is
+powerless on all five axes, so no cell's pass is purely an artefact of its size.
+
+Read this way, **12 of the 40 headers are distinguished from the whole and 28 are
+not**, with the multiplicity correction declared in advance. Both counts are
+returned: before correction 27 headers separate, after it 12. The dal chapter is
+among the 28 — it holds on all five axes — but it is also one of the 15 that
+change verdict with the correction, its poetry axis reading p = 3.7 × 10⁻⁴
+against a threshold of 2.5 × 10⁻⁴. It ranks 12th of 40 by D on that axis. That is
+stated rather than buried: the dal verdict is a function of a declared
+correction, and saying so is the difference between a rule fixed in advance and
+one relaxed until something passes.
+
+**None of this is yet structure-of-structure.** A cell against the whole is still
+part-and-whole. The second-order statement is that the *law of the excess field*
+is the same at every depth — that sections deviate from their book as books
+deviate from the work — and it needs two nested covers. The deposit does not
+carry them. All 41 headers are contiguous blocks, 14 in book form and 26 in
+section form, and the section names cite letters that have no book in the file:
+no row carries both levels, so the parent link was lost in extraction. One trace
+survived that might restore it — `entry_num` resets 28 times, close to the 14
+book count — and the rule (a reset begins a book) was declared before it was
+tested. It was then **refuted by counting its violations: all 28 resets fall
+inside a header block, 12 of them land on section headers, and all 14 book starts
+have no reset at all — 54 violations**. The marker is within-block numbering,
+unaligned with the cover.
+
+So the equation's standing is **deferred for want of a second depth**, not held
+and not refuted. The comparison path exists in the code and is not walked today.
+Deferral leaves the question open and refutes nothing.
+
+Two residuals are worth stating outside the module. Every prior forty-chapter
+measurement on this deposit — including the census and the attribution above —
+compared a **mixture of two cover levels** against the whole; part of the scatter
+they reported may be that mixture rather than the material. And invariance across
+two depths would not be fractality even if it were recovered: fractality needs
+many levels, and the source affords at most two.
+
+## A constraint that is real, an asymmetry that was a spelling convention
+
+A separate reading of the same deposit asked whether Arabic avoids putting two
+consonants of the same place of articulation next to each other inside a root,
+and reported that the avoidance is near-total between C1 and C2 but only slight
+between C2 and C3 — a positional asymmetry, with the qaf singled out as an
+especially constrained letter. `maqayis_adjacency_constraint` re-measures all
+three claims on the deposited roots. The first survives; the other two do not.
+
+The constraint itself is there and is not marginal. Across 4,562 distinct
+triliteral roots, folded onto eleven declared places of articulation, same-place
+adjacency runs at **2.57% observed against 8.29% expected** at C1–C2 and **3.09%
+against 9.03%** at C2–C3, each about z = −14 against a column-permutation null
+that holds each position's letter frequencies fixed. Both survive Holm
+correction over the three declared tests.
+
+The asymmetry does not survive, and the reason is a property of the deposit
+rather than of the language. Geminate roots are stored **with the doubling
+written out** — `root_full` is `أجج` where `root_display` is `أج` — so in 449 of
+4,562 roots the second and third letters are literally the same letter. Counting
+those as same-place agreement inflates C2–C3 from 3.09% to 12.63% and
+manufactures the whole effect. Dropping pairs of one letter — whose place
+agreement is given by identity, not measured in the material — leaves 2.57% and
+3.09%, and the difference between the two positions, **tested directly against a
+single null rather than by comparing two separately computed z-scores**, comes
+back at p = 0.71. The two positions are not distinguished. Comparing two
+z-values is not a test of the difference between them: z grows with sample size
+alone, and the two positions have different denominators once identical pairs
+are dropped.
+
+Nor is the qaf singled out. Ranking every letter by observed-over-expected
+same-place adjacency at C1–C2 — with the expectation computed exactly from the
+margins, so no seed enters the ranking — the qaf has **0 same-place neighbours
+out of 360 against an expectation of 11.8**. That is a real constraint, but it is
+a **fifteen-way tie at the floor**: ت ث ح خ د ذ ز س ص ط ظ ع غ ق ك all sit at
+zero. A letter is singled out only if it is alone at the floor, and this one is
+not. The letters that do tolerate same-place neighbours are ش, ج, ي, و, ء and ه,
+and most of the 117 surviving C1–C2 violations have a glide in them — so the
+tail of this table is partly a consequence of assigning و and ي to the labial
+and palatal classes, an assignment that is contested and not resolved here.
+
+Three things are stated rather than assumed. The eleven places are a declared
+grouping, not a forced one: Sibawayh counts sixteen, and a coarser grouping
+raises the expected baseline and inflates every depression ratio. Root-cooccurrence
+avoidance is a standing claim since Greenberg 1950, so finding it here is a
+sanity check on the extraction, not a discovery. And a constraint on *who may
+stand next to whom* is not an account of *how often a letter occurs*, so it does
+not close the frequency question it was offered to close.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
