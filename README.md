@@ -7345,6 +7345,83 @@ probes come back negative returns exactly the same standing for it. Ruling out
 two accounts does not establish a third, and the true account may be a fourth
 that was never named.
 
+## A measure with no knob, and the depth it could not reach
+
+Every earlier reading of "the part mirrors the whole" on this deposit was settled
+by a number somebody chose: a 5% tolerance, a "practically negligible" gap, an
+n ≥ 30 cutoff. `maqayis_structure_of_structure` rebuilds the claim so that no
+number in it is chosen after seeing a result.
+
+The raw gap is replaced by a **normalised structure function**
+
+```
+D_a(c) = Î_MM(1[x ∈ c] ; a) / min(H(1_c), H(a))   ∈ [0, 1]
+```
+
+— bias-corrected mutual information divided by its own structural ceiling. The
+denominator is what every prior measurement lacked, and it retires three
+objections at once: it removes the effect of cell size, it removes the effect of
+the axis alphabet, and it makes a nearly-constant axis and a balanced one
+comparable instead of making the second win by definition. Where the ceiling is
+zero, D returns nothing at all; such a reading is **counted as powerless, never
+read as a perfect match**. On this deposit none of the 200 readings is powerless
+in that sense.
+
+The tolerance is likewise not chosen but **derived per cell**. With both margins
+fixed, the permutation null of a cell-by-axis intersection is exactly
+hypergeometric, so the null is enumerated term by term rather than sampled: every
+attainable intersection count, with its log-gamma weight, mapped through the same
+D. This removes the seed, the replicate count, and — decisively — the resolution
+floor. A first implementation sampled 400 permutations, whose smallest reachable
+p-value is 1/401 ≈ 0.0025, while Holm's tightest threshold over 200 tests is
+0.05/200 = 0.00025. Rejection was impossible by construction; the test was dead
+and would have reported universal self-similarity as a finding. The exact
+enumeration reaches p = 6.4 × 10⁻²¹ on the strongest cell, and the whole run
+takes under a second.
+
+The allowance is therefore *derived from cell size*, wide for small cells and
+narrow for large ones, and no gap threshold appears anywhere. What can still go
+wrong is powerlessness of a different kind, so it is measured too: for each
+reading the smallest p-value it could attain at maximum possible separation is
+computed, and **17 of 200 readings cannot reach the corrected threshold whatever
+the material holds**. All 17 sit in cells of nine rows or fewer. No cell is
+powerless on all five axes, so no cell's pass is purely an artefact of its size.
+
+Read this way, **12 of the 40 headers are distinguished from the whole and 28 are
+not**, with the multiplicity correction declared in advance. Both counts are
+returned: before correction 27 headers separate, after it 12. The dal chapter is
+among the 28 — it holds on all five axes — but it is also one of the 15 that
+change verdict with the correction, its poetry axis reading p = 3.7 × 10⁻⁴
+against a threshold of 2.5 × 10⁻⁴. It ranks 12th of 40 by D on that axis. That is
+stated rather than buried: the dal verdict is a function of a declared
+correction, and saying so is the difference between a rule fixed in advance and
+one relaxed until something passes.
+
+**None of this is yet structure-of-structure.** A cell against the whole is still
+part-and-whole. The second-order statement is that the *law of the excess field*
+is the same at every depth — that sections deviate from their book as books
+deviate from the work — and it needs two nested covers. The deposit does not
+carry them. All 41 headers are contiguous blocks, 14 in book form and 26 in
+section form, and the section names cite letters that have no book in the file:
+no row carries both levels, so the parent link was lost in extraction. One trace
+survived that might restore it — `entry_num` resets 28 times, close to the 14
+book count — and the rule (a reset begins a book) was declared before it was
+tested. It was then **refuted by counting its violations: all 28 resets fall
+inside a header block, 12 of them land on section headers, and all 14 book starts
+have no reset at all — 54 violations**. The marker is within-block numbering,
+unaligned with the cover.
+
+So the equation's standing is **deferred for want of a second depth**, not held
+and not refuted. The comparison path exists in the code and is not walked today.
+Deferral leaves the question open and refutes nothing.
+
+Two residuals are worth stating outside the module. Every prior forty-chapter
+measurement on this deposit — including the census and the attribution above —
+compared a **mixture of two cover levels** against the whole; part of the scatter
+they reported may be that mixture rather than the material. And invariance across
+two depths would not be fractality even if it were recovered: fractality needs
+many levels, and the source affords at most two.
+
 ```bash
 python -m pip install -e '.[dev]'
 pytest
