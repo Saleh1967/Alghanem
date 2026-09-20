@@ -7818,6 +7818,63 @@ measured on, and never multiplied into 78,215
 python examples/arabic/read_implicit_sukun_treatment.py
 ```
 
+## The same question put to a second text
+
+The sukūn split above carried its own limit in its name: a rate measured on
+twenty-nine words of one sūra is not a corpus rate. A limit like that is not
+lifted by saying so — it is lifted by **a second place to measure**. There is
+one in this tree: Fatḥ 48:29, fifty-four words, deposited by letters
+(`fath_ayah_source_text`). The same measurement was run over it with the same
+codec, and the two censuses set side by side.
+
+| | al-Fātiḥa | Fatḥ 29 | gap |
+|---|---|---|---|
+| words | 29 | 54 | |
+| sukūn-bearing carriers | 75 | 104 | |
+| written (U+0652) | 21 | 27 | |
+| written share | 28.000% | 25.962% | **2.038 points** |
+
+**The finding did not flip.** In both texts most of the sukūn is unwritten, and
+the two shares sit two points apart. The alif's door is closer still —
+42.593% of the unwritten there, 42.857% here, **a quarter of a point** — and
+the gemination pair-start is the furthest, 25.926% against 20.779%.
+
+**The alif replicated exactly.** Thirty-three written alifs in Fatḥ 29, **all**
+holding an unmarked sukūn, not one with a mark and not one with a vowel —
+exactly as the twenty-three in the Fātiḥa. Fifty-six written alifs across two
+texts, none of them marked. The two dagger alifs in the Fātiḥa are counted
+apart and not erased: a dagger is a mark above a letter, not a written alif.
+This **widens the evidence without changing its kind**: what was read from
+absence is still read from absence, and a repeated absence is not a byte
+(`THE_ALIF_REPLICATION_IS_STILL_READ_FROM_ABSENCE`).
+
+**The onset parted further.** After lifting the alif: fourteen sukūn-initial
+words in the Fātiḥa, five of them written (35.714%); twelve in Fatḥ 29, three
+written (25.000%) — ten and a half points. So a text that agreed on the whole
+disagreed at the first position, which by itself forbids carrying one text's
+share onto another's position. The unwritten onsets happen to match exactly —
+nine and nine, split the same way — and nine out of nine is a small-number
+coincidence, not a law.
+
+**What the agreement does not establish** is named rather than absorbed.
+Eighty-three words out of 78,245 is **0.106%** of the corpus: the second text
+moves the scope from a two-thousandth to a thousandth, not to a corpus rate
+(`TWO_TEXTS_ARE_STILL_NOT_A_CORPUS`). Both deposits sit at the same lowest
+rank — `TRANSCRIBED_IN_TREE_NOT_COLLATED`, transcribed here and collated
+against nothing — and by the same hand, so their agreement may be one
+transcriber's habit in the pointing rather than a property of the script
+(`TWO_TRANSCRIPTIONS_OF_ONE_HAND_ARE_NOT_TWO_WITNESSES`). Both were read
+through the same `CarrierStateCodec`, the very thing that names the implicit
+sukūn, so any bias in it moves both figures the same way and the agreement
+hides it rather than ruling it out (`A_SHARED_CODEC_IS_A_SHARED_LIMIT`). And
+two points make a line wherever they fall: no trend, no direction, and no
+interpolation is read off these two numbers
+(`A_GAP_BETWEEN_TWO_SCOPES_IS_NOT_A_TREND`).
+
+```bash
+python examples/arabic/read_sukun_second_scope.py
+```
+
 ```bash
 python examples/arabic/read_quran_word_total_standing.py
 ```
