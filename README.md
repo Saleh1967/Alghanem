@@ -8076,7 +8076,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 521-fold: 32 pairs, then 16,666. Both questions were answered,
+The widening is 522-fold: 32 pairs, then 16,712. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8095,7 +8095,7 @@ than a tail: six shadda-bearing pairs hold 99.928%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,402 of 16,634
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,411 of 16,680
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8215,6 +8215,63 @@ python examples/arabic/read_font_deposit.py
 
 ```bash
 python examples/arabic/read_blind_skeleton_transport.py
+```
+
+That milestone published ten classes and named its own limit in the same breath:
+isolated glyphs only, no shaping engine. The next step widened exactly that
+limit and nothing else. `GSUB` names a glyph for each of `init`, `medi` and
+`fina`, and those single substitutions are readable with `struct` alone. So the
+same blind question was put four times instead of once.
+
+What is read is still not shaping. A contextual `GSUB` engine remains out of
+reach, and nothing here decides which form appears in an actual word; what is
+recovered is only *the glyph the font names for that position*. Substitutions
+producing more than one glyph are refused and counted rather than guessed —
+five in Amiri, none in the other two.
+
+The first result is an agreement, and it is total. The set of letters the
+positional features do not cover is not merely the same size across the three
+fonts but the same set, letter for letter: eighteen with no initial or medial
+form, seven with no final one. Three fonts from three designers, two scripts
+and two centuries apart, agree perfectly on *which letter has which position*
+and disagree widely on *how each is drawn*. Joining is a fact about the writing
+system that transports; geometry is a fact about the font that transports only
+so far.
+
+The second result is the milestone, and it is a demotion. The ten do not
+survive.
+
+| position | transports to all three |
+|---|---|
+| `isol` | 10 |
+| `init` | **3** |
+| `medi` | **4** |
+| `fina` | 10 |
+| **all four** | **2** |
+
+Isolated and final are identical to each other, which is why the earlier figure
+looked robust: it was one answer counted twice. Initial and medial are a
+different world. Only **سش and عغ** survive all four positions. The flagship
+بتث falls — not because the fonts disagree about ب ت ث, but because in initial
+and medial position both Naskh deposits swallow them into a single tooth shared
+by `ئبتثؽؾؿنىي`, while the Kufi partitions the same letters differently. The
+class does not shrink; it widens until its boundary stops agreeing. The ten were
+a fact about two positions, not about the script.
+
+And widening is not only subtraction. **فق** transports to all three fonts in
+both joined positions and does not exist as a class isolated or final, where the
+two tails diverge. A question asked only of isolated forms could not have seen
+it. Across the four positions the union of transporting classes is eleven and
+the intersection is two, and every claim in this area lives somewhere between
+those two numbers — so which one is meant has to be said.
+
+One discipline is kept throughout: no class here crosses a position boundary.
+Each is measured strictly inside its own column, and it was never asked whether
+an initial form shares a contour with an isolated one. Nothing in this table
+says anything about a letter's constancy across its own positions.
+
+```bash
+python examples/arabic/read_positional_widening.py
 ```
 
 ```bash
