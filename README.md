@@ -8076,7 +8076,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 516-fold: 32 pairs, then 16,517. Both questions were answered,
+The widening is 517-fold: 32 pairs, then 16,574. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8091,11 +8091,11 @@ a specimen written deliberately illegal to show it yields no state. Neither is
 Arabic. The least frequent pair that *is* Arabic sits at 9, nine times the
 published floor. So the minimum of this census measures what the medium quotes,
 not what the script allows, and the distribution turns out to be a cliff rather
-than a tail: six shadda-bearing pairs hold 99.927%, and the remaining three
+than a tail: six shadda-bearing pairs hold 99.928%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,361 of 16,485
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,379 of 16,542
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8103,6 +8103,53 @@ instead of hiding.
 
 ```bash
 python examples/arabic/read_pair_sample_widening.py
+```
+
+Widening the sample had been widening the *witnesses*. The next step widened
+the **population** — not who is asked, but what is asked about. The population
+had been nine marks over deposited positions; it became every letter and mark
+in the five Arabic blocks: 970 `Lo` and 105 `Mn`. And the wider population
+turned up something the wider sample could not: a gap in the predicate rather
+than a shortage of evidence.
+
+Eight of those 970 letters — 0.825% — are not simple. Each has a canonical
+decomposition, which is to say each is a carrier and a mark fused into one
+codepoint: آ أ ؤ إ ئ, and three Perso-Urdu letters that never occur here. They
+hide exactly three marks: maddah above, hamza above, hamza below. All three are
+`Mn` in the Arabic blocks, so they are marks by the table's own reckoning. None
+of the three is among the nine. So a mark that is genuinely written in the
+bytes is invisible to every census we have run — not because it was excluded,
+but because it stopped being a mark in the text's normal form.
+
+The deposits settle how much this costs. Standalone occurrences of the three:
+zero in al-Fātiḥa, zero in al-Fatḥ, before normalization and after. Occurrences
+hidden inside letters: three and eight. The visible census reports nothing at
+all about eleven written marks.
+
+Two further things fell out of the widening. First, a published rule broke. The
+nine have pairwise distinct combining classes, which is why order inside a pair
+carries no information. The three do not: 230, 230, 220. Two of them collide,
+canonical ordering leaves colliding marks alone, and so the order of
+maddah+hamza-above *is* preserved and *does* carry information — the exact
+negation. That property belonged to those nine specifically, not to Arabic
+marks. Second, the disappearance is partly our own doing: a haraka's class is
+below hamza's, so it does not block, and `ا + fatḥa + hamza` normalizes to
+`أ + fatḥa`. Normalization itself moves a mark out of the mark stream and into
+the letter, at read time.
+
+One identity came free and is worth keeping: the count of fused carriers equals
+the NFD−NFC delta exactly, 3 for 3 and 8 for 8 — on pure Arabic. It breaks on
+the tree's prose by 117, and all 117 are accounted: mathematical negation signs
+and two Latin letters, nothing Arabic. The condition is measured at read time
+rather than assumed.
+
+This module names and measures the gap; it does not close it. The three were
+not imported into `written_haraka_mark`, and the pair census was not widened
+from 36 to 66. Every figure published about the nine remains true about the
+nine — and bounded by them.
+
+```bash
+python examples/arabic/read_hidden_mark_population.py
 ```
 
 ```bash
