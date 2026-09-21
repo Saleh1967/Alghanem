@@ -8080,7 +8080,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 524-fold: 32 pairs, then 16,781. Both questions were answered,
+The widening is 528-fold: 32 pairs, then 16,904. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8095,11 +8095,11 @@ a specimen written deliberately illegal to show it yields no state. Neither is
 Arabic. The least frequent pair that *is* Arabic sits at 9, nine times the
 published floor. So the minimum of this census measures what the medium quotes,
 not what the script allows, and the distribution turns out to be a cliff rather
-than a tail: six shadda-bearing pairs hold 99.928%, and the remaining three
+than a tail: six shadda-bearing pairs hold 99.929%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,426 of 16,749
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,454 of 16,872
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8339,6 +8339,89 @@ words between them.
 
 ```bash
 python examples/arabic/read_carrier_projection_deposit.py
+```
+
+A procedural note on that deposit: it was merged while one check was still
+pending. That is not a failure, but its closure record says *merged with one
+check pending*, not "all checks passed", until that check's result has been
+read.
+
+### Certifying the projection before the chain
+
+The previous deposit said who the carriers are, where a word ends and what an
+edge is. It did not say **what the projection lost, and by whose leave**. That
+is what a `ProjectionCertificate` says, and it is derived at read time rather
+than written down.
+
+The order is deposited first, and it is boundary *then* fold:
+
+```
+RawText --B--> WrittenWords --Π_F--> CarrierWords --A--> Adjacency --P--> Probability
+```
+
+Because the tree holds two operations — folding a character stream `F_s` and
+folding a written word `F_w` — their agreement is measured rather than assumed,
+and it does not hold everywhere:
+
+| deposit | rule | `B(F_s(T)) = map(F_w, B(T))`? |
+|---|---|---|
+| Fatiha | any whitespace | yes |
+| Fatiha | space only | **no** |
+| Fath 48:29 | any whitespace | yes |
+| Fath 48:29 | space only | yes |
+
+The cause is measured, not described: the Fatiha's ayah separator is a newline,
+the projection discards it because it is not a carrier, and the space-only rule
+does not eat it — so folding first leaves the newline *inside* a word while
+splitting first removes it. Commutation holds only where the boundary consumes
+every whitespace the fold discards, and **no certificate is issued where the two
+orders disagree**. The rule that fabricated six edges above breaks the
+commutation here too; that is a second finding about it, not a restatement.
+
+Collapse is read off fibers rather than counted in pairs. With
+`[w]_Π = {w' : Π(w') = Π(w)}`, a fiber of size one is a preserved distinction
+and a larger fiber is a collapse group, and every figure is derived:
+`N_written = Σ|f|`, `N_skeleton = |Fibers|`, `Loss = Σ(|f| − 1)`. On the Fath
+ayah that is 50 − 47 = 3, and the arithmetic would still be right if four
+written words met in one skeleton.
+
+| deposit | written | skeletons | loss | preserved | licensed | unresolved | destructive |
+|---|---|---|---|---|---|---|---|
+| Fatiha | 26 | 26 | 0 | 26 | 0 | 0 | 0 |
+| Fath 48:29 | 50 | 47 | **3** | 44 | **0** | **3** | **0** |
+
+A declared fold is a **mechanism**, not a **license**. That the folding table is
+written proves the transformation is declared; it does not prove that losing a
+distinction is permitted. A collapse is licensed only by an entry in an explicit
+written register bound to that deposit and those written forms, and that register
+is **empty**. So `اللَّهُ`/`اللَّهِ`, `الْكُفَّارَ`/`الْكُفَّارِ` and
+`مِنَ`/`مِنْ` are *unresolved distinctions*, not licensed collapses — and their
+measured mechanism is discarded residue, so on this evidence the declared fold
+causes no collapse at all.
+
+`destructive collapse` is likewise not granted by the mere presence of another
+layer in the tree. It requires an independent deposited witness bound to the same
+source identity **and the same occurrence**. That register is empty too, so the
+class is empty here — a statement about our evidence, not about Arabic.
+
+Transport withholds a certificate; it does not locate a property. Ten measured
+geometric classes transport across the three font deposits, and after folding
+they gather carriers the projection keeps apart — `بتث`, `جحخ`, `دذ`, `رز`,
+`سش`, `صض`, `طظ`, `عغ`, and, moved there by the fold itself, `ته` and `ءو`. The
+law is therefore `¬Transport(x) ⇒ ¬CertifiedCarrierInvariant(x)` and **not**
+`¬Transport(x) ⇒ PositionProperty(x) ∨ FontProperty(x)`: a failure to transport
+may lie in the measurement, in an interaction, or in the poverty of the witness.
+
+Two laws close the layer: no Markov state without a projection identity
+certificate, and no statistical invariance claim from an invariance the
+projection itself made — three written repeats become five projected repeats on
+the Fath ayah. And one distinction is frozen: observed adjacency is not a
+linguistic relation and is not a probabilistic transition. The scope stays two
+deposits of eighty-three words, with a local declared scope rank wired to no
+readiness rank and no kernel authority; widening the population is separate work.
+
+```bash
+python examples/arabic/read_projection_identity_certificate.py
 ```
 
 ```bash

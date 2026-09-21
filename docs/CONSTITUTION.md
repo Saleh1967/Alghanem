@@ -4030,3 +4030,84 @@ separately so the convention cannot be read as an analysis.
 carries its schema version in its own content. When the semantics of measurement
 change, the digest changes as a change of contract, and figures from two schema
 versions are not compared as if they measured the same thing.
+
+## `G0.PROJ-0` — projection identity before probabilistic closure
+
+`NoMarkovStateWithoutAProjectionIdentityCertificate`. A probabilistic state
+space may not be raised over a projection whose identity has not been deposited.
+The certificate names its source identity, its fold rule by digest, its boundary
+rule, its fibers, its loss, its residue, its trace and its scope. Numbers
+computed over an undeposited projection are arithmetic without a referent.
+
+`TheOrderIsBoundaryThenFoldThenAdjacency`. The deposited order is
+
+```
+RawText --B--> WrittenWords --Π_F--> CarrierWords --A--> Adjacency --P--> Probability
+```
+
+and no step may be jumped. `P` in particular is not reached before `B`, `Π_F`
+and `A` are deposited, each with its own published cost.
+
+`StreamFoldingAndWordFoldingAreTwoOperationsUntilTheyAreMeasuredEqual`. Where an
+implementation folds a character stream and also folds a written word, their
+agreement `B(F_s(T)) = map(F_w, B(T))` is measured per deposit and per boundary
+rule, never assumed. It holds only where the boundary rule consumes every
+whitespace character the fold discards, and it demonstrably fails on a deposit
+whose ayah separator is a newline under a space-only rule. No certificate is
+issued where the two orders disagree.
+
+`TheCollapseIsAFiberNotAPair`. Preservation and loss are read off the
+equivalence classes `[w]_Π = {w' : Π(w') = Π(w)}`. A fiber of size one is a
+preserved distinction; a larger fiber is a collapse group. The published figures
+are derived — `N_written = Σ|f|`, `N_skeleton = |Fibers|`,
+`Loss = Σ(|f| − 1)` — so that a fiber holding four written words is counted
+correctly without amending the rule.
+
+`DeclaredFold != LicensedCollapse`. That a fold rule is written establishes that
+the transformation is *declared*; it does not establish that the loss of a
+distinction is *permitted*. The mechanism of a collapse (declared fold,
+discarded residue, or both) is descriptive and never promotes a standing. A
+collapse is licensed only by an explicit written license register entry bound to
+that deposit and those written forms. An empty register means nothing is
+licensed.
+
+`NoDestructiveCollapseWithoutAnOccurrenceAlignedWitness`. A collapse is called
+destructive only on an independent deposited witness bound to the same source
+identity and the same occurrence, showing a distinction the tree was able to
+keep and the projection erased. The mere existence of another layer in the tree
+is not such a witness. Absent one, the standing stays `unresolved distinction`,
+and an empty destructive class is a statement about our evidence, not about
+Arabic.
+
+`APropertyThatDoesNotTransportIsNotCertifiedAsACarrierInvariant`. Failure to
+transport across the deposited fonts, positions or contexts withholds a
+certificate; it does not locate the property. Formally
+`¬Transport(x) ⇒ ¬CertifiedCarrierInvariant(x)`, and **not**
+`¬Transport(x) ⇒ PositionProperty(x) ∨ FontProperty(x)`, since the failure may
+lie in the measurement, in an interaction, or in the poverty of the witness.
+
+`NoStatisticalInvarianceClaimFromAnInvarianceTheProjectionItselfMade`. Where the
+projection increases repetition — three written repeats becoming five projected
+repeats, fifty distinct written words becoming forty-seven skeletons — any
+regularity measured downstream may be an artifact of the projection. Such a
+regularity licenses no invariance claim about the text.
+
+`ObservedAdjacency != LinguisticRelation != ProbabilisticTransition`. An edge
+deposited under an explicit fold and boundary is an observed adjacency. It is
+not thereby a linguistic unit, it carries no causal force, and it is not a state
+transition in the probabilistic sense. The three are named apart and never
+substituted for one another.
+
+`ContractCorrectnessIsNotPopulationWidening`. The scope of this section is the
+two deposits holding eighty-three words between them, and its rank is a local
+declared scope name, connected to no readiness rank and to no kernel authority.
+Widening the population is separate work, so that the correctness of the
+contract is never read as the size of the evidence.
+
+### What this section does not establish
+
+It does not establish that the current folding is the correct projection for
+Arabic, nor that any-whitespace is the final definition of an Arabic word, nor
+that the three unresolved collapses are permitted. It re-legitimises no figure
+computed over MASAQ, whose bytes remain outside the tree and whose chain
+therefore stays unread.
