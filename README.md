@@ -8080,7 +8080,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 528-fold: 32 pairs, then 16,924. Both questions were answered,
+The widening is 536-fold: 32 pairs, then 17,154. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8095,11 +8095,11 @@ a specimen written deliberately illegal to show it yields no state. Neither is
 Arabic. The least frequent pair that *is* Arabic sits at 9, nine times the
 published floor. So the minimum of this census measures what the medium quotes,
 not what the script allows, and the distribution turns out to be a cliff rather
-than a tail: six shadda-bearing pairs hold 99.929%, and the remaining three
+than a tail: six shadda-bearing pairs hold 99.930%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,455 of 16,892
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,498 of 17,122
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8453,6 +8453,88 @@ readiness rank and no kernel authority; widening the population is separate work
 ```bash
 python examples/arabic/read_projection_identity_certificate.py
 ```
+
+### The state space before the chain
+
+Asked for Markov chains over the Qurʾān, this tree answers by first asking what
+may enter a state space at all. Five units answer, in order, and none of them
+computes a probability.
+
+The first closes a branch instead of deleting it. An excluded claim has two
+standings that must not be confused: `BELOW_THRESHOLD`, which falls short of a
+declared bar and stays a candidate for a larger sample, and
+`CLOSED_AS_LEXICAL_ARTIFACT`, whose corruption mechanism has been diagnosed and
+which a larger sample only strengthens. The raw token-count sukūn-overlap claim
+is closed under `TOKEN_REPETITION_INFLATION` — a presence claim counted token by
+token lets one frequent word testify repeatedly about itself — and the mechanism
+is not asserted but witnessed by the tree's own distributional probe: best
+partition `k=2` rather than `3`, split 2,159 against 34, and a smaller cluster
+mixing genuine function words with high-frequency content words. "Fatḥa-only" is
+closed only to the extent measured, its exposed share `(tokens − types)/tokens`,
+which on the projected Fatḥ āyah is 12.963% and on the Fātiḥa 10.345%. What is
+left over is not admitted; it is simply not closed by this mechanism. A closed
+claim never re-enters a freeze.
+
+The second constrains the branch that survives. Absence is immune to
+token-repetition inflation, but not to emptiness: `obs = 0` reads as suppression
+only under a declared null hypothesis, a declared minimum expectation floor, and
+a published distribution of zero-cell contributors counted as types rather than
+tokens. Lacking any of the three the reading is withheld, not relaxed, and every
+reading carries its largest contributor share so that a cell held up by one
+repeated type is never read as a population. The contract register is empty, and
+the filtered CVC test is named and refused by name rather than silently unknown.
+
+The third deposits the ordering algebra the certificate deferred:
+`COMMUTES | ORDER_REQUIRED | UNRESOLVED`. Commutation is measured; an order is
+*deposited*, naming which side is legal and on what ground; everything else is
+unresolved. What is required is a **known** order, not a commuting one — the
+refusal is of ambiguity, not of non-commutation. The order register is empty, so
+the one broken cell, the Fātiḥa under the space-only rule, stands `UNRESOLVED`.
+Its cause is a line break the fold projects and the boundary does not eat, which
+is live in every multi-line text — and the Qurʾānic corpus is one.
+
+The fourth turns a census into a contract. Sukūn enters as two states, never
+one: written sukūn, whose witness is in the ink, and inferred sukūn, whose
+witness is a rule of ours; merging them would turn our decision into evidence
+from the text. The first half of a geminate is evicted from the column into its
+own category rather than subclassed within it. Measured: written 21 and 27,
+inferred 40 and 61, evicted 14 and 16, against raw columns of 75 and 104. No
+single sukūn total is issued from a three-way column.
+
+The fifth reads the gate. The prerequisites are ordered, not a set — lexical
+closure, sukūn split, corpus bytes, corpus certificate, composition order — and
+the first unmet one is the door. The first two are met; the third is not, since
+`corpora/quran-simple-enhanced.txt` is neither vendored nor declared. So token
+Markov is `BLOCKED` at a named prerequisite, and every token figure that ever
+issues must ship with its dominance reading or the closed artifact returns
+wearing a larger number. Functional Markov is `SUSPENDED`, a different standing
+altogether: it awaits a licensed functional/lexical partition that does not
+exist, the one distributional attempt at measuring one returned a recorded
+negative result, and satisfying all five prerequisites would not lift it. Behind
+both, the statistical gate still holds, now measurable per deposit: three
+repeated written types become five projected on the Fatḥ āyah and stay three on
+the Fātiḥa. The surplus was made by the fold, not by the text.
+
+```bash
+python examples/arabic/read_lexical_artifact_closure.py
+```
+
+```bash
+python examples/arabic/read_suppression_expectation_floor.py
+```
+
+```bash
+python examples/arabic/read_projection_composition_order.py
+```
+
+```bash
+python examples/arabic/read_sukun_state_contract.py
+```
+
+```bash
+python examples/arabic/read_markov_readiness_gate.py
+```
+
 
 ```bash
 python examples/arabic/read_quran_word_total_standing.py

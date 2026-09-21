@@ -1,4 +1,4 @@
-"""Witnesses for the lexical artifact closure: standing, mechanism, extent, dominance."""
+"""Witnesses for the lexical artifact closure: standing, mechanism, dominance."""
 
 from __future__ import annotations
 
@@ -94,8 +94,9 @@ def test_the_dominance_token_count_equals_what_the_deposit_holds(
     assert reading.tokens == expected
 
 
-def test_projection_lowers_the_type_count_on_the_fath_ayah_and_not_on_the_fatiha(
-) -> None:
+def test_projection_lowers_the_type_count_on_the_fath_ayah_and_not_on_the_fatiha() -> (
+    None
+):
     fath_written = dominance_of(FATH_AYAH_SOURCE_ID, False)
     fath_projected = dominance_of(FATH_AYAH_SOURCE_ID, True)
     fatiha_written = dominance_of(FATIHA_SOURCE_ID, False)

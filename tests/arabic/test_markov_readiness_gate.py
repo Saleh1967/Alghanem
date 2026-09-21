@@ -1,4 +1,4 @@
-"""Witnesses for the Markov readiness gate: ordered prerequisites, blocked, suspended."""
+"""Witnesses for the Markov readiness gate: prerequisites, blocked, suspended."""
 
 from __future__ import annotations
 
@@ -35,15 +35,13 @@ def test_the_chain_reads_every_prerequisite_once_in_the_published_order() -> Non
     assert set(read) == set(Prerequisite)
 
 
-def test_the_first_two_prerequisites_are_met_by_the_deposits_in_this_tree(
-) -> None:
+def test_the_first_two_prerequisites_are_met_by_the_deposits_in_this_tree() -> None:
     chain = {reading.prerequisite: reading for reading in the_prerequisite_chain()}
     assert chain[Prerequisite.LEXICAL_ARTIFACT_CLOSED].met
     assert chain[Prerequisite.SUKUN_COLUMN_SPLIT].met
 
 
-def test_the_corpus_bytes_prerequisite_tracks_the_resolver_and_not_a_constant(
-) -> None:
+def test_the_corpus_bytes_prerequisite_tracks_the_resolver_and_not_a_constant() -> None:
     chain = {reading.prerequisite: reading for reading in the_prerequisite_chain()}
     assert chain[Prerequisite.CORPUS_BYTES_PRESENT].met is (
         quran_corpus_bytes_are_resolvable()
@@ -60,8 +58,7 @@ def test_a_prerequisite_reading_without_a_written_ground_is_refused() -> None:
 # --- token Markov is blocked at the corpus bytes ---------------------------
 
 
-def test_token_markov_is_blocked_and_names_the_corpus_bytes_as_its_door(
-) -> None:
+def test_token_markov_is_blocked_and_names_the_corpus_bytes_as_its_door() -> None:
     reading = token_markov_standing()
     assert reading.standing is ChainStanding.BLOCKED
     assert reading.blocking_prerequisite is Prerequisite.CORPUS_BYTES_PRESENT
@@ -74,15 +71,13 @@ def test_the_blocking_ground_names_the_vendored_corpus_path() -> None:
 # --- functional Markov is suspended, not blocked ---------------------------
 
 
-def test_functional_markov_is_suspended_and_carries_no_blocking_prerequisite(
-) -> None:
+def test_functional_markov_is_suspended_and_carries_no_blocking_prerequisite() -> None:
     reading = functional_markov_standing()
     assert reading.standing is ChainStanding.SUSPENDED
     assert reading.blocking_prerequisite is None
 
 
-def test_the_suspension_is_grounded_in_the_negative_distributional_probe(
-) -> None:
+def test_the_suspension_is_grounded_in_the_negative_distributional_probe() -> None:
     assert "سالبة" in functional_markov_standing().ground
 
 
@@ -98,9 +93,7 @@ def test_a_suspended_chain_may_not_carry_a_blocking_prerequisite() -> None:
 
 def test_a_blocked_chain_must_name_its_blocking_prerequisite() -> None:
     with pytest.raises(MarkovReadinessError):
-        ChainReading(
-            chain_name="مختلق", standing=ChainStanding.BLOCKED, ground="سند"
-        )
+        ChainReading(chain_name="مختلق", standing=ChainStanding.BLOCKED, ground="سند")
 
 
 def test_the_two_chains_do_not_share_a_standing() -> None:
@@ -128,8 +121,7 @@ def test_a_token_figure_publishes_the_leading_share_of_its_dominance() -> None:
 # --- the statistical gate: what the projection itself made -----------------
 
 
-def test_the_projection_makes_two_extra_repeated_types_on_the_fath_ayah(
-) -> None:
+def test_the_projection_makes_two_extra_repeated_types_on_the_fath_ayah() -> None:
     regularity = projection_made_regularity_on(FATH_AYAH_SOURCE_ID)
     assert (regularity.repeated_written, regularity.repeated_projected) == (3, 5)
     assert regularity.made_by_the_projection == 2

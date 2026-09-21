@@ -73,12 +73,9 @@ def test_a_zero_above_the_expectation_floor_reads_as_a_suppression() -> None:
     assert reading.standing is SuppressionStanding.SUPPRESSION
 
 
-def test_a_nonzero_outside_the_declared_band_is_withheld_not_called_near_zero(
-) -> None:
+def test_a_nonzero_outside_the_declared_band_is_withheld_not_called_near_zero() -> None:
     reading = read_zero_cell(_a_complete_contract(), observed=3, expected=12.0)
-    assert reading.standing is (
-        SuppressionStanding.WITHHELD_FOR_AN_INCOMPLETE_CONTRACT
-    )
+    assert reading.standing is (SuppressionStanding.WITHHELD_FOR_AN_INCOMPLETE_CONTRACT)
 
 
 def test_a_declared_near_zero_band_admits_what_it_declares_and_no_more() -> None:

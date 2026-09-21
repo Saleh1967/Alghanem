@@ -44,6 +44,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, fields
 from enum import Enum
 from typing import Final
@@ -317,19 +318,39 @@ def _assert_the_register_is_empty_and_the_named_test_is_refused() -> None:
 def _assert_a_contract_missing_any_of_the_three_is_refused() -> None:
     """حارسُ استيراد: نقصُ واحدةٍ من الثلاث رفضٌ عند البناء لا تساهُلٌ بعده."""
 
-    base = {
-        "test_identity": "حارس",
-        "null_hypothesis": NullHypothesis.INDEPENDENT_MARGINALS,
-        "minimum_expectation": 5.0,
-        "type_contributors": (TypeContributor(type_key="نمط", occurrences=1),),
-    }
-    for field_name, broken in (
-        ("minimum_expectation", 0.0),
-        ("type_contributors", ()),
-        ("test_identity", "   "),
-    ):
+    contributors = (TypeContributor(type_key="نمط", occurrences=1),)
+    builders: tuple[tuple[str, Callable[[], SuppressionContract]], ...] = (
+        (
+            "minimum_expectation",
+            lambda: SuppressionContract(
+                test_identity="حارس",
+                null_hypothesis=NullHypothesis.INDEPENDENT_MARGINALS,
+                minimum_expectation=0.0,
+                type_contributors=contributors,
+            ),
+        ),
+        (
+            "type_contributors",
+            lambda: SuppressionContract(
+                test_identity="حارس",
+                null_hypothesis=NullHypothesis.INDEPENDENT_MARGINALS,
+                minimum_expectation=5.0,
+                type_contributors=(),
+            ),
+        ),
+        (
+            "test_identity",
+            lambda: SuppressionContract(
+                test_identity="   ",
+                null_hypothesis=NullHypothesis.INDEPENDENT_MARGINALS,
+                minimum_expectation=5.0,
+                type_contributors=contributors,
+            ),
+        ),
+    )
+    for field_name, build in builders:
         try:
-            SuppressionContract(**{**base, field_name: broken})
+            build()
         except SuppressionFloorError:
             continue
         raise SuppressionFloorError(  # pragma: no cover - الرفضُ فوقُ يمنعه

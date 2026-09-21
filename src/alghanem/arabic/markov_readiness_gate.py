@@ -65,8 +65,8 @@ from alghanem.arabic.carrier_projection_deposit import (
     words_of,
 )
 from alghanem.arabic.lexical_artifact_closure import (
-    DominanceReading,
     THE_CLOSED_CLAIMS,
+    DominanceReading,
     dominance_of,
 )
 from alghanem.arabic.projection_composition_order import the_composition_table
@@ -145,9 +145,7 @@ THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THEY_ARE_ABSENT: Final[str] = (
     "الشرط الذي يليه"
 )
 
-A_NEGATIVE_PROBE_SUSPENDS_THE_FUNCTIONAL_SPLIT_UNTIL_IT_IS_DEPOSITED: Final[
-    str
-] = (
+A_NEGATIVE_PROBE_SUSPENDS_THE_FUNCTIONAL_SPLIT_UNTIL_IT_IS_DEPOSITED: Final[str] = (
     "A_NEGATIVE_PROBE_SUSPENDS_THE_FUNCTIONAL_SPLIT_UNTIL_IT_IS_DEPOSITED: "
     "المحاولةُ التوزيعيّةُ الوحيدةُ نتيجتُها سالبةٌ ومسجَّلة — أفضلُ عنقودٍ "
     "اثنان لا ثلاثة، وقسمةٌ خلطت حروفَ المعاني بكلماتِ المحتوى فائقةِ التكرار — "
@@ -216,8 +214,7 @@ def _sukun_split_reading() -> PrerequisiteReading:
     return PrerequisiteReading(
         prerequisite=Prerequisite.SUKUN_COLUMN_SPLIT,
         met=met,
-        ground="عمودُ السكون مقسومٌ إلى حالتَين ومُخرَجٍ على "
-        f"{len(splits)} وديعة.",
+        ground="عمودُ السكون مقسومٌ إلى حالتَين ومُخرَجٍ على " f"{len(splits)} وديعة.",
     )
 
 
@@ -298,9 +295,7 @@ class ChainReading:
         if (self.blocking_prerequisite is None) is (
             self.standing is ChainStanding.BLOCKED
         ):
-            raise MarkovReadinessError(
-                "الشرطُ الحاجبُ يلزم المحجوبَ وحدَه ويُمنَع على سواه."
-            )
+            raise MarkovReadinessError("الشرطُ الحاجبُ يلزم المحجوبَ وحدَه ويُمنَع على سواه.")
 
 
 def token_markov_standing() -> ChainReading:

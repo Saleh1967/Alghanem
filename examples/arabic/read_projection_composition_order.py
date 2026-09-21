@@ -18,9 +18,7 @@ def main() -> None:
     print(f"deposited orders: {len(THE_ORDER_REGISTER)}")
     print("\nthe composition table:")
     for finding in the_composition_table():
-        usable = usable_for_composition(
-            finding.source_identity, finding.boundary_rule
-        )
+        usable = usable_for_composition(finding.source_identity, finding.boundary_rule)
         print(
             f"  {finding.source_identity} x {finding.boundary_rule.name}: "
             f"{finding.standing.value} (usable: {usable})"

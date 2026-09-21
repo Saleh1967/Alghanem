@@ -212,9 +212,7 @@ def the_probe_witness() -> ProbeWitness:
 
     report = RECORDED_PROBE_REPORT
     selected = next(
-        partition
-        for partition in report.partitions
-        if partition.k == report.selected_k
+        partition for partition in report.partitions if partition.k == report.selected_k
     )
     layer = report.discovered_layers[0]
     return ProbeWitness(
@@ -384,10 +382,7 @@ def _assert_no_authority_field() -> None:
 def _assert_the_two_standings_are_not_one() -> None:
     """حارسُ استيراد: «مُغلَق» و«دون العتبة» موقفان متمايزان بالتعداد."""
 
-    if (
-        ExclusionStanding.CLOSED_AS_LEXICAL_ARTIFACT
-        is ExclusionStanding.BELOW_THRESHOLD
-    ):  # pragma: no cover - التعدادُ يمنعه
+    if len(ExclusionStanding) != 3:  # pragma: no cover - التعدادُ يمنعه
         raise LexicalArtifactError("الموقفان اتّحدا، والتمييزُ بينهما هو المقصود.")
     values = {member.value for member in ExclusionStanding}
     if len(values) != len(ExclusionStanding):  # pragma: no cover - التعدادُ يمنعه

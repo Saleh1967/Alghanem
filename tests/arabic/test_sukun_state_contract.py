@@ -47,8 +47,7 @@ def test_the_inferred_state_is_the_alif_and_the_bare_carrier_together() -> None:
     ):
         counted = dict(census.by_source)
         assert split.inferred == (
-            counted[SukunSource.ALIF_WITHOUT_A_MARK]
-            + counted[SukunSource.BARE_CARRIER]
+            counted[SukunSource.ALIF_WITHOUT_A_MARK] + counted[SukunSource.BARE_CARRIER]
         )
 
 
@@ -101,8 +100,7 @@ def test_the_eviction_lowers_the_state_space_below_the_raw_column() -> None:
 # --- no single total is issued ---------------------------------------------
 
 
-def test_a_merged_column_total_is_always_refused_and_names_its_three_parts(
-) -> None:
+def test_a_merged_column_total_is_always_refused_and_names_its_three_parts() -> None:
     for split in the_sukun_splits():
         with pytest.raises(SukunStateContractError) as raised:
             refuse_a_merged_total(split.scope)
@@ -119,9 +117,7 @@ def test_an_unmeasured_scope_is_refused_rather_than_answered() -> None:
 
 def test_a_split_that_does_not_exhaust_its_column_is_refused() -> None:
     with pytest.raises(SukunStateContractError):
-        SukunStateSplit(
-            scope="مختلق", written=1, inferred=1, evicted=1, raw_column=9
-        )
+        SukunStateSplit(scope="مختلق", written=1, inferred=1, evicted=1, raw_column=9)
 
 
 # --- house guards ----------------------------------------------------------

@@ -63,8 +63,7 @@ def test_the_one_broken_cell_is_the_fatiha_under_the_space_only_rule() -> None:
     assert broken[0].boundary_rule is WordBoundary.SPACE_ONLY
 
 
-def test_the_broken_cell_is_unresolved_and_not_promoted_to_order_required(
-) -> None:
+def test_the_broken_cell_is_unresolved_and_not_promoted_to_order_required() -> None:
     finding = classify_composition(FATIHA_SOURCE_ID, WordBoundary.SPACE_ONLY)
     assert finding.standing is CompositionStanding.UNRESOLVED
     assert finding.legal_side is None
