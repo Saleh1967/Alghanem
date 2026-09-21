@@ -8076,7 +8076,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 522-fold: 32 pairs, then 16,712. Both questions were answered,
+The widening is 524-fold: 32 pairs, then 16,781. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8095,7 +8095,7 @@ than a tail: six shadda-bearing pairs hold 99.928%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,411 of 16,680
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,426 of 16,749
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8272,6 +8272,66 @@ says anything about a letter's constancy across its own positions.
 
 ```bash
 python examples/arabic/read_positional_widening.py
+```
+
+### Depositing the projection before the chain
+
+A Markov chain over "the 29 carriers" was built outside this tree, and it
+produced entropies, mutual information and a minimum-complete-memory verdict.
+None of that enters here. What enters is what that chain silently assumed and
+never deposited: **who the carriers are, where a word ends, and what an edge
+is**. A correct computation over an undeposited projection is an arithmetic
+without a referent.
+
+The twenty-nine are a *folding*, not a finding. No new table is written: the
+already-deposited `DECLARED_CARRIERS` is taken as-is — itself declared written
+rather than derived — and eight written forms are folded into their bases
+(`أ إ ؤ ئ آ` → `ء`, `ة` → `ت`, `ى` → `ي`, `ٱ` → `ا`). Twenty-nine is the
+*result of that decision*; fold differently and the number changes.
+
+The word boundary is likewise a decision, and the obvious one is wrong. Splitting
+"between two spaces" was proposed. Measured against both deposits:
+
+| deposit | rule | words | carriers | edges |
+|---|---|---|---|---|
+| Fatiha | space only | 23 | 143 | **120** |
+| Fatiha | any whitespace | **29** | 143 | **114** |
+| Fath 48:29 | space only | 54 | 249 | 195 |
+| Fath 48:29 | any whitespace | 54 | 249 | 195 |
+
+The Fatiha deposit separates its ayahs with a **newline, not a space**. The
+space-only rule therefore welds the end of each ayah to the start of the next,
+producing a fourteen-carrier "word" and **six edges that exist in no writing**:
+`م←ا`, `م←ص`, `م←م`, `ن←ء`, `ن←ا`, `ن←ا`. The carrier count does not move at
+all between the two rules — the entire disagreement is in the *edges*. And the
+same rule is completely inert on the Fath ayah, which is a single line: a rule
+that does not move on one text is not thereby correct on it.
+
+The edge is within-word adjacency only: a word of `n` carriers gives `n-1`, and
+the refusals are published rather than passed over in silence — 28 on the
+Fatiha, 53 on the Fath ayah. The definition is checked arithmetically at every
+census: edges = carriers − words.
+
+What the projection costs is measured too. It discards 119 characters of six
+kinds on the Fatiha and 204 of eight on the Fath ayah. On the Fath ayah fifty
+distinct written words become **forty-seven** skeletons, and all three collisions
+are endings: `اللَّهُ`/`اللَّهِ`, `الْكُفَّارَ`/`الْكُفَّارِ`, `مِنَ`/`مِنْ`.
+On the Fatiha nothing collides at all. On this evidence the projection is deaf
+to the ending — a statement about two texts, not a rule of Arabic.
+
+Repetition is made by the projection rather than found by it: three written
+words repeat in the Fath ayah and **five** skeletons do. Counting repetition on
+skeletons counts the repetition of your projection, not of the text.
+
+There is no transition matrix here, no entropy, no log-likelihood and no model
+comparison — an import-time guard refuses any such name in the interface. This
+is the ground of a chain, not a chain. And MASAQ, on which the external figures
+were computed, is named with its digest in `corpora/README.md` and is **not** in
+the tree, so everything above is measured on two deposits holding eighty-three
+words between them.
+
+```bash
+python examples/arabic/read_carrier_projection_deposit.py
 ```
 
 ```bash
