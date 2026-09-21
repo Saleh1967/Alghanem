@@ -37,6 +37,14 @@ B(F_s(T)) = \operatorname{map}(F_w, B(T))
 في الوديعة السابقة؛ فكسرُه ههنا خبرٌ ثانٍ عنه لا تكرارٌ للأوّل
 (`THE_COMMUTATION_HOLDS_ONLY_WHERE_THE_BOUNDARY_EATS_THE_DISCARDED_SPACE`).
 
+ولا يُعمَّم هذا الشرطُ على كلِّ مسقط. المرفوضُ ههنا تركيبٌ **بلا ترتيبٍ
+مودَع**، لا مسقطٌ غيرُ متبادل؛ فقد يصحّ مستقبلًا مسقطٌ لا يتبادل فيه
+الطَّيُّ والحدُّ ولكن له ترتيبٌ قانونيٌّ مكتوبٌ يُصرَّح به. فالقانونُ
+الأدقُّ: لا شهادةَ تحت تركيبٍ ملتبسٍ لم يُثبَّت ترتيبُه، لا: كلُّ مسقطٍ
+صحيحٍ يتبادل. وجبرُ الترتيب — أن يُصنَّف التركيبُ متبادلًا أو مشروطَ ترتيبٍ
+أو غيرَ محلول — ليس مُودَعًا بعد، فلا يُصدَر ههنا إلّا رفضُ الالتباس
+(`NO_CERTIFICATE_UNDER_AN_UNORDERED_COMPOSITION`).
+
 **وثانيًا: والالتقاءُ لِيفٌ لا زوج.** لا يُعَدُّ المحفوظُ والملتقي عدًّا
 ثنائيًّا، بل تُبنى فئاتُ التكافؤ:
 
@@ -89,11 +97,15 @@ DeclaredFold \neq LicensedCollapse
 \]
 
 \[
-\neg Transport(x) \Rightarrow PositionProperty(x) \lor FontProperty(x)
+\neg Transport(x) \not\Rightarrow PositionProperty(x) \lor FontProperty(x)
 \]
 
 وللطَّيِّ نفسِه أثرٌ ههنا يُنشَر: هو ينقل موضعَ الشكّ فيضمّ `ة` إلى `ت` فتصير
-`ت/ه` غيرَ مشهودٍ لها، ويضمّ `ؤ` إلى `ء` فتصير `ء/و` كذلك
+`ت/ه` غيرَ مشهودٍ لها، ويضمّ `ؤ` إلى `ء` فتصير `ء/و` كذلك. ومَخرَجُ هذه
+الخطوة **موسومٌ بنوعه** لا مجرّدَ فئاتٍ تُتلى: كلُّ فئةٍ تُردّ في
+`CarrierDistinctionFinding` موقفُها الوحيدُ المتاحُ ههنا
+`NOT_CERTIFIED_AS_CARRIER_INVARIANT`، وليس في هذه الوحدة اسمٌ يقول إنّ
+التمييزَ باطلٌ أو مكذوب
 (`A_PROPERTY_THAT_DOES_NOT_TRANSPORT_IS_NOT_CERTIFIED_AS_A_CARRIER_INVARIANT`).
 
 **وسادسًا: ولا حالةَ ماركوف بلا شهادة، ولا ثباتَ من صُنع المسقط.** قانونان
@@ -145,6 +157,7 @@ from alghanem.arabic.fatiha_source_text import FATIHA_SOURCE_ID
 __all__ = [
     "A_DECLARED_FOLD_IS_A_MECHANISM_AND_NOT_A_LICENSE",
     "A_PROPERTY_THAT_DOES_NOT_TRANSPORT_IS_NOT_CERTIFIED_AS_A_CARRIER_INVARIANT",
+    "NO_CERTIFICATE_UNDER_AN_UNORDERED_COMPOSITION",
     "NO_DESTRUCTIVE_COLLAPSE_WITHOUT_AN_OCCURRENCE_ALIGNED_WITNESS",
     "NO_MARKOV_STATE_WITHOUT_A_PROJECTION_IDENTITY_CERTIFICATE",
     "NO_STATISTICAL_INVARIANCE_CLAIM_FROM_AN_INVARIANCE_THE_PROJECTION_ITSELF_MADE",
@@ -157,6 +170,7 @@ __all__ = [
     "THE_LICENSE_REGISTER",
     "THE_ORDER",
     "THE_SCOPE_RANK",
+    "CarrierDistinctionFinding",
     "CollapseLicense",
     "CollapseMechanism",
     "CollapseStanding",
@@ -165,6 +179,8 @@ __all__ = [
     "ProjectionFiber",
     "ProjectionIdentityError",
     "StandingFinding",
+    "TransportStanding",
+    "carrier_distinction_findings",
     "carriers_a_deposit_writes",
     "certificate_of",
     "fibers_of",
@@ -188,6 +204,14 @@ THE_COMMUTATION_HOLDS_ONLY_WHERE_THE_BOUNDARY_EATS_THE_DISCARDED_SPACE: Final[st
     "تسليمًا، وقد انكسر في واحدةٍ من أربع: الفاتحةُ بحدِّ الفراغ وحدَه، إذ "
     "يُسقِط الطَّيُّ سطرَها الجديدَ ولا يأكله ذلك الحدُّ فيبقى داخل الكلمة "
     "إن طُوي المجرى أوّلًا؛ فلا شهادةَ تُصدَر حيث لا توافق"
+)
+
+NO_CERTIFICATE_UNDER_AN_UNORDERED_COMPOSITION: Final[str] = (
+    "NO_CERTIFICATE_UNDER_AN_UNORDERED_COMPOSITION: المرفوضُ ههنا تركيبٌ "
+    "التبس ترتيبُه فلم يُودَع، لا مسقطٌ لا يتبادل؛ فقد يصحّ مسقطٌ لا يتبادل "
+    "فيه الطَّيُّ والحدُّ ولكن يُصرَّح بترتيبه القانونيّ. والتبادلُ شرطُ هذا "
+    "العقد لا شرطُ كلِّ مسقط، وجبرُ الترتيب لم يُودَع بعد فلا يُصنَّف ههنا "
+    "متبادلًا أو مشروطَ ترتيبٍ أو غيرَ محلول"
 )
 
 THE_COLLAPSE_IS_A_FIBER_NOT_A_PAIR: Final[str] = (
@@ -254,6 +278,9 @@ THE_CERTIFICATE_IS_ISSUED_OVER_TWO_DEPOSITS_OF_EIGHTY_THREE_WORDS: Final[str] = 
 PROJECTION_IDENTITY_NAMED_RESIDUALS: Final[dict[str, str]] = {
     "THE_COMMUTATION_HOLDS_ONLY_WHERE_THE_BOUNDARY_EATS_THE_DISCARDED_SPACE": (
         THE_COMMUTATION_HOLDS_ONLY_WHERE_THE_BOUNDARY_EATS_THE_DISCARDED_SPACE
+    ),
+    "NO_CERTIFICATE_UNDER_AN_UNORDERED_COMPOSITION": (
+        NO_CERTIFICATE_UNDER_AN_UNORDERED_COMPOSITION
     ),
     "THE_COLLAPSE_IS_A_FIBER_NOT_A_PAIR": THE_COLLAPSE_IS_A_FIBER_NOT_A_PAIR,
     "A_DECLARED_FOLD_IS_A_MECHANISM_AND_NOT_A_LICENSE": (
@@ -729,6 +756,37 @@ def certificate_of(
 # --- النقل: ما لا يُشهَد له بأنّه ثباتُ حامل --------------------------------
 
 
+class TransportStanding(Enum):
+    """موقفُ تمييزٍ بين حاملَين تحت النقل الهندسيّ الأعمى.
+
+    وليس فيه عضوٌ يُبطِل التمييزَ ولا يُكذّبه؛ فالمتاحُ في هذه البيّنة رفعُ
+    وصفِ ثباتِ الحامل لا غير، وما عداه يحتاج عقدًا آخرَ وبيّنةً أخرى.
+    """
+
+    NOT_CERTIFIED_AS_CARRIER_INVARIANT = "not-certified-as-carrier-invariant"
+
+
+@dataclass(frozen=True)
+class CarrierDistinctionFinding:
+    """فئةُ حواملَ لم ينقل تمييزُها، موسومةً بموقفها وسندِه."""
+
+    members: frozenset[str]
+    standing: TransportStanding
+    ground: str
+
+    def __post_init__(self) -> None:
+        if len(self.members) < 2:
+            raise ProjectionIdentityError("فئةُ تمييزٍ دون عضوَين لا تُوصَف.")
+        if not self.ground.strip():
+            raise ProjectionIdentityError("موقفٌ بلا سندٍ مكتوبٍ لا يُصدَر.")
+
+    @property
+    def sorted_members(self) -> tuple[str, ...]:
+        """أعضاءُ الفئة مرتَّبةً، ليُقرأ المخرَجُ على وجهٍ واحد."""
+
+        return tuple(sorted(self.members))
+
+
 @cache
 def uncertified_carrier_distinctions() -> tuple[frozenset[str], ...]:
     """فئاتُ الحوامل التي يفرّقها المسقطُ ولا تشهد لها هندسةُ الخطوط الثلاثة.
@@ -747,6 +805,24 @@ def uncertified_carrier_distinctions() -> tuple[frozenset[str], ...]:
         if len(folded) > 1:
             found.append(frozenset(folded))
     return tuple(sorted(found, key=lambda members: (-len(members), sorted(members))))
+
+
+@cache
+def carrier_distinction_findings() -> tuple[CarrierDistinctionFinding, ...]:
+    """المخرَجُ الموسومُ بنوعه: كلُّ فئةٍ وموقفُها وسندُه، لا فئاتٌ عارية.
+
+    والموقفُ واحدٌ لا سواه في هذه البيّنة: `NOT_CERTIFIED_AS_CARRIER_INVARIANT`.
+    فلا يُقرأ المخرَجُ على أنّه تكذيبُ هُويّةٍ ولا إبطالُ تمييز.
+    """
+
+    return tuple(
+        CarrierDistinctionFinding(
+            members=members,
+            standing=TransportStanding.NOT_CERTIFIED_AS_CARRIER_INVARIANT,
+            ground=A_PROPERTY_THAT_DOES_NOT_TRANSPORT_IS_NOT_CERTIFIED_AS_A_CARRIER_INVARIANT,
+        )
+        for members in uncertified_carrier_distinctions()
+    )
 
 
 # --- حرّاسُ الاستيراد ------------------------------------------------------
@@ -772,6 +848,21 @@ def _assert_no_probability_leaks_in() -> None:
         lowered = name.lower()
         if any(word in lowered for word in banned):
             raise ProjectionIdentityError(f"اسمُ احتمالٍ في واجهة الشهادة: {name}.")
+
+
+def _assert_no_falsification_name_in_the_interface() -> None:
+    """حارسُ استيراد: لا اسمَ تكذيبٍ في الواجهة؛ فالمرفوعُ شهادةٌ لا هُويّة."""
+
+    banned = ("false_", "_false", "refut", "disprov", "invalid", "falsif")
+    for name in __all__:
+        if name in PROJECTION_IDENTITY_NAMED_RESIDUALS:
+            continue
+        lowered = name.lower()
+        if any(word in lowered for word in banned):
+            raise ProjectionIdentityError(f"اسمُ تكذيبٍ في واجهة الشهادة: {name}.")
+    standings = {member for member in TransportStanding}
+    if standings != {TransportStanding.NOT_CERTIFIED_AS_CARRIER_INVARIANT}:
+        raise ProjectionIdentityError("موقفُ نقلٍ زائدٌ على ما تحتمله البيّنة.")
 
 
 def _assert_the_registers_are_empty_on_this_evidence() -> None:
@@ -851,6 +942,7 @@ def _assert_the_deposits_are_the_two_named() -> None:
 
 _assert_no_authority_field()
 _assert_no_probability_leaks_in()
+_assert_no_falsification_name_in_the_interface()
 _assert_the_deposits_are_the_two_named()
 _assert_no_fold_touches_whitespace()
 _assert_the_commutation_is_measured_and_breaks_where_it_is_said_to()

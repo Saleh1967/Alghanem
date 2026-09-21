@@ -21,7 +21,7 @@
 |---|---|---|---|---|
 | الفاتحة | 16 | 3/36 | فتحة+شدّة (10) | فتحة+خنجريّة (2) |
 | + الفتح ٢٩ | 32 | 4/36 | فتحة+شدّة (24) | ضمّة+شدّة (2) |
-| + نثر الشجرة | 16,904 | 9/36 | فتحة+شدّة (7,426) | سكون+خنجريّة (1) |
+| + نثر الشجرة | 16,924 | 9/36 | فتحة+شدّة (7,435) | سكون+خنجريّة (1) |
 
 فالتوسيعُ **528 ضعفًا** في عدد المزدوجات. وفيه جوابُ السؤالين معًا:
 
@@ -33,7 +33,7 @@
 (`THE_MINIMUM_MOVES_AT_EVERY_RUNG_WHILE_THE_MAXIMUM_NEVER_DOES`).
 
 **وثالثًا: التوزيعُ ليس ذا ذيلٍ بل ذو جُرف.** المتحقّقُ تسعةٌ على النثر، ستّةٌ
-منها `X + شدّة` وتحوز 16,892 من 16,904 — أي **99.929%** — وثلاثةٌ تحوز **12**
+منها `X + شدّة` وتحوز 16,912 من 16,924 — أي **99.929%** — وثلاثةٌ تحوز **12**
 وقوعًا لا غير. وبين 951 و9 عاملُ 105. فليس بين الجسم والقاع تدرّجٌ يُقرأ منه
 ترتيبٌ في الندرة.
 
@@ -55,8 +55,8 @@
 (`THE_FLOOR_MEASURES_WHAT_THE_MEDIUM_QUOTES_NOT_WHAT_THE_SCRIPT_ALLOWS`).
 
 **وخامسًا: التوسيعُ غيّر المجتمعَ لا الحجمَ وحدَه.** المزدوجاتُ المبدوءةُ
-بتنوينٍ: **صفرٌ** من 32 في المُودَعَين القرآنيَّين، و**4,454** من 16,872 في
-النثر — أي 26.400%. فالنثرُ يُظهِر تركيباتِ تنوينٍ لم يُظهِرها النصّان ألبتّة.
+بتنوينٍ: **صفرٌ** من 32 في المُودَعَين القرآنيَّين، و**4,455** من 16,892 في
+النثر — أي 26.373%. فالنثرُ يُظهِر تركيباتِ تنوينٍ لم يُظهِرها النصّان ألبتّة.
 فلا يُقال إنّ العيّنةَ الكبرى عيّنةٌ أكبرُ من الشيء نفسه
 (`WIDENING_INTO_A_NEW_REGISTER_CHANGES_THE_POPULATION_NOT_ONLY_ITS_SIZE`).
 
@@ -65,6 +65,16 @@
 `prose_scope_has_drifted` ولا تُخفى. والوحدةُ تُخرِج نفسَها من نطاقها كيلا
 تقيسَ الآلةُ نفسَها
 (`THE_PROSE_SCOPE_GROWS_WITH_THE_TREE_SO_ITS_FIGURES_ARE_DATED`).
+
+**وسابعًا: وكانت البصمةُ تحرس النطاقَ ولا تحرس الأرقام.** فلمّا أُعيد القياسُ
+على البصمة المُجمَّدة نفسِها — 408 ملفًّا و7,588,660 بايتًا — خرج 16,796
+مزدوجًا حيث كان المنقولُ 16,781. فالمنقولُ كان قد انفصل عن المقيس بلا أن يسقط
+شاهد. فجُمِّدت أرقامُ الدرجة الثالثة في `THE_THIRD_RUNG_AT_MEASUREMENT`،
+وتُقابَل بما يقيسه القرصُ في `third_rung_figures`. ويُقرَّر ههنا صريحًا أنّ
+مجتمعَ هذا القياس مربوطٌ **ببنية المستودع** لا بمجالٍ لغويٍّ مستقلّ: كلُّ
+ملفٍّ يُضاف يوسّعه. وهذا مذكورٌ لا مُصحَّحٌ، لأنّ الوحدةَ تقيس سِجلَّ النثر
+بما هو، ولا تدّعي أنّه عيّنةٌ من العربيّة
+(`THE_FINGERPRINT_GUARDED_THE_SCOPE_AND_NOT_THE_FIGURES_TRANSCRIBED`).
 """
 
 from __future__ import annotations
@@ -160,7 +170,31 @@ class ScopeFingerprint:
 
 PROSE_SCOPE_AT_MEASUREMENT: Final[ScopeFingerprint] = ScopeFingerprint(
     files=409,
-    text_bytes=7629798,
+    text_bytes=7634818,
+)
+
+
+@dataclass(frozen=True)
+class RungFigures:
+    """أرقامُ درجةٍ مؤرَّخةٌ كما نُقلت إلى النثر، ليُقابَل المنقولُ بالمقيس."""
+
+    total_pairs: int
+    realized: int
+    shadda_bearing: int
+    tanwin_initial_in_prose: int
+    prose_pairs: int
+
+    def __post_init__(self) -> None:
+        if min(vars(self).values()) < 1:
+            raise PairWideningError("رقمُ درجةٍ دون الواحد لا يُجمَّد.")
+
+
+THE_THIRD_RUNG_AT_MEASUREMENT: Final[RungFigures] = RungFigures(
+    total_pairs=16924,
+    realized=9,
+    shadda_bearing=16912,
+    tanwin_initial_in_prose=4455,
+    prose_pairs=16892,
 )
 
 THE_SCOPE_EXCLUSIONS: Final[frozenset[str]] = frozenset(
@@ -260,6 +294,26 @@ def shadda_bearing_pairs(census: PairCensus) -> int:
     return sum(count.occurrences for count in census.counts if SHADDA in count.pair)
 
 
+def third_rung_figures() -> RungFigures:
+    """أرقامُ الدرجة الثالثة الآن، تُقاس من القرص ولا تُنقَل عن النثر."""
+
+    rung = the_widening_ladder()[2]
+    prose = pair_census_over(prose_scope_text(), "نثر الشجرة وحدَه")
+    return RungFigures(
+        total_pairs=rung.total_pairs,
+        realized=rung.realized,
+        shadda_bearing=shadda_bearing_pairs(rung),
+        tanwin_initial_in_prose=tanwin_initial_pairs(prose),
+        prose_pairs=prose.total_pairs,
+    )
+
+
+def the_transcribed_figures_have_drifted() -> bool:
+    """أزحزحت الأرقامُ المنقولةُ عمّا يقيسه القرصُ الآن؟ وتُكشَف ولا تُخفى."""
+
+    return third_rung_figures() != THE_THIRD_RUNG_AT_MEASUREMENT
+
+
 def the_least_frequent_arabic_pair() -> TailOccurrence:
     """أقلُّ المزدوجات وقوعًا **ممّا هو عربيٌّ صحيح**، لا أقلُّ الجميع."""
 
@@ -300,7 +354,7 @@ THE_FLOOR_MEASURES_WHAT_THE_MEDIUM_QUOTES_NOT_WHAT_THE_SCRIPT_ALLOWS: Final[str]
 WIDENING_INTO_A_NEW_REGISTER_CHANGES_THE_POPULATION_NOT_ONLY_ITS_SIZE: Final[str] = (
     "WIDENING_INTO_A_NEW_REGISTER_CHANGES_THE_POPULATION_NOT_ONLY_ITS_SIZE: "
     "المزدوجاتُ المبدوءةُ بتنوينٍ صفرٌ من 32 في المُودَعَين القرآنيَّين، "
-    "و4,454 من 16,872 في النثر. فليست الكبرى عيّنةً أكبرَ من الشيء نفسه، "
+    "و4,455 من 16,892 في النثر. فليست الكبرى عيّنةً أكبرَ من الشيء نفسه، "
     "وثباتُ الصدارةِ عبرَها ثباتٌ عبرَ سِجلَّين لا داخلَ سِجلٍّ واحد."
 )
 
@@ -310,6 +364,17 @@ THE_PROSE_SCOPE_GROWS_WITH_THE_TREE_SO_ITS_FIGURES_ARE_DATED: Final[str] = (
     "إلى الشجرة تزحزحها. وشواهدُ الأرقام تسقط عند الزحزحة قصدًا ولا تُتخطّى، "
     "فإعادةُ التجميد قياسٌ يُعاد لا صيانةٌ تُجرى؛ وتبقى الأحكامُ البنيويّةُ "
     "— ثباتُ الصدارة وتزحزحُ القاع — قائمةً على أيّ نطاقٍ كان."
+)
+
+THE_FINGERPRINT_GUARDED_THE_SCOPE_AND_NOT_THE_FIGURES_TRANSCRIBED: Final[str] = (
+    "THE_FINGERPRINT_GUARDED_THE_SCOPE_AND_NOT_THE_FIGURES_TRANSCRIBED: كانت "
+    "البصمةُ تحرس عدد الملفّات والبايتات ولا تحرس الأرقامَ المنقولةَ إلى "
+    "النثر، فانفصل المنقولُ عن المقيس على النطاق المُجمَّد نفسِه: قِيس 16,796 "
+    "مزدوجًا حيث نُقِل 16,781. فجُمِّدت أرقامُ الدرجة الثالثة كذلك، وصارت "
+    "زحزحتُها تُكشَف بـ`the_transcribed_figures_have_drifted`. وأصلُ الأمر "
+    "أنّ مجتمعَ القياس ههنا مربوطٌ ببنية المستودع لا بمجالٍ لغويٍّ مستقلّ، "
+    "فكلُّ ملفٍّ يُضاف يوسّعه؛ وهذا مذكورٌ لا مُصحَّحٌ، إذ الوحدةُ تقيس سِجلَّ "
+    "النثر بما هو، ولا تدّعي أنّه عيّنةٌ من العربيّة."
 )
 
 PAIR_SAMPLE_WIDENING_NAMED_RESIDUALS: Final[dict[str, str]] = {
@@ -328,6 +393,9 @@ PAIR_SAMPLE_WIDENING_NAMED_RESIDUALS: Final[dict[str, str]] = {
     "THE_PROSE_SCOPE_GROWS_WITH_THE_TREE_SO_ITS_FIGURES_ARE_DATED": (
         THE_PROSE_SCOPE_GROWS_WITH_THE_TREE_SO_ITS_FIGURES_ARE_DATED
     ),
+    "THE_FINGERPRINT_GUARDED_THE_SCOPE_AND_NOT_THE_FIGURES_TRANSCRIBED": (
+        THE_FINGERPRINT_GUARDED_THE_SCOPE_AND_NOT_THE_FIGURES_TRANSCRIBED
+    ),
 }
 
 _FORBIDDEN_FIELD_TOKENS: Final[tuple[str, ...]] = (
@@ -343,7 +411,7 @@ _FORBIDDEN_FIELD_TOKENS: Final[tuple[str, ...]] = (
 def _assert_no_authority_field() -> None:
     """حارسُ استيراد: لا حقلَ سلطةٍ ولا رتبةٍ في عدٍّ لا سلطةَ فيه."""
 
-    for holder in (TailOccurrence, ScopeFingerprint):
+    for holder in (TailOccurrence, ScopeFingerprint, RungFigures):
         for declared in fields(holder):
             lowered = declared.name.lower()
             for token in _FORBIDDEN_FIELD_TOKENS:

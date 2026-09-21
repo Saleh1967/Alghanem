@@ -4056,6 +4056,15 @@ whitespace character the fold discards, and it demonstrably fails on a deposit
 whose ayah separator is a newline under a space-only rule. No certificate is
 issued where the two orders disagree.
 
+`NoCertificateUnderAnUnorderedComposition`. Commutation is a requirement of
+*this contract*, not a property demanded of every legitimate projection. A future
+projection whose stream fold and word boundary do not commute may still be
+legitimate if its composition order is explicitly deposited and argued. What is
+refused here is a composition whose order is ambiguous and undeclared. The
+ordering algebra itself — classifying a composition as commuting, order-required,
+or unresolved — is not deposited yet, so this section issues only the refusal of
+ambiguity.
+
 `TheCollapseIsAFiberNotAPair`. Preservation and loss are read off the
 equivalence classes `[w]_Π = {w' : Π(w') = Π(w)}`. A fiber of size one is a
 preserved distinction; a larger fiber is a collapse group. The published figures
@@ -4084,7 +4093,11 @@ transport across the deposited fonts, positions or contexts withholds a
 certificate; it does not locate the property. Formally
 `¬Transport(x) ⇒ ¬CertifiedCarrierInvariant(x)`, and **not**
 `¬Transport(x) ⇒ PositionProperty(x) ∨ FontProperty(x)`, since the failure may
-lie in the measurement, in an interaction, or in the poverty of the witness.
+lie in the measurement, in an interaction, or in the poverty of the witness. The
+output of this step is typed: each affected class is returned with the standing
+`NOT_CERTIFIED_AS_CARRIER_INVARIANT`, and no name in the unit may read as
+falsification (`FALSE_`, `REFUTED`, `DISPROVED`, `INVALID`), which an import
+guard enforces. Withholding a certificate is not falsifying an identity.
 
 `NoStatisticalInvarianceClaimFromAnInvarianceTheProjectionItselfMade`. Where the
 projection increases repetition — three written repeats becoming five projected

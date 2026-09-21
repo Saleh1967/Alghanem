@@ -8080,7 +8080,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 528-fold: 32 pairs, then 16,904. Both questions were answered,
+The widening is 528-fold: 32 pairs, then 16,924. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8099,11 +8099,24 @@ than a tail: six shadda-bearing pairs hold 99.929%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,454 of 16,872
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,455 of 16,892
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
 instead of hiding.
+
+Re-freezing those figures while certifying the projection exposed a second,
+sharper point. The fingerprint guarded the *scope* — file count and byte count —
+but nothing guarded the *transcribed numbers*. Measured again over the very
+fingerprint it had been frozen at (408 files, 7,588,660 bytes), the ladder gave
+16,796 pairs where the prose said 16,781: the transcription had drifted without
+a single witness failing. The third rung is therefore frozen too, in
+`THE_THIRD_RUNG_AT_MEASUREMENT`, and compared against disk by
+`third_rung_figures`. It also makes explicit what the coupling is: this
+measurement population tracks *repository structure*, not an independent
+linguistic domain — every source file added widens it. That is recorded, not
+repaired; the unit measures the prose register as it is and never claimed it was
+a sample of Arabic.
 
 ```bash
 python examples/arabic/read_pair_sample_widening.py
@@ -8342,9 +8355,12 @@ python examples/arabic/read_carrier_projection_deposit.py
 ```
 
 A procedural note on that deposit: it was merged while one check was still
-pending. That is not a failure, but its closure record says *merged with one
-check pending*, not "all checks passed", until that check's result has been
-read.
+pending. That is not a failure, but the closure record keeps **two** statuses,
+not one: *merge-time status* — merged with one check pending, **not** "all
+checks passed" — and *eventual check result*, which is recorded separately once
+that check has finished and been read. Neither status may be overwritten by the
+other: a later green run does not retroactively make the merge fully checked,
+and a pending merge does not by itself mean the check failed.
 
 ### Certifying the projection before the chain
 
@@ -8377,6 +8393,14 @@ splitting first removes it. Commutation holds only where the boundary consumes
 every whitespace the fold discards, and **no certificate is issued where the two
 orders disagree**. The rule that fabricated six edges above breaks the
 commutation here too; that is a second finding about it, not a restatement.
+
+That requirement binds *this contract* and is not a claim about projections in
+general. A later projection whose stream fold and word boundary genuinely do not
+commute may still be legitimate — provided its composition order is explicitly
+deposited and argued. What is refused here is an **unordered, ambiguous**
+composition, not non-commutation as such. The ordering algebra that would
+classify a composition as commuting, order-required or unresolved is not
+deposited yet, so this unit issues only the refusal of ambiguity.
 
 Collapse is read off fibers rather than counted in pairs. With
 `[w]_Π = {w' : Π(w') = Π(w)}`, a fiber of size one is a preserved distinction
@@ -8411,6 +8435,12 @@ they gather carriers the projection keeps apart — `بتث`, `جحخ`, `دذ`, 
 law is therefore `¬Transport(x) ⇒ ¬CertifiedCarrierInvariant(x)` and **not**
 `¬Transport(x) ⇒ PositionProperty(x) ∨ FontProperty(x)`: a failure to transport
 may lie in the measurement, in an interaction, or in the poverty of the witness.
+The output is typed accordingly: each class comes back as a
+`CarrierDistinctionFinding` whose standing is `NOT_CERTIFIED_AS_CARRIER_INVARIANT`
+— the only standing this evidence admits. Nothing here says a carrier distinction
+is false, refuted or invalid, and an import guard refuses any such name in the
+interface. Ten transporting classes withhold a certificate from fourteen pairwise
+distinctions; they do not falsify one.
 
 Two laws close the layer: no Markov state without a projection identity
 certificate, and no statistical invariance claim from an invariance the

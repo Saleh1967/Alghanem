@@ -19,9 +19,9 @@ from alghanem.arabic.projection_identity_certificate import (
     THE_SCOPE_RANK,
     CollapseStanding,
     ProjectionIdentityError,
+    carrier_distinction_findings,
     certificate_of,
     the_commutation_table,
-    uncertified_carrier_distinctions,
 )
 
 
@@ -74,10 +74,10 @@ def main() -> None:
         "a declared fold is a mechanism, not a license"
     )
 
-    classes = uncertified_carrier_distinctions()
-    print(f"\ncarrier distinctions not certified by transport: {len(classes)} classes")
-    for klass in classes:
-        print(f"  {''.join(sorted(klass))}")
+    findings = carrier_distinction_findings()
+    print(f"\ncarrier distinctions not certified by transport: {len(findings)} classes")
+    for finding in findings:
+        print(f"  {''.join(finding.sorted_members)}: {finding.standing.value}")
     print("  (a failure to transport withholds a certificate; it locates nothing)")
 
     print("\nrepetition made by the projection, not found by it:")

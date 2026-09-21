@@ -23,6 +23,7 @@ from alghanem.arabic.projection_identity_certificate import (
     THE_LICENSE_REGISTER,
     THE_ORDER,
     THE_SCOPE_RANK,
+    CarrierDistinctionFinding,
     CollapseLicense,
     CollapseMechanism,
     CollapseStanding,
@@ -30,6 +31,8 @@ from alghanem.arabic.projection_identity_certificate import (
     ProjectionCertificate,
     ProjectionFiber,
     ProjectionIdentityError,
+    TransportStanding,
+    carrier_distinction_findings,
     certificate_of,
     fibers_of,
     fold_rule_digest,
@@ -440,6 +443,61 @@ def test_a_failure_to_transport_is_not_read_as_a_font_or_position_property() -> 
         "A_PROPERTY_THAT_DOES_NOT_TRANSPORT_IS_NOT_CERTIFIED_AS_A_CARRIER_INVARIANT"
     ]
     assert "لا يُثبِت موطنًا" in residual
+
+
+def test_every_uncertified_class_comes_back_typed_and_grounded() -> None:
+    findings = carrier_distinction_findings()
+    assert len(findings) == len(uncertified_carrier_distinctions())
+    assert all(isinstance(finding, CarrierDistinctionFinding) for finding in findings)
+    assert {finding.members for finding in findings} == set(
+        uncertified_carrier_distinctions()
+    )
+    for finding in findings:
+        assert finding.ground.strip()
+
+
+def test_the_only_standing_transport_can_issue_is_a_withheld_certificate() -> None:
+    assert set(TransportStanding) == {
+        TransportStanding.NOT_CERTIFIED_AS_CARRIER_INVARIANT
+    }
+    assert all(
+        finding.standing is TransportStanding.NOT_CERTIFIED_AS_CARRIER_INVARIANT
+        for finding in carrier_distinction_findings()
+    )
+
+
+def test_no_name_in_the_interface_reads_as_falsification() -> None:
+    banned = ("false_", "_false", "refut", "disprov", "invalid", "falsif")
+    for name in module.__all__:
+        if name in PROJECTION_IDENTITY_NAMED_RESIDUALS:
+            continue
+        assert not any(word in name.lower() for word in banned), name
+
+
+def test_a_class_of_one_member_is_not_a_distinction_finding() -> None:
+    with pytest.raises(ProjectionIdentityError):
+        CarrierDistinctionFinding(
+            members=frozenset({"ب"}),
+            standing=TransportStanding.NOT_CERTIFIED_AS_CARRIER_INVARIANT,
+            ground="سند",
+        )
+
+
+def test_a_finding_without_a_written_ground_is_refused() -> None:
+    with pytest.raises(ProjectionIdentityError):
+        CarrierDistinctionFinding(
+            members=frozenset({"ب", "ت"}),
+            standing=TransportStanding.NOT_CERTIFIED_AS_CARRIER_INVARIANT,
+            ground="   ",
+        )
+
+
+def test_the_commutation_requirement_is_bound_to_this_contract_only() -> None:
+    residual = PROJECTION_IDENTITY_NAMED_RESIDUALS[
+        "NO_CERTIFICATE_UNDER_AN_UNORDERED_COMPOSITION"
+    ]
+    assert "لا مسقطٌ لا يتبادل" in residual
+    assert "شرطُ هذا" in residual
 
 
 # --- no probability, and no invariance the projection itself made -----------
