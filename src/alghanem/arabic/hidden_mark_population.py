@@ -3,11 +3,16 @@
 وُسِّعت العيّنةُ من قبل، والعيّنةُ توسيعُ **الشواهد**. وههنا يُوسَّع
 **المجتمعُ** نفسُه: لا مَن يُسأل، بل ما يُسأل عنه. فقد كان المجتمعُ تسعَ
 علاماتٍ فوق مواضعَ مُودَعة، فصار **كلَّ** ما في كتل العربيّة من حروفٍ
-وعلامات: `Lo` سبعُمئةٍ وسبعون، و`Mn` مئةٌ وخمس. ووجدنا في المجتمع الموسَّع
-ما لم يكن في العيّنة الموسَّعة: **ثغرةً في المسند لا نقصًا في الشواهد**.
+وعلامات: `Lo` سبعُمئةٍ وسبعون، و`Mn` مئةٌ وخمس **عند يونيكود 15.0.0**؛ فإن
+قُرئ الجدولُ بالإصدار 13.0.0 فهما ثمانٍ وستّون وتسعُمئة وستٌّ وتسعون. فحجمُ
+المجتمع مؤرَّخٌ لا دائم، وهو مُجمَّدٌ بإصدارِه في
+`THE_POPULATION_MEASURED_BY_UNICODE_VERSION` ويُطابَق عند الاستيراد. ووجدنا
+في المجتمع الموسَّع ما لم يكن في العيّنة الموسَّعة: **ثغرةً في المسند لا
+نقصًا في الشواهد**.
 
 **أوّلًا: ثمانيةُ حروفٍ ليست حروفًا بسيطة.** من السبعمئة والسبعين، **ثمانيةٌ**
-— أي **0.825%** — لها تفكّكٌ قانونيٌّ في الجدول؛ أي أنّ كلَّ واحدٍ منها
+— أي **0.825%**، و0.826% عند الإصدار الأقدم — لها تفكّكٌ قانونيٌّ في الجدول؛
+أي أنّ كلَّ واحدٍ منها
 **حاملٌ وعلامةٌ مُلحَمان** في نقطةِ ترميزٍ واحدة:
 
 | الحرف | النقطة | حاملُه | علامتُه المخفيّة |
@@ -95,6 +100,19 @@ HAMZA_ABOVE: Final[str] = "\u0654"
 HAMZA_BELOW: Final[str] = "\u0655"
 
 _LETTER_CATEGORY: Final[str] = "Lo"
+
+
+THE_POPULATION_MEASURED_BY_UNICODE_VERSION: Final[dict[str, int]] = {
+    "13.0.0": 968,
+    "15.0.0": 970,
+}
+"""حجمُ مجتمع الحروف عند كلّ إصدارٍ قِيس عليه؛ وإصدارٌ سواهما لم يُقَس."""
+
+
+def the_population_recorded_for(version: str) -> int | None:
+    """الحجمُ المُجمَّدُ لإصدارٍ إن قِيس عليه، و`None` إن لم يُقَس فلا يُدَّعى."""
+
+    return THE_POPULATION_MEASURED_BY_UNICODE_VERSION.get(version)
 
 
 class HiddenMarkError(ValueError):
@@ -416,7 +434,22 @@ def _assert_every_residual_is_named_by_its_key() -> None:
             raise HiddenMarkError(f"بقيّةٌ لا تبدأ بمفتاحها: {key}.")
 
 
+def _assert_the_frozen_population_matches_the_table_being_read() -> None:
+    """حارسُ استيراد: إن كان الإصدارُ مقيسًا فحجمُه يُطابِق، وإلّا فلا يُدَّعى."""
+
+    recorded = the_population_recorded_for(UNICODE_VERSION)
+    if recorded is None:
+        return
+    derived = len(arabic_letters())
+    if derived != recorded:
+        raise HiddenMarkError(
+            f"مجتمعُ الحروف عند {UNICODE_VERSION} قُرئ {derived} والمُجمَّدُ "
+            f"له {recorded}؛ فالرقمُ المنشورُ يُعاد قياسُه."
+        )
+
+
 _assert_no_authority_field()
 _assert_the_hidden_are_marks_outside_the_nine()
 _assert_the_wider_population_breaks_the_order_rule()
 _assert_every_residual_is_named_by_its_key()
+_assert_the_frozen_population_matches_the_table_being_read()

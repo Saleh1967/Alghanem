@@ -13,6 +13,7 @@ from alghanem.arabic.hidden_mark_population import (
     HAMZA_ABOVE,
     HAMZA_BELOW,
     MADDAH_ABOVE,
+    THE_POPULATION_MEASURED_BY_UNICODE_VERSION,
     HiddenMarkError,
     InvisibilityReading,
     arabic_letters,
@@ -31,19 +32,36 @@ from alghanem.arabic.hidden_mark_population import (
     order_bearing_pairs,
     read_invisibility,
     the_identity_holds_on,
+    the_population_recorded_for,
 )
 from alghanem.arabic.hidden_mark_population import (
     HIDDEN_MARK_NAMED_RESIDUALS as RESIDUALS,
 )
 from alghanem.arabic.mark_pair_census import THE_NINE_MARKS
-from alghanem.arabic.written_haraka_mark import arabic_combining_marks
+from alghanem.arabic.written_haraka_mark import (
+    arabic_combining_marks,
+    the_superset_recorded_for,
+)
 
 FATIHA = "\n".join(FATIHA_LINES)
 
 
 def test_the_widened_population_is_the_whole_arabic_letter_universe() -> None:
-    assert len(arabic_letters()) == 970
-    assert len(arabic_combining_marks()) == 105
+    letters = the_population_recorded_for(unicodedata.unidata_version)
+    marks = the_superset_recorded_for(unicodedata.unidata_version)
+    if letters is None or marks is None:
+        pytest.skip(f"لم يُقَس على يونيكود {unicodedata.unidata_version} بعد.")
+    assert len(arabic_letters()) == letters
+    assert len(arabic_combining_marks()) == marks
+
+
+def test_the_population_is_a_fact_about_a_unicode_version_not_about_arabic() -> None:
+    assert THE_POPULATION_MEASURED_BY_UNICODE_VERSION["13.0.0"] == 968
+    assert THE_POPULATION_MEASURED_BY_UNICODE_VERSION["15.0.0"] == 970
+
+
+def test_an_unmeasured_unicode_version_is_refused_not_guessed() -> None:
+    assert the_population_recorded_for("1.0.0") is None
 
 
 def test_only_eight_letters_of_the_population_are_not_simple() -> None:

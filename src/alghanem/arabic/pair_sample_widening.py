@@ -160,7 +160,7 @@ class ScopeFingerprint:
 
 PROSE_SCOPE_AT_MEASUREMENT: Final[ScopeFingerprint] = ScopeFingerprint(
     files=408,
-    text_bytes=7584363,
+    text_bytes=7588660,
 )
 
 THE_SCOPE_EXCLUSIONS: Final[frozenset[str]] = frozenset(

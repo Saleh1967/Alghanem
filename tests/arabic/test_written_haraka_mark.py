@@ -13,6 +13,7 @@ from alghanem.arabic.implicit_sukun_treatment import SukunSource, census_over
 from alghanem.arabic.written_haraka_mark import (
     CANONICAL_FORMS,
     THE_IMPORTED_HARAKAT,
+    THE_SUPERSET_MEASURED_BY_UNICODE_VERSION,
     UNICODE_VERSION,
     WRITTEN_HARAKA_NAMED_RESIDUALS,
     ImportWeight,
@@ -26,6 +27,7 @@ from alghanem.arabic.written_haraka_mark import (
     import_weight,
     imported_haraka_names,
     positions_of,
+    the_superset_recorded_for,
     verify_canonical_invariance,
 )
 
@@ -104,10 +106,31 @@ def test_a_combining_mark_may_not_open_a_position() -> None:
 
 def test_the_import_is_seven_of_a_derived_one_hundred_and_five() -> None:
     weight = import_weight()
+    recorded = the_superset_recorded_for(UNICODE_VERSION)
     assert weight.selected == 7
-    assert weight.superset == len(arabic_combining_marks()) == 105
-    assert weight.share == pytest.approx(6.666667, abs=1e-6)
+    assert weight.superset == len(arabic_combining_marks())
     assert weight.unicode_version == UNICODE_VERSION == unicodedata.unidata_version
+    if recorded is None:
+        pytest.skip(f"لم يُقَس على يونيكود {UNICODE_VERSION} بعد.")
+    assert weight.superset == recorded
+    assert weight.share == pytest.approx(100.0 * 7 / recorded, abs=1e-6)
+
+
+def test_the_denominator_moved_between_the_two_measured_versions() -> None:
+    assert THE_SUPERSET_MEASURED_BY_UNICODE_VERSION["13.0.0"] == 96
+    assert THE_SUPERSET_MEASURED_BY_UNICODE_VERSION["15.0.0"] == 105
+
+
+def test_the_import_share_moves_with_the_denominator_not_with_the_import() -> None:
+    older = 100.0 * 7 / THE_SUPERSET_MEASURED_BY_UNICODE_VERSION["13.0.0"]
+    newer = 100.0 * 7 / THE_SUPERSET_MEASURED_BY_UNICODE_VERSION["15.0.0"]
+    assert older == pytest.approx(7.291667, abs=1e-6)
+    assert newer == pytest.approx(6.666667, abs=1e-6)
+    assert older > newer
+
+
+def test_an_unmeasured_unicode_version_is_refused_not_guessed() -> None:
+    assert the_superset_recorded_for("1.0.0") is None
 
 
 def test_the_superset_is_read_from_the_table_and_contains_the_import() -> None:

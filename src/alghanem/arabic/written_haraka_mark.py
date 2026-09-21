@@ -23,6 +23,20 @@
 الاستيراد مقيسًا لا موصوفًا: سبعٌ من مئةٍ وخمس
 (`THE_IMPORT_IS_A_SELECTION_NOT_A_DERIVATION`).
 
+**والمقامُ تحرّك فعلًا، كما قالت البقيّةُ إنّه قد يتحرّك.** قيل ههنا إنّ
+المئةَ والخمسَ رقمٌ مؤرَّخٌ لا دائم، ثمّ قُرئ الجدولُ بإصدارٍ آخر فتحرّك:
+
+| إصدارُ اليونيكود | نقاطُ `Mn` | نصيبُ السبع |
+|---|---|---|
+| 13.0.0 | 96 | 7.292% |
+| 15.0.0 | 105 | 6.667% |
+
+فتسعُ نقاطٍ أُضيفت بين الإصدارين، فهبط نصيبُ الاستيراد بلا أن تُمَسَّ السبع.
+والسبعُ أنفسُها لم تتحرّك في الإصدارين جميعًا، فالمُستورَدُ ثابتٌ والمقامُ
+متحرّك. ولا تُقرأ الهُويّاتُ التسعُ ههنا — إنّما عدَدُها — إذ لا يُقرأ في
+الشجرة جدولٌ غيرُ الجدول الحاضر
+(`A_UNICODE_VERSION_IS_A_DEPENDENCY`).
+
 **والشدّةُ والألفُ الخنجريّةُ خارجتان بالاستيراد لا باليونيكود.** كلتاهما
 `Mn` كالسبع سواءً بسواء، ولا شيءَ في الجدول يُخرجهما. أُخرجتا لأنّ الاختيارَ
 أخرجهما، وهو عينُ ما يجعل الاستيرادَ استيرادًا
@@ -102,6 +116,7 @@ __all__ = [
     "THE_IMPORT_IS_A_SELECTION_NOT_A_DERIVATION",
     "THE_INVARIANCE_IS_CANONICAL_AND_NOT_COMPATIBILITY",
     "THE_NEGATIVE_IS_AN_ABSENT_MARK_NOT_A_SUKUN",
+    "THE_SUPERSET_MEASURED_BY_UNICODE_VERSION",
     "UNICODE_VERSION",
     "WRITTEN_HARAKA_NAMED_RESIDUALS",
     "ImportWeight",
@@ -115,12 +130,31 @@ __all__ = [
     "import_weight",
     "imported_haraka_names",
     "positions_of",
+    "the_superset_recorded_for",
     "verify_canonical_invariance",
 ]
 
 
 UNICODE_VERSION: Final[str] = unicodedata.unidata_version
 """إصدارُ جدول اليونيكود الذي قُرِّر عليه كلُّ ما ههنا، مُسجَّلًا لا مطويًّا."""
+
+
+THE_SUPERSET_MEASURED_BY_UNICODE_VERSION: Final[dict[str, int]] = {
+    "13.0.0": 96,
+    "15.0.0": 105,
+}
+"""حجمُ المجموعة الأكبر عند كلّ إصدارٍ قِيس عليه فعلًا؛ وما سواه غيرُ مقيس."""
+
+
+def the_superset_recorded_for(version: str) -> int | None:
+    """الحجمُ المُجمَّدُ لإصدارٍ إن كان قِيس عليه، و`None` إن لم يُقَس.
+
+    والعدمُ ههنا **«لم يُقَس»** لا «لا شيءَ فيه»: فمن قرأ الجدولَ بإصدارٍ
+    ثالثٍ فحجمُه مقروءٌ عنده من `arabic_combining_marks` ولا يُدَّعى أنّه
+    أحدُ العددين المُجمَّدين.
+    """
+
+    return THE_SUPERSET_MEASURED_BY_UNICODE_VERSION.get(version)
 
 
 THE_IMPORTED_HARAKAT: Final[frozenset[str]] = frozenset(
@@ -378,9 +412,10 @@ def compatibility_exceptions() -> tuple[str, ...]:
 THE_IMPORT_IS_A_SELECTION_NOT_A_DERIVATION: Final[str] = (
     "THE_IMPORT_IS_A_SELECTION_NOT_A_DERIVATION: لا خاصّيةَ في اليونيكود "
     "اسمُها «حركة»، فلا يُشتقّ منه أنّ هذه السبعَ حركاتٌ وأنّ غيرَها ليس. "
-    "المُشتَقُّ منه المجموعةُ الأكبر: 105 نقاطِ `Mn` في كتل العربيّة عند "
-    "الإصدار 15.0.0؛ والمستورَدُ اختيارُ سبعٍ منها، أي 6.667%. فهذا استيرادٌ "
-    "صغيرٌ **موزونٌ** لا مَنفيّ، وحجمُه مقيسٌ عند القراءة في `import_weight`."
+    "المُشتَقُّ منه المجموعةُ الأكبر: نقاطُ `Mn` في كتل العربيّة، وهي 105 "
+    "عند الإصدار 15.0.0 و96 عند 13.0.0؛ والمستورَدُ اختيارُ سبعٍ منها، أي "
+    "6.667% أو 7.292% بحسب الجدول المقروء. فهذا استيرادٌ صغيرٌ **موزونٌ** لا "
+    "مَنفيّ، وحجمُه مقيسٌ عند القراءة في `import_weight`."
 )
 
 SHADDA_AND_DAGGER_ARE_EXCLUDED_BY_THE_IMPORT_NOT_BY_UNICODE: Final[str] = (
@@ -430,10 +465,11 @@ A_WRITTEN_MARK_IS_NOT_A_PRONOUNCED_VOWEL: Final[str] = (
 
 A_UNICODE_VERSION_IS_A_DEPENDENCY: Final[str] = (
     "A_UNICODE_VERSION_IS_A_DEPENDENCY: المجموعةُ الأكبر مقروءةٌ من جدولٍ "
-    f"مؤرَّخ، وهو ههنا {UNICODE_VERSION}؛ وقد تُضاف نقاطُ `Mn` في إصدارٍ "
-    "لاحقٍ فيتحرّك المقامُ 105 ويتحرّك معه نصيبُ الاستيراد. والسبعُ "
-    "مستقرّةٌ منذ الإصدار الأوّل، لكنّ استقرارَها **مقروءٌ لا مضمون**: "
-    "لذلك يُقاس الوزنُ عند القراءة ولا يُكتَب في ثابت."
+    f"مؤرَّخ، وهو ههنا {UNICODE_VERSION}؛ وقد قيل إنّ المقامَ قد يتحرّك، "
+    "فتحرّك: 96 نقطةً عند 13.0.0 و105 عند 15.0.0، فنصيبُ السبع 7.292% ثمّ "
+    "6.667%. والسبعُ أنفسُها لم تتحرّك في الإصدارين، لكنّ استقرارَها "
+    "**مقروءٌ لا مضمون**: لذلك يُقاس الوزنُ عند القراءة ولا يُكتَب في ثابت، "
+    "وإصدارٌ لم يُقَس عليه لا يُدَّعى له رقمٌ من هذين."
 )
 
 WRITTEN_HARAKA_NAMED_RESIDUALS: Final[dict[str, str]] = {
@@ -490,5 +526,20 @@ def _assert_the_import_stays_inside_the_derived_superset() -> None:
     import_weight()
 
 
+def _assert_the_frozen_superset_matches_the_table_being_read() -> None:
+    """حارسُ استيراد: إن كان الإصدارُ مقيسًا فرقمُه يُطابِق، وإلّا فلا يُدَّعى."""
+
+    recorded = the_superset_recorded_for(UNICODE_VERSION)
+    if recorded is None:
+        return
+    derived = len(arabic_combining_marks())
+    if derived != recorded:
+        raise WrittenHarakaError(
+            f"المجموعةُ الأكبر عند {UNICODE_VERSION} قُرئت {derived} "
+            f"والمُجمَّدُ لها {recorded}؛ فالرقمُ المنشورُ يُعاد قياسُه."
+        )
+
+
 _assert_no_authority_field()
 _assert_the_import_stays_inside_the_derived_superset()
+_assert_the_frozen_superset_matches_the_table_being_read()

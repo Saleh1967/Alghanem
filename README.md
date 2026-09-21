@@ -7953,7 +7953,11 @@ to avoid (`THE_NEGATIVE_IS_AN_ABSENT_MARK_NOT_A_SUKUN`). The selection of the
 seven remains a choice and not a derivation
 (`THE_IMPORT_IS_A_SELECTION_NOT_A_DERIVATION`), the invariance is canonical
 and not compatibility (`THE_INVARIANCE_IS_CANONICAL_AND_NOT_COMPATIBILITY`),
-and the 105 is read from a Unicode version that will move
+and the 105 is read from a Unicode version that **has since been observed to
+move**: reading the same rule against Unicode 13.0.0 gives 96 marks and a
+7.292% share, against 15.0.0 gives 105 and 6.667%. Nine codepoints entered the
+denominator; not one of the seven moved. The share is therefore a fact about
+which table is open, and the residual that predicted this is now measured
 (`A_UNICODE_VERSION_IS_A_DEPENDENCY`).
 
 ```bash
@@ -8108,11 +8112,14 @@ python examples/arabic/read_pair_sample_widening.py
 Widening the sample had been widening the *witnesses*. The next step widened
 the **population** — not who is asked, but what is asked about. The population
 had been nine marks over deposited positions; it became every letter and mark
-in the five Arabic blocks: 970 `Lo` and 105 `Mn`. And the wider population
-turned up something the wider sample could not: a gap in the predicate rather
-than a shortage of evidence.
+in the five Arabic blocks: 970 `Lo` and 105 `Mn` **at Unicode 15.0.0**. Read
+the table at 13.0.0 and the same two counts are 968 and 96 — the population is
+dated, not permanent, so it is frozen per version and checked at import. And
+the wider population turned up something the wider sample could not: a gap in
+the predicate rather than a shortage of evidence.
 
-Eight of those 970 letters — 0.825% — are not simple. Each has a canonical
+Eight of those 970 letters — 0.825%, or 0.826% at the older table — are not
+simple. Each has a canonical
 decomposition, which is to say each is a carrier and a mark fused into one
 codepoint: آ أ ؤ إ ئ, and three Perso-Urdu letters that never occur here. They
 hide exactly three marks: maddah above, hamza above, hamza below. All three are
