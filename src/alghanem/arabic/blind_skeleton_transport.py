@@ -78,7 +78,7 @@ from __future__ import annotations
 import unicodedata
 from collections import defaultdict
 from dataclasses import dataclass, fields
-from functools import lru_cache
+from functools import cache
 from typing import Final
 
 from alghanem.arabic.font_deposit import (
@@ -221,12 +221,10 @@ def open_identities(
         }
         if len(letters) > 1:
             opened.append(frozenset(letters))
-    return tuple(
-        sorted(opened, key=lambda letters: (-len(letters), sorted(letters)))
-    )
+    return tuple(sorted(opened, key=lambda letters: (-len(letters), sorted(letters))))
 
 
-@lru_cache(maxsize=None)
+@cache
 def geometric_classes_of(
     filename: str, whole_font: bool = False
 ) -> tuple[frozenset[str], ...]:
@@ -238,7 +236,7 @@ def geometric_classes_of(
     return open_identities(filename, group_blindly(filename, sample))
 
 
-@lru_cache(maxsize=None)
+@cache
 def declared_classes_of(filename: str) -> tuple[frozenset[str], ...]:
     """الفئاتُ **المُعلَنة**: ما يقوله الخطّ في بتاته عن تركيب رسومه.
 

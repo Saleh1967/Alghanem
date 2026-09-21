@@ -8076,7 +8076,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 517-fold: 32 pairs, then 16,574. Both questions were answered,
+The widening is 521-fold: 32 pairs, then 16,666. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8095,7 +8095,7 @@ than a tail: six shadda-bearing pairs hold 99.928%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,379 of 16,542
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,402 of 16,634
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8150,6 +8150,71 @@ nine — and bounded by them.
 
 ```bash
 python examples/arabic/read_hidden_mark_population.py
+```
+
+Every figure up to here came from one source of bits: the deposited text, read
+against Unicode's tables. That source is silent about an entire class of
+question. Unicode says ب and ت and ث are three letters; it does not say whether
+they are *drawn* alike, because it stores no drawing. So a second source of bits
+was needed, and a font file is one: `TextBits ⊕ FontBits → GlyphGeometry`.
+
+The first lesson was administrative and arrived by accident. The fonts were
+first read from `/usr/share/fonts`, the environment was rebuilt, the fonts were
+gone, and every number measured against them evaporated. That is exactly the
+failure the repository's read-time rule exists to prevent. So three fonts are
+now deposited under `fonts/`, with their licence text and a manifest that
+freezes each file's SHA-256, byte length, glyph count, units-per-em and table
+names, and refuses to load a drifted deposit rather than repairing it. The
+reader is `struct` alone — `dependencies = []` is untouched — and what it
+cannot parse it refuses: `CFF` outlines, `cmap` formats other than 4, scale
+transforms inside composites. There is no shaping engine here and no contextual
+`GSUB`; only isolated glyphs, never compared across positions.
+
+Which fonts matters more than that there are three. Amiri and Scheherazade are
+Naskh from independent designers, and both *declare* a decomposition: ب is a
+composite glyph pointing at a shared component. Noto Kufi Arabic declares almost
+nothing — 733 simple glyphs. That contrast is the whole experiment, because
+reading a declared decomposition is not a discovery: it is a transcription of
+what the type designer decided. KacstBook would have served the same role and
+was excluded for a licensing reason, not an evidentiary one — it is GPL-2 and
+this repository is MIT. All three deposits are OFL-1.1.
+
+So the grouping was run blind. `group_blindly` accepts opaque glyph ids only;
+Unicode identity selects the sample and is then withheld, and the letters are
+reattached to the classes after the partition exists. On Amiri that recovers the
+rasm families — بتث، جحخ، دذ، رز، سش، صض، طظ، عغ، ةه — without the word "dot"
+ever being imported. But the result that matters is the transport. **The
+declared decomposition transports to all three deposits in zero classes.** It
+transports between the two Naskh fonts in eleven, and to the Kufi in none at
+all, because the four things Noto Kufi declares are آأ، ؤو، إا، ئى: Unicode's own
+hamza fusions, nothing of the rasm. **The measured geometry transports to all
+three in ten.** A declared decomposition is a fact about how a font was built;
+a measured one is a question that can be put to a font that declares nothing.
+
+Two limits are published with the result rather than after it. The shared-contour
+relation is transitively closed, so it chains: widening the blind sample from the
+Arabic letters to every glyph in the font leaves both Naskh fonts exactly where
+they were, 13 and 14, and collapses Noto Kufi from 14 to 10 as ؤ ة ع غ ه و fuse
+through contextual forms. A class is conditional on its sample, and the condition
+is stated. And the description length — M₀ with every glyph independent against
+M₁ with distinct contours shared — saves 32.463%, 34.660% and 30.416% across the
+three. That is a number in a declared unit (counted points), not a model
+selection; there is no weighing protocol here.
+
+Last, this touches the previous milestone. `hidden_mark_population` found that
+Unicode fuses آ أ إ into ا plus a mark. Does that structure show up in geometry?
+Scheherazade groups all four; Amiri groups آ إ ا and *excludes* أ, because its
+alef body is the alef body shifted twelve units rather than zero; Noto Kufi
+splits the family in two. The table's structure is geometrically realized in one
+deposit of three, and the non-zero offset is the new information. Neither source
+of bits outranks the other — they disagree, and the disagreement is the finding.
+
+```bash
+python examples/arabic/read_font_deposit.py
+```
+
+```bash
+python examples/arabic/read_blind_skeleton_transport.py
 ```
 
 ```bash

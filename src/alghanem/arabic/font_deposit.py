@@ -42,7 +42,7 @@ from __future__ import annotations
 import hashlib
 import struct
 from dataclasses import dataclass, fields
-from functools import lru_cache
+from functools import cache
 from pathlib import Path
 from typing import Final
 
@@ -256,8 +256,7 @@ def every_deposit_matches_its_manifest() -> bool:
     """أطابقت الودائعُ أوصافَها المجمَّدة؟ يُقاس من القرص لا يُفترَض."""
 
     return all(
-        measured_manifest_of(manifest.filename) == manifest
-        for manifest in FONT_DEPOSIT
+        measured_manifest_of(manifest.filename) == manifest for manifest in FONT_DEPOSIT
     )
 
 
@@ -320,16 +319,16 @@ class FontBits:
             )[0]
             if code < start:
                 return 0
-            delta = struct.unpack(
-                ">h", raw[deltas + 2 * index : deltas + 2 * index + 2]
-            )[0]
+            delta = int(
+                struct.unpack(">h", raw[deltas + 2 * index : deltas + 2 * index + 2])[0]
+            )
             offset = struct.unpack(
                 ">H", raw[ranges + 2 * index : ranges + 2 * index + 2]
             )[0]
             if offset == 0:
                 return (code + delta) & 0xFFFF
             at = ranges + 2 * index + offset + 2 * (code - start)
-            glyph = struct.unpack(">H", raw[at : at + 2])[0]
+            glyph = int(struct.unpack(">H", raw[at : at + 2])[0])
             return 0 if glyph == 0 else (glyph + delta) & 0xFFFF
         return 0
 
@@ -340,10 +339,10 @@ class FontBits:
         if self._long_loca:
             at = loca + 4 * glyph
             first, second = struct.unpack(">II", self._raw[at : at + 8])
-            return first, second
+            return int(first), int(second)
         at = loca + 2 * glyph
         first, second = struct.unpack(">HH", self._raw[at : at + 4])
-        return first * 2, second * 2
+        return int(first) * 2, int(second) * 2
 
     def is_composite(self, glyph: int) -> bool:
         """أرسمٌ مركّبٌ هو، أي أنّ الخطّ **يعلن** تفكيكَه في بتاته؟"""
@@ -352,7 +351,7 @@ class FontBits:
         if start == end:
             return False
         at = self._tables["glyf"][0] + start
-        return struct.unpack(">h", self._raw[at : at + 2])[0] < 0
+        return bool(struct.unpack(">h", self._raw[at : at + 2])[0] < 0)
 
     def components_of(self, glyph: int) -> tuple[tuple[int, int, int], ...]:
         """مكوّناتُ رسمٍ مركّبٍ كما أعلنها الخطّ: رقمٌ وإزاحتان."""
@@ -477,7 +476,7 @@ class FontBits:
         return digest.hexdigest()
 
 
-@lru_cache(maxsize=None)
+@cache
 def load_font(filename: str) -> FontBits:
     """يحمّل وديعةً بعد مطابقةِ وصفِها المجمَّد؛ ويرفض عند أيّ انزياح."""
 
