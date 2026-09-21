@@ -7818,6 +7818,529 @@ measured on, and never multiplied into 78,215
 python examples/arabic/read_implicit_sukun_treatment.py
 ```
 
+## The same question put to a second text
+
+The sukūn split above carried its own limit in its name: a rate measured on
+twenty-nine words of one sūra is not a corpus rate. A limit like that is not
+lifted by saying so — it is lifted by **a second place to measure**. There is
+one in this tree: Fatḥ 48:29, fifty-four words, deposited by letters
+(`fath_ayah_source_text`). The same measurement was run over it with the same
+codec, and the two censuses set side by side.
+
+| | al-Fātiḥa | Fatḥ 29 | gap |
+|---|---|---|---|
+| words | 29 | 54 | |
+| sukūn-bearing carriers | 75 | 104 | |
+| written (U+0652) | 21 | 27 | |
+| written share | 28.000% | 25.962% | **2.038 points** |
+
+**The finding did not flip.** In both texts most of the sukūn is unwritten, and
+the two shares sit two points apart. The alif's door is closer still —
+42.593% of the unwritten there, 42.857% here, **a quarter of a point** — and
+the gemination pair-start is the furthest, 25.926% against 20.779%.
+
+**Every figure above was re-derived by a second rule that does not know the
+codec.** `tests/arabic/test_sukun_second_scope_independent_check.py` writes the
+reading rule out from scratch, over the same deposited bytes, and reproduces
+all of it — not only the totals but **word by word**, so no pair of
+compensating errors can hide inside an equal sum. The two rules are visibly not
+the same implementation: the codec folds `ى` into `ي` and `آ` into `ء`, so the
+carrier is named differently in five words of Fatḥ 29 while the verdict is
+identical in all of them. What that lifts is **the chance of an implementation
+error**, and no more: both rules read "an unmarked carrier is sākin" and
+neither one measured that, so `A_SHARED_CODEC_IS_A_SHARED_LIMIT` stands in its
+larger half.
+
+**And the closest agreement turned out to be the most convention-bound.** The
+quarter of a point holds only while "alif" means U+0627 alone. Because the
+codec folds `ى` into `ي`, that boundary cannot be examined from its output at
+all; examined by the second rule, the gap moves to **4.161 points** if `ى`
+counts as an alif and **6.758** if `آ` counts too. The agreement is true of its
+boundary, and no property of the alif is read from it until the boundary itself
+is measured
+(`THE_ALIF_AGREEMENT_MOVES_WITH_THE_CARRIER_CONVENTION`).
+
+**The alif replicated exactly.** Thirty-three written alifs in Fatḥ 29, **all**
+holding an unmarked sukūn, not one with a mark and not one with a vowel —
+exactly as the twenty-three in the Fātiḥa. Fifty-six written alifs across two
+texts, none of them marked. The two dagger alifs in the Fātiḥa are counted
+apart and not erased: a dagger is a mark above a letter, not a written alif.
+This **widens the evidence without changing its kind**: what was read from
+absence is still read from absence, and a repeated absence is not a byte
+(`THE_ALIF_REPLICATION_IS_STILL_READ_FROM_ABSENCE`).
+
+**The onset parted further.** After lifting the alif: fourteen sukūn-initial
+words in the Fātiḥa, five of them written (35.714%); twelve in Fatḥ 29, three
+written (25.000%) — ten and a half points. So a text that agreed on the whole
+disagreed at the first position, which by itself forbids carrying one text's
+share onto another's position. The unwritten onsets happen to match exactly —
+nine and nine, split the same way — and nine out of nine is a small-number
+coincidence, not a law.
+
+**What the agreement does not establish** is named rather than absorbed.
+Eighty-three words out of 78,245 is **0.106%** of the corpus: the second text
+moves the scope from a two-thousandth to a thousandth, not to a corpus rate
+(`TWO_TEXTS_ARE_STILL_NOT_A_CORPUS`). Both deposits sit at the same lowest
+rank — `TRANSCRIBED_IN_TREE_NOT_COLLATED`, transcribed here and collated
+against nothing — and by the same hand, so their agreement may be one
+transcriber's habit in the pointing rather than a property of the script
+(`TWO_TRANSCRIPTIONS_OF_ONE_HAND_ARE_NOT_TWO_WITNESSES`). Both were read
+through the same `CarrierStateCodec`, the very thing that names the implicit
+sukūn, so any bias in it moves both figures the same way and the agreement
+hides it rather than ruling it out (`A_SHARED_CODEC_IS_A_SHARED_LIMIT`). And
+two points make a line wherever they fall: no trend, no direction, and no
+interpolation is read off these two numbers
+(`A_GAP_BETWEEN_TWO_SCOPES_IS_NOT_A_TREND`).
+
+```bash
+python examples/arabic/read_sukun_second_scope.py
+```
+
+## A predicate the bits decide on their own
+
+Every Arabic figure published here so far has rested on an imported phonetic
+theory: twenty-nine letters, eleven points of articulation, a carrier/vowel
+split. That import is real and has always been declared. This milestone asks a
+narrower question that does not need it: **does this position carry a written
+haraka mark?** — `HasWrittenHarakaMark`.
+
+*Position* is not stipulated. Both deposited texts partition exactly and
+without remainder into Unicode `Lo` (34 distinct letters) and `Mn` (9 distinct
+combining marks); there is no third category to argue about, so a position is
+an `Lo` with the `Mn` run that follows it, read straight from
+`General_Category`.
+
+**The import is weighed, not merely named.** Unicode has no "haraka" property,
+so the seven codepoints must be chosen by hand. But Unicode *does* derive the
+superset they are chosen from: the combining marks of the Arabic blocks, which
+number **105** at Unicode 15.0.0. The import is therefore a selection of 7 out
+of 105 — **6.667%** — and its complement is enumerable rather than vague. Two
+of the 98 rejected marks are genuinely contestable, shadda (U+0651) and the
+dagger alif (U+0670), and they are excluded by the import, not by Unicode.
+
+**And the contested part moves nothing at all here.** Admitting shadda, the
+dagger, or both was run as an experiment over the two deposits: in all four
+combinations, **zero** positions changed verdict. The cause is measured, not
+assumed — neither text contains a single position bearing shadda or dagger
+*without* a haraka beside it, so the position is already marked before the
+question is asked. The published figures thus do not depend on the arguable
+part of the import. This is a fact about these two texts and not about the
+rule: a bare `بّ` does change verdict, and that is exercised in the tests.
+
+**The guarantee is proved by exhaustion, and its boundary is exact.** All
+1,114,112 codepoints were scanned: zero introduce one of the seven under NFD,
+zero destroy one, and zero Arabic codepoint splits into more than one position
+— so the verdict is invariant under NFC and NFD for *every possible input*,
+not merely for the deposits. Under compatibility normalization it breaks, in
+exactly **22** enumerable codepoints (`U+FC5E` decomposes to SPACE + DAMMATAN
++ SHADDA, and so on), so `positions_of` refuses NFKC and NFKD rather than
+silently correcting them.
+
+The predicate also reconciles exactly with the previous milestone, and the
+reconciliation is a subtraction with no remainder: unmarked positions equal
+the earlier implicit sukūn minus the gemination pair-starts — **40 = 54 − 14**
+on al-Fātiḥa, **61 = 77 − 16** on Fatḥ 48:29. The category the earlier work
+had to flag by hand as "not a sukūn at all" is the one this predicate excludes
+structurally. On al-Fātiḥa 103 of 143 positions are marked (**72.028%**); on
+Fatḥ 48:29, 188 of 249 (**75.502%**).
+
+**What certainty this is** is named rather than inflated. It is certainty
+about the script and not about the sound: a written mark is not a pronounced
+vowel (`A_WRITTEN_MARK_IS_NOT_A_PRONOUNCED_VOWEL`). Above all the negative
+carries no phonetic content — an unmarked position is a *missing mark*, and
+calling it a sukūn would re-import the whole theory this predicate was built
+to avoid (`THE_NEGATIVE_IS_AN_ABSENT_MARK_NOT_A_SUKUN`). The selection of the
+seven remains a choice and not a derivation
+(`THE_IMPORT_IS_A_SELECTION_NOT_A_DERIVATION`), the invariance is canonical
+and not compatibility (`THE_INVARIANCE_IS_CANONICAL_AND_NOT_COMPATIBILITY`),
+and the 105 is read from a Unicode version that **has since been observed to
+move**: reading the same rule against Unicode 13.0.0 gives 96 marks and a
+7.292% share, against 15.0.0 gives 105 and 6.667%. Nine codepoints entered the
+denominator; not one of the seven moved. The share is therefore a fact about
+which table is open, and the residual that predicted this is now measured
+(`A_UNICODE_VERSION_IS_A_DEPENDENCY`).
+
+```bash
+python examples/arabic/read_written_haraka_mark.py
+```
+
+## The fiber structure, read from the bits
+
+This tree has a long fiber apparatus already — `carrier_state_observed_fiber`,
+`fiber_bundle_verdict`, `position_bundle_sections` — and all of it runs on the
+`CarrierStateCodec` and on an axis scheme registered before any counting. This
+milestone asks the same structural question along the other road: `π: E → B`
+read from Unicode alone, over the predicate of the previous section, with no
+codec and no preregistered scheme.
+
+**It is not a fiber bundle.** A bundle requires its fibers to match, and two
+sizes are measured, not one: empty and singleton. On al-Fātiḥa 40 empty and
+103 singleton; on Fatḥ 48:29, 61 and 188. What actually stands is a *partial
+section* — and there is **no total section at all**, because a section needs a
+point over every base point and the empty fibers have none. The count of total
+sections is 0, not 1. Over the marked sub-base alone it is exactly 1, since a
+singleton fiber leaves nothing to choose.
+
+**And here is the result worth having.** The previous section measured that
+admitting shadda and the dagger alif moves **zero** verdicts. That is true —
+*of the binary question*. Ask the fiber question instead, how many are in this
+fiber, and the same widening is not inert at all:
+
+| | al-Fātiḥa | Fatḥ 48:29 |
+|---|---|---|
+| binary verdicts moved | 0 | 0 |
+| fibers going from singleton to pair | **16** | **16** |
+
+So "the fiber is a singleton" is **not a property of Arabic script**; it is a
+direct artifact of restricting the selection to seven. The general lesson is
+larger than the number: **inertness is not a property of an import, it is a
+property of the question put to it.** An import that is inert in a binary
+projection can be decisive in the structure built over it. The earlier residual
+has been amended in place to carry that bound rather than left to be read too
+widely.
+
+**The two sixteens are not one number twice.** They are split by cause rather
+than left as a coincidence: al-Fātiḥa is 14 shadda + 2 dagger, Fatḥ is 16
+shadda + 0 dagger. Equal totals, different causes, and no pattern is read off
+them.
+
+**The bundle can be restored, at a stated price.** Adjoin "absence" as a fiber
+member and the fibers all become 8, the bundle becomes trivially `B × 8`, and a
+total section exists. That is exactly what the deposited scheme did when it
+made the absence value a member of every axis. But absence is not a codepoint:
+the eighth member is brought in from outside the table. So whether this is a
+bundle turns on a **stipulation, not a measurement**, and that is named rather
+than folded away. Nor is there local triviality over the letters: the realized
+sets range 0–4 on al-Fātiḥa and 0–5 on Fatḥ, and no letter carries all seven.
+
+```bash
+python examples/arabic/read_haraka_fiber_structure.py
+```
+
+## The most frequent pair — and why no corpus number appears here
+
+The question was put for the **whole corpus**. The first part of the answer is
+what this tree does not contain: **the corpus bytes are not here.**
+`quran_corpus_word_total` freezes their fingerprint — 1,319,901 bytes and a
+known `sha256` — but not their content, and
+`quran_corpus_bytes_are_resolvable()` returns `False`. So no corpus figure is
+published in this section, and none is extrapolated from the two deposits.
+Instead there are two things: a bound derived from Unicode that holds for any
+text, and an apparatus that runs on the bytes the moment they are supplied and
+**refuses** when they are not.
+
+**Unicode forbids none of the pairs.** The canonical combining classes of the
+nine marks are all distinct — 27, 28, 29, 30, 31, 32, 33, 34, 35 — with no
+repeats. Two consequences are derived rather than stipulated. Mutual exclusion
+would require a shared class, and there is none, so **all C(9,2) = 36 pairs are
+permitted by the table**. And because the classes are distinct, canonical
+ordering totally orders any pair, so **a pair is a set, not a sequence** — the
+order of the two marks carries no information. Measured against the deposits
+and not contradicted: 16 pairs in each, byte-identical before and after
+normalization, none out of class order.
+
+**So the restriction is in the text, not in the table.** Thirty-six are
+permitted; al-Fātiḥa realizes 3 and Fatḥ 48:29 realizes 2, four distinct
+between them, leaving 32 that never occur. That absence is a fact about two
+short texts and may be an artifact of their length rather than a prohibition in
+the script, and it is not read as one.
+
+| pair | al-Fātiḥa | Fatḥ 48:29 |
+|---|---|---|
+| fatḥa + shadda | **10** | **14** |
+| kasra + shadda | 4 | 0 |
+| fatḥa + dagger alif | 2 | 0 |
+| ḍamma + shadda | 0 | 2 |
+
+The leader is **fatḥa + shadda** in both, uncontested in each separately. Every
+realized pair contains shadda or the dagger — the two marks the previous import
+excluded — and the 16 pairs are exactly the 16 fibers the previous section
+measured as enlarged, which is asserted as a cross-check rather than left as a
+coincidence.
+
+**What is preregistered before the bytes are seen:** the corpus run reports the
+full ranked census and not the leader alone, states how many of the 36 are
+realized, and reports the second and third alongside the first so a narrow
+margin cannot be read as a clear one. If two tie, the tie is reported and not
+broken — which is why `leaders` is plural and `the_lead_is_uncontested` is
+something read rather than assumed. And throughout, a pair of marks is a pair
+of codepoints on one position: not a geminate, not a syllable, not a sound.
+
+```bash
+python examples/arabic/read_mark_pair_census.py
+```
+
+Then the sample was widened and asked for its *least* frequent pair. There is
+no third vocalized Qurʾānic deposit in the tree and the corpus bytes are still
+absent, so the only further Arabic available is the tree's own prose — the
+docstrings and named residuals under `src/alghanem/`. Those are deposited
+bytes, re-derivable at read time, so they serve; but they are one hand and an
+engineering log, not a second scribal witness, and `pair_sample_widening` says
+so rather than quietly promoting them. The two deposits and the measuring
+module itself are excluded from that scope so the ladder is cumulative without
+double-counting and the instrument never measures itself.
+
+The widening is 524-fold: 32 pairs, then 16,781. Both questions were answered,
+and they were answered differently. **The leader never moved** — fatḥa+shadda
+leads uncontested at all three rungs, across a register change and two and a
+half orders of magnitude. **The floor moved at every rung**: three rungs named
+three different pairs least-frequent, because a floor standing on one
+occurrence is moved by one occurrence.
+
+Then the floor's twelve occurrences were read one by one, since no minimum is
+worth publishing unexamined. The result was not a rare spelling. The rarest
+pair, sukūn+dagger at 1, is the output of a *defective codec* quoted inside an
+audit of its defect; the next, fatḥa+ḍamma at 2, is two vowels on one carrier —
+a specimen written deliberately illegal to show it yields no state. Neither is
+Arabic. The least frequent pair that *is* Arabic sits at 9, nine times the
+published floor. So the minimum of this census measures what the medium quotes,
+not what the script allows, and the distribution turns out to be a cliff rather
+than a tail: six shadda-bearing pairs hold 99.928%, and the remaining three
+hold twelve occurrences between them.
+
+The widening also changed the population and not merely its size: pairs
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,426 of 16,749
+in the prose. That makes the leader's stability a stability across two
+registers rather than inside one — and it makes the prose figures dated, since
+the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
+instead of hiding.
+
+```bash
+python examples/arabic/read_pair_sample_widening.py
+```
+
+Widening the sample had been widening the *witnesses*. The next step widened
+the **population** — not who is asked, but what is asked about. The population
+had been nine marks over deposited positions; it became every letter and mark
+in the five Arabic blocks: 970 `Lo` and 105 `Mn` **at Unicode 15.0.0**. Read
+the table at 13.0.0 and the same two counts are 968 and 96 — the population is
+dated, not permanent, so it is frozen per version and checked at import. And
+the wider population turned up something the wider sample could not: a gap in
+the predicate rather than a shortage of evidence.
+
+Eight of those 970 letters — 0.825%, or 0.826% at the older table — are not
+simple. Each has a canonical
+decomposition, which is to say each is a carrier and a mark fused into one
+codepoint: آ أ ؤ إ ئ, and three Perso-Urdu letters that never occur here. They
+hide exactly three marks: maddah above, hamza above, hamza below. All three are
+`Mn` in the Arabic blocks, so they are marks by the table's own reckoning. None
+of the three is among the nine. So a mark that is genuinely written in the
+bytes is invisible to every census we have run — not because it was excluded,
+but because it stopped being a mark in the text's normal form.
+
+The deposits settle how much this costs. Standalone occurrences of the three:
+zero in al-Fātiḥa, zero in al-Fatḥ, before normalization and after. Occurrences
+hidden inside letters: three and eight. The visible census reports nothing at
+all about eleven written marks.
+
+Two further things fell out of the widening. First, a published rule broke. The
+nine have pairwise distinct combining classes, which is why order inside a pair
+carries no information. The three do not: 230, 230, 220. Two of them collide,
+canonical ordering leaves colliding marks alone, and so the order of
+maddah+hamza-above *is* preserved and *does* carry information — the exact
+negation. That property belonged to those nine specifically, not to Arabic
+marks. Second, the disappearance is partly our own doing: a haraka's class is
+below hamza's, so it does not block, and `ا + fatḥa + hamza` normalizes to
+`أ + fatḥa`. Normalization itself moves a mark out of the mark stream and into
+the letter, at read time.
+
+One identity came free and is worth keeping: the count of fused carriers equals
+the NFD−NFC delta exactly, 3 for 3 and 8 for 8 — on pure Arabic. It breaks on
+the tree's prose by 117, and all 117 are accounted: mathematical negation signs
+and two Latin letters, nothing Arabic. The condition is measured at read time
+rather than assumed.
+
+This module names and measures the gap; it does not close it. The three were
+not imported into `written_haraka_mark`, and the pair census was not widened
+from 36 to 66. Every figure published about the nine remains true about the
+nine — and bounded by them.
+
+```bash
+python examples/arabic/read_hidden_mark_population.py
+```
+
+Every figure up to here came from one source of bits: the deposited text, read
+against Unicode's tables. That source is silent about an entire class of
+question. Unicode says ب and ت and ث are three letters; it does not say whether
+they are *drawn* alike, because it stores no drawing. So a second source of bits
+was needed, and a font file is one: `TextBits ⊕ FontBits → GlyphGeometry`.
+
+The first lesson was administrative and arrived by accident. The fonts were
+first read from `/usr/share/fonts`, the environment was rebuilt, the fonts were
+gone, and every number measured against them evaporated. That is exactly the
+failure the repository's read-time rule exists to prevent. So three fonts are
+now deposited under `fonts/`, with their licence text and a manifest that
+freezes each file's SHA-256, byte length, glyph count, units-per-em and table
+names, and refuses to load a drifted deposit rather than repairing it. The
+reader is `struct` alone — `dependencies = []` is untouched — and what it
+cannot parse it refuses: `CFF` outlines, `cmap` formats other than 4, scale
+transforms inside composites. There is no shaping engine here and no contextual
+`GSUB`; only isolated glyphs, never compared across positions.
+
+Which fonts matters more than that there are three. Amiri and Scheherazade are
+Naskh from independent designers, and both *declare* a decomposition: ب is a
+composite glyph pointing at a shared component. Noto Kufi Arabic declares almost
+nothing — 733 simple glyphs. That contrast is the whole experiment, because
+reading a declared decomposition is not a discovery: it is a transcription of
+what the type designer decided. KacstBook would have served the same role and
+was excluded for a licensing reason, not an evidentiary one — it is GPL-2 and
+this repository is MIT. All three deposits are OFL-1.1.
+
+So the grouping was run blind. `group_blindly` accepts opaque glyph ids only;
+Unicode identity selects the sample and is then withheld, and the letters are
+reattached to the classes after the partition exists. On Amiri that recovers the
+rasm families — بتث، جحخ، دذ، رز، سش، صض، طظ، عغ، ةه — without the word "dot"
+ever being imported. But the result that matters is the transport. **The
+declared decomposition transports to all three deposits in zero classes.** It
+transports between the two Naskh fonts in eleven, and to the Kufi in none at
+all, because the four things Noto Kufi declares are آأ، ؤو، إا، ئى: Unicode's own
+hamza fusions, nothing of the rasm. **The measured geometry transports to all
+three in ten.** A declared decomposition is a fact about how a font was built;
+a measured one is a question that can be put to a font that declares nothing.
+
+Two limits are published with the result rather than after it. The shared-contour
+relation is transitively closed, so it chains: widening the blind sample from the
+Arabic letters to every glyph in the font leaves both Naskh fonts exactly where
+they were, 13 and 14, and collapses Noto Kufi from 14 to 10 as ؤ ة ع غ ه و fuse
+through contextual forms. A class is conditional on its sample, and the condition
+is stated. And the description length — M₀ with every glyph independent against
+M₁ with distinct contours shared — saves 32.463%, 34.660% and 30.416% across the
+three. That is a number in a declared unit (counted points), not a model
+selection; there is no weighing protocol here.
+
+Last, this touches the previous milestone. `hidden_mark_population` found that
+Unicode fuses آ أ إ into ا plus a mark. Does that structure show up in geometry?
+Scheherazade groups all four; Amiri groups آ إ ا and *excludes* أ, because its
+alef body is the alef body shifted twelve units rather than zero; Noto Kufi
+splits the family in two. The table's structure is geometrically realized in one
+deposit of three, and the non-zero offset is the new information. Neither source
+of bits outranks the other — they disagree, and the disagreement is the finding.
+
+```bash
+python examples/arabic/read_font_deposit.py
+```
+
+```bash
+python examples/arabic/read_blind_skeleton_transport.py
+```
+
+That milestone published ten classes and named its own limit in the same breath:
+isolated glyphs only, no shaping engine. The next step widened exactly that
+limit and nothing else. `GSUB` names a glyph for each of `init`, `medi` and
+`fina`, and those single substitutions are readable with `struct` alone. So the
+same blind question was put four times instead of once.
+
+What is read is still not shaping. A contextual `GSUB` engine remains out of
+reach, and nothing here decides which form appears in an actual word; what is
+recovered is only *the glyph the font names for that position*. Substitutions
+producing more than one glyph are refused and counted rather than guessed —
+five in Amiri, none in the other two.
+
+The first result is an agreement, and it is total. The set of letters the
+positional features do not cover is not merely the same size across the three
+fonts but the same set, letter for letter: eighteen with no initial or medial
+form, seven with no final one. Three fonts from three designers, two scripts
+and two centuries apart, agree perfectly on *which letter has which position*
+and disagree widely on *how each is drawn*. Joining is a fact about the writing
+system that transports; geometry is a fact about the font that transports only
+so far.
+
+The second result is the milestone, and it is a demotion. The ten do not
+survive.
+
+| position | transports to all three |
+|---|---|
+| `isol` | 10 |
+| `init` | **3** |
+| `medi` | **4** |
+| `fina` | 10 |
+| **all four** | **2** |
+
+Isolated and final are identical to each other, which is why the earlier figure
+looked robust: it was one answer counted twice. Initial and medial are a
+different world. Only **سش and عغ** survive all four positions. The flagship
+بتث falls — not because the fonts disagree about ب ت ث, but because in initial
+and medial position both Naskh deposits swallow them into a single tooth shared
+by `ئبتثؽؾؿنىي`, while the Kufi partitions the same letters differently. The
+class does not shrink; it widens until its boundary stops agreeing. The ten were
+a fact about two positions, not about the script.
+
+And widening is not only subtraction. **فق** transports to all three fonts in
+both joined positions and does not exist as a class isolated or final, where the
+two tails diverge. A question asked only of isolated forms could not have seen
+it. Across the four positions the union of transporting classes is eleven and
+the intersection is two, and every claim in this area lives somewhere between
+those two numbers — so which one is meant has to be said.
+
+One discipline is kept throughout: no class here crosses a position boundary.
+Each is measured strictly inside its own column, and it was never asked whether
+an initial form shares a contour with an isolated one. Nothing in this table
+says anything about a letter's constancy across its own positions.
+
+```bash
+python examples/arabic/read_positional_widening.py
+```
+
+### Depositing the projection before the chain
+
+A Markov chain over "the 29 carriers" was built outside this tree, and it
+produced entropies, mutual information and a minimum-complete-memory verdict.
+None of that enters here. What enters is what that chain silently assumed and
+never deposited: **who the carriers are, where a word ends, and what an edge
+is**. A correct computation over an undeposited projection is an arithmetic
+without a referent.
+
+The twenty-nine are a *folding*, not a finding. No new table is written: the
+already-deposited `DECLARED_CARRIERS` is taken as-is — itself declared written
+rather than derived — and eight written forms are folded into their bases
+(`أ إ ؤ ئ آ` → `ء`, `ة` → `ت`, `ى` → `ي`, `ٱ` → `ا`). Twenty-nine is the
+*result of that decision*; fold differently and the number changes.
+
+The word boundary is likewise a decision, and the obvious one is wrong. Splitting
+"between two spaces" was proposed. Measured against both deposits:
+
+| deposit | rule | words | carriers | edges |
+|---|---|---|---|---|
+| Fatiha | space only | 23 | 143 | **120** |
+| Fatiha | any whitespace | **29** | 143 | **114** |
+| Fath 48:29 | space only | 54 | 249 | 195 |
+| Fath 48:29 | any whitespace | 54 | 249 | 195 |
+
+The Fatiha deposit separates its ayahs with a **newline, not a space**. The
+space-only rule therefore welds the end of each ayah to the start of the next,
+producing a fourteen-carrier "word" and **six edges that exist in no writing**:
+`م←ا`, `م←ص`, `م←م`, `ن←ء`, `ن←ا`, `ن←ا`. The carrier count does not move at
+all between the two rules — the entire disagreement is in the *edges*. And the
+same rule is completely inert on the Fath ayah, which is a single line: a rule
+that does not move on one text is not thereby correct on it.
+
+The edge is within-word adjacency only: a word of `n` carriers gives `n-1`, and
+the refusals are published rather than passed over in silence — 28 on the
+Fatiha, 53 on the Fath ayah. The definition is checked arithmetically at every
+census: edges = carriers − words.
+
+What the projection costs is measured too. It discards 119 characters of six
+kinds on the Fatiha and 204 of eight on the Fath ayah. On the Fath ayah fifty
+distinct written words become **forty-seven** skeletons, and all three collisions
+are endings: `اللَّهُ`/`اللَّهِ`, `الْكُفَّارَ`/`الْكُفَّارِ`, `مِنَ`/`مِنْ`.
+On the Fatiha nothing collides at all. On this evidence the projection is deaf
+to the ending — a statement about two texts, not a rule of Arabic.
+
+Repetition is made by the projection rather than found by it: three written
+words repeat in the Fath ayah and **five** skeletons do. Counting repetition on
+skeletons counts the repetition of your projection, not of the text.
+
+There is no transition matrix here, no entropy, no log-likelihood and no model
+comparison — an import-time guard refuses any such name in the interface. This
+is the ground of a chain, not a chain. And MASAQ, on which the external figures
+were computed, is named with its digest in `corpora/README.md` and is **not** in
+the tree, so everything above is measured on two deposits holding eighty-three
+words between them.
+
+```bash
+python examples/arabic/read_carrier_projection_deposit.py
+```
+
 ```bash
 python examples/arabic/read_quran_word_total_standing.py
 ```
