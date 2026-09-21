@@ -8066,6 +8066,45 @@ of codepoints on one position: not a geminate, not a syllable, not a sound.
 python examples/arabic/read_mark_pair_census.py
 ```
 
+Then the sample was widened and asked for its *least* frequent pair. There is
+no third vocalized Qurʾānic deposit in the tree and the corpus bytes are still
+absent, so the only further Arabic available is the tree's own prose — the
+docstrings and named residuals under `src/alghanem/`. Those are deposited
+bytes, re-derivable at read time, so they serve; but they are one hand and an
+engineering log, not a second scribal witness, and `pair_sample_widening` says
+so rather than quietly promoting them. The two deposits and the measuring
+module itself are excluded from that scope so the ladder is cumulative without
+double-counting and the instrument never measures itself.
+
+The widening is 516-fold: 32 pairs, then 16,517. Both questions were answered,
+and they were answered differently. **The leader never moved** — fatḥa+shadda
+leads uncontested at all three rungs, across a register change and two and a
+half orders of magnitude. **The floor moved at every rung**: three rungs named
+three different pairs least-frequent, because a floor standing on one
+occurrence is moved by one occurrence.
+
+Then the floor's twelve occurrences were read one by one, since no minimum is
+worth publishing unexamined. The result was not a rare spelling. The rarest
+pair, sukūn+dagger at 1, is the output of a *defective codec* quoted inside an
+audit of its defect; the next, fatḥa+ḍamma at 2, is two vowels on one carrier —
+a specimen written deliberately illegal to show it yields no state. Neither is
+Arabic. The least frequent pair that *is* Arabic sits at 9, nine times the
+published floor. So the minimum of this census measures what the medium quotes,
+not what the script allows, and the distribution turns out to be a cliff rather
+than a tail: six shadda-bearing pairs hold 99.927%, and the remaining three
+hold twelve occurrences between them.
+
+The widening also changed the population and not merely its size: pairs
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,361 of 16,485
+in the prose. That makes the leader's stability a stability across two
+registers rather than inside one — and it makes the prose figures dated, since
+the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
+instead of hiding.
+
+```bash
+python examples/arabic/read_pair_sample_widening.py
+```
+
 ```bash
 python examples/arabic/read_quran_word_total_standing.py
 ```

@@ -198,6 +198,26 @@ class PairCensus:
 
         return len(self.leaders) == 1
 
+    @property
+    def trailers(self) -> tuple[PairCount, ...]:
+        """أقلُّ المتحقّقِ وقوعًا؛ ولا يُكسَر التساوي باختيار.
+
+        والمعدومُ ليس ههنا: مزدوجٌ لم يقع ليس أقلَّ وقوعًا، بل هو خارجُ
+        التعداد رأسًا (`AN_UNREALIZED_PAIR_IS_NOT_A_FORBIDDEN_PAIR`).
+        """
+
+        ranked = self.ranked
+        if not ranked:
+            return ()
+        floor = ranked[-1].occurrences
+        return tuple(count for count in ranked if count.occurrences == floor)
+
+    @property
+    def the_floor_is_uncontested(self) -> bool:
+        """أَتفرّد القاعُ؟ فإن تساوى اثنان فلا قاعَ مفرد."""
+
+        return len(self.trailers) == 1
+
 
 def pair_census_over(text: str, scope: str) -> PairCensus:
     """يعدّ مزدوجاتِ التسع فوق مواضع نصٍّ، مزدوجًا مزدوجًا."""
