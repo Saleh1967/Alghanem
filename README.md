@@ -8013,6 +8013,59 @@ sets range 0–4 on al-Fātiḥa and 0–5 on Fatḥ, and no letter carries all 
 python examples/arabic/read_haraka_fiber_structure.py
 ```
 
+## The most frequent pair — and why no corpus number appears here
+
+The question was put for the **whole corpus**. The first part of the answer is
+what this tree does not contain: **the corpus bytes are not here.**
+`quran_corpus_word_total` freezes their fingerprint — 1,319,901 bytes and a
+known `sha256` — but not their content, and
+`quran_corpus_bytes_are_resolvable()` returns `False`. So no corpus figure is
+published in this section, and none is extrapolated from the two deposits.
+Instead there are two things: a bound derived from Unicode that holds for any
+text, and an apparatus that runs on the bytes the moment they are supplied and
+**refuses** when they are not.
+
+**Unicode forbids none of the pairs.** The canonical combining classes of the
+nine marks are all distinct — 27, 28, 29, 30, 31, 32, 33, 34, 35 — with no
+repeats. Two consequences are derived rather than stipulated. Mutual exclusion
+would require a shared class, and there is none, so **all C(9,2) = 36 pairs are
+permitted by the table**. And because the classes are distinct, canonical
+ordering totally orders any pair, so **a pair is a set, not a sequence** — the
+order of the two marks carries no information. Measured against the deposits
+and not contradicted: 16 pairs in each, byte-identical before and after
+normalization, none out of class order.
+
+**So the restriction is in the text, not in the table.** Thirty-six are
+permitted; al-Fātiḥa realizes 3 and Fatḥ 48:29 realizes 2, four distinct
+between them, leaving 32 that never occur. That absence is a fact about two
+short texts and may be an artifact of their length rather than a prohibition in
+the script, and it is not read as one.
+
+| pair | al-Fātiḥa | Fatḥ 48:29 |
+|---|---|---|
+| fatḥa + shadda | **10** | **14** |
+| kasra + shadda | 4 | 0 |
+| fatḥa + dagger alif | 2 | 0 |
+| ḍamma + shadda | 0 | 2 |
+
+The leader is **fatḥa + shadda** in both, uncontested in each separately. Every
+realized pair contains shadda or the dagger — the two marks the previous import
+excluded — and the 16 pairs are exactly the 16 fibers the previous section
+measured as enlarged, which is asserted as a cross-check rather than left as a
+coincidence.
+
+**What is preregistered before the bytes are seen:** the corpus run reports the
+full ranked census and not the leader alone, states how many of the 36 are
+realized, and reports the second and third alongside the first so a narrow
+margin cannot be read as a clear one. If two tie, the tie is reported and not
+broken — which is why `leaders` is plural and `the_lead_is_uncontested` is
+something read rather than assumed. And throughout, a pair of marks is a pair
+of codepoints on one position: not a geminate, not a syllable, not a sound.
+
+```bash
+python examples/arabic/read_mark_pair_census.py
+```
+
 ```bash
 python examples/arabic/read_quran_word_total_standing.py
 ```
