@@ -8080,7 +8080,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 524-fold: 32 pairs, then 16,781. Both questions were answered,
+The widening is 536-fold: 32 pairs, then 17,154. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8095,15 +8095,28 @@ a specimen written deliberately illegal to show it yields no state. Neither is
 Arabic. The least frequent pair that *is* Arabic sits at 9, nine times the
 published floor. So the minimum of this census measures what the medium quotes,
 not what the script allows, and the distribution turns out to be a cliff rather
-than a tail: six shadda-bearing pairs hold 99.928%, and the remaining three
+than a tail: six shadda-bearing pairs hold 99.930%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,426 of 16,749
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,498 of 17,122
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
 instead of hiding.
+
+Re-freezing those figures while certifying the projection exposed a second,
+sharper point. The fingerprint guarded the *scope* — file count and byte count —
+but nothing guarded the *transcribed numbers*. Measured again over the very
+fingerprint it had been frozen at (408 files, 7,588,660 bytes), the ladder gave
+16,796 pairs where the prose said 16,781: the transcription had drifted without
+a single witness failing. The third rung is therefore frozen too, in
+`THE_THIRD_RUNG_AT_MEASUREMENT`, and compared against disk by
+`third_rung_figures`. It also makes explicit what the coupling is: this
+measurement population tracks *repository structure*, not an independent
+linguistic domain — every source file added widens it. That is recorded, not
+repaired; the unit measures the prose register as it is and never claimed it was
+a sample of Arabic.
 
 ```bash
 python examples/arabic/read_pair_sample_widening.py
@@ -8340,6 +8353,188 @@ words between them.
 ```bash
 python examples/arabic/read_carrier_projection_deposit.py
 ```
+
+A procedural note on that deposit: it was merged while one check was still
+pending. That is not a failure, but the closure record keeps **two** statuses,
+not one: *merge-time status* — merged with one check pending, **not** "all
+checks passed" — and *eventual check result*, which is recorded separately once
+that check has finished and been read. Neither status may be overwritten by the
+other: a later green run does not retroactively make the merge fully checked,
+and a pending merge does not by itself mean the check failed.
+
+### Certifying the projection before the chain
+
+The previous deposit said who the carriers are, where a word ends and what an
+edge is. It did not say **what the projection lost, and by whose leave**. That
+is what a `ProjectionCertificate` says, and it is derived at read time rather
+than written down.
+
+The order is deposited first, and it is boundary *then* fold:
+
+```
+RawText --B--> WrittenWords --Π_F--> CarrierWords --A--> Adjacency --P--> Probability
+```
+
+Because the tree holds two operations — folding a character stream `F_s` and
+folding a written word `F_w` — their agreement is measured rather than assumed,
+and it does not hold everywhere:
+
+| deposit | rule | `B(F_s(T)) = map(F_w, B(T))`? |
+|---|---|---|
+| Fatiha | any whitespace | yes |
+| Fatiha | space only | **no** |
+| Fath 48:29 | any whitespace | yes |
+| Fath 48:29 | space only | yes |
+
+The cause is measured, not described: the Fatiha's ayah separator is a newline,
+the projection discards it because it is not a carrier, and the space-only rule
+does not eat it — so folding first leaves the newline *inside* a word while
+splitting first removes it. Commutation holds only where the boundary consumes
+every whitespace the fold discards, and **no certificate is issued where the two
+orders disagree**. The rule that fabricated six edges above breaks the
+commutation here too; that is a second finding about it, not a restatement.
+
+That requirement binds *this contract* and is not a claim about projections in
+general. A later projection whose stream fold and word boundary genuinely do not
+commute may still be legitimate — provided its composition order is explicitly
+deposited and argued. What is refused here is an **unordered, ambiguous**
+composition, not non-commutation as such. The ordering algebra that would
+classify a composition as commuting, order-required or unresolved is not
+deposited yet, so this unit issues only the refusal of ambiguity.
+
+Collapse is read off fibers rather than counted in pairs. With
+`[w]_Π = {w' : Π(w') = Π(w)}`, a fiber of size one is a preserved distinction
+and a larger fiber is a collapse group, and every figure is derived:
+`N_written = Σ|f|`, `N_skeleton = |Fibers|`, `Loss = Σ(|f| − 1)`. On the Fath
+ayah that is 50 − 47 = 3, and the arithmetic would still be right if four
+written words met in one skeleton.
+
+| deposit | written | skeletons | loss | preserved | licensed | unresolved | destructive |
+|---|---|---|---|---|---|---|---|
+| Fatiha | 26 | 26 | 0 | 26 | 0 | 0 | 0 |
+| Fath 48:29 | 50 | 47 | **3** | 44 | **0** | **3** | **0** |
+
+A declared fold is a **mechanism**, not a **license**. That the folding table is
+written proves the transformation is declared; it does not prove that losing a
+distinction is permitted. A collapse is licensed only by an entry in an explicit
+written register bound to that deposit and those written forms, and that register
+is **empty**. So `اللَّهُ`/`اللَّهِ`, `الْكُفَّارَ`/`الْكُفَّارِ` and
+`مِنَ`/`مِنْ` are *unresolved distinctions*, not licensed collapses — and their
+measured mechanism is discarded residue, so on this evidence the declared fold
+causes no collapse at all.
+
+`destructive collapse` is likewise not granted by the mere presence of another
+layer in the tree. It requires an independent deposited witness bound to the same
+source identity **and the same occurrence**. That register is empty too, so the
+class is empty here — a statement about our evidence, not about Arabic.
+
+Transport withholds a certificate; it does not locate a property. Ten measured
+geometric classes transport across the three font deposits, and after folding
+they gather carriers the projection keeps apart — `بتث`, `جحخ`, `دذ`, `رز`,
+`سش`, `صض`, `طظ`, `عغ`, and, moved there by the fold itself, `ته` and `ءو`. The
+law is therefore `¬Transport(x) ⇒ ¬CertifiedCarrierInvariant(x)` and **not**
+`¬Transport(x) ⇒ PositionProperty(x) ∨ FontProperty(x)`: a failure to transport
+may lie in the measurement, in an interaction, or in the poverty of the witness.
+The output is typed accordingly: each class comes back as a
+`CarrierDistinctionFinding` whose standing is `NOT_CERTIFIED_AS_CARRIER_INVARIANT`
+— the only standing this evidence admits. Nothing here says a carrier distinction
+is false, refuted or invalid, and an import guard refuses any such name in the
+interface. Ten transporting classes withhold a certificate from fourteen pairwise
+distinctions; they do not falsify one.
+
+Two laws close the layer: no Markov state without a projection identity
+certificate, and no statistical invariance claim from an invariance the
+projection itself made — three written repeats become five projected repeats on
+the Fath ayah. And one distinction is frozen: observed adjacency is not a
+linguistic relation and is not a probabilistic transition. The scope stays two
+deposits of eighty-three words, with a local declared scope rank wired to no
+readiness rank and no kernel authority; widening the population is separate work.
+
+```bash
+python examples/arabic/read_projection_identity_certificate.py
+```
+
+### The state space before the chain
+
+Asked for Markov chains over the Qurʾān, this tree answers by first asking what
+may enter a state space at all. Five units answer, in order, and none of them
+computes a probability.
+
+The first closes a branch instead of deleting it. An excluded claim has two
+standings that must not be confused: `BELOW_THRESHOLD`, which falls short of a
+declared bar and stays a candidate for a larger sample, and
+`CLOSED_AS_LEXICAL_ARTIFACT`, whose corruption mechanism has been diagnosed and
+which a larger sample only strengthens. The raw token-count sukūn-overlap claim
+is closed under `TOKEN_REPETITION_INFLATION` — a presence claim counted token by
+token lets one frequent word testify repeatedly about itself — and the mechanism
+is not asserted but witnessed by the tree's own distributional probe: best
+partition `k=2` rather than `3`, split 2,159 against 34, and a smaller cluster
+mixing genuine function words with high-frequency content words. "Fatḥa-only" is
+closed only to the extent measured, its exposed share `(tokens − types)/tokens`,
+which on the projected Fatḥ āyah is 12.963% and on the Fātiḥa 10.345%. What is
+left over is not admitted; it is simply not closed by this mechanism. A closed
+claim never re-enters a freeze.
+
+The second constrains the branch that survives. Absence is immune to
+token-repetition inflation, but not to emptiness: `obs = 0` reads as suppression
+only under a declared null hypothesis, a declared minimum expectation floor, and
+a published distribution of zero-cell contributors counted as types rather than
+tokens. Lacking any of the three the reading is withheld, not relaxed, and every
+reading carries its largest contributor share so that a cell held up by one
+repeated type is never read as a population. The contract register is empty, and
+the filtered CVC test is named and refused by name rather than silently unknown.
+
+The third deposits the ordering algebra the certificate deferred:
+`COMMUTES | ORDER_REQUIRED | UNRESOLVED`. Commutation is measured; an order is
+*deposited*, naming which side is legal and on what ground; everything else is
+unresolved. What is required is a **known** order, not a commuting one — the
+refusal is of ambiguity, not of non-commutation. The order register is empty, so
+the one broken cell, the Fātiḥa under the space-only rule, stands `UNRESOLVED`.
+Its cause is a line break the fold projects and the boundary does not eat, which
+is live in every multi-line text — and the Qurʾānic corpus is one.
+
+The fourth turns a census into a contract. Sukūn enters as two states, never
+one: written sukūn, whose witness is in the ink, and inferred sukūn, whose
+witness is a rule of ours; merging them would turn our decision into evidence
+from the text. The first half of a geminate is evicted from the column into its
+own category rather than subclassed within it. Measured: written 21 and 27,
+inferred 40 and 61, evicted 14 and 16, against raw columns of 75 and 104. No
+single sukūn total is issued from a three-way column.
+
+The fifth reads the gate. The prerequisites are ordered, not a set — lexical
+closure, sukūn split, corpus bytes, corpus certificate, composition order — and
+the first unmet one is the door. The first two are met; the third is not, since
+`corpora/quran-simple-enhanced.txt` is neither vendored nor declared. So token
+Markov is `BLOCKED` at a named prerequisite, and every token figure that ever
+issues must ship with its dominance reading or the closed artifact returns
+wearing a larger number. Functional Markov is `SUSPENDED`, a different standing
+altogether: it awaits a licensed functional/lexical partition that does not
+exist, the one distributional attempt at measuring one returned a recorded
+negative result, and satisfying all five prerequisites would not lift it. Behind
+both, the statistical gate still holds, now measurable per deposit: three
+repeated written types become five projected on the Fatḥ āyah and stay three on
+the Fātiḥa. The surplus was made by the fold, not by the text.
+
+```bash
+python examples/arabic/read_lexical_artifact_closure.py
+```
+
+```bash
+python examples/arabic/read_suppression_expectation_floor.py
+```
+
+```bash
+python examples/arabic/read_projection_composition_order.py
+```
+
+```bash
+python examples/arabic/read_sukun_state_contract.py
+```
+
+```bash
+python examples/arabic/read_markov_readiness_gate.py
+```
+
 
 ```bash
 python examples/arabic/read_quran_word_total_standing.py

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
+from pathlib import Path
 
 import pytest
 
@@ -17,7 +18,9 @@ from alghanem.arabic.pair_sample_widening import (
     SUKUN,
     THE_SCOPE_EXCLUSIONS,
     THE_TAIL_AUDITED,
+    THE_THIRD_RUNG_AT_MEASUREMENT,
     PairWideningError,
+    RungFigures,
     ScopeFingerprint,
     TailOccurrence,
     prose_scope_files,
@@ -30,7 +33,9 @@ from alghanem.arabic.pair_sample_widening import (
     the_floor_moves_across_the_ladder,
     the_leader_is_stable_across_the_ladder,
     the_least_frequent_arabic_pair,
+    the_transcribed_figures_have_drifted,
     the_widening_ladder,
+    third_rung_figures,
 )
 from alghanem.arabic.pair_sample_widening import (
     PAIR_SAMPLE_WIDENING_NAMED_RESIDUALS as RESIDUALS,
@@ -157,6 +162,31 @@ def test_excluding_the_deposits_keeps_the_ladder_free_of_double_counting() -> No
 def test_the_scope_fingerprint_is_read_from_disk_and_matches_the_frozen_one() -> None:
     assert prose_scope_fingerprint() == PROSE_SCOPE_AT_MEASUREMENT
     assert not prose_scope_has_drifted()
+
+
+def test_the_transcribed_third_rung_figures_match_what_disk_measures() -> None:
+    assert third_rung_figures() == THE_THIRD_RUNG_AT_MEASUREMENT
+    assert not the_transcribed_figures_have_drifted()
+
+
+def test_the_frozen_figures_are_the_ones_the_prose_transcribes() -> None:
+    figures = THE_THIRD_RUNG_AT_MEASUREMENT
+    prose = Path(__file__).resolve().parents[2] / "README.md"
+    text = prose.read_text(encoding="utf-8")
+    assert f"{figures.total_pairs:,}" in text
+    assert f"{figures.tanwin_initial_in_prose:,}" in text
+    assert f"{figures.prose_pairs:,}" in text
+
+
+def test_a_rung_figure_below_one_is_refused() -> None:
+    with pytest.raises(PairWideningError):
+        RungFigures(
+            total_pairs=0,
+            realized=1,
+            shadda_bearing=1,
+            tanwin_initial_in_prose=1,
+            prose_pairs=1,
+        )
 
 
 def test_drift_is_detected_rather_than_smoothed_over() -> None:

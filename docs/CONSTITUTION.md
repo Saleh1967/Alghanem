@@ -4030,3 +4030,205 @@ separately so the convention cannot be read as an analysis.
 carries its schema version in its own content. When the semantics of measurement
 change, the digest changes as a change of contract, and figures from two schema
 versions are not compared as if they measured the same thing.
+
+## `G0.PROJ-0` — projection identity before probabilistic closure
+
+`NoMarkovStateWithoutAProjectionIdentityCertificate`. A probabilistic state
+space may not be raised over a projection whose identity has not been deposited.
+The certificate names its source identity, its fold rule by digest, its boundary
+rule, its fibers, its loss, its residue, its trace and its scope. Numbers
+computed over an undeposited projection are arithmetic without a referent.
+
+`TheOrderIsBoundaryThenFoldThenAdjacency`. The deposited order is
+
+```
+RawText --B--> WrittenWords --Π_F--> CarrierWords --A--> Adjacency --P--> Probability
+```
+
+and no step may be jumped. `P` in particular is not reached before `B`, `Π_F`
+and `A` are deposited, each with its own published cost.
+
+`StreamFoldingAndWordFoldingAreTwoOperationsUntilTheyAreMeasuredEqual`. Where an
+implementation folds a character stream and also folds a written word, their
+agreement `B(F_s(T)) = map(F_w, B(T))` is measured per deposit and per boundary
+rule, never assumed. It holds only where the boundary rule consumes every
+whitespace character the fold discards, and it demonstrably fails on a deposit
+whose ayah separator is a newline under a space-only rule. No certificate is
+issued where the two orders disagree.
+
+`NoCertificateUnderAnUnorderedComposition`. Commutation is a requirement of
+*this contract*, not a property demanded of every legitimate projection. A future
+projection whose stream fold and word boundary do not commute may still be
+legitimate if its composition order is explicitly deposited and argued. What is
+refused here is a composition whose order is ambiguous and undeclared. The
+ordering algebra itself — classifying a composition as commuting, order-required,
+or unresolved — is not deposited yet, so this section issues only the refusal of
+ambiguity.
+
+`TheCollapseIsAFiberNotAPair`. Preservation and loss are read off the
+equivalence classes `[w]_Π = {w' : Π(w') = Π(w)}`. A fiber of size one is a
+preserved distinction; a larger fiber is a collapse group. The published figures
+are derived — `N_written = Σ|f|`, `N_skeleton = |Fibers|`,
+`Loss = Σ(|f| − 1)` — so that a fiber holding four written words is counted
+correctly without amending the rule.
+
+`DeclaredFold != LicensedCollapse`. That a fold rule is written establishes that
+the transformation is *declared*; it does not establish that the loss of a
+distinction is *permitted*. The mechanism of a collapse (declared fold,
+discarded residue, or both) is descriptive and never promotes a standing. A
+collapse is licensed only by an explicit written license register entry bound to
+that deposit and those written forms. An empty register means nothing is
+licensed.
+
+`NoDestructiveCollapseWithoutAnOccurrenceAlignedWitness`. A collapse is called
+destructive only on an independent deposited witness bound to the same source
+identity and the same occurrence, showing a distinction the tree was able to
+keep and the projection erased. The mere existence of another layer in the tree
+is not such a witness. Absent one, the standing stays `unresolved distinction`,
+and an empty destructive class is a statement about our evidence, not about
+Arabic.
+
+`APropertyThatDoesNotTransportIsNotCertifiedAsACarrierInvariant`. Failure to
+transport across the deposited fonts, positions or contexts withholds a
+certificate; it does not locate the property. Formally
+`¬Transport(x) ⇒ ¬CertifiedCarrierInvariant(x)`, and **not**
+`¬Transport(x) ⇒ PositionProperty(x) ∨ FontProperty(x)`, since the failure may
+lie in the measurement, in an interaction, or in the poverty of the witness. The
+output of this step is typed: each affected class is returned with the standing
+`NOT_CERTIFIED_AS_CARRIER_INVARIANT`, and no name in the unit may read as
+falsification (`FALSE_`, `REFUTED`, `DISPROVED`, `INVALID`), which an import
+guard enforces. Withholding a certificate is not falsifying an identity.
+
+`NoStatisticalInvarianceClaimFromAnInvarianceTheProjectionItselfMade`. Where the
+projection increases repetition — three written repeats becoming five projected
+repeats, fifty distinct written words becoming forty-seven skeletons — any
+regularity measured downstream may be an artifact of the projection. Such a
+regularity licenses no invariance claim about the text.
+
+`ObservedAdjacency != LinguisticRelation != ProbabilisticTransition`. An edge
+deposited under an explicit fold and boundary is an observed adjacency. It is
+not thereby a linguistic unit, it carries no causal force, and it is not a state
+transition in the probabilistic sense. The three are named apart and never
+substituted for one another.
+
+`ContractCorrectnessIsNotPopulationWidening`. The scope of this section is the
+two deposits holding eighty-three words between them, and its rank is a local
+declared scope name, connected to no readiness rank and to no kernel authority.
+Widening the population is separate work, so that the correctness of the
+contract is never read as the size of the evidence.
+
+### What this section does not establish
+
+It does not establish that the current folding is the correct projection for
+Arabic, nor that any-whitespace is the final definition of an Arabic word, nor
+that the three unresolved collapses are permitted. It re-legitimises no figure
+computed over MASAQ, whose bytes remain outside the tree and whose chain
+therefore stays unread.
+
+## `G0.STATE-0` — the state space before the chain
+
+This section governs what may enter a state space at all. It adds no statistic,
+issues no transition matrix, and computes no probability. It closes one
+evidential branch, constrains the survivor, deposits the ordering algebra that
+`G0.PROJ-0` deferred, splits one column into two states, and leaves the two
+state-space licences standing exactly where the deposited evidence leaves them.
+Its units are `lexical_artifact_closure`, `suppression_expectation_floor`,
+`projection_composition_order`, `sukun_state_contract` and
+`markov_readiness_gate`.
+
+`AClosedArtifactIsNotAFigureBelowAThreshold`. An excluded claim has two distinct
+standings. `BELOW_THRESHOLD` falls short of a declared bar and stays a candidate
+for a larger sample. `CLOSED_AS_LEXICAL_ARTIFACT` has had its corruption
+mechanism diagnosed, and a larger sample strengthens that mechanism rather than
+weakening it. The raw token-count "sukūn-overlap" claim is closed under
+`TOKEN_REPETITION_INFLATION`: a presence claim counted token by token lets a
+single high-frequency word testify repeatedly on its own behalf. The mechanism
+is not asserted; its witness is the deposited distributional probe, whose best
+partition was `k=2` rather than `3`, split 2,159 against 34, and whose smaller
+cluster mixed genuine function words with high-frequency content words. Numbers
+from a closed claim do not re-enter a freeze, and `refuse_to_freeze` always
+refuses.
+
+`APartialClosureClosesItsMeasuredShareAndNoMore`. "Fatḥa-only" shares the
+mechanism only to the extent measured, so only its exposed share
+`(tokens − types) / tokens` is closed. What remains is not admitted; it is *not
+closed by this mechanism*, which is the difference between what has not been
+shown and what has been shown false. The share is derived at read time from the
+deposit bytes, never transcribed.
+
+`AZeroWithATinyExpectationIsAnEmptyCellNotASuppression`. Absence is immune to
+token-repetition inflation but not to emptiness. `obs = 0` reads as suppression
+only under three deposits together: a declared null hypothesis the expectation
+is computed against, a declared minimum expectation floor, and a published
+distribution of zero-cell contributors counted as **types**, not tokens.
+Lacking any of the three, the reading is withheld, not relaxed. Every reading
+publishes its largest contributor share, so that a cell held up by one repeated
+type is never read as a population. The contract register is empty here, and
+the filtered CVC test is named and refused by name rather than silently unknown.
+
+`AFailureToCommuteDoesNotItselfDepositAnOrder`. `G0.PROJ-0` made commutation a
+condition of its own certificate and deferred the ordering algebra. That algebra
+is deposited here as three standings: `COMMUTES`, which is measured;
+`ORDER_REQUIRED`, which is *deposited* — a written record naming which side of
+the composition is legal and on what ground; and `UNRESOLVED`, which is the
+remainder. A composition is usable when its order is **known**, either because
+it does not matter or because it is written; what is refused is ambiguity, not
+non-commutation. The order register is empty on this evidence, so the single
+broken cell — the Fātiḥa under the space-only rule — stands `UNRESOLVED`. That
+is a statement about our deposit, not about Arabic. Its cause, a line break the
+fold projects and the boundary does not eat, is live in every multi-line text,
+and the Qurʾānic corpus is one; each text is classified on its own measurement
+and never by generalisation.
+
+`TheWrittenAndTheInferredAreNotOneState`. A census names sources; it does not
+partition a state space. Sukūn enters as **two** states, never one: written
+sukūn, whose witness is in the ink, and inferred sukūn, whose witness is a rule
+of ours. Merging them turns our decision into evidence from the text, which is
+the same confusion for which the lexical branch was closed. The first half of a
+geminate is neither: it is evicted from the column into its own category rather
+than subclassed within it. On the two deposits the split is written 21 and 27,
+inferred 40 and 61, evicted 14 and 16, against raw columns of 75 and 104. No
+single "sukūn total" is issued from a three-way column, and the request is
+always refused with its three parts named.
+
+`AGateThatNamesItsFirstUnmetPrerequisiteIsNotAFailure`. The prerequisites of a
+state space are **ordered**, not a set: the first unmet one is the door, and
+what follows it is not examined, since a later condition cannot compensate for
+an earlier one. The order is lexical closure, sukūn column split, corpus bytes,
+corpus projection certificate, composition order. The first two are met by the
+deposits in this tree; the third is not, since the corpus bytes are neither
+vendored nor declared, so every Qurʾānic figure today is a computation without a
+referent. Depositing them would not open the gate, only move the standing to the
+next condition.
+
+`ANegativeProbeSuspendsTheFunctionalSplitUntilItIsDeposited`. The two
+state-space licences are not one. Token Markov is `BLOCKED` at a named
+prerequisite whose path is known. Functional Markov is `SUSPENDED`, which is a
+different standing: it awaits a licensed functional/lexical partition that does
+not exist, and the single distributional attempt at measuring one returned a
+recorded negative result. Satisfying all five prerequisites does not lift the
+suspension, and an import guard makes any other value for that chain impossible.
+
+`NoTokenFigureIsIssuedWithoutItsDominanceReading`. Every figure drawn from
+tokens is issued together with the leading type's share and the repeated mass;
+a `TokenFigure` cannot be constructed without a dominance reading. Absent that,
+the closed lexical artifact would return at a larger scale wearing a larger
+number.
+
+`AnInvarianceTheProjectionMadeIsNotAStatisticalFinding`. The statistical gate of
+`G0.PROJ-0` remains in force and is now measurable per deposit: three repeated
+written types become five repeated projected types on the Fatḥ āyah and remain
+three on the Fātiḥa. The surplus was made by the fold, not by the text, and is
+subtracted from any regularity claimed.
+
+### What this section does not establish
+
+It does not establish any Markov figure over the Qurʾān, functional or token,
+since no such figure is computed here. It does not establish that the Fātiḥa
+composition is unorderable — only that no order for it has been deposited. It
+does not establish that the filtered CVC suppression result is wrong — only that
+its cells, contributors, null hypothesis and expectation floor are not in this
+tree, so it is refused by name rather than read. It does not re-legitimise MASAQ
+or any figure computed over it, and it establishes nothing about the phonology
+of Arabic; its entire subject is what may be admitted as evidence, and in what
+order.
