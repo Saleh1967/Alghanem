@@ -8080,7 +8080,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 540-fold: 32 pairs, then 17,290. Both questions were answered,
+The widening is 543-fold: 32 pairs, then 17,374. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8099,7 +8099,7 @@ than a tail: six shadda-bearing pairs hold 99.931%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,546 of 17,258
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,572 of 17,342
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8553,6 +8553,50 @@ its ties and suspensions named, never as work in progress.
 The deposit is authority-inert: it imports nothing from `kernel/` and nothing
 from `program/`, no gate reads it, and no figure in it claims to have been
 measured here.
+
+## An algebra of slot rights, built here rather than adopted
+
+A three-layer algebra over the triliteral root arrived as prose from the same
+external conversation, with the instruction to build it here and not to lean on
+the one that arrived. So `src/alghanem/arabic/slot_rights_composition_algebra.py`
+re-derives all three layers from the bytes this tree actually holds, and the
+quoted figures are filed as quoted, not as confirmation.
+
+Layer one is the right of a letter to a slot, with three standings and no
+`PROHIBITED` member at all: absence yields a candidate for prohibition, never a
+prohibition, and theorem ح١ — verified at import — says a witnessed right stays
+witnessed as evidence grows. A slot is born only under three written conditions:
+distinct carriers, witnessed substitution pairs, and the fall of the weaker
+model that makes the three slots exchangeable inside a root.
+
+Layer two asks what composition would have to mean. Theorem ت١ shows the left
+and right compositions are identically equal, so the real question is whether
+either equals the joint law — true if and only if the flanks are conditionally
+independent given the middle — and its verifier checks the *iff* in both
+directions. Theorem ت٢ was born from a recorded failure: on a lexicon where no
+root repeats, a null model that permutes freely manufactures collisions and so
+does not preserve the unit of analysis. The replacement is a swap chain that
+holds both adjacent tables and root distinctness fixed, and that replacement is
+post hoc, named as such.
+
+Layer three types every constraint by relation, so identity and place-class are
+separate cells and OCP becomes one branch of the set rather than its root. Two
+things there are worth naming. The permutation floor binds the correction: a
+two-sided permutation p has floor `2/(B+1)`, not `1/(B+1)`, and with the wrong
+floor extreme cells silently report as neutral under a Bonferroni threshold.
+And the difference between the two adjacent relations is located, not merely
+asserted — it lives in the identity cell alone, which is why this tree's earlier
+adjacency verdict and this one do not contradict each other.
+
+Nothing in the deposit is licensed. The licence condition was written before the
+counts, it requires a second independent source, and that source's bytes are not
+here; `CellVerdict` raises if anything tries to construct a licensed verdict.
+Like the audit register beside it, the module imports nothing from `kernel/` and
+nothing from `program/`, and no gate reads it.
+
+```bash
+python examples/arabic/run_slot_rights_algebra.py
+```
 
 ```bash
 python examples/arabic/read_lexical_artifact_closure.py

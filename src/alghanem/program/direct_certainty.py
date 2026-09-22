@@ -663,6 +663,60 @@ REPORTED_UNVERIFIED_FIGURES: Final[tuple[UnverifiedFigureRecord, ...]] = (
         source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
         constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
     ),
+    UnverifiedFigureRecord(
+        subject="عدّةُ جذور المقاييس المنقولة",
+        figure_text="4,362 جذرًا",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="عدّةُ جذور المدوّنة المنقولة",
+        figure_text="1,602 جذرًا",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="خلايا الحقوق المنقولة",
+        figure_text="84 خليّةً كلُّها مشهودة",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="خلايا التفضيل والكبت المنقولة",
+        figure_text="10 تفضيلٍ و6 كبت",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="اجتماعُ الطرفين من مخرجٍ واحدٍ منقولًا",
+        figure_text="0.48 من المتوقَّع",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="تماثلُ الطرفين منقولًا",
+        figure_text="0.14 و0.12 من المتوقَّع",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="تخمةُ المضاعف منقولةً",
+        figure_text="444 بإزاء 186.6 متوقَّعًا",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="كبتُ ج١ج٢ منقولًا",
+        figure_text="2 بإزاء 174.5 متوقَّعًا",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="تجانسُ الذلقيّ في ج١ج٣ منقولًا",
+        figure_text="0.89 و0.91",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
 )
 """أرقامُ نصّ البروتوكول نفسِه، مقروءةً بقاعدته: خبرٌ مُسجَّلٌ لا قياسٌ مقبول."""
 
