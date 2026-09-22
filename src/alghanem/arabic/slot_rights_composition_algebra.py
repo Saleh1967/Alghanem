@@ -1,4 +1,4 @@
-"""جبرٌ على ثلاث طبقات: حقوقُ الخانة، ثمّ هندسةُ التركيب، ثمّ القيدُ مصنَّفًا بنوع العلاقة.
+"""جبرٌ على أربع طبقات: حقوقُ الخانة، فهندسةُ التركيب، فالقيدُ المصنَّف، فالمثلّث.
 
 **ما تفعله هذه الوحدة**: تبني الطبقاتِ الثلاثَ بناءً مستقلًّا على بايتات هذه
 الشجرة وحدَها، وتُبرهن مبرهنتين تُفحصان آليًّا عند الاستيراد، وتقيس ما يُقاس
@@ -74,6 +74,51 @@
 الرفضُ **متعذّرًا لا منتفيًا**، ويُخرَج حينئذٍ ``VerdictStanding.UNRESOLVABLE_AT_THIS_B``
 لا «غيرُ دالّ». والعتبةُ والعددُ يُعلَنان مع كلّ حكم.
 
+# الطبقة الرابعة: الترخيصُ مثلّثًا لا سلسلة
+
+لمّا سقط إغلاقُ التركيب في الطبقة الثانية تبيّن أنّ ``B₁₃`` رابطةٌ مستقلّةٌ لا
+حاصلُ الرابطتين المتجاورتين. فالرسمُ مثلّثٌ لا سلسلة. ويبقى سؤالٌ واحدٌ بعده،
+وهو **سؤال الطبقة الرابعة**: أيكفي المثلّثُ نفسُه؟ أي هل الجذرُ الثلاثيُّ
+مردودٌ إلى رابطاته الثنائية الثلاث مجتمعةً، أم فيه **حدٌّ ثلاثيٌّ** لا تبلغه
+الثلاثُ مهما اجتمعت؟
+
+**النموذجُ الصفريّ**: نموذجُ «لا تفاعلَ ثلاثيّ» — يثبّت الجداول الثنائية
+الثلاثة ``C1C2`` و``C2C3`` و``C1C3`` **كلَّها تامّةً معًا**، ويُبقي الجدولَ
+ثنائيَّ القيمة فيحفظ تمايزَ الجذور بحكم بنيته لا باشتراطٍ زائد. وحركتُه حركةُ
+المكعّب ٢×٢×٢: يُختار حرفان في كلّ خانة، فتنقلب قُطرا المكعّب أحدهما بالآخر.
+
+**مبرهنة ث١ (حركةُ المكعّب تحفظ الهوامش الثلاثة)**: القُطران
+``P = {ace, adf, bcf, bde}`` و``M = {acf, ade, bce, bdf}`` لهما الإسقاطاتُ
+الثنائيّةُ الثلاثُ نفسُها بعينها: ``{ac, ad, bc, bd}`` و``{ce, cf, de, df}``
+و``{ae, af, be, bf}``. والبرهانُ عدٌّ مباشرٌ على ثمانِ خلايا. وعليه فكلُّ خطوةٍ
+تُبقي الجداول الثلاثة كما هي، فما يتحرّك هو **الحدُّ الثلاثيُّ وحدَه**. تُفحَص
+آليًّا في ``verify_cube_move_preserves_all_margins``.
+
+**مبرهنة ث٢ (الإحصاءةُ الثلاثيّةُ ليست فضلةَ هوامش)**: لو كانت الإحصاءةُ
+المختبَرةُ محدَّدةً بالهوامش الثنائية لكان الاختبارُ فارغًا: قيمتُها ثابتةٌ على
+الألياف كلِّها فلا يقع رفضٌ أبدًا، ويُقرأ ذلك «انغلاقًا» وهو أثرُ التعريف.
+والبرهانُ شاهدٌ مضادٌّ صريح: على المكعّب ٢×٢×٢ بتوزيع مخارجَ مكتوب، تختلف
+قيمةُ الإحصاءة بين ``P`` و``M`` مع تطابق الهوامش الثلاثة. فالإحصاءاتُ الثلاثُ
+المختبَرةُ **ثلاثيّةٌ بالفعل**. تُفحَص آليًّا في
+``verify_ternary_statistics_are_not_margin_determined``.
+
+وكشف هذا الفحصُ — **قبل العدّ لا بعده** — أنّ المكعّبَ المجرّد لا يُحرّك
+التغطيةَ ألبتّة: قُطراه متساويا عدد الثلاثيّات المتمايزة وإن اختلفت أعيانُها،
+مهما كان توزيعُ المخارج. فالشاهدُ لا يقوم على المكعّب وحدَه، بل على جدولٍ فيه
+المكعّبُ و**صدًى** ساكنٌ على خلايا منفصلة. وهذا هو الفرقُ بين إحصاءةٍ جمعيّةٍ
+على الصفوف وإحصاءةٍ جمعيّةٍ على المجموعة، ولولا اشتراطُ الشاهد لمرّ اختبارُ
+التغطية فارغًا وقُرئ جمودُه انغلاقًا.
+
+``A_CUBE_MOVE_SET_IS_NOT_A_PROVEN_MARKOV_BASIS``: حركاتُ المكعّب ٢×٢×٢ لا
+تُثبَت هنا كفايتُها أساسًا ماركوفيًّا لنموذج «لا تفاعل ثلاثيّ»؛ وهو في العامّ
+يحتاج حركاتٍ أعلى رتبة. فالسلسلةُ تمشي في جزءٍ من الليف لا فيه كلِّه، وكلُّ
+رقمٍ يخرج منها مقيَّدٌ بذلك.
+
+``A_STILL_STATISTIC_IS_NOT_A_CLOSED_TRIANGLE``: جمودُ الإحصاءة يحتمل أمرين —
+أن يكون الحدُّ الثلاثيُّ منتفيًا، أو أن تكون السلسلةُ لا تخلط. فلا يُقرأ عدمُ
+الرفض انغلاقًا إلّا بعد حارسٍ مكتوب: عددُ الخطوات المقبولة فوق حدٍّ، وتباينُ
+الإحصاءة فوق الصفر، وإلّا فالمنزلةُ ``TriangleStanding.UNMIXED``.
+
 **خمولٌ سلطويّ**: لا ولادةَ هنا، ولا حكمَ ولادة، ولا تجميدَ ``E0``، ولا
 استيرادَ من ``kernel/`` ولا من ``program/``.
 """
@@ -82,9 +127,10 @@ from __future__ import annotations
 
 import random
 from collections import defaultdict
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from enum import Enum
+from itertools import product
 from typing import Final
 
 from .maqayis_adjacency_constraint import (
@@ -112,10 +158,14 @@ __all__ = [
     "THE_LICENCE_IS_WITHHELD_ON_ITS_OWN_TERMS",
     "THE_PERMUTATION_FLOOR_BINDS_THE_CORRECTION",
     "THE_PREREGISTERED_LICENCE_CONDITION",
+    "THE_PREREGISTERED_TRIANGLE_CONDITION",
     "THE_QUOTED_ALGEBRA_FIGURES",
     "SlotBirthConditions",
     "SlotRight",
     "SlotRightsAlgebraError",
+    "TernaryStatistic",
+    "TriangleReading",
+    "TriangleStanding",
     "VerdictStanding",
     "algebra_substrate",
     "distinctness_preserving_swap_chain",
@@ -123,6 +173,7 @@ __all__ = [
     "fold_collapse_count",
     "licence_standing",
     "measure_closure",
+    "measure_triangle_closure",
     "positional_asymmetry_locus",
     "quoted_against_measured",
     "second_source_is_resolvable",
@@ -130,8 +181,12 @@ __all__ = [
     "slot_rights",
     "substitution_pairs",
     "typed_cell_verdicts",
+    "no_three_way_interaction_chain",
+    "ternary_statistics",
     "verify_composition_identity",
+    "verify_cube_move_preserves_all_margins",
     "verify_naive_null_breaks_distinctness",
+    "verify_ternary_statistics_are_not_margin_determined",
     "verify_witness_monotonicity",
 ]
 
@@ -248,6 +303,18 @@ THE_PERMUTATION_FLOOR_BINDS_THE_CORRECTION: Final[str] = (
     "يُخرِج حيادًا مصنوعًا من ضيق العدد لا من البيانات."
 )
 
+A_CUBE_MOVE_SET_IS_NOT_A_PROVEN_MARKOV_BASIS: Final[str] = (
+    "حركاتُ المكعّب ٢×٢×٢ لا تُثبَت ههنا أساسًا ماركوفيًّا تامًّا لنموذج «لا تفاعل "
+    "ثلاثيّ»؛ فالسلسلةُ تمشي في جزءٍ من الليف لا في كلِّه، وكلُّ رقمٍ يخرج منها "
+    "مقيَّدٌ بهذا لا مُطلَق."
+)
+
+A_STILL_STATISTIC_IS_NOT_A_CLOSED_TRIANGLE: Final[str] = (
+    "جمودُ الإحصاءة يحتمل انتفاءَ الحدّ الثلاثيّ ويحتمل تعذّرَ الخلط، وهما "
+    "مختلفان. فلا يُقرأ عدمُ الرفض انغلاقًا إلّا بعد حارسٍ مكتوبٍ على عدد الخطوات "
+    "المقبولة وعلى تباين الإحصاءة، وإلّا فالمنزلةُ `UNMIXED` لا «انغلق»."
+)
+
 SLOT_RIGHTS_ALGEBRA_NAMED_RESIDUALS: Final[dict[str, str]] = {
     "THERE_IS_NO_PROHIBITED_STANDING": THERE_IS_NO_PROHIBITED_STANDING,
     "THE_LICENCE_IS_WITHHELD_ON_ITS_OWN_TERMS": (
@@ -264,6 +331,12 @@ SLOT_RIGHTS_ALGEBRA_NAMED_RESIDUALS: Final[dict[str, str]] = {
     ),
     "THE_PERMUTATION_FLOOR_BINDS_THE_CORRECTION": (
         THE_PERMUTATION_FLOOR_BINDS_THE_CORRECTION
+    ),
+    "A_CUBE_MOVE_SET_IS_NOT_A_PROVEN_MARKOV_BASIS": (
+        A_CUBE_MOVE_SET_IS_NOT_A_PROVEN_MARKOV_BASIS
+    ),
+    "A_STILL_STATISTIC_IS_NOT_A_CLOSED_TRIANGLE": (
+        A_STILL_STATISTIC_IS_NOT_A_CLOSED_TRIANGLE
     ),
 }
 
@@ -1023,6 +1096,334 @@ def positional_asymmetry_locus(
 
 
 # ---------------------------------------------------------------------------
+# الطبقة الرابعة: الترخيصُ مثلّثًا لا سلسلة
+# ---------------------------------------------------------------------------
+
+THE_PREREGISTERED_TRIANGLE_CONDITION: Final[str] = (
+    "شرطُ حكم الطبقة الرابعة، مكتوبٌ ومُودَعٌ قبل تشغيل قياسها: يُقاس ثلاثُ "
+    "إحصاءاتٍ ثلاثيّةٍ مُسمّاةٍ سلفًا في `TernaryStatistic` تحت نموذج «لا تفاعل "
+    "ثلاثيّ» بحركة المكعّب؛ فإن لم تخرج واحدةٌ منها عن حدّ التبديل عند عتبةٍ "
+    "قدرُها 0.05 مقسومةً على ثلاث، قيل «انغلق المثلّث على هذا المصدر وهذه "
+    "السلسلة»؛ وإن خرجت واحدةٌ فأكثر قيل «سقط»، ولزم حدٌّ ثلاثيٌّ وراء الروابط "
+    "الثلاث. ولا يُقرأ عدمُ الرفض انغلاقًا إلّا إذا اجتاز الحارسُ: خطواتٌ مقبولةٌ "
+    "لا تقلّ عن ألف، وتباينٌ فوق الصفر في كلّ إحصاءة، وإلّا فالمنزلةُ `UNMIXED`. "
+    "ولا يُمنَح وسمُ «مرخّص» في الحالين، لأنّ المصدرَ الثاني غائبٌ عن الشجرة."
+)
+
+
+class TernaryStatistic(Enum):
+    """الإحصاءاتُ الثلاثُ المُسمّاةُ قبل العدّ، وكلُّها ثلاثيّةُ الرتبة."""
+
+    PLACE_HOMOGENEOUS = "مخرجٌ واحدٌ للحروف الثلاثة"
+    PLACE_ALL_DISTINCT = "ثلاثةُ مخارجَ متمايزة"
+    PLACE_TRIPLE_COVERAGE = "عدّةُ ثلاثيّات المخارج المحقَّقة"
+
+
+class TriangleStanding(Enum):
+    """منزلةُ المثلّث: انغلاقٌ، أو سقوطٌ، أو تعذّرٌ لجمود السلسلة."""
+
+    CLOSES_ON_THIS_SOURCE = "انغلق على هذا المصدر وهذه السلسلة"
+    FAILS = "سقط، فثمّ حدٌّ ثلاثيٌّ وراء الروابط الثلاث"
+    UNMIXED = "غيرُ محسومٍ لتعذّر الخلط"
+
+
+def ternary_statistics(
+    sample: Iterable[tuple[str, str, str]],
+    places: Mapping[str, str],
+) -> dict[TernaryStatistic, int]:
+    """الإحصاءاتُ الثلاثُ على تشكيلةٍ واحدة، بترتيبٍ مُسمًّى لا ضمنيّ."""
+
+    homogeneous = 0
+    distinct = 0
+    triples: set[tuple[str, str, str]] = set()
+    for first, middle, last in sample:
+        triple = (places[first], places[middle], places[last])
+        triples.add(triple)
+        spread = len(set(triple))
+        if spread == 1:
+            homogeneous += 1
+        elif spread == 3:
+            distinct += 1
+    return {
+        TernaryStatistic.PLACE_HOMOGENEOUS: homogeneous,
+        TernaryStatistic.PLACE_ALL_DISTINCT: distinct,
+        TernaryStatistic.PLACE_TRIPLE_COVERAGE: len(triples),
+    }
+
+
+THE_CUBE_DIAGONALS: Final[
+    tuple[tuple[tuple[int, int, int], ...], tuple[tuple[int, int, int], ...]]
+] = (
+    ((0, 0, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0)),
+    ((0, 0, 1), (0, 1, 0), (1, 0, 0), (1, 1, 1)),
+)
+
+
+def verify_cube_move_preserves_all_margins() -> bool:
+    """فحصُ مبرهنة ث١ آليًّا: القُطران متساويا الإسقاطات الثلاثة.
+
+    يُبنى المكعّبُ على حرفين في كلّ خانة، وتُقارَن الإسقاطاتُ الثنائيّةُ الثلاثُ
+    عدًّا لا وصفًا. ويُفحَص معها أنّ القُطرين متمايزان، وإلّا كانت الحركةُ عدمًا.
+    """
+
+    letters = (("a", "b"), ("c", "d"), ("e", "f"))
+    sides = tuple(
+        tuple(
+            (letters[0][first], letters[1][middle], letters[2][last])
+            for first, middle, last in diagonal
+        )
+        for diagonal in THE_CUBE_DIAGONALS
+    )
+    if set(sides[0]) & set(sides[1]):
+        raise SlotRightsAlgebraError("قُطرا المكعّب لا يتقاطعان، وقد تقاطعا.")
+    for pair in ((0, 1), (1, 2), (0, 2)):
+        projections = tuple(
+            sorted((root[pair[0]], root[pair[1]]) for root in side) for side in sides
+        )
+        if projections[0] != projections[1]:
+            raise SlotRightsAlgebraError(
+                "سقطت مبرهنة ث١: حركةُ المكعّب حرّكت إسقاطًا ثنائيًّا."
+            )
+    return True
+
+
+def _echo_block(
+    side: Sequence[tuple[str, str, str]],
+    places: Mapping[str, str],
+) -> tuple[tuple[tuple[str, str, str], ...], dict[str, str]]:
+    """صدًى لثلاثيّات ``side`` على خلايا منفصلةٍ عن المكعّب تمامًا.
+
+    الصدى ساكنٌ لا تمسّه حركةُ المكعّب، لأنّ حروفَه غيرُ حروفه. وهو اللازم
+    لإظهار أثر الحركة في إحصاءةٍ جمعيّةٍ على المجموعة كالتغطية.
+    """
+
+    minted: dict[str, str] = {}
+    rows: list[tuple[str, str, str]] = []
+    for root in side:
+        row: list[str] = []
+        for slot, letter in enumerate(root):
+            name = f"صدى{slot}{places[letter]}"
+            minted[name] = places[letter]
+            row.append(name)
+        rows.append((row[0], row[1], row[2]))
+    return tuple(rows), minted
+
+
+def verify_ternary_statistics_are_not_margin_determined() -> bool:
+    """فحصُ مبرهنة ث٢ آليًّا: لكلّ إحصاءةٍ شاهدٌ مضادٌّ على جدولٍ لا على مكعّب.
+
+    يُبنى جدولان يختلفان بحركة مكعّبٍ واحدةٍ لا غير — فهوامشُهما الثلاثةُ
+    متطابقةٌ بحكم ث١ — ويُطلَب لكلّ إحصاءةٍ توزيعُ مخارجَ تختلف عنده قيمتُها
+    بين الجدولين. وأُضيف إلى المكعّب **صدًى** على خلايا منفصلة، لأنّ المكعّبَ
+    المجرّد لا يُحرّك التغطية ألبتّة: قُطراه متساويا عدد الثلاثيّات المتمايزة
+    وإن اختلفت أعيانُها. وهذا وحدَه فرقُ إحصاءةٍ جمعيّةٍ على المجموعة من
+    إحصاءةٍ جمعيّةٍ على الصفوف، وكشفُه هنا سابقٌ للعدّ لا لاحقٌ له.
+    """
+
+    letters = ("a", "b", "c", "d", "e", "f")
+    sides = tuple(
+        tuple(
+            (letters[first], letters[2 + middle], letters[4 + last])
+            for first, middle, last in diagonal
+        )
+        for diagonal in THE_CUBE_DIAGONALS
+    )
+    unwitnessed = set(TernaryStatistic)
+    for assignment in product("012", repeat=len(letters)):
+        places = dict(zip(letters, assignment, strict=True))
+        echo, minted = _echo_block(sides[1], places)
+        widened = {**places, **minted}
+        left = ternary_statistics(sides[0] + echo, widened)
+        right = ternary_statistics(sides[1] + echo, widened)
+        for statistic in tuple(unwitnessed):
+            if left[statistic] != right[statistic]:
+                unwitnessed.discard(statistic)
+        if not unwitnessed:
+            return True
+    raise SlotRightsAlgebraError(
+        "سقطت مبرهنة ث٢: إحصاءةٌ لا شاهدَ لها، فهي فضلةُ هوامشَ لا حدٌّ ثلاثيّ."
+    )
+
+
+def no_three_way_interaction_chain(
+    present: set[tuple[str, str, str]],
+    letters: Sequence[str],
+    *,
+    accepted_target: int,
+    generator: random.Random,
+    proposal_budget: int,
+) -> int:
+    """سلسلةُ «لا تفاعلَ ثلاثيّ»: تقلب قُطرَ مكعّبٍ بالآخر، وتُعدِّل ``present``.
+
+    المقترحُ **متناظر**: تُسحَب حرفان في كلّ خانة سحبًا منتظمًا، فاحتمالُ اقتراح
+    الحركة واحتمالُ اقتراح عكسها سواء. ورُفض المقترحُ المُوجَّهُ الأسرعُ لأنّه
+    غيرُ متناظرٍ فيُخِلّ بالتوزيع على الليف. ويُخرَج عددُ الخطوات المقبولة.
+    """
+
+    if accepted_target < 0 or proposal_budget < 0:
+        raise SlotRightsAlgebraError("عددٌ سالبٌ لا يكون هدفًا ولا ميزانيّة.")
+    width = len(letters)
+    if width < 2:
+        raise SlotRightsAlgebraError("المكعّبُ يقتضي حرفين فأكثر في كلّ خانة.")
+    holds = present.__contains__
+    draw = generator.randrange
+    accepted = 0
+    for _ in range(proposal_budget):
+        if accepted >= accepted_target:
+            break
+        picks = []
+        for _ in range(3):
+            one = draw(width)
+            other = draw(width - 1)
+            picks.append((one, other + (other >= one)))
+        first_a, first_b = letters[picks[0][0]], letters[picks[0][1]]
+        mid_a, mid_b = letters[picks[1][0]], letters[picks[1][1]]
+        last_a, last_b = letters[picks[2][0]], letters[picks[2][1]]
+        corner = (first_a, mid_a, last_a)
+        opposite = (first_b, mid_b, last_b)
+        if holds(corner) == holds(opposite):
+            continue
+        even = (
+            corner,
+            (first_a, mid_b, last_b),
+            (first_b, mid_a, last_b),
+            (first_b, mid_b, last_a),
+        )
+        odd = (
+            (first_a, mid_a, last_b),
+            (first_a, mid_b, last_a),
+            (first_b, mid_a, last_a),
+            opposite,
+        )
+        held, empty = (even, odd) if holds(corner) else (odd, even)
+        if not (holds(held[1]) and holds(held[2]) and holds(held[3])):
+            continue
+        if holds(empty[0]) or holds(empty[1]) or holds(empty[2]):
+            continue
+        present.difference_update(held)
+        present.update(empty)
+        accepted += 1
+    return accepted
+
+
+@dataclass(frozen=True, slots=True)
+class TriangleReading:
+    """قراءةُ المثلّث: أيُستغنى بالروابط الثلاث عن حدٍّ ثلاثيّ؟"""
+
+    observed: Mapping[TernaryStatistic, int]
+    null_mean: Mapping[TernaryStatistic, float]
+    probability: Mapping[TernaryStatistic, float]
+    spread: Mapping[TernaryStatistic, int]
+    accepted_moves: int
+    draws: int
+    threshold: float
+    accepted_floor: int
+
+    def __post_init__(self) -> None:
+        if self.draws < 1:
+            raise SlotRightsAlgebraError("قراءةٌ بلا سحبةٍ ليست قراءة.")
+        if set(self.observed) != set(TernaryStatistic):
+            raise SlotRightsAlgebraError("قراءةُ المثلّث تستوفي الإحصاءات الثلاث.")
+
+    @property
+    def mixed(self) -> bool:
+        """أخلطت السلسلة؟ والحارسُ خطواتٌ مقبولةٌ وتباينٌ في كلّ إحصاءة."""
+
+        if self.accepted_moves < self.accepted_floor:
+            return False
+        return all(self.spread[statistic] > 1 for statistic in TernaryStatistic)
+
+    @property
+    def standing(self) -> TriangleStanding:
+        """منزلةُ المثلّث بالشرط المكتوب قبل العدّ، لا بقراءةٍ بعده."""
+
+        if not self.mixed:
+            return TriangleStanding.UNMIXED
+        floor = 2.0 / (self.draws + 1)
+        if self.threshold < floor:
+            return TriangleStanding.UNMIXED
+        for statistic in TernaryStatistic:
+            if self.probability[statistic] <= self.threshold:
+                return TriangleStanding.FAILS
+        return TriangleStanding.CLOSES_ON_THIS_SOURCE
+
+
+def measure_triangle_closure(
+    roots: Sequence[tuple[str, str, str]] | None = None,
+    *,
+    draws: int = 200,
+    burn_in: int = 2000,
+    sweep: int = 100,
+    proposal_budget: int = 40_000_000,
+    accepted_floor: int = 1000,
+    seed: int = 20260922,
+) -> TriangleReading:
+    """قياسُ المثلّث تحت نموذجٍ يثبّت الروابطَ الثلاثَ كلَّها ويحفظ التمايز.
+
+    ``burn_in`` و``sweep`` بالخطوات **المقبولة** لا المقترَحة، و``proposal_budget``
+    سقفٌ يمنع دورانًا بلا نهاية إن لم تقبل السلسلةُ شيئًا. والقيمةُ المُخرَجةُ
+    قيمةٌ ذاتُ وجهين، وأصغرُ ما تبلغه ``2/(draws+1)``.
+    """
+
+    body = tuple(roots) if roots is not None else algebra_substrate()
+    if draws < 1:
+        raise SlotRightsAlgebraError("قياسٌ بلا سحبةٍ ليس قياسًا.")
+    letters = tuple(sorted({letter for root in body for letter in root}))
+    places = {letter: place_of(letter) for letter in letters}
+    observed = ternary_statistics(body, places)
+    present = set(body)
+    if len(present) != len(body):
+        raise SlotRightsAlgebraError("النموذجُ ثنائيُّ القيمة، فلا يقبل جذرًا مكرّرًا.")
+    generator = random.Random(seed)
+    accepted = no_three_way_interaction_chain(
+        present,
+        letters,
+        accepted_target=burn_in,
+        generator=generator,
+        proposal_budget=proposal_budget,
+    )
+    totals = dict.fromkeys(TernaryStatistic, 0.0)
+    atmost = dict.fromkeys(TernaryStatistic, 0)
+    atleast = dict.fromkeys(TernaryStatistic, 0)
+    seen: dict[TernaryStatistic, set[int]] = {
+        statistic: set() for statistic in TernaryStatistic
+    }
+    for _ in range(draws):
+        accepted += no_three_way_interaction_chain(
+            present,
+            letters,
+            accepted_target=sweep,
+            generator=generator,
+            proposal_budget=proposal_budget,
+        )
+        drawn = ternary_statistics(present, places)
+        for statistic, value in drawn.items():
+            totals[statistic] += value
+            seen[statistic].add(value)
+            atmost[statistic] += value <= observed[statistic]
+            atleast[statistic] += value >= observed[statistic]
+    probability = {
+        statistic: min(
+            1.0,
+            2.0 * min(atmost[statistic] + 1, atleast[statistic] + 1) / (draws + 1),
+        )
+        for statistic in TernaryStatistic
+    }
+    return TriangleReading(
+        observed=dict(observed),
+        null_mean={
+            statistic: totals[statistic] / draws for statistic in TernaryStatistic
+        },
+        probability=probability,
+        spread={statistic: len(seen[statistic]) for statistic in TernaryStatistic},
+        accepted_moves=accepted,
+        draws=draws,
+        threshold=0.05 / len(TernaryStatistic),
+        accepted_floor=accepted_floor,
+    )
+
+
+# ---------------------------------------------------------------------------
 # المنقولُ في وجه المقيس
 # ---------------------------------------------------------------------------
 
@@ -1086,7 +1487,7 @@ def quoted_against_measured(
 
 
 # ---------------------------------------------------------------------------
-# فحصُ المبرهنتين وحراسةُ الخمول عند الاستيراد
+# فحصُ المبرهنات وحراسةُ الخمول عند الاستيراد
 # ---------------------------------------------------------------------------
 
 
@@ -1106,3 +1507,5 @@ def _refuse_operative_vocabulary() -> None:
 
 _refuse_operative_vocabulary()
 verify_composition_identity()
+verify_cube_move_preserves_all_margins()
+verify_ternary_statistics_are_not_margin_determined()
