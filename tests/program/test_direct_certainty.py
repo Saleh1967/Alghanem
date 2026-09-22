@@ -231,7 +231,7 @@ def test_a_verdict_without_a_written_reason_is_refused() -> None:
 
 
 def test_every_reported_figure_arrived_as_prose_and_none_is_a_measurement() -> None:
-    assert len(REPORTED_UNVERIFIED_FIGURES) == 17
+    assert len(REPORTED_UNVERIFIED_FIGURES) == 51
     for record in REPORTED_UNVERIFIED_FIGURES:
         assert not record.source_genus.supports_freeze
         assert record.subject.strip()

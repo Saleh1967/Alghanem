@@ -30,7 +30,15 @@
 منها ما حُسِب على بياناتٍ غير منقّاة، ومنها ما بقي تصنيفُه ناقصًا؛ فوصولُ
 شاهدٍ مُبصَّمٍ إلى الشجرة يرفع جنسًا واحدًا عمّن شهِدَه، ولا يُصحِّح رقمًا عطبُه
 في كيفيّة إنتاجه (`ABSENCE_OF_BYTES_IS_NOT_EVERY_GROUND_OF_REFUSAL`). ولذلك
-تُشتَقّ القسمةُ في `figures_by_constraint()` ولا تُكتَب عددًا في نثر.
+تُشتَقّ القسمةُ في `figures_by_constraint()` ولا تُكتَب عددًا في نثر. وقد
+أُضيف إلى القيود الثلاثة قيدٌ رابعٌ مُسمًّى: `POST_HOC_LEVEL_SELECTION`، لرقمٍ
+اختير مستواه **بعد** رؤية نتيجة المستوى الآخر. وعطبُه ليس غيابَ بايتات ولا
+تلوّثَ بيانات، بل كيفيّةُ إنتاجه؛ فلا يرفعه إيداعُ ملفّ.
+
+**وأرقامُ تدقيق SLGAE تسكن هذا السجلَّ لا سجلًّا ثانيًا.** إيداعُ ذلك التقرير
+قائمٌ في `alghanem.arabic.slgae_audit_deposit`، وكلُّ رقمٍ فيه له نظيرٌ ههنا
+بجنس مصدره وقيده، ويُقابَل الإيداعُ بالسجلّ في الشواهد. ولا تقرأ هذه الوحدةُ
+ذلك الإيداعَ ولا تستورده، فاتّجاهُ الاعتماد محفوظ.
 
 **وقاعدةُ النتيجتين تقرأ هذه الوحدةَ ولا تُقرَأ منها.** ما بعد التجميد —
 تصنيفُ كلّ محاولةِ إغلاقِ فجوةٍ في فئتين لا ثالثَ لهما — قائمٌ في
@@ -316,6 +324,7 @@ class FigureConstraint(Enum):
     COMPUTED_ON_UNPURIFIED_DATA = "computed_on_unpurified_data"
     NOT_RE_DERIVABLE_IN_THIS_TREE = "not_re_derivable_in_this_tree"
     CLASSIFICATION_INCOMPLETE = "classification_incomplete"
+    POST_HOC_LEVEL_SELECTION = "post_hoc_level_selection"
 
 
 @dataclass(frozen=True)
@@ -450,6 +459,210 @@ REPORTED_UNVERIFIED_FIGURES: Final[tuple[UnverifiedFigureRecord, ...]] = (
         source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
         constraint=FigureConstraint.CLASSIFICATION_INCOMPLETE,
     ),
+    UnverifiedFigureRecord(
+        subject="قيمتا z في كتل تجنّب الجذور بحسب تقرير SLGAE",
+        figure_text="z = −9.4 و z = −8.4",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="غيابُ التركيبات الممنوعة عن الجذوع بحسب تقرير SLGAE",
+        figure_text="0 من 4,331 جذعًا",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="نسبةُ المقاطع فائقة الثقل في الوصل بحسب تقرير SLGAE",
+        figure_text="1.43% وكلُّها مُفسَّرة",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="بداياتُ الساكن دون إصلاح بحسب تقرير SLGAE",
+        figure_text="صفرُ بدايةٍ بساكنٍ دون إصلاح",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="الرباعيُّ المكرَّر من الثلاثيّ المُضعَّف بحسب تقرير SLGAE",
+        figure_text="16/40 = 40% مقابل 0.67% مصادفةً، p ≈ 0.0015",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="اقترانُ الحلق بالفتح في عين المضارع بحسب تقرير SLGAE",
+        figure_text="81% مقابل 17%، Fisher p = 1.5×10⁻¹⁴",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="الفتحُ بعد إنّ على النصّ المشكول بحسب تقرير SLGAE",
+        figure_text="500/548 = 91.2% ولا ضمّةَ واحدة",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="ارتباطاتُ P3 بين المستويات بحسب تقرير SLGAE",
+        figure_text="كلُّ |ρ| ≤ 0.15",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="تجنّبُ الواو والياء صائتَهما بحسب تقرير SLGAE",
+        figure_text="وُ = 0.19 وهي الأدنى",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="الانغلاقُ مقابل الموقع في الإعلال بحسب تقرير SLGAE",
+        figure_text="47.6% مقابل 38.1%",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="تنبؤُ شابلي مقابل الخليل بالتنافر بحسب تقرير SLGAE",
+        figure_text="ρ = 0.39 للخليل مقابل ρ = 0.18 لشابلي",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="أوزانُ المجرّد التي فيها CVC بحسب تقرير SLGAE",
+        figure_text="26 وزنًا فيه CVC",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="المدى الهندسيّ على المحور المولود بحسب تقرير SLGAE",
+        figure_text="فشلٌ جزئيٌّ على المحور المولود وحده",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="نسبةُ الإخلاء في دعوى الماضي بحسب تقرير SLGAE",
+        figure_text="77.3% مقابل 5.2% المُجمَّدة",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="مخرَجُ الحذف الفردي على الحقول المشتركة بحسب تقرير SLGAE",
+        figure_text="صفرٌ على الحقول المشتركة، فضاع تمييزُ ل/ر",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="منعُ الكتلة بين الكلمتين عند L4 بحسب تقرير SLGAE",
+        figure_text="اختفاءٌ تامٌّ لمنع الكتلة عند L4",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="فروقُ BIC في P2 بحسب تقرير SLGAE",
+        figure_text="ΔBIC ≈ +1500 و +4000",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="فروقُ BIC في P2b على الرموز بحسب تقرير SLGAE",
+        figure_text="ΔBIC = +149 و +187 على الرموز",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.POST_HOC_LEVEL_SELECTION,
+    ),
+    UnverifiedFigureRecord(
+        subject="إحصاءةُ F في P1 من تجربة ٥ك بحسب تقرير SLGAE",
+        figure_text="F = 1.48 دون العتبة 1.88",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="مؤشّرُ ARI في P3 من تجربة ٥ك بحسب تقرير SLGAE",
+        figure_text="ARI = −0.08",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="نقاءُ V2 وأرجحيّتُه بحسب تقرير SLGAE",
+        figure_text="نقاء 0.654 مقابل 0.569، p = 0.12",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="انضمامُ النون في V3 بحسب تقرير SLGAE",
+        figure_text="النون مع ل ر لا مع الميم",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="ثباتُ V1 قبل استبعاد أوّل الجذع وبعده بحسب تقرير SLGAE",
+        figure_text="ثابت 25/26 ثمّ تغيّرٌ كلّيّ",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="λ المنشورة ومجالُها المحسوب بحسب تقرير SLGAE",
+        figure_text="0.43 مقابل المجال [0.462, 0.491]",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="نسبةُ γ/β المُعلَنة والمحسوبتان بحسب تقرير SLGAE",
+        figure_text="1.55 مُعلَنةً، والمحسوبان 1.388 و 1.479",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="المعرّفُ الواحد على تجربتين بحسب تقرير SLGAE",
+        figure_text="قسمان بالرقم ٥ك و VOWEL-FIRST-BIRTH-AR-1، وصفرُ أسماءٍ مشتركة",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="نسبتا جسر الحلق بحسب تقرير SLGAE",
+        figure_text="1.148 مقابل 4.765، أي ×4.15",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="أرجحيّتا جسر الحلق بحسب تقرير SLGAE",
+        figure_text="1.39 مقابل 20.81، أي ×15",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="عرضُ الترميز المنقول لكلّ وحدةٍ مشكولة",
+        figure_text="ثماني بتّاتٍ لكلّ وحدةٍ مشكولة",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="مسحُ التقابل التامّ المنقول في بناءٍ آخر",
+        figure_text="224 مُسنَدًا و 32 مردودًا",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="ما تركه محورُ المخرج معلَّقًا بحسب التقرير",
+        figure_text="20 حالةً معلَّقة",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="ما حسمه محورُ الحركة من الحالات المعلَّقة",
+        figure_text="صفرٌ من 20",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="قسمةُ الصفات المولودة على الحالات المعلَّقة",
+        figure_text="8 محسومة و 9 متعادلة و 3 موقوفة",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="عددُ الملفّات وعددُ الاختبارات المنقولان عن بناءٍ آخر",
+        figure_text="62 اختبارًا و 424 ملفًّا",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
 )
 """أرقامُ نصّ البروتوكول نفسِه، مقروءةً بقاعدته: خبرٌ مُسجَّلٌ لا قياسٌ مقبول."""
 
@@ -504,12 +717,14 @@ UNREAD_STEP_ORDER_IS_NOT_A_RANKING: Final[str] = (
 
 ABSENCE_OF_BYTES_IS_NOT_EVERY_GROUND_OF_REFUSAL: Final[str] = (
     "ABSENCE_OF_BYTES_IS_NOT_EVERY_GROUND_OF_REFUSAL: قيودُ الرفض في "
-    "`FigureConstraint` ثلاثةُ أجناسٍ لا جنسٌ واحد، فنزولُ شاهدٍ مُبصَّمٍ في "
+    "`FigureConstraint` أربعةُ أجناسٍ لا جنسٌ واحد، فنزولُ شاهدٍ مُبصَّمٍ في "
     "الشجرة يرفع عن سجلٍّ **جنسًا واحدًا** هو تعذُّرُ إعادة الاشتقاق، ولمن "
     "شهِدَه ذلك الملفُّ وحدَه. و`COMPUTED_ON_UNPURIFIED_DATA` و"
-    "`CLASSIFICATION_INCOMPLETE` عطبان في **كيفيّة إنتاج الرقم** لا في غياب "
-    "ملفّ: الأوّل حُسِب على نصٍّ لم يجتز كاشفَ التلوّث، والثاني ترك بقيّةً غيرَ "
-    "مُصنَّفة؛ فلا يرفعهما بلوغُ البايتات ولو طابقت بصمتَها. والقسمةُ تُشتَقّ "
+    "`CLASSIFICATION_INCOMPLETE` و`POST_HOC_LEVEL_SELECTION` ثلاثتُها عطبٌ في "
+    "**كيفيّة إنتاج الرقم** لا في غياب ملفّ: الأوّل حُسِب على نصٍّ لم يجتز كاشفَ "
+    "التلوّث، والثاني ترك بقيّةً غيرَ مُصنَّفة، والثالث اختير مستواه بعد رؤية "
+    "نتيجة المستوى الآخر؛ فلا يرفعها بلوغُ البايتات ولو طابقت بصمتَها. "
+    "والقسمةُ تُشتَقّ "
     "في `figures_by_constraint()` ولا تُنسَخ عددًا في نثر"
 )
 

@@ -8080,7 +8080,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 536-fold: 32 pairs, then 17,154. Both questions were answered,
+The widening is 540-fold: 32 pairs, then 17,290. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8095,11 +8095,11 @@ a specimen written deliberately illegal to show it yields no state. Neither is
 Arabic. The least frequent pair that *is* Arabic sits at 9, nine times the
 published floor. So the minimum of this census measures what the medium quotes,
 not what the script allows, and the distribution turns out to be a cliff rather
-than a tail: six shadda-bearing pairs hold 99.930%, and the remaining three
+than a tail: six shadda-bearing pairs hold 99.931%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,498 of 17,122
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,546 of 17,258
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8514,6 +8514,45 @@ negative result, and satisfying all five prerequisites would not lift it. Behind
 both, the statistical gate still holds, now measurable per deposit: three
 repeated written types become five projected on the Fatḥ āyah and stay three on
 the Fātiḥa. The surplus was made by the fold, not by the text.
+
+## An external audit, deposited with its constraints
+
+An audit report on an external body of research — SLGAE — arrived as prose from
+another conversation: ten results said to have held, thirteen named failures,
+five results whose *support* was withdrawn while the result itself still stands,
+and four discrepancies found by arithmetic rather than by reading. None of its
+figures is re-derivable here. The corpus bytes it was computed on are not in
+this tree, and neither is the `exp(β)` column its two arithmetic discrepancies
+would need. So `src/alghanem/arabic/slgae_audit_deposit.py` deposits the report
+rather than re-running it, and every figure it quotes is filed in the one
+existing `REPORTED_UNVERIFIED_FIGURES` register with its source genus and its
+constraint — recording is not endorsing.
+
+Three things the deposit adds that the tree did not have. First, a third genus:
+`RESULT_STANDS_SUPPORT_WITHDRAWN`, for a result that was neither refuted nor
+vindicated but lost its warrant — circular on tags applied by the same rules
+being tested, a manual post-hoc judgment, a near-definitional identity, an
+analyst-chosen threshold, a traditional classification renamed. Second, a named
+genus for each failure, so that "it failed" is never the whole record: beaten by
+a rival, contradicted by the count, fell statistically, direction reversed,
+fragile under a change of scope, method collapsed. Third, a fourth constraint in
+`FigureConstraint` — `POST_HOC_LEVEL_SELECTION` — for a figure whose *level* was
+chosen after the other level's result was seen. Its defect is neither absent
+bytes nor unpurified data but the way it was produced, so depositing a file
+would not lift it.
+
+The report's own numbers about *this* build are split rather than merged. What
+this tree can measure it measures at read time: the quoted module and test
+counts are compared against what the disk says in
+`the_quoted_build_counts_against_disk`, and neither side is frozen. What it
+cannot measure — the quoted code width, the quoted assignment sweep — stays
+quoted, because another tree measured it. And what was left undecided is
+deposited as undecided: one axis blocked at a measured zero, one deferred with
+its ties and suspensions named, never as work in progress.
+
+The deposit is authority-inert: it imports nothing from `kernel/` and nothing
+from `program/`, no gate reads it, and no figure in it claims to have been
+measured here.
 
 ```bash
 python examples/arabic/read_lexical_artifact_closure.py
