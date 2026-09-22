@@ -1,4 +1,4 @@
-"""تشغيلُ الطبقات الثلاث بعددِ تبديلاتٍ يكفي عتبةَ بونفيروني، وطبعُ ما يخرج.
+"""تشغيلُ الطبقات الأربع بعددِ تبديلاتٍ يكفي عتبتَها، وطبعُ ما يخرج.
 
 والاختباراتُ تُشغّل الجبرَ بعددٍ صغيرٍ لتبقى سريعة، فيخرج فيها الحكمُ
 `UNRESOLVABLE_AT_THIS_B` وهو الصوابُ عند ذلك العدد. وهذا المثالُ يرفع العدد
@@ -8,16 +8,22 @@
 
 ولا يُمنح هنا وسمُ «مرخّص» لشيء: شرطُ القيد المكتوب قبل النظر منتفٍ، وبايتاتُ
 المصدر الثاني ليست في هذه الشجرة.
+
+والطبقةُ الرابعةُ أبطأُ الأربع: سلسلةُ «لا تفاعلَ ثلاثيّ» تقبل نحو أربعين خطوةً
+في الثانية، فيأخذ تشغيلُها دقائق. وذلك ثمنُ مقترحٍ متناظرٍ لم يُستبدل بأسرعَ
+منه موجَّهٍ يُخِلّ بالتوزيع.
 """
 
 from __future__ import annotations
 
 from alghanem.arabic.slot_rights_composition_algebra import (
+    TernaryStatistic,
     VerdictStanding,
     algebra_substrate,
     fold_collapse_count,
     licence_standing,
     measure_closure,
+    measure_triangle_closure,
     positional_asymmetry_locus,
     quoted_against_measured,
     second_source_is_resolvable,
@@ -81,6 +87,20 @@ def main() -> None:
     print(f"  في التماثل: {locus.identity_difference} (p = {identity_p})")
     print(f"  في التجانس: {locus.class_difference} (p = {locus.class_probability:.5f})")
     print(f"  الموضع: {locus.locus.value if locus.locus else 'غيرُ منفرد'}")
+
+    print("\n— الطبقة الرابعة: المثلّثُ لا السلسلة —")
+    print(f"  الشرطُ مكتوبٌ قبل العدّ، وعتبتُه {0.05 / 3:.5f}.")
+    triangle = measure_triangle_closure(body)
+    print(f"  الخطواتُ المقبولة: {triangle.accepted_moves:,} · خلطت: {triangle.mixed}")
+    for statistic in TernaryStatistic:
+        observed = triangle.observed[statistic]
+        expected = triangle.null_mean[statistic]
+        chance = triangle.probability[statistic]
+        print(
+            f"  {statistic.value}: {observed:,} بإزاء {expected:,.1f} "
+            f"(p = {chance:.5f}، قيمٌ مختلفة {triangle.spread[statistic]})"
+        )
+    print(f"  منزلةُ المثلّث: {triangle.standing.value}")
 
     print("\n— المنقولُ في وجه المقيس —")
     for subject, quoted, measured, agrees in quoted_against_measured(body):

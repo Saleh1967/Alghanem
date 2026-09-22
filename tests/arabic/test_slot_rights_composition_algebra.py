@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import random
+from itertools import product
 from pathlib import Path
 
 import pytest
@@ -12,6 +13,7 @@ from alghanem.arabic.maqayis_adjacency_constraint import THE_DECLARED_PLACE_CLAS
 from alghanem.arabic.slot_rights_composition_algebra import (
     SLOT_RIGHTS_ALGEBRA_NAMED_RESIDUALS,
     THE_PREREGISTERED_LICENCE_CONDITION,
+    THE_PREREGISTERED_TRIANGLE_CONDITION,
     THE_QUOTED_ALGEBRA_FIGURES,
     AlgebraLicenceStanding,
     AsymmetryLocus,
@@ -22,6 +24,9 @@ from alghanem.arabic.slot_rights_composition_algebra import (
     SlotBirthConditions,
     SlotRight,
     SlotRightsAlgebraError,
+    TernaryStatistic,
+    TriangleReading,
+    TriangleStanding,
     VerdictStanding,
     algebra_substrate,
     distinctness_preserving_swap_chain,
@@ -29,15 +34,20 @@ from alghanem.arabic.slot_rights_composition_algebra import (
     fold_collapse_count,
     licence_standing,
     measure_closure,
+    measure_triangle_closure,
+    no_three_way_interaction_chain,
     positional_asymmetry_locus,
     quoted_against_measured,
     second_source_is_resolvable,
     slot_birth_conditions,
     slot_rights,
     substitution_pairs,
+    ternary_statistics,
     typed_cell_verdicts,
     verify_composition_identity,
+    verify_cube_move_preserves_all_margins,
     verify_naive_null_breaks_distinctness,
+    verify_ternary_statistics_are_not_margin_determined,
     verify_witness_monotonicity,
 )
 
@@ -471,3 +481,183 @@ def test_every_quoted_algebra_figure_has_its_twin_in_the_one_register() -> None:
     }
     for subject, figure in THE_QUOTED_ALGEBRA_FIGURES.items():
         assert (subject, figure) in recorded
+
+
+# ---------------------------------------------------------------------------
+# الطبقة الرابعة: الترخيصُ مثلّثًا لا سلسلة
+# ---------------------------------------------------------------------------
+
+
+def test_the_cube_move_preserves_every_one_of_the_three_margins() -> None:
+    """مبرهنة ث١ مفحوصةٌ عدًّا لا وصفًا."""
+
+    assert verify_cube_move_preserves_all_margins() is True
+
+
+def test_the_three_ternary_statistics_each_have_a_counter_witness() -> None:
+    """مبرهنة ث٢: لا إحصاءةَ فيها فضلةُ هوامش، وإلّا كان الاختبارُ فارغًا."""
+
+    assert verify_ternary_statistics_are_not_margin_determined() is True
+
+
+def test_a_bare_cube_cannot_move_the_coverage_statistic_at_all() -> None:
+    """الكشفُ الذي سبق العدّ: التغطيةُ لا يُحرّكها مكعّبٌ مجرّد، فلزم الصدى."""
+
+    letters = ("a", "b", "c", "d", "e", "f")
+    sides = [
+        [
+            (letters[first], letters[2 + middle], letters[4 + last])
+            for first, middle, last in diagonal
+        ]
+        for diagonal in (
+            ((0, 0, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0)),
+            ((0, 0, 1), (0, 1, 0), (1, 0, 0), (1, 1, 1)),
+        )
+    ]
+    for assignment in product("012", repeat=len(letters)):
+        places = dict(zip(letters, assignment, strict=True))
+        left = ternary_statistics(sides[0], places)
+        right = ternary_statistics(sides[1], places)
+        assert (
+            left[TernaryStatistic.PLACE_TRIPLE_COVERAGE]
+            == right[TernaryStatistic.PLACE_TRIPLE_COVERAGE]
+        )
+
+
+def test_the_chain_never_changes_the_size_of_the_lexicon() -> None:
+    """الحارسُ الذي أسقط خللًا واقعًا: الحجمُ ثابتٌ في كلّ خطوة."""
+
+    body = algebra_substrate()
+    present = set(body)
+    letters = tuple(sorted({letter for root in body for letter in root}))
+    no_three_way_interaction_chain(
+        present,
+        letters,
+        accepted_target=5,
+        generator=random.Random(3),
+        proposal_budget=200_000,
+    )
+    assert len(present) == len(body)
+
+
+def test_the_chain_preserves_all_three_pairwise_tables_exactly() -> None:
+    """ما يتحرّك هو الحدُّ الثلاثيُّ وحدَه؛ والجداولُ الثلاثةُ لا تُمسّ."""
+
+    body = algebra_substrate()
+    present = set(body)
+    letters = tuple(sorted({letter for root in body for letter in root}))
+
+    def tables(rows: set[tuple[str, str, str]]) -> tuple[list[tuple[str, str]], ...]:
+        return tuple(
+            sorted((row[left], row[right]) for row in rows)
+            for left, right in ((0, 1), (1, 2), (0, 2))
+        )
+
+    before = tables(present)
+    moved = no_three_way_interaction_chain(
+        present,
+        letters,
+        accepted_target=30,
+        generator=random.Random(5),
+        proposal_budget=2_000_000,
+    )
+    assert moved > 0
+    assert tables(present) == before
+
+
+def test_the_triangle_condition_was_written_before_the_count() -> None:
+    """الشرطُ نصٌّ يُقرأ، وفيه العتبةُ والحارسُ ومنعُ الترخيص معًا."""
+
+    assert "قبل تشغيل قياسها" in THE_PREREGISTERED_TRIANGLE_CONDITION
+    assert "UNMIXED" in THE_PREREGISTERED_TRIANGLE_CONDITION
+    assert "مرخّص" in THE_PREREGISTERED_TRIANGLE_CONDITION
+
+
+def test_a_still_chain_is_read_as_unmixed_and_never_as_a_closed_triangle() -> None:
+    """جمودُ السلسلة منزلةٌ ثالثةٌ لا انغلاق."""
+
+    reading = TriangleReading(
+        observed=dict.fromkeys(TernaryStatistic, 7),
+        null_mean=dict.fromkeys(TernaryStatistic, 7.0),
+        probability=dict.fromkeys(TernaryStatistic, 1.0),
+        spread=dict.fromkeys(TernaryStatistic, 1),
+        accepted_moves=0,
+        draws=200,
+        threshold=0.05 / 3,
+        accepted_floor=1000,
+    )
+    assert reading.mixed is False
+    assert reading.standing is TriangleStanding.UNMIXED
+
+
+def test_a_threshold_finer_than_the_two_sided_floor_is_unmixed_not_closed() -> None:
+    """عتبةٌ أدقُّ من حدّ التبديل تُخرِج تعذّرًا لا انغلاقًا."""
+
+    reading = TriangleReading(
+        observed=dict.fromkeys(TernaryStatistic, 7),
+        null_mean=dict.fromkeys(TernaryStatistic, 9.0),
+        probability=dict.fromkeys(TernaryStatistic, 1.0),
+        spread=dict.fromkeys(TernaryStatistic, 40),
+        accepted_moves=5000,
+        draws=10,
+        threshold=0.05 / 3,
+        accepted_floor=1000,
+    )
+    assert reading.standing is TriangleStanding.UNMIXED
+
+
+def test_one_statistic_beyond_the_threshold_makes_the_triangle_fail() -> None:
+    """خروجُ إحصاءةٍ واحدةٍ يكفي لإسقاط المثلّث، بالشرط المكتوب."""
+
+    probability = dict.fromkeys(TernaryStatistic, 0.9)
+    probability[TernaryStatistic.PLACE_HOMOGENEOUS] = 0.001
+    reading = TriangleReading(
+        observed=dict.fromkeys(TernaryStatistic, 7),
+        null_mean=dict.fromkeys(TernaryStatistic, 9.0),
+        probability=probability,
+        spread=dict.fromkeys(TernaryStatistic, 40),
+        accepted_moves=5000,
+        draws=2000,
+        threshold=0.05 / 3,
+        accepted_floor=1000,
+    )
+    assert reading.standing is TriangleStanding.FAILS
+
+
+def test_a_triangle_reading_missing_a_statistic_is_refused() -> None:
+    """قراءةٌ ناقصةُ الإحصاءات لا تُبنى."""
+
+    with pytest.raises(SlotRightsAlgebraError):
+        TriangleReading(
+            observed={TernaryStatistic.PLACE_HOMOGENEOUS: 1},
+            null_mean={TernaryStatistic.PLACE_HOMOGENEOUS: 1.0},
+            probability={TernaryStatistic.PLACE_HOMOGENEOUS: 1.0},
+            spread={TernaryStatistic.PLACE_HOMOGENEOUS: 2},
+            accepted_moves=5000,
+            draws=200,
+            threshold=0.05 / 3,
+            accepted_floor=1000,
+        )
+
+
+def test_the_triangle_measurement_runs_and_reports_its_own_mixing() -> None:
+    """قياسٌ قصيرٌ يُخرِج قراءةً كاملةً ويُصرّح بخلطه لا يُخفيه."""
+
+    reading = measure_triangle_closure(
+        draws=3,
+        burn_in=2,
+        sweep=1,
+        proposal_budget=60_000,
+        accepted_floor=1000,
+        seed=17,
+    )
+    assert isinstance(reading, TriangleReading)
+    assert reading.standing is TriangleStanding.UNMIXED
+    assert set(reading.observed) == set(TernaryStatistic)
+
+
+def test_the_triangle_layer_grants_no_licence_whatever_it_finds() -> None:
+    """المنزلتان معًا خارج الترخيص، لأنّ المصدرَ الثاني غائب."""
+
+    assert licence_standing() is not AlgebraLicenceStanding.LICENSED
+    assert "مرخّص" in THE_PREREGISTERED_TRIANGLE_CONDITION

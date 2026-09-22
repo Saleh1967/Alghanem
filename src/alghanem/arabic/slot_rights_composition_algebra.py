@@ -1267,6 +1267,7 @@ def no_three_way_interaction_chain(
         raise SlotRightsAlgebraError("المكعّبُ يقتضي حرفين فأكثر في كلّ خانة.")
     holds = present.__contains__
     draw = generator.randrange
+    width_at_entry = len(present)
     accepted = 0
     for _ in range(proposal_budget):
         if accepted >= accepted_target:
@@ -1295,14 +1296,28 @@ def no_three_way_interaction_chain(
             (first_b, mid_a, last_a),
             opposite,
         )
-        held, empty = (even, odd) if holds(corner) else (odd, even)
-        if not (holds(held[1]) and holds(held[2]) and holds(held[3])):
-            continue
-        if holds(empty[0]) or holds(empty[1]) or holds(empty[2]):
-            continue
+        if holds(corner):
+            # ``even[0]`` مشهودٌ و``odd[3]`` غائبٌ بحكم الفرز أعلاه، ويُفحَص ما بقي.
+            if not (holds(even[1]) and holds(even[2]) and holds(even[3])):
+                continue
+            if holds(odd[0]) or holds(odd[1]) or holds(odd[2]):
+                continue
+            held, empty = even, odd
+        else:
+            # ``odd[3]`` مشهودٌ و``even[0]`` غائبٌ، ويُفحَص ما بقي. وتركُ خليّةٍ
+            # بلا فحصٍ يُخرِج حركةً تُغيّر حجمَ المعجم، وهو ما يمنعه الحارسُ دونه.
+            if not (holds(odd[0]) and holds(odd[1]) and holds(odd[2])):
+                continue
+            if holds(even[1]) or holds(even[2]) or holds(even[3]):
+                continue
+            held, empty = odd, even
         present.difference_update(held)
         present.update(empty)
         accepted += 1
+    if len(present) != width_at_entry:
+        raise SlotRightsAlgebraError(
+            "حركةُ المكعّب غيّرت حجمَ المعجم، وهي لا تُغيّره؛ فالخطوةُ فاسدة."
+        )
     return accepted
 
 

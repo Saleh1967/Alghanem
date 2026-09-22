@@ -8080,7 +8080,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 543-fold: 32 pairs, then 17,374. Both questions were answered,
+The widening is 544-fold: 32 pairs, then 17,418. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8099,7 +8099,7 @@ than a tail: six shadda-bearing pairs hold 99.931%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,572 of 17,342
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,594 of 17,386
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8593,6 +8593,35 @@ counts, it requires a second independent source, and that source's bytes are not
 here; `CellVerdict` raises if anything tries to construct a licensed verdict.
 Like the audit register beside it, the module imports nothing from `kernel/` and
 nothing from `program/`, and no gate reads it.
+
+A fourth layer follows from the third. Once the chain failed, B₁₃ was an
+independent binding and the licensing graph was a triangle rather than a chain.
+That leaves exactly one further question: is the triangle enough, or is there a
+ternary term the three pairwise bindings cannot reach? The null model that
+answers it fixes all three pairwise tables at once and keeps the table binary,
+so distinctness is preserved by construction; its move is the 2×2×2 cube, and
+theorem ث١ — verified at import — shows that flipping one cube diagonal for the
+other leaves all three two-dimensional projections identical.
+
+Two things there are worth naming, and both were found before the count rather
+than after. Theorem ث٢ demands a counter-witness for every statistic, on the
+ground that a statistic determined by the pairwise margins would be constant on
+the fiber, never rejected, and its stillness misread as closure. Demanding it
+exposed that a bare cube cannot move the coverage statistic at all: the two
+diagonals always realize the same *number* of distinct place-triples, even when
+the triples themselves differ. So the witness is built on a table — cube plus a
+static echo on disjoint cells — not on a cube. And the chain carries a size
+invariant, because the first implementation left two of the eight cube cells
+unchecked and silently grew the lexicon; the invariant caught it, the null means
+were nonsense, and the recorded first run is void.
+
+The measurement itself: with all three pairwise tables and root distinctness
+held fixed, and 22,000 accepted symmetric moves, none of the three ternary
+statistics leaves the permutation band at the written threshold. On this source
+and this chain the triangle closes — the root is its three pairwise bindings,
+no more and no less. Nothing is licensed by that; the second source is still
+absent, and the cube move set is not proved to be a full Markov basis, so the
+walk covers part of the fiber rather than all of it.
 
 ```bash
 python examples/arabic/run_slot_rights_algebra.py
