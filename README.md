@@ -8080,7 +8080,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 546-fold: 32 pairs, then 17,472. Both questions were answered,
+The widening is 548-fold: 32 pairs, then 17,536. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8095,11 +8095,11 @@ a specimen written deliberately illegal to show it yields no state. Neither is
 Arabic. The least frequent pair that *is* Arabic sits at 9, nine times the
 published floor. So the minimum of this census measures what the medium quotes,
 not what the script allows, and the distribution turns out to be a cliff rather
-than a tail: six shadda-bearing pairs hold 99.931%, and the remaining three
+than a tail: six shadda-bearing pairs hold 99.932%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,607 of 17,440
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,624 of 17,504
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8669,6 +8669,51 @@ third prerequisite.
 
 ```bash
 python examples/arabic/run_markov_order_induction.py
+```
+
+## One hundred and twelve is a declaration, and four of its five holes are only scarcity
+
+`letter_haraka_partition` builds the table that 112 names: the twenty-eight
+letters of the declared alphabet against the three short vowels and the sukūn.
+Both factors are unit-of-analysis decisions rather than givens. The alphabet is
+read from `letter_fingerprint`'s own vocabulary minus the bare hamza, the
+hamza-bearing and alif-wasla forms are folded by that module's declared fold and
+no second one, and tanwīn, shadda and the dagger alif are deliberately left
+outside the four because they already have their table elsewhere.
+
+The table is filled along a cumulative ladder: the Fātiḥa alone realises 41 of
+the 112 cells over 100 occurrences and 20 of the 28 letters; adding Fatḥ 48:29
+takes it to 74 cells and 27 letters; adding the tree's own prose — with this
+module excluded from it by name, so that its figures do not move whenever its
+description is edited — takes it to 107 cells over 80,313 occurrences with every
+letter present. Five cells stay empty, and the module refuses to read them as
+prohibitions until their margins are consulted. Sukūn is 427 of 80,313 — 0.53%
+— so the expected counts for ث, ز and ظ bearing it are 1.451, 2.951 and 1.053,
+and zero is unremarkable at each. Alef's whole row is ten occurrences. **Four of
+the five absences are consistent with scarcity**; only alef-with-fatḥa survives
+the filter, and even that is not a discovery, since alef *is* the long fatḥa.
+
+The second half asks whether the twenty-eight letters can be grouped by their
+vowel profiles, and whether a greedy merge finds the best grouping. Stirling
+numbers of the second kind count the space exactly — S(28,4) is about 3×10¹⁵ and
+B(28) is 6,160,539,404,599,934,652,455 — which is precisely why the optimum is
+not computed on the full alphabet and is not claimed there. Four subsets are
+declared in advance, each searched at 2, 3, 4 and 5 classes, and on each of
+those sixteen cells the greedy agglomerative merge is set against the exhaustive
+optimum under the same penalised criterion `markov_order_induction` uses. The
+enumerator is checked at import against Stirling's own recurrence and against a
+distinctness count, since a generator that silently dropped partitions would
+turn "optimal" into "best of what I happened to visit".
+
+The pre-registered condition demands a zero gap on every cell. Greedy reaches
+the optimum on thirteen of the sixteen and misses on three, by 22.889, 3.002 and
+1.089 — and the largest miss is on the widest subset searched, so breadth is not
+the cure. Twelve wins out of sixteen is not optimality, and the standing
+recorded is `FALLS_SHORT`. Nothing here lifts a block or thaws a freeze: the
+corpus gate is re-checked after every measurement and is still blocked.
+
+```bash
+python examples/arabic/run_letter_haraka_partition.py
 ```
 
 ```bash
