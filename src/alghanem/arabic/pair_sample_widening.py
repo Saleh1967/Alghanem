@@ -24,7 +24,7 @@
 |---|---|---|---|---|
 | الفاتحة | 16 | 3/36 | فتحة+شدّة (10) | فتحة+خنجريّة (2) |
 | + الفتح ٢٩ | 32 | 4/36 | فتحة+شدّة (24) | ضمّة+شدّة (2) |
-| + نثر الشجرة | 17,153 | 9/36 | فتحة+شدّة (7,522) | سكون+خنجريّة (1) |
+| + نثر الشجرة | 17,155 | 9/36 | فتحة+شدّة (7,524) | سكون+خنجريّة (1) |
 
 فالتوسيعُ **536 ضعفًا** في عدد المزدوجات. وفيه جوابُ السؤالين معًا:
 
@@ -36,7 +36,7 @@
 (`THE_MINIMUM_MOVES_AT_EVERY_RUNG_WHILE_THE_MAXIMUM_NEVER_DOES`).
 
 **وثالثًا: التوزيعُ ليس ذا ذيلٍ بل ذو جُرف.** المتحقّقُ تسعةٌ على النثر، ستّةٌ
-منها `X + شدّة` وتحوز 17,141 من 17,153 — أي **99.930%** — وثلاثةٌ تحوز **12**
+منها `X + شدّة` وتحوز 17,143 من 17,155 — أي **99.930%** — وثلاثةٌ تحوز **12**
 وقوعًا لا غير. وبين 951 و9 عاملُ 105. فليس بين الجسم والقاع تدرّجٌ يُقرأ منه
 ترتيبٌ في الندرة.
 
@@ -58,7 +58,7 @@
 (`THE_FLOOR_MEASURES_WHAT_THE_MEDIUM_QUOTES_NOT_WHAT_THE_SCRIPT_ALLOWS`).
 
 **وخامسًا: التوسيعُ غيّر المجتمعَ لا الحجمَ وحدَه.** المزدوجاتُ المبدوءةُ
-بتنوينٍ: **صفرٌ** من 32 في المُودَعَين القرآنيَّين، و**4,497** من 17,121 في
+بتنوينٍ: **صفرٌ** من 32 في المُودَعَين القرآنيَّين، و**4,497** من 17,123 في
 النثر — أي 26.373%. فالنثرُ يُظهِر تركيباتِ تنوينٍ لم يُظهِرها النصّان ألبتّة.
 فلا يُقال إنّ العيّنةَ الكبرى عيّنةٌ أكبرُ من الشيء نفسه
 (`WIDENING_INTO_A_NEW_REGISTER_CHANGES_THE_POPULATION_NOT_ONLY_ITS_SIZE`).
@@ -173,7 +173,7 @@ class ScopeFingerprint:
 
 PROSE_SCOPE_AT_MEASUREMENT: Final[ScopeFingerprint] = ScopeFingerprint(
     files=414,
-    text_bytes=7732923,
+    text_bytes=7733690,
 )
 
 
@@ -193,11 +193,11 @@ class RungFigures:
 
 
 THE_THIRD_RUNG_AT_MEASUREMENT: Final[RungFigures] = RungFigures(
-    total_pairs=17153,
+    total_pairs=17155,
     realized=9,
-    shadda_bearing=17141,
+    shadda_bearing=17143,
     tanwin_initial_in_prose=4497,
-    prose_pairs=17121,
+    prose_pairs=17123,
 )
 
 THE_SCOPE_EXCLUSIONS: Final[frozenset[str]] = frozenset(
@@ -357,7 +357,7 @@ THE_FLOOR_MEASURES_WHAT_THE_MEDIUM_QUOTES_NOT_WHAT_THE_SCRIPT_ALLOWS: Final[str]
 WIDENING_INTO_A_NEW_REGISTER_CHANGES_THE_POPULATION_NOT_ONLY_ITS_SIZE: Final[str] = (
     "WIDENING_INTO_A_NEW_REGISTER_CHANGES_THE_POPULATION_NOT_ONLY_ITS_SIZE: "
     "المزدوجاتُ المبدوءةُ بتنوينٍ صفرٌ من 32 في المُودَعَين القرآنيَّين، "
-    "و4,497 من 17,121 في النثر. فليست الكبرى عيّنةً أكبرَ من الشيء نفسه، "
+    "و4,497 من 17,123 في النثر. فليست الكبرى عيّنةً أكبرَ من الشيء نفسه، "
     "وثباتُ الصدارةِ عبرَها ثباتٌ عبرَ سِجلَّين لا داخلَ سِجلٍّ واحد."
 )
 

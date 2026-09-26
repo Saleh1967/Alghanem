@@ -7542,6 +7542,9 @@ of the bytes was not measured, merely unmentioned
 `quran_corpus_word_total.py` builds that door on MASAQ's three-source order —
 passed path, then `ALGHANEM_QURAN_CORPUS_PATH`, then
 `corpora/quran-simple-enhanced.txt` **if it actually exists**, and no fourth.
+The bytes have since been deposited at that third place, verbatim and
+fingerprint-matched, under the Tanzil `CC BY-ND 3.0` attribution recorded in
+`corpora/README.md`; the door is built and now it opens on bytes.
 Absence is an explicit refusal rather than a default, a resolvable path with no
 file is not resolvable bytes, and a resolved file with the wrong digest fails
 instead of being skipped. No total leaves the module without a length *and*
@@ -8080,7 +8083,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 536-fold: 32 pairs, then 17,153. Both questions were answered,
+The widening is 536-fold: 32 pairs, then 17,155. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8099,7 +8102,7 @@ than a tail: six shadda-bearing pairs hold 99.930%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,497 of 17,121
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,497 of 17,123
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8503,9 +8506,13 @@ single sukūn total is issued from a three-way column.
 
 The fifth reads the gate. The prerequisites are ordered, not a set — lexical
 closure, sukūn split, corpus bytes, corpus certificate, composition order — and
-the first unmet one is the door. The first two are met; the third is not, since
-`corpora/quran-simple-enhanced.txt` is neither vendored nor declared. So token
-Markov is `BLOCKED` at a named prerequisite, and every token figure that ever
+the first unmet one is the door. The first two are met, and the third is now met too: the bytes were taken in
+through `tools/intake_corpus.py`, which matches length and SHA-256 against the
+frozen reference before writing, and they sit at
+`corpora/quran-simple-enhanced.txt`. Their arrival did not open the door — it
+moved the stop to the fourth rung, the corpus projection certificate, exactly as
+the gate said it would before they came. So token
+Markov is still `BLOCKED` at a named prerequisite, and every token figure that ever
 issues must ship with its dominance reading or the closed artifact returns
 wearing a larger number. Functional Markov is `SUSPENDED`, a different standing
 altogether: it awaits a licensed functional/lexical partition that does not

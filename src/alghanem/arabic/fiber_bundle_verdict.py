@@ -437,9 +437,10 @@ class WiderCorpusClaim:
 
 
 _ABSENT: Final[str] = (
-    "بايتاتُ المدوّنة ليست في الشجرة عمدًا؛ فالرقمُ لا يُعاد اشتقاقُه ههنا، "
-    f"وإنّما تُودَع بصمتُه: {FROZEN_CORPUS.source_name} بطول "
-    f"{FROZEN_CORPUS.byte_length} بايتًا"
+    "الرقمُ لا يُعاد اشتقاقُه في هذه الوحدة، وإنّما تُودَع بصمتُه: "
+    f"{FROZEN_CORPUS.source_name} بطول {FROZEN_CORPUS.byte_length} بايتًا. "
+    "وإيداعُ البايتات في الشجرة لا يجعل المنقولَ مقيسًا: الاشتقاقُ فعلٌ "
+    "يُفعَل ويُعلَن، لا حالٌ يَؤول إليه المنقولُ بوصول بايتاته"
 )
 
 WIDER_CORPUS_CLAIMS: Final[tuple[WiderCorpusClaim, ...]] = (
@@ -480,8 +481,8 @@ A_DOWNWARD_GAP_MAY_BE_A_SAMPLING_ZERO_NOTE: Final[str] = (
 
 A_WIDER_CORPUS_NUMBER_IS_A_CLAIM_HERE_NOTE: Final[str] = (
     "AWiderCorpusNumberIsAClaimHere: أرقامُ المدوّنة الأوسع مُسنَدةٌ إلى بصمةٍ "
-    "بايتاتُها غائبةٌ عن الشجرة عمدًا؛ فتُسجَّل دعاوى مقرونةً بسبب تعذّر "
-    "اشتقاقها، ولا تُنسَخ في موضع المقيس ولو كانت صادقة"
+    "لم يُعَد اشتقاقُها ههنا؛ فتُسجَّل دعاوى مقرونةً بسبب تعذّر اشتقاقها، ولا "
+    "تُنسَخ في موضع المقيس ولو كانت صادقة، ولو حضرت بايتاتُها في الشجرة"
 )
 
 RANK_IS_VERTICAL_NOT_HORIZONTAL_NOTE: Final[str] = (
