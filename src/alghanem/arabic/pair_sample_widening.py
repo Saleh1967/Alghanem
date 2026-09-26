@@ -21,7 +21,7 @@
 |---|---|---|---|---|
 | الفاتحة | 16 | 3/36 | فتحة+شدّة (10) | فتحة+خنجريّة (2) |
 | + الفتح ٢٩ | 32 | 4/36 | فتحة+شدّة (24) | ضمّة+شدّة (2) |
-| + نثر الشجرة | 17,549 | 9/36 | فتحة+شدّة (7,673) | سكون+خنجريّة (1) |
+| + نثر الشجرة | 17,554 | 9/36 | فتحة+شدّة (7,674) | سكون+خنجريّة (1) |
 
 فالتوسيعُ **548 ضعفًا** في عدد المزدوجات. وفيه جوابُ السؤالين معًا:
 
@@ -33,7 +33,7 @@
 (`THE_MINIMUM_MOVES_AT_EVERY_RUNG_WHILE_THE_MAXIMUM_NEVER_DOES`).
 
 **وثالثًا: التوزيعُ ليس ذا ذيلٍ بل ذو جُرف.** المتحقّقُ تسعةٌ على النثر، ستّةٌ
-منها `X + شدّة` وتحوز 17,537 من 17,549 — أي **99.932%** — وثلاثةٌ تحوز **12**
+منها `X + شدّة` وتحوز 17,542 من 17,554 — أي **99.932%** — وثلاثةٌ تحوز **12**
 وقوعًا لا غير. وبين 984 و9 عاملُ 109. فليس بين الجسم والقاع تدرّجٌ يُقرأ منه
 ترتيبٌ في الندرة.
 
@@ -55,7 +55,7 @@
 (`THE_FLOOR_MEASURES_WHAT_THE_MEDIUM_QUOTES_NOT_WHAT_THE_SCRIPT_ALLOWS`).
 
 **وخامسًا: التوسيعُ غيّر المجتمعَ لا الحجمَ وحدَه.** المزدوجاتُ المبدوءةُ
-بتنوينٍ: **صفرٌ** من 32 في المُودَعَين القرآنيَّين، و**4,627** من 17,517 في
+بتنوينٍ: **صفرٌ** من 32 في المُودَعَين القرآنيَّين، و**4,629** من 17,522 في
 النثر — أي 26.416%. فالنثرُ يُظهِر تركيباتِ تنوينٍ لم يُظهِرها النصّان ألبتّة.
 فلا يُقال إنّ العيّنةَ الكبرى عيّنةٌ أكبرُ من الشيء نفسه
 (`WIDENING_INTO_A_NEW_REGISTER_CHANGES_THE_POPULATION_NOT_ONLY_ITS_SIZE`).
@@ -170,7 +170,7 @@ class ScopeFingerprint:
 
 PROSE_SCOPE_AT_MEASUREMENT: Final[ScopeFingerprint] = ScopeFingerprint(
     files=418,
-    text_bytes=7949504,
+    text_bytes=7951523,
 )
 
 
@@ -190,11 +190,11 @@ class RungFigures:
 
 
 THE_THIRD_RUNG_AT_MEASUREMENT: Final[RungFigures] = RungFigures(
-    total_pairs=17549,
+    total_pairs=17554,
     realized=9,
-    shadda_bearing=17537,
-    tanwin_initial_in_prose=4627,
-    prose_pairs=17517,
+    shadda_bearing=17542,
+    tanwin_initial_in_prose=4629,
+    prose_pairs=17522,
 )
 
 THE_SCOPE_EXCLUSIONS: Final[frozenset[str]] = frozenset(

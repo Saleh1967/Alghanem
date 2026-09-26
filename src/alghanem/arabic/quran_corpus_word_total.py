@@ -45,6 +45,13 @@
 استقرار قاعدة العدّ لا شهادةٌ على المدوّنة المقصودة
 (`A_MIRROR_IS_A_CORROBORATION_NOT_A_SUBSTITUTE`).
 
+**سادسًا: الإذنُ فُحِص ومُنِح، والبايتاتُ لم تنزل.** كان غيابُها محمولًا
+على أنّ إذنَ النسخ لم يُفحَص؛ وقد صرّح مالكُ المستودع بالموافقة والتفويض،
+فسقط ذلك الحامل. والغائبُ الآن **بلوغُ البايتات لا الحقُّ فيها**: اسمُ
+`tanzil.net` لا يُحَلّ من بيئة التنفيذ، ولا مرآةً مفحوصةً تُخرِج الطولَ
+المُجمَّد. وإذنٌ ممنوحٌ لا يصير بايتاتٍ، ولا يرفع المطابقةَ عن ملفٍّ يُوضَع
+في الموضع المسنون (`A_PERMISSION_GRANTED_IS_NOT_BYTES_IN_HAND`).
+
 **ولا سلطةَ لهذه الوحدة**: لا ولادةَ فيها، ولا حكمَ ولادة، ولا تجميدَ `E0`،
 ولا تستورد من `kernel/` شيئًا، ولا تقرؤها وحدةٌ فيه.
 """
@@ -79,6 +86,7 @@ __all__ = [
     "A_COUNT_WITHOUT_A_DECLARED_RULE_IS_NOT_A_COUNT_NOTE",
     "A_DIGEST_WITHOUT_A_RESOLVER_IS_A_GATE_ON_NO_DOOR_NOTE",
     "A_MIRROR_IS_A_CORROBORATION_NOT_A_SUBSTITUTE_NOTE",
+    "A_PERMISSION_GRANTED_IS_NOT_BYTES_IN_HAND_NOTE",
     "A_SURVEY_IS_NOT_A_PROHIBITION_NOTE",
     "NO_FIGURE_WITHOUT_THE_FINGERPRINTED_BYTES_NOTE",
     "QURAN_CORPUS_NAMED_RESIDUALS",
@@ -657,6 +665,18 @@ A_MIRROR_IS_A_CORROBORATION_NOT_A_SUBSTITUTE_NOTE: Final[str] = (
     "بصمته، كيلا تتسلّل البايتاتُ المقصودةُ من باب المرايا"
 )
 
+A_PERMISSION_GRANTED_IS_NOT_BYTES_IN_HAND_NOTE: Final[str] = (
+    "APermissionGrantedIsNotBytesInHand: كان غيابُ البايتات محمولًا على أنّ "
+    "إذنَ النسخ **لم يُفحَص**؛ وقد فُحِص بعدُ ومُنِح: صرّح مالكُ المستودع "
+    "بالموافقة على الإيداع والتفويض به. فسقط الحاملُ الأوّل، ولم تنزل "
+    "البايتات. والغائبُ اليومَ **بلوغُها لا الحقُّ فيها**: `tanzil.net` لا "
+    "يُحَلّ اسمُه من بيئة التنفيذ، والمرايا المفحوصةُ لا تُخرِج الطولَ "
+    "1,319,901، وفهرسُ بحث الشيفرة يُسقِط الملفّاتِ الكبيرة. وإذنٌ ممنوحٌ "
+    "لا يصير بايتاتٍ، كما أنّ بصمةً لا تصير إذنًا: ملفٌّ يُوضَع في الموضع "
+    "المسنون وهو غيرُ المبصوم **يَفشَل ولا يُتخطّى**، فالتفويضُ يرفع المانعَ "
+    "الحقوقيّ ولا يرفع المطابقة"
+)
+
 A_SURVEY_IS_NOT_A_PROHIBITION_NOTE: Final[str] = (
     "ASurveyIsNotAProhibition: لم تُوجَد في المرايا المفحوصة نسخةٌ بطول "
     "1,319,901؛ وهذا **حدُّ مسحٍ** لا حكمٌ بعدم الوجود. وفهرسُ بحث الشيفرة "
@@ -689,6 +709,9 @@ QURAN_CORPUS_NAMED_RESIDUALS: Final[dict[str, str]] = {
         A_MIRROR_IS_A_CORROBORATION_NOT_A_SUBSTITUTE_NOTE
     ),
     "ASurveyIsNotAProhibition": A_SURVEY_IS_NOT_A_PROHIBITION_NOTE,
+    "APermissionGrantedIsNotBytesInHand": (
+        A_PERMISSION_GRANTED_IS_NOT_BYTES_IN_HAND_NOTE
+    ),
     "TheThirtyAreTheDisjoinedLetters": THE_THIRTY_ARE_THE_DISJOINED_LETTERS_NOTE,
     "TheRuleIsNotFittedToItsResult": THE_RULE_IS_NOT_FITTED_TO_ITS_RESULT_NOTE,
     "AnAccountOfTheGapIsNotARederivation": (
