@@ -14,14 +14,14 @@
 |---|---|---|
 | ١ | إغلاقُ الأثر المعجميّ | مستوفًى |
 | ٢ | عقدُ حالةِ السكون | مستوفًى |
-| ٣ | بايتاتُ المدوّنة | **غيرُ مستوفًى** |
-| ٤ | شهادةُ إسقاطِ المدوّنة | غيرُ منظورٍ فيه |
+| ٣ | بايتاتُ المدوّنة | مستوفًى بالإيداع المُبصَّم |
+| ٤ | شهادةُ إسقاطِ المدوّنة | **غيرُ مستوفًى** |
 | ٥ | قانونُ ترتيبِ تركيبها | غيرُ منظورٍ فيه |
 
-**وثالثًا: وماركوف التوكنز موقوفٌ بالشرط الثالث.** `word_total` ترفض لأنّ
-البايتات ليست في الشجرة ولا مصرَّحًا بمسارها؛ فكلُّ رقمٍ قرآنيٍّ اليومَ حسابٌ
-بلا مرجِع. ولو أُودِعت غدًا لم يُفتَح البابُ وحدَه، بل انتقل الوقوفُ إلى
-الشرط الذي يليه (`THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THEY_ARE_ABSENT`).
+**وثالثًا: وماركوف التوكنز موقوفٌ بالشرط الرابع.** كانت البايتاتُ هي البابَ
+حين لم تكن في الشجرة؛ ثمّ أُودِعت في `corpora/` مُطابِقةً طولًا وبصمةً،
+فاستُوفِي الشرطُ الثالث ولم يُفتَح البابُ: انتقل الوقوفُ إلى شهادة الإسقاط
+كما كُتِب قبل وصولها (`THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THE_STOP_MOVED_PAST_THEM`).
 
 **ورابعًا: وماركوف الوظيفيُّ موقوفٌ لا محجوب.**
 
@@ -82,7 +82,7 @@ __all__ = [
     "A_NEGATIVE_PROBE_SUSPENDS_THE_FUNCTIONAL_SPLIT_UNTIL_IT_IS_DEPOSITED",
     "MARKOV_READINESS_NAMED_RESIDUALS",
     "NO_TOKEN_FIGURE_IS_ISSUED_WITHOUT_ITS_DOMINANCE_READING",
-    "THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THEY_ARE_ABSENT",
+    "THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THE_STOP_MOVED_PAST_THEM",
     "THE_PREREQUISITE_ORDER",
     "ChainReading",
     "ChainStanding",
@@ -138,11 +138,11 @@ A_GATE_THAT_NAMES_ITS_FIRST_UNMET_PREREQUISITE_IS_NOT_A_FAILURE: Final[str] = (
     "لا مجموعة، فأوّلُ غيرِ مستوفًى هو البابُ، وما بعده غيرُ منظورٍ فيه"
 )
 
-THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THEY_ARE_ABSENT: Final[str] = (
-    "THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THEY_ARE_ABSENT: المدوّنةُ ليست "
-    f"في `{QURAN_CORPUS_RELATIVE_PATH}` ولا مصرَّحًا بمسارها، فكلُّ رقمٍ قرآنيٍّ "
-    "اليومَ حسابٌ بلا مرجِع؛ وإيداعُها لا يفتح البابَ بل ينقل الوقوفَ إلى "
-    "الشرط الذي يليه"
+THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THE_STOP_MOVED_PAST_THEM: Final[str] = (
+    "THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THE_STOP_MOVED_PAST_THEM: أُودِعت "
+    f"بايتاتُ المدوّنة في `{QURAN_CORPUS_RELATIVE_PATH}` مُطابِقةً طولًا وبصمةً، "
+    "فاستُوفِي الشرطُ الثالث. وإيداعُها لم يفتح البابَ كما قيل قبل وصولها: "
+    "انتقل الوقوفُ إلى الشرط الذي يليه، ولا يزال كلُّ رقمٍ ماركوفيٍّ ممنوعًا"
 )
 
 A_NEGATIVE_PROBE_SUSPENDS_THE_FUNCTIONAL_SPLIT_UNTIL_IT_IS_DEPOSITED: Final[str] = (
@@ -168,8 +168,8 @@ MARKOV_READINESS_NAMED_RESIDUALS: Final[dict[str, str]] = {
     "A_GATE_THAT_NAMES_ITS_FIRST_UNMET_PREREQUISITE_IS_NOT_A_FAILURE": (
         A_GATE_THAT_NAMES_ITS_FIRST_UNMET_PREREQUISITE_IS_NOT_A_FAILURE
     ),
-    "THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THEY_ARE_ABSENT": (
-        THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THEY_ARE_ABSENT
+    "THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THE_STOP_MOVED_PAST_THEM": (
+        THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THE_STOP_MOVED_PAST_THEM
     ),
     "A_NEGATIVE_PROBE_SUSPENDS_THE_FUNCTIONAL_SPLIT_UNTIL_IT_IS_DEPOSITED": (
         A_NEGATIVE_PROBE_SUSPENDS_THE_FUNCTIONAL_SPLIT_UNTIL_IT_IS_DEPOSITED
@@ -225,7 +225,7 @@ def _corpus_bytes_reading() -> PrerequisiteReading:
         met=resolvable,
         ground=(
             f"بايتاتُ المدوّنة تُحَلّ إلى ملفٍّ حاضر: {resolvable}. "
-            f"{THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THEY_ARE_ABSENT}"
+            f"{THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THE_STOP_MOVED_PAST_THEM}"
         ),
     )
 
@@ -427,15 +427,26 @@ def _assert_the_chain_is_ordered_and_complete() -> None:
         raise MarkovReadinessError("شرطٌ مسمًّى لم يُقرَأ في السلسلة.")
 
 
-def _assert_the_token_chain_is_blocked_at_the_corpus_bytes() -> None:
-    """حارسُ استيراد: الوقوفُ اليومَ عند البايتات، لا قبلها ولا بعدها."""
+def _assert_the_token_chain_is_blocked_at_its_first_unmet_rung() -> None:
+    """حارسُ استيراد: الحاجبُ هو أوّلُ غيرِ مستوفًى بعينه، لا شرطٌ مكتوبٌ سلفًا.
 
+    وكان هذا الحارسُ يسمّي البايتاتِ حاجبًا بالاسم، فلمّا أُودِعت صار يرفض
+    استيفاءً هو عينُ ما كُتِب أنّه سيقع. فالمنشورُ أنّ الوقوفَ عند **أوّل**
+    غيرِ مستوفًى، وعليه يُقاس: لا يُستوفى شرطٌ متأخّرٌ فوقَ حاجبٍ قائم، ولا
+    يُعلَن حجبٌ بشرطٍ استُوفِي.
+    """
+
+    unmet = _first_unmet()
     reading = token_markov_standing()
+    if unmet is None:
+        if reading.standing is not ChainStanding.OPEN:
+            raise MarkovReadinessError("الشروطُ مستوفاةٌ والسلسلةُ ليست مفتوحة.")
+        return
     if reading.standing is not ChainStanding.BLOCKED:
-        raise MarkovReadinessError("ماركوف التوكنز ليس محجوبًا والبايتاتُ غائبة.")
-    if reading.blocking_prerequisite is not Prerequisite.CORPUS_BYTES_PRESENT:
+        raise MarkovReadinessError(f"شرطٌ غيرُ مستوفًى ({unmet.prerequisite}) بلا حجب.")
+    if reading.blocking_prerequisite is not unmet.prerequisite:
         raise MarkovReadinessError(
-            f"الحاجبُ غيرُ المنشور: {reading.blocking_prerequisite}."
+            f"الحاجبُ غيرُ أوّلِ غيرِ مستوفًى: {reading.blocking_prerequisite}."
         )
 
 
@@ -491,7 +502,7 @@ def _assert_every_residual_is_named_by_its_key() -> None:
 _assert_no_authority_field()
 _assert_this_module_issues_no_probability()
 _assert_the_chain_is_ordered_and_complete()
-_assert_the_token_chain_is_blocked_at_the_corpus_bytes()
+_assert_the_token_chain_is_blocked_at_its_first_unmet_rung()
 _assert_the_functional_chain_is_suspended_and_not_blocked()
 _assert_a_token_figure_refuses_a_missing_dominance()
 _assert_the_projection_makes_regularity_where_it_was_measured()

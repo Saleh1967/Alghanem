@@ -24,6 +24,13 @@ Three registers, kept apart on purpose:
     assumed: if such a file ever arrives, this script fails, because the figure
     would then be measurable and this register would have gone stale.
 
+``ARRIVED_BUT_NOT_RE_DERIVED``
+    A named source whose bytes have since been deposited, fingerprint-matched,
+    so its figures are now *measurable* — but are **not measured here**. This
+    register is the opposite tripwire: its presence is asserted, so a source
+    that disappears fails the run. Arrival is not re-derivation, and nothing in
+    this register may be read as a witness until it moves into ``REDERIVED``.
+
 What this script does **not** do: it adopts no figure, issues no verdict,
 lifts no blocked milestone, and imports nothing from ``alghanem.kernel``. That
 a count re-derives shows the counter counted these bytes under this rule; it
@@ -173,15 +180,28 @@ SELF_REFERENTIAL: tuple[Witness, ...] = (
 
 
 NOT_IN_THIS_TREE: tuple[tuple[str, str], ...] = (
+    ("quranic-corpus-morphology-0.4.txt", "the iʿrāb corpus witness"),
+)
+ARRIVED_BUT_NOT_RE_DERIVED: tuple[tuple[str, str], ...] = (
     (
-        "quran-simple-enhanced.txt",
+        "corpora/quran-simple-enhanced.txt",
         (
             "the compression ladder (85.11 / 87.67 / 88.01 / 88.34%) and the "
             "four jarād/mazīd corpus counts"
         ),
     ),
-    ("quranic-corpus-morphology-0.4.txt", "the iʿrāb corpus witness"),
 )
+"""Sources now deposited whose figures this script still does not re-derive.
+
+The bytes arrived through ``tools/intake_corpus.py``, which matches length and
+SHA-256 against the frozen reference before writing, so ``NOT_IN_THIS_TREE`` no
+longer describes them. What has **not** happened is the measurement: the ladder
+percentages and the corpus counts are still quoted from the specification and
+re-derived nowhere here. Moving a figure out of this register means running it,
+not renaming it.
+"""
+
+
 """Named sources the specification measures against, whose bytes are absent.
 
 The codec revision audit's 99.992251% is a neighbour of this register worth
@@ -230,6 +250,18 @@ def main() -> int:
             print(f"  [DRIFT] {source_name} has arrived at {present}")
         else:
             print(f"  [absent] {source_name} — withholds {what_it_would_carry}")
+    print()
+
+    print("deposited sources whose figures are measurable but NOT measured here:")
+    for relative_path, what_it_would_carry in ARRIVED_BUT_NOT_RE_DERIVED:
+        if (root / relative_path).is_file():
+            print(f"  [present, unmeasured] {relative_path} — {what_it_would_carry}")
+        else:
+            failures.append(
+                f"{relative_path} is no longer deposited: this register claims "
+                "bytes that are not there"
+            )
+            print(f"  [DRIFT] {relative_path} is no longer in the tree")
     print()
 
     if failures:

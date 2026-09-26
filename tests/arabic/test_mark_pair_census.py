@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unicodedata
+from pathlib import Path
 
 import pytest
 
@@ -20,6 +21,7 @@ from alghanem.arabic.mark_pair_census import (
     pair_census_over_corpus,
     possible_pairs,
 )
+from alghanem.arabic.quran_corpus_word_total import quran_corpus_bytes_are_resolvable
 
 _FATIHA = "\n".join(FATIHA_LINES)
 _FATH = FATH_AYAH_SOURCE_TEXT
@@ -32,18 +34,36 @@ _SHADDA = "\u0651"
 _DAGGER = "\u0670"
 
 
-def test_the_corpus_bytes_are_absent_from_this_tree() -> None:
-    """السؤالُ عن كلّ المدوّنة لا يُجاب ههنا: بايتاتُها ليست في الشجرة."""
+def test_the_corpus_run_tracks_the_resolver_and_not_a_constant() -> None:
+    """حضورُ المدوّنة يُقرأ من مُحَلِّل المسار، ولا يُكتَب ثابتًا ههنا."""
 
-    assert corpus_run_is_available() is False
+    assert corpus_run_is_available() is quran_corpus_bytes_are_resolvable()
 
 
-def test_the_corpus_run_refuses_rather_than_estimating() -> None:
-    """ولا تُقدَّر المدوّنةُ من المُودَعَين، بل يُرفَض الطلبُ صريحًا."""
+def test_the_corpus_run_is_either_the_fingerprinted_bytes_or_an_explicit_refusal(
+    tmp_path: Path,
+) -> None:
+    """لا تقديرَ بين الحدَّين: إمّا رقمٌ من البايتات المبصومة وإمّا رفضٌ صريح."""
 
-    with pytest.raises(Exception) as raised:
-        pair_census_over_corpus()
-    assert "المدوّنة" in str(raised.value)
+    if corpus_run_is_available():
+        census = pair_census_over_corpus()
+        assert census.scope == "المدوّنة"
+        assert census.positions_read > 0
+    else:
+        with pytest.raises(Exception) as raised:
+            pair_census_over_corpus()
+        assert "المدوّنة" in str(raised.value)
+
+
+def test_bytes_that_differ_from_the_frozen_digest_are_refused_not_counted(
+    tmp_path: Path,
+) -> None:
+    """وملفٌّ مُحَلٌّ مخالفُ البصمة يُرفَض ولا يُعَدّ، وإن كان عربيًّا سليمًا."""
+
+    impostor = tmp_path / "quran-simple-enhanced.txt"
+    impostor.write_text("1|1|بِسْم\n", encoding="utf-8")
+    with pytest.raises(Exception):
+        pair_census_over_corpus(str(impostor))
 
 
 def test_the_nine_combining_classes_are_all_distinct() -> None:
@@ -228,7 +248,7 @@ def test_every_residual_is_named_by_its_own_key() -> None:
     """وكلُّ بقيّةٍ تبدأ بمفتاحها فلا تُقتَبس منزوعةَ النسبة."""
 
     assert set(MARK_PAIR_NAMED_RESIDUALS) == {
-        "THE_CORPUS_BYTES_ARE_ABSENT_SO_NO_CORPUS_FIGURE_IS_PUBLISHED",
+        "THE_CORPUS_FIGURE_IS_PUBLISHED_ONLY_FROM_THE_FINGERPRINTED_BYTES",
         "A_RANKING_ON_TWO_TEXTS_IS_NOT_A_CORPUS_RANKING",
         "AN_UNREALIZED_PAIR_IS_NOT_A_FORBIDDEN_PAIR",
         "THE_ORDER_INSIDE_A_PAIR_CARRIES_NO_INFORMATION",

@@ -97,3 +97,25 @@ def test_an_absent_source_is_asserted_absent_never_assumed(
     for source_name, what_it_would_carry in example.NOT_IN_THIS_TREE:
         assert what_it_would_carry.strip()
         assert list(root.rglob(source_name)) == []
+
+
+def test_a_deposited_source_is_asserted_present_and_still_unmeasured(
+    example: ModuleType,
+) -> None:
+    """والحضورُ يُفحَص كذلك: وصولُ البايتات ليس إعادةَ اشتقاقٍ لأرقامها."""
+
+    root = repository_root()
+    assert example.ARRIVED_BUT_NOT_RE_DERIVED
+    rederived = {witness.name for witness in example.REDERIVED}
+    for relative_path, what_it_would_carry in example.ARRIVED_BUT_NOT_RE_DERIVED:
+        assert what_it_would_carry.strip()
+        assert (root / relative_path).is_file()
+        assert relative_path not in rederived
+
+
+def test_the_two_registers_never_name_the_same_source(example: ModuleType) -> None:
+    """ولا يُعَدّ مصدرٌ غائبًا وحاضرًا معًا: السجلّان متنافيان بأسمائهما."""
+
+    absent = {name for name, _ in example.NOT_IN_THIS_TREE}
+    arrived = {Path(path).name for path, _ in example.ARRIVED_BUT_NOT_RE_DERIVED}
+    assert absent.isdisjoint(arrived)
