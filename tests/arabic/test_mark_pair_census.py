@@ -20,6 +20,7 @@ from alghanem.arabic.mark_pair_census import (
     pair_census_over_corpus,
     possible_pairs,
 )
+from alghanem.arabic.quran_corpus_word_total import quran_corpus_bytes_are_resolvable
 
 _FATIHA = "\n".join(FATIHA_LINES)
 _FATH = FATH_AYAH_SOURCE_TEXT
@@ -32,6 +33,16 @@ _SHADDA = "\u0651"
 _DAGGER = "\u0670"
 
 
+def test_the_corpus_run_tracks_the_resolver_and_not_a_constant() -> None:
+    """الثابتُ: الجولةُ متاحةٌ متى حُلَّ مسارٌ إلى ملفٍّ حاضر، لا «ممتنعةٌ أبدًا»."""
+
+    assert corpus_run_is_available() is quran_corpus_bytes_are_resolvable()
+
+
+@pytest.mark.skipif(
+    quran_corpus_bytes_are_resolvable(),
+    reason="واقعةٌ مؤرَّخةٌ بغياب البايتات؛ وحضورُها يُتيح الجولةَ ولا يكسر شيئًا.",
+)
 def test_the_corpus_bytes_are_absent_from_this_tree() -> None:
     """السؤالُ عن كلّ المدوّنة لا يُجاب ههنا: بايتاتُها ليست في الشجرة."""
 
@@ -39,11 +50,25 @@ def test_the_corpus_bytes_are_absent_from_this_tree() -> None:
 
 
 def test_the_corpus_run_refuses_rather_than_estimating() -> None:
-    """ولا تُقدَّر المدوّنةُ من المُودَعَين، بل يُرفَض الطلبُ صريحًا."""
+    """ولا تُقدَّر المدوّنةُ من المُودَعَين، بل يُرفَض الطلبُ صريحًا.
 
-    with pytest.raises(Exception) as raised:
+    والرفضُ رفضان: غيابُ البايتات، ومخالفةُ البصمة؛ وكلاهما رفضٌ مسمًّى لا
+    تقدير. ولا يُشترَط أحدُهما بعينه، إذ يتغيّر بتغيّر ما على القرص.
+    """
+
+    if not quran_corpus_bytes_are_resolvable():
+        with pytest.raises(Exception) as raised:
+            pair_census_over_corpus()
+        assert "المدوّنة" in str(raised.value)
+        return
+    try:
         pair_census_over_corpus()
-    assert "المدوّنة" in str(raised.value)
+    except Exception as refusal:  # noqa: BLE001 - الرفضُ نفسُه هو المفحوص
+        assert (
+            "المدوّنة" in str(refusal)
+            or "البصمة" in str(refusal)
+            or "طولُ" in str(refusal)
+        )
 
 
 def test_the_nine_combining_classes_are_all_distinct() -> None:

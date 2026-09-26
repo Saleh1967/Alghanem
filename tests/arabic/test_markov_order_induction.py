@@ -336,7 +336,7 @@ def test_the_condition_names_its_three_clauses_and_its_guard() -> None:
     assert "UNREADABLE" in THE_PREREGISTERED_COMMUTATION_CONDITION
 
 
-def test_measuring_here_leaves_the_corpus_gate_blocked() -> None:
+def test_measuring_here_does_not_move_the_corpus_gate() -> None:
     assert the_corpus_gate_is_untouched() is True
     measure_commutation(draws=THE_REQUIRED_DRAW_FLOOR)
     assert the_corpus_gate_is_untouched() is True

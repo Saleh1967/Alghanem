@@ -69,7 +69,7 @@ from functools import cache
 from typing import Final
 
 from .maqayis_adjacency_constraint import place_of
-from .markov_readiness_gate import ChainStanding, token_markov_standing
+from .markov_readiness_gate import ChainReading, token_markov_standing
 from .slot_rights_composition_algebra import algebra_substrate
 
 __all__ = [
@@ -600,10 +600,18 @@ def verify_the_triangle_fit_reproduces_every_margin() -> bool:
     return True
 
 
-def the_corpus_gate_is_untouched() -> bool:
-    """أتبقى بوّابةُ ماركوف على المدوّنة محجوبةً بعد هذا القياس؟ نعم، ويُفحَص."""
+_THE_GATE_AS_READ_AT_IMPORT: Final[ChainReading] = token_markov_standing()
+"""قراءةُ البوّابة قبل أيّ قياسٍ ههنا، لتكون المقارنةُ إلى ملحوظٍ لا إلى منزلةٍ مُرمَّزة."""
 
-    return token_markov_standing().standing is ChainStanding.BLOCKED
+
+def the_corpus_gate_is_untouched() -> bool:
+    """أزحزح شيءٌ من هذا القياس بوّابةَ ماركوف عمّا كانت عليه عند الاستيراد؟
+
+    والمقارنةُ إلى القراءة الملحوظة لا إلى `BLOCKED` مُرمَّزة: فلو رُمِّزت
+    لصار إيداعُ البايتات — وهو استيفاءُ شرطٍ لا عطب — يُقرَأ ههنا خللًا.
+    """
+
+    return token_markov_standing() == _THE_GATE_AS_READ_AT_IMPORT
 
 
 # ---------------------------------------------------------------------------

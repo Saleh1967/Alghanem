@@ -23,6 +23,13 @@
 بلا مرجِع. ولو أُودِعت غدًا لم يُفتَح البابُ وحدَه، بل انتقل الوقوفُ إلى
 الشرط الذي يليه (`THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THEY_ARE_ABSENT`).
 
+وكان حارسُ الاستيراد يشترط الشرطَ الثالثَ **بعينه**، فيرفع خطأً لحظةَ
+الانتقال إلى الرابع؛ أي أنّ إيداعَ البايتات بحقّها كان يُسقِط هذه الوحدةَ
+ومَن يستوردها. فرفعُ الحظر كان ممتنعًا لا بشرطه بل **بحارسه**. والحارسُ اليومَ
+يمسك الثابتَ — أنّ الحاجبَ أوّلُ شرطٍ غيرِ مستوفًى أيًّا كان — والواقعةُ
+المؤرَّخةُ تُفحَص في اختبارٍ يُتخطّى حين تحضر البايتات
+(`A_DATED_STANDING_IS_NOT_AN_INVARIANT_AND_A_GUARD_MUST_HOLD_THE_INVARIANT`).
+
 **ورابعًا: وماركوف الوظيفيُّ موقوفٌ لا محجوب.**
 
 \\[
@@ -78,6 +85,7 @@ from alghanem.arabic.sukun_state_contract import the_sukun_splits
 
 __all__ = [
     "AN_INVARIANCE_THE_PROJECTION_MADE_IS_NOT_A_STATISTICAL_FINDING",
+    "A_DATED_STANDING_IS_NOT_AN_INVARIANT_AND_A_GUARD_MUST_HOLD_THE_INVARIANT",
     "A_GATE_THAT_NAMES_ITS_FIRST_UNMET_PREREQUISITE_IS_NOT_A_FAILURE",
     "A_NEGATIVE_PROBE_SUSPENDS_THE_FUNCTIONAL_SPLIT_UNTIL_IT_IS_DEPOSITED",
     "MARKOV_READINESS_NAMED_RESIDUALS",
@@ -145,6 +153,15 @@ THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THEY_ARE_ABSENT: Final[str] = (
     "الشرط الذي يليه"
 )
 
+A_DATED_STANDING_IS_NOT_AN_INVARIANT_AND_A_GUARD_MUST_HOLD_THE_INVARIANT: Final[str] = (
+    "A_DATED_STANDING_IS_NOT_AN_INVARIANT_AND_A_GUARD_MUST_HOLD_THE_INVARIANT: "
+    "«الحاجبُ اليومَ هو الشرطُ الثالث» واقعةٌ مؤرَّخة، و«الحاجبُ أوّلُ شرطٍ "
+    "غيرِ مستوفًى» ثابت؛ وحارسُ الاستيراد إن أمسك المؤرَّخَ صار استيفاءُ "
+    "الشرط عطبًا يُسقِط الوحدةَ عند استيرادها، فيمتنع رفعُ الحظر عمليًّا وإن "
+    "أُودِعت البايتاتُ بحقّها. فالحارسُ يمسك الثابتَ، والواقعةُ المؤرَّخةُ "
+    "تُفحَص في اختبارٍ يُتخطّى حين تحضر البايتات"
+)
+
 A_NEGATIVE_PROBE_SUSPENDS_THE_FUNCTIONAL_SPLIT_UNTIL_IT_IS_DEPOSITED: Final[str] = (
     "A_NEGATIVE_PROBE_SUSPENDS_THE_FUNCTIONAL_SPLIT_UNTIL_IT_IS_DEPOSITED: "
     "المحاولةُ التوزيعيّةُ الوحيدةُ نتيجتُها سالبةٌ ومسجَّلة — أفضلُ عنقودٍ "
@@ -170,6 +187,9 @@ MARKOV_READINESS_NAMED_RESIDUALS: Final[dict[str, str]] = {
     ),
     "THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THEY_ARE_ABSENT": (
         THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THEY_ARE_ABSENT
+    ),
+    "A_DATED_STANDING_IS_NOT_AN_INVARIANT_AND_A_GUARD_MUST_HOLD_THE_INVARIANT": (
+        A_DATED_STANDING_IS_NOT_AN_INVARIANT_AND_A_GUARD_MUST_HOLD_THE_INVARIANT
     ),
     "A_NEGATIVE_PROBE_SUSPENDS_THE_FUNCTIONAL_SPLIT_UNTIL_IT_IS_DEPOSITED": (
         A_NEGATIVE_PROBE_SUSPENDS_THE_FUNCTIONAL_SPLIT_UNTIL_IT_IS_DEPOSITED
@@ -427,15 +447,29 @@ def _assert_the_chain_is_ordered_and_complete() -> None:
         raise MarkovReadinessError("شرطٌ مسمًّى لم يُقرَأ في السلسلة.")
 
 
-def _assert_the_token_chain_is_blocked_at_the_corpus_bytes() -> None:
-    """حارسُ استيراد: الوقوفُ اليومَ عند البايتات، لا قبلها ولا بعدها."""
+def _assert_the_token_standing_names_its_first_unmet_prerequisite() -> None:
+    """حارسُ استيراد: الحاجبُ **أوّلُ** شرطٍ غيرِ مستوفًى، أيًّا كان.
+
+    وكان هذا الحارسُ يشترط الشرطَ الثالثَ بعينه، فكان يُسقِط الوحدةَ عند
+    الاستيراد لحظةَ إيداع البايتات — أي أنّه يجعل **استيفاءَ الشرط عطبًا**،
+    وهو نقيضُ ما تقوله `THE_CORPUS_BYTES_ARE_THE_THIRD_RUNG_AND_THEY_ARE_ABSENT`
+    نفسُها: «وإيداعُها لا يفتح البابَ بل ينقل الوقوفَ إلى الشرط الذي يليه».
+    فالمفحوصُ ههنا الثابتُ لا المؤرَّخ
+    (`A_DATED_STANDING_IS_NOT_AN_INVARIANT_AND_A_GUARD_MUST_HOLD_THE_INVARIANT`).
+    """
 
     reading = token_markov_standing()
+    unmet = _first_unmet()
+    if unmet is None:
+        if reading.standing is not ChainStanding.OPEN:
+            raise MarkovReadinessError("الشروطُ مستوفاةٌ والموقفُ ليس مفتوحًا.")
+        return
     if reading.standing is not ChainStanding.BLOCKED:
-        raise MarkovReadinessError("ماركوف التوكنز ليس محجوبًا والبايتاتُ غائبة.")
-    if reading.blocking_prerequisite is not Prerequisite.CORPUS_BYTES_PRESENT:
+        raise MarkovReadinessError("شرطٌ غيرُ مستوفًى والموقفُ ليس محجوبًا.")
+    if reading.blocking_prerequisite is not unmet.prerequisite:
         raise MarkovReadinessError(
-            f"الحاجبُ غيرُ المنشور: {reading.blocking_prerequisite}."
+            f"الحاجبُ المُعلَن {reading.blocking_prerequisite} "
+            f"ليس أوّلَ غيرِ مستوفًى {unmet.prerequisite}."
         )
 
 
@@ -491,7 +525,7 @@ def _assert_every_residual_is_named_by_its_key() -> None:
 _assert_no_authority_field()
 _assert_this_module_issues_no_probability()
 _assert_the_chain_is_ordered_and_complete()
-_assert_the_token_chain_is_blocked_at_the_corpus_bytes()
+_assert_the_token_standing_names_its_first_unmet_prerequisite()
 _assert_the_functional_chain_is_suspended_and_not_blocked()
 _assert_a_token_figure_refuses_a_missing_dominance()
 _assert_the_projection_makes_regularity_where_it_was_measured()

@@ -319,9 +319,9 @@ class TestGreedyAgainstOptimal:
 
 
 class TestTheInertness:
-    """الوحدةُ لا ترفع حظرًا، والبوّابةُ تُفحَص بعدها لا يُقال عنها."""
+    """الوحدةُ لا تحرّك البوّابةَ، وتُقارَن بعد القياس بقراءتها عند الاستيراد."""
 
-    def test_the_corpus_gate_is_still_blocked_after_every_measurement(self) -> None:
+    def test_the_corpus_gate_does_not_move_after_every_measurement(self) -> None:
         measure_greedy_gap()
         table_census(SourceRung.WITH_PROSE)
         assert the_block_and_the_freeze_are_untouched() is True

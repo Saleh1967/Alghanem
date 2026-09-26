@@ -58,12 +58,42 @@ def test_a_prerequisite_reading_without_a_written_ground_is_refused() -> None:
 # --- token Markov is blocked at the corpus bytes ---------------------------
 
 
+def test_the_standing_always_names_the_first_unmet_prerequisite_whatever_it_is() -> (
+    None
+):
+    """الثابتُ، لا المؤرَّخ: الحاجبُ أوّلُ شرطٍ غيرِ مستوفًى، وإلّا فمفتوح."""
+
+    reading = token_markov_standing()
+    unmet = [item for item in the_prerequisite_chain() if not item.met]
+    if not unmet:
+        assert reading.standing is ChainStanding.OPEN
+        assert reading.blocking_prerequisite is None
+    else:
+        assert reading.standing is ChainStanding.BLOCKED
+        assert reading.blocking_prerequisite is unmet[0].prerequisite
+
+
+def test_the_import_guard_holds_the_invariant_and_not_a_dated_rung() -> None:
+    """لو أمسك الحارسُ الشرطَ الثالثَ بعينه لأسقط الشجرةَ لحظةَ إيداع البايتات."""
+
+    module._assert_the_token_standing_names_its_first_unmet_prerequisite()
+    assert not hasattr(module, "_assert_the_token_chain_is_blocked_at_the_corpus_bytes")
+
+
+@pytest.mark.skipif(
+    quran_corpus_bytes_are_resolvable(),
+    reason="واقعةٌ مؤرَّخةٌ بغياب البايتات؛ وحضورُها ينقل الحاجبَ ولا يكسر شيئًا.",
+)
 def test_token_markov_is_blocked_and_names_the_corpus_bytes_as_its_door() -> None:
     reading = token_markov_standing()
     assert reading.standing is ChainStanding.BLOCKED
     assert reading.blocking_prerequisite is Prerequisite.CORPUS_BYTES_PRESENT
 
 
+@pytest.mark.skipif(
+    quran_corpus_bytes_are_resolvable(),
+    reason="واقعةٌ مؤرَّخةٌ بغياب البايتات؛ والمسارُ المُعلَنُ يتغيّر بتغيّر المصدر.",
+)
 def test_the_blocking_ground_names_the_vendored_corpus_path() -> None:
     assert "quran-simple-enhanced.txt" in token_markov_standing().ground
 

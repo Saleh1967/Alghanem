@@ -74,7 +74,7 @@ from typing import Final
 from .fath_ayah_source_text import FATH_AYAH_SOURCE_TEXT
 from .fatiha_source_text import FATIHA_LINES
 from .letter_fingerprint import LETTER_VOCABULARY, fold_root
-from .markov_readiness_gate import ChainStanding, token_markov_standing
+from .markov_readiness_gate import ChainReading, token_markov_standing
 from .pair_sample_widening import prose_scope_files
 
 __all__ = [
@@ -713,10 +713,18 @@ def greedy_standing(readings: Sequence[ProbeReading]) -> GreedyStanding:
     return GreedyStanding.FALLS_SHORT
 
 
-def the_block_and_the_freeze_are_untouched() -> bool:
-    """أبقيت بوّابةُ ماركوف على المدوّنة محجوبةً بعد كلّ ما ههنا؟ يُفحَص لا يُقال."""
+_THE_GATE_AS_READ_AT_IMPORT: Final[ChainReading] = token_markov_standing()
+"""قراءةُ البوّابة قبل أيّ قياسٍ ههنا، لتكون المقارنةُ إلى ملحوظٍ لا إلى منزلةٍ مُرمَّزة."""
 
-    return token_markov_standing().standing is ChainStanding.BLOCKED
+
+def the_block_and_the_freeze_are_untouched() -> bool:
+    """أزحزح شيءٌ ممّا ههنا بوّابةَ ماركوف عمّا كانت عليه عند الاستيراد؟
+
+    والمقارنةُ إلى القراءة الملحوظة لا إلى `BLOCKED` مُرمَّزة، إذ ليست مهمّةُ
+    هذه الوحدة أن تُبقيَ الحظرَ قائمًا، بل ألّا تكون هي التي حرّكته.
+    """
+
+    return token_markov_standing() == _THE_GATE_AS_READ_AT_IMPORT
 
 
 # ---------------------------------------------------------------------------
