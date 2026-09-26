@@ -8080,7 +8080,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 544-fold: 32 pairs, then 17,418. Both questions were answered,
+The widening is 546-fold: 32 pairs, then 17,472. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8099,7 +8099,7 @@ than a tail: six shadda-bearing pairs hold 99.931%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,594 of 17,386
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,607 of 17,440
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8622,6 +8622,54 @@ and this chain the triangle closes — the root is its three pairwise bindings,
 no more and no less. Nothing is licensed by that; the second source is still
 absent, and the cube move set is not proved to be a full Markov basis, so the
 walk covers part of the fiber rather than all of it.
+
+## The Markov order of the root is a property of the route, not of the source
+
+Having established what binds the three slots, the obvious next question is what
+Markov order the root has. `markov_order_induction` asks it — and answers that
+the question, as usually posed, has no answer on this evidence.
+
+The root is read as a sequence of three places drawn from the eleven declared
+ones, giving an 11×11×11 table with 776 of its 1331 cells occupied. Over it sits
+a strictly nested ladder of four log-linear models: independence (30 df), the
+Markov chain on the two adjacent pairs (230 df), the triangle with all three
+pairs but no ternary term (330 df), and the saturated table (1330 df). The
+nesting is verified at import rather than asserted, on a synthetic sample built
+to carry a real three-way interaction; a second import-time theorem checks that
+the triangle fit reproduces all three two-dimensional margins, since a fit that
+matched two and missed the third would be a chain wearing a triangle's name.
+
+Then two inductions, composed both ways. *Induction on the order* climbs the
+ladder on the whole lexicon under a penalised criterion. *Induction for the
+unseen* splits the lexicon into a seen half and a hidden half and judges by what
+predicts the hidden one. Running them on-then-for gives one rung; running them
+for-then-on gives another; and asking the held-out half directly gives a third.
+The whole lexicon selects the **chain**. Inside the seen halves, in 30 of 30
+draws, the selection is **independence**. The best predictor of the hidden half,
+at both declared smoothings, is the **triangle**. Three routes, three rungs, one
+body of evidence — the pre-registered commutation condition fails on all three
+of its clauses, and the square does not commute.
+
+The crossover scan shows why, and shows it is arithmetic rather than a bug: the
+selected rung is independence up to about 3,191 roots, splits at 3,647, and is
+the chain by 4,103. The full lexicon, at 4,559, sits just past the crossover. So
+"the root is a first-order Markov chain" is not a reading of the material; it is
+a reading of the material *at this size, under this criterion*. That is the
+finding, and it is a negative one.
+
+Two disciplinary notes are recorded in the module rather than omitted. The
+threshold was fixed before the recorded run but after an exploratory crossover
+probe whose numbers had been seen, so it is not a registered prediction and says
+so. And the held-out comparison needs an additive smoothing, which is a choice;
+two are declared in advance, and if they disagree on a winner the leg is not
+read at all — the standing becomes `UNREADABLE` rather than being settled by
+preferring one. Nothing here touches the corpus gate: the material is the
+fingerprinted root table, and token Markov over the Quran remains blocked at its
+third prerequisite.
+
+```bash
+python examples/arabic/run_markov_order_induction.py
+```
 
 ```bash
 python examples/arabic/run_slot_rights_algebra.py
