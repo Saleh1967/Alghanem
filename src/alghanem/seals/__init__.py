@@ -1,6 +1,6 @@
 """عدّةُ المحاسبة: سجلُّ أختامٍ لا يخزن رقمًا، وقانونُ وديعةٍ لا يقبل بلا فاتورة."""
 
-from .deposit_law import (
+from .invoice_law import (
     A_DELTA_ACROSS_TWO_SCOPES_IS_NOT_A_DELTA,
     A_DEPOSIT_THAT_BRINGS_NO_LIVE_SEAL_IS_NOT_ADMITTED,
     A_GAIN_BOUGHT_BY_DROPPING_EVIDENCE_IS_DECAY_NOT_GAIN,

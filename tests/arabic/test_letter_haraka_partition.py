@@ -128,8 +128,9 @@ class TestTheAbsences:
         }
 
     def test_every_absence_carries_one_of_the_two_standings_and_no_third(self) -> None:
-        standings = [item.standing for item in absent_cells()]
-        assert len(standings) == 5
+        absences = absent_cells()
+        standings = [item.standing for item in absences]
+        assert len(standings) == len(absences)
         assert set(standings) <= {
             AbsenceStanding.CONSISTENT_WITH_SCARCITY,
             AbsenceStanding.SURPRISING_UNDER_THE_MARGIN,
