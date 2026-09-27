@@ -1,14 +1,14 @@
 """المزدوجُ الأكثرُ تكرارًا: مقيسٌ على المُودَعَين، ومُهيَّأٌ للمدوّنة لا مُدَّعًى عليها.
 
-سُئل: ما المزدوجُ الأكثرُ تكرارًا **على كلّ المدوّنة**؟ وجوابُ هذه الشجرة يبدأ
-بما ليس فيها: **بايتاتُ المدوّنة ليست ههنا**. فـ`quran_corpus_word_total`
-تحفظ بصمتَها مُجمَّدةً — 1,319,901 بايتًا و`sha256` معلومًا — ولا تحفظ بايتاتِها،
-و`quran_corpus_bytes_are_resolvable()` تردّ `False` في هذه الشجرة. فلا يُنشَر
-ههنا رقمٌ عن المدوّنة ألبتّة، ولا يُقدَّر، ولا يُستنبَط من المُودَعَين
-(`THE_CORPUS_BYTES_ARE_ABSENT_SO_NO_CORPUS_FIGURE_IS_PUBLISHED`).
+سُئل: ما المزدوجُ الأكثرُ تكرارًا **على كلّ المدوّنة**؟ وجوابُ هذه الشجرة معلَّقٌ
+بالبايتات لا بالتقدير: `quran_corpus_word_total` تحفظ المُجمَّدَ — 1,319,901
+بايتًا و`sha256` معلومًا — و`pair_census_over_corpus` لا تُخرِج رقمًا إلّا بعد
+مطابقتهما معًا. فما دامت البايتاتُ غائبةً فالطلبُ **مرفوضٌ صريحًا** لا مُقدَّرٌ
+من المُودَعَين، ومتى حضرت مُطابِقةً فالرقمُ من البايتات نفسِها لا من قياسٍ
+عليها (`THE_CORPUS_FIGURE_IS_PUBLISHED_ONLY_FROM_THE_FINGERPRINTED_BYTES`).
 
-والذي يُصنَع بدلًا من التقدير شيئان: **حدٌّ مشتقٌّ من اليونيكود** يصحّ على كلّ
-نصّ، و**آلةٌ مُسجَّلةٌ قبل الرؤية** تُشغَّل على البايتات متى حضرت.
+والمقيسُ ههنا على المُودَعَين يبقى مقيسًا عليهما: **حدٌّ مشتقٌّ من اليونيكود**
+يصحّ على كلّ نصّ، و**آلةٌ مُسجَّلةٌ قبل الرؤية** تُشغَّل على البايتات متى حضرت.
 
 **أوّلًا: اليونيكود لا يمنع مزدوجًا واحدًا من الستّة والثلاثين.** الأصنافُ
 اللاصقةُ (`Canonical_Combining_Class`) للتسع متمايزةٌ كلُّها بلا تكرار:
@@ -74,7 +74,7 @@ __all__ = [
     "A_RANKING_ON_TWO_TEXTS_IS_NOT_A_CORPUS_RANKING",
     "A_TIE_IS_REPORTED_AND_NOT_BROKEN",
     "MARK_PAIR_NAMED_RESIDUALS",
-    "THE_CORPUS_BYTES_ARE_ABSENT_SO_NO_CORPUS_FIGURE_IS_PUBLISHED",
+    "THE_CORPUS_FIGURE_IS_PUBLISHED_ONLY_FROM_THE_FINGERPRINTED_BYTES",
     "THE_NINE_MARKS",
     "THE_ORDER_INSIDE_A_PAIR_CARRIES_NO_INFORMATION",
     "MarkPairError",
@@ -268,12 +268,12 @@ def pair_census_over_corpus(path: str | None = None) -> PairCensus:
     return pair_census_over(data.decode("utf-8"), "المدوّنة")
 
 
-THE_CORPUS_BYTES_ARE_ABSENT_SO_NO_CORPUS_FIGURE_IS_PUBLISHED: Final[str] = (
-    "THE_CORPUS_BYTES_ARE_ABSENT_SO_NO_CORPUS_FIGURE_IS_PUBLISHED: بايتاتُ "
-    "المدوّنة ليست في هذه الشجرة، و`quran_corpus_bytes_are_resolvable()` تردّ "
-    "`False`. فالسؤالُ عن «كلّ المدوّنة» لا يُجاب ههنا برقم، ولا يُقدَّر من "
-    "المُودَعَين. والآلةُ مكتوبةٌ لتُشغَّل على البايتات متى حضرت مُصادَقةً "
-    "ببصمتها، وترفض صريحًا متى غابت."
+THE_CORPUS_FIGURE_IS_PUBLISHED_ONLY_FROM_THE_FINGERPRINTED_BYTES: Final[str] = (
+    "THE_CORPUS_FIGURE_IS_PUBLISHED_ONLY_FROM_THE_FINGERPRINTED_BYTES: رقمُ "
+    "المدوّنة لا يخرج ههنا إلّا من بايتاتٍ يُطابَق طولُها وبصمتُها على "
+    "المُجمَّد؛ فمتى غابت رُفض الطلبُ صريحًا ولم يُقدَّر من المُودَعَين، ومتى "
+    "حضرت فالرقمُ منها وحدَها. وحضورُ البايتات لا يجعل المقيسَ على "
+    "المُودَعَين مقيسًا على المدوّنة: كلُّ رقمٍ يبقى مسنوبًا إلى نطاقه."
 )
 
 A_RANKING_ON_TWO_TEXTS_IS_NOT_A_CORPUS_RANKING: Final[str] = (
@@ -311,8 +311,8 @@ A_PAIR_OF_MARKS_IS_NOT_A_PHONETIC_UNIT: Final[str] = (
 )
 
 MARK_PAIR_NAMED_RESIDUALS: Final[dict[str, str]] = {
-    "THE_CORPUS_BYTES_ARE_ABSENT_SO_NO_CORPUS_FIGURE_IS_PUBLISHED": (
-        THE_CORPUS_BYTES_ARE_ABSENT_SO_NO_CORPUS_FIGURE_IS_PUBLISHED
+    "THE_CORPUS_FIGURE_IS_PUBLISHED_ONLY_FROM_THE_FINGERPRINTED_BYTES": (
+        THE_CORPUS_FIGURE_IS_PUBLISHED_ONLY_FROM_THE_FINGERPRINTED_BYTES
     ),
     "A_RANKING_ON_TWO_TEXTS_IS_NOT_A_CORPUS_RANKING": (
         A_RANKING_ON_TWO_TEXTS_IS_NOT_A_CORPUS_RANKING

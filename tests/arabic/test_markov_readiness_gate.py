@@ -55,7 +55,7 @@ def test_a_prerequisite_reading_without_a_written_ground_is_refused() -> None:
         )
 
 
-# --- token Markov is blocked at the corpus bytes ---------------------------
+# --- token Markov is blocked at its first unmet rung -----------------------
 
 
 def test_the_standing_always_names_the_first_unmet_prerequisite_whatever_it_is() -> (
@@ -85,9 +85,13 @@ def test_the_import_guard_holds_the_invariant_and_not_a_dated_rung() -> None:
     reason="واقعةٌ مؤرَّخةٌ بغياب البايتات؛ وحضورُها ينقل الحاجبَ ولا يكسر شيئًا.",
 )
 def test_token_markov_is_blocked_and_names_the_corpus_bytes_as_its_door() -> None:
+def test_token_markov_is_blocked_at_the_first_unmet_prerequisite() -> None:
+    chain = the_prerequisite_chain()
+    unmet = next((reading for reading in chain if not reading.met), None)
+    assert unmet is not None
     reading = token_markov_standing()
     assert reading.standing is ChainStanding.BLOCKED
-    assert reading.blocking_prerequisite is Prerequisite.CORPUS_BYTES_PRESENT
+    assert reading.blocking_prerequisite is unmet.prerequisite
 
 
 @pytest.mark.skipif(

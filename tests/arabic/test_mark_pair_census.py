@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unicodedata
+from pathlib import Path
 
 import pytest
 
@@ -45,8 +46,9 @@ def test_the_corpus_run_tracks_the_resolver_and_not_a_constant() -> None:
 )
 def test_the_corpus_bytes_are_absent_from_this_tree() -> None:
     """السؤالُ عن كلّ المدوّنة لا يُجاب ههنا: بايتاتُها ليست في الشجرة."""
+    """حضورُ المدوّنة يُقرأ من مُحَلِّل المسار، ولا يُكتَب ثابتًا ههنا."""
 
-    assert corpus_run_is_available() is False
+    assert corpus_run_is_available() is quran_corpus_bytes_are_resolvable()
 
 
 def test_the_corpus_run_refuses_rather_than_estimating() -> None:
@@ -253,7 +255,7 @@ def test_every_residual_is_named_by_its_own_key() -> None:
     """وكلُّ بقيّةٍ تبدأ بمفتاحها فلا تُقتَبس منزوعةَ النسبة."""
 
     assert set(MARK_PAIR_NAMED_RESIDUALS) == {
-        "THE_CORPUS_BYTES_ARE_ABSENT_SO_NO_CORPUS_FIGURE_IS_PUBLISHED",
+        "THE_CORPUS_FIGURE_IS_PUBLISHED_ONLY_FROM_THE_FINGERPRINTED_BYTES",
         "A_RANKING_ON_TWO_TEXTS_IS_NOT_A_CORPUS_RANKING",
         "AN_UNREALIZED_PAIR_IS_NOT_A_FORBIDDEN_PAIR",
         "THE_ORDER_INSIDE_A_PAIR_CARRIES_NO_INFORMATION",
