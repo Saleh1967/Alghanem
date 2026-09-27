@@ -37,8 +37,9 @@
 
 **وثالثًا: التوزيعُ ليس ذا ذيلٍ بل ذو جُرف.** المتحقّقُ تسعةٌ على النثر، ستّةٌ
 منها `X + شدّة` وتحوز 17,852 من 17,864 — أي **99.933%** — وثلاثةٌ تحوز **12**
-وقوعًا لا غير. وبين 1,007 و9 عاملُ 111. فليس بين الجسم والقاع تدرّجٌ يُقرأ منه
-ترتيبٌ في الندرة.
+وقوعًا لا غير. وبين 1,015 و9 عاملُ 112 بالقسمة الأرضية —
+وهي مُعلَنةٌ باسمها ومقيسةٌ بـ`the_cliff_factor`، لا مُتَّبَعةً عرفًا.
+فليس بين الجسم والقاع تدرّجٌ يُقرأ منه ترتيبٌ في الندرة.
 
 **ورابعًا: وفُحصت الوقوعاتُ الاثنتا عشرةُ كلُّها واحدةً واحدة**، إذ لا يُنشَر
 قاعٌ لم يُنظَر في مادّته:
@@ -308,6 +309,54 @@ def third_rung_figures() -> RungFigures:
         shadda_bearing=shadda_bearing_pairs(rung),
         tanwin_initial_in_prose=tanwin_initial_pairs(prose),
         prose_pairs=prose.total_pairs,
+    )
+
+
+@dataclass(frozen=True)
+class CliffFactor:
+    """جُرفُ الدرجة الثالثة بطرفيه وعاملِه، مقيسًا لا متّبَعًا عرفًا."""
+
+    lightest_shadda_bearing: int
+    heaviest_without_shadda: int
+
+    def __post_init__(self) -> None:
+        if self.lightest_shadda_bearing < 1 or self.heaviest_without_shadda < 1:
+            raise PairWideningError("طرفُ جُرفٍ دون الواحد لا يُقاس.")
+
+    @property
+    def factor(self) -> int:
+        """العاملُ **بالقسمة الأرضية** — مُعلَنةً باسمها لا مطويّةً عرفًا."""
+
+        return self.lightest_shadda_bearing // self.heaviest_without_shadda
+
+
+def the_cliff_factor() -> CliffFactor:
+    """طرفا الجُرف: أخفُّ ما فيه شدّة، وأثقلُ ما لا شدّةَ فيه، من القرص الآن."""
+
+    counts = [count for count in the_widening_ladder()[2].counts if count.occurrences]
+    bearing = [count for count in counts if SHADDA in count.pair]
+    bare = [count for count in counts if SHADDA not in count.pair]
+    if not bearing or not bare:
+        raise PairWideningError("لا جُرفَ حيث غاب أحدُ الجانبين.")
+    return CliffFactor(
+        lightest_shadda_bearing=min(count.occurrences for count in bearing),
+        heaviest_without_shadda=max(count.occurrences for count in bare),
+    )
+
+
+def the_tail_occurrences_now() -> tuple[tuple[tuple[str, str], int], ...]:
+    """وقوعاتُ القاع الثلاثة كما يقيسها القرصُ الآن، لا كما جُمِّدت."""
+
+    counts = the_widening_ladder()[2].counts
+    return tuple(
+        sorted(
+            (
+                (count.pair, count.occurrences)
+                for count in counts
+                if count.occurrences and SHADDA not in count.pair
+            ),
+            key=lambda entry: (-entry[1], entry[0]),
+        )
     )
 
 

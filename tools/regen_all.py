@@ -37,7 +37,9 @@ if str(SRC_ROOT) not in sys.path:
 
 from alghanem.arabic import hamil_audit_second_reading as second_reading  # noqa: E402
 from alghanem.arabic import hamil_phase1_audit_deposit as phase1  # noqa: E402
+from alghanem.arabic import hamil_phase2_audit_deposit as phase2  # noqa: E402
 from alghanem.arabic import letter_haraka_partition as partition  # noqa: E402
+from alghanem.arabic import methodological_sources as sources  # noqa: E402
 from alghanem.arabic import pair_sample_widening as widening  # noqa: E402
 from alghanem.arabic import quran_corpus_word_total as word_total  # noqa: E402
 from alghanem.program import project_state  # noqa: E402
@@ -103,6 +105,68 @@ def _third_rung_renderings() -> Mapping[str, str]:
         "tanwin_initial_in_prose": f"{figures.tanwin_initial_in_prose:,}",
         "prose_pairs": f"{figures.prose_pairs:,}",
     }
+
+
+def _widening_prose_renderings() -> Mapping[str, str]:
+    """أرقامُ نثر `pair_sample_widening` نفسِه: سُلَّمُه وجُرفُه وقاعُه."""
+
+    ladder = widening.the_widening_ladder()
+    figures = widening.third_rung_figures()
+    cliff = widening.the_cliff_factor()
+    tail = widening.the_tail_occurrences_now()
+    leader = ladder[2].leaders[0].occurrences
+    renderings = {
+        "fold": f"**{figures.total_pairs // ladder[1].total_pairs} ضعفًا**",
+        "third_rung.row": (
+            f"| + نثر الشجرة | {figures.total_pairs:,} | "
+            f"{figures.realized}/36 | فتحة+شدّة ({leader:,}) |"
+        ),
+        "cliff.share": (
+            f"{figures.shadda_bearing:,} من {figures.total_pairs:,} — أي "
+            f"**{100 * figures.shadda_bearing / figures.total_pairs:.3f}%**"
+        ),
+        "cliff.factor": (
+            f"وبين {cliff.lightest_shadda_bearing:,} و"
+            f"{cliff.heaviest_without_shadda} عاملُ {cliff.factor} "
+            "بالقسمة الأرضية"
+        ),
+        "tail.total": f"**{sum(count for _, count in tail)}** وقوعًا",
+        "register.tanwin": (
+            f"**{figures.tanwin_initial_in_prose:,}** من "
+            f"{figures.prose_pairs:,} في النثر — أي "
+            f"{100 * figures.tanwin_initial_in_prose / figures.prose_pairs:.3f}%"
+        ),
+    }
+    for pair, count in tail:
+        key = "+".join(f"U+{ord(mark):04X}" for mark in pair)
+        renderings[f"tail.{key}"] = f"({count})"
+    return renderings
+
+
+def _phase2_tally() -> Mapping[str, str]:
+    """حصيلةُ الجولة الثانية، مولَّدةً من البايتات المُودَعة عند كلّ نداء."""
+
+    return {key: str(value) for key, value in phase2.verdict_tally().items()}
+
+
+def _hamil_register_tally() -> Mapping[str, str]:
+    """تعدادُ سجلّ أختامهم، مشتقًّا من قائمته لا منقولًا عن حقوله."""
+
+    return {key: str(value) for key, value in phase2.register_tally().items()}
+
+
+def _methodological_sources_sides() -> Mapping[str, str]:
+    """الجانبُ الحيُّ لمصدرٍ منهجيّ: حضورُ ذكره في وحدة بابه النافذ."""
+
+    doors = sources.doors_by_standing()
+    absent = sources.missing_citations()
+    fold = {
+        f"باب: {dotted}": ("غائبٌ ذكرُ مصدره" if dotted in absent else marker)
+        for dotted, marker in sources.citation_sites()
+    }
+    for standing, names in doors.items():
+        fold[standing.value] = " · ".join(names) if names else "لا باب"
+    return fold
 
 
 def _partition_ladder_renderings() -> Mapping[str, str]:
@@ -250,6 +314,36 @@ def the_registry() -> SealRegistry:
                 transcription=lambda: _named_fields(
                     second_reading.THE_COUNTS_AT_MEASUREMENT
                 ),
+            ),
+            _prose_seal(
+                name="pair_sample_widening.prose ← نثرُ الوحدة",
+                origin=(
+                    "the_widening_ladder() · the_cliff_factor() · "
+                    "the_tail_occurrences_now() ↔ نثرُ الوحدة"
+                ),
+                prose=Path(widening.__file__),
+                measure=_widening_prose_renderings,
+            ),
+            Seal(
+                name="hamil_phase2_audit_deposit.tally",
+                genus=SealGenus.GENERATED,
+                origin="exhibits/hamil-induction ↔ حكمٌ مشتقٌّ عند كلّ قراءة",
+                generate=_phase2_tally,
+                transcription=_phase2_tally,
+            ),
+            Seal(
+                name="hamil_phase2_audit_deposit.register",
+                genus=SealGenus.GENERATED,
+                origin="seals.json المُودَع ↔ تعدادٌ مشتقٌّ من قائمة أختامه",
+                generate=_hamil_register_tally,
+                transcription=_hamil_register_tally,
+            ),
+            Seal(
+                name="methodological_sources.T3",
+                genus=SealGenus.EPISTEMIC_WITNESS,
+                origin="THE_METHODOLOGICAL_SOURCES ↔ حضورُ الذكر في وحدة كلّ باب",
+                generate=_methodological_sources_sides,
+                transcription=_methodological_sources_sides,
             ),
             _prose_seal(
                 name="letter_haraka_partition.ladder",
