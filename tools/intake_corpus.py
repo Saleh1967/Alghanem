@@ -13,6 +13,15 @@
 `SANCTIONED_DEPOSIT_FILENAMES`، فلا تُنشئ هذه الأداةُ اسمًا طارئًا في موضع
 الإيداع. وإعادةُ التشغيل على بايتاتٍ مُودَعةٍ سلفًا لا تُعيد الكتابة.
 
+**ومحضرُ «الدرجة الثالثة عند القياس» إجراءٌ ههنا لا درسٌ مكتوب.** في #186 خرج
+16,796 مزدوجًا مقيسًا حيث كان المنقولُ إلى النثر 16,781: فانفصل المنقولُ عن
+المقيس بلا أن يسقط شاهد. فقاعدةُ هذا الباب الآن: **لا رقمَ يُنسَخ من عرضٍ
+خارجيّ إلى وديعة**. وكلُّ رقمٍ تُخرِجه هذه الأداةُ — الطولُ والبصمةُ — يُولَّد
+من بايتات المقصد **بعد كتابتها** لا من بايتات المصدر في الذاكرة ولا من صفحةٍ
+مقروءة؛ فتُمسَك الكتابةُ الناقصةُ عند بابها. وما لم يولَّد ههنا يُسمّى في
+الوديعة `QUOTED_INCOMING_NOT_REPRODUCED` ولا يُقرأ مقيسًا
+(`alghanem.arabic.audit_corpus_deposit`).
+
     python tools/intake_corpus.py --source-root /tmp/src
     python tools/intake_corpus.py --corpus quran-simple-enhanced.txt \\
         --source /path/to/quran-simple-enhanced.txt
@@ -32,6 +41,10 @@ from pathlib import Path
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPOSITORY_ROOT / "src"))
 
+from alghanem.arabic.audit_corpus_deposit import (  # noqa: E402
+    AUDIT_CORPUS_RELATIVE_PATH,
+    THE_AUDIT_CORPUS,
+)
 from alghanem.arabic.compression_model_preregistration import (  # noqa: E402
     FROZEN_CORPUS,
 )
@@ -78,6 +91,11 @@ SANCTIONED_DEPOSITS: tuple[SanctionedDeposit, ...] = (
         byte_length=FROZEN_CORPUS.byte_length,
         sha256_hex=FROZEN_CORPUS.sha256_hex,
     ),
+    SanctionedDeposit(
+        relative_path=AUDIT_CORPUS_RELATIVE_PATH,
+        byte_length=THE_AUDIT_CORPUS.byte_length,
+        sha256_hex=THE_AUDIT_CORPUS.sha256_hex,
+    ),
 )
 
 
@@ -123,18 +141,32 @@ def locate_source(
 
 
 def intake(deposit: SanctionedDeposit, source: Path) -> str:
-    """يستقبل بايتاتٍ إلى موضعها المسنون بعد المطابقة، ويصف ما وقع."""
+    """يستقبل بايتاتٍ إلى موضعها المسنون بعد المطابقة، ويصف ما وقع.
+
+    والوصفُ يحمل أرقامًا **مولَّدةً من القرص بعد الكتابة** لا منقولةً عن
+    المصدر ولا عن عرضٍ خارجيّ: تُعاد قراءةُ المقصد وتُطابَق ثانيةً، فكتابةٌ
+    ناقصةٌ أو مقطوعةٌ تُمسَك ههنا لا عند أوّل قراءةٍ بعد أيّام
+    (`NO_FIGURE_IS_COPIED_FROM_A_DISPLAY_INTO_A_DEPOSIT`).
+    """
 
     if not source.is_file():
         raise IntakeRefusal(f"لا ملفَّ في مسار المصدر: {source}")
     data = source.read_bytes()
     verify(data, deposit)
     destination = deposit.destination
-    if destination.is_file() and destination.read_bytes() == data:
-        return f"مُودَعٌ سلفًا بالبصمة نفسِها: {deposit.relative_path}"
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_bytes(data)
-    return f"أُودِعَ بعد مطابقة الطول والبصمة: {deposit.relative_path}"
+    already = destination.is_file() and destination.read_bytes() == data
+    if not already:
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(data)
+    settled = destination.read_bytes()
+    verify(settled, deposit)
+    generated = (
+        f"طولٌ مولَّدٌ من القرص {len(settled)}؛ "
+        f"بصمةٌ مولَّدةٌ من القرص {hashlib.sha256(settled).hexdigest()}"
+    )
+    if already:
+        return f"مُودَعٌ سلفًا بالبصمة نفسِها: {deposit.relative_path} — {generated}"
+    return f"أُودِعَ بعد مطابقة الطول والبصمة: {deposit.relative_path} — {generated}"
 
 
 def _selected_deposits(names: list[str] | None) -> tuple[SanctionedDeposit, ...]:
