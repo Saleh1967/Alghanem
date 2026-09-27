@@ -2496,7 +2496,7 @@ separate decision this module does not take.
 
 Five files were fetched and read as bytes rather than as project descriptions.
 `ar_pud-ud-test` (1,000 sentences, 20,747 tokens) and the three
-`ar_padt-ud-*` files (7,674 sentences, 282,384 tokens in total) carry `HEAD` and
+`ar_padt-ud-*` files (7,700 sentences, 282,384 tokens in total) carry `HEAD` and
 `DEPREL` populated on *every* token line, so the outcome for them is
 `RELATION_LAYER_PRESENT`. `ar_nyuad-ud-test` is the case that a project
 description would have hidden: its `HEAD` and `DEPREL` are populated on all
@@ -8080,7 +8080,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 548-fold: 32 pairs, then 17,554. Both questions were answered,
+The widening is 548-fold: 32 pairs, then 17,624. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8099,7 +8099,7 @@ than a tail: six shadda-bearing pairs hold 99.932%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,629 of 17,522
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,662 of 17,592
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8714,6 +8714,56 @@ corpus gate is re-checked after every measurement and is still blocked.
 
 ```bash
 python examples/arabic/run_letter_haraka_partition.py
+```
+
+## Eighteen of a sibling's identities close, five contradict, and only Stirling is a real cross-check
+
+A sibling repository deposited the first ث/ع round of its `hamil` program: a
+dictionary engine, its JSON output, and an induction results file. Its corpus —
+`mujammad.txt`, 1,306,770 bytes from GlobalQuran — is not in this tree, and
+neither is any of its output. Nothing of it can be re-measured here. But most of
+its figures do not need the corpus to be checked: they are identities *inside
+the quotation itself*, and
+`src/alghanem/arabic/hamil_phase1_audit_deposit.py` recomputes them at import
+rather than filing them as prose.
+
+The verdict of every check is derived from its two sides, never written in a
+field — a theorem verified at import refuses any dataclass here that carries a
+`verdict` member, so changing one quoted number flips its own verdict and
+nothing else. Eighteen identities close to the letter: the four classes sum to
+the word total, the twenty qāf endings sum to their class, the reconciliation
+closes both ways, the transition table sums to the training half, the two halves
+sum to the pair count, and the order gap reproduces. Five contradict, and each
+is measured rather than asserted: the chain rule is broken by 0.0316 bits when
+it must be zero by definition; no denominator declared anywhere in the results
+file yields the interface's quoted per-gate rate; the held-out gain recomputes to
+49.89 bits, not 4.96; the partition *costs more* than no partition at all by
+11.609 bits, so "it does not buy" understates it; and the `T` marginal is 102
+here against 209 quoted in speech, while `C` agrees exactly — one of the two
+announced cross-checks holds and the other misses by a factor of two.
+
+The distinction the deposit adds is between agreement and confirmation. A total
+agreeing with the sum of its parts proves the quotation is internally
+consistent, not that it was measured on anything: two fabricated consistent
+numbers pass the same test, so `AGREES` here is the absence of a fault, not the
+presence of a truth. Only seven of the twenty-five checks are cross-checks in
+the real sense — Stirling and Bell, recomputed from `letter_haraka_partition`,
+a separate implementation with no shared line. S(28,4) = 2,998,587,019,946,701
+agreeing digit for digit across two independent programs is the one result in
+this deposit that testifies to both of them.
+
+Two checks carry no sides at all, because they need bytes that were never
+deposited, and the type refuses to let them carry sides — an uncheckable claim
+may not be dressed as a checked one. Five defects in the sibling's listing are
+described and explicitly marked as never run here, including a rule declared for
+three letters and executed for two, a residual that counts its own rule's
+matches as unexplained, and three `assert` statements freezing dated facts in a
+guard — the same fault this tree removed from its own readiness gate. One older
+question closes along the way: the seal `8b387e8` was never a missing object
+here, it is a seal of that repository.
+
+```bash
+python examples/arabic/run_hamil_phase1_audit.py
 ```
 
 ```bash

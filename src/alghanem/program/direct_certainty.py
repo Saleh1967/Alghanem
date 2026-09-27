@@ -717,6 +717,18 @@ REPORTED_UNVERIFIED_FIGURES: Final[tuple[UnverifiedFigureRecord, ...]] = (
         source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
         constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
     ),
+    UnverifiedFigureRecord(
+        subject="ربحُ الزوجيّ المشترك في إيداع hamil، ولا مقامَ في ملفّه يُخرِجه",
+        figure_text="5.83 بتًّا لكلّ زوجيٍّ مشترك",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="بصمةُ الهياكل 14,870 في إيداع hamil، الموقوفةُ على مدوّنةٍ ليست هنا",
+        figure_text="14,870 هيكلًا (متبدّلة 1,692)",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
 )
 """أرقامُ نصّ البروتوكول نفسِه، مقروءةً بقاعدته: خبرٌ مُسجَّلٌ لا قياسٌ مقبول."""
 
