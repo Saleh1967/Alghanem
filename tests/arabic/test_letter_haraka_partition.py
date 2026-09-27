@@ -128,18 +128,25 @@ class TestTheAbsences:
             ("ظ", "\u0652"),
         }
 
-    def test_four_of_the_five_are_consistent_with_scarcity(self) -> None:
+    def test_three_of_the_five_are_consistent_with_scarcity(self) -> None:
         standings = [item.standing for item in absent_cells()]
-        assert standings.count(AbsenceStanding.CONSISTENT_WITH_SCARCITY) == 4
-        assert standings.count(AbsenceStanding.SURPRISING_UNDER_THE_MARGIN) == 1
+        assert standings.count(AbsenceStanding.CONSISTENT_WITH_SCARCITY) == 3
+        assert standings.count(AbsenceStanding.SURPRISING_UNDER_THE_MARGIN) == 2
 
-    def test_the_only_surprising_cell_is_the_alef_bearing_a_fatha(self) -> None:
+    def test_the_surprising_cells_are_the_alef_fatha_and_the_zay_sukun(self) -> None:
         surprising = [
             item
             for item in absent_cells()
             if item.standing is AbsenceStanding.SURPRISING_UNDER_THE_MARGIN
         ]
-        assert [(item.letter, item.haraka) for item in surprising] == [("ا", "\u064e")]
+        assert [(item.letter, item.haraka) for item in surprising] == [
+            ("ا", "\u064e"),
+            ("ز", "\u0652"),
+        ]
+
+    def test_the_zay_cell_sits_within_a_hair_of_the_margin(self) -> None:
+        zay = next(item for item in absent_cells() if item.letter == "ز")
+        assert abs(zay.expected - -math.log(THE_SURPRISE_FLOOR)) < 0.2
 
     def test_the_alef_row_is_itself_almost_empty(self) -> None:
         alef = next(item for item in absent_cells() if item.letter == "ا")

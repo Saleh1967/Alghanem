@@ -8083,7 +8083,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 550-fold: 32 pairs, then 17,612. Both questions were answered,
+The widening is 552-fold: 32 pairs, then 17,668. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8102,7 +8102,7 @@ than a tail: six shadda-bearing pairs hold 99.932%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,656 of 17,580
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,664 of 17,636
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8692,13 +8692,18 @@ The table is filled along a cumulative ladder: the Fātiḥa alone realises 41 o
 the 112 cells over 100 occurrences and 20 of the 28 letters; adding Fatḥ 48:29
 takes it to 74 cells and 27 letters; adding the tree's own prose — with this
 module excluded from it by name, so that its figures do not move whenever its
-description is edited — takes it to 107 cells over 80,313 occurrences with every
+description is edited — takes it to 107 cells over 81,160 occurrences with every
 letter present. Five cells stay empty, and the module refuses to read them as
-prohibitions until their margins are consulted. Sukūn is 427 of 80,313 — 0.53%
-— so the expected counts for ث, ز and ظ bearing it are 1.451, 2.951 and 1.053,
-and zero is unremarkable at each. Alef's whole row is ten occurrences. **Four of
-the five absences are consistent with scarcity**; only alef-with-fatḥa survives
-the filter, and even that is not a discovery, since alef *is* the long fatḥa.
+prohibitions until their margins are consulted. Sukūn is 439 of 81,160 — 0.54%
+— so the expected counts for ث and ظ bearing it are 1.487 and 1.071, and zero is
+unremarkable at each. Alef's whole row is ten occurrences. **Three of the five
+absences are consistent with scarcity**, and two survive the filter:
+alef-with-fatḥa, which is not a discovery since alef *is* the long fatḥa, and
+zāy-with-sukūn. The second is the more instructive one. At an earlier
+measurement its expectation was 2.951, just under the 2.996 margin, and it was
+filed as scarcity; the tree's prose then grew and the same cell now expects
+3.018 and is filed as surprising — with not one letter changing anywhere in the
+script. An absence standing is dated by its margin, not fixed by itself.
 
 The second half asks whether the twenty-eight letters can be grouped by their
 vowel profiles, and whether a greedy merge finds the best grouping. Stirling
@@ -8771,6 +8776,62 @@ here, it is a seal of that repository.
 
 ```bash
 python examples/arabic/run_hamil_phase1_audit.py
+```
+
+## The ending is released by what follows it, and the headline figure is not issued here
+
+The same sibling then sent a claim about the end of the Arabic word: that it is
+produced by four generators, that the deciding context is what comes *before*
+it, and that the gain is 0.52 bits.
+`src/alghanem/arabic/ending_release_deposit.py` re-measures all of it on our own
+sealed bytes, through `read_quran_corpus_bytes` alone, which checks both length
+and digest before releasing a byte. Nothing is transcribed and believed: every
+quoted number is put beside a live measurement and its standing is derived from
+the two sides, never written in a field.
+
+Thirteen agree and six contradict. The two structural laws survive more strongly
+than they were claimed: two adjacent written sukūns inside a word occur **zero**
+times — no madd exception, no shadda exception — and a word-initial written
+sukūn occurs exactly twice, in `لْيَقْطَعْ` and `لْيَقْضُوا`, both directly after
+«ثُمَّ». Both of those ayahs also carry the same lām of command *joined*, and it
+is joined in 212 tokens across the corpus, so the two separations are a spacing
+habit of the script and not a breach. The guards need no exception at all.
+
+The deciding context is the following letter, not the preceding one. On the
+alternating forms, a sukūn-final word before a word beginning with the
+connecting alif occurs **zero times out of 4,534** — the cell is absent, not
+rare — while a voweled ending before it occurs 1,643 times. That is why the rule
+is named ق-تخلّص and not ق-وقف. But the zero belongs to the *connecting hamza*
+alone: widen the condition to every shape of alif and the empty cell fills with
+1,232 occurrences and the law collapses, so a restatement as "before alif" would
+destroy it.
+
+The form key moves the figure more than the phenomenon does. Dropping every mark
+gives 301 alternating forms and 2,039 fatḥa releases; keeping the shadda gives
+292 and 1,038; keeping every internal mark gives 243 and 799 — with no letter
+changing anywhere in the text. The published pair is the most generous of the
+three, so the deposit publishes the whole ladder rather than one rung. And the
+generous key merges homographs: 155 of its 301 "alternating" forms cover more
+than one pointed stem — `أنزل` is أُنزِلَ and أَنزَلَ and أَنزِلْ at once — so part of
+the alternation is a coincidence of spelling rather than inflection.
+
+Two things are deliberately not published. Pause cannot be measured on this
+pointing at all: only 95 of 6,236 ayah endings are written with a sukūn, so the
+text is pointed for continuation throughout and "the ending is underlyingly a
+sukūn" is imported from grammar rather than measured; the ق debt stays open. And
+the 0.52-bit figure is **not issued in this tree in any form**, because a
+conditional entropy over two adjacent tokens is a first-order Markov quantity
+and `markov_readiness_gate` is still standing. A number computed in a
+conversation does not become a deposit by having been computed, and the type
+here refuses to let a withheld figure carry a number at all. Both quoted figures
+are filed in `REPORTED_UNVERIFIED_FIGURES` instead, where recording is not
+endorsing. One attribution also closes: `FRACTAL-T3` and `G-SUK-1` were cited as
+freezes of ours and are absent from this tree entirely — checked by reading
+every module rather than by assertion, with this file excluded from its own scan
+so that listing the two names cannot prove their presence.
+
+```bash
+python examples/arabic/run_ending_release_deposit.py
 ```
 
 ```bash

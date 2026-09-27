@@ -729,6 +729,18 @@ REPORTED_UNVERIFIED_FIGURES: Final[tuple[UnverifiedFigureRecord, ...]] = (
         source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
         constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
     ),
+    UnverifiedFigureRecord(
+        subject="ربحُ الحاكم السابق في خاتمة الكلمة؛ وبوّابةُ ماركوف تمنع إصدارَه",
+        figure_text="0.52 بت، وفضلٌ على اللاحق 0.398",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.NOT_RE_DERIVABLE_IN_THIS_TREE,
+    ),
+    UnverifiedFigureRecord(
+        subject="أصلُ الخاتمة سكونًا في الوقف، والمدوّنةُ مشكولةٌ للوصل فلا تشهد",
+        figure_text="مولِّداتٌ أربعة، خانتان منها غيرُ ملحوظتَين",
+        source_genus=CertaintySourceGenus.PROSE_FROM_ANOTHER_CONVERSATION,
+        constraint=FigureConstraint.CLASSIFICATION_INCOMPLETE,
+    ),
 )
 """أرقامُ نصّ البروتوكول نفسِه، مقروءةً بقاعدته: خبرٌ مُسجَّلٌ لا قياسٌ مقبول."""
 
