@@ -8083,7 +8083,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 552-fold: 32 pairs, then 17,668. Both questions were answered,
+The widening is 556-fold: 32 pairs, then 17,806. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8102,7 +8102,7 @@ than a tail: six shadda-bearing pairs hold 99.932%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,664 of 17,636
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,683 of 17,774
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8771,8 +8771,12 @@ described and explicitly marked as never run here, including a rule declared for
 three letters and executed for two, a residual that counts its own rule's
 matches as unexplained, and three `assert` statements freezing dated facts in a
 guard — the same fault this tree removed from its own readiness gate. One older
-question closes along the way: the seal `8b387e8` was never a missing object
-here, it is a seal of that repository.
+question is re-opened in the right genus along the way: the seal `8b387e8` was
+never a missing object here. Once the audited corpus was deposited, the digest
+generated from disk turned out to be a content seal, `8b387ea811bc…` — so the
+genus of the question was wrong. The quoted seven characters are still not a
+prefix of it: they agree in six and part at the seventh, and the quoted figure
+stays quoted.
 
 ```bash
 python examples/arabic/run_hamil_phase1_audit.py
