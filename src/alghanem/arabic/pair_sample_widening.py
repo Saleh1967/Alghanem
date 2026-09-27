@@ -200,6 +200,11 @@ THE_THIRD_RUNG_AT_MEASUREMENT: Final[RungFigures] = RungFigures(
     shadda_bearing=17988,
     tanwin_initial_in_prose=4745,
     prose_pairs=17968,
+    total_pairs=18153,
+    realized=9,
+    shadda_bearing=18141,
+    tanwin_initial_in_prose=4735,
+    prose_pairs=18121,
 )
 
 THE_SCOPE_EXCLUSIONS: Final[frozenset[str]] = frozenset(

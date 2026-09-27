@@ -16,6 +16,64 @@
 > Reading order: **`docs/VISION.md` → `docs/AIMS.md` → `docs/CONSTITUTION.md` →
 > source → tests → the derived state block.**
 
+## The architecture in one page: seal → engine → deposit → law → CI
+
+This repository is a long engineering log, and a log is not a map. Below is the
+map: five links, each a real thing in the tree, each checkable by opening the
+file named next to it.
+
+| # | Link | What it does | Where it lives |
+|---|---|---|---|
+| 1 | **Seal** (الختم) | Turns content into a digest, so "this exact text" can be named later without trusting prose | `src/alghanem/canonical_content.py` — `canonical_bytes`, `canonical_digest` |
+| 2 | **Door** (الباب) | The one sanctioned way to reach the corpus bytes, checking length and SHA-256 before returning them | `src/alghanem/arabic/quran_corpus_word_total.py` — `read_quran_corpus_bytes` |
+| 3 | **Engine / deposit** (المحرّك/الوديعة) | A module that measures something and publishes it with its provenance, deriving every verdict and freezing what must not drift | e.g. `arabic/mudari_prefix_preregistration.py` (sealed before evidence) and `arabic/mudari_prefix_census.py` (the run that falsified it) |
+| 4 | **Law** (القانون) | One central place that walks the whole tree and asks whether a house convention actually holds everywhere, or only where it was obeyed | `src/alghanem/deposit_law.py` |
+| 5 | **CI** | Runs the suite, and the suite carries the law; a convention not asserted by a test is not enforced by anything | `.github/workflows/ci.yml`, `tests/test_deposit_law.py` |
+
+### Why link 4 exists, and what it refuses to do
+
+Before it, every module guarded itself — 199 guard functions across the tree,
+each enforced at its own import. That is enough for a module and not enough for
+a repository: there was no single place to ask *"does this convention hold on
+the whole tree, or only on the modules that happened to obey it?"*
+
+`deposit_law` asks exactly that, and splits the answers into two kinds that
+were previously read as one:
+
+- A **gate** (بوابة) is a law measured to hold at **zero breaches on the whole
+  tree today**. Breaching one raises `DepositLawError` and fails CI.
+- A **witness** (شاهد) is a convention that is **real but not yet universal**.
+  It is published with its exact breach count and the names of the modules that
+  break it — neither hidden as "style" nor promoted to a law it does not
+  satisfy.
+
+The three gates: every named residual is a non-empty text; every name in
+`__all__` is defined in its own module; no guard function is defined and then
+never reached. The four witnesses: the residual container is written as a
+mapping in most modules and as a tuple in the rest; a residual text usually but
+not always opens with its own token; a frozen digest usually but not always has
+a live generator beside it; a module mentioning the corpus path usually but not
+always goes through the door.
+
+Two refusals are deliberate, and both are the point:
+
+1. **No exemption list.** The sweep covers `src/alghanem/**/*.py` with no
+   skip-list, and `deposit_law.py` is inside its own sweep. A law that exempts
+   its violators is not measuring anything, and a test asserts the file
+   contains no allowlist marker at all.
+2. **No frozen magnitude.** The module stores no count, no ratio, no total —
+   every number above is recomputed from disk on each call, and the tests
+   assert *breaches are zero*, never *the count is N*. This is not fastidious:
+   this tree already contains frozen figures that shift the moment a file is
+   added, so a law that froze a magnitude would be the first thing to go stale.
+
+A witness is promoted to a gate by driving its breaches to zero in a diff, not
+by rewording it. `tests/test_deposit_law.py` enforces the converse too: a
+witness that has quietly become universal fails, with the message *"promote it
+instead of leaving it a witness"*.
+
+Read it with `python examples/read_deposit_law.py`.
+
 Alghanem is a research codebase for a general algebra of licensed
 transformations. The current release is the language-agnostic **Kernel v0.1**:
 small, shallowly immutable data structures for anchors, operations, evidence,
@@ -8098,7 +8156,7 @@ a specimen written deliberately illegal to show it yields no state. Neither is
 Arabic. The least frequent pair that *is* Arabic sits at 9, nine times the
 published floor. So the minimum of this census measures what the medium quotes,
 not what the script allows, and the distribution turns out to be a cliff rather
-than a tail: six shadda-bearing pairs hold 99.932%, and the remaining three
+than a tail: six shadda-bearing pairs hold 99.933%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
@@ -8834,6 +8892,123 @@ endorsing. One attribution also closes: `FRACTAL-T3` and `G-SUK-1` were cited as
 freezes of ours and are absent from this tree entirely — checked by reading
 every module rather than by assertion, with this file excluded from its own scan
 so that listing the two names cannot prove their presence.
+
+## The fractal table is a majority law, and its four breaks are named
+
+The claim arriving from the sibling program is that three operations — joining,
+cutting, recomposition — recur at every level of the stream. That claim is
+deposited in `src/alghanem/arabic/fractal_majority_law_deposit.py` not as a
+total law with exceptions tucked into a footnote, but as a table in which every
+row carries its standing: measured here on sealed bytes, measured in another
+unit of this tree, quoted from the sibling program, or asserted and never
+measured. Half the rows are measured; the share is derived from the table rather
+than written into it, and an import-time guard refuses a table that is wholly
+measured or wholly unmeasured, because neither is a majority law.
+
+Four breaks are named, each with the level it sits on and the genus of evidence
+that found it: the ending is not the resting place (measured here), the letter
+fingerprint has no zero line (declared by the sibling, blocked here), the
+induction square does not commute (`markov_order_induction`), and the field-112
+binary is a majority rather than a totality (declared there, blocked here on
+bytes that were never deposited). Three signatures travel with the table —
+the larynx has three states, so the three operations are the work of one organ
+and the cut is native to the stream; vowels are voiced, so "without obstruction"
+belongs to the mouth and not the larynx; and majority, not totality. The
+signatures are commitments, and the type refuses to let them be read as
+measurements: the larynx row is `ASSERTED_AND_NOT_MEASURED` and is excluded from
+the measured rows by test.
+
+The second condition — is the ending different from the word's interior? — was
+run here on our own sealed corpus, and the answer is yes in the direction that
+was claimed, on **both** declared ending keys: fatḥa collapses nine points on
+the last-letter key and six on the last-marked key, and entropy *rises* at the
+edge (0.127 and 0.096 bits) rather than falling. The ending is where the
+information is, not where the stream rests. The magnitudes are a different
+question, and they are not smoothed: against a tolerance declared before the
+comparison, all eight interior comparisons agree and nine of the ten ending
+comparisons contradict, including "29.0% sukūn+tanwīn at the edge", which our
+bytes put at 21.4% and 22.9% depending on the key. Those quoted figures were
+measured on `mujammad.txt`, which differs from our corpus by 13,131 bytes, so
+the disagreement is expected rather than alarming — and a direction that holds
+is still not a magnitude that matches.
+
+The ending key turns out to matter as much as the phenomenon. Tanwīn in this
+pointing sits sometimes on the final alif (`مَرَضاً`) and sometimes before it
+(`هُدًى`), so the last-letter key demotes 8,801 edge tanwīns into the interior
+while the last-marked key keeps them. No single ending figure is published here;
+the ladder of both keys travels with it. One number does cross implementations:
+the denominator 78,215, quoted in `position_haraka_bit_account` from an external
+table, is exactly the count of words bearing at least one mark in our sealed
+bytes, recomputed here by an independent route.
+
+The first condition — do all the letters separate? — is not answered here at
+all. It was answered by `letter_fingerprint.py` in the Algebra repository: four
+dimensions, two measured and two written by hand, the pair (د، ق) structurally
+colliding in one cell, and uniqueness of 28/29 with no zero line beside it. No
+byte of that file is in this tree, so its standing is `NOT_CHECKABLE_HERE` —
+neither agreement nor contradiction — and lifting the block takes two steps, a
+deposit through the gate and a re-run of the uniqueness *with* a zero line,
+since a uniqueness without one is a number without a scale.
+
+```bash
+python examples/arabic/read_fractal_majority_law.py
+```
+
+## A prediction about مضارعة prefixes was sealed, and the bytes falsified it
+
+The four prefix letters «أنيت» carry two loads at once: the letter names who the
+verb is attributed to, and its vowel names the pattern and whether the verb is
+active or passive. Most of that exposition is not in the cited source at all, so
+`mudari_prefix_preregistration` sorts ten claims into three genera before any
+counting: three are textually in the source, five come from the science of ṣarf,
+and two are the speaker's own inference, declared as such. Four of the ten are
+marked as things a pointed text without grammatical tagging simply cannot see,
+and none of those four is counted here.
+
+The counting condition was then frozen by content digest and committed in its
+own commit, one that reads no corpus byte and holds no measured number — a test
+asserts both by reading the module's own source. Standing as *prior to the
+evidence* is a claim about history, so it is made checkable in git history
+rather than asserted in prose. The condition: first slot one of the four
+letters and bearing a written ḍamma, second slot bearing a written sukūn, at
+least three slots, and read the class of the **penultimate** slot. One
+prediction was entailed and declared: kasra plus fatḥa at 90% or more. One
+question was declared explicitly *unpredicted*: which of the two leads.
+
+It failed, and not narrowly: 43.77%, 439 of 1,003. The cause is measured rather
+than guessed. The leading class is one the condition never contemplated —
+unmarked, 450 of 1,003 — and 427 of those 450 unmarked slots are a wāw, 22 a
+yāʾ. The penultimate slot is the verb's ʿayn only in a form carrying no suffix;
+`يُؤْمِنُونَ` pushes the ʿayn two places left. The exposition's own sentence
+predicted this without noticing: person marking is distributed across both edges
+of the word, and it is the edge that marks the person which displaced the
+measurement in the middle.
+
+Reading the **third** slot instead gives 94.32%, above the declared floor. That
+reading is published with standing `POST_HOC_THIRD_SLOT` and is not read as the
+prediction confirmed: it was chosen after seeing the failure and diagnosing it,
+so it is a new hypothesis to be sealed and run elsewhere, not a rescue. The
+derived verdict stays `FALSIFIED` under test. The kasra-to-fatḥa split under
+that reading is 638 to 308, reported as a number because the specification said
+in advance that it expected nothing there.
+
+Two declared ladders came out flat and are published flat. Widening the hamza
+carrier from `أ` to all four alif shapes moved exactly zero matches under both
+filters — unlike the same widening in `ending_release_deposit`, which moved a
+cell from zero to over a thousand — because requiring a written ḍamma already
+excludes the bare shapes in this pointing. And the pre-declared defect, that the
+surface cannot tell a noun from a verb, was turned into a quantity instead of a
+caveat: the tanwīn filter removed 26 occurrences in exactly 7 distinct forms,
+all 7 of them nouns, and the ten most frequent survivors were audited one by one
+— nine verbs and one noun, `أُخْرَى` with fifteen occurrences. Precise and still
+incomplete, with the incompleteness named. The seal `c35956ef`, cited as ours,
+is not in this tree; it is recorded as absent, and a test walks the tree to keep
+that record honest.
+
+```bash
+python examples/arabic/read_mudari_prefix_census.py
+```
+
 
 ```bash
 python examples/arabic/run_ending_release_deposit.py
