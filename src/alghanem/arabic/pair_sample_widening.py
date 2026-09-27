@@ -24,9 +24,9 @@
 |---|---|---|---|---|
 | الفاتحة | 16 | 3/36 | فتحة+شدّة (10) | فتحة+خنجريّة (2) |
 | + الفتح ٢٩ | 32 | 4/36 | فتحة+شدّة (24) | ضمّة+شدّة (2) |
-| + نثر الشجرة | 18,153 | 9/36 | فتحة+شدّة (7,912) | سكون+خنجريّة (1) |
+| + نثر الشجرة | 18,345 | 9/36 | فتحة+شدّة (7,970) |
 
-فالتوسيعُ **567 ضعفًا** في عدد المزدوجات. وفيه جوابُ السؤالين معًا:
+فالتوسيعُ **573 ضعفًا** في عدد المزدوجات. وفيه جوابُ السؤالين معًا:
 
 **المتصدّرُ لم يتزحزح في درجةٍ من الثلاث**، ولا نوزع في واحدةٍ منها، مع تغيُّر
 السِّجلّ وتغيُّر الحجم مرتبتين ونصفًا. وهذا تثبيتٌ معتبَرٌ للصدارة.
@@ -36,9 +36,10 @@
 (`THE_MINIMUM_MOVES_AT_EVERY_RUNG_WHILE_THE_MAXIMUM_NEVER_DOES`).
 
 **وثالثًا: التوزيعُ ليس ذا ذيلٍ بل ذو جُرف.** المتحقّقُ تسعةٌ على النثر، ستّةٌ
-منها `X + شدّة` وتحوز 18,141 من 18,153 — أي **99.934%** — وثلاثةٌ تحوز **12**
-وقوعًا لا غير. وبين 1,023 و9 عاملُ 114. فليس بين الجسم والقاع تدرّجٌ يُقرأ منه
-ترتيبٌ في الندرة.
+منها `X + شدّة` وتحوز 18,333 من 18,345 — أي **99.935%** — وثلاثةٌ تحوز
+**12** وقوعًا لا غير. وبين 1,032 و9 عاملُ 114 بالقسمة الأرضية —
+وهي مُعلَنةٌ باسمها ومقيسةٌ بـ`the_cliff_factor`، لا مُتَّبَعةً عرفًا.
+فليس بين الجسم والقاع تدرّجٌ يُقرأ منه ترتيبٌ في الندرة.
 
 **ورابعًا: وفُحصت الوقوعاتُ الاثنتا عشرةُ كلُّها واحدةً واحدة**، إذ لا يُنشَر
 قاعٌ لم يُنظَر في مادّته:
@@ -58,8 +59,9 @@
 (`THE_FLOOR_MEASURES_WHAT_THE_MEDIUM_QUOTES_NOT_WHAT_THE_SCRIPT_ALLOWS`).
 
 **وخامسًا: التوسيعُ غيّر المجتمعَ لا الحجمَ وحدَه.** المزدوجاتُ المبدوءةُ
-بتنوينٍ: **صفرٌ** من 32 في المُودَعَين القرآنيَّين، و**4,683** من 17,774 في
-النثر — أي 26.446%. فالنثرُ يُظهِر تركيباتِ تنوينٍ لم يُظهِرها النصّان ألبتّة.
+بتنوينٍ: **صفرٌ** من 32 في المُودَعَين القرآنيَّين، وهي
+**4,797** من 18,313 في النثر — أي 26.195%.
+فالنثرُ يُظهِر تركيباتِ تنوينٍ لم يُظهِرها النصّان ألبتّة.
 فلا يُقال إنّ العيّنةَ الكبرى عيّنةٌ أكبرُ من الشيء نفسه
 (`WIDENING_INTO_A_NEW_REGISTER_CHANGES_THE_POPULATION_NOT_ONLY_ITS_SIZE`).
 
@@ -172,8 +174,8 @@ class ScopeFingerprint:
 
 
 PROSE_SCOPE_AT_MEASUREMENT: Final[ScopeFingerprint] = ScopeFingerprint(
-    files=427,
-    text_bytes=8225781,
+    files=432,
+    text_bytes=8284859,
 )
 
 
@@ -193,11 +195,11 @@ class RungFigures:
 
 
 THE_THIRD_RUNG_AT_MEASUREMENT: Final[RungFigures] = RungFigures(
-    total_pairs=18153,
+    total_pairs=18345,
     realized=9,
-    shadda_bearing=18141,
-    tanwin_initial_in_prose=4735,
-    prose_pairs=18121,
+    shadda_bearing=18333,
+    tanwin_initial_in_prose=4797,
+    prose_pairs=18313,
 )
 
 THE_SCOPE_EXCLUSIONS: Final[frozenset[str]] = frozenset(
@@ -308,6 +310,54 @@ def third_rung_figures() -> RungFigures:
         shadda_bearing=shadda_bearing_pairs(rung),
         tanwin_initial_in_prose=tanwin_initial_pairs(prose),
         prose_pairs=prose.total_pairs,
+    )
+
+
+@dataclass(frozen=True)
+class CliffFactor:
+    """جُرفُ الدرجة الثالثة بطرفيه وعاملِه، مقيسًا لا متّبَعًا عرفًا."""
+
+    lightest_shadda_bearing: int
+    heaviest_without_shadda: int
+
+    def __post_init__(self) -> None:
+        if self.lightest_shadda_bearing < 1 or self.heaviest_without_shadda < 1:
+            raise PairWideningError("طرفُ جُرفٍ دون الواحد لا يُقاس.")
+
+    @property
+    def factor(self) -> int:
+        """العاملُ **بالقسمة الأرضية** — مُعلَنةً باسمها لا مطويّةً عرفًا."""
+
+        return self.lightest_shadda_bearing // self.heaviest_without_shadda
+
+
+def the_cliff_factor() -> CliffFactor:
+    """طرفا الجُرف: أخفُّ ما فيه شدّة، وأثقلُ ما لا شدّةَ فيه، من القرص الآن."""
+
+    counts = [count for count in the_widening_ladder()[2].counts if count.occurrences]
+    bearing = [count for count in counts if SHADDA in count.pair]
+    bare = [count for count in counts if SHADDA not in count.pair]
+    if not bearing or not bare:
+        raise PairWideningError("لا جُرفَ حيث غاب أحدُ الجانبين.")
+    return CliffFactor(
+        lightest_shadda_bearing=min(count.occurrences for count in bearing),
+        heaviest_without_shadda=max(count.occurrences for count in bare),
+    )
+
+
+def the_tail_occurrences_now() -> tuple[tuple[tuple[str, str], int], ...]:
+    """وقوعاتُ القاع الثلاثة كما يقيسها القرصُ الآن، لا كما جُمِّدت."""
+
+    counts = the_widening_ladder()[2].counts
+    return tuple(
+        sorted(
+            (
+                (count.pair, count.occurrences)
+                for count in counts
+                if count.occurrences and SHADDA not in count.pair
+            ),
+            key=lambda entry: (-entry[1], entry[0]),
+        )
     )
 
 

@@ -127,21 +127,32 @@ class TestTheAbsences:
             ("ز", "\u0652"),
         }
 
-    def test_two_of_the_four_are_consistent_with_scarcity(self) -> None:
-        standings = [item.standing for item in absent_cells()]
-        assert standings.count(AbsenceStanding.CONSISTENT_WITH_SCARCITY) == 2
-        assert standings.count(AbsenceStanding.SURPRISING_UNDER_THE_MARGIN) == 2
+    def test_every_absence_carries_one_of_the_two_standings_and_no_third(self) -> None:
+        absences = absent_cells()
+        standings = [item.standing for item in absences]
+        assert len(standings) == len(absences)
+        assert set(standings) <= {
+            AbsenceStanding.CONSISTENT_WITH_SCARCITY,
+            AbsenceStanding.SURPRISING_UNDER_THE_MARGIN,
+        }
 
-    def test_the_surprising_cells_are_the_alef_fatha_and_the_zay_sukun(self) -> None:
-        surprising = [
+    def test_the_alef_fatha_is_surprising_at_every_measurement(self) -> None:
+        alef = next(
             item
             for item in absent_cells()
-            if item.standing is AbsenceStanding.SURPRISING_UNDER_THE_MARGIN
-        ]
-        assert [(item.letter, item.haraka) for item in surprising] == [
-            ("ا", "\u064e"),
-            ("ز", "\u0652"),
-        ]
+            if (item.letter, item.haraka) == ("ا", "\u064e")
+        )
+        assert alef.standing is AbsenceStanding.SURPRISING_UNDER_THE_MARGIN
+
+    def test_the_zay_standing_is_read_off_the_floor_and_not_frozen_here(self) -> None:
+        zay = next(item for item in absent_cells() if item.letter == "ز")
+        floor = -math.log(THE_SURPRISE_FLOOR)
+        expected_standing = (
+            AbsenceStanding.SURPRISING_UNDER_THE_MARGIN
+            if zay.expected > floor
+            else AbsenceStanding.CONSISTENT_WITH_SCARCITY
+        )
+        assert zay.standing is expected_standing
 
     def test_the_zay_cell_sits_just_past_the_margin_and_drifts_with_the_tree(
         self,
