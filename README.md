@@ -8692,17 +8692,17 @@ The table is filled along a cumulative ladder: the Fātiḥa alone realises 41 o
 the 112 cells over 100 occurrences and 20 of the 28 letters; adding Fatḥ 48:29
 takes it to 74 cells and 27 letters; adding the tree's own prose — with this
 module excluded from it by name, so that its figures do not move whenever its
-description is edited — takes it to 107 cells over 81,160 occurrences with every
+description is edited — takes it to 107 cells over 82,128 occurrences with every
 letter present. Five cells stay empty, and the module refuses to read them as
-prohibitions until their margins are consulted. Sukūn is 439 of 81,160 — 0.54%
-— so the expected counts for ث and ظ bearing it are 1.487 and 1.071, and zero is
+prohibitions until their margins are consulted. Sukūn is 439 of 82,128 — 0.53%
+— so the expected counts for ث and ظ bearing it are 1.470 and 1.064, and zero is
 unremarkable at each. Alef's whole row is ten occurrences. **Three of the five
 absences are consistent with scarcity**, and two survive the filter:
 alef-with-fatḥa, which is not a discovery since alef *is* the long fatḥa, and
 zāy-with-sukūn. The second is the more instructive one. At an earlier
 measurement its expectation was 2.951, just under the 2.996 margin, and it was
 filed as scarcity; the tree's prose then grew and the same cell now expects
-3.018 and is filed as surprising — with not one letter changing anywhere in the
+3.004 and is filed as surprising — with not one letter changing anywhere in the
 script. An absence standing is dated by its margin, not fixed by itself.
 
 The second half asks whether the twenty-eight letters can be grouped by their
