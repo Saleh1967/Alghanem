@@ -86,9 +86,7 @@ class ApplicationDoor:
                 "بابٌ يُعلَن نافذًا يلزمه موضعٌ يُفتَح ويُقرَأ؛ وإلّا فهو دعوى."
             )
         if self.standing is DoorStanding.DECLARED_NOT_IMPLEMENTED and self.module:
-            raise MethodologicalSourceError(
-                "بابٌ مُعلَنٌ غيرُ منفَّذٍ لا يُنسَب إلى وحدةٍ قائمة."
-            )
+            raise MethodologicalSourceError("بابٌ مُعلَنٌ غيرُ منفَّذٍ لا يُنسَب إلى وحدةٍ قائمة.")
 
 
 @dataclass(frozen=True)
@@ -153,8 +151,7 @@ THE_METHODOLOGICAL_SOURCES: Final[tuple[MethodologicalSource, ...]] = (
         author="نقلٌ منهجيٌّ في بابِ الجملة",
         parts=("المجلَّد المنقولُ عنه بطاقةُ الجملة",),
         what_is_taken=(
-            "تقسيمُ الجملة وأسبابُ الربط بين أجزائها — تُنقَل نصًّا ولا "
-            "تُحوَّل عدًّا."
+            "تقسيمُ الجملة وأسبابُ الربط بين أجزائها — تُنقَل نصًّا ولا " "تُحوَّل عدًّا."
         ),
         doors=(
             ApplicationDoor(

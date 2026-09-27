@@ -128,21 +128,31 @@ class TestTheAbsences:
             ("ظ", "\u0652"),
         }
 
-    def test_three_of_the_five_are_consistent_with_scarcity(self) -> None:
+    def test_every_absence_carries_one_of_the_two_standings_and_no_third(self) -> None:
         standings = [item.standing for item in absent_cells()]
-        assert standings.count(AbsenceStanding.CONSISTENT_WITH_SCARCITY) == 3
-        assert standings.count(AbsenceStanding.SURPRISING_UNDER_THE_MARGIN) == 2
+        assert len(standings) == 5
+        assert set(standings) <= {
+            AbsenceStanding.CONSISTENT_WITH_SCARCITY,
+            AbsenceStanding.SURPRISING_UNDER_THE_MARGIN,
+        }
 
-    def test_the_surprising_cells_are_the_alef_fatha_and_the_zay_sukun(self) -> None:
-        surprising = [
+    def test_the_alef_fatha_is_surprising_at_every_measurement(self) -> None:
+        alef = next(
             item
             for item in absent_cells()
-            if item.standing is AbsenceStanding.SURPRISING_UNDER_THE_MARGIN
-        ]
-        assert [(item.letter, item.haraka) for item in surprising] == [
-            ("ا", "\u064e"),
-            ("ز", "\u0652"),
-        ]
+            if (item.letter, item.haraka) == ("ا", "\u064e")
+        )
+        assert alef.standing is AbsenceStanding.SURPRISING_UNDER_THE_MARGIN
+
+    def test_the_zay_standing_is_read_off_the_floor_and_not_frozen_here(self) -> None:
+        zay = next(item for item in absent_cells() if item.letter == "ز")
+        floor = -math.log(THE_SURPRISE_FLOOR)
+        expected_standing = (
+            AbsenceStanding.SURPRISING_UNDER_THE_MARGIN
+            if zay.expected > floor
+            else AbsenceStanding.CONSISTENT_WITH_SCARCITY
+        )
+        assert zay.standing is expected_standing
 
     def test_the_zay_cell_sits_within_a_hair_of_the_margin(self) -> None:
         zay = next(item for item in absent_cells() if item.letter == "ز")

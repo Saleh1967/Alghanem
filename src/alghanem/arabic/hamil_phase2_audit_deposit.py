@@ -543,9 +543,7 @@ def _assert_no_verdict_field_is_written() -> None:
         written = {item.name for item in fields(holder)}
         for forbidden in ("verdict", "standing", "gap"):
             if forbidden in written:
-                raise HamilPhase2Error(
-                    f"{holder.__name__}: الحكمُ يُشتقّ ولا يُكتَب حقلًا."
-                )
+                raise HamilPhase2Error(f"{holder.__name__}: الحكمُ يُشتقّ ولا يُكتَب حقلًا.")
 
 
 def _assert_every_residual_is_followed() -> None:
