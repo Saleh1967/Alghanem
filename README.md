@@ -2496,7 +2496,7 @@ separate decision this module does not take.
 
 Five files were fetched and read as bytes rather than as project descriptions.
 `ar_pud-ud-test` (1,000 sentences, 20,747 tokens) and the three
-`ar_padt-ud-*` files (7,700 sentences, 282,384 tokens in total) carry `HEAD` and
+`ar_padt-ud-*` files (7,664 sentences, 282,384 tokens in total) carry `HEAD` and
 `DEPREL` populated on *every* token line, so the outcome for them is
 `RELATION_LAYER_PRESENT`. `ar_nyuad-ud-test` is the case that a project
 description would have hidden: its `HEAD` and `DEPREL` are populated on all
@@ -8083,7 +8083,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 548-fold: 32 pairs, then 17,624. Both questions were answered,
+The widening is 550-fold: 32 pairs, then 17,612. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8102,7 +8102,7 @@ than a tail: six shadda-bearing pairs hold 99.932%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,662 of 17,592
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,656 of 17,580
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports

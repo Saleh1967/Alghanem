@@ -35,42 +35,35 @@ _DAGGER = "\u0670"
 
 
 def test_the_corpus_run_tracks_the_resolver_and_not_a_constant() -> None:
-    """الثابتُ: الجولةُ متاحةٌ متى حُلَّ مسارٌ إلى ملفٍّ حاضر، لا «ممتنعةٌ أبدًا»."""
-
-    assert corpus_run_is_available() is quran_corpus_bytes_are_resolvable()
-
-
-@pytest.mark.skipif(
-    quran_corpus_bytes_are_resolvable(),
-    reason="واقعةٌ مؤرَّخةٌ بغياب البايتات؛ وحضورُها يُتيح الجولةَ ولا يكسر شيئًا.",
-)
-def test_the_corpus_bytes_are_absent_from_this_tree() -> None:
-    """السؤالُ عن كلّ المدوّنة لا يُجاب ههنا: بايتاتُها ليست في الشجرة."""
     """حضورُ المدوّنة يُقرأ من مُحَلِّل المسار، ولا يُكتَب ثابتًا ههنا."""
 
     assert corpus_run_is_available() is quran_corpus_bytes_are_resolvable()
 
 
-def test_the_corpus_run_refuses_rather_than_estimating() -> None:
-    """ولا تُقدَّر المدوّنةُ من المُودَعَين، بل يُرفَض الطلبُ صريحًا.
+def test_the_corpus_run_is_either_the_fingerprinted_bytes_or_an_explicit_refusal(
+    tmp_path: Path,
+) -> None:
+    """لا تقديرَ بين الحدَّين: إمّا رقمٌ من البايتات المبصومة وإمّا رفضٌ صريح."""
 
-    والرفضُ رفضان: غيابُ البايتات، ومخالفةُ البصمة؛ وكلاهما رفضٌ مسمًّى لا
-    تقدير. ولا يُشترَط أحدُهما بعينه، إذ يتغيّر بتغيّر ما على القرص.
-    """
-
-    if not quran_corpus_bytes_are_resolvable():
+    if corpus_run_is_available():
+        census = pair_census_over_corpus()
+        assert census.scope == "المدوّنة"
+        assert census.positions_read > 0
+    else:
         with pytest.raises(Exception) as raised:
             pair_census_over_corpus()
         assert "المدوّنة" in str(raised.value)
-        return
-    try:
-        pair_census_over_corpus()
-    except Exception as refusal:  # noqa: BLE001 - الرفضُ نفسُه هو المفحوص
-        assert (
-            "المدوّنة" in str(refusal)
-            or "البصمة" in str(refusal)
-            or "طولُ" in str(refusal)
-        )
+
+
+def test_bytes_that_differ_from_the_frozen_digest_are_refused_not_counted(
+    tmp_path: Path,
+) -> None:
+    """وملفٌّ مُحَلٌّ مخالفُ البصمة يُرفَض ولا يُعَدّ، وإن كان عربيًّا سليمًا."""
+
+    impostor = tmp_path / "quran-simple-enhanced.txt"
+    impostor.write_text("1|1|بِسْم\n", encoding="utf-8")
+    with pytest.raises(Exception):
+        pair_census_over_corpus(str(impostor))
 
 
 def test_the_nine_combining_classes_are_all_distinct() -> None:
