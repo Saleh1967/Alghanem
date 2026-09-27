@@ -8083,7 +8083,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 561-fold: 32 pairs, then 17,972. Both questions were answered,
+The widening is 564-fold: 32 pairs, then 18,050. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8102,7 +8102,7 @@ than a tail: six shadda-bearing pairs hold 99.933%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,707 of 17,940
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,720 of 18,018
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8894,6 +8894,62 @@ since a uniqueness without one is a number without a scale.
 ```bash
 python examples/arabic/read_fractal_majority_law.py
 ```
+
+## A prediction about مضارعة prefixes was sealed, and the bytes falsified it
+
+The four prefix letters «أنيت» carry two loads at once: the letter names who the
+verb is attributed to, and its vowel names the pattern and whether the verb is
+active or passive. Most of that exposition is not in the cited source at all, so
+`mudari_prefix_preregistration` sorts ten claims into three genera before any
+counting: three are textually in the source, five come from the science of ṣarf,
+and two are the speaker's own inference, declared as such. Four of the ten are
+marked as things a pointed text without grammatical tagging simply cannot see,
+and none of those four is counted here.
+
+The counting condition was then frozen by content digest and committed in its
+own commit, one that reads no corpus byte and holds no measured number — a test
+asserts both by reading the module's own source. Standing as *prior to the
+evidence* is a claim about history, so it is made checkable in git history
+rather than asserted in prose. The condition: first slot one of the four
+letters and bearing a written ḍamma, second slot bearing a written sukūn, at
+least three slots, and read the class of the **penultimate** slot. One
+prediction was entailed and declared: kasra plus fatḥa at 90% or more. One
+question was declared explicitly *unpredicted*: which of the two leads.
+
+It failed, and not narrowly: 43.77%, 439 of 1,003. The cause is measured rather
+than guessed. The leading class is one the condition never contemplated —
+unmarked, 450 of 1,003 — and 427 of those 450 unmarked slots are a wāw, 22 a
+yāʾ. The penultimate slot is the verb's ʿayn only in a form carrying no suffix;
+`يُؤْمِنُونَ` pushes the ʿayn two places left. The exposition's own sentence
+predicted this without noticing: person marking is distributed across both edges
+of the word, and it is the edge that marks the person which displaced the
+measurement in the middle.
+
+Reading the **third** slot instead gives 94.32%, above the declared floor. That
+reading is published with standing `POST_HOC_THIRD_SLOT` and is not read as the
+prediction confirmed: it was chosen after seeing the failure and diagnosing it,
+so it is a new hypothesis to be sealed and run elsewhere, not a rescue. The
+derived verdict stays `FALSIFIED` under test. The kasra-to-fatḥa split under
+that reading is 638 to 308, reported as a number because the specification said
+in advance that it expected nothing there.
+
+Two declared ladders came out flat and are published flat. Widening the hamza
+carrier from `أ` to all four alif shapes moved exactly zero matches under both
+filters — unlike the same widening in `ending_release_deposit`, which moved a
+cell from zero to over a thousand — because requiring a written ḍamma already
+excludes the bare shapes in this pointing. And the pre-declared defect, that the
+surface cannot tell a noun from a verb, was turned into a quantity instead of a
+caveat: the tanwīn filter removed 26 occurrences in exactly 7 distinct forms,
+all 7 of them nouns, and the ten most frequent survivors were audited one by one
+— nine verbs and one noun, `أُخْرَى` with fifteen occurrences. Precise and still
+incomplete, with the incompleteness named. The seal `c35956ef`, cited as ours,
+is not in this tree; it is recorded as absent, and a test walks the tree to keep
+that record honest.
+
+```bash
+python examples/arabic/read_mudari_prefix_census.py
+```
+
 
 ```bash
 python examples/arabic/run_ending_release_deposit.py
