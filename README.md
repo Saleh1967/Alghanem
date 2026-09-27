@@ -8083,7 +8083,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 556-fold: 32 pairs, then 17,806. Both questions were answered,
+The widening is 560-fold: 32 pairs, then 17,911. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8098,11 +8098,11 @@ a specimen written deliberately illegal to show it yields no state. Neither is
 Arabic. The least frequent pair that *is* Arabic sits at 9, nine times the
 published floor. So the minimum of this census measures what the medium quotes,
 not what the script allows, and the distribution turns out to be a cliff rather
-than a tail: six shadda-bearing pairs hold 99.932%, and the remaining three
+than a tail: six shadda-bearing pairs hold 99.933%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,683 of 17,774
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,703 of 17,879
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8833,6 +8833,67 @@ endorsing. One attribution also closes: `FRACTAL-T3` and `G-SUK-1` were cited as
 freezes of ours and are absent from this tree entirely — checked by reading
 every module rather than by assertion, with this file excluded from its own scan
 so that listing the two names cannot prove their presence.
+
+## The fractal table is a majority law, and its four breaks are named
+
+The claim arriving from the sibling program is that three operations — joining,
+cutting, recomposition — recur at every level of the stream. That claim is
+deposited in `src/alghanem/arabic/fractal_majority_law_deposit.py` not as a
+total law with exceptions tucked into a footnote, but as a table in which every
+row carries its standing: measured here on sealed bytes, measured in another
+unit of this tree, quoted from the sibling program, or asserted and never
+measured. Half the rows are measured; the share is derived from the table rather
+than written into it, and an import-time guard refuses a table that is wholly
+measured or wholly unmeasured, because neither is a majority law.
+
+Four breaks are named, each with the level it sits on and the genus of evidence
+that found it: the ending is not the resting place (measured here), the letter
+fingerprint has no zero line (declared by the sibling, blocked here), the
+induction square does not commute (`markov_order_induction`), and the field-112
+binary is a majority rather than a totality (declared there, blocked here on
+bytes that were never deposited). Three signatures travel with the table —
+the larynx has three states, so the three operations are the work of one organ
+and the cut is native to the stream; vowels are voiced, so "without obstruction"
+belongs to the mouth and not the larynx; and majority, not totality. The
+signatures are commitments, and the type refuses to let them be read as
+measurements: the larynx row is `ASSERTED_AND_NOT_MEASURED` and is excluded from
+the measured rows by test.
+
+The second condition — is the ending different from the word's interior? — was
+run here on our own sealed corpus, and the answer is yes in the direction that
+was claimed, on **both** declared ending keys: fatḥa collapses nine points on
+the last-letter key and six on the last-marked key, and entropy *rises* at the
+edge (0.127 and 0.096 bits) rather than falling. The ending is where the
+information is, not where the stream rests. The magnitudes are a different
+question, and they are not smoothed: against a tolerance declared before the
+comparison, all eight interior comparisons agree and nine of the ten ending
+comparisons contradict, including "29.0% sukūn+tanwīn at the edge", which our
+bytes put at 21.4% and 22.9% depending on the key. Those quoted figures were
+measured on `mujammad.txt`, which differs from our corpus by 13,131 bytes, so
+the disagreement is expected rather than alarming — and a direction that holds
+is still not a magnitude that matches.
+
+The ending key turns out to matter as much as the phenomenon. Tanwīn in this
+pointing sits sometimes on the final alif (`مَرَضاً`) and sometimes before it
+(`هُدًى`), so the last-letter key demotes 8,801 edge tanwīns into the interior
+while the last-marked key keeps them. No single ending figure is published here;
+the ladder of both keys travels with it. One number does cross implementations:
+the denominator 78,215, quoted in `position_haraka_bit_account` from an external
+table, is exactly the count of words bearing at least one mark in our sealed
+bytes, recomputed here by an independent route.
+
+The first condition — do all the letters separate? — is not answered here at
+all. It was answered by `letter_fingerprint.py` in the Algebra repository: four
+dimensions, two measured and two written by hand, the pair (د، ق) structurally
+colliding in one cell, and uniqueness of 28/29 with no zero line beside it. No
+byte of that file is in this tree, so its standing is `NOT_CHECKABLE_HERE` —
+neither agreement nor contradiction — and lifting the block takes two steps, a
+deposit through the gate and a re-run of the uniqueness *with* a zero line,
+since a uniqueness without one is a number without a scale.
+
+```bash
+python examples/arabic/read_fractal_majority_law.py
+```
 
 ```bash
 python examples/arabic/run_ending_release_deposit.py
