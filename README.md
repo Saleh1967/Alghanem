@@ -16,6 +16,64 @@
 > Reading order: **`docs/VISION.md` → `docs/AIMS.md` → `docs/CONSTITUTION.md` →
 > source → tests → the derived state block.**
 
+## The architecture in one page: seal → engine → deposit → law → CI
+
+This repository is a long engineering log, and a log is not a map. Below is the
+map: five links, each a real thing in the tree, each checkable by opening the
+file named next to it.
+
+| # | Link | What it does | Where it lives |
+|---|---|---|---|
+| 1 | **Seal** (الختم) | Turns content into a digest, so "this exact text" can be named later without trusting prose | `src/alghanem/canonical_content.py` — `canonical_bytes`, `canonical_digest` |
+| 2 | **Door** (الباب) | The one sanctioned way to reach the corpus bytes, checking length and SHA-256 before returning them | `src/alghanem/arabic/quran_corpus_word_total.py` — `read_quran_corpus_bytes` |
+| 3 | **Engine / deposit** (المحرّك/الوديعة) | A module that measures something and publishes it with its provenance, deriving every verdict and freezing what must not drift | e.g. `arabic/mudari_prefix_preregistration.py` (sealed before evidence) and `arabic/mudari_prefix_census.py` (the run that falsified it) |
+| 4 | **Law** (القانون) | One central place that walks the whole tree and asks whether a house convention actually holds everywhere, or only where it was obeyed | `src/alghanem/deposit_law.py` |
+| 5 | **CI** | Runs the suite, and the suite carries the law; a convention not asserted by a test is not enforced by anything | `.github/workflows/ci.yml`, `tests/test_deposit_law.py` |
+
+### Why link 4 exists, and what it refuses to do
+
+Before it, every module guarded itself — 199 guard functions across the tree,
+each enforced at its own import. That is enough for a module and not enough for
+a repository: there was no single place to ask *"does this convention hold on
+the whole tree, or only on the modules that happened to obey it?"*
+
+`deposit_law` asks exactly that, and splits the answers into two kinds that
+were previously read as one:
+
+- A **gate** (بوابة) is a law measured to hold at **zero breaches on the whole
+  tree today**. Breaching one raises `DepositLawError` and fails CI.
+- A **witness** (شاهد) is a convention that is **real but not yet universal**.
+  It is published with its exact breach count and the names of the modules that
+  break it — neither hidden as "style" nor promoted to a law it does not
+  satisfy.
+
+The three gates: every named residual is a non-empty text; every name in
+`__all__` is defined in its own module; no guard function is defined and then
+never reached. The four witnesses: the residual container is written as a
+mapping in most modules and as a tuple in the rest; a residual text usually but
+not always opens with its own token; a frozen digest usually but not always has
+a live generator beside it; a module mentioning the corpus path usually but not
+always goes through the door.
+
+Two refusals are deliberate, and both are the point:
+
+1. **No exemption list.** The sweep covers `src/alghanem/**/*.py` with no
+   skip-list, and `deposit_law.py` is inside its own sweep. A law that exempts
+   its violators is not measuring anything, and a test asserts the file
+   contains no allowlist marker at all.
+2. **No frozen magnitude.** The module stores no count, no ratio, no total —
+   every number above is recomputed from disk on each call, and the tests
+   assert *breaches are zero*, never *the count is N*. This is not fastidious:
+   this tree already contains frozen figures that shift the moment a file is
+   added, so a law that froze a magnitude would be the first thing to go stale.
+
+A witness is promoted to a gate by driving its breaches to zero in a diff, not
+by rewording it. `tests/test_deposit_law.py` enforces the converse too: a
+witness that has quietly become universal fails, with the message *"promote it
+instead of leaving it a witness"*.
+
+Read it with `python examples/read_deposit_law.py`.
+
 Alghanem is a research codebase for a general algebra of licensed
 transformations. The current release is the language-agnostic **Kernel v0.1**:
 small, shallowly immutable data structures for anchors, operations, evidence,
@@ -8083,7 +8141,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 564-fold: 32 pairs, then 18,050. Both questions were answered,
+The widening is 567-fold: 32 pairs, then 18,153. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8102,7 +8160,7 @@ than a tail: six shadda-bearing pairs hold 99.933%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,720 of 18,018
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,735 of 18,121
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
