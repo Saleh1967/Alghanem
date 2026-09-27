@@ -8083,7 +8083,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 536-fold: 32 pairs, then 17,155. Both questions were answered,
+The widening is 552-fold: 32 pairs, then 17,668. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8098,11 +8098,11 @@ a specimen written deliberately illegal to show it yields no state. Neither is
 Arabic. The least frequent pair that *is* Arabic sits at 9, nine times the
 published floor. So the minimum of this census measures what the medium quotes,
 not what the script allows, and the distribution turns out to be a cliff rather
-than a tail: six shadda-bearing pairs hold 99.930%, and the remaining three
+than a tail: six shadda-bearing pairs hold 99.932%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,497 of 17,123
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,664 of 17,636
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8521,6 +8521,322 @@ negative result, and satisfying all five prerequisites would not lift it. Behind
 both, the statistical gate still holds, now measurable per deposit: three
 repeated written types become five projected on the Fatḥ āyah and stay three on
 the Fātiḥa. The surplus was made by the fold, not by the text.
+
+## An external audit, deposited with its constraints
+
+An audit report on an external body of research — SLGAE — arrived as prose from
+another conversation: ten results said to have held, thirteen named failures,
+five results whose *support* was withdrawn while the result itself still stands,
+and four discrepancies found by arithmetic rather than by reading. None of its
+figures is re-derivable here. The corpus bytes it was computed on are not in
+this tree, and neither is the `exp(β)` column its two arithmetic discrepancies
+would need. So `src/alghanem/arabic/slgae_audit_deposit.py` deposits the report
+rather than re-running it, and every figure it quotes is filed in the one
+existing `REPORTED_UNVERIFIED_FIGURES` register with its source genus and its
+constraint — recording is not endorsing.
+
+Three things the deposit adds that the tree did not have. First, a third genus:
+`RESULT_STANDS_SUPPORT_WITHDRAWN`, for a result that was neither refuted nor
+vindicated but lost its warrant — circular on tags applied by the same rules
+being tested, a manual post-hoc judgment, a near-definitional identity, an
+analyst-chosen threshold, a traditional classification renamed. Second, a named
+genus for each failure, so that "it failed" is never the whole record: beaten by
+a rival, contradicted by the count, fell statistically, direction reversed,
+fragile under a change of scope, method collapsed. Third, a fourth constraint in
+`FigureConstraint` — `POST_HOC_LEVEL_SELECTION` — for a figure whose *level* was
+chosen after the other level's result was seen. Its defect is neither absent
+bytes nor unpurified data but the way it was produced, so depositing a file
+would not lift it.
+
+The report's own numbers about *this* build are split rather than merged. What
+this tree can measure it measures at read time: the quoted module and test
+counts are compared against what the disk says in
+`the_quoted_build_counts_against_disk`, and neither side is frozen. What it
+cannot measure — the quoted code width, the quoted assignment sweep — stays
+quoted, because another tree measured it. And what was left undecided is
+deposited as undecided: one axis blocked at a measured zero, one deferred with
+its ties and suspensions named, never as work in progress.
+
+The deposit is authority-inert: it imports nothing from `kernel/` and nothing
+from `program/`, no gate reads it, and no figure in it claims to have been
+measured here.
+
+## An algebra of slot rights, built here rather than adopted
+
+A three-layer algebra over the triliteral root arrived as prose from the same
+external conversation, with the instruction to build it here and not to lean on
+the one that arrived. So `src/alghanem/arabic/slot_rights_composition_algebra.py`
+re-derives all three layers from the bytes this tree actually holds, and the
+quoted figures are filed as quoted, not as confirmation.
+
+Layer one is the right of a letter to a slot, with three standings and no
+`PROHIBITED` member at all: absence yields a candidate for prohibition, never a
+prohibition, and theorem ح١ — verified at import — says a witnessed right stays
+witnessed as evidence grows. A slot is born only under three written conditions:
+distinct carriers, witnessed substitution pairs, and the fall of the weaker
+model that makes the three slots exchangeable inside a root.
+
+Layer two asks what composition would have to mean. Theorem ت١ shows the left
+and right compositions are identically equal, so the real question is whether
+either equals the joint law — true if and only if the flanks are conditionally
+independent given the middle — and its verifier checks the *iff* in both
+directions. Theorem ت٢ was born from a recorded failure: on a lexicon where no
+root repeats, a null model that permutes freely manufactures collisions and so
+does not preserve the unit of analysis. The replacement is a swap chain that
+holds both adjacent tables and root distinctness fixed, and that replacement is
+post hoc, named as such.
+
+Layer three types every constraint by relation, so identity and place-class are
+separate cells and OCP becomes one branch of the set rather than its root. Two
+things there are worth naming. The permutation floor binds the correction: a
+two-sided permutation p has floor `2/(B+1)`, not `1/(B+1)`, and with the wrong
+floor extreme cells silently report as neutral under a Bonferroni threshold.
+And the difference between the two adjacent relations is located, not merely
+asserted — it lives in the identity cell alone, which is why this tree's earlier
+adjacency verdict and this one do not contradict each other.
+
+Nothing in the deposit is licensed. The licence condition was written before the
+counts, it requires a second independent source, and that source's bytes are not
+here; `CellVerdict` raises if anything tries to construct a licensed verdict.
+Like the audit register beside it, the module imports nothing from `kernel/` and
+nothing from `program/`, and no gate reads it.
+
+A fourth layer follows from the third. Once the chain failed, B₁₃ was an
+independent binding and the licensing graph was a triangle rather than a chain.
+That leaves exactly one further question: is the triangle enough, or is there a
+ternary term the three pairwise bindings cannot reach? The null model that
+answers it fixes all three pairwise tables at once and keeps the table binary,
+so distinctness is preserved by construction; its move is the 2×2×2 cube, and
+theorem ث١ — verified at import — shows that flipping one cube diagonal for the
+other leaves all three two-dimensional projections identical.
+
+Two things there are worth naming, and both were found before the count rather
+than after. Theorem ث٢ demands a counter-witness for every statistic, on the
+ground that a statistic determined by the pairwise margins would be constant on
+the fiber, never rejected, and its stillness misread as closure. Demanding it
+exposed that a bare cube cannot move the coverage statistic at all: the two
+diagonals always realize the same *number* of distinct place-triples, even when
+the triples themselves differ. So the witness is built on a table — cube plus a
+static echo on disjoint cells — not on a cube. And the chain carries a size
+invariant, because the first implementation left two of the eight cube cells
+unchecked and silently grew the lexicon; the invariant caught it, the null means
+were nonsense, and the recorded first run is void.
+
+The measurement itself: with all three pairwise tables and root distinctness
+held fixed, and 22,000 accepted symmetric moves, none of the three ternary
+statistics leaves the permutation band at the written threshold. On this source
+and this chain the triangle closes — the root is its three pairwise bindings,
+no more and no less. Nothing is licensed by that; the second source is still
+absent, and the cube move set is not proved to be a full Markov basis, so the
+walk covers part of the fiber rather than all of it.
+
+## The Markov order of the root is a property of the route, not of the source
+
+Having established what binds the three slots, the obvious next question is what
+Markov order the root has. `markov_order_induction` asks it — and answers that
+the question, as usually posed, has no answer on this evidence.
+
+The root is read as a sequence of three places drawn from the eleven declared
+ones, giving an 11×11×11 table with 776 of its 1331 cells occupied. Over it sits
+a strictly nested ladder of four log-linear models: independence (30 df), the
+Markov chain on the two adjacent pairs (230 df), the triangle with all three
+pairs but no ternary term (330 df), and the saturated table (1330 df). The
+nesting is verified at import rather than asserted, on a synthetic sample built
+to carry a real three-way interaction; a second import-time theorem checks that
+the triangle fit reproduces all three two-dimensional margins, since a fit that
+matched two and missed the third would be a chain wearing a triangle's name.
+
+Then two inductions, composed both ways. *Induction on the order* climbs the
+ladder on the whole lexicon under a penalised criterion. *Induction for the
+unseen* splits the lexicon into a seen half and a hidden half and judges by what
+predicts the hidden one. Running them on-then-for gives one rung; running them
+for-then-on gives another; and asking the held-out half directly gives a third.
+The whole lexicon selects the **chain**. Inside the seen halves, in 30 of 30
+draws, the selection is **independence**. The best predictor of the hidden half,
+at both declared smoothings, is the **triangle**. Three routes, three rungs, one
+body of evidence — the pre-registered commutation condition fails on all three
+of its clauses, and the square does not commute.
+
+The crossover scan shows why, and shows it is arithmetic rather than a bug: the
+selected rung is independence up to about 3,191 roots, splits at 3,647, and is
+the chain by 4,103. The full lexicon, at 4,559, sits just past the crossover. So
+"the root is a first-order Markov chain" is not a reading of the material; it is
+a reading of the material *at this size, under this criterion*. That is the
+finding, and it is a negative one.
+
+Two disciplinary notes are recorded in the module rather than omitted. The
+threshold was fixed before the recorded run but after an exploratory crossover
+probe whose numbers had been seen, so it is not a registered prediction and says
+so. And the held-out comparison needs an additive smoothing, which is a choice;
+two are declared in advance, and if they disagree on a winner the leg is not
+read at all — the standing becomes `UNREADABLE` rather than being settled by
+preferring one. Nothing here touches the corpus gate: the material is the
+fingerprinted root table, and token Markov over the Quran remains blocked at its
+third prerequisite.
+
+```bash
+python examples/arabic/run_markov_order_induction.py
+```
+
+## One hundred and twelve is a declaration, and four of its five holes are only scarcity
+
+`letter_haraka_partition` builds the table that 112 names: the twenty-eight
+letters of the declared alphabet against the three short vowels and the sukūn.
+Both factors are unit-of-analysis decisions rather than givens. The alphabet is
+read from `letter_fingerprint`'s own vocabulary minus the bare hamza, the
+hamza-bearing and alif-wasla forms are folded by that module's declared fold and
+no second one, and tanwīn, shadda and the dagger alif are deliberately left
+outside the four because they already have their table elsewhere.
+
+The table is filled along a cumulative ladder: the Fātiḥa alone realises 41 of
+the 112 cells over 100 occurrences and 20 of the 28 letters; adding Fatḥ 48:29
+takes it to 74 cells and 27 letters; adding the tree's own prose — with this
+module excluded from it by name, so that its figures do not move whenever its
+description is edited — takes it to 107 cells over 81,160 occurrences with every
+letter present. Five cells stay empty, and the module refuses to read them as
+prohibitions until their margins are consulted. Sukūn is 439 of 81,160 — 0.54%
+— so the expected counts for ث and ظ bearing it are 1.487 and 1.071, and zero is
+unremarkable at each. Alef's whole row is ten occurrences. **Three of the five
+absences are consistent with scarcity**, and two survive the filter:
+alef-with-fatḥa, which is not a discovery since alef *is* the long fatḥa, and
+zāy-with-sukūn. The second is the more instructive one. At an earlier
+measurement its expectation was 2.951, just under the 2.996 margin, and it was
+filed as scarcity; the tree's prose then grew and the same cell now expects
+3.018 and is filed as surprising — with not one letter changing anywhere in the
+script. An absence standing is dated by its margin, not fixed by itself.
+
+The second half asks whether the twenty-eight letters can be grouped by their
+vowel profiles, and whether a greedy merge finds the best grouping. Stirling
+numbers of the second kind count the space exactly — S(28,4) is about 3×10¹⁵ and
+B(28) is 6,160,539,404,599,934,652,455 — which is precisely why the optimum is
+not computed on the full alphabet and is not claimed there. Four subsets are
+declared in advance, each searched at 2, 3, 4 and 5 classes, and on each of
+those sixteen cells the greedy agglomerative merge is set against the exhaustive
+optimum under the same penalised criterion `markov_order_induction` uses. The
+enumerator is checked at import against Stirling's own recurrence and against a
+distinctness count, since a generator that silently dropped partitions would
+turn "optimal" into "best of what I happened to visit".
+
+The pre-registered condition demands a zero gap on every cell. Greedy reaches
+the optimum on thirteen of the sixteen and misses on three, by 22.889, 3.002 and
+1.089 — and the largest miss is on the widest subset searched, so breadth is not
+the cure. Twelve wins out of sixteen is not optimality, and the standing
+recorded is `FALLS_SHORT`. Nothing here lifts a block or thaws a freeze: the
+corpus gate is re-checked after every measurement and is still blocked.
+
+```bash
+python examples/arabic/run_letter_haraka_partition.py
+```
+
+## Eighteen of a sibling's identities close, five contradict, and only Stirling is a real cross-check
+
+A sibling repository deposited the first ث/ع round of its `hamil` program: a
+dictionary engine, its JSON output, and an induction results file. Its corpus —
+`mujammad.txt`, 1,306,770 bytes from GlobalQuran — is not in this tree, and
+neither is any of its output. Nothing of it can be re-measured here. But most of
+its figures do not need the corpus to be checked: they are identities *inside
+the quotation itself*, and
+`src/alghanem/arabic/hamil_phase1_audit_deposit.py` recomputes them at import
+rather than filing them as prose.
+
+The verdict of every check is derived from its two sides, never written in a
+field — a theorem verified at import refuses any dataclass here that carries a
+`verdict` member, so changing one quoted number flips its own verdict and
+nothing else. Eighteen identities close to the letter: the four classes sum to
+the word total, the twenty qāf endings sum to their class, the reconciliation
+closes both ways, the transition table sums to the training half, the two halves
+sum to the pair count, and the order gap reproduces. Five contradict, and each
+is measured rather than asserted: the chain rule is broken by 0.0316 bits when
+it must be zero by definition; no denominator declared anywhere in the results
+file yields the interface's quoted per-gate rate; the held-out gain recomputes to
+49.89 bits, not 4.96; the partition *costs more* than no partition at all by
+11.609 bits, so "it does not buy" understates it; and the `T` marginal is 102
+here against 209 quoted in speech, while `C` agrees exactly — one of the two
+announced cross-checks holds and the other misses by a factor of two.
+
+The distinction the deposit adds is between agreement and confirmation. A total
+agreeing with the sum of its parts proves the quotation is internally
+consistent, not that it was measured on anything: two fabricated consistent
+numbers pass the same test, so `AGREES` here is the absence of a fault, not the
+presence of a truth. Only seven of the twenty-five checks are cross-checks in
+the real sense — Stirling and Bell, recomputed from `letter_haraka_partition`,
+a separate implementation with no shared line. S(28,4) = 2,998,587,019,946,701
+agreeing digit for digit across two independent programs is the one result in
+this deposit that testifies to both of them.
+
+Two checks carry no sides at all, because they need bytes that were never
+deposited, and the type refuses to let them carry sides — an uncheckable claim
+may not be dressed as a checked one. Five defects in the sibling's listing are
+described and explicitly marked as never run here, including a rule declared for
+three letters and executed for two, a residual that counts its own rule's
+matches as unexplained, and three `assert` statements freezing dated facts in a
+guard — the same fault this tree removed from its own readiness gate. One older
+question closes along the way: the seal `8b387e8` was never a missing object
+here, it is a seal of that repository.
+
+```bash
+python examples/arabic/run_hamil_phase1_audit.py
+```
+
+## The ending is released by what follows it, and the headline figure is not issued here
+
+The same sibling then sent a claim about the end of the Arabic word: that it is
+produced by four generators, that the deciding context is what comes *before*
+it, and that the gain is 0.52 bits.
+`src/alghanem/arabic/ending_release_deposit.py` re-measures all of it on our own
+sealed bytes, through `read_quran_corpus_bytes` alone, which checks both length
+and digest before releasing a byte. Nothing is transcribed and believed: every
+quoted number is put beside a live measurement and its standing is derived from
+the two sides, never written in a field.
+
+Thirteen agree and six contradict. The two structural laws survive more strongly
+than they were claimed: two adjacent written sukūns inside a word occur **zero**
+times — no madd exception, no shadda exception — and a word-initial written
+sukūn occurs exactly twice, in `لْيَقْطَعْ` and `لْيَقْضُوا`, both directly after
+«ثُمَّ». Both of those ayahs also carry the same lām of command *joined*, and it
+is joined in 212 tokens across the corpus, so the two separations are a spacing
+habit of the script and not a breach. The guards need no exception at all.
+
+The deciding context is the following letter, not the preceding one. On the
+alternating forms, a sukūn-final word before a word beginning with the
+connecting alif occurs **zero times out of 4,534** — the cell is absent, not
+rare — while a voweled ending before it occurs 1,643 times. That is why the rule
+is named ق-تخلّص and not ق-وقف. But the zero belongs to the *connecting hamza*
+alone: widen the condition to every shape of alif and the empty cell fills with
+1,232 occurrences and the law collapses, so a restatement as "before alif" would
+destroy it.
+
+The form key moves the figure more than the phenomenon does. Dropping every mark
+gives 301 alternating forms and 2,039 fatḥa releases; keeping the shadda gives
+292 and 1,038; keeping every internal mark gives 243 and 799 — with no letter
+changing anywhere in the text. The published pair is the most generous of the
+three, so the deposit publishes the whole ladder rather than one rung. And the
+generous key merges homographs: 155 of its 301 "alternating" forms cover more
+than one pointed stem — `أنزل` is أُنزِلَ and أَنزَلَ and أَنزِلْ at once — so part of
+the alternation is a coincidence of spelling rather than inflection.
+
+Two things are deliberately not published. Pause cannot be measured on this
+pointing at all: only 95 of 6,236 ayah endings are written with a sukūn, so the
+text is pointed for continuation throughout and "the ending is underlyingly a
+sukūn" is imported from grammar rather than measured; the ق debt stays open. And
+the 0.52-bit figure is **not issued in this tree in any form**, because a
+conditional entropy over two adjacent tokens is a first-order Markov quantity
+and `markov_readiness_gate` is still standing. A number computed in a
+conversation does not become a deposit by having been computed, and the type
+here refuses to let a withheld figure carry a number at all. Both quoted figures
+are filed in `REPORTED_UNVERIFIED_FIGURES` instead, where recording is not
+endorsing. One attribution also closes: `FRACTAL-T3` and `G-SUK-1` were cited as
+freezes of ours and are absent from this tree entirely — checked by reading
+every module rather than by assertion, with this file excluded from its own scan
+so that listing the two names cannot prove their presence.
+
+```bash
+python examples/arabic/run_ending_release_deposit.py
+```
+
+```bash
+python examples/arabic/run_slot_rights_algebra.py
+```
 
 ```bash
 python examples/arabic/read_lexical_artifact_closure.py
