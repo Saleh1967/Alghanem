@@ -1,4 +1,4 @@
-"""اختبارُ وثيقة الأصول: أبوابُها أربعةَ عشر، ومواضعُها تُفتَح، ولا رقمَ فيها."""
+"""اختبارُ وثيقة الأصول: أبوابُها خمسةَ عشر، ومواضعُها تُفتَح، ولا رقمَ فيها."""
 
 from __future__ import annotations
 
@@ -32,11 +32,11 @@ def _load_gate() -> ModuleType:
 gate = _load_gate()
 
 
-def test_the_fourteen_doors_are_read_and_each_site_is_on_disk() -> None:
+def test_the_fifteen_doors_are_read_and_each_site_is_on_disk() -> None:
     doors = gate._usool_doors()
-    assert doors["الأبوابُ المقروءة"] == "14"
+    assert doors["الأبوابُ المقروءة"] == "15"
     sites = [value for key, value in doors.items() if key.startswith("باب: ")]
-    assert len(sites) == 14
+    assert len(sites) == 15
     for site in sites:
         assert (REPO_ROOT / site).is_file(), site
 
@@ -80,7 +80,17 @@ def test_the_document_declares_itself_a_methodological_correspondence() -> None:
     text = DOCUMENT.read_text(encoding="utf-8")
     assert "مقابلةٌ منهجية" in text
     assert "لا تطبيقٌ فقهيّ" in text
-    assert "جدولُ المقابلات" in text
+    assert "جدولُ التشبيهاتِ المقيسة" in text
+
+
+def test_the_table_claims_a_likeness_of_effect_and_never_an_identity() -> None:
+    """حدُّ الباب الخامس عشر: يُدَّعى أثرُ الأصل لا ماهيتُه."""
+
+    text = DOCUMENT.read_text(encoding="utf-8")
+    assert "تشبيهٌ بالأثر" in text
+    assert "أثرُه أثرُ" in text
+    assert "التطابقُ حرفيّ" not in text
+    assert "جدولُ المقابلات" not in text
 
 
 def test_the_document_is_sealed_as_an_epistemic_witness_and_never_collided() -> None:
