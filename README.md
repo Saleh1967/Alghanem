@@ -14,7 +14,14 @@
 > is.
 >
 > Reading order: **`docs/VISION.md` → `docs/AIMS.md` → `docs/CONSTITUTION.md` →
-> source → tests → the derived state block.**
+> `docs/USOOL_AL-UNBOOB.md` → source → tests → the derived state block.**
+>
+> `docs/USOOL_AL-UNBOOB.md` (أصولُ الأنبوب) states the twelve doors of the
+> pipeline's own method — definition, ruler, the four admissible evidences,
+> what is forbidden — and names, for each door, the module in this tree that
+> enforces it. It is a *methodological correspondence*, not a legal
+> application: it is registered as an **epistemic witness** (cited, never
+> counted) and carries no figure that may be transcribed from it.
 
 ## The architecture in one page: seal → engine → deposit → law → CI
 

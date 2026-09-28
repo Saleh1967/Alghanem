@@ -22,6 +22,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from collections.abc import Iterator, Mapping
 from dataclasses import fields, is_dataclass
@@ -52,6 +53,13 @@ from alghanem.seals import (  # noqa: E402
 )
 
 SUKUN: Final[str] = "\u0652"
+
+USOOL_DOCUMENT: Final[Path] = REPO_ROOT / "docs" / "USOOL_AL-UNBOOB.md"
+
+_USOOL_DOOR: Final[re.Pattern[str]] = re.compile(
+    r"^## (?P<title>.+)\n\n> \*\*موضعُه في الشجرة:\*\* `(?P<site>[^`]+)`",
+    re.MULTILINE,
+)
 
 
 def _named_fields(deposit: object) -> dict[str, str]:
@@ -153,6 +161,32 @@ def _hamil_register_tally() -> Mapping[str, str]:
     """تعدادُ سجلّ أختامهم، مشتقًّا من قائمته لا منقولًا عن حقوله."""
 
     return {key: str(value) for key, value in phase2.register_tally().items()}
+
+
+def _usool_doors() -> Mapping[str, str]:
+    """الجانبُ الحيُّ لوثيقة الأصول: بصمتُها، وأبوابُها، ومواضعُ تلك الأبواب.
+
+    وهي **شاهدٌ معرفيٌّ لا رقم**: لا يُنقَل منها مقدارٌ إلى حساب، ولا تُصادَم
+    مصادمةَ المولَّد. والحيُّ فيها موضعُ كلّ باب: يُفتَح على القرص عند كلّ
+    قراءة، فإن زال بابٌ أو انتقل موضعُه انكشف حالًا ولم يبقَ نثرًا يدّعي.
+    """
+
+    text = USOOL_DOCUMENT.read_text(encoding="utf-8")
+    doors = tuple(
+        (match.group("title"), match.group("site"))
+        for match in _USOOL_DOOR.finditer(text)
+    )
+    if not doors:
+        raise SealError("وثيقةُ أصولٍ بلا بابٍ يُسمّي موضعَه لا تُحرَس.")
+    fold: dict[str, str] = {
+        "بصمةُ الوثيقة": sha256(text.encode("utf-8")).hexdigest()[:12],
+        "الأبوابُ المقروءة": str(len(doors)),
+    }
+    for title, site in doors:
+        fold[f"باب: {title}"] = (
+            site if (REPO_ROOT / site).is_file() else "موضعٌ غائبٌ عن الشجرة"
+        )
+    return fold
 
 
 def _methodological_sources_sides() -> Mapping[str, str]:
@@ -337,6 +371,13 @@ def the_registry() -> SealRegistry:
                 origin="seals.json المُودَع ↔ تعدادٌ مشتقٌّ من قائمة أختامه",
                 generate=_hamil_register_tally,
                 transcription=_hamil_register_tally,
+            ),
+            Seal(
+                name="usool_al_unboob.doors",
+                genus=SealGenus.EPISTEMIC_WITNESS,
+                origin="docs/USOOL_AL-UNBOOB.md ↔ حضورُ موضعِ كلِّ بابٍ على القرص",
+                generate=_usool_doors,
+                transcription=_usool_doors,
             ),
             Seal(
                 name="methodological_sources.T3",
