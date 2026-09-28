@@ -14,6 +14,10 @@ from alghanem.arabic import (
     APPLICATION_STOPS_AT_THE_FOURTH_LINK_NOTE,
     ARABIC_PACKAGE_RELATIVE_PATH,
     GOVERNING_CONSTRAINTS,
+    GRADUATION_EXAM_ABSENCE_GUARDS_NOTE,
+    GRADUATION_EXAM_MATERIAL_REFERENCE,
+    OUT_OF_TREE_MARKER,
+    THE_EXAM_KEEPS_ITS_DECISION_NUMBER_SO_LABELS_NO_LONGER_ASCEND_NOTE,
     UNIVERSAL_IDEA_IS_ABSENT_NOTE,
     ChainLedger,
     ChainLinkCoding,
@@ -44,10 +48,10 @@ def declaration(**overrides: object) -> ChainLinkDeclaration:
     return ChainLinkDeclaration(**base)  # type: ignore[arg-type]
 
 
-def test_the_chain_holds_exactly_fifteen_successive_positions() -> None:
+def test_the_chain_holds_exactly_sixteen_successive_positions() -> None:
     ledger = read_chain()
-    assert len(ledger.readings) == 15
-    assert [item.declaration.position for item in ledger.readings] == list(range(15))
+    assert len(ledger.readings) == 16
+    assert [item.declaration.position for item in ledger.readings] == list(range(16))
     assert [item.declaration.label for item in ledger.readings][:6] == [
         "٠",
         "١",
@@ -77,24 +81,24 @@ def test_the_fourth_link_is_coded_by_this_milestone() -> None:
     assert fourth.coding is ChainLinkCoding.مُرمَّزة
 
 
-def test_the_tenth_link_is_coded_by_this_milestone() -> None:
-    tenth = next(
-        item for item in read_chain().readings if item.declaration.label == "١٠"
+def test_the_eleventh_link_is_coded_by_this_milestone() -> None:
+    eleventh = next(
+        item for item in read_chain().readings if item.declaration.label == "١١"
     )
-    assert tenth.declaration.module_relative_path == "umum_khusus.py"
-    assert tenth.coding is ChainLinkCoding.مُرمَّزة
+    assert eleventh.declaration.module_relative_path == "umum_khusus.py"
+    assert eleventh.coding is ChainLinkCoding.مُرمَّزة
 
 
-def test_a_tree_without_the_tenth_link_module_reads_it_as_uncoded_not_skipped(
+def test_a_tree_without_the_eleventh_link_module_reads_it_as_uncoded_not_skipped(
     tmp_path: Path,
 ) -> None:
     package = tmp_path / ARABIC_PACKAGE_RELATIVE_PATH
     (package / "encoding").mkdir(parents=True)
     (package / "encoding" / "observation.py").write_text("", encoding="utf-8")
     ledger = read_chain(tmp_path)
-    tenth = next(item for item in ledger.readings if item.declaration.label == "١٠")
-    assert tenth.coding is ChainLinkCoding.حلقة_غير_مُرمَّزة
-    assert len(ledger.readings) == 15
+    eleventh = next(item for item in ledger.readings if item.declaration.label == "١١")
+    assert eleventh.coding is ChainLinkCoding.حلقة_غير_مُرمَّزة
+    assert len(ledger.readings) == 16
 
 
 def test_the_first_two_links_stay_deferred_by_a_named_constitutional_law() -> None:
@@ -164,10 +168,10 @@ def test_a_module_naming_link_may_not_be_read_as_deferred_nor_the_reverse() -> N
         )
 
 
-def test_a_position_outside_the_fifteen_is_refused() -> None:
-    with pytest.raises(DecisionChainError, match="خمسةَ عشرَ موضعًا"):
-        declaration(position=15)
-    with pytest.raises(DecisionChainError, match="خمسةَ عشرَ موضعًا"):
+def test_a_position_outside_the_sixteen_is_refused() -> None:
+    with pytest.raises(DecisionChainError, match="ستةَ عشرَ موضعًا"):
+        declaration(position=16)
+    with pytest.raises(DecisionChainError, match="ستةَ عشرَ موضعًا"):
         declaration(position=-1)
 
 
@@ -210,9 +214,9 @@ def test_a_tree_without_the_fourth_link_module_reads_it_as_uncoded(
     assert ledger.reach[0] is ChainLinkReach.بالغة
 
 
-def test_the_two_governing_constraints_are_framework_not_links() -> None:
-    assert len(GOVERNING_CONSTRAINTS) == 2
-    assert [item.label for item in GOVERNING_CONSTRAINTS] == ["أ", "ب"]
+def test_the_governing_constraints_are_framework_not_links() -> None:
+    assert len(GOVERNING_CONSTRAINTS) == 3
+    assert [item.label for item in GOVERNING_CONSTRAINTS] == ["أ", "ب", "٧"]
     assert all(item.is_in_the_chain is False for item in GOVERNING_CONSTRAINTS)
     assert all(
         item.standing is GoverningConstraintStanding.مُصرَّح_غير_مُرمَّز
@@ -299,3 +303,132 @@ def test_this_ledger_changes_no_external_audit_field(card: str) -> None:
         audit_card(_EXAMPLES / card).to_dict(), ensure_ascii=False, sort_keys=True
     )
     assert before == after
+
+
+def test_the_graduation_exam_sits_at_its_declared_position_and_shifts_no_position() -> (
+    None
+):
+    """موضعُ الامتحان آخرَ السلسلة، ولم يُزِح موضعًا واحدًا؛ والمتحرّكُ الأرقام."""
+
+    readings = read_chain().readings
+    exam = readings[-1]
+
+    assert exam.declaration.position == 15
+    assert exam.declaration.label == "٧"
+    assert exam.declaration.title.startswith("امتحانُ التخرّج")
+    assert [item.declaration.label for item in readings[:15]] == [
+        "٠",
+        "١",
+        "٢",
+        "٣أ",
+        "٣ب",
+        "٤",
+        "٥",
+        "٦",
+        "٨",
+        "٩",
+        "١٠",
+        "١١",
+        "١٢",
+        "١٣",
+        "١٤",
+    ]
+
+
+def test_the_exam_names_one_material_bound_outside_this_tree_and_only_one() -> None:
+    """مادّتُه مُصدِّرُ hamil، وهو وحده الموصولُ خارجَ الشجرة."""
+
+    bound = [
+        item for item in read_chain().readings if item.declaration.is_bound_out_of_tree
+    ]
+
+    assert len(bound) == 1
+    assert (
+        bound[0].declaration.module_relative_path == GRADUATION_EXAM_MATERIAL_REFERENCE
+    )
+    assert "hamil" in GRADUATION_EXAM_MATERIAL_REFERENCE
+    assert "induction/export_seals.py" in GRADUATION_EXAM_MATERIAL_REFERENCE
+
+
+def test_the_bound_link_manufactures_no_dead_relative_path_in_this_tree() -> None:
+    """العقدُ الارتباطُ بالمخرج، فلا يُنسَب المرجعُ إلى حزمة العربية."""
+
+    exam = read_chain().readings[-1]
+    path = exam.declaration.module_path
+
+    assert path is not None
+    assert path.startswith(OUT_OF_TREE_MARKER)
+    assert not path.startswith(ARABIC_PACKAGE_RELATIVE_PATH)
+    assert not (repository_root_path() / path).exists()
+
+
+def test_a_bound_link_is_uncoded_by_its_mark_and_not_by_a_missing_file(
+    tmp_path: Path,
+) -> None:
+    """ولو وُجد في الشجرة ملفٌّ بذلك الاسم لم يُقرأ الموصولُ مُرمَّزًا."""
+
+    package = tmp_path / ARABIC_PACKAGE_RELATIVE_PATH
+    package.mkdir(parents=True)
+    forged = package / GRADUATION_EXAM_MATERIAL_REFERENCE.replace("/", "_")
+    forged.write_text("", encoding="utf-8")
+
+    exam = read_chain(tmp_path).readings[-1]
+
+    assert exam.coding is ChainLinkCoding.حلقة_غير_مُرمَّزة
+    assert exam.is_coded is False
+
+
+def test_a_bound_reference_with_nothing_after_the_mark_is_refused() -> None:
+    with pytest.raises(DecisionChainError, match="مرجعُ المُصدِّر الموصول"):
+        declaration(module_relative_path=OUT_OF_TREE_MARKER + "   ")
+
+
+def test_the_third_constraint_carries_the_three_absence_guards_as_prose() -> None:
+    """ثلاثةُ شروط الغياب نصٌّ في `gap_note` لا عدّادٌ ولا حكم."""
+
+    third = GOVERNING_CONSTRAINTS[2]
+
+    assert third.label == "٧"
+    assert third.is_in_the_chain is False
+    assert third.standing is GoverningConstraintStanding.مُصرَّح_غير_مُرمَّز
+    assert third.gap_note == GRADUATION_EXAM_ABSENCE_GUARDS_NOTE
+    assert third.gap_note != GOVERNING_CONSTRAINTS[0].gap_note
+    assert third.gap_note != GOVERNING_CONSTRAINTS[1].gap_note
+    for fragment in ("**(١)**", "**(٢)**", "**(٣)**"):
+        assert fragment in GRADUATION_EXAM_ABSENCE_GUARDS_NOTE
+    assert "ast" in GRADUATION_EXAM_ABSENCE_GUARDS_NOTE
+    assert "02_tariqa_aqliyya" in GRADUATION_EXAM_ABSENCE_GUARDS_NOTE
+
+
+def test_the_third_constraint_asks_after_a_result_written_in_neither_end() -> None:
+    third = GOVERNING_CONSTRAINTS[2]
+
+    assert "لم تكن" in third.question and "مكتوبةً في طرفٍ منهما" in third.question
+    assert "mirror.py" in third.question
+    assert "deposit_law.verdict" in third.question
+
+
+def test_the_exam_carries_its_decision_number_and_the_labels_stop_ascending() -> None:
+    """الامتحانُ رقمُه `٧` في آخر المواضع، فالأرقامُ لم تعد تتصاعد مع المواضع."""
+
+    labels = [item.declaration.label for item in read_chain().readings]
+
+    assert labels[-1] == "٧"
+    assert labels[8:15] == ["٨", "٩", "١٠", "١١", "١٢", "١٣", "١٤"]
+    assert labels[:8] == ["٠", "١", "٢", "٣أ", "٣ب", "٤", "٥", "٦"]
+    assert len(set(labels)) == len(labels)
+    assert "الأرقامُ لم تعد تتصاعد" in (
+        THE_EXAM_KEEPS_ITS_DECISION_NUMBER_SO_LABELS_NO_LONGER_ASCEND_NOTE
+    )
+
+
+def test_the_exam_and_its_governing_constraint_carry_one_number_not_two() -> None:
+    """الرقمُ `٧` على الحلقة وعلى قيدها الحاكم معًا، مقصودًا ومحروسًا."""
+
+    exam = read_chain().readings[-1]
+
+    assert exam.declaration.label == GOVERNING_CONSTRAINTS[-1].label
+    assert [item.label for item in GOVERNING_CONSTRAINTS].count("٧") == 1
+    assert (
+        sum(1 for item in read_chain().readings if item.declaration.label == "٧") == 1
+    )

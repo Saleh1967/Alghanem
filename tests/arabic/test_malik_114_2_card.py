@@ -1,4 +1,4 @@
-"""تطبيقٌ كاملٌ واحد على بطاقة (مَلِك) في الناس:2، مُشغَّلًا على حلقات ٤–١٣.
+"""تطبيقٌ كاملٌ واحد على بطاقة (مَلِك) في الناس:2، مُشغَّلًا على حلقات ٤–٦ و٨–١٤.
 
 هذا **اختبارُ تشغيل، لا وحدةُ قياسٍ جديدة**: لا يُنشئ سلطةً ولا مفردةً ولا
 دفترًا، ولا يُصدر ولادةً ولا تجميدًا ولا `E0`، ولا تقرؤه وحدةٌ في الشجرة. وكلُّ
@@ -187,20 +187,20 @@ def test_the_fourth_link_stops_by_a_derived_category_error_not_by_waiting() -> N
     )
 
 
-def test_the_fourth_and_twelfth_links_stop_for_the_same_absent_declaration() -> None:
-    """وقوفُ ٤ و١٢ غيابُ إعلانٍ واحد، لا غيابان: طريقُ ورود النقل."""
+def test_the_fourth_and_thirteenth_links_stop_for_the_same_absent_declaration() -> None:
+    """وقوفُ ٤ و١٣ غيابُ إعلانٍ واحد، لا غيابان: طريقُ ورود النقل."""
 
     by_label = {attempt.label: attempt for attempt in traverse(_card())}
 
     assert by_label["٤"].stood_up is False
-    assert by_label["١٢"].stood_up is False
-    assert "عينُ ما تفتقده الحلقةُ ٤" in by_label["١٢"].missing_declaration
+    assert by_label["١٣"].stood_up is False
+    assert "عينُ ما تفتقده الحلقةُ ٤" in by_label["١٣"].missing_declaration
     assert declared_members(_card(), TransmissionStanding) == ()
     assert declared_members(_card(), KnowledgeBasis) == ()
 
 
 def test_links_that_stand_up_after_the_stop_are_not_read_as_reached() -> None:
-    """٥ و٦ و٧ تقوم بذاتها على هذه البطاقة، ولا تُقرأ بالغةً بعد وقوف ٤."""
+    """٥ و٦ و٨ تقوم بذاتها على هذه البطاقة، ولا تُقرأ بالغةً بعد وقوف ٤."""
 
     attempts = traverse(_card())
     by_label = {attempt.label: attempt for attempt in attempts}
@@ -208,7 +208,7 @@ def test_links_that_stand_up_after_the_stop_are_not_read_as_reached() -> None:
 
     stood = [attempt.label for attempt in attempts if attempt.stood_up]
 
-    assert stood == ["٥", "٦", "٧"]
+    assert stood == ["٥", "٦", "٨"]
     assert stop is not None
     assert attempts.index(stop) < attempts.index(by_label["٥"])
 
@@ -221,12 +221,12 @@ def test_the_traversal_is_not_complete_so_the_application_test_is_unmet() -> Non
     assert not all(attempt.stood_up for attempt in attempts)
     assert [attempt.label for attempt in attempts if not attempt.stood_up] == [
         "٤",
-        "٨",
         "٩",
         "١٠",
         "١١",
         "١٢",
         "١٣",
+        "١٤",
     ]
     assert all(
         attempt.missing_declaration.strip()
