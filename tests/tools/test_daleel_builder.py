@@ -177,3 +177,21 @@ def test_a_forged_uniqueness_claim_is_refused(tmp_path: Path) -> None:
     assert audit.claims_uniqueness
     assert audit.unsupported_uniqueness
     assert not audit.is_clean
+
+
+def test_the_analogy_rules_are_located_in_the_bytes_not_transcribed() -> None:
+    """البابُ الخامس عشر يستند إلى مولِّدٍ يفتح قاعدتيه، لا إلى عددٍ منقول."""
+
+    loci = builder.analogy_rule_loci()
+    assert len(loci) == len(builder.THE_ANALOGY_RULES)
+    for locus, rule in zip(loci, builder.THE_ANALOGY_RULES, strict=True):
+        assert locus.text == builder.fold(rule)
+        assert locus.length > 0
+
+
+def test_a_rule_that_left_the_bytes_drops_the_gate(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """سقوطُ المولِّد مُجرَّبٌ لا موصوف: قاعدةٌ لا تقع في البايتات تُسقِطه."""
+
+    monkeypatch.setattr(builder, "THE_ANALOGY_RULES", ("قاعدةٌ لا يعرفها الكتابُ البتّة",))
+    with pytest.raises(builder.BuilderError):
+        builder.analogy_rule_loci()

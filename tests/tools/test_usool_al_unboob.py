@@ -76,6 +76,22 @@ def test_the_document_carries_no_figure_that_could_be_transcribed() -> None:
     assert stray == []
 
 
+def test_a_code_span_that_is_only_digits_is_a_transcribed_figure_in_disguise() -> None:
+    """ثغرةُ الحارس الأولى: الاستثناءُ للمسارات والمعرّفات لا للأعداد العارية."""
+
+    spans = CODE_SPAN.findall(DOCUMENT.read_text(encoding="utf-8"))
+    bare = [
+        span
+        for span in spans
+        if span.strip("`").strip()
+        and all(
+            mark.isdigit() or mark in ARABIC_INDIC or mark in " ,_"
+            for mark in span.strip("`")
+        )
+    ]
+    assert bare == [], bare
+
+
 def test_the_document_declares_itself_a_methodological_correspondence() -> None:
     text = DOCUMENT.read_text(encoding="utf-8")
     assert "مقابلةٌ منهجية" in text

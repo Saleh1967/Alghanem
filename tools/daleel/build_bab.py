@@ -96,6 +96,13 @@ OCCURRENCE_IS_NOT_UNIQUENESS_AND_THE_CLAIM_IS_MEASURED: Final[str] = (
     "شرطًا لم ترفعه."
 )
 
+A_RULE_CITED_IN_PROSE_IS_LOCATED_NOT_TRANSCRIBED: Final[str] = (
+    "قاعدتا القياس اللتان يحملهما البابُ الخامس عشر من وثيقة الأصول تُفتَحان "
+    "ههنا من البايتات عند كلّ تشغيل، فإن زالت واحدةٌ منهما أو تبدّل حرفٌ فيها "
+    "سقطت البوّابة. ولا يُنقَل موضعُهما عددًا إلى نثر الوثيقة: العددُ المنقول "
+    "لا فاتورةَ له، والموضعُ ههنا مولَّدٌ من مولِّده."
+)
+
 THE_NOTES: Final[tuple[str, ...]] = (
     A_QUOTE_IS_A_SLICE_NOT_A_COPY,
     THE_BUILDER_DOES_NOT_REASON,
@@ -103,6 +110,7 @@ THE_NOTES: Final[tuple[str, ...]] = (
     A_VERSE_COMES_FROM_THE_SOURCE_NOT_FROM_A_MUSHAF,
     THE_TWO_BASES_ARE_DECLARED_NEVER_MIXED,
     OCCURRENCE_IS_NOT_UNIQUENESS_AND_THE_CLAIM_IS_MEASURED,
+    A_RULE_CITED_IN_PROSE_IS_LOCATED_NOT_TRANSCRIBED,
 )
 
 
@@ -177,6 +185,20 @@ def occurrences(fragment: str) -> int:
     if not needle:
         raise BuilderError("شريحةٌ فارغةٌ لا تُعَدّ.")
     return source_text().count(needle)
+
+
+THE_ANALOGY_RULES: Final[tuple[str, ...]] = (
+    "لأن الجنس الواحد الذي لا يختلف، أو النوع الواحد الذي يختلف، ينطبق على "
+    "جنسه وعلى نوعه كل ما ثبت لفرد من أفراده، لأنه جنس واحد ونوع واحد",
+    "فلا يعمم على غيرها ولا يقاس عليها. لا قياساً شمولياً ولا قياساً حقيقياً، "
+    "بل يجب أن يؤخذ لتلك الحادثة وحدها",
+)
+
+
+def analogy_rule_loci() -> tuple[Locus, ...]:
+    """مواضعُ قاعدتَي القياس في المصدر — مولَّدةٌ لا منقولة."""
+
+    return tuple(locate(rule) for rule in THE_ANALOGY_RULES)
 
 
 @dataclass(frozen=True, slots=True)
@@ -430,6 +452,11 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     print(f"المقام: {SOURCE_BYTES.name} · بصمةُ بايتاته: {source_fingerprint()[:12]}")
     print(f"المسطرة: {THE_RULER}")
+    rules = analogy_rule_loci()
+    print(
+        "قاعدتا القياس (البابُ الخامس عشر) مفتوحتان من البايتات: "
+        + " · ".join(f"{locus.offset}+{locus.length}" for locus in rules)
+    )
     failed = False
     for audit in audits:
         mark = "✓" if audit.is_clean else "✗"
