@@ -291,6 +291,10 @@ _QUOTE = re.compile(f"{OPEN_QUOTE}([^{OPEN_QUOTE}{CLOSE_QUOTE}]+){CLOSE_QUOTE}")
 
 _DEPOSITOR_MARKUP = re.compile(r"\*\*|`")
 
+_BLOCKQUOTE_MARK = re.compile(r"^[ \t]*>[ \t]?", re.MULTILINE)
+
+_CODE_SPAN = re.compile(r"`[^`]*`")
+
 THE_SEPARATOR: Final[str] = "---"
 
 THE_AUDITED_REGION_IS_THE_TRANSCRIPTION_NOT_THE_VERDICT: Final[str] = (
@@ -300,36 +304,59 @@ THE_AUDITED_REGION_IS_THE_TRANSCRIPTION_NOT_THE_VERDICT: Final[str] = (
     "يقلب أداةَ صدقٍ إلى مولِّد إنذارٍ كاذب."
 )
 
+THE_TREE_KEEPS_TWO_PAGE_SHAPES_AND_ONE_RULE_WOULD_BLIND_THE_TOOL: Final[str] = (
+    "THE_TREE_KEEPS_TWO_PAGE_SHAPES_AND_ONE_RULE_WOULD_BLIND_THE_TOOL: "
+    "صفحاتُ العقد على شكلين مقيسين من القرص، لا واحدٍ. منها ما يفتح بترويسةٍ "
+    "يُغلقها خطٌّ ثمّ يأتي النقلُ ثمّ خطٌّ ثانٍ ثمّ الحكم — وهو ما تصرّح به "
+    "ترويسةُ 00_aqida بنصّها: «ما دون الخطّ الأول نصُّ العقدة… وما بعد الخطّ "
+    "الفاصل الثاني حكمُ هذه الشجرة». ومنها ما يفتح بالنقل مباشرةً فخطٌّ واحدٌ "
+    "يليه الحكم. فالقاعدةُ: الحكمُ يبدأ عند الخطّ الأخير، والنقلُ ينتهي عنده؛ "
+    "ويُطرَح ما قبل الخطّ الأول إن كانت الخطوطُ أكثرَ من واحد. وقطعُ الأداة عند "
+    "الخطّ الأول وحدَه كان يُخرِج صفحاتٍ كاملةً من الفحص ثمّ يطبع لها علامةَ "
+    "سلامة — وهو أسوأ من سكوتها، لأنّه سكوتٌ يدّعي الكلام."
+)
+
 THE_DEPOSITORS_MARKUP_IS_NOT_THE_BOOKS_LETTERS: Final[str] = (
     "THE_DEPOSITORS_MARKUP_IS_NOT_THE_BOOKS_LETTERS: تشديدُ المودِع "
     "(`**` و`` ` ``) وَسْمُ صفحةٍ لا حرفٌ من الكتاب؛ فيُرفَع قبل الموازنة ولا "
-    "يُحمَّل على المصدر."
+    "يُحمَّل على المصدر. وكذلك علامةُ الاقتباس في ماركداون (`>`) في أوّل السطر: "
+    "نقلٌ طويلٌ يمتدّ أسطرًا يحملها في وسطه، فتُحمَّل على الكتاب حروفًا لم يكتبها "
+    "ويُردّ النقلُ الصحيحُ تسميةً — وهو إنذارٌ كاذبٌ من جنس ما يمنعه حدُّ الأداة."
 )
 
 
 def transcription_region(document: str) -> str:
-    """ما فوق الخطّ الفاصل وحدَه — فهو موضعُ عهد النقل، وما تحته حكمٌ لا نقل."""
+    """موضعُ عهد النقل: ما انتهى عند الخطّ الأخير، وبدأ بعد الأول إن تعدّدت."""
 
     lines = document.splitlines()
-    for index, line in enumerate(lines):
-        if line.strip() == THE_SEPARATOR:
-            return "\n".join(lines[:index])
-    return document
+    rules = [index for index, line in enumerate(lines) if line.strip() == THE_SEPARATOR]
+    if not rules:
+        return document
+    if len(rules) == 1:
+        return "\n".join(lines[: rules[0]])
+    return "\n".join(lines[rules[0] + 1 : rules[-1]])
 
 
 def quotes_in(document: str) -> tuple[str, ...]:
     """اقتباساتُ صفحةٍ كما كُتبت بين «»، مرفوعًا عنها وَسْمُ المودِع وحدَه."""
 
     return tuple(
-        _DEPOSITOR_MARKUP.sub("", match.group(1)) for match in _QUOTE.finditer(document)
+        _DEPOSITOR_MARKUP.sub("", _BLOCKQUOTE_MARK.sub("", match.group(1)))
+        for match in _QUOTE.finditer(document)
     )
 
 
 def stray_ellipses_outside_quotes(document: str) -> int:
-    """نقاطٌ مفردةٌ خارج «» — اشتباهٌ بنقاط الكتاب؛ حذفُ المودِع `[…]` وحده."""
+    """نقاطٌ مفردةٌ خارج «» — اشتباهٌ بنقاط الكتاب؛ حذفُ المودِع `[…]` وحده.
+
+    ونطاقُ الشيفرة مطروحٌ على حكم منازل الأداة الثلاث: نقطةٌ بين علامتَي
+    `` ` `` **تسميةٌ للعلامة** لا استعمالٌ لها — كقول الصفحة إنّ الكتاب
+    يستعمل `…` فاصلًا. وعدُّها اشتباهًا يجعل الصفحةَ تسقط لأنّها **شرحت**
+    قاعدةَ نقلها، وذاك إنذارٌ كاذبٌ يعاقب الإفصاح.
+    """
 
     outside = _QUOTE.sub(" ", document).replace(DEPOSITOR_ELISION, " ")
-    return outside.count(THE_BOOKS_OWN_ELLIPSIS)
+    return _CODE_SPAN.sub(" ", outside).count(THE_BOOKS_OWN_ELLIPSIS)
 
 
 @dataclass(frozen=True, slots=True)

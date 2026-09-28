@@ -100,10 +100,38 @@ def test_a_cited_path_is_tagged_present_or_outside_the_tree() -> None:
 
 
 def test_the_deposited_nodes_are_what_disk_holds_not_what_was_narrated() -> None:
-    """أربعُ عقدٍ على القرص؛ وما رُوي إيداعُه ولم يُودَع لا يُعَدّ مودَعًا."""
+    """العقدُ تُقاس من القرص لا تُنسَخ قائمةً: ولا عقدةَ تمرّ بلا فحص.
 
-    names = [path.parent.name for path in builder.deposited_nodes()]
-    assert names == ["05_maalumat", "06_asalib", "12_maqamat", "13_tabaqat"]
+    وكانت ههنا قائمةٌ مجمَّدةٌ بأسماء أربعِ عقد. فلمّا وصلت خمسٌ أخرى سقط
+    الاختبارُ — وهو محقٌّ في سقوطه لكنّه سقط عن **نقلٍ** لا عن **قياس**:
+    ما حرسه أنّ الأسماء هي هي، لا أنّ كلّ عقدةٍ على القرص مفحوصة. فصار
+    الحدُّ مقيسًا: مجموعةُ ما يفحصه الباني هي عينُ مجموعةِ ما يحمل صفحةً
+    على القرص، لا تزيد ولا تنقص.
+    """
+
+    audited = {path.parent.name for path in builder.deposited_nodes()}
+    on_disk = {
+        child.name
+        for child in builder.NODES_ROOT.iterdir()
+        if child.is_dir() and (child / "README.md").is_file()
+    }
+    assert audited == on_disk
+    assert audited
+
+
+def test_no_node_is_waved_through_with_nothing_audited() -> None:
+    """سكوتٌ يدّعي الكلام: صفحةٌ فيها «» ويُطبَع لها ✓ على صفرِ فحص.
+
+    وهذا عطبٌ وقع فعلًا: قاعدةُ القطع عند الخطّ الأوّل أخرجت خمسَ عقدٍ
+    كاملةً من الفحص ثمّ منحتها علامةَ سلامة.
+    """
+
+    for audit in builder.audit_all():
+        page = (builder.NODES_ROOT / audit.node / "README.md").read_text(
+            encoding="utf-8"
+        )
+        if builder.OPEN_QUOTE in page:
+            assert audit.quotes > 0, audit.node
 
 
 def test_no_deposited_node_carries_a_fabricated_passage() -> None:
@@ -195,3 +223,53 @@ def test_a_rule_that_left_the_bytes_drops_the_gate(monkeypatch) -> None:  # type
     monkeypatch.setattr(builder, "THE_ANALOGY_RULES", ("قاعدةٌ لا يعرفها الكتابُ البتّة",))
     with pytest.raises(builder.BuilderError):
         builder.analogy_rule_loci()
+
+
+def test_a_page_whose_header_is_closed_by_a_rule_is_read_not_skipped() -> None:
+    """شكلا الصفحة مقروءان: ترويسةٌ يغلقها خطٌّ ثمّ نقلٌ ثمّ خطٌّ ثمّ حكم."""
+
+    document = "\n".join(
+        [
+            "# عنوان",
+            "",
+            "> ترويسةٌ تصف المسطرة.",
+            "",
+            "---",
+            "",
+            "«فأسلوب الدعاية إذا استعمل»",
+            "",
+            "---",
+            "",
+            "«مصطلحُ الشجرة» تحت الخطّ فلا يُفحَص.",
+            "",
+        ]
+    )
+    quotes = builder.quotes_in(builder.transcription_region(document))
+    assert quotes == ("فأسلوب الدعاية إذا استعمل",)
+
+
+def test_a_page_with_one_rule_still_reads_everything_above_it() -> None:
+    """والشكلُ الآخر لم يُكسَر: خطٌّ واحدٌ فالنقلُ كلُّ ما فوقه."""
+
+    document = "«فأسلوب الدعاية إذا استعمل»\n\n---\n\n«مصطلحُ الشجرة»\n"
+    assert builder.quotes_in(builder.transcription_region(document)) == (
+        "فأسلوب الدعاية إذا استعمل",
+    )
+
+
+def test_a_blockquote_mark_inside_a_long_quote_is_not_charged_to_the_book() -> None:
+    """علامةُ الاقتباس في أوّل السطر وَسْمُ صفحةٍ، فلا تُحمَّل على المصدر."""
+
+    document = "> «فأسلوب الدعاية\n> إذا استعمل»\n"
+    (quoted,) = builder.quotes_in(document)
+    assert ">" not in quoted
+    assert builder.locate(quoted).length > 0
+
+
+def test_an_ellipsis_named_inside_a_code_span_is_not_a_suspected_elision() -> None:
+    """تسميةُ العلامة ليست استعمالَها؛ ولا تُعاقَب صفحةٌ شرحت قاعدةَ نقلها."""
+
+    named = "الكتابُ يستعمل `…` فاصلًا بين فقراته.\n"
+    used = "وقال الكاتب … ثمّ سكت.\n"
+    assert builder.stray_ellipses_outside_quotes(named) == 0
+    assert builder.stray_ellipses_outside_quotes(used) == 1
