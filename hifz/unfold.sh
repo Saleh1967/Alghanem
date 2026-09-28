@@ -34,10 +34,50 @@ FETCH="$HAMIL_ROOT/fetch_source.sh"
 export SOURCES_DIR="${SOURCES_DIR:-$HIFZ_DIR/.sources}"
 export SOURCES_CACHE="${SOURCES_CACHE:-$HIFZ_DIR/.cache}"
 
+# البيانُ يُقرأ هنا لموضع البايتات وحدَه، لا للأختام: الأختامُ تُصادَم في البيت
+# المستدعى لا تُعاد قراءتُها هنا.
+MANIFEST="${SOURCES_MANIFEST:-$HAMIL_ROOT/sources_manifest.tsv}"
+INBOX="${SOURCES_INBOX:-$HAMIL_ROOT/corpora/inbox}"
+
 E_USAGE=2
 HIFZ_RETRIES="${HIFZ_RETRIES:-2}"
 
 say() { printf '%s\n' "$1" >&2; }
+
+# ــ موضعُ البايتات يُقرأ من البيان لا يُنتزَع من سطر مطبوع ــــــــــــــــــــ
+# نصُّ ما يطبعه fetch_source.sh عند النجاح زينةٌ للقارئ، وليس من العقد في شيء:
+# العقدُ خمسةُ مخارجَ لا صيغةُ سطر. فانتزاعُ المسار منه يكسر عند أوّل تحسينِ
+# عبارةٍ هناك. والبيانُ نفسُه مصدرُ الحقيقة، كما في قراءة المعرِّفات.
+field_of() { # field_of <معرِّف> <رقمُ الحقل>
+  [ -f "$MANIFEST" ] || return 1
+  awk -F'\t' -v id="$1" -v n="$2" '
+    /^[[:space:]]*#/ || NF < 10 { next }
+    $1 == id { print $n; found = 1; exit }
+    END { exit (found ? 0 : 1) }
+  ' "$MANIFEST"
+}
+
+# الطرقُ ثلاثٌ وموضعُ البايتات يختلف بها:
+#   البعيدُ (OpenITI) يُودِع في SOURCES_DIR/<معرِّف>.txt
+#   المحلّيُّ يبقى حيث وضعه المالكُ في صندوق الوارد
+#   وself يُقرأ إلى مؤقَّتٍ يمحوه البيتُ المستدعى عند خروجه، فلا بايتاتٍ تُسلَّم
+bytes_path() { # bytes_path <معرِّف>
+  local id="$1" repo name
+  repo="$(field_of "$id" 2)" || { printf '%s/%s.txt\n' "$SOURCES_DIR" "$id"; return 0; }
+  case "$repo" in
+    local)
+      name="$(field_of "$id" 5)"
+      [ -n "$name" ] && [ "$name" != "-" ] || return 1
+      printf '%s/%s\n' "$INBOX" "$name"
+      ;;
+    self)
+      return 2
+      ;;
+    *)
+      printf '%s/%s.txt\n' "$SOURCES_DIR" "$id"
+      ;;
+  esac
+}
 
 usage() {
   say "استعمالٌ: bash hifz/unfold.sh <معرِّف>   (معرِّفٌ واحدٌ لا --all)"
@@ -70,10 +110,16 @@ while : ; do
   case "$rc" in
     0)
       printf '%s\n' "$out" >&2
-      # المحلّيُّ وself يبقيان حيث وُضعا، والبعيدُ يُودَع في SOURCES_DIR.
-      # فالمسارُ يُقرأ من سطر البيت المستدعى لا يُفترَض.
-      path="$(printf '%s\n' "$out" | sed -n 's/.*→ //p' | sed 's/ ([^)]*)$//' | tail -n 1)"
-      [ -n "$path" ] || path="$SOURCES_DIR/$id.txt"
+      path="$(bytes_path "$id")"; pr=$?
+      if [ "$pr" = "2" ]; then
+        say "«$id» مطابقُ ختمِه ✓ لكنّه من طريق self: البيتُ المستدعى يقرؤه إلى"
+        say "  مؤقَّتٍ يمحوه عند خروجه، فلا بايتاتٍ تُسلَّم إلى هنا فتُطوى."
+        exit 1
+      fi
+      if [ "$pr" != "0" ] || [ -z "$path" ]; then
+        say "«$id» مطابقُ ختمِه ✓ ولا موضعَ بايتاتٍ يُقرأ له في البيان"
+        exit 1
+      fi
       say "«$id» مفكوكٌ مطابقُ الختم ✓"
       printf '%s\n' "$path"
       exit 0

@@ -51,6 +51,17 @@ exit "$rc"
 STUB
 chmod +x "$HOUSE/fetch_source.sh"
 
+# بيانٌ مصطنَعٌ بحقوله العشرة: منه يُقرأ موضعُ البايتات — لا من سطرٍ مطبوع.
+mkdir -p "$HOUSE/corpora/inbox"
+printf 'وضعه المالكُ بيده\n' > "$HOUSE/corpora/inbox/محلّيّ.txt"
+{
+  printf '#id\trepo\tref\tpattern\tpath\tblob\tbytes\tsha256\tstate\tnote\n'
+  printf 'ibnmalik_alfiyya\tOpenITI/0675AH\tmaster\t-\t-\tdead\t97798\tbeef\tمختوم\tالألفية\n'
+  printf 'nahhas_icrab_sham\tOpenITI/0350AH\tmaster\t-\t-\tdead\t4170848\tbeef\tمختوم\tالإعراب\n'
+  printf 'shakhsiyya_j1\tself\tb7abcad\t-\tج١.docx\tdead\t283112\tbeef\tمختوم\tمن_التاريخ\n'
+  printf 'mahalli\tlocal\t-\t-\tمحلّيّ.txt\tdead\t30\tbeef\tمختوم\tبيد_المالك\n'
+} > "$HOUSE/sources_manifest.tsv"
+
 export HAMIL_ROOT="$HOUSE"
 export SOURCES_DIR="$LAB/sources"
 export SOURCES_CACHE="$LAB/cache"
@@ -101,6 +112,22 @@ claim "النداءُ بلا معرِّفٍ خطأُ استعمال" "2" "$?"
 HAMIL_ROOT="$LAB/لا-بيت" bash "$HIFZ_DIR/unfold.sh" ibnmalik_alfiyya >/dev/null 2>&1
 claim "بيتٌ غائبٌ خطأُ استعمالٍ لا تعذُّرُ جلب" "2" "$?"
 
+# ــ موضعُ البايتات من البيان لا من سطرٍ مطبوع ـــــــــــــــــــــــــــــــ
+echo "الموضعُ يُقرأ من البيان:"
+reset; set_rc 0
+claim "البعيدُ يُودَع في SOURCES_DIR" "$SOURCES_DIR/ibnmalik_alfiyya.txt" \
+  "$(bash "$HIFZ_DIR/unfold.sh" ibnmalik_alfiyya 2>/dev/null)"
+claim "المحلّيُّ يبقى حيث وضعه المالك" "$HOUSE/corpora/inbox/محلّيّ.txt" \
+  "$(bash "$HIFZ_DIR/unfold.sh" mahalli 2>/dev/null)"
+bash "$HIFZ_DIR/unfold.sh" shakhsiyya_j1 >/dev/null 2>&1
+claim "self لا يُسلِّم بايتاتٍ فلا يُطوى" "1" "$?"
+
+# وهذا هو المقصد: صيغةُ السطر المطبوع زينةٌ لا عقدٌ، فتغيُّرُها لا يكسر شيئًا.
+reset; set_rc 0
+sed -i 's|echo "\$id مطابقُ الختم ✓ → \$dest (deadbeef)"|echo "تمّ: $id [$dest]"|' "$HOUSE/fetch_source.sh"
+claim "تغيُّرُ صيغة السطر لا يزحزح الموضع" "$SOURCES_DIR/ibnmalik_alfiyya.txt" \
+  "$(bash "$HIFZ_DIR/unfold.sh" ibnmalik_alfiyya 2>/dev/null)"
+
 # ــ المعرِّفاتُ تُقرأ آليًّا من البيان، المختومُ وحدَه ــــــــــــــــــــــــ
 echo "المعرِّفاتُ من البيان لا من قائمةٍ يدويّة:"
 ids="$(bash "$HIFZ_DIR/fold.sh" --ids)"
@@ -125,8 +152,12 @@ claim "المخالفُ ختمَه يُرفَع حكمُه 4" "4" "$?"
 claim "ولا يُطوى منه شيء" "0" "$(ls "$HIFZ_FOLDS" 2>/dev/null | wc -l | tr -d ' ')"
 
 # ــ المخرجاتُ والذاكرةُ داخلَ Alghanem لا في بيت البايتات ــــــــــــــــــــ
+# ــ المخرجاتُ والذاكرةُ داخلَ Alghanem لا في بيت البايتات ــــــــــــــــــــ
+# (صندوقُ الوارد مهادٌ صنعتُه أنا هنا؛ المُدَّعى أنّ المستدعيَ لا يودِع مخرجاتِه
+#  ولا ذاكرتَه هناك — وموضعُهما الافتراضيّ corpora/sources.)
 echo "لا يكتب المستدعي في شجرةِ من يستدعيه:"
-claim "لا مخرجاتٍ في بيت البايتات" "0" "$([ -d "$HOUSE/corpora" ] && echo 1 || echo 0)"
+claim "لا مخرجاتٍ في بيت البايتات" "0" "$([ -e "$HOUSE/corpora/sources" ] && echo 1 || echo 0)"
+claim "المخرجاتُ في شجرة Alghanem" "1" "$([ -d "$SOURCES_DIR" ] && echo 1 || echo 0)"
 
 printf '\nالمصادمُ: %d موافقةً · %d مخالفةً\n' "$pass" "$fail"
 [ "$fail" = "0" ] || exit 1
