@@ -86,12 +86,23 @@ THE_TWO_BASES_ARE_DECLARED_NEVER_MIXED: Final[str] = (
     "عددٌ بلا أساسه."
 )
 
+THE_UNIQUENESS_CLAIM: Final[str] = "وُجد في نصّ الحاوية مرّةً واحدةً"
+
+OCCURRENCE_IS_NOT_UNIQUENESS_AND_THE_CLAIM_IS_MEASURED: Final[str] = (
+    "OCCURRENCE_IS_NOT_UNIQUENESS_AND_THE_CLAIM_IS_MEASURED: وقوعُ الشريحة "
+    "في البايتات غيرُ تفرّدها فيها؛ فصفحةٌ تكتفي بدعوى الوقوع لا يُطالَبُ "
+    "نقلُها بالتفرّد، وصفحةٌ تدّعي «مرّةً واحدةً» يُقاس تفرُّدُ كلِّ شريحةٍ "
+    "فيها ويسقط بناؤها إن كذبت الدعوى. فالحارسُ يتبع الدعوى ولا يفرض عليها "
+    "شرطًا لم ترفعه."
+)
+
 THE_NOTES: Final[tuple[str, ...]] = (
     A_QUOTE_IS_A_SLICE_NOT_A_COPY,
     THE_BUILDER_DOES_NOT_REASON,
     A_SOURCE_DEFECT_IS_COPIED_AND_NAMED_NOT_MENDED,
     A_VERSE_COMES_FROM_THE_SOURCE_NOT_FROM_A_MUSHAF,
     THE_TWO_BASES_ARE_DECLARED_NEVER_MIXED,
+    OCCURRENCE_IS_NOT_UNIQUENESS_AND_THE_CLAIM_IS_MEASURED,
 )
 
 
@@ -318,25 +329,39 @@ class NodeAudit:
     not_in_source: tuple[str, ...]
     fabricated: tuple[str, ...]
     stray_ellipses: int
+    claims_uniqueness: bool
+    repeated_slices: tuple[str, ...]
 
     @property
     def is_clean(self) -> bool:
-        """`True` حين لا تلفيقَ ولا نقطةَ حذفٍ ملتبسةٌ خارج «»."""
+        """`True` حين لا تلفيقَ ولا نقطةَ حذفٍ ملتبسةٌ، ولا دعوى تفرّدٍ مكذوبة."""
 
-        return not self.fabricated and self.stray_ellipses == 0
+        return (
+            not self.fabricated
+            and self.stray_ellipses == 0
+            and not self.unsupported_uniqueness
+        )
+
+    @property
+    def unsupported_uniqueness(self) -> tuple[str, ...]:
+        """شرائحُ تقع أكثرَ من مرّةٍ في صفحةٍ ادّعت أنّ كلَّ اقتباسٍ فيها فريد."""
+
+        return self.repeated_slices if self.claims_uniqueness else ()
 
 
 def audit_node(path: Path) -> NodeAudit:
     """يُمرّ كلَّ اقتباسٍ فوق الخطّ على البايتات ويُنزِله منزلتَه."""
 
-    region = transcription_region(path.read_text(encoding="utf-8"))
+    document = path.read_text(encoding="utf-8")
+    region = transcription_region(document)
     quoted_all = quotes_in(region)
     not_in_source: list[str] = []
     fabricated: list[str] = []
+    repeated: list[str] = []
     established = 0
     for quoted in quoted_all:
         try:
-            build_passage(quoted)
+            passage = build_passage(quoted)
         except BuilderError as failure:
             entry = f"{fold(quoted)[:70]} — {failure}"
             if "تلفيقٌ لا نقل" in str(failure):
@@ -345,6 +370,10 @@ def audit_node(path: Path) -> NodeAudit:
                 not_in_source.append(fold(quoted)[:70])
         else:
             established += 1
+            for locus in passage.loci:
+                tally = occurrences(locus.text)
+                if tally != 1:
+                    repeated.append(f"{locus.text[:60]} — وقع {tally} مرّات")
     return NodeAudit(
         node=path.parent.name,
         quotes=len(quoted_all),
@@ -352,6 +381,8 @@ def audit_node(path: Path) -> NodeAudit:
         not_in_source=tuple(not_in_source),
         fabricated=tuple(fabricated),
         stray_ellipses=stray_ellipses_outside_quotes(region),
+        claims_uniqueness=THE_UNIQUENESS_CLAIM in fold(document),
+        repeated_slices=tuple(repeated),
     )
 
 
@@ -406,10 +437,13 @@ def main(argv: list[str] | None = None) -> int:
             f"{mark} {audit.node}: {audit.established}/{audit.quotes} شريحةٌ "
             f"مُثبَتةٌ بإزاحتها · {len(audit.not_in_source)} تسميةٌ لا نقلَ "
             f"فيها · {len(audit.fabricated)} تلفيق · نقاطٌ ملتبسةٌ خارج «»: "
-            f"{audit.stray_ellipses}"
+            f"{audit.stray_ellipses} · دعوى التفرّد: "
+            f"{'مرفوعةٌ ومقيسة' if audit.claims_uniqueness else 'غيرُ مرفوعة'}"
         )
         for mention in audit.not_in_source:
             print(f"    · ليس نقلًا من المقام: {mention}")
+        for repetition in audit.unsupported_uniqueness:
+            print(f"    ✗ دعوى تفرّدٍ مكذوبة: {repetition}")
         for forgery in audit.fabricated:
             print(f"    ✗ تلفيق: {forgery}")
         if not audit.is_clean:

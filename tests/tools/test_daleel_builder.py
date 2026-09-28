@@ -132,3 +132,48 @@ def test_the_exercise_over_the_whole_deposit_exits_clean() -> None:
     """مخرَجُ الأداة نفسُه هو الحكم؛ ولا يُقرأ نجاحٌ من وصفٍ دون تشغيل."""
 
     assert builder.main([]) == 0
+
+
+def test_occurrence_is_not_uniqueness_and_both_are_measured() -> None:
+    """الوقوعُ غيرُ التفرّد: شريحةٌ ثابتةٌ في البايتات قد تقع مرّاتٍ فيها."""
+
+    assert builder.occurrences("فأسلوب الدعاية إذا استعمل") == 1
+    assert builder.occurrences("تعارض") > 1
+
+
+def test_a_node_claiming_uniqueness_has_every_slice_occurring_once() -> None:
+    """دعوى «مرّةً واحدةً» مقيسةٌ لا مأخوذةٌ على حسن الظنّ."""
+
+    claimants = [audit for audit in builder.audit_all() if audit.claims_uniqueness]
+    assert claimants, "صفحةٌ واحدةٌ على الأقلّ ترفع دعوى التفرّد"
+    for audit in claimants:
+        assert audit.unsupported_uniqueness == (), (
+            audit.node,
+            audit.unsupported_uniqueness,
+        )
+
+
+def test_a_node_that_never_claims_uniqueness_is_not_held_to_it() -> None:
+    """الحارسُ يتبع الدعوى ولا يفرض شرطًا لم ترفعه الصفحة."""
+
+    silent = [audit for audit in builder.audit_all() if not audit.claims_uniqueness]
+    assert silent, "صفحةٌ واحدةٌ على الأقلّ تسكت عن التفرّد"
+    assert any(audit.repeated_slices for audit in silent)
+    for audit in silent:
+        assert audit.unsupported_uniqueness == ()
+
+
+def test_a_forged_uniqueness_claim_is_refused(tmp_path: Path) -> None:
+    """بابُ إبطال الدعوى مُجرَّب: صفحةٌ تدّعي التفرّدَ بشريحةٍ مكرّرةٍ تسقط."""
+
+    node = tmp_path / "99_forged"
+    node.mkdir()
+    page = node / "README.md"
+    page.write_text(
+        f"«تعارض»\n\n{builder.THE_UNIQUENESS_CLAIM} حرفًا بحرف.\n",
+        encoding="utf-8",
+    )
+    audit = builder.audit_node(page)
+    assert audit.claims_uniqueness
+    assert audit.unsupported_uniqueness
+    assert not audit.is_clean
