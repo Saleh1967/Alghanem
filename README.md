@@ -9059,12 +9059,16 @@ single module under `src/alghanem/` moves measured figures, so run the
 regeneration gate — and pay the cascade it names — before opening a pull
 request. `hifz/test_hifz.sh` collides the caller against the sibling house's
 contract in a temporary directory and touches no network.
+`tools/daleel/build_bab.py` re-derives every quotation deposited under
+`encyclopedia/tariqa/` from the source bytes by offset, and fails when two
+slices are presented in an order the source does not hold.
 
 ```bash
 python -m pip install -e '.[dev]'
 python tools/regen_all.py --check
 python -c "from alghanem.deposit_law import assert_the_gates_hold; assert_the_gates_hold()"
 pytest
+python tools/daleel/build_bab.py
 bash hifz/test_hifz.sh
 ruff check .
 ruff format --check .
