@@ -5849,7 +5849,7 @@ and `final bytes` reads `4/9` with five reorderings and nothing lost.
 Eighteen hand-picked surfaces are a fixture, not a corpus. `arabic_round_trip_corpus`
 therefore runs the same pipeline over the fingerprinted, fully vocalised
 al-Fātiḥah deposit already in this tree (`fatiha_source_text`, sha256
-`d435d63a…`, 552 bytes), and freezes the result as `FATIHA_ROUND_TRIP`.
+`d436d63a…`, 552 bytes), and freezes the result as `FATIHA_ROUND_TRIP`.
 `measure_deposited_text` re-hashes the text it is given and refuses to measure
 anything whose bytes do not match the fingerprint it was handed, so the figure
 belongs to that exact deposit and no other.
@@ -6291,7 +6291,7 @@ hold on the deposit; three are withheld, and the run says which and why.
 separation is measured rather than assumed.** They are two distinct subjects
 that no single element may carry, and a contract that folds one into the other
 is refused before any counting. Over the fingerprinted Fātiḥa deposit
-(`d435d63a…`) the two classes come out at 21 occurrences bearing the sukūn mark
+(`d436d63a…`) the two classes come out at 21 occurrences bearing the sukūn mark
 on its own axis against 40 bearing no mark on any measured axis, and a run in
 which those two numbers coincided would be refused rather than reported. No
 occurrence carries a haraka and a sukūn together, while 14 carry a haraka and a
@@ -8170,7 +8170,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 574-fold: 32 pairs, then 18,376. Both questions were answered,
+The widening is 575-fold: 32 pairs, then 18,415. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8189,7 +8189,7 @@ than a tail: six shadda-bearing pairs hold 99.935%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,806 of 18,344
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,814 of 18,383
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8779,9 +8779,9 @@ The table is filled along a cumulative ladder: the Fātiḥa alone realises 41 o
 the 112 cells over 100 occurrences and 20 of the 28 letters; adding Fatḥ 48:29
 takes it to 74 cells and 27 letters; adding the tree's own prose — with this
 module excluded from it by name, so that its figures do not move whenever its
-description is edited — takes it to 108 cells over 84,882 occurrences with every
+description is edited — takes it to 108 cells over 85,174 occurrences with every
 letter present. Five cells stay empty, and the module refuses to read them as
-prohibitions until their margins are consulted. Sukūn is 467 of 84,882 — 0.55%
+prohibitions until their margins are consulted. Sukūn is 467 of 85,174 — 0.55%
 — so the expected counts for ث and ظ bearing it are 1.470 and 1.052, and zero is
 unremarkable at each. Alef's whole row is ten occurrences. **Four of the five
 absences are consistent with scarcity**, and one survives the filter:
