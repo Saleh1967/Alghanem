@@ -1,4 +1,4 @@
-"""اختبارُ وثيقة الأصول: أبوابُها اثنا عشر، ومواضعُها تُفتَح، ولا رقمَ فيها."""
+"""اختبارُ وثيقة الأصول: أبوابُها ثلاثةَ عشر، ومواضعُها تُفتَح، ولا رقمَ فيها."""
 
 from __future__ import annotations
 
@@ -32,11 +32,11 @@ def _load_gate() -> ModuleType:
 gate = _load_gate()
 
 
-def test_the_twelve_doors_are_read_and_each_site_is_on_disk() -> None:
+def test_the_thirteen_doors_are_read_and_each_site_is_on_disk() -> None:
     doors = gate._usool_doors()
-    assert doors["الأبوابُ المقروءة"] == "12"
+    assert doors["الأبوابُ المقروءة"] == "13"
     sites = [value for key, value in doors.items() if key.startswith("باب: ")]
-    assert len(sites) == 12
+    assert len(sites) == 13
     for site in sites:
         assert (REPO_ROOT / site).is_file(), site
 
