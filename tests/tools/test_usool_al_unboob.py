@@ -1,4 +1,4 @@
-"""اختبارُ وثيقة الأصول: أبوابُها اثنا عشر، ومواضعُها تُفتَح، ولا رقمَ فيها."""
+"""اختبارُ وثيقة الأصول: أبوابُها خمسةَ عشر، ومواضعُها تُفتَح، ولا رقمَ فيها."""
 
 from __future__ import annotations
 
@@ -32,11 +32,11 @@ def _load_gate() -> ModuleType:
 gate = _load_gate()
 
 
-def test_the_twelve_doors_are_read_and_each_site_is_on_disk() -> None:
+def test_the_fifteen_doors_are_read_and_each_site_is_on_disk() -> None:
     doors = gate._usool_doors()
-    assert doors["الأبوابُ المقروءة"] == "12"
+    assert doors["الأبوابُ المقروءة"] == "15"
     sites = [value for key, value in doors.items() if key.startswith("باب: ")]
-    assert len(sites) == 12
+    assert len(sites) == 15
     for site in sites:
         assert (REPO_ROOT / site).is_file(), site
 
@@ -76,11 +76,37 @@ def test_the_document_carries_no_figure_that_could_be_transcribed() -> None:
     assert stray == []
 
 
+def test_a_code_span_that_is_only_digits_is_a_transcribed_figure_in_disguise() -> None:
+    """ثغرةُ الحارس الأولى: الاستثناءُ للمسارات والمعرّفات لا للأعداد العارية."""
+
+    spans = CODE_SPAN.findall(DOCUMENT.read_text(encoding="utf-8"))
+    bare = [
+        span
+        for span in spans
+        if span.strip("`").strip()
+        and all(
+            mark.isdigit() or mark in ARABIC_INDIC or mark in " ,_"
+            for mark in span.strip("`")
+        )
+    ]
+    assert bare == [], bare
+
+
 def test_the_document_declares_itself_a_methodological_correspondence() -> None:
     text = DOCUMENT.read_text(encoding="utf-8")
     assert "مقابلةٌ منهجية" in text
     assert "لا تطبيقٌ فقهيّ" in text
-    assert "جدولُ المقابلات" in text
+    assert "جدولُ التشبيهاتِ المقيسة" in text
+
+
+def test_the_table_claims_a_likeness_of_effect_and_never_an_identity() -> None:
+    """حدُّ الباب الخامس عشر: يُدَّعى أثرُ الأصل لا ماهيتُه."""
+
+    text = DOCUMENT.read_text(encoding="utf-8")
+    assert "تشبيهٌ بالأثر" in text
+    assert "أثرُه أثرُ" in text
+    assert "التطابقُ حرفيّ" not in text
+    assert "جدولُ المقابلات" not in text
 
 
 def test_the_document_is_sealed_as_an_epistemic_witness_and_never_collided() -> None:

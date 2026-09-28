@@ -9050,9 +9050,26 @@ python examples/arabic/read_markov_readiness_gate.py
 python examples/arabic/read_quran_word_total_standing.py
 ```
 
+These are the same checks CI runs, in the same order
+([`.github/workflows/ci.yml`](.github/workflows/ci.yml)). The two gates that run
+before `pytest` are not formalities: `tools/regen_all.py --check` re-derives
+every number transcribed into prose and fails on the first drift, and
+`assert_the_gates_hold()` walks the whole tree against the deposit law. Adding a
+single module under `src/alghanem/` moves measured figures, so run the
+regeneration gate — and pay the cascade it names — before opening a pull
+request. `hifz/test_hifz.sh` collides the caller against the sibling house's
+contract in a temporary directory and touches no network.
+`tools/daleel/build_bab.py` re-derives every quotation deposited under
+`encyclopedia/tariqa/` from the source bytes by offset, and fails when two
+slices are presented in an order the source does not hold.
+
 ```bash
 python -m pip install -e '.[dev]'
+python tools/regen_all.py --check
+python -c "from alghanem.deposit_law import assert_the_gates_hold; assert_the_gates_hold()"
 pytest
+python tools/daleel/build_bab.py
+bash hifz/test_hifz.sh
 ruff check .
 ruff format --check .
 mypy src
