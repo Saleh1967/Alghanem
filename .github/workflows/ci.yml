@@ -22,6 +22,9 @@ jobs:
       - name: deposit law (gates must hold across the whole tree)
         run: python -c "from alghanem.deposit_law import assert_the_gates_hold; assert_the_gates_hold()"
       - run: pytest
+      # مستدعي البيت الآخر يُصادَم بلا شبكة: العقدُ مقسومُ الأحكام لا الجلبُ نفسُه.
+      - name: hifz (the caller keeps the five-exit contract)
+        run: bash hifz/test_hifz.sh
       - run: ruff check .
       - run: ruff format --check .
       - run: mypy src
