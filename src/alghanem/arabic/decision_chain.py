@@ -1,9 +1,15 @@
-"""دفترُ سلسلة القرار: خمسةَ عشرَ موضعًا مُشتقّةً من الشجرة لا مكتوبةً.
+"""دفترُ سلسلة القرار: ستةَ عشرَ موضعًا مُشتقّةً من الشجرة لا مكتوبةً.
 
 السلسلةُ من الصفر إلى الثالثة عشرة، ومع انقسام الحلقة الثالثة إلى شِقّيها
-(الدالُّ وحده، والمدلولُ وحده) تصير مواضعُها خمسةَ عشر. وكلُّ موضعٍ يُسمّي
+(الدالُّ وحده، والمدلولُ وحده) تصير مواضعُها خمسةَ عشر، ثمّ يُلحَق بها موضعُ
+**امتحان التخرّج** فتصير ستةَ عشر. وكلُّ موضعٍ يُسمّي
 وحدتَه بمسارها في الشجرة، ووجودُ الوحدة **يُقرأ** من الشجرة نفسها؛ وغيابُها
 يُنتج `حلقة_غير_مُرمَّزة` لا تخطّيًا صامتًا — على منوال `pipeline_stations`.
+
+**وموضعٌ واحدٌ مادّتُه خارج هذه الشجرة**: امتحانُ التخرّج يُسمّي مُصدِّرَ
+`hamil` ويُعلَّم `موصول_خارج_الشجرة` — فالعقدُ الارتباطُ بمخرج المُصدِّر لا
+وجودُ ملفٍّ هنا، ولا يُصطنَع له مسارٌ نسبيٌّ ميتٌ داخل `src/alghanem/arabic`.
+وهو لذلك `حلقة_غير_مُرمَّزة` بحكمِ العلامة لا بمصادفةِ مسارٍ مفقود.
 
 **وكلُّ حلقةٍ شرطٌ لما بعدها، فالبلوغُ مُشتَقٌّ بالتتابع لا بالترميز وحده.**
 حلقةٌ مُرمَّزةٌ سبقتها حلقةٌ غيرُ بالغة تُقرأ `مسبوقة_بحلقة_غير_بالغة`، لا
@@ -15,8 +21,8 @@
 الشجرة (`LAW_DEFERRAL_IS_DECLARED_NOT_READ_NOTE`)؛ أمّا الحلقةُ التي تُسمّي
 وحدةً غيرَ موجودة فحالُها مقروءةٌ من الشجرة كغيرها.
 
-**والقيدان الحاكمان ليسا حلقتين في السلسلة بل إطارُها**، فيُسجَّلان على حدة
-بحالٍ صريحة؛ وكلاهما غيرُ مُرمَّزٍ اليوم، **وغيابُهما ليس غيابًا واحدًا**:
+**والقيودُ الحاكمة ليست حلقاتٍ في السلسلة بل إطارُها**، فتُسجَّل على حدة
+بحالٍ صريحة؛ وكلُّها غيرُ مُرمَّزٍ اليوم، **وغيابُها ليس غيابًا واحدًا**:
 القيدُ (أ) ينتظر فكرةً كلّيةً غيرَ مكتوبة، ولا تُكتَب في هذه الدورة
 (`UNIVERSAL_IDEA_IS_ABSENT_NOTE`)؛ والقيدُ (ب) لا ينتظر نظريةً بل تطبيقًا،
 وقد جرى التطبيقُ الأوّل فعلًا على بطاقة (مَلِك) في الناس:٢ فوقف عند الحلقة
@@ -24,7 +30,10 @@
 ذلك الوقوف حُسِم بعدُ** باشتقاق بنية الاستشهاد المعجميّ في
 `lexical_transmission`: خطأٌ فئويٌّ بنيويّ لا حجزٌ لغياب سلطةٍ اليوم. فالفرقُ
 بين الغيابين مُسجَّلٌ في سبب كلٍّ منهما، ولا تُفتَح له مفردةٌ ثالثة قبل أن
-يُكسَب: حالُ القيد ثنائيةٌ حتى يقوم تطبيقٌ كاملٌ يُشتَقّ منه الإغلاق.
+يُكسَب: حالُ القيد ثنائيةٌ حتى يقوم تطبيقٌ كاملٌ يُشتَقّ منه الإغلاق. والقيدُ
+(٧) — الحاكمان اللذان يحكمان امتحانَ التخرّج — ثالثُها، وغيابُه من جنسٍ ثالث:
+لا فراغَ نظريّ ولا تطبيقٌ انقطع، بل **بناءٌ لم يقع بعدُ** على مادّةٍ موصولةٍ
+خارجَ الشجرة (`GRADUATION_EXAM_ABSENCE_GUARDS_NOTE`).
 
 **والدفترُ قراءةٌ لا سلطة**: لا يُصدر ولادةً ولا تجميدًا ولا `E0`، ولا تقرؤه
 وحدةٌ في `kernel/`.
@@ -43,8 +52,12 @@ __all__ = [
     "CHAIN_LEDGER_IS_NOT_A_GATE_NOTE",
     "EACH_LINK_CONDITIONS_THE_NEXT_NOTE",
     "GOVERNING_CONSTRAINTS",
+    "GRADUATION_EXAM_ABSENCE_GUARDS_NOTE",
+    "GRADUATION_EXAM_MATERIAL_REFERENCE",
     "LAW_DEFERRAL_IS_DECLARED_NOT_READ_NOTE",
     "ONE_MODULE_MAY_SERVE_TWO_LINKS_NOTE",
+    "OUT_OF_TREE_BOND_IS_TO_AN_OUTPUT_NOT_A_PATH_NOTE",
+    "OUT_OF_TREE_MARKER",
     "UNIVERSAL_IDEA_IS_ABSENT_NOTE",
     "ChainLedger",
     "ChainLinkCoding",
@@ -87,6 +100,38 @@ class GoverningConstraintStanding(Enum):
 
 
 ARABIC_PACKAGE_RELATIVE_PATH: Final[str] = "src/alghanem/arabic"
+
+OUT_OF_TREE_MARKER: Final[str] = "موصول_خارج_الشجرة:"
+
+GRADUATION_EXAM_MATERIAL_REFERENCE: Final[str] = (
+    f"{OUT_OF_TREE_MARKER}Saleh1967/hamil-hala-zaman-program@main:"
+    "induction/export_seals.py"
+)
+
+OUT_OF_TREE_BOND_IS_TO_AN_OUTPUT_NOT_A_PATH_NOTE: Final[str] = (
+    "الموضعُ الذي مادّتُه في مستودعٍ آخر يُعلَّم `موصول_خارج_الشجرة` ولا "
+    "يُصطنَع له مسارٌ نسبيٌّ داخل `src/alghanem/arabic`: فالإشارةُ إلى بيتٍ "
+    "مجاورٍ عقدُها الارتباطُ بمخرج المُصدِّر لا بوجود ملفٍّ هنا، ومسارٌ نسبيٌّ "
+    "يشير إلى ما ليس في هذه الشجرة مسارٌ ميتٌ يُقرأ غيابًا في الشجرة وهو ليس "
+    "منها أصلًا. والموصولُ لذلك `حلقة_غير_مُرمَّزة` بحكمِ العلامة لا بمصادفةِ "
+    "مسارٍ مفقود، ولا يُقرأ `مُرمَّزة` ولو وُجد في الشجرة ملفٌّ بذلك الاسم."
+)
+
+GRADUATION_EXAM_ABSENCE_GUARDS_NOTE: Final[str] = (
+    "غيابُ هذا القيد ثلاثةُ شروطٍ مُصرَّحةٌ نصًّا لا عدّادًا ولا حكمًا: "
+    "**(١)** حارسُ غيابٍ يُشغَّل — فتحُ الملفّات مراقَبٌ أو `ast` على البانِي — "
+    "فإن مسّ البانِي بايتةً واحدةً من نصّ المصدر سقط البابُ بتمامه. "
+    "**(٢)** إن نُقل رقمٌ إلى هذه الشجرة مكتوبًا بدل موضعه، سقط القرارُ لا "
+    "الرقم: نسخةٌ ثانيةٌ تتخلّف هي القبرُ الذي جاء البابُ الخامس يفتحه. "
+    "**(٣)** سلسلةُ الشهادة مفتوحةُ الطرف: الدالُّ مسنودٌ إلى البايتات وحدَها، "
+    "ولا يُصادِق عقدٌ على اللغة فيدور الدور. "
+    "والمادّةُ موصولةٌ لا منقولة: مُصدِّرُ `hamil` يُخرج أختامَ [بوّابة] "
+    "بإزاحاتها البايتية وبصمةِ وديعةِ كلٍّ منها وفواتيرَها بأحكامها المشتقّة. "
+    "والرقمُ الذي حُذف في الجولة السابقة ساقطٌ ولا يُحيا: حُذف بحكمٍ مودَعٍ في "
+    "`encyclopedia/tariqa/02_tariqa_aqliyya/README.md` — رقمٌ بلا فاتورةٍ "
+    "ممنوعٌ بالباب الثاني عشر، والنسخُ رفعُ حكمٍ لا محوُ سجلّ (الباب العاشر). "
+    "والترميزُ ممنوعٌ قبل التطبيق: إعلانُه ادّعاءُ بناءٍ لم يقع."
+)
 
 EACH_LINK_CONDITIONS_THE_NEXT_NOTE: Final[str] = (
     "كلُّ حلقةٍ شرطٌ لما بعدها، فالبلوغُ مُشتَقٌّ بالتتابع لا بالترميز وحده: "
@@ -241,6 +286,13 @@ _DECLARED_LINKS: Final[tuple[tuple[int, str, str, str | None, str | None], ...]]
         "maluma_mafhum.py",
         None,
     ),
+    (
+        15,
+        "١٤",
+        "امتحانُ التخرّج: أيبني البانِي برهانًا على مقاديرَ لم يرَ نصَّها؟",
+        GRADUATION_EXAM_MATERIAL_REFERENCE,
+        None,
+    ),
 )
 
 
@@ -269,9 +321,9 @@ class ChainLinkDeclaration:
     def __post_init__(self) -> None:
         if isinstance(self.position, bool) or not isinstance(self.position, int):
             raise DecisionChainError("موقعُ الحلقة عددٌ صحيح.")
-        if not 0 <= self.position <= 14:
+        if not 0 <= self.position <= 15:
             raise DecisionChainError(
-                "مواقعُ السلسلة خمسةَ عشرَ موضعًا من الصفر إلى الرابع عشر؛ "
+                "مواقعُ السلسلة ستةَ عشرَ موضعًا من الصفر إلى الخامس عشر؛ "
                 "والحلقةُ الثالثة شِقّان لا موضعٌ واحد."
             )
         _require_non_blank(self.label, "رقمُ الحلقة")
@@ -286,15 +338,35 @@ class ChainLinkDeclaration:
             _require_non_blank(self.module_relative_path, "وحدةُ الحلقة")
             if self.module_relative_path.endswith("__init__.py"):
                 raise DecisionChainError("وحدةُ الحلقة وحدةٌ مُسمّاة، لا ملفَّ تجميعِ حزمة.")
+            if self.is_bound_out_of_tree:
+                _require_non_blank(
+                    self.module_relative_path[len(OUT_OF_TREE_MARKER) :],
+                    "مرجعُ المُصدِّر الموصول",
+                )
         if self.deferral_law is not None:
             _require_non_blank(self.deferral_law, "قانونُ التأجيل")
 
     @property
+    def is_bound_out_of_tree(self) -> bool:
+        """أموصولةٌ مادّةُ هذا الموضع بمخرج مُصدِّرٍ خارج هذه الشجرة؟"""
+
+        return (
+            self.module_relative_path is not None
+            and self.module_relative_path.startswith(OUT_OF_TREE_MARKER)
+        )
+
+    @property
     def module_path(self) -> str | None:
-        """مسارُ الوحدة منسوبًا إلى جذر المستودع، أو `None` للمؤجَّلة بقانون."""
+        """مسارُ الوحدة منسوبًا إلى جذر المستودع، أو `None` للمؤجَّلة بقانون.
+
+        والموصولُ خارج الشجرة يُعاد مرجعًا معلَّمًا كما هو، فلا يُصطنَع له
+        مسارٌ نسبيٌّ ميتٌ داخل `src/alghanem/arabic`.
+        """
 
         if self.module_relative_path is None:
             return None
+        if self.is_bound_out_of_tree:
+            return self.module_relative_path
         return f"{ARABIC_PACKAGE_RELATIVE_PATH}/{self.module_relative_path}"
 
 
@@ -424,6 +496,23 @@ GOVERNING_CONSTRAINTS: Final[tuple[GoverningConstraint, ...]] = (
         standing=GoverningConstraintStanding.مُصرَّح_غير_مُرمَّز,
         gap_note=APPLICATION_STOPS_AT_THE_FOURTH_LINK_NOTE,
     ),
+    GoverningConstraint(
+        label="٧",
+        title=(
+            "صفرُ الخلاف يشهد أنّ الرقمَ يُولَد ولا يكفي، وإشارةُ الفاتورة "
+            "وحدَها تحكم أنّه ربح"
+        ),
+        question=(
+            "أتُشتَقّ من الأختام الحيّة ذاتِ الفواتير الصحيحة — مقروءةً من "
+            "مواضعها في المستودع المُخرِج لا من نسخةٍ منقولة — نتيجةٌ لم تكن "
+            "مكتوبةً في طرفٍ منهما؟ فصفرُ الخلاف يشهد أنّ الرقمَ يُولَد ولا "
+            "يكفي: هويةُ المرآة تُولَد أيضًا وجدولُها فارغ "
+            "(`hamil · induction/mirror.py`)؛ وإشارةُ الفاتورة وحدَها "
+            "(`deposit_law.verdict`) تحكم أنّه ربح، لا إجماعُ الشهود."
+        ),
+        standing=GoverningConstraintStanding.مُصرَّح_غير_مُرمَّز,
+        gap_note=GRADUATION_EXAM_ABSENCE_GUARDS_NOTE,
+    ),
 )
 
 
@@ -450,6 +539,8 @@ def read_chain(root: Path | None = None) -> ChainLedger:
         )
         if relative is None:
             coding = ChainLinkCoding.مؤجَّلة_بقانون
+        elif declaration.is_bound_out_of_tree:
+            coding = ChainLinkCoding.حلقة_غير_مُرمَّزة
         elif (package / relative).is_file():
             coding = ChainLinkCoding.مُرمَّزة
         else:
@@ -479,12 +570,23 @@ if len(ChainLinkReach) != 3:  # pragma: no cover - guard
     raise RuntimeError("البلوغُ ثلاثيٌّ مغلق: بالغة، ومنقطعةٌ بذاتها، ومسبوقةٌ بمنقطعة.")
 if len(GoverningConstraintStanding) != 2:  # pragma: no cover - guard
     raise RuntimeError("حالُ القيد الحاكم ثنائيةٌ مغلقة.")
-if len(_DECLARED_LINKS) != 15:  # pragma: no cover - guard
-    raise RuntimeError("مواضعُ السلسلة خمسةَ عشر: ١٤ حلقةً وشِقٌّ ثانٍ للثالثة.")
-if tuple(row[0] for row in _DECLARED_LINKS) != tuple(range(15)):  # pragma: no cover
+if len(_DECLARED_LINKS) != 16:  # pragma: no cover - guard
+    raise RuntimeError(
+        "مواضعُ السلسلة ستةَ عشر: ١٤ حلقةً، وشِقٌّ ثانٍ للثالثة، وامتحانُ التخرّج."
+    )
+if tuple(row[0] for row in _DECLARED_LINKS) != tuple(range(16)):  # pragma: no cover
     raise RuntimeError("مواقعُ السلسلة متعاقبةٌ من الصفر بلا فجوة.")
-if len({row[1] for row in _DECLARED_LINKS}) != 15:  # pragma: no cover - guard
+if len({row[1] for row in _DECLARED_LINKS}) != 16:  # pragma: no cover - guard
     raise RuntimeError("أرقامُ الحلقات متغايرة، ورقمٌ مُعادٌ يُخفي موضعًا تحت آخر.")
-if len(GOVERNING_CONSTRAINTS) != 2:  # pragma: no cover - guard
-    raise RuntimeError("القيدان الحاكمان اثنان، وليسا حلقتين في السلسلة.")
+if (
+    sum(  # pragma: no cover - guard
+        1
+        for row in _DECLARED_LINKS
+        if row[3] is not None and row[3].startswith(OUT_OF_TREE_MARKER)
+    )
+    != 1
+):
+    raise RuntimeError("موضعٌ واحدٌ وحده مادّتُه موصولةٌ خارج الشجرة، وهو امتحانُ التخرّج.")
+if len(GOVERNING_CONSTRAINTS) != 3:  # pragma: no cover - guard
+    raise RuntimeError("القيودُ الحاكمة ثلاثة، وليست حلقاتٍ في السلسلة.")
 _assert_no_fields_matching(("count", "number", "total", "verdict", "birth", "freeze"))

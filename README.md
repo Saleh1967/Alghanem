@@ -1120,16 +1120,21 @@ mapping its `جزئي` onto a general rule would be the genus confusion the rule
 forbids; a foreign value is refused rather than coerced. Like its siblings it is
 a registration, not a certificate: it names no source text and issues nothing.
 
-`decision_chain` reads the chain's fifteen positions off the tree in the manner
+`decision_chain` reads the chain's sixteen positions off the tree in the manner
 of `pipeline_stations`, and adds what a station table does not need: **reach is
 derived by succession**, because each link conditions the next. A coded link
 preceded by an unreached one reads `مسبوقة_بحلقة_غير_بالغة`, which is what keeps
 the chain from appearing complete while links 1 and 2 — the carrier, and the
 (carrier, state) derivative — remain deferred under `KnotNotEssence`. Deferral
 by law is declared and names its constitutional law; absence of a module is
-never read as deferral by itself. The two governing constraints are recorded as
-the chain's frame rather than positions in it, and neither can be declared
-coded: constraint (أ) would need a written universal idea for GFLK against which
+never read as deferral by itself. The last position, امتحان التخرّج, is the one
+whose material lives in another repository: it names hamil's seal exporter and
+carries the mark `موصول_خارج_الشجرة` rather than a relative path that would be
+dead inside `src/alghanem/arabic`, since the bond is to the exporter's output
+and not to the presence of a file here, and it is therefore read
+`حلقة_غير_مُرمَّزة` by its mark rather than by a missing file. The three governing
+constraints are recorded as the chain's frame rather than positions in it, and
+none can be declared coded: constraint (أ) would need a written universal idea for GFLK against which
 an epistemically loaded tool could be measured, and this repository has none —
 the gap is recorded structurally here instead of being smoothed over in prose,
 and writing that idea is left as separate work. Constraint (ب) admits only one
@@ -1145,10 +1150,19 @@ fourth, الوضع بالنقل, because a manat-shaped card declares its named 
 never declares the *path* by which they arrived — no member of
 `TransmissionStanding` appears in it, which is the very same absence that stops
 link ١٢. Links ٥, ٦ and ٧ stand up on the card, and are therefore *not* read as
-reached, by the same succession rule the ledger applies everywhere. So the two
+reached, by the same succession rule the ledger applies everywhere. So the
 governing constraints stay `مُصرَّح_غير_مُرمَّز` but no longer for one reason:
-(أ) lacks a theory nobody has written, while (ب) lacks nothing but a traversal
-that stopped at a named position. No `jiddiya_ifada.py` is created, because a
+(أ) lacks a theory nobody has written, (ب) lacks nothing but a traversal
+that stopped at a named position, and (٧) — the graduation exam's two rulers,
+that a zero disagreement only witnesses that a figure is *born* and never that
+it is *won*, and that the invoice's own verdict rules it a win rather than any
+count of agreeing witnesses — lacks a build that has not happened yet over
+material bound outside this tree. Its gap note carries the three absence
+conditions as prose rather than as a counter or a verdict: an absence guard that
+actually runs over the builder, the fall of the decision rather than the figure
+if a number is ever transcribed here instead of read from its offset, and a
+chain of witness that stays open-ended because the signifier rests on the bytes
+alone. No `jiddiya_ifada.py` is created, because a
 module measuring an application that did not complete is exactly the *further
 stage of the measuring apparatus* that constraint (ب) forbids; and no third
 standing member is opened, since a distinction is admitted here only when one
@@ -8148,7 +8162,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 573-fold: 32 pairs, then 18,345. Both questions were answered,
+The widening is 574-fold: 32 pairs, then 18,374. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8167,7 +8181,7 @@ than a tail: six shadda-bearing pairs hold 99.935%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,797 of 18,313
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,806 of 18,342
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8757,9 +8771,9 @@ The table is filled along a cumulative ladder: the Fātiḥa alone realises 41 o
 the 112 cells over 100 occurrences and 20 of the 28 letters; adding Fatḥ 48:29
 takes it to 74 cells and 27 letters; adding the tree's own prose — with this
 module excluded from it by name, so that its figures do not move whenever its
-description is edited — takes it to 108 cells over 84,724 occurrences with every
+description is edited — takes it to 108 cells over 84,852 occurrences with every
 letter present. Five cells stay empty, and the module refuses to read them as
-prohibitions until their margins are consulted. Sukūn is 467 of 84,724 — 0.55%
+prohibitions until their margins are consulted. Sukūn is 467 of 84,852 — 0.55%
 — so the expected counts for ث and ظ bearing it are 1.470 and 1.052, and zero is
 unremarkable at each. Alef's whole row is ten occurrences. **Four of the five
 absences are consistent with scarcity**, and one survives the filter:
