@@ -17,6 +17,7 @@ from alghanem.arabic import (
     GRADUATION_EXAM_ABSENCE_GUARDS_NOTE,
     GRADUATION_EXAM_MATERIAL_REFERENCE,
     OUT_OF_TREE_MARKER,
+    THE_EXAM_KEEPS_ITS_DECISION_NUMBER_SO_LABELS_NO_LONGER_ASCEND_NOTE,
     UNIVERSAL_IDEA_IS_ABSENT_NOTE,
     ChainLedger,
     ChainLinkCoding,
@@ -80,23 +81,23 @@ def test_the_fourth_link_is_coded_by_this_milestone() -> None:
     assert fourth.coding is ChainLinkCoding.مُرمَّزة
 
 
-def test_the_tenth_link_is_coded_by_this_milestone() -> None:
-    tenth = next(
-        item for item in read_chain().readings if item.declaration.label == "١٠"
+def test_the_eleventh_link_is_coded_by_this_milestone() -> None:
+    eleventh = next(
+        item for item in read_chain().readings if item.declaration.label == "١١"
     )
-    assert tenth.declaration.module_relative_path == "umum_khusus.py"
-    assert tenth.coding is ChainLinkCoding.مُرمَّزة
+    assert eleventh.declaration.module_relative_path == "umum_khusus.py"
+    assert eleventh.coding is ChainLinkCoding.مُرمَّزة
 
 
-def test_a_tree_without_the_tenth_link_module_reads_it_as_uncoded_not_skipped(
+def test_a_tree_without_the_eleventh_link_module_reads_it_as_uncoded_not_skipped(
     tmp_path: Path,
 ) -> None:
     package = tmp_path / ARABIC_PACKAGE_RELATIVE_PATH
     (package / "encoding").mkdir(parents=True)
     (package / "encoding" / "observation.py").write_text("", encoding="utf-8")
     ledger = read_chain(tmp_path)
-    tenth = next(item for item in ledger.readings if item.declaration.label == "١٠")
-    assert tenth.coding is ChainLinkCoding.حلقة_غير_مُرمَّزة
+    eleventh = next(item for item in ledger.readings if item.declaration.label == "١١")
+    assert eleventh.coding is ChainLinkCoding.حلقة_غير_مُرمَّزة
     assert len(ledger.readings) == 16
 
 
@@ -304,14 +305,16 @@ def test_this_ledger_changes_no_external_audit_field(card: str) -> None:
     assert before == after
 
 
-def test_the_graduation_exam_sits_at_its_declared_position_and_shifts_nothing() -> None:
-    """موضعُ الامتحان مُعلَنٌ آخرَ السلسلة، ولم يُزِح موضعًا واحدًا قبله."""
+def test_the_graduation_exam_sits_at_its_declared_position_and_shifts_no_position() -> (
+    None
+):
+    """موضعُ الامتحان آخرَ السلسلة، ولم يُزِح موضعًا واحدًا؛ والمتحرّكُ الأرقام."""
 
     readings = read_chain().readings
     exam = readings[-1]
 
     assert exam.declaration.position == 15
-    assert exam.declaration.label == "١٤"
+    assert exam.declaration.label == "٧"
     assert exam.declaration.title.startswith("امتحانُ التخرّج")
     assert [item.declaration.label for item in readings[:15]] == [
         "٠",
@@ -322,13 +325,13 @@ def test_the_graduation_exam_sits_at_its_declared_position_and_shifts_nothing() 
         "٤",
         "٥",
         "٦",
-        "٧",
         "٨",
         "٩",
         "١٠",
         "١١",
         "١٢",
         "١٣",
+        "١٤",
     ]
 
 
@@ -403,3 +406,29 @@ def test_the_third_constraint_asks_after_a_result_written_in_neither_end() -> No
     assert "لم تكن" in third.question and "مكتوبةً في طرفٍ منهما" in third.question
     assert "mirror.py" in third.question
     assert "deposit_law.verdict" in third.question
+
+
+def test_the_exam_carries_its_decision_number_and_the_labels_stop_ascending() -> None:
+    """الامتحانُ رقمُه `٧` في آخر المواضع، فالأرقامُ لم تعد تتصاعد مع المواضع."""
+
+    labels = [item.declaration.label for item in read_chain().readings]
+
+    assert labels[-1] == "٧"
+    assert labels[8:15] == ["٨", "٩", "١٠", "١١", "١٢", "١٣", "١٤"]
+    assert labels[:8] == ["٠", "١", "٢", "٣أ", "٣ب", "٤", "٥", "٦"]
+    assert len(set(labels)) == len(labels)
+    assert "الأرقامُ لم تعد تتصاعد" in (
+        THE_EXAM_KEEPS_ITS_DECISION_NUMBER_SO_LABELS_NO_LONGER_ASCEND_NOTE
+    )
+
+
+def test_the_exam_and_its_governing_constraint_carry_one_number_not_two() -> None:
+    """الرقمُ `٧` على الحلقة وعلى قيدها الحاكم معًا، مقصودًا ومحروسًا."""
+
+    exam = read_chain().readings[-1]
+
+    assert exam.declaration.label == GOVERNING_CONSTRAINTS[-1].label
+    assert [item.label for item in GOVERNING_CONSTRAINTS].count("٧") == 1
+    assert (
+        sum(1 for item in read_chain().readings if item.declaration.label == "٧") == 1
+    )

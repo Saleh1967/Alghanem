@@ -1132,7 +1132,15 @@ whose material lives in another repository: it names hamil's seal exporter and
 carries the mark `موصول_خارج_الشجرة` rather than a relative path that would be
 dead inside `src/alghanem/arabic`, since the bond is to the exporter's output
 and not to the presence of a file here, and it is therefore read
-`حلقة_غير_مُرمَّزة` by its mark rather than by a missing file. The three governing
+`حلقة_غير_مُرمَّزة` by its mark rather than by a missing file. That position
+carries the number ٧ it was given where it was drafted, so the links that used
+to be ٧–١٣ were renamed ٨–١٤ and nothing else moved: no position, no order, no
+material. Two consequences are declared rather than smoothed over — the labels
+no longer ascend with the positions, since the last position is numbered ٧, so
+the position is the ordering and the number is only the decision's name; and the
+number ٧ sits on the link and on its governing constraint at once, which is
+deliberate, because that constraint is this link's frame and not a second
+decision, and a guard requires the two to stay equal. The three governing
 constraints are recorded as the chain's frame rather than positions in it, and
 none can be declared coded: constraint (أ) would need a written universal idea for GFLK against which
 an epistemically loaded tool could be measured, and this repository has none —
@@ -1145,11 +1153,11 @@ carries مَلِك at الناس:٢, chosen because the word's spelling there is
 disputed: the مالك/مَلِك contest belongs to الفاتحة:٤ and is a contest of
 *reading*, not of signification, which the card excludes by name rather than by
 silence. `tests/arabic/test_malik_114_2_card.py` drives that one card through
-links ٤–١٣ and derives, from the card's own text, which link stops it: the
+links ٤–٦ and ٨–١٤ and derives, from the card's own text, which link stops it: the
 fourth, الوضع بالنقل, because a manat-shaped card declares its named sources but
 never declares the *path* by which they arrived — no member of
 `TransmissionStanding` appears in it, which is the very same absence that stops
-link ١٢. Links ٥, ٦ and ٧ stand up on the card, and are therefore *not* read as
+link ١٣. Links ٥, ٦ and ٨ stand up on the card, and are therefore *not* read as
 reached, by the same succession rule the ledger applies everywhere. So the
 governing constraints stay `مُصرَّح_غير_مُرمَّز` but no longer for one reason:
 (أ) lacks a theory nobody has written, (ب) lacks nothing but a traversal
@@ -8162,7 +8170,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 574-fold: 32 pairs, then 18,374. Both questions were answered,
+The widening is 574-fold: 32 pairs, then 18,376. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8181,7 +8189,7 @@ than a tail: six shadda-bearing pairs hold 99.935%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,806 of 18,342
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,806 of 18,344
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8771,9 +8779,9 @@ The table is filled along a cumulative ladder: the Fātiḥa alone realises 41 o
 the 112 cells over 100 occurrences and 20 of the 28 letters; adding Fatḥ 48:29
 takes it to 74 cells and 27 letters; adding the tree's own prose — with this
 module excluded from it by name, so that its figures do not move whenever its
-description is edited — takes it to 108 cells over 84,852 occurrences with every
+description is edited — takes it to 108 cells over 84,882 occurrences with every
 letter present. Five cells stay empty, and the module refuses to read them as
-prohibitions until their margins are consulted. Sukūn is 467 of 84,852 — 0.55%
+prohibitions until their margins are consulted. Sukūn is 467 of 84,882 — 0.55%
 — so the expected counts for ث and ظ bearing it are 1.470 and 1.052, and zero is
 unremarkable at each. Alef's whole row is ten occurrences. **Four of the five
 absences are consistent with scarcity**, and one survives the filter:

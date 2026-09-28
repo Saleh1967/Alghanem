@@ -1,9 +1,13 @@
-"""معينٌ مشترك: سَوقُ بطاقةٍ واحدة على حلقات سلسلة القرار ٤–١٣.
+"""معينٌ مشترك: سَوقُ بطاقةٍ واحدة على حلقات سلسلة القرار ٤–٦ و٨–١٤.
 
 هذا **معينُ اختبارٍ لا وحدةُ قياس**: لا يُنشئ سلطةً ولا مفردةً ولا دفترًا، ولا
 يُصدر ولادةً ولا تجميدًا ولا `E0`، ولا تقرؤه وحدةٌ في الشجرة. وقد أُخرِج من
 اختبار بطاقة (مَلِك) وحده ليُساق عليه أكثرُ من بطاقة بالمنهج نفسه، فيُقرأ موضعُ
 الوقوف من البطاقات جميعًا لا من واحدةٍ يُعمَّم حكمُها.
+
+**والفجوةُ عند `٧` مقصودة**: رقمُ `٧` في السلسلة هو امتحانُ التخرّج، ومادّتُه
+موصولةٌ خارج الشجرة ولا تُساق عليها بطاقة؛ فالمَسُوقُ هنا عشرُ حلقاتٍ كما كان،
+وما تغيّر أسماؤها لا عددُها ولا ترتيبُها.
 
 **والوقوفُ مُشتَقٌّ من البطاقة لا مكتوبٌ هنا**: لكلّ حلقةٍ إعلانٌ تحتاجه من
 مفرداتها المغلقة، ويُفحَص نصُّ البطاقة كلُّه عن أعضاء تلك المفردات؛ فإن لم يَرِد
@@ -160,8 +164,8 @@ def link_six(card: dict[str, Any]) -> LinkAttempt:
     )
 
 
-def link_seven(card: dict[str, Any]) -> LinkAttempt:
-    """٧ البيانُ بالقول مقدَّمًا على البيان بالفعل: الترتيبُ مُشتَقٌّ من القرائن."""
+def link_eight(card: dict[str, Any]) -> LinkAttempt:
+    """٨ البيانُ بالقول مقدَّمًا على البيان بالفعل: الترتيبُ مُشتَقٌّ من القرائن."""
 
     derived = derive_bayan_models(read_manat_qarain(card))
     models = {model.model_id: model for model in derived}
@@ -174,21 +178,21 @@ def link_seven(card: dict[str, Any]) -> LinkAttempt:
         and fil.weaker_model_ids == (QAWL_MODEL_ID,)
     )
     return LinkAttempt(
-        label="٧",
+        label="٨",
         module_relative_path="manat_verification.py",
         stood_up=ordered,
         missing_declaration="" if ordered else "قرينتا قولٍ وفعلٍ معًا في البطاقة",
     )
 
 
-def link_eight(card: dict[str, Any]) -> LinkAttempt:
-    """٨ المنطوقُ والمفهوم: يلزمه قناةُ دلالةٍ وجنسُ مفهومٍ مُعلَنان."""
+def link_nine(card: dict[str, Any]) -> LinkAttempt:
+    """٩ المنطوقُ والمفهوم: يلزمه قناةُ دلالةٍ وجنسُ مفهومٍ مُعلَنان."""
 
     declared = declared_members(card, DalalaChannel) and declared_members(
         card, MafhumKind
     )
     return LinkAttempt(
-        label="٨",
+        label="٩",
         module_relative_path="mantuq_mafhum_ifada.py",
         stood_up=bool(declared),
         missing_declaration=(
@@ -200,14 +204,14 @@ def link_eight(card: dict[str, Any]) -> LinkAttempt:
     )
 
 
-def link_nine(card: dict[str, Any]) -> LinkAttempt:
-    """٩ القياسُ بعلّةٍ منطبقة: يلزمه أصلٌ مُجمَّدٌ مُسمًّى وعلّةٌ مُعلَنة."""
+def link_ten(card: dict[str, Any]) -> LinkAttempt:
+    """١٠ القياسُ بعلّةٍ منطبقة: يلزمه أصلٌ مُجمَّدٌ مُسمًّى وعلّةٌ مُعلَنة."""
 
     declared = any(
         declares(card, reference) for reference in frozen_asl_references()
     ) and bool(declared_members(card, IllaApplication))
     return LinkAttempt(
-        label="٩",
+        label="١٠",
         module_relative_path="qiyas_rabt_registration.py",
         stood_up=declared,
         missing_declaration=(
@@ -219,14 +223,14 @@ def link_nine(card: dict[str, Any]) -> LinkAttempt:
     )
 
 
-def link_ten(card: dict[str, Any]) -> LinkAttempt:
-    """١٠ العمومُ والخصوص: يلزمه دليلان بنطاقَيهما، أو جنسُ قاعدةٍ للتفريع."""
+def link_eleven(card: dict[str, Any]) -> LinkAttempt:
+    """١١ العمومُ والخصوص: يلزمه دليلان بنطاقَيهما، أو جنسُ قاعدةٍ للتفريع."""
 
     declared = bool(declared_members(card, DalilScope)) or bool(
         declared_members(card, RuleGenus)
     )
     return LinkAttempt(
-        label="١٠",
+        label="١١",
         module_relative_path="umum_khusus.py",
         stood_up=declared,
         missing_declaration=(
@@ -238,14 +242,14 @@ def link_ten(card: dict[str, Any]) -> LinkAttempt:
     )
 
 
-def link_eleven(card: dict[str, Any]) -> LinkAttempt:
-    """١١ الروايةُ والدراية: يلزمها قناةُ نقلٍ مُعرَّفةٌ ببصمتها، أو فرعُ درايةٍ."""
+def link_twelve(card: dict[str, Any]) -> LinkAttempt:
+    """١٢ الروايةُ والدراية: يلزمها قناةُ نقلٍ مُعرَّفةٌ ببصمتها، أو فرعُ درايةٍ."""
 
     declared = bool(declared_members(card, RiwayaStanding)) or bool(
         declared_members(card, DirayaBranch)
     )
     return LinkAttempt(
-        label="١١",
+        label="١٢",
         module_relative_path="riwaya_diraya_registration.py",
         stood_up=declared,
         missing_declaration=(
@@ -257,8 +261,8 @@ def link_eleven(card: dict[str, Any]) -> LinkAttempt:
     )
 
 
-def link_twelve(card: dict[str, Any]) -> LinkAttempt:
-    """١٢ درجةُ اليقين: تُشتَقّ من أساسٍ واستقلالٍ وتكرارٍ مُعلَنة."""
+def link_thirteen(card: dict[str, Any]) -> LinkAttempt:
+    """١٣ درجةُ اليقين: تُشتَقّ من أساسٍ واستقلالٍ وتكرارٍ مُعلَنة."""
 
     declared = (
         bool(declared_members(card, KnowledgeBasis))
@@ -266,7 +270,7 @@ def link_twelve(card: dict[str, Any]) -> LinkAttempt:
         and bool(declared_members(card, RepetitionPattern))
     )
     return LinkAttempt(
-        label="١٢",
+        label="١٣",
         module_relative_path="transmission_standing.py",
         stood_up=declared,
         missing_declaration=(
@@ -278,14 +282,14 @@ def link_twelve(card: dict[str, Any]) -> LinkAttempt:
     )
 
 
-def link_thirteen(card: dict[str, Any]) -> LinkAttempt:
-    """١٣ المعلومةُ والمفهوم: يلزمها هدفٌ دلاليٌّ وسندٌ ينتهي إلى حسٍّ مباشر."""
+def link_fourteen(card: dict[str, Any]) -> LinkAttempt:
+    """١٤ المعلومةُ والمفهوم: يلزمها هدفٌ دلاليٌّ وسندٌ ينتهي إلى حسٍّ مباشر."""
 
     declared = bool(declared_members(card, SemanticTarget)) and bool(
         declared_members(card, SanadOrigin)
     )
     return LinkAttempt(
-        label="١٣",
+        label="١٤",
         module_relative_path="maluma_mafhum.py",
         stood_up=declared,
         missing_declaration=(
@@ -298,19 +302,19 @@ def link_thirteen(card: dict[str, Any]) -> LinkAttempt:
 
 
 def traverse(card: dict[str, Any]) -> tuple[LinkAttempt, ...]:
-    """سَوقُ البطاقة على الحلقات ٤–١٣ بترتيبها، بلا تقديمٍ ولا تأخير."""
+    """سَوقُ البطاقة على الحلقات ٤–٦ و٨–١٤ بترتيبها، بلا تقديمٍ ولا تأخير."""
 
     return (
         link_four(card),
         link_five(card),
         link_six(card),
-        link_seven(card),
         link_eight(card),
         link_nine(card),
         link_ten(card),
         link_eleven(card),
         link_twelve(card),
         link_thirteen(card),
+        link_fourteen(card),
     )
 
 
