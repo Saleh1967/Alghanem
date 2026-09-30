@@ -42,6 +42,7 @@ from alghanem.arabic import hamil_phase2_audit_deposit as phase2  # noqa: E402
 from alghanem.arabic import letter_haraka_partition as partition  # noqa: E402
 from alghanem.arabic import methodological_sources as sources  # noqa: E402
 from alghanem.arabic import pair_sample_widening as widening  # noqa: E402
+from alghanem.arabic import powers_two_regime_measure as powers  # noqa: E402
 from alghanem.arabic import quran_corpus_word_total as word_total  # noqa: E402
 from alghanem.arabic import zipf_block_entropy_measure as zipf  # noqa: E402
 from alghanem.program import project_state  # noqa: E402
@@ -303,6 +304,69 @@ def _zipf_prose_renderings() -> Mapping[str, str]:
     return renderings
 
 
+def _powers_tail_zipf() -> float:
+    """جودةُ ربط الذيل على زِبف الخام، على المفتاح المختوم."""
+
+    return powers.tail_fit(powers.TokenRule.AS_SEALED, powers.Law.ZIPF).r_squared
+
+
+def _powers_figures_measured() -> Mapping[str, str]:
+    """أرقامُ ورقة Powers مقيسةً الآن من البايتات المختومة."""
+
+    sealed = powers.token_census(powers.TokenRule.AS_SEALED)
+    dropped = powers.token_census(powers.TokenRule.PUBLISHER_MARKUP_DROPPED)
+    fold: dict[str, str] = {
+        "tokens.sealed": str(sealed.tokens),
+        "tokens.dropped": str(dropped.tokens),
+        "markup": str(powers.the_publisher_markup_census().occurrences),
+        "head.zipf": f"{powers.head_fit().r_squared:.4f}",
+        "tail.zipf": f"{_powers_tail_zipf():.4f}",
+        "tail.powers": f"{powers.tail_fit().r_squared:.4f}",
+        "head.dropped": (
+            f"{powers.head_fit(powers.TokenRule.PUBLISHER_MARKUP_DROPPED).r_squared:.4f}"
+        ),
+    }
+    for index, band in enumerate(powers.band_lengths()):
+        fold[f"length.band{index + 1}"] = f"{band.mean_length:.4f}"
+    return fold
+
+
+def _powers_figures_transcribed() -> Mapping[str, str]:
+    """الأرقامُ كما جُمِّدت في الوحدة، لتُصادَم بما يقيسه القرصُ الآن."""
+
+    sealed, dropped, markup = powers.THE_TOKENS_AT_MEASUREMENT
+    head, tail_zipf, tail_powers, head_dropped = powers.THE_REGIMES_AT_MEASUREMENT
+    fold: dict[str, str] = {
+        "tokens.sealed": str(sealed),
+        "tokens.dropped": str(dropped),
+        "markup": str(markup),
+        "head.zipf": f"{head:.4f}",
+        "tail.zipf": f"{tail_zipf:.4f}",
+        "tail.powers": f"{tail_powers:.4f}",
+        "head.dropped": f"{head_dropped:.4f}",
+    }
+    for index, value in enumerate(powers.THE_LENGTHS_AT_MEASUREMENT):
+        fold[f"length.band{index + 1}"] = f"{value:.4f}"
+    return fold
+
+
+def _powers_prose_renderings() -> Mapping[str, str]:
+    """أرقامُ نثر وحدة Powers: مقامُها، ونظاماها، وسُلَّمُ أطوالها."""
+
+    renderings = {
+        "tokens.dropped": (
+            f"{powers.token_census(powers.TokenRule.PUBLISHER_MARKUP_DROPPED).tokens:,}"
+        ),
+        "markup": f"{powers.the_publisher_markup_census().occurrences:,}",
+        "head.zipf": f"{powers.head_fit().r_squared:.4f}",
+        "tail.powers": f"{powers.tail_fit().r_squared:.4f}",
+        "tail.zipf": f"{_powers_tail_zipf():.4f}",
+    }
+    for index, band in enumerate(powers.band_lengths()):
+        renderings[f"length.band{index + 1}"] = f"{band.mean_length:.3f}"
+    return renderings
+
+
 def _phase1_tally() -> Mapping[str, str]:
     checks = phase1.THE_CHECKS
     agrees = sum(1 for check in checks if check.verdict is phase1.CheckVerdict.AGREES)
@@ -519,6 +583,33 @@ def the_registry() -> SealRegistry:
                 why=(
                     "لا نافذةَ رتبٍ مُعلَنةٌ معه، ويقع في نافذتنا العاشرة الألفيّة "
                     "وحدَها؛ فيُعرَض ولا يُصادَم"
+                ),
+            ),
+            Seal(
+                name="powers_two_regime_measure.figures",
+                genus=SealGenus.GENERATED,
+                origin=(
+                    "THE_TOKENS_AT_MEASUREMENT · THE_REGIMES_AT_MEASUREMENT · "
+                    "THE_LENGTHS_AT_MEASUREMENT ↔ القياسُ من البايتات المختومة"
+                ),
+                generate=_powers_figures_measured,
+                transcription=_powers_figures_transcribed,
+            ),
+            _prose_seal(
+                name="powers_two_regime_measure.prose ← نثرُ الوحدة",
+                origin="head_fit() · tail_fit() · band_lengths() ↔ نثرُ الوحدة",
+                prose=Path(powers.__file__),
+                measure=_powers_prose_renderings,
+            ),
+            _quoted(
+                name="powers_two_regime_measure.THE_QUOTED_POWERS_FIGURES",
+                origin="نقلٌ عن شهادةٍ مرفوعةٍ على `mujammad.norm.txt` وورقة 1998",
+                rendering=" · ".join(
+                    f"{figure.value}" for figure in powers.THE_QUOTED_POWERS_FIGURES
+                ),
+                why=(
+                    "بايتاتُ مقامها ليست في هذه الشجرة؛ فتُعرَض وتُقابَل بحدٍّ "
+                    "مُعلَنٍ ولا تُتَّخَذ مرجعًا"
                 ),
             ),
             _quoted(
