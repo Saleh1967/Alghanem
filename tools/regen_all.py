@@ -43,6 +43,7 @@ from alghanem.arabic import letter_haraka_partition as partition  # noqa: E402
 from alghanem.arabic import methodological_sources as sources  # noqa: E402
 from alghanem.arabic import pair_sample_widening as widening  # noqa: E402
 from alghanem.arabic import quran_corpus_word_total as word_total  # noqa: E402
+from alghanem.arabic import zipf_block_entropy_measure as zipf  # noqa: E402
 from alghanem.program import project_state  # noqa: E402
 from alghanem.seals import (  # noqa: E402
     Seal,
@@ -253,6 +254,55 @@ def _sukun_share_renderings() -> Mapping[str, str]:
     }
 
 
+def _zipf_ladders_measured() -> Mapping[str, str]:
+    """سُلَّما زِبف والكتل مقيسَين الآن من البايتات المختومة."""
+
+    census = zipf.vocabulary_census()
+    fold: dict[str, str] = {
+        "tokens": str(census.tokens),
+        "types": str(census.types),
+        "hapax": str(census.hapax),
+    }
+    for fit in zipf.zipf_ladder():
+        fold[f"window.{fit.window}"] = f"{fit.magnitude:.4f} · {fit.r_squared:.4f}"
+    stride = zipf.block_entropy_ladder(
+        zipf.StreamKey.AS_SEALED, zipf.SamplingRule.EVERY_SEVENTH
+    )
+    for size, value in zip(zipf.THE_BLOCK_SIZES, stride.per_character):
+        fold[f"stride.k{size}"] = f"{value:.4f}"
+    return fold
+
+
+def _zipf_ladders_transcribed() -> Mapping[str, str]:
+    """السُّلَّمان كما جُمِّدا في الوحدة، ليُصادَما بما يقيسه القرصُ الآن."""
+
+    tokens, types, hapax = zipf.THE_VOCABULARY_AT_MEASUREMENT
+    fold: dict[str, str] = {
+        "tokens": str(tokens),
+        "types": str(types),
+        "hapax": str(hapax),
+    }
+    for window, magnitude, r_squared in zipf.THE_LADDER_AT_MEASUREMENT:
+        fold[f"window.{window}"] = f"{magnitude:.4f} · {r_squared:.4f}"
+    for size, value in zip(zipf.THE_BLOCK_SIZES, zipf.THE_STRIDE_LADDER_AT_MEASUREMENT):
+        fold[f"stride.k{size}"] = f"{value:.4f}"
+    return fold
+
+
+def _zipf_prose_renderings() -> Mapping[str, str]:
+    """أرقامُ نثر وحدة زِبف: مقامُها، وسُلَّمُ نوافذها، وما تُنقِصه الخطوة."""
+
+    census = zipf.vocabulary_census()
+    renderings = {
+        "tokens": f"{census.tokens:,}",
+        "types": f"{census.types:,}",
+    }
+    for fit in zipf.zipf_ladder():
+        renderings[f"window.{fit.window}.magnitude"] = f"{fit.magnitude:.4f}"
+        renderings[f"window.{fit.window}.r_squared"] = f"{fit.r_squared:.4f}"
+    return renderings
+
+
 def _phase1_tally() -> Mapping[str, str]:
     checks = phase1.THE_CHECKS
     agrees = sum(1 for check in checks if check.verdict is phase1.CheckVerdict.AGREES)
@@ -442,6 +492,34 @@ def the_registry() -> SealRegistry:
                 origin="docs/VISION.md ↔ render_state_block(derive_project_state())",
                 generate=_vision_block_measured,
                 transcription=_vision_block_transcribed,
+            ),
+            Seal(
+                name="zipf_block_entropy_measure.ladders",
+                genus=SealGenus.GENERATED,
+                origin=(
+                    "THE_VOCABULARY_AT_MEASUREMENT · THE_LADDER_AT_MEASUREMENT · "
+                    "THE_STRIDE_LADDER_AT_MEASUREMENT ↔ القياسُ من البايتات المختومة"
+                ),
+                generate=_zipf_ladders_measured,
+                transcription=_zipf_ladders_transcribed,
+            ),
+            _prose_seal(
+                name="zipf_block_entropy_measure.prose ← نثرُ الوحدة",
+                origin="zipf_ladder() · vocabulary_census() ↔ نثرُ الوحدة",
+                prose=Path(zipf.__file__),
+                measure=_zipf_prose_renderings,
+            ),
+            _quoted(
+                name="zipf_block_entropy_measure.THE_QUOTED_ZIPF",
+                origin="نقلٌ عن `mujammad.norm.txt`؛ بايتاتُه ليست في هذه الشجرة",
+                rendering=(
+                    f"α={zipf.THE_QUOTED_ZIPF.magnitude} · "
+                    f"R²={zipf.THE_QUOTED_ZIPF.r_squared}"
+                ),
+                why=(
+                    "لا نافذةَ رتبٍ مُعلَنةٌ معه، ويقع في نافذتنا العاشرة الألفيّة "
+                    "وحدَها؛ فيُعرَض ولا يُصادَم"
+                ),
             ),
             _quoted(
                 name="quran_corpus_word_total.THE_QUOTED_WORD_TOTAL",

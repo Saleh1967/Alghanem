@@ -8170,7 +8170,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 580-fold: 32 pairs, then 18,666. Both questions were answered,
+The widening is 586-fold: 32 pairs, then 18,762. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8189,7 +8189,7 @@ than a tail: six shadda-bearing pairs hold 99.936%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,861 of 18,634
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,869 of 18,730
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8779,9 +8779,9 @@ The table is filled along a cumulative ladder: the Fātiḥa alone realises 41 o
 the 112 cells over 100 occurrences and 20 of the 28 letters; adding Fatḥ 48:29
 takes it to 74 cells and 27 letters; adding the tree's own prose — with this
 module excluded from it by name, so that its figures do not move whenever its
-description is edited — takes it to 108 cells over 86,413 occurrences with every
+description is edited — takes it to 108 cells over 86,878 occurrences with every
 letter present. Five cells stay empty, and the module refuses to read them as
-prohibitions until their margins are consulted. Sukūn is 467 of 86,413 — 0.54%
+prohibitions until their margins are consulted. Sukūn is 467 of 86,878 — 0.54%
 — so the expected counts for ث and ظ bearing it are 1.470 and 1.052, and zero is
 unremarkable at each. Alef's whole row is ten occurrences. **Four of the five
 absences are consistent with scarcity**, and one survives the filter:
@@ -9036,6 +9036,52 @@ that record honest.
 
 ```bash
 python examples/arabic/read_mudari_prefix_census.py
+```
+
+## Zipf's exponent is a function of the rank window, and the stride is not free
+
+A certificate arrived claiming that the fractal function of the language had
+been measured on a clean normalised text: Zipf with **α = 1.026 at R² = 0.979**
+over 15,490 types in 77,801 words, and a block-entropy ladder falling from
+4.115 to 1.910 bits per character over blocks of one to eight, sampled with a
+declared stride of `i += 7`. Those bytes — `mujammad.norm.txt` — are not in this
+tree, so the figures were neither believed nor denied. Both measurements were
+re-run here on our own sealed corpus, through the fingerprinted door alone
+(`zipf_block_entropy_measure`).
+
+The first result is that **there is no single exponent to compare against**.
+Fitting `log f` against `log r` by least squares on the same bytes gives 0.7766
+at a hundred ranks, 0.9239 at a thousand, 0.9734 at five thousand, 1.0041 at ten
+thousand, and 0.8678 over the whole vocabulary — with R² between 0.9469 and
+0.9956. The exponent is a function of the rank window and nothing about the
+corpus changes between those seven numbers. A quoted α with no declared window
+has seven counterparts here, not one.
+
+The second result is where the quoted pair lands. Against a tolerance declared
+before the comparison — 0.05 in the exponent, 0.01 in R² — the quoted pair
+agrees with exactly one of our seven windows, the ten-thousand-rank fit, and
+contradicts the other six including our whole-vocabulary figure. That is the
+agreement of a window, not of a text: their denominator is 77,801 words and
+15,490 types, ours is 82,532 and 18,201.
+
+The third result prices the declared bias. A declared stride is honest, but
+honesty is not inertness: measured here, `i += 7` barely touches `k = 1` and
+removes **0.1305 bits per character at `k = 8`** — it bites hardest exactly
+where the "graded structure" is read. Compared rung by rung on their own stride,
+their ladder agrees with ours in one rung of eight.
+
+The fourth result refutes a claim made in passing. Folding hamza and untying
+shadda were said to have redrawn the frequencies, so that the clean text has a
+Zipf of its own. On our bytes the folding moves **two types out of 18,201** and
+the exponent by less than 0.001 on every one of the seven windows — while
+visibly moving the character stream itself, so the inertness is a result and not
+an unimplemented branch. Finally, nothing here is called a fractal dimension: a
+falling `H(k)/k` is what every stream with correlated symbols does, so it is
+evidence of correlation, not a measured dimension, and neither Hausdorff nor
+Hurst is computed in this tree.
+
+```bash
+python examples/arabic/read_zipf_block_entropy.py
 ```
 
 
