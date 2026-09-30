@@ -27,6 +27,7 @@ from alghanem.arabic.discovery_lab import (
     reads_a_prior_ledger,
     run,
     rung_standing,
+    runs_citing_a_prior_run,
     separating_positions,
 )
 
@@ -158,11 +159,14 @@ def test_only_the_first_rung_is_reached_and_the_rest_are_blocked() -> None:
         assert standings[number] is RungStanding.BLOCKED_BY_ITS_DECLARED_BLOCKER
 
 
-def test_the_third_rungs_blocker_is_an_absent_deposit_on_disk() -> None:
-    """مانعُ الثالثة غيابُ سجلٍّ يُلتمَس على القرص؛ ولو أُودِع لانقلب الحكم."""
+def test_the_third_rungs_blocker_moved_from_absent_bytes_to_an_absent_citation() -> (
+    None
+):
+    """السجلُّ أُودِع، فانتقل المانعُ: لا جولةَ تستشهد بجولةٍ قبلها بعدُ."""
 
+    assert (Path(THE_RUN_LEDGER)).is_file()
+    assert runs_citing_a_prior_run() == ()
     assert reads_a_prior_ledger() is False
-    assert not (Path(THE_RUN_LEDGER)).is_file()
 
 
 def test_the_fourth_rungs_blocker_is_counted_from_declared_domains() -> None:

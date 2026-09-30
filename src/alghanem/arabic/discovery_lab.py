@@ -85,6 +85,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Final
 
+from . import discovery_lab_ledger as ledger
 from .fath_ayah_source_text import FATH_AYAH_SOURCE_TEXT
 from .fatiha_source_text import FATIHA_SOURCE_TEXT
 from .written_haraka_mark import Position, has_written_haraka_mark, positions_of
@@ -94,6 +95,7 @@ __all__ = [
     "A_CRITERION_FIXED_AFTER_THE_COUNT_IS_NOT_A_CRITERION",
     "A_MEASUREMENT_ON_THE_SIGNIFIER_IS_NOT_THE_SOURCES_DIVISION",
     "A_RUNG_IS_REACHED_BY_MEASUREMENT_NOT_BY_DECLARATION",
+    "A_DEPOSITED_LEDGER_IS_NOT_YET_A_CUMULATIVE_ONE",
     "A_SELECTION_AMONG_ENACTED_RULES_IS_NOT_AN_EXTRACTION",
     "A_TEST_THAT_DOES_NOT_SEPARATE_THE_RIVALS_IS_NOT_A_TEST",
     "THE_FITTING_DEPOSIT",
@@ -119,6 +121,7 @@ __all__ = [
     "THE_DEPOSITS",
     "enacted_explanations",
     "reads_a_prior_ledger",
+    "runs_citing_a_prior_run",
     "explanation_reading",
     "held_out_agreement",
     "ordering_flips_on_leaving_one_word_out",
@@ -167,6 +170,12 @@ A_SELECTION_AMONG_ENACTED_RULES_IS_NOT_AN_EXTRACTION: Final[str] = (
     "التفسيرانِ مسنونانِ بيدٍ، ونصُّهما في بايتات هذا الملفّ يُلتمَس فيوجَد. "
     "فاختيارُ أحدهما على مادّةٍ مستقلّةٍ ترجيحٌ بين مكتوبَين، لا استخراجُ "
     "قاعدةٍ لم تُوضَع؛ والدرجةُ الثانيةُ تطلب الثاني لا الأوّل."
+)
+
+A_DEPOSITED_LEDGER_IS_NOT_YET_A_CUMULATIVE_ONE: Final[str] = (
+    "حضورُ ملفّ السجلّ على القرص ليس تعلُّمًا تراكميًّا: يُشترَط بندٌ يستشهد "
+    "ببندٍ سابقٍ من جنسه فيُرى أثرُ الأوّل في الثاني. ولو اكتُفي بالوجود "
+    "لمرّت الدرجةُ بإيداع ملفٍّ لا بعملٍ جرى."
 )
 
 A_RUNG_IS_REACHED_BY_MEASUREMENT_NOT_BY_DECLARATION: Final[str] = (
@@ -230,8 +239,8 @@ THE_DEPOSITS: Final[tuple[LabDeposit, ...]] = (
 THE_FITTING_DEPOSIT: Final[str] = "الفاتحة"
 """المُودَعُ الذي يُرجَّح عليه؛ مُسمًّى قبل الجري لا بعد رؤية الأعداد."""
 
-THE_RUN_LEDGER: Final[str] = "exhibits/discovery-lab/runs.json"
-"""موضعُ سجلّ الجولات لو أُودِع؛ وغيابُه هو مانعُ الدرجة الثالثة مقيسًا."""
+THE_RUN_LEDGER: Final[str] = ledger.THE_LEDGER_RELATIVE_PATH
+"""موضعُ سجلّ الجولات المُودَع؛ ومنه تُقرأ مادّةُ الدرجة الثالثة لا وجودُه وحدَه."""
 
 
 THE_HELD_OUT_DEPOSIT: Final[str] = "الفتح ٢٩"
@@ -706,19 +715,42 @@ def enacted_explanations() -> tuple[str, ...]:
 
 
 def _run_ledger_path() -> Path:
-    """موضعُ سجلّ الجولات المنتظَر؛ وغيابُه يُقاس على القرص لا يُوصَف."""
+    """موضعُ سجلّ الجولات المُودَع؛ ويُقاس على القرص لا يُوصَف."""
 
-    return Path(__file__).resolve().parents[3] / THE_RUN_LEDGER
+    return ledger.ledger_path()
+
+
+def runs_citing_a_prior_run() -> tuple[str, ...]:
+    """الجولاتُ المحتسَبةُ في السجلّ التي تستشهد بجولةٍ سابقة؛ ومادّةُ الثالثة.
+
+    وقد أُودِع السجلُّ فعلًا، فانتقل مانعُ الدرجة الثالثة من **غياب بايتاته**
+    إلى **خلوّه من جولةٍ تبني على سابقة**. فالإيداعُ وحدَه ليس تراكمًا، ولو
+    اكتُفي به لمرّت الدرجةُ بوجود ملفٍّ لا بعملٍ جرى
+    (`A_DEPOSITED_LEDGER_IS_NOT_YET_A_CUMULATIVE_ONE`).
+    """
+
+    if not _run_ledger_path().is_file():
+        return ()
+    runs = {
+        entry.entry_id
+        for entry in ledger.read_ledger()
+        if entry.kind is ledger.EntryKind.RUN
+    }
+    return tuple(
+        entry.entry_id
+        for entry in ledger.counted_runs()
+        if any(cited in runs for cited in entry.cites)
+    )
 
 
 def reads_a_prior_ledger() -> bool:
-    """أيجد هذا المختبرُ سجلَّ جولاتٍ سابقةٍ مُودَعًا؟ يُلتمَس على القرص.
+    """أتستفيد جولةٌ محتسَبةٌ من جولةٍ سابقةٍ في السجلّ؟ يُقاس من بنوده.
 
-    ولو أُودِع غدًا لانقلب حكمُ الدرجة الثالثة من نفسه بلا تحرير حرفٍ ههنا؛
-    وإيداعُه وحدَه لا يكفي حتّى تُقرأ منه جولةٌ سابقةٌ في مسألةٍ جديدة.
+    ولا يكفي حضورُ بايتات السجلّ: يُشترَط بندٌ يستشهد ببندٍ من جنسه، فإن
+    كُتب غدًا انقلب حكمُ الدرجة من نفسه بلا تحرير حرفٍ ههنا.
     """
 
-    return _run_ledger_path().is_file()
+    return bool(runs_citing_a_prior_run())
 
 
 def rung_standing() -> tuple[tuple[Rung, RungStanding, str], ...]:
@@ -745,9 +777,11 @@ def rung_standing() -> tuple[tuple[Rung, RungStanding, str], ...]:
             )
         elif rung.number == 3:
             reached = reads_a_prior_ledger()
+            deposited = _run_ledger_path().is_file()
             why = (
-                f"سجلُّ الجولات المنتظَرُ في {THE_RUN_LEDGER}: "
-                f"{'موجود' if reached else 'غائب'}؛ والمختبرُ لا يكتب حصيلتَه."
+                f"سجلُّ الجولات في {THE_RUN_LEDGER}: "
+                f"{'مُودَع' if deposited else 'غائب'}؛ وجولاتٌ تستشهد بسابقةٍ: "
+                f"{len(runs_citing_a_prior_run())}."
             )
         else:
             reached = len(domains) > 1
