@@ -20,18 +20,23 @@ from alghanem.arabic.tawlid_algebra_ledger import (
     PREREGISTRATION_IS_INERT_ON_WHAT_A_MACHINE_CAN_REDERIVE,
     ROOT_DIGEST,
     THE_CHAIN_ORDERS_THE_LINKS_AND_GIT_DATES_THEM,
+    THE_RESERVED_PHONETIC_NAMES,
     LedgerLink,
     LinkGenus,
     LinkStanding,
+    bare_positions_are_not_sukun,
     boundary_collisions_under_initial_ban,
     cell_digests,
     chain_is_unbroken,
     extras_count_forcing,
     folded_digests,
+    generatorless_reserved_names,
     initial_silent_cells,
     ledger_path,
     read_deposited_ledger,
+    realized_against_licensed_cells,
     recomputed_link_digests,
+    shadda_sources_on_our_deposits,
     standing_of,
     standings,
     surviving_chains,
@@ -109,7 +114,14 @@ def test_the_agreeing_formal_links_are_all_but_the_one_named_refutation() -> Non
 
 
 def _moved_figure(link: LedgerLink) -> dict[str, int]:
-    for key in ("العدد", "البصمات_الفريدة", "الجذر_الوحيد"):
+    for key in (
+        "العدد",
+        "البصمات_الفريدة",
+        "الجذر_الوحيد",
+        "الشدّات",
+        "العاري_من_علامة",
+        "المتحقَّق",
+    ):
         if key in link.payload:
             return {key: int(link.payload[key]) + 1}
     raise AssertionError("حلقةٌ صوريّةٌ بلا عددٍ يُحرَّك")
@@ -188,12 +200,88 @@ def test_the_later_segment_is_appended_and_rewrites_no_earlier_digest() -> None:
     links = read_deposited_ledger()
     later = _chapter_fourteen()
     assert later
-    earlier = [link for link in links if link not in later]
+    earlier = links[: links.index(later[0])]
     assert [link.link_digest for link in links[: len(earlier)]] == [
         link.link_digest for link in earlier
     ]
     assert later[0].previous_digest == earlier[-1].link_digest
     assert {link.stamp for link in earlier} == {"2026-09-29T22:42:23+00:00"}
+
+
+def _chapter_thirty_seven() -> list[LedgerLink]:
+    return [
+        link for link in read_deposited_ledger() if link.stamp.startswith("2026-09-30")
+    ]
+
+
+def test_the_third_segment_appends_and_rewrites_no_earlier_digest() -> None:
+    links = read_deposited_ledger()
+    later = _chapter_thirty_seven()
+    assert later
+    earlier = links[: links.index(later[0])]
+    assert [link.link_digest for link in links[: len(earlier)]] == [
+        link.link_digest for link in earlier
+    ]
+    assert later[0].previous_digest == earlier[-1].link_digest
+    assert {link.stamp for link in earlier} == {
+        "2026-09-29T22:42:23+00:00",
+        "2026-09-29T23:42:31+00:00",
+    }
+
+
+def test_a_measured_proxy_is_never_read_as_agreeing_with_its_named_phenomenon() -> None:
+    proxies = [
+        (link, standing)
+        for link, standing in standings()
+        if link.genus is LinkGenus.PROXY_NOT_THE_PHENOMENON
+    ]
+    assert proxies
+    for link, standing in proxies:
+        assert standing is LinkStanding.THE_MARK_IS_MEASURED_AND_THE_NAME_IS_NOT
+        assert standing is not LinkStanding.REDERIVED_AND_AGREES
+        assert link.payload["المقيس"] != link.payload["المنسوبُ_إليه"]
+
+
+def test_the_dichotomy_of_chapter_thirty_seven_is_refuted_by_a_third_genus() -> None:
+    """«إمّا بصمةٌ فتُقاس وإمّا لا بصمةَ فتُحجَز — ولا ثالث» — وههنا ثالثُها."""
+
+    genera = {link.genus for link in _chapter_thirty_seven()}
+    assert LinkGenus.PROXY_NOT_THE_PHENOMENON in genera
+    assert LinkGenus.FORMAL in genera
+
+
+def test_a_shadda_that_no_article_explains_is_measured_on_both_deposits() -> None:
+    censuses = shadda_sources_on_our_deposits()
+    assert len(censuses) == 2
+    for census in censuses:
+        assert census.at_least_other_than_assimilation > 0
+        assert census.total > census.at_most_article_assimilation
+
+
+def test_widening_the_assimilation_side_cannot_rescue_the_identification() -> None:
+    """القسمةُ مُنحازةٌ ضدّ نفسها، فتدقيقُها لا يُنقِص الطرفَ الآخر."""
+
+    for census in shadda_sources_on_our_deposits():
+        assert (
+            census.at_least_other_than_assimilation
+            == census.total - census.at_most_article_assimilation
+        )
+        assert census.at_most_article_assimilation < census.total
+
+
+def test_bareness_is_reported_apart_from_the_sukun_it_was_once_read_as() -> None:
+    for _, bare, implied, gap in bare_positions_are_not_sukun():
+        assert bare + gap == implied
+        assert gap > 0
+
+
+def test_the_realized_cells_are_fewer_than_the_licensed_field() -> None:
+    realized, licensed = realized_against_licensed_cells()
+    assert realized < licensed
+
+
+def test_the_reservation_is_measured_by_absent_generators_not_asserted() -> None:
+    assert set(generatorless_reserved_names()) == set(THE_RESERVED_PHONETIC_NAMES)
 
 
 def test_the_claimed_starting_theorem_is_refuted_by_the_deposited_algebra() -> None:

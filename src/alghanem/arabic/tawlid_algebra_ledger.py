@@ -71,10 +71,15 @@ from itertools import product
 from pathlib import Path
 from typing import Any, Final
 
+from .fath_ayah_source_text import FATH_AYAH_SOURCE_TEXT
+from .fatiha_source_text import FATIHA_LINES
+from .letter_haraka_partition import SourceRung, table_census
+
 __all__ = [
     "AN_UNMEASURED_EXPECTATION_IS_NOT_A_CONFIRMED_ONE",
     "LICENSED_STATE_COUNT",
     "AN_UNBOUNDED_EXPECTATION_CANNOT_FAIL_SO_IT_IS_NOT_ONE",
+    "A_MARK_HAS_MANY_SOURCES_SO_COUNTING_IT_DOES_NOT_COUNT_ONE",
     "A_PROOF_OVER_THE_ALGEBRA_IS_NOT_A_PROOF_OVER_THE_LANGUAGE",
     "PREREGISTRATION_IS_INERT_ON_WHAT_A_MACHINE_CAN_REDERIVE",
     "ROOT_DIGEST",
@@ -88,15 +93,20 @@ __all__ = [
     "cell_digests",
     "chain_is_unbroken",
     "extras_count_forcing",
+    "THE_RESERVED_PHONETIC_NAMES",
+    "bare_positions_are_not_sukun",
     "boundary_collisions_under_initial_ban",
     "folded_digests",
+    "generatorless_reserved_names",
     "initial_silent_cells",
     "ledger_path",
     "read_deposited_ledger",
+    "realized_against_licensed_cells",
     "recomputed_link_digests",
     "standing_of",
     "standings",
     "surviving_chains",
+    "shadda_sources_on_our_deposits",
     "surviving_chains_by_enumeration",
 ]
 
@@ -121,6 +131,12 @@ A_PROOF_OVER_THE_ALGEBRA_IS_NOT_A_PROOF_OVER_THE_LANGUAGE: Final[str] = (
     "فقد بدَّل المحمولَ في أثناء البرهان."
 )
 
+A_MARK_HAS_MANY_SOURCES_SO_COUNTING_IT_DOES_NOT_COUNT_ONE: Final[str] = (
+    "للبصمة الواحدة مصادرُ شتّى، فعدُّها عدُّ المجموع لا عدُّ واحدٍ منها. "
+    "وتسميةُ المجموع باسم أحد مصادره تُنزِل حدًّا أعلى منزلةَ المقدار، "
+    "وهذا ثالثٌ بين «مقيسٍ» و«محجوز» لا ثانيهما."
+)
+
 AN_UNBOUNDED_EXPECTATION_CANNOT_FAIL_SO_IT_IS_NOT_ONE: Final[str] = (
     "«صنفٌ صغير» و«نحوُ ألفٍ» لا يُكذِّبهما عددٌ، فلا يُصادَمان ولا يُعَدّان "
     "توقُّعًا مشدودًا؛ ويُودَعان بجنسهما حتّى يُشَدّا بحدٍّ أو بمَجال."
@@ -141,6 +157,7 @@ class LinkGenus(Enum):
     AWAITING_ITS_MATERIAL = "بندٌ_متوقَّعٌ_ينتظر_مادّتَه"
     DECLARED_CLASH = "مناقضةٌ_معلَنة"
     UNBOUND_EXPECTATION = "توقُّعٌ_غيرُ_مشدود"
+    PROXY_NOT_THE_PHENOMENON = "بصمةٌ_مقيسةٌ_والظاهرةُ_غيرُها"
 
 
 class LinkStanding(Enum):
@@ -151,6 +168,7 @@ class LinkStanding(Enum):
     ITS_MATERIAL_HAS_NOT_ARRIVED = "لم_تصل_مادّتُه"
     TWO_SIDES_NOT_LIFTED_HERE = "طرفان_متناقضان_لا_يُرفَعان_ههنا"
     NOT_FALSIFIABLE_AS_WORDED = "لا_يُصادَم_لأنّه_بلا_حدّ"
+    THE_MARK_IS_MEASURED_AND_THE_NAME_IS_NOT = "البصمةُ_مقيسةٌ_والمُسمّى_لا"
 
 
 @dataclass(frozen=True)
@@ -340,6 +358,129 @@ def folded_digests() -> tuple[str, ...]:
     )
 
 
+SHADDA: Final[str] = "\u0651"
+THE_SUN_LETTERS: Final[frozenset[str]] = frozenset("تثدذرزسشصضطظلن")
+THE_RESERVED_PHONETIC_NAMES: Final[tuple[str, ...]] = (
+    "إمالة",
+    "إخفاء",
+    "إظهار",
+    "قلقلة",
+    "غنة",
+    "روم",
+    "إشمام",
+)
+
+
+@dataclass(frozen=True)
+class ShaddaSources:
+    """شدّاتُ وديعةٍ مقسومةً بأدنى قسمةٍ يحتملها الرسمُ وحدَه."""
+
+    scope: str
+    total: int
+    at_most_article_assimilation: int
+
+    @property
+    def at_least_other_than_assimilation(self) -> int:
+        """ما لا يُنسَب إلى إدغام لام التعريف، حدًّا أدنى لا تقديرًا."""
+
+        return self.total - self.at_most_article_assimilation
+
+
+def _our_deposits() -> tuple[tuple[str, str], ...]:
+    return (
+        ("الفاتحة", "\n".join(FATIHA_LINES)),
+        ("الفتح ٤٨:٢٩", FATH_AYAH_SOURCE_TEXT),
+    )
+
+
+def shadda_sources_on_our_deposits() -> tuple[ShaddaSources, ...]:
+    """أكلُّ شدّةٍ إدغام؟ يُقاس على بايتاتنا لا على مدوّنتهم.
+
+    والقسمةُ ههنا **مُنحازةٌ ضدّ نفسها عمدًا**: كلُّ شدّةٍ على حرفٍ شمسيٍّ
+    تسبقه لامٌ تُحسَب إدغامَ لام تعريفٍ وإن لم تكن، فيكبر طرفُ «الإدغام»
+    ويصغر ما عداه. فإن بقي بعد هذا التحيّز موضعٌ واحدٌ خارجَ الإدغام فقد
+    سقطت المطابقةُ بينه وبين الشدّة — سقوطًا لا يُنقَض بتدقيق القسمة، إذ
+    تدقيقُها لا يزيد الطرفَ الآخرَ إلّا كِبَرًا.
+    """
+
+    censuses: list[ShaddaSources] = []
+    for scope, text in _our_deposits():
+        characters = list(text)
+        total = 0
+        assimilation = 0
+        for index, character in enumerate(characters):
+            if character != SHADDA:
+                continue
+            total += 1
+            cursor = index - 1
+            while cursor >= 0 and not ("\u0621" <= characters[cursor] <= "\u064a"):
+                cursor -= 1
+            if cursor < 0:
+                continue
+            carrier = characters[cursor]
+            preceding = None
+            scan = cursor - 1
+            while scan >= 0:
+                if "\u0621" <= characters[scan] <= "\u064a":
+                    preceding = characters[scan]
+                    break
+                scan -= 1
+            if carrier in THE_SUN_LETTERS and preceding == "ل":
+                assimilation += 1
+        censuses.append(
+            ShaddaSources(
+                scope=scope, total=total, at_most_article_assimilation=assimilation
+            )
+        )
+    return tuple(censuses)
+
+
+def bare_positions_are_not_sukun() -> tuple[tuple[str, int, int, int], ...]:
+    """الفجوةُ بين «بلا علامة» و«ساكن»، مقيسةً لا موصوفة.
+
+    تُعاد ههنا من `written_haraka_mark` نفسِها: المواضعُ العاريةُ من علامة،
+    والمُضمَرُ في الإحصاء الأسبق، وفارقُهما وهو «أوّلُ زوج الشدّة». فمن
+    سمّى العريَ سكونًا أدخل نصفَ حرفٍ في عدِّ الحروف بهذا المقدار.
+    """
+
+    from .written_haraka_mark import has_written_haraka_mark, positions_of
+
+    readings: list[tuple[str, int, int, int]] = []
+    for scope, text in _our_deposits():
+        positions = positions_of(text)
+        bare = sum(1 for position in positions if not has_written_haraka_mark(position))
+        pair_starts = text.count(SHADDA)
+        readings.append((scope, bare, bare + pair_starts, pair_starts))
+    return tuple(readings)
+
+
+def realized_against_licensed_cells() -> tuple[int, int]:
+    """المتحقَّقُ والمرخَّص، اثنان لا واحد.
+
+    فالحقلُ ما يُجيزه البناء، والمتحقَّقُ ما وقع في نصٍّ بعينه. وتسميةُ
+    الثاني «حقلًا» تُثبِّت عَرَضًا في موضع القانون.
+    """
+
+    census = table_census(SourceRung.WITH_PROSE)
+    return census.realized_cells, LICENSED_STATE_COUNT * THE_CONSONANT_COUNT
+
+
+def generatorless_reserved_names() -> tuple[str, ...]:
+    """أيُّ المحجوزات الستّ بلا مولِّدٍ يُخرِج لها عددًا في هذه الشجرة؟
+
+    ويُقاس الحجزُ ولا يُدَّعى: يُفتَّش نثرُ الشجرة كلُّه عن اسمٍ يُنتِج
+    رقمًا لواحدةٍ منها، فإن لم يوجد كان الحجزُ مقيسًا لا موعودًا.
+    """
+
+    root = Path(__file__).resolve().parent
+    sources = sorted(root.rglob("*.py"))
+    generators = {
+        name: any(f"def {name}" in path.read_text(encoding="utf-8") for path in sources)
+        for name in THE_RESERVED_PHONETIC_NAMES
+    }
+    return tuple(name for name, found in generators.items() if not found)
+
+
 def _formal_standing(link: LedgerLink) -> LinkStanding:
     generator = str(link.payload.get("المولّد", ""))
     if generator == "extras_count_forcing":
@@ -360,6 +501,35 @@ def _formal_standing(link: LedgerLink) -> LinkStanding:
         agrees = initial_silent_cells() == link.payload["العدد"]
     elif generator == "boundary_collisions_under_initial_ban":
         agrees = boundary_collisions_under_initial_ban() == link.payload["العدد"]
+    elif generator == "shadda_sources_on_our_deposits":
+        census = next(
+            item
+            for item in shadda_sources_on_our_deposits()
+            if item.scope == link.payload["الوديعة"]
+        )
+        agrees = (
+            census.total == link.payload["الشدّات"]
+            and census.at_least_other_than_assimilation
+            == link.payload["حدٌّ_أدنى_لما_ليس_إدغامَ_لام"]
+        )
+    elif generator == "bare_positions_are_not_sukun":
+        reading = next(
+            item
+            for item in bare_positions_are_not_sukun()
+            if item[0] == link.payload["الوديعة"]
+        )
+        agrees = (
+            reading[1] == link.payload["العاري_من_علامة"]
+            and reading[2] == link.payload["المُضمَرُ_سكونًا_سابقًا"]
+            and reading[3] == link.payload["الفارق_وهو_أوّلُ_زوج_الشدّة"]
+        )
+    elif generator == "realized_against_licensed_cells":
+        realized, licensed = realized_against_licensed_cells()
+        agrees = (
+            realized == link.payload["المتحقَّق"] and licensed == link.payload["المرخَّص"]
+        )
+    elif generator == "generatorless_reserved_names":
+        agrees = len(generatorless_reserved_names()) == link.payload["العدد"]
     elif generator == "cell_digests":
         agrees = len(set(cell_digests())) == link.payload["البصمات_الفريدة"]
     elif generator == "folded_digests":
@@ -382,6 +552,8 @@ def standing_of(link: LedgerLink) -> LinkStanding:
         return LinkStanding.ITS_MATERIAL_HAS_NOT_ARRIVED
     if link.genus is LinkGenus.UNBOUND_EXPECTATION:
         return LinkStanding.NOT_FALSIFIABLE_AS_WORDED
+    if link.genus is LinkGenus.PROXY_NOT_THE_PHENOMENON:
+        return LinkStanding.THE_MARK_IS_MEASURED_AND_THE_NAME_IS_NOT
     return LinkStanding.TWO_SIDES_NOT_LIFTED_HERE
 
 
