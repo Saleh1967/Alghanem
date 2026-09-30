@@ -31,6 +31,30 @@
 `طرفان_متناقضان_لا_يُرفَعان_ههنا` لأنّ رفعَهما يحتاج بايتاتِ شهادتهم وهي
 غائبة.
 
+**ورابعًا مكرَّرًا: وبرهانُ الجبرِ غيرُ برهانِ اللغة.** وردَ في الفصل الرابع
+عشر برهانُ استحالةٍ يُختَم بـ«لا تُبتدأ كلمةٌ بسكونٍ ذرّيّ»، مبناه إحصاءُ
+عوامل `G1` الستّة وبيانُ أنّ لا واحدَ منها يُخرِج سكونًا أوّلًا. والقسمةُ في
+صدر ذاك البرهان ثنائيّةٌ: الخليّةُ الأولى **إمّا** ثمرةُ عامل **وإمّا ذرّةٌ
+داخلة. والمُبرهَنُ شِقُّها الأوّل وحدَه**، والشقُّ الثاني متروكٌ بلا إغلاق،
+وهو بعينه ما يُجيزه `G0`. فيُقاس ههنا بـ`initial_silent_cells` عددُ ما
+يُجيزه الجبرُ المُودَعُ ابتداءً ساكنًا، ويُودَع الحكمُ مشتقًّا لا مكتوبًا
+(`A_PROOF_OVER_THE_ALGEBRA_IS_NOT_A_PROOF_OVER_THE_LANGUAGE`).
+
+وثمنُ التعديل — لو قُبِل المنعُ قيدًا — مُودَعٌ بأعداده لا موصوفًا: تُقاس
+الأجيالُ بـ`surviving_chains(..., forbid_initial_silence=True)` فيُعلَم كم
+تهبط. **فالقيدُ يُسعَّر قبل أن يُقبَل.**
+
+**وخامسًا: وما لا حدَّ له لا يُصادَم.** «صنفٌ صغيرٌ مسجَّل» و«نحوُ ألفٍ من
+ستّة آلاف» عبارتان لا يُكذِّبهما عددٌ مهما جاء، فليستا توقُّعًا مشدودًا.
+وتُودَعان بجنس `توقُّعٌ_غيرُ_مشدود` وحكمُهما `لا_يُصادَم_لأنّه_بلا_حدّ`،
+ولا يُرفَعان إلى «موافقٍ» بورود مادّتهما
+(`AN_UNBOUNDED_EXPECTATION_CANNOT_FAIL_SO_IT_IS_NOT_ONE`).
+
+**وسادسًا: وموافقةُ طرفٍ من مناقضةٍ قائمةٍ ليست تعضيدًا.** توقُّعُ صفرِ
+اللقاء الوصليّ يوافق أحدَ طرفَي المناقضة المُودَعة قبلُ ولم تُرفَع. فلو
+جاء الفحصُ بصفرٍ لم يكن ذلك شهادةً للنظريّة، بل اختيارًا لأحد الطرفين
+وهما بعدُ على حالهما.
+
 **خمولٌ سلطويّ**: لا ولادةَ ههنا ولا حكمَ ولادة، ولا استيرادَ من `kernel/`
 ولا من `program/`، ولا قراءةَ لمدوّنةٍ من `corpora/`، ولا بوّابةَ في هذه
 الشجرة تُصدِّق عددًا عربيًّا بهذا السجلّ. وما فيه من أعداد أجنبيّة نقلٌ
@@ -50,6 +74,8 @@ from typing import Any, Final
 __all__ = [
     "AN_UNMEASURED_EXPECTATION_IS_NOT_A_CONFIRMED_ONE",
     "LICENSED_STATE_COUNT",
+    "AN_UNBOUNDED_EXPECTATION_CANNOT_FAIL_SO_IT_IS_NOT_ONE",
+    "A_PROOF_OVER_THE_ALGEBRA_IS_NOT_A_PROOF_OVER_THE_LANGUAGE",
     "PREREGISTRATION_IS_INERT_ON_WHAT_A_MACHINE_CAN_REDERIVE",
     "ROOT_DIGEST",
     "SILENT_STATE_COUNT",
@@ -62,13 +88,16 @@ __all__ = [
     "cell_digests",
     "chain_is_unbroken",
     "extras_count_forcing",
+    "boundary_collisions_under_initial_ban",
     "folded_digests",
+    "initial_silent_cells",
     "ledger_path",
     "read_deposited_ledger",
     "recomputed_link_digests",
     "standing_of",
     "standings",
     "surviving_chains",
+    "surviving_chains_by_enumeration",
 ]
 
 THE_CHAIN_ORDERS_THE_LINKS_AND_GIT_DATES_THEM: Final[str] = (
@@ -86,6 +115,17 @@ AN_UNMEASURED_EXPECTATION_IS_NOT_A_CONFIRMED_ONE: Final[str] = (
     "تبييضٌ، وعدُّه مناقضةً محاكمةٌ بلا بيّنة."
 )
 
+A_PROOF_OVER_THE_ALGEBRA_IS_NOT_A_PROOF_OVER_THE_LANGUAGE: Final[str] = (
+    "دعوى «يولِّدها الجبرُ» تُقاس على الجبر ههنا وتُحسَم، ودعوى «تقع في "
+    "العربيّة» تُقاس على مدوّنة. فمن برهن الأولى ثمّ أعلن الثانية نتيجةً "
+    "فقد بدَّل المحمولَ في أثناء البرهان."
+)
+
+AN_UNBOUNDED_EXPECTATION_CANNOT_FAIL_SO_IT_IS_NOT_ONE: Final[str] = (
+    "«صنفٌ صغير» و«نحوُ ألفٍ» لا يُكذِّبهما عددٌ، فلا يُصادَمان ولا يُعَدّان "
+    "توقُّعًا مشدودًا؛ ويُودَعان بجنسهما حتّى يُشَدّا بحدٍّ أو بمَجال."
+)
+
 ROOT_DIGEST: Final[str] = "0" * 64
 
 THE_CONSONANT_COUNT: Final[int] = 28
@@ -100,6 +140,7 @@ class LinkGenus(Enum):
     FORMAL = "برهانٌ_صوريّ"
     AWAITING_ITS_MATERIAL = "بندٌ_متوقَّعٌ_ينتظر_مادّتَه"
     DECLARED_CLASH = "مناقضةٌ_معلَنة"
+    UNBOUND_EXPECTATION = "توقُّعٌ_غيرُ_مشدود"
 
 
 class LinkStanding(Enum):
@@ -109,6 +150,7 @@ class LinkStanding(Enum):
     REDERIVED_AND_DIFFERS = "أُعيد_اشتقاقُه_فخالف"
     ITS_MATERIAL_HAS_NOT_ARRIVED = "لم_تصل_مادّتُه"
     TWO_SIDES_NOT_LIFTED_HERE = "طرفان_متناقضان_لا_يُرفَعان_ههنا"
+    NOT_FALSIFIABLE_AS_WORDED = "لا_يُصادَم_لأنّه_بلا_حدّ"
 
 
 @dataclass(frozen=True)
@@ -213,15 +255,19 @@ def _is_silent(cell: tuple[int, int]) -> bool:
     return cell[1] == LICENSED_STATE_COUNT - SILENT_STATE_COUNT
 
 
-def surviving_chains(length: int) -> int:
-    """عدُّ السلاسل التي لا يتجاور فيها ساكنان، بالتكرار المشتقّ من الحقل."""
+def surviving_chains(length: int, *, forbid_initial_silence: bool = False) -> int:
+    """عدُّ السلاسل التي لا يتجاور فيها ساكنان، بالتكرار المشتقّ من الحقل.
+
+    و`forbid_initial_silence` **ليس من الجبر المُودَع**: هو قيدٌ مقترَحٌ يُقاس
+    أثرُه ليُعرَف ثمنُه، لا شرطٌ يُفترَض. والجبرُ بلا هذا القيد هو الأصل.
+    """
 
     if length < 1:
         raise ValueError("طولُ السلسلة لا يقلُّ عن واحد")
     cells = _cells()
     moving = sum(1 for cell in cells if not _is_silent(cell))
     silent = len(cells) - moving
-    ending_moving, ending_silent = moving, silent
+    ending_moving, ending_silent = moving, 0 if forbid_initial_silence else silent
     for _ in range(length - 1):
         ending_moving, ending_silent = (
             moving * (ending_moving + ending_silent),
@@ -230,7 +276,9 @@ def surviving_chains(length: int) -> int:
     return ending_moving + ending_silent
 
 
-def surviving_chains_by_enumeration(length: int) -> int:
+def surviving_chains_by_enumeration(
+    length: int, *, forbid_initial_silence: bool = False
+) -> int:
     """العدُّ نفسُه استقصاءً تامًّا، تنفيذٌ ثانٍ مستقلٌّ عن التكرار."""
 
     cells = _cells()
@@ -241,6 +289,36 @@ def surviving_chains_by_enumeration(length: int) -> int:
             _is_silent(chain[index]) and _is_silent(chain[index + 1])
             for index in range(length - 1)
         )
+        and not (forbid_initial_silence and _is_silent(chain[0]))
+    )
+
+
+def initial_silent_cells() -> int:
+    """كم خليّةً يُجيز الجبرُ المُودَعُ أن تُبتدأ بها ساكنةً ذرّيًّا؟
+
+    وهذا هو موضعُ الفحص: دعوى «لا ابتداءَ بسكونٍ ذرّيّ» تُقاس ههنا على
+    الجبر نفسِه، لا على مدوّنة. فإن جاء العددُ فوق الصفر فالدعوى ليست
+    مبرهنةً في هذا الجبر مهما صدقت في العربيّة.
+    """
+
+    return sum(1 for cell in _cells() if _is_silent(cell))
+
+
+def boundary_collisions_under_initial_ban() -> int:
+    """لو مُنع الابتداءُ الساكن، فكم لقاءً ساكنًا يبقى عند الوصلة؟
+
+    يُستقصى حاصلُ ضرب الخاتمات في المبتدآت استقصاءً تامًّا، فيُقاس
+    الاستتباعُ ولا يُسلَّم به. وهذا قياسُ **صحّةِ اللزوم** وحدَه، ولا يشهد
+    لمقدَّمه: مقدَّمُه مقيسٌ في حلقةٍ أخرى ومخالِف.
+    """
+
+    cells = _cells()
+    openers = [cell for cell in cells if not _is_silent(cell)]
+    return sum(
+        1
+        for last in cells
+        for first in openers
+        if _is_silent(last) and _is_silent(first)
     )
 
 
@@ -270,10 +348,18 @@ def _formal_standing(link: LedgerLink) -> LinkStanding:
         agrees = measured == link.payload["الجذر_الوحيد"]
     elif generator == "surviving_chains":
         length = int(link.payload["الطول"])
-        measured = surviving_chains(length)
+        banned = bool(link.payload.get("مُنِع_الابتداءُ_الساكن", False))
+        measured = surviving_chains(length, forbid_initial_silence=banned)
         agrees = measured == link.payload["العدد"]
         if agrees and length <= 3:
-            agrees = surviving_chains_by_enumeration(length) == link.payload["العدد"]
+            agrees = (
+                surviving_chains_by_enumeration(length, forbid_initial_silence=banned)
+                == link.payload["العدد"]
+            )
+    elif generator == "initial_silent_cells":
+        agrees = initial_silent_cells() == link.payload["العدد"]
+    elif generator == "boundary_collisions_under_initial_ban":
+        agrees = boundary_collisions_under_initial_ban() == link.payload["العدد"]
     elif generator == "cell_digests":
         agrees = len(set(cell_digests())) == link.payload["البصمات_الفريدة"]
     elif generator == "folded_digests":
@@ -294,6 +380,8 @@ def standing_of(link: LedgerLink) -> LinkStanding:
         return _formal_standing(link)
     if link.genus is LinkGenus.AWAITING_ITS_MATERIAL:
         return LinkStanding.ITS_MATERIAL_HAS_NOT_ARRIVED
+    if link.genus is LinkGenus.UNBOUND_EXPECTATION:
+        return LinkStanding.NOT_FALSIFIABLE_AS_WORDED
     return LinkStanding.TWO_SIDES_NOT_LIFTED_HERE
 
 
