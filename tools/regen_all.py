@@ -41,6 +41,7 @@ from alghanem.arabic import hamil_phase1_audit_deposit as phase1  # noqa: E402
 from alghanem.arabic import hamil_phase2_audit_deposit as phase2  # noqa: E402
 from alghanem.arabic import letter_haraka_partition as partition  # noqa: E402
 from alghanem.arabic import methodological_sources as sources  # noqa: E402
+from alghanem.arabic import owner_licensed_deposit as owner_deposit  # noqa: E402
 from alghanem.arabic import pair_sample_widening as widening  # noqa: E402
 from alghanem.arabic import quran_corpus_word_total as word_total  # noqa: E402
 from alghanem.program import project_state  # noqa: E402
@@ -320,6 +321,27 @@ def _quoted(name: str, origin: str, rendering: str, why: str) -> Seal:
     )
 
 
+def _owner_licensed_seals() -> Mapping[str, str]:
+    """ما نُقل عن كلِّ وديعةٍ مأذونة: ختمُها وحجمُها ومنزلتُها المشتقّة."""
+
+    renderings: dict[str, str] = {}
+    for deposit in owner_deposit.THE_DEPOSITS:
+        renderings[f"{deposit.path}.sha256"] = deposit.transcribed_sha256
+        renderings[f"{deposit.path}.bytes"] = f"{deposit.transcribed_bytes:,}"
+    return renderings
+
+
+def _owner_licensed_measured() -> Mapping[str, str]:
+    """وما يولِّده القرصُ الآن لها؛ ويُصادَم بالمنقول عند كلّ نداء."""
+
+    renderings: dict[str, str] = {}
+    for deposit in owner_deposit.THE_DEPOSITS:
+        reading = owner_deposit.measure(deposit)
+        renderings[f"{deposit.path}.sha256"] = reading.measured_sha256
+        renderings[f"{deposit.path}.bytes"] = f"{reading.measured_bytes:,}"
+    return renderings
+
+
 def the_registry() -> SealRegistry:
     """كلُّ ختمٍ في الشجرة، مولَّدًا عند كلّ نداء ولا يُخزَن."""
 
@@ -384,6 +406,13 @@ def the_registry() -> SealRegistry:
                 origin="seals.json المُودَع ↔ تعدادٌ مشتقٌّ من قائمة أختامه",
                 generate=_hamil_register_tally,
                 transcription=_hamil_register_tally,
+            ),
+            Seal(
+                name="owner_licensed_deposit.seals",
+                genus=SealGenus.GENERATED,
+                origin="THE_DEPOSITS ↔ بايتاتُ الودائع المأذونة على القرص",
+                generate=_owner_licensed_measured,
+                transcription=_owner_licensed_seals,
             ),
             Seal(
                 name="usool_al_unboob.doors",
