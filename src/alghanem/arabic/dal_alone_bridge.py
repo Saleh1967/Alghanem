@@ -49,6 +49,27 @@
 `A_SURFACE_SEGMENT_IS_NOT_A_ROOT_ENTRY`، وعينُ قاعدة القياس المقيَّد بالجنس
 الواحد (`THE_DAL_CHAPTER_GLOSS_IS_A_HOMONYM_NOT_THIS_SIDE`).
 
+**والخلوُّ مسحٌ جرى لا بحثٌ غاب.** لا يكفي أن يُقال «ليس في الشجرة ملفُّ
+الضلع»: طُلِبت مادّتُه فيما بين أيدينا من بايتات النبهاني، فكانت الحجّةُ
+ساقَين. الأولى: **الكتابُ الحاملُ للقسمة غائبٌ عن هذه الشجرة أصلًا** — القسمةُ
+في «الشخصية الإسلامية» الجزء الثالث، ولا بايتَ منه ههنا، وإنّما فيها كتابٌ
+آخرُ له. والثانية: ذلك الكتابُ الحاضرُ **مُسِح** فلم يقع فيه لفظُ القسمة ولا
+جملةُ حصرها (`THE_VACANCY_SURVIVED_A_SCAN_AND_IS_NOT_A_SILENCE`).
+
+**والمسحُ مُنحازٌ إلى عدم الوجدان، فيُعلَن انحيازُه ويُضبَط.** استخراجُ النصّ
+من مستندٍ مُركَّبٍ استخراجٌ خشن: ما فاته من البايتات يُقرأ عدمَ وجدانٍ وهو عدمُ
+قراءة، فالانحيازُ إلى تقوية النفي لا إلى تضعيفه
+(`A_CRUDE_EXTRACTION_BIASES_A_NEGATIVE_TOWARD_ITSELF`). ولذلك لا يُعتمَد النفيُ
+حتّى يجتاز **شاهدًا موجِبًا**: يُعَدُّ ما استُخرج من كلمٍ عربيٍّ فيكون كثيرًا،
+ويُلتمَس فيه لفظٌ قريبٌ من المطلوب فيوجد. فالآلةُ ليست عمياء، وعدمُ وجدانها
+القسمةَ عدمُ وجودٍ في المستخرَج لا عجزٌ عن القراءة.
+
+**والاقترابُ يُسمّى ولا يُعَدُّ وجدانًا**: في الكتاب الحاضر مواضعُ فيها لفظُ
+المدلول، وهي في سياق تصوُّر واقع الفكرة لا في قسمة اللفظ؛ وعددُها يُخرجه
+`material_scan` ولا يُنقَل ههنا رقمًا. فلا تُحسَب مادّةً للضلع، ولا تُطوى
+فيُقال «لا ذكرَ للمدلول فيه»
+(`A_NEAR_MISS_IS_NAMED_AND_NOT_COUNTED_AS_A_FINDING`).
+
 **وما يُخرجه هذا الجسر أعدادٌ عن هذه الشجرة لا عن اللغة**: عددُ المحاور،
 وحاملُ اللازم، وحضورُ ملفٍّ وغيابُه. فليس فيه رقمٌ عن عربيّةٍ ولا عن مدوّنة،
 ولا يُقرأ منه حكمٌ على لفظٍ واحد
@@ -64,6 +85,7 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -72,25 +94,34 @@ from typing import Final
 __all__ = [
     "AN_AXIS_CLASSIFICATION_IS_ENACTED_HERE_NOT_READ",
     "A_PROJECTION_OF_A_BUILT_PROOF_IS_NOT_A_NEW_PROOF",
+    "A_CRUDE_EXTRACTION_BIASES_A_NEGATIVE_TOWARD_ITSELF",
+    "A_NEAR_MISS_IS_NAMED_AND_NOT_COUNTED_AS_A_FINDING",
     "A_SHAPE_CARRIED_BY_SOME_IS_NOT_A_SHAPE_OF_THE_GENUS",
     "THE_DAL_CHAPTER_GLOSS_IS_A_HOMONYM_NOT_THIS_SIDE",
     "THE_SEVEN_ARE_BY_BOTH_NOT_BY_THE_SIGNIFIER_ALONE",
+    "THE_BOOK_THAT_CARRIES_THE_DIVISION_IS_ABSENT_FROM_THIS_TREE",
+    "THE_DIVISION_MARKERS",
+    "THE_NEAR_MISS",
+    "THE_SCANNED_BOOK",
     "THE_SHAPE_INVARIANTS",
     "THE_SIDES",
     "THE_THIRD_SIDE_IS_VACANT_AND_ITS_VACANCY_IS_MEASURED",
     "THE_TRANSCRIBED_AXES",
+    "THE_VACANCY_SURVIVED_A_SCAN_AND_IS_NOT_A_SILENCE",
     "THIS_BRIDGE_MEASURES_THE_TREE_NOT_THE_LANGUAGE",
     "WHAT_WOULD_DISCHARGE_THE_VACANCY",
     "AxisLoad",
     "DalAloneBridgeError",
     "DecisionAxis",
     "InvariantCensus",
+    "MaterialScan",
     "ProofSide",
     "SideStanding",
     "SidesReading",
     "axis_transcription_drift",
     "invariant_census",
     "load_census",
+    "material_scan",
     "sides_reading",
     "the_seven_are_by_both",
 ]
@@ -143,6 +174,41 @@ THIS_BRIDGE_MEASURES_THE_TREE_NOT_THE_LANGUAGE: Final[str] = (
     "البراهين، وحضورُ ملفٍّ وغيابُه. وليس فيه عددٌ عن عربيّةٍ ولا عن "
     "مدوّنة، ولا يُصنَّف به لفظٌ واحد."
 )
+
+
+A_CRUDE_EXTRACTION_BIASES_A_NEGATIVE_TOWARD_ITSELF: Final[str] = (
+    "استخراجُ نصٍّ من مستندٍ مُركَّبٍ خشنٌ، وما يفوته يُقرأ عدمَ وجدانٍ وهو "
+    "عدمُ قراءة. فالانحيازُ مع النفي لا عليه، ولذلك لا يُعتمَد النفيُ حتّى "
+    "يجتاز شاهدًا موجِبًا يُثبِت أنّ الآلة تقرأ."
+)
+
+A_NEAR_MISS_IS_NAMED_AND_NOT_COUNTED_AS_A_FINDING: Final[str] = (
+    "لفظٌ قريبٌ من المطلوب في سياقٍ آخر يُسمّى بموضعه ولا يُحسَب مادّةً؛ "
+    "وطيُّه ليُقال «لا ذكرَ له البتّة» تقويةٌ للنفي بحذف ما يُضعِفه."
+)
+
+THE_VACANCY_SURVIVED_A_SCAN_AND_IS_NOT_A_SILENCE: Final[str] = (
+    "خلوُّ الضلع وقوفٌ بنتيجةِ مسحٍ جرى لا بغياب بحث: الكتابُ الحاملُ "
+    "للقسمة غائبٌ عن الشجرة أصلًا، والكتابُ الحاضرُ لمؤلِّفه مُسِح فلم "
+    "يحملها. ومن قرأ «لم يُبحَث» قرأ غيرَ ما جرى."
+)
+
+THE_BOOK_THAT_CARRIES_THE_DIVISION_IS_ABSENT_FROM_THIS_TREE: Final[str] = (
+    "القسمةُ باعتبار الدالّ وحدَه تُطلَب من «الشخصية الإسلامية» الجزء "
+    "الثالث، ولا بايتَ منه في هذه الشجرة. فهذه ساقُ الخلوّ الأولى، ولا "
+    "يرفعها مسحُ كتابٍ آخرَ للمؤلِّف نفسِه مهما اتّسع."
+)
+
+THE_SCANNED_BOOK: Final[str] = "التفكير(71)(3).doc"
+
+THE_DIVISION_MARKERS: Final[tuple[str, ...]] = (
+    "ينقسم اللفظ",
+    "باعتبار الدال",
+    "الدال وحده",
+    "الدالّ وحده",
+)
+
+THE_NEAR_MISS: Final[str] = "مدلول"
 
 
 class SideStanding(Enum):
@@ -426,3 +492,51 @@ def the_seven_are_by_both() -> bool:
     if index < 0:
         raise DalAloneBridgeError("جملةُ الحصر غائبةٌ عن بايتات وحدتها.")
     return "والمدلول" in text[index : index + len(opening) + 12]
+
+
+@dataclass(frozen=True)
+class MaterialScan:
+    """نتيجةُ مسحِ الكتاب الحاضر عن مادّة الضلع الخالي، بانحيازها مُعلَنًا."""
+
+    book: str
+    extracted_arabic_runs: int
+    marker_hits: tuple[tuple[str, int], ...]
+    near_miss_hits: int
+
+    @property
+    def the_extractor_is_not_blind(self) -> bool:
+        """الشاهدُ الموجِب: أخرجت الآلةُ عربيّةً كثيرةً ووجدت الاقتراب."""
+
+        return self.extracted_arabic_runs > 1000 and self.near_miss_hits > 0
+
+    @property
+    def carries_the_division(self) -> bool:
+        return any(count for _, count in self.marker_hits)
+
+
+def _scanned_book_path() -> Path:
+    return _arabic_package().parents[2] / THE_SCANNED_BOOK
+
+
+def material_scan() -> MaterialScan:
+    """أيحمل الكتابُ الحاضرُ قسمةَ الدالّ وحدَه؟ يُمسَح ولا يُفترَض.
+
+    والاستخراجُ خشنٌ مُعلَنُ الخشونة، فيُخرَج معه شاهدُه الموجِب: عددُ ما
+    استُخرج من كلمٍ عربيّ، وعددُ مواضع اللفظ القريب. فبهما يُعلَم أنّ عدمَ
+    وجدان القسمة عدمُ وجودٍ في المستخرَج لا عجزٌ عن القراءة.
+    """
+
+    path = _scanned_book_path()
+    if not path.is_file():
+        raise DalAloneBridgeError(
+            "الكتابُ المُعلَن مسحُه غائبٌ عن موضعه، فلا يُنقَل عنه نفيٌ ولا إثبات."
+        )
+    text = path.read_bytes().decode("utf-16-le", errors="ignore")
+    runs = len(re.findall(r"[\u0621-\u064a]{3,}", text))
+    hits = tuple((marker, text.count(marker)) for marker in THE_DIVISION_MARKERS)
+    return MaterialScan(
+        book=THE_SCANNED_BOOK,
+        extracted_arabic_runs=runs,
+        marker_hits=hits,
+        near_miss_hits=text.count(THE_NEAR_MISS),
+    )

@@ -165,3 +165,59 @@ def test_the_dal_chapter_gloss_is_not_counted_as_the_built_side() -> None:
     assert "dal_alone_gloss" not in {side.module for side in THE_SIDES}
     assert "dal_alone_gloss" not in THE_BUILT_PROOFS
     assert sides_reading().vacant == ("الدالُّ وحدَه",)
+
+
+def test_the_book_carrying_the_division_is_absent_so_the_scan_is_secondary() -> None:
+    """ساقُ الخلوّ الأولى: لا بايتَ من الكتاب الحامل للقسمة في هذه الشجرة."""
+
+    from alghanem.arabic.dal_alone_bridge import (
+        THE_BOOK_THAT_CARRIES_THE_DIVISION_IS_ABSENT_FROM_THIS_TREE,
+    )
+
+    declared = THE_BOOK_THAT_CARRIES_THE_DIVISION_IS_ABSENT_FROM_THIS_TREE
+    assert "الشخصية الإسلامية" in declared
+    assert not list(Path(".").glob("**/*الشخصية*"))
+
+
+def test_the_scanned_book_does_not_carry_the_division() -> None:
+    from alghanem.arabic.dal_alone_bridge import material_scan
+
+    scan = material_scan()
+    assert scan.carries_the_division is False
+    assert [count for _, count in scan.marker_hits] == [0, 0, 0, 0]
+
+
+def test_a_crude_negative_is_not_taken_without_a_positive_control() -> None:
+    """المسحُ منحازٌ إلى النفي، فلا يُقبَل حتّى تثبت الآلةُ أنّها تقرأ."""
+
+    from alghanem.arabic.dal_alone_bridge import material_scan
+
+    scan = material_scan()
+    assert scan.the_extractor_is_not_blind is True
+    assert scan.extracted_arabic_runs > 1000
+    assert scan.near_miss_hits > 0
+
+
+def test_the_near_miss_is_reported_and_not_folded_into_the_negative() -> None:
+    from alghanem.arabic.dal_alone_bridge import THE_NEAR_MISS, material_scan
+
+    scan = material_scan()
+    assert scan.near_miss_hits > 0
+    assert THE_NEAR_MISS not in dict(scan.marker_hits)
+
+
+def test_the_scan_publishes_no_figure_that_is_transcribed_into_prose() -> None:
+    """أرقامُ المسح تُخرَج من مولِّدها ولا تُنقَل في النثر."""
+
+    text = Path("src/alghanem/arabic/dal_alone_bridge.py").read_text(encoding="utf-8")
+    from alghanem.arabic.dal_alone_bridge import material_scan
+
+    scan = material_scan()
+    assert str(scan.extracted_arabic_runs) not in text
+    assert f"{scan.near_miss_hits} موضع" not in text
+
+
+def test_a_missing_scanned_book_is_refused_and_not_read_as_a_negative() -> None:
+    from alghanem.arabic import dal_alone_bridge
+
+    assert dal_alone_bridge._scanned_book_path().is_file()
