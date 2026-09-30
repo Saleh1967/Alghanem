@@ -7,16 +7,21 @@ from pathlib import Path
 import pytest
 
 from alghanem.arabic.dal_alone_bridge import (
+    THE_BOOK_THAT_CARRIES_THE_DIVISION_IS_ABSENT_FROM_THIS_TREE,
     THE_BUILT_PROOFS,
+    THE_DIVISION_BOOK,
+    THE_MATERIAL_ARRIVED_SO_THE_VACANCY_CHANGED_ITS_GENUS,
     THE_SHAPE_INVARIANTS,
     THE_SIDES,
     THE_TRANSCRIBED_AXES,
+    THE_VACANCY_SURVIVED_A_SCAN_AND_IS_NOT_A_SILENCE,
     WHAT_WOULD_DISCHARGE_THE_VACANCY,
     AxisLoad,
     DalAloneBridgeError,
     DecisionAxis,
     SideStanding,
     axis_transcription_drift,
+    division_material_standing,
     invariant_census,
     load_census,
     sides_reading,
@@ -221,3 +226,30 @@ def test_a_missing_scanned_book_is_refused_and_not_read_as_a_negative() -> None:
     from alghanem.arabic import dal_alone_bridge
 
     assert dal_alone_bridge._scanned_book_path().is_file()
+
+
+def test_the_first_leg_of_the_vacancy_has_fallen_and_it_is_measured() -> None:
+    """كان الخلوُّ يقوم على غياب الكتاب؛ والكتابُ حضر، فيُقاس حضورُه."""
+
+    standing = division_material_standing()
+    assert standing.deposit_name is not None
+    assert standing.sealed
+    assert standing.is_owned_by_this_tree
+    assert standing.deposit_name.startswith(THE_DIVISION_BOOK)
+
+
+def test_the_fallen_leg_is_written_fallen_and_not_left_standing() -> None:
+    assert "سقطت" in THE_BOOK_THAT_CARRIES_THE_DIVISION_IS_ABSENT_FROM_THIS_TREE
+    assert "عذرًا" in THE_MATERIAL_ARRIVED_SO_THE_VACANCY_CHANGED_ITS_GENUS
+
+
+def test_the_surviving_leg_no_longer_claims_to_empty_the_side_alone() -> None:
+    assert "وهذا وحدَه لا يُخلي الضلعَ اليومَ" in (
+        THE_VACANCY_SURVIVED_A_SCAN_AND_IS_NOT_A_SILENCE
+    )
+
+
+def test_the_side_is_still_vacant_because_no_proof_was_built() -> None:
+    """حضورُ المادّة لا يبني البرهان: الخلوُّ باقٍ وجنسُه تغيّر."""
+
+    assert "الدالُّ وحدَه" in sides_reading().vacant

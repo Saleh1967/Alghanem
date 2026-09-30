@@ -49,12 +49,18 @@
 `A_SURFACE_SEGMENT_IS_NOT_A_ROOT_ENTRY`، وعينُ قاعدة القياس المقيَّد بالجنس
 الواحد (`THE_DAL_CHAPTER_GLOSS_IS_A_HOMONYM_NOT_THIS_SIDE`).
 
-**والخلوُّ مسحٌ جرى لا بحثٌ غاب.** لا يكفي أن يُقال «ليس في الشجرة ملفُّ
-الضلع»: طُلِبت مادّتُه فيما بين أيدينا من بايتات النبهاني، فكانت الحجّةُ
-ساقَين. الأولى: **الكتابُ الحاملُ للقسمة غائبٌ عن هذه الشجرة أصلًا** — القسمةُ
-في «الشخصية الإسلامية» الجزء الثالث، ولا بايتَ منه ههنا، وإنّما فيها كتابٌ
-آخرُ له. والثانية: ذلك الكتابُ الحاضرُ **مُسِح** فلم يقع فيه لفظُ القسمة ولا
-جملةُ حصرها (`THE_VACANCY_SURVIVED_A_SCAN_AND_IS_NOT_A_SILENCE`).
+**والخلوُّ مسحٌ جرى لا بحثٌ غاب — وساقُه الأولى سقطت.** كانت الحجّةُ ههنا
+ساقَين: الأولى أنّ الكتابَ الحاملَ للقسمة — «الشخصية الإسلامية» الجزء الثالث —
+**غائبٌ عن هذه الشجرة أصلًا، ولا بايتَ منه**؛ والثانية أنّ الكتابَ الحاضرَ
+لمؤلِّفه مُسِح فلم يحمل القسمة. **والساقُ الأولى سقطت**: أُودِعت بايتاتُ الجزء
+الثالث مختومةً، وفيها لفظُ القسمة بحروفه. فلم يعد الخلوُّ خلوَّ **مادّة** بل
+خلوَّ **برهانٍ لم يُبنَ بعدُ على مادّةٍ حاضرة، وهو خلوٌّ أضعفُ بابًا وأثقلُ
+دَينًا** (`THE_MATERIAL_ARRIVED_SO_THE_VACANCY_CHANGED_ITS_GENUS`). وسقوطُها
+**يُقاس** لا يُروى: يُلتمَس اسمُها في سجلّ الودائع وختمُها
+(`division_material_standing`) — **مِلكًا لا مضمونًا**، فهذا الجسرُ يقيس
+الشجرةَ لا اللغة — فإن نُزعت الوديعةُ عاد الحكمُ الأوّل من نفسه.
+والساقُ الثانية باقيةٌ على حالها: مسحُ الكتاب الحاضر جرى ولم يجد
+(`THE_VACANCY_SURVIVED_A_SCAN_AND_IS_NOT_A_SILENCE`).
 
 **والمسحُ مُنحازٌ إلى عدم الوجدان، فيُعلَن انحيازُه ويُضبَط.** استخراجُ النصّ
 من مستندٍ مُركَّبٍ استخراجٌ خشن: ما فاته من البايتات يُقرأ عدمَ وجدانٍ وهو عدمُ
@@ -91,6 +97,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Final
 
+from .owner_licensed_deposit import THE_DEPOSITS
+
 __all__ = [
     "AN_AXIS_CLASSIFICATION_IS_ENACTED_HERE_NOT_READ",
     "A_PROJECTION_OF_A_BUILT_PROOF_IS_NOT_A_NEW_PROOF",
@@ -100,6 +108,8 @@ __all__ = [
     "THE_DAL_CHAPTER_GLOSS_IS_A_HOMONYM_NOT_THIS_SIDE",
     "THE_SEVEN_ARE_BY_BOTH_NOT_BY_THE_SIGNIFIER_ALONE",
     "THE_BOOK_THAT_CARRIES_THE_DIVISION_IS_ABSENT_FROM_THIS_TREE",
+    "THE_MATERIAL_ARRIVED_SO_THE_VACANCY_CHANGED_ITS_GENUS",
+    "THE_DIVISION_BOOK",
     "THE_DIVISION_MARKERS",
     "THE_NEAR_MISS",
     "THE_SCANNED_BOOK",
@@ -113,6 +123,7 @@ __all__ = [
     "AxisLoad",
     "DalAloneBridgeError",
     "DecisionAxis",
+    "DivisionMaterialStanding",
     "InvariantCensus",
     "MaterialScan",
     "ProofSide",
@@ -121,6 +132,7 @@ __all__ = [
     "axis_transcription_drift",
     "invariant_census",
     "load_census",
+    "division_material_standing",
     "material_scan",
     "sides_reading",
     "the_seven_are_by_both",
@@ -188,18 +200,28 @@ A_NEAR_MISS_IS_NAMED_AND_NOT_COUNTED_AS_A_FINDING: Final[str] = (
 )
 
 THE_VACANCY_SURVIVED_A_SCAN_AND_IS_NOT_A_SILENCE: Final[str] = (
-    "خلوُّ الضلع وقوفٌ بنتيجةِ مسحٍ جرى لا بغياب بحث: الكتابُ الحاملُ "
-    "للقسمة غائبٌ عن الشجرة أصلًا، والكتابُ الحاضرُ لمؤلِّفه مُسِح فلم "
-    "يحملها. ومن قرأ «لم يُبحَث» قرأ غيرَ ما جرى."
+    "خلوُّ الضلع وقوفٌ بنتيجةِ مسحٍ جرى لا بغياب بحث: الكتابُ الحاضرُ "
+    "لمؤلِّفه مُسِح فلم يحمل القسمة. ومن قرأ «لم يُبحَث» قرأ غيرَ ما جرى. "
+    "وهذا وحدَه لا يُخلي الضلعَ اليومَ، إذ حضرت المادّةُ من كتابٍ آخر."
 )
 
 THE_BOOK_THAT_CARRIES_THE_DIVISION_IS_ABSENT_FROM_THIS_TREE: Final[str] = (
-    "القسمةُ باعتبار الدالّ وحدَه تُطلَب من «الشخصية الإسلامية» الجزء "
-    "الثالث، ولا بايتَ منه في هذه الشجرة. فهذه ساقُ الخلوّ الأولى، ولا "
-    "يرفعها مسحُ كتابٍ آخرَ للمؤلِّف نفسِه مهما اتّسع."
+    "كانت القسمةُ باعتبار الدالّ وحدَه تُطلَب من «الشخصية الإسلامية» الجزء "
+    "الثالث ولا بايتَ منه في هذه الشجرة، فكانت تلك ساقَ الخلوّ الأولى. "
+    "وقد أُودِعت بايتاتُه مختومةً فسقطت الساقُ، ويبقى نصُّها ههنا مؤرَّخًا "
+    "ليُعلَم على أيِّ شيءٍ كان الحكمُ يقوم يومَ قام."
+)
+
+THE_MATERIAL_ARRIVED_SO_THE_VACANCY_CHANGED_ITS_GENUS: Final[str] = (
+    "حضورُ المادّة لا يبني البرهان، لكنّه يُغيِّر جنسَ خلوّه: كان خلوَّ "
+    "مادّةٍ لا تُملَك، فصار خلوَّ برهانٍ لم يُبنَ على مادّةٍ مملوكةٍ "
+    "مختومة. والثاني دَينٌ علينا، والأوّلُ كان عذرًا؛ فلا يُقرأ أحدُهما "
+    "بالآخر، ولا يُترَك النثرُ الأوّلُ قائمًا بعد سقوط سنده."
 )
 
 THE_SCANNED_BOOK: Final[str] = "التفكير(71)(3).doc"
+
+THE_DIVISION_BOOK: Final[str] = "الشخصية الإسلامية · الجزء الثالث"
 
 THE_DIVISION_MARKERS: Final[tuple[str, ...]] = (
     "ينقسم اللفظ",
@@ -492,6 +514,47 @@ def the_seven_are_by_both() -> bool:
     if index < 0:
         raise DalAloneBridgeError("جملةُ الحصر غائبةٌ عن بايتات وحدتها.")
     return "والمدلول" in text[index : index + len(opening) + 12]
+
+
+@dataclass(frozen=True)
+class DivisionMaterialStanding:
+    """منزلةُ مادّة الضلع في سجلّ الودائع؛ تُقاس عند كلّ نداء."""
+
+    deposit_name: str | None
+    sealed: bool
+
+    @property
+    def is_owned_by_this_tree(self) -> bool:
+        return self.deposit_name is not None and self.sealed
+
+
+def division_material_standing() -> DivisionMaterialStanding:
+    """أحضرت مادّةُ القسمة في هذه الشجرة؟ يُلتمَس سجلُّ الودائع ولا يُفترَض.
+
+    وهذه هي الساقُ الأولى للخلوّ، وكانت قائمةً يومَ كُتب هذا الجسر. فإن
+    عاد هذا النداءُ بحضورٍ سقطت الساقُ من نفسها بلا تحرير حرفٍ ههنا، وإن
+    نُزعت الوديعةُ عاد الحكمُ الأوّل كما كان.
+
+    ويُسأل السجلُّ **باسم الكتاب لا بمساره**: فمسارُ المدوّنة لا يُكتَب في
+    هذه الوحدة أصلًا، لأنّ حارسَها يمنع ذكرَ موضع المدوّنات فيها؛ وتقطيعُ
+    اسم الموضع ليعبُر ذلك الحارسَ التفافٌ عليه لا وفاءٌ به.
+
+    ولا تُفتَح ههنا بايتةٌ من بايتات الوديعة ولا يُعَدُّ فيها لفظ: هذا
+    الجسرُ يقيس الشجرةَ لا اللغة (`THIS_BRIDGE_MEASURES_THE_TREE_NOT_THE_LANGUAGE`)،
+    فالمقيسُ **مِلكُ الشجرةِ للمادّة** لا مضمونُ المادّة. ومن أراد عدَّ
+    القسمة في متنها فليَعُدَّها في وحدةٍ جنسُها ذلك.
+    """
+
+    from .owner_licensed_deposit import DepositStanding, standing_of
+
+    for deposit in THE_DEPOSITS:
+        if not deposit.name.startswith(THE_DIVISION_BOOK):
+            continue
+        return DivisionMaterialStanding(
+            deposit_name=deposit.name,
+            sealed=standing_of(deposit) is DepositStanding.SIGNED_AND_SEALED,
+        )
+    return DivisionMaterialStanding(deposit_name=None, sealed=False)
 
 
 @dataclass(frozen=True)
