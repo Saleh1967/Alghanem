@@ -44,6 +44,7 @@ from alghanem.arabic import methodological_sources as sources  # noqa: E402
 from alghanem.arabic import pair_sample_widening as widening  # noqa: E402
 from alghanem.arabic import powers_two_regime_measure as powers  # noqa: E402
 from alghanem.arabic import quran_corpus_word_total as word_total  # noqa: E402
+from alghanem.arabic import turath_coverage_tally as turath  # noqa: E402
 from alghanem.arabic import zipf_block_entropy_measure as zipf  # noqa: E402
 from alghanem.program import project_state  # noqa: E402
 from alghanem.seals import (  # noqa: E402
@@ -367,6 +368,59 @@ def _powers_prose_renderings() -> Mapping[str, str]:
     return renderings
 
 
+def _turath_tally_measured() -> Mapping[str, str]:
+    """إحصاءُ جدول التغطية مُعادًا الآن من صفوفه ومن القرص."""
+
+    current = turath.tally()
+    fold: dict[str, str] = {
+        "rows": str(current.rows),
+        "covered": str(current.covered),
+        "absent": str(current.absent),
+        "hedged": str(current.hedged),
+        "overstated": str(turath.the_header_overstates_the_covered_rows_by()),
+        "unnamed": str(turath.unnamed_nodes()),
+        "title_gap": str(turath.the_title_is_unreached_even_by_the_header()),
+    }
+    for ground in turath.Ground:
+        fold[f"ground.{ground.name}"] = str(turath.ground_census()[ground])
+    return fold
+
+
+def _turath_tally_transcribed() -> Mapping[str, str]:
+    """الإحصاءُ كما جُمِّد في الوحدة، ليُصادَم بما تُخرِجه الصفوفُ الآن."""
+
+    rows, covered, absent, hedged = turath.THE_TALLY_AT_MEASUREMENT
+    overstated, unnamed, title_gap = turath.THE_BREACHES_AT_MEASUREMENT
+    fold: dict[str, str] = {
+        "rows": str(rows),
+        "covered": str(covered),
+        "absent": str(absent),
+        "hedged": str(hedged),
+        "overstated": str(overstated),
+        "unnamed": str(unnamed),
+        "title_gap": str(title_gap),
+    }
+    for ground, count in zip(turath.Ground, turath.THE_GROUND_CENSUS_AT_MEASUREMENT):
+        fold[f"ground.{ground.name}"] = str(count)
+    return fold
+
+
+def _turath_prose_renderings() -> Mapping[str, str]:
+    """أرقامُ نثر وحدة التغطية: مجاميعُها الثلاثة وخروقُها وتوزيعُ مقاماتها."""
+
+    current = turath.tally()
+    return {
+        "rows": str(current.rows),
+        "covered": str(current.covered),
+        "absent": str(current.absent),
+        "overstated": str(turath.the_header_overstates_the_covered_rows_by()),
+        "unnamed": str(turath.unnamed_nodes()),
+        "not_deposited": str(turath.ground_census()[turath.Ground.NOT_DEPOSITED]),
+        "no_figure": str(turath.ground_census()[turath.Ground.NO_FIGURE]),
+        "ayah_lines": f"{turath.deposited_ayah_lines():,}",
+    }
+
+
 def _phase1_tally() -> Mapping[str, str]:
     checks = phase1.THE_CHECKS
     agrees = sum(1 for check in checks if check.verdict is phase1.CheckVerdict.AGREES)
@@ -610,6 +664,35 @@ def the_registry() -> SealRegistry:
                 why=(
                     "بايتاتُ مقامها ليست في هذه الشجرة؛ فتُعرَض وتُقابَل بحدٍّ "
                     "مُعلَنٍ ولا تُتَّخَذ مرجعًا"
+                ),
+            ),
+            Seal(
+                name="turath_coverage_tally.tally",
+                genus=SealGenus.GENERATED,
+                origin=(
+                    "THE_TALLY_AT_MEASUREMENT · THE_BREACHES_AT_MEASUREMENT · "
+                    "THE_GROUND_CENSUS_AT_MEASUREMENT ↔ العدُّ من الصفوف ومن القرص"
+                ),
+                generate=_turath_tally_measured,
+                transcription=_turath_tally_transcribed,
+            ),
+            _prose_seal(
+                name="turath_coverage_tally.prose ← نثرُ الوحدة",
+                origin="tally() · ground_census() ↔ نثرُ الوحدة",
+                prose=Path(turath.__file__),
+                measure=_turath_prose_renderings,
+            ),
+            _quoted(
+                name="turath_coverage_tally.THE_QUOTED_HEADER",
+                origin="نقلٌ عن ترويسة جدول التغطية وعنوانه",
+                rendering=(
+                    f"{turath.THE_QUOTED_HEADER.covered} مغطاة · "
+                    f"{turath.THE_QUOTED_HEADER.absent} غياب · "
+                    f"على {turath.THE_QUOTED_NODE_COUNT} عقدة"
+                ),
+                why=(
+                    "يُعرَض بنصّه ثمّ يُصادَم بعدّ الصفوف؛ ولا يُصحَّح في مكانه "
+                    "ولا تُزاد صفوفٌ تسويةً له"
                 ),
             ),
             _quoted(

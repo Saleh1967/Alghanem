@@ -2270,9 +2270,9 @@ bare letters, since the digital witness carries no vocalisation or punctuation t
 compare, and the residual names that limit instead of claiming the orthography
 was collated. Third, the locus was raised only in part and the disagreement was
 not smoothed: the volume is settled at three by the `PageV03P317` and
-`PageV03P318` milestones that bracket the passage, but whether a milestone closes
+`PageV03P319` milestones that bracket the passage, but whether a milestone closes
 its page or opens it was not verified, so the page is left standing between 317
-and 318 (`PAGE_MILESTONE_CONVENTION_NOT_VERIFIED`) rather than guessed. The card's
+and 319 (`PAGE_MILESTONE_CONVENTION_NOT_VERIFIED`) rather than guessed. The card's
 own «[ص: ٣٧٢]» belongs to a different edition and was **not** overwritten by this
 one, which is the same refusal applied earlier to «المقام»; and
 `مقابل_بنسخة_ورقية_محققة` still has no entry, because pagination encoded from a
@@ -8170,7 +8170,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 587-fold: 32 pairs, then 18,810. Both questions were answered,
+The widening is 587-fold: 32 pairs, then 18,871. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8189,7 +8189,7 @@ than a tail: six shadda-bearing pairs hold 99.936%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,882 of 18,778
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,913 of 18,839
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8779,9 +8779,9 @@ The table is filled along a cumulative ladder: the Fātiḥa alone realises 41 o
 the 112 cells over 100 occurrences and 20 of the 28 letters; adding Fatḥ 48:29
 takes it to 74 cells and 27 letters; adding the tree's own prose — with this
 module excluded from it by name, so that its figures do not move whenever its
-description is edited — takes it to 108 cells over 87,317 occurrences with every
+description is edited — takes it to 108 cells over 87,681 occurrences with every
 letter present. Five cells stay empty, and the module refuses to read them as
-prohibitions until their margins are consulted. Sukūn is 467 of 87,317 — 0.53%
+prohibitions until their margins are consulted. Sukūn is 467 of 87,681 — 0.53%
 — so the expected counts for ث and ظ bearing it are 1.470 and 1.052, and zero is
 unremarkable at each. Alef's whole row is ten occurrences. **Four of the five
 absences are consistent with scarcity**, and one survives the filter:
@@ -9004,7 +9004,7 @@ least three slots, and read the class of the **penultimate** slot. One
 prediction was entailed and declared: kasra plus fatḥa at 90% or more. One
 question was declared explicitly *unpredicted*: which of the two leads.
 
-It failed, and not narrowly: 43.77%, 439 of 1,003. The cause is measured rather
+It failed, and not narrowly: 43.77%, 440 of 1,003. The cause is measured rather
 than guessed. The leading class is one the condition never contemplated —
 unmarked, 450 of 1,003 — and 427 of those 450 unmarked slots are a wāw, 22 a
 yāʾ. The penultimate slot is the verb's ʿayn only in a form carrying no suffix;
@@ -9138,6 +9138,42 @@ as refutation.
 
 ```bash
 python examples/arabic/read_powers_two_regime.py
+```
+
+## A coverage table whose three totals disagree, and a coverage claim with no criterion
+
+A table was raised claiming that the Arabic grammatical tradition — Sībawayh,
+al-Ājurrūmiyya, the prosodists, the tajwīd scholars — covers twenty-eight of
+"the thirty-three nodes of the dāl", leaving four declared absences. That claim
+cannot be adjudicated here: no byte of Sībawayh or al-Ājurrūmiyya is deposited
+in this tree, only two Qurʾānic corpora, and the table declares no criterion for
+what "covered" means. `turath_coverage_tally` therefore refuses to grade a
+single row. `is_falsifiable_here` returns `False` for all of them, and an
+import-time assertion keeps it that way.
+
+What *is* measurable is the table's own arithmetic, and it fails three ways at
+once, with no corpus involved. The table has **25** rows, of which **21** carry
+a covering verdict and **4** declare an absence. Its header says 28 + 4 = **32**.
+Its title says **33**. No two of the three agree: the header overstates the
+covered rows by **7**, **8** of the titled nodes are never named at all, and even
+the header falls one short of its own title.
+
+The verdict vocabulary is four-valued, not two. Alongside twenty plain
+`مغطاة` there is one `مغطاة بنيويًّا` and, among the absences, one
+`لا عقدة صريحة` beside three bare `لا عقدة`. The header's two-way sum silently
+folds both hedges into unhedged columns.
+
+The left column does not share a ground either. Exactly one row (the 112 cells)
+is re-derivable here through `letter_haraka_partition`; one row is mixed — the
+**6,236** ayah lines are ours, but the 114 sūras and the 77,801 words are
+reachable from neither deposit, since neither carries the field separators that
+would yield them; **7** rows cite figures that live nowhere in this tree; and
+**16** rows carry no figure at all. Five named residuals record all of this,
+including the one that cannot be closed by any amount of work here: a universal
+negative over an undeposited tradition is not a measurement.
+
+```bash
+python examples/arabic/read_turath_coverage_tally.py
 ```
 
 
