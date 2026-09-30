@@ -9084,6 +9084,62 @@ Hurst is computed in this tree.
 python examples/arabic/read_zipf_block_entropy.py
 ```
 
+### The curve has two regimes, the first rank is a publisher's mark, and the length law breaks at its top rung
+
+A paper (Powers, 1998) was raised as an upgrade from "raw Zipf" to "corrected
+Zipf", with three of its claims reported as measured and confirmed: a head
+(ranks 10–99) obeying Zipf at R² = 0.9805, a tail (rank 100 onward) obeying
+1/(r·log²r) at R² = 0.9508 and beating Zipf's 0.9476 there, and a
+length–frequency ladder ascending monotonically 3.20 → 3.84 → 5.05 → 5.62 →
+5.99. `powers_two_regime_measure` runs all three against the sealed bytes of
+this tree and separates four things that were being read as one.
+
+The paper's *ordering* survives. On our bytes the head obeys plain Zipf at
+R² = 0.9924, and on the tail the corrected law does beat Zipf — 0.9417 against
+0.9376 — exactly the direction the paper predicts. The paper's *magnitudes*
+split under a tolerance declared before the comparison, not after seeing the
+gap: both tail figures agree within 0.01 (one of them sitting on the very edge,
+0.0100), while the head figure contradicts by 0.0119 and contradicts *upward* —
+our head is a better Zipf fit than the one quoted. A prediction that holds is
+not a quoted number that matches, and the unit records the two separately. It
+also refuses to call the tail fit an instance of 1/(r·log²r): the fitted slope
+is −0.687, not the −1 that form asserts, so what is measured is a regression
+with a free slope on that predictor, not the law itself.
+
+The second separation is about the corpus rather than the paper. The most
+frequent token on our sealed bytes is not an Arabic word at all: it is `<sel>`,
+a publisher's pause mark, 4,287 occurrences, at rank 1. The head of our curve
+was being led by markup. So the unit measures under two declared token rules,
+one of which drops publisher marks derived by pattern rather than listed by
+name. Dropping them leaves 78,245 tokens — the same number quoted in
+`quran_corpus_word_total`'s prose for the "simple" family. That is a numeric
+coincidence and not a second implementation agreeing: this deposit carries no
+field separators, so that module's ayah-field rule returns zero on these very
+bytes and cannot produce 78,245 itself. The unit asserts that silence with a
+function rather than a sentence.
+
+The third separation is the length law. Mean word length in drawn letters
+across the declared frequency bands is 3.500 · 3.345 · 4.456 · 5.080 · 5.408.
+The extremes say what the paper says, without qualification — the rarest words
+are about two letters longer than the most frequent ones — but the ascent is
+*not* monotone: it breaks between the top band and the next. The reason is
+measured, not guessed. The top band holds two types under the sealed key and
+one after the markup is dropped, and the mean of a band of one or two is not a
+mean that can be compared. So the claim is accepted at its extremes and refused
+in its monotonicity, and the break is checked against band thinness rather than
+excused.
+
+The fourth is bookkeeping about what cannot be measured here at all. The
+paper's meaning-count law (m ∝ √f) needs a sense inventory, and no sense
+lexicon is deposited in this tree; its optimal-coding claim L(r) needs a
+deposited rank code to compare against ours. Both are filed as pending items
+naming exactly what they are waiting for, and neither is read as agreement or
+as refutation.
+
+```bash
+python examples/arabic/read_powers_two_regime.py
+```
+
 
 ```bash
 python examples/arabic/run_ending_release_deposit.py
