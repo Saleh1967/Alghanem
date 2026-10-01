@@ -63,7 +63,6 @@ from .a116_bridge_licence import (
     DeclaredMaterial,
     LicenceCheck,
     MeasuredEvidence,
-    Verdict,
 )
 from .quran_mirror_collation import ayah_rows_of
 
@@ -235,7 +234,10 @@ THE_RULES: Final[tuple[BoundaryRule, ...]] = (
         rule_id="SAKINAYN_TANWIN_KASR",
         gate=Gate.SAKINAYN,
         effect="تحريكُ نون التنوين بالكسر",
-        guard="التنوينُ ثابتٌ في رسم الطرف الأيسر؛ ولا تُنقَل القاعدةُ إلى نونٍ أصليّةٍ أو إلى سكونٍ آخر",
+        guard=(
+            "التنوينُ ثابتٌ في رسم الطرف الأيسر؛ ولا تُنقَل القاعدةُ إلى نونٍ "
+            "أصليّةٍ أو إلى سكونٍ آخر"
+        ),
         reference="مصدرُ التخلّص من الساكنين المسجَّل في summary.json",
     ),
     BoundaryRule(
@@ -633,8 +635,16 @@ class SeamCertificate:
     فيُفقَد أثرُ إصلاح المدّ عند الحدّ. فصارت الشهادةُ تحمل
     `left_input` و`left_output` و`right_input` و`right_output` وهويّةَ القاعدة
     وحارسَها ومرجعَها، ويُردّ ادّعاءُ قاعدةٍ لم تُحرّك طرفَها.
+
+    والحدُّ نفسُه جزءٌ من هويّة الشهادة: `left_exit` و`right_entry` محمولان،
+    ورسما الطرفين محفوظان بجانب مُخرَجيهما
+    (`A_DELETION_IN_THE_PROJECTION_DOES_NOT_ERASE_THE_SOURCE_GLYPH`).
     """
 
+    left_source: str
+    right_source: str
+    left_exit: Exit
+    right_entry: Entry
     left_input: tuple[Atom, ...]
     left_output: tuple[Atom, ...]
     right_input: tuple[Atom, ...]
@@ -662,6 +672,10 @@ class SeamCertificate:
             self.right_output == self.right_input
         ):
             raise Boundary116Error("ادِّعاءُ حذف همزةٍ لم يُحرّك الطرفَ الأيمن؛ أثرٌ مزوَّر.")
+        if self.left_exit is Exit.PAUSE and self.right_entry is Entry.JOINED:
+            raise Boundary116Error(
+                "خريطةُ حدٍّ توقف الطرفَ الأيسر ثمّ تصله بالأيمن؛ حدٌّ متعارض."
+            )
 
     @property
     def rules(self) -> tuple[BoundaryRule, ...]:
@@ -678,15 +692,27 @@ class SeamCertificate:
         return self.left_output[-1].is_silent and self.right_output[0].is_silent
 
 
-def seam(left: str, right: str) -> SeamCertificate:
-    """حدُّ وصلٍ بين رسمين: الأيسرُ يستمرّ، والأيمنُ موصولٌ بما قبله.
+def seam(
+    left: str,
+    right: str,
+    *,
+    left_exit: Exit = Exit.CONTINUE,
+    right_entry: Entry = Entry.JOINED,
+) -> SeamCertificate:
+    """حدُّ وصلٍ بين رسمين؛ والحدُّ مُصرَّحٌ به لا مفترَضٌ من التجاور.
 
     والفاصلةُ غيرُ المصرَّح بحدِّها — كوسم الناشر — تمنع شهادةً مكتملةً ولا
-    تُقرأ وقفًا.
+    تُقرأ وقفًا. وخريطةٌ توقف الأيسرَ ثمّ تصله بالأيمن تُردّ عند البناء
+    (`BOUNDARY_NO_PAUSE_THEN_JOIN`)، ولا يُستنتَج الوقفُ الفعليُّ من الفاصلة
+    وحدَها (`AN_UNDECLARED_SEPARATOR_BLOCKS_A_SEAM_IT_DOES_NOT_PAUSE`).
     """
 
     if THE_PUBLISHER_SEPARATOR in (left, right):
         return SeamCertificate(
+            left_source=left,
+            right_source=right,
+            left_exit=left_exit,
+            right_entry=right_entry,
             left_input=(),
             left_output=(),
             right_input=(),
@@ -696,9 +722,12 @@ def seam(left: str, right: str) -> SeamCertificate:
             deferral_reasons=("فاصلةٌ غيرُ مصرَّحٍ بحدِّها تمنع شهادةَ وصل",),
         )
 
-    left_projection = project(left, BoundaryMode(Entry.START, Exit.CONTINUE))
+    if left_exit is Exit.PAUSE and right_entry is Entry.JOINED:
+        raise Boundary116Error("خريطةُ حدٍّ توقف الطرفَ الأيسر ثمّ تصله بالأيمن؛ حدٌّ متعارض.")
+
+    left_projection = project(left, BoundaryMode(Entry.START, left_exit))
     right_at_start = project(right, BoundaryMode(Entry.START, Exit.CONTINUE))
-    right_projection = project(right, BoundaryMode(Entry.JOINED, Exit.CONTINUE))
+    right_projection = project(right, BoundaryMode(right_entry, Exit.CONTINUE))
     left_atoms = list(left_projection.atoms)
     right_atoms = list(right_projection.atoms)
     applied = list(right_projection.applied)
@@ -706,7 +735,12 @@ def seam(left: str, right: str) -> SeamCertificate:
         right_projection.deferral_reasons
     )
 
-    if left_atoms and right_atoms and right_atoms[0].is_silent:
+    if (
+        left_exit is Exit.CONTINUE
+        and left_atoms
+        and right_atoms
+        and right_atoms[0].is_silent
+    ):
         tail = left_atoms[-1]
         if tail.origin is AtomOrigin.MADD:
             left_atoms.pop()
@@ -723,6 +757,10 @@ def seam(left: str, right: str) -> SeamCertificate:
         reasons.append("أحدُ الطرفين غيرُ مكتمل")
 
     certificate = SeamCertificate(
+        left_source=left,
+        right_source=right,
+        left_exit=left_exit,
+        right_entry=right_entry,
         left_input=left_projection.atoms,
         left_output=tuple(left_atoms),
         right_input=right_at_start.atoms,
@@ -736,6 +774,10 @@ def seam(left: str, right: str) -> SeamCertificate:
         and certificate.leaves_two_silents_at_the_seam
     ):
         return SeamCertificate(
+            left_source=certificate.left_source,
+            right_source=certificate.right_source,
+            left_exit=certificate.left_exit,
+            right_entry=certificate.right_entry,
             left_input=certificate.left_input,
             left_output=certificate.left_output,
             right_input=certificate.right_input,
@@ -935,7 +977,10 @@ class TranscribedBookRow:
 
     def __post_init__(self) -> None:
         for name, pair in (
-            ("ابتداء/استمرار", (self.complete_start_continue, self.deferred_start_continue)),
+            (
+                "ابتداء/استمرار",
+                (self.complete_start_continue, self.deferred_start_continue),
+            ),
             ("ابتداء/وقف", (self.complete_start_pause, self.deferred_start_pause)),
         ):
             if sum(pair) != self.occurrences:
@@ -1151,7 +1196,9 @@ def the_ledger() -> tuple[tuple[str, LicenceCheck], ...]:
 def _witness() -> SeamCertificate:
     """الشاهدُ المُعلَن في التقرير، مُشغَّلًا ههنا لا منقولًا عنه."""
 
-    return seam("\u0641\u0650\u064a", "\u0627\u0644\u0652\u0628\u064e\u064a\u0652\u062a\u0650")
+    return seam(
+        "\u0641\u0650\u064a", "\u0627\u0644\u0652\u0628\u064e\u064a\u0652\u062a\u0650"
+    )
 
 
 THREE_MUTUALLY_EXCLUSIVE_VALUES_CANNOT_CARRY_A_PRODUCT_OF_TWO_AXES: Final[str] = (
