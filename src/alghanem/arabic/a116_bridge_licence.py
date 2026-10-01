@@ -66,11 +66,14 @@
 
 from __future__ import annotations
 
+import hashlib
 import unicodedata
-from collections.abc import Sequence
-from dataclasses import dataclass
+from collections.abc import Callable, Sequence
+from dataclasses import dataclass, field
 from enum import Enum
 from functools import lru_cache
+from pathlib import Path
+from types import MappingProxyType
 from typing import Final
 
 from .letter_fingerprint import LETTER_VOCABULARY, fold_root
@@ -79,7 +82,8 @@ from .letter_haraka_partition import (
     THE_DECLARED_LETTERS,
     THE_HUNDRED_AND_TWELVE,
 )
-from .quran_mirror_collation import ayah_rows_of
+from .pipeline_stations import repository_root_path
+from .quran_mirror_collation import THE_DEPOSITS, ayah_rows_of
 
 __all__ = [
     "A116BridgeLicenceError",
@@ -89,12 +93,20 @@ __all__ = [
     "A_CASE_OUTSIDE_THE_MODEL_IS_NOT_A_FORM_FORBIDDEN_IN_ARABIC",
     "A_CELL_IS_A_SEAT_NOT_A_PHONETIC_LICENCE",
     "A_FIXPOINT_CLOSES_THE_DECLARED_MODEL_NOT_THE_LANGUAGE",
+    "A_MATERIAL_STANDING_IS_RESOLVED_FROM_DISK_NOT_DECLARED_IN_A_FIELD",
+    "A_SILENT_MEASUREMENT_IS_NOT_A_MEASURED_COUNTER_EVIDENCE",
     "A_SUSPENDED_CLAIM_IS_NEVER_PROMOTED_BY_A_PASSING_TEST",
     "A_TRANSCRIBED_FIGURE_IS_NOT_A_REDERIVED_ONE",
+    "THE_COMPLETION_CONDITIONS",
     "CarrierCluster",
     "CollisionReading",
+    "DeclaredMaterial",
+    "DeferredEntry",
+    "EVIDENCE_IS_A_REDERIVED_QUANTITY_NOT_A_COUNTED_STRING",
     "FixpointReading",
     "LicenceCheck",
+    "MaterialStanding",
+    "MeasuredEvidence",
     "ModelExitReading",
     "NO_LICENCE_HERE_LIFTS_A_BLOCK_OR_THAWS_A_FREEZE",
     "RowStanding",
@@ -105,6 +117,8 @@ __all__ = [
     "THE_HUNDRED_AND_SIXTEEN",
     "THE_NAMED_COLLIDING_PAIR",
     "THE_REPORT_AT_TRANSCRIPTION",
+    "THE_REPORT_MATERIALS",
+    "THE_SEALED_MATERIAL",
     "THE_UNDEPOSITED_MATERIALS",
     "TranscribedRow",
     "Verdict",
@@ -114,6 +128,7 @@ __all__ = [
     "census",
     "collision_reading",
     "comparison_rows",
+    "deferred_register",
     "deposited_words",
     "fixpoint_reading",
     "model_exit_reading",
@@ -144,6 +159,77 @@ THE_UNDEPOSITED_MATERIALS: Final[tuple[str, ...]] = (
     "A116_Bridge_License_Lab.zip",
 )
 """موادُّ التقرير، غيرُ المُودَعةِ في الشجرة؛ وغيابُها يُسمّى ولا يُسكَت عنه."""
+
+
+class MaterialStanding(Enum):
+    """مقامُ المادّة، **مُشتَقًّا من القرص** لا مُعلَنًا في حقلٍ يُكتَب باليد."""
+
+    DEPOSITED_AND_SEALED = "مُودَعةٌ مطابقةٌ لطولها وبصمتها"
+    ABSENT_FROM_THE_TREE = "غائبةٌ عن الشجرة"
+    PRESENT_WITHOUT_A_DECLARED_SEAL = "حاضرةٌ بلا ختمٍ مُعلَن"
+    PRESENT_BUT_BREAKS_ITS_SEAL = "حاضرةٌ مخالفةٌ لختمها"
+
+    @property
+    def admits_measurement(self) -> bool:
+        """لا يُقاس إلّا على مُودَعٍ مختوم؛ وما سواه يُعلَّق ولا يُقاس عليه."""
+
+        return self is MaterialStanding.DEPOSITED_AND_SEALED
+
+
+@dataclass(frozen=True)
+class DeclaredMaterial:
+    """مادّةٌ مُعلَنةٌ بمسارها وطولها وبصمتها؛ ومقامُها يُقرأ من القرص لا يُكتَب.
+
+    والمادّةُ غيرُ المُودَعةِ تُعلَن **بلا ختم**، فإن ظهرت يومًا في موضعها
+    خرجت `PRESENT_WITHOUT_A_DECLARED_SEAL` ولم تُقرأ مُودَعة: فمجيءُ بايتاتٍ
+    إلى مسارٍ ليس شهادةً أنّها البايتاتُ المقصودة.
+    """
+
+    key: str
+    relative_path: str
+    declared_byte_length: int | None = None
+    declared_sha256: str | None = None
+
+    def __post_init__(self) -> None:
+        if not self.relative_path.strip():
+            raise A116BridgeLicenceError("مادّةٌ بلا مسارٍ لا تُعلَن.")
+        if (self.declared_byte_length is None) != (self.declared_sha256 is None):
+            raise A116BridgeLicenceError("ختمٌ نصفُه طولٌ ونصفُه بصمةٌ لا يُقبَل.")
+
+    def resolved_path(self, root: Path | None = None) -> Path:
+        """موضعُها في الشجرة؛ ولا بابَ ثانٍ يُفتَح من بيئةٍ أو تخمين."""
+
+        return (root or repository_root_path()) / self.relative_path
+
+    def standing(self, root: Path | None = None) -> MaterialStanding:
+        """مقامُها **بمحاولة حلِّها ومطابقةِ ختمها**، لا بإقرارٍ مكتوب."""
+
+        path = self.resolved_path(root)
+        if not path.is_file():
+            return MaterialStanding.ABSENT_FROM_THE_TREE
+        if self.declared_sha256 is None or self.declared_byte_length is None:
+            return MaterialStanding.PRESENT_WITHOUT_A_DECLARED_SEAL
+        raw = path.read_bytes()
+        if len(raw) != self.declared_byte_length:
+            return MaterialStanding.PRESENT_BUT_BREAKS_ITS_SEAL
+        if hashlib.sha256(raw).hexdigest() != self.declared_sha256:
+            return MaterialStanding.PRESENT_BUT_BREAKS_ITS_SEAL
+        return MaterialStanding.DEPOSITED_AND_SEALED
+
+
+THE_SEALED_MATERIAL: Final[DeclaredMaterial] = DeclaredMaterial(
+    key="quran-simple-enhanced",
+    relative_path=f"corpora/{THE_EXAMINED_DEPOSIT}",
+    declared_byte_length=THE_DEPOSITS[THE_EXAMINED_DEPOSIT][0],
+    declared_sha256=THE_DEPOSITS[THE_EXAMINED_DEPOSIT][1],
+)
+"""المُودَعُ المقيسُ عليه؛ طولُه وبصمتُه مقروءان من `quran_mirror_collation`."""
+
+THE_REPORT_MATERIALS: Final[tuple[DeclaredMaterial, ...]] = tuple(
+    DeclaredMaterial(key=name, relative_path=f"exhibits/a116-report/{name}")
+    for name in THE_UNDEPOSITED_MATERIALS
+)
+"""موادُّ التقرير بمواضعها المُعلَنة وبلا ختم؛ فلا تُقرأ مُودَعةً ولو حضرت."""
 
 THE_CARRIERS: Final[tuple[str, ...]] = tuple(LETTER_VOCABULARY)
 """التسعةُ والعشرون: الثمانيةُ والعشرون بالهمزة المفردة، ومعها الألف."""
@@ -642,11 +728,53 @@ def model_exit_reading() -> ModelExitReading:
 
 
 class Verdict(Enum):
-    """ما تُخرِجه ‎Λ‎ ولا رابعَ له؛ والتعليقُ منزلةٌ لا سكوت."""
+    """ما تُخرِجه ‎Λ‎، وهي أربعٌ لا ثلاث؛ وكلُّ واحدةٍ تُسمّي سببَها لا منزلتَها فقط."""
 
     LICENSED = "مرخَّص"
-    REFUSED_WITH_EVIDENCE = "مرفوضٌ بدليل"
+    REFUSED_BY_A_MEASURED_COUNTER_EVIDENCE = "مرفوضٌ بدليلٍ مخالف"
+    REFUSED_FOR_A_SILENT_MEASUREMENT = "مرفوضٌ لأنّ القياسَ لم يُخرِج"
     SUSPENDED = "معلَّق"
+
+    @property
+    def is_a_refusal(self) -> bool:
+        """الرفضُ بابان: خالفَ، أو سكت؛ وكلاهما **قياسٌ جرى** لا تعليق."""
+
+        return self in {
+            Verdict.REFUSED_BY_A_MEASURED_COUNTER_EVIDENCE,
+            Verdict.REFUSED_FOR_A_SILENT_MEASUREMENT,
+        }
+
+
+@dataclass(frozen=True)
+class MeasuredEvidence:
+    """دليلٌ **مقدارٌ يُعاد اشتقاقُه**، لا سلسلةَ نصٍّ تُعَدّ في صفّ.
+
+    فلكلّ دليلٍ مُولِّدٌ يُشغَّل عند كلّ حكم، ويُقابَل مُخرَجُه بالمنقول. ولا
+    يُقبَل دليلٌ بلا مولِّد، فالعدُّ وحدَه كان ثغرةَ العقد الأولى
+    (`EVIDENCE_IS_A_REDERIVED_QUANTITY_NOT_A_COUNTED_STRING`).
+    """
+
+    name: str
+    expected: int
+    rederive: Callable[[], int] = field(repr=False)
+
+    def __post_init__(self) -> None:
+        if not self.name.strip():
+            raise A116BridgeLicenceError("دليلٌ بلا اسمٍ لا يُحتَجّ به.")
+        if not callable(self.rederive):
+            raise A116BridgeLicenceError("دليلٌ بلا مولِّدٍ يُشغَّل ليس بدليل.")
+
+    @property
+    def measured(self) -> int:
+        """المقدارُ مُشتقًّا الآن من مولِّده؛ ولا قيمةَ مخزونةٌ تُقرأ بدلًا منه."""
+
+        return int(self.rederive())
+
+    @property
+    def agrees(self) -> bool:
+        """أيوافق المنقولُ ما يُخرِجه المولِّدُ الآن؟ وهذا هو الاحتجاج كلُّه."""
+
+        return self.measured == self.expected
 
 
 @dataclass(frozen=True)
@@ -654,15 +782,16 @@ class LicenceCheck:
     """‎Λ_ℓ = Check(المجال، الشروط، الأثر، الدليل، الحدّ الأدنى)‎.
 
     واختلافُ الطبقة يُغيّر **الشروطَ** ويُبقي الإجراءَ واحدًا؛ فلا عقدَ ناقصَ
-    بندٍ يُشغَّل، ولا دليلَ غائبٍ يُقرأ موافقةً.
+    بندٍ يُشغَّل، ولا دليلَ غائبٍ يُقرأ موافقةً. والمادّةُ **تُحَلّ ويُطابَق
+    ختمُها** عند كلّ حكم، فلا يُنزَّل مردودٌ إلى معلَّقٍ بكلمةٍ تُكتَب.
     """
 
     scope: str
     conditions: tuple[str, ...]
     effect: str
-    evidence: tuple[str, ...]
+    evidence: tuple[MeasuredEvidence, ...]
     minimum: int
-    material_is_deposited: bool = True
+    material: DeclaredMaterial
 
     def __post_init__(self) -> None:
         if not self.scope.strip() or not self.effect.strip():
@@ -671,30 +800,54 @@ class LicenceCheck:
             raise A116BridgeLicenceError("عقدٌ بلا شرطٍ مُعلَنٍ لا يُشغَّل.")
         if self.minimum < 1:
             raise A116BridgeLicenceError("حدٌّ أدنى دون الواحد يُرخّص بلا دليل.")
-        if not self.material_is_deposited and self.evidence:
-            raise A116BridgeLicenceError("لا دليلَ يُقرأ من مادّةٍ غيرِ مُودَعة.")
+        if not isinstance(self.material, DeclaredMaterial):
+            raise A116BridgeLicenceError("عقدٌ بلا مادّةٍ مُعلَنةِ المسار لا يُشغَّل.")
+
+    @property
+    def material_standing(self) -> MaterialStanding:
+        """مقامُ مادّته الآن، مقروءًا من القرص عند كلّ نداء."""
+
+        return self.material.standing()
+
+    @property
+    def disagreeing(self) -> tuple[MeasuredEvidence, ...]:
+        """ما خالف من الأدلّة عند إعادة اشتقاقه؛ وهو موجِبُ الردّ بدليل."""
+
+        return tuple(item for item in self.evidence if not item.agrees)
+
+    @property
+    def agreeing(self) -> tuple[MeasuredEvidence, ...]:
+        """ما وافق منها؛ وهو وحدَه ما يُحتسَب في بلوغ الحدّ الأدنى."""
+
+        return tuple(item for item in self.evidence if item.agrees)
 
     @property
     def verdict(self) -> Verdict:
-        """الحكمُ مُشتَقٌّ عند كلّ نداءٍ من بنود العقد، ولا يُكتَب في حقلٍ يُنقَض.
+        """الحكمُ مُشتَقٌّ عند كلّ نداءٍ من مقام المادّة ومن إعادة اشتقاق الدليل.
 
-        والتعليقُ **غيابُ المادّة**، والرفضُ **حضورُها دون الحدّ الأدنى**؛ فلا
-        يُقرأ غيابُ البايتات رفضًا، ولا يُقرأ قصورُ الدليل تعليقًا.
+        والأبوابُ أربعةٌ مفروزة: **التعليقُ** أن لا تُحَلّ المادّةُ أو يُخالَف
+        ختمُها، و**الردُّ بدليلٍ مخالف** أن يُقاس فيخرج ما ينقض المنقول،
+        و**الردُّ لسكوت القياس** أن يُقاس فلا يُخرِج ما يبلغ الحدّ، والترخيصُ
+        بعدهما. فلا يُقرأ غيابُ البايتات ردًّا، ولا يُنزَّل مردودٌ إلى معلَّق.
         """
 
-        if not self.material_is_deposited:
+        if not self.material_standing.admits_measurement:
             return Verdict.SUSPENDED
-        if len(self.evidence) < self.minimum:
-            return Verdict.REFUSED_WITH_EVIDENCE
+        if self.disagreeing:
+            return Verdict.REFUSED_BY_A_MEASURED_COUNTER_EVIDENCE
+        if len(self.agreeing) < self.minimum:
+            return Verdict.REFUSED_FOR_A_SILENT_MEASUREMENT
         return Verdict.LICENSED
 
 
 def the_ledger() -> tuple[tuple[str, LicenceCheck], ...]:
-    """سجلُّ دعاوى التقرير، كلٌّ منها مارٌّ بعقد ‎Λ‎ نفسِه لا بحكمٍ مكتوب."""
+    """سجلُّ دعاوى التقرير، كلٌّ منها مارٌّ بعقد ‎Λ‎ نفسِه لا بحكمٍ مكتوب.
 
-    fixpoint = fixpoint_reading()
-    exits = model_exit_reading()
-    collisions = collision_reading()
+    ولا يُحتَرَس ههنا بإخلاء صفِّ الدليل عند كذب شرطه — فذاك كان يُخرِج
+    الدعوى «مرفوضةً بدليل» وهي صامتة. بل يصير الشرطُ نفسُه **دليلًا يُعاد
+    اشتقاقُه**، فيُردّ مخالفًا إن خالف، ويُردّ صامتًا إن لم يُخرِج.
+    """
+
     return (
         (
             "اشتقاقُ المئة وستَّ عشرةَ خانةً",
@@ -703,11 +856,19 @@ def the_ledger() -> tuple[tuple[str, LicenceCheck], ...]:
                 conditions=("29 حاملًا مقروءًا من المفردة", "4 حركاتٍ مُعلَنة"),
                 effect="خاناتٌ تمثيليّةٌ لا تراخيصُ صوتيّة",
                 evidence=(
-                    f"الخانات المشتقّة: {THE_HUNDRED_AND_SIXTEEN}",
-                    f"فرقُها عن {THE_HUNDRED_AND_TWELVE}: "
-                    f"صفُّ الهمزة ({len(the_hamza_row())})",
+                    MeasuredEvidence(
+                        "الخاناتُ المشتقّة",
+                        THE_HUNDRED_AND_SIXTEEN,
+                        lambda: len(a116_cells()),
+                    ),
+                    MeasuredEvidence(
+                        "صفُّ الهمزة فرقًا عن المئة واثنتَي عشرة",
+                        THE_HUNDRED_AND_SIXTEEN - THE_HUNDRED_AND_TWELVE,
+                        lambda: len(the_hamza_row()),
+                    ),
                 ),
                 minimum=2,
+                material=THE_SEALED_MATERIAL,
             ),
         ),
         (
@@ -717,12 +878,24 @@ def the_ledger() -> tuple[tuple[str, LicenceCheck], ...]:
                 conditions=("انتقالٌ تامٌّ على كلّ خانة", "‎S(k+1) = S(k)‎"),
                 effect="إغلاقٌ لجميع الأطوال داخل النموذج لا في العربيّة",
                 evidence=(
-                    f"درجةُ الاستقرار: {fixpoint.saturation_rung}",
-                    f"المجموعةُ المستقرّة: {len(fixpoint.stable_set)}",
-                )
-                if fixpoint.closes_all_lengths
-                else (),
-                minimum=2,
+                    MeasuredEvidence(
+                        "بلوغُ نقطة الاستقرار",
+                        1,
+                        lambda: int(fixpoint_reading().closes_all_lengths),
+                    ),
+                    MeasuredEvidence(
+                        "درجةُ الاستقرار",
+                        fixpoint_reading().saturation_rung,
+                        lambda: fixpoint_reading().saturation_rung,
+                    ),
+                    MeasuredEvidence(
+                        "المجموعةُ المستقرّة",
+                        len(fixpoint_reading().stable_set),
+                        lambda: len(fixpoint_reading().stable_set),
+                    ),
+                ),
+                minimum=3,
+                material=THE_SEALED_MATERIAL,
             ),
         ),
         (
@@ -732,14 +905,26 @@ def the_ledger() -> tuple[tuple[str, LicenceCheck], ...]:
                 conditions=("الزوجُ مشهودٌ في المُودَع", "انتقالُه بالجسر مقيسٌ"),
                 effect="تمايزُ الزوج، مع بقاء مجموعاتٍ أخرى",
                 evidence=(
-                    (
-                        f"مجموعاتٌ أزالها الجسر: {collisions.groups_the_bridge_removes}",
-                        f"مجموعاتٌ باقيةٌ بعده: {collisions.groups_with_the_bridge}",
-                    )
-                    if collisions.the_bridge_moves_the_named_pair
-                    else ()
+                    MeasuredEvidence(
+                        "تمايزُ الزوج المُسمّى بالجسر",
+                        1,
+                        lambda: int(
+                            collision_reading().the_bridge_moves_the_named_pair
+                        ),
+                    ),
+                    MeasuredEvidence(
+                        "مجموعاتٌ أزالها الجسر",
+                        collision_reading().groups_the_bridge_removes,
+                        lambda: collision_reading().groups_the_bridge_removes,
+                    ),
+                    MeasuredEvidence(
+                        "مجموعاتٌ باقيةٌ بعده",
+                        collision_reading().groups_with_the_bridge,
+                        lambda: collision_reading().groups_with_the_bridge,
+                    ),
                 ),
-                minimum=2,
+                minimum=3,
+                material=THE_SEALED_MATERIAL,
             ),
         ),
         (
@@ -749,14 +934,26 @@ def the_ledger() -> tuple[tuple[str, LicenceCheck], ...]:
                 conditions=("كلُّ خارجٍ يسقط عند خانته الأولى",),
                 effect="حاجةُ تجسير الوصل بين الكلمات",
                 evidence=(
-                    (
-                        f"الخارجون: {exits.outside_forms}",
-                        f"الساقطون عند الخانة الأولى: {exits.fell_at_the_first_cell}",
-                    )
-                    if exits.every_exit_needs_a_left_context
-                    else ()
+                    MeasuredEvidence(
+                        "كلُّ خارجٍ يحتاج سياقًا يساريًّا",
+                        1,
+                        lambda: int(
+                            model_exit_reading().every_exit_needs_a_left_context
+                        ),
+                    ),
+                    MeasuredEvidence(
+                        "الخارجون",
+                        model_exit_reading().outside_forms,
+                        lambda: model_exit_reading().outside_forms,
+                    ),
+                    MeasuredEvidence(
+                        "الساقطون عند الخانة الأولى",
+                        model_exit_reading().fell_at_the_first_cell,
+                        lambda: model_exit_reading().fell_at_the_first_cell,
+                    ),
                 ),
-                minimum=2,
+                minimum=3,
+                material=THE_SEALED_MATERIAL,
             ),
         ),
         (
@@ -766,13 +963,18 @@ def the_ledger() -> tuple[tuple[str, LicenceCheck], ...]:
                 conditions=("كلُّ صفٍّ مقيسٍ يوافق ما يُخرِجه القرص",),
                 effect="ترقيةُ المنقول إلى مقيس",
                 evidence=tuple(
-                    f"{row.name}: {value}"
-                    for row, value, standing in comparison_rows()
-                    if standing is RowStanding.AGREES_WITH_WHAT_DISK_GIVES
+                    MeasuredEvidence(
+                        row.name,
+                        row.transcribed,
+                        _row_rederivation(row.measured_key),
+                    )
+                    for row in THE_REPORT_AT_TRANSCRIPTION
+                    if row.measured_key is not None
                 ),
                 minimum=sum(
                     1 for row in THE_REPORT_AT_TRANSCRIPTION if row.is_measurable_here
                 ),
+                material=THE_SEALED_MATERIAL,
             ),
         ),
         (
@@ -783,7 +985,7 @@ def the_ledger() -> tuple[tuple[str, LicenceCheck], ...]:
                 effect="تغطيةُ الجبر للعربيّة بلا زيادةٍ ولا نقص",
                 evidence=(),
                 minimum=1,
-                material_is_deposited=False,
+                material=THE_REPORT_MATERIALS[0],
             ),
         ),
         (
@@ -794,7 +996,10 @@ def the_ledger() -> tuple[tuple[str, LicenceCheck], ...]:
                 effect="نسبةُ المقيس إلى الرواية",
                 evidence=(),
                 minimum=1,
-                material_is_deposited=False,
+                material=DeclaredMaterial(
+                    key="hafs-certified-mushaf",
+                    relative_path="corpora/hafs-certified-mushaf.txt",
+                ),
             ),
         ),
         (
@@ -805,10 +1010,16 @@ def the_ledger() -> tuple[tuple[str, LicenceCheck], ...]:
                 effect="شهادةُ نجاحٍ قابلةٌ لإعادة التشغيل",
                 evidence=(),
                 minimum=2,
-                material_is_deposited=False,
+                material=THE_REPORT_MATERIALS[1],
             ),
         ),
     )
+
+
+def _row_rederivation(key: str) -> Callable[[], int]:
+    """مولِّدُ صفٍّ باسم حقله؛ يُشغَّل عند كلّ حكمٍ ولا يُقرأ من مخزون."""
+
+    return lambda: census().value_of(key)
 
 
 def suspended_claims() -> tuple[str, ...]:
@@ -817,6 +1028,80 @@ def suspended_claims() -> tuple[str, ...]:
     return tuple(
         name for name, check in the_ledger() if check.verdict is Verdict.SUSPENDED
     )
+
+
+THE_COMPLETION_CONDITIONS: Final[MappingProxyType[str, tuple[str, ...]]] = (
+    MappingProxyType(
+        {
+            "أرقامُ التقرير مُعادةُ الاشتقاق من هذه البايتات": (
+                "إيداعُ البايتات التي قِيس عليها التقريرُ بطولها وبصمتها",
+                "إعلانُ قاعدة العنقدة التي أخرجت 113 خانةً مشهودة",
+                "إعادةُ اشتقاق كلّ صفٍّ منها ههنا بلا تحريك قاعدة",
+            ),
+            "كلُّ انتقالٍ عربيٍّ إلى الوزن والتركيب مرخَّصٌ بهذه الدالّة": (
+                "إيداعُ متنٍ خارجَ المُودَع تُقاس عليه الانتقالات",
+                "شهادةٌ مُسمّاةٌ لكلّ انتقالٍ، مع شاهدٍ مضادٍّ يُطلَب ولا يوجد",
+                "برهانُ الجمع (لا انتقالَ بلا باب) والمنع (لا انتقالَ ببابين)",
+            ),
+            "مطابقةُ المتن لرواية حفص": (
+                "مصحفٌ مُصدَّقٌ لحفصٍ مُودَعٌ بطوله وبصمته",
+                "مقابلةٌ موضعًا موضعًا تُخرِج بقيّةً مُسمّاةً لا نسبةً مجمَلة",
+            ),
+            "اجتيازُ أربعين اختبارًا من أربعين": (
+                "إيداعُ موادّ التقرير في الشجرة",
+                "ختمُها بطولٍ وبصمةٍ مُعلَنَين",
+                "تشغيلُ الأربعين ههنا لا نقلُ عددها",
+            ),
+        }
+    )
+)
+"""شروطُ استكمال البرهان لكلّ دعوى لم تُرخَّص؛ مُعلَنةٌ لتُنفَّذ لا لتُؤنِس."""
+
+
+@dataclass(frozen=True)
+class DeferredEntry:
+    """دعوى لم تُرخَّص: حكمُها وسببُه وشواهدُه وشروطُ استكمال برهانه."""
+
+    claim: str
+    verdict: Verdict
+    reason: str
+    witnesses: tuple[str, ...]
+    completion_conditions: tuple[str, ...]
+
+
+def deferred_register() -> tuple[DeferredEntry, ...]:
+    """سجلُّ ما لم يُرخَّص، بأسبابٍ وشواهدَ **مشتقّةٍ** من العقد لا منقولة."""
+
+    entries: list[DeferredEntry] = []
+    for name, check in the_ledger():
+        if check.verdict is Verdict.LICENSED:
+            continue
+        standing = check.material_standing
+        if check.verdict is Verdict.SUSPENDED:
+            reason = f"مادّتُه {standing.value}: {check.material.relative_path}"
+            witnesses = (f"المسارُ المُعلَن: {check.material.relative_path}",)
+        elif check.verdict is Verdict.REFUSED_BY_A_MEASURED_COUNTER_EVIDENCE:
+            reason = "قِيس فخالف: أدلّةٌ أعيد اشتقاقُها فنقضت المنقول"
+            witnesses = tuple(
+                f"{item.name}: منقولٌ {item.expected} · مقيسٌ {item.measured}"
+                for item in check.disagreeing
+            )
+        else:
+            reason = (
+                f"قِيس فلم يُخرِج: الموافقُ {len(check.agreeing)} "
+                f"دون الحدّ {check.minimum}"
+            )
+            witnesses = tuple(f"شرطٌ مُعلَن: {cond}" for cond in check.conditions)
+        entries.append(
+            DeferredEntry(
+                claim=name,
+                verdict=check.verdict,
+                reason=reason,
+                witnesses=witnesses,
+                completion_conditions=THE_COMPLETION_CONDITIONS.get(name, ()),
+            )
+        )
+    return tuple(entries)
 
 
 def the_block_and_the_freeze_are_untouched() -> bool:
@@ -868,6 +1153,24 @@ A_SUSPENDED_CLAIM_IS_NEVER_PROMOTED_BY_A_PASSING_TEST: Final[str] = (
     "بأسماء موادّها، ولا يرفعها اجتيازُ اختبارٍ في هذه الشجرة."
 )
 
+A_MATERIAL_STANDING_IS_RESOLVED_FROM_DISK_NOT_DECLARED_IN_A_FIELD: Final[str] = (
+    "A_MATERIAL_STANDING_IS_RESOLVED_FROM_DISK_NOT_DECLARED_IN_A_FIELD: مقامُ "
+    "المادّة يُشتَقُّ بمحاولة حلِّ مسارها ومطابقةِ طولها وبصمتها عند كلّ حكم؛ "
+    "فلا يُنزَّل مردودٌ إلى معلَّقٍ بعَلَمٍ مكتوبٍ باليد."
+)
+
+EVIDENCE_IS_A_REDERIVED_QUANTITY_NOT_A_COUNTED_STRING: Final[str] = (
+    "EVIDENCE_IS_A_REDERIVED_QUANTITY_NOT_A_COUNTED_STRING: لكلّ دليلٍ مولِّدٌ "
+    "يُشغَّل عند كلّ حكمٍ ويُقابَل مُخرَجُه بالمنقول؛ فلا يُنال ترخيصٌ بطول صفٍّ "
+    "من السلاسل."
+)
+
+A_SILENT_MEASUREMENT_IS_NOT_A_MEASURED_COUNTER_EVIDENCE: Final[str] = (
+    "A_SILENT_MEASUREMENT_IS_NOT_A_MEASURED_COUNTER_EVIDENCE: «قِيس فلم يُخرِج» "
+    "حالةٌ رابعةٌ مُسمّاةٌ غيرُ «قِيس فخالف»؛ وخلطُهما كان يُخرِج الصامتَ باسم "
+    "المردود بدليل."
+)
+
 NO_LICENCE_HERE_LIFTS_A_BLOCK_OR_THAWS_A_FREEZE: Final[str] = (
     "NO_LICENCE_HERE_LIFTS_A_BLOCK_OR_THAWS_A_FREEZE: لا ولادةَ ههنا، ولا حكمَ "
     "ولادة، ولا رفعَ حظرٍ، ولا فكَّ تجميد، ولا استيرادَ من kernel/."
@@ -880,6 +1183,9 @@ A116_BRIDGE_LICENCE_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     A_FIXPOINT_CLOSES_THE_DECLARED_MODEL_NOT_THE_LANGUAGE,
     A_CASE_OUTSIDE_THE_MODEL_IS_NOT_A_FORM_FORBIDDEN_IN_ARABIC,
     A_SUSPENDED_CLAIM_IS_NEVER_PROMOTED_BY_A_PASSING_TEST,
+    A_MATERIAL_STANDING_IS_RESOLVED_FROM_DISK_NOT_DECLARED_IN_A_FIELD,
+    EVIDENCE_IS_A_REDERIVED_QUANTITY_NOT_A_COUNTED_STRING,
+    A_SILENT_MEASUREMENT_IS_NOT_A_MEASURED_COUNTER_EVIDENCE,
     NO_LICENCE_HERE_LIFTS_A_BLOCK_OR_THAWS_A_FREEZE,
 )
 """البقايا بأسمائها؛ وكلُّ واحدةٍ منها فرقٌ يُحتَجّ به لا شعارٌ يُردَّد."""
