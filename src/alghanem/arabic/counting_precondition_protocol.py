@@ -32,7 +32,15 @@
 والاستيفاءُ على **المادّة**. فمن قرأ نفاذَ البروتوكول استيفاءً للشرط فقد
 قرأ غيرَ ما كُتب (`A_BINDING_PROTOCOL_IS_NOT_A_MET_PRECONDITION`).
 
-**وخامسًا: ولا رقمَ مُجمَّدٍ في هذه الوحدة سوى ختمِ الموقع.** لا عددَ
+**وخامسًا: البابُ مسلوكٌ لا مسنونٌ وحده.** بابٌ لا يمرّ به عددٌ واحدٌ قاعدةٌ
+لا يطيعها أحدٌ ولا يكذّبها أحد. فسجلُّ `THE_COUNTING_SITES` يُسمّي مواقعَ عدٍّ
+حقيقيّةً في الشجرة ويمرّرها بالباب، فتخرج أعدادُها حاملةً حالَها. وعادُّ كلِّ
+موقعٍ هو عادُّ وحدته بعينه، فما يخرج ههنا إعلانُ حالٍ على قياسٍ واحدٍ لا قياسٌ
+ثانٍ يُصادَم به الأوّل
+(`A_COUNT_RESTATED_AT_THE_DOOR_IS_NOT_A_SECOND_MEASUREMENT`)، وعددُ المواقع
+المسجَّلة لا يُقرأ تغطيةً للشجرة (`A_DOOR_WITH_NO_TRAFFIC_IS_A_RULE_NOBODY_OBEYS`).
+
+**وسادسًا: ولا رقمَ مُجمَّدٍ في هذه الوحدة سوى ختمِ الموقع.** لا عددَ
 مستوردين، ولا نسبةَ امتثال؛ فالشجرةُ تنمو فتكذب الأرقامُ المُجمَّدةُ فيها.
 والمستوردون يُقرأون من القرص شاهدًا يُنشَر، و**الاستيرادُ ليس مرورًا**: وحدةٌ
 تستورد هذا البابَ وتعُدّ من غيره لم تمرّ به
@@ -42,6 +50,7 @@
     ABindingProcedure       != AMetCondition
     AnImportOfTheDoor       != APassageThroughIt
     AnOrderInProse          != AnOrderInConstruction
+    ARegisteredSite         != AWholeTreeCovered
 
 ولا سلطانَ لهذه الوحدة: لا ولادةَ، ولا رفعَ حظر، ولا فكَّ تجميد، ولا استيرادَ
 من `kernel/` (`NO_PROTOCOL_HERE_LIFTS_A_BLOCK_OR_THAWS_A_FREEZE`).
@@ -64,19 +73,24 @@ __all__ = [
     "AN_IMPORT_IS_NOT_A_PASSAGE_THROUGH_THE_DOOR",
     "AN_ORDER_ENFORCED_BY_CONSTRUCTION_IS_NOT_AN_ORDER_PROMISED_IN_PROSE",
     "A_BINDING_PROTOCOL_IS_NOT_A_MET_PRECONDITION",
+    "A_COUNT_RESTATED_AT_THE_DOOR_IS_NOT_A_SECOND_MEASUREMENT",
     "A_COUNT_WITHOUT_A_DECLARED_STANDING_IS_REFUSED_NOT_ASSUMED_LICENSED",
+    "A_DOOR_WITH_NO_TRAFFIC_IS_A_RULE_NOBODY_OBEYS",
     "COUNTING_PROTOCOL_NAMED_RESIDUALS",
     "ClauseForce",
     "CountingProtocolError",
+    "CountingSite",
     "CountingStanding",
     "DeclaredCount",
     "EDITING_THE_FOUNDING_FUNCTION_IS_A_DELIBERATE_ACT_THAT_RESEALS_ITS_SITE",
     "NO_PROTOCOL_HERE_LIFTS_A_BLOCK_OR_THAWS_A_FREEZE",
     "ProtocolBinding",
     "ProtocolClause",
+    "THE_COUNTING_SITES",
     "THE_FOUNDING_SITE",
     "THE_PROTOCOL_CLAUSES",
     "count_under_the_protocol",
+    "declared_counts_of_the_tree",
     "importers_of_the_protocol",
     "protocol_binding",
     "require_the_protocol",
@@ -354,7 +368,90 @@ def count_under_the_protocol(
 
 
 # ---------------------------------------------------------------------------
-# خامسًا: شاهدُ المستوردين، يُقرأ من القرص ولا يُجمَّد
+# خامسًا: مواقعُ العدّ التي تمرّ بالباب فعلًا
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True, slots=True)
+class CountingSite:
+    """موقعُ عدٍّ مُعلَنٌ باسمه ووحدته وقراءته وعادِّه المؤجَّل."""
+
+    name: str
+    module: str
+    reading: str
+    counter: Callable[[], int]
+
+    def __post_init__(self) -> None:
+        if not self.name.strip():
+            raise CountingProtocolError("موقعُ عدٍّ بلا اسمٍ لا يُسجَّل.")
+        if not self.module.strip() or not self.reading.strip():
+            raise CountingProtocolError("موقعُ عدٍّ بلا وحدةٍ أو بلا قراءةٍ لا يُسجَّل.")
+        if not callable(self.counter):
+            raise CountingProtocolError("موقعُ عدٍّ بلا عادٍّ يُستدعى لا يُسجَّل.")
+
+
+def _partition_cells() -> int:
+    from .letter_haraka_partition import SourceRung, table_census
+
+    return table_census(SourceRung.WITH_PROSE).realized_cells
+
+
+def _partition_occurrences() -> int:
+    from .letter_haraka_partition import SourceRung, table_census
+
+    return table_census(SourceRung.WITH_PROSE).occurrences
+
+
+def _fatiha_carrier_occurrences() -> int:
+    from .carrier_projection_deposit import (
+        THE_DEPOSITS_PROJECTED,
+        WordBoundary,
+        census_of,
+    )
+
+    census = census_of(THE_DEPOSITS_PROJECTED[0], WordBoundary.SPACE_ONLY)
+    return census.carrier_occurrences
+
+
+THE_COUNTING_SITES: Final[tuple[CountingSite, ...]] = (
+    CountingSite(
+        name="خلايا جدول الحرف والحركة",
+        module="letter_haraka_partition",
+        reading="الخلايا المحقَّقة في الدرجة الثالثة",
+        counter=_partition_cells,
+    ),
+    CountingSite(
+        name="وقوعات جدول الحرف والحركة",
+        module="letter_haraka_partition",
+        reading="مجموعُ وقوعات الخلايا في الدرجة الثالثة",
+        counter=_partition_occurrences,
+    ),
+    CountingSite(
+        name="حوامل الفاتحة المُسقَطة",
+        module="carrier_projection_deposit",
+        reading="وقوعاتُ الحوامل بحدِّ الفراغ وحده",
+        counter=_fatiha_carrier_occurrences,
+    ),
+)
+"""مواقعُ عدٍّ حقيقيّةٌ تمرّ بالباب؛ وبها يصير البروتوكولُ مسلوكًا لا مسنونًا."""
+
+
+def declared_counts_of_the_tree(root: Path | None = None) -> tuple[DeclaredCount, ...]:
+    """تمريرُ كلِّ موقعٍ مُسجَّلٍ بالباب؛ فيخرج عددُه حاملًا حالَه تحت الدالّة.
+
+    والقيمةُ ههنا **ليست قياسًا ثانيًا**: عادُّها هو عادُّ وحدتها بعينه، ومرجعُ
+    صحّتها وحدتُها لا هذا الباب
+    (`A_COUNT_RESTATED_AT_THE_DOOR_IS_NOT_A_SECOND_MEASUREMENT`).
+    """
+
+    return tuple(
+        count_under_the_protocol(site.name, site.counter, root)
+        for site in THE_COUNTING_SITES
+    )
+
+
+# ---------------------------------------------------------------------------
+# سادسًا: شاهدُ المستوردين، يُقرأ من القرص ولا يُجمَّد
 # ---------------------------------------------------------------------------
 
 
@@ -416,11 +513,25 @@ NO_PROTOCOL_HERE_LIFTS_A_BLOCK_OR_THAWS_A_FREEZE: Final[str] = (
     "ولادة، ولا رفعَ حظرٍ، ولا فكَّ تجميد، ولا استيرادَ من kernel/."
 )
 
+A_DOOR_WITH_NO_TRAFFIC_IS_A_RULE_NOBODY_OBEYS: Final[str] = (
+    "A_DOOR_WITH_NO_TRAFFIC_IS_A_RULE_NOBODY_OBEYS: بابٌ لا يمرّ به عددٌ واحدٌ "
+    "قاعدةٌ لا يطيعها أحدٌ ولا يُكذِّبها أحد؛ فسجلُّ المواقع هو الذي يجعل "
+    "البروتوكول مسلوكًا، وعددُ مواقعه لا يُقرأ تغطيةً للشجرة."
+)
+
+A_COUNT_RESTATED_AT_THE_DOOR_IS_NOT_A_SECOND_MEASUREMENT: Final[str] = (
+    "A_COUNT_RESTATED_AT_THE_DOOR_IS_NOT_A_SECOND_MEASUREMENT: عادُّ الموقع هو "
+    "عادُّ وحدته بعينه، فما يخرج ههنا إعلانُ حالٍ على قياسٍ واحد، لا قياسٌ ثانٍ "
+    "يُصادَم به الأوّل."
+)
+
 COUNTING_PROTOCOL_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     A_BINDING_PROTOCOL_IS_NOT_A_MET_PRECONDITION,
     AN_ORDER_ENFORCED_BY_CONSTRUCTION_IS_NOT_AN_ORDER_PROMISED_IN_PROSE,
     A_COUNT_WITHOUT_A_DECLARED_STANDING_IS_REFUSED_NOT_ASSUMED_LICENSED,
     AN_IMPORT_IS_NOT_A_PASSAGE_THROUGH_THE_DOOR,
+    A_DOOR_WITH_NO_TRAFFIC_IS_A_RULE_NOBODY_OBEYS,
+    A_COUNT_RESTATED_AT_THE_DOOR_IS_NOT_A_SECOND_MEASUREMENT,
     EDITING_THE_FOUNDING_FUNCTION_IS_A_DELIBERATE_ACT_THAT_RESEALS_ITS_SITE,
     NO_PROTOCOL_HERE_LIFTS_A_BLOCK_OR_THAWS_A_FREEZE,
 )
@@ -436,6 +547,16 @@ def the_block_and_the_freeze_are_untouched() -> str:
 # ---------------------------------------------------------------------------
 # حرّاسُ الاستيراد
 # ---------------------------------------------------------------------------
+
+
+def _assert_the_sites_are_named_and_distinct() -> None:
+    if not THE_COUNTING_SITES:
+        raise CountingProtocolError(
+            "سجلُّ مواقع العدّ فارغ: " f"{A_DOOR_WITH_NO_TRAFFIC_IS_A_RULE_NOBODY_OBEYS}"
+        )
+    names = [site.name for site in THE_COUNTING_SITES]
+    if len(set(names)) != len(names):
+        raise CountingProtocolError("اسمُ موقعٍ مكرَّرٌ في السجلّ؛ فالتسمية تلتبس.")
 
 
 def _assert_the_clauses_are_ordered_and_named() -> None:
@@ -461,4 +582,5 @@ def _assert_the_site_is_sealed_at_import() -> None:
 
 
 _assert_the_clauses_are_ordered_and_named()
+_assert_the_sites_are_named_and_distinct()
 _assert_the_site_is_sealed_at_import()

@@ -11,14 +11,17 @@ import pytest
 from alghanem.arabic.a116_bridge_licence import MaterialStanding
 from alghanem.arabic.counting_precondition_protocol import (
     COUNTING_PROTOCOL_NAMED_RESIDUALS,
+    THE_COUNTING_SITES,
     THE_FOUNDING_SITE,
     THE_PROTOCOL_CLAUSES,
     ClauseForce,
     CountingProtocolError,
+    CountingSite,
     CountingStanding,
     DeclaredCount,
     ProtocolBinding,
     count_under_the_protocol,
+    declared_counts_of_the_tree,
     importers_of_the_protocol,
     protocol_binding,
     require_the_protocol,
@@ -313,3 +316,75 @@ def test_the_module_claims_no_authority() -> None:
     assert "NO_PROTOCOL_HERE_LIFTS_A_BLOCK_OR_THAWS_A_FREEZE" in (
         the_block_and_the_freeze_are_untouched()
     )
+
+
+def test_the_register_names_real_sites_and_each_one_passes_the_door() -> None:
+    """الإكمال: مواقعُ عدٍّ حقيقيّةٌ تمرّ بالباب، فيخرج عددُها حاملًا حالَه."""
+
+    declared = declared_counts_of_the_tree()
+    assert len(declared) == len(THE_COUNTING_SITES)
+    assert [count.name for count in declared] == [
+        site.name for site in THE_COUNTING_SITES
+    ]
+    for count in declared:
+        assert isinstance(count, DeclaredCount)
+        assert count.value > 0
+        assert count.site_standing is MaterialStanding.DEPOSITED_AND_SEALED
+
+
+def test_no_registered_count_is_licensed_while_a_half_is_suspended() -> None:
+    """المرورُ بالباب ليس ترخيصًا: نصفُ الدالّة الصوتيُّ موقوفٌ فكلُّها معلَّق."""
+
+    for count in declared_counts_of_the_tree():
+        assert not count.is_licensed
+        assert count.standing is CountingStanding.CONDITIONAL_ON_A_NAMED_SUSPENSION
+        assert count.unmet_halves
+
+
+def test_the_registered_counter_is_the_counter_of_its_own_module() -> None:
+    """العددُ عند الباب إعلانُ حالٍ على قياسٍ واحدٍ لا قياسٌ ثانٍ يُصادَم به."""
+
+    from alghanem.arabic.letter_haraka_partition import SourceRung, table_census
+
+    census = table_census(SourceRung.WITH_PROSE)
+    by_name = {count.name: count.value for count in declared_counts_of_the_tree()}
+    assert by_name["خلايا جدول الحرف والحركة"] == census.realized_cells
+    assert by_name["وقوعات جدول الحرف والحركة"] == census.occurrences
+
+
+def test_the_register_refuses_a_site_without_a_name_or_a_counter() -> None:
+    """موقعٌ بلا اسمٍ أو بلا عادٍّ يُستدعى لا يُسجَّل أصلًا."""
+
+    with pytest.raises(CountingProtocolError):
+        CountingSite(
+            name="   ",
+            module="letter_haraka_partition",
+            reading="قراءةٌ ما",
+            counter=lambda: 1,
+        )
+    with pytest.raises(CountingProtocolError):
+        CountingSite(
+            name="موقعٌ بلا عادّ",
+            module="letter_haraka_partition",
+            reading="قراءةٌ ما",
+            counter=7,  # type: ignore[arg-type]
+        )
+
+
+def test_a_registered_site_counts_nothing_when_the_door_is_stopped(
+    tmp_path: Path,
+) -> None:
+    """الأسبقيّةُ تشمل السجلَّ: بابٌ واقفٌ لا يُستدعى معه عادُّ موقعٍ واحد."""
+
+    (tmp_path / "src" / "alghanem" / "arabic").mkdir(parents=True)
+    with pytest.raises(CountingProtocolError):
+        declared_counts_of_the_tree(tmp_path)
+
+
+def test_an_empty_register_would_be_a_rule_nobody_obeys() -> None:
+    """البقيّةُ مُسمّاة: بابٌ بلا مرورٍ قاعدةٌ لا يطيعها أحدٌ ولا يكذّبها أحد."""
+
+    joined = "\n".join(COUNTING_PROTOCOL_NAMED_RESIDUALS)
+    assert "A_DOOR_WITH_NO_TRAFFIC_IS_A_RULE_NOBODY_OBEYS" in joined
+    assert "A_COUNT_RESTATED_AT_THE_DOOR_IS_NOT_A_SECOND_MEASUREMENT" in joined
+    assert THE_COUNTING_SITES
