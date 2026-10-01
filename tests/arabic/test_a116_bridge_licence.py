@@ -204,6 +204,23 @@ def test_a_sukun_seed_falls_out_of_the_model_and_that_is_not_a_prohibition() -> 
 # ---------------------------------------------------------------------------
 
 
+def _evidence(name: str, value: int, measured: int) -> a116.MeasuredEvidence:
+    return a116.MeasuredEvidence(name, value, lambda: measured)
+
+
+def _check(**kwargs: object) -> a116.LicenceCheck:
+    payload: dict[str, object] = {
+        "scope": "مجالٌ مُعلَن",
+        "conditions": ("شرطٌ مُعلَن",),
+        "effect": "أثرٌ مُعلَن",
+        "evidence": (_evidence("دليلٌ مقيس", 1, 1),),
+        "minimum": 1,
+        "material": a116.THE_SEALED_MATERIAL,
+    }
+    payload.update(kwargs)
+    return a116.LicenceCheck(**payload)  # type: ignore[arg-type]
+
+
 def test_a_check_missing_a_clause_is_refused_before_it_runs() -> None:
     """عقدٌ ناقصُ بندٍ لا يُشغَّل أصلًا، ولا يُكمَّل بقيمةٍ افتراضيّة."""
 
@@ -211,61 +228,99 @@ def test_a_check_missing_a_clause_is_refused_before_it_runs() -> None:
         {"scope": "   "},
         {"conditions": ()},
         {"minimum": 0},
+        {"effect": "  "},
+        {"material": "corpora/quran-simple-enhanced.txt"},
     ):
-        payload = {
-            "scope": "مجالٌ مُعلَن",
-            "conditions": ("شرطٌ مُعلَن",),
-            "effect": "أثرٌ مُعلَن",
-            "evidence": ("دليلٌ مقيس",),
-            "minimum": 1,
-            **kwargs,
-        }
         with pytest.raises(a116.A116BridgeLicenceError):
-            a116.LicenceCheck(**payload)  # type: ignore[arg-type]
+            _check(**kwargs)
 
 
-def test_an_absent_material_suspends_and_a_short_evidence_refuses() -> None:
-    """التعليقُ غيابُ المادّة، والرفضُ حضورُها دون الحدّ؛ ولا يُقرأ أحدُهما الآخر."""
+def test_a_material_standing_is_resolved_from_disk_not_declared_in_a_field() -> None:
+    """المقامُ يُشتَقّ بحلّ المسار ومطابقة الختم؛ ولا عَلَمَ يُكتَب فيُصدَّق."""
 
-    suspended = a116.LicenceCheck(
-        scope="مادّةٌ غيرُ مُودَعة",
-        conditions=("البايتاتُ في الشجرة",),
-        effect="شهادةٌ تُعاد",
-        evidence=(),
-        minimum=1,
-        material_is_deposited=False,
+    sealed = a116.THE_SEALED_MATERIAL
+    assert sealed.standing() is a116.MaterialStanding.DEPOSITED_AND_SEALED
+    assert sealed.standing().admits_measurement
+
+    absent = a116.DeclaredMaterial(
+        key="ghayb",
+        relative_path="corpora/a-file-that-is-not-here.txt",
     )
-    refused = a116.LicenceCheck(
-        scope="مادّةٌ مُودَعة",
-        conditions=("دليلان",),
-        effect="أثرٌ مُعلَن",
-        evidence=("دليلٌ واحد",),
-        minimum=2,
-    )
-    licensed = a116.LicenceCheck(
-        scope="مادّةٌ مُودَعة",
-        conditions=("دليلان",),
-        effect="أثرٌ مُعلَن",
-        evidence=("أوّل", "ثانٍ"),
-        minimum=2,
-    )
-    assert suspended.verdict is a116.Verdict.SUSPENDED
-    assert refused.verdict is a116.Verdict.REFUSED_WITH_EVIDENCE
-    assert licensed.verdict is a116.Verdict.LICENSED
+    assert absent.standing() is a116.MaterialStanding.ABSENT_FROM_THE_TREE
 
+    unsealed = a116.DeclaredMaterial(key="raw", relative_path="README.md")
+    assert unsealed.standing() is (
+        a116.MaterialStanding.PRESENT_WITHOUT_A_DECLARED_SEAL
+    )
+    assert not unsealed.standing().admits_measurement
 
-def test_evidence_is_never_read_from_an_undeposited_material() -> None:
-    """مادّةٌ غيرُ مُودَعةٍ لا يُعلَّق عليها دليل؛ والدعوى تُردّ لا تُسكَّت."""
+    broken = a116.DeclaredMaterial(
+        key="broken",
+        relative_path=sealed.relative_path,
+        declared_byte_length=sealed.declared_byte_length,
+        declared_sha256="0" * 64,
+    )
+    assert broken.standing() is a116.MaterialStanding.PRESENT_BUT_BREAKS_ITS_SEAL
 
     with pytest.raises(a116.A116BridgeLicenceError):
-        a116.LicenceCheck(
-            scope="مادّةٌ غيرُ مُودَعة",
-            conditions=("شرطٌ مُعلَن",),
-            effect="أثرٌ مُعلَن",
-            evidence=("دليلٌ من غائب",),
-            minimum=1,
-            material_is_deposited=False,
-        )
+        a116.DeclaredMaterial(key="half", relative_path="x", declared_sha256="a")
+
+
+def test_a_lying_flag_can_no_longer_demote_a_refusal_into_a_suspension() -> None:
+    """المادّةُ الحاضرةُ المختومةُ تُقاس ولو ادُّعي غيابُها؛ فلا بابَ لعَلَمٍ كاذب."""
+
+    check = _check(evidence=(), minimum=1)
+    assert check.material_standing.admits_measurement
+    assert check.verdict is a116.Verdict.REFUSED_FOR_A_SILENT_MEASUREMENT
+    assert not hasattr(check, "material_is_deposited")
+
+
+def test_evidence_is_a_rederived_quantity_so_a_fabricated_row_never_licenses() -> None:
+    """الدليلُ يُعاد اشتقاقُه؛ فصفٌّ مختلَقٌ يُنقَض بمولِّده ولا يُعَدّ ترخيصًا."""
+
+    honest = _check(
+        evidence=(_evidence("أوّل", 2, 2), _evidence("ثانٍ", 3, 3)),
+        minimum=2,
+    )
+    fabricated = _check(
+        evidence=(_evidence("أوّل", 2, 2), _evidence("مختلَق", 3, 4)),
+        minimum=2,
+    )
+    assert honest.verdict is a116.Verdict.LICENSED
+    assert fabricated.verdict is (a116.Verdict.REFUSED_BY_A_MEASURED_COUNTER_EVIDENCE)
+    assert fabricated.disagreeing[0].measured == 4
+    with pytest.raises(a116.A116BridgeLicenceError):
+        a116.MeasuredEvidence("  ", 1, lambda: 1)
+
+
+def test_a_silent_measurement_is_not_a_measured_counter_evidence() -> None:
+    """«قِيس فلم يُخرِج» بابٌ رابعٌ مُسمًّى، لا يُخرَج باسم «قِيس فخالف»."""
+
+    silent = _check(evidence=(), minimum=1)
+    short = _check(evidence=(_evidence("واحد", 1, 1),), minimum=2)
+    countered = _check(evidence=(_evidence("واحد", 1, 2),), minimum=1)
+    assert silent.verdict is a116.Verdict.REFUSED_FOR_A_SILENT_MEASUREMENT
+    assert short.verdict is a116.Verdict.REFUSED_FOR_A_SILENT_MEASUREMENT
+    assert countered.verdict is (a116.Verdict.REFUSED_BY_A_MEASURED_COUNTER_EVIDENCE)
+    assert silent.verdict.is_a_refusal and countered.verdict.is_a_refusal
+    assert not a116.Verdict.SUSPENDED.is_a_refusal
+
+
+def test_an_absent_material_suspends_before_any_evidence_is_read() -> None:
+    """غيابُ المادّة تعليقٌ سابقٌ على الدليل؛ ولا يُقرأ غيابُ البايتات ردًّا."""
+
+    suspended = _check(
+        material=a116.DeclaredMaterial(
+            key="ghayb", relative_path="exhibits/a116-report/A116_Report_AR.html"
+        ),
+        evidence=(_evidence("دليلٌ من غائب", 1, 9),),
+        minimum=1,
+    )
+    assert suspended.verdict is a116.Verdict.SUSPENDED
+    assert suspended.verdict not in {
+        a116.Verdict.REFUSED_BY_A_MEASURED_COUNTER_EVIDENCE,
+        a116.Verdict.REFUSED_FOR_A_SILENT_MEASUREMENT,
+    }
 
 
 def test_the_report_rederivation_claim_is_refused_by_what_disk_gives() -> None:
@@ -273,8 +328,42 @@ def test_the_report_rederivation_claim_is_refused_by_what_disk_gives() -> None:
 
     ledger = dict(a116.the_ledger())
     claim = ledger["أرقامُ التقرير مُعادةُ الاشتقاق من هذه البايتات"]
-    assert claim.verdict is a116.Verdict.REFUSED_WITH_EVIDENCE
-    assert claim.material_is_deposited
+    assert claim.verdict is a116.Verdict.REFUSED_BY_A_MEASURED_COUNTER_EVIDENCE
+    assert claim.material_standing.admits_measurement
+    assert claim.disagreeing
+
+
+def test_the_deferred_register_names_a_reason_and_witnesses_for_each_entry() -> None:
+    """لكلّ مؤجَّلٍ سببٌ وشواهدُ مشتقّةٌ وشروطُ استكمال؛ ولا مؤجَّلَ صامت."""
+
+    register = a116.deferred_register()
+    assert register
+    for entry in register:
+        assert entry.verdict is not a116.Verdict.LICENSED
+        assert entry.reason.strip()
+        assert entry.witnesses
+        assert entry.completion_conditions
+    countered = next(
+        entry
+        for entry in register
+        if entry.verdict is a116.Verdict.REFUSED_BY_A_MEASURED_COUNTER_EVIDENCE
+    )
+    assert any("مقيسٌ" in witness for witness in countered.witnesses)
+
+
+def test_the_alif_row_is_wholly_empty_so_the_transcribed_thirteenth_is_not_met() -> (
+    None
+):
+    """المنقولُ 113 يشهد لـ‎اْ‎؛ وهذه البايتات لا تُخرِج ألفًا تحمل علامةً أصلًا."""
+
+    reading = a116.alif_row_reading()
+    assert reading.alif_occurrences > 0
+    assert reading.alif_bearing_a_sukun == 0
+    assert reading.alif_bearing_any_haraka == 0
+    assert reading.dagger_alifs == 0
+    assert reading.alif_waslas == 0
+    assert reading.the_alif_row_is_wholly_empty
+    assert a116.census().attested_cells == a116.THE_HUNDRED_AND_TWELVE
 
 
 def test_the_three_open_claims_stay_suspended_by_their_named_materials() -> None:

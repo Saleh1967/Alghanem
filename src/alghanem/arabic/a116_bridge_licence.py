@@ -111,6 +111,7 @@ __all__ = [
     "NO_LICENCE_HERE_LIFTS_A_BLOCK_OR_THAWS_A_FREEZE",
     "RowStanding",
     "SyllableState",
+    "THE_ALIF_ROW_IS_EMPTY_ON_THESE_BYTES_SO_THE_THIRTEENTH_IS_NOT_WITNESSED",
     "THE_CARRIERS",
     "THE_EXAMINED_DEPOSIT",
     "THE_HARAKAT",
@@ -122,7 +123,9 @@ __all__ = [
     "THE_UNDEPOSITED_MATERIALS",
     "TranscribedRow",
     "Verdict",
+    "AlifRowReading",
     "a116_cells",
+    "alif_row_reading",
     "atomic_projection",
     "carrier_clusters",
     "census",
@@ -485,6 +488,57 @@ def census() -> A116Census:
         absent_cells=absent,
         complete_words=complete,
         bridge_words=len(words) - complete,
+    )
+
+
+@dataclass(frozen=True)
+class AlifRowReading:
+    """قراءةُ صفّ الألف وحدَه؛ موضعُ الانزياح بين 113 المنقولة و112 المقيسة."""
+
+    alif_occurrences: int
+    alif_bearing_a_sukun: int
+    alif_bearing_any_haraka: int
+    dagger_alifs: int
+    alif_waslas: int
+    absent_alif_cells: tuple[tuple[str, str], ...]
+
+    @property
+    def the_alif_row_is_wholly_empty(self) -> bool:
+        """أخلا صفُّ الألف كلُّه؟ فإن خلا فالمشهودُ 112 لا 113."""
+
+        return len(self.absent_alif_cells) == len(THE_HARAKAT)
+
+
+def alif_row_reading() -> AlifRowReading:
+    """لِمَ لم تبلغ 113؟ الجوابُ مقيسٌ: الألفُ في هذه البايتات لا تحمل علامةً.
+
+    فالمنقولُ يُبقي ثلاثًا غيرَ مرخّصةٍ (ألفٌ بفتحةٍ · بضمّةٍ · بكسرة) ويشهد
+    لألفٍ بسكون؛ وهذه
+    البايتاتُ لا تُخرِج ألفًا تحمل سكونًا ولا حركةً ولا خنجريّةً ولا وصلًا. فالفرقُ
+    في **المادّة أو في قاعدة العنقدة**، ولا تُحرَّك قاعدةٌ ههنا لتوافقَ رقمًا
+    (`THE_ALIF_ROW_IS_EMPTY_ON_THESE_BYTES_SO_THE_THIRTEENTH_IS_NOT_WITNESSED`).
+    """
+
+    text = "\n".join(ayah_rows_of(THE_EXAMINED_DEPOSIT))
+    sukun = "\u0652"
+    with_sukun = 0
+    with_haraka = 0
+    for index, char in enumerate(text):
+        if char != "\u0627":
+            continue
+        following = text[index + 1 : index + 2]
+        if following == sukun:
+            with_sukun += 1
+        elif following in set(THE_HARAKAT) - {sukun}:
+            with_haraka += 1
+    absent = tuple(cell for cell in census().absent_cells if cell[0] == "\u0627")
+    return AlifRowReading(
+        alif_occurrences=text.count("\u0627"),
+        alif_bearing_a_sukun=with_sukun,
+        alif_bearing_any_haraka=with_haraka,
+        dagger_alifs=text.count("\u0670"),
+        alif_waslas=text.count("\u0671"),
+        absent_alif_cells=absent,
     )
 
 
@@ -1079,7 +1133,9 @@ def deferred_register() -> tuple[DeferredEntry, ...]:
         standing = check.material_standing
         if check.verdict is Verdict.SUSPENDED:
             reason = f"مادّتُه {standing.value}: {check.material.relative_path}"
-            witnesses = (f"المسارُ المُعلَن: {check.material.relative_path}",)
+            witnesses: tuple[str, ...] = (
+                f"المسارُ المُعلَن: {check.material.relative_path}",
+            )
         elif check.verdict is Verdict.REFUSED_BY_A_MEASURED_COUNTER_EVIDENCE:
             reason = "قِيس فخالف: أدلّةٌ أعيد اشتقاقُها فنقضت المنقول"
             witnesses = tuple(
@@ -1171,6 +1227,14 @@ A_SILENT_MEASUREMENT_IS_NOT_A_MEASURED_COUNTER_EVIDENCE: Final[str] = (
     "المردود بدليل."
 )
 
+THE_ALIF_ROW_IS_EMPTY_ON_THESE_BYTES_SO_THE_THIRTEENTH_IS_NOT_WITNESSED: Final[str] = (
+    "THE_ALIF_ROW_IS_EMPTY_ON_THESE_BYTES_SO_THE_THIRTEENTH_IS_NOT_WITNESSED: "
+    "الألفُ في هذا المُودَع لا تحمل سكونًا ولا حركةً ولا خنجريّةً ولا وصلًا، فصفُّها "
+    "خالٍ كلُّه والمشهودُ 112؛ والمنقولُ 113 يشهد لألفٍ بسكون، والفرقُ في المادّة "
+    "أو "
+    "في قاعدة العنقدة، ولا تُحرَّك قاعدةٌ لتوافقَ رقمًا."
+)
+
 NO_LICENCE_HERE_LIFTS_A_BLOCK_OR_THAWS_A_FREEZE: Final[str] = (
     "NO_LICENCE_HERE_LIFTS_A_BLOCK_OR_THAWS_A_FREEZE: لا ولادةَ ههنا، ولا حكمَ "
     "ولادة، ولا رفعَ حظرٍ، ولا فكَّ تجميد، ولا استيرادَ من kernel/."
@@ -1186,6 +1250,7 @@ A116_BRIDGE_LICENCE_NAMED_RESIDUALS: Final[tuple[str, ...]] = (
     A_MATERIAL_STANDING_IS_RESOLVED_FROM_DISK_NOT_DECLARED_IN_A_FIELD,
     EVIDENCE_IS_A_REDERIVED_QUANTITY_NOT_A_COUNTED_STRING,
     A_SILENT_MEASUREMENT_IS_NOT_A_MEASURED_COUNTER_EVIDENCE,
+    THE_ALIF_ROW_IS_EMPTY_ON_THESE_BYTES_SO_THE_THIRTEENTH_IS_NOT_WITNESSED,
     NO_LICENCE_HERE_LIFTS_A_BLOCK_OR_THAWS_A_FREEZE,
 )
 """البقايا بأسمائها؛ وكلُّ واحدةٍ منها فرقٌ يُحتَجّ به لا شعارٌ يُردَّد."""
