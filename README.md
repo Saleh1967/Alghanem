@@ -8170,7 +8170,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 580-fold: 32 pairs, then 18,824. Both questions were answered,
+The widening is 612-fold: 32 pairs, then 19,589. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8185,11 +8185,11 @@ a specimen written deliberately illegal to show it yields no state. Neither is
 Arabic. The least frequent pair that *is* Arabic sits at 9, nine times the
 published floor. So the minimum of this census measures what the medium quotes,
 not what the script allows, and the distribution turns out to be a cliff rather
-than a tail: six shadda-bearing pairs hold 99.936%, and the remaining three
+than a tail: six shadda-bearing pairs hold 99.939%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 4,898 of 18,792
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,058 of 19,557
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8779,9 +8779,9 @@ The table is filled along a cumulative ladder: the Fātiḥa alone realises 41 o
 the 112 cells over 100 occurrences and 20 of the 28 letters; adding Fatḥ 48:29
 takes it to 74 cells and 27 letters; adding the tree's own prose — with this
 module excluded from it by name, so that its figures do not move whenever its
-description is edited — takes it to 108 cells over 87,213 occurrences with every
+description is edited — takes it to 108 cells over 90,753 occurrences with every
 letter present. Five cells stay empty, and the module refuses to read them as
-prohibitions until their margins are consulted. Sukūn is 467 of 87,213 — 0.54%
+prohibitions until their margins are consulted. Sukūn is 486 of 90,753 — 0.54%
 — so the expected counts for ث and ظ bearing it are 1.470 and 1.052, and zero is
 unremarkable at each. Alef's whole row is ten occurrences. **Four of the five
 absences are consistent with scarcity**, and one survives the filter:
