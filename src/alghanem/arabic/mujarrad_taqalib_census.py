@@ -29,32 +29,57 @@
 `ALGHANEM_MASAQ_PATH`). فالإشغالُ معلَّقٌ باسم مادّته، ولا يُقدَّر، ولا
 يُستبدَل به إحصاءُ شكلٍ سطحيٍّ يُسمّى فعلًا وهو غيرُه.
 
-**وثالثًا: المقلوبُ مقيسٌ على جدول «مقاييس اللغة» المختوم.**
-الجردُ: جذورُ `maqayis_by_root_csv_999.csv` من الأصناف الحرفيّةِ الثلاثة
-(«ثلاثي» و«مضاعف» و«ثلاثي معتل»)، مطويّةً بـ`THE_DECLARED_FOLD` إلى
-ثمانيةٍ وعشرين حرفًا. ثمّ يُجمَع كلُّ جذرٍ إلى **مداره**: مجموعةُ حروفه
-مرتَّبةً، وفضاءُ المدار تباديلُ متعدِّدِ المجموعة `n! / ∏ mᵢ!`.
+**وثالثًا: المقلوبُ مقيسٌ على جدول «مقاييس اللغة» المختوم، وطيُّه مُتّفَقٌ
+عليه لا مُعادُ الكتابة.**
+`THE_FOLD_IS_READ_FROM_THE_AGREED_BRIDGE_NOT_REWRITTEN`: الطيُّ بندٌ من
+جسر الإملاء والصوت والترميز المتّفق عليه، يُقرأ من `tajsir_bridge.fold_map`
+ولا يُكتَب ههنا ثانيةً. فترميزُ الهمزة **شرطُ إمكانٍ للعدّ** لا تفصيلٌ
+بعده: الجردُ يكتب اثنين وثلاثين حرفًا، والجسرُ يردُّ مقاعدَ الهمزة كلَّها
+إلى **الألف** لا إلى الهمزة. ومن طوى طيًّا ثانيًا ههنا عدَّ شجرةً أخرى.
+
+والجردُ: جذورُ `maqayis_by_root_csv_999.csv` من الأصناف الحرفيّةِ الثلاثة
+(«ثلاثي» و«مضاعف» و«ثلاثي معتل»)، مطويّةً بالجسر إلى ثمانيةٍ وعشرين حرفًا.
+ثمّ يُجمَع كلُّ جذرٍ إلى **مداره**: مجموعةُ حروفه مرتَّبةً، وفضاءُ المدار
+تباديلُ متعدِّدِ المجموعة `n! / ∏ mᵢ!`.
 
 والمقيسُ على هذه البايتات: **2,099** مدارًا، فضاؤها **11,215** خليّة،
-المستعملُ منها **4,559**، والباقي **6,656**.
+المستعملُ منها **4,559**، والباقي **6,656**. وهذه الثلاثةُ **لا تتحرّك**
+بتبدّل الطيّ: قيستْ بطيِّ الهمزةِ همزةً فخرجت هي نفسُها. فالهويّاتُ ثابتةٌ
+والفرقُ في موضعٍ آخر، يأتي في الفقرة التالية.
+
+`EVERY_FIGURE_HERE_IS_A_FIGURE_IN_THIS_DEPOSIT`: وكلُّ رقمٍ ههنا محكومٌ
+بهذا المُودَع وحدَه. المدوّنةُ تحكم على المدوّنة؛ وهي شاهدٌ من شواهد
+العربيّة لا العربيّةُ كلُّها، فلا يُقرأ خلوٌّ فيها نفيًا عن اللسان.
 
 **ورابعًا: الممتنعُ لا يُعَدّ ممتنعًا حتّى يُقاس على المستعمل.**
 القاعدتان المُعلَنتان ههنا أمرُهما مقيسٌ لا مُجادَلٌ فيه:
 
-| القاعدة | خلاياها | مستعملٌ منها | نسبةُ الداخل | نسبةُ الخارج |
-|---|---|---|---|---|
-| لا تتماثل الفاءُ والعين | 459 | 2 | 0.436% | 42.367% |
-| لا يتجاور حرفان من مخرجٍ واحد | 320 | 80 | 25.000% | 41.111% |
+| القاعدة | خلاياها | مستعملٌ منها | نسبةُ الداخل | نسبةُ الخارج | امتنعت عنه |
+|---|---|---|---|---|---|
+| لا تتماثل الفاءُ والعين | 459 | 2 | 0.436% | 42.367% | 0 |
+| لا يتجاور حرفان من مخرجٍ واحد | 260 | 65 | 25.000% | 42.074% | 1,158 |
+
+`THE_RULE_THAT_CANNOT_READ_A_LETTER_ABSTAINS_IT_DOES_NOT_PERMIT`: والعمودُ
+الأخيرُ ثمنُ الجسر المتّفق عليه، مقيسًا. قاعدةُ الجوار تقرأ **ترتيبَ
+المخارج**، وفيه ثمانيةٌ وعشرون حرفًا منها «ء» وليس فيها «ا». والجسرُ يردُّ
+مقاعدَ الهمزة إلى «ا»، فتَفقِد القاعدةُ موطئَها على **1,158** خليّة. فلو
+قُرئ سكوتُها إباحةً لانتفخ الحرُّ بألفٍ ومئةٍ وثمانٍ وخمسين خليّةً بلا
+فحص. فتُخرَج ثلاثيّةَ الحكم: تمنع · تُبيح · **تمتنع**؛ والممتنَعُ عنه
+مُخرَجٌ من البسط والمقام معًا ومُسمًّى بعددِه.
+
+وههنا قياسٌ يُقرأ: الطيُّ حرّك **قاعدةَ** القاعدة (320 خليّةً → 260)
+ولم يُحرّك **نسبتَها**: 25.000% في الطيَّين كليهما. فالثمنُ مقيسٌ في
+الأساس، لا في الميل.
 
 `AN_IMPOSSIBILITY_WITH_ATTESTED_INSTANCES_IS_NOT_AN_IMPOSSIBILITY`: قاعدةٌ
 يُخالفها مستعملٌ واحدٌ ليست امتناعًا بل ميلًا. والأولى يُخالفها اثنان
-والثانيةَ ثمانون؛ ومع ذلك أثرُهما مقيسٌ ولا يُمحى، وهو في العمودين
+والثانيةَ خمسةٌ وستّون؛ ومع ذلك أثرُهما مقيسٌ ولا يُمحى، وهو في العمودين
 الأخيرين. فتُخرَج كلٌّ منهما **ميلًا مقيسًا** بنسبتَيه، لا امتناعًا، ولا
 لا شيء. ويُفترقان في القوّة افتراقًا بيّنًا: الأولى تُهبِط الاستعمالَ إلى
 جزءٍ من مئة، والثانيةُ إلى نحو ثلاثة أخماسه.
 
 `THE_USED_AMONG_THE_FORBIDDEN_IS_WARRANTED_BY_SAMA_ALONE_HERE`: المستعملُ
-داخلَ الممتنع — اثنان وثمانون خليّةً — كلُّه مُستنَدُه **السماع**: وقوعُه
+داخلَ الممتنع — سبعةٌ وستّون خليّةً — كلُّه مُستنَدُه **السماع**: وقوعُه
 في الجرد المختوم. وأمّا **القياس** فلا يُمنَح ههنا ألبتّة، لأنّه يطلب إيداعَ
 قاعدةٍ مُصرَّحٍ بها تُرخِّصُ المسكوتَ عنه، وليس في الشجرة إيداعٌ كذلك.
 
@@ -66,17 +91,36 @@
 إلّا قيدٌ **حسّاسٌ للترتيب** (كقاعدتَي الجدول أعلاه، وكلتاهما حسّاسةٌ
 للترتيب). وهذه قضيّةٌ في بنية المسألة، تُثبِتها الاختباراتُ ولا تُروى.
 
-فالتقسيمُ المقيس: مستعملٌ غيرُ ممنوع **4,477** · مستعملٌ ممنوع **82** ·
-ممنوعٌ غيرُ مستعمل **695** · **مهمل 5,961**. والمهملُ ههنا بقيّةٌ بعد
-الممنوع، لا صنفٌ له قاعدةٌ تُخرِجه.
+فالتقسيمُ المقيسُ على ستِّ منازل، لا على أربع:
+
+| المنزلة | مستعمل | غيرُ مستعمل |
+|---|---|---|
+| لا قاعدةَ تمنعه | 4,120 | 5,244 |
+| قاعدةٌ تمنعه | 67 | 650 |
+| قاعدةٌ امتنعت عن الحكم | 372 | 762 |
+
+والمجموع 11,215، والمستعملُ 4,559. والمهملُ ههنا **5,244** وحدَها: ما
+سكتَ عنه الجردُ وقد حكمت عليه القواعدُ كلُّها بالإباحة. وأمّا الـ762
+فليست مهملًا بل **غيرَ مفحوصة**؛ وضمُّها إلى المهمل يدَّعي فحصًا لم يقع.
+
+والترتيبُ في هذا التقسيم: المنعُ أوّلًا، ثمّ الامتناعُ عن الحكم، ثمّ
+الحرّيّة. ولذلك خرج صفُّ الامتناع **1,134** لا **1,158**: أربعٌ وعشرون
+خليّةً امتنعت عنها قاعدةُ الجوار وقد منعَتْها قاعدةُ الفاء والعين، فحُسبت
+ممنوعةً؛ إذ حكمٌ واقعٌ أولى من سكوتٍ عن حكم.
 
 **وسادسًا: الرباعيُّ مقيسٌ خاليًا لا محذوفًا.**
 `THE_QUADRILATERAL_ROW_IS_MEASURED_EMPTY_NOT_DROPPED`: في الجرد المختوم
 **ثلاثةُ** جذورٍ رباعيّةٍ فقط، صنفُها «رباعي مكرر» وكلُّها على شكل `ABAB`،
 ففضاءُ تقاليبها ستّةٌ لكلٍّ لا أربعةٌ وعشرون. فالرباعيُّ يُخرَج بثلاثته
 وبفضائه، ولا يُحذَف صفُّه؛ إذ حذفُ درجةٍ خاليةٍ يرفع التغطيةَ بإخفاء خلوٍّ
-مقيس. وليس في هذا الجرد رباعيٌّ غيرُ مكرَّر ألبتّة، فالأربعةُ والعشرون
-فضاءٌ صوريٌّ بلا مادّةٍ ههنا.
+مقيس.
+
+`A_FORMAL_SPACE_IS_NOT_A_CLAIM_ABOUT_ARABIC`: والأربعةُ والعشرون **ليست
+محذوفةً** بخلوِّ الجرد منها. فالفضاءُ حسابٌ على شكل التكرار وحدَه، قائمٌ
+بنفسه لا بشاهد؛ ولذلك يُخرِج `quadrilateral_formal_shapes` أشكالَ الرباعيِّ
+الخمسةَ عشرَ كلَّها بفضائها — `ABCD` بأربعةٍ وعشرين و`ABAB` بستّة — ثمّ
+يَصِلُ بكلِّ شكلٍ شاهدَه في هذا المُودَع **عمودًا منفصلًا**: مشهودٌ له أو
+مسكوتٌ عنه. فالجبرُ الصوريُّ يقوم على قدمَيه، والمُودَعُ يشهد ولا يُلغي.
 
 **وسابعًا: شرطُ «لا يُستعمل نمطُ القالب من صنفين مختلفين» — مقيسٌ لا
 مفترَض.**
@@ -88,8 +132,9 @@
 
 `THE_FOLD_IS_A_DECLARED_STEP_AND_IT_COSTS`: الجردُ الوارد يكتب اثنين
 وثلاثين حرفًا (مقاعدُ الهمزة وصورتا الألف والياء)، والطيُّ يردُّها إلى
-ثمانيةٍ وعشرين **بثمنٍ مقيس**: ثلاثُ صورٍ متمايزةٍ تصير واحدة. فالثمنُ
-مكتوبٌ مع العدد، ولا يُطوى حرفٌ صامتًا.
+ثمانيةٍ وعشرين **بثمنَين مقيسَين**: ثلاثُ صورٍ متمايزةٍ تصير واحدة
+(حدا · دفا · لما)، وألفٌ ومئةٌ وثمانٍ وخمسون خليّةً تفقد قاعدةُ الجوار
+موطئَها عليها. فالثمنان مكتوبان مع العدد، ولا يُطوى حرفٌ صامتًا.
 
 وهذه الوحدةُ قراءةٌ لا سلطة: لا ولادةَ فيها، ولا حكمَ ولادة، ولا تجميدَ
 `E0`، ولا استيرادَ من `kernel/`، ولا يُرفَع بها حجبُ طبقة.
@@ -99,6 +144,7 @@ from __future__ import annotations
 
 import math
 from collections import Counter
+from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import Enum
 from itertools import permutations
@@ -109,14 +155,18 @@ from typing import Final
 from .classical_makharij_table import CLASSICAL_ORDINAL
 from .maqayis_root_table_deposit import root_table_rows
 from .masaq_corpus_deposit import MASAQ_PATH_VARIABLE
+from .tajsir_bridge import fold_map
 
 __all__ = [
     "A_MULTISET_RULE_CANNOT_EXPLAIN_A_GAP_INSIDE_ITS_OWN_ORBIT_NOTE",
     "AN_IMPOSSIBILITY_WITH_ATTESTED_INSTANCES_IS_NOT_AN_IMPOSSIBILITY_NOTE",
     "EVERY_RUNG_NAMES_WHAT_CUT_IT_AND_WHO_SAID_SO_NOTE",
+    "A_FORMAL_SPACE_IS_NOT_A_CLAIM_ABOUT_ARABIC_NOTE",
+    "EVERY_FIGURE_HERE_IS_A_FIGURE_IN_THIS_DEPOSIT_NOTE",
     "THE_CENSUS_AT_MEASUREMENT",
-    "THE_DECLARED_FOLD",
     "THE_FOLD_IS_A_DECLARED_STEP_AND_IT_COSTS_NOTE",
+    "THE_FOLD_IS_READ_FROM_THE_AGREED_BRIDGE_NOT_REWRITTEN_NOTE",
+    "THE_RULE_THAT_CANNOT_READ_A_LETTER_ABSTAINS_IT_DOES_NOT_PERMIT_NOTE",
     "THE_LETTER_CLASSES_READ_HERE",
     "THE_QUADRILATERAL_CLASS",
     "THE_QUADRILATERAL_ROW_IS_MEASURED_EMPTY_NOT_DROPPED_NOTE",
@@ -131,21 +181,29 @@ __all__ = [
     "CellStanding",
     "ClassCollision",
     "ForbiddingRule",
+    "FormalShape",
     "MujarradTaqalibError",
     "OrbitReading",
     "RulePrice",
+    "RuleVerdict",
     "RungWarrant",
+    "ShapeWitness",
     "TaqalibCensus",
     "UsageWarrant",
     "WaznRung",
     "class_collisions",
     "classify_cell",
+    "declared_fold",
     "fold_root",
     "multiset_permutation_count",
     "orbit_readings",
+    "quadrilateral_formal_shapes",
     "quadrilateral_readings",
     "rule_prices",
+    "rule_verdict",
+    "rules_abstaining_on",
     "taqalib_census",
+    "unranked_letters_of",
     "wazn_occupancy_is_suspended",
 ]
 
@@ -199,10 +257,36 @@ class MujarradTaqalibError(ValueError):
     """رفضٌ صريح: جردٌ متبدّل، أو جذرٌ خارج الجرد، أو رقمٌ بلا قاعدة."""
 
 
-THE_DECLARED_FOLD: Final[MappingProxyType[str, str]] = MappingProxyType(
-    {"أ": "ء", "إ": "ء", "آ": "ء", "ئ": "ء", "ؤ": "ء", "ا": "ء", "ى": "ي"}
+def declared_fold() -> Mapping[str, str]:
+    """الطيُّ المتّفقُ عليه، مقروءًا من `tajsir_bridge` لا مُعادَ الكتابة ههنا.
+
+    وهو بندٌ واحدٌ في الشجرة: مقاعدُ الهمزة إلى **الألف** لا إلى الهمزة،
+    والهمزةُ على واوٍ إلى الواو، وعلى ياءٍ وألفٌ مقصورةٌ إلى الياء. ومن
+    أعاد كتابتَه ههنا فتح بابَ طيَّين لجسرٍ واحد.
+    """
+
+    return fold_map()
+
+
+THE_FOLD_IS_READ_FROM_THE_AGREED_BRIDGE_NOT_REWRITTEN_NOTE: Final[str] = (
+    "طيُّ الإملاء والصوت مُتّفَقٌ عليه في `tajsir_bridge.fold_map`، ويُقرأ "
+    "منه؛ فلا يُكتَب في هذه الوحدة طيٌّ ثانٍ يُشبهه ويُخالفه في بندٍ"
 )
-"""بنودُ الطيّ بنصّها: مقاعدُ الهمزة إلى الهمزة، والألفُ المقصورةُ إلى الياء."""
+
+THE_RULE_THAT_CANNOT_READ_A_LETTER_ABSTAINS_IT_DOES_NOT_PERMIT_NOTE: Final[str] = (
+    "الطيُّ المتّفقُ عليه يُصيّر مقاعدَ الهمزة ألفًا، والألفُ ليست في ترتيب "
+    "المخارج؛ فقاعدةُ الجوار تمتنع عن الحكم ههنا، وسكوتُها ليس إباحة"
+)
+
+A_FORMAL_SPACE_IS_NOT_A_CLAIM_ABOUT_ARABIC_NOTE: Final[str] = (
+    "فضاءُ التقاليب حسابٌ على شكل التكرار وحدَه، يقوم بنفسه: `ABCD` أربعةٌ "
+    "وعشرون وإن خلا منه الجرد؛ والخلوُّ غيابُ شاهدٍ لا نقضَ للفضاء"
+)
+
+EVERY_FIGURE_HERE_IS_A_FIGURE_IN_THIS_DEPOSIT_NOTE: Final[str] = (
+    "كلُّ رقمٍ ههنا محكومٌ بمُودَعٍ واحدٍ مختوم: المدوّنةُ تحكم على المدوّنة، "
+    "وهي شاهدٌ من شواهدِ العربيّة لا العربيّةُ كلُّها"
+)
 
 THE_LETTER_CLASSES_READ_HERE: Final[tuple[str, ...]] = (
     "ثلاثي",
@@ -223,7 +307,7 @@ def fold_root(root: str) -> str:
 
     if not root:
         raise MujarradTaqalibError("جذرٌ فارغٌ لا يُطوى ولا يُعَدّ.")
-    return "".join(THE_DECLARED_FOLD.get(letter, letter) for letter in root)
+    return "".join(declared_fold().get(letter, letter) for letter in root)
 
 
 def multiset_permutation_count(letters: str) -> int:
@@ -335,6 +419,14 @@ def wazn_occupancy_is_suspended() -> str:
     return THE_WAZN_OCCUPANCY_IS_SUSPENDED_FOR_ABSENT_MATERIAL_NOTE
 
 
+class RuleVerdict(Enum):
+    """حكمُ قاعدةٍ على صورةٍ. وثلاثةٌ لا اثنان: الامتناعُ عن الحكم صنفٌ مُسمًّى."""
+
+    FORBIDS = "تمنع هذه الصورة"
+    PERMITS = "لا تمنعها"
+    UNREADABLE_FOR_AN_UNRANKED_LETTER = "تمتنع عن الحكم: حرفٌ لا رتبةَ له في جدولها"
+
+
 class ForbiddingRule(Enum):
     """قواعدُ الامتناع المُعلَنة، وكلتاهما حسّاسةٌ للترتيب فتُفرِّق داخلَ المدار."""
 
@@ -342,23 +434,55 @@ class ForbiddingRule(Enum):
     ADJACENT_SHARED_MAKHRAJ = "لا يتجاور حرفان مختلفان من مخرجٍ واحد"
 
 
-def _forbids(rule: ForbiddingRule, form: str) -> bool:
+def rule_verdict(rule: ForbiddingRule, form: str) -> RuleVerdict:
+    """حكمُ القاعدة على الصورة، أو امتناعُها عن الحكم باسم علّة امتناعها.
+
+    قاعدةُ التماثل تقرأ الهويّةَ وحدَها فتحكم على كلِّ حرف. وقاعدةُ التجاور
+    تقرأ **المخرج**، وليس لكلِّ حرفٍ مطويٍّ مخرجٌ في الجدول المُودَع؛ فإذا
+    عدمته امتنعت عن الحكم ولم تُقرأ إباحةً. وقراءةُ الامتناع إباحةً تُضخِّم
+    الحرَّ بما لم يُفحَص، وهو بعينه ما تمنعه هذه الدالّة.
+    """
+
+    if not form:
+        raise MujarradTaqalibError("صورةٌ فارغةٌ لا تُفحَص.")
     if rule is ForbiddingRule.FA_EQUALS_AYN:
-        return len(form) >= 2 and form[0] == form[1]
-    return any(
+        if len(form) < 2:
+            return RuleVerdict.UNREADABLE_FOR_AN_UNRANKED_LETTER
+        return RuleVerdict.FORBIDS if form[0] == form[1] else RuleVerdict.PERMITS
+    if any(CLASSICAL_ORDINAL.get(letter) is None for letter in form):
+        return RuleVerdict.UNREADABLE_FOR_AN_UNRANKED_LETTER
+    clashes = any(
         form[index] != form[index + 1]
-        and CLASSICAL_ORDINAL.get(form[index]) is not None
-        and CLASSICAL_ORDINAL.get(form[index]) == CLASSICAL_ORDINAL.get(form[index + 1])
+        and CLASSICAL_ORDINAL[form[index]] == CLASSICAL_ORDINAL[form[index + 1]]
         for index in range(len(form) - 1)
     )
+    return RuleVerdict.FORBIDS if clashes else RuleVerdict.PERMITS
+
+
+def unranked_letters_of(form: str) -> tuple[str, ...]:
+    """حروفُ الصورة التي لا رتبةَ لها في جدول المخارج؛ عليها يدور الامتناع."""
+
+    return tuple(letter for letter in form if CLASSICAL_ORDINAL.get(letter) is None)
 
 
 def forbidding_rules_against(form: str) -> tuple[ForbiddingRule, ...]:
     """أيُّ القواعد المُعلَنة تمنع هذه الصورة؟ تُسمّى كلُّها ولا تُدمَج في حكم."""
 
-    if not form:
-        raise MujarradTaqalibError("صورةٌ فارغةٌ لا تُفحَص.")
-    return tuple(rule for rule in ForbiddingRule if _forbids(rule, form))
+    return tuple(
+        rule
+        for rule in ForbiddingRule
+        if rule_verdict(rule, form) is RuleVerdict.FORBIDS
+    )
+
+
+def rules_abstaining_on(form: str) -> tuple[ForbiddingRule, ...]:
+    """أيُّ القواعد امتنعت عن الحكم على هذه الصورة؟ تُسمّى ولا تُطوى في «مُباح»."""
+
+    return tuple(
+        rule
+        for rule in ForbiddingRule
+        if rule_verdict(rule, form) is RuleVerdict.UNREADABLE_FOR_AN_UNRANKED_LETTER
+    )
 
 
 class UsageWarrant(Enum):
@@ -369,25 +493,37 @@ class UsageWarrant(Enum):
 
 
 class CellStanding(Enum):
-    """منزلةُ خليّةِ تقليبٍ واحدة. والمهملُ بقيّةٌ بعد الممنوع لا صنفٌ بقاعدة."""
+    """منزلةُ خليّةِ تقليبٍ واحدة. وستٌّ لا أربع: المحجوبُ عن الفحص صنفٌ مُسمًّى."""
 
-    USED_UNFORBIDDEN = "مستعملٌ لا تمنعه قاعدة"
+    USED_UNFORBIDDEN = "مستعملٌ فُحِص بالقواعد كلِّها فلم تمنعه"
     USED_THOUGH_FORBIDDEN = "مستعملٌ تمنعه قاعدةٌ فتنتقض القاعدة"
+    USED_WITH_A_RULE_ABSTAINING = "مستعملٌ امتنعت عن الحكم عليه قاعدة"
     FORBIDDEN_AND_UNUSED = "ممنوعٌ بقاعدةٍ ولم يُستعمل"
-    MUHMAL = "مهملٌ: لا قاعدةَ تمنعه ولم يُستعمل"
+    UNUSED_WITH_A_RULE_ABSTAINING = "خالٍ امتنعت عن الحكم عليه قاعدة، فلا يُسمّى مهملًا"
+    MUHMAL = "مهملٌ: فُحِص بالقواعد كلِّها فلم تمنعه ولم يُستعمل"
 
 
 def classify_cell(form: str, used: bool) -> CellStanding:
-    """منزلةُ الخليّة مُشتقّةٌ من القواعد ومن الاستعمال معًا، لا تُملى باليد."""
+    """منزلةُ الخليّة مُشتقّةٌ من الأحكام ومن الاستعمال معًا، لا تُملى باليد.
 
-    forbidden = bool(forbidding_rules_against(form))
-    if used:
+    والمنعُ يسبق الامتناعَ في القراءة: صورةٌ منعتها قاعدةٌ ممنوعةٌ وإن امتنعت
+    عنها أخرى. وأمّا المهملُ فلا يُسمّى مهملًا إلّا بعد أن تحكم القواعدُ
+    كلُّها، إذ المهملُ دعوى «لا مانعَ ولم يقع» وهي تطلب فحصًا تامًّا.
+    """
+
+    if forbidding_rules_against(form):
         return (
             CellStanding.USED_THOUGH_FORBIDDEN
-            if forbidden
-            else CellStanding.USED_UNFORBIDDEN
+            if used
+            else CellStanding.FORBIDDEN_AND_UNUSED
         )
-    return CellStanding.FORBIDDEN_AND_UNUSED if forbidden else CellStanding.MUHMAL
+    if rules_abstaining_on(form):
+        return (
+            CellStanding.USED_WITH_A_RULE_ABSTAINING
+            if used
+            else CellStanding.UNUSED_WITH_A_RULE_ABSTAINING
+        )
+    return CellStanding.USED_UNFORBIDDEN if used else CellStanding.MUHMAL
 
 
 def _used_forms(class_names: tuple[str, ...], root: Path | None) -> frozenset[str]:
@@ -452,20 +588,24 @@ def orbit_readings(
 
 @dataclass(frozen=True, slots=True)
 class TaqalibCensus:
-    """جملةُ محور المقلوب: مداراتٌ وفضاءٌ وتقسيمُ المنازل الأربع."""
+    """جملةُ محور المقلوب: مداراتٌ وفضاءٌ وتقسيمُ المنازل الستّ."""
 
     orbits: int
     space: int
     used_unforbidden: int
     used_though_forbidden: int
+    used_with_a_rule_abstaining: int
     forbidden_and_unused: int
+    unused_with_a_rule_abstaining: int
     muhmal: int
 
     def __post_init__(self) -> None:
         parts = (
             self.used_unforbidden,
             self.used_though_forbidden,
+            self.used_with_a_rule_abstaining,
             self.forbidden_and_unused,
+            self.unused_with_a_rule_abstaining,
             self.muhmal,
         )
         for value in (self.orbits, self.space, *parts):
@@ -473,14 +613,24 @@ class TaqalibCensus:
                 raise MujarradTaqalibError("عددٌ في الإحصاء صحيحٌ غيرُ سالب.")
         if sum(parts) != self.space:
             raise MujarradTaqalibError(
-                "المنازلُ الأربعُ لا تستوفي الفضاء؛ وإحصاءٌ لا يُجمَع ليس قسمة."
+                "المنازلُ الستُّ لا تستوفي الفضاء؛ وإحصاءٌ لا يُجمَع ليس قسمة."
             )
 
     @property
     def used(self) -> int:
         """جملةُ المستعمل: الممنوعُ منه محسوبٌ معه، فلا يسقط نقضُ القاعدة."""
 
-        return self.used_unforbidden + self.used_though_forbidden
+        return (
+            self.used_unforbidden
+            + self.used_though_forbidden
+            + self.used_with_a_rule_abstaining
+        )
+
+    @property
+    def unexamined(self) -> int:
+        """ما لم تَحكم عليه القواعدُ كلُّها؛ لا يُضَمُّ إلى الحرّ ولا إلى المهمل."""
+
+        return self.used_with_a_rule_abstaining + self.unused_with_a_rule_abstaining
 
 
 def taqalib_census(
@@ -498,26 +648,43 @@ def taqalib_census(
         space=sum(reading.space for reading in readings),
         used_unforbidden=tally[CellStanding.USED_UNFORBIDDEN],
         used_though_forbidden=tally[CellStanding.USED_THOUGH_FORBIDDEN],
+        used_with_a_rule_abstaining=tally[CellStanding.USED_WITH_A_RULE_ABSTAINING],
         forbidden_and_unused=tally[CellStanding.FORBIDDEN_AND_UNUSED],
+        unused_with_a_rule_abstaining=tally[CellStanding.UNUSED_WITH_A_RULE_ABSTAINING],
         muhmal=tally[CellStanding.MUHMAL],
     )
 
 
 @dataclass(frozen=True, slots=True)
 class RulePrice:
-    """ثمنُ قاعدةِ امتناعٍ مقيسًا: خلاياها، ومستعملُها، ونسبتا الاستعمال."""
+    """ثمنُ قاعدةٍ مقيسًا: خلاياها ومستعملُها، وما امتنعت عن الحكم عليه.
+
+    ونسبتا الاستعمال محسوبتان على ما **حكمت** عليه وحدَه؛ وما امتنعت عنه
+    مُخرَجٌ من البسط والمقام معًا ومُسمًّى بعددِه، فلا يُحسَب إباحةً ولا
+    منعًا. وبغير هذا العمود تُقرأ القاعدةُ أوسعَ مدًى ممّا فُحِص بها.
+    """
 
     rule: ForbiddingRule
     cells: int
     used_inside: int
     cells_outside: int
     used_outside: int
+    cells_abstained: int
+    used_abstained: int
 
     def __post_init__(self) -> None:
         if self.cells < 1 or self.cells_outside < 1:
             raise MujarradTaqalibError("قاعدةٌ بلا خلايا داخلَها أو خارجَها لا تُسعَّر.")
         if self.used_inside > self.cells or self.used_outside > self.cells_outside:
             raise MujarradTaqalibError("المستعملُ لا يزيد على خلاياه.")
+        if self.cells_abstained < 0 or self.used_abstained > self.cells_abstained:
+            raise MujarradTaqalibError("المُمتنَعُ عنه عددٌ غيرُ سالبٍ يسع مستعملَه.")
+
+    @property
+    def abstains(self) -> bool:
+        """هل امتنعت القاعدةُ عن الحكم على خليّةٍ واحدةٍ فأكثر؟ يُقال ولا يُطوى."""
+
+        return self.cells_abstained > 0
 
     @property
     def is_refuted_as_an_impossibility(self) -> bool:
@@ -555,23 +722,23 @@ def rule_prices(
     readings = orbit_readings(class_names, root)
     prices = []
     for rule in ForbiddingRule:
-        inside = used_inside = outside = used_outside = 0
+        tally: Counter[tuple[RuleVerdict, bool]] = Counter()
         for reading in readings:
             occupied = set(reading.used)
             for cell in reading.standings:
-                if _forbids(rule, cell):
-                    inside += 1
-                    used_inside += cell in occupied
-                else:
-                    outside += 1
-                    used_outside += cell in occupied
+                tally[(rule_verdict(rule, cell), cell in occupied)] += 1
+        abstention = RuleVerdict.UNREADABLE_FOR_AN_UNRANKED_LETTER
         prices.append(
             RulePrice(
                 rule=rule,
-                cells=inside,
-                used_inside=used_inside,
-                cells_outside=outside,
-                used_outside=used_outside,
+                cells=tally[(RuleVerdict.FORBIDS, True)]
+                + tally[(RuleVerdict.FORBIDS, False)],
+                used_inside=tally[(RuleVerdict.FORBIDS, True)],
+                cells_outside=tally[(RuleVerdict.PERMITS, True)]
+                + tally[(RuleVerdict.PERMITS, False)],
+                used_outside=tally[(RuleVerdict.PERMITS, True)],
+                cells_abstained=tally[(abstention, True)] + tally[(abstention, False)],
+                used_abstained=tally[(abstention, True)],
             )
         )
     return tuple(prices)
@@ -627,22 +794,96 @@ def quadrilateral_readings(root: Path | None = None) -> tuple[OrbitReading, ...]
     return orbit_readings((THE_QUADRILATERAL_CLASS,), root)
 
 
+class ShapeWitness(Enum):
+    """منزلةُ شكلِ تكرارٍ في هذا المُودَع. والخلوُّ صمتٌ لا نفي."""
+
+    ATTESTED_IN_THIS_DEPOSIT = "مشهودٌ له في هذا المُودَع"
+    UNATTESTED_IN_THIS_DEPOSIT = "لا شاهدَ له في هذا المُودَع؛ وليس منفيًّا"
+
+
+@dataclass(frozen=True, slots=True)
+class FormalShape:
+    """شكلُ تكرارٍ وفضاؤه الصوريّ، مستقلًّا عمّا شهد له هذا المُودَع أو سكت عنه.
+
+    `A_FORMAL_SPACE_IS_NOT_A_CLAIM_ABOUT_ARABIC`: الفضاءُ ههنا ناتجُ حسابٍ
+    على شكل التكرار وحدَه، لا دعوى في العربيّة. وشهادةُ المُودَع عمودٌ آخر
+    لا يُضرَب فيه ولا يَحذفه: شكلٌ بلا شاهدٍ يبقى بفضائه موسومًا بالسكوت.
+    """
+
+    shape: str
+    space: int
+    attested_roots: int
+
+    def __post_init__(self) -> None:
+        if not self.shape.strip():
+            raise MujarradTaqalibError("شكلٌ بلا رمزٍ ليس شكلًا.")
+        if self.space < 1 or self.attested_roots < 0:
+            raise MujarradTaqalibError("فضاءٌ غيرُ موجبٍ أو شاهدٌ سالبٌ مرفوض.")
+
+    @property
+    def witness(self) -> ShapeWitness:
+        """منزلةُ الشاهد مُشتقّةٌ من العدد، ولا تُكتَب حقلًا يُملى باليد."""
+
+        if self.attested_roots:
+            return ShapeWitness.ATTESTED_IN_THIS_DEPOSIT
+        return ShapeWitness.UNATTESTED_IN_THIS_DEPOSIT
+
+
+def _repetition_shape(form: str) -> str:
+    seen: dict[str, str] = {}
+    return "".join(
+        seen.setdefault(letter, chr(ord("A") + len(seen))) for letter in form
+    )
+
+
+def quadrilateral_formal_shapes(root: Path | None = None) -> tuple[FormalShape, ...]:
+    """أشكالُ الرباعيِّ الصوريّة الخمسةَ عشرَ، وفضاءُ كلٍّ، وشاهدُه في المُودَع.
+
+    والفضاءُ يُحسَب من الشكل لا من الشاهد، فيخرج `ABCD` بأربعةٍ وعشرين وإن
+    لم يشهد له هذا الجردُ بجذرٍ واحد؛ وهذا هو الفرقُ بين «لا مادّةَ ههنا»
+    و«لا يكون».
+    """
+
+    attested: Counter[str] = Counter()
+    for row in root_table_rows(root):
+        if row["root_type"] == THE_QUADRILATERAL_CLASS and row["root_full"]:
+            attested[_repetition_shape(fold_root(row["root_full"]))] += 1
+    shapes: dict[str, str] = {}
+    for first in "AB":
+        for second in "ABC":
+            for third in "ABCD":
+                for fourth in "ABCDE":
+                    candidate = first + second + third + fourth
+                    if _repetition_shape(candidate) == candidate:
+                        shapes[candidate] = candidate
+    return tuple(
+        FormalShape(
+            shape=shape,
+            space=multiset_permutation_count(shape),
+            attested_roots=attested[shape],
+        )
+        for shape in sorted(shapes)
+    )
+
+
 THE_CENSUS_AT_MEASUREMENT: Final[TaqalibCensus] = TaqalibCensus(
     orbits=2_099,
     space=11_215,
-    used_unforbidden=4_477,
-    used_though_forbidden=82,
-    forbidden_and_unused=695,
-    muhmal=5_961,
+    used_unforbidden=4_120,
+    used_though_forbidden=67,
+    used_with_a_rule_abstaining=372,
+    forbidden_and_unused=650,
+    unused_with_a_rule_abstaining=762,
+    muhmal=5_244,
 )
 """المقيسُ على `maqayis_by_root_csv_999.csv` المختوم؛ تُعيده الاختباراتُ من البايتات."""
 
 THE_RULE_PRICES_AT_MEASUREMENT: Final[
-    MappingProxyType[ForbiddingRule, tuple[int, int]]
+    MappingProxyType[ForbiddingRule, tuple[int, int, int]]
 ] = MappingProxyType(
     {
-        ForbiddingRule.FA_EQUALS_AYN: (459, 2),
-        ForbiddingRule.ADJACENT_SHARED_MAKHRAJ: (320, 80),
+        ForbiddingRule.FA_EQUALS_AYN: (459, 2, 0),
+        ForbiddingRule.ADJACENT_SHARED_MAKHRAJ: (260, 65, 1_158),
     }
 )
-"""لكلِّ قاعدةٍ: خلاياها ومستعملُها. وكلتاهما منقوضةٌ امتناعًا بسماعٍ مُثبَت."""
+"""لكلِّ قاعدةٍ: خلاياها، ومستعملُها، وما امتنعت عن الحكم عليه."""
