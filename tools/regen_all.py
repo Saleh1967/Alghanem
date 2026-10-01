@@ -36,6 +36,7 @@ SRC_ROOT: Final[Path] = REPO_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
+from alghanem.arabic import counting_precondition_protocol as protocol  # noqa: E402
 from alghanem.arabic import hamil_audit_second_reading as second_reading  # noqa: E402
 from alghanem.arabic import hamil_phase1_audit_deposit as phase1  # noqa: E402
 from alghanem.arabic import hamil_phase2_audit_deposit as phase2  # noqa: E402
@@ -320,6 +321,17 @@ def _quoted(name: str, origin: str, rendering: str, why: str) -> Seal:
     )
 
 
+def _founding_site_declared() -> Mapping[str, str]:
+    """الجانبُ المنقول: موقعُ دالّة التأسيس كما أُعلن في البروتوكول نفسِه."""
+
+    site = protocol.THE_FOUNDING_SITE
+    return {
+        "المسار": site.relative_path,
+        "الطول": str(site.declared_byte_length),
+        "البصمة": str(site.declared_sha256),
+    }
+
+
 def the_registry() -> SealRegistry:
     """كلُّ ختمٍ في الشجرة، مولَّدًا عند كلّ نداء ولا يُخزَن."""
 
@@ -327,6 +339,13 @@ def the_registry() -> SealRegistry:
     partition_prose = Path(partition.__file__)
     return SealRegistry(
         seals=(
+            Seal(
+                name="counting_precondition_protocol.founding_site",
+                genus=SealGenus.GENERATED,
+                origin="THE_FOUNDING_SITE ↔ site_seal_renderings()",
+                generate=protocol.site_seal_renderings,
+                transcription=_founding_site_declared,
+            ),
             Seal(
                 name="pair_sample_widening.prose_scope",
                 genus=SealGenus.GENERATED,

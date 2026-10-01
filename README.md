@@ -8170,7 +8170,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 614-fold: 32 pairs, then 19,652. Both questions were answered,
+The widening is 626-fold: 32 pairs, then 20,039. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8185,11 +8185,11 @@ a specimen written deliberately illegal to show it yields no state. Neither is
 Arabic. The least frequent pair that *is* Arabic sits at 9, nine times the
 published floor. So the minimum of this census measures what the medium quotes,
 not what the script allows, and the distribution turns out to be a cliff rather
-than a tail: six shadda-bearing pairs hold 99.939%, and the remaining three
+than a tail: six shadda-bearing pairs hold 99.940%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,069 of 19,620
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,170 of 20,007
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8779,9 +8779,9 @@ The table is filled along a cumulative ladder: the Fātiḥa alone realises 41 o
 the 112 cells over 100 occurrences and 20 of the 28 letters; adding Fatḥ 48:29
 takes it to 74 cells and 27 letters; adding the tree's own prose — with this
 module excluded from it by name, so that its figures do not move whenever its
-description is edited — takes it to 108 cells over 91,289 occurrences with every
+description is edited — takes it to 108 cells over 93,400 occurrences with every
 letter present. Five cells stay empty, and the module refuses to read them as
-prohibitions until their margins are consulted. Sukūn is 491 of 91,289 — 0.54%
+prohibitions until their margins are consulted. Sukūn is 493 of 93,400 — 0.53%
 — so the expected counts for ث and ظ bearing it are 1.470 and 1.052, and zero is
 unremarkable at each. Alef's whole row is ten occurrences. **Four of the five
 absences are consistent with scarcity**, and one survives the filter:
@@ -9096,6 +9096,35 @@ ruff check .
 ruff format --check .
 mypy src
 ```
+
+## `canonical116/`: the counting precondition as an executable contract
+
+`canonical116` implements `A116-CANONICAL-TXT-1.0`: the orthographic rasm of
+entry, junction and pause projected onto the 116 cells of `29 × 4`. `bridge()`
+takes the source (text or bytes), its declared encoding, the reading profile,
+the per-word `entry`/`exit` states and the annotations that settle deleted
+information, and returns a record that keeps the source whole alongside one of
+five mutually exclusive statuses: `READY`, `DEFER`, `REJECT`,
+`INVALID_ENCODING_OR_TYPE`, `INVALID_CONFIGURATION`. Outside `READY` both
+`canonical_atoms` and `canonical_text` are null and `count_eligible` is false.
+
+The identity register is part of the output, not a diagnostic: `ة` in pause
+projects to `هْ` exactly as a written `هْ` does, and only the register tells the
+two apart. A silent support alif, a wasl alif's starting vowel and a deleted
+`و`/`ي` sukūn are never guessed — each needs an annotation carrying `evidence`,
+and an annotation may never contradict an explicit mark. `count_atoms()` is the
+only counting door: it replays the certificate from its own source bytes and
+options, refuses on any mismatch, and returns all 116 keys including the zeros —
+which never licenses an absent cell.
+
+```bash
+python -m unittest canonical116.test_bridge -v
+python -m canonical116 input.txt --context-json contexts.json --count
+```
+
+`READY` is a validity certificate with respect to the implemented rules and the
+declared annotations. It is not a morphological or lexical certificate for the
+word, and not a proof that the algebra covers Arabic.
 
 See [`docs/CONSTITUTION.md`](docs/CONSTITUTION.md) for the initial
 constitutional laws governing the kernel.
