@@ -109,10 +109,28 @@ def test_a_silent_axes_count_is_not_read_as_a_zero() -> None:
 
 
 def test_the_axes_disagreement_is_structural_not_a_single_row() -> None:
-    """الخلافُ يتجاوز ربعَ الملفّ، فالعلّةُ منهجيّةٌ لا مفردةٌ تُعالَج في صفّ."""
+    """الخللُ منتشرٌ في مئات الصفوف، فالعلّةُ منهجيّةٌ لا مفردةٌ تُعالَج في صفّ."""
 
     reading = boundary_reading()
-    assert reading.rows_whose_axes_fields_disagree * 4 > reading.rows
+    assert reading.rows_whose_axes_fields_disagree > 1
+    assert reading.rows_declaring_more_axes_than_they_carry > 1
+
+
+def test_correcting_the_separator_lowered_the_disagreement_below_a_quarter() -> None:
+    """القسمةُ بالفاصلة العربيّة ضخّمت الخلافَ؛ وتصحيحُ الاصطلاح يُنزِله دونَ الربع."""
+
+    rows = audit.root_table_rows()
+    inflated = sum(
+        1
+        for row in rows
+        if row["axes_count"].strip().isdigit()
+        and int(row["axes_count"])
+        != len([part for part in row["semantic_axes"].split("،") if part.strip()])
+    )
+    reading = boundary_reading()
+    assert inflated == 1_257
+    assert inflated * 4 > reading.rows
+    assert reading.rows_whose_axes_fields_disagree * 4 < reading.rows
 
 
 def test_the_reconciliation_keys_each_finding_to_its_original_row() -> None:
@@ -202,3 +220,93 @@ def test_this_module_issues_no_birth_and_reads_no_kernel() -> None:
             imported.add(node.module or "")
     assert not any("kernel" in name for name in imported)
     assert isinstance(boundary_reading(), BoundaryReading)
+
+
+def test_the_arabic_comma_never_separates_two_axes_in_this_file() -> None:
+    """الاختبارُ الأوّل: الفاصلةُ العربيّة داخلُ شرحٍ لا فاصلٌ بين محورين."""
+
+    census = audit.separator_census()
+    assert census == audit.THE_SEPARATOR_CENSUS_AT_MEASUREMENT
+    assert census.rows_with_both_marks == 0
+    assert census.comma_rows_declaring_one_axis == census.rows_with_an_arabic_comma
+    assert census.the_comma_never_separates
+
+
+def test_a_single_axis_whose_gloss_carries_commas_is_not_multiplied() -> None:
+    """صفُّ «أسس» يُعلن محورًا واحدًا وفي شرحه فواصل؛ فلا يُقرأ محاورَ عدّة."""
+
+    row = _row_named("أسس")
+    assert "،" in row["semantic_axes"]
+    assert row["axes_count"].strip() == "1"
+    assert len(audit.axes_of(row)) == 1
+
+
+def test_two_axes_parted_by_the_pipe_are_read_as_two() -> None:
+    """صفُّ «أدد» يفصل محورَيه بالشارحة؛ فيُقرآن اثنين لا واحدًا."""
+
+    row = _row_named("أدد")
+    assert row["axes_count"].strip() == "2"
+    assert audit.axes_of(row) == ("عظم الشي وشدته وتكرره", "الندود")
+
+
+def _row_named(root: str) -> dict[str, str]:
+    for row in audit.root_table_rows():
+        if row["root_full"].strip() == root:
+            return row
+    raise AssertionError(f"لا صفَّ للجذر {root}")
+
+
+def test_the_axes_residue_is_two_named_classes_that_exhaust_it() -> None:
+    """الاختبارُ الثاني: الخلافُ مفروزٌ صنفين مُسمّيين، ومجموعُهما يستنفده."""
+
+    reading = boundary_reading()
+    assert reading.rows_whose_axes_fields_disagree == 822
+    assert reading.rows_whose_axes_field_is_silent == 597
+    assert reading.rows_declaring_more_axes_than_they_carry == 225
+    assert reading.axes_residue_classes_exhaust_the_disagreement
+
+
+def test_a_silent_axes_field_is_an_extraction_failure_not_a_count_error() -> None:
+    """صفوفُ الصنف الأوّل محاورُها خاليةٌ وعدُّها ناطق؛ فالخللُ في الاستخراج."""
+
+    rows = audit.root_table_rows()
+    for index in audit.rows_whose_axes_field_is_silent():
+        assert not (rows[index]["semantic_axes"] or "").strip()
+        assert rows[index]["axes_count"].strip().isdigit()
+
+
+def test_reading_the_field_correctly_is_not_claiming_its_axes_are_true() -> None:
+    """الاختبارُ الثالثُ — صحّةُ المعنى — غيرُ مُدّعًى، ومُعلَنٌ أنّه غيرُ مُدّعًى."""
+
+    assert (
+        "لا تجيب عنه" in audit.THREE_SEPARATE_TESTS_AND_THE_THIRD_IS_NOT_INFERRED_NOTE
+    )
+    assert not hasattr(audit, "axes_are_semantically_adequate")
+    assert not hasattr(audit, "semantic_adequacy")
+
+
+def test_every_reconciliation_segment_is_a_candidate_awaiting_review() -> None:
+    """الترشيحُ لا الحصر: كلُّ مقطعٍ يحمل حدَّه ودليلَه وبدائلَه وقرارًا معلَّقًا."""
+
+    segments = reconciliation_rows()
+    assert len(segments) == boundary_reading().conservative_swallowed_entries
+    for segment in segments:
+        assert segment["review_decision"] == "معلَّق"
+        assert segment["boundary_evidence"]
+        assert segment["alternatives"]
+        assert segment["row_identifier"]
+    readable = [segment for segment in segments if segment["head_is_readable"]]
+    assert readable
+    for segment in readable:
+        assert isinstance(segment["segment_start"], int)
+        assert segment["segment_end"] > segment["segment_start"]
+
+
+def test_the_nomination_note_refuses_to_claim_the_seventeen_exhaust_the_defect() -> (
+    None
+):
+    """السبعةَ عشرَ حدٌّ أدنى مُرشَّح؛ والنصُّ يمنع قراءتَها حصرًا."""
+
+    note = audit.THE_OPENING_FORMULA_NOMINATES_AND_DOES_NOT_PROVE_EXHAUSTION_NOTE
+    assert "لا يبرهن" in note
+    assert "حدٌّ" in note and "أدنى" in note

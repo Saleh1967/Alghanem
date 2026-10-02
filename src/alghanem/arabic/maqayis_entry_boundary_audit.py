@@ -43,11 +43,25 @@
 `عنوانٌ غيرُ مقروء`، ولا يُعَدّ في المادّة المفقودة ولا يُحذَف من التقرير: فإنّ
 حذفَه يُوهم دقّةً لم تقع، وعدَّه يُسمّي مفقودًا بلا اسم.
 
-`THE_AXES_FIELDS_ARE_A_TOOL_OUTPUT_NOT_A_WITNESS_ON_THE_LEXICON`: `axes_count`
-يخالف عددَ ما في `semantic_axes` في ألفٍ ومئتين وسبعةٍ وخمسين صفًّا — أي أكثر
-من ربع الملفّ. وليست العلّةُ في صفّ «أجج» وحدَه حتّى تُعالَج مفردةً. فالحقلان
+`THREE_SEPARATE_TESTS_AND_THE_THIRD_IS_NOT_INFERRED`: اصطلاحُ حقل المحاور
+يُقاس قبل أن يُعَدّ. فالشارحةُ `|` هي الفاصل: تقع في مئتين وثلاثةٍ وسبعين
+صفًّا، والفاصلةُ العربيّةُ تقع في مئةٍ وتسعةٍ وتسعين، **ولا تجتمعان في صفٍّ
+واحد**، وكلُّ صفوف الفاصلة العربيّة — مئةٌ وتسعةٌ وتسعون من مئةٍ وتسعةٍ
+وتسعين — تُعلن محورًا واحدًا. فالفاصلةُ داخلُ الشرح لا فاصلٌ بين محورين، ومن
+قسم بها حوَّل أجزاءَ الشرح محاورَ. وعلى الاصطلاح المصحَّح يكون الخلافُ
+ثمانمائةٍ واثنين وعشرين صفًّا، يُفرَزان صنفين: خمسمائةٍ وسبعةٌ وتسعون سكت فيها
+الحقلُ ونطق العدُّ — وهو فشلُ استخراجٍ لا خطأُ عدّ — ومئتان وخمسةٌ وعشرون نطق
+فيها الحقلان فاختلفا. وسلامةُ القراءة غيرُ اتّساق البنية، وكلاهما غيرُ صحّة
+المعنى؛ **والثالثُ لا تجيب عنه هذه الوحدة ولا تدّعيه**.
+
+`THE_AXES_FIELDS_ARE_A_TOOL_OUTPUT_NOT_A_WITNESS_ON_THE_LEXICON`: الحقلان
 **مخرجُ أداةٍ غيرِ مُسمّاةٍ لا شهادةٌ على نصّ ابن فارس**، ولا يُقرأ أيٌّ منهما
 محورًا دلاليًّا للمادّة. والمتنُ وحدَه أصلُ الاستخراج.
+
+`THE_OPENING_FORMULA_NOMINATES_AND_DOES_NOT_PROVE_EXHAUSTION`: اطّرادُ الفاتحة
+يرخّص الترشيحَ لا الحصر. فالسبعةَ عشرَ حدٌّ أدنى مُرشَّح، و`reconciliation_rows`
+تُخرِج لكلٍّ مقطعًا يحمل حدَّه ودليلَه وبدائلَه وقرارًا `معلَّق`، فتُعتمَد
+المادّةُ المدقّقةُ وحدَها ولا تُفتَح بها أخواتُها.
 
 `RECONCILIATION_IS_DEPOSITED_AND_THE_BYTES_ARE_NEVER_WRITTEN_OVER`: لا تُحرَّر
 بايتةٌ واحدة. فلكلّ صفٍّ معرّفٌ مُشتَقٌّ من **بصمة الملفّ ورقم الصفّ**، وتُعلَّق
@@ -81,6 +95,18 @@ __all__ = [
     "A_HEAD_THAT_CANNOT_BE_READ_IS_NOT_A_NAMED_MATERIAL_NOTE",
     "A_SWALLOWED_ENTRY_IS_A_LOST_MATERIAL_NOT_ONLY_A_BLURRED_BOUNDARY_NOTE",
     "AXES_DISAGREEMENT_COUNTING_RULE",
+    "separator_census",
+    "rows_whose_axes_field_is_silent",
+    "rows_declaring_more_axes_than_they_carry",
+    "axes_of",
+    "SeparatorCensus",
+    "THREE_SEPARATE_TESTS_AND_THE_THIRD_IS_NOT_INFERRED_NOTE",
+    "THE_OPENING_FORMULA_NOMINATES_AND_DOES_NOT_PROVE_EXHAUSTION_NOTE",
+    "REVIEW_IS_PENDING_UNTIL_ITS_EVIDENCE_CLOSES",
+    "AXIS_SEPARATOR",
+    "ARABIC_COMMA",
+    "AXES_SEPARATOR_CENSUS_RULE",
+    "AXES_RESIDUE_CLASSING_RULE",
     "CHAPTER_HEAD_MARKER",
     "COARSE_DETECTOR_RULE",
     "CONSERVATIVE_DETECTOR_RULE",
@@ -89,6 +115,7 @@ __all__ = [
     "RECONCILIATION_IS_DEPOSITED_AND_THE_BYTES_ARE_NEVER_WRITTEN_OVER_NOTE",
     "THE_AXES_FIELDS_ARE_A_TOOL_OUTPUT_NOT_A_WITNESS_ON_THE_LEXICON_NOTE",
     "THE_BOUNDARY_READING_AT_MEASUREMENT",
+    "THE_SEPARATOR_CENSUS_AT_MEASUREMENT",
     "THE_OPENING_FORMULA_IS_MEASURED_NOT_ASSUMED_NOTE",
     "THIS_IS_REGISTRATION_NOT_AUTHORITY_NOTE",
     "BoundaryReading",
@@ -199,12 +226,27 @@ CONSERVATIVE_DETECTOR_RULE: Final[str] = (
     "محارف. وما سبقته لفظةُ «باب» مصروفٌ عنه إلى صنف فاتحة الباب"
 )
 
+AXES_SEPARATOR_CENSUS_RULE: Final[str] = (
+    "إحصاءُ الفواصل يُجرى قبل أيّ عدٍّ ليُعرَف اصطلاحُ الحقل لا ليُفترَض: "
+    "يُعَدُّ ما فيه الشارحةُ `|`، وما فيه الفاصلةُ العربيّة (U+060C)، وما "
+    "اجتمعتا فيه، ثمّ يُعَدُّ من صفوف الفاصلة العربيّة ما أعلن محورًا واحدًا. "
+    "فإن أعلنت صفوفُ الفاصلة العربيّة كلُّها محورًا واحدًا، ولم تجتمع العلامتان "
+    "في صفٍّ واحد، فالفاصلةُ العربيّة داخلُ الشرح لا فاصلٌ بين محورين"
+)
+
 AXES_DISAGREEMENT_COUNTING_RULE: Final[str] = (
     "الصفُّ مُتخالِفٌ إذا كان `axes_count` رقمًا وخالف عددَ المحاور في "
-    "`semantic_axes` مفصولةً بالفاصلة العربية (U+060C) بعد إسقاط الفارغ. "
+    "`semantic_axes` مفصولةً بالشارحة `|` وحدَها بعد إسقاط الفارغ. "
     "و`axes_count` الخالي **ليس صفرًا**: هو غيابُ عدٍّ لا عددٌ مخالف، فيُفرَز "
     "صنفًا ثانيًا يُعَدّ على حدة. وقراءتُه صفرًا تُدخِل في الخلاف صفوفًا لم "
     "يُعلَن لها عددٌ أصلًا، فتُخلَط مخالفةُ الأداة بسكوتها"
+)
+
+AXES_RESIDUE_CLASSING_RULE: Final[str] = (
+    "بقيّةُ الخلاف تُفرَز صنفين لا تُجمَع في رقم: `محاورُ خاليةٌ وعددٌ مُعلَن` "
+    "حين يسكت `semantic_axes` ويدّعي `axes_count` عددًا — وهو فشلُ استخراجٍ لا "
+    "خطأُ عدّ؛ و`العددُ أكبرُ من المستخرَج` حين ينطق الحقلان ويختلفان. "
+    "والصنفان مُشتقّان بالطرح من الخلاف نفسه، فمجموعُهما يساويه بناءً"
 )
 
 A_BOUNDARY_DEFECT_MULTIPLIES_DOWNSTREAM_AND_SHOWS_IN_NO_COUNTER_NOTE: Final[str] = (
@@ -247,10 +289,29 @@ A_HEAD_THAT_CANNOT_BE_READ_IS_NOT_A_NAMED_MATERIAL_NOTE: Final[str] = (
 
 THE_AXES_FIELDS_ARE_A_TOOL_OUTPUT_NOT_A_WITNESS_ON_THE_LEXICON_NOTE: Final[str] = (
     "`semantic_axes` و`axes_count` مخرجُ أداةٍ غيرِ مُسمّاةٍ لا شهادةٌ على نصّ "
-    "ابن فارس: يتخالفان في أكثرَ من ربع الملفّ، ويسكت العدُّ في قرابة خُمسه "
-    "سكوتًا تامًّا. والسكوتُ غيرُ المخالفة، فيُفرَزان صنفين ولا يُقرأ الخالي "
-    "صفرًا. فالعلّةُ منهجيّةٌ لا مفردةٌ تُعالَج في صفّ، ولا يُقرأ أيٌّ منهما "
-    "محورًا دلاليًّا، والمتنُ وحدَه أصلُ الاستخراج."
+    "ابن فارس: يتخالفان في ثمانمائةٍ واثنين وعشرين صفًّا بعد تصحيح اصطلاح "
+    "الفاصل، ويسكت العدُّ في قرابة خُمس الملفّ سكوتًا تامًّا. والسكوتُ غيرُ "
+    "المخالفة، فيُفرَزان صنفين ولا يُقرأ الخالي صفرًا. فالعلّةُ منهجيّةٌ لا "
+    "مفردةٌ تُعالَج في صفّ، ولا يُقرأ أيٌّ منهما محورًا دلاليًّا، والمتنُ وحدَه "
+    "أصلُ الاستخراج."
+)
+
+THREE_SEPARATE_TESTS_AND_THE_THIRD_IS_NOT_INFERRED_NOTE: Final[str] = (
+    "تُفصَل ثلاثةُ اختباراتٍ لا يُستنتَج لاحقُها من سابقه: (١) سلامةُ قراءة "
+    "الحقل — أيُّ فاصلٍ هو المستعمَل؟ وتجيب عنه `separator_census`. (٢) اتّساقُ "
+    "العدد والبنية على ذلك الاصطلاح، وتجيب عنه `axes_disagreement_rows`. (٣) "
+    "صحّةُ المعنى — أتستوفي المحاورُ ما يقوله متنُ المادّة؟ **وهذا لا تجيب عنه "
+    "هذه الوحدة ولا تدّعيه**: الصفُّ المتّسقُ بنيةً قد يكون كاذبًا دلالةً، "
+    "والمتخالفُ قد يكون محورُه صحيحًا وعدَدُه خاطئًا. فمن قرأ الاتّساقَ صدقًا "
+    "أسند إلى الأداة شهادةً لم تُعطَ."
+)
+
+THE_OPENING_FORMULA_NOMINATES_AND_DOES_NOT_PROVE_EXHAUSTION_NOTE: Final[str] = (
+    "اطّرادُ الفاتحة يرخّص **ترشيحَ** المقاطع ولا يبرهن استيفاءها: لا يثبت به "
+    "أنّ كلَّ فاتحةٍ داخليّةٍ بدايةُ مادّة، ولا أنّ كلَّ مادّةٍ مبتلَعةٍ تحمل "
+    "فاتحةً يبلغها الكاشف، ولا أنّ المكشوفَ يستنفد الخلل. فالسبعةَ عشرَ **حدٌّ "
+    "أدنى مُرشَّحٌ** لا حصرٌ، وقرارُ كلّ مقطعٍ يبقى `معلَّق` حتّى تكتمل أدلّتُه "
+    "واحدًا واحدًا؛ فتُعتمَد المادّةُ المدقّقةُ وحدَها ولا تُفتَح بها أخواتُها."
 )
 
 RECONCILIATION_IS_DEPOSITED_AND_THE_BYTES_ARE_NEVER_WRITTEN_OVER_NOTE: Final[str] = (
@@ -258,6 +319,8 @@ RECONCILIATION_IS_DEPOSITED_AND_THE_BYTES_ARE_NEVER_WRITTEN_OVER_NOTE: Final[str
     "الصفّ، وتُعلَّق عليه قراءةُ حدّه. فيُصحَّح الحدُّ في القراءة ويبقى الأصلُ "
     "مقروءًا كما ورد، فلا يُفقَد أصلٌ بتصحيح."
 )
+
+REVIEW_IS_PENDING_UNTIL_ITS_EVIDENCE_CLOSES: Final[str] = "معلَّق"
 
 THIS_IS_REGISTRATION_NOT_AUTHORITY_NOTE: Final[str] = (
     "لا ولادةَ هنا، ولا حكمَ ولادة، ولا تجميدَ `E0`، ولا استيرادَ من "
@@ -333,6 +396,26 @@ class SwallowedEntry:
 
 
 @dataclass(frozen=True, slots=True)
+class SeparatorCensus:
+    """الاختبارُ الأوّل مُفرَدًا: ما العلاماتُ الواقعةُ في الحقل، وكيف تتوزّع."""
+
+    rows: int
+    rows_with_the_pipe: int
+    rows_with_an_arabic_comma: int
+    rows_with_both_marks: int
+    comma_rows_declaring_one_axis: int
+
+    @property
+    def the_comma_never_separates(self) -> bool:
+        """أكلُّ صفوف الفاصلة العربيّة تُعلن محورًا واحدًا، ولا تجتمع بالشارحة؟"""
+
+        return (
+            self.rows_with_both_marks == 0
+            and self.comma_rows_declaring_one_axis == self.rows_with_an_arabic_comma
+        )
+
+
+@dataclass(frozen=True, slots=True)
 class BoundaryReading:
     """قراءةُ الحدّ: اطّرادُ الفاتحة، وكاشفان، وأصنافُ التسمية، وخلافُ المحاور."""
 
@@ -344,6 +427,8 @@ class BoundaryReading:
     swallowed_entries_with_a_readable_head: int
     swallowed_entries_without_their_own_row: int
     rows_whose_axes_fields_disagree: int
+    rows_whose_axes_field_is_silent: int
+    rows_declaring_more_axes_than_they_carry: int
     rows_without_an_axes_count: int
 
     @property
@@ -357,6 +442,16 @@ class BoundaryReading:
         """الفرقُ بين الحدّ الأعلى والأدنى، مُسمًّى لا مطويًّا في أحدهما."""
 
         return self.coarse_later_namings - self.conservative_swallowed_entries
+
+    @property
+    def axes_residue_classes_exhaust_the_disagreement(self) -> bool:
+        """أيستنفد الصنفان المُسمّيان الخلافَ؟ فلا تبقى بقيّةٌ بلا اسم."""
+
+        return (
+            self.rows_whose_axes_field_is_silent
+            + self.rows_declaring_more_axes_than_they_carry
+            == self.rows_whose_axes_fields_disagree
+        )
 
 
 @lru_cache(maxsize=1)
@@ -461,19 +556,76 @@ def _geminate_expansion(head: str) -> str:
     return head + head[-1] if head else head
 
 
+AXIS_SEPARATOR: Final[str] = "|"
+ARABIC_COMMA: Final[str] = "\u060c"
+
+
+def axes_of(row: dict[str, str]) -> tuple[str, ...]:
+    """محاورُ الصفّ مفصولةً بالشارحة وحدَها؛ والفاصلةُ العربيّة داخلُ شرحٍ لا فاصل."""
+
+    field = row.get("semantic_axes") or ""
+    return tuple(part.strip() for part in field.split(AXIS_SEPARATOR) if part.strip())
+
+
+@lru_cache(maxsize=1)
+def separator_census() -> SeparatorCensus:
+    """الاختبارُ الأوّل: أيُّ فاصلٍ هو المستعمَل؟ مقيسًا على الحقل لا مفترضًا."""
+
+    rows = _rows()
+    with_pipe = 0
+    with_comma = 0
+    with_both = 0
+    comma_rows_declaring_one_axis = 0
+    for row in rows:
+        field = row.get("semantic_axes") or ""
+        pipe = AXIS_SEPARATOR in field
+        comma = ARABIC_COMMA in field
+        with_pipe += pipe
+        with_comma += comma
+        with_both += pipe and comma
+        if comma and (row.get("axes_count") or "").strip() == "1":
+            comma_rows_declaring_one_axis += 1
+    return SeparatorCensus(
+        rows=len(rows),
+        rows_with_the_pipe=with_pipe,
+        rows_with_an_arabic_comma=with_comma,
+        rows_with_both_marks=with_both,
+        comma_rows_declaring_one_axis=comma_rows_declaring_one_axis,
+    )
+
+
 @lru_cache(maxsize=1)
 def axes_disagreement_rows() -> tuple[int, ...]:
-    """أرقامُ الصفوف التي يخالف فيها `axes_count` الرقميُّ عددَ `semantic_axes`."""
+    """الاختبارُ الثاني: أرقامُ الصفوف التي يخالف فيها العددُ المُعلَن بنيةَ الحقل."""
 
     disagreeing: list[int] = []
     for index, row in enumerate(_rows()):
         raw = (row["axes_count"] or "").strip()
         if not raw.isdigit():
             continue
-        axes = [part for part in row["semantic_axes"].split("،") if part.strip()]
-        if int(raw) != len(axes):
+        if int(raw) != len(axes_of(row)):
             disagreeing.append(index)
     return tuple(disagreeing)
+
+
+@lru_cache(maxsize=1)
+def rows_whose_axes_field_is_silent() -> tuple[int, ...]:
+    """من المتخالفين: ما سكت حقلُ محاوره ونطق عدُّه؛ فشلُ استخراجٍ لا خطأُ عدّ."""
+
+    rows = _rows()
+    return tuple(
+        index
+        for index in axes_disagreement_rows()
+        if not (rows[index].get("semantic_axes") or "").strip()
+    )
+
+
+@lru_cache(maxsize=1)
+def rows_declaring_more_axes_than_they_carry() -> tuple[int, ...]:
+    """من المتخالفين: ما نطق الحقلان فيه واختلفا؛ وهو الخلافُ بالمعنى الضيّق."""
+
+    silent = set(rows_whose_axes_field_is_silent())
+    return tuple(index for index in axes_disagreement_rows() if index not in silent)
 
 
 @lru_cache(maxsize=1)
@@ -488,20 +640,45 @@ def rows_without_an_axes_count() -> tuple[int, ...]:
 
 
 def reconciliation_rows() -> tuple[dict[str, object], ...]:
-    """قراءةُ المصالحة: معرّفُ الصفّ الأصليّ، ومضيفُه، وما نُسب إليه خطأً."""
+    """مقاطعُ مُرشَّحةٌ للمصالحة: حدٌّ ودليلُه وبدائلُه وقرارٌ معلَّق، لا تصحيحٌ نافذ."""
 
     digest = root_table_digest()
-    return tuple(
-        {
-            "row_identifier": row_identifier(entry.row_index, digest),
-            "host_root": entry.host_root,
-            "swallowed_head": entry.swallowed_head,
-            "normalized_head": entry.normalized_head,
-            "head_is_readable": entry.head_is_readable,
-            "has_its_own_row": entry.has_its_own_row,
-        }
-        for entry in swallowed_entries()
-    )
+    rows = _rows()
+    segments: list[dict[str, object]] = []
+    for entry in swallowed_entries():
+        body = _require_body(dict(rows[entry.row_index]), entry.row_index)
+        start = _segment_start(body, entry.swallowed_head)
+        segments.append(
+            {
+                "row_identifier": row_identifier(entry.row_index, digest),
+                "host_root": entry.host_root,
+                "segment_start": start,
+                "segment_end": len(body) if start is not None else None,
+                "candidate_head": entry.swallowed_head,
+                "normalized_head": entry.normalized_head,
+                "head_is_readable": entry.head_is_readable,
+                "has_its_own_row": entry.has_its_own_row,
+                "boundary_evidence": (
+                    "عنوانٌ مفردٌ يليه سطرٌ يفتتح بتسمية حروفه"
+                    if entry.head_is_readable
+                    else "قوسُ محرِّرٍ لا حرفَ فيه"
+                ),
+                "alternatives": (
+                    "إحالةٌ في المتن · تنبيهٌ · فاتحةُ بابٍ لم تُلتقَط"
+                    if entry.head_is_readable
+                    else "ضجيجُ كشفٍ لا مادّة"
+                ),
+                "review_decision": REVIEW_IS_PENDING_UNTIL_ITS_EVIDENCE_CLOSES,
+            }
+        )
+    return tuple(segments)
+
+
+def _segment_start(body: str, head: str) -> int | None:
+    """مطلعُ المقطع المُرشَّح: موضعُ عنوانه في المتن، أو لا شيءَ إن لم يُوجَد."""
+
+    offset = body.find(head)
+    return offset if offset != -1 else None
 
 
 def boundary_reading() -> BoundaryReading:
@@ -526,8 +703,22 @@ def boundary_reading() -> BoundaryReading:
             1 for entry in readable if not entry.has_its_own_row
         ),
         rows_whose_axes_fields_disagree=len(axes_disagreement_rows()),
+        rows_whose_axes_field_is_silent=len(rows_whose_axes_field_is_silent()),
+        rows_declaring_more_axes_than_they_carry=len(
+            rows_declaring_more_axes_than_they_carry()
+        ),
         rows_without_an_axes_count=len(rows_without_an_axes_count()),
     )
+
+
+THE_SEPARATOR_CENSUS_AT_MEASUREMENT: Final[SeparatorCensus] = SeparatorCensus(
+    rows=4_576,
+    rows_with_the_pipe=273,
+    rows_with_an_arabic_comma=199,
+    rows_with_both_marks=0,
+    comma_rows_declaring_one_axis=199,
+)
+"""إحصاءُ الفواصل يوم القياس؛ وهو وحدَه ما يرخّص القسمةَ بالشارحة دون غيرها."""
 
 
 THE_BOUNDARY_READING_AT_MEASUREMENT: Final[BoundaryReading] = BoundaryReading(
@@ -538,7 +729,9 @@ THE_BOUNDARY_READING_AT_MEASUREMENT: Final[BoundaryReading] = BoundaryReading(
     conservative_swallowed_entries=17,
     swallowed_entries_with_a_readable_head=15,
     swallowed_entries_without_their_own_row=15,
-    rows_whose_axes_fields_disagree=1_257,
+    rows_whose_axes_fields_disagree=822,
+    rows_whose_axes_field_is_silent=597,
+    rows_declaring_more_axes_than_they_carry=225,
     rows_without_an_axes_count=864,
 )
 """القراءةُ المُجمَّدةُ يوم القياس؛ تُصادَم بما يُشتَقّ من البايتات لا تُصدَّق."""
