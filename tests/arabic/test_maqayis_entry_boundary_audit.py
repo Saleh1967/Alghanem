@@ -310,3 +310,67 @@ def test_the_nomination_note_refuses_to_claim_the_seventeen_exhaust_the_defect()
     note = audit.THE_OPENING_FORMULA_NOMINATES_AND_DOES_NOT_PROVE_EXHAUSTION_NOTE
     assert "لا يبرهن" in note
     assert "حدٌّ" in note and "أدنى" in note
+
+
+def test_the_chapter_header_names_another_letter_in_half_the_file() -> None:
+    """دليلٌ ثالثٌ على أنّ الحقول المشتقّة مخرجُ أداة: الترويسةُ تخالف الجذر."""
+
+    reading = boundary_reading()
+    assert reading.rows_carrying_a_chapter_header == 4_564
+    assert reading.rows_whose_chapter_header_names_another_letter == 2_183
+    assert len(audit.chapter_header_mismatch_rows()) == len(
+        set(audit.chapter_header_mismatch_rows())
+    )
+
+
+def test_the_kutub_entry_carries_the_header_of_another_letter() -> None:
+    """مادّةُ «كتب» تحمل «كتاب الفاء»؛ شاهدٌ مفردٌ على المخالفة المعدودة."""
+
+    rows = audit.root_table_rows()
+    index = next(i for i, row in enumerate(rows) if row["root_full"].strip() == "كتب")
+    assert "الفاء" in audit.fold_for_comparison(rows[index]["chapter_header"])
+    assert index in audit.chapter_header_mismatch_rows()
+
+
+def test_a_header_is_not_counted_as_mismatching_for_a_mere_shadda() -> None:
+    """التطبيعُ يمنع عدَّ «كتاب الثّاء» مخالفةً لجذرٍ أوّلُه ثاء؛ وبغيره يُفسَد العدّ."""
+
+    rows = audit.root_table_rows()
+    index = next(
+        i
+        for i, row in enumerate(rows)
+        if row["chapter_header"].strip() == "كتاب الثّاء"
+        and row["root_full"].strip().startswith("ث")
+    )
+    assert index not in audit.chapter_header_mismatch_rows()
+    assert "الثاء" not in rows[index]["chapter_header"]
+
+
+def test_a_row_without_a_header_is_not_counted_as_mismatching() -> None:
+    """غيابُ الترويسة ليس مخالفةً فيها؛ فلا يُحشَر الساكتُ في المخالفين."""
+
+    rows = audit.root_table_rows()
+    headless = [
+        index
+        for index, row in enumerate(rows)
+        if not (row["chapter_header"] or "").strip()
+    ]
+    assert headless
+    assert not set(headless) & set(audit.chapter_header_mismatch_rows())
+
+
+def test_a_field_disagreement_is_never_published_as_a_lexicon_error() -> None:
+    """822 خلافَ حقلين لا 822 خطأً معجميًّا؛ والنصُّ يمنع هذه القراءة."""
+
+    note = audit.A_FIELD_DISAGREEMENT_IS_NOT_A_LEXICON_ERROR_NOTE
+    assert "خلافُ حقلين" in note
+    assert "لا صدقَ معنًى" in note
+
+
+def test_the_silent_class_is_described_and_its_cause_is_not_named() -> None:
+    """وصفُ حالِ الحقلين لا تشخيصُ سببها؛ فتسميةُ السبب تحتاج آليّةَ الإنتاج."""
+
+    rule = audit.AXES_RESIDUE_CLASSING_RULE
+    assert "وصفُ حالِ" in rule
+    assert "آليّة إنتاج الحقل" in rule
+    assert "فشل استخراج" not in rule
