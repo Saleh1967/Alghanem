@@ -70,6 +70,8 @@
 from __future__ import annotations
 
 import hashlib
+import re
+import zipfile
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -395,6 +397,25 @@ class ChannelReading:
         return self.standing is ChannelStanding.OPEN
 
 
+A_SEALED_CONTAINER_IS_READ_THROUGH_ITS_FORMAT_NOT_AS_RAW_BYTES: Final[str] = (
+    "الختمُ يقع على بايتات الملفّ كما أُودِع، والقراءةُ تقع على نصّه: فملفُّ "
+    "‎.docx‎ حاويةُ ZIP مضغوطة، وفكُّ بايتاتها الخام UTF-8 لا يُخرِج جملةً "
+    "واحدةً من متنه — فتبقى القناةُ مقفلةً والمادّةُ حاضرةٌ مختومة. فيُقرأ "
+    "‎word/document.xml‎ وتُنزَع وسومُه، ولا يُمسّ الختم."
+)
+
+
+def _sealed_material_text(path: Path) -> str:
+    """نصُّ مادّةٍ مختومة: حاويةُ ‎.docx‎ تُفَكّ إلى متنها، وما سواها UTF-8."""
+
+    data = path.read_bytes()
+    if data[:2] == b"PK" and zipfile.is_zipfile(path):
+        with zipfile.ZipFile(path) as archive:
+            xml = archive.read("word/document.xml").decode("utf-8")
+        return re.sub(r"<[^>]+>", "", xml)
+    return data.decode("utf-8", errors="ignore")
+
+
 def channel_readings(root: Path | None = None) -> tuple[ChannelReading, ...]:
     """حالُ القنوات الثلاث، مُشتقًّا من أختام المواد لا مكتوبًا في نثر."""
 
@@ -412,10 +433,8 @@ def channel_readings(root: Path | None = None) -> tuple[ChannelReading, ...]:
                 f"فلا تُقرأ فيها جملةُ «{gate.defining_phrase}»"
             )
         else:
-            text = (
-                ((root or _repository_root()) / seal.material.relative_path)
-                .read_bytes()
-                .decode("utf-8", errors="ignore")
+            text = _sealed_material_text(
+                (root or _repository_root()) / seal.material.relative_path
             )
             opened = gate.defining_phrase in text
             if not opened:
