@@ -64,14 +64,14 @@ def test_the_fold_proves_the_utterance_matches_not_the_orthography() -> None:
     assert quotation_is_in_the_deposited_ayah()
 
 
-def test_the_link_produces_a_judgment_before_any_masaq_byte_lands() -> None:
-    """ثلاثُ دعاوى نافذةٌ بالأدلّة الحاضرة؛ فالتشغيلُ أثرٌ لا وعد."""
+def test_the_link_produces_a_judgment_from_the_evidence_that_is_here() -> None:
+    """أربعُ دعاوى نافذةٌ بالأدلّة الحاضرة بعد نزول MASAQ؛ فالتشغيلُ أثرٌ لا وعد."""
 
     reading = link_reading()
     assert reading == THE_LINK_READING_AT_MEASUREMENT
     assert not link_reading_has_drifted()
     assert reading.the_link_produced_a_judgment
-    assert reading.granted_claims == 3
+    assert reading.granted_claims == 4
 
 
 def test_removing_a_necessary_premise_suspends_only_what_rests_on_it() -> None:
@@ -139,7 +139,7 @@ def test_a_pending_premise_names_the_material_it_waits_for() -> None:
     for premise in pending:
         assert premise.pending_material
     materials = {premise.pending_material for premise in pending}
-    assert "corpora/MASAQ.csv" in materials
+    assert "بايتاتُ مغني اللبيب، غيرُ مُودَعةٍ في الشجرة" in materials
 
 
 def test_the_suspension_is_per_claim_and_not_per_file() -> None:
@@ -159,12 +159,9 @@ def test_a_missing_premise_is_named_and_not_merely_counted() -> None:
     """ما نقص يُسمّى بعينه في الشهادة، فلا يُقال «ناقصة» بلا تسمية."""
 
     satisfied = link.satisfied_premise_names()
-    claim = next(c for c in the_claims() if c.name == "البناء_للمجهول")
+    claim = next(c for c in the_claims() if c.name == "تعلق_الجار_والمجرور")
     missing = claim.missing_under(satisfied)
-    assert set(missing) == {
-        PremiseName.تجزئة_مساق,
-        PremiseName.وسم_البناء_للمجهول,
-    }
+    assert set(missing) == {PremiseName.قاعدة_على_في_مغني_اللبيب}
 
 
 def test_the_certificate_carries_loci_premises_bounds_and_what_is_pending() -> None:

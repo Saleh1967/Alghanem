@@ -85,7 +85,7 @@ class TestTheLadder:
     def test_the_ladder_lands_on_the_recorded_census(self) -> None:
         assert table_census(SourceRung.FATIHA).realized_cells == 41
         assert table_census(SourceRung.WITH_FATH).realized_cells == 74
-        assert table_census(SourceRung.WITH_PROSE).realized_cells == 109
+        assert table_census(SourceRung.WITH_PROSE).realized_cells == 110
 
     def test_every_declared_letter_appears_only_at_the_widest_rung(self) -> None:
         assert table_census(SourceRung.FATIHA).letters_present < 28
@@ -94,7 +94,7 @@ class TestTheLadder:
 
     def test_the_table_does_not_fill_even_at_the_widest_rung(self) -> None:
         widest = table_census(SourceRung.WITH_PROSE)
-        assert widest.empty_cells == 3
+        assert widest.empty_cells == 2
         assert widest.realized_cells < THE_HUNDRED_AND_TWELVE
 
     def test_no_cell_falls_outside_the_two_declarations(self) -> None:
@@ -117,9 +117,9 @@ class TestTheLadder:
 class TestTheAbsences:
     """الخلوُّ يُقاس بهوامشه، ولا يُقرأ منعًا بمجرّده."""
 
-    def test_the_three_absences_are_named_exactly(self) -> None:
+    def test_the_two_absences_are_named_exactly(self) -> None:
         absences = absent_cells()
-        assert len(absences) == 3
+        assert len(absences) == 2
         assert {(item.letter, item.haraka) for item in absences} == {
             ("ا", "\u0652"),
             ("ز", "\u0652"),

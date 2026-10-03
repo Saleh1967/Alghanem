@@ -121,7 +121,7 @@ def test_the_differing_formal_links_are_exactly_the_two_named_refutations() -> N
 
 
 def test_the_realized_count_moved_and_so_refuted_its_own_promotion_to_a_field() -> None:
-    """١٠٨ نُصِّبت حقلًا فصارت ١٠٩ بنموّ النثر وحدَه؛ فالعددُ نفسُه هو الناقض."""
+    """١٠٨ نُصِّبت حقلًا فصارت ١١٠ بنموّ النثر وحدَه؛ فالعددُ نفسُه هو الناقض."""
 
     link = next(
         item for item in read_deposited_ledger() if "المتحقَّقُ ليس حقلًا" in item.name
