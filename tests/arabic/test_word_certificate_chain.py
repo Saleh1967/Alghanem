@@ -15,7 +15,10 @@ from alghanem.arabic.word_certificate_chain import (
     AnalysisSubject,
     AnalysisWitness,
     CertificateLayer,
+    FeatureClaim,
     LayerStanding,
+    StructuralFeature,
+    WitnessGate,
     WordCertificateError,
     canonical_admission,
     certify,
@@ -40,23 +43,85 @@ def _origin_witness(address: WordAddress) -> OriginWitness:
     )
 
 
-def _analysis(
-    subject: AnalysisSubject, claim: str = "دعوى", surface: str = THE_SURFACE
+THE_MAQAYIS_LOCUS = WordAddress("MAQAYIS_BY_ROOT", 9041, 1)
+
+THE_MAQAYIS_EXCERPT = (
+    'حيي,مضاعف,874,حي,,,,"الحاء والياء والحرف المعتل أصلان: أحدهما خِلاف '
+    "المَوْت، والآخر الاستحياء"
+)
+
+THE_CORPUS_EXCERPT = "فِي الْقِصَاصِ حَيَاةٌ يَا أُولِي الْأَلْبَابِ"
+
+
+def _occurrence_witness(
+    surface: str = THE_SURFACE, address: WordAddress = THE_ADDRESS
 ) -> AnalysisWitness:
+    """شاهدُ وقوعٍ من مدوّنةٍ مختومة: يُثبِت الوقوعَ لا المادّةَ ولا الإعراب."""
+
     return AnalysisWitness(
-        subject=subject,
-        claim=claim,
+        subject=AnalysisSubject.OCCURRENCE_OF_THE_SURFACE,
+        claim=f"وقع السطحُ «{surface}» في «{address.rendered}»",
         surface=surface,
-        lexical_source="corpora/quran-simple-enhanced.txt",
-        lexical_locus="2:179",
+        source_key=address.source_key,
+        locus=address,
+        quoted_excerpt=THE_CORPUS_EXCERPT,
+        claimed_features=(FeatureClaim(StructuralFeature.SURFACE, surface),),
+        claim_rests_on=(surface,),
+        rule_versioned_id="قاعدة-الوقوع-من-مدوّنةٍ-مختومة@1",
         examiner="tests",
     )
 
 
+def _root_witness(surface: str = THE_SURFACE) -> AnalysisWitness:
+    """شاهدُ مادّةٍ من معجمٍ مختوم، مُسنَدٌ إلى نصّ بابه في النسخة المختومة."""
+
+    return AnalysisWitness(
+        subject=AnalysisSubject.ROOT_AND_WAZN,
+        claim="مادّةُ «حيي» في مقاييس اللغة، بنصّ بابها",
+        surface=surface,
+        source_key="MAQAYIS_BY_ROOT",
+        locus=THE_MAQAYIS_LOCUS,
+        quoted_excerpt=THE_MAQAYIS_EXCERPT,
+        claimed_features=(FeatureClaim(StructuralFeature.SURFACE, surface),),
+        claim_rests_on=("الحاء والياء والحرف المعتل أصلان",),
+        rule_versioned_id="قاعدة-المادّة-من-معجمٍ-مختوم@1",
+        examiner="tests",
+    )
+
+
+def _syntax_witness() -> AnalysisWitness:
+    """شاهدٌ نحويٌّ لا مصدرَ مُعلَنًا له بعدُ، فيُرَدُّ ببوّابته الأولى."""
+
+    return AnalysisWitness(
+        subject=AnalysisSubject.SYNTACTIC_FUNCTION,
+        claim="دعوى إعرابٍ من تشجيرٍ لم يُودَع",
+        surface=THE_SURFACE,
+        source_key="MASAQ",
+        locus=WordAddress("MASAQ", 1, 1),
+        quoted_excerpt="تشجيرٌ لم يُودَع بعدُ",
+        claimed_features=(FeatureClaim(StructuralFeature.SURFACE, THE_SURFACE),),
+        claim_rests_on=("تشجيرٌ",),
+        rule_versioned_id="قاعدة-الوظيفة-من-تشجيرٍ-مُعلَن@1",
+        examiner="tests",
+    )
+
+
+def _analysis(
+    subject: AnalysisSubject, claim: str = "دعوى", surface: str = THE_SURFACE
+) -> AnalysisWitness:
+    """شاهدٌ لموضوعٍ مُسمًّى: المادّةُ من معجمها، والوقوعُ من مدوّنته."""
+
+    if subject is AnalysisSubject.ROOT_AND_WAZN:
+        return _root_witness(surface)
+    if subject is AnalysisSubject.OCCURRENCE_OF_THE_SURFACE:
+        return _occurrence_witness(surface)
+    return _syntax_witness()
+
+
 def _full_witnesses() -> tuple[AnalysisWitness, ...]:
     return (
+        _analysis(AnalysisSubject.OCCURRENCE_OF_THE_SURFACE),
         _analysis(AnalysisSubject.ROOT_AND_WAZN),
-        _analysis(AnalysisSubject.SYNTACTIC_FUNCTION),
     )
 
 
@@ -132,8 +197,12 @@ def test_withdrawing_the_origin_witness_only_unseats_the_reference() -> None:
         analysis_witnesses=_full_witnesses(),
     )
     without = certify(THE_ADDRESS, analysis_witnesses=_full_witnesses())
-    assert with_it.is_licensed is True
-    assert without.is_licensed is False
+    kept_premise = "منشأُ المقتطفِ مُثبَتٌ بشهادة"
+    assert kept_premise not in with_it.overall.blocking_premises
+    assert kept_premise in without.overall.blocking_premises
+    assert set(with_it.overall.blocking_premises) < set(
+        without.overall.blocking_premises
+    )
     for layer in (CertificateLayer.ENCODING, CertificateLayer.CANONICAL_ADMISSION):
         kept = next(one for one in without.verdicts if one.layer is layer)
         assert kept.standing is LayerStanding.LICENSED_IN_SCOPE
@@ -145,7 +214,7 @@ def test_withdrawing_the_root_witness_cascades_into_the_syntax_premise() -> None
     certificate = certify(
         THE_ADDRESS,
         witnesses=(_origin_witness(THE_ADDRESS),),
-        analysis_witnesses=(_analysis(AnalysisSubject.SYNTACTIC_FUNCTION),),
+        analysis_witnesses=(_syntax_witness(),),
     )
     blocked = set(certificate.overall.blocking_premises)
     root_premise = next(
@@ -185,11 +254,17 @@ def test_a_witness_pointing_at_an_absent_source_is_not_admitted() -> None:
         subject=AnalysisSubject.ROOT_AND_WAZN,
         claim="دعوى",
         surface=THE_SURFACE,
-        lexical_source="corpora/this-file-does-not-exist.txt",
-        lexical_locus="x",
+        source_key="corpora/this-file-does-not-exist.txt",
+        locus=WordAddress("corpora/this-file-does-not-exist.txt", 1, 1),
+        quoted_excerpt="مقطعٌ لا مصدرَ له",
+        claimed_features=(FeatureClaim(StructuralFeature.SURFACE, THE_SURFACE),),
+        claim_rests_on=("مقطعٌ",),
+        rule_versioned_id="قاعدة-المادّة-من-معجمٍ-مختوم@1",
         examiner="tests",
     )
-    assert ghost.source_is_present() is False
+    audit = ghost.audit({})
+    assert audit.admitted is False
+    assert WitnessGate.SOURCE_PRESENT_AND_SEALED in audit.failed_gates
     certificate = certify(THE_ADDRESS, analysis_witnesses=(ghost,))
     morphology = next(
         one for one in certificate.verdicts if one.layer is CertificateLayer.MORPHOLOGY
@@ -343,6 +418,12 @@ def test_the_declared_scope_insulates_the_quran_results() -> None:
         witnesses=(_origin_witness(THE_ADDRESS),),
         analysis_witnesses=_full_witnesses(),
     )
-    assert certificate.is_licensed is True
-    assert certificate.scope.insulation[0] in certificate.overall.cause
+    licensed = [
+        one
+        for one in certificate.verdicts
+        if one.standing is LayerStanding.LICENSED_IN_SCOPE
+    ]
+    assert licensed
+    assert all("النطاق المُعلَن" in one.cause for one in licensed)
+    assert certificate.scope.insulation
     assert certificate.scope.deferred

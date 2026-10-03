@@ -40,6 +40,7 @@ if str(SRC_ROOT) not in sys.path:
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from alghanem.arabic.epistemic_layers import EpistemicStanding  # noqa: E402
 from alghanem.arabic.excerpt_origin_bridge import (  # noqa: E402
     OriginWitness,
     WordAddress,
@@ -59,7 +60,6 @@ from alghanem.arabic.word_certificate_chain import (  # noqa: E402
     certify,
     fingerprint,
 )
-from alghanem.arabic.epistemic_layers import EpistemicStanding  # noqa: E402
 
 EXHIBIT_DIR: Final[Path] = REPO_ROOT / "exhibits" / "word-certificate"
 LEDGER_PATH: Final[Path] = EXHIBIT_DIR / "certificates.jsonl"
@@ -135,9 +135,7 @@ THE_FABRICATED_WITNESSES: Final[tuple[AnalysisWitness, ...]] = (
         source_key="README.md",
         locus=WordAddress("README.md", 9999, 9999),
         quoted_excerpt="إحالةٌ لا وجودَ لها",
-        claimed_features=(
-            FeatureClaim(StructuralFeature.TANWIN_MARK, "لا تنوين"),
-        ),
+        claimed_features=(FeatureClaim(StructuralFeature.TANWIN_MARK, "لا تنوين"),),
         claim_rests_on=("فعلٌ ماضٍ",),
         rule_versioned_id="قاعدة-المادّة-من-معجمٍ-مختوم@1",
         examiner="مُختلِق",

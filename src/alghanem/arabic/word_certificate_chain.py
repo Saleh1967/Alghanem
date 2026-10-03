@@ -606,7 +606,9 @@ class FeatureCondition:
     def rendered(self) -> str:
         """صورةُ الشرط مكتوبةً."""
 
-        return f"{self.feature.name}{'' if self.expected is None else '=' + self.expected}"
+        return (
+            f"{self.feature.name}{'' if self.expected is None else '=' + self.expected}"
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -665,8 +667,7 @@ THE_ANALYSIS_RULES: Final[tuple[AnalysisRule, ...]] = (
         required_source_genus=SourceGenus.CORPUS_OF_TEXT,
         conditions=(FeatureCondition(StructuralFeature.SURFACE),),
         applicability_note=(
-            "تنطبق على موضعٍ يُحَلّ في مدوّنةٍ مختومة، فيُقرأ منه سطحُ الكلمة "
-            "حرفًا بحرف"
+            "تنطبق على موضعٍ يُحَلّ في مدوّنةٍ مختومة، فيُقرأ منه سطحُ الكلمة " "حرفًا بحرف"
         ),
         establishes="وقوعَ هذا السطح في هذا الموضع من تلك النسخة بعينها",
         limit=(
@@ -688,8 +689,7 @@ THE_ANALYSIS_RULES: Final[tuple[AnalysisRule, ...]] = (
             "موادَّ مختومٍ يُنقَل منه نصُّ باب المادّة بعينه"
         ),
         establishes=(
-            "مادّةَ المدخل المعجميّ ونصَّ بابها في تلك النسخة، منسوبةً إلى "
-            "موضعها فيها"
+            "مادّةَ المدخل المعجميّ ونصَّ بابها في تلك النسخة، منسوبةً إلى " "موضعها فيها"
         ),
         limit=(
             "لا تُخرِج وزنًا، ولا تُثبِت أنّ هذا الوقوعَ من تلك المادّة إلّا "
@@ -1077,8 +1077,7 @@ class AnalysisWitness:
                     WitnessGate.RULE_APPLIES_TO_THIS_OCCURRENCE,
                     not unmet,
                     (
-                        "شروطُ انطباقٍ لم تتحقّق في هذا الوقوع: "
-                        + " · ".join(unmet)
+                        "شروطُ انطباقٍ لم تتحقّق في هذا الوقوع: " + " · ".join(unmet)
                         if unmet
                         else f"{rule.versioned_id}: {rule.applicability_note}"
                     ),
@@ -1189,9 +1188,7 @@ def _cascade(premises: tuple[Premise, ...]) -> tuple[Premise, ...]:
 # ----- المقدّماتُ المُودَعة -----
 
 
-def _establishes_of(
-    witness: AnalysisWitness, rules: tuple[AnalysisRule, ...]
-) -> str:
+def _establishes_of(witness: AnalysisWitness, rules: tuple[AnalysisRule, ...]) -> str:
     """ما تُثبِته القاعدةُ عند هذا الوقوع، وحدُّها؛ لا ما كتبه الشاهدُ لنفسه.
 
     فالدعوى تُقرأ في حدود قاعدتها ومصدرها، ولا تُنقَل إلى الشهادة كما وردت.
@@ -1404,8 +1401,7 @@ def deposited_premises(
                 if syntax_witness is not None
                 else _refusal_note(
                     refusals.get(AnalysisSubject.SYNTACTIC_FUNCTION),
-                    "لا إعرابَ مُودَعًا لهذا الموضع، والعلامةُ الظاهرةُ تحتمل "
-                    "أكثرَ من وجه",
+                    "لا إعرابَ مُودَعًا لهذا الموضع، والعلامةُ الظاهرةُ تحتمل " "أكثرَ من وجه",
                 )
             ),
             why_it_applies_here=(

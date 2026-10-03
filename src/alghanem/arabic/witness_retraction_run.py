@@ -12,7 +12,8 @@
 من القرص، وموضعٌ يُحَلّ إلى إزاحة، ومقطعٌ منقولٌ حرفًا بحرف، ومعطياتٌ بنيويّةٌ
 تُطابق المقيس، وقاعدةٌ بإصدارها تنطبق على الوقوع.
 
-**وثلاثُ حالاتٍ تُفصَل ولا تُخلَط** (`THE_SOURCE_THE_DERIVATION_AND_THE_CLAIM_ARE_THREE_STATES`):
+**وثلاثُ حالاتٍ تُفصَل ولا تُخلَط**
+(`THE_SOURCE_THE_DERIVATION_AND_THE_CLAIM_ARE_THREE_STATES`):
 
 - **حالُ المصدر**: أحاضرٌ مختومٌ أم مسحوب؟
 - **حالُ الاشتقاق**: أقائمٌ أم معلَّقٌ لسقوط مقدّمةٍ أو نقضِ اعتمادِ قاعدته؟
@@ -48,8 +49,8 @@ from ..ontology import (
     EvidenceGenus,
     ExistenceStanding,
     FactRegister,
-    Individual,
     IdentityNetwork,
+    Individual,
     InferenceRule,
     KnowledgeStock,
     Polarity,
@@ -317,8 +318,9 @@ def base_stock() -> KnowledgeStock:
             f"{located.byte_offset} في «{THE_WITNESSED_ADDRESS.rendered}»، مقيسةً "
             "من البايتات المختومة"
         ),
-        source_name=witness_source_of(THE_WITNESSED_ADDRESS.source_key)
-        .source.relative_path,
+        source_name=witness_source_of(
+            THE_WITNESSED_ADDRESS.source_key
+        ).source.relative_path,
         scope=THE_SCOPE,
     )
     rule = carrier_rule()
@@ -350,9 +352,7 @@ def base_stock() -> KnowledgeStock:
         register=register,
         identity=IdentityNetwork(network_id="شبكة-سحب-الشاهد"),
     )
-    support = _proposition(
-        "سند-الشاهد-الأوّل", "وقوع-السطح-مشهودٌ-له", _SURFACE, primary
-    )
+    support = _proposition("سند-الشاهد-الأوّل", "وقوع-السطح-مشهودٌ-له", _SURFACE, primary)
     stock = stock.admit(
         support,
         AdmissionLicence(
@@ -584,6 +584,4 @@ def run() -> RescueOutcome:
         INDEPENDENCE_OF_DERIVATION_IS_NOT_INDEPENDENCE_OF_MATTER,
         THE_ANCHOR_IS_NAMED_AND_IT_IS_NOT_THE_HASH_ITSELF,
     )
-    return RescueOutcome(
-        readings=tuple(readings), lines=tuple(lines), limits=limits
-    )
+    return RescueOutcome(readings=tuple(readings), lines=tuple(lines), limits=limits)
