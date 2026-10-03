@@ -83,15 +83,20 @@ from .general import (
     PriorBaseRef,
 )
 from .inference import (
+    A_NAMED_MODEL_IS_NOT_AN_ADMISSIBLE_ONE,
     NON_ENTAILMENT_NEEDS_TWO_MODELS,
     PERSISTENCE_IS_DEFEASIBLE,
     THREE_OUTCOMES_HIDE_TWO_DIFFERENT_SILENCES,
     Derivation,
     InferenceError,
     Model,
+    ModelAdmissibility,
+    ModelCheck,
+    ModelConstraint,
     NonEntailmentWitness,
     SupportStatus,
     assess_support,
+    check_model,
     non_entailment_witness,
     refuse_silence_as_negation,
 )
@@ -192,6 +197,11 @@ from .verification import (
 )
 
 __all__ = [
+    "check_model",
+    "ModelConstraint",
+    "ModelCheck",
+    "ModelAdmissibility",
+    "A_NAMED_MODEL_IS_NOT_AN_ADMISSIBLE_ONE",
     "accept",
     "AcceptanceRecord",
     "AcceptanceStanding",

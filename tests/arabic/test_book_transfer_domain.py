@@ -8,16 +8,22 @@
 
 from __future__ import annotations
 
+import dataclasses as dc
+
 import pytest
 
 from alghanem.arabic.book_transfer_domain import (
     BOOK_HOLDING_STATE_ID,
     BOOK_INDIVIDUAL_ID,
+    BOOK_LOCATION_STATE_ID,
+    BOOK_OWNERSHIP_STATE_ID,
     BOOK_TRANSFER_EVENT_ID,
     BOOK_TYPE_ID,
     HELD_BY_FIRST,
     HELD_BY_SECOND,
+    OWNED_BY_SECOND,
     THE_BOOK_DOMAIN_SCOPE,
+    THREE_STATES_ARE_NOT_ONE,
     book_holding_question,
     book_transfer_store,
     book_world_register,
@@ -33,6 +39,8 @@ from alghanem.ontology import (
     Proposition,
     PropositionForm,
     SupportStatus,
+    assess_support,
+    hold_state,
     requirements_for,
 )
 
@@ -139,3 +147,120 @@ def test_both_domains_are_founded_on_the_very_same_candidate_kinds() -> None:
             books.ontology.candidate(book_id).kind
             is doors.ontology.candidate(door_id).kind
         )
+
+
+# ----- الموضعُ والحيازةُ والملكيّةُ ثلاثٌ لا واحدة -----
+
+
+def test_the_three_states_are_deposited_as_three_not_folded_into_one() -> None:
+    store = book_transfer_store()
+    state_ids = {definition.state_id for definition in store.states}
+    assert state_ids == {
+        BOOK_HOLDING_STATE_ID,
+        BOOK_LOCATION_STATE_ID,
+        BOOK_OWNERSHIP_STATE_ID,
+    }
+    for state_id in state_ids:
+        values = set(store.state_of(state_id).mutually_exclusive_values)
+        assert len(values) == 2
+    assert set(
+        store.state_of(BOOK_HOLDING_STATE_ID).mutually_exclusive_values
+    ).isdisjoint(store.state_of(BOOK_OWNERSHIP_STATE_ID).mutually_exclusive_values)
+
+
+def test_the_transfer_decides_holding_and_leaves_ownership_undecided() -> None:
+    scope = THE_BOOK_DOMAIN_SCOPE
+    store = book_transfer_store()
+    evidence = dc.replace(
+        transfer_observation(HELD_BY_SECOND, scope),
+        evidence_id="مشاهدة-حيازةٍ-بعد-النقل",
+    )
+    register = book_world_register()
+    register = hold_state(
+        individual_id=BOOK_INDIVIDUAL_ID,
+        state_id=BOOK_HOLDING_STATE_ID,
+        value=HELD_BY_SECOND,
+        scope=scope,
+        evidence=evidence,
+        register=register,
+        store=store,
+        proposition_id="قضيّة-الحيازة-بعد-النقل",
+    )
+    holding = assess_support(
+        "سؤال-الحيازة",
+        Proposition(
+            proposition_id="هدف-الحيازة",
+            form=PropositionForm.STATE_HOLDS,
+            subject_id=BOOK_INDIVIDUAL_ID,
+            predicate_id=BOOK_HOLDING_STATE_ID,
+            value=HELD_BY_SECOND,
+            polarity=Polarity.AFFIRMED,
+            scope=scope,
+            evidence_ref=evidence.ref,
+        ),
+        register,
+        store,
+    )
+    ownership = assess_support(
+        "سؤال-الملكيّة",
+        Proposition(
+            proposition_id="هدف-الملكيّة",
+            form=PropositionForm.STATE_HOLDS,
+            subject_id=BOOK_INDIVIDUAL_ID,
+            predicate_id=BOOK_OWNERSHIP_STATE_ID,
+            value=OWNED_BY_SECOND,
+            polarity=Polarity.AFFIRMED,
+            scope=scope,
+            evidence_ref=evidence.ref,
+        ),
+        register,
+        store,
+    )
+    assert holding.status is SupportStatus.SUPPORTS_PROPOSITION
+    assert ownership.status is SupportStatus.UNDECIDED_BY_AVAILABLE_PREMISES
+    assert ownership.status is not SupportStatus.SUPPORTS_NEGATION
+    assert "الملكيّةُ لا تتحرّك إلّا بسببٍ مُعلَنٍ لها" in THREE_STATES_ARE_NOT_ONE
+
+
+def test_no_rule_in_the_deposit_names_ownership_or_location_as_its_consequent() -> None:
+    store = book_transfer_store()
+    for rule in store.rules:
+        assert BOOK_OWNERSHIP_STATE_ID not in rule.conclusion_pattern
+        assert BOOK_LOCATION_STATE_ID not in rule.conclusion_pattern
+
+
+def test_the_direction_of_the_transfer_is_not_baked_into_the_domain_data() -> None:
+    scope = THE_BOOK_DOMAIN_SCOPE
+    store = book_transfer_store()
+    for value in (HELD_BY_FIRST, HELD_BY_SECOND):
+        evidence = dc.replace(
+            transfer_observation(value, scope),
+            evidence_id=f"مشاهدة-اتّجاهٍ-{value}",
+        )
+        register = book_world_register()
+        register = hold_state(
+            individual_id=BOOK_INDIVIDUAL_ID,
+            state_id=BOOK_HOLDING_STATE_ID,
+            value=value,
+            scope=scope,
+            evidence=evidence,
+            register=register,
+            store=store,
+            proposition_id="قضيّة-الحيازة",
+        )
+        derivation = assess_support(
+            "سؤال-الحيازة",
+            Proposition(
+                proposition_id="هدف",
+                form=PropositionForm.STATE_HOLDS,
+                subject_id=BOOK_INDIVIDUAL_ID,
+                predicate_id=BOOK_HOLDING_STATE_ID,
+                value=value,
+                polarity=Polarity.AFFIRMED,
+                scope=scope,
+                evidence_ref=evidence.ref,
+            ),
+            register,
+            store,
+        )
+        assert derivation.status is SupportStatus.SUPPORTS_PROPOSITION

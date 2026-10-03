@@ -31,19 +31,25 @@ from enum import Enum
 from typing import Final
 
 from ..canonical_content import canonical_bytes, canonical_digest
+from .content import DiscourseContent, Polarity
 from .facts import FactRegister, Proposition, PropositionForm
-from .substance import SubstanceStore
+from .substance import RuleKind, SubstanceStore
 
 __all__ = [
+    "A_NAMED_MODEL_IS_NOT_AN_ADMISSIBLE_ONE",
     "NON_ENTAILMENT_NEEDS_TWO_MODELS",
     "PERSISTENCE_IS_DEFEASIBLE",
     "THREE_OUTCOMES_HIDE_TWO_DIFFERENT_SILENCES",
     "Derivation",
     "InferenceError",
     "Model",
+    "ModelAdmissibility",
+    "ModelCheck",
+    "ModelConstraint",
     "NonEntailmentWitness",
     "SupportStatus",
     "assess_support",
+    "check_model",
     "non_entailment_witness",
     "refuse_silence_as_negation",
 ]
@@ -51,6 +57,15 @@ __all__ = [
 
 class InferenceError(ValueError):
     """رفضٌ بنيويٌّ في طبقة الاستدلال؛ لا حملَ على أقرب حالة."""
+
+
+A_NAMED_MODEL_IS_NOT_AN_ADMISSIBLE_ONE: Final[str] = (
+    "نموذجٌ عنوانُه «مفتوح» وآخرُ عنوانُه «مغلق» تسميةٌ لا برهان: شاهدُ عدم "
+    "اللزوم لا يُخرَج حتّى يُفحَص في كلا النموذجين أنّ قيمَ الحال في فضائها "
+    "المُعلَن، وأنّ أنواعَ أحداثِه مودَعة، وأنّ المنفيَّ في القول غيرُ واقعٍ "
+    "فيه، وأنّ لكلّ قاعدةٍ صارمةٍ قيدًا منفَّذًا استوفاه — وإلّا فالشهادةُ "
+    "دعوى ثانيةٌ تُضاف إلى الأولى"
+)
 
 
 THREE_OUTCOMES_HIDE_TWO_DIFFERENT_SILENCES: Final[str] = (
@@ -199,6 +214,7 @@ class NonEntailmentWitness:
     first: Model
     second: Model
     declared_model_note: str
+    admissibility: tuple[ModelAdmissibility, ...] = ()
 
     def __post_init__(self) -> None:
         _require_text(self.question_ref, "مُعرِّفُ السؤال")
@@ -243,6 +259,9 @@ class NonEntailmentWitness:
             "first": self.first.as_canonical_content(),
             "second": self.second.as_canonical_content(),
             "declared_model_note": self.declared_model_note,
+            "admissibility": [
+                verdict.as_canonical_content() for verdict in self.admissibility
+            ],
         }
 
 
@@ -333,6 +352,192 @@ def assess_support(
     )
 
 
+class ModelCheck(Enum):
+    """مواضعُ فحصِ النموذج؛ مفردةٌ مغلقةٌ فيها عضوُ ما لا يُفحَص ههنا."""
+
+    VALUE_IN_THE_DECLARED_SPACE = "value_in_the_declared_space"
+    STATE_IS_DEPOSITED = "state_is_deposited"
+    EVENT_TYPE_IS_DEPOSITED = "event_type_is_deposited"
+    NEGATED_CONTENT_RESPECTED = "negated_content_respected"
+    DECLARED_CONSTRAINTS_HOLD = "declared_constraints_hold"
+    RULE_NOT_EXECUTABLE_HERE = "rule_not_executable_here"
+
+
+@dataclass(frozen=True, slots=True)
+class ModelConstraint:
+    """قيدٌ **منفَّذٌ** مشتقٌّ من قاعدةٍ صارمة: وقوعُ حدثٍ يلزمه قيمةُ حال.
+
+    ونمطُ القاعدة في الرصيد نثرٌ لا يُنفَّذ؛ فهذا القيدُ صورتُه التنفيذيّةُ
+    المُعلَنة، ومُعرِّفُ قاعدتِه مذكورٌ فيه كي لا يُقرأ قيدًا بلا أصل.
+    """
+
+    constraint_id: str
+    rule_versioned_id: str
+    individual_id: str
+    trigger_event_type_id: str
+    required_state_id: str
+    required_value: str
+
+    def __post_init__(self) -> None:
+        for text, label in (
+            (self.constraint_id, "مُعرِّفُ القيد"),
+            (self.rule_versioned_id, "مُعرِّفُ القاعدة المُصدِرة"),
+            (self.individual_id, "الفردُ المُقيَّد"),
+            (self.trigger_event_type_id, "نوعُ الحدث المُطلِق"),
+            (self.required_state_id, "الحالُ اللازمة"),
+            (self.required_value, "القيمةُ اللازمة"),
+        ):
+            _require_text(text, label)
+
+    def holds_in(self, model: Model) -> bool:
+        """أيستوفي النموذجُ هذا القيد؟ وعدمُ إطلاقِه استيفاءٌ لا خرق."""
+
+        if not model.event_occurred(self.individual_id, self.trigger_event_type_id):
+            return True
+        value = model.state_of(self.individual_id, self.required_state_id)
+        return value == self.required_value
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """محتوى القيد للبصمة."""
+
+        return {
+            "constraint_id": self.constraint_id,
+            "rule_versioned_id": self.rule_versioned_id,
+            "individual_id": self.individual_id,
+            "trigger_event_type_id": self.trigger_event_type_id,
+            "required_state_id": self.required_state_id,
+            "required_value": self.required_value,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class ModelAdmissibility:
+    """حكمُ قبولِ نموذجٍ: المواضعُ المفحوصةُ والمتخلِّفةُ والمعلَّقةُ بأسمائها."""
+
+    model_id: str
+    checked: tuple[ModelCheck, ...]
+    failed: tuple[ModelCheck, ...]
+    failure_notes: tuple[str, ...]
+    unexecuted_rule_ids: tuple[str, ...]
+
+    @property
+    def is_admissible(self) -> bool:
+        """أمقبولٌ النموذج؟ ولا موضعَ متخلِّفٌ فيه."""
+
+        return not self.failed
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """محتوى الحكم للبصمة."""
+
+        return {
+            "model_id": self.model_id,
+            "checked": [check.value for check in self.checked],
+            "failed": [check.value for check in self.failed],
+            "failure_notes": list(self.failure_notes),
+            "unexecuted_rule_ids": list(self.unexecuted_rule_ids),
+        }
+
+
+def check_model(
+    model: Model,
+    store: SubstanceStore,
+    constraints: Sequence[ModelConstraint] = (),
+    content: DiscourseContent | None = None,
+) -> ModelAdmissibility:
+    """افحص استيفاءَ نموذجٍ للرصيد وللقيود المُعلَنة ولمضمونِ القول المنفيّ.
+
+    المدخل: نموذجٌ، ورصيدٌ، وقيودٌ منفَّذةٌ مشتقّةٌ من قواعدَ صارمة، ومضمونٌ.
+    الشرط: لا شيء؛ والفحصُ يُخرِج مواضعَه كلَّها مفحوصةً أو متخلِّفة.
+    المخرج: حكمُ قبولٍ يُسمّي ما تخلَّف وما لم يُنفَّذ.
+    ما تحفظه: القواعدُ النثريّةُ تُسمّى `RULE_NOT_EXECUTABLE_HERE` ولا تُقرأ
+        مستوفاةً بالسكوت؛ فالقبولُ مشروطٌ بأن يكون لكلّ قاعدةٍ صارمةٍ قيدُها.
+    """
+
+    checked: list[ModelCheck] = []
+    failed: list[ModelCheck] = []
+    notes: list[str] = []
+
+    checked.append(ModelCheck.STATE_IS_DEPOSITED)
+    checked.append(ModelCheck.VALUE_IN_THE_DECLARED_SPACE)
+    for (individual_id, state_id), value in sorted(model.state_values.items()):
+        try:
+            definition = store.state_of(state_id)
+        except Exception:
+            if ModelCheck.STATE_IS_DEPOSITED not in failed:
+                failed.append(ModelCheck.STATE_IS_DEPOSITED)
+            notes.append(f"حالٌ غيرُ مودَعةٍ في الرصيد: `{state_id}`")
+            continue
+        if value not in definition.mutually_exclusive_values:
+            if ModelCheck.VALUE_IN_THE_DECLARED_SPACE not in failed:
+                failed.append(ModelCheck.VALUE_IN_THE_DECLARED_SPACE)
+            notes.append(
+                f"قيمةٌ خارجَ فضاء `{state_id}` المُعلَن: `{value}` " f"لـ`{individual_id}`"
+            )
+
+    checked.append(ModelCheck.EVENT_TYPE_IS_DEPOSITED)
+    for individual_id, event_type_id in sorted(model.occurred_event_keys):
+        try:
+            store.event_type_of(event_type_id)
+        except Exception:
+            if ModelCheck.EVENT_TYPE_IS_DEPOSITED not in failed:
+                failed.append(ModelCheck.EVENT_TYPE_IS_DEPOSITED)
+            notes.append(
+                f"نوعُ حدثٍ غيرُ مودَعٍ في الرصيد: `{event_type_id}` " f"لـ`{individual_id}`"
+            )
+
+    if content is not None:
+        checked.append(ModelCheck.NEGATED_CONTENT_RESPECTED)
+        event = content.event
+        if event.polarity is Polarity.NEGATED:
+            for filling in event.role_fillings:
+                designation = filling.designation
+                if designation is None:
+                    continue
+                for candidate_id in designation.candidate_individual_ids:
+                    if model.event_occurred(candidate_id, event.event_type_id):
+                        if ModelCheck.NEGATED_CONTENT_RESPECTED not in failed:
+                            failed.append(ModelCheck.NEGATED_CONTENT_RESPECTED)
+                        notes.append(
+                            f"القولُ ينفي `{event.event_type_id}` عن "
+                            f"`{candidate_id}` والنموذجُ يُوقِعه"
+                        )
+
+    checked.append(ModelCheck.DECLARED_CONSTRAINTS_HOLD)
+    for constraint in constraints:
+        if not constraint.holds_in(model):
+            if ModelCheck.DECLARED_CONSTRAINTS_HOLD not in failed:
+                failed.append(ModelCheck.DECLARED_CONSTRAINTS_HOLD)
+            notes.append(
+                f"قيدٌ مخروقٌ `{constraint.constraint_id}` عن قاعدة "
+                f"`{constraint.rule_versioned_id}`"
+            )
+
+    covered = {constraint.rule_versioned_id for constraint in constraints}
+    unexecuted = tuple(
+        sorted(
+            f"{rule.rule_id}@{rule.version}"
+            for rule in store.rules
+            if rule.kind is RuleKind.STRICT_IN_THE_DECLARED_MODEL
+            and f"{rule.rule_id}@{rule.version}" not in covered
+        )
+    )
+    if unexecuted:
+        checked.append(ModelCheck.RULE_NOT_EXECUTABLE_HERE)
+        failed.append(ModelCheck.RULE_NOT_EXECUTABLE_HERE)
+        notes.append(
+            "قاعدةٌ صارمةٌ بلا قيدٍ منفَّذٍ يقابلها، فلا يُقال إنّ النموذجَ "
+            "استوفاها: " + " · ".join(unexecuted)
+        )
+
+    return ModelAdmissibility(
+        model_id=model.model_id,
+        checked=tuple(checked),
+        failed=tuple(failed),
+        failure_notes=tuple(notes),
+        unexecuted_rule_ids=unexecuted,
+    )
+
+
 def non_entailment_witness(
     question_ref: str,
     individual_id: str,
@@ -340,13 +545,19 @@ def non_entailment_witness(
     values: Sequence[str],
     shared_occurred_event_keys: Sequence[tuple[str, str]],
     declared_model_note: str,
+    store: SubstanceStore,
+    constraints: Sequence[ModelConstraint] = (),
+    content: DiscourseContent | None = None,
 ) -> NonEntailmentWitness:
-    """ابنِ شاهدَ عدم لزومٍ: نموذجانِ يختلفان في قيمة الحال ويتّفقان فيما عداها.
+    """ابنِ شاهدَ عدم لزومٍ **بعد فحصِ قبولِ النموذجين**، لا بتسميتِهما.
 
-    المدخل: فردٌ وحالٌ وقيمتانِ من قيمها، وما وقع من أحداثٍ في النموذجين معًا.
-    الشرط: القيمتانِ مختلفتان؛ والمتّفقتانِ لا تشهدان.
+    المدخل: فردٌ وحالٌ وقيمتانِ، وما وقع من أحداثٍ في النموذجين معًا، ورصيدٌ،
+        وقيودٌ منفَّذةٌ عن القواعد الصارمة، ومضمونُ القول المنفيّ إن وُجِد.
+    الشرط: القيمتانِ مختلفتان، **وكلا النموذجين مقبولٌ بفحص `check_model`**؛
+        فإن تخلّف موضعٌ في أحدهما لم تُخرَج شهادةُ عدمِ لزومٍ ألبتّة.
     المخرج: شاهدٌ مبصومٌ يُقرَأ دليلًا على عدم اللزوم **داخل النموذج المُعلَن**.
-    حدُّها: لا يُثبِت الشاهدُ شيئًا خارجَ المجال المُصرَّح به في بيانه.
+    حدُّها: لا يُثبِت الشاهدُ شيئًا خارجَ المجال المُصرَّح به في بيانه، ولا
+        يُنفَّذ من القواعد إلّا ما له قيدٌ مُعلَن.
     """
 
     if len(values) != 2:
@@ -355,21 +566,36 @@ def non_entailment_witness(
         )
     first_value, second_value = values
     shared = tuple(shared_occurred_event_keys)
+    first = Model(
+        model_id=f"{question_ref}::نموذج-١",
+        state_values={(individual_id, state_id): first_value},
+        occurred_event_keys=shared,
+    )
+    second = Model(
+        model_id=f"{question_ref}::نموذج-٢",
+        state_values={(individual_id, state_id): second_value},
+        occurred_event_keys=shared,
+    )
+    admissibility = tuple(
+        check_model(model, store, constraints, content) for model in (first, second)
+    )
+    for verdict in admissibility:
+        if not verdict.is_admissible:
+            raise InferenceError(
+                A_NAMED_MODEL_IS_NOT_AN_ADMISSIBLE_ONE
+                + f"؛ والنموذجُ `{verdict.model_id}` تخلَّف في: "
+                + " · ".join(check.value for check in verdict.failed)
+                + "؛ والبيان: "
+                + " · ".join(verdict.failure_notes)
+            )
     return NonEntailmentWitness(
         question_ref=question_ref,
         queried_state_id=state_id,
         queried_individual_id=individual_id,
-        first=Model(
-            model_id=f"{question_ref}::نموذج-١",
-            state_values={(individual_id, state_id): first_value},
-            occurred_event_keys=shared,
-        ),
-        second=Model(
-            model_id=f"{question_ref}::نموذج-٢",
-            state_values={(individual_id, state_id): second_value},
-            occurred_event_keys=shared,
-        ),
+        first=first,
+        second=second,
         declared_model_note=declared_model_note,
+        admissibility=admissibility,
     )
 
 

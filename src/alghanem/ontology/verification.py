@@ -312,13 +312,18 @@ def verify(
             else "سؤالٌ خارجَ الصورِ المنفَّذة وجوابُه يدّعي حسمًا"
         )
     elif conclusion_id is not None:
-        conclusion = register.proposition_of(conclusion_id)
-        if conclusion.form is not expected:
+        try:
+            conclusion = register.proposition_of(conclusion_id)
+        except Exception as absence:  # noqa: BLE001 - يُعاد بنصّه لا بصنفه
             relevance_ok = False
-            relevance_reason = (
-                f"صورةُ القضيّة `{conclusion.form.value}` لا تجيب عن سؤالٍ نوعُه "
-                f"`{question.kind.value}`"
-            )
+            relevance_reason = f"القضيّةُ المُشارُ إليها غائبةٌ عن السجلّ: {absence}"
+        else:
+            if conclusion.form is not expected:
+                relevance_ok = False
+                relevance_reason = (
+                    f"صورةُ القضيّة `{conclusion.form.value}` لا تجيب عن سؤالٍ "
+                    f"نوعُه `{question.kind.value}`"
+                )
     findings.append(
         (VerificationCheck.RELEVANCE_TO_QUESTION, relevance_ok, relevance_reason)
     )

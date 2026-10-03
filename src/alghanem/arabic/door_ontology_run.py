@@ -33,6 +33,7 @@ from ..ontology import (
     FactRegister,
     Individual,
     MinimalityReading,
+    ModelConstraint,
     NonEntailmentWitness,
     Polarity,
     Proposition,
@@ -68,6 +69,7 @@ from .fath_ontology_bridge import (
 from .fath_surface_analysis import read_utterance
 
 __all__ = [
+    "door_model_constraints",
     "A_SILENCE_IS_NOT_A_PROOF",
     "THE_JUDGMENT_FOLLOWS_ITS_EVIDENCE",
     "THE_NEGATION_UTTERANCE",
@@ -350,6 +352,29 @@ class RunOutcome:
         }
 
 
+def door_model_constraints() -> tuple[ModelConstraint, ...]:
+    """الصورةُ المنفَّذةُ للقاعدة الصارمة `قاعدة-أثر-الفتح`، مربوطةً بمُعرِّفها.
+
+    المدخل: لا شيء؛ القاعدةُ مودَعةٌ في رصيد هذا المجال.
+    الشرط: لكلّ قاعدةٍ صارمةٍ في الرصيد قيدٌ ههنا، وإلّا رفض `check_model`
+        إخراجَ شهادةِ عدمِ لزومٍ وسمّى القاعدةَ غيرَ منفَّذة.
+    المخرج: قيودٌ تُنفَّذ على النماذج.
+    حدُّها: نمطُ القاعدة في الرصيد نثرٌ، وهذا القيدُ **نقلٌ مُعلَنٌ** له لا
+        اشتقاقٌ منه؛ فمن غيَّر النثرَ لزمه تغييرُ القيد بيده.
+    """
+
+    return (
+        ModelConstraint(
+            constraint_id="قيد-أثر-الفتح",
+            rule_versioned_id="قاعدة-أثر-الفتح@١",
+            individual_id=DOOR_INDIVIDUAL_ID,
+            trigger_event_type_id=DOOR_OPENING_EVENT_ID,
+            required_state_id=DOOR_STATE_ID,
+            required_value=DOOR_STATE_OPEN,
+        ),
+    )
+
+
 def full_run() -> RunOutcome:
     """شغِّل المسارَ كاملًا، وأخرِج الحكمَ قبل تغيّر المعرفة وبعده.
 
@@ -406,6 +431,9 @@ def full_run() -> RunOutcome:
         state_id=DOOR_STATE_ID,
         values=(DOOR_STATE_SHUT, DOOR_STATE_OPEN),
         shared_occurred_event_keys=(),
+        store=store,
+        constraints=door_model_constraints(),
+        content=bridge.content,
         declared_model_note=(
             "نموذجان يتّفقان على أنّ زيدًا لم يفتح البابَ في الفترة، ويختلفان "
             "في حاله: في الأوّل كان مغلقًا، وفي الثاني كان مفتوحًا أصلًا أو "

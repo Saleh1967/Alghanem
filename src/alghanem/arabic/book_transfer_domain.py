@@ -53,7 +53,14 @@ __all__ = [
     "KNOWING_A_TYPE_IS_NOT_WITNESSING_AN_EVENT",
     "THE_BOOK_DOMAIN_SCOPE",
     "THE_MACHINERY_IS_SHARED_NOT_THE_LEXICON",
+    "AT_THE_TABLE",
     "BOOK_HOLDING_STATE_ID",
+    "BOOK_LOCATION_STATE_ID",
+    "BOOK_OWNERSHIP_STATE_ID",
+    "IN_THE_SATCHEL",
+    "OWNED_BY_FIRST",
+    "OWNED_BY_SECOND",
+    "THREE_STATES_ARE_NOT_ONE",
     "BOOK_INDIVIDUAL_ID",
     "BOOK_TRANSFER_EVENT_ID",
     "BOOK_TYPE_ID",
@@ -74,6 +81,14 @@ THE_MACHINERY_IS_SHARED_NOT_THE_LEXICON: Final[str] = (
     "نفسُها بلا سطرٍ جديدٍ في المحرِّك"
 )
 
+THREE_STATES_ARE_NOT_ONE: Final[str] = (
+    "الموضعُ والحيازةُ والملكيّةُ ثلاثُ حالاتٍ لا واحدة: كتابٌ على مائدةِ "
+    "زيدٍ قد يكون في حيازة عمرٍو وفي ملكِ ثالث. وقاعدةُ `حدث_نقل` في هذا "
+    "النموذج تُعيِّن **الحيازةَ** وحدَها؛ فلا يُستنتَج منها موضعٌ ولا تُقرأ "
+    "نقلًا للملكيّة. والملكيّةُ لا تتحرّك إلّا بسببٍ مُعلَنٍ لها، ولا سببَ "
+    "لها في هذا الرصيد؛ فتبقى قيمتُها مجهولةً لا منفيّة"
+)
+
 KNOWING_A_TYPE_IS_NOT_WITNESSING_AN_EVENT: Final[str] = (
     "إيداعُ نوع الحدث وأدوارِه ونتيجتِه معرفةٌ عن النوع، لا خبرٌ عن فرد: "
     "ومن قرأ وجودَ `حدث_نقل` في الرصيد انتقالًا واقعًا خلط الرصيدَ بالسجلّ"
@@ -90,6 +105,12 @@ _WIDE: Final[Scope] = Scope(domain_id=_DOMAIN, timeline_id=_TIMELINE, start=0, e
 BOOK_TYPE_ID: Final[str] = "كتاب"
 _PERSON_TYPE_ID: Final[str] = "شخص"
 BOOK_HOLDING_STATE_ID: Final[str] = "حال_الحيازة"
+BOOK_LOCATION_STATE_ID: Final[str] = "حال_الموضع"
+BOOK_OWNERSHIP_STATE_ID: Final[str] = "حال_الملكيّة"
+AT_THE_TABLE: Final[str] = "على_المائدة"
+IN_THE_SATCHEL: Final[str] = "في_الحقيبة"
+OWNED_BY_FIRST: Final[str] = "مِلكُ_الأوّل"
+OWNED_BY_SECOND: Final[str] = "مِلكُ_الثاني"
 HELD_BY_FIRST: Final[str] = "عند_الأوّل"
 HELD_BY_SECOND: Final[str] = "عند_الثاني"
 BOOK_TRANSFER_EVENT_ID: Final[str] = "حدث_نقل"
@@ -122,7 +143,8 @@ def book_transfer_store(store_id: str = "رصيد-الكتب") -> SubstanceStore
     types_evidence = _stipulation(
         "اصطلاح-أنواع-الكتب",
         "أنواعُ هذا المجال: شيءٌ، وكتابٌ أخصُّ منه، وشخصٌ؛ والحيازةُ حالٌ "
-        "للكتاب قيمتُها عند الأوّل أو عند الثاني لا ثالثَ لهما في هذا النموذج",
+        "للكتاب قيمتُها عند الأوّل أو عند الثاني لا ثالثَ لهما في هذا النموذج؛ "
+        + THREE_STATES_ARE_NOT_ONE,
     )
     events_evidence = _stipulation(
         "اصطلاح-حدث-النقل",
@@ -132,7 +154,8 @@ def book_transfer_store(store_id: str = "رصيد-الكتب") -> SubstanceStore
     rule_evidence = _stipulation(
         "اصطلاح-قاعدة-أثر-النقل",
         "في هذا النموذج المُعلَن: وقوعُ `حدث_نقل` في فترةٍ يُعيِّن الحيازةَ عند "
-        "المتلقّي في تلك الفترة؛ قطعيّةٌ **داخل النموذج** لا في العالَم",
+        "المتلقّي في تلك الفترة؛ قطعيّةٌ **داخل النموذج** لا في العالَم. "
+        "ولا تمسُّ هذه القاعدةُ `حال_الموضع` ولا `حال_الملكيّة` بحال",
     )
     relations_evidence = _stipulation(
         "اصطلاح-علاقات-الكتب",
@@ -171,6 +194,20 @@ def book_transfer_store(store_id: str = "رصيد-الكتب") -> SubstanceStore
             state_id=BOOK_HOLDING_STATE_ID,
             bearer_type_id=BOOK_TYPE_ID,
             mutually_exclusive_values=(HELD_BY_FIRST, HELD_BY_SECOND),
+            evidence_ref=types_evidence.ref,
+            kind=OntologicalKind.STATE,
+        ),
+        StateDefinition(
+            state_id=BOOK_LOCATION_STATE_ID,
+            bearer_type_id=BOOK_TYPE_ID,
+            mutually_exclusive_values=(AT_THE_TABLE, IN_THE_SATCHEL),
+            evidence_ref=types_evidence.ref,
+            kind=OntologicalKind.STATE,
+        ),
+        StateDefinition(
+            state_id=BOOK_OWNERSHIP_STATE_ID,
+            bearer_type_id=BOOK_TYPE_ID,
+            mutually_exclusive_values=(OWNED_BY_FIRST, OWNED_BY_SECOND),
             evidence_ref=types_evidence.ref,
             kind=OntologicalKind.STATE,
         ),

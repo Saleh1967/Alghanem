@@ -31,6 +31,7 @@ from alghanem.arabic.door_ontology_run import (
     THE_OBSERVED_INTERVAL,
     THE_QUESTION_INTERVAL,
     ZAYD_INDIVIDUAL_ID,
+    door_model_constraints,
     door_state_observation,
     door_world_register,
     full_run,
@@ -185,6 +186,8 @@ def test_a_witness_whose_models_agree_is_refused() -> None:
             values=(DOOR_STATE_SHUT, DOOR_STATE_SHUT),
             shared_occurred_event_keys=(),
             declared_model_note="نموذجان لا يختلفان",
+            store=door_domain_store(),
+            constraints=door_model_constraints(),
         )
 
 
