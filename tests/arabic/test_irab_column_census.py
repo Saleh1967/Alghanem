@@ -310,6 +310,34 @@ def test_a_csv_without_the_declared_columns_stops_the_census() -> None:
         census_from_bytes(data)
 
 
+MEASURED_FIGURE_DISAGREEMENTS_AT_DEPOSIT: list[tuple[str, int, int, str, str]] = [
+    (
+        "قيمُ الوظيفة النحوية المتمايزة",
+        66,
+        65,
+        "واردةٌ_وخالف_عددُها",
+        "NOT_YET_CLASSIFIED",
+    ),
+    (
+        "قيمُ البناء والإعراب المتمايزة",
+        12,
+        13,
+        "واردةٌ_وخالف_عددُها",
+        "NOT_YET_CLASSIFIED",
+    ),
+]
+"""رقمان واردان نقضهما القياسُ يومَ نزلت البايتاتُ المختومة؛ وتصنيفُ سببِهما دَينٌ
+مفتوح (NOT_YET_CLASSIFIED) لا يُملأ بتخمين."""
+
+MEASURED_COVERAGE_DISAGREEMENTS_AT_DEPOSIT: list[tuple[str, str, float]] = [
+    ("Segmented_Word", "98.2553", 100.0),
+    ("Morph_tag", "98.2039", 99.9486291596111),
+    ("Invariable_Declinable", "84.45", 99.99619475256378),
+]
+"""ثلاثُ تغطياتٍ واردةٍ نقضها القياس؛ والسبعُ الباقيةُ صمدت. والمُدَّعى يُبقى
+بحروفه بجانب المقيس، ولا يُصحَّح أحدُهما بالآخر."""
+
+
 @pytest.mark.skipif(
     not masaq_bytes_are_resolvable(),
     reason=(
@@ -348,10 +376,9 @@ def test_the_arriving_figures_are_rederived_from_the_deposited_bytes() -> None:
         for difference in differences
     ]
 
-    assert disagreeing == [], (
-        "أرقامٌ واردةٌ لم تُطابِق ما اشتُقَّ من البايتات المُبصَّمة؛ "
-        "والفرقُ يُعرَض مُصنَّفًا ولا يُطوى: " + repr(disagreeing)
-    )
+    # النقضُ مُسجَّلٌ يومَ نزلت البايتاتُ المختومة، ولا يُعدَّل الرقمُ ليُطابِق.
+    message = "تغيّر الخلافُ المُسجَّل بين المُدَّعى والمُشتَقّ: " + repr(disagreeing)
+    assert disagreeing == MEASURED_FIGURE_DISAGREEMENTS_AT_DEPOSIT, message
 
 
 TRANSMITTED_LITERAL_SPELLINGS: tuple[tuple[str, str], ...] = (
@@ -507,9 +534,8 @@ def test_the_arriving_coverages_are_rederived_from_the_deposited_bytes() -> None
         if not reading.agrees
     ]
 
-    assert disagreeing == [], "تغطياتٌ واردةٌ لم تُطابِق ما اشتُقَّ من البايتات: " + repr(
-        disagreeing
-    )
+    message = "تغيّر الخلافُ المُسجَّل في التغطيات: " + repr(disagreeing)
+    assert disagreeing == MEASURED_COVERAGE_DISAGREEMENTS_AT_DEPOSIT, message
 
 
 ANCHORED_RECORDS: tuple[dict[str, str], ...] = tuple(

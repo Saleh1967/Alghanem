@@ -601,7 +601,7 @@ class MasaqWordInput:
 
     @property
     def held_out_tags(self) -> tuple[str, ...]:
-        """وسومُ ``Morph_Tag`` المحجوبة؛ مُشتَقّةٌ من الوسوم الخمسة المُجمَّدة."""
+        """وسومُ ``Morph_tag`` المحجوبة؛ مُشتَقّةٌ من الوسوم الخمسة المُجمَّدة."""
 
         return tuple(
             occurrence.held_out.value_of(MORPH_TAG_COLUMN)
