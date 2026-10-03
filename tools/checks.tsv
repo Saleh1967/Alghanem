@@ -1,0 +1,15 @@
+# مانيفستُ الفحوص: مصدرٌ واحدٌ يُستدعى محليًّا ومن CI، فلا تُكتَب أوامرُ الفحص مرّتين.
+# الأعمدةُ مفصولةٌ بـTAB: الاسم · متغيّرُ البيئة اللازم (- إن لم يلزم) · الأمر.
+# الفحصُ الذي يلزمه متغيّرٌ غائبٌ يُسجَّل SKIPPED بسببه، ولا يُسجَّل نجاحًا أبدًا؛
+# و--strict (وهو ما يستعمله CI) يجعل التخطّي خروجًا غيرَ صفريّ.
+# الترتيبُ هنا هو ترتيبُ التشغيل، والشاهدُ الخارجيُّ يُقابَل ببصمته قبل أيِّ قراءةٍ له.
+external-witness	ALGHANEM_SIBAWAYH_PATH	test "$(stat -c %s "$ALGHANEM_SIBAWAYH_PATH")" = 2639395 && echo "a160f940bb194e6fe7e6655d2c7f28e41f1fc648c4c5e340cc4e42306d5cb625  $ALGHANEM_SIBAWAYH_PATH" | sha256sum -c -
+regen-all	-	python tools/regen_all.py --check
+deposit-law	-	python -c "from alghanem.deposit_law import assert_the_gates_hold; assert_the_gates_hold()"
+pytest	-	pytest
+canonical116	-	python -m unittest discover -s canonical116 -t . -p "test_*.py"
+daleel	-	python tools/daleel/build_bab.py
+hifz	-	bash hifz/test_hifz.sh
+ruff-check	-	ruff check .
+ruff-format	-	ruff format --check .
+mypy	-	mypy src

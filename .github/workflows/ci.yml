@@ -12,14 +12,18 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      # الإجراءاتُ الخارجيّةُ مثبَّتةٌ إلى commits لا إلى وسومٍ متحرّكة. التحديثُ
+      # يكون بقراءة وسم الإصدار الجديد من مستودع الإجراء ثمّ استبدال الـSHA
+      # والتعليق معًا، فلا يتبدّل المُنفَّذ تحت وسمٍ ثابت الاسم.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: "3.10"
       - run: python -m pip install -e ".[dev]"
       # شاهدُ الخارج: «الكتاب» لسيبويه يُجلَب من OpenITI بإيداعٍ مثبَّت ولا يُودَع في
-      # الشجرة (رخصته CC BY-NC-SA 4.0)، ويُقابَل بطوله وبصمته قبل أيّ قراءة.
-      - name: external witness (Kitab Sibawayh, pinned and sealed)
+      # الشجرة (رخصته CC BY-NC-SA 4.0). الجلبُ هنا، ومقابلةُ طوله وبصمته في
+      # مانيفست الفحوص، فلا يُكتَب تحقّقُ البصمة مرّتين.
+      - name: external witness (Kitab Sibawayh, pinned)
         run: |
           dir="$RUNNER_TEMP/openiti-0200AH"
           rel="data/0180Sibawayhi/0180Sibawayhi.KitabSibawayhi"
@@ -29,20 +33,16 @@ jobs:
           git -C "$dir" fetch -q --depth 1 --filter=blob:none origin 599f22fe249871f602efe2e0ddc801d3742960a3
           git -C "$dir" checkout -q FETCH_HEAD
           target="$dir/$rel/0180Sibawayhi.KitabSibawayhi.JK006989-ara1"
-          test "$(stat -c %s "$target")" = "2639395"
-          echo "a160f940bb194e6fe7e6655d2c7f28e41f1fc648c4c5e340cc4e42306d5cb625  $target" | sha256sum -c -
           echo "ALGHANEM_SIBAWAYH_PATH=$target" >> "$GITHUB_ENV"
-      - run: python tools/regen_all.py --check
-      # القانونُ المركزيّ يُشغَّل وحدَه أوّلًا ليُرى خرقُه باسمه لا مختلطًا بغيره.
-      - name: deposit law (gates must hold across the whole tree)
-        run: python -c "from alghanem.deposit_law import assert_the_gates_hold; assert_the_gates_hold()"
-      - run: pytest
-      # الباني يختبر نفسه على ما أُودِع: بابُ الإبطال يُرى باسمه لا مبتلعًا في المجموع.
-      - name: daleel (no deposited passage is a fabricated splice)
-        run: python tools/daleel/build_bab.py
-      # مستدعي البيت الآخر يُصادَم بلا شبكة: العقدُ مقسومُ الأحكام لا الجلبُ نفسُه.
-      - name: hifz (the caller keeps the five-exit contract)
-        run: bash hifz/test_hifz.sh
-      - run: ruff check .
-      - run: ruff format --check .
-      - run: mypy src
+      # مدخلُ التشغيل الواحد: الفحوصُ نفسُها التي تُشغَّل محليًّا بالأمر ذاته،
+      # و--strict يمنع أن يُقرأ فحصٌ متخطًّى لغياب مصدره نجاحًا.
+      - name: checks (tools/checks.tsv)
+        run: bash tools/run_checks.sh --strict
+      - name: check logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: check-logs-${{ github.sha }}
+          path: .check-logs/
+          if-no-files-found: warn
+          retention-days: 14

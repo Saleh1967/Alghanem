@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# سجلّاتُ مُشغِّل الفحوص المحلّيّ (tools/run_checks.sh)
+.check-logs/
