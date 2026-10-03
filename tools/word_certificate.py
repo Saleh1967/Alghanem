@@ -4,11 +4,14 @@
 بايتاتِ المصادر المختومة، ويُودِع السجلَّ والتقريرَ في `exhibits/`، فيُصادَم
 المُودَعُ بما يولّده القرصُ عند كلّ مراجعة.
 
-والحالاتُ المُشهَدُ لها ثلاثٌ، وكلٌّ منها قياسٌ لا دعوى:
+والحالاتُ المُشهَدُ لها أربعٌ، وكلٌّ منها قياسٌ لا دعوى:
 
-- **المُرخَّصة**: «حَيَاةٌ» في `QURAN_SIMPLE@L186:W4`، بشهادةِ منشأٍ مُودَعةٍ
-  وشاهدَي تحليل.
+- **المُثبَتُ بقدرِ شواهده**: «حَيَاةٌ» في `QURAN_SIMPLE@L186:W4`، بشهادةِ منشأٍ
+  مُودَعةٍ وشاهدَي تحليلٍ مرّت بوّاباتُهما الخمس.
 - **المعلَّقة**: الموضعُ عينُه بلا شواهد، فتُسمّى كلُّ مقدّمةٍ عالقةٍ باسمها.
+- **مردودةُ الشاهد**: الموضعُ عينُه بشاهدٍ مختلَقٍ — دعوى غيرُ مسندة، ومصدرٌ
+  `README.md`، وموضعٌ لا وجودَ له، وسطحٌ مطابق — فيُرَدّ ببوّاباته المسمّاة،
+  وتتحرّك البصمةُ وإن ثبتت البايتات.
 - **المردودة**: «وَفِي الْفَرْقِ نَظَرٌ» — عبارةُ التدقيق السابق، غائبةٌ عن
   كلّ مصدرٍ مختومٍ في الشجرة، فلا يُنقَل إليها سياقٌ ولا تُبنى لها شهادة.
 
@@ -48,11 +51,15 @@ from alghanem.arabic.word_certificate_chain import (  # noqa: E402
     THE_DECLARED_SCOPE,
     AnalysisSubject,
     AnalysisWitness,
+    FeatureClaim,
     LayerStanding,
+    ReviewAttestation,
+    StructuralFeature,
     WordCertificate,
     certify,
     fingerprint,
 )
+from alghanem.arabic.epistemic_layers import EpistemicStanding  # noqa: E402
 
 EXHIBIT_DIR: Final[Path] = REPO_ROOT / "exhibits" / "word-certificate"
 LEDGER_PATH: Final[Path] = EXHIBIT_DIR / "certificates.jsonl"
@@ -71,22 +78,75 @@ THE_ORIGIN_WITNESS: Final[OriginWitness] = OriginWitness(
     examiner="tools/word_certificate.py",
 )
 
+THE_SURFACE: Final[str] = "\u062d\u064e\u064a\u064e\u0627\u0629\u064c"
+
+THE_CARRIERS: Final[str] = "\u062d\u064e\u064a\u064e\u0627\u0629"
+
+THE_MAQAYIS_EXCERPT: Final[str] = (
+    'حيي,مضاعف,874,حي,,,,"الحاء والياء والحرف المعتل أصلان: أحدهما خِلاف '
+    "المَوْت، والآخر الاستحياء"
+)
+
 THE_ANALYSIS_WITNESSES: Final[tuple[AnalysisWitness, ...]] = (
     AnalysisWitness(
-        subject=AnalysisSubject.ROOT_AND_WAZN,
-        claim="الحوامل «حَيَاة» بعد عزل علامة التنوين؛ والتاءُ مربوطةٌ في الرسم",
-        surface="\u062d\u064e\u064a\u064e\u0627\u0629\u064c",
-        lexical_source="corpora/quran-simple-enhanced.txt",
-        lexical_locus="2:179 — «وَلَكُمْ فِي الْقِصَاصِ حَيَاةٌ»",
+        subject=AnalysisSubject.OCCURRENCE_OF_THE_SURFACE,
+        claim=(
+            "وقع السطحُ «حَيَاةٌ» في «QURAN_SIMPLE@L186:W4»، وحواملُه بعد عزل "
+            "علامة التنوين «حَيَاة»"
+        ),
+        surface=THE_SURFACE,
+        source_key="QURAN_SIMPLE",
+        locus=THE_CERTIFIED_ADDRESS,
+        quoted_excerpt="فِي الْقِصَاصِ حَيَاةٌ يَا أُولِي الْأَلْبَابِ",
+        claimed_features=(
+            FeatureClaim(StructuralFeature.SURFACE, THE_SURFACE),
+            FeatureClaim(StructuralFeature.TANWIN_MARK, "تنوينُ ضمّ"),
+        ),
+        claim_rests_on=(THE_SURFACE,),
+        rule_versioned_id="قاعدة-الوقوع-من-مدوّنةٍ-مختومة@1",
         examiner="tools/word_certificate.py",
     ),
     AnalysisWitness(
-        subject=AnalysisSubject.SYNTACTIC_FUNCTION,
-        claim="نكرةٌ مرفوعةٌ بالضمّة، وقبلها شبهُ جملةٍ «فِي الْقِصَاصِ»",
-        surface="\u062d\u064e\u064a\u064e\u0627\u0629\u064c",
-        lexical_source="corpora/quran-simple-enhanced.txt",
-        lexical_locus="2:179 — السطرُ نفسُه",
+        subject=AnalysisSubject.ROOT_AND_WAZN,
+        claim=(
+            "مادّةُ «حيي» في مقاييس اللغة، بنصّ بابها في النسخة المختومة؛ "
+            "والحواملُ المقيسةُ من الوقوع «حَيَاة»"
+        ),
+        surface=THE_SURFACE,
+        source_key="MAQAYIS_BY_ROOT",
+        locus=WordAddress("MAQAYIS_BY_ROOT", 9041, 1),
+        quoted_excerpt=THE_MAQAYIS_EXCERPT,
+        claimed_features=(
+            FeatureClaim(StructuralFeature.CARRIERS_WITHOUT_TANWIN, THE_CARRIERS),
+            FeatureClaim(StructuralFeature.TANWIN_MARK, "تنوينُ ضمّ"),
+            FeatureClaim(StructuralFeature.SURFACE, THE_SURFACE),
+        ),
+        claim_rests_on=("الحاء والياء والحرف المعتل أصلان",),
+        rule_versioned_id="قاعدة-المادّة-من-معجمٍ-مختوم@1",
         examiner="tools/word_certificate.py",
+    ),
+)
+
+THE_FABRICATED_WITNESSES: Final[tuple[AnalysisWitness, ...]] = (
+    AnalysisWitness(
+        subject=AnalysisSubject.ROOT_AND_WAZN,
+        claim="دعوى غيرُ مسندة: «حَيَاةٌ» فعلٌ ماضٍ مبنيٌّ على السكون",
+        surface=THE_SURFACE,
+        source_key="README.md",
+        locus=WordAddress("README.md", 9999, 9999),
+        quoted_excerpt="إحالةٌ لا وجودَ لها",
+        claimed_features=(
+            FeatureClaim(StructuralFeature.TANWIN_MARK, "لا تنوين"),
+        ),
+        claim_rests_on=("فعلٌ ماضٍ",),
+        rule_versioned_id="قاعدة-المادّة-من-معجمٍ-مختوم@1",
+        examiner="مُختلِق",
+        review=ReviewAttestation(
+            reviewer_id="مراجعٌ مُسمًّى في هذا المثال",
+            scope="هذا الوقوعُ وحدَه",
+            rank=EpistemicStanding.PRESUMPTIVE_ALWAYS,
+            statement="راجعتُ الشاهدَ ووافقتُ عليه",
+        ),
     ),
 )
 
@@ -121,6 +181,35 @@ def _certificate_row(label: str, certificate: WordCertificate) -> dict[str, Any]
             "السبب": certificate.overall.cause,
             "العالقة": list(certificate.overall.blocking_premises),
         },
+        "شواهد_التحليل": [
+            {
+                "الموضوع": one.subject.value,
+                "الدعوى": one.claim,
+                "المصدر": one.source_key,
+                "الموضع": one.locus,
+                "القاعدة": one.rule_versioned_id,
+                "مقبول": one.admitted,
+                "البوّابات": [
+                    {
+                        "البوّابة": two.gate.value,
+                        "مرّت": two.passed,
+                        "السبب": two.cause,
+                    }
+                    for two in one.gates
+                ],
+                "ما_يُغلقها": one.what_would_close_it,
+                "المراجعة": (
+                    None
+                    if one.review is None
+                    else {
+                        "المراجع": one.review.reviewer_id,
+                        "نطاقها": one.review.scope,
+                        "رتبتها": one.review.rank.value,
+                    }
+                ),
+            }
+            for one in certificate.witnesses
+        ],
         "المقدّمات": [
             {
                 "الاسم": one.name,
@@ -189,9 +278,15 @@ def ledger_rows() -> tuple[dict[str, Any], ...]:
         analysis_witnesses=THE_ANALYSIS_WITNESSES,
     )
     suspended = certify(THE_CERTIFIED_ADDRESS)
+    fabricated = certify(
+        THE_CERTIFIED_ADDRESS,
+        witnesses=(THE_ORIGIN_WITNESS,),
+        analysis_witnesses=THE_FABRICATED_WITNESSES,
+    )
     return (
-        _certificate_row("مُرخَّصة — بشهادةٍ وشاهدَين", licensed),
+        _certificate_row("مُثبَتةٌ بقدرِ شواهدها — بشهادةٍ وشاهدَين", licensed),
         _certificate_row("معلَّقة — بلا شواهد", suspended),
+        _certificate_row("مردودةُ الشاهد — شاهدٌ مختلَق", fabricated),
         _refused_row(),
     )
 
@@ -208,7 +303,7 @@ def render_ledger(rows: tuple[dict[str, Any], ...]) -> str:
 def render_report(rows: tuple[dict[str, Any], ...]) -> str:
     """التقريرُ العربيُّ يُميّز المغلقَ والممتنعَ والمعلَّق، بدليل كلّ حكم."""
 
-    licensed, suspended, refused = rows
+    licensed, suspended, fabricated, refused = rows
     lines: list[str] = [
         "# تقريرُ شهادةِ الكلمة في سياقها",
         "",
@@ -223,7 +318,7 @@ def render_report(rows: tuple[dict[str, Any], ...]) -> str:
     lines.extend(f"- **العزل**: {one}" for one in THE_DECLARED_SCOPE.insulation)
     lines += [
         "",
-        "## أوّلًا: المغلَق — شهادةٌ مُرخَّصةٌ داخل نطاقها",
+        "## أوّلًا: المُثبَتُ بقدرِ شواهده — شهادةٌ بشاهدَين مرّت بوّاباتُهما",
         "",
         f"الموضع: `{licensed['العنوان']}` · السطح: «{licensed['السطح']}» · "
         f"إزاحةُ المحارف {licensed['إزاحة_المحارف']} · إزاحةُ البايتات "
