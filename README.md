@@ -8781,7 +8781,7 @@ takes it to 74 cells and 27 letters; adding the tree's own prose — with this
 module excluded from it by name, so that its figures do not move whenever its
 description is edited — takes it to 110 cells over 104,027 occurrences with every
 letter present. Two cells stay empty, and the module refuses to read them as
-prohibitions until their margins are consulted. Sukūn is 557 of 104,027 — 0.54%
+prohibitions until their margins are consulted. Sukūn is 552 of 104,027 — 0.53%
 — and the cells once filed as scarce (ظ, then ث, bearing it) have since filled
 as the prose grew. Alef's whole row is twelve occurrences, so its sukūn cell is
 expected 0.064 times and **stays consistent with scarcity**. A third cell,
