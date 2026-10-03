@@ -15,27 +15,39 @@ import pytest
 
 from alghanem.arabic.dal_madlul_bridge import SealStanding, governing_seal_reading
 from alghanem.arabic.maqayis_link_candidates import (
+    A_SYNTHETIC_ADMISSION_DOES_NOT_VALIDATE_THE_REAL_SUSPENSIONS,
     AN_ADMITTED_LEXICAL_LINK_ASSERTS_NO_EXTERNAL_FACT,
     MAQAYIS_LINK_CANDIDATE_NAMED_RESIDUALS,
+    THE_ABAT_BOUNDARY_REVIEW,
     THE_CANDIDATE_SAMPLE_SIZE,
+    THE_CONDITIONS_FOR_A_LAFZ_BRIDGE,
     THE_DISPLAY_EXCERPT_LIMIT,
+    THE_ONE_MATERIAL_ACTUALLY_REVIEWED,
     AdmissionStanding,
     AttributionCheck,
+    BoundaryAttestation,
     BoundaryStanding,
+    CounterClaimDetermination,
     DalProcessing,
     InputUnitKind,
     LinkChainRung,
     MaqayisLinkCandidateError,
+    RefusalStanding,
     ReviewAttestation,
-    SufficiencyCheck,
+    ReviewVerdict,
+    SemanticSupportCheck,
     SuspensionGenus,
+    TextualMatchCheck,
+    _sample_rows,
     candidate_counts,
     chain_reach,
     dal_readings,
     input_unit_reading,
     link_candidates,
     provenance_shares,
+    reconciliation_rows,
     report_rows,
+    suspension_reason_census,
     verify,
 )
 from alghanem.arabic.maqayis_witness_census import AxesStanding
@@ -61,7 +73,11 @@ def test_all_twenty_dals_are_kept_including_the_blank_and_the_suspect() -> None:
     assert len(readings) == THE_CANDIDATE_SAMPLE_SIZE
     assert sum(1 for reading in readings if reading.candidates == 0) > 0
     assert (
-        sum(1 for reading in readings if reading.boundary is BoundaryStanding.SUSPECT)
+        sum(
+            1
+            for reading in readings
+            if reading.boundary is BoundaryStanding.UNDETERMINED_BY_THE_DETECTOR
+        )
         > 0
     )
     assert any(
@@ -124,51 +140,169 @@ def test_no_candidate_is_admitted_and_each_suspension_names_its_genus() -> None:
         assert reading.unmet_conditions
 
 
-def test_absent_evidence_and_counter_evidence_are_two_different_genera() -> None:
-    """صفٌّ ساكتُ الحقل غيرُ صفٍّ يقول متنُه «ليس بأصل»؛ وفرقُهما مقيسٌ لا مقول."""
+def test_the_one_real_review_refuses_the_boundary_it_examined() -> None:
+    """مراجعةٌ واقعيّةٌ لمادّةٍ واحدة: «أبت» تبتلع «أبث»، فالقرارُ يتبع نتيجتَها.
 
-    empty = {
-        reading.root_display: reading
-        for reading in dal_readings()
-        if reading.candidates == 0
-    }
+    والشهادةُ مودَعةٌ ناقصةَ المقابلة عمدًا لأنّ المقابلةَ لم تُسلِّم؛ فلا
+    ترفع الحدَّ، ولا يُقرأ وسمُ الصفِّ بالمفتاح تبعيّةً لكلِّ مقطعٍ فيه.
+    """
+
+    assert THE_ABAT_BOUNDARY_REVIEW.row_index == 12
+    assert THE_ABAT_BOUNDARY_REVIEW.end_examined is True
+    assert THE_ABAT_BOUNDARY_REVIEW.internal_headers_examined is True
+    assert THE_ABAT_BOUNDARY_REVIEW.collated_with_the_next_material is False
+    assert THE_ABAT_BOUNDARY_REVIEW.is_complete is False
+    assert "أبث" in THE_ONE_MATERIAL_ACTUALLY_REVIEWED
+
+    # والابتلاعُ مقروءٌ من المتن نفسِه لا من دعوى المراجع.
+    rows = dict(_sample_rows(None))
+    body = rows[12]["body_text"]
+    assert rows[12]["root_full"] == "أبت"
+    assert "أبِثٌ" in body and "الكَبِث" in body
+
+    # والقرارُ يتبع الإيداع: الحدُّ يبقى غيرَ مُحقَّق والنسبةُ غيرَ معيَّنة.
+    examined = [
+        verify(candidate, boundaries=(THE_ABAT_BOUNDARY_REVIEW,))
+        for candidate in link_candidates()
+        if candidate.row_index == 12
+    ]
+    assert examined
+    for reading in examined:
+        assert reading.boundary is BoundaryStanding.CANDIDATE_BY_THE_DETECTOR
+        assert reading.attribution is AttributionCheck.NOT_DETERMINED
+        assert reading.standing is AdmissionStanding.SUSPENDED
+
+
+def test_the_reconciliation_table_carries_every_one_of_the_twenty() -> None:
+    """جدولٌ صفّيٌّ لا قائمةٌ مختصرة: الدوالُّ الثلاثةُ بلا مرشَّحٍ صفوفٌ فيه."""
+
+    rows = reconciliation_rows()
+    assert len(rows) == THE_CANDIDATE_SAMPLE_SIZE == 20
+    assert sum(int(row["مرشحات"]) for row in rows) == 19
+    assert sum(1 for row in rows if row["مرشحات"] == 0) == 3
+    assert sum(1 for row in rows if row["مرشحات"] == 2) == 2
+    assert sum(1 for row in rows if row["مرشحات"] >= 1) == 17
+    assert sum(int(row["معتمدون"]) for row in rows) == 0
+    assert sum(int(row["معلقون"]) for row in rows) == 19
+    assert sum(int(row["مرفوضون"]) for row in rows) == 0
+    for row in rows:
+        if row["مرشحات"] == 0:
+            assert row["لماذا_لا_مرشح"]
+        else:
+            assert row["لماذا_لا_مرشح"] is None
+            assert len(row["أسباب_التعليق"]) == row["مرشحات"]
+
+
+def test_the_suspension_reasons_are_overlapping_not_exclusive_classes() -> None:
+    """أسبابُ التعليق تُعَدّ منفردةً ومتقاطعةً؛ وجمعُها لا يساوي عددَ المعلَّقين."""
+
+    census = suspension_reason_census()
+    assert census["معلقون"] == 19
+    singles = {key: value for key, value in census.items() if key.startswith("سبب: ")}
+    joints = {key: value for key, value in census.items() if key.startswith("تقاطع: ")}
+    assert singles and joints
+    assert sum(singles.values()) > census["معلقون"]
+    assert sum(joints.values()) == census["معلقون"]
+
+
+def test_a_negation_form_is_not_read_as_a_determined_counter_claim() -> None:
+    """رصدُ «ليس بأصل» تركيبٌ محفوظٌ لم يُعيَّن منفيُّه، فلا يُرفَع دليلًا مضادًّا."""
+
+    empty = [reading for reading in dal_readings() if reading.candidates == 0]
     assert empty
-    genera = {name: reading.suspension_genera for name, reading in empty.items()}
-    assert any(
-        SuspensionGenus.COUNTER_EVIDENCE in value for value in genera.values()
-    ), genera
-    assert any(
-        SuspensionGenus.ABSENT_EVIDENCE in value for value in genera.values()
-    ), genera
+    negating = [
+        reading
+        for reading in empty
+        if reading.refusal is RefusalStanding.TARGET_UNDETERMINED
+    ]
+    assert negating
+    for reading in negating:
+        assert reading.refusal is not RefusalStanding.DETERMINED_COUNTER_CLAIM
+        assert SuspensionGenus.COUNTER_EVIDENCE not in reading.suspension_genera
+        assert SuspensionGenus.ABSENT_EVIDENCE in reading.suspension_genera
 
 
-def test_the_three_witnesses_separate_on_the_real_rows() -> None:
-    """الشهاداتُ الثلاثُ تفترق فعلًا: سلامةٌ تامّة، ونسبةٌ قائمة، وكفايةٌ متفاوتة."""
+def test_a_deposited_determination_is_what_raises_a_negation_to_a_counter_claim() -> (
+    None
+):
+    """التعارضُ يُحقَّق بتعيينٍ مودَعٍ يُسمّي المنفيَّ والدعوى وسببَ الانطباق."""
+
+    bearing = next(
+        reading
+        for reading in dal_readings()
+        if reading.refusal is RefusalStanding.TARGET_UNDETERMINED
+    )
+    determination = CounterClaimDetermination(
+        material_key=bearing.material_key,
+        negating_text="ليس",
+        what_is_denied="استقلالُ المادّة أصلًا يُقاس عليه",
+        claim_it_opposes="أنّ هذه المادّة تُخرِج أصلًا معجميًّا واحدًا",
+        why_it_applies="تعيينٌ مصطنعٌ لامتحان الحارس، لا قراءةُ سياقٍ عربيّة",
+    )
+    after = next(
+        reading
+        for reading in dal_readings(determinations=(determination,))
+        if reading.material_key == bearing.material_key
+    )
+    assert after.refusal is RefusalStanding.DETERMINED_COUNTER_CLAIM
+    assert SuspensionGenus.COUNTER_EVIDENCE in after.suspension_genera
+
+
+def test_the_four_checks_separate_and_none_is_read_as_another() -> None:
+    """المطابقةُ النصّيّةُ والنسبةُ والإسنادُ فحوصٌ مفصولة، ولا يُرفَع أدناها."""
 
     verifications = [verify(candidate) for candidate in link_candidates()]
     assert all(reading.source_integrity for reading in verifications)
+    assert all(reading.segment_in_row for reading in verifications)
+    assert all(not reading.probe_refutes_the_row for reading in verifications)
+    # النسبةُ غيرُ معيَّنةٍ في العشرين كلِّهم: لا شهادةَ حدٍّ مودَعةً لأيّ صفّ.
     assert all(
-        reading.attribution
-        in (AttributionCheck.IN_THIS_MATERIAL, AttributionCheck.BOUNDARY_SUSPECT)
+        reading.attribution is AttributionCheck.NOT_DETERMINED
         for reading in verifications
     )
-    sufficiency = {reading.sufficiency for reading in verifications}
-    assert SufficiencyCheck.NOT_FOUND_IN_THE_WITNESS in sufficiency
-    assert len(sufficiency) > 1
+    # والإسنادُ الدلاليُّ غيرُ مُثبَتٍ، ولو وقعت المطابقةُ النصّيّةُ بحروفها.
+    assert all(
+        reading.semantic_support
+        is SemanticSupportCheck.NOT_ESTABLISHED_WITHOUT_A_REVIEW
+        for reading in verifications
+    )
+    matches = {reading.textual_match for reading in verifications}
+    assert TextualMatchCheck.MATCHES_VERBATIM in matches
+    assert TextualMatchCheck.NO_TEXTUAL_MATCH in matches
 
 
-def test_a_normalised_agreement_is_never_read_as_a_verbatim_one() -> None:
-    """الموافقةُ بعد تجريد التشكيل تُسمّى باسمها، فلا تُقرأ إسنادًا بالحروف."""
+def test_a_verbatim_textual_match_does_not_establish_semantic_support() -> None:
+    """وقوعُ الصياغة بحروفها لا يرفعها إسنادًا، ولا غيابُها ينفيه."""
 
-    normalised = [
+    verbatim = [
         reading
         for reading in (verify(candidate) for candidate in link_candidates())
-        if reading.sufficiency is SufficiencyCheck.SUPPORTED_UNDER_A_NAMED_NORMALISATION
+        if reading.textual_match is TextualMatchCheck.MATCHES_VERBATIM
     ]
-    assert normalised
-    for reading in normalised:
+    assert verbatim
+    for reading in verbatim:
+        assert (
+            reading.semantic_support
+            is SemanticSupportCheck.NOT_ESTABLISHED_WITHOUT_A_REVIEW
+        )
         assert reading.standing is AdmissionStanding.SUSPENDED
-        assert reading.candidate.candidate_meaning not in reading.candidate.witness.text
+        assert not any("مطابقة" in condition for condition in reading.unmet_conditions)
+
+
+def test_an_absent_textual_match_is_never_read_as_an_absent_support() -> None:
+    """غيابُ المطابقة النصّيّة ليس في أسباب التعليق أصلًا، فلا يُقرأ نفيًا."""
+
+    unmatched = [
+        reading
+        for reading in (verify(candidate) for candidate in link_candidates())
+        if reading.textual_match is TextualMatchCheck.NO_TEXTUAL_MATCH
+    ]
+    assert unmatched
+    for reading in unmatched:
+        assert all(
+            "الإسنادُ الدلاليّ" in condition or "صحّةُ النسبة" in condition
+            for condition in reading.unmet_conditions
+        )
 
 
 def test_the_governing_text_absence_suspends_only_the_signification_kind() -> None:
@@ -180,16 +314,19 @@ def test_the_governing_text_absence_suspends_only_the_signification_kind() -> No
     assert all(candidate.signification_kind is None for candidate in candidates)
 
 
-def test_the_chain_stops_at_the_lafz_by_a_declared_prohibition() -> None:
-    """الوصلتان الرابعةُ والخامسةُ ممتنعتان بالنظام لا بنقص دليل، ويُقال ذلك."""
+def test_the_chain_stops_at_the_second_rung_because_no_boundary_is_verified() -> None:
+    """الوصلةُ الثانيةُ لا تُبلَغ بالكاشف: لا شهادةَ حدٍّ مودَعةً لأيّ صفٍّ بعدُ."""
 
     reach = dict((rung, (ok, why)) for rung, ok, why in chain_reach())
     assert reach[LinkChainRung.MATERIAL_KEY][0] is True
-    assert reach[LinkChainRung.VERIFIED_MATERIAL][0] is True
+    assert reach[LinkChainRung.VERIFIED_MATERIAL][0] is False
+    assert (
+        f"0 من {THE_CANDIDATE_SAMPLE_SIZE}" in reach[LinkChainRung.VERIFIED_MATERIAL][1]
+    )
     assert reach[LinkChainRung.EXTRACTED_MEANING][0] is False
     assert reach[LinkChainRung.LAFZ][0] is False
     assert reach[LinkChainRung.USAGE][0] is False
-    assert "مشتقٍّ" in reach[LinkChainRung.USAGE][1]
+    assert "خارجَ النطاق" in reach[LinkChainRung.USAGE][1]
 
 
 def test_nothing_here_is_claimed_to_be_generated_from_structure() -> None:
@@ -244,38 +381,107 @@ def _sound_candidate():
     """مرشَّحٌ من صفٍّ حدُّه محقَّقٌ، ليُمتحَن عليه الحارسُ صعودًا وهبوطًا."""
 
     for candidate in link_candidates():
-        if candidate.boundary is BoundaryStanding.SOUND:
+        if candidate.boundary is BoundaryStanding.CANDIDATE_BY_THE_DETECTOR:
             return candidate
     raise AssertionError("لا صفَّ محقَّقَ الحدّ في العيّنة، فلا يُمتحَن الحارس.")
 
 
 def _verbatim_candidate():
-    """مرشَّحٌ مصنوعٌ معناه مقتطعٌ من شاهده بحروفه، فتستوفي الكفايةُ شرطَها."""
+    """مرشَّحٌ مصنوعٌ معناه مقتطعٌ من شاهده بحروفه؛ مطابقةٌ نصّيّةٌ لا إسناد."""
 
     candidate = _sound_candidate()
     witness = candidate.witness.text
     return dataclasses.replace(candidate, candidate_meaning=witness[5:15])
 
 
-def _review_for(candidate) -> ReviewAttestation:
+def _review_for(
+    candidate, verdict: ReviewVerdict = ReviewVerdict.SUPPORTS_THE_MEANING
+) -> ReviewAttestation:
     return ReviewAttestation(
         material_key=candidate.material_key,
         candidate_meaning=candidate.candidate_meaning,
         witness_text=candidate.witness.text,
         reviewer="امتحانُ حارسٍ مصطنع",
         statement="مودَعٌ لامتحان البوّابة وحدَها، لا شهادةً على معنًى عربيّ",
+        verdict=verdict,
     )
 
 
-def test_the_guard_admits_only_when_all_five_conditions_meet() -> None:
-    """البوّابةُ تفتح فعلًا: فحصٌ صاعدٌ يمنع أن يكون صفرُ المعتمَدين عمى آلة."""
+def _boundary_for(candidate, *, complete: bool = True) -> BoundaryAttestation:
+    return BoundaryAttestation(
+        material_key=candidate.material_key,
+        row_index=candidate.row_index,
+        end_examined=complete,
+        internal_headers_examined=True,
+        collated_with_the_next_material=True,
+        reviewer="امتحانُ حارسٍ مصطنع",
+        statement="شهادةُ حدٍّ مصطنعةٌ لامتحان المسار، لا تحقيقٌ لمادّةٍ عربيّة",
+    )
+
+
+def _opened(candidate):
+    """أودِع ما يفتح المسار: شهادةُ حدٍّ ومراجعةٌ مُسنِدة؛ ولا ثالثَ يُفترَض."""
+
+    return {
+        "reviews": (_review_for(candidate),),
+        "boundaries": (_boundary_for(candidate),),
+    }
+
+
+def test_the_guard_admits_only_when_every_declared_condition_meets() -> None:
+    """مسارُ القبول يعمل على المصطنع؛ ولا يُقرأ تصحيحًا لقرارات العيّنة الواقعيّة."""
 
     candidate = _verbatim_candidate()
-    reading = verify(candidate, reviews=(_review_for(candidate),))
-    assert reading.sufficiency is SufficiencyCheck.SUPPORTS_VERBATIM
-    assert reading.attribution is AttributionCheck.IN_THIS_MATERIAL
+    reading = verify(candidate, **_opened(candidate))
+    assert reading.attribution is AttributionCheck.VERIFIED_BY_A_DEPOSITED_WITNESS
+    assert reading.semantic_support is (
+        SemanticSupportCheck.ESTABLISHED_BY_A_DEPOSITED_REVIEW
+    )
     assert reading.standing is AdmissionStanding.ADMITTED
     assert reading.unmet_conditions == ()
+    assert A_SYNTHETIC_ADMISSION_DOES_NOT_VALIDATE_THE_REAL_SUSPENSIONS.startswith(
+        "A_SYNTHETIC_ADMISSION_DOES_NOT_VALIDATE_THE_REAL_SUSPENSIONS"
+    )
+
+
+def test_an_incomplete_boundary_witness_does_not_verify_the_attribution() -> None:
+    """شهادةُ حدٍّ لم يُفحَص فيها المنتهى لا تُحقِّق الحدّ، فتبقى النسبةُ معلَّقة."""
+
+    candidate = _verbatim_candidate()
+    partial = _boundary_for(candidate, complete=False)
+    assert partial.is_complete is False
+    reading = verify(
+        candidate, reviews=(_review_for(candidate),), boundaries=(partial,)
+    )
+    assert reading.boundary is BoundaryStanding.CANDIDATE_BY_THE_DETECTOR
+    assert reading.attribution is AttributionCheck.NOT_DETERMINED
+    assert reading.standing is AdmissionStanding.SUSPENDED
+
+
+def test_a_deposited_review_may_deny_the_meaning_and_that_is_recorded() -> None:
+    """المراجعةُ النافيةُ تُحفَظ بجهتها، فتُعلَّق بدليلٍ مضادٍّ لا بتعذُّر أداة."""
+
+    candidate = _verbatim_candidate()
+    reading = verify(
+        candidate,
+        reviews=(_review_for(candidate, ReviewVerdict.DENIES_THE_MEANING),),
+        boundaries=(_boundary_for(candidate),),
+    )
+    assert reading.semantic_support is SemanticSupportCheck.DENIED_BY_A_DEPOSITED_REVIEW
+    assert reading.standing is AdmissionStanding.SUSPENDED
+    assert reading.suspension_genus is SuspensionGenus.COUNTER_EVIDENCE
+
+
+def test_a_support_without_any_textual_match_is_admitted_all_the_same() -> None:
+    """الإسنادُ لا يُشترَط له تطابقٌ حرفيّ: صياغةٌ مختلفةٌ تُعتمَد بمراجعتها."""
+
+    base = _sound_candidate()
+    candidate = dataclasses.replace(
+        base, candidate_meaning="صياغةٌ لا تقع في الشاهد نصًّا البتّة"
+    )
+    reading = verify(candidate, **_opened(candidate))
+    assert reading.textual_match is TextualMatchCheck.NO_TEXTUAL_MATCH
+    assert reading.standing is AdmissionStanding.ADMITTED
 
 
 def test_a_genuine_witness_from_another_material_fails_the_attribution() -> None:
@@ -289,57 +495,59 @@ def test_a_genuine_witness_from_another_material_fails_the_attribution() -> None
         if other.row_index != host.row_index and other.witness.text != host.witness.text
     )
     transplanted = dataclasses.replace(host, witness=foreign.witness)
-    reading = verify(transplanted, reviews=(_review_for(transplanted),))
-    assert reading.attribution is not AttributionCheck.IN_THIS_MATERIAL
+    reading = verify(transplanted, **_opened(transplanted))
+    assert reading.segment_in_row is False
+    assert reading.attribution is AttributionCheck.REFUTED_BY_THE_PROBE
+    assert reading.standing is AdmissionStanding.SUSPENDED
+    assert any("وقوعُ المقطع" in condition for condition in reading.unmet_conditions)
+
+
+def test_a_segment_in_a_row_is_not_a_segment_in_a_material() -> None:
+    """وقوعُ المقطع في الصفّ ووسمُ الصفِّ بالمفتاح لا يُثبِتان تبعيّتَه للمادّة."""
+
+    candidate = _verbatim_candidate()
+    reading = verify(candidate, reviews=(_review_for(candidate),))
+    assert reading.segment_in_row is True
+    assert reading.probe_refutes_the_row is False
+    assert reading.attribution is AttributionCheck.NOT_DETERMINED
     assert reading.standing is AdmissionStanding.SUSPENDED
     assert any("صحّةُ النسبة" in condition for condition in reading.unmet_conditions)
 
 
-def test_a_witness_inside_the_material_that_does_not_support_the_meaning() -> None:
-    """شاهدٌ من المادّة نفسِها لا يُسنِد المعنى: لا تكفي الأوّلتان لاعتماده."""
+def test_an_undetermined_boundary_suspends_what_depends_on_it() -> None:
+    """حدٌّ لم يُعيِّنه الكاشفُ يُعلِّق نتائجَه التابعة ولو استوفى غيرُها شرطَه."""
 
-    candidate = dataclasses.replace(
-        _sound_candidate(), candidate_meaning="معنًى لا يقع في هذا الشاهد البتّة"
-    )
-    reading = verify(candidate, reviews=(_review_for(candidate),))
-    assert reading.source_integrity is True
-    assert reading.attribution is AttributionCheck.IN_THIS_MATERIAL
-    assert reading.sufficiency is SufficiencyCheck.NOT_FOUND_IN_THE_WITNESS
-    assert reading.standing is AdmissionStanding.SUSPENDED
-
-
-def test_a_suspect_boundary_suspends_what_depends_on_it() -> None:
-    """حدُّ مادّةٍ مشتبهٌ يُعلِّق نتائجَه التابعة ولو استوفى غيرُها شرطَه."""
-
-    suspect = next(
+    undetermined = next(
         candidate
         for candidate in link_candidates()
-        if candidate.boundary is BoundaryStanding.SUSPECT
+        if candidate.boundary is BoundaryStanding.UNDETERMINED_BY_THE_DETECTOR
     )
-    forged = dataclasses.replace(suspect, candidate_meaning=suspect.witness.text[5:15])
+    forged = dataclasses.replace(
+        undetermined, candidate_meaning=undetermined.witness.text[5:15]
+    )
     reading = verify(forged, reviews=(_review_for(forged),))
-    assert reading.sufficiency is SufficiencyCheck.SUPPORTS_VERBATIM
-    assert reading.attribution is AttributionCheck.BOUNDARY_SUSPECT
+    assert reading.textual_match is TextualMatchCheck.MATCHES_VERBATIM
+    assert reading.attribution is AttributionCheck.NOT_DETERMINED
     assert reading.standing is AdmissionStanding.SUSPENDED
-    assert reading.suspension_genus is SuspensionGenus.ABSENT_EVIDENCE
+    assert reading.suspension_genus is SuspensionGenus.TOOL_UNAVAILABLE
 
 
 def test_a_reviewed_material_does_not_open_its_neighbours() -> None:
     """مراجعةُ مادّةٍ إذنٌ فيها وحدَها، فلا تفتح جارتَها ولا معنًى آخرَ فيها."""
 
     candidate = _verbatim_candidate()
-    review = _review_for(candidate)
+    opened = _opened(candidate)
     neighbour = next(
         other
         for other in link_candidates()
-        if other.boundary is BoundaryStanding.SOUND
+        if other.boundary is BoundaryStanding.CANDIDATE_BY_THE_DETECTOR
         and other.material_key != candidate.material_key
     )
     forged = dataclasses.replace(
         neighbour, candidate_meaning=neighbour.witness.text[5:15]
     )
-    assert verify(forged, reviews=(review,)).standing is AdmissionStanding.SUSPENDED
-    assert verify(candidate, reviews=(review,)).standing is AdmissionStanding.ADMITTED
+    assert verify(forged, **opened).standing is AdmissionStanding.SUSPENDED
+    assert verify(candidate, **opened).standing is AdmissionStanding.ADMITTED
 
 
 def test_withdrawing_the_review_suspends_the_dependent_link_only() -> None:
@@ -349,24 +557,33 @@ def test_withdrawing_the_review_suspends_the_dependent_link_only() -> None:
     second = next(
         dataclasses.replace(other, candidate_meaning=other.witness.text[5:15])
         for other in link_candidates()
-        if other.boundary is BoundaryStanding.SOUND
+        if other.boundary is BoundaryStanding.CANDIDATE_BY_THE_DETECTOR
         and other.material_key != first.material_key
     )
     both = (_review_for(first), _review_for(second))
-    assert verify(first, reviews=both).standing is AdmissionStanding.ADMITTED
-    assert verify(second, reviews=both).standing is AdmissionStanding.ADMITTED
+    edges = (_boundary_for(first), _boundary_for(second))
+    assert verify(first, reviews=both, boundaries=edges).standing is (
+        AdmissionStanding.ADMITTED
+    )
+    assert verify(second, reviews=both, boundaries=edges).standing is (
+        AdmissionStanding.ADMITTED
+    )
 
     withdrawn = (_review_for(second),)
-    assert verify(first, reviews=withdrawn).standing is AdmissionStanding.SUSPENDED
-    assert verify(second, reviews=withdrawn).standing is AdmissionStanding.ADMITTED
+    assert verify(first, reviews=withdrawn, boundaries=edges).standing is (
+        AdmissionStanding.SUSPENDED
+    )
+    assert verify(second, reviews=withdrawn, boundaries=edges).standing is (
+        AdmissionStanding.ADMITTED
+    )
 
 
 def test_changing_the_witness_or_the_meaning_forces_a_new_verification() -> None:
     """تغيُّرُ الشاهد أو المعنى يُسقِط الاعتمادَ حتّى يُستأنَف التحقّقُ عليهما."""
 
     candidate = _verbatim_candidate()
-    review = _review_for(candidate)
-    assert verify(candidate, reviews=(review,)).standing is AdmissionStanding.ADMITTED
+    opened = _opened(candidate)
+    assert verify(candidate, **opened).standing is AdmissionStanding.ADMITTED
 
     moved = dataclasses.replace(
         candidate,
@@ -376,28 +593,29 @@ def test_changing_the_witness_or_the_meaning_forces_a_new_verification() -> None
             text=candidate.witness.text[:-1],
         ),
     )
-    assert verify(moved, reviews=(review,)).standing is AdmissionStanding.SUSPENDED
+    assert verify(moved, **opened).standing is AdmissionStanding.SUSPENDED
 
     renamed = dataclasses.replace(
         candidate, candidate_meaning=candidate.witness.text[6:16]
     )
-    assert verify(renamed, reviews=(review,)).standing is AdmissionStanding.SUSPENDED
+    assert verify(renamed, **opened).standing is AdmissionStanding.SUSPENDED
 
 
-def test_counter_evidence_is_recorded_and_does_not_flip_the_verdict_by_itself() -> None:
-    """الشاهدُ المعارضُ يُسجَّل بجنسه ليُقوَّم، ولا يُعدي غيرَه ولا يُهمَل."""
+def test_a_negation_form_is_recorded_without_infecting_its_neighbours() -> None:
+    """تركيبُ النفي يُسجَّل بمنزلته ليُحقَّق، ولا يُعدي غيرَه ولا يُهمَل."""
 
     refusing = [
-        reading for reading in dal_readings() if reading.carries_a_refusal_formula
+        reading
+        for reading in dal_readings()
+        if reading.refusal is not RefusalStanding.NO_NEGATION_FORM
     ]
     assert refusing
     for reading in refusing:
-        assert SuspensionGenus.COUNTER_EVIDENCE in reading.suspension_genera
         assert reading.processing is DalProcessing.NO_ADMITTED_OUTPUT
 
     clean = _verbatim_candidate()
-    clean_reading = verify(clean, reviews=(_review_for(clean),))
-    assert clean_reading.counter_evidence_in_witness is False
+    clean_reading = verify(clean, **_opened(clean))
+    assert clean_reading.refusal is RefusalStanding.NO_NEGATION_FORM
     assert clean_reading.standing is AdmissionStanding.ADMITTED
 
 
@@ -405,13 +623,19 @@ def test_an_admitted_link_asserts_nothing_outside_language() -> None:
     """اعتمادُ ربطٍ معجميٍّ لا يُصدِّق واقعةً خارجيّة، ولا يبلغ وصلةَ الاستعمال."""
 
     candidate = _verbatim_candidate()
-    review = _review_for(candidate)
-    reading = verify(candidate, reviews=(review,))
+    opened = _opened(candidate)
+    reading = verify(candidate, **opened)
     assert reading.standing is AdmissionStanding.ADMITTED
     assert "خارجَ اللغة" in reading.scope
-    reach = dict((rung, ok) for rung, ok, _ in chain_reach(reviews=(review,)))
+    reasons = {rung: why for rung, _, why in chain_reach(**opened)}
+    reach = {rung: ok for rung, ok, _ in chain_reach(**opened)}
     assert reach[LinkChainRung.LAFZ] is False
     assert reach[LinkChainRung.USAGE] is False
+    # حدُّ نطاقٍ محلّيٌّ لا امتناعٌ بالنظام؛ وشروطُ الجسر مُسمّاةٌ لا مُبهَمة.
+    for rung in (LinkChainRung.LAFZ, LinkChainRung.USAGE):
+        assert "خارجَ النطاق" in reasons[rung]
+        assert "لا امتناعٌ في المشروع" in reasons[rung]
+    assert len(THE_CONDITIONS_FOR_A_LAFZ_BRIDGE) == 5
     assert AN_ADMITTED_LEXICAL_LINK_ASSERTS_NO_EXTERNAL_FACT.startswith(
         "AN_ADMITTED_LEXICAL_LINK_ASSERTS_NO_EXTERNAL_FACT"
     )
@@ -425,8 +649,7 @@ def test_a_deposited_review_does_not_lift_the_file_nor_the_third_rung() -> None:
     """
 
     made = _verbatim_candidate()
-    review = _review_for(made)
-    assert verify(made, reviews=(review,)).standing is AdmissionStanding.ADMITTED
+    assert verify(made, **_opened(made)).standing is AdmissionStanding.ADMITTED
 
     real_reviews = tuple(
         ReviewAttestation(
@@ -438,6 +661,7 @@ def test_a_deposited_review_does_not_lift_the_file_nor_the_third_rung() -> None:
         )
         for candidate in link_candidates()
     )
+    # ولا شهادةَ حدٍّ تُودَع لأيٍّ منهم، فالنسبةُ تبقى غيرَ معيَّنة.
     readings = [
         verify(candidate, reviews=real_reviews) for candidate in link_candidates()
     ]
@@ -450,14 +674,23 @@ def test_a_partially_processed_dal_is_never_read_as_an_exhausted_one() -> None:
     """«عولجت محاورُه» حكمٌ على حقول هذا الملفّ، لا استيفاءٌ لمعاني المادّة."""
 
     readings = dal_readings()
-    processed = [
+    assert not [
         reading
         for reading in readings
         if reading.processing is DalProcessing.ALL_DECLARED_AXES_PROCESSED
     ]
-    assert processed
-    assert all(reading.admitted == 0 for reading in processed)
-    assert all(reading.boundary is BoundaryStanding.SOUND for reading in processed)
+    partial = [
+        reading
+        for reading in readings
+        if reading.processing is DalProcessing.PARTIALLY_PROCESSED
+    ]
+    assert partial
+    assert all(reading.admitted == 0 for reading in partial)
+    # وعلّةُ الجزئيّةِ مُسمّاةٌ: لا حدَّ مُحقَّقًا بشهادةٍ في العشرين كلِّهم.
+    assert all(
+        reading.boundary is not BoundaryStanding.VERIFIED_BY_A_DEPOSITED_WITNESS
+        for reading in readings
+    )
 
 
 def test_a_candidate_with_an_empty_meaning_is_refused_at_construction() -> None:

@@ -108,7 +108,14 @@ __all__ = [
     "A_PROCESSED_FIELD_IS_NOT_AN_EXHAUSTED_MEANING",
     "A_REVIEWED_MATERIAL_DOES_NOT_OPEN_ITS_NEIGHBOURS",
     "A_ROOT_KEY_DISPLAY_FORM_IS_NOT_A_USED_WORD",
+    "A_HEADER_DETECTOR_PROPOSES_A_BOUNDARY_IT_DOES_NOT_VERIFY",
+    "A_NEGATION_FORM_IS_NOT_A_DETERMINED_COUNTER_CLAIM",
     "A_ROOT_ORIGIN_IS_NOT_THE_MEANING_OF_EVERY_DERIVATIVE",
+    "A_SEGMENT_IN_A_ROW_IS_NOT_A_SEGMENT_IN_A_MATERIAL",
+    "A_SYNTHETIC_ADMISSION_DOES_NOT_VALIDATE_THE_REAL_SUSPENSIONS",
+    "THE_ONE_MATERIAL_ACTUALLY_REVIEWED",
+    "THE_ABAT_BOUNDARY_REVIEW",
+    "A_TEXTUAL_MATCH_IS_NOT_A_SEMANTIC_SUPPORT",
     "A_SOURCE_IS_A_ROUTE_OF_ACCESS_NOT_A_KIND_OF_SIGNIFICATION",
     "A_TRANSPORTED_MEANING_IS_NOT_A_GENERATED_ONE",
     "FINDING_THE_WORD_ORIGIN_DOES_NOT_SUPPORT_A_PARTICULAR_MEANING",
@@ -116,6 +123,8 @@ __all__ = [
     "THE_ABSENCE_OF_ONE_SOURCE_SUSPENDS_ONLY_WHAT_DEPENDS_ON_IT",
     "THE_ADMISSION_RULE",
     "THE_CANDIDATE_SAMPLE_RULE",
+    "THE_CONDITIONS_FOR_A_LAFZ_BRIDGE",
+    "THE_LAFZ_LINK_IS_OUT_OF_THIS_UNITS_SCOPE_NOT_IMPOSSIBLE",
     "THE_CANDIDATE_SAMPLE_SIZE",
     "THE_DISPLAY_EXCERPT_LIMIT",
     "THE_EXTRACTION_METHOD",
@@ -135,9 +144,14 @@ __all__ = [
     "MaqayisLinkCandidateError",
     "ProvenanceShares",
     "ReviewAttestation",
+    "BoundaryAttestation",
+    "CounterClaimDetermination",
+    "RefusalStanding",
+    "ReviewVerdict",
+    "SemanticSupportCheck",
     "SourceReference",
-    "SufficiencyCheck",
     "SuspensionGenus",
+    "TextualMatchCheck",
     "VerificationReading",
     "WitnessReference",
     "candidate_counts",
@@ -146,6 +160,8 @@ __all__ = [
     "input_unit_reading",
     "link_candidates",
     "provenance_shares",
+    "reconciliation_rows",
+    "suspension_reason_census",
     "report_rows",
     "verify",
 ]
@@ -166,9 +182,66 @@ A_ROOT_KEY_DISPLAY_FORM_IS_NOT_A_USED_WORD: Final[str] = (
 A_ROOT_ORIGIN_IS_NOT_THE_MEANING_OF_EVERY_DERIVATIVE: Final[str] = (
     "A_ROOT_ORIGIN_IS_NOT_THE_MEANING_OF_EVERY_DERIVATIVE: أصلُ الجذر عند "
     "ابن فارس حكمٌ على المادّة، فلا يُحمَل معنًى تلقائيًّا على كلّ مشتقٍّ منها "
-    "ولا على كلّ وقوعٍ لها في عبارة؛ والوصلتان الرابعةُ والخامسةُ ممتنعتان "
-    "ههنا امتناعًا مُعلَنًا داخل النظام لا تعذُّرَ أداةٍ ولا غيابَ دليل"
+    "ولا على كلّ وقوعٍ لها في عبارة؛ وهذا قيدٌ على ما يُستنتَج من هذا المصدر، "
+    "لا حكمٌ على إمكان الوصلتين الرابعة والخامسة في المشروع"
 )
+
+A_TEXTUAL_MATCH_IS_NOT_A_SEMANTIC_SUPPORT: Final[str] = (
+    "A_TEXTUAL_MATCH_IS_NOT_A_SEMANTIC_SUPPORT: وقوعُ صياغة المعنى في الشاهد "
+    "نصًّا يُثبِت وجودَ سلسلةٍ نصّيّةٍ لا غير؛ فقد تقع في سياقٍ ينفيها أو "
+    "ينسبها إلى قولٍ مرفوضٍ أو يتحدّث عن مادّةٍ أخرى. وبالعكس: قد يُسنِد "
+    "الشاهدُ المعنى بصياغةٍ مختلفةٍ بلا تطابق، فلا يُقرأ غيابُ المطابقة نفيًا "
+    "للإسناد؛ والإسنادُ شهادةٌ رابعةٌ مصدرُها مراجعةٌ مودَعةٌ تُسمّي جهتَه"
+)
+
+A_NEGATION_FORM_IS_NOT_A_DETERMINED_COUNTER_CLAIM: Final[str] = (
+    "A_NEGATION_FORM_IS_NOT_A_DETERMINED_COUNTER_CLAIM: رصدُ «ليس بأصل» "
+    "رصدُ تركيبٍ لا تحقيقٌ لتعارض؛ فلا يُعلَم أمنفيُّه استقلالُ المادّة أصلًا، "
+    "أم وجودُ قياسٍ يجمع استعمالاتها، أم صحّةُ لفظٍ أو نسبةٍ بعينها، أم "
+    "المعنى المرشَّح نفسُه. ونفيُ الأوّل لا يُلازِم نفيَ وجود معنًى معجميّ، "
+    "فلا يُرفَع الرصدُ دليلًا مضادًّا إلّا بتعيينٍ مودَعٍ يُسمّي دعواه وسببَ "
+    "انطباقها"
+)
+
+A_HEADER_DETECTOR_PROPOSES_A_BOUNDARY_IT_DOES_NOT_VERIFY: Final[str] = (
+    "A_HEADER_DETECTOR_PROPOSES_A_BOUNDARY_IT_DOES_NOT_VERIFY: حضورُ "
+    "الترويسة قرينةُ ابتداءٍ تقترح حدًّا، ولا تقول أين ينتهي المتن، ولا تنفي "
+    "ترويسةً داخليّةً ابتُلعت، ولا تُقابِل الصفَّ بتاليه؛ وغيابُها قد يكون "
+    "اختلافَ تنسيقٍ في أوائل المواد لا خللًا في المادّة. فيُفصَل حدٌّ مرشَّحٌ "
+    "بكاشفٍ مُعلَن عن حدٍّ محقَّقٍ بشهادةٍ مودَعة، ولا يُسوَّى بينهما"
+)
+
+A_SEGMENT_IN_A_ROW_IS_NOT_A_SEGMENT_IN_A_MATERIAL: Final[str] = (
+    "A_SEGMENT_IN_A_ROW_IS_NOT_A_SEGMENT_IN_A_MATERIAL: وقوعُ المقطع في "
+    "الصفّ، ووسمُ الصفِّ بهذا المفتاح، مستويان لا يُثبِتان تبعيّةَ المقطع "
+    "للمادّة المعجميّة الصحيحة؛ والمادّةُ المبتلعةُ هي الموضعُ الذي ينفصل "
+    "فيه الثلاثة، فلا تُبلَغ الثالثةُ إلّا بشهادةِ حدٍّ مودَعة"
+)
+
+A_SYNTHETIC_ADMISSION_DOES_NOT_VALIDATE_THE_REAL_SUSPENSIONS: Final[str] = (
+    "A_SYNTHETIC_ADMISSION_DOES_NOT_VALIDATE_THE_REAL_SUSPENSIONS: بلوغُ "
+    "`ADMITTED` على مدخلٍ مصنوعٍ يُثبِت أنّ مسار القبول يعمل وأنّ الآلة لا "
+    "ترفض كلَّ مدخلٍ آليًّا، ولا يُثبِت صحّةَ أسباب تعليق المرشَّحات الحقيقيّة، "
+    "ولا قدرةَ الآلة على اعتماد شاهدٍ واقعيٍّ مستوفٍ، ولا خلوَّ الشروط من "
+    "زائدٍ يمنع اعتمادًا مشروعًا؛ وهذه الثلاثةُ تُراجَع على مادّةٍ واقعيّةٍ كاملة"
+)
+
+THE_LAFZ_LINK_IS_OUT_OF_THIS_UNITS_SCOPE_NOT_IMPOSSIBLE: Final[str] = (
+    "THE_LAFZ_LINK_IS_OUT_OF_THIS_UNITS_SCOPE_NOT_IMPOSSIBLE: اللفظُ "
+    "والاستعمالُ خارجَ النطاق المُعلَن لهذه الوحدة، إذ مدخلُها مفاتيحُ موادَّ "
+    "لا ألفاظٌ مستعمَلة؛ وهذا قيدٌ معماريٌّ محلّيٌّ يُبحَث تغييرُه، لا امتناعٌ "
+    "في المشروع. وشروطُ جسرٍ مستقلٍّ لها مُسمّاةٌ في "
+    "`THE_CONDITIONS_FOR_A_LAFZ_BRIDGE`"
+)
+
+THE_CONDITIONS_FOR_A_LAFZ_BRIDGE: Final[tuple[str, ...]] = (
+    "مدوّنةُ ألفاظٍ مختومةٌ تُقرأ منها صورُ الاستعمال لا مفاتيحُ الموادّ",
+    "تحليلٌ صرفيٌّ يردّ اللفظَ إلى مادّته، لا وكيلُ إطارٍ سطحيّ",
+    "قاعدةٌ مُعلَنةٌ تُبيّن متى يَحمِل المشتقُّ معنى أصلِ مادّته ومتى لا",
+    "شاهدُ سياقٍ لكلّ وقوعٍ يُقرأ منه المعنى في موضعه لا في المعجم",
+    "مراجعةٌ تُسمّي جهةَ الإسناد في الوقوع كما تُسمّيها في المادّة",
+)
+"""شروطُ بناء جسرٍ مستقلٍّ للّفظ والاستعمال؛ مُسمّاةٌ كي لا يُقرأ القيدُ امتناعًا."""
 
 A_SOURCE_IS_A_ROUTE_OF_ACCESS_NOT_A_KIND_OF_SIGNIFICATION: Final[str] = (
     "A_SOURCE_IS_A_ROUTE_OF_ACCESS_NOT_A_KIND_OF_SIGNIFICATION: المقاييسُ "
@@ -220,6 +293,24 @@ AN_ADMITTED_LEXICAL_LINK_ASSERTS_NO_EXTERNAL_FACT: Final[str] = (
 )
 
 MAQAYIS_LINK_CANDIDATE_NAMED_RESIDUALS: Final[dict[str, str]] = {
+    "THE_LAFZ_LINK_IS_OUT_OF_THIS_UNITS_SCOPE_NOT_IMPOSSIBLE": (
+        THE_LAFZ_LINK_IS_OUT_OF_THIS_UNITS_SCOPE_NOT_IMPOSSIBLE
+    ),
+    "A_SYNTHETIC_ADMISSION_DOES_NOT_VALIDATE_THE_REAL_SUSPENSIONS": (
+        A_SYNTHETIC_ADMISSION_DOES_NOT_VALIDATE_THE_REAL_SUSPENSIONS
+    ),
+    "A_SEGMENT_IN_A_ROW_IS_NOT_A_SEGMENT_IN_A_MATERIAL": (
+        A_SEGMENT_IN_A_ROW_IS_NOT_A_SEGMENT_IN_A_MATERIAL
+    ),
+    "A_HEADER_DETECTOR_PROPOSES_A_BOUNDARY_IT_DOES_NOT_VERIFY": (
+        A_HEADER_DETECTOR_PROPOSES_A_BOUNDARY_IT_DOES_NOT_VERIFY
+    ),
+    "A_NEGATION_FORM_IS_NOT_A_DETERMINED_COUNTER_CLAIM": (
+        A_NEGATION_FORM_IS_NOT_A_DETERMINED_COUNTER_CLAIM
+    ),
+    "A_TEXTUAL_MATCH_IS_NOT_A_SEMANTIC_SUPPORT": (
+        A_TEXTUAL_MATCH_IS_NOT_A_SEMANTIC_SUPPORT
+    ),
     "A_ROOT_KEY_DISPLAY_FORM_IS_NOT_A_USED_WORD": (
         A_ROOT_KEY_DISPLAY_FORM_IS_NOT_A_USED_WORD
     ),
@@ -388,38 +479,133 @@ def _source_reference(root: Path | None = None) -> SourceReference:
 
 
 class BoundaryStanding(Enum):
-    """حالُ حدِّ المادّة، مُشتقًّا من تصنيف الترويسة القائم لا من تصنيفٍ جديد."""
+    """حالُ حدِّ المادّة؛ والكاشفُ يقترح حدًّا ولا يُحقِّقه، فلا يُسوَّى بينهما.
 
-    SOUND = "حدٌّ محقَّق"
-    SUSPECT = "حدٌّ مشتبه"
+    فالترويسةُ الحاضرةُ قرينةُ ابتداءٍ لا شهادةُ حدّ: لا تقول أين ينتهي المتن،
+    ولا تنفي ترويسةً داخليّةً ابتُلعت، ولا تُقابِل الصفَّ بتاليه
+    (`A_HEADER_DETECTOR_PROPOSES_A_BOUNDARY_IT_DOES_NOT_VERIFY`). ولا يبلغ
+    صفٌّ `VERIFIED_BY_A_DEPOSITED_WITNESS` إلّا بشهادةِ حدٍّ مودَعةٍ باسمها.
+    """
+
+    CANDIDATE_BY_THE_DETECTOR = "حدٌّ مرشَّحٌ بكاشفٍ مُعلَن"
+    UNDETERMINED_BY_THE_DETECTOR = "حدٌّ لم يُعيِّنه الكاشف"
+    VERIFIED_BY_A_DEPOSITED_WITNESS = "حدٌّ محقَّقٌ بشهادةٍ مودَعة"
 
 
-def _boundary_standing(row: Mapping[str, str]) -> BoundaryStanding:
-    """حدُّ صفٍّ: ترويسةُ بابٍ أو كتابِ حرفٍ حدٌّ محقَّق، وما سواها مشتبه."""
+@dataclass(frozen=True, slots=True)
+class BoundaryAttestation:
+    """شهادةُ حدٍّ مودَعةٌ لصفٍّ بعينه: نهايتُه، وداخلُه، ومقابلتُه بتاليه.
 
+    ولا تُودَع شهادةٌ إلّا ببيانِ ما فُحِص؛ فحدٌّ يُدَّعى تحقّقُه بلا نظرٍ في
+    نهايته وترويساته الداخليّة ومقابلته بالمادّة التالية حدٌّ لم يُحقَّق.
+    """
+
+    material_key: str
+    row_index: int
+    end_examined: bool
+    internal_headers_examined: bool
+    collated_with_the_next_material: bool
+    reviewer: str
+    statement: str
+
+    def __post_init__(self) -> None:
+        if not self.reviewer.strip() or not self.statement.strip():
+            raise MaqayisLinkCandidateError("شهادةُ حدٍّ بلا مراجعٍ وبيانٍ تُرَدّ.")
+
+    @property
+    def is_complete(self) -> bool:
+        """أفُحِصت الثلاثةُ كلُّها؟ وناقصُ واحدةٍ لا يرفع الحدَّ إلى التحقّق."""
+
+        return (
+            self.end_examined
+            and self.internal_headers_examined
+            and self.collated_with_the_next_material
+        )
+
+
+THE_ONE_MATERIAL_ACTUALLY_REVIEWED = (
+    "THE_ONE_MATERIAL_ACTUALLY_REVIEWED: مراجعةٌ واقعيّةٌ واحدةٌ أُجرِيت على "
+    "الرتبة 12 («أبت»:13)، وهي من الصفوف الثمانية التي يقترح الكاشفُ حدَّها. "
+    "فُحِص المنتهى، وفُحِش داخلُه، وقُوبِل بالمادّة التالية («أبد»:14): "
+    "فظهر أنّ متنَ الصفِّ يبتلع كلامًا ليس من مادّته — فيه «وهذا الباب مهمل "
+    "عند الخليل»، و«الكَبِث: المتغيِّر المُرْوِح»، و«إِنه لأبِثٌ … وناقة أبثَة» "
+    "— وهذا من مادّة «أبث» لا من «أبت». فالمقابلةُ لم تُسلِّم، والحدُّ "
+    "مردودٌ لا مُحقَّق. وهذه شهادةُ ابتلاعٍ تُثبِت أنّ وسمَ الصفِّ بمفتاحٍ "
+    "ليس تبعيّةَ كلِّ مقطعٍ فيه لذلك المفتاح."
+)
+
+THE_ABAT_BOUNDARY_REVIEW = BoundaryAttestation(
+    material_key="أبت:13",
+    row_index=12,
+    end_examined=True,
+    internal_headers_examined=True,
+    collated_with_the_next_material=False,
+    reviewer="مراجعةُ هذه الجلسة، بالنظر في متن الصفّ وتاليه",
+    statement=THE_ONE_MATERIAL_ACTUALLY_REVIEWED,
+)
+
+
+def _boundary_standing(
+    row: Mapping[str, str],
+    row_index: int = -1,
+    boundaries: tuple[BoundaryAttestation, ...] = (),
+) -> BoundaryStanding:
+    """حدُّ صفٍّ: شهادةٌ مودَعةٌ تامّةٌ تُحقِّقه، والكاشفُ يقترحه أو لا يُعيِّنه."""
+
+    key = f"{row['root_full']}:{row['entry_num']}"
+    for attestation in boundaries:
+        if (
+            attestation.material_key == key
+            and attestation.row_index == row_index
+            and attestation.is_complete
+        ):
+            return BoundaryStanding.VERIFIED_BY_A_DEPOSITED_WITNESS
     form = classify_header(row["chapter_header"])
     if form in (HeaderForm.LETTER_BOOK, HeaderForm.SUB_CHAPTER):
-        return BoundaryStanding.SOUND
-    return BoundaryStanding.SUSPECT
+        return BoundaryStanding.CANDIDATE_BY_THE_DETECTOR
+    return BoundaryStanding.UNDETERMINED_BY_THE_DETECTOR
 
 
 # --- الشهاداتُ الثلاث ---------------------------------------------------------
 
 
 class AttributionCheck(Enum):
-    """شهادةُ صحّة النسبة: أتابعٌ هذا الشاهدُ للمادّة المقصودة ضمن حدٍّ محقَّق؟"""
+    """شهادةُ النسبة على مستواها الثالث: أتابعٌ هذا المقطعُ للمادّة المقصودة؟
 
-    IN_THIS_MATERIAL = "تابعٌ للمادّة المقصودة"
-    NOT_IN_THIS_MATERIAL = "ليس من المادّة المقصودة"
-    BOUNDARY_SUSPECT = "حدُّ المادّة مشتبه"
+    ووقوعُ المقطع في الصفّ (`segment_in_row`) ووسمُ الصفِّ بهذا المفتاح
+    مستويان أوّلان لا يُثبِتان الثالث؛ والمادّةُ المبتلعةُ هي الموضعُ الذي
+    ينفصل فيه الثلاثةُ فعلًا
+    (`A_SEGMENT_IN_A_ROW_IS_NOT_A_SEGMENT_IN_A_MATERIAL`).
+    """
+
+    VERIFIED_BY_A_DEPOSITED_WITNESS = "نسبةٌ محقَّقةٌ بشهادةِ حدٍّ مودَعة"
+    NOT_DETERMINED = "نسبةٌ غيرُ معيَّنة: الصفُّ موسومٌ ولم يُحقَّق حدُّه"
+    REFUTED_BY_THE_PROBE = "نسبةٌ منقوضة: المقطعُ ليس من هذه المادّة"
 
 
-class SufficiencyCheck(Enum):
-    """شهادةُ كفاية الاستشهاد، وعلاقةُ عبارة الشاهد بالصياغة المستخرَجة فيها."""
+class TextualMatchCheck(Enum):
+    """ما يُثبِته هذا الفحصُ **وجودُ سلسلةٍ نصّيّة** لا غير، ولا يُسمّى كفاية.
 
-    SUPPORTS_VERBATIM = "يُسنِده بحروفه"
-    SUPPORTED_UNDER_A_NAMED_NORMALISATION = "يُسنِده بعد تجريدِ تشكيلٍ مُسمًّى"
-    NOT_FOUND_IN_THE_WITNESS = "لا تقع صياغتُه في الشاهد"
+    فقد يقع المعنى بحروفه في سياقٍ ينفيه أو ينسبه إلى قولٍ مرفوضٍ أو يتحدّث
+    عن مادّةٍ أخرى؛ وقد يُسنِد الشاهدُ المعنى بصياغةٍ مختلفةٍ بلا تطابق
+    (`A_TEXTUAL_MATCH_IS_NOT_A_SEMANTIC_SUPPORT`).
+    """
+
+    MATCHES_VERBATIM = "تقع صياغتُه بحروفها"
+    MATCHES_UNDER_A_NAMED_NORMALISATION = "تقع بعد تحويلٍ مُسمًّى: تجريدُ تشكيل"
+    NO_TEXTUAL_MATCH = "لا تقع صياغتُه نصًّا"
+
+
+class SemanticSupportCheck(Enum):
+    """الإسنادُ الدلاليّ: أيُثبِت المقطعُ هذا المعنى بعينه وبالجهة المطلوبة؟
+
+    ولا تُخرِجه آلةٌ من مطابقةٍ نصّيّة؛ مصدرُه مراجعةٌ مودَعةٌ تقول بأيّ جهةٍ
+    أسند الشاهدُ المعنى. وغيابُها تعليقٌ لتعذُّر الأداة لا نفيٌ للإسناد.
+    """
+
+    ESTABLISHED_BY_A_DEPOSITED_REVIEW = "مُثبَتٌ بمراجعةٍ مودَعة"
+    DENIED_BY_A_DEPOSITED_REVIEW = "منفيٌّ بمراجعةٍ مودَعة"
+    NOT_ESTABLISHED_WITHOUT_A_REVIEW = "غيرُ مُثبَتٍ: لا مراجعةَ مودَعة"
 
 
 THE_LETTER_NAMES: Final[Mapping[str, tuple[str, ...]]] = {
@@ -474,9 +660,43 @@ THE_REFUSAL_FORMULAE: Final[tuple[str, ...]] = (
 )
 """صيغُ نفيِ الأصل كما ترد في المتن؛ تُلتمَس بعد تجريد التشكيل.
 
-ووقوعُها دليلٌ **مضادٌّ** لدعوى أنّ هذه المادّة تُخرِج أصلًا معجميًّا، وهو غيرُ
-غيابِ الدليل؛ ولذلك يُفرَز بجنسِ تعليقٍ آخر.
+ورصدُ التركيب **ليس تحقيقًا للتعارض**: النصُّ النافي يُحفَظ، وأمّا المنفيُّ
+المحدَّد — أهو استقلالُ المادّة أصلًا، أم وجودُ قياسٍ يجمع استعمالاتها، أم
+صحّةُ لفظٍ أو نسبةٍ بعينها، أم المعنى المرشَّح نفسُه؟ — فلا يُعيَّن بلا قراءةِ
+سياقٍ مودَعة (`A_NEGATION_FORM_IS_NOT_A_DETERMINED_COUNTER_CLAIM`).
 """
+
+
+class RefusalStanding(Enum):
+    """منزلةُ صيغة النفي في شاهدٍ؛ وأعلاها لا تُبلَغ بلا تعيينٍ مودَع."""
+
+    NO_NEGATION_FORM = "لا صيغةَ نفيٍ في الشاهد"
+    TARGET_UNDETERMINED = "صيغةُ نفيٍ لم يُعيَّن منفيُّها"
+    DETERMINED_COUNTER_CLAIM = "تعارضٌ محقَّقٌ بتعيينِ دعواه"
+
+
+@dataclass(frozen=True, slots=True)
+class CounterClaimDetermination:
+    """تعيينُ تعارضٍ مودَعٌ: النصُّ النافي، والمنفيُّ، والدعوى، وسببُ الانطباق."""
+
+    material_key: str
+    negating_text: str
+    what_is_denied: str
+    claim_it_opposes: str
+    why_it_applies: str
+
+    def __post_init__(self) -> None:
+        for name in (
+            "material_key",
+            "negating_text",
+            "what_is_denied",
+            "claim_it_opposes",
+            "why_it_applies",
+        ):
+            if not str(getattr(self, name)).strip():
+                raise MaqayisLinkCandidateError(
+                    "تعيينُ التعارض بنصٍّ نافٍ ومنفيٍّ ودعوًى وسببِ انطباق."
+                )
 
 
 class SuspensionGenus(Enum):
@@ -573,17 +793,31 @@ class LinkCandidate:
         return f"{self.material_key}#{self.axis_index}"
 
 
+class ReviewVerdict(Enum):
+    """جهةُ المراجعة المودَعة؛ والنافيةُ تُحفَظ كما تُحفَظ المُثبِتة."""
+
+    SUPPORTS_THE_MEANING = "يُسنِد الشاهدُ هذا المعنى"
+    DENIES_THE_MEANING = "لا يُسنِد الشاهدُ هذا المعنى"
+
+
 @dataclass(frozen=True, slots=True)
 class ReviewAttestation:
-    """مراجعةٌ مودَعةٌ لمادّةٍ بعينها ومعنًى بنصّه؛ لا إذنَ عامٌّ ولا إذنُ ملفّ."""
+    """مراجعةٌ مودَعةٌ لمادّةٍ بعينها ومعنًى بنصّه؛ لا إذنَ عامٌّ ولا إذنُ ملفّ.
+
+    وهي **مصدرُ الإسناد الدلاليّ الوحيد** في هذه الوحدة: الآلةُ تقيس مطابقةً
+    نصّيّةً وتعرضها، ولا تَرفعها إسنادًا؛ والرافعُ مراجعٌ يقول بأيّ جهة.
+    """
 
     material_key: str
     candidate_meaning: str
     witness_text: str
     reviewer: str
     statement: str
+    verdict: ReviewVerdict = ReviewVerdict.SUPPORTS_THE_MEANING
 
     def __post_init__(self) -> None:
+        if not isinstance(self.verdict, ReviewVerdict):
+            raise MaqayisLinkCandidateError("جهةُ المراجعة عضوٌ من `ReviewVerdict`.")
         for name in ("material_key", "candidate_meaning", "witness_text", "reviewer"):
             if not str(getattr(self, name)).strip():
                 raise MaqayisLinkCandidateError(
@@ -592,11 +826,14 @@ class ReviewAttestation:
 
 
 THE_ADMISSION_RULE: Final[str] = (
-    "يُعتمَد الربطُ إذا اجتمعت خمسٌ: بصمةُ النسخة مطابقةٌ عند القراءة، "
-    "والشاهدُ منتزَعٌ من حقل المادّة نفسِها بإزاحتيه، ونسبتُه مُثبَتةٌ بمِسبارٍ "
-    "لا يُصدِّق نفسَه، وحدُّ المادّة محقَّق، وكفايةُ الاستشهاد `SUPPORTS_VERBATIM` "
-    "ومعها مراجعةٌ مودَعةٌ لهذه المادّة وهذا المعنى بنصّه. وتخلُّفُ واحدةٍ "
-    "يُعلِّق هذا المرشَّحَ وحدَه بجنسِ سببه، ولا يُعلِّق غيرَه ولا يَرفُضه"
+    "يُعتمَد الربطُ إذا اجتمعت أربعٌ: بصمةُ النسخة مطابقةٌ عند القراءة، "
+    "والمقطعُ واقعٌ بإزاحتيه في حقل الصفّ، ومِسبارُ تسمية الحروف لم ينقض "
+    "نسبتَه، ونسبتُه إلى المادّة محقَّقةٌ بشهادةِ حدٍّ مودَعةٍ فُحِص فيها "
+    "المنتهى والترويساتُ الداخليّةُ والمقابلةُ بالتالي، ومعها مراجعةٌ مودَعةٌ "
+    "لهذه المادّة وهذا المعنى وهذا الشاهد تقول `SUPPORTS_THE_MEANING`. "
+    "**والمطابقةُ النصّيّةُ ليست شرطًا ولا مانعًا**: تُقاس وتُعرَض، ولا تُرفَع "
+    "إسنادًا، ولا يُقرأ غيابُها نفيًا له. وتخلُّفُ شرطٍ يُعلِّق هذا المرشَّحَ "
+    "وحدَه بجنسِ سببه، ولا يُعلِّق غيرَه ولا يَرفُضه"
 )
 
 
@@ -604,16 +841,24 @@ THE_ADMISSION_RULE: Final[str] = (
 class VerificationReading:
     """نتيجةُ التحقّق لمرشَّحٍ واحد: شهاداتُه الثلاث، وحالُه، وسببُ تعليقه.
 
-    و`counter_evidence_in_witness` **يُسجَّل ولا يَقضي**: وقوعُ صيغة نفيِ الأصل
-    في الشاهد واقعةٌ تُحفَظ لتُقوَّم، ولا تقلب حالَ الاعتماد آليًّا؛ فقلبُ
-    الحكم بلا تقويمٍ مثلُ إهماله سواءً بسواء.
+    والحقولُ مفصولةٌ بما يُثبِته كلُّ فحصٍ وحدَه: `segment_in_row` وجودُ
+    المقطع في الصفّ، و`attribution` نسبتُه إلى المادّة، و`textual_match`
+    وجودُ سلسلةٍ نصّيّة، و`semantic_support` إسنادُ المعنى. ولا يُقرأ أدناها
+    دليلًا على أعلاها، ولا غيابُ أدناها نفيًا لأعلاها.
+
+    و`refusal` **يُسجَّل ولا يَقضي**: صيغةُ النفي واقعةٌ تُحفَظ لتُقوَّم، ولا
+    تقلب حالَ الاعتماد آليًّا؛ فقلبُ الحكم بلا تعيينِ دعواه مثلُ إهماله.
     """
 
     candidate: LinkCandidate
     source_integrity: bool
+    segment_in_row: bool
+    probe_refutes_the_row: bool
+    boundary: BoundaryStanding
     attribution: AttributionCheck
-    sufficiency: SufficiencyCheck
-    counter_evidence_in_witness: bool
+    textual_match: TextualMatchCheck
+    semantic_support: SemanticSupportCheck
+    refusal: RefusalStanding
     review: ReviewAttestation | None
     standing: AdmissionStanding
     suspension_genus: SuspensionGenus | None
@@ -699,7 +944,7 @@ def _first_sentence(body: str) -> tuple[int, int]:
 
 
 def _attribution_of(row: Mapping[str, str], sentence: str) -> AttributionCheck:
-    """أتُسمّي جملةُ الشاهد حروفَ جذرِ صفِّها؟ مِسبارٌ لا يَقرأ ما يُقاس به."""
+    """مِسبارٌ **ناقضٌ لا مُثبِت**: يُسقِط نسبةً، ولا يرفع غيرَ المعيَّنة محقَّقةً."""
 
     bare = strip_diacritics(sentence)
     letters: list[str] = []
@@ -707,28 +952,46 @@ def _attribution_of(row: Mapping[str, str], sentence: str) -> AttributionCheck:
         if character in THE_LETTER_NAMES and character not in letters:
             letters.append(character)
     if not letters:
-        return AttributionCheck.NOT_IN_THIS_MATERIAL
+        return AttributionCheck.REFUTED_BY_THE_PROBE
     for character in letters:
         if not any(name in bare for name in THE_LETTER_NAMES[character]):
-            return AttributionCheck.NOT_IN_THIS_MATERIAL
-    return AttributionCheck.IN_THIS_MATERIAL
+            return AttributionCheck.REFUTED_BY_THE_PROBE
+    return AttributionCheck.NOT_DETERMINED
 
 
-def _sufficiency_of(meaning: str, witness: str) -> SufficiencyCheck:
-    """أيُسنِد الشاهدُ هذا المعنى بعينه؟ وبأيّ علاقةٍ بين عبارته وصياغته؟"""
+def _textual_match_of(meaning: str, witness: str) -> TextualMatchCheck:
+    """أتقع صياغةُ المعنى في الشاهد نصًّا؟ وجودُ سلسلةٍ لا إسنادُ معنًى."""
 
     if meaning in witness:
-        return SufficiencyCheck.SUPPORTS_VERBATIM
+        return TextualMatchCheck.MATCHES_VERBATIM
     if strip_diacritics(meaning) in strip_diacritics(witness):
-        return SufficiencyCheck.SUPPORTED_UNDER_A_NAMED_NORMALISATION
-    return SufficiencyCheck.NOT_FOUND_IN_THE_WITNESS
+        return TextualMatchCheck.MATCHES_UNDER_A_NAMED_NORMALISATION
+    return TextualMatchCheck.NO_TEXTUAL_MATCH
 
 
 def _carries_a_refusal(witness: str) -> bool:
-    """أتقع في الشاهد صيغةُ نفيِ الأصل؟ دليلٌ مضادٌّ لا غيابُ دليل."""
+    """أتقع في الشاهد صيغةُ نفيٍ؟ رصدُ تركيبٍ لا تحقيقٌ لتعارض."""
 
     bare = strip_diacritics(witness)
     return any(formula in bare for formula in THE_REFUSAL_FORMULAE)
+
+
+def _refusal_standing(
+    material_key: str,
+    witness: str,
+    determinations: tuple[CounterClaimDetermination, ...] = (),
+) -> RefusalStanding:
+    """منزلةُ النفي: لا صيغةَ، أو صيغةٌ غيرُ معيَّنةِ المنفيّ، أو تعارضٌ محقَّق."""
+
+    if not _carries_a_refusal(witness):
+        return RefusalStanding.NO_NEGATION_FORM
+    bare = strip_diacritics(witness)
+    for determination in determinations:
+        if determination.material_key == material_key and (
+            strip_diacritics(determination.negating_text) in bare
+        ):
+            return RefusalStanding.DETERMINED_COUNTER_CLAIM
+    return RefusalStanding.TARGET_UNDETERMINED
 
 
 def _signification_kind(governing: SealStanding) -> DalalaKind | None:
@@ -803,10 +1066,12 @@ def verify(
     *,
     root: Path | None = None,
     reviews: tuple[ReviewAttestation, ...] = (),
+    boundaries: tuple[BoundaryAttestation, ...] = (),
+    determinations: tuple[CounterClaimDetermination, ...] = (),
 ) -> VerificationReading:
-    """افحص مرشَّحًا بثلاث شهاداتٍ منفصلة، وأخرِج حالَه وسببَ تعليقه إن عُلِّق.
+    """افحص مرشَّحًا بفحوصٍ مفصولةٍ بما يُثبِته كلٌّ منها، وأخرِج حالَه وسببَه.
 
-    والشهاداتُ تُعاد من البايتات عند كلّ فحص: لا يُصدَّق حقلٌ محفوظٌ في
+    والفحوصُ تُعاد من البايتات عند كلّ نداء: لا يُصدَّق حقلٌ محفوظٌ في
     المرشَّح على نفسه، فتغيُّرُ الشاهد أو المعنى يُوجِب إعادةَ التحقّق ويظهر
     أثرُه ههنا لا في نثرٍ مكتوب.
     """
@@ -824,17 +1089,22 @@ def verify(
     )
 
     span = body[candidate.witness.start_offset : candidate.witness.end_offset]
-    if span != candidate.witness.text:
-        attribution = AttributionCheck.NOT_IN_THIS_MATERIAL
+    segment_in_row = span == candidate.witness.text
+    probe_refutes = segment_in_row and (
+        _attribution_of(row, candidate.witness.text)
+        is AttributionCheck.REFUTED_BY_THE_PROBE
+    )
+    boundary = _boundary_standing(row, candidate.row_index, boundaries)
+    if not segment_in_row or probe_refutes:
+        attribution = AttributionCheck.REFUTED_BY_THE_PROBE
+    elif boundary is BoundaryStanding.VERIFIED_BY_A_DEPOSITED_WITNESS:
+        attribution = AttributionCheck.VERIFIED_BY_A_DEPOSITED_WITNESS
     else:
-        attribution = _attribution_of(row, candidate.witness.text)
-    if (
-        attribution is AttributionCheck.IN_THIS_MATERIAL
-        and _boundary_standing(row) is BoundaryStanding.SUSPECT
-    ):
-        attribution = AttributionCheck.BOUNDARY_SUSPECT
+        attribution = AttributionCheck.NOT_DETERMINED
 
-    sufficiency = _sufficiency_of(candidate.candidate_meaning, candidate.witness.text)
+    textual_match = _textual_match_of(
+        candidate.candidate_meaning, candidate.witness.text
+    )
 
     review = next(
         (
@@ -846,47 +1116,66 @@ def verify(
         ),
         None,
     )
+    if review is None:
+        support = SemanticSupportCheck.NOT_ESTABLISHED_WITHOUT_A_REVIEW
+    elif review.verdict is ReviewVerdict.SUPPORTS_THE_MEANING:
+        support = SemanticSupportCheck.ESTABLISHED_BY_A_DEPOSITED_REVIEW
+    else:
+        support = SemanticSupportCheck.DENIED_BY_A_DEPOSITED_REVIEW
+
+    refusal = _refusal_standing(
+        candidate.material_key, candidate.witness.text, determinations
+    )
 
     unmet: list[str] = []
     genus: SuspensionGenus | None = None
     if not source_integrity:
         unmet.append("سلامةُ المصدر: الشاهدُ لا يقع في النسخة المقروءة بهذه البصمة")
         genus = SuspensionGenus.COUNTER_EVIDENCE
-    if attribution is AttributionCheck.NOT_IN_THIS_MATERIAL:
-        unmet.append("صحّةُ النسبة: الشاهدُ ليس من المادّة المقصودة")
+    if not segment_in_row:
+        unmet.append("وقوعُ المقطع: الإزاحتان لا تُخرِجان هذا النصَّ من الصفّ")
         genus = genus or SuspensionGenus.COUNTER_EVIDENCE
-    elif attribution is AttributionCheck.BOUNDARY_SUSPECT:
-        unmet.append("صحّةُ النسبة: حدُّ المادّة مشتبهٌ فتُعلَّق نتائجُه التابعة")
-        genus = genus or SuspensionGenus.ABSENT_EVIDENCE
-    if sufficiency is SufficiencyCheck.NOT_FOUND_IN_THE_WITNESS:
-        unmet.append("كفايةُ الاستشهاد: لا تقع صياغةُ المعنى في الشاهد")
-        genus = genus or (
-            SuspensionGenus.COUNTER_EVIDENCE
-            if _carries_a_refusal(candidate.witness.text)
-            else SuspensionGenus.ABSENT_EVIDENCE
+    elif probe_refutes:
+        unmet.append("صحّةُ النسبة: مِسبارُ تسمية الحروف ينقض نسبةَ المقطع")
+        genus = genus or SuspensionGenus.COUNTER_EVIDENCE
+    elif attribution is AttributionCheck.NOT_DETERMINED:
+        unmet.append(
+            "صحّةُ النسبة: الصفُّ موسومٌ بالمفتاح ولا شهادةَ حدٍّ مودَعةٍ تُحقِّق "
+            "تبعيّةَ المقطع لهذه المادّة"
         )
-    elif sufficiency is SufficiencyCheck.SUPPORTED_UNDER_A_NAMED_NORMALISATION:
-        unmet.append("كفايةُ الاستشهاد: الموافقةُ بعد تجريدِ تشكيلٍ مُسمًّى لا بحروفها")
         genus = genus or SuspensionGenus.TOOL_UNAVAILABLE
-    if review is None:
-        unmet.append("قبولُ المعنى موقوفٌ على مراجعةٍ مودَعةٍ لهذه المادّة وهذا المعنى")
+    if support is SemanticSupportCheck.NOT_ESTABLISHED_WITHOUT_A_REVIEW:
+        unmet.append(
+            "الإسنادُ الدلاليّ: لا مراجعةَ مودَعةً تقول إنّ هذا الشاهدَ يُسنِد "
+            "هذا المعنى وبالجهة المطلوبة"
+        )
         genus = genus or SuspensionGenus.TOOL_UNAVAILABLE
+    elif support is SemanticSupportCheck.DENIED_BY_A_DEPOSITED_REVIEW:
+        unmet.append("الإسنادُ الدلاليّ: مراجعةٌ مودَعةٌ تنفي إسنادَ هذا الشاهد")
+        genus = genus or SuspensionGenus.COUNTER_EVIDENCE
+    if refusal is RefusalStanding.DETERMINED_COUNTER_CLAIM:
+        unmet.append("تعارضٌ محقَّقٌ: تعيينٌ مودَعٌ يُبيّن الدعوى التي يُعارضها")
+        genus = SuspensionGenus.COUNTER_EVIDENCE
 
     standing = AdmissionStanding.ADMITTED if not unmet else AdmissionStanding.SUSPENDED
     return VerificationReading(
         candidate=candidate,
         source_integrity=source_integrity,
+        segment_in_row=segment_in_row,
+        probe_refutes_the_row=probe_refutes,
+        boundary=boundary,
         attribution=attribution,
-        sufficiency=sufficiency,
-        counter_evidence_in_witness=_carries_a_refusal(candidate.witness.text),
+        textual_match=textual_match,
+        semantic_support=support,
+        refusal=refusal,
         review=review,
         standing=standing,
         suspension_genus=genus,
         unmet_conditions=tuple(unmet),
         scope=(
             "نطاقُ الاعتماد: أنّ هذه النسخةَ من هذا المعجم أسندت هذا المعنى "
-            "لهذه المادّة؛ ولا يمتدّ إلى مشتقٍّ ولا إلى وقوعٍ في عبارة، ولا "
-            "يُقرأ تصديقًا لواقعةٍ خارجَ اللغة"
+            "لهذه المادّة بشهادةِ حدٍّ ومراجعةٍ مودَعتَين؛ ولا يمتدّ إلى مشتقٍّ "
+            "ولا إلى وقوعٍ في عبارة، ولا يُقرأ تصديقًا لواقعةٍ خارجَ اللغة"
         ),
     )
 
@@ -898,6 +1187,8 @@ def chain_reach(
     root: Path | None = None,
     *,
     reviews: tuple[ReviewAttestation, ...] = (),
+    boundaries: tuple[BoundaryAttestation, ...] = (),
+    determinations: tuple[CounterClaimDetermination, ...] = (),
 ) -> tuple[tuple[LinkChainRung, bool, str], ...]:
     """أيُّ الوصلات بلغتها الآلةُ فعلًا، وبأيّ شرط؛ ولا تُدَّعى وصلةٌ لم تُنفَّذ."""
 
@@ -906,7 +1197,19 @@ def chain_reach(
     admitted = sum(
         1
         for candidate in candidates
-        if verify(candidate, root=root, reviews=reviews).is_admitted
+        if verify(
+            candidate,
+            root=root,
+            reviews=reviews,
+            boundaries=boundaries,
+            determinations=determinations,
+        ).is_admitted
+    )
+    verified_rows = sum(
+        1
+        for index, row in _sample_rows(root)
+        if _boundary_standing(row, index, boundaries)
+        is BoundaryStanding.VERIFIED_BY_A_DEPOSITED_WITNESS
     )
     return (
         (
@@ -916,8 +1219,11 @@ def chain_reach(
         ),
         (
             LinkChainRung.VERIFIED_MATERIAL,
-            True,
-            "المادّةُ محقَّقةٌ بحدِّها: ترويسةٌ مصنَّفةٌ بالتصنيف القائم، والمشتبهُ معلَّق",
+            verified_rows > 0,
+            "المادّةُ لا تُحقَّق بالكاشف بل بشهادةِ حدٍّ مودَعةٍ فُحِص فيها المنتهى "
+            "والترويساتُ الداخليّةُ والمقابلةُ بالتالي؛ والمُحقَّقُ الآن "
+            f"{verified_rows} من {THE_CANDIDATE_SAMPLE_SIZE} "
+            f"({A_HEADER_DETECTOR_PROPOSES_A_BOUNDARY_IT_DOES_NOT_VERIFY})",
         ),
         (
             LinkChainRung.EXTRACTED_MEANING,
@@ -927,12 +1233,12 @@ def chain_reach(
         (
             LinkChainRung.LAFZ,
             False,
-            A_ROOT_ORIGIN_IS_NOT_THE_MEANING_OF_EVERY_DERIVATIVE,
+            THE_LAFZ_LINK_IS_OUT_OF_THIS_UNITS_SCOPE_NOT_IMPOSSIBLE,
         ),
         (
             LinkChainRung.USAGE,
             False,
-            A_ROOT_ORIGIN_IS_NOT_THE_MEANING_OF_EVERY_DERIVATIVE,
+            THE_LAFZ_LINK_IS_OUT_OF_THIS_UNITS_SCOPE_NOT_IMPOSSIBLE,
         ),
     )
 
@@ -961,7 +1267,7 @@ class DalReading:
     boundary: BoundaryStanding
     axes_count_standing: str
     processing: DalProcessing
-    carries_a_refusal_formula: bool
+    refusal: RefusalStanding
     suspension_genera: tuple[SuspensionGenus, ...]
 
 
@@ -969,11 +1275,19 @@ def dal_readings(
     root: Path | None = None,
     *,
     reviews: tuple[ReviewAttestation, ...] = (),
+    boundaries: tuple[BoundaryAttestation, ...] = (),
+    determinations: tuple[CounterClaimDetermination, ...] = (),
 ) -> tuple[DalReading, ...]:
     """الدوالُّ العشرون كلُّهم، بما فيهم الفارغُ والمشتبه؛ ولا يُطوى صفٌّ متعذِّر."""
 
     verifications = tuple(
-        verify(candidate, root=root, reviews=reviews)
+        verify(
+            candidate,
+            root=root,
+            reviews=reviews,
+            boundaries=boundaries,
+            determinations=determinations,
+        )
         for candidate in link_candidates(root)
     )
     by_row: dict[int, list[VerificationReading]] = {}
@@ -991,14 +1305,19 @@ def dal_readings(
             ]
         )
         admitted = sum(1 for reading in mine if reading.is_admitted)
-        boundary = _boundary_standing(row)
+        boundary = _boundary_standing(row, index, boundaries)
         standing = weigh_declared_axes_count(row)
         body = _nfc(row["body_text"])
         start, end = _first_sentence(body)
-        refusal = _carries_a_refusal(body[start:end])
+        refusal = _refusal_standing(
+            f"{row['root_full']}:{row['entry_num']}", body[start:end], determinations
+        )
         if not mine:
             processing = DalProcessing.NO_ADMITTED_OUTPUT
-        elif boundary is BoundaryStanding.SUSPECT or standing != AxesStanding.AGREES:
+        elif (
+            boundary is not BoundaryStanding.VERIFIED_BY_A_DEPOSITED_WITNESS
+            or standing != AxesStanding.AGREES
+        ):
             processing = DalProcessing.PARTIALLY_PROCESSED
         else:
             processing = DalProcessing.ALL_DECLARED_AXES_PROCESSED
@@ -1013,7 +1332,7 @@ def dal_readings(
                 boundary=boundary,
                 axes_count_standing=standing,
                 processing=processing,
-                carries_a_refusal_formula=refusal,
+                refusal=refusal,
                 suspension_genera=(
                     tuple(
                         dict.fromkeys(
@@ -1025,7 +1344,7 @@ def dal_readings(
                     if mine
                     else (
                         (SuspensionGenus.COUNTER_EVIDENCE,)
-                        if refusal
+                        if refusal is RefusalStanding.DETERMINED_COUNTER_CLAIM
                         else (SuspensionGenus.ABSENT_EVIDENCE,)
                     )
                 ),
@@ -1047,6 +1366,8 @@ def provenance_shares(
     root: Path | None = None,
     *,
     reviews: tuple[ReviewAttestation, ...] = (),
+    boundaries: tuple[BoundaryAttestation, ...] = (),
+    determinations: tuple[CounterClaimDetermination, ...] = (),
 ) -> ProvenanceShares:
     """النسبُ الثلاثُ معدودةً؛ ولا يُدَّعى توليدُ معنًى من الـ١١٦ ههنا."""
 
@@ -1054,7 +1375,13 @@ def provenance_shares(
     admitted = sum(
         1
         for candidate in candidates
-        if verify(candidate, root=root, reviews=reviews).is_admitted
+        if verify(
+            candidate,
+            root=root,
+            reviews=reviews,
+            boundaries=boundaries,
+            determinations=determinations,
+        ).is_admitted
     )
     return ProvenanceShares(
         generated_from_structure=0,
@@ -1067,6 +1394,8 @@ def candidate_counts(
     root: Path | None = None,
     *,
     reviews: tuple[ReviewAttestation, ...] = (),
+    boundaries: tuple[BoundaryAttestation, ...] = (),
+    determinations: tuple[CounterClaimDetermination, ...] = (),
 ) -> dict[str, int]:
     """الأعدادُ بوحداتٍ منفصلة؛ ولا يُجمَع دالٌّ إلى محورٍ ولا محورٌ إلى مرشَّح.
 
@@ -1074,9 +1403,20 @@ def candidate_counts(
     والمحورُ وحدةٌ، والمرشَّحُ وحدةٌ؛ والدالُّ الواحدُ يُخرِج محاورَ عدّة.
     """
 
-    readings = dal_readings(root, reviews=reviews)
+    readings = dal_readings(
+        root,
+        reviews=reviews,
+        boundaries=boundaries,
+        determinations=determinations,
+    )
     verifications = tuple(
-        verify(candidate, root=root, reviews=reviews)
+        verify(
+            candidate,
+            root=root,
+            reviews=reviews,
+            boundaries=boundaries,
+            determinations=determinations,
+        )
         for candidate in link_candidates(root)
     )
     return {
@@ -1086,8 +1426,20 @@ def candidate_counts(
         "معتمدون": sum(1 for reading in verifications if reading.is_admitted),
         "معلقون": sum(1 for reading in verifications if not reading.is_admitted),
         "دوال_بلا_مرشح": sum(1 for reading in readings if reading.candidates == 0),
-        "دوال_حدها_مشتبه": sum(
-            1 for reading in readings if reading.boundary is BoundaryStanding.SUSPECT
+        "دوال_حدها_مرشح_بالكاشف": sum(
+            1
+            for reading in readings
+            if reading.boundary is BoundaryStanding.CANDIDATE_BY_THE_DETECTOR
+        ),
+        "دوال_حدها_غير_معين": sum(
+            1
+            for reading in readings
+            if reading.boundary is BoundaryStanding.UNDETERMINED_BY_THE_DETECTOR
+        ),
+        "دوال_حدها_محقق_بشهادة": sum(
+            1
+            for reading in readings
+            if reading.boundary is BoundaryStanding.VERIFIED_BY_A_DEPOSITED_WITNESS
         ),
         "دوال_مخالفة_العدد_المصرح": sum(
             1
@@ -1099,10 +1451,115 @@ def candidate_counts(
             for reading in readings
             if reading.axes_count_standing == AxesStanding.BLANK
         ),
-        "دوال_في_شاهدها_نفيُ_أصل": sum(
-            1 for reading in readings if reading.carries_a_refusal_formula
+        "دوال_في_شاهدها_صيغة_نفي_غير_معينة": sum(
+            1
+            for reading in readings
+            if reading.refusal is RefusalStanding.TARGET_UNDETERMINED
+        ),
+        "دوال_تعارضها_محقق": sum(
+            1
+            for reading in readings
+            if reading.refusal is RefusalStanding.DETERMINED_COUNTER_CLAIM
         ),
     }
+
+
+def reconciliation_rows(
+    root: Path | None = None,
+    *,
+    reviews: tuple[ReviewAttestation, ...] = (),
+    boundaries: tuple[BoundaryAttestation, ...] = (),
+    determinations: tuple[CounterClaimDetermination, ...] = (),
+) -> tuple[dict[str, object], ...]:
+    """جدولُ العشرين صفًّا صفًّا؛ ولا عددَ ضمنيٌّ ولا دالٌّ يسقط من الحصيلة.
+
+    فالدوالُّ الثلاثةُ بلا مرشَّحٍ صفوفٌ ههنا كغيرها: لا تختفي لأنّ عدّادَ
+    المرشَّحات لا يشملها، ويُقرأ في صفِّها لماذا لم يُخرِج محورًا.
+    """
+
+    readings = dal_readings(
+        root, reviews=reviews, boundaries=boundaries, determinations=determinations
+    )
+    by_row: dict[int, list[VerificationReading]] = {}
+    for candidate in link_candidates(root):
+        checked = verify(
+            candidate,
+            root=root,
+            reviews=reviews,
+            boundaries=boundaries,
+            determinations=determinations,
+        )
+        by_row.setdefault(candidate.row_index, []).append(checked)
+
+    rows: list[dict[str, object]] = []
+    for reading in readings:
+        mine = by_row.get(reading.row_index, [])
+        rows.append(
+            {
+                "دال": reading.root_display,
+                "مفتاح_المادة": reading.material_key,
+                "رتبة_الصف": reading.row_index,
+                "محاور_مصرحة": reading.axes_count_standing,
+                "محاور_مكتوبة": reading.declared_axes,
+                "مرشحات": reading.candidates,
+                "معتمدون": reading.admitted,
+                "معلقون": reading.candidates - reading.admitted,
+                "مرفوضون": 0,
+                "حد_المادة": reading.boundary.value,
+                "منزلة_النفي": reading.refusal.value,
+                "حال_المعالجة": reading.processing.value,
+                "معاني_مرشحة": [
+                    checked.candidate.candidate_meaning for checked in mine
+                ],
+                "مطابقة_نصية": [checked.textual_match.value for checked in mine],
+                "إسناد_دلالي": [checked.semantic_support.value for checked in mine],
+                "أسباب_التعليق": [list(checked.unmet_conditions) for checked in mine],
+                "لماذا_لا_مرشح": (
+                    None
+                    if mine
+                    else "لا محورَ مكتوبًا في `semantic_axes`؛ فراغُ تصريحٍ لا تصريحٌ بغياب"
+                ),
+            }
+        )
+    return tuple(rows)
+
+
+def suspension_reason_census(
+    root: Path | None = None,
+    *,
+    reviews: tuple[ReviewAttestation, ...] = (),
+    boundaries: tuple[BoundaryAttestation, ...] = (),
+    determinations: tuple[CounterClaimDetermination, ...] = (),
+) -> dict[str, int]:
+    """أسبابُ التعليق **متداخلةٌ لا متنافية**: كلُّ سببٍ يُعَدّ وحدَه، ثمّ تُعَدّ
+    تقاطعاتُه؛ فجمعُ الأعمدة لا يساوي عددَ المعلَّقين ولا يُراد له ذلك."""
+
+    singles: dict[str, int] = {}
+    joint: dict[tuple[str, ...], int] = {}
+    suspended = 0
+    for candidate in link_candidates(root):
+        checked = verify(
+            candidate,
+            root=root,
+            reviews=reviews,
+            boundaries=boundaries,
+            determinations=determinations,
+        )
+        if checked.is_admitted:
+            continue
+        suspended += 1
+        heads = tuple(
+            condition.split(":", 1)[0].strip() for condition in checked.unmet_conditions
+        )
+        for head in heads:
+            singles[head] = singles.get(head, 0) + 1
+        joint[heads] = joint.get(heads, 0) + 1
+    census = {"معلقون": suspended}
+    census.update({f"سبب: {head}": count for head, count in sorted(singles.items())})
+    census.update(
+        {"تقاطع: " + " + ".join(heads): count for heads, count in sorted(joint.items())}
+    )
+    return census
 
 
 # --- السجلّ: سطرٌ لكلّ واقعة ----------------------------------------------------
@@ -1112,6 +1569,8 @@ def report_rows(
     root: Path | None = None,
     *,
     reviews: tuple[ReviewAttestation, ...] = (),
+    boundaries: tuple[BoundaryAttestation, ...] = (),
+    determinations: tuple[CounterClaimDetermination, ...] = (),
 ) -> tuple[dict[str, object], ...]:
     """سجلُّ الآلة صفوفًا: مصدرٌ، ووحدةُ مدخلٍ، وسلسلةٌ، ودوالُّ، ومرشَّحون، وعدّ.
 
@@ -1147,7 +1606,9 @@ def report_rows(
             "بقية": A_ROOT_KEY_DISPLAY_FORM_IS_NOT_A_USED_WORD,
         },
     ]
-    for rung, reached, why in chain_reach(root, reviews=reviews):
+    for rung, reached, why in chain_reach(
+        root, reviews=reviews, boundaries=boundaries, determinations=determinations
+    ):
         rows.append(
             {
                 "نوع": "وصلة",
@@ -1156,7 +1617,9 @@ def report_rows(
                 "بيان": why,
             }
         )
-    for reading in dal_readings(root, reviews=reviews):
+    for reading in dal_readings(
+        root, reviews=reviews, boundaries=boundaries, determinations=determinations
+    ):
         rows.append(
             {
                 "نوع": "دال",
@@ -1169,12 +1632,18 @@ def report_rows(
                 "حد_المادة": reading.boundary.value,
                 "موقف_العدد_المصرح": reading.axes_count_standing,
                 "حال_المعالجة": reading.processing.value,
-                "في_شاهده_نفيُ_أصل": reading.carries_a_refusal_formula,
+                "منزلة_النفي": reading.refusal.value,
                 "أجناس_التعليق": [genus.value for genus in reading.suspension_genera],
             }
         )
     for candidate in link_candidates(root):
-        checked = verify(candidate, root=root, reviews=reviews)
+        checked = verify(
+            candidate,
+            root=root,
+            reviews=reviews,
+            boundaries=boundaries,
+            determinations=determinations,
+        )
         rows.append(
             {
                 "نوع": "مرشح",
@@ -1195,9 +1664,13 @@ def report_rows(
                 "مقتطف_عرض": candidate.witness.display_excerpt,
                 "مقطوع_للعرض": candidate.witness.is_truncated_for_display,
                 "سلامة_المصدر": checked.source_integrity,
+                "وقوع_المقطع_في_الصف": checked.segment_in_row,
+                "المسبار_ينقض_النسبة": checked.probe_refutes_the_row,
+                "حد_المادة": checked.boundary.value,
                 "صحة_النسبة": checked.attribution.value,
-                "كفاية_الاستشهاد": checked.sufficiency.value,
-                "في_شاهده_نفيُ_أصل": checked.counter_evidence_in_witness,
+                "مطابقة_نصية": checked.textual_match.value,
+                "إسناد_دلالي": checked.semantic_support.value,
+                "منزلة_النفي": checked.refusal.value,
                 "نوع_الدلالة": (
                     candidate.signification_kind.value
                     if candidate.signification_kind is not None
@@ -1216,7 +1689,9 @@ def report_rows(
                 "نطاق": checked.scope,
             }
         )
-    shares = provenance_shares(root, reviews=reviews)
+    shares = provenance_shares(
+        root, reviews=reviews, boundaries=boundaries, determinations=determinations
+    )
     rows.append(
         {
             "نوع": "نسب_التوليد",
