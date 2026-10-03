@@ -168,7 +168,11 @@ def test_the_dal_chapter_gloss_is_not_counted_as_the_built_side() -> None:
 
 
 def test_the_book_carrying_the_division_is_absent_so_the_scan_is_secondary() -> None:
-    """ساقُ الخلوّ الأولى: لا بايتَ من الكتاب الحامل للقسمة في هذه الشجرة."""
+    """ساقُ الخلوّ الأولى سقطت بالإيداع؛ والثانيةُ قائمة، فالخلوُّ لم يُرفَع.
+
+    وهذا الشاهدُ انقلب بانقلاب القرص: كان يقيس غيابًا فصار يقيس حضورًا،
+    ويُبقي الحكمَ معلّقًا على الساق التي لم تسقط.
+    """
 
     from alghanem.arabic.dal_alone_bridge import (
         THE_BOOK_THAT_CARRIES_THE_DIVISION_IS_ABSENT_FROM_THIS_TREE,
@@ -176,7 +180,13 @@ def test_the_book_carrying_the_division_is_absent_so_the_scan_is_secondary() -> 
 
     declared = THE_BOOK_THAT_CARRIES_THE_DIVISION_IS_ABSENT_FROM_THIS_TREE
     assert "الشخصية الإسلامية" in declared
-    assert not list(Path(".").glob("**/*الشخصية*"))
+    from alghanem.arabic.dal_madlul_bridge import (
+        SealStanding,
+        governing_seal_reading,
+    )
+
+    assert governing_seal_reading().standing is SealStanding.SEALED_AND_PRESENT
+    assert list(Path(".").glob("**/*الشخصية*"))
 
 
 def test_the_scanned_book_does_not_carry_the_division() -> None:

@@ -131,6 +131,7 @@ __all__ = [
     "report_rows",
     "seal_reading_for",
     "seal_readings",
+    "sealed_material_text",
     "suspended_signifiers",
     "transcription_is_not_a_seal",
 ]
@@ -183,8 +184,10 @@ THE_INSTRUMENT_IS_SHOWN_SIGHTED_BEFORE_ITS_ZERO_IS_READ: Final[str] = (
 
 A_ZERO_REACHED_BY_VACANCY_IS_NOT_A_ZERO_EARNED: Final[str] = (
     "A_ZERO_REACHED_BY_VACANCY_IS_NOT_A_ZERO_EARNED: «صفرُ زوجٍ جُمع فيه "
-    "الدالُّ والمدلولُ مفهومًا» متحقّقٌ ههنا لأنّه لا زوجَ أصلًا؛ فيُعرَض "
-    "الرقمُ ومعه الطريقُ الذي بلغه، ولا يُقرأ ظفرًا بضبطٍ لم يُمتحَن"
+    "الدالُّ والمدلولُ مفهومًا» كان يُبلَغ بالخلوّ إذ لا زوجَ أصلًا. وقد "
+    "صارت الأزواجُ تُخرَج، فالصفرُ الآنَ مكتسَبٌ: بنيةُ `BridgePair` تمنع "
+    "الجمعَ، و`the_zero_was_reached_by_vacancy` تُفرِّق بين الحالين فلا "
+    "يُقرأ الرقمان واحدًا"
 )
 
 THE_FIFTH_SECTION_IS_CONTESTED_AND_UNADJUDICABLE_HERE: Final[str] = (
@@ -451,13 +454,18 @@ A_SEALED_CONTAINER_IS_READ_THROUGH_ITS_FORMAT_NOT_AS_RAW_BYTES: Final[str] = (
 )
 
 
-def _sealed_material_text(path: Path) -> str:
-    """نصُّ مادّةٍ مختومة: حاويةُ ‎.docx‎ تُفَكّ إلى متنها، وما سواها UTF-8."""
+def sealed_material_text(path: Path) -> str:
+    """نصُّ مادّةٍ مختومة: حاويةُ ‎.docx‎ تُفَكّ إلى متنها، وما سواها UTF-8.
+
+    وحدُّ الفقرة ‎</w:p>‎ يُستبدَل بسطرٍ **قبل** نزع الوسوم؛ فنزعُها بلا
+    فاصلٍ يلصق آخرَ فقرةٍ بأوّل التي تليها، فتنشأ جملةٌ لا يقولها المتن.
+    """
 
     data = path.read_bytes()
     if data[:2] == b"PK" and zipfile.is_zipfile(path):
         with zipfile.ZipFile(path) as archive:
             xml = archive.read("word/document.xml").decode("utf-8")
+        xml = xml.replace("</w:p>", "\n").replace("<w:br/>", "\n")
         return re.sub(r"<[^>]+>", "", xml)
     return data.decode("utf-8", errors="ignore")
 
@@ -479,7 +487,7 @@ def channel_readings(root: Path | None = None) -> tuple[ChannelReading, ...]:
                 f"فلا تُقرأ فيها جملةُ «{gate.defining_phrase}»"
             )
         else:
-            text = _sealed_material_text(
+            text = sealed_material_text(
                 (root or _repository_root()) / seal.material.relative_path
             )
             opened = gate.defining_phrase in text
@@ -584,7 +592,7 @@ def fifth_section_reading(root: Path | None = None) -> FifthSectionReading:
     if not reading.is_readable:
         return FifthSectionReading(False, None, None, reading.standing)
     path = (root or _repository_root()) / reading.material.relative_path
-    text = _sealed_material_text(path)
+    text = sealed_material_text(path)
     found = THE_FIFTH_SECTION_SENTENCE in text
     return FifthSectionReading(
         is_settled=found,
@@ -659,8 +667,12 @@ def _tolerant(phrase: str) -> str:
 _DENIED_ORIGIN: Final[tuple[str, ...]] = ("ليس بأصل",)
 _MANY_ORIGINS: Final[tuple[str, ...]] = ("أصلان", "أصول", "معنيان", "أصلين")
 _ONE_ORIGIN = re.compile(
-    _tolerant("أصل") + r"\s*" + _tolerant("واحد") + r"\s*،\s*" + _tolerant("وهو") +
-    r"\s+([^.،]+)\."
+    _tolerant("أصل")
+    + r"\s*"
+    + _tolerant("واحد")
+    + r"\s*،\s*"
+    + _tolerant("وهو")
+    + r"\s+([^.،]+)\."
 )
 _SIGNIFIES = re.compile(
     "(?:" + "|".join(_tolerant(verb) for verb in ("يدل", "تدل")) + r")"
@@ -707,9 +719,7 @@ def extract_madlul(body: str) -> MadlulExtraction:
     signifies = _SIGNIFIES.search(head)
     if signifies is not None:
         if "،" in signifies.group(1):
-            return MadlulExtraction(
-                None, head, "جملةُ الدلالة موصولةٌ بفاصلة فلا تُقطَع"
-            )
+            return MadlulExtraction(None, head, "جملةُ الدلالة موصولةٌ بفاصلة فلا تُقطَع")
         return MadlulExtraction(
             signifies.group(1).strip(), signifies.group(0).strip(), None
         )
@@ -1013,9 +1023,13 @@ def report_rows(root: Path | None = None) -> tuple[dict[str, object], ...]:
             "بقية": A_ZERO_REACHED_BY_VACANCY_IS_NOT_A_ZERO_EARNED,
         }
     )
+    fifth = fifth_section_reading(root)
     rows.append(
         {
             "نوع": "خامس_متنازع",
+            "أحُسم": fifth.is_settled,
+            "الشاهد": fifth.verbatim,
+            "مصدر_الحسم": fifth.sealed_source,
             "في_القسمة_المبرهنة": THE_CONTESTED_FIFTH_SECTION[0],
             "في_الطلب": THE_CONTESTED_FIFTH_SECTION[1],
             "بقية": THE_FIFTH_SECTION_IS_CONTESTED_AND_UNADJUDICABLE_HERE,
