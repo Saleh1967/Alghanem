@@ -5,7 +5,7 @@
 | العمليّة | ما تُضيفه | مصدرُ الإضافة | حدُّها |
 |---|---|---|---|
 | `resolve_reference` | حصرُ مرشَّحين أو إبقاؤهم | سجلُّ الأفراد | لا تختار واحدًا من متعدّد |
-| `test_membership` | حكمُ انتماءٍ بحال قيمة | شروطُ النوع المنفَّذة | لا تُكمِل شرطًا غائبًا |
+| `check_membership` | حكمُ انتماءٍ بحال قيمة | شروطُ النوع المنفَّذة | لا تُكمِل شرطًا غائبًا |
 | `compose_relations` | علاقةٌ ناتجة | رخصةُ تركيبٍ مُسمّاة | لا تركيبَ بلا رخصة |
 | `hold_state` | قضيّةُ حالٍ على فترة | دليلٌ يُثبِت | لا تتجاوز فترةَ دليلها |
 | `build_event_content` | مضمونُ حدث | تحليلٌ + معنًى معتمد | لا تُسنِد دورًا لم يرد |
@@ -58,7 +58,7 @@ __all__ = [
     "recompute_after_evidence_change",
     "refuse_part_as_instance",
     "resolve_reference",
-    "test_membership",
+    "check_membership",
     "transitive_closure",
 ]
 
@@ -172,7 +172,7 @@ class MembershipVerdict:
         )
 
 
-def test_membership(
+def check_membership(
     individual_id: str,
     type_id: str,
     register: FactRegister,

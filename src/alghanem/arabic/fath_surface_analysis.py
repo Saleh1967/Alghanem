@@ -28,6 +28,7 @@ from .word_structure_dictionary import analyze_word
 
 __all__ = [
     "A_FROZEN_NOUN_HAS_NO_DERIVED_ROOT",
+    "A_SILENT_ORTHOGRAPHIC_APPENDAGE_IS_A_NAMED_SUSPENSION",
     "A_SURFACE_FUNCTION_IS_NOT_A_ROLE",
     "AN_UNREAD_SHAPE_IS_NAMED_NOT_GUESSED",
     "Construction",
@@ -54,6 +55,13 @@ A_SURFACE_FUNCTION_IS_NOT_A_ROLE: Final[str] = (
 A_FROZEN_NOUN_HAS_NO_DERIVED_ROOT: Final[str] = (
     "العَلَمُ واللفظُ الجامدُ لا يُحمَلان على جذرٍ مشتقّ: جذرُهما موقوفٌ "
     "بالتصريح، وإخراجُ ثلاثيٍّ منهما بالحذف صناعةُ معلومةٍ لا قراءتُها"
+)
+
+A_SILENT_ORTHOGRAPHIC_APPENDAGE_IS_A_NAMED_SUSPENSION: Final[str] = (
+    "واوُ «عَمْرٌو» الفارقةُ زيادةٌ رسميّةٌ ساكنةٌ بعد التنوين، لا حرفَ بنيةٍ "
+    "ولا علامةَ إعراب؛ وقواعدُ هذه الوحدة تقرأ الحركةَ على آخر حرفٍ مكتوب، "
+    "فيخرج العَلَمُ `UNRECOGNISED`. والموضعُ معلَّقٌ باسمه: إسقاطُ الواو قبل "
+    "القراءة تعديلٌ للنصّ لا قراءةٌ له، ولا يُرخَّص إلّا بقاعدةِ رسمٍ معلَنة"
 )
 
 AN_UNREAD_SHAPE_IS_NAMED_NOT_GUESSED: Final[str] = (

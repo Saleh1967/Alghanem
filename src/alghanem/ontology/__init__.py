@@ -134,13 +134,13 @@ from .operations import (
     RuleApplication,
     apply_rule,
     build_event_content,
+    check_membership,
     compose_relations,
     content_of_utterance,
     hold_state,
     recompute_after_evidence_change,
     refuse_part_as_instance,
     resolve_reference,
-    test_membership,
     transitive_closure,
 )
 from .question import (
@@ -321,7 +321,7 @@ __all__ = [
     "SubstanceStore",
     "SubsumptionLink",
     "SupportStatus",
-    "test_membership",
+    "check_membership",
     "THE_ALGEBRA_DOES_NOT_CREATE_ITS_OBJECTS",
     "THREE_OUTCOMES_HIDE_TWO_DIFFERENT_SILENCES",
     "transitive_closure",
