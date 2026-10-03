@@ -27,9 +27,6 @@
 | + نثر الشجرة | 20,981 | 9/36 | فتحة+شدّة (8,945) |
 
 فالتوسيعُ **655 ضعفًا** في عدد المزدوجات. وفيه جوابُ السؤالين معًا:
-| + نثر الشجرة | 20,260 | 9/36 | فتحة+شدّة (8,731) |
-
-فالتوسيعُ **633 ضعفًا** في عدد المزدوجات. وفيه جوابُ السؤالين معًا:
 
 **المتصدّرُ لم يتزحزح في درجةٍ من الثلاث**، ولا نوزع في واحدةٍ منها، مع تغيُّر
 السِّجلّ وتغيُّر الحجم مرتبتين ونصفًا. وهذا تثبيتٌ معتبَرٌ للصدارة.
@@ -203,16 +200,6 @@ THE_THIRD_RUNG_AT_MEASUREMENT: Final[RungFigures] = RungFigures(
     shadda_bearing=20969,
     tanwin_initial_in_prose=5338,
     prose_pairs=20949,
-    total_pairs=20260,
-    realized=9,
-    shadda_bearing=20248,
-    tanwin_initial_in_prose=5236,
-    prose_pairs=20228,
-    total_pairs=20078,
-    realized=9,
-    shadda_bearing=20066,
-    tanwin_initial_in_prose=5180,
-    prose_pairs=20046,
 )
 
 THE_SCOPE_EXCLUSIONS: Final[frozenset[str]] = frozenset(
