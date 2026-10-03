@@ -6,9 +6,9 @@ import pytest
 
 from alghanem.arabic.imla_founding_function import (
     IMLA_FOUNDING_NAMED_RESIDUALS,
+    THE_ACOUSTIC_RECORDING_IS_DEFERRED_BY_OWNER_DECISION,
     THE_IMLA_TABLE,
     THE_PHONETIC_HALF,
-    THE_PHONETIC_HALF_COMPLETION_CONDITIONS,
     HalfStanding,
     ImlaClass,
     ImlaFamily,
@@ -102,19 +102,38 @@ def test_the_seating_doors_are_read_from_the_fingerprint_fold() -> None:
     assert ImlaClass.SHADDA not in seats
 
 
-def test_the_phonetic_half_is_suspended_and_names_its_completion_conditions() -> None:
+def test_the_phonetic_half_is_derived_and_never_written_suspended() -> None:
+    """الحالُ مشتقّةٌ بالتشغيل؛ والوقفُ المكتوبُ لا يخرج من الدالّة."""
+
     condition = possibility_condition()
-    assert condition.phonetic_half is HalfStanding.SUSPENDED
-    assert condition.suspension_reason.strip()
-    assert condition.completion_conditions == (THE_PHONETIC_HALF_COMPLETION_CONDITIONS)
+    assert condition.phonetic_half is not HalfStanding.SUSPENDED
     assert len(THE_PHONETIC_HALF) == 2
+    if condition.phonetic_half is not HalfStanding.MET:
+        assert condition.phonetic_residue
+        assert len(condition.completion_conditions) == len(condition.phonetic_residue)
+
+
+def test_the_acoustic_deferral_is_carried_and_does_not_condition_the_half() -> None:
+    """التسجيلُ الصوتيُّ مؤجَّلٌ بقرار، ويُحمَل مع الحال ولا يدخل بقيّتَها."""
+
+    condition = possibility_condition()
+    assert condition.deferred_out_of_scope == (
+        THE_ACOUSTIC_RECORDING_IS_DEFERRED_BY_OWNER_DECISION
+    )
+    for residue in condition.phonetic_residue:
+        assert "تسجيل" not in residue
 
 
 def test_a_complete_orthographic_half_does_not_meet_the_possibility_condition() -> None:
     condition = possibility_condition()
     assert condition.orthographic_half is HalfStanding.MET
+    if condition.phonetic_half is HalfStanding.MET:
+        assert condition.is_met and condition.unmet_halves == ()
+        return
     assert not condition.is_met
-    assert condition.unmet_halves == ("النصفُ الصوتيّ: موقوف",)
+    (named,) = condition.unmet_halves
+    assert named.startswith("النصفُ الصوتيّ النظريّ: ")
+    assert condition.phonetic_half.value in named
 
 
 def test_a_position_outside_the_text_is_refused_not_defaulted() -> None:

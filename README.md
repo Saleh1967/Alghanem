@@ -8171,6 +8171,7 @@ module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
 The widening is 633-fold: 32 pairs, then 20,260. Both questions were answered,
+The widening is 627-fold: 32 pairs, then 20,078. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8788,6 +8789,13 @@ there. Alef's whole row is twelve occurrences, so its sukūn cell is expected
 cell, alef-with-fatḥa, once survived that filter and has since filled with two
 occurrences from the growing prose alone — and its emptiness was never a
 discovery, since alef *is* the long fatḥa.
+description is edited — takes it to 108 cells over 93,627 occurrences with every
+letter present. Five cells stay empty, and the module refuses to read them as
+prohibitions until their margins are consulted. Sukūn is 493 of 93,627 — 0.53%
+— so the expected counts for ث and ظ bearing it are 1.470 and 1.052, and zero is
+unremarkable at each. Alef's whole row is ten occurrences. **Four of the five
+absences are consistent with scarcity**, and one survives the filter:
+alef-with-fatḥa, which is not a discovery since alef *is* the long fatḥa.
 The zāy-with-sukūn cell is the more instructive one. At an earlier measurement
 its expectation was 2.951, just under the 2.996 margin, and it was filed as
 scarcity; the tree's prose grew and it crossed to 3.009 and was filed as

@@ -38,6 +38,8 @@
 **وثالثًا: التوزيعُ ليس ذا ذيلٍ بل ذو جُرف.** المتحقّقُ تسعةٌ على النثر، ستّةٌ
 منها `X + شدّة` وتحوز 20,248 من 20,260 — أي **99.941%** — وثلاثةٌ تحوز
 **12** وقوعًا لا غير. وبين 1,173 و9 عاملُ 130 بالقسمة الأرضية —
+منها `X + شدّة` وتحوز 20,066 من 20,078 — أي **99.940%** — وثلاثةٌ تحوز
+**12** وقوعًا لا غير. وبين 1,157 و9 عاملُ 128 بالقسمة الأرضية —
 وهي مُعلَنةٌ باسمها ومقيسةٌ بـ`the_cliff_factor`، لا مُتَّبَعةً عرفًا.
 فليس بين الجسم والقاع تدرّجٌ يُقرأ منه ترتيبٌ في الندرة.
 
@@ -178,6 +180,8 @@ PROSE_SCOPE_AT_MEASUREMENT: Final[ScopeFingerprint] = ScopeFingerprint(
     text_bytes=8984691,
     files=451,
     text_bytes=8911210,
+    files=452,
+    text_bytes=8932913,
 )
 
 
@@ -202,6 +206,11 @@ THE_THIRD_RUNG_AT_MEASUREMENT: Final[RungFigures] = RungFigures(
     shadda_bearing=20248,
     tanwin_initial_in_prose=5236,
     prose_pairs=20228,
+    total_pairs=20078,
+    realized=9,
+    shadda_bearing=20066,
+    tanwin_initial_in_prose=5180,
+    prose_pairs=20046,
 )
 
 THE_SCOPE_EXCLUSIONS: Final[frozenset[str]] = frozenset(
