@@ -311,9 +311,9 @@ def test_an_absent_textual_match_is_never_read_as_an_absent_support() -> None:
 
 
 def test_the_governing_text_absence_suspends_only_the_signification_kind() -> None:
-    """غيابُ النصّ الحاكم يُعلِّق التصنيفَ وحدَه، ويبقى العملُ المعجميُّ ماضيًا."""
+    """حضورُ النصّ الحاكم لا يملأ نوعَ الدلالة، ويبقى العملُ المعجميُّ ماضيًا."""
 
-    assert governing_seal_reading().standing is SealStanding.ABSENT_FROM_THIS_TREE
+    assert governing_seal_reading().standing is SealStanding.SEALED_AND_PRESENT
     candidates = link_candidates()
     assert candidates
     assert all(candidate.signification_kind is None for candidate in candidates)
