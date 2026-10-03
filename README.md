@@ -8171,6 +8171,7 @@ module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
 The widening is 682-fold: 32 pairs, then 21,825. Both questions were answered,
+The widening is 669-fold: 32 pairs, then 21,438. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8190,6 +8191,7 @@ hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
 beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,551 of 21,793
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,459 of 21,406
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports

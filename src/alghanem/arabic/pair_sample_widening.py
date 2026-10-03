@@ -38,6 +38,8 @@
 **وثالثًا: التوزيعُ ليس ذا ذيلٍ بل ذو جُرف.** المتحقّقُ تسعةٌ على النثر، ستّةٌ
 منها `X + شدّة` وتحوز 21,813 من 21,825 — أي **99.945%** — وثلاثةٌ تحوز
 **12** وقوعًا لا غير. وبين 1,259 و9 عاملُ 139 بالقسمة الأرضية —
+منها `X + شدّة` وتحوز 21,426 من 21,438 — أي **99.944%** — وثلاثةٌ تحوز
+**12** وقوعًا لا غير. وبين 1,212 و9 عاملُ 134 بالقسمة الأرضية —
 وهي مُعلَنةٌ باسمها ومقيسةٌ بـ`the_cliff_factor`، لا مُتَّبَعةً عرفًا.
 فليس بين الجسم والقاع تدرّجٌ يُقرأ منه ترتيبٌ في الندرة.
 
@@ -61,6 +63,7 @@
 **وخامسًا: التوسيعُ غيّر المجتمعَ لا الحجمَ وحدَه.** المزدوجاتُ المبدوءةُ
 بتنوينٍ: **صفرٌ** من 32 في المُودَعَين القرآنيَّين، وهي
 **5,551** من 21,793 في النثر — أي 25.471%.
+**5,459** من 21,406 في النثر — أي 25.502%.
 فالنثرُ يُظهِر تركيباتِ تنوينٍ لم يُظهِرها النصّان ألبتّة.
 فلا يُقال إنّ العيّنةَ الكبرى عيّنةٌ أكبرُ من الشيء نفسه
 (`WIDENING_INTO_A_NEW_REGISTER_CHANGES_THE_POPULATION_NOT_ONLY_ITS_SIZE`).
@@ -176,6 +179,8 @@ class ScopeFingerprint:
 PROSE_SCOPE_AT_MEASUREMENT: Final[ScopeFingerprint] = ScopeFingerprint(
     files=476,
     text_bytes=9623865,
+    files=475,
+    text_bytes=9554908,
 )
 
 
@@ -200,6 +205,11 @@ THE_THIRD_RUNG_AT_MEASUREMENT: Final[RungFigures] = RungFigures(
     shadda_bearing=21813,
     tanwin_initial_in_prose=5551,
     prose_pairs=21793,
+    total_pairs=21438,
+    realized=9,
+    shadda_bearing=21426,
+    tanwin_initial_in_prose=5459,
+    prose_pairs=21406,
 )
 
 THE_SCOPE_EXCLUSIONS: Final[frozenset[str]] = frozenset(
