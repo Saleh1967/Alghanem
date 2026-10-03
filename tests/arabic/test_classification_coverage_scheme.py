@@ -37,9 +37,13 @@ from alghanem.arabic.masaq_corpus_deposit import (
     DERIVED_NOUN_TAGS,
     MASAQ_PATH_VARIABLE,
     MASAQ_SHA256,
+    masaq_bytes_are_resolvable,
 )
 
 _REPORT = run_coverage()
+_BYTES_PRESENT = masaq_bytes_are_resolvable()
+"""حضورُ البايتات المختومة يُقرأ من القرص؛ فالمتوقَّعُ يتبعه ولا يُكتَب لحالٍ واحدة."""
+_EXPECTED_UNRESOLVED = 25 if _BYTES_PRESENT else 26
 _CATEGORIES_IN_THE_REPORT = {coverage.category for coverage in _REPORT.coverages}
 
 
@@ -193,8 +197,23 @@ def test_the_surfaces_come_from_the_deposit_and_are_not_retyped() -> None:
 
 
 def test_no_analysis_is_resolved_while_the_reference_bytes_are_absent() -> None:
-    """لا فحصَ محسومًا ما دامت البايتاتُ غائبة، ولا يُحسَب غيرُ المحسوم صحيحًا."""
+    """لا فحصَ محسومًا ما دامت البايتاتُ غائبة، ولا يُحسَب غيرُ المحسوم صحيحًا.
 
+    وبحضورها لا يُحسَم إلّا سؤالُ الفئة لفئةٍ لها وَسْمٌ مُثبَت؛ فالحضورُ يرفع
+    علّةَ الغياب وحدَها ولا يرفع ما سواها.
+    """
+
+    if _BYTES_PRESENT:
+        for row in _REPORT.rows:
+            for check in row.checks:
+                assert check.is_resolved is (
+                    check.question is AnalysisQuestion.CATEGORY
+                    and check.category in CATEGORY_TAGS
+                )
+        assert _REPORT.unresolved_total == _EXPECTED_UNRESOLVED
+        for coverage in _REPORT.coverages:
+            assert coverage.matched_total <= coverage.resolved_total
+        return
     for row in _REPORT.rows:
         for check in row.checks:
             assert check.is_resolved is False
@@ -209,12 +228,14 @@ def test_every_unresolved_check_names_its_own_cause() -> None:
     """العلّةُ تُسمّى واحدةً واحدة، ولا تُجمَع تحت «لم يجرِ تحليل»."""
 
     causes = _REPORT.unresolved_by_cause
-    assert sum(causes.values()) == _REPORT.unresolved_total == 26
-    assert causes == {
+    assert sum(causes.values()) == _REPORT.unresolved_total == _EXPECTED_UNRESOLVED
+    expected = {
         AnalysisOutcome.UNRESOLVED_NO_ATTESTED_TAG_FOR_THIS_CATEGORY: 9,
-        AnalysisOutcome.UNRESOLVED_REFERENCE_BYTES_NOT_RESOLVED: 1,
         AnalysisOutcome.UNRESOLVED_THE_REFERENCE_HAS_NO_COLUMN_FOR_THIS_QUESTION: 16,
     }
+    if not _BYTES_PRESENT:
+        expected[AnalysisOutcome.UNRESOLVED_REFERENCE_BYTES_NOT_RESOLVED] = 1
+    assert causes == expected
 
 
 def test_the_marker_and_evidence_questions_fail_in_the_reference_not_the_bytes() -> (
@@ -241,7 +262,7 @@ def test_only_the_categories_with_an_attested_tag_wait_on_the_bytes() -> None:
             waits = check.outcome is (
                 AnalysisOutcome.UNRESOLVED_REFERENCE_BYTES_NOT_RESOLVED
             )
-            assert waits is (check.category in CATEGORY_TAGS)
+            assert waits is (check.category in CATEGORY_TAGS and not _BYTES_PRESENT)
 
 
 def test_round_trip_success_does_not_produce_any_analysis_accuracy() -> None:
@@ -346,7 +367,7 @@ def _synthetic_records(tag: str) -> tuple[dict[str, str], ...]:
             "Column5": "9",
             "Word_No": "1",
             "Segmented_Word": "ال",
-            "Morph_Tag": "DET",
+            "Morph_tag": "DET",
         },
         {
             "Sura_No": "1",
@@ -354,7 +375,7 @@ def _synthetic_records(tag: str) -> tuple[dict[str, str], ...]:
             "Column5": "9",
             "Word_No": "2",
             "Segmented_Word": "ضالين",
-            "Morph_Tag": tag,
+            "Morph_tag": tag,
         },
     )
 
@@ -469,7 +490,7 @@ def test_the_rendered_table_shows_the_columns_the_measurement_requires() -> None
     for column in ("RoundTrip", "REFUSED", "MISMATCH", "UNRESOLVED", "Accuracy"):
         assert column in rendered
     assert "bytes returned: 5/5" in rendered
-    assert "unresolved analyses: 26" in rendered
+    assert f"unresolved analyses: {_EXPECTED_UNRESOLVED}" in rendered
     assert "MASAQ" in rendered
     for outcome in _REPORT.unresolved_by_cause:
         assert outcome.name in rendered

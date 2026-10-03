@@ -276,7 +276,7 @@ def deposit_path_ignore_rule(relative_path: str = MASAQ_RELATIVE_PATH) -> str | 
     )
 
 
-MORPH_TAG_COLUMN: Final[str] = "Morph_Tag"
+MORPH_TAG_COLUMN: Final[str] = "Morph_tag"
 """العمودُ الذي يحمل وَسْمَ الصرف؛ ربطٌ يُسَنّ ويُعلَن، لا يُقرأ من بصمة."""
 
 SEGMENT_INDEX_COLUMN: Final[str] = "Word_No"
@@ -525,7 +525,7 @@ MIRROR_CORROBORATION: Final[MirrorCorroboration] = MirrorCorroboration(
     ),
     what_it_establishes=(
         "أنّ أعدادَ الأبواب الأربعةَ عشرَ خرجت مطابقةً من ملفٍّ آخرَ مُعلَنِ "
-        "الطول والبصمة، عمودُ الوَسْم فيه «Morph_Tag»؛ فهي قرينةُ استقرارٍ "
+        "الطول والبصمة، عمودُ الوَسْم فيه «Morph_tag»؛ فهي قرينةُ استقرارٍ "
         "على قاعدة العدّ نفسِها في نسختين"
     ),
     what_it_does_not_establish=(
@@ -651,21 +651,13 @@ def _field_rows(data: bytes) -> list[list[str]]:
 def rederive_embedded_newline_records(data: bytes) -> int:
     """السجلّاتُ التي في أحد حقولها فاصلُ سطرٍ داخل اقتباس، ترويسةً وما بعدها."""
 
-    return sum(
-        1
-        for row in _field_rows(data)
-        if any(len(field.splitlines()) > 1 for field in row)
-    )
+    return sum(1 for row in _field_rows(data) if any("\n" in field for field in row))
 
 
 def rederive_embedded_newline_breaks(data: bytes) -> int:
     """عددُ الفواصل نفسِها لا عددُ حامليها؛ فالسجلُّ قد يحمل أكثرَ من فاصل."""
 
-    return sum(
-        max(len(field.splitlines()) - 1, 0)
-        for row in _field_rows(data)
-        for field in row
-    )
+    return sum(field.count("\n") for row in _field_rows(data) for field in row)
 
 
 def rederive_tag_count(data: bytes, tag: str) -> int:
