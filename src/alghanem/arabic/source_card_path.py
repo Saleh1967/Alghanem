@@ -67,8 +67,8 @@ from ..ontology import (
     Scope,
 )
 from .accumulation_run import (
-    AN_OFFSET_IN_AN_EXTRACTION_IS_NOT_A_PAGE,
     A_SAYING_IN_A_SOURCE_IS_NOT_AN_ADOPTED_RULE,
+    AN_OFFSET_IN_AN_EXTRACTION_IS_NOT_A_PAGE,
 )
 from .dal_madlul_bridge import sealed_material_text
 
@@ -410,6 +410,20 @@ class CardReading:
             and self.context_holds
         )
 
+    @property
+    def refusal(self) -> str | None:
+        """سببُ عدم إعادة الإنتاج مُسمًّى، أو `None` إن أُعيد إنتاجُها."""
+
+        if not self.seal_matches:
+            return "ختمُ النسخة لا يُطابِق المُعلَن، فلا يُقرَأ منها نصّ"
+        if self.measured_excerpt is None:
+            return "المجالُ خارجَ طول المستخرَج"
+        if self.measured_excerpt != self.card.excerpt:
+            return "المقطعُ المقيسُ في المجال لا يُطابِق المنقولَ حرفًا بحرف"
+        if not self.context_holds:
+            return "السياقُ المُعلَنُ لا يُحيط بالمجال"
+        return None
+
 
 THE_READING_SCOPE: Final[Scope] = Scope(domain_id="قراءةُ مصدرٍ مختومٍ بإزاحاته")
 """نطاقُ أحكام النسبة: «وقع هذا النصُّ في هذا الموضع من هذه النسخة»."""
@@ -495,7 +509,7 @@ THE_CARDS: Final[tuple[KnowledgeCard, ...]] = (
         conditions=("نوعُ العلاقة ممّا استعملته العرب",),
         exceptions=(
             "لا يُشترَط أن يكون العربُ استعملوا هذا التعبيرَ بعينه؛ "
-            "القيدُ على نوع العلاقة لا على جزئيّات الاستعمال"
+            "القيدُ على نوع العلاقة لا على جزئيّات الاستعمال",
         ),
         cross_reference_card_ids=("بطاقة-علاقة-السببية-القابلية",),
         use_limits=(
@@ -577,7 +591,7 @@ THE_CARDS: Final[tuple[KnowledgeCard, ...]] = (
         conditions=("القيدُ على المجاز **بالذات**؛ والمجازُ بالتبع وارد",),
         exceptions=(
             "الحرفُ يدخله المجاز **تبعًا** لمتعلَّقه، فنفيُ الدخول نفيُ "
-            "الأصالة لا نفيُ التبعيّة"
+            "الأصالة لا نفيُ التبعيّة",
         ),
         cross_reference_card_ids=("بطاقة-الدوران-والترجيح",),
         use_limits=(
@@ -1128,7 +1142,11 @@ def base_stock(
     order = 0
     for reading in read_cards(cards, root):
         if not reading.is_reproduced:
-            continue
+            raise SourceCardError(
+                f"بطاقةٌ لم تُعَد من بايتات مصدرها لا تُدخَل: "
+                f"`{reading.card.versioned_id}` — "
+                f"{reading.refusal}"
+            )
         card = reading.card
         slice_evidence = _slice_evidence(card)
         reading_evidence = _interpretation_evidence(card)
@@ -1301,6 +1319,12 @@ def apply_to_case(
     """
 
     rule_id = f"{THE_RULE_ID}@{version}"
+    adoption = stock.adoption_of(rule_id)
+    if not adoption.is_live:
+        raise SourceCardError(
+            f"لا يُطبَّق بترخيصٍ غيرِ حيّ: `{rule_id}`؛ والنتيجةُ المبنيّةُ "
+            "على اعتمادٍ منقوضٍ لا تُقبَل ولا تُستأنَف بإعادة الاستدعاء."
+        )
     premise_rows: list[tuple[str, str, str]] = []
     bindings: list[tuple[str, str, str]] = []
     conditions: list[tuple[str, str]] = []
@@ -1569,7 +1593,9 @@ def verify_certificate(
         else:
             checked.append("تسميةُ المقدّمة الناقصة في الشهادة")
     else:
-        named = [row for row in certificate.blockers_examined if row[0] == "المانعُ القائم"]
+        named = [
+        row for row in certificate.blockers_examined if row[0] == "المانعُ القائم"
+    ]
         if not named:
             breaches.append("منعٌ بلا تسميةِ المانع")
         else:
@@ -1793,7 +1819,10 @@ def run_experiment(root: Path | None = None) -> ExperimentTrace:
             ),
             observations=(
                 f"الحكم: {incomplete_certificate.verdict.value}",
-                *(f"الناقص: {name}" for name in incomplete_certificate.missing_premises),
+                *(
+                    f"الناقص: {name}"
+                    for name in incomplete_certificate.missing_premises
+                ),
             ),
             stock_content_id=after_blocked.content_id[:16],
         )
@@ -1843,7 +1872,8 @@ def run_experiment(root: Path | None = None) -> ExperimentTrace:
                 "السحب، ويصير سندُها المُسمّى هو البديلَ لا المشتقَّ"
             ),
             observations=(
-                f"السندُ الباقي: {' · '.join(after_withdrawal.supporting_proposition_ids)}",
+                "السندُ الباقي: "
+                + " · ".join(after_withdrawal.supporting_proposition_ids),
                 f"طوائفُ الاستقلال: {after_withdrawal.independent_support_count}",
                 f"الحكمُ بعد السحب: {after_withdrawal.standing.value}",
                 "الشهادةُ المحدَّثة: القبولُ قائمٌ على السند البديل، "
