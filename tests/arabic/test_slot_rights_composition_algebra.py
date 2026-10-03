@@ -142,14 +142,21 @@ def test_no_verdict_in_this_deposit_is_ever_licensed() -> None:
 
 
 def test_the_second_source_is_absent_and_its_absence_is_stated_not_filled() -> None:
-    """بايتاتُ المصدر الثاني غائبةٌ، ولا يُسدّ غيابُها بتكرار تشغيل."""
+    """غيابُ المصدر الثاني يُقال ولا يُسدّ؛ وحضورُه يُقال ولا يُقرأ عدًّا ولا ترخيصًا.
 
-    assert second_source_is_resolvable() is False
+    حين نزلت بايتاتُ MASAQ مختومةً صار المصدرُ الثاني محلولًا، ولم يُعَدَّ
+    جذرٌ منه بعد: فالصفُّ يبقى غيرَ مطابِق، والترخيصُ محجوبٌ بسببه الأسبق.
+    """
+
     row = next(
         entry for entry in quoted_against_measured() if entry[0] == "عدّةُ جذور المدوّنة"
     )
-    assert "ليست في هذه الشجرة" in row[2]
+    if second_source_is_resolvable():
+        assert "محلولة" in row[2]
+    else:
+        assert "ليست في هذه الشجرة" in row[2]
     assert row[3] is False
+    assert licence_standing() is AlgebraLicenceStanding.WITHHELD_NO_PRIOR_CONDITION
 
 
 def test_the_preregistered_condition_names_three_clauses_and_disclaims_priority() -> (

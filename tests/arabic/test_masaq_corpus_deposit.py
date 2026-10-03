@@ -58,7 +58,7 @@ from alghanem.arabic.masaq_corpus_deposit import (
     vendored_masaq_path,
 )
 
-SYNTHETIC_HEADER = "ID,Sura_No,Verse_No,Word_No,Column5,Morph_Tag,Gloss"
+SYNTHETIC_HEADER = "ID,Sura_No,Verse_No,Word_No,Column5,Morph_tag,Gloss"
 """ترويسةٌ مُصطنَعةٌ تحمل الأعمدةَ المُعلَنة وحدَها؛ ليست ترويسةَ الملفّ الحقيقيّ."""
 
 SYNTHETIC_ROWS = (
