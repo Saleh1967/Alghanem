@@ -201,15 +201,25 @@ def test_the_letter_count_conflict_keeps_both_sides_and_adjudicates_neither() ->
 # --- الأختامُ والغياب ----------------------------------------------------------
 
 
-def test_the_governing_material_is_absent_so_its_rows_are_never_emitted() -> None:
-    absent = [
+def test_the_governing_material_is_present_yet_still_yields_no_rows() -> None:
+    """حضورُ البايتات ليس إخراجَ بنود: المادّةُ تُفتَح، والمجسّاتُ لا تقع فيها.
+
+    فلا يُقرأ هذا الصفرُ «غيابًا» بعد اليومَ، ولا يُقرأ «بحثًا جرى فلم يجد»
+    في مادّةٍ لم تُفتَح: البايتاتُ تُفتَح فعلًا وتُقرأ منها ١١٣٢ فقرة، ثمّ
+    لا يقع فيها مجسٌّ من مجسّات هذه الوحدة.
+    """
+
+    present = [
         reading
         for reading in seal_readings()
         if reading.material.key == "SHAKHSIYYA_THREE"
     ]
-    assert len(absent) == 1
-    assert absent[0].standing is SealStanding.ABSENT_FROM_THIS_TREE
-    assert not absent[0].is_readable
+    assert len(present) == 1
+    assert present[0].standing is SealStanding.SEALED_AND_PRESENT
+    assert present[0].is_readable
+    lines = material_text("SHAKHSIYYA_THREE")
+    assert lines is not None
+    assert len(lines) == 1132
     assert all(entry.material_key != "SHAKHSIYYA_THREE" for entry in lexicon_entries())
 
 

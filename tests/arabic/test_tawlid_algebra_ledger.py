@@ -96,12 +96,18 @@ def test_no_formal_link_can_agree_once_its_figure_is_moved() -> None:
         item for item in read_deposited_ledger() if item.genus is LinkGenus.FORMAL
     ]
     assert len(formal) >= 7
-    for link in formal:
+    agreeing = [
+        link
+        for link in formal
+        if standing_of(link) is LinkStanding.REDERIVED_AND_AGREES
+    ]
+    assert agreeing
+    for link in agreeing:
         moved = replace(link, payload={**link.payload, **_moved_figure(link)})
         assert standing_of(moved) is LinkStanding.REDERIVED_AND_DIFFERS
 
 
-def test_the_agreeing_formal_links_are_all_but_the_one_named_refutation() -> None:
+def test_the_differing_formal_links_are_exactly_the_two_named_refutations() -> None:
     differing = [
         link.name
         for link in read_deposited_ledger()
@@ -109,8 +115,19 @@ def test_the_agreeing_formal_links_are_all_but_the_one_named_refutation() -> Non
         and standing_of(link) is LinkStanding.REDERIVED_AND_DIFFERS
     ]
     assert differing == [
-        "الفصل ١٤ · مبرهنةُ الابتداء — الشقُّ الجبريّ: " "أيولِّد الجبرُ ابتداءً ساكنًا ذرّيًّا؟"
+        "الفصل ١٤ · مبرهنةُ الابتداء — الشقُّ الجبريّ: " "أيولِّد الجبرُ ابتداءً ساكنًا ذرّيًّا؟",
+        "الفصل ٣٧ · المتحقَّقُ ليس حقلًا",
     ]
+
+
+def test_the_realized_count_moved_and_so_refuted_its_own_promotion_to_a_field() -> None:
+    """١٠٨ نُصِّبت حقلًا فصارت ١١٠ بنموّ النثر وحدَه؛ فالعددُ نفسُه هو الناقض."""
+
+    link = next(
+        item for item in read_deposited_ledger() if "المتحقَّقُ ليس حقلًا" in item.name
+    )
+    assert link.payload["المتحقَّق"] == 108
+    assert standing_of(link) is LinkStanding.REDERIVED_AND_DIFFERS
 
 
 def _moved_figure(link: LedgerLink) -> dict[str, int]:

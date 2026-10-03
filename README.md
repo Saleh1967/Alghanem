@@ -8786,11 +8786,23 @@ prohibitions until their margins are consulted. Sukūn is 505 of 95,688 — 0.53
 unremarkable at each. Alef's whole row is ten occurrences. **Four of the five
 absences are consistent with scarcity**, and one survives the filter:
 alef-with-fatḥa, which is not a discovery since alef *is* the long fatḥa.
+description is edited — takes it to 110 cells over 99,736 occurrences with every
+letter present. Two cells stay empty, and the module refuses to read them as
+prohibitions until their margins are consulted. Sukūn is 535 of 99,736 — 0.54%
+— and the cells once filed as scarce (ظ, then ث, bearing it) have since filled
+as the prose grew. Alef's whole row is twelve occurrences, so its sukūn cell is
+expected 0.064 times and **stays consistent with scarcity**. A third cell,
+alef-with-fatḥa, once survived that filter and has since filled from the growing
+prose alone — and its emptiness was never a discovery, since alef *is* the long
+fatḥa.
+
 The zāy-with-sukūn cell is the more instructive one. At an earlier measurement
 its expectation was 2.951, just under the 2.996 margin, and it was filed as
 scarcity; the tree's prose grew and it crossed to 3.009 and was filed as
-surprising; the prose grew again and it fell back to 2.993 and is filed as
-scarcity once more — with not one letter changing anywhere in the script.
+surprising; the prose grew again and it fell back to 2.993 and was filed as
+scarcity once more; the prose grew a third time and it crossed again, to 3.674
+with a zero-probability of 0.025 — with not one letter changing anywhere in the
+script.
 An absence standing is dated by its margin, not fixed by itself.
 
 The second half asks whether the twenty-eight letters can be grouped by their
