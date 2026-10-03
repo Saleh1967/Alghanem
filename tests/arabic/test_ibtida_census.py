@@ -525,6 +525,14 @@ def test_an_unreadable_word_key_is_counted_rather_than_dropped_in_silence() -> N
     assert "AnUnreadableWordKeyIsCountedNotDropped" in IBTIDA_CENSUS_NAMED_RESIDUALS
 
 
+MEASURED_STEM_DENOMINATOR_AT_DEPOSIT: int = 9_519
+"""مقامُ الابتداء مقيسًا بالقاعدة المُسجَّلة قبل الرؤية (الجذوعُ وحدَها)، يومَ
+نزلت البايتاتُ المختومة. والمُدَّعى ١١٬٣٤٩ لم يصمد تحت تلك القاعدة: هو بعينه
+عددُ المقاطع كلِّها لا الجذوع — مقيسًا بالقيمة قيمةً قيمة — فالأرقامُ الواردةُ
+عُدَّت بقاعدةٍ غيرِ المُعلَنة. ويُسجَّل النقضُ ومعه سببُه؛ ولا تُعدَّل القاعدة
+بعد رؤية الرقم، ولا الرقمُ ليُطابِقها."""
+
+
 @pytest.mark.skipif(
     not masaq_bytes_are_resolvable(),
     reason=(
@@ -546,16 +554,16 @@ def test_the_inchoative_denominator_is_rederived_from_the_deposited_bytes() -> N
         "مقامُ الجذوع خالف المُدَّعى قبل قراءة رقمٍ واحد: "
         f"{reading.stem_count} لا {ARRIVING_STEM_TOTAL}"
     )
-    assert reading.denominator_count == INCHOATIVE_POSITION_TOTAL, (
-        "مقامُ الابتداء خالف المُدَّعى: "
-        f"{reading.denominator_count} لا {INCHOATIVE_POSITION_TOTAL}"
-    )
+    # النقضُ مُسجَّلٌ لا مطويّ: القاعدةُ المُعلَنة تُخرِج غيرَ المُدَّعى.
+    assert reading.denominator_count == MEASURED_STEM_DENOMINATOR_AT_DEPOSIT
+    assert reading.denominator_count != INCHOATIVE_POSITION_TOTAL
+    # وسببُه مقيس: المُدَّعى يُستعاد بالضبط على المقاطع كلِّها، قيمةً قيمة.
+    over_every_segment: dict[str, int] = {}
+    for record in records:
+        value = record.get("Syntactic_Role", "").strip()
+        if value in INCHOATIVE_POSITION_VALUES:
+            over_every_segment[value] = over_every_segment.get(value, 0) + 1
     for figure in ARRIVING_INCHOATIVE_POSITIONS:
-        assert reading.counts_by_value.get(figure.value) == (
-            figure.claimed_segment_count
-        ), (
-            f"«{figure.value}» خالف المُدَّعى: "
-            f"{reading.counts_by_value.get(figure.value)} لا "
-            f"{figure.claimed_segment_count}"
-        )
+        assert over_every_segment.get(figure.value) == figure.claimed_segment_count
+    assert sum(over_every_segment.values()) == INCHOATIVE_POSITION_TOTAL
     assert classes.conserves_the_denominator
