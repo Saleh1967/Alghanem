@@ -56,6 +56,11 @@ from alghanem.arabic.maqayis_witness_census import weigh_declared_axes_count
 __all__ = [
     "THE_ORIGINAL_BYTES_ARE_NEVER_EDITED",
     "THE_SWALLOWING_MECHANISM_IS_A_MISSING_HEAD_FORMULA",
+    "THE_CAUSE_OF_THE_MISSING_HEADER_IS_UNCOLLATED",
+    "THE_WITNESS_AT_FORTY_NINE_IS_A_LOCAL_CLAIM",
+    "THE_OFFSET_IS_OURS_AND_THE_LEXICAL_BOUNDARY_IS_NOT",
+    "unsettled_transition_range",
+    "radical_tally_clue",
     "THE_OFFSET_UNIT",
     "THE_ABAT_ROW_INDEX",
     "THE_ABAT_MATERIAL_KEY",
@@ -72,6 +77,8 @@ __all__ = [
     "extracted_candidate",
     "extracted_review",
     "transition_evidence",
+    "THE_ABAT_LEDGER_CUT_AT_313",
+    "THE_RECURRING_NEGLECT_SENTENCE",
     "reconciliation_counts",
 ]
 
@@ -83,12 +90,29 @@ THE_ORIGINAL_BYTES_ARE_NEVER_EDITED: Final[str] = (
 )
 
 THE_SWALLOWING_MECHANISM_IS_A_MISSING_HEAD_FORMULA: Final[str] = (
-    "THE_SWALLOWING_MECHANISM_IS_A_MISSING_HEAD_FORMULA: ابتلاعُ «أبث» ليس "
-    "خطأً عارضًا في صفٍّ واحد، بل أثرٌ لقاعدةٍ: قاسمُ الصفوف يقسم عند ترويسة "
-    "«الهمزة و… و…»، وهذه التركيبةُ لمادّة «أبث» **لا تقع في الملفّ كلِّه ولا "
-    "مرّةً واحدة**، فلم يجد القاسمُ أين يقسم فأُلحِقت بسابقتها. وهو مقيسٌ "
-    "يُعاد اشتقاقُه، لا مظنون؛ ويُنبِّه إلى أنّ لهذا الابتلاع نظائرَ لم تُفحَص."
+    "THE_SWALLOWING_MECHANISM_IS_A_MISSING_HEAD_FORMULA: **المقيسُ** أنّ "
+    "تركيبة «الهمزة والباء والثاء» لا تقع في الملفّ كلِّه ولا مرّةً واحدة، "
+    "وأنّ قاسمَ الصفوف يقسم عند هذه التركيبة، فلم يجد أين يقسم فالتصق نصّان "
+    "في صفٍّ واحد. وهذا يُعاد اشتقاقُه من البايتات."
+    " **وأمّا لماذا غابت الترويسةُ فلم يُقَس، وهو فرضيّةٌ لا واقعة**: "
+    "أسقطها المؤلِّفُ لأنّه أعلن البابَ مهملًا؟ أم أسقطها ناسخٌ أو محقِّقٌ أو "
+    "ناشر؟ أم كانت في الأصل وسقطت في الرقمنة التي أخرجت هذا الجدول؟ "
+    "والثلاثةُ تُنتِج ما نراه، ولا يفصل بينها إلّا مقابلةُ نسخةٍ معلومةِ "
+    "الهويّة. فيُسجَّل الأثرُ مقيسًا، وتُسجَّل علّتُه مُعلَّقةً "
+    "(`THE_CAUSE_OF_THE_MISSING_HEADER_IS_UNCOLLATED`)."
 )
+
+THE_CAUSE_OF_THE_MISSING_HEADER_IS_UNCOLLATED: Final[tuple[str, ...]] = (
+    "أسقط المؤلِّفُ صيغةَ القياس لأنّه أعلن البابَ مهملًا — وهي عادةٌ "
+    "مُلاحَظةٌ في مواضعَ أُخَر لم تُعَدّ ههنا، فلا تُقدَّم قاعدةً",
+    "أسقطها ناسخٌ أو محقِّقٌ أو ناشرُ هذه الطبعة بعينها",
+    "كانت في الأصل وسقطت في الرقمنة التي أخرجت هذا الجدول",
+)
+"""ثلاثُ علَلٍ تُنتِج الأثرَ نفسَه، ولا تُرجَّح واحدةٌ بغير مقابلة.
+
+ونسبةُ الإسقاط إلى المؤلِّف تحتاج ما تحتاجه أيُّ نسبةٍ: دليلًا يُعيِّن، لا
+توافقًا مع عادةٍ مظنونة.
+"""
 
 THE_OFFSET_UNIT: Final[str] = (
     "نقاطُ شفرةِ بايثون في `body_text` بعد تسويةِ NFC، والصفرُ أوّلُ الحقل"
@@ -97,8 +121,46 @@ THE_OFFSET_UNIT: Final[str] = (
 THE_ABAT_ROW_INDEX: Final[int] = 12
 THE_ABAT_MATERIAL_KEY: Final[str] = "أبت:13"
 
-THE_ABAT_TRANSITION_OFFSET: Final[int] = 313
-"""موضعُ انتقال المتن عن «أبت»؛ منتهى المقطع المحقَّق ومبتدأ الملتبس."""
+THE_OFFSET_IS_OURS_AND_THE_LEXICAL_BOUNDARY_IS_NOT: Final[str] = (
+    "THE_OFFSET_IS_OURS_AND_THE_LEXICAL_BOUNDARY_IS_NOT: إزاحاتُ هذا السجلّ "
+    "دقيقةٌ بالمعنى الوحيد الذي تحتمله: تُعاد من البايتات فتُخرِج النصَّ "
+    "نفسَه حرفًا بحرف. وليست دقّتُها صحّةً لحدٍّ معجميّ: أين تنتهي «أبت» في "
+    "النسخة المطبوعة واقعةٌ لا تُقاس بإزاحة. فما نقطعه نسمّيه **قَطعَ سجلٍّ**، "
+    "ولا نسمّيه موضعَ انتقالِ المادّة "
+    "(`AN_OFFSET_IS_EXACT_WHILE_A_LEXICAL_BOUNDARY_IS_NOT`)."
+)
+
+THE_ABAT_LEDGER_CUT_AT_313: Final[int] = 313
+"""قَطعُ سجلٍّ بين بندَين **ملتبسَين كلاهما**، لا موضعُ انتقالِ المادّة.
+
+وكان يُسمّى «موضعَ الانتقال» ويوصَف بأنّه «منتهى المقطع المحقَّق»، وكلاهما
+خطأ: المحقَّقُ ينتهي عند 49 لا عند 313، وما بين 49 و313 مُرشَّحٌ لا محقَّق،
+وما بين 313 و358 ملتبسٌ كذلك. فالقطعُ ههنا قطعُ عرضٍ لبندَين مختلفَي
+السبب، ولا يَدَّعي أنّ المادّة انتهت عنده.
+
+وموضعُ الانتقال الحقيقيُّ محصورٌ لا مُعيَّن، ويُشتَقّ بـ
+`unsettled_transition_range`.
+"""
+
+THE_ABAT_TRANSITION_OFFSET: Final[int] = THE_ABAT_LEDGER_CUT_AT_313
+"""اسمٌ سابقٌ أُبقي للمتّصلين به، ومعناه الصحيحُ في `THE_ABAT_LEDGER_CUT_AT_313`."""
+
+THE_WITNESS_AT_FORTY_NINE_IS_A_LOCAL_CLAIM: Final[str] = (
+    "THE_WITNESS_AT_FORTY_NINE_IS_A_LOCAL_CLAIM: الشاهدُ `body_text[0:49]` "
+    "جملةٌ واحدةٌ تحمل دعواها كاملةً وتُعرِّف نفسَها بنفسها. **المادّةُ التي "
+    "تُسمّيها**: «الهمزة والباء والتاء» منطوقةً بأسماء حروفها، فهي تُعيِّن "
+    "جذرَها ولا تستعيره من وسم الصفّ. **والمعنى الذي تُصرِّح به**: «أصلٌ "
+    "واحد، وهو الحرّ وشدّته» بصيغة التنصيص المعهودة عند المؤلِّف. "
+    "**والسياقُ اللازم لاستبعاد تقييدٍ مؤثّر** ليس المقطعَ كلَّه ولا الصفَّ "
+    "كلَّه، بل ثلاثةُ مواضعَ بعينها فُحِصت: ما يَلي الجملةَ مباشرةً في تفسير "
+    "المادّة («أَبَتَ يومنا… إذا اشتدّ حرُّه»، فيُصدِّق ولا يُقيِّد)، وما "
+    "فيها من استدراكٍ منسوبٍ («الأَبْتة كالوَغْرة من القَيظ»، تشبيهٌ لا "
+    "خلافٌ في الأصل)، وما قد يحمل نفيًا («وهذا الباب مهملٌ عند الخليل»، "
+    "وهو **خارجَ المقطع** في بندٍ ملتبسٍ لم تثبت نسبتُه، فلا يُحمَل على "
+    "الدعوى ولا يُطرَح عنها). "
+    "**ولذلك لا يحتاج هذا الحكمُ تحقيقَ `[0:313]` ولم يَثبُت**: المحتاجُ "
+    "إليه نسبةُ `[0:49]` وحدَه، وهو ما تُثبِته الترويسةُ بنفسها."
+)
 
 THE_SESSION_REVIEW_METHOD: Final[ReviewMethod] = ReviewMethod(
     performed_by="وكيلُ Copilot في هذه الجلسة",
@@ -124,7 +186,10 @@ THE_QUESTION_THAT_NEEDS_A_HUMAN_DECISION: Final[str] = (
     "فيه؛ ولا ترويسةَ له؛ والمقابلةُ بالصفّ التالي تُجيب عن حدِّ الصفّ لا عن "
     "هذا البند. والحاسمُ نسخةٌ مرجعيّةٌ يُنظَر فيها: أتطبع «(أبث)» عنوانًا "
     "قبل هذه الجملة أم بعدها؟ وما يُبنى على الجواب: إن كانت مُفتتَحًا فالبندُ "
-    "أجنبيٌّ عن «أبت»، وإن كانت خاتمةً فهي منه ويبقى ما بعدها أجنبيًّا."
+    "أجنبيٌّ عن «أبت»، وإن كانت خاتمةً فهي منه ويبقى ما بعدها أجنبيًّا. "
+    "وقرينةٌ تُعرَض على الناظر ولا تُغني عن النسخة: هذه الجملةُ نفسُها "
+    "تتكرّر في الصفّ عند 561 داخلَ بندٍ ثبتت غُربتُه "
+    "(`THE_RECURRING_NEGLECT_SENTENCE`)."
 )
 
 THE_REFERENCE_COPIES_TO_CONSULT: Final[tuple[str, ...]] = (
@@ -168,25 +233,47 @@ THE_ABAT_SEGMENTS: Final[tuple[SegmentAttribution, ...]] = (
         material_key=THE_ABAT_MATERIAL_KEY,
         row_index=THE_ABAT_ROW_INDEX,
         start_offset=0,
-        end_offset=313,
+        end_offset=49,
         offset_unit=THE_OFFSET_UNIT,
         quoted_head="الهمزة والباء والتاء أصلٌ واحد",
-        quoted_tail="الأَبْتة كالوَغْرة من القَيظ.\n",
-        routes=(
-            AttributionRoute.HEAD_FORMULA_NAMES_ITS_OWN_RADICALS,
-            AttributionRoute.RADICAL_CONSISTENCY_TO_THE_FIRST_FOREIGN_FORM,
-        ),
+        quoted_tail="وهو الحرّ وشدّته.",
+        routes=(AttributionRoute.HEAD_FORMULA_NAMES_ITS_OWN_RADICALS,),
         decision=SegmentDecision.ATTRIBUTED_TO_THIS_MATERIAL,
         collation_source=(
-            "البايتاتُ المختومةُ وحدَها: الترويسةُ تُسمّي الهمزةَ والباءَ "
-            "والتاء، والمجالُ يحمل 12 صيغةً بالتاء و**صفرَ** صيغةٍ بالثاء"
+            "البايتاتُ المختومةُ وحدَها: الجملةُ تُسمّي الهمزةَ والباءَ "
+            "والتاء بأسماء حروفها، فتُعيِّن مادّتَها بنفسها"
         ),
         reviewer=THE_SESSION_REVIEW_METHOD.performed_by,
         method=THE_SESSION_REVIEW_METHOD.procedure,
         statement=(
-            "مقطعٌ تابعٌ لمادّة «أبت»: يفتتح بترويستها التي تُسمّي حروفَها، "
-            "ثمّ لا يخرج عن صِيَغ جذرها حتّى منتهاه. ولا يدّعي هذا البندُ "
-            "أين تنتهي المادّةُ في النسخة المطبوعة، بل أنّ هذا النصَّ منها."
+            "جملةُ الترويسة وحدَها، وهي ما يُثبِته الطريقُ الحاسمُ المتوفّر "
+            "ولا أكثر. وكان هذا البندُ يمتدّ إلى 313 اتّكالًا على استمرار "
+            "صِيَغ الجذر، وذاك عَدٌّ لحروفٍ لا نسبةٌ، فقُصِر البندُ على "
+            "موضع الدليل (`THE_WITNESS_AT_FORTY_NINE_IS_A_LOCAL_CLAIM`)."
+        ),
+    ),
+    SegmentAttribution(
+        material_key=THE_ABAT_MATERIAL_KEY,
+        row_index=THE_ABAT_ROW_INDEX,
+        start_offset=49,
+        end_offset=313,
+        offset_unit=THE_OFFSET_UNIT,
+        quoted_head="\nقال ابنُ السكّيت وغيره: أَبَتَ يومنا",
+        quoted_tail="الأَبْتة كالوَغْرة من القَيظ.\n",
+        routes=(AttributionRoute.RADICAL_CONSISTENCY_TO_THE_FIRST_FOREIGN_FORM,),
+        decision=SegmentDecision.UNRESOLVED,
+        collation_source=(
+            "البايتاتُ المختومة: عشرُ صيغٍ بالتاء وصفرُ صيغةٍ بالثاء — "
+            "قرينةُ ترشيحٍ لا حاسمة"
+        ),
+        reviewer=THE_SESSION_REVIEW_METHOD.performed_by,
+        method=THE_SESSION_REVIEW_METHOD.procedure,
+        statement=(
+            "تفسيرُ المادّة بعد ترويستها، ويُرجَّح أنّه منها ترجيحًا قويًّا: "
+            "يُصدِّق الترويسةَ لفظًا ومعنًى («أَبَتَ يومنا… إذا اشتدّ حرُّه»). "
+            "ولكنّ المُرجِّحَ قرينةُ ترشيحٍ لا طريقٌ حاسم، ولا ترويسةَ فيه "
+            "تُسمّي حروفَها، فيبقى مُرشَّحًا معلَّقًا لا محقَّقًا "
+            "(`A_LETTER_TALLY_NOMINATES_AN_ATTRIBUTION_IT_DOES_NOT_SETTLE_ONE`)."
         ),
     ),
     SegmentAttribution(
@@ -212,12 +299,21 @@ THE_ABAT_SEGMENTS: Final[tuple[SegmentAttribution, ...]] = (
         offset_unit=THE_OFFSET_UNIT,
         quoted_head="الأبِثُ الأشِرُ النّشيط",
         quoted_tail="قال:\n",
-        routes=(AttributionRoute.RADICAL_CONSISTENCY_TO_THE_FIRST_FOREIGN_FORM,),
+        routes=(
+            AttributionRoute.DEFINITIONAL_GLOSS_OF_A_FOREIGN_LEMMA,
+            AttributionRoute.RADICAL_CONSISTENCY_TO_THE_FIRST_FOREIGN_FORM,
+        ),
         decision=SegmentDecision.FOREIGN_TO_THIS_MATERIAL,
-        collation_source="البايتاتُ المختومة: «الأبِث» صيغةُ جذرٍ ثالثُه ثاءٌ لا تاء",
+        collation_source=(
+            "البايتاتُ المختومة عند 358: «الأبِثُ الأشِرُ النّشيط» — مُفرَدةٌ "
+            "معرَّفةٌ يَليها حدُّها، وهي صيغةُ جذرٍ ثالثُه ثاء"
+        ),
         statement=(
-            "تفسيرُ مُفرَدةٍ بالثاء مصدَّرةً بالتعريف، وهو مُفتتَحُ تفسيرِ "
-            "مادّةٍ أخرى لا استشهادٌ داخل «أبت»."
+            "ليس النقضُ عدَّ ثاءٍ، بل أنّ هذا تعريفُ مُفرَدةٍ من جذرٍ آخر: "
+            "«الأبِثُ» معرَّفةً ثمّ حدُّها بلا رابطٍ ولا فعلِ قولٍ، وهي "
+            "صيغةُ «أبث» لا «أبت». فالنصُّ يُسمّي مادّةً أخرى ويشرحها، "
+            "وذلك يُعيِّن الوجهةَ ولا يكتفي بغياب حرف "
+            "(`A_REFUTATION_NEEDS_A_NAMED_DESTINATION_NOT_A_MISSING_LETTER`)."
         ),
         reviewer=THE_SESSION_REVIEW_METHOD.performed_by,
         method=THE_SESSION_REVIEW_METHOD.procedure,
@@ -250,19 +346,76 @@ THE_ABAT_SEGMENTS: Final[tuple[SegmentAttribution, ...]] = (
         offset_unit=THE_OFFSET_UNIT,
         quoted_head="أصبَحَ عمَّارٌ نشيطا أبِثَا",
         quoted_tail="وناقة أبثَة.\n",
-        routes=(AttributionRoute.RADICAL_CONSISTENCY_TO_THE_FIRST_FOREIGN_FORM,),
+        routes=(
+            AttributionRoute.DEFINITIONAL_GLOSS_OF_A_FOREIGN_LEMMA,
+            AttributionRoute.RADICAL_CONSISTENCY_TO_THE_FIRST_FOREIGN_FORM,
+        ),
         decision=SegmentDecision.FOREIGN_TO_THIS_MATERIAL,
-        collation_source="البايتاتُ المختومة: ستُّ صيغٍ بالثاء (أبِثَا · كَبِثَا · أبثَة)",
+        collation_source=(
+            "البايتاتُ المختومة عند 622: «والكَبِث: المتغيِّر المُرْوِح» — "
+            "مُفرَدةٌ معرَّفةٌ يَليها حدُّها بالنقطتين، من جذر «كبث»"
+        ),
         reviewer=THE_SESSION_REVIEW_METHOD.performed_by,
         method=THE_SESSION_REVIEW_METHOD.procedure,
-        statement=("ذيلُ الصفِّ كلُّه في «أبث» و«كبث»، ولا صيغةَ فيه من جذر «أبت»."),
+        statement=(
+            "يحمل هذا البندُ تعريفَ مُفرَدةٍ من جذرٍ ثالثٍ صريحًا: «والكَبِث: "
+            "المتغيِّر المُرْوِح»، ثمّ «وليس الكَبِث عند الخليل ولا ابن دريد»، "
+            "وهو كلامُ مادّةٍ في مادّتها. فالوجهةُ مُسمّاةٌ لا مستنتَجةً من "
+            "غياب تاء."
+        ),
     ),
 )
-"""خمسةُ بنودٍ لصفٍّ واحد: واحدٌ محقَّقٌ، واثنان أجنبيّان، واثنان ملتبسان.
+"""ستّةُ بنودٍ لصفٍّ واحد: واحدٌ محقَّقٌ، واثنان أجنبيّان، وثلاثةٌ ملتبسة.
 
-ولا يُقال «الصفُّ مختلط» فحسب: مجالُ المحقَّق مُعيَّنٌ بإزاحتيه، وموضعُ
-الانتقال مُسمًّى (313)، والملتبسُ محفوظٌ بسؤاله لا بإلحاقه بأقرب جار.
+وكان المحقَّقُ `[0,313)` فقُصِر على `[0,49)`: الزائدُ عليه كان مُسنَدًا إلى
+عدِّ الحروف وحدَه، وقد نُزِّل ذاك العدُّ قرينةَ ترشيحٍ، فنزل معه البند.
+والمقطوعُ منه `[49,313)` لم يُطرَح بل صار بندًا مُرشَّحًا معلَّقًا، فالتعليقُ
+غيرُ النقض.
+
+ولا يُقال «الصفُّ مختلط» فحسب: مجالُ المحقَّق مُعيَّنٌ بإزاحتيه، والملتبسُ
+محفوظٌ بسؤاله لا بإلحاقه بأقرب جار. وأمّا موضعُ انتقال المادّة فمحصورٌ لا
+مُعيَّن (`unsettled_transition_range`)، و313 قطعُ سجلٍّ لا انتقالُ مادّة.
 """
+
+
+THE_RECURRING_NEGLECT_SENTENCE: Final[tuple[tuple[int, str], ...]] = (
+    (313, "وهذا الباب مهملٌ عند الخليل. قال الشّيبانىّ:"),
+    (561, "وهذا الباب مهمل عند الخليل، وليست الكلمة عند ابن دريد"),
+)
+"""جملةُ الإهمال تقع **مرّتين** في الصفّ، والثانيةُ داخلَ بندٍ ثبتت غُربته.
+
+وهذا قرينةٌ تُثقِل احتمالَ أن تكون الأولى كذلك من «أبث» أُزيحت عن موضعها،
+ولا تَحسِمه: تكرارُ صيغةٍ مألوفةٍ عند المؤلِّف يقع في مادّتين متجاورتين
+كما يقع في مادّةٍ واحدةٍ مُكرَّرةً. فتُسجَّل موضعًا ونصًّا، ولا تُرقّى طريقًا
+حاسمًا؛ وهي من جملة ما يُعرَض على المراجع البشريّ في
+`THE_QUESTION_THAT_NEEDS_A_HUMAN_DECISION`.
+"""
+
+
+def unsettled_transition_range(
+    segments: tuple[SegmentAttribution, ...] = (),
+) -> tuple[int, int]:
+    """المجالُ الذي يقع فيه انتقالُ المادّة، مُشتَقًّا من البنود لا مكتوبًا.
+
+    حدُّه الأدنى منتهى آخرِ بندٍ ثبتت تبعيّتُه، وحدُّه الأعلى مبتدأُ أوّلِ
+    بندٍ ثبتت غُربتُه؛ وما بينهما لم يُحسَم. فالجوابُ مجالٌ لا نقطة، وهذا
+    هو القدرُ الذي يُنتِجه الدليلُ الحاضر.
+    """
+
+    rows = segments or THE_ABAT_SEGMENTS
+    attributed = [
+        segment.end_offset
+        for segment in rows
+        if segment.decision is SegmentDecision.ATTRIBUTED_TO_THIS_MATERIAL
+    ]
+    foreign = [
+        segment.start_offset
+        for segment in rows
+        if segment.decision is SegmentDecision.FOREIGN_TO_THIS_MATERIAL
+    ]
+    if not attributed or not foreign:
+        raise MaqayisLinkCandidateError("لا يُشتَقّ مجالُ الانتقال بلا طرفَيه.")
+    return (max(attributed), min(foreign))
 
 
 # --- المعنى المستخرَج من مقطعٍ ثبتت نسبتُه ------------------------------------
@@ -482,23 +635,32 @@ def reconciliation_ledger(
     return tuple(entries)
 
 
-def transition_evidence(root: Path | None = None) -> dict[str, int]:
-    """شاهدُ موضعِ الانتقال مقيسًا من البايتات: الجذرُ الثالثُ قبلَه وبعدَه.
+def radical_tally_clue(root: Path | None = None) -> dict[str, int]:
+    """عدُّ الحرفَين حول قَطع السجلّ مقيسًا من البايتات — **قرينةُ ترشيحٍ**.
 
-    و«الثاء» هي الحدُّ الظاهر: ما قبل الإزاحة خالٍ منها بالكلّيّة وهو يحمل
-    التاءَ اثنتَي عشرةَ مرّة، وما بعدها يحملها. وهذا شاهدُ اتّساقٍ لا برهانُ
-    حدّ: لا يُخرِج موضعَ الانتقال، بل يُصدِّق موضعًا اقتُرِح.
+    وهو يُقاس صحيحًا ويُسمّى باسمه: عددُ تاءاتٍ وثاءاتٍ، لا نسبةُ نصٍّ إلى
+    مادّة. فلا يُثبِت تبعيّةً بوفرة التاء، ولا يَنقُضها بورود الثاء: قد
+    ترد الثاءُ في شاهدٍ مُستشهَدٍ به («أثارت») وقد تَرد في اسمِ راوٍ، وقد
+    تغيب عن نصٍّ أجنبيٍّ بالكلّيّة كالبند [313, 358). وإنّما يُرجَّح به
+    النظرُ فيُقدَّم مقطعٌ على مقطع
+    (`A_LETTER_TALLY_NOMINATES_AN_ATTRIBUTION_IT_DOES_NOT_SETTLE_ONE`).
     """
 
     body = _body_of(root)
-    before = _bare(body[:THE_ABAT_TRANSITION_OFFSET])
-    after = _bare(body[THE_ABAT_TRANSITION_OFFSET:])
+    before = _bare(body[:THE_ABAT_LEDGER_CUT_AT_313])
+    after = _bare(body[THE_ABAT_LEDGER_CUT_AT_313:])
     return {
-        "تاءٌ_قبل_الانتقال": before.count("ت"),
-        "ثاءٌ_قبل_الانتقال": before.count("ث"),
-        "تاءٌ_بعد_الانتقال": after.count("ت"),
-        "ثاءٌ_بعد_الانتقال": after.count("ث"),
+        "تاءٌ_قبل_القطع": before.count("ت"),
+        "ثاءٌ_قبل_القطع": before.count("ث"),
+        "تاءٌ_بعد_القطع": after.count("ت"),
+        "ثاءٌ_بعد_القطع": after.count("ث"),
     }
+
+
+def transition_evidence(root: Path | None = None) -> dict[str, int]:
+    """اسمٌ سابقٌ أُبقي للمتّصلين به؛ والصوابُ `radical_tally_clue`."""
+
+    return radical_tally_clue(root)
 
 
 def reconciliation_counts(

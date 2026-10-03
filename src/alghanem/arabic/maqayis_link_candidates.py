@@ -115,6 +115,17 @@ __all__ = [
     "A_SEGMENT_ATTRIBUTION_IS_NOT_A_SETTLED_MATERIAL_EXTENT",
     "AN_UNRESOLVED_SEGMENT_STAYS_SUSPENDED_ON_ITS_OWN",
     "AN_AGENT_REVIEW_IS_NOT_A_HUMAN_OR_INDEPENDENT_REVIEW",
+    "A_LETTER_TALLY_NOMINATES_AN_ATTRIBUTION_IT_DOES_NOT_SETTLE_ONE",
+    "A_REFUTATION_NEEDS_A_NAMED_DESTINATION_NOT_A_MISSING_LETTER",
+    "AN_OFFSET_IS_EXACT_WHILE_A_LEXICAL_BOUNDARY_IS_NOT",
+    "A_DEPOSITED_REVIEW_FIELD_IS_NOT_A_VERIFIED_REVIEW",
+    "ONE_ADMITTED_LINK_IS_NOT_THE_ADMISSION_OF_A_DALS_MEANINGS",
+    "RouteStrength",
+    "HeadFormulaClue",
+    "MEANING_IDENTITY_RULE",
+    "meaning_identity",
+    "WHAT_THE_MACHINE_CHECKS",
+    "WHAT_RESTS_ON_A_NAMED_REVIEWER",
     "AttributionRoute",
     "RoutePremises",
     "THE_ATTRIBUTION_ROUTES",
@@ -257,6 +268,43 @@ AN_AGENT_REVIEW_IS_NOT_A_HUMAN_OR_INDEPENDENT_REVIEW: Final[str] = (
     "بلا منهجٍ مُصرَّحٍ تُرَدّ عند الإنشاء، فلا تبلغ بابَ الاعتماد أصلًا."
 )
 
+A_LETTER_TALLY_NOMINATES_AN_ATTRIBUTION_IT_DOES_NOT_SETTLE_ONE: Final[str] = (
+    "A_LETTER_TALLY_NOMINATES_AN_ATTRIBUTION_IT_DOES_NOT_SETTLE_ONE: عدُّ "
+    "حروفِ الجذر حضورًا وغيابًا يقيس صفةً للنصّ لا نسبتَه. فغيابُ الحرف لا "
+    "يَنقُل المقطعَ إلى مادّةٍ مُسمّاة، وحضورُه لا يَقصُره على هذه المادّة؛ "
+    "والشاهدُ المنقولُ يحمل ما ليس من الجذر بلا ابتلاع. فهو **قرينةُ ترشيحٍ** "
+    "مُعلَنةٌ بـ`RouteStrength.NOMINATING_CLUE`، لا يُبنى عليها إثباتٌ ولا نقض."
+)
+
+A_REFUTATION_NEEDS_A_NAMED_DESTINATION_NOT_A_MISSING_LETTER: Final[str] = (
+    "A_REFUTATION_NEEDS_A_NAMED_DESTINATION_NOT_A_MISSING_LETTER: النقضُ "
+    "حكمٌ كالإثبات، فيحتاج ما يحتاجه: دليلًا يُعيِّن أنّ المقطع نصُّ مادّةٍ "
+    "أخرى — كتفسيرِ مُفرَدةٍ معرَّفةٍ هي مدخلُها — أو يناقض النسبةَ المقصودة. "
+    "وما دون ذلك يُترَك ملتبسًا، فالالتباسُ بندٌ لا سكوت."
+)
+
+AN_OFFSET_IS_EXACT_WHILE_A_LEXICAL_BOUNDARY_IS_NOT: Final[str] = (
+    "AN_OFFSET_IS_EXACT_WHILE_A_LEXICAL_BOUNDARY_IS_NOT: الإزاحةُ عددٌ "
+    "يُعاد اشتقاقُه من البايتات فيُقابَل حرفًا بحرف؛ وحدُّ المادّة في المعجم "
+    "واقعةٌ في نسخةٍ مطبوعةٍ لا تُقاس بإزاحة. فدقّةُ القَطع في سجلّنا لا "
+    "تُقرأ صحّةً لحدٍّ معجميّ، وقَطعُ السجلّ يُسمّى قَطعَ سجلٍّ لا انتقالَ مادّة."
+)
+
+A_DEPOSITED_REVIEW_FIELD_IS_NOT_A_VERIFIED_REVIEW: Final[str] = (
+    "A_DEPOSITED_REVIEW_FIELD_IS_NOT_A_VERIFIED_REVIEW: الآلةُ تفحص وجودَ "
+    "المراجعة ومطابقةَ مادّتها ومعناها وشاهدِها، وتردُّ ناقصةَ المنهج أو "
+    "وجهِ الإسناد. وهذا كلُّه فحصُ **شكلٍ**: أمّا صدقُ الحكم بأنّ هذا الشاهد "
+    "يُسنِد هذا المعنى فلا تفحصه الآلةُ ولا تدّعيه، وهو متّكئٌ على مراجعٍ "
+    "مُسمًّى. فامتلاءُ الحقل ليس إثباتًا لصحّته."
+)
+
+ONE_ADMITTED_LINK_IS_NOT_THE_ADMISSION_OF_A_DALS_MEANINGS: Final[str] = (
+    "ONE_ADMITTED_LINK_IS_NOT_THE_ADMISSION_OF_A_DALS_MEANINGS: اعتمادُ "
+    "ربطٍ واحدٍ يُعتمَد به ذلك الربطُ وحدَه. فلا يُقرأ استيفاءً لمعاني الدالّ، "
+    "ولا يرفع تعليقَ مرشَّحٍ آخَر له؛ وبقاءُ مرشَّحٍ قديمٍ معلَّقًا لا يمحو "
+    "الربطَ الجديد. والمقداران يُعرَضان معًا في سطر الدالّ بحدودِ تغطيته."
+)
+
 THE_LAFZ_LINK_IS_OUT_OF_THIS_UNITS_SCOPE_NOT_IMPOSSIBLE: Final[str] = (
     "THE_LAFZ_LINK_IS_OUT_OF_THIS_UNITS_SCOPE_NOT_IMPOSSIBLE: اللفظُ "
     "والاستعمالُ خارجَ النطاق المُعلَن لهذه الوحدة، إذ مدخلُها مفاتيحُ موادَّ "
@@ -341,6 +389,21 @@ MAQAYIS_LINK_CANDIDATE_NAMED_RESIDUALS: Final[dict[str, str]] = {
     ),
     "AN_AGENT_REVIEW_IS_NOT_A_HUMAN_OR_INDEPENDENT_REVIEW": (
         AN_AGENT_REVIEW_IS_NOT_A_HUMAN_OR_INDEPENDENT_REVIEW
+    ),
+    "A_LETTER_TALLY_NOMINATES_AN_ATTRIBUTION_IT_DOES_NOT_SETTLE_ONE": (
+        A_LETTER_TALLY_NOMINATES_AN_ATTRIBUTION_IT_DOES_NOT_SETTLE_ONE
+    ),
+    "A_REFUTATION_NEEDS_A_NAMED_DESTINATION_NOT_A_MISSING_LETTER": (
+        A_REFUTATION_NEEDS_A_NAMED_DESTINATION_NOT_A_MISSING_LETTER
+    ),
+    "AN_OFFSET_IS_EXACT_WHILE_A_LEXICAL_BOUNDARY_IS_NOT": (
+        AN_OFFSET_IS_EXACT_WHILE_A_LEXICAL_BOUNDARY_IS_NOT
+    ),
+    "A_DEPOSITED_REVIEW_FIELD_IS_NOT_A_VERIFIED_REVIEW": (
+        A_DEPOSITED_REVIEW_FIELD_IS_NOT_A_VERIFIED_REVIEW
+    ),
+    "ONE_ADMITTED_LINK_IS_NOT_THE_ADMISSION_OF_A_DALS_MEANINGS": (
+        ONE_ADMITTED_LINK_IS_NOT_THE_ADMISSION_OF_A_DALS_MEANINGS
     ),
     "A_HEADER_DETECTOR_PROPOSES_A_BOUNDARY_IT_DOES_NOT_VERIFY": (
         A_HEADER_DETECTOR_PROPOSES_A_BOUNDARY_IT_DOES_NOT_VERIFY
@@ -432,6 +495,52 @@ THE_EXTRACTION_METHOD: Final[str] = (
     "شاهدُه من `body_text` تحت `THE_WITNESS_SELECTION_RULE`. ولا يُولَّد "
     "مرشَّحٌ من `axes_count` ولا من `poetry_evidence`"
 )
+
+
+WHAT_THE_MACHINE_CHECKS: Final[tuple[str, ...]] = (
+    "مطابقةُ بصمةِ النسخة المقروءة لبصمةِ النسخة التي بُني عليها المرشَّح",
+    "انتزاعُ الشاهد بإزاحتيه من الحقل حرفًا بحرف (`segment_in_row`)",
+    "وقوعُ مجالِ الشاهد داخلَ بندِ مصالحةٍ مودَعٍ لهذه المادّة وهذا الصفّ",
+    "أنّ الطريقَ المحتجَّ به مُعلَنُ المقدّمات، متوفّرٌ، وحاسمٌ لا مُرشِّح",
+    "وجودُ مراجعةٍ مطابقةِ المادّة والمعنى والشاهد، وأنّها تحمل منهجًا "
+    "ومنفِّذًا ووجهَ إسنادٍ غيرَ خالٍ — وأنّ منفِّذَها مُصرَّحٌ ببشريّته أو آليّته",
+    "وقوعُ صياغةِ المعنى في الشاهد نصًّا أو بعد تسويةٍ مُسمّاة — **تُعرَض ولا " "تُشترَط**",
+    "رصدُ تركيبِ نفيٍ في الشاهد، وقرينةُ تسميةِ الترويسة لحروف جذرها",
+)
+"""ما تُعيد الآلةُ اشتقاقَه من البايتات عند كلّ نداء، فيُصدَّق بلا مراجع."""
+
+WHAT_RESTS_ON_A_NAMED_REVIEWER: Final[tuple[str, ...]] = (
+    "أنّ هذا الشاهدَ يُسنِد هذا المعنى — لا مطابقتُه له، بل إسنادُه إيّاه",
+    "تمييزُ موضعِ التفسير من موضع الاستشهاد عند الاحتجاج بطريق "
+    "`DEFINITIONAL_GLOSS_OF_A_FOREIGN_LEMMA`",
+    "أنّ ما في المقطع من استدراكٍ أو تشبيهٍ لا يُقيِّد المعنى المستخرَج",
+    "أنّ المنفيَّ في صيغة نفيٍ واقعةٍ ليس الدعوى المقصودة",
+    "حدودُ التعميم المكتوبةُ مع المعنى: ما يسَعُه الحكمُ وما لا يسَعُه",
+)
+"""ما لا تفحصه الآلةُ ولا تدّعيه، فيُحمَل على مراجعٍ مُسمًّى بمنهجه.
+
+وامتلاءُ هذه الحقول فحصٌ شكليٌّ تُجريه الآلة؛ وصدقُ ما فيها ليس مفحوصًا
+(`A_DEPOSITED_REVIEW_FIELD_IS_NOT_A_VERIFIED_REVIEW`).
+"""
+
+MEANING_IDENTITY_RULE: Final[str] = (
+    "هويّةُ المعنى زوجٌ: مفتاحُ المادّة، وصياغةُ المعنى بعد تسويةٍ مُعلَنةٍ "
+    "قبل العدّ — تسويةُ NFC، ثمّ تجريدُ علامات الشكل، ثمّ طيُّ تتابع البياض "
+    "إلى فراغٍ واحد، ثمّ قصُّ الطرفين. فـ«الحرّ وشدّته» و«الحر وشدته» معنًى "
+    "واحدٌ معدودٌ مرّة، و«شدّةُ الحرّ» معنًى ثانٍ لأنّ الصياغةَ غيرُ الصياغة. "
+    "والمعيارُ **صوريٌّ مُعلَنٌ قبل النتيجة**، لا حكمَ ترادفٍ: فقد يَعُدّ "
+    "اثنين ما يراه قارئٌ واحدًا، ويُسجَّل ذلك حدًّا لا يُخفى. وعددُ الشهادات "
+    "غيرُ عددِ المعاني: شهادتان على معنًى واحدٍ معنًى واحد، ومعنًى بلا شهادةٍ "
+    "معنًى معدودٌ غيرُ مُسنَد."
+)
+
+
+def meaning_identity(material_key: str, meaning: str) -> tuple[str, str]:
+    """هويّةُ المعنى تحت `MEANING_IDENTITY_RULE`؛ تُشتَقّ ولا تُكتَب."""
+
+    folded = " ".join(strip_diacritics(_nfc(meaning)).split())
+    return (material_key, folded)
+
 
 THE_WITNESS_SELECTION_RULE: Final[str] = (
     "شاهدُ المرشَّح جملةُ `body_text` الأولى، وحدُّها أوّلُ نقطةٍ أو فاصلِ "
@@ -619,8 +728,25 @@ class AttributionRoute(Enum):
 
     HEAD_FORMULA_NAMES_ITS_OWN_RADICALS = "ترويسةُ المادّة تُسمّي حروفَها بأنفسها"
     RADICAL_CONSISTENCY_TO_THE_FIRST_FOREIGN_FORM = "اتّساقُ الجذر حتّى أوّل صيغةٍ أجنبيّة"
+    DEFINITIONAL_GLOSS_OF_A_FOREIGN_LEMMA = "تفسيرُ مُفرَدةٍ معرَّفةٍ من جذرٍ آخر"
     COLLATION_WITH_THE_NEXT_MATERIAL = "المقابلةُ بالمادّة التالية"
     REFERENCE_COPY_COLLATION = "المقابلةُ بنسخةٍ مرجعيّةٍ معلومةِ الهويّة"
+
+
+class RouteStrength(Enum):
+    """قوّةُ طريقٍ: أيحسم النسبةَ أم يُرشِّح لها؟ والفرقُ ليس في الثقة بل في ما يُثبِت.
+
+    فطريقٌ قائمٌ على **حضورِ حروفِ الجذر أو غيابِها** يقيس صفةً للنصّ، لا
+    نسبتَه: غيابُ حرفٍ لا يَنقُل المقطعَ إلى مادّةٍ أخرى، وحضورُه لا يَقصُره
+    على هذه. فمثلُه **قرينةُ ترشيحٍ** تُضيّق البحث، ولا يُبنى عليه حكمٌ وحدَه
+    (`A_LETTER_TALLY_NOMINATES_AN_ATTRIBUTION_IT_DOES_NOT_SETTLE_ONE`).
+
+    والحاسمُ ما يُعيِّن مادّةً بعينها: ترويسةٌ تُسمّي حروفَها، أو تفسيرُ
+    مُفرَدةٍ معرَّفةٍ هي مدخلُ مادّةٍ أخرى، أو مقابلةٌ بنسخةٍ معلومةِ الهويّة.
+    """
+
+    NOMINATING_CLUE = "قرينةُ ترشيحٍ تُضيّق البحث ولا تَحسِم نسبةً"
+    ESTABLISHING = "طريقٌ يُعيِّن المادّةَ فيَحسِم النسبةَ إثباتًا أو نقضًا"
 
 
 @dataclass(frozen=True, slots=True)
@@ -631,6 +757,15 @@ class RoutePremises:
     establishes: str
     limits: tuple[str, ...]
     is_available_on_this_deposit: bool
+    strength: RouteStrength
+
+    @property
+    def can_settle_an_attribution(self) -> bool:
+        """أيصلح هذا الطريقُ وحدَه لحسمِ نسبةٍ؟ المتوفّرُ الحاسمُ لا غير."""
+
+        return self.is_available_on_this_deposit and (
+            self.strength is RouteStrength.ESTABLISHING
+        )
 
 
 THE_ATTRIBUTION_ROUTES: Final[Mapping[AttributionRoute, RoutePremises]] = {
@@ -645,23 +780,52 @@ THE_ATTRIBUTION_ROUTES: Final[Mapping[AttributionRoute, RoutePremises]] = {
             "يُثبِت المبتدأ ولا يُثبِت المنتهى، فلا يُقرأ حدًّا للمادّة",
             "لا يقع إلّا حيث كُتبت الترويسةُ فعلًا، وغيابُها ليس نفيًا",
             "لو اتّفقت ترويستان في حروفهما لم يفصل بينهما هذا الطريق",
+            "يُثبِت الجملةَ الحاملةَ للترويسة؛ وامتدادُه إلى ما بعدها دعوى ثانية",
         ),
         is_available_on_this_deposit=True,
+        strength=RouteStrength.ESTABLISHING,
     ),
     AttributionRoute.RADICAL_CONSISTENCY_TO_THE_FIRST_FOREIGN_FORM: RoutePremises(
         premise=(
-            "صيغُ المادّة تحمل حرفَها الثالث؛ فمجالٌ من مُفتتَحِ المقطع إلى "
-            "أوّلِ صيغةٍ تحمل حرفًا ثالثًا مخالفًا مجالٌ لم يدخله نصُّ "
-            "مادّةٍ أخرى بشاهدٍ مقيس"
+            "صيغُ المادّة تحمل حرفَها الثالث؛ فمجالٌ يحمل حرفَ المادّة ولا "
+            "يحمل حرفَ جارتها **مُرشَّحٌ** أن يكون منها. وهذا عدُّ حروفٍ لا "
+            "غير: يُحصي ما في النصّ، ولا يقول لمن هو"
         ),
-        establishes="أنّ المجال خالٍ من صيغِ المادّة المجاورة المعلومة حروفُها",
+        establishes=(
+            "ترشيحًا: أنّ المجال مُتّسقٌ مع نسبته إلى هذه المادّة، ومُضيَّقٌ "
+            "عن جارتها المعلومة حروفُها — ولا يُقرأ حسمًا"
+        ),
         limits=(
             "وكيلٌ سطحيٌّ بالحروف لا تحليلٌ صرفيّ، فلا يُسمّى تحقيقَ اشتقاق",
             "لا يكشف ابتلاعَ مادّةٍ يوافق حرفُها الثالثُ حرفَ المادّة المضيفة",
-            "الكلمةُ المنقولةُ في الاستشهاد قد تحمل حرفًا أجنبيًّا بلا ابتلاع",
+            "**ورودُ حرفٍ أجنبيٍّ في شرح المادّة لا ينقض نسبتَها**: الشاهدُ "
+            "المنقولُ والكلمةُ المقابَلُ بها يحملان ما ليس من الجذر",
             "مجالٌ خالٍ من الحرفين معًا لا يُحسَم بهذا الطريق البتّة",
+            "قرينةُ ترشيحٍ بنصِّ `RouteStrength`، فلا تُثبِت نسبةً ولا تنقضها",
         ),
         is_available_on_this_deposit=True,
+        strength=RouteStrength.NOMINATING_CLUE,
+    ),
+    AttributionRoute.DEFINITIONAL_GLOSS_OF_A_FOREIGN_LEMMA: RoutePremises(
+        premise=(
+            "المادّةُ تُفسِّر مداخلَها بصيغةٍ معهودة: مُفرَدةٌ معرَّفةٌ يَتلوها "
+            "تفسيرُها («الأبِثُ الأشِرُ النّشيط» · «والكَبِث: المتغيِّر "
+            "المُرْوِح»). فموضعُ التفسير مُعيِّنٌ للمادّة، بخلاف موضع "
+            "الاستشهاد المُصدَّر بـ«قال» أو «يقال»"
+        ),
+        establishes=(
+            "أنّ المقطع يُفسِّر مدخلَ مادّةٍ أخرى مُسمّاةٍ بجذرها، فهو نصُّها "
+            "لا نصُّ المادّة المضيفة — وهو نقضٌ مُعيَّنُ المنقولِ إليه"
+        ),
+        limits=(
+            "لا يُعيِّن أين ابتدأ نصُّ تلك المادّة، بل أنّ هذا منه",
+            "قد تُفسِّر مادّةٌ مُفرَدةً من جذرٍ آخر عند المقابلة أو الإبدال، "
+            "فيُشترَط أن يكون التفسيرُ مدخلًا لا مقابَلةً عارضة",
+            "تمييزُ موضعِ التفسير من موضع الاستشهاد قراءةُ مراجعٍ، لا قاعدةٌ "
+            "آليّةٌ تُطبَّق على كلّ نصّ",
+        ),
+        is_available_on_this_deposit=True,
+        strength=RouteStrength.ESTABLISHING,
     ),
     AttributionRoute.COLLATION_WITH_THE_NEXT_MATERIAL: RoutePremises(
         premise="مُفتتَحُ الصفِّ التالي يحدّ منتهى هذا الصفّ إن لم يُبتلَع بينهما",
@@ -671,6 +835,7 @@ THE_ATTRIBUTION_ROUTES: Final[Mapping[AttributionRoute, RoutePremises]] = {
             "يسقط متى ابتُلعت مادّةٌ كاملةٌ بين الصفَّين، وهو عينُ واقعة «أبت»",
         ),
         is_available_on_this_deposit=True,
+        strength=RouteStrength.ESTABLISHING,
     ),
     AttributionRoute.REFERENCE_COPY_COLLATION: RoutePremises(
         premise="نسخةٌ ثانيةٌ معلومةُ الهويّة (تحقيقٌ وناشرٌ وسنةٌ وصفحة) تُقابَل بها",
@@ -680,6 +845,7 @@ THE_ATTRIBUTION_ROUTES: Final[Mapping[AttributionRoute, RoutePremises]] = {
             "ولا يُفترَض تطابقُ النسخ ولا الصفحات؛ تُسجَّل هويّةُ النسخة أوّلًا",
         ),
         is_available_on_this_deposit=False,
+        strength=RouteStrength.ESTABLISHING,
     ),
 }
 
@@ -725,28 +891,66 @@ class SegmentAttribution:
                 raise MaqayisLinkCandidateError(
                     "بندُ المصالحة بوحدةِ إزاحةٍ ومراجعٍ ومنهجٍ وبيانٍ، وناقصُه يُرَدّ."
                 )
-        if self.decision is SegmentDecision.ATTRIBUTED_TO_THIS_MATERIAL and not (
-            self.routes
-        ):
-            raise MaqayisLinkCandidateError("نسبةٌ محقَّقةٌ بلا طريقٍ مُعلَنٍ تُرَدّ.")
+        decided = self.decision in (
+            SegmentDecision.ATTRIBUTED_TO_THIS_MATERIAL,
+            SegmentDecision.FOREIGN_TO_THIS_MATERIAL,
+        )
+        if decided and not self.settling_routes:
+            raise MaqayisLinkCandidateError(
+                "قرارٌ حاسمٌ — إثباتًا أو نقضًا — بلا طريقٍ حاسمٍ متوفّرٍ يُرَدّ؛ "
+                "وقرينةُ الترشيح لا تُرقّى إلى حسمٍ بتكرارها."
+            )
 
     @property
-    def established_routes(self) -> tuple[AttributionRoute, ...]:
-        """الطرقُ المتوفّرةُ فعلًا على هذا المودَع؛ وغيرُ المتوفّر لا يُحتَجّ به."""
+    def settling_routes(self) -> tuple[AttributionRoute, ...]:
+        """الطرقُ المتوفّرةُ **الحاسمة**؛ وقرينةُ الترشيح ليست منها.
+
+        وغيرُ المتوفّرِ على هذا المودَع لا يُحتَجّ به ولو كان حاسمًا في نفسه.
+        """
 
         return tuple(
             route
             for route in self.routes
-            if THE_ATTRIBUTION_ROUTES[route].is_available_on_this_deposit
+            if THE_ATTRIBUTION_ROUTES[route].can_settle_an_attribution
         )
 
     @property
+    def nominating_routes(self) -> tuple[AttributionRoute, ...]:
+        """القرائنُ المُرشِّحةُ المودَعة؛ تُعرَض في السجلّ ولا يُبنى عليها حكم."""
+
+        return tuple(
+            route
+            for route in self.routes
+            if THE_ATTRIBUTION_ROUTES[route].strength is RouteStrength.NOMINATING_CLUE
+        )
+
+    @property
+    def established_routes(self) -> tuple[AttributionRoute, ...]:
+        """اسمٌ سابقٌ لـ`settling_routes`؛ أُبقي ولم يُوسَّع معناه."""
+
+        return self.settling_routes
+
+    @property
     def is_established(self) -> bool:
-        """أثبتت نسبةُ هذا المقطع بطريقٍ متوفّرٍ مُعلَنِ المقدّمات والحدود؟"""
+        """أثبتت نسبةُ هذا المقطع بطريقٍ متوفّرٍ **حاسمٍ** مُعلَنِ المقدّمات؟"""
 
         return bool(
             self.decision is SegmentDecision.ATTRIBUTED_TO_THIS_MATERIAL
-            and self.established_routes
+            and self.settling_routes
+        )
+
+    @property
+    def is_refuted(self) -> bool:
+        """نُقِضت نسبتُه بدليلٍ **يُعيِّن المادّةَ المنقولَ إليها**؟
+
+        فلا يكفي أن يَخلو المقطعُ من حرفِ الجذر ولا أن يحمل حرفًا أجنبيًّا:
+        النقضُ حكمٌ كالإثبات، يحتاج طريقًا حاسمًا لا عدَّ حروف
+        (`A_REFUTATION_NEEDS_A_NAMED_DESTINATION_NOT_A_MISSING_LETTER`).
+        """
+
+        return bool(
+            self.decision is SegmentDecision.FOREIGN_TO_THIS_MATERIAL
+            and self.settling_routes
         )
 
     def covers(self, start: int, end: int) -> bool:
@@ -786,7 +990,22 @@ class AttributionCheck(Enum):
 
     VERIFIED_BY_A_DEPOSITED_WITNESS = "نسبةٌ محقَّقةٌ بشهادةِ حدٍّ مودَعة"
     NOT_DETERMINED = "نسبةٌ غيرُ معيَّنة: الصفُّ موسومٌ ولم يُحقَّق حدُّه"
-    REFUTED_BY_THE_PROBE = "نسبةٌ منقوضة: المقطعُ ليس من هذه المادّة"
+    REFUTED_BY_THE_PROBE = "نسبةٌ منقوضة بدليلٍ يُعيِّن المادّةَ المنقولَ إليها"
+
+
+class HeadFormulaClue(Enum):
+    """أتُسمّي الجملةُ حروفَ جذرِ صفِّها؟ **قرينةٌ تُعرَض، لا حكمٌ يُبنى**.
+
+    فكانت هذه القراءةُ تُخرِج نقضًا للنسبة عند غياب اسمِ حرف، وذلك خلطٌ:
+    جملةٌ لا تُسمّي الحروفَ قد تكون من المادّة نفسِها (شاهدٌ، أو تفسيرُ
+    مُفرَدة)، وغيابُ الاسم لا يُعيِّن مادّةً بديلة
+    (`A_LETTER_TALLY_NOMINATES_AN_ATTRIBUTION_IT_DOES_NOT_SETTLE_ONE`).
+    فصارت قرينةَ ترشيحٍ تُسجَّل ولا تُسقِط حكمًا.
+    """
+
+    NAMES_EVERY_RADICAL = "تُسمّي حروفَ الجذر كلَّها: قرينةُ ترويسةٍ مُرجَّحة"
+    DOES_NOT_NAME_THEM = "لا تُسمّيها: لا ترويسةَ ههنا، ولا نقضَ في ذلك"
+    NO_RADICALS_READ = "لم يُقرَأ من وسم الصفّ حرفٌ، فلا قرينةَ أصلًا"
 
 
 class TextualMatchCheck(Enum):
@@ -1084,9 +1303,10 @@ class ReviewAttestation:
 
 THE_ADMISSION_RULE: Final[str] = (
     "يُعتمَد الربطُ إذا اجتمعت أربعٌ: بصمةُ النسخة مطابقةٌ عند القراءة، "
-    "والمقطعُ واقعٌ بإزاحتيه في حقل الصفّ، ومِسبارُ تسمية الحروف لم ينقض "
-    "نسبتَه، ونسبتُه إلى المادّة محقَّقةٌ — **إمّا** بشهادةِ نسبةٍ لهذا "
-    "المقطع بإزاحتيه بطريقٍ متوفّرٍ من `THE_ATTRIBUTION_ROUTES`، **وإمّا** "
+    "والمقطعُ واقعٌ بإزاحتيه في حقل الصفّ، ولا بندَ مصالحةٍ يَنقُله إلى "
+    "مادّةٍ أخرى بطريقٍ حاسم، ونسبتُه إلى المادّة محقَّقةٌ — **إمّا** بشهادةِ "
+    "نسبةٍ لهذا المقطع بإزاحتيه بطريقٍ متوفّرٍ **حاسمٍ** من "
+    "`THE_ATTRIBUTION_ROUTES` (وقرينةُ الترشيح ليست منه)، **وإمّا** "
     "بشهادةِ حدٍّ للصفِّ كلِّه فُحِص فيها المنتهى والترويساتُ الداخليّةُ "
     "والمقابلةُ بالتالي — ومعها مراجعةٌ مودَعةٌ موثَّقةُ المنهج والمنفِّذ "
     "لهذه المادّة وهذا المعنى وهذا الشاهد تقول `SUPPORTS_THE_MEANING`. "
@@ -1117,7 +1337,7 @@ class VerificationReading:
     segment: SegmentAttribution | None
     source_integrity: bool
     segment_in_row: bool
-    probe_refutes_the_row: bool
+    head_formula_clue: HeadFormulaClue
     boundary: BoundaryStanding
     attribution: AttributionCheck
     textual_match: TextualMatchCheck
@@ -1207,8 +1427,8 @@ def _first_sentence(body: str) -> tuple[int, int]:
     return (0, match.end() if match else len(body))
 
 
-def _attribution_of(row: Mapping[str, str], sentence: str) -> AttributionCheck:
-    """مِسبارٌ **ناقضٌ لا مُثبِت**: يُسقِط نسبةً، ولا يرفع غيرَ المعيَّنة محقَّقةً."""
+def _head_formula_clue(row: Mapping[str, str], sentence: str) -> HeadFormulaClue:
+    """أتُسمّي هذه الجملةُ حروفَ جذرِ صفِّها؟ قرينةٌ تُقاس وتُعرَض لا غير."""
 
     bare = strip_diacritics(sentence)
     letters: list[str] = []
@@ -1216,11 +1436,11 @@ def _attribution_of(row: Mapping[str, str], sentence: str) -> AttributionCheck:
         if character in THE_LETTER_NAMES and character not in letters:
             letters.append(character)
     if not letters:
-        return AttributionCheck.REFUTED_BY_THE_PROBE
+        return HeadFormulaClue.NO_RADICALS_READ
     for character in letters:
         if not any(name in bare for name in THE_LETTER_NAMES[character]):
-            return AttributionCheck.REFUTED_BY_THE_PROBE
-    return AttributionCheck.NOT_DETERMINED
+            return HeadFormulaClue.DOES_NOT_NAME_THEM
+    return HeadFormulaClue.NAMES_EVERY_RADICAL
 
 
 def _textual_match_of(meaning: str, witness: str) -> TextualMatchCheck:
@@ -1355,19 +1575,15 @@ def verify(
 
     span = body[candidate.witness.start_offset : candidate.witness.end_offset]
     segment_in_row = span == candidate.witness.text
-    probe_refutes = segment_in_row and (
-        _attribution_of(row, candidate.witness.text)
-        is AttributionCheck.REFUTED_BY_THE_PROBE
-    )
+    clue = _head_formula_clue(row, candidate.witness.text)
     boundary = _boundary_standing(row, candidate.row_index, boundaries)
     segment = _segment_for(candidate, segments)
     # شرطُ النسبة وشرطُ استيفاءِ الحدِّ مفصولان: يكفي الحكمَ أوّلُهما، ويبلغه
-    # بندُ مصالحةٍ لهذا المقطع كما تبلغه شهادةُ حدٍّ للصفّ كلِّه.
-    if not segment_in_row or probe_refutes:
+    # بندُ مصالحةٍ لهذا المقطع كما تبلغه شهادةُ حدٍّ للصفّ كلِّه. وقرينةُ
+    # الترويسة تُعرَض ولا تُسقِط: النقضُ يحتاج مادّةً مُسمّاةً يُنقَل إليها.
+    if not segment_in_row:
         attribution = AttributionCheck.REFUTED_BY_THE_PROBE
-    elif segment is not None and segment.decision is (
-        SegmentDecision.FOREIGN_TO_THIS_MATERIAL
-    ):
+    elif segment is not None and segment.is_refuted:
         attribution = AttributionCheck.REFUTED_BY_THE_PROBE
     elif segment is not None and segment.is_established:
         attribution = AttributionCheck.VERIFIED_BY_A_DEPOSITED_WITNESS
@@ -1409,11 +1625,11 @@ def verify(
     if not segment_in_row:
         unmet.append("وقوعُ المقطع: الإزاحتان لا تُخرِجان هذا النصَّ من الصفّ")
         genus = genus or SuspensionGenus.COUNTER_EVIDENCE
-    elif probe_refutes:
-        unmet.append("صحّةُ النسبة: مِسبارُ تسمية الحروف ينقض نسبةَ المقطع")
-        genus = genus or SuspensionGenus.COUNTER_EVIDENCE
     elif attribution is AttributionCheck.REFUTED_BY_THE_PROBE:
-        unmet.append("صحّةُ النسبة: بندُ مصالحةٍ مودَعٌ يقول إنّ المقطعَ من مادّةٍ أخرى")
+        unmet.append(
+            "صحّةُ النسبة: بندُ مصالحةٍ مودَعٌ يَنقُل المقطعَ إلى مادّةٍ أخرى "
+            "بطريقٍ حاسمٍ مُسمًّى، لا بغيابِ حرفٍ من الجذر"
+        )
         genus = genus or SuspensionGenus.COUNTER_EVIDENCE
     elif attribution is AttributionCheck.NOT_DETERMINED:
         unmet.append(
@@ -1440,7 +1656,7 @@ def verify(
         segment=segment,
         source_integrity=source_integrity,
         segment_in_row=segment_in_row,
-        probe_refutes_the_row=probe_refutes,
+        head_formula_clue=clue,
         boundary=boundary,
         attribution=attribution,
         textual_match=textual_match,
@@ -1461,27 +1677,71 @@ def verify(
 # --- السلسلةُ وبلوغُها ---------------------------------------------------------
 
 
+def _readings_for(
+    root: Path | None,
+    *,
+    links: tuple[LinkCandidate, ...],
+    reviews: tuple[ReviewAttestation, ...],
+    boundaries: tuple[BoundaryAttestation, ...],
+    segments: tuple[SegmentAttribution, ...],
+    determinations: tuple[CounterClaimDetermination, ...],
+) -> tuple[VerificationReading, ...]:
+    """فحصُ مرشَّحي المحاور والروابطِ المودَعة معًا، في مرورٍ واحدٍ لا مرورين.
+
+    فالآلةُ واحدةٌ: الربطُ المستخرَجُ من المتن يدخل من البابِ الذي يدخل منه
+    مرشَّحُ `semantic_axes`، ويُفحَص بفحوصه، ويُعلَّق بأسبابه. وما يُحفَظ
+    بينهما فرقُ **المصدر** (`meaning_field`) لا فرقُ المعاملة.
+    """
+
+    return tuple(
+        verify(
+            candidate,
+            root=root,
+            reviews=reviews,
+            boundaries=boundaries,
+            segments=segments,
+            determinations=determinations,
+        )
+        for candidate in link_candidates(root) + links
+    )
+
+
+def is_text_derived(candidate: LinkCandidate) -> bool:
+    """أمُستخرَجٌ معناه من متن المادّة أم منقولٌ من حقل المحاور؟
+
+    والفرقُ محفوظٌ لأنّه فرقٌ في الحجّة: حقلُ `semantic_axes` تلخيصُ ناقلٍ
+    قد يخالف المتن، والمتنُ شاهدٌ يُقابَل بإزاحتيه. فلا يُجمَعان في عدٍّ
+    واحدٍ بلا تمييز.
+    """
+
+    return candidate.meaning_field == "body_text"
+
+
 def chain_reach(
     root: Path | None = None,
     *,
+    links: tuple[LinkCandidate, ...] = (),
     reviews: tuple[ReviewAttestation, ...] = (),
     boundaries: tuple[BoundaryAttestation, ...] = (),
+    segments: tuple[SegmentAttribution, ...] = (),
     determinations: tuple[CounterClaimDetermination, ...] = (),
 ) -> tuple[tuple[LinkChainRung, bool, str], ...]:
     """أيُّ الوصلات بلغتها الآلةُ فعلًا، وبأيّ شرط؛ ولا تُدَّعى وصلةٌ لم تُنفَّذ."""
 
     source = _source_reference(root)
-    candidates = link_candidates(root)
-    admitted = sum(
+    readings = _readings_for(
+        root,
+        links=links,
+        reviews=reviews,
+        boundaries=boundaries,
+        segments=segments,
+        determinations=determinations,
+    )
+    admitted = sum(1 for reading in readings if reading.is_admitted)
+    admitted_from_text = sum(
         1
-        for candidate in candidates
-        if verify(
-            candidate,
-            root=root,
-            reviews=reviews,
-            boundaries=boundaries,
-            determinations=determinations,
-        ).is_admitted
+        for reading in readings
+        if reading.is_admitted and is_text_derived(reading.candidate)
     )
     verified_rows = sum(
         1
@@ -1506,7 +1766,10 @@ def chain_reach(
         (
             LinkChainRung.EXTRACTED_MEANING,
             admitted > 0,
-            f"المعنى المستخرَجُ يبلغ بالاعتماد وحدَه؛ والمعتمَدُ الآن {admitted}",
+            "المعنى المستخرَجُ يبلغ بالاعتماد وحدَه؛ والمعتمَدُ الآن "
+            f"{admitted}، منها {admitted_from_text} مستخرَجٌ من المتن "
+            f"و{admitted - admitted_from_text} منقولٌ من حقل المحاور؛ "
+            f"({ONE_ADMITTED_LINK_IS_NOT_THE_ADMISSION_OF_A_DALS_MEANINGS})",
         ),
         (
             LinkChainRung.LAFZ,
@@ -1534,7 +1797,12 @@ class DalProcessing(Enum):
 
 @dataclass(frozen=True, slots=True)
 class DalReading:
-    """سطرُ دالٍّ محفوظٌ كاملًا: محاورُه، ومرشَّحوه، وحدُّه، وخلافُ عدده."""
+    """سطرُ دالٍّ محفوظٌ كاملًا: مرشَّحاتُه، ومعتمَدُه، ومعلَّقُه، وحدودُ تغطيته.
+
+    والمقداران محفوظان معًا عمدًا: الربطُ المعتمَدُ لا يمحو مرشَّحًا معلَّقًا،
+    والمعلَّقُ لا يمحو المعتمَد
+    (`ONE_ADMITTED_LINK_IS_NOT_THE_ADMISSION_OF_A_DALS_MEANINGS`).
+    """
 
     root_display: str
     material_key: str
@@ -1547,26 +1815,68 @@ class DalReading:
     processing: DalProcessing
     refusal: RefusalStanding
     suspension_genera: tuple[SuspensionGenus, ...]
+    axis_candidates: int = 0
+    axis_admitted: int = 0
+    text_links: int = 0
+    text_links_admitted: int = 0
+    text_links_suspended: int = 0
+    distinct_meanings: int = 0
+    distinct_meanings_admitted: int = 0
+    attestations: int = 0
+    coverage_limit: str = ""
+
+
+def _coverage_limit(
+    *,
+    declared_axes: int,
+    distinct_meanings: int,
+    admitted_meanings: int,
+    boundary: BoundaryStanding,
+) -> str:
+    """حدُّ تغطيةِ دالٍّ مكتوبًا بأعداده، لا تقديرًا ولا تعميمًا.
+
+    ويُكتَب ولو كان المعتمَدُ صفرًا أو كاملًا: السطرُ يُقرأ وحدَه، فلا
+    يُستعار حدُّه من عدٍّ في سطرٍ آخر.
+    """
+
+    if admitted_meanings == 0:
+        covered = "لا معنى من معانيه معتمَدٌ بعد"
+    elif admitted_meanings < distinct_meanings:
+        covered = (
+            f"المعتمَدُ {admitted_meanings} من {distinct_meanings} معنًى مميَّزًا "
+            "في هذا السجلّ، وما عداه معلَّقٌ بسببه لا مرفوض"
+        )
+    else:
+        covered = f"اعتُمِدت معانيه المميَّزةُ في هذا السجلّ كلُّها ({admitted_meanings})"
+    extent = (
+        "وحدُّ المادّة محقَّقٌ بشهادةٍ"
+        if boundary is BoundaryStanding.VERIFIED_BY_A_DEPOSITED_WITNESS
+        else "وحدُّ المادّة غيرُ محقَّق، فلا يُدَّعى أنّ هذا السجلَّ استوفى متنَها"
+    )
+    return (
+        f"{covered}؛ وحقلُ المحاور يُعلِن {declared_axes}، وهو تصريحُ ناقلٍ لا "
+        f"حصرٌ للمعاني. {extent}."
+    )
 
 
 def dal_readings(
     root: Path | None = None,
     *,
+    links: tuple[LinkCandidate, ...] = (),
     reviews: tuple[ReviewAttestation, ...] = (),
     boundaries: tuple[BoundaryAttestation, ...] = (),
+    segments: tuple[SegmentAttribution, ...] = (),
     determinations: tuple[CounterClaimDetermination, ...] = (),
 ) -> tuple[DalReading, ...]:
     """الدوالُّ العشرون كلُّهم، بما فيهم الفارغُ والمشتبه؛ ولا يُطوى صفٌّ متعذِّر."""
 
-    verifications = tuple(
-        verify(
-            candidate,
-            root=root,
-            reviews=reviews,
-            boundaries=boundaries,
-            determinations=determinations,
-        )
-        for candidate in link_candidates(root)
+    verifications = _readings_for(
+        root,
+        links=links,
+        reviews=reviews,
+        boundaries=boundaries,
+        segments=segments,
+        determinations=determinations,
     )
     by_row: dict[int, list[VerificationReading]] = {}
     for reading in verifications:
@@ -1583,6 +1893,25 @@ def dal_readings(
             ]
         )
         admitted = sum(1 for reading in mine if reading.is_admitted)
+        material_key = f"{row['root_full']}:{row['entry_num']}"
+        from_text = tuple(
+            reading for reading in mine if is_text_derived(reading.candidate)
+        )
+        from_axes = tuple(
+            reading for reading in mine if not is_text_derived(reading.candidate)
+        )
+        meanings = {
+            meaning_identity(material_key, reading.candidate.candidate_meaning)
+            for reading in mine
+        }
+        meanings_admitted = {
+            meaning_identity(material_key, reading.candidate.candidate_meaning)
+            for reading in mine
+            if reading.is_admitted
+        }
+        attestations = sum(
+            1 for attestation in reviews if attestation.material_key == material_key
+        )
         boundary = _boundary_standing(row, index, boundaries)
         standing = weigh_declared_axes_count(row)
         body = _nfc(row["body_text"])
@@ -1626,6 +1955,24 @@ def dal_readings(
                         else (SuspensionGenus.ABSENT_EVIDENCE,)
                     )
                 ),
+                axis_candidates=len(from_axes),
+                axis_admitted=sum(1 for reading in from_axes if reading.is_admitted),
+                text_links=len(from_text),
+                text_links_admitted=sum(
+                    1 for reading in from_text if reading.is_admitted
+                ),
+                text_links_suspended=sum(
+                    1 for reading in from_text if not reading.is_admitted
+                ),
+                distinct_meanings=len(meanings),
+                distinct_meanings_admitted=len(meanings_admitted),
+                attestations=attestations,
+                coverage_limit=_coverage_limit(
+                    declared_axes=declared_axes,
+                    distinct_meanings=len(meanings),
+                    admitted_meanings=len(meanings_admitted),
+                    boundary=boundary,
+                ),
             )
         )
     return tuple(readings)
@@ -1643,36 +1990,41 @@ class ProvenanceShares:
 def provenance_shares(
     root: Path | None = None,
     *,
+    links: tuple[LinkCandidate, ...] = (),
     reviews: tuple[ReviewAttestation, ...] = (),
     boundaries: tuple[BoundaryAttestation, ...] = (),
+    segments: tuple[SegmentAttribution, ...] = (),
     determinations: tuple[CounterClaimDetermination, ...] = (),
 ) -> ProvenanceShares:
-    """النسبُ الثلاثُ معدودةً؛ ولا يُدَّعى توليدُ معنًى من الـ١١٦ ههنا."""
+    """النسبُ الثلاثُ معدودةً؛ ولا يُدَّعى توليدُ معنًى من الـ١١٦ ههنا.
+
+    و«المنقولُ من الرصيد» مرشَّحاتُ `semantic_axes` وحدَها: الربطُ
+    المستخرَجُ من المتن ليس نقلًا عن تلخيصِ ناقلٍ، فلا يُعَدّ معه.
+    """
 
     candidates = link_candidates(root)
-    admitted = sum(
-        1
-        for candidate in candidates
-        if verify(
-            candidate,
-            root=root,
-            reviews=reviews,
-            boundaries=boundaries,
-            determinations=determinations,
-        ).is_admitted
+    readings = _readings_for(
+        root,
+        links=links,
+        reviews=reviews,
+        boundaries=boundaries,
+        segments=segments,
+        determinations=determinations,
     )
     return ProvenanceShares(
         generated_from_structure=0,
         transported_from_stock=len(candidates),
-        established_by_linking=admitted,
+        established_by_linking=sum(1 for reading in readings if reading.is_admitted),
     )
 
 
 def candidate_counts(
     root: Path | None = None,
     *,
+    links: tuple[LinkCandidate, ...] = (),
     reviews: tuple[ReviewAttestation, ...] = (),
     boundaries: tuple[BoundaryAttestation, ...] = (),
+    segments: tuple[SegmentAttribution, ...] = (),
     determinations: tuple[CounterClaimDetermination, ...] = (),
 ) -> dict[str, int]:
     """الأعدادُ بوحداتٍ منفصلة؛ ولا يُجمَع دالٌّ إلى محورٍ ولا محورٌ إلى مرشَّح.
@@ -1683,26 +2035,53 @@ def candidate_counts(
 
     readings = dal_readings(
         root,
+        links=links,
         reviews=reviews,
         boundaries=boundaries,
+        segments=segments,
         determinations=determinations,
     )
-    verifications = tuple(
-        verify(
-            candidate,
-            root=root,
-            reviews=reviews,
-            boundaries=boundaries,
-            determinations=determinations,
-        )
-        for candidate in link_candidates(root)
+    verifications = _readings_for(
+        root,
+        links=links,
+        reviews=reviews,
+        boundaries=boundaries,
+        segments=segments,
+        determinations=determinations,
+    )
+    from_text = tuple(
+        reading for reading in verifications if is_text_derived(reading.candidate)
     )
     return {
         "دوال": len(readings),
         "محاور_مكتوبة": sum(reading.declared_axes for reading in readings),
         "مرشحات": len(verifications),
+        "مرشحات_من_حقل_المحاور": len(verifications) - len(from_text),
+        "روابط_من_المتن": len(from_text),
         "معتمدون": sum(1 for reading in verifications if reading.is_admitted),
+        "معتمدون_من_المتن": sum(1 for reading in from_text if reading.is_admitted),
         "معلقون": sum(1 for reading in verifications if not reading.is_admitted),
+        "معانٍ_مميزة": len(
+            {
+                meaning_identity(
+                    reading.candidate.material_key,
+                    reading.candidate.candidate_meaning,
+                )
+                for reading in verifications
+            }
+        ),
+        "معانٍ_مميزة_معتمدة": len(
+            {
+                meaning_identity(
+                    reading.candidate.material_key,
+                    reading.candidate.candidate_meaning,
+                )
+                for reading in verifications
+                if reading.is_admitted
+            }
+        ),
+        "شهادات_مراجعة_مودعة": len(reviews),
+        "دوال_فيها_رابط_معتمد": sum(1 for reading in readings if reading.admitted > 0),
         "دوال_بلا_مرشح": sum(1 for reading in readings if reading.candidates == 0),
         "دوال_حدها_مرشح_بالكاشف": sum(
             1
@@ -1846,13 +2225,18 @@ def suspension_reason_census(
 def report_rows(
     root: Path | None = None,
     *,
+    links: tuple[LinkCandidate, ...] = (),
     reviews: tuple[ReviewAttestation, ...] = (),
     boundaries: tuple[BoundaryAttestation, ...] = (),
+    segments: tuple[SegmentAttribution, ...] = (),
     determinations: tuple[CounterClaimDetermination, ...] = (),
 ) -> tuple[dict[str, object], ...]:
     """سجلُّ الآلة صفوفًا: مصدرٌ، ووحدةُ مدخلٍ، وسلسلةٌ، ودوالُّ، ومرشَّحون، وعدّ.
 
     وكلُّ صفٍّ يحمل جنسَه في `نوع`، فلا يُقرأ صفُّ مرشَّحٍ معتمَدًا ولا العكس.
+    وهذا **سجلٌّ موحَّد**: الربطُ المستخرَجُ من المتن يُعرَض في السجلّ نفسِه
+    الذي تُعرَض فيه مرشَّحاتُ حقلِ المحاور، موصولًا بمعرّف مادّته ورتبةِ
+    صفّها، مُميَّزًا بـ`مصدر_المعنى` لا مفصولًا في تقريرٍ ثانٍ.
     """
 
     source = _source_reference(root)
@@ -1884,8 +2268,41 @@ def report_rows(
             "بقية": A_ROOT_KEY_DISPLAY_FORM_IS_NOT_A_USED_WORD,
         },
     ]
+    rows.append(
+        {
+            "نوع": "ما_يفحصه_الآلة",
+            "آليّ": list(WHAT_THE_MACHINE_CHECKS),
+            "متّكئ_على_مراجع": list(WHAT_RESTS_ON_A_NAMED_REVIEWER),
+            "بقية": A_DEPOSITED_REVIEW_FIELD_IS_NOT_A_VERIFIED_REVIEW,
+        }
+    )
+    rows.append(
+        {
+            "نوع": "قاعدة_هوية_المعنى",
+            "القاعدة": MEANING_IDENTITY_RULE,
+            "بقية": ONE_ADMITTED_LINK_IS_NOT_THE_ADMISSION_OF_A_DALS_MEANINGS,
+        }
+    )
+    for route, premises in THE_ATTRIBUTION_ROUTES.items():
+        rows.append(
+            {
+                "نوع": "طريق_نسبة",
+                "الطريق": route.value,
+                "قوّة": premises.strength.value,
+                "يحسم": premises.can_settle_an_attribution,
+                "متوفّر": premises.is_available_on_this_deposit,
+                "مقدّمة": premises.premise,
+                "ما_يثبته": premises.establishes,
+                "حدود": list(premises.limits),
+            }
+        )
     for rung, reached, why in chain_reach(
-        root, reviews=reviews, boundaries=boundaries, determinations=determinations
+        root,
+        links=links,
+        reviews=reviews,
+        boundaries=boundaries,
+        segments=segments,
+        determinations=determinations,
     ):
         rows.append(
             {
@@ -1896,7 +2313,12 @@ def report_rows(
             }
         )
     for reading in dal_readings(
-        root, reviews=reviews, boundaries=boundaries, determinations=determinations
+        root,
+        links=links,
+        reviews=reviews,
+        boundaries=boundaries,
+        segments=segments,
+        determinations=determinations,
     ):
         rows.append(
             {
@@ -1912,16 +2334,26 @@ def report_rows(
                 "حال_المعالجة": reading.processing.value,
                 "منزلة_النفي": reading.refusal.value,
                 "أجناس_التعليق": [genus.value for genus in reading.suspension_genera],
+                "مرشحات_من_حقل_المحاور": reading.axis_candidates,
+                "معتمدون_من_حقل_المحاور": reading.axis_admitted,
+                "روابط_من_المتن": reading.text_links,
+                "روابط_معتمدة_من_المتن": reading.text_links_admitted,
+                "روابط_معلقة_من_المتن": reading.text_links_suspended,
+                "معانٍ_مميزة": reading.distinct_meanings,
+                "معانٍ_مميزة_معتمدة": reading.distinct_meanings_admitted,
+                "شهادات_مراجعة": reading.attestations,
+                "حدود_التغطية": reading.coverage_limit,
             }
         )
-    for candidate in link_candidates(root):
-        checked = verify(
-            candidate,
-            root=root,
-            reviews=reviews,
-            boundaries=boundaries,
-            determinations=determinations,
-        )
+    for checked in _readings_for(
+        root,
+        links=links,
+        reviews=reviews,
+        boundaries=boundaries,
+        segments=segments,
+        determinations=determinations,
+    ):
+        candidate = checked.candidate
         rows.append(
             {
                 "نوع": "مرشح",
@@ -1932,6 +2364,16 @@ def report_rows(
                 "وحدة_المدخل": candidate.input_unit.value,
                 "معنى_مرشح": candidate.candidate_meaning,
                 "حقل_الصياغة": candidate.meaning_field,
+                "مصدر_المعنى": (
+                    "متنُ المادّة بإزاحتين"
+                    if is_text_derived(candidate)
+                    else "حقلُ `semantic_axes` منقولًا"
+                ),
+                "هوية_المعنى": list(
+                    meaning_identity(
+                        candidate.material_key, candidate.candidate_meaning
+                    )
+                ),
                 "محور_رقم": candidate.axis_index,
                 "محاور_الصف": candidate.axis_total,
                 "بدائل": list(candidate.alternatives),
@@ -1941,9 +2383,29 @@ def report_rows(
                 "وحدة_الإزاحة": candidate.witness.offset_unit,
                 "مقتطف_عرض": candidate.witness.display_excerpt,
                 "مقطوع_للعرض": candidate.witness.is_truncated_for_display,
+                "بند_المصالحة": (
+                    [checked.segment.start_offset, checked.segment.end_offset]
+                    if checked.segment is not None
+                    else None
+                ),
+                "قرار_البند": (
+                    checked.segment.decision.value
+                    if checked.segment is not None
+                    else None
+                ),
+                "طرق_حاسمة": (
+                    [route.value for route in checked.segment.settling_routes]
+                    if checked.segment is not None
+                    else []
+                ),
+                "قرائن_ترشيح": (
+                    [route.value for route in checked.segment.nominating_routes]
+                    if checked.segment is not None
+                    else []
+                ),
                 "سلامة_المصدر": checked.source_integrity,
                 "وقوع_المقطع_في_الصف": checked.segment_in_row,
-                "المسبار_ينقض_النسبة": checked.probe_refutes_the_row,
+                "قرينة_الترويسة": checked.head_formula_clue.value,
                 "حد_المادة": checked.boundary.value,
                 "صحة_النسبة": checked.attribution.value,
                 "مطابقة_نصية": checked.textual_match.value,
@@ -1968,7 +2430,12 @@ def report_rows(
             }
         )
     shares = provenance_shares(
-        root, reviews=reviews, boundaries=boundaries, determinations=determinations
+        root,
+        links=links,
+        reviews=reviews,
+        boundaries=boundaries,
+        segments=segments,
+        determinations=determinations,
     )
     rows.append(
         {
@@ -1979,6 +2446,13 @@ def report_rows(
             "بقية": A_TRANSPORTED_MEANING_IS_NOT_A_GENERATED_ONE,
         }
     )
-    counts = candidate_counts(root, reviews=reviews)
+    counts = candidate_counts(
+        root,
+        links=links,
+        reviews=reviews,
+        boundaries=boundaries,
+        segments=segments,
+        determinations=determinations,
+    )
     rows.append({"نوع": "عدّ", **counts, "قاعدة_الاعتماد": THE_ADMISSION_RULE})
     return tuple(rows)
