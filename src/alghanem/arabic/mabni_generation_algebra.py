@@ -45,7 +45,12 @@
 مُفردةُ الليف. فالدالّةُ من الكلمة إلى وزنها ليست متباينة، ولا مقلوبَ لها؛
 فلا تُستخرَج من الوزن وحدَه هويّةُ الكلمة، فضلًا عن بابها إعرابًا أو بناءً
 (`A_SHAPE_THAT_CARRIES_SEVEN_HUNDRED_WORDS_SORTS_NOTHING`). وهذا حكمٌ على
-**هذه** البايتات بهذه القوالب، لا على العربيّة.
+**هذه** البايتات بهذه القوالب، لا على العربيّة. وهذه الأعدادُ الأربعةُ
+مُجمَّدةٌ في `THE_WAZN_FIBRES_AT_MEASUREMENT` وتُقابَل بالقرص في الاختبار،
+وتعريفُها — نسخةً ووحدةَ عدٍّ وتطبيعًا وتجزئةً وسياسةَ متعذِّرٍ ونطاقًا — في
+`THE_WAZN_FIBRE_COUNTING_RULE`. و«الوزنُ» فيها **توقيعٌ مقطعيٌّ** لا وزنٌ
+صرفيّ، فلا يُقرأ `CVC·CV·CV` صيغةَ اشتقاق
+(`A_SYLLABLE_TEMPLATE_IS_NOT_A_MORPHOLOGICAL_WAZN`).
 
 **وخامسًا: البناءاتُ الاثنتا عشرة المطلوبةُ لا تُبنى ههنا، وتُسمّى.**
 الحروفُ الوظيفيّةُ والأدواتُ والضمائرُ والمبنيّاتُ والأفعالُ والمشتقّاتُ
@@ -81,6 +86,7 @@ __all__ = [
     "AN_UNEXHAUSTED_RUNG_LICENSES_NOTHING_ABOVE_IT_NOTE",
     "AN_UNSEGMENTED_WORD_IS_CARRIED_IN_THE_DENOMINATOR_NOTE",
     "A_SHAPE_THAT_CARRIES_SEVEN_HUNDRED_WORDS_SORTS_NOTHING_NOTE",
+    "A_SYLLABLE_TEMPLATE_IS_NOT_A_MORPHOLOGICAL_WAZN_NOTE",
     "AN_UNDEPOSITED_MATERIAL_IS_A_NAMED_SUSPENSION_NOT_A_DEFAULT_NOTE",
     "BuildStanding",
     "ExhaustionRung",
@@ -92,6 +98,8 @@ __all__ = [
     "THE_CHEAPEST_FIRST_ORDER",
     "THE_HUNDRED_AND_TWELVE_IS_A_CELL_COUNT_NOT_A_SYLLABLE_COUNT_NOTE",
     "THE_LADDER_AT_MEASUREMENT",
+    "THE_WAZN_FIBRES_AT_MEASUREMENT",
+    "THE_WAZN_FIBRE_COUNTING_RULE",
     "THE_LONG_VOWEL_COUNT",
     "THE_SHORT_VOWELS",
     "THE_TWELVE_REQUESTED_BUILDS",
@@ -130,6 +138,12 @@ AN_UNEXHAUSTED_RUNG_LICENSES_NOTHING_ABOVE_IT_NOTE: Final[str] = (
 A_SHAPE_THAT_CARRIES_SEVEN_HUNDRED_WORDS_SORTS_NOTHING_NOTE: Final[str] = (
     "الدالّةُ من الكلمة إلى وزنها ليست متباينةً على هذه البايتات، فلا مقلوبَ "
     "لها؛ ولا يُستخرَج من الوزن وحدَه بابٌ إعرابًا ولا بناءً."
+)
+
+A_SYLLABLE_TEMPLATE_IS_NOT_A_MORPHOLOGICAL_WAZN_NOTE: Final[str] = (
+    "«الوزنُ» ههنا توقيعٌ مقطعيٌّ من `CV` و`CVC` ونحوِهما، لا وزنٌ صرفيٌّ من "
+    "«فَعَلَ» و«مَفْعُول»؛ فاتّفاقُ العدد لا يُقرأ اتّفاقًا في المفهوم، "
+    "و`CVC·CV·CV` قالبُ مقاطعَ لا صيغةَ اشتقاق."
 )
 
 AN_UNDEPOSITED_MATERIAL_IS_A_NAMED_SUSPENSION_NOT_A_DEFAULT_NOTE: Final[str] = (
@@ -557,6 +571,34 @@ THE_LADDER_AT_MEASUREMENT: Final[Mapping[str, tuple[int, int, int, int]]] = {
 """
 
 
+THE_WAZN_FIBRES_AT_MEASUREMENT: Final[Mapping[str, int | str]] = {
+    "distinct_wazn": 426,
+    "distinct_words": 15054,
+    "heaviest_wazn": "CVC·CV·CV",
+    "heaviest_fibre": 725,
+    "singleton_fibres": 102,
+    "words_read": 78245,
+}
+"""أعدادُ ألياف الوزن وقتَ القياس؛ وهي نفسُها المنقولةُ في نثر هذا الملفّ.
+
+وتُقابَل بالقرص في `tests/arabic/test_mabni_generation_algebra.py`، فإن زاغت
+فُسِّرت الزحزحةُ قبل أن يُبدَّل الرقم؛ ولا يُجمَّد عددٌ لِيَمُرَّ فحصٌ.
+"""
+
+
+THE_WAZN_FIBRE_COUNTING_RULE: Final[str] = (
+    "نسخةُ المدوّنة: `corpora/quran-simple-enhanced.txt` كما يحلُّها "
+    "`quran_corpus_path`. ووحدةُ العدّ: رمزٌ مفصولٌ بفراغٍ فيه حرفٌ عربيٌّ "
+    "واحدٌ على الأقلّ في المدى U+0621–U+064A. والتطبيع: لا تطبيعَ قبل "
+    "التقطيع؛ يُمرَّر الرمزُ كما هو إلى `_read_words`. والتجزئة: تقطيعٌ "
+    "مقطعيٌّ بقوالب `SyllableTemplate` لا تحليلٌ صرفيّ. وسياسةُ المتعذِّر: "
+    "المتعذِّرُ محمولٌ في `words_read` ولا ليفَ له، فلا يدخل "
+    "`distinct_words`. ونطاقُ الحساب: هذه البايتاتُ بهذه القوالب، لا "
+    "العربيّةُ ولا مدوّنةٌ أخرى"
+)
+"""تعريفُ الأعداد قبل حراستها؛ فعددٌ بلا وحدةِ عدٍّ ونطاقٍ لا يُحرَس أصلًا."""
+
+
 MABNI_GENERATION_ALGEBRA_NAMED_RESIDUALS: Final[Mapping[str, str]] = {
     "AN_UNDEPOSITED_MATERIAL_IS_A_NAMED_SUSPENSION_NOT_A_DEFAULT": (
         AN_UNDEPOSITED_MATERIAL_IS_A_NAMED_SUSPENSION_NOT_A_DEFAULT_NOTE
@@ -569,6 +611,9 @@ MABNI_GENERATION_ALGEBRA_NAMED_RESIDUALS: Final[Mapping[str, str]] = {
     ),
     "A_SHAPE_THAT_CARRIES_SEVEN_HUNDRED_WORDS_SORTS_NOTHING": (
         A_SHAPE_THAT_CARRIES_SEVEN_HUNDRED_WORDS_SORTS_NOTHING_NOTE
+    ),
+    "A_SYLLABLE_TEMPLATE_IS_NOT_A_MORPHOLOGICAL_WAZN": (
+        A_SYLLABLE_TEMPLATE_IS_NOT_A_MORPHOLOGICAL_WAZN_NOTE
     ),
     "THE_ATTESTED_CARRIERS_EXCEED_THE_DECLARED_ALPHABET": (
         THE_ATTESTED_CARRIERS_EXCEED_THE_DECLARED_ALPHABET_NOTE

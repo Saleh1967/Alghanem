@@ -148,9 +148,7 @@ A_VERDICT_IS_NOT_ACCEPTED_ON_A_CERTIFICATE_THAT_ONLY_EXISTS: Final[str] = (
     "المنتِجُ لا تُقرَأ تحقُّقًا."
 )
 
-A_LEXICAL_ATTESTATION_IS_NOT_A_FACT_SO_THE_REPORT_IS_WHAT_IS_DEPOSITED: Final[
-    str
-] = (
+A_LEXICAL_ATTESTATION_IS_NOT_A_FACT_SO_THE_REPORT_IS_WHAT_IS_DEPOSITED: Final[str] = (
     "`FactRegister` يرفض إيداعَ قضيّةٍ بشهادةٍ معجميّةٍ لأنّها تُثبِت وضعَ "
     "اللفظ لا وقوعَ واقعة. فوقائعُ الحالات تُودَع هنا **تقاريرَ مقبولة** "
     "تُسمّي شاهدَها النصّيّ في بطاقةٍ بعينها؛ والمُودَعُ أنّ هذا القولَ مقبولٌ "
@@ -365,9 +363,7 @@ class KnowledgeCard:
         if self.start < 0 or self.end <= self.start:
             raise SourceCardError("حدّا المقطع مرتّبان وغيرُ سالبَين.")
         if len(self.excerpt) != self.end - self.start:
-            raise SourceCardError(
-                "طولُ المقطع طولُ مجاله؛ ونصفُ اقتطاعٍ ليس موضعًا."
-            )
+            raise SourceCardError("طولُ المقطع طولُ مجاله؛ ونصفُ اقتطاعٍ ليس موضعًا.")
         if not (self.context_start <= self.start < self.end <= self.context_end):
             raise SourceCardError("سياقُ البطاقة يحيط بمقطعها قبلَه وبعدَه.")
         if not self.interpretation.strip():
@@ -560,12 +556,8 @@ THE_CARDS: Final[tuple[KnowledgeCard, ...]] = (
             "عند دوران اللفظ بين المعنيين فالحملُ على الحقيقة **راجحٌ** لا "
             "متعيّن؛ والمرجوحُ قائمٌ يصحّ الصيرُ إليه بقرينة"
         ),
-        conditions=(
-            "تحقُّقُ الدوران: أن يكون للّفظ وضعٌ أوّلُ ومعنًى مجازيٌّ محتمَلٌ معًا",
-        ),
-        exceptions=(
-            "التعليلُ في النصّ: احتياجُ المجاز إلى الوضع الأوّل والمناسبة والنقل",
-        ),
+        conditions=("تحقُّقُ الدوران: أن يكون للّفظ وضعٌ أوّلُ ومعنًى مجازيٌّ محتمَلٌ معًا",),
+        exceptions=("التعليلُ في النصّ: احتياجُ المجاز إلى الوضع الأوّل والمناسبة والنقل",),
         cross_reference_card_ids=("بطاقة-الأصل-الحقيقة", "بطاقة-ما-لا-يدخله-المجاز"),
         use_limits=(
             "يُستعمَل في ترجيح قراءةٍ عند الدوران",
@@ -718,9 +710,7 @@ def read_cards(
             continue
         measured = text[card.start : card.end]
         context = text[card.context_start : card.context_end]
-        readings.append(
-            CardReading(card, True, measured, card.excerpt in context)
-        )
+        readings.append(CardReading(card, True, measured, card.excerpt in context))
     return tuple(readings)
 
 
@@ -925,8 +915,7 @@ class UsageCase:
             raise SourceCardError("للحالة مُعرِّفٌ وجملةٌ غيرُ فارغَين.")
         if self.word not in self.phrase:
             raise SourceCardError(
-                "اللفظُ المنظورُ فيه واقعٌ في جملة الحالة؛ ولفظٌ خارجَها "
-                "حالةٌ لا تُفحَص."
+                "اللفظُ المنظورُ فيه واقعٌ في جملة الحالة؛ ولفظٌ خارجَها " "حالةٌ لا تُفحَص."
             )
         kinds = [fact.kind for fact in self.facts]
         if len(kinds) != len(set(kinds)):
@@ -1028,9 +1017,7 @@ THE_CASES: Final[tuple[UsageCase, ...]] = (
         case_id="سال-الوادي",
         phrase="سال الوادي",
         word="الوادي",
-        provenance=(
-            "جملةٌ يسوقها المؤلِّفُ مثالًا في `بطاقة-علاقة-السببية-القابلية`"
-        ),
+        provenance=("جملةٌ يسوقها المؤلِّفُ مثالًا في `بطاقة-علاقة-السببية-القابلية`"),
         facts=(
             CaseFact(
                 PremiseKind.FIRST_COINAGE,
@@ -1375,14 +1362,11 @@ def apply_to_case(
         )
         bindings.append((kind.value, item.value or "", item.evidence_ref.evidence_id))
         affirmed = item.polarity is Polarity.AFFIRMED
-        conditions.append(
-            (kind.value, "مثبتةٌ بدليل" if affirmed else "منفيّةٌ بدليل")
-        )
+        conditions.append((kind.value, "مثبتةٌ بدليل" if affirmed else "منفيّةٌ بدليل"))
         if kind is PremiseKind.DIVERTING_INDICATION and affirmed:
             blocked = THE_BLOCKERS[0]
             alternatives.append(
-                "الحملُ على المجاز بشرط علاقةٍ من أنواع العرب "
-                "(`بطاقة-شرط-العلاقة`)"
+                "الحملُ على المجاز بشرط علاقةٍ من أنواع العرب " "(`بطاقة-شرط-العلاقة`)"
             )
         if kind is PremiseKind.ADMITS_MAJAZ_BY_ITSELF and not affirmed:
             blocked = THE_BLOCKERS[1]
@@ -1471,9 +1455,7 @@ def apply_to_case(
         blockers_examined=tuple(blockers),
         conclusion_proposition_id=conclusion_id,
         missing_premises=(),
-        alternatives=(
-            "الحملُ على المجاز مرجوحٌ ههنا، ويصير إليه من أقام قرينةً صارفة",
-        ),
+        alternatives=("الحملُ على المجاز مرجوحٌ ههنا، ويصير إليه من أقام قرينةً صارفة",),
         residues=tuple(residues),
         stock_version=updated.version,
     )
@@ -1517,9 +1499,7 @@ def verify_certificate(
         adoption = stock.adoption_of(certificate.rule_versioned_id)
         checked.append(f"حضورُ اعتمادٍ لـ`{certificate.rule_versioned_id}`")
         if not adoption.is_live:
-            breaches.append(
-                f"اعتمادٌ غيرُ حيٍّ للقاعدة `{certificate.rule_versioned_id}`"
-            )
+            breaches.append(f"اعتمادٌ غيرُ حيٍّ للقاعدة `{certificate.rule_versioned_id}`")
         else:
             checked.append("حياةُ الاعتماد عند الفحص")
     except Exception:  # noqa: BLE001
@@ -1534,13 +1514,9 @@ def verify_certificate(
         if item.suspended:
             breaches.append(f"مقدّمةٌ معلَّقةٌ تُحتَجّ بها الشهادة: `{proposition_id}`")
         if item.evidence_ref.evidence_id != evidence_id:
-            breaches.append(
-                f"دليلُ المقدّمة `{proposition_id}` تبدّل عمّا في الشهادة"
-            )
+            breaches.append(f"دليلُ المقدّمة `{proposition_id}` تبدّل عمّا في الشهادة")
         elif (item.value or "") != value:
-            breaches.append(
-                f"مضمونُ المقدّمة `{proposition_id}` تبدّل عمّا في الشهادة"
-            )
+            breaches.append(f"مضمونُ المقدّمة `{proposition_id}` تبدّل عمّا في الشهادة")
         else:
             try:
                 evidence = stock.register.evidence_of(evidence_id)
@@ -1594,8 +1570,8 @@ def verify_certificate(
             checked.append("تسميةُ المقدّمة الناقصة في الشهادة")
     else:
         named = [
-        row for row in certificate.blockers_examined if row[0] == "المانعُ القائم"
-    ]
+            row for row in certificate.blockers_examined if row[0] == "المانعُ القائم"
+        ]
         if not named:
             breaches.append("منعٌ بلا تسميةِ المانع")
         else:
@@ -1903,9 +1879,7 @@ def run_experiment(root: Path | None = None) -> ExperimentTrace:
     conclusion_after_correction = corrected.register.proposition_of(
         sound_certificate.conclusion_proposition_id or ""
     )
-    untouched = corrected.register.proposition_of(
-        "قضية-نص-بطاقة-الدوران-والترجيح"
-    )
+    untouched = corrected.register.proposition_of("قضية-نص-بطاقة-الدوران-والترجيح")
     reapplied, second_certificate = apply_to_case(corrected, sound, attempt=2)
     second_reading = verify_certificate(reapplied, second_certificate)
     steps.append(
@@ -1966,8 +1940,7 @@ def run_experiment(root: Path | None = None) -> ExperimentTrace:
         register=amended.register.amend_evidence(
             _amended(
                 stale_source,
-                " — مراجعةٌ لاحقةٌ بدّلت جوابَها: صارت القرينةُ عندها محتمَلةً "
-                "لا منفيّة",
+                " — مراجعةٌ لاحقةٌ بدّلت جوابَها: صارت القرينةُ عندها محتمَلةً " "لا منفيّة",
             )
         ),
     )
@@ -1987,10 +1960,7 @@ def run_experiment(root: Path | None = None) -> ExperimentTrace:
                 f"{'صمد' if stale_reading.holds else 'خُرِق'}",
                 *(f"الخرق: {breach}" for breach in stale_reading.breaches),
                 f"إعادةُ التطبيق بعد التبدُّل: {fresh_certificate.verdict.value}",
-                *(
-                    f"الناقص: {name}"
-                    for name in fresh_certificate.missing_premises
-                ),
+                *(f"الناقص: {name}" for name in fresh_certificate.missing_premises),
             ),
             stock_content_id=stale.content_id[:16],
         )

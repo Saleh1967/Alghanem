@@ -19,6 +19,8 @@ from alghanem.arabic.mabni_generation_algebra import (
     THE_LONG_VOWEL_COUNT,
     THE_SHORT_VOWELS,
     THE_TWELVE_REQUESTED_BUILDS,
+    THE_WAZN_FIBRE_COUNTING_RULE,
+    THE_WAZN_FIBRES_AT_MEASUREMENT,
     BuildStanding,
     ExhaustionRung,
     LadderReading,
@@ -400,6 +402,67 @@ def test_the_heaviest_wazn_carries_hundreds_of_words_on_the_sealed_corpus() -> N
     assert fibres.heaviest_fibre >= 700
     assert fibres.singleton_fibres < fibres.distinct_wazn
     assert not fibres.is_injective
+
+
+@pytest.mark.skipif(
+    _CORPUS is None,
+    reason="بايتاتُ المدوّنة المختومة غيرُ محلولةٍ في هذه البيئة",
+)
+def test_the_transcribed_wazn_figures_match_what_disk_measures() -> None:
+    """الأعدادُ الأربعةُ المنقولةُ تُقابَل بالقرص؛ وزحزحتُها تُفسَّر لا تُجمَّد."""
+
+    assert _CORPUS is not None
+    assert len(_CORPUS) == THE_WAZN_FIBRES_AT_MEASUREMENT["words_read"]
+    fibres = wazn_fibres(_CORPUS)
+    assert fibres.distinct_wazn == THE_WAZN_FIBRES_AT_MEASUREMENT["distinct_wazn"]
+    assert fibres.distinct_words == THE_WAZN_FIBRES_AT_MEASUREMENT["distinct_words"]
+    assert fibres.heaviest_wazn == THE_WAZN_FIBRES_AT_MEASUREMENT["heaviest_wazn"]
+    assert fibres.heaviest_fibre == THE_WAZN_FIBRES_AT_MEASUREMENT["heaviest_fibre"]
+    assert fibres.singleton_fibres == THE_WAZN_FIBRES_AT_MEASUREMENT["singleton_fibres"]
+
+
+def test_the_prose_carries_the_same_four_figures_it_guards() -> None:
+    """نثرُ الملفّ ونصُّ التجميد مصدرُ قياسٍ واحد، فلا رقمٌ في نثرٍ بلا حارس."""
+
+    from alghanem.arabic import mabni_generation_algebra as module
+
+    prose = module.__doc__ or ""
+    assert "426" in prose
+    assert "15,054" in prose
+    assert "725" in prose
+    assert "مئةٌ واثنتان" in prose
+    assert str(THE_WAZN_FIBRES_AT_MEASUREMENT["distinct_wazn"]) in prose
+    assert str(THE_WAZN_FIBRES_AT_MEASUREMENT["heaviest_fibre"]) in prose
+    assert f"{THE_WAZN_FIBRES_AT_MEASUREMENT['distinct_words']:,}" in prose
+    assert THE_WAZN_FIBRES_AT_MEASUREMENT["singleton_fibres"] == 102
+
+
+def test_the_counting_rule_names_every_term_the_figures_depend_on() -> None:
+    """عددٌ بلا نسخةٍ ووحدةِ عدٍّ وتطبيعٍ وتجزئةٍ وسياسةِ متعذِّرٍ ونطاقٍ لا يُحرَس."""
+
+    rule = THE_WAZN_FIBRE_COUNTING_RULE
+    for term in (
+        "نسخةُ المدوّنة",
+        "وحدةُ العدّ",
+        "التطبيع",
+        "التجزئة",
+        "سياسةُ المتعذِّر",
+        "نطاقُ الحساب",
+    ):
+        assert term in rule
+
+
+def test_a_syllable_template_is_never_read_as_a_morphological_wazn() -> None:
+    """التوقيعُ المقطعيُّ ليس وزنًا صرفيًّا، والباقي يقول ذلك بنصّه لا بنيّته."""
+
+    note = MABNI_GENERATION_ALGEBRA_NAMED_RESIDUALS[
+        "A_SYLLABLE_TEMPLATE_IS_NOT_A_MORPHOLOGICAL_WAZN"
+    ]
+    assert "فَعَلَ" in note
+    assert "CVC·CV·CV" in note
+    heaviest = str(THE_WAZN_FIBRES_AT_MEASUREMENT["heaviest_wazn"])
+    assert "·" in heaviest
+    assert set(heaviest.split("·")) <= {"CV", "CVV", "CVC", "CVVC", "CVCC", "CVVCC"}
 
 
 # ── سادسًا: البواقي المُسمّاة ────────────────────────────────────────────
