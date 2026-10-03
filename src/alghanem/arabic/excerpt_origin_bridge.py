@@ -67,6 +67,7 @@ __all__ = [
     "THE_ADJACENCY_OF_DATASET_LINES_IS_NOT_A_CONTINUOUS_CONTEXT",
     "THE_PRIOR_AUDIT",
     "THE_SEARCH_LIST",
+    "THE_SURFACE_IS_COMPARED_VERBATIM_AND_NEVER_FOLDED_SILENTLY",
     "THE_THIRD_CLAIM_IS_NEVER_DERIVED_FROM_THE_FIRST_TWO",
     "TextSource",
     "UNIQUENESS_IS_RELATIVE_TO_A_DECLARED_SEARCH_LIST",
@@ -86,6 +87,11 @@ __all__ = [
 class ExcerptOriginError(Exception):
     """خطأُ جسرِ المنشأ: يُرفَع ولا يُبتلَع، ويُسمّى سببُه في نصّه."""
 
+
+THE_SURFACE_IS_COMPARED_VERBATIM_AND_NEVER_FOLDED_SILENTLY: Final[str] = (
+    "المصادرُ تُقرأ بلا تطبيع، فالسطحُ يُقابَل بحرفه؛ ومن طوى NFC صامتًا "
+    "أثبت وجودًا لم يكن في البايتات، فالطيُّ يُسمّى ويُرفَع به الخطأ ولا يُجرى"
+)
 
 THE_ADDRESS_WITHOUT_A_SOURCE_IS_NOT_AN_IDENTITY: Final[str] = (
     "عنوانُ سطرٍ وكلمةٍ بلا مصدرٍ مُسمًّى إزاحةٌ لا هويّة: يُحَلّ في كلّ مصدرٍ "
@@ -525,15 +531,20 @@ def origin_readings(
 
     if not phrase:
         raise ExcerptOriginError("عبارةٌ خاليةٌ لا يُبحَث عن منشئها.")
-    if unicodedata.normalize("NFC", phrase) != phrase:
-        raise ExcerptOriginError(
-            "العبارةُ غيرُ مطبَّعةٍ تطبيعَ NFC، والمصادرُ تُقرأ بلا طيّ؛ "
-            "فالمقارنةُ ملتبسةٌ ولا تُجرى."
-        )
     scope = THE_SEARCH_LIST if sources is None else sources
     if not scope:
         raise ExcerptOriginError("قائمةُ بحثٍ خاليةٌ لا يُقاس عليها تفرّد.")
     positions = _occurrences(phrase, root, scope)
+    if not positions:
+        folded = unicodedata.normalize("NFC", phrase)
+        for source in scope:
+            body = unicodedata.normalize("NFC", source_text(source, root))
+            if folded in body:
+                raise ExcerptOriginError(
+                    f"العبارةُ غائبةٌ بحرفها عن [{source.key}] وحاضرةٌ فيه بعد "
+                    "طيّ NFC على الطرفَين؛ والمصادرُ تُقرأ بلا طيّ. "
+                    f"{THE_SURFACE_IS_COMPARED_VERBATIM_AND_NEVER_FOLDED_SILENTLY}"
+                )
     listed = " · ".join(one.key for one in scope)
 
     present = ClaimReading(
