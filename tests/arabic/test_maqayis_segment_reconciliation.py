@@ -21,21 +21,29 @@ from pathlib import Path
 import pytest
 
 from alghanem.arabic.maqayis_link_candidates import (
+    A_DEPOSITED_REVIEW_FIELD_IS_NOT_A_VERIFIED_REVIEW,
+    MAQAYIS_LINK_CANDIDATE_NAMED_RESIDUALS,
     THE_ATTRIBUTION_ROUTES,
+    WHAT_RESTS_ON_A_NAMED_REVIEWER,
+    WHAT_THE_MACHINE_CHECKS,
     AdmissionStanding,
     AttributionCheck,
     AttributionRoute,
     BoundaryStanding,
     MaqayisLinkCandidateError,
     ReviewVerdict,
+    RouteStrength,
     SegmentDecision,
     SemanticSupportCheck,
     SuspensionGenus,
+    TextualMatchCheck,
+    meaning_identity,
     verify,
 )
 from alghanem.arabic.maqayis_root_table_deposit import MaqayisRootTableError
 from alghanem.arabic.maqayis_segment_reconciliation import (
     THE_ABAT_EXTRACTION,
+    THE_ABAT_LEDGER_CUT_AT_313,
     THE_ABAT_MATERIAL_KEY,
     THE_ABAT_ROW_INDEX,
     THE_ABAT_SEGMENTS,
@@ -45,9 +53,11 @@ from alghanem.arabic.maqayis_segment_reconciliation import (
     THE_SESSION_REVIEW_METHOD,
     extracted_candidate,
     extracted_review,
+    radical_tally_clue,
     reconciliation_counts,
     reconciliation_ledger,
     transition_evidence,
+    unsettled_transition_range,
 )
 
 # ── بابُ الحالة الواقعيّة: «أبت» ─────────────────────────────────────────
@@ -93,7 +103,7 @@ def test_the_unsettled_row_boundary_does_not_block_the_attributed_segment() -> N
         for entry in reconciliation_ledger()
         if entry.decision is SegmentDecision.UNRESOLVED
     ]
-    assert len(unresolved) == 2
+    assert len(unresolved) == 3
     assert all(entry.attributed_material is None for entry in unresolved)
 
 
@@ -225,22 +235,26 @@ def test_the_ledger_reproduces_every_entry_from_the_sealed_bytes() -> None:
     assert all(end == spans[i + 1][0] for i, (_, end) in enumerate(spans[:-1]))
 
 
-def test_the_transition_point_is_named_not_merely_the_mixture() -> None:
-    """لا يُكتفى بأنّ الصفَّ مختلط: مجالُ «أبت» مُعيَّنٌ وموضعُ الانتقال مُسمًّى."""
+def test_the_offset_is_exact_while_the_lexical_boundary_stays_a_range() -> None:
+    """الإزاحةُ تُعيد النصَّ حرفًا بحرف، ولا تُخرِج حدَّ المادّة نقطةً.
+
+    و313 قَطعُ سجلٍّ بين بندَين ملتبسَين، لا موضعُ انتقالِ المادّة؛ وموضعُ
+    الانتقال مجالٌ يُشتَقّ من طرفَيه الثابتَين: منتهى المحقَّق ومبتدأُ الأجنبيّ.
+    """
 
     body = _row_body()
-    assert THE_ABAT_TRANSITION_OFFSET == 313
-    before = body[:THE_ABAT_TRANSITION_OFFSET]
-    after = body[THE_ABAT_TRANSITION_OFFSET:]
-    assert before.startswith("الهمزة والباء والتاء أصلٌ واحد")
-    assert after.startswith("وهذا الباب مهملٌ عند الخليل")
-    # والقِسمةُ مقيسةٌ لا مُقدَّرة: ما قبلها خالٍ من الثاء، وما بعدها يحملها.
-    assert transition_evidence() == {
-        "تاءٌ_قبل_الانتقال": 12,
-        "ثاءٌ_قبل_الانتقال": 0,
-        "تاءٌ_بعد_الانتقال": 8,
-        "ثاءٌ_بعد_الانتقال": 8,
+    assert THE_ABAT_LEDGER_CUT_AT_313 == 313
+    assert body[:THE_ABAT_LEDGER_CUT_AT_313].startswith("الهمزة والباء والتاء")
+    assert body[THE_ABAT_LEDGER_CUT_AT_313:].startswith("وهذا الباب مهملٌ")
+    assert unsettled_transition_range() == (49, 358)
+    # وعدُّ الحرفَين يبقى مقيسًا، ولكن باسمه: قرينةُ ترشيحٍ لا حدُّ مادّة.
+    assert radical_tally_clue() == {
+        "تاءٌ_قبل_القطع": 12,
+        "ثاءٌ_قبل_القطع": 0,
+        "تاءٌ_بعد_القطع": 8,
+        "ثاءٌ_بعد_القطع": 8,
     }
+    assert transition_evidence() == radical_tally_clue()
 
 
 def test_the_swallowing_mechanism_is_measured_on_the_whole_file() -> None:
@@ -286,7 +300,10 @@ def test_the_collation_with_the_next_material_is_not_required_of_every_case() ->
     )
     assert AttributionRoute.COLLATION_WITH_THE_NEXT_MATERIAL not in attributed.routes
     assert attributed.is_established
-    assert len(attributed.established_routes) == 2
+    assert attributed.settling_routes == (
+        AttributionRoute.HEAD_FORMULA_NAMES_ITS_OWN_RADICALS,
+    )
+    assert attributed.nominating_routes == ()
 
 
 def test_the_counts_are_separated_by_unit() -> None:
@@ -295,10 +312,10 @@ def test_the_counts_are_separated_by_unit() -> None:
     counts = reconciliation_counts()
     assert counts["صفوف_مصالَحة"] == 1
     assert counts["موادّ_مميَّزة_في_الصفوف"] == 2
-    assert counts["مقاطع"] == 5
+    assert counts["مقاطع"] == 6
     assert counts["مقاطع_ثابتة_النسبة"] == 1
     assert counts["مقاطع_منقوضة_النسبة"] == 2
-    assert counts["مقاطع_ملتبسة"] == 2
+    assert counts["مقاطع_ملتبسة"] == 3
     assert counts["معانٍ_مستخرَجة_من_المتن"] == 1
 
 
@@ -432,3 +449,172 @@ def test_the_original_table_is_never_written_by_this_layer() -> None:
         csv.field_size_limit(10**9)
         header = next(csv.reader(handle))
     assert header[0] == "root_full"
+
+
+# ── بابُ ما يسقط الربطَ وما لا يسقطه ─────────────────────────────────────
+
+
+def test_withdrawing_the_local_witness_suspends_the_link_it_carried() -> None:
+    """الربطُ قائمٌ بشاهده الموضعيّ: إن سُحِب البندُ عُلِّق الربطُ ولم يبقَ.
+
+    وهذا امتحانُ التبعيّة: لو بقي الزوجُ معتمَدًا بعد رفع بنده لكان الاعتمادُ
+    مُستنِدًا إلى شيءٍ آخر لم يُعلَن — عادةٍ، أو وسمِ صفٍّ، أو مطابقةٍ نصّيّة.
+    """
+
+    candidate, review = _case()
+    without = tuple(
+        segment
+        for segment in THE_ABAT_SEGMENTS
+        if segment.decision is not SegmentDecision.ATTRIBUTED_TO_THIS_MATERIAL
+    )
+    reading = verify(candidate, segments=without, reviews=(review,))
+    assert reading.segment is None
+    assert reading.attribution is AttributionCheck.NOT_DETERMINED
+    assert reading.standing is AdmissionStanding.SUSPENDED
+    assert any("صحّةُ النسبة" in note for note in reading.unmet_conditions)
+    # والسقوطُ من النسبة وحدَها: البصمةُ سليمةٌ والمراجعةُ قائمة.
+    assert reading.source_integrity is True
+    assert reading.semantic_support is (
+        SemanticSupportCheck.ESTABLISHED_BY_A_DEPOSITED_REVIEW
+    )
+
+
+def test_an_unrelated_tail_change_does_not_drop_the_link() -> None:
+    """تبدُّلُ ذيلٍ أجنبيٍّ عن الشاهد لا يَمَسُّ شيئًا ممّا يقوم عليه الربط.
+
+    والنسخةُ تُكتَب على القرص معلومةَ الهويّة، ويُقلَب فيها ما بعد 497 — وهو
+    بندٌ ثبتت غُربتُه عن «أبت» — بقلبِ كلمتين متساويتَي البايتات. فالشاهدُ
+    `[0:49)` لا يتحرّك حرفًا، وكذلك بندُه وطريقُه ومراجعتُه ومطابقتُه.
+
+    ويُفصَل ههنا بابان: بوّابةُ الإيداع تُقابِل **الملفَّ كلَّه** ببصمةٍ
+    مُجمَّدة، فتردُّ هذه النسخةَ لأنّها ليست النسخةَ المودَعة — وذاك حكمٌ
+    على النسخة. وأمّا الربطُ فقائمٌ بشاهده، ولا شيءَ فيه تبدّل.
+    """
+
+    import unicodedata
+
+    source = Path("maqayis_by_root_csv_999.csv")
+    before = "وناقة أبثَة.".encode()
+    after = "وناقة ةأبثَ.".encode()
+    assert len(before) == len(after)
+    raw = source.read_bytes()
+    assert raw.count(before) == 1
+    with tempfile.TemporaryDirectory() as temporary:
+        root = Path(temporary) / "tail"
+        root.mkdir()
+        (root / source.name).write_bytes(raw.replace(before, after, 1))
+        # بوّابةُ الإيداع تحكم على الملفّ كلِّه، فتردُّ النسخةَ لا الربط.
+        with pytest.raises(MaqayisRootTableError):
+            extracted_candidate(root)
+        mutated = unicodedata.normalize(
+            "NFC",
+            (root / source.name).read_text(encoding="utf-8"),
+        )
+    # وما يقوم عليه الربطُ لم يتبدّل: النصُّ الحاملُ موجودٌ بحروفه مرّةً واحدة.
+    candidate = extracted_candidate()
+    assert candidate.witness.text.startswith("الهمزة والباء والتاء")
+    assert mutated.count(candidate.witness.text) == 1
+    assert mutated.count("وناقة أبثَة.") == 0
+    reading = verify(
+        candidate, segments=THE_ABAT_SEGMENTS, reviews=(extracted_review(),)
+    )
+    assert reading.standing is AdmissionStanding.ADMITTED
+    assert reading.segment is not None
+    assert reading.segment.end_offset == 49
+
+
+def test_a_foreign_letter_in_an_explanation_does_not_refute_the_attribution() -> None:
+    """ورودُ ثاءٍ في شرح المادّة لا ينقض نسبتَه؛ والنقضُ يحتاج وجهةً مُسمّاة.
+
+    والبندُ [388, 497) فيه ثاءٌ واحدةٌ في «أثارت» من جذر «أثر» داخل بيتٍ
+    مُستشهَدٍ به، ومع ذلك لم يُنقَض: طريقُ عدِّ الحروف نزل قرينةَ ترشيح،
+    فلا يُخرِج قرارًا حاسمًا إثباتًا ولا نقضًا.
+    """
+
+    body = _row_body()
+    verse = body[388:497]
+    assert "ث" in verse
+    segment = next(entry for entry in THE_ABAT_SEGMENTS if entry.start_offset == 388)
+    assert segment.decision is SegmentDecision.UNRESOLVED
+    assert segment.is_refuted is False
+    clue = THE_ATTRIBUTION_ROUTES[
+        AttributionRoute.RADICAL_CONSISTENCY_TO_THE_FIRST_FOREIGN_FORM
+    ]
+    assert clue.strength is RouteStrength.NOMINATING_CLUE
+    assert clue.can_settle_an_attribution is False
+    # ولا يُبنى بندٌ منقوضٌ بهذه القرينة وحدَها أصلًا.
+    with pytest.raises(MaqayisLinkCandidateError):
+        dataclasses.replace(
+            segment,
+            decision=SegmentDecision.FOREIGN_TO_THIS_MATERIAL,
+            routes=(AttributionRoute.RADICAL_CONSISTENCY_TO_THE_FIRST_FOREIGN_FORM,),
+        )
+    # والمنقوضان إنّما نُقِضا بتفسيرِ مُفرَدةٍ تُسمّي جذرَها، لا بعدِّ حرف.
+    for entry in THE_ABAT_SEGMENTS:
+        if entry.decision is SegmentDecision.FOREIGN_TO_THIS_MATERIAL:
+            assert entry.settling_routes == (
+                AttributionRoute.DEFINITIONAL_GLOSS_OF_A_FOREIGN_LEMMA,
+            )
+
+
+# ── بابُ الإسناد مفصولًا عن سلامةِ البصمة ────────────────────────────────
+
+
+def test_an_authentic_witness_with_an_unsupported_meaning_is_refused() -> None:
+    """شاهدٌ أصيلٌ ومعنًى بلا مراجعةٍ: يُعلَّق لانعدام الإسناد لا لعلّةٍ في النسخة.
+
+    والمعنى ههنا مقتطَعٌ من الشاهد نفسِه ومطابقٌ له نصًّا، فالمطابقةُ النصّيّةُ
+    قائمةٌ والبصمةُ سليمةٌ والنسبةُ ثابتة؛ ولا يبلغ الاعتمادَ لأنّ الإسنادَ
+    لا يُقاس (`A_TEXTUAL_MATCH_IS_NOT_A_SEMANTIC_SUPPORT`).
+    """
+
+    candidate = extracted_candidate()
+    other = dataclasses.replace(candidate, candidate_meaning="أصلٌ واحد")
+    assert other.candidate_meaning in other.witness.text
+    reading = verify(other, segments=THE_ABAT_SEGMENTS, reviews=(extracted_review(),))
+    assert reading.source_integrity is True
+    assert reading.attribution is AttributionCheck.VERIFIED_BY_A_DEPOSITED_WITNESS
+    assert reading.textual_match is TextualMatchCheck.MATCHES_VERBATIM
+    assert reading.semantic_support is (
+        SemanticSupportCheck.NOT_ESTABLISHED_WITHOUT_A_REVIEW
+    )
+    assert reading.standing is AdmissionStanding.SUSPENDED
+    assert any("الإسنادُ الدلاليّ" in note for note in reading.unmet_conditions)
+
+
+def test_a_supported_meaning_phrased_otherwise_is_not_matched_by_the_review() -> None:
+    """المراجعةُ تُطابَق بنصِّ المعنى حرفًا بحرف، فصياغةٌ أخرى تسقط من بابها.
+
+    وهذا حدٌّ يُعلَن لا يُغطّى: «الحر وشدته» بلا حركاتٍ هو معنى «الحرّ وشدّته»
+    عند القارئ، وليس هو عند هذه الآلة. فالإسنادُ مربوطٌ بنصّه، والتوسيعُ إلى
+    تطبيعٍ يُغيِّر ما تَشهد به المراجعةُ فلا يُفعَل بلا مراجعةٍ ثانية.
+    """
+
+    candidate = extracted_candidate()
+    restated = dataclasses.replace(candidate, candidate_meaning="الحر وشدته")
+    reading = verify(
+        restated, segments=THE_ABAT_SEGMENTS, reviews=(extracted_review(),)
+    )
+    assert reading.semantic_support is (
+        SemanticSupportCheck.NOT_ESTABLISHED_WITHOUT_A_REVIEW
+    )
+    assert reading.standing is AdmissionStanding.SUSPENDED
+    # ومع ذلك فهما معنًى واحدٌ بمعيار الهويّة المُعلَن، وهذا موضعُ الفرق.
+    assert meaning_identity(
+        candidate.material_key, candidate.candidate_meaning
+    ) == meaning_identity(restated.material_key, restated.candidate_meaning)
+
+
+def test_the_presence_of_review_fields_is_not_their_correctness() -> None:
+    """حقولُ المراجعة تُقاس حضورًا لا صدقًا؛ والمنفِّذُ آليٌّ غيرُ مستقلّ."""
+
+    review = extracted_review()
+    assert review.method.is_human is False
+    assert review.method.is_independent is False
+    assert A_DEPOSITED_REVIEW_FIELD_IS_NOT_A_VERIFIED_REVIEW in (
+        MAQAYIS_LINK_CANDIDATE_NAMED_RESIDUALS.values()
+    )
+    machine = set(WHAT_THE_MACHINE_CHECKS)
+    reviewed = set(WHAT_RESTS_ON_A_NAMED_REVIEWER)
+    assert machine and reviewed
+    assert machine.isdisjoint(reviewed)

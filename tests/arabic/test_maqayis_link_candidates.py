@@ -29,6 +29,7 @@ from alghanem.arabic.maqayis_link_candidates import (
     BoundaryStanding,
     CounterClaimDetermination,
     DalProcessing,
+    HeadFormulaClue,
     InputUnitKind,
     LinkChainRung,
     MaqayisLinkCandidateError,
@@ -255,7 +256,10 @@ def test_the_four_checks_separate_and_none_is_read_as_another() -> None:
     verifications = [verify(candidate) for candidate in link_candidates()]
     assert all(reading.source_integrity for reading in verifications)
     assert all(reading.segment_in_row for reading in verifications)
-    assert all(not reading.probe_refutes_the_row for reading in verifications)
+    assert all(
+        reading.head_formula_clue is not HeadFormulaClue.DOES_NOT_NAME_THEM
+        for reading in verifications
+    )
     # النسبةُ غيرُ معيَّنةٍ في العشرين كلِّهم: لا شهادةَ حدٍّ مودَعةً لأيّ صفّ.
     assert all(
         reading.attribution is AttributionCheck.NOT_DETERMINED
@@ -520,7 +524,7 @@ def test_a_segment_in_a_row_is_not_a_segment_in_a_material() -> None:
     candidate = _verbatim_candidate()
     reading = verify(candidate, reviews=(_review_for(candidate),))
     assert reading.segment_in_row is True
-    assert reading.probe_refutes_the_row is False
+    assert reading.head_formula_clue is HeadFormulaClue.NAMES_EVERY_RADICAL
     assert reading.attribution is AttributionCheck.NOT_DETERMINED
     assert reading.standing is AdmissionStanding.SUSPENDED
     assert any("صحّةُ النسبة" in condition for condition in reading.unmet_conditions)
