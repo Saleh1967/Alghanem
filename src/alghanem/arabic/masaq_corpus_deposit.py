@@ -651,11 +651,7 @@ def _field_rows(data: bytes) -> list[list[str]]:
 def rederive_embedded_newline_records(data: bytes) -> int:
     """السجلّاتُ التي في أحد حقولها فاصلُ سطرٍ داخل اقتباس، ترويسةً وما بعدها."""
 
-    return sum(
-        1
-        for row in _field_rows(data)
-        if any("\n" in field for field in row)
-    )
+    return sum(1 for row in _field_rows(data) if any("\n" in field for field in row))
 
 
 def rederive_embedded_newline_breaks(data: bytes) -> int:
