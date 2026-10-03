@@ -9077,8 +9077,23 @@ python examples/arabic/read_markov_readiness_gate.py
 python examples/arabic/read_quran_word_total_standing.py
 ```
 
-These are the same checks CI runs, in the same order
-([`.github/workflows/ci.yml`](.github/workflows/ci.yml)). The two gates that run
+These are the same checks CI runs, in the same order. The list itself lives in
+one place — [`tools/checks.tsv`](tools/checks.tsv) — and both a local run and
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) drive it through
+`tools/run_checks.sh`, so neither side carries a second copy of the commands:
+
+```bash
+bash tools/run_checks.sh              # all of them, continuing past a failure
+bash tools/run_checks.sh --fail-fast  # stop at the first failure
+bash tools/run_checks.sh --only ruff-check,mypy
+```
+
+Each check gets its own log, exit code and duration under `.check-logs/`
+alongside an `environment.txt` carrying the head SHA, the interpreter and the
+Unicode data version the run was measured on. A check whose declared source is
+missing is recorded `SKIPPED` with the reason and a check never reached is
+recorded `NOT_RUN`; neither is ever read as a pass, and CI passes `--strict` so
+a skip fails the job. The two gates that run
 before `pytest` are not formalities: `tools/regen_all.py --check` re-derives
 every number transcribed into prose and fails on the first drift, and
 `assert_the_gates_hold()` walks the whole tree against the deposit law. Adding a
@@ -9095,6 +9110,7 @@ python -m pip install -e '.[dev]'
 python tools/regen_all.py --check
 python -c "from alghanem.deposit_law import assert_the_gates_hold; assert_the_gates_hold()"
 pytest
+python -m unittest discover -s canonical116 -t . -p 'test_*.py'
 python tools/daleel/build_bab.py
 bash hifz/test_hifz.sh
 ruff check .
