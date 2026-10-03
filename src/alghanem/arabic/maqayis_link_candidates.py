@@ -112,6 +112,15 @@ __all__ = [
     "A_NEGATION_FORM_IS_NOT_A_DETERMINED_COUNTER_CLAIM",
     "A_ROOT_ORIGIN_IS_NOT_THE_MEANING_OF_EVERY_DERIVATIVE",
     "A_SEGMENT_IN_A_ROW_IS_NOT_A_SEGMENT_IN_A_MATERIAL",
+    "A_SEGMENT_ATTRIBUTION_IS_NOT_A_SETTLED_MATERIAL_EXTENT",
+    "AN_UNRESOLVED_SEGMENT_STAYS_SUSPENDED_ON_ITS_OWN",
+    "AN_AGENT_REVIEW_IS_NOT_A_HUMAN_OR_INDEPENDENT_REVIEW",
+    "AttributionRoute",
+    "RoutePremises",
+    "THE_ATTRIBUTION_ROUTES",
+    "SegmentDecision",
+    "SegmentAttribution",
+    "ReviewMethod",
     "A_SYNTHETIC_ADMISSION_DOES_NOT_VALIDATE_THE_REAL_SUSPENSIONS",
     "THE_ONE_MATERIAL_ACTUALLY_REVIEWED",
     "THE_ABAT_BOUNDARY_REVIEW",
@@ -226,6 +235,28 @@ A_SYNTHETIC_ADMISSION_DOES_NOT_VALIDATE_THE_REAL_SUSPENSIONS: Final[str] = (
     "زائدٍ يمنع اعتمادًا مشروعًا؛ وهذه الثلاثةُ تُراجَع على مادّةٍ واقعيّةٍ كاملة"
 )
 
+A_SEGMENT_ATTRIBUTION_IS_NOT_A_SETTLED_MATERIAL_EXTENT: Final[str] = (
+    "A_SEGMENT_ATTRIBUTION_IS_NOT_A_SETTLED_MATERIAL_EXTENT: تحقيقُ نسبةِ "
+    "مقطعٍ بعينه إلى مادّةٍ غيرُ استيفاءِ حدِّ المادّة كلِّها. والحكمُ على "
+    "مقطعٍ لا يحتاج إلّا الأوّل: فمتى ثبت أنّ هذا النصَّ من هذه المادّة جاز "
+    "الحكمُ عليه، وبقي ذيلُ الصفِّ ملتبسًا معلَّقًا بنفسه. وربطُهما يُسقِط "
+    "حكمًا قائمَ الدليل لعلّةٍ في غيره، وهو خلطُ شرطٍ بشرط لا احتياط."
+)
+
+AN_UNRESOLVED_SEGMENT_STAYS_SUSPENDED_ON_ITS_OWN: Final[str] = (
+    "AN_UNRESOLVED_SEGMENT_STAYS_SUSPENDED_ON_ITS_OWN: المقطعُ الذي لم تثبت "
+    "نسبتُه ولم تُنقَض يبقى بندًا ثالثًا مستقلًّا في السجلّ: لا يُنسَب إلى "
+    "مفتاح الصفّ لأنّه وقع فيه، ولا يُطرَح لأنّ جارَه أجنبيّ. ونسبةُ كلِّ "
+    "محتويات الصفِّ إلى مفتاحه هي الخطأُ الذي كشفه ابتلاعُ «أبت» مادّةَ «أبث»."
+)
+
+AN_AGENT_REVIEW_IS_NOT_A_HUMAN_OR_INDEPENDENT_REVIEW: Final[str] = (
+    "AN_AGENT_REVIEW_IS_NOT_A_HUMAN_OR_INDEPENDENT_REVIEW: `ReviewMethod` "
+    "يُصرِّح بمنهج المراجعة وهويّة منفِّذها، ولا تُسمّى مراجعةُ الوكيل بشريّةً "
+    "ولا مستقلّةً. و`SUPPORTS_THE_MEANING` ليس مفتاحًا يكفي قلبُه: مراجعةٌ "
+    "بلا منهجٍ مُصرَّحٍ تُرَدّ عند الإنشاء، فلا تبلغ بابَ الاعتماد أصلًا."
+)
+
 THE_LAFZ_LINK_IS_OUT_OF_THIS_UNITS_SCOPE_NOT_IMPOSSIBLE: Final[str] = (
     "THE_LAFZ_LINK_IS_OUT_OF_THIS_UNITS_SCOPE_NOT_IMPOSSIBLE: اللفظُ "
     "والاستعمالُ خارجَ النطاق المُعلَن لهذه الوحدة، إذ مدخلُها مفاتيحُ موادَّ "
@@ -301,6 +332,15 @@ MAQAYIS_LINK_CANDIDATE_NAMED_RESIDUALS: Final[dict[str, str]] = {
     ),
     "A_SEGMENT_IN_A_ROW_IS_NOT_A_SEGMENT_IN_A_MATERIAL": (
         A_SEGMENT_IN_A_ROW_IS_NOT_A_SEGMENT_IN_A_MATERIAL
+    ),
+    "A_SEGMENT_ATTRIBUTION_IS_NOT_A_SETTLED_MATERIAL_EXTENT": (
+        A_SEGMENT_ATTRIBUTION_IS_NOT_A_SETTLED_MATERIAL_EXTENT
+    ),
+    "AN_UNRESOLVED_SEGMENT_STAYS_SUSPENDED_ON_ITS_OWN": (
+        AN_UNRESOLVED_SEGMENT_STAYS_SUSPENDED_ON_ITS_OWN
+    ),
+    "AN_AGENT_REVIEW_IS_NOT_A_HUMAN_OR_INDEPENDENT_REVIEW": (
+        AN_AGENT_REVIEW_IS_NOT_A_HUMAN_OR_INDEPENDENT_REVIEW
     ),
     "A_HEADER_DETECTOR_PROPOSES_A_BOUNDARY_IT_DOES_NOT_VERIFY": (
         A_HEADER_DETECTOR_PROPOSES_A_BOUNDARY_IT_DOES_NOT_VERIFY
@@ -566,6 +606,172 @@ def _boundary_standing(
     return BoundaryStanding.UNDETERMINED_BY_THE_DETECTOR
 
 
+# --- طرقُ تحقيقِ نسبةِ المقطع -------------------------------------------------
+
+
+class AttributionRoute(Enum):
+    """طرقٌ مسندةٌ تُحقِّق نسبةَ **مقطعٍ** إلى مادّة؛ ولكلٍّ مقدّمةٌ وحدٌّ.
+
+    والمقابلةُ بالمادّة التالية ليست شرطًا لازمًا لكلِّ حالةٍ بالتعريف: هي
+    طريقٌ من طرقٍ تُحقِّق الغرضَ نفسَه — أنّ هذا النصَّ من هذه المادّة — وكلُّ
+    بديلٍ يُوثَّق بمقدّماته وحدوده في `THE_ATTRIBUTION_ROUTES` قبل استعماله.
+    """
+
+    HEAD_FORMULA_NAMES_ITS_OWN_RADICALS = "ترويسةُ المادّة تُسمّي حروفَها بأنفسها"
+    RADICAL_CONSISTENCY_TO_THE_FIRST_FOREIGN_FORM = "اتّساقُ الجذر حتّى أوّل صيغةٍ أجنبيّة"
+    COLLATION_WITH_THE_NEXT_MATERIAL = "المقابلةُ بالمادّة التالية"
+    REFERENCE_COPY_COLLATION = "المقابلةُ بنسخةٍ مرجعيّةٍ معلومةِ الهويّة"
+
+
+@dataclass(frozen=True, slots=True)
+class RoutePremises:
+    """مقدّماتُ طريقٍ وما يُثبِته وحدودُه وحالُ توفّره؛ تُكتَب قبل استعماله."""
+
+    premise: str
+    establishes: str
+    limits: tuple[str, ...]
+    is_available_on_this_deposit: bool
+
+
+THE_ATTRIBUTION_ROUTES: Final[Mapping[AttributionRoute, RoutePremises]] = {
+    AttributionRoute.HEAD_FORMULA_NAMES_ITS_OWN_RADICALS: RoutePremises(
+        premise=(
+            "جرى المؤلِّفُ على افتتاح المادّة بتسمية حروفها: «الهمزة والباء "
+            "والتاء أصلٌ واحد…»، فالمقطعُ يُعرِّف نفسَه بنفسه ولا يُستعار "
+            "تعريفُه من وسمِ الصفّ"
+        ),
+        establishes="أنّ مُفتتَحَ هذا المقطع هو مُفتتَحُ هذه المادّة بعينها",
+        limits=(
+            "يُثبِت المبتدأ ولا يُثبِت المنتهى، فلا يُقرأ حدًّا للمادّة",
+            "لا يقع إلّا حيث كُتبت الترويسةُ فعلًا، وغيابُها ليس نفيًا",
+            "لو اتّفقت ترويستان في حروفهما لم يفصل بينهما هذا الطريق",
+        ),
+        is_available_on_this_deposit=True,
+    ),
+    AttributionRoute.RADICAL_CONSISTENCY_TO_THE_FIRST_FOREIGN_FORM: RoutePremises(
+        premise=(
+            "صيغُ المادّة تحمل حرفَها الثالث؛ فمجالٌ من مُفتتَحِ المقطع إلى "
+            "أوّلِ صيغةٍ تحمل حرفًا ثالثًا مخالفًا مجالٌ لم يدخله نصُّ "
+            "مادّةٍ أخرى بشاهدٍ مقيس"
+        ),
+        establishes="أنّ المجال خالٍ من صيغِ المادّة المجاورة المعلومة حروفُها",
+        limits=(
+            "وكيلٌ سطحيٌّ بالحروف لا تحليلٌ صرفيّ، فلا يُسمّى تحقيقَ اشتقاق",
+            "لا يكشف ابتلاعَ مادّةٍ يوافق حرفُها الثالثُ حرفَ المادّة المضيفة",
+            "الكلمةُ المنقولةُ في الاستشهاد قد تحمل حرفًا أجنبيًّا بلا ابتلاع",
+            "مجالٌ خالٍ من الحرفين معًا لا يُحسَم بهذا الطريق البتّة",
+        ),
+        is_available_on_this_deposit=True,
+    ),
+    AttributionRoute.COLLATION_WITH_THE_NEXT_MATERIAL: RoutePremises(
+        premise="مُفتتَحُ الصفِّ التالي يحدّ منتهى هذا الصفّ إن لم يُبتلَع بينهما",
+        establishes="منتهى المادّة، فهو طريقُ الحدِّ لا طريقُ المقطع",
+        limits=(
+            "يُجيب عن سؤال الحدِّ كلِّه، وهو أوسعُ ممّا يحتاجه الحكمُ على مقطع",
+            "يسقط متى ابتُلعت مادّةٌ كاملةٌ بين الصفَّين، وهو عينُ واقعة «أبت»",
+        ),
+        is_available_on_this_deposit=True,
+    ),
+    AttributionRoute.REFERENCE_COPY_COLLATION: RoutePremises(
+        premise="نسخةٌ ثانيةٌ معلومةُ الهويّة (تحقيقٌ وناشرٌ وسنةٌ وصفحة) تُقابَل بها",
+        establishes="موضعَ الانتقال بشهادةِ ناقلٍ ثانٍ لا بتقديرٍ من النصّ وحدَه",
+        limits=(
+            "لا نسخةَ مرجعيّةً مودَعةً في هذه الشجرة، فالطريقُ غيرُ متوفّر",
+            "ولا يُفترَض تطابقُ النسخ ولا الصفحات؛ تُسجَّل هويّةُ النسخة أوّلًا",
+        ),
+        is_available_on_this_deposit=False,
+    ),
+}
+
+
+class SegmentDecision(Enum):
+    """قرارُ بندٍ في سجلّ المصالحة؛ وثلاثةٌ لا اثنان، فالالتباسُ بندٌ لا سكوت."""
+
+    ATTRIBUTED_TO_THIS_MATERIAL = "نسبتُه إلى هذه المادّة محقَّقةٌ بطريقٍ مُعلَن"
+    FOREIGN_TO_THIS_MATERIAL = "نسبتُه إلى هذه المادّة منقوضة: نصُّ مادّةٍ أخرى"
+    UNRESOLVED = "لم تثبت نسبتُه ولم تُنقَض: بندٌ معلَّقٌ مستقلٌّ بنفسه"
+
+
+@dataclass(frozen=True, slots=True)
+class SegmentAttribution:
+    """شهادةُ نسبةٍ لمقطعٍ بإزاحتيه، لا لصفٍّ كامل ولا لمادّةٍ مستوفاة.
+
+    وهذه هي الشهادةُ التي يحتاجها الحكمُ على مقطعٍ فعلًا
+    (`A_SEGMENT_ATTRIBUTION_IS_NOT_A_SETTLED_MATERIAL_EXTENT`): لا تدّعي أين
+    تنتهي المادّة، ولا يُسقِطها بقاءُ ذيلِ الصفِّ ملتبسًا.
+    """
+
+    material_key: str
+    row_index: int
+    start_offset: int
+    end_offset: int
+    offset_unit: str
+    quoted_head: str
+    quoted_tail: str
+    routes: tuple[AttributionRoute, ...]
+    decision: SegmentDecision
+    collation_source: str
+    reviewer: str
+    method: str
+    statement: str
+
+    def __post_init__(self) -> None:
+        if self.start_offset < 0 or self.end_offset <= self.start_offset:
+            raise MaqayisLinkCandidateError("إزاحتا المقطع مجالٌ غيرُ خالٍ وغيرُ سالب.")
+        if not isinstance(self.decision, SegmentDecision):
+            raise MaqayisLinkCandidateError("قرارُ المقطع عضوٌ من `SegmentDecision`.")
+        for name in ("offset_unit", "reviewer", "method", "statement"):
+            if not str(getattr(self, name)).strip():
+                raise MaqayisLinkCandidateError(
+                    "بندُ المصالحة بوحدةِ إزاحةٍ ومراجعٍ ومنهجٍ وبيانٍ، وناقصُه يُرَدّ."
+                )
+        if self.decision is SegmentDecision.ATTRIBUTED_TO_THIS_MATERIAL and not (
+            self.routes
+        ):
+            raise MaqayisLinkCandidateError("نسبةٌ محقَّقةٌ بلا طريقٍ مُعلَنٍ تُرَدّ.")
+
+    @property
+    def established_routes(self) -> tuple[AttributionRoute, ...]:
+        """الطرقُ المتوفّرةُ فعلًا على هذا المودَع؛ وغيرُ المتوفّر لا يُحتَجّ به."""
+
+        return tuple(
+            route
+            for route in self.routes
+            if THE_ATTRIBUTION_ROUTES[route].is_available_on_this_deposit
+        )
+
+    @property
+    def is_established(self) -> bool:
+        """أثبتت نسبةُ هذا المقطع بطريقٍ متوفّرٍ مُعلَنِ المقدّمات والحدود؟"""
+
+        return bool(
+            self.decision is SegmentDecision.ATTRIBUTED_TO_THIS_MATERIAL
+            and self.established_routes
+        )
+
+    def covers(self, start: int, end: int) -> bool:
+        """أيقع مجالُ الشاهد داخلَ هذا البند كلَّه؟ والتداخلُ الجزئيّ لا يكفي."""
+
+        return self.start_offset <= start and end <= self.end_offset
+
+
+def _segment_for(
+    candidate: LinkCandidate, segments: tuple[SegmentAttribution, ...]
+) -> SegmentAttribution | None:
+    """بندُ المصالحة الذي يَسَع شاهدَ هذا المرشَّح في مادّته وصفّه، إن وُجد."""
+
+    for segment in segments:
+        if (
+            segment.material_key == candidate.material_key
+            and segment.row_index == candidate.row_index
+            and segment.covers(
+                candidate.witness.start_offset, candidate.witness.end_offset
+            )
+        ):
+            return segment
+    return None
+
+
 # --- الشهاداتُ الثلاث ---------------------------------------------------------
 
 
@@ -801,6 +1007,42 @@ class ReviewVerdict(Enum):
 
 
 @dataclass(frozen=True, slots=True)
+class ReviewMethod:
+    """منهجُ المراجعة وهويّةُ منفِّذها، مُصرَّحًا بهما لا مفهومَين ضمنًا.
+
+    و`is_human` و`is_independent` حقلان يُصرَّح بهما ولا يُستنتَجان من اسم
+    المراجع؛ ومراجعةُ الوكيل تُسجَّل بما هي: آليّةٌ غيرُ مستقلّة، تُقرأ
+    إجراءً موثَّقًا قابلًا للنقض، لا شهادةَ عالمٍ
+    (`AN_AGENT_REVIEW_IS_NOT_A_HUMAN_OR_INDEPENDENT_REVIEW`).
+    """
+
+    performed_by: str
+    is_human: bool
+    is_independent: bool
+    procedure: str
+    materials_consulted: tuple[str, ...]
+
+    def __post_init__(self) -> None:
+        for name in ("performed_by", "procedure"):
+            if not str(getattr(self, name)).strip():
+                raise MaqayisLinkCandidateError(
+                    "منهجُ المراجعة بمنفِّذٍ وإجراءٍ مُصرَّحَين، وناقصُه يُرَدّ."
+                )
+        if not self.materials_consulted:
+            raise MaqayisLinkCandidateError("مراجعةٌ لا تُسمّي ما نظرت فيه تُرَدّ.")
+
+    @property
+    def standing(self) -> str:
+        """وصفُ المراجعة بما هي؛ يُعرَض مع كلِّ اعتمادٍ تستند إليه."""
+
+        if self.is_human and self.is_independent:
+            return "مراجعةٌ بشريّةٌ مستقلّة"
+        if self.is_human:
+            return "مراجعةٌ بشريّةٌ غيرُ مستقلّة"
+        return "مراجعةٌ آليّةٌ غيرُ مستقلّة: إجراءٌ موثَّقٌ لا شهادةُ عالم"
+
+
+@dataclass(frozen=True, slots=True)
 class ReviewAttestation:
     """مراجعةٌ مودَعةٌ لمادّةٍ بعينها ومعنًى بنصّه؛ لا إذنَ عامٌّ ولا إذنُ ملفّ.
 
@@ -813,24 +1055,45 @@ class ReviewAttestation:
     witness_text: str
     reviewer: str
     statement: str
+    method: ReviewMethod
     verdict: ReviewVerdict = ReviewVerdict.SUPPORTS_THE_MEANING
+    mode_of_support: str = ""
+    qualifications: tuple[str, ...] = ()
+    generalisation_limits: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not isinstance(self.verdict, ReviewVerdict):
             raise MaqayisLinkCandidateError("جهةُ المراجعة عضوٌ من `ReviewVerdict`.")
+        if not isinstance(self.method, ReviewMethod):
+            raise MaqayisLinkCandidateError(
+                "المراجعةُ بمنهجٍ مُصرَّحٍ (`ReviewMethod`)؛ ولا يُقلَب مفتاحُ "
+                "الجهة بلا بيانِ المنهج ومنفِّذه."
+            )
         for name in ("material_key", "candidate_meaning", "witness_text", "reviewer"):
             if not str(getattr(self, name)).strip():
                 raise MaqayisLinkCandidateError(
                     "المراجعةُ المودَعةُ بمادّةٍ ومعنًى وشاهدٍ ومراجعٍ، وناقصُها يُرفَض."
                 )
+        if self.verdict is ReviewVerdict.SUPPORTS_THE_MEANING and not (
+            self.mode_of_support.strip()
+        ):
+            raise MaqayisLinkCandidateError(
+                "مراجعةٌ مُسنِدةٌ بلا بيانِ وجهِ الإسناد تُرَدّ عند الإنشاء."
+            )
 
 
 THE_ADMISSION_RULE: Final[str] = (
     "يُعتمَد الربطُ إذا اجتمعت أربعٌ: بصمةُ النسخة مطابقةٌ عند القراءة، "
     "والمقطعُ واقعٌ بإزاحتيه في حقل الصفّ، ومِسبارُ تسمية الحروف لم ينقض "
-    "نسبتَه، ونسبتُه إلى المادّة محقَّقةٌ بشهادةِ حدٍّ مودَعةٍ فُحِص فيها "
-    "المنتهى والترويساتُ الداخليّةُ والمقابلةُ بالتالي، ومعها مراجعةٌ مودَعةٌ "
+    "نسبتَه، ونسبتُه إلى المادّة محقَّقةٌ — **إمّا** بشهادةِ نسبةٍ لهذا "
+    "المقطع بإزاحتيه بطريقٍ متوفّرٍ من `THE_ATTRIBUTION_ROUTES`، **وإمّا** "
+    "بشهادةِ حدٍّ للصفِّ كلِّه فُحِص فيها المنتهى والترويساتُ الداخليّةُ "
+    "والمقابلةُ بالتالي — ومعها مراجعةٌ مودَعةٌ موثَّقةُ المنهج والمنفِّذ "
     "لهذه المادّة وهذا المعنى وهذا الشاهد تقول `SUPPORTS_THE_MEANING`. "
+    "**واستيفاءُ حدِّ المادّة كلِّها ليس شرطًا للحكم على مقطعٍ منها**: الحكمُ "
+    "يحتاج نسبةَ مقطعه لا غير، وبقاءُ ذيلِ الصفِّ ملتبسًا يبقى بندًا معلَّقًا "
+    "مستقلًّا ولا يُسقِط حكمًا قام دليلُه "
+    "(`A_SEGMENT_ATTRIBUTION_IS_NOT_A_SETTLED_MATERIAL_EXTENT`). "
     "**والمطابقةُ النصّيّةُ ليست شرطًا ولا مانعًا**: تُقاس وتُعرَض، ولا تُرفَع "
     "إسنادًا، ولا يُقرأ غيابُها نفيًا له. وتخلُّفُ شرطٍ يُعلِّق هذا المرشَّحَ "
     "وحدَه بجنسِ سببه، ولا يُعلِّق غيرَه ولا يَرفُضه"
@@ -851,6 +1114,7 @@ class VerificationReading:
     """
 
     candidate: LinkCandidate
+    segment: SegmentAttribution | None
     source_integrity: bool
     segment_in_row: bool
     probe_refutes_the_row: bool
@@ -1067,6 +1331,7 @@ def verify(
     root: Path | None = None,
     reviews: tuple[ReviewAttestation, ...] = (),
     boundaries: tuple[BoundaryAttestation, ...] = (),
+    segments: tuple[SegmentAttribution, ...] = (),
     determinations: tuple[CounterClaimDetermination, ...] = (),
 ) -> VerificationReading:
     """افحص مرشَّحًا بفحوصٍ مفصولةٍ بما يُثبِته كلٌّ منها، وأخرِج حالَه وسببَه.
@@ -1095,8 +1360,17 @@ def verify(
         is AttributionCheck.REFUTED_BY_THE_PROBE
     )
     boundary = _boundary_standing(row, candidate.row_index, boundaries)
+    segment = _segment_for(candidate, segments)
+    # شرطُ النسبة وشرطُ استيفاءِ الحدِّ مفصولان: يكفي الحكمَ أوّلُهما، ويبلغه
+    # بندُ مصالحةٍ لهذا المقطع كما تبلغه شهادةُ حدٍّ للصفّ كلِّه.
     if not segment_in_row or probe_refutes:
         attribution = AttributionCheck.REFUTED_BY_THE_PROBE
+    elif segment is not None and segment.decision is (
+        SegmentDecision.FOREIGN_TO_THIS_MATERIAL
+    ):
+        attribution = AttributionCheck.REFUTED_BY_THE_PROBE
+    elif segment is not None and segment.is_established:
+        attribution = AttributionCheck.VERIFIED_BY_A_DEPOSITED_WITNESS
     elif boundary is BoundaryStanding.VERIFIED_BY_A_DEPOSITED_WITNESS:
         attribution = AttributionCheck.VERIFIED_BY_A_DEPOSITED_WITNESS
     else:
@@ -1138,10 +1412,13 @@ def verify(
     elif probe_refutes:
         unmet.append("صحّةُ النسبة: مِسبارُ تسمية الحروف ينقض نسبةَ المقطع")
         genus = genus or SuspensionGenus.COUNTER_EVIDENCE
+    elif attribution is AttributionCheck.REFUTED_BY_THE_PROBE:
+        unmet.append("صحّةُ النسبة: بندُ مصالحةٍ مودَعٌ يقول إنّ المقطعَ من مادّةٍ أخرى")
+        genus = genus or SuspensionGenus.COUNTER_EVIDENCE
     elif attribution is AttributionCheck.NOT_DETERMINED:
         unmet.append(
-            "صحّةُ النسبة: الصفُّ موسومٌ بالمفتاح ولا شهادةَ حدٍّ مودَعةٍ تُحقِّق "
-            "تبعيّةَ المقطع لهذه المادّة"
+            "صحّةُ النسبة: الصفُّ موسومٌ بالمفتاح ولا بندَ مصالحةٍ لهذا المقطع "
+            "ولا شهادةَ حدٍّ للصفّ تُحقِّق تبعيّتَه لهذه المادّة"
         )
         genus = genus or SuspensionGenus.TOOL_UNAVAILABLE
     if support is SemanticSupportCheck.NOT_ESTABLISHED_WITHOUT_A_REVIEW:
@@ -1160,6 +1437,7 @@ def verify(
     standing = AdmissionStanding.ADMITTED if not unmet else AdmissionStanding.SUSPENDED
     return VerificationReading(
         candidate=candidate,
+        segment=segment,
         source_integrity=source_integrity,
         segment_in_row=segment_in_row,
         probe_refutes_the_row=probe_refutes,

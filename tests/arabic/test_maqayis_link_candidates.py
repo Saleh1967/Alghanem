@@ -34,6 +34,7 @@ from alghanem.arabic.maqayis_link_candidates import (
     MaqayisLinkCandidateError,
     RefusalStanding,
     ReviewAttestation,
+    ReviewMethod,
     ReviewVerdict,
     SemanticSupportCheck,
     SuspensionGenus,
@@ -394,6 +395,15 @@ def _verbatim_candidate():
     return dataclasses.replace(candidate, candidate_meaning=witness[5:15])
 
 
+_SYNTHETIC_METHOD = ReviewMethod(
+    performed_by="امتحانُ حارسٍ مصطنع",
+    is_human=False,
+    is_independent=False,
+    procedure="إيداعٌ لامتحان مسار البوّابة وحدَه، لا نظرَ في نصٍّ عربيّ",
+    materials_consulted=("لا شيء: مرشَّحٌ مصنوعٌ لا مادّةَ له",),
+)
+
+
 def _review_for(
     candidate, verdict: ReviewVerdict = ReviewVerdict.SUPPORTS_THE_MEANING
 ) -> ReviewAttestation:
@@ -403,7 +413,9 @@ def _review_for(
         witness_text=candidate.witness.text,
         reviewer="امتحانُ حارسٍ مصطنع",
         statement="مودَعٌ لامتحان البوّابة وحدَها، لا شهادةً على معنًى عربيّ",
+        method=_SYNTHETIC_METHOD,
         verdict=verdict,
+        mode_of_support="وجهٌ مصطنعٌ لامتحان الحارس، لا إسنادَ معنًى",
     )
 
 
@@ -658,6 +670,8 @@ def test_a_deposited_review_does_not_lift_the_file_nor_the_third_rung() -> None:
             witness_text=candidate.witness.text,
             reviewer="امتحانُ حارسٍ مصطنع",
             statement="إيداعٌ لامتحان البوّابة، لا شهادةً على معنًى عربيّ",
+            method=_SYNTHETIC_METHOD,
+            mode_of_support="وجهٌ مصطنعٌ لامتحان الحارس",
         )
         for candidate in link_candidates()
     )
