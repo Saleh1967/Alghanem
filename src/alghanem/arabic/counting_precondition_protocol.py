@@ -110,9 +110,9 @@ class CountingProtocolError(RuntimeError):
 THE_FOUNDING_SITE: Final[DeclaredMaterial] = DeclaredMaterial(
     key="imla_founding_function",
     relative_path="src/alghanem/arabic/imla_founding_function.py",
-    declared_byte_length=23090,
+    declared_byte_length=25954,
     declared_sha256=(
-        "4b7e62fe6daf3e11b709dffef6f3cc0255da65e28747a090bdf882e9e55f5845"
+        "326664b5c58165426a901853a5d02c501c13b1df0b55302adf9ab85312c2f3b0"
     ),
 )
 """موقعُ دالّة التأسيس محفوظًا بطوله وبصمته؛ ومقامُه يُقرأ من القرص لا يُكتَب."""

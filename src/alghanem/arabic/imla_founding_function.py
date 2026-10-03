@@ -1,4 +1,4 @@
-"""دالّةُ التأسيس: تصنيفٌ إملائيٌّ جامعٌ مانعٌ، ونصفٌ صوتيٌّ موقوف.
+"""دالّةُ التأسيس: تصنيفٌ إملائيٌّ جامعٌ مانعٌ، ونصفٌ صوتيٌّ نظريٌّ مُشتَقّ.
 
 هذه الوحدةُ تُجيب سؤالًا سابقًا على العدّ كلِّه: **بأيّ حقٍّ يُعَدّ موضعٌ من
 النصّ؟** فالعدُّ لا يبدأ إلّا بعد أن يُقسَم المُودَعُ قسمةً لا يسقط منها موضعٌ
@@ -28,11 +28,14 @@
 بطيّ حرفه بـ`letter_fingerprint.fold_root` ومقابلتِه بالمفردة المُعلَنة. ولا
 يُكتَب ههنا طيٌّ ثانٍ (`THE_FOLD_IS_READ_FROM_THE_FINGERPRINT_NOT_REWRITTEN`).
 
-سادسًا — وهو الحدّ — النصفُ الصوتيُّ (مخارجُ وصفات) **مُعلَنٌ موقوف**: لا
-تسجيلَ ههنا، والاختبارُ نصٌّ إلى نصّ. فدالّةُ التأسيس **ناقصةٌ نصفَها**،
-وشرطُ الإمكان للعدّ والبرهان **غيرُ مستوفًى** ما دام الوقفُ قائمًا. ولا
-يُقرأ تمامُ النصف الإملائيّ تمامًا للدالّة
-(`A_COMPLETE_HALF_IS_NOT_A_COMPLETE_FUNCTION`).
+سادسًا — وهو الحدّ — النصفُ الصوتيُّ (مخارجُ وصفات) **نظريٌّ مُشتَقّ** لا
+مكتوبُ الحال: يُقرأ من باب الحروف في «الكتاب» لسيبويه ببايتاته المختومة
+(`sibawayh_phonetics`)، ويُستوفى إذا أخذ كلُّ حرفٍ تجلسه الأبوابُ مخرجًا وتوقيعَ
+صفات، وانقسم الجهرُ والهمسُ قسمةً تامّة، وافترقت حروفُ كلِّ مخرج. وما لم
+يُستوفَ يُسمّى ببقيّته المقيسة لا بوقفٍ مكتوب. أمّا **التسجيلُ الصوتيُّ** فمؤجَّلٌ
+بقرار المالك خارجَ النطاق، ولا يدخل شرطَ الإمكان ولا يُعلِّق عددًا
+(`A_DEFERRED_RECORDING_IS_NOT_A_SUSPENDED_THEORY`). ولا يُقرأ تمامُ النصف
+الإملائيّ تمامًا للدالّة (`A_COMPLETE_HALF_IS_NOT_A_COMPLETE_FUNCTION`).
 
     ADeclaredTable          != ATableTheBytesContain
     AnOrthographicHalf      != AFoundingFunction
@@ -51,6 +54,7 @@ from enum import Enum
 from functools import lru_cache
 from typing import Final
 
+from . import sibawayh_phonetics
 from .letter_fingerprint import LETTER_VOCABULARY, fold_root
 from .quran_mirror_collation import ayah_rows_of
 
@@ -70,7 +74,9 @@ __all__ = [
     "THE_EXAMINED_DEPOSIT",
     "THE_FOLD_IS_READ_FROM_THE_FINGERPRINT_NOT_REWRITTEN",
     "THE_IMLA_TABLE",
+    "THE_ACOUSTIC_RECORDING_IS_DEFERRED_BY_OWNER_DECISION",
     "THE_PHONETIC_HALF",
+    "phonetic_half_reading",
     "class_of",
     "classify",
     "deposit_coverage",
@@ -240,19 +246,11 @@ THE_PHONETIC_HALF: Final[tuple[PhoneticDimension, ...]] = (
 )
 """النصفُ الصوتيّ: يُسمّى ولا يُقاس، فالتسجيلُ موقوفٌ والاختبارُ نصٌّ إلى نصّ."""
 
-THE_PHONETIC_HALF_IS_SUSPENDED_BECAUSE: Final[str] = (
-    "التسجيلُ الصوتيُّ موقوفٌ في هذه الشجرة، والمقيسُ نصٌّ إلى نصّ؛ فالمخرجُ "
-    "والصفةُ يُسمّيان ولا يُسنَد إليهما حكم."
+THE_ACOUSTIC_RECORDING_IS_DEFERRED_BY_OWNER_DECISION: Final[str] = (
+    "التسجيلُ الصوتيُّ وضابطُ السمع مؤجَّلان بقرار المالك خارجَ النطاق؛ والمقيسُ "
+    "ههنا علمُ الصوت النظريُّ المنقول، فلا يدخل التأجيلُ شرطَ الإمكان."
 )
-"""سببُ الوقف، محفوظًا مع الحالة لا مفصولًا عنها."""
-
-THE_PHONETIC_HALF_COMPLETION_CONDITIONS: Final[tuple[str, ...]] = (
-    "رفعُ وقف التسجيل بإيداع مادّةٍ صوتيّةٍ مختومةٍ بطولها وبصمتها",
-    "ضابطُ سمعٍ مسجَّلٌ قبل أيّ قراءة، على عُرف سجلّ مختبر الاكتشاف",
-    "إسنادُ مخرجٍ وصفةٍ لكلّ بابٍ من أبواب الجدول، جمعًا ومنعًا كما في الإملاء",
-    "بقيّةٌ مُسمّاةٌ لكلّ بابٍ لا يجد مخرجًا أو يجد مخرجين",
-)
-"""شروطُ استكمال النصف الموقوف؛ مُعلَنةٌ لتُنفَّذ لا لتُؤنِس."""
+"""التأجيلُ بقرارٍ مُسمًّى: يُحمَل مع الحال ولا يُعلِّقها."""
 
 
 def _is_word_final(text: str, index: int) -> bool:
@@ -412,6 +410,7 @@ class HalfStanding(Enum):
     MET = "مستوفًى"
     SUSPENDED = "موقوف"
     UNMET_WITH_A_MEASURED_RESIDUE = "غيرُ مستوفًى ببقيّةٍ مقيسة"
+    SOURCE_NOT_RESOLVABLE = "مصدرُه غيرُ حاضرٍ مختومًا"
 
 
 @dataclass(frozen=True)
@@ -425,8 +424,9 @@ class PossibilityCondition:
 
     orthographic_half: HalfStanding
     phonetic_half: HalfStanding
-    suspension_reason: str
+    phonetic_residue: tuple[str, ...]
     completion_conditions: tuple[str, ...]
+    deferred_out_of_scope: str = THE_ACOUSTIC_RECORDING_IS_DEFERRED_BY_OWNER_DECISION
 
     @property
     def is_met(self) -> bool:
@@ -445,7 +445,8 @@ class PossibilityCondition:
         if self.orthographic_half is not HalfStanding.MET:
             unmet.append(f"النصفُ الإملائيّ: {self.orthographic_half.value}")
         if self.phonetic_half is not HalfStanding.MET:
-            unmet.append(f"النصفُ الصوتيّ: {self.phonetic_half.value}")
+            named = "؛ ".join(self.phonetic_residue)
+            unmet.append(f"النصفُ الصوتيّ النظريّ: {self.phonetic_half.value} — {named}")
         return tuple(unmet)
 
 
@@ -459,11 +460,63 @@ def possibility_condition(name: str = THE_EXAMINED_DEPOSIT) -> PossibilityCondit
         if coverage.is_total and exclusivity.is_exclusive
         else HalfStanding.UNMET_WITH_A_MEASURED_RESIDUE
     )
+    phonetic, residue, conditions = phonetic_half_reading()
     return PossibilityCondition(
         orthographic_half=orthographic,
-        phonetic_half=HalfStanding.SUSPENDED,
-        suspension_reason=THE_PHONETIC_HALF_IS_SUSPENDED_BECAUSE,
-        completion_conditions=THE_PHONETIC_HALF_COMPLETION_CONDITIONS,
+        phonetic_half=phonetic,
+        phonetic_residue=residue,
+        completion_conditions=conditions,
+    )
+
+
+def phonetic_half_reading() -> tuple[HalfStanding, tuple[str, ...], tuple[str, ...]]:
+    """حالُ النصف الصوتيّ النظريّ مُشتقّةً بالتشغيل، وبقيّتُها، وشروطُ سدّها.
+
+    يُستوفى إذا أخذ **كلُّ حرفٍ تجلسه الأبوابُ** مخرجًا من باب سيبويه، وانقسم
+    الجهرُ والهمسُ قسمةً تامّةً مطابقةً للمنصوص، وافترقت حروفُ كلِّ مخرجٍ
+    بتواقيع صفاتها. والتسجيلُ الصوتيُّ لا يدخل هذا الشرط.
+    """
+
+    if not sibawayh_phonetics.source_is_resolvable():
+        return (
+            HalfStanding.SOURCE_NOT_RESOLVABLE,
+            ("بايتاتُ «الكتاب» لسيبويه غيرُ حاضرةٍ مختومة",),
+            (
+                "إحضارُ KITAB_SIBAWAYH بطوله وبصمته عبر "
+                f"{sibawayh_phonetics.THE_SOURCE.path_environment_variable}",
+            ),
+        )
+    reading = sibawayh_phonetics.reading()
+    seated = {
+        fold_root(char) or char
+        for rule in THE_IMLA_TABLE
+        if rule.cls in seating_classes()
+        for char in rule.codepoints
+    }
+    residue: list[str] = []
+    conditions: list[str] = []
+    missing = [
+        letter for letter in reading.letters_without_a_makhraj if letter in seated
+    ]
+    if missing:
+        residue.append("حروفٌ بلا مخرجٍ في النصّ المودَع: " + " ".join(missing))
+        conditions.append("مقابلةُ جملةِ المخرج الساقطة بصفحةٍ مطبوعةٍ مُودَعةٍ بختمها")
+    unsigned = sorted(letter for letter in seated if not reading.signature(letter))
+    if unsigned:
+        residue.append("حروفٌ بلا توقيعِ صفة: " + " ".join(unsigned))
+        conditions.append("استخراجُ صفاتها من مرساةٍ في الباب نفسه")
+    if not reading.voicing_is_a_partition:
+        residue.append("الجهرُ والهمسُ لا يقسمان المفردةَ قسمةً تامّة")
+        conditions.append("مراجعةُ مرساتَي الجهر والهمس على النصّ")
+    if reading.unseparated_cells:
+        residue.append("خاناتُ مخرجٍ لا تفترق حروفُها بصفاتها")
+        conditions.append("صفةٌ فاصلةٌ من شاهدٍ ثانٍ مسمّى")
+    if not residue:
+        return HalfStanding.MET, (), ()
+    return (
+        HalfStanding.UNMET_WITH_A_MEASURED_RESIDUE,
+        tuple(residue),
+        tuple(conditions),
     )
 
 

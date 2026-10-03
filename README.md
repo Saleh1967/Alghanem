@@ -8190,6 +8190,11 @@ hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
 beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,338 of 20,949
+than a tail: six shadda-bearing pairs hold 99.941%, and the remaining three
+hold twelve occurrences between them.
+
+The widening also changed the population and not merely its size: pairs
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,236 of 20,228
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8785,6 +8790,21 @@ prohibitions until their margins are consulted. Sukūn is 526 of 98,534 — 0.53
 — and the cells once filed as scarce (ظ, then ث, bearing it) have since filled
 as the prose grew. Alef's whole row is ten occurrences, so **alef-with-sukūn
 stays consistent with scarcity**, and one absence survives the filter:
+description is edited — takes it to 109 cells over 94,370 occurrences with every
+letter present. Three cells stay empty, and the module refuses to read them as
+prohibitions until their margins are consulted. Sukūn is 502 of 94,370 — 0.53%
+— so the expected count for ث bearing it is 1.708, and zero is unremarkable
+there. Alef's whole row is twelve occurrences, so its sukūn cell is expected
+0.064 times. **Both of those absences are consistent with scarcity.** A third
+cell, alef-with-fatḥa, once survived that filter and has since filled with two
+occurrences from the growing prose alone — and its emptiness was never a
+discovery, since alef *is* the long fatḥa.
+description is edited — takes it to 108 cells over 93,627 occurrences with every
+letter present. Five cells stay empty, and the module refuses to read them as
+prohibitions until their margins are consulted. Sukūn is 493 of 93,627 — 0.53%
+— so the expected counts for ث and ظ bearing it are 1.470 and 1.052, and zero is
+unremarkable at each. Alef's whole row is ten occurrences. **Four of the five
+absences are consistent with scarcity**, and one survives the filter:
 alef-with-fatḥa, which is not a discovery since alef *is* the long fatḥa.
 The zāy-with-sukūn cell is the more instructive one. At an earlier measurement
 its expectation was 2.951, just under the 2.996 margin, and it was filed as

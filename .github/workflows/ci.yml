@@ -17,6 +17,21 @@ jobs:
         with:
           python-version: "3.10"
       - run: python -m pip install -e ".[dev]"
+      # شاهدُ الخارج: «الكتاب» لسيبويه يُجلَب من OpenITI بإيداعٍ مثبَّت ولا يُودَع في
+      # الشجرة (رخصته CC BY-NC-SA 4.0)، ويُقابَل بطوله وبصمته قبل أيّ قراءة.
+      - name: external witness (Kitab Sibawayh, pinned and sealed)
+        run: |
+          dir="$RUNNER_TEMP/openiti-0200AH"
+          rel="data/0180Sibawayhi/0180Sibawayhi.KitabSibawayhi"
+          git init -q "$dir"
+          git -C "$dir" remote add origin https://github.com/OpenITI/0200AH.git
+          git -C "$dir" sparse-checkout set "$rel"
+          git -C "$dir" fetch -q --depth 1 --filter=blob:none origin 599f22fe249871f602efe2e0ddc801d3742960a3
+          git -C "$dir" checkout -q FETCH_HEAD
+          target="$dir/$rel/0180Sibawayhi.KitabSibawayhi.JK006989-ara1"
+          test "$(stat -c %s "$target")" = "2639395"
+          echo "a160f940bb194e6fe7e6655d2c7f28e41f1fc648c4c5e340cc4e42306d5cb625  $target" | sha256sum -c -
+          echo "ALGHANEM_SIBAWAYH_PATH=$target" >> "$GITHUB_ENV"
       - run: python tools/regen_all.py --check
       # القانونُ المركزيّ يُشغَّل وحدَه أوّلًا ليُرى خرقُه باسمه لا مختلطًا بغيره.
       - name: deposit law (gates must hold across the whole tree)

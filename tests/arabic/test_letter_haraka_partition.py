@@ -121,7 +121,6 @@ class TestTheAbsences:
         absences = absent_cells()
         assert len(absences) == 3
         assert {(item.letter, item.haraka) for item in absences} == {
-            ("ا", "\u064e"),
             ("ا", "\u0652"),
             ("ز", "\u0652"),
         }
@@ -135,13 +134,13 @@ class TestTheAbsences:
             AbsenceStanding.SURPRISING_UNDER_THE_MARGIN,
         }
 
-    def test_the_alef_fatha_is_surprising_at_every_measurement(self) -> None:
-        alef = next(
-            item
-            for item in absent_cells()
-            if (item.letter, item.haraka) == ("ا", "\u064e")
-        )
-        assert alef.standing is AbsenceStanding.SURPRISING_UNDER_THE_MARGIN
+    def test_the_alef_fatha_cell_was_surprising_and_has_since_filled(self) -> None:
+        """خليّةٌ قُرئت مستغرَبةً ثمّ امتلأت بنموّ النثر وحدَه؛ فالاستغرابُ مؤرَّخ."""
+
+        assert ("ا", "\u064e") not in {
+            (item.letter, item.haraka) for item in absent_cells()
+        }
+        assert cell_counts(SourceRung.WITH_PROSE)[("ا", "\u064e")] == 2
 
     def test_the_zay_standing_is_read_off_the_floor_and_not_frozen_here(self) -> None:
         zay = next(item for item in absent_cells() if item.letter == "ز")
