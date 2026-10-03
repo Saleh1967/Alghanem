@@ -8170,7 +8170,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 654-fold: 32 pairs, then 20,957. Both questions were answered,
+The widening is 655-fold: 32 pairs, then 20,963. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8189,7 +8189,7 @@ than a tail: six shadda-bearing pairs hold 99.943%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,336 of 20,925
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,339 of 20,931
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8779,9 +8779,9 @@ The table is filled along a cumulative ladder: the Fātiḥa alone realises 41 o
 the 112 cells over 100 occurrences and 20 of the 28 letters; adding Fatḥ 48:29
 takes it to 74 cells and 27 letters; adding the tree's own prose — with this
 module excluded from it by name, so that its figures do not move whenever its
-description is edited — takes it to 109 cells over 98,361 occurrences with every
+description is edited — takes it to 109 cells over 98,387 occurrences with every
 letter present. Three cells stay empty, and the module refuses to read them as
-prohibitions until their margins are consulted. Sukūn is 526 of 98,361 — 0.53%
+prohibitions until their margins are consulted. Sukūn is 526 of 98,387 — 0.53%
 — and the cells once filed as scarce (ظ, then ث, bearing it) have since filled
 as the prose grew. Alef's whole row is ten occurrences, so **alef-with-sukūn
 stays consistent with scarcity**, and one absence survives the filter:

@@ -82,6 +82,7 @@ __all__ = [
     "IMPORTING_RULES_IS_NOT_LEARNING_THEM",
     "REINSTATEMENT_IS_A_POLICY_NOT_A_TRUTH",
     "THE_RECORDED_TIME_IS_NOT_THE_TIME_OF_THE_CLAIM",
+    "THE_SUSPENSION_IS_CONSERVATIVE_AND_HERE_IS_WHERE_IT_OVERSHOOTS",
     "AccumulationError",
     "AdmissionLicence",
     "AdoptionLicence",
@@ -134,6 +135,16 @@ REINSTATEMENT_IS_A_POLICY_NOT_A_TRUTH: Final[str] = (
 THE_RECORDED_TIME_IS_NOT_THE_TIME_OF_THE_CLAIM: Final[str] = (
     "رتبةُ التسجيل موضعٌ في هذا الرصيد، ونطاقُ القضيّة زمنُ تعلُّقها بالواقع؛ "
     "وخلطُهما يجعل الأحدثَ تسجيلًا أصدقَ مضمونًا."
+)
+
+THE_SUSPENSION_IS_CONSERVATIVE_AND_HERE_IS_WHERE_IT_OVERSHOOTS: Final[str] = (
+    "تعليقُ التبعيّات يمشي على **الاشتقاق** لا على المضمون: فنتيجةٌ اشتُقّت "
+    "من مقدّمتين تُعلَّق بتصحيح إحداهما، وإن كان البديلُ يحمل مضمونَ "
+    "المصحَّحة نفسَه وكانت القاعدةُ تنطلق عليه. والمثالُ المُسمّى هو "
+    "`test_a_correction_suspends_a_conclusion_its_replacement_would_relicense`: "
+    "ثَمّ تُعلَّق نتيجةٌ كان يُعاد اشتقاقُها. وهذا اختيارٌ مُعلَن: إعادةُ "
+    "الاشتقاق **فعلٌ جديدٌ بترخيصه**، لا أثرٌ تلقائيٌّ للتصحيح؛ ولو جرت "
+    "تلقائيًّا لصارت نتيجةٌ قائمةً بلا ترخيصِ إدخالٍ يُسمّي مقدّماتِها."
 )
 
 
@@ -620,7 +631,9 @@ def _suspend_with_dependents(
     الشرط: الحكمُ قائمٌ في السجلّ.
     المخرج: سجلٌّ فيه الحكمُ معلَّقٌ وما تبعه معلَّق.
     حدُّها: التعليقُ **محفوظٌ لا ممحوّ**، وهو محدودٌ بالتبعيّات المتأثّرة؛
-        فقضيّةٌ تشارك الدليلَ نفسَه ولا تشتقّ من هذا الحكم تبقى قائمة.
+        فقضيّةٌ تشارك الدليلَ نفسَه ولا تشتقّ من هذا الحكم تبقى قائمة. وهو مع
+        ذلك **محافظٌ بقدرٍ مُسمًّى**، وموضعُ تجاوزه مُعلَنٌ ومُمتحَنٌ في
+        `THE_SUSPENSION_IS_CONSERVATIVE_AND_HERE_IS_WHERE_IT_OVERSHOOTS`.
     """
 
     items = list(register.propositions)

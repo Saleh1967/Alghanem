@@ -35,6 +35,7 @@ from .accumulation import (
     IMPORTING_RULES_IS_NOT_LEARNING_THEM,
     REINSTATEMENT_IS_A_POLICY_NOT_A_TRUTH,
     THE_RECORDED_TIME_IS_NOT_THE_TIME_OF_THE_CLAIM,
+    THE_SUSPENSION_IS_CONSERVATIVE_AND_HERE_IS_WHERE_IT_OVERSHOOTS,
     AccumulationError,
     AdmissionLicence,
     AdoptionLicence,
@@ -147,6 +148,7 @@ from .inference import (
 )
 from .lineage import (
     A_LINEAGE_IS_NOT_EDITED_IT_IS_EXTENDED,
+    A_REFERENCE_IS_DERIVED_NOT_CONSTRUCTED,
     ORIGIN_UNITY_IS_NOT_ONTOLOGY_UNITY,
     ExistenceLineageError,
     ExistenceLineageRef,
@@ -264,6 +266,7 @@ __all__ = [
     "IMPORTING_RULES_IS_NOT_LEARNING_THEM",
     "REINSTATEMENT_IS_A_POLICY_NOT_A_TRUTH",
     "THE_RECORDED_TIME_IS_NOT_THE_TIME_OF_THE_CLAIM",
+    "THE_SUSPENSION_IS_CONSERVATIVE_AND_HERE_IS_WHERE_IT_OVERSHOOTS",
     "AccumulationError",
     "AdmissionLicence",
     "AdoptionLicence",

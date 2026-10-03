@@ -642,3 +642,167 @@ def test_the_content_id_moves_when_the_stock_moves() -> None:
     stock = _stock(evidence)
     item = _membership("حكم", "فرد", "نوع", evidence)
     assert stock.content_id != stock.admit(item, _licence(item, 1)).content_id
+
+
+# ----- حدودُ هذه النواة، مُمتحَنةً لا مُعلَنةً قولًا -----
+
+
+def test_every_module_name_is_importable_from_the_package_surface() -> None:
+    """ما في `__all__` مستوردٌ فعلًا؛ واسمٌ مُعلَنٌ بلا استيرادٍ تصديرٌ كاذب."""
+
+    import alghanem.ontology as package
+
+    assert [name for name in package.__all__ if not hasattr(package, name)] == []
+
+
+def _two_premise_conclusion() -> tuple[KnowledgeStock, InferenceRule]:
+    """نتيجةٌ اشتُقّت من مقدّمتين، إحداهما ستُصحَّح ببديلٍ يحمل مضمونَها."""
+
+    source = _evidence("دليل-مصدر", EvidenceGenus.STIPULATED_DEFINITION)
+    rule = _rule(source)
+    adoption = _evidence(
+        "دليل-اعتماد",
+        EvidenceGenus.STIPULATED_DEFINITION,
+        f"يُعتمَد `{rule.versioned_id}` في هذا المجال",
+    )
+    first = _evidence("دليل-أوّل")
+    second = _evidence("دليل-ثانٍ")
+    fresh = _evidence("دليل-مراجعة")
+    stock = _stock(first, source, adoption, second, fresh)
+    stock = stock.adopt_rule(
+        rule,
+        AdoptionLicence(
+            rule_versioned_id=rule.versioned_id,
+            origin=RuleOrigin.TRANSMITTED_FROM_A_SOURCE,
+            condition_note="شرطٌ مُعلَن",
+            evidence_ref=adoption.ref,
+        ),
+        adoption,
+    )
+    one = _membership("مقدّمة-أولى", "فرد", "مقدّمة", first)
+    two = _membership("مقدّمة-ثانية", "فرد", "مقدّمةٌ-ثانية", second)
+    stock = stock.admit(one, _licence(one, 1)).admit(two, _licence(two, 2))
+    conclusion = Proposition(
+        proposition_id="نتيجة",
+        form=PropositionForm.TYPE_MEMBERSHIP,
+        subject_id="فرد",
+        predicate_id="نوع",
+        value=None,
+        polarity=Polarity.AFFIRMED,
+        scope=THE_SCOPE,
+        evidence_ref=first.ref,
+        derived_from_proposition_ids=("مقدّمة-أولى", "مقدّمة-ثانية"),
+        derived_by_rule=rule.versioned_id,
+    )
+    stock, blocked = stock.apply_adopted_rule(
+        rule.versioned_id,
+        ("مقدّمة-أولى", "مقدّمة-ثانية"),
+        conclusion,
+        _licence(conclusion, 3),
+    )
+    assert blocked is None
+    return stock, rule
+
+
+def test_a_correction_suspends_a_conclusion_its_replacement_would_relicense() -> None:
+    """**المثالُ المُسمّى للقصور المحافظ.**
+
+    المقدّمةُ الأولى تُصحَّح ببديلٍ يحمل **المحمولَ نفسَه** في النطاق نفسِه،
+    فالقاعدةُ كانت تنطلق على البديل كما انطلقت على المصحَّحة. ومع ذلك تُعلَّق
+    النتيجة. فالتعليقُ يمشي على الاشتقاق لا على المضمون — وهذا تجاوزٌ مقيسٌ
+    لا مُدَّعًى.
+    """
+
+    stock, _ = _two_premise_conclusion()
+    fresh = stock.register.evidence_of("دليل-مراجعة")
+    replacement = _membership("مقدّمة-أولى-مصحَّحة", "فرد", "مقدّمة", fresh)
+    corrected = stock.register.proposition_of("مقدّمة-أولى")
+
+    assert replacement.predicate_id == corrected.predicate_id
+    assert replacement.scope == corrected.scope
+    assert replacement.polarity is corrected.polarity
+
+    stock = stock.correct(
+        Correction(
+            correction_id="تصحيح",
+            corrected_proposition_id="مقدّمة-أولى",
+            replacement_proposition_id="مقدّمة-أولى-مصحَّحة",
+            scope=THE_SCOPE,
+            recorded_order=4,
+            reason="الدليلُ الأوّل نُسِب خطأً، والمضمونُ باقٍ",
+            evidence_ref=fresh.ref,
+            policy=ReinstatementPolicy.KEEP_SUSPENDED_UNTIL_NEW_EVIDENCE,
+        ),
+        replacement,
+        _licence(replacement, 5),
+    )
+
+    assert stock.register.proposition_of("نتيجة").suspended is True
+    assert stock.register.proposition_of("مقدّمة-ثانية").suspended is False
+    assert stock.register.proposition_of("مقدّمة-أولى-مصحَّحة").suspended is False
+
+
+def test_the_overshoot_is_undone_only_by_a_new_licensed_derivation() -> None:
+    """ولا تعود النتيجةُ إلّا باشتقاقٍ جديدٍ بترخيصه؛ لا بأثرٍ تلقائيّ."""
+
+    stock, rule = _two_premise_conclusion()
+    fresh = stock.register.evidence_of("دليل-مراجعة")
+    replacement = _membership("مقدّمة-أولى-مصحَّحة", "فرد", "مقدّمة", fresh)
+    stock = stock.correct(
+        Correction(
+            correction_id="تصحيح",
+            corrected_proposition_id="مقدّمة-أولى",
+            replacement_proposition_id="مقدّمة-أولى-مصحَّحة",
+            scope=THE_SCOPE,
+            recorded_order=4,
+            reason="الدليلُ الأوّل نُسِب خطأً، والمضمونُ باقٍ",
+            evidence_ref=fresh.ref,
+            policy=ReinstatementPolicy.KEEP_SUSPENDED_UNTIL_NEW_EVIDENCE,
+        ),
+        replacement,
+        _licence(replacement, 5),
+    )
+    claim = ClaimKey(
+        subject_id="فرد",
+        predicate_id="نوع",
+        value=None,
+        polarity=Polarity.AFFIRMED,
+        scope=THE_SCOPE,
+    )
+    assert stock.verdict_for(claim).supporting_proposition_ids == ()
+
+    again = Proposition(
+        proposition_id="نتيجةٌ-مُعادةُ-الاشتقاق",
+        form=PropositionForm.TYPE_MEMBERSHIP,
+        subject_id="فرد",
+        predicate_id="نوع",
+        value=None,
+        polarity=Polarity.AFFIRMED,
+        scope=THE_SCOPE,
+        evidence_ref=fresh.ref,
+        derived_from_proposition_ids=("مقدّمة-أولى-مصحَّحة", "مقدّمة-ثانية"),
+        derived_by_rule=rule.versioned_id,
+    )
+    stock, blocked = stock.apply_adopted_rule(
+        rule.versioned_id,
+        ("مقدّمة-أولى-مصحَّحة", "مقدّمة-ثانية"),
+        again,
+        _licence(again, 6),
+    )
+    assert blocked is None
+    assert stock.verdict_for(claim).supporting_proposition_ids == (
+        "نتيجةٌ-مُعادةُ-الاشتقاق",
+    )
+    assert stock.register.proposition_of("نتيجة").suspended is True
+
+
+def test_the_declared_overshoot_names_a_test_that_exists_in_this_file() -> None:
+    """الإعلانُ يُسمّي اختبارَه، والاسمُ المُسمّى موجودٌ ههنا — لا دعوى بلا شاهد."""
+
+    from alghanem.ontology import (
+        THE_SUSPENSION_IS_CONSERVATIVE_AND_HERE_IS_WHERE_IT_OVERSHOOTS as declared,
+    )
+
+    named = "test_a_correction_suspends_a_conclusion_its_replacement_would_relicense"
+    assert named in declared
+    assert named in globals()
