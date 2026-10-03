@@ -70,6 +70,8 @@
 from __future__ import annotations
 
 import hashlib
+import re
+import zipfile
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -90,13 +92,20 @@ __all__ = [
     "A_SUSPENDED_SIGNIFIER_IS_A_FIRST_CLASS_ROW_NOT_A_DROPPED_ONE",
     "A_TRANSCRIPTION_IN_THE_TREE_IS_NOT_SEALED_BYTES",
     "A_ZERO_REACHED_BY_VACANCY_IS_NOT_A_ZERO_EARNED",
+    "A_COORDINATED_STATEMENT_IS_LEFT_WHOLE_OR_LEFT_ALONE",
+    "A_DENIED_ORIGIN_IS_NEVER_READ_AS_A_SIGNIFIED",
+    "A_SETTLEMENT_IS_QUOTED_FROM_THE_MATERIAL_NOT_ANNOUNCED_HERE",
+    "MANY_ORIGINS_ARE_NOT_ONE_COMPLETE_NAMED_THING",
+    "ONLY_THE_MATCHING_CHANNEL_EMITS_SO_THE_OTHER_TWO_ZEROS_ARE_VACANT",
     "THE_CHANNEL_GATES",
     "THE_CONTESTED_FIFTH_SECTION",
     "THE_DECLARED_MATERIALS",
     "THE_DEFERRED_LINE",
     "THE_FIFTH_SECTION_IS_CONTESTED_AND_UNADJUDICABLE_HERE",
+    "THE_FIFTH_SECTION_SENTENCE",
     "THE_INSTRUMENT_IS_SHOWN_SIGHTED_BEFORE_ITS_ZERO_IS_READ",
     "THE_MADLUL_SECTIONS_IN_REQUEST_ORDER",
+    "THE_PAIR_EXTRACTION_RULE",
     "THE_SUSPENSION_SAMPLE_RULE",
     "THE_SUSPENSION_SAMPLE_SIZE",
     "THE_WITNESS_CHARACTER_LIMIT",
@@ -107,6 +116,8 @@ __all__ = [
     "ChannelStanding",
     "DalMadlulBridgeError",
     "DeclaredMaterial",
+    "FifthSectionReading",
+    "MadlulExtraction",
     "MaterialRole",
     "SealReading",
     "SealStanding",
@@ -114,10 +125,13 @@ __all__ = [
     "bridge_metrics",
     "bridge_pairs",
     "channel_readings",
+    "extract_madlul",
+    "fifth_section_reading",
     "governing_seal_reading",
     "report_rows",
     "seal_reading_for",
     "seal_readings",
+    "sealed_material_text",
     "suspended_signifiers",
     "transcription_is_not_a_seal",
 ]
@@ -170,15 +184,52 @@ THE_INSTRUMENT_IS_SHOWN_SIGHTED_BEFORE_ITS_ZERO_IS_READ: Final[str] = (
 
 A_ZERO_REACHED_BY_VACANCY_IS_NOT_A_ZERO_EARNED: Final[str] = (
     "A_ZERO_REACHED_BY_VACANCY_IS_NOT_A_ZERO_EARNED: «صفرُ زوجٍ جُمع فيه "
-    "الدالُّ والمدلولُ مفهومًا» متحقّقٌ ههنا لأنّه لا زوجَ أصلًا؛ فيُعرَض "
-    "الرقمُ ومعه الطريقُ الذي بلغه، ولا يُقرأ ظفرًا بضبطٍ لم يُمتحَن"
+    "الدالُّ والمدلولُ مفهومًا» كان يُبلَغ بالخلوّ إذ لا زوجَ أصلًا. وقد "
+    "صارت الأزواجُ تُخرَج، فالصفرُ الآنَ مكتسَبٌ: بنيةُ `BridgePair` تمنع "
+    "الجمعَ، و`the_zero_was_reached_by_vacancy` تُفرِّق بين الحالين فلا "
+    "يُقرأ الرقمان واحدًا"
 )
 
 THE_FIFTH_SECTION_IS_CONTESTED_AND_UNADJUDICABLE_HERE: Final[str] = (
     "THE_FIFTH_SECTION_IS_CONTESTED_AND_UNADJUDICABLE_HERE: خامسُ الأقسام في "
     "`madlul_alone_formal` «هذيان»، وخامسُ الطلب «لفظٌ مركّبٌ مهمَل». "
-    "والفصلُ بينهما لا يكون إلّا ببايتات ج٣ وهي غائبة، فيُسجَّل الخلافُ ولا "
-    "تُعاد تسميةُ عضوٍ في قسمةٍ مُبرهَنةٍ على قولٍ مرويّ"
+    "والفصلُ بينهما لا يكون إلّا ببايتات ج٣. وقد وصلت البايتاتُ بختمها، "
+    "فانتقل الأمرُ من «خلافٌ مسجَّل» إلى `fifth_section_reading` تُخرِجه من "
+    "المتن بحروفه؛ ولا يُقرأ هذا البندُ وحدَه بعدُ حكمًا على الغياب"
+)
+
+A_SETTLEMENT_IS_QUOTED_FROM_THE_MATERIAL_NOT_ANNOUNCED_HERE: Final[str] = (
+    "A_SETTLEMENT_IS_QUOTED_FROM_THE_MATERIAL_NOT_ANNOUNCED_HERE: حسمُ "
+    "الخلاف في القسم الخامس لا يُكتَب ههنا جملةً، بل يُنتزَع من بايتات ج٣ "
+    "المختومة بحروفه؛ فإن تغيّرت البايتاتُ سقط الحسمُ من تلقائه، ولم يبقَ "
+    "في النثر دعوى تعيش بعد شاهدها"
+)
+
+A_DENIED_ORIGIN_IS_NEVER_READ_AS_A_SIGNIFIED: Final[str] = (
+    "A_DENIED_ORIGIN_IS_NEVER_READ_AS_A_SIGNIFIED: يقول ابنُ فارس في بعض "
+    "الصدور «ليس بأصل»، وهو **نفيٌ**؛ فلا يُقلَب إثباتًا ولا يُنتزَع منه "
+    "مدلولٌ بحالٍ. والسطرُ حينئذٍ معلَّقٌ بدرجةٍ مسمّاةٍ لا زوجٌ مُخرَج"
+)
+
+A_COORDINATED_STATEMENT_IS_LEFT_WHOLE_OR_LEFT_ALONE: Final[str] = (
+    "A_COORDINATED_STATEMENT_IS_LEFT_WHOLE_OR_LEFT_ALONE: متى جاءت جملةُ "
+    "الدلالة موصولةً بفاصلةٍ — «تدلّ على الدهر، وعلى شئ من أرفاغ البطن» — "
+    "فقطعُها عند الفاصلة يُخرِج نصفَ المدلول باسم تمامه. فتُترَك كاملةً أو "
+    "يُترَك السطرُ معلَّقًا؛ ولا يُقتطَع منها ما يوافق رقمًا"
+)
+
+MANY_ORIGINS_ARE_NOT_ONE_COMPLETE_NAMED_THING: Final[str] = (
+    "MANY_ORIGINS_ARE_NOT_ONE_COMPLETE_NAMED_THING: قناةُ المطابقة تُخرِج "
+    "«تمامَ المسمّى»، فصدرٌ يصرّح بـ«أصلان» أو «ثلاثة أصول» أو «معنيان» لا "
+    "يُنتزَع منه واحدٌ يُسمّى تمامًا — ذلك اختيارٌ لا قراءة. فيُعلَّق السطرُ "
+    "بدرجته، ويُحفَظ تعدُّدُه كما صرّح به"
+)
+
+ONLY_THE_MATCHING_CHANNEL_EMITS_SO_THE_OTHER_TWO_ZEROS_ARE_VACANT: Final[str] = (
+    "ONLY_THE_MATCHING_CHANNEL_EMITS_SO_THE_OTHER_TWO_ZEROS_ARE_VACANT: "
+    "الأصلُ المعجميُّ الحاضرُ يصرّح بتمام المسمّى، ولا يصرّح بجزئه ولا "
+    "بلازمه الذهنيّ. فصفرُ التضمّن وصفرُ الالتزام صفرا **خلوِّ مادّةٍ** لا "
+    "صفرَي بحثٍ جرى فلم يجد؛ وقناتاهما مفتوحتان بالرخصة، خاليتان بالمادّة"
 )
 
 THE_DEFERRED_LINE: Final[str] = (
@@ -395,6 +446,30 @@ class ChannelReading:
         return self.standing is ChannelStanding.OPEN
 
 
+A_SEALED_CONTAINER_IS_READ_THROUGH_ITS_FORMAT_NOT_AS_RAW_BYTES: Final[str] = (
+    "الختمُ يقع على بايتات الملفّ كما أُودِع، والقراءةُ تقع على نصّه: فملفُّ "
+    "‎.docx‎ حاويةُ ZIP مضغوطة، وفكُّ بايتاتها الخام UTF-8 لا يُخرِج جملةً "
+    "واحدةً من متنه — فتبقى القناةُ مقفلةً والمادّةُ حاضرةٌ مختومة. فيُقرأ "
+    "‎word/document.xml‎ وتُنزَع وسومُه، ولا يُمسّ الختم."
+)
+
+
+def sealed_material_text(path: Path) -> str:
+    """نصُّ مادّةٍ مختومة: حاويةُ ‎.docx‎ تُفَكّ إلى متنها، وما سواها UTF-8.
+
+    وحدُّ الفقرة ‎</w:p>‎ يُستبدَل بسطرٍ **قبل** نزع الوسوم؛ فنزعُها بلا
+    فاصلٍ يلصق آخرَ فقرةٍ بأوّل التي تليها، فتنشأ جملةٌ لا يقولها المتن.
+    """
+
+    data = path.read_bytes()
+    if data[:2] == b"PK" and zipfile.is_zipfile(path):
+        with zipfile.ZipFile(path) as archive:
+            xml = archive.read("word/document.xml").decode("utf-8")
+        xml = xml.replace("</w:p>", "\n").replace("<w:br/>", "\n")
+        return re.sub(r"<[^>]+>", "", xml)
+    return data.decode("utf-8", errors="ignore")
+
+
 def channel_readings(root: Path | None = None) -> tuple[ChannelReading, ...]:
     """حالُ القنوات الثلاث، مُشتقًّا من أختام المواد لا مكتوبًا في نثر."""
 
@@ -412,10 +487,8 @@ def channel_readings(root: Path | None = None) -> tuple[ChannelReading, ...]:
                 f"فلا تُقرأ فيها جملةُ «{gate.defining_phrase}»"
             )
         else:
-            text = (
-                ((root or _repository_root()) / seal.material.relative_path)
-                .read_bytes()
-                .decode("utf-8", errors="ignore")
+            text = sealed_material_text(
+                (root or _repository_root()) / seal.material.relative_path
             )
             opened = gate.defining_phrase in text
             if not opened:
@@ -489,7 +562,48 @@ THE_CONTESTED_FIFTH_SECTION: Final[tuple[str, str]] = (
     MadlulSection.HADHAYAN.value,
     "لفظ_مركّب_مهمَل",
 )
-"""خامسُ القسمة المُبرهَنة، وخامسُ الطلب؛ والفصلُ بينهما موقوفٌ على ج٣."""
+"""خامسُ القسمة المُبرهَنة، وخامسُ الطلب؛ وفصلُهما في `fifth_section_reading`."""
+
+
+THE_FIFTH_SECTION_SENTENCE: Final[str] = (
+    "والخامس: أن يكون المدلول لفظاً مركباً مهملاً، وهو الهذيان"
+)
+"""الجملةُ التي يُبحَث عنها في بايتات ج٣؛ ولا تُقرأ حسمًا حتّى تُوجَد فيها."""
+
+
+@dataclass(frozen=True, slots=True)
+class FifthSectionReading:
+    """حسمُ القسم الخامس: أوُجدت الجملةُ في المادّة المختومة، وبأيّ حروف."""
+
+    is_settled: bool
+    verbatim: str | None
+    sealed_source: str | None
+    standing: SealStanding
+
+
+def fifth_section_reading(root: Path | None = None) -> FifthSectionReading:
+    """أيَحسم المتنُ الخلافَ بين «هذيان» و«لفظ مركّب مهمَل»؟ يُقرأ ولا يُدَّعى.
+
+    والحسمُ — إن وقع — **توحيدٌ** لا إعادةُ تسمية: المتنُ يجعل الاسمين
+    لمسمًّى واحد، فلا يُحذَف عضوٌ من قسمةٍ مُبرهَنةٍ ولا يُضاف.
+    """
+
+    reading = governing_seal_reading(root)
+    if not reading.is_readable:
+        return FifthSectionReading(False, None, None, reading.standing)
+    path = (root or _repository_root()) / reading.material.relative_path
+    text = sealed_material_text(path)
+    found = THE_FIFTH_SECTION_SENTENCE in text
+    return FifthSectionReading(
+        is_settled=found,
+        verbatim=THE_FIFTH_SECTION_SENTENCE if found else None,
+        sealed_source=(
+            f"{reading.material.relative_path}@{reading.measured_sha256}"
+            if found
+            else None
+        ),
+        standing=reading.standing,
+    )
 
 
 # --- الدوالُّ المعلَّقة ------------------------------------------------------
@@ -531,14 +645,89 @@ class SuspendedSignifier:
                 )
 
 
-def suspended_signifiers(root: Path | None = None) -> tuple[SuspendedSignifier, ...]:
-    """الدوالُّ المعلَّقة: تُنتزَع من مادّةٍ مختومةٍ حاضرة، وتُحفَظ بشواهدها.
+THE_PAIR_EXTRACTION_RULE: Final[str] = (
+    "المدلولُ يُنتزَع من **صدر** سطر المقاييس وحدَه — وهو ما قبل أوّل نقطة — "
+    "لأنّ ابنَ فارس يفتتح المقالة بتصريح الأصل ثمّ يستشهد. وترتيبُ الفحص "
+    "مكتوبٌ قبل التشغيل: (١) إن نفى الصدرُ الأصلَ فلا مدلول؛ (٢) إن صرّح "
+    "بتعدُّدٍ فلا مدلول؛ (٣) فإن قال «أصلٌ واحد، وهو كذا.» فالمدلولُ «كذا»؛ "
+    "(٤) فإن قال «يدلّ على كذا.» غيرَ موصولٍ بفاصلة فالمدلولُ «كذا»؛ "
+    "(٥) وما عدا ذلك معلَّقٌ بدرجته. والمطابقةُ وحدَها تُخرِج، ودليلُ كلِّ "
+    "زوجٍ جملةُ الصدر بحروفها"
+)
 
-    وهذه هي شهادةُ أنّ الآلةَ ليست عمياء: تقرأ بايتاتٍ مختومةً، وتُخرِج
-    دوالَّ بأعيانها وسطورَها، ثمّ تقف عند البابٍ المقفل فلا تُخمِّن مدلولًا.
-    وإذا غابت المادّةُ المختومةُ لم تُخرَج عيّنةٌ صامتةٌ فارغة، بل يُرفَع
-    الرفضُ: فرقٌ بين «لا معلَّقَ» و«لم نقرأ».
-    """
+_HARAKAT: Final[str] = r"[\u064B-\u0652\u0670\u0640]*"
+
+
+def _tolerant(phrase: str) -> str:
+    """نمطٌ يقرأ العبارةَ مهما تخلّلتها الحركاتُ أو التطويل، بحروفها لا بشكلها."""
+
+    return _HARAKAT.join(re.escape(letter) for letter in phrase) + _HARAKAT
+
+
+_DENIED_ORIGIN: Final[tuple[str, ...]] = ("ليس بأصل",)
+_MANY_ORIGINS: Final[tuple[str, ...]] = ("أصلان", "أصول", "معنيان", "أصلين")
+_ONE_ORIGIN = re.compile(
+    _tolerant("أصل")
+    + r"\s*"
+    + _tolerant("واحد")
+    + r"\s*،\s*"
+    + _tolerant("وهو")
+    + r"\s+([^.،]+)\."
+)
+_SIGNIFIES = re.compile(
+    "(?:" + "|".join(_tolerant(verb) for verb in ("يدل", "تدل")) + r")"
+    r"(?:\s+" + _tolerant("بناؤها") + r")?\s+" + _tolerant("على") + r"\s+([^.]+)\."
+)
+
+
+@dataclass(frozen=True, slots=True)
+class MadlulExtraction:
+    """نتيجةُ تطبيق القاعدة على صدرٍ واحد: مدلولٌ ودليلُه، أو درجةٌ غيرُ مستوفاة."""
+
+    madlul: str | None
+    verbatim: str
+    unmet_rung: str | None
+
+    def __post_init__(self) -> None:
+        if (self.madlul is None) == (self.unmet_rung is None):
+            raise DalMadlulBridgeError(
+                "القراءةُ إمّا مدلولٌ بدليله وإمّا درجةٌ غيرُ مستوفاةٍ باسمها؛ "
+                "ولا تجتمعان ولا ترتفعان."
+            )
+
+
+def _head_of(body: str) -> str:
+    """صدرُ السطر: ما قبل أوّل نقطةٍ ومعها؛ وما بعده شواهدُ لا تصريحُ أصل."""
+
+    cut = body.find(".")
+    return body if cut < 0 else body[: cut + 1]
+
+
+def extract_madlul(body: str) -> MadlulExtraction:
+    """تطبيقُ `THE_PAIR_EXTRACTION_RULE` على سطرٍ من المقاييس، بترتيبه المُعلَن."""
+
+    head = _head_of(body.strip())
+    for denial in _DENIED_ORIGIN:
+        if re.search(_tolerant(denial), head):
+            return MadlulExtraction(None, head, "نفى الصدرُ الأصلَ، والنفيُ لا يُقلَب")
+    for many in _MANY_ORIGINS:
+        if re.search(_tolerant(many), head):
+            return MadlulExtraction(None, head, "صرّح الصدرُ بتعدُّد الأصول")
+    one = _ONE_ORIGIN.search(head)
+    if one is not None:
+        return MadlulExtraction(one.group(1).strip(), one.group(0).strip(), None)
+    signifies = _SIGNIFIES.search(head)
+    if signifies is not None:
+        if "،" in signifies.group(1):
+            return MadlulExtraction(None, head, "جملةُ الدلالة موصولةٌ بفاصلة فلا تُقطَع")
+        return MadlulExtraction(
+            signifies.group(1).strip(), signifies.group(0).strip(), None
+        )
+    return MadlulExtraction(None, head, "لا جملةَ دلالةٍ بالصيغ المُعلَنة")
+
+
+def _sealed_sample(root: Path | None = None) -> tuple[tuple[str, str, str], ...]:
+    """العيّنةُ المُسمّاة قبل النظر: اسمُ الدالّ، وسطرُه كاملًا، ومصدرُه المختوم."""
 
     readings_by_key = {reading.material.key: reading for reading in seal_readings(root)}
     origin = readings_by_key["MAQAYIS_BY_ROOT"]
@@ -547,25 +736,46 @@ def suspended_signifiers(root: Path | None = None) -> tuple[SuspendedSignifier, 
             f"الأصلُ المعجميُّ {origin.standing.value}؛ ولا تُنتزَع دوالٌّ من "
             "مادّةٍ لم يُطابَق ختمُها."
         )
-    unmet = _first_unmet_rung(root)
+    source = f"{origin.material.relative_path}@{origin.measured_sha256}"
     seen: list[str] = []
-    suspended: list[SuspendedSignifier] = []
+    sample: list[tuple[str, str, str]] = []
     for row in root_table_rows(root):
         dal = row["root_display"].strip()
-        witness = row["body_text"].strip()[:THE_WITNESS_CHARACTER_LIMIT].strip()
-        if not dal or not witness or dal in seen:
+        body = row["body_text"].strip()
+        if not dal or not body or dal in seen:
             continue
         seen.append(dal)
+        sample.append((dal, body, source))
+        if len(sample) == THE_SUSPENSION_SAMPLE_SIZE:
+            break
+    return tuple(sample)
+
+
+def suspended_signifiers(root: Path | None = None) -> tuple[SuspendedSignifier, ...]:
+    """الدوالُّ المعلَّقة: تُنتزَع من مادّةٍ مختومةٍ حاضرة، وتُحفَظ بشواهدها.
+
+    وهذه هي شهادةُ أنّ الآلةَ ليست عمياء: تقرأ بايتاتٍ مختومةً، وتُخرِج
+    دوالَّ بأعيانها وسطورَها، ثمّ تقف عند ما لم تستوفِ قاعدتُه فلا تُخمِّن
+    مدلولًا. وإذا غابت المادّةُ المختومةُ لم تُخرَج عيّنةٌ صامتةٌ فارغة، بل
+    يُرفَع الرفضُ: فرقٌ بين «لا معلَّقَ» و«لم نقرأ».
+
+    والدرجةُ غيرُ المستوفاة ليست واحدةً لكلّ السطور: هي سببُ هذا السطر
+    بعينه، منفصلًا عن سبب غيره.
+    """
+
+    suspended: list[SuspendedSignifier] = []
+    for dal, body, source in _sealed_sample(root):
+        reading = extract_madlul(body)
+        if reading.unmet_rung is None:
+            continue
         suspended.append(
             SuspendedSignifier(
                 dal=dal,
-                unmet_rung=unmet,
-                verbatim_witness=witness,
-                sealed_source=f"{origin.material.relative_path}@{origin.measured_sha256}",
+                unmet_rung=reading.unmet_rung,
+                verbatim_witness=body[:THE_WITNESS_CHARACTER_LIMIT].strip(),
+                sealed_source=source,
             )
         )
-        if len(suspended) == THE_SUSPENSION_SAMPLE_SIZE:
-            break
     return tuple(suspended)
 
 
@@ -616,16 +826,36 @@ class BridgePair:
 def bridge_pairs(root: Path | None = None) -> tuple[BridgePair, ...]:
     """الأزواجُ التي يُخرجها الجسر؛ ولا يُخرِج زوجًا وقناتُه مقفلة.
 
-    ليست هذه «نتيجةً فارغة»: هي بابٌ مقفلٌ مُسمًّى شرطُه. ومتى وصلت بايتاتُ
-    المادّة الحاكمة بختمها المُعلَن انفتحت القنواتُ بهذه الدالّة نفسِها.
+    الرخصةُ من ج٣: قناةُ المطابقة لا تُفتَح إلّا ببايتاتها المختومة، تقع
+    فيها جملةُ «دلالة اللفظ على تمام مسماه» بحروفها. والمادّةُ من المقاييس:
+    صدرُ كلِّ سطرٍ يصرّح بأصل الجذر. فالمصدران اثنان لا واحد، والخلطُ بينهما
+    يجعل الرخصةَ مادّةً أو المادّةَ رخصة.
+
+    ولا تُخرِج هذه الدالّةُ إلّا من قناة المطابقة: راجع
+    `ONLY_THE_MATCHING_CHANNEL_EMITS_SO_THE_OTHER_TWO_ZEROS_ARE_VACANT`.
     """
 
-    if any(reading.is_open for reading in channel_readings(root)):
-        raise DalMadlulBridgeError(
-            "انفتحت قناةٌ ولم تُبنَ بعدُ آلةُ إخراج أزواجها؛ ولا يُخرَج زوجٌ "
-            "بغير دليلٍ حرفيٍّ من حاويةٍ مختومة، فيُرفَع الرفضُ ولا يُخمَّن."
+    open_kinds = {
+        reading.gate.kind for reading in channel_readings(root) if reading.is_open
+    }
+    if DalalaKind.مطابقة not in open_kinds:
+        return ()
+    pairs: list[BridgePair] = []
+    for dal, body, source in _sealed_sample(root):
+        reading = extract_madlul(body)
+        if reading.madlul is None:
+            continue
+        pairs.append(
+            BridgePair(
+                dal=dal,
+                channel=DalalaKind.مطابقة,
+                madlul=reading.madlul,
+                madlul_section=MadlulSection.MEANING,
+                verbatim_evidence=reading.verbatim,
+                sealed_source=source,
+            )
         )
-    return ()
+    return tuple(pairs)
 
 
 # --- المقاييس الأربعة، بأرقامها الخام ----------------------------------------
@@ -687,14 +917,15 @@ def bridge_metrics(root: Path | None = None) -> BridgeMetrics:
 
     pairs = bridge_pairs(root)
     suspended = suspended_signifiers(root)
+    examined = len(pairs) + len(suspended)
     return BridgeMetrics(
-        dals_examined=len(suspended),
+        dals_examined=examined,
         pairs_emitted=len(pairs),
         suspended_count=len(suspended),
         coverage_numerator=sum(
             1 for pair in pairs if pair.channel is DalalaKind.مطابقة
         ),
-        coverage_denominator=len(suspended),
+        coverage_denominator=examined,
         audited_sample_size=len(pairs),
         truthful_in_sample=None,
         sectioned_with_written_evidence=sum(
@@ -792,9 +1023,13 @@ def report_rows(root: Path | None = None) -> tuple[dict[str, object], ...]:
             "بقية": A_ZERO_REACHED_BY_VACANCY_IS_NOT_A_ZERO_EARNED,
         }
     )
+    fifth = fifth_section_reading(root)
     rows.append(
         {
             "نوع": "خامس_متنازع",
+            "أحُسم": fifth.is_settled,
+            "الشاهد": fifth.verbatim,
+            "مصدر_الحسم": fifth.sealed_source,
             "في_القسمة_المبرهنة": THE_CONTESTED_FIFTH_SECTION[0],
             "في_الطلب": THE_CONTESTED_FIFTH_SECTION[1],
             "بقية": THE_FIFTH_SECTION_IS_CONTESTED_AND_UNADJUDICABLE_HERE,

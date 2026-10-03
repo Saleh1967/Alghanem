@@ -563,14 +563,19 @@ def link_reading() -> LinkReading:
 
 THE_LINK_READING_AT_MEASUREMENT: Final[LinkReading] = LinkReading(
     premises=7,
-    satisfied_premises=4,
+    satisfied_premises=6,
     claims=6,
-    granted_claims=3,
-    suspended_claims=2,
+    granted_claims=4,
+    suspended_claims=1,
     barred_claims=1,
     quotation_matches_the_deposit=True,
 )
-"""القراءةُ المُجمَّدةُ يوم القياس؛ وتنزيلُ MASAQ يُزحزحها، وذلك مقصودٌ."""
+"""القراءةُ المُجمَّدةُ يوم القياس.
+
+وقد نزلت بايتاتُ MASAQ فزحزحتها كما أُعلِن: المقدّماتُ المستوفاةُ ٤ → ٦،
+والنافذةُ ٣ → ٤، والمعلَّقةُ ٢ → ١. وبقي المنعُ البنيويُّ واحدًا لا ينفتح
+بمادّة، وبقي معلَّقٌ واحدٌ ينتظر مغني اللبيب.
+"""
 
 
 def link_reading_has_drifted() -> bool:

@@ -50,6 +50,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Final
 
+from .dal_madlul_bridge import sealed_material_text
+
 __all__ = [
     "A_CONFLICT_IS_RECORDED_IN_BOTH_TEXTS_AND_NOT_ADJUDICATED_HERE",
     "A_CROSSING_TO_A_SECOND_MATERIAL_IS_NAMED_NOT_SILENT",
@@ -360,14 +362,18 @@ def material_text(key: str, root: Path | None = None) -> tuple[str, ...] | None:
 
     ولا تُفَكّ بايتةٌ قبل مطابقة الطول والختم معًا؛ فالغيابُ ومخالفةُ الختم
     سواءٌ ههنا في المنع، ويفترقان في التقرير.
+
+    والقراءةُ تمرّ بصيغة الحاوية لا ببايتاتها الخام — راجع
+    `A_SEALED_CONTAINER_IS_READ_THROUGH_ITS_FORMAT_NOT_AS_RAW_BYTES` — فملفُّ
+    ‎.docx‎ حاويةُ ZIP، وفكُّها UTF-8 يرفع `UnicodeDecodeError` لا `None`،
+    فيُقرأ العطبُ غيابًا وهو حضورٌ لم يُحسَن فتحُه.
     """
 
     reading = seal_reading_for(_material_by_key(key), root)
     if not reading.is_readable:
         return None
     assert reading.resolved_path is not None
-    data = Path(reading.resolved_path).read_bytes()
-    return tuple(data.decode("utf-8").split("\n"))
+    return tuple(sealed_material_text(Path(reading.resolved_path)).split("\n"))
 
 
 # --- المجسّاتُ المصرَّحُ بها قبل النظر -------------------------------------------
