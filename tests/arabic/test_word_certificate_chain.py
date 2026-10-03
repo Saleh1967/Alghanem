@@ -115,9 +115,7 @@ def test_a_right_source_with_a_wrong_excerpt_offset_blocks_the_reference() -> No
     )
     assert certificate.is_licensed is False
     reference = next(
-        one
-        for one in certificate.verdicts
-        if one.layer is CertificateLayer.REFERENCE
+        one for one in certificate.verdicts if one.layer is CertificateLayer.REFERENCE
     )
     assert reference.standing is LayerStanding.SUSPENDED_BY_NAMED_CAUSE
 
@@ -150,7 +148,12 @@ def test_withdrawing_the_root_witness_cascades_into_the_syntax_premise() -> None
         analysis_witnesses=(_analysis(AnalysisSubject.SYNTACTIC_FUNCTION),),
     )
     blocked = set(certificate.overall.blocking_premises)
-    assert "\u0627\u0644\u062c\u0630\u0631\u064f \u0648\u0627\u0644\u0648\u0632\u0646\u064f \u0645\u062f\u062e\u0644\u0627\u0646 \u0645\u0639\u062c\u0645\u064a\u0651\u0627\u0646" in blocked
+    root_premise = next(
+        one
+        for one in certificate.premises
+        if one.layer is CertificateLayer.MORPHOLOGY and one.required_for_the_claim
+    )
+    assert root_premise.name in blocked
     syntax = next(
         one for one in certificate.premises if one.layer is CertificateLayer.SYNTAX
     )
@@ -279,7 +282,10 @@ def test_the_issuer_refuses_a_standing_supplied_by_the_caller() -> None:
     """لا تُبتلَع دعوى المستدعي صامتةً: تُرَدّ باسم القاعدة ويُرفَع الخطأ."""
 
     with pytest.raises(WordCertificateError):
-        certify(THE_ADDRESS, standing_from_caller="\u0645\u0631\u062e\u0651\u0635\u0629")
+        certify(
+            THE_ADDRESS,
+            standing_from_caller="\u0645\u0631\u062e\u0651\u0635\u0629",
+        )
 
 
 def test_an_absent_evidence_is_suspended_and_never_refused() -> None:

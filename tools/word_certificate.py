@@ -45,10 +45,10 @@ from alghanem.arabic.excerpt_origin_bridge import (  # noqa: E402
     prior_audit_standing,
 )
 from alghanem.arabic.word_certificate_chain import (  # noqa: E402
+    THE_DECLARED_SCOPE,
     AnalysisSubject,
     AnalysisWitness,
     LayerStanding,
-    THE_DECLARED_SCOPE,
     WordCertificate,
     certify,
     fingerprint,
@@ -200,9 +200,7 @@ def render_ledger(rows: tuple[dict[str, Any], ...]) -> str:
     """السجلُّ سطرًا سطرًا، مُرتَّبَ المفاتيح ليثبت نصُّه بين التشغيلات."""
 
     return (
-        "\n".join(
-            json.dumps(one, ensure_ascii=False, sort_keys=True) for one in rows
-        )
+        "\n".join(json.dumps(one, ensure_ascii=False, sort_keys=True) for one in rows)
         + "\n"
     )
 
@@ -214,17 +212,14 @@ def render_report(rows: tuple[dict[str, Any], ...]) -> str:
     lines: list[str] = [
         "# تقريرُ شهادةِ الكلمة في سياقها",
         "",
-        "> هذا الملفُّ مُولَّدٌ بـ`python tools/word_certificate.py`؛ "
-        "ولا يُحرَّر يدويًّا.",
+        "> هذا الملفُّ مُولَّدٌ بـ`python tools/word_certificate.py`؛ " "ولا يُحرَّر يدويًّا.",
         "",
         "## النطاقُ، مُعلَنًا قبل القياس",
         "",
     ]
     lines.extend(f"- **المشمول**: {one}" for one in THE_DECLARED_SCOPE.included)
     lines.extend(f"- **المستثنى**: {one}" for one in THE_DECLARED_SCOPE.excluded)
-    lines.append(
-        "- **المؤجَّل**: " + " · ".join(THE_DECLARED_SCOPE.deferred)
-    )
+    lines.append("- **المؤجَّل**: " + " · ".join(THE_DECLARED_SCOPE.deferred))
     lines.extend(f"- **العزل**: {one}" for one in THE_DECLARED_SCOPE.insulation)
     lines += [
         "",
@@ -340,9 +335,7 @@ def main(argv: list[str] | None = None) -> int:
             if not path.is_file():
                 drift.append(f"{path.relative_to(REPO_ROOT)}: غائبٌ عن الشجرة")
             elif path.read_text(encoding="utf-8") != generated:
-                drift.append(
-                    f"{path.relative_to(REPO_ROOT)}: يخالف ما يولّده القرصُ"
-                )
+                drift.append(f"{path.relative_to(REPO_ROOT)}: يخالف ما يولّده القرصُ")
         if drift:
             sys.stderr.write(
                 "المُودَعُ لا يُطابق المولَّد:\n"
@@ -358,13 +351,10 @@ def main(argv: list[str] | None = None) -> int:
     REPORT_PATH.write_text(report, encoding="utf-8")
     for one in rows:
         if "الحكم_الإجمالي" in one:
-            sys.stdout.write(
-                f"{one['الحالة']}: {one['الحكم_الإجمالي']['المنزلة']}\n"
-            )
+            sys.stdout.write(f"{one['الحالة']}: {one['الحكم_الإجمالي']['المنزلة']}\n")
         else:
             sys.stdout.write(
-                f"{one['الحالة']}: إعادةُ الإنتاج "
-                f"{one['قابلة_لإعادة_الإنتاج']}\n"
+                f"{one['الحالة']}: إعادةُ الإنتاج " f"{one['قابلة_لإعادة_الإنتاج']}\n"
             )
     sys.stdout.write(
         f"كُتِب: {LEDGER_PATH.relative_to(REPO_ROOT)} · "

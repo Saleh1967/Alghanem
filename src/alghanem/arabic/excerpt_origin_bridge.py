@@ -16,8 +16,8 @@
 | الدعوى | ما يُثبتها | ما لا يُثبتها |
 |---|---|---|
 | أ — العبارةُ موجودةٌ في مصدر | وجدانُها في بايتاتٍ مختومة | لا شيءَ عن منشأ المقتطف |
-| ب — موضعُها متفرّدٌ في قائمة البحث | عدُّ مواضعها في القائمة المُعلَنة | لا شيءَ عن منشأ المقتطف |
-| ج — هذا الموضعُ أصلُ المقتطف | شهادةُ منشأٍ مُسمّاةُ المنهج والمنفِّذ | «أ» و«ب» معًا لا تُنتجانها |
+| ب — موضعُها متفرّدٌ في القائمة | عدُّ مواضعها في القائمة المُعلَنة | لا شيءَ عن المنشأ |
+| ج — هذا الموضعُ أصلُ المقتطف | شهادةُ منشأٍ مُسمّاةُ المنهج | «أ» و«ب» لا تُنتجانها |
 
 وتفرّدُ «ب» مقيَّدٌ بقائمته لا مطلقًا: فما كان متفرّدًا في مصدرٍ قد يقع مرّتين
 في قائمةٍ من مصدرَين، والعددُ يتبدّل بتبدّل القائمة لا بتبدّل النصّ
@@ -229,9 +229,7 @@ def source_by_key(key: str) -> TextSource:
         if source.key == key:
             return source
     declared = " · ".join(one.key for one in THE_SEARCH_LIST)
-    raise ExcerptOriginError(
-        f"مفتاحُ مصدرٍ غيرُ مُعلَنٍ: «{key}». والمُعلَنُ: {declared}."
-    )
+    raise ExcerptOriginError(f"مفتاحُ مصدرٍ غيرُ مُعلَنٍ: «{key}». والمُعلَنُ: {declared}.")
 
 
 def _repo_root(root: Path | None) -> Path:
@@ -296,13 +294,13 @@ def source_reading(source: TextSource, root: Path | None = None) -> SourceReadin
         return SourceReading(source, SourceStanding.ABSENT_FROM_THIS_TREE, None, None)
     raw = path.read_bytes()
     digest = hashlib.sha256(raw).hexdigest()
-    agrees = len(raw) == source.declared_byte_length and digest == source.declared_sha256
+    agrees = (
+        len(raw) == source.declared_byte_length and digest == source.declared_sha256
+    )
     return SourceReading(
         source=source,
         standing=(
-            SourceStanding.SEALED_AND_PRESENT
-            if agrees
-            else SourceStanding.SEAL_BROKEN
+            SourceStanding.SEALED_AND_PRESENT if agrees else SourceStanding.SEAL_BROKEN
         ),
         measured_byte_length=len(raw),
         measured_sha256=digest,
@@ -336,7 +334,8 @@ class WordAddress:
     def __post_init__(self) -> None:
         if not self.source_key.strip():
             raise ExcerptOriginError(
-                f"عنوانٌ بلا مفتاح مصدر: {THE_ADDRESS_WITHOUT_A_SOURCE_IS_NOT_AN_IDENTITY}"
+                "عنوانٌ بلا مفتاح مصدر: "
+                f"{THE_ADDRESS_WITHOUT_A_SOURCE_IS_NOT_AN_IDENTITY}"
             )
         if self.line < 1 or self.word < 1:
             raise ExcerptOriginError("السطرُ والكلمةُ مرقومان من الواحد.")
@@ -413,9 +412,7 @@ def locate(
             char_offset + len(surface) : char_offset + len(surface) + context
         ],
         preceding_word=words[address.word - 2] if address.word > 1 else None,
-        following_word=(
-            words[address.word] if address.word < len(words) else None
-        ),
+        following_word=(words[address.word] if address.word < len(words) else None),
     )
 
 
@@ -549,9 +546,7 @@ def origin_readings(
 
     present = ClaimReading(
         claim=OriginClaim.PRESENT_IN_A_SOURCE,
-        standing=(
-            ClaimStanding.ESTABLISHED if positions else ClaimStanding.REFUTED
-        ),
+        standing=(ClaimStanding.ESTABLISHED if positions else ClaimStanding.REFUTED),
         evidence=(
             f"وُجدت في {len(positions)} موضعًا ضمن [{listed}]"
             if positions

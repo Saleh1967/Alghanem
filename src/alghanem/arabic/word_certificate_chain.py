@@ -40,7 +40,6 @@
 from __future__ import annotations
 
 import hashlib
-
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -138,10 +137,7 @@ class DeclaredScope:
 
 
 THE_DECLARED_SCOPE: Final[DeclaredScope] = DeclaredScope(
-    included=(
-        "نصوصٌ عربيّةٌ فصيحةٌ معياريّةٌ مشكولة، من قائمةِ مصادرَ مُحدَّدةٍ "
-        "مؤرَّخةٍ مبصومة",
-    ),
+    included=("نصوصٌ عربيّةٌ فصيحةٌ معياريّةٌ مشكولة، من قائمةِ مصادرَ مُحدَّدةٍ " "مؤرَّخةٍ مبصومة",),
     excluded=("المطابقةُ الصوتيّةُ المسجَّلة",),
     deferred=("غيرُ المشكول", "العامّيّ", "غيرُ المعياريّ"),
     insulation=(
@@ -324,13 +320,7 @@ def canonical_admission(surface: str) -> CanonicalAdmission:
     reproduced = bool(verify(record).get("reproduced"))
     rejoined = "".join(atoms)
     lost = tuple(
-        sorted(
-            {
-                one
-                for one in surface
-                if one not in rejoined and not one.isspace()
-            }
-        )
+        sorted({one for one in surface if one not in rejoined and not one.isspace()})
     )
     return CanonicalAdmission(
         status=str(record.get("status")),
@@ -426,9 +416,7 @@ class AnalysisWitness:
             ("المنفِّذ", self.examiner),
         ):
             if not value.strip():
-                raise WordCertificateError(
-                    f"شاهدُ تحليلٍ بلا «{label}» لا يُقبَل."
-                )
+                raise WordCertificateError(f"شاهدُ تحليلٍ بلا «{label}» لا يُقبَل.")
 
     def source_is_present(self, root: Path | None = None) -> bool:
         """أحاضرٌ مصدرُ الشاهد في الشجرة؟ يُقاس من القرص لا يُصدَّق."""
@@ -486,7 +474,7 @@ def _cascade(premises: tuple[Premise, ...]) -> tuple[Premise, ...]:
         if premise.standing is ClaimStanding.ESTABLISHED and (
             premise.name not in settled_names
         ):
-            fallen = " · ".join(
+            fallen_names = " · ".join(
                 one
                 for one in premise.depends_on
                 if one in by_name and one not in settled_names
@@ -499,7 +487,7 @@ def _cascade(premises: tuple[Premise, ...]) -> tuple[Premise, ...]:
                     admission_evidence=premise.admission_evidence,
                     why_it_applies_here=premise.why_it_applies_here,
                     what_it_establishes=(
-                        f"لا شيءَ بعدُ: سقط متبوعُها «{fallen}» فسقطت تبعًا"
+                        f"لا شيءَ بعدُ: سقط متبوعُها «{fallen_names}» فسقطت تبعًا"
                     ),
                     standing=ClaimStanding.SUSPENDED,
                     required_for_the_claim=premise.required_for_the_claim,
@@ -558,9 +546,7 @@ def deposited_premises(
         Premise(
             name="الفكُّ صارمٌ وأثرُ المتسامح مقيس",
             layer=CertificateLayer.ENCODING,
-            why_invoked=(
-                "الفكُّ المتسامحُ يحذف أخطاءَ الترميز صامتًا فيُفسِد الإزاحات"
-            ),
+            why_invoked=("الفكُّ المتسامحُ يحذف أخطاءَ الترميز صامتًا فيُفسِد الإزاحات"),
             admission_evidence=(
                 "`decode_audit` يقيس ما كان المتسامحُ سيُسقطه من محارفَ ههنا"
             ),
@@ -572,9 +558,7 @@ def deposited_premises(
         Premise(
             name="التمثيلُ مقبولٌ في المئة والستّ عشرة",
             layer=CertificateLayer.CANONICAL_ADMISSION,
-            why_invoked=(
-                "لا تُقرأ وحداتٌ وأدوارٌ من سطحٍ لم يُقبَل في جدول الذرّات"
-            ),
+            why_invoked=("لا تُقرأ وحداتٌ وأدوارٌ من سطحٍ لم يُقبَل في جدول الذرّات"),
             admission_evidence=(
                 f"الجسر: الحالةُ {admission.status} وإعادةُ الاشتقاق "
                 f"{'ناجحة' if admission.replay_reproduced else 'فاشلة'}"
@@ -595,9 +579,7 @@ def deposited_premises(
         Premise(
             name="الرسمُ المحفوظُ غيرُ التصيير الوصليّ",
             layer=CertificateLayer.CANONICAL_ADMISSION,
-            why_invoked=(
-                "قد يُظَنّ أنّ الذرّاتِ تُعيد الرسمَ، فيُقرأ التصييرُ أصلًا"
-            ),
+            why_invoked=("قد يُظَنّ أنّ الذرّاتِ تُعيد الرسمَ، فيُقرأ التصييرُ أصلًا"),
             admission_evidence=(
                 "ما لم يُستردّ من السطح في الذرّات: "
                 + (" · ".join(admission.lost_in_the_rendering) or "لا شيء")
@@ -608,8 +590,7 @@ def deposited_premises(
                 else "لم يسقط من السطح شيءٌ في هذا التصيير"
             ),
             what_it_establishes=(
-                "أنّ الرسمَ لا يُستردّ من الذرّات، فلا يُدَّعى اشتقاقُ جذرٍ "
-                "ولا معنًى منها"
+                "أنّ الرسمَ لا يُستردّ من الذرّات، فلا يُدَّعى اشتقاقُ جذرٍ " "ولا معنًى منها"
                 if admission.lost_in_the_rendering
                 else "أنّ التصييرَ ههنا لم يُسقِط محرفًا، وهو قياسٌ على هذا "
                 "السطح لا قاعدةٌ عامّة"
@@ -621,9 +602,7 @@ def deposited_premises(
         Premise(
             name="التنوينُ معلَّمٌ ومعزولٌ عن حروف الجذر",
             layer=CertificateLayer.MORPHOLOGY,
-            why_invoked=(
-                "عدُّ نون التنوين حرفًا من الجذر يُفسِد الجذرَ والوزنَ معًا"
-            ),
+            why_invoked=("عدُّ نون التنوين حرفًا من الجذر يُفسِد الجذرَ والوزنَ معًا"),
             admission_evidence=(
                 "`tanwin_reading` يفصل علامةَ التنوين عن حوامل السطح بالمحارف"
             ),
@@ -671,8 +650,7 @@ def deposited_premises(
                 f"إعرابٌ مُودَع: {syntax_witness.lexical_source} · "
                 f"{syntax_witness.lexical_locus} · بفحص {syntax_witness.examiner}"
                 if syntax_witness is not None
-                else "لا إعرابَ مُودَعًا لهذا الموضع، والعلامةُ الظاهرةُ تحتمل "
-                "أكثرَ من وجه"
+                else "لا إعرابَ مُودَعًا لهذا الموضع، والعلامةُ الظاهرةُ تحتمل " "أكثرَ من وجه"
             ),
             why_it_applies_here=(
                 f"جارُ الموضع في البايتات: قبله «{boundary.preceding_word}» "
@@ -796,9 +774,7 @@ def the_chain(
             station_in="نصٌّ مفكوكٌ غيرُ مطبَّع",
             operation="حلُّ العنوان إلى سطرٍ وكلمةٍ ثمّ إلى إزاحةٍ ومدى",
             condition="أن يحتمل المصدرُ السطرَ والكلمةَ المطلوبَين",
-            obstacle=(
-                "عنوانٌ بلا مفتاح مصدرٍ لا يُحَلّ: يُخرج في كلّ مصدرٍ مدلولًا آخَر"
-            ),
+            obstacle=("عنوانٌ بلا مفتاح مصدرٍ لا يُحَلّ: يُخرج في كلّ مصدرٍ مدلولًا آخَر"),
             witness=(
                 f"إزاحةُ المحارف {located.char_offset} · إزاحةُ البايتات "
                 f"{located.byte_offset} · المدى {located.excerpt_bounds}"
@@ -847,9 +823,7 @@ def the_chain(
             operation="عزلُ علامة التنوين ثمّ طلبُ جذرٍ ووزنٍ من شاهدٍ معجميّ",
             condition="أن يُودَع شاهدٌ معجميٌّ يحسم الأصليَّ من الزائد",
             obstacle=THE_ROOT_AND_THE_MEANING_ARE_LEXICAL_INPUTS_NOT_STRUCTURAL_OUTPUTS,
-            witness=(
-                f"الحوامل بعد نزع العلامة: «{tanwin.carriers_without_the_mark}»"
-            ),
+            witness=(f"الحوامل بعد نزع العلامة: «{tanwin.carriers_without_the_mark}»"),
             rank=EpistemicStanding.PRESUMPTIVE_ALWAYS,
             station_out="جذعٌ وجذرٌ ووزنٌ — معلَّقةٌ بلا شاهد",
             dependencies=("مقاطعُ وحدودٌ بترخيصٍ جزئيّ",),
@@ -872,9 +846,7 @@ def the_chain(
             station_in="علاقاتٌ نحويّة — معلَّقة",
             operation="نسبةُ ما قبلَ الموضعِ وما بعده إلى المقتطف",
             condition="أن تُثبَت دعوى المنشأ بشهادةٍ مُسمّاةِ المنهج والمنفِّذ",
-            obstacle=(
-                "وجدانُ العبارةِ وتفرُّدُها لا يُنتجان المنشأ، فلا يُنقَل سياق"
-            ),
+            obstacle=("وجدانُ العبارةِ وتفرُّدُها لا يُنتجان المنشأ، فلا يُنقَل سياق"),
             witness=f"سياقان مقيسان بطول {len(located.preceding_context)} محرفًا",
             rank=EpistemicStanding.PRESUMPTIVE_ALWAYS,
             station_out="حكمٌ للكلمة في نطاقها",
@@ -1062,9 +1034,7 @@ def certify(
             "المحتوى وصلاحيةِ القواعد والتبعيّات."
         )
     located = locate(address, root)
-    readings = origin_readings(
-        located.surface, witnesses=witnesses, root=root
-    )
+    readings = origin_readings(located.surface, witnesses=witnesses, root=root)
     origin_established = any(
         one.claim is OriginClaim.IS_THE_ORIGIN_OF_THE_EXCERPT and one.is_established
         for one in readings
@@ -1114,10 +1084,10 @@ def fingerprint(certificate: WordCertificate) -> str:
         "".join(certificate.admission.atoms),
         certificate.overall.standing.value,
     ]
+    rows.extend(f"{one.name}={one.standing.value}" for one in certificate.premises)
     rows.extend(
-        f"{one.name}={one.standing.value}" for one in certificate.premises
+        f"{one.layer.value}={one.standing.value}" for one in certificate.verdicts
     )
-    rows.extend(f"{one.layer.value}={one.standing.value}" for one in certificate.verdicts)
     return hashlib.sha256("\n".join(rows).encode("utf-8")).hexdigest()
 
 
