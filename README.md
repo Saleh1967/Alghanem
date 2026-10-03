@@ -5917,7 +5917,7 @@ What the number did, on the same fingerprinted deposit:
 | `SEGMENTATION_ONSETLESS_INITIAL_SAKIN` | 14 | **0** |
 | `SEGMENTATION_TWO_ADJACENT_SAKINS` | 0 | **8** |
 | reordering-only mismatches at final bytes | 4 | 5 |
-| table digest | `7025007494c12056…` | `1e659c20b67fda9e…` |
+| table digest | `7025007495c12056…` | `1e659c20b67fda9e…` |
 
 The wall did not fall; it moved and was renamed. The measured stopping point
 became the assimilated article lām, eight times over — and the next change was
@@ -7198,7 +7198,7 @@ gate is not vacuous.
 
 **A third field is not necessary for the declared target.** The extra field is a
 function of the record already encoded, so it cannot separate two states the
-record does not separate. Measured, it costs 1494 bits and returns nothing: the
+record does not separate. Measured, it costs 1495 bits and returns nothing: the
 decode is identical with it and without it. That negation is scoped — it is a
 statement about the target *retrieve the occurrence in its place*, not a claim
 that the field is meaningless for some other target never tested here.
@@ -8170,7 +8170,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 632-fold: 32 pairs, then 20,232. Both questions were answered,
+The widening is 632-fold: 32 pairs, then 20,313. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8189,7 +8189,7 @@ than a tail: six shadda-bearing pairs hold 99.941%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,221 of 20,200
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,251 of 20,281
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8779,9 +8779,9 @@ The table is filled along a cumulative ladder: the Fātiḥa alone realises 41 o
 the 112 cells over 100 occurrences and 20 of the 28 letters; adding Fatḥ 48:29
 takes it to 74 cells and 27 letters; adding the tree's own prose — with this
 module excluded from it by name, so that its figures do not move whenever its
-description is edited — takes it to 108 cells over 94,081 occurrences with every
+description is edited — takes it to 108 cells over 94,379 occurrences with every
 letter present. Five cells stay empty, and the module refuses to read them as
-prohibitions until their margins are consulted. Sukūn is 494 of 94,081 — 0.53%
+prohibitions until their margins are consulted. Sukūn is 495 of 94,379 — 0.52%
 — so the expected counts for ث and ظ bearing it are 1.470 and 1.052, and zero is
 unremarkable at each. Alef's whole row is ten occurrences. **Four of the five
 absences are consistent with scarcity**, and one survives the filter:
