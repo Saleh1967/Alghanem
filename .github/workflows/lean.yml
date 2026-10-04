@@ -1,0 +1,64 @@
+name: Lean (A116 closure)
+
+# البرهانُ الصوريّ لإغلاق النموذج المقطعيّ على الـ116، ثمّ مطابقتُه بالشيفرة.
+# ثلاثُ بوّابات، وسقوطُ أيٍّ منها يُسقِط الفحص:
+#   ١. نواةُ Lean تقبل كلَّ مبرهنة (lake build).
+#   ٢. لا برهانَ يستند إلى sorry أو إلى native_decide (تدقيقُ المسلّمات).
+#   ٣. الانتقالُ في Lean والبايثون واحدٌ على الأزواج الـ348 كلِّها.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: formal/a116
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install elan (toolchain pinned by formal/a116/lean-toolchain)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
+            | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: kernel checks every theorem
+        run: |
+          set -euo pipefail
+          lake build 2>&1 | tee build.log
+          # لا تحذيرَ يُبتلَع: تحذيرٌ في برهانٍ رياضيٍّ عيبٌ يُصلَح لا ضجيجٌ يُتجاهَل.
+          if grep -n "warning" build.log; then echo "::error::تحذيرٌ في البناء"; exit 1; fi
+
+      - name: no sorry, no native_decide (axiom audit)
+        run: |
+          set -euo pipefail
+          if grep -rnE "\bsorry\b|native_decide|^\s*axiom\b" --include=*.lean A116 A116.lean Main.lean; then
+            echo "::error::برهانٌ ناقصٌ أو مسلَّمةٌ مُضافة"; exit 1
+          fi
+          lake env lean Audit.lean | tee axioms.txt
+          if grep -nE "sorryAx|Lean.ofReduceBool" axioms.txt; then
+            echo "::error::مبرهنةٌ تستند إلى ما لا تفحصه النواة"; exit 1
+          fi
+          # المسلّماتُ المقبولة ثلاثٌ قياسيّة لا غير.
+          if grep -oE "\[[^]]*\]" axioms.txt | tr -d '[] ' | tr ',' '\n' | grep -v '^$' \
+               | grep -vxE "propext|Classical.choice|Quot.sound"; then
+            echo "::error::مسلّمةٌ خارجَ القياسيّة"; exit 1
+          fi
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Lean and Python share one transition on all 348 pairs
+        run: |
+          set -euo pipefail
+          python -m pip install -e ../..
+          lake exe a116-table > table.csv
+          python ../../tools/lean_a116_conformance.py table.csv
