@@ -53,3 +53,8 @@ import A116
 #print axioms A116.Numbering.pair_injective
 #print axioms A116.Numbering.pair_surjective
 #print axioms A116.Numbering.pair_closed
+#print axioms A116.Ishtiqaq.extract_fill_wf
+#print axioms A116.Ishtiqaq.root_sublist_fill_wf
+#print axioms A116.Ishtiqaq.fill_injective
+#print axioms A116.Ishtiqaq.soundTemplates_wf
+#print axioms A116.Ishtiqaq.form_alone_does_not_determine_root
