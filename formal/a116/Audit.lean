@@ -66,3 +66,11 @@ import A116
 #print axioms A116.Derivation.stationary_unique
 #print axioms A116.Derivation.share_of_I
 #print axioms A116.Derivation.stationary_w
+#print axioms A116.Ladder.run_depends_only_on_pattern
+#print axioms A116.Ladder.U_eq_pow_mul_g
+#print axioms A116.Ladder.pattern_count_fib
+#print axioms A116.Ladder.admissible_patterns_3
+#print axioms A116.Ladder.U3_by_pattern
+#print axioms A116.Ladder.patterns_of_the_cited_words
+#print axioms A116.Ladder.kana_and_inna_are_indistinguishable
+#print axioms A116.Ladder.kana_is_not_kataba
