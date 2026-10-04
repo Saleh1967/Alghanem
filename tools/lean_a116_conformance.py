@@ -164,6 +164,12 @@ def _check_counts(path: Path) -> str | None:
     return None
 
 
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(_REPO_ROOT) not in sys.path:
+    # `canonical116` في جذر الشجرة لا في الحزمة المنصَّبة؛ وCI يشغّل من formal/a116.
+    sys.path.insert(0, str(_REPO_ROOT))
+
+
 def _rasm_recovery() -> object:
     sys.path.insert(0, str(Path(__file__).resolve().parent / "rasm_recovery"))
     import contextual

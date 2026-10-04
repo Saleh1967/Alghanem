@@ -8170,7 +8170,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 696-fold: 32 pairs, then 22,290. Both questions were answered,
+The widening is 700-fold: 32 pairs, then 22,427. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8189,7 +8189,7 @@ than a tail: six shadda-bearing pairs hold 99.945%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,671 of 22,258
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,695 of 22,395
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8779,12 +8779,12 @@ The table is filled along a cumulative ladder: the Fātiḥa alone realises 41 o
 the 112 cells over 100 occurrences and 20 of the 28 letters; adding Fatḥ 48:29
 takes it to 74 cells and 27 letters; adding the tree's own prose — with this
 module excluded from it by name, so that its figures do not move whenever its
-description is edited — takes it to 110 cells over 104,689 occurrences with every
-letter present. Two cells stay empty, and the module refuses to read them as
-prohibitions until their margins are consulted. Sukūn is 552 of 104,689 — 0.53%
-— and the cells once filed as scarce (ظ, then ث, bearing it) have since filled
-as the prose grew. Alef's whole row is twelve occurrences, so its sukūn cell is
-expected 0.064 times and **stays consistent with scarcity**. A third cell,
+description is edited — takes it to 111 cells over 105,489 occurrences with every
+letter present. One cell stays empty, and the module refuses to read it as a
+prohibition until its margin is consulted. Sukūn is 639 of 105,489 — 0.61%
+— and the cells once filed as scarce (ظ, then ث, then ز, bearing it) have since
+filled as the prose grew. Alef's whole row is thirteen occurrences, so its sukūn
+cell is expected 0.079 times and **stays consistent with scarcity**. A third cell,
 alef-with-fatḥa, once survived that filter and has since filled from the growing
 prose alone — and its emptiness was never a discovery, since alef *is* the long
 fatḥa.
@@ -8794,8 +8794,8 @@ its expectation was 2.951, just under the 2.996 margin, and it was filed as
 scarcity; the tree's prose grew and it crossed to 3.009 and was filed as
 surprising; the prose grew again and it fell back to 2.993 and was filed as
 scarcity once more; the prose grew a third time and it crossed again, to 3.719
-with a zero-probability of 0.024 — with not one letter changing anywhere in the
-script.
+with a zero-probability of 0.024; and the prose grew once more and filled it
+with a single occurrence — with not one letter changing anywhere in the script.
 An absence standing is dated by its margin, not fixed by itself.
 
 The second half asks whether the twenty-eight letters can be grouped by their
