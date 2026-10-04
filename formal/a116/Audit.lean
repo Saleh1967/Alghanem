@@ -58,3 +58,11 @@ import A116
 #print axioms A116.Ishtiqaq.fill_injective
 #print axioms A116.Ishtiqaq.soundTemplates_wf
 #print axioms A116.Ishtiqaq.form_alone_does_not_determine_root
+#print axioms A116.Field112.field112_eq_cells112
+#print axioms A116.Field112.hamzaRow_named
+#print axioms A116.Field112.cells_eq_field112_append_hamza
+#print axioms A116.Derivation.branching_nodes
+#print axioms A116.Derivation.rows_stochastic
+#print axioms A116.Derivation.stationary_unique
+#print axioms A116.Derivation.share_of_I
+#print axioms A116.Derivation.stationary_w
