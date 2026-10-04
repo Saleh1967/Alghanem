@@ -8170,7 +8170,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 701-fold: 32 pairs, then 22,459. Both questions were answered,
+The widening is 702-fold: 32 pairs, then 22,481. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8189,7 +8189,7 @@ than a tail: six shadda-bearing pairs hold 99.947%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,705 of 22,427
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,707 of 22,449
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8779,9 +8779,9 @@ The table is filled along a cumulative ladder: the Fātiḥa alone realises 41 o
 the 112 cells over 100 occurrences and 20 of the 28 letters; adding Fatḥ 48:29
 takes it to 74 cells and 27 letters; adding the tree's own prose — with this
 module excluded from it by name, so that its figures do not move whenever its
-description is edited — takes it to 111 cells over 105,607 occurrences with every
+description is edited — takes it to 111 cells over 105,658 occurrences with every
 letter present. One cell stays empty, and the module refuses to read it as a
-prohibition until its margin is consulted. Sukūn is 642 of 105,607 — 0.61%
+prohibition until its margin is consulted. Sukūn is 642 of 105,658 — 0.61%
 — and the cells once filed as scarce (ظ, then ث, then ز, bearing it) have since
 filled as the prose grew. Alef's whole row is thirteen occurrences, so its sukūn
 cell is expected 0.079 times and **stays consistent with scarcity**. A third cell,

@@ -84,3 +84,7 @@ import A116
 #print axioms A116.Junction.licensed_upto_4
 #print axioms A116.Junction.burnside_3
 #print axioms A116.Junction.burnside_4
+#print axioms A116.Pause.mem_pats_iff
+#print axioms A116.Pause.U_by_patterns
+#print axioms A116.Pause.pause_admissible
+#print axioms A116.Pause.pause_strictly_extends
