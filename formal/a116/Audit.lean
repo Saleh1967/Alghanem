@@ -77,3 +77,10 @@ import A116
 #print axioms A116.Stages.parse_flat
 #print axioms A116.Stages.flat_parse
 #print axioms A116.Stages.flat_injective
+#print axioms A116.Junction.admissible_map_carriers
+#print axioms A116.Junction.admissible_prefix
+#print axioms A116.Junction.admissible_append
+#print axioms A116.Junction.U_by_patterns_upto_6
+#print axioms A116.Junction.licensed_upto_4
+#print axioms A116.Junction.burnside_3
+#print axioms A116.Junction.burnside_4
