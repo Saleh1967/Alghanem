@@ -14,15 +14,22 @@
 الانتقال على المجال كلِّه يُوجِب تطابقَ الأثر على كلّ سلسلةٍ بأيّ طول؛ فتنتقل
 مبرهناتُ Lean إلى الشيفرة البايثونيّة بهذا التطابق وحدَه.
 
+وإن مُرِّر ملفٌّ ثانٍ (`lake exe a116-table counts`) قوبلت أعدادُ ‎U(n)‎ التي
+برهن Lean تقابلَها بعدٍّ مباشرٍ في البايثون: كلُّ سلسلةٍ من الـ116 بطول ‎n ≤ 2‎
+تُشغَّل بـ`run_declared_model` وتُعَدّ ما لم تسقط. فالعددُ المبرهَنُ يُصادَم
+بالآلة البايثونيّة نفسِها لا بقيمةٍ مكتوبة.
+
 الاستعمال::
 
     lake exe a116-table > table.csv
-    python tools/lean_a116_conformance.py table.csv
+    lake exe a116-table counts > counts.csv
+    python tools/lean_a116_conformance.py table.csv counts.csv
 """
 
 from __future__ import annotations
 
 import sys
+from itertools import product
 from pathlib import Path
 
 from alghanem.arabic.a116_bridge_licence import (
@@ -31,12 +38,14 @@ from alghanem.arabic.a116_bridge_licence import (
     SyllableState,
     a116_cells,
     fixpoint_reading,
+    run_declared_model,
     step,
 )
 
 EXPECTED_ROWS = 3 * 116
 HAMZA_INDEX_IN_LEAN = 28
 SUKUN_INDEX_IN_LEAN = 3
+BRUTE_FORCE_UP_TO = 2
 
 
 def _fail(message: str) -> int:
@@ -45,8 +54,8 @@ def _fail(message: str) -> int:
 
 
 def main(argv: list[str]) -> int:
-    if len(argv) != 2:
-        return _fail("الاستعمال: lean_a116_conformance.py <جدول Lean>")
+    if len(argv) not in (2, 3):
+        return _fail("الاستعمال: lean_a116_conformance.py <جدول Lean> [أعداد Lean]")
 
     if len(THE_CARRIERS) != 29 or len(THE_HARAKAT) != 4:
         return _fail("أبعادُ البايثون غيرُ ‎29 × 4‎ التي يفترضها ملفُّ Lean")
@@ -88,11 +97,42 @@ def main(argv: list[str]) -> int:
     if seen != expected:
         return _fail("جدولُ Lean لا يغطّي ‎الحالات × الخانات‎ كلَّها")
 
+    if len(argv) == 3:
+        failure = _check_counts(Path(argv[2]))
+        if failure is not None:
+            return _fail(failure)
+
     print(
         f"✓ الانتقالُ في Lean والبايثون واحدٌ على {len(seen)} زوجًا من ‎(حالة، خانة)‎ "
         "— فمبرهناتُ formal/a116 تصدق على `a116_bridge_licence.step`"
     )
     return 0
+
+
+def _check_counts(path: Path) -> str | None:
+    """أعدادُ ‎U(n)‎ من Lean مقابلَ العدّ المباشر بالآلة البايثونيّة حتى الطول 2."""
+
+    lean_counts: dict[int, int] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            length, value = line.strip().split(",")
+            lean_counts[int(length)] = int(value)
+    cells = a116_cells()
+    for length in range(BRUTE_FORCE_UP_TO + 1):
+        if length not in lean_counts:
+            return f"أعدادُ Lean تخلو من ‎U({length})‎"
+        accepted = sum(
+            1
+            for word in product(cells, repeat=length)
+            if run_declared_model(word) is not SyllableState.FELL_OUT_OF_THE_MODEL
+        )
+        if accepted != lean_counts[length]:
+            return f"‎U({length})‎: Lean {lean_counts[length]}، والعدُّ المباشر {accepted}"
+    print(
+        f"✓ ‎U(n)‎ المبرهَنُ في Lean يطابق العدَّ المباشر حتى الطول {BRUTE_FORCE_UP_TO}: "
+        + "، ".join(str(lean_counts[n]) for n in range(BRUTE_FORCE_UP_TO + 1))
+    )
+    return None
 
 
 if __name__ == "__main__":

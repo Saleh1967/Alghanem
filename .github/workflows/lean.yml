@@ -4,7 +4,8 @@ name: Lean (A116 closure)
 # ثلاثُ بوّابات، وسقوطُ أيٍّ منها يُسقِط الفحص:
 #   ١. نواةُ Lean تقبل كلَّ مبرهنة (lake build).
 #   ٢. لا برهانَ يستند إلى sorry أو إلى native_decide (تدقيقُ المسلّمات).
-#   ٣. الانتقالُ في Lean والبايثون واحدٌ على الأزواج الـ348 كلِّها.
+#   ٣. الانتقالُ في Lean والبايثون واحدٌ على الأزواج الـ348 كلِّها،
+#      والعددُ المبرهَن ‎U(n)‎ يطابق العدَّ المباشر بالآلة البايثونيّة.
 
 on:
   push:
@@ -56,9 +57,10 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Lean and Python share one transition on all 348 pairs
+      - name: Lean and Python share one transition, and the proved count matches
         run: |
           set -euo pipefail
           python -m pip install -e ../..
           lake exe a116-table > table.csv
-          python ../../tools/lean_a116_conformance.py table.csv
+          lake exe a116-table counts > counts.csv
+          python ../../tools/lean_a116_conformance.py table.csv counts.csv
