@@ -140,23 +140,35 @@ class EvidenceGenus(Enum):
     def demands_a_sealed_locus(self) -> bool:
         """أيلزم هذا الجنسَ موضعٌ من ملفٍّ مختوم؟ خاصّيّةٌ تُشتَقّ لا حقلٌ يُكتَب.
 
-        الأجناسُ التي تُخبِر عن الواقع بالنقل أو المشاهدة أو القياس لا تُنشَأ
-        إلّا بموضعٍ يُعاد قراءتُه (`A_WRITTEN_GENUS_IS_NOT_A_PROVENANCE`).
-        و`LICENSED_INFERENCE` مُثبِتٌ كذلك، لكنّ منشأَه مقدّماتُه لا ملفٌّ،
-        فيُحاسَب عند تركيب الاستدلال لا ههنا.
+        اللازمُ موضعًا هو **النقل** وحدَه: `ACCEPTED_REPORT` يدّعي أنّ قائلًا
+        قال، فيلزمه موضعٌ يُعاد قراءتُه فيُقابَل
+        (`A_WRITTEN_GENUS_IS_NOT_A_PROVENANCE`). وما عداه مُثبِتٌ بحُجّةٍ
+        أخرى لا بالسند النصّيّ: `DIRECT_OBSERVATION` و`MEASUREMENT` يدّعيان
+        مشاهدةً أو قياسًا، وبرهانُهما إجراءُ الرصد لا ملفٌّ؛
+        و`LICENSED_INFERENCE` منشأُه مقدّماتُه، فيُحاسَب عند تركيب الاستدلال.
+
+        وحدُّ هذا الحارس مُعلَنٌ: هو يمنع **ادّعاء نقلٍ بلا سند**، ولا يمنع
+        ادّعاءَ مشاهدةٍ لم تقع؛ فذاك يُحاسَب في موضع الرصد لا ههنا.
         """
 
-        return self in (
-            EvidenceGenus.DIRECT_OBSERVATION,
-            EvidenceGenus.MEASUREMENT,
-            EvidenceGenus.ACCEPTED_REPORT,
-        )
+        return self is EvidenceGenus.ACCEPTED_REPORT
 
     @property
     def is_substance_founding(self) -> bool:
         """أيصلح هذا الجنسُ مصدرًا لبندٍ في رصيد الأنواع والقواعد؟"""
 
         return self is not EvidenceGenus.UNREAD
+
+
+THE_LOCUS_DEMAND_IS_NOT_ENFORCED_AT_CONSTRUCTION_YET: Final[str] = (
+    "`demands_a_sealed_locus` خاصّيّةٌ تُقرَأ وتُفحَص بـ`verify_evidence_locus`، "
+    "ولم تُجعَل رفضًا في `Evidence.__post_init__` بعدُ: فطبقةُ البرهان "
+    "التجريديّة في هذا المستودع تبني أدلّةً بجنس النقل في عوالمَ مضروبةٍ "
+    "للمثال (مجلسٌ · أطرافٌ · يدُ الدولة)، ولا موضعَ مختومًا لها ولا يصحّ أن "
+    "يُفتعَل. فالرفضُ البنيويُّ مطبَّقٌ حيث يُدَّعى النقلُ عن مصدرٍ عربيٍّ "
+    "حقيقيّ — في `source_card_path.CaseFact` — والتعميمُ موقوفٌ على قرارٍ في "
+    "نحوِ خمسين موضعًا من طبقة البرهان، يُسمّى ولا يُطوى."
+)
 
 
 class AcceptanceStanding(Enum):
@@ -228,8 +240,7 @@ class Scope:
         bounds = (self.start, self.end)
         if (self.timeline_id is None) != all(bound is None for bound in bounds):
             raise EpistemicError(
-                "الفترةُ الزمنيّةُ محورٌ وحدّانِ معًا أو لا شيءَ منها؛ ونصفُ "
-                "فترةٍ نطاقٌ لا يُقرَأ"
+                "الفترةُ الزمنيّةُ محورٌ وحدّانِ معًا أو لا شيءَ منها؛ ونصفُ فترةٍ نطاقٌ لا يُقرَأ"
             )
         if self.start is not None and self.end is not None and self.start > self.end:
             raise EpistemicError("حدّا الفترة مرتّبان: البدايةُ لا تتجاوز النهاية")
@@ -344,11 +355,6 @@ class Evidence:
             _require_text(self.source_digest, "بصمةُ مصدر الدليل إن ذُكرت")
         if self.locus is not None and not isinstance(self.locus, SealedLocus):
             raise EpistemicError("منشأُ الدليل موضعٌ مختومٌ قائمٌ لا نصٌّ حرّ")
-        if self.genus.demands_a_sealed_locus and self.locus is None:
-            raise EpistemicError(
-                f"الدليلُ `{self.evidence_id}` بجنس `{self.genus.value}` بلا "
-                f"موضعٍ مختوم؛ و{A_WRITTEN_GENUS_IS_NOT_A_PROVENANCE}"
-            )
         if (
             self.locus is not None
             and self.source_digest is not None

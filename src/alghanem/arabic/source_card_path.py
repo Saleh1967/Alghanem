@@ -47,6 +47,7 @@ from typing import Final
 
 from ..ontology import (
     A_DECLARED_WORLD_IS_NOT_A_WITNESSED_ONE,
+    A_WRITTEN_GENUS_IS_NOT_A_PROVENANCE,
     AdmissionLicence,
     AdoptionLicence,
     ClaimKey,
@@ -372,8 +373,7 @@ class KnowledgeCard:
             raise SourceCardError("للبطاقة تفسيرٌ مقترحٌ مُعلَن، أو لا تكون بطاقة.")
         if not self.use_limits:
             raise SourceCardError(
-                "بطاقةٌ بلا حدودِ استعمالٍ مُعلَنةٍ تُستعمَل في كلّ شيء؛ "
-                "وحدُّ الاستعمال حقلٌ مُلزَم."
+                "بطاقةٌ بلا حدودِ استعمالٍ مُعلَنةٍ تُستعمَل في كلّ شيء؛ وحدُّ الاستعمال حقلٌ مُلزَم."
             )
 
     @property
@@ -606,8 +606,7 @@ THE_CARDS: Final[tuple[KnowledgeCard, ...]] = (
         speaker="مؤلِّفُ «الشخصية الإسلامية ج٣»",
         genus=SpeechGenus.EXAMPLE,
         interpretation=(
-            "«سال الوادي» مثالٌ يسوقه المؤلِّفُ للسببيّة القابليّة: أُطلِق "
-            "اسمُ السبب على المسبَّب"
+            "«سال الوادي» مثالٌ يسوقه المؤلِّفُ للسببيّة القابليّة: أُطلِق اسمُ السبب على المسبَّب"
         ),
         conditions=("المثالُ تحت «النوع الأول: السببية» من أنواع العلاقة",),
         exceptions=(),
@@ -930,10 +929,21 @@ class CaseFact:
     value: str
     evidence_statement: str
     genus: EvidenceGenus = EvidenceGenus.DECLARED_SCENARIO
+    from_card_id: str | None = None
 
     def __post_init__(self) -> None:
         if not self.value.strip() or not self.evidence_statement.strip():
             raise SourceCardError("لكلّ واقعةٍ قيمةٌ ودليلٌ مُعلَنان.")
+        if self.genus.demands_a_sealed_locus and self.from_card_id is None:
+            raise SourceCardError(
+                f"الواقعةُ `{self.kind.value}` بجنس `{self.genus.value}` بلا "
+                f"بطاقةٍ تُنقَل عنها؛ و{A_WRITTEN_GENUS_IS_NOT_A_PROVENANCE}"
+            )
+        if self.from_card_id is not None and not self.genus.demands_a_sealed_locus:
+            raise SourceCardError(
+                f"الواقعةُ `{self.kind.value}` تُسمّي بطاقةً تُنقَل عنها، "
+                f"فلا تُودَع بجنس `{self.genus.value}` غيرِ الناقل"
+            )
         if self.genus is EvidenceGenus.DECLARED_SCENARIO:
             return
         if not self.genus.is_fact_establishing:
@@ -962,36 +972,32 @@ class UsageCase:
     def __post_init__(self) -> None:
         if not self.case_id.strip() or not self.phrase.strip():
             raise SourceCardError("للحالة مُعرِّفٌ وجملةٌ غيرُ فارغَين.")
-        if self.world is CaseWorld.DECLARED:
-            establishing = [
-                fact.kind.value for fact in self.facts if not fact.is_declared_only
-            ]
-            if establishing:
-                raise SourceCardError(
-                    f"الحالةُ `{self.case_id}` جملةٌ صغناها، فلا تحمل وقائعُها "
-                    f"جنسًا مُثبِتًا: {' · '.join(establishing)}. و"
-                    + A_DECLARED_WORLD_IS_NOT_A_WITNESSED_ONE
-                )
-        else:
+        if self.world is CaseWorld.TRANSMITTED:
             declared = [fact.kind.value for fact in self.facts if fact.is_declared_only]
             if declared:
                 raise SourceCardError(
                     f"الحالةُ `{self.case_id}` منقولةٌ، فلا تُودَع فيها واقعةٌ "
                     f"بجنس العالَم المُعلَن: {' · '.join(declared)}"
                 )
-
-    @property
-    def is_a_declared_world(self) -> bool:
-        """أهذه جملةٌ صغناها نحن؟ فحكمُها حكمُ عالَمٍ مُعلَنٍ لا حكمُ واقعة."""
-
-        return self.world is CaseWorld.DECLARED
         if self.word not in self.phrase:
             raise SourceCardError(
-                "اللفظُ المنظورُ فيه واقعٌ في جملة الحالة؛ ولفظٌ خارجَها " "حالةٌ لا تُفحَص."
+                "اللفظُ المنظورُ فيه واقعٌ في جملة الحالة؛ ولفظٌ خارجَها حالةٌ لا تُفحَص."
             )
         kinds = [fact.kind for fact in self.facts]
         if len(kinds) != len(set(kinds)):
             raise SourceCardError("لا تُودَع واقعتان من جنسٍ واحدٍ في حالةٍ واحدة.")
+
+    @property
+    def is_a_declared_world(self) -> bool:
+        """أهذه جملةٌ صغناها نحن؟ فحكمُها حكمُ عالَمٍ مُعلَنٍ لا حكمُ واقعة.
+
+        وكونُ العالَم مُعلَنًا لا يمنع أن تُنقَل عن بطاقةٍ **واقعةٌ معجميّة**
+        فيه؛ فالمنشأُ يُحاسَب على كلّ واقعةٍ بمفردها في `CaseFact`. الذي
+        يلزَم من إعلان العالَم أنّ فردَ الاستعمال مفروضٌ للخطاب، وأنّ
+        قراءتَنا لجملتنا لا تُسمّى خبرًا بلغنا.
+        """
+
+        return self.world is CaseWorld.DECLARED
 
     @property
     def individual_id(self) -> str:
@@ -1021,7 +1027,8 @@ THE_CASES: Final[tuple[UsageCase, ...]] = (
                 "الحيوان المفترس",
                 "وضعُ «أسد» الأوّلُ مقروءٌ في `بطاقة-تعريف-الحقيقة` نصًّا: "
                 "«كالأسد المستعمل في الحيوان المفترس»",
-                EvidenceGenus.DECLARED_SCENARIO,
+                EvidenceGenus.ACCEPTED_REPORT,
+                from_card_id="بطاقة-تعريف-الحقيقة",
             ),
             CaseFact(
                 PremiseKind.USAGE_IS_AMBULANT,
@@ -1029,7 +1036,8 @@ THE_CASES: Final[tuple[UsageCase, ...]] = (
                 "بين الحيوان المفترس والرجل الشجاع",
                 "المعنى المجازيُّ المحتمَلُ مقروءٌ في `بطاقة-تعريف-المجاز` "
                 "نصًّا: «كالأسد المستعمل في الرجل الشجاع»",
-                EvidenceGenus.DECLARED_SCENARIO,
+                EvidenceGenus.ACCEPTED_REPORT,
+                from_card_id="بطاقة-تعريف-المجاز",
             ),
             CaseFact(
                 PremiseKind.ADMITS_MAJAZ_BY_ITSELF,
@@ -1061,14 +1069,16 @@ THE_CASES: Final[tuple[UsageCase, ...]] = (
                 Polarity.AFFIRMED,
                 "الحيوان المفترس",
                 "وضعُ «أسد» الأوّلُ مقروءٌ في `بطاقة-تعريف-الحقيقة` نصًّا",
-                EvidenceGenus.DECLARED_SCENARIO,
+                EvidenceGenus.ACCEPTED_REPORT,
+                from_card_id="بطاقة-تعريف-الحقيقة",
             ),
             CaseFact(
                 PremiseKind.USAGE_IS_AMBULANT,
                 Polarity.AFFIRMED,
                 "بين الحيوان المفترس والرجل الشجاع",
                 "المعنى المجازيُّ المحتمَلُ مقروءٌ في `بطاقة-تعريف-المجاز` نصًّا",
-                EvidenceGenus.DECLARED_SCENARIO,
+                EvidenceGenus.ACCEPTED_REPORT,
+                from_card_id="بطاقة-تعريف-المجاز",
             ),
             CaseFact(
                 PremiseKind.ADMITS_MAJAZ_BY_ITSELF,
@@ -1106,7 +1116,8 @@ THE_CASES: Final[tuple[UsageCase, ...]] = (
                 Polarity.AFFIRMED,
                 "بين الوادي والماء الذي فيه",
                 "المعنى المجازيُّ مُصرَّحٌ به في المقطع: «أي الماء الذي في الوادي»",
-                EvidenceGenus.DECLARED_SCENARIO,
+                EvidenceGenus.ACCEPTED_REPORT,
+                from_card_id="بطاقة-علاقة-السببية-القابلية",
             ),
             CaseFact(
                 PremiseKind.ADMITS_MAJAZ_BY_ITSELF,
@@ -1121,6 +1132,8 @@ THE_CASES: Final[tuple[UsageCase, ...]] = (
                 "إسنادُ السيلان إلى الوادي قرينةٌ صارفةٌ إلى الماء",
                 "المؤلِّفُ نفسُه يقرأ المقطعَ مجازًا بالسببيّة القابليّة في "
                 "`بطاقة-علاقة-السببية-القابلية`",
+                EvidenceGenus.ACCEPTED_REPORT,
+                from_card_id="بطاقة-علاقة-السببية-القابلية",
             ),
         ),
     ),
@@ -1153,6 +1166,9 @@ THE_CASES: Final[tuple[UsageCase, ...]] = (
 
 
 def _case_evidence(case: UsageCase, fact: CaseFact) -> Evidence:
+    locus = (
+        None if fact.from_card_id is None else _card_locus(card_of(fact.from_card_id))
+    )
     return _evidence(
         f"دليل-{case.case_id}-{fact.kind.name}",
         fact.genus,
@@ -1163,6 +1179,7 @@ def _case_evidence(case: UsageCase, fact: CaseFact) -> Evidence:
         ),
         "وقائعُ الحالات المُودَعة",
         THE_USAGE_SCOPE,
+        locus,
     )
 
 
@@ -1506,7 +1523,7 @@ def apply_to_case(
         if kind is PremiseKind.DIVERTING_INDICATION and affirmed:
             blocked = THE_BLOCKERS[0]
             alternatives.append(
-                "الحملُ على المجاز بشرط علاقةٍ من أنواع العرب " "(`بطاقة-شرط-العلاقة`)"
+                "الحملُ على المجاز بشرط علاقةٍ من أنواع العرب (`بطاقة-شرط-العلاقة`)"
             )
         if kind is PremiseKind.ADMITS_MAJAZ_BY_ITSELF and not affirmed:
             blocked = THE_BLOCKERS[1]
@@ -1826,33 +1843,15 @@ class ExperimentTrace:
         raise SourceCardError(f"لا خطوةَ بهذا المفتاح في الأثر: `{key}`")
 
 
+NO_SECOND_ROOT_IS_AVAILABLE_SO_THE_STEP_REPORTS_ITS_LOSS: Final[str] = (
+    "السندُ البديلُ كان «مراجعةً ثانيةً» صغناها نحن، وقراءتُنا لجملتنا ليست "
+    "طائفةً ثانيةً من الأصول: فأصلُها نحن، وأصلُ الاشتقاق بطاقتا ج٣ اللتان "
+    "قرأناهما نحن أيضًا. ولا يوجد في هذا المستودع سندٌ ثانٍ مستقلُّ الأصل "
+    "لهذه الدعوى، فتُعلَن الخسارةُ ولا يُعاد تسميةُ الصنيعة سندًا."
+)
+
 THE_ALTERNATIVE_SUPPORT_ID: Final[str] = "قضية-سند-بديل-أسد-في-الغابة"
-"""سندٌ مستقلٌّ للدعوى نفسِها: مراجعةٌ ثانيةٌ مُعلَنةٌ لا تمرّ ببطاقات ج٣."""
-
-
-def _alternative_support(case: UsageCase) -> tuple[Evidence, Proposition]:
-    evidence = _evidence(
-        f"دليل-سند-بديل-{case.case_id}",
-        EvidenceGenus.DECLARED_SCENARIO,
-        (
-            f"مراجعةٌ ثانيةٌ مُعلَنةٌ قرأت «{case.phrase}» فرجّحت الحقيقةَ فيها "
-            "دون المرور ببطاقتَي ج٣؛ فأصلُ هذا السند غيرُ أصل الاشتقاق. و"
-            + A_USAGE_TYPE_IS_NOT_A_TRUTH_VALUE
-        ),
-        "مراجعةُ قارئٍ ثانٍ في هذا المستودع",
-        THE_USAGE_SCOPE,
-    )
-    proposition = Proposition(
-        proposition_id=f"قضية-سند-بديل-{case.case_id}",
-        form=PropositionForm.ATTRIBUTE_VALUE,
-        subject_id=case.individual_id,
-        predicate_id="الراجحُ-في-هذا-الاستعمال",
-        value="الحقيقة",
-        polarity=Polarity.AFFIRMED,
-        scope=THE_USAGE_SCOPE,
-        evidence_ref=evidence.ref,
-    )
-    return evidence, proposition
+"""مُعرِّفٌ محفوظٌ لسندٍ **لم يعد يُودَع**؛ انظر الثابتَ أعلاه."""
 
 
 def _amended(evidence: Evidence, addition: str) -> Evidence:
@@ -1866,6 +1865,32 @@ def _verdict_line(stock: KnowledgeStock, case: UsageCase) -> str:
         f"{len(reading.supporting_proposition_ids)} في "
         f"{reading.independent_support_count} طائفةً مستقلّة"
     )
+
+
+def _judgement_rows(
+    stock: KnowledgeStock,
+) -> tuple[tuple[str, str, str, str], ...]:
+    """صفُّ الحكم لكلّ حالةٍ على هذا الرصيد؛ يُستدعى مكتملًا وغيرَ مكتمل."""
+
+    rows: list[tuple[str, str, str, str]] = []
+    for case in THE_CASES:
+        _, certificate = apply_to_case(stock, case)
+        texts = " ⟵ ".join(
+            f"«{stock.register.proposition_of(row[0]).value}»"
+            for row in certificate.premise_rows
+            if row[0].startswith("قضية-نص-")
+        )
+        conditions = " · ".join(
+            f"{name}: {standing}" for name, standing in certificate.conditions_checked
+        )
+        dependents = (
+            certificate.conclusion_proposition_id
+            or " · ".join(certificate.missing_premises)
+            or "—"
+        )
+        rows.append((case.case_id, certificate.verdict.value, texts, conditions))
+        rows.append((case.case_id, "التبعيّات", dependents, conditions))
+    return tuple(rows)
 
 
 def run_experiment(root: Path | None = None) -> ExperimentTrace:
@@ -1944,18 +1969,8 @@ def run_experiment(root: Path | None = None) -> ExperimentTrace:
         )
     )
 
-    alt_evidence, alt_proposition = _alternative_support(sound)
-    with_alternative = after_blocked.with_evidence(alt_evidence).admit(
-        alt_proposition,
-        AdmissionLicence(
-            proposition_id=alt_proposition.proposition_id,
-            scope=THE_USAGE_SCOPE,
-            evidence_ref=alt_proposition.evidence_ref,
-            recorded_order=5_000,
-        ),
-    )
-    before_withdrawal = with_alternative.verdict_for(claim_of_case(sound))
-    withdrawn = with_alternative.retract_evidence("دليل-نص-بطاقة-الأصل-الحقيقة")
+    before_withdrawal = after_blocked.verdict_for(claim_of_case(sound))
+    withdrawn = after_blocked.retract_evidence("دليل-نص-بطاقة-الأصل-الحقيقة")
     after_withdrawal = withdrawn.verdict_for(claim_of_case(sound))
     withdrawn_reading = verify_certificate(withdrawn, sound_certificate)
     steps.append(
@@ -1982,26 +1997,55 @@ def run_experiment(root: Path | None = None) -> ExperimentTrace:
     steps.append(
         ExperimentStep(
             key="د",
-            title="سندٌ بديلٌ صالحٌ يُبقي الحكمَ مدعومًا وتُحدَّث شهادتُه",
+            title="لا سندَ بديلًا مستقلَّ الأصل؛ والخسارةُ تُعلَن ولا تُجمَّل",
             expectation=(
-                "الدعوى نفسُها مُودَعةٌ بسندٍ مستقلِّ الأصل، فتبقى مدعومةً بعد "
-                "السحب، ويصير سندُها المُسمّى هو البديلَ لا المشتقَّ"
+                "كانت هذه الخطوةُ تُودِع «مراجعةً ثانيةً» صغناها نحن وتُسمّيها "
+                "سندًا مستقلَّ الأصل. وهي ليست كذلك: أصلُها نحن، وأصلُ "
+                "الاشتقاق بطاقتان قرأناهما نحن. فالمتوقَّعُ الآن أن تبقى "
+                "الدعوى بلا سندٍ بعد السحب"
             ),
             observations=(
                 "السندُ الباقي: "
-                + " · ".join(after_withdrawal.supporting_proposition_ids),
+                + (" · ".join(after_withdrawal.supporting_proposition_ids) or "لا شيء"),
                 f"طوائفُ الاستقلال: {after_withdrawal.independent_support_count}",
                 f"الحكمُ بعد السحب: {after_withdrawal.standing.value}",
-                "الشهادةُ المحدَّثة: القبولُ قائمٌ على السند البديل، "
-                "والشهادةُ المشتقّةُ مخروقةٌ باسمها",
+                NO_SECOND_ROOT_IS_AVAILABLE_SO_THE_STEP_REPORTS_ITS_LOSS,
             ),
             stock_content_id=withdrawn.content_id[:16],
         )
     )
 
+    # الخطوتان «هـ» و«و» تفحصان **آلةَ الرصيد** (التصحيحَ والإصدارَ وزحزحةَ
+    # البصمة)، ولا تُشغَّلان إلّا على مقدّمةِ تفسيرٍ حيّة. وبعد حارسِ المنشأ
+    # صار التفسيرُ قراءةً مُعلَنةً لا تُودَع واقعةً، فلا مقدّمةَ حيّةَ ولا
+    # نتيجةَ مشتقّة. والخطوةُ غيرُ المشغَّلة تُسمّى NOT_RUN ولا تُعَدّ نجاحًا.
+    if _live_interpretation_premise(withdrawn) is None:
+        for key, title in (
+            ("هـ", "تصحيحُ تفسيرِ بطاقةٍ يُنشئ إصدارًا ويحفظ القديم ويُعيد التقييم"),
+            ("و", "تعديلُ دليلٍ غيرِ متعلِّقٍ يُزحزح البصمةَ ولا يُغيِّر حكمًا"),
+        ):
+            steps.append(
+                ExperimentStep(
+                    key=key,
+                    title=title,
+                    expectation="NOT_RUN: تحتاج مقدّمةَ تفسيرٍ حيّة",
+                    observations=(
+                        "NOT_RUN — لا قضيّةَ تفسيرٍ حيّةٌ في الرصيد: التفسيرُ "
+                        "قراءتُنا، وجنسُها مُعلَنٌ لا يُودَع واقعةً بعد حارس "
+                        "المنشأ. فالخطوةُ لم تُشغَّل، ولا تُقرَأ نجاحًا ولا "
+                        "فشلًا سلوكيًّا.",
+                        A_DECLARED_WORLD_IS_NOT_A_WITNESSED_ONE,
+                    ),
+                    stock_content_id=withdrawn.content_id[:16],
+                )
+            )
+        return ExperimentTrace(
+            steps=tuple(steps), judgement_rows=_judgement_rows(stock)
+        )
+
     definition_card = card_of("بطاقة-تعريف-الحقيقة")
     corrected, new_card = correct_interpretation(
-        with_alternative,
+        withdrawn,
         definition_card,
         interpretation=(
             "الحقيقةُ **نوعُ استعمالٍ دلاليّ**: اللفظُ المستعمَلُ فيما وُضِع "
@@ -2064,8 +2108,7 @@ def run_experiment(root: Path | None = None) -> ExperimentTrace:
             observations=(
                 f"بصمةُ الرصيد قبل: {reapplied.content_id[:16]}",
                 f"بصمةُ الرصيد بعد: {amended.content_id[:16]}",
-                f"التحقُّق من شهادة الحالة: "
-                f"{'صمد' if amended_reading.holds else 'خُرِق'}",
+                f"التحقُّق من شهادة الحالة: {'صمد' if amended_reading.holds else 'خُرِق'}",
                 _verdict_line(amended, sound),
                 _verdict_line(amended, blocked_case),
             ),
@@ -2080,7 +2123,7 @@ def run_experiment(root: Path | None = None) -> ExperimentTrace:
         register=amended.register.amend_evidence(
             _amended(
                 stale_source,
-                " — مراجعةٌ لاحقةٌ بدّلت جوابَها: صارت القرينةُ عندها محتمَلةً " "لا منفيّة",
+                " — مراجعةٌ لاحقةٌ بدّلت جوابَها: صارت القرينةُ عندها محتمَلةً لا منفيّة",
             )
         ),
     )
@@ -2096,8 +2139,7 @@ def run_experiment(root: Path | None = None) -> ExperimentTrace:
                 "حكمٌ بشهادةٍ تُحيل على بصمةٍ زائلة"
             ),
             observations=(
-                f"التحقُّق من الشهادة القديمة: "
-                f"{'صمد' if stale_reading.holds else 'خُرِق'}",
+                f"التحقُّق من الشهادة القديمة: {'صمد' if stale_reading.holds else 'خُرِق'}",
                 *(f"الخرق: {breach}" for breach in stale_reading.breaches),
                 f"إعادةُ التطبيق بعد التبدُّل: {fresh_certificate.verdict.value}",
                 *(f"الناقص: {name}" for name in fresh_certificate.missing_premises),
@@ -2106,22 +2148,4 @@ def run_experiment(root: Path | None = None) -> ExperimentTrace:
         )
     )
 
-    rows: list[tuple[str, str, str, str]] = []
-    for case in THE_CASES:
-        _, certificate = apply_to_case(stock, case)
-        texts = " ⟵ ".join(
-            f"«{stock.register.proposition_of(row[0]).value}»"
-            for row in certificate.premise_rows
-            if row[0].startswith("قضية-نص-")
-        )
-        conditions = " · ".join(
-            f"{name}: {standing}" for name, standing in certificate.conditions_checked
-        )
-        dependents = (
-            certificate.conclusion_proposition_id
-            or " · ".join(certificate.missing_premises)
-            or "—"
-        )
-        rows.append((case.case_id, certificate.verdict.value, texts, conditions))
-        rows.append((case.case_id, "التبعيّات", dependents, conditions))
-    return ExperimentTrace(steps=tuple(steps), judgement_rows=tuple(rows))
+    return ExperimentTrace(steps=tuple(steps), judgement_rows=_judgement_rows(stock))
