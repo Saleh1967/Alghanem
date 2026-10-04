@@ -35,6 +35,25 @@
 في الحالَين. وعلامةُ الترقيم وحدَها لا تُثبِت أداءً وقفيًّا بعينه، ولا تُختلَق
 كلمةٌ لاحقةٌ لاختبار الوصل: يُختبَر على ما في البايتات لا على ما يُفترَض
 (`A_PUNCTUATION_MARK_ALONE_IS_NOT_A_PAUSE_PERFORMANCE`).
+
+**وسادسًا: حضورُ ملفٍّ ومطابقةُ سطحٍ ليسا قبولَ شاهد.** كان القبولُ ههنا
+شرطين: أن يُطابق سطحُ الشاهد المقيسَ، وأن يكون مسارُه ملفًّا حاضرًا في
+الشجرة. وبهما قُبِل شاهدٌ دعواه غير مسندةٍ ومصدرُه `README.md` وموضعُه إحالةٌ
+لا وجودَ لها، وبقيت الشهادةُ **مرخَّصةً** وبصمتُها **لم تتحرّك**. فالقبولُ
+الآن خمسُ بوّاباتٍ مفصولةٍ تُقاس كلُّ واحدةٍ وحدَها: حضورُ المصدر وسلامةُ
+ختمه، واستخراجُ المقطع من موضعه المُسمّى، ونسبتُه إلى ذلك المصدر حرفًا بحرف،
+وإسنادُه للدعوى بمعطياتٍ بنيويّةٍ تُصادَم بالمقيس، وانطباقُ قاعدةٍ ذاتِ
+إصدارٍ وشرطِ تطبيقٍ على هذا الوقوع بعينه. والمراجعةُ البشريّةُ تُحفَظ بهويّتها
+ونطاقها ورتبتها ولا تفتح بوّابةً سقطت
+(`A_PRESENT_FILE_IS_NOT_AN_ADMITTED_WITNESS` ·
+`A_REVIEW_IS_RECORDED_AND_IS_NOT_A_PROOF`).
+
+**وسابعًا: البصمةُ تربط القرارَ بشواهده وإصدارات قواعده.** فما لم يدخلها
+الشاهدُ ودعواه وقاعدتُه بإصدارها، كان تبديلُ الشاهد لا يُحرِّكها، فتُعاد
+شهادةٌ محرَّفةٌ باسم القديمة. وهي تكشف العبثَ **عند المصادمة بمرساةٍ موثوقة**
+— المُودَعُ في `exhibits/` يُصادَم بما يولّده القرصُ في CI — ولا تجعل السجلَّ
+غيرَ قابلٍ لإعادة الكتابة بذاتها
+(`A_FINGERPRINT_BINDS_THE_DECISION_TO_ITS_WITNESSES_AND_RULE_VERSIONS`).
 """
 
 from __future__ import annotations
@@ -47,32 +66,52 @@ from typing import Final
 
 from .epistemic_layers import EpistemicStanding
 from .excerpt_origin_bridge import (
+    THE_SURFACE_IS_COMPARED_VERBATIM_AND_NEVER_FOLDED_SILENTLY,
     ClaimStanding,
     ExcerptOriginError,
     LocatedWord,
     OriginClaim,
     OriginWitness,
+    TextSource,
     WordAddress,
     locate,
     origin_readings,
+    source_by_key,
+    source_reading,
 )
 
 __all__ = [
     "AN_ABSENT_EVIDENCE_IS_NOT_A_REFUTATION",
+    "AnalysisRule",
     "AnalysisSubject",
     "AnalysisWitness",
+    "A_CORPUS_ATTESTS_AN_OCCURRENCE_NOT_AN_ANALYSIS",
+    "A_FINGERPRINT_BINDS_THE_DECISION_TO_ITS_WITNESSES_AND_RULE_VERSIONS",
+    "A_PRESENT_FILE_IS_NOT_AN_ADMITTED_WITNESS",
+    "A_REVIEW_IS_RECORDED_AND_IS_NOT_A_PROOF",
     "A_PUNCTUATION_MARK_ALONE_IS_NOT_A_PAUSE_PERFORMANCE",
     "A_READY_PROTOCOL_STATE_IS_NOT_A_LICENCE_OF_THE_WORD",
     "BoundaryReading",
     "CanonicalAdmission",
     "CertificateLayer",
+    "FeatureClaim",
+    "FeatureCondition",
+    "GateReading",
     "LayerStanding",
     "LayerVerdict",
     "Premise",
+    "ReviewAttestation",
+    "SourceGenus",
+    "StructuralFeature",
+    "THE_ANALYSIS_RULES",
     "THE_DECLARED_SCOPE",
+    "THE_WITNESS_SOURCES",
     "THE_ROOT_AND_THE_MEANING_ARE_LEXICAL_INPUTS_NOT_STRUCTURAL_OUTPUTS",
     "THE_SCOPE_IS_DECLARED_BEFORE_THE_MEASUREMENT_NOT_AFTER_IT",
     "Transition",
+    "WitnessAudit",
+    "WitnessGate",
+    "WitnessSource",
     "WordCertificate",
     "WordCertificateError",
     "boundary_reading",
@@ -81,9 +120,13 @@ __all__ = [
     "deposited_premises",
     "fingerprint",
     "layer_verdicts",
+    "measured_features",
     "overall_verdict",
+    "rule_of",
     "tanwin_reading",
     "the_chain",
+    "witness_audits",
+    "witness_source_of",
 ]
 
 
@@ -379,67 +422,710 @@ def boundary_reading(located: LocatedWord) -> BoundaryReading:
     )
 
 
-# ----- شاهدُ التحليل: مدخلٌ معجميٌّ أو نحويٌّ مُودَعٌ لا مولَّدٌ -----
+# ----- شاهدُ التحليل: خمسُ بوّاباتٍ مفصولةٍ لا تطابقُ سطحٍ وحضورُ ملفّ -----
+
+
+A_PRESENT_FILE_IS_NOT_AN_ADMITTED_WITNESS: Final[str] = (
+    "حضورُ ملفٍّ في الشجرة ومطابقةُ سطحٍ ليسا قبولًا لشاهد: القبولُ خمسُ "
+    "بوّاباتٍ مفصولةٍ — حضورُ المصدر وسلامةُ ختمه، واستخراجُ المقطع من موضعه، "
+    "ونسبتُه إلى ذلك المصدر، وإسنادُه للدعوى بعينها، وانطباقُ قاعدةٍ ذاتِ "
+    "إصدارٍ على هذا الوقوع"
+)
+
+A_REVIEW_IS_RECORDED_AND_IS_NOT_A_PROOF: Final[str] = (
+    "مراجعةُ إنسانٍ تُحفَظ بهويّتها ونطاقها ورتبتها، ولا تفتح بوّابةً سقطت؛ "
+    "فحقلٌ مرفوعٌ لا يصير برهانًا بكتابته"
+)
+
+A_CORPUS_ATTESTS_AN_OCCURRENCE_NOT_AN_ANALYSIS: Final[str] = (
+    "المدوّنةُ تُثبِت وقوعَ لفظٍ في موضعٍ، ولا تُثبِت جذرًا ولا وزنًا ولا "
+    "إعرابًا؛ وجنسُ المصدر شرطُ انطباقِ القاعدة لا زينةً في بطاقتها"
+)
 
 
 class AnalysisSubject(Enum):
     """موضوعُ الشاهد: ما الذي يَحسِمه إن قُبِل؟"""
 
+    OCCURRENCE_OF_THE_SURFACE = "وقوعُ السطح في موضعه"
     ROOT_AND_WAZN = "الجذرُ والوزن"
     SYNTACTIC_FUNCTION = "الوظيفةُ النحويّة"
     REFERENT = "مرجعُ الإحالة"
 
 
+class SourceGenus(Enum):
+    """جنسُ المصدر: ما الذي يصلح أن يُثبِته أصلًا، قبل النظر في مضمونه؟"""
+
+    CORPUS_OF_TEXT = "مدوّنةُ نصٍّ: تُثبِت وقوعًا في موضعٍ لا تحليلًا"
+    LEXICON_OF_ROOTS = "معجمُ موادَّ: يُثبِت مدخلًا معجميًّا في مادّته"
+    SYNTACTIC_ANNOTATION = "تشجيرٌ نحويٌّ مُعلَن: يُثبِت وظيفةً في موضعه"
+
+
+@dataclass(frozen=True, slots=True)
+class WitnessSource:
+    """مصدرُ شاهدٍ مُعلَنٌ: بايتاتٌ مختومةٌ وجنسٌ وحدٌّ لما يصلح إثباتُه."""
+
+    source: TextSource
+    genus: SourceGenus
+    limit: str
+
+    @property
+    def key(self) -> str:
+        """مفتاحُ المصدر؛ وهو جزءٌ من هويّة كلّ موضعٍ فيه."""
+
+        return self.source.key
+
+
+_QURAN_SIMPLE: Final[TextSource] = source_by_key("QURAN_SIMPLE")
+
+
+_MAQAYIS: Final[TextSource] = TextSource(
+    key="MAQAYIS_BY_ROOT",
+    title="مقاييس اللغة لابن فارس — جدولٌ بالمادّة",
+    edition="maqayis_by_root_csv_999 · مودَعٌ في جذر الشجرة",
+    relative_path="maqayis_by_root_csv_999.csv",
+    declared_byte_length=5_539_405,
+    declared_sha256=(
+        "2c6000bd47797e183294b89da77df4ddfd27921ea595c6071ba52299c382ccb0"
+    ),
+    decode_policy=_QURAN_SIMPLE.decode_policy,
+    normalization_policy=_QURAN_SIMPLE.normalization_policy,
+    line_policy=_QURAN_SIMPLE.line_policy,
+)
+
+
+THE_WITNESS_SOURCES: Final[tuple[WitnessSource, ...]] = (
+    WitnessSource(
+        source=_QURAN_SIMPLE,
+        genus=SourceGenus.CORPUS_OF_TEXT,
+        limit=A_CORPUS_ATTESTS_AN_OCCURRENCE_NOT_AN_ANALYSIS,
+    ),
+    WitnessSource(
+        source=source_by_key("GLOBALQURAN_SIMPLE"),
+        genus=SourceGenus.CORPUS_OF_TEXT,
+        limit=A_CORPUS_ATTESTS_AN_OCCURRENCE_NOT_AN_ANALYSIS,
+    ),
+    WitnessSource(
+        source=_MAQAYIS,
+        genus=SourceGenus.LEXICON_OF_ROOTS,
+        limit=(
+            "يُثبِت مدخلَ المادّة ونصَّ بابها كما في هذه النسخة، ولا يُثبِت "
+            "إعرابَ وقوعٍ ولا وزنَ كلمةٍ بعينها"
+        ),
+    ),
+)
+
+
+def witness_source_of(key: str) -> WitnessSource:
+    """مصدرُ الشاهد بمفتاحه من المُعلَن، أو خطأٌ باسم ما هو مُعلَن."""
+
+    for one in THE_WITNESS_SOURCES:
+        if one.key == key:
+            return one
+    declared = " · ".join(one.key for one in THE_WITNESS_SOURCES)
+    raise WordCertificateError(
+        f"مفتاحُ مصدرٍ غيرُ مُعلَنٍ لشاهدٍ: «{key}». والمُعلَنُ: {declared}."
+    )
+
+
+class StructuralFeature(Enum):
+    """معطًى بنيويٌّ يُقاس من بايتات الوقوع، فيُصادَم به ادّعاءُ الشاهد."""
+
+    SURFACE = "سطحُ الكلمة كما في البايتات"
+    CARRIERS_WITHOUT_TANWIN = "الحواملُ بعد عزل علامة التنوين"
+    TANWIN_IS_WRITTEN = "أمكتوبةٌ علامةُ تنوين؟"
+    TANWIN_MARK = "اسمُ علامة التنوين"
+    FINAL_RASM_LETTER = "آخِرُ محرفٍ في الرسم بعد نزع الحركات"
+    PRECEDING_WORD = "الكلمةُ السابقةُ في السطر"
+    FOLLOWING_WORD = "الكلمةُ التاليةُ في السطر"
+
+
+_MARKS: Final[frozenset[str]] = frozenset(_HARAKAT | set(_TANWIN) | {"\u0651"})
+
+_ABSENT: Final[str] = "—"
+
+
+def measured_features(
+    located: LocatedWord, tanwin: TanwinReading
+) -> dict[StructuralFeature, str]:
+    """يقيس معطياتِ الوقوع من بايتاته؛ ولا يقرأ منها جذرًا ولا إعرابًا.
+
+    المدخل: كلمةٌ محلولةُ الموضع، وقراءةُ تنوينها.
+    الشرط: لا شرط؛ كلُّ قيمةٍ تُشتَقّ من المحارف.
+    المخرج: مفردةٌ من المعطيات إلى قيمها المقيسة.
+    حدُّها: معطًى بنيويٌّ ليس تحليلًا: الحواملُ ليست جذرًا، والعلامةُ ليست
+        إعرابًا (`THE_ROOT_AND_THE_MEANING_ARE_LEXICAL_INPUTS_NOT_STRUCTURAL_OUTPUTS`).
+    """
+
+    rasm = "".join(one for one in located.surface if one not in _MARKS)
+    return {
+        StructuralFeature.SURFACE: located.surface,
+        StructuralFeature.CARRIERS_WITHOUT_TANWIN: tanwin.carriers_without_the_mark,
+        StructuralFeature.TANWIN_IS_WRITTEN: "نعم" if tanwin.present else "لا",
+        StructuralFeature.TANWIN_MARK: tanwin.mark_name or _ABSENT,
+        StructuralFeature.FINAL_RASM_LETTER: rasm[-1] if rasm else _ABSENT,
+        StructuralFeature.PRECEDING_WORD: located.preceding_word or _ABSENT,
+        StructuralFeature.FOLLOWING_WORD: located.following_word or _ABSENT,
+    }
+
+
+@dataclass(frozen=True, slots=True)
+class FeatureClaim:
+    """ادّعاءُ معطًى بنيويٍّ بقيمةٍ بعينها؛ يُصادَم بالمقيس فيَثبُت أو يسقط."""
+
+    feature: StructuralFeature
+    value: str
+
+    def holds_in(self, measured: dict[StructuralFeature, str]) -> bool:
+        """أتُطابق القيمةُ المدّعاةُ ما قيس من البايتات؟"""
+
+        return measured.get(self.feature) == self.value
+
+    @property
+    def rendered(self) -> str:
+        """صورةُ الادّعاء مكتوبةً للبصمة والتقرير."""
+
+        return f"{self.feature.name}={self.value}"
+
+
+@dataclass(frozen=True, slots=True)
+class FeatureCondition:
+    """شرطُ انطباقٍ على معطًى: قيمةٌ بعينها، أو حضورٌ غيرُ فارغٍ إن لم تُسمَّ."""
+
+    feature: StructuralFeature
+    expected: str | None = None
+
+    def holds_in(self, measured: dict[StructuralFeature, str]) -> bool:
+        """أينطبق الشرطُ على هذا الوقوع؟ يُقرَأ من المقيس لا من بطاقة القاعدة."""
+
+        value = measured.get(self.feature)
+        if value is None or not value.strip() or value == _ABSENT:
+            return False
+        return True if self.expected is None else value == self.expected
+
+    @property
+    def rendered(self) -> str:
+        """صورةُ الشرط مكتوبةً."""
+
+        return (
+            f"{self.feature.name}{'' if self.expected is None else '=' + self.expected}"
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class AnalysisRule:
+    """قاعدةُ تحليلٍ بإصدارها وشروطِ انطباقها وحدِّ ما تُخرِجه.
+
+    ولا تُطبَّق بحضورها في الكتاب: تُطبَّق إن كان جنسُ المصدر جنسَها، وكلُّ
+    شرطٍ من شروطها منطبقًا على **هذا الوقوع** بعينه.
+    """
+
+    rule_id: str
+    version: str
+    subject: AnalysisSubject
+    required_source_genus: SourceGenus
+    conditions: tuple[FeatureCondition, ...]
+    applicability_note: str
+    establishes: str
+    limit: str
+
+    def __post_init__(self) -> None:
+        for label, value in (
+            ("مُعرِّف", self.rule_id),
+            ("إصدار", self.version),
+            ("شرطُ الانطباق", self.applicability_note),
+            ("ما تُثبِته", self.establishes),
+            ("حدُّها", self.limit),
+        ):
+            if not value.strip():
+                raise WordCertificateError(f"قاعدةُ تحليلٍ بلا «{label}» لا تُعتمَد.")
+        if not self.conditions:
+            raise WordCertificateError(
+                "قاعدةٌ بلا شرطِ انطباقٍ مقيسٍ تنطبق على كلّ شيءٍ فلا تُميّز شيئًا."
+            )
+
+    @property
+    def versioned_id(self) -> str:
+        """مُعرِّفُ القاعدة بإصدارها؛ ولا اعتمادَ على مُعرِّفٍ بلا إصدار."""
+
+        return f"{self.rule_id}@{self.version}"
+
+    def unmet_conditions(
+        self, measured: dict[StructuralFeature, str]
+    ) -> tuple[str, ...]:
+        """الشروطُ غيرُ المنطبقة على هذا الوقوع، مُسمّاةً لا معدودة."""
+
+        return tuple(
+            one.rendered for one in self.conditions if not one.holds_in(measured)
+        )
+
+
+THE_ANALYSIS_RULES: Final[tuple[AnalysisRule, ...]] = (
+    AnalysisRule(
+        rule_id="قاعدة-الوقوع-من-مدوّنةٍ-مختومة",
+        version="1",
+        subject=AnalysisSubject.OCCURRENCE_OF_THE_SURFACE,
+        required_source_genus=SourceGenus.CORPUS_OF_TEXT,
+        conditions=(FeatureCondition(StructuralFeature.SURFACE),),
+        applicability_note=(
+            "تنطبق على موضعٍ يُحَلّ في مدوّنةٍ مختومة، فيُقرأ منه سطحُ الكلمة " "حرفًا بحرف"
+        ),
+        establishes="وقوعَ هذا السطح في هذا الموضع من تلك النسخة بعينها",
+        limit=(
+            "لا تُخرِج جذرًا ولا وزنًا ولا إعرابًا — "
+            f"{A_CORPUS_ATTESTS_AN_OCCURRENCE_NOT_AN_ANALYSIS}"
+        ),
+    ),
+    AnalysisRule(
+        rule_id="قاعدة-المادّة-من-معجمٍ-مختوم",
+        version="1",
+        subject=AnalysisSubject.ROOT_AND_WAZN,
+        required_source_genus=SourceGenus.LEXICON_OF_ROOTS,
+        conditions=(
+            FeatureCondition(StructuralFeature.CARRIERS_WITHOUT_TANWIN),
+            FeatureCondition(StructuralFeature.SURFACE),
+        ),
+        applicability_note=(
+            "تنطبق على وقوعٍ قُرئت حواملُه من بايتاتٍ مختومة، وشاهدُه من معجمِ "
+            "موادَّ مختومٍ يُنقَل منه نصُّ باب المادّة بعينه"
+        ),
+        establishes=(
+            "مادّةَ المدخل المعجميّ ونصَّ بابها في تلك النسخة، منسوبةً إلى " "موضعها فيها"
+        ),
+        limit=(
+            "لا تُخرِج وزنًا، ولا تُثبِت أنّ هذا الوقوعَ من تلك المادّة إلّا "
+            "بما نُقل في الدعوى من حواملَ مقيسة"
+        ),
+    ),
+    AnalysisRule(
+        rule_id="قاعدة-الوظيفة-من-تشجيرٍ-مُعلَن",
+        version="1",
+        subject=AnalysisSubject.SYNTACTIC_FUNCTION,
+        required_source_genus=SourceGenus.SYNTACTIC_ANNOTATION,
+        conditions=(
+            FeatureCondition(StructuralFeature.SURFACE),
+            FeatureCondition(StructuralFeature.PRECEDING_WORD),
+        ),
+        applicability_note=(
+            "تنطبق على وقوعٍ له جارٌ سابقٌ مقروءٌ من البايتات، وشاهدُه من "
+            "تشجيرٍ نحويٍّ مُعلَنٍ مختومٍ يُسمّي هذا الموضعَ بعينه"
+        ),
+        establishes="الوظيفةَ النحويّةَ كما يُسمّيها ذلك التشجيرُ في موضعه",
+        limit=(
+            "حكمُ التشجير نقلٌ عن مُشجِّرٍ لا قياسٌ من الحروف؛ ولا يُرقّى إلى "
+            "يقينٍ بمجرّد إيداعه"
+        ),
+    ),
+)
+
+
+def rule_of(
+    versioned_id: str, rules: tuple[AnalysisRule, ...] = THE_ANALYSIS_RULES
+) -> AnalysisRule | None:
+    """قاعدةٌ بإصدارها من الكتاب المُعتمَد، أو لا شيءَ إن لم تكن فيه."""
+
+    for one in rules:
+        if one.versioned_id == versioned_id:
+            return one
+    return None
+
+
+@dataclass(frozen=True, slots=True)
+class ReviewAttestation:
+    """شهادةُ مراجعٍ: هويّةٌ ونطاقٌ ورتبة؛ تُحفَظ ولا تُقرأ برهانًا.
+
+    فهي تُسجَّل في بطاقة الشاهد لتُراجَع، ولا تفتح بوّابةً سقطت
+    (`A_REVIEW_IS_RECORDED_AND_IS_NOT_A_PROOF`).
+    """
+
+    reviewer_id: str
+    scope: str
+    rank: EpistemicStanding
+    statement: str
+
+    def __post_init__(self) -> None:
+        for label, value in (
+            ("هويّةُ المراجع", self.reviewer_id),
+            ("نطاقُ المراجعة", self.scope),
+            ("نصُّ المراجعة", self.statement),
+        ):
+            if not value.strip():
+                raise WordCertificateError(f"مراجعةٌ بلا «{label}» لا تُسجَّل.")
+        if not isinstance(self.rank, EpistemicStanding):
+            raise WordCertificateError("رتبةُ المراجعة عضوٌ في سلّم الرتب القائم.")
+
+    @property
+    def rendered(self) -> str:
+        """صورةُ المراجعة مكتوبةً للبصمة والتقرير."""
+
+        return f"{self.reviewer_id} · {self.scope} · {self.rank.value}"
+
+
+class WitnessGate(Enum):
+    """بوّاباتُ القبول الخمس، مفصولةٌ بأسمائها؛ ولا تُطوى واحدةٌ في أختها."""
+
+    SOURCE_PRESENT_AND_SEALED = "حضورُ المصدر وسلامةُ ختمه"
+    EXCERPT_EXTRACTED_AT_LOCUS = "استخراجُ المقطع من موضعه المُسمّى"
+    EXCERPT_ATTRIBUTED_TO_SOURCE = "نسبةُ المقطع إلى ذلك المصدر بعينه"
+    EXCERPT_SUPPORTS_THE_CLAIM = "إسنادُ المقطع للدعوى المحدَّدة"
+    RULE_APPLIES_TO_THIS_OCCURRENCE = "انطباقُ قاعدةٍ ذاتِ إصدارٍ على هذا الوقوع"
+
+
+@dataclass(frozen=True, slots=True)
+class GateReading:
+    """قراءةُ بوّابةٍ واحدة: أمرّت؟ ولماذا؟ وما الذي يُغلِقها إن لم تمرّ؟"""
+
+    gate: WitnessGate
+    passed: bool
+    cause: str
+
+    @property
+    def rendered(self) -> str:
+        """صورةُ القراءة مكتوبةً."""
+
+        return f"{self.gate.name}={'مرّت' if self.passed else 'سقطت'}"
+
+
+@dataclass(frozen=True, slots=True)
+class WitnessAudit:
+    """تدقيقُ شاهدٍ: بوّاباتُه الخمسُ بأسبابها، ومراجعتُه إن سُجِّلت.
+
+    والقبولُ **مُشتَقٌّ** من البوّابات لا حقلٌ يُكتَب، والمراجعةُ محفوظةٌ لا
+    مُرخِّصة (`A_REVIEW_IS_RECORDED_AND_IS_NOT_A_PROOF`).
+    """
+
+    subject: AnalysisSubject
+    claim: str
+    source_key: str
+    locus: str
+    rule_versioned_id: str
+    gates: tuple[GateReading, ...]
+    review: ReviewAttestation | None
+
+    @property
+    def admitted(self) -> bool:
+        """يُقبَل الشاهدُ إن مرّت بوّاباتُه الخمسُ جميعًا، ولا رابعَ لها."""
+
+        return len(self.gates) == len(WitnessGate) and all(
+            one.passed for one in self.gates
+        )
+
+    @property
+    def failed_gates(self) -> tuple[WitnessGate, ...]:
+        """البوّاباتُ الساقطةُ بأسمائها؛ والردُّ يُسمّي سببَه ولا يُجمِله."""
+
+        return tuple(one.gate for one in self.gates if not one.passed)
+
+    @property
+    def what_would_close_it(self) -> str:
+        """ما المطلوبُ لإغلاق هذا الشاهد؟ يُسمّى ولا يُترَك سكوتًا."""
+
+        if self.admitted:
+            return "لا شيء: البوّاباتُ الخمسُ مرّت، والقبولُ في حدود المصدر وقاعدته"
+        return " · ".join(one.cause for one in self.gates if not one.passed)
+
+    @property
+    def rendered(self) -> str:
+        """صورةُ التدقيق مكتوبةً، وهي ما يدخل البصمة."""
+
+        marks = " ".join(one.rendered for one in self.gates)
+        review = self.review.rendered if self.review is not None else _ABSENT
+        return (
+            f"{self.subject.name}|{self.source_key}|{self.locus}|"
+            f"{self.rule_versioned_id}|{self.claim}|{marks}|مراجعة:{review}"
+        )
+
+
 @dataclass(frozen=True, slots=True)
 class AnalysisWitness:
-    """شاهدُ تحليلٍ مُودَع: مُسمّى المصدرِ والموضعِ والسطحِ والمنفِّذ.
+    """شاهدُ تحليلٍ مُودَع: مصدرٌ مُعلَنٌ مختوم، وموضعٌ يُحَلّ، ومقطعٌ منقول.
 
-    ولا يُقبَل إلّا بأربعةٍ: مصدرٌ مُسمًّى بمسارٍ نسبيّ، وسطحٌ يُطابق المقيسَ
-    من البايتات، ودعوى، ومنفِّذ. فإن خالف سطحُه المقيسَ، أو غاب مصدرُه عن
-    الشجرة، لم يُقبَل؛ ولا يُحوَّل ردُّه امتناعًا في موضوعه
-    (`AN_ABSENT_EVIDENCE_IS_NOT_A_REFUTATION`).
+    ولا يُقبَل بمطابقةِ سطحٍ وحضورِ ملفّ
+    (`A_PRESENT_FILE_IS_NOT_AN_ADMITTED_WITNESS`): يُقبَل ببوّاباتٍ خمسٍ
+    تُقاس كلُّ واحدةٍ منها وحدَها، ويُسمّى ما سقط منها. وردُّه ليس امتناعًا في
+    موضوعه (`AN_ABSENT_EVIDENCE_IS_NOT_A_REFUTATION`).
     """
 
     subject: AnalysisSubject
     claim: str
     surface: str
-    lexical_source: str
-    lexical_locus: str
+    source_key: str
+    locus: WordAddress
+    quoted_excerpt: str
+    claimed_features: tuple[FeatureClaim, ...]
+    claim_rests_on: tuple[str, ...]
+    rule_versioned_id: str
     examiner: str
+    review: ReviewAttestation | None = None
 
     def __post_init__(self) -> None:
         for label, value in (
             ("الدعوى", self.claim),
             ("السطح", self.surface),
-            ("المصدر", self.lexical_source),
-            ("الموضع", self.lexical_locus),
+            ("مفتاحُ المصدر", self.source_key),
+            ("المقطعُ المنقول", self.quoted_excerpt),
+            ("القاعدةُ بإصدارها", self.rule_versioned_id),
             ("المنفِّذ", self.examiner),
         ):
             if not value.strip():
                 raise WordCertificateError(f"شاهدُ تحليلٍ بلا «{label}» لا يُقبَل.")
+        if not isinstance(self.locus, WordAddress):
+            raise WordCertificateError(
+                "موضعُ الشاهد عنوانٌ قائمٌ يُحَلّ إلى إزاحة، لا نصٌّ حرّ."
+            )
+        if "@" not in self.rule_versioned_id:
+            raise WordCertificateError(
+                "الشاهدُ يُسمّي قاعدتَه **بإصدارها**؛ ومُعرِّفٌ بلا إصدارٍ يُبقي "
+                "الاحتجاجَ ساريًا على نصٍّ تغيّر."
+            )
+        if not self.claimed_features:
+            raise WordCertificateError(
+                "دعوى بلا معطًى بنيويٍّ قابلٍ للفحص لا تُصادَم بشيء؛ "
+                f"{A_PRESENT_FILE_IS_NOT_AN_ADMITTED_WITNESS}"
+            )
+        if not self.claim_rests_on:
+            raise WordCertificateError(
+                "دعوى لا تُسمّي ما تستند إليه من المقطع المنقول لا تُفحَص نسبتُها."
+            )
 
-    def source_is_present(self, root: Path | None = None) -> bool:
-        """أحاضرٌ مصدرُ الشاهد في الشجرة؟ يُقاس من القرص لا يُصدَّق."""
+    @property
+    def lexical_source(self) -> str:
+        """مسارُ مصدر الشاهد نسبيًّا، مُشتَقًّا من المُعلَن لا مكتوبًا فيه."""
 
-        base = root if root is not None else Path(__file__).resolve().parents[3]
-        return (base / self.lexical_source).is_file()
+        return witness_source_of(self.source_key).source.relative_path
 
-    def admits(self, surface: str, root: Path | None = None) -> bool:
-        """يُقبَل إن طابق سطحُه المقيسَ وكان مصدرُه حاضرًا؛ وإلّا فلا."""
+    @property
+    def lexical_locus(self) -> str:
+        """صورةُ الموضع مكتوبةً، ومفتاحُ المصدر جزءٌ منها."""
 
-        return self.surface == surface and self.source_is_present(root)
+        return self.locus.rendered
+
+    def audit(
+        self,
+        measured: dict[StructuralFeature, str],
+        root: Path | None = None,
+        rules: tuple[AnalysisRule, ...] = THE_ANALYSIS_RULES,
+    ) -> WitnessAudit:
+        """يُدقِّق الشاهدَ ببوّاباته الخمس، ويُسمّي سببَ كلّ واحدةٍ سقطت.
+
+        المدخل: معطياتُ الوقوع المقيسة، وجذرُ الشجرة، وكتابُ القواعد المعتمَد.
+        الشرط: لا شرط؛ وكلُّ بوّابةٍ تُقاس وحدَها فلا يُطوى سقوطُ واحدةٍ في أختها.
+        المخرج: تدقيقٌ فيه خمسُ قراءاتٍ ومراجعةٌ إن سُجِّلت.
+        حدُّها: لا تحكم بصدق الدعوى في العالم، بل بنسبتها إلى مقطعٍ في مصدرٍ
+            مختومٍ وبانطباقِ قاعدةٍ مُعتمَدةٍ على هذا الوقوع.
+        """
+
+        gates: list[GateReading] = []
+        source: WitnessSource | None = None
+        try:
+            source = witness_source_of(self.source_key)
+        except WordCertificateError as error:
+            gates.append(
+                GateReading(WitnessGate.SOURCE_PRESENT_AND_SEALED, False, str(error))
+            )
+        if source is not None:
+            reading = source_reading(source.source, root)
+            gates.append(
+                GateReading(
+                    WitnessGate.SOURCE_PRESENT_AND_SEALED,
+                    reading.standing.is_readable,
+                    f"{source.key}: {reading.standing.value}",
+                )
+            )
+        located: LocatedWord | None = None
+        if source is None:
+            gates.append(
+                GateReading(
+                    WitnessGate.EXCERPT_EXTRACTED_AT_LOCUS,
+                    False,
+                    "لا مصدرَ مُعلَنًا، فلا موضعَ يُحَلّ فيه",
+                )
+            )
+        elif self.locus.source_key != self.source_key:
+            gates.append(
+                GateReading(
+                    WitnessGate.EXCERPT_EXTRACTED_AT_LOCUS,
+                    False,
+                    f"موضعٌ في «{self.locus.source_key}» ومصدرٌ «{self.source_key}»: "
+                    "عنوانٌ لا يقع في المصدر المُدّعى",
+                )
+            )
+        else:
+            try:
+                located = locate(self.locus, root, source=source.source)
+            except ExcerptOriginError as error:
+                gates.append(
+                    GateReading(
+                        WitnessGate.EXCERPT_EXTRACTED_AT_LOCUS, False, str(error)
+                    )
+                )
+            else:
+                gates.append(
+                    GateReading(
+                        WitnessGate.EXCERPT_EXTRACTED_AT_LOCUS,
+                        True,
+                        f"«{self.locus.rendered}» يُحَلّ إلى إزاحةِ محارف "
+                        f"{located.char_offset}",
+                    )
+                )
+        if located is None:
+            gates.append(
+                GateReading(
+                    WitnessGate.EXCERPT_ATTRIBUTED_TO_SOURCE,
+                    False,
+                    "لا مقطعَ مستخرَجًا، فلا نسبةَ تُفحَص",
+                )
+            )
+        elif self.quoted_excerpt not in located.line_text:
+            gates.append(
+                GateReading(
+                    WitnessGate.EXCERPT_ATTRIBUTED_TO_SOURCE,
+                    False,
+                    "المقطعُ المنقولُ ليس في سطر الموضع حرفًا بحرف؛ "
+                    f"{THE_SURFACE_IS_COMPARED_VERBATIM_AND_NEVER_FOLDED_SILENTLY}",
+                )
+            )
+        elif located.surface not in self.quoted_excerpt:
+            gates.append(
+                GateReading(
+                    WitnessGate.EXCERPT_ATTRIBUTED_TO_SOURCE,
+                    False,
+                    f"المقطعُ المنقولُ لا يشمل كلمةَ الموضع «{located.surface}»",
+                )
+            )
+        else:
+            gates.append(
+                GateReading(
+                    WitnessGate.EXCERPT_ATTRIBUTED_TO_SOURCE,
+                    True,
+                    f"المقطعُ منقولٌ حرفًا بحرفٍ من سطر «{self.locus.rendered}»",
+                )
+            )
+        unmatched = tuple(
+            one.rendered for one in self.claimed_features if not one.holds_in(measured)
+        )
+        unquoted = tuple(
+            one for one in self.claim_rests_on if one not in self.quoted_excerpt
+        )
+        if unmatched:
+            gates.append(
+                GateReading(
+                    WitnessGate.EXCERPT_SUPPORTS_THE_CLAIM,
+                    False,
+                    "معطياتٌ مدّعاةٌ تخالف المقيسَ من بايتات الوقوع: "
+                    + " · ".join(unmatched),
+                )
+            )
+        elif unquoted:
+            gates.append(
+                GateReading(
+                    WitnessGate.EXCERPT_SUPPORTS_THE_CLAIM,
+                    False,
+                    "ما تستند إليه الدعوى ليس في المقطع المنقول: "
+                    + " · ".join(unquoted),
+                )
+            )
+        elif self.surface != measured.get(StructuralFeature.SURFACE):
+            gates.append(
+                GateReading(
+                    WitnessGate.EXCERPT_SUPPORTS_THE_CLAIM,
+                    False,
+                    "سطحُ الشاهد يخالف سطحَ الوقوع المشهود له",
+                )
+            )
+        else:
+            gates.append(
+                GateReading(
+                    WitnessGate.EXCERPT_SUPPORTS_THE_CLAIM,
+                    True,
+                    f"{len(self.claimed_features)} معطًى مدّعًى طابق المقيسَ، و"
+                    f"{len(self.claim_rests_on)} مستندًا منقولٌ في المقطع",
+                )
+            )
+        rule = rule_of(self.rule_versioned_id, rules)
+        if rule is None:
+            gates.append(
+                GateReading(
+                    WitnessGate.RULE_APPLIES_TO_THIS_OCCURRENCE,
+                    False,
+                    f"لا قاعدةَ بهذا الإصدار في الكتاب المعتمَد: "
+                    f"`{self.rule_versioned_id}`",
+                )
+            )
+        elif rule.subject is not self.subject:
+            gates.append(
+                GateReading(
+                    WitnessGate.RULE_APPLIES_TO_THIS_OCCURRENCE,
+                    False,
+                    f"قاعدةٌ في «{rule.subject.value}» احتُجَّ بها في "
+                    f"«{self.subject.value}»",
+                )
+            )
+        elif source is None or source.genus is not rule.required_source_genus:
+            gates.append(
+                GateReading(
+                    WitnessGate.RULE_APPLIES_TO_THIS_OCCURRENCE,
+                    False,
+                    f"جنسُ المصدر ليس جنسَ القاعدة: تطلب "
+                    f"«{rule.required_source_genus.value}» — "
+                    f"{A_CORPUS_ATTESTS_AN_OCCURRENCE_NOT_AN_ANALYSIS}",
+                )
+            )
+        else:
+            unmet = rule.unmet_conditions(measured)
+            gates.append(
+                GateReading(
+                    WitnessGate.RULE_APPLIES_TO_THIS_OCCURRENCE,
+                    not unmet,
+                    (
+                        "شروطُ انطباقٍ لم تتحقّق في هذا الوقوع: " + " · ".join(unmet)
+                        if unmet
+                        else f"{rule.versioned_id}: {rule.applicability_note}"
+                    ),
+                )
+            )
+        return WitnessAudit(
+            subject=self.subject,
+            claim=self.claim,
+            source_key=self.source_key,
+            locus=self.locus.rendered,
+            rule_versioned_id=self.rule_versioned_id,
+            gates=tuple(gates),
+            review=self.review,
+        )
+
+    def admits(
+        self,
+        measured: dict[StructuralFeature, str],
+        root: Path | None = None,
+        rules: tuple[AnalysisRule, ...] = THE_ANALYSIS_RULES,
+    ) -> bool:
+        """يُقبَل إن مرّت البوّاباتُ الخمس؛ والقبولُ مُشتَقٌّ من التدقيق."""
+
+        return self.audit(measured, root, rules).admitted
+
+
+def witness_audits(
+    witnesses: tuple[AnalysisWitness, ...],
+    measured: dict[StructuralFeature, str],
+    root: Path | None = None,
+    rules: tuple[AnalysisRule, ...] = THE_ANALYSIS_RULES,
+) -> tuple[WitnessAudit, ...]:
+    """تدقيقُ كلّ شاهدٍ مُقدَّمٍ لهذا الوقوع، مقبولًا كان أو مردودًا."""
+
+    return tuple(one.audit(measured, root, rules) for one in witnesses)
 
 
 def _witness_for(
     subject: AnalysisSubject,
     witnesses: tuple[AnalysisWitness, ...],
-    surface: str,
+    measured: dict[StructuralFeature, str],
     root: Path | None,
+    rules: tuple[AnalysisRule, ...] = THE_ANALYSIS_RULES,
 ) -> AnalysisWitness | None:
-    """أوّلُ شاهدٍ مقبولٍ في موضوعه، أو لا شيء."""
+    """أوّلُ شاهدٍ مرّت بوّاباتُه الخمسُ في موضوعه، أو لا شيء."""
 
     for one in witnesses:
-        if one.subject is subject and one.admits(surface, root):
+        if one.subject is subject and one.admits(measured, root, rules):
             return one
     return None
 
@@ -502,6 +1188,38 @@ def _cascade(premises: tuple[Premise, ...]) -> tuple[Premise, ...]:
 # ----- المقدّماتُ المُودَعة -----
 
 
+def _establishes_of(witness: AnalysisWitness, rules: tuple[AnalysisRule, ...]) -> str:
+    """ما تُثبِته القاعدةُ عند هذا الوقوع، وحدُّها؛ لا ما كتبه الشاهدُ لنفسه.
+
+    فالدعوى تُقرأ في حدود قاعدتها ومصدرها، ولا تُنقَل إلى الشهادة كما وردت.
+    """
+
+    rule = rule_of(witness.rule_versioned_id, rules)
+    limit = witness_source_of(witness.source_key).limit
+    if rule is None:  # pragma: no cover - لا يُقبَل شاهدٌ بلا قاعدةٍ معتمدة
+        return f"دعوى الشاهد بلا قاعدةٍ معتمدة: {witness.claim}"
+    return (
+        f"{rule.establishes} — بقاعدة `{rule.versioned_id}`، ودعوى الشاهد: "
+        f"«{witness.claim}». وحدُّ القاعدة: {rule.limit}. وحدُّ المصدر: {limit}"
+    )
+
+
+def _refusal_note(audit: WitnessAudit | None, absent: str) -> str:
+    """سببُ التعليق: ردُّ شاهدٍ ببوّاباته الساقطة، أو غيابُ شاهدٍ أصلًا.
+
+    وردُّ الشاهد ليس امتناعًا في موضوعه؛ والمطلوبُ لإغلاق المقدّمة يُسمّى
+    (`AN_ABSENT_EVIDENCE_IS_NOT_A_REFUTATION`).
+    """
+
+    if audit is None:
+        return absent
+    failed = " · ".join(one.value for one in audit.failed_gates)
+    return (
+        f"شاهدٌ مُقدَّمٌ مردودٌ ببوّاباتٍ مُسمّاة ({failed})؛ والمطلوبُ لإغلاقه: "
+        f"{audit.what_would_close_it}"
+    )
+
+
 def deposited_premises(
     located: LocatedWord,
     boundary: BoundaryReading,
@@ -510,6 +1228,7 @@ def deposited_premises(
     origin_is_established: bool,
     analysis_witnesses: tuple[AnalysisWitness, ...] = (),
     root: Path | None = None,
+    rules: tuple[AnalysisRule, ...] = THE_ANALYSIS_RULES,
 ) -> tuple[Premise, ...]:
     """المقدّماتُ المُستدعاةُ لهذا الموضع، كلٌّ بأجوبتها الأربعة ومنزلتها.
 
@@ -519,13 +1238,18 @@ def deposited_premises(
 
     settled = ClaimStanding.ESTABLISHED
     suspended = ClaimStanding.SUSPENDED
-    surface = located.surface
+    measured = measured_features(located, tanwin)
     root_witness = _witness_for(
-        AnalysisSubject.ROOT_AND_WAZN, analysis_witnesses, surface, root
+        AnalysisSubject.ROOT_AND_WAZN, analysis_witnesses, measured, root, rules
     )
     syntax_witness = _witness_for(
-        AnalysisSubject.SYNTACTIC_FUNCTION, analysis_witnesses, surface, root
+        AnalysisSubject.SYNTACTIC_FUNCTION, analysis_witnesses, measured, root, rules
     )
+    refusals = {
+        one.subject: one
+        for one in reversed(witness_audits(analysis_witnesses, measured, root, rules))
+        if not one.admitted
+    }
     premises: list[Premise] = [
         Premise(
             name="بايتاتُ المصدر مختومةٌ ومُعادةُ القياس",
@@ -616,22 +1340,26 @@ def deposited_premises(
             required_for_the_claim=False,
         ),
         Premise(
-            name="الجذرُ والوزنُ مدخلان معجميّان",
+            name="مادّةُ المدخل المعجميّ مُودَعةٌ بشاهدٍ من جنسها",
             layer=CertificateLayer.MORPHOLOGY,
             why_invoked="الدعوى تطلب جذرًا ووزنًا، وليسا في الذرّات",
             admission_evidence=(
-                f"شاهدٌ معجميٌّ مُودَع: {root_witness.lexical_source} · "
-                f"{root_witness.lexical_locus} · بفحص {root_witness.examiner}"
+                f"شاهدٌ معجميٌّ مرّت بوّاباتُه الخمس: {root_witness.lexical_source} · "
+                f"{root_witness.lexical_locus} · بقاعدة "
+                f"`{root_witness.rule_versioned_id}` · بفحص {root_witness.examiner}"
                 if root_witness is not None
-                else "لا شاهدَ معجميًّا مُودَعًا لهذا السطح في هذه الشجرة — "
-                f"{THE_ROOT_AND_THE_MEANING_ARE_LEXICAL_INPUTS_NOT_STRUCTURAL_OUTPUTS}"
+                else _refusal_note(
+                    refusals.get(AnalysisSubject.ROOT_AND_WAZN),
+                    "لا شاهدَ معجميًّا مُودَعًا لهذا السطح في هذه الشجرة — "
+                    f"{THE_ROOT_AND_THE_MEANING_ARE_LEXICAL_INPUTS_NOT_STRUCTURAL_OUTPUTS}",
+                )
             ),
             why_it_applies_here=(
                 "الحوامل المقروءةُ تحتمل أكثرَ من تقطيعٍ أصليٍّ وزائد، ولا "
                 "يَحسِمها إلّا معجم"
             ),
             what_it_establishes=(
-                f"الجذرَ والوزنَ بشاهدٍ مُودَع: {root_witness.claim}"
+                _establishes_of(root_witness, rules)
                 if root_witness is not None
                 else "لا شيءَ بعدُ؛ وهي مُستدعاةٌ معلَّقةٌ لا مطويّة"
             ),
@@ -643,27 +1371,53 @@ def deposited_premises(
             ),
         ),
         Premise(
+            name="الوزنُ مُودَعٌ بشاهدٍ من جنسه",
+            layer=CertificateLayer.MORPHOLOGY,
+            why_invoked="الدعوى تطلب وزنًا، ولا يُخرِجه معجمُ موادَّ ولا الذرّات",
+            admission_evidence=(
+                "لا شاهدَ صرفيًّا مُودَعًا يُخرِج وزنًا: قاعدةُ المادّة تُصرِّح "
+                "في حدِّها بأنّها لا تُخرِج وزنًا"
+            ),
+            why_it_applies_here=(
+                f"الحوامل «{tanwin.carriers_without_the_mark}» تحتمل أكثرَ من "
+                "وزنٍ، والعلامةُ لا تَحسِمها"
+            ),
+            what_it_establishes=(
+                "لا شيءَ بعدُ؛ ويُغلِقها شاهدٌ من تحليلٍ صرفيٍّ مُعلَنٍ مختومٍ "
+                "يُسمّي هذا الوقوعَ بعينه، بقاعدةٍ ذاتِ إصدارٍ وشرطِ انطباق"
+            ),
+            standing=suspended,
+            required_for_the_claim=False,
+            depends_on=("مادّةُ المدخل المعجميّ مُودَعةٌ بشاهدٍ من جنسها",),
+        ),
+        Premise(
             name="الوظيفةُ النحويّةُ مُثبَتةٌ بشاهد",
             layer=CertificateLayer.SYNTAX,
             why_invoked="الدعوى تطلب إعرابًا — مبتدأً أو خبرًا أو غيرَهما",
             admission_evidence=(
-                f"إعرابٌ مُودَع: {syntax_witness.lexical_source} · "
-                f"{syntax_witness.lexical_locus} · بفحص {syntax_witness.examiner}"
+                f"إعرابٌ مرّت بوّاباتُه الخمس: {syntax_witness.lexical_source} · "
+                f"{syntax_witness.lexical_locus} · بقاعدة "
+                f"`{syntax_witness.rule_versioned_id}` · بفحص {syntax_witness.examiner}"
                 if syntax_witness is not None
-                else "لا إعرابَ مُودَعًا لهذا الموضع، والعلامةُ الظاهرةُ تحتمل " "أكثرَ من وجه"
+                else _refusal_note(
+                    refusals.get(AnalysisSubject.SYNTACTIC_FUNCTION),
+                    "لا إعرابَ مُودَعًا لهذا الموضع، والعلامةُ الظاهرةُ تحتمل " "أكثرَ من وجه",
+                )
             ),
             why_it_applies_here=(
                 f"جارُ الموضع في البايتات: قبله «{boundary.preceding_word}» "
                 f"وبعده «{boundary.following_word}»"
             ),
             what_it_establishes=(
-                f"الوظيفةَ النحويّةَ بشاهدٍ مُودَع: {syntax_witness.claim}"
+                _establishes_of(syntax_witness, rules)
                 if syntax_witness is not None
-                else "لا شيءَ بعدُ؛ معلَّقةٌ حتّى يُودَع شاهدُها"
+                else "لا شيءَ بعدُ؛ معلَّقةٌ حتّى يُودَع تشجيرٌ نحويٌّ مُعلَنٌ "
+                "مختومٌ يُسمّي هذا الموضعَ — وبايتاتُ MASAQ في هذه الشجرة داخل "
+                "مضغوطٍ بلا بابٍ مُعلَنٍ يقرؤها، فهذا هو المطلوبُ لإغلاقها"
             ),
             standing=settled if syntax_witness is not None else suspended,
             required_for_the_claim=True,
-            depends_on=("الجذرُ والوزنُ مدخلان معجميّان",),
+            depends_on=("مادّةُ المدخل المعجميّ مُودَعةٌ بشاهدٍ من جنسها",),
         ),
         Premise(
             name="منشأُ المقتطفِ مُثبَتٌ بشهادة",
@@ -1000,6 +1754,7 @@ class WordCertificate:
     tanwin: TanwinReading
     admission: CanonicalAdmission
     origin: tuple[object, ...]
+    witnesses: tuple[WitnessAudit, ...]
     premises: tuple[Premise, ...]
     transitions: tuple[Transition, ...]
     verdicts: tuple[LayerVerdict, ...]
@@ -1019,6 +1774,7 @@ def certify(
     witnesses: tuple[OriginWitness, ...] = (),
     analysis_witnesses: tuple[AnalysisWitness, ...] = (),
     root: Path | None = None,
+    rules: tuple[AnalysisRule, ...] = THE_ANALYSIS_RULES,
     standing_from_caller: object = None,
 ) -> WordCertificate:
     """يُصدِر شهادةَ موضعٍ باشتقاقِ كلّ حكمٍ فيها من البايتات والمقدّمات.
@@ -1042,6 +1798,9 @@ def certify(
     boundary = boundary_reading(located)
     tanwin = tanwin_reading(located.surface)
     admission = canonical_admission(located.surface)
+    audits = witness_audits(
+        analysis_witnesses, measured_features(located, tanwin), root, rules
+    )
     premises = deposited_premises(
         located,
         boundary,
@@ -1050,6 +1809,7 @@ def certify(
         origin_established,
         analysis_witnesses,
         root,
+        rules,
     )
     transitions = the_chain(located, boundary, tanwin, admission, premises)
     verdicts = layer_verdicts(premises)
@@ -1059,6 +1819,7 @@ def certify(
         tanwin=tanwin,
         admission=admission,
         origin=tuple(readings),
+        witnesses=audits,
         premises=premises,
         transitions=transitions,
         verdicts=verdicts,
@@ -1070,7 +1831,12 @@ def fingerprint(certificate: WordCertificate) -> str:
     """بصمةُ الشهادة، مأخوذةٌ من محتواها المُشتَقّ لا من حقلٍ مخزون.
 
     فتُعاد من الشهادةِ عينِها كلَّ مرّة؛ ومن حرَّف سطحًا أو إزاحةً أو منزلةَ
-    مقدّمةٍ تحرّكت بصمتُه. وهي شاهدُ عدمِ التحريف لا شاهدُ صحّةِ التحليل
+    مقدّمةٍ تحرّكت بصمتُه. وتدخلها **تدقيقاتُ الشواهد**: دعاواها، ومفاتيحُ
+    مصادرها، ومواضعُها، وقواعدُها بإصداراتها، وبوّاباتُها الخمس؛ فشهادةٌ بُدِّل
+    شاهدُها لا تُعيد بصمتَها، ولا يُعاد اعتمادُ قديمةٍ بقاعدةٍ تغيّر إصدارُها
+    (`A_FINGERPRINT_BINDS_THE_DECISION_TO_ITS_WITNESSES_AND_RULE_VERSIONS`).
+    وهي مع ذلك شاهدُ عدمِ التحريف لا شاهدُ صحّةِ التحليل، وتكشف العبثَ
+    **عند المصادمة بمرساةٍ موثوقة** لا بذاتها
     (`A_READY_PROTOCOL_STATE_IS_NOT_A_LICENCE_OF_THE_WORD`).
     """
 
@@ -1084,12 +1850,19 @@ def fingerprint(certificate: WordCertificate) -> str:
         "".join(certificate.admission.atoms),
         certificate.overall.standing.value,
     ]
+    rows.extend(one.rendered for one in certificate.witnesses)
     rows.extend(f"{one.name}={one.standing.value}" for one in certificate.premises)
     rows.extend(
         f"{one.layer.value}={one.standing.value}" for one in certificate.verdicts
     )
     return hashlib.sha256("\n".join(rows).encode("utf-8")).hexdigest()
 
+
+A_FINGERPRINT_BINDS_THE_DECISION_TO_ITS_WITNESSES_AND_RULE_VERSIONS: Final[str] = (
+    "قرارُ القبول مربوطٌ بالشهادة والسؤال والدعوى وشواهدها وإصدارات قواعدها؛ "
+    "فتغييرُ دليلٍ غيرِ متعلّقٍ لا يُسقِطه، وإعادةُ بصمِ شهادةٍ محرّفةٍ لا "
+    "تُصحِّح مضمونَها، وسقوطُ إصدارِ قاعدةٍ يمنع إعادةَ اعتمادِ ما بُني عليها"
+)
 
 THE_ISSUER_DERIVES_AND_NEVER_ACCEPTS_A_SUPPLIED_STANDING: Final[str] = (
     "المُصدِرُ يشتقّ حكمَه من المقدّمات والتبعيّات، ويَرُدّ أيَّ حالةٍ يمرّرها "

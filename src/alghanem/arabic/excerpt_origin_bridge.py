@@ -371,13 +371,29 @@ class LocatedWord:
 
 
 def locate(
-    address: WordAddress, root: Path | None = None, context: int = 40
+    address: WordAddress,
+    root: Path | None = None,
+    context: int = 40,
+    source: TextSource | None = None,
 ) -> LocatedWord:
-    """يَحُلُّ عنوانًا إلى موضعٍ في بايتاتٍ مختومة، ويَردُّ ما لا تحتمله."""
+    """يَحُلُّ عنوانًا إلى موضعٍ في بايتاتٍ مختومة، ويَردُّ ما لا تحتمله.
+
+    و`source` مُعلَنٌ ليَحُلَّ العنوانَ في مصدرٍ مختومٍ **خارج قائمة البحث** —
+    كمصادر الشواهد في `word_certificate_chain` — بالشروط نفسِها: ختمٌ يُصادَم،
+    وفكٌّ صارم، ومفتاحٌ يُطابق مفتاحَ العنوان؛ فلا يُحَلّ عنوانٌ في مصدرٍ آخر
+    (`THE_ADDRESS_WITHOUT_A_SOURCE_IS_NOT_AN_IDENTITY`).
+    """
 
     if context < 0:
         raise ExcerptOriginError("مدى السياق لا يكون سالبًا.")
-    source = source_by_key(address.source_key)
+    if source is None:
+        source = source_by_key(address.source_key)
+    elif source.key != address.source_key:
+        raise ExcerptOriginError(
+            f"«{address.rendered}»: مصدرٌ مفتاحُه «{source.key}» لا يَحُلّ عنوانًا "
+            f"في «{address.source_key}» — "
+            f"{THE_ADDRESS_WITHOUT_A_SOURCE_IS_NOT_AN_IDENTITY}"
+        )
     text = source_text(source, root)
     lines = text.split("\n")
     if address.line > len(lines):
