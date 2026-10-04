@@ -25,6 +25,11 @@
 وقوبل ‎P(u, r)‎ بـ`pair` وعُكس بـ`unpair`. فتنتقل مبرهناتُ `Numbering.lean` إلى
 الشيفرة البايثونيّة التي تُصدر الشهادات.
 
+وإن مُرِّر ملفُّ `syllables` قوبل تقطيعُ `Stages.parse` في Lean بـ`mabni_stages.syllabify`
+على كلّ سلسلةِ أنواعٍ بطول ‎1 … 8‎، وتُحرَس أنّ أطولَ سلسلةٍ في المبنيّات المقطَّعة
+لا تتجاوز 8؛ فتنتقل مبرهناتُ `Stages.lean` (التقطيعُ وحيدٌ ومعكوسُه الوصل) إلى كلّ
+صورةٍ مبنيّةٍ قطّعها البايثون.
+
 الاستعمال::
 
     lake exe a116-table > table.csv
@@ -66,7 +71,7 @@ def main(argv: list[str]) -> int:
     rest = argv[1:]
     while rest:
         head = rest.pop(0)
-        if head in ("--order", "--numbers", "--pairs"):
+        if head in ("--order", "--numbers", "--pairs", "--syllables"):
             if not rest:
                 return _fail(f"{head} بلا ملفّ")
             extras[head[2:]] = Path(rest.pop(0))
@@ -125,6 +130,7 @@ def main(argv: list[str]) -> int:
         ("order", _check_bridge_order),
         ("numbers", _check_numbers),
         ("pairs", _check_pairs),
+        ("syllables", _check_syllables),
     ):
         if name in extras:
             failure = check(extras[name])
@@ -230,6 +236,45 @@ def _check_pairs(path: Path) -> str | None:
             return f"`unpair({z})` لا يعيد ‎({u}, {r})‎"
         seen += 1
     print(f"✓ اقترانُ كانتور في Lean يطابق `pair` و`unpair` على {seen} زوجًا")
+    return None
+
+
+SYLLABLE_LENGTH_BOUND = 8
+
+
+def _check_syllables(path: Path) -> str | None:
+    from alghanem.arabic.mabni_stages import form_records, syllabify
+
+    lines = [
+        line.strip()
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    expected = sum(3**n for n in range(1, SYLLABLE_LENGTH_BOUND + 1))
+    if len(lines) != expected:
+        return f"تقطيعُ Lean فيه {len(lines)} سطرًا لا {expected}"
+    seen: set[tuple[str, ...]] = set()
+    for line in lines:
+        key, lean = line.split(",")
+        kinds = tuple(key.split("-"))
+        seen.add(kinds)
+        result = syllabify(kinds)
+        python = "none" if result is None else "-".join(result)
+        if python != lean:
+            return f"اختلافُ التقطيع عند {key}: Lean {lean} والبايثون {python}"
+    if seen != {
+        kinds
+        for n in range(1, SYLLABLE_LENGTH_BOUND + 1)
+        for kinds in product(("CV", "V", "C"), repeat=n)
+    }:
+        return "سلاسلُ التقطيع لا تغطّي كلَّ سلسلةٍ بطول 1 … 8"
+    longest = max(len(r.kinds) for r in form_records() if r.syllables)
+    if longest > SYLLABLE_LENGTH_BOUND:
+        return f"أطولُ صورةٍ مقطَّعة {longest} ذرّةً فوق الحدّ {SYLLABLE_LENGTH_BOUND}"
+    print(
+        f"✓ تقطيعُ Lean (`Stages.parse`) هو `mabni_stages.syllabify` على {len(lines)} "
+        f"سلسلةً بطول 1–{SYLLABLE_LENGTH_BOUND}، وأطولُ مبنيٍّ مقطَّعٍ {longest} ذرّات"
+    )
     return None
 
 

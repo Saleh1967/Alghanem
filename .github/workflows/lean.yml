@@ -67,5 +67,7 @@ jobs:
           lake exe a116-table bridge-order > order.csv
           lake exe a116-table numbers > numbers.csv
           lake exe a116-table pairs > pairs.csv
+          lake exe a116-table syllables > syllables.csv
           python ../../tools/lean_a116_conformance.py table.csv counts.csv \
-            --order order.csv --numbers numbers.csv --pairs pairs.csv
+            --order order.csv --numbers numbers.csv --pairs pairs.csv \
+            --syllables syllables.csv

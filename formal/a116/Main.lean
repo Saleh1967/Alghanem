@@ -11,9 +11,45 @@ import A116
   `canonical116.bridge.A116` خانةً خانة.
 * `numbers`: ‎F‎ (`atomNumber`) لكلّ سلسلةٍ بطول ‎≤ 2‎ بترتيب الجسر (13,573 سطرًا).
 * `pairs`: ‎P(u, r)‎ لـ‎u, r < 64‎.
+* `syllables`: لكلّ سلسلةِ أنواعٍ بطول ‎1 … 8‎ (9,840 سلسلة) تقطيعُها بـ`Stages.parse`
+  أو `none`، ليُطابَق بـ`mabni_stages.syllabify` سلسلةً سلسلة.
 -/
 
 open A116
+
+namespace SyllableTable
+
+open Stages
+
+def allK : Nat → List (List K)
+  | 0 => [[]]
+  | n + 1 => (allK n).flatMap fun p => [p ++ [.cv], p ++ [.v], p ++ [.c]]
+
+def kName : K → String
+  | .cv => "CV"
+  | .v => "V"
+  | .c => "C"
+
+def leadName : Lead → List String
+  | .none => []
+  | .C => ["C|"]
+  | .V => ["V|"]
+  | .VC => ["VC|"]
+
+def sylName : Syl → String
+  | .CV => "CV"
+  | .CVV => "CVV"
+  | .CVC => "CVC"
+  | .CVVC => "CVVC"
+  | .CVCC => "CVCC"
+
+def render (k : List K) : String :=
+  let key := "-".intercalate (k.map kName)
+  match parse k with
+  | some (l, ss) => s!"{key},{"-".intercalate (leadName l ++ ss.map sylName)}"
+  | none => s!"{key},none"
+
+end SyllableTable
 
 def main (args : List String) : IO Unit := do
   match args with
@@ -33,6 +69,10 @@ def main (args : List String) : IO Unit := do
       for j in ix do
         IO.println
           s!"{i} {j},{Numbering.atomNumber [Numbering.bridgeCell i, Numbering.bridgeCell j]}"
+  | ["syllables"] =>
+    for n in List.range 8 do
+      for k in SyllableTable.allK (n + 1) do
+        IO.println (SyllableTable.render k)
   | ["pairs"] =>
     for u in List.range 64 do
       for r in List.range 64 do

@@ -74,3 +74,6 @@ import A116
 #print axioms A116.Ladder.patterns_of_the_cited_words
 #print axioms A116.Ladder.kana_and_inna_are_indistinguishable
 #print axioms A116.Ladder.kana_is_not_kataba
+#print axioms A116.Stages.parse_flat
+#print axioms A116.Stages.flat_parse
+#print axioms A116.Stages.flat_injective
