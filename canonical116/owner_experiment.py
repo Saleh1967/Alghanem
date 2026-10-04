@@ -55,7 +55,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Final
 
-from .bridge import A116, ALPHABET, HARAKAT, BridgeStatus, bridge
+from .bridge_v1_0 import A116, ALPHABET, HARAKAT, BridgeStatus, bridge
 
 __all__ = [
     "OWNER_SIGNATURE",

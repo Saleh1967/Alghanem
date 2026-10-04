@@ -65,7 +65,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import Final
 
-from .bridge import SUKUN, bridge
+from .bridge_v1_0 import SUKUN, bridge
 from .dal_claim_test import (
     MADD_ATOMS,
     Partition,

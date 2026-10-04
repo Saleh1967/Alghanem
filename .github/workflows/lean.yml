@@ -5,7 +5,8 @@ name: Lean (A116 closure)
 #   ١. نواةُ Lean تقبل كلَّ مبرهنة (lake build).
 #   ٢. لا برهانَ يستند إلى sorry أو إلى native_decide (تدقيقُ المسلّمات).
 #   ٣. الانتقالُ في Lean والبايثون واحدٌ على الأزواج الـ348 كلِّها،
-#      والعددُ المبرهَن ‎U(n)‎ يطابق العدَّ المباشر بالآلة البايثونيّة.
+#      والعددُ المبرهَن ‎U(n)‎ يطابق العدَّ المباشر بالآلة البايثونيّة،
+#      وترتيبُ الجسر والترقيمُ ‎F‎ واقترانُ كانتور في Lean هي ما في جسر الرسم.
 
 on:
   push:
@@ -63,4 +64,8 @@ jobs:
           python -m pip install -e ../..
           lake exe a116-table > table.csv
           lake exe a116-table counts > counts.csv
-          python ../../tools/lean_a116_conformance.py table.csv counts.csv
+          lake exe a116-table bridge-order > order.csv
+          lake exe a116-table numbers > numbers.csv
+          lake exe a116-table pairs > pairs.csv
+          python ../../tools/lean_a116_conformance.py table.csv counts.csv \
+            --order order.csv --numbers numbers.csv --pairs pairs.csv

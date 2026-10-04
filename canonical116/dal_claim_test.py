@@ -56,7 +56,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Final
 
-from .bridge import A116, SUKUN, BridgeStatus, bridge
+from .bridge_v1_0 import A116, SUKUN, BridgeStatus, bridge
 from .owner_experiment import (
     OWNER_SIGNATURE,
     Figure,

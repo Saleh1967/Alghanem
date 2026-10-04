@@ -60,6 +60,35 @@
 وقد امتُحن ذلك: تغييرُ حدٍّ واحدٍ في `fold` أو في `S` يُسقط البناء، وطيُّ Lean
 وفكُّه يطابقان بايثون Algebra على كلماتٍ مُختبَرة.
 
+### الليفُ والرتبة (`A116/Fiber.lean`)، منقولًا من `tools/rasm_recovery/PROOF_AR.md`
+
+مجالٌ منتهٍ `D` بلا تكرار وإسقاطٌ `A`؛ والشهادةُ ‎(A x, رتبةُ x في ليفه)‎.
+
+| الاسم في Lean | المنطوق |
+|---|---|
+| `decode_encode`، `encode_injective` | ‎decode(encode x) = x‎ لكلّ ‎x ∈ D‎، والشهادةُ متباينة |
+| `decode_sound`، `decode_none_of_rank_ge` | الفكُّ لا يُخرج إلا عنصرًا من `D` صورتُه المطلوبة، ورتبةٌ خارج الليف تُرفض |
+| `rank_lt` | الرتبةُ أصغرُ من حجم الليف ‎m‎ |
+| `fiber_length_le`، `fiber_length_le_two_pow` | **الحدّ الأدنى:** كلُّ سجلٍّ في ‎Fin k‎ يُستعاد منه الليفُ يحقّق ‎m ≤ k‎، فـ‎b‎ بتّاتٍ تحتاج ‎m ≤ 2^b‎ |
+| `nodup_fin_length_le` | مبدأُ الحمام، مبرهَنًا بلا مكتبة |
+
+وهي عامّةٌ على كلّ إسقاط: **الاستعادةُ نسبيّةٌ إلى `A`**، فإسقاطٌ خاطئٌ يُستعاد بدقّةٍ
+تامّة. ولذلك أُصلح الجسرُ نفسُه (ألفُ الوصل بعد السابقة، البروتوكول 1.1) ولم يُكتفَ بها.
+
+### الترقيمُ وترتيبُ الجسر وكانتور (`A116/Numbering.lean`)
+
+| الاسم في Lean | المنطوق |
+|---|---|
+| `valid_zero_iff`، `S_zero_pow`، `off_zero_geo`، `fold_zero_eq_digits` | بلا محجورين كلُّ كلمةٍ جائزة، و‎S(n) = Bⁿ‎، و‎off(n) = Σ_{j<n} Bʲ‎، و‎fold‎ قيمةُ الأرقام بالأساس ‎B‎ |
+| `foldAny_zero_closed`، `atomNumber_closed` | ‎F(a) = O(n) + v(a)‎ صيغةُ الجسر بعينها، حالةٌ خاصّةٌ من الطيّ المبرهَن |
+| `atomNumber_injective`، `atomNumber_surjective` | ‎F‎ تقابلٌ من **كلّ** سلاسل الخانات إلى ℕ (الوقفُ ‎CVCC‎ داخل؛ لا ترخيصَ مقطعيّ) |
+| `bridgeCell_bridgeIndex`، `bridgeIndex_bridgeCell` | ترتيبُ `canonical116.bridge.A116` تقابلٌ مع الخانات |
+| `orders_differ_only_in_two_rows` | ترتيبُ الجسر وترتيبُ `Cells` يختلفان في ثمانية مواضع: صفّا الألف والهمزة |
+| `pair_injective`، `pair_surjective`، `pair_closed` | ‎P(u, r) = (u+r)(u+r+1)/2 + r‎ تقابلٌ ‎ℕ × ℕ → ℕ‎ |
+
+وفي CI يُطابَق ترتيبُ الجسر خانةً خانة، و‎F‎ بـ`fold_atoms` على كلّ سلسلةٍ بطول ‎≤ 2‎
+(13,573)، و‎P‎ بـ`pair` و`unpair` على 4,096 زوجًا.
+
 ## ما تقوله المبرهناتُ وما لا تقوله
 
 * **المبرهنة ١ صحيحةٌ لكنّها خاوية.** المجموعةُ المستقرّة هي كلُّ الحالات
@@ -103,7 +132,11 @@ lake build                      # النواةُ تفحص كلَّ مبرهنة
 lake env lean Audit.lean        # المسلّماتُ التي يستند إليها كلُّ برهان
 lake exe a116-table > table.csv
 lake exe a116-table counts > counts.csv
-python ../../tools/lean_a116_conformance.py table.csv counts.csv
+lake exe a116-table bridge-order > order.csv
+lake exe a116-table numbers > numbers.csv
+lake exe a116-table pairs > pairs.csv
+python ../../tools/lean_a116_conformance.py table.csv counts.csv \
+  --order order.csv --numbers numbers.csv --pairs pairs.csv
 ```
 
 وفي CI: `.github/workflows/lean.yml`.

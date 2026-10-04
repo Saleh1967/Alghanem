@@ -19,11 +19,18 @@
 تُشغَّل بـ`run_declared_model` وتُعَدّ ما لم تسقط. فالعددُ المبرهَنُ يُصادَم
 بالآلة البايثونيّة نفسِها لا بقيمةٍ مكتوبة.
 
+وإن مُرِّرت ملفّاتُ `bridge-order` و`numbers` و`pairs` قوبل ترتيبُ الجسر في Lean
+(`bridgeCell`) بـ`canonical116.bridge.A116` خانةً خانة، وقوبل ‎F‎ (`atomNumber`)
+بـ`fold_atoms` في `tools/rasm_recovery/contextual.py` على كلّ سلسلةٍ بطول ‎≤ 2‎،
+وقوبل ‎P(u, r)‎ بـ`pair` وعُكس بـ`unpair`. فتنتقل مبرهناتُ `Numbering.lean` إلى
+الشيفرة البايثونيّة التي تُصدر الشهادات.
+
 الاستعمال::
 
     lake exe a116-table > table.csv
     lake exe a116-table counts > counts.csv
-    python tools/lean_a116_conformance.py table.csv counts.csv
+    python tools/lean_a116_conformance.py table.csv counts.csv \
+        --order order.csv --numbers numbers.csv --pairs pairs.csv
 """
 
 from __future__ import annotations
@@ -54,6 +61,18 @@ def _fail(message: str) -> int:
 
 
 def main(argv: list[str]) -> int:
+    extras: dict[str, Path] = {}
+    positional: list[str] = [argv[0]]
+    rest = argv[1:]
+    while rest:
+        head = rest.pop(0)
+        if head in ("--order", "--numbers", "--pairs"):
+            if not rest:
+                return _fail(f"{head} بلا ملفّ")
+            extras[head[2:]] = Path(rest.pop(0))
+        else:
+            positional.append(head)
+    argv = positional
     if len(argv) not in (2, 3):
         return _fail("الاستعمال: lean_a116_conformance.py <جدول Lean> [أعداد Lean]")
 
@@ -102,6 +121,16 @@ def main(argv: list[str]) -> int:
         if failure is not None:
             return _fail(failure)
 
+    for name, check in (
+        ("order", _check_bridge_order),
+        ("numbers", _check_numbers),
+        ("pairs", _check_pairs),
+    ):
+        if name in extras:
+            failure = check(extras[name])
+            if failure is not None:
+                return _fail(failure)
+
     print(
         f"✓ الانتقالُ في Lean والبايثون واحدٌ على {len(seen)} زوجًا من ‎(حالة، خانة)‎ "
         "— فمبرهناتُ formal/a116 تصدق على `a116_bridge_licence.step`"
@@ -132,6 +161,69 @@ def _check_counts(path: Path) -> str | None:
         f"✓ ‎U(n)‎ المبرهَنُ في Lean يطابق العدَّ المباشر حتى الطول {BRUTE_FORCE_UP_TO}: "
         + "، ".join(str(lean_counts[n]) for n in range(BRUTE_FORCE_UP_TO + 1))
     )
+    return None
+
+
+def _rasm_recovery() -> object:
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "rasm_recovery"))
+    import contextual
+
+    return contextual
+
+
+def _check_bridge_order(path: Path) -> str | None:
+    """ترتيبُ `bridgeCell` في Lean هو `canonical116.bridge.A116` خانةً خانة."""
+
+    from canonical116.bridge import A116
+
+    rows = [r for r in path.read_text(encoding="utf-8").splitlines() if r.strip()]
+    if len(rows) != 116:
+        return f"ترتيبُ الجسر في Lean فيه {len(rows)} سطرًا لا 116"
+    for row in rows:
+        k, carrier, haraka = (int(x) for x in row.split(","))
+        lean_atom = THE_CARRIERS[carrier] + THE_HARAKAT[haraka]
+        if A116[k] != lean_atom:
+            return f"الموضع {k}: الجسر {A116[k]} وLean {lean_atom}"
+    print("✓ ترتيبُ الجسر في Lean (`bridgeCell`) هو `canonical116.bridge.A116` بعينه")
+    return None
+
+
+def _check_numbers(path: Path) -> str | None:
+    """‎F‎ في Lean (`atomNumber`) هو `fold_atoms` في جسر الرسم على كلّ طولٍ ‎≤ 2‎."""
+
+    from canonical116.bridge import A116
+
+    contextual = _rasm_recovery()
+    seen = 0
+    for row in path.read_text(encoding="utf-8").splitlines():
+        if not row.strip():
+            continue
+        indices, value = row.rsplit(",", 1)
+        atoms = tuple(A116[int(i)] for i in indices.split())
+        if contextual.fold_atoms(atoms) != int(value):  # type: ignore[attr-defined]
+            return f"‎F({' '.join(atoms)})‎: Lean {value}"
+        seen += 1
+    if seen != 1 + 116 + 116 * 116:
+        return f"أعدادُ ‎F‎ من Lean {seen} لا {1 + 116 + 116 * 116}"
+    print(f"✓ ‎F‎ في Lean يطابق `fold_atoms` على {seen} سلسلةً (الأطوال 0–2)")
+    return None
+
+
+def _check_pairs(path: Path) -> str | None:
+    """‎P(u, r)‎ في Lean هو `pair`، و`unpair` يعكسه."""
+
+    contextual = _rasm_recovery()
+    seen = 0
+    for row in path.read_text(encoding="utf-8").splitlines():
+        if not row.strip():
+            continue
+        u, r, z = (int(x) for x in row.split(","))
+        if contextual.pair(u, r) != z:  # type: ignore[attr-defined]
+            return f"‎P({u}, {r})‎: Lean {z}"
+        if contextual.unpair(z) != (u, r):  # type: ignore[attr-defined]
+            return f"`unpair({z})` لا يعيد ‎({u}, {r})‎"
+        seen += 1
+    print(f"✓ اقترانُ كانتور في Lean يطابق `pair` و`unpair` على {seen} زوجًا")
     return None
 
 
