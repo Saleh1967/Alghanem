@@ -8782,6 +8782,9 @@ module excluded from it by name, so that its figures do not move whenever its
 description is edited — takes it to 110 cells over 105,046 occurrences with every
 letter present. Two cells stay empty, and the module refuses to read them as
 prohibitions until their margins are consulted. Sukūn is 552 of 105,311 — 0.52%
+description is edited — takes it to 110 cells over 104,689 occurrences with every
+letter present. Two cells stay empty, and the module refuses to read them as
+prohibitions until their margins are consulted. Sukūn is 552 of 104,689 — 0.53%
 — and the cells once filed as scarce (ظ, then ث, bearing it) have since filled
 as the prose grew. Alef's whole row is twelve occurrences, so its sukūn cell is
 expected 0.063 times and **stays consistent with scarcity**. A third cell,
