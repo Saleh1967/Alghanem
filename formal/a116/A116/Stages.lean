@@ -6,7 +6,8 @@
 ## الأنواع
 
 * نوعُ الذرّة `K`: `cv` (خانةٌ متحرّكة)، `v` (ساكنةٌ دورُها مدّ)، `c` (ساكنةٌ تُغلق).
-* المقطع `Syl`: `CV`، `CVV`، `CVC`، `CVVC`، `CVCC` — متحرّكٌ يفتح وما بعده يُتمّه.
+* المقطع `Syl`: `CV`، `CVV`، `CVC`، `CVVC`، `CVCC`، `CVVCC` — متحرّكٌ يفتح وما بعده يُتمّه.
+  (`CVVCC`: مدٌّ قبل مضعَّفٍ موقوفٍ عليه، تَامّْ؛ شوهد في نصٍّ خارجَ القرآن.)
 * القطعةُ الصادرة `Lead`: لا شيء، أو `C|`، أو `V|`، أو `VC|` — ما يسبق أوّلَ متحرّكٍ
   حين يقطع التجزيءُ تضعيفًا أو مدًّا نواتُه في القطعة السابقة.
 
@@ -15,7 +16,7 @@
 * `parse_flat`: تقطيعُ وصلِ أيِّ قطعةٍ ومقاطع يعيدها بعينها.
 * `flat_parse`: ما قطّعه `parse` يعيد الوصلُ السلسلةَ نفسَها.
 * `flat_injective`: لا يكون لسلسلةٍ تقطيعان.
-* فـ`parse` تقابلٌ بين مجاله وأزواج (قطعة، مقاطع)، والمقاطعُ الخمسةُ والقطعُ الأربعُ
+* فـ`parse` تقابلٌ بين مجاله وأزواج (قطعة، مقاطع)، والمقاطعُ الستّةُ والقطعُ الأربعُ
   هي **كلُّ** ما يمكن أن يخرج.
 -/
 
@@ -26,7 +27,7 @@ inductive K where
   deriving DecidableEq, Repr
 
 inductive Syl where
-  | CV | CVV | CVC | CVVC | CVCC
+  | CV | CVV | CVC | CVVC | CVCC | CVVCC
   deriving DecidableEq, Repr
 
 inductive Lead where
@@ -42,6 +43,7 @@ def Syl.coda : Syl → List K
   | .CVC => [c]
   | .CVVC => [v, c]
   | .CVCC => [c, c]
+  | .CVVCC => [v, c, c]
 
 def Syl.atoms (s : Syl) : List K := cv :: s.coda
 
@@ -57,6 +59,7 @@ def sylOf : List K → Option Syl
   | [c] => some .CVC
   | [v, c] => some .CVVC
   | [c, c] => some .CVCC
+  | [v, c, c] => some .CVVCC
   | _ => none
 
 def leadOf : List K → Option Lead

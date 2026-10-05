@@ -11,8 +11,9 @@ import A116
   `canonical116.bridge.A116` خانةً خانة.
 * `numbers`: ‎F‎ (`atomNumber`) لكلّ سلسلةٍ بطول ‎≤ 2‎ بترتيب الجسر (13,573 سطرًا).
 * `pairs`: ‎P(u, r)‎ لـ‎u, r < 64‎.
-* `syllables`: لكلّ سلسلةِ أنواعٍ بطول ‎1 … 8‎ (9,840 سلسلة) تقطيعُها بـ`Stages.parse`
-  أو `none`، ليُطابَق بـ`mabni_stages.syllabify` سلسلةً سلسلة.
+* `syllables`: لكلّ سلسلةِ أنواعٍ بطول ‎1 … 11‎ (265,719 سلسلة) تقطيعُها بـ`Stages.parse`
+  أو `none`، ثمّ `binOK` و`continueB` و`pauseB` من `Ternary`، ليُطابَق ذلك كلُّه
+  بـ`mabni_stages.syllabify` و`ternary_licence` سلسلةً سلسلة.
 -/
 
 open A116
@@ -42,12 +43,14 @@ def sylName : Syl → String
   | .CVC => "CVC"
   | .CVVC => "CVVC"
   | .CVCC => "CVCC"
+  | .CVVCC => "CVVCC"
 
 def render (k : List K) : String :=
   let key := "-".intercalate (k.map kName)
+  let lic := s!"{Ternary.binOK k},{Ternary.continueB k},{Ternary.pauseB k}"
   match parse k with
-  | some (l, ss) => s!"{key},{"-".intercalate (leadName l ++ ss.map sylName)}"
-  | none => s!"{key},none"
+  | some (l, ss) => s!"{key},{"-".intercalate (leadName l ++ ss.map sylName)},{lic}"
+  | none => s!"{key},none,{lic}"
 
 end SyllableTable
 
@@ -70,7 +73,7 @@ def main (args : List String) : IO Unit := do
         IO.println
           s!"{i} {j},{Numbering.atomNumber [Numbering.bridgeCell i, Numbering.bridgeCell j]}"
   | ["syllables"] =>
-    for n in List.range 8 do
+    for n in List.range 11 do
       for k in SyllableTable.allK (n + 1) do
         IO.println (SyllableTable.render k)
   | ["pairs"] =>

@@ -11,3 +11,4 @@ import A116.Ladder
 import A116.Stages
 import A116.Junction
 import A116.Pause
+import A116.Ternary

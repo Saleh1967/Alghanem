@@ -88,3 +88,13 @@ import A116
 #print axioms A116.Pause.U_by_patterns
 #print axioms A116.Pause.pause_admissible
 #print axioms A116.Pause.pause_strictly_extends
+#print axioms A116.Ternary.binary_is_continue
+#print axioms A116.Ternary.continue_strictly_extends_binary
+#print axioms A116.Ternary.continue_is_pause
+#print axioms A116.Ternary.pause_strictly_extends_continue
+#print axioms A116.Ternary.tamm_is_pause_only
+#print axioms A116.Ternary.binary_is_blind_to_madd
+#print axioms A116.Ternary.admissible_iff_admissibleB
+#print axioms A116.Ternary.binOK_eq_admissibleB
+#print axioms A116.Ternary.continueB_iff
+#print axioms A116.Ternary.pauseB_iff

@@ -68,6 +68,7 @@ SYLLABLES: Final[tuple[str, ...]] = (
     "CVC",
     "CVVC",
     "CVCC",
+    "CVVCC",
     "C|",
     "V|",
     "VC|",
@@ -173,6 +174,7 @@ _CODA: Final[dict[tuple[str, ...], str]] = {
     ("C",): "CVC",
     ("V", "C"): "CVVC",
     ("C", "C"): "CVCC",
+    ("V", "C", "C"): "CVVCC",
 }
 
 

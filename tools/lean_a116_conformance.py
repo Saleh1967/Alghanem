@@ -26,9 +26,10 @@
 الشيفرة البايثونيّة التي تُصدر الشهادات.
 
 وإن مُرِّر ملفُّ `syllables` قوبل تقطيعُ `Stages.parse` في Lean بـ`mabni_stages.syllabify`
-على كلّ سلسلةِ أنواعٍ بطول ‎1 … 8‎، وتُحرَس أنّ أطولَ سلسلةٍ في المبنيّات المقطَّعة
-لا تتجاوز 8؛ فتنتقل مبرهناتُ `Stages.lean` (التقطيعُ وحيدٌ ومعكوسُه الوصل) إلى كلّ
-صورةٍ مبنيّةٍ قطّعها البايثون.
+على كلّ سلسلةِ أنواعٍ بطول ‎1 … 11‎، وتُحرَس أنّ أطولَ سلسلةٍ مقطَّعةٍ في المبنيّات
+وفي النصّ الخارجيّ `corpora/tashkeela-fadel-test.txt` لا تتجاوز 11؛ فتنتقل
+مبرهناتُ `Stages.lean` (التقطيعُ وحيدٌ ومعكوسُه الوصل) و`Ternary.lean` إلى كلّ
+كلمةٍ قطّعها البايثون في المجالين.
 
 الاستعمال::
 
@@ -239,11 +240,12 @@ def _check_pairs(path: Path) -> str | None:
     return None
 
 
-SYLLABLE_LENGTH_BOUND = 8
+SYLLABLE_LENGTH_BOUND = 11
 
 
 def _check_syllables(path: Path) -> str | None:
     from alghanem.arabic.mabni_stages import form_records, syllabify
+    from alghanem.arabic.ternary_licence import binary_licensed, licences
 
     lines = [
         line.strip()
@@ -255,25 +257,37 @@ def _check_syllables(path: Path) -> str | None:
         return f"تقطيعُ Lean فيه {len(lines)} سطرًا لا {expected}"
     seen: set[tuple[str, ...]] = set()
     for line in lines:
-        key, lean = line.split(",")
+        key, lean, lean_bin, lean_cont, lean_pause = line.split(",")
         kinds = tuple(key.split("-"))
         seen.add(kinds)
         result = syllabify(kinds)
         python = "none" if result is None else "-".join(result)
         if python != lean:
             return f"اختلافُ التقطيع عند {key}: Lean {lean} والبايثون {python}"
+        cont, pause = licences(kinds)
+        mine = (binary_licensed(kinds), cont, pause)
+        theirs = tuple(flag == "true" for flag in (lean_bin, lean_cont, lean_pause))
+        if mine != theirs:
+            return f"اختلافُ الترخيص عند {key}: Lean {theirs} والبايثون {mine}"
     if seen != {
         kinds
         for n in range(1, SYLLABLE_LENGTH_BOUND + 1)
         for kinds in product(("CV", "V", "C"), repeat=n)
     }:
-        return "سلاسلُ التقطيع لا تغطّي كلَّ سلسلةٍ بطول 1 … 8"
-    longest = max(len(r.kinds) for r in form_records() if r.syllables)
+        return f"سلاسلُ التقطيع لا تغطّي كلَّ سلسلةٍ بطول 1 … {SYLLABLE_LENGTH_BOUND}"
+    from alghanem.arabic.ternary_licence import longest_syllabified_word
+
+    longest = max(
+        max(len(r.kinds) for r in form_records() if r.syllables),
+        longest_syllabified_word(),
+    )
     if longest > SYLLABLE_LENGTH_BOUND:
         return f"أطولُ صورةٍ مقطَّعة {longest} ذرّةً فوق الحدّ {SYLLABLE_LENGTH_BOUND}"
     print(
-        f"✓ تقطيعُ Lean (`Stages.parse`) هو `mabni_stages.syllabify` على {len(lines)} "
-        f"سلسلةً بطول 1–{SYLLABLE_LENGTH_BOUND}، وأطولُ مبنيٍّ مقطَّعٍ {longest} ذرّات"
+        f"✓ تقطيعُ Lean (`Stages.parse`) وتراخيصُه الثلاثة (`Ternary`) هي "
+        f"`mabni_stages.syllabify` و`ternary_licence` على {len(lines)} "
+        f"سلسلةً بطول 1–{SYLLABLE_LENGTH_BOUND}، "
+        f"وأطولُ كلمةٍ مقطَّعةٍ في المجالين {longest} ذرّة"
     )
     return None
 

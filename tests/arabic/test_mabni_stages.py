@@ -118,6 +118,7 @@ def test_syllabification_is_unique_and_reverses_on_short_strings() -> None:
         "CVC": ("C",),
         "CVVC": ("V", "C"),
         "CVCC": ("C", "C"),
+        "CVVCC": ("V", "C", "C"),
     }
     leads = {"C|": ("C",), "V|": ("V",), "VC|": ("V", "C")}
     for n in range(1, 7):

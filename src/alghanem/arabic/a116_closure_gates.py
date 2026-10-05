@@ -37,7 +37,7 @@ __all__ = [
 ]
 
 _LETTERS: Final[str] = "ابتثجحخدذرزسشصضطظعغفقكلمنهويء"
-_HARAKAT: Final[str] = "َُِْ"
+_HARAKAT: Final[str] = "".join(map(chr, (0x064E, 0x064F, 0x0650, 0x0652)))
 THE_116_ATOMS: Final[tuple[str, ...]] = tuple(
     letter + haraka for letter in _LETTERS for haraka in _HARAKAT
 )
