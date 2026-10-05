@@ -5,10 +5,10 @@
 | الوسم | العدد |
 |---|---|
 | مبرهن | 12 |
-| مفحوص_استقصاء | 10 |
+| مفحوص_استقصاء | 11 |
 | مفحوص_بعينة | 0 |
 | دليل | 0 |
-| معلن | 4 |
+| معلن | 5 |
 | رأي | 0 |
 | مفتوح | 8 |
 | معلق | 14 |
@@ -32,12 +32,14 @@
 | GUARD | لا قارئَ للنصّ ولا كاتبَ له في الشجرة خارج `suspended/` | مفحوص_استقصاء | `test:tests/test_guard.py::test_no_breach_in_the_tree`<br>`test:tests/test_guard.py::test_a_planted_reader_is_caught`<br>`test:tests/test_guard.py::test_suspended_is_not_importable` |  |
 | INFER | `infer` لا يُنتج إلّا بمقبولٍ وبصورةٍ منتجة | مفحوص_استقصاء | `test:tests/test_knowledge.py::test_candidates_never_produce`<br>`test:tests/test_knowledge.py::test_every_produced_step_is_productive` |  |
 | LEARN | حلقةُ التعلّم: المرشَّحُ لا يُنتج، والمحجوبُ لا يراه المولِّد، والخاطئُ يُسحب، والسجلُّ تامّ | مفحوص_استقصاء | `test:tests/test_learning.py::test_held_out_is_never_shown`<br>`test:tests/test_learning.py::test_wrong_admission_is_retracted`<br>`test:tests/test_learning.py::test_every_proposal_has_one_verdict` |  |
+| NAZM-case | توافقُ الإعراب بين كلمتين هو تساوي حالة الخانة الأخيرة | مفحوص_استقصاء | `test:tests/test_nazm.py::test_case_agreement_is_last_cell_state` |  |
 | Q18 | كلُّ حرفٍ متّجهُ صفاتٍ تامّ | مفحوص_استقصاء | `test:tests/test_phonology.py::test_every_letter_has_a_full_vector` |  |
 | Q21 | عمودُ الطبقات بلا دورة، ولا تُبنى طبقةٌ قبل شرطها | مفحوص_استقصاء | `test:tests/test_order.py::test_spine_is_acyclic`<br>`test:tests/test_order.py::test_no_leap` |  |
 | Q21-code | الشيفرةُ نفسُها لا تقفز: لا تستورد وحدةٌ وحدةَ طبقةٍ ليست من شروطها | مفحوص_استقصاء | `test:tests/test_order.py::test_modules_import_only_their_prerequisites` |  |
 | Q22 | الاستنتاجُ المعكوس: ‎U(1) = 87‎ و29 حاملًا ⇒ 3 متحرّكات ⇒ ‎116‎ | مفحوص_استقصاء | `test:tests/test_cells.py::test_inventory_is_derived_from_U1` |  |
 | Q24 | الظلُّ M/S يعجز والطيُّ يفرّق (ذَيْن/ذِين) | مفحوص_استقصاء | `test:tests/test_cells.py::test_shadow_fails_fold_separates` |  |
 | DL1-DL6 | أقسامُ الوضع والدلالة والحقيقة والمجاز والمنطوق والمفهوم مغلقة | معلن | `test:tests/test_semantics.py::test_partitions_are_closed` |  |
+| NAZM | ستّةُ أنماط تركيبٍ وثلاثُ علاقاتٍ منقولةٌ من تعقّل جداولَ معلَنة؛ لا قاعدةَ تعمل | معلن | `test:tests/test_nazm.py::test_six_patterns_three_relations_as_in_taaqol` | المصدر sonaiso/taaqol-gpt@91dad10 (formal_shape_composition.py، رتبته هناك مرشَّح). ما له بتٌّ هنا شرطٌ واحد: توافقُ الإعراب (حالةُ الخانة الأخيرة). |
 | Q19 | كلُّ زوجٍ من الأزواج يقسم الـ29 | معلن | `test:tests/test_phonology.py::test_pairs_partition` | صادقٌ بالبناء (السالبُ متمّمُ الموجب)؛ فهو تعريفٌ لا اكتشاف. |
 | Q20 | الجوفُ للمدّ الثلاث | معلن | `test:tests/test_phonology.py::test_jawf_is_madd` |  |
 | RANK-THUBUT | تصنيفُ الدليل قطعيًّا أو ظنّيًّا | معلن | `test:tests/test_rank.py::test_evidence_grades` | المتواترُ والتعريفُ قطعيّان؛ الآحادُ والمشهورُ والمعجمُ والمشاهدةُ (حكمٌ على صفة) ظنّيّة — ج٣ ¶275، ¶277، ¶713؛ التفكير. قاعدةٌ معلنةٌ لا مبرهنة. |

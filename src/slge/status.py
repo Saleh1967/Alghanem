@@ -56,6 +56,13 @@ _P, _X, _S, _D, _O = (Status.مبرهن, Status.مفحوص_استقصاء, Statu
                       Status.مفتوح)
 
 _DECLARED: tuple[Claim, ...] = (
+    # — النظم (منقول من تعقّل) —
+    _c("NAZM", "ستّةُ أنماط تركيبٍ وثلاثُ علاقاتٍ منقولةٌ من تعقّل جداولَ معلَنة؛ لا قاعدةَ تعمل", _D,
+       "test:tests/test_nazm.py::test_six_patterns_three_relations_as_in_taaqol",
+       note="المصدر sonaiso/taaqol-gpt@91dad10 (formal_shape_composition.py، رتبته هناك مرشَّح). "
+            "ما له بتٌّ هنا شرطٌ واحد: توافقُ الإعراب (حالةُ الخانة الأخيرة)."),
+    _c("NAZM-case", "توافقُ الإعراب بين كلمتين هو تساوي حالة الخانة الأخيرة", _X,
+       "test:tests/test_nazm.py::test_case_agreement_is_last_cell_state"),
     # — المدخل الوحيد —
     _c("ENTRY", "لا يدخل العمودَ إلّا شهادةُ بوّابة الغانم ذرّاتٍ، وتعود ذرّاتٍ بعينها", _X,
        "test:tests/test_entry.py::test_kitabun_enters_as_five_cells_and_exits_byte_for_byte",
