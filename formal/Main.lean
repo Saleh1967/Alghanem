@@ -84,6 +84,10 @@ def main (args : List String) : IO Unit := do
           let key := "-".intercalate (w.map fun c => toString c.index)
           let bits := String.ofList ((Sequence.encodeWord w).map fun b => if b then '1' else '0')
           IO.println s!"{key},{bits}"
+  | ["categories"] =>
+    for w in Categories.pronouns do
+      let key := "-".intercalate (w.map fun c => toString c.index)
+      IO.println s!"pronoun,{key},{slgeFold w}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

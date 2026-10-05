@@ -33,3 +33,9 @@ import Slge
 #print axioms Slge.Sequence.decodeWord_encodeWord
 #print axioms Slge.Sequence.encodeWord_prefix_free
 #print axioms Slge.Sequence.decode_encode
+#print axioms Slge.Consistency.atomNumber_determines_fold
+#print axioms Slge.Consistency.fold_determines_atomNumber
+#print axioms Slge.Consistency.numbers_agree
+#print axioms Slge.Categories.pronoun_sound
+#print axioms Slge.Categories.pronoun_numbers_nodup
+#print axioms Slge.Categories.sub_trans

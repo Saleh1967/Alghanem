@@ -73,6 +73,16 @@ _DECLARED: tuple[Claim, ...] = (
     _c("SEQ-stream", "تيارُ كلماتٍ مرخَّصةٍ يُفكّ كلُّه بترتيبه بلا فاصلٍ ولا حاملٍ زائد", _P,
        "lean:Slge.Sequence.decode_encode", "lean:Slge.Sequence.U_lt_two_pow_width",
        note="الكلفةُ معلنة: cost(k) = (k+1) + ⌊log₂U(k)⌋+1 بتًّا؛ k=1: 9، k=2: 17 (من جدول Lean)."),
+    # — الاتّساق والأقانيم —
+    _c("NUM-agree", "عددُ الشهادة (ترقيم الذرّات) وعددُ الطيّ متكافئان على المرخَّصات بطولٍ واحد", _P,
+       "lean:Slge.Consistency.numbers_agree", "lean:Slge.Consistency.atomNumber_determines_fold",
+       "lean:Slge.Consistency.fold_determines_atomNumber"),
+    _c("AQ-pronoun", "الضمائرُ المنفصلة أقنومٌ سليم (كلُّها مرخَّصة) بأعدادٍ متباينة، وشكلُها ليس بصمة", _P,
+       "lean:Slge.Categories.pronoun_sound", "lean:Slge.Categories.pronoun_numbers_nodup",
+       "test:tests/test_conformance.py::test_categories_match_lean",
+       note="خاناتُها من شهادات بوّابة الغانم؛ اكتمالُها على MASAQ قياسٌ لم يُطبع بعد."),
+    _c("AQ-lattice", "الاحتواءُ بين الأقانيم انعكاسيٌّ متعدٍّ، والسلامةُ تنزل من الأعلى إلى الأدنى", _P,
+       "lean:Slge.Categories.sub_trans"),
     # — المدخل الوحيد —
     _c("ENTRY", "لا يدخل العمودَ إلّا شهادةُ بوّابة الغانم ذرّاتٍ، وتعود ذرّاتٍ بعينها", _X,
        "test:tests/test_entry.py::test_kitabun_enters_as_five_cells_and_exits_byte_for_byte",

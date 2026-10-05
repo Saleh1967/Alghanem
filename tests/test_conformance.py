@@ -72,3 +72,14 @@ def test_sequence_matches_lean() -> None:
     assert lean == ours
     words = [w for n in (1, 2) for w in licensed_words(n)][:500]
     assert decode(encode(words)) == [tuple(w) for w in words]
+
+
+def test_categories_match_lean() -> None:
+    """الضمائرُ الاثنا عشر خاناتٍ وأعدادًا = جدولُ `Categories.pronouns` في Lean."""
+
+    from slge.categories import PRONOUNS, fingerprints, pronoun
+
+    rows = [r for r in _rows("categories.csv") if r[0] == "pronoun"]
+    assert [r[1] for r in rows] == ["-".join(str(index(c)) for c in w) for w in PRONOUNS]
+    assert [int(r[2]) for r in rows] == list(fingerprints())
+    assert len(set(fingerprints())) == 12 and all(pronoun(w) for w in PRONOUNS)
