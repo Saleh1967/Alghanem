@@ -7,6 +7,7 @@ import Slge
 * `counts`: ‎n,count(n)‎ لـ‎n = 0 … 12‎ من `Slge.count` المبرهَن أنه ‎U(n)‎.
 * `folds`: لكلّ مرخَّصةٍ بطول ‎≤ 2‎: رموزُ SLGE (‎4·حامل + حالة‎) مفصولةً بـ`-` ثمّ طيُّها.
 * `ghazali`: ‎درجة,صورة,منتجة‎ للخانات الثماني.
+* `rank`: ‎رتبة١,شواهد١,خاص١,رتبة٢,شواهد٢,خاص٢,الحكم‎ لكلّ رتبتين وشواهد ‎1…3‎ وخصوصٍ (‎108‎ أسطر).
 -/
 
 open Slge
@@ -24,6 +25,20 @@ def formName : Ghazali.Form → String
   | .naqidTali => "naqid_tali"
   | .naqidMuqaddam => "naqid_muqaddam"
   | .aynTali => "ayn_tali"
+
+def gradeName : Rank.Grade → String
+  | .zanni => "zanni"
+  | .qati => "qati"
+
+def verdictName : Rank.Verdict → String
+  | .yaqin => "yaqin"
+  | .zann => "zann"
+  | .rajih => "rajih"
+  | .marjuh => "marjuh"
+  | .mardud => "mardud"
+  | .taadul => "taadul"
+  | .tanaqud => "tanaqud"
+  | .makhsus => "makhsus"
 
 def main (args : List String) : IO Unit := do
   match args with
@@ -43,4 +58,12 @@ def main (args : List String) : IO Unit := do
     for d in [Ghazali.Degree.akhass, .musawi] do
       for f in [Ghazali.Form.aynMuqaddam, .naqidTali, .naqidMuqaddam, .aynTali] do
         IO.println s!"{degreeName d},{formName f},{Ghazali.productive d f}"
-  | _ => IO.eprintln "usage: slge-table bridge|counts|folds|ghazali"
+  | ["rank"] =>
+    for g1 in [Rank.Grade.zanni, .qati] do
+      for s1 in [1, 2, 3] do
+        for g2 in [Rank.Grade.zanni, .qati] do
+          for s2 in [1, 2, 3] do
+            for (x, y) in [(false, false), (true, false), (false, true)] do
+              let v := Rank.weighS ⟨g1, s1⟩ ⟨g2, s2⟩ x y
+              IO.println s!"{gradeName g1},{s1},{x},{gradeName g2},{s2},{y},{verdictName v}"
+  | _ => IO.eprintln "usage: slge-table bridge|counts|folds|ghazali|rank"

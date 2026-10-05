@@ -64,5 +64,5 @@ jobs:
           fi
       - name: the committed Lean outputs are what Lean prints now
         run: |
-          for m in bridge counts folds ghazali; do lake exe slge-table "$m" > "out/$m.csv"; done
+          for m in bridge counts folds ghazali rank; do lake exe slge-table "$m" > "out/$m.csv"; done
           git diff --exit-code -- out

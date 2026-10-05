@@ -14,6 +14,7 @@ from slge.knowledge import (
     Licence,
     LicenceGround,
     Literal,
+    Naql,
     Standing,
     WorldRule,
 )
@@ -22,8 +23,8 @@ from slge.learning import GoldQuestion
 GENERATOR = "مولِّد (رأي سابق)"
 
 
-def ev(eid: str, genus: Genus, source: str) -> Evidence:
-    return Evidence(eid, genus, eid, source)
+def ev(eid: str, genus: Genus, source: str, naql: Naql | None = None) -> Evidence:
+    return Evidence(eid, genus, eid, source, naql=naql)
 
 
 def rule(rid: str, a: str, b: str, st: Standing, e: Evidence | None,
@@ -34,9 +35,12 @@ def rule(rid: str, a: str, b: str, st: Standing, e: Evidence | None,
 
 QURAN = "corpora/quran-simple-enhanced.txt"
 ADMITTED = (
-    rule("أف-محرم", "أف", "محرم", Standing.شرعي, ev("قرآن-2052", Genus.خبر_مقبول, QURAN)),
-    rule("حمل-نفقة", "حامل", "نفقة", Standing.شرعي, ev("قرآن-5223", Genus.خبر_مقبول, QURAN)),
-    rule("سائمة-زكاة", "سائمة", "زكاة", Standing.شرعي, ev("بخاري", Genus.خبر_مقبول, "bukhari")),
+    rule("أف-محرم", "أف", "محرم", Standing.شرعي,
+         ev("قرآن-2052", Genus.خبر_مقبول, QURAN, Naql.متواتر)),
+    rule("حمل-نفقة", "حامل", "نفقة", Standing.شرعي,
+         ev("قرآن-5223", Genus.خبر_مقبول, QURAN, Naql.متواتر)),
+    rule("سائمة-زكاة", "سائمة", "زكاة", Standing.شرعي,
+         ev("بخاري", Genus.خبر_مقبول, "bukhari", Naql.آحاد)),
     rule("أف-أذى", "أف", "أذى", Standing.وضعي, ev("لسان", Genus.شاهد_معجمي, "lisan")),
     rule("إنسان-حيوان", "إنسان", "حيوان", Standing.تعريفي,
          ev("حد", Genus.تعريف_مشترط, "micyar")),

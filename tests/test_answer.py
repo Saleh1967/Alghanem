@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from slge.answer import Answer, Sentence, compose, render, verbalize
+from slge.answer import Answer, Sentence, compose, render, respond, verbalize
 from slge.knowledge import Genus, Licence, LicenceGround, Literal, infer
 from slge.status import Status
 from world_fixture import ADMITTED, PROPOSED_RULES, ev
@@ -59,3 +59,24 @@ def test_verbalizer_cannot_drop_tags() -> None:
             [(s.status, s.support) for s in a.sentences]
         with pytest.raises(ValueError):
             verbalize(a, _Eraser())
+
+
+def test_respond_carries_rank_and_specialisation() -> None:
+    from slge.knowledge import Admission, Degree, Naql, Standing, WorldRule
+    from slge.rank import Rank
+
+    q = ev("ق", Genus.خبر_مقبول, "corpora/quran-simple-enhanced.txt", Naql.متواتر)
+    rules = (
+        WorldRule("عام", "مكلف", "صوم واجب", Degree.اخص, Standing.شرعي, Admission.مقبول, "ن", q),
+        WorldRule("خاص", "مسافر", "صوم واجب", Degree.اخص, Standing.شرعي, Admission.مقبول, "ن",
+                  ev("ق2", Genus.خبر_مقبول, "خبر", Naql.آحاد), (), False),
+        WorldRule("حد", "مسافر", "مكلف", Degree.اخص, Standing.تعريفي, Admission.مقبول, "ح",
+                  ev("ح", Genus.تعريف_مشترط, "تعريف")),
+    )
+    a = respond("أيجب الصوم على المسافر؟", (Literal("مسافر", True), Literal("مكلف", True)),
+                "صوم واجب", rules)
+    text = render(a)
+    assert a.rank is Rank.ظن and "الرتبة: ظن" in text
+    assert "عامٌّ مخصوص" in text and "lean:Slge.Rank.general_is_makhsus" in text
+    assert all(s.support for s in a.sentences)
+    assert verbalize(a, _Echo()).rank is a.rank

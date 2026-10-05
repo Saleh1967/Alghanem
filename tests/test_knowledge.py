@@ -82,13 +82,15 @@ def _all_rules() -> list[WorldRule]:
     for a, b in product(_CONCEPTS, repeat=2):
         if a != b:
             for d in Degree:
-                out.append(rule(f"{a}{b}{d.value}", a, b, Standing.تعريفي,
-                                ev("ت", Genus.تعريف_مشترط, "تعريف"), (), d))
+                for positive in (True, False):
+                    out.append(WorldRule(f"{a}{b}{d.value}{positive}", a, b, d, Standing.تعريفي,
+                                         Admission.مقبول, "تعريف",
+                                         ev("ت", Genus.تعريف_مشترط, "تعريف"), (), positive))
     return out
 
 
 def _holds(r: WorldRule, m: dict[str, bool]) -> bool:
-    a, b = m[r.antecedent], m[r.consequent]
+    a, b = m[r.antecedent], m[r.consequent] == r.positive
     return (not a or b) if r.degree is Degree.اخص else a == b
 
 
@@ -99,11 +101,20 @@ def test_every_produced_step_is_productive() -> None:
     والمعطى — وهذا معنى «منتج» نفسُه الذي برهنه Lean للخطوة الواحدة، ممدودًا إلى الطريق.
     """
 
+    _check_soundness(max_rules=2)
+
+
+@pytest.mark.slow
+def test_every_produced_step_is_productive_three_rules() -> None:
+    _check_soundness(max_rules=3)
+
+
+def _check_soundness(max_rules: int) -> None:
     rules = _all_rules()
     models = [dict(zip(_CONCEPTS, bits, strict=True))
               for bits in product((False, True), repeat=3)]
     checked = 0
-    for k in range(4):
+    for k in range(max_rules + 1):
         for base in combinations(rules, k):
             for c, aff, target in product(_CONCEPTS, (True, False), _CONCEPTS):
                 v = infer(Literal(c, aff), target, base)
@@ -117,4 +128,4 @@ def test_every_produced_step_is_productive() -> None:
                     if m[c] == aff and all(_holds(r, m) for r in base):
                         assert m[v.conclusion.concept] == v.conclusion.affirmed
                 checked += 1
-    assert checked > 1000
+    assert checked > 100

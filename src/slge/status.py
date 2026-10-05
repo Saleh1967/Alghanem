@@ -143,6 +143,30 @@ LEDGER: Final[tuple[Claim, ...]] = (
        "test:tests/test_knowledge.py::test_every_produced_step_is_productive"),
     _c("MAFHUM-open", "طريقُ مخالفة الغاية ومخالفة العدد إلى صورة", _O,
        note="`knowledge.MAFHUM_ROUTE` يكتب الموافقةَ ومخالفتي الصفة والشرط وحدها."),
+    # — رتبة الجواب —
+    _c("RANK-MEET", "رتبةُ النتيجة رتبةُ أضعف مقدّماتها؛ لا ترقية", _P,
+       "lean:Slge.Rank.pathGrade_qati_iff", "lean:Slge.Rank.no_promotion",
+       "test:tests/test_rank.py::test_rank_never_promotes_on_random_worlds",
+       note="الغزالي، محكّ النظر: «يقينية ضرورية بحسب ذوق المقدمات»."),
+    _c("RANK-WEIGH", "القطعيُّ يردّ الظنّيّ، ولا يُردّ قطعيّ، والراجحُ مرجوحٌ من الجهة الأخرى، "
+       "والتعادلُ ظنّيّان متساويان، وتعارضُ قطعيّين تناقض", _P,
+       "lean:Slge.Rank.weigh_swap", "lean:Slge.Rank.qati_never_loses",
+       "lean:Slge.Rank.mardud_iff", "lean:Slge.Rank.tanaqud_iff", "lean:Slge.Rank.taadul_iff",
+       "test:tests/test_rank.py::test_rank_table_matches_lean",
+       note="التفكير: «يؤخذ القطعي ويرد الظني»؛ ج٣ ¶1060، ¶1062."),
+    _c("RANK-KHASS", "الخاصُّ يُعمل به أيًّا كان ثبوتُه، والعامُّ مخصوصٌ لا مردود", _P,
+       "lean:Slge.Rank.specific_wins", "lean:Slge.Rank.general_is_makhsus",
+       "lean:Slge.Rank.qati_general_yields_to_zanni_specific",
+       "lean:Slge.Rank.same_scope_is_weigh",
+       "test:tests/test_rank.py::test_specific_wins_and_general_is_makhsus",
+       note="ج٣ ¶1065. والخصوصُ محسوبٌ من لزوم المقدَّمين بالقواعد المقبولة."),
+    _c("RANK-THUBUT", "تصنيفُ الدليل قطعيًّا أو ظنّيًّا", Status.معلن,
+       "test:tests/test_rank.py::test_evidence_grades",
+       note="المتواترُ والتعريفُ قطعيّان؛ الآحادُ والمشهورُ والمعجمُ والمشاهدةُ (حكمٌ على صفة) "
+            "ظنّيّة — ج٣ ¶275، ¶277، ¶713؛ التفكير. قاعدةٌ معلنةٌ لا مبرهنة."),
+    _c("RANK-open", "مرجّحاتُ الحكم (التحريمُ على الإباحة …) والجمعُ «من وجه دون وجه»", _O,
+       note="ج٣ ¶1063، ¶1066–1074: يحتاجان نوعَ الحكم ونطاقَه في القاعدة؛ وتعارضُ ظنّيّين "
+            "في نطاقٍ واحدٍ يوزن الآن بعدد الشواهد المستقلّة وحده."),
     # — التعلّم —
     _c("LEARN", "حلقةُ التعلّم: المرشَّحُ لا يُنتج، والمحجوبُ لا يراه المولِّد، "
        "والخاطئُ يُسحب، والسجلُّ تامّ", _X,

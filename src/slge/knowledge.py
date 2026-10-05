@@ -29,6 +29,7 @@ __all__ = [
     "Licence",
     "LicenceGround",
     "Literal",
+    "Naql",
     "Outcome",
     "Standing",
     "Step",
@@ -36,6 +37,7 @@ __all__ = [
     "WorldKnowledgeError",
     "WorldRule",
     "infer",
+    "moves",
     "productive",
 ]
 
@@ -126,15 +128,24 @@ GENERA_OF_STANDING: Final[dict[Standing, frozenset[Genus]]] = {
 والفرضيّةُ لا تُثبت منزلةً أصلًا."""
 
 
+class Naql(Enum):
+    """طريقُ نقل الخبر (الشخصية ج٣ ¶268–277): المتواترُ يفيد اليقين، والمشهورُ والآحادُ الظنّ."""
+
+    متواتر = "mutawatir"
+    مشهور = "mashhur"
+    آحاد = "ahad"
+
+
 @dataclass(frozen=True, slots=True)
 class Evidence:
-    """دليلٌ مسمّى: جنسُه ونصُّه ومصدرُه وبصمةُ المصدر إن كان ملفًّا."""
+    """دليلٌ مسمّى: جنسُه ونصُّه ومصدرُه، وطريقُ نقله إن كان خبرًا، وبصمةُ المصدر إن كان ملفًّا."""
 
     evidence_id: str
     genus: Genus
     statement: str
     source: str
     sha256: str | None = None
+    naql: Naql | None = None
 
     def __post_init__(self) -> None:
         if not (self.evidence_id.strip() and self.statement.strip() and self.source.strip()):
@@ -161,6 +172,9 @@ class WorldRule:
     origin: str
     evidence: Evidence | None = None
     blocker_ids: tuple[str, ...] = ()
+    positive: bool = True
+    """قطبُ التالي: ‎True‎ «كلّما كان أ كان ب»، و‎False‎ «كلّما كان أ لم يكن ب»
+    (مثلًا «المسافرُ ليس الصومُ عليه واجبًا»). وبه وحده يقع التعارضُ بين طريقين."""
 
     def __post_init__(self) -> None:
         for name in ("rule_id", "antecedent", "consequent", "origin"):
@@ -259,17 +273,19 @@ class Verdict:
     note: str
 
 
-def _moves(rule: WorldRule, at: Literal, lifted: bool) -> list[tuple[Literal, Form, bool]]:
+def moves(rule: WorldRule, at: Literal, lifted: bool) -> list[tuple[Literal, Form, bool]]:
     """الانتقالاتُ من حرفٍ عبر قاعدة: (إلى، الصورة، أهي منتجة بالجدول المبرهَن)."""
 
     degree = Degree.مساو if lifted else rule.degree
     moves: list[tuple[Literal, Form, bool]] = []
     if at.concept == rule.antecedent:
         form = Form.عين_المقدم if at.affirmed else Form.نقيض_المقدم
-        moves.append((Literal(rule.consequent, at.affirmed), form, productive(degree, form)))
+        value = at.affirmed == rule.positive
+        moves.append((Literal(rule.consequent, value), form, productive(degree, form)))
     if at.concept == rule.consequent:
-        form = Form.عين_التالي if at.affirmed else Form.نقيض_التالي
-        moves.append((Literal(rule.antecedent, at.affirmed), form, productive(degree, form)))
+        same = at.affirmed == rule.positive  # المعطى عينُ التالي أم نقيضُه
+        form = Form.عين_التالي if same else Form.نقيض_التالي
+        moves.append((Literal(rule.antecedent, same), form, productive(degree, form)))
     return moves
 
 
@@ -291,7 +307,7 @@ def _search(
             if rule.admission is Admission.مرشح and not allow_candidates:
                 continue
             licence = licences.get(rule.rule_id)
-            for nxt, form, ok in _moves(rule, at, licence is not None):
+            for nxt, form, ok in moves(rule, at, licence is not None):
                 if (not ok and not allow_unproductive) or nxt in seen:
                     continue
                 seen.add(nxt)

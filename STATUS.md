@@ -4,13 +4,13 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 9 |
+| مبرهن | 12 |
 | مفحوص_استقصاء | 19 |
 | مفحوص_بعينة | 2 |
 | دليل | 0 |
-| معلن | 3 |
+| معلن | 4 |
 | رأي | 0 |
-| مفتوح | 8 |
+| مفتوح | 9 |
 
 | المعرّف | الدعوى | الوسم | السند | ملاحظة |
 |---|---|---|---|---|
@@ -23,6 +23,9 @@
 | LICENCE | الرافعُ إلى المساواة يُنتج مفهومَ المخالفة | مبرهن | `lean:Slge.Ghazali.licence_makes_mafhum` |  |
 | Q1 | الخاناتُ ‎116 = 29 × 4‎، تامّةٌ بلا تكرار | مبرهن | `lean:Slge.scells_length`<br>`test:tests/test_cells.py::test_cells_are_116` |  |
 | Q2 | الترخيصُ قيدُ مسار، وهو `Admissible` في الـ116 بعينه لكلّ طول | مبرهن | `lean:Slge.licensed_iff`<br>`test:tests/test_conformance.py::test_folds_match_lean` |  |
+| RANK-KHASS | الخاصُّ يُعمل به أيًّا كان ثبوتُه، والعامُّ مخصوصٌ لا مردود | مبرهن | `lean:Slge.Rank.specific_wins`<br>`lean:Slge.Rank.general_is_makhsus`<br>`lean:Slge.Rank.qati_general_yields_to_zanni_specific`<br>`lean:Slge.Rank.same_scope_is_weigh`<br>`test:tests/test_rank.py::test_specific_wins_and_general_is_makhsus` | ج٣ ¶1065. والخصوصُ محسوبٌ من لزوم المقدَّمين بالقواعد المقبولة. |
+| RANK-MEET | رتبةُ النتيجة رتبةُ أضعف مقدّماتها؛ لا ترقية | مبرهن | `lean:Slge.Rank.pathGrade_qati_iff`<br>`lean:Slge.Rank.no_promotion`<br>`test:tests/test_rank.py::test_rank_never_promotes_on_random_worlds` | الغزالي، محكّ النظر: «يقينية ضرورية بحسب ذوق المقدمات». |
+| RANK-WEIGH | القطعيُّ يردّ الظنّيّ، ولا يُردّ قطعيّ، والراجحُ مرجوحٌ من الجهة الأخرى، والتعادلُ ظنّيّان متساويان، وتعارضُ قطعيّين تناقض | مبرهن | `lean:Slge.Rank.weigh_swap`<br>`lean:Slge.Rank.qati_never_loses`<br>`lean:Slge.Rank.mardud_iff`<br>`lean:Slge.Rank.tanaqud_iff`<br>`lean:Slge.Rank.taadul_iff`<br>`test:tests/test_rank.py::test_rank_table_matches_lean` | التفكير: «يؤخذ القطعي ويرد الظني»؛ ج٣ ¶1060، ¶1062. |
 | ANSWER | كلُّ جملةٍ في الجواب لها وسمٌ وسند، والمُعيدُ لا يُسقطهما | مفحوص_استقصاء | `test:tests/test_answer.py::test_every_sentence_is_tagged`<br>`test:tests/test_answer.py::test_verbalizer_cannot_drop_tags` |  |
 | INFER | `infer` لا يُنتج إلّا بمقبولٍ وبصورةٍ منتجة | مفحوص_استقصاء | `test:tests/test_knowledge.py::test_candidates_never_produce`<br>`test:tests/test_knowledge.py::test_every_produced_step_is_productive` |  |
 | L1-rho | سلّمُ الحروف: الألفُ وحدها لا تتحرّك | مفحوص_استقصاء | `test:tests/test_morphology.py::test_every_used_cell_respects_rho` | الأصلُ (`LADDER`) منع الحركةَ على الواو والياء أيضًا، فناقض «وَ» و«يَ» في جداوله. |
@@ -47,6 +50,7 @@
 | DL1-DL6 | أقسامُ الوضع والدلالة والحقيقة والمجاز والمنطوق والمفهوم مغلقة | معلن | `test:tests/test_semantics.py::test_partitions_are_closed` |  |
 | Q19 | كلُّ زوجٍ من الأزواج يقسم الـ29 | معلن | `test:tests/test_phonology.py::test_pairs_partition` | صادقٌ بالبناء (السالبُ متمّمُ الموجب)؛ فهو تعريفٌ لا اكتشاف. |
 | Q20 | الجوفُ للمدّ الثلاث | معلن | `test:tests/test_phonology.py::test_jawf_is_madd` |  |
+| RANK-THUBUT | تصنيفُ الدليل قطعيًّا أو ظنّيًّا | معلن | `test:tests/test_rank.py::test_evidence_grades` | المتواترُ والتعريفُ قطعيّان؛ الآحادُ والمشهورُ والمعجمُ والمشاهدةُ (حكمٌ على صفة) ظنّيّة — ج٣ ¶275، ¶277، ¶713؛ التفكير. قاعدةٌ معلنةٌ لا مبرهنة. |
 | DL4 | كشفُ النسب بالكلمات المفتاحيّة | مفتوح | — | حُذف `nisba_ok`: البحثُ عن «فاعل» في نصٍّ ليس كشفًا للإسناد. يُبنى في طبقة النظم. |
 | GRID-NOM-labels | قالبا MS-7 وNS-1 يخالفان رسمَ اسميهما | مفتوح | `test:tests/test_morphology.py::test_nominal_templates_against_their_own_labels` | MS-7: لامٌ ثابتٌ ساكن والرسمُ «لَ» جذريّ؛ NS-1: فاءٌ مفتوحةٌ والرسمُ «فْ». كشفهما الفحصُ الآليّ للقالب برسم اسمه؛ والحسمُ لصاحب الجرد. |
 | GRID-wasl | همزةُ الأوزان VII–X مكتوبةٌ ‎(ء، فتح)‎ في الشبكة | مفتوح | — | يُفحص على `sibawayh-abniya.tsv` في الغانم قبل أيّ تغيير. |
@@ -54,4 +58,5 @@
 | PHON-open | «ذ، ث» على «اللسان/عام»، و«ي» في الجوف وحده | مفتوح | — | بياناتٌ تراثيّةٌ ناقصة كما أُعلنت؛ لم تُكمَّل من الذاكرة. |
 | Q12-wasl | حركةُ همزة الوصل في غير «ال» (كسرٌ أو ضمّ) | مفتوح | — | الأصلُ يفتحها دائمًا؛ تُرك كما هو حتى يشهد نصٌّ مودَع. |
 | Q14-nun | الوقفُ على «يَفْعَلُونَ» يحذف الواوَ والنونَ معًا | مفتوح | — | هذا سلوكُ الأصل وتفحصه Q14 هناك؛ ولم يُشهد له بنصّ. يحتاج شاهدًا من قراءةٍ مودَعة. |
+| RANK-open | مرجّحاتُ الحكم (التحريمُ على الإباحة …) والجمعُ «من وجه دون وجه» | مفتوح | — | ج٣ ¶1063، ¶1066–1074: يحتاجان نوعَ الحكم ونطاقَه في القاعدة؛ وتعارضُ ظنّيّين في نطاقٍ واحدٍ يوزن الآن بعدد الشواهد المستقلّة وحده. |
 | WAZUN | استخراجُ الأوزان من نشرةٍ مشكولةٍ لأبواب سيبويه | مفتوح | — | الأصلُ (`slge_wazun`) يستدعي `slge_laws.normalize` غيرَ الموجودة؛ والنشرةُ المجرّدةُ مودعةٌ في الغانم (`corpora/sibawayh-abniya.tsv`) بلا تشكيل. |
