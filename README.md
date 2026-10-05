@@ -8170,7 +8170,7 @@ so rather than quietly promoting them. The two deposits and the measuring
 module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
-The widening is 703-fold: 32 pairs, then 22,505. Both questions were answered,
+The widening is 712-fold: 32 pairs, then 22,801. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8185,11 +8185,11 @@ a specimen written deliberately illegal to show it yields no state. Neither is
 Arabic. The least frequent pair that *is* Arabic sits at 9, nine times the
 published floor. So the minimum of this census measures what the medium quotes,
 not what the script allows, and the distribution turns out to be a cliff rather
-than a tail: six shadda-bearing pairs hold 99.947%, and the remaining three
+than a tail: six shadda-bearing pairs hold 99.946%, and the remaining three
 hold twelve occurrences between them.
 
 The widening also changed the population and not merely its size: pairs
-beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,714 of 22,473
+beginning with tanwīn are 0 of 32 in the Qurʾānic deposits and 5,758 of 22,769
 in the prose. That makes the leader's stability a stability across two
 registers rather than inside one — and it makes the prose figures dated, since
 the scope grows whenever the tree does, which `prose_scope_has_drifted` reports
@@ -8779,12 +8779,12 @@ The table is filled along a cumulative ladder: the Fātiḥa alone realises 41 o
 the 112 cells over 100 occurrences and 20 of the 28 letters; adding Fatḥ 48:29
 takes it to 74 cells and 27 letters; adding the tree's own prose — with this
 module excluded from it by name, so that its figures do not move whenever its
-description is edited — takes it to 111 cells over 105,744 occurrences with every
+description is edited — takes it to 111 cells over 107,028 occurrences with every
 letter present. One cell stays empty, and the module refuses to read it as a
-prohibition until its margin is consulted. Sukūn is 643 of 105,744 — 0.61%
-— and the cells once filed as scarce (ظ, then ث, then ز, bearing it) have since
-filled as the prose grew. Alef's whole row is thirteen occurrences, so its sukūn
-cell is expected 0.079 times and **stays consistent with scarcity**. A third cell,
+prohibition until its margin is consulted. Sukūn is 643 of 107,028 — 0.60%
+— and the cells once filed as scarce (ظ, then ث, bearing it) have since filled
+as the prose grew. Alef's whole row is thirteen occurrences, so its sukūn cell is
+expected 0.078 times and **stays consistent with scarcity**. A third cell,
 alef-with-fatḥa, once survived that filter and has since filled from the growing
 prose alone — and its emptiness was never a discovery, since alef *is* the long
 fatḥa.
@@ -9077,8 +9077,23 @@ python examples/arabic/read_markov_readiness_gate.py
 python examples/arabic/read_quran_word_total_standing.py
 ```
 
-These are the same checks CI runs, in the same order
-([`.github/workflows/ci.yml`](.github/workflows/ci.yml)). The two gates that run
+These are the same checks CI runs, in the same order. The list itself lives in
+one place — [`tools/checks.tsv`](tools/checks.tsv) — and both a local run and
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) drive it through
+`tools/run_checks.sh`, so neither side carries a second copy of the commands:
+
+```bash
+bash tools/run_checks.sh              # all of them, continuing past a failure
+bash tools/run_checks.sh --fail-fast  # stop at the first failure
+bash tools/run_checks.sh --only ruff-check,mypy
+```
+
+Each check gets its own log, exit code and duration under `.check-logs/`
+alongside an `environment.txt` carrying the head SHA, the interpreter and the
+Unicode data version the run was measured on. A check whose declared source is
+missing is recorded `SKIPPED` with the reason and a check never reached is
+recorded `NOT_RUN`; neither is ever read as a pass, and CI passes `--strict` so
+a skip fails the job. The two gates that run
 before `pytest` are not formalities: `tools/regen_all.py --check` re-derives
 every number transcribed into prose and fails on the first drift, and
 `assert_the_gates_hold()` walks the whole tree against the deposit law. Adding a
@@ -9095,6 +9110,7 @@ python -m pip install -e '.[dev]'
 python tools/regen_all.py --check
 python -c "from alghanem.deposit_law import assert_the_gates_hold; assert_the_gates_hold()"
 pytest
+python -m unittest discover -s canonical116 -t . -p 'test_*.py'
 python tools/daleel/build_bab.py
 bash hifz/test_hifz.sh
 ruff check .

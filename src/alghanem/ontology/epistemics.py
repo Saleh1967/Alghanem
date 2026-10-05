@@ -32,15 +32,19 @@
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass, fields
 from enum import Enum
+from pathlib import Path
 from typing import Final
 
 from ..canonical_content import canonical_bytes, canonical_digest
 
 __all__ = [
     "AN_EVIDENCE_IDENTITY_IS_ITS_CONTENT",
+    "A_DECLARED_WORLD_IS_NOT_A_WITNESSED_ONE",
     "A_SOURCE_NAME_IS_NOT_A_CONTENT",
+    "A_WRITTEN_GENUS_IS_NOT_A_PROVENANCE",
     "KNOWING_IS_NOT_ONLY_REPORTING",
     "NO_RECORDED_VALUE_IS_NOT_A_RECORDED_ABSENCE",
     "UNKNOWN_IS_A_STATUS_NOT_A_KIND",
@@ -50,8 +54,10 @@ __all__ = [
     "EvidenceRef",
     "EpistemicError",
     "Scope",
+    "SealedLocus",
     "ValueStatus",
     "refuse_unknown_as_a_kind",
+    "verify_evidence_locus",
 ]
 
 
@@ -88,6 +94,18 @@ A_SOURCE_NAME_IS_NOT_A_CONTENT: Final[str] = (
     "إحالةً لا معلومة"
 )
 
+A_WRITTEN_GENUS_IS_NOT_A_PROVENANCE: Final[str] = (
+    "كتابةُ الجنس ليست منشأً للدليل: من كتب `ACCEPTED_REPORT` بجانب جملةٍ "
+    "صاغها بيده فقد سمّى الخبرَ باسمه ولم يَرِد به عن أحد؛ ولذلك لا يُنشَأ "
+    "جنسٌ مُثبِتٌ للوقائع إلّا بموضعٍ من ملفٍّ مختومٍ يُعاد قراءتُه فيُقابَل"
+)
+
+A_DECLARED_WORLD_IS_NOT_A_WITNESSED_ONE: Final[str] = (
+    "العالَمُ المُعلَنُ جملةٌ نصوغها للفحص لا واقعةٌ شاهدناها ولا خبرٌ بلغنا: "
+    "`DECLARED_SCENARIO` يَحفظها بصفتها، ولا يُثبِت بها شيءٌ عن الواقع؛ ومن "
+    "سمّاها مشاهدةً أثبت بسجلّ الوقائع ما لم يُشاهِده أحد"
+)
+
 
 class EvidenceGenus(Enum):
     """أجناسُ الأدلّة؛ مفردةٌ مغلقةٌ فيها عضوُ جهلٍ مُصرَّحٌ به."""
@@ -99,15 +117,16 @@ class EvidenceGenus(Enum):
     LEXICAL_ATTESTATION = "lexical_attestation"
     STIPULATED_DEFINITION = "stipulated_definition"
     DECLARED_HYPOTHESIS = "declared_hypothesis"
+    DECLARED_SCENARIO = "declared_scenario"
     UNREAD = "unread"
 
     @property
     def is_fact_establishing(self) -> bool:
         """أيُثبِت هذا الجنسُ قضيّةً عن الواقع؟ خاصّيّةٌ تُشتَقّ لا حقلٌ يُكتَب.
 
-        التعريفُ الاصطلاحيُّ والفرضيّةُ المُعلَنةُ يُحفَظان بصفتهما، ولا
-        يُرقَّيان حقيقةً مثبتة؛ والشهادةُ المعجميّةُ تُثبِت وضعَ اللفظ لا وقوعَ
-        الحدث، فهي مصدرُ رصيدٍ لا مصدرُ واقعة.
+        التعريفُ الاصطلاحيُّ والفرضيّةُ المُعلَنةُ والعالَمُ المُعلَنُ تُحفَظ
+        بصفتها، ولا تُرقَّى حقيقةً مثبتة؛ والشهادةُ المعجميّةُ تُثبِت وضعَ
+        اللفظ لا وقوعَ الحدث، فهي مصدرُ رصيدٍ لا مصدرُ واقعة.
         """
 
         return self in (
@@ -118,10 +137,38 @@ class EvidenceGenus(Enum):
         )
 
     @property
+    def demands_a_sealed_locus(self) -> bool:
+        """أيلزم هذا الجنسَ موضعٌ من ملفٍّ مختوم؟ خاصّيّةٌ تُشتَقّ لا حقلٌ يُكتَب.
+
+        اللازمُ موضعًا هو **النقل** وحدَه: `ACCEPTED_REPORT` يدّعي أنّ قائلًا
+        قال، فيلزمه موضعٌ يُعاد قراءتُه فيُقابَل
+        (`A_WRITTEN_GENUS_IS_NOT_A_PROVENANCE`). وما عداه مُثبِتٌ بحُجّةٍ
+        أخرى لا بالسند النصّيّ: `DIRECT_OBSERVATION` و`MEASUREMENT` يدّعيان
+        مشاهدةً أو قياسًا، وبرهانُهما إجراءُ الرصد لا ملفٌّ؛
+        و`LICENSED_INFERENCE` منشأُه مقدّماتُه، فيُحاسَب عند تركيب الاستدلال.
+
+        وحدُّ هذا الحارس مُعلَنٌ: هو يمنع **ادّعاء نقلٍ بلا سند**، ولا يمنع
+        ادّعاءَ مشاهدةٍ لم تقع؛ فذاك يُحاسَب في موضع الرصد لا ههنا.
+        """
+
+        return self is EvidenceGenus.ACCEPTED_REPORT
+
+    @property
     def is_substance_founding(self) -> bool:
         """أيصلح هذا الجنسُ مصدرًا لبندٍ في رصيد الأنواع والقواعد؟"""
 
         return self is not EvidenceGenus.UNREAD
+
+
+THE_LOCUS_DEMAND_IS_NOT_ENFORCED_AT_CONSTRUCTION_YET: Final[str] = (
+    "`demands_a_sealed_locus` خاصّيّةٌ تُقرَأ وتُفحَص بـ`verify_evidence_locus`، "
+    "ولم تُجعَل رفضًا في `Evidence.__post_init__` بعدُ: فطبقةُ البرهان "
+    "التجريديّة في هذا المستودع تبني أدلّةً بجنس النقل في عوالمَ مضروبةٍ "
+    "للمثال (مجلسٌ · أطرافٌ · يدُ الدولة)، ولا موضعَ مختومًا لها ولا يصحّ أن "
+    "يُفتعَل. فالرفضُ البنيويُّ مطبَّقٌ حيث يُدَّعى النقلُ عن مصدرٍ عربيٍّ "
+    "حقيقيّ — في `source_card_path.CaseFact` — والتعميمُ موقوفٌ على قرارٍ في "
+    "نحوِ خمسين موضعًا من طبقة البرهان، يُسمّى ولا يُطوى."
+)
 
 
 class AcceptanceStanding(Enum):
@@ -193,8 +240,7 @@ class Scope:
         bounds = (self.start, self.end)
         if (self.timeline_id is None) != all(bound is None for bound in bounds):
             raise EpistemicError(
-                "الفترةُ الزمنيّةُ محورٌ وحدّانِ معًا أو لا شيءَ منها؛ ونصفُ "
-                "فترةٍ نطاقٌ لا يُقرَأ"
+                "الفترةُ الزمنيّةُ محورٌ وحدّانِ معًا أو لا شيءَ منها؛ ونصفُ فترةٍ نطاقٌ لا يُقرَأ"
             )
         if self.start is not None and self.end is not None and self.start > self.end:
             raise EpistemicError("حدّا الفترة مرتّبان: البدايةُ لا تتجاوز النهاية")
@@ -234,10 +280,55 @@ class Scope:
 
 
 @dataclass(frozen=True, slots=True)
-class Evidence:
-    """دليلٌ واحد: جنسُه، ومضمونُه، ومصدرُه المُسمّى، ونطاقُ سريانه.
+class SealedLocus:
+    """موضعٌ من ملفٍّ مختوم: مسارُه النسبيُّ وختمُه ومداه والمقتطفُ المنقول.
 
-    والمنزلةُ والهويّةُ خاصّيّتانِ مشتقّتانِ لا حقلانِ يُكتَبان.
+    وهذا هو المنشأُ الذي يَفصِل ما نُقِل عمّا كُتِب
+    (`A_WRITTEN_GENUS_IS_NOT_A_PROVENANCE`): المدى حدّانِ مرتّبانِ على نصِّ
+    الملفّ المفكوك، و`excerpt` نسخةُ ما بينهما حرفًا بحرف. والمقابلةُ نفسُها
+    تقع في `verify_evidence_locus`، فلا يقرأ هذا الصنفُ قرصًا عند بنائه.
+    """
+
+    path: str
+    digest: str
+    start: int
+    end: int
+    excerpt: str
+
+    def __post_init__(self) -> None:
+        _require_text(self.path, "مسارُ الملفّ المختوم")
+        _require_text(self.digest, "ختمُ الملفّ المختوم")
+        _require_text(self.excerpt, "مقتطفُ الموضع المنقول")
+        for bound, label in ((self.start, "بدايةُ المدى"), (self.end, "نهايتُه")):
+            if not isinstance(bound, int) or isinstance(bound, bool) or bound < 0:
+                raise EpistemicError(f"{label} عددٌ صحيحٌ غيرُ سالب")
+        if self.start >= self.end:
+            raise EpistemicError("مدى الموضع مرتَّبٌ غيرُ خالٍ: البدايةُ دون النهاية")
+        if self.end - self.start != len(self.excerpt):
+            raise EpistemicError(
+                "طولُ المقتطف هو طولُ المدى؛ ومقتطفٌ أطولُ أو أقصرُ من حدّيه "
+                "موضعٌ آخرُ يلبس ثوبَ هذا"
+            )
+
+    def as_canonical_content(self) -> dict[str, object]:
+        """محتوى الموضع للبصمة؛ فتبديلُ المقتطف يُبدّل هويّةَ الدليل."""
+
+        return {
+            "path": self.path,
+            "digest": self.digest,
+            "start": self.start,
+            "end": self.end,
+            "excerpt": self.excerpt,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class Evidence:
+    """دليلٌ واحد: جنسُه، ومضمونُه، ومصدرُه المُسمّى، ونطاقُ سريانه، ومنشؤه.
+
+    والمنزلةُ والهويّةُ خاصّيّتانِ مشتقّتانِ لا حقلانِ يُكتَبان. وكلُّ جنسٍ
+    يُخبِر عن الواقع بنقلٍ أو مشاهدةٍ أو قياسٍ **لا يُنشَأ بلا `locus`**: هذا
+    هو الفصلُ بين ما نُقِل وما كُتِب، ويقع عند الإنشاء لا عند المراجعة.
     """
 
     evidence_id: str
@@ -246,6 +337,7 @@ class Evidence:
     source_name: str
     scope: Scope
     source_digest: str | None = None
+    locus: SealedLocus | None = None
 
     def __post_init__(self) -> None:
         _require_text(self.evidence_id, "مُعرِّفُ الدليل")
@@ -261,6 +353,17 @@ class Evidence:
             raise EpistemicError("نطاقُ الدليل نطاقٌ قائمٌ لا نصٌّ حرّ")
         if self.source_digest is not None:
             _require_text(self.source_digest, "بصمةُ مصدر الدليل إن ذُكرت")
+        if self.locus is not None and not isinstance(self.locus, SealedLocus):
+            raise EpistemicError("منشأُ الدليل موضعٌ مختومٌ قائمٌ لا نصٌّ حرّ")
+        if (
+            self.locus is not None
+            and self.source_digest is not None
+            and self.source_digest != self.locus.digest
+        ):
+            raise EpistemicError(
+                "ختمُ المصدر المكتوبُ يخالف ختمَ الموضع المنقولِ منه؛ ولا "
+                "يُحمَل أحدُهما على الآخر"
+            )
 
     @property
     def standing(self) -> AcceptanceStanding:
@@ -283,6 +386,7 @@ class Evidence:
             "source_name": self.source_name,
             "source_digest": self.source_digest,
             "scope": self.scope.as_canonical_content(),
+            "locus": None if self.locus is None else self.locus.as_canonical_content(),
         }
 
     @property
@@ -333,6 +437,52 @@ class EvidenceRef:
         return {"evidence_id": self.evidence_id, "content_id": self.content_id}
 
 
+def verify_evidence_locus(evidence: Evidence, root: Path) -> SealedLocus:
+    """أعِد قراءةَ موضع الدليل من البايتات وقابِله؛ والمخالفةُ رفضٌ لا تنبيه.
+
+    الجذرُ يُمرَّر ولا يُستنبَط، على منوال `witness_occurrence`، فتبقى هذه
+    الطبقةُ تسجيلًا لا سلطةَ قرصٍ لها. وتُقابَل ثلاثةُ أشياء بالترتيب: حضورُ
+    الملفّ، ثمّ ختمُه، ثمّ المقتطفُ عند مداه. وغيابُ الملفّ رفضٌ كذلك: دليلٌ
+    مُثبِتٌ لا يُقرَأ منشؤه لا يُقرَأ مُثبِتًا.
+    """
+
+    if not isinstance(evidence, Evidence):
+        raise EpistemicError("المقابلةُ تقع على دليلٍ قائم")
+    if not isinstance(root, Path):
+        raise EpistemicError("جذرُ القراءة مسارٌ قائمٌ لا نصٌّ حرّ")
+    locus = evidence.locus
+    if locus is None:
+        raise EpistemicError(
+            f"الدليلُ `{evidence.evidence_id}` بلا موضعٍ يُقابَل؛ و"
+            + A_WRITTEN_GENUS_IS_NOT_A_PROVENANCE
+        )
+    path = root / locus.path
+    if not path.is_file():
+        raise EpistemicError(
+            f"ملفُّ المنشأ `{locus.path}` غائبٌ عن الشجرة، فلا يُقابَل الموضع"
+        )
+    raw = path.read_bytes()
+    measured = hashlib.sha256(raw).hexdigest()
+    if measured != locus.digest:
+        raise EpistemicError(
+            f"ختمُ `{locus.path}` المقيسُ `{measured}` يخالف المكتوبَ "
+            f"`{locus.digest}`؛ والبايتاتُ هي الحَكَم"
+        )
+    text = raw.decode("utf-8")
+    if locus.end > len(text):
+        raise EpistemicError(
+            f"مدى الموضع `[{locus.start}:{locus.end}]` يتجاوز نصَّ "
+            f"`{locus.path}` ({len(text)} محرفًا)"
+        )
+    read = text[locus.start : locus.end]
+    if read != locus.excerpt:
+        raise EpistemicError(
+            f"المقتطفُ المكتوبُ في `{evidence.evidence_id}` يخالف ما يُقرَأ عند "
+            f"`[{locus.start}:{locus.end}]` من `{locus.path}`"
+        )
+    return locus
+
+
 _KIND_FIELD_MARKERS: Final[tuple[str, ...]] = ("kind", "genus", "type_id", "sort")
 """أسماءٌ تدلّ على جنسٍ أنطولوجيّ؛ ولا يُسنَد إليها `ValueStatus` بحال."""
 
@@ -348,7 +498,12 @@ def refuse_unknown_as_a_kind(field_name: str, value: object) -> None:
             raise EpistemicError(UNKNOWN_IS_A_STATUS_NOT_A_KIND)
 
 
-for _declaring_type in (Evidence, EvidenceRef, Scope):  # pragma: no cover - guard
+for _declaring_type in (
+    Evidence,
+    EvidenceRef,
+    Scope,
+    SealedLocus,
+):  # pragma: no cover - guard
     for _field in fields(_declaring_type):
         if _field.type is ValueStatus:  # pragma: no cover - guard
             raise RuntimeError(UNKNOWN_IS_A_STATUS_NOT_A_KIND)

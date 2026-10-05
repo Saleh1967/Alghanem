@@ -70,7 +70,9 @@ from .content import (
     RoleFilling,
 )
 from .epistemics import (
+    A_DECLARED_WORLD_IS_NOT_A_WITNESSED_ONE,
     A_SOURCE_NAME_IS_NOT_A_CONTENT,
+    A_WRITTEN_GENUS_IS_NOT_A_PROVENANCE,
     AN_EVIDENCE_IDENTITY_IS_ITS_CONTENT,
     KNOWING_IS_NOT_ONLY_REPORTING,
     NO_RECORDED_VALUE_IS_NOT_A_RECORDED_ABSENCE,
@@ -81,8 +83,10 @@ from .epistemics import (
     EvidenceGenus,
     EvidenceRef,
     Scope,
+    SealedLocus,
     ValueStatus,
     refuse_unknown_as_a_kind,
+    verify_evidence_locus,
 )
 from .facts import (
     A_CONDITIONAL_IS_NOT_UNBOUND_BY_DEPOSIT,
@@ -334,6 +338,8 @@ __all__ = [
     "EpistemicError",
     "EventContent",
     "EventTypeDefinition",
+    "A_DECLARED_WORLD_IS_NOT_A_WITNESSED_ONE",
+    "A_WRITTEN_GENUS_IS_NOT_A_PROVENANCE",
     "Evidence",
     "EvidenceGenus",
     "EvidenceRef",
@@ -411,6 +417,8 @@ __all__ = [
     "RuleApplication",
     "RuleKind",
     "Scope",
+    "SealedLocus",
+    "verify_evidence_locus",
     "StateDefinition",
     "SubstanceError",
     "SubstanceStore",
