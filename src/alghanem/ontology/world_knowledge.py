@@ -181,6 +181,7 @@ class EquivalenceGround(Enum):
     علة_واحدة = "single_cause"
     وصف_مفهم = "causal_description"
     سياق = "context"
+    أداة_شرط = "conditional_particle"
 
 
 @dataclass(frozen=True, slots=True)
@@ -194,6 +195,12 @@ class EquivalenceLicence:
     def __post_init__(self) -> None:
         if not self.rule_id.strip():
             raise WorldKnowledgeError("الرافع يسمي قاعدته")
+
+    @property
+    def is_candidate(self) -> bool:
+        """رافع دليله فرضية معلنة: رأي مقترح لا يدخل الانتاج."""
+
+        return self.evidence.genus is EvidenceGenus.DECLARED_HYPOTHESIS
 
 
 class Form(Enum):
@@ -243,6 +250,7 @@ class Verdict:
 
     outcome: Outcome
     conclusion: Literal | None
+    would_conclude: Literal | None
     path: tuple[Step, ...]
     defeasible: bool
     blocked_by: tuple[str, ...]
@@ -318,11 +326,12 @@ def infer(
     """
 
     by_id = {rule.rule_id: rule for rule in rules}
-    licence_map = {lic.rule_id: lic for lic in licences}
     for lic in licences:
         if lic.rule_id not in by_id:
             raise WorldKnowledgeError(f"رافع لقاعدة غير موجودة: {lic.rule_id}")
-    found = _search(given, target, rules, licence_map, False, False)
+    admitted = {lic.rule_id: lic for lic in licences if not lic.is_candidate}
+    every = {lic.rule_id: lic for lic in licences}
+    found = _search(given, target, rules, admitted, False, False)
     if found is not None:
         conclusion, path = found
         used = [by_id[step.rule_id] for step in path]
@@ -332,40 +341,46 @@ def infer(
             )
         )
         if blocked:
-            return Verdict(Outcome.لا_طريق, None, path, True, blocked, "مانع قائم")
+            return Verdict(
+                Outcome.لا_طريق, None, None, path, True, blocked, "مانع قائم"
+            )
         return Verdict(
             Outcome.منتج,
+            conclusion,
             conclusion,
             path,
             any(rule.standing.is_defeasible for rule in used),
             (),
             "",
         )
-    pending = _search(given, target, rules, licence_map, True, False)
+    pending = _search(given, target, rules, every, True, False)
     if pending is not None:
-        _, path = pending
+        would, path = pending
         waiting = [
             step.rule_id
             for step in path
             if by_id[step.rule_id].admission is Admission.مرشح
+            or (step.licence is not None and every[step.rule_id].is_candidate)
         ]
         return Verdict(
             Outcome.ناقص,
             None,
+            would,
             path,
             False,
             (),
-            "قاعدة مرشحة لم تقبل: " + "، ".join(waiting),
+            "مرشح لم يقبل: " + "، ".join(waiting),
         )
-    fallacy = _search(given, target, rules, licence_map, True, True)
+    fallacy = _search(given, target, rules, admitted, True, True)
     if fallacy is not None:
         _, path = fallacy
         return Verdict(
             Outcome.غير_منتج,
+            None,
             None,
             path,
             False,
             (),
             "«وأما عين التالي ونقيض المقدم فلا ينتجان» ما لم ترفع القاعدة إلى المساواة",
         )
-    return Verdict(Outcome.لا_طريق, None, (), False, (), "")
+    return Verdict(Outcome.لا_طريق, None, None, (), False, (), "")
