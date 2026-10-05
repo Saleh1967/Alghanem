@@ -80,7 +80,8 @@ _DECLARED: tuple[Claim, ...] = (
     _c("AQ-pronoun", "الضمائرُ المنفصلة أقنومٌ سليم (كلُّها مرخَّصة) بأعدادٍ متباينة، وشكلُها ليس بصمة", _P,
        "lean:Slge.Categories.pronoun_sound", "lean:Slge.Categories.pronoun_numbers_nodup",
        "test:tests/test_conformance.py::test_categories_match_lean",
-       note="خاناتُها من شهادات بوّابة الغانم؛ اكتمالُها على MASAQ قياسٌ لم يُطبع بعد."),
+       note="خاناتُها من جسر الغانم (ستّةٌ في المجال المختوم، وستّةٌ خارجه تُذرَّر بالجسر "
+            "وتُرفض من البوّابة بالاسم)؛ اكتمالُها على MASAQ قياسٌ لم يُطبع بعد."),
     _c("AQ-lattice", "الاحتواءُ بين الأقانيم انعكاسيٌّ متعدٍّ، والسلامةُ تنزل من الأعلى إلى الأدنى", _P,
        "lean:Slge.Categories.sub_trans"),
     # — المدخل الوحيد —

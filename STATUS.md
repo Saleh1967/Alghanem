@@ -16,7 +16,7 @@
 | المعرّف | الدعوى | الوسم | السند | ملاحظة |
 |---|---|---|---|---|
 | AQ-lattice | الاحتواءُ بين الأقانيم انعكاسيٌّ متعدٍّ، والسلامةُ تنزل من الأعلى إلى الأدنى | مبرهن | `lean:Slge.Categories.sub_trans` |  |
-| AQ-pronoun | الضمائرُ المنفصلة أقنومٌ سليم (كلُّها مرخَّصة) بأعدادٍ متباينة، وشكلُها ليس بصمة | مبرهن | `lean:Slge.Categories.pronoun_sound`<br>`lean:Slge.Categories.pronoun_numbers_nodup`<br>`test:tests/test_conformance.py::test_categories_match_lean` | خاناتُها من شهادات بوّابة الغانم؛ اكتمالُها على MASAQ قياسٌ لم يُطبع بعد. |
+| AQ-pronoun | الضمائرُ المنفصلة أقنومٌ سليم (كلُّها مرخَّصة) بأعدادٍ متباينة، وشكلُها ليس بصمة | مبرهن | `lean:Slge.Categories.pronoun_sound`<br>`lean:Slge.Categories.pronoun_numbers_nodup`<br>`test:tests/test_conformance.py::test_categories_match_lean` | خاناتُها من جسر الغانم (ستّةٌ في المجال المختوم، وستّةٌ خارجه تُذرَّر بالجسر وتُرفض من البوّابة بالاسم)؛ اكتمالُها على MASAQ قياسٌ لم يُطبع بعد. |
 | BARREN | عقمُ نقيض المقدَّم وعين التالي في الأخصّ مشهودٌ بنموذجين | مبرهن | `lean:Slge.Ghazali.barren_witnessed` |  |
 | BRIDGE | الجسرُ بين ترميز SLGE وترميز الـ116 تقابلٌ يحفظ السكون | مبرهن | `lean:Slge.ofCell_toCell`<br>`lean:Slge.toCell_ofCell`<br>`lean:Slge.toCell_isSukun`<br>`test:tests/test_conformance.py::test_bridge_matches_lean` |  |
 | CHAIN | الأخصُّ متعدٍّ (مفهومُ الموافقة سلسلة) | مبرهن | `lean:Slge.Ghazali.akhass_chain` |  |
