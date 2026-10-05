@@ -179,6 +179,7 @@ SANCTIONED_DEPOSIT_FILENAMES: Final[tuple[str, ...]] = (
     "globalquran-simple-enhanced.txt",
     "tashkeela-fadel-test.txt",
     "tashkeela-fadel-test.LICENSE",
+    "sibawayh-abniya.tsv",
 )
 """ما يجوز أن يسكن مجلَّدَ الإيداع: بيانُه، وبايتاتُ مدوّناته بأسمائها المسنونة.
 

@@ -291,3 +291,21 @@ python tools/intake_corpus.py --corpus globalquran-simple-enhanced.txt \
 
 ويقرؤه `src/alghanem/arabic/ternary_licence.py` بعد مطابقة الطول والبصمة، ويحرس
 أرقامَه `tests/arabic/test_ternary_licence.py`.
+
+## `sibawayh-abniya.tsv` — أبنيةُ سيبويه مجمَّدةً قبل الفحص
+
+| الحقل | القيمة |
+| --- | --- |
+| المسار | `corpora/sibawayh-abniya.tsv` |
+| البصمة (SHA‑256) | `678ca5144698b571a42804b19b8d1680766df7f2339cf6c9c53d84994051fdd9` |
+| طولُ البايتات | `33549` |
+| المصدر | نشرتا الكتاب في hamil-hala-zaman-program: `corpora/sources/sibawayh_kitab_sham.txt` (`ad676dff…affcad`) و`sibawayh_kitab_jk.txt` (`a160f940…5cd625`) |
+| المستخرِج | `tools/sibawayh_abniya_extract.py`، وقواعدُه كلُّها معلنةٌ في رأسه |
+
+كلُّ صفٍّ: الطبقة (N أبوابُ الأسماء، V بابا الفعل، P أسماءُ المزيد بقاعدة الميم في sham
+23891-23895)، والهيكل، واللفظُ كما كُتب، والقاعدة، والنشرة، ورقمُ السطر. والنشرتان غيرُ
+مشكولتين في هذه الأبواب، فالجردُ هياكلُ حروفٍ لا أوزانٌ مشكولة. وهو جدولٌ مشتقٌّ من
+نصٍّ تراثيّ، لا نسخةٌ له.
+
+ويقرؤه `src/alghanem/arabic/closed_inventory.py` بعد مطابقة البصمة، ويحرس أرقامَه
+`tests/arabic/test_closed_inventory.py`.
