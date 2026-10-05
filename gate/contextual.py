@@ -15,7 +15,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from math import isqrt
 
-from canonical116.bridge import A116, PROTOCOL_VERSION, SUKUN, bridge
+from gate.bridge import A116, PROTOCOL_VERSION, SUKUN, bridge
 
 INDEX = {a: i for i, a in enumerate(A116)}
 

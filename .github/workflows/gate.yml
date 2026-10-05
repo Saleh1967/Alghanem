@@ -1,0 +1,112 @@
+name: Gate (sole entry and exit)
+
+# بوّابةٌ واحدة: البرهانُ في Lean، ومرآتُه في `gate/`، ومطابقتُهما بالجداول المولَّدة،
+# والحارسُ الذي يمنع أيَّ قارئٍ أو كاتبٍ خارجَها. سقوطُ أيّ خطوةٍ يُسقط الفحص.
+#   ١. نواةُ Lean تقبل كلَّ مبرهنة (بما فيها Recovery)، بلا تحذير.
+#   ٢. لا sorry ولا native_decide ولا مسلّمةً خارجَ القياسيّة (Audit.lean).
+#   ٣. الجداولُ المولَّدةُ من Lean (order/numbers/pairs/syllables/table/counts) هي المودَعةُ بايتًا بايتًا.
+#   ٤. البايثون يطابق الجداول (test_conformance)، والبوّابة تعمل على المدوّنة المختومة (test_gate).
+#   ٥. الحارس: لا خرق، والمعلَّقُ غيرُ قابلٍ للاستيراد، والسجلُّ مطابقٌ للشجرة (test_guard).
+#   ٦. القياسُ على المرجع البشريّ المحجوب (MASAQ ≥ 97%) — بطيء، على main فقط.
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: formal/a116
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install elan (toolchain pinned by formal/a116/lean-toolchain)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
+            | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: kernel checks every theorem, no warning swallowed
+        run: |
+          set -euo pipefail
+          lake build 2>&1 | tee build.log
+          if grep -n "warning" build.log; then echo "::error::تحذيرٌ في البناء"; exit 1; fi
+
+      - name: no sorry, no native_decide, standard axioms only
+        run: |
+          set -euo pipefail
+          if grep -rnE "\bsorry\b|native_decide|^\s*axiom\b" --include=*.lean A116 A116.lean Main.lean; then
+            echo "::error::برهانٌ ناقصٌ أو مسلَّمةٌ مُضافة"; exit 1
+          fi
+          lake env lean Audit.lean | tee axioms.txt
+          if grep -nE "sorryAx|Lean.ofReduceBool" axioms.txt; then
+            echo "::error::مبرهنةٌ تستند إلى ما لا تفحصه النواة"; exit 1
+          fi
+          if grep -oE "\[[^]]*\]" axioms.txt | tr -d '[] ' | tr ',' '\n' | grep -v '^$' \
+               | grep -vxE "propext|Classical.choice|Quot.sound"; then
+            echo "::error::مسلّمةٌ خارجَ القياسيّة"; exit 1
+          fi
+          for t in edit_roundtrip shadda_restore tanwin_restore hamza_restore ilal_edit_restore \
+                   no_seat_recovery_from_hamza_alone restoration_forces_fiber_separation compose_restoration; do
+            grep -q "A116.Recovery.$t" axioms.txt || { echo "::error::Recovery.$t غيرُ مدقَّقة"; exit 1; }
+          done
+
+      - name: the committed tables are the ones Lean generates now
+        run: |
+          set -euo pipefail
+          lake exe a116-table > table.csv
+          lake exe a116-table counts > counts.csv
+          lake exe a116-table bridge-order > order.csv
+          lake exe a116-table numbers > numbers.csv
+          lake exe a116-table pairs > pairs.csv
+          git diff --exit-code -- table.csv counts.csv order.csv numbers.csv pairs.csv
+          lake exe a116-table syllables > syllables.csv   # 13 MB: يُولَّد هنا ويُسلَّم للبايثون لا يُودَع
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lean-syllables
+          path: formal/a116/syllables.csv
+
+  gate:
+    needs: [lean]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: lean-syllables
+          path: formal/a116
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: install the gate only
+        run: python -m pip install -e ".[dev]"
+      - name: lint and types on the gate surface
+        run: |
+          ruff check gate tests tools
+          mypy
+      - name: registry matches suspended/ tree
+        run: python tools/gen_registry.py --check
+      - name: guard — no reader or writer outside the gate
+        run: python -c "from gate.guard import breaches; b = breaches(); print(b or 'لا خرق'); raise SystemExit(1 if b else 0)"
+      - name: conformance, gate, guard (fast)
+        run: pytest -q -m "not slow"
+
+  masaq:
+    if: github.ref == 'refs/heads/main'
+    needs: [lean, gate]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - run: python -m pip install -e ".[dev]"
+      - name: recovery measured against the held-out human reference
+        run: pytest -q -m slow

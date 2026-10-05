@@ -1,5 +1,13 @@
 # Alghanem
 
+> **2026-10-05 — البوّابةُ الوحيدة.** المدخلُ والمخرجُ الوحيدان لهذه الشجرة هما البرهانُ في
+> `formal/a116` ومرآتُه `gate/` (`enter` / `exit` / `derive` / `recover` / `licence`).
+> كلُّ ما سواهما (984 وحدة: `src/`، `tests/` القديمة، `examples/`، `tools/`، `hifz/`) **معلَّقٌ**
+> في `suspended/` بسجلٍّ `SUSPENDED_REGISTRY.json` — تعليقٌ لا حذف — ولا يعود إلّا عبر البوّابة.
+> تعليماتُ الدخول لكلّ وكيل: [`CLAUDE.md`](CLAUDE.md). والفحص: `.github/workflows/gate.yml`.
+> ما تحت هذا السطر سجلٌّ هندسيٌّ تراكميٌّ سابقٌ على التعليق؛ مساراتُه القديمة (`src/alghanem/...`)
+> صارت تحت `suspended/`.
+
 > **Start here: [`docs/VISION.md`](docs/VISION.md)** — what Alghanem is, why it
 > exists, and what it does not claim. This README is a cumulative engineering
 > log; the vision document is the entry point, and its "current state" section

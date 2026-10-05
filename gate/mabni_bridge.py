@@ -73,7 +73,7 @@ __all__ = [
     "report",
 ]
 
-_ROOT = Path(__file__).resolve().parents[3]
+_ROOT = Path(__file__).resolve().parents[1]
 MASAQ_PATH: Final[Path] = _ROOT / "corpora" / "MASAQ.csv"
 
 MABNI_LABELS: Final[frozenset[str]] = frozenset(
@@ -341,7 +341,7 @@ def project_form(
     (`wasl_start_vowel`)، لأنّ المولِّدَ يعرف قالبَها؛ ولا تُورَّد لغير المولَّد.
     """
 
-    from canonical116.bridge import bridge
+    from gate.bridge import bridge
 
     notes: dict[str, dict[str, str]] = {}
     vowel = wasl_start_vowel(form) if generated else None

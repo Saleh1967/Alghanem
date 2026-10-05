@@ -53,8 +53,6 @@ from io import StringIO
 from pathlib import Path
 from typing import Final
 
-from .pipeline_stations import repository_root_path
-
 __all__ = [
     "A_COUNT_IN_A_FILE_IS_NOT_A_COUNT_IN_ARABIC_NOTE",
     "A_COUNT_IS_RELATIVE_TO_ITS_COUNTING_RULE_NOTE",
@@ -87,6 +85,13 @@ __all__ = [
 
 
 ROOT_TABLE_RELATIVE_PATH: Final[str] = "maqayis_by_root_csv_999.csv"
+
+
+def repository_root_path() -> Path:
+    """جذرُ المستودع، مُشتقًّا من موضع هذه الوحدة لا مكتوبًا."""
+
+    return Path(__file__).resolve().parents[1]
+
 
 
 class MaqayisRootTableError(ValueError):

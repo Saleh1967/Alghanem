@@ -170,7 +170,21 @@
   },
   "short_numbering_cases": 13573,
   "minimality_scope": "fixed-length residual conditional on atoms, context and full shared finite codebook",
-  "whole_word_linguistic_license": false,
-  "new_lean_theorems_checked": false,
+  "whole_word_linguistic_license": "ternary: formal/a116/A116/Ternary.lean (continue/pause)",
+  "new_lean_theorems_checked": {
+    "file": "formal/a116/A116/Recovery.lean",
+    "built_by": "lake build + Audit.lean (axioms: propext, Quot.sound only)",
+    "theorems": [
+      "edit_roundtrip",
+      "shadda_restore",
+      "tanwin_restore",
+      "hamza_restore",
+      "ilal_edit_restore",
+      "no_seat_recovery_from_hamza_alone",
+      "restoration_forces_fiber_separation",
+      "compose_restoration"
+    ],
+    "unverified": "alghanem-constitution/legacy/RecoveryMetric.lean theorems 9-26 (Mathlib; never built)"
+  },
   "general_language_closure": false
 }

@@ -98,3 +98,11 @@ import A116
 #print axioms A116.Ternary.binOK_eq_admissibleB
 #print axioms A116.Ternary.continueB_iff
 #print axioms A116.Ternary.pauseB_iff
+#print axioms A116.Recovery.edit_roundtrip
+#print axioms A116.Recovery.shadda_restore
+#print axioms A116.Recovery.tanwin_restore
+#print axioms A116.Recovery.hamza_restore
+#print axioms A116.Recovery.ilal_edit_restore
+#print axioms A116.Recovery.no_seat_recovery_from_hamza_alone
+#print axioms A116.Recovery.restoration_forces_fiber_separation
+#print axioms A116.Recovery.compose_restoration

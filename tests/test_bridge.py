@@ -5,8 +5,15 @@ from __future__ import annotations
 import unittest
 from typing import Any
 
-from canonical116 import A116, HARAKAT, PROTOCOL_VERSION, bridge, count_atoms, verify
-from canonical116.bridge import CountingRefused
+from gate.bridge import (
+    A116,
+    HARAKAT,
+    PROTOCOL_VERSION,
+    CountingRefused,
+    bridge,
+    count_atoms,
+    verify,
+)
 
 START_CONTINUE = {"0": {"entry": "start", "exit": "continue"}}
 START_PAUSE = {"0": {"entry": "start", "exit": "pause"}}
@@ -64,7 +71,7 @@ class TheAlphabetIsOneHundredAndSixteen(unittest.TestCase):
         import hashlib
         from pathlib import Path
 
-        from canonical116 import bridge_v1_0
+        from gate import bridge_v1_0
 
         frozen = Path(bridge_v1_0.__file__).read_bytes()
         self.assertEqual(
@@ -74,7 +81,7 @@ class TheAlphabetIsOneHundredAndSixteen(unittest.TestCase):
         self.assertEqual(bridge_v1_0.PROTOCOL_VERSION, "A116-CANONICAL-TXT-1.0")
 
     def test_a_one_zero_certificate_replays_under_one_zero(self) -> None:
-        from canonical116 import bridge_v1_0
+        from gate import bridge_v1_0
 
         old = bridge_v1_0.bridge("فَاتَّبِعْ", contexts=START_CONTINUE)
         self.assertEqual(old["status"], "READY")

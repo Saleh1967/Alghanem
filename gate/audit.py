@@ -12,6 +12,7 @@ from collections import Counter, defaultdict
 from dataclasses import replace
 from pathlib import Path
 
+from gate.bridge import A116, PROTOCOL_VERSION
 from gate.contextual import (
     Codebook,
     Context,
@@ -22,11 +23,22 @@ from gate.contextual import (
     unfold_atoms,
     unpair,
 )
-from canonical116.bridge import A116, PROTOCOL_VERSION
 from gate.rasm_consistency import consistent
 
 SOURCE_SHA = "37633090743d403886b334d12dd911d1994e49767faa9f2be0f01fd48b466c5a"
 ROOT = Path(__file__).resolve().parent
+
+
+NEW_LEAN_THEOREMS = [
+    "edit_roundtrip",
+    "shadda_restore",
+    "tanwin_restore",
+    "hamza_restore",
+    "ilal_edit_restore",
+    "no_seat_recovery_from_hamza_alone",
+    "restoration_forces_fiber_separation",
+    "compose_restoration"
+]
 
 
 def must_refuse(fn):
@@ -200,8 +212,16 @@ def main(path, out_dir):
             "fixed-length residual conditional on atoms, context and "
             "full shared finite codebook"
         ),
-        "whole_word_linguistic_license": False,
-        "new_lean_theorems_checked": False,
+        "whole_word_linguistic_license": "ternary: formal/a116/A116/Ternary.lean (continue/pause)",
+        "new_lean_theorems_checked": {
+            "file": "formal/a116/A116/Recovery.lean",
+            "built_by": "lake build + Audit.lean (axioms: propext, Quot.sound only)",
+            "theorems": NEW_LEAN_THEOREMS,
+            "unverified": (
+                "alghanem-constitution/legacy/RecoveryMetric.lean theorems 9-26 "
+                "(Mathlib; never built)"
+            ),
+        },
         "general_language_closure": False,
     }
     (OUT / "joined_provenance.json").write_text(

@@ -703,7 +703,7 @@ def normalize(form: str) -> str:
 def maqayis_roots() -> tuple[str, ...]:
     """جذورُ المقاييس الثلاثيّة (بحروفها، والكراسيُّ همزة)، بلا تكرار، مرتّبة."""
 
-    from .maqayis_root_table_deposit import root_table_rows
+    from .maqayis_root_table import root_table_rows
 
     roots = {_seat_free(r["root_full"]).replace("ى", Y) for r in root_table_rows()}
     return tuple(
