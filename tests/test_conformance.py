@@ -54,3 +54,21 @@ def test_ghazali_matches_lean() -> None:
     assert len(rows) == 8
     for d, f, p in rows:
         assert productive(names[d], forms[f]) == (p == "true")
+
+
+def test_sequence_matches_lean() -> None:
+    """`stream.encode_word` = `Sequence.encodeWord` على كلّ مرخَّصةٍ بطول ‎≤ 2‎،
+    والعرضُ والكلفةُ كما في Lean،
+    وكلُّ تيارٍ مرمَّزٍ يُفكّ بعينه (مرآةُ `decode_encode`)."""
+
+    from slge.stream import cost, decode, encode, encode_word, width
+
+    rows = _rows("sequence.csv")
+    widths = {int(r[1]): (int(r[2]), int(r[3])) for r in rows if r[0] == "width"}
+    assert widths == {k: (width(k), cost(k)) for k in (0, 1, 2)}
+    lean = {r[0]: r[1] for r in rows if r[0] != "width"}
+    ours = {"-".join(str(index(c)) for c in w): "".join("1" if b else "0" for b in encode_word(w))
+            for n in (0, 1, 2) for w in licensed_words(n)}
+    assert lean == ours
+    words = [w for n in (1, 2) for w in licensed_words(n)][:500]
+    assert decode(encode(words)) == [tuple(w) for w in words]

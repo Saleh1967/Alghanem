@@ -4,7 +4,7 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 12 |
+| مبرهن | 15 |
 | مفحوص_استقصاء | 11 |
 | مفحوص_بعينة | 0 |
 | دليل | 0 |
@@ -27,6 +27,9 @@
 | RANK-KHASS | الخاصُّ يُعمل به أيًّا كان ثبوتُه، والعامُّ مخصوصٌ لا مردود | مبرهن | `lean:Slge.Rank.specific_wins`<br>`lean:Slge.Rank.general_is_makhsus`<br>`lean:Slge.Rank.qati_general_yields_to_zanni_specific`<br>`lean:Slge.Rank.same_scope_is_weigh`<br>`test:tests/test_rank.py::test_specific_wins_and_general_is_makhsus` | ج٣ ¶1065. والخصوصُ محسوبٌ من لزوم المقدَّمين بالقواعد المقبولة. |
 | RANK-MEET | رتبةُ النتيجة رتبةُ أضعف مقدّماتها؛ لا ترقية | مبرهن | `lean:Slge.Rank.pathGrade_qati_iff`<br>`lean:Slge.Rank.no_promotion`<br>`test:tests/test_rank.py::test_rank_never_promotes_on_random_worlds` | الغزالي، محكّ النظر: «يقينية ضرورية بحسب ذوق المقدمات». |
 | RANK-WEIGH | القطعيُّ يردّ الظنّيّ، ولا يُردّ قطعيّ، والراجحُ مرجوحٌ من الجهة الأخرى، والتعادلُ ظنّيّان متساويان، وتعارضُ قطعيّين تناقض | مبرهن | `lean:Slge.Rank.weigh_swap`<br>`lean:Slge.Rank.qati_never_loses`<br>`lean:Slge.Rank.mardud_iff`<br>`lean:Slge.Rank.tanaqud_iff`<br>`lean:Slge.Rank.taadul_iff`<br>`test:tests/test_rank.py::test_rank_table_matches_lean` | التفكير: «يؤخذ القطعي ويرد الظني»؛ ج٣ ¶1060، ¶1062. |
+| SEQ-delim | ترميزُ الكلمة ذاتيُّ الحدّ: تُقرأ من رأس أيّ تيارٍ ويبقى ما بعدها بعينه | مبرهن | `lean:Slge.Sequence.decodeWord_encodeWord`<br>`lean:Slge.Sequence.encodeWord_prefix_free`<br>`test:tests/test_conformance.py::test_sequence_matches_lean`<br>`test:tests/test_cells.py::test_stream_refuses_unlicensed_and_is_prefix_free` |  |
+| SEQ-recover | فكُّ طيِّ المرخَّصة يعيدها بعينها | مبرهن | `lean:Slge.Sequence.slgeUnfold_slgeFold` |  |
+| SEQ-stream | تيارُ كلماتٍ مرخَّصةٍ يُفكّ كلُّه بترتيبه بلا فاصلٍ ولا حاملٍ زائد | مبرهن | `lean:Slge.Sequence.decode_encode`<br>`lean:Slge.Sequence.U_lt_two_pow_width` | الكلفةُ معلنة: cost(k) = (k+1) + ⌊log₂U(k)⌋+1 بتًّا؛ k=1: 9، k=2: 17 (من جدول Lean). |
 | ANSWER | كلُّ جملةٍ في الجواب لها وسمٌ وسند، والمُعيدُ لا يُسقطهما | مفحوص_استقصاء | `test:tests/test_answer.py::test_every_sentence_is_tagged`<br>`test:tests/test_answer.py::test_verbalizer_cannot_drop_tags` |  |
 | ENTRY | لا يدخل العمودَ إلّا شهادةُ بوّابة الغانم ذرّاتٍ، وتعود ذرّاتٍ بعينها | مفحوص_استقصاء | `test:tests/test_entry.py::test_kitabun_enters_as_five_cells_and_exits_byte_for_byte`<br>`test:tests/test_entry.py::test_every_cell_round_trips`<br>`test:tests/test_entry.py::test_non_atoms_are_refused_by_name` | الجسرُ ذرّة ← خانة هو `Slge.ofCell/toCell` المبرهَن؛ والذرّاتُ نفسُها من `gate.enter` في الغانم (A116-CANONICAL-TXT-1.1) لا من قارئٍ هنا. |
 | GUARD | لا قارئَ للنصّ ولا كاتبَ له في الشجرة خارج `suspended/` | مفحوص_استقصاء | `test:tests/test_guard.py::test_no_breach_in_the_tree`<br>`test:tests/test_guard.py::test_a_planted_reader_is_caught`<br>`test:tests/test_guard.py::test_suspended_is_not_importable` |  |

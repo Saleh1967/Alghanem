@@ -73,6 +73,17 @@ def main (args : List String) : IO Unit := do
         let key := "-".intercalate (w.map fun c => toString c.index)
         let gl := " ".intercalate ((Rasm.write none w).map glyphName)
         IO.println s!"{key},{gl}"
+  | ["sequence"] =>
+    -- لكلّ مرخَّصةٍ بطول ‎≤ 2‎: مفتاحُها، بتّاتُ `encodeWord` (0/1)، وكلفةُ الطول؛ وسطرٌ ختاميّ
+    -- يرمّز تيارًا من ثلاث كلماتٍ ويفكّه ليُطابَق فكُّه بايثونًا.
+    for k in List.range 3 do
+      IO.println s!"width,{k},{Sequence.width k},{Sequence.cost k}"
+    for n in List.range 3 do
+      for w in words n do
+        if licensed w then
+          let key := "-".intercalate (w.map fun c => toString c.index)
+          let bits := String.ofList ((Sequence.encodeWord w).map fun b => if b then '1' else '0')
+          IO.println s!"{key},{bits}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

@@ -63,6 +63,16 @@ _DECLARED: tuple[Claim, ...] = (
             "ما له بتٌّ هنا شرطٌ واحد: توافقُ الإعراب (حالةُ الخانة الأخيرة)."),
     _c("NAZM-case", "توافقُ الإعراب بين كلمتين هو تساوي حالة الخانة الأخيرة", _X,
        "test:tests/test_nazm.py::test_case_agreement_is_last_cell_state"),
+    # — التسلسل: النصّ تيارُ شهاداتٍ ذاتيُّ الحدّ —
+    _c("SEQ-recover", "فكُّ طيِّ المرخَّصة يعيدها بعينها", _P,
+       "lean:Slge.Sequence.slgeUnfold_slgeFold"),
+    _c("SEQ-delim", "ترميزُ الكلمة ذاتيُّ الحدّ: تُقرأ من رأس أيّ تيارٍ ويبقى ما بعدها بعينه", _P,
+       "lean:Slge.Sequence.decodeWord_encodeWord", "lean:Slge.Sequence.encodeWord_prefix_free",
+       "test:tests/test_conformance.py::test_sequence_matches_lean",
+       "test:tests/test_cells.py::test_stream_refuses_unlicensed_and_is_prefix_free"),
+    _c("SEQ-stream", "تيارُ كلماتٍ مرخَّصةٍ يُفكّ كلُّه بترتيبه بلا فاصلٍ ولا حاملٍ زائد", _P,
+       "lean:Slge.Sequence.decode_encode", "lean:Slge.Sequence.U_lt_two_pow_width",
+       note="الكلفةُ معلنة: cost(k) = (k+1) + ⌊log₂U(k)⌋+1 بتًّا؛ k=1: 9، k=2: 17 (من جدول Lean)."),
     # — المدخل الوحيد —
     _c("ENTRY", "لا يدخل العمودَ إلّا شهادةُ بوّابة الغانم ذرّاتٍ، وتعود ذرّاتٍ بعينها", _X,
        "test:tests/test_entry.py::test_kitabun_enters_as_five_cells_and_exits_byte_for_byte",

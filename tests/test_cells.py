@@ -76,3 +76,19 @@ def test_shadow_fails_fold_separates() -> None:
     dheen = [("ذ", "كسر"), ("ي", SUKUN), ("ن", "فتح")]
     assert shadow(dhayn) == shadow(dheen)
     assert fold(dhayn) != fold(dheen)
+
+
+def test_stream_refuses_unlicensed_and_is_prefix_free() -> None:
+    """لا يُرمَّز غيرُ المرخَّص؛ وترميزُ كلمةٍ لا يبدأ به ترميزُ أخرى (مرآةُ `encodeWord_prefix_free`)."""
+
+    import pytest
+
+    from slge.stream import decode_word, encode_word
+
+    with pytest.raises(ValueError, match="NOT_LICENSED"):
+        encode_word((("ب", "سكون"),))
+    a, b = (("م", "فتح"), ("ا", "سكون")), (("م", "كسر"), ("ن", "سكون"))
+    ea, eb = encode_word(a), encode_word(b)
+    assert ea != eb and ea[: len(eb)] != eb and eb[: len(ea)] != ea
+    assert decode_word(ea + eb) == (a, eb)
+    assert decode_word(eb) == (b, [])

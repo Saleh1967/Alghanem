@@ -27,3 +27,9 @@ import Slge
 #print axioms Slge.Rasm.read_write
 #print axioms Slge.Rasm.write_injective
 #print axioms Slge.Rasm.headOK_write
+#print axioms Slge.Sequence.slgeUnfold_slgeFold
+#print axioms Slge.Sequence.bitsToNat_natToBits
+#print axioms Slge.Sequence.U_lt_two_pow_width
+#print axioms Slge.Sequence.decodeWord_encodeWord
+#print axioms Slge.Sequence.encodeWord_prefix_free
+#print axioms Slge.Sequence.decode_encode
