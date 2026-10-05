@@ -16,7 +16,7 @@ import json
 from collections import Counter, defaultdict
 from pathlib import Path
 
-from rasm_consistency import consistent
+from gate.rasm_consistency import consistent
 
 
 def check(path):

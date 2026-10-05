@@ -1,4 +1,4 @@
-"""Run: python audit.py corpora/quran-simple-enhanced.txt OUT_DIR
+"""Run: python -m gate.audit corpora/quran-simple-enhanced.txt OUT_DIR
 
 Pinned historical regression ONLY; does not establish standard Arabic coverage.
 No sentence is generated. Joined inputs are actual adjacent words in a line.
@@ -12,7 +12,7 @@ from collections import Counter, defaultdict
 from dataclasses import replace
 from pathlib import Path
 
-from contextual import (
+from gate.contextual import (
     Codebook,
     Context,
     fold_atoms,
@@ -22,9 +22,8 @@ from contextual import (
     unfold_atoms,
     unpair,
 )
-from rasm_consistency import consistent
-
 from canonical116.bridge import A116, PROTOCOL_VERSION
+from gate.rasm_consistency import consistent
 
 SOURCE_SHA = "37633090743d403886b334d12dd911d1994e49767faa9f2be0f01fd48b466c5a"
 ROOT = Path(__file__).resolve().parent

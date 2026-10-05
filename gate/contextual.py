@@ -11,15 +11,11 @@ from __future__ import annotations
 
 import hashlib
 import json
-import sys
 from collections import defaultdict
 from dataclasses import dataclass
 from math import isqrt
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-
-from canonical116.bridge import A116, PROTOCOL_VERSION, SUKUN, bridge  # noqa: E402
+from canonical116.bridge import A116, PROTOCOL_VERSION, SUKUN, bridge
 
 INDEX = {a: i for i, a in enumerate(A116)}
 
