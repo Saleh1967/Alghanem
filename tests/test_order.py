@@ -7,7 +7,7 @@ import ast
 import pytest
 
 from conftest import ROOT
-from slge.order import LAYERS, META, MODULE_LAYER, ancestors, build, no_leap
+from slge.order import LAYERS, META, MODULE_LAYER, SUSPENDED_MODULES, ancestors, build, no_leap
 
 
 def test_spine_is_acyclic() -> None:
@@ -43,6 +43,20 @@ def test_every_module_is_on_the_spine() -> None:
     modules = {p.stem for p in (ROOT / "src" / "slge").glob("*.py")} - {"__init__"}
     assert modules == set(MODULE_LAYER) | META
     assert set(MODULE_LAYER.values()) <= set(LAYERS)
+    assert not modules & set(SUSPENDED_MODULES)
+
+
+def test_suspended_modules_are_out_of_the_tree_and_unimportable() -> None:
+    import importlib
+
+    for m, layer in SUSPENDED_MODULES.items():
+        assert (ROOT / "suspended" / "src" / "slge" / f"{m}.py").exists(), m
+        assert layer in LAYERS
+        try:
+            importlib.import_module(f"slge.{m}")
+        except ImportError:
+            continue
+        raise AssertionError(f"slge.{m} ما زال قابلًا للاستيراد")
 
 
 def test_modules_import_only_their_prerequisites() -> None:

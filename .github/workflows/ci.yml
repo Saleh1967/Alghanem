@@ -31,6 +31,10 @@ jobs:
         run: pytest -q
       - name: STATUS.md is generated from the ledger
         run: python tools/gen_status.py --check
+      - name: suspended registry matches the tree
+        run: python tools/gen_registry.py --check
+      - name: guard — no text reader or writer outside suspended/
+        run: python -c "from slge.guard import breaches; b = breaches(); print(b or 'لا خرق'); raise SystemExit(1 if b else 0)"
 
   lean:
     runs-on: ubuntu-latest

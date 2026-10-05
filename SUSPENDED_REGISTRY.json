@@ -1,0 +1,106 @@
+{
+  "principle": "suspension without deletion: history stays in git; nothing returns except by re_admit_requires",
+  "sole_entry_exit": "slge.entry (from_atoms/to_atoms on Alghanem gate certificates)",
+  "count": 9,
+  "units": [
+    {
+      "path": "suspended/src/slge/encoding.py",
+      "previous_path": "src/slge/encoding.py",
+      "reason": "reads, normalizes or writes text outside the gate (encoding, orthography, lexicon, morphology); re-enters only as consumers of gate certificates",
+      "suspended_at": "2026-10-05",
+      "re_admit_requires": [
+        "entry only through slge.entry.from_atoms on a certificate from Alghanem gate.enter (no text reading, normalizing or writing)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in ARCHITECTURE.md"
+      ]
+    },
+    {
+      "path": "suspended/src/slge/lexicon.py",
+      "previous_path": "src/slge/lexicon.py",
+      "reason": "reads, normalizes or writes text outside the gate (encoding, orthography, lexicon, morphology); re-enters only as consumers of gate certificates",
+      "suspended_at": "2026-10-05",
+      "re_admit_requires": [
+        "entry only through slge.entry.from_atoms on a certificate from Alghanem gate.enter (no text reading, normalizing or writing)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in ARCHITECTURE.md"
+      ]
+    },
+    {
+      "path": "suspended/src/slge/morphology.py",
+      "previous_path": "src/slge/morphology.py",
+      "reason": "reads, normalizes or writes text outside the gate (encoding, orthography, lexicon, morphology); re-enters only as consumers of gate certificates",
+      "suspended_at": "2026-10-05",
+      "re_admit_requires": [
+        "entry only through slge.entry.from_atoms on a certificate from Alghanem gate.enter (no text reading, normalizing or writing)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in ARCHITECTURE.md"
+      ]
+    },
+    {
+      "path": "suspended/src/slge/orthography.py",
+      "previous_path": "src/slge/orthography.py",
+      "reason": "reads, normalizes or writes text outside the gate (encoding, orthography, lexicon, morphology); re-enters only as consumers of gate certificates",
+      "suspended_at": "2026-10-05",
+      "re_admit_requires": [
+        "entry only through slge.entry.from_atoms on a certificate from Alghanem gate.enter (no text reading, normalizing or writing)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in ARCHITECTURE.md"
+      ]
+    },
+    {
+      "path": "suspended/tests/test_encoding.py",
+      "previous_path": "tests/test_encoding.py",
+      "reason": "tests of suspended modules (incl. the python mirror of Slge.Rasm)",
+      "suspended_at": "2026-10-05",
+      "re_admit_requires": [
+        "entry only through slge.entry.from_atoms on a certificate from Alghanem gate.enter (no text reading, normalizing or writing)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in ARCHITECTURE.md"
+      ]
+    },
+    {
+      "path": "suspended/tests/test_lexicon.py",
+      "previous_path": "tests/test_lexicon.py",
+      "reason": "tests of suspended modules (incl. the python mirror of Slge.Rasm)",
+      "suspended_at": "2026-10-05",
+      "re_admit_requires": [
+        "entry only through slge.entry.from_atoms on a certificate from Alghanem gate.enter (no text reading, normalizing or writing)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in ARCHITECTURE.md"
+      ]
+    },
+    {
+      "path": "suspended/tests/test_morphology.py",
+      "previous_path": "tests/test_morphology.py",
+      "reason": "tests of suspended modules (incl. the python mirror of Slge.Rasm)",
+      "suspended_at": "2026-10-05",
+      "re_admit_requires": [
+        "entry only through slge.entry.from_atoms on a certificate from Alghanem gate.enter (no text reading, normalizing or writing)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in ARCHITECTURE.md"
+      ]
+    },
+    {
+      "path": "suspended/tests/test_orthography.py",
+      "previous_path": "tests/test_orthography.py",
+      "reason": "tests of suspended modules (incl. the python mirror of Slge.Rasm)",
+      "suspended_at": "2026-10-05",
+      "re_admit_requires": [
+        "entry only through slge.entry.from_atoms on a certificate from Alghanem gate.enter (no text reading, normalizing or writing)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in ARCHITECTURE.md"
+      ]
+    },
+    {
+      "path": "suspended/tests/test_rasm_conformance.py",
+      "previous_path": "tests/test_rasm_conformance.py",
+      "reason": "tests of suspended modules (incl. the python mirror of Slge.Rasm)",
+      "suspended_at": "2026-10-05",
+      "re_admit_requires": [
+        "entry only through slge.entry.from_atoms on a certificate from Alghanem gate.enter (no text reading, normalizing or writing)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in ARCHITECTURE.md"
+      ]
+    }
+  ]
+}

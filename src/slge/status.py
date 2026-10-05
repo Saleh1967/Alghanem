@@ -34,6 +34,7 @@ class Status(Enum):
     معلن = 5
     رأي = 6
     مفتوح = 7
+    معلق = 8
 
 
 @dataclass(frozen=True, slots=True)
@@ -54,7 +55,18 @@ def _c(cid: str, statement: str, status: Status, *support: str, note: str = "") 
 _P, _X, _S, _D, _O = (Status.مبرهن, Status.مفحوص_استقصاء, Status.مفحوص_بعينة, Status.معلن,
                       Status.مفتوح)
 
-LEDGER: Final[tuple[Claim, ...]] = (
+_DECLARED: tuple[Claim, ...] = (
+    # — المدخل الوحيد —
+    _c("ENTRY", "لا يدخل العمودَ إلّا شهادةُ بوّابة الغانم ذرّاتٍ، وتعود ذرّاتٍ بعينها", _X,
+       "test:tests/test_entry.py::test_kitabun_enters_as_five_cells_and_exits_byte_for_byte",
+       "test:tests/test_entry.py::test_every_cell_round_trips",
+       "test:tests/test_entry.py::test_non_atoms_are_refused_by_name",
+       note="الجسرُ ذرّة ← خانة هو `Slge.ofCell/toCell` المبرهَن؛ والذرّاتُ نفسُها من `gate.enter` "
+            "في الغانم (A116-CANONICAL-TXT-1.1) لا من قارئٍ هنا."),
+    _c("GUARD", "لا قارئَ للنصّ ولا كاتبَ له في الشجرة خارج `suspended/`", _X,
+       "test:tests/test_guard.py::test_no_breach_in_the_tree",
+       "test:tests/test_guard.py::test_a_planted_reader_is_caught",
+       "test:tests/test_guard.py::test_suspended_is_not_importable"),
     # — الخانة والترخيص والعدّ —
     _c("Q1", "الخاناتُ ‎116 = 29 × 4‎، تامّةٌ بلا تكرار", _P,
        "lean:Slge.scells_length", "test:tests/test_cells.py::test_cells_are_116"),
@@ -75,39 +87,39 @@ LEDGER: Final[tuple[Claim, ...]] = (
     _c("Q24", "الظلُّ M/S يعجز والطيُّ يفرّق (ذَيْن/ذِين)", _X,
        "test:tests/test_cells.py::test_shadow_fails_fold_separates"),
     _c("Q3", "استواءُ البدال: تبديلُ حاملين في الجذر يتبدّل في المولَّد", _X,
-       "test:tests/test_morphology.py::test_equivariance_all_transpositions",
+       "suspended:tests/test_morphology.py::test_equivariance_all_transpositions",
        note="الأصلُ فحص 40 تبديلًا بعيّنة؛ هنا كلُّ تبديلٍ داخل كلّ صنفٍ على كلّ قالب."),
     _c("Q4", "الإعرابُ إسقاطٌ على الخانة الأخيرة يحفظ الترخيص", _X,
-       "test:tests/test_morphology.py::test_iirab_touches_only_last_cell"),
+       "suspended:tests/test_morphology.py::test_iirab_touches_only_last_cell"),
     _c("Q5", "المثاليُّ المحظور (ألفٌ متحرّكة) لا يقع في أيّ ثابتٍ أو زائد", _X,
-       "test:tests/test_morphology.py::test_no_forbidden_cell_in_any_table",
+       "suspended:tests/test_morphology.py::test_no_forbidden_cell_in_any_table",
        note="كان الأصلُ يفحص PREFIX/SUFFIX ولا يفحص OPS، ففي OPS أربعةُ صفوفٍ تنقضه؛ صُحّحت."),
     _c("Q6", "إغلاقُ العمليّات في الـ116", _X,
-       "test:tests/test_morphology.py::test_tables_are_closed_in_116"),
+       "suspended:tests/test_morphology.py::test_tables_are_closed_in_116"),
     _c("Q11", "الإملاء: ما كُتب يُقرأ بعينه، ‎read (write w) = w‎، لكلّ سلسلة", _P,
        "lean:Slge.Rasm.read_write", "lean:Slge.Rasm.write_injective",
-       "test:tests/test_conformance.py::test_rasm_matches_lean",
-       "test:tests/test_orthography.py::test_roundtrip_exhaustive_upto_2",
-       "test:tests/test_orthography.py::test_roundtrip_exhaustive_3",
+       "suspended:tests/test_rasm_conformance.py::test_rasm_matches_lean",
+       "suspended:tests/test_orthography.py::test_roundtrip_exhaustive_upto_2",
+       "suspended:tests/test_orthography.py::test_roundtrip_exhaustive_3",
        note="الأصلُ فحص 7 عيّنات؛ وعلى المرخَّصات بطول ≤ 2 كان يخطئ في 31 ويسقط في 87 "
             "(«فِي» تعود ألفًا؛ والهمزةُ الساكنة KeyError). والمبرهَنُ قواعدُ الكاتب الخمسُ "
             "المعلنة على رموزٍ مجرّدة؛ ومطابقتُها بيونيكود البايثون على كلّ سلسلةٍ بطول ≤ 2."),
     _c("Q12", "الابتداء: المطلعُ متحرّك، وهمزةُ الوصل همزةٌ لا ألف", _X,
-       "test:tests/test_orthography.py::test_begin_respects_rho"),
+       "suspended:tests/test_orthography.py::test_begin_respects_rho"),
     _c("Q12-wasl", "حركةُ همزة الوصل في غير «ال» (كسرٌ أو ضمّ)", _O,
        note="الأصلُ يفتحها دائمًا؛ تُرك كما هو حتى يشهد نصٌّ مودَع."),
     _c("Q13", "الوصل: همزةُ الوصل تسقط، والشمسيُّ يُدغم، والوصلةُ ليست ساكنين", _S,
-       "test:tests/test_orthography.py::test_join_bismillah"),
+       "suspended:tests/test_orthography.py::test_join_bismillah"),
     _c("Q14", "الوقف: الختامُ ساكن، والتنوينُ يُحذف", _S,
-       "test:tests/test_orthography.py::test_pause_tanwin"),
+       "suspended:tests/test_orthography.py::test_pause_tanwin"),
     _c("Q14-nun", "الوقفُ على «يَفْعَلُونَ» يحذف الواوَ والنونَ معًا", _O,
        note="هذا سلوكُ الأصل وتفحصه Q14 هناك؛ ولم يُشهد له بنصّ. يحتاج شاهدًا من قراءةٍ مودَعة."),
     _c("Q15", "التطبيعُ متساوي الأثر", _X,
-       "test:tests/test_encoding.py::test_normalize_idempotent_on_every_char"),
+       "suspended:tests/test_encoding.py::test_normalize_idempotent_on_every_char"),
     _c("Q16", "كاشفُ التعارض يلتقط كلَّ بديلٍ معلن", _X,
-       "test:tests/test_encoding.py::test_conflicts_catch_every_substitution"),
+       "suspended:tests/test_encoding.py::test_conflicts_catch_every_substitution"),
     _c("Q17", "ملفّاتُ المحرّك خاليةٌ من محارفَ خارج الجدول", _X,
-       "test:tests/test_encoding.py::test_sources_are_clean"),
+       "suspended:tests/test_encoding.py::test_sources_are_clean"),
     _c("Q18", "كلُّ حرفٍ متّجهُ صفاتٍ تامّ", _X,
        "test:tests/test_phonology.py::test_every_letter_has_a_full_vector"),
     _c("Q19", "كلُّ زوجٍ من الأزواج يقسم الـ29", _D,
@@ -122,10 +134,10 @@ LEDGER: Final[tuple[Claim, ...]] = (
     _c("Q21-code", "الشيفرةُ نفسُها لا تقفز: لا تستورد وحدةٌ وحدةَ طبقةٍ ليست من شروطها", _X,
        "test:tests/test_order.py::test_modules_import_only_their_prerequisites"),
     _c("L3-L4", "الأدواتُ والمبنيّات: ذرّاتُها مشتقّةٌ من رسمها، ومرخَّصة", _X,
-       "test:tests/test_lexicon.py::test_every_entry_is_licensed",
+       "suspended:tests/test_lexicon.py::test_every_entry_is_licensed",
        note="في الأصل اختلف الرسمُ والذرّاتُ في عشرة مداخل؛ والمصدرُ الآن واحد."),
     _c("L1-rho", "سلّمُ الحروف: الألفُ وحدها لا تتحرّك", _X,
-       "test:tests/test_morphology.py::test_every_used_cell_respects_rho",
+       "suspended:tests/test_morphology.py::test_every_used_cell_respects_rho",
        note="الأصلُ (`LADDER`) منع الحركةَ على الواو والياء أيضًا، فناقض «وَ» و«يَ» في جداوله."),
     # — الدلالة —
     _c("DL1-DL6", "أقسامُ الوضع والدلالة والحقيقة والمجاز والمنطوق والمفهوم مغلقة", _D,
@@ -184,11 +196,33 @@ LEDGER: Final[tuple[Claim, ...]] = (
     _c("GRID-wasl", "همزةُ الأوزان VII–X مكتوبةٌ ‎(ء، فتح)‎ في الشبكة", _O,
        note="يُفحص على `sibawayh-abniya.tsv` في الغانم قبل أيّ تغيير."),
     _c("GRID-NOM-labels", "قالبا MS-7 وNS-1 يخالفان رسمَ اسميهما", _O,
-       "test:tests/test_morphology.py::test_nominal_templates_against_their_own_labels",
+       "suspended:tests/test_morphology.py::test_nominal_templates_against_their_own_labels",
        note="MS-7: لامٌ ثابتٌ ساكن والرسمُ «لَ» جذريّ؛ NS-1: فاءٌ مفتوحةٌ والرسمُ «فْ». "
             "كشفهما الفحصُ الآليّ للقالب برسم اسمه؛ والحسمُ لصاحب الجرد."),
     _c("WAZUN", "استخراجُ الأوزان من نشرةٍ مشكولةٍ لأبواب سيبويه", _O,
        note="الأصلُ (`slge_wazun`) يستدعي `slge_laws.normalize` غيرَ الموجودة؛ والنشرةُ "
             "المجرّدةُ مودعةٌ في الغانم (`corpora/sibawayh-abniya.tsv`) بلا تشكيل."),
 )
+
+
+def _suspend(claims: tuple[Claim, ...]) -> tuple[Claim, ...]:
+    """دعوى سندُها في `suspended/` تُوسَم معلَّقةً مهما كان وسمُها المعلَن: لا يُشهَد بما لا يجري.
+
+    البرهانُ في Lean (إن وُجد) باقٍ بعينه، لكنّ المرآةَ البايثونيّةَ التي كانت تُفحَص معلَّقةٌ
+    حتى تعود عبر بوّابة الغانم؛ فالوسمُ وسمُ الطريق كلِّه لا أقوى حلقةٍ فيه.
+    """
+
+    out: list[Claim] = []
+    for c in claims:
+        if any(s.startswith("suspended:") for s in c.support):
+            note = ("معلَّقٌ مع وحدته (انظر SUSPENDED_REGISTRY.json)؛ "
+                    f"الوسمُ المعلَن قبل التعليق: {c.status.name}")
+            full = (c.note + " " if c.note else "") + note
+            out.append(Claim(c.claim_id, c.statement, Status.معلق, c.support, full))
+        else:
+            out.append(c)
+    return tuple(out)
+
+
+LEDGER: Final[tuple[Claim, ...]] = _suspend(_DECLARED)
 """السجلّ."""

@@ -20,6 +20,7 @@ __all__ = ["LAYERS", "META", "MODULE_LAYER", "ancestors", "build", "no_leap", "s
 LAYERS: Final[dict[str, tuple[str, ...]]] = {
     "الصفات": (),
     "البتات": (),
+    "المدخل": ("البتات",),
     "اليونيكود": ("البتات",),
     "الترميز العثماني": ("اليونيكود",),
     "الإملاء": ("الترميز العثماني",),
@@ -42,11 +43,8 @@ LAYERS: Final[dict[str, tuple[str, ...]]] = {
 MODULE_LAYER: Final[dict[str, str]] = {
     "phonology": "الصفات",
     "cells": "البتات",
-    "encoding": "اليونيكود",
-    "orthography": "الإملاء",
+    "entry": "المدخل",
     "semantics": "الدلالة",
-    "lexicon": "المبنيات",
-    "morphology": "الإعراب",
     "knowledge": "المعرفة",
     "rank": "الترجيح",
     "learning": "التعلم",
@@ -54,7 +52,16 @@ MODULE_LAYER: Final[dict[str, str]] = {
 }
 """الوحدة ← طبقتُها. والصرفُ كلُّه (الفعل … الإعراب) في وحدةٍ واحدة طبقتُها أعلاها."""
 
-META: Final[frozenset[str]] = frozenset({"order", "status"})
+SUSPENDED_MODULES: Final[dict[str, str]] = {
+    "encoding": "اليونيكود",
+    "orthography": "الإملاء",
+    "lexicon": "المبنيات",
+    "morphology": "الإعراب",
+}
+"""وحداتٌ معلَّقةٌ في `suspended/src/slge/` بطبقاتها: كانت تقرأ النصّ وتكتبه خارج البوّابة.
+لا يدخل نصٌّ إلى العمود إلّا شهادةً من بوّابة الغانم (`gate.enter`)، فلا تعود إلّا من هناك."""
+
+META: Final[frozenset[str]] = frozenset({"order", "status", "guard"})
 """وحداتٌ خارج العمود: تصفه ولا تبني فيه؛ يستوردها أيُّ أحد، ولا تستورد هي شيئًا منه."""
 
 

@@ -33,6 +33,10 @@ def test_every_support_exists() -> None:
             elif kind == "test":
                 path, _, name = ref.partition("::")
                 assert name in _test_names(path), s
+            elif kind == "suspended":
+                path, _, name = ref.partition("::")
+                assert name in _test_names("suspended/" + path), s
+                assert c.status is Status.معلق, c.claim_id
             else:
                 raise AssertionError(f"سندٌ مجهولُ النوع: {s}")
 
@@ -46,6 +50,8 @@ def test_status_needs_matching_support() -> None:
             assert "test" in kinds, c.claim_id
         if c.status is Status.مفتوح:
             assert c.note or c.support, c.claim_id
+        if c.status is Status.معلق:
+            assert "suspended" in kinds, c.claim_id
 
 
 def test_status_md_is_current() -> None:
