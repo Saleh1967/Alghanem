@@ -48,7 +48,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import Final
 
-from .bridge import bridge
+from .bridge_v1_0 import bridge
 from .owner_experiment import (
     OWNER_SIGNATURE,
     REPOSITORY_ROOT,

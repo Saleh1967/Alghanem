@@ -177,6 +177,9 @@ SANCTIONED_DEPOSIT_FILENAMES: Final[tuple[str, ...]] = (
     "MASAQ.csv",
     "quran-simple-enhanced.txt",
     "globalquran-simple-enhanced.txt",
+    "tashkeela-fadel-test.txt",
+    "tashkeela-fadel-test.LICENSE",
+    "sibawayh-abniya.tsv",
 )
 """ما يجوز أن يسكن مجلَّدَ الإيداع: بيانُه، وبايتاتُ مدوّناته بأسمائها المسنونة.
 
@@ -402,8 +405,7 @@ MASAQ_DEPOSIT_NAMED_RESIDUALS: Final[dict[str, str]] = {
 
 
 BYTE_LENGTH_RULE: Final[str] = (
-    "طولُ البايتات على القرص كما هي، بلا تطبيعٍ ولا فَكِّ ترميزٍ ولا حذفِ "
-    "علامة ترتيبٍ في أوّلها"
+    "طولُ البايتات على القرص كما هي، بلا تطبيعٍ ولا فَكِّ ترميزٍ ولا حذفِ علامة ترتيبٍ في أوّلها"
 )
 
 DIGEST_RULE: Final[str] = (
@@ -757,7 +759,7 @@ MASAQ_REDERIVED_FIGURES: Final[tuple[RederivedFigure, ...]] = (
         deposited=MASAQ_SHA256,
         counting_rule=DIGEST_RULE,
         what_it_does_not_establish=(
-            "صحّةَ وَسْمٍ واحدٍ فيها: البصمةُ هويّةُ بايتاتٍ لا تصديقٌ على " "حكمِ مُوسِّم"
+            "صحّةَ وَسْمٍ واحدٍ فيها: البصمةُ هويّةُ بايتاتٍ لا تصديقٌ على حكمِ مُوسِّم"
         ),
         derive=lambda data: hashlib.sha256(data).hexdigest(),
     ),
@@ -766,7 +768,7 @@ MASAQ_REDERIVED_FIGURES: Final[tuple[RederivedFigure, ...]] = (
         deposited=DEPOSITED_LINE_COUNT,
         counting_rule=LINE_COUNTING_RULE,
         what_it_does_not_establish=(
-            "أنّه عددُ المقاطع المُوسَّمة: السطرُ ليس سجلًّا، والفرقُ ١٧٧ " "مُسمًّى بعلّته لا مطويّ"
+            "أنّه عددُ المقاطع المُوسَّمة: السطرُ ليس سجلًّا، والفرقُ ١٧٧ مُسمًّى بعلّته لا مطويّ"
         ),
         derive=rederive_line_count,
     ),
