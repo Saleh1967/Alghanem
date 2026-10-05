@@ -1,0 +1,57 @@
+# سجلُّ الدعاوى
+
+مولَّدٌ من `src/slge/status.py` بـ`python tools/gen_status.py`؛ لا يُحرَّر باليد.
+
+| الوسم | العدد |
+|---|---|
+| مبرهن | 9 |
+| مفحوص_استقصاء | 19 |
+| مفحوص_بعينة | 2 |
+| دليل | 0 |
+| معلن | 3 |
+| رأي | 0 |
+| مفتوح | 8 |
+
+| المعرّف | الدعوى | الوسم | السند | ملاحظة |
+|---|---|---|---|---|
+| BARREN | عقمُ نقيض المقدَّم وعين التالي في الأخصّ مشهودٌ بنموذجين | مبرهن | `lean:Slge.Ghazali.barren_witnessed` |  |
+| BRIDGE | الجسرُ بين ترميز SLGE وترميز الـ116 تقابلٌ يحفظ السكون | مبرهن | `lean:Slge.ofCell_toCell`<br>`lean:Slge.toCell_ofCell`<br>`lean:Slge.toCell_isSukun`<br>`test:tests/test_conformance.py::test_bridge_matches_lean` |  |
+| CHAIN | الأخصُّ متعدٍّ (مفهومُ الموافقة سلسلة) | مبرهن | `lean:Slge.Ghazali.akhass_chain` |  |
+| COUNT | عدّادُ SLGE هو ‎U(n)‎ لكلّ n | مبرهن | `lean:Slge.count_eq_U`<br>`test:tests/test_conformance.py::test_counts_match_lean` |  |
+| FOLD | الطيُّ تقابلٌ بين المرخَّصات بطول n و‎{0…U(n)−1}‎ | مبرهن | `lean:Slge.slgeFold_injective`<br>`lean:Slge.slgeFold_surjective`<br>`test:tests/test_conformance.py::test_folds_match_lean` | يحلّ محلّ Q23/Q23b في الأصل: كان الفحصُ هناك طيًّا موضعيًّا بأساس 116، وصحّتُه بالبناء لا بالعدّ؛ وهنا طيٌّ كثيفٌ مبرهَنٌ لكلّ طول. |
+| GHAZALI | جدولُ الصور المنتجة هو جدولُ الغزالي بعينه، محسوبًا بالبتّات | مبرهن | `lean:Slge.Ghazali.ghazali_table`<br>`test:tests/test_conformance.py::test_ghazali_matches_lean` |  |
+| LICENCE | الرافعُ إلى المساواة يُنتج مفهومَ المخالفة | مبرهن | `lean:Slge.Ghazali.licence_makes_mafhum` |  |
+| Q1 | الخاناتُ ‎116 = 29 × 4‎، تامّةٌ بلا تكرار | مبرهن | `lean:Slge.scells_length`<br>`test:tests/test_cells.py::test_cells_are_116` |  |
+| Q2 | الترخيصُ قيدُ مسار، وهو `Admissible` في الـ116 بعينه لكلّ طول | مبرهن | `lean:Slge.licensed_iff`<br>`test:tests/test_conformance.py::test_folds_match_lean` |  |
+| ANSWER | كلُّ جملةٍ في الجواب لها وسمٌ وسند، والمُعيدُ لا يُسقطهما | مفحوص_استقصاء | `test:tests/test_answer.py::test_every_sentence_is_tagged`<br>`test:tests/test_answer.py::test_verbalizer_cannot_drop_tags` |  |
+| INFER | `infer` لا يُنتج إلّا بمقبولٍ وبصورةٍ منتجة | مفحوص_استقصاء | `test:tests/test_knowledge.py::test_candidates_never_produce`<br>`test:tests/test_knowledge.py::test_every_produced_step_is_productive` |  |
+| L1-rho | سلّمُ الحروف: الألفُ وحدها لا تتحرّك | مفحوص_استقصاء | `test:tests/test_morphology.py::test_every_used_cell_respects_rho` | الأصلُ (`LADDER`) منع الحركةَ على الواو والياء أيضًا، فناقض «وَ» و«يَ» في جداوله. |
+| L3-L4 | الأدواتُ والمبنيّات: ذرّاتُها مشتقّةٌ من رسمها، ومرخَّصة | مفحوص_استقصاء | `test:tests/test_lexicon.py::test_every_entry_is_licensed` | في الأصل اختلف الرسمُ والذرّاتُ في عشرة مداخل؛ والمصدرُ الآن واحد. |
+| LEARN | حلقةُ التعلّم: المرشَّحُ لا يُنتج، والمحجوبُ لا يراه المولِّد، والخاطئُ يُسحب، والسجلُّ تامّ | مفحوص_استقصاء | `test:tests/test_learning.py::test_held_out_is_never_shown`<br>`test:tests/test_learning.py::test_wrong_admission_is_retracted`<br>`test:tests/test_learning.py::test_every_proposal_has_one_verdict` |  |
+| Q11 | الإملاء: ‎to_atoms(to_rasm(w)) = w‎ لكلّ مرخَّصةٍ بطول ‎≤ 3‎ | مفحوص_استقصاء | `test:tests/test_orthography.py::test_roundtrip_exhaustive_upto_2`<br>`test:tests/test_orthography.py::test_roundtrip_exhaustive_3` | الأصلُ فحص 7 عيّنات؛ وعلى المرخَّصات بطول ≤ 2 كان يخطئ في 31 ويسقط في 87 («فِي» تعود ألفًا؛ والهمزةُ الساكنة KeyError). |
+| Q12 | الابتداء: المطلعُ متحرّك، وهمزةُ الوصل همزةٌ لا ألف | مفحوص_استقصاء | `test:tests/test_orthography.py::test_begin_respects_rho` |  |
+| Q15 | التطبيعُ متساوي الأثر | مفحوص_استقصاء | `test:tests/test_encoding.py::test_normalize_idempotent_on_every_char` |  |
+| Q16 | كاشفُ التعارض يلتقط كلَّ بديلٍ معلن | مفحوص_استقصاء | `test:tests/test_encoding.py::test_conflicts_catch_every_substitution` |  |
+| Q17 | ملفّاتُ المحرّك خاليةٌ من محارفَ خارج الجدول | مفحوص_استقصاء | `test:tests/test_encoding.py::test_sources_are_clean` |  |
+| Q18 | كلُّ حرفٍ متّجهُ صفاتٍ تامّ | مفحوص_استقصاء | `test:tests/test_phonology.py::test_every_letter_has_a_full_vector` |  |
+| Q21 | عمودُ الطبقات بلا دورة، ولا تُبنى طبقةٌ قبل شرطها | مفحوص_استقصاء | `test:tests/test_order.py::test_spine_is_acyclic`<br>`test:tests/test_order.py::test_no_leap` |  |
+| Q21-code | الشيفرةُ نفسُها لا تقفز: لا تستورد وحدةٌ وحدةَ طبقةٍ ليست من شروطها | مفحوص_استقصاء | `test:tests/test_order.py::test_modules_import_only_their_prerequisites` |  |
+| Q22 | الاستنتاجُ المعكوس: ‎U(1) = 87‎ و29 حاملًا ⇒ 3 متحرّكات ⇒ ‎116‎ | مفحوص_استقصاء | `test:tests/test_cells.py::test_inventory_is_derived_from_U1` |  |
+| Q24 | الظلُّ M/S يعجز والطيُّ يفرّق (ذَيْن/ذِين) | مفحوص_استقصاء | `test:tests/test_cells.py::test_shadow_fails_fold_separates` |  |
+| Q3 | استواءُ البدال: تبديلُ حاملين في الجذر يتبدّل في المولَّد | مفحوص_استقصاء | `test:tests/test_morphology.py::test_equivariance_all_transpositions` | الأصلُ فحص 40 تبديلًا بعيّنة؛ هنا كلُّ تبديلٍ داخل كلّ صنفٍ على كلّ قالب. |
+| Q4 | الإعرابُ إسقاطٌ على الخانة الأخيرة يحفظ الترخيص | مفحوص_استقصاء | `test:tests/test_morphology.py::test_iirab_touches_only_last_cell` |  |
+| Q5 | المثاليُّ المحظور (ألفٌ متحرّكة) لا يقع في أيّ ثابتٍ أو زائد | مفحوص_استقصاء | `test:tests/test_morphology.py::test_no_forbidden_cell_in_any_table` | كان الأصلُ يفحص PREFIX/SUFFIX ولا يفحص OPS، ففي OPS أربعةُ صفوفٍ تنقضه؛ صُحّحت. |
+| Q6 | إغلاقُ العمليّات في الـ116 | مفحوص_استقصاء | `test:tests/test_morphology.py::test_tables_are_closed_in_116` |  |
+| Q13 | الوصل: همزةُ الوصل تسقط، والشمسيُّ يُدغم، والوصلةُ ليست ساكنين | مفحوص_بعينة | `test:tests/test_orthography.py::test_join_bismillah` |  |
+| Q14 | الوقف: الختامُ ساكن، والتنوينُ يُحذف | مفحوص_بعينة | `test:tests/test_orthography.py::test_pause_tanwin` |  |
+| DL1-DL6 | أقسامُ الوضع والدلالة والحقيقة والمجاز والمنطوق والمفهوم مغلقة | معلن | `test:tests/test_semantics.py::test_partitions_are_closed` |  |
+| Q19 | كلُّ زوجٍ من الأزواج يقسم الـ29 | معلن | `test:tests/test_phonology.py::test_pairs_partition` | صادقٌ بالبناء (السالبُ متمّمُ الموجب)؛ فهو تعريفٌ لا اكتشاف. |
+| Q20 | الجوفُ للمدّ الثلاث | معلن | `test:tests/test_phonology.py::test_jawf_is_madd` |  |
+| DL4 | كشفُ النسب بالكلمات المفتاحيّة | مفتوح | — | حُذف `nisba_ok`: البحثُ عن «فاعل» في نصٍّ ليس كشفًا للإسناد. يُبنى في طبقة النظم. |
+| GRID-NOM-labels | قالبا MS-7 وNS-1 يخالفان رسمَ اسميهما | مفتوح | `test:tests/test_morphology.py::test_nominal_templates_against_their_own_labels` | MS-7: لامٌ ثابتٌ ساكن والرسمُ «لَ» جذريّ؛ NS-1: فاءٌ مفتوحةٌ والرسمُ «فْ». كشفهما الفحصُ الآليّ للقالب برسم اسمه؛ والحسمُ لصاحب الجرد. |
+| GRID-wasl | همزةُ الأوزان VII–X مكتوبةٌ ‎(ء، فتح)‎ في الشبكة | مفتوح | — | يُفحص على `sibawayh-abniya.tsv` في الغانم قبل أيّ تغيير. |
+| MAFHUM-open | طريقُ مخالفة الغاية ومخالفة العدد إلى صورة | مفتوح | — | `knowledge.MAFHUM_ROUTE` يكتب الموافقةَ ومخالفتي الصفة والشرط وحدها. |
+| PHON-open | «ذ، ث» على «اللسان/عام»، و«ي» في الجوف وحده | مفتوح | — | بياناتٌ تراثيّةٌ ناقصة كما أُعلنت؛ لم تُكمَّل من الذاكرة. |
+| Q12-wasl | حركةُ همزة الوصل في غير «ال» (كسرٌ أو ضمّ) | مفتوح | — | الأصلُ يفتحها دائمًا؛ تُرك كما هو حتى يشهد نصٌّ مودَع. |
+| Q14-nun | الوقفُ على «يَفْعَلُونَ» يحذف الواوَ والنونَ معًا | مفتوح | — | هذا سلوكُ الأصل وتفحصه Q14 هناك؛ ولم يُشهد له بنصّ. يحتاج شاهدًا من قراءةٍ مودَعة. |
+| WAZUN | استخراجُ الأوزان من نشرةٍ مشكولةٍ لأبواب سيبويه | مفتوح | — | الأصلُ (`slge_wazun`) يستدعي `slge_laws.normalize` غيرَ الموجودة؛ والنشرةُ المجرّدةُ مودعةٌ في الغانم (`corpora/sibawayh-abniya.tsv`) بلا تشكيل. |

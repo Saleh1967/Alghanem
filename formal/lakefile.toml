@@ -1,0 +1,17 @@
+name = "slge_formal"
+version = "0.1.0"
+defaultTargets = ["Slge", "slge-table"]
+
+# البرهانُ الواحد: الـ116 في مستودع الغانم، مثبَّتًا بإيداعٍ لا بفرع.
+[[require]]
+name = "a116"
+git = "https://github.com/Saleh1967/alghanem"
+rev = "f9229386e3dba7f968daf25c4a1bdaa90910d8ca"
+subDir = "formal/a116"
+
+[[lean_lib]]
+name = "Slge"
+
+[[lean_exe]]
+name = "slge-table"
+root = "Main"

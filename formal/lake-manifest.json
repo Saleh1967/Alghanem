@@ -1,0 +1,16 @@
+{"version": "1.2.0",
+ "packagesDir": ".lake/packages",
+ "packages":
+ [{"url": "https://github.com/Saleh1967/alghanem",
+   "type": "git",
+   "subDir": "formal/a116",
+   "scope": "",
+   "rev": "f9229386e3dba7f968daf25c4a1bdaa90910d8ca",
+   "name": "a116",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "f9229386e3dba7f968daf25c4a1bdaa90910d8ca",
+   "inherited": false,
+   "configFile": "lakefile.toml"}],
+ "name": "slge_formal",
+ "lakeDir": ".lake",
+ "fixedToolchain": false}

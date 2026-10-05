@@ -1,0 +1,68 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: install (pinned tools, package without deps — it has none)
+        run: |
+          pip install -r requirements-dev.txt
+          pip install -e . --no-deps
+      - name: lint
+        run: ruff check .
+      - name: types (strict)
+        run: mypy
+      - name: tests (including the exhaustive slow ones)
+        run: pytest -q
+      - name: STATUS.md is generated from the ledger
+        run: python tools/gen_status.py --check
+
+  lean:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: formal
+    steps:
+      - uses: actions/checkout@v4
+      - name: install elan (toolchain pinned by formal/lean-toolchain)
+        working-directory: .
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
+            | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.elan
+            formal/.lake
+          key: lean-${{ hashFiles('formal/lean-toolchain', 'formal/lake-manifest.json') }}
+      - name: build (fetches A116 from Alghanem at the pinned revision)
+        run: lake build
+      - name: no sorry, no native_decide, no new axioms
+        run: |
+          if grep -rnE "\bsorry\b|native_decide|^\s*axiom\b" --include=*.lean Slge Slge.lean Main.lean; then
+            exit 1
+          fi
+          lake env lean Audit.lean | tee axioms.txt
+          if grep -vE "^'[^']+' (depends on axioms: \[(propext|Quot.sound|Classical.choice)(, (propext|Quot.sound|Classical.choice))*\]|does not depend on any axioms)$" axioms.txt; then
+            echo "an axiom outside propext/Quot.sound/Classical.choice" && exit 1
+          fi
+      - name: the committed Lean outputs are what Lean prints now
+        run: |
+          for m in bridge counts folds ghazali; do lake exe slge-table "$m" > "out/$m.csv"; done
+          git diff --exit-code -- out
