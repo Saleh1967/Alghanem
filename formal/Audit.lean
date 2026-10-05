@@ -24,3 +24,6 @@ import Slge
 #print axioms Slge.Rank.general_is_makhsus
 #print axioms Slge.Rank.qati_general_yields_to_zanni_specific
 #print axioms Slge.Rank.same_scope_is_weigh
+#print axioms Slge.Rasm.read_write
+#print axioms Slge.Rasm.write_injective
+#print axioms Slge.Rasm.headOK_write

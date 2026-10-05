@@ -4,8 +4,8 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 12 |
-| مفحوص_استقصاء | 19 |
+| مبرهن | 13 |
+| مفحوص_استقصاء | 18 |
 | مفحوص_بعينة | 2 |
 | دليل | 0 |
 | معلن | 4 |
@@ -22,6 +22,7 @@
 | GHAZALI | جدولُ الصور المنتجة هو جدولُ الغزالي بعينه، محسوبًا بالبتّات | مبرهن | `lean:Slge.Ghazali.ghazali_table`<br>`test:tests/test_conformance.py::test_ghazali_matches_lean` |  |
 | LICENCE | الرافعُ إلى المساواة يُنتج مفهومَ المخالفة | مبرهن | `lean:Slge.Ghazali.licence_makes_mafhum` |  |
 | Q1 | الخاناتُ ‎116 = 29 × 4‎، تامّةٌ بلا تكرار | مبرهن | `lean:Slge.scells_length`<br>`test:tests/test_cells.py::test_cells_are_116` |  |
+| Q11 | الإملاء: ما كُتب يُقرأ بعينه، ‎read (write w) = w‎، لكلّ سلسلة | مبرهن | `lean:Slge.Rasm.read_write`<br>`lean:Slge.Rasm.write_injective`<br>`test:tests/test_conformance.py::test_rasm_matches_lean`<br>`test:tests/test_orthography.py::test_roundtrip_exhaustive_upto_2`<br>`test:tests/test_orthography.py::test_roundtrip_exhaustive_3` | الأصلُ فحص 7 عيّنات؛ وعلى المرخَّصات بطول ≤ 2 كان يخطئ في 31 ويسقط في 87 («فِي» تعود ألفًا؛ والهمزةُ الساكنة KeyError). والمبرهَنُ قواعدُ الكاتب الخمسُ المعلنة على رموزٍ مجرّدة؛ ومطابقتُها بيونيكود البايثون على كلّ سلسلةٍ بطول ≤ 2. |
 | Q2 | الترخيصُ قيدُ مسار، وهو `Admissible` في الـ116 بعينه لكلّ طول | مبرهن | `lean:Slge.licensed_iff`<br>`test:tests/test_conformance.py::test_folds_match_lean` |  |
 | RANK-KHASS | الخاصُّ يُعمل به أيًّا كان ثبوتُه، والعامُّ مخصوصٌ لا مردود | مبرهن | `lean:Slge.Rank.specific_wins`<br>`lean:Slge.Rank.general_is_makhsus`<br>`lean:Slge.Rank.qati_general_yields_to_zanni_specific`<br>`lean:Slge.Rank.same_scope_is_weigh`<br>`test:tests/test_rank.py::test_specific_wins_and_general_is_makhsus` | ج٣ ¶1065. والخصوصُ محسوبٌ من لزوم المقدَّمين بالقواعد المقبولة. |
 | RANK-MEET | رتبةُ النتيجة رتبةُ أضعف مقدّماتها؛ لا ترقية | مبرهن | `lean:Slge.Rank.pathGrade_qati_iff`<br>`lean:Slge.Rank.no_promotion`<br>`test:tests/test_rank.py::test_rank_never_promotes_on_random_worlds` | الغزالي، محكّ النظر: «يقينية ضرورية بحسب ذوق المقدمات». |
@@ -31,7 +32,6 @@
 | L1-rho | سلّمُ الحروف: الألفُ وحدها لا تتحرّك | مفحوص_استقصاء | `test:tests/test_morphology.py::test_every_used_cell_respects_rho` | الأصلُ (`LADDER`) منع الحركةَ على الواو والياء أيضًا، فناقض «وَ» و«يَ» في جداوله. |
 | L3-L4 | الأدواتُ والمبنيّات: ذرّاتُها مشتقّةٌ من رسمها، ومرخَّصة | مفحوص_استقصاء | `test:tests/test_lexicon.py::test_every_entry_is_licensed` | في الأصل اختلف الرسمُ والذرّاتُ في عشرة مداخل؛ والمصدرُ الآن واحد. |
 | LEARN | حلقةُ التعلّم: المرشَّحُ لا يُنتج، والمحجوبُ لا يراه المولِّد، والخاطئُ يُسحب، والسجلُّ تامّ | مفحوص_استقصاء | `test:tests/test_learning.py::test_held_out_is_never_shown`<br>`test:tests/test_learning.py::test_wrong_admission_is_retracted`<br>`test:tests/test_learning.py::test_every_proposal_has_one_verdict` |  |
-| Q11 | الإملاء: ‎to_atoms(to_rasm(w)) = w‎ لكلّ مرخَّصةٍ بطول ‎≤ 3‎ | مفحوص_استقصاء | `test:tests/test_orthography.py::test_roundtrip_exhaustive_upto_2`<br>`test:tests/test_orthography.py::test_roundtrip_exhaustive_3` | الأصلُ فحص 7 عيّنات؛ وعلى المرخَّصات بطول ≤ 2 كان يخطئ في 31 ويسقط في 87 («فِي» تعود ألفًا؛ والهمزةُ الساكنة KeyError). |
 | Q12 | الابتداء: المطلعُ متحرّك، وهمزةُ الوصل همزةٌ لا ألف | مفحوص_استقصاء | `test:tests/test_orthography.py::test_begin_respects_rho` |  |
 | Q15 | التطبيعُ متساوي الأثر | مفحوص_استقصاء | `test:tests/test_encoding.py::test_normalize_idempotent_on_every_char` |  |
 | Q16 | كاشفُ التعارض يلتقط كلَّ بديلٍ معلن | مفحوص_استقصاء | `test:tests/test_encoding.py::test_conflicts_catch_every_substitution` |  |

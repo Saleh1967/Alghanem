@@ -84,11 +84,14 @@ LEDGER: Final[tuple[Claim, ...]] = (
        note="كان الأصلُ يفحص PREFIX/SUFFIX ولا يفحص OPS، ففي OPS أربعةُ صفوفٍ تنقضه؛ صُحّحت."),
     _c("Q6", "إغلاقُ العمليّات في الـ116", _X,
        "test:tests/test_morphology.py::test_tables_are_closed_in_116"),
-    _c("Q11", "الإملاء: ‎to_atoms(to_rasm(w)) = w‎ لكلّ مرخَّصةٍ بطول ‎≤ 3‎", _X,
+    _c("Q11", "الإملاء: ما كُتب يُقرأ بعينه، ‎read (write w) = w‎، لكلّ سلسلة", _P,
+       "lean:Slge.Rasm.read_write", "lean:Slge.Rasm.write_injective",
+       "test:tests/test_conformance.py::test_rasm_matches_lean",
        "test:tests/test_orthography.py::test_roundtrip_exhaustive_upto_2",
        "test:tests/test_orthography.py::test_roundtrip_exhaustive_3",
        note="الأصلُ فحص 7 عيّنات؛ وعلى المرخَّصات بطول ≤ 2 كان يخطئ في 31 ويسقط في 87 "
-            "(«فِي» تعود ألفًا؛ والهمزةُ الساكنة KeyError)."),
+            "(«فِي» تعود ألفًا؛ والهمزةُ الساكنة KeyError). والمبرهَنُ قواعدُ الكاتب الخمسُ "
+            "المعلنة على رموزٍ مجرّدة؛ ومطابقتُها بيونيكود البايثون على كلّ سلسلةٍ بطول ≤ 2."),
     _c("Q12", "الابتداء: المطلعُ متحرّك، وهمزةُ الوصل همزةٌ لا ألف", _X,
        "test:tests/test_orthography.py::test_begin_respects_rho"),
     _c("Q12-wasl", "حركةُ همزة الوصل في غير «ال» (كسرٌ أو ضمّ)", _O,
