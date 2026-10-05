@@ -91,7 +91,17 @@ def test_pronoun_atoms_match_slge_categories_lean() -> None:
         "هُمَا": [(26, 2), (24, 0), (1, 3)], "هُمْ": [(26, 2), (24, 3)],
         "هُنَّ": [(26, 2), (25, 3), (25, 0)],
     }
+    from gate.contextual import Context, project
+
+    in_domain = {"أَنَا", "نَحْنُ", "هُوَ", "هِيَ", "هُمَا", "هُمْ"}  # الستّة الواردة مستقلّةً في المدوّنة
     for surface, cells in expected.items():
         cert = enter(surface.encode("utf-8"))
-        assert not isinstance(cert, Refusal), surface
-        assert [(alphabet.index(a[0]), marks[a[1]]) for a in cert.atoms] == cells, surface
+        if surface in in_domain:
+            assert not isinstance(cert, Refusal), surface
+            atoms = cert.atoms
+        else:  # خارج المجال المختوم: البوّابة ترفض بالاسم، والجسرُ وحدَه يعطي الذرّات
+            assert isinstance(cert, Refusal) and cert.status == "OUTSIDE_DECLARED_DOMAIN", surface
+            decision = project(surface, Context())
+            assert decision["status"] == "READY", surface
+            atoms = decision["atoms"]
+        assert [(alphabet.index(a[0]), marks[a[1]]) for a in atoms] == cells, surface
