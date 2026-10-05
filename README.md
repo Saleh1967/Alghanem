@@ -8171,6 +8171,7 @@ module itself are excluded from that scope so the ladder is cumulative without
 double-counting and the instrument never measures itself.
 
 The widening is 705-fold: 32 pairs, then 22,587. Both questions were answered,
+The widening is 703-fold: 32 pairs, then 22,505. Both questions were answered,
 and they were answered differently. **The leader never moved** — fatḥa+shadda
 leads uncontested at all three rungs, across a register change and two and a
 half orders of magnitude. **The floor moved at every rung**: three rungs named
@@ -8797,8 +8798,8 @@ its expectation was 2.951, just under the 2.996 margin, and it was filed as
 scarcity; the tree's prose grew and it crossed to 3.009 and was filed as
 surprising; the prose grew again and it fell back to 2.993 and was filed as
 scarcity once more; the prose grew a third time and it crossed again, to 3.719
-with a zero-probability of 0.024 — with not one letter changing anywhere in the
-script.
+with a zero-probability of 0.024; and the prose grew once more and filled it
+with a single occurrence — with not one letter changing anywhere in the script.
 An absence standing is dated by its margin, not fixed by itself.
 
 The second half asks whether the twenty-eight letters can be grouped by their

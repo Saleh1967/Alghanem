@@ -1,6 +1,7 @@
 # `corpora/` — موضعُ المدوَّنات المُودَعة
 
 **ما يُودَع هنا هو ما فُحِص إذنُ إيداعه وأُودِع وسمُه**، لا كلُّ ما يُقاس.
+(وأُضيف بعدُ نصٌّ ثالثٌ خارجَ القرآن: `tashkeela-fadel-test.txt`، وبيانُه في آخر هذا الملف.)
 وفي هذا المجلَّد اليومَ بايتاتُ مدوّنتَين: `quran-simple-enhanced.txt` بدور
 القياس، و`globalquran-simple-enhanced.txt` بدور التدقيق. وكلتاهما فُحِص إذنُ
 نسخها فأُودِع وسمُه وإسنادُه أدناه. وبايتاتُ سائر مدوَّنات هذه الشجرة باقيةٌ
@@ -266,3 +267,45 @@ python tools/intake_corpus.py --corpus globalquran-simple-enhanced.txt \
 وموضعُ هذه القراءة `src/alghanem/arabic/hamil_audit_second_reading.py`، وفيه
 تحوُّلا الفحصَين الموقوفَين بتاريخهما: أحدُهما رُفِع وقفُه فقِيس، والآخرُ
 موقوفٌ على نموذجهم المُدرَّب فأُعيد تجنيسُه **ولم تَرفعه البايتات**.
+
+## `tashkeela-fadel-test.txt` — نصٌّ مشكولٌ خارجَ القرآن
+
+| الحقل | القيمة |
+| --- | --- |
+| المسار | `corpora/tashkeela-fadel-test.txt` |
+| البصمة (SHA‑256) | `4e851ff836f0a178abb15d9f4a8bcf92748b77cc0d67030d9fae2fbe698baa12` |
+| طولُ البايتات | `1747544` |
+| المصدر | `dataset/test.txt` في https://github.com/AliOsm/arabic-text-diacritization، الالتزام `e083579c03e489936200b69d792fd426bb576743` |
+| الرخصة | MIT — نصُّها كاملًا في `tashkeela-fadel-test.LICENSE` (البصمة `e9fe052b…f87666`)، وهو شرطُها |
+| المحتوى | 2,500 سطرٍ من نصوصٍ فقهيّةٍ مشكولةٍ مأخوذةٍ من مدوّنة Tashkeela؛ وقد تقتبس آياتٍ لم تُفصَل |
+
+نصُّ الإسناد:
+
+> Fadel, Tuffaha, Al-Jawarneh and Al-Ayyoub, "Arabic Text Diacritization Using
+> Deep Neural Networks", ICCAIS 2019 — dataset/test.txt, MIT License.
+> Verbatim copy, unmodified.
+
+**وحدُّ ما فُحِص من الإذن**: رخصةُ MIT لهذا المستودع مفحوصةٌ ومودَعٌ نصُّها. أمّا شروطُ
+مدوّنة Tashkeela الأصليّة التي أُخذ منها النصّ فلم تُفحَص هنا، ولا يُدَّعى فحصُها
+(`APermissionUnexaminedIsNotAPermissionRefused` على الوجه الآخر: ولا هو إذنٌ مفحوص).
+
+ويقرؤه `src/alghanem/arabic/ternary_licence.py` بعد مطابقة الطول والبصمة، ويحرس
+أرقامَه `tests/arabic/test_ternary_licence.py`.
+
+## `sibawayh-abniya.tsv` — أبنيةُ سيبويه مجمَّدةً قبل الفحص
+
+| الحقل | القيمة |
+| --- | --- |
+| المسار | `corpora/sibawayh-abniya.tsv` |
+| البصمة (SHA‑256) | `678ca5144698b571a42804b19b8d1680766df7f2339cf6c9c53d84994051fdd9` |
+| طولُ البايتات | `33549` |
+| المصدر | نشرتا الكتاب في hamil-hala-zaman-program: `corpora/sources/sibawayh_kitab_sham.txt` (`ad676dff…affcad`) و`sibawayh_kitab_jk.txt` (`a160f940…5cd625`) |
+| المستخرِج | `tools/sibawayh_abniya_extract.py`، وقواعدُه كلُّها معلنةٌ في رأسه |
+
+كلُّ صفٍّ: الطبقة (N أبوابُ الأسماء، V بابا الفعل، P أسماءُ المزيد بقاعدة الميم في sham
+23891-23895)، والهيكل، واللفظُ كما كُتب، والقاعدة، والنشرة، ورقمُ السطر. والنشرتان غيرُ
+مشكولتين في هذه الأبواب، فالجردُ هياكلُ حروفٍ لا أوزانٌ مشكولة. وهو جدولٌ مشتقٌّ من
+نصٍّ تراثيّ، لا نسخةٌ له.
+
+ويقرؤه `src/alghanem/arabic/closed_inventory.py` بعد مطابقة البصمة، ويحرس أرقامَه
+`tests/arabic/test_closed_inventory.py`.

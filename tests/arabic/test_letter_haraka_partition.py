@@ -85,7 +85,7 @@ class TestTheLadder:
     def test_the_ladder_lands_on_the_recorded_census(self) -> None:
         assert table_census(SourceRung.FATIHA).realized_cells == 41
         assert table_census(SourceRung.WITH_FATH).realized_cells == 74
-        assert table_census(SourceRung.WITH_PROSE).realized_cells == 110
+        assert table_census(SourceRung.WITH_PROSE).realized_cells == 111
 
     def test_every_declared_letter_appears_only_at_the_widest_rung(self) -> None:
         assert table_census(SourceRung.FATIHA).letters_present < 28
@@ -94,7 +94,7 @@ class TestTheLadder:
 
     def test_the_table_does_not_fill_even_at_the_widest_rung(self) -> None:
         widest = table_census(SourceRung.WITH_PROSE)
-        assert widest.empty_cells == 2
+        assert widest.empty_cells == 1
         assert widest.realized_cells < THE_HUNDRED_AND_TWELVE
 
     def test_no_cell_falls_outside_the_two_declarations(self) -> None:
@@ -117,12 +117,11 @@ class TestTheLadder:
 class TestTheAbsences:
     """الخلوُّ يُقاس بهوامشه، ولا يُقرأ منعًا بمجرّده."""
 
-    def test_the_two_absences_are_named_exactly(self) -> None:
+    def test_the_one_absence_is_named_exactly(self) -> None:
         absences = absent_cells()
-        assert len(absences) == 2
+        assert len(absences) == 1
         assert {(item.letter, item.haraka) for item in absences} == {
             ("ا", "\u0652"),
-            ("ز", "\u0652"),
         }
 
     def test_every_absence_carries_one_of_the_two_standings_and_no_third(self) -> None:
@@ -142,25 +141,16 @@ class TestTheAbsences:
         }
         assert cell_counts(SourceRung.WITH_PROSE)[("ا", "\u064e")] == 2
 
-    def test_the_zay_standing_is_read_off_the_floor_and_not_frozen_here(self) -> None:
-        zay = next(item for item in absent_cells() if item.letter == "ز")
-        floor = -math.log(THE_SURPRISE_FLOOR)
-        expected_standing = (
-            AbsenceStanding.SURPRISING_UNDER_THE_MARGIN
-            if zay.expected > floor
-            else AbsenceStanding.CONSISTENT_WITH_SCARCITY
-        )
-        assert zay.standing is expected_standing
+    def test_the_zay_cell_crossed_the_margin_and_has_since_filled(self) -> None:
+        """زايٌ بسكون: ندرةٌ ثمّ استغرابٌ ثمّ ندرةٌ ثمّ استغراب، ثمّ امتلأت بنموّ النثر.
 
-    def test_the_zay_cell_sits_just_past_the_margin_and_drifts_with_the_tree(
-        self,
-    ) -> None:
-        floor = -math.log(THE_SURPRISE_FLOOR)
-        zay = next(item for item in absent_cells() if item.letter == "ز")
-        assert floor < zay.expected < 2 * floor, (
-            "منزلةُ هذه الخليّة مؤرَّخةٌ بهامشها: عبرت العتبةَ بنموّ النثر "
-            "وحدَه، وما زالت دون ضعفها؛ فلا يُجمَّد لها مقدارٌ بعينه."
-        )
+        فالخلوُّ كان منزلةً مؤرَّخةً بهامشها كما قيل، لا منعًا في الخطّ.
+        """
+
+        assert ("ز", "\u0652") not in {
+            (item.letter, item.haraka) for item in absent_cells()
+        }
+        assert cell_counts(SourceRung.WITH_PROSE)[("ز", "\u0652")] >= 1
 
     def test_the_alef_row_is_itself_almost_empty(self) -> None:
         alef = next(item for item in absent_cells() if item.letter == "ا")

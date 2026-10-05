@@ -19,20 +19,8 @@ import unicodedata
 from enum import Enum
 from typing import Any
 
-PROTOCOL_VERSION = "A116-CANONICAL-TXT-1.1"
-"""إصدارُ العقد؛ وتوسيعُ الملفّ يحتاج قاعدةً مصرَّحًا بها وشاهدًا واختبارات.
-
-1.1 = 1.0 + قاعدةٌ واحدة: ألفٌ عاريةٌ بعد حروف سوابقَ محتملةٍ مفتوحةٍ ويليها ساكنٌ
-أو مشدَّدٌ أو حرفٌ بلا حركة تُعلَّق بـ`ALIF_AFTER_A_POSSIBLE_PREFIX_MAY_BE_WASL`
-بدل أن تُقرأ ألفَ مدّ. كان 1.0 يُخرِج `فَاتَّبِعْ` ← فَ اْ تْ تَ بِ عْ، فيُثبت مدًّا
-لا يُنطَق (همزةُ الوصل تسقط بعد السابقة). وعلى `quran-simple-enhanced.txt`
-تنتقل 368 صورةً متمايزة من READY إلى DEFER، وكلُّها ألفُ وصل؛ ولا تنتقل صورةٌ في
-الاتجاه الآخر. وتكلفتُها المعلنة: مدٌّ لازمٌ أصليٌّ بالصورة نفسها (`كَافَّةً`) يُعلَّق
-كذلك، لأنّ الفرقَ صرفيٌّ لا رسميّ.
-
-و1.0 محفوظٌ بايتًا ببايت في `bridge_v1_0.py`، وعليه تُعاد التجاربُ المسجَّلة قبل
-1.1 كما سُجِّلت؛ و`verify` تُعيد كلَّ شهادةٍ بإصدارها.
-"""
+PROTOCOL_VERSION = "A116-CANONICAL-TXT-1.0"
+"""إصدارُ العقد؛ وتوسيعُ الملفّ يحتاج قاعدةً مصرَّحًا بها وشاهدًا واختبارات."""
 
 ALPHABET: tuple[str, ...] = (
     "ء",
@@ -550,37 +538,6 @@ def _previous_reading(clusters: list[dict[str, Any]], position: int) -> dict[str
     return clusters[position - 1].get("reading") or {}
 
 
-PREFIX_CARRIERS: frozenset[str] = frozenset({"و", "ف", "ب", "ل", "ك"})
-"""حروفُ السوابق المتّصلة التي يليها همزُ وصلٍ في الرسم: وَ فَ بِ لِ كَ، ومعها همزةُ
-الاستفهام (ألفٌ عليها همزة). وهي قائمةُ صورٍ لا حكمٌ بأنّ الحرفَ سابقةٌ."""
-
-
-def _may_be_wasl_after_prefix(clusters: list[dict[str, Any]], position: int) -> bool:
-    """ألفٌ عاريةٌ بعد سوابقَ محتملةٍ ويليها ساكنٌ أو مشدَّد: لا تُحسَم من السطح.
-
-    `فَاتَّبِعْ` (فَ + اتَّبِعْ، ألفُ وصلٍ تسقط) و`كَافَّةً` (كاف أصليّة، ألفُ مدٍّ
-    لازم) صورتان من بابٍ واحد: حرفٌ من حروف السوابق مفتوح، ثمّ ألفٌ عارية، ثمّ
-    مشدَّد. فالفرقُ صرفيٌّ (أهذا الحرفُ سابقةٌ أم فاءُ الكلمة؟) لا رسميّ، والجسرُ
-    لا يحسمه؛ فيُعلَّق باسمه. وما يلي الألفَ فيه حركةٌ (`فَاطِرِ`، `كَانَ`) يبقى مدًّا،
-    إذ همزةُ الوصل لا تقع إلا قبل ساكن.
-    """
-
-    if position == 0 or position + 1 >= len(clusters):
-        return False
-    for cluster in clusters[:position]:
-        base = cluster["base"]
-        marks = cluster["marks"]
-        interrogative = base == "ا" and HAMZA_ABOVE in marks
-        if base not in PREFIX_CARRIERS and not interrogative:
-            return False
-    following = clusters[position + 1]
-    marks = following["marks"]
-    has_vowel = any(mark in VOWELS for mark in marks) or any(
-        mark in TANWINS for mark in marks
-    )
-    return SUKUN in marks or SHADDA in marks or not has_vowel
-
-
 def _cluster_atoms(
     base: str,
     reading: dict[str, Any],
@@ -629,8 +586,6 @@ def _cluster_atoms(
             and reading["vowel"] is None
             and not reading["sukun"]
         ):
-            if _may_be_wasl_after_prefix(clusters, position):
-                raise _defer("ALIF_AFTER_A_POSSIBLE_PREFIX_MAY_BE_WASL", base)
             clusters[position]["role"] = "MADD"
             return ["ا" + SUKUN]
         if reading["vowel"] is not None or reading["sukun"]:
@@ -828,14 +783,7 @@ def verify(record: dict[str, Any]) -> dict[str, Any]:
         raise CountingRefused("شهادةٌ بلا مصدرٍ محفوظٍ لا يُعاد تنفيذها.")
     raw = base64.b64decode(record["source_bytes_base64"])
     options = record.get("options") or {}
-    replayer = bridge
-    if record.get("protocol_version") == "A116-CANONICAL-TXT-1.0":
-        from . import bridge_v1_0
-
-        replayer = bridge_v1_0.bridge
-    elif record.get("protocol_version") != PROTOCOL_VERSION:
-        raise CountingRefused("شهادةٌ بإصدارٍ غيرِ معروفٍ لا يُعاد تنفيذها.")
-    replay = replayer(
+    replay = bridge(
         raw,
         encoding=record.get("encoding"),
         profile=options.get("profile", "modern-vocalized"),

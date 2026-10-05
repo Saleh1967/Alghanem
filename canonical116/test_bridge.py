@@ -18,6 +18,39 @@ def atoms_of(text: str, **kwargs: Any) -> list[str]:
     return atoms
 
 
+class AWaslAlifAfterAPrefixIsNotReadAsMadd(unittest.TestCase):
+    """فَ + اتَّبِعْ: ألفُ الوصل بعد السابقة تسقط في النطق، فلا تُقرأ ألفَ مدّ.
+
+    وصورتُها السطحيّة (حرفُ سابقةٍ مفتوح + ألفٌ عارية + ساكنٌ أو مشدَّد) هي صورةُ
+    `كَافَّةً` ذاتِ المدّ اللازم؛ فالجسرُ يعلّق ولا يحسم.
+    """
+
+    def test_wasl_after_fa_defers_with_its_name(self) -> None:
+        for word in ("فَاتَّبِعْ", "فَاجْعَلْ", "وَالْكِتَابِ", "أَفَاتَّخَذْتُمْ", "لَّاتَّبَعْنَاكُمْ"):
+            record = bridge(word, contexts=START_CONTINUE)
+            self.assertEqual(record["status"], "DEFER", word)
+            self.assertEqual(
+                record["deferrals"][0]["reason"],
+                "ALIF_AFTER_A_POSSIBLE_PREFIX_MAY_BE_WASL",
+            )
+            self.assertIsNone(record["canonical_atoms"])
+
+    def test_the_same_surface_shape_with_a_true_madd_also_defers(self) -> None:
+        self.assertEqual(bridge("كَافَّةً", contexts=START_CONTINUE)["status"], "DEFER")
+
+    def test_a_madd_before_a_vowelled_letter_stays_madd(self) -> None:
+        self.assertEqual(
+            atoms_of("فَاطِرِ", contexts=START_CONTINUE), ["فَ", "اْ", "طِ", "رِ"]
+        )
+        self.assertEqual(atoms_of("كَانَ", contexts=START_CONTINUE), ["كَ", "اْ", "نَ"])
+        self.assertEqual(atoms_of("لَا", contexts=START_CONTINUE), ["لَ", "اْ"])
+
+    def test_a_madd_lazim_after_a_non_prefix_letter_stays_madd(self) -> None:
+        self.assertEqual(
+            atoms_of("دَابَّةٍ", contexts=START_CONTINUE), ["دَ", "اْ", "بْ", "بَ", "تِ", "نْ"]
+        )
+
+
 class TheAlphabetIsOneHundredAndSixteen(unittest.TestCase):
     def test_the_product_is_twenty_nine_by_four(self) -> None:
         self.assertEqual(len(A116), 116)
@@ -25,7 +58,28 @@ class TheAlphabetIsOneHundredAndSixteen(unittest.TestCase):
         self.assertEqual(len(HARAKAT), 4)
 
     def test_the_protocol_names_its_version(self) -> None:
-        self.assertEqual(PROTOCOL_VERSION, "A116-CANONICAL-TXT-1.0")
+        self.assertEqual(PROTOCOL_VERSION, "A116-CANONICAL-TXT-1.1")
+
+    def test_version_one_zero_is_kept_byte_for_byte(self) -> None:
+        import hashlib
+        from pathlib import Path
+
+        from canonical116 import bridge_v1_0
+
+        frozen = Path(bridge_v1_0.__file__).read_bytes()
+        self.assertEqual(
+            hashlib.sha256(frozen).hexdigest(),
+            "982586e4b8fd7c91ca7243c132cf6de6356d81b3d8ce4b2d3832e37db393e1ab",
+        )
+        self.assertEqual(bridge_v1_0.PROTOCOL_VERSION, "A116-CANONICAL-TXT-1.0")
+
+    def test_a_one_zero_certificate_replays_under_one_zero(self) -> None:
+        from canonical116 import bridge_v1_0
+
+        old = bridge_v1_0.bridge("فَاتَّبِعْ", contexts=START_CONTINUE)
+        self.assertEqual(old["status"], "READY")
+        self.assertTrue(verify(old)["reproduced"])
+        self.assertEqual(bridge("فَاتَّبِعْ", contexts=START_CONTINUE)["status"], "DEFER")
 
 
 class TheOrthographicRasmIsProjected(unittest.TestCase):
