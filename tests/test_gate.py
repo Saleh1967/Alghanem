@@ -73,3 +73,25 @@ def test_recovery_on_masaq_verbs_is_at_least_97_percent() -> None:
     total = sum(r["outcomes"].values()) if "outcomes" in r else None
     assert total, r.keys()
     assert r["outcomes"]["RECOVERED"] / total >= 0.97
+
+
+def test_pronoun_atoms_match_slge_categories_lean() -> None:
+    """الضمائرُ المنفصلة الاثنا عشر: ذرّاتُ البوّابة هي خاناتُ `Slge.Categories.pronouns` (مواضعُ SLGE:
+    الهمزةُ 0 ثمّ الأبجديّة؛ الحالاتُ فتح 0 كسر 1 ضم 2 سكون 3)."""
+
+    alphabet = "ءابتثجحخدذرزسشصضطظعغفقكلمنهوي"
+    marks = {"َ": 0, "ِ": 1, "ُ": 2, "ْ": 3}
+    expected = {
+        "أَنَا": [(0, 0), (25, 0), (1, 3)], "نَحْنُ": [(25, 0), (6, 3), (25, 2)],
+        "أَنْتَ": [(0, 0), (25, 3), (3, 0)], "أَنْتِ": [(0, 0), (25, 3), (3, 1)],
+        "أَنْتُمَا": [(0, 0), (25, 3), (3, 2), (24, 0), (1, 3)],
+        "أَنْتُمْ": [(0, 0), (25, 3), (3, 2), (24, 3)],
+        "أَنْتُنَّ": [(0, 0), (25, 3), (3, 2), (25, 3), (25, 0)],
+        "هُوَ": [(26, 2), (27, 0)], "هِيَ": [(26, 1), (28, 0)],
+        "هُمَا": [(26, 2), (24, 0), (1, 3)], "هُمْ": [(26, 2), (24, 3)],
+        "هُنَّ": [(26, 2), (25, 3), (25, 0)],
+    }
+    for surface, cells in expected.items():
+        cert = enter(surface.encode("utf-8"))
+        assert not isinstance(cert, Refusal), surface
+        assert [(alphabet.index(a[0]), marks[a[1]]) for a in cert.atoms] == cells, surface
