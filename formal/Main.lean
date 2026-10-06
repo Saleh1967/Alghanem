@@ -148,6 +148,12 @@ def main (args : List String) : IO Unit := do
   | ["marifa"] =>
     for p in Marifa.mawsul do
       IO.println s!"{p.1},{"-".intercalate (p.2.map fun c => toString c.index)}"
+  | ["sarf"] =>
+    for w in Sarf.witnesses do
+      let h := match w.2.2 with
+        | .muntahaJumu => "muntahaJumu" | .maqsura => "maqsura" | .mamduda => "mamduda"
+        | .sifa => "sifa" | .alifNun => "alifNun" | .unread => "unread"
+      IO.println s!"{w.1},{"-".intercalate (w.2.1.map fun c => toString c.index)},{h}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

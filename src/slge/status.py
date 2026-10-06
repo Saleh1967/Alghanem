@@ -284,6 +284,23 @@ _DECLARED: tuple[Claim, ...] = (
        "وخلافُ وسم)؛ العلمُ منوَّن 35/157 فالتنوينُ ليس علامةَ تنكير", _S,
        "test:tests/test_marifa.py::test_masaq_measurement_and_index",
        note="القوّةُ ترتيبٌ معلَن؛ العلمُ والنكرة من المعجم؛ المستترُ بلا خانة."),
+    # — الممنوعُ من الصرف —
+    _c("SARF-law", "الممنوعُ: صورةُ جرّه هي صورةُ نصبه؛ والمنصرفُ يفرّقهما الكسرُ والتنوين؛ وشرطا الصرف "
+       "يردّان الكسرة", _P,
+       "lean:Slge.Sarf.jarr_eq_nasb", "lean:Slge.Sarf.sarf_jarr_ne_nasb",
+       "lean:Slge.Sarf.al_jarr_kasra", "lean:Slge.Sarf.idafa_jarr_kasra",
+       "test:tests/test_sarf.py::test_decisive_law_jarr_is_nasb"),
+    _c("SARF-illa",
+       "عللُ الصيغة تُقرأ من الخانة: منتهى الجموع (قراءةُ القالب سليمةٌ لكلّ أصل)، ألفا التأنيث، "
+       "وزنُ أَفْعَل/فَعْلَان، الألفُ والنون", _P,
+       "lean:Slge.Sarf.onTemplate_fill", "lean:Slge.Sarf.muntaha_wf",
+       "lean:Slge.Sarf.witnesses_illa",
+       "test:tests/test_conformance.py::test_sarf_matches_lean"),
+    _c("SARF-masaq",
+       "بعد الجارّ على 754 اسمًا: بأل ⇒ كسر 255؛ مضاف ⇒ كسر 120؛ المجرّدُ منوَّنُ كسرٍ 251 أو "
+       "مفتوحٌ بلا تنوين 44 (الممنوع: 17 بعلّة صيغةٍ مقروءة، 27 معجم)", _S,
+       "test:tests/test_sarf.py::test_masaq_measurement_and_index",
+       note="العلميّةُ بعجمتها وتأنيثها وتركيبها وعدلها معجم؛ والهمزةُ الأصليّةُ في الممدود دَين."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

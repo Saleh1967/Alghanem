@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_lean_index.py` من ملفّات `.lean` و`Audit.lean` و`out/axioms.txt`؛ لا يُحرَّر باليد. الـ116 من الغانم بإيداعه المثبَّت في `formal/lakefile.toml`.
 
-**454 مبرهنة، منها 287 مدقَّقةُ المسلّمات.**
+**461 مبرهنة، منها 294 مدقَّقةُ المسلّمات.**
 
 كلُّ درجةٍ تستهلك ما قبلها: لا تدخل الكلمةُ درجةً قبل أن تُرخَّص في التي تحتها. «مدقَّق» = في `Audit.lean` وطُبعت مسلّماتُه؛ وما ليس مدقَّقًا مبرهَنٌ في Lean لكن لم يُطبع سندُه بعدُ فلا يُستشهد به في `status.py`.
 
@@ -639,6 +639,18 @@
 | `forms_nodup` | — | مدقَّق | propext |
 | `ten_single_opposes` | — | مدقَّق | propext |
 | `six_ta_is_radical` | — | مدقَّق | propext |
+
+### `Slge/Sarf.lean` — 7 مبرهنة (`Slge.Sarf`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `jarr_eq_nasb` | — | مدقَّق | propext |
+| `sarf_jarr_ne_nasb` | — | مدقَّق | propext |
+| `al_jarr_kasra` | — | مدقَّق | propext, Quot.sound |
+| `idafa_jarr_kasra` | — | مدقَّق | propext |
+| `onTemplate_fill` | — | مدقَّق | propext, Quot.sound |
+| `witnesses_illa` | — | مدقَّق | propext |
+| `muntaha_wf` | — | مدقَّق | propext |
 
 ## الدرجة ١٧ — أدواتُ الربط والاستفهام: الخانةُ فالحدُّ فالعمل، والمعنى معلَن
 

@@ -4,9 +4,9 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 56 |
+| مبرهن | 58 |
 | مفحوص_استقصاء | 12 |
-| مفحوص_بعينة | 11 |
+| مفحوص_بعينة | 12 |
 | دليل | 0 |
 | معلن | 10 |
 | رأي | 0 |
@@ -58,6 +58,8 @@
 | RAWABIT-amal | العملُ دالّةٌ على الخانة الأخيرة؛ وعلى الأفعال الخمسة حذفُ النون جزمًا ونصبًا | مبرهن | `lean:Slge.Rawabit.govern_jazm_afal`<br>`lean:Slge.Rawabit.govern_nasb_afal`<br>`lean:Slge.Rawabit.raf_not_governed_jazm`<br>`test:tests/test_rawabit.py::test_govern_reads_the_last_cell_and_the_five_verbs` |  |
 | RAWABIT-cells | 70 أداةً مفردة خاناتُها مرخَّصة؛ 36 منها من شهادات البوّابة بعينها | مبرهن | `lean:Slge.Rawabit.particles_licensed`<br>`test:tests/test_conformance.py::test_rawabit_matches_lean`<br>`test:tests/test_rawabit.py::test_every_particle_licensed_and_witness_counts` |  |
 | RAWABIT-proclitic | الحرفُ المتحرّك المتّصل (و ف ل ب ك س) لا يُفسد ترخيصَ ما بعده | مبرهن | `lean:Slge.Rawabit.proclitic_keeps_licence`<br>`lean:Slge.Rawabit.proclitics_one_vowelled_cell` |  |
+| SARF-illa | عللُ الصيغة تُقرأ من الخانة: منتهى الجموع (قراءةُ القالب سليمةٌ لكلّ أصل)، ألفا التأنيث، وزنُ أَفْعَل/فَعْلَان، الألفُ والنون | مبرهن | `lean:Slge.Sarf.onTemplate_fill`<br>`lean:Slge.Sarf.muntaha_wf`<br>`lean:Slge.Sarf.witnesses_illa`<br>`test:tests/test_conformance.py::test_sarf_matches_lean` |  |
+| SARF-law | الممنوعُ: صورةُ جرّه هي صورةُ نصبه؛ والمنصرفُ يفرّقهما الكسرُ والتنوين؛ وشرطا الصرف يردّان الكسرة | مبرهن | `lean:Slge.Sarf.jarr_eq_nasb`<br>`lean:Slge.Sarf.sarf_jarr_ne_nasb`<br>`lean:Slge.Sarf.al_jarr_kasra`<br>`lean:Slge.Sarf.idafa_jarr_kasra`<br>`test:tests/test_sarf.py::test_decisive_law_jarr_is_nasb` |  |
 | SEQ-delim | ترميزُ الكلمة ذاتيُّ الحدّ: تُقرأ من رأس أيّ تيارٍ ويبقى ما بعدها بعينه | مبرهن | `lean:Slge.Sequence.decodeWord_encodeWord`<br>`lean:Slge.Sequence.encodeWord_prefix_free`<br>`test:tests/test_conformance.py::test_sequence_matches_lean`<br>`test:tests/test_cells.py::test_stream_refuses_unlicensed_and_is_prefix_free` |  |
 | SEQ-recover | فكُّ طيِّ المرخَّصة يعيدها بعينها | مبرهن | `lean:Slge.Sequence.slgeUnfold_slgeFold` |  |
 | SEQ-stream | تيارُ كلماتٍ مرخَّصةٍ يُفكّ كلُّه بترتيبه بلا فاصلٍ ولا حاملٍ زائد | مبرهن | `lean:Slge.Sequence.decode_encode`<br>`lean:Slge.Sequence.U_lt_two_pow_width` | الكلفةُ معلنة: cost(k) = (k+1) + ⌊log₂U(k)⌋+1 بتًّا؛ k=1: 9، k=2: 17 (من جدول Lean). |
@@ -90,6 +92,7 @@
 | KHAMSA-gate | صورُ أب وأخ وذو بالقانون = ذرّاتُ شهادات البوّابة (10 شواهد)؛ حمٌ وفوٌ بالقانون نفسه | مفحوص_بعينة | `test:tests/test_khamsa.py::test_forms_match_gate_witnesses` | الشروطُ (مفرد، مكبَّر، مضاف لغير الياء) معلَنةٌ في Ctx لا مستنبَطة. |
 | MARIFA-tanwin | على 6,544 صورةً من MASAQ: أل مع تنوين 1 (وسم خاطئ)؛ مضافٌ مع تنوين 12 (تنوينُ العوض وخلافُ وسم)؛ العلمُ منوَّن 35/157 فالتنوينُ ليس علامةَ تنكير | مفحوص_بعينة | `test:tests/test_marifa.py::test_masaq_measurement_and_index` | القوّةُ ترتيبٌ معلَن؛ العلمُ والنكرة من المعجم؛ المستترُ بلا خانة. |
 | NIDA-masaq | على 489 منادًى بشهادات البوّابة: الضمُّ ⇒ مبنيّ 188/188؛ الفتحُ والكسرُ ⇒ معرب 195/237؛ 63 لا تقرؤها الخانة | مفحوص_بعينة | `test:tests/test_nida.py::test_masaq_measurement_and_index` | الباقي خلافُ وسمٍ في MASAQ (أَهْلَ، مَعْشَرَ، بَنِي موسومةً «مبني»)؛ لم أُصلحه. |
+| SARF-masaq | بعد الجارّ على 754 اسمًا: بأل ⇒ كسر 255؛ مضاف ⇒ كسر 120؛ المجرّدُ منوَّنُ كسرٍ 251 أو مفتوحٌ بلا تنوين 44 (الممنوع: 17 بعلّة صيغةٍ مقروءة، 27 معجم) | مفحوص_بعينة | `test:tests/test_sarf.py::test_masaq_measurement_and_index` | العلميّةُ بعجمتها وتأنيثها وتركيبها وعدلها معجم؛ والهمزةُ الأصليّةُ في الممدود دَين. |
 | SHABAKA-minimal | ترتيبُ البصريّين ليس أقلَّ الأشجار كلفةً: 341 عمليّةً مقابل 155؛ يتّفقان في 21 أبًا من 112 | مفحوص_بعينة | `test:tests/test_shabaka.py::test_computed_tree_is_minimal_and_classical_is_not` | أقلُّ شجرةٍ (Prim على مسافة لِيفنشتاين للقوالب) محسوبةٌ لا مقرَّرة؛ ما يحمله ترتيبُ البصريّين فوق كلفة القالب شرطُ حدٍّ دلاليّ لم يُقَس بعد. |
 | WAZN-sibawayh | هياكلُ الأوزان مقابل أبنية سيبويه المجمَّدة: 95/113 عنده؛ 18 مسمّاة؛ 122 من هياكله خارج الجدول | مفحوص_بعينة | `test:tests/test_wazn.py::test_skeletons_measured_against_sibawayh` | الحركاتُ معلَنةٌ من كتب الصرف لا مقيسة؛ الرباعيُّ والإعلالُ والمفعولُ المطلق والجامدُ خارج الجدول باسمها (DEBTS). |
 | ZAMAN-masaq | التصرُّفُ عددُ الحالات: على 1,334 موضعًا من MASAQ المتصرّفةُ 8/12 بحالتين فأكثر والمبنيّةُ 5/7 بحالةٍ واحدة (والاثنان كسرةُ وصلٍ وتصادفُ رسم)؛ وعند الفتح الظرفُ 230/326 | مفحوص_بعينة | `test:tests/test_zaman.py::test_masaq_measurement_and_index` | الظرفيّةُ (معنى في) لا تُقرأ من الخانة: دَينٌ على النظم. |

@@ -294,3 +294,10 @@ import Slge
 #print axioms Slge.Marifa.mawsul_dual_case
 #print axioms Slge.Marifa.deposited_no_tanwin
 #print axioms Slge.Marifa.man_looks_like_tanwin
+#print axioms Slge.Sarf.jarr_eq_nasb
+#print axioms Slge.Sarf.sarf_jarr_ne_nasb
+#print axioms Slge.Sarf.al_jarr_kasra
+#print axioms Slge.Sarf.idafa_jarr_kasra
+#print axioms Slge.Sarf.onTemplate_fill
+#print axioms Slge.Sarf.muntaha_wf
+#print axioms Slge.Sarf.witnesses_illa

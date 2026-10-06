@@ -257,3 +257,18 @@ def test_marifa_matches_lean() -> None:
     rows = _rows("marifa.csv")
     assert [r[0] for r in rows] == list(MAWSUL)
     assert [r[1] for r in rows] == ["-".join(str(index(c)) for c in w) for w in MAWSUL.values()]
+
+
+def test_sarf_matches_lean() -> None:
+    """شواهدُ العلل بأحكامها = جدولُ `Sarf.witnesses`."""
+
+    from slge.sarf import illa
+
+    lean = {"muntahaJumu": "صيغة منتهى الجموع", "maqsura": "ألف التأنيث المقصورة",
+            "mamduda": "ألف التأنيث الممدودة", "sifa": "وزن أَفْعَل/فَعْلَان (صفةٌ أو علم)",
+            "alifNun": "ألف ونون زائدتان", "unread": "معجم"}
+    rows = _rows("sarf.csv")
+    assert len(rows) == 9
+    for r in rows:
+        cells = tuple(_cell(int(i)) for i in r[1].split("-"))
+        assert illa(cells) == lean[r[2]], r[0]
