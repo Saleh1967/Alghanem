@@ -4,9 +4,9 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 53 |
+| مبرهن | 56 |
 | مفحوص_استقصاء | 12 |
-| مفحوص_بعينة | 10 |
+| مفحوص_بعينة | 11 |
 | دليل | 0 |
 | معلن | 10 |
 | رأي | 0 |
@@ -43,6 +43,9 @@
 | KHAMSA-forms | الصورُ الخمسَ عشرة مرخَّصةٌ متباينةُ الأعداد؛ وما خرج عن الشروط لا يُخمَّن | مبرهن | `lean:Slge.Khamsa.khamsa_licensed`<br>`lean:Slge.Khamsa.khamsa_numbers_nodup`<br>`lean:Slge.Khamsa.no_guess_for_plural`<br>`test:tests/test_conformance.py::test_khamsa_matches_lean` |  |
 | KHAMSA-madd | حرفُ المدّ صورةُ الحركة (و↔ضم، ا↔فتح، ي↔كسر) والحالةُ تُقرأ من الصورة بعينها | مبرهن | `lean:Slge.Khamsa.madd_matches_short`<br>`lean:Slge.Khamsa.caseOf_form`<br>`lean:Slge.Khamsa.form_injective_stem`<br>`test:tests/test_khamsa.py::test_case_is_read_back_from_every_form` |  |
 | LICENCE | الرافعُ إلى المساواة يُنتج مفهومَ المخالفة | مبرهن | `lean:Slge.Ghazali.licence_makes_mafhum` |  |
+| MARIFA-al | التعريفُ بأل عمليّةٌ تحفظ الترخيص، والإدغامُ الشمسيُّ لا يغيّر نمطَ السكون، والأداةُ تُقرأ من الصدر | مبرهن | `lean:Slge.Marifa.shamsi_licensed`<br>`lean:Slge.Marifa.al_licensed`<br>`lean:Slge.Marifa.hasAl_al`<br>`test:tests/test_marifa.py::test_al_and_shamsi_match_gate` |  |
+| MARIFA-idafa | الإضافةُ تُسقط التنوينَ وتحفظ الترخيص؛ والمضافُ إلى ضميرٍ لا تنوينَ له | مبرهن | `lean:Slge.Marifa.dropTanwin_licensed`<br>`lean:Slge.Marifa.idafa_no_tanwin`<br>`lean:Slge.Marifa.mudaf_is_marifa`<br>`test:tests/test_marifa.py::test_idafa_drops_tanwin` |  |
+| MARIFA-mawsul | الموصولةُ 14 صورةً مرخَّصةً متباينة؛ المبدوءُ بأل تُقرأ أداتُه؛ ومثنّاه كالإشارة | مبرهن | `lean:Slge.Marifa.mawsul_licensed`<br>`lean:Slge.Marifa.mawsul_nodup`<br>`lean:Slge.Marifa.mawsul_al`<br>`lean:Slge.Marifa.mawsul_dual_case`<br>`lean:Slge.Marifa.deposited_no_tanwin`<br>`lean:Slge.Marifa.man_looks_like_tanwin`<br>`test:tests/test_conformance.py::test_marifa_matches_lean` |  |
 | NIDA-adawat | الأدواتُ الستّ حروفٌ مرخَّصة؛ ويَا تُوصَل بكلّ مرخَّص | مبرهن | `lean:Slge.Nida.particles_licensed`<br>`lean:Slge.Nida.particles_nodup`<br>`lean:Slge.Nida.ya_junction`<br>`test:tests/test_conformance.py::test_nida_matches_lean` |  |
 | NIDA-hukm | قانونُ المنادى من الخانة الأخيرة: الضمُّ بناءٌ، والتنوينُ لا يجامع البناء | مبرهن | `lean:Slge.Nida.damm_is_bina`<br>`lean:Slge.Nida.tanwin_never_bina`<br>`lean:Slge.Nida.witnesses_hukm`<br>`test:tests/test_nida.py::test_hukm_reads_the_last_cell` |  |
 | NIDA-nudba | الندبة (حَسْرَتَاهْ) ساكنان متجاوران: خارج الترخيص الثنائيّ لكلّ جذع | مبرهن | `lean:Slge.Nida.nudba_not_binary_licensed`<br>`test:tests/test_nida.py::test_nudba_is_outside_binary_licence` | صورةُ وقفٍ يرخّصها الثلاثيُّ في الغانم (A116.Ternary)؛ لا تُدّعى هنا. |
@@ -85,6 +88,7 @@
 | ISHARA-gate | 13 صورةً من شهادات البوّابة هي صورُ القانون بعينها؛ الباقي (12) بالقانون | مفحوص_بعينة | `lean:Slge.Ishara.witnessed_subset`<br>`test:tests/test_ishara.py::test_gate_witnesses_are_the_law_forms` | الدلالةُ (قريب/بعيد، عدد، جنس) من الحصر المُرسَل معلَنة. |
 | ISTIFHAM-sadara | الصدارة على MASAQ: 100/251 في صدر الآية أو بعد عاطف/جارّ/همزة؛ 151 بعد فعل قولٍ ونظرٍ وسؤال | مفحوص_بعينة | `test:tests/test_istifham.py::test_tiers_and_index` | صدارةُ جملةٍ لا آية: لا تُقاس بلا حدٍّ للجملة — دَينٌ على النظم. الدلالةُ من الحصر المُرسَل معلَنة. |
 | KHAMSA-gate | صورُ أب وأخ وذو بالقانون = ذرّاتُ شهادات البوّابة (10 شواهد)؛ حمٌ وفوٌ بالقانون نفسه | مفحوص_بعينة | `test:tests/test_khamsa.py::test_forms_match_gate_witnesses` | الشروطُ (مفرد، مكبَّر، مضاف لغير الياء) معلَنةٌ في Ctx لا مستنبَطة. |
+| MARIFA-tanwin | على 6,544 صورةً من MASAQ: أل مع تنوين 1 (وسم خاطئ)؛ مضافٌ مع تنوين 12 (تنوينُ العوض وخلافُ وسم)؛ العلمُ منوَّن 35/157 فالتنوينُ ليس علامةَ تنكير | مفحوص_بعينة | `test:tests/test_marifa.py::test_masaq_measurement_and_index` | القوّةُ ترتيبٌ معلَن؛ العلمُ والنكرة من المعجم؛ المستترُ بلا خانة. |
 | NIDA-masaq | على 489 منادًى بشهادات البوّابة: الضمُّ ⇒ مبنيّ 188/188؛ الفتحُ والكسرُ ⇒ معرب 195/237؛ 63 لا تقرؤها الخانة | مفحوص_بعينة | `test:tests/test_nida.py::test_masaq_measurement_and_index` | الباقي خلافُ وسمٍ في MASAQ (أَهْلَ، مَعْشَرَ، بَنِي موسومةً «مبني»)؛ لم أُصلحه. |
 | SHABAKA-minimal | ترتيبُ البصريّين ليس أقلَّ الأشجار كلفةً: 341 عمليّةً مقابل 155؛ يتّفقان في 21 أبًا من 112 | مفحوص_بعينة | `test:tests/test_shabaka.py::test_computed_tree_is_minimal_and_classical_is_not` | أقلُّ شجرةٍ (Prim على مسافة لِيفنشتاين للقوالب) محسوبةٌ لا مقرَّرة؛ ما يحمله ترتيبُ البصريّين فوق كلفة القالب شرطُ حدٍّ دلاليّ لم يُقَس بعد. |
 | WAZN-sibawayh | هياكلُ الأوزان مقابل أبنية سيبويه المجمَّدة: 95/113 عنده؛ 18 مسمّاة؛ 122 من هياكله خارج الجدول | مفحوص_بعينة | `test:tests/test_wazn.py::test_skeletons_measured_against_sibawayh` | الحركاتُ معلَنةٌ من كتب الصرف لا مقيسة؛ الرباعيُّ والإعلالُ والمفعولُ المطلق والجامدُ خارج الجدول باسمها (DEBTS). |

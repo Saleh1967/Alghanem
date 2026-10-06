@@ -145,6 +145,9 @@ def main (args : List String) : IO Unit := do
   | ["adad"] =>
     for w in Adad.forms do
       IO.println ("-".intercalate (w.map fun c => toString c.index))
+  | ["marifa"] =>
+    for p in Marifa.mawsul do
+      IO.println s!"{p.1},{"-".intercalate (p.2.map fun c => toString c.index)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

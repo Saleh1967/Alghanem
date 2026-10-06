@@ -264,6 +264,26 @@ _DECLARED: tuple[Claim, ...] = (
        "حالةُ المعدود دالّةٌ في مدى العدد: على 72 موضعًا من MASAQ بشهادات البوّابة 71 مطابق", _S,
        "lean:Slge.Adad.tamyiz_ranges", "test:tests/test_adad.py::test_tamyiz_function_and_masaq",
        note="الحيادُ (مائة، ألف) والمعطوفُ وتذكيرُ المعدود بمفرده: معلن."),
+    # — المعارف —
+    _c("MARIFA-al",
+       "التعريفُ بأل عمليّةٌ تحفظ الترخيص، والإدغامُ الشمسيُّ لا يغيّر نمطَ السكون، والأداةُ تُقرأ "
+       "من الصدر", _P, "lean:Slge.Marifa.shamsi_licensed", "lean:Slge.Marifa.al_licensed",
+       "lean:Slge.Marifa.hasAl_al", "test:tests/test_marifa.py::test_al_and_shamsi_match_gate"),
+    _c("MARIFA-idafa", "الإضافةُ تُسقط التنوينَ وتحفظ الترخيص؛ والمضافُ إلى ضميرٍ لا تنوينَ له", _P,
+       "lean:Slge.Marifa.dropTanwin_licensed", "lean:Slge.Marifa.idafa_no_tanwin",
+       "lean:Slge.Marifa.mudaf_is_marifa", "test:tests/test_marifa.py::test_idafa_drops_tanwin"),
+    _c("MARIFA-mawsul",
+       "الموصولةُ 14 صورةً مرخَّصةً متباينة؛ المبدوءُ بأل تُقرأ أداتُه؛ ومثنّاه كالإشارة", _P,
+       "lean:Slge.Marifa.mawsul_licensed", "lean:Slge.Marifa.mawsul_nodup",
+       "lean:Slge.Marifa.mawsul_al",
+       "lean:Slge.Marifa.mawsul_dual_case", "lean:Slge.Marifa.deposited_no_tanwin",
+       "lean:Slge.Marifa.man_looks_like_tanwin",
+       "test:tests/test_conformance.py::test_marifa_matches_lean"),
+    _c("MARIFA-tanwin",
+       "على 6,544 صورةً من MASAQ: أل مع تنوين 1 (وسم خاطئ)؛ مضافٌ مع تنوين 12 (تنوينُ العوض "
+       "وخلافُ وسم)؛ العلمُ منوَّن 35/157 فالتنوينُ ليس علامةَ تنكير", _S,
+       "test:tests/test_marifa.py::test_masaq_measurement_and_index",
+       note="القوّةُ ترتيبٌ معلَن؛ العلمُ والنكرة من المعجم؛ المستترُ بلا خانة."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

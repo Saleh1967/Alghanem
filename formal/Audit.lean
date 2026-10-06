@@ -282,3 +282,15 @@ import Slge
 #print axioms Slge.Adad.tamyiz_ranges
 #print axioms Slge.Adad.forms_licensed
 #print axioms Slge.Adad.forms_nodup
+#print axioms Slge.Marifa.shamsi_licensed
+#print axioms Slge.Marifa.al_licensed
+#print axioms Slge.Marifa.hasAl_al
+#print axioms Slge.Marifa.dropTanwin_licensed
+#print axioms Slge.Marifa.idafa_no_tanwin
+#print axioms Slge.Marifa.mudaf_is_marifa
+#print axioms Slge.Marifa.mawsul_licensed
+#print axioms Slge.Marifa.mawsul_nodup
+#print axioms Slge.Marifa.mawsul_al
+#print axioms Slge.Marifa.mawsul_dual_case
+#print axioms Slge.Marifa.deposited_no_tanwin
+#print axioms Slge.Marifa.man_looks_like_tanwin

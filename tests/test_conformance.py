@@ -247,3 +247,13 @@ def test_adad_matches_lean() -> None:
             forms += [compound(s, True), compound(s, False)]
     assert len(rows) == len(forms) == 82
     assert [r[0] for r in rows] == ["-".join(str(index(c)) for c in w) for w in forms]
+
+
+def test_marifa_matches_lean() -> None:
+    """الموصولةُ الأربعَ عشرةَ بأسمائها وخاناتها = جدولُ `Marifa.mawsul`."""
+
+    from slge.marifa import MAWSUL
+
+    rows = _rows("marifa.csv")
+    assert [r[0] for r in rows] == list(MAWSUL)
+    assert [r[1] for r in rows] == ["-".join(str(index(c)) for c in w) for w in MAWSUL.values()]

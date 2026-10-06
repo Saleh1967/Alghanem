@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_lean_index.py` من ملفّات `.lean` و`Audit.lean` و`out/axioms.txt`؛ لا يُحرَّر باليد. الـ116 من الغانم بإيداعه المثبَّت في `formal/lakefile.toml`.
 
-**437 مبرهنة، منها 275 مدقَّقةُ المسلّمات.**
+**454 مبرهنة، منها 287 مدقَّقةُ المسلّمات.**
 
 كلُّ درجةٍ تستهلك ما قبلها: لا تدخل الكلمةُ درجةً قبل أن تُرخَّص في التي تحتها. «مدقَّق» = في `Audit.lean` وطُبعت مسلّماتُه؛ وما ليس مدقَّقًا مبرهَنٌ في Lean لكن لم يُطبع سندُه بعدُ فلا يُستشهد به في `status.py`.
 
@@ -457,6 +457,28 @@
 | `mabni_no_case` | — | مدقَّق | propext |
 | `witnessed_count` | — | — | — |
 | `witnessed_subset` | — | مدقَّق | propext |
+
+### `Slge/Marifa.lean` — 17 مبرهنة (`Slge.Marifa`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `shamsi_map_isSukun` | — | — | — |
+| `shamsi_licensed` | — | مدقَّق | propext |
+| `al_licensed` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `hasAl_al` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `licensed_initOf` | — | — | — |
+| `dropTanwin_licensed` | — | مدقَّق | propext |
+| `v24` | — | — | — |
+| `v26` | — | — | — |
+| `idafa_no_tanwin` | المضافُ إلى ضميرٍ لا تنوينَ له: آخرُه الضميرُ لا النون. | مدقَّق | propext, Classical.choice, Quot.sound |
+| `mawsul_licensed` | — | مدقَّق | propext |
+| `mawsul_nodup` | — | مدقَّق | propext |
+| `mawsul_al` | الموصولُ المبدوءُ بأل تقرأ الأداةَ في صدره. | مدقَّق | propext |
+| `mawsul_dual_case` | مثنّى الموصول يُقرأ إعرابُه كالإشارة: من المدّ قبل النون. | مدقَّق | propext |
+| `al_is_marifa` | — | — | — |
+| `mudaf_is_marifa` | — | مدقَّق | propext |
+| `deposited_no_tanwin` | المودَعُ بالذات لا تنوينَ فيه — إلّا مَنْ: نونُها أصلٌ ساكنٌ بعد فتحٍ، فالخانةُ تقرؤها كتنوين | مدقَّق | propext |
+| `man_looks_like_tanwin` | المودَعُ بالذات لا تنوينَ فيه — إلّا مَنْ: نونُها أصلٌ ساكنٌ بعد فتحٍ، فالخانةُ تقرؤها كتنوين | مدقَّق | propext |
 
 ## الدرجة ١٥ — الوزنُ وشبكتُه: القالبُ يُرخَّص مرّةً لكلّ الأصول، والجبرُ يحفظ الأصل
 
