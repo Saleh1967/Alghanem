@@ -4,11 +4,11 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 20 |
+| مبرهن | 23 |
 | مفحوص_استقصاء | 12 |
-| مفحوص_بعينة | 0 |
+| مفحوص_بعينة | 1 |
 | دليل | 0 |
-| معلن | 6 |
+| معلن | 7 |
 | رأي | 0 |
 | مفتوح | 8 |
 | معلق | 14 |
@@ -35,6 +35,9 @@
 | SEQ-delim | ترميزُ الكلمة ذاتيُّ الحدّ: تُقرأ من رأس أيّ تيارٍ ويبقى ما بعدها بعينه | مبرهن | `lean:Slge.Sequence.decodeWord_encodeWord`<br>`lean:Slge.Sequence.encodeWord_prefix_free`<br>`test:tests/test_conformance.py::test_sequence_matches_lean`<br>`test:tests/test_cells.py::test_stream_refuses_unlicensed_and_is_prefix_free` |  |
 | SEQ-recover | فكُّ طيِّ المرخَّصة يعيدها بعينها | مبرهن | `lean:Slge.Sequence.slgeUnfold_slgeFold` |  |
 | SEQ-stream | تيارُ كلماتٍ مرخَّصةٍ يُفكّ كلُّه بترتيبه بلا فاصلٍ ولا حاملٍ زائد | مبرهن | `lean:Slge.Sequence.decode_encode`<br>`lean:Slge.Sequence.U_lt_two_pow_width` | الكلفةُ معلنة: cost(k) = (k+1) + ⌊log₂U(k)⌋+1 بتًّا؛ k=1: 9، k=2: 17 (من جدول Lean). |
+| WAZN-indep | ترخيصُ الكلمة من القالب وحدَه: الوزنُ يُرخَّص مرّةً لكلّ الأصول | مبرهن | `lean:Slge.Wazn.states_fill`<br>`lean:Slge.Wazn.licensed_fill_indep`<br>`test:tests/test_wazn.py::test_licence_is_root_independent` |  |
+| WAZN-root | الأصلُ يُستردّ من الصيغة بالقالب لكلّ قالبٍ سليمٍ ولكلّ أصل | مبرهن | `lean:Slge.Wazn.rootOf_fill`<br>`lean:Slge.Wazn.awzan_root`<br>`test:tests/test_wazn.py::test_fill_then_root_of_recovers_every_root` |  |
+| WAZN-table | 104 أوزانٍ مودَعة سليمةٌ ومرخَّصةٌ لكلّ أصل؛ بايثونُها مطابقٌ لجدول Lean | مبرهن | `lean:Slge.Wazn.awzan_wf`<br>`lean:Slge.Wazn.awzan_licensed`<br>`test:tests/test_conformance.py::test_wazn_matches_lean` |  |
 | ANSWER | كلُّ جملةٍ في الجواب لها وسمٌ وسند، والمُعيدُ لا يُسقطهما | مفحوص_استقصاء | `test:tests/test_answer.py::test_every_sentence_is_tagged`<br>`test:tests/test_answer.py::test_verbalizer_cannot_drop_tags` |  |
 | ENTRY | لا يدخل العمودَ إلّا شهادةُ بوّابة الغانم ذرّاتٍ، وتعود ذرّاتٍ بعينها | مفحوص_استقصاء | `test:tests/test_entry.py::test_kitabun_enters_as_five_cells_and_exits_byte_for_byte`<br>`test:tests/test_entry.py::test_every_cell_round_trips`<br>`test:tests/test_entry.py::test_non_atoms_are_refused_by_name` | الجسرُ ذرّة ← خانة هو `Slge.ofCell/toCell` المبرهَن؛ والذرّاتُ نفسُها من `gate.enter` في الغانم (A116-CANONICAL-TXT-1.1) لا من قارئٍ هنا. |
 | GRANT-forge | لا حقلَ حكمٍ يُملأ: الفحصُ يجري كلَّ منح | مفحوص_استقصاء | `test:tests/test_grant.py::test_verdict_cannot_be_forged`<br>`test:tests/test_grant.py::test_grant_requires_check_to_run` |  |
@@ -47,12 +50,14 @@
 | Q21-code | الشيفرةُ نفسُها لا تقفز: لا تستورد وحدةٌ وحدةَ طبقةٍ ليست من شروطها | مفحوص_استقصاء | `test:tests/test_order.py::test_modules_import_only_their_prerequisites` |  |
 | Q22 | الاستنتاجُ المعكوس: ‎U(1) = 87‎ و29 حاملًا ⇒ 3 متحرّكات ⇒ ‎116‎ | مفحوص_استقصاء | `test:tests/test_cells.py::test_inventory_is_derived_from_U1` |  |
 | Q24 | الظلُّ M/S يعجز والطيُّ يفرّق (ذَيْن/ذِين) | مفحوص_استقصاء | `test:tests/test_cells.py::test_shadow_fails_fold_separates` |  |
+| WAZN-sibawayh | هياكلُ الأوزان مقابل أبنية سيبويه المجمَّدة: 88/104 عنده؛ 16 مسمّاة؛ 126 من هياكله خارج الجدول | مفحوص_بعينة | `test:tests/test_wazn.py::test_skeletons_measured_against_sibawayh` | الحركاتُ معلَنةٌ من كتب الصرف لا مقيسة؛ الرباعيُّ والإعلالُ والمفعولُ المطلق والجامدُ خارج الجدول باسمها (DEBTS). |
 | DL1-DL6 | أقسامُ الوضع والدلالة والحقيقة والمجاز والمنطوق والمفهوم مغلقة | معلن | `test:tests/test_semantics.py::test_partitions_are_closed` |  |
 | GRANT-declared | ستّةُ جسورٍ وصلت بلا فحصٍ يعمل: أسماءٌ معلَنة بدَينها لا جسور | معلن | `test:tests/test_grant.py::test_only_one_rung_has_a_working_check` |  |
 | NAZM | ستّةُ أنماط تركيبٍ وثلاثُ علاقاتٍ منقولةٌ من تعقّل جداولَ معلَنة؛ لا قاعدةَ تعمل | معلن | `test:tests/test_nazm.py::test_six_patterns_three_relations_as_in_taaqol` | المصدر sonaiso/taaqol-gpt@91dad10 (formal_shape_composition.py، رتبته هناك مرشَّح). ما له بتٌّ هنا شرطٌ واحد: توافقُ الإعراب (حالةُ الخانة الأخيرة). |
 | Q19 | كلُّ زوجٍ من الأزواج يقسم الـ29 | معلن | `test:tests/test_phonology.py::test_pairs_partition` | صادقٌ بالبناء (السالبُ متمّمُ الموجب)؛ فهو تعريفٌ لا اكتشاف. |
 | Q20 | الجوفُ للمدّ الثلاث | معلن | `test:tests/test_phonology.py::test_jawf_is_madd` |  |
 | RANK-THUBUT | تصنيفُ الدليل قطعيًّا أو ظنّيًّا | معلن | `test:tests/test_rank.py::test_evidence_grades` | المتواترُ والتعريفُ قطعيّان؛ الآحادُ والمشهورُ والمعجمُ والمشاهدةُ (حكمٌ على صفة) ظنّيّة — ج٣ ¶275، ¶277، ¶713؛ التفكير. قاعدةٌ معلنةٌ لا مبرهنة. |
+| WAZN-awzan | أوزانُ الفعل والمصدر والمشتقّات والتأنيث والجموع كما في كتب الصرف | معلن | `test:tests/test_wazn.py::test_masdar_of_mazid_is_a_declared_pair_of_deposited_awzan` |  |
 | DL4 | كشفُ النسب بالكلمات المفتاحيّة | مفتوح | — | حُذف `nisba_ok`: البحثُ عن «فاعل» في نصٍّ ليس كشفًا للإسناد. يُبنى في طبقة النظم. |
 | GRID-wasl | همزةُ الأوزان VII–X مكتوبةٌ ‎(ء، فتح)‎ في الشبكة | مفتوح | — | يُفحص على `sibawayh-abniya.tsv` في الغانم قبل أيّ تغيير. |
 | MAFHUM-open | طريقُ مخالفة الغاية ومخالفة العدد إلى صورة | مفتوح | — | `knowledge.MAFHUM_ROUTE` يكتب الموافقةَ ومخالفتي الصفة والشرط وحدها. |

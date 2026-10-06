@@ -6,3 +6,4 @@ import Slge.Sequence
 import Slge.Consistency
 import Slge.Categories
 import Slge.Grant
+import Slge.Wazn

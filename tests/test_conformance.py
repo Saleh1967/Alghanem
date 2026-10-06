@@ -10,7 +10,7 @@ import csv
 from pathlib import Path
 
 from conftest import ROOT, licensed_words
-from slge.cells import ALPHABET, CELLS, STATES, Cell, a116_code, count, fold, index
+from slge.cells import ALPHABET, CELLS, STATES, Cell, a116_code, count, fold, index, licensed
 from slge.knowledge import Degree, Form, productive
 
 OUT = ROOT / "formal" / "out"
@@ -83,3 +83,18 @@ def test_categories_match_lean() -> None:
     assert [r[1] for r in rows] == ["-".join(str(index(c)) for c in w) for w in PRONOUNS]
     assert [int(r[2]) for r in rows] == list(fingerprints())
     assert len(set(fingerprints())) == 12 and all(pronoun(w) for w in PRONOUNS)
+
+
+def test_wazn_matches_lean() -> None:
+    """الأوزانُ المودَعة (104) بميزانها خاناتٍ، ترخيصُها، وردُّها الأصلَ = جدولُ `Wazn.awzan`."""
+
+    from slge.wazn import AWZAN, FAL, mizan, root_of
+
+    rows = _rows("wazn.csv")
+    assert len(rows) == len(AWZAN) == 104
+    for r, w in zip(rows, AWZAN, strict=True):
+        m = mizan(w.template)
+        assert r[1] == "-".join(str(index(c)) for c in m), w.name
+        assert r[2] == "true" and licensed(m), w.name
+        assert r[3] == "-".join(str(ALPHABET.index(c)) for c in FAL)
+        assert root_of(w.template, m) == FAL

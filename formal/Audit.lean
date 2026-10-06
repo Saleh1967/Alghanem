@@ -45,3 +45,9 @@ import Slge
 #print axioms Slge.Grant.empty_ladder_grants_nothing
 #print axioms Slge.Grant.mursam_sound
 #print axioms Slge.Grant.mursam_refuses_initial_sukun
+#print axioms Slge.Wazn.rootOf_fill
+#print axioms Slge.Wazn.states_fill
+#print axioms Slge.Wazn.licensed_fill_indep
+#print axioms Slge.Wazn.awzan_wf
+#print axioms Slge.Wazn.awzan_licensed
+#print axioms Slge.Wazn.awzan_root

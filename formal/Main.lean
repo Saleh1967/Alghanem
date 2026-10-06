@@ -88,6 +88,16 @@ def main (args : List String) : IO Unit := do
     for w in Categories.pronouns do
       let key := "-".intercalate (w.map fun c => toString c.index)
       IO.println s!"pronoun,{key},{slgeFold w}"
+  | ["wazn"] =>
+    -- لكلّ وزنٍ مودَع: رقمُه، وميزانُه خاناتٍ (رموزُ SLGE)، وهل يردّ الأصلَ (ف، ع، ل).
+    let mut n := 0
+    for t in Wazn.awzan do
+      let m := Wazn.mizan t
+      let key := "-".intercalate (m.map fun c => toString c.index)
+      let back := ([0, 1, 2] : List (Fin 3)).map fun i => match Wazn.rootOf t m i with
+        | some c => toString c.val | none => "none"
+      IO.println s!"{n},{key},{licensed m},{"-".intercalate back}"
+      n := n + 1
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

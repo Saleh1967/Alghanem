@@ -24,11 +24,11 @@
 
 ```sh
 pip install -r requirements-dev.txt && pip install -e . --no-deps
-ruff check . && mypy && pytest -q                     # 84 اختبارًا
+ruff check . && mypy && pytest -q                     # 121 اختبارًا
 python tools/gen_status.py --check
 python tools/gen_registry.py --check
 python -c "from slge.guard import breaches; print(breaches() or 'لا خرق')"
-cd formal && lake build && lake env lean Audit.lean   # 44 مبرهنة؛ propext/Quot.sound فقط
+cd formal && lake build && lake env lean Audit.lean   # 50 مبرهنة؛ propext/Quot.sound فقط
 ```
 
 وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه، وأثبت وجودَ كلّ ملفٍّ تذكره قبل الكلام عنه.
