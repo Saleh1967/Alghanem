@@ -1,0 +1,2703 @@
+[
+{
+"sura": 2,
+"verse": 28,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": null
+},
+{
+"sura": 2,
+"verse": 68,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"نا",
+"POSS_PRON",
+"Suffix"
+]
+},
+{
+"sura": 2,
+"verse": 69,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"نا",
+"POSS_PRON",
+"Suffix"
+]
+},
+{
+"sura": 2,
+"verse": 70,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"نا",
+"POSS_PRON",
+"Suffix"
+]
+},
+{
+"sura": 2,
+"verse": 130,
+"word": "وَمَنْ",
+"seg": "من",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 2,
+"verse": 133,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ه",
+"POSS_PRON",
+"Suffix"
+]
+},
+{
+"sura": 2,
+"verse": 138,
+"word": "وَمَنْ",
+"seg": "من",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 2,
+"verse": 142,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ناس",
+"NOUN_CONCRETE",
+"Stem"
+]
+},
+{
+"sura": 2,
+"verse": 148,
+"word": "أَيْنَمَا",
+"seg": "أين",
+"prev": [
+"ات",
+"NSUFF_FEM_PL",
+"Suffix"
+]
+},
+{
+"sura": 2,
+"verse": 211,
+"word": "كَمْ",
+"seg": "كم",
+"prev": [
+"إسرائيل",
+"NOUN_PROP_FOREIGN",
+"Stem"
+]
+},
+{
+"sura": 2,
+"verse": 214,
+"word": "مَتَى",
+"seg": "متى",
+"prev": [
+"ه",
+"POSS_PRON",
+"Suffix"
+]
+},
+{
+"sura": 2,
+"verse": 249,
+"word": "كَمْ",
+"seg": "كم",
+"prev": [
+"له",
+"NOUN_PROP",
+"Stem"
+]
+},
+{
+"sura": 2,
+"verse": 259,
+"word": "كَمْ",
+"seg": "كم",
+"prev": [
+"قال",
+"PV",
+"Stem"
+]
+},
+{
+"sura": 2,
+"verse": 259,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"عظام",
+"NOUN_CONCRETE",
+"Stem"
+]
+},
+{
+"sura": 2,
+"verse": 260,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"ي",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 3,
+"verse": 6,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"أرحام",
+"NOUN_CONCRETE",
+"Stem"
+]
+},
+{
+"sura": 3,
+"verse": 25,
+"word": "فَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 3,
+"verse": 86,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": null
+},
+{
+"sura": 3,
+"verse": 101,
+"word": "وَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 3,
+"verse": 112,
+"word": "أَيْنَما",
+"seg": "أين",
+"prev": [
+"ة",
+"NSUFF_FEM_SG",
+"Suffix"
+]
+},
+{
+"sura": 3,
+"verse": 137,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 4,
+"verse": 21,
+"word": "وَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 4,
+"verse": 39,
+"word": "وَمَاذَا",
+"seg": "ماذا",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 4,
+"verse": 41,
+"word": "فَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 4,
+"verse": 50,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 4,
+"verse": 62,
+"word": "فَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 4,
+"verse": 75,
+"word": "وَمَا",
+"seg": "ما",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 4,
+"verse": 78,
+"word": "فَمَالِ",
+"seg": "ما",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 4,
+"verse": 87,
+"word": "وَمَنْ",
+"seg": "من",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 4,
+"verse": 122,
+"word": "وَمَنْ",
+"seg": "من",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 4,
+"verse": 125,
+"word": "وَمَنْ",
+"seg": "من",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 5,
+"verse": 31,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"ه",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 5,
+"verse": 43,
+"word": "وَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 5,
+"verse": 64,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نفق",
+"IV",
+"Stem"
+]
+},
+{
+"sura": 5,
+"verse": 75,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 6,
+"verse": 6,
+"word": "كَمْ",
+"seg": "كم",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 6,
+"verse": 11,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 6,
+"verse": 21,
+"word": "وَمَنْ",
+"seg": "من",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 6,
+"verse": 22,
+"word": "أَيْنَ",
+"seg": "أين",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 6,
+"verse": 24,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 6,
+"verse": 46,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 6,
+"verse": 65,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 6,
+"verse": 81,
+"word": "وَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 6,
+"verse": 93,
+"word": "وَمَنْ",
+"seg": "من",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 6,
+"verse": 95,
+"word": "فَأَنَّى",
+"seg": "أنى",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 7,
+"verse": 4,
+"word": "وَكَمْ",
+"seg": "كم",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 7,
+"verse": 12,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"قال",
+"PV",
+"Stem"
+]
+},
+{
+"sura": 7,
+"verse": 37,
+"word": "أَيْنَ",
+"seg": "أين",
+"prev": [
+"وا",
+"PVSUFF_SUBJ:3MP",
+"Suffix"
+]
+},
+{
+"sura": 7,
+"verse": 84,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 7,
+"verse": 86,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 7,
+"verse": 93,
+"word": "فَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 7,
+"verse": 103,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 7,
+"verse": 129,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"IV",
+"Stem"
+]
+},
+{
+"sura": 7,
+"verse": 187,
+"word": "أَيَّانَ",
+"seg": "أيان",
+"prev": [
+"(null)",
+"CASE_DEF_GEN",
+"Suffix"
+]
+},
+{
+"sura": 9,
+"verse": 7,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": null
+},
+{
+"sura": 9,
+"verse": 8,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": null
+},
+{
+"sura": 9,
+"verse": 38,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"وا",
+"PVSUFF_SUBJ:3MP",
+"Suffix"
+]
+},
+{
+"sura": 10,
+"verse": 14,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"IV",
+"Stem"
+]
+},
+{
+"sura": 10,
+"verse": 15,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"قل",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 10,
+"verse": 31,
+"word": "أَمَّنْ",
+"seg": "من",
+"prev": [
+"أ",
+"INTERROG",
+"Prefix"
+]
+},
+{
+"sura": 10,
+"verse": 32,
+"word": "فَأَنَّى",
+"seg": "أنى",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 10,
+"verse": 34,
+"word": "فَأَنَّى",
+"seg": "أنى",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 10,
+"verse": 35,
+"word": "أَمَّنْ",
+"seg": "من",
+"prev": [
+"أ",
+"INTERROG",
+"Prefix"
+]
+},
+{
+"sura": 10,
+"verse": 35,
+"word": "فَمَا",
+"seg": "ما",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 10,
+"verse": 35,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"كم",
+"PRON_2MP",
+"Suffix"
+]
+},
+{
+"sura": 10,
+"verse": 39,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 10,
+"verse": 48,
+"word": "مَتَى",
+"seg": "متى",
+"prev": [
+"None",
+"None",
+"Other_i3rab"
+]
+},
+{
+"sura": 10,
+"verse": 73,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 11,
+"verse": 18,
+"word": "وَمَنْ",
+"seg": "من",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 11,
+"verse": 84,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"له",
+"NOUN_PROP",
+"Stem"
+]
+},
+{
+"sura": 12,
+"verse": 11,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"None",
+"None",
+"Other_i3rab"
+]
+},
+{
+"sura": 12,
+"verse": 25,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ت",
+"SUFF_FEM_TA",
+"Suffix"
+]
+},
+{
+"sura": 12,
+"verse": 50,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ه",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 12,
+"verse": 51,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"قال",
+"PV",
+"Stem"
+]
+},
+{
+"sura": 12,
+"verse": 109,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 13,
+"verse": 32,
+"word": "فَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 14,
+"verse": 24,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"ر",
+"IV",
+"Stem"
+]
+},
+{
+"sura": 14,
+"verse": 45,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"كم",
+"PRON_2MP",
+"Suffix"
+]
+},
+{
+"sura": 15,
+"verse": 32,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"إبليس",
+"NOUN_PROP_FOREIGN",
+"Stem"
+]
+},
+{
+"sura": 15,
+"verse": 56,
+"word": "وَمَنْ",
+"seg": "من",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 15,
+"verse": 57,
+"word": "فَمَا",
+"seg": "ما",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 16,
+"verse": 21,
+"word": "أَيَّانَ",
+"seg": "أيان",
+"prev": [
+"ون",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 16,
+"verse": 27,
+"word": "أَيْنَ",
+"seg": "أين",
+"prev": [
+"قول",
+"IV",
+"Stem"
+]
+},
+{
+"sura": 16,
+"verse": 36,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 17,
+"verse": 17,
+"word": "وَكَمْ",
+"seg": "كم",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 17,
+"verse": 21,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 17,
+"verse": 48,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 17,
+"verse": 51,
+"word": "مَتَى",
+"seg": "متى",
+"prev": [
+"None",
+"None",
+"Other_i3rab"
+]
+},
+{
+"sura": 18,
+"verse": 19,
+"word": "كَمْ",
+"seg": "كم",
+"prev": [
+"هم",
+"PRON_3MP",
+"Suffix"
+]
+},
+{
+"sura": 18,
+"verse": 68,
+"word": "وَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 19,
+"verse": 29,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"وا",
+"PVSUFF_SUBJ:3MP",
+"Suffix"
+]
+},
+{
+"sura": 19,
+"verse": 31,
+"word": "أَيْنَمَا",
+"seg": "أين",
+"prev": [
+"ا",
+"CASE_INDEF_(ACC_GEN)",
+"Suffix"
+]
+},
+{
+"sura": 19,
+"verse": 74,
+"word": "وَكَمْ",
+"seg": "كم",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 19,
+"verse": 98,
+"word": "وَكَمْ",
+"seg": "كم",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 20,
+"verse": 51,
+"word": "فَمَا",
+"seg": "ما",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 20,
+"verse": 95,
+"word": "فَمَا",
+"seg": "ما",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 20,
+"verse": 128,
+"word": "كَمْ",
+"seg": "كم",
+"prev": [
+"هم",
+"PRON",
+"Stem"
+]
+},
+{
+"sura": 21,
+"verse": 11,
+"word": "وَكَمْ",
+"seg": "كم",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 21,
+"verse": 38,
+"word": "مَتَى",
+"seg": "متى",
+"prev": [
+"None",
+"None",
+"Other_i3rab"
+]
+},
+{
+"sura": 21,
+"verse": 42,
+"word": "مَنْ",
+"seg": "من",
+"prev": [
+"قل",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 21,
+"verse": 52,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ه",
+"POSS_PRON",
+"Suffix"
+]
+},
+{
+"sura": 21,
+"verse": 59,
+"word": "مَنْ",
+"seg": "من",
+"prev": [
+"وا",
+"PVSUFF_SUBJ:3MP",
+"Suffix"
+]
+},
+{
+"sura": 22,
+"verse": 44,
+"word": "فَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 23,
+"verse": 86,
+"word": "مَنْ",
+"seg": "من",
+"prev": [
+"قل",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 23,
+"verse": 88,
+"word": "مَنْ",
+"seg": "من",
+"prev": [
+"قل",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 23,
+"verse": 89,
+"word": "فَأَنَّى",
+"seg": "أنى",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 23,
+"verse": 112,
+"word": "كَمْ",
+"seg": "كم",
+"prev": [
+"قال",
+"PV",
+"Stem"
+]
+},
+{
+"sura": 25,
+"verse": 9,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 25,
+"verse": 42,
+"word": "مَنْ",
+"seg": "من",
+"prev": [
+"عذاب",
+"GERUND",
+"Stem"
+]
+},
+{
+"sura": 25,
+"verse": 45,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"ك",
+"POSS_PRON",
+"Suffix"
+]
+},
+{
+"sura": 26,
+"verse": 7,
+"word": "كَمْ",
+"seg": "كم",
+"prev": [
+"(null)",
+"CASE_DEF_GEN",
+"Suffix"
+]
+},
+{
+"sura": 26,
+"verse": 70,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ه",
+"POSS_PRON",
+"Suffix"
+]
+},
+{
+"sura": 26,
+"verse": 92,
+"word": "أَيْنَمَا",
+"seg": "أين",
+"prev": [
+"هم",
+"PRON",
+"Stem"
+]
+},
+{
+"sura": 26,
+"verse": 221,
+"word": "مَنْ",
+"seg": "من",
+"prev": [
+"على",
+"PREP",
+"Stem"
+]
+},
+{
+"sura": 27,
+"verse": 14,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 27,
+"verse": 51,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 27,
+"verse": 60,
+"word": "أَمَّنْ",
+"seg": "من",
+"prev": [
+"أ",
+"INTERROG",
+"Prefix"
+]
+},
+{
+"sura": 27,
+"verse": 61,
+"word": "أَمَّنْ",
+"seg": "من",
+"prev": [
+"أ",
+"INTERROG",
+"Prefix"
+]
+},
+{
+"sura": 27,
+"verse": 62,
+"word": "أَمَّنْ",
+"seg": "من",
+"prev": [
+"أ",
+"INTERROG",
+"Prefix"
+]
+},
+{
+"sura": 27,
+"verse": 63,
+"word": "أَمَّنْ",
+"seg": "من",
+"prev": [
+"أ",
+"INTERROG",
+"Prefix"
+]
+},
+{
+"sura": 27,
+"verse": 63,
+"word": "وَمَنْ",
+"seg": "من",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 27,
+"verse": 64,
+"word": "أَمَّنْ",
+"seg": "من",
+"prev": [
+"أ",
+"INTERROG",
+"Prefix"
+]
+},
+{
+"sura": 27,
+"verse": 64,
+"word": "وَمَنْ",
+"seg": "من",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 27,
+"verse": 65,
+"word": "أَيَّانَ",
+"seg": "أيان",
+"prev": [
+"ون",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 27,
+"verse": 69,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 27,
+"verse": 71,
+"word": "مَتَى",
+"seg": "متى",
+"prev": [
+"None",
+"None",
+"Other_i3rab"
+]
+},
+{
+"sura": 28,
+"verse": 23,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"قال",
+"PV",
+"Stem"
+]
+},
+{
+"sura": 28,
+"verse": 40,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 28,
+"verse": 50,
+"word": "وَمَنْ",
+"seg": "من",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 28,
+"verse": 58,
+"word": "وَكَمْ",
+"seg": "كم",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 28,
+"verse": 62,
+"word": "أَيْنَ",
+"seg": "أين",
+"prev": [
+"قول",
+"IV",
+"Stem"
+]
+},
+{
+"sura": 28,
+"verse": 74,
+"word": "أَيْنَ",
+"seg": "أين",
+"prev": [
+"قول",
+"IV",
+"Stem"
+]
+},
+{
+"sura": 29,
+"verse": 19,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 29,
+"verse": 20,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 29,
+"verse": 61,
+"word": "مَنْ",
+"seg": "من",
+"prev": [
+"هم",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 29,
+"verse": 61,
+"word": "فَأَنَّى",
+"seg": "أنى",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 29,
+"verse": 63,
+"word": "مَنْ",
+"seg": "من",
+"prev": [
+"هم",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 30,
+"verse": 9,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 30,
+"verse": 32,
+"word": "مِنَ",
+"seg": "من",
+"prev": null
+},
+{
+"sura": 30,
+"verse": 42,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 30,
+"verse": 48,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"سماء",
+"NOUN_CONCRETE",
+"Stem"
+]
+},
+{
+"sura": 30,
+"verse": 50,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"له",
+"NOUN_PROP",
+"Stem"
+]
+},
+{
+"sura": 31,
+"verse": 25,
+"word": "مَنْ",
+"seg": "من",
+"prev": [
+"هم",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 32,
+"verse": 26,
+"word": "كَمْ",
+"seg": "كم",
+"prev": [
+"هم",
+"PRON",
+"Stem"
+]
+},
+{
+"sura": 32,
+"verse": 28,
+"word": "مَتَى",
+"seg": "متى",
+"prev": [
+"None",
+"None",
+"Other_i3rab"
+]
+},
+{
+"sura": 33,
+"verse": 17,
+"word": "مَنْ",
+"seg": "من",
+"prev": [
+"قل",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 34,
+"verse": 29,
+"word": "مَتَى",
+"seg": "متى",
+"prev": [
+"None",
+"None",
+"Other_i3rab"
+]
+},
+{
+"sura": 34,
+"verse": 45,
+"word": "فَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 34,
+"verse": 52,
+"word": "وَأَنَّى",
+"seg": "أنى",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 35,
+"verse": 3,
+"word": "فَأَنَّى",
+"seg": "أنى",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 35,
+"verse": 26,
+"word": "فَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 35,
+"verse": 44,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 36,
+"verse": 31,
+"word": "كَمْ",
+"seg": "كم",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 36,
+"verse": 48,
+"word": "مَتَى",
+"seg": "متى",
+"prev": [
+"None",
+"None",
+"Other_i3rab"
+]
+},
+{
+"sura": 36,
+"verse": 66,
+"word": "فَأَنَّى",
+"seg": "أنى",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 37,
+"verse": 25,
+"word": "مَا",
+"seg": "ما",
+"prev": null
+},
+{
+"sura": 37,
+"verse": 73,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 37,
+"verse": 87,
+"word": "فَمَا",
+"seg": "ما",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 37,
+"verse": 92,
+"word": "مَا",
+"seg": "ما",
+"prev": null
+},
+{
+"sura": 37,
+"verse": 154,
+"word": "مَا",
+"seg": "ما",
+"prev": null
+},
+{
+"sura": 37,
+"verse": 154,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"كم",
+"PRON_2MP",
+"Suffix"
+]
+},
+{
+"sura": 38,
+"verse": 3,
+"word": "كَمْ",
+"seg": "كم",
+"prev": null
+},
+{
+"sura": 38,
+"verse": 62,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"وا",
+"PVSUFF_SUBJ:3MP",
+"Suffix"
+]
+},
+{
+"sura": 38,
+"verse": 75,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"إبليس",
+"NOUN_PROP_FOREIGN",
+"Stem"
+]
+},
+{
+"sura": 39,
+"verse": 6,
+"word": "فَأَنَّى",
+"seg": "أنى",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 39,
+"verse": 9,
+"word": "أَمَّنْ",
+"seg": "من",
+"prev": [
+"أ",
+"INTERROG",
+"Prefix"
+]
+},
+{
+"sura": 40,
+"verse": 5,
+"word": "فَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 40,
+"verse": 21,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 40,
+"verse": 41,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"None",
+"None",
+"Other_i3rab"
+]
+},
+{
+"sura": 40,
+"verse": 62,
+"word": "فَأَنَّى",
+"seg": "أنى",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 40,
+"verse": 73,
+"word": "أَيْنَ",
+"seg": "أين",
+"prev": [
+"هم",
+"PRON",
+"Stem"
+]
+},
+{
+"sura": 40,
+"verse": 82,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 41,
+"verse": 47,
+"word": "أَيْنَ",
+"seg": "أين",
+"prev": [
+"هم",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 42,
+"verse": 17,
+"word": "وَمَا",
+"seg": "ما",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 42,
+"verse": 52,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"دري",
+"IV",
+"Stem"
+]
+},
+{
+"sura": 43,
+"verse": 6,
+"word": "وَكَمْ",
+"seg": "كم",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 43,
+"verse": 25,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"نظر",
+"CV",
+"Stem"
+]
+},
+{
+"sura": 43,
+"verse": 87,
+"word": "فَأَنَّى",
+"seg": "أنى",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 44,
+"verse": 25,
+"word": "كَمْ",
+"seg": "كم",
+"prev": null
+},
+{
+"sura": 45,
+"verse": 32,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"دري",
+"IV",
+"Stem"
+]
+},
+{
+"sura": 46,
+"verse": 9,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"دري",
+"IV",
+"Stem"
+]
+},
+{
+"sura": 47,
+"verse": 10,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 47,
+"verse": 18,
+"word": "فَأَنَّى",
+"seg": "أنى",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 47,
+"verse": 27,
+"word": "فَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 50,
+"verse": 6,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"هم",
+"POSS_PRON",
+"Suffix"
+]
+},
+{
+"sura": 50,
+"verse": 36,
+"word": "وَكَمْ",
+"seg": "كم",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 51,
+"verse": 12,
+"word": "أَيَّانَ",
+"seg": "أيان",
+"prev": [
+"ون",
+"IVSUFF_SUBJ:MP_MOOD:I",
+"Suffix"
+]
+},
+{
+"sura": 51,
+"verse": 31,
+"word": "فَمَا",
+"seg": "ما",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 53,
+"verse": 26,
+"word": "وَكَمْ",
+"seg": "كم",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 54,
+"verse": 16,
+"word": "فَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 54,
+"verse": 18,
+"word": "فَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 54,
+"verse": 21,
+"word": "فَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 54,
+"verse": 30,
+"word": "فَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 56,
+"verse": 8,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ة",
+"NSUFF_FEM_SG",
+"Suffix"
+]
+},
+{
+"sura": 56,
+"verse": 9,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"None",
+"None",
+"Other_i3rab"
+]
+},
+{
+"sura": 56,
+"verse": 27,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"يمين",
+"NOUN_ABSTRACT",
+"Stem"
+]
+},
+{
+"sura": 56,
+"verse": 41,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"شمال",
+"NOUN_ABSTRACT",
+"Stem"
+]
+},
+{
+"sura": 57,
+"verse": 4,
+"word": "أَيْنَمَا",
+"seg": "أين",
+"prev": [
+"كم",
+"PRON_2MP",
+"Suffix"
+]
+},
+{
+"sura": 58,
+"verse": 7,
+"word": "أَيْنَ",
+"seg": "أين",
+"prev": [
+"هم",
+"PRON_3MP",
+"Suffix"
+]
+},
+{
+"sura": 67,
+"verse": 17,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"None",
+"None",
+"Other_i3rab"
+]
+},
+{
+"sura": 67,
+"verse": 18,
+"word": "فَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 67,
+"verse": 20,
+"word": "أَمَّنْ",
+"seg": "من",
+"prev": [
+"أ",
+"INTERROG",
+"Prefix"
+]
+},
+{
+"sura": 67,
+"verse": 21,
+"word": "أَمَّنْ",
+"seg": "من",
+"prev": [
+"أ",
+"INTERROG",
+"Prefix"
+]
+},
+{
+"sura": 67,
+"verse": 22,
+"word": "أَمَّنْ",
+"seg": "من",
+"prev": [
+"أ",
+"INTERROG",
+"Prefix"
+]
+},
+{
+"sura": 67,
+"verse": 25,
+"word": "مَتَى",
+"seg": "متى",
+"prev": [
+"None",
+"None",
+"Other_i3rab"
+]
+},
+{
+"sura": 68,
+"verse": 36,
+"word": "مَا",
+"seg": "ما",
+"prev": null
+},
+{
+"sura": 68,
+"verse": 36,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"كم",
+"PRON_2MP",
+"Suffix"
+]
+},
+{
+"sura": 69,
+"verse": 2,
+"word": "مَا",
+"seg": "ما",
+"prev": null
+},
+{
+"sura": 69,
+"verse": 3,
+"word": "وَمَا",
+"seg": "ما",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 69,
+"verse": 3,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ك",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 69,
+"verse": 26,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"در",
+"IV",
+"Stem"
+]
+},
+{
+"sura": 70,
+"verse": 36,
+"word": "فَمَالِ",
+"seg": "ما",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 71,
+"verse": 13,
+"word": "مَا",
+"seg": "ما",
+"prev": null
+},
+{
+"sura": 71,
+"verse": 15,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"وا",
+"SUBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 72,
+"verse": 24,
+"word": "مَنْ",
+"seg": "من",
+"prev": [
+"None",
+"None",
+"Other_i3rab"
+]
+},
+{
+"sura": 73,
+"verse": 17,
+"word": "فَكَيْفَ",
+"seg": "كيف",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 74,
+"verse": 19,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"قتل",
+"PV_PASS",
+"Stem"
+]
+},
+{
+"sura": 74,
+"verse": 20,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"(null)",
+"PVSUFF_SUBJ:3MS",
+"Suffix"
+]
+},
+{
+"sura": 74,
+"verse": 27,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ك",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 74,
+"verse": 42,
+"word": "مَا",
+"seg": "ما",
+"prev": null
+},
+{
+"sura": 75,
+"verse": 6,
+"word": "أَيَّانَ",
+"seg": "أيان",
+"prev": [
+"سأل",
+"IV",
+"Stem"
+]
+},
+{
+"sura": 75,
+"verse": 10,
+"word": "أَيْنَ",
+"seg": "أين",
+"prev": [
+"ئذ",
+"POSS_PRON",
+"Suffix"
+]
+},
+{
+"sura": 75,
+"verse": 27,
+"word": "مَنْ",
+"seg": "من",
+"prev": [
+"قيل",
+"PV_PASS",
+"Stem"
+]
+},
+{
+"sura": 77,
+"verse": 12,
+"word": "لِأَيِّ",
+"seg": "أي",
+"prev": [
+"ل",
+"PREP",
+"Prefix"
+]
+},
+{
+"sura": 77,
+"verse": 14,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ك",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 79,
+"verse": 42,
+"word": "أَيَّانَ",
+"seg": "أيان",
+"prev": [
+"(null)",
+"CASE_DEF_GEN",
+"Suffix"
+]
+},
+{
+"sura": 81,
+"verse": 26,
+"word": "فَأَيْنَ",
+"seg": "أين",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 82,
+"verse": 6,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"(null)",
+"CASE_DEF_GEN",
+"Suffix"
+]
+},
+{
+"sura": 82,
+"verse": 17,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ك",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 82,
+"verse": 18,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ثم",
+"CONJ",
+"Stem"
+]
+},
+{
+"sura": 82,
+"verse": 18,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ك",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 83,
+"verse": 8,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ك",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 83,
+"verse": 19,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ك",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 86,
+"verse": 2,
+"word": "وَمَا",
+"seg": "ما",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 86,
+"verse": 2,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ك",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 88,
+"verse": 17,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"إبل",
+"NOUN_CONCRETE",
+"Stem"
+]
+},
+{
+"sura": 88,
+"verse": 18,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"سماء",
+"NOUN_CONCRETE",
+"Stem"
+]
+},
+{
+"sura": 88,
+"verse": 19,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"جبال",
+"NOUN_CONCRETE",
+"Stem"
+]
+},
+{
+"sura": 88,
+"verse": 20,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"(null)",
+"CASE_DEF_GEN",
+"Suffix"
+]
+},
+{
+"sura": 89,
+"verse": 6,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"ر",
+"IV",
+"Stem"
+]
+},
+{
+"sura": 89,
+"verse": 23,
+"word": "وَأَنَّى",
+"seg": "أنى",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 90,
+"verse": 12,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ك",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 95,
+"verse": 7,
+"word": "فَمَا",
+"seg": "ما",
+"prev": [
+"ف",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 97,
+"verse": 2,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ك",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 99,
+"verse": 3,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"(null)",
+"CASE_DEF_GEN",
+"Suffix"
+]
+},
+{
+"sura": 101,
+"verse": 2,
+"word": "مَا",
+"seg": "ما",
+"prev": null
+},
+{
+"sura": 101,
+"verse": 3,
+"word": "وَمَا",
+"seg": "ما",
+"prev": [
+"و",
+"CONJ",
+"Prefix"
+]
+},
+{
+"sura": 101,
+"verse": 3,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ك",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 101,
+"verse": 10,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ك",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 104,
+"verse": 5,
+"word": "مَا",
+"seg": "ما",
+"prev": [
+"ك",
+"OBJ_PRON",
+"Suffix"
+]
+},
+{
+"sura": 105,
+"verse": 1,
+"word": "كَيْفَ",
+"seg": "كيف",
+"prev": [
+"ر",
+"IV",
+"Stem"
+]
+}
+]

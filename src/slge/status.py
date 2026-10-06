@@ -176,6 +176,31 @@ _DECLARED: tuple[Claim, ...] = (
        "lean:Slge.Ishara.witnessed_subset",
        "test:tests/test_ishara.py::test_gate_witnesses_are_the_law_forms",
        note="الدلالةُ (قريب/بعيد، عدد، جنس) من الحصر المُرسَل معلَنة."),
+    # — أسماءُ الاستفهام —
+    _c("ISTIFHAM-ayy",
+       "أَيّ المعربُ الوحيد: صورُه تختلف في الخانة الأخيرة لا غير؛ وسائرُها صورةٌ واحدة", _P,
+       "lean:Slge.Istifham.caseOf_ayy", "lean:Slge.Istifham.ayy_differs_only_in_state",
+       "lean:Slge.Istifham.ayy_three_forms", "lean:Slge.Istifham.mabni_single_form",
+       "test:tests/test_istifham.py::test_ayy_is_the_only_declinable"),
+    _c("ISTIFHAM-tarkib",
+       "مَاذَا = مَا ++ ذَا، أَمَّنْ = أَمْ ++ مَنْ، مَنْ ذَا وصلٌ مرخَّص؛ وما بعد الجارّ تحذف ألفَها "
+       "ثمّ يُدغَم", _P,
+       "lean:Slge.Istifham.madha_is_ma_dha", "lean:Slge.Istifham.man_dha_junction",
+       "lean:Slge.Istifham.amman_is_am_man", "lean:Slge.Istifham.ma_after_jarr",
+       "lean:Slge.Istifham.amma_is_an_ma_idgham", "lean:Slge.Istifham.mimma_is_min_ma_idgham",
+       "lean:Slge.Istifham.idghamNM_length",
+       "test:tests/test_istifham.py::test_composition_and_ma_after_jarr"),
+    _c("ISTIFHAM-forms",
+       "22 صورةً مرخَّصةً متباينة، 21 منها شواهدُ البوّابة بعينها؛ والهمزةُ حرفٌ متّصل", _P,
+       "lean:Slge.Istifham.forms_licensed", "lean:Slge.Istifham.forms_nodup",
+       "lean:Slge.Istifham.hamza_prefix_licensed",
+       "test:tests/test_conformance.py::test_istifham_matches_lean"),
+    _c("ISTIFHAM-sadara",
+       "الصدارة على MASAQ: 100/251 في صدر الآية أو بعد عاطف/جارّ/همزة؛ 151 بعد فعل قولٍ ونظرٍ "
+       "وسؤال", _S,
+       "test:tests/test_istifham.py::test_tiers_and_index",
+       note="صدارةُ جملةٍ لا آية: لا تُقاس بلا حدٍّ للجملة — دَينٌ على النظم. الدلالةُ من الحصر "
+            "المُرسَل معلَنة."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

@@ -13,3 +13,4 @@ import Slge.Afal
 import Slge.Rawabit
 import Slge.Damair
 import Slge.Ishara
+import Slge.Istifham

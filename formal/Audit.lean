@@ -232,3 +232,17 @@ import Slge
 #print axioms Slge.Ishara.duals_have_case
 #print axioms Slge.Ishara.mabni_no_case
 #print axioms Slge.Ishara.witnessed_subset
+#print axioms Slge.Istifham.caseOf_ayy
+#print axioms Slge.Istifham.ayy_differs_only_in_state
+#print axioms Slge.Istifham.ayy_three_forms
+#print axioms Slge.Istifham.mabni_single_form
+#print axioms Slge.Istifham.madha_is_ma_dha
+#print axioms Slge.Istifham.man_dha_junction
+#print axioms Slge.Istifham.amman_is_am_man
+#print axioms Slge.Istifham.ma_after_jarr
+#print axioms Slge.Istifham.amma_is_an_ma_idgham
+#print axioms Slge.Istifham.mimma_is_min_ma_idgham
+#print axioms Slge.Istifham.idghamNM_length
+#print axioms Slge.Istifham.hamza_prefix_licensed
+#print axioms Slge.Istifham.forms_licensed
+#print axioms Slge.Istifham.forms_nodup

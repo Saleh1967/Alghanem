@@ -172,3 +172,14 @@ def test_ishara_matches_lean() -> None:
     assert len(rows) == len(FORMS) == 25
     for r, f in zip(rows, FORMS, strict=True):
         assert r[0] == f.name and r[1] == "-".join(str(index(c)) for c in f.cells)
+
+
+def test_istifham_matches_lean() -> None:
+    """الصورُ الاثنتان والعشرون بأسمائها وخاناتها = جدولُ `Istifham.forms`."""
+
+    from slge.istifham import FORMS
+
+    rows = _rows("istifham.csv")
+    assert len(rows) == len(FORMS) == 22
+    for r, f in zip(rows, FORMS, strict=True):
+        assert r[0] == f.name and r[1] == "-".join(str(index(c)) for c in f.cells)

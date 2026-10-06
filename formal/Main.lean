@@ -122,6 +122,9 @@ def main (args : List String) : IO Unit := do
   | ["ishara"] =>
     for p in Ishara.forms do
       IO.println s!"{p.1},{"-".intercalate (p.2.map fun c => toString c.index)}"
+  | ["istifham"] =>
+    for p in Istifham.forms do
+      IO.println s!"{p.1},{"-".intercalate (p.2.map fun c => toString c.index)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

@@ -227,3 +227,17 @@
 'Slge.Ishara.duals_have_case' depends on axioms: [propext]
 'Slge.Ishara.mabni_no_case' depends on axioms: [propext]
 'Slge.Ishara.witnessed_subset' depends on axioms: [propext]
+'Slge.Istifham.caseOf_ayy' depends on axioms: [propext]
+'Slge.Istifham.ayy_differs_only_in_state' depends on axioms: [propext]
+'Slge.Istifham.ayy_three_forms' depends on axioms: [propext]
+'Slge.Istifham.mabni_single_form' depends on axioms: [propext]
+'Slge.Istifham.madha_is_ma_dha' does not depend on any axioms
+'Slge.Istifham.man_dha_junction' depends on axioms: [propext]
+'Slge.Istifham.amman_is_am_man' does not depend on any axioms
+'Slge.Istifham.ma_after_jarr' does not depend on any axioms
+'Slge.Istifham.amma_is_an_ma_idgham' depends on axioms: [propext]
+'Slge.Istifham.mimma_is_min_ma_idgham' depends on axioms: [propext]
+'Slge.Istifham.idghamNM_length' depends on axioms: [propext]
+'Slge.Istifham.hamza_prefix_licensed' depends on axioms: [propext, Quot.sound]
+'Slge.Istifham.forms_licensed' depends on axioms: [propext]
+'Slge.Istifham.forms_nodup' depends on axioms: [propext]

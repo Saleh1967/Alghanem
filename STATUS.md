@@ -4,9 +4,9 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 39 |
+| مبرهن | 42 |
 | مفحوص_استقصاء | 12 |
-| مفحوص_بعينة | 5 |
+| مفحوص_بعينة | 6 |
 | دليل | 0 |
 | معلن | 10 |
 | رأي | 0 |
@@ -34,6 +34,9 @@
 | ISHARA-dual | المثنّى: الحالةُ من المدّ قبل النون (ولو لحقت الكاف)؛ الياءُ لا تفرّق نصبًا وجرًّا | مبرهن | `lean:Slge.Ishara.caseOf_dual`<br>`lean:Slge.Ishara.caseOf_dual_bud`<br>`lean:Slge.Ishara.nasb_eq_jarr_dual`<br>`lean:Slge.Ishara.duals_have_case` |  |
 | ISHARA-mabni | المبنيُّ ما لا تقرأ له الخانةُ حالةً: 17 صورةً من 25؛ وكلُّها مرخَّصةٌ متباينة | مبرهن | `lean:Slge.Ishara.mabni_no_case`<br>`lean:Slge.Ishara.forms_licensed`<br>`lean:Slge.Ishara.forms_nodup`<br>`test:tests/test_conformance.py::test_ishara_matches_lean` |  |
 | ISHARA-ops | التنبيهُ في الصدر والبعدُ في العجز عمليّتان تحفظان الترخيصَ لكلّ نواة | مبرهن | `lean:Slge.Ishara.tanbih_licensed`<br>`lean:Slge.Ishara.bud_licensed`<br>`test:tests/test_ishara.py::test_three_operations_and_case_reading` |  |
+| ISTIFHAM-ayy | أَيّ المعربُ الوحيد: صورُه تختلف في الخانة الأخيرة لا غير؛ وسائرُها صورةٌ واحدة | مبرهن | `lean:Slge.Istifham.caseOf_ayy`<br>`lean:Slge.Istifham.ayy_differs_only_in_state`<br>`lean:Slge.Istifham.ayy_three_forms`<br>`lean:Slge.Istifham.mabni_single_form`<br>`test:tests/test_istifham.py::test_ayy_is_the_only_declinable` |  |
+| ISTIFHAM-forms | 22 صورةً مرخَّصةً متباينة، 21 منها شواهدُ البوّابة بعينها؛ والهمزةُ حرفٌ متّصل | مبرهن | `lean:Slge.Istifham.forms_licensed`<br>`lean:Slge.Istifham.forms_nodup`<br>`lean:Slge.Istifham.hamza_prefix_licensed`<br>`test:tests/test_conformance.py::test_istifham_matches_lean` |  |
+| ISTIFHAM-tarkib | مَاذَا = مَا ++ ذَا، أَمَّنْ = أَمْ ++ مَنْ، مَنْ ذَا وصلٌ مرخَّص؛ وما بعد الجارّ تحذف ألفَها ثمّ يُدغَم | مبرهن | `lean:Slge.Istifham.madha_is_ma_dha`<br>`lean:Slge.Istifham.man_dha_junction`<br>`lean:Slge.Istifham.amman_is_am_man`<br>`lean:Slge.Istifham.ma_after_jarr`<br>`lean:Slge.Istifham.amma_is_an_ma_idgham`<br>`lean:Slge.Istifham.mimma_is_min_ma_idgham`<br>`lean:Slge.Istifham.idghamNM_length`<br>`test:tests/test_istifham.py::test_composition_and_ma_after_jarr` |  |
 | KHAMSA-forms | الصورُ الخمسَ عشرة مرخَّصةٌ متباينةُ الأعداد؛ وما خرج عن الشروط لا يُخمَّن | مبرهن | `lean:Slge.Khamsa.khamsa_licensed`<br>`lean:Slge.Khamsa.khamsa_numbers_nodup`<br>`lean:Slge.Khamsa.no_guess_for_plural`<br>`test:tests/test_conformance.py::test_khamsa_matches_lean` |  |
 | KHAMSA-madd | حرفُ المدّ صورةُ الحركة (و↔ضم، ا↔فتح، ي↔كسر) والحالةُ تُقرأ من الصورة بعينها | مبرهن | `lean:Slge.Khamsa.madd_matches_short`<br>`lean:Slge.Khamsa.caseOf_form`<br>`lean:Slge.Khamsa.form_injective_stem`<br>`test:tests/test_khamsa.py::test_case_is_read_back_from_every_form` |  |
 | LICENCE | الرافعُ إلى المساواة يُنتج مفهومَ المخالفة | مبرهن | `lean:Slge.Ghazali.licence_makes_mafhum` |  |
@@ -68,6 +71,7 @@
 | Q24 | الظلُّ M/S يعجز والطيُّ يفرّق (ذَيْن/ذِين) | مفحوص_استقصاء | `test:tests/test_cells.py::test_shadow_fails_fold_separates` |  |
 | AFAL-gate | ستّةُ شواهد من شهادات البوّابة تطابق القانون؛ نصبُ الاثنين ورفعُ المخاطبة بالقانون | مفحوص_بعينة | `test:tests/test_afal.py::test_forms_match_gate_witnesses` | الخمسةُ خمسةٌ بجدول مطابقةٍ معلَن (ياءُ المخاطبة لا تلحق حرفَ الغيبة). |
 | ISHARA-gate | 13 صورةً من شهادات البوّابة هي صورُ القانون بعينها؛ الباقي (12) بالقانون | مفحوص_بعينة | `lean:Slge.Ishara.witnessed_subset`<br>`test:tests/test_ishara.py::test_gate_witnesses_are_the_law_forms` | الدلالةُ (قريب/بعيد، عدد، جنس) من الحصر المُرسَل معلَنة. |
+| ISTIFHAM-sadara | الصدارة على MASAQ: 100/251 في صدر الآية أو بعد عاطف/جارّ/همزة؛ 151 بعد فعل قولٍ ونظرٍ وسؤال | مفحوص_بعينة | `test:tests/test_istifham.py::test_tiers_and_index` | صدارةُ جملةٍ لا آية: لا تُقاس بلا حدٍّ للجملة — دَينٌ على النظم. الدلالةُ من الحصر المُرسَل معلَنة. |
 | KHAMSA-gate | صورُ أب وأخ وذو بالقانون = ذرّاتُ شهادات البوّابة (10 شواهد)؛ حمٌ وفوٌ بالقانون نفسه | مفحوص_بعينة | `test:tests/test_khamsa.py::test_forms_match_gate_witnesses` | الشروطُ (مفرد، مكبَّر، مضاف لغير الياء) معلَنةٌ في Ctx لا مستنبَطة. |
 | SHABAKA-minimal | ترتيبُ البصريّين ليس أقلَّ الأشجار كلفةً: 341 عمليّةً مقابل 155؛ يتّفقان في 21 أبًا من 112 | مفحوص_بعينة | `test:tests/test_shabaka.py::test_computed_tree_is_minimal_and_classical_is_not` | أقلُّ شجرةٍ (Prim على مسافة لِيفنشتاين للقوالب) محسوبةٌ لا مقرَّرة؛ ما يحمله ترتيبُ البصريّين فوق كلفة القالب شرطُ حدٍّ دلاليّ لم يُقَس بعد. |
 | WAZN-sibawayh | هياكلُ الأوزان مقابل أبنية سيبويه المجمَّدة: 95/113 عنده؛ 18 مسمّاة؛ 122 من هياكله خارج الجدول | مفحوص_بعينة | `test:tests/test_wazn.py::test_skeletons_measured_against_sibawayh` | الحركاتُ معلَنةٌ من كتب الصرف لا مقيسة؛ الرباعيُّ والإعلالُ والمفعولُ المطلق والجامدُ خارج الجدول باسمها (DEBTS). |

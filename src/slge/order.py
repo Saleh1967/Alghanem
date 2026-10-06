@@ -59,6 +59,7 @@ MODULE_LAYER: Final[dict[str, str]] = {
     "rawabit": "النظم",
     "damair": "النظم",
     "ishara": "الأقانيم",
+    "istifham": "النظم",
     "knowledge": "المعرفة",
     "rank": "الترجيح",
     "learning": "التعلم",

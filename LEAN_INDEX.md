@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_lean_index.py` من ملفّات `.lean` و`Audit.lean` و`out/axioms.txt`؛ لا يُحرَّر باليد. الـ116 من الغانم بإيداعه المثبَّت في `formal/lakefile.toml`.
 
-**374 مبرهنة، منها 225 مدقَّقةُ المسلّمات.**
+**389 مبرهنة، منها 239 مدقَّقةُ المسلّمات.**
 
 كلُّ درجةٍ تستهلك ما قبلها: لا تدخل الكلمةُ درجةً قبل أن تُرخَّص في التي تحتها. «مدقَّق» = في `Audit.lean` وطُبعت مسلّماتُه؛ وما ليس مدقَّقًا مبرهَنٌ في Lean لكن لم يُطبع سندُه بعدُ فلا يُستشهد به في `status.py`.
 
@@ -550,7 +550,7 @@
 | `damair_nodup` | — | مدقَّق | لا مسلّمات |
 | `allForms_count` | — | — | — |
 
-## الدرجة ١٧ — أدواتُ الربط: الخانةُ فالحدُّ فالعمل، والمعنى معلَن
+## الدرجة ١٧ — أدواتُ الربط والاستفهام: الخانةُ فالحدُّ فالعمل، والمعنى معلَن
 
 ### `Slge/Rawabit.lean` — 7 مبرهنة (`Slge.Rawabit`)
 
@@ -563,6 +563,26 @@
 | `particles_count` | — | — | — |
 | `particles_licensed` | — | مدقَّق | propext |
 | `proclitics_one_vowelled_cell` | كلُّ حرفٍ متّصلٍ خانةٌ واحدةٌ متحرّكة. | مدقَّق | propext |
+
+### `Slge/Istifham.lean` — 15 مبرهنة (`Slge.Istifham`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `caseOf_ayy` | — | مدقَّق | propext |
+| `ayy_differs_only_in_state` | — | مدقَّق | propext |
+| `madha_is_ma_dha` | — | مدقَّق | لا مسلّمات |
+| `man_dha_junction` | — | مدقَّق | propext |
+| `amman_is_am_man` | — | مدقَّق | لا مسلّمات |
+| `ma_after_jarr` | — | مدقَّق | لا مسلّمات |
+| `amma_is_an_ma_idgham` | — | مدقَّق | propext |
+| `mimma_is_min_ma_idgham` | — | مدقَّق | propext |
+| `idghamNM_length` | الإدغامُ لا يغيّر الطول. | مدقَّق | propext |
+| `hamza_prefix_licensed` | الإدغامُ لا يغيّر الطول. | مدقَّق | propext, Quot.sound |
+| `forms_count` | — | — | — |
+| `forms_licensed` | — | مدقَّق | propext |
+| `forms_nodup` | — | مدقَّق | propext |
+| `mabni_single_form` | — | مدقَّق | propext |
+| `ayy_three_forms` | والمعربُ أَيّ له ثلاث. | مدقَّق | propext |
 
 ## الدرجة ١٨ — المعرفةُ والترجيح: الإنتاجُ والتعارضُ وقطعيُّ الدلالة
 
