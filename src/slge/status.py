@@ -878,6 +878,39 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_bits.py::test_whole_mushaf_as_one_stream",
        note="عددُ الشهادة في الغانم Σ 1,276,753 بتًّا = 1.96 × عددِ الذرّات قبل اقتران كانتور (651,981) "
             "ليحمل 38 بتًّا من الرتبة — مقيس؛ تغييرُه قرارُ برهانٍ في A116.Numbering."),
+    # — المدود —
+    _c("MADD-letter", "حرفُ المدّ خانةٌ ساكنةٌ بعد حركتها (الصنفُ v في التقطيع الثلاثيّ): لا مدَّ في صدر "
+       "كلمةٍ ولا مدّان متجاوران لكلّ كلمة؛ والترخيصُ الثنائيُّ هو binOK على الأصناف لكلّ كلمة", _P,
+       "lean:Slge.Madd.kinds_head_not_v", "lean:Slge.Madd.no_adjacent_madd",
+       "lean:Slge.Madd.licensed_eq_binOK", "lean:Slge.Madd.kindOf_cv",
+       "test:tests/test_madd.py::test_madd_letter_is_sukun_after_its_vowel_and_never_initial_or_adjacent",
+       note="kinds مرآةُ gate.licence.kind_of على الخانات؛ مطابَقةٌ بجدول madd.csv على الـ121."),
+    _c("MADD-lazim", "المدُّ اللازم (مدٌّ ثمّ ساكنٌ أصليّ) هو فاصلُ الترخيص الثلاثيّ عن الثنائيّ: في كلمةٍ "
+       "مرخَّصةٍ وصلًا مدٌّ لازمٌ ⇔ غيرُ مرخَّصةٍ ثنائيًّا — لكلّ كلمة؛ وعلى المصحف 65 صورةً "
+       "ثلاثيّةً فقط "
+       "= 65 صورةَ لازم", _P,
+       "lean:Slge.Madd.lazim_iff_not_binary", "lean:Slge.Madd.hasVC_iff_not_binOK",
+       "lean:Slge.Madd.addallin_ternary_only",
+       "test:tests/test_madd.py::test_lazim_separates_ternary_from_binary",
+       "test:tests/test_madd.py::test_corpus_measurement_and_index",
+       note="الضَّالِّينَ وحَاجَّ: مثقَّلٌ (مضعَّف)؛ ءَالْءَانَ مخفَّف. اللازمُ الحرفيّ (الٓمٓ) غيرُ مشكولٍ فلا يدخل."),
+    _c("MADD-rules", "أحكامُ المدّ من الخانة التالية والحدّ: همزةٌ في الكلمة ⇒ متّصل، ساكنٌ ⇒ لازم، همزةٌ "
+       "صدرَ التالية ⇒ منفصلٌ وصلًا (لكلّ كلمة)، قبل الأخيرة وقفًا ⇒ عارضٌ والكلمةُ نفسُها "
+       "طبيعيٌّ وصلًا "
+       "(لكلّ كلمة)؛ "
+       "واللينُ والصلةُ ملحقان، والواوُ الساقطةُ محجوبةٌ بالجدول", _P,
+       "lean:Slge.Madd.arid_iff_pause", "lean:Slge.Madd.munfasil_iff_next_hamza",
+       "lean:Slge.Madd.silent_waw_tabled", "lean:Slge.Madd.madd_witnesses",
+       "test:tests/test_madd.py::test_rules_read_from_next_cell_and_boundary",
+       note="المقاديرُ معلَنة؛ الألفُ الخنجريّة ليست في المدوّنة المختومة؛ مدُّ العوض بقيّةُ رسمٍ في "
+            "الغانم."),
+    _c("MADD-masaq", "على المصحف المشهود (78,207 كلمة، 47,865 حرفَ مدّ): طبيعيّ 40,230، منفصل 5,619، "
+       "متّصل "
+       "1,744، لازم 108، صلة 4,591، محجوب 164؛ وقفًا سقفُ العارض 16,627 واللين 3,031؛ وعلى "
+       "MASAQ الهاءُ "
+       "بين متحرّكين هاءُ كنايةٍ في 55.2%", _S,
+       "test:tests/test_madd.py::test_corpus_measurement_and_index",
+       note="الخانةُ لا تفصل هاءَ الكناية من هاء الكلمة (اللَّه): الصلةُ قراءةٌ بشرط القرينة."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

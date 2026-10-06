@@ -833,3 +833,33 @@ def test_tabayun_matches_lean() -> None:
             assert mawadd(m) == (("ف", "ع", "ل"),) * int(r[4]), r
         elif r[0] == "rel":
             assert rel(cells(r[1]), cells(r[2])) == rn[r[3]], r
+
+
+def test_madd_matches_lean() -> None:
+    """الأصنافُ والترخيصُ الثلاثيّ والثنائيّ ومدودُ الميزان لكلّ قالب، والشواهدُ بسياقها = جدولُ `Madd`."""
+
+    from slge.madd import binary_ok, continue_licensed, has_vc, kinds, madd, pause_licensed
+
+    rows = _rows("madd.csv")
+    mn = {"tabii": "طبيعيّ", "muttasil": "متّصل", "munfasil": "منفصل", "lazimThaqil": "لازم مثقَّل",
+          "lazimKhafif": "لازم مخفَّف", "arid": "عارض", "lin": "لين", "silaSughra": "صلة صغرى",
+          "silaKubra": "صلة كبرى", "silent": "محجوب"}
+
+    def cells(x: str) -> tuple[tuple[str, str], ...]:
+        return tuple(_cell(int(i)) for i in x.split("-")) if x else ()
+
+    def hits(x: str) -> list[tuple[int, str]]:
+        return [(int(h.split(":")[0]), mn[h.split(":")[1]]) for h in x.split("+")] if x else []
+
+    assert sum(r[0] == "mizan" for r in rows) == 121 and sum(r[0] == "madd" for r in rows) == 15
+    for r in rows:
+        if r[0] == "mizan":
+            m = cells(r[2])
+            assert "".join(kinds(m)) == r[3], r
+            flags = (continue_licensed(m), pause_licensed(m), binary_ok(m))
+            assert flags == tuple(x == "true" for x in r[4:7]), r
+            assert madd(m, (), False) == hits(r[7]) and madd(m, (), True) == hits(r[8]), r
+        elif r[0] == "madd":
+            w, n, p = cells(r[1]), cells(r[2]), r[3] == "true"
+            assert madd(w, n, p) == hits(r[4]), r
+            assert (binary_ok(w), has_vc(w)) == (r[5] == "true", r[6] == "true"), r

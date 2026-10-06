@@ -499,6 +499,24 @@ def main (args : List String) : IO Unit := do
                    (Wad.intishar, Tabayun.nashr), (Tabayun.nashr, Wad.intishar), (Wad.kitab, Wad.kitab),
                    (Wad.intishar, Wad.intishar), (Uslub.la, Tabayun.darbun), (Wad.manha, Tabayun.nashr)] do
       IO.println s!"rel,{key a},{key b},{rn (Tabayun.rel a b)}"
+  | ["madd"] =>
+    -- الأصنافُ الثلاثة والترخيصُ الثلاثيّ والثنائيّ على الميزان لكلّ قالب، ومدودُ الميزان وصلًا ووقفًا، والشواهد.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let kk := fun (k : A116.Stages.K) => match k with | .cv => "cv" | .v => "v" | .c => "c"
+    let mn := fun (k : Madd.Kind) => match k with
+      | .tabii => "tabii" | .muttasil => "muttasil" | .munfasil => "munfasil" | .lazimThaqil => "lazimThaqil"
+      | .lazimKhafif => "lazimKhafif" | .arid => "arid" | .lin => "lin" | .silaSughra => "silaSughra"
+      | .silaKubra => "silaKubra" | .silent => "silent"
+    let hits := fun (l : List (Nat × Madd.Kind)) => "+".intercalate (l.map fun (i, k) => s!"{i}:{mn k}")
+    for k in List.range 121 do
+      let m := Wazn.mizan (Sarf.templ k)
+      IO.println s!"mizan,{k},{key m},{"".intercalate ((Madd.kinds m).map kk)},{Madd.continueLicensed m},{Madd.pauseLicensed m},{A116.Ternary.binOK (Madd.kinds m)},{hits (Madd.madd m [] false)},{hits (Madd.madd m [] true)}"
+    for (w, n, p) in [(Madd.qalu, ([] : List SCell), false), (Madd.assama, [], false), (Madd.addallin, [], false),
+                      (Madd.alan, [], false), (Madd.alamin, [], true), (Madd.alamin, [], false),
+                      (Madd.khawf, [], true), (Madd.khawf, [], false), (Madd.innahu, Madd.kana, false),
+                      (Madd.innahu, Madd.illa, false), (Madd.bima, Madd.unzila, false), (Madd.bima, Madd.kana, false),
+                      (Madd.amanu, [], false), (Madd.ulaika, [], false), (Madd.addallin, [], true)] do
+      IO.println s!"madd,{key w},{key n},{p},{hits (Madd.madd w n p)},{A116.Ternary.binOK (Madd.kinds w)},{Madd.hasVC (Madd.kinds w)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do
