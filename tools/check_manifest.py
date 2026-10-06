@@ -9,6 +9,7 @@
 
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 import sys
@@ -75,9 +76,10 @@ def main() -> int:
         return 0
     if "--indexes" in sys.argv:
         rc = 0
+        env = {**os.environ, "PYTHONPATH": str(ROOT / "src")}  # الأدواتُ تُشغَّل من جذر الشجرة
         for tool in index_tools():
             res = subprocess.run([sys.executable, str(ROOT / "tools" / tool), "--check"], cwd=ROOT,
-                                 capture_output=True, text=True)
+                                 capture_output=True, text=True, env=env)
             sys.stdout.write(res.stdout)
             if res.returncode != 0:
                 sys.stderr.write(res.stderr)
