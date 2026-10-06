@@ -321,6 +321,37 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_tawabi.py::test_masaq_measurement_and_index",
        note="المتبوعُ قانونُ تيار؛ المطابقةُ الأربع للنعت تُقاس في النظم؛ "
             "البدلُ وعطفُ البيان لا تفرّقهما الخانة."),
+    # — النواسخ —
+    _c("NAWASIKH-ops", "أربعةُ أبوابٍ عمليّتان: كان = (رفع، نصب)، إنّ عكسُها، كاد عملُ كان، ظنّ نصبان، "
+       "لا للجنس عملُ إنّ؛ والعمليّتان تحفظان الترخيص", _P,
+       "lean:Slge.Nawasikh.inna_eq_swap_kana", "lean:Slge.Nawasikh.kada_eq_kana",
+       "lean:Slge.Nawasikh.zanna_both_nasb", "lean:Slge.Nawasikh.laJins_eq_inna",
+       "lean:Slge.Nawasikh.raf_licensed", "lean:Slge.Nawasikh.nasb_licensed",
+       "test:tests/test_nawasikh.py::test_two_operations_four_babs"),
+    _c("NAWASIKH-read", "ما رُفع يُقرأ رفعًا لكلّ جذع (ومع التنوين وأل)؛ وما نُصب نصبًا إن لم يكن آخرُه "
+       "نونًا، ومع التنوين لكلّ جذع؛ والحركةُ وحدَها لا تنوينَ معها", _P,
+       "lean:Slge.Nawasikh.caseClass_raf", "lean:Slge.Nawasikh.caseClass_nasb",
+       "lean:Slge.Nawasikh.caseClass_nasb_tanwin", "lean:Slge.Nawasikh.caseClass_raf_tanwin",
+       "lean:Slge.Nawasikh.caseClass_al_raf", "lean:Slge.Nawasikh.uqud_nasb_compatible",
+       "lean:Slge.Nawasikh.raf_no_tanwin", "lean:Slge.Nawasikh.nasb_no_tanwin",
+       "test:tests/test_nawasikh.py::test_two_operations_four_babs"),
+    _c("NAWASIKH-la", "اسمُ لا النافية للجنس: فتحٌ بلا تنوينٍ ولا أداة، يُقرأ نصبًا", _P,
+       "lean:Slge.Nawasikh.laJins_ism_no_tanwin", "lean:Slge.Nawasikh.la_rayb_witness",
+       "test:tests/test_nawasikh.py::test_la_jins_ism_is_bare_nakira"),
+    _c("NAWASIKH-kaffa", "المودَعاتُ الأربع مرخَّصة؛ والكفُّ إلحاقُ «مَا» يحفظ الترخيص والصورُ الستّ هي "
+       "العمليّة؛ وجدولُ الأدوات يسجّل إِنَّ ناصبةً وإِنَّمَا بلا عمل؛ وخبرُ كاد مضارعٌ مرفوع", _P,
+       "lean:Slge.Nawasikh.kana_licensed", "lean:Slge.Nawasikh.kada_licensed",
+       "lean:Slge.Nawasikh.inna_licensed", "lean:Slge.Nawasikh.zanna_licensed",
+       "lean:Slge.Nawasikh.kaffa_licensed", "lean:Slge.Nawasikh.kaffa_forms",
+       "lean:Slge.Nawasikh.innama_kaffa_in_rawabit", "lean:Slge.Nawasikh.kada_khabar_raf",
+       "test:tests/test_nawasikh.py::test_deposits_licensed_and_kaffa",
+       note="أَنْ ليست في جدول أدوات الربط (an_not_in_rawabit): دَين؛ وجَعَلَ في بابين: المعنى يفصل."),
+    _c("NAWASIKH-masaq", "على 2,599 اسمٍ وخبرٍ من MASAQ: خبرُ كان نصبٌ 98%، خبرُ إنّ رفعٌ 98%، "
+       "اسمُ كان رفعٌ 92%، اسمُ إنّ نصبٌ 90%، اسمُ لا 73/73 نكرةٌ مفتوحة؛ عسى بأَنْ 21/24 "
+       "وكاد 0/23 وطفق 0/3؛ وإنّما لا اسمَ ناسخٍ بعدها 27/27", _S,
+       "test:tests/test_nawasikh.py::test_masaq_measurement_and_index",
+       note="المخالفُ: جمعُ المؤنّث السالم وياءُ المتكلّم والمنقوص — دُيونٌ على القارئ؛ "
+            "والتمامُ والجمودُ والتعليقُ تيارٌ ومعجم."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

@@ -307,3 +307,42 @@
 'Slge.Tawabi.caseClass_khamsa_raf' depends on axioms: [propext]
 'Slge.Tawabi.khamsa_nasb_unread' depends on axioms: [propext]
 'Slge.Tawabi.caseClass_uqud_raf' depends on axioms: [propext]
+'Slge.Nawasikh.inna_eq_swap_kana' depends on axioms: [propext]
+'Slge.Nawasikh.kada_eq_kana' depends on axioms: [propext]
+'Slge.Nawasikh.laJins_eq_inna' depends on axioms: [propext]
+'Slge.Nawasikh.zanna_both_nasb' depends on axioms: [propext]
+'Slge.Nawasikh.raf_licensed' depends on axioms: [propext, Quot.sound]
+'Slge.Nawasikh.nasb_licensed' depends on axioms: [propext, Quot.sound]
+'Slge.Nawasikh.setLast_eq_append' depends on axioms: [propext]
+'Slge.Nawasikh.caseClass_of_last_damm' depends on axioms: [propext]
+'Slge.Nawasikh.caseClass_raf' depends on axioms: [propext]
+'Slge.Nawasikh.lastOf_setLast_carrier' depends on axioms: [propext]
+'Slge.Nawasikh.caseClass_nasb' depends on axioms: [propext]
+'Slge.Nawasikh.caseClass_nasb_tanwin' depends on axioms: [propext]
+'Slge.Nawasikh.caseClass_raf_tanwin' depends on axioms: [propext]
+'Slge.Nawasikh.caseClass_al_raf' depends on axioms: [propext]
+'Slge.Nawasikh.caseClass_of_last_yin' depends on axioms: [propext]
+'Slge.Nawasikh.uqud_nasb_compatible' depends on axioms: [propext]
+'Slge.Nawasikh.no_tanwin_setLast' depends on axioms: [propext, Quot.sound]
+'Slge.Nawasikh.raf_no_tanwin' depends on axioms: [propext, Quot.sound]
+'Slge.Nawasikh.nasb_no_tanwin' depends on axioms: [propext, Quot.sound]
+'Slge.Nawasikh.hasAl_setLast' depends on axioms: [propext, Quot.sound]
+'Slge.Nawasikh.laJins_ism_no_tanwin' depends on axioms: [propext, Quot.sound]
+'Slge.Nawasikh.kana_licensed' depends on axioms: [propext]
+'Slge.Nawasikh.kada_licensed' depends on axioms: [propext]
+'Slge.Nawasikh.inna_licensed' depends on axioms: [propext]
+'Slge.Nawasikh.zanna_licensed' depends on axioms: [propext]
+'Slge.Nawasikh.counts' does not depend on any axioms
+'Slge.Nawasikh.jaala_shared' does not depend on any axioms
+'Slge.Nawasikh.inna_in_rawabit' does not depend on any axioms
+'Slge.Nawasikh.laysa_la_ma_in_rawabit' does not depend on any axioms
+'Slge.Nawasikh.kaffa_licensed' depends on axioms: [propext]
+'Slge.Nawasikh.kaffa_forms' does not depend on any axioms
+'Slge.Nawasikh.kaffa_forms_licensed' depends on axioms: [propext]
+'Slge.Nawasikh.innama_kaffa_in_rawabit' does not depend on any axioms
+'Slge.Nawasikh.kada_khabar_raf' depends on axioms: [propext]
+'Slge.Nawasikh.an_licensed' depends on axioms: [propext]
+'Slge.Nawasikh.an_not_in_rawabit' does not depend on any axioms
+'Slge.Nawasikh.an_khabar_nasb' depends on axioms: [propext]
+'Slge.Nawasikh.kana_inna_witness' depends on axioms: [propext]
+'Slge.Nawasikh.la_rayb_witness' depends on axioms: [propext]

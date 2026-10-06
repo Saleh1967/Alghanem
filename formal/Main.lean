@@ -160,6 +160,16 @@ def main (args : List String) : IO Unit := do
       let h := match Tawabi.caseClass w with
         | .raf => "raf" | .nasb => "nasb" | .jarr => "jarr" | .nasbJarr => "nasbJarr" | .unread => "unread"
       IO.println s!"{n},{"-".intercalate (w.map fun c => toString c.index)},{h}"
+  | ["nawasikh"] =>
+    -- المودَعات الأربع بخاناتها، وصورُ الكفّ الستّ، وشاهدا كان/إنّ
+    for (bab, l) in [("kana", Nawasikh.kanaSisters), ("kada", Nawasikh.kadaSisters),
+                     ("inna", Nawasikh.innaSisters), ("zanna", Nawasikh.zannaSisters)] do
+      for p in l do
+        IO.println s!"{bab},{p.1},{"-".intercalate (p.2.map fun c => toString c.index)}"
+    for p in Nawasikh.innaSisters do
+      IO.println s!"kaffa,{p.1},{"-".intercalate ((Nawasikh.kaffa p.2).map fun c => toString c.index)}"
+    IO.println s!"kana_khabar,غَفُورًا,{"-".intercalate ((Nawasikh.tanwin (Nawasikh.kana.2 Nawasikh.ghafur)).map fun c => toString c.index)}"
+    IO.println s!"inna_khabar,غَفُورٌ,{"-".intercalate ((Nawasikh.tanwin (Nawasikh.inna.2 Nawasikh.ghafur)).map fun c => toString c.index)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

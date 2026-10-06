@@ -286,3 +286,24 @@ def test_tawabi_matches_lean() -> None:
     for r in rows:
         cells = tuple(_cell(int(i)) for i in r[1].split("-"))
         assert case_class(cells) == lean[r[2]], r[0]
+
+
+def test_nawasikh_matches_lean() -> None:
+    """المودَعاتُ الأربع وصورُ الكفّ وشاهدا كان/إنّ = جدولُ `Nawasikh`."""
+
+    from slge.nawasikh import INNA, KADA, KANA, ZANNA, kaffa, nasb, raf, tanwin
+    from slge.rawabit import cells_of
+
+    rows = _rows("nawasikh.csv")
+    assert len(rows) == 13 + 12 + 6 + 15 + 6 + 2
+    babs = {"kana": KANA, "kada": KADA, "inna": INNA, "zanna": ZANNA}
+    for r in rows:
+        cells = tuple(_cell(int(i)) for i in r[2].split("-"))
+        if r[0] in babs:
+            word = next(w for w in babs[r[0]] if w.replace("اِ", "ا") == r[1])
+            assert cells_of(word) == cells, r
+        elif r[0] == "kaffa":
+            assert kaffa(cells_of(r[1])) == cells, r
+        else:
+            op = nasb if r[0] == "kana_khabar" else raf
+            assert tanwin(op(cells_of("غَفُورُ"))) == cells == cells_of(r[1]), r

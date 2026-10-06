@@ -4,9 +4,9 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 61 |
+| مبرهن | 65 |
 | مفحوص_استقصاء | 12 |
-| مفحوص_بعينة | 13 |
+| مفحوص_بعينة | 14 |
 | دليل | 0 |
 | معلن | 10 |
 | رأي | 0 |
@@ -46,6 +46,10 @@
 | MARIFA-al | التعريفُ بأل عمليّةٌ تحفظ الترخيص، والإدغامُ الشمسيُّ لا يغيّر نمطَ السكون، والأداةُ تُقرأ من الصدر | مبرهن | `lean:Slge.Marifa.shamsi_licensed`<br>`lean:Slge.Marifa.al_licensed`<br>`lean:Slge.Marifa.hasAl_al`<br>`test:tests/test_marifa.py::test_al_and_shamsi_match_gate` |  |
 | MARIFA-idafa | الإضافةُ تُسقط التنوينَ وتحفظ الترخيص؛ والمضافُ إلى ضميرٍ لا تنوينَ له | مبرهن | `lean:Slge.Marifa.dropTanwin_licensed`<br>`lean:Slge.Marifa.idafa_no_tanwin`<br>`lean:Slge.Marifa.mudaf_is_marifa`<br>`test:tests/test_marifa.py::test_idafa_drops_tanwin` |  |
 | MARIFA-mawsul | الموصولةُ 14 صورةً مرخَّصةً متباينة؛ المبدوءُ بأل تُقرأ أداتُه؛ ومثنّاه كالإشارة | مبرهن | `lean:Slge.Marifa.mawsul_licensed`<br>`lean:Slge.Marifa.mawsul_nodup`<br>`lean:Slge.Marifa.mawsul_al`<br>`lean:Slge.Marifa.mawsul_dual_case`<br>`lean:Slge.Marifa.deposited_no_tanwin`<br>`lean:Slge.Marifa.man_looks_like_tanwin`<br>`test:tests/test_conformance.py::test_marifa_matches_lean` |  |
+| NAWASIKH-kaffa | المودَعاتُ الأربع مرخَّصة؛ والكفُّ إلحاقُ «مَا» يحفظ الترخيص والصورُ الستّ هي العمليّة؛ وجدولُ الأدوات يسجّل إِنَّ ناصبةً وإِنَّمَا بلا عمل؛ وخبرُ كاد مضارعٌ مرفوع | مبرهن | `lean:Slge.Nawasikh.kana_licensed`<br>`lean:Slge.Nawasikh.kada_licensed`<br>`lean:Slge.Nawasikh.inna_licensed`<br>`lean:Slge.Nawasikh.zanna_licensed`<br>`lean:Slge.Nawasikh.kaffa_licensed`<br>`lean:Slge.Nawasikh.kaffa_forms`<br>`lean:Slge.Nawasikh.innama_kaffa_in_rawabit`<br>`lean:Slge.Nawasikh.kada_khabar_raf`<br>`test:tests/test_nawasikh.py::test_deposits_licensed_and_kaffa` | أَنْ ليست في جدول أدوات الربط (an_not_in_rawabit): دَين؛ وجَعَلَ في بابين: المعنى يفصل. |
+| NAWASIKH-la | اسمُ لا النافية للجنس: فتحٌ بلا تنوينٍ ولا أداة، يُقرأ نصبًا | مبرهن | `lean:Slge.Nawasikh.laJins_ism_no_tanwin`<br>`lean:Slge.Nawasikh.la_rayb_witness`<br>`test:tests/test_nawasikh.py::test_la_jins_ism_is_bare_nakira` |  |
+| NAWASIKH-ops | أربعةُ أبوابٍ عمليّتان: كان = (رفع، نصب)، إنّ عكسُها، كاد عملُ كان، ظنّ نصبان، لا للجنس عملُ إنّ؛ والعمليّتان تحفظان الترخيص | مبرهن | `lean:Slge.Nawasikh.inna_eq_swap_kana`<br>`lean:Slge.Nawasikh.kada_eq_kana`<br>`lean:Slge.Nawasikh.zanna_both_nasb`<br>`lean:Slge.Nawasikh.laJins_eq_inna`<br>`lean:Slge.Nawasikh.raf_licensed`<br>`lean:Slge.Nawasikh.nasb_licensed`<br>`test:tests/test_nawasikh.py::test_two_operations_four_babs` |  |
+| NAWASIKH-read | ما رُفع يُقرأ رفعًا لكلّ جذع (ومع التنوين وأل)؛ وما نُصب نصبًا إن لم يكن آخرُه نونًا، ومع التنوين لكلّ جذع؛ والحركةُ وحدَها لا تنوينَ معها | مبرهن | `lean:Slge.Nawasikh.caseClass_raf`<br>`lean:Slge.Nawasikh.caseClass_nasb`<br>`lean:Slge.Nawasikh.caseClass_nasb_tanwin`<br>`lean:Slge.Nawasikh.caseClass_raf_tanwin`<br>`lean:Slge.Nawasikh.caseClass_al_raf`<br>`lean:Slge.Nawasikh.uqud_nasb_compatible`<br>`lean:Slge.Nawasikh.raf_no_tanwin`<br>`lean:Slge.Nawasikh.nasb_no_tanwin`<br>`test:tests/test_nawasikh.py::test_two_operations_four_babs` |  |
 | NIDA-adawat | الأدواتُ الستّ حروفٌ مرخَّصة؛ ويَا تُوصَل بكلّ مرخَّص | مبرهن | `lean:Slge.Nida.particles_licensed`<br>`lean:Slge.Nida.particles_nodup`<br>`lean:Slge.Nida.ya_junction`<br>`test:tests/test_conformance.py::test_nida_matches_lean` |  |
 | NIDA-hukm | قانونُ المنادى من الخانة الأخيرة: الضمُّ بناءٌ، والتنوينُ لا يجامع البناء | مبرهن | `lean:Slge.Nida.damm_is_bina`<br>`lean:Slge.Nida.tanwin_never_bina`<br>`lean:Slge.Nida.witnesses_hukm`<br>`test:tests/test_nida.py::test_hukm_reads_the_last_cell` |  |
 | NIDA-nudba | الندبة (حَسْرَتَاهْ) ساكنان متجاوران: خارج الترخيص الثنائيّ لكلّ جذع | مبرهن | `lean:Slge.Nida.nudba_not_binary_licensed`<br>`test:tests/test_nida.py::test_nudba_is_outside_binary_licence` | صورةُ وقفٍ يرخّصها الثلاثيُّ في الغانم (A116.Ternary)؛ لا تُدّعى هنا. |
@@ -94,6 +98,7 @@
 | ISTIFHAM-sadara | الصدارة على MASAQ: 100/251 في صدر الآية أو بعد عاطف/جارّ/همزة؛ 151 بعد فعل قولٍ ونظرٍ وسؤال | مفحوص_بعينة | `test:tests/test_istifham.py::test_tiers_and_index` | صدارةُ جملةٍ لا آية: لا تُقاس بلا حدٍّ للجملة — دَينٌ على النظم. الدلالةُ من الحصر المُرسَل معلَنة. |
 | KHAMSA-gate | صورُ أب وأخ وذو بالقانون = ذرّاتُ شهادات البوّابة (10 شواهد)؛ حمٌ وفوٌ بالقانون نفسه | مفحوص_بعينة | `test:tests/test_khamsa.py::test_forms_match_gate_witnesses` | الشروطُ (مفرد، مكبَّر، مضاف لغير الياء) معلَنةٌ في Ctx لا مستنبَطة. |
 | MARIFA-tanwin | على 6,544 صورةً من MASAQ: أل مع تنوين 1 (وسم خاطئ)؛ مضافٌ مع تنوين 12 (تنوينُ العوض وخلافُ وسم)؛ العلمُ منوَّن 35/157 فالتنوينُ ليس علامةَ تنكير | مفحوص_بعينة | `test:tests/test_marifa.py::test_masaq_measurement_and_index` | القوّةُ ترتيبٌ معلَن؛ العلمُ والنكرة من المعجم؛ المستترُ بلا خانة. |
+| NAWASIKH-masaq | على 2,599 اسمٍ وخبرٍ من MASAQ: خبرُ كان نصبٌ 98%، خبرُ إنّ رفعٌ 98%، اسمُ كان رفعٌ 92%، اسمُ إنّ نصبٌ 90%، اسمُ لا 73/73 نكرةٌ مفتوحة؛ عسى بأَنْ 21/24 وكاد 0/23 وطفق 0/3؛ وإنّما لا اسمَ ناسخٍ بعدها 27/27 | مفحوص_بعينة | `test:tests/test_nawasikh.py::test_masaq_measurement_and_index` | المخالفُ: جمعُ المؤنّث السالم وياءُ المتكلّم والمنقوص — دُيونٌ على القارئ؛ والتمامُ والجمودُ والتعليقُ تيارٌ ومعجم. |
 | NIDA-masaq | على 489 منادًى بشهادات البوّابة: الضمُّ ⇒ مبنيّ 188/188؛ الفتحُ والكسرُ ⇒ معرب 195/237؛ 63 لا تقرؤها الخانة | مفحوص_بعينة | `test:tests/test_nida.py::test_masaq_measurement_and_index` | الباقي خلافُ وسمٍ في MASAQ (أَهْلَ، مَعْشَرَ، بَنِي موسومةً «مبني»)؛ لم أُصلحه. |
 | SARF-masaq | بعد الجارّ على 754 اسمًا: بأل ⇒ كسر 255؛ مضاف ⇒ كسر 120؛ المجرّدُ منوَّنُ كسرٍ 251 أو مفتوحٌ بلا تنوين 44 (الممنوع: 17 بعلّة صيغةٍ مقروءة، 27 معجم) | مفحوص_بعينة | `test:tests/test_sarf.py::test_masaq_measurement_and_index` | العلميّةُ بعجمتها وتأنيثها وتركيبها وعدلها معجم؛ والهمزةُ الأصليّةُ في الممدود دَين. |
 | SHABAKA-minimal | ترتيبُ البصريّين ليس أقلَّ الأشجار كلفةً: 341 عمليّةً مقابل 155؛ يتّفقان في 21 أبًا من 112 | مفحوص_بعينة | `test:tests/test_shabaka.py::test_computed_tree_is_minimal_and_classical_is_not` | أقلُّ شجرةٍ (Prim على مسافة لِيفنشتاين للقوالب) محسوبةٌ لا مقرَّرة؛ ما يحمله ترتيبُ البصريّين فوق كلفة القالب شرطُ حدٍّ دلاليّ لم يُقَس بعد. |
