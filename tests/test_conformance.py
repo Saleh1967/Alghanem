@@ -150,3 +150,14 @@ def test_rawabit_matches_lean() -> None:
     for r, p in zip(rows, PARTICLES, strict=True):
         assert r[0] == p.name and r[1] == "-".join(str(index(c)) for c in p.cells)
         assert r[2] == amal[p.amal] and r[3] == str(p.proclitic).lower() and r[4] == "true"
+
+
+def test_damair_matches_lean() -> None:
+    """الصورُ الثلاثُ والثلاثون (12 رفع + 12 نصب + 9 شواهد) = جدولُ `Damair.allForms`."""
+
+    from slge.damair import DETACHED_NASB, DETACHED_RAF, WITNESS
+
+    rows = _rows("damair.csv")
+    forms = [p.cells for p in DETACHED_RAF + DETACHED_NASB] + list(WITNESS.values())[:9]
+    assert len(rows) == len(forms) == 33
+    assert [r[0] for r in rows] == ["-".join(str(index(c)) for c in w) for w in forms]

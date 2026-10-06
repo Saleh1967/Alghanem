@@ -11,3 +11,4 @@ import Slge.Shabaka
 import Slge.Khamsa
 import Slge.Afal
 import Slge.Rawabit
+import Slge.Damair

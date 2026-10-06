@@ -4,11 +4,11 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 32 |
+| مبرهن | 36 |
 | مفحوص_استقصاء | 12 |
 | مفحوص_بعينة | 4 |
 | دليل | 0 |
-| معلن | 9 |
+| معلن | 10 |
 | رأي | 0 |
 | مفتوح | 8 |
 | معلق | 14 |
@@ -23,6 +23,10 @@
 | BRIDGE | الجسرُ بين ترميز SLGE وترميز الـ116 تقابلٌ يحفظ السكون | مبرهن | `lean:Slge.ofCell_toCell`<br>`lean:Slge.toCell_ofCell`<br>`lean:Slge.toCell_isSukun`<br>`test:tests/test_conformance.py::test_bridge_matches_lean` |  |
 | CHAIN | الأخصُّ متعدٍّ (مفهومُ الموافقة سلسلة) | مبرهن | `lean:Slge.Ghazali.akhass_chain` |  |
 | COUNT | عدّادُ SLGE هو ‎U(n)‎ لكلّ n | مبرهن | `lean:Slge.count_eq_U`<br>`test:tests/test_conformance.py::test_counts_match_lean` |  |
+| DAMAIR-forms | 33 صورةً مرخَّصةً متباينة: 12 رفعًا و12 نصبًا منفصلة و9 شواهدَ متّصلة | مبرهن | `lean:Slge.Damair.damair_licensed`<br>`lean:Slge.Damair.damair_nodup`<br>`test:tests/test_conformance.py::test_damair_matches_lean` |  |
+| DAMAIR-iyya | ضميرُ النصب المنفصل = الحاملُ إِيَّا + المتّصل؛ والإلحاقُ يحفظ الترخيص | مبرهن | `lean:Slge.Damair.iyya_is_carrier_plus_suffix`<br>`lean:Slge.Damair.witness_iyya`<br>`lean:Slge.Damair.attach_licensed`<br>`test:tests/test_damair.py::test_iyya_is_carrier_plus_attached` |  |
+| DAMAIR-na | قانونُ نا: سكونُ الصحيح قبلها رفعٌ، وحركتُه أو مدُّه نصبٌ/جرّ — من الخانة، لكلّ حامل | مبرهن | `lean:Slge.Damair.na_raf_reads_sukun`<br>`lean:Slge.Damair.na_nasb_reads_vowel`<br>`lean:Slge.Damair.na_after_madd_not_raf`<br>`lean:Slge.Damair.witness_na_roles`<br>`test:tests/test_damair.py::test_na_law_on_gate_witnesses` |  |
+| DAMAIR-ta | قانونُ التاء: الشخصُ في حالتها بعد ساكن؛ وبعد المتحرّك ليست تاءَ الفاعل | مبرهن | `lean:Slge.Damair.ta_person`<br>`lean:Slge.Damair.ta_after_vowel_not_subject`<br>`lean:Slge.Damair.witness_ta_persons`<br>`test:tests/test_damair.py::test_ta_law_on_gate_witnesses` |  |
 | FOLD | الطيُّ تقابلٌ بين المرخَّصات بطول n و‎{0…U(n)−1}‎ | مبرهن | `lean:Slge.slgeFold_injective`<br>`lean:Slge.slgeFold_surjective`<br>`test:tests/test_conformance.py::test_folds_match_lean` | يحلّ محلّ Q23/Q23b في الأصل: كان الفحصُ هناك طيًّا موضعيًّا بأساس 116، وصحّتُه بالبناء لا بالعدّ؛ وهنا طيٌّ كثيفٌ مبرهَنٌ لكلّ طول. |
 | GHAZALI | جدولُ الصور المنتجة هو جدولُ الغزالي بعينه، محسوبًا بالبتّات | مبرهن | `lean:Slge.Ghazali.ghazali_table`<br>`test:tests/test_conformance.py::test_ghazali_matches_lean` |  |
 | GRANT-check | المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة | مبرهن | `lean:Slge.Grant.grant_iff_check`<br>`lean:Slge.Grant.no_grant_of_refused`<br>`lean:Slge.Grant.ladder_implies_base`<br>`lean:Slge.Grant.empty_ladder_grants_nothing` | قانونُ tarkib/bridge.py بفحصٍ دالّةً لا نصًّا؛ الحكمُ المزوَّر الذي قبله الأصلُ لا يُصاغ هنا. |
@@ -63,6 +67,7 @@
 | KHAMSA-gate | صورُ أب وأخ وذو بالقانون = ذرّاتُ شهادات البوّابة (10 شواهد)؛ حمٌ وفوٌ بالقانون نفسه | مفحوص_بعينة | `test:tests/test_khamsa.py::test_forms_match_gate_witnesses` | الشروطُ (مفرد، مكبَّر، مضاف لغير الياء) معلَنةٌ في Ctx لا مستنبَطة. |
 | SHABAKA-minimal | ترتيبُ البصريّين ليس أقلَّ الأشجار كلفةً: 341 عمليّةً مقابل 155؛ يتّفقان في 21 أبًا من 112 | مفحوص_بعينة | `test:tests/test_shabaka.py::test_computed_tree_is_minimal_and_classical_is_not` | أقلُّ شجرةٍ (Prim على مسافة لِيفنشتاين للقوالب) محسوبةٌ لا مقرَّرة؛ ما يحمله ترتيبُ البصريّين فوق كلفة القالب شرطُ حدٍّ دلاليّ لم يُقَس بعد. |
 | WAZN-sibawayh | هياكلُ الأوزان مقابل أبنية سيبويه المجمَّدة: 95/113 عنده؛ 18 مسمّاة؛ 122 من هياكله خارج الجدول | مفحوص_بعينة | `test:tests/test_wazn.py::test_skeletons_measured_against_sibawayh` | الحركاتُ معلَنةٌ من كتب الصرف لا مقيسة؛ الرباعيُّ والإعلالُ والمفعولُ المطلق والجامدُ خارج الجدول باسمها (DEBTS). |
+| DAMAIR-roles | الأدوارُ الإعرابيّة الثابتة من الحصر المُرسَل معلَنة؛ الياءُ والمستترُ خارج ما يقرؤه الحرف | معلن | `test:tests/test_damair.py::test_index_is_current` |  |
 | DL1-DL6 | أقسامُ الوضع والدلالة والحقيقة والمجاز والمنطوق والمفهوم مغلقة | معلن | `test:tests/test_semantics.py::test_partitions_are_closed` |  |
 | GRANT-declared | ستّةُ جسورٍ وصلت بلا فحصٍ يعمل: أسماءٌ معلَنة بدَينها لا جسور | معلن | `test:tests/test_grant.py::test_only_one_rung_has_a_working_check` |  |
 | NAZM | ستّةُ أنماط تركيبٍ وثلاثُ علاقاتٍ منقولةٌ من تعقّل جداولَ معلَنة؛ لا قاعدةَ تعمل | معلن | `test:tests/test_nazm.py::test_six_patterns_three_relations_as_in_taaqol` | المصدر sonaiso/taaqol-gpt@91dad10 (formal_shape_composition.py، رتبته هناك مرشَّح). ما له بتٌّ هنا شرطٌ واحد: توافقُ الإعراب (حالةُ الخانة الأخيرة). |

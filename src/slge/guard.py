@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parents[2]
 EXEMPT_DIRS = ("suspended", "formal", "tests", ".git", ".lake", "__pycache__", ".venv")
 EXEMPT_FILES = (
     "src/slge/guard.py", "tools/gen_status.py", "tools/gen_registry.py", "tools/gen_lean_index.py",
-    "tools/gen_rawabit_index.py",
+    "tools/gen_rawabit_index.py", "tools/gen_damair_index.py",
     "src/slge/order.py",  # يبصم خاناتٍ لا نصًّا
 )
 IO_ATTRS = frozenset(

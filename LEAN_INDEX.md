@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_lean_index.py` من ملفّات `.lean` و`Audit.lean` و`out/axioms.txt`؛ لا يُحرَّر باليد. الـ116 من الغانم بإيداعه المثبَّت في `formal/lakefile.toml`.
 
-**342 مبرهنة، منها 203 مدقَّقةُ المسلّمات.**
+**358 مبرهنة، منها 215 مدقَّقةُ المسلّمات.**
 
 كلُّ درجةٍ تستهلك ما قبلها: لا تدخل الكلمةُ درجةً قبل أن تُرخَّص في التي تحتها. «مدقَّق» = في `Audit.lean` وطُبعت مسلّماتُه؛ وما ليس مدقَّقًا مبرهَنٌ في Lean لكن لم يُطبع سندُه بعدُ فلا يُستشهد به في `status.py`.
 
@@ -471,7 +471,7 @@
 | `network_rooted` | كلُّ وزنٍ يبلغ الجذر. | مدقَّق | propext |
 | `run_edge_wf` | كلُّ وزنٍ يبلغ الجذر. | مدقَّق | propext, Quot.sound |
 
-## الدرجة ١٦ — الإعرابُ بالحروف وبالنون: الأسماءُ الخمسة والأفعالُ الخمسة
+## الدرجة ١٦ — الإعرابُ بالحروف وبالنون والضمائرُ: الأسماءُ الخمسة والأفعالُ الخمسة ونا والتاء
 
 ### `Slge/Khamsa.lean` — 13 مبرهنة (`Slge.Khamsa`)
 
@@ -507,6 +507,27 @@
 | `pronounOf_form` | — | مدقَّق | propext |
 | `five_licensed` | — | مدقَّق | propext |
 | `forms_count` | عددُها: جذعان بالغيبة (٢ ضميرين × ٣) + جذعان بالخطاب (٣ × ٣) = ٣٠. | — | — |
+
+### `Slge/Damair.lean` — 16 مبرهنة (`Slge.Damair`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `iyya_is_carrier_plus_suffix` | — | مدقَّق | propext, Quot.sound |
+| `nasbDetached_count` | — | — | — |
+| `na_raf_reads_sukun` | نا الفاعلين: يلحق ما آخرُه ساكنٌ صحيح (لا حرفَ مدّ). | مدقَّق | propext |
+| `na_after_madd_not_raf` | وبعد حرف المدّ (إِيَّانَا، فِينَا) ليس رفعًا: المدُّ حركةٌ طويلة. | مدقَّق | propext, Classical.choice, Quot.sound |
+| `na_nasb_reads_vowel` | نا المتكلّمين: يلحق ما آخرُه متحرّك. | مدقَّق | propext, Classical.choice, Quot.sound |
+| `ta_person` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `ta_after_vowel_not_subject` | والتاءُ بعد متحرّكٍ ليست تاءَ الفاعل. | مدقَّق | propext |
+| `ya_ambiguous` | الياءُ الساكنة بعد كسرٍ: مخاطبةٌ أو متكلّمٌ — الخانةُ لا تفصل. | — | — |
+| `noAdj_append` | الإلحاقُ يحفظ الترخيص إن كان الموصولُ مرخَّصًا والملحَقُ لا يبدأ بساكنٍ بعد ساكن. | — | — |
+| `attach_licensed` | الإلحاقُ يحفظ الترخيص إن كان الموصولُ مرخَّصًا والملحَقُ لا يبدأ بساكنٍ بعد ساكن. | مدقَّق | propext |
+| `witness_na_roles` | — | مدقَّق | propext |
+| `witness_ta_persons` | — | مدقَّق | propext |
+| `witness_iyya` | — | مدقَّق | propext |
+| `damair_licensed` | — | مدقَّق | propext |
+| `damair_nodup` | — | مدقَّق | لا مسلّمات |
+| `allForms_count` | — | — | — |
 
 ## الدرجة ١٧ — أدواتُ الربط: الخانةُ فالحدُّ فالعمل، والمعنى معلَن
 

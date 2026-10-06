@@ -210,3 +210,15 @@ import Slge
 #print axioms Slge.Rawabit.govern_jazm_afal
 #print axioms Slge.Rawabit.govern_nasb_afal
 #print axioms Slge.Rawabit.raf_not_governed_jazm
+#print axioms Slge.Damair.iyya_is_carrier_plus_suffix
+#print axioms Slge.Damair.na_raf_reads_sukun
+#print axioms Slge.Damair.na_nasb_reads_vowel
+#print axioms Slge.Damair.ta_person
+#print axioms Slge.Damair.ta_after_vowel_not_subject
+#print axioms Slge.Damair.attach_licensed
+#print axioms Slge.Damair.witness_na_roles
+#print axioms Slge.Damair.witness_ta_persons
+#print axioms Slge.Damair.witness_iyya
+#print axioms Slge.Damair.damair_licensed
+#print axioms Slge.Damair.damair_nodup
+#print axioms Slge.Damair.na_after_madd_not_raf
