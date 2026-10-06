@@ -901,5 +901,45 @@ def test_jidh_matches_lean() -> None:
                 return "-".join(str(index(c)) for c in cs)
 
             mine = [[key(tuple(c for p in x.pre for c in p)), str(x.al), key(x.stem), key(x.suf),
-                     "+".join(str(t) for t in x.templates), key(x.restore())] for x in got]
+                     "+".join(str(t) for t in x.templates), key(x.restore()), key(x.asl),
+                     _chain(x.ilal)] for x in got]
             assert mine == want, (r, mine, want)
+
+
+def _chain(ch: tuple[tuple[str, int], ...]) -> str:
+    from slge.ilal import RULES
+
+    return "+".join(f"{RULES.index(rule)}:{i}" for rule, i in ch)
+
+
+def test_ilal_matches_lean() -> None:
+    """الصعودُ والنزولُ لكلّ قاعدةٍ وموضعٍ على كلمات الشواهد، والنزولُ حتى خطوتين بسلاسله = جدولُ "
+    "`Ilal`."""
+
+    from slge.ilal import RULES, apply, descend, undo
+
+    rows = _rows("ilal.csv")
+
+    def cells(x: str) -> tuple[tuple[str, str], ...]:
+        return tuple(_cell(int(i)) for i in x.split("-")) if x else ()
+
+    def key(cs: tuple[tuple[str, str], ...]) -> str:
+        return "-".join(str(index(c)) for c in cs)
+
+    n_apply = n_undo = 0
+    descents: dict[str, list[tuple[str, str]]] = {}
+    for r in rows:
+        if r[0] == "apply":
+            got = apply(RULES[int(r[1])], cells(r[2]), int(r[3]))
+            assert ("-" if got is None else key(got)) == r[4], r
+            n_apply += 1
+        elif r[0] == "undo":
+            us = undo(RULES[int(r[1])], cells(r[2]), int(r[3]))
+            assert "|".join(key(u) for u in us) == r[4], r
+            n_undo += 1
+        elif r[0] == "descend":
+            descents.setdefault(r[1], []).append((r[2], r[3]))
+    assert n_apply == n_undo > 1000 and len(descents) >= 15
+    for w, want in descents.items():
+        mine = [(_chain(ch), key(u)) for ch, u in descend(cells(w), len(cells(w)))]
+        assert mine == want, (w, mine, want)

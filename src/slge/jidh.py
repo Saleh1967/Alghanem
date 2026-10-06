@@ -5,8 +5,12 @@
 الجداول الحاصرة (السوابقُ المفردة وأل، والضمائرُ المتّصلة ولواحقُ الفاعل) يُردّ بالإلصاق
 (`peelPrefix_sound`، `peelSuffix_sound`، `dropAl_sound`)، والقارئُ `jidh` لا يعيد قراءةً إلّا وردُّها
 الكلمةُ بعينها (`jidh_restores`)، وما صعد بالجبر ينزل بالقارئ (`jidh_complete`: لكلّ سابقةٍ ولاحقةٍ من
-الجداول وقالبٍ وجذرٍ وحالة)، والجذعُ النازل كلمةٌ مرخَّصةٌ في ذاته. القياسُ على مودَع شهادات المصحف وعلى
-قسمة MASAQ المحجوبة في `tools/gen_jidh_index.py`.
+الجداول وقالبٍ وجذرٍ وحالة)، والجذعُ النازل كلمةٌ مرخَّصةٌ في ذاته. وإن لم يُقرأ الجذعُ على قالبٍ نزل القارئُ
+بقواعد الإعلال (`slge.ilal`، حتى خطوتين) إلى أصولٍ يصعد كلٌّ منها بسلسلته إلى الجذع بعينه
+(`jidh_ascends`)،
+وما صعد بالجبر ينزل (`jidh_complete_ilal`). القياسُ على مودَع شهادات المصحف وعلى قسمة MASAQ المحجوبة
+في
+`tools/gen_jidh_index.py`.
 """
 
 from __future__ import annotations
@@ -17,15 +21,17 @@ from typing import Final
 
 from slge.cells import SUKUN, Cell
 from slge.filiyya import OBJECT_SUFFIXES, SUBJECT_SUFFIXES
+from slge.ilal import Chain, descend
 from slge.madd import pause_licensed
 from slge.maqam import _on_template_root as on_template_root
 from slge.maqam import with_prefix
 from slge.marifa import al, drop_tanwin, has_al
+from slge.nida import has_tanwin
 from slge.wazn import AWZAN, Template
 from slge.zuruf import set_last
 
 __all__ = ["ENCLITICS", "PROCLITICS", "Reading", "jidh", "last_state", "on_template_mod",
-           "stem_senses"]
+           "on_templates", "stem_senses"]
 
 Word = tuple[Cell, ...]
 _A: Final = "فتح"
@@ -58,27 +64,44 @@ _BY_LEN: Final[dict[int, tuple[int, ...]]] = {
 """القوالبُ بطولها: المطابقةُ تشترط تساوي الطول (`root_of` يردّ `None` وإلّا)."""
 
 
+def on_templates(v: Word) -> tuple[int, ...]:
+    """القوالبُ التي تُقرأ عليها الكلمةُ بعد تسوية آخرها (`onTemplates`)."""
+
+    return tuple(k for k in _BY_LEN.get(len(v), ()) if on_template_mod(k, v))
+
+
 @cache
 def stem_senses(s: Word) -> tuple[int, ...]:
-    """معاني الجذع بعد تسوية آخره؛ والمضارعُ بردّ صدره ياءً إن لم يُقرأ مباشرة."""
+    """معاني الجذع بعد تسوية آخره: كما هو أوّلًا (فالنونُ الساكنةُ قد تكون لامًا: كَوَنْ)، ثمّ بردّ التنوين،
+    ثمّ المضارعُ بردّ صدره ياءً."""
 
-    v = drop_tanwin(s)
-    direct = tuple(k for k in _BY_LEN.get(len(v), ()) if on_template_mod(k, v))
-    if direct or not v or v[0][0] not in "ءنت":
+    direct = on_templates(s)
+    if direct:
         return direct
-    u = with_prefix("ي", v)
-    return tuple(k for k in _BY_LEN.get(len(u), ()) if on_template_mod(k, u))
+    v = drop_tanwin(s)
+    if has_tanwin(s):
+        tanwin = on_templates(v)
+        if tanwin:
+            return tanwin
+    if not v or v[0][0] not in "ءنت":
+        return ()
+    return on_templates(with_prefix("ي", v))
 
 
 @dataclass(frozen=True, slots=True)
 class Reading:
-    """قراءةُ جذع: السوابقُ، أل (0 لا، 1 بهمزتها، 2 موصولةً بلا همزةٍ بعد سابقة)، الجذعُ، اللاحقةُ،
+    """قراءةُ جذع: السوابقُ، أل (0 لا، 1 بهمزتها، 2 موصولةً بلا همزةٍ بعد سابقة)، الجذعُ، اللاحقةُ، أصلُ
+    الجذع
+    قبل الإعلال (الجذعُ نفسُه إن لم يكن إعلال)، سلسلةُ الصعود من الأصل (مع اللاحقة) إلى الجذع (مع
+    اللاحقة)،
     والقوالب."""
 
     pre: tuple[Word, ...]
     al: int
     stem: Word
     suf: Word
+    asl: Word
+    ilal: Chain
     templates: tuple[int, ...]
 
     def restore(self) -> Word:
@@ -107,8 +130,29 @@ def _drop_al(w: Word, kind: int) -> Word | None:
     return s if s and al(s)[1:] == w else None
 
 
+def _readings_at(w: Word, pre: tuple[Word, ...], suf: Word, use_al: int) -> list[Reading]:
+    """قراءاتُ قطعٍ واحد (`readingsAt`): الجذعُ مرخَّصٌ في ذاته، وعلى قالبٍ مباشرةً أو بعد النزول "
+    "بالإعلال."""
+
+    w1 = _peel_prefix(tuple(c for p in pre for c in p), w)
+    w2 = _peel_suffix(suf, w1) if w1 is not None else None
+    stem = (_drop_al(w2, use_al) if use_al else w2) if w2 is not None else None
+    if not stem or not pause_licensed(stem):
+        return []  # النزول: الجذعُ كلمةٌ مرخَّصةٌ في ذاته
+    ts = stem_senses(stem)
+    if ts:
+        return [Reading(pre, use_al, stem, suf, stem, (), ts)]
+    out = []
+    for chain, u in descend((*stem, *suf), len(stem)):
+        asl = _peel_suffix(suf, u)
+        if asl is not None and (ts := stem_senses(asl)):
+            out.append(Reading(pre, use_al, stem, suf, asl, chain, ts))
+    return out
+
+
 def jidh(w: Word) -> tuple[Reading, ...]:
-    """قراءاتُ الكلمة: كلُّ قطعٍ من الجداول يعيد الكلمةَ بعينها وجذعُه على قالبٍ بعد التسوية."""
+    """قراءاتُ الكلمة: كلُّ قطعٍ من الجداول يعيد الكلمةَ بعينها وجذعُه على قالبٍ بعد التسوية (أو بعد
+    الإعلال)."""
 
     pres: list[tuple[Word, ...]] = [()] + [(p,) for p in PROCLITICS]
     pres += [(p, q) for p in PROCLITICS for q in PROCLITICS]
@@ -116,24 +160,11 @@ def jidh(w: Word) -> tuple[Reading, ...]:
     sufs: list[Word] = [q for q in ((), *ENCLITICS) if _peel_suffix(q, w) is not None]
     out: list[Reading] = []
     for pre in pres:
-        w1 = _peel_prefix(tuple(c for p in pre for c in p), w)
-        assert w1 is not None
         for suf in sufs:
-            w2 = _peel_suffix(suf, w1)
-            if w2 is None:
-                continue
             for use_al in (0, 1, 2):
                 if use_al == 2 and (not pre or pre[-1][0][0] == "ء"):
                     continue  # الموصولةُ بلا همزةٍ بعد سابقةٍ غيرِ همزة الاستفهام (آلْآنَ تُكتب بالمدّ)
-                stem = _drop_al(w2, use_al) if use_al else w2
-                if not stem or not pause_licensed(stem):
-                    continue  # النزول: الجذعُ كلمةٌ مرخَّصةٌ في ذاته
-                ts = stem_senses(stem)
-                if not ts:
-                    continue
-                r = Reading(pre, use_al, stem, suf, ts)
-                if r.restore() == w:
-                    out.append(r)
+                out.extend(r for r in _readings_at(w, pre, suf, use_al) if r.restore() == w)
     return tuple(out)
 
 
@@ -153,8 +184,21 @@ def _check() -> None:
     rs = jidh(cells_of("أَلْأَرْضُ"))
     assert [(len(r.pre), r.al, r.templates) for r in rs] == [(0, 1, (29,))]
     assert [r.templates for r in jidh(cells_of("رَبِّ"))] == [(29,)]
-    r = jidh(cells_of("كَذَّبُو"))  # قراءتان على الخانة: فَعَّلَ + واو الجماعة، أو كَ + الذَّبُو — القرينةُ تفصل
-    assert len(r) == 2 and r[0].suf == (("و", SUKUN),) and r[0].templates == (12,) and r[1].al == 2
+    r = jidh(cells_of("كَذَّبُو"))  # قراءتان بلا إعلالٍ (فَعَّلَ + واو الجماعة، أو كَ + الذَّبُو) وأربعٌ بالإعلال
+    assert len(r) == 6 and r[0].suf == (("و", SUKUN),) and r[0].templates == (12,) and r[1].al == 2
+    assert [len(x.ilal) for x in r] == [0, 0, 2, 2, 1, 1]
+    r = jidh(cells_of("قَالَ"))  # الإعلالُ نزولًا: أصلان واويٌّ ويائيّ على فَعَلَ
+    assert [(x.asl, x.ilal, x.templates) for x in r] == [
+        (cells_of("قَوَلَ"), (("QALB_AYN", 0),), (0, 36)), (cells_of("قَيَلَ"), (("QALB_AYN", 0),), (0,
+        36))]
+    r = jidh(cells_of("كُنْتُمْ"))  # خطوتان: قلبٌ ثمّ حذفٌ ملزَم؛ والنونُ الساكنةُ لامٌ لا تنوين
+    assert [(x.stem, x.asl, x.ilal) for x in r] == [
+        (cells_of("كُنْ"), cells_of("كَوَنْ"), (("QALB_AYN", 0), ("HADHF_AYN_U", 0))),
+        (cells_of("كُنْ"), cells_of("كَيَنْ"), (("QALB_AYN", 0), ("HADHF_AYN_U", 0)))]
+    r = jidh(cells_of("دَعَوْ"))  # حذفُ اللام المضمومة قبل واو الجماعة
+    assert [(x.suf, x.asl) for x in r][1:] == [
+        ((("و", SUKUN),), cells_of("دَعَوُ")), ((("و", SUKUN),), cells_of("دَعَيُ"))]
+    assert jidh(cells_of("قِيلَ")) == ()  # المبنيُّ للمجهول من الأجوف ليس من القواعد — باسمه
     r = jidh(cells_of("وَشَّمْسِ"))
     assert len(r) == 1 and r[0].al == 2 and r[0].templates == (29,)
     r = jidh(cells_of("بِكِتَابِهِمْ"))

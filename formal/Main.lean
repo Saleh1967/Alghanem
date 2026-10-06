@@ -49,6 +49,10 @@ def verdictName : Rank.Verdict → String
   | .tanaqud => "tanaqud"
   | .makhsus => "makhsus"
 
+/-- سلسلةُ إعلالٍ نصًّا: رقمُ القاعدة في `Rule.all` وموضعُها. -/
+def chain (ch : Slge.Ilal.Chain) : String :=
+  "+".intercalate (ch.map fun x => s!"{Slge.Ilal.Rule.all.idxOf x.1}:{x.2}")
+
 def main (args : List String) : IO Unit := do
   match args with
   | ["bridge"] =>
@@ -531,7 +535,22 @@ def main (args : List String) : IO Unit := do
       let rs := Jidh.jidh w
       IO.println s!"jidh,{key w},{rs.length}"
       for r in rs do
-        IO.println s!"reading,{key w},{key r.pre.flatten},{al r.al},{key r.stem},{key r.suf},{ks r.templates},{key r.restore}"
+        IO.println s!"reading,{key w},{key r.pre.flatten},{al r.al},{key r.stem},{key r.suf},{ks r.templates},{key r.restore},{key r.asl},{chain r.ilal}"
+  | ["ilal"] =>
+    -- الصعودُ والنزولُ لكلّ قاعدةٍ وموضعٍ على كلمات الشواهد، والنزولُ حتى خطوتين بسلاسله.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let words := [Ilal.qawala, Ilal.qala, Ilal.qawal, Ilal.qul, Ilal.yaqwulu, Ilal.yaqulu, Ilal.daawa, Ilal.daa,
+                  Ilal.yawidu, Ilal.yaidu, Ilal.aamana, Ilal.amana, Ilal.miwzan, Ilal.mizan, Ilal.istabara0,
+                  Ilal.istabara, Jidh.kuntum, Jidh.kana, Jidh.daaw, Jidh.jaa, Jidh.kadhdhabu,
+                  [Categories.c 24 2, Categories.c 28 3, Categories.c 21 1, Categories.c 25 2], [Categories.c 0 1, Categories.c 11 3, Categories.c 8 0, Categories.c 1 3, Categories.c 8 0], [Categories.c 0 1, Categories.c 27 3, Categories.c 3 0, Categories.c 14 0, Categories.c 23 0]]
+    for w in words do
+      for (ρ, j) in Ilal.Rule.all.zip (List.range Ilal.Rule.all.length) do
+        for i in List.range w.length do
+          let a := match Ilal.apply ρ w i with | some v => key v | none => "-"
+          IO.println s!"apply,{j},{key w},{i},{a}"
+          IO.println s!"undo,{j},{key w},{i},{"|".intercalate ((Ilal.undo ρ w i).map key)}"
+      for x in Ilal.descend w w.length do
+        IO.println s!"descend,{key w},{chain x.1},{key x.2}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

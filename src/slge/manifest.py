@@ -59,6 +59,7 @@ MODULES: Final[tuple[Module, ...]] = (
     _m("jumla"), _m("filiyya"), _m("shibh"), _m("nisab"), _m("talil"), _m("maqam"), _m("jiha"),
     _m("naat"), _m("uslub"), _m("talab"), _m("kulli"), _m("wad"), _m("tabayun"),
     Module("madd", ("Madd",), ("madd",), "gen_madd_index.py", "test_madd.py", law=True),
+    Module("ilal", ("Ilal",), ("ilal",), "gen_ilal_index.py", "test_ilal.py", law=True),
     Module("jidh", ("Jidh",), ("jidh",), "gen_jidh_index.py", "test_jidh.py", law=True),
     # الفهارسُ الجامعة (بلا وحدة)
     Module("bits", (), (), "gen_bits_index.py", "test_bits.py"),

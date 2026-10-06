@@ -946,12 +946,52 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_jidh.py::test_peeling_restores_the_word_exactly",
        note="التعدّدُ يُقرأ كما هو (كَذَّبُوا: فَعَّلَ+وا أو كَ+الذَّبُو) والقرينةُ تفصله."),
     _c("JIDH-masaq", "على مودَع المصحف نفسِه (18,179 صورةً بزوائدها): القوالبُ تقرأ 1,743 كما هي، "
-       "و4,682 بعد تسوية الآخر وحدَها، و13,706 (75.4%) بعد فصل الزوائد؛ وعلى قسمة MASAQ المحجوبة "
-       "(40,731): "
-       "قراءةٌ واحدةٌ توافقها 36.2%، وبين قراءاتٍ متعدّدة 8.8%، وعلى غيرها 14.8%، ولا قراءة 40.2%", _S,
+       "و4,815 بعد تسوية الآخر وحدَها (والنونُ الساكنةُ لامٌ قبل أن تكون تنوينًا)، و14,912 (82.0%) بعد "
+       "فصل الزوائد والنزول بالإعلال؛ وعلى قسمة MASAQ المحجوبة (40,731): قراءةٌ واحدةٌ توافقها "
+       "35.5%، "
+       "وبين قراءاتٍ متعدّدة 33.2%، وعلى غيرها 15.3%، ولا قراءة 15.9%", _S,
        "test:tests/test_jidh.py::test_numbers_before_and_after_on_the_same_deposit",
-       note="ما بقي باسمه: الإعلالُ (A116.Ilal في الغانم)، وقالبا فِعْلٍ وفَعَالٍ غيرُ مودَعين، والجداولُ "
-            "تقرأ أدواتِها."),
+       note="ما بقي باسمه: قالبا فِعْلٍ وفَعَالٍ غيرُ مودَعين، والجداولُ تقرأ أدواتِها، والأصلُ الواويُّ "
+            "واليائيُّ قراءتان تفصلهما القرينةُ المعجميّة."),
+    # — الإعلالُ والإبدال: جبرٌ مغلقٌ صعودًا ونزولًا —
+    _c("ILAL-inverse", "القواعدُ الثلاثَ عشرةَ صعودٌ من الأصل إلى الصورة في نافذة، والنزولُ عكسُه بعينه: "
+       "كلُّ أصلٍ ينزل إليه القارئُ يصعد إلى الصورة بعينها، وكلُّ أصلٍ يصعد ينزل إليه — لكلّ قاعدةٍ وكلمةٍ "
+       "وموضع", _P,
+       "lean:Slge.Ilal.down_sound", "lean:Slge.Ilal.down_complete", "lean:Slge.Ilal.undo_sound",
+       "lean:Slge.Ilal.undo_complete", "lean:Slge.Ilal.up_length",
+       "test:tests/test_ilal.py::test_every_rule_ascends_and_descends_exactly",
+       note="هندسةٌ عكسيّةٌ لـA116.Ilal: هناك سجلُّ تعديلٍ يردّ الأصلَ (edit_roundtrip)، وهنا النزولُ دالّةٌ "
+            "من الصورة إلى أصولها كلِّها."),
+    _c("ILAL-closed", "القلبُ بين متحرّكين، والنقلُ، وحذفُ واو المثال، وقلبُ اللام، وحذفُ اللام، "
+       "والإبدالُ تحفظ الترخيصَ — عبر الجسر إلى أدوات الغانم بعينها؛ وأصلُ حذف العين (ألفٌ ساكنةٌ قبل "
+       "ساكن) غيرُ مرخَّصٍ فالحذفُ ملزَم", _P,
+       "lean:Slge.Ilal.qalbAyn_closed", "lean:Slge.Ilal.naql_closed",
+       "lean:Slge.Ilal.hadhfWaw_closed", "lean:Slge.Ilal.qalbLam_closed",
+       "lean:Slge.Ilal.hadhfLam_closed", "lean:Slge.Ilal.ibdal_closed",
+       "lean:Slge.Ilal.hadhfAyn_forced", "lean:Slge.Ilal.closure_witnesses",
+       "test:tests/test_ilal.py::test_closure_and_forcing_on_licensing",
+       note="الشروطُ اللغويّة (حرفُ المضارعة، ضمُّ اللام قبل واو الجماعة، مواضعُ النوافذ) معلَنةٌ "
+            "لا مبرهَنة — كما في الغانم."),
+    _c("ILAL-descent", "القارئُ ينزل حتى خطوتين وكلُّ ما ينزل إليه يصعد بسلسلته إلى الكلمة بعينها، "
+       "وما صعد بخطوةٍ في موضعه ينزل؛ وفي الجذع: أصلُ كلّ قراءةٍ يصعد بسلسلتها إلى جذعها، وما صعد من "
+       "قالبٍ وجذرٍ بقاعدةٍ ينزل بالقارئ", _P,
+       "lean:Slge.Ilal.descend_ascends", "lean:Slge.Ilal.descend_complete",
+       "lean:Slge.Ilal.step1_sound", "lean:Slge.Ilal.step1_complete",
+       "lean:Slge.Jidh.readingsAt_ascends", "lean:Slge.Jidh.jidh_ascends",
+       "lean:Slge.Jidh.jidh_complete_ilal", "lean:Slge.Ilal.up_witnesses",
+       "lean:Slge.Ilal.down_qala", "lean:Slge.Ilal.down_qul", "lean:Slge.Ilal.down_yaqulu",
+       "lean:Slge.Ilal.down_daa", "lean:Slge.Ilal.down_yaidu", "lean:Slge.Ilal.down_amana",
+       "lean:Slge.Ilal.down_mizan", "lean:Slge.Ilal.down_istabara",
+       "lean:Slge.Jidh.jidh_witnesses_ilal_qalb", "lean:Slge.Jidh.jidh_witnesses_ilal_hadhf",
+       "test:tests/test_ilal.py::test_descent_is_bounded_and_every_descent_ascends",
+       "test:tests/test_ilal.py::test_jidh_reads_by_descent_with_named_origins",
+       note="قُلْ وكُنْتُمْ بخطوتين (قلبٌ ثمّ حذفٌ ملزَم)؛ والنزولُ لا يُجرى إلّا إن لم يُقرأ الجذعُ مباشرةً "
+            "(أولويّةٌ معلَنة)."),
+    _c("ILAL-masaq", "على مودَع المصحف نفسِه: 2,138 صورةً لها قراءةٌ بالإعلال (11.8%)، منها 1,000 لا "
+       "تُقرأ إلّا به (5.5%)؛ وكلُّ قراءةٍ (6,516) صعد أصلُها بسلسلتها على المودَع؛ وعلى قسمة MASAQ "
+       "المحجوبة: 9,249 كلمةً لا تُقرأ إلّا بالإعلال لاحقةُ المرجع بين قراءاتها في 92.4%", _S,
+       "test:tests/test_ilal.py::test_numbers_on_the_deposit",
+       note="باسمه: المبنيُّ للمجهول والمجزومُ من الأجوف ليسا من القواعد؛ والإعلالُ بثلاث خطوات."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

@@ -24,6 +24,7 @@ from slge.categories import PRONOUNS
 from slge.cells import Cell, fold, licensed
 from slge.entry import from_atoms, to_atoms
 from slge.huruf import by_cells
+from slge.ilal import RULES
 from slge.ishara import FORMS as ISHARA
 from slge.jidh import jidh
 from slge.jiha import sigha
@@ -96,7 +97,9 @@ def _g4(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
 
 def _g5(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
     rs = jidh(w)
-    return Pass("الجذع", rs, "" if rs else "لا قطعَ من الجداول يضع جذعًا على قالب")
+    used = sorted({rule for r in rs for rule, _ in r.ilal}, key=RULES.index)
+    note = "الإعلال: " + "، ".join(used) if used else ""
+    return Pass("الجذع", rs, note if rs else "لا قطعَ من الجداول يضع جذعًا على قالب")
 
 
 def _g6(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:

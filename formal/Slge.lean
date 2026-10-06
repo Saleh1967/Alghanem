@@ -43,4 +43,5 @@ import Slge.Kulli
 import Slge.Wad
 import Slge.Tabayun
 import Slge.Madd
+import Slge.Ilal
 import Slge.Jidh

@@ -31,8 +31,9 @@ def test_case_is_the_last_cell_not_the_template() -> None:
                 assert k in stem_senses(v), (k, r, st)
     assert stem_senses(cells_of("رَبِّ")) == (29,) and stem_senses(cells_of("رَبُّ")) == (29,)
     assert stem_senses(cells_of("كَذَّبُ")) == (12,)  # الماضي قبل واو الجماعة
-    # الطفرة: جذعٌ بألفٍ في موضع أصلٍ لا يُقرأ (الألفُ ليست أصلًا)
+    # الطفرة: جذعٌ بألفٍ في موضع أصلٍ لا يُقرأ مباشرةً (الألفُ ليست أصلًا)؛ والقارئُ ينزل بالإعلال
     assert stem_senses(cells_of("قَالَ")) == ()
+    assert stem_senses(cells_of("كَوَنْ")) == (0, 36)  # النونُ الساكنةُ لامٌ قبل أن تكون تنوينًا
 
 
 def test_peeling_restores_the_word_exactly() -> None:
@@ -54,7 +55,7 @@ def test_peeling_restores_the_word_exactly() -> None:
     assert rs2[0].templates == (35, 41, 93)
     assert [r.templates for r in jidh(cells_of("وَجَدَ"))] == [(0, 36)]
     # الطفرة: قراءةٌ مزوَّرةٌ لا تُردّ
-    fake = Reading(((("و", "فتح"),),), 0, cells_of("أَرْضِ"), (), (29,))
+    fake = Reading(((("و", "فتح"),),), 0, cells_of("أَرْضِ"), (), cells_of("أَرْضِ"), (), (29,))
     assert fake.restore() != cells_of("وَلْأَرْضِ")
     assert jidh(cells_of("لَا")) == () and jidh(cells_of("هُوَ")) == ()
 
@@ -68,7 +69,7 @@ def test_numbers_before_and_after_on_the_same_deposit() -> None:
 
     m = measure()
     assert m["forms"] == 18179
-    assert m["before"] == 1743 and m["step1"] == 4682 and m["step2"] == 13706
+    assert m["before"] == 1743 and m["step1"] == 4815 and m["step2"] == 14912  # الإعلالُ نزولًا
     assert m["before"] < m["step1"] < m["step2"]
     assert m["gold_match"] > 14000 and m["gold_match"] + m["gold_among"] > 18000
     assert m["only_wrong"] < m["gold_match"] / 2
