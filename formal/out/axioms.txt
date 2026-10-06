@@ -137,6 +137,7 @@
 'Slge.toCell_ofCell' depends on axioms: [propext, Quot.sound]
 'Slge.toCell_isSukun' depends on axioms: [propext, Quot.sound]
 'Slge.licensed_iff' depends on axioms: [propext, Quot.sound]
+'Slge.slgeFold_lt' depends on axioms: [propext, Quot.sound]
 'Slge.slgeFold_injective' depends on axioms: [propext, Quot.sound]
 'Slge.slgeFold_surjective' depends on axioms: [propext, Quot.sound]
 'Slge.count_eq_U' depends on axioms: [propext, Quot.sound]

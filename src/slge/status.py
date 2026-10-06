@@ -865,6 +865,19 @@ _DECLARED: tuple[Claim, ...] = (
        "وك‑ف‑ر (10 صور)", _S,
        "test:tests/test_tabayun.py::test_masaq_measurement_and_index",
        note="متّحدا المادّة ترادفُ صورةٍ لا معنًى؛ وفَعَالٌ (سَوَادٌ/بَيَاضٌ) ليست في المعجم المودَع."),
+    # — البتّاتُ على السُّلَّم —
+    _c("BITS-ladder", "شهاداتُ المدوّنة المختومة (18,179 صورة / 78,207 كلمة، مودَعةً خاناتٍ وأعدادًا لا "
+       "نصًّا) تمرّ بالدرجات بلا ضياع: الخاناتُ ذرّاتٌ بعينها 18,179/18,179؛ fold < U(n) "
+       "وunfold∘fold = id على 18,114/18,114؛ مجموعُ بتّات الطيّ 658,873 ≤ Σ width(n) 672,465؛ "
+       "المصحفُ تيارًا واحدًا 78,100 "
+       "كلمةً = 2,792,533 بتًّا = Σ cost(k)، وكلُّ كلمةٍ تعود؛ المنحُ = الترخيصُ 18,114", _S,
+       "lean:Slge.slgeFold_lt", "lean:Slge.Sequence.slgeUnfold_slgeFold",
+       "lean:Slge.Sequence.decodeWord_encodeWord", "lean:Slge.Sequence.decode_encode",
+       "lean:Slge.Grant.mursam_sound",
+       "test:tests/test_bits.py::test_fold_under_its_proven_bound_and_back",
+       "test:tests/test_bits.py::test_whole_mushaf_as_one_stream",
+       note="عددُ الشهادة في الغانم Σ 1,276,753 بتًّا = 1.96 × عددِ الذرّات قبل اقتران كانتور (651,981) "
+            "ليحمل 38 بتًّا من الرتبة — مقيس؛ تغييرُه قرارُ برهانٍ في A116.Numbering."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

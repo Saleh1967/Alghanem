@@ -142,6 +142,7 @@ import Slge
 #print axioms Slge.toCell_ofCell
 #print axioms Slge.toCell_isSukun
 #print axioms Slge.licensed_iff
+#print axioms Slge.slgeFold_lt
 #print axioms Slge.slgeFold_injective
 #print axioms Slge.slgeFold_surjective
 #print axioms Slge.count_eq_U

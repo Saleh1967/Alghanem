@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_lean_index.py` من ملفّات `.lean` و`Audit.lean` و`out/axioms.txt`؛ لا يُحرَّر باليد. الـ116 من الغانم بإيداعه المثبَّت في `formal/lakefile.toml`.
 
-**857 مبرهنة، منها 675 مدقَّقةُ المسلّمات.**
+**857 مبرهنة، منها 676 مدقَّقةُ المسلّمات.**
 
 كلُّ درجةٍ تستهلك ما قبلها: لا تدخل الكلمةُ درجةً قبل أن تُرخَّص في التي تحتها. «مدقَّق» = في `Audit.lean` وطُبعت مسلّماتُه؛ وما ليس مدقَّقًا مبرهَنٌ في Lean لكن لم يُطبع سندُه بعدُ فلا يُستشهد به في `status.py`.
 
@@ -365,7 +365,7 @@
 | `map_toCell_ofCell` | — | — | — |
 | `noAdj_iff` | — | — | — |
 | `licensed_iff` | **الترخيصُ هو القبولُ في الـ116 بعينه**، لكلّ سلسلةٍ بأيّ طول. | مدقَّق | propext, Quot.sound |
-| `slgeFold_lt` | — | — | — |
+| `slgeFold_lt` | — | مدقَّق | propext, Quot.sound |
 | `slgeFold_injective` | **متباين:** مرخَّصتان بطولٍ واحدٍ وطيٍّ واحدٍ هما واحدة. | مدقَّق | propext, Quot.sound |
 | `slgeFold_surjective` | **شامل:** كلُّ عددٍ دون ‎U(n)‎ طيُّ مرخَّصةٍ بطول n، وهي `slgeUnfold n k`. | مدقَّق | propext, Quot.sound |
 | `countPair_eq` | — | — | — |
