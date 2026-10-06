@@ -63,7 +63,9 @@ jobs:
                    Boundary.no_start_with_sukun Boundary.pause_ends_with_sukun Boundary.join_iff \
                    Boundary.wasl_dropped_needs_moving_left Boundary.pause_then_join_is_not_join \
                    Ilal.vowelled_to_sukun_between_vowelled Ilal.swap_sukun_vowel Ilal.delete_sukun_after_vowelled \
-                   Ilal.two_sukun_not_admissible Ilal.hadhf_ayn_forced Ilal.admissible_replace_carrier; do
+                   Ilal.two_sukun_not_admissible Ilal.hadhf_ayn_forced Ilal.admissible_replace_carrier \
+                   Hamza.seat_initial_by_own Hamza.seat_medial_strongest Hamza.qat_stays_when_joined \
+                   Hamza.prefix_hamza_admissible; do
             grep -q "A116.$t" axioms.txt || { echo "::error::$t غيرُ مدقَّقة"; exit 1; }
           done
 
@@ -76,7 +78,8 @@ jobs:
           lake exe a116-table numbers > numbers.csv
           lake exe a116-table pairs > pairs.csv
           lake exe a116-table utf8 > utf8.csv
-          git diff --exit-code -- table.csv counts.csv order.csv numbers.csv pairs.csv utf8.csv
+          lake exe a116-table hamza > hamza.csv
+          git diff --exit-code -- table.csv counts.csv order.csv numbers.csv pairs.csv utf8.csv hamza.csv
           lake exe a116-table syllables > syllables.csv   # 13 MB: يُولَّد هنا ويُسلَّم للبايثون لا يُودَع
 
       - uses: actions/upload-artifact@v4

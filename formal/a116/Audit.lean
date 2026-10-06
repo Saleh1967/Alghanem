@@ -134,3 +134,10 @@ import A116
 #print axioms A116.Ilal.qala_witness
 #print axioms A116.Ilal.qultu_witness
 #print axioms A116.Ilal.yaqulu_witness
+#print axioms A116.Hamza.seat_initial_by_own
+#print axioms A116.Hamza.seat_final_by_prev
+#print axioms A116.Hamza.seat_after_madd_final_is_line
+#print axioms A116.Hamza.seat_medial_strongest
+#print axioms A116.Hamza.seat_depends_on_context
+#print axioms A116.Hamza.qat_stays_when_joined
+#print axioms A116.Hamza.prefix_hamza_admissible
