@@ -644,6 +644,36 @@ _DECLARED: tuple[Claim, ...] = (
        "في 6,332 (62%)؛ الإسنادُ مبتدأً وخبرًا 1,416/1,643، والتقييدُ مفعولًا به 1,955/3,471", _S,
        "lean:Slge.Nisab.nisba_witnesses", "test:tests/test_nisab.py::test_reader_and_masaq",
        note="المبنيُّ فاعلًا ومفعولًا صورةٌ واحدة؛ العلمُ المنوَّن نكرةٌ بالخانة؛ المعتلُّ على غير قالب."),
+    # — التعليلُ والسببيّة —
+    _c("TALIL-fadla", "العلّةُ فضلةٌ لا تُرفَع: المفعولُ لأجله مصدرٌ منصوبٌ لكلّ جذع، وصورتا التعليل "
+       "(نصبُ المصدر، جرُّه بالحرف) كلمةٌ بعينها إلّا خانةَ الآخر؛ وأدواتُ التعليل الستُّ مرخَّصةٌ من جدول "
+       "الربط، ولِأَنَّ عملُ إِنَّ، وليس فيها ما يرفع معمولَه", _P,
+       "lean:Slge.Talil.liajlih_reads_nasb", "lean:Slge.Talil.fadla_witnesses",
+       "lean:Slge.Talil.two_forms_same_word", "lean:Slge.Talil.tools_licensed",
+       "lean:Slge.Talil.tools_in_rawabit", "lean:Slge.Talil.li_anna_eq_inna",
+       "lean:Slge.Talil.talil_never_raf", "lean:Slge.Talil.min_ajli_jarr",
+       "test:tests/test_talil.py::test_cause_is_never_raf_and_two_forms_are_one_word",
+       note="شرطُ المفعول لأجله (القلبيّةُ واتّحادُ الفاعل والزمان) معنًى؛ اللامُ والباءُ لغير التعليل "
+            "احتمالٌ لا قطع."),
+    _c("TALIL-sababiyya", "السببيّةُ الاشتقاقيّة على الأوزان الـ121 ترتيبٌ جزئيٌّ صارم: لا شيءَ علّةُ "
+       "نفسه، وعلّةُ العلّة علّة، ولا دور، والبعدُ عن الجذر يتناقص على كلّ سبب؛ والجذرُ علّةُ الكلّ ولا "
+       "علّةَ له", _P,
+       "lean:Slge.Talil.derives_irrefl", "lean:Slge.Talil.derives_trans",
+       "lean:Slge.Talil.derives_asymm", "lean:Slge.Talil.derives_dist",
+       "lean:Slge.Talil.root_causes_all",
+       "test:tests/test_talil.py::test_derivational_causality_is_a_strict_partial_order",
+       note="السببيّةُ بين الأحداث (التعليمُ علّةُ العلم) معنًى لا خانة."),
+    _c("TALIL-tanazu", "التنازع: إعمالُ الثاني لقربه — المتنازَعُ فيه معمولُ الأقرب وخانتُه مستقلّةٌ عن "
+       "الأوّل، والأوّلُ بضميره متّصلًا حافظًا للترخيص؛ والمفعولُ لأجله حرٌّ في الموضع بنصبٍ واحد", _P,
+       "lean:Slge.Talil.nearer_works", "lean:Slge.Talil.first_takes_pronoun",
+       "lean:Slge.Talil.tanazu_witness", "lean:Slge.Talil.fronting_keeps_nasb",
+       "test:tests/test_talil.py::test_tanazu_nearer_works_and_first_keeps_pronoun",
+       note="إعمالُ الأوّل (الكوفيّون) معلَن لا مودَع."),
+    _c("TALIL-masaq", "القارئُ talil على 5,593 كلمةً من الشريحتين المودَعتين بشهادات البوّابة: المفعولُ "
+       "لأجله يُقرأ لأجله 27/38، والمفعولُ به يُقرأ لأجله خطأً 161/2,618، والمجرورُ بـلِ/بِ يُقرأ تعليلًا "
+       "بالحرف 359/2,887 (إحصاءٌ بلا مرجع)؛ وكلُّ مفعولٍ لأجله في MASAQ منصوب 38/38", _S,
+       "lean:Slge.Talil.talil_witnesses", "test:tests/test_talil.py::test_reader_and_masaq",
+       note="فَعَالٌ ومَفْعِلَةٌ وتَفْعِلَةٌ غيرُ مودَعة (جَزَاءً، مَوْعِظَةً)؛ الأجوفُ والمقصورُ على غير قالب."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

@@ -331,6 +331,24 @@ def main (args : List String) : IO Unit := do
                    (Jumla.zayd, Nisab.rakiban), (Nisab.kitabu, Nisab.zaydin), (Nisab.ilm, Jumla.darasa),
                    (Nisab.ilm, Jumla.fidDar), (Jumla.darasa, Jumla.darasa)] do
       IO.println s!"nisba,{key a},{key b},{nn (Nisab.nisba a b)}"
+  | ["talil"] =>
+    -- السببيّةُ الاشتقاقيّة: لكلّ وزنٍ أسلافُه (عللُه)؛ وأدواتُ التعليل بخاناتها وعملها؛ والتعليلُ المقروء على الشواهد.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    for a in List.range 121 do
+      for b in List.range 121 do
+        if Talil.derives a b then IO.println s!"derives,{a},{b},{Nisab.dist b Nisab.F}"
+    let an := fun (a : Talil.Amal) => match a with
+      | .jarrIsm => "jarr" | .innaAmal => "inna" | .nasbFil => "nasbFil"
+    for (n, cs, a) in Talil.tools do
+      IO.println s!"tool,{n},{key cs},{an a}"
+    let tn := fun (t : Talil.Talil) => match t with
+      | .liAnna => "liAnna" | .liajlih => "liajlih" | .biHarf => "biHarf" | .unread => "unread"
+    for (a, b) in [(Jumla.darasa, Talil.hadhar), (Jumla.darasa, Talil.dars), (Jumla.darasa, Talil.bi ++ Talil.darb),
+                   (Jumla.darasa, Talil.li ++ Talil.hikma), (Jumla.darasa, Talil.liAnna), (Jumla.darasa, Jumla.zayd),
+                   (Filiyya.akala, Filiyya.addars)] do
+      IO.println s!"talil,{key a},{key b},{tn (Talil.talil a b)}"
+    let t := Talil.tanazu Talil.alimtu Talil.amiltu Talil.alkhayr Talil.hu
+    IO.println s!"tanazu,{key t.1},{key t.2.1},{key t.2.2}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

@@ -33,3 +33,4 @@ import Slge.Jumla
 import Slge.Filiyya
 import Slge.Shibh
 import Slge.Nisab
+import Slge.Talil

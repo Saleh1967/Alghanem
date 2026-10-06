@@ -605,3 +605,33 @@ def test_nisab_matches_lean() -> None:
             a = tuple(_cell(int(i)) for i in r[1].split("-"))
             b = tuple(_cell(int(i)) for i in r[2].split("-"))
             assert nisba(a, b) == nn[r[3]], r
+
+
+def test_talil_matches_lean() -> None:
+    """أزواجُ السببيّة الاشتقاقيّة، وأدواتُ التعليل، والتعليلُ المقروء، والتنازعُ = جدولُ `Talil`."""
+
+    from slge.nisab import dist
+    from slge.talil import TOOLS, derives, talil, tanazu
+    from slge.wazn import AWZAN
+
+    rows = _rows("talil.csv")
+    tn = {"liAnna": "لأنّ", "liajlih": "مفعول لأجله", "biHarf": "تعليل بالحرف", "unread": "—"}
+    an = {"jarr": "جرّ", "inna": "إنّ", "nasbFil": "نصب الفعل"}
+    got = {(int(r[1]), int(r[2])) for r in rows if r[0] == "derives"}
+    n = len(AWZAN)
+    assert got == {(a, b) for a in range(n) for b in range(n) if derives(a, b)} and len(got) == 339
+    for r in rows:
+        if r[0] == "derives":
+            assert dist(int(r[2])) == int(r[3]) < dist(int(r[1])), r
+        elif r[0] == "tool":
+            name, cells, amal = r[1], tuple(_cell(int(i)) for i in r[2].split("-")), an[r[3]]
+            assert (name, cells, amal) in TOOLS, r
+        elif r[0] == "talil":
+            a = tuple(_cell(int(i)) for i in r[1].split("-"))
+            b = tuple(_cell(int(i)) for i in r[2].split("-"))
+            assert talil(a, b) == tn[r[3]], r
+        elif r[0] == "tanazu":
+            v1, v2, w = (tuple(_cell(int(i)) for i in x.split("-")) for x in r[1:4])
+            assert tanazu(v1[:-1], v2, (*w[:-1], ("ر", "ضم")), v1[-1:]) == (v1, v2, w), r
+    assert sum(r[0] == "tool" for r in rows) == len(TOOLS) == 6
+
