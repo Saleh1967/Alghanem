@@ -7,3 +7,4 @@ import Slge.Consistency
 import Slge.Categories
 import Slge.Grant
 import Slge.Wazn
+import Slge.Shabaka

@@ -98,6 +98,10 @@ def main (args : List String) : IO Unit := do
         | some c => toString c.val | none => "none"
       IO.println s!"{n},{key},{licensed m},{"-".intercalate back}"
       n := n + 1
+  | ["shabaka"] =>
+    -- حوافُّ شبكة البصريّين: الابن، الأب، عددُ العمليّات، وهل يبلغ الجذر.
+    for e in Shabaka.edges do
+      IO.println s!"{e.1},{e.2.1},{e.2.2.length},{Shabaka.reaches e.1 113}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

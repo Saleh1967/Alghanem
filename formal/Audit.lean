@@ -51,3 +51,8 @@ import Slge
 #print axioms Slge.Wazn.awzan_wf
 #print axioms Slge.Wazn.awzan_licensed
 #print axioms Slge.Wazn.awzan_root
+#print axioms Slge.Shabaka.wf_step
+#print axioms Slge.Shabaka.wf_run
+#print axioms Slge.Shabaka.edges_apply
+#print axioms Slge.Shabaka.network_rooted
+#print axioms Slge.Shabaka.run_edge_wf

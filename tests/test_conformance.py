@@ -91,10 +91,25 @@ def test_wazn_matches_lean() -> None:
     from slge.wazn import AWZAN, FAL, mizan, root_of
 
     rows = _rows("wazn.csv")
-    assert len(rows) == len(AWZAN) == 104
+    assert len(rows) == len(AWZAN) == 113
     for r, w in zip(rows, AWZAN, strict=True):
         m = mizan(w.template)
         assert r[1] == "-".join(str(index(c)) for c in m), w.name
         assert r[2] == "true" and licensed(m), w.name
         assert r[3] == "-".join(str(ALPHABET.index(c)) for c in FAL)
         assert root_of(w.template, m) == FAL
+
+
+def test_shabaka_matches_lean() -> None:
+    """حوافُّ البصريّين: (ابن، أب، عددُ العمليّات، يبلغ الجذر) = جدولُ `Shabaka.edges`."""
+
+    from slge.shabaka import CLASSICAL, ROOT, diff
+    from slge.wazn import AWZAN
+
+    names = [w.name for w in AWZAN]
+    by = {w.name: w.template for w in AWZAN}
+    rows = _rows("shabaka.csv")
+    assert len(rows) == len(CLASSICAL) == 112 and names[29] == ROOT
+    for r, (child, parent) in zip(rows, CLASSICAL.items(), strict=True):
+        assert (int(r[0]), int(r[1])) == (names.index(child), names.index(parent))
+        assert int(r[2]) == len(diff(by[parent], by[child])) and r[3] == "true"
