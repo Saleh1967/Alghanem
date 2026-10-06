@@ -120,7 +120,9 @@ def repair(surface: str) -> tuple[str, tuple[Edit, ...]]:
     i = 1
     while i < len(cl) - 1:
         if (cl[i] == ALIF and _proclitics(cl[:i])
-                and (cl[i + 1] == LAM or SUKUN in cl[i + 1] or SHADDA in cl[i + 1])):
+                and (cl[i + 1] == LAM or SUKUN in cl[i + 1] or SHADDA in cl[i + 1]
+                     or (_bare(cl[i + 1]) and cl[i + 1] not in (ALIF, WAW, YA)
+                         and i + 2 < len(cl)))):
             edits.append(("WASL_SILENT", i, ALIF))
             cl.pop(i)
             continue

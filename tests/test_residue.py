@@ -61,3 +61,24 @@ def test_wasl_vowel_follows_the_rule() -> None:
     assert repair("الْحَمْدُ")[0].startswith("ٱَ")
     assert repair("انْصُرْ")[0].startswith("ٱُ")
     assert repair("اضْرِبْ")[0].startswith("ٱِ")
+
+
+def test_long_vowel_codas_are_geminate_except_madd_al_farq() -> None:
+    """«التقاء الساكنين على حدّه»: كلُّ قافيةِ CVVC في شهادات المصحف مدغمةٌ (حَاجَّ: 65) إلّا مدَّ الفرق
+    (آلْآنَ: 1). قياسٌ لا برهان — ودَينٌ مسمًّى لتضييق `Ternary.ContinueLicensed`."""
+
+    from gate.licence import kind_of
+
+    geminate, other = 0, []
+    for s in sorted(_surfaces()):
+        cert = enter(s.encode("utf-8"))
+        if isinstance(cert, Refusal):
+            continue
+        k = kind_of(cert.atoms)
+        for i in range(len(k) - 1):
+            if k[i] == "v" and k[i + 1] == "c":
+                if i + 2 < len(cert.atoms) and cert.atoms[i + 2][0] == cert.atoms[i + 1][0]:
+                    geminate += 1
+                else:
+                    other.append(s)
+    assert geminate == 65 and other == ["آلْآنَ"]

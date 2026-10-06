@@ -44,7 +44,7 @@ def test_every_ready_word_round_trips_and_is_admissible() -> None:
         assert consistent(surface, cert.atoms), surface
         assert g.book.decode_integer(cert.integer) == surface
     assert ready == 17551
-    assert madd == 104  # ما يراه الثلاثيُّ ويعمى عنه الثنائيّ (مدٌّ ثمّ مشدَّد أو ساكن)
+    assert madd == 65  # ما يراه الثلاثيُّ ويعمى عنه الثنائيّ: مدٌّ ثمّ مشدَّد (حَاجَّ)
 
 
 def test_refusals_are_named_and_never_guessed() -> None:

@@ -61,7 +61,9 @@ jobs:
           done
           for t in Unicode.decode_encode Unicode.encode_prefix_free Unicode.decodeAll_encodeAll \
                    Boundary.no_start_with_sukun Boundary.pause_ends_with_sukun Boundary.join_iff \
-                   Boundary.wasl_dropped_needs_moving_left Boundary.pause_then_join_is_not_join; do
+                   Boundary.wasl_dropped_needs_moving_left Boundary.pause_then_join_is_not_join \
+                   Ilal.vowelled_to_sukun_between_vowelled Ilal.swap_sukun_vowel Ilal.delete_sukun_after_vowelled \
+                   Ilal.two_sukun_not_admissible Ilal.hadhf_ayn_forced Ilal.admissible_replace_carrier; do
             grep -q "A116.$t" axioms.txt || { echo "::error::$t غيرُ مدقَّقة"; exit 1; }
           done
 

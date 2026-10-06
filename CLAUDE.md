@@ -35,7 +35,7 @@ export PATH=$HOME/.elan/bin:$PATH
 ruff check gate tests tools && mypy
 python tools/gen_registry.py --check
 python -c "from gate.guard import breaches; print(breaches() or 'لا خرق')"
-pytest -q -m "not slow"        # 69 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
+pytest -q -m "not slow"        # 98 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
 ```
 
 وقبل الطبعة: أثبت أنّ الملف الذي تتكلّم عنه موجودٌ («لا ثقة بلا طبعة»)، وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه أنت.
@@ -50,6 +50,7 @@ pytest -q -m "not slow"        # 69 اختبارًا؛ و`pytest -q -m slow` ل�
 | `gate/bridge.py`, `gate/contextual.py` | النصّ ← الذرّات، الترقيم، الشهادة (بروتوكول A116-CANONICAL-TXT-1.1) | مطابَق للجداول (`tests/test_conformance.py`) |
 | `gate/licence.py` | التقطيع الثلاثيّ بايثونًا؛ الحكمُ الأخير قبل الشهادة | مطابَق لـ265,719 سطرًا من Lean |
 | `formal/a116/A116/Unicode.lean`, `Boundary.lean` | UTF-8 تقابلٌ ذاتيُّ الحدّ على مجال يونيكود؛ قانون الابتداء/الوصل/الوقف (لا ابتداء بساكن، الوقف يُسكِّن، الوصل بشرط الحدّ، همزة الوصل تسقط ولا تُقبل بعد ساكن) | مبرهن؛ مطابَق (`utf8.csv`، `test_boundary.py`) |
+| `formal/a116/A116/Ilal.lean` + `gate/ilal.py` | الإعلال والإبدال: 12 قاعدةً تعديلاتٍ على الخانات؛ الردّ مبرهَن، الإغلاق مبرهَن (قلب/نقل/حذف/إبدال)، حذف عين الأجوف ملزَم (الأصل غير مرخَّص) | مبرهن + شواهد مفحوصة |
 | `gate/residue.py` | بقيّةُ الرسم: 8 قواعد طبعةٍ مسمّاة (`A116.Residue`)؛ READY 8,532 → 18,179 من 18,200، ردٌّ بعينه | مبرهن (الردّ) + مقيس (التغطية) |
 | `gate/mabni_verbs.py`, `gate/mabni_bridge.py` | 770 جذرًا ← 315,874 صورة؛ الاسترجاع | مقيس (MASAQ 97.23%) |
 | `gate/guard.py` | الحارس | مفحوص (خرقٌ مزروعٌ يُلتقط) |

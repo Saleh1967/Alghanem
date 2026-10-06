@@ -122,3 +122,15 @@ import A116
 #print axioms A116.Boundary.join_iff
 #print axioms A116.Boundary.wasl_dropped_needs_moving_left
 #print axioms A116.Boundary.pause_then_join_is_not_join
+#print axioms A116.Ilal.admissible_replace_carrier
+#print axioms A116.Ilal.vowelled_to_sukun_between_vowelled
+#print axioms A116.Ilal.swap_sukun_vowel
+#print axioms A116.Ilal.delete_sukun_after_vowelled
+#print axioms A116.Ilal.two_sukun_not_admissible
+#print axioms A116.Ilal.hadhf_ayn_forced
+#print axioms A116.Ilal.qalb_ayn_restore
+#print axioms A116.Ilal.naql_restore
+#print axioms A116.Ilal.ibdal_restore
+#print axioms A116.Ilal.qala_witness
+#print axioms A116.Ilal.qultu_witness
+#print axioms A116.Ilal.yaqulu_witness
