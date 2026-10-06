@@ -486,6 +486,19 @@ def main (args : List String) : IO Unit := do
     for w in [Wad.intishar, Wad.manha, Wad.kitab, Wad.hilal, Wad.ayn, Wad.qamar, Wad.amana, Kulli.katib,
               Jiha.yaktubu, Maqam.huwa, Kulli.hadha, Uslub.la] do
       IO.println s!"wad,{key w},{ks (Wad.senses (Marifa.dropTanwin w))},{kn (Wad.wad w)}"
+  | ["tabayun"] =>
+    -- عزلةُ القالب وعددُ موادّ الميزان لكلّ قالبٍ من الـ121، وعلاقاتُ الشواهد.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let rn := fun (k : Tabayun.Rel) => match k with
+      | .munfarid => "munfarid" | .mushtarak => "mushtarak" | .ittihad => "ittihad"
+      | .mutabayin => "mutabayin" | .mutadakhil => "mutadakhil" | .unread => "unread"
+    for k in List.range 121 do
+      let m := Wazn.mizan (Sarf.templ k)
+      IO.println s!"mizan,{k},{key m},{Tabayun.isolated k},{(Tabayun.mawadd m).length}"
+    for (a, b) in [(Tabayun.darbun, Tabayun.qatl), (Tabayun.qatl, Tabayun.darbun), (Tabayun.darbun, Tabayun.dirab),
+                   (Wad.intishar, Tabayun.nashr), (Tabayun.nashr, Wad.intishar), (Wad.kitab, Wad.kitab),
+                   (Wad.intishar, Wad.intishar), (Uslub.la, Tabayun.darbun), (Wad.manha, Tabayun.nashr)] do
+      IO.println s!"rel,{key a},{key b},{rn (Tabayun.rel a b)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

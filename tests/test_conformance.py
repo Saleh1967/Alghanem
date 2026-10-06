@@ -811,3 +811,25 @@ def test_wad_matches_lean() -> None:
         elif r[0] == "wad":
             w = cells(r[1])
             assert senses(drop_tanwin(w)) == ks(r[2]) and wad(w) == kn[r[3]], r
+
+
+def test_tabayun_matches_lean() -> None:
+    """موادُّ الميزان وعزلةُ القالب لكلّ قالب، وعلاقاتُ الشواهد = جدولُ `Tabayun`."""
+
+    from slge.tabayun import isolated, mawadd, rel
+
+    rows = _rows("tabayun.csv")
+    rn = {"munfarid": "منفرد", "mushtarak": "مشترك", "ittihad": "متّحدا المادّة",
+          "mutabayin": "متباينان", "mutadakhil": "متداخلان", "unread": "—"}
+
+    def cells(x: str) -> tuple[tuple[str, str], ...]:
+        return tuple(_cell(int(i)) for i in x.split("-"))
+
+    assert sum(r[0] == "mizan" for r in rows) == 121 and sum(r[0] == "rel" for r in rows) == 9
+    for r in rows:
+        if r[0] == "mizan":
+            m = cells(r[2])
+            assert isolated(int(r[1])) == (r[3] == "true"), r
+            assert mawadd(m) == (("ف", "ع", "ل"),) * int(r[4]), r
+        elif r[0] == "rel":
+            assert rel(cells(r[1]), cells(r[2])) == rn[r[3]], r

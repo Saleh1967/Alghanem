@@ -670,3 +670,15 @@ import Slge
 #print axioms Slge.Wad.masdar_forms_distinct
 #print axioms Slge.Wad.wad_witnesses
 #print axioms Slge.Wad.intishar_two_roots
+#print axioms Slge.Tabayun.shareMadda_iff
+#print axioms Slge.Tabayun.shareMadda_symm
+#print axioms Slge.Tabayun.tabayun_symm
+#print axioms Slge.Tabayun.shareMadda_self
+#print axioms Slge.Tabayun.tabayun_irrefl
+#print axioms Slge.Tabayun.isolated_count
+#print axioms Slge.Tabayun.templ_wf
+#print axioms Slge.Tabayun.mawadd_fill_isolated
+#print axioms Slge.Tabayun.tabayun_of_isolated
+#print axioms Slge.Tabayun.fill_functional
+#print axioms Slge.Tabayun.rel_witnesses
+#print axioms Slge.Tabayun.seven_not_exhaustive

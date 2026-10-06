@@ -842,6 +842,29 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_wad.py::test_masaq_measurement_and_index",
        note="أكبرُ المشترك المقيس: اللَّهُ بسابقة أل على أَفْعَلَ/فَعَّلَ (87) — العلَمُ بالمعجم؛ وآمَنَ تُقرأ "
             "فَاعَلَ بالخانة."),
+    # — المتباين —
+    _c("TABAYUN-rel", "التباينُ على الخانات (كلمتان لا مادّةَ بينهما) متماثلٌ لكلّ كلمتين وغيرُ انعكاسيّ "
+       "(كلُّ ذي مادّةٍ يشارك نفسَه)؛ والحصرُ السباعيُّ باعتبار الدالّ والمدلول يُقرأ بعدد الكلمات وعدد "
+       "الموادّ وله قسمٌ ثامن تقرؤه الخانة: المتداخلان", _P,
+       "lean:Slge.Tabayun.tabayun_symm", "lean:Slge.Tabayun.shareMadda_self",
+       "lean:Slge.Tabayun.tabayun_irrefl", "lean:Slge.Tabayun.rel_witnesses",
+       "lean:Slge.Tabayun.seven_not_exhaustive",
+       "test:tests/test_tabayun.py::test_tabayun_is_symmetric_and_irreflexive",
+       "test:tests/test_tabayun.py::test_seven_fold_division_and_its_eighth",
+       note="اِنْتِشَارٌ/نَشْرٌ متداخلان (ن‑ش‑ر مشتركة وت‑ش‑ر منفردة)؛ المنقولُ والحقيقةُ والمجازُ لا "
+            "خانةَ لها."),
+    _c("TABAYUN-asl", "الأصلُ في الوضع التباين: على القالب المعزول (77 من الـ121) جذران مختلفان لا "
+       "ألفَ فيهما كلمتان متباينتان على قالبٍ واحد — لكلّ قالبٍ معزول ولكلّ جذرين؛ والترادفُ التامُّ "
+       "مستحيل (الملءُ دالّة)", _P,
+       "lean:Slge.Tabayun.tabayun_of_isolated", "lean:Slge.Tabayun.mawadd_fill_isolated",
+       "lean:Slge.Tabayun.isolated_count", "lean:Slge.Tabayun.fill_functional",
+       "test:tests/test_tabayun.py::test_default_is_divergence_on_isolated_templates",
+       note="على غير المعزول يقع التداخل (اِنْفِعَالٌ/اِفْتِعَالٌ)؛ وfill_functional بديهيّ."),
+    _c("TABAYUN-masaq", "على 936 صورةً مقروءةً من MASAQ بشهادات البوّابة: بين كلّ صورتين (437,580 "
+       "زوجًا) متباينان 99.82%، متّحدا المادّة 760، متداخلان 13؛ عائلاتُ المادّة 565 أكبرُها ن‑ز‑ل "
+       "وك‑ف‑ر (10 صور)", _S,
+       "test:tests/test_tabayun.py::test_masaq_measurement_and_index",
+       note="متّحدا المادّة ترادفُ صورةٍ لا معنًى؛ وفَعَالٌ (سَوَادٌ/بَيَاضٌ) ليست في المعجم المودَع."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

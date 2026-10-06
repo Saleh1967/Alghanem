@@ -41,3 +41,4 @@ import Slge.Uslub
 import Slge.Talab
 import Slge.Kulli
 import Slge.Wad
+import Slge.Tabayun
