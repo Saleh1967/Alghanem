@@ -633,3 +633,12 @@
 'Slge.Uslub.nahy_only_present' depends on axioms: [propext, Quot.sound]
 'Slge.Uslub.ma_afala_splits_by_next_case' depends on axioms: [propext, Quot.sound]
 'Slge.Uslub.uslub_witnesses' depends on axioms: [propext]
+'Slge.Talab.ismFil_licensed' depends on axioms: [propext]
+'Slge.Talab.ismFil_count' does not depend on any axioms
+'Slge.Talab.four_forms_witnesses' depends on axioms: [propext]
+'Slge.Talab.lam_reaches_every_person' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Talab.lam_amr_jazm' depends on axioms: [propext]
+'Slge.Talab.lam_amr_licensed' depends on axioms: [propext, Quot.sound]
+'Slge.Talab.la_before_amr_stays_amr' depends on axioms: [propext, Quot.sound]
+'Slge.Talab.nahy_requires_la' depends on axioms: [propext, Quot.sound]
+'Slge.Talab.amr_never_reads_nahy' depends on axioms: [propext, Quot.sound]

@@ -438,6 +438,24 @@ def main (args : List String) : IO Unit := do
                       ([], Naat.alrajul, none), ([], Uslub.la, none)] do
       let u := Uslub.uslub a b n
       IO.println s!"uslub,{key a},{key b},{match n with | some w => key w | none => ""},{un u},{Uslub.truthApt u}"
+  | ["talab"] =>
+    -- صورُ الطلب على الشواهد، ولامُ الأمر على كلّ قالبِ مضارعٍ بصدوره على الميزان، وأسماءُ الفعل.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let sn := fun (s : Option Talab.Sura) => match s with
+      | some .sigha => "sigha" | some .lam => "lam" | some .masdar => "masdar" | some .ismFil => "ismFil"
+      | none => "none"
+    for (n, cs) in Talab.ismFil do
+      IO.println s!"ismFil,{n},{key cs},{sn (Talab.talab [] cs)}"
+    for k in Jiha.presentTemplates do
+      for p in [(0 : Fin 29), 25, 3, 28] do
+        let v := Maqam.withPrefix p (Wazn.mizan (Sarf.templ k))
+        IO.println s!"lam,{key (Talab.lamAmr v)},{sn (Talab.talab [] (Talab.lamAmr v))}"
+        IO.println s!"lamWaw,{key (Talab.lamAmrAfterWaw v)},{sn (Talab.talab Talab.waw (Talab.lamAmrAfterWaw v))}"
+    for (a, b) in [([], Jiha.uktub), ([], Talab.lamAmr Jiha.yaktubu), (Talab.waw, Talab.lamAmrAfterWaw Jiha.yaktubu),
+                   (Talab.fa, Talab.lamAmrAfterWaw Jiha.yaktubu), ([], Talab.masdarAmr Talab.darb), ([], Talab.sah),
+                   ([], Jiha.yaktubu), ([], Jiha.kataba), ([], Talab.lamAmrAfterWaw Jiha.yaktubu),
+                   (Jiha.kataba, Talab.masdarAmr Talab.darb)] do
+      IO.println s!"talab,{key a},{key b},{sn (Talab.talab a b)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

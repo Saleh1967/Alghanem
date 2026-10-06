@@ -739,3 +739,27 @@ def test_uslub_matches_lean() -> None:
             u = uslub(cells(r[1]), cells(r[2]), cells(r[3]) if r[3] else None)
             assert u == un[r[4]] and truth_apt(u) == (r[5] == "true"), r
 
+
+def test_talab_matches_lean() -> None:
+    """أسماءُ الفعل، ولامُ الأمر على كلّ قالبِ مضارعٍ بصدوره (مكسورةً وساكنة)، والشواهد = `Talab`."""
+
+    from slge.talab import ISM_FIL, WAW, talab
+
+    rows = _rows("talab.csv")
+    sn = {"sigha": "صيغة", "lam": "لام", "masdar": "مصدر", "ismFil": "اسم فعل", "none": None}
+
+    def cells(x: str) -> tuple[tuple[str, str], ...]:
+        return tuple(_cell(int(i)) for i in x.split("-")) if x else ()
+
+    assert sum(r[0] == "lam" for r in rows) == 52 == sum(r[0] == "lamWaw" for r in rows)
+    for r in rows:
+        if r[0] == "ismFil":
+            assert (r[1], cells(r[2])) in ISM_FIL and talab((), cells(r[2])) == sn[r[3]], r
+        elif r[0] == "lam":
+            assert talab((), cells(r[1])) == sn[r[2]], r
+        elif r[0] == "lamWaw":
+            assert talab(WAW, cells(r[1])) == sn[r[2]], r
+        elif r[0] == "talab":
+            assert talab(cells(r[1]), cells(r[2])) == sn[r[3]], r
+    assert sum(r[0] == "talab" for r in rows) == 10 and sum(r[0] == "ismFil" for r in rows) == 8
+

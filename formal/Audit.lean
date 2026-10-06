@@ -638,3 +638,12 @@ import Slge
 #print axioms Slge.Uslub.nahy_only_present
 #print axioms Slge.Uslub.ma_afala_splits_by_next_case
 #print axioms Slge.Uslub.uslub_witnesses
+#print axioms Slge.Talab.ismFil_licensed
+#print axioms Slge.Talab.ismFil_count
+#print axioms Slge.Talab.four_forms_witnesses
+#print axioms Slge.Talab.lam_reaches_every_person
+#print axioms Slge.Talab.lam_amr_jazm
+#print axioms Slge.Talab.lam_amr_licensed
+#print axioms Slge.Talab.la_before_amr_stays_amr
+#print axioms Slge.Talab.nahy_requires_la
+#print axioms Slge.Talab.amr_never_reads_nahy

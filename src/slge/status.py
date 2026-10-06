@@ -772,6 +772,28 @@ _DECLARED: tuple[Claim, ...] = (
        "وأجوف)؛ فعلُ الأمر 268: يُقرأ أمرًا في 88؛ ما بعد حرف الاستفهام 24: استفهامٌ في 23", _S,
        "test:tests/test_uslub.py::test_masaq_measurement_and_index",
        note="أمرُ أَفْعَلَ والأجوفُ والناقصُ على غير قالب: 132 أمرًا لا يُقرأ و48 يُقرأ خبرًا — باسمها."),
+    # — الطلب —
+    _c("TALAB-suwar", "صورُ الأمر الأربع تُقرأ من الخانة (الصيغة، اللام، المصدر النائب، اسم الفعل من "
+       "جدولٍ حاصر)؛ لامُ الأمر على المضارع تصل كلَّ شخصٍ لكلّ قالبٍ ولكلّ جذر، وتجزم أبدًا، وتحفظ "
+       "الترخيص", _P,
+       "lean:Slge.Talab.four_forms_witnesses", "lean:Slge.Talab.ismFil_licensed",
+       "lean:Slge.Talab.lam_reaches_every_person", "lean:Slge.Talab.lam_amr_jazm",
+       "lean:Slge.Talab.lam_amr_licensed",
+       "test:tests/test_talab.py::test_four_forms_and_lam_for_every_person",
+       note="المضعّفُ يُجزَم بالفتح (التقاءُ الساكنين) والمعتلُّ بالحذف: دَينُ الإعلال؛ المصدرُ النائبُ عن "
+            "المفعول المطلق لا يفرّقه إلّا الصدر."),
+    _c("TALAB-amr-nahy", "الأمرُ بالشيء ليس نهيًا عن ضدّه على الخانة: لَا قبل صيغة الأمر لا تقلبها "
+       "نهيًا لكلّ قالبٍ ولكلّ جذر، والنهيُ لا يُقرأ إلّا بلَا قبل مضارع، وصيغةُ الأمر لا تُقرأ نهيًا "
+       "مهما كان ما قبلها وما بعدها — التحويلُ عمليّتان", _P,
+       "lean:Slge.Talab.la_before_amr_stays_amr", "lean:Slge.Talab.nahy_requires_la",
+       "lean:Slge.Talab.amr_never_reads_nahy",
+       "test:tests/test_talab.py::test_four_forms_and_lam_for_every_person",
+       note="الضدُّ معنًى؛ والإلزامُ (وجوبٌ/ندب) ليس في الخانة: معلَن لا مبرهَن."),
+    _c("TALAB-masaq", "على MASAQ بشهادات البوّابة: فعلُ الأمر بلا لاحقة 268 يُقرأ صيغةً في 88، واسمُ "
+       "فعل الأمر 1/1؛ لامُ الأمر 71 موضعًا كلُّها مجزومة عند MASAQ (سكونٌ 38، حذفُ نون 21، حذفُ حرف "
+       "علّة 12) و69 منها بعد الواو أو الفاء", _S,
+       "test:tests/test_talab.py::test_masaq_measurement_and_index",
+       note="أمرُ أَفْعَلَ والأجوفُ والناقصُ على غير قالب: 180 أمرًا لا يُقرأ — باسمها."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",
