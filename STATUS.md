@@ -4,9 +4,9 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 50 |
+| مبرهن | 53 |
 | مفحوص_استقصاء | 12 |
-| مفحوص_بعينة | 9 |
+| مفحوص_بعينة | 10 |
 | دليل | 0 |
 | معلن | 10 |
 | رأي | 0 |
@@ -15,6 +15,9 @@
 
 | المعرّف | الدعوى | الوسم | السند | ملاحظة |
 |---|---|---|---|---|
+| ADAD-forms | 82 صورةً مرخَّصةً متباينة (مذكّر/مؤنّث × 3 حالات، العقود، اثنا عشر، المركّب) | مبرهن | `lean:Slge.Adad.forms_licensed`<br>`lean:Slge.Adad.forms_nodup`<br>`test:tests/test_conformance.py::test_adad_matches_lean` |  |
+| ADAD-ta | المخالفةُ (3–10) خانةُ تاءٍ واحدة بعد فتحة الجذع؛ وجنسُ المعدود يُقرأ منها (وسِتُّ تاؤها أصل) | مبرهن | `lean:Slge.Adad.fem_is_masc_without_ta`<br>`lean:Slge.Adad.genderOf_masc`<br>`lean:Slge.Adad.genderOf_fem_forms`<br>`lean:Slge.Adad.six_ta_is_radical`<br>`lean:Slge.Adad.ten_single_opposes`<br>`test:tests/test_adad.py::test_gender_is_one_ta_and_six_is_radical` |  |
+| ADAD-tarkib | التركيبُ (11–19) فتحُ الجزأين وشينُ عَشَر؛ اثنا عشر إعرابُه من مدّه؛ العقودُ واوٌ وياء | مبرهن | `lean:Slge.Adad.compound_both_fatha`<br>`lean:Slge.Adad.shin_law`<br>`lean:Slge.Adad.twelve_case`<br>`lean:Slge.Adad.uqud_case`<br>`test:tests/test_adad.py::test_compound_shin_twelve_uqud` |  |
 | AFAL-harmony | الحركةُ قبل الضمير من جنسه — قانونُ الأسماء الخمسة نفسُه؛ والصورُ الثلاثون مرخَّصة | مبرهن | `lean:Slge.Afal.glide_matches_before`<br>`lean:Slge.Afal.five_licensed`<br>`test:tests/test_conformance.py::test_afal_matches_lean` |  |
 | AFAL-nun | الرفعُ يُقرأ من الآخر (نونٌ أو لا)، والضميرُ من حرفه؛ وصورةُ النصب هي صورةُ الجزم | مبرهن | `lean:Slge.Afal.moodOf_raf`<br>`lean:Slge.Afal.moodOf_nasb`<br>`lean:Slge.Afal.pronounOf_form`<br>`lean:Slge.Afal.nasb_eq_jazm`<br>`test:tests/test_afal.py::test_mood_is_one_bit_and_nasb_equals_jazm` |  |
 | AQ-lattice | الاحتواءُ بين الأقانيم انعكاسيٌّ متعدٍّ، والسلامةُ تنزل من الأعلى إلى الأدنى | مبرهن | `lean:Slge.Categories.sub_trans` |  |
@@ -77,6 +80,7 @@
 | Q21-code | الشيفرةُ نفسُها لا تقفز: لا تستورد وحدةٌ وحدةَ طبقةٍ ليست من شروطها | مفحوص_استقصاء | `test:tests/test_order.py::test_modules_import_only_their_prerequisites` |  |
 | Q22 | الاستنتاجُ المعكوس: ‎U(1) = 87‎ و29 حاملًا ⇒ 3 متحرّكات ⇒ ‎116‎ | مفحوص_استقصاء | `test:tests/test_cells.py::test_inventory_is_derived_from_U1` |  |
 | Q24 | الظلُّ M/S يعجز والطيُّ يفرّق (ذَيْن/ذِين) | مفحوص_استقصاء | `test:tests/test_cells.py::test_shadow_fails_fold_separates` |  |
+| ADAD-tamyiz | حالةُ المعدود دالّةٌ في مدى العدد: على 72 موضعًا من MASAQ بشهادات البوّابة 71 مطابق | مفحوص_بعينة | `lean:Slge.Adad.tamyiz_ranges`<br>`test:tests/test_adad.py::test_tamyiz_function_and_masaq` | الحيادُ (مائة، ألف) والمعطوفُ وتذكيرُ المعدود بمفرده: معلن. |
 | AFAL-gate | ستّةُ شواهد من شهادات البوّابة تطابق القانون؛ نصبُ الاثنين ورفعُ المخاطبة بالقانون | مفحوص_بعينة | `test:tests/test_afal.py::test_forms_match_gate_witnesses` | الخمسةُ خمسةٌ بجدول مطابقةٍ معلَن (ياءُ المخاطبة لا تلحق حرفَ الغيبة). |
 | ISHARA-gate | 13 صورةً من شهادات البوّابة هي صورُ القانون بعينها؛ الباقي (12) بالقانون | مفحوص_بعينة | `lean:Slge.Ishara.witnessed_subset`<br>`test:tests/test_ishara.py::test_gate_witnesses_are_the_law_forms` | الدلالةُ (قريب/بعيد، عدد، جنس) من الحصر المُرسَل معلَنة. |
 | ISTIFHAM-sadara | الصدارة على MASAQ: 100/251 في صدر الآية أو بعد عاطف/جارّ/همزة؛ 151 بعد فعل قولٍ ونظرٍ وسؤال | مفحوص_بعينة | `test:tests/test_istifham.py::test_tiers_and_index` | صدارةُ جملةٍ لا آية: لا تُقاس بلا حدٍّ للجملة — دَينٌ على النظم. الدلالةُ من الحصر المُرسَل معلَنة. |

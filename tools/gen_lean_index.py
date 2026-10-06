@@ -44,7 +44,7 @@ LADDER: tuple[tuple[str, str, tuple[tuple[str, str], ...]], ...] = (
      (("Slge", "Wazn"), ("Slge", "Shabaka"))),
     ("١٦", "الإعرابُ بالحروف وبالنون والضمائرُ: الأسماءُ الخمسة والأفعالُ الخمسة ونا والتاء",
      (("Slge", "Khamsa"), ("Slge", "Afal"), ("Slge", "Damair"), ("Slge", "Nida"),
-      ("Slge", "Zuruf"), ("Slge", "Zaman"))),
+      ("Slge", "Zuruf"), ("Slge", "Zaman"), ("Slge", "Adad"))),
     ("١٧", "أدواتُ الربط والاستفهام: الخانةُ فالحدُّ فالعمل، والمعنى معلَن",
      (("Slge", "Rawabit"), ("Slge", "Istifham"))),
     ("١٨", "المعرفةُ والترجيح: الإنتاجُ والتعارضُ وقطعيُّ الدلالة",

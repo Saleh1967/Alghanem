@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_lean_index.py` من ملفّات `.lean` و`Audit.lean` و`out/axioms.txt`؛ لا يُحرَّر باليد. الـ116 من الغانم بإيداعه المثبَّت في `formal/lakefile.toml`.
 
-**422 مبرهنة، منها 263 مدقَّقةُ المسلّمات.**
+**437 مبرهنة، منها 275 مدقَّقةُ المسلّمات.**
 
 كلُّ درجةٍ تستهلك ما قبلها: لا تدخل الكلمةُ درجةً قبل أن تُرخَّص في التي تحتها. «مدقَّق» = في `Audit.lean` وطُبعت مسلّماتُه؛ وما ليس مدقَّقًا مبرهَنٌ في Lean لكن لم يُطبع سندُه بعدُ فلا يُستشهد به في `status.py`.
 
@@ -597,6 +597,26 @@
 | `constants_licensed` | — | مدقَّق | propext |
 | `constants_states` | — | مدقَّق | propext |
 | `al_amsu` | — | مدقَّق | propext |
+
+### `Slge/Adad.lean` — 15 مبرهنة (`Slge.Adad`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `setLast_setLast` | — | — | — |
+| `fem_is_masc_without_ta` | — | مدقَّق | propext |
+| `genderOf_masc` | — | مدقَّق | propext |
+| `genderOf_fem_forms` | صورُ المؤنّث المودَعة كلُّها تُقرأ مؤنّثةً — ومنها سِتُّ بتائها الأصليّة. | مدقَّق | propext |
+| `shin_law` | — | مدقَّق | propext |
+| `compound_both_fatha` | — | مدقَّق | propext |
+| `twelve_case` | — | مدقَّق | propext |
+| `v27` | — | — | — |
+| `uqud_case` | — | مدقَّق | propext |
+| `tamyiz_ranges` | — | مدقَّق | propext |
+| `forms_count` | — | — | — |
+| `forms_licensed` | — | مدقَّق | propext |
+| `forms_nodup` | — | مدقَّق | propext |
+| `ten_single_opposes` | — | مدقَّق | propext |
+| `six_ta_is_radical` | — | مدقَّق | propext |
 
 ## الدرجة ١٧ — أدواتُ الربط والاستفهام: الخانةُ فالحدُّ فالعمل، والمعنى معلَن
 

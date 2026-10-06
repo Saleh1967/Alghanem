@@ -270,3 +270,15 @@ import Slge
 #print axioms Slge.Zaman.constants_licensed
 #print axioms Slge.Zaman.constants_states
 #print axioms Slge.Zaman.al_amsu
+#print axioms Slge.Adad.fem_is_masc_without_ta
+#print axioms Slge.Adad.genderOf_masc
+#print axioms Slge.Adad.genderOf_fem_forms
+#print axioms Slge.Adad.six_ta_is_radical
+#print axioms Slge.Adad.ten_single_opposes
+#print axioms Slge.Adad.shin_law
+#print axioms Slge.Adad.compound_both_fatha
+#print axioms Slge.Adad.twelve_case
+#print axioms Slge.Adad.uqud_case
+#print axioms Slge.Adad.tamyiz_ranges
+#print axioms Slge.Adad.forms_licensed
+#print axioms Slge.Adad.forms_nodup

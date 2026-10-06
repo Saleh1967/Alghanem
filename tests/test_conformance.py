@@ -227,3 +227,23 @@ def test_zaman_matches_lean() -> None:
     assert [r[2] for r in crows] == ["-".join(str(index(c)) for c in w)
                                      for w, _ in CONSTANTS.values()]
     assert [STATES[int(r[3])] for r in crows] == [st for _, st in CONSTANTS.values()]
+
+
+def test_adad_matches_lean() -> None:
+    """الصورُ الاثنتان والثمانون = جدولُ `Adad.forms` بترتيبه."""
+
+    from slge.adad import STEMS, UQUD, compound, fem, masc, twelve, uqud
+
+    rows = _rows("adad.csv")
+    forms: list[tuple[Cell, ...]] = []
+    for s in STEMS.values():
+        forms += [masc(s, STATES[2]), masc(s, STATES[0]), masc(s, STATES[1]),
+                  fem(s, STATES[2]), fem(s, STATES[0]), fem(s, STATES[1])]
+    for s in UQUD.values():
+        forms += [uqud(s, True), uqud(s, False)]
+    forms += [twelve(True, True), twelve(False, True), twelve(True, False), twelve(False, False)]
+    for n, s in STEMS.items():
+        if n <= 9:
+            forms += [compound(s, True), compound(s, False)]
+    assert len(rows) == len(forms) == 82
+    assert [r[0] for r in rows] == ["-".join(str(index(c)) for c in w) for w in forms]
