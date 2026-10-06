@@ -8,7 +8,7 @@
 
 - النصُّ يدخل في مستودع الغانم وحدَه: `gate.enter(bytes) → Certificate | Refusal` (`Saleh1967/Alghanem`، فرع `claude/official-gate`، حزمة `gate/`، برهانُها `formal/a116`).
 - هنا: `slge.entry.from_atoms(cert.atoms) → خانات`، و`slge.entry.to_atoms(خانات) → ذرّات` تعود إلى `gate.exit`. والطيُّ `to_integer/from_integer` مبرهَنٌ (`Slge.slgeFold_*`) على المرخَّص ثنائيًّا؛ وما رخّصه الثلاثيُّ وحدَه (كـ«حَاجَّ») يحمل عددَه في شهادته.
-- الطبقاتُ الحيّة: `entry`، `cells`، `stream`، `categories`، `phonology`، `semantics`، `nazm`، `grant`، `knowledge`، `rank`، `learning`، `answer` (و`order`، `status`، `guard` وصفًا). ما سواها **معلَّق** في `suspended/` بسجلٍّ (`SUSPENDED_REGISTRY.json`): `encoding`، `orthography`، `lexicon`، `morphology` — كانت تقرأ النصّ وتطبّعه خارج البوّابة.
+- الطبقاتُ الحيّة: `entry`، `cells`، `stream`، `categories`، `phonology`، `semantics`، `nazm`، `grant`، `wazn`، `knowledge`، `rank`، `learning`، `answer` (و`order`، `status`، `guard` وصفًا). ما سواها **معلَّق** في `suspended/` بسجلٍّ (`SUSPENDED_REGISTRY.json`): `encoding`، `orthography`، `lexicon`، `morphology` — كانت تقرأ النصّ وتطبّعه خارج البوّابة.
 
 ## ما لا تفعله
 
