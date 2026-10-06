@@ -42,6 +42,9 @@ DAMMA: Final = "\u064f"
 KASRA: Final = "\u0650"
 LAM: Final = "\u0644"
 PROCLITICS: Final = "\u0648\u0641\u0628\u0644\u0643\u0623"  # و ف ب ل ك أ
+LETTERS: Final[frozenset[str]] = frozenset("ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىي" + ALIF_WASLA)
+"""حروفُ الرسم التي يعرفها الجسر (`bridge._is_arabic_letter`): قاعدةُ السكون لا تُطبَّق على غيرها
+(واوٌ صغيرة، ياءٌ صغيرة، تطويل، ترقيم…) كي لا تُصنع علامةٌ بلا حرفٍ تُقرأ كلمةً ثانية."""
 RULES: Final[tuple[str, ...]] = (
     "IDGHAM", "TANWIN_ALIF", "FARIQA", "WASL", "WASL_SILENT", "SHAMSI", "ASSIM", "SUKUN",
 )
@@ -77,7 +80,7 @@ def has_marks(text: str) -> bool:
 
 
 def _bare(c: str) -> bool:
-    return len(c) == 1 and c[0] not in "آ"  # آ تحمل مدّها في ذاتها
+    return len(c) == 1 and c[0] in LETTERS and c[0] != "آ"  # آ تحمل مدّها في ذاتها
 
 
 def repair(surface: str) -> tuple[str, tuple[Edit, ...]]:

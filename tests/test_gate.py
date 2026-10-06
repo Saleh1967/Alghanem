@@ -51,10 +51,30 @@ def test_refusals_are_named_and_never_guessed() -> None:
     assert enter("حاسوب".encode()).reasons == ("UNVOCALIZED_WORD_IS_NEVER_GUESSED",)
     assert enter("حم".encode()).reasons == ("UNVOCALIZED_WORD_IS_NEVER_GUESSED",)
     assert not isinstance(enter("يَعْلَمُونَ".encode()), Refusal)  # المدُّ بلا سكون: قاعدةُ طبعةٍ مسمّاة
-    # الرسمُ العثمانيّ (واوٌ صغيرة بعد الهاء): الجسرُ يرفضه بحدٍّ مسمًّى، والاسمُ يصل إلى الرفض لا None
-    small = enter("حَوْلَهُۥ".encode())
-    assert isinstance(small, Refusal) and small.status == "INVALID_CONFIGURATION"
-    assert small.reasons == ("INVALID_BOUNDARY_OR_ANNOTATION",)
+    # رمزٌ ليس حرفًا (واوٌ صغيرة، ترقيم): ليس كلمةً واحدة — DEFER باسمه، لا حالةَ رابعة ولا None
+    for w in ("حَوْلَهُۥ", "عَلَيْهِۦ", "كَتَبَ،", "«كَتَبَ»"):
+        r = enter(w.encode())
+        assert isinstance(r, Refusal) and r.status == "DEFER", w
+        assert r.reasons == ("NOT_ONE_EXACT_WORD_SPAN",), w
+    # المدخلُ بايتاتٌ: ما ليس UTF-8 وما ليس كلمةً واحدة يُرفض باسمه ولا يُرمى استثناء
+    assert enter(b"\xff\xfe") == Refusal("REJECT", ("NOT_UTF8",))
+    assert enter(b"") == Refusal("REJECT", ("NOT_ONE_TOKEN",))
+    assert enter("كَتَبَ ضَرَبَ".encode()) == Refusal("REJECT", ("NOT_ONE_TOKEN",))
+
+
+def test_enter_has_three_statuses_only() -> None:
+    """القانون: الرفضُ DEFER أو REJECT أو OUTSIDE_DECLARED_DOMAIN لا غير — على رسوم المدوّنة المختومة
+    وعلى رسومٍ عثمانيّةٍ ومرقّمة؛ وكلُّ تأجيلٍ أو ردٍّ له سببٌ مسمًّى (والخارجُ عن المجال اسمُه حالتُه)."""
+
+    g = gate()
+    sample = [*g.book.domain[:2000], "حَوْلَهُۥ", "رَبِّهِۦ", "بِهِۦٓ", "ٱلنَّبِيِّۦنَ", "ٱللَّهِ", "هُدًۭى", "مَٰلِكِ",
+              "كَتَبَ،", "الٓمٓ"]
+    for s in sample:
+        r = g.enter(s.encode())
+        if isinstance(r, Refusal):
+            assert r.status in ("DEFER", "REJECT", "OUTSIDE_DECLARED_DOMAIN"), (s, r)
+            if r.status != "OUTSIDE_DECLARED_DOMAIN":
+                assert r.reasons and all(x and x != "None" for x in r.reasons), (s, r)
     with pytest.raises(ValueError):
         exit(enter("كَتَبَ".encode())._replace(ordinal=5) if False else _tampered())
 

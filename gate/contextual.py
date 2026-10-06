@@ -15,7 +15,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from math import isqrt
 
-from gate.bridge import A116, PROTOCOL_VERSION, SUKUN, bridge
+from gate.bridge import A116, PROTOCOL_VERSION, SUKUN, _segment, _typographic_bridge, bridge
 
 INDEX = {a: i for i, a in enumerate(A116)}
 
@@ -69,6 +69,14 @@ def project(surface: str, context: Context):
     source = context.left + " " + surface if joined else surface
     boundaries = {0: {"entry": "start", "exit": "continue"}} if joined else {}
     boundaries[target] = {"entry": context.entry, "exit": context.exit}
+    # الرسمُ الذي يقسمه الجسرُ أكثرَ من كلمةٍ (رمزٌ ليس حرفًا في وسطه) ليس كلمةً واحدة: تأجيلٌ باسمه،
+    # قبل واجهة الحدود التي لا تعرف إلّا الكلمةَ الواحدة (وإلّا خرج INVALID_CONFIGURATION بلا معنًى).
+    if len(_segment(_typographic_bridge(source)[0])[0]) != target + 1:
+        return {
+            "status": "DEFER",
+            "reasons": [{"reason": "NOT_ONE_EXACT_WORD_SPAN"}],
+            "atoms": None,
+        }
     report = bridge(source, profile=context.profile, contexts=boundaries)
     reasons = [dict(x) for k in ("deferrals", "rejections") for x in report.get(k, [])]
     if report.get("error"):

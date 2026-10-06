@@ -94,7 +94,13 @@ class Gate:
         self.book = Codebook(forms, self.context)  # type: ignore[no-untyped-call]
 
     def enter(self, data: bytes) -> Certificate | Refusal:
-        surface = data.decode("utf-8")
+        try:
+            surface = data.decode("utf-8")
+        except UnicodeDecodeError:
+            return Refusal("REJECT", ("NOT_UTF8",))
+        if not surface or any(c.isspace() for c in surface):
+            # المدخلُ كلمةٌ واحدة: لا فراغَ فيها ولا تكون فارغة — رفضٌ مسمًّى لا استثناء.
+            return Refusal("REJECT", ("NOT_ONE_TOKEN",))
         if not has_marks(surface):
             # كلمةٌ بلا أيّ علامة (الحروفُ المقطّعة، نصٌّ غيرُ مشكول): لا تُصلَح ولا تُخمَّن.
             return Refusal("DEFER", ("UNVOCALIZED_WORD_IS_NEVER_GUESSED",))
