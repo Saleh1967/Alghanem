@@ -186,5 +186,31 @@
     ],
     "unverified": "alghanem-constitution/legacy/RecoveryMetric.lean theorems 9-26 (Mathlib; never built)"
   },
-  "general_language_closure": false
+  "general_language_closure": false,
+  "edition_residue": {
+    "rules": [
+      "IDGHAM",
+      "TANWIN_ALIF",
+      "FARIQA",
+      "WASL",
+      "WASL_SILENT",
+      "SHAMSI",
+      "ASSIM",
+      "SUKUN"
+    ],
+    "lean": "formal/a116/A116/Residue.lean (sukun_restore, fariqa_restore, tanwinAlif_restore, idgham_restore, chain_restore, residue_separates)",
+    "sealed_surfaces": 18200,
+    "canonical_forms": 17572,
+    "ready_before": 8532,
+    "ready_after": 18179,
+    "refused_named": {
+      "UNVOCALIZED_WORD_IS_NEVER_GUESSED": 14,
+      "TANWIN_WITH_ANOTHER_HARAKA": 3,
+      "INITIAL_SUKUN_WITHOUT_REPAIR": 3,
+      "NOT_CONTINUE_LICENSED_AFTER_REPAIR": 1
+    },
+    "round_trip_failures": 0,
+    "unlicensed_certificates": 0,
+    "measured_at": "2026-10-06"
+  }
 }

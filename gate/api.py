@@ -5,7 +5,10 @@
 * `enter(data, context)` — بايتاتُ كلمةٍ واحدةٍ (UTF-8) ← `Certificate` أو `Refusal`.
   الشهادةُ تحمل ذرّاتِ الـ116، ورتبةَ الكلمة في ليفها، والعددَ الذي يطويهما (اقترانُ
   كانتور على ترقيم الذرّات)، وبصمةَ القاموس. والرفضُ يحمل سببَه مسمًّى ولا يُخمَّن شيء.
-* `exit(cert)` — الشهادةُ ← بايتاتُ الكلمة بعينها (`Fiber.decode_encode`).
+* `exit(cert)` — الشهادةُ ← بايتاتُ الكلمة بعينها (`Fiber.decode_encode` + ردُّ البقيّة
+  `Residue.chain_restore`).
+* البقيّة: الرسمُ يدخل بعد إصلاحه بقواعد الطبعة الثماني المسمّاة (`residue.repair`)، وتحمل الشهادةُ
+  السجلَّ ليُردّ الرسمُ بعينه عند الخروج.
 * `derive(root, template)` — جذرٌ وقالبٌ ← صورُ الفعل المولَّدة، كلٌّ منها شهادةً.
 * `recover(cert)` — شهادةٌ ← الجذورُ والأوزانُ التي تولِّدها، إن كانت مولَّدةً.
 
@@ -26,6 +29,8 @@ from typing import Any, Final, cast
 
 from .contextual import Certificate as _Cert
 from .contextual import Codebook, Context, project
+from .licence import continue_licensed, kind_of
+from .residue import Edit, has_marks, repair, unrepair
 
 __all__ = [
     "CORPUS_SHA256",
@@ -45,7 +50,24 @@ CORPUS_SHA256: Final[str] = (
     "37633090743d403886b334d12dd911d1994e49767faa9f2be0f01fd48b466c5a"
 )
 
-Certificate = _Cert
+@dataclass(frozen=True)
+class Certificate:
+    """شهادةُ الكلمة: شهادةُ الصورة القانونيّة (ذرّاتٌ وعدد) + بقيّةُ الرسم (قواعدُ الطبعة بمواضعها).
+
+    `A116.Residue`: الرسمُ = الصورةُ + البقيّة، ويُردّ بعينه (`chain_restore`)، والرسمُ يحدّدهما معًا
+    (`residue_separates`). فالبصمةُ الكاملة (العدد، البقيّة)، لا العددُ وحدَه.
+    """
+
+    core: _Cert
+    residue: tuple[Edit, ...]
+
+    @property
+    def atoms(self) -> tuple[str, ...]:
+        return self.core.atoms
+
+    @property
+    def integer(self) -> int:
+        return self.core.integer
 
 
 @dataclass(frozen=True)
@@ -66,23 +88,34 @@ class Gate:
             raise ValueError(f"WRONG_SEALED_CORPUS:{digest}")
         self.context = context or Context()
         text = raw.decode("utf-8")
-        forms = {w for w in text.split() if w != "<sel>" and _arabic(w)}
+        surfaces = {w for w in text.split() if w != "<sel>" and _arabic(w)}
+        # القاموسُ على الصور القانونيّة: الرسمُ يدخل بعد إصلاحه بقواعد الطبعة المسمّاة (`residue`).
+        forms = {repair(w)[0] for w in surfaces}
         self.book = Codebook(forms, self.context)  # type: ignore[no-untyped-call]
 
     def enter(self, data: bytes) -> Certificate | Refusal:
         surface = data.decode("utf-8")
-        if surface not in self.book.decisions:
-            decision = project(surface, self.context)
+        if not has_marks(surface):
+            # كلمةٌ بلا أيّ علامة (الحروفُ المقطّعة، نصٌّ غيرُ مشكول): لا تُصلَح ولا تُخمَّن.
+            return Refusal("DEFER", ("UNVOCALIZED_WORD_IS_NEVER_GUESSED",))
+        canonical, residue = repair(surface)
+        if canonical not in self.book.decisions:
+            decision = project(canonical, self.context)
             if decision["status"] != "READY":
                 return Refusal(decision["status"], _reasons(decision))
             return Refusal("OUTSIDE_DECLARED_DOMAIN", ())
-        decision = self.book.decisions[surface]
+        decision = self.book.decisions[canonical]
         if decision["status"] != "READY":
             return Refusal(decision["status"], _reasons(decision))
-        return cast(Certificate, self.book.encode(surface))  # type: ignore[no-untyped-call]
+        core = self.book.encode(canonical)  # type: ignore[no-untyped-call]
+        if not continue_licensed(kind_of(core.atoms)):
+            # الترخيصُ الثلاثيّ (`Ternary.ContinueLicensed`) هو الحكمُ الأخير: لا شهادةَ لغير المرخَّص.
+            return Refusal("REJECT", ("NOT_CONTINUE_LICENSED_AFTER_REPAIR",))
+        return Certificate(core, residue)
 
     def exit(self, cert: Certificate) -> bytes:
-        return cast(str, self.book.decode(cert)).encode("utf-8")  # type: ignore[no-untyped-call]
+        canonical = cast(str, self.book.decode(cert.core))  # type: ignore[no-untyped-call]
+        return unrepair(canonical, cert.residue).encode("utf-8")
 
 
 def _arabic(w: str) -> bool:
@@ -143,7 +176,7 @@ def recover(surface_or_cert: Certificate | str) -> tuple[str, tuple[Reading, ...
 
     surface = (
         gate().exit(surface_or_cert).decode("utf-8")
-        if isinstance(surface_or_cert, _Cert)
+        if isinstance(surface_or_cert, Certificate)
         else surface_or_cert
     )
     outcome, found = recover_verb(surface)

@@ -56,6 +56,9 @@ jobs:
                    no_seat_recovery_from_hamza_alone restoration_forces_fiber_separation compose_restoration; do
             grep -q "A116.Recovery.$t" axioms.txt || { echo "::error::Recovery.$t غيرُ مدقَّقة"; exit 1; }
           done
+          for t in sukun_restore fariqa_restore tanwinAlif_restore idgham_restore chain_restore residue_separates; do
+            grep -q "A116.Residue.$t" axioms.txt || { echo "::error::Residue.$t غيرُ مدقَّقة"; exit 1; }
+          done
 
       - name: the committed tables are the ones Lean generates now
         run: |

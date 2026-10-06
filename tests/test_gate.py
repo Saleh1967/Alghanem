@@ -21,8 +21,10 @@ def test_licence_matches_lean_witnesses() -> None:
 
 
 def test_corpus_is_the_sealed_one() -> None:
+    """18,200 رسمًا في المدوّنة المختومة تصير 17,572 صورةً قانونيّة (رسومٌ تتّحد صورتُها وتختلف بقيّتُها)."""
+
     assert gate().book.payload["bridge_protocol"] == "A116-CANONICAL-TXT-1.1"
-    assert len(gate().book.domain) == 18200
+    assert len(gate().book.domain) == 17572
 
 
 def test_every_ready_word_round_trips_and_is_admissible() -> None:
@@ -41,13 +43,14 @@ def test_every_ready_word_round_trips_and_is_admissible() -> None:
             madd += 1
         assert consistent(surface, cert.atoms), surface
         assert g.book.decode_integer(cert.integer) == surface
-    assert ready == 8532
-    assert madd == 22  # ما يراه الثلاثيُّ ويعمى عنه الثنائيّ (مدٌّ ثمّ مشدَّد)
+    assert ready == 17551
+    assert madd == 104  # ما يراه الثلاثيُّ ويعمى عنه الثنائيّ (مدٌّ ثمّ مشدَّد أو ساكن)
 
 
 def test_refusals_are_named_and_never_guessed() -> None:
-    assert enter("حاسوب".encode()).status == "DEFER"
-    assert enter("يَعْلَمُونَ".encode()).reasons == ("HARAKA_IS_ABSENT_AND_IS_NEVER_GUESSED",)
+    assert enter("حاسوب".encode()).reasons == ("UNVOCALIZED_WORD_IS_NEVER_GUESSED",)
+    assert enter("حم".encode()).reasons == ("UNVOCALIZED_WORD_IS_NEVER_GUESSED",)
+    assert not isinstance(enter("يَعْلَمُونَ".encode()), Refusal)  # المدُّ بلا سكون: قاعدةُ طبعةٍ مسمّاة
     with pytest.raises(ValueError):
         exit(enter("كَتَبَ".encode())._replace(ordinal=5) if False else _tampered())
 
@@ -55,7 +58,9 @@ def test_refusals_are_named_and_never_guessed() -> None:
 def _tampered():
     from dataclasses import replace
 
-    return replace(enter("كَتَبَ".encode()), ordinal=5)
+    cert = enter("كَتَبَ".encode())
+    assert not isinstance(cert, Refusal)
+    return replace(cert, core=replace(cert.core, ordinal=5))
 
 
 def test_generation_and_recovery_agree() -> None:
@@ -93,15 +98,13 @@ def test_pronoun_atoms_match_slge_categories_lean() -> None:
     }
     from gate.contextual import Context, project
 
-    in_domain = {"أَنَا", "نَحْنُ", "هُوَ", "هِيَ", "هُمَا", "هُمْ"}  # الستّة الواردة مستقلّةً في المدوّنة
     for surface, cells in expected.items():
         cert = enter(surface.encode("utf-8"))
-        if surface in in_domain:
-            assert not isinstance(cert, Refusal), surface
-            atoms = cert.atoms
-        else:  # خارج المجال المختوم: البوّابة ترفض بالاسم، والجسرُ وحدَه يعطي الذرّات
-            assert isinstance(cert, Refusal) and cert.status == "OUTSIDE_DECLARED_DOMAIN", surface
+        if isinstance(cert, Refusal):  # خارج المجال المختوم: رفضٌ بالاسم، والجسرُ وحدَه يُذرّر
+            assert cert.status == "OUTSIDE_DECLARED_DOMAIN", surface
             decision = project(surface, Context())
             assert decision["status"] == "READY", surface
             atoms = decision["atoms"]
+        else:
+            atoms = cert.atoms
         assert [(alphabet.index(a[0]), marks[a[1]]) for a in atoms] == cells, surface

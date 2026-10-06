@@ -106,3 +106,9 @@ import A116
 #print axioms A116.Recovery.no_seat_recovery_from_hamza_alone
 #print axioms A116.Recovery.restoration_forces_fiber_separation
 #print axioms A116.Recovery.compose_restoration
+#print axioms A116.Residue.sukun_restore
+#print axioms A116.Residue.fariqa_restore
+#print axioms A116.Residue.tanwinAlif_restore
+#print axioms A116.Residue.idgham_restore
+#print axioms A116.Residue.chain_restore
+#print axioms A116.Residue.residue_separates
