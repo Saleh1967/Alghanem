@@ -24,7 +24,7 @@
 
 ```sh
 pip install -r requirements-dev.txt && pip install -e . --no-deps
-ruff check . && mypy && pytest -q                     # 136 اختبارًا
+ruff check . && mypy && pytest -q                     # 135 اختبارًا
 python tools/gen_status.py --check
 python tools/gen_registry.py --check
 python -c "from slge.guard import breaches; print(breaches() or 'لا خرق')"
