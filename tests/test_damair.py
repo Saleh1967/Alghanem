@@ -25,9 +25,9 @@ def test_na_law_on_gate_witnesses() -> None:
         assert na_role(WITNESS[w]) == "نصب/جرّ", w
     assert na_role(WITNESS["كُنْتُ"]) is None
     # طفرة: تسكينُ ما قبل نا في جَاءَنَا يقلبه رفعًا
-    w = list(WITNESS["جَاءَنَا"])
-    w[2] = ("ء", SUKUN)
-    assert na_role(tuple(w)) == "رفع"
+    mutant = list(WITNESS["جَاءَنَا"])
+    mutant[2] = ("ء", SUKUN)
+    assert na_role(tuple(mutant)) == "رفع"
 
 
 def test_ta_law_on_gate_witnesses() -> None:
