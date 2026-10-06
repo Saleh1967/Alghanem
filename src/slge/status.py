@@ -513,6 +513,41 @@ _DECLARED: tuple[Claim, ...] = (
        "25 رفعًا، وحَتَّى ناصبةٌ للفعل 74 وجارّةٌ للاسم؛ ولَا في خمسة أدوار وإِنْ في أربعة", _S,
        "test:tests/test_huruf.py::test_masaq_measurement_and_index",
        note="عدُّ أوصافٍ مجمَّد؛ صورُ الحروف بشهادات البوّابة؛ أَنْ المضمرةُ تيار."),
+    # — الجملةُ الاسميّة —
+    _c("JUMLA-cells", "المبتدأُ والخبرُ طرفان مرفوعان بعمليّةٍ واحدة تُقرأ رفعًا وتحفظ الترخيص لكلّ جذع؛ "
+       "وصورُهما تُقرأ: الضميرُ من جدوله، والمبنيُّ من جداوله، والمعربُ من رفعه؛ وشبهُ الجملة من صدرها، "
+       "والجملةُ الفعليّةُ من قالب الفعل، والمفردُ من رفعه", _P,
+       "lean:Slge.Jumla.nominal_reads_raf", "lean:Slge.Jumla.nominal_licensed",
+       "lean:Slge.Jumla.pronoun_is_damir", "lean:Slge.Jumla.raf_is_ism",
+       "lean:Slge.Jumla.kinds_witnesses",
+       "test:tests/test_jumla.py::test_both_sides_raf_and_kinds",
+       note="المصدرُ المؤوّل مبتدأً تيار؛ والمتّصلُ الجارُّ على نكرةٍ لا تفرّقه الخانةُ من حرف الأصل."),
+    _c("JUMLA-order", "الرتبةُ دالّةٌ في الخانات لا في الموضع (التقديمُ عمليّةٌ على الزوج): لامُ الابتداء "
+       "تمسك المبتدأ لكلّ مبتدأ وخبر، والصدارةُ والنكرةُ مع شبه الجملة والضميرُ العائدُ تقدّم الخبر، "
+       "والخبرُ الفعليُّ وتساوي الرتبة يؤخّرانه، وما سواه جواز؛ والموضعُ المخالفُ يُرفض", _P,
+       "lean:Slge.Jumla.swap_swap", "lean:Slge.Jumla.order_swap", "lean:Slge.Jumla.order_lam",
+       "lean:Slge.Jumla.lam_licensed", "lean:Slge.Jumla.lam_refuses_khabar_first",
+       "lean:Slge.Jumla.order_witnesses",
+       "test:tests/test_jumla.py::test_order_is_read_from_cells_not_position",
+       note="الحصرُ بإلّا وإنّما تيارٌ (كلمتان) خارج القارئ باسمه."),
+    _c("JUMLA-agree", "المطابقةُ عمليّاتٌ على الخبر (تأنيثٌ، تثنيةٌ، جمعان) تحفظ الترخيص، ويقرؤها الجنسُ "
+       "والعددُ من اللاحقة بعد إسقاطها؛ فالعمليّةُ الواحدةُ على الطرفين تُطابق؛ والرابطُ في الخبر الجملة "
+       "ضميرٌ أو إشارةٌ أو إعادةُ لفظ", _P,
+       "lean:Slge.Jumla.ops_licensed", "lean:Slge.Jumla.suffix_licensed",
+       "lean:Slge.Jumla.gender_taNith",
+       "lean:Slge.Jumla.number_taNith", "lean:Slge.Jumla.number_ops", "lean:Slge.Jumla.gender_jamF",
+       "lean:Slge.Jumla.agree_ops", "lean:Slge.Jumla.agree_witnesses",
+       "lean:Slge.Jumla.rabit_repeat",
+       "lean:Slge.Jumla.rabit_witnesses", "lean:Slge.Jumla.lawla_witness",
+       "test:tests/test_jumla.py::test_agreement_is_an_operation_and_an_exception",
+       "test:tests/test_jumla.py::test_rabit_four_kinds_three_read",
+       note="استثناءُ جمع غير العاقل يقرؤه القالبُ احتمالًا والعقلُ معجم؛ العمومُ والتلاؤمُ الأنطولوجيُّ "
+            "والتقديرُ في حذف الخبر معلَنة؛ الفاعلُ المستتر لا خانةَ له."),
+    _c("JUMLA-masaq", "على 3,146 زوجًا (مبتدأ، خبر) من MASAQ بشهادات البوّابة: رتبةُ القارئ تقبل موضعَ "
+       "المصحف في 2,822 (89.7%)؛ والخبرُ المفردُ المشتقُّ يطابق مبتدأه المعرب في 269/312؛ والرابطُ "
+       "ضميرٌ في 329 من 519 جملةً فعليّة", _S,
+       "test:tests/test_jumla.py::test_masaq_measurement_and_index",
+       note="الأزواجُ بنافذة الآية (المؤخّرُ يأخذ ما قبله)؛ 192 كلمةً مستبعَدةً بالاسم."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

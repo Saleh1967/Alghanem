@@ -1,0 +1,15 @@
+order,rajul-fidDar,40-22-94-103,81-115-0-35-32-7-41,khabarFirst,true,shibhJumla
+order,almafarr-ayna,0-95-96-80-43-42,0-115-100,khabarFirst,true,unread
+order,tullabuha-fiMadrasa,66-95-92-7-10-104-7,81-115-0-95-96-35-40-48-13,khabarFirst,true,shibhJumla
+order,zayd-darasa,44-115-34-103,32-40-48,mubtadaFirst,true,jumla
+order,akhi-rafiqi,0-29-115,40-81-115-85-115,mubtadaFirst,true,unread
+order,lazayd-qaim,92-44-115-34-103,84-7-1-98-103,mubtadaFirst,true,mufrad
+order,salama-fiTaanni,0-51-48-92-7-96-14,81-115-0-15-12-0-103-101-115,free,true,shibhJumla
+agree,talib,64-7-93-10,masc,single,false
+agree,taNith,64-7-93-8-14,fem,single,false
+agree,dual,64-7-93-8-7-101,masc,dual,false
+agree,jamM,64-7-93-10-111-100,masc,plural,false
+agree,jamF,64-7-93-8-7-14,fem,plural,false
+agree,dualTaNith,64-7-93-8-12-7-101,fem,dual,false
+agree,jibal,0-95-21-8-7-94,masc,single,true
+agree,shahiqa,52-7-105-84-14,fem,single,false

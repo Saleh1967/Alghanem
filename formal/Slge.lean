@@ -29,3 +29,4 @@ import Slge.Wasl
 import Slge.Ism
 import Slge.Fil
 import Slge.Huruf
+import Slge.Jumla

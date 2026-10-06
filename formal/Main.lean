@@ -249,6 +249,29 @@ def main (args : List String) : IO Unit := do
       | .jazm => "jazm" | .jazm2 => "jazm2" | .tabi => "tabi" | .none => "none"
     for x in Huruf.table do
       IO.println s!"{cl x.cls},{x.name},{"-".intercalate (x.cells.map fun c => toString c.index)},{am x.amal}"
+  | ["jumla"] =>
+    -- الشواهدُ: الرتبةُ المقروءة والقبول، والجنسُ والعددُ بعد العمليّات، والرابط.
+    let ru := fun (r : Jumla.Rutba) => match r with
+      | .khabarFirst => "khabarFirst" | .mubtadaFirst => "mubtadaFirst" | .free => "free"
+    let kk := fun (k : Jumla.KhabarKind) => match k with
+      | .mufrad => "mufrad" | .shibhJumla => "shibhJumla" | .jumla => "jumla" | .unread => "unread"
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    for (n, j) in [("rajul-fidDar", (⟨Jumla.rajul, Jumla.fidDar, true⟩ : Jumla.Jumla)),
+                   ("almafarr-ayna", ⟨Jumla.almafarr, Jumla.ayna, true⟩),
+                   ("tullabuha-fiMadrasa", ⟨Jumla.tullabuha, Jumla.fiMadrasa, true⟩),
+                   ("zayd-darasa", ⟨Jumla.zayd, Jumla.darasa, false⟩),
+                   ("akhi-rafiqi", ⟨Jumla.akhi, Jumla.rafiqi, false⟩),
+                   ("lazayd-qaim", ⟨Jumla.lam Jumla.zayd, Jumla.qaim, false⟩),
+                   ("salama-fiTaanni", ⟨Jumla.salama, Jumla.fiTaanni, false⟩)] do
+      IO.println s!"order,{n},{key j.mubtada},{key j.khabar},{ru (Jumla.order j)},{Jumla.admissible j},{kk (Jumla.khabarKind j.khabar)}"
+    let g := fun (w : List SCell) => match Jumla.gender w with | .masc => "masc" | .fem => "fem"
+    let nn := fun (w : List SCell) => match Jumla.number w with
+      | .single => "single" | .dual => "dual" | .plural => "plural"
+    for (n, w) in [("talib", Jumla.talib), ("taNith", Jumla.taNith Jumla.talib), ("dual", Jumla.dual Jumla.talib),
+                   ("jamM", Jumla.jamM Jumla.talib), ("jamF", Jumla.jamF Jumla.talib),
+                   ("dualTaNith", Jumla.dual (Jumla.taNith Jumla.talib)), ("jibal", Jumla.jibal),
+                   ("shahiqa", Jumla.shahiqa)] do
+      IO.println s!"agree,{n},{key w},{g w},{nn w},{Jumla.brokenPlural w}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

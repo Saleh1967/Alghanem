@@ -478,3 +478,45 @@ def test_huruf_matches_lean() -> None:
     for r, x in zip(rows, TABLE, strict=True):
         cells = tuple(_cell(int(i)) for i in r[2].split("-"))
         assert (cls[r[0]], r[1], cells, amal[r[3]]) == (x.cls, x.name, x.cells, x.amal), r
+
+
+def test_jumla_matches_lean() -> None:
+    """الرتبةُ والقبولُ وصنفُ الخبر على الشواهد، والجنسُ والعددُ بعد العمليّات = جدولُ `Jumla`."""
+
+    from slge.jumla import (
+        WITNESSES,
+        admissible,
+        broken_plural,
+        dual,
+        gender,
+        jam_f,
+        jam_m,
+        khabar_kind,
+        number,
+        order,
+        ta_nith,
+    )
+    from slge.rawabit import cells_of
+
+    rows = _rows("jumla.csv")
+    ru = {"khabarFirst": "تقديم الخبر", "mubtadaFirst": "تقديم المبتدأ", "free": "جواز"}
+    kk = {"mufrad": "مفرد", "shibhJumla": "شبه جملة", "jumla": "جملة فعلية", "unread": "—"}
+    orders = [r for r in rows if r[0] == "order"]
+    assert len(orders) == len(WITNESSES) == 7
+    for r, j in zip(orders, WITNESSES.values(), strict=True):
+        assert j.mubtada == tuple(_cell(int(i)) for i in r[2].split("-")), r[1]
+        assert j.khabar == tuple(_cell(int(i)) for i in r[3].split("-")), r[1]
+        assert order(j) == ru[r[4]] and admissible(j) == (r[5] == "true")
+        assert khabar_kind(j.khabar) == kk[r[6]]
+    talib = cells_of("طَالِبُ")
+    forms = {"talib": talib, "taNith": ta_nith(talib), "dual": dual(talib), "jamM": jam_m(talib),
+             "jamF": jam_f(talib), "dualTaNith": dual(ta_nith(talib)), "jibal": cells_of("اَلْجِبَالُ"),
+             "shahiqa": cells_of("شَاهِقَةُ")}
+    g = {"masc": "مذكر", "fem": "مؤنث"}
+    n = {"single": "مفرد", "dual": "مثنى", "plural": "جمع"}
+    for r in rows:
+        if r[0] == "agree":
+            w = forms[r[1]]
+            assert w == tuple(_cell(int(i)) for i in r[2].split("-")), r[1]
+            assert (gender(w), number(w)) == (g[r[3]], n[r[4]]), r[1]
+            assert broken_plural(w) == (r[5] == "true"), r[1]
