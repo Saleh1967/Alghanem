@@ -59,6 +59,11 @@ jobs:
           for t in sukun_restore fariqa_restore tanwinAlif_restore idgham_restore chain_restore residue_separates; do
             grep -q "A116.Residue.$t" axioms.txt || { echo "::error::Residue.$t غيرُ مدقَّقة"; exit 1; }
           done
+          for t in Unicode.decode_encode Unicode.encode_prefix_free Unicode.decodeAll_encodeAll \
+                   Boundary.no_start_with_sukun Boundary.pause_ends_with_sukun Boundary.join_iff \
+                   Boundary.wasl_dropped_needs_moving_left Boundary.pause_then_join_is_not_join; do
+            grep -q "A116.$t" axioms.txt || { echo "::error::$t غيرُ مدقَّقة"; exit 1; }
+          done
 
       - name: the committed tables are the ones Lean generates now
         run: |
@@ -68,7 +73,8 @@ jobs:
           lake exe a116-table bridge-order > order.csv
           lake exe a116-table numbers > numbers.csv
           lake exe a116-table pairs > pairs.csv
-          git diff --exit-code -- table.csv counts.csv order.csv numbers.csv pairs.csv
+          lake exe a116-table utf8 > utf8.csv
+          git diff --exit-code -- table.csv counts.csv order.csv numbers.csv pairs.csv utf8.csv
           lake exe a116-table syllables > syllables.csv   # 13 MB: يُولَّد هنا ويُسلَّم للبايثون لا يُودَع
 
       - uses: actions/upload-artifact@v4

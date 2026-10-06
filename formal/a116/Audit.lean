@@ -112,3 +112,13 @@ import A116
 #print axioms A116.Residue.idgham_restore
 #print axioms A116.Residue.chain_restore
 #print axioms A116.Residue.residue_separates
+#print axioms A116.Unicode.decode_encode
+#print axioms A116.Unicode.encode_prefix_free
+#print axioms A116.Unicode.decodeAll_encodeAll
+#print axioms A116.Unicode.arabic_is_two_bytes
+#print axioms A116.Unicode.markOrder_restore
+#print axioms A116.Boundary.no_start_with_sukun
+#print axioms A116.Boundary.pause_ends_with_sukun
+#print axioms A116.Boundary.join_iff
+#print axioms A116.Boundary.wasl_dropped_needs_moving_left
+#print axioms A116.Boundary.pause_then_join_is_not_join

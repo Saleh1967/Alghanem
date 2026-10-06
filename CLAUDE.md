@@ -10,6 +10,7 @@
 - المخرج: `gate.exit(cert) → bytes` — الكلمةُ بعينها (`Fiber.decode_encode`).
 - الاشتقاق: `gate.derive(root)`، والاسترجاع: `gate.recover(cert)`؛ كلاهما يُقاس على مرجعٍ بشريٍّ محجوب (MASAQ) لا على شيفرته.
 - الترخيص: `gate.licence` — الثلاثيّ (`cv | v | c`) لا الثنائيّ؛ فالثنائيُّ أعمى عن المدّ (`Ternary.binary_is_blind_to_madd`).
+- الحدّ: `Context(entry, exit)` — في الوصل تُرخَّص الكلمةُ مع ما قبلها (`JUNCTION_NOT_LICENSED` رفضٌ مسمًّى)، لا تُحشر كسرةُ التقاء الساكنين تخمينًا.
 - البقيّة: `gate.residue` — الرسمُ = صورةٌ قانونيّة + بقيّةُ قواعدِ طبعةٍ مسمّاة؛ الشهادةُ تحملها ويُردّ الرسمُ بعينه (`A116.Residue.chain_restore`). ما لا قاعدةَ له يُرفض باسمه، لا يُخمَّن.
 
 كلُّ ما سوى ذلك **معلَّق** في `suspended/` بسجلٍّ (`SUSPENDED_REGISTRY.json`) يذكر سببَ كلّ وحدةٍ وشرطَ عودتها. التعليقُ نقلٌ لا حذف؛ التاريخُ في git.
@@ -34,7 +35,7 @@ export PATH=$HOME/.elan/bin:$PATH
 ruff check gate tests tools && mypy
 python tools/gen_registry.py --check
 python -c "from gate.guard import breaches; print(breaches() or 'لا خرق')"
-pytest -q -m "not slow"        # 65 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
+pytest -q -m "not slow"        # 69 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
 ```
 
 وقبل الطبعة: أثبت أنّ الملف الذي تتكلّم عنه موجودٌ («لا ثقة بلا طبعة»)، وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه أنت.
@@ -48,6 +49,7 @@ pytest -q -m "not slow"        # 65 اختبارًا؛ و`pytest -q -m slow` ل�
 | `gate/api.py` | الواجهة الوحيدة | مفحوص (`tests/test_gate.py`) |
 | `gate/bridge.py`, `gate/contextual.py` | النصّ ← الذرّات، الترقيم، الشهادة (بروتوكول A116-CANONICAL-TXT-1.1) | مطابَق للجداول (`tests/test_conformance.py`) |
 | `gate/licence.py` | التقطيع الثلاثيّ بايثونًا؛ الحكمُ الأخير قبل الشهادة | مطابَق لـ265,719 سطرًا من Lean |
+| `formal/a116/A116/Unicode.lean`, `Boundary.lean` | UTF-8 تقابلٌ ذاتيُّ الحدّ على مجال يونيكود؛ قانون الابتداء/الوصل/الوقف (لا ابتداء بساكن، الوقف يُسكِّن، الوصل بشرط الحدّ، همزة الوصل تسقط ولا تُقبل بعد ساكن) | مبرهن؛ مطابَق (`utf8.csv`، `test_boundary.py`) |
 | `gate/residue.py` | بقيّةُ الرسم: 8 قواعد طبعةٍ مسمّاة (`A116.Residue`)؛ READY 8,532 → 18,179 من 18,200، ردٌّ بعينه | مبرهن (الردّ) + مقيس (التغطية) |
 | `gate/mabni_verbs.py`, `gate/mabni_bridge.py` | 770 جذرًا ← 315,874 صورة؛ الاسترجاع | مقيس (MASAQ 97.23%) |
 | `gate/guard.py` | الحارس | مفحوص (خرقٌ مزروعٌ يُلتقط) |

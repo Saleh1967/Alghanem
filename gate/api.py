@@ -108,7 +108,16 @@ class Gate:
         if decision["status"] != "READY":
             return Refusal(decision["status"], _reasons(decision))
         core = self.book.encode(canonical)  # type: ignore[no-untyped-call]
-        if not continue_licensed(kind_of(core.atoms)):
+        atoms = tuple(core.atoms)
+        if self.context.entry == "joined":
+            # قانونُ الحدّ (`Boundary.join_iff`): الموصولُ يُرخَّص مع ما قبله، لا وحدَه؛ وما سقطت وصلُه
+            # لا يُقبل بعد ساكن (`pause_then_join_is_not_join`). لا تُحشَر كسرةٌ: رفضٌ مسمًّى.
+            left = project(repair(self.context.left)[0], Context())
+            if left["status"] != "READY":
+                return Refusal("DEFER", ("LEFT_CONTEXT_HAS_NO_CERTIFICATE",))
+            if not continue_licensed(kind_of(tuple(left["atoms"]) + atoms)):
+                return Refusal("REJECT", ("JUNCTION_NOT_LICENSED",))
+        elif not continue_licensed(kind_of(atoms)):
             # الترخيصُ الثلاثيّ (`Ternary.ContinueLicensed`) هو الحكمُ الأخير: لا شهادةَ لغير المرخَّص.
             return Refusal("REJECT", ("NOT_CONTINUE_LICENSED_AFTER_REPAIR",))
         return Certificate(core, residue)

@@ -69,3 +69,18 @@ def test_python_ternary_parse_matches_lean_syllables_table() -> None:
             ), key
             rows += 1
     assert rows == 265719
+
+
+def test_utf8_codec_matches_lean_on_the_surface_alphabet() -> None:
+    """`A116.Unicode.utf8Encode` = ترميزُ بايثون على أبجديّة الرسم (53 نقطة)، وكلُّ العربيّ بايتان."""
+
+    rows = 0
+    with (ROOT / "formal" / "a116" / "utf8.csv").open(encoding="utf-8") as fh:
+        for line in fh:
+            cp, bytes_ = line.rstrip("\n").split(",")
+            lean = bytes(int(b) for b in bytes_.split())
+            assert lean == chr(int(cp)).encode("utf-8"), cp
+            if 0x600 <= int(cp) <= 0x6FF:
+                assert len(lean) == 2
+            rows += 1
+    assert rows == 53

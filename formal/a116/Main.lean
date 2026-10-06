@@ -76,6 +76,10 @@ def main (args : List String) : IO Unit := do
     for n in List.range 11 do
       for k in SyllableTable.allK (n + 1) do
         IO.println (SyllableTable.render k)
+  | ["utf8"] =>
+    -- أبجديّةُ الرسم: الحروفُ ‎U+0621–U+064A‎، العلاماتُ ‎U+064B–U+0652‎، ألفُ الوصل ‎U+0671‎، والمسافة.
+    for c in (List.range 0x2B).map (· + 0x621) ++ (List.range 8).map (· + 0x64B) ++ [0x671, 0x20] do
+      IO.println s!"{c},{" ".intercalate ((Unicode.utf8Encode c).map toString)}"
   | ["pairs"] =>
     for u in List.range 64 do
       for r in List.range 64 do
