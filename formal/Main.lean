@@ -469,6 +469,23 @@ def main (args : List String) : IO Unit := do
     for w in [Kulli.katib, Kulli.kitaba, Nawasikh.tanwin Talab.darb, Jiha.kataba, Jiha.yaktubu, Jiha.uktub,
               Kulli.rajulun, Naat.alrajul, Uslub.la, Kulli.hadha] do
       IO.println s!"kulli,{key w},{kn (Kulli.kulli w)}"
+  | ["wad"] =>
+    -- الوضعُ على الميزان لكلّ قالبٍ من الـ121 (معانيه وصورُه وقراءتُه)، وأزواجُ الالتقاء، والمتطابقات، والشواهد.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let kn := fun (k : Wad.Kind) => match k with
+      | .majdul => "majdul" | .mufrad => "mufrad" | .wadMushtarak => "wadMushtarak"
+      | .suraMushtarak => "suraMushtarak" | .unread => "unread"
+    let ks := fun (l : List Nat) => "+".intercalate (l.map toString)
+    for k in List.range 121 do
+      let m := Wazn.mizan (Sarf.templ k)
+      IO.println s!"mizan,{k},{key m},{ks (Wad.senses m)},{ks (Wad.classes m)},{kn (Wad.wad m)}"
+    for (k, q) in Wad.collisionPairs do
+      IO.println s!"pair,{k},{q}"
+    for (k, q) in Wad.duplicates do
+      IO.println s!"dup,{k},{q}"
+    for w in [Wad.intishar, Wad.manha, Wad.kitab, Wad.hilal, Wad.ayn, Wad.qamar, Wad.amana, Kulli.katib,
+              Jiha.yaktubu, Maqam.huwa, Kulli.hadha, Uslub.la] do
+      IO.println s!"wad,{key w},{ks (Wad.senses (Marifa.dropTanwin w))},{kn (Wad.wad w)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

@@ -814,6 +814,34 @@ _DECLARED: tuple[Claim, ...] = (
        "7,327 من 13,657؛ الجزئيُّ 2,389، الفعلُ 1,868، العرضيُّ 622، الماهويُّ 1,899، المصدرُ 517", _S,
        "test:tests/test_kulli.py::test_masaq_measurement_and_index",
        note="أكبرُ البقايا: الجامدُ على قالب المصدر (بَحْرٌ على فَعْلٌ) يُقرأ حدثًا 1,976 — الفرقُ معنًى."),
+    # — الوضعُ والمشتركُ والترادف —
+    _c("WAD-fill", "الوضعُ ملءُ قالبٍ بجذر: متباينٌ في الجذر لكلّ قالبٍ سليم، والقالبُ يُستردّ من ملئه لكلّ "
+       "جذرٍ لا ألفَ فيه؛ والميزانُ لا يُشترَك: كلُّ ميزانٍ من الـ121 على صورةٍ واحدة ومعانيه بابُ قالبه", _P,
+       "lean:Slge.Wad.wad_injective", "lean:Slge.Wad.sense_of_fill", "lean:Slge.Wad.mizan_unaided",
+       "lean:Slge.Wad.mizan_senses",
+       "test:tests/test_wad.py::test_wad_is_injective_in_root_and_recovered_from_the_word",
+       note="الموضوعُ له على الخانات زوجٌ (قالب، جذر)؛ و«الوضعُ موضوعُه الذهن» رأيٌ لا خانةَ له."),
+    _c("WAD-mushtarak", "المشتركُ اللفظيُّ محصورٌ ومجدوَل: اشتراكُ الوضع ستّةُ أزواجٍ متطابقة في المعجم "
+       "المودَع، واشتراكُ الصورة لا يقع لجذرين لا ألفَ فيهما إلّا بين قالبين متساويي الطول والحالات "
+       "والزوائد المتقابلة لا تقابل ألفٌ زائدةٌ موضعَ أصلٍ فيهما — وأزواجُها 42 بعينها (36 مختلفةُ "
+       "القالب)", _P,
+       "lean:Slge.Wad.duplicate_templates", "lean:Slge.Wad.mayCollide_sound",
+       "lean:Slge.Wad.homonymy_is_tabled", "lean:Slge.Wad.collision_pairs_eq",
+       "lean:Slge.Wad.collision_pairs_split", "lean:Slge.Wad.intishar_two_roots",
+       "lean:Slge.Wad.wad_witnesses", "test:tests/test_wad.py::test_homonymy_is_bounded_and_tabled",
+       note="اِنْتِشَارٌ: اِنْفِعَالٌ من ت‑ش‑ر وافْتِعَالٌ من ن‑ش‑ر؛ ومَنْحَةٌ: مَفْعَلٌ/فَعْلَةٌ. اشتراكُ المعنى "
+            "(عَيْنٌ) ليس في الخانة."),
+    _c("WAD-taraduf", "المترادفان الصرفيّان يشتركان في الجذر لكلّ قالبين سليمين ولكلّ جذر، ومصادرُ "
+       "الجذر الواحد صورٌ متباينة إلّا ما تطابق قالبُه", _P,
+       "lean:Slge.Wad.taraduf_same_root", "lean:Slge.Wad.masdar_forms_distinct",
+       "test:tests/test_wad.py::test_synonyms_share_root_and_differ_in_form",
+       note="ترادفُ الجذرين (قَمَرٌ/هِلَالٌ) معنًى لا صورة: معلَن."),
+    _c("WAD-masaq", "على 15,260 كلمةً موسومةً من MASAQ بشهادات البوّابة: ممّا تقرؤه القوالب (2,911) "
+       "يُفهم بلا قرينة 2,748 (94.4%)؛ مشتركُ الوضع 48 ومشتركُ الصورة 115، ووسمُ المرجع قرينةً "
+       "يفصلهما", _S,
+       "test:tests/test_wad.py::test_masaq_measurement_and_index",
+       note="أكبرُ المشترك المقيس: اللَّهُ بسابقة أل على أَفْعَلَ/فَعَّلَ (87) — العلَمُ بالمعجم؛ وآمَنَ تُقرأ "
+            "فَاعَلَ بالخانة."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

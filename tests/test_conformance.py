@@ -783,3 +783,31 @@ def test_kulli_matches_lean() -> None:
         elif r[0] in ("table", "kulli"):
             assert kulli(cells(r[1])) == kn[r[2]], r
 
+
+
+def test_wad_matches_lean() -> None:
+    """معاني الميزان وصورُه وقراءتُه لكلّ قالب، وأزواجُ الالتقاء، والمتطابقات، والشواهد = جدولُ `Wad`."""
+
+    from slge.marifa import drop_tanwin
+    from slge.wad import classes, collision_pairs, duplicates, senses, wad
+
+    rows = _rows("wad.csv")
+    kn = {"majdul": "مجدوَل", "mufrad": "مفرد الوضع", "wadMushtarak": "مشترك الوضع",
+          "suraMushtarak": "مشترك الصورة", "unread": "—"}
+
+    def cells(x: str) -> tuple[tuple[str, str], ...]:
+        return tuple(_cell(int(i)) for i in x.split("-"))
+
+    def ks(x: str) -> tuple[int, ...]:
+        return tuple(int(i) for i in x.split("+")) if x else ()
+
+    assert sum(r[0] == "mizan" for r in rows) == 121 and sum(r[0] == "wad" for r in rows) == 12
+    assert tuple((int(r[1]), int(r[2])) for r in rows if r[0] == "pair") == collision_pairs()
+    assert tuple((int(r[1]), int(r[2])) for r in rows if r[0] == "dup") == duplicates()
+    for r in rows:
+        if r[0] == "mizan":
+            m = cells(r[2])
+            assert senses(m) == ks(r[3]) and classes(m) == ks(r[4]) and wad(m) == kn[r[5]], r
+        elif r[0] == "wad":
+            w = cells(r[1])
+            assert senses(drop_tanwin(w)) == ks(r[2]) and wad(w) == kn[r[3]], r

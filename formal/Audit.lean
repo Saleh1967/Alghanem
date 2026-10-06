@@ -656,3 +656,17 @@ import Slge
 #print axioms Slge.Kulli.masdar_no_sigha
 #print axioms Slge.Kulli.masdar_not_shifted
 #print axioms Slge.Kulli.kulli_witnesses
+#print axioms Slge.Wad.wad_injective
+#print axioms Slge.Wad.sense_of_fill
+#print axioms Slge.Wad.duplicate_templates
+#print axioms Slge.Wad.mayCollide_sound
+#print axioms Slge.Wad.mem_collisionPairs
+#print axioms Slge.Wad.homonymy_is_tabled
+#print axioms Slge.Wad.collision_pairs_eq
+#print axioms Slge.Wad.collision_pairs_split
+#print axioms Slge.Wad.mizan_unaided
+#print axioms Slge.Wad.mizan_senses
+#print axioms Slge.Wad.taraduf_same_root
+#print axioms Slge.Wad.masdar_forms_distinct
+#print axioms Slge.Wad.wad_witnesses
+#print axioms Slge.Wad.intishar_two_roots
