@@ -4,9 +4,9 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 25 |
+| مبرهن | 27 |
 | مفحوص_استقصاء | 12 |
-| مفحوص_بعينة | 2 |
+| مفحوص_بعينة | 3 |
 | دليل | 0 |
 | معلن | 8 |
 | رأي | 0 |
@@ -25,6 +25,8 @@
 | GHAZALI | جدولُ الصور المنتجة هو جدولُ الغزالي بعينه، محسوبًا بالبتّات | مبرهن | `lean:Slge.Ghazali.ghazali_table`<br>`test:tests/test_conformance.py::test_ghazali_matches_lean` |  |
 | GRANT-check | المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة | مبرهن | `lean:Slge.Grant.grant_iff_check`<br>`lean:Slge.Grant.no_grant_of_refused`<br>`lean:Slge.Grant.ladder_implies_base`<br>`lean:Slge.Grant.empty_ladder_grants_nothing` | قانونُ tarkib/bridge.py بفحصٍ دالّةً لا نصًّا؛ الحكمُ المزوَّر الذي قبله الأصلُ لا يُصاغ هنا. |
 | GRANT-mursam | لا يُمنح «مرسوم» إلّا لمرخَّصٍ، وهو Admissible في الـ116 | مبرهن | `lean:Slge.Grant.mursam_sound`<br>`lean:Slge.Grant.mursam_refuses_initial_sukun`<br>`test:tests/test_grant.py::test_mursam_grants_licensed_only` |  |
+| KHAMSA-forms | الصورُ الخمسَ عشرة مرخَّصةٌ متباينةُ الأعداد؛ وما خرج عن الشروط لا يُخمَّن | مبرهن | `lean:Slge.Khamsa.khamsa_licensed`<br>`lean:Slge.Khamsa.khamsa_numbers_nodup`<br>`lean:Slge.Khamsa.no_guess_for_plural`<br>`test:tests/test_conformance.py::test_khamsa_matches_lean` |  |
+| KHAMSA-madd | حرفُ المدّ صورةُ الحركة (و↔ضم، ا↔فتح، ي↔كسر) والحالةُ تُقرأ من الصورة بعينها | مبرهن | `lean:Slge.Khamsa.madd_matches_short`<br>`lean:Slge.Khamsa.caseOf_form`<br>`lean:Slge.Khamsa.form_injective_stem`<br>`test:tests/test_khamsa.py::test_case_is_read_back_from_every_form` |  |
 | LICENCE | الرافعُ إلى المساواة يُنتج مفهومَ المخالفة | مبرهن | `lean:Slge.Ghazali.licence_makes_mafhum` |  |
 | NUM-agree | عددُ الشهادة (ترقيم الذرّات) وعددُ الطيّ متكافئان على المرخَّصات بطولٍ واحد | مبرهن | `lean:Slge.Consistency.numbers_agree`<br>`lean:Slge.Consistency.atomNumber_determines_fold`<br>`lean:Slge.Consistency.fold_determines_atomNumber` |  |
 | Q1 | الخاناتُ ‎116 = 29 × 4‎، تامّةٌ بلا تكرار | مبرهن | `lean:Slge.scells_length`<br>`test:tests/test_cells.py::test_cells_are_116` |  |
@@ -52,6 +54,7 @@
 | Q21-code | الشيفرةُ نفسُها لا تقفز: لا تستورد وحدةٌ وحدةَ طبقةٍ ليست من شروطها | مفحوص_استقصاء | `test:tests/test_order.py::test_modules_import_only_their_prerequisites` |  |
 | Q22 | الاستنتاجُ المعكوس: ‎U(1) = 87‎ و29 حاملًا ⇒ 3 متحرّكات ⇒ ‎116‎ | مفحوص_استقصاء | `test:tests/test_cells.py::test_inventory_is_derived_from_U1` |  |
 | Q24 | الظلُّ M/S يعجز والطيُّ يفرّق (ذَيْن/ذِين) | مفحوص_استقصاء | `test:tests/test_cells.py::test_shadow_fails_fold_separates` |  |
+| KHAMSA-gate | صورُ أب وأخ وذو بالقانون = ذرّاتُ شهادات البوّابة (10 شواهد)؛ حمٌ وفوٌ بالقانون نفسه | مفحوص_بعينة | `test:tests/test_khamsa.py::test_forms_match_gate_witnesses` | الشروطُ (مفرد، مكبَّر، مضاف لغير الياء) معلَنةٌ في Ctx لا مستنبَطة. |
 | SHABAKA-minimal | ترتيبُ البصريّين ليس أقلَّ الأشجار كلفةً: 341 عمليّةً مقابل 155؛ يتّفقان في 21 أبًا من 112 | مفحوص_بعينة | `test:tests/test_shabaka.py::test_computed_tree_is_minimal_and_classical_is_not` | أقلُّ شجرةٍ (Prim على مسافة لِيفنشتاين للقوالب) محسوبةٌ لا مقرَّرة؛ ما يحمله ترتيبُ البصريّين فوق كلفة القالب شرطُ حدٍّ دلاليّ لم يُقَس بعد. |
 | WAZN-sibawayh | هياكلُ الأوزان مقابل أبنية سيبويه المجمَّدة: 95/113 عنده؛ 18 مسمّاة؛ 122 من هياكله خارج الجدول | مفحوص_بعينة | `test:tests/test_wazn.py::test_skeletons_measured_against_sibawayh` | الحركاتُ معلَنةٌ من كتب الصرف لا مقيسة؛ الرباعيُّ والإعلالُ والمفعولُ المطلق والجامدُ خارج الجدول باسمها (DEBTS). |
 | DL1-DL6 | أقسامُ الوضع والدلالة والحقيقة والمجاز والمنطوق والمفهوم مغلقة | معلن | `test:tests/test_semantics.py::test_partitions_are_closed` |  |

@@ -102,6 +102,10 @@ def main (args : List String) : IO Unit := do
     -- حوافُّ شبكة البصريّين: الابن، الأب، عددُ العمليّات، وهل يبلغ الجذر.
     for e in Shabaka.edges do
       IO.println s!"{e.1},{e.2.1},{e.2.2.length},{Shabaka.reaches e.1 113}"
+  | ["khamsa"] =>
+    for w in Khamsa.forms do
+      let key := "-".intercalate (w.map fun c => toString c.index)
+      IO.println s!"{key},{slgeFold w}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

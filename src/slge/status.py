@@ -99,6 +99,19 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_shabaka.py::test_computed_tree_is_minimal_and_classical_is_not",
        note="أقلُّ شجرةٍ (Prim على مسافة لِيفنشتاين للقوالب) محسوبةٌ لا مقرَّرة؛ ما يحمله ترتيبُ البصريّين "
             "فوق كلفة القالب شرطُ حدٍّ دلاليّ لم يُقَس بعد."),
+    # — الأسماء الخمسة: الإعرابُ بالحروف دالّة —
+    _c("KHAMSA-madd", "حرفُ المدّ صورةُ الحركة (و↔ضم، ا↔فتح، ي↔كسر) والحالةُ تُقرأ من الصورة بعينها", _P,
+       "lean:Slge.Khamsa.madd_matches_short", "lean:Slge.Khamsa.caseOf_form",
+       "lean:Slge.Khamsa.form_injective_stem",
+       "test:tests/test_khamsa.py::test_case_is_read_back_from_every_form"),
+    _c("KHAMSA-forms", "الصورُ الخمسَ عشرة مرخَّصةٌ متباينةُ الأعداد؛ وما خرج عن الشروط لا يُخمَّن", _P,
+       "lean:Slge.Khamsa.khamsa_licensed", "lean:Slge.Khamsa.khamsa_numbers_nodup",
+       "lean:Slge.Khamsa.no_guess_for_plural",
+       "test:tests/test_conformance.py::test_khamsa_matches_lean"),
+    _c("KHAMSA-gate",
+       "صورُ أب وأخ وذو بالقانون = ذرّاتُ شهادات البوّابة (10 شواهد)؛ حمٌ وفوٌ بالقانون نفسه", _S,
+       "test:tests/test_khamsa.py::test_forms_match_gate_witnesses",
+       note="الشروطُ (مفرد، مكبَّر، مضاف لغير الياء) معلَنةٌ في Ctx لا مستنبَطة."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

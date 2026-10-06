@@ -113,3 +113,14 @@ def test_shabaka_matches_lean() -> None:
     for r, (child, parent) in zip(rows, CLASSICAL.items(), strict=True):
         assert (int(r[0]), int(r[1])) == (names.index(child), names.index(parent))
         assert int(r[2]) == len(diff(by[parent], by[child])) and r[3] == "true"
+
+
+def test_khamsa_matches_lean() -> None:
+    """الصورُ الخمسَ عشرة خاناتٍ وأعدادًا = جدولُ `Khamsa.forms`."""
+
+    from slge.khamsa import CASES, KHAMSA, form
+
+    rows = _rows("khamsa.csv")
+    forms = [form(s, c) for s in KHAMSA for c in CASES]
+    assert [r[0] for r in rows] == ["-".join(str(index(c)) for c in w) for w in forms]
+    assert [int(r[1]) for r in rows] == [fold(w) for w in forms]

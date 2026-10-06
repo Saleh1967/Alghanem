@@ -56,3 +56,9 @@ import Slge
 #print axioms Slge.Shabaka.edges_apply
 #print axioms Slge.Shabaka.network_rooted
 #print axioms Slge.Shabaka.run_edge_wf
+#print axioms Slge.Khamsa.madd_matches_short
+#print axioms Slge.Khamsa.caseOf_form
+#print axioms Slge.Khamsa.form_injective_stem
+#print axioms Slge.Khamsa.no_guess_for_plural
+#print axioms Slge.Khamsa.khamsa_licensed
+#print axioms Slge.Khamsa.khamsa_numbers_nodup
