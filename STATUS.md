@@ -4,11 +4,11 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 29 |
+| مبرهن | 32 |
 | مفحوص_استقصاء | 12 |
 | مفحوص_بعينة | 4 |
 | دليل | 0 |
-| معلن | 8 |
+| معلن | 9 |
 | رأي | 0 |
 | مفتوح | 8 |
 | معلق | 14 |
@@ -36,6 +36,9 @@
 | RANK-KHASS | الخاصُّ يُعمل به أيًّا كان ثبوتُه، والعامُّ مخصوصٌ لا مردود | مبرهن | `lean:Slge.Rank.specific_wins`<br>`lean:Slge.Rank.general_is_makhsus`<br>`lean:Slge.Rank.qati_general_yields_to_zanni_specific`<br>`lean:Slge.Rank.same_scope_is_weigh`<br>`test:tests/test_rank.py::test_specific_wins_and_general_is_makhsus` | ج٣ ¶1065. والخصوصُ محسوبٌ من لزوم المقدَّمين بالقواعد المقبولة. |
 | RANK-MEET | رتبةُ النتيجة رتبةُ أضعف مقدّماتها؛ لا ترقية | مبرهن | `lean:Slge.Rank.pathGrade_qati_iff`<br>`lean:Slge.Rank.no_promotion`<br>`test:tests/test_rank.py::test_rank_never_promotes_on_random_worlds` | الغزالي، محكّ النظر: «يقينية ضرورية بحسب ذوق المقدمات». |
 | RANK-WEIGH | القطعيُّ يردّ الظنّيّ، ولا يُردّ قطعيّ، والراجحُ مرجوحٌ من الجهة الأخرى، والتعادلُ ظنّيّان متساويان، وتعارضُ قطعيّين تناقض | مبرهن | `lean:Slge.Rank.weigh_swap`<br>`lean:Slge.Rank.qati_never_loses`<br>`lean:Slge.Rank.mardud_iff`<br>`lean:Slge.Rank.tanaqud_iff`<br>`lean:Slge.Rank.taadul_iff`<br>`test:tests/test_rank.py::test_rank_table_matches_lean` | التفكير: «يؤخذ القطعي ويرد الظني»؛ ج٣ ¶1060، ¶1062. |
+| RAWABIT-amal | العملُ دالّةٌ على الخانة الأخيرة؛ وعلى الأفعال الخمسة حذفُ النون جزمًا ونصبًا | مبرهن | `lean:Slge.Rawabit.govern_jazm_afal`<br>`lean:Slge.Rawabit.govern_nasb_afal`<br>`lean:Slge.Rawabit.raf_not_governed_jazm`<br>`test:tests/test_rawabit.py::test_govern_reads_the_last_cell_and_the_five_verbs` |  |
+| RAWABIT-cells | 70 أداةً مفردة خاناتُها مرخَّصة؛ 36 منها من شهادات البوّابة بعينها | مبرهن | `lean:Slge.Rawabit.particles_licensed`<br>`test:tests/test_conformance.py::test_rawabit_matches_lean`<br>`test:tests/test_rawabit.py::test_every_particle_licensed_and_witness_counts` |  |
+| RAWABIT-proclitic | الحرفُ المتحرّك المتّصل (و ف ل ب ك س) لا يُفسد ترخيصَ ما بعده | مبرهن | `lean:Slge.Rawabit.proclitic_keeps_licence`<br>`lean:Slge.Rawabit.proclitics_one_vowelled_cell` |  |
 | SEQ-delim | ترميزُ الكلمة ذاتيُّ الحدّ: تُقرأ من رأس أيّ تيارٍ ويبقى ما بعدها بعينه | مبرهن | `lean:Slge.Sequence.decodeWord_encodeWord`<br>`lean:Slge.Sequence.encodeWord_prefix_free`<br>`test:tests/test_conformance.py::test_sequence_matches_lean`<br>`test:tests/test_cells.py::test_stream_refuses_unlicensed_and_is_prefix_free` |  |
 | SEQ-recover | فكُّ طيِّ المرخَّصة يعيدها بعينها | مبرهن | `lean:Slge.Sequence.slgeUnfold_slgeFold` |  |
 | SEQ-stream | تيارُ كلماتٍ مرخَّصةٍ يُفكّ كلُّه بترتيبه بلا فاصلٍ ولا حاملٍ زائد | مبرهن | `lean:Slge.Sequence.decode_encode`<br>`lean:Slge.Sequence.U_lt_two_pow_width` | الكلفةُ معلنة: cost(k) = (k+1) + ⌊log₂U(k)⌋+1 بتًّا؛ k=1: 9، k=2: 17 (من جدول Lean). |
@@ -66,6 +69,7 @@
 | Q19 | كلُّ زوجٍ من الأزواج يقسم الـ29 | معلن | `test:tests/test_phonology.py::test_pairs_partition` | صادقٌ بالبناء (السالبُ متمّمُ الموجب)؛ فهو تعريفٌ لا اكتشاف. |
 | Q20 | الجوفُ للمدّ الثلاث | معلن | `test:tests/test_phonology.py::test_jawf_is_madd` |  |
 | RANK-THUBUT | تصنيفُ الدليل قطعيًّا أو ظنّيًّا | معلن | `test:tests/test_rank.py::test_evidence_grades` | المتواترُ والتعريفُ قطعيّان؛ الآحادُ والمشهورُ والمعجمُ والمشاهدةُ (حكمٌ على صفة) ظنّيّة — ج٣ ¶275، ¶277، ¶713؛ التفكير. قاعدةٌ معلنةٌ لا مبرهنة. |
+| RAWABIT-babs | المعاني (23 بابًا من الجدول المُرسَل) معلَنة؛ والتراكيبُ ليست أدواتٍ بل تياراتُ شهادات | معلن | `test:tests/test_rawabit.py::test_index_is_current` |  |
 | SHABAKA-classical | ترتيبُ البصريّين: المصدرُ أصلُ المشتقّات؛ الماضي فالمضارع فالأمر؛ المزيدُ من المجرّد | معلن | `test:tests/test_shabaka.py::test_classical_edges_are_machine_checked_and_rooted` |  |
 | WAZN-awzan | أوزانُ الفعل والمصدر والمشتقّات والتأنيث والجموع كما في كتب الصرف | معلن | `test:tests/test_wazn.py::test_masdar_of_mazid_is_a_declared_pair_of_deposited_awzan` |  |
 | DL4 | كشفُ النسب بالكلمات المفتاحيّة | مفتوح | — | حُذف `nisba_ok`: البحثُ عن «فاعل» في نصٍّ ليس كشفًا للإسناد. يُبنى في طبقة النظم. |

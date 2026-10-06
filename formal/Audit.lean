@@ -204,3 +204,9 @@ import Slge
 #print axioms Slge.Afal.moodOf_nasb
 #print axioms Slge.Afal.pronounOf_form
 #print axioms Slge.Afal.five_licensed
+#print axioms Slge.Rawabit.particles_licensed
+#print axioms Slge.Rawabit.proclitic_keeps_licence
+#print axioms Slge.Rawabit.proclitics_one_vowelled_cell
+#print axioms Slge.Rawabit.govern_jazm_afal
+#print axioms Slge.Rawabit.govern_nasb_afal
+#print axioms Slge.Rawabit.raf_not_governed_jazm

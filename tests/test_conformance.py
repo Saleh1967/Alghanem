@@ -136,3 +136,17 @@ def test_afal_matches_lean() -> None:
     assert len(rows) == len(forms) == 30
     assert [r[0] for r in rows] == ["-".join(str(index(c)) for c in w) for w in forms]
     assert [r[1] for r in rows] == ["true"] * 30
+
+
+def test_rawabit_matches_lean() -> None:
+    """الأدواتُ السبعون خاناتٍ وعملًا واتّصالًا = جدولُ `Rawabit.particles`."""
+
+    from slge.rawabit import PARTICLES
+
+    rows = _rows("rawabit.csv")
+    amal = {"": "none", "جزم": "jazm", "نصب": "nasb", "جرّ": "jarr",
+            "نصب الاسم ورفع الخبر": "nasbIsm"}
+    assert len(rows) == len(PARTICLES) == 70
+    for r, p in zip(rows, PARTICLES, strict=True):
+        assert r[0] == p.name and r[1] == "-".join(str(index(c)) for c in p.cells)
+        assert r[2] == amal[p.amal] and r[3] == str(p.proclitic).lower() and r[4] == "true"

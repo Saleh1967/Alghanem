@@ -10,3 +10,4 @@ import Slge.Wazn
 import Slge.Shabaka
 import Slge.Khamsa
 import Slge.Afal
+import Slge.Rawabit
