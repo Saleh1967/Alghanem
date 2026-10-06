@@ -307,3 +307,21 @@ def test_nawasikh_matches_lean() -> None:
         else:
             op = nasb if r[0] == "kana_khabar" else raf
             assert tanwin(op(cells_of("غَفُورُ"))) == cells == cells_of(r[1]), r
+
+
+def test_jazm_matches_lean() -> None:
+    """أدواتُ الجزم والشرط وشواهدُ القارئ = جدولُ `Jazm`."""
+
+    from slge.jazm import JAZIM_ONE, SHART_GHAYR, SHART_JAZIM, marker
+    from slge.rawabit import cells_of
+
+    rows = _rows("jazm.csv")
+    assert len(rows) == 4 + 12 + 7 + 8
+    babs = {"one": JAZIM_ONE, "jazim": SHART_JAZIM, "ghayr": SHART_GHAYR}
+    lean = {"sukun": "سكون", "dropNun": "حذف النون", "unread": "لا تقرؤه الخانة"}
+    for r in rows:
+        cells = tuple(_cell(int(i)) for i in r[2].split("-"))
+        if r[0] in babs:
+            assert r[1] in babs[r[0]] and cells_of(r[1]) == cells, r
+        else:
+            assert marker(cells) == lean[r[3]], r

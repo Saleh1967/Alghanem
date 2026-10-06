@@ -352,6 +352,25 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_nawasikh.py::test_masaq_measurement_and_index",
        note="المخالفُ: جمعُ المؤنّث السالم وياءُ المتكلّم والمنقوص — دُيونٌ على القارئ؛ "
             "والتمامُ والجمودُ والتعليقُ تيارٌ ومعجم."),
+    # — الجزم والشرط —
+    _c("JAZM-ops", "العلاماتُ الثلاث عمليّات: السكونُ مرخَّصٌ بعد متحرّكٍ وغيرُ مرخَّصٍ بعد مدٍّ فيُلزِم حذفَ "
+       "عين الأجوف؛ حذفُ حرف العلّة يحفظ الترخيصَ ويترك حركةَ الأصل؛ حذفُ النون صورةُ النصب", _P,
+       "lean:Slge.Jazm.sukun_licensed", "lean:Slge.Jazm.hollow_forced",
+       "lean:Slge.Jazm.yaqulu_sukun_unlicensed", "lean:Slge.Jazm.dropWeak_licensed",
+       "lean:Slge.Jazm.dropWeak_last", "lean:Slge.Jazm.afal_jazm_eq_nasb",
+       "lean:Slge.Jazm.marker_afal_jazm", "lean:Slge.Jazm.waw_shared",
+       "test:tests/test_jazm.py::test_three_markers_three_operations"),
+    _c("JAZM-tools", "الأدواتُ 4 + 12 + 7 مرخَّصة؛ لامُ الأمر حرفٌ متّصل؛ لَا الناهيةُ ولَمَّا الجازمةُ وسبعةُ "
+       "أسماءِ شرطٍ خاناتُها خاناتُ غيرها (النافية، الحينيّة، الاستفهام)؛ وأَيّ وحدَها معربة", _P,
+       "lean:Slge.Jazm.tools_licensed", "lean:Slge.Jazm.counts", "lean:Slge.Jazm.amr_licensed",
+       "lean:Slge.Jazm.shared_la_lamma", "lean:Slge.Jazm.shared_istifham",
+       "lean:Slge.Jazm.ayy_declines", "lean:Slge.Jazm.rawabit_jazm",
+       "test:tests/test_jazm.py::test_tools_counted_and_shared",
+       note="إِنْ وإِذْمَا ومَتَى وأَيَّانَ وأَيْنَ وإِذَا وحِينَ ولَوْ ولَوْمَا ليست في جدول أدوات الربط: دَين."),
+    _c("JAZM-masaq", "على 1,365 مضارعًا مجزومًا من MASAQ: حذفُ النون يقرؤه القارئ 520/537، والسكونُ "
+       "514/634 (والباقي كسرةُ الوصل ويَكُ)، وحذفُ حرف العلّة لا تقرؤه الخانة 192/194 كما بُرهن", _S,
+       "test:tests/test_jazm.py::test_masaq_measurement_and_index",
+       note="كسرةُ التقاء الساكنين قانونُ Context في الغانم؛ الجزمُ بفعلين والفاءُ الرابطة تيار."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

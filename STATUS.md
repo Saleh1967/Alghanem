@@ -4,9 +4,9 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 65 |
+| مبرهن | 67 |
 | مفحوص_استقصاء | 12 |
-| مفحوص_بعينة | 14 |
+| مفحوص_بعينة | 15 |
 | دليل | 0 |
 | معلن | 10 |
 | رأي | 0 |
@@ -40,6 +40,8 @@
 | ISTIFHAM-ayy | أَيّ المعربُ الوحيد: صورُه تختلف في الخانة الأخيرة لا غير؛ وسائرُها صورةٌ واحدة | مبرهن | `lean:Slge.Istifham.caseOf_ayy`<br>`lean:Slge.Istifham.ayy_differs_only_in_state`<br>`lean:Slge.Istifham.ayy_three_forms`<br>`lean:Slge.Istifham.mabni_single_form`<br>`test:tests/test_istifham.py::test_ayy_is_the_only_declinable` |  |
 | ISTIFHAM-forms | 22 صورةً مرخَّصةً متباينة، 21 منها شواهدُ البوّابة بعينها؛ والهمزةُ حرفٌ متّصل | مبرهن | `lean:Slge.Istifham.forms_licensed`<br>`lean:Slge.Istifham.forms_nodup`<br>`lean:Slge.Istifham.hamza_prefix_licensed`<br>`test:tests/test_conformance.py::test_istifham_matches_lean` |  |
 | ISTIFHAM-tarkib | مَاذَا = مَا ++ ذَا، أَمَّنْ = أَمْ ++ مَنْ، مَنْ ذَا وصلٌ مرخَّص؛ وما بعد الجارّ تحذف ألفَها ثمّ يُدغَم | مبرهن | `lean:Slge.Istifham.madha_is_ma_dha`<br>`lean:Slge.Istifham.man_dha_junction`<br>`lean:Slge.Istifham.amman_is_am_man`<br>`lean:Slge.Istifham.ma_after_jarr`<br>`lean:Slge.Istifham.amma_is_an_ma_idgham`<br>`lean:Slge.Istifham.mimma_is_min_ma_idgham`<br>`lean:Slge.Istifham.idghamNM_length`<br>`test:tests/test_istifham.py::test_composition_and_ma_after_jarr` |  |
+| JAZM-ops | العلاماتُ الثلاث عمليّات: السكونُ مرخَّصٌ بعد متحرّكٍ وغيرُ مرخَّصٍ بعد مدٍّ فيُلزِم حذفَ عين الأجوف؛ حذفُ حرف العلّة يحفظ الترخيصَ ويترك حركةَ الأصل؛ حذفُ النون صورةُ النصب | مبرهن | `lean:Slge.Jazm.sukun_licensed`<br>`lean:Slge.Jazm.hollow_forced`<br>`lean:Slge.Jazm.yaqulu_sukun_unlicensed`<br>`lean:Slge.Jazm.dropWeak_licensed`<br>`lean:Slge.Jazm.dropWeak_last`<br>`lean:Slge.Jazm.afal_jazm_eq_nasb`<br>`lean:Slge.Jazm.marker_afal_jazm`<br>`lean:Slge.Jazm.waw_shared`<br>`test:tests/test_jazm.py::test_three_markers_three_operations` |  |
+| JAZM-tools | الأدواتُ 4 + 12 + 7 مرخَّصة؛ لامُ الأمر حرفٌ متّصل؛ لَا الناهيةُ ولَمَّا الجازمةُ وسبعةُ أسماءِ شرطٍ خاناتُها خاناتُ غيرها (النافية، الحينيّة، الاستفهام)؛ وأَيّ وحدَها معربة | مبرهن | `lean:Slge.Jazm.tools_licensed`<br>`lean:Slge.Jazm.counts`<br>`lean:Slge.Jazm.amr_licensed`<br>`lean:Slge.Jazm.shared_la_lamma`<br>`lean:Slge.Jazm.shared_istifham`<br>`lean:Slge.Jazm.ayy_declines`<br>`lean:Slge.Jazm.rawabit_jazm`<br>`test:tests/test_jazm.py::test_tools_counted_and_shared` | إِنْ وإِذْمَا ومَتَى وأَيَّانَ وأَيْنَ وإِذَا وحِينَ ولَوْ ولَوْمَا ليست في جدول أدوات الربط: دَين. |
 | KHAMSA-forms | الصورُ الخمسَ عشرة مرخَّصةٌ متباينةُ الأعداد؛ وما خرج عن الشروط لا يُخمَّن | مبرهن | `lean:Slge.Khamsa.khamsa_licensed`<br>`lean:Slge.Khamsa.khamsa_numbers_nodup`<br>`lean:Slge.Khamsa.no_guess_for_plural`<br>`test:tests/test_conformance.py::test_khamsa_matches_lean` |  |
 | KHAMSA-madd | حرفُ المدّ صورةُ الحركة (و↔ضم، ا↔فتح، ي↔كسر) والحالةُ تُقرأ من الصورة بعينها | مبرهن | `lean:Slge.Khamsa.madd_matches_short`<br>`lean:Slge.Khamsa.caseOf_form`<br>`lean:Slge.Khamsa.form_injective_stem`<br>`test:tests/test_khamsa.py::test_case_is_read_back_from_every_form` |  |
 | LICENCE | الرافعُ إلى المساواة يُنتج مفهومَ المخالفة | مبرهن | `lean:Slge.Ghazali.licence_makes_mafhum` |  |
@@ -96,6 +98,7 @@
 | AFAL-gate | ستّةُ شواهد من شهادات البوّابة تطابق القانون؛ نصبُ الاثنين ورفعُ المخاطبة بالقانون | مفحوص_بعينة | `test:tests/test_afal.py::test_forms_match_gate_witnesses` | الخمسةُ خمسةٌ بجدول مطابقةٍ معلَن (ياءُ المخاطبة لا تلحق حرفَ الغيبة). |
 | ISHARA-gate | 13 صورةً من شهادات البوّابة هي صورُ القانون بعينها؛ الباقي (12) بالقانون | مفحوص_بعينة | `lean:Slge.Ishara.witnessed_subset`<br>`test:tests/test_ishara.py::test_gate_witnesses_are_the_law_forms` | الدلالةُ (قريب/بعيد، عدد، جنس) من الحصر المُرسَل معلَنة. |
 | ISTIFHAM-sadara | الصدارة على MASAQ: 100/251 في صدر الآية أو بعد عاطف/جارّ/همزة؛ 151 بعد فعل قولٍ ونظرٍ وسؤال | مفحوص_بعينة | `test:tests/test_istifham.py::test_tiers_and_index` | صدارةُ جملةٍ لا آية: لا تُقاس بلا حدٍّ للجملة — دَينٌ على النظم. الدلالةُ من الحصر المُرسَل معلَنة. |
+| JAZM-masaq | على 1,365 مضارعًا مجزومًا من MASAQ: حذفُ النون يقرؤه القارئ 520/537، والسكونُ 514/634 (والباقي كسرةُ الوصل ويَكُ)، وحذفُ حرف العلّة لا تقرؤه الخانة 192/194 كما بُرهن | مفحوص_بعينة | `test:tests/test_jazm.py::test_masaq_measurement_and_index` | كسرةُ التقاء الساكنين قانونُ Context في الغانم؛ الجزمُ بفعلين والفاءُ الرابطة تيار. |
 | KHAMSA-gate | صورُ أب وأخ وذو بالقانون = ذرّاتُ شهادات البوّابة (10 شواهد)؛ حمٌ وفوٌ بالقانون نفسه | مفحوص_بعينة | `test:tests/test_khamsa.py::test_forms_match_gate_witnesses` | الشروطُ (مفرد، مكبَّر، مضاف لغير الياء) معلَنةٌ في Ctx لا مستنبَطة. |
 | MARIFA-tanwin | على 6,544 صورةً من MASAQ: أل مع تنوين 1 (وسم خاطئ)؛ مضافٌ مع تنوين 12 (تنوينُ العوض وخلافُ وسم)؛ العلمُ منوَّن 35/157 فالتنوينُ ليس علامةَ تنكير | مفحوص_بعينة | `test:tests/test_marifa.py::test_masaq_measurement_and_index` | القوّةُ ترتيبٌ معلَن؛ العلمُ والنكرة من المعجم؛ المستترُ بلا خانة. |
 | NAWASIKH-masaq | على 2,599 اسمٍ وخبرٍ من MASAQ: خبرُ كان نصبٌ 98%، خبرُ إنّ رفعٌ 98%، اسمُ كان رفعٌ 92%، اسمُ إنّ نصبٌ 90%، اسمُ لا 73/73 نكرةٌ مفتوحة؛ عسى بأَنْ 21/24 وكاد 0/23 وطفق 0/3؛ وإنّما لا اسمَ ناسخٍ بعدها 27/27 | مفحوص_بعينة | `test:tests/test_nawasikh.py::test_masaq_measurement_and_index` | المخالفُ: جمعُ المؤنّث السالم وياءُ المتكلّم والمنقوص — دُيونٌ على القارئ؛ والتمامُ والجمودُ والتعليقُ تيارٌ ومعجم. |

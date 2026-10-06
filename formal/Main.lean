@@ -170,6 +170,14 @@ def main (args : List String) : IO Unit := do
       IO.println s!"kaffa,{p.1},{"-".intercalate ((Nawasikh.kaffa p.2).map fun c => toString c.index)}"
     IO.println s!"kana_khabar,غَفُورًا,{"-".intercalate ((Nawasikh.tanwin (Nawasikh.kana.2 Nawasikh.ghafur)).map fun c => toString c.index)}"
     IO.println s!"inna_khabar,غَفُورٌ,{"-".intercalate ((Nawasikh.tanwin (Nawasikh.inna.2 Nawasikh.ghafur)).map fun c => toString c.index)}"
+  | ["jazm"] =>
+    let mk := fun (m : Jazm.Marker) => match m with
+      | .sukun => "sukun" | .dropNun => "dropNun" | .unread => "unread"
+    for (bab, l) in [("one", Jazm.jazimOne), ("jazim", Jazm.shartJazim), ("ghayr", Jazm.shartGhayr)] do
+      for p in l do
+        IO.println s!"{bab},{p.1},{"-".intercalate (p.2.map fun c => toString c.index)}"
+    for (n, w) in Jazm.witnesses do
+      IO.println s!"marker,{n},{"-".intercalate (w.map fun c => toString c.index)},{mk (Jazm.marker w)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do
