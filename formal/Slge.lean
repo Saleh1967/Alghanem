@@ -16,3 +16,4 @@ import Slge.Ishara
 import Slge.Istifham
 import Slge.Nida
 import Slge.Zuruf
+import Slge.Zaman

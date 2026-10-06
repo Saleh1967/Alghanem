@@ -137,6 +137,11 @@ def main (args : List String) : IO Unit := do
   | ["zuruf"] =>
     for w in Zuruf.forms do
       IO.println ("-".intercalate (w.map fun c => toString c.index))
+  | ["zaman"] =>
+    for w in Zaman.forms do
+      IO.println s!"form,{"-".intercalate (w.map fun c => toString c.index)}"
+    for p in Zaman.constants do
+      IO.println s!"constant,{p.1},{"-".intercalate (p.2.1.map fun c => toString c.index)},{p.2.2}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

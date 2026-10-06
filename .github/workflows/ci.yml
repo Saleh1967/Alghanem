@@ -68,7 +68,7 @@ jobs:
           fi
       - name: the committed Lean outputs are what Lean prints now
         run: |
-          for m in bridge counts folds ghazali rank rasm sequence categories wazn shabaka khamsa afal rawabit damair ishara istifham nida zuruf; do lake exe slge-table "$m" > "out/$m.csv"; done
+          for m in bridge counts folds ghazali rank rasm sequence categories wazn shabaka khamsa afal rawabit damair ishara istifham nida zuruf zaman; do lake exe slge-table "$m" > "out/$m.csv"; done
           git diff --exit-code -- out
       - name: LEAN_INDEX.md is what the tree says now (ladder order, audit, axioms)
-        run: python3 ../tools/gen_lean_index.py --check && PYTHONPATH=../src python3 ../tools/gen_rawabit_index.py --check && PYTHONPATH=../src python3 ../tools/gen_damair_index.py --check && PYTHONPATH=../src python3 ../tools/gen_ishara_index.py --check && PYTHONPATH=../src python3 ../tools/gen_istifham_index.py --check && PYTHONPATH=../src python3 ../tools/gen_nida_index.py --check && PYTHONPATH=../src python3 ../tools/gen_zuruf_index.py --check
+        run: python3 ../tools/gen_lean_index.py --check && PYTHONPATH=../src python3 ../tools/gen_rawabit_index.py --check && PYTHONPATH=../src python3 ../tools/gen_damair_index.py --check && PYTHONPATH=../src python3 ../tools/gen_ishara_index.py --check && PYTHONPATH=../src python3 ../tools/gen_istifham_index.py --check && PYTHONPATH=../src python3 ../tools/gen_nida_index.py --check && PYTHONPATH=../src python3 ../tools/gen_zuruf_index.py --check && PYTHONPATH=../src python3 ../tools/gen_zaman_index.py --check

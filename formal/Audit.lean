@@ -261,3 +261,12 @@ import Slge
 #print axioms Slge.Zuruf.forms_hukm
 #print axioms Slge.Zuruf.constants_single
 #print axioms Slge.Zuruf.haythu_always_cut
+#print axioms Slge.Zaman.tanwin_vs_qat
+#print axioms Slge.Zaman.hukm_rafTanwin
+#print axioms Slge.Zaman.hukm_nasbTanwin
+#print axioms Slge.Zaman.forms_licensed
+#print axioms Slge.Zaman.forms_nodup
+#print axioms Slge.Zaman.forms_hukm
+#print axioms Slge.Zaman.constants_licensed
+#print axioms Slge.Zaman.constants_states
+#print axioms Slge.Zaman.al_amsu

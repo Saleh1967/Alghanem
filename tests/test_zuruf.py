@@ -53,3 +53,9 @@ def test_masaq_measurement_and_index() -> None:
                     if a == "فتح" and b == "—" and c == "غير مضاف")
     assert fath_free == 4
     assert mod.render() == (root / "ZURUF_INDEX.md").read_text(encoding="utf-8")
+
+
+def test_constants_agree_with_ishara() -> None:
+    from slge.ishara import HUNA, THAMMA
+
+    assert CONSTANTS["ثَمَّ"] == THAMMA and CONSTANTS["هُنَا"] == HUNA

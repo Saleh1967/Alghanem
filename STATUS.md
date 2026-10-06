@@ -4,9 +4,9 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 47 |
+| مبرهن | 50 |
 | مفحوص_استقصاء | 12 |
-| مفحوص_بعينة | 8 |
+| مفحوص_بعينة | 9 |
 | دليل | 0 |
 | معلن | 10 |
 | رأي | 0 |
@@ -60,6 +60,9 @@
 | WAZN-indep | ترخيصُ الكلمة من القالب وحدَه: الوزنُ يُرخَّص مرّةً لكلّ الأصول | مبرهن | `lean:Slge.Wazn.states_fill`<br>`lean:Slge.Wazn.licensed_fill_indep`<br>`test:tests/test_wazn.py::test_licence_is_root_independent` |  |
 | WAZN-root | الأصلُ يُستردّ من الصيغة بالقالب لكلّ قالبٍ سليمٍ ولكلّ أصل | مبرهن | `lean:Slge.Wazn.rootOf_fill`<br>`lean:Slge.Wazn.awzan_root`<br>`test:tests/test_wazn.py::test_fill_then_root_of_recovers_every_root` |  |
 | WAZN-table | 113 وزنًا مودَعًا سليمةٌ ومرخَّصةٌ لكلّ أصل؛ بايثونُها مطابقٌ لجدول Lean | مبرهن | `lean:Slge.Wazn.awzan_wf`<br>`lean:Slge.Wazn.awzan_licensed`<br>`test:tests/test_conformance.py::test_wazn_matches_lean` |  |
+| ZAMAN-forms | المتصرّفُ خمسُ صورٍ مرخَّصةٍ متباينة (مضاف/مجرور/مقطوع/مرفوعٌ منوَّن/منصوبٌ منوَّن) | مبرهن | `lean:Slge.Zaman.forms_licensed`<br>`lean:Slge.Zaman.forms_nodup`<br>`lean:Slge.Zaman.forms_hukm`<br>`test:tests/test_conformance.py::test_zaman_matches_lean` |  |
+| ZAMAN-mabni | المبنيّةُ الثمانية صورةٌ واحدةٌ بحالةٍ ثابتة كما أُعلنت؛ وأَمْسِ بأل العهديّة معرب | مبرهن | `lean:Slge.Zaman.constants_licensed`<br>`lean:Slge.Zaman.constants_states`<br>`lean:Slge.Zaman.al_amsu`<br>`test:tests/test_zaman.py::test_constants_single_state` |  |
+| ZAMAN-tanwin | الخانةُ تفرّق الضمَّ المنوَّن (مرفوعٌ متصرّف) من الضمّ العاري (مقطوع) | مبرهن | `lean:Slge.Zaman.tanwin_vs_qat`<br>`lean:Slge.Zaman.hukm_rafTanwin`<br>`lean:Slge.Zaman.hukm_nasbTanwin`<br>`test:tests/test_zaman.py::test_five_forms_and_readers` |  |
 | ZURUF-forms | 51 صورةً (17 جذعًا × 3) مرخَّصةً بأحكامها؛ وحَيْثُ مقطوعةٌ أبدًا | مبرهن | `lean:Slge.Zuruf.forms_licensed`<br>`lean:Slge.Zuruf.forms_hukm`<br>`lean:Slge.Zuruf.haythu_always_cut`<br>`lean:Slge.Zuruf.constants_single`<br>`test:tests/test_conformance.py::test_zuruf_matches_lean` |  |
 | ZURUF-ops | الإضافةُ والجرُّ والقطعُ عمليّاتٌ على الخانة الأخيرة تحفظ الترخيصَ ويقرؤها الحكم | مبرهن | `lean:Slge.Zuruf.setLast_licensed`<br>`lean:Slge.Zuruf.hukm_qat`<br>`lean:Slge.Zuruf.hukm_mudaf`<br>`lean:Slge.Zuruf.hukm_jarr`<br>`test:tests/test_zuruf.py::test_three_operations_read_back` |  |
 | ANSWER | كلُّ جملةٍ في الجواب لها وسمٌ وسند، والمُعيدُ لا يُسقطهما | مفحوص_استقصاء | `test:tests/test_answer.py::test_every_sentence_is_tagged`<br>`test:tests/test_answer.py::test_verbalizer_cannot_drop_tags` |  |
@@ -81,6 +84,7 @@
 | NIDA-masaq | على 489 منادًى بشهادات البوّابة: الضمُّ ⇒ مبنيّ 188/188؛ الفتحُ والكسرُ ⇒ معرب 195/237؛ 63 لا تقرؤها الخانة | مفحوص_بعينة | `test:tests/test_nida.py::test_masaq_measurement_and_index` | الباقي خلافُ وسمٍ في MASAQ (أَهْلَ، مَعْشَرَ، بَنِي موسومةً «مبني»)؛ لم أُصلحه. |
 | SHABAKA-minimal | ترتيبُ البصريّين ليس أقلَّ الأشجار كلفةً: 341 عمليّةً مقابل 155؛ يتّفقان في 21 أبًا من 112 | مفحوص_بعينة | `test:tests/test_shabaka.py::test_computed_tree_is_minimal_and_classical_is_not` | أقلُّ شجرةٍ (Prim على مسافة لِيفنشتاين للقوالب) محسوبةٌ لا مقرَّرة؛ ما يحمله ترتيبُ البصريّين فوق كلفة القالب شرطُ حدٍّ دلاليّ لم يُقَس بعد. |
 | WAZN-sibawayh | هياكلُ الأوزان مقابل أبنية سيبويه المجمَّدة: 95/113 عنده؛ 18 مسمّاة؛ 122 من هياكله خارج الجدول | مفحوص_بعينة | `test:tests/test_wazn.py::test_skeletons_measured_against_sibawayh` | الحركاتُ معلَنةٌ من كتب الصرف لا مقيسة؛ الرباعيُّ والإعلالُ والمفعولُ المطلق والجامدُ خارج الجدول باسمها (DEBTS). |
+| ZAMAN-masaq | التصرُّفُ عددُ الحالات: على 1,334 موضعًا من MASAQ المتصرّفةُ 8/12 بحالتين فأكثر والمبنيّةُ 5/7 بحالةٍ واحدة (والاثنان كسرةُ وصلٍ وتصادفُ رسم)؛ وعند الفتح الظرفُ 230/326 | مفحوص_بعينة | `test:tests/test_zaman.py::test_masaq_measurement_and_index` | الظرفيّةُ (معنى في) لا تُقرأ من الخانة: دَينٌ على النظم. |
 | ZURUF-masaq | على 1,493 ظرفًا بشهادات البوّابة: الضمُّ ⇒ مقطوع 82/82 (وحَيْثُ ثابت)؛ الفتحُ ⇒ مضاف 752/756؛ الكسرُ ⇒ بعد جارٍّ أو ياء 568/584 | مفحوص_بعينة | `test:tests/test_zuruf.py::test_masaq_measurement_and_index` | المختصُّ قيدٌ معجميّ؛ المقاديرُ بلا شاهد؛ ظرفُ الزمان حصرُه معلَّق. |
 | DAMAIR-roles | الأدوارُ الإعرابيّة الثابتة من الحصر المُرسَل معلَنة؛ الياءُ والمستترُ خارج ما يقرؤه الحرف | معلن | `test:tests/test_damair.py::test_index_is_current` |  |
 | DL1-DL6 | أقسامُ الوضع والدلالة والحقيقة والمجاز والمنطوق والمفهوم مغلقة | معلن | `test:tests/test_semantics.py::test_partitions_are_closed` |  |

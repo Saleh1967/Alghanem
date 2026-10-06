@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_lean_index.py` من ملفّات `.lean` و`Audit.lean` و`out/axioms.txt`؛ لا يُحرَّر باليد. الـ116 من الغانم بإيداعه المثبَّت في `formal/lakefile.toml`.
 
-**410 مبرهنة، منها 254 مدقَّقةُ المسلّمات.**
+**422 مبرهنة، منها 263 مدقَّقةُ المسلّمات.**
 
 كلُّ درجةٍ تستهلك ما قبلها: لا تدخل الكلمةُ درجةً قبل أن تُرخَّص في التي تحتها. «مدقَّق» = في `Audit.lean` وطُبعت مسلّماتُه؛ وما ليس مدقَّقًا مبرهَنٌ في Lean لكن لم يُطبع سندُه بعدُ فلا يُستشهد به في `status.py`.
 
@@ -580,6 +580,23 @@
 | `forms_hukm` | — | مدقَّق | propext |
 | `constants_single` | — | مدقَّق | propext |
 | `haythu_always_cut` | حَيْثُ مقطوعةٌ أبدًا: حكمُها الضمّ. | مدقَّق | propext |
+
+### `Slge/Zaman.lean` — 12 مبرهنة (`Slge.Zaman`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `tanwin_vs_qat` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `lastOf_append_singleton` | — | — | — |
+| `initOf_append_singleton` | — | — | — |
+| `hukm_rafTanwin` | — | مدقَّق | propext |
+| `hukm_nasbTanwin` | — | مدقَّق | propext |
+| `forms_count` | — | — | — |
+| `forms_licensed` | — | مدقَّق | propext |
+| `forms_nodup` | — | مدقَّق | propext |
+| `forms_hukm` | — | مدقَّق | propext |
+| `constants_licensed` | — | مدقَّق | propext |
+| `constants_states` | — | مدقَّق | propext |
+| `al_amsu` | — | مدقَّق | propext |
 
 ## الدرجة ١٧ — أدواتُ الربط والاستفهام: الخانةُ فالحدُّ فالعمل، والمعنى معلَن
 

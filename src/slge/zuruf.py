@@ -16,7 +16,6 @@ from dataclasses import dataclass
 from typing import Final
 
 from slge.cells import STATES, Cell, licensed
-from slge.ishara import HUNA, THAMMA
 
 __all__ = ["CONSTANTS", "STEMS", "Zarf", "hukm", "jarr", "mudaf", "qat", "set_last"]
 
@@ -88,8 +87,8 @@ CONSTANTS: Final[dict[str, tuple[Cell, ...]]] = {
     "حَيْثُ": _s(("ح", _A), ("ي", SUKUN), ("ث", _U)),
     "لَدُنْ": _s(("ل", _A), ("د", _U), ("ن", SUKUN)),
     "لَدَى": _s(("ل", _A), ("د", _A), ("ا", SUKUN)),
-    "ثَمَّ": THAMMA,
-    "هُنَا": HUNA,
+    "ثَمَّ": _s(("ث", _A), ("م", SUKUN), ("م", _A)),  # = ishara.THAMMA؛ تطابقُه conformance
+    "هُنَا": _s(("ه", _U), ("ن", _A), ("ا", SUKUN)),   # = ishara.HUNA
 }
 
 

@@ -229,6 +229,22 @@ _DECLARED: tuple[Claim, ...] = (
        "مضاف 752/756؛ الكسرُ ⇒ بعد جارٍّ أو ياء 568/584", _S,
        "test:tests/test_zuruf.py::test_masaq_measurement_and_index",
        note="المختصُّ قيدٌ معجميّ؛ المقاديرُ بلا شاهد؛ ظرفُ الزمان حصرُه معلَّق."),
+    # — ظروفُ الزمان —
+    _c("ZAMAN-forms", "المتصرّفُ خمسُ صورٍ مرخَّصةٍ متباينة (مضاف/مجرور/مقطوع/مرفوعٌ منوَّن/منصوبٌ منوَّن)",
+       _P, "lean:Slge.Zaman.forms_licensed", "lean:Slge.Zaman.forms_nodup",
+       "lean:Slge.Zaman.forms_hukm",
+       "test:tests/test_conformance.py::test_zaman_matches_lean"),
+    _c("ZAMAN-tanwin", "الخانةُ تفرّق الضمَّ المنوَّن (مرفوعٌ متصرّف) من الضمّ العاري (مقطوع)", _P,
+       "lean:Slge.Zaman.tanwin_vs_qat", "lean:Slge.Zaman.hukm_rafTanwin",
+       "lean:Slge.Zaman.hukm_nasbTanwin", "test:tests/test_zaman.py::test_five_forms_and_readers"),
+    _c("ZAMAN-mabni",
+       "المبنيّةُ الثمانية صورةٌ واحدةٌ بحالةٍ ثابتة كما أُعلنت؛ وأَمْسِ بأل العهديّة معرب", _P,
+       "lean:Slge.Zaman.constants_licensed", "lean:Slge.Zaman.constants_states",
+       "lean:Slge.Zaman.al_amsu", "test:tests/test_zaman.py::test_constants_single_state"),
+    _c("ZAMAN-masaq", "التصرُّفُ عددُ الحالات: على 1,334 موضعًا من MASAQ المتصرّفةُ 8/12 بحالتين فأكثر "
+       "والمبنيّةُ 5/7 بحالةٍ واحدة (والاثنان كسرةُ وصلٍ وتصادفُ رسم)؛ وعند الفتح الظرفُ 230/326", _S,
+       "test:tests/test_zaman.py::test_masaq_measurement_and_index",
+       note="الظرفيّةُ (معنى في) لا تُقرأ من الخانة: دَينٌ على النظم."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

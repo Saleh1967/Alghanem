@@ -211,3 +211,19 @@ def test_zuruf_matches_lean() -> None:
     forms = [op(z.stem) for z in STEMS for op in (mudaf, jarr, qat)]
     assert len(rows) == len(forms) == 51
     assert [r[0] for r in rows] == ["-".join(str(index(c)) for c in w) for w in forms]
+
+
+def test_zaman_matches_lean() -> None:
+    """الصورُ الأربعون (8 × 5) والثوابتُ الثمانية = جدولا `Zaman.forms` و`Zaman.constants`."""
+
+    from slge.zaman import CONSTANTS, STEMS, forms_of
+
+    rows = _rows("zaman.csv")
+    forms = [f for stem in STEMS.values() for f in forms_of(stem)]
+    frows = [r for r in rows if r[0] == "form"]
+    assert [r[1] for r in frows] == ["-".join(str(index(c)) for c in w) for w in forms]
+    crows = [r for r in rows if r[0] == "constant"]
+    assert [r[1] for r in crows] == list(CONSTANTS)
+    assert [r[2] for r in crows] == ["-".join(str(index(c)) for c in w)
+                                     for w, _ in CONSTANTS.values()]
+    assert [STATES[int(r[3])] for r in crows] == [st for _, st in CONSTANTS.values()]
