@@ -62,3 +62,24 @@ def test_status_md_is_current() -> None:
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     assert (ROOT / "STATUS.md").read_text(encoding="utf-8") == mod.render()
+
+
+def test_lean_index_is_current() -> None:
+    """`LEAN_INDEX.md` مولَّدٌ من الشجرة لا مكتوبٌ باليد (يُتخطّى إن لم تُجلب حزمة a116 بعد)."""
+
+    import importlib.util
+    import sys
+    from pathlib import Path
+
+    import pytest
+
+    root = Path(__file__).resolve().parent.parent
+    if not (root / "formal" / ".lake" / "packages" / "a116").exists():
+        pytest.skip("a116 غير مجلوبة")
+    tool = root / "tools" / "gen_lean_index.py"
+    spec = importlib.util.spec_from_file_location("gen_lean_index", tool)
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules["gen_lean_index"] = mod
+    spec.loader.exec_module(mod)
+    assert mod.render() == (root / "LEAN_INDEX.md").read_text(encoding="utf-8")

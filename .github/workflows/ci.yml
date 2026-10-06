@@ -62,11 +62,13 @@ jobs:
           if grep -rnE "\bsorry\b|native_decide|^\s*axiom\b" --include=*.lean Slge Slge.lean Main.lean; then
             exit 1
           fi
-          lake env lean Audit.lean | tee axioms.txt
-          if grep -vE "^'[^']+' (depends on axioms: \[(propext|Quot.sound|Classical.choice)(, (propext|Quot.sound|Classical.choice))*\]|does not depend on any axioms)$" axioms.txt; then
+          lake env lean Audit.lean | tee out/axioms.txt
+          if grep -vE "^'[^']+' (depends on axioms: \[(propext|Quot.sound|Classical.choice)(, (propext|Quot.sound|Classical.choice))*\]|does not depend on any axioms)$" out/axioms.txt; then
             echo "an axiom outside propext/Quot.sound/Classical.choice" && exit 1
           fi
       - name: the committed Lean outputs are what Lean prints now
         run: |
-          for m in bridge counts folds ghazali rank rasm sequence categories; do lake exe slge-table "$m" > "out/$m.csv"; done
+          for m in bridge counts folds ghazali rank rasm sequence categories wazn shabaka khamsa afal; do lake exe slge-table "$m" > "out/$m.csv"; done
           git diff --exit-code -- out
+      - name: LEAN_INDEX.md is what the tree says now (ladder order, audit, axioms)
+        run: python3 ../tools/gen_lean_index.py --check
