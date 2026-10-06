@@ -187,12 +187,15 @@ theorem shared_istifham :
 /-- أَيّ وحدَها معربة: ثلاثُ صورٍ بثلاث حركات. -/
 theorem ayy_declines : Istifham.ayy 2 ≠ Istifham.ayy 0 ∧ Istifham.ayy 0 ≠ Istifham.ayy 1 := by decide
 
-/-- جدولُ أدوات الربط: الجوازمُ المسجَّلةُ فيه بعملها، وغيرُ الجازمة بلا عمل. -/
+/-- جدولُ أدوات الربط: الجوازمُ كلُّها فيه بعملها (لَمْ لَمَّا وأدواتُ الشرط الجازمة الاثنتا عشرة)، وغيرُ
+الجازمة السبعُ بلا عمل — سُدِّد الدَينُ: لا أداةَ خارج الجدول. -/
 theorem rawabit_jazm :
-    ["لَمْ", "لَمَّا", "مَا", "مَهْمَا", "أَيْنَمَا", "أَنَّى", "حَيْثُمَا", "كَيْفَمَا"].all
+    (["لَمْ", "لَمَّا"] ++ shartJazim.map (·.1)).all
       (fun n => Rawabit.particles.any (fun p => p.name == n && p.amal == .jazm)) = true ∧
-    ["لَا", "لَوْلَا", "كُلَّمَا"].all
-      (fun n => Rawabit.particles.any (fun p => p.name == n && p.amal == .none)) = true := by decide
+    (shartGhayr.filter (·.1 != "لَمَّا")).all
+      (fun q => Rawabit.particles.any (fun p => p.name == q.1 && p.amal == .none)) = true ∧
+    Rawabit.particles.any (fun p => p.name == "لَمَّا" && p.amal == .jazm) = true ∧   -- الحينيّةُ خانةُ الجازمة
+    ["لِ", "لَا"].all (fun n => Rawabit.particles.any (·.name == n)) = true := by decide
 
 /-- الجزمُ بفعلين: حكمُ كلٍّ منهما حكمُ الواحد. -/
 theorem two_verbs (pr₁ pr₂ : Afal.Prefix) (s₁ s₂ : Afal.Stem) (p₁ p₂ : Afal.Pronoun) :

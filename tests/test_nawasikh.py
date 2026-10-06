@@ -43,7 +43,8 @@ def test_deposits_licensed_and_kaffa() -> None:
         assert kaffa(cells_of(w)) == cells_of(w + "مَا") and licensed(kaffa(cells_of(w)))
     amal = {p.name: p.amal for p in PARTICLES}
     assert amal["إِنَّ"] == "نصب الاسم ورفع الخبر" and amal["إِنَّمَا"] == ""
-    assert "أَنْ" not in amal and "كَأَنَّ" not in amal and "لَيْتَ" not in amal
+    # دَينٌ سُدِّد: الستُّ كلُّها في جدول أدوات الربط، وأَنْ الناصبةُ معها (`inna_in_rawabit`، `an_in_rawabit`)
+    assert all(amal[w] == "نصب الاسم ورفع الخبر" for w in INNA) and amal["أَنْ"] == "نصب"
 
 
 def test_masaq_measurement_and_index() -> None:

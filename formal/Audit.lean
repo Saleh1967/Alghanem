@@ -348,7 +348,7 @@ import Slge
 #print axioms Slge.Nawasikh.innama_kaffa_in_rawabit
 #print axioms Slge.Nawasikh.kada_khabar_raf
 #print axioms Slge.Nawasikh.an_licensed
-#print axioms Slge.Nawasikh.an_not_in_rawabit
+#print axioms Slge.Nawasikh.an_in_rawabit
 #print axioms Slge.Nawasikh.an_khabar_nasb
 #print axioms Slge.Nawasikh.kana_inna_witness
 #print axioms Slge.Nawasikh.la_rayb_witness

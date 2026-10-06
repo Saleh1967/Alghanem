@@ -22,8 +22,8 @@ def test_cells_follow_the_gate_law() -> None:
 
 
 def test_every_particle_licensed_and_witness_counts() -> None:
-    assert len(PARTICLES) == 70 and all(licensed(p.cells) for p in PARTICLES)
-    assert sum(p.witness == "شهادة" for p in PARTICLES) == 36
+    assert len(PARTICLES) == 90 and all(licensed(p.cells) for p in PARTICLES)
+    assert sum(p.witness == "شهادة" for p in PARTICLES) == 45
     assert {p.bab for p in PARTICLES} <= set(BABS) and set(COMPOUND) <= set(BABS)
 
 

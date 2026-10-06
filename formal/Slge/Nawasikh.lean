@@ -273,10 +273,10 @@ theorem counts : kanaSisters.length = 13 ∧ kadaSisters.length = 12 ∧ innaSis
 theorem jaala_shared : (kadaSisters.map (·.2)).contains [c 5 0, c 18 0, c 23 0] = true ∧
     (zannaSisters.map (·.2)).contains [c 5 0, c 18 0, c 23 0] = true := by decide
 
-/-- أربعةٌ من الستّة في جدول أدوات الربط بعملها `nasbIsm`؛ وكَأَنَّ ولَيْتَ ليستا فيه. -/
+/-- الستّةُ كلُّها في جدول أدوات الربط بعملها `nasbIsm` — سُدِّد الدَين (كَأَنَّ ولَيْتَ). -/
 theorem inna_in_rawabit :
-    ["إِنَّ", "أَنَّ", "لَكِنَّ", "لَعَلَّ"].all
-      (fun n => Rawabit.particles.any (fun p => p.name == n && p.amal == .nasbIsm)) = true := by decide
+    innaSisters.all (fun q => Rawabit.particles.any (fun p => p.name == q.1 && p.amal == .nasbIsm)) =
+      true := by decide
 
 /-- لَيْسَ ولَا ومَا في جدول أدوات الربط بلا عملٍ مسجَّل: عملُها عملُ كان قانونُ تيار. -/
 theorem laysa_la_ma_in_rawabit :
@@ -322,11 +322,13 @@ def kadaKhabar (pr : Afal.Prefix) (s : Afal.Stem) (p : Afal.Pronoun) : List SCel
 theorem kada_khabar_raf (pr : Afal.Prefix) (s : Afal.Stem) (p : Afal.Pronoun) :
     Afal.moodOf (kadaKhabar pr s p) = .raf := Afal.moodOf_raf pr s p
 
-/-- أَنْ المصدريّة (شاهدُ بوّابة)؛ ليست في جدول أدوات الربط — دَينٌ مسمًّى؛ وخبرُ عَسَى بها منصوب. -/
+/-- أَنْ المصدريّة (شاهدُ بوّابة) في جدول أدوات الربط ناصبةً — سُدِّد الدَين؛ وخبرُ عَسَى بها منصوب. -/
 def an : List SCell := [c 0 0, c 25 3]
 
 theorem an_licensed : licensed an = true := by decide
-theorem an_not_in_rawabit : Rawabit.particles.any (·.name == "أَنْ") = false := by decide
+theorem an_in_rawabit :
+    Rawabit.particles.any (fun p => p.name == "أَنْ" && p.cells == an && p.amal == .nasb) = true := by
+  decide
 
 theorem an_khabar_nasb (pr : Afal.Prefix) (s : Afal.Stem) (p : Afal.Pronoun) :
     Afal.moodOf (Afal.form pr s p .nasb) = .nasb := Afal.moodOf_nasb pr s p

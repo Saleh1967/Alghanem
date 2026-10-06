@@ -69,7 +69,7 @@ theorem proclitic_keeps_licence (k : Fin 29) (st : Fin 4) (hst : st.val ≠ 3) (
     simp only [Bool.and_eq_true, Bool.not_eq_eq_eq_not, Bool.not_true] at hw
     simp [hst, hw.2, hw.1]
 
-/-- الأدواتُ المودَعة (70)، خاناتُها كما تُخرجها البوّابة. -/
+/-- الأدواتُ المودَعة (90)، خاناتُها كما تُخرجها البوّابة. -/
 def particles : List Particle := [
   ⟨"وَ", [c 27 0], .none, true⟩,
   ⟨"فَ", [c 20 0], .none, true⟩,
@@ -140,10 +140,31 @@ def particles : List Particle := [
   ⟨"مِنْ", [c 24 1, c 25 3], .jarr, false⟩,
   ⟨"عَنْ", [c 18 0, c 25 3], .jarr, false⟩,
   ⟨"إِلَى", [c 0 1, c 23 0, c 1 3], .jarr, false⟩,
-  ⟨"عَلَى", [c 18 0, c 23 0, c 1 3], .jarr, false⟩
+  ⟨"عَلَى", [c 18 0, c 23 0, c 1 3], .jarr, false⟩,
+  -- سدادُ دَينٍ مسمًّى (2026-10-06): حروفُ حصر الأدوات التي كانت خارج الجدول
+  ⟨"أَنْ", [c 0 0, c 25 3], .nasb, false⟩,
+  ⟨"إِذَنْ", [c 0 1, c 9 0, c 25 3], .nasb, false⟩,
+  ⟨"إِذْمَا", [c 0 1, c 9 3, c 24 0, c 1 3], .jazm, false⟩,
+  ⟨"أَيَّانَ", [c 0 0, c 28 3, c 28 0, c 1 3, c 25 0], .jazm, false⟩,
+  ⟨"حِينَ", [c 6 1, c 28 3, c 25 0], .none, false⟩,
+  ⟨"لَوْمَا", [c 23 0, c 27 3, c 24 0, c 1 3], .none, false⟩,
+  ⟨"كَأَنَّ", [c 22 0, c 0 0, c 25 3, c 25 0], .nasbIsm, false⟩,
+  ⟨"لَيْتَ", [c 23 0, c 28 3, c 3 0], .nasbIsm, false⟩,
+  ⟨"مُذْ", [c 24 2, c 9 3], .jarr, false⟩,
+  ⟨"مُنْذُ", [c 24 2, c 25 3, c 9 2], .jarr, false⟩,
+  ⟨"رُبَّ", [c 10 2, c 2 3, c 2 0], .jarr, false⟩,
+  ⟨"خَلَا", [c 7 0, c 23 0, c 1 3], .jarr, false⟩,
+  ⟨"عَدَا", [c 18 0, c 8 0, c 1 3], .jarr, false⟩,
+  ⟨"حَاشَا", [c 6 0, c 1 3, c 13 0, c 1 3], .jarr, false⟩,
+  ⟨"تَ", [c 3 0], .jarr, true⟩,
+  ⟨"أَلَا", [c 0 0, c 23 0, c 1 3], .none, false⟩,
+  ⟨"أَمَا", [c 0 0, c 24 0, c 1 3], .none, false⟩,
+  ⟨"لَاتَ", [c 23 0, c 1 3, c 3 0], .none, false⟩,
+  ⟨"هَلْ", [c 26 0, c 23 3], .none, false⟩,
+  ⟨"فِي", [c 20 1, c 28 3], .jarr, false⟩
 ]
 
-theorem particles_count : particles.length = 70 := by rfl
+theorem particles_count : particles.length = 90 := by rfl
 
 theorem particles_licensed : particles.all (fun p => licensed p.cells) = true := by decide
 

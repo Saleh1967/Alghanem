@@ -127,7 +127,7 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_afal.py::test_forms_match_gate_witnesses",
        note="الخمسةُ خمسةٌ بجدول مطابقةٍ معلَن (ياءُ المخاطبة لا تلحق حرفَ الغيبة)."),
     # — أدواتُ الربط: فهرسةٌ على الدرجات —
-    _c("RAWABIT-cells", "70 أداةً مفردة خاناتُها مرخَّصة؛ 36 منها من شهادات البوّابة بعينها", _P,
+    _c("RAWABIT-cells", "90 أداةً مفردة خاناتُها مرخَّصة؛ 45 منها من شهادات البوّابة بعينها", _P,
        "lean:Slge.Rawabit.particles_licensed",
        "test:tests/test_conformance.py::test_rawabit_matches_lean",
        "test:tests/test_rawabit.py::test_every_particle_licensed_and_witness_counts"),
@@ -346,7 +346,7 @@ _DECLARED: tuple[Claim, ...] = (
        "lean:Slge.Nawasikh.kaffa_licensed", "lean:Slge.Nawasikh.kaffa_forms",
        "lean:Slge.Nawasikh.innama_kaffa_in_rawabit", "lean:Slge.Nawasikh.kada_khabar_raf",
        "test:tests/test_nawasikh.py::test_deposits_licensed_and_kaffa",
-       note="أَنْ ليست في جدول أدوات الربط (an_not_in_rawabit): دَين؛ وجَعَلَ في بابين: المعنى يفصل."),
+       note="أَنْ في جدول أدوات الربط ناصبةً (an_in_rawabit): دَينٌ سُدِّد؛ وجَعَلَ في بابين: المعنى يفصل."),
     _c("NAWASIKH-masaq", "على 2,599 اسمٍ وخبرٍ من MASAQ: خبرُ كان نصبٌ 99%، خبرُ إنّ رفعٌ 98%، "
        "اسمُ كان رفعٌ 92%، اسمُ إنّ نصبٌ 95%، اسمُ لا 73/73 نكرةٌ مفتوحة؛ عسى بأَنْ 21/24 "
        "وكاد 0/23 وطفق 0/3؛ وإنّما لا اسمَ ناسخٍ بعدها 27/27", _S,

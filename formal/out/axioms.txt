@@ -343,7 +343,7 @@
 'Slge.Nawasikh.innama_kaffa_in_rawabit' does not depend on any axioms
 'Slge.Nawasikh.kada_khabar_raf' depends on axioms: [propext]
 'Slge.Nawasikh.an_licensed' depends on axioms: [propext]
-'Slge.Nawasikh.an_not_in_rawabit' does not depend on any axioms
+'Slge.Nawasikh.an_in_rawabit' does not depend on any axioms
 'Slge.Nawasikh.an_khabar_nasb' depends on axioms: [propext]
 'Slge.Nawasikh.kana_inna_witness' depends on axioms: [propext]
 'Slge.Nawasikh.la_rayb_witness' depends on axioms: [propext]
@@ -366,7 +366,7 @@
 'Slge.Jazm.shared_la_lamma' depends on axioms: [propext]
 'Slge.Jazm.shared_istifham' depends on axioms: [propext]
 'Slge.Jazm.ayy_declines' depends on axioms: [propext]
-'Slge.Jazm.rawabit_jazm' does not depend on any axioms
+'Slge.Jazm.rawabit_jazm' depends on axioms: [propext]
 'Slge.Jazm.two_verbs' depends on axioms: [propext]
 'Slge.Mansubat.tamyiz_eq_hal' depends on axioms: [propext]
 'Slge.Mansubat.nakira_reads_nasb' depends on axioms: [propext]

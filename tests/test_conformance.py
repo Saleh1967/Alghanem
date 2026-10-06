@@ -146,7 +146,7 @@ def test_rawabit_matches_lean() -> None:
     rows = _rows("rawabit.csv")
     amal = {"": "none", "جزم": "jazm", "نصب": "nasb", "جرّ": "jarr",
             "نصب الاسم ورفع الخبر": "nasbIsm"}
-    assert len(rows) == len(PARTICLES) == 70
+    assert len(rows) == len(PARTICLES) == 90
     for r, p in zip(rows, PARTICLES, strict=True):
         assert r[0] == p.name and r[1] == "-".join(str(index(c)) for c in p.cells)
         assert r[2] == amal[p.amal] and r[3] == str(p.proclitic).lower() and r[4] == "true"

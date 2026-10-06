@@ -145,10 +145,13 @@ theorem proclitic_jarr_licensed (w : List SCell) (hw : licensed w = true) :
     Rawabit.proclitic_keeps_licence _ 0 (by decide) w hw,
     Rawabit.proclitic_keeps_licence _ 0 (by decide) w hw⟩
 
-/-- تسعةٌ منها في جدول أدوات الربط جارّةً. -/
+/-- السبعةَ عشرَ كلُّها في جدول أدوات الربط: ستّةَ عشرَ جارّةً، وواوُ القسم خانةُ واو العطف (بلا عمل في
+الجدول؛ جرُّها حدٌّ في `Huruf`) — سُدِّد الدَين. -/
 theorem harfs_in_rawabit :
-    ["بِ", "لِ", "كَ", "مِنْ", "إِلَى", "عَنْ", "عَلَى", "حَتَّى"].all
-      (fun n => Rawabit.particles.any (fun p => p.name == n && p.amal == .jarr)) = true := by decide
+    (harfs.filter (·.1 != "وَ")).all
+      (fun h => Rawabit.particles.any (fun p => p.name == h.1 && p.amal == .jarr)) = true ∧
+    Rawabit.particles.any (fun p => p.name == "وَ" && p.cells == [c 27 0] && p.proclitic) = true := by
+  decide
 
 /-- تَاللَّهِ ووَاللَّهِ: شاهدا بوّابة؛ التاءُ مختصّةٌ بلفظ الجلالة (معلَن). وتَاللَّهِ (مدٌّ قبل لامٍ
 مشدّدة: ساكنان) خارج الترخيص الثنائيّ كحَاجَّ — يرخّصها الثلاثيُّ في الغانم؛ ووَاللَّهِ ثنائيّةُ الترخيص. -/
