@@ -47,11 +47,12 @@ def test_anchor_and_mahall_from_the_preceding_cells() -> None:
     assert anchor(cells_of("اَلْعِلْمُ")) == "كون محذوف" and anchor(cells_of("هُوَ")) == "كون محذوف"
     assert mahall(cells_of("اَلْعِلْمُ")) == "خبر" and mahall(cells_of("طَائِرًا")) == "نعت"
     assert mahall(cells_of("اَلْعُصْفُورَ")) == "حال" and mahall(cells_of("اَلْكِتَابِ")) == "حال"
-    for w in MAWSUL.values():
-        assert mahall(w) == "صلة"
-    for w in ("كِتَابُ", "رَجُلُ", "مُجْتَهِدُ"):
-        assert mahall((*nasb(cells_of(w)), ("ن", "سكون"))) == "نعت", w
-        assert mahall(raf(al(cells_of(w)))) == "خبر" and mahall(nasb(al(cells_of(w)))) == "حال", w
+    for m in MAWSUL.values():
+        assert mahall(m) == "صلة"
+    for name in ("كِتَابُ", "رَجُلُ", "مُجْتَهِدُ"):
+        w = cells_of(name)
+        assert mahall((*nasb(w), ("ن", "سكون"))) == "نعت", name
+        assert mahall(raf(al(w))) == "خبر" and mahall(nasb(al(w))) == "حال", name
     assert mahall(cells_of("هُوَ")) == "خبر" and mahall(cells_of("كِتَابِي")) == "—"  # المضافُ إلى الياء
     assert case_class(kawn("خبر")) == "رفع" and case_class(kawn("حال")) == "نصب"
     assert kawn("صلة") == cells_of("اِسْتَقَرَّ")
