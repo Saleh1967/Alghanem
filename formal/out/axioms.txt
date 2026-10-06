@@ -462,3 +462,11 @@
 'Slge.Fil.ibdal_licensed' depends on axioms: [propext]
 'Slge.Fil.ibdal_witnesses' depends on axioms: [propext]
 'Slge.Fil.kada_eleven' does not depend on any axioms
+'Slge.Huruf.counts' does not depend on any axioms
+'Slge.Huruf.table_licensed' depends on axioms: [propext]
+'Slge.Huruf.no_tanwin' depends on axioms: [propext]
+'Slge.Huruf.proclitics_keep_licence' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Huruf.shared_cells' does not depend on any axioms
+'Slge.Huruf.amal_is_operation' depends on axioms: [propext]
+'Slge.Huruf.rawabit_agrees' depends on axioms: [propext]
+'Slge.Huruf.sawfa_witness' depends on axioms: [propext]

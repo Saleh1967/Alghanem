@@ -4,9 +4,9 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 79 |
+| مبرهن | 81 |
 | مفحوص_استقصاء | 12 |
-| مفحوص_بعينة | 20 |
+| مفحوص_بعينة | 21 |
 | دليل | 0 |
 | معلن | 10 |
 | رأي | 0 |
@@ -37,6 +37,8 @@
 | GHAZALI | جدولُ الصور المنتجة هو جدولُ الغزالي بعينه، محسوبًا بالبتّات | مبرهن | `lean:Slge.Ghazali.ghazali_table`<br>`test:tests/test_conformance.py::test_ghazali_matches_lean` |  |
 | GRANT-check | المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة | مبرهن | `lean:Slge.Grant.grant_iff_check`<br>`lean:Slge.Grant.no_grant_of_refused`<br>`lean:Slge.Grant.ladder_implies_base`<br>`lean:Slge.Grant.empty_ladder_grants_nothing` | قانونُ tarkib/bridge.py بفحصٍ دالّةً لا نصًّا؛ الحكمُ المزوَّر الذي قبله الأصلُ لا يُصاغ هنا. |
 | GRANT-mursam | لا يُمنح «مرسوم» إلّا لمرخَّصٍ، وهو Admissible في الـ116 | مبرهن | `lean:Slge.Grant.mursam_sound`<br>`lean:Slge.Grant.mursam_refuses_initial_sukun`<br>`test:tests/test_grant.py::test_mursam_grants_licensed_only` |  |
+| HURUF-amal | عملُ الحرف عمليّةٌ على ما بعده بُرهنت في بابها: جرٌّ، نصبُ اسمٍ ورفعُ خبر، نصبُ المضارع وجزمُه، والتبعيّة؛ وجدولُ أدوات الربط يشهد لما فيه؛ والتنفيسُ بلا أثر | مبرهن | `lean:Slge.Huruf.amal_is_operation`<br>`lean:Slge.Huruf.rawabit_agrees`<br>`lean:Slge.Huruf.sawfa_witness`<br>`test:tests/test_huruf.py::test_amal_is_operation` |  |
+| HURUF-table | جدولٌ واحدٌ لـ68 حرفًا في ثلاث مجموعات (31 للأسماء، 18 للأفعال، 19 مشتركة) على 53 صورةً مرخَّصة؛ لا تنوينَ فيها (وما نونُه أصلٌ يشابه التنوين مسمًّى، وأَنَّ تُقرأ أداةَ تعريفٍ شمسيّة)؛ والمتّصلةُ لا تُفسد ما بعدها | مبرهن | `lean:Slge.Huruf.counts`<br>`lean:Slge.Huruf.table_licensed`<br>`lean:Slge.Huruf.no_tanwin`<br>`lean:Slge.Huruf.proclitics_keep_licence`<br>`lean:Slge.Huruf.shared_cells`<br>`test:tests/test_huruf.py::test_table_deposited_and_licensed` | الخانةُ الواحدةُ في أبوابٍ عدّة (لَا أربعًا، وَ أربعًا، حَتَّى ثلاثًا): العملُ من التيار. |
 | ISHARA-dual | المثنّى: الحالةُ من المدّ قبل النون (ولو لحقت الكاف)؛ الياءُ لا تفرّق نصبًا وجرًّا | مبرهن | `lean:Slge.Ishara.caseOf_dual`<br>`lean:Slge.Ishara.caseOf_dual_bud`<br>`lean:Slge.Ishara.nasb_eq_jarr_dual`<br>`lean:Slge.Ishara.duals_have_case` |  |
 | ISHARA-mabni | المبنيُّ ما لا تقرأ له الخانةُ حالةً: 17 صورةً من 25؛ وكلُّها مرخَّصةٌ متباينة | مبرهن | `lean:Slge.Ishara.mabni_no_case`<br>`lean:Slge.Ishara.forms_licensed`<br>`lean:Slge.Ishara.forms_nodup`<br>`test:tests/test_conformance.py::test_ishara_matches_lean` |  |
 | ISHARA-ops | التنبيهُ في الصدر والبعدُ في العجز عمليّتان تحفظان الترخيصَ لكلّ نواة | مبرهن | `lean:Slge.Ishara.tanbih_licensed`<br>`lean:Slge.Ishara.bud_licensed`<br>`test:tests/test_ishara.py::test_three_operations_and_case_reading` |  |
@@ -109,6 +111,7 @@
 | ADAD-tamyiz | حالةُ المعدود دالّةٌ في مدى العدد: على 72 موضعًا من MASAQ بشهادات البوّابة 71 مطابق | مفحوص_بعينة | `lean:Slge.Adad.tamyiz_ranges`<br>`test:tests/test_adad.py::test_tamyiz_function_and_masaq` | الحيادُ (مائة، ألف) والمعطوفُ وتذكيرُ المعدود بمفرده: معلن. |
 | AFAL-gate | ستّةُ شواهد من شهادات البوّابة تطابق القانون؛ نصبُ الاثنين ورفعُ المخاطبة بالقانون | مفحوص_بعينة | `test:tests/test_afal.py::test_forms_match_gate_witnesses` | الخمسةُ خمسةٌ بجدول مطابقةٍ معلَن (ياءُ المخاطبة لا تلحق حرفَ الغيبة). |
 | FIL-masaq | على 18,765 فعلًا من MASAQ: عينُ الماضي المجرّد السالم فتحٌ 489 كسرٌ 119 ضمٌّ 9، وعينُ المضارع فتحٌ 1,226 كسرٌ 1,036 ضمٌّ 657؛ الماضي على القوالب 831 والباقي معتلٌّ ومضعَّف | مفحوص_بعينة | `test:tests/test_fil.py::test_masaq_measurement_and_index` | الزوجُ (البابُ) قانونُ معجمٍ يجمع الصورتين؛ الخانةُ تقرأ كلَّ صورةٍ وحدَها. |
+| HURUF-masaq | على 41,830 موضعًا من MASAQ: لَنْ ينصب المضارعَ بعده 104/106، وأَنْ 446 نصبًا مقابل 25 رفعًا، وحَتَّى ناصبةٌ للفعل 74 وجارّةٌ للاسم؛ ولَا في خمسة أدوار وإِنْ في أربعة | مفحوص_بعينة | `test:tests/test_huruf.py::test_masaq_measurement_and_index` | عدُّ أوصافٍ مجمَّد؛ صورُ الحروف بشهادات البوّابة؛ أَنْ المضمرةُ تيار. |
 | ISHARA-gate | 13 صورةً من شهادات البوّابة هي صورُ القانون بعينها؛ الباقي (12) بالقانون | مفحوص_بعينة | `lean:Slge.Ishara.witnessed_subset`<br>`test:tests/test_ishara.py::test_gate_witnesses_are_the_law_forms` | الدلالةُ (قريب/بعيد، عدد، جنس) من الحصر المُرسَل معلَنة. |
 | ISM-masaq | على 19,216 اسمًا معربًا من MASAQ: الثلاثيُّ 4,447 منه على العشرة 4,101 وفِعُل معدومة وفُعُل 185 كلُّها جموع؛ الرباعيُّ 1,580 أكثرُه فَعْلَل وفُعْلَل وفِعْلَل؛ تصغيرٌ 23 ونسبٌ 139 بالقارئ | مفحوص_بعينة | `test:tests/test_ism.py::test_masaq_measurement_and_index` | 1,824 صورةً مرفوضةٌ بالاسم؛ فَعَلَل وفَعِلَل أشكالُ المزيد بالتاء لا المجرّد. |
 | ISTIFHAM-sadara | الصدارة على MASAQ: 100/251 في صدر الآية أو بعد عاطف/جارّ/همزة؛ 151 بعد فعل قولٍ ونظرٍ وسؤال | مفحوص_بعينة | `test:tests/test_istifham.py::test_tiers_and_index` | صدارةُ جملةٍ لا آية: لا تُقاس بلا حدٍّ للجملة — دَينٌ على النظم. الدلالةُ من الحصر المُرسَل معلَنة. |

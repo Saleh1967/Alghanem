@@ -444,3 +444,19 @@ def test_fil_matches_lean() -> None:
             assert ops[r[1]] == tuple(_cell(int(i)) for i in r[2].split("-")), r
         elif r[0] == "rubai":
             assert cells_of(r[1]) == tuple(_cell(int(i)) for i in r[2].split("-")), r
+
+
+def test_huruf_matches_lean() -> None:
+    """جدولُ الحروف الموحَّد = جدولُ `Huruf` بأصنافه وأعماله."""
+
+    from slge.huruf import TABLE
+
+    rows = _rows("huruf.csv")
+    assert len(rows) == len(TABLE) == 68
+    cls = {"ism": "اسم", "fil": "فعل", "mushtarak": "مشترك"}
+    amal = {"jarr": "جرّ", "nasbIsm": "نصب الاسم", "nida": "نداء", "maiyya": "معيّة",
+            "nasbFil": "نصب الفعل", "jazm": "جزم", "jazm2": "جزم فعلين", "tabi": "تبعيّة",
+            "none": ""}
+    for r, x in zip(rows, TABLE, strict=True):
+        cells = tuple(_cell(int(i)) for i in r[2].split("-"))
+        assert (cls[r[0]], r[1], cells, amal[r[3]]) == (x.cls, x.name, x.cells, x.amal), r

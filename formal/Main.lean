@@ -238,6 +238,13 @@ def main (args : List String) : IO Unit := do
       IO.println s!"op,{n},{"-".intercalate (w.map fun c => toString c.index)}"
     for p in Fil.rubai do
       IO.println s!"rubai,{p.1},{"-".intercalate (p.2.map fun c => toString c.index)}"
+  | ["huruf"] =>
+    let cl := fun (k : Huruf.Class) => match k with | .ism => "ism" | .fil => "fil" | .mushtarak => "mushtarak"
+    let am := fun (a : Huruf.Amal) => match a with
+      | .jarr => "jarr" | .nasbIsm => "nasbIsm" | .nida => "nida" | .maiyya => "maiyya" | .nasbFil => "nasbFil"
+      | .jazm => "jazm" | .jazm2 => "jazm2" | .tabi => "tabi" | .none => "none"
+    for x in Huruf.table do
+      IO.println s!"{cl x.cls},{x.name},{"-".intercalate (x.cells.map fun c => toString c.index)},{am x.amal}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

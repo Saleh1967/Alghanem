@@ -467,3 +467,11 @@ import Slge
 #print axioms Slge.Fil.ibdal_licensed
 #print axioms Slge.Fil.ibdal_witnesses
 #print axioms Slge.Fil.kada_eleven
+#print axioms Slge.Huruf.counts
+#print axioms Slge.Huruf.table_licensed
+#print axioms Slge.Huruf.no_tanwin
+#print axioms Slge.Huruf.proclitics_keep_licence
+#print axioms Slge.Huruf.shared_cells
+#print axioms Slge.Huruf.amal_is_operation
+#print axioms Slge.Huruf.rawabit_agrees
+#print axioms Slge.Huruf.sawfa_witness

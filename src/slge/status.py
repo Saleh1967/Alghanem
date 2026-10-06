@@ -480,6 +480,22 @@ _DECLARED: tuple[Claim, ...] = (
        "المضارع فتحٌ 1,226 كسرٌ 1,036 ضمٌّ 657؛ الماضي على القوالب 831 والباقي معتلٌّ ومضعَّف", _S,
        "test:tests/test_fil.py::test_masaq_measurement_and_index",
        note="الزوجُ (البابُ) قانونُ معجمٍ يجمع الصورتين؛ الخانةُ تقرأ كلَّ صورةٍ وحدَها."),
+    # — الحروف والأدوات —
+    _c("HURUF-table", "جدولٌ واحدٌ لـ68 حرفًا في ثلاث مجموعات (31 للأسماء، 18 للأفعال، 19 مشتركة) "
+       "على 53 صورةً مرخَّصة؛ لا تنوينَ فيها (وما نونُه أصلٌ يشابه التنوين مسمًّى، وأَنَّ تُقرأ أداةَ "
+       "تعريفٍ شمسيّة)؛ والمتّصلةُ لا تُفسد ما بعدها", _P,
+       "lean:Slge.Huruf.counts", "lean:Slge.Huruf.table_licensed", "lean:Slge.Huruf.no_tanwin",
+       "lean:Slge.Huruf.proclitics_keep_licence", "lean:Slge.Huruf.shared_cells",
+       "test:tests/test_huruf.py::test_table_deposited_and_licensed",
+       note="الخانةُ الواحدةُ في أبوابٍ عدّة (لَا أربعًا، وَ أربعًا، حَتَّى ثلاثًا): العملُ من التيار."),
+    _c("HURUF-amal", "عملُ الحرف عمليّةٌ على ما بعده بُرهنت في بابها: جرٌّ، نصبُ اسمٍ ورفعُ خبر، نصبُ "
+       "المضارع وجزمُه، والتبعيّة؛ وجدولُ أدوات الربط يشهد لما فيه؛ والتنفيسُ بلا أثر", _P,
+       "lean:Slge.Huruf.amal_is_operation", "lean:Slge.Huruf.rawabit_agrees",
+       "lean:Slge.Huruf.sawfa_witness", "test:tests/test_huruf.py::test_amal_is_operation"),
+    _c("HURUF-masaq", "على 41,830 موضعًا من MASAQ: لَنْ ينصب المضارعَ بعده 104/106، وأَنْ 446 نصبًا مقابل "
+       "25 رفعًا، وحَتَّى ناصبةٌ للفعل 74 وجارّةٌ للاسم؛ ولَا في خمسة أدوار وإِنْ في أربعة", _S,
+       "test:tests/test_huruf.py::test_masaq_measurement_and_index",
+       note="عدُّ أوصافٍ مجمَّد؛ صورُ الحروف بشهادات البوّابة؛ أَنْ المضمرةُ تيار."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

@@ -1,0 +1,68 @@
+ism,بِ,9,jarr
+ism,لِ,93,jarr
+ism,كَ,88,jarr
+ism,وَ,108,jarr
+ism,تَ,12,jarr
+ism,مِنْ,97-103,jarr
+ism,إِلَى,1-92-7,jarr
+ism,عَنْ,72-103,jarr
+ism,عَلَى,72-92-7,jarr
+ism,فِي,81-115,jarr
+ism,حَتَّى,24-15-12-7,jarr
+ism,مُذْ,98-39,jarr
+ism,مُنْذُ,98-103-38,jarr
+ism,خَلَا,28-92-7,jarr
+ism,عَدَا,72-32-7,jarr
+ism,حَاشَا,24-7-52-7,jarr
+ism,رُبَّ,42-11-8,jarr
+ism,إِنَّ,1-103-100,nasbIsm
+ism,أَنَّ,0-103-100,nasbIsm
+ism,كَأَنَّ,88-0-103-100,nasbIsm
+ism,لَكِنَّ,92-89-103-100,nasbIsm
+ism,لَيْتَ,92-115-12,nasbIsm
+ism,لَعَلَّ,92-72-95-92,nasbIsm
+ism,أَ,0,nida
+ism,أَيْ,0-115,nida
+ism,أَيَا,0-112-7,nida
+ism,هَيَا,104-112-7,nida
+ism,يَا,112-7,nida
+ism,وَا,108-7,nida
+ism,لَا (النافية للجنس),92-7,nasbIsm
+ism,وَ (المعيّة),108,maiyya
+fil,أَنْ,0-103,nasbFil
+fil,لَنْ,92-103,nasbFil
+fil,كَيْ,88-115,nasbFil
+fil,إِذَنْ,1-36-103,nasbFil
+fil,لِ (كي/الجحود),93,nasbFil
+fil,حَتَّى (النصب),24-15-12-7,nasbFil
+fil,فَ (السببيّة),80,nasbFil
+fil,وَ (المعيّة),108,nasbFil
+fil,لَمْ,92-99,jazm
+fil,لَمَّا,92-99-96-7,jazm
+fil,لِ,93,jazm
+fil,لَا,92-7,jazm
+fil,إِنْ,1-103,jazm2
+fil,إِذْمَا,1-39-96-7,jazm2
+fil,سَ,48,none
+fil,سَوْفَ,48-111-80,none
+fil,كَلَّا,88-95-92-7,none
+fil,قَدْ,84-35,none
+mushtarak,وَ,108,tabi
+mushtarak,فَ,80,tabi
+mushtarak,ثُمَّ,18-99-96,tabi
+mushtarak,حَتَّى,24-15-12-7,tabi
+mushtarak,أَوْ,0-111,tabi
+mushtarak,أَمْ,0-99,tabi
+mushtarak,لَا,92-7,tabi
+mushtarak,بَلْ,8-95,tabi
+mushtarak,لَكِنْ,92-89-103,tabi
+mushtarak,أَ,0,none
+mushtarak,هَلْ,104-95,none
+mushtarak,مَا,96-7,none
+mushtarak,لَا,92-7,none
+mushtarak,لَمْ,92-99,jazm
+mushtarak,لَنْ,92-103,nasbFil
+mushtarak,إِنْ (النفي),1-103,none
+mushtarak,لَاتَ,92-7-12,none
+mushtarak,أَلَا,0-92-7,none
+mushtarak,أَمَا,0-96-7,none
