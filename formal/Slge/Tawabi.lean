@@ -40,6 +40,10 @@ def caseClass (w : List SCell) : CaseClass :=
       else if n.carrier.val = 25 ∧ n.state.val = 0 ∧ g.state.val = 3 ∧ g.carrier.val = 28 ∧ p.state.val = 1 then .nasbJarr
       else if n.carrier.val = 25 ∧ n.state.val = 1 ∧ g.state.val = 3 ∧ g.carrier.val = 1 ∧ p.state.val = 0 then .raf
       else if n.carrier.val = 25 ∧ n.state.val = 1 ∧ g.state.val = 3 ∧ g.carrier.val = 28 ∧ p.state.val = 0 then .nasbJarr
+      -- جمعُ المؤنّث السالم: كسرةٌ بعد ألفٍ وتاء نصبٌ أو جرّ (منوَّنًا أو لا)
+      else if n.carrier.val = 25 ∧ n.state.val = 3 ∧ g.carrier.val = 3 ∧ g.state.val = 1 ∧
+              p.carrier.val = 1 ∧ p.state.val = 3 then .nasbJarr
+      else if n.carrier.val = 3 ∧ n.state.val = 1 ∧ g.carrier.val = 1 ∧ g.state.val = 3 then .nasbJarr
       -- التنوين: حركةٌ فنونٌ ساكنة
       else if n.carrier.val = 25 ∧ n.state.val = 3 then
         (if g.state.val = 2 then .raf else if g.state.val = 0 then .nasb else if g.state.val = 1 then .jarr else .unread)
@@ -49,7 +53,8 @@ def caseClass (w : List SCell) : CaseClass :=
       else if n.state.val = 2 then .raf else if n.state.val = 0 then .nasb else if n.state.val = 1 then .jarr
       else .unread
   | [n, g] =>
-      if n.carrier.val = 25 ∧ n.state.val = 3 then
+      if n.carrier.val = 3 ∧ n.state.val = 1 ∧ g.carrier.val = 1 ∧ g.state.val = 3 then .nasbJarr
+      else if n.carrier.val = 25 ∧ n.state.val = 3 then
         (if g.state.val = 2 then .raf else if g.state.val = 0 then .nasb else if g.state.val = 1 then .jarr else .unread)
       else if n.state.val = 2 then .raf else if n.state.val = 0 then .nasb else if n.state.val = 1 then .jarr
       else .unread
@@ -89,6 +94,21 @@ theorem four_markers_one_case :
     caseClass rajulani = .raf ∧ caseClass rajulun = .raf := by decide
 
 theorem follows_khamsa : follows alimu (akhuka.take 3) = true := by decide
+
+/-- جمعُ المؤنّث السالم: الكسرةُ بعد ألفٍ وتاء نصبٌ أو جرّ لكلّ جذع (مُؤْمِنَاتٍ، الْمُؤْمِنَاتِ). -/
+theorem v3 : ((3 : Fin 29).val = 3) := rfl
+
+theorem caseClass_jam_muannath (i : List SCell) :
+    caseClass (i ++ [c 1 3, c 3 1]) = .nasbJarr ∧ caseClass (i ++ [c 1 3, c 3 1, c 25 3]) = .nasbJarr := by
+  constructor
+  · unfold caseClass
+    simp only [List.reverse_append, List.reverse_cons, List.reverse_nil, List.nil_append,
+      List.cons_append]
+    cases i.reverse <;> simp [c, v3, Ishara.s3]
+  · unfold caseClass
+    simp only [List.reverse_append, List.reverse_cons, List.reverse_nil, List.nil_append,
+      List.cons_append]
+    cases i.reverse <;> simp [c, v3, Ishara.v25, Ishara.s3]
 
 /-- حروفُ عطف النسق التسعة في جدول أدوات الربط. -/
 def nasaq : List String := ["وَ", "فَ", "ثُمَّ", "حَتَّى", "أَوْ", "أَمْ", "لَا", "بَلْ", "لَكِنْ"]

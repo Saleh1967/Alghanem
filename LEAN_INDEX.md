@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_lean_index.py` من ملفّات `.lean` و`Audit.lean` و`out/axioms.txt`؛ لا يُحرَّر باليد. الـ116 من الغانم بإيداعه المثبَّت في `formal/lakefile.toml`.
 
-**535 مبرهنة، منها 365 مدقَّقةُ المسلّمات.**
+**555 مبرهنة، منها 384 مدقَّقةُ المسلّمات.**
 
 كلُّ درجةٍ تستهلك ما قبلها: لا تدخل الكلمةُ درجةً قبل أن تُرخَّص في التي تحتها. «مدقَّق» = في `Audit.lean` وطُبعت مسلّماتُه؛ وما ليس مدقَّقًا مبرهَنٌ في Lean لكن لم يُطبع سندُه بعدُ فلا يُستشهد به في `status.py`.
 
@@ -688,7 +688,7 @@
 
 ## الدرجة ١٨ — التوابعُ والنواسخُ والجزم: الحالةُ لا العلامة، وأبوابٌ عمليّتان، وعلاماتٌ ثلاثٌ عمليّاتٌ ثلاث
 
-### `Slge/Tawabi.lean` — 12 مبرهنة (`Slge.Tawabi`)
+### `Slge/Tawabi.lean` — 14 مبرهنة (`Slge.Tawabi`)
 
 | المبرهنة | ما تقول | التدقيق | المسلّمات |
 |---|---|---|---|
@@ -698,6 +698,8 @@
 | `follows_refl` | — | مدقَّق | propext |
 | `four_markers_one_case` | — | مدقَّق | لا مسلّمات |
 | `follows_khamsa` | — | مدقَّق | propext |
+| `v3` | جمعُ المؤنّث السالم: الكسرةُ بعد ألفٍ وتاء نصبٌ أو جرّ لكلّ جذع (مُؤْمِنَاتٍ، الْمُؤْمِنَاتِ). | — | — |
+| `caseClass_jam_muannath` | جمعُ المؤنّث السالم: الكسرةُ بعد ألفٍ وتاء نصبٌ أو جرّ لكلّ جذع (مُؤْمِنَاتٍ، الْمُؤْمِنَاتِ). | مدقَّق | propext |
 | `nasaq_in_rawabit` | — | مدقَّق | لا مسلّمات |
 | `tawkid_words_licensed` | — | مدقَّق | propext |
 | `tawkid_case` | كُلُّهُمْ: الحالةُ من الجذع قبل الضمير. | مدقَّق | propext |
@@ -776,6 +778,29 @@
 | `ayy_declines` | أَيّ وحدَها معربة: ثلاثُ صورٍ بثلاث حركات. | مدقَّق | propext |
 | `rawabit_jazm` | جدولُ أدوات الربط: الجوازمُ المسجَّلةُ فيه بعملها، وغيرُ الجازمة بلا عمل. | مدقَّق | لا مسلّمات |
 | `two_verbs` | الجزمُ بفعلين: حكمُ كلٍّ منهما حكمُ الواحد. | مدقَّق | propext |
+
+### `Slge/Mansubat.lean` — 18 مبرهنة (`Slge.Mansubat`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `tamyiz_eq_hal` | — | مدقَّق | propext |
+| `nakira_reads_nasb` | — | مدقَّق | propext |
+| `nakira_has_tanwin` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `nakira_licensed` | — | مدقَّق | propext, Quot.sound |
+| `sorting_by_template` | — | مدقَّق | propext |
+| `derived_templates_wf` | — | مدقَّق | propext |
+| `adad_tamyiz_is_nakira` | تمييزُ العدد 11–99: الحالةُ نفسُها (فتحٌ منوَّنٌ مفرد). | مدقَّق | propext, Quot.sound |
+| `tahwil_witness` | — | مدقَّق | propext |
+| `tamm_muthbat_reads_nasb` | — | مدقَّق | propext |
+| `badal_follows` | البدلُ تبعيّةٌ في الحالة: مرفوعٌ بعد مرفوع (المستثنى منه فاعلٌ). | مدقَّق | propext |
+| `mufarragh_eq_role` | المفرَّغ: إِلَّا بلا أثرٍ على الخانة؛ العمليّةُ عمليّةُ الموقع. | مدقَّق | propext |
+| `tools_licensed` | — | مدقَّق | propext |
+| `illa_ghayr_in_rawabit` | — | مدقَّق | لا مسلّمات |
+| `ghayr_idafa_jarr` | — | مدقَّق | propext |
+| `ghayr_takes_hukm` | — | مدقَّق | propext |
+| `ma_khala_nasb` | — | مدقَّق | propext |
+| `witnesses` | شواهدُ البوّابة: سُجَّدًا (حال)، شَيْبًا وعُيُونًا وكَوْكَبًا (تمييز) = العمليّةُ على الجذع. | مدقَّق | propext |
+| `sukara_hal` | — | مدقَّق | propext |
 
 ## الدرجة ١٩ — المعرفةُ والترجيح: الإنتاجُ والتعارضُ وقطعيُّ الدلالة
 

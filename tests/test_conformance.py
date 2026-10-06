@@ -325,3 +325,30 @@ def test_jazm_matches_lean() -> None:
             assert r[1] in babs[r[0]] and cells_of(r[1]) == cells, r
         else:
             assert marker(cells) == lean[r[3]], r
+
+
+def test_mansubat_matches_lean() -> None:
+    """قانونُ الفرز والعمليّاتُ والأدوات = جدولُ `Mansubat`."""
+
+    from slge.mansubat import TOOLS, derived, ghayr_of, nakira_mansuba, raf, tahwil
+    from slge.marifa import idafa
+    from slge.rawabit import cells_of
+    from slge.zuruf import jarr
+
+    rows = _rows("mansubat.csv")
+    assert len(rows) == 5 + 4 + 6
+    names = {"dahik": "ضَاحِكُ", "rakid": "رَاكِضُ", "nafs": "نَفْسُ", "shayb": "شَيْبُ", "sukara": "سُكَارَى"}
+    tools = dict(zip(("illa", "ghayr", "siwa", "khala", "ada", "hasha"), TOOLS, strict=True))
+    shayb, ras = cells_of("شَيْبُ"), cells_of("رَأْسُ")
+    ops = {"shayb": nakira_mansuba(shayb), "ras": tahwil(shayb, ras)[0],
+           "original": idafa(raf(shayb), cells_of("اَرَّأْسِ")),
+           "ghayr_raf": ghayr_of(raf, cells_of("رَجُلُ"))}
+    for r in rows:
+        cells = tuple(_cell(int(i)) for i in r[2].split("-"))
+        if r[0] == "derived":
+            assert cells_of(names[r[1]]) == cells and derived(cells) == (r[3] == "true"), r
+        elif r[0] == "op":
+            assert ops[r[1]] == cells, r
+        else:
+            assert cells_of(tools[r[1]]) == cells, r
+    assert jarr(ras)[-1] == ("س", "كسر")

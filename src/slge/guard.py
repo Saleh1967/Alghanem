@@ -29,6 +29,7 @@ EXEMPT_FILES = (
     "tools/gen_zaman_index.py", "tools/gen_adad_index.py",
     "tools/gen_marifa_index.py", "tools/gen_sarf_index.py",
     "tools/gen_tawabi_index.py", "tools/gen_nawasikh_index.py", "tools/gen_jazm_index.py",
+    "tools/gen_mansubat_index.py",
     "src/slge/order.py",  # يبصم خاناتٍ لا نصًّا
 )
 IO_ATTRS = frozenset(

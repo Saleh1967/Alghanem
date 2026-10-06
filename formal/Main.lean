@@ -178,6 +178,18 @@ def main (args : List String) : IO Unit := do
         IO.println s!"{bab},{p.1},{"-".intercalate (p.2.map fun c => toString c.index)}"
     for (n, w) in Jazm.witnesses do
       IO.println s!"marker,{n},{"-".intercalate (w.map fun c => toString c.index)},{mk (Jazm.marker w)}"
+  | ["mansubat"] =>
+    for (n, w) in [("dahik", Mansubat.dahik), ("rakid", Mansubat.rakid), ("nafs", Mansubat.nafs),
+                   ("shayb", Mansubat.shayb), ("sukara", Mansubat.sukara)] do
+      IO.println s!"derived,{n},{"-".intercalate (w.map fun c => toString c.index)},{Mansubat.derived w}"
+    for (n, w) in [("shayb", Mansubat.nakiraMansuba Mansubat.shayb),
+                   ("ras", (Mansubat.tahwil Mansubat.shayb Mansubat.rasStem).1),
+                   ("original", Mansubat.original Mansubat.shayb Mansubat.rasStem),
+                   ("ghayr_raf", Mansubat.ghayrOf Nawasikh.raf [Slge.Categories.c 10 0, Slge.Categories.c 5 2, Slge.Categories.c 23 2])] do
+      IO.println s!"op,{n},{"-".intercalate (w.map fun c => toString c.index)}"
+    for (n, w) in [("illa", Mansubat.illa), ("ghayr", Mansubat.ghayr), ("siwa", Mansubat.siwa),
+                   ("khala", Mansubat.khala), ("ada", Mansubat.ada), ("hasha", Mansubat.hasha)] do
+      IO.println s!"tool,{n},{"-".intercalate (w.map fun c => toString c.index)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

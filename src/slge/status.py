@@ -306,7 +306,8 @@ _DECLARED: tuple[Claim, ...] = (
        "رفعُ الخمسة والعقود بالواو رفعٌ لكلّ جذع؛ والتبعيّةُ متماثلةٌ انعكاسيّة", _P,
        "lean:Slge.Tawabi.four_markers_one_case", "lean:Slge.Tawabi.follows_khamsa",
        "lean:Slge.Tawabi.caseClass_khamsa_raf", "lean:Slge.Tawabi.caseClass_uqud_raf",
-       "lean:Slge.Tawabi.follows_symm", "lean:Slge.Tawabi.follows_refl",
+       "lean:Slge.Tawabi.caseClass_jam_muannath", "lean:Slge.Tawabi.follows_symm",
+       "lean:Slge.Tawabi.follows_refl",
        "test:tests/test_tawabi.py::test_four_markers_one_case"),
     _c("TAWABI-unread", "نصبُ الخمسة بالألف لا يقرؤه القارئُ العامّ: الألفُ مشتركةٌ مع المقصور — "
        "المعجمُ يفصل",
@@ -346,11 +347,11 @@ _DECLARED: tuple[Claim, ...] = (
        "lean:Slge.Nawasikh.innama_kaffa_in_rawabit", "lean:Slge.Nawasikh.kada_khabar_raf",
        "test:tests/test_nawasikh.py::test_deposits_licensed_and_kaffa",
        note="أَنْ ليست في جدول أدوات الربط (an_not_in_rawabit): دَين؛ وجَعَلَ في بابين: المعنى يفصل."),
-    _c("NAWASIKH-masaq", "على 2,599 اسمٍ وخبرٍ من MASAQ: خبرُ كان نصبٌ 98%، خبرُ إنّ رفعٌ 98%، "
-       "اسمُ كان رفعٌ 92%، اسمُ إنّ نصبٌ 90%، اسمُ لا 73/73 نكرةٌ مفتوحة؛ عسى بأَنْ 21/24 "
+    _c("NAWASIKH-masaq", "على 2,599 اسمٍ وخبرٍ من MASAQ: خبرُ كان نصبٌ 99%، خبرُ إنّ رفعٌ 98%، "
+       "اسمُ كان رفعٌ 92%، اسمُ إنّ نصبٌ 95%، اسمُ لا 73/73 نكرةٌ مفتوحة؛ عسى بأَنْ 21/24 "
        "وكاد 0/23 وطفق 0/3؛ وإنّما لا اسمَ ناسخٍ بعدها 27/27", _S,
        "test:tests/test_nawasikh.py::test_masaq_measurement_and_index",
-       note="المخالفُ: جمعُ المؤنّث السالم وياءُ المتكلّم والمنقوص — دُيونٌ على القارئ؛ "
+       note="المخالفُ: ياءُ المتكلّم والمنقوص — دُيونٌ على القارئ؛ "
             "والتمامُ والجمودُ والتعليقُ تيارٌ ومعجم."),
     # — الجزم والشرط —
     _c("JAZM-ops", "العلاماتُ الثلاث عمليّات: السكونُ مرخَّصٌ بعد متحرّكٍ وغيرُ مرخَّصٍ بعد مدٍّ فيُلزِم حذفَ "
@@ -371,6 +372,27 @@ _DECLARED: tuple[Claim, ...] = (
        "514/634 (والباقي كسرةُ الوصل ويَكُ)، وحذفُ حرف العلّة لا تقرؤه الخانة 192/194 كما بُرهن", _S,
        "test:tests/test_jazm.py::test_masaq_measurement_and_index",
        note="كسرةُ التقاء الساكنين قانونُ Context في الغانم؛ الجزمُ بفعلين والفاءُ الرابطة تيار."),
+    # — بقيّة المنصوبات —
+    _c("MANSUBAT-ops", "الحالُ المفردةُ والتمييزُ عمليّةٌ واحدة (نكرةٌ منصوبة = فتحٌ فتنوين): تُقرأ نصبًا "
+       "وتحمل التنوينَ وتحفظ الترخيص لكلّ جذع؛ والفرزُ (مشتقّ/جامد) يقرؤه القالب؛ والمحوَّلُ عمليّات", _P,
+       "lean:Slge.Mansubat.tamyiz_eq_hal", "lean:Slge.Mansubat.nakira_reads_nasb",
+       "lean:Slge.Mansubat.nakira_has_tanwin", "lean:Slge.Mansubat.nakira_licensed",
+       "lean:Slge.Mansubat.sorting_by_template", "lean:Slge.Mansubat.adad_tamyiz_is_nakira",
+       "lean:Slge.Mansubat.tahwil_witness", "lean:Slge.Mansubat.sukara_hal",
+       "test:tests/test_mansubat.py::test_hal_and_tamyiz_one_operation"),
+    _c("MANSUBAT-istithna", "الاستثناءُ ثلاثُ حالاتٍ ثلاثُ عمليّات: التامُّ المثبت نصبٌ، والتامُّ المنفيّ "
+       "نصبٌ أو بدلٌ (تبعيّةٌ في الحالة)، والمفرَّغُ عمليّةُ الموقع (إِلَّا بلا أثر)؛ غَيْر مضافةٌ تأخذ "
+       "الحكم؛ خَلَا/عَدَا بـ«ما» نصب", _P,
+       "lean:Slge.Mansubat.tamm_muthbat_reads_nasb", "lean:Slge.Mansubat.badal_follows",
+       "lean:Slge.Mansubat.mufarragh_eq_role", "lean:Slge.Mansubat.tools_licensed",
+       "lean:Slge.Mansubat.ghayr_idafa_jarr", "lean:Slge.Mansubat.ghayr_takes_hukm",
+       "lean:Slge.Mansubat.ma_khala_nasb",
+       "test:tests/test_mansubat.py::test_istithna_three_operations"),
+    _c("MANSUBAT-masaq", "على 508 حالٍ وتمييزٍ ومستثنًى من MASAQ: الحالُ نصبٌ 275/290، التمييزُ 38/52 "
+       "(والباقي تمييزُ كم مجرور)، المستثنى 38/41؛ والمثبتُ بعد إِلَّا مستثنًى 83، والمنفيُّ بدلٌ أو "
+       "حسب الموقع 318/475", _S,
+       "test:tests/test_mansubat.py::test_masaq_measurement_and_index",
+       note="516 صورةً رُفضت بالاسم (REJECT: التنوينُ بعد الألف في طبعة MASAQ)؛ النفيُ والتمامُ تيار."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",
