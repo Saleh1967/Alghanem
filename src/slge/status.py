@@ -932,9 +932,13 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_jidh.py::test_case_is_the_last_cell_not_the_template",
        note="القوالبُ أُودعت بآخرٍ واحد (wazn.py: parse(«فَعْلُ»))؛ التسويةُ تسبق المطابقة في كلّ قارئٍ "
             "جديد."),
-    _c("JIDH-peel", "فصلُ الزوائد قطعٌ من الجداول الحاصرة يُردّ بالإلصاق لكلّ كلمة (السوابقُ المفردة وأل "
-       "بهمزتها أو موصولةً، والضمائرُ المتّصلة ولواحقُ الفاعل)، والقارئُ لا يعيد قراءةً إلّا وردُّها "
-       "الكلمةُ بعينها", _P,
+    _c("JIDH-peel", "الجبرُ مغلقٌ صعودًا ونزولًا: سابقةٌ متحرّكة على مرخَّصٍ مرخَّصٌ (لكلّ سابقةٍ وكلمة)، "
+       "والقطعُ عكسُ الإلصاق بعينه (لكلّ كلمة)، والقارئُ لا يعيد قراءةً إلّا وردُّها الكلمةُ بعينها "
+       "وجذعُها مرخَّصٌ في ذاته؛ وما صعد بالجبر ينزل بالقارئ: لكلّ سابقةٍ ولاحقةٍ من الجداول وقالبٍ سليم "
+       "وجذرٍ وحالةِ آخر", _P,
+       "lean:Slge.Jidh.prefix_licensed", "lean:Slge.Jidh.peelPrefix_append",
+       "lean:Slge.Jidh.peelSuffix_append", "lean:Slge.Jidh.dropAl_al",
+       "lean:Slge.Jidh.jidh_complete",
        "lean:Slge.Jidh.peelPrefix_sound", "lean:Slge.Jidh.peelSuffix_sound",
        "lean:Slge.Jidh.dropAl_sound", "lean:Slge.Jidh.jidh_restores",
        "lean:Slge.Jidh.jidh_witnesses_al", "lean:Slge.Jidh.jidh_witnesses_case",

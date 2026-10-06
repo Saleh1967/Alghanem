@@ -709,6 +709,12 @@ import Slge
 #print axioms Slge.Jidh.peelSuffix_sound
 #print axioms Slge.Jidh.dropAl_sound
 #print axioms Slge.Jidh.jidh_restores
+#print axioms Slge.Jidh.prefix_licensed
+#print axioms Slge.Jidh.peelPrefix_append
+#print axioms Slge.Jidh.peelSuffix_append
+#print axioms Slge.Jidh.dropAl_al
+#print axioms Slge.Jidh.mem_stemSenses
+#print axioms Slge.Jidh.jidh_complete
 #print axioms Slge.Jidh.jidh_witnesses_al
 #print axioms Slge.Jidh.jidh_witnesses_case
 #print axioms Slge.Jidh.jidh_witnesses_affix

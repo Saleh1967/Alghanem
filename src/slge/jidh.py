@@ -4,8 +4,9 @@
 القالب (`on_template_mod`؛ مبرهَنٌ `rootOf_setLast`، `onTemplateMod_setLast`). وفصلُ الزوائد قطعٌ من
 الجداول الحاصرة (السوابقُ المفردة وأل، والضمائرُ المتّصلة ولواحقُ الفاعل) يُردّ بالإلصاق
 (`peelPrefix_sound`، `peelSuffix_sound`، `dropAl_sound`)، والقارئُ `jidh` لا يعيد قراءةً إلّا وردُّها
-الكلمةُ بعينها (`jidh_restores`). القياسُ على مودَع شهادات المصحف وعلى قسمة MASAQ المحجوبة في
-`tools/gen_jidh_index.py`.
+الكلمةُ بعينها (`jidh_restores`)، وما صعد بالجبر ينزل بالقارئ (`jidh_complete`: لكلّ سابقةٍ ولاحقةٍ من
+الجداول وقالبٍ وجذرٍ وحالة)، والجذعُ النازل كلمةٌ مرخَّصةٌ في ذاته. القياسُ على مودَع شهادات المصحف وعلى
+قسمة MASAQ المحجوبة في `tools/gen_jidh_index.py`.
 """
 
 from __future__ import annotations
@@ -16,6 +17,7 @@ from typing import Final
 
 from slge.cells import SUKUN, Cell
 from slge.filiyya import OBJECT_SUFFIXES, SUBJECT_SUFFIXES
+from slge.madd import pause_licensed
 from slge.maqam import _on_template_root as on_template_root
 from slge.maqam import with_prefix
 from slge.marifa import al, drop_tanwin, has_al
@@ -124,8 +126,8 @@ def jidh(w: Word) -> tuple[Reading, ...]:
                 if use_al == 2 and (not pre or pre[-1][0][0] == "ء"):
                     continue  # الموصولةُ بلا همزةٍ بعد سابقةٍ غيرِ همزة الاستفهام (آلْآنَ تُكتب بالمدّ)
                 stem = _drop_al(w2, use_al) if use_al else w2
-                if not stem:
-                    continue
+                if not stem or not pause_licensed(stem):
+                    continue  # النزول: الجذعُ كلمةٌ مرخَّصةٌ في ذاته
                 ts = stem_senses(stem)
                 if not ts:
                     continue

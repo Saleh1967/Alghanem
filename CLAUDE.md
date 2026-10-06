@@ -18,7 +18,7 @@
 
 1. **بوّابةٌ في `gates.LADDER` لا دالّةٌ منفردة**: يُستدعى من `slge/gates.py` في موضعه من السُّلَّم، فتمرّ عليه شهادةُ المصحف كاملةً في كلّ اختبار.
 2. **مقيسٌ على شهادات المصحف الكاملة قبل أيّ شريحةٍ مقسومة**: فهرسُه يقرأ `tests/data/corpus-certificates.json.gz` (الصورُ بسوابقها ولواحقها) ويُثبت الرقمَ عليه؛ وشرائحُ MASAQ المقسومة قرينةٌ تالية لا مقياسٌ أوّل — فما يُقاس على الجذع لا يشهد على الكلمة.
-3. **لا يطابق قالبًا إلّا بعد تسوية الآخر المبرهَنة** (`jidh.on_template_mod` ← `Jidh.onTemplateMod_setLast`): الإعرابُ والمزاجُ حالةُ الخانة الأخيرة لا جزءٌ من القالب، والزوائدُ تُفصل بجداولها وتُردّ بعينها (`jidh_restores`).
+3. **لا يطابق قالبًا إلّا بعد تسوية الآخر المبرهَنة** (`jidh.on_template_mod` ← `Jidh.onTemplateMod_setLast`): الإعرابُ والمزاجُ حالةُ الخانة الأخيرة لا جزءٌ من القالب؛ والزوائدُ عمليّاتٌ جبريّة مغلقةٌ صعودًا (الإلصاقُ يحفظ الترخيص: `prefix_licensed`، `Jumla.suffix_licensed`) ونزولًا (القطعُ عكسُها بعينه: `peelPrefix_append`، `peelSuffix_append`، `dropAl_al`)، والنزولُ يستوفي الصعود (`jidh_complete`): ما صعد بالجبر ينزل بالقارئ — لا بحثًا في جدولٍ يُفحص ردُّه.
 
 سببُ القانون مسجَّلٌ بالعدد في `ARCHITECTURE.md` (ADR ٧): القرّاءُ الذين بُنوا على الحصور المُرسَلة وقِيسوا على جذوعٍ مقسومة قرؤوا 1,743 صورةً من 18,179؛ وبعد التسوية والفصل 13,706.
 
@@ -77,7 +77,7 @@ python tools/gen_bits_index.py --check               # فهرسُ البتّات
 python tools/gen_madd_index.py --check               # فهرسُ المدود على الدرجات (MADD_INDEX.md)
 python tools/gen_jidh_index.py --check               # فهرسُ الجذع: الرقمُ قبل التسوية والفصل وبعدهما (JIDH_INDEX.md)
 python -c "from slge.guard import breaches; print(breaches() or 'لا خرق')"
-cd formal && lake build && lake env lean Audit.lean   # 709 مدقَّقة (الـ116 وSLGE)؛ propext/Classical.choice/Quot.sound فقط
+cd formal && lake build && lake env lean Audit.lean   # 715 مدقَّقة (الـ116 وSLGE)؛ propext/Classical.choice/Quot.sound فقط
 ```
 
 وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه، وأثبت وجودَ كلّ ملفٍّ تذكره قبل الكلام عنه.

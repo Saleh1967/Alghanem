@@ -219,7 +219,8 @@ def jidh (w : List SCell) : List Reading :=
         | none => none
         | some stem =>
           let ts := stemSenses stem
-          if stem ≠ [] ∧ ts ≠ [] then
+          -- النزول: الجذعُ كلمةٌ مرخَّصةٌ (وقفًا) في ذاته — الجبرُ مغلقٌ نزولًا كما هو صعودًا
+          if stem ≠ [] ∧ Madd.pauseLicensed stem ∧ ts ≠ [] then
             let r : Reading := ⟨pre, al, stem, suf, ts⟩
             if r.restore == w then some r else none
           else none)
@@ -249,6 +250,93 @@ theorem jidh_restores (w : List SCell) : ∀ r ∈ jidh w, r.restore = w := by
             · simp at hm
           · simp
 
+/-! ## الجبرُ المغلق صعودًا ونزولًا
+
+الزيادةُ عمليّاتٌ على الخانات (سابقةٌ متحرّكة، لاحقةٌ بعد تسوية الآخر إلى حالتها، أل)، والترخيصُ مغلقٌ تحتها
+صعودًا؛ والقطعُ عكسُها بعينه نزولًا؛ وما صعد بالجبر ينزل بالقارئ (`jidh_complete`). -/
+
+/-- الصعود ١: سابقةٌ متحرّكة على كلمةٍ مرخَّصة كلمةٌ مرخَّصة — لكلّ سابقةٍ وكلمة. -/
+theorem prefix_licensed (p : SCell) (hp : p.state.val ≠ 3) (w : List SCell) (hw : licensed w = true) :
+    licensed (p :: w) = true := by
+  have hp' : p.isSukun = false := by simp [SCell.isSukun, hp]
+  cases w with
+  | nil => simp [licensed, noAdj, hp']
+  | cons x t =>
+    simp only [licensed, Bool.and_eq_true, Bool.not_eq_true'] at hw
+    simp only [licensed, noAdj, hp', Bool.not_false, Bool.true_and, Bool.false_and]
+    exact hw.2
+
+/-- الصعود ٢: لاحقةٌ من الجدول بعد تسوية آخر الكلمة إلى حالتها المتحرّكة (`Jumla.suffix_licensed`)؛ والساكنةُ
+(كَتَبْ + تُ) في `Filiyya.past_licensed`. الإلصاقُ يُردّ بعينه: -/
+theorem peelPrefix_append (p s : List SCell) : peelPrefix p (p ++ s) = some s := by
+  simp [peelPrefix, List.take_left', List.drop_left']
+
+theorem peelSuffix_append (q s : List SCell) : peelSuffix q (s ++ q) = some s := by
+  simp [peelSuffix, List.drop_left', List.take_left']
+
+theorem dropAl_al (s : List SCell) (hne : s ≠ []) : dropAl .full (Marifa.al s) = some s := by
+  have h2 : (Marifa.al s).drop 2 = s := by
+    unfold Marifa.al Marifa.shamsi
+    cases s with
+    | nil => exact absurd rfl hne
+    | cons x t =>
+      simp only []
+      split <;> rfl
+  simp [dropAl, Marifa.hasAl_al s hne, h2]
+
+/-- الجذعُ على قالبه بعد التسوية مهما كانت حالةُ آخره: `k` من معاني `setLast (fill (templ k) r) st`. -/
+theorem mem_stemSenses (k : Nat) (hk : k < 121) (r : Wazn.Root) (hr : ∀ i, (r i).val ≠ 1) (st : Fin 4)
+    (htan : Nida.hasTanwin (setLast (Wazn.fill (Sarf.templ k) r) st) = false) :
+    k ∈ stemSenses (setLast (Wazn.fill (Sarf.templ k) r) st) := by
+  have hwf := Tabayun.templ_wf k hk
+  have hne : Sarf.templ k ≠ [] := by
+    intro h; have := hwf; rw [h] at this; exact absurd this.1 (by simp [Wazn.slots])
+  have hmem : k ∈ (List.range 121).filter fun q =>
+      Maqam.onTemplateRoot q (setLast (Marifa.dropTanwin (setLast (Wazn.fill (Sarf.templ k) r) st))
+        (lastState (Sarf.templ q))) := by
+    rw [List.mem_filter]
+    refine ⟨List.mem_range.2 hk, ?_⟩
+    unfold Marifa.dropTanwin
+    rw [htan]
+    simp only [Bool.false_eq_true, ite_false]
+    rw [Shibh.setLast_setLast, setLast_fill _ r hne]
+    exact Jiha.onTemplateRoot_fill k hwf r hr
+  unfold stemSenses
+  simp only
+  split
+  · exact hmem
+  · rename_i h; exact absurd (List.ne_nil_of_mem hmem) h
+
+/-- الاكتمال: ما صعد بالجبر ينزل بالقارئ — لكلّ سابقةٍ من الجدول ولاحقةٍ من الجدول وقالبٍ سليم وجذرٍ لا ألفَ
+فيه وحالةِ آخر: `jidh (p ++ setLast (fill (templ k) r) st ++ q)` فيه قراءةٌ سابقتُها `p` ولاحقتُها `q` وجذعُها
+`setLast (fill (templ k) r) st` وقالبُها `k`. -/
+theorem jidh_complete (p : List SCell) (hp : p ∈ proclitics) (q : List SCell) (hq : q ∈ enclitics)
+    (k : Nat) (hk : k < 121) (r : Wazn.Root) (hr : ∀ i, (r i).val ≠ 1) (st : Fin 4)
+    (htan : Nida.hasTanwin (setLast (Wazn.fill (Sarf.templ k) r) st) = false)
+    (hlic : Madd.pauseLicensed (setLast (Wazn.fill (Sarf.templ k) r) st) = true) :
+    ∃ rd ∈ jidh (p ++ setLast (Wazn.fill (Sarf.templ k) r) st ++ q),
+      rd.pre = [p] ∧ rd.al = .none ∧ rd.stem = setLast (Wazn.fill (Sarf.templ k) r) st ∧ rd.suf = q ∧
+      k ∈ rd.templates := by
+  generalize hs : setLast (Wazn.fill (Sarf.templ k) r) st = s at htan hlic ⊢
+  have hks : k ∈ stemSenses s := hs ▸ mem_stemSenses k hk r hr st (hs ▸ htan)
+  have hsne : s ≠ [] := by
+    intro h; rw [h] at hks
+    have : stemSenses [] = [] := by decide
+    rw [this] at hks; exact absurd hks (List.not_mem_nil)
+  refine ⟨⟨[p], .none, s, q, stemSenses s⟩, ?_, rfl, rfl, rfl, rfl, hks⟩
+  unfold jidh
+  simp only [List.mem_flatMap, List.mem_filterMap]
+  refine ⟨[p], ?_, q, ?_, .none, by simp, ?_⟩
+  · simp only [List.mem_append, List.mem_map, List.mem_cons]
+    exact Or.inl (Or.inr ⟨p, hp, rfl⟩)
+  · exact List.mem_cons_of_mem _ hq
+  · simp only [reduceCtorEq, false_and, ite_false, List.flatten_cons, List.flatten_nil, List.append_nil]
+    rw [List.append_assoc, peelPrefix_append]
+    simp only [peelSuffix_append, dropAl]
+    have hts : stemSenses s ≠ [] := List.ne_nil_of_mem hks
+    simp only [hsne, hts, hlic, ne_eq, not_false_eq_true, and_self, ite_true]
+    simp [Reading.restore, withAl]
+
 def walard : List SCell := [c 27 0, c 23 3, c 0 0, c 10 3, c 15 1]                 -- وَلْأَرْضِ (صورةُ الشهادة)
 def alard : List SCell := [c 0 0, c 23 3, c 0 0, c 10 3, c 15 2]                   -- أَلْأَرْضُ
 def washshams : List SCell := [c 27 0, c 13 3, c 13 0, c 24 3, c 12 1]             -- وَشَّمْسِ
@@ -265,13 +353,13 @@ theorem jidh_witnesses_al :
     (jidh alard).map (fun r => (r.pre.length, r.al, r.templates)) = [(0, .full, [29])] ∧
     (jidh washshams).map (fun r => (r.pre.length, r.al, r.stem, r.templates)) =
       [(1, .silent, [c 13 0, c 24 3, c 12 1], [29])] := by
-  refine ⟨by decide, by decide, by decide⟩
+  refine ⟨by decide +kernel, by decide +kernel, by decide +kernel⟩
 
 /-- رَبِّ: مجرورٌ يُقرأ على فَعْلٍ بعد التسوية؛ وَجَدَ: فعلٌ أو مصدرٌ بعد التسوية (0، 36) — التعدّدُ يُقرأ والقرينةُ
 تفصل. -/
 theorem jidh_witnesses_case :
     (jidh rabbi).map (·.templates) = [[29]] ∧ (jidh wajada).map (·.templates) = [[0, 36]] := by
-  refine ⟨by decide, by decide⟩
+  refine ⟨by decide +kernel, by decide +kernel⟩
 
 /-- كَذَّبُوا: قراءتان على الخانة (فَعَّلَ + واو الجماعة، أو كَ + الذَّبُو)؛ تَجْعَلُوا: يَفْعَلُ بردّ الصدر + واو؛
 بِكِتَابِهِمْ: ب + كِتَاب + هِمْ. -/
@@ -281,6 +369,6 @@ theorem jidh_witnesses_affix :
     (jidh tajalu).map (fun r => (r.stem, r.suf, r.templates)) =
       [([c 3 0, c 5 3, c 18 0, c 23 2], [c 27 3], [4])] ∧
     (jidh bikitabihim).map (fun r => (r.pre.length, r.suf.length, r.templates)) = [(1, 2, [35, 41, 93])] := by
-  refine ⟨by decide, by decide, by decide⟩
+  refine ⟨by decide +kernel, by decide +kernel, by decide +kernel⟩
 
 end Slge.Jidh
