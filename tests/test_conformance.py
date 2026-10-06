@@ -520,3 +520,41 @@ def test_jumla_matches_lean() -> None:
             assert w == tuple(_cell(int(i)) for i in r[2].split("-")), r[1]
             assert (gender(w), number(w)) == (g[r[3]], n[r[4]]), r[1]
             assert broken_plural(w) == (r[5] == "true"), r[1]
+
+
+def test_filiyya_matches_lean() -> None:
+    """رتبةُ الثلاثيّ وقبولُه على الشواهد، والمجهولُ، والنائبُ، والفرزُ = جدولُ `Filiyya`."""
+
+    from slge.filiyya import (
+        WITNESSES,
+        admissible,
+        majhul,
+        majhul_pres,
+        naib_kind,
+        order,
+        sort_fadla,
+    )
+    from slge.rawabit import cells_of
+
+    rows = _rows("filiyya.csv")
+    ru = {"failFirst": "الفاعل أولًا", "mafulFirst": "المفعول أولًا",
+          "mafulBeforeFil": "المفعول قبل الفعل", "free": "جواز"}
+    nk = {"maful": "مفعول به", "majrur": "مجرور", "zarf": "ظرف", "masdar": "مصدر"}
+    fd = {"liajlih": "مفعول لأجله", "mutlaq": "مفعول مطلق", "hal": "حال", "unread": "—"}
+
+    def cells(s: str) -> tuple[Cell, ...]:
+        return tuple(_cell(int(i)) for i in s.split("-")) if s else ()
+
+    orders = [r for r in rows if r[0] == "order"]
+    assert len(orders) == len(WITNESSES) == 6
+    for r, j in zip(orders, WITNESSES.values(), strict=True):
+        assert (j.fil, j.fail, j.maful) == (cells(r[2]), cells(r[3]), cells(r[4])), r[1]
+        assert order(j) == ru[r[5]] and admissible(j) == (r[6] == "true"), r[1]
+    for r in rows:
+        if r[0] == "majhul":
+            op = majhul(cells_of("كَتَبَ")) if r[1] == "kataba" else majhul_pres(cells_of("يَكْتُبُ"))
+            assert op == cells(r[2]), r[1]
+        elif r[0] == "naib":
+            assert naib_kind(cells(r[1])) == nk[r[2]], r[1]
+        elif r[0] == "fadla":
+            assert sort_fadla(cells(r[1]), cells(r[2])) == fd[r[3]], r[1]

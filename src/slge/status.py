@@ -548,6 +548,51 @@ _DECLARED: tuple[Claim, ...] = (
        "ضميرٌ في 329 من 519 جملةً فعليّة", _S,
        "test:tests/test_jumla.py::test_masaq_measurement_and_index",
        note="الأزواجُ بنافذة الآية (المؤخّرُ يأخذ ما قبله)؛ 192 كلمةً مستبعَدةً بالاسم."),
+    # — الجملةُ الفعليّة —
+    _c("FILIYYA-fil", "الفعلُ ثلاثُ حالات: الماضي مبنيٌّ وآخرُه تقرؤه لاحقتُه (على جدول الضمائر) ومرخَّصٌ "
+       "بها لكلّ جذعٍ سالم، والمضارعُ معربٌ بعلاماتٍ عمليّات (Jazm/Afal)، والأمرُ مبنيٌّ على ما يُجزم به "
+       "مضارعُه (آخرُ كلّ قالب أمرٍ ساكن)", _P,
+       "lean:Slge.Filiyya.past_endings", "lean:Slge.Filiyya.past_licensed",
+       "lean:Slge.Filiyya.amr_ends_like_jazm",
+       "test:tests/test_filiyya.py::test_verb_three_states_and_subject_three_forms"),
+    _c("FILIYYA-fail", "الفاعلُ رفعٌ يُقرأ لكلّ جذع؛ البارزُ المتّصلُ لاحقةٌ من الجدول بحالة ما قبلها "
+       "تُقرأ لكلّ فعل، والمفعولُ المتّصلُ كذلك؛ والمستترُ لا خانةَ له", _P,
+       "lean:Slge.Filiyya.fail_reads_raf", "lean:Slge.Filiyya.subjectSuffixes_from_table",
+       "lean:Slge.Filiyya.attached_subject", "lean:Slge.Filiyya.attached_object",
+       "test:tests/test_filiyya.py::test_verb_three_states_and_subject_three_forms",
+       note="المصدرُ المؤوّل فاعلًا تيار؛ نونُ النسوة/الأصل وكافُ الخطاب/الأصل بحالة ما قبلها وما بقي "
+            "معجم."),
+    _c("FILIYYA-order", "رتبُ التباديل (ف × س₁ × س₂) من الخانات لا من الموضع: الفاعلُ المتّصل يقدّم "
+       "الفاعلَ "
+       "لكلّ فعلٍ ومفعول، والمفعولُ المتّصل يقدّم المفعولَ لكلّ فعلٍ وفاعل؛ والعائدُ وخفاءُ العلامة والصدارةُ "
+       "شواهد؛ والموضعُ المخالفُ يُرفض", _P,
+       "lean:Slge.Filiyya.order_swap", "lean:Slge.Filiyya.attached_subject_first",
+       "lean:Slge.Filiyya.attached_object_first", "lean:Slge.Filiyya.order_witnesses",
+       "test:tests/test_filiyya.py::test_order_from_cells_and_mutation_refused",
+       note="الحصرُ بإلّا وإنّما تيار؛ ومَا/مَنْ صورةٌ واحدةٌ للاستفهام والموصول والشرط."),
+    _c("FILIYYA-naib", "المبنيُّ للمجهول عمليّتان على الحالات (ضمُّ الأوّل وكسرُ ما قبل الآخر؛ وفتحُه في "
+       "المضارع): فَعَلَ ← فُعِلَ ويَفْعَلُ ← يُفْعَلُ لكلّ جذر بقالبي الشبكة؛ نائبُ الفاعل بالرفع نفسِه، "
+       "وصورُه الأربع يقرؤها الجدولُ والصدر", _P,
+       "lean:Slge.Filiyya.majhul_fill", "lean:Slge.Filiyya.majhul_witnesses",
+       "lean:Slge.Filiyya.naib_eq_fail",
+       "lean:Slge.Filiyya.naib_witnesses",
+       "test:tests/test_filiyya.py::test_passive_two_state_operations_and_naib",
+       note="ترتيبُ النائب معلَن؛ اسمُ المصدر والمصدرُ على قالبٍ واحد (الدَّرْس): معجم."),
+    _c("FILIYYA-mafail", "المفاعيلُ نصبٌ فتنوين يُقرأ لكلّ جذع؛ الظرفُ من جداوله منصوبًا؛ قانونُ الفرز: "
+       "مشتقٌّ ⇒ حال، مصدرٌ بجذر الفعل ⇒ مطلق، مصدرٌ بغيره ⇒ لأجله؛ المعيّةُ واوٌ متّصلةٌ تحفظ الترخيص "
+       "والمشاركةُ على تَفَاعَلَ عطف؛ والمطلقُ يردّ جذرَ فعله لكلّ جذر", _P,
+       "lean:Slge.Filiyya.maful_reads_nasb", "lean:Slge.Filiyya.zarf_reads_nasb",
+       "lean:Slge.Filiyya.sorting_masdar_hal", "lean:Slge.Filiyya.maiyya_licensed",
+       "lean:Slge.Filiyya.tafaala_is_ataf", "lean:Slge.Filiyya.mutlaq_shares_root",
+       "test:tests/test_filiyya.py::test_four_objects",
+       note="المختصُّ من الظروف (المسجد) وفعلُ المشاركة خارج تَفَاعَلَ: معجم."),
+    _c("FILIYYA-masaq", "على 26,196 كلمةً من MASAQ بشهادات البوّابة: آخرُ الماضي من لاحقته يوافق "
+       "علامةَ "
+       "MASAQ 6,119/6,979؛ الفاعلُ المتّصلُ يوافق وسمَه 14,252/16,727؛ ورتبةُ القارئ تقبل موضعَ "
+       "المصحف في "
+       "15,621 من 16,727 (93.4%)", _S,
+       "test:tests/test_filiyya.py::test_masaq_measurement_and_index",
+       note="الثلاثيّاتُ بنافذة الفعل؛ 2,644 كلمةً مستبعَدةً بالاسم."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

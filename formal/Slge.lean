@@ -30,3 +30,4 @@ import Slge.Ism
 import Slge.Fil
 import Slge.Huruf
 import Slge.Jumla
+import Slge.Filiyya

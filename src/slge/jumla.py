@@ -34,10 +34,10 @@ from slge.zuruf import CONSTANTS as ZURUF_CONSTANTS
 from slge.zuruf import STEMS as ZURUF_STEMS
 from slge.zuruf import jarr, mudaf, qat, set_last
 
-__all__ = ["VERB_TEMPLATES", "WITNESSES", "Jumla", "admissible", "agree", "agree_loose",
-           "broken_plural", "dual", "gender", "jam_f", "jam_m", "khabar_kind", "lam",
-           "mubtada_kind", "nakira", "nominal", "number", "order", "rabit", "shibh_jumla", "swap",
-           "ta_nith"]
+__all__ = ["VERB_TEMPLATES", "WITNESSES", "Jumla", "admissible", "agree", "agree_loose", "bare",
+           "broken_plural", "dual", "gender", "has_aid_pronoun", "istifham", "jam_f", "jam_m",
+           "khabar_kind", "lam", "mubtada_kind", "nakira", "nominal", "number", "order", "rabit",
+           "shibh_jumla", "swap", "ta_nith"]
 
 _A, _I, _U, SUKUN = STATES
 Word = tuple[Cell, ...]
@@ -134,6 +134,10 @@ def starts_lam(w: Word) -> bool:
     return bool(w) and w[0] == ("ل", _A)
 
 
+def istifham(w: Word) -> bool:
+    return w in _ISTIFHAM
+
+
 def nakira(w: Word) -> bool:
     """النكرةُ من الخانة: تنوينٌ بلا أل."""
 
@@ -152,7 +156,7 @@ def order(j: Jumla) -> str:
     m, k = j.mubtada, j.khabar
     if starts_lam(m):
         return "تقديم المبتدأ"
-    if k in _ISTIFHAM:
+    if istifham(k):
         return "تقديم الخبر"
     if nakira(m) and shibh_jumla(k):
         return "تقديم الخبر"
@@ -229,14 +233,16 @@ def gender(w: Word) -> str:
     return "مذكر"
 
 
-def _bare(w: Word) -> Word:
+def bare(w: Word) -> Word:
+    """الجذعُ بلا أل (خانتا الهمزة واللام/الشمسيّة)."""
+
     return w[2:] if has_al(w) else w
 
 
 def broken_plural(w: Word) -> bool:
     """جمعُ التكسير احتمالًا: على قالبٍ من قوالب الجموع (83–100 ومنتهى الجموع)."""
 
-    b = set_last(_bare(w), _U)
+    b = set_last(bare(w), _U)
     return any(on_template(k, b) for k in (*range(83, 101), *MUNTAHA))
 
 

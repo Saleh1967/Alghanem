@@ -272,6 +272,34 @@ def main (args : List String) : IO Unit := do
                    ("dualTaNith", Jumla.dual (Jumla.taNith Jumla.talib)), ("jibal", Jumla.jibal),
                    ("shahiqa", Jumla.shahiqa)] do
       IO.println s!"agree,{n},{key w},{g w},{nn w},{Jumla.brokenPlural w}"
+  | ["filiyya"] =>
+    -- الشواهدُ: رتبةُ الثلاثيّ وقبولُه، والمجهولُ، والنائبُ، والفرزُ.
+    let ru := fun (r : Filiyya.Rutba) => match r with
+      | .failFirst => "failFirst" | .mafulFirst => "mafulFirst" | .mafulBeforeFil => "mafulBeforeFil"
+      | .free => "free"
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    for (n, j) in [("katabtu", (⟨Filiyya.katabtu, [], Filiyya.addars, .FSO⟩ : Filiyya.Filiyya)),
+                   ("musa-isa", ⟨Filiyya.daraba, Filiyya.musa, Filiyya.isa, .FSO⟩),
+                   ("sahibuha", ⟨Filiyya.sakana, Filiyya.sahibuha, Filiyya.addar, .FOS⟩),
+                   ("akramani", ⟨Filiyya.akramani, Filiyya.abuka, [], .FOS⟩),
+                   ("ayya", ⟨Filiyya.qabalta, [], Filiyya.ayya, .OFS⟩),
+                   ("akala", ⟨Filiyya.akala, Filiyya.zaydun, Filiyya.tuffahatan, .FSO⟩)] do
+      IO.println s!"order,{n},{key j.fil},{key j.fail},{key j.maful},{ru (Filiyya.order j)},{Filiyya.admissible j}"
+    let nk := fun (k : Filiyya.NaibKind) => match k with
+      | .maful => "maful" | .majrur => "majrur" | .zarf => "zarf" | .masdar => "masdar"
+    let fd := fun (k : Filiyya.Fadla) => match k with
+      | .liajlih => "liajlih" | .mutlaqF => "mutlaq" | .hal => "hal" | .unread => "unread"
+    for (n, w) in [("kataba", Filiyya.majhul [Slge.Categories.c 22 0, Slge.Categories.c 3 0, Slge.Categories.c 2 0]),
+                   ("yaktubu", Filiyya.majhulPres [Slge.Categories.c 28 0, Slge.Categories.c 22 3, Slge.Categories.c 3 2, Slge.Categories.c 2 2])] do
+      IO.println s!"majhul,{n},{key w}"
+    for w in [Filiyya.naib [Slge.Categories.c 0 0, Slge.Categories.c 10 3, Slge.Categories.c 10 0, Slge.Categories.c 5 2, Slge.Categories.c 23 0],
+              [Slge.Categories.c 28 0, Slge.Categories.c 27 3, Slge.Categories.c 24 2],
+              [Slge.Categories.c 20 0, Slge.Categories.c 26 3, Slge.Categories.c 24 2, Slge.Categories.c 25 3]] do
+      IO.println s!"naib,{key w},{nk (Filiyya.naibKind w)}"
+    for (w, v) in [([Slge.Categories.c 10 0, Slge.Categories.c 20 3, Slge.Categories.c 2 0, Slge.Categories.c 3 0, Slge.Categories.c 25 3], Filiyya.qumtu),
+              ([Slge.Categories.c 10 0, Slge.Categories.c 1 3, Slge.Categories.c 18 1, Slge.Categories.c 2 0, Slge.Categories.c 25 3], Filiyya.qumtu),
+              ([Slge.Categories.c 15 0, Slge.Categories.c 10 3, Slge.Categories.c 2 0, Slge.Categories.c 25 3], Filiyya.darabtu)] do
+      IO.println s!"fadla,{key w},{key v},{fd (Filiyya.sortFadla w v)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do
