@@ -49,9 +49,9 @@ def test_peeling_restores_the_word_exactly() -> None:
             assert r.templates and r.stem
     assert [(len(r.pre), r.al, r.templates) for r in jidh(cells_of("وَلْأَرْضِ"))] == [(1, 2, (29,))]
     assert [(len(r.pre), r.al, r.templates) for r in jidh(cells_of("أَلْأَرْضُ"))] == [(0, 1, (29,))]
-    r = jidh(cells_of("بِكِتَابِهِمْ"))
-    assert len(r) == 1 and len(r[0].pre) == 1 and len(r[0].suf) == 2
-    assert r[0].templates == (35, 41, 93)
+    rs2 = jidh(cells_of("بِكِتَابِهِمْ"))
+    assert len(rs2) == 1 and len(rs2[0].pre) == 1 and len(rs2[0].suf) == 2
+    assert rs2[0].templates == (35, 41, 93)
     assert [r.templates for r in jidh(cells_of("وَجَدَ"))] == [(0, 36)]
     # الطفرة: قراءةٌ مزوَّرةٌ لا تُردّ
     fake = Reading(((("و", "فتح"),),), 0, cells_of("أَرْضِ"), (), (29,))

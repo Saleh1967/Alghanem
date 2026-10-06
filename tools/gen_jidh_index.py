@@ -58,7 +58,7 @@ def measure() -> dict[str, Any]:
     forms = corpus_forms()
     before = sum(bool(senses(drop_tanwin(w))) for w in forms)
     step1 = sum(bool(stem_senses(w)) for w in forms)
-    readings = Counter()
+    readings: Counter[str] = Counter()
     for w in forms:
         n = len(jidh(w))
         readings["0" if n == 0 else "1" if n == 1 else "2" if n == 2 else "3+"] += 1
