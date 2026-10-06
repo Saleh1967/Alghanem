@@ -300,6 +300,26 @@ def main (args : List String) : IO Unit := do
               ([Slge.Categories.c 10 0, Slge.Categories.c 1 3, Slge.Categories.c 18 1, Slge.Categories.c 2 0, Slge.Categories.c 25 3], Filiyya.qumtu),
               ([Slge.Categories.c 15 0, Slge.Categories.c 10 3, Slge.Categories.c 2 0, Slge.Categories.c 25 3], Filiyya.darabtu)] do
       IO.println s!"fadla,{key w},{key v},{fd (Filiyya.sortFadla w v)}"
+  | ["shibh"] =>
+    -- الشواهدُ: الصورتان، والزائدُ، والمرتكزُ، والمحلُّ، والكونُ المحذوف.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let kk := fun (k : Shibh.Kind) => match k with
+      | .jarrMajrur => "jarrMajrur" | .zarf => "zarf" | .none => "none"
+    let an := fun (a : Shibh.Anchor) => match a with
+      | .verb => "verb" | .derived => "derived" | .kawn => "kawn"
+    let mh := fun (m : Shibh.Mahall) => match m with
+      | .khabar => "khabar" | .naat => "naat" | .hal => "hal" | .sila => "sila" | .unread => "unread"
+    for w in [Shibh.fiDar, [Slge.Categories.c 23 0, Slge.Categories.c 26 2, Slge.Categories.c 24 3],
+              Shibh.masaan, Shibh.zarf Shibh.masjid, Jumla.zayd] do
+      IO.println s!"kind,{key w},{kk (Shibh.kind w)}"
+    IO.println s!"zaid,{key (Nawasikh.raf (Majrurat.jarr (Marifa.dropTanwin Shibh.ahad)))},{key (Nawasikh.raf (Marifa.dropTanwin Shibh.ahad))}"
+    for w in [Shibh.jalasa, Jumla.qaim, Shibh.ilm] do
+      IO.println s!"anchor,{key w},{an (Shibh.anchor w)}"
+    for w in [Shibh.ilm, Shibh.tair, Shibh.usfur,
+              [Slge.Categories.c 0 0, Slge.Categories.c 23 3, Slge.Categories.c 23 0, Slge.Categories.c 9 1, Slge.Categories.c 28 3]] do
+      IO.println s!"mahall,{key w},{mh (Shibh.mahall w)}"
+    for m in [Shibh.Mahall.khabar, .naat, .hal, .sila] do
+      IO.println s!"kawn,{mh m},{key (Shibh.kawn m)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

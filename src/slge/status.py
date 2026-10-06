@@ -593,6 +593,31 @@ _DECLARED: tuple[Claim, ...] = (
        "15,621 من 16,727 (93.4%)", _S,
        "test:tests/test_filiyya.py::test_masaq_measurement_and_index",
        note="الثلاثيّاتُ بنافذة الفعل؛ 2,644 كلمةً مستبعَدةً بالاسم."),
+    # — شبهُ الجملة —
+    _c("SHIBH-forms", "شبهُ الجملة صورتان: حرفٌ من الجدول ثمّ جرٌّ على الآخر (المجرورُ بعد الحرف بعينه "
+       "ويُقرأ جرًّا لكلّ اسم، والتركيبُ مرخَّصٌ لكلّ حرفٍ واسم)، وظرفٌ من الجداول منصوبًا؛ والقارئُ يفرزهما؛ "
+       "وردُّ الزائد رفعٌ يُعيد الاسمَ بعينه لكلّ اسم؛ والمختصُّ خارج الجدول الحاصر فيُجرّ", _P,
+       "lean:Slge.Shibh.jarr_majrur_reads_jarr", "lean:Slge.Shibh.jarr_majrur_licensed",
+       "lean:Slge.Shibh.kind_witnesses", "lean:Slge.Shibh.setLast_setLast",
+       "lean:Slge.Shibh.zaid_restores",
+       "lean:Slge.Shibh.zaid_witness", "lean:Slge.Shibh.masjid_not_zarf",
+       "test:tests/test_shibh.py::test_two_forms_and_the_table_is_exhaustive",
+       "test:tests/test_shibh.py::test_zaid_is_restored_by_raf",
+       note="الأصليُّ والزائدُ خانةٌ واحدة: الزيادةُ معنًى؛ مَعَ ليست في الجدول المودَع — باسمها."),
+    _c("SHIBH-anchor", "المرتكزُ ممّا قبل شبه الجملة: فعلٌ على قالبه أو مشتقٌّ على قالب الوصف أو الكونُ "
+       "المحذوف (ثلاثةٌ حاصرة)؛ والمحلُّ من خانة ما قبلها: صلةٌ بعد كلّ موصول، نعتٌ بعد النكرة لكلّ جذع، "
+       "خبرٌ بعد المعرفة المرفوعة لكلّ جذع، حالٌ بعد المنصوبة؛ والكونُ المحذوفُ بحالة المحلّ", _P,
+       "lean:Slge.Shibh.anchor_witnesses", "lean:Slge.Shibh.mahall_after_mawsul",
+       "lean:Slge.Shibh.mahall_after_nakira", "lean:Slge.Shibh.mahall_after_al_raf",
+       "lean:Slge.Shibh.mahall_witnesses", "lean:Slge.Shibh.kawn_reads",
+       "test:tests/test_shibh.py::test_anchor_and_mahall_from_the_preceding_cells",
+       note="تقديرُ الكون معلَنٌ وحالتُه مقروءة؛ المرتكزُ البعيدُ تيار؛ برهانُ الحصر المُرسَل تحصيلُ حاصل."),
+    _c("SHIBH-masaq", "على 40,731 كلمةً من MASAQ بشهادات البوّابة: الجارُّ والمجرور بالقارئ "
+       "8,075/12,402 "
+       "(والباقي متّصلٌ على غير أل)، الظرفُ 1,375/2,033، المجرورُ يُقرأ جرًّا 5,392 ويُردّ زائدُه بعينه "
+       "4,752؛ وشبهُ الجملة الخبرُ مرتكزُها كونٌ محذوف 616/739", _S,
+       "test:tests/test_shibh.py::test_masaq_measurement_and_index",
+       note="المرتكزُ والمحلُّ من الكلمة السابقة مباشرة؛ 3,370 كلمةً مستبعَدةً بالاسم."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

@@ -526,3 +526,16 @@ import Slge
 #print axioms Slge.Filiyya.maiyya_licensed
 #print axioms Slge.Filiyya.tafaala_is_ataf
 #print axioms Slge.Filiyya.mutlaq_shares_root
+#print axioms Slge.Shibh.jarr_majrur_reads_jarr
+#print axioms Slge.Shibh.jarr_majrur_licensed
+#print axioms Slge.Shibh.kind_witnesses
+#print axioms Slge.Shibh.setLast_setLast
+#print axioms Slge.Shibh.zaid_restores
+#print axioms Slge.Shibh.zaid_witness
+#print axioms Slge.Shibh.masjid_not_zarf
+#print axioms Slge.Shibh.anchor_witnesses
+#print axioms Slge.Shibh.mahall_after_mawsul
+#print axioms Slge.Shibh.mahall_after_nakira
+#print axioms Slge.Shibh.mahall_after_al_raf
+#print axioms Slge.Shibh.mahall_witnesses
+#print axioms Slge.Shibh.kawn_reads

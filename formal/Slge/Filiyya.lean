@@ -323,8 +323,15 @@ def isMasdar (w : List SCell) : Bool :=
   masdarTemplates.any (fun k =>
     Sarf.onTemplate (Sarf.templ k) (setLast (Marifa.dropTanwin (Jumla.bare w)) 2))
 
+/-- الظرفُ من الجداول: صورُ الأسماء المعربة (بالنصب)، والمبنيّاتُ (إِذْ، إِذَا، حَيْثُ، ثَمَّ، هُنَا…). -/
+def isZarfBare (w : List SCell) : Bool :=
+  Zuruf.forms.any (· == setLast w 0) || Zaman.forms.any (· == w) || Zaman.forms.any (· == setLast w 0) ||
+    Zuruf.constants.any (·.2 == w) || Zaman.constants.any (·.2.1 == w)
+
+/-- والمضافُ إلى الضمير (بَيْنَهُمْ، مَعَكُمْ): الجدولُ بعد إسقاط اللاحقة. -/
 def isZarf (w : List SCell) : Bool :=
-  Zuruf.forms.any (· == setLast w 0) || Zaman.forms.any (· == w) || Zaman.forms.any (· == setLast w 0)
+  isZarfBare w || Jumla.aidSuffixes.any (fun p =>
+    p.isSuffixOf w && p.length < w.length && isZarfBare (w.take (w.length - p.length)))
 
 /-- النائبُ من صدر الكلمة وجدولها: مجرورٌ (شبهُ جملة)، ظرفٌ، مصدرٌ، وإلّا فالمفعولُ به؛ والترتيبُ معلَن. -/
 def naibKind (w : List SCell) : NaibKind :=

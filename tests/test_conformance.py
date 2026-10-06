@@ -558,3 +558,31 @@ def test_filiyya_matches_lean() -> None:
             assert naib_kind(cells(r[1])) == nk[r[2]], r[1]
         elif r[0] == "fadla":
             assert sort_fadla(cells(r[1]), cells(r[2])) == fd[r[3]], r[1]
+
+
+def test_shibh_matches_lean() -> None:
+    """الصورتان والزائدُ والمرتكزُ والمحلُّ والكونُ المحذوف على الشواهد = جدولُ `Shibh`."""
+
+    from slge.shibh import anchor, kawn, kind, mahall
+    from slge.tawabi import case_class
+
+    rows = _rows("shibh.csv")
+    kk = {"jarrMajrur": "جار ومجرور", "zarf": "ظرف", "none": "—"}
+    an = {"verb": "فعل", "derived": "مشتق", "kawn": "كون محذوف"}
+    mh = {"khabar": "خبر", "naat": "نعت", "hal": "حال", "sila": "صلة", "unread": "—"}
+
+    def cells(s: str) -> tuple[Cell, ...]:
+        return tuple(_cell(int(i)) for i in s.split("-")) if s else ()
+
+    assert len(rows) == 5 + 1 + 3 + 4 + 4
+    for r in rows:
+        if r[0] == "kind":
+            assert kind(cells(r[1])) == kk[r[2]], r
+        elif r[0] == "zaid":
+            assert r[1] == r[2] and case_class(cells(r[1])) == "رفع"
+        elif r[0] == "anchor":
+            assert anchor(cells(r[1])) == an[r[2]], r
+        elif r[0] == "mahall":
+            assert mahall(cells(r[1])) == mh[r[2]], r
+        elif r[0] == "kawn":
+            assert kawn(mh[r[1]]) == cells(r[2]), r

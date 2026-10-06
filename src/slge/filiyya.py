@@ -27,8 +27,10 @@ from slge.rawabit import cells_of
 from slge.sarf import on_template
 from slge.tawabi import case_class
 from slge.wazn import AWZAN, Template, fill, root_of
+from slge.zaman import CONSTANTS as ZAMAN_CONSTANTS
 from slge.zaman import STEMS as ZAMAN_STEMS
 from slge.zaman import nasb_tanwin
+from slge.zuruf import CONSTANTS as ZURUF_CONSTANTS
 from slge.zuruf import STEMS as ZURUF_STEMS
 from slge.zuruf import mudaf, set_last
 
@@ -181,8 +183,19 @@ def is_masdar(w: Word) -> bool:
     return any(on_template(k, b) for k in MASDAR_TEMPLATES)
 
 
+_MABNI_ZARF: Final[frozenset[Word]] = frozenset(ZURUF_CONSTANTS.values()) | frozenset(
+    v[0] for v in ZAMAN_CONSTANTS.values())
+
+
+def _is_zarf_bare(w: Word) -> bool:
+    return set_last(w, _A) in _ZURUF or w in _ZAMAN or set_last(w, _A) in _ZAMAN or w in _MABNI_ZARF
+
+
 def is_zarf(w: Word) -> bool:
-    return set_last(w, _A) in _ZURUF or w in _ZAMAN or set_last(w, _A) in _ZAMAN
+    """الظرفُ من الجداول: المعربُ بالنصب والمبنيّ (إِذْ، إِذَا…)، والمضافُ إلى الضمير بعد إسقاطه."""
+
+    return _is_zarf_bare(w) or any(
+        len(p) < len(w) and w[-len(p):] == p and _is_zarf_bare(w[: -len(p)]) for p in _AID)
 
 
 def naib_kind(w: Word) -> str:
