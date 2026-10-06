@@ -56,7 +56,7 @@ def breaches() -> list[Breach]:
         rel = str(p.relative_to(ROOT))
         tree = ast.parse(p.read_text(encoding="utf-8"))
         for n in ast.walk(tree):
-            if isinstance(n, (ast.Import, ast.ImportFrom)):
+            if isinstance(n, ast.Import | ast.ImportFrom):
                 names = [a.name for a in n.names] if isinstance(n, ast.Import) else [n.module or ""]
                 for m in names:
                     if m.startswith(FORBIDDEN_IMPORT_PREFIXES):
