@@ -211,6 +211,18 @@ def main (args : List String) : IO Unit := do
       IO.println s!"kind,{n},{"-".intercalate (w.map fun c => toString c.index)},{kn (Wasl.kind w)}"
     IO.println s!"templates,wasl,{"-".intercalate (Wasl.waslTemplates.map toString)}"
     IO.println s!"templates,qat,{"-".intercalate (Wasl.qatTemplates.map toString)}"
+  | ["ism"] =>
+    for w in Ism.witnesses do
+      IO.println s!"thulathi,{w.1},{"-".intercalate (w.2.1.map fun c => toString c.index)},{w.2.2.1}-{w.2.2.2}"
+    for p in Ism.rubai ++ Ism.khumasi do
+      IO.println s!"shape,{p.1},{"-".intercalate (p.2.map fun c => toString c.index)},{"-".intercalate ((Ism.shape p.2).map toString)}"
+    for (n, w) in [("rujayl", Ism.saghir3 10 5 23 2), ("durayhim", Ism.saghir4 8 10 26 24 2),
+                   ("usayfir", Ism.saghir5 18 14 20 10 2),
+                   ("misri", Ism.nisba [Slge.Categories.c 24 1, Slge.Categories.c 14 3, Slge.Categories.c 10 0] 2),
+                   ("makki", Ism.nisba (Ism.prepare .dropTa [Slge.Categories.c 24 0, Slge.Categories.c 22 3, Slge.Categories.c 22 0, Slge.Categories.c 3 2]) 2),
+                   ("asawi", Ism.nisba (Ism.prepare .maqsur3 [Slge.Categories.c 18 0, Slge.Categories.c 14 0, Slge.Categories.c 1 3]) 2),
+                   ("amawi", Ism.nisba (Ism.prepare .manqus3 [Slge.Categories.c 18 0, Slge.Categories.c 24 1, Slge.Categories.c 28 3]) 2)] do
+      IO.println s!"op,{n},{"-".intercalate (w.map fun c => toString c.index)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

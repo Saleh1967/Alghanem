@@ -26,3 +26,4 @@ import Slge.Jazm
 import Slge.Mansubat
 import Slge.Majrurat
 import Slge.Wasl
+import Slge.Ism

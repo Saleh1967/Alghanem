@@ -436,6 +436,29 @@ _DECLARED: tuple[Claim, ...] = (
        "(4,318) يوافق الشهادةَ 4,259؛ وبعد السابقة لا وصلَ قائمًا: 943 ساقطٌ و119 محذوفٌ رسمًا", _S,
        "test:tests/test_wasl.py::test_masaq_measurement_and_index",
        note="555 صورةً مرفوضةٌ بالاسم؛ المهموزُ المعتلّ والمدغم والحروفُ لا يقرؤها القالب."),
+    # — الاسم —
+    _c("ISM-thulathi", "المجرّدُ الثلاثيُّ عشرةٌ = 3 × 4 − 2: اثنا عشرَ قالبًا يسقط فُعُل وفِعُل، كلُّها "
+       "سليمةٌ مرخَّصةٌ لكلّ جذر وتُقرأ من الخانتين الأُوليين؛ والرباعيُّ خمسةُ أشكالٍ (الحصرُ يسمّي فَعْلَل "
+       "مرّتين) والخماسيُّ أربعة", _P,
+       "lean:Slge.Ism.thulathi_ten", "lean:Slge.Ism.thulathi_wf", "lean:Slge.Ism.thulathi_licensed",
+       "lean:Slge.Ism.thulathi_read", "lean:Slge.Ism.witnesses_read", "lean:Slge.Ism.rubai_shapes",
+       "lean:Slge.Ism.khumasi_shapes", "test:tests/test_ism.py::test_thulathi_ten_and_shapes",
+       note="الحصرُ يسمّي «فُعِل» ساقطةً ثمّ يعدّها بدُئِل: الجدولُ يفصل — الساقطان فُعُل وفِعُل."),
+    _c("ISM-tahwil", "التصغيرُ ثلاثُ عمليّاتٍ تحفظ الترخيصَ لكلّ جذر ويقرؤها القارئ؛ والنسبُ عمليّةٌ واحدة "
+       "بعد تهيئةٍ مسمّاة تحفظ الترخيصَ وتُقرأ", _P,
+       "lean:Slge.Ism.tasghir_licensed", "lean:Slge.Ism.tasghir_read",
+       "lean:Slge.Ism.tasghir_witnesses",
+       "lean:Slge.Ism.nisba_licensed", "lean:Slge.Ism.nisba_read", "lean:Slge.Ism.nisba_witnesses",
+       "test:tests/test_ism.py::test_tasghir_and_nisba_operations"),
+    _c("ISM-bina", "البناءُ العارضُ حالةٌ ثابتةٌ في الآخر بعمليّةٍ في بابها (المنادى، اسمُ لا، المقطوع، "
+       "المركّب)؛ واللازمُ 71 صورةً مودَعة", _P,
+       "lean:Slge.Ism.arid_bina", "lean:Slge.Ism.lazim_deposited",
+       "test:tests/test_ism.py::test_arid_bina_in_its_babs"),
+    _c("ISM-masaq", "على 19,216 اسمًا معربًا من MASAQ: الثلاثيُّ 4,447 منه على العشرة 4,101 وفِعُل "
+       "معدومة وفُعُل 185 كلُّها جموع؛ الرباعيُّ 1,580 أكثرُه فَعْلَل وفُعْلَل وفِعْلَل؛ تصغيرٌ 23 "
+       "ونسبٌ 139 بالقارئ", _S,
+       "test:tests/test_ism.py::test_masaq_measurement_and_index",
+       note="1,824 صورةً مرفوضةٌ بالاسم؛ فَعَلَل وفَعِلَل أشكالُ المزيد بالتاء لا المجرّد."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

@@ -393,3 +393,30 @@ def test_wasl_matches_lean() -> None:
             assert ten[r[1]] == cells[:-1] and kind(cells) == lean[r[3]], r
         else:
             assert kind(cells) == lean[r[3]], r
+
+
+def test_ism_matches_lean() -> None:
+    """شواهدُ الثلاثيّ وأشكالُ الرباعيّ والخماسيّ وعمليّاتُ التصغير والنسب = جدولُ `Ism`."""
+
+    from slge.cells import STATES
+    from slge.ism import nisba, prepare, read_thulathi, saghir3, saghir4, saghir5, shape
+    from slge.rawabit import cells_of
+
+    rows = _rows("ism.csv")
+    assert len(rows) == 11 + 10 + 7
+    st = dict(zip("0123", STATES, strict=True))
+    u = STATES[2]
+    ops = {"rujayl": saghir3("ر", "ج", "ل", u), "durayhim": saghir4("د", "ر", "ه", "م", u),
+           "usayfir": saghir5("ع", "ص", "ف", "ر", u), "misri": nisba(cells_of("مِصْرَ"), u),
+           "makki": nisba(prepare("حذف التاء", cells_of("مَكَّةُ")), STATES[2]),
+           "asawi": nisba(prepare("مقصور ثالث", cells_of("عَصَا")), STATES[2]),
+           "amawi": nisba(prepare("منقوص ثالث", cells_of("عَمِي")), STATES[2])}
+    for r in rows:
+        cells = tuple(_cell(int(i)) for i in r[2].split("-"))
+        if r[0] == "thulathi":
+            f, a = r[3].split("-")
+            assert read_thulathi(cells) == (st[f], st[a]), r
+        elif r[0] == "shape":
+            assert shape(cells) == tuple(st[x] for x in r[3].split("-")), r
+        else:
+            assert ops[r[1]] == cells, r
