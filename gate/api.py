@@ -132,10 +132,16 @@ def _arabic(w: str) -> bool:
 
 
 def _reasons(decision: dict[str, Any]) -> tuple[str, ...]:
+    """أسبابُ الرفض بأسمائها؛ وما غلّفه الجسرُ في `upstream_error` يُفكّ فلا يخرج رفضٌ بلا اسم."""
+
     out: list[str] = []
     for r in decision.get("reasons") or ():
         if isinstance(r, dict):
-            out.append(str(r.get("reason")))
+            inner = r.get("upstream_error")
+            if isinstance(inner, dict) and r.get("reason") is None:
+                out.append(str(inner.get("reason")))
+            else:
+                out.append(str(r.get("reason")))
         else:
             out.append(str(r))
     return tuple(out)
