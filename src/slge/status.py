@@ -393,6 +393,28 @@ _DECLARED: tuple[Claim, ...] = (
        "حسب الموقع 318/475", _S,
        "test:tests/test_mansubat.py::test_masaq_measurement_and_index",
        note="516 صورةً رُفضت بالاسم (REJECT: التنوينُ بعد الألف في طبعة MASAQ)؛ النفيُ والتمامُ تيار."),
+    # — المجرورات —
+    _c("MAJRURAT-ops", "الجرُّ عمليّةٌ واحدة (كسرٌ، وللنكرة تنوين) تُقرأ جرًّا لكلّ جذعٍ وتحفظ الترخيصَ "
+       "ويحكم عليها جدولُ الأدوات؛ الياءُ (جمعٌ ومثنًّى) نصبٌ أو جرّ، والخمسةُ بالياء لا يقرؤها القارئ؛ "
+       "والفتحةُ في الممنوع تُقرأ نصبًا والجرُّ من جدول العلل", _P,
+       "lean:Slge.Majrurat.jarr_licensed", "lean:Slge.Majrurat.caseClass_jarr",
+       "lean:Slge.Majrurat.caseClass_jarr_tanwin", "lean:Slge.Majrurat.govern_jarr",
+       "lean:Slge.Majrurat.uqud_jarr_compatible", "lean:Slge.Majrurat.dual_jarr_compatible",
+       "lean:Slge.Majrurat.khamsa_jarr_unread", "lean:Slge.Majrurat.mamnu_jarr_reads_nasb",
+       "lean:Slge.Majrurat.an_kasra_shared",
+       "test:tests/test_majrurat.py::test_one_operation_three_markers"),
+    _c("MAJRURAT-sabab", "سببُ الجرّ في الحدّ: 17 حرفًا مرخَّصًا والمتّصلةُ الخمسةُ لا تُفسد ما بعدها؛ "
+       "الإضافةُ تُسقط التنوينَ ونونَ الجمع والمثنّى، واللفظيّةُ يقرؤها القالب؛ والتبعيّةُ توافقٌ", _P,
+       "lean:Slge.Majrurat.harfs_licensed", "lean:Slge.Majrurat.proclitic_jarr_licensed",
+       "lean:Slge.Majrurat.harfs_in_rawabit", "lean:Slge.Majrurat.rubba_nakira",
+       "lean:Slge.Majrurat.mudaf_no_tanwin", "lean:Slge.Majrurat.mudaf_drops_nun",
+       "lean:Slge.Majrurat.lafziyya_by_template", "lean:Slge.Majrurat.tabi_jarr_follows",
+       "test:tests/test_majrurat.py::test_sabab_in_boundary",
+       note="تَاللَّهِ خارج الترخيص الثنائيّ (مدٌّ فلامٌ مشدّدة) كحَاجَّ: الثلاثيُّ في الغانم."),
+    _c("MAJRURAT-masaq", "على 18,184 مجرورٍ ومضافٍ من MASAQ: الكسرةُ جرٌّ 9,790/9,930، الياءُ نصبٌ/جرّ "
+       "أو غيرُ مقروءة 988/1,000، الفتحةُ نصبٌ 290/308؛ والمضافُ بلا تنوين 8,058/8,137", _S,
+       "test:tests/test_majrurat.py::test_masaq_measurement_and_index",
+       note="إِيمَانِ وشَيْطَانِ تُقرأ رفعًا كالمثنّى: خانةٌ واحدة؛ تنوينُ العوض في المضاف مسمًّى."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

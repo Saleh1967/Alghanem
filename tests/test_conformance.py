@@ -352,3 +352,22 @@ def test_mansubat_matches_lean() -> None:
         else:
             assert cells_of(tools[r[1]]) == cells, r
     assert jarr(ras)[-1] == ("س", "كسر")
+
+
+def test_majrurat_matches_lean() -> None:
+    """حروفُ الجرّ وعمليّاتُ الإضافة والمثنّى = جدولُ `Majrurat`."""
+
+    from slge.majrurat import HARFS, dual, jarr_nakira, mudaf_dual, mudaf_uqud
+    from slge.rawabit import cells_of
+
+    rows = _rows("majrurat.csv")
+    assert len(rows) == len(HARFS) + 4
+    rajul = cells_of("رَجُلُ")
+    ops = {"jarr_nakira": jarr_nakira(rajul), "dual": dual(rajul), "mudaf_dual": mudaf_dual(rajul),
+           "mudaf_uqud": mudaf_uqud(cells_of("مُهَنْدِسُ"), True)}
+    for r in rows:
+        cells = tuple(_cell(int(i)) for i in r[2].split("-"))
+        if r[0] == "harf":
+            assert r[1] in HARFS and cells_of(r[1]) == cells, r
+        else:
+            assert ops[r[1]] == cells, r

@@ -190,6 +190,15 @@ def main (args : List String) : IO Unit := do
     for (n, w) in [("illa", Mansubat.illa), ("ghayr", Mansubat.ghayr), ("siwa", Mansubat.siwa),
                    ("khala", Mansubat.khala), ("ada", Mansubat.ada), ("hasha", Mansubat.hasha)] do
       IO.println s!"tool,{n},{"-".intercalate (w.map fun c => toString c.index)}"
+  | ["majrurat"] =>
+    for p in Majrurat.harfs do
+      IO.println s!"harf,{p.1},{"-".intercalate (p.2.map fun c => toString c.index)}"
+    let rajul := [Slge.Categories.c 10 0, Slge.Categories.c 5 2, Slge.Categories.c 23 2]
+    for (n, w) in [("jarr_nakira", Nawasikh.tanwin (Majrurat.jarr rajul)), ("dual", Majrurat.dual rajul),
+                   ("mudaf_uqud", Majrurat.mudafUqud [Slge.Categories.c 24 2, Slge.Categories.c 26 0,
+                      Slge.Categories.c 25 3, Slge.Categories.c 8 1, Slge.Categories.c 12 2] true),
+                   ("mudaf_dual", Majrurat.mudafDual rajul)] do
+      IO.println s!"op,{n},{"-".intercalate (w.map fun c => toString c.index)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do
