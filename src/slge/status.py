@@ -618,6 +618,32 @@ _DECLARED: tuple[Claim, ...] = (
        "4,752؛ وشبهُ الجملة الخبرُ مرتكزُها كونٌ محذوف 616/739", _S,
        "test:tests/test_shibh.py::test_masaq_measurement_and_index",
        note="المرتكزُ والمحلُّ من الكلمة السابقة مباشرة؛ 3,370 كلمةً مستبعَدةً بالاسم."),
+    # — النِّسَبُ الثلاث —
+    _c("NISAB-isnad", "الإسنادُ عمليّةٌ واحدة: مبتدأُ الاسميّة وفاعلُ الفعليّة ونائبُه هي الرفعُ بعينه، "
+       "فيُقرأ المسندُ إليه رفعًا لكلّ جذع", _P,
+       "lean:Slge.Nisab.isnad_one_operation", "lean:Slge.Nisab.isnad_reads_raf",
+       "test:tests/test_nisab.py::test_isnad_is_one_operation"),
+    _c("NISAB-taqyid", "التقييدُ لا يُنشئ رفعًا: الحالُ والتمييزُ والمفعولُ نصبٌ لكلّ جذع، والإضافةُ والجارُّ "
+       "جرٌّ لكلّ اسم، والنعتُ تبعٌ تناظريٌّ انعكاسيّ؛ والرفعُ في التقييد تبعٌ لا أصل", _P,
+       "lean:Slge.Nisab.taqyid_nasb", "lean:Slge.Nisab.taqyid_jarr", "lean:Slge.Nisab.naat_follows",
+       "lean:Slge.Nisab.taqyid_raf_only_by_following",
+       "test:tests/test_nisab.py::test_taqyid_never_creates_raf"),
+    _c("NISAB-tadmin", "التضمينُ على الخانات ترتيبٌ جزئيٌّ (انعكاسيٌّ متعدٍّ متضادُّ التباين) من نواة Lean؛ "
+       "الصورةُ تتضمّن جذرَها لكلّ قالبٍ ولكلّ جذر؛ والفصلُ: ما اختلف قالبُه اختلفت صورتُه على 121 قالبًا؛ "
+       "وسلاسلُ الأوزان تنتهي بالجذر", _P,
+       "lean:Slge.Nisab.contains_refl", "lean:Slge.Nisab.contains_trans",
+       "lean:Slge.Nisab.contains_antisymm",
+       "lean:Slge.Nisab.form_contains_root", "lean:Slge.Nisab.slots_ordered",
+       "lean:Slge.Nisab.species_distinct", "lean:Slge.Nisab.chains_end_at_root",
+       "test:tests/test_nisab.py::test_containment_is_a_partial_order_and_forms_contain_roots",
+       "test:tests/test_nisab.py::test_chains_end_at_root",
+       note="التضمينُ بين الكلمات (الجنسُ والنوع) معجم؛ القالبُ المودَعُ بمعنيين صورةٌ واحدة: الفصلُ هناك "
+            "معنًى."),
+    _c("NISAB-masaq", "القارئُ nisba على 10,149 زوجًا من الشرائح المودَعة بشهادات البوّابة: يوافق وسمَ "
+       "MASAQ "
+       "في 6,332 (62%)؛ الإسنادُ مبتدأً وخبرًا 1,416/1,643، والتقييدُ مفعولًا به 1,955/3,471", _S,
+       "lean:Slge.Nisab.nisba_witnesses", "test:tests/test_nisab.py::test_reader_and_masaq",
+       note="المبنيُّ فاعلًا ومفعولًا صورةٌ واحدة؛ العلمُ المنوَّن نكرةٌ بالخانة؛ المعتلُّ على غير قالب."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

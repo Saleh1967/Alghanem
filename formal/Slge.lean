@@ -32,3 +32,4 @@ import Slge.Huruf
 import Slge.Jumla
 import Slge.Filiyya
 import Slge.Shibh
+import Slge.Nisab

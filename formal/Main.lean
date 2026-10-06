@@ -320,6 +320,17 @@ def main (args : List String) : IO Unit := do
       IO.println s!"mahall,{key w},{mh (Shibh.mahall w)}"
     for m in [Shibh.Mahall.khabar, .naat, .hal, .sila] do
       IO.println s!"kawn,{mh m},{key (Shibh.kawn m)}"
+  | ["nisab"] =>
+    -- التضمينُ على الأوزان: لكلّ وزنٍ سلسلةُ أسلافه وبعدُه عن الجذر؛ والنسبةُ المقروءةُ على الشواهد.
+    for k in List.range 121 do
+      IO.println s!"chain,{k},{"-".intercalate ((Nisab.chain k Nisab.F).map toString)},{Nisab.dist k Nisab.F}"
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let nn := fun (n : Nisab.Nisba) => match n with
+      | .isnad => "isnad" | .taqyid => "taqyid" | .unread => "unread"
+    for (a, b) in [(Nisab.ilm, Nisab.nur), (Filiyya.akala, Jumla.zayd), (Jumla.rajul, Nisab.karim),
+                   (Jumla.zayd, Nisab.rakiban), (Nisab.kitabu, Nisab.zaydin), (Nisab.ilm, Jumla.darasa),
+                   (Nisab.ilm, Jumla.fidDar), (Jumla.darasa, Jumla.darasa)] do
+      IO.println s!"nisba,{key a},{key b},{nn (Nisab.nisba a b)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

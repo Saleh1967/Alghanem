@@ -4,9 +4,9 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 93 |
+| مبرهن | 96 |
 | مفحوص_استقصاء | 12 |
-| مفحوص_بعينة | 24 |
+| مفحوص_بعينة | 25 |
 | دليل | 0 |
 | معلن | 10 |
 | رأي | 0 |
@@ -77,6 +77,9 @@
 | NIDA-adawat | الأدواتُ الستّ حروفٌ مرخَّصة؛ ويَا تُوصَل بكلّ مرخَّص | مبرهن | `lean:Slge.Nida.particles_licensed`<br>`lean:Slge.Nida.particles_nodup`<br>`lean:Slge.Nida.ya_junction`<br>`test:tests/test_conformance.py::test_nida_matches_lean` |  |
 | NIDA-hukm | قانونُ المنادى من الخانة الأخيرة: الضمُّ بناءٌ، والتنوينُ لا يجامع البناء | مبرهن | `lean:Slge.Nida.damm_is_bina`<br>`lean:Slge.Nida.tanwin_never_bina`<br>`lean:Slge.Nida.witnesses_hukm`<br>`test:tests/test_nida.py::test_hukm_reads_the_last_cell` |  |
 | NIDA-nudba | الندبة (حَسْرَتَاهْ) ساكنان متجاوران: خارج الترخيص الثنائيّ لكلّ جذع | مبرهن | `lean:Slge.Nida.nudba_not_binary_licensed`<br>`test:tests/test_nida.py::test_nudba_is_outside_binary_licence` | صورةُ وقفٍ يرخّصها الثلاثيُّ في الغانم (A116.Ternary)؛ لا تُدّعى هنا. |
+| NISAB-isnad | الإسنادُ عمليّةٌ واحدة: مبتدأُ الاسميّة وفاعلُ الفعليّة ونائبُه هي الرفعُ بعينه، فيُقرأ المسندُ إليه رفعًا لكلّ جذع | مبرهن | `lean:Slge.Nisab.isnad_one_operation`<br>`lean:Slge.Nisab.isnad_reads_raf`<br>`test:tests/test_nisab.py::test_isnad_is_one_operation` |  |
+| NISAB-tadmin | التضمينُ على الخانات ترتيبٌ جزئيٌّ (انعكاسيٌّ متعدٍّ متضادُّ التباين) من نواة Lean؛ الصورةُ تتضمّن جذرَها لكلّ قالبٍ ولكلّ جذر؛ والفصلُ: ما اختلف قالبُه اختلفت صورتُه على 121 قالبًا؛ وسلاسلُ الأوزان تنتهي بالجذر | مبرهن | `lean:Slge.Nisab.contains_refl`<br>`lean:Slge.Nisab.contains_trans`<br>`lean:Slge.Nisab.contains_antisymm`<br>`lean:Slge.Nisab.form_contains_root`<br>`lean:Slge.Nisab.slots_ordered`<br>`lean:Slge.Nisab.species_distinct`<br>`lean:Slge.Nisab.chains_end_at_root`<br>`test:tests/test_nisab.py::test_containment_is_a_partial_order_and_forms_contain_roots`<br>`test:tests/test_nisab.py::test_chains_end_at_root` | التضمينُ بين الكلمات (الجنسُ والنوع) معجم؛ القالبُ المودَعُ بمعنيين صورةٌ واحدة: الفصلُ هناك معنًى. |
+| NISAB-taqyid | التقييدُ لا يُنشئ رفعًا: الحالُ والتمييزُ والمفعولُ نصبٌ لكلّ جذع، والإضافةُ والجارُّ جرٌّ لكلّ اسم، والنعتُ تبعٌ تناظريٌّ انعكاسيّ؛ والرفعُ في التقييد تبعٌ لا أصل | مبرهن | `lean:Slge.Nisab.taqyid_nasb`<br>`lean:Slge.Nisab.taqyid_jarr`<br>`lean:Slge.Nisab.naat_follows`<br>`lean:Slge.Nisab.taqyid_raf_only_by_following`<br>`test:tests/test_nisab.py::test_taqyid_never_creates_raf` |  |
 | NUM-agree | عددُ الشهادة (ترقيم الذرّات) وعددُ الطيّ متكافئان على المرخَّصات بطولٍ واحد | مبرهن | `lean:Slge.Consistency.numbers_agree`<br>`lean:Slge.Consistency.atomNumber_determines_fold`<br>`lean:Slge.Consistency.fold_determines_atomNumber` |  |
 | Q1 | الخاناتُ ‎116 = 29 × 4‎، تامّةٌ بلا تكرار | مبرهن | `lean:Slge.scells_length`<br>`test:tests/test_cells.py::test_cells_are_116` |  |
 | Q2 | الترخيصُ قيدُ مسار، وهو `Admissible` في الـ116 بعينه لكلّ طول | مبرهن | `lean:Slge.licensed_iff`<br>`test:tests/test_conformance.py::test_folds_match_lean` |  |
@@ -136,6 +139,7 @@
 | MARIFA-tanwin | على 6,544 صورةً من MASAQ: أل مع تنوين 1 (وسم خاطئ)؛ مضافٌ مع تنوين 12 (تنوينُ العوض وخلافُ وسم)؛ العلمُ منوَّن 35/157 فالتنوينُ ليس علامةَ تنكير | مفحوص_بعينة | `test:tests/test_marifa.py::test_masaq_measurement_and_index` | القوّةُ ترتيبٌ معلَن؛ العلمُ والنكرة من المعجم؛ المستترُ بلا خانة. |
 | NAWASIKH-masaq | على 2,599 اسمٍ وخبرٍ من MASAQ: خبرُ كان نصبٌ 99%، خبرُ إنّ رفعٌ 98%، اسمُ كان رفعٌ 92%، اسمُ إنّ نصبٌ 95%، اسمُ لا 73/73 نكرةٌ مفتوحة؛ عسى بأَنْ 21/24 وكاد 0/23 وطفق 0/3؛ وإنّما لا اسمَ ناسخٍ بعدها 27/27 | مفحوص_بعينة | `test:tests/test_nawasikh.py::test_masaq_measurement_and_index` | المخالفُ: ياءُ المتكلّم والمنقوص — دُيونٌ على القارئ؛ والتمامُ والجمودُ والتعليقُ تيارٌ ومعجم. |
 | NIDA-masaq | على 489 منادًى بشهادات البوّابة: الضمُّ ⇒ مبنيّ 188/188؛ الفتحُ والكسرُ ⇒ معرب 195/237؛ 63 لا تقرؤها الخانة | مفحوص_بعينة | `test:tests/test_nida.py::test_masaq_measurement_and_index` | الباقي خلافُ وسمٍ في MASAQ (أَهْلَ، مَعْشَرَ، بَنِي موسومةً «مبني»)؛ لم أُصلحه. |
+| NISAB-masaq | القارئُ nisba على 10,149 زوجًا من الشرائح المودَعة بشهادات البوّابة: يوافق وسمَ MASAQ في 6,332 (62%)؛ الإسنادُ مبتدأً وخبرًا 1,416/1,643، والتقييدُ مفعولًا به 1,955/3,471 | مفحوص_بعينة | `lean:Slge.Nisab.nisba_witnesses`<br>`test:tests/test_nisab.py::test_reader_and_masaq` | المبنيُّ فاعلًا ومفعولًا صورةٌ واحدة؛ العلمُ المنوَّن نكرةٌ بالخانة؛ المعتلُّ على غير قالب. |
 | SARF-masaq | بعد الجارّ على 754 اسمًا: بأل ⇒ كسر 255؛ مضاف ⇒ كسر 120؛ المجرّدُ منوَّنُ كسرٍ 251 أو مفتوحٌ بلا تنوين 44 (الممنوع: 17 بعلّة صيغةٍ مقروءة، 27 معجم) | مفحوص_بعينة | `test:tests/test_sarf.py::test_masaq_measurement_and_index` | العلميّةُ بعجمتها وتأنيثها وتركيبها وعدلها معجم؛ والهمزةُ الأصليّةُ في الممدود دَين. |
 | SHABAKA-minimal | ترتيبُ البصريّين ليس أقلَّ الأشجار كلفةً: 361 عمليّةً مقابل 165؛ يتّفقان في 21 أبًا من 120 | مفحوص_بعينة | `test:tests/test_shabaka.py::test_computed_tree_is_minimal_and_classical_is_not` | أقلُّ شجرةٍ (Prim على مسافة لِيفنشتاين للقوالب) محسوبةٌ لا مقرَّرة؛ ما يحمله ترتيبُ البصريّين فوق كلفة القالب شرطُ حدٍّ دلاليّ لم يُقَس بعد. |
 | SHIBH-masaq | على 40,731 كلمةً من MASAQ بشهادات البوّابة: الجارُّ والمجرور بالقارئ 8,075/12,402 (والباقي متّصلٌ على غير أل)، الظرفُ 1,375/2,033، المجرورُ يُقرأ جرًّا 5,392 ويُردّ زائدُه بعينه 4,752؛ وشبهُ الجملة الخبرُ مرتكزُها كونٌ محذوف 616/739 | مفحوص_بعينة | `test:tests/test_shibh.py::test_masaq_measurement_and_index` | المرتكزُ والمحلُّ من الكلمة السابقة مباشرة؛ 3,370 كلمةً مستبعَدةً بالاسم. |

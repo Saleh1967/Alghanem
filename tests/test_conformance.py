@@ -586,3 +586,22 @@ def test_shibh_matches_lean() -> None:
             assert mahall(cells(r[1])) == mh[r[2]], r
         elif r[0] == "kawn":
             assert kawn(mh[r[1]]) == cells(r[2]), r
+
+
+def test_nisab_matches_lean() -> None:
+    """سلاسلُ الأوزان وأبعادُها، والنسبةُ المقروءةُ على الشواهد = جدولُ `Nisab`."""
+
+    from slge.nisab import chain, dist, nisba
+
+    rows = _rows("nisab.csv")
+    nn = {"isnad": "إسناد", "taqyid": "تقييد", "unread": "—"}
+    chains = [r for r in rows if r[0] == "chain"]
+    assert len(chains) == 121
+    for r in chains:
+        k = int(r[1])
+        assert chain(k) == [int(x) for x in r[2].split("-")] and dist(k) == int(r[3]), r
+    for r in rows:
+        if r[0] == "nisba":
+            a = tuple(_cell(int(i)) for i in r[1].split("-"))
+            b = tuple(_cell(int(i)) for i in r[2].split("-"))
+            assert nisba(a, b) == nn[r[3]], r
