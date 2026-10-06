@@ -296,3 +296,14 @@
 'Slge.Sarf.onTemplate_fill' depends on axioms: [propext, Quot.sound]
 'Slge.Sarf.muntaha_wf' depends on axioms: [propext]
 'Slge.Sarf.witnesses_illa' depends on axioms: [propext]
+'Slge.Tawabi.compatible_symm' depends on axioms: [propext]
+'Slge.Tawabi.follows_symm' depends on axioms: [propext]
+'Slge.Tawabi.follows_refl' depends on axioms: [propext]
+'Slge.Tawabi.four_markers_one_case' does not depend on any axioms
+'Slge.Tawabi.follows_khamsa' depends on axioms: [propext]
+'Slge.Tawabi.nasaq_in_rawabit' does not depend on any axioms
+'Slge.Tawabi.tawkid_words_licensed' depends on axioms: [propext]
+'Slge.Tawabi.tawkid_case' depends on axioms: [propext]
+'Slge.Tawabi.caseClass_khamsa_raf' depends on axioms: [propext]
+'Slge.Tawabi.khamsa_nasb_unread' depends on axioms: [propext]
+'Slge.Tawabi.caseClass_uqud_raf' depends on axioms: [propext]

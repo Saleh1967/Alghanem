@@ -20,3 +20,4 @@ import Slge.Zaman
 import Slge.Adad
 import Slge.Marifa
 import Slge.Sarf
+import Slge.Tawabi

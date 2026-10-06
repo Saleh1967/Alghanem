@@ -301,3 +301,14 @@ import Slge
 #print axioms Slge.Sarf.onTemplate_fill
 #print axioms Slge.Sarf.muntaha_wf
 #print axioms Slge.Sarf.witnesses_illa
+#print axioms Slge.Tawabi.compatible_symm
+#print axioms Slge.Tawabi.follows_symm
+#print axioms Slge.Tawabi.follows_refl
+#print axioms Slge.Tawabi.four_markers_one_case
+#print axioms Slge.Tawabi.follows_khamsa
+#print axioms Slge.Tawabi.nasaq_in_rawabit
+#print axioms Slge.Tawabi.tawkid_words_licensed
+#print axioms Slge.Tawabi.tawkid_case
+#print axioms Slge.Tawabi.caseClass_khamsa_raf
+#print axioms Slge.Tawabi.khamsa_nasb_unread
+#print axioms Slge.Tawabi.caseClass_uqud_raf

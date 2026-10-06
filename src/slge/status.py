@@ -301,6 +301,26 @@ _DECLARED: tuple[Claim, ...] = (
        "مفتوحٌ بلا تنوين 44 (الممنوع: 17 بعلّة صيغةٍ مقروءة، 27 معجم)", _S,
        "test:tests/test_sarf.py::test_masaq_measurement_and_index",
        note="العلميّةُ بعجمتها وتأنيثها وتركيبها وعدلها معجم؛ والهمزةُ الأصليّةُ في الممدود دَين."),
+    # — التوابع —
+    _c("TAWABI-case", "الحالةُ لا العلامة: قارئٌ يردّ الضمّةَ والواوَ والألفَ رفعًا؛ "
+       "رفعُ الخمسة والعقود بالواو رفعٌ لكلّ جذع؛ والتبعيّةُ متماثلةٌ انعكاسيّة", _P,
+       "lean:Slge.Tawabi.four_markers_one_case", "lean:Slge.Tawabi.follows_khamsa",
+       "lean:Slge.Tawabi.caseClass_khamsa_raf", "lean:Slge.Tawabi.caseClass_uqud_raf",
+       "lean:Slge.Tawabi.follows_symm", "lean:Slge.Tawabi.follows_refl",
+       "test:tests/test_tawabi.py::test_four_markers_one_case"),
+    _c("TAWABI-unread", "نصبُ الخمسة بالألف لا يقرؤه القارئُ العامّ: الألفُ مشتركةٌ مع المقصور — "
+       "المعجمُ يفصل",
+       _P, "lean:Slge.Tawabi.khamsa_nasb_unread",
+       "test:tests/test_tawabi.py::test_khamsa_raf_read_nasb_unread"),
+    _c("TAWABI-nasaq", "حروفُ النسق التسعة في جدول أدوات الربط؛ والتوكيدُ المعنويّ ستّةُ ألفاظٍ "
+       "مرخَّصة تُضاف إلى ضمير (وعَامَّة خارج الثنائيّ)", _P,
+       "lean:Slge.Tawabi.nasaq_in_rawabit", "lean:Slge.Tawabi.tawkid_words_licensed",
+       "lean:Slge.Tawabi.tawkid_case", "test:tests/test_tawabi.py::test_nasaq_and_tawkid"),
+    _c("TAWABI-masaq", "على 3,179 زوجًا من MASAQ: النعتُ يوافق 873/1,079 فيما تقرؤه الخانة؛ "
+       "المخالفُ من اختيار المتبوع ومن جرّ الممنوع بالفتحة", _S,
+       "test:tests/test_tawabi.py::test_masaq_measurement_and_index",
+       note="المتبوعُ قانونُ تيار؛ المطابقةُ الأربع للنعت تُقاس في النظم؛ "
+            "البدلُ وعطفُ البيان لا تفرّقهما الخانة."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

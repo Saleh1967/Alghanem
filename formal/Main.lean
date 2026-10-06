@@ -154,6 +154,12 @@ def main (args : List String) : IO Unit := do
         | .muntahaJumu => "muntahaJumu" | .maqsura => "maqsura" | .mamduda => "mamduda"
         | .sifa => "sifa" | .alifNun => "alifNun" | .unread => "unread"
       IO.println s!"{w.1},{"-".intercalate (w.2.1.map fun c => toString c.index)},{h}"
+  | ["tawabi"] =>
+    for (n, w) in [("alimu", Tawabi.alimu), ("akhu", Tawabi.akhuka.take 3), ("muslimuna", Tawabi.muslimuna),
+                   ("rajulani", Tawabi.rajulani), ("rajulun", Tawabi.rajulun)] do
+      let h := match Tawabi.caseClass w with
+        | .raf => "raf" | .nasb => "nasb" | .jarr => "jarr" | .nasbJarr => "nasbJarr" | .unread => "unread"
+      IO.println s!"{n},{"-".intercalate (w.map fun c => toString c.index)},{h}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

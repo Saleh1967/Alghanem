@@ -272,3 +272,17 @@ def test_sarf_matches_lean() -> None:
     for r in rows:
         cells = tuple(_cell(int(i)) for i in r[1].split("-"))
         assert illa(cells) == lean[r[2]], r[0]
+
+
+def test_tawabi_matches_lean() -> None:
+    """شواهدُ العلامات الأربع = جدولُ `Tawabi` بحالاتها المقروءة."""
+
+    from slge.tawabi import case_class
+
+    rows = _rows("tawabi.csv")
+    lean = {"raf": "رفع", "nasb": "نصب", "jarr": "جرّ", "nasbJarr": "نصب/جرّ",
+            "unread": "لا تقرؤه الخانة"}
+    assert len(rows) == 5
+    for r in rows:
+        cells = tuple(_cell(int(i)) for i in r[1].split("-"))
+        assert case_class(cells) == lean[r[2]], r[0]
