@@ -106,6 +106,10 @@ def main (args : List String) : IO Unit := do
     for w in Khamsa.forms do
       let key := "-".intercalate (w.map fun c => toString c.index)
       IO.println s!"{key},{slgeFold w}"
+  | ["afal"] =>
+    for w in Afal.forms do
+      let key := "-".intercalate (w.map fun c => toString c.index)
+      IO.println s!"{key},{licensed w}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

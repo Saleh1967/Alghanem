@@ -62,3 +62,9 @@ import Slge
 #print axioms Slge.Khamsa.no_guess_for_plural
 #print axioms Slge.Khamsa.khamsa_licensed
 #print axioms Slge.Khamsa.khamsa_numbers_nodup
+#print axioms Slge.Afal.glide_matches_before
+#print axioms Slge.Afal.nasb_eq_jazm
+#print axioms Slge.Afal.moodOf_raf
+#print axioms Slge.Afal.moodOf_nasb
+#print axioms Slge.Afal.pronounOf_form
+#print axioms Slge.Afal.five_licensed

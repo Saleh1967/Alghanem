@@ -4,9 +4,9 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 27 |
+| مبرهن | 29 |
 | مفحوص_استقصاء | 12 |
-| مفحوص_بعينة | 3 |
+| مفحوص_بعينة | 4 |
 | دليل | 0 |
 | معلن | 8 |
 | رأي | 0 |
@@ -15,6 +15,8 @@
 
 | المعرّف | الدعوى | الوسم | السند | ملاحظة |
 |---|---|---|---|---|
+| AFAL-harmony | الحركةُ قبل الضمير من جنسه — قانونُ الأسماء الخمسة نفسُه؛ والصورُ الثلاثون مرخَّصة | مبرهن | `lean:Slge.Afal.glide_matches_before`<br>`lean:Slge.Afal.five_licensed`<br>`test:tests/test_conformance.py::test_afal_matches_lean` |  |
+| AFAL-nun | الرفعُ يُقرأ من الآخر (نونٌ أو لا)، والضميرُ من حرفه؛ وصورةُ النصب هي صورةُ الجزم | مبرهن | `lean:Slge.Afal.moodOf_raf`<br>`lean:Slge.Afal.moodOf_nasb`<br>`lean:Slge.Afal.pronounOf_form`<br>`lean:Slge.Afal.nasb_eq_jazm`<br>`test:tests/test_afal.py::test_mood_is_one_bit_and_nasb_equals_jazm` |  |
 | AQ-lattice | الاحتواءُ بين الأقانيم انعكاسيٌّ متعدٍّ، والسلامةُ تنزل من الأعلى إلى الأدنى | مبرهن | `lean:Slge.Categories.sub_trans` |  |
 | AQ-pronoun | الضمائرُ المنفصلة أقنومٌ سليم (كلُّها مرخَّصة) بأعدادٍ متباينة، وشكلُها ليس بصمة | مبرهن | `lean:Slge.Categories.pronoun_sound`<br>`lean:Slge.Categories.pronoun_numbers_nodup`<br>`test:tests/test_conformance.py::test_categories_match_lean` | خاناتُها من جسر الغانم (ستّةٌ في المجال المختوم، وستّةٌ خارجه تُذرَّر بالجسر وتُرفض من البوّابة بالاسم)؛ اكتمالُها على MASAQ قياسٌ لم يُطبع بعد. |
 | BARREN | عقمُ نقيض المقدَّم وعين التالي في الأخصّ مشهودٌ بنموذجين | مبرهن | `lean:Slge.Ghazali.barren_witnessed` |  |
@@ -54,6 +56,7 @@
 | Q21-code | الشيفرةُ نفسُها لا تقفز: لا تستورد وحدةٌ وحدةَ طبقةٍ ليست من شروطها | مفحوص_استقصاء | `test:tests/test_order.py::test_modules_import_only_their_prerequisites` |  |
 | Q22 | الاستنتاجُ المعكوس: ‎U(1) = 87‎ و29 حاملًا ⇒ 3 متحرّكات ⇒ ‎116‎ | مفحوص_استقصاء | `test:tests/test_cells.py::test_inventory_is_derived_from_U1` |  |
 | Q24 | الظلُّ M/S يعجز والطيُّ يفرّق (ذَيْن/ذِين) | مفحوص_استقصاء | `test:tests/test_cells.py::test_shadow_fails_fold_separates` |  |
+| AFAL-gate | ستّةُ شواهد من شهادات البوّابة تطابق القانون؛ نصبُ الاثنين ورفعُ المخاطبة بالقانون | مفحوص_بعينة | `test:tests/test_afal.py::test_forms_match_gate_witnesses` | الخمسةُ خمسةٌ بجدول مطابقةٍ معلَن (ياءُ المخاطبة لا تلحق حرفَ الغيبة). |
 | KHAMSA-gate | صورُ أب وأخ وذو بالقانون = ذرّاتُ شهادات البوّابة (10 شواهد)؛ حمٌ وفوٌ بالقانون نفسه | مفحوص_بعينة | `test:tests/test_khamsa.py::test_forms_match_gate_witnesses` | الشروطُ (مفرد، مكبَّر، مضاف لغير الياء) معلَنةٌ في Ctx لا مستنبَطة. |
 | SHABAKA-minimal | ترتيبُ البصريّين ليس أقلَّ الأشجار كلفةً: 341 عمليّةً مقابل 155؛ يتّفقان في 21 أبًا من 112 | مفحوص_بعينة | `test:tests/test_shabaka.py::test_computed_tree_is_minimal_and_classical_is_not` | أقلُّ شجرةٍ (Prim على مسافة لِيفنشتاين للقوالب) محسوبةٌ لا مقرَّرة؛ ما يحمله ترتيبُ البصريّين فوق كلفة القالب شرطُ حدٍّ دلاليّ لم يُقَس بعد. |
 | WAZN-sibawayh | هياكلُ الأوزان مقابل أبنية سيبويه المجمَّدة: 95/113 عنده؛ 18 مسمّاة؛ 122 من هياكله خارج الجدول | مفحوص_بعينة | `test:tests/test_wazn.py::test_skeletons_measured_against_sibawayh` | الحركاتُ معلَنةٌ من كتب الصرف لا مقيسة؛ الرباعيُّ والإعلالُ والمفعولُ المطلق والجامدُ خارج الجدول باسمها (DEBTS). |

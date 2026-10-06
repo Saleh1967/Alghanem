@@ -124,3 +124,15 @@ def test_khamsa_matches_lean() -> None:
     forms = [form(s, c) for s in KHAMSA for c in CASES]
     assert [r[0] for r in rows] == ["-".join(str(index(c)) for c in w) for w in forms]
     assert [int(r[1]) for r in rows] == [fold(w) for w in forms]
+
+
+def test_afal_matches_lean() -> None:
+    """الصورُ الثلاثون (4 جذوع × ضمائرُها × 3 حالات) = جدولُ `Afal.forms`."""
+
+    from slge.afal import MOODS, PRONOUNS, STEMS, agree, form
+
+    rows = _rows("afal.csv")
+    forms = [form(s, p, m) for s in STEMS for p in PRONOUNS if agree(s.prefix, p) for m in MOODS]
+    assert len(rows) == len(forms) == 30
+    assert [r[0] for r in rows] == ["-".join(str(index(c)) for c in w) for w in forms]
+    assert [r[1] for r in rows] == ["true"] * 30
