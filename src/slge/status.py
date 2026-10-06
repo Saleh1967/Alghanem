@@ -730,6 +730,30 @@ _DECLARED: tuple[Claim, ...] = (
        "وواحدٌ ماضٍ (طفرةُ shift_only_present المقيسة)", _S,
        "test:tests/test_jiha.py::test_masaq_measurement_and_index",
        note="المبنيُّ للمجهول من المزيد (أُنْزِلَ) وأمرُ أَفْعَلَ غيرُ مودَعَين، والمعتلُّ على غير قالب."),
+    # — النعتُ والمطابقة الرباعيّة —
+    _c("NAAT-vec", "النعتُ الحقيقيّ مطابقةٌ في أربعةٍ تُقرأ من الخانة (الإعراب، التعريف، الجنس، العدد): "
+       "انعكاسيّةٌ على المقروء وتناظريّة؛ والمخالفُ إعرابًا أو تعريفًا ممنوعٌ لكلّ جذعين؛ والمنوَّنُ المرفوعُ "
+       "بلا أل على مثله مطابقٌ في الإعراب والتعريف لكلّ جذعين", _P,
+       "lean:Slge.Naat.naatOk_refl", "lean:Slge.Naat.naatOk_symm", "lean:Slge.Naat.naatOk_case",
+       "lean:Slge.Naat.naatOk_definite", "lean:Slge.Naat.naatOk_agree",
+       "lean:Slge.Naat.non_matching_case_blocked", "lean:Slge.Naat.non_matching_definite_blocked",
+       "lean:Slge.Naat.nakira_pair_two_coordinates", "lean:Slge.Naat.hasAl_setLast_tanwin",
+       "lean:Slge.Naat.naat_witnesses",
+       "test:tests/test_naat.py::test_four_coordinates_match_for_every_stem",
+       note="الجنسُ والعددُ من اللاحقة والقالب: المؤنّثُ بلا تاء والجمعُ غيرُ المقيس لا تفصلهما الخانة."),
+    _c("NAAT-haml", "الحملُ واحدٌ والفرقُ التعريف: النعتُ والخبرُ على معرفةٍ مرفوعةٍ يتّفقان في ثلاثةٍ "
+       "ويفترقان في التعريف؛ والجملةُ بعد النكرة نعتٌ وبعد المعرفة حال — الحالُ تشترط صاحبًا معرفةً لكلّ "
+       "كلمة، والجملةُ بعد النكرة المنوَّنة المنصوبة نعتٌ لكلّ جذعٍ لا تشابه صورتُه فعلًا", _P,
+       "lean:Slge.Naat.khabar_not_naat", "lean:Slge.Naat.hal_requires_marifa",
+       "lean:Slge.Naat.naat_after_nakira",
+       "test:tests/test_naat.py::test_clause_after_nakira_is_naat_and_hal_needs_marifa",
+       note="النعتُ السببيّ خارج الحصر؛ المعطوفُ والبدلُ يُقرآن نعتًا متى طابقا: الفرقُ أداةٌ ومعنًى."),
+    _c("NAAT-masaq", "على 1,388 زوجَ نعتٍ من MASAQ بشهادات البوّابة: قارئُ المطابقة الرباعيّة يقرؤها "
+       "نعتًا في 677؛ والإعرابُ من الخانة على طرفَي النعت يوافق الوسمَ 2,188/2,776، وأل توافق det "
+       "2,609/2,776", _S,
+       "test:tests/test_naat.py::test_masaq_measurement_and_index",
+       note="أوّلُ مخالفة فيما لم يُقرأ: إعرابٌ لا يُقرأ 309 (موصولٌ ومبنيّ)، تعريفٌ 162 (مضافٌ وعلم)، "
+            "إعرابٌ 108، عددٌ 76، جنسٌ 56."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

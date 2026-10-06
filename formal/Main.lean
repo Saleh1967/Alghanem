@@ -391,6 +391,31 @@ def main (args : List String) : IO Unit := do
                    (Jiha.kana, Jiha.yaktubu), ([], Jiha.uktub), ([], Jiha.sa ++ Jiha.kataba),
                    (Jiha.sawfa, Jiha.kataba), ([], Jumla.zayd)] do
       IO.println s!"jiha,{key a},{key b},{jn (Jiha.jiha a b)}"
+  | ["naat"] =>
+    -- المتّجهُ الرباعيّ والنعتُ والحملُ والمحلُّ على الشواهد.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let cn := fun (x : Tawabi.CaseClass) => match x with
+      | .raf => "raf" | .nasb => "nasb" | .jarr => "jarr" | .nasbJarr => "nasbJarr" | .unread => "unread"
+    let gn := fun (g : Jumla.Gender) => match g with | .masc => "masc" | .fem => "fem"
+    let nn := fun (n : Jumla.Number) => match n with | .single => "single" | .dual => "dual" | .plural => "plural"
+    let hn := fun (h : Naat.Haml) => match h with | .naat => "naat" | .khabar => "khabar" | .unread => "unread"
+    let mn := fun (m : Naat.Mahall) => match m with | .naat => "naat" | .hal => "hal" | .unread => "unread"
+    let ws := [Naat.alrajul, Naat.rajulun, Naat.rajulan, Naat.alrajuli, Nawasikh.tanwin Naat.madrasa,
+               Nawasikh.tanwin Naat.kabira, Jumla.dual Naat.rajul, Nawasikh.tanwin Naat.tawil,
+               Nawasikh.tanwin (Nawasikh.nasb Naat.tawil), Marifa.al Naat.tawil, Nawasikh.nasb Naat.alrajul,
+               Jumla.darasa]
+    for w in ws do
+      let v := Naat.vec w
+      IO.println s!"vec,{key w},{cn v.cc},{v.definite},{gn v.gender},{nn v.number}"
+    for (m, k) in [(Naat.alrajul, Naat.tawil), (Naat.rajulun, Naat.tawil), (Naat.rajulan, Naat.tawil),
+                   (Naat.alrajuli, Naat.tawil), (Nawasikh.tanwin Naat.madrasa, Naat.kabira)] do
+      IO.println s!"naat,{key m},{key k},{key (Naat.naat m k)},{Naat.naatOk m (Naat.naat m k)}"
+    for (m, n) in [(Naat.rajulun, Nawasikh.tanwin (Nawasikh.nasb Naat.tawil)), (Naat.rajulun, Marifa.al Naat.tawil),
+                   (Naat.rajulun, Nawasikh.tanwin Naat.kabira), (Jumla.dual Naat.rajul, Nawasikh.tanwin Naat.tawil),
+                   (Naat.alrajul, Nawasikh.tanwin Naat.tawil)] do
+      IO.println s!"haml,{key m},{key n},{Naat.naatOk m n},{hn (Naat.hamlKind m n)}"
+    for w in [Naat.rajulan, Nawasikh.nasb Naat.alrajul, Jumla.darasa, Naat.alrajul] do
+      IO.println s!"mahall,{key w},{mn (Naat.jumlaMahall w)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

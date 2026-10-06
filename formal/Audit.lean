@@ -612,3 +612,16 @@ import Slge
 #print axioms Slge.Jiha.sa_licensed
 #print axioms Slge.Jiha.shifts_in_rawabit
 #print axioms Slge.Jiha.jiha_witnesses
+#print axioms Slge.Naat.naatOk_refl
+#print axioms Slge.Naat.naatOk_symm
+#print axioms Slge.Naat.naatOk_case
+#print axioms Slge.Naat.naatOk_definite
+#print axioms Slge.Naat.naatOk_agree
+#print axioms Slge.Naat.non_matching_case_blocked
+#print axioms Slge.Naat.non_matching_definite_blocked
+#print axioms Slge.Naat.khabar_not_naat
+#print axioms Slge.Naat.hasAl_setLast_tanwin
+#print axioms Slge.Naat.nakira_pair_two_coordinates
+#print axioms Slge.Naat.hal_requires_marifa
+#print axioms Slge.Naat.naat_after_nakira
+#print axioms Slge.Naat.naat_witnesses

@@ -686,3 +686,32 @@ def test_jiha_matches_lean() -> None:
             assert jiha(a, b) == jn[r[3]], r
     assert sum(r[0] == "jiha" for r in rows) == 11
 
+
+def test_naat_matches_lean() -> None:
+    """المتّجهُ الرباعيّ والنعتُ والحملُ والمحلُّ على الشواهد = جدولُ `Naat`."""
+
+    from slge.naat import haml_kind, jumla_mahall, naat, naat_ok, vec
+
+    rows = _rows("naat.csv")
+    cn = {"raf": "رفع", "nasb": "نصب", "jarr": "جرّ", "nasbJarr": "نصب/جرّ",
+          "unread": "لا تقرؤه الخانة"}
+    gn, nn = {"masc": "مذكر", "fem": "مؤنث"}, {"single": "مفرد", "dual": "مثنى", "plural": "جمع"}
+    hn = {"naat": "نعت", "khabar": "خبر", "unread": "—"}
+    mn = {"naat": "نعت", "hal": "حال", "unread": "—"}
+
+    def cells(x: str) -> tuple[tuple[str, str], ...]:
+        return tuple(_cell(int(i)) for i in x.split("-"))
+
+    for r in rows:
+        if r[0] == "vec":
+            assert vec(cells(r[1])) == (cn[r[2]], r[3] == "true", gn[r[4]], nn[r[5]]), r
+        elif r[0] == "naat":
+            m, k = cells(r[1]), cells(r[2])
+            assert naat(m, k) == cells(r[3]) and naat_ok(m, naat(m, k)) == (r[4] == "true"), r
+        elif r[0] == "haml":
+            m, n = cells(r[1]), cells(r[2])
+            assert naat_ok(m, n) == (r[3] == "true") and haml_kind(m, n) == hn[r[4]], r
+        elif r[0] == "mahall":
+            assert jumla_mahall(cells(r[1])) == mn[r[2]], r
+    assert sum(r[0] == "vec" for r in rows) == 12 and sum(r[0] == "haml" for r in rows) == 5
+
