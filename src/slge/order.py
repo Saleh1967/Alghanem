@@ -51,6 +51,7 @@ MODULE_LAYER: Final[dict[str, str]] = {
     "categories": "الأقانيم",
     "semantics": "الدلالة",
     "nazm": "النظم",
+    "grant": "النظم",
     "knowledge": "المعرفة",
     "rank": "الترجيح",
     "learning": "التعلم",

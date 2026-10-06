@@ -4,11 +4,11 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 18 |
-| مفحوص_استقصاء | 11 |
+| مبرهن | 20 |
+| مفحوص_استقصاء | 12 |
 | مفحوص_بعينة | 0 |
 | دليل | 0 |
-| معلن | 5 |
+| معلن | 6 |
 | رأي | 0 |
 | مفتوح | 8 |
 | معلق | 14 |
@@ -23,6 +23,8 @@
 | COUNT | عدّادُ SLGE هو ‎U(n)‎ لكلّ n | مبرهن | `lean:Slge.count_eq_U`<br>`test:tests/test_conformance.py::test_counts_match_lean` |  |
 | FOLD | الطيُّ تقابلٌ بين المرخَّصات بطول n و‎{0…U(n)−1}‎ | مبرهن | `lean:Slge.slgeFold_injective`<br>`lean:Slge.slgeFold_surjective`<br>`test:tests/test_conformance.py::test_folds_match_lean` | يحلّ محلّ Q23/Q23b في الأصل: كان الفحصُ هناك طيًّا موضعيًّا بأساس 116، وصحّتُه بالبناء لا بالعدّ؛ وهنا طيٌّ كثيفٌ مبرهَنٌ لكلّ طول. |
 | GHAZALI | جدولُ الصور المنتجة هو جدولُ الغزالي بعينه، محسوبًا بالبتّات | مبرهن | `lean:Slge.Ghazali.ghazali_table`<br>`test:tests/test_conformance.py::test_ghazali_matches_lean` |  |
+| GRANT-check | المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة | مبرهن | `lean:Slge.Grant.grant_iff_check`<br>`lean:Slge.Grant.no_grant_of_refused`<br>`lean:Slge.Grant.ladder_implies_base`<br>`lean:Slge.Grant.empty_ladder_grants_nothing` | قانونُ tarkib/bridge.py بفحصٍ دالّةً لا نصًّا؛ الحكمُ المزوَّر الذي قبله الأصلُ لا يُصاغ هنا. |
+| GRANT-mursam | لا يُمنح «مرسوم» إلّا لمرخَّصٍ، وهو Admissible في الـ116 | مبرهن | `lean:Slge.Grant.mursam_sound`<br>`lean:Slge.Grant.mursam_refuses_initial_sukun`<br>`test:tests/test_grant.py::test_mursam_grants_licensed_only` |  |
 | LICENCE | الرافعُ إلى المساواة يُنتج مفهومَ المخالفة | مبرهن | `lean:Slge.Ghazali.licence_makes_mafhum` |  |
 | NUM-agree | عددُ الشهادة (ترقيم الذرّات) وعددُ الطيّ متكافئان على المرخَّصات بطولٍ واحد | مبرهن | `lean:Slge.Consistency.numbers_agree`<br>`lean:Slge.Consistency.atomNumber_determines_fold`<br>`lean:Slge.Consistency.fold_determines_atomNumber` |  |
 | Q1 | الخاناتُ ‎116 = 29 × 4‎، تامّةٌ بلا تكرار | مبرهن | `lean:Slge.scells_length`<br>`test:tests/test_cells.py::test_cells_are_116` |  |
@@ -35,6 +37,7 @@
 | SEQ-stream | تيارُ كلماتٍ مرخَّصةٍ يُفكّ كلُّه بترتيبه بلا فاصلٍ ولا حاملٍ زائد | مبرهن | `lean:Slge.Sequence.decode_encode`<br>`lean:Slge.Sequence.U_lt_two_pow_width` | الكلفةُ معلنة: cost(k) = (k+1) + ⌊log₂U(k)⌋+1 بتًّا؛ k=1: 9، k=2: 17 (من جدول Lean). |
 | ANSWER | كلُّ جملةٍ في الجواب لها وسمٌ وسند، والمُعيدُ لا يُسقطهما | مفحوص_استقصاء | `test:tests/test_answer.py::test_every_sentence_is_tagged`<br>`test:tests/test_answer.py::test_verbalizer_cannot_drop_tags` |  |
 | ENTRY | لا يدخل العمودَ إلّا شهادةُ بوّابة الغانم ذرّاتٍ، وتعود ذرّاتٍ بعينها | مفحوص_استقصاء | `test:tests/test_entry.py::test_kitabun_enters_as_five_cells_and_exits_byte_for_byte`<br>`test:tests/test_entry.py::test_every_cell_round_trips`<br>`test:tests/test_entry.py::test_non_atoms_are_refused_by_name` | الجسرُ ذرّة ← خانة هو `Slge.ofCell/toCell` المبرهَن؛ والذرّاتُ نفسُها من `gate.enter` في الغانم (A116-CANONICAL-TXT-1.1) لا من قارئٍ هنا. |
+| GRANT-forge | لا حقلَ حكمٍ يُملأ: الفحصُ يجري كلَّ منح | مفحوص_استقصاء | `test:tests/test_grant.py::test_verdict_cannot_be_forged`<br>`test:tests/test_grant.py::test_grant_requires_check_to_run` |  |
 | GUARD | لا قارئَ للنصّ ولا كاتبَ له في الشجرة خارج `suspended/` | مفحوص_استقصاء | `test:tests/test_guard.py::test_no_breach_in_the_tree`<br>`test:tests/test_guard.py::test_a_planted_reader_is_caught`<br>`test:tests/test_guard.py::test_suspended_is_not_importable` |  |
 | INFER | `infer` لا يُنتج إلّا بمقبولٍ وبصورةٍ منتجة | مفحوص_استقصاء | `test:tests/test_knowledge.py::test_candidates_never_produce`<br>`test:tests/test_knowledge.py::test_every_produced_step_is_productive` |  |
 | LEARN | حلقةُ التعلّم: المرشَّحُ لا يُنتج، والمحجوبُ لا يراه المولِّد، والخاطئُ يُسحب، والسجلُّ تامّ | مفحوص_استقصاء | `test:tests/test_learning.py::test_held_out_is_never_shown`<br>`test:tests/test_learning.py::test_wrong_admission_is_retracted`<br>`test:tests/test_learning.py::test_every_proposal_has_one_verdict` |  |
@@ -45,6 +48,7 @@
 | Q22 | الاستنتاجُ المعكوس: ‎U(1) = 87‎ و29 حاملًا ⇒ 3 متحرّكات ⇒ ‎116‎ | مفحوص_استقصاء | `test:tests/test_cells.py::test_inventory_is_derived_from_U1` |  |
 | Q24 | الظلُّ M/S يعجز والطيُّ يفرّق (ذَيْن/ذِين) | مفحوص_استقصاء | `test:tests/test_cells.py::test_shadow_fails_fold_separates` |  |
 | DL1-DL6 | أقسامُ الوضع والدلالة والحقيقة والمجاز والمنطوق والمفهوم مغلقة | معلن | `test:tests/test_semantics.py::test_partitions_are_closed` |  |
+| GRANT-declared | ستّةُ جسورٍ وصلت بلا فحصٍ يعمل: أسماءٌ معلَنة بدَينها لا جسور | معلن | `test:tests/test_grant.py::test_only_one_rung_has_a_working_check` |  |
 | NAZM | ستّةُ أنماط تركيبٍ وثلاثُ علاقاتٍ منقولةٌ من تعقّل جداولَ معلَنة؛ لا قاعدةَ تعمل | معلن | `test:tests/test_nazm.py::test_six_patterns_three_relations_as_in_taaqol` | المصدر sonaiso/taaqol-gpt@91dad10 (formal_shape_composition.py، رتبته هناك مرشَّح). ما له بتٌّ هنا شرطٌ واحد: توافقُ الإعراب (حالةُ الخانة الأخيرة). |
 | Q19 | كلُّ زوجٍ من الأزواج يقسم الـ29 | معلن | `test:tests/test_phonology.py::test_pairs_partition` | صادقٌ بالبناء (السالبُ متمّمُ الموجب)؛ فهو تعريفٌ لا اكتشاف. |
 | Q20 | الجوفُ للمدّ الثلاث | معلن | `test:tests/test_phonology.py::test_jawf_is_madd` |  |

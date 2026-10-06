@@ -39,3 +39,9 @@ import Slge
 #print axioms Slge.Categories.pronoun_sound
 #print axioms Slge.Categories.pronoun_numbers_nodup
 #print axioms Slge.Categories.sub_trans
+#print axioms Slge.Grant.grant_iff_check
+#print axioms Slge.Grant.no_grant_of_refused
+#print axioms Slge.Grant.ladder_implies_base
+#print axioms Slge.Grant.empty_ladder_grants_nothing
+#print axioms Slge.Grant.mursam_sound
+#print axioms Slge.Grant.mursam_refuses_initial_sukun

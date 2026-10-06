@@ -8,7 +8,7 @@
 
 - النصُّ يدخل في مستودع الغانم وحدَه: `gate.enter(bytes) → Certificate | Refusal` (`Saleh1967/Alghanem`، فرع `claude/official-gate`، حزمة `gate/`، برهانُها `formal/a116`).
 - هنا: `slge.entry.from_atoms(cert.atoms) → خانات`، و`slge.entry.to_atoms(خانات) → ذرّات` تعود إلى `gate.exit`. والطيُّ `to_integer/from_integer` مبرهَنٌ (`Slge.slgeFold_*`) على المرخَّص ثنائيًّا؛ وما رخّصه الثلاثيُّ وحدَه (كـ«حَاجَّ») يحمل عددَه في شهادته.
-- الطبقاتُ الحيّة: `entry`، `cells`، `phonology`، `semantics`، `knowledge`، `rank`، `learning`، `answer` (و`order`، `status`، `guard` وصفًا). ما سواها **معلَّق** في `suspended/` بسجلٍّ (`SUSPENDED_REGISTRY.json`): `encoding`، `orthography`، `lexicon`، `morphology` — كانت تقرأ النصّ وتطبّعه خارج البوّابة.
+- الطبقاتُ الحيّة: `entry`، `cells`، `stream`، `categories`، `phonology`، `semantics`، `nazm`، `grant`، `knowledge`، `rank`، `learning`، `answer` (و`order`، `status`، `guard` وصفًا). ما سواها **معلَّق** في `suspended/` بسجلٍّ (`SUSPENDED_REGISTRY.json`): `encoding`، `orthography`، `lexicon`، `morphology` — كانت تقرأ النصّ وتطبّعه خارج البوّابة.
 
 ## ما لا تفعله
 
@@ -24,11 +24,11 @@
 
 ```sh
 pip install -r requirements-dev.txt && pip install -e . --no-deps
-ruff check . && mypy && pytest -q                     # 73 اختبارًا
+ruff check . && mypy && pytest -q                     # 84 اختبارًا
 python tools/gen_status.py --check
 python tools/gen_registry.py --check
 python -c "from slge.guard import breaches; print(breaches() or 'لا خرق')"
-cd formal && lake build && lake env lean Audit.lean   # 23 مبرهنة؛ propext/Quot.sound فقط
+cd formal && lake build && lake env lean Audit.lean   # 44 مبرهنة؛ propext/Quot.sound فقط
 ```
 
 وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه، وأثبت وجودَ كلّ ملفٍّ تذكره قبل الكلام عنه.
