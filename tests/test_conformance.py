@@ -91,7 +91,7 @@ def test_wazn_matches_lean() -> None:
     from slge.wazn import AWZAN, FAL, mizan, root_of
 
     rows = _rows("wazn.csv")
-    assert len(rows) == len(AWZAN) == 113
+    assert len(rows) == len(AWZAN) == 121
     for r, w in zip(rows, AWZAN, strict=True):
         m = mizan(w.template)
         assert r[1] == "-".join(str(index(c)) for c in m), w.name
@@ -109,7 +109,7 @@ def test_shabaka_matches_lean() -> None:
     names = [w.name for w in AWZAN]
     by = {w.name: w.template for w in AWZAN}
     rows = _rows("shabaka.csv")
-    assert len(rows) == len(CLASSICAL) == 112 and names[29] == ROOT
+    assert len(rows) == len(CLASSICAL) == 120 and names[29] == ROOT
     for r, (child, parent) in zip(rows, CLASSICAL.items(), strict=True):
         assert (int(r[0]), int(r[1])) == (names.index(child), names.index(parent))
         assert int(r[2]) == len(diff(by[parent], by[child])) and r[3] == "true"
@@ -426,15 +426,33 @@ def test_fil_matches_lean() -> None:
     """الأبوابُ وأحرفُ الزيادة وعمليّاتُ الإعلال والإبدال والرباعيُّ = جدولُ `Fil`."""
 
     from slge.cells import STATES
-    from slge.fil import ABWAB, MAZID, added, ibdal, iftaal, naql, qalb
+    from slge.fil import (
+        ABWAB,
+        MAZID,
+        MAZID_AMR,
+        MAZID_PRES,
+        added,
+        amr_of,
+        ibdal,
+        idgham,
+        iftaal,
+        naql,
+        qalb,
+    )
     from slge.rawabit import cells_of
+    from slge.wazn import AWZAN
 
     rows = _rows("fil.csv")
-    assert len(rows) == 6 + 9 + 5 + 4
+    assert len(rows) == 6 + 9 + 7 + 7 + 4
     st = dict(zip("0123", STATES, strict=True))
     ops = {"istabara": ibdal(iftaal(("ص", "ب", "ر"))), "izdahara": ibdal(iftaal(("ز", "ه", "ر"))),
-           "ittasala": ibdal(iftaal(("و", "ص", "ل"))), "qala": qalb(cells_of("قَوَلَ")),
+           "ittasala": ibdal(iftaal(("و", "ص", "ل"))), "ittakhadha": ibdal(iftaal(("ء", "خ", "ذ"))),
+           "radda": idgham(cells_of("رَدَدَ")), "qala": qalb(cells_of("قَوَلَ")),
            "qulu": naql(cells_of("قْوُلُ"))}
+    amr = [r for r in rows if r[0] == "amr"]
+    assert [(int(r[1]), int(r[2])) for r in amr] == list(zip(MAZID_PRES, MAZID_AMR, strict=True))
+    for r in amr:
+        assert r[3] == "true" and amr_of(AWZAN[int(r[1])].template) == AWZAN[int(r[2])].template
     babs = [r for r in rows if r[0] == "bab"]
     assert [(st[r[1][0]], st[r[1][2]]) for r in babs] == list(ABWAB)
     for r in rows:

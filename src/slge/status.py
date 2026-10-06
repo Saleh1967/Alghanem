@@ -70,11 +70,12 @@ _DECLARED: tuple[Claim, ...] = (
     _c("WAZN-indep", "ترخيصُ الكلمة من القالب وحدَه: الوزنُ يُرخَّص مرّةً لكلّ الأصول", _P,
        "lean:Slge.Wazn.states_fill", "lean:Slge.Wazn.licensed_fill_indep",
        "test:tests/test_wazn.py::test_licence_is_root_independent"),
-    _c("WAZN-table", "113 وزنًا مودَعًا سليمةٌ ومرخَّصةٌ لكلّ أصل؛ بايثونُها مطابقٌ لجدول Lean", _P,
+    _c("WAZN-table", "121 وزنًا مودَعًا سليمةٌ ومرخَّصةٌ لكلّ أصل؛ بايثونُها مطابقٌ لجدول Lean", _P,
        "lean:Slge.Wazn.awzan_wf", "lean:Slge.Wazn.awzan_licensed",
        "test:tests/test_conformance.py::test_wazn_matches_lean"),
     _c("WAZN-sibawayh",
-       "هياكلُ الأوزان مقابل أبنية سيبويه المجمَّدة: 95/113 عنده؛ 18 مسمّاة؛ 122 من هياكله خارج الجدول",
+       "هياكلُ الأوزان مقابل أبنية سيبويه المجمَّدة: 103/121 عنده؛ 18 مسمّاة؛ 122 من هياكله خارج "
+       "الجدول",
        _S,
        "test:tests/test_wazn.py::test_skeletons_measured_against_sibawayh",
        note="الحركاتُ معلَنةٌ من كتب الصرف لا مقيسة؛ الرباعيُّ والإعلالُ والمفعولُ المطلق والجامدُ "
@@ -86,7 +87,7 @@ _DECLARED: tuple[Claim, ...] = (
        "lean:Slge.Shabaka.wf_step", "lean:Slge.Shabaka.wf_run",
        "test:tests/test_shabaka.py::test_every_edit_keeps_the_root_recoverable"),
     _c("SHABAKA-edges",
-       "112 حافّةً من المصدر المجرّد: الابنُ = الأبُ بعد عمليّاته، وكلُّ وزنٍ يبلغ الجذر", _P,
+       "120 حافّةً من المصدر المجرّد: الابنُ = الأبُ بعد عمليّاته، وكلُّ وزنٍ يبلغ الجذر", _P,
        "lean:Slge.Shabaka.edges_apply", "lean:Slge.Shabaka.network_rooted",
        "lean:Slge.Shabaka.run_edge_wf",
        "test:tests/test_conformance.py::test_shabaka_matches_lean"),
@@ -94,7 +95,7 @@ _DECLARED: tuple[Claim, ...] = (
        "ترتيبُ البصريّين: المصدرُ أصلُ المشتقّات؛ الماضي فالمضارع فالأمر؛ المزيدُ من المجرّد", _D,
        "test:tests/test_shabaka.py::test_classical_edges_are_machine_checked_and_rooted"),
     _c("SHABAKA-minimal",
-       "ترتيبُ البصريّين ليس أقلَّ الأشجار كلفةً: 341 عمليّةً مقابل 155؛ يتّفقان في 21 أبًا من 112",
+       "ترتيبُ البصريّين ليس أقلَّ الأشجار كلفةً: 361 عمليّةً مقابل 165؛ يتّفقان في 21 أبًا من 120",
        _S,
        "test:tests/test_shabaka.py::test_computed_tree_is_minimal_and_classical_is_not",
        note="أقلُّ شجرةٍ (Prim على مسافة لِيفنشتاين للقوالب) محسوبةٌ لا مقرَّرة؛ ما يحمله ترتيبُ البصريّين "
@@ -424,14 +425,14 @@ _DECLARED: tuple[Claim, ...] = (
        "lean:Slge.Wasl.wasl_qat_cells_shared", "lean:Slge.Wasl.istifhamVerb_licensed",
        "test:tests/test_wasl.py::test_boundary_laws",
        note="الحدُّ نفسُه مبرهَنٌ في الغانم (A116.Boundary) وبقيّةُ الرسم WASL/WASL_SILENT في شهادته."),
-    _c("WASL-templates", "الحصرُ الصرفيُّ تقسيمٌ لقوالب awzan المبدوءة بهمزة (11 وصلًا، 9 قطعًا، "
-       "متباينان يغطّيان العشرين)؛ القارئُ يقرأ من القالب والجذر والعشرة السماعيّة؛ "
+    _c("WASL-templates", "الحصرُ الصرفيُّ تقسيمٌ لقوالب awzan المبدوءة بهمزة (14 وصلًا، 10 قطعًا، "
+       "متباينان يغطّيان الأربعةَ والعشرين)؛ القارئُ يقرأ من القالب والجذر والعشرة السماعيّة؛ "
        "والألفُ لا تكون أصلًا", _P,
        "lean:Slge.Wasl.templates_partition", "lean:Slge.Wasl.templates_wf",
        "lean:Slge.Wasl.kind_witnesses", "lean:Slge.Wasl.template_reads_what_cells_cannot",
        "lean:Slge.Wasl.illa_not_wasl", "lean:Slge.Wasl.ten_licensed", "lean:Slge.Wasl.ten_shape",
        "lean:Slge.Wasl.plural_qat", "test:tests/test_wasl.py::test_templates_partition_and_reader",
-       note="أمرُ الخماسيّ والسداسيّ بلا قالبٍ في awzan بعد: دَين."),
+       note="أمرُ الخماسيّ والسداسيّ وصلٌ (118–120) وأمرُ الرباعيّ قطعٌ (113): دَينٌ سُدِّد."),
     _c("WASL-masaq", "على 16,072 صورةً مبدوءةً بهمزة من MASAQ بشهادات البوّابة: فيما يقرؤه القالبُ "
        "(4,318) يوافق الشهادةَ 4,259؛ وبعد السابقة لا وصلَ قائمًا: 943 ساقطٌ و119 محذوفٌ رسمًا", _S,
        "test:tests/test_wasl.py::test_masaq_measurement_and_index",
@@ -470,14 +471,28 @@ _DECLARED: tuple[Claim, ...] = (
        "بثلاثة؛ لا خماسيَّ الأصول (الجذرُ ثلاثيٌّ بالبناء) والرباعيُّ أشكالٌ مرخَّصة", _P,
        "lean:Slge.Fil.mazid_counts", "lean:Slge.Fil.root_is_ternary", "lean:Slge.Fil.rubai_shapes",
        "test:tests/test_fil.py::test_mazid_and_rubai"),
+    _c("FIL-amr", "أمرُ المزيد من مضارعه بقاعدة أمر المجرّد (حذفُ المضارعة، تسكينُ الآخر، همزةُ وصلٍ "
+       "لما بدأ بساكن): سبعةٌ بالقاعدة، وأَفْعِلْ يفرّقه القطعُ المفتوح؛ وأمرُ اِفْعَلَّ بالقاعدة غيرُ "
+       "مرخَّصٍ ثنائيًّا", _P,
+       "lean:Slge.Fil.amr_of_pres", "lean:Slge.Fil.amr_ifalla_unlicensed",
+       "test:tests/test_fil.py::test_mazid_imperative_and_post_template_readers",
+       note="دَينٌ سُدِّد: قوالبُ 113–120 في awzan وحوافُّها في الشبكة؛ فكُّ إدغام أمرِ اِفْعَلَّ بقيّةٌ مسمّاة."),
     _c("FIL-ilal", "الإعلالُ ثلاثُ عمليّات (قلبٌ ونقلٌ يحفظان الترخيص، وحذفٌ ملزَم) والإبدالُ ثلاثُ "
-       "قواعد على اِفْتَعَلَ لا تغيّر نمطَ السكون", _P,
+       "قواعد على اِفْتَعَلَ لا تغيّر نمطَ السكون (والهمزةُ فاءً كالواو والياء: اِتَّخَذَ)", _P,
        "lean:Slge.Fil.qalb_licensed", "lean:Slge.Fil.naql_licensed", "lean:Slge.Fil.hadhf_witness",
        "lean:Slge.Fil.qalb_witness", "lean:Slge.Fil.naql_witness", "lean:Slge.Fil.ibdal_licensed",
        "lean:Slge.Fil.ibdal_witnesses", "test:tests/test_fil.py::test_ilal_and_ibdal_operations",
-       note="الردُّ مبرهَنٌ في الغانم (A116.Ilal)؛ اِتَّخَذَ بالهمزة خارج القاعدة المسمّاة."),
+       note="الردُّ مبرهَنٌ في الغانم (A116.Ilal)."),
+    _c("FIL-readers", "ما بعد القالب: الأجوفُ على فَعَلَ بعد القلب [ف، ا، ل] لكلّ جذرٍ عينُه واوٌ أو ياء، "
+       "والمضعَّفُ بعد الإدغام [ف، عْ، ع] لكلّ جذرٍ عينُه لامُه؛ الإدغامُ يحفظ الترخيص؛ والقارئان يردّان "
+       "قَالَ وجَاءَ ورَدَّ", _P,
+       "lean:Slge.Fil.qalb_pastT", "lean:Slge.Fil.idgham_pastT", "lean:Slge.Fil.idgham_licensed",
+       "lean:Slge.Fil.readers_witnesses",
+       "test:tests/test_fil.py::test_mazid_imperative_and_post_template_readers",
+       note="عينُ الأجوف بين الواو والياء: المعجمُ يفصل (قَالَ: ق‑و‑ل، بَاعَ: ب‑ي‑ع)."),
     _c("FIL-masaq", "على 18,765 فعلًا من MASAQ: عينُ الماضي المجرّد السالم فتحٌ 489 كسرٌ 119 ضمٌّ 9، وعينُ "
-       "المضارع فتحٌ 1,226 كسرٌ 1,036 ضمٌّ 657؛ الماضي على القوالب 831 والباقي معتلٌّ ومضعَّف", _S,
+       "المضارع فتحٌ 1,226 كسرٌ 1,036 ضمٌّ 657؛ الماضي على القوالب 831، وبعد القالب بالعمليّة 1,160 "
+       "(أجوف 1,082، مضعَّف 78)؛ الباقي 1,233 ناقصٌ ومثالٌ ومزيدٌ معتلّ", _S,
        "test:tests/test_fil.py::test_masaq_measurement_and_index",
        note="الزوجُ (البابُ) قانونُ معجمٍ يجمع الصورتين؛ الخانةُ تقرأ كلَّ صورةٍ وحدَها."),
     # — الحروف والأدوات —

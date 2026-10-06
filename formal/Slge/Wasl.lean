@@ -95,10 +95,11 @@ theorem wasl_qat_cells_shared :
 
 /-! ## الحصرُ الصرفيّ: تقسيمُ القوالب -/
 
-/-- أمرُ الثلاثيّ (8–10)، ماضي الخماسيّ والسداسيّ (16–19)، ومصادرُهما (44–47). -/
-def waslTemplates : List Nat := [8, 9, 10, 16, 17, 18, 19, 44, 45, 46, 47]
-/-- الرباعيُّ أَفْعَلَ ومصدرُه إِفْعَال، وأَفْعَل، والجموعُ أَفْعُل/أَفْعَال/أَفْعِلَة/أَفْعِلَاء، وأَفَاعِل/أَفَاعِيل. -/
-def qatTemplates : List Nat := [11, 38, 54, 83, 84, 85, 100, 105, 106]
+/-- أمرُ الثلاثيّ (8–10)، ماضي الخماسيّ والسداسيّ (16–19)، ومصادرُهما (44–47)، وأمرُهما (118–120). -/
+def waslTemplates : List Nat := [8, 9, 10, 16, 17, 18, 19, 44, 45, 46, 47, 118, 119, 120]
+/-- الرباعيُّ أَفْعَلَ ومصدرُه إِفْعَال وأمرُه أَفْعِلْ، وأَفْعَل، والجموعُ أَفْعُل/أَفْعَال/أَفْعِلَة/أَفْعِلَاء،
+وأَفَاعِل/أَفَاعِيل. -/
+def qatTemplates : List Nat := [11, 38, 54, 83, 84, 85, 100, 105, 106, 113]
 
 def startsHamza : Wazn.Template → Bool
   | .lit x :: _ => x.carrier.val == 0
@@ -108,6 +109,7 @@ def startsHamza : Wazn.Template → Bool
 def hamzaTemplates : List Nat :=
   (List.range Wazn.awzan.length).filter (fun k => startsHamza (Sarf.templ k))
 
+set_option maxRecDepth 4096 in
 theorem templates_partition :
     (waslTemplates.filter (· ∈ qatTemplates)) = [] ∧
     hamzaTemplates.all (fun k => k ∈ waslTemplates || k ∈ qatTemplates) = true ∧
@@ -164,9 +166,11 @@ def kind (w : List SCell) : Kind :=
   else if radicalHamza w then .qatRadical
   else .unread
 
+set_option maxRecDepth 4096 in
 /-- إِلَّا على اِفْعَلْ بجذر ل‑ل‑ا: القالبُ يقبلها والألفُ الأصلُ تردّها — فلا تُقرأ وصلًا. -/
 theorem illa_not_wasl : kind Mansubat.illa = .unread := by decide
 
+set_option maxRecDepth 4096 in
 /-- شواهد: اِقْرَأْ (بوّابة)، اِنْطَلَقَ، اِسْتَخْرَجَ، اِنْطِلَاق وصلٌ؛ أَكْرَمَ، إِكْرَام، أَبْنَاءَ (بوّابة) قطعٌ؛
 أَخَذَ (بوّابة) وأَرْض قطعٌ أصليّ؛ أَكْتُبُ قطعٌ — لكن من قالب أَفْعُل (أَنْفُس) لا من المضارعة: الخانةُ لا تفرّق
 مضارعَ المتكلّم من جمع القلّة، والحكمُ (قطع) واحد. -/

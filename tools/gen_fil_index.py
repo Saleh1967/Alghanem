@@ -10,7 +10,7 @@ from collections import Counter
 from pathlib import Path
 
 from slge.cells import STATES
-from slge.fil import ABWAB, DHZ, ITBAQ, MAZID, MISSING, added
+from slge.fil import ABWAB, DHZ, ITBAQ, MAZID, MISSING, added, read_doubled, read_hollow
 from slge.wazn import AWZAN, fill, root_of
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -52,7 +52,18 @@ def measure() -> dict[str, object]:
             pres_ayn[_SYM[stem[1][1]]] += 1
         if tag in ("PV", "PV_PASS") and not r["n"]:
             hit = next((k for k in (0, 1, 2, *MAZID) if _on(k, stem)), None)
-            templ[AWZAN[hit].name if hit is not None else "—"] += 1
+            mudgham = len(stem) >= 5 and stem[:2] == (("ء", STATES[1]), ("ت", STATES[3])) \
+                and stem[2][0] == "ت" and _on(17, (stem[0], ("و", STATES[3]), *stem[2:]))
+            if mudgham:  # القالبُ يقبله بفاءٍ تاء؛ والفاءُ الأصلُ (و/ي/ء) بعد الإبدال معجم
+                templ["اِفْتَعَلَ (مدغمٌ بعد الإبدال)"] += 1
+            elif hit is not None:
+                templ[AWZAN[hit].name] += 1
+            elif read_hollow(stem) is not None:
+                templ["فَعَلَ (أجوف بعد القلب)"] += 1
+            elif read_doubled(stem) is not None:
+                templ["فَعَلَ (مضعَّف بعد الإدغام)"] += 1
+            else:
+                templ["—"] += 1
             iftaal_shape = (len(stem) >= 3 and stem[0] == ("ء", STATES[1])
                             and stem[1][1] == STATES[3])
             if iftaal_shape:
@@ -102,9 +113,9 @@ def render() -> str:
         "البوّابة؛ `naql_licensed`).",
         "- **الحذف**: السكونُ بعد المدّ غيرُ مرخَّصٍ فيُحذف المعتلّ (يَقُولُ ← يَقُلْ `hadhf_witness`؛ "
         "`Jazm.hollow_forced`).",
-        "- **الإبدال** `ibdal` على اِفْتَعَلَ: تاءٌ ⇒ طاءٌ بعد الإطباق، تاءٌ ⇒ دالٌ بعد د/ذ/ز، فاءٌ و/ي "
+        "- **الإبدال** `ibdal` على اِفْتَعَلَ: تاءٌ ⇒ طاءٌ بعد الإطباق، تاءٌ ⇒ دالٌ بعد د/ذ/ز، فاءٌ و/ي/ء "
         "⇒ تاءٌ مدغمة — لا يغيّر نمطَ السكون فيحفظ الترخيص (`ibdal_licensed`)؛ اِصْطَبَرَ اِزْدَهَرَ اِتَّصَلَ "
-        "(`ibdal_witnesses`)، واصْطَفَى وازْدَادُوا بشهادة البوّابة.",
+        "اِتَّخَذَ (`ibdal_witnesses`)، واصْطَفَى وازْدَادُوا واتَّخَذَ بشهادة البوّابة.",
         "",
         "## القياس على MASAQ", "",
         f"على {m['n']} فعلًا بشهادات البوّابة (الجذعُ بعد السابقة وقبل اللاحقة):", "",
@@ -122,8 +133,11 @@ def render() -> str:
         "| القالب | العدد |", "|---|---|",
         *[f"| {k} | {v} |" for k, v in templ.most_common(14)],
         "",
-        "ما لا يقرؤه القالب (—): المعتلُّ والمهموزُ والمضعَّف والمدغمُ (قَالَ، جَاءَ، رَدَّ، اِتَّخَذَ) — "
-        "إعلالٌ وإبدالٌ بعد القالب، دَينٌ مسمًّى.",
+        "ما بعد القالب يُقرأ بالعمليّة (دَينٌ سُدِّد): الأجوفُ [ف، ا، ل] بعد القلب (`qalb_pastT`؛ "
+        "`read_hollow`: قَالَ، جَاءَ)، والمضعَّفُ [ف، عْ، ع] بعد الإدغام (`idgham_pastT`؛ `read_doubled`: "
+        "رَدَّ)، واِفْتَعَلَ المدغمُ بعد الإبدال (اِتَّخَذَ: القالبُ يقبله بفاءٍ تاء، والفاءُ الأصلُ و/ي/ء "
+        "معجم — `ibdal`). "
+        "وما بقي (—): ناقصٌ ومثالٌ ولفيفٌ وأجوفٌ على المزيد — إعلالٌ بعد القالب، بقيّةٌ مسمّاة.",
         "",
         "### الإبدالُ في اِفْتَعَلَ", "",
         "| القاعدة | العدد |", "|---|---|",
@@ -132,7 +146,9 @@ def render() -> str:
         "## ما لا تقرؤه الخانة — باسمه", "",
         "- معاني صيغ الزيادة (التعدية، المشاركة، المطاوعة، الطلب): معلَن.",
         "- اختيارُ الباب لجذرٍ بعينه (نَصَرَ–يَنْصُرُ لا يَنْصِرُ): معجم.",
-        "- أمرُ الخماسيّ والسداسيّ ومضارعُ المزيد: قوالبُ ناقصةٌ في `awzan` — دَين.",
+        "- أمرُ المزيد: قوالبُ 113–120 من مضارعه بقاعدة أمر المجرّد (`amr_of_pres`)؛ أَفْعِلْ يفرّقه القطعُ "
+        "المفتوح، وأمرُ اِفْعَلَّ بالقاعدة ساكنان غيرُ مرخَّصين (`amr_ifalla_unlicensed`) — فكُّ الإدغام "
+        "بقيّةٌ مسمّاة.",
         "- شريحةُ MASAQ: 374 صورةً مستبعَدة (فارغٌ بعد السابقة 316، مرفوضٌ بالاسم 58).",
         "",
     ]

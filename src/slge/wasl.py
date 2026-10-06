@@ -2,9 +2,10 @@
 
 في الابتداء الهمزتان خانةٌ واحدة (همزةٌ متحرّكةٌ فساكن)؛ الفرقُ في الحدّ (الوصلُ يسقط في الوصل
 `drop_wasl`، والقطعُ يبقى) وفي بقيّة الرسم `WASL`/`WASL_SILENT` بشهادة البوّابة. الحصرُ الصرفيُّ تقسيمٌ
-لقوالب `wazn.AWZAN` المبدوءة بهمزة: `WASL_TEMPLATES` (أمرُ الثلاثيّ، ماضي الخماسيّ والسداسيّ ومصدراهما)
-و`QAT_TEMPLATES` (الرباعيُّ ومصدرُه وأَفْعَل والجموع). القارئُ `kind`: السماعيُّ (العشرة) أوّلًا، ثمّ القالب،
-ثمّ القطعُ الأصليُّ من الجذر، وما سواه لا يُقرأ. القياسُ على MASAQ في `tools/gen_wasl_index.py`.
+لقوالب `wazn.AWZAN` المبدوءة بهمزة: `WASL_TEMPLATES` (أمرُ الثلاثيّ، ماضي الخماسيّ والسداسيّ ومصدراهما
+وأمرُهما) و`QAT_TEMPLATES` (الرباعيُّ ومصدرُه وأمرُه وأَفْعَل والجموع). القارئُ `kind`: السماعيُّ (العشرة)
+أوّلًا، ثمّ القالب، ثمّ القطعُ الأصليُّ من الجذر، وما سواه لا يُقرأ. القياسُ على MASAQ في
+`tools/gen_wasl_index.py`.
 """
 
 from __future__ import annotations
@@ -20,8 +21,8 @@ __all__ = ["QAT_TEMPLATES", "TEN", "WASL_TEMPLATES", "drop_wasl", "istifham_verb
            "radical_hamza", "starts_hamza"]
 
 _A, _I, _U, SUKUN = STATES
-WASL_TEMPLATES: Final[tuple[int, ...]] = (8, 9, 10, 16, 17, 18, 19, 44, 45, 46, 47)
-QAT_TEMPLATES: Final[tuple[int, ...]] = (11, 38, 54, 83, 84, 85, 100, 105, 106)
+WASL_TEMPLATES: Final[tuple[int, ...]] = (8, 9, 10, 16, 17, 18, 19, 44, 45, 46, 47, 118, 119, 120)
+QAT_TEMPLATES: Final[tuple[int, ...]] = (11, 38, 54, 83, 84, 85, 100, 105, 106, 113)
 TEN: Final[tuple[str, ...]] = ("اِسْمُ", "اِبْنُ", "اِبْنَةُ", "اِمْرُؤُ", "اِمْرَأَةُ", "اِثْنَانِ", "اِثْنَتَانِ", "اِبْنُمُ",
                                "اَيْمُ", "اَيْمُنُ")
 _TEN_CELLS: Final[frozenset[tuple[Cell, ...]]] = frozenset(cells_of(w) for w in TEN)

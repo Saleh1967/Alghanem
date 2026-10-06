@@ -37,7 +37,7 @@ def test_boundary_laws() -> None:
 
 def test_templates_partition_and_reader() -> None:
     hamza = [k for k in range(len(AWZAN)) if starts_hamza(k)]
-    assert hamza == sorted(WASL_TEMPLATES + QAT_TEMPLATES) and len(hamza) == 20
+    assert hamza == sorted(WASL_TEMPLATES + QAT_TEMPLATES) and len(hamza) == 24
     assert not set(WASL_TEMPLATES) & set(QAT_TEMPLATES)
     for w, k in (("اِقْرَأْ", "وصل"), ("اِنْطَلَقَ", "وصل"), ("اِسْتَخْرَجَ", "وصل"), ("اِنْطِلَاقُ", "وصل"),
                  ("أَكْرَمَ", "قطع"), ("إِكْرَامُ", "قطع"), ("أَبْنَاءُ", "قطع"), ("أَسْمَاءُ", "قطع"),

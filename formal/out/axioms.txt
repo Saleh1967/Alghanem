@@ -451,6 +451,8 @@
 'Slge.Fil.bab_witnesses' depends on axioms: [propext]
 'Slge.Fil.bab3_condition_witness' depends on axioms: [propext]
 'Slge.Fil.mazid_counts' depends on axioms: [propext]
+'Slge.Fil.amr_of_pres' depends on axioms: [propext, Quot.sound]
+'Slge.Fil.amr_ifalla_unlicensed' depends on axioms: [propext]
 'Slge.Fil.rubai_shapes' depends on axioms: [propext]
 'Slge.Fil.root_is_ternary' does not depend on any axioms
 'Slge.Fil.qalb_witness' depends on axioms: [propext]
@@ -461,6 +463,10 @@
 'Slge.Fil.ibdal_map_isSukun' depends on axioms: [propext]
 'Slge.Fil.ibdal_licensed' depends on axioms: [propext]
 'Slge.Fil.ibdal_witnesses' depends on axioms: [propext]
+'Slge.Fil.idgham_licensed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Fil.qalb_pastT' depends on axioms: [propext]
+'Slge.Fil.idgham_pastT' depends on axioms: [propext]
+'Slge.Fil.readers_witnesses' depends on axioms: [propext]
 'Slge.Fil.kada_eleven' does not depend on any axioms
 'Slge.Huruf.counts' does not depend on any axioms
 'Slge.Huruf.table_licensed' depends on axioms: [propext]

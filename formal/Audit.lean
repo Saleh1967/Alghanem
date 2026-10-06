@@ -456,6 +456,8 @@ import Slge
 #print axioms Slge.Fil.bab_witnesses
 #print axioms Slge.Fil.bab3_condition_witness
 #print axioms Slge.Fil.mazid_counts
+#print axioms Slge.Fil.amr_of_pres
+#print axioms Slge.Fil.amr_ifalla_unlicensed
 #print axioms Slge.Fil.rubai_shapes
 #print axioms Slge.Fil.root_is_ternary
 #print axioms Slge.Fil.qalb_witness
@@ -466,6 +468,10 @@ import Slge
 #print axioms Slge.Fil.ibdal_map_isSukun
 #print axioms Slge.Fil.ibdal_licensed
 #print axioms Slge.Fil.ibdal_witnesses
+#print axioms Slge.Fil.idgham_licensed
+#print axioms Slge.Fil.qalb_pastT
+#print axioms Slge.Fil.idgham_pastT
+#print axioms Slge.Fil.readers_witnesses
 #print axioms Slge.Fil.kada_eleven
 #print axioms Slge.Huruf.counts
 #print axioms Slge.Huruf.table_licensed

@@ -1,4 +1,5 @@
 import Slge.Ism
+import Slge.Shabaka
 
 /-!
 # الفعل: أبوابُه أزواجُ حالات، وزيادتُه طولُ قالب، وإعلالُه وإبدالُه عمليّاتٌ على الخانات
@@ -90,6 +91,37 @@ theorem mazid_counts :
     mazid.all (fun k => decide (Wazn.WF (Sarf.templ k))) = true ∧
     ([0, 1, 2].map (fun k => added (Sarf.templ k))) = [0, 0, 0] := by decide
 
+/-! ## أمرُ المزيد (دَينٌ سُدِّد) -/
+
+def startsSukun : Wazn.Template → Bool
+  | .slot _ s :: _ => s.val == 3
+  | .lit x :: _ => x.state.val == 3
+  | [] => false
+
+/-- أمرُ المضارع: حذفُ حرف المضارعة وتسكينُ الآخر؛ وما بدأ بساكنٍ سبقته همزةُ وصلٍ مكسورة. -/
+def amrOf (pres : Wazn.Template) : Wazn.Template :=
+  let body := Shabaka.del 0 (Shabaka.setSt (pres.length - 1) 3 pres)
+  if startsSukun body then .lit (c 0 1) :: body else body
+
+def mazidPres : List Nat := [21, 22, 23, 24, 25, 26, 28]
+def mazidAmr : List Nat := [114, 115, 116, 117, 118, 119, 120]
+
+/-- أمرُ المزيد من مضارعه بالقاعدة نفسِها التي تُخرج أمرَ المجرّد (`Shabaka.edges` 8–10): سبعةٌ بالقاعدة
+وحدَها؛ ويُفْعِلُ بالقاعدة يُعطي اِفْعِلْ (أمرَ المجرّد بعينه) — فهمزةُ القطع المفتوحةُ في أَفْعِلْ هي ما يفرّق
+الرباعيَّ من الثلاثيّ: قطعٌ لا وصل (`Wasl.qatTemplates`)، والخانةُ تحمل الفرق. -/
+theorem amr_of_pres :
+    (mazidPres.zip mazidAmr).all (fun p => amrOf (Sarf.templ p.1) == Sarf.templ p.2) = true ∧
+    amrOf (Sarf.templ 20) = Sarf.templ 9 ∧
+    Sarf.templ 113 = Shabaka.setSt 0 0 (amrOf (Sarf.templ 20)) ∧
+    amrOf (Sarf.templ 4) = Sarf.templ 8 ∧ amrOf (Sarf.templ 5) = Sarf.templ 9 ∧
+    (113 ∈ Wasl.qatTemplates) ∧ ([118, 119, 120].all (· ∈ Wasl.waslTemplates)) = true ∧
+    (mazidAmr.all (fun k => decide (Wazn.WF (Sarf.templ k)))) = true ∧
+    (mazidAmr.map (fun k => added (Sarf.templ k))) = [1, 1, 2, 2, 2, 2, 3] := by decide
+
+/-- أمرُ اِفْعَلَّ بالقاعدة اِفْعَلْلْ: ساكنان، غيرُ مرخَّصٍ ثنائيًّا (كجزمه) — فكُّ الإدغام أو الفتحُ
+بقيّةٌ مسمّاة. -/
+theorem amr_ifalla_unlicensed : licensed (Wazn.mizan (amrOf (Sarf.templ 27))) = false := by decide
+
 /-- المجرّدُ الرباعيُّ ومزيدُه: أشكالُ حالاتٍ (الجذرُ في `Wazn` ثلاثيٌّ بالبناء). -/
 def rubai : List (String × List SCell) := [
   ("دَحْرَجَ", [c 8 0, c 6 3, c 10 0, c 5 0]), ("زَلْزَلَ", [c 11 0, c 23 3, c 11 0, c 23 0]),
@@ -178,7 +210,8 @@ def ibdal : List SCell → List SCell
   | h :: f :: t :: rest =>
       if itbaq f.carrier then h :: f :: ⟨⟨16, by decide⟩, t.state⟩ :: rest
       else if dhz f.carrier then h :: f :: ⟨⟨8, by decide⟩, t.state⟩ :: rest
-      else if f.carrier.val = 27 ∨ f.carrier.val = 28 then h :: ⟨⟨3, by decide⟩, f.state⟩ :: t :: rest
+      else if f.carrier.val = 27 ∨ f.carrier.val = 28 ∨ f.carrier.val = 0 then
+        h :: ⟨⟨3, by decide⟩, f.state⟩ :: t :: rest
       else h :: f :: t :: rest
   | w => w
 
@@ -193,8 +226,11 @@ theorem ibdal_map_isSukun : ∀ w : List SCell, (ibdal w).map SCell.isSukun = w.
 theorem ibdal_licensed (w : List SCell) : licensed (ibdal w) = licensed w :=
   Zuruf.licensed_of_map_isSukun _ _ (ibdal_map_isSukun w)
 
-/-- اِصْطَبَرَ، اِزْدَهَرَ، اِتَّصَلَ؛ وبشهادة البوّابة اصْطَفَى وازْدَادُوا (جذعُهما بالقاعدة نفسِها). -/
+/-- اِصْطَبَرَ، اِزْدَهَرَ، اِتَّصَلَ، اِتَّخَذَ (الهمزةُ فاءً كالواو والياء — دَينٌ سُدِّد)؛ وبشهادة البوّابة اصْطَفَى
+وازْدَادُوا واتَّخَذَ (جذعُها بالقاعدة نفسِها). -/
 theorem ibdal_witnesses :
+    ibdal (iftaal (fun i => if i = 0 then 0 else if i = 1 then 7 else 9)) =
+      [c 0 1, c 3 3, c 3 0, c 7 0, c 9 0] ∧
     ibdal (iftaal (fun i => if i = 0 then 14 else if i = 1 then 2 else 10)) =
       [c 0 1, c 14 3, c 16 0, c 2 0, c 10 0] ∧
     ibdal (iftaal (fun i => if i = 0 then 11 else if i = 1 then 26 else 10)) =
@@ -203,6 +239,58 @@ theorem ibdal_witnesses :
       [c 0 1, c 3 3, c 3 0, c 14 0, c 23 0] ∧
     (ibdal [c 0 1, c 14 3, c 3 0, c 20 0, c 1 3]) = [c 0 1, c 14 3, c 16 0, c 20 0, c 1 3] ∧
     (ibdal [c 0 1, c 11 3, c 3 0, c 1 3, c 8 2, c 27 3]).take 3 = [c 0 1, c 11 3, c 8 0] := by decide
+
+/-! ## ما بعد القالب: الأجوفُ والمضعَّف يُقرآن بالعمليّة (دَينٌ سُدِّد) -/
+
+/-- الإدغام: عينٌ ولامٌ من حرفٍ واحدٍ متحرّكتان ⇒ العينُ ساكنة (رَدَدَ ← رَدَّ). -/
+def idgham : List SCell → List SCell
+  | x :: y :: z :: t =>
+      if y.carrier = z.carrier ∧ y.state.val ≠ 3 ∧ z.state.val ≠ 3 then x :: ⟨y.carrier, 3⟩ :: z :: t
+      else x :: y :: z :: t
+  | w => w
+
+/-- الإدغامُ يحفظ الترخيصَ إذا كان الأوّلُ متحرّكًا (ما قبل العين لا يكون ساكنًا في الماضي). -/
+theorem idgham_licensed (x y z : SCell) (t : List SCell) (hx : x.isSukun = false)
+    (h : licensed (x :: y :: z :: t) = true) : licensed (idgham (x :: y :: z :: t)) = true := by
+  have h' := h
+  simp only [licensed, noAdj, Bool.and_eq_true] at h'
+  have hzt : noAdj (z :: t) = true := h'.2.2.2
+  show licensed (if y.carrier = z.carrier ∧ y.state.val ≠ 3 ∧ z.state.val ≠ 3
+      then x :: ⟨y.carrier, 3⟩ :: z :: t else x :: y :: z :: t) = true
+  have hx' : x.state.val ≠ 3 := by simpa [SCell.isSukun] using hx
+  split
+  · rename_i hc
+    simp [licensed, noAdj, hx', hc.2.2, hzt, SCell.isSukun, Ishara.s3]
+  · exact h
+
+/-- الأجوفُ على فَعَلَ بعد القلب: [ف، ا، ل] لكلّ جذرٍ عينُه واوٌ أو ياء. -/
+theorem qalb_pastT (r : Wazn.Root) (h : (r 1).val = 27 ∨ (r 1).val = 28) :
+    qalb (Wazn.fill (pastT 0) r) = [⟨r 0, 0⟩, c 1 3, ⟨r 2, 0⟩] := by
+  simp [Wazn.fill, pastT, Wazn.fillSym, qalb, h]
+
+/-- المضعَّفُ على فَعَلَ بعد الإدغام: [ف، عْ، ع] لكلّ جذرٍ عينُه لامُه. -/
+theorem idgham_pastT (r : Wazn.Root) (h : r 1 = r 2) :
+    idgham (Wazn.fill (pastT 0) r) = [⟨r 0, 0⟩, ⟨r 1, 3⟩, ⟨r 2, 0⟩] := by
+  simp [Wazn.fill, pastT, Wazn.fillSym, idgham, h]
+
+/-- القارئان: الأجوفُ يُقرأ جذرًا بعينٍ مجهولةٍ بين الواو والياء (المعجمُ يفصل)، والمضعَّفُ جذرًا تامًّا. -/
+def readHollow : List SCell → Option (Fin 29 × Fin 29)
+  | [x, m, z] => if m = c 1 3 ∧ x.state.val = 0 ∧ z.state.val = 0 then some (x.carrier, z.carrier) else none
+  | _ => none
+
+def readDoubled : List SCell → Option Wazn.Root
+  | [x, y, z] => if y.carrier = z.carrier ∧ y.state.val = 3 ∧ x.state.val = 0 ∧ z.state.val = 0 then
+      some (fun i => if i = 0 then x.carrier else y.carrier) else none
+  | _ => none
+
+/-- قَالَ وجَاءَ يُقرآن أجوفين (ق‑؟‑ل، ج‑؟‑ء)؛ رَدَّ ومَدَّ مضعَّفين، وما قُرئ يُردّ بالعمليّة بعينه. -/
+theorem readers_witnesses :
+    readHollow [c 21 0, c 1 3, c 23 0] = some (21, 23) ∧
+    readHollow [c 5 0, c 1 3, c 0 0] = some (5, 0) ∧
+    (readDoubled [c 10 0, c 8 3, c 8 0]).map (fun r => idgham (Wazn.fill (pastT 0) r)) =
+      some [c 10 0, c 8 3, c 8 0] ∧
+    readHollow [c 25 0, c 14 0, c 10 0] = none ∧ readDoubled [c 25 0, c 14 0, c 10 0] = none := by
+  decide
 
 /-- هذا الحصرُ يعدّ كاد أحدَ عشرَ (بلا هَبَّ): العشرةُ المشتركةُ في `Nawasikh.kadaSisters`. -/
 theorem kada_eleven :

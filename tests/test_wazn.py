@@ -80,9 +80,9 @@ def test_masdar_of_mazid_is_a_declared_pair_of_deposited_awzan() -> None:
 
 
 def test_skeletons_measured_against_sibawayh() -> None:
-    """هياكلُ الأوزان (حروفًا بلا حركات) مقابل أبنية سيبويه المجمَّدة: 95 من 113 مذكورةٌ عنده؛
+    """هياكلُ الأوزان (حروفًا بلا حركات) مقابل أبنية سيبويه المجمَّدة: 103 من 121 مذكورةٌ عنده؛
     والـ18 الباقيةُ مسمّاةٌ: الأمرُ والمصدرُ القياسيُّ للمزيد وبعضُ المشتقّات والجموع ليست في
-    أبواب الأبنية؛ و122 من هياكله الـ158 خارج الجدول (الجدولُ يصيب 36 هيكلًا بـ95 وزنًا مشكولًا؛
+    أبواب الأبنية؛ و122 من هياكله الـ158 خارج الجدول (الجدولُ يصيب 36 هيكلًا بـ103 أوزانٍ مشكولة؛
     وأكثرُ الباقي رباعيٌّ ونادر): دَين."""
 
     raw = SIBAWAYH.read_bytes()
@@ -98,7 +98,7 @@ def test_skeletons_measured_against_sibawayh() -> None:
 
     hit = [w.name for w in AWZAN if key(w.name) in skeletons]
     miss = [w.name for w in AWZAN if key(w.name) not in skeletons]
-    assert len(hit) == 95 and len(miss) == 18, miss
+    assert len(hit) == 103 and len(miss) == 18, miss
     assert len(skeletons - {key(w.name) for w in AWZAN}) == 122
 
 

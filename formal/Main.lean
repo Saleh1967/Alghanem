@@ -101,7 +101,7 @@ def main (args : List String) : IO Unit := do
   | ["shabaka"] =>
     -- حوافُّ شبكة البصريّين: الابن، الأب، عددُ العمليّات، وهل يبلغ الجذر.
     for e in Shabaka.edges do
-      IO.println s!"{e.1},{e.2.1},{e.2.2.length},{Shabaka.reaches e.1 113}"
+      IO.println s!"{e.1},{e.2.1},{e.2.2.length},{Shabaka.reaches e.1 121}"
   | ["khamsa"] =>
     for w in Khamsa.forms do
       let key := "-".intercalate (w.map fun c => toString c.index)
@@ -231,8 +231,12 @@ def main (args : List String) : IO Unit := do
     let r1 : Wazn.Root := fun i => if i = 0 then 14 else if i = 1 then 2 else 10
     let r2 : Wazn.Root := fun i => if i = 0 then 11 else if i = 1 then 26 else 10
     let r3 : Wazn.Root := fun i => if i = 0 then 27 else if i = 1 then 14 else 23
+    let r4 : Wazn.Root := fun i => if i = 0 then 0 else if i = 1 then 7 else 9
+    for (p, a) in Fil.mazidPres.zip Fil.mazidAmr do
+      IO.println s!"amr,{p},{a},{Fil.amrOf (Sarf.templ p) == Sarf.templ a}"
     for (n, w) in [("istabara", Fil.ibdal (Fil.iftaal r1)), ("izdahara", Fil.ibdal (Fil.iftaal r2)),
-                   ("ittasala", Fil.ibdal (Fil.iftaal r3)),
+                   ("ittasala", Fil.ibdal (Fil.iftaal r3)), ("ittakhadha", Fil.ibdal (Fil.iftaal r4)),
+                   ("radda", Fil.idgham [Slge.Categories.c 10 0, Slge.Categories.c 8 0, Slge.Categories.c 8 0]),
                    ("qala", Fil.qalb [Slge.Categories.c 21 0, Slge.Categories.c 27 0, Slge.Categories.c 23 0]),
                    ("qulu", Fil.naql [Slge.Categories.c 21 3, Slge.Categories.c 27 2, Slge.Categories.c 23 2])] do
       IO.println s!"op,{n},{"-".intercalate (w.map fun c => toString c.index)}"

@@ -7,10 +7,28 @@ import json
 from pathlib import Path
 
 from slge.cells import STATES, licensed
-from slge.fil import ABWAB, MAZID, MISSING, added, halqi, ibdal, iftaal, naql, qalb, read_bab
+from slge.fil import (
+    ABWAB,
+    MAZID,
+    MAZID_AMR,
+    MAZID_PRES,
+    MISSING,
+    added,
+    amr_of,
+    halqi,
+    ibdal,
+    idgham,
+    iftaal,
+    naql,
+    qalb,
+    read_bab,
+    read_doubled,
+    read_hollow,
+)
 from slge.jazm import sukun
 from slge.rawabit import cells_of
-from slge.wazn import AWZAN, fill
+from slge.wasl import QAT_TEMPLATES, WASL_TEMPLATES
+from slge.wazn import AWZAN, fill, mizan
 
 _A, _I, _U, SUKUN = STATES
 SLICE = Path(__file__).parent / "data" / "masaq-fil.json.gz"
@@ -48,6 +66,27 @@ def test_ilal_and_ibdal_operations() -> None:
     for root in (("ص", "ب", "ر"), ("ز", "ه", "ر"), ("و", "ص", "ل"), ("ك", "س", "ب")):
         assert licensed(ibdal(iftaal(root))) == licensed(iftaal(root))
     assert ibdal(cells_of("اِصْتَفَى")) == cells_of("اِصْطَفَى")
+    assert ibdal(iftaal(("ء", "خ", "ذ"))) == cells_of("اِتْتَخَذَ")  # الهمزةُ فاءً: دَينٌ سُدِّد
+
+
+def test_mazid_imperative_and_post_template_readers() -> None:
+    """أمرُ المزيد من مضارعه بقاعدة أمر المجرّد؛ وأَفْعِلْ يفرّقه القطعُ؛ والأجوفُ والمضعَّف يُقرآن بعد
+    القالب."""
+
+    for p, a in zip(MAZID_PRES, MAZID_AMR, strict=True):
+        assert amr_of(AWZAN[p].template) == AWZAN[a].template and AWZAN[a].bab == "أمر مزيد"
+        assert licensed(mizan(AWZAN[a].template))
+    assert amr_of(AWZAN[20].template) == AWZAN[9].template and AWZAN[113].name == "أَفْعِلْ"
+    assert 113 in QAT_TEMPLATES and all(k in WASL_TEMPLATES for k in (118, 119, 120))
+    assert not licensed(mizan(amr_of(AWZAN[27].template)))  # اِفْعَلْلْ: ساكنان
+    assert fill(AWZAN[120].template, ("غ", "ف", "ر")) == cells_of("اِسْتَغْفِرْ")
+    assert fill(AWZAN[113].template, ("ك", "ر", "م")) == cells_of("أَكْرِمْ")
+    assert idgham(cells_of("رَدَدَ")) == cells_of("رَدْدَ") and licensed(idgham(cells_of("مَدَدَ")))
+    assert read_doubled(cells_of("رَدْدَ")) == ("ر", "د", "د")
+    assert read_doubled(cells_of("كَتَبَ")) is None
+    assert read_hollow(cells_of("قَالَ")) == ("ق", "ل") and read_hollow(cells_of("جَاءَ")) == ("ج", "ء")
+    for root in (("ق", "و", "ل"), ("ب", "ي", "ع")):
+        assert qalb(fill(AWZAN[0].template, root)) == ((root[0], _A), ("ا", SUKUN), (root[2], _A))
 
 
 def test_masaq_measurement_and_index() -> None:
