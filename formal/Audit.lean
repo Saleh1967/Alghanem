@@ -379,6 +379,8 @@ import Slge
 #print axioms Slge.Mansubat.nakira_licensed
 #print axioms Slge.Mansubat.sorting_by_template
 #print axioms Slge.Mansubat.derived_templates_wf
+#print axioms Slge.Mansubat.derived_of_bare
+#print axioms Slge.Mansubat.derived_witnesses
 #print axioms Slge.Mansubat.adad_tamyiz_is_nakira
 #print axioms Slge.Mansubat.tahwil_witness
 #print axioms Slge.Mansubat.tamm_muthbat_reads_nasb

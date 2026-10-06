@@ -10,11 +10,14 @@ from slge.mansubat import (
     TOOLS,
     after_khala,
     derived,
+    derived_bare,
+    fakk,
     ghayr_of,
     hal,
     mustathna,
     nasb,
     raf,
+    strip_suffix,
     tahwil,
     tamyiz,
 )
@@ -33,6 +36,14 @@ def test_hal_and_tamyiz_one_operation() -> None:
         assert case_class(x) == "نصب" and has_tanwin(x) and licensed(x), w
     assert hal(cells_of("شَيْبُ")) == cells_of("شَيْبًا")
     assert derived(cells_of("ضَاحِكُ")) and derived(cells_of("مُفْسِدُ")) and not derived(cells_of("نَفْسُ"))
+    # دَينٌ سُدِّد: اللاحقةُ تُسقَط والإدغامُ يُفكّ قبل القراءة (`derived_witnesses`)
+    for w in ("صَافْفَاتِ", "مُبْصِرَتَ", "خَالِدِينَ", "بَيْضَاءَ", "حُنَفَاءَ", "ظَالِمِيْ", "خَائِفُ", "قَائِمُ"):
+        assert derived(cells_of(w)), w
+    assert not derived_bare(cells_of("صَافْفَاتِ"))
+    assert strip_suffix(cells_of("مُبْصِرَتَ")) == cells_of("مُبْصِرَ")
+    assert fakk(_I, cells_of("صَافْفُ")) == cells_of("صَافِفُ")
+    for w in ("شَيْبُ", "كِتَابُ", "فَرِحُ", "مُذَبْذَبُ"):
+        assert not derived(cells_of(w)), w
     ras, shayb = cells_of("رَأْسُ"), cells_of("شَيْبُ")
     assert tahwil(shayb, ras) == (cells_of("اَرَّأْسُ"), cells_of("شَيْبًا"))
     sukara = cells_of("سُكَارَى")

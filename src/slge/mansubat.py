@@ -19,14 +19,14 @@ from slge.rawabit import PARTICLES, cells_of
 from slge.wazn import AWZAN, fill, root_of
 from slge.zuruf import jarr, set_last
 
-__all__ = ["DERIVED", "FAAIL", "FAL", "TOOLS", "after_khala", "derived", "ghayr_of", "hal",
-           "mustathna", "nakira_mansuba", "tahwil", "tamyiz"]
+__all__ = ["DERIVED", "FAAIL", "FAL", "TOOLS", "after_khala", "derived", "derived_bare", "fakk",
+           "ghayr_of", "hal", "mustathna", "nakira_mansuba", "strip_suffix", "tahwil", "tamyiz"]
 
 _A, _I, _U, SUKUN = STATES
 FAAIL: Final[int] = 48
 FAL: Final[int] = 29
 DERIVED: Final[tuple[int, ...]] = (48, 49, 50, 51, 52, 53, 54, 55, 66, 67, 68, 69, 70, 71, 72, 73,
-                                   74, 75, 76, 77, 78, 79)
+                                   74, 75, 76, 77, 78, 79, 80, 81, 82, 99)
 Op = Callable[[tuple[Cell, ...]], tuple[Cell, ...]]
 
 
@@ -54,10 +54,43 @@ hal: Final[Op] = nakira_mansuba
 tamyiz: Final[Op] = nakira_mansuba
 
 
-def derived(stem: tuple[Cell, ...]) -> bool:
+def derived_bare(stem: tuple[Cell, ...]) -> bool:
     """قانونُ الفرز: على قالبٍ من قوالب الوصف ⇒ مشتقٌّ (حال)؛ وإلّا فجامدٌ أو قالبٌ لا يقرؤه."""
 
     return any(_on_template(k, set_last(stem, _U)) for k in DERIVED)
+
+
+def strip_suffix(w: tuple[Cell, ...]) -> tuple[Cell, ...]:
+    """ما بعد الجذع يُسقَط قبل القراءة: ـَات، ـِين/ـُون/ـَيْن، ـِي (المضاف)، ـَة (مرآةُ `stripSuffix`)."""
+
+    n = len(w)
+    if n >= 4 and w[-2] == ("ا", SUKUN) and w[-1][0] == "ت" and w[-3][1] == _A:
+        return w[:-2]
+    if n >= 4 and w[-2] in (("ي", SUKUN), ("و", SUKUN)) and w[-1][0] == "ن":
+        return w[:-2]
+    if n >= 4 and w[-1] == ("ي", SUKUN) and w[-2][1] == _I:
+        return w[:-1]
+    if n >= 3 and w[-1][0] == "ت" and w[-2][1] == _A:
+        return w[:-1]
+    return w
+
+
+def fakk(state: str, w: tuple[Cell, ...]) -> tuple[Cell, ...]:
+    """فكُّ الإدغام: أوّلُ ساكنٍ يليه حرفُه نفسُه يُحرَّك (صَافّ ← صَافِف)."""
+
+    for i in range(len(w) - 1):
+        if w[i][0] == w[i + 1][0] and w[i][1] == SUKUN and w[i + 1][1] != SUKUN:
+            return (*w[:i], (w[i][0], state), *w[i + 1:])
+    return w
+
+
+def derived(stem: tuple[Cell, ...]) -> bool:
+    """القارئُ التامّ: الجذعُ بعينه، أو بعد إسقاط اللاحقة، أو بعد فكّ الإدغام ثمّ الإسقاط (`derived`)."""
+
+    if derived_bare(stem) or derived_bare(strip_suffix(stem)):
+        return True
+    return any(derived_bare(fakk(s, stem)) or derived_bare(strip_suffix(fakk(s, stem)))
+               for s in (_A, _I, _U))
 
 
 def tahwil(s: tuple[Cell, ...], r: tuple[Cell, ...]) -> tuple[tuple[Cell, ...], tuple[Cell, ...]]:

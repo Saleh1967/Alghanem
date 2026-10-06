@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_lean_index.py` من ملفّات `.lean` و`Audit.lean` و`out/axioms.txt`؛ لا يُحرَّر باليد. الـ116 من الغانم بإيداعه المثبَّت في `formal/lakefile.toml`.
 
-**645 مبرهنة، منها 474 مدقَّقةُ المسلّمات.**
+**647 مبرهنة، منها 476 مدقَّقةُ المسلّمات.**
 
 كلُّ درجةٍ تستهلك ما قبلها: لا تدخل الكلمةُ درجةً قبل أن تُرخَّص في التي تحتها. «مدقَّق» = في `Audit.lean` وطُبعت مسلّماتُه؛ وما ليس مدقَّقًا مبرهَنٌ في Lean لكن لم يُطبع سندُه بعدُ فلا يُستشهد به في `status.py`.
 
@@ -779,7 +779,7 @@
 | `rawabit_jazm` | جدولُ أدوات الربط: الجوازمُ كلُّها فيه بعملها (لَمْ لَمَّا وأدواتُ الشرط الجازمة الاثنتا عشرة)، وغيرُ | مدقَّق | propext |
 | `two_verbs` | الجزمُ بفعلين: حكمُ كلٍّ منهما حكمُ الواحد. | مدقَّق | propext |
 
-### `Slge/Mansubat.lean` — 18 مبرهنة (`Slge.Mansubat`)
+### `Slge/Mansubat.lean` — 20 مبرهنة (`Slge.Mansubat`)
 
 | المبرهنة | ما تقول | التدقيق | المسلّمات |
 |---|---|---|---|
@@ -787,6 +787,8 @@
 | `nakira_reads_nasb` | — | مدقَّق | propext |
 | `nakira_has_tanwin` | — | مدقَّق | propext, Classical.choice, Quot.sound |
 | `nakira_licensed` | — | مدقَّق | propext, Quot.sound |
+| `derived_of_bare` | — | مدقَّق | propext |
+| `derived_witnesses` | شواهدُ البوّابة: صَافَّاتٍ (فكٌّ فإسقاط)، مُبْصِرَةً (ـَة)، خَالِدِينَ (ـِين)، بَيْضَاءَ (فَعْلَاء)، | مدقَّق | propext |
 | `sorting_by_template` | — | مدقَّق | propext |
 | `derived_templates_wf` | — | مدقَّق | propext |
 | `adad_tamyiz_is_nakira` | تمييزُ العدد 11–99: الحالةُ نفسُها (فتحٌ منوَّنٌ مفرد). | مدقَّق | propext, Quot.sound |

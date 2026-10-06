@@ -48,7 +48,7 @@ python tools/gen_ism_index.py --check                # فهرسُ الاسم ع�
 python tools/gen_fil_index.py --check                # فهرسُ الفعل على الدرجات (FIL_INDEX.md)
 python tools/gen_huruf_index.py --check              # فهرسُ الحروف والأدوات على الدرجات (HURUF_INDEX.md)
 python -c "from slge.guard import breaches; print(breaches() or 'لا خرق')"
-cd formal && lake build && lake env lean Audit.lean   # 478 مدقَّقة (الـ116 وSLGE)؛ propext/Classical.choice/Quot.sound فقط
+cd formal && lake build && lake env lean Audit.lean   # 480 مدقَّقة (الـ116 وSLGE)؛ propext/Classical.choice/Quot.sound فقط
 ```
 
 وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه، وأثبت وجودَ كلّ ملفٍّ تذكره قبل الكلام عنه.

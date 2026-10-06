@@ -62,13 +62,54 @@ theorem nakira_licensed (w : List SCell) (hw : licensed w = true) (hne : w ≠ [
 /-! ## قانونُ الفرز: القالبُ يقرأ المشتقَّ من الجامد -/
 
 /-- قوالبُ الوصف المشتقّ في `Wazn.awzan`: فَاعِل، مَفْعُول، فَعَّال، مِفْعَال، فَعُول، فَعِيل، أَفْعَل، فَعْلَان،
-ومُفْعِل … مُسْتَفْعَل، وفَاعِلَة. -/
+ومُفْعِل … مُسْتَفْعَل، وفَاعِلَة، ومؤنّثاتُ الصفة (فَعْلَاء، فَعْلَى، فُعْلَى) وجمعُ فَعِيل (فُعَلَاء). -/
 def derivedTemplates : List Nat :=
-  [48, 49, 50, 51, 52, 53, 54, 55, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79]
+  [48, 49, 50, 51, 52, 53, 54, 55, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 99]
 
 /-- مشتقٌّ على الخانة: على قالبٍ من قوالب الوصف (بالضمّ في الآخر كما أُودعت). -/
-def derived (w : List SCell) : Bool :=
+def derivedBare (w : List SCell) : Bool :=
   derivedTemplates.any (fun k => Sarf.onTemplate (Sarf.templ k) (setLast w 2))
+
+/-- ما بعد الجذع يُسقَط قبل القراءة (دَينٌ سُدِّد): ـَات، ـِين/ـُون، ـَيْن، ـِي (الجمعُ المضاف)، ـَة. -/
+def stripSuffix (w : List SCell) : List SCell :=
+  let n := w.length
+  let at_ (i : Nat) : SCell := w.getD i (c 0 0)
+  if n ≥ 4 ∧ at_ (n - 2) = c 1 3 ∧ (at_ (n - 1)).carrier.val = 3 ∧ (at_ (n - 3)).state.val = 0 then
+    w.take (n - 2)                                                                    -- ـَات
+  else if n ≥ 4 ∧ (at_ (n - 2) = c 28 3 ∨ at_ (n - 2) = c 27 3) ∧ (at_ (n - 1)).carrier.val = 25 then
+    w.take (n - 2)                                                                    -- ـِين ـُون ـَيْن
+  else if n ≥ 4 ∧ at_ (n - 1) = c 28 3 ∧ (at_ (n - 2)).state.val = 1 then
+    w.take (n - 1)                                                                    -- ـِي (مضاف)
+  else if n ≥ 3 ∧ (at_ (n - 1)).carrier.val = 3 ∧ (at_ (n - 2)).state.val = 0 then
+    w.take (n - 1)                                                                    -- ـَة
+  else w
+
+/-- فكُّ الإدغام: أوّلُ ساكنٍ يليه حرفُه نفسُه يُحرَّك بالحالة `s` (صَافّ ← صَافِف). -/
+def fakk (s : Fin 4) : List SCell → List SCell
+  | x :: y :: t => if x.carrier = y.carrier ∧ x.state.val = 3 ∧ y.state.val ≠ 3 then ⟨x.carrier, s⟩ :: y :: t
+      else x :: fakk s (y :: t)
+  | w => w
+
+/-- القارئُ التامّ: الجذعُ بعينه، أو بعد إسقاط اللاحقة، أو بعد فكّ الإدغام (بالحالات الثلاث) ثمّ الإسقاط. -/
+def derived (w : List SCell) : Bool :=
+  derivedBare w || derivedBare (stripSuffix w) ||
+    ([0, 1, 2] : List (Fin 4)).any (fun s => derivedBare (fakk s w) || derivedBare (stripSuffix (fakk s w)))
+
+theorem derived_of_bare (w : List SCell) (h : derivedBare w = true) : derived w = true := by
+  simp [derived, h]
+
+/-- شواهدُ البوّابة: صَافَّاتٍ (فكٌّ فإسقاط)، مُبْصِرَةً (ـَة)، خَالِدِينَ (ـِين)، بَيْضَاءَ (فَعْلَاء)،
+حُنَفَاءَ (فُعَلَاء)، ظَالِمِي (ـِي)؛ ونَفْسٌ وشَيْبٌ وكِتَابٌ لا تُقرأ بعد الإسقاط أيضًا. -/
+theorem derived_witnesses :
+    derived [c 14 0, c 1 3, c 20 3, c 20 0, c 1 3, c 3 1] = true ∧
+    derived [c 24 2, c 2 3, c 14 1, c 10 0, c 3 0] = true ∧
+    derived [c 7 0, c 1 3, c 23 1, c 8 1, c 28 3, c 25 0] = true ∧
+    derived [c 2 0, c 28 3, c 15 0, c 1 3, c 0 0] = true ∧
+    derived [c 6 2, c 25 0, c 20 0, c 1 3, c 0 0] = true ∧
+    derived [c 17 0, c 1 3, c 23 1, c 24 1, c 28 3] = true ∧
+    derivedBare [c 14 0, c 1 3, c 20 3, c 20 0, c 1 3, c 3 1] = false ∧
+    derived [c 25 0, c 20 3, c 12 2] = false ∧ derived [c 13 0, c 28 3, c 2 2] = false ∧
+    derived [c 22 1, c 3 0, c 1 3, c 2 2] = false := by decide
 
 def faail : Wazn.Template := Sarf.templ 48
 def fal : Wazn.Template := Sarf.templ 29

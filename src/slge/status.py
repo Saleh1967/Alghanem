@@ -375,10 +375,12 @@ _DECLARED: tuple[Claim, ...] = (
        note="كسرةُ التقاء الساكنين قانونُ Context في الغانم؛ الجزمُ بفعلين والفاءُ الرابطة تيار."),
     # — بقيّة المنصوبات —
     _c("MANSUBAT-ops", "الحالُ المفردةُ والتمييزُ عمليّةٌ واحدة (نكرةٌ منصوبة = فتحٌ فتنوين): تُقرأ نصبًا "
-       "وتحمل التنوينَ وتحفظ الترخيص لكلّ جذع؛ والفرزُ (مشتقّ/جامد) يقرؤه القالب؛ والمحوَّلُ عمليّات", _P,
+       "وتحمل التنوينَ وتحفظ الترخيص لكلّ جذع؛ والفرزُ (مشتقّ/جامد) يقرؤه القالبُ بعد إسقاط اللاحقة "
+       "وفكّ الإدغام؛ والمحوَّلُ عمليّات", _P,
        "lean:Slge.Mansubat.tamyiz_eq_hal", "lean:Slge.Mansubat.nakira_reads_nasb",
        "lean:Slge.Mansubat.nakira_has_tanwin", "lean:Slge.Mansubat.nakira_licensed",
-       "lean:Slge.Mansubat.sorting_by_template", "lean:Slge.Mansubat.adad_tamyiz_is_nakira",
+       "lean:Slge.Mansubat.sorting_by_template", "lean:Slge.Mansubat.derived_witnesses",
+       "lean:Slge.Mansubat.derived_of_bare", "lean:Slge.Mansubat.adad_tamyiz_is_nakira",
        "lean:Slge.Mansubat.tahwil_witness", "lean:Slge.Mansubat.sukara_hal",
        "test:tests/test_mansubat.py::test_hal_and_tamyiz_one_operation"),
     _c("MANSUBAT-istithna", "الاستثناءُ ثلاثُ حالاتٍ ثلاثُ عمليّات: التامُّ المثبت نصبٌ، والتامُّ المنفيّ "
