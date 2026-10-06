@@ -35,3 +35,4 @@ import Slge.Shibh
 import Slge.Nisab
 import Slge.Talil
 import Slge.Maqam
+import Slge.Jiha

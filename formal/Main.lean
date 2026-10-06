@@ -371,6 +371,26 @@ def main (args : List String) : IO Unit := do
                    (Maqam.tadrusu, Maqam.anta), (Maqam.tadrusu, Maqam.hiya), (Filiyya.darabtu, Maqam.anta),
                    (Maqam.adrusu, Maqam.huwa), (Jumla.darasa, Jumla.zayd)] do
       IO.println s!"tawkid,{key v},{key d},{Maqam.tawkid v d}"
+  | ["jiha"] =>
+    -- الصيغةُ من الحالات لكلّ قالبٍ على الميزان (الماضي، الأمر، المضارعُ بصدوره)؛ والجهةُ على الشواهد.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let gn := fun (s : Option Jiha.Sigha) => match s with
+      | some .madi => "madi" | some .mudari => "mudari" | some .amr => "amr" | none => "none"
+    for k in Jiha.pastTemplates ++ Jiha.amrTemplates do
+      IO.println s!"sigha,{k},{key (Wazn.mizan (Sarf.templ k))},{gn (Jiha.sigha (Wazn.mizan (Sarf.templ k)))}"
+    for k in Jiha.presentTemplates do
+      for p in [(0 : Fin 29), 25, 3, 28] do
+        let v := Maqam.withPrefix p (Wazn.mizan (Sarf.templ k))
+        IO.println s!"sigha,{k},{key v},{gn (Jiha.sigha v)}"
+    let jn := fun (j : Jiha.Jiha) => match j with
+      | .madi => "madi" | .mudari => "mudari" | .mustaqbal => "mustaqbal" | .madiManfi => "madiManfi"
+      | .mustaqbalManfi => "mustaqbalManfi" | .madiMustamirr => "madiMustamirr" | .amr => "amr"
+      | .unread => "unread"
+    for (a, b) in [([], Jiha.kataba), ([], Jiha.yaktubu), ([], Jiha.sa ++ Jiha.yaktubu), (Jiha.sawfa, Jiha.yaktubu),
+                   (Jiha.lam, Jazm.sukun Jiha.yaktubu), (Jiha.lan, Nawasikh.nasb Jiha.yaktubu),
+                   (Jiha.kana, Jiha.yaktubu), ([], Jiha.uktub), ([], Jiha.sa ++ Jiha.kataba),
+                   (Jiha.sawfa, Jiha.kataba), ([], Jumla.zayd)] do
+      IO.println s!"jiha,{key a},{key b},{jn (Jiha.jiha a b)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

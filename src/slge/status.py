@@ -704,6 +704,32 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_maqam.py::test_masaq_measurement_and_index",
        note="المبدَلُ همزتُه ألفًا والناقصُ والمثالُ المنصوب: الخانةُ لا تفصل؛ وسومُ MASAQ للشخص قليلةٌ "
             "وبعضُها مخالف."),
+    # — الجهةُ والزمن —
+    _c("JIHA-sigha", "الصيغةُ دالّةٌ في الحالات: ما على قالبٍ فحالاتُه حالاتُ قالبه، وأصنافُ الماضي "
+       "والمضارع والأمر متباينةُ الحالات قالبًا قالبًا؛ فقارئُ الصيغة يقرأ كلَّ ماضٍ ماضيًا وكلَّ أمرٍ أمرًا "
+       "وكلَّ مضارعٍ بصدوره الأربعة مضارعًا لكلّ جذرٍ لا ألفَ فيه", _P,
+       "lean:Slge.Jiha.states_of_onTemplate", "lean:Slge.Jiha.sigha_states_disjoint",
+       "lean:Slge.Jiha.sigha_of_fill", "lean:Slge.Jiha.not_on_other_class",
+       "test:tests/test_jiha.py::test_sigha_is_a_function_of_states_for_every_root"),
+    _c("JIHA-amr", "الأمرُ للمخاطب وحده: صيغةُ الأمر مخاطبٌ عند قارئ المقام لكلّ قالبٍ ولكلّ جذرٍ (بلا "
+       "ألفٍ ولا تاءٍ آخرًا ولا لاحقة)، وأمرُ الغائب والمتكلّم باللام على المضارع لا بقالب", _P,
+       "lean:Slge.Jiha.amr_is_mukhatab", "lean:Slge.Jiha.amr_fill_last",
+       "lean:Slge.Jiha.ghaib_amr_by_lam",
+       "test:tests/test_jiha.py::test_amr_is_mukhatab_and_ghaib_by_lam"),
+    _c("JIHA-shift", "أدواتُ الإزاحة (السين، سَوْفَ، لَمْ، لَنْ، كَانَ) عمليّاتٌ لا تقبل إلّا المضارع، "
+       "والماضي والأمرُ لا يُزاحان بأداة؛ السينُ تحفظ الترخيص وتُردّ بعينها، والأدواتُ من جدول الربط "
+       "بعملها", _P,
+       "lean:Slge.Jiha.shift_only_present", "lean:Slge.Jiha.past_not_shifted",
+       "lean:Slge.Jiha.sa_licensed", "lean:Slge.Jiha.sa_restores", "lean:Slge.Jiha.lam_restores",
+       "lean:Slge.Jiha.shifts_in_rawabit",
+       "lean:Slge.Jiha.jiha_witnesses", "test:tests/test_jiha.py::test_shift_only_on_present",
+       note="نقاطُ رايشنباخ (E، S، R) والزمنُ المعنويّ: معنًى لا خانة."),
+    _c("JIHA-masaq", "على 16,642 فعلًا من MASAQ بشهادات البوّابة: الصيغةُ على 8,799 فعلًا بلا لاحقة "
+       "توافق الوسمَ في 4,528 وتخالفه في 260 (والباقي معتلٌّ أو على غير قالب)؛ والسينُ على 117 فعلًا: "
+       "116 مضارعًا "
+       "وواحدٌ ماضٍ (طفرةُ shift_only_present المقيسة)", _S,
+       "test:tests/test_jiha.py::test_masaq_measurement_and_index",
+       note="المبنيُّ للمجهول من المزيد (أُنْزِلَ) وأمرُ أَفْعَلَ غيرُ مودَعَين، والمعتلُّ على غير قالب."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

@@ -665,3 +665,24 @@ def test_maqam_matches_lean() -> None:
             assert tawkid(v, d) == (r[3] == "true"), r
     assert sum(r[0] == "tawkid" for r in rows) == 8 and sum(r[0] == "zuhur" for r in rows) == 4
 
+
+def test_jiha_matches_lean() -> None:
+    """الصيغةُ على الميزان لكلّ قالب (الماضي والأمر والمضارع بصدوره)، والجهةُ على الشواهد = `Jiha`."""
+
+    from slge.jiha import jiha, sigha
+
+    rows = _rows("jiha.csv")
+    gn = {"madi": "ماضٍ", "mudari": "مضارع", "amr": "أمر", "none": None}
+    jn = {"madi": "ماضٍ", "mudari": "مضارع", "mustaqbal": "مستقبل", "madiManfi": "ماضٍ منفيّ",
+          "mustaqbalManfi": "مستقبل منفيّ", "madiMustamirr": "ماضٍ مستمرّ", "amr": "أمر",
+          "unread": "—"}
+    assert sum(r[0] == "sigha" for r in rows) == 13 + 10 + 4 * 13
+    for r in rows:
+        if r[0] == "sigha":
+            assert sigha(tuple(_cell(int(i)) for i in r[2].split("-"))) == gn[r[3]], r
+        elif r[0] == "jiha":
+            a = tuple(_cell(int(i)) for i in r[1].split("-")) if r[1] else ()
+            b = tuple(_cell(int(i)) for i in r[2].split("-"))
+            assert jiha(a, b) == jn[r[3]], r
+    assert sum(r[0] == "jiha" for r in rows) == 11
+
