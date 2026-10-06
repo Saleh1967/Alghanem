@@ -11,7 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Final
 
-__all__ = ["MODULES", "Module", "index_tools", "lean_files", "tables"]
+__all__ = ["MODULES", "Module", "index_tools", "lean_files", "readers_under_law", "tables"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -24,6 +24,9 @@ class Module:
     tables: tuple[str, ...] = ()
     index: str | None = None
     test: str | None = None
+    law: bool = False
+    """قارئٌ تحت قانون القارئ (CLAUDE.md): بوّابةٌ في `gates.LADDER`، مقيسٌ على مودَع المصحف قبل أيّ
+    شريحة، ولا يطابق قالبًا إلّا عبر `jidh.on_template_mod`."""
 
 
 def _m(name: str, index: bool = True) -> Module:
@@ -54,7 +57,9 @@ MODULES: Final[tuple[Module, ...]] = (
     _m("zuruf"), _m("zaman"), _m("adad"), _m("marifa"), _m("sarf"), _m("tawabi"), _m("nawasikh"),
     _m("jazm"), _m("mansubat"), _m("majrurat"), _m("wasl"), _m("ism"), _m("fil"), _m("huruf"),
     _m("jumla"), _m("filiyya"), _m("shibh"), _m("nisab"), _m("talil"), _m("maqam"), _m("jiha"),
-    _m("naat"), _m("uslub"), _m("talab"), _m("kulli"), _m("wad"), _m("tabayun"), _m("madd"),
+    _m("naat"), _m("uslub"), _m("talab"), _m("kulli"), _m("wad"), _m("tabayun"),
+    Module("madd", ("Madd",), ("madd",), "gen_madd_index.py", "test_madd.py", law=True),
+    Module("jidh", ("Jidh",), ("jidh",), "gen_jidh_index.py", "test_jidh.py", law=True),
     # الفهارسُ الجامعة (بلا وحدة)
     Module("bits", (), (), "gen_bits_index.py", "test_bits.py"),
     Module("gates", (), (), None, "test_gates.py"),
@@ -70,6 +75,12 @@ def tables() -> tuple[str, ...]:
 
 def lean_files() -> tuple[str, ...]:
     return tuple(x for m in MODULES for x in m.lean)
+
+
+def readers_under_law() -> tuple[Module, ...]:
+    """القرّاءُ الخاضعون لقانون القارئ — كلُّ قارئٍ جديدٍ يُسجَّل هنا بـ`law=True`."""
+
+    return tuple(m for m in MODULES if m.law)
 
 
 def index_tools() -> tuple[str, ...]:

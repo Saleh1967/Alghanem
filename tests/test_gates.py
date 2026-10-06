@@ -32,8 +32,8 @@ def _forms() -> list[tuple[tuple[str, str], ...]]:
 
 def test_ladder_order_and_named_refusals() -> None:
     names = [g.name for g in LADDER]
-    assert names == ["الخانة", "الترخيص", "العدد", "الجداول", "الصرف", "الإعراب", "الجواب"]
-    assert [g.governing for g in LADDER] == [True, True, True, False, False, False, False]
+    assert names == ["الخانة", "الترخيص", "العدد", "الجداول", "الجذع", "الصرف", "الإعراب", "الجواب"]
+    assert [g.governing for g in LADDER] == [True, True, True, False, False, False, False, False]
     t = climb(("كَ", "تَ", "بَ"))
     assert all(isinstance(x, Pass) for x in t) and exit_atoms(t) == ("كَ", "تَ", "بَ")
     # الطفرة: ذرّةٌ ليست من الـ116 — تقف عند الخانة باسمها ولا بوّابةَ فوقها
@@ -73,7 +73,29 @@ def test_manifest_covers_the_tree() -> None:
     import subprocess
     import sys
 
-    assert len(MODULES) >= 50 and len(tables()) == 45 and len(index_tools()) == 34
+    assert len(MODULES) >= 50 and len(tables()) == 46 and len(index_tools()) == 35
     res = subprocess.run([sys.executable, str(ROOT_DIR / "tools" / "check_manifest.py")],
                          capture_output=True, text=True, cwd=ROOT_DIR)
     assert res.returncode == 0, res.stderr
+
+
+def test_readers_under_the_law() -> None:
+    """قانونُ القارئ: (١) بوّابةٌ في السُّلَّم لا دالّةٌ منفردة، (٢) مقيسٌ على مودَع المصحف قبل أيّ
+    شريحة، (٣) لا يطابق قالبًا إلّا عبر تسوية الآخر المبرهَنة."""
+
+    import re
+
+    from slge.manifest import readers_under_law
+
+    gates_src = (ROOT_DIR / "src" / "slge" / "gates.py").read_text(encoding="utf-8")
+    law = readers_under_law()
+    assert {m.name for m in law} >= {"madd", "jidh"}
+    for m in law:
+        assert re.search(rf"^from slge\.{m.name} import ", gates_src, re.M), f"{m.name}: ليس بوّابة"
+        assert m.index, f"{m.name}: بلا فهرسٍ يقيسه"
+        tool = (ROOT_DIR / "tools" / m.index).read_text(encoding="utf-8")
+        assert "corpus-certificates.json.gz" in tool, f"{m.name}: لا يُقاس على المصحف"
+        src = (ROOT_DIR / "src" / "slge" / f"{m.name}.py").read_text(encoding="utf-8")
+        uses_templates = "on_template" in src or "senses(" in src
+        if uses_templates and m.name != "jidh":
+            assert "on_template_mod" in src or "jidh" in src, f"{m.name}: بلا تسوية الآخر"

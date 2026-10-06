@@ -863,3 +863,43 @@ def test_madd_matches_lean() -> None:
             w, n, p = cells(r[1]), cells(r[2]), r[3] == "true"
             assert madd(w, n, p) == hits(r[4]), r
             assert (binary_ok(w), has_vc(w)) == (r[5] == "true", r[6] == "true"), r
+
+
+def test_jidh_matches_lean() -> None:
+    """تسويةُ الآخر على الميزان لكلّ قالبٍ وحالة، وقراءاتُ الشواهد (السوابق، أل، الجذع، اللاحقة،
+    القوالب) = جدولُ `Jidh`."""
+
+    from slge.jidh import jidh, last_state, on_template_mod, stem_senses
+    from slge.wazn import AWZAN
+    from slge.zuruf import set_last
+
+    rows = _rows("jidh.csv")
+    st_of = {"0": "فتح", "1": "كسر", "2": "ضم", "3": "سكون"}
+
+    def cells(x: str) -> tuple[tuple[str, str], ...]:
+        return tuple(_cell(int(i)) for i in x.split("-")) if x else ()
+
+    assert sum(r[0] == "mizan" for r in rows) == 121 and sum(r[0] == "jidh" for r in rows) == 10
+    readings: dict[str, list[list[str]]] = {}
+    for r in rows:
+        if r[0] == "mizan":
+            k, m = int(r[1]), cells(r[2])
+            assert st_of[r[3]] == last_state(AWZAN[k].template), r
+            hits = "".join("1" if on_template_mod(k, set_last(m, st)) else "0"
+                           for st in st_of.values())
+            assert hits == r[4], r
+            want_ts = tuple(int(x) for x in r[5].split("+") if x)
+            assert stem_senses(set_last(m, "كسر")) == want_ts, r
+        elif r[0] == "reading":
+            readings.setdefault(r[1], []).append(r[2:])
+    for r in rows:
+        if r[0] == "jidh":
+            got = jidh(cells(r[1]))
+            assert len(got) == int(r[2]), r
+            want = readings.get(r[1], [])
+            def key(cs: tuple[tuple[str, str], ...]) -> str:
+                return "-".join(str(index(c)) for c in cs)
+
+            mine = [[key(tuple(c for p in x.pre for c in p)), str(x.al), key(x.stem), key(x.suf),
+                     "+".join(str(t) for t in x.templates), key(x.restore())] for x in got]
+            assert mine == want, (r, mine, want)

@@ -923,6 +923,31 @@ _DECLARED: tuple[Claim, ...] = (
        "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
        "test:tests/test_gates.py::test_manifest_covers_the_tree",
        note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
+    # — الجذع: تسويةُ الآخر وفصلُ الزوائد —
+    _c("JIDH-case", "الإعرابُ والمزاجُ حالةُ الخانة الأخيرة لا جزءٌ من القالب: استخراجُ الجذر لا يرى "
+       "الحالات لكلّ قالبٍ وكلمةٍ وحالة، وملءُ قالبٍ سليم بأيّ حالةٍ في آخره يُقرأ على قالبه ويُستردّ جذرُه "
+       "بعينه", _P,
+       "lean:Slge.Jidh.rootOf_setLast", "lean:Slge.Jidh.onTemplateMod_setLast",
+       "lean:Slge.Jidh.setLast_fill",
+       "test:tests/test_jidh.py::test_case_is_the_last_cell_not_the_template",
+       note="القوالبُ أُودعت بآخرٍ واحد (wazn.py: parse(«فَعْلُ»))؛ التسويةُ تسبق المطابقة في كلّ قارئٍ "
+            "جديد."),
+    _c("JIDH-peel", "فصلُ الزوائد قطعٌ من الجداول الحاصرة يُردّ بالإلصاق لكلّ كلمة (السوابقُ المفردة وأل "
+       "بهمزتها أو موصولةً، والضمائرُ المتّصلة ولواحقُ الفاعل)، والقارئُ لا يعيد قراءةً إلّا وردُّها "
+       "الكلمةُ بعينها", _P,
+       "lean:Slge.Jidh.peelPrefix_sound", "lean:Slge.Jidh.peelSuffix_sound",
+       "lean:Slge.Jidh.dropAl_sound", "lean:Slge.Jidh.jidh_restores",
+       "lean:Slge.Jidh.jidh_witnesses_al", "lean:Slge.Jidh.jidh_witnesses_case",
+       "lean:Slge.Jidh.jidh_witnesses_affix",
+       "test:tests/test_jidh.py::test_peeling_restores_the_word_exactly",
+       note="التعدّدُ يُقرأ كما هو (كَذَّبُوا: فَعَّلَ+وا أو كَ+الذَّبُو) والقرينةُ تفصله."),
+    _c("JIDH-masaq", "على مودَع المصحف نفسِه (18,179 صورةً بزوائدها): القوالبُ تقرأ 1,743 كما هي، "
+       "و4,682 بعد تسوية الآخر وحدَها، و13,706 (75.4%) بعد فصل الزوائد؛ وعلى قسمة MASAQ المحجوبة "
+       "(40,731): "
+       "قراءةٌ واحدةٌ توافقها 36.2%، وبين قراءاتٍ متعدّدة 8.8%، وعلى غيرها 14.8%، ولا قراءة 40.2%", _S,
+       "test:tests/test_jidh.py::test_numbers_before_and_after_on_the_same_deposit",
+       note="ما بقي باسمه: الإعلالُ (A116.Ilal في الغانم)، وقالبا فِعْلٍ وفَعَالٍ غيرُ مودَعين، والجداولُ "
+            "تقرأ أدواتِها."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

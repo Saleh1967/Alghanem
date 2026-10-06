@@ -41,6 +41,7 @@ EXEMPT_FILES = (
     "tools/gen_bits_index.py",
     "tools/gen_madd_index.py",
     "tools/check_manifest.py",
+    "tools/gen_jidh_index.py",
     "src/slge/order.py",  # يبصم خاناتٍ لا نصًّا
 )
 IO_ATTRS = frozenset(

@@ -699,3 +699,16 @@ import Slge
 #print axioms Slge.Madd.silent_waw_tabled
 #print axioms Slge.Madd.madd_witnesses
 #print axioms Slge.Madd.addallin_ternary_only
+#print axioms Slge.Jidh.map_carrier_setLast
+#print axioms Slge.Jidh.extract_of_carriers
+#print axioms Slge.Jidh.rootOf_setLast
+#print axioms Slge.Jidh.lastState_cons
+#print axioms Slge.Jidh.setLast_fill
+#print axioms Slge.Jidh.onTemplateMod_setLast
+#print axioms Slge.Jidh.peelPrefix_sound
+#print axioms Slge.Jidh.peelSuffix_sound
+#print axioms Slge.Jidh.dropAl_sound
+#print axioms Slge.Jidh.jidh_restores
+#print axioms Slge.Jidh.jidh_witnesses_al
+#print axioms Slge.Jidh.jidh_witnesses_case
+#print axioms Slge.Jidh.jidh_witnesses_affix

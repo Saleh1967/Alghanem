@@ -517,6 +517,21 @@ def main (args : List String) : IO Unit := do
                       (Madd.innahu, Madd.illa, false), (Madd.bima, Madd.unzila, false), (Madd.bima, Madd.kana, false),
                       (Madd.amanu, [], false), (Madd.ulaika, [], false), (Madd.addallin, [], true)] do
       IO.println s!"madd,{key w},{key n},{p},{hits (Madd.madd w n p)},{A116.Ternary.binOK (Madd.kinds w)},{Madd.hasVC (Madd.kinds w)}"
+  | ["jidh"] =>
+    -- تسويةُ الآخر على الميزان لكلّ قالبٍ وكلّ حالة، وقراءاتُ الشواهد (السوابق، أل، الجذع، اللاحقة، القوالب).
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let al := fun (a : Jidh.Al) => match a with | .none => "0" | .full => "1" | .silent => "2"
+    let ks := fun (l : List Nat) => "+".intercalate (l.map toString)
+    for k in List.range 121 do
+      let m := Wazn.mizan (Sarf.templ k)
+      let hits := (List.range 4).map fun st => Jidh.onTemplateMod (Sarf.templ k) (Zuruf.setLast m ⟨st % 4, by omega⟩)
+      IO.println s!"mizan,{k},{key m},{(Jidh.lastState (Sarf.templ k)).val},{"".intercalate (hits.map fun b => if b then "1" else "0")},{ks (Jidh.stemSenses (Zuruf.setLast m 1))}"
+    for w in [Jidh.walard, Jidh.alard, Jidh.washshams, Jidh.rabbi, Jidh.kadhdhabu, Jidh.tajalu, Jidh.bikitabihim,
+              Jidh.wajada, Uslub.la, Madd.qalu] do
+      let rs := Jidh.jidh w
+      IO.println s!"jidh,{key w},{rs.length}"
+      for r in rs do
+        IO.println s!"reading,{key w},{key r.pre.flatten},{al r.al},{key r.stem},{key r.suf},{ks r.templates},{key r.restore}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

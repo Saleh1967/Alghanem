@@ -1,4 +1,4 @@
-"""البوّاباتُ المتتابعة: شهادةُ الغانم تصعد SLGE بوّابةً بوّابةً، ولا بوّابةَ فوق مرفوضة — مرآةُ
+"""البوّاباتُ المتتابعة: شهادةُ الغانم تصعد SLGE ثمانيَ بوّاباتٍ، ولا بوّابةَ فوق مرفوضة — مرآةُ
 `Grant.Ladder`.
 
 المدخلُ ذرّاتُ شهادةٍ من بوّابة الغانم (لا نصّ)، والمخرجُ ذرّاتٌ بعينها إلى `gate.exit`. بينهما سُلَّمٌ من
@@ -8,8 +8,9 @@
 الحاكمة (رفضُها يوقف الصعود): ١ الخانة (ذرّات ← خانات؛ `NOT_A_116_ATOM`)، ٢ الترخيص (ثلاثيٌّ وصلًا؛
 `NOT_CONTINUE_LICENSED`)، ٣ العدد (ثنائيٌّ ← `fold`؛ والثلاثيُّ فقط `TERNARY_ONLY_NO_NUMBER`: عددُه في
 شهادته).
-القارئة (قراءةٌ أو «لا قراءة» باسمه، ولا ترفض): ٤ الجداول الحاصرة، ٥ الصرف (`wad.senses`)، ٦ الإعراب
-(`tawabi.case_class`)، ٧ الجواب (القرّاء بسياقهم). فما لا يُقرأ ليس خطأً بل حدًّا معلَنًا. الجدولُ الكامل في
+القارئة (قراءةٌ أو «لا قراءة» باسمه، ولا ترفض): ٤ الجداول الحاصرة، ٥ الجذع (تسويةُ الآخر وفصلُ الزوائد
+`jidh`)، ٦ الصرف على الصورة كما هي (`wad.senses`)، ٧ الإعراب (`tawabi.case_class`)، ٨ الجواب (القرّاء
+بسياقهم). فما لا يُقرأ ليس خطأً بل حدًّا معلَنًا. الجدولُ الكامل في
 `ARCHITECTURE.md` (ADR ٦). `climb(atoms)` يعيد أثرَ الصعود كلَّه.
 """
 
@@ -24,6 +25,7 @@ from slge.cells import Cell, fold, licensed
 from slge.entry import from_atoms, to_atoms
 from slge.huruf import by_cells
 from slge.ishara import FORMS as ISHARA
+from slge.jidh import jidh
 from slge.jiha import sigha
 from slge.kulli import kulli
 from slge.madd import continue_licensed, madd
@@ -93,16 +95,21 @@ def _g4(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
 
 
 def _g5(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
-    s = senses(w)
-    return Pass("الصرف", s, "" if s else "على غير قالبٍ من الـ121")
+    rs = jidh(w)
+    return Pass("الجذع", rs, "" if rs else "لا قطعَ من الجداول يضع جذعًا على قالب")
 
 
 def _g6(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
+    s = senses(w)
+    return Pass("الصرف", s, "" if s else "الصورةُ كما هي على غير قالب؛ انظر قراءاتِ الجذع")
+
+
+def _g7(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
     c = case_class(w)
     return Pass("الإعراب", c, "" if c != "لا تقرؤه الخانة" else "لا تقرؤه الخانة")
 
 
-def _g7(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
+def _g8(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
     nxt: Word = ctx.get("next", ())
     return Pass("الجواب", {"الكليّ": kulli(w), "الوضع": wad(w), "الصيغة": sigha(w),
                           "المدود": madd(w, nxt, bool(ctx.get("pause", False)))})
@@ -110,8 +117,8 @@ def _g7(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
 
 LADDER: Final[tuple[Gate, ...]] = (
     Gate("الخانة", True, _g1), Gate("الترخيص", True, _g2), Gate("العدد", True, _g3),
-    Gate("الجداول", False, _g4), Gate("الصرف", False, _g5), Gate("الإعراب", False, _g6),
-    Gate("الجواب", False, _g7),
+    Gate("الجداول", False, _g4), Gate("الجذع", False, _g5), Gate("الصرف", False, _g6),
+    Gate("الإعراب", False, _g7), Gate("الجواب", False, _g8),
 )
 
 
