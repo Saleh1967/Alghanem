@@ -222,3 +222,13 @@ import Slge
 #print axioms Slge.Damair.damair_licensed
 #print axioms Slge.Damair.damair_nodup
 #print axioms Slge.Damair.na_after_madd_not_raf
+#print axioms Slge.Ishara.tanbih_licensed
+#print axioms Slge.Ishara.bud_licensed
+#print axioms Slge.Ishara.caseOf_dual
+#print axioms Slge.Ishara.caseOf_dual_bud
+#print axioms Slge.Ishara.nasb_eq_jarr_dual
+#print axioms Slge.Ishara.forms_licensed
+#print axioms Slge.Ishara.forms_nodup
+#print axioms Slge.Ishara.duals_have_case
+#print axioms Slge.Ishara.mabni_no_case
+#print axioms Slge.Ishara.witnessed_subset

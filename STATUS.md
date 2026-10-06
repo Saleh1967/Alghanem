@@ -4,9 +4,9 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 36 |
+| مبرهن | 39 |
 | مفحوص_استقصاء | 12 |
-| مفحوص_بعينة | 4 |
+| مفحوص_بعينة | 5 |
 | دليل | 0 |
 | معلن | 10 |
 | رأي | 0 |
@@ -31,6 +31,9 @@
 | GHAZALI | جدولُ الصور المنتجة هو جدولُ الغزالي بعينه، محسوبًا بالبتّات | مبرهن | `lean:Slge.Ghazali.ghazali_table`<br>`test:tests/test_conformance.py::test_ghazali_matches_lean` |  |
 | GRANT-check | المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة | مبرهن | `lean:Slge.Grant.grant_iff_check`<br>`lean:Slge.Grant.no_grant_of_refused`<br>`lean:Slge.Grant.ladder_implies_base`<br>`lean:Slge.Grant.empty_ladder_grants_nothing` | قانونُ tarkib/bridge.py بفحصٍ دالّةً لا نصًّا؛ الحكمُ المزوَّر الذي قبله الأصلُ لا يُصاغ هنا. |
 | GRANT-mursam | لا يُمنح «مرسوم» إلّا لمرخَّصٍ، وهو Admissible في الـ116 | مبرهن | `lean:Slge.Grant.mursam_sound`<br>`lean:Slge.Grant.mursam_refuses_initial_sukun`<br>`test:tests/test_grant.py::test_mursam_grants_licensed_only` |  |
+| ISHARA-dual | المثنّى: الحالةُ من المدّ قبل النون (ولو لحقت الكاف)؛ الياءُ لا تفرّق نصبًا وجرًّا | مبرهن | `lean:Slge.Ishara.caseOf_dual`<br>`lean:Slge.Ishara.caseOf_dual_bud`<br>`lean:Slge.Ishara.nasb_eq_jarr_dual`<br>`lean:Slge.Ishara.duals_have_case` |  |
+| ISHARA-mabni | المبنيُّ ما لا تقرأ له الخانةُ حالةً: 17 صورةً من 25؛ وكلُّها مرخَّصةٌ متباينة | مبرهن | `lean:Slge.Ishara.mabni_no_case`<br>`lean:Slge.Ishara.forms_licensed`<br>`lean:Slge.Ishara.forms_nodup`<br>`test:tests/test_conformance.py::test_ishara_matches_lean` |  |
+| ISHARA-ops | التنبيهُ في الصدر والبعدُ في العجز عمليّتان تحفظان الترخيصَ لكلّ نواة | مبرهن | `lean:Slge.Ishara.tanbih_licensed`<br>`lean:Slge.Ishara.bud_licensed`<br>`test:tests/test_ishara.py::test_three_operations_and_case_reading` |  |
 | KHAMSA-forms | الصورُ الخمسَ عشرة مرخَّصةٌ متباينةُ الأعداد؛ وما خرج عن الشروط لا يُخمَّن | مبرهن | `lean:Slge.Khamsa.khamsa_licensed`<br>`lean:Slge.Khamsa.khamsa_numbers_nodup`<br>`lean:Slge.Khamsa.no_guess_for_plural`<br>`test:tests/test_conformance.py::test_khamsa_matches_lean` |  |
 | KHAMSA-madd | حرفُ المدّ صورةُ الحركة (و↔ضم، ا↔فتح، ي↔كسر) والحالةُ تُقرأ من الصورة بعينها | مبرهن | `lean:Slge.Khamsa.madd_matches_short`<br>`lean:Slge.Khamsa.caseOf_form`<br>`lean:Slge.Khamsa.form_injective_stem`<br>`test:tests/test_khamsa.py::test_case_is_read_back_from_every_form` |  |
 | LICENCE | الرافعُ إلى المساواة يُنتج مفهومَ المخالفة | مبرهن | `lean:Slge.Ghazali.licence_makes_mafhum` |  |
@@ -64,6 +67,7 @@
 | Q22 | الاستنتاجُ المعكوس: ‎U(1) = 87‎ و29 حاملًا ⇒ 3 متحرّكات ⇒ ‎116‎ | مفحوص_استقصاء | `test:tests/test_cells.py::test_inventory_is_derived_from_U1` |  |
 | Q24 | الظلُّ M/S يعجز والطيُّ يفرّق (ذَيْن/ذِين) | مفحوص_استقصاء | `test:tests/test_cells.py::test_shadow_fails_fold_separates` |  |
 | AFAL-gate | ستّةُ شواهد من شهادات البوّابة تطابق القانون؛ نصبُ الاثنين ورفعُ المخاطبة بالقانون | مفحوص_بعينة | `test:tests/test_afal.py::test_forms_match_gate_witnesses` | الخمسةُ خمسةٌ بجدول مطابقةٍ معلَن (ياءُ المخاطبة لا تلحق حرفَ الغيبة). |
+| ISHARA-gate | 13 صورةً من شهادات البوّابة هي صورُ القانون بعينها؛ الباقي (12) بالقانون | مفحوص_بعينة | `lean:Slge.Ishara.witnessed_subset`<br>`test:tests/test_ishara.py::test_gate_witnesses_are_the_law_forms` | الدلالةُ (قريب/بعيد، عدد، جنس) من الحصر المُرسَل معلَنة. |
 | KHAMSA-gate | صورُ أب وأخ وذو بالقانون = ذرّاتُ شهادات البوّابة (10 شواهد)؛ حمٌ وفوٌ بالقانون نفسه | مفحوص_بعينة | `test:tests/test_khamsa.py::test_forms_match_gate_witnesses` | الشروطُ (مفرد، مكبَّر، مضاف لغير الياء) معلَنةٌ في Ctx لا مستنبَطة. |
 | SHABAKA-minimal | ترتيبُ البصريّين ليس أقلَّ الأشجار كلفةً: 341 عمليّةً مقابل 155؛ يتّفقان في 21 أبًا من 112 | مفحوص_بعينة | `test:tests/test_shabaka.py::test_computed_tree_is_minimal_and_classical_is_not` | أقلُّ شجرةٍ (Prim على مسافة لِيفنشتاين للقوالب) محسوبةٌ لا مقرَّرة؛ ما يحمله ترتيبُ البصريّين فوق كلفة القالب شرطُ حدٍّ دلاليّ لم يُقَس بعد. |
 | WAZN-sibawayh | هياكلُ الأوزان مقابل أبنية سيبويه المجمَّدة: 95/113 عنده؛ 18 مسمّاة؛ 122 من هياكله خارج الجدول | مفحوص_بعينة | `test:tests/test_wazn.py::test_skeletons_measured_against_sibawayh` | الحركاتُ معلَنةٌ من كتب الصرف لا مقيسة؛ الرباعيُّ والإعلالُ والمفعولُ المطلق والجامدُ خارج الجدول باسمها (DEBTS). |

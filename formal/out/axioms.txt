@@ -217,3 +217,13 @@
 'Slge.Damair.damair_licensed' depends on axioms: [propext]
 'Slge.Damair.damair_nodup' does not depend on any axioms
 'Slge.Damair.na_after_madd_not_raf' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Ishara.tanbih_licensed' depends on axioms: [propext, Quot.sound]
+'Slge.Ishara.bud_licensed' depends on axioms: [propext]
+'Slge.Ishara.caseOf_dual' depends on axioms: [propext]
+'Slge.Ishara.caseOf_dual_bud' depends on axioms: [propext]
+'Slge.Ishara.nasb_eq_jarr_dual' depends on axioms: [propext]
+'Slge.Ishara.forms_licensed' depends on axioms: [propext]
+'Slge.Ishara.forms_nodup' depends on axioms: [propext]
+'Slge.Ishara.duals_have_case' depends on axioms: [propext]
+'Slge.Ishara.mabni_no_case' depends on axioms: [propext]
+'Slge.Ishara.witnessed_subset' depends on axioms: [propext]

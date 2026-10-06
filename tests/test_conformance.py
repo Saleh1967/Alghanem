@@ -161,3 +161,14 @@ def test_damair_matches_lean() -> None:
     forms = [p.cells for p in DETACHED_RAF + DETACHED_NASB] + list(WITNESS.values())[:9]
     assert len(rows) == len(forms) == 33
     assert [r[0] for r in rows] == ["-".join(str(index(c)) for c in w) for w in forms]
+
+
+def test_ishara_matches_lean() -> None:
+    """الصورُ الخمسُ والعشرون بأسمائها وخاناتها = جدولُ `Ishara.forms`."""
+
+    from slge.ishara import FORMS
+
+    rows = _rows("ishara.csv")
+    assert len(rows) == len(FORMS) == 25
+    for r, f in zip(rows, FORMS, strict=True):
+        assert r[0] == f.name and r[1] == "-".join(str(index(c)) for c in f.cells)
