@@ -223,6 +223,21 @@ def main (args : List String) : IO Unit := do
                    ("asawi", Ism.nisba (Ism.prepare .maqsur3 [Slge.Categories.c 18 0, Slge.Categories.c 14 0, Slge.Categories.c 1 3]) 2),
                    ("amawi", Ism.nisba (Ism.prepare .manqus3 [Slge.Categories.c 18 0, Slge.Categories.c 24 1, Slge.Categories.c 28 3]) 2)] do
       IO.println s!"op,{n},{"-".intercalate (w.map fun c => toString c.index)}"
+  | ["fil"] =>
+    for p in Fil.abwab do
+      IO.println s!"bab,{p.1}-{p.2}"
+    for k in Fil.mazid do
+      IO.println s!"mazid,{k},{Fil.added (Sarf.templ k)}"
+    let r1 : Wazn.Root := fun i => if i = 0 then 14 else if i = 1 then 2 else 10
+    let r2 : Wazn.Root := fun i => if i = 0 then 11 else if i = 1 then 26 else 10
+    let r3 : Wazn.Root := fun i => if i = 0 then 27 else if i = 1 then 14 else 23
+    for (n, w) in [("istabara", Fil.ibdal (Fil.iftaal r1)), ("izdahara", Fil.ibdal (Fil.iftaal r2)),
+                   ("ittasala", Fil.ibdal (Fil.iftaal r3)),
+                   ("qala", Fil.qalb [Slge.Categories.c 21 0, Slge.Categories.c 27 0, Slge.Categories.c 23 0]),
+                   ("qulu", Fil.naql [Slge.Categories.c 21 3, Slge.Categories.c 27 2, Slge.Categories.c 23 2])] do
+      IO.println s!"op,{n},{"-".intercalate (w.map fun c => toString c.index)}"
+    for p in Fil.rubai do
+      IO.println s!"rubai,{p.1},{"-".intercalate (p.2.map fun c => toString c.index)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

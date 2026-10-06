@@ -459,6 +459,27 @@ _DECLARED: tuple[Claim, ...] = (
        "ونسبٌ 139 بالقارئ", _S,
        "test:tests/test_ism.py::test_masaq_measurement_and_index",
        note="1,824 صورةً مرفوضةٌ بالاسم؛ فَعَلَل وفَعِلَل أشكالُ المزيد بالتاء لا المجرّد."),
+    # — الفعل —
+    _c("FIL-abwab", "الأبوابُ الستّة أزواجُ (عينِ الماضي، عينِ المضارع) من تسعة؛ قوالبُها سليمةٌ وصورُها "
+       "مرخَّصةٌ لكلّ جذر وتُقرأ من الخانتين؛ وشرطُ باب فَتَحَ حلقيّةٌ مقروءة", _P,
+       "lean:Slge.Fil.abwab_six", "lean:Slge.Fil.bab_wf", "lean:Slge.Fil.bab_licensed",
+       "lean:Slge.Fil.bab_read", "lean:Slge.Fil.bab_witnesses",
+       "test:tests/test_fil.py::test_abwab_six_of_nine",
+       note="الثلاثةُ الساقطة (كسر–ضم، ضم–فتح، ضم–كسر) ثقلٌ معلَن؛ واختيارُ الباب للجذر معجم."),
+    _c("FIL-mazid", "أحرفُ الزيادة = طولُ القالب − 3؛ التسعةُ في awzan ثلاثةٌ بحرف وخمسةٌ بحرفين وواحدٌ "
+       "بثلاثة؛ لا خماسيَّ الأصول (الجذرُ ثلاثيٌّ بالبناء) والرباعيُّ أشكالٌ مرخَّصة", _P,
+       "lean:Slge.Fil.mazid_counts", "lean:Slge.Fil.root_is_ternary", "lean:Slge.Fil.rubai_shapes",
+       "test:tests/test_fil.py::test_mazid_and_rubai"),
+    _c("FIL-ilal", "الإعلالُ ثلاثُ عمليّات (قلبٌ ونقلٌ يحفظان الترخيص، وحذفٌ ملزَم) والإبدالُ ثلاثُ "
+       "قواعد على اِفْتَعَلَ لا تغيّر نمطَ السكون", _P,
+       "lean:Slge.Fil.qalb_licensed", "lean:Slge.Fil.naql_licensed", "lean:Slge.Fil.hadhf_witness",
+       "lean:Slge.Fil.qalb_witness", "lean:Slge.Fil.naql_witness", "lean:Slge.Fil.ibdal_licensed",
+       "lean:Slge.Fil.ibdal_witnesses", "test:tests/test_fil.py::test_ilal_and_ibdal_operations",
+       note="الردُّ مبرهَنٌ في الغانم (A116.Ilal)؛ اِتَّخَذَ بالهمزة خارج القاعدة المسمّاة."),
+    _c("FIL-masaq", "على 18,765 فعلًا من MASAQ: عينُ الماضي المجرّد السالم فتحٌ 489 كسرٌ 119 ضمٌّ 9، وعينُ "
+       "المضارع فتحٌ 1,226 كسرٌ 1,036 ضمٌّ 657؛ الماضي على القوالب 831 والباقي معتلٌّ ومضعَّف", _S,
+       "test:tests/test_fil.py::test_masaq_measurement_and_index",
+       note="الزوجُ (البابُ) قانونُ معجمٍ يجمع الصورتين؛ الخانةُ تقرأ كلَّ صورةٍ وحدَها."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

@@ -4,9 +4,9 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 76 |
+| مبرهن | 79 |
 | مفحوص_استقصاء | 12 |
-| مفحوص_بعينة | 19 |
+| مفحوص_بعينة | 20 |
 | دليل | 0 |
 | معلن | 10 |
 | رأي | 0 |
@@ -30,6 +30,9 @@
 | DAMAIR-iyya | ضميرُ النصب المنفصل = الحاملُ إِيَّا + المتّصل؛ والإلحاقُ يحفظ الترخيص | مبرهن | `lean:Slge.Damair.iyya_is_carrier_plus_suffix`<br>`lean:Slge.Damair.witness_iyya`<br>`lean:Slge.Damair.attach_licensed`<br>`test:tests/test_damair.py::test_iyya_is_carrier_plus_attached` |  |
 | DAMAIR-na | قانونُ نا: سكونُ الصحيح قبلها رفعٌ، وحركتُه أو مدُّه نصبٌ/جرّ — من الخانة، لكلّ حامل | مبرهن | `lean:Slge.Damair.na_raf_reads_sukun`<br>`lean:Slge.Damair.na_nasb_reads_vowel`<br>`lean:Slge.Damair.na_after_madd_not_raf`<br>`lean:Slge.Damair.witness_na_roles`<br>`test:tests/test_damair.py::test_na_law_on_gate_witnesses` |  |
 | DAMAIR-ta | قانونُ التاء: الشخصُ في حالتها بعد ساكن؛ وبعد المتحرّك ليست تاءَ الفاعل | مبرهن | `lean:Slge.Damair.ta_person`<br>`lean:Slge.Damair.ta_after_vowel_not_subject`<br>`lean:Slge.Damair.witness_ta_persons`<br>`test:tests/test_damair.py::test_ta_law_on_gate_witnesses` |  |
+| FIL-abwab | الأبوابُ الستّة أزواجُ (عينِ الماضي، عينِ المضارع) من تسعة؛ قوالبُها سليمةٌ وصورُها مرخَّصةٌ لكلّ جذر وتُقرأ من الخانتين؛ وشرطُ باب فَتَحَ حلقيّةٌ مقروءة | مبرهن | `lean:Slge.Fil.abwab_six`<br>`lean:Slge.Fil.bab_wf`<br>`lean:Slge.Fil.bab_licensed`<br>`lean:Slge.Fil.bab_read`<br>`lean:Slge.Fil.bab_witnesses`<br>`test:tests/test_fil.py::test_abwab_six_of_nine` | الثلاثةُ الساقطة (كسر–ضم، ضم–فتح، ضم–كسر) ثقلٌ معلَن؛ واختيارُ الباب للجذر معجم. |
+| FIL-ilal | الإعلالُ ثلاثُ عمليّات (قلبٌ ونقلٌ يحفظان الترخيص، وحذفٌ ملزَم) والإبدالُ ثلاثُ قواعد على اِفْتَعَلَ لا تغيّر نمطَ السكون | مبرهن | `lean:Slge.Fil.qalb_licensed`<br>`lean:Slge.Fil.naql_licensed`<br>`lean:Slge.Fil.hadhf_witness`<br>`lean:Slge.Fil.qalb_witness`<br>`lean:Slge.Fil.naql_witness`<br>`lean:Slge.Fil.ibdal_licensed`<br>`lean:Slge.Fil.ibdal_witnesses`<br>`test:tests/test_fil.py::test_ilal_and_ibdal_operations` | الردُّ مبرهَنٌ في الغانم (A116.Ilal)؛ اِتَّخَذَ بالهمزة خارج القاعدة المسمّاة. |
+| FIL-mazid | أحرفُ الزيادة = طولُ القالب − 3؛ التسعةُ في awzan ثلاثةٌ بحرف وخمسةٌ بحرفين وواحدٌ بثلاثة؛ لا خماسيَّ الأصول (الجذرُ ثلاثيٌّ بالبناء) والرباعيُّ أشكالٌ مرخَّصة | مبرهن | `lean:Slge.Fil.mazid_counts`<br>`lean:Slge.Fil.root_is_ternary`<br>`lean:Slge.Fil.rubai_shapes`<br>`test:tests/test_fil.py::test_mazid_and_rubai` |  |
 | FOLD | الطيُّ تقابلٌ بين المرخَّصات بطول n و‎{0…U(n)−1}‎ | مبرهن | `lean:Slge.slgeFold_injective`<br>`lean:Slge.slgeFold_surjective`<br>`test:tests/test_conformance.py::test_folds_match_lean` | يحلّ محلّ Q23/Q23b في الأصل: كان الفحصُ هناك طيًّا موضعيًّا بأساس 116، وصحّتُه بالبناء لا بالعدّ؛ وهنا طيٌّ كثيفٌ مبرهَنٌ لكلّ طول. |
 | GHAZALI | جدولُ الصور المنتجة هو جدولُ الغزالي بعينه، محسوبًا بالبتّات | مبرهن | `lean:Slge.Ghazali.ghazali_table`<br>`test:tests/test_conformance.py::test_ghazali_matches_lean` |  |
 | GRANT-check | المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة | مبرهن | `lean:Slge.Grant.grant_iff_check`<br>`lean:Slge.Grant.no_grant_of_refused`<br>`lean:Slge.Grant.ladder_implies_base`<br>`lean:Slge.Grant.empty_ladder_grants_nothing` | قانونُ tarkib/bridge.py بفحصٍ دالّةً لا نصًّا؛ الحكمُ المزوَّر الذي قبله الأصلُ لا يُصاغ هنا. |
@@ -105,6 +108,7 @@
 | Q24 | الظلُّ M/S يعجز والطيُّ يفرّق (ذَيْن/ذِين) | مفحوص_استقصاء | `test:tests/test_cells.py::test_shadow_fails_fold_separates` |  |
 | ADAD-tamyiz | حالةُ المعدود دالّةٌ في مدى العدد: على 72 موضعًا من MASAQ بشهادات البوّابة 71 مطابق | مفحوص_بعينة | `lean:Slge.Adad.tamyiz_ranges`<br>`test:tests/test_adad.py::test_tamyiz_function_and_masaq` | الحيادُ (مائة، ألف) والمعطوفُ وتذكيرُ المعدود بمفرده: معلن. |
 | AFAL-gate | ستّةُ شواهد من شهادات البوّابة تطابق القانون؛ نصبُ الاثنين ورفعُ المخاطبة بالقانون | مفحوص_بعينة | `test:tests/test_afal.py::test_forms_match_gate_witnesses` | الخمسةُ خمسةٌ بجدول مطابقةٍ معلَن (ياءُ المخاطبة لا تلحق حرفَ الغيبة). |
+| FIL-masaq | على 18,765 فعلًا من MASAQ: عينُ الماضي المجرّد السالم فتحٌ 489 كسرٌ 119 ضمٌّ 9، وعينُ المضارع فتحٌ 1,226 كسرٌ 1,036 ضمٌّ 657؛ الماضي على القوالب 831 والباقي معتلٌّ ومضعَّف | مفحوص_بعينة | `test:tests/test_fil.py::test_masaq_measurement_and_index` | الزوجُ (البابُ) قانونُ معجمٍ يجمع الصورتين؛ الخانةُ تقرأ كلَّ صورةٍ وحدَها. |
 | ISHARA-gate | 13 صورةً من شهادات البوّابة هي صورُ القانون بعينها؛ الباقي (12) بالقانون | مفحوص_بعينة | `lean:Slge.Ishara.witnessed_subset`<br>`test:tests/test_ishara.py::test_gate_witnesses_are_the_law_forms` | الدلالةُ (قريب/بعيد، عدد، جنس) من الحصر المُرسَل معلَنة. |
 | ISM-masaq | على 19,216 اسمًا معربًا من MASAQ: الثلاثيُّ 4,447 منه على العشرة 4,101 وفِعُل معدومة وفُعُل 185 كلُّها جموع؛ الرباعيُّ 1,580 أكثرُه فَعْلَل وفُعْلَل وفِعْلَل؛ تصغيرٌ 23 ونسبٌ 139 بالقارئ | مفحوص_بعينة | `test:tests/test_ism.py::test_masaq_measurement_and_index` | 1,824 صورةً مرفوضةٌ بالاسم؛ فَعَلَل وفَعِلَل أشكالُ المزيد بالتاء لا المجرّد. |
 | ISTIFHAM-sadara | الصدارة على MASAQ: 100/251 في صدر الآية أو بعد عاطف/جارّ/همزة؛ 151 بعد فعل قولٍ ونظرٍ وسؤال | مفحوص_بعينة | `test:tests/test_istifham.py::test_tiers_and_index` | صدارةُ جملةٍ لا آية: لا تُقاس بلا حدٍّ للجملة — دَينٌ على النظم. الدلالةُ من الحصر المُرسَل معلَنة. |

@@ -420,3 +420,27 @@ def test_ism_matches_lean() -> None:
             assert shape(cells) == tuple(st[x] for x in r[3].split("-")), r
         else:
             assert ops[r[1]] == cells, r
+
+
+def test_fil_matches_lean() -> None:
+    """الأبوابُ وأحرفُ الزيادة وعمليّاتُ الإعلال والإبدال والرباعيُّ = جدولُ `Fil`."""
+
+    from slge.cells import STATES
+    from slge.fil import ABWAB, MAZID, added, ibdal, iftaal, naql, qalb
+    from slge.rawabit import cells_of
+
+    rows = _rows("fil.csv")
+    assert len(rows) == 6 + 9 + 5 + 4
+    st = dict(zip("0123", STATES, strict=True))
+    ops = {"istabara": ibdal(iftaal(("ص", "ب", "ر"))), "izdahara": ibdal(iftaal(("ز", "ه", "ر"))),
+           "ittasala": ibdal(iftaal(("و", "ص", "ل"))), "qala": qalb(cells_of("قَوَلَ")),
+           "qulu": naql(cells_of("قْوُلُ"))}
+    babs = [r for r in rows if r[0] == "bab"]
+    assert [(st[r[1][0]], st[r[1][2]]) for r in babs] == list(ABWAB)
+    for r in rows:
+        if r[0] == "mazid":
+            assert int(r[1]) in MAZID and added(int(r[1])) == int(r[2]), r
+        elif r[0] == "op":
+            assert ops[r[1]] == tuple(_cell(int(i)) for i in r[2].split("-")), r
+        elif r[0] == "rubai":
+            assert cells_of(r[1]) == tuple(_cell(int(i)) for i in r[2].split("-")), r
