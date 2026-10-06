@@ -248,3 +248,11 @@
 'Slge.Nida.particles_licensed' depends on axioms: [propext]
 'Slge.Nida.particles_nodup' does not depend on any axioms
 'Slge.Nida.witnesses_hukm' depends on axioms: [propext]
+'Slge.Zuruf.hukm_qat' depends on axioms: [propext]
+'Slge.Zuruf.hukm_mudaf' depends on axioms: [propext]
+'Slge.Zuruf.hukm_jarr' depends on axioms: [propext]
+'Slge.Zuruf.setLast_licensed' depends on axioms: [propext, Quot.sound]
+'Slge.Zuruf.forms_licensed' depends on axioms: [propext]
+'Slge.Zuruf.forms_hukm' depends on axioms: [propext]
+'Slge.Zuruf.constants_single' depends on axioms: [propext]
+'Slge.Zuruf.haythu_always_cut' depends on axioms: [propext]

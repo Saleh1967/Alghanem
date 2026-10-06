@@ -134,6 +134,9 @@ def main (args : List String) : IO Unit := do
         | .mansub => "mansub" | .nakiraGhayrMaqsuda => "nakira" | .mudafIlaYa => "mudafIlaYa"
         | .unread => "unread"
       IO.println s!"witness,{w.1},{"-".intercalate (w.2.1.map fun c => toString c.index)},{h}"
+  | ["zuruf"] =>
+    for w in Zuruf.forms do
+      IO.println ("-".intercalate (w.map fun c => toString c.index))
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

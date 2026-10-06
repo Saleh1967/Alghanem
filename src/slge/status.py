@@ -217,6 +217,18 @@ _DECLARED: tuple[Claim, ...] = (
        "63 لا تقرؤها الخانة", _S,
        "test:tests/test_nida.py::test_masaq_measurement_and_index",
        note="الباقي خلافُ وسمٍ في MASAQ (أَهْلَ، مَعْشَرَ، بَنِي موسومةً «مبني»)؛ لم أُصلحه."),
+    # — ظروفُ المكان —
+    _c("ZURUF-ops", "الإضافةُ والجرُّ والقطعُ عمليّاتٌ على الخانة الأخيرة تحفظ الترخيصَ ويقرؤها الحكم", _P,
+       "lean:Slge.Zuruf.setLast_licensed", "lean:Slge.Zuruf.hukm_qat", "lean:Slge.Zuruf.hukm_mudaf",
+       "lean:Slge.Zuruf.hukm_jarr", "test:tests/test_zuruf.py::test_three_operations_read_back"),
+    _c("ZURUF-forms", "51 صورةً (17 جذعًا × 3) مرخَّصةً بأحكامها؛ وحَيْثُ مقطوعةٌ أبدًا", _P,
+       "lean:Slge.Zuruf.forms_licensed", "lean:Slge.Zuruf.forms_hukm",
+       "lean:Slge.Zuruf.haythu_always_cut", "lean:Slge.Zuruf.constants_single",
+       "test:tests/test_conformance.py::test_zuruf_matches_lean"),
+    _c("ZURUF-masaq", "على 1,493 ظرفًا بشهادات البوّابة: الضمُّ ⇒ مقطوع 82/82 (وحَيْثُ ثابت)؛ الفتحُ ⇒ "
+       "مضاف 752/756؛ الكسرُ ⇒ بعد جارٍّ أو ياء 568/584", _S,
+       "test:tests/test_zuruf.py::test_masaq_measurement_and_index",
+       note="المختصُّ قيدٌ معجميّ؛ المقاديرُ بلا شاهد؛ ظرفُ الزمان حصرُه معلَّق."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

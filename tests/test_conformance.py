@@ -200,3 +200,14 @@ def test_nida_matches_lean() -> None:
         if r[0] == "witness":
             cells = tuple(_cell(int(i)) for i in r[2].split("-"))
             assert hukm(cells) == lean_hukm[r[3]], r[1]
+
+
+def test_zuruf_matches_lean() -> None:
+    """الصورُ الإحدى والخمسون (17 جذعًا × مضاف/مجرور/مقطوع) = جدولُ `Zuruf.forms`."""
+
+    from slge.zuruf import STEMS, jarr, mudaf, qat
+
+    rows = _rows("zuruf.csv")
+    forms = [op(z.stem) for z in STEMS for op in (mudaf, jarr, qat)]
+    assert len(rows) == len(forms) == 51
+    assert [r[0] for r in rows] == ["-".join(str(index(c)) for c in w) for w in forms]

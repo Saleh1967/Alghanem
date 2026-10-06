@@ -4,9 +4,9 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 45 |
+| مبرهن | 47 |
 | مفحوص_استقصاء | 12 |
-| مفحوص_بعينة | 7 |
+| مفحوص_بعينة | 8 |
 | دليل | 0 |
 | معلن | 10 |
 | رأي | 0 |
@@ -60,6 +60,8 @@
 | WAZN-indep | ترخيصُ الكلمة من القالب وحدَه: الوزنُ يُرخَّص مرّةً لكلّ الأصول | مبرهن | `lean:Slge.Wazn.states_fill`<br>`lean:Slge.Wazn.licensed_fill_indep`<br>`test:tests/test_wazn.py::test_licence_is_root_independent` |  |
 | WAZN-root | الأصلُ يُستردّ من الصيغة بالقالب لكلّ قالبٍ سليمٍ ولكلّ أصل | مبرهن | `lean:Slge.Wazn.rootOf_fill`<br>`lean:Slge.Wazn.awzan_root`<br>`test:tests/test_wazn.py::test_fill_then_root_of_recovers_every_root` |  |
 | WAZN-table | 113 وزنًا مودَعًا سليمةٌ ومرخَّصةٌ لكلّ أصل؛ بايثونُها مطابقٌ لجدول Lean | مبرهن | `lean:Slge.Wazn.awzan_wf`<br>`lean:Slge.Wazn.awzan_licensed`<br>`test:tests/test_conformance.py::test_wazn_matches_lean` |  |
+| ZURUF-forms | 51 صورةً (17 جذعًا × 3) مرخَّصةً بأحكامها؛ وحَيْثُ مقطوعةٌ أبدًا | مبرهن | `lean:Slge.Zuruf.forms_licensed`<br>`lean:Slge.Zuruf.forms_hukm`<br>`lean:Slge.Zuruf.haythu_always_cut`<br>`lean:Slge.Zuruf.constants_single`<br>`test:tests/test_conformance.py::test_zuruf_matches_lean` |  |
+| ZURUF-ops | الإضافةُ والجرُّ والقطعُ عمليّاتٌ على الخانة الأخيرة تحفظ الترخيصَ ويقرؤها الحكم | مبرهن | `lean:Slge.Zuruf.setLast_licensed`<br>`lean:Slge.Zuruf.hukm_qat`<br>`lean:Slge.Zuruf.hukm_mudaf`<br>`lean:Slge.Zuruf.hukm_jarr`<br>`test:tests/test_zuruf.py::test_three_operations_read_back` |  |
 | ANSWER | كلُّ جملةٍ في الجواب لها وسمٌ وسند، والمُعيدُ لا يُسقطهما | مفحوص_استقصاء | `test:tests/test_answer.py::test_every_sentence_is_tagged`<br>`test:tests/test_answer.py::test_verbalizer_cannot_drop_tags` |  |
 | ENTRY | لا يدخل العمودَ إلّا شهادةُ بوّابة الغانم ذرّاتٍ، وتعود ذرّاتٍ بعينها | مفحوص_استقصاء | `test:tests/test_entry.py::test_kitabun_enters_as_five_cells_and_exits_byte_for_byte`<br>`test:tests/test_entry.py::test_every_cell_round_trips`<br>`test:tests/test_entry.py::test_non_atoms_are_refused_by_name` | الجسرُ ذرّة ← خانة هو `Slge.ofCell/toCell` المبرهَن؛ والذرّاتُ نفسُها من `gate.enter` في الغانم (A116-CANONICAL-TXT-1.1) لا من قارئٍ هنا. |
 | GRANT-forge | لا حقلَ حكمٍ يُملأ: الفحصُ يجري كلَّ منح | مفحوص_استقصاء | `test:tests/test_grant.py::test_verdict_cannot_be_forged`<br>`test:tests/test_grant.py::test_grant_requires_check_to_run` |  |
@@ -79,6 +81,7 @@
 | NIDA-masaq | على 489 منادًى بشهادات البوّابة: الضمُّ ⇒ مبنيّ 188/188؛ الفتحُ والكسرُ ⇒ معرب 195/237؛ 63 لا تقرؤها الخانة | مفحوص_بعينة | `test:tests/test_nida.py::test_masaq_measurement_and_index` | الباقي خلافُ وسمٍ في MASAQ (أَهْلَ، مَعْشَرَ، بَنِي موسومةً «مبني»)؛ لم أُصلحه. |
 | SHABAKA-minimal | ترتيبُ البصريّين ليس أقلَّ الأشجار كلفةً: 341 عمليّةً مقابل 155؛ يتّفقان في 21 أبًا من 112 | مفحوص_بعينة | `test:tests/test_shabaka.py::test_computed_tree_is_minimal_and_classical_is_not` | أقلُّ شجرةٍ (Prim على مسافة لِيفنشتاين للقوالب) محسوبةٌ لا مقرَّرة؛ ما يحمله ترتيبُ البصريّين فوق كلفة القالب شرطُ حدٍّ دلاليّ لم يُقَس بعد. |
 | WAZN-sibawayh | هياكلُ الأوزان مقابل أبنية سيبويه المجمَّدة: 95/113 عنده؛ 18 مسمّاة؛ 122 من هياكله خارج الجدول | مفحوص_بعينة | `test:tests/test_wazn.py::test_skeletons_measured_against_sibawayh` | الحركاتُ معلَنةٌ من كتب الصرف لا مقيسة؛ الرباعيُّ والإعلالُ والمفعولُ المطلق والجامدُ خارج الجدول باسمها (DEBTS). |
+| ZURUF-masaq | على 1,493 ظرفًا بشهادات البوّابة: الضمُّ ⇒ مقطوع 82/82 (وحَيْثُ ثابت)؛ الفتحُ ⇒ مضاف 752/756؛ الكسرُ ⇒ بعد جارٍّ أو ياء 568/584 | مفحوص_بعينة | `test:tests/test_zuruf.py::test_masaq_measurement_and_index` | المختصُّ قيدٌ معجميّ؛ المقاديرُ بلا شاهد؛ ظرفُ الزمان حصرُه معلَّق. |
 | DAMAIR-roles | الأدوارُ الإعرابيّة الثابتة من الحصر المُرسَل معلَنة؛ الياءُ والمستترُ خارج ما يقرؤه الحرف | معلن | `test:tests/test_damair.py::test_index_is_current` |  |
 | DL1-DL6 | أقسامُ الوضع والدلالة والحقيقة والمجاز والمنطوق والمفهوم مغلقة | معلن | `test:tests/test_semantics.py::test_partitions_are_closed` |  |
 | GRANT-declared | ستّةُ جسورٍ وصلت بلا فحصٍ يعمل: أسماءٌ معلَنة بدَينها لا جسور | معلن | `test:tests/test_grant.py::test_only_one_rung_has_a_working_check` |  |

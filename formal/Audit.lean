@@ -253,3 +253,11 @@ import Slge
 #print axioms Slge.Nida.particles_licensed
 #print axioms Slge.Nida.particles_nodup
 #print axioms Slge.Nida.witnesses_hukm
+#print axioms Slge.Zuruf.hukm_qat
+#print axioms Slge.Zuruf.hukm_mudaf
+#print axioms Slge.Zuruf.hukm_jarr
+#print axioms Slge.Zuruf.setLast_licensed
+#print axioms Slge.Zuruf.forms_licensed
+#print axioms Slge.Zuruf.forms_hukm
+#print axioms Slge.Zuruf.constants_single
+#print axioms Slge.Zuruf.haythu_always_cut
