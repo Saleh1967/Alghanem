@@ -34,3 +34,4 @@ import Slge.Filiyya
 import Slge.Shibh
 import Slge.Nisab
 import Slge.Talil
+import Slge.Maqam

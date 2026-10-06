@@ -571,3 +571,20 @@
 'Slge.Talil.tanazu_witness' depends on axioms: [propext]
 'Slge.Talil.fronting_keeps_nasb' depends on axioms: [propext]
 'Slge.Talil.talil_witnesses' depends on axioms: [propext]
+'Slge.Maqam.suffixShakhs_covers' depends on axioms: [propext]
+'Slge.Maqam.present_heads_ya' depends on axioms: [propext]
+'Slge.Maqam.present_templates_wf' depends on axioms: [propext]
+'Slge.Maqam.withPrefix_fill' depends on axioms: [propext, Quot.sound]
+'Slge.Maqam.present_prefix_reads_person' depends on axioms: [propext, Quot.sound]
+'Slge.Maqam.hadir_wujub' does not depend on any axioms
+'Slge.Maqam.ghaib_jawaz' does not depend on any axioms
+'Slge.Maqam.zahir_only_ghaib' depends on axioms: [propext]
+'Slge.Maqam.zahir_not_hadir' does not depend on any axioms
+'Slge.Maqam.mustatir_has_no_cell' depends on axioms: [propext]
+'Slge.Maqam.shakhs_witnesses' depends on axioms: [propext]
+'Slge.Maqam.zuhur_witnesses' depends on axioms: [propext]
+'Slge.Maqam.detached_all_read' does not depend on any axioms
+'Slge.Maqam.detached_mem' depends on axioms: [propext]
+'Slge.Maqam.tawkid_needs_both' depends on axioms: [propext]
+'Slge.Maqam.tawkid_witnesses' depends on axioms: [propext]
+'Slge.Maqam.aid_forces_maful_first' depends on axioms: [propext]

@@ -349,6 +349,28 @@ def main (args : List String) : IO Unit := do
       IO.println s!"talil,{key a},{key b},{tn (Talil.talil a b)}"
     let t := Talil.tanazu Talil.alimtu Talil.amiltu Talil.alkhayr Talil.hu
     IO.println s!"tanazu,{key t.1},{key t.2.1},{key t.2.2}"
+  | ["maqam"] =>
+    -- الشخصُ من الخانات لكلّ قالبِ مضارعٍ بصدوره الأربعة على الميزان؛ والشواهدُ: الشخصُ والظهورُ والتوكيد.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let sn := fun (s : Option Maqam.Shakhs) => match s with
+      | some .mutakallim => "mutakallim" | some .mukhatab => "mukhatab" | some .ghaib => "ghaib"
+      | some .mukhatabOrGhaiba => "ta" | none => "none"
+    for k in Maqam.presentTemplates do
+      for p in [(0 : Fin 29), 25, 3, 28] do
+        let v := Maqam.withPrefix p (Wazn.mizan (Sarf.templ k))
+        IO.println s!"present,{k},{p},{key v},{sn (Maqam.shakhs v)}"
+    for v in [Maqam.adrusu, Maqam.nadrusu, Maqam.tadrusu, Maqam.yadrusu, Maqam.darasat, Maqam.udrus,
+              Filiyya.qumtu, Filiyya.darabtu, Jumla.darasa, Jumla.zayd] do
+      IO.println s!"shakhs,{key v},{sn (Maqam.shakhs v)}"
+    let zn := fun (z : Maqam.Zuhur) => match z with
+      | .zahir => "zahir" | .mustatir => "mustatir" | .muttasil => "muttasil"
+    for (v, n) in [(Jumla.darasa, some Jumla.zayd), (Maqam.adrusu, some Jumla.zayd),
+                   (Jumla.darasa, some Filiyya.addars), (Filiyya.darabtu, none)] do
+      IO.println s!"zuhur,{key v},{match n with | some w => key w | none => ""},{zn (Maqam.zuhur v n)}"
+    for (v, d) in [(Filiyya.darabtu, Maqam.ana), (Maqam.adrusu, Maqam.ana), (Jumla.darasa, Maqam.huwa),
+                   (Maqam.tadrusu, Maqam.anta), (Maqam.tadrusu, Maqam.hiya), (Filiyya.darabtu, Maqam.anta),
+                   (Maqam.adrusu, Maqam.huwa), (Jumla.darasa, Jumla.zayd)] do
+      IO.println s!"tawkid,{key v},{key d},{Maqam.tawkid v d}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

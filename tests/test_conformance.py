@@ -635,3 +635,33 @@ def test_talil_matches_lean() -> None:
             assert tanazu(v1[:-1], v2, (*w[:-1], ("ر", "ضم")), v1[-1:]) == (v1, v2, w), r
     assert sum(r[0] == "tool" for r in rows) == len(TOOLS) == 6
 
+
+def test_maqam_matches_lean() -> None:
+    """الشخصُ من الصدر على الميزان لكلّ قالب، والشواهدُ (الشخصُ والظهورُ والتوكيد) = جدولُ `Maqam`."""
+
+    from slge.maqam import PRESENT_TEMPLATES, shakhs, tawkid, with_prefix, zuhur
+    from slge.wazn import AWZAN, mizan
+
+    rows = _rows("maqam.csv")
+    sn = {"mutakallim": "متكلم", "mukhatab": "مخاطب", "ghaib": "غائب", "ta": "مخاطب/غائبة",
+          "none": None}
+    zn = {"zahir": "ظاهر", "mustatir": "مستتر", "muttasil": "متصل"}
+    pre = {"0": "ء", "25": "ن", "3": "ت", "28": "ي"}
+    presents = [r for r in rows if r[0] == "present"]
+    assert len(presents) == 4 * len(PRESENT_TEMPLATES)
+    for r in presents:
+        v = with_prefix(pre[r[2]], mizan(AWZAN[int(r[1])].template))
+        assert v == tuple(_cell(int(i)) for i in r[3].split("-")) and shakhs(v) == sn[r[4]], r
+    for r in rows:
+        if r[0] == "shakhs":
+            assert shakhs(tuple(_cell(int(i)) for i in r[1].split("-"))) == sn[r[2]], r
+        elif r[0] == "zuhur":
+            v = tuple(_cell(int(i)) for i in r[1].split("-"))
+            n = tuple(_cell(int(i)) for i in r[2].split("-")) if r[2] else None
+            assert zuhur(v, n) == zn[r[3]], r
+        elif r[0] == "tawkid":
+            v = tuple(_cell(int(i)) for i in r[1].split("-"))
+            d = tuple(_cell(int(i)) for i in r[2].split("-"))
+            assert tawkid(v, d) == (r[3] == "true"), r
+    assert sum(r[0] == "tawkid" for r in rows) == 8 and sum(r[0] == "zuhur" for r in rows) == 4
+

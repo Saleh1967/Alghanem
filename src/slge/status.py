@@ -674,6 +674,36 @@ _DECLARED: tuple[Claim, ...] = (
        "بالحرف 359/2,887 (إحصاءٌ بلا مرجع)؛ وكلُّ مفعولٍ لأجله في MASAQ منصوب 38/38", _S,
        "lean:Slge.Talil.talil_witnesses", "test:tests/test_talil.py::test_reader_and_masaq",
        note="فَعَالٌ ومَفْعِلَةٌ وتَفْعِلَةٌ غيرُ مودَعة (جَزَاءً، مَوْعِظَةً)؛ الأجوفُ والمقصورُ على غير قالب."),
+    # — المقام —
+    _c("MAQAM-shakhs", "الشخصُ من الخانة: صدرُ المضارع يقرؤه لكلّ قالبٍ (13) ولكلّ جذرٍ لا ألفَ فيه — "
+       "همزةٌ ونونٌ متكلّم، تاءٌ مخاطبٌ أو غائبة (لا تفصل)، ياءٌ غائب؛ ولاحقةُ الفاعل بشخصٍ لكلّ لاحقة، "
+       "والماضي بلا لاحقةٍ غائب، والأمرُ مخاطب", _P,
+       "lean:Slge.Maqam.present_prefix_reads_person", "lean:Slge.Maqam.withPrefix_fill",
+       "lean:Slge.Maqam.present_heads_ya", "lean:Slge.Maqam.suffixShakhs_covers",
+       "lean:Slge.Maqam.shakhs_witnesses",
+       "test:tests/test_maqam.py::test_prefix_reads_person_for_every_present_template_and_root",
+       note="القارئُ المركَّب (لاحقةٌ فصدرٌ فقالب) مشهودٌ لا عامّ؛ العامُّ قارئُ الصدر على الأجذار بلا ألف."),
+    _c("MAQAM-istitar", "المستترُ لا خانةَ له: غيابُ لاحقةٍ وشخصٌ مقروء؛ وجوبًا للحاضر وجوازًا للغائب؛ "
+       "والاسمُ الظاهرُ فاعلًا للغائب وحده لا بعد متكلّمٍ أو مخاطب، والمتّصلُ والمستترُ لكلّ شخص", _P,
+       "lean:Slge.Maqam.mustatir_has_no_cell", "lean:Slge.Maqam.hadir_wujub",
+       "lean:Slge.Maqam.ghaib_jawaz",
+       "lean:Slge.Maqam.zahir_only_ghaib", "lean:Slge.Maqam.zahir_not_hadir",
+       "lean:Slge.Maqam.zuhur_witnesses",
+       "test:tests/test_maqam.py::test_concealed_has_no_cell_and_explicit_only_for_ghaib",
+       note="ما في الحصر المُرسَل من حظر استتار الغائب خلافُ النحو ولم يُدخَل: الغائبُ مستترٌ جوازًا."),
+    _c("MAQAM-tawkid", "التوكيدُ اللفظيّ للضمير مطابقةُ شخص: لكلّ منفصلٍ في الجدول شخصٌ، ولا توكيدَ إلّا "
+       "بمنفصلٍ من الجدول وفعلٍ قُرئ شخصُه؛ والضميرُ العائدُ في الفاعل يفرض تقديمَ المفعول", _P,
+       "lean:Slge.Maqam.detached_all_read", "lean:Slge.Maqam.detached_mem",
+       "lean:Slge.Maqam.tawkid_needs_both", "lean:Slge.Maqam.tawkid_witnesses",
+       "lean:Slge.Maqam.aid_forces_maful_first",
+       "test:tests/test_maqam.py::test_emphasis_requires_same_person",
+       note="الحضورُ والشهودُ وعودُ الغائب على سابقٍ: معنًى ومقام."),
+    _c("MAQAM-masaq", "على 16,727 فعلًا من MASAQ بشهادات البوّابة: الشخصُ حيث وُسم يوافق 596 ويخالف 32 "
+       "(ولم يُقرأ 560)، ولاحقةُ الفاعل توافق 14,256/16,727، والفاعلُ الظاهرُ بعد الفعل 560 بعد غائبٍ "
+       "أو تاءٍ و10 بعد حاضر (طفرةُ zahir_only_ghaib المقيسة)", _S,
+       "test:tests/test_maqam.py::test_masaq_measurement_and_index",
+       note="المبدَلُ همزتُه ألفًا والناقصُ والمثالُ المنصوب: الخانةُ لا تفصل؛ وسومُ MASAQ للشخص قليلةٌ "
+            "وبعضُها مخالف."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",
