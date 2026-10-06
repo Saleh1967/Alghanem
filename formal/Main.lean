@@ -416,6 +416,28 @@ def main (args : List String) : IO Unit := do
       IO.println s!"haml,{key m},{key n},{Naat.naatOk m n},{hn (Naat.hamlKind m n)}"
     for w in [Naat.rajulan, Nawasikh.nasb Naat.alrajul, Jumla.darasa, Naat.alrajul] do
       IO.println s!"mahall,{key w},{mn (Naat.jumlaMahall w)}"
+  | ["uslub"] =>
+    -- الأسلوبُ على الشواهد، ولَا على كلّ قالبِ مضارعٍ بصدوره مجزومًا ومرفوعًا (على الميزان)، والأدوات.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let un := fun (u : Uslub.Uslub) => match u with
+      | .khabar => "khabar" | .amr => "amr" | .nahy => "nahy" | .istifham => "istifham" | .nida => "nida"
+      | .tamanni => "tamanni" | .tarajji => "tarajji" | .taajjub => "taajjub" | .madhDhamm => "madhDhamm"
+      | .unread => "unread"
+    for (n, cs, u) in Uslub.tools do
+      IO.println s!"tool,{n},{key cs},{un u}"
+    for k in Jiha.presentTemplates do
+      for p in [(0 : Fin 29), 25, 3, 28] do
+        let v := Maqam.withPrefix p (Wazn.mizan (Sarf.templ k))
+        IO.println s!"la,{key (Jazm.sukun v)},{un (Uslub.uslub Uslub.la (Jazm.sukun v) none)}"
+        IO.println s!"la,{key v},{un (Uslub.uslub Uslub.la v none)}"
+    let nasbRajul := Nawasikh.tanwin (Nawasikh.nasb Naat.rajul)
+    for (a, b, n) in [([], Jiha.uktub, none), (Uslub.la, Jazm.sukun Uslub.taktub, none), (Uslub.la, Uslub.taktub, none),
+                      (Uslub.hal, Uslub.taktub, none), (Uslub.ya, Naat.rajul, none), (Uslub.layta, Jumla.zayd, none),
+                      (Uslub.laalla, Jumla.zayd, none), (Uslub.ma, Uslub.akrama, some nasbRajul),
+                      (Uslub.ma, Uslub.akrama, some Jumla.zayd), ([], Uslub.nima, none), ([], Jiha.kataba, none),
+                      ([], Naat.alrajul, none), ([], Uslub.la, none)] do
+      let u := Uslub.uslub a b n
+      IO.println s!"uslub,{key a},{key b},{match n with | some w => key w | none => ""},{un u},{Uslub.truthApt u}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

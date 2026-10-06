@@ -620,3 +620,16 @@
 'Slge.Naat.hal_requires_marifa' depends on axioms: [propext]
 'Slge.Naat.naat_after_nakira' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Slge.Naat.naat_witnesses' depends on axioms: [propext]
+'Slge.Uslub.truth_iff_khabar' depends on axioms: [propext]
+'Slge.Uslub.tools_licensed' depends on axioms: [propext]
+'Slge.Uslub.tools_count' does not depend on any axioms
+'Slge.Uslub.tools_in_rawabit' does not depend on any axioms
+'Slge.Uslub.setLast_id' depends on axioms: [propext]
+'Slge.Uslub.amr_is_insha' depends on axioms: [propext, Quot.sound]
+'Slge.Uslub.present_fill_last' depends on axioms: [propext, Quot.sound]
+'Slge.Uslub.map_state_setLast' does not depend on any axioms
+'Slge.Uslub.sukun_present_not_past' depends on axioms: [propext, Quot.sound]
+'Slge.Uslub.la_splits_by_last_state' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Uslub.nahy_only_present' depends on axioms: [propext, Quot.sound]
+'Slge.Uslub.ma_afala_splits_by_next_case' depends on axioms: [propext, Quot.sound]
+'Slge.Uslub.uslub_witnesses' depends on axioms: [propext]

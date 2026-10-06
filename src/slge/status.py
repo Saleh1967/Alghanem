@@ -754,6 +754,24 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_naat.py::test_masaq_measurement_and_index",
        note="أوّلُ مخالفة فيما لم يُقرأ: إعرابٌ لا يُقرأ 309 (موصولٌ ومبنيّ)، تعريفٌ 162 (مضافٌ وعلم)، "
             "إعرابٌ 108، عددٌ 76، جنسٌ 56."),
+    # — الأسلوب: الخبرُ والإنشاء —
+    _c("USLUB-khabar", "الصدقُ والكذبُ للخبر وحده، والإنشاءُ يُقرأ من الخانة: الأمرُ إنشاءٌ لكلّ قالبِ أمرٍ "
+       "ولكلّ جذرٍ مهما كان ما قبله وما بعده؛ ولَا تفصل النهيَ (إنشاء) عن النفي (خبر) بخانة آخر الفعل "
+       "وحدها لكلّ قالبِ مضارعٍ وصدرٍ وجذر؛ ومَا أَفْعَلَ تعجّبٌ إن نُصب ما بعده وخبرٌ إن رُفع لكلّ جذر", _P,
+       "lean:Slge.Uslub.truth_iff_khabar", "lean:Slge.Uslub.amr_is_insha",
+       "lean:Slge.Uslub.la_splits_by_last_state", "lean:Slge.Uslub.sukun_present_not_past",
+       "lean:Slge.Uslub.nahy_only_present", "lean:Slge.Uslub.ma_afala_splits_by_next_case",
+       "lean:Slge.Uslub.tools_licensed", "lean:Slge.Uslub.tools_in_rawabit",
+       "lean:Slge.Uslub.uslub_witnesses",
+       "test:tests/test_uslub.py::test_truth_only_for_khabar_and_insha_read_from_cells",
+       "test:tests/test_uslub.py::test_witnesses_and_mutations",
+       note="يَلْلِمْ من ل‑ل‑م يشابه لَلِّمْ بالخانة فقُيّد برهانُ لَا بذلك؛ القسمُ وصيغُ العقود والخبرُ "
+            "المرادُ به الإنشاء معنًى."),
+    _c("USLUB-masaq", "على شريحة شبه الجملة بشهادات البوّابة: لَا + مضارعٍ بلا لاحقة 34 سياقًا بوسم "
+       "MASAQ (جزم = نهي، غير عامل = نفي): القارئُ يوافقه بخانة الآخر في 21 ويخالفه في 7 (معتلٌّ "
+       "وأجوف)؛ فعلُ الأمر 268: يُقرأ أمرًا في 88؛ ما بعد حرف الاستفهام 24: استفهامٌ في 23", _S,
+       "test:tests/test_uslub.py::test_masaq_measurement_and_index",
+       note="أمرُ أَفْعَلَ والأجوفُ والناقصُ على غير قالب: 132 أمرًا لا يُقرأ و48 يُقرأ خبرًا — باسمها."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

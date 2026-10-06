@@ -715,3 +715,27 @@ def test_naat_matches_lean() -> None:
             assert jumla_mahall(cells(r[1])) == mn[r[2]], r
     assert sum(r[0] == "vec" for r in rows) == 12 and sum(r[0] == "haml" for r in rows) == 5
 
+
+def test_uslub_matches_lean() -> None:
+    """الأدواتُ، ولَا على كلّ قالبِ مضارعٍ بصدوره مجزومًا ومرفوعًا، والأسلوبُ على الشواهد = جدولُ `Uslub`."""
+
+    from slge.uslub import LA, TOOLS, truth_apt, uslub
+
+    rows = _rows("uslub.csv")
+    un = {"khabar": "خبر", "amr": "أمر", "nahy": "نهي", "istifham": "استفهام", "nida": "نداء",
+          "tamanni": "تمنّ", "tarajji": "ترجّ", "taajjub": "تعجّب", "madhDhamm": "مدح وذمّ",
+          "unread": "—"}
+
+    def cells(x: str) -> tuple[tuple[str, str], ...]:
+        return tuple(_cell(int(i)) for i in x.split("-")) if x else ()
+
+    assert sum(r[0] == "la" for r in rows) == 104 and sum(r[0] == "tool" for r in rows) == 14
+    for r in rows:
+        if r[0] == "tool":
+            assert (r[1], cells(r[2]), un[r[3]]) in TOOLS, r
+        elif r[0] == "la":
+            assert uslub(LA, cells(r[1])) == un[r[2]], r
+        elif r[0] == "uslub":
+            u = uslub(cells(r[1]), cells(r[2]), cells(r[3]) if r[3] else None)
+            assert u == un[r[4]] and truth_apt(u) == (r[5] == "true"), r
+

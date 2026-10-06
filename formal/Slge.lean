@@ -37,3 +37,4 @@ import Slge.Talil
 import Slge.Maqam
 import Slge.Jiha
 import Slge.Naat
+import Slge.Uslub

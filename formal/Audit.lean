@@ -625,3 +625,16 @@ import Slge
 #print axioms Slge.Naat.hal_requires_marifa
 #print axioms Slge.Naat.naat_after_nakira
 #print axioms Slge.Naat.naat_witnesses
+#print axioms Slge.Uslub.truth_iff_khabar
+#print axioms Slge.Uslub.tools_licensed
+#print axioms Slge.Uslub.tools_count
+#print axioms Slge.Uslub.tools_in_rawabit
+#print axioms Slge.Uslub.setLast_id
+#print axioms Slge.Uslub.amr_is_insha
+#print axioms Slge.Uslub.present_fill_last
+#print axioms Slge.Uslub.map_state_setLast
+#print axioms Slge.Uslub.sukun_present_not_past
+#print axioms Slge.Uslub.la_splits_by_last_state
+#print axioms Slge.Uslub.nahy_only_present
+#print axioms Slge.Uslub.ma_afala_splits_by_next_case
+#print axioms Slge.Uslub.uslub_witnesses
