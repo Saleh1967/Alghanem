@@ -7,9 +7,10 @@
 **لا يدخل هذه الشجرةَ نصٌّ، ولا يخرج منها نصّ. المدخلُ الوحيد شهادةُ بوّابة الغانم، والمخرجُ الوحيد ذرّاتُها بعينها.**
 
 - النصُّ يدخل في مستودع الغانم وحدَه: `gate.enter(bytes) → Certificate | Refusal` (`Saleh1967/Alghanem`، فرع `claude/official-gate`، حزمة `gate/`، برهانُها `formal/a116`).
+- السُّلَّمُ الفعليّ: `slge.gates.climb(cert.atoms)` سبعُ بوّاباتٍ متتابعة (الخانة، الترخيص، العدد حاكمةً؛ الجداول، الصرف، الإعراب، الجواب قارئةً) — ولا بوّابةَ فوق مرفوضة (`Grant.ladder_implies_base`). وكلُّ وحدةٍ مسجَّلةٌ في `slge.manifest` بمواضعها، و`python tools/check_manifest.py` يشهد أنّها موصولةٌ في كلّ موضع (ADR ٦ في `ARCHITECTURE.md`).
 - شهاداتُ المصحف كلِّه مودَعةٌ خاناتٍ وأعدادًا (`tests/data/corpus-certificates.json.gz`، بصمةُ المدوّنة فيه) وتُقاس على السُّلَّم في `BITS_INDEX.md`.
 - هنا: `slge.entry.from_atoms(cert.atoms) → خانات`، و`slge.entry.to_atoms(خانات) → ذرّات` تعود إلى `gate.exit`. والطيُّ `to_integer/from_integer` مبرهَنٌ (`Slge.slgeFold_*`) على المرخَّص ثنائيًّا؛ وما رخّصه الثلاثيُّ وحدَه (كـ«حَاجَّ») يحمل عددَه في شهادته.
-- الطبقاتُ الحيّة: `entry`، `cells`، `stream`، `categories`، `phonology`، `semantics`، `nazm`، `grant`، `wazn`، `shabaka`، `khamsa`، `afal`، `rawabit`، `damair`، `ishara`، `istifham`، `nida`، `zuruf`، `zaman`، `adad`، `marifa`، `sarf`، `tawabi`، `nawasikh`، `jazm`، `mansubat`، `majrurat`، `wasl`، `ism`، `fil`، `huruf`، `jumla`، `filiyya`، `shibh`، `nisab`، `talil`، `maqam`، `jiha`، `naat`، `uslub`، `talab`، `kulli`، `wad`، `tabayun`، `madd`، `knowledge`، `rank`، `learning`، `answer` (و`order`، `status`، `guard` وصفًا). ما سواها **معلَّق** في `suspended/` بسجلٍّ (`SUSPENDED_REGISTRY.json`): `encoding`، `orthography`، `lexicon`، `morphology` — كانت تقرأ النصّ وتطبّعه خارج البوّابة.
+- الطبقاتُ الحيّة: `entry`، `cells`، `stream`، `categories`، `phonology`، `semantics`، `nazm`، `grant`، `wazn`، `shabaka`، `khamsa`، `afal`، `rawabit`، `damair`، `ishara`، `istifham`، `nida`، `zuruf`، `zaman`، `adad`، `marifa`، `sarf`، `tawabi`، `nawasikh`، `jazm`، `mansubat`، `majrurat`، `wasl`، `ism`، `fil`، `huruf`، `jumla`، `filiyya`، `shibh`، `nisab`، `talil`، `maqam`، `jiha`، `naat`، `uslub`، `talab`، `kulli`، `wad`، `tabayun`، `madd`، `knowledge`، `rank`، `learning`، `answer`، و`gates` (البوّاباتُ المتتابعة فوقها كلِّها) (و`order`، `status`، `guard`، `manifest` وصفًا). ما سواها **معلَّق** في `suspended/` بسجلٍّ (`SUSPENDED_REGISTRY.json`): `encoding`، `orthography`، `lexicon`، `morphology` — كانت تقرأ النصّ وتطبّعه خارج البوّابة.
 
 ## ما لا تفعله
 
@@ -25,9 +26,10 @@
 
 ```sh
 pip install -r requirements-dev.txt && pip install -e . --no-deps
-ruff check . && mypy && pytest -q                     # 312 اختبارًا
+ruff check . && mypy && pytest -q                     # 315 اختبارًا
 python tools/gen_status.py --check
 python tools/gen_registry.py --check
+python tools/check_manifest.py && python tools/check_manifest.py --indexes   # السجلُّ وكلُّ الفهارس (بدل السطور أدناه واحدًا واحدًا)
 python tools/gen_lean_index.py --check               # فهرسُ المبرهنات على درجات الترخيص (LEAN_INDEX.md)
 python tools/gen_rawabit_index.py --check            # فهرسةُ أدوات الربط على الدرجات (RAWABIT_INDEX.md)
 python tools/gen_damair_index.py --check             # فهرسُ الضمائر على الدرجات (DAMAIR_INDEX.md)

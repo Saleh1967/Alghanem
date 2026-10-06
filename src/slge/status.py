@@ -911,6 +911,18 @@ _DECLARED: tuple[Claim, ...] = (
        "بين متحرّكين هاءُ كنايةٍ في 55.2%", _S,
        "test:tests/test_madd.py::test_corpus_measurement_and_index",
        note="الخانةُ لا تفصل هاءَ الكناية من هاء الكلمة (اللَّه): الصلةُ قراءةٌ بشرط القرينة."),
+    # — البوّاباتُ المتتابعة والسجلّ —
+    _c("GATES-ladder", "شهادةُ الغانم تصعد SLGE سبعَ بوّاباتٍ متتابعة (الخانة، الترخيص، العدد حاكمةً؛ "
+       "الجداول، الصرف، الإعراب، الجواب قارئةً)، ولا بوّابةَ فوق مرفوضة، والمخرجُ ذرّاتٌ بعينها؛ على "
+       "المصحف 18,114 صورةً تصعد كلَّه و65 تقف عند العدد باسمها", _S,
+       "lean:Slge.Grant.ladder_implies_base", "lean:Slge.Grant.no_grant_of_refused",
+       "test:tests/test_gates.py::test_ladder_order_and_named_refusals",
+       "test:tests/test_gates.py::test_whole_mushaf_climbs_consistently",
+       note="قانونُ السُّلَّم مبرهَنٌ على المجرّد؛ البوّاباتُ تركّب الدوالَّ القائمة (مفحوص) ولا تبني قراءة."),
+    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (51 وحدة، 45 جدولًا، 34 فهرسًا): كلُّ وحدةٍ "
+       "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
+       "test:tests/test_gates.py::test_manifest_covers_the_tree",
+       note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

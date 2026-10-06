@@ -1,0 +1,78 @@
+"""سجلُّ الوحدات: لكلّ وحدةٍ موضعُها في الشجرة كلِّها — ملفُّ Lean، وجدولُ المطابقة، وأداةُ الفهرس، واختبارُها.
+
+كان إدخالُ وحدةٍ يمسّ عشرةَ ملفّاتٍ باليد (`Slge.lean`، `Audit.lean`، `Main.lean`، `guard.py`، `order.py`،
+`status.py`، `gen_lean_index.py`، `ci.yml`، `CLAUDE.md`، `test_conformance.py`). هذا السجلُّ مصدرٌ واحدٌ
+لتلك المواضع: `tools/check_manifest.py` يفحص أنّ كلَّ وحدةٍ موصولةٌ في كلّ موضع، وCI يأخذ قوائمَه من هنا
+لا من سطرٍ مكتوبٍ باليد. وصفيٌّ لا يبني (كـ`order` و`status`).
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Final
+
+__all__ = ["MODULES", "Module", "index_tools", "lean_files", "tables"]
+
+
+@dataclass(frozen=True, slots=True)
+class Module:
+    """وحدةٌ بايثونيّة وما يقابلها: ملفّاتُ Lean (بلا `.lean`)، جداولُ `slge-table`، أداةُ الفهرس،
+    والاختبار."""
+
+    name: str
+    lean: tuple[str, ...] = ()
+    tables: tuple[str, ...] = ()
+    index: str | None = None
+    test: str | None = None
+
+
+def _m(name: str, index: bool = True) -> Module:
+    """بابٌ قياسيّ: `Name.lean`، جدولُ `name`، `gen_name_index.py`، `test_name.py`."""
+
+    return Module(name, (name.capitalize(),), (name,), f"gen_{name}_index.py" if index else None,
+                  f"test_{name}.py")
+
+
+MODULES: Final[tuple[Module, ...]] = (
+    # الأساس: البتّات والمدخل والتسلسل — Lean باسمٍ غيرِ اسم الوحدة
+    Module("cells", ("Bridge", "Consistency"), ("bridge", "counts", "folds"), None,
+           "test_cells.py"),
+    Module("entry", (), (), None, "test_entry.py"),
+    Module("stream", ("Sequence",), ("sequence",), None, None),
+    Module("phonology", (), (), None, "test_phonology.py"),
+    Module("semantics", ("Rasm",), ("rasm",), None, "test_semantics.py"),
+    Module("categories", ("Categories",), ("categories",), None, None),
+    Module("nazm", (), (), None, "test_nazm.py"),
+    Module("grant", ("Grant",), (), None, "test_grant.py"),
+    Module("knowledge", ("Ghazali",), ("ghazali",), None, "test_knowledge.py"),
+    Module("rank", ("Rank",), ("rank",), None, "test_rank.py"),
+    Module("learning", (), (), None, "test_learning.py"),
+    Module("answer", (), (), None, "test_answer.py"),
+    # الأبواب: Lean باسم الوحدة، جدولٌ باسمها، فهرسٌ واختبار
+    _m("wazn", index=False), _m("shabaka", index=False), _m("khamsa", index=False),
+    _m("afal", index=False), _m("rawabit"), _m("damair"), _m("ishara"), _m("istifham"), _m("nida"),
+    _m("zuruf"), _m("zaman"), _m("adad"), _m("marifa"), _m("sarf"), _m("tawabi"), _m("nawasikh"),
+    _m("jazm"), _m("mansubat"), _m("majrurat"), _m("wasl"), _m("ism"), _m("fil"), _m("huruf"),
+    _m("jumla"), _m("filiyya"), _m("shibh"), _m("nisab"), _m("talil"), _m("maqam"), _m("jiha"),
+    _m("naat"), _m("uslub"), _m("talab"), _m("kulli"), _m("wad"), _m("tabayun"), _m("madd"),
+    # الفهارسُ الجامعة (بلا وحدة)
+    Module("bits", (), (), "gen_bits_index.py", "test_bits.py"),
+    Module("gates", (), (), None, "test_gates.py"),
+)
+"""كلُّ وحدةٍ حيّة (وصفيّةُ `order`/`status`/`guard`/`manifest` خارجَها) وما يقابلها."""
+
+
+def tables() -> tuple[str, ...]:
+    """أسماءُ جداول `lake exe slge-table` بترتيب السجلّ — قائمةُ CI."""
+
+    return tuple(t for m in MODULES for t in m.tables)
+
+
+def lean_files() -> tuple[str, ...]:
+    return tuple(x for m in MODULES for x in m.lean)
+
+
+def index_tools() -> tuple[str, ...]:
+    """أدواتُ الفهارس التي يفحصها CI بـ`--check`."""
+
+    return tuple(m.index for m in MODULES if m.index)
