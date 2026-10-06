@@ -25,3 +25,4 @@ import Slge.Nawasikh
 import Slge.Jazm
 import Slge.Mansubat
 import Slge.Majrurat
+import Slge.Wasl

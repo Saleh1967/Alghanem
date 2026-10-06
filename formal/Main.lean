@@ -199,6 +199,18 @@ def main (args : List String) : IO Unit := do
                       Slge.Categories.c 25 3, Slge.Categories.c 8 1, Slge.Categories.c 12 2] true),
                    ("mudaf_dual", Majrurat.mudafDual rajul)] do
       IO.println s!"op,{n},{"-".intercalate (w.map fun c => toString c.index)}"
+  | ["wasl"] =>
+    let kn := fun (k : Wasl.Kind) => match k with
+      | .wasl => "wasl" | .qat => "qat" | .qatRadical => "qatRadical" | .unread => "unread"
+    for p in Wasl.tenNouns do
+      IO.println s!"ten,{p.1},{"-".intercalate (p.2.map fun c => toString c.index)},{kn (Wasl.kind p.2)}"
+    for (n, w) in [("iqra", [Slge.Categories.c 0 1, Slge.Categories.c 21 3, Slge.Categories.c 10 0, Slge.Categories.c 0 3]),
+                   ("intalaqa", Wasl.intalaqa), ("intilaq", Wasl.intilaq), ("akrama", Wasl.akrama),
+                   ("ikram", Wasl.ikram), ("akhadha", [Slge.Categories.c 0 0, Slge.Categories.c 7 0, Slge.Categories.c 9 0]),
+                   ("illa", Mansubat.illa)] do
+      IO.println s!"kind,{n},{"-".intercalate (w.map fun c => toString c.index)},{kn (Wasl.kind w)}"
+    IO.println s!"templates,wasl,{"-".intercalate (Wasl.waslTemplates.map toString)}"
+    IO.println s!"templates,qat,{"-".intercalate (Wasl.qatTemplates.map toString)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

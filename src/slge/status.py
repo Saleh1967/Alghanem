@@ -415,6 +415,27 @@ _DECLARED: tuple[Claim, ...] = (
        "أو غيرُ مقروءة 988/1,000، الفتحةُ نصبٌ 290/308؛ والمضافُ بلا تنوين 8,058/8,137", _S,
        "test:tests/test_majrurat.py::test_masaq_measurement_and_index",
        note="إِيمَانِ وشَيْطَانِ تُقرأ رفعًا كالمثنّى: خانةٌ واحدة؛ تنوينُ العوض في المضاف مسمًّى."),
+    # — همزتا الوصل والقطع —
+    _c("WASL-boundary", "لا ابتداءَ بساكن وهمزةُ الوصل تُرخِّصه؛ في الوصل تسقط فيتّصل الساكنُ بمتحرّكٍ قبله "
+       "ولا تُقبل بعد ساكن؛ والقطعُ يبقى بعد أيّ آخر؛ والخانةُ لا تفرّقهما في الابتداء", _P,
+       "lean:Slge.Wasl.no_initial_sukun", "lean:Slge.Wasl.wasl_licenses",
+       "lean:Slge.Wasl.wasl_drops",
+       "lean:Slge.Wasl.wasl_after_sukun", "lean:Slge.Wasl.qat_stays", "lean:Slge.Wasl.quick_test",
+       "lean:Slge.Wasl.wasl_qat_cells_shared", "lean:Slge.Wasl.istifhamVerb_licensed",
+       "test:tests/test_wasl.py::test_boundary_laws",
+       note="الحدُّ نفسُه مبرهَنٌ في الغانم (A116.Boundary) وبقيّةُ الرسم WASL/WASL_SILENT في شهادته."),
+    _c("WASL-templates", "الحصرُ الصرفيُّ تقسيمٌ لقوالب awzan المبدوءة بهمزة (11 وصلًا، 9 قطعًا، "
+       "متباينان يغطّيان العشرين)؛ القارئُ يقرأ من القالب والجذر والعشرة السماعيّة؛ "
+       "والألفُ لا تكون أصلًا", _P,
+       "lean:Slge.Wasl.templates_partition", "lean:Slge.Wasl.templates_wf",
+       "lean:Slge.Wasl.kind_witnesses", "lean:Slge.Wasl.template_reads_what_cells_cannot",
+       "lean:Slge.Wasl.illa_not_wasl", "lean:Slge.Wasl.ten_licensed", "lean:Slge.Wasl.ten_shape",
+       "lean:Slge.Wasl.plural_qat", "test:tests/test_wasl.py::test_templates_partition_and_reader",
+       note="أمرُ الخماسيّ والسداسيّ بلا قالبٍ في awzan بعد: دَين."),
+    _c("WASL-masaq", "على 16,072 صورةً مبدوءةً بهمزة من MASAQ بشهادات البوّابة: فيما يقرؤه القالبُ "
+       "(4,318) يوافق الشهادةَ 4,259؛ وبعد السابقة لا وصلَ قائمًا: 943 ساقطٌ و119 محذوفٌ رسمًا", _S,
+       "test:tests/test_wasl.py::test_masaq_measurement_and_index",
+       note="555 صورةً مرفوضةٌ بالاسم؛ المهموزُ المعتلّ والمدغم والحروفُ لا يقرؤها القالب."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

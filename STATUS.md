@@ -4,9 +4,9 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 71 |
+| مبرهن | 73 |
 | مفحوص_استقصاء | 12 |
-| مفحوص_بعينة | 17 |
+| مفحوص_بعينة | 18 |
 | دليل | 0 |
 | معلن | 10 |
 | رأي | 0 |
@@ -78,6 +78,8 @@
 | TAWABI-case | الحالةُ لا العلامة: قارئٌ يردّ الضمّةَ والواوَ والألفَ رفعًا؛ رفعُ الخمسة والعقود بالواو رفعٌ لكلّ جذع؛ والتبعيّةُ متماثلةٌ انعكاسيّة | مبرهن | `lean:Slge.Tawabi.four_markers_one_case`<br>`lean:Slge.Tawabi.follows_khamsa`<br>`lean:Slge.Tawabi.caseClass_khamsa_raf`<br>`lean:Slge.Tawabi.caseClass_uqud_raf`<br>`lean:Slge.Tawabi.caseClass_jam_muannath`<br>`lean:Slge.Tawabi.follows_symm`<br>`lean:Slge.Tawabi.follows_refl`<br>`test:tests/test_tawabi.py::test_four_markers_one_case` |  |
 | TAWABI-nasaq | حروفُ النسق التسعة في جدول أدوات الربط؛ والتوكيدُ المعنويّ ستّةُ ألفاظٍ مرخَّصة تُضاف إلى ضمير (وعَامَّة خارج الثنائيّ) | مبرهن | `lean:Slge.Tawabi.nasaq_in_rawabit`<br>`lean:Slge.Tawabi.tawkid_words_licensed`<br>`lean:Slge.Tawabi.tawkid_case`<br>`test:tests/test_tawabi.py::test_nasaq_and_tawkid` |  |
 | TAWABI-unread | نصبُ الخمسة بالألف لا يقرؤه القارئُ العامّ: الألفُ مشتركةٌ مع المقصور — المعجمُ يفصل | مبرهن | `lean:Slge.Tawabi.khamsa_nasb_unread`<br>`test:tests/test_tawabi.py::test_khamsa_raf_read_nasb_unread` |  |
+| WASL-boundary | لا ابتداءَ بساكن وهمزةُ الوصل تُرخِّصه؛ في الوصل تسقط فيتّصل الساكنُ بمتحرّكٍ قبله ولا تُقبل بعد ساكن؛ والقطعُ يبقى بعد أيّ آخر؛ والخانةُ لا تفرّقهما في الابتداء | مبرهن | `lean:Slge.Wasl.no_initial_sukun`<br>`lean:Slge.Wasl.wasl_licenses`<br>`lean:Slge.Wasl.wasl_drops`<br>`lean:Slge.Wasl.wasl_after_sukun`<br>`lean:Slge.Wasl.qat_stays`<br>`lean:Slge.Wasl.quick_test`<br>`lean:Slge.Wasl.wasl_qat_cells_shared`<br>`lean:Slge.Wasl.istifhamVerb_licensed`<br>`test:tests/test_wasl.py::test_boundary_laws` | الحدُّ نفسُه مبرهَنٌ في الغانم (A116.Boundary) وبقيّةُ الرسم WASL/WASL_SILENT في شهادته. |
+| WASL-templates | الحصرُ الصرفيُّ تقسيمٌ لقوالب awzan المبدوءة بهمزة (11 وصلًا، 9 قطعًا، متباينان يغطّيان العشرين)؛ القارئُ يقرأ من القالب والجذر والعشرة السماعيّة؛ والألفُ لا تكون أصلًا | مبرهن | `lean:Slge.Wasl.templates_partition`<br>`lean:Slge.Wasl.templates_wf`<br>`lean:Slge.Wasl.kind_witnesses`<br>`lean:Slge.Wasl.template_reads_what_cells_cannot`<br>`lean:Slge.Wasl.illa_not_wasl`<br>`lean:Slge.Wasl.ten_licensed`<br>`lean:Slge.Wasl.ten_shape`<br>`lean:Slge.Wasl.plural_qat`<br>`test:tests/test_wasl.py::test_templates_partition_and_reader` | أمرُ الخماسيّ والسداسيّ بلا قالبٍ في awzan بعد: دَين. |
 | WAZN-indep | ترخيصُ الكلمة من القالب وحدَه: الوزنُ يُرخَّص مرّةً لكلّ الأصول | مبرهن | `lean:Slge.Wazn.states_fill`<br>`lean:Slge.Wazn.licensed_fill_indep`<br>`test:tests/test_wazn.py::test_licence_is_root_independent` |  |
 | WAZN-root | الأصلُ يُستردّ من الصيغة بالقالب لكلّ قالبٍ سليمٍ ولكلّ أصل | مبرهن | `lean:Slge.Wazn.rootOf_fill`<br>`lean:Slge.Wazn.awzan_root`<br>`test:tests/test_wazn.py::test_fill_then_root_of_recovers_every_root` |  |
 | WAZN-table | 113 وزنًا مودَعًا سليمةٌ ومرخَّصةٌ لكلّ أصل؛ بايثونُها مطابقٌ لجدول Lean | مبرهن | `lean:Slge.Wazn.awzan_wf`<br>`lean:Slge.Wazn.awzan_licensed`<br>`test:tests/test_conformance.py::test_wazn_matches_lean` |  |
@@ -112,6 +114,7 @@
 | SARF-masaq | بعد الجارّ على 754 اسمًا: بأل ⇒ كسر 255؛ مضاف ⇒ كسر 120؛ المجرّدُ منوَّنُ كسرٍ 251 أو مفتوحٌ بلا تنوين 44 (الممنوع: 17 بعلّة صيغةٍ مقروءة، 27 معجم) | مفحوص_بعينة | `test:tests/test_sarf.py::test_masaq_measurement_and_index` | العلميّةُ بعجمتها وتأنيثها وتركيبها وعدلها معجم؛ والهمزةُ الأصليّةُ في الممدود دَين. |
 | SHABAKA-minimal | ترتيبُ البصريّين ليس أقلَّ الأشجار كلفةً: 341 عمليّةً مقابل 155؛ يتّفقان في 21 أبًا من 112 | مفحوص_بعينة | `test:tests/test_shabaka.py::test_computed_tree_is_minimal_and_classical_is_not` | أقلُّ شجرةٍ (Prim على مسافة لِيفنشتاين للقوالب) محسوبةٌ لا مقرَّرة؛ ما يحمله ترتيبُ البصريّين فوق كلفة القالب شرطُ حدٍّ دلاليّ لم يُقَس بعد. |
 | TAWABI-masaq | على 3,179 زوجًا من MASAQ: النعتُ يوافق 873/1,079 فيما تقرؤه الخانة؛ المخالفُ من اختيار المتبوع ومن جرّ الممنوع بالفتحة | مفحوص_بعينة | `test:tests/test_tawabi.py::test_masaq_measurement_and_index` | المتبوعُ قانونُ تيار؛ المطابقةُ الأربع للنعت تُقاس في النظم؛ البدلُ وعطفُ البيان لا تفرّقهما الخانة. |
+| WASL-masaq | على 16,072 صورةً مبدوءةً بهمزة من MASAQ بشهادات البوّابة: فيما يقرؤه القالبُ (4,318) يوافق الشهادةَ 4,259؛ وبعد السابقة لا وصلَ قائمًا: 943 ساقطٌ و119 محذوفٌ رسمًا | مفحوص_بعينة | `test:tests/test_wasl.py::test_masaq_measurement_and_index` | 555 صورةً مرفوضةٌ بالاسم؛ المهموزُ المعتلّ والمدغم والحروفُ لا يقرؤها القالب. |
 | WAZN-sibawayh | هياكلُ الأوزان مقابل أبنية سيبويه المجمَّدة: 95/113 عنده؛ 18 مسمّاة؛ 122 من هياكله خارج الجدول | مفحوص_بعينة | `test:tests/test_wazn.py::test_skeletons_measured_against_sibawayh` | الحركاتُ معلَنةٌ من كتب الصرف لا مقيسة؛ الرباعيُّ والإعلالُ والمفعولُ المطلق والجامدُ خارج الجدول باسمها (DEBTS). |
 | ZAMAN-masaq | التصرُّفُ عددُ الحالات: على 1,334 موضعًا من MASAQ المتصرّفةُ 8/12 بحالتين فأكثر والمبنيّةُ 5/7 بحالةٍ واحدة (والاثنان كسرةُ وصلٍ وتصادفُ رسم)؛ وعند الفتح الظرفُ 230/326 | مفحوص_بعينة | `test:tests/test_zaman.py::test_masaq_measurement_and_index` | الظرفيّةُ (معنى في) لا تُقرأ من الخانة: دَينٌ على النظم. |
 | ZURUF-masaq | على 1,493 ظرفًا بشهادات البوّابة: الضمُّ ⇒ مقطوع 82/82 (وحَيْثُ ثابت)؛ الفتحُ ⇒ مضاف 752/756؛ الكسرُ ⇒ بعد جارٍّ أو ياء 568/584 | مفحوص_بعينة | `test:tests/test_zuruf.py::test_masaq_measurement_and_index` | المختصُّ قيدٌ معجميّ؛ المقاديرُ بلا شاهد؛ ظرفُ الزمان حصرُه معلَّق. |

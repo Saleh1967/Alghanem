@@ -371,3 +371,25 @@ def test_majrurat_matches_lean() -> None:
             assert r[1] in HARFS and cells_of(r[1]) == cells, r
         else:
             assert ops[r[1]] == cells, r
+
+
+def test_wasl_matches_lean() -> None:
+    """الأسماءُ العشرة وشواهدُ القارئ وتقسيمُ القوالب = جدولُ `Wasl`."""
+
+    from slge.rawabit import cells_of
+    from slge.wasl import QAT_TEMPLATES, TEN, WASL_TEMPLATES, kind
+
+    rows = _rows("wasl.csv")
+    assert len(rows) == 10 + 7 + 2
+    lean = {"wasl": "وصل", "qat": "قطع", "qatRadical": "قطع أصلي", "unread": "لا يُقرأ"}
+    ten = {w[:-1]: cells_of(w)[:-1] for w in TEN}
+    for r in rows:
+        if r[0] == "templates":
+            assert tuple(int(i) for i in r[2].split("-")) == (WASL_TEMPLATES if r[1] == "wasl"
+                                                               else QAT_TEMPLATES)
+            continue
+        cells = tuple(_cell(int(i)) for i in r[2].split("-"))
+        if r[0] == "ten":
+            assert ten[r[1]] == cells[:-1] and kind(cells) == lean[r[3]], r
+        else:
+            assert kind(cells) == lean[r[3]], r
