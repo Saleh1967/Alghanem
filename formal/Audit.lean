@@ -246,3 +246,10 @@ import Slge
 #print axioms Slge.Istifham.hamza_prefix_licensed
 #print axioms Slge.Istifham.forms_licensed
 #print axioms Slge.Istifham.forms_nodup
+#print axioms Slge.Nida.tanwin_never_bina
+#print axioms Slge.Nida.damm_is_bina
+#print axioms Slge.Nida.ya_junction
+#print axioms Slge.Nida.nudba_not_binary_licensed
+#print axioms Slge.Nida.particles_licensed
+#print axioms Slge.Nida.particles_nodup
+#print axioms Slge.Nida.witnesses_hukm

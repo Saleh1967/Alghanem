@@ -201,6 +201,22 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_istifham.py::test_tiers_and_index",
        note="صدارةُ جملةٍ لا آية: لا تُقاس بلا حدٍّ للجملة — دَينٌ على النظم. الدلالةُ من الحصر "
             "المُرسَل معلَنة."),
+    # — النداء —
+    _c("NIDA-hukm", "قانونُ المنادى من الخانة الأخيرة: الضمُّ بناءٌ، والتنوينُ لا يجامع البناء", _P,
+       "lean:Slge.Nida.damm_is_bina", "lean:Slge.Nida.tanwin_never_bina",
+       "lean:Slge.Nida.witnesses_hukm", "test:tests/test_nida.py::test_hukm_reads_the_last_cell"),
+    _c("NIDA-adawat", "الأدواتُ الستّ حروفٌ مرخَّصة؛ ويَا تُوصَل بكلّ مرخَّص", _P,
+       "lean:Slge.Nida.particles_licensed", "lean:Slge.Nida.particles_nodup",
+       "lean:Slge.Nida.ya_junction", "test:tests/test_conformance.py::test_nida_matches_lean"),
+    _c("NIDA-nudba", "الندبة (حَسْرَتَاهْ) ساكنان متجاوران: خارج الترخيص الثنائيّ لكلّ جذع", _P,
+       "lean:Slge.Nida.nudba_not_binary_licensed",
+       "test:tests/test_nida.py::test_nudba_is_outside_binary_licence",
+       note="صورةُ وقفٍ يرخّصها الثلاثيُّ في الغانم (A116.Ternary)؛ لا تُدّعى هنا."),
+    _c("NIDA-masaq",
+       "على 489 منادًى بشهادات البوّابة: الضمُّ ⇒ مبنيّ 188/188؛ الفتحُ والكسرُ ⇒ معرب 195/237؛ "
+       "63 لا تقرؤها الخانة", _S,
+       "test:tests/test_nida.py::test_masaq_measurement_and_index",
+       note="الباقي خلافُ وسمٍ في MASAQ (أَهْلَ، مَعْشَرَ، بَنِي موسومةً «مبني»)؛ لم أُصلحه."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

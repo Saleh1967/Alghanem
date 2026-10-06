@@ -183,3 +183,20 @@ def test_istifham_matches_lean() -> None:
     assert len(rows) == len(FORMS) == 22
     for r, f in zip(rows, FORMS, strict=True):
         assert r[0] == f.name and r[1] == "-".join(str(index(c)) for c in f.cells)
+
+
+def test_nida_matches_lean() -> None:
+    """الأدواتُ الستّ وشواهدُ الحكم = جدولا `Nida.particles` و`Nida.witnesses`."""
+
+    from slge.nida import PARTICLES, hukm
+
+    rows = _rows("nida.csv")
+    parts = [r for r in rows if r[0] == "particle"]
+    assert [r[1] for r in parts] == [p.name for p in PARTICLES]
+    assert [r[2] for r in parts] == ["-".join(str(index(c)) for c in p.cells) for p in PARTICLES]
+    lean_hukm = {"mabniDamm": "مبني على الضم", "mansub": "معرب منصوب",
+                 "mudafIlaYa": "مضاف إلى ياء محذوفة", "unread": "لا تقرؤه الخانة"}
+    for r in rows:
+        if r[0] == "witness":
+            cells = tuple(_cell(int(i)) for i in r[2].split("-"))
+            assert hukm(cells) == lean_hukm[r[3]], r[1]

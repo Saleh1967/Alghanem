@@ -241,3 +241,10 @@
 'Slge.Istifham.hamza_prefix_licensed' depends on axioms: [propext, Quot.sound]
 'Slge.Istifham.forms_licensed' depends on axioms: [propext]
 'Slge.Istifham.forms_nodup' depends on axioms: [propext]
+'Slge.Nida.tanwin_never_bina' depends on axioms: [propext]
+'Slge.Nida.damm_is_bina' depends on axioms: [propext]
+'Slge.Nida.ya_junction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Nida.nudba_not_binary_licensed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Nida.particles_licensed' depends on axioms: [propext]
+'Slge.Nida.particles_nodup' does not depend on any axioms
+'Slge.Nida.witnesses_hukm' depends on axioms: [propext]

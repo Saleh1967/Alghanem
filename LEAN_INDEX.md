@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_lean_index.py` من ملفّات `.lean` و`Audit.lean` و`out/axioms.txt`؛ لا يُحرَّر باليد. الـ116 من الغانم بإيداعه المثبَّت في `formal/lakefile.toml`.
 
-**389 مبرهنة، منها 239 مدقَّقةُ المسلّمات.**
+**398 مبرهنة، منها 246 مدقَّقةُ المسلّمات.**
 
 كلُّ درجةٍ تستهلك ما قبلها: لا تدخل الكلمةُ درجةً قبل أن تُرخَّص في التي تحتها. «مدقَّق» = في `Audit.lean` وطُبعت مسلّماتُه؛ وما ليس مدقَّقًا مبرهَنٌ في Lean لكن لم يُطبع سندُه بعدُ فلا يُستشهد به في `status.py`.
 
@@ -549,6 +549,20 @@
 | `damair_licensed` | — | مدقَّق | propext |
 | `damair_nodup` | — | مدقَّق | لا مسلّمات |
 | `allForms_count` | — | — | — |
+
+### `Slge/Nida.lean` — 9 مبرهنة (`Slge.Nida`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `tanwin_never_bina` | التنوينُ لا يجامع البناء. | مدقَّق | propext |
+| `damm_is_bina` | الضمُّ في الآخر بلا تنوينٍ بناءٌ أبدًا (ما لم يكن قبله واوٌ ساكنةٌ فنون: جمعٌ سالم). | مدقَّق | propext |
+| `ya_junction` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `noAdj_two_sukun` | — | — | — |
+| `nudba_not_binary_licensed` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `particles_licensed` | — | مدقَّق | propext |
+| `particles_nodup` | — | مدقَّق | لا مسلّمات |
+| `particles_count` | — | — | — |
+| `witnesses_hukm` | — | مدقَّق | propext |
 
 ## الدرجة ١٧ — أدواتُ الربط والاستفهام: الخانةُ فالحدُّ فالعمل، والمعنى معلَن
 

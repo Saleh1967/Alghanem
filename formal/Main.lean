@@ -125,6 +125,15 @@ def main (args : List String) : IO Unit := do
   | ["istifham"] =>
     for p in Istifham.forms do
       IO.println s!"{p.1},{"-".intercalate (p.2.map fun c => toString c.index)}"
+  | ["nida"] =>
+    for p in Nida.particles do
+      IO.println s!"particle,{p.1},{"-".intercalate (p.2.map fun c => toString c.index)}"
+    for w in Nida.witnesses do
+      let h := match w.2.2 with
+        | .mabniDamm => "mabniDamm" | .mabniAlif => "mabniAlif" | .mabniWaw => "mabniWaw"
+        | .mansub => "mansub" | .nakiraGhayrMaqsuda => "nakira" | .mudafIlaYa => "mudafIlaYa"
+        | .unread => "unread"
+      IO.println s!"witness,{w.1},{"-".intercalate (w.2.1.map fun c => toString c.index)},{h}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do
