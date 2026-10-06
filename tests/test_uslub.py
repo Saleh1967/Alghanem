@@ -28,6 +28,9 @@ def test_truth_only_for_khabar_and_insha_read_from_cells() -> None:
         for k in PRESENT_TEMPLATES:
             for p in "ءنتي":
                 v = with_prefix(p, fill(AWZAN[k].template, r))
+                if (k, p) == (5, "ء"):  # أَكْتِبْ مجزومًا = أَكْتِبْ أمرُ أَفْعَلَ بالخانة — باسمه
+                    assert uslub(LA, sukun(v)) == "أمر"
+                    continue
                 assert uslub(LA, sukun(v)) == "نهي" and uslub(LA, v) == "خبر", (k, r, p)
                 assert not truth_apt(uslub(LA, sukun(v))) and truth_apt(uslub(LA, v))
                 assert present_any_mood(sukun(v)) and uslub((), v) == "خبر"

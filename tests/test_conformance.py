@@ -676,7 +676,7 @@ def test_jiha_matches_lean() -> None:
     jn = {"madi": "ماضٍ", "mudari": "مضارع", "mustaqbal": "مستقبل", "madiManfi": "ماضٍ منفيّ",
           "mustaqbalManfi": "مستقبل منفيّ", "madiMustamirr": "ماضٍ مستمرّ", "amr": "أمر",
           "unread": "—"}
-    assert sum(r[0] == "sigha" for r in rows) == 13 + 10 + 4 * 13
+    assert sum(r[0] == "sigha" for r in rows) == 13 + 11 + 4 * 13
     for r in rows:
         if r[0] == "sigha":
             assert sigha(tuple(_cell(int(i)) for i in r[2].split("-"))) == gn[r[3]], r
@@ -762,4 +762,24 @@ def test_talab_matches_lean() -> None:
         elif r[0] == "talab":
             assert talab(cells(r[1]), cells(r[2])) == sn[r[3]], r
     assert sum(r[0] == "talab" for r in rows) == 10 and sum(r[0] == "ismFil" for r in rows) == 8
+
+
+def test_kulli_matches_lean() -> None:
+    """الجهةُ الوجوديّة على الميزان لكلّ قالب، وعلى الجزئيّات المجدوَلة، وعلى الشواهد = جدولُ `Kulli`."""
+
+    from slge.kulli import kulli
+
+    rows = _rows("kulli.csv")
+    kn = {"juzi": "جزئيّ", "aradi": "كليّ عرضيّ", "hadath": "حدث مجرّد", "fil": "حدث مهيّأ",
+          "jamid": "كليّ ماهويّ", "unread": "—"}
+
+    def cells(x: str) -> tuple[tuple[str, str], ...]:
+        return tuple(_cell(int(i)) for i in x.split("-"))
+
+    assert sum(r[0] == "mizan" for r in rows) == 121 and sum(r[0] == "table" for r in rows) == 51
+    for r in rows:
+        if r[0] == "mizan":
+            assert kulli(cells(r[2])) == kn[r[3]], r
+        elif r[0] in ("table", "kulli"):
+            assert kulli(cells(r[1])) == kn[r[2]], r
 

@@ -642,3 +642,12 @@
 'Slge.Talab.la_before_amr_stays_amr' depends on axioms: [propext, Quot.sound]
 'Slge.Talab.nahy_requires_la' depends on axioms: [propext, Quot.sound]
 'Slge.Talab.amr_never_reads_nahy' depends on axioms: [propext, Quot.sound]
+'Slge.Kulli.universal_in_particulars' depends on axioms: [propext, Quot.sound]
+'Slge.Kulli.particulars_off_templates' depends on axioms: [propext]
+'Slge.Kulli.juzi_by_table' depends on axioms: [propext]
+'Slge.Kulli.aradi_hadath_disjoint' does not depend on any axioms
+'Slge.Kulli.masdar_templates_wf' depends on axioms: [propext]
+'Slge.Kulli.masdar_states_disjoint' depends on axioms: [propext]
+'Slge.Kulli.masdar_no_sigha' depends on axioms: [propext, Quot.sound]
+'Slge.Kulli.masdar_not_shifted' depends on axioms: [propext, Quot.sound]
+'Slge.Kulli.kulli_witnesses' depends on axioms: [propext]

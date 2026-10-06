@@ -39,3 +39,4 @@ import Slge.Jiha
 import Slge.Naat
 import Slge.Uslub
 import Slge.Talab
+import Slge.Kulli

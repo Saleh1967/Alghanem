@@ -108,7 +108,7 @@ theorem past_licensed (stem : List SCell) (hw : licensed stem = true) (hlen : 2 
     simp at hy; subst hy; simp [SCell.isSukun, c]
 
 /-- الأمرُ مبنيٌّ على ما يُجزم به مضارعُه: آخرُه ساكنٌ لكلّ قوالب الأمر المودَعة، كآخر `Jazm.sukun`. -/
-def amrTemplates : List Nat := [8, 9, 10] ++ Fil.mazidAmr
+def amrTemplates : List Nat := [8, 9, 10, 113] ++ Fil.mazidAmr
 
 theorem amr_ends_like_jazm :
     amrTemplates.all (fun k => (Sarf.templ k).getLast? == some (.slot 2 3)) = true ∧

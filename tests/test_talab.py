@@ -34,7 +34,8 @@ def test_four_forms_and_lam_for_every_person() -> None:
                 assert licensed(lam_amr(v)) or k == 27  # المضعّفُ يُجزَم بالفتح — باسمه
                 assert talab(WAW, lam_amr_after_waw(v)) == "لام" == talab(FA, lam_amr_after_waw(v))
                 assert talab((), lam_amr_after_waw(v)) is None  # الطفرة: لامٌ ساكنةٌ بلا واو
-                assert talab((), v) is None and uslub(LA, sukun(v)) == "نهي"
+                assert talab((), v) is None
+                assert uslub(LA, sukun(v)) == ("أمر" if (k, p) == (5, "ء") else "نهي")  # أَكْتِبْ
         past = fill(AWZAN[0].template, r)
         assert talab((), (("ل", "كسر"), *past)) is None  # الطفرة: لامٌ على ماضٍ
     assert len(ISM_FIL) == 8 and all(talab((), cs) == "اسم فعل" for _, cs in ISM_FIL)

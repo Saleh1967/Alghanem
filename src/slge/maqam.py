@@ -28,7 +28,7 @@ Word = tuple[Cell, ...]
 
 PRESENT_TEMPLATES: Final[tuple[int, ...]] = (4, 5, 6, 7, 20, 21, 22, 23, 24, 25, 26, 27, 28)
 PAST_TEMPLATES: Final[tuple[int, ...]] = (0, 1, 2, 3, *MAZID)
-AMR_TEMPLATES: Final[tuple[int, ...]] = (8, 9, 10, *MAZID_AMR)
+AMR_TEMPLATES: Final[tuple[int, ...]] = (8, 9, 10, 113, *MAZID_AMR)
 _PREFIX: Final[dict[str, str]] = {"ء": "متكلم", "ن": "متكلم", "ت": "مخاطب/غائبة", "ي": "غائب"}
 # شخصُ لاحقة الماضي بترتيب الجدول: تُ ونا متكلّم؛ تَ تِ تما تم تنّ وي وين مخاطب؛ وا ا نَ ون ان غائب
 SUFFIX_SHAKHS: Final[tuple[str, ...]] = (

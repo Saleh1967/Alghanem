@@ -647,3 +647,12 @@ import Slge
 #print axioms Slge.Talab.la_before_amr_stays_amr
 #print axioms Slge.Talab.nahy_requires_la
 #print axioms Slge.Talab.amr_never_reads_nahy
+#print axioms Slge.Kulli.universal_in_particulars
+#print axioms Slge.Kulli.particulars_off_templates
+#print axioms Slge.Kulli.juzi_by_table
+#print axioms Slge.Kulli.aradi_hadath_disjoint
+#print axioms Slge.Kulli.masdar_templates_wf
+#print axioms Slge.Kulli.masdar_states_disjoint
+#print axioms Slge.Kulli.masdar_no_sigha
+#print axioms Slge.Kulli.masdar_not_shifted
+#print axioms Slge.Kulli.kulli_witnesses

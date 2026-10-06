@@ -79,7 +79,7 @@ def past(stem: Word, suffix: Word) -> Word:
 def amr_ends_like_jazm() -> bool:
     """آخرُ كلّ قالب أمرٍ مودَعٍ ساكنٌ، كآخر المضارع المجزوم."""
 
-    amr: tuple[int, ...] = (8, 9, 10, *MAZID_AMR)
+    amr: tuple[int, ...] = (8, 9, 10, 113, *MAZID_AMR)
     return all(AWZAN[k].template[-1].state == SUKUN for k in amr) and all(
         amr_of(AWZAN[p].template)[-1].state == SUKUN for p in MAZID_PRES)
 

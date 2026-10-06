@@ -456,6 +456,19 @@ def main (args : List String) : IO Unit := do
                    ([], Jiha.yaktubu), ([], Jiha.kataba), ([], Talab.lamAmrAfterWaw Jiha.yaktubu),
                    (Jiha.kataba, Talab.masdarAmr Talab.darb)] do
       IO.println s!"talab,{key a},{key b},{sn (Talab.talab a b)}"
+  | ["kulli"] =>
+    -- الجهةُ الوجوديّة على الميزان لكلّ قالبٍ من الـ121، وعلى الجزئيّات المجدوَلة، وعلى الشواهد.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let kn := fun (k : Kulli.Kind) => match k with
+      | .juzi => "juzi" | .aradi => "aradi" | .hadath => "hadath" | .fil => "fil" | .jamid => "jamid"
+      | .unread => "unread"
+    for k in List.range 121 do
+      IO.println s!"mizan,{k},{key (Wazn.mizan (Sarf.templ k))},{kn (Kulli.kulli (Wazn.mizan (Sarf.templ k)))}"
+    for w in Categories.pronouns ++ Ishara.forms.map (·.2) ++ Marifa.mawsul.map (·.2) do
+      IO.println s!"table,{key w},{kn (Kulli.kulli w)}"
+    for w in [Kulli.katib, Kulli.kitaba, Nawasikh.tanwin Talab.darb, Jiha.kataba, Jiha.yaktubu, Jiha.uktub,
+              Kulli.rajulun, Naat.alrajul, Uslub.la, Kulli.hadha] do
+      IO.println s!"kulli,{key w},{kn (Kulli.kulli w)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do
