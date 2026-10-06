@@ -32,7 +32,7 @@ python tools/gen_rawabit_index.py --check            # فهرسةُ أدوات �
 python tools/gen_damair_index.py --check             # فهرسُ الضمائر على الدرجات (DAMAIR_INDEX.md)
 python tools/gen_ishara_index.py --check             # فهرسُ أسماء الإشارة على الدرجات (ISHARA_INDEX.md)
 python -c "from slge.guard import breaches; print(breaches() or 'لا خرق')"
-cd formal && lake build && lake env lean Audit.lean   # 219 مدقَّقة (الـ116 وSLGE)؛ propext/Quot.sound فقط
+cd formal && lake build && lake env lean Audit.lean   # 229 مدقَّقة (الـ116 وSLGE)؛ propext/Quot.sound فقط
 ```
 
 وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه، وأثبت وجودَ كلّ ملفٍّ تذكره قبل الكلام عنه.
