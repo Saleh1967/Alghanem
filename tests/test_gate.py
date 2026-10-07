@@ -132,3 +132,29 @@ def test_pronoun_atoms_match_slge_categories_lean() -> None:
         else:
             atoms = cert.atoms
         assert [(alphabet.index(a[0]), marks[a[1]]) for a in atoms] == cells, surface
+
+
+# — المادّة ١١ من دستور الوكيل: الشهادةُ لا تأخذ العالمَ معاملًا —
+
+LAFZ_CONTEXT = frozenset({"entry", "exit", "left", "profile"})
+"""ما يجوز أن يدخل البوّابةَ مع البايتات: حدُّ الوصل والوقف، والجارُ الأيسر، وطبعةٌ مسمّاة — كلُّه من اللفظ،
+لا شيءَ منه من الواقع الخارجيّ («زيدٌ قائم» لا يبطل إذا قعد زيد)."""
+
+
+def _world_free(params: tuple[str, ...], context_fields: frozenset[str]) -> list[str]:
+    bad = [p for p in params if p not in ("data", "context")]
+    bad += [f"context.{f}" for f in sorted(context_fields - LAFZ_CONTEXT)]
+    return [f"WORLD_IN_CERTIFICATE:{x}" for x in bad]
+
+
+def test_certificate_takes_no_world() -> None:
+    import dataclasses
+    import inspect
+
+    from gate.contextual import Context
+
+    params = tuple(inspect.signature(enter).parameters)
+    fields = frozenset(f.name for f in dataclasses.fields(Context))
+    assert params == ("data", "context") and _world_free(params, fields) == []
+    assert _world_free(("data", "world"), fields) == ["WORLD_IN_CERTIFICATE:world"]
+    assert _world_free(params, fields | {"time"}) == ["WORLD_IN_CERTIFICATE:context.time"]
