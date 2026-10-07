@@ -1,5 +1,7 @@
 # Alghanem
 
+> **الرؤية (2026-10-07):** التفسيرُ والفكُّ والطيُّ **من البتّات**، والبرهانُ الرياضيُّ لبُّ المشروع — [`docs/VISION.md`](docs/VISION.md)، والخطّةُ بخطواتها وأرقامها [`docs/ROADMAP.md`](docs/ROADMAP.md)، ودستورُ من يكتب هنا [`AGENT_CONSTITUTION.md`](AGENT_CONSTITUTION.md).
+
 > **2026-10-05 — البوّابةُ الوحيدة.** المدخلُ والمخرجُ الوحيدان لهذه الشجرة هما البرهانُ في
 > `formal/a116` ومرآتُه `gate/` (`enter` / `exit` / `derive` / `recover` / `licence`).
 > كلُّ ما سواهما (984 وحدة: `src/`، `tests/` القديمة، `examples/`، `tools/`، `hifz/`) **معلَّقٌ**
