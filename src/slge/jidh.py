@@ -31,7 +31,7 @@ from slge.wazn import AWZAN, Template
 from slge.zuruf import set_last
 
 __all__ = ["ENCLITICS", "PROCLITICS", "Reading", "jidh", "last_state", "on_template_mod",
-           "on_templates", "stem_senses"]
+           "on_templates", "stem_form", "stem_senses"]
 
 Word = tuple[Cell, ...]
 _A: Final = "فتح"
@@ -86,6 +86,20 @@ def stem_senses(s: Word) -> tuple[int, ...]:
     if not v or v[0][0] not in "ءنت":
         return ()
     return on_templates(with_prefix("ي", v))
+
+
+def stem_form(s: Word) -> Word:
+    """صورةُ الجذع التي قُرئ عليها — بترتيب `stem_senses` (`stemForm`): كما هو، أو بلا تنوين، أو بصدر
+    المضارع ياءً؛ الجذرُ يُستخرج منها (`stemSenses_eq_stemForm`)."""
+
+    if on_templates(s):
+        return s
+    v = drop_tanwin(s)
+    if has_tanwin(s) and on_templates(v):
+        return v
+    if v and v[0][0] in "ءنت":
+        return with_prefix("ي", v)
+    return v
 
 
 @dataclass(frozen=True, slots=True)
@@ -206,6 +220,8 @@ def _check() -> None:
     assert r[0].templates == (35, 41, 93)
     assert [r.templates for r in jidh(cells_of("وَجَدَ"))] == [(0, 36)]  # فعلٌ أو مصدرٌ بعد التسوية
     assert jidh(cells_of("لَا")) == ()
+    for text in ("فَرِيقُنْ", "كَوَنْ", "تَجْعَلُ", "قَالَ"):  # معاني الجذع هي قوالبُ صورته
+        assert stem_senses(cells_of(text)) == on_templates(stem_form(cells_of(text))), text
 
 
 _check()

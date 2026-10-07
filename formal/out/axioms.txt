@@ -747,6 +747,7 @@
 'Slge.Jidh.mem_stemSenses' depends on axioms: [propext, Quot.sound]
 'Slge.Jidh.jidh_complete' depends on axioms: [propext, Quot.sound]
 'Slge.Jidh.jidh_complete_ilal' depends on axioms: [propext, Quot.sound]
+'Slge.Jidh.stemSenses_eq_stemForm' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Slge.Jidh.jidh_witnesses_al' depends on axioms: [propext, Quot.sound]
 'Slge.Jidh.jidh_witnesses_case' depends on axioms: [propext, Quot.sound]
 'Slge.Jidh.jidh_witnesses_affix' depends on axioms: [propext, Quot.sound]
@@ -762,3 +763,4 @@
 'Slge.Maqayis.member_witnesses' depends on axioms: [propext]
 'Slge.Maqayis.rank_kadhdhabu' depends on axioms: [propext, Quot.sound]
 'Slge.Maqayis.rank_qala' depends on axioms: [propext, Quot.sound]
+'Slge.Maqayis.rank_fariqun' depends on axioms: [propext, Quot.sound]

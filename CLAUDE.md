@@ -82,7 +82,7 @@ python tools/gen_ilal_index.py --check               # فهرسُ الإعلال
 python tools/gen_maqayis_index.py --check            # فهرسُ القرينة المعجميّة: المتعدّدُ قبل عضويّة المقاييس وبعدها (MAQAYIS_INDEX.md)
 python tools/deposit_maqayis.py --check              # جدولا المقاييس (Lean وبايثون) مولَّدان من المودَع المختوم tests/data/maqayis-roots.json.gz
 python -c "from slge.guard import breaches; print(breaches() or 'لا خرق')"
-cd formal && lake build && lake env lean Audit.lean   # 764 مدقَّقة (الـ116 وSLGE)؛ propext/Classical.choice/Quot.sound فقط
+cd formal && lake build && lake env lean Audit.lean   # 766 مدقَّقة (الـ116 وSLGE)؛ propext/Classical.choice/Quot.sound فقط
 ```
 
 وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه، وأثبت وجودَ كلّ ملفٍّ تذكره قبل الكلام عنه.

@@ -56,8 +56,10 @@ def rootOfTemplate (k : Nat) (u : List SCell) : Option Wazn.Root :=
   | some a, some b, some d => some (fun i => if i = 0 then a else if i = 1 then b else d)
   | _, _, _ => none
 
-/-- جذورُ القراءة: جذرُ أصلها على كلّ قالبٍ من قوالبها. -/
-def Reading.roots (rd : Jidh.Reading) : List Wazn.Root := rd.templates.filterMap (rootOfTemplate · rd.asl)
+/-- جذورُ القراءة: جذرُ **صورة** أصلها (`Jidh.stemForm`: بلا تنوينٍ أو بصدر المضارع، كما قُرئت) على كلّ
+قالبٍ من قوالبها — فالتنوينُ خانةٌ زائدة على القالب. -/
+def Reading.roots (rd : Jidh.Reading) : List Wazn.Root :=
+  rd.templates.filterMap (rootOfTemplate · (Jidh.stemForm rd.asl))
 
 /-- قراءةٌ مشهودة: أحدُ جذورها في المقاييس. -/
 def attested (rd : Jidh.Reading) : Bool := (Reading.roots rd).any member
@@ -82,9 +84,10 @@ theorem length_rank : ∀ rs : List Jidh.Reading, (rank rs).length = rs.length
     simp only [rank, List.length_append] at ih ⊢
     cases ha : attested rd <;> simp [ha] <;> omega
 
-/-- قراءةٌ أصلُها ملءُ قالبٍ سليم `k` من قوالبها بجذرٍ مشهود قراءةٌ مشهودة. -/
+/-- قراءةٌ صورةُ أصلها ملءُ قالبٍ سليم `k` من قوالبها بجذرٍ مشهود قراءةٌ مشهودة. -/
 theorem attested_of_member (rd : Jidh.Reading) (k : Nat) (hk : k ∈ rd.templates) (r : Wazn.Root)
-    (hwf : Wazn.WF (Sarf.templ k)) (hasl : rd.asl = Wazn.fill (Sarf.templ k) r) (hm : member r = true) :
+    (hwf : Wazn.WF (Sarf.templ k)) (hasl : Jidh.stemForm rd.asl = Wazn.fill (Sarf.templ k) r)
+    (hm : member r = true) :
     attested rd = true := by
   unfold attested
   rw [List.any_eq_true]
@@ -126,5 +129,12 @@ theorem rank_kadhdhabu :
 set_option maxRecDepth 100000 in
 /-- قَالَ: الأصلان قول وقيل كلاهما مشهود — القرينةُ المعجميّة لا تفصلهما، وهذا يُقال باسمه. -/
 theorem rank_qala : (rank (Jidh.jidh Ilal.qala)).map attested = [true, true] := by decide +kernel
+
+set_option maxRecDepth 100000 in
+/-- فَرِيقٌ: التنوينُ خانةٌ زائدة على القالب؛ الجذرُ من صورة الجذع بلا تنوين (فَعِيل، فرق مشهود) لا من الجذع
+كما هو — وقراءاتُ فَ+رِيق بالإعلال مشهودةٌ أيضًا (ريق/روق): القرينةُ هنا لا تفصل، وهذا يُقال باسمه. -/
+theorem rank_fariqun :
+    (rank (Jidh.jidh Jidh.fariqun)).map (fun rd => (attested rd, rd.templates)) =
+      [(true, [53]), (true, [97]), (true, [97]), (true, [97])] := by decide +kernel
 
 end Slge.Maqayis

@@ -575,7 +575,7 @@ def main (args : List String) : IO Unit := do
                       (8, 18, 27), (8, 18, 28), (5, 28, 0), (22, 27, 25), (22, 28, 25)] do
       IO.println s!"member,{a},{b},{d},{Maqayis.member (root a b d)}"
     for w in [Jidh.kadhdhabu, Ilal.qala, Jidh.kuntum, Jidh.kana, Jidh.daaw, Jidh.jaa, Jidh.wajada, Jidh.walard,
-              Jidh.bikitabihim, Madd.qalu] do
+              Jidh.bikitabihim, Madd.qalu, Jidh.fariqun, Jidh.tajalu] do
       let rs := Maqayis.rank (Jidh.jidh w)
       IO.println s!"rank,{key w},{rs.length}"
       for r in rs do

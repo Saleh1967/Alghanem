@@ -14,7 +14,7 @@ from __future__ import annotations
 from typing import Final
 
 from slge.cells import ALPHABET
-from slge.jidh import Reading
+from slge.jidh import Reading, stem_form
 from slge.maqayis_table import ROOTS, SHA256, WEAK
 from slge.wazn import AWZAN, root_of
 
@@ -51,11 +51,13 @@ def member(r: Root) -> bool:
 
 
 def roots_of(rd: Reading) -> tuple[Root, ...]:
-    """جذورُ القراءة: جذرُ أصلها على كلّ قالبٍ من قوالبها (`Reading.roots`)."""
+    """جذورُ القراءة: جذرُ **صورة** أصلها (`stem_form`: بلا تنوينٍ أو بصدر المضارع) على كلّ قالبٍ من
+    قوالبها (`Reading.roots`) — فالتنوينُ خانةٌ زائدة على القالب."""
 
     out = []
+    base = stem_form(rd.asl)
     for k in rd.templates:
-        r = root_of(AWZAN[k].template, rd.asl)
+        r = root_of(AWZAN[k].template, base)
         if r is not None:
             out.append(r)
     return tuple(out)
@@ -86,6 +88,9 @@ def _check() -> None:
         (True, 0, (12,)), (False, 2, (2,)), (False, 2, (0, 36)), (False, 2, (0, 36)),
         (False, 2, (2,)), (False, 2, (2,))]
     assert [attested(r) for r in rank(jidh(cells_of("قَالَ")))] == [True, True]
+    rs = rank(jidh(cells_of("فَرِيقٌ")))
+    assert [(attested(r), r.templates) for r in rs] == [(True, (53,))] + [(True, (97,))] * 3
+    assert roots_of(rs[0]) == (("ف", "ر", "ق"),)
 
 
 _check()

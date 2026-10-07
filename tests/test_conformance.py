@@ -991,4 +991,4 @@ def test_maqayis_matches_lean() -> None:
                      "+".join(".".join(str(ALPHABET.index(c)) for c in ro) for ro in roots_of(x))]
                     for x in got]
             assert mine == readings.get(r[1], []), (r, mine)
-    assert n_rank == 10
+    assert n_rank == 12

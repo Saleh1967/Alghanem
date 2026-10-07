@@ -194,6 +194,41 @@ def stemSenses (s : List SCell) : List Nat :=
         else []
       | none => []
 
+/-- صورةُ الجذع التي قُرئ عليها — بترتيب `stemSenses`: كما هو، أو بلا تنوين، أو بصدر المضارع ياءً.
+الجذرُ يُستخرج منها لا من الجذع كما هو (فالتنوينُ خانةٌ زائدة على القالب). -/
+def stemForm (s : List SCell) : List SCell :=
+  if onTemplates s ≠ [] then s
+  else
+    let v := Marifa.dropTanwin s
+    if Nida.hasTanwin s ∧ onTemplates v ≠ [] then v
+    else match v.head? with
+      | some x => if x.carrier.val = 0 ∨ x.carrier.val = 25 ∨ x.carrier.val = 3 then
+          Maqam.withPrefix 28 v
+        else v
+      | none => v
+
+theorem dropTanwin_of_not (s : List SCell) (h : Nida.hasTanwin s = false) : Marifa.dropTanwin s = s := by
+  simp [Marifa.dropTanwin, h]
+
+/-- معاني الجذع هي قوالبُ صورته بعينها: ما يُقرأ عليه الجذعُ يُقرأ على `stemForm`. -/
+theorem stemSenses_eq_stemForm (s : List SCell) : stemSenses s = onTemplates (stemForm s) := by
+  unfold stemSenses stemForm
+  by_cases h1 : onTemplates s ≠ []
+  · simp [h1]
+  · simp only [h1, ite_false]
+    by_cases h2 : Nida.hasTanwin s ∧ onTemplates (Marifa.dropTanwin s) ≠ []
+    · simp [h2]
+    · simp only [h2, ite_false]
+      have hv : onTemplates (Marifa.dropTanwin s) = [] := by
+        by_cases ht : Nida.hasTanwin s
+        · exact Classical.not_not.mp (fun hne => h2 ⟨ht, hne⟩)
+        · rw [dropTanwin_of_not s (by simpa using ht)]; exact Classical.not_not.mp h1
+      split
+      · split
+        · rfl
+        · exact hv.symm
+      · exact hv.symm
+
 structure Reading where
   pre : List (List SCell)
   al : Al
@@ -417,6 +452,7 @@ def kadhdhabu : List SCell := [c 22 0, c 9 3, c 9 0, c 2 2, c 27 3]             
 def tajalu : List SCell := [c 3 0, c 5 3, c 18 0, c 23 2, c 27 3]                   -- تَجْعَلُو
 def bikitabihim : List SCell := [c 2 1, c 22 1, c 3 0, c 1 3, c 2 1, c 26 1, c 24 3] -- بِكِتَابِهِمْ
 def wajada : List SCell := [c 27 0, c 5 0, c 8 0]                                   -- وَجَدَ
+def fariqun : List SCell := [c 20 0, c 10 1, c 28 3, c 21 2, c 25 3]                -- فَرِيقٌ (صورةُ الشهادة)
 
 /-- وَلْأَرْضِ: و + أل موصولةً + أَرْض على فَعْلٍ؛ أَلْأَرْضُ: أل بهمزتها؛ وَشَّمْسِ: أل موصولةٌ شمسيّة. -/
 theorem jidh_witnesses_al :

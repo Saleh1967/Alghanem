@@ -752,6 +752,7 @@ import Slge
 #print axioms Slge.Jidh.mem_stemSenses
 #print axioms Slge.Jidh.jidh_complete
 #print axioms Slge.Jidh.jidh_complete_ilal
+#print axioms Slge.Jidh.stemSenses_eq_stemForm
 #print axioms Slge.Jidh.jidh_witnesses_al
 #print axioms Slge.Jidh.jidh_witnesses_case
 #print axioms Slge.Jidh.jidh_witnesses_affix
@@ -767,3 +768,4 @@ import Slge
 #print axioms Slge.Maqayis.member_witnesses
 #print axioms Slge.Maqayis.rank_kadhdhabu
 #print axioms Slge.Maqayis.rank_qala
+#print axioms Slge.Maqayis.rank_fariqun
