@@ -752,3 +752,13 @@
 'Slge.Jidh.jidh_witnesses_affix' depends on axioms: [propext, Quot.sound]
 'Slge.Jidh.jidh_witnesses_ilal_qalb' depends on axioms: [propext, Quot.sound]
 'Slge.Jidh.jidh_witnesses_ilal_hadhf' depends on axioms: [propext, Quot.sound]
+'Slge.Maqayis.table_length' does not depend on any axioms
+'Slge.Maqayis.member_sound' depends on axioms: [propext, Quot.sound]
+'Slge.Maqayis.matchesL_weak' depends on axioms: [propext, Quot.sound]
+'Slge.Maqayis.matchesL_exact' depends on axioms: [propext, Quot.sound]
+'Slge.Maqayis.mem_rank' depends on axioms: [propext]
+'Slge.Maqayis.length_rank' depends on axioms: [propext, Quot.sound]
+'Slge.Maqayis.attested_of_member' depends on axioms: [propext, Quot.sound]
+'Slge.Maqayis.member_witnesses' depends on axioms: [propext]
+'Slge.Maqayis.rank_kadhdhabu' depends on axioms: [propext, Quot.sound]
+'Slge.Maqayis.rank_qala' depends on axioms: [propext, Quot.sound]

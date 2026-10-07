@@ -30,6 +30,7 @@ from slge.jidh import jidh
 from slge.jiha import sigha
 from slge.kulli import kulli
 from slge.madd import continue_licensed, madd
+from slge.maqayis import attested, rank
 from slge.marifa import MAWSUL
 from slge.tawabi import case_class
 from slge.wad import senses, wad
@@ -96,10 +97,13 @@ def _g4(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
 
 
 def _g5(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
-    rs = jidh(w)
+    rs = rank(jidh(w))  # المشهودُ في المقاييس أوّلًا؛ لا قراءةَ تسقط (`mem_rank`، `length_rank`)
     used = sorted({rule for r in rs for rule, _ in r.ilal}, key=RULES.index)
-    note = "الإعلال: " + "، ".join(used) if used else ""
-    return Pass("الجذع", rs, note if rs else "لا قطعَ من الجداول يضع جذعًا على قالب")
+    notes = ["الإعلال: " + "، ".join(used)] if used else []
+    seen = sum(attested(r) for r in rs)
+    if rs and seen < len(rs):
+        notes.append(f"المقاييس: {seen} من {len(rs)} مشهودة")
+    return Pass("الجذع", rs, "؛ ".join(notes) if rs else "لا قطعَ من الجداول يضع جذعًا على قالب")
 
 
 def _g6(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:

@@ -556,6 +556,31 @@ def main (args : List String) : IO Unit := do
           | none => pure ()
       for x in Ilal.descend w w.length do
         IO.println s!"descend,{key w},{chain x.1},{key x.2}"
+  | ["maqayis"] =>
+    -- الجدولُ المودَع مفكوكًا، والعضويّةُ على شبكةٍ من الجذور وعلى الشواهد، وترتيبُ قراءات الشواهد بالقرينة.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let ks := fun (l : List Nat) => "+".intercalate (l.map toString)
+    let fin := fun (n : Nat) => (⟨n % 29, Nat.mod_lt _ (by decide)⟩ : Fin 29)
+    let root := fun (a b d : Nat) => (fun i => if i = 0 then fin a else if i = 1 then fin b else fin d : Wazn.Root)
+    IO.println s!"size,{Maqayis.table.length}"
+    for n in Maqayis.table do
+      let (a, b, d) := Maqayis.decode n
+      IO.println s!"code,{n},{a},{b},{d}"
+    -- شبكةٌ: كلُّ جذرٍ (a, b, d) بخطوة 7 على الحوامل الـ29 — 5×5×5 = 125 جذرًا، وبعضُها في الجدول وبعضُها لا
+    for a in [0, 7, 14, 21, 28] do
+      for b in [0, 7, 14, 21, 28] do
+        for d in [0, 7, 14, 21, 28] do
+          IO.println s!"member,{a},{b},{d},{Maqayis.member (root a b d)}"
+    for (a, b, d) in [(21, 27, 23), (21, 28, 23), (22, 3, 2), (9, 2, 27), (10, 24, 28), (10, 24, 27), (22, 9, 2),
+                      (8, 18, 27), (8, 18, 28), (5, 28, 0), (22, 27, 25), (22, 28, 25)] do
+      IO.println s!"member,{a},{b},{d},{Maqayis.member (root a b d)}"
+    for w in [Jidh.kadhdhabu, Ilal.qala, Jidh.kuntum, Jidh.kana, Jidh.daaw, Jidh.jaa, Jidh.wajada, Jidh.walard,
+              Jidh.bikitabihim, Madd.qalu] do
+      let rs := Maqayis.rank (Jidh.jidh w)
+      IO.println s!"rank,{key w},{rs.length}"
+      for r in rs do
+        let roots := (Maqayis.Reading.roots r).map fun ρ => s!"{(ρ 0).val}.{(ρ 1).val}.{(ρ 2).val}"
+        IO.println s!"reading,{key w},{Maqayis.attested r},{key r.asl},{ks r.templates},{"+".intercalate roots}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

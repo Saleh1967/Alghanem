@@ -950,3 +950,45 @@ def test_ilal_matches_lean() -> None:
     for w, want in descents.items():
         mine = [(_chain(ch), key(u)) for ch, u in descend(cells(w), len(cells(w)))]
         assert mine == want, (w, mine, want)
+
+
+def test_maqayis_matches_lean() -> None:
+    """جدولُ المقاييس مفكوكًا، والعضويّةُ على شبكة 125 جذرًا وعلى الشواهد، وترتيبُ قراءات الشواهد بالقرينة
+    وجذورُها = جدولُ `Maqayis`."""
+
+    from slge.jidh import jidh
+    from slge.maqayis import ROOTS, attested, decode, member, rank, roots_of
+
+    rows = _rows("maqayis.csv")
+
+    def cells(x: str) -> tuple[Cell, ...]:
+        return tuple(_cell(int(i)) for i in x.split("-")) if x else ()
+
+    def key(cs: tuple[Cell, ...]) -> str:
+        return "-".join(str(index(c)) for c in cs)
+
+    codes = [r for r in rows if r[0] == "code"]
+    assert [r[0] for r in rows[:1]] == ["size"] and int(rows[0][1]) == len(codes) == len(ROOTS) == 4561
+    assert [int(r[1]) for r in codes] == list(ROOTS)
+    for r in codes:
+        assert decode(int(r[1])) == (int(r[2]), int(r[3]), int(r[4])), r
+    members = [r for r in rows if r[0] == "member"]
+    assert len(members) == 137 and {r[4] for r in members} == {"true", "false"}
+    for r in members:
+        root = tuple(ALPHABET[int(x)] for x in r[1:4])
+        assert member(root) == (r[4] == "true"), r  # type: ignore[arg-type]
+    readings: dict[str, list[list[str]]] = {}
+    for r in rows:
+        if r[0] == "reading":
+            readings.setdefault(r[1], []).append(r[2:])
+    n_rank = 0
+    for r in rows:
+        if r[0] == "rank":
+            n_rank += 1
+            got = rank(jidh(cells(r[1])))
+            assert len(got) == int(r[2]), r
+            mine = [[str(attested(x)).lower(), key(x.asl), "+".join(str(t) for t in x.templates),
+                     "+".join(".".join(str(ALPHABET.index(c)) for c in ro) for ro in roots_of(x))]
+                    for x in got]
+            assert mine == readings.get(r[1], []), (r, mine)
+    assert n_rank == 10

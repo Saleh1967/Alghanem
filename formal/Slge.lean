@@ -45,3 +45,5 @@ import Slge.Tabayun
 import Slge.Madd
 import Slge.Ilal
 import Slge.Jidh
+import Slge.MaqayisTable
+import Slge.Maqayis

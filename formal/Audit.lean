@@ -757,3 +757,13 @@ import Slge
 #print axioms Slge.Jidh.jidh_witnesses_affix
 #print axioms Slge.Jidh.jidh_witnesses_ilal_qalb
 #print axioms Slge.Jidh.jidh_witnesses_ilal_hadhf
+#print axioms Slge.Maqayis.table_length
+#print axioms Slge.Maqayis.member_sound
+#print axioms Slge.Maqayis.matchesL_weak
+#print axioms Slge.Maqayis.matchesL_exact
+#print axioms Slge.Maqayis.mem_rank
+#print axioms Slge.Maqayis.length_rank
+#print axioms Slge.Maqayis.attested_of_member
+#print axioms Slge.Maqayis.member_witnesses
+#print axioms Slge.Maqayis.rank_kadhdhabu
+#print axioms Slge.Maqayis.rank_qala

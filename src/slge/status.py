@@ -919,7 +919,7 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_gates.py::test_ladder_order_and_named_refusals",
        "test:tests/test_gates.py::test_whole_mushaf_climbs_consistently",
        note="قانونُ السُّلَّم مبرهَنٌ على المجرّد؛ البوّاباتُ تركّب الدوالَّ القائمة (مفحوص) ولا تبني قراءة."),
-    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (51 وحدة، 45 جدولًا، 34 فهرسًا): كلُّ وحدةٍ "
+    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (55 وحدة، 48 جدولًا، 37 فهرسًا): كلُّ وحدةٍ "
        "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
        "test:tests/test_gates.py::test_manifest_covers_the_tree",
        note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
@@ -1009,6 +1009,28 @@ _DECLARED: tuple[Claim, ...] = (
        "المحجوبة: 9,249 كلمةً لا تُقرأ إلّا بالإعلال لاحقةُ المرجع بين قراءاتها في 92.4%", _S,
        "test:tests/test_ilal.py::test_numbers_on_the_deposit",
        note="باسمه: المبنيُّ للمجهول والمجزومُ من الأجوف ليسا من القواعد؛ والإعلالُ بثلاث خطوات."),
+    # — القرينةُ المعجميّة: عضويّةُ الجذر في مقاييس اللغة —
+    _c("MAQAYIS-member", "العضويّةُ في مقاييس اللغة (4,561 جذرًا ثلاثيًّا حواملَ، جدولٌ مولَّدٌ من مودَعٍ مختوم) "
+       "دالّةٌ على الخانات لا بحثَ خارج الجدول، والمعتلّةُ في الطبعة تطابق الواوَ أو الياءَ لا غير، وقراءةٌ "
+       "أصلُها على قالبٍ سليم بجذرٍ مشهود مشهودةٌ", _P,
+       "lean:Slge.Maqayis.member_sound", "lean:Slge.Maqayis.matchesL_weak",
+       "lean:Slge.Maqayis.matchesL_exact", "lean:Slge.Maqayis.attested_of_member",
+       "lean:Slge.Maqayis.member_witnesses",
+       "test:tests/test_maqayis.py::test_membership_is_on_cells_and_weak_matches_waw_or_ya_only",
+       note="الجدولُ عضويّةٌ لا معنًى: محاورُ المعاني لم تُودَع؛ والرباعيُّ الثلاثةُ أُسقط باسمه."),
+    _c("MAQAYIS-rank", "الترتيبُ بالقرينة — المشهودُ أوّلًا — لا يُسقط قراءةً ولا يزيدها لكلّ قائمة؛ وعلى "
+       "الشاهد: كَذَّبُوا تفصلها (كذب مشهودٌ وذبو لا)، وقَالَ لا تفصلها (قول وقيل كلاهما مشهود)", _P,
+       "lean:Slge.Maqayis.mem_rank", "lean:Slge.Maqayis.length_rank",
+       "lean:Slge.Maqayis.rank_kadhdhabu", "lean:Slge.Maqayis.rank_qala",
+       "test:tests/test_maqayis.py::test_rank_keeps_every_reading_and_puts_attested_first",
+       note="بوّابةُ الجذع تعيد القراءاتِ مرتّبةً بالقرينة (`gates._g5`) والتعدّدُ باقٍ كما هو."),
+    _c("MAQAYIS-masaq", "على مودَع المصحف نفسِه: الصورُ متعدّدةُ القراءات 3,896 ← 2,930 (فصلت القرينةُ "
+       "966، 24.8% من المتعدّد)، و4,347 صورةً لا قراءةَ مشهودةً لها؛ وعلى قسمة MASAQ المحجوبة (40,731): "
+       "قراءةٌ واحدةٌ موافقة 35.5% ← 39.9%، وبين متعدّدة 33.2% ← 27.4%، والقرينةُ تُسقط الذهبيّةَ في 1.4% "
+       "(580: جذعٌ ذهبيٌّ على غير قالبٍ مودَع أو تقرؤه الجداول فتُشهَد قسمةٌ أخرى)", _S,
+       "test:tests/test_maqayis.py::test_numbers_before_and_after_on_the_same_deposit",
+       note="الخسارةُ تُذكر كما يُذكر الربح؛ والقرينةُ ترتّب ولا تُسقط، والإسقاطُ قياسٌ لما لو اختير "
+            "المشهودُ وحدَه."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",
