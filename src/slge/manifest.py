@@ -72,6 +72,8 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("wujud", ("Wujud", "WujudTable"), ("wujud",), "gen_wujud_index.py", "test_wujud.py",
            law=True),
     Module("wujud_table", (), (), None, "test_wujud.py"),  # مولَّدٌ من أبواب الأوزان
+    Module("maani", ("Maani", "MaaniTable"), ("maani",), "gen_maani_index.py", "test_maani.py"),
+    Module("maani_table", (), (), None, "test_maani.py"),  # مولَّدٌ من مودَع معاني الحروف
     # الفهارسُ الجامعة (بلا وحدة)
     Module("bits", (), (), "gen_bits_index.py", "test_bits.py"),
     Module("gates", (), (), None, "test_gates.py"),
@@ -101,6 +103,8 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
             "شهاداتُ المصحف كلِّه خاناتٍ وأعدادًا؛ بصمةُ المدوّنة فيه"),
     Deposit("maqayis-roots.json.gz", "وضع", "جذورُ مقاييس اللغة حواملَ (4,561)"),
     Deposit("sibawayh-abniya.tsv", "وضع", "أبنيةُ الأسماء عند سيبويه (158 هيكلًا)"),
+    Deposit("nabhani-huruf.json", "وضع",
+            "معاني الحروف من مبحث «الحرف» في الشخصيّة ج3 بترتيب المصدر (25 مدخلًا، 29 حرفًا)"),
     *(Deposit(f"masaq-{x}", "مرجع محجوب", "شريحةُ MASAQ") for x in (
         "adad.json", "fil.json.gz", "filiyya.json.gz", "hamza.json", "huruf.json",
         "interrog.json", "ism.json.gz", "jazm.json", "jumla.json", "majrurat.json.gz",

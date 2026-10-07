@@ -20,7 +20,7 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from typing import Any, Final
 
-from slge.adawat import of_cells
+from slge.adawat import TABLE_ADAWAT, of_cells
 from slge.adawat import rank as rank_adawat
 from slge.categories import PRONOUNS
 from slge.cells import Cell, fold, licensed
@@ -31,6 +31,8 @@ from slge.ishara import FORMS as ISHARA
 from slge.jidh import jidh
 from slge.jiha import sigha
 from slge.kulli import kulli
+from slge.maani import is_zarf, senses_of
+from slge.maani import rank as rank_maani
 from slge.madd import continue_licensed, madd
 from slge.maqayis import attested, rank
 from slge.marifa import MAWSUL
@@ -109,15 +111,34 @@ def _g5(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
     return Pass("الجذع", rs, "؛ ".join(notes) if rs else "لا قطعَ من الجداول يضع جذعًا على قالب")
 
 
+def _maani_note(w: Word, ctx: dict[str, Any]) -> str:
+    """إن كانت الكلمةُ نفسُها حرفًا له معانٍ في المصدر: معانيه مرتَّبةً بالقرينتين — نفيٌ قبله
+    (`Adawat.Rel.nafy` للأداة السابقة) وظرفٌ بعده (`Maani.isZarf` للكلمة التالية) — لا مختارة."""
+
+    own = of_cells(w)
+    if own is None:
+        return ""
+    ss = senses_of(TABLE_ADAWAT.index(own))
+    if not ss:
+        return ""
+    prev: Word = ctx.get("prev", ())
+    before = of_cells(prev) if prev else None
+    ranked = rank_maani(ss, nafy_before=bool(before and before.rel == "نفي"),
+                        zarf_after=is_zarf(ctx.get("next", ())))
+    return "؛ معاني الحرف: " + " > ".join(ranked)
+
+
 def _g5b(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
-    """الأداةُ المجاورة قبل الكلمة تقدّم قراءاتِ صنف معمولها الأوّل ولا تُسقط قراءة (`Adawat.rank`)."""
+    """الأداةُ المجاورة قبل الكلمة تقدّم قراءاتِ صنف معمولها الأوّل ولا تُسقط قراءة (`Adawat.rank`)؛
+    وإن كانت الكلمةُ حرفًا فمعانيه مرتَّبةً في الملاحظة (`Maani.rank`)."""
 
     prev: Word = ctx.get("prev", ())
     a = of_cells(prev) if prev else None
     if a is None:
-        return Pass("الأدوات", None, "لا أداةَ قبلها")
+        return Pass("الأدوات", None, "لا أداةَ قبلها" + _maani_note(w, ctx))
     rs = rank_adawat(a, rank(jidh(w)))
-    return Pass("الأدوات", (a.harf.name, rs), f"{a.rel}؛ معمولُها {'/'.join(a.args)}")
+    return Pass("الأدوات", (a.harf.name, rs),
+                f"{a.rel}؛ معمولُها {'/'.join(a.args)}" + _maani_note(w, ctx))
 
 
 def _g6(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:

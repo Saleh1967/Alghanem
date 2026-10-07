@@ -52,3 +52,5 @@ import Slge.Abniya
 import Slge.Adawat
 import Slge.WujudTable
 import Slge.Wujud
+import Slge.MaaniTable
+import Slge.Maani

@@ -1092,3 +1092,40 @@ def test_wujud_matches_lean() -> None:
     for r in readings:
         w = tuple(_cell(int(i)) for i in r[1].split("-"))
         assert "+".join(on[ont_of_reading(x)] for x in jidh(w)) == r[2], r
+
+
+def test_maani_matches_lean() -> None:
+    """معاني كلّ حرفٍ بترتيب المصدر، والترتيبُ بالقرينتين على شواهد، وظرفيّةُ صورٍ = جدولُ `Maani`."""
+
+    from slge.maani import is_zarf, rank, senses_of
+    from slge.maani_table import SENSES, TABLE
+
+    lean = {"ابتداء الغاية في الزمان": "ibtidaGhayaZaman", "ابتداء الغاية": "ibtidaGhaya",
+            "انتهاء الغاية": "intihaGhaya", "التبعيض": "tabid", "بيان الجنس": "bayanJins",
+            "زائدة": "zaida", "بمعنى مع": "maa", "الظرفية": "zarfiyya", "بمعنى على": "ala",
+            "التجوّز": "tajawwuz", "الإلصاق": "ilsaq", "الاستعانة": "istiana",
+            "المصاحبة": "musahaba",
+            "بمعنى من أجل": "minAjl", "بمعنى في": "fi", "الاختصاص": "ikhtisas", "التقليل": "taqlil",
+            "القسم": "qasam", "الاستعلاء": "istila", "المباعدة": "mubaada", "التشبيه": "tashbih",
+            "مطلق الجمع": "mutlaqJam", "الترتيب والتعقيب": "tartibTaqib",
+            "الترتيب والتراخي": "tartibTarakhi", "المعطوف جزء من المعطوف عليه": "juzMinMatuf",
+            "الترتيب": "tartib", "تعليق الحكم بأحد المذكورين": "taliqBiAhad", "الشك": "shakk",
+            "التخيير": "takhyir", "الإباحة": "ibaha", "مخالفة المعطوف عليه في حكمه": "mukhalafa",
+            "نفي الحال": "nafyHal", "نفي المستقبل": "nafyMustaqbal", "النهي": "nahy",
+            "الدعاء": "dua",
+            "قلب المضارع إلى الماضي": "qalbMadi", "تأكيد المستقبل": "takidMustaqbal"}
+    assert set(lean) == set(SENSES)
+    rows = _rows("maani.csv")
+    senses = [r for r in rows if r[0] == "senses"]
+    assert len(senses) == len(TABLE) == 29
+    for r in senses:
+        assert "+".join(lean[s] for s in senses_of(int(r[1]))) == r[2], r
+    ranks = [r for r in rows if r[0] == "rank"]
+    assert len(ranks) == 20
+    for r in ranks:
+        mine = rank(senses_of(int(r[1])), nafy_before=r[2] == "true", zarf_after=r[3] == "true")
+        assert "+".join(lean[s] for s in mine) == r[4], r
+    zarf = [r for r in rows if r[0] == "zarf"]
+    assert len(zarf) == 4 and [r[2] for r in zarf] == ["true", "true", "false", "false"]
+    for r in zarf:
+        assert str(is_zarf(tuple(_cell(int(i)) for i in r[1].split("-")))).lower() == r[2], r

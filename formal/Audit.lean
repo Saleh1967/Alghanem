@@ -802,3 +802,14 @@ import Slge
 #print axioms Slge.Wujud.mem_rank
 #print axioms Slge.Wujud.length_rank
 #print axioms Slge.Wujud.witnesses
+#print axioms Slge.Maani.table_length
+#print axioms Slge.Maani.indices_in_table
+#print axioms Slge.Maani.jarr_uncovered
+#print axioms Slge.Maani.multi_eq
+#print axioms Slge.Maani.ghaya_first_in_source
+#print axioms Slge.Maani.mem_split
+#print axioms Slge.Maani.length_split
+#print axioms Slge.Maani.mem_rank
+#print axioms Slge.Maani.length_rank
+#print axioms Slge.Maani.rank_none
+#print axioms Slge.Maani.witnesses

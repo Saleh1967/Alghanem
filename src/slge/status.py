@@ -921,7 +921,7 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_gates.py::test_ladder_order_and_named_refusals",
        "test:tests/test_gates.py::test_whole_mushaf_climbs_consistently",
        note="قانونُ السُّلَّم مبرهَنٌ على المجرّد؛ البوّاباتُ تركّب الدوالَّ القائمة (مفحوص) ولا تبني قراءة."),
-    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (60 وحدة، 51 جدولًا، 40 فهرسًا): كلُّ وحدةٍ "
+    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (62 وحدة، 52 جدولًا، 41 فهرسًا): كلُّ وحدةٍ "
        "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
        "test:tests/test_gates.py::test_manifest_covers_the_tree",
        note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
@@ -1123,6 +1123,37 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_wujud.py::test_numbers_on_the_deposit_and_masaq",
        note="الاسمُ عند المرجع يُقرأ هنا مصدرًا في 4,044 لأنّ القالبَ لا يفصل الاسمَ من المصدر (فَعْل، "
             "فِعَال)؛ والفعلُ يُقرأ وصفًا/اسمًا في 1,090 — القوالبُ المشتركة؛ كلٌّ باسمه."),
+    _c("MAANI-table", "معاني الحروف منقولةٌ من مبحث «الحرف» في الشخصيّة ج3 بترتيب المصدر "
+       "(مودَعٌ مختوم؛ 25 مدخلًا، 29 حرفًا من الجدول الموحَّد)، كلُّ فهرسٍ فيها فهرسٌ في "
+       "`Huruf.table`؛ المتعدّدُ تسعةٌ بأرقامها "
+       "(الباء 7، من 4، أو 4، في 3، لا النافية 3، اللام/إلى/حتّى/حتّى العاطفة 2)؛ وحروفُ "
+       "الجرّ بلا معنًى في "
+       "المصدر خلا وعدا وحاشا بأرقامها", _P,
+       "lean:Slge.Maani.table_length", "lean:Slge.Maani.indices_in_table",
+       "lean:Slge.Maani.multi_eq", "lean:Slge.Maani.jarr_uncovered",
+       "test:tests/test_maani.py::test_table_follows_the_source_order",
+       "test:tests/test_maani.py::test_deposit_is_sealed_and_tables_are_generated_from_it",
+       note="المعاني أسماءٌ من النصّ بالمطابقة الحرفيّة (`tools/deposit_maani.py`)؛ لا معنى يُختار "
+            "ولا يُستنتج: ما لم يذكره المصدرُ فارغٌ باسمه."),
+    _c("MAANI-rank", "الأصلُ أوّلًا: حيث ذكر المصدرُ معنى غايةٍ أو ظرفيّةٍ لحرفٍ ذكره أوّلَ معانيه؛ والترتيبُ "
+       "بالقرينتين (ظرفٌ بعده، نفيٌ قبله) يحفظ العضويّةَ والعدد ولا يُسقط معنًى، وبلا "
+       "قرينةٍ يعيد ترتيبَ "
+       "المصدر بعينه", _P,
+       "lean:Slge.Maani.ghaya_first_in_source", "lean:Slge.Maani.mem_rank",
+       "lean:Slge.Maani.length_rank", "lean:Slge.Maani.rank_none", "lean:Slge.Maani.witnesses",
+       "test:tests/test_maani.py::test_rank_by_clue_keeps_every_sense",
+       note="القرينتان معلَنتان: الظرفُ من جدولَي `Zuruf`/`Zaman`، والنفيُ قبله يقدّم «زائدة» "
+            "تعميمًا لشاهد "
+            "المصدر الوحيد («ما جاءني من أحد»)."),
+    _c("MAANI-masaq", "على MASAQ: 7,369 وقوعًا لحرفٍ له معانٍ؛ القرينتان غيّرتا ترتيبَ المصدر في 8 "
+       "فقط (من 2، "
+       "الباء 6)؛ وشواهدُ المصدر القرآنيّة على المعاني غير الأولى: يقدّمها الترتيبُ في 1 "
+       "من 5 وُجدت — المعنى "
+       "حاضرٌ في القائمة لا محذوف", _S,
+       "test:tests/test_maani.py::test_numbers_on_masaq",
+       note="«بمعنى مع» و«بمعنى على» و«من أجل» تلزمها قرينةُ المتعلَّق (الفعلُ العامل وجنسُ "
+            "المجرور) — دينٌ "
+            "باسمه؛ و«أو» بالمقام تحتاج `Uslub` على الجملة."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

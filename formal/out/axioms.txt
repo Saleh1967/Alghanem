@@ -797,3 +797,14 @@
 'Slge.Wujud.mem_rank' depends on axioms: [propext]
 'Slge.Wujud.length_rank' depends on axioms: [propext, Quot.sound]
 'Slge.Wujud.witnesses' depends on axioms: [propext, Quot.sound]
+'Slge.Maani.table_length' does not depend on any axioms
+'Slge.Maani.indices_in_table' does not depend on any axioms
+'Slge.Maani.jarr_uncovered' depends on axioms: [propext]
+'Slge.Maani.multi_eq' does not depend on any axioms
+'Slge.Maani.ghaya_first_in_source' depends on axioms: [propext]
+'Slge.Maani.mem_split' depends on axioms: [propext]
+'Slge.Maani.length_split' depends on axioms: [propext, Quot.sound]
+'Slge.Maani.mem_rank' depends on axioms: [propext]
+'Slge.Maani.length_rank' depends on axioms: [propext, Quot.sound]
+'Slge.Maani.rank_none' depends on axioms: [propext]
+'Slge.Maani.witnesses' depends on axioms: [propext]

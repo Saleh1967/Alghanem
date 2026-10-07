@@ -618,6 +618,17 @@ def main (args : List String) : IO Unit := do
       IO.println s!"ont,{k},{on (Wujud.ontOf k)},{kn (Kulli.kulli (Wazn.mizan (Sarf.templ k)))},{p}"
     for w in [Jidh.fariqun, Jidh.kadhdhabu, Ilal.qala, Jidh.wajada, Jidh.bikitabihim, Madd.qalu, Jidh.walard] do
       IO.println s!"reading,{key w},{"+".intercalate ((Jidh.jidh w).map fun rd => on (Wujud.ontOfReading rd))}"
+  | ["maani"] =>
+    -- معاني كلّ حرفٍ بترتيب المصدر، والترتيبُ بالقرينتين على شواهد؛ وظرفيّةُ صورٍ من الجدولين.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let sn := fun (s : Maani.Sense) => ((repr s).pretty.splitOn ".").getLastD ""
+    for p in Maani.table do
+      IO.println s!"senses,{p.1},{"+".intercalate (p.2.map sn)}"
+    for h in [5, 9, 0, 1, 6] do
+      for q in [({} : Maani.Clue), {nafyBefore := true}, {zarfAfter := true}, {nafyBefore := true, zarfAfter := true}] do
+        IO.println s!"rank,{h},{q.nafyBefore},{q.zarfAfter},{"+".intercalate ((Maani.rank q (Maani.sensesOf h)).map sn)}"
+    for w in [Zuruf.jarr (Zuruf.stems.getD 0 ("", [])).2, Zuruf.jarr (Zaman.stems.getD 0 ("", [])).2, Jidh.fariqun, Shibh.ilm] do
+      IO.println s!"zarf,{key w},{Maani.isZarf w}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do
