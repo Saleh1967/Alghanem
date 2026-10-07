@@ -212,7 +212,8 @@ def _check() -> None:
     r = jidh(cells_of("دَعَوْ"))  # حذفُ اللام المضمومة قبل واو الجماعة
     assert [(x.suf, x.asl) for x in r][1:] == [
         ((("و", SUKUN),), cells_of("دَعَوُ")), ((("و", SUKUN),), cells_of("دَعَيُ"))]
-    assert jidh(cells_of("قِيلَ")) == ()  # المبنيُّ للمجهول من الأجوف ليس من القواعد — باسمه
+    r = jidh(cells_of("قِيلَ"))  # المبنيُّ للمجهول من الأجوف ليس من القواعد — باسمه؛ يُقرأ اسمًا على فِعْل
+    assert [(x.templates, x.ilal) for x in r] == [((121,), ())]
     r = jidh(cells_of("وَشَّمْسِ"))
     assert len(r) == 1 and r[0].al == 2 and r[0].templates == (29,)
     r = jidh(cells_of("بِكِتَابِهِمْ"))

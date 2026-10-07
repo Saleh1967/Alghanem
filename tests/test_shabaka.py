@@ -60,14 +60,15 @@ def test_classical_edges_are_machine_checked_and_rooted() -> None:
 
 
 def test_computed_tree_is_minimal_and_classical_is_not() -> None:
-    """مقيس: شجرةُ البصريّين تكلّف 361 عمليّةً، والأقلُّ الممكن 165؛ ويتّفقان في 21 أبًا من 120."""
+    """مقيس: شجرةُ البصريّين تكلّف 369 عمليّةً، والأقلُّ الممكن 166؛ ويتّفقان في 22 أبًا من 124
+    (كانت 361/165/21 من 120 قبل قوالب الاسم الأربعة: أ2)."""
 
     cost = edge_costs()
     classical = sum(cost[(c, p)] for c, p in CLASSICAL.items())
     computed = sum(cost[(c, p)] for c, p in COMPUTED.items())
-    assert (classical, computed) == (361, 165)
+    assert (classical, computed) == (369, 166)
     assert computed <= classical
-    assert agreement()[:2] == (21, 120)
+    assert agreement()[:2] == (22, 124)
     assert minimal_tree() == COMPUTED
 
 

@@ -70,16 +70,18 @@ _DECLARED: tuple[Claim, ...] = (
     _c("WAZN-indep", "ترخيصُ الكلمة من القالب وحدَه: الوزنُ يُرخَّص مرّةً لكلّ الأصول", _P,
        "lean:Slge.Wazn.states_fill", "lean:Slge.Wazn.licensed_fill_indep",
        "test:tests/test_wazn.py::test_licence_is_root_independent"),
-    _c("WAZN-table", "121 وزنًا مودَعًا سليمةٌ ومرخَّصةٌ لكلّ أصل؛ بايثونُها مطابقٌ لجدول Lean", _P,
+    _c("WAZN-table", "125 وزنًا مودَعًا (121 من كتب الصرف و4 من أبنية سيبويه) سليمةٌ ومرخَّصةٌ "
+       "لكلّ أصل؛ بايثونُها مطابقٌ لجدول Lean", _P,
        "lean:Slge.Wazn.awzan_wf", "lean:Slge.Wazn.awzan_licensed",
        "test:tests/test_conformance.py::test_wazn_matches_lean"),
     _c("WAZN-sibawayh",
-       "هياكلُ الأوزان مقابل أبنية سيبويه المجمَّدة: 103/121 عنده؛ 18 مسمّاة؛ 122 من هياكله خارج "
-       "الجدول",
-       _S,
+       "هياكلُ الأوزان مقابل أبنية سيبويه المختومة (158 هيكلًا): 111 من 125 عنده؛ 14 مسمّاةٌ بأرقامها؛ "
+       "والهيكلُ دالّةٌ على القالب في Lean (الشدّةُ حرفٌ واحد، التاءُ الأخيرةُ تُسقط، الهمزةُ الأولى وصلًا "
+       "أو قطعًا)", _P,
+       "lean:Slge.Abniya.outside_abniya", "lean:Slge.Abniya.abniya_length",
        "test:tests/test_wazn.py::test_skeletons_measured_against_sibawayh",
        note="الحركاتُ معلَنةٌ من كتب الصرف لا مقيسة؛ الرباعيُّ والإعلالُ والمفعولُ المطلق والجامدُ "
-            "خارج الجدول باسمها (DEBTS)."),
+            "خارج الجدول باسمها (DEBTS). كان القياسُ بمفتاح الاسم 103/121 قبل أن يُبرهَن الهيكل."),
     _c("WAZN-awzan", "أوزانُ الفعل والمصدر والمشتقّات والتأنيث والجموع كما في كتب الصرف", _D,
        "test:tests/test_wazn.py::test_masdar_of_mazid_is_a_declared_pair_of_deposited_awzan"),
     # — شبكةُ الأوزان: الترخيصُ الجبريُّ التدريجيُّ من المصدر —
@@ -87,7 +89,7 @@ _DECLARED: tuple[Claim, ...] = (
        "lean:Slge.Shabaka.wf_step", "lean:Slge.Shabaka.wf_run",
        "test:tests/test_shabaka.py::test_every_edit_keeps_the_root_recoverable"),
     _c("SHABAKA-edges",
-       "120 حافّةً من المصدر المجرّد: الابنُ = الأبُ بعد عمليّاته، وكلُّ وزنٍ يبلغ الجذر", _P,
+       "124 حافّةً من المصدر المجرّد: الابنُ = الأبُ بعد عمليّاته، وكلُّ وزنٍ يبلغ الجذر", _P,
        "lean:Slge.Shabaka.edges_apply", "lean:Slge.Shabaka.network_rooted",
        "lean:Slge.Shabaka.run_edge_wf",
        "test:tests/test_conformance.py::test_shabaka_matches_lean"),
@@ -95,7 +97,7 @@ _DECLARED: tuple[Claim, ...] = (
        "ترتيبُ البصريّين: المصدرُ أصلُ المشتقّات؛ الماضي فالمضارع فالأمر؛ المزيدُ من المجرّد", _D,
        "test:tests/test_shabaka.py::test_classical_edges_are_machine_checked_and_rooted"),
     _c("SHABAKA-minimal",
-       "ترتيبُ البصريّين ليس أقلَّ الأشجار كلفةً: 361 عمليّةً مقابل 165؛ يتّفقان في 21 أبًا من 120",
+       "ترتيبُ البصريّين ليس أقلَّ الأشجار كلفةً: 369 عمليّةً مقابل 166؛ يتّفقان في 22 أبًا من 124",
        _S,
        "test:tests/test_shabaka.py::test_computed_tree_is_minimal_and_classical_is_not",
        note="أقلُّ شجرةٍ (Prim على مسافة لِيفنشتاين للقوالب) محسوبةٌ لا مقرَّرة؛ ما يحمله ترتيبُ البصريّين "
@@ -919,7 +921,7 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_gates.py::test_ladder_order_and_named_refusals",
        "test:tests/test_gates.py::test_whole_mushaf_climbs_consistently",
        note="قانونُ السُّلَّم مبرهَنٌ على المجرّد؛ البوّاباتُ تركّب الدوالَّ القائمة (مفحوص) ولا تبني قراءة."),
-    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (55 وحدة، 48 جدولًا، 37 فهرسًا): كلُّ وحدةٍ "
+    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (57 وحدة، 49 جدولًا، 38 فهرسًا): كلُّ وحدةٍ "
        "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
        "test:tests/test_gates.py::test_manifest_covers_the_tree",
        note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
@@ -1035,6 +1037,30 @@ _DECLARED: tuple[Claim, ...] = (
        note="الخسارةُ تُذكر كما يُذكر الربح؛ والقرينةُ ترتّب ولا تُسقط. الجذرُ من صورة الجذع "
             "(`stemSenses_eq_stemForm`) لا من الجذع كما هو — كان التنوينُ يمنع الجذرَ فتبقى 4,347 "
             "بلا قراءةٍ مشهودة (أُصلح في اليوم نفسه)."),
+    # — قوالبُ الاسم على أبنية سيبويه (أ2) —
+    _c("ABNIYA-ism", "قوالبُ الاسم الأربعةُ المضافة (فِعْل، فَعَال، فُعَيْل، فَاعُول) هياكلُها عند سيبويه، "
+       "وحوافُّها من آبائها في الشبكة بعمليّاتٍ مفحوصة، وسليمةٌ مرخَّصةٌ لكلّ أصل", _P,
+       "lean:Slge.Abniya.ism_in_abniya", "lean:Slge.Shabaka.edges_apply", "lean:Slge.Wazn.awzan_wf",
+       "lean:Slge.Wazn.awzan_licensed",
+       "test:tests/test_abniya.py::test_added_noun_templates_satisfy_the_three_conditions",
+       note="المعلَّقُ باسمه (ABNIYA_INDEX.md): فَعِل (يتساوى مع فَعِلَ)، فَيْعِل، فُعْلَة، فَعِيلَة، مَفْعِلَة، "
+            "النسبةُ، فُعَالَة — لم ترفع الموافقةَ على MASAQ أو أنزلتها."),
+    _c("ABNIYA-disjoint", "التمايز: قالبان مفصولان (يختلفان في زائدٍ، أو زائدٌ قبالةَ أصل، أو أصلان "
+       "بحالتين، أو في الآخر بالحامل) لا يقرآن ملءً واحدًا بعد تسوية الآخر على أصلين نظيفين — لكلّ "
+       "قالبين من الجدول "
+       "وأصلين وحالتين؛ وكلُّ زوجين من الـ125 مفصولان إلّا 11 مسمّاة", _P,
+       "lean:Slge.Abniya.separated_sound", "lean:Slge.Abniya.awzan_disjoint",
+       "lean:Slge.Abniya.awzan_separated", "lean:Slge.Abniya.ambiguous_sound",
+       "lean:Slge.Abniya.awzan_lits",
+       "test:tests/test_abniya.py::test_separation_refuses_one_fill_for_two_templates_on_clean_roots",
+       note="الأزواجُ غيرُ المفصولة هي بعينها ما يعيده الجذعُ قراءاتٍ متعدّدةً على جذرٍ واحد (الماضي "
+            "ومصدرُه، الماضي والأمر، القالبُ المكرَّر)."),
+    _c("ABNIYA-masaq", "على مودَع المصحف نفسِه: الجذعُ 14,912 ← 15,510 من 18,179 (82.0% ← 85.3%)؛ فِعْلٌ "
+       "وحدَه يقرأ 406 صورةً لا تُقرأ إلّا عليه وفَعَالٌ 265؛ وعلى قسمة MASAQ المحجوبة: لا قراءة 15.9% ← "
+       "12.2%، وقراءةٌ واحدةٌ موافقة 35.5% ← 38.0%، وبعد القرينة المعجميّة 40.0% ← 43.0%", _S,
+       "test:tests/test_abniya.py::test_numbers_before_and_after_on_the_same_deposit",
+       note="ما نقص يُذكر: صورٌ تُقرأ بالإعلال 2,138 ← 1,960 (صارت تُقرأ مباشرةً على فِعْل/فَعَال)، "
+            "وما تقرؤه الجداول (إِنَّ، مِنْ) صار يُقرأ على فِعْل أيضًا — الجداولُ قبل القوالب (أ4)."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

@@ -10,7 +10,7 @@ import Slge.Bridge
   (`WF`: المواضعُ الثلاثةُ كلُّها حاضرة) ولكلّ أصل.
 * `states_fill`: حالاتُ الصيغة هي حالاتُ القالب، لا تتوقّف على الأصل.
 * `licensed_fill_indep`: **الترخيصُ لا يتوقّف على الأصل** — فالوزنُ يُرخَّص مرّةً لكلّ الأصول.
-* `awzan_wf`، `awzan_licensed`: الأوزانُ المودَعة (121) سليمةٌ ومرخَّصةٌ بميزانها، فمرخَّصةٌ
+* `awzan_wf`، `awzan_licensed`: الأوزانُ المودَعة (125) سليمةٌ ومرخَّصةٌ بميزانها، فمرخَّصةٌ
   لكلّ أصلٍ بـ`licensed_fill_indep`.
 
 وهو الشقُّ الصوريُّ من `A116.Ishtiqaq` معادًا على خانات SLGE بحالاتها؛ ما ليس هنا: الإعلال،
@@ -153,7 +153,7 @@ theorem licensed_of_mizan (t : Template) (h : licensed (mizan t) = true) (r : Ro
 def r (i s : Nat) (hi : i < 3 := by decide) (hs : s < 4 := by decide) : Sym := .slot ⟨i, hi⟩ ⟨s, hs⟩
 def l (k s : Nat) (hk : k < 29 := by decide) (hs : s < 4 := by decide) : Sym := .lit ⟨⟨k, hk⟩, ⟨s, hs⟩⟩
 
-/-- 121 وزنًا بترتيب `slge.wazn.AWZAN` (مولَّدةٌ منه؛ تُطابَق بجدول `wazn.csv`). -/
+/-- 125 وزنًا بترتيب `slge.wazn.AWZAN` (مولَّدةٌ منه؛ تُطابَق بجدول `wazn.csv`). -/
 def awzan : List Template := [
   [r 0 0, r 1 0, r 2 0],  -- فَعَلَ
   [r 0 0, r 1 1, r 2 0],  -- فَعِلَ
@@ -276,13 +276,24 @@ def awzan : List Template := [
   [l 3 0, r 0 0, l 1 3, r 1 0, r 2 3],  -- تَفَاعَلْ
   [l 0 1, l 25 3, r 0 0, r 1 1, r 2 3],  -- اِنْفَعِلْ
   [l 0 1, r 0 3, l 3 0, r 1 1, r 2 3],  -- اِفْتَعِلْ
-  [l 0 1, l 12 3, l 3 0, r 0 3, r 1 1, r 2 3]  -- اِسْتَفْعِلْ
+  [l 0 1, l 12 3, l 3 0, r 0 3, r 1 1, r 2 3],  -- اِسْتَفْعِلْ
+  -- قوالبُ الاسم على أبنية سيبويه (أ2): كلٌّ منها من أبيه في الشبكة بعمليّات `Shabaka` (الحافّةُ مفحوصة)،
+  -- وأُدخل لأنّه رفع الرقمَ على المودَع (فهرسُ الأبنية)؛ وما لم يرفعه معلَّقٌ باسمه هناك.
+  [r 0 1, r 1 3, r 2 2],  -- فِعْلٌ
+  [r 0 0, r 1 0, l 1 3, r 2 2],  -- فَعَالٌ
+  [r 0 2, r 1 0, l 28 3, r 2 2],  -- فُعَيْلٌ
+  [r 0 0, l 1 3, r 1 2, l 27 3, r 2 2]  -- فَاعُولٌ
 ]
 
-theorem awzan_count : awzan.length = 121 := by rfl
+/-- عددُ القوالب المودَعة: 121 من كتب الصرف و4 من أبنية سيبويه. -/
+def N : Nat := 125
 
+theorem awzan_count : awzan.length = N := by rfl
+
+set_option maxRecDepth 100000 in
 theorem awzan_wf : ∀ t ∈ awzan, WF t := by decide
 
+set_option maxRecDepth 100000 in
 theorem awzan_mizan_licensed : ∀ t ∈ awzan, licensed (mizan t) = true := by decide
 
 /-- كلُّ وزنٍ مودَعٍ مرخَّصٌ لكلّ أصلٍ ثلاثيّ. -/

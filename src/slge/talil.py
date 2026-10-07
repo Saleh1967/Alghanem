@@ -29,7 +29,7 @@ __all__ = ["LI_ANNA", "MIN_AJLI", "TOOLS", "F", "apply", "derives", "maful_li_aj
 
 _A, _I, _U, SUKUN = STATES
 Word = tuple[Cell, ...]
-F: Final[int] = 121
+F: Final[int] = 125
 
 
 def maful_li_ajlih(w: Word) -> Word:

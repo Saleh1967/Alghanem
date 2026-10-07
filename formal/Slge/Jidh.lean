@@ -179,7 +179,7 @@ def enclitics : List (List SCell) :=
 
 /-- القوالبُ التي تُقرأ عليها الكلمةُ بعد تسوية آخرها، بجذرٍ لا ألفَ فيه. -/
 def onTemplates (v : List SCell) : List Nat :=
-  (List.range 121).filter fun k => Maqam.onTemplateRoot k (setLast v (lastState (Sarf.templ k)))
+  (List.range Wazn.N).filter fun k => Maqam.onTemplateRoot k (setLast v (lastState (Sarf.templ k)))
 
 /-- معاني الجذع بعد تسوية آخره: كما هو أوّلًا (فالنونُ الساكنةُ قد تكون لامًا: كَوَنْ)، ثمّ بردّ التنوين،
 ثمّ المضارعُ بردّ صدره ياءً. -/
@@ -366,7 +366,7 @@ theorem dropAl_al (s : List SCell) (hne : s ≠ []) : dropAl .full (Marifa.al s)
 
 /-- الجذعُ على قالبه بعد التسوية مهما كانت حالةُ آخره: `k` من معاني `setLast (fill (templ k) r) st` — لكلّ
 قالبٍ سليم وجذرٍ وحالة، بلا شرطٍ على التنوين. -/
-theorem mem_stemSenses (k : Nat) (hk : k < 121) (r : Wazn.Root) (hr : ∀ i, (r i).val ≠ 1) (st : Fin 4) :
+theorem mem_stemSenses (k : Nat) (hk : k < Wazn.N) (r : Wazn.Root) (hr : ∀ i, (r i).val ≠ 1) (st : Fin 4) :
     k ∈ stemSenses (setLast (Wazn.fill (Sarf.templ k) r) st) := by
   have hwf := Tabayun.templ_wf k hk
   have hne : Sarf.templ k ≠ [] := by
@@ -386,7 +386,7 @@ theorem mem_stemSenses (k : Nat) (hk : k < 121) (r : Wazn.Root) (hr : ∀ i, (r 
 فيه وحالةِ آخر: `jidh (p ++ setLast (fill (templ k) r) st ++ q)` فيه قراءةٌ سابقتُها `p` ولاحقتُها `q` وجذعُها
 `setLast (fill (templ k) r) st` وقالبُها `k`. -/
 theorem jidh_complete (p : List SCell) (hp : p ∈ proclitics) (q : List SCell) (hq : q ∈ enclitics)
-    (k : Nat) (hk : k < 121) (r : Wazn.Root) (hr : ∀ i, (r i).val ≠ 1) (st : Fin 4)
+    (k : Nat) (hk : k < Wazn.N) (r : Wazn.Root) (hr : ∀ i, (r i).val ≠ 1) (st : Fin 4)
     (hlic : Madd.pauseLicensed (setLast (Wazn.fill (Sarf.templ k) r) st) = true) :
     ∃ rd ∈ jidh (p ++ setLast (Wazn.fill (Sarf.templ k) r) st ++ q),
       rd.pre = [p] ∧ rd.al = .none ∧ rd.stem = setLast (Wazn.fill (Sarf.templ k) r) st ∧ rd.suf = q ∧
@@ -414,7 +414,7 @@ theorem jidh_complete (p : List SCell) (hp : p ∈ proclitics) (q : List SCell) 
 /-- الاكتمالُ بالإعلال: ما صعد بقاعدةٍ من أصلٍ على قالبٍ ينزل بالقارئ — لكلّ قالبٍ سليم وجذرٍ وحالةٍ وقاعدةٍ
 وموضع: إن كان الجذعُ الظاهر `w` مرخَّصًا ولا قالبَ له مباشرةً، ففي `jidh w` قراءةٌ أصلُها الأصلُ وسلسلتُها
 القاعدةُ وقالبُها `k`. -/
-theorem jidh_complete_ilal (k : Nat) (hk : k < 121) (r : Wazn.Root) (hr : ∀ i, (r i).val ≠ 1) (st : Fin 4)
+theorem jidh_complete_ilal (k : Nat) (hk : k < Wazn.N) (r : Wazn.Root) (hr : ∀ i, (r i).val ≠ 1) (st : Fin 4)
     (ρ : Ilal.Rule) (i : Nat) (w : List SCell) (hi : i ∈ Ilal.positions ρ w.length)
     (hup : Ilal.apply ρ (setLast (Wazn.fill (Sarf.templ k) r) st) i = some w)
     (hlic : Madd.pauseLicensed w = true) (hno : stemSenses w = []) :

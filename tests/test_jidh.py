@@ -69,7 +69,8 @@ def test_numbers_before_and_after_on_the_same_deposit() -> None:
 
     m = measure()
     assert m["forms"] == 18179
-    assert m["before"] == 1743 and m["step1"] == 4815 and m["step2"] == 14912  # الإعلالُ نزولًا
+    # كانت 1,743 / 4,815 / 14,912 قبل قوالب الاسم الأربعة (أ2: فِعْل، فَعَال، فُعَيْل، فَاعُول)
+    assert m["before"] == 1848 and m["step1"] == 5196 and m["step2"] == 15510
     assert m["before"] < m["step1"] < m["step2"]
     assert m["gold_match"] > 14000 and m["gold_match"] + m["gold_among"] > 18000
     assert m["only_wrong"] < m["gold_match"] / 2

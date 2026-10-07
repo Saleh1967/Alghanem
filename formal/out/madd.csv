@@ -119,6 +119,10 @@ mizan,117,12-80-7-72-95,cvcvvcvc,true,true,true,2:tabii,2:tabii
 mizan,118,1-103-80-73-95,cvccvcvc,true,true,true,,
 mizan,119,1-83-12-73-95,cvccvcvc,true,true,true,,
 mizan,120,1-51-12-83-73-95,cvccvccvc,true,true,true,,
+mizan,121,81-75-94,cvccv,true,true,true,,
+mizan,122,80-72-7-94,cvcvvcv,true,true,true,2:tabii,2:arid
+mizan,123,82-72-115-94,cvcvccv,true,true,true,,2:lin
+mizan,124,80-7-74-111-94,cvvcvvcv,true,true,true,1:tabii+3:tabii,1:tabii+3:arid
 madd,84-7-94-111,,false,1:tabii+3:tabii,true,false
 madd,0-51-48-96-7-1,,false,4:muttasil,true,false
 madd,0-63-60-7-95-93-115-100,,false,3:lazimThaqil+6:tabii,false,true

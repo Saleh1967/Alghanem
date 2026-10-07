@@ -102,7 +102,8 @@ def test_jidh_reads_by_descent_with_named_origins() -> None:
     for r in jidh(cells_of("كُنْتُمْ")):
         assert r.stem == cells_of("كُنْ") and r.suf == (("ت", "ضم"), ("م", SUKUN))
         assert ascend(r.ilal, (*r.asl, *r.suf)) == (*r.stem, *r.suf)  # jidh_ascends
-    assert jidh(cells_of("قِيلَ")) == ()  # باسمه: المبنيُّ للمجهول من الأجوف ليس من القواعد
+    # باسمه: المبنيُّ للمجهول من الأجوف ليس من القواعد — لا قراءةَ بالإعلال؛ ويُقرأ اسمًا على فِعْل (121)
+    assert [(r.templates, r.ilal) for r in jidh(cells_of("قِيلَ"))] == [((121,), ())]
 
 
 def test_numbers_on_the_deposit() -> None:
@@ -113,9 +114,12 @@ def test_numbers_on_the_deposit() -> None:
     from gen_ilal_index import measure
 
     m = measure()
-    assert m["forms"] == 18179 and m["with"] == 2138 and m["only"] == 1000
+    # كانت 2,138 و1,000 قبل قوالب الاسم الأربعة (أ2): ما صار يُقرأ مباشرةً على فِعْل/فَعَال لا ينزل
+    # بالإعلال
+    assert m["forms"] == 18179 and m["with"] == 1960 and m["only"] == 644
     assert m["rules"]["QALB_AYN"] > m["rules"]["HADHF_AYN_U"] > m["rules"]["NAQL"]
-    assert m["m_hit"] > 0.9 * m["m_total"] > 8000
+    # كانت 9,249 كلمةً لا تُقرأ إلّا بالإعلال فصارت 7,746 بعد قوالب الاسم (أ2)
+    assert m["m_total"] == 7746 and m["m_hit"] > 0.9 * m["m_total"]
     law = m["law"]
     assert law["itbaq_ta"] == 17 and law["itbaq_tta"] == 108 and law["dzz_ta"] == 20
     assert law["dzz_dal"] == 297 and len(law["kept"]) == 32

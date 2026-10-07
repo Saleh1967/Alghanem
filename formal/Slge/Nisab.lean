@@ -13,7 +13,7 @@ import Slge.Shibh
   لكلّ قالبٍ مودَعٍ ولكلّ جذر (`form_contains_root`). والتضمينُ على الخانات هو الجزئيّةُ المرتَّبة: انعكاسيٌّ
   ومتعدٍّ ومتضادُّ التباين (`contains_refl`، `contains_trans`، `contains_antisymm`) — ترتيبٌ جزئيٌّ مبرهَنٌ
   من نواة Lean لا من نوعٍ مُعرَّفٍ باليد. و**الفصلُ**: الجذرُ الواحد (الجنس) تشقّه القوالبُ أنواعًا متباينة —
-  121 صورةً للميزان متباينةٌ كلُّها (`species_distinct`)، فما اختلف قالبُه اختلفت صورتُه.
+  125 صورةً للميزان متباينةٌ كلُّها (`species_distinct`)، فما اختلف قالبُه اختلفت صورتُه.
 * القارئُ `nisba` يقرأ النسبةَ بين كلمتين من خانتيهما: إسنادٌ (مسندٌ إليه مرفوعٌ أو ضميرٌ أو فعلٌ، ومسند)،
   تقييدٌ (نصبٌ منوَّنٌ، أو جرٌّ، أو تبعيّةٌ في الحالة)، وما سواه لا يُقرأ؛ والتضمينُ بين كلمتين معنًى (الإنسانُ
   حيوان) لا خانة — باسمه.
@@ -104,7 +104,7 @@ theorem form_contains_root (t : Wazn.Template) (ht : t ∈ Wazn.awzan) (r : Wazn
   exact List.Sublist.trans h3 (map_carrier_fill t r)
 
 /-- التضمينُ على الأوزان: سلسلةُ أسلاف الوزن في شبكة البصريّين حتى الجذر، بوقودٍ يكفي الشجرةَ كلَّها. -/
-def F : Nat := 121
+def F : Nat := Wazn.N
 
 def chain (k : Nat) : Nat → List Nat
   | 0 => [k]
@@ -118,7 +118,7 @@ def dist (k : Nat) (fuel : Nat) : Nat := (chain k fuel).length - 1
 set_option maxRecDepth 4096 in
 /-- كلُّ سلسلةٍ تنتهي بالجذر (`network_rooted` بصورةٍ أخرى)، والجذرُ بعدُه صفر. -/
 theorem chains_end_at_root :
-    ((List.range 121).all fun k => (chain k F).getLast? == some Shabaka.root) = true ∧ dist 29 F = 0 := by
+    ((List.range Wazn.N).all fun k => (chain k F).getLast? == some Shabaka.root) = true ∧ dist 29 F = 0 := by
   decide
 
 set_option maxRecDepth 100000 in

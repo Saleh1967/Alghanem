@@ -24,7 +24,7 @@ __all__ = ["F", "chain", "contains", "dist", "form_contains_root", "isnad", "nis
 
 _A, _I, _U, SUKUN = STATES
 Word = tuple[Cell, ...]
-F: Final[int] = 121
+F: Final[int] = 125
 
 
 def isnad(m: Word) -> Word:

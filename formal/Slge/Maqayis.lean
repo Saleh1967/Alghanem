@@ -132,9 +132,9 @@ theorem rank_qala : (rank (Jidh.jidh Ilal.qala)).map attested = [true, true] := 
 
 set_option maxRecDepth 100000 in
 /-- فَرِيقٌ: التنوينُ خانةٌ زائدة على القالب؛ الجذرُ من صورة الجذع بلا تنوين (فَعِيل، فرق مشهود) لا من الجذع
-كما هو — وقراءاتُ فَ+رِيق بالإعلال مشهودةٌ أيضًا (ريق/روق): القرينةُ هنا لا تفصل، وهذا يُقال باسمه. -/
+كما هو — وقراءةُ فَ+رِيق على فِعْل (121) مشهودةٌ أيضًا (ريق): القرينةُ هنا لا تفصل، وهذا يُقال باسمه. -/
 theorem rank_fariqun :
     (rank (Jidh.jidh Jidh.fariqun)).map (fun rd => (attested rd, rd.templates)) =
-      [(true, [53]), (true, [97]), (true, [97]), (true, [97])] := by decide +kernel
+      [(true, [53]), (true, [121])] := by decide +kernel
 
 end Slge.Maqayis

@@ -11,7 +11,7 @@ import Slge.Kulli
   `duplicate_templates`)؛ و**اشتراكُ الصورة** — قالبان مختلفان يلتقيان في كلمة (اِنْتِشَارٌ: اِنْفِعَالٌ من
   ت‑ش‑ر وافْتِعَالٌ من ن‑ش‑ر؛ مَنْحَةٌ: مَفْعَلٌ من ن‑ح‑ت وفَعْلَةٌ من م‑ن‑ح). الالتقاءُ محصور: لا يلتقي قالبان
   على كلمةٍ لجذرين لا ألفَ فيهما إلّا إذا تساوى طولُهما وحالاتُهما وزوائدُهما المتقابلة ولم يقابل ألفًا زائدةً
-  موضعُ أصل (`mayCollide_sound`: لكلّ قالبين ولكلّ جذرين)، وأزواجُ الـ121 التي تستوفي ذلك 42 بعينها
+  موضعُ أصل (`mayCollide_sound`: لكلّ قالبين ولكلّ جذرين)، وأزواجُ الـ125 التي تستوفي ذلك 42 بعينها (قوالبُ الاسم الأربعةُ لا تلتقي بشيء)
   (`collision_pairs_eq`) — فكلُّ اشتراكِ صورةٍ في المعجم المودَع مجدوَلٌ (`homonymy_is_tabled`).
 * **الفهمُ بلا قرينة**: ما قرأه قالبٌ واحد (`unaided`). والميزانُ (ف‑ع‑ل) لا يُشترَك: كلُّ ميزانٍ يُقرأ على صورته
   وحدَها ومعانيه بابُها بعينه (`mizan_unaided`، `mizan_senses`).
@@ -45,7 +45,7 @@ theorem wad_injective (t : Wazn.Template) (ht : Wazn.WF t) (r r' : Wazn.Root)
 
 /-- معاني الكلمة: القوالبُ التي تقرؤها بجذرٍ لا ألفَ فيه (أرقامُها في `Wazn.awzan`). -/
 def senses (w : List SCell) : List Nat :=
-  (List.range 121).filter fun k => Maqam.onTemplateRoot k w
+  (List.range Wazn.N).filter fun k => Maqam.onTemplateRoot k w
 
 /-- صورُ الكلمة: معانيها بعد طيّ القوالب المتطابقة إلى أوّلها. -/
 def classes (w : List SCell) : List Nat :=
@@ -55,7 +55,7 @@ def classes (w : List SCell) : List Nat :=
 def unaided (w : List SCell) : Bool := (senses w).length == 1
 
 /-- الموضوعُ يُستردّ من الموضوع له: القالبُ من معاني ملئه، لكلّ قالبٍ سليم ولكلّ جذرٍ لا ألفَ فيه. -/
-theorem sense_of_fill (k : Nat) (hk : k < 121) (hw : Wazn.WF (Sarf.templ k)) (r : Wazn.Root)
+theorem sense_of_fill (k : Nat) (hk : k < Wazn.N) (hw : Wazn.WF (Sarf.templ k)) (r : Wazn.Root)
     (hr : ∀ i, (r i).val ≠ 1) : k ∈ senses (Wazn.fill (Sarf.templ k) r) := by
   unfold senses
   rw [List.mem_filter]
@@ -70,8 +70,8 @@ theorem sense_of_fill (k : Nat) (hk : k < 121) (hw : Wazn.WF (Sarf.templ k)) (r 
 
 /-- أزواجُ القوالب المتطابقة في المعجم المودَع (`k < q`). -/
 def duplicates : List (Nat × Nat) :=
-  (List.range 121).flatMap fun k =>
-    ((List.range 121).filter fun q => k < q && Sarf.templ k == Sarf.templ q).map fun q => (k, q)
+  (List.range Wazn.N).flatMap fun k =>
+    ((List.range Wazn.N).filter fun q => k < q && Sarf.templ k == Sarf.templ q).map fun q => (k, q)
 
 /-- ستّةُ أزواج: فُعُولٌ (30، 94)، فِعَالٌ (35، 41، 93)، مِفْعَالٌ (51، 60)، فِعْلَةٌ (64، 86) — صورةٌ واحدة
 مودَعةٌ لأكثر من باب (مصدرٌ وجمع، مبالغةٌ وآلة). -/
@@ -128,10 +128,10 @@ theorem mayCollide_sound : ∀ (t u : Wazn.Template) (r r' : Wazn.Root),
 
 /-- أزواجُ القوالب التي قد تلتقي (`k < q`). -/
 def collisionPairs : List (Nat × Nat) :=
-  (List.range 121).flatMap fun k =>
-    ((List.range 121).filter fun q => k < q && mayCollide (Sarf.templ k) (Sarf.templ q)).map fun q => (k, q)
+  (List.range Wazn.N).flatMap fun k =>
+    ((List.range Wazn.N).filter fun q => k < q && mayCollide (Sarf.templ k) (Sarf.templ q)).map fun q => (k, q)
 
-theorem mem_collisionPairs (k q : Nat) (hk : k < q) (hq : q < 121)
+theorem mem_collisionPairs (k q : Nat) (hk : k < q) (hq : q < Wazn.N)
     (h : mayCollide (Sarf.templ k) (Sarf.templ q) = true) : (k, q) ∈ collisionPairs := by
   unfold collisionPairs
   rw [List.mem_flatMap]
@@ -143,7 +143,7 @@ theorem mem_collisionPairs (k q : Nat) (hk : k < q) (hq : q < 121)
 
 /-- كلُّ اشتراكِ صورةٍ في المعجم المودَع مجدوَل: إن التقى قالبان على كلمةٍ لجذرين لا ألفَ فيهما فزوجُهما
 في `collisionPairs`. -/
-theorem homonymy_is_tabled (k q : Nat) (hk : k < q) (hq : q < 121) (r r' : Wazn.Root)
+theorem homonymy_is_tabled (k q : Nat) (hk : k < q) (hq : q < Wazn.N) (r r' : Wazn.Root)
     (hr : ∀ i, (r i).val ≠ 1) (hr' : ∀ i, (r' i).val ≠ 1)
     (h : Wazn.fill (Sarf.templ k) r = Wazn.fill (Sarf.templ q) r') : (k, q) ∈ collisionPairs :=
   mem_collisionPairs k q hk hq (mayCollide_sound _ _ r r' hr hr' h)
@@ -168,15 +168,15 @@ theorem collision_pairs_split :
 /-! ## الميزانُ لا يُشترَك -/
 
 set_option maxRecDepth 100000 in
-/-- كلُّ ميزانٍ من الـ121 يُقرأ على صورةٍ واحدة. -/
+/-- كلُّ ميزانٍ من الـ125 يُقرأ على صورةٍ واحدة. -/
 theorem mizan_unaided :
-    ((List.range 121).all fun k => (classes (Wazn.mizan (Sarf.templ k))).length == 1) = true := by decide
+    ((List.range Wazn.N).all fun k => (classes (Wazn.mizan (Sarf.templ k))).length == 1) = true := by decide
 
 set_option maxRecDepth 100000 in
 /-- معاني الميزان بابُ قالبه بعينه: القوالبُ المطابقةُ له لا غير. -/
 theorem mizan_senses :
-    ((List.range 121).all fun k =>
-      senses (Wazn.mizan (Sarf.templ k)) == (List.range 121).filter fun q => Sarf.templ q == Sarf.templ k)
+    ((List.range Wazn.N).all fun k =>
+      senses (Wazn.mizan (Sarf.templ k)) == (List.range Wazn.N).filter fun q => Sarf.templ q == Sarf.templ k)
       = true := by decide
 
 /-! ## الترادف: صورتان لجذرٍ واحد -/

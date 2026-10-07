@@ -86,12 +86,12 @@ def test_categories_match_lean() -> None:
 
 
 def test_wazn_matches_lean() -> None:
-    """الأوزانُ المودَعة (104) بميزانها خاناتٍ، ترخيصُها، وردُّها الأصلَ = جدولُ `Wazn.awzan`."""
+    """الأوزانُ المودَعة (125) بميزانها خاناتٍ، ترخيصُها، وردُّها الأصلَ = جدولُ `Wazn.awzan`."""
 
     from slge.wazn import AWZAN, FAL, mizan, root_of
 
     rows = _rows("wazn.csv")
-    assert len(rows) == len(AWZAN) == 121
+    assert len(rows) == len(AWZAN) == 125
     for r, w in zip(rows, AWZAN, strict=True):
         m = mizan(w.template)
         assert r[1] == "-".join(str(index(c)) for c in m), w.name
@@ -109,7 +109,7 @@ def test_shabaka_matches_lean() -> None:
     names = [w.name for w in AWZAN]
     by = {w.name: w.template for w in AWZAN}
     rows = _rows("shabaka.csv")
-    assert len(rows) == len(CLASSICAL) == 120 and names[29] == ROOT
+    assert len(rows) == len(CLASSICAL) == 124 and names[29] == ROOT
     for r, (child, parent) in zip(rows, CLASSICAL.items(), strict=True):
         assert (int(r[0]), int(r[1])) == (names.index(child), names.index(parent))
         assert int(r[2]) == len(diff(by[parent], by[child])) and r[3] == "true"
@@ -596,7 +596,7 @@ def test_nisab_matches_lean() -> None:
     rows = _rows("nisab.csv")
     nn = {"isnad": "إسناد", "taqyid": "تقييد", "unread": "—"}
     chains = [r for r in rows if r[0] == "chain"]
-    assert len(chains) == 121
+    assert len(chains) == 125
     for r in chains:
         k = int(r[1])
         assert chain(k) == [int(x) for x in r[2].split("-")] and dist(k) == int(r[3]), r
@@ -619,7 +619,8 @@ def test_talil_matches_lean() -> None:
     an = {"jarr": "جرّ", "inna": "إنّ", "nasbFil": "نصب الفعل"}
     got = {(int(r[1]), int(r[2])) for r in rows if r[0] == "derives"}
     n = len(AWZAN)
-    assert got == {(a, b) for a in range(n) for b in range(n) if derives(a, b)} and len(got) == 339
+    assert got == {(a, b) for a in range(n) for b in range(n) if derives(a, b)}
+    assert len(got) == 345  # 339 قبل قوالب الاسم الأربعة
     for r in rows:
         if r[0] == "derives":
             assert dist(int(r[2])) == int(r[3]) < dist(int(r[1])), r
@@ -776,7 +777,7 @@ def test_kulli_matches_lean() -> None:
     def cells(x: str) -> tuple[tuple[str, str], ...]:
         return tuple(_cell(int(i)) for i in x.split("-"))
 
-    assert sum(r[0] == "mizan" for r in rows) == 121 and sum(r[0] == "table" for r in rows) == 51
+    assert sum(r[0] == "mizan" for r in rows) == 125 and sum(r[0] == "table" for r in rows) == 51
     for r in rows:
         if r[0] == "mizan":
             assert kulli(cells(r[2])) == kn[r[3]], r
@@ -801,7 +802,7 @@ def test_wad_matches_lean() -> None:
     def ks(x: str) -> tuple[int, ...]:
         return tuple(int(i) for i in x.split("+")) if x else ()
 
-    assert sum(r[0] == "mizan" for r in rows) == 121 and sum(r[0] == "wad" for r in rows) == 12
+    assert sum(r[0] == "mizan" for r in rows) == 125 and sum(r[0] == "wad" for r in rows) == 12
     assert tuple((int(r[1]), int(r[2])) for r in rows if r[0] == "pair") == collision_pairs()
     assert tuple((int(r[1]), int(r[2])) for r in rows if r[0] == "dup") == duplicates()
     for r in rows:
@@ -825,7 +826,7 @@ def test_tabayun_matches_lean() -> None:
     def cells(x: str) -> tuple[tuple[str, str], ...]:
         return tuple(_cell(int(i)) for i in x.split("-"))
 
-    assert sum(r[0] == "mizan" for r in rows) == 121 and sum(r[0] == "rel" for r in rows) == 9
+    assert sum(r[0] == "mizan" for r in rows) == 125 and sum(r[0] == "rel" for r in rows) == 9
     for r in rows:
         if r[0] == "mizan":
             m = cells(r[2])
@@ -851,7 +852,7 @@ def test_madd_matches_lean() -> None:
     def hits(x: str) -> list[tuple[int, str]]:
         return [(int(h.split(":")[0]), mn[h.split(":")[1]]) for h in x.split("+")] if x else []
 
-    assert sum(r[0] == "mizan" for r in rows) == 121 and sum(r[0] == "madd" for r in rows) == 15
+    assert sum(r[0] == "mizan" for r in rows) == 125 and sum(r[0] == "madd" for r in rows) == 15
     for r in rows:
         if r[0] == "mizan":
             m = cells(r[2])
@@ -879,7 +880,7 @@ def test_jidh_matches_lean() -> None:
     def cells(x: str) -> tuple[tuple[str, str], ...]:
         return tuple(_cell(int(i)) for i in x.split("-")) if x else ()
 
-    assert sum(r[0] == "mizan" for r in rows) == 121 and sum(r[0] == "jidh" for r in rows) == 10
+    assert sum(r[0] == "mizan" for r in rows) == 125 and sum(r[0] == "jidh" for r in rows) == 10
     readings: dict[str, list[list[str]]] = {}
     for r in rows:
         if r[0] == "mizan":
@@ -992,3 +993,25 @@ def test_maqayis_matches_lean() -> None:
                     for x in got]
             assert mine == readings.get(r[1], []), (r, mine)
     assert n_rank == 12
+
+
+def test_abniya_matches_lean() -> None:
+    """هيكلُ كلّ قالبٍ وعضويّتُه في أبنية سيبويه، وتمايزُ كلّ زوجين، والأزواجُ المسمّاة = جدولُ `Abniya`."""
+
+    from slge.abniya import AMBIGUOUS, SKELETONS, in_abniya, separated, skeleton_of
+    from slge.wazn import AWZAN
+
+    rows = _rows("abniya.csv")
+    assert rows[0] == ["size", str(len(SKELETONS))] and len(SKELETONS) == 158
+    skel = [r for r in rows if r[0] == "skel"]
+    assert len(skel) == len(AWZAN) == 125
+    for r in skel:
+        t = AWZAN[int(r[1])].template
+        assert "-".join(str(x) for x in skeleton_of(t)) == r[2], r
+        assert in_abniya(t) == (r[3] == "true"), r
+    seps = [r for r in rows if r[0] == "sep"]
+    assert len(seps) == 125 * 124 // 2
+    for r in seps:
+        k, q = int(r[1]), int(r[2])
+        assert separated(AWZAN[k].template, AWZAN[q].template) == (r[3] == "true"), r
+    assert [(int(r[1]), int(r[2])) for r in rows if r[0] == "amb"] == list(AMBIGUOUS)

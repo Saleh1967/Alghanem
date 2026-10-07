@@ -47,3 +47,5 @@ import Slge.Ilal
 import Slge.Jidh
 import Slge.MaqayisTable
 import Slge.Maqayis
+import Slge.AbniyaTable
+import Slge.Abniya

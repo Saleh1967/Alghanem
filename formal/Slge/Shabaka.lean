@@ -10,7 +10,7 @@ import Slge.Wazn
   فالصعودُ درجةً درجةً لا يُفقد الفاءَ والعينَ واللام، والحكمُ بعد كلّ درجةٍ على القالب وحدَه
   (`Wazn.licensed_fill_indep`).
 * `edges_apply`: شبكةُ البصريّين المودَعة (120 حافّة): الابنُ = الأبُ بعد عمليّاتِه، بالحساب.
-* `network_rooted`: كلُّ وزنٍ يبلغ الجذرَ (المصدرُ المجرّد فَعْل، الرقم 29) في أقلّ من 121 خطوة.
+* `network_rooted`: كلُّ وزنٍ يبلغ الجذرَ (المصدرُ المجرّد فَعْل، الرقم 29) في أقلّ من 125 خطوة.
 * `network_wf`: ومن ذلك سلامةُ كلّ وزنٍ في الشبكة من سلامة الجذر وحدَها.
 
 الترتيبُ نفسُه (مَن أبو مَن) **معلن** من البصريّين؛ وأنّه ليس أقلَّ الأشجار كلفةً **مقيس** في بايثون
@@ -223,7 +223,12 @@ def edges : List (Nat × Nat × List Step) := [
   (117, 24, [.set 5 3, .del 0]),  -- يَتَفَاعَلُ → تَفَاعَلْ
   (118, 25, [.set 4 3, .del 0, .ins 0 (l 0 1)]),  -- يَنْفَعِلُ → اِنْفَعِلْ
   (119, 26, [.set 4 3, .del 0, .ins 0 (l 0 1)]),  -- يَفْتَعِلُ → اِفْتَعِلْ
-  (120, 28, [.set 5 3, .del 0, .ins 0 (l 0 1)])  -- يَسْتَفْعِلُ → اِسْتَفْعِلْ
+  (120, 28, [.set 5 3, .del 0, .ins 0 (l 0 1)]),  -- يَسْتَفْعِلُ → اِسْتَفْعِلْ
+  -- قوالبُ الاسم على أبنية سيبويه (أ2) من آبائها
+  (121, 29, [.set 0 1]),  -- فَعْلٌ → فِعْلٌ
+  (122, 29, [.set 1 0, .ins 2 (l 1 3)]),  -- فَعْلٌ → فَعَالٌ
+  (123, 29, [.set 0 2, .set 1 0, .ins 2 (l 28 3)]),  -- فَعْلٌ → فُعَيْلٌ
+  (124, 48, [.set 2 2, .ins 3 (l 27 3)])  -- فَاعِلٌ → فَاعُولٌ
 ]
 
 def root : Nat := 29
@@ -244,10 +249,10 @@ def reaches : Nat → Nat → Bool
     | some p => reaches p n
     | none => false
 
-theorem edges_count : edges.length = 120 := by rfl
+theorem edges_count : edges.length = 124 := by rfl
 
 /-- كلُّ وزنٍ يبلغ الجذر. -/
-theorem network_rooted : (List.range 121).all (fun k => reaches k 121) = true := by decide
+theorem network_rooted : (List.range Wazn.N).all (fun k => reaches k Wazn.N) = true := by decide
 
 theorem run_edge_wf (c p : Nat) (es : List Step) (h : (c, p, es) ∈ edges) (w : WF (getT p)) :
     WF (getT c) := by

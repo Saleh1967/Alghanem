@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import csv
 import hashlib
-import unicodedata
 from collections import Counter
 from itertools import product
 from pathlib import Path
@@ -80,26 +79,28 @@ def test_masdar_of_mazid_is_a_declared_pair_of_deposited_awzan() -> None:
 
 
 def test_skeletons_measured_against_sibawayh() -> None:
-    """هياكلُ الأوزان (حروفًا بلا حركات) مقابل أبنية سيبويه المجمَّدة: 103 من 121 مذكورةٌ عنده؛
-    والـ18 الباقيةُ مسمّاةٌ: الأمرُ والمصدرُ القياسيُّ للمزيد وبعضُ المشتقّات والجموع ليست في
-    أبواب الأبنية؛ و122 من هياكله الـ158 خارج الجدول (الجدولُ يصيب 36 هيكلًا بـ103 أوزانٍ مشكولة؛
-    وأكثرُ الباقي رباعيٌّ ونادر): دَين."""
+    """هياكلُ الأوزان (حروفًا بلا حركات، الشدّةُ حرفٌ واحد، التاءُ الأخيرةُ تُسقط، الهمزةُ الأولى وصلًا أو
+    قطعًا) مقابل أبنية سيبويه المختومة: 111 من 125 عنده (منها قوالبُ الاسم الأربعة)؛ والـ14 الباقيةُ
+    مسمّاةٌ بأرقامها (`Abniya.outside_abniya`): مصادرُ الانفعال والافتعال والافعلال والاستفعال، مضارعُ
+    التفعّل والافتعال واسما فاعلهما ومفعولُ الافتعال، منتهى الجموع بالياء، فَعَالَى وفُعَالَى. و122 من
+    هياكله الـ158 خارج الجدول (أكثرُها رباعيٌّ ونادر): دَين. (كان القياسُ بمفتاح الاسم 103/121 قبل أن
+    يُبرهَن الهيكلُ في Lean.)"""
+
+    from slge.abniya import ISM, OUTSIDE, SKELETONS, in_abniya, skeleton_of
 
     raw = SIBAWAYH.read_bytes()
     assert hashlib.sha256(raw).hexdigest() == SIBAWAYH_SHA
     rows = list(csv.DictReader(raw.decode("utf-8").splitlines(), delimiter="\t"))
     skeletons = {r["skeleton"] for r in rows}
-    assert len(skeletons) == 158 and len({r["token"] for r in rows}) == 163
-
-    def key(name: str) -> str:
-        t = "".join(c for c in name.split(" ")[0] if unicodedata.category(c) != "Mn")
-        t = t.replace("ة", "").replace("ى", "ا")
-        return t.replace("أ", "ء").replace("إ", "ء")
-
-    hit = [w.name for w in AWZAN if key(w.name) in skeletons]
-    miss = [w.name for w in AWZAN if key(w.name) not in skeletons]
-    assert len(hit) == 103 and len(miss) == 18, miss
-    assert len(skeletons - {key(w.name) for w in AWZAN}) == 122
+    assert len(skeletons) == 158 == len(SKELETONS) and len({r["token"] for r in rows}) == 163
+    assert {tuple(ALPHABET.index(ch) for ch in sk) for sk in skeletons} == set(SKELETONS)
+    hit = [k for k in range(len(AWZAN)) if in_abniya(AWZAN[k].template)]
+    miss = [k for k in range(len(AWZAN)) if not in_abniya(AWZAN[k].template)]
+    assert len(hit) == 111 and tuple(miss) == OUTSIDE and set(ISM) <= set(hit)
+    assert len(set(SKELETONS) - {skeleton_of(AWZAN[k].template) for k in hit}) >= 122 - 4
+    # الطفرة: هيكلٌ لا أصولَ فيه ليس بناءً
+    assert tuple(ALPHABET.index(ch) for ch in "ففف") not in set(SKELETONS)
+    assert all(20 in sk and 18 in sk and 23 in sk for sk in SKELETONS)  # كلُّ بناءٍ على ف ع ل
 
 
 def test_debts_are_named() -> None:

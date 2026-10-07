@@ -105,7 +105,7 @@ def main (args : List String) : IO Unit := do
   | ["shabaka"] =>
     -- حوافُّ شبكة البصريّين: الابن، الأب، عددُ العمليّات، وهل يبلغ الجذر.
     for e in Shabaka.edges do
-      IO.println s!"{e.1},{e.2.1},{e.2.2.length},{Shabaka.reaches e.1 121}"
+      IO.println s!"{e.1},{e.2.1},{e.2.2.length},{Shabaka.reaches e.1 Wazn.N}"
   | ["khamsa"] =>
     for w in Khamsa.forms do
       let key := "-".intercalate (w.map fun c => toString c.index)
@@ -326,7 +326,7 @@ def main (args : List String) : IO Unit := do
       IO.println s!"kawn,{mh m},{key (Shibh.kawn m)}"
   | ["nisab"] =>
     -- التضمينُ على الأوزان: لكلّ وزنٍ سلسلةُ أسلافه وبعدُه عن الجذر؛ والنسبةُ المقروءةُ على الشواهد.
-    for k in List.range 121 do
+    for k in List.range Wazn.N do
       IO.println s!"chain,{k},{"-".intercalate ((Nisab.chain k Nisab.F).map toString)},{Nisab.dist k Nisab.F}"
     let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
     let nn := fun (n : Nisab.Nisba) => match n with
@@ -338,8 +338,8 @@ def main (args : List String) : IO Unit := do
   | ["talil"] =>
     -- السببيّةُ الاشتقاقيّة: لكلّ وزنٍ أسلافُه (عللُه)؛ وأدواتُ التعليل بخاناتها وعملها؛ والتعليلُ المقروء على الشواهد.
     let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
-    for a in List.range 121 do
-      for b in List.range 121 do
+    for a in List.range Wazn.N do
+      for b in List.range Wazn.N do
         if Talil.derives a b then IO.println s!"derives,{a},{b},{Nisab.dist b Nisab.F}"
     let an := fun (a : Talil.Amal) => match a with
       | .jarrIsm => "jarr" | .innaAmal => "inna" | .nasbFil => "nasbFil"
@@ -466,7 +466,7 @@ def main (args : List String) : IO Unit := do
     let kn := fun (k : Kulli.Kind) => match k with
       | .juzi => "juzi" | .aradi => "aradi" | .hadath => "hadath" | .fil => "fil" | .jamid => "jamid"
       | .unread => "unread"
-    for k in List.range 121 do
+    for k in List.range Wazn.N do
       IO.println s!"mizan,{k},{key (Wazn.mizan (Sarf.templ k))},{kn (Kulli.kulli (Wazn.mizan (Sarf.templ k)))}"
     for w in Categories.pronouns ++ Ishara.forms.map (·.2) ++ Marifa.mawsul.map (·.2) do
       IO.println s!"table,{key w},{kn (Kulli.kulli w)}"
@@ -480,7 +480,7 @@ def main (args : List String) : IO Unit := do
       | .majdul => "majdul" | .mufrad => "mufrad" | .wadMushtarak => "wadMushtarak"
       | .suraMushtarak => "suraMushtarak" | .unread => "unread"
     let ks := fun (l : List Nat) => "+".intercalate (l.map toString)
-    for k in List.range 121 do
+    for k in List.range Wazn.N do
       let m := Wazn.mizan (Sarf.templ k)
       IO.println s!"mizan,{k},{key m},{ks (Wad.senses m)},{ks (Wad.classes m)},{kn (Wad.wad m)}"
     for (k, q) in Wad.collisionPairs do
@@ -496,7 +496,7 @@ def main (args : List String) : IO Unit := do
     let rn := fun (k : Tabayun.Rel) => match k with
       | .munfarid => "munfarid" | .mushtarak => "mushtarak" | .ittihad => "ittihad"
       | .mutabayin => "mutabayin" | .mutadakhil => "mutadakhil" | .unread => "unread"
-    for k in List.range 121 do
+    for k in List.range Wazn.N do
       let m := Wazn.mizan (Sarf.templ k)
       IO.println s!"mizan,{k},{key m},{Tabayun.isolated k},{(Tabayun.mawadd m).length}"
     for (a, b) in [(Tabayun.darbun, Tabayun.qatl), (Tabayun.qatl, Tabayun.darbun), (Tabayun.darbun, Tabayun.dirab),
@@ -512,7 +512,7 @@ def main (args : List String) : IO Unit := do
       | .lazimKhafif => "lazimKhafif" | .arid => "arid" | .lin => "lin" | .silaSughra => "silaSughra"
       | .silaKubra => "silaKubra" | .silent => "silent"
     let hits := fun (l : List (Nat × Madd.Kind)) => "+".intercalate (l.map fun (i, k) => s!"{i}:{mn k}")
-    for k in List.range 121 do
+    for k in List.range Wazn.N do
       let m := Wazn.mizan (Sarf.templ k)
       IO.println s!"mizan,{k},{key m},{"".intercalate ((Madd.kinds m).map kk)},{Madd.continueLicensed m},{Madd.pauseLicensed m},{A116.Ternary.binOK (Madd.kinds m)},{hits (Madd.madd m [] false)},{hits (Madd.madd m [] true)}"
     for (w, n, p) in [(Madd.qalu, ([] : List SCell), false), (Madd.assama, [], false), (Madd.addallin, [], false),
@@ -526,7 +526,7 @@ def main (args : List String) : IO Unit := do
     let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
     let al := fun (a : Jidh.Al) => match a with | .none => "0" | .full => "1" | .silent => "2"
     let ks := fun (l : List Nat) => "+".intercalate (l.map toString)
-    for k in List.range 121 do
+    for k in List.range Wazn.N do
       let m := Wazn.mizan (Sarf.templ k)
       let hits := (List.range 4).map fun st => Jidh.onTemplateMod (Sarf.templ k) (Zuruf.setLast m ⟨st % 4, by omega⟩)
       IO.println s!"mizan,{k},{key m},{(Jidh.lastState (Sarf.templ k)).val},{"".intercalate (hits.map fun b => if b then "1" else "0")},{ks (Jidh.stemSenses (Zuruf.setLast m 1))}"
@@ -581,6 +581,17 @@ def main (args : List String) : IO Unit := do
       for r in rs do
         let roots := (Maqayis.Reading.roots r).map fun ρ => s!"{(ρ 0).val}.{(ρ 1).val}.{(ρ 2).val}"
         IO.println s!"reading,{key w},{Maqayis.attested r},{key r.asl},{ks r.templates},{"+".intercalate roots}"
+  | ["abniya"] =>
+    -- هيكلُ كلّ قالب وعضويّتُه في أبنية سيبويه، وتمايزُ كلّ زوجين، والأزواجُ المسمّاة.
+    IO.println s!"size,{Abniya.abniya.length}"
+    for k in List.range Wazn.N do
+      IO.println s!"skel,{k},{"-".intercalate ((Abniya.skeletonOf (Sarf.templ k)).map toString)},{Abniya.inAbniya (Sarf.templ k)}"
+    for k in List.range Wazn.N do
+      for q in List.range Wazn.N do
+        if k < q then
+          IO.println s!"sep,{k},{q},{Abniya.separated (Sarf.templ k) (Sarf.templ q)}"
+    for p in Abniya.ambiguous do
+      IO.println s!"amb,{p.1},{p.2}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

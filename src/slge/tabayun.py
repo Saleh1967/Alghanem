@@ -4,7 +4,7 @@
 الحصرُ السباعيُّ باعتبار الدالّ والمدلول يُقرأ بعدد الكلمات وعدد الموادّ: منفردٌ، مشترك، متّحدا المادّة
 (ترادفُ صورة)، متباينان (`tabayun`: لا مادّةَ بينهما — متماثلٌ غيرُ انعكاسيّ
 `tabayun_symm`/`tabayun_irrefl`)، ومتداخلان — قسمٌ ثامن تقرؤه الخانة (`seven_not_exhaustive`).
-الأصلُ في الوضع التباين: على القالب المعزول (77 من الـ121 `isolated_count`) جذران مختلفان كلمتان
+الأصلُ في الوضع التباين: على القالب المعزول (81 من الـ125 `isolated_count`) جذران مختلفان كلمتان
 متباينتان على قالبٍ واحد (`tabayun_of_isolated`). القياسُ على MASAQ في `tools/gen_tabayun_index.py`.
 """
 
@@ -75,7 +75,7 @@ def _check() -> None:
     from slge.rawabit import cells_of
     from slge.wazn import fill
 
-    assert sum(isolated(k) for k in range(len(AWZAN))) == 77
+    assert sum(isolated(k) for k in range(len(AWZAN))) == 81  # قوالبُ الاسم الأربعةُ معزولة
     for k in (0, 29, 35, 48):
         assert isolated(k)
         w1, w2 = fill(AWZAN[k].template, ("ك", "ت", "ب")), fill(AWZAN[k].template, ("د", "ر", "س"))

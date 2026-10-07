@@ -45,6 +45,8 @@ EXEMPT_FILES = (
     "tools/gen_ilal_index.py",
     "tools/gen_maqayis_index.py",
     "tools/deposit_maqayis.py",  # يقرأ المصدرَ المختوم ويكتب المودَعَ وجدولَيه؛ لا نصَّ يُطبَّع
+    "tools/deposit_abniya.py",
+    "tools/gen_abniya_index.py",
     "src/slge/order.py",  # يبصم خاناتٍ لا نصًّا
 )
 IO_ATTRS = frozenset(

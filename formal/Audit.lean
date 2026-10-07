@@ -769,3 +769,11 @@ import Slge
 #print axioms Slge.Maqayis.rank_kadhdhabu
 #print axioms Slge.Maqayis.rank_qala
 #print axioms Slge.Maqayis.rank_fariqun
+#print axioms Slge.Abniya.abniya_length
+#print axioms Slge.Abniya.outside_abniya
+#print axioms Slge.Abniya.ism_in_abniya
+#print axioms Slge.Abniya.awzan_lits
+#print axioms Slge.Abniya.separated_sound
+#print axioms Slge.Abniya.ambiguous_sound
+#print axioms Slge.Abniya.awzan_separated
+#print axioms Slge.Abniya.awzan_disjoint

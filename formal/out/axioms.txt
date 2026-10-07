@@ -764,3 +764,11 @@
 'Slge.Maqayis.rank_kadhdhabu' depends on axioms: [propext, Quot.sound]
 'Slge.Maqayis.rank_qala' depends on axioms: [propext, Quot.sound]
 'Slge.Maqayis.rank_fariqun' depends on axioms: [propext, Quot.sound]
+'Slge.Abniya.abniya_length' does not depend on any axioms
+'Slge.Abniya.outside_abniya' depends on axioms: [propext]
+'Slge.Abniya.ism_in_abniya' depends on axioms: [propext]
+'Slge.Abniya.awzan_lits' depends on axioms: [propext]
+'Slge.Abniya.separated_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Abniya.ambiguous_sound' depends on axioms: [propext]
+'Slge.Abniya.awzan_separated' depends on axioms: [propext]
+'Slge.Abniya.awzan_disjoint' depends on axioms: [propext, Classical.choice, Quot.sound]

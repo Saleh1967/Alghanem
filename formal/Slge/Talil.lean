@@ -12,10 +12,10 @@ import Slge.Nisab
   (`li_anna_eq_inna`)، وكَيْ ولِ نصبُ المضارع. كلُّها مرخَّصةٌ (`tools_licensed`) ومن جدول أدوات الربط
   (`tools_in_rawabit`). و**ليس فيها ما يرفع العلّة**: الجرُّ جرٌّ والنصبُ نصبٌ واسمُ لِأَنَّ نصبٌ
   (`talil_never_raf`) — العلّةُ فضلةٌ أبدًا.
-* **السببيّةُ الاشتقاقيّة** (د١٦): المصدرُ علّةُ المشتقّ عند البصريّين — فالعلّيّةُ على الـ121 هي السلفيّةُ في
+* **السببيّةُ الاشتقاقيّة** (د١٦): المصدرُ علّةُ المشتقّ عند البصريّين — فالعلّيّةُ على الـ125 هي السلفيّةُ في
   الشبكة (`derives a b`: `b` سلفُ `a` في `Nisab.chain`)، وهي ترتيبٌ جزئيٌّ **صارم**: لا شيءَ علّةُ نفسه
   (`derives_irrefl`)، وعلّةُ العلّة علّة (`derives_trans`)، ولا دورَ (`derives_asymm`) — الثلاثةُ من
-  ثلاثة جداول مقرَّرة بـ`decide` على 121 و121×121 (لا نوعٌ مُعرَّفٌ باليد). والبعدُ عن الجذر يتناقص على كلّ
+  ثلاثة جداول مقرَّرة بـ`decide` على 125 و125×125 (لا نوعٌ مُعرَّفٌ باليد). والبعدُ عن الجذر يتناقص على كلّ
   سببٍ (`derives_dist`) فلا لانهاية.
 * **التنازع** (د٨): فعلان على معمولٍ واحد — إعمالُ الثاني لقربه (البصريّون): المتنازَعُ فيه معمولُ الأقرب
   ولا يمسّه الأوّلُ (`nearer_works`: الخانةُ مستقلّةٌ عن الفعل الأوّل)، والأوّلُ يُعمَل في ضميره متّصلًا
@@ -122,46 +122,46 @@ theorem min_ajli_jarr (w : List SCell) (hne : w ≠ [])
     licensed minAjli = true :=
   ⟨by decide, Majrurat.caseClass_jarr w hne hk, by decide⟩
 
-/-! ## السببيّةُ الاشتقاقيّة: ترتيبٌ جزئيٌّ صارم على الـ121 -/
+/-! ## السببيّةُ الاشتقاقيّة: ترتيبٌ جزئيٌّ صارم على الـ125 -/
 
 /-- `b` علّةُ `a`: سلفٌ له في شبكة البصريّين (المصدرُ أصلُ المشتقّ). -/
 def derives (a b : Nat) : Bool := (Nisab.chain a Nisab.F).tail.contains b
 
 set_option maxRecDepth 4096 in
-theorem derives_irrefl_all : ((List.range 121).all fun a => !derives a a) = true := by decide
+theorem derives_irrefl_all : ((List.range Wazn.N).all fun a => !derives a a) = true := by decide
 
 set_option maxRecDepth 100000 in
 /-- البعدُ عن الجذر يتناقص على كلّ سبب. -/
 theorem derives_dist_all :
-    ((List.range 121).all fun a => (List.range 121).all fun b =>
+    ((List.range Wazn.N).all fun a => (List.range Wazn.N).all fun b =>
       !derives a b || decide (Nisab.dist b Nisab.F < Nisab.dist a Nisab.F)) = true := by
   decide
 
 set_option maxRecDepth 100000 in
 /-- أسلافُ السلف أسلاف. -/
 theorem derives_trans_all :
-    ((List.range 121).all fun a => (List.range 121).all fun b =>
+    ((List.range Wazn.N).all fun a => (List.range Wazn.N).all fun b =>
       !derives a b || (Nisab.chain b Nisab.F).tail.all fun d => derives a d) = true := by
   decide
 
-theorem derives_irrefl (a : Nat) (ha : a < 121) : derives a a = false := by
+theorem derives_irrefl (a : Nat) (ha : a < Wazn.N) : derives a a = false := by
   have h := List.all_eq_true.1 derives_irrefl_all a (List.mem_range.2 ha)
   simpa using h
 
-theorem derives_dist (a b : Nat) (ha : a < 121) (hb : b < 121) (h : derives a b = true) :
+theorem derives_dist (a b : Nat) (ha : a < Wazn.N) (hb : b < Wazn.N) (h : derives a b = true) :
     Nisab.dist b Nisab.F < Nisab.dist a Nisab.F := by
   have h1 := List.all_eq_true.1 (List.all_eq_true.1 derives_dist_all a (List.mem_range.2 ha)) b
     (List.mem_range.2 hb)
   simpa [h] using h1
 
-theorem derives_trans (a b d : Nat) (ha : a < 121) (hb : b < 121)
+theorem derives_trans (a b d : Nat) (ha : a < Wazn.N) (hb : b < Wazn.N)
     (h₁ : derives a b = true) (h₂ : derives b d = true) : derives a d = true := by
   have h1 := List.all_eq_true.1 (List.all_eq_true.1 derives_trans_all a (List.mem_range.2 ha)) b
     (List.mem_range.2 hb)
   simp only [h₁, Bool.not_true, Bool.false_or] at h1
   exact List.all_eq_true.1 h1 d (List.mem_of_elem_eq_true h₂)
 
-theorem derives_asymm (a b : Nat) (ha : a < 121) (hb : b < 121) (h : derives a b = true) :
+theorem derives_asymm (a b : Nat) (ha : a < Wazn.N) (hb : b < Wazn.N) (h : derives a b = true) :
     derives b a = false := by
   cases hba : derives b a with
   | false => rfl
@@ -172,8 +172,8 @@ theorem derives_asymm (a b : Nat) (ha : a < 121) (hb : b < 121) (h : derives a b
 
 /-- الجذرُ (فَعْلٌ، 29) علّةُ كلّ وزنٍ سواه، ولا علّةَ له. -/
 theorem root_causes_all :
-    ((List.range 121).all fun a => (a == Shabaka.root) || derives a Shabaka.root) = true ∧
-    ((List.range 121).all fun b => !derives Shabaka.root b) = true := by
+    ((List.range Wazn.N).all fun a => (a == Shabaka.root) || derives a Shabaka.root) = true ∧
+    ((List.range Wazn.N).all fun b => !derives Shabaka.root b) = true := by
   refine ⟨?_, ?_⟩ <;> decide
 
 /-! ## التنازع -/

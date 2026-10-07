@@ -35,7 +35,7 @@ def test_tabayun_is_symmetric_and_irreflexive() -> None:
 
 def test_default_is_divergence_on_isolated_templates() -> None:
     iso = [k for k in range(len(AWZAN)) if isolated(k)]
-    assert len(iso) == 77
+    assert len(iso) == 81  # كانت 77 من 121؛ قوالبُ الاسم الأربعةُ معزولة
     non_iso = {k for p in collision_pairs() if p not in duplicates() for k in p}
     assert set(iso) == set(range(len(AWZAN))) - non_iso
     for k in iso:
@@ -57,7 +57,9 @@ def test_seven_fold_division_and_its_eighth() -> None:
     assert rel(cells_of("اِنْتِشَارٌ"), cells_of("نَشْرٌ")) == "متداخلان"
     assert rel(cells_of("كِتَابٌ"), cells_of("كِتَابٌ")) == "منفرد"
     assert rel(cells_of("اِنْتِشَارٌ"), cells_of("اِنْتِشَارٌ")) == "مشترك"
-    assert rel(cells_of("لَا"), darb) == "—" and rel(cells_of("سَوَادٌ"), cells_of("بَيَاضٌ")) == "—"
+    # سَوَادٌ/بَيَاضٌ كانا «—» قبل فَعَال (أ2) فصارا متباينين على قالبٍ واحد؛ وما ليس على قالبٍ يبقى «—»
+    assert rel(cells_of("سَوَادٌ"), cells_of("بَيَاضٌ")) == "متباينان"
+    assert rel(cells_of("لَا"), darb) == "—" and rel(cells_of("إِبْرَاهِيمُ"), darb) == "—"
 
 
 def test_masaq_measurement_and_index() -> None:
@@ -71,7 +73,7 @@ def test_masaq_measurement_and_index() -> None:
     pairs, families = m["pairs"], m["families"]
     assert isinstance(pairs, dict) and isinstance(families, dict)
     total = sum(pairs.values())
-    assert m["forms"] == 936 and m["isolated"] == 77
+    assert m["forms"] == 988 and m["isolated"] == 81  # كانت 936 و77 قبل قوالب الاسم (أ2)
     assert pairs["متباينان"] / total > 0.99 and pairs["متّحدا المادّة"] > 500
     assert pairs["متداخلان"] > 0
     assert families[("ن", "ز", "ل")] == 10 and families[("ك", "ف", "ر")] == 10

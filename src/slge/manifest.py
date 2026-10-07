@@ -64,6 +64,9 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("maqayis", ("Maqayis", "MaqayisTable"), ("maqayis",), "gen_maqayis_index.py",
            "test_maqayis.py", law=True),
     Module("maqayis_table", (), (), None, "test_maqayis.py"),  # مولَّدٌ من المودَع
+    Module("abniya", ("Abniya", "AbniyaTable"), ("abniya",), "gen_abniya_index.py",
+           "test_abniya.py"),
+    Module("abniya_table", (), (), None, "test_abniya.py"),  # مولَّدٌ من المودَع
     # الفهارسُ الجامعة (بلا وحدة)
     Module("bits", (), (), "gen_bits_index.py", "test_bits.py"),
     Module("gates", (), (), None, "test_gates.py"),

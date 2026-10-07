@@ -11,7 +11,7 @@ import Slge.Wad
   فالسبعةُ ليست حاصرةً على الخانات — باسمه.
 * **التباينُ متماثلٌ غيرُ انعكاسيّ**: `tabayun_symm` لكلّ كلمتين، و`shareMadda_self` (كلُّ ذي مادّةٍ يشارك
   نفسَه) فلا كلمةَ تباين نفسَها (`tabayun_irrefl`).
-* **الأصلُ في الوضع التباين**: على القالب المعزول (الذي لا يلتقي بغيره — 77 من الـ121 `isolated_count`)،
+* **الأصلُ في الوضع التباين**: على القالب المعزول (الذي لا يلتقي بغيره — 81 من الـ125 `isolated_count`)،
   جذران مختلفان لا ألفَ فيهما يعطيان كلمتين متباينتين، وهما على قالبٍ واحد: التباينُ في المادّة لا
   يلغي الجنسَ الجامع (الصورة) — `tabayun_of_isolated` لكلّ قالبٍ معزول ولكلّ جذرين. وعلى غير
   المعزول (اِنْتِشَارٌ) يقع التداخل — باسمه.
@@ -80,16 +80,16 @@ theorem tabayun_irrefl (w : List SCell) : tabayun w w = false := by simp [tabayu
 
 /-- القالبُ المعزول: لا يلتقي بقالبٍ غيرِ مطابقٍ له. -/
 def isolated (k : Nat) : Bool :=
-  (List.range 121).all fun q => !Wad.mayCollide (Sarf.templ k) (Sarf.templ q) || Sarf.templ q == Sarf.templ k
+  (List.range Wazn.N).all fun q => !Wad.mayCollide (Sarf.templ k) (Sarf.templ q) || Sarf.templ q == Sarf.templ k
 
 set_option maxRecDepth 100000 in
-/-- 77 قالبًا معزولًا من الـ121؛ وغيرُ المعزول 44 هي أطرافُ أزواج الالتقاء المختلفة. -/
-theorem isolated_count : ((List.range 121).filter isolated).length = 77 := by decide
+/-- 81 قالبًا معزولًا من الـ125 (قوالبُ الاسم الأربعةُ معزولة)؛ وغيرُ المعزول 44 هي أطرافُ أزواج الالتقاء المختلفة. -/
+theorem isolated_count : ((List.range Wazn.N).filter isolated).length = 81 := by decide
 
-theorem templ_wf : ∀ q, q < 121 → Wazn.WF (Sarf.templ q) := by decide
+theorem templ_wf : ∀ q, q < Wazn.N → Wazn.WF (Sarf.templ q) := by decide
 
 /-- على القالب المعزول، كلُّ قالبٍ يقرأ ملأَه (بجذرٍ لا ألفَ فيه) مطابقٌ له، فمادّتُه جذرُه وحدَه. -/
-theorem mawadd_fill_isolated (k : Nat) (hk : k < 121) (hiso : isolated k = true) (r : Wazn.Root)
+theorem mawadd_fill_isolated (k : Nat) (hk : k < Wazn.N) (hiso : isolated k = true) (r : Wazn.Root)
     (hr : ∀ i, (r i).val ≠ 1) :
     ∀ m ∈ mawadd (Wazn.fill (Sarf.templ k) r), m = (some (r 0), some (r 1), some (r 2)) := by
   intro m hm
@@ -121,7 +121,7 @@ theorem mawadd_fill_isolated (k : Nat) (hk : k < 121) (hiso : isolated k = true)
 
 /-- الأصلُ في الوضع التباين: على القالب المعزول، جذران مختلفان لا ألفَ فيهما يعطيان كلمتين متباينتين
 على قالبٍ واحد (التباينُ في المادّة لا يلغي الجنسَ الجامع) — لكلّ قالبٍ معزول ولكلّ جذرين. -/
-theorem tabayun_of_isolated (k : Nat) (hk : k < 121) (hiso : isolated k = true) (r r' : Wazn.Root)
+theorem tabayun_of_isolated (k : Nat) (hk : k < Wazn.N) (hiso : isolated k = true) (r r' : Wazn.Root)
     (hr : ∀ i, (r i).val ≠ 1) (hr' : ∀ i, (r' i).val ≠ 1) (hne : r ≠ r') :
     tabayun (Wazn.fill (Sarf.templ k) r) (Wazn.fill (Sarf.templ k) r') = true ∧
     Sarf.onTemplate (Sarf.templ k) (Wazn.fill (Sarf.templ k) r) = true ∧

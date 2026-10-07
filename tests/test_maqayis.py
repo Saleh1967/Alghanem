@@ -83,14 +83,15 @@ def test_numbers_before_and_after_on_the_same_deposit() -> None:
     m = measure()
     assert m["forms"] == 18179 and m["roots"] == 4561
     b, a = m["before"], m["after"]
-    assert sum(b.values()) == sum(a.values()) == 14912  # لا صورةَ تسقط
-    # الأرقامُ بعد استخراج الجذر من صورة الجذع (`stemForm`) لا من الجذع كما هو: كانت 966 فُصلت
-    # و4,347 بلا قراءةٍ مشهودة (التنوينُ كان يمنع الجذر)، فصارت 1,001 و2,178.
-    assert b["2"] + b["3+"] == 3896 and a["2"] + a["3+"] == 2895  # الفصلُ 1,001
-    assert a["1"] == b["1"] + 1001 and m["none_attested"] == 2178
+    assert sum(b.values()) == sum(a.values()) == 15510  # لا صورةَ تسقط (كانت 14,912)
+    # الأرقامُ بعد قوالب الاسم الأربعة (أ2): كانت 3,896 ← 2,895 (فُصل 1,001) و2,178 بلا قراءةٍ مشهودة؛
+    # وقبل ذلك (الجذرُ من الجذع كما هو) 966 و4,347.
+    assert b["2"] + b["3+"] == 4116 and a["2"] + a["3+"] == 3019  # الفصلُ 1,097
+    assert a["1"] == b["1"] + 1097 and m["none_attested"] == 2238
     mb, ma = m["b"], m["a"]
-    assert mb["match"] == 14478 and mb["among"] == 13527
-    assert ma["match"] == 16304 and ma["among"] == 11243 and ma["dropped"] == 458  # كانت 580
+    assert mb["match"] == 15475 and mb["among"] == 14118  # كانت 14,478 و13,527
+    assert ma["match"] == 17533 and ma["among"] == 11349  # كانت 16,304 و11,243
+    assert ma["dropped"] == 711  # كانت 458
     assert mb["match"] + mb["among"] == ma["match"] + ma["among"] + ma["dropped"]  # الذهبيُّ لا يُخفى
     assert mb["wrong"] == ma["wrong"] and mb["none"] == ma["none"]  # القرينةُ لا تُنشئ قراءة
     gen = str(ROOT_DIR / "tools" / "gen_maqayis_index.py")

@@ -89,7 +89,8 @@ def _check() -> None:
         (False, 2, (2,)), (False, 2, (2,))]
     assert [attested(r) for r in rank(jidh(cells_of("قَالَ")))] == [True, True]
     rs = rank(jidh(cells_of("فَرِيقٌ")))
-    assert [(attested(r), r.templates) for r in rs] == [(True, (53,))] + [(True, (97,))] * 3
+    # فَعِيل بجذر فرق، ثمّ فَ+رِيق على فِعْل (121)
+    assert [(attested(r), r.templates) for r in rs] == [(True, (53,)), (True, (121,))]
     assert roots_of(rs[0]) == (("ف", "ر", "ق"),)
 
 
