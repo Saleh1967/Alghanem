@@ -54,3 +54,5 @@ import Slge.WujudTable
 import Slge.Wujud
 import Slge.MaaniTable
 import Slge.Maani
+import Slge.MukhassasTable
+import Slge.Mukhassas

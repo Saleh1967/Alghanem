@@ -41,5 +41,5 @@ def test_prior_knowledge_is_read_only_above_the_gates() -> None:
     «معلومات سابقة» (حين يوجد) يسكن طبقةَ الحكم أو فوقها."""
     assert "البوابات" in ancestors("الحكم")
     assert "الحكم" not in ancestors("البوابات")
-    for module, layer in MODULE_LAYER.items():
-        assert layer != "الحكم", f"{module}: لا وحدةَ في الحكم قبل الإذن (المادّة ٩)"
+    assert [m for m, layer in MODULE_LAYER.items() if layer == "الحكم"] == ["mukhassas"], \
+        "لا وحدةَ في الحكم بلا إذنٍ مسجَّل (المادّة ٩؛ ADR ١٥)"

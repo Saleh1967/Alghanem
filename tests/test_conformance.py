@@ -1129,3 +1129,29 @@ def test_maani_matches_lean() -> None:
     assert len(zarf) == 4 and [r[2] for r in zarf] == ["true", "true", "false", "false"]
     for r in zarf:
         assert str(is_zarf(tuple(_cell(int(i)) for i in r[1].split("-")))).lower() == r[2], r
+
+
+def test_mukhassas_matches_lean() -> None:
+    """الشجرةُ (معرّف، مستوى، أب، كتاب، جذور)، والقابليّاتُ الموروثة لكلّ كتاب، والحكمُ على شواهد = جدولُ
+    `Mukhassas`."""
+
+    from slge.mukhassas import BOOKS, NODES, judge_in
+
+    rows = _rows("mukhassas.csv")
+    nodes = [r for r in rows if r[0] == "node"]
+    assert len(nodes) == len(NODES) == 1600
+    for r in nodes:
+        n = NODES[int(r[1])]
+        assert (n[1], n[2], n[5]) == (int(r[2]), int(r[3]), int(r[4])), r
+        assert [str(c) for c in n[4]] == ([] if r[5] == "" else r[5].split("+")), r
+    under = [r for r in rows if r[0] == "under"]
+    assert len(under) == len(BOOKS) == 73
+    for r in under:
+        mine = BOOKS[int(r[1])]
+        lean = [] if r[2] == "" else [int(x) for x in r[2].split("+")]
+        assert sorted(set(lean)) == sorted(mine) and len(lean) >= len(mine), r
+    judged = [r for r in rows if r[0] == "judge"]
+    assert len(judged) == 5
+    for r in judged:
+        g, w = judge_in(int(r[1]), int(r[2]))
+        assert (f"mafhum:{w}" if g == "مفهوم" else "malumah") == r[3], r

@@ -921,7 +921,7 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_gates.py::test_ladder_order_and_named_refusals",
        "test:tests/test_gates.py::test_whole_mushaf_climbs_consistently",
        note="قانونُ السُّلَّم مبرهَنٌ على المجرّد؛ البوّاباتُ تركّب الدوالَّ القائمة (مفحوص) ولا تبني قراءة."),
-    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (63 وحدة، 52 جدولًا، 42 فهرسًا): كلُّ وحدةٍ "
+    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (65 وحدة، 53 جدولًا، 43 فهرسًا): كلُّ وحدةٍ "
        "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
        "test:tests/test_gates.py::test_manifest_covers_the_tree",
        note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
@@ -1154,6 +1154,39 @@ _DECLARED: tuple[Claim, ...] = (
        note="«بمعنى مع» و«بمعنى على» و«من أجل» تلزمها قرينةُ المتعلَّق (الفعلُ العامل وجنسُ "
             "المجرور) — دينٌ "
             "باسمه؛ و«أو» بالمقام تحتاج `Uslub` على الجملة."),
+    _c("MUKHASSAS-tree", "شجرةُ المخصّص كما هي من المختوم (1,600 عقدة: 73/337/1,190) بلا إعادة "
+       "تصنيف: "
+       "المعرّفاتُ مواضع، الأبُ أسبقُ وأدنى مستوًى وكتابُ الابن كتابُ أبيه، المستوى الأوّل وحدَه بلا أب، "
+       "وكتابُ كلّ عقدةٍ من المستوى الأوّل", _P,
+       "lean:Slge.Mukhassas.nodes_length", "lean:Slge.Mukhassas.ids_are_positions",
+       "lean:Slge.Mukhassas.parent_lt", "lean:Slge.Mukhassas.parent_level_lt",
+       "lean:Slge.Mukhassas.level_one_iff_no_parent", "lean:Slge.Mukhassas.book_is_level_one",
+       "lean:Slge.Mukhassas.level_counts",
+       "test:tests/test_mukhassas.py::test_tree_is_the_source_tree",
+       note="الاستقراءُ العامّ (الكتابُ ما تبلغه مطاردةُ الأب) غيرُ مكتوبٍ في Lean؛ محليًّا مبرهَن وشاملًا "
+            "مفحوص."),
+    _c("MUKHASSAS-rasm", "ربطُ عناوين الشجرة بجذور المقاييس بالرسم (قاعدةٌ معلَنة: سوابقُ ولواحق، "
+       "ثلاثةُ "
+       "حروف أو أربعةٌ بألف، ألفاظُ الهيكل لا تُربط): 1,080 من 1,600 عقدة، 608 جذرًا متمايزًا؛ قابليّةُ "
+       "الكتاب اتّحادُ جذور ما تحته بالتعريف", _S,
+       "lean:Slge.Mukhassas.caps_length",
+       "test:tests/test_mukhassas.py::test_rasm_linking_is_declared_and_measured",
+       note="النصُّ غيرُ مشكول: الرابطُ «مطابَقٌ بالرسم» لا «مرخَّص»."),
+    _c("MUKHASSAS-hukm", "الحكمُ على (كتاب، جذر) مرتبتان: «مفهوم» بشاهدٍ عقدةٍ في الكتاب يحمل عنوانُها "
+       "الجذر، أو «معلومة» بلا شاهد؛ لا «مفهوم» بلا شاهد، والشاهدُ في القابليّات "
+       "الموروثة، ولا رفضَ ولا "
+       "امتناع؛ شواهد: مشي مفهومٌ تحت أبواب المشي ومعلومةٌ تحت الإنسان، وجري معلومةٌ تحت النخل", _P,
+       "lean:Slge.Mukhassas.mafhum_has_witness", "lean:Slge.Mukhassas.mafhum_in_capsUnder",
+       "lean:Slge.Mukhassas.judge_total", "lean:Slge.Mukhassas.witnesses",
+       "test:tests/test_mukhassas.py::test_judgement_is_two_graded_with_witness",
+       note="أوّلُ وحدات طبقة الحكم فوق السُّلَّم (المادّة ١٠)؛ الغيابُ ليس امتناعًا (المادّة ١٦)؛ الحكمُ "
+            "لـ(كتاب، جذر) لا لـ(مسنَد إليه، مسنَد) بعد."),
+    _c("MUKHASSAS-masaq", "على مودَع المصحف: القراءاتُ الفعليّة الأولى 6,329 صورةً على 1,115 جذرًا (921 "
+       "بلا جذرٍ في المقاييس)؛ يشهد لجذرها كتابٌ في المخصّص: 324 من 1,115 جذرًا (29.1%)، "
+       "2,794 من 6,329 "
+       "صورة (44.1%)", _S,
+       "test:tests/test_mukhassas.py::test_numbers_on_the_deposit",
+       note="قابليّةٌ لجنسٍ ما، لا للمسنَد إليه بعينه؛ والربطُ بالرسم يُسقط ما لم يُربط."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

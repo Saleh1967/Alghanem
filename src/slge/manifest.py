@@ -74,6 +74,9 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("wujud_table", (), (), None, "test_wujud.py"),  # مولَّدٌ من أبواب الأوزان
     Module("maani", ("Maani", "MaaniTable"), ("maani",), "gen_maani_index.py", "test_maani.py"),
     Module("maani_table", (), (), None, "test_maani.py"),  # مولَّدٌ من مودَع معاني الحروف
+    Module("mukhassas", ("Mukhassas", "MukhassasTable"), ("mukhassas",), "gen_mukhassas_index.py",
+           "test_mukhassas.py"),
+    Module("mukhassas_table", (), (), None, "test_mukhassas.py"),  # مولَّدٌ من المخصّص المختوم
     # الفهارسُ الجامعة (بلا وحدة)
     Module("bits", (), (), "gen_bits_index.py", "test_bits.py"),
     Module("nabhani", (), (), "gen_nabhani_index.py", "test_nabhani_index.py"),  # فهرسُ المطابقة

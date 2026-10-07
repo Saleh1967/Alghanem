@@ -813,3 +813,15 @@ import Slge
 #print axioms Slge.Maani.length_rank
 #print axioms Slge.Maani.rank_none
 #print axioms Slge.Maani.witnesses
+#print axioms Slge.Mukhassas.nodes_length
+#print axioms Slge.Mukhassas.ids_are_positions
+#print axioms Slge.Mukhassas.parent_lt
+#print axioms Slge.Mukhassas.level_one_iff_no_parent
+#print axioms Slge.Mukhassas.level_counts
+#print axioms Slge.Mukhassas.caps_length
+#print axioms Slge.Mukhassas.parent_level_lt
+#print axioms Slge.Mukhassas.book_is_level_one
+#print axioms Slge.Mukhassas.mafhum_has_witness
+#print axioms Slge.Mukhassas.mafhum_in_capsUnder
+#print axioms Slge.Mukhassas.judge_total
+#print axioms Slge.Mukhassas.witnesses

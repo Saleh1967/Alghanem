@@ -808,3 +808,15 @@
 'Slge.Maani.length_rank' depends on axioms: [propext, Quot.sound]
 'Slge.Maani.rank_none' depends on axioms: [propext]
 'Slge.Maani.witnesses' depends on axioms: [propext]
+'Slge.Mukhassas.nodes_length' does not depend on any axioms
+'Slge.Mukhassas.ids_are_positions' does not depend on any axioms
+'Slge.Mukhassas.parent_lt' does not depend on any axioms
+'Slge.Mukhassas.level_one_iff_no_parent' does not depend on any axioms
+'Slge.Mukhassas.level_counts' does not depend on any axioms
+'Slge.Mukhassas.caps_length' does not depend on any axioms
+'Slge.Mukhassas.parent_level_lt' depends on axioms: [propext]
+'Slge.Mukhassas.book_is_level_one' depends on axioms: [propext]
+'Slge.Mukhassas.mafhum_has_witness' depends on axioms: [propext, Quot.sound]
+'Slge.Mukhassas.mafhum_in_capsUnder' depends on axioms: [propext, Quot.sound]
+'Slge.Mukhassas.judge_total' depends on axioms: [propext]
+'Slge.Mukhassas.witnesses' depends on axioms: [propext]

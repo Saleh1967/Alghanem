@@ -629,6 +629,16 @@ def main (args : List String) : IO Unit := do
         IO.println s!"rank,{h},{q.nafyBefore},{q.zarfAfter},{"+".intercalate ((Maani.rank q (Maani.sensesOf h)).map sn)}"
     for w in [Zuruf.jarr (Zuruf.stems.getD 0 ("", [])).2, Zuruf.jarr (Zaman.stems.getD 0 ("", [])).2, Jidh.fariqun, Shibh.ilm] do
       IO.println s!"zarf,{key w},{Maani.isZarf w}"
+  | ["mukhassas"] =>
+    -- الشجرةُ (معرّف، مستوى، أب، كتاب، جذور) والقابليّاتُ الموروثة لكلّ كتاب، والحكمُ على شواهد.
+    for n in Mukhassas.nodes do
+      IO.println s!"node,{n.1},{n.2.1},{n.2.2.1},{n.2.2.2.1},{"+".intercalate (n.2.2.2.2.map toString)}"
+    for n in Mukhassas.nodes do
+      if n.2.1 == 1 then
+        IO.println s!"under,{n.1},{"+".intercalate ((Mukhassas.capsUnder n.1).map toString)}"
+    for (b, r) in [(163, 22018), (1, 22018), (979, 4829), (617, 22018), (664, 4829)] do
+      let g := match Mukhassas.judgeIn b r with | .mafhum w => s!"mafhum:{w}" | .malumah => "malumah"
+      IO.println s!"judge,{b},{r},{g}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do
