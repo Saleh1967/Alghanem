@@ -10,8 +10,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from slge.cells import SUKUN, licensed
-from slge.ilal import RULES, apply, ascend, descend, positions, undo
+from slge.ilal import RULES, apply, ascend, descend, positions, record, restore, undo
 from slge.jidh import jidh
+from slge.madd import continue_licensed, pause_licensed
 from slge.rawabit import cells_of
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +42,25 @@ def test_every_rule_ascends_and_descends_exactly() -> None:
     assert apply("NAQL", cells_of("كَتَبَ"), 0) is None
     assert ascend((("HADHF_AYN_U", 0), ("QALB_AYN", 0)), cells_of("قَوَلْ")) is None
     assert ascend((("QALB_AYN", 0), ("HADHF_AYN_U", 0)), cells_of("قَوَلْ")) == cells_of("قُلْ")
+
+
+def test_roundtrip_by_the_alghanem_record() -> None:
+    """الردُّ بسجلّ الغانم بعينه: `restoreEdit (apply ρ u i) (record ρ u i) = u` لكلّ زوجٍ من الجدول."""
+
+    for rule, i, asl, sura in PAIRS:
+        u, w = cells_of(asl), cells_of(sura)
+        rc = record(rule, u, i)
+        assert restore(w, rc) == u, rule  # apply_roundtrip
+        start, inserted, removed = rc
+        assert len(removed) >= 1 and w[:start] == u[:start]  # ما قبل البداية لا يُمسّ
+        assert len(w) - inserted + len(removed) == len(u)
+    # الطفرة: سجلٌّ مزوَّرٌ (بدايةٌ منقولة) لا يردّ الأصل
+    u, w = cells_of("قَوَلَ"), cells_of("قَالَ")
+    assert restore(w, (0, 1, (("و", "فتح"),))) != u
+    # الترخيصُ الثلاثيُّ لا يتغيّر بإبدال تاء الافتعال طاءً أو دالًا (ibdal_ternary)
+    for a, b in (("إِصْتَبَرَ", "إِصْطَبَرَ"), ("إِزْتَادَ", "إِزْدَادَ")):
+        assert continue_licensed(cells_of(a)) == continue_licensed(cells_of(b))
+        assert pause_licensed(cells_of(a)) == pause_licensed(cells_of(b))
 
 
 def test_closure_and_forcing_on_licensing() -> None:
@@ -96,6 +116,10 @@ def test_numbers_on_the_deposit() -> None:
     assert m["forms"] == 18179 and m["with"] == 2138 and m["only"] == 1000
     assert m["rules"]["QALB_AYN"] > m["rules"]["HADHF_AYN_U"] > m["rules"]["NAQL"]
     assert m["m_hit"] > 0.9 * m["m_total"] > 8000
+    law = m["law"]
+    assert law["itbaq_ta"] == 17 and law["itbaq_tta"] == 108 and law["dzz_ta"] == 20
+    assert law["dzz_dal"] == 297 and len(law["kept"]) == 32
+    assert "بسطت" in law["kept"] and "حرصتم" in law["kept"] and "ءصطبر" not in law["kept"]
     res = subprocess.run([sys.executable, str(ROOT_DIR / "tools" / "gen_ilal_index.py"), "--check"],
                          capture_output=True, text=True, cwd=ROOT_DIR)
     assert res.returncode == 0, res.stderr

@@ -549,6 +549,11 @@ def main (args : List String) : IO Unit := do
           let a := match Ilal.apply ρ w i with | some v => key v | none => "-"
           IO.println s!"apply,{j},{key w},{i},{a}"
           IO.println s!"undo,{j},{key w},{i},{"|".intercalate ((Ilal.undo ρ w i).map key)}"
+          match Ilal.apply ρ w i with
+          | some v =>
+            let rc := Ilal.record ρ w i
+            IO.println s!"record,{j},{key w},{i},{rc.start},{rc.insertedLength},{key rc.removed},{key (A116.Recovery.restoreEdit v rc)}"
+          | none => pure ()
       for x in Ilal.descend w w.length do
         IO.println s!"descend,{key w},{chain x.1},{key x.2}"
   | ["rank"] =>

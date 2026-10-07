@@ -18,7 +18,8 @@ from typing import Final
 
 from slge.cells import SUKUN, Cell
 
-__all__ = ["RULES", "Chain", "apply", "ascend", "descend", "down", "positions", "undo", "up"]
+__all__ = ["RULES", "Chain", "Record", "apply", "ascend", "descend", "down", "positions", "record",
+           "restore", "undo", "up"]
 
 Word = tuple[Cell, ...]
 Chain = tuple[tuple[str, int], ...]
@@ -169,6 +170,35 @@ def undo(rule: str, w: Word, i: int) -> tuple[Word, ...]:
     return tuple((*w[:i], *u) for u in down(rule, w[i:]))
 
 
+Record = tuple[int, int, Word]
+"""سجلُّ التعديل (البداية، طولُ المدرَج، المحذوف) — `A116.Recovery.EditRecord` بعينه."""
+
+
+def record(rule: str, u: Word, i: int) -> Record:
+    """سجلُّ تطبيق القاعدة في الموضع `i` من الأصل (`Ilal.record`)."""
+
+    d = u[i:]
+    if rule in ("HADHF_AYN_U", "HADHF_AYN_I") and len(d) >= 2:
+        return (i, 1, d[:2])
+    if rule == "NAQL" and len(d) >= 3:
+        return (i + 1, 2, d[1:3])
+    if rule in ("HADHF_LAM", "HADHF_WAW") and len(d) >= 2:
+        return (i + 1, 0, d[1:2])
+    if rule == "FA_TA" and len(d) >= 1:
+        return (i, 1, d[:1])
+    if len(d) >= 2:
+        return (i + 1, 1, d[1:2])
+    return (i, 0, ())
+
+
+def restore(out: Word, rec: Record) -> Word:
+    """`Recovery.restoreEdit`: ‎take start ++ removed ++ drop (start + inserted)‎ — الردُّ بالسجلّ هو
+    الأصلُ بعينه لكلّ قاعدةٍ وأصلٍ وموضع (`apply_roundtrip`)."""
+
+    start, inserted, removed = rec
+    return (*out[:start], *removed, *out[start + inserted:])
+
+
 def positions(rule: str, n: int) -> tuple[int, ...]:
     """مواضعُ النافذة في جذعٍ طولُه `n`: حذفُ واو المثال في الصدر، وحذفُ لام الناقص في الآخر، والباقي في
     أيّ
@@ -229,6 +259,8 @@ def _check() -> None:
             v = apply(rule, qawala, i)
             if v is not None:
                 assert qawala in undo(rule, v, i), (rule, i)  # لا أصلَ يفوت
+                assert restore(v, record(rule, qawala, i)) == qawala  # الردُّ بالسجلّ (roundtrip)
+    assert restore(cells_of("يَقُولُ"), record("NAQL", cells_of("يَقْوُلُ"), 0)) == cells_of("يَقْوُلُ")
 
 
 _check()

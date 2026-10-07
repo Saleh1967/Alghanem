@@ -1,5 +1,6 @@
 import Slge.Categories
 import Slge.Wazn
+import Slge.Madd
 import A116.Ilal
 
 /-!
@@ -391,6 +392,131 @@ theorem descend_complete (ρ : Rule) (u w : List SCell) (i n : Nat) (hi : i ∈ 
   simp only [descend, List.mem_flatMap, List.mem_cons]
   exact ⟨(ρ, i, u), step1_complete ρ u w i n hi h, Or.inl rfl⟩
 
+/-! ## الردُّ بسجلّ الغانم بعينه (roundtrip)
+
+في الغانم كلُّ قاعدةٍ تعديلٌ له سجلٌّ `EditRecord` (البداية، طولُ المدرَج، المحذوف) يردّه `restoreEdit` بعينه
+(`edit_roundtrip`). هنا `record ρ u i` سجلُّ تطبيق القاعدة، و`apply_roundtrip`: ردُّ الصورة بالسجلّ هو الأصلُ بعينه —
+لكلّ قاعدةٍ وأصلٍ وموضع، وهو مثولُ `edit_roundtrip` نفسِه؛ و`apply_roundtrip_a116`: الشيءُ نفسُه على خانات
+الغانم عبر الجسر، فسجلُّ SLGE هو سجلُّ الغانم. -/
+
+section Roundtrip
+open A116.Recovery
+
+/-- سجلُّ التعديل: البداية، طولُ المدرَج، المحذوفُ من الأصل. -/
+def record (ρ : Rule) (u : List SCell) (i : Nat) : EditRecord SCell :=
+  match ρ, u.drop i with
+  | .qalbAyn, _ :: y :: _ => ⟨i + 1, 1, [y]⟩
+  | .hadhfAynU, p :: y :: _ => ⟨i, 1, [p, y]⟩
+  | .hadhfAynI, p :: y :: _ => ⟨i, 1, [p, y]⟩
+  | .naql, _ :: x :: y :: _ => ⟨i + 1, 2, [x, y]⟩
+  | .qalbLam, _ :: y :: _ => ⟨i + 1, 1, [y]⟩
+  | .hadhfLam, _ :: y :: _ => ⟨i + 1, 0, [y]⟩
+  | .hadhfWaw, _ :: y :: _ => ⟨i + 1, 0, [y]⟩
+  | .faTa, y :: _ => ⟨i, 1, [y]⟩
+  | _, _ :: y :: _ => ⟨i + 1, 1, [y]⟩
+  | _, _ => ⟨i, 0, []⟩
+
+theorem roundtrip_of (L ins R rem : List SCell) (s : Nat) (hs : L.length = s) :
+    restoreEdit (L ++ ins ++ R) ⟨s, ins.length, rem⟩ = L ++ rem ++ R := by
+  subst hs; rw [List.append_assoc]; exact edit_roundtrip L rem ins R
+
+theorem roundtrip_cons (A pre ins R rem : List SCell) (s : Nat) (hs : (A ++ pre).length = s) :
+    restoreEdit (A ++ (pre ++ (ins ++ R))) ⟨s, ins.length, rem⟩ = A ++ (pre ++ (rem ++ R)) := by
+  have := roundtrip_of (A ++ pre) ins R rem s hs
+  simpa only [List.append_assoc] using this
+
+/-- الردُّ بالسجلّ هو الأصلُ بعينه — لكلّ قاعدةٍ وأصلٍ وموضع (مثولُ `edit_roundtrip`). -/
+theorem apply_roundtrip (ρ : Rule) (u w : List SCell) (i : Nat) (h : apply ρ u i = some w) :
+    restoreEdit w (record ρ u i) = u := by
+  have hne : u.drop i ≠ [] := by
+    intro hn; simp only [apply, hn, up_nil, Option.map_none] at h; exact absurd h (by simp)
+  have hlen := take_length_of_drop_ne_nil hne
+  have hu : u = u.take i ++ u.drop i := (List.take_append_drop i u).symm
+  simp only [apply, Option.map_eq_some_iff] at h
+  obtain ⟨v, hv, rfl⟩ := h
+  generalize hd : u.drop i = d at hv hu hne
+  conv => rhs; rw [hu]
+  cases ρ <;> rcases d with _ | ⟨p, _ | ⟨y, _ | ⟨z, _ | ⟨t, r⟩⟩⟩⟩ <;>
+    simp only [up, reduceCtorEq] at hv <;>
+    (split at hv <;> simp only [Option.some.injEq, reduceCtorEq] at hv) <;> subst hv <;>
+    simp only [record, hd] <;>
+    first
+      | exact roundtrip_cons (u.take i) [p] [alif] _ [y] (i + 1) (by simp [hlen])
+      | exact roundtrip_cons (u.take i) [] [⟨p.carrier, 2⟩] _ [p, y] i (by simp [hlen])
+      | exact roundtrip_cons (u.take i) [] [⟨p.carrier, 1⟩] _ [p, y] i (by simp [hlen])
+      | exact roundtrip_cons (u.take i) [p] [⟨y.carrier, z.state⟩, ⟨z.carrier, 3⟩] _ [y, z] (i + 1)
+          (by simp [hlen])
+      | exact roundtrip_cons (u.take i) [p] [] _ [y] (i + 1) (by simp [hlen])
+      | exact roundtrip_cons (u.take i) [] [c 3 3] _ [p] i (by simp [hlen])
+      | exact roundtrip_cons (u.take i) [p] [⟨16, y.state⟩] _ [y] (i + 1) (by simp [hlen])
+      | exact roundtrip_cons (u.take i) [p] [⟨8, y.state⟩] _ [y] (i + 1) (by simp [hlen])
+      | exact roundtrip_cons (u.take i) [p] [c 28 3] _ [y] (i + 1) (by simp [hlen])
+      | exact roundtrip_cons (u.take i) [p] [gw] _ [y] (i + 1) (by simp [hlen])
+
+theorem restoreEdit_map (out : List SCell) (r : EditRecord SCell) :
+    restoreEdit (out.map toCell) ⟨r.start, r.insertedLength, r.removed.map toCell⟩ =
+      (restoreEdit out r).map toCell := by
+  simp [restoreEdit, List.map_append, List.map_take, List.map_drop]
+
+/-- الردُّ على خانات الغانم بسجلّ SLGE بعينه: سجلُّ SLGE هو سجلُّ الغانم عبر الجسر. -/
+theorem apply_roundtrip_a116 (ρ : Rule) (u w : List SCell) (i : Nat) (h : apply ρ u i = some w) :
+    restoreEdit (w.map toCell)
+      ⟨(record ρ u i).start, (record ρ u i).insertedLength, (record ρ u i).removed.map toCell⟩ =
+      u.map toCell := by
+  rw [restoreEdit_map, apply_roundtrip ρ u w i h]
+
+end Roundtrip
+
+/-! ## الإبدالُ والترخيصُ المتدرّج: إبدالُ حاملٍ غيرِ حرف مدٍّ بمثله لا يغيّر الأصنافَ الثلاثة -/
+
+section Ternary
+
+theorem kindsAux_state (y y' : SCell) (h : y.state = y'.state) (r : List SCell) :
+    Madd.kindsAux (some y) r = Madd.kindsAux (some y') r := by
+  cases r with
+  | nil => rfl
+  | cons z t => simp only [Madd.kindsAux, Madd.kindOf, Madd.isMaddAfter, h]; rfl
+
+/-- ليس حرفَ مدّ (ا و ي). -/
+def notMadd (k : Fin 29) : Prop := k.val ≠ 1 ∧ k.val ≠ 27 ∧ k.val ≠ 28
+
+theorem kindOf_carrier (p : Option SCell) (x : SCell) (k : Fin 29) (hk : notMadd k)
+    (hx : notMadd x.carrier) : Madd.kindOf p ⟨k, x.state⟩ = Madd.kindOf p x := by
+  unfold Madd.kindOf
+  cases p with
+  | none => rfl
+  | some q =>
+    simp only [Madd.isMaddAfter]
+    have h1 : (k.val == 1) = false := by simp [hk.1]
+    have h2 : (k.val == 27) = false := by simp [hk.2.1]
+    have h3 : (k.val == 28) = false := by simp [hk.2.2]
+    have h4 : (x.carrier.val == 1) = false := by simp [hx.1]
+    have h5 : (x.carrier.val == 27) = false := by simp [hx.2.1]
+    have h6 : (x.carrier.val == 28) = false := by simp [hx.2.2]
+    simp only [h1, h2, h3, h4, h5, h6, Bool.false_and, Bool.or_self]
+
+theorem ibdal_kinds (l r : List SCell) (x : SCell) (k : Fin 29) (hk : notMadd k) (hx : notMadd x.carrier) :
+    ∀ p, Madd.kindsAux p (l ++ [⟨k, x.state⟩] ++ r) = Madd.kindsAux p (l ++ [x] ++ r) := by
+  induction l with
+  | nil =>
+    intro p
+    simp only [List.nil_append, List.cons_append, List.nil_append, Madd.kindsAux]
+    rw [kindOf_carrier p x k hk hx, kindsAux_state ⟨k, x.state⟩ x rfl r]
+  | cons a l ih =>
+    intro p
+    simp only [List.cons_append, Madd.kindsAux]
+    rw [ih (some a)]
+
+/-- تاءُ الافتعال طاءً أو دالًا وفاؤُه تاءً: الترخيصُ الثلاثيُّ (وصلًا ووقفًا) لا يتغيّر، كما لا يتغيّر الثنائيّ. -/
+theorem ibdal_ternary (l r : List SCell) (x : SCell) (k : Fin 29) (hk : notMadd k) (hx : notMadd x.carrier) :
+    Madd.continueLicensed (l ++ [⟨k, x.state⟩] ++ r) = Madd.continueLicensed (l ++ [x] ++ r) ∧
+    Madd.pauseLicensed (l ++ [⟨k, x.state⟩] ++ r) = Madd.pauseLicensed (l ++ [x] ++ r) := by
+  unfold Madd.continueLicensed Madd.pauseLicensed Madd.kinds
+  rw [ibdal_kinds l r x k hk hx none]
+  exact ⟨rfl, rfl⟩
+
+end Ternary
+
 /-! ## الشواهد بالحساب (خانات SLGE: ء٠ ا١ … ق٢١ ل٢٣ م٢٤ ن٢٥ و٢٧ ي٢٨) -/
 
 def qala : List SCell := [c 21 0, c 1 3, c 23 0]                       -- قَالَ
@@ -432,5 +558,12 @@ theorem closure_witnesses :
     licensed qawala = true ∧ licensed qala = true ∧ licensed [c 21 0, c 1 3, c 23 3] = false ∧
     licensed qul = true ∧ licensed yaqwulu = true ∧ licensed yaqulu = true := by decide
 
+
+/-- الردُّ بالسجلّ على الشواهد (بعينها بالحساب). -/
+theorem roundtrip_witnesses :
+    A116.Recovery.restoreEdit qala (record .qalbAyn qawala 0) = qawala ∧
+    A116.Recovery.restoreEdit yaqulu (record .naql yaqwulu 0) = yaqwulu ∧
+    A116.Recovery.restoreEdit yaidu (record .hadhfWaw yawidu 0) = yawidu ∧
+    A116.Recovery.restoreEdit istabara (record .taTta istabara0 1) = istabara0 := by decide
 
 end Slge.Ilal

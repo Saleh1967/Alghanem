@@ -725,6 +725,14 @@ import Slge
 #print axioms Slge.Ilal.down_mizan
 #print axioms Slge.Ilal.down_istabara
 #print axioms Slge.Ilal.closure_witnesses
+#print axioms Slge.Ilal.apply_roundtrip
+#print axioms Slge.Ilal.apply_roundtrip_a116
+#print axioms Slge.Ilal.restoreEdit_map
+#print axioms Slge.Ilal.kindsAux_state
+#print axioms Slge.Ilal.kindOf_carrier
+#print axioms Slge.Ilal.ibdal_kinds
+#print axioms Slge.Ilal.ibdal_ternary
+#print axioms Slge.Ilal.roundtrip_witnesses
 #print axioms Slge.Jidh.map_carrier_setLast
 #print axioms Slge.Jidh.extract_of_carriers
 #print axioms Slge.Jidh.rootOf_setLast

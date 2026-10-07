@@ -916,7 +916,7 @@ def test_ilal_matches_lean() -> None:
     """الصعودُ والنزولُ لكلّ قاعدةٍ وموضعٍ على كلمات الشواهد، والنزولُ حتى خطوتين بسلاسله = جدولُ "
     "`Ilal`."""
 
-    from slge.ilal import RULES, apply, descend, undo
+    from slge.ilal import RULES, apply, descend, record, restore, undo
 
     rows = _rows("ilal.csv")
 
@@ -926,7 +926,7 @@ def test_ilal_matches_lean() -> None:
     def key(cs: tuple[tuple[str, str], ...]) -> str:
         return "-".join(str(index(c)) for c in cs)
 
-    n_apply = n_undo = 0
+    n_apply = n_undo = n_record = 0
     descents: dict[str, list[tuple[str, str]]] = {}
     for r in rows:
         if r[0] == "apply":
@@ -937,9 +937,16 @@ def test_ilal_matches_lean() -> None:
             us = undo(RULES[int(r[1])], cells(r[2]), int(r[3]))
             assert "|".join(key(u) for u in us) == r[4], r
             n_undo += 1
+        elif r[0] == "record":
+            rule, u, i = RULES[int(r[1])], cells(r[2]), int(r[3])
+            rc = record(rule, u, i)
+            assert (str(rc[0]), str(rc[1]), key(rc[2])) == (r[4], r[5], r[6]), r
+            v = apply(rule, u, i)
+            assert v is not None and key(restore(v, rc)) == r[7] == key(u), r  # roundtrip
+            n_record += 1
         elif r[0] == "descend":
             descents.setdefault(r[1], []).append((r[2], r[3]))
-    assert n_apply == n_undo > 1000 and len(descents) >= 15
+    assert n_apply == n_undo > 1000 and len(descents) >= 15 and n_record == 12
     for w, want in descents.items():
         mine = [(_chain(ch), key(u)) for ch, u in descend(cells(w), len(cells(w)))]
         assert mine == want, (w, mine, want)
