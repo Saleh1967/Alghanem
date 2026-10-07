@@ -968,7 +968,7 @@ def test_maqayis_matches_lean() -> None:
         return "-".join(str(index(c)) for c in cs)
 
     codes = [r for r in rows if r[0] == "code"]
-    assert [r[0] for r in rows[:1]] == ["size"] and int(rows[0][1]) == len(codes) == len(ROOTS) == 4561
+    assert rows[0][0] == "size" and int(rows[0][1]) == len(codes) == len(ROOTS) == 4561
     assert [int(r[1]) for r in codes] == list(ROOTS)
     for r in codes:
         assert decode(int(r[1])) == (int(r[2]), int(r[3]), int(r[4])), r

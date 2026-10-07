@@ -2,8 +2,8 @@
 
 الجذعُ يعيد قراءاتٍ متعدّدة والتعدّدُ يُقرأ كما هو؛ والقرينةُ التي تفصله عضويّةُ جذر القراءة في جدولٍ مختوم
 (مقاييسُ اللغة لابن فارس، 4,561 جذرًا ثلاثيًّا حواملَ في `maqayis_table`، مولَّدٌ من المودَع). العضويّةُ
-دالّةٌ على الخانات لا بحثَ خارج الجدول (`member_sound`)، والعينُ أو اللامُ المعتلّةُ في الطبعة تطابق الواوَ أو
-الياءَ لا غير (`matchesL_weak`)، والترتيبُ بالقرينة — المشهودُ أوّلًا — لا يُسقط قراءةً ولا يزيدها
+دالّةٌ على الخانات لا بحثَ خارج الجدول (`member_sound`)، والعينُ أو اللامُ المعتلّةُ في الطبعة تطابق
+الواوَ أو الياءَ لا غير (`matchesL_weak`)، والترتيبُ بالقرينة — المشهودُ أوّلًا — لا يُسقط قراءةً ولا يزيدها
 (`mem_rank`، `length_rank`)، وقراءةٌ أصلُها على قالبٍ سليم بجذرٍ مشهود مشهودةٌ (`attested_of_member`).
 الجدولُ يفصل ما لم يُشهَد ولا يختار بين مشهودَين (قَالَ: قول وقيل كلاهما في المقاييس — `rank_qala`).
 القياسُ على مودَع شهادات المصحف وعلى قسمة MASAQ المحجوبة في `tools/gen_maqayis_index.py`.
@@ -46,7 +46,8 @@ def member(r: Root) -> bool:
     """العضويّةُ: جذرٌ من الخانات في جدول المقاييس (`member`)."""
 
     a, b, d = _code(r)
-    return any(_matches_l(ta, a) and _matches_l(tb, b) and _matches_l(td, d) for ta, tb, td in _TABLE)
+    return any(_matches_l(ta, a) and _matches_l(tb, b) and _matches_l(td, d)
+               for ta, tb, td in _TABLE)
 
 
 def roots_of(rd: Reading) -> tuple[Root, ...]:
@@ -79,11 +80,11 @@ def _check() -> None:
     assert len(ROOTS) == 4561 and len(_TABLE) == 4561
     assert member(("ق", "و", "ل")) and member(("ق", "ي", "ل")) and member(("ك", "ت", "ب"))
     assert not member(("ذ", "ب", "و"))
-    assert member(("ر", "م", "ي")) and member(("ر", "م", "و"))  # رمى في الطبعة: المعتلّةُ مجهولةُ العين
+    assert member(("ر", "م", "ي")) and member(("ر", "م", "و"))  # رمى: المعتلّةُ مجهولةُ العين
     rs = rank(jidh(cells_of("كَذَّبُو")))
     assert [(attested(r), r.al, r.templates) for r in rs] == [
-        (True, 0, (12,)), (False, 2, (2,)), (False, 2, (0, 36)), (False, 2, (0, 36)), (False, 2, (2,)),
-        (False, 2, (2,))]
+        (True, 0, (12,)), (False, 2, (2,)), (False, 2, (0, 36)), (False, 2, (0, 36)),
+        (False, 2, (2,)), (False, 2, (2,))]
     assert [attested(r) for r in rank(jidh(cells_of("قَالَ")))] == [True, True]
 
 

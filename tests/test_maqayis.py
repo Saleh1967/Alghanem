@@ -25,7 +25,8 @@ DEPOSIT = ROOT_DIR / "tests" / "data" / "maqayis-roots.json.gz"
 def test_deposit_is_sealed_and_the_table_is_generated_from_it() -> None:
     with gzip.open(DEPOSIT, "rt", encoding="utf-8") as f:
         d = json.load(f)
-    assert d["sha256"] == SHA256 == "2c6000bd47797e183294b89da77df4ddfd27921ea595c6071ba52299c382ccb0"
+    assert d["sha256"] == SHA256
+    assert SHA256 == "2c6000bd47797e183294b89da77df4ddfd27921ea595c6071ba52299c382ccb0"
     assert d["rows"] == 4576 and d["distinct_roots"] == 4565 and d["triliteral"] == 4562
     assert sorted(d["skipped_quadriliteral"]) == ["ثأثأ", "جأجأ", "جهجه"]
     assert d["weak_code"] == WEAK == 29 and d["alphabet"] == "".join(ALPHABET)
