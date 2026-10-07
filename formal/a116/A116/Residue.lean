@@ -35,17 +35,18 @@ namespace A116.Residue
 
 open A116.Recovery
 
-/-- رموزُ الرسم: حرفٌ، علامةٌ (فتحة ضمّة كسرة سكون)، شدّة، تنوين. -/
+/-- رموزُ الرسم: حرفٌ، علامةٌ (فتحة ضمّة كسرة سكون)، شدّة، تنوين، ألفٌ خنجريّة (طبعةُ globalquran). -/
 inductive Glyph where
   | letter : Fin 29 → Glyph
   | mark : Fin 4 → Glyph
   | shadda : Glyph
   | tanwin : Fin 3 → Glyph
+  | dagger : Glyph
   deriving DecidableEq, Repr
 
-/-- قواعدُ الطبعة الأربع. -/
+/-- قواعدُ الطبعة الخمس المبرهَنةُ هنا (والباقي في `gate/residue.py` مثولاتٌ لـ`edit_roundtrip` نفسِه). -/
 inductive Rule where
-  | sukun | fariqa | tanwinAlif | idgham
+  | sukun | fariqa | tanwinAlif | idgham | daggerAlif
   deriving DecidableEq, Repr
 
 /-- تعديلٌ واحد: قاعدتُه وسجلُّه. -/
@@ -81,6 +82,13 @@ theorem tanwinAlif_restore (l r : List Glyph) (t : Fin 3) :
 theorem idgham_restore (c : Fin 29) (r : List Glyph) :
     restoreEdit ([.letter c] ++ r) ⟨1, 0, [.shadda]⟩ = [.letter c] ++ [.shadda] ++ r := by
   have := edit_roundtrip [.letter c] [.shadda] [] r
+  simpa using this
+
+/-- `daggerAlif`: الطبعةُ (globalquran، ومنها مدوّنةُ hamil) كتبت ألفًا خنجريّةً فوق الحرف (الرَّحْمَٰنِ)؛ الإصلاحُ
+يحذفها فتصير الصورةُ صورةَ المدوّنة المختومة بعينها (الرَّحْمَنِ)؛ السجلُّ يعيدها في موضعها. -/
+theorem daggerAlif_restore (l r : List Glyph) :
+    restoreEdit (l ++ r) ⟨l.length, 0, [.dagger]⟩ = l ++ [.dagger] ++ r := by
+  have := edit_roundtrip l [.dagger] [] r
   simpa using this
 
 /-! ## السلسلة -/

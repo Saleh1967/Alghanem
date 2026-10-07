@@ -45,8 +45,10 @@ PROCLITICS: Final = "\u0648\u0641\u0628\u0644\u0643\u0623"  # و ف ب ل ك أ
 LETTERS: Final[frozenset[str]] = frozenset("ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىي" + ALIF_WASLA)
 """حروفُ الرسم التي يعرفها الجسر (`bridge._is_arabic_letter`): قاعدةُ السكون لا تُطبَّق على غيرها
 (واوٌ صغيرة، ياءٌ صغيرة، تطويل، ترقيم…) كي لا تُصنع علامةٌ بلا حرفٍ تُقرأ كلمةً ثانية."""
+DAGGER: Final = "\u0670"
 RULES: Final[tuple[str, ...]] = (
-    "IDGHAM", "TANWIN_ALIF", "FARIQA", "WASL", "WASL_SILENT", "SHAMSI", "ASSIM", "SUKUN",
+    "DAGGER_ALIF", "IDGHAM", "TANWIN_ALIF", "FARIQA", "WASL", "WASL_SILENT", "SHAMSI", "ASSIM",
+    "SUKUN",
 )
 
 
@@ -88,6 +90,13 @@ def repair(surface: str) -> tuple[str, tuple[Edit, ...]]:
 
     cl = clusters(surface)
     edits: list[Edit] = []
+
+    # 0. DAGGER_ALIF: ألفٌ خنجريّةٌ فوق الحرف (طبعةُ globalquran: الرَّحْمَٰنِ) — تُحذف فتصير الصورةُ صورةَ
+    #    المدوّنة المختومة بعينها، ويُسجَّل العنقودُ كما ورد فيُردّ بعينه (`Residue.daggerAlif_restore`).
+    for i, c in enumerate(cl):
+        if DAGGER in c:
+            edits.append(("DAGGER_ALIF", i, c))
+            cl[i] = c.replace(DAGGER, "")
 
     # 1. IDGHAM
     if cl and SHADDA in cl[0]:
@@ -179,6 +188,8 @@ def unrepair(canonical: str, residue: tuple[Edit, ...]) -> str:
             cl[i + 1] = cl[i + 1][0] + FATHATAN
         elif rule == "IDGHAM":
             cl[0] = cl[0][0] + removed + cl[0][1:]
+        elif rule == "DAGGER_ALIF":
+            cl[i] = removed
         else:
             raise ValueError(f"UNKNOWN_RULE:{rule}")
     return "".join(cl)

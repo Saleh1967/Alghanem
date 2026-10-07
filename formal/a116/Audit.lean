@@ -110,6 +110,7 @@ import A116
 #print axioms A116.Residue.fariqa_restore
 #print axioms A116.Residue.tanwinAlif_restore
 #print axioms A116.Residue.idgham_restore
+#print axioms A116.Residue.daggerAlif_restore
 #print axioms A116.Residue.chain_restore
 #print axioms A116.Residue.residue_separates
 #print axioms A116.Unicode.decode_encode
