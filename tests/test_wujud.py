@@ -91,9 +91,9 @@ def test_numbers_on_the_deposit_and_masaq() -> None:
     import sys
 
     sys.path.insert(0, str(ROOT_DIR / "tools"))
-    from gen_wujud_index import FIL as F
     from gen_wujud_index import measure
 
+    F = FIL
     m = measure()
     assert m["forms"] == 18179 and sum(m["dist"].values()) == 18179 and m["dist"]["—"] == 2669
     assert m["dist"][F] == 7250 and m["masaq"] == 25799 and m["none"] == 1952
