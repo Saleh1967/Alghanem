@@ -921,7 +921,7 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_gates.py::test_ladder_order_and_named_refusals",
        "test:tests/test_gates.py::test_whole_mushaf_climbs_consistently",
        note="قانونُ السُّلَّم مبرهَنٌ على المجرّد؛ البوّاباتُ تركّب الدوالَّ القائمة (مفحوص) ولا تبني قراءة."),
-    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (57 وحدة، 49 جدولًا، 38 فهرسًا): كلُّ وحدةٍ "
+    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (58 وحدة، 50 جدولًا، 39 فهرسًا): كلُّ وحدةٍ "
        "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
        "test:tests/test_gates.py::test_manifest_covers_the_tree",
        note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
@@ -1061,6 +1061,35 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_abniya.py::test_numbers_before_and_after_on_the_same_deposit",
        note="ما نقص يُذكر: صورٌ تُقرأ بالإعلال 2,138 ← 1,960 (صارت تُقرأ مباشرةً على فِعْل/فَعَال)، "
             "وما تقرؤه الجداول (إِنَّ، مِنْ) صار يُقرأ على فِعْل أيضًا — الجداولُ قبل القوالب (أ4)."),
+    # — الأدواتُ علاقاتٍ تشغيليّة —
+    _c("ADAWAT-structure", "كلُّ أداةٍ من الجدول الموحَّد (68) على بنيةٍ واحدة: الصورةُ خاناتٍ، الرتبةُ، "
+       "أصنافُ المعمولات بعدد الرتبة، والعاملُ في الاسم معمولُه الأوّل اسمٌ وفي الفعل فعلٌ والعاطفُ "
+       "ثنائيّ؛ والعملُ دالّةٌ على خانة آخر المعمول تعيد مرخَّصًا على المعرب (لكلّ أداةٍ وكلمة)، "
+       "والجزمُ بتسكينٍ مرخَّصٍ ما لم يسبقه مدّ", _P,
+       "lean:Slge.Adawat.table_length", "lean:Slge.Adawat.args_arity",
+       "lean:Slge.Adawat.args_of_amal", "lean:Slge.Adawat.apply_licensed",
+       "lean:Slge.Adawat.apply_jazm_licensed",
+       "test:tests/test_adawat.py::test_amal_is_a_licensed_function_on_the_last_cell",
+       note="نوعُ العلاقة (تعدية، توكيد، نفي، شرط، جمع، ترتيب، تخيير…) عمودٌ معلَنٌ من كتب حروف "
+            "المعاني لا مبرهَن: الخاناتُ لا تحمل معنى، ولا جداولَ صدقٍ هنا."),
+    _c("ADAWAT-composition", "التركيبُ بعينه والكفّ: كَأَنَّ = كَ ++ أَنَّ، أَلَا = أَ ++ لَا، أَمَا = أَ ++ مَا، "
+       "لِكَيْ = لِ ++ كَيْ وكَيْلَا = كَيْ ++ لَا بعملِ كَيْ، وإِنَّمَا = إِنَّ ++ مَا بلا عمل", _P,
+       "lean:Slge.Adawat.compositions", "lean:Slge.Nawasikh.kaffa_forms",
+       "test:tests/test_adawat.py::test_compositions_and_kaff_are_exact"),
+    _c("ADAWAT-rank", "الأداةُ المجاورة تقدّم قراءاتِ جارتها التي صنفُها صنفُ معمولها الأوّل ولا تُسقط "
+       "قراءةً ولا تزيدها (لكلّ أداةٍ وقائمة)؛ وعلى الشاهد: لَمْ تجزم يَكْتُبُ وإِنَّ تنصب كِتَابٌ وتُبقي "
+       "قراءتَي فَرِيقٌ", _P,
+       "lean:Slge.Adawat.mem_rank", "lean:Slge.Adawat.length_rank", "lean:Slge.Adawat.witnesses",
+       "test:tests/test_adawat.py::test_rank_puts_the_fitting_category_first_and_drops_nothing",
+       note="بوّابةُ «الأدوات» في السُّلَّم بعد الجذع تقرأ الأداةَ السابقة من السياق "
+            "(`climb(prev=…)`)."),
+    _c("ADAWAT-masaq", "على قسمة MASAQ المحجوبة (40,731؛ 29,866 لها تالية): بعد الجارّ القائم بنفسه "
+       "التاليةُ مجرورةٌ 89.8% (3,701)، وبعد ناصب الفعل منصوبةٌ 80.0% بلا مخالف، وبعد الجازم مجزومةٌ "
+       "بلا مخالف؛ والجارُّ المتّصل 81.5%؛ وللتالية ذات القراءات من الصنفين (593): القراءةُ الأولى "
+       "بصنف المرجع 49.9% ← 96.5% بترتيب الأداة", _S,
+       "test:tests/test_adawat.py::test_numbers_before_and_after_on_masaq",
+       note="المخالفُ باسمه: معمولُ الأداة ليس التاليةَ دائمًا، والصورةُ المشتركة (لَا ×4) تُؤخذ بأوّل "
+            "مدخل فضعف «نصب الاسم» (21.4%) — فصلُ المشترك شأنُ الجملة."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

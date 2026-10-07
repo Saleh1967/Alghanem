@@ -592,6 +592,20 @@ def main (args : List String) : IO Unit := do
           IO.println s!"sep,{k},{q},{Abniya.separated (Sarf.templ k) (Sarf.templ q)}"
     for p in Abniya.ambiguous do
       IO.println s!"amb,{p.1},{p.2}"
+  | ["adawat"] =>
+    -- لكلّ أداة: الصورةُ، الرتبةُ، الأصنافُ، العملُ على شاهدين (اسمٌ وفعلٌ معربان)، ونوعُ العلاقة؛ والترتيبُ على الشواهد.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let cat := fun (k : Adawat.Cat) => match k with | .ism => "ism" | .fil => "fil" | .jumla => "jumla" | .ay => "ay"
+    let kitabu := [Categories.c 22 1, Categories.c 3 0, Categories.c 1 3, Categories.c 2 2]
+    for (a, k) in Adawat.table.zip (List.range Adawat.table.length) do
+      IO.println s!"adat,{k},{key a.harf.cells},{a.arity},{"+".intercalate (a.args.map cat)},{repr a.rel},{key (Adawat.apply a kitabu)},{key (Adawat.apply a Adawat.yaktubu)}"
+    for (w, p) in [(Jidh.fariqun, Adawat.inna), (Jidh.fariqun, Adawat.lam), (Jidh.wajada, Adawat.lam), (Jidh.kadhdhabu, Adawat.inna),
+                   (Madd.qalu, Adawat.lam), (Jidh.walard, [Categories.c 20 1, Categories.c 28 3])] do
+      match Adawat.ofCells p with
+      | some a =>
+        let rs := Adawat.rank a (Maqayis.rank (Jidh.jidh w))
+        IO.println s!"rank,{key w},{key p},{rs.length},{"+".intercalate (rs.map fun rd => (if Adawat.fits a rd then "1" else "0") ++ "." ++ (cat (Adawat.catOf rd)))}"
+      | none => IO.println s!"rank,{key w},{key p},none,"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

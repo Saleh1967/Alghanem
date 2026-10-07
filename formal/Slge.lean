@@ -49,3 +49,4 @@ import Slge.MaqayisTable
 import Slge.Maqayis
 import Slge.AbniyaTable
 import Slge.Abniya
+import Slge.Adawat

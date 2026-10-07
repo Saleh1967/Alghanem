@@ -1015,3 +1015,51 @@ def test_abniya_matches_lean() -> None:
         k, q = int(r[1]), int(r[2])
         assert separated(AWZAN[k].template, AWZAN[q].template) == (r[3] == "true"), r
     assert [(int(r[1]), int(r[2])) for r in rows if r[0] == "amb"] == list(AMBIGUOUS)
+
+
+def test_adawat_matches_lean() -> None:
+    """لكلّ أداة: الصورةُ والرتبةُ والأصنافُ والعملُ على شاهدين ونوعُ العلاقة، والترتيبُ على الشواهد = جدولُ
+    `Adawat`."""
+
+    from slge.adawat import TABLE_ADAWAT, apply, cat_of, fits, of_cells, rank
+    from slge.jidh import jidh
+    from slge.maqayis import rank as rank_maqayis
+
+    rows = _rows("adawat.csv")
+    cat = {"اسم": "ism", "فعل": "fil", "جملة": "jumla", "أيّ": "ay"}
+    rel = {"تعدية": "taadiya", "استثناء": "istithna", "تقليل": "taqlil", "توكيد": "tawkid",
+           "تشبيه": "tashbih", "استدراك": "istidrak", "تمنٍّ": "tamanni", "ترجٍّ": "tarajji",
+           "نداء": "nida", "نفي": "nafy", "معيّة": "maiyya", "مصدريّة": "masdariyya", "جزاء": "jaza",
+           "أمر": "amr", "نهي": "nahy", "شرط": "shart", "تنفيس": "tanfis", "ردع": "rad",
+           "تحقيق": "tahqiq", "جمع": "jam", "ترتيب وتعقيب": "tartibTaqib",
+           "ترتيب وتراخٍ": "tartibTarakhi", "غاية": "ghaya", "تخيير": "takhyir", "إضراب": "idrab",
+           "استفهام": "istifham", "استفتاح": "istiftah"}
+
+    def cells(x: str) -> tuple[Cell, ...]:
+        return tuple(_cell(int(i)) for i in x.split("-")) if x else ()
+
+    def key(cs: tuple[Cell, ...]) -> str:
+        return "-".join(str(index(c)) for c in cs)
+
+    kitabu, yaktubu = cells("89-12-7-10"), cells("112-91-14-10")  # كِتَابُ، يَكْتُبُ
+    adat = [r for r in rows if r[0] == "adat"]
+    assert len(adat) == len(TABLE_ADAWAT) == 68
+    for r in adat:
+        a = TABLE_ADAWAT[int(r[1])]
+        assert key(a.harf.cells) == r[2] and a.arity == int(r[3]), r
+        assert "+".join(cat[x] for x in a.args) == r[4], r
+        assert r[5] == f"Slge.Adawat.Rel.{rel[a.rel]}", r
+        assert key(apply(a, kitabu)) == r[6] and key(apply(a, yaktubu)) == r[7], r
+    ranks = [r for r in rows if r[0] == "rank"]
+    assert len(ranks) == 6
+    for r in ranks:
+        found = of_cells(cells(r[2]))
+        if r[3] == "none":
+            assert found is None, r
+            continue
+        assert found is not None
+        a = found
+        rs = rank(a, rank_maqayis(jidh(cells(r[1]))))
+        assert len(rs) == int(r[3]), r
+        mine = "+".join(("1" if fits(a, x) else "0") + "." + cat[cat_of(x)] for x in rs)
+        assert mine == r[4], (r, mine)

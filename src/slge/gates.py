@@ -20,6 +20,8 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from typing import Any, Final
 
+from slge.adawat import of_cells
+from slge.adawat import rank as rank_adawat
 from slge.categories import PRONOUNS
 from slge.cells import Cell, fold, licensed
 from slge.entry import from_atoms, to_atoms
@@ -106,6 +108,17 @@ def _g5(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
     return Pass("الجذع", rs, "؛ ".join(notes) if rs else "لا قطعَ من الجداول يضع جذعًا على قالب")
 
 
+def _g5b(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
+    """الأداةُ المجاورة قبل الكلمة تقدّم قراءاتِ صنف معمولها الأوّل ولا تُسقط قراءة (`Adawat.rank`)."""
+
+    prev: Word = ctx.get("prev", ())
+    a = of_cells(prev) if prev else None
+    if a is None:
+        return Pass("الأدوات", None, "لا أداةَ قبلها")
+    rs = rank_adawat(a, rank(jidh(w)))
+    return Pass("الأدوات", (a.harf.name, rs), f"{a.rel}؛ معمولُها {'/'.join(a.args)}")
+
+
 def _g6(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
     s = senses(w)
     return Pass("الصرف", s, "" if s else "الصورةُ كما هي على غير قالب؛ انظر قراءاتِ الجذع")
@@ -124,15 +137,17 @@ def _g8(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
 
 LADDER: Final[tuple[Gate, ...]] = (
     Gate("الخانة", True, _g1), Gate("الترخيص", True, _g2), Gate("العدد", True, _g3),
-    Gate("الجداول", False, _g4), Gate("الجذع", False, _g5), Gate("الصرف", False, _g6),
+    Gate("الجداول", False, _g4), Gate("الجذع", False, _g5), Gate("الأدوات", False, _g5b),
+    Gate("الصرف", False, _g6),
     Gate("الإعراب", False, _g7), Gate("الجواب", False, _g8),
 )
 
 
-def climb(atoms: Sequence[str], nxt: Word = (), pause: bool = False) -> tuple[Pass | Refusal, ...]:
+def climb(atoms: Sequence[str], nxt: Word = (), pause: bool = False,
+          prev: Word = ()) -> tuple[Pass | Refusal, ...]:
     """يصعد السُّلَّمَ من ذرّات الشهادة ويقف عند أوّل رفضٍ حاكم؛ البوّاباتُ القارئة لا توقف."""
 
-    ctx: dict[str, Any] = {"atoms": tuple(atoms), "next": nxt, "pause": pause}
+    ctx: dict[str, Any] = {"atoms": tuple(atoms), "next": nxt, "pause": pause, "prev": prev}
     trace: list[Pass | Refusal] = []
     w: Word = ()
     for g in LADDER:

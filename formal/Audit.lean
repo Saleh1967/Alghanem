@@ -777,3 +777,12 @@ import Slge
 #print axioms Slge.Abniya.ambiguous_sound
 #print axioms Slge.Abniya.awzan_separated
 #print axioms Slge.Abniya.awzan_disjoint
+#print axioms Slge.Adawat.table_length
+#print axioms Slge.Adawat.args_arity
+#print axioms Slge.Adawat.args_of_amal
+#print axioms Slge.Adawat.apply_licensed
+#print axioms Slge.Adawat.apply_jazm_licensed
+#print axioms Slge.Adawat.compositions
+#print axioms Slge.Adawat.mem_rank
+#print axioms Slge.Adawat.length_rank
+#print axioms Slge.Adawat.witnesses

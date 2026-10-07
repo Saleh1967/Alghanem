@@ -772,3 +772,12 @@
 'Slge.Abniya.ambiguous_sound' depends on axioms: [propext]
 'Slge.Abniya.awzan_separated' depends on axioms: [propext]
 'Slge.Abniya.awzan_disjoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Adawat.table_length' does not depend on any axioms
+'Slge.Adawat.args_arity' does not depend on any axioms
+'Slge.Adawat.args_of_amal' does not depend on any axioms
+'Slge.Adawat.apply_licensed' depends on axioms: [propext, Quot.sound]
+'Slge.Adawat.apply_jazm_licensed' depends on axioms: [propext]
+'Slge.Adawat.compositions' depends on axioms: [propext]
+'Slge.Adawat.mem_rank' depends on axioms: [propext]
+'Slge.Adawat.length_rank' depends on axioms: [propext, Quot.sound]
+'Slge.Adawat.witnesses' depends on axioms: [propext, Quot.sound]
