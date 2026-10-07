@@ -36,6 +36,7 @@ from slge.maqayis import attested, rank
 from slge.marifa import MAWSUL
 from slge.tawabi import case_class
 from slge.wad import senses, wad
+from slge.wujud import ont_of_reading
 
 __all__ = ["LADDER", "Gate", "Pass", "Refusal", "climb", "exit_atoms"]
 
@@ -131,7 +132,9 @@ def _g7(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
 
 def _g8(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
     nxt: Word = ctx.get("next", ())
+    rs = rank(jidh(w))
     return Pass("الجواب", {"الكليّ": kulli(w), "الوضع": wad(w), "الصيغة": sigha(w),
+                          "الوجود": ont_of_reading(rs[0]) if rs else "—",
                           "المدود": madd(w, nxt, bool(ctx.get("pause", False)))})
 
 

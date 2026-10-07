@@ -74,7 +74,7 @@ def test_manifest_covers_the_tree() -> None:
     import subprocess
     import sys
 
-    assert len(MODULES) >= 50 and len(tables()) == 50 and len(index_tools()) == 39
+    assert len(MODULES) >= 50 and len(tables()) == 51 and len(index_tools()) == 40
     res = subprocess.run([sys.executable, str(ROOT_DIR / "tools" / "check_manifest.py")],
                          capture_output=True, text=True, cwd=ROOT_DIR)
     assert res.returncode == 0, res.stderr
@@ -90,7 +90,7 @@ def test_readers_under_the_law() -> None:
 
     gates_src = (ROOT_DIR / "src" / "slge" / "gates.py").read_text(encoding="utf-8")
     law = readers_under_law()
-    assert {m.name for m in law} >= {"madd", "jidh", "maqayis", "adawat"}
+    assert {m.name for m in law} >= {"madd", "jidh", "maqayis", "adawat", "wujud"}
     for m in law:
         assert re.search(rf"^from slge\.{m.name} import ", gates_src, re.M), f"{m.name}: ليس بوّابة"
         assert m.index, f"{m.name}: بلا فهرسٍ يقيسه"

@@ -921,7 +921,7 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_gates.py::test_ladder_order_and_named_refusals",
        "test:tests/test_gates.py::test_whole_mushaf_climbs_consistently",
        note="قانونُ السُّلَّم مبرهَنٌ على المجرّد؛ البوّاباتُ تركّب الدوالَّ القائمة (مفحوص) ولا تبني قراءة."),
-    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (58 وحدة، 50 جدولًا، 39 فهرسًا): كلُّ وحدةٍ "
+    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (60 وحدة، 51 جدولًا، 40 فهرسًا): كلُّ وحدةٍ "
        "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
        "test:tests/test_gates.py::test_manifest_covers_the_tree",
        note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
@@ -1090,6 +1090,39 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_adawat.py::test_numbers_before_and_after_on_masaq",
        note="المخالفُ باسمه: معمولُ الأداة ليس التاليةَ دائمًا، والصورةُ المشتركة (لَا ×4) تُؤخذ بأوّل "
             "مدخل فضعف «نصب الاسم» (21.4%) — فصلُ المشترك شأنُ الجملة."),
+    # — الجهةُ الوجوديّة: المصدرُ والمشتقُّ والجامدُ تقسيمًا مغلقًا —
+    _c("WUJUD-partition", "كلُّ قالبٍ من الـ125 على صنفٍ واحد من ستّة (فعل 37، مصدر 22، وصفٌ مشتقّ 25، "
+       "ظرفٌ وآلة 7، صيغةُ جمع 30، اسمٌ 4)؛ الفعلُ هو قوائمُ الماضي والمضارع والأمر بعينها، والمصدرُ "
+       "قوالبُ المصدر بعينها، والوصفُ داخل قوالب الوصف إلّا فُعَلَاءُ جمعًا", _P,
+       "lean:Slge.Wujud.table_length", "lean:Slge.Wujud.table_length_N",
+       "lean:Slge.Wujud.class_counts", "lean:Slge.Wujud.fil_eq",
+       "lean:Slge.Wujud.masdar_eq", "lean:Slge.Wujud.wasf_derived",
+       "test:tests/test_wujud.py::test_partition_is_total_and_six_fold",
+       note="الأصنافُ من أبواب الأوزان المودَعة (معلَن)؛ الجمودُ قيدٌ معجميٌّ لا تفصله الخانة: فِعْلٌ "
+            "عِلْمًا مصدرٌ ورِجْلًا جامد."),
+    _c("WUJUD-closure", "الإغلاقُ المنطقيّ والأنطولوجيّ: كلُّ فعلٍ له صيغةٌ على ميزانه ولا صيغةَ لمصدر، "
+       "وكلُّ وصفٍ مشتقٌّ على ميزانه إلّا المقصورَين؛ أصلُ الشبكة مصدرٌ، ولا شيءَ ينحدر من اسمٍ ولا من "
+       "صيغة جمع، والمشتقُّ أبوه فعلٌ أو مشتقّ", _P,
+       "lean:Slge.Wujud.fil_sigha_mizan", "lean:Slge.Wujud.masdar_no_sigha_mizan",
+       "lean:Slge.Wujud.wasf_derived_mizan", "lean:Slge.Wujud.root_masdar",
+       "lean:Slge.Wujud.ism_jam_leaves", "lean:Slge.Wujud.mushtaqq_from_fil_or_mushtaqq",
+       "lean:Slge.Jiha.sigha_of_fill", "lean:Slge.Kulli.masdar_no_sigha",
+       "test:tests/test_wujud.py::test_closure_against_existing_lists_and_network",
+       note="هذا معنى «المصدرُ أصلُ المشتقّ» و«الجامدُ لا يُشتقّ منه» على الجدول لا في الكلام."),
+    _c("WUJUD-reader", "الكليُّ يقرأ الجهةَ المودَعة على الميزان في 111 من 125، والمخالفُ 14 بأرقامها: "
+       "اشتراكُ الصورة (أَفْعَلُ/أَفْعُلُ مضارعُ المتكلّم، فِعْلَة جمعًا وهيئة، فِعَال وفُعُول جمعًا ومصدرًا، "
+       "مُفَاعَلَة ومِفْعَال وفَعَّالَة بصورة المشتقّ، فُعَلَاء) أو ما لا يقرؤه (المقصور)؛ وجهةُ القراءة من "
+       "قوالبها، والترتيبُ بجهةٍ لا يُسقط قراءةً", _P,
+       "lean:Slge.Wujud.kulli_agreement", "lean:Slge.Wujud.mem_rank", "lean:Slge.Wujud.length_rank",
+       "lean:Slge.Wujud.witnesses",
+       "test:tests/test_wujud.py::test_reader_agreement_names_its_exceptions"),
+    _c("WUJUD-masaq", "على مودَع المصحف (18,179): جهةُ القراءة الأولى فعلٌ 7,250، مصدرٌ 2,959، وصفٌ "
+       "2,436، ظرفٌ وآلة 155، جمعٌ 1,813، اسمٌ 897، لا قراءة 2,669؛ وعلى وسوم MASAQ المحجوبة (23,847 "
+       "مقروءة): الموافقةُ 52.2% (الفعلُ 83.4%، المصدرُ 49.9%، الوصفُ 53.6%، الاسمُ 30.2%)، وبعد ترتيب "
+       "الأداة 52.4%", _S,
+       "test:tests/test_wujud.py::test_numbers_on_the_deposit_and_masaq",
+       note="الاسمُ عند المرجع يُقرأ هنا مصدرًا في 4,044 لأنّ القالبَ لا يفصل الاسمَ من المصدر (فَعْل، "
+            "فِعَال)؛ والفعلُ يُقرأ وصفًا/اسمًا في 1,090 — القوالبُ المشتركة؛ كلٌّ باسمه."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

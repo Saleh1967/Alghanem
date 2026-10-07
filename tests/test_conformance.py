@@ -1063,3 +1063,32 @@ def test_adawat_matches_lean() -> None:
         assert len(rs) == int(r[3]), r
         mine = "+".join(("1" if fits(a, x) else "0") + "." + cat[cat_of(x)] for x in rs)
         assert mine == r[4], (r, mine)
+
+
+def test_wujud_matches_lean() -> None:
+    """جهةُ كلّ قالبٍ وقراءةُ الكليّ لميزانه وأبوه في الشبكة، وجهةُ قراءات الشواهد = جدولُ `Wujud`."""
+
+    from slge.jidh import jidh
+    from slge.kulli import kulli
+    from slge.shabaka import CLASSICAL
+    from slge.wazn import AWZAN, mizan
+    from slge.wujud import ONT, ont_of, ont_of_reading
+
+    rows = _rows("wujud.csv")
+    on = {"فعل": "fil", "مصدر": "masdar", "وصف": "wasf", "ظرف وآلة": "zarfAla", "جمع": "jam",
+          "اسم": "ism"}
+    kn = {"جزئيّ": "juzi", "كليّ عرضيّ": "aradi", "حدث مجرّد": "hadath", "حدث مهيّأ": "fil",
+          "كليّ ماهويّ": "jamid", "—": "unread"}
+    names = [w.name for w in AWZAN]
+    ont = [r for r in rows if r[0] == "ont"]
+    assert len(ont) == len(ONT) == 125
+    for r in ont:
+        k = int(r[1])
+        assert on[ont_of(k)] == r[2] and kn[kulli(mizan(AWZAN[k].template))] == r[3], r
+        parent = CLASSICAL.get(names[k])
+        assert (str(names.index(parent)) if parent else "-") == r[4], r
+    readings = [r for r in rows if r[0] == "reading"]
+    assert len(readings) == 7
+    for r in readings:
+        w = tuple(_cell(int(i)) for i in r[1].split("-"))
+        assert "+".join(on[ont_of_reading(x)] for x in jidh(w)) == r[2], r

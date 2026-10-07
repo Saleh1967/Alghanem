@@ -606,6 +606,18 @@ def main (args : List String) : IO Unit := do
         let rs := Adawat.rank a (Maqayis.rank (Jidh.jidh w))
         IO.println s!"rank,{key w},{key p},{rs.length},{"+".intercalate (rs.map fun rd => (if Adawat.fits a rd then "1" else "0") ++ "." ++ (cat (Adawat.catOf rd)))}"
       | none => IO.println s!"rank,{key w},{key p},none,"
+  | ["wujud"] =>
+    -- جهةُ كلّ قالب، وقراءةُ الكليّ لميزانه، وأبوه في الشبكة؛ وجهةُ قراءات الشواهد.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let on := fun (o : Wujud.Ont) => match o with
+      | .fil => "fil" | .masdar => "masdar" | .wasf => "wasf" | .zarfAla => "zarfAla" | .jam => "jam" | .ism => "ism"
+    let kn := fun (k : Kulli.Kind) => match k with
+      | .juzi => "juzi" | .aradi => "aradi" | .hadath => "hadath" | .fil => "fil" | .jamid => "jamid" | .unread => "unread"
+    for k in List.range Wazn.N do
+      let p := match Shabaka.parentOf k with | some p => toString p | none => "-"
+      IO.println s!"ont,{k},{on (Wujud.ontOf k)},{kn (Kulli.kulli (Wazn.mizan (Sarf.templ k)))},{p}"
+    for w in [Jidh.fariqun, Jidh.kadhdhabu, Ilal.qala, Jidh.wajada, Jidh.bikitabihim, Madd.qalu, Jidh.walard] do
+      IO.println s!"reading,{key w},{"+".intercalate ((Jidh.jidh w).map fun rd => on (Wujud.ontOfReading rd))}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

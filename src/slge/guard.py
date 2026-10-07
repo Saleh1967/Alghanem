@@ -48,6 +48,8 @@ EXEMPT_FILES = (
     "tools/deposit_abniya.py",
     "tools/gen_abniya_index.py",
     "tools/gen_adawat_index.py",
+    "tools/gen_wujud_index.py",
+    "tools/deposit_wujud.py",
     "src/slge/order.py",  # يبصم خاناتٍ لا نصًّا
 )
 IO_ATTRS = frozenset(

@@ -50,3 +50,5 @@ import Slge.Maqayis
 import Slge.AbniyaTable
 import Slge.Abniya
 import Slge.Adawat
+import Slge.WujudTable
+import Slge.Wujud

@@ -68,6 +68,9 @@ MODULES: Final[tuple[Module, ...]] = (
            "test_abniya.py"),
     Module("abniya_table", (), (), None, "test_abniya.py"),  # مولَّدٌ من المودَع
     Module("adawat", ("Adawat",), ("adawat",), "gen_adawat_index.py", "test_adawat.py", law=True),
+    Module("wujud", ("Wujud", "WujudTable"), ("wujud",), "gen_wujud_index.py", "test_wujud.py",
+           law=True),
+    Module("wujud_table", (), (), None, "test_wujud.py"),  # مولَّدٌ من أبواب الأوزان
     # الفهارسُ الجامعة (بلا وحدة)
     Module("bits", (), (), "gen_bits_index.py", "test_bits.py"),
     Module("gates", (), (), None, "test_gates.py"),
