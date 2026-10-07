@@ -2,7 +2,7 @@
 
 اقرأ هذا كلَّه قبل أيّ أمر. ما خالفه يُرفض بالاسم.
 
-**دستورُ الوكيل** (ملزِمٌ لي قبل القانون الواحد وبعده): `AGENT_CONSTITUTION.md` في مستودع الغانم — تسعُ موادَّ ضدّ الهلوسة والغشّ الدستوريّ وفبركة الاختبارات وترك Lean، كلٌّ بفحصها الآليّ واسم مخالفتها.
+**دستورُ الوكيل** (ملزِمٌ لي قبل القانون الواحد وبعده): `AGENT_CONSTITUTION.md` في مستودع الغانم — أربعَ عشرةَ مادّةً: تسعٌ ضدّ الهلوسة والغشّ الدستوريّ وفبركة الاختبارات وترك Lean، وخمسٌ تفصل الوضعَ عن المعلومات السابقة عن الحكم (الحكمُ فوق الترخيص لا فيه؛ الشهادةُ لا تأخذ العالمَ معاملًا؛ لا مودَعَ بلا نوع؛ الحكمُ ثلاثيٌّ لا يُسقط ترخيصًا؛ أركانُ العقل الأربعة شرطُ كلّ اقتراح)، كلٌّ بفحصها الآليّ واسم مخالفتها.
 
 ## القانون الواحد
 
@@ -12,7 +12,7 @@
 - السُّلَّمُ الفعليّ: `slge.gates.climb(cert.atoms)` تسعُ بوّاباتٍ متتابعة (الخانة، الترخيص، العدد حاكمةً؛ الجداول، الجذع، الأدوات، الصرف، الإعراب، الجواب قارئةً) — ولا بوّابةَ فوق مرفوضة (`Grant.ladder_implies_base`). وكلُّ وحدةٍ مسجَّلةٌ في `slge.manifest` بمواضعها، و`python tools/check_manifest.py` يشهد أنّها موصولةٌ في كلّ موضع (ADR ٦ في `ARCHITECTURE.md`).
 - شهاداتُ المصحف كلِّه مودَعةٌ خاناتٍ وأعدادًا (`tests/data/corpus-certificates.json.gz`، بصمةُ المدوّنة فيه) وتُقاس على السُّلَّم في `BITS_INDEX.md`.
 - هنا: `slge.entry.from_atoms(cert.atoms) → خانات`، و`slge.entry.to_atoms(خانات) → ذرّات` تعود إلى `gate.exit`. والطيُّ `to_integer/from_integer` مبرهَنٌ (`Slge.slgeFold_*`) على المرخَّص ثنائيًّا؛ وما رخّصه الثلاثيُّ وحدَه (كـ«حَاجَّ») يحمل عددَه في شهادته.
-- الطبقاتُ الحيّة: `entry`، `cells`، `stream`، `categories`، `phonology`، `semantics`، `nazm`، `grant`، `wazn`، `shabaka`، `khamsa`، `afal`، `rawabit`، `damair`، `ishara`، `istifham`، `nida`، `zuruf`، `zaman`، `adad`، `marifa`، `sarf`، `tawabi`، `nawasikh`، `jazm`، `mansubat`، `majrurat`، `wasl`، `ism`، `fil`، `huruf`، `jumla`، `filiyya`، `shibh`، `nisab`، `talil`، `maqam`، `jiha`، `naat`، `uslub`، `talab`، `kulli`، `wad`، `tabayun`، `madd`، `ilal`، `jidh`، `maqayis_table`، `maqayis`، `abniya_table`، `abniya`، `adawat`، `wujud_table`، `wujud`، `knowledge`، `rank`، `learning`، `answer`، و`gates` (البوّاباتُ المتتابعة فوقها كلِّها) (و`order`، `status`، `guard`، `manifest` وصفًا). ما سواها **معلَّق** في `suspended/` بسجلٍّ (`SUSPENDED_REGISTRY.json`): `encoding`، `orthography`، `lexicon`، `morphology` — كانت تقرأ النصّ وتطبّعه خارج البوّابة.
+- الطبقاتُ الحيّة: `entry`، `cells`، `stream`، `categories`، `phonology`، `semantics`، `nazm`، `grant`، `wazn`، `shabaka`، `khamsa`، `afal`، `rawabit`، `damair`، `ishara`، `istifham`، `nida`، `zuruf`، `zaman`، `adad`، `marifa`، `sarf`، `tawabi`، `nawasikh`، `jazm`، `mansubat`، `majrurat`، `wasl`، `ism`، `fil`، `huruf`، `jumla`، `filiyya`، `shibh`، `nisab`، `talil`، `maqam`، `jiha`، `naat`، `uslub`، `talab`، `kulli`، `wad`، `tabayun`، `madd`، `ilal`، `jidh`، `maqayis_table`، `maqayis`، `abniya_table`، `abniya`، `adawat`، `wujud_table`، `wujud`، `knowledge`، `rank`، `learning`، `answer`، و`gates` (البوّاباتُ المتتابعة فوقها كلِّها) (و`order`، `status`، `guard`، `manifest` وصفًا). وفوق البوّابات طبقةُ **الحكم** (`order.LAYERS["الحكم"]`) فارغةٌ حتى يُؤذن: ما يحكم على مطابقة النسبة للواقع المودَع لا يدخل سُلَّم الترخيص (دستور الوكيل، المادّتان ١٠ و١٣)؛ وكلُّ مودَعٍ في `tests/data/` مسجَّلٌ بنوعه في `manifest.DEPOSITS` (المادّة ١٢). ما سواها **معلَّق** في `suspended/` بسجلٍّ (`SUSPENDED_REGISTRY.json`): `encoding`، `orthography`، `lexicon`، `morphology` — كانت تقرأ النصّ وتطبّعه خارج البوّابة.
 
 ## قانونُ القارئ (ملزِمٌ لكلّ وكيل؛ يفحصه `tests/test_gates.py::test_readers_under_the_law`)
 
@@ -38,7 +38,7 @@
 
 ```sh
 pip install -r requirements-dev.txt && pip install -e . --no-deps
-ruff check . && mypy && pytest -q                     # 350 اختبارًا
+ruff check . && mypy && pytest -q                     # 353 اختبارًا
 python tools/gen_status.py --check
 python tools/gen_registry.py --check
 python tools/check_manifest.py && python tools/check_manifest.py --indexes   # السجلُّ وكلُّ الفهارس (بدل السطور أدناه واحدًا واحدًا)

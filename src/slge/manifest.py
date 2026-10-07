@@ -11,7 +11,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Final
 
-__all__ = ["MODULES", "Module", "index_tools", "lean_files", "readers_under_law", "tables"]
+__all__ = ["DEPOSITS", "DEPOSIT_KINDS", "MODULES", "Deposit", "Module", "index_tools", "lean_files",
+           "readers_under_law", "tables"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -76,6 +77,37 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("gates", (), (), None, "test_gates.py"),
 )
 """كلُّ وحدةٍ حيّة (وصفيّةُ `order`/`status`/`guard`/`manifest` خارجَها) وما يقابلها."""
+
+
+DEPOSIT_KINDS: Final[frozenset[str]] = frozenset(
+    {"واقع مختوم", "وضع", "معلومات سابقة", "مرجع محجوب"})
+"""أنواعُ المودَع الأربعة (دستورُ الوكيل، المادّة ١٢): **واقعٌ مختوم** (شهاداتُ النصّ كما نقلتها
+البوّابة بلا تخمين)؛ **وضع** (اصطلاحُ العرب: لفظٌ ↔ معنًى ذهنيّ — المقاييس، الأبنية، الأوزان)؛
+**معلومات سابقة** (حقائقُ الأشياء وخواصُّها — الأجناسُ والقابليّات؛ لا يُقاس بها ترخيصٌ ولا تُقاس
+هي على مرجع ترخيص)؛ **مرجعٌ محجوب** (وسومٌ بشريّة يُقاس عليها ولا يُقرأ منها)."""
+
+
+@dataclass(frozen=True, slots=True)
+class Deposit:
+    """ملفٌّ في `tests/data/` ونوعُه؛ لا مودَعَ بلا نوع (`tests/test_deposits.py`)."""
+
+    path: str
+    kind: str
+    note: str = ""
+
+
+DEPOSITS: Final[tuple[Deposit, ...]] = (
+    Deposit("corpus-certificates.json.gz", "واقع مختوم",
+            "شهاداتُ المصحف كلِّه خاناتٍ وأعدادًا؛ بصمةُ المدوّنة فيه"),
+    Deposit("maqayis-roots.json.gz", "وضع", "جذورُ مقاييس اللغة حواملَ (4,561)"),
+    Deposit("sibawayh-abniya.tsv", "وضع", "أبنيةُ الأسماء عند سيبويه (158 هيكلًا)"),
+    *(Deposit(f"masaq-{x}", "مرجع محجوب", "شريحةُ MASAQ") for x in (
+        "adad.json", "fil.json.gz", "filiyya.json.gz", "hamza.json", "huruf.json",
+        "interrog.json", "ism.json.gz", "jazm.json", "jumla.json", "majrurat.json.gz",
+        "mansubat.json", "marifa.json", "munada.json", "nawasikh.json", "sarf.json",
+        "shibh.json.gz", "tawabi.json", "zaman.json", "zuruf.json")),
+)
+"""كلُّ مودَعٍ بنوعه. «معلومات سابقة» لا مودَعَ لها بعد: تدخل بإذنٍ وختمٍ (المادّة ٩)."""
 
 
 def tables() -> tuple[str, ...]:
