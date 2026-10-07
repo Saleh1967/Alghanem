@@ -28,7 +28,8 @@ def problems() -> list[str]:
     main = (ROOT / "formal" / "Main.lean").read_text(encoding="utf-8")
     claude = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
     for m in MODULES:
-        if m.name != "bits" and not (ROOT / "src" / "slge" / f"{m.name}.py").exists():
+        descriptive = m.name in ("bits", "nabhani")
+        if not descriptive and not (ROOT / "src" / "slge" / f"{m.name}.py").exists():
             out.append(f"{m.name}: لا وحدةَ src/slge/{m.name}.py")
         for lean in m.lean:
             path = ROOT / "formal" / "Slge" / f"{lean}.lean"

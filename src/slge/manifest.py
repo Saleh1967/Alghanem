@@ -76,6 +76,7 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("maani_table", (), (), None, "test_maani.py"),  # مولَّدٌ من مودَع معاني الحروف
     # الفهارسُ الجامعة (بلا وحدة)
     Module("bits", (), (), "gen_bits_index.py", "test_bits.py"),
+    Module("nabhani", (), (), "gen_nabhani_index.py", "test_nabhani_index.py"),  # فهرسُ المطابقة
     Module("gates", (), (), None, "test_gates.py"),
 )
 """كلُّ وحدةٍ حيّة (وصفيّةُ `order`/`status`/`guard`/`manifest` خارجَها) وما يقابلها."""
@@ -91,11 +92,14 @@ DEPOSIT_KINDS: Final[frozenset[str]] = frozenset(
 
 @dataclass(frozen=True, slots=True)
 class Deposit:
-    """ملفٌّ في `tests/data/` ونوعُه؛ لا مودَعَ بلا نوع (`tests/test_deposits.py`)."""
+    """ملفٌّ في `tests/data/` ونوعُه؛ لا مودَعَ بلا نوع (`tests/test_deposits.py`). المختومُ بإذن
+    المالك يحمل بصمةَ محتواه (بعد فكّ الضغط) ورخصتَه (`tests/test_seals.py`)."""
 
     path: str
     kind: str
     note: str = ""
+    sha256: str = ""
+    licence: str = ""
 
 
 DEPOSITS: Final[tuple[Deposit, ...]] = (
@@ -105,13 +109,31 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
     Deposit("sibawayh-abniya.tsv", "وضع", "أبنيةُ الأسماء عند سيبويه (158 هيكلًا)"),
     Deposit("nabhani-huruf.json", "وضع",
             "معاني الحروف من مبحث «الحرف» في الشخصيّة ج3 بترتيب المصدر (25 مدخلًا، 29 حرفًا)"),
+    # — مختومةٌ بإذن مالك المشروع («اختم ورخّص — موافق بتوقيع مالك المشروع»، 2026-10-08)؛ نصوصُ
+    #   OpenITI (الإصدار 2025.1.9، Zenodo 17767721) برخصة CC BY-NC-SA 4.0؛ بايتاتٌ مودَعة لا تقرؤها
+    #   شيفرةٌ هنا إلّا أدواتُ الإيداع المعفاة، وما يُقرأ منها يدخل جدولًا مولَّدًا بـ--check (المادّة ١٢). —
+    Deposit("openiti-mukhassas.txt.gz", "وضع",
+            "المخصّص لابن سيده (JK000849): 22 كتابًا / 330 بابًا / 1,150 فصلًا؛ روايةُ الوضع الأوّل "
+            "مسنَدةً",
+            "8d8134c2bce16b70b07bddf974fa5e9c0f7cd80129d8452baf55cd87006b80ac",
+            "CC BY-NC-SA 4.0 (OpenITI)"),
+    Deposit("openiti-maqayis.txt.gz", "وضع",
+            "معجم مقاييس اللغة لابن فارس كاملًا (JK008008) ومنه الرباعيّ وما فوقه",
+            "da8853fc941d4016a533fd9c7a1f794a2ccfa92f1c74e68d4acbd6d910e72a67",
+            "CC BY-NC-SA 4.0 (OpenITI)"),
+    Deposit("openiti-majaz-quran.txt.gz", "مرجع محجوب",
+            "مجاز القرآن لأبي عبيدة (JK010146): مرجعُ الأحكام المحجوب للمجاز — يُقاس عليه ولا يُقرأ "
+            "منه",
+            "432dae05748f2f972b3238e56dd0c56e72b10f0c3900ee8da1a8cca812b2fc88",
+            "CC BY-NC-SA 4.0 (OpenITI)"),
     *(Deposit(f"masaq-{x}", "مرجع محجوب", "شريحةُ MASAQ") for x in (
         "adad.json", "fil.json.gz", "filiyya.json.gz", "hamza.json", "huruf.json",
         "interrog.json", "ism.json.gz", "jazm.json", "jumla.json", "majrurat.json.gz",
         "mansubat.json", "marifa.json", "munada.json", "nawasikh.json", "sarf.json",
         "shibh.json.gz", "tawabi.json", "zaman.json", "zuruf.json")),
 )
-"""كلُّ مودَعٍ بنوعه. «معلومات سابقة» لا مودَعَ لها بعد: تدخل بإذنٍ وختمٍ (المادّة ٩)."""
+"""كلُّ مودَعٍ بنوعه. «معلومات سابقة» لا مودَعَ لها بعد: المخصّصُ مختومٌ «وضعًا» (روايةُ الوضع)،
+وتُشتقّ منه المعلوماتُ السابقة (الأجناسُ والقابليّات) جدولًا مولَّدًا بنوعها حين يُؤذن بأداتها."""
 
 
 def tables() -> tuple[str, ...]:

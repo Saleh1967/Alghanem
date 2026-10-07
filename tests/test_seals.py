@@ -1,0 +1,34 @@
+"""الختمُ بإذن المالك: كلُّ مودَعٍ مختوم بصمتُه (بعد فكّ الضغط) ورخصتُه مثبَّتتان، والبايتُ الواحد يُسقطه."""
+
+from __future__ import annotations
+
+import gzip
+import hashlib
+
+from conftest import ROOT
+from slge.manifest import DEPOSITS
+
+DATA = ROOT / "tests" / "data"
+SEALED = tuple(d for d in DEPOSITS if d.sha256)
+
+
+def test_sealed_sources_match_their_hash_and_carry_a_licence() -> None:
+    assert [d.path for d in SEALED] == ["openiti-mukhassas.txt.gz", "openiti-maqayis.txt.gz",
+                                         "openiti-majaz-quran.txt.gz"]
+    for d in SEALED:
+        raw = gzip.decompress((DATA / d.path).read_bytes())
+        assert hashlib.sha256(raw).hexdigest() == d.sha256, d.path
+        assert d.licence.startswith("CC BY-NC-SA 4.0") and d.kind in ("وضع", "مرجع محجوب"), d.path
+        assert raw.startswith(b"######OpenITI#"), d.path
+
+
+def test_one_byte_breaks_the_seal() -> None:
+    d = SEALED[2]
+    raw = bytearray(gzip.decompress((DATA / d.path).read_bytes()))
+    raw[len(raw) // 2] ^= 1
+    assert hashlib.sha256(bytes(raw)).hexdigest() != d.sha256
+
+
+def test_unsealed_deposits_have_no_hash_claim() -> None:
+    for d in DEPOSITS:
+        assert bool(d.sha256) == bool(d.licence), d.path
