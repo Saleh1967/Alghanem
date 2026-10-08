@@ -872,3 +872,12 @@ import Slge
 #print axioms Slge.Hasm.witness_min
 #print axioms Slge.Hasm.witness_kataba
 #print axioms Slge.Hasm.witness_ilayka
+#print axioms Slge.Tawzi.table_licensed
+#print axioms Slge.Tawzi.tawzi_restores
+#print axioms Slge.Tawzi.tawzi_core_mem
+#print axioms Slge.Tawzi.tawzi_host_suf
+#print axioms Slge.Tawzi.tawzi_suf_mem
+#print axioms Slge.Tawzi.witness_alayhim
+#print axioms Slge.Tawzi.witness_lahum
+#print axioms Slge.Tawzi.witness_particles
+#print axioms Slge.Tawzi.witness_none

@@ -1287,3 +1287,23 @@ def test_hasm_matches_lean() -> None:
             key = ("+".join("-".join(str(index(c)) for c in p) for p in pre) + f"|{al}|{k}|"
                    + "-".join(str(index(c)) for c in suf))
             assert key == r[5], (key, r)
+
+
+def test_tawzi_matches_lean() -> None:
+    """جدولُ الموزِّع بلا تكرار، والحواملُ، وقراءاتُ ستّ كلمات (سوابق|المبنيّ|الصورة|اللاحقة) = `Tawzi`."""
+
+    from slge.tawzi import HOSTS, TABLE, tawzi
+
+    rows = _rows("tawzi.csv")
+    t = next(r for r in rows if r[0] == "table")
+    assert int(t[2]) == len(TABLE) and int(t[3]) == len(HOSTS)
+    words = {r[1]: tuple(CELLS[int(i)] for i in r[2].split("-")) for r in rows if r[0] == "count"}
+    for name, w in words.items():
+        lean = {r[3] for r in rows if r[0] == "word" and r[1] == name}
+        def k(x: tuple[tuple[str, str], ...]) -> str:
+            return "-".join(str(index(c)) for c in x)
+
+        mine = {"+".join(k(p) for p in m.pre) + f"|{k(m.core)}|{k(m.surface)}|{k(m.suf)}"
+                for m in tawzi(w)}
+        assert mine == lean, (name, mine, lean)
+        assert len(lean) <= int(next(r[3] for r in rows if r[0] == "count" and r[1] == name))

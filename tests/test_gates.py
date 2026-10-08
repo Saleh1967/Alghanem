@@ -66,15 +66,17 @@ def test_whole_mushaf_climbs_consistently() -> None:
         t = climb(to_atoms(w))
         if len(t) == len(LADDER):
             assert isinstance(t[3], Pass)
-            tabled[str(t[3].out)] += 1
-    assert set(tabled) <= {"ضمير", "إشارة", "موصول", "أداة", "None"} and tabled["None"] > 2000
+            tabled[t[3].out[0].kind if t[3].out else "None"] += 1
+    # الموزِّع (ADR ٢٣): المبنيُّ بأبوابه الستّة بسوابقه ولاحقته؛ ما سواه «None» إلى الجذع
+    assert set(tabled) <= {"حرف", "ضمير", "إشارة", "استفهام", "موصول", "ظرف", "None"}
+    assert tabled["None"] > 2000
 
 
 def test_manifest_covers_the_tree() -> None:
     import subprocess
     import sys
 
-    assert len(MODULES) >= 50 and len(tables()) == 58 and len(index_tools()) == 48
+    assert len(MODULES) >= 50 and len(tables()) == 59 and len(index_tools()) == 49
     res = subprocess.run([sys.executable, str(ROOT_DIR / "tools" / "check_manifest.py")],
                          capture_output=True, text=True, cwd=ROOT_DIR)
     assert res.returncode == 0, res.stderr

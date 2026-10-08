@@ -66,3 +66,4 @@ import Slge.Pipeline
 import Slge.PipelineTable
 import Slge.HasmTable
 import Slge.Hasm
+import Slge.Tawzi

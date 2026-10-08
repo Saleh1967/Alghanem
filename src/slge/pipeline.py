@@ -22,6 +22,7 @@ from slge.jidh import Reading, jidh
 from slge.maqayis import rank as rank_maqayis
 from slge.nisab import nisba
 from slge.tawabi import case_class, compatible
+from slge.tawzi import tawzi
 from slge.wujud import FIL, ISM, JAM, MASDAR, WASF, ZARF, ont_of_reading
 
 __all__ = ["COARSE", "GOLD_CASE", "GOLD_JIHA", "GOLD_NISBA", "STAGES", "STOPS", "Gold", "run",
@@ -33,7 +34,8 @@ STAGES: Final[tuple[str, ...]] = ("البوابة", "الجذع", "الجهة", 
 """المراحلُ بترتيبها؛ `Pipeline.stages` في Lean بالعدد نفسه."""
 
 STOPS: Final[tuple[str, ...]] = (
-    "NOT_IN_CERTIFICATES", "NO_READING", "SEGMENTS_TIE", "READING_NOT_GOLD",
+    "NOT_IN_CERTIFICATES", "NO_READING", "PARTICLE_NOT_IN_TABLE", "SEGMENTS_TIE",
+    "READING_NOT_GOLD",
     "NO_JIHA_IN_REFERENCE", "JIHA_MISMATCH", "CASE_NOT_READ", "CASE_MISMATCH",
     "NO_NISBA_IN_REFERENCE", "NISBA_MISMATCH", "PASSED",
 )
@@ -43,7 +45,9 @@ GOLD_JIHA: Final[dict[str, str]] = {
     "PV": FIL, "IV": FIL, "CV": FIL, "PV_PASS": FIL, "IV_PASS": FIL, "GERUND": MASDAR,
     "NOUN_ACTIVE_PART": WASF, "NOUN_PASSIVE_PART": WASF, "ADJ_QUALIT": WASF, "ADJ_COMP": WASF,
     "NOUN_CONCRETE": ISM, "NOUN_ABSTRACT": ISM, "NOUN_PROP": ISM, "NOUN_PROP_FOREIGN": ISM,
-    "ADV": ISM,
+    "ADV": ISM, "NOUN_NUM": ISM, "NOUN_TIME_PLACE": ISM, "NOUN_FIVE": ISM, "NOUN_INSTRUMENT": ISM,
+    "ADJ_INTENS": WASF, "NOUN_RELATIVE": WASF, "GERUND_MEEM": MASDAR, "GERUND_INSTANT": MASDAR,
+    "GERUND_PROFESSION": MASDAR,
 }
 """وسمُ MASAQ → الجهةُ الوجوديّة (كما في فهرس الوجود)؛ ما ليس هنا (حروف، ضمائر) لا جهةَ له في المرجع."""
 
@@ -102,21 +106,34 @@ def run(w: Word, stem: Word, prev: Word | None, g: Gold, attested: bool,
 
     if not attested:
         return "NOT_IN_CERTIFICATES"
-    rs, top = _top(w, prev)
-    if top is None:
-        return "NO_READING"
-    if strict:
-        h = hasm(of_cells(prev) if prev else None, rs)
-        if h.name == "TIE":
-            return "SEGMENTS_TIE"
-        top = h.readings[0]
-    if not _is_gold(top, g):
-        return "READING_NOT_GOLD"
     jiha = GOLD_JIHA.get(g.tag)
-    if jiha is None:
-        return "NO_JIHA_IN_REFERENCE"
-    if COARSE[ont_of_reading(top)] != jiha:
-        return "JIHA_MISMATCH"
+    ms = tawzi(w)
+    if ms:  # الموزِّع أوّلًا: مبنيٌّ من جدوله، قسمتُه (سوابق، لاحقة) بلا قالب
+        segs = {(m.pre, m.suf) for m in ms}
+        if strict and len(segs) > 1:
+            return "SEGMENTS_TIE"
+        m0 = ms[0]
+        if not (tuple(c for p in m0.pre for c in p) == g.pre and not g.det and m0.suf == g.suf):
+            return "READING_NOT_GOLD"
+        if jiha is None:
+            return "NO_JIHA_IN_REFERENCE"
+        if not (m0.kind == "ظرف" and jiha == ISM):
+            return "JIHA_MISMATCH"
+    else:
+        rs, top = _top(w, prev)
+        if top is None:
+            return "PARTICLE_NOT_IN_TABLE" if jiha is None else "NO_READING"
+        if strict:
+            h = hasm(of_cells(prev) if prev else None, rs)
+            if h.name == "TIE":
+                return "SEGMENTS_TIE"
+            top = h.readings[0]
+        if not _is_gold(top, g):
+            return "READING_NOT_GOLD"
+        if jiha is None:
+            return "NO_JIHA_IN_REFERENCE"
+        if COARSE[ont_of_reading(top)] != jiha:
+            return "JIHA_MISMATCH"
     case = GOLD_CASE.get(g.case)
     if case is None:
         return "CASE_NOT_READ"
@@ -131,7 +148,8 @@ def run(w: Word, stem: Word, prev: Word | None, g: Gold, attested: bool,
 
 
 _STAGE_OF_STOP: Final[dict[str, int]] = {
-    "NOT_IN_CERTIFICATES": 0, "NO_READING": 1, "SEGMENTS_TIE": 1, "READING_NOT_GOLD": 1,
+    "NOT_IN_CERTIFICATES": 0, "NO_READING": 1, "PARTICLE_NOT_IN_TABLE": 1, "SEGMENTS_TIE": 1,
+    "READING_NOT_GOLD": 1,
     "NO_JIHA_IN_REFERENCE": 2, "JIHA_MISMATCH": 2, "CASE_NOT_READ": 3, "CASE_MISMATCH": 3,
     "NO_NISBA_IN_REFERENCE": 4, "NISBA_MISMATCH": 4, "PASSED": 5,
 }
@@ -144,11 +162,11 @@ def stages_passed(stop: str) -> int:
 
 
 def _check() -> None:
-    assert len(STAGES) == 5 and STOPS[-1] == "PASSED" and len(STOPS) == 11
+    assert len(STAGES) == 5 and STOPS[-1] == "PASSED" and len(STOPS) == 12
     assert set(_STAGE_OF_STOP) == set(STOPS)
     assert all(0 <= stages_passed(s) <= 5 for s in STOPS) and stages_passed("PASSED") == 5
     # لا تقفز كلمةٌ مرحلة: كلُّ توقّفٍ في مرحلةٍ يعني عبورَ ما قبلها
-    assert sorted(stages_passed(s) for s in STOPS) == [0, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5]
+    assert sorted(stages_passed(s) for s in STOPS) == [0, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5]
     g = Gold(pre=(), det=False, suf=(), tag="PREP", case="مبني", role="حرف جر")
     assert run((), (), None, g, attested=False) == "NOT_IN_CERTIFICATES"
     assert set(GOLD_JIHA.values()) <= set(COARSE)

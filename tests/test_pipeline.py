@@ -32,10 +32,11 @@ def test_deposited_funnels_are_antitone() -> None:
     assert all(b <= a for a, b in pairwise(STRICT))
     assert all(b <= a for a, b in pairwise(RANKED))
     assert STRICT[0] == RANKED[0] and STRICT[1] == RANKED[1]  # لا هيمنةَ لأحدهما بعد الحسم
-    # الجذعُ صارمًا = قسمةٌ واحدة محسومة وذهبيّة (فهرس الحسم: 26,758)؛ كان 15,583 حين عُدّ القالبُ قسمة
-    assert STRICT[2] == 26_758
-    # الرقمُ الواحد دون 30% — مسجَّلٌ ليُقاس عليه كلُّ تحسين (كان 1,763 قبل الحسم)
-    assert STRICT[5] / MASAQ < 0.30 and STRICT[5] == 1_989 and RANKED[5] == 1_943
+    # الجذعُ صارمًا = الموزِّعُ أو قسمةٌ محسومة ذهبيّة: 32,592 (كان 26,758 قبل الموزِّع، و15,583 حين
+    # عُدّ القالبُ قسمة)
+    assert STRICT[2] == 32_592
+    # الرقمُ الواحد دون 30% — مسجَّلٌ ليُقاس عليه كلُّ تحسين (1,763 ← 1,989 ← 2,070)
+    assert STRICT[5] / MASAQ < 0.30 and STRICT[5] == 2_070 and RANKED[5] == 2_023
 
 
 def test_a_sound_verb_crosses_to_the_jiha_and_stops_by_name_when_not_asked() -> None:

@@ -22,12 +22,9 @@ from typing import Any, Final
 
 from slge.adawat import TABLE_ADAWAT, of_cells
 from slge.adawat import rank as rank_adawat
-from slge.categories import PRONOUNS
 from slge.cells import Cell, fold, licensed
 from slge.entry import from_atoms, to_atoms
-from slge.huruf import by_cells
 from slge.ilal import RULES
-from slge.ishara import FORMS as ISHARA
 from slge.jidh import jidh
 from slge.jiha import sigha
 from slge.kulli import kulli
@@ -35,8 +32,8 @@ from slge.maani import is_zarf, senses_of
 from slge.maani import rank as rank_maani
 from slge.madd import continue_licensed, madd
 from slge.maqayis import attested, rank
-from slge.marifa import MAWSUL
 from slge.tawabi import case_class
+from slge.tawzi import tawzi
 from slge.wad import senses, wad
 from slge.wujud import ont_of_reading
 
@@ -90,14 +87,12 @@ def _g3(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
 
 
 def _g4(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
-    if w in PRONOUNS:
-        return Pass("الجداول", "ضمير")
-    if any(f.cells == w for f in ISHARA):
-        return Pass("الجداول", "إشارة")
-    if w in MAWSUL.values():
-        return Pass("الجداول", "موصول")
-    if by_cells(w):
-        return Pass("الجداول", "أداة")
+    """الموزِّع: المبنيُّ يُقرأ من جدوله بسوابقه ولاحقته قبل القوالب (`Tawzi.tawzi_restores`)؛ ما ليس
+    منه يمضي إلى الجذع باسمه."""
+
+    ms = tawzi(w)
+    if ms:
+        return Pass("الجداول", ms, "؛ ".join(sorted({m.kind for m in ms})))
     return Pass("الجداول", None, "ليست مجدوَلة")
 
 

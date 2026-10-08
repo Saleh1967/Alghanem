@@ -30,8 +30,8 @@ from slge.nida import has_tanwin
 from slge.wazn import AWZAN, Template
 from slge.zuruf import set_last
 
-__all__ = ["ENCLITICS", "PROCLITICS", "Reading", "jidh", "last_state", "on_template_mod",
-           "on_templates", "stem_form", "stem_senses"]
+__all__ = ["ENCLITICS", "OBJECT_SUFFIXES", "PROCLITICS", "Reading", "jidh", "last_state",
+           "on_template_mod", "on_templates", "stem_form", "stem_senses"]
 
 Word = tuple[Cell, ...]
 _A: Final = "فتح"
