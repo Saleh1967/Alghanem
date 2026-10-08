@@ -83,15 +83,17 @@ def test_numbers_before_and_after_on_the_same_deposit() -> None:
     m = measure()
     assert m["forms"] == 18179 and m["roots"] == 4561
     b, a = m["before"], m["after"]
-    assert sum(b.values()) == sum(a.values()) == 15510  # لا صورةَ تسقط (كانت 14,912)
+    assert sum(b.values()) == sum(a.values()) == 15673  # لا صورةَ تسقط (كانت 15,510 ثمّ 14,912)
     # الأرقامُ بعد قوالب الاسم الأربعة (أ2): كانت 3,896 ← 2,895 (فُصل 1,001) و2,178 بلا قراءةٍ مشهودة؛
     # وقبل ذلك (الجذرُ من الجذع كما هو) 966 و4,347.
-    assert b["2"] + b["3+"] == 4116 and a["2"] + a["3+"] == 3019  # الفصلُ 1,097
-    assert a["1"] == b["1"] + 1097 and m["none_attested"] == 2238
+    # ثمّ (قبل زوائد سيبويه، ADR ١٨): 4,116 ← 3,019 و2,238 بلا قراءةٍ مشهودة
+    assert b["2"] + b["3+"] == 4307 and a["2"] + a["3+"] == 3197  # الفصلُ 1,110
+    assert a["1"] == b["1"] + 1110 and m["none_attested"] == 2223
     mb, ma = m["b"], m["a"]
-    assert mb["match"] == 15475 and mb["among"] == 14118  # كانت 14,478 و13,527
-    assert ma["match"] == 17533 and ma["among"] == 11349  # كانت 16,304 و11,243
-    assert ma["dropped"] == 711  # كانت 458
+    # قبل زوائد سيبويه (ADR ١٨): 15,475/14,118 ← 17,533/11,349 وأُسقط 711
+    assert mb["match"] == 15583 and mb["among"] == 14329  # كانت 14,478 و13,527
+    assert ma["match"] == 17657 and ma["among"] == 11540  # كانت 16,304 و11,243
+    assert ma["dropped"] == 715  # كانت 458
     assert mb["match"] + mb["among"] == ma["match"] + ma["among"] + ma["dropped"]  # الذهبيُّ لا يُخفى
     assert mb["wrong"] == ma["wrong"] and mb["none"] == ma["none"]  # القرينةُ لا تُنشئ قراءة
     gen = str(ROOT_DIR / "tools" / "gen_maqayis_index.py")

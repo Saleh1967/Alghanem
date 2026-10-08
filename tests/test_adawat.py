@@ -104,8 +104,8 @@ def test_numbers_before_and_after_on_masaq() -> None:
     assert m["amal"]["نصب الفعل"]["مخالف"] == 0 and m["amal"]["جزم"]["مخالف"] == 0
     assert m["attached"]["موافق"] == 3093
     b, a = m["before"], m["after"]
-    assert sum(b.values()) == sum(a.values()) == 593  # لا كلمةَ تسقط
-    assert b["موافق"] == 296 and a["موافق"] == 572  # 49.9% ← 96.5%
+    assert sum(b.values()) == sum(a.values()) == 595  # لا كلمةَ تسقط (كانت 593 قبل زوائد سيبويه)
+    assert b["موافق"] == 298 and a["موافق"] == 572  # 50.1% ← 96.1% (كان 296 قبل زوائد سيبويه)
     assert m["tool_forms"] == 50
     gen = str(ROOT_DIR / "tools" / "gen_adawat_index.py")
     res = subprocess.run([sys.executable, gen, "--check"], capture_output=True, text=True,

@@ -41,8 +41,16 @@ PROCLITICS: Final[tuple[Word, ...]] = (
     (("ء", _A),), (("ل", _A),),
 )
 """السوابقُ المفردة: و ف ب ل ك س أ (الاستفهام) لَ (التوكيد)."""
-ENCLITICS: Final[tuple[Word, ...]] = (*OBJECT_SUFFIXES, *(p for p, _ in SUBJECT_SUFFIXES))
-"""اللواحق: الضمائرُ المتّصلة ولواحقُ الفاعل."""
+_ZAWAID: Final[tuple[Word, ...]] = ((("ن", "سكون"), ("ن", "فتح")), (("ت", "سكون"),))
+ZAWAID_SUFFIXES: Final[tuple[Word, ...]] = (*_ZAWAID,
+                                           *(z + o for z in _ZAWAID for o in OBJECT_SUFFIXES))
+"""زوائدُ سيبويه اللاحقةُ بالفعل (`Jidh.zawaidSuffixes`؛ يبرهنها `slge.zawaid` على بابها): نونُ التوكيد
+الثقيلة ـَنَّ، وتاءُ التأنيث الساكنة ـَتْ، وكلٌّ منهما قبل ضميرِ نصب (إغلاقُ اللواحق على التركيب)؛
+والخفيفةُ ـَنْ خانتُها خانةُ التنوين فيقرؤها `stem_senses` بردّه."""
+
+ENCLITICS: Final[tuple[Word, ...]] = (*OBJECT_SUFFIXES, *(p for p, _ in SUBJECT_SUFFIXES),
+                                     *ZAWAID_SUFFIXES)
+"""اللواحق: الضمائرُ المتّصلة ولواحقُ الفاعل وزوائدُ سيبويه (`Jidh.enclitics`)."""
 
 
 def last_state(t: Template) -> str:

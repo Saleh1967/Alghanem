@@ -14,6 +14,7 @@ SEALED = tuple(d for d in DEPOSITS if d.sha256)
 
 def test_sealed_sources_match_their_hash_and_carry_a_licence() -> None:
     assert [d.path for d in SEALED] == ["openiti-mukhassas.txt.gz", "openiti-maqayis.txt.gz",
+                                         "openiti-sibawayh-kitab.txt.gz",
                                          "openiti-majaz-quran.txt.gz"]
     for d in SEALED:
         raw = gzip.decompress((DATA / d.path).read_bytes())

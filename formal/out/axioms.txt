@@ -820,3 +820,16 @@
 'Slge.Mukhassas.mafhum_in_capsUnder' depends on axioms: [propext, Quot.sound]
 'Slge.Mukhassas.judge_total' depends on axioms: [propext]
 'Slge.Mukhassas.witnesses' depends on axioms: [propext]
+'Slge.Zawaid.letters_ten' does not depend on any axioms
+'Slge.Zawaid.letters_nodup' does not depend on any axioms
+'Slge.Zawaid.letters_lt' does not depend on any axioms
+'Slge.Zawaid.cells_forty' depends on axioms: [propext, Quot.sound]
+'Slge.Zawaid.tawkid_licensed' depends on axioms: [propext, Quot.sound]
+'Slge.Zawaid.anith_licensed' depends on axioms: [propext, Quot.sound]
+'Slge.Zawaid.khafifa_is_tanwin' depends on axioms: [propext, Quot.sound]
+'Slge.Zawaid.in_enclitics' depends on axioms: [propext]
+'Slge.Zawaid.thaqila_read' depends on axioms: [propext, Quot.sound]
+'Slge.Zawaid.taTanith_read' depends on axioms: [propext, Quot.sound]
+'Slge.Zawaid.mudaraa_are_zawaid' depends on axioms: [propext, Quot.sound]
+'Slge.Zawaid.mudaraa_licensed' depends on axioms: [propext, Quot.sound]
+'Slge.Zawaid.shawahid' depends on axioms: [propext]

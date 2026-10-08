@@ -1155,3 +1155,56 @@ def test_mukhassas_matches_lean() -> None:
     for r in judged:
         g, w = judge_in(int(r[1]), int(r[2]))
         assert (f"mafhum:{w}" if g == "مفهوم" else "malumah") == r[3], r
+
+
+def test_zawaid_matches_lean() -> None:
+    """حروفُ الزوائد العشرة وخاناتُها الأربعون واللواحقُ الثلاث، وإلصاقُ النون والتاء على شواهد = جدولُ
+    `Zawaid`؛ والجدولُ المنقول وشواهدُ القرآن حواملَ = `zawaid_table`."""
+
+    from slge.zawaid import (
+        CELLS,
+        KHAFIFA,
+        LETTERS,
+        MUDARAA,
+        TA_TANITH,
+        THAQILA,
+        WITNESSES,
+        anith,
+        has_tanwin_shape,
+        tawkid,
+    )
+    from slge.zawaid_table import TABLE
+
+    def cells(x: str) -> tuple[Cell, ...]:
+        return tuple(_cell(int(i)) for i in x.split("-")) if x else ()
+
+    def key(cs: tuple[Cell, ...]) -> str:
+        return "-".join(str(index(c)) for c in cs)
+
+    heads = ("letters", "mudaraa", "cells", "thaqila", "khafifa", "taTanith")
+    rows = {r[0]: r for r in _rows("zawaid.csv") if r[0] in heads}
+    assert [ALPHABET[int(i)] for i in rows["letters"][1].split("+")] == list(LETTERS)
+    assert [ALPHABET[int(i)] for i in rows["mudaraa"][1].split("+")] == list(MUDARAA)
+    assert cells(rows["cells"][1]) == CELLS and len(CELLS) == 40
+    assert (cells(rows["thaqila"][1]), cells(rows["khafifa"][1]), cells(rows["taTanith"][1])) == (
+        THAQILA, KHAFIFA, TA_TANITH)
+    table = [r for r in _rows("zawaid.csv") if r[0] == "table"]
+    assert len(table) == len(TABLE) == 10
+    for r, (_, letter, pos, exs, _) in zip(table, TABLE, strict=True):
+        assert ALPHABET[int(r[1])] == letter
+        assert ([] if r[2] == "" else [int(p) for p in r[2].split("+")]) == list(pos)
+        assert len([] if r[3] == "" else r[3].split("|")) == len(exs)
+    wit = [r for r in _rows("zawaid.csv") if r[0] == "witness"]
+    assert len(wit) == sum(len(ws) for _, ws in WITNESSES) == 48
+    ops = [r for r in _rows("zawaid.csv") if r[0] in ("tawkid", "anith", "tanwin")]
+    assert len(ops) == 6 * 4
+    for r in ops:
+        w = cells(r[1])
+        if r[0] == "tawkid":
+            got = tawkid(w, r[2] == "1")
+            assert key(got) == r[3] and str(licensed(got)).lower() == r[4], r
+        elif r[0] == "anith":
+            got = anith(w)
+            assert key(got) == r[2] and str(licensed(got)).lower() == r[3], r
+        else:
+            assert str(has_tanwin_shape(tawkid(w, False))).lower() == r[2], r

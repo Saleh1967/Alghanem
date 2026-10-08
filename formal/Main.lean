@@ -639,6 +639,28 @@ def main (args : List String) : IO Unit := do
     for (b, r) in [(163, 22018), (1, 22018), (979, 4829), (617, 22018), (664, 4829)] do
       let g := match Mukhassas.judgeIn b r with | .mafhum w => s!"mafhum:{w}" | .malumah => "malumah"
       IO.println s!"judge,{b},{r},{g}"
+  | ["zawaid"] =>
+    -- الحروفُ العشرة بفهارسها، خاناتُها الأربعون، اللواحقُ الثلاث، وإلصاقُ النون والتاء على شواهد.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    IO.println s!"letters,{"+".intercalate (Zawaid.letters.map toString)}"
+    IO.println s!"mudaraa,{"+".intercalate (Zawaid.mudaraa.map toString)}"
+    IO.println s!"cells,{key Zawaid.cells}"
+    IO.println s!"thaqila,{key Zawaid.thaqila}"
+    IO.println s!"khafifa,{key Zawaid.khafifa}"
+    IO.println s!"taTanith,{key Zawaid.taTanith}"
+    for e in Zawaid.table do
+      IO.println s!"table,{e.1},{"+".intercalate (e.2.1.map toString)},{"|".intercalate (e.2.2.map fun x => "+".intercalate (x.map toString))}"
+    for w in Zawaid.witnesses do
+      IO.println s!"witness,{"+".intercalate (w.map toString)}"
+    let stems := [[Categories.c 3 0, Categories.c 21 2, Categories.c 27 3, Categories.c 23 2],
+                  [Categories.c 3 2, Categories.c 18 3, Categories.c 10 1, Categories.c 15 2],
+                  [Categories.c 21 0, Categories.c 1 3, Categories.c 23 0], Jidh.kana, Jidh.daaw,
+                  [Categories.c 28 0, Categories.c 20 3, Categories.c 18 0, Categories.c 23 2]]
+    for w in stems do
+      IO.println s!"tawkid,{key w},1,{key (Zawaid.tawkid w true)},{licensed (Zawaid.tawkid w true)}"
+      IO.println s!"tawkid,{key w},0,{key (Zawaid.tawkid w false)},{licensed (Zawaid.tawkid w false)}"
+      IO.println s!"anith,{key w},{key (Zawaid.anith w)},{licensed (Zawaid.anith w)}"
+      IO.println s!"tanwin,{key w},{Nida.hasTanwin (Zawaid.tawkid w false)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

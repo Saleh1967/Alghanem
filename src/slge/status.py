@@ -921,7 +921,7 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_gates.py::test_ladder_order_and_named_refusals",
        "test:tests/test_gates.py::test_whole_mushaf_climbs_consistently",
        note="قانونُ السُّلَّم مبرهَنٌ على المجرّد؛ البوّاباتُ تركّب الدوالَّ القائمة (مفحوص) ولا تبني قراءة."),
-    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (65 وحدة، 53 جدولًا، 43 فهرسًا): كلُّ وحدةٍ "
+    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (67 وحدة، 54 جدولًا، 44 فهرسًا): كلُّ وحدةٍ "
        "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
        "test:tests/test_gates.py::test_manifest_covers_the_tree",
        note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
@@ -1187,6 +1187,31 @@ _DECLARED: tuple[Claim, ...] = (
        "صورة (44.1%)", _S,
        "test:tests/test_mukhassas.py::test_numbers_on_the_deposit",
        note="قابليّةٌ لجنسٍ ما، لا للمسنَد إليه بعينه؛ والربطُ بالرسم يُسقط ما لم يُربط."),
+    _c("ZAWAID-letters", "حروفُ الزوائد العشرة عند سيبويه («باب علم حروف الزوائد»، الكتابُ المختوم) "
+       "حواملُ متمايزة من التسعة والعشرين، وخاناتُها في الحالات الأربع أربعون من الـ116؛ وحروفُ "
+       "المضارعة الأربعة منها", _P,
+       "lean:Slge.Zawaid.letters_ten", "lean:Slge.Zawaid.letters_nodup",
+       "lean:Slge.Zawaid.cells_forty",
+       "lean:Slge.Zawaid.mudaraa_are_zawaid", "lean:Slge.Zawaid.mudaraa_licensed",
+       "test:tests/test_zawaid.py::test_ten_letters_in_the_order_of_the_chapter",
+       "test:tests/test_conformance.py::test_zawaid_matches_lean",
+       note="المواضعُ والأمثلةُ كما وردت في الباب بلا تأويل؛ الأمثلةُ غيرُ مشكولة فربطُها بالرسم."),
+    _c("ZAWAID-tawkid", "نونُ التوكيد الثقيلة ـَنَّ والخفيفة ـَنْ وتاءُ التأنيث الساكنة ـَتْ عمليّاتُ إلصاقٍ "
+       "تحفظ الترخيص، والقطعُ عكسُها عبر لواحق الجذع فيستوفي النزولُ الصعود؛ والخفيفةُ خانتُها خانةُ "
+       "التنوين", _P,
+       "lean:Slge.Zawaid.tawkid_licensed", "lean:Slge.Zawaid.anith_licensed",
+       "lean:Slge.Zawaid.in_enclitics", "lean:Slge.Zawaid.thaqila_read",
+       "lean:Slge.Zawaid.taTanith_read",
+       "lean:Slge.Zawaid.khafifa_is_tanwin", "lean:Slge.Zawaid.shawahid",
+       "test:tests/test_zawaid.py::test_attachment_keeps_licence_and_peel_returns_the_stem",
+       "test:tests/test_zawaid.py::test_reader_peels_the_nun_and_the_ta_on_a_verb",
+       note="صورتا النون في المثنّى والنسوة (تَفْعَلَانِّ) لم تُنفَّذ؛ والهمزُ عند التقاء الساكنين بابُ الحدّ."),
+    _c("ZAWAID-masaq", "على مودَع المصحف: 267 صورةً آخرُها الثقيلة يقرأ الجذعُ 96 منها فعلًا بها، و224 "
+       "آخرُها التاءُ الساكنة يقرأ 156؛ وعلى MASAQ: EMPHATIC_NUN 160/239، SUFF_FEM_TA 348/643، "
+       "PROTECT_NUN 109/219", _S,
+       "test:tests/test_zawaid.py::test_reader_peels_the_nun_and_the_ta_on_a_verb",
+       note="الرقمُ في ZAWAID_INDEX.md؛ ما فات: جذعٌ أجوفُ أو ناقصٌ قبل اللاحقة يحتاج الإعلالَ داخلَ "
+            "القطع، وMASAQ يسم تاءَ الفاعل (كُنْتَ) وتاءَ الالتقاء (قَالَتِ) بوسم التأنيث."),
     # — المنح: لا اسمَ قبل قبضته —
     _c("GRANT-check", "المنحُ برهانُ فحصٍ جرى؛ ما رفضه الفحصُ لا يُمنح، ولا درجةَ فوق مرفوضة", _P,
        "lean:Slge.Grant.grant_iff_check", "lean:Slge.Grant.no_grant_of_refused",

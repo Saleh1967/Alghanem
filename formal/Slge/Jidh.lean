@@ -173,9 +173,16 @@ theorem dropAl_sound {a : Al} {w s : List SCell} (h : dropAl a w = some s) : wit
 def proclitics : List (List SCell) :=
   [[c 27 0], [c 20 0], [c 2 1], [c 23 1], [c 22 0], [c 12 0], [c 0 0], [c 23 0]]
 
-/-- اللواحق: الضمائرُ المتّصلة ولواحقُ الفاعل. -/
+/-- زوائدُ سيبويه اللاحقةُ بالفعل (`Slge.Zawaid` يبرهنها على بابها): نونُ التوكيد الثقيلة `ـَنَّ`،
+وتاءُ التأنيث الساكنة `ـَتْ`، وكلٌّ منهما قبل ضميرِ نصبٍ (يَأْتِيَنَّكُمْ، أَخَذَتْكُمْ: إغلاقُ اللواحق على
+التركيب)؛ والخفيفةُ `ـَنْ` خانتُها خانةُ التنوين فيقرؤها `stemSenses` بردّه. -/
+def zawaidSuffixes : List (List SCell) :=
+  [[c 25 3, c 25 0], [c 3 3]] ++
+    [[c 25 3, c 25 0], [c 3 3]].flatMap (fun z => Filiyya.objectSuffixes.map (z ++ ·))
+
+/-- اللواحق: الضمائرُ المتّصلة ولواحقُ الفاعل وزوائدُ سيبويه. -/
 def enclitics : List (List SCell) :=
-  Filiyya.objectSuffixes ++ Filiyya.subjectSuffixes.map (·.1)
+  Filiyya.objectSuffixes ++ Filiyya.subjectSuffixes.map (·.1) ++ zawaidSuffixes
 
 /-- القوالبُ التي تُقرأ عليها الكلمةُ بعد تسوية آخرها، بجذرٍ لا ألفَ فيه. -/
 def onTemplates (v : List SCell) : List Nat :=

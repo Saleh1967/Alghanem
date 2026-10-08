@@ -825,3 +825,16 @@ import Slge
 #print axioms Slge.Mukhassas.mafhum_in_capsUnder
 #print axioms Slge.Mukhassas.judge_total
 #print axioms Slge.Mukhassas.witnesses
+#print axioms Slge.Zawaid.letters_ten
+#print axioms Slge.Zawaid.letters_nodup
+#print axioms Slge.Zawaid.letters_lt
+#print axioms Slge.Zawaid.cells_forty
+#print axioms Slge.Zawaid.tawkid_licensed
+#print axioms Slge.Zawaid.anith_licensed
+#print axioms Slge.Zawaid.khafifa_is_tanwin
+#print axioms Slge.Zawaid.in_enclitics
+#print axioms Slge.Zawaid.thaqila_read
+#print axioms Slge.Zawaid.taTanith_read
+#print axioms Slge.Zawaid.mudaraa_are_zawaid
+#print axioms Slge.Zawaid.mudaraa_licensed
+#print axioms Slge.Zawaid.shawahid

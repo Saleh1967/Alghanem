@@ -95,14 +95,16 @@ def test_numbers_on_the_deposit_and_masaq() -> None:
 
     F = FIL
     m = measure()
-    assert m["forms"] == 18179 and sum(m["dist"].values()) == 18179 and m["dist"]["—"] == 2669
-    assert m["dist"][F] == 7250 and m["masaq"] == 25799 and m["none"] == 1952
+    # «—» كانت 2,669 قبل زوائد سيبويه (ADR ١٨)
+    assert m["forms"] == 18179 and sum(m["dist"].values()) == 18179 and m["dist"]["—"] == 2506
+    # الفعلُ كان 7,250 وبلا قراءةٍ 1,952 وعلى MASAQ 23,847 قبل زوائد سيبويه (ADR ١٨)
+    assert m["dist"][F] == 7445 and m["masaq"] == 25799 and m["none"] == 1822
     b, a = m["before"], m["after"]
-    assert sum(b.values()) == sum(a.values()) == 23847
-    assert b[(F, F)] == 6817 and a[(F, F)] == 6804  # الفعلُ 83.4% ← 83.3% بترتيب الأداة
+    assert sum(b.values()) == sum(a.values()) == 23977
+    assert b[(F, F)] == 6954 and a[(F, F)] == 6939  # الفعلُ بترتيب الأداة (كانا 6,817 و6,804)
     hit_b = sum(b[(g, g)] for g in ("فعل", "مصدر", "وصف", "اسم"))
     hit_a = sum(a[(g, g)] for g in ("فعل", "مصدر", "وصف", "اسم"))
-    assert hit_b == 12456 and hit_a == 12487  # 52.2% ← 52.4%
+    assert hit_b == 12593 and hit_a == 12622  # 52.5% ← 52.6% (كانا 12,456 و12,487)
     gen = str(ROOT_DIR / "tools" / "gen_wujud_index.py")
     res = subprocess.run([sys.executable, gen, "--check"], capture_output=True, text=True,
                          cwd=ROOT_DIR)

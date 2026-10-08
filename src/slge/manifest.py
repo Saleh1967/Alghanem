@@ -77,6 +77,9 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("mukhassas", ("Mukhassas", "MukhassasTable"), ("mukhassas",), "gen_mukhassas_index.py",
            "test_mukhassas.py"),
     Module("mukhassas_table", (), (), None, "test_mukhassas.py"),  # مولَّدٌ من المخصّص المختوم
+    Module("zawaid", ("Zawaid", "ZawaidTable"), ("zawaid",), "gen_zawaid_index.py",
+           "test_zawaid.py"),
+    Module("zawaid_table", (), (), None, "test_zawaid.py"),  # مولَّدٌ من الكتاب المختوم
     # الفهارسُ الجامعة (بلا وحدة)
     Module("bits", (), (), "gen_bits_index.py", "test_bits.py"),
     Module("nabhani", (), (), "gen_nabhani_index.py", "test_nabhani_index.py"),  # فهرسُ المطابقة
@@ -134,6 +137,11 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
             "معجم مقاييس اللغة لابن فارس كاملًا (JK008008) ومنه الرباعيّ وما فوقه",
             "da8853fc941d4016a533fd9c7a1f794a2ccfa92f1c74e68d4acbd6d910e72a67",
             "CC BY-NC-SA 4.0 (OpenITI)"),
+    Deposit("openiti-sibawayh-kitab.txt.gz", "وضع",
+            "الكتاب لسيبويه كاملًا (JK006989؛ 0200AH @599f22f، مطابقٌ لنسخة hamil): حروفُ الزوائد "
+            "العشرة بمواضعها، وأبوابُ النون الثقيلة والخفيفة بشواهدها",
+            "a160f940bb194e6fe7e6655d2c7f28e41f1fc648c4c5e340cc4e42306d5cb625",
+            "CC BY-NC-SA 4.0 (OpenITI)"),
     Deposit("openiti-majaz-quran.txt.gz", "مرجع محجوب",
             "مجاز القرآن لأبي عبيدة (JK010146): مرجعُ الأحكام المحجوب للمجاز — يُقاس عليه ولا يُقرأ "
             "منه",
@@ -143,7 +151,7 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
         "adad.json", "fil.json.gz", "filiyya.json.gz", "hamza.json", "huruf.json",
         "interrog.json", "ism.json.gz", "jazm.json", "jumla.json", "majrurat.json.gz",
         "mansubat.json", "marifa.json", "munada.json", "nawasikh.json", "sarf.json",
-        "shibh.json.gz", "tawabi.json", "zaman.json", "zuruf.json")),
+        "shibh.json.gz", "tawabi.json", "zaman.json", "zawaid.json", "zuruf.json")),
 )
 """كلُّ مودَعٍ بنوعه. «معلومات سابقة» لا مودَعَ لها بعد: المخصّصُ مختومٌ «وضعًا» (روايةُ الوضع)،
 وتُشتقّ منه المعلوماتُ السابقة (الأجناسُ والقابليّات) جدولًا مولَّدًا بنوعها حين يُؤذن بأداتها."""

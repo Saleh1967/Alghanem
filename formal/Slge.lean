@@ -56,3 +56,5 @@ import Slge.MaaniTable
 import Slge.Maani
 import Slge.MukhassasTable
 import Slge.Mukhassas
+import Slge.ZawaidTable
+import Slge.Zawaid

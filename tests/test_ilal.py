@@ -116,10 +116,11 @@ def test_numbers_on_the_deposit() -> None:
     m = measure()
     # كانت 2,138 و1,000 قبل قوالب الاسم الأربعة (أ2): ما صار يُقرأ مباشرةً على فِعْل/فَعَال لا ينزل
     # بالإعلال
-    assert m["forms"] == 18179 and m["with"] == 1960 and m["only"] == 644
+    # ثمّ 1,960 قبل زوائد سيبويه (ADR ١٨: النونُ والتاءُ لاحقتين تفتحان جذوعًا معتلّةً للإعلال)
+    assert m["forms"] == 18179 and m["with"] == 2040 and m["only"] == 648
     assert m["rules"]["QALB_AYN"] > m["rules"]["HADHF_AYN_U"] > m["rules"]["NAQL"]
     # كانت 9,249 كلمةً لا تُقرأ إلّا بالإعلال فصارت 7,746 بعد قوالب الاسم (أ2)
-    assert m["m_total"] == 7746 and m["m_hit"] > 0.9 * m["m_total"]
+    assert m["m_total"] == 7749 and m["m_hit"] > 0.9 * m["m_total"]  # كانت 7,746
     law = m["law"]
     assert law["itbaq_ta"] == 17 and law["itbaq_tta"] == 108 and law["dzz_ta"] == 20
     assert law["dzz_dal"] == 297 and len(law["kept"]) == 32
