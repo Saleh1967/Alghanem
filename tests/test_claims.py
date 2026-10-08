@@ -50,8 +50,8 @@ def test_ledger_file_names_every_generator_and_table() -> None:
     text = (ROOT / "CLAIMS.md").read_text(encoding="utf-8")
     for name, _, _ in MOD.generators():
         assert f"### `{name}`" in text, name
-    for csv in (ROOT / "formal" / "a116").glob("*.csv"):
-        assert f"`{csv.name}.rows`" in text, csv.name
+    for name in MOD.TABLE_NAMES:
+        assert f"`{name}.csv.rows`" in text, name
     from gate.api import CORPUS_SHA256
 
     assert CORPUS_SHA256 in text

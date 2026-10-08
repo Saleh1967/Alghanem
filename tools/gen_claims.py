@@ -30,6 +30,11 @@ TARGET = ROOT / "CLAIMS.md"
 CORPUS = ROOT / "corpora" / "quran-simple-enhanced.txt"
 MASAQ = ROOT / "corpora" / "MASAQ.csv"
 TABLES = ROOT / "formal" / "a116"
+TABLE_NAMES = ("counts", "hadd", "hamza", "numbers", "order", "pairs", "syllables", "table", "utf8")
+"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ السبعة (يطابقها CI بايتًا بايتًا) والمولَّدتان
+لحجمهما (`syllables`، `hadd`: تُولَّدان في وظيفة Lean وتُنزَّلان أثرًا إلى وظيفة البوّابة). جدولٌ جديد
+لا يدخل
+السجلَّ بوجوده على القرص بل بإضافته هنا وإلى الأثر في CI — وإلّا اختلف السجلُّ محلّيًّا عنه في CI."""
 FAN = 12  # أقصى ما يُفرد من مفاتيح؛ وما فوقه يُجمل عددًا ومجموعًا
 
 
@@ -113,7 +118,11 @@ def ledger() -> list[dict[str, Any]]:
         rows.append({"generator": name, "reads": list(reads),
                      "fingerprint": hashlib.sha256(blob.encode("utf-8")).hexdigest()[:16],
                      "numbers": nums})
-    for csv in sorted(TABLES.glob("*.csv")):
+    for name in TABLE_NAMES:
+        csv = TABLES / f"{name}.csv"
+        if not csv.exists():
+            raise FileNotFoundError(
+                f"{csv.name}: جدولُ Lean غيرُ مولَّد — شغّل lake exe a116-table {name}")
         n = sum(1 for _ in csv.open(encoding="utf-8"))
         rows.append({"generator": f"lake exe a116-table {csv.stem}", "reads": [],
                      "fingerprint": _sha(csv)[:16], "numbers": [(f"{csv.name}.rows", n)]})
