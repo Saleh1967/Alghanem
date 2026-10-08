@@ -45,6 +45,8 @@ jobs:
         run: python tools/gen_nabhani_index.py --check
       - name: the Mukhassas tree and capability tables (Lean and Python) are generated from the sealed source
         run: python tools/deposit_mukhassas.py --check
+      - name: CLAIMS.md — every published number recomputed from its generator; no number in CLAUDE.md without one
+        run: python tools/gen_claims.py --check
       - name: guard — no text reader or writer outside suspended/
         run: python -c "from slge.guard import breaches; b = breaches(); print(b or 'لا خرق'); raise SystemExit(1 if b else 0)"
 

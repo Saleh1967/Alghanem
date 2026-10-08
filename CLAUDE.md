@@ -2,7 +2,7 @@
 
 اقرأ هذا كلَّه قبل أيّ أمر. ما خالفه يُرفض بالاسم.
 
-**دستورُ الوكيل** (ملزِمٌ لي قبل القانون الواحد وبعده): `AGENT_CONSTITUTION.md` في مستودع الغانم — سبعَ عشرةَ مادّةً في ثلاثة أبواب: تسعٌ ضدّ الهلوسة والغشّ الدستوريّ وفبركة الاختبارات وترك Lean؛ وخمسٌ تفصل الوضعَ عن المعلومات السابقة عن الحكم (الحكمُ فوق الترخيص لا فيه؛ الشهادةُ لا تأخذ العالمَ معاملًا؛ لا مودَعَ بلا نوع؛ الحكمُ ثلاثيٌّ لا يُسقط ترخيصًا؛ أركانُ العقل الأربعة شرطُ كلّ اقتراح)؛ وثلاثٌ لمراتب المخرج (من حيث هي / معلومة / مفهوم؛ لا «مفهوم» بلا شاهدِ واقعٍ مودَع؛ الدلالةُ من حيث هي بلا لافظٍ ولا سامع، وLean يُبرهن المرويَّ لا اللغة)، كلٌّ بفحصها الآليّ واسم مخالفتها.
+**دستورُ الوكيل** (ملزِمٌ لي قبل القانون الواحد وبعده): `AGENT_CONSTITUTION.md` في مستودع الغانم — سبعَ عشرةَ مادّةً في ثلاثة أبواب: تسعٌ ضدّ الهلوسة والغشّ الدستوريّ وفبركة الاختبارات وترك Lean؛ وخمسٌ تفصل الوضعَ عن المعلومات السابقة عن الحكم (الحكمُ فوق الترخيص لا فيه؛ الشهادةُ لا تأخذ العالمَ معاملًا؛ لا مودَعَ بلا نوع؛ الحكمُ ثلاثيٌّ لا يُسقط ترخيصًا؛ أركانُ العقل الأربعة شرطُ كلّ اقتراح)؛ وثلاثٌ لمراتب المخرج (من حيث هي / معلومة / مفهوم؛ لا «مفهوم» بلا شاهدِ واقعٍ مودَع؛ الدلالةُ من حيث هي بلا لافظٍ ولا سامع، وLean يُبرهن المرويَّ لا اللغة)، كلٌّ بفحصها الآليّ واسم مخالفتها. ومعجمُ الاصطلاح الجامع للمستودعات كلِّها: `GLOSSARY.md` في الغانم (مولَّدٌ ومفحوص).
 
 ## القانون الواحد
 
@@ -30,7 +30,7 @@
 2. لا تستورد `slge.encoding` ولا `slge.orthography` ولا `slge.lexicon` ولا `slge.morphology` ولا شيئًا من `suspended/`.
 3. لا تستورد بوّابةَ الغانم هنا: الشهادةُ تصل بتّاتٍ (ذرّاتٍ وعددًا)؛ المستودعان منفصلان والبرهانُ مشترَكٌ بإيداعٍ مثبَّت (`formal/lake-manifest.json`).
 4. لا تُعِد وحدةً من `suspended/` إلّا بثلاثة: (١) مدخلُها `slge.entry` على شهادةٍ لا نصّ، (٢) اختباراتٌ مستقلّةٌ عن شيفرتها مطعَّمةٌ بالطفرة (20/20)، (٣) ADR في `ARCHITECTURE.md`. ثمّ `python tools/gen_registry.py`.
-5. لا تحرِّر `STATUS.md` ولا `LEAN_INDEX.md` ولا `RAWABIT_INDEX.md` ولا `DAMAIR_INDEX.md` ولا `ISHARA_INDEX.md` ولا `ISTIFHAM_INDEX.md` ولا `NIDA_INDEX.md` ولا `ZURUF_INDEX.md` ولا `ZAMAN_INDEX.md` ولا `ADAD_INDEX.md` ولا `MARIFA_INDEX.md` ولا `SARF_INDEX.md` ولا `TAWABI_INDEX.md` ولا `NAWASIKH_INDEX.md` ولا `JAZM_INDEX.md` ولا `MANSUBAT_INDEX.md` ولا `MAJRURAT_INDEX.md` ولا `WASL_INDEX.md` ولا `ISM_INDEX.md` ولا `FIL_INDEX.md` ولا `HURUF_INDEX.md` ولا `JUMLA_INDEX.md` ولا `FILIYYA_INDEX.md` ولا `SHIBH_INDEX.md` ولا `NISAB_INDEX.md` ولا `TALIL_INDEX.md` ولا `MAQAM_INDEX.md` ولا `JIHA_INDEX.md` ولا `NAAT_INDEX.md` ولا `USLUB_INDEX.md` ولا `TALAB_INDEX.md` ولا `KULLI_INDEX.md` ولا `WAD_INDEX.md` ولا `TABAYUN_INDEX.md` ولا `BITS_INDEX.md` ولا `MADD_INDEX.md` ولا `ILAL_INDEX.md` ولا `JIDH_INDEX.md` ولا `MAQAYIS_INDEX.md` ولا `ABNIYA_INDEX.md` ولا `ADAWAT_INDEX.md` ولا `WUJUD_INDEX.md` ولا `MAANI_INDEX.md` ولا `NABHANI_INDEX.md` ولا `MUKHASSAS_INDEX.md` ولا `SUSPENDED_REGISTRY.json` ولا `formal/out/*` بيدك؛ تُولَّد وتُطابَق.
+5. لا تحرِّر `STATUS.md` ولا `LEAN_INDEX.md` ولا `RAWABIT_INDEX.md` ولا `DAMAIR_INDEX.md` ولا `ISHARA_INDEX.md` ولا `ISTIFHAM_INDEX.md` ولا `NIDA_INDEX.md` ولا `ZURUF_INDEX.md` ولا `ZAMAN_INDEX.md` ولا `ADAD_INDEX.md` ولا `MARIFA_INDEX.md` ولا `SARF_INDEX.md` ولا `TAWABI_INDEX.md` ولا `NAWASIKH_INDEX.md` ولا `JAZM_INDEX.md` ولا `MANSUBAT_INDEX.md` ولا `MAJRURAT_INDEX.md` ولا `WASL_INDEX.md` ولا `ISM_INDEX.md` ولا `FIL_INDEX.md` ولا `HURUF_INDEX.md` ولا `JUMLA_INDEX.md` ولا `FILIYYA_INDEX.md` ولا `SHIBH_INDEX.md` ولا `NISAB_INDEX.md` ولا `TALIL_INDEX.md` ولا `MAQAM_INDEX.md` ولا `JIHA_INDEX.md` ولا `NAAT_INDEX.md` ولا `USLUB_INDEX.md` ولا `TALAB_INDEX.md` ولا `KULLI_INDEX.md` ولا `WAD_INDEX.md` ولا `TABAYUN_INDEX.md` ولا `BITS_INDEX.md` ولا `MADD_INDEX.md` ولا `ILAL_INDEX.md` ولا `JIDH_INDEX.md` ولا `MAQAYIS_INDEX.md` ولا `ABNIYA_INDEX.md` ولا `ADAWAT_INDEX.md` ولا `WUJUD_INDEX.md` ولا `MAANI_INDEX.md` ولا `NABHANI_INDEX.md` ولا `MUKHASSAS_INDEX.md` ولا `CLAIMS.md` ولا `SUSPENDED_REGISTRY.json` ولا `formal/out/*` بيدك؛ تُولَّد وتُطابَق.
 6. لا تكتب في `status.py` وسمًا أقوى من سنده: «مبرهن» لما في Lean باسمه مدقَّقًا في `Audit.lean`؛ «مفحوص» لما له اختبارٌ باسمه؛ وما سندُه في `suspended/` يُوسَم «معلق» آليًّا (`status._suspend`). (الدعاوى المعروفةُ المبالغُ فيها سابقًا: Q22 دوريّ، Q3 بالبناء — لا تُعِدها.)
 7. لا تدمج بلا إذن صاحب المستودع.
 
@@ -38,7 +38,7 @@
 
 ```sh
 pip install -r requirements-dev.txt && pip install -e . --no-deps
-ruff check . && mypy && pytest -q                     # 372 اختبارًا
+ruff check . && mypy && pytest -q                     # 377 اختبارًا
 python tools/gen_status.py --check
 python tools/gen_registry.py --check
 python tools/check_manifest.py && python tools/check_manifest.py --indexes   # السجلُّ وكلُّ الفهارس (بدل السطور أدناه واحدًا واحدًا)
@@ -91,6 +91,7 @@ python tools/deposit_maani.py --check                # جدولا معاني ا�
 python tools/gen_nabhani_index.py --check            # فهرسُ المطابقة النبهانيّ ↔ الوحدات: لا إشارةَ إلى وحدةٍ أو مبرهنةٍ أو اختبارٍ لا وجودَ له (NABHANI_INDEX.md)
 python tools/gen_mukhassas_index.py --check          # فهرسُ المخصّص: الشجرةُ كما هي، الربطُ بالرسم، القابليّاتُ الموروثة، الحكمُ بشاهد على المودَع (MUKHASSAS_INDEX.md)
 python tools/deposit_mukhassas.py --check            # جدولا المخصّص (Lean وبايثون) مولَّدان من المختوم tests/data/openiti-mukhassas.txt.gz
+python tools/gen_claims.py --check                   # سجلُّ الأرقام: كلُّ رقمٍ منشور يُعاد حسابُه من measure() مولِّده ببصمة مودَعاته ومخرَجه؛ ولا عددَ في CLAUDE.md بلا مولِّد (CLAIMS.md؛ ~7 دقائق)
 python -c "from slge.guard import breaches; print(breaches() or 'لا خرق')"
 cd formal && lake build && lake env lean Audit.lean   # 822 مدقَّقة (الـ116 وSLGE)؛ propext/Classical.choice/Quot.sound فقط
 ```
