@@ -30,11 +30,14 @@ TARGET = ROOT / "CLAIMS.md"
 CORPUS = ROOT / "corpora" / "quran-simple-enhanced.txt"
 MASAQ = ROOT / "corpora" / "MASAQ.csv"
 TABLES = ROOT / "formal" / "a116"
-TABLE_NAMES = ("counts", "hadd", "hamza", "numbers", "order", "pairs", "syllables", "table", "utf8")
-"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ السبعة (يطابقها CI بايتًا بايتًا) والمولَّدتان
-لحجمهما (`syllables`، `hadd`: تُولَّدان في وظيفة Lean وتُنزَّلان أثرًا إلى وظيفة البوّابة). جدولٌ جديد
-لا يدخل
-السجلَّ بوجوده على القرص بل بإضافته هنا وإلى الأثر في CI — وإلّا اختلف السجلُّ محلّيًّا عنه في CI."""
+TABLE_NAMES = (
+    "counts", "hadd", "hadd-join", "hamza", "numbers", "order", "pairs", "syllables", "table",
+    "utf8",
+)
+"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ السبعة (يطابقها CI بايتًا بايتًا)
+والمولَّداتُ الثلاث لحجمها (`syllables`، `hadd`، `hadd-join`: تُولَّد في وظيفة Lean وتُنزَّل أثرًا إلى
+وظيفة البوّابة). جدولٌ جديد لا يدخل السجلَّ بوجوده على القرص بل بإضافته هنا وإلى الأثر في CI — وإلّا
+اختلف السجلُّ محلّيًّا عنه في CI."""
 FAN = 12  # أقصى ما يُفرد من مفاتيح؛ وما فوقه يُجمل عددًا ومجموعًا
 
 
