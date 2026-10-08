@@ -57,7 +57,10 @@ def measure() -> dict[str, Any]:
 
 def render() -> str:
     m = measure()
-    pct = lambda n: f"{100 * n / m['atoms']:.1f}%"  # noqa: E731
+
+    def pct(n: int) -> str:
+        return f"{100 * n / m['atoms']:.1f}%"
+
     lines = [
         "# فهرسُ المخارج — مخارجُ سيبويه وصفاتُه خاناتٍ، والمعلَنُ مقابَلًا بالمختوم",
         "",
