@@ -841,3 +841,8 @@
 'Slge.Makharij.shidda_partition' does not depend on any axioms
 'Slge.Makharij.itbaq_partition' does not depend on any axioms
 'Slge.Makharij.mutbaqa_witness' does not depend on any axioms
+'Slge.IlalBab.table_length' does not depend on any axioms
+'Slge.IlalBab.every_rule_once' does not depend on any axioms
+'Slge.IlalBab.witnesses_read' depends on axioms: [propext]
+'Slge.IlalBab.unwitnessed' does not depend on any axioms
+'Slge.IlalBab.debts_named' does not depend on any axioms

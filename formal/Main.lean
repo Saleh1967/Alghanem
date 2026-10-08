@@ -676,6 +676,13 @@ def main (args : List String) : IO Unit := do
                    ("mutbaqa", Makharij.mutbaqa), ("munfatiha", Makharij.munfatiha),
                    ("bayn", Makharij.bayn)] do
       IO.println s!"sifa,{n},{"+".intercalate (l.map toString)}"
+  | ["ilal_bab"] =>
+    -- أبوابُ الإعلال: لكلّ قاعدةٍ سطرُ بابها وشاهدُه حواملَ وصورةُ المصحف خاناتٍ (مفاتيحَ) وموضعُها وقراءتُها.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    for r in IlalBab.table do
+      IO.println s!"row,{r.1},{r.2.1},{"+".intercalate (r.2.2.1.map toString)},{key r.2.2.2.1},{r.2.2.2.2},{IlalBab.reads r}"
+    for n in IlalBab.debts do
+      IO.println s!"debt,{n}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

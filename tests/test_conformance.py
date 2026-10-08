@@ -1227,3 +1227,25 @@ def test_makharij_matches_lean() -> None:
     for r in (r for r in rows if r[0] == "sifa"):
         mine = BAYN if r[1] == "bayn" else SIFAT[r[1]][1]
         assert tuple(ALPHABET[int(i)] for i in r[2].split("+")) == mine, r
+
+
+def test_ilal_bab_matches_lean() -> None:
+    """أبوابُ الإعلال: القاعدةُ وسطرُها وشاهدُها وصورةُ المصحف وموضعُها وقراءتُها = جدولُ `IlalBab`."""
+
+    from slge.ilal import RULES
+    from slge.ilal_bab import DEBTS, TABLE, reads
+
+    rows = _rows("ilal_bab.csv")
+    got = [r for r in rows if r[0] == "row"]
+    # رسمُ الشاهد خشنًا كما أودعته الأداة: الهمزةُ بصورها ألفٌ، ة→ت، ى→ا.
+    coarse = {"أ": "ء", "إ": "ء", "ؤ": "ء", "ئ": "ء", "آ": "ءا", "ة": "ت", "ى": "ا"}
+    assert len(got) == len(TABLE) == 13
+    for r, mine in zip(got, TABLE, strict=True):
+        rule, _, line, word, cells, at, _ = mine
+        assert RULES[int(r[1])] == rule and int(r[2]) == line, r
+        rasm = "".join(coarse.get(ch, ch) for ch in word).replace("ء", "ا")
+        assert [ALPHABET[int(i)] for i in r[3].split("+")] == [c for c in rasm if c in ALPHABET], r
+        key = "-".join(str(index(c)) for c in (cells or ()))
+        assert r[4] == key and int(r[5]) == (at or 0), r
+        assert (r[6] == "true") == reads(mine), r
+    assert [int(r[1]) for r in rows if r[0] == "debt"] == [n for _, n in DEBTS]

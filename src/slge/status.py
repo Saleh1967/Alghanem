@@ -921,7 +921,7 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_gates.py::test_ladder_order_and_named_refusals",
        "test:tests/test_gates.py::test_whole_mushaf_climbs_consistently",
        note="قانونُ السُّلَّم مبرهَنٌ على المجرّد؛ البوّاباتُ تركّب الدوالَّ القائمة (مفحوص) ولا تبني قراءة."),
-    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (69 وحدة، 55 جدولًا، 45 فهرسًا): كلُّ وحدةٍ "
+    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (71 وحدة، 56 جدولًا، 46 فهرسًا): كلُّ وحدةٍ "
        "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
        "test:tests/test_gates.py::test_manifest_covers_the_tree",
        note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
@@ -1220,6 +1220,14 @@ _DECLARED: tuple[Claim, ...] = (
        "الجوف", _S,
        "test:tests/test_makharij.py::test_sibawayh_hams_differs_from_the_declared_phonology_by_sad",
        note="لا يُصحَّح المعلَنُ من الذاكرة؛ المختومُ هو الحجّة، والمعلَنُ دينٌ باسمه (ADR ١٩)."),
+    _c("ILAL-bab", "لكلّ قاعدةٍ من قواعد الإعلال الثلاثَ عشرةَ بابُها في الكتاب المختوم بسطره وشاهدٌ "
+       "من نصّ الباب بعينه؛ ثمانٍ لها صورةٌ من مودَع المصحف تقرؤها القاعدةُ نفسُها، وخمسٌ شاهدُها رسمٌ "
+       "بلا خانات باسمها؛ وسبعةُ أبوابٍ بلا قاعدة ديونٌ بأسطرها", _P,
+       "lean:Slge.IlalBab.every_rule_once", "lean:Slge.IlalBab.witnesses_read",
+       "lean:Slge.IlalBab.unwitnessed", "lean:Slge.IlalBab.debts_named",
+       "test:tests/test_ilal_bab.py::test_eight_rules_read_their_deposited_forms",
+       "test:tests/test_conformance.py::test_ilal_bab_matches_lean",
+       note="الشاهدُ واردٌ في الباب لا مسوقٌ له بعينه؛ والخمسُ لا صورةَ لها في المصحف برسمها (ADR ٢٠)."),
     _c("ZAWAID-masaq", "على مودَع المصحف: 267 صورةً آخرُها الثقيلة يقرأ الجذعُ 96 منها فعلًا بها، و224 "
        "آخرُها التاءُ الساكنة يقرأ 156؛ وعلى MASAQ: EMPHATIC_NUN 160/239، SUFF_FEM_TA 348/643، "
        "PROTECT_NUN 109/219", _S,

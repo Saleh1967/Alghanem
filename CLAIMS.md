@@ -35,7 +35,7 @@
 | `masaq-zawaid.json` | مرجع محجوب | `15ab1c4691c88ebb99b4f37c5f1c062c83a20a988fdd6099cc835eaea4097478` |
 | `masaq-zuruf.json` | مرجع محجوب | `ef2e77119120a8f5109e28e63c0835468ce85442806c44b0e4f4a70635416dd3` |
 
-## الأرقام (847 رقمًا من 39 مولِّدًا)
+## الأرقام (855 رقمًا من 40 مولِّدًا)
 
 ### `tools/gen_abniya_index.py::measure`
 
@@ -291,6 +291,21 @@
 | `after.لن.فعل مضارع مجرور` | 1 |
 | `after.لن.فعل مضارع منصوب` | 104 |
 | `roles.len` | 40 |
+
+### `tools/gen_ilal_bab_index.py::measure`
+
+يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `150dc7fc0c6f9fa2`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `all_read` | 1 |
+| `chapters` | 9 |
+| `debts` | 7 |
+| `forms` | 18,179 |
+| `read.len` | 13 |
+| `read.sum` | 37,799 |
+| `rows` | 13 |
+| `witnessed` | 8 |
 
 ### `tools/gen_ilal_index.py::measure`
 

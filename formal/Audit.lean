@@ -846,3 +846,8 @@ import Slge
 #print axioms Slge.Makharij.shidda_partition
 #print axioms Slge.Makharij.itbaq_partition
 #print axioms Slge.Makharij.mutbaqa_witness
+#print axioms Slge.IlalBab.table_length
+#print axioms Slge.IlalBab.every_rule_once
+#print axioms Slge.IlalBab.witnesses_read
+#print axioms Slge.IlalBab.unwitnessed
+#print axioms Slge.IlalBab.debts_named
