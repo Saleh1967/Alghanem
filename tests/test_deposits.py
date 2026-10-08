@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from conftest import ROOT
-from slge.manifest import DEPOSIT_KINDS, DEPOSITS, Deposit
+from slge.manifest import CERTIFICATES_DIGEST, DEPOSIT_KINDS, DEPOSITS, GATE_REV, Deposit
 from slge.order import MODULE_LAYER, ancestors
 
 DATA = ROOT / "tests" / "data"
@@ -43,3 +43,29 @@ def test_prior_knowledge_is_read_only_above_the_gates() -> None:
     assert "الحكم" not in ancestors("البوابات")
     assert [m for m, layer in MODULE_LAYER.items() if layer == "الحكم"] == ["mukhassas"], \
         "لا وحدةَ في الحكم بلا إذنٍ مسجَّل (المادّة ٩؛ ADR ١٥)"
+
+
+def _canonical(d: object) -> str:
+    import hashlib
+    import json
+
+    blob = json.dumps(d, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(blob.encode("utf-8")).hexdigest()
+
+
+def test_certificates_deposit_is_what_the_pinned_gate_printed() -> None:
+    """خياطةُ الطبقتين: بصمةُ المودَع القانونيّة هي ما طبعته بوّابةُ الغانم على `GATE_REV`؛ وCI
+    (`ci.yml`) يستنسخ البوّابةَ على الإيداع نفسه ويعيد التوليدَ قيمةً قيمة
+    (`DEPOSIT_DRIFTED_FROM_GATE`)."""
+
+    import gzip
+    import json
+
+    with gzip.open(DATA / "corpus-certificates.json.gz", "rt", encoding="utf-8") as f:
+        d = json.load(f)
+    assert _canonical(d) == CERTIFICATES_DIGEST
+    assert len(GATE_REV) == 40 and d["tokens"] == 78245 and len(d["forms"]) == 18179
+    ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    assert "GATE_REV" in ci and "gen_certificates.py --check" in ci  # CI يقرأ الإيداعَ من هنا
+    d["forms"][7]["fiber_size"] += 1
+    assert _canonical(d) != CERTIFICATES_DIGEST

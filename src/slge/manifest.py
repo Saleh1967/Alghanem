@@ -11,8 +11,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Final
 
-__all__ = ["DEPOSITS", "DEPOSIT_KINDS", "MODULES", "Deposit", "Module", "index_tools", "lean_files",
-           "readers_under_law", "tables"]
+__all__ = ["CERTIFICATES_DIGEST", "DEPOSITS", "DEPOSIT_KINDS", "GATE_REV", "MODULES", "Deposit",
+           "Module", "index_tools", "lean_files", "readers_under_law", "tables"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -105,9 +105,19 @@ class Deposit:
     licence: str = ""
 
 
+GATE_REV: Final[str] = "072ef77d1f9945ec2fde100f9d32c9b56d0e609e"
+"""إيداعُ بوّابة الغانم (`Saleh1967/Alghanem`، فرع `claude/official-gate`) الذي يُعاد منه توليدُ مودَع
+الشهادات في CI (`tools/gen_certificates.py --check`): ما يقيسه SLGE هو ما تطبعه البوّابةُ على المدوّنة
+المختومة بهذا الإيداع؛ أيُّ فرقٍ `DEPOSIT_DRIFTED_FROM_GATE`. يُرفع مع المودَع معًا لا أحدُهما وحدَه."""
+
+CERTIFICATES_DIGEST: Final[str] = "4329fb9c3acaf5235c00da1e2373d9706c9739e488c05ab7d3cb377e69545144"
+"""بصمةُ المودَع بصورته القانونيّة (JSON مرتّبَ المفاتيح بلا فراغ) كما طبعتها البوّابةُ على `GATE_REV`؛
+يفحصها `tests/test_deposits.py` محلّيًّا بلا بوّابة، وCI يعيد التوليدَ من البوّابة نفسها."""
+
 DEPOSITS: Final[tuple[Deposit, ...]] = (
     Deposit("corpus-certificates.json.gz", "واقع مختوم",
-            "شهاداتُ المصحف كلِّه خاناتٍ وأعدادًا؛ بصمةُ المدوّنة فيه"),
+            "شهاداتُ المصحف كلِّه خاناتٍ وأعدادًا؛ بصمةُ المدوّنة فيه؛ يُعاد توليدُه من البوّابة على "
+            "GATE_REV"),
     Deposit("maqayis-roots.json.gz", "وضع", "جذورُ مقاييس اللغة حواملَ (4,561)"),
     Deposit("sibawayh-abniya.tsv", "وضع", "أبنيةُ الأسماء عند سيبويه (158 هيكلًا)"),
     Deposit("nabhani-huruf.json", "وضع",

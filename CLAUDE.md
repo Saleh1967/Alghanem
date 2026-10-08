@@ -10,7 +10,7 @@
 
 - النصُّ يدخل في مستودع الغانم وحدَه: `gate.enter(bytes) → Certificate | Refusal` (`Saleh1967/Alghanem`، فرع `claude/official-gate`، حزمة `gate/`، برهانُها `formal/a116`).
 - السُّلَّمُ الفعليّ: `slge.gates.climb(cert.atoms)` تسعُ بوّاباتٍ متتابعة (الخانة، الترخيص، العدد حاكمةً؛ الجداول، الجذع، الأدوات، الصرف، الإعراب، الجواب قارئةً) — ولا بوّابةَ فوق مرفوضة (`Grant.ladder_implies_base`). وكلُّ وحدةٍ مسجَّلةٌ في `slge.manifest` بمواضعها، و`python tools/check_manifest.py` يشهد أنّها موصولةٌ في كلّ موضع (ADR ٦ في `ARCHITECTURE.md`).
-- شهاداتُ المصحف كلِّه مودَعةٌ خاناتٍ وأعدادًا (`tests/data/corpus-certificates.json.gz`، بصمةُ المدوّنة فيه) وتُقاس على السُّلَّم في `BITS_INDEX.md`.
+- شهاداتُ المصحف كلِّه مودَعةٌ خاناتٍ وأعدادًا (`tests/data/corpus-certificates.json.gz`، بصمةُ المدوّنة فيه) وتُقاس على السُّلَّم في `BITS_INDEX.md`. والمودَعُ مخيطٌ بالبوّابة شيفرةً لا نثرًا: `manifest.GATE_REV` إيداعُ الغانم الذي يعيد CI منه توليدَ المودَع (`tools/gen_certificates.py --check` هناك) ويطابقه قيمةً قيمة — أيُّ فرقٍ `DEPOSIT_DRIFTED_FROM_GATE`؛ وبصمتُه القانونيّة `manifest.CERTIFICATES_DIGEST` تُفحص محلّيًّا (`test_certificates_deposit_is_what_the_pinned_gate_printed`). رفعُ المودَع ورفعُ `GATE_REV` معًا لا أحدُهما وحدَه.
 - هنا: `slge.entry.from_atoms(cert.atoms) → خانات`، و`slge.entry.to_atoms(خانات) → ذرّات` تعود إلى `gate.exit`. والطيُّ `to_integer/from_integer` مبرهَنٌ (`Slge.slgeFold_*`) على المرخَّص ثنائيًّا؛ وما رخّصه الثلاثيُّ وحدَه (كـ«حَاجَّ») يحمل عددَه في شهادته.
 - الطبقاتُ الحيّة: `entry`، `cells`، `stream`، `categories`، `phonology`، `semantics`، `nazm`، `grant`، `wazn`، `shabaka`، `khamsa`، `afal`، `rawabit`، `damair`، `ishara`، `istifham`، `nida`، `zuruf`، `zaman`، `adad`، `marifa`، `sarf`، `tawabi`، `nawasikh`، `jazm`، `mansubat`، `majrurat`، `wasl`، `ism`، `fil`، `huruf`، `jumla`، `filiyya`، `shibh`، `nisab`، `talil`، `maqam`، `jiha`، `naat`، `uslub`، `talab`، `kulli`، `wad`، `tabayun`، `madd`، `ilal`، `jidh`، `maqayis_table`، `maqayis`، `abniya_table`، `abniya`، `adawat`، `wujud_table`، `wujud`، `maani_table`، `maani`، `mukhassas_table`، `mukhassas`، `knowledge`، `rank`، `learning`، `answer`، و`gates` (البوّاباتُ المتتابعة فوقها كلِّها) (و`order`، `status`، `guard`، `manifest` وصفًا). وفوق البوّابات طبقةُ **الحكم** (`order.LAYERS["الحكم"]`): ما يحكم على مطابقة النسبة للواقع المودَع لا يدخل سُلَّم الترخيص (دستور الوكيل، المادّتان ١٠ و١٣)؛ أوّلُ وحداتها `mukhassas` (بإذن المالك 2026-10-08، ADR ١٥): شجرةُ المخصّص كما هي وقابليّاتُ عناوينها بالرسم، والحكمُ على (كتاب، جذر) مرتبتين «مفهوم» بشاهدٍ أو «معلومة» بلا شاهد — لا رفضَ ولا امتناع (`Mukhassas.mafhum_has_witness`، `judge_total`)؛ وكلُّ مودَعٍ في `tests/data/` مسجَّلٌ بنوعه في `manifest.DEPOSITS` (المادّة ١٢)؛ والمختومُ بإذن المالك (المخصّص، مقاييس اللغة كاملًا، مجاز القرآن — OpenITI، CC BY-NC-SA 4.0) يحمل بصمتَه ورخصتَه ويفحصه `tests/test_seals.py`، وهو بايتاتٌ لا تقرؤها شيفرةٌ هنا إلّا أداةُ إيداعٍ معفاة تولّد جدولًا بـ`--check`. ما سواها **معلَّق** في `suspended/` بسجلٍّ (`SUSPENDED_REGISTRY.json`): `encoding`، `orthography`، `lexicon`، `morphology` — كانت تقرأ النصّ وتطبّعه خارج البوّابة.
 
@@ -38,7 +38,7 @@
 
 ```sh
 pip install -r requirements-dev.txt && pip install -e . --no-deps
-ruff check . && mypy && pytest -q                     # 377 اختبارًا
+ruff check . && mypy && pytest -q                     # 378 اختبارًا
 python tools/gen_status.py --check
 python tools/gen_registry.py --check
 python tools/check_manifest.py && python tools/check_manifest.py --indexes   # السجلُّ وكلُّ الفهارس (بدل السطور أدناه واحدًا واحدًا)
