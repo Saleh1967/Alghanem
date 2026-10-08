@@ -63,7 +63,8 @@ TERMS: tuple[Term, ...] = (
          "formal/a116/A116/Ternary.lean", "theorem binary_is_blind_to_madd"),
     Term("قيدُ الحدّ", "hadd constraint (CVVC only before a geminate)",
          "«التقاءُ الساكنين على حدّه»: قافيةُ المدّ (CVVC) لا تُرخَّص وصلًا إلّا والمُغلِقُ أوّلُ مثلين "
-         "(حَاجَّ) أو مدَّ فرق؛ وما سواه رفضٌ مسمًّى `CVVC_NOT_GEMINATE` (قَالْتُ) — `strictB`.",
+         "(حَاجَّ) أو مدَّ فرق، والمدُّ والمدغمُ في كلمةٍ واحدة؛ وما سواه رفضٌ مسمًّى "
+         "(`CVVC_NOT_GEMINATE`، `CVVC_ACROSS_WORD_BOUNDARY`) — `strictB` و`strictJoinB`.",
          "formal/a116/A116/Hadd.lean", "def strictB (w : List Cell) : Bool", ("قيدُ الحدّ",)),
     Term("السكونُ الموضعيّ", "positional sukun",
          "حالةُ `sukun` في الخانة معناها «موضعٌ لا تتبعه حركةٌ قصيرة» لا «عدمُ الحركة نطقًا»؛ فحرفُ المدّ "

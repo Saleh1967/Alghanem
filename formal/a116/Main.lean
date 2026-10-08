@@ -14,6 +14,9 @@ import A116
 * `hadd`: لكلّ سلسلةِ خاناتٍ بطول ‎1 … 4‎ من ستّة حواملَ (ء ا و ي ل ج) × أربع حالات
   (‎24 + 24² + 24³ + 24⁴ = 346,200‎ سطرًا): الذرّاتُ نصًّا، ثمّ `Hadd.kindOf` و`continueB` و
   `Hadd.strictB`، ليُطابَق بـ`gate.licence.kind_of` و`strict_licensed` سطرًا سطرًا.
+* `hadd-join`: لكلّ زوجٍ (أولى بطول ‎1 … 3‎، ثانيةٌ بطول ‎1 … 2‎) من ثلاثة حواملَ (ا ل ج) × أربع
+  حالات (‎1,884 × 156 = 293,904‎ سطرًا): الذرّاتُ، ثمّ `Hadd.strictB` على الموصول و`Hadd.strictJoinB`،
+  ليُطابَق بـ`gate.licence.strict_joined` سطرًا سطرًا.
 * `syllables`: لكلّ سلسلةِ أنواعٍ بطول ‎1 … 11‎ (265,719 سلسلة) تقطيعُها بـ`Stages.parse`
   أو `none`، ثمّ `binOK` و`continueB` و`pauseB` من `Ternary`، ليُطابَق ذلك كلُّه
   بـ`mabni_stages.syllabify` و`ternary_licence` سلسلةً سلسلة.
@@ -79,6 +82,19 @@ def render (w : List Cell) : String :=
   let k := Hadd.kindOf w
   s!"{atoms},{"-".intercalate (k.map SyllableTable.kName)},{Ternary.continueB k},{Hadd.strictB w}"
 
+def joinAlphabet : List Cell :=
+  ['ا', 'ل', 'ج'].flatMap fun ch => Haraka.all.map fun h => Ladder.atom ch h
+
+def allJ : Nat → List (List Cell)
+  | 0 => [[]]
+  | n + 1 => (allJ n).flatMap fun w => joinAlphabet.map fun c => w ++ [c]
+
+def atomsOf (w : List Cell) : String :=
+  " ".intercalate (w.map fun c => String.ofList [Field112.carrierChar c.carrier, mark c.haraka])
+
+def renderJoin (l r : List Cell) : String :=
+  s!"{atomsOf l}|{atomsOf r},{Hadd.strictB (l ++ r)},{Hadd.strictJoinB l r}"
+
 end HaddTable
 
 def main (args : List String) : IO Unit := do
@@ -107,6 +123,12 @@ def main (args : List String) : IO Unit := do
     for n in List.range 4 do
       for w in HaddTable.allW (n + 1) do
         IO.println (HaddTable.render w)
+  | ["hadd-join"] =>
+    for m in List.range 3 do
+      for l in HaddTable.allJ (m + 1) do
+        for n in List.range 2 do
+          for r in HaddTable.allJ (n + 1) do
+            IO.println (HaddTable.renderJoin l r)
   | ["hamza"] =>
     -- جدولُ الكرسيّ لكلّ سياق: pos,own,prev,prevLong,prevYa,nextWaw,seat
     for p in [Hamza.Pos.initial, .medial, .final] do

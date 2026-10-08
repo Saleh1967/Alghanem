@@ -67,7 +67,8 @@ jobs:
                    Hamza.seat_initial_by_own Hamza.seat_medial_strongest Hamza.qat_stays_when_joined \
                    Hamza.prefix_hamza_admissible \
                    Hadd.geminateB_vc_carrier Hadd.geminateB_vc_final Hadd.strict_cvvc_is_geminate \
-                   Hadd.strictB_continue Hadd.hadd_debt_closed Hadd.farq_needs_its_hamza; do
+                   Hadd.strictB_continue Hadd.hadd_debt_closed Hadd.farq_needs_its_hamza \
+                   Hadd.straddle_rejected Hadd.ya_shafiina_straddles Hadd.strictJoinB_nil; do
             grep -q "A116.$t" axioms.txt || { echo "::error::$t غيرُ مدقَّقة"; exit 1; }
           done
 
@@ -84,6 +85,7 @@ jobs:
           git diff --exit-code -- table.csv counts.csv order.csv numbers.csv pairs.csv utf8.csv hamza.csv
           lake exe a116-table syllables > syllables.csv   # 13 MB: يُولَّد هنا ويُسلَّم للبايثون لا يُودَع
           lake exe a116-table hadd > hadd.csv             # 14 MB: قيدُ الحدّ (Hadd.strictB) — يُولَّد ولا يُودَع
+          lake exe a116-table hadd-join > hadd-join.csv   # الحدُّ بين كلمتين (Hadd.strictJoinB) — يُولَّد ولا يُودَع
 
       - uses: actions/upload-artifact@v4
         with:
@@ -91,6 +93,7 @@ jobs:
           path: |
             formal/a116/syllables.csv
             formal/a116/hadd.csv
+            formal/a116/hadd-join.csv
 
   gate:
     needs: [lean]

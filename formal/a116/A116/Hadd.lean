@@ -38,6 +38,10 @@ import A116.Ladder
 * `farq_needs_its_hamza`: الطفرةُ المرفوضة — الصورةُ نفسُها بغير همزة الاستفهام في أوّلها مرفوضة؛
   فالاستثناءُ لا يتّسع لكلّ مدٍّ قبل لام.
 * `kindOf_hajja`: إسقاطُ خانات «حَاجَّ» هو `Ternary.hajja` بعينه.
+* **الحدّ بين كلمتين** (`strictJoinB`): الاستثناءُ داخلَ الكلمة الواحدة وحدَها. `straddle_rejected` (مدٌّ آخرَ
+  الأولى ومُغلِقٌ أوّلَ الثانية مرفوضٌ لكلّ طول)، `strictJoinB_strict`، `strictJoinB_nil`، والعيبُ المسدود
+  `ya_shafiina_straddles` (يَا + الشَّافِعِينَ: يقبله `strictB` موصولًا ويرفضه `strictJoinB`)، وشاهدا القبول
+  `quli_dallina_join` و`quli_lhamdu_join`.
 
 ولا يُبرهَن هنا أنّ هذا القيدَ هو قانونُ العربيّة: Lean يُبرهن خواصَّ التعريف على الخانات؛ ومطابقتُه
 للمرويّ مقيسةٌ على المدوّنة المختومة (`tests/test_hadd.py`).
@@ -207,5 +211,73 @@ theorem farq_needs_its_hamza :
   have hk : kindOf baalaana = flat .none [.CVVC, .CVV, .CV] := by decide
   simp only [strictB, hk, continueB_flat]
   decide
+
+/-! ## الحدُّ بين كلمتين: الاستثناءُ داخلَ الكلمة الواحدة وحدَها
+
+شرطُ باب «دابّة» عند المؤلّف أن يكون المدُّ والمدغمُ «من كلمةٍ واحدة». فإن كان المدُّ آخرَ الأولى
+والمدغمُ أوّلَ الثانية (يَا + الشَّافِعِينَ ← `يَ اْ | شْ شَ …`) فالمدُّ يُقصَّر نطقًا، والقافيةُ ليست
+على حدّها. `strictB` على السلسلة الموصولة لا يرى الحدّ فيقبلها؛ و`strictJoinB` يرفض كلَّ `v` يليه
+`c` إن وقع الحدُّ بين المدّ وما بعد المُغلِق. -/
+
+/-- قافيةُ مدٍّ يقطعها الحدّ: `v | c` أو `v c | x`، حيث `b` طولُ الكلمة الأولى. -/
+def straddles (l r : List Cell) : Bool :=
+  let k := kindOf (l ++ r)
+  let b := l.length
+  (decide (1 ≤ b) && k[b - 1]? == some .v && k[b]? == some .c) ||
+    (decide (2 ≤ b) && k[b - 2]? == some .v && k[b - 1]? == some .c)
+
+/-- الوصلُ مرخَّصٌ بقيد الحدّ: مرخَّصٌ موصولًا، ولا قافيةَ مدٍّ يقطعها الحدّ. -/
+def strictJoinB (l r : List Cell) : Bool := strictB (l ++ r) && !straddles l r
+
+theorem strictJoinB_strict {l r : List Cell} (h : strictJoinB l r = true) : strictB (l ++ r) = true := by
+  simp only [strictJoinB, Bool.and_eq_true] at h
+  exact h.1
+
+/-- بلا كلمةٍ أولى لا حدَّ: القيدُ هو `strictB` بعينه. -/
+theorem strictJoinB_nil (r : List Cell) : strictJoinB [] r = strictB r := by
+  simp [strictJoinB, straddles]
+
+/-- **الحدُّ لكلّ طول:** مدٌّ آخرَ الأولى يليه مُغلِقٌ أوّلَ الثانية — مرفوضٌ مهما كان بعده. -/
+theorem straddle_rejected (l r : List Cell) (hb : 1 ≤ l.length)
+    (hv : (kindOf (l ++ r))[l.length - 1]? = some .v) (hc : (kindOf (l ++ r))[l.length]? = some .c) :
+    strictJoinB l r = false := by
+  simp [strictJoinB, straddles, hb, hv, hc]
+
+theorem cited_join_letters_are_carriers :
+    ['ش', 'ف', 'ع', 'ح', 'م', 'د'].all (Field112.carriers29.contains ·) = true := by
+  decide
+
+open Haraka in
+/-- «يَا» كما تحملها الشهادة: `يَ اْ`. -/
+def ya : List Cell := [atom 'ي' fatha, atom 'ا' sukun]
+open Haraka in
+/-- «الشَّافِعِينَ» موصولةً: سقطت همزةُ الوصل ولامُ الشمسيّة بقيّةٌ (`شْ شَ اْ فِ عِ يْ نَ`). -/
+def shshafiina : List Cell :=
+  [atom 'ش' sukun, atom 'ش' fatha, atom 'ا' sukun, atom 'ف' kasra, atom 'ع' kasra, atom 'ي' sukun,
+    atom 'ن' fatha]
+open Haraka in
+/-- «قُلِ»: `قُ لِ`. -/
+def quli : List Cell := [atom 'ق' damma, atom 'ل' kasra]
+open Haraka in
+/-- «الْحَمْدُ» موصولةً: `لْ حَ مْ دُ`. -/
+def lhamdu : List Cell := [atom 'ل' sukun, atom 'ح' fatha, atom 'م' sukun, atom 'د' damma]
+
+/-- **العيبُ مسمًّى ومسدود:** `strictB` على الموصول يقبل «يَا + الشَّافِعِينَ»، و`strictJoinB` يرفضه. -/
+theorem ya_shafiina_straddles :
+    strictB (ya ++ shshafiina) = true ∧ strictJoinB ya shshafiina = false := by
+  have hk : kindOf (ya ++ shshafiina) = flat .none [.CVVC, .CVV, .CV, .CVV, .CV] := by decide
+  refine ⟨?_, ?_⟩
+  · simp only [strictB, hk, continueB_flat]; decide
+  · simp only [strictJoinB, strictB, hk, continueB_flat]; decide
+
+/-- المدُّ والمدغمُ في الكلمة الثانية وحدَها (قُلِ + ضَالِّينَ): مقبول. -/
+theorem quli_dallina_join : strictJoinB quli dallina = true := by
+  have hk : kindOf (quli ++ dallina) = flat .none [.CV, .CV, .CVVC, .CVV, .CV] := by decide
+  simp only [strictJoinB, strictB, hk, continueB_flat]; decide
+
+/-- الوصلُ بعد متحرّك (قُلِ + الْحَمْدُ): مقبول. -/
+theorem quli_lhamdu_join : strictJoinB quli lhamdu = true := by
+  have hk : kindOf (quli ++ lhamdu) = flat .none [.CV, .CVC, .CVC, .CV] := by decide
+  simp only [strictJoinB, strictB, hk, continueB_flat]; decide
 
 end A116.Hadd

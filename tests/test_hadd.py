@@ -6,6 +6,8 @@
 ٣. الشواهد: توقّعاتٌ مكتوبةٌ باليد من الاصطلاح (حَاجَّ، ضَالِّينَ، قُلْتُ، آلْآنَ مقبولة؛ قَالْتُ مرفوضة)،
    لا محسوبةٌ بالشيفرة المفحوصة.
 ٤. المدوّنةُ المختومة: الرقمُ قبلُ وبعدُ واحد (لا جاهزَ سقط)، والوصلُ بعد مدٍّ يُرفض باسمه.
+٥. الحدُّ بين كلمتين (`Hadd.strictJoinB`): مطابقةُ `hadd-join` (293,904 سطرًا) وطفرتان مسمّاتان، والعيبُ
+   المسدود «يَا + الشَّافِعِينَ» مرفوضٌ في البوّابة باسمه.
 """
 
 from __future__ import annotations
@@ -17,10 +19,18 @@ import pytest
 
 from gate import Refusal, enter, gate
 from gate.contextual import Context
-from gate.licence import K, continue_licensed, hadd_ok, kind_of, strict_licensed
+from gate.licence import (
+    K,
+    continue_licensed,
+    hadd_ok,
+    kind_of,
+    strict_joined,
+    strict_licensed,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 TABLE = ROOT / "formal" / "a116" / "hadd.csv"
+JOIN_TABLE = ROOT / "formal" / "a116" / "hadd-join.csv"
 
 
 def w(s: str) -> tuple[str, ...]:
@@ -125,3 +135,62 @@ def test_junction_after_madd_is_refused_by_name() -> None:
     assert after_madd.reasons == ("JUNCTION_NOT_LICENSED", "CVVC_NOT_GEMINATE")
     after_vowel = enter("الْأَرْضِ".encode(), Context(entry="joined", left="قُلِ"))
     assert not isinstance(after_vowel, Refusal)
+
+
+def _join_rows() -> list[tuple[tuple[str, ...], tuple[str, ...], bool, bool]]:
+    out = []
+    with JOIN_TABLE.open(encoding="utf-8") as fh:
+        for line in fh:
+            pair, strict, joined = line.rstrip("\n").split(",")
+            left, right = pair.split("|")
+            out.append((tuple(left.split(" ")), tuple(right.split(" ")), strict == "true",
+                        joined == "true"))
+    return out
+
+
+def test_python_mirror_matches_lean_hadd_join_table() -> None:
+    rows = _join_rows()
+    assert len(rows) == 293904
+    for left, right, strict, joined in rows:
+        assert strict_licensed(left + right) == strict, (left, right)
+        assert strict_joined(left, right) == joined, (left, right)
+
+
+def _mut_no_boundary(left: Sequence[str], right: Sequence[str]) -> bool:
+    """الطفرة ٤ (`MUTANT_NO_BOUNDARY`): القيدُ على الموصول بلا حدّ — هو العيبُ المسدود."""
+
+    return strict_licensed(tuple(left) + tuple(right))
+
+
+def _mut_boundary_after_madd_only(left: Sequence[str], right: Sequence[str]) -> bool:
+    """الطفرة ٥ (`MUTANT_BOUNDARY_AFTER_MADD_ONLY`): يُفحص `v | c` ويُنسى `v c | x`."""
+
+    k = kind_of(tuple(left) + tuple(right))
+    b = len(left)
+    cut = b < len(k) and k[b - 1] == "v" and k[b] == "c"
+    return strict_licensed(tuple(left) + tuple(right)) and not cut
+
+
+@pytest.mark.parametrize(
+    "mutant", [_mut_no_boundary, _mut_boundary_after_madd_only],
+    ids=["MUTANT_NO_BOUNDARY", "MUTANT_BOUNDARY_AFTER_MADD_ONLY"],
+)
+def test_lean_join_table_rejects_named_mutants(
+    mutant: Callable[[Sequence[str], Sequence[str]], bool],
+) -> None:
+    wrong = sum(1 for left, right, _, joined in _join_rows() if mutant(left, right) != joined)
+    assert wrong > 0
+
+
+def test_madd_then_geminate_across_words_is_refused_by_name() -> None:
+    """`ya_shafiina_straddles`: يَا + الشَّافِعِينَ — المدُّ في الأولى والمدغمُ (لامُ الشمسيّة) في الثانية؛
+    الاستثناءُ داخلَ الكلمة الواحدة وحدَها، فيُرفض باسمه. والمدُّ والمدغمُ معًا في الثانية مقبولان."""
+
+    shafiina = "\u0627\u0644\u0634\u0651\u064e\u0627\u0641\u0650\u0639\u0650\u064a\u0646\u064e"
+    # الرسمُ بنقاطه في المدوّنة المختومة (الشدّةُ قبل الفتحة)، لا كما تُدخله لوحةُ مفاتيح
+    across = enter(shafiina.encode(), Context(entry="joined", left="يَا"))
+    assert isinstance(across, Refusal)
+    assert across.reasons == ("JUNCTION_NOT_LICENSED", "CVVC_ACROSS_WORD_BOUNDARY")
+    assert strict_joined(w("قُ لِ"), w("ضَ اْ لْ لِ يْ نَ"))  # quli_dallina_join
+    assert not strict_joined(w("يَ اْ"), w("شْ شَ اْ فِ عِ يْ نَ"))  # ya_shafiina_straddles
+    assert strict_licensed(w("يَ اْ شْ شَ اْ فِ عِ يْ نَ"))  # …وكان القيدُ بلا حدٍّ يقبلها

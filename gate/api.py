@@ -29,7 +29,7 @@ from typing import Any, Final, cast
 
 from .contextual import Certificate as _Cert
 from .contextual import Codebook, Context, project
-from .licence import continue_licensed, hadd_ok, kind_of
+from .licence import continue_licensed, hadd_ok, kind_of, straddles
 from .residue import Edit, has_marks, repair, unrepair
 
 __all__ = [
@@ -127,6 +127,10 @@ class Gate:
             if not hadd_ok(joined):
                 # `Hadd.strictB`: مدٌّ قبل ساكنٍ غيرِ مدغمٍ عند الحدّ (يَا + لْأَرْضِ) — لا يُقصَّر تخمينًا.
                 return Refusal("REJECT", ("JUNCTION_NOT_LICENSED", "CVVC_NOT_GEMINATE"))
+            if straddles(tuple(left["atoms"]), atoms):
+                # `Hadd.strictJoinB`: المدُّ في كلمةٍ والمدغمُ في الأخرى (يَا + شْشَافِعِينَ) — الاستثناءُ
+                # داخلَ الكلمة الواحدة وحدَها؛ والمدُّ يُقصَّر نطقًا، فلا يُرخَّص ولا يُقصَّر تخمينًا.
+                return Refusal("REJECT", ("JUNCTION_NOT_LICENSED", "CVVC_ACROSS_WORD_BOUNDARY"))
         elif not continue_licensed(kind_of(atoms)):
             # الترخيصُ الثلاثيّ (`Ternary.ContinueLicensed`) هو الحكمُ الأخير: لا شهادةَ لغير المرخَّص.
             return Refusal("REJECT", ("NOT_CONTINUE_LICENSED_AFTER_REPAIR",))

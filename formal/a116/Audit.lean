@@ -154,3 +154,9 @@ import A116
 #print axioms A116.Hadd.qultu_strict
 #print axioms A116.Hadd.alaana_strict
 #print axioms A116.Hadd.farq_needs_its_hamza
+#print axioms A116.Hadd.strictJoinB_strict
+#print axioms A116.Hadd.strictJoinB_nil
+#print axioms A116.Hadd.straddle_rejected
+#print axioms A116.Hadd.ya_shafiina_straddles
+#print axioms A116.Hadd.quli_dallina_join
+#print axioms A116.Hadd.quli_lhamdu_join
