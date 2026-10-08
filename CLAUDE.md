@@ -12,6 +12,7 @@
 - المخرج: `gate.exit(cert) → bytes` — الكلمةُ بعينها (`Fiber.decode_encode`).
 - الاشتقاق: `gate.derive(root)`، والاسترجاع: `gate.recover(cert)`؛ كلاهما يُقاس على مرجعٍ بشريٍّ محجوب (MASAQ) لا على شيفرته.
 - الترخيص: `gate.licence` — الثلاثيّ (`cv | v | c`) لا الثنائيّ؛ فالثنائيُّ أعمى عن المدّ (`Ternary.binary_is_blind_to_madd`).
+- قيدُ الحدّ: قافيةُ المدّ (CVVC) لا تُرخَّص وصلًا إلّا والمُغلِقُ أوّلُ مثلين (حَاجَّ)، أو مدَّ الفرق (آلْآنَ) — `A116.Hadd.strictB` ومرآتُه `gate.licence.strict_licensed`؛ وما سواه رفضٌ مسمًّى `CVVC_NOT_GEMINATE` (قَالْتُ)، لا تقصيرَ تخمينًا. والسكونُ في الخانة **موضعيّ**: «موضعٌ لا تتبعه حركةٌ قصيرة» لا «عدمُ الحركة نطقًا»؛ فحرفُ المدّ خانةٌ ساكنةٌ دورُها `v` (`Hadd.kindOf`)، و«الحركةُ الصفر» هي حالةُ `sukun` وظيفيًّا (ADR ٣).
 - الحدّ: `Context(entry, exit)` — في الوصل تُرخَّص الكلمةُ مع ما قبلها (`JUNCTION_NOT_LICENSED` رفضٌ مسمًّى)، لا تُحشر كسرةُ التقاء الساكنين تخمينًا.
 - البقيّة: `gate.residue` — الرسمُ = صورةٌ قانونيّة + بقيّةُ قواعدِ طبعةٍ مسمّاة؛ الشهادةُ تحملها ويُردّ الرسمُ بعينه (`A116.Residue.chain_restore`). ما لا قاعدةَ له يُرفض باسمه، لا يُخمَّن.
 
@@ -34,13 +35,14 @@
 export PATH=$HOME/.elan/bin:$PATH
 (cd formal/a116 && lake build && lake env lean Audit.lean)   # صفرُ تحذير؛ المسلّماتُ propext/Classical.choice/Quot.sound فقط
 (cd formal/a116 && lake exe a116-table syllables > syllables.csv)   # 13 MB، يُولَّد لا يُودَع؛ يلزم test_conformance
+(cd formal/a116 && lake exe a116-table hadd > hadd.csv)             # 14 MB، يُولَّد لا يُودَع؛ يلزم test_hadd وgen_claims
 ruff check gate tests tools && mypy
 python tools/gen_registry.py --check
 python tools/gen_glossary.py --check          # معجمُ الاصطلاح (GLOSSARY.md): كلُّ مصطلحٍ بموضع تعريفه، مرساةٌ لا توجد تُسقط البناء
 python -m gate.audit corpora/quran-simple-enhanced.txt /tmp/audit_out && git diff --exit-code -- gate/audit_results.json   # الملفُّ ما تحسبه البوّابة الآن، لا كتلةَ فيه بيد
 python tools/gen_claims.py --check            # سجلُّ الأرقام (CLAIMS.md): كلُّ رقمٍ منشور يُعاد حسابُه من مولِّده المسمّى ببصمة مودَعاته ومخرَجه؛ ولا عددَ في CLAUDE.md بلا مولِّد (~4 دقائق)
 python -c "from gate.guard import breaches; print(breaches() or 'لا خرق')"
-pytest -q -m "not slow"        # 109 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
+pytest -q -m "not slow"        # 116 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
 ```
 
 وقبل الطبعة: أثبت أنّ الملف الذي تتكلّم عنه موجودٌ («لا ثقة بلا طبعة»)، وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه أنت.
@@ -54,6 +56,7 @@ pytest -q -m "not slow"        # 109 اختبارًا؛ و`pytest -q -m slow` ل
 | `gate/api.py` | الواجهة الوحيدة | مفحوص (`tests/test_gate.py`) |
 | `gate/bridge.py`, `gate/contextual.py` | النصّ ← الذرّات، الترقيم، الشهادة (بروتوكول A116-CANONICAL-TXT-1.1) | مطابَق للجداول (`tests/test_conformance.py`) |
 | `gate/licence.py` | التقطيع الثلاثيّ بايثونًا؛ الحكمُ الأخير قبل الشهادة | مطابَق لـ265,719 سطرًا من Lean |
+| `formal/a116/A116/Hadd.lean` + `gate/licence.py` (`strict_licensed`) | قيدُ الحدّ: قافيةُ المدّ مدغمةٌ أو مدُّ فرق؛ إسقاطُ الخانة على `cv \| v \| c` تعريفٌ في Lean (`kindOf`) | مبرهن؛ مطابَق لـ346,200 سطرًا (`test_hadd.py`، بثلاث طفراتٍ مرفوضة) |
 | `formal/a116/A116/Unicode.lean`, `Boundary.lean` | UTF-8 تقابلٌ ذاتيُّ الحدّ على مجال يونيكود؛ قانون الابتداء/الوصل/الوقف (لا ابتداء بساكن، الوقف يُسكِّن، الوصل بشرط الحدّ، همزة الوصل تسقط ولا تُقبل بعد ساكن) | مبرهن؛ مطابَق (`utf8.csv`، `test_boundary.py`) |
 | `formal/a116/A116/Ilal.lean` + `gate/ilal.py` | الإعلال والإبدال: 12 قاعدةً تعديلاتٍ على الخانات؛ الردّ مبرهَن، الإغلاق مبرهَن (قلب/نقل/حذف/إبدال)، حذف عين الأجوف ملزَم (الأصل غير مرخَّص) | مبرهن + شواهد مفحوصة |
 | `formal/a116/A116/Hamza.lean` + `gate/hamza.py` | الهمزة: حاملٌ كسائر الحوامل؛ كرسيُّها دالّة في السياق (384 سياقًا، جدول Lean)؛ القطع يبقى في الوصل، والأدوار الزائدة (استفهام/متكلّم/تعدية) تحفظ الترخيص | مبرهن؛ مقيس (97.6% من كراسي المصحف، الباقي بقيّة مسمّاة) |

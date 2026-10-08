@@ -29,7 +29,7 @@ from typing import Any, Final, cast
 
 from .contextual import Certificate as _Cert
 from .contextual import Codebook, Context, project
-from .licence import continue_licensed, kind_of
+from .licence import continue_licensed, hadd_ok, kind_of
 from .residue import Edit, has_marks, repair, unrepair
 
 __all__ = [
@@ -121,11 +121,18 @@ class Gate:
             left = project(repair(self.context.left)[0], Context())
             if left["status"] != "READY":
                 return Refusal("DEFER", ("LEFT_CONTEXT_HAS_NO_CERTIFICATE",))
-            if not continue_licensed(kind_of(tuple(left["atoms"]) + atoms)):
+            joined = tuple(left["atoms"]) + atoms
+            if not continue_licensed(kind_of(joined)):
                 return Refusal("REJECT", ("JUNCTION_NOT_LICENSED",))
+            if not hadd_ok(joined):
+                # `Hadd.strictB`: مدٌّ قبل ساكنٍ غيرِ مدغمٍ عند الحدّ (يَا + لْأَرْضِ) — لا يُقصَّر تخمينًا.
+                return Refusal("REJECT", ("JUNCTION_NOT_LICENSED", "CVVC_NOT_GEMINATE"))
         elif not continue_licensed(kind_of(atoms)):
             # الترخيصُ الثلاثيّ (`Ternary.ContinueLicensed`) هو الحكمُ الأخير: لا شهادةَ لغير المرخَّص.
             return Refusal("REJECT", ("NOT_CONTINUE_LICENSED_AFTER_REPAIR",))
+        elif not hadd_ok(atoms):
+            # قيدُ الحدّ (`Hadd.strictB`): قافيةُ مدٍّ لا يُغلقها أوّلُ مثلين (قَالْتُ) — رفضٌ مسمًّى.
+            return Refusal("REJECT", ("CVVC_NOT_GEMINATE",))
         return Certificate(core, residue)
 
     def exit(self, cert: Certificate) -> bytes:

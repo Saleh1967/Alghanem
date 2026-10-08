@@ -6,8 +6,12 @@
 `Stages.parse`، وتحكم بـ`ContinueLicensed` و`PauseLicensed` كما في `Ternary.lean`.
 
 كلُّ دالّةٍ هنا تقابل تعريفًا في Lean باسمه، ومطابقتُها بالشواهد الثلاثة المسمّاة هناك
-(`hajja`، `bahr`، `tamm`) في `tests/test_gate.py`. وما لا تعريفَ له في Lean هو إسقاطُ
-الذرّةِ على صنفها (`kind_of`) وهو معلنٌ هنا لا مبرهن.
+(`hajja`، `bahr`، `tamm`) في `tests/test_gate.py`. وإسقاطُ الذرّةِ على صنفها (`kind_of`) مرآةُ
+`A116.Hadd.kindOf`، وقيدُ الحدّ (`hadd_ok`، `strict_licensed`) مرآةُ `Hadd.haddB` و`Hadd.strictB`،
+ومطابقتُهما بجدول `lake exe a116-table hadd` (346,200 سطرًا) في `tests/test_hadd.py`.
+
+«ساكن» في الذرّة معناه موضعيّ: موضعٌ لا تتبعه حركةٌ قصيرة. فحرفُ المدّ (`اْ` بعد فتحة) ساكنٌ موضعًا
+وجزءٌ ثانٍ من حركةٍ طويلةٍ نطقًا، ودورُه `v` هو ما يفرّقه عن المُغلِق `c`.
 """
 
 from __future__ import annotations
@@ -109,6 +113,39 @@ def binary_ok(k: Sequence[K]) -> bool:
 
     s = [a != "cv" for a in k]
     return bool(s) and not s[0] and all(not (a and b) for a, b in zip(s, s[1:]))
+
+
+def _carrier(atom: str) -> str:
+    return atom[0]
+
+
+def _is_farq(atoms: Sequence[str]) -> bool:
+    """`Hadd.isFarq`: مدُّ الفرق — ءَ اْ لْ في أوّل الكلمة (آلْآنَ)."""
+
+    return len(atoms) >= 3 and atoms[0] == "ءَ" and atoms[1] == "اْ" and _carrier(atoms[2]) == "ل"
+
+
+def _geminate(pairs: Sequence[tuple[K, str]]) -> bool:
+    """`Hadd.geminateB`: كلُّ `v` يليه `c` فالـ`c` يليه حاملُه نفسُه (أوّلُ مثلين)."""
+
+    for i in range(len(pairs) - 1):
+        if pairs[i][0] == "v" and pairs[i + 1][0] == "c":
+            if i + 2 >= len(pairs) or _carrier(pairs[i + 1][1]) != _carrier(pairs[i + 2][1]):
+                return False
+    return True
+
+
+def hadd_ok(atoms: Sequence[str]) -> bool:
+    """`Hadd.haddB`: التقاءُ الساكنين على حدّه، إلّا مدَّ الفرق في أوّل الكلمة."""
+
+    pairs = list(zip(kind_of(atoms), atoms))
+    return _geminate(pairs[2:] if _is_farq(atoms) else pairs)
+
+
+def strict_licensed(atoms: Sequence[str]) -> bool:
+    """`Hadd.strictB`: مرخَّصٌ ثلاثيًّا وصلًا، وكلُّ قافيةِ مدٍّ فيه مدغمة (أو مدُّ فرق)."""
+
+    return continue_licensed(kind_of(atoms)) and hadd_ok(atoms)
 
 
 def licence(atoms: Sequence[str]) -> tuple[Lead, list[Syl]] | None:

@@ -142,3 +142,15 @@ import A116
 #print axioms A116.Hamza.seat_depends_on_context
 #print axioms A116.Hamza.qat_stays_when_joined
 #print axioms A116.Hamza.prefix_hamza_admissible
+#print axioms A116.Hadd.strictB_continue
+#print axioms A116.Hadd.geminateB_vc_carrier
+#print axioms A116.Hadd.geminateB_vc_final
+#print axioms A116.Hadd.strict_cvvc_is_geminate
+#print axioms A116.Hadd.kindOf_hajja
+#print axioms A116.Hadd.continueB_flat
+#print axioms A116.Hadd.hadd_debt_closed
+#print axioms A116.Hadd.hajja_strict
+#print axioms A116.Hadd.dallina_strict
+#print axioms A116.Hadd.qultu_strict
+#print axioms A116.Hadd.alaana_strict
+#print axioms A116.Hadd.farq_needs_its_hamza

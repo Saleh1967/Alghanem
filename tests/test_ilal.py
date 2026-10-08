@@ -7,7 +7,7 @@ import pytest
 
 from gate import derive
 from gate.ilal import RULES, apply, restore
-from gate.licence import binary_ok, continue_licensed, kind_of
+from gate.licence import binary_ok, continue_licensed, kind_of, strict_licensed
 
 
 def w(s: str) -> tuple[str, ...]:
@@ -49,19 +49,22 @@ def test_apply_then_restore_is_identity(rule: str) -> None:
 def test_surface_is_continue_licensed(rule: str) -> None:
     _, _, surface = WITNESSES[rule]
     assert continue_licensed(kind_of(surface)), rule
+    assert strict_licensed(surface), rule
 
 
 def test_hadhf_ayn_is_forced_by_the_binary_licence() -> None:
     """`hadhf_ayn_forced` (على `Admissible` الثنائيّ): قَالْتُ ساكنان متجاوران فغيرُ مرخَّصة، وقُلْتُ مرخَّصة.
 
-    والثلاثيُّ (`ContinueLicensed`) يقبل قَالْتُ (CVVC-CV) لأنّه لا يميّز قافيةَ المدّ المدغمةَ من غيرها؛
-    والمقيسُ في المصحف: 65 من 66 قوافي CVVC مدغمة (حَاجَّ)، والواحدةُ الباقية مدُّ الفرق (آلْآنَ).
-    فتضييقُ الثلاثيّ («التقاء الساكنين على حدّه») دَينٌ مسمًّى على `Ternary.lean`."""
+    والثلاثيُّ (`ContinueLicensed`) وحدَه يقبل قَالْتُ (CVVC-CV) لأنّه لا يميّز قافيةَ المدّ المدغمةَ من
+    غيرها؛ وكان ذلك دَينًا مسمًّى، سدّه قيدُ الحدّ (`Hadd.hadd_debt_closed`): مرفوضةٌ بـ`strictB`، فالحذفُ —
+    وهو نطقًا تقصيرُ الحركة الطويلة — ملزَمٌ على الثلاثيّ أيضًا. والمقيسُ في المصحف: 65 من 66 قوافي CVVC
+    مدغمة (حَاجَّ)، والواحدةُ الباقية مدُّ الفرق (آلْآنَ)، وكلاهما مقبولٌ بالقيد."""
 
     source, _, surface = WITNESSES["HADHF_AYN"]
     assert not binary_ok(kind_of(source))
-    assert continue_licensed(kind_of(source))  # الدَّينُ المسمّى: الثلاثيُّ لا يُلزم الحذف
-    assert binary_ok(kind_of(surface)) and continue_licensed(kind_of(surface))
+    assert continue_licensed(kind_of(source))  # الثلاثيُّ وحدَه لا يُلزم الحذف…
+    assert not strict_licensed(source)  # …وقيدُ الحدّ يُلزمه (`hadd_debt_closed`)
+    assert binary_ok(kind_of(surface)) and strict_licensed(surface)
 
 
 def test_rules_refuse_by_name_when_not_applicable() -> None:

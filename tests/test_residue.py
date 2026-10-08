@@ -66,7 +66,8 @@ def test_wasl_vowel_follows_the_rule() -> None:
 
 def test_long_vowel_codas_are_geminate_except_madd_al_farq() -> None:
     """«التقاء الساكنين على حدّه»: كلُّ قافيةِ CVVC في شهادات المصحف مدغمةٌ (حَاجَّ: 65) إلّا مدَّ الفرق
-    (آلْآنَ: 1). قياسٌ لا برهان — ودَينٌ مسمًّى لتضييق `Ternary.ContinueLicensed`."""
+    (آلْآنَ: 1). قياسٌ لا برهان؛ والتضييقُ الذي كان دَينًا على `Ternary.ContinueLicensed` هو الآن
+    `A116.Hadd.strictB` (تضعيفٌ أو مدُّ فرق)، والمطابقةُ والطفراتُ في `tests/test_hadd.py`."""
 
     from gate.licence import kind_of
 

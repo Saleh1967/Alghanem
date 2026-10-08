@@ -11,6 +11,9 @@ import A116
   `canonical116.bridge.A116` خانةً خانة.
 * `numbers`: ‎F‎ (`atomNumber`) لكلّ سلسلةٍ بطول ‎≤ 2‎ بترتيب الجسر (13,573 سطرًا).
 * `pairs`: ‎P(u, r)‎ لـ‎u, r < 64‎.
+* `hadd`: لكلّ سلسلةِ خاناتٍ بطول ‎1 … 4‎ من ستّة حواملَ (ء ا و ي ل ج) × أربع حالات
+  (‎24 + 24² + 24³ + 24⁴ = 346,200‎ سطرًا): الذرّاتُ نصًّا، ثمّ `Hadd.kindOf` و`continueB` و
+  `Hadd.strictB`، ليُطابَق بـ`gate.licence.kind_of` و`strict_licensed` سطرًا سطرًا.
 * `syllables`: لكلّ سلسلةِ أنواعٍ بطول ‎1 … 11‎ (265,719 سلسلة) تقطيعُها بـ`Stages.parse`
   أو `none`، ثمّ `binOK` و`continueB` و`pauseB` من `Ternary`، ليُطابَق ذلك كلُّه
   بـ`mabni_stages.syllabify` و`ternary_licence` سلسلةً سلسلة.
@@ -54,6 +57,30 @@ def render (k : List K) : String :=
 
 end SyllableTable
 
+namespace HaddTable
+
+open Stages
+
+def mark : Haraka → Char
+  | .fatha => '\u064E'
+  | .damma => '\u064F'
+  | .kasra => '\u0650'
+  | .sukun => '\u0652'
+
+def alphabet : List Cell :=
+  ['ء', 'ا', 'و', 'ي', 'ل', 'ج'].flatMap fun ch => Haraka.all.map fun h => Ladder.atom ch h
+
+def allW : Nat → List (List Cell)
+  | 0 => [[]]
+  | n + 1 => (allW n).flatMap fun w => alphabet.map fun c => w ++ [c]
+
+def render (w : List Cell) : String :=
+  let atoms := " ".intercalate (w.map fun c => String.ofList [Field112.carrierChar c.carrier, mark c.haraka])
+  let k := Hadd.kindOf w
+  s!"{atoms},{"-".intercalate (k.map SyllableTable.kName)},{Ternary.continueB k},{Hadd.strictB w}"
+
+end HaddTable
+
 def main (args : List String) : IO Unit := do
   match args with
   | ["counts"] =>
@@ -76,6 +103,10 @@ def main (args : List String) : IO Unit := do
     for n in List.range 11 do
       for k in SyllableTable.allK (n + 1) do
         IO.println (SyllableTable.render k)
+  | ["hadd"] =>
+    for n in List.range 4 do
+      for w in HaddTable.allW (n + 1) do
+        IO.println (HaddTable.render w)
   | ["hamza"] =>
     -- جدولُ الكرسيّ لكلّ سياق: pos,own,prev,prevLong,prevYa,nextWaw,seat
     for p in [Hamza.Pos.initial, .medial, .final] do

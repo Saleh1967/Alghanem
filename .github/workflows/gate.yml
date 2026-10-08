@@ -65,7 +65,9 @@ jobs:
                    Ilal.vowelled_to_sukun_between_vowelled Ilal.swap_sukun_vowel Ilal.delete_sukun_after_vowelled \
                    Ilal.two_sukun_not_admissible Ilal.hadhf_ayn_forced Ilal.admissible_replace_carrier \
                    Hamza.seat_initial_by_own Hamza.seat_medial_strongest Hamza.qat_stays_when_joined \
-                   Hamza.prefix_hamza_admissible; do
+                   Hamza.prefix_hamza_admissible \
+                   Hadd.geminateB_vc_carrier Hadd.geminateB_vc_final Hadd.strict_cvvc_is_geminate \
+                   Hadd.strictB_continue Hadd.hadd_debt_closed Hadd.farq_needs_its_hamza; do
             grep -q "A116.$t" axioms.txt || { echo "::error::$t غيرُ مدقَّقة"; exit 1; }
           done
 
@@ -81,11 +83,14 @@ jobs:
           lake exe a116-table hamza > hamza.csv
           git diff --exit-code -- table.csv counts.csv order.csv numbers.csv pairs.csv utf8.csv hamza.csv
           lake exe a116-table syllables > syllables.csv   # 13 MB: يُولَّد هنا ويُسلَّم للبايثون لا يُودَع
+          lake exe a116-table hadd > hadd.csv             # 14 MB: قيدُ الحدّ (Hadd.strictB) — يُولَّد ولا يُودَع
 
       - uses: actions/upload-artifact@v4
         with:
           name: lean-syllables
-          path: formal/a116/syllables.csv
+          path: |
+            formal/a116/syllables.csv
+            formal/a116/hadd.csv
 
   gate:
     needs: [lean]

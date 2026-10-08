@@ -18,3 +18,4 @@ import A116.Unicode
 import A116.Boundary
 import A116.Ilal
 import A116.Hamza
+import A116.Hadd
