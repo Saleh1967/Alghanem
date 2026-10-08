@@ -62,6 +62,7 @@ EXEMPT_FILES = (
     "tools/gen_makharij_index.py",
     "tools/deposit_ilal_bab.py",  # يقرأ الكتابَ المختوم ومودَعَ المصحف ويولّد جدولَي أبواب الإعلال
     "tools/gen_ilal_bab_index.py",
+    "tools/gen_pipeline_index.py",  # يقرأ MASAQ والشهادات ويولّد القمعَ وجدولَيه
     "src/slge/order.py",  # يبصم خاناتٍ لا نصًّا
 )
 IO_ATTRS = frozenset(

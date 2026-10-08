@@ -851,3 +851,10 @@ import Slge
 #print axioms Slge.IlalBab.witnesses_read
 #print axioms Slge.IlalBab.unwitnessed
 #print axioms Slge.IlalBab.debts_named
+#print axioms Slge.Pipeline.survive_mem
+#print axioms Slge.Pipeline.survive_prefix
+#print axioms Slge.Pipeline.survivors_antitone
+#print axioms Slge.Pipeline.survivors_le_stage
+#print axioms Slge.Pipeline.funnel_antitone
+#print axioms Slge.Pipeline.funnel_length
+#print axioms Slge.PipelineTable.funnels

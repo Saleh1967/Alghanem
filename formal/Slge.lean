@@ -62,3 +62,5 @@ import Slge.MakharijTable
 import Slge.Makharij
 import Slge.IlalBabTable
 import Slge.IlalBab
+import Slge.Pipeline
+import Slge.PipelineTable

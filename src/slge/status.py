@@ -921,7 +921,7 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_gates.py::test_ladder_order_and_named_refusals",
        "test:tests/test_gates.py::test_whole_mushaf_climbs_consistently",
        note="قانونُ السُّلَّم مبرهَنٌ على المجرّد؛ البوّاباتُ تركّب الدوالَّ القائمة (مفحوص) ولا تبني قراءة."),
-    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (71 وحدة، 56 جدولًا، 46 فهرسًا): كلُّ وحدةٍ "
+    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (73 وحدة، 57 جدولًا، 47 فهرسًا): كلُّ وحدةٍ "
        "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
        "test:tests/test_gates.py::test_manifest_covers_the_tree",
        note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
@@ -1220,6 +1220,16 @@ _DECLARED: tuple[Claim, ...] = (
        "الجوف", _S,
        "test:tests/test_makharij.py::test_sibawayh_hams_differs_from_the_declared_phonology_by_sad",
        note="لا يُصحَّح المعلَنُ من الذاكرة؛ المختومُ هو الحجّة، والمعلَنُ دينٌ باسمه (ADR ١٩)."),
+    _c("PIPELINE-one-number", "السُّلَّمُ رقمًا واحدًا على MASAQ (40,731 كلمةً بشهادات البوّابة): يعبر "
+       "المراحلَ الخمس — الشهادة، الجذعُ قراءةً واحدةً ذهبيّة، الجهة، الحالة، النسبة — 1,763 كلمةً "
+       "(4.3%)؛ ومن الكلمات التي يسألها المرجعُ عن الخمس كلِّها (10,080): 17.5%؛ ولو قُبلت الأولى بعد "
+       "الترتيب: 1,943", _S,
+       "lean:Slge.Pipeline.survivors_antitone", "lean:Slge.Pipeline.survive_mem",
+       "lean:Slge.Pipeline.funnel_antitone", "lean:Slge.PipelineTable.funnels",
+       "test:tests/test_pipeline.py::test_deposited_funnels_are_antitone_and_ranked_dominates_strict",
+       "test:tests/test_conformance.py::test_pipeline_matches_lean",
+       note="رقمُ الإدارة: التوقّفُ في الجذع (تعدّدٌ 17,830، لا قراءة 4,844) هو عنقُ الزجاجة؛ "
+            "الحرفُ والمبنيُّ خارج القمع باسمهما (PIPELINE_INDEX.md، ADR ٢١)."),
     _c("ILAL-bab", "لكلّ قاعدةٍ من قواعد الإعلال الثلاثَ عشرةَ بابُها في الكتاب المختوم بسطره وشاهدٌ "
        "من نصّ الباب بعينه؛ ثمانٍ لها صورةٌ من مودَع المصحف تقرؤها القاعدةُ نفسُها، وخمسٌ شاهدُها رسمٌ "
        "بلا خانات باسمها؛ وسبعةُ أبوابٍ بلا قاعدة ديونٌ بأسطرها", _P,

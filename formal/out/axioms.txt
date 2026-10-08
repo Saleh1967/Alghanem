@@ -846,3 +846,10 @@
 'Slge.IlalBab.witnesses_read' depends on axioms: [propext]
 'Slge.IlalBab.unwitnessed' does not depend on any axioms
 'Slge.IlalBab.debts_named' does not depend on any axioms
+'Slge.Pipeline.survive_mem' depends on axioms: [propext, Quot.sound]
+'Slge.Pipeline.survive_prefix' depends on axioms: [propext]
+'Slge.Pipeline.survivors_antitone' depends on axioms: [propext]
+'Slge.Pipeline.survivors_le_stage' depends on axioms: [propext, Quot.sound]
+'Slge.Pipeline.funnel_antitone' depends on axioms: [propext]
+'Slge.Pipeline.funnel_length' depends on axioms: [propext]
+'Slge.PipelineTable.funnels' depends on axioms: [propext]

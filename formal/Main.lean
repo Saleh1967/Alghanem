@@ -683,6 +683,11 @@ def main (args : List String) : IO Unit := do
       IO.println s!"row,{r.1},{r.2.1},{"+".intercalate (r.2.2.1.map toString)},{key r.2.2.2.1},{r.2.2.2.2},{IlalBab.reads r}"
     for n in IlalBab.debts do
       IO.println s!"debt,{n}"
+  | ["pipeline"] =>
+    -- قمعُ السُّلَّم على MASAQ: العابرون بعد كلّ مرحلة، صارمًا ومرتَّبًا.
+    IO.println s!"strict,{"+".intercalate (PipelineTable.strict.map toString)}"
+    IO.println s!"ranked,{"+".intercalate (PipelineTable.ranked.map toString)}"
+    IO.println s!"stages,{Pipeline.stageCount}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

@@ -35,7 +35,7 @@
 | `masaq-zawaid.json` | مرجع محجوب | `15ab1c4691c88ebb99b4f37c5f1c062c83a20a988fdd6099cc835eaea4097478` |
 | `masaq-zuruf.json` | مرجع محجوب | `ef2e77119120a8f5109e28e63c0835468ce85442806c44b0e4f4a70635416dd3` |
 
-## الأرقام (855 رقمًا من 40 مولِّدًا)
+## الأرقام (894 رقمًا من 41 مولِّدًا)
 
 ### `tools/gen_abniya_index.py::measure`
 
@@ -875,6 +875,52 @@
 | `read.('تقييد: مفعول به', 'إسناد')` | 712 |
 | `read.('تقييد: مفعول به', 'تقييد')` | 1,955 |
 | `read.('تقييد: مفعول به', '—')` | 804 |
+
+### `tools/gen_pipeline_index.py::measure`
+
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `69bc196fbdf9b788`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `asked` | 10,080 |
+| `content` | 25,799 |
+| `masaq` | 40,731 |
+| `ranked.content_passed` | 1,943 |
+| `ranked.funnel[0]` | 40,731 |
+| `ranked.funnel[1]` | 40,731 |
+| `ranked.funnel[2]` | 26,124 |
+| `ranked.funnel[3]` | 10,845 |
+| `ranked.funnel[4]` | 5,609 |
+| `ranked.funnel[5]` | 1,943 |
+| `ranked.stops.CASE_MISMATCH` | 1,278 |
+| `ranked.stops.CASE_NOT_READ` | 3,958 |
+| `ranked.stops.JIHA_MISMATCH` | 8,210 |
+| `ranked.stops.NISBA_MISMATCH` | 409 |
+| `ranked.stops.NOT_IN_CERTIFICATES` | 0 |
+| `ranked.stops.NO_JIHA_IN_REFERENCE` | 7,069 |
+| `ranked.stops.NO_NISBA_IN_REFERENCE` | 3,257 |
+| `ranked.stops.NO_READING` | 4,844 |
+| `ranked.stops.PASSED` | 1,943 |
+| `ranked.stops.READINGS_AMBIGUOUS` | 0 |
+| `ranked.stops.READING_NOT_GOLD` | 9,763 |
+| `strict.content_passed` | 1,763 |
+| `strict.funnel[0]` | 40,731 |
+| `strict.funnel[1]` | 40,731 |
+| `strict.funnel[2]` | 15,583 |
+| `strict.funnel[3]` | 7,549 |
+| `strict.funnel[4]` | 4,990 |
+| `strict.funnel[5]` | 1,763 |
+| `strict.stops.CASE_MISMATCH` | 575 |
+| `strict.stops.CASE_NOT_READ` | 1,984 |
+| `strict.stops.JIHA_MISMATCH` | 6,540 |
+| `strict.stops.NISBA_MISMATCH` | 380 |
+| `strict.stops.NOT_IN_CERTIFICATES` | 0 |
+| `strict.stops.NO_JIHA_IN_REFERENCE` | 1,494 |
+| `strict.stops.NO_NISBA_IN_REFERENCE` | 2,847 |
+| `strict.stops.NO_READING` | 4,844 |
+| `strict.stops.PASSED` | 1,763 |
+| `strict.stops.READINGS_AMBIGUOUS` | 17,830 |
+| `strict.stops.READING_NOT_GOLD` | 2,474 |
 
 ### `tools/gen_sarf_index.py::measure`
 

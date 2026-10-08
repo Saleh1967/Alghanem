@@ -86,6 +86,9 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("ilal_bab", ("IlalBab", "IlalBabTable"), ("ilal_bab",), "gen_ilal_bab_index.py",
            "test_ilal_bab.py"),
     Module("ilal_bab_table", (), (), None, "test_ilal_bab.py"),  # مولَّدٌ من الكتاب المختوم والمصحف
+    Module("pipeline", ("Pipeline", "PipelineTable"), ("pipeline",), "gen_pipeline_index.py",
+           "test_pipeline.py"),
+    Module("pipeline_table", (), (), None, "test_pipeline.py"),  # القمعُ أعدادًا، مولَّدٌ على MASAQ
     # الفهارسُ الجامعة (بلا وحدة)
     Module("bits", (), (), "gen_bits_index.py", "test_bits.py"),
     Module("nabhani", (), (), "gen_nabhani_index.py", "test_nabhani_index.py"),  # فهرسُ المطابقة

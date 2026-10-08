@@ -1249,3 +1249,15 @@ def test_ilal_bab_matches_lean() -> None:
         assert r[4] == key and int(r[5]) == (at or 0), r
         assert (r[6] == "true") == reads(mine), r
     assert [int(r[1]) for r in rows if r[0] == "debt"] == [n for _, n in DEBTS]
+
+
+def test_pipeline_matches_lean() -> None:
+    """قمعُ السُّلَّم صارمًا ومرتَّبًا = جدولُ `PipelineTable`، والمراحلُ خمس."""
+
+    from slge.pipeline import STAGES
+    from slge.pipeline_table import RANKED, STRICT
+
+    by = {r[0]: r[1] for r in _rows("pipeline.csv")}
+    assert tuple(int(x) for x in by["strict"].split("+")) == STRICT
+    assert tuple(int(x) for x in by["ranked"].split("+")) == RANKED
+    assert int(by["stages"]) == len(STAGES) == len(STRICT) - 1 == 5
