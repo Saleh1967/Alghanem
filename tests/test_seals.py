@@ -9,7 +9,8 @@ from conftest import ROOT
 from slge.manifest import DEPOSITS
 
 DATA = ROOT / "tests" / "data"
-SEALED = tuple(d for d in DEPOSITS if d.sha256)
+SEALED = tuple(d for d in DEPOSITS if d.sha256 and d.licence != "بتوقيع المالك")
+SIGNED = tuple(d for d in DEPOSITS if d.licence == "بتوقيع المالك")
 
 
 def test_sealed_sources_match_their_hash_and_carry_a_licence() -> None:
@@ -21,6 +22,14 @@ def test_sealed_sources_match_their_hash_and_carry_a_licence() -> None:
         assert hashlib.sha256(raw).hexdigest() == d.sha256, d.path
         assert d.licence.startswith("CC BY-NC-SA 4.0") and d.kind in ("وضع", "مرجع محجوب"), d.path
         assert raw.startswith(b"######OpenITI#"), d.path
+
+
+def test_owner_signed_deposits_match_their_hash_and_name_the_signer() -> None:
+    assert [d.path for d in SIGNED] == ["owner-alam.json"]
+    for d in SIGNED:
+        raw = (DATA / d.path).read_bytes()
+        assert hashlib.sha256(raw).hexdigest() == d.sha256 and d.kind == "وضع", d.path
+        assert "بتوقيع المالك" in raw.decode("utf-8"), d.path
 
 
 def test_one_byte_breaks_the_seal() -> None:

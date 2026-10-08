@@ -32,11 +32,11 @@ def test_deposited_funnels_are_antitone() -> None:
     assert all(b <= a for a, b in pairwise(STRICT))
     assert all(b <= a for a, b in pairwise(RANKED))
     assert STRICT[0] == RANKED[0] and STRICT[1] == RANKED[1]  # لا هيمنةَ لأحدهما بعد الحسم
-    # الجذعُ صارمًا = الموزِّعُ أو قسمةٌ محسومة ذهبيّة: 32,592 (كان 26,758 قبل الموزِّع، و15,583 حين
-    # عُدّ القالبُ قسمة)
-    assert STRICT[2] == 32_592
-    # الرقمُ الواحد دون 30% — مسجَّلٌ ليُقاس عليه كلُّ تحسين (1,763 ← 1,989 ← 2,070)
-    assert STRICT[5] / MASAQ < 0.30 and STRICT[5] == 2_070 and RANKED[5] == 2_023
+    # الجذعُ صارمًا = الموزِّعُ أو العلمُ الموقَّع أو قسمةٌ محسومة ذهبيّة: 34,206 (كان 32,592 قبل
+    # الأعلام، و26,758 قبل الموزِّع، و15,583 حين عُدّ القالبُ قسمة)
+    assert STRICT[2] == 34_206
+    # الرقمُ الواحد دون 30% — مسجَّلٌ ليُقاس عليه كلُّ تحسين (1,763 ← 1,989 ← 2,070 ← 3,070)
+    assert STRICT[5] / MASAQ < 0.30 and STRICT[5] == 3_070 and RANKED[5] == 3_023
 
 
 def test_a_sound_verb_crosses_to_the_jiha_and_stops_by_name_when_not_asked() -> None:
@@ -71,3 +71,21 @@ def test_strict_decides_segments_by_hasm_and_ranked_takes_the_first() -> None:
     assert run(w, w, None, g, attested=True) == "CASE_NOT_READ"
     assert run(w, w, None, g, attested=True, strict=False) == "CASE_NOT_READ"
     assert "SEGMENTS_TIE" in STOPS and stages_passed("SEGMENTS_TIE") == 1
+
+
+def test_the_divine_name_and_proper_nouns_cross_the_stem_by_the_owner_signature() -> None:
+    # ءَلْلَهُ: المرجعُ يعدّ أل سابقةً (det)؛ الموقَّعُ لفظٌ منفرد — يعبر الجذعَ والجهةَ ويُقرأ رفعًا
+    w = cells_of("ءَلْلَهُ")
+    g = Gold(pre=(), det=True, suf=(), tag="NOUN_PROP", case="مرفوع", role="مبتدأ")
+    assert run(w, w, None, g, attested=True) == "NO_NISBA_IN_REFERENCE"  # لا جارَ فلا نسبة
+    # إِبْرَاهِيمَ ممنوعٌ: الفتحُ يوافق النصبَ والجرّ؛ ولا يوافق الرفع
+    w = cells_of("إِبْرَاهِيمَ")
+    g = Gold(pre=(), det=False, suf=(), tag="NOUN_PROP", case="مجرور", role="مضاف إليه")
+    assert run(w, w, cells_of("رَبْبِ"), g, attested=True) == "PASSED"
+    g2 = Gold(pre=(), det=False, suf=(), tag="NOUN_PROP", case="مرفوع", role="فاعل")
+    assert run(w, w, cells_of("قَاْلَ"), g2, attested=True) == "CASE_MISMATCH"
+    # وسمٌ فعليٌّ لعلمٍ يُسقط الجهة؛ وأل مرجعيّةٌ على غير الجلالة تُسقط القسمة
+    g3 = Gold(pre=(), det=False, suf=(), tag="PV", case="مجرور", role="مضاف إليه")
+    assert run(w, w, None, g3, attested=True) == "JIHA_MISMATCH"
+    g4 = Gold(pre=(), det=True, suf=(), tag="NOUN_PROP", case="مجرور", role="مضاف إليه")
+    assert run(w, w, None, g4, attested=True) == "READING_NOT_GOLD"

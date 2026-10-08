@@ -16,6 +16,7 @@ from typing import Final
 
 from slge.adawat import of_cells
 from slge.adawat import rank as rank_adawat
+from slge.alam import ilm
 from slge.cells import Cell
 from slge.hasm import hasm
 from slge.jidh import Reading, jidh
@@ -107,6 +108,7 @@ def run(w: Word, stem: Word, prev: Word | None, g: Gold, attested: bool,
     if not attested:
         return "NOT_IN_CERTIFICATES"
     jiha = GOLD_JIHA.get(g.tag)
+    own_case = case_class(stem)  # حالةُ الجذع من آخره؛ والعلمُ يقرؤها من صرفه (`Alam.caseOf`)
     ms = tawzi(w)
     if ms:  # الموزِّع أوّلًا: مبنيٌّ من جدوله، قسمتُه (سوابق، لاحقة) بلا قالب
         segs = {(m.pre, m.suf) for m in ms}
@@ -119,6 +121,20 @@ def run(w: Word, stem: Word, prev: Word | None, g: Gold, attested: bool,
             return "NO_JIHA_IN_REFERENCE"
         if not (m0.kind == "ظرف" and jiha == ISM):
             return "JIHA_MISMATCH"
+    elif ils := ilm(w):  # ثمّ العلمُ ولفظُ الجلالة: لفظٌ منفردٌ من الموقَّع، لا قالبَ ولا أل
+        if strict and len({m.pre for m in ils}) > 1:
+            return "SEGMENTS_TIE"
+        i0 = ils[0]
+        # القسمةُ المرجعُ فيها توقيعُ المالك: لفظُ الجلالة منفردٌ لا أل فيه (خلافَ وسمِ MASAQ)؛ وسوى
+        # الجلالة يوافقُ المرجعَ في السوابق وخلوِّ اللاحقة وأل.
+        gold_al = g.det and i0.kind != "جلالة"
+        if not (tuple(c for p in i0.pre for c in p) == g.pre and not gold_al and not g.suf):
+            return "READING_NOT_GOLD"
+        if jiha is None:
+            return "NO_JIHA_IN_REFERENCE"
+        if jiha != ISM:
+            return "JIHA_MISMATCH"
+        own_case = i0.case
     else:
         rs, top = _top(w, prev)
         if top is None:
@@ -137,7 +153,7 @@ def run(w: Word, stem: Word, prev: Word | None, g: Gold, attested: bool,
     case = GOLD_CASE.get(g.case)
     if case is None:
         return "CASE_NOT_READ"
-    if not compatible(case_class(stem), case):
+    if not compatible(own_case, case):
         return "CASE_MISMATCH"
     expected = GOLD_NISBA.get(g.role)
     if expected is None or prev is None:

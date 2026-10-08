@@ -51,6 +51,8 @@ jobs:
         run: python tools/deposit_makharij.py --check
       - name: the Ilal-chapter tables (Lean and Python) are generated from the sealed Kitab and the certificates deposit
         run: python tools/deposit_ilal_bab.py --check
+      - name: the proper-noun and divine-name tables (Lean and Python) are generated from the owner-signed deposit
+        run: python tools/deposit_alam.py --check
       - name: the certificates deposit is what the pinned gate prints now (stitching the layers by code, not by prose)
         run: |
           git clone -q https://github.com/Saleh1967/Alghanem.git /tmp/alghanem

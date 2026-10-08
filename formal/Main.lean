@@ -709,6 +709,16 @@ def main (args : List String) : IO Unit := do
       for m in Tawzi.tawzi w do
         IO.println s!"word,{n},{key w},{"+".intercalate (m.pre.map key)}|{key m.core}|{key m.surface}|{key m.suf}"
       IO.println s!"count,{n},{key w},{(Tawzi.tawzi w).length}"
+  | ["alam"] =>
+    -- الأعلامُ ولفظُ الجلالة (بتوقيع المالك): حجمُ الجدول وصورُ الجلالة، وكلماتٌ بقراءاتها (سوابق|الصفّ|الحالة).
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    IO.println s!"table,{AlamTable.table.length},{Alam.jalalaForms.length},{Alam.proclitics.length}"
+    for (n, w) in [("allahu", Alam.allahu), ("billahi", Alam.billahi), ("tallahi", Alam.tallahi),
+                   ("lahumma", AlamTable.lahumma), ("ibrahima", Alam.ibrahima), ("lutin", Alam.lutin),
+                   ("kataba", Alam.kataba)] do
+      for m in Alam.ilm w do
+        IO.println s!"word,{n},{key w},{"+".intercalate (m.pre.map key)}|{m.item}|{m.case}"
+      IO.println s!"count,{n},{key w},{(Alam.ilm w).length}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

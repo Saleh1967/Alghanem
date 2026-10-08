@@ -87,6 +87,9 @@ MODULES: Final[tuple[Module, ...]] = (
            "test_ilal_bab.py"),
     Module("ilal_bab_table", (), (), None, "test_ilal_bab.py"),  # مولَّدٌ من الكتاب المختوم والمصحف
     Module("tawzi", ("Tawzi",), ("tawzi",), "gen_tawzi_index.py", "test_tawzi.py", law=True),
+    Module("alam", ("Alam", "AlamTable"), ("alam",), "gen_alam_index.py", "test_alam.py",
+           law=True),
+    Module("alam_table", (), (), None, "test_alam.py"),  # مولَّدٌ من المودَع الموقَّع
     Module("hasm", ("Hasm", "HasmTable"), ("hasm",), "gen_hasm_index.py", "test_hasm.py"),
     Module("hasm_table", (), (), None, "test_hasm.py"),  # تكرارُ الجذور، مولَّدٌ من مودَع المصحف
     Module("pipeline", ("Pipeline", "PipelineTable"), ("pipeline",), "gen_pipeline_index.py",
@@ -154,6 +157,13 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
             "العشرة بمواضعها، وأبوابُ النون الثقيلة والخفيفة بشواهدها",
             "a160f940bb194e6fe7e6655d2c7f28e41f1fc648c4c5e340cc4e42306d5cb625",
             "CC BY-NC-SA 4.0 (OpenITI)"),
+    # — بتوقيع المالك (صالح الغانم، 2026-10-09): لفظُ الجلالة منفردًا لا شبيهَ له، واللهمّ، والأعلامُ
+    #   موسومةً لفظًا منفردًا بلا قياس (ممنوعٌ/منصرف/مقصور/غيرُ مشهود الجرّ، عربيٌّ/أعجميّ). —
+    Deposit("owner-alam.json", "وضع",
+            "لفظُ الجلالة (10 صور) و57 علمًا موسومةً بعينها؛ وضعُ العلميّة لا القياس — تُولَّد منه "
+            "جداولُ `Alam` بـ--check (ADR ٢٤)",
+            "09290ebbc0203a407531a74dd528581108f7403931c7bd4dd80a9b0d5fb59a86",
+            "بتوقيع المالك"),
     Deposit("openiti-majaz-quran.txt.gz", "مرجع محجوب",
             "مجاز القرآن لأبي عبيدة (JK010146): مرجعُ الأحكام المحجوب للمجاز — يُقاس عليه ولا يُقرأ "
             "منه",

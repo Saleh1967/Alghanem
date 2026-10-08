@@ -7,10 +7,10 @@ import Slge.Pipeline
 namespace Slge.PipelineTable
 
 /-- 40731 كلمةً؛ العابرون بعد 0..5 مراحل (الصارم). -/
-def strict : List Nat := [40731, 40731, 32592, 11596, 6563, 2070]
+def strict : List Nat := [40731, 40731, 34206, 13260, 8165, 3070]
 
 /-- العابرون بعد 0..5 مراحل (المرتَّب). -/
-def ranked : List Nat := [40731, 40731, 32683, 11423, 6502, 2023]
+def ranked : List Nat := [40731, 40731, 34237, 13087, 8104, 3023]
 
 /-- القمعان سلسلتان متناقصتان على خمس مراحل. -/
 theorem funnels : Pipeline.Antitone strict ∧ Pipeline.Antitone ranked ∧

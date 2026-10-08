@@ -921,7 +921,7 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_gates.py::test_ladder_order_and_named_refusals",
        "test:tests/test_gates.py::test_whole_mushaf_climbs_consistently",
        note="قانونُ السُّلَّم مبرهَنٌ على المجرّد؛ البوّاباتُ تركّب الدوالَّ القائمة (مفحوص) ولا تبني قراءة."),
-    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (76 وحدة، 59 جدولًا، 49 فهرسًا): كلُّ وحدةٍ "
+    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (78 وحدة، 60 جدولًا، 50 فهرسًا): كلُّ وحدةٍ "
        "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
        "test:tests/test_gates.py::test_manifest_covers_the_tree",
        note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
@@ -1230,6 +1230,19 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_conformance.py::test_tawzi_matches_lean",
        note="الجدولُ 246 صورةً من الجداول القائمة بلا زيادةٍ من الذاكرة؛ مَعَ وأَنَّا ولفظُ الجلالة بأل "
             "خارجه باسمها (TAWZI_INDEX.md، ADR ٢٣)."),
+    _c("ALAM-signed", "لفظُ الجلالة لفظٌ منفردٌ لا شبيهَ له (عشرُ صورٍ مسمّاة بموضعها: ابتداءً، بعد "
+       "سابقة، مدًّا بعد تاء القسم أو همزة الاستفهام، واللهمّ)، والأعلامُ موسومةٌ بعينها بلا قياس "
+       "(ممنوعٌ جرُّه بالفتح، منصرفٌ بالتنوين، مقصورٌ بلا حالة، أعجميٌّ وعربيّ) — من مودَعٍ بتوقيع "
+       "المالك، تُقرأ بسوابقها وحالةِ آخرها وتُردّ بعينها", _P,
+       "lean:Slge.Alam.ilm_restores", "lean:Slge.Alam.jalala_forms_count",
+       "lean:Slge.Alam.mamnu_jarr_is_fatha", "lean:Slge.Alam.witness_jalala",
+       "lean:Slge.Alam.witness_alam", "lean:Slge.AlamTable.table_length",
+       "test:tests/test_alam.py::test_jalala_has_ten_named_forms_in_their_places_and_lahumma_alone",
+       "test:tests/test_alam.py::test_proper_nouns_read_their_case_from_the_last_cell",
+       "test:tests/test_conformance.py::test_alam_matches_lean",
+       "test:tests/test_seals.py::test_owner_signed_deposits_match_their_hash_and_name_the_signer",
+       note="قائمةُ الأعلام من صفوف MASAQ ثمّ وُقِّعت فاختيارُها غيرُ مستقلٍّ عن المرجع؛ وأل في لفظ "
+            "الجلالة خلافٌ مع وسم المرجع مفصولٌ بالتوقيع لا بالقياس (ALAM_INDEX.md، ADR ٢٤)."),
     _c("HASM-segments", "القالبُ ليس قسمة: القراءاتُ المتّفقةُ قسمةً (سوابق، أل، جذع، لواحق) قسمةٌ "
        "واحدة تُحسم بلا قرينة؛ وإن تعدّدت حُسمت بالدرجة (الجوارُ ثمّ المعجمُ ثمّ تكرارُ الجذر في المودَع) "
        "أعلى وحيدًا أو تعادلًا باسمه، ولا قراءةَ تُحذف", _P,

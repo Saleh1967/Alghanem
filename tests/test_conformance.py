@@ -1307,3 +1307,29 @@ def test_tawzi_matches_lean() -> None:
                 for m in tawzi(w)}
         assert mine == lean, (name, mine, lean)
         assert len(lean) <= int(next(r[3] for r in rows if r[0] == "count" and r[1] == name))
+
+def test_alam_matches_lean() -> None:
+    """جدولُ الأعلام الموقَّع وصورُ الجلالة العشر والسوابق، وقراءاتُ سبع كلمات
+    (سوابق|الصفّ|الحالة) = `Alam`."""
+
+    from slge.alam import ALAM, ALAM_PROCLITICS, JALALA_FORMS, ilm
+
+    rows = _rows("alam.csv")
+    t = next(r for r in rows if r[0] == "table")
+    assert (int(t[1]), int(t[2]), int(t[3])) == (len(ALAM), len(JALALA_FORMS), len(ALAM_PROCLITICS))
+    forms = {"INITIAL": 0, "AFTER_PREFIX": 1, "MADD": 2, "LAHUMMA": 3}
+    cases = {"رفع": 0, "نصب": 1, "جرّ": 2, "نصب/جرّ": 3, "لا تقرؤه الخانة": 4}
+    rasm_row = {r: i for i, (r, *_) in enumerate(ALAM)}
+    words = {r[1]: tuple(CELLS[int(i)] for i in r[2].split("-")) for r in rows if r[0] == "count"}
+    assert len(words) == 7
+    for name, w in words.items():
+        lean = {r[3] for r in rows if r[0] == "word" and r[1] == name}
+        def k(x: tuple[tuple[str, str], ...]) -> str:
+            return "-".join(str(index(c)) for c in x)
+
+        mine = set()
+        for m in ilm(w):
+            item = 1000 + forms[m.form] if m.kind == "جلالة" else rasm_row[m.rasm]
+            mine.add("+".join(k(p) for p in m.pre) + f"|{item}|{cases[m.case]}")
+        assert mine == lean, (name, mine, lean)
+        assert len(mine) == int(next(r[3] for r in rows if r[0] == "count" and r[1] == name))

@@ -876,3 +876,10 @@
 'Slge.Tawzi.witness_lahum' depends on axioms: [propext]
 'Slge.Tawzi.witness_particles' depends on axioms: [propext]
 'Slge.Tawzi.witness_none' depends on axioms: [propext]
+'Slge.AlamTable.table_length' does not depend on any axioms
+'Slge.Alam.setLast_append_single' does not depend on any axioms
+'Slge.Alam.mamnu_jarr_is_fatha' depends on axioms: [propext]
+'Slge.Alam.jalala_forms_count' does not depend on any axioms
+'Slge.Alam.ilm_restores' depends on axioms: [propext, Quot.sound]
+'Slge.Alam.witness_jalala' depends on axioms: [propext]
+'Slge.Alam.witness_alam' depends on axioms: [propext]

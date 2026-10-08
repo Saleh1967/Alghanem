@@ -881,3 +881,10 @@ import Slge
 #print axioms Slge.Tawzi.witness_lahum
 #print axioms Slge.Tawzi.witness_particles
 #print axioms Slge.Tawzi.witness_none
+#print axioms Slge.AlamTable.table_length
+#print axioms Slge.Alam.setLast_append_single
+#print axioms Slge.Alam.mamnu_jarr_is_fatha
+#print axioms Slge.Alam.jalala_forms_count
+#print axioms Slge.Alam.ilm_restores
+#print axioms Slge.Alam.witness_jalala
+#print axioms Slge.Alam.witness_alam

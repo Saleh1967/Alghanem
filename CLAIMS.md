@@ -13,6 +13,7 @@
 | `openiti-mukhassas.txt.gz` | وضع | `8d8134c2bce16b70b07bddf974fa5e9c0f7cd80129d8452baf55cd87006b80ac` |
 | `openiti-maqayis.txt.gz` | وضع | `da8853fc941d4016a533fd9c7a1f794a2ccfa92f1c74e68d4acbd6d910e72a67` |
 | `openiti-sibawayh-kitab.txt.gz` | وضع | `a160f940bb194e6fe7e6655d2c7f28e41f1fc648c4c5e340cc4e42306d5cb625` |
+| `owner-alam.json` | وضع | `09290ebbc0203a407531a74dd528581108f7403931c7bd4dd80a9b0d5fb59a86` |
 | `openiti-majaz-quran.txt.gz` | مرجع محجوب | `432dae05748f2f972b3238e56dd0c56e72b10f0c3900ee8da1a8cca812b2fc88` |
 | `masaq-adad.json` | مرجع محجوب | `9018b3f445f65bc23799f0bee3cda1ab1fe3a1a0a0ab7e67e6d85406e77cd822` |
 | `masaq-fil.json.gz` | مرجع محجوب | `61ed093595d72dc3b144b1ce1baf5f9c358f17ceeda765378a5198e86546060c` |
@@ -35,7 +36,7 @@
 | `masaq-zawaid.json` | مرجع محجوب | `15ab1c4691c88ebb99b4f37c5f1c062c83a20a988fdd6099cc835eaea4097478` |
 | `masaq-zuruf.json` | مرجع محجوب | `ef2e77119120a8f5109e28e63c0835468ce85442806c44b0e4f4a70635416dd3` |
 
-## الأرقام (950 رقمًا من 43 مولِّدًا)
+## الأرقام (982 رقمًا من 44 مولِّدًا)
 
 ### `tools/gen_abniya_index.py::measure`
 
@@ -124,6 +125,45 @@
 | `table` | 68 |
 | `tool_forms` | 50 |
 | `with_next` | 29,866 |
+
+### `tools/gen_alam_index.py::measure`
+
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `51d469d7656e1f66`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `case_asked` | 1,714 |
+| `case_ok` | 1,631 |
+| `det_jalala` | 1,255 |
+| `forms` | 18,179 |
+| `gold` | 460 |
+| `jalala_forms` | 10 |
+| `jforms.AFTER_PREFIX` | 10 |
+| `jforms.INITIAL` | 3 |
+| `jforms.LAHUMMA` | 1 |
+| `jforms.MADD` | 3 |
+| `kinds.أعجمي` | 86 |
+| `kinds.جلالة` | 17 |
+| `kinds.عربي` | 73 |
+| `multi` | 0 |
+| `none` | 220 |
+| `props` | 1,935 |
+| `read` | 176 |
+| `sarfs.غير مشهود الجرّ` | 23 |
+| `sarfs.مقصور` | 13 |
+| `sarfs.ممنوع` | 74 |
+| `sarfs.منصرف` | 49 |
+| `sarfs.منفرد` | 17 |
+| `table` | 57 |
+| `table_kinds.أعجمي` | 30 |
+| `table_kinds.عربي` | 27 |
+| `table_sarfs.غير مشهود الجرّ` | 8 |
+| `table_sarfs.مقصور` | 4 |
+| `table_sarfs.ممنوع` | 27 |
+| `table_sarfs.منصرف` | 18 |
+| `unread_top.len` | 15 |
+| `with_pre` | 80 |
+| `wrong` | 0 |
 
 ### `tools/gen_bits_index.py::measure`
 
@@ -897,51 +937,51 @@
 
 ### `tools/gen_pipeline_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `6da6861b4595067b`.
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `71cbdfaa4e67f1b2`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
 | `asked` | 10,445 |
 | `content` | 26,418 |
 | `masaq` | 40,731 |
-| `ranked.content_passed` | 2,023 |
+| `ranked.content_passed` | 3,023 |
 | `ranked.funnel[0]` | 40,731 |
 | `ranked.funnel[1]` | 40,731 |
-| `ranked.funnel[2]` | 32,683 |
-| `ranked.funnel[3]` | 11,423 |
-| `ranked.funnel[4]` | 6,502 |
-| `ranked.funnel[5]` | 2,023 |
-| `ranked.stops.CASE_MISMATCH` | 1,018 |
+| `ranked.funnel[2]` | 34,237 |
+| `ranked.funnel[3]` | 13,087 |
+| `ranked.funnel[4]` | 8,104 |
+| `ranked.funnel[5]` | 3,023 |
+| `ranked.stops.CASE_MISMATCH` | 1,080 |
 | `ranked.stops.CASE_NOT_READ` | 3,903 |
-| `ranked.stops.JIHA_MISMATCH` | 8,063 |
-| `ranked.stops.NISBA_MISMATCH` | 792 |
+| `ranked.stops.JIHA_MISMATCH` | 7,953 |
+| `ranked.stops.NISBA_MISMATCH` | 908 |
 | `ranked.stops.NOT_IN_CERTIFICATES` | 0 |
 | `ranked.stops.NO_JIHA_IN_REFERENCE` | 13,197 |
-| `ranked.stops.NO_NISBA_IN_REFERENCE` | 3,687 |
-| `ranked.stops.NO_READING` | 1,913 |
+| `ranked.stops.NO_NISBA_IN_REFERENCE` | 4,173 |
+| `ranked.stops.NO_READING` | 1,803 |
 | `ranked.stops.PARTICLE_NOT_IN_TABLE` | 151 |
-| `ranked.stops.PASSED` | 2,023 |
-| `ranked.stops.READING_NOT_GOLD` | 5,984 |
+| `ranked.stops.PASSED` | 3,023 |
+| `ranked.stops.READING_NOT_GOLD` | 4,540 |
 | `ranked.stops.SEGMENTS_TIE` | 0 |
-| `strict.content_passed` | 2,070 |
+| `strict.content_passed` | 3,070 |
 | `strict.funnel[0]` | 40,731 |
 | `strict.funnel[1]` | 40,731 |
-| `strict.funnel[2]` | 32,592 |
-| `strict.funnel[3]` | 11,596 |
-| `strict.funnel[4]` | 6,563 |
-| `strict.funnel[5]` | 2,070 |
-| `strict.stops.CASE_MISMATCH` | 901 |
+| `strict.funnel[2]` | 34,206 |
+| `strict.funnel[3]` | 13,260 |
+| `strict.funnel[4]` | 8,165 |
+| `strict.funnel[5]` | 3,070 |
+| `strict.stops.CASE_MISMATCH` | 963 |
 | `strict.stops.CASE_NOT_READ` | 4,132 |
-| `strict.stops.JIHA_MISMATCH` | 7,904 |
-| `strict.stops.NISBA_MISMATCH` | 795 |
+| `strict.stops.JIHA_MISMATCH` | 7,854 |
+| `strict.stops.NISBA_MISMATCH` | 911 |
 | `strict.stops.NOT_IN_CERTIFICATES` | 0 |
 | `strict.stops.NO_JIHA_IN_REFERENCE` | 13,092 |
-| `strict.stops.NO_NISBA_IN_REFERENCE` | 3,698 |
-| `strict.stops.NO_READING` | 1,913 |
+| `strict.stops.NO_NISBA_IN_REFERENCE` | 4,184 |
+| `strict.stops.NO_READING` | 1,803 |
 | `strict.stops.PARTICLE_NOT_IN_TABLE` | 151 |
-| `strict.stops.PASSED` | 2,070 |
-| `strict.stops.READING_NOT_GOLD` | 4,230 |
-| `strict.stops.SEGMENTS_TIE` | 1,845 |
+| `strict.stops.PASSED` | 3,070 |
+| `strict.stops.READING_NOT_GOLD` | 2,890 |
+| `strict.stops.SEGMENTS_TIE` | 1,681 |
 
 ### `tools/gen_sarf_index.py::measure`
 

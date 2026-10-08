@@ -22,6 +22,7 @@ from typing import Any, Final
 
 from slge.adawat import TABLE_ADAWAT, of_cells
 from slge.adawat import rank as rank_adawat
+from slge.alam import ilm
 from slge.cells import Cell, fold, licensed
 from slge.entry import from_atoms, to_atoms
 from slge.ilal import RULES
@@ -87,12 +88,16 @@ def _g3(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
 
 
 def _g4(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
-    """الموزِّع: المبنيُّ يُقرأ من جدوله بسوابقه ولاحقته قبل القوالب (`Tawzi.tawzi_restores`)؛ ما ليس
-    منه يمضي إلى الجذع باسمه."""
+    """الموزِّع: المبنيُّ يُقرأ من جدوله بسوابقه ولاحقته قبل القوالب (`Tawzi.tawzi_restores`)، ثمّ
+    العلمُ ولفظُ الجلالة من الموقَّع بلا قياس (`Alam.ilm_restores`)؛ ما ليس منهما يمضي إلى الجذع
+    باسمه."""
 
     ms = tawzi(w)
     if ms:
         return Pass("الجداول", ms, "؛ ".join(sorted({m.kind for m in ms})))
+    ils = ilm(w)  # ثمّ العلمُ ولفظُ الجلالة: لفظٌ منفردٌ من الموقَّع (`Alam.ilm_restores`)
+    if ils:
+        return Pass("الجداول", ils, "؛ ".join(sorted({"علم: " + m.kind for m in ils})))
     return Pass("الجداول", None, "ليست مجدوَلة")
 
 
