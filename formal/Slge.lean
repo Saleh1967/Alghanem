@@ -64,3 +64,5 @@ import Slge.IlalBabTable
 import Slge.IlalBab
 import Slge.Pipeline
 import Slge.PipelineTable
+import Slge.HasmTable
+import Slge.Hasm

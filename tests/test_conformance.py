@@ -1261,3 +1261,29 @@ def test_pipeline_matches_lean() -> None:
     assert tuple(int(x) for x in by["strict"].split("+")) == STRICT
     assert tuple(int(x) for x in by["ranked"].split("+")) == RANKED
     assert int(by["stages"]) == len(STAGES) == len(STRICT) - 1 == 5
+
+
+def test_hasm_matches_lean() -> None:
+    """حدُّ التكرار وعددُ الجذور وثلاثُ كلماتٍ (قراءات، قسمات، القسمةُ المحسومة) = `Hasm` في Lean."""
+
+    from slge.hasm import BOUND, hasm, segments
+    from slge.hasm_table import ROOT_FREQ
+    from slge.jidh import jidh
+
+    rows = _rows("hasm.csv")
+    by = {r[0]: r for r in rows if r[0] in ("bound", "roots")}
+    assert int(by["bound"][1]) == BOUND and int(by["roots"][1]) == len(ROOT_FREQ)
+    for r in (r for r in rows if r[0] == "word"):
+        w = tuple(CELLS[int(i)] for i in r[2].split("-"))
+        rs = jidh(w)
+        assert len(rs) == int(r[3]) and len(segments(rs)) == int(r[4]), r
+        h = hasm(None, rs)
+        if r[5] == "TIE":
+            assert h.seg is None
+        else:
+            assert h.seg is not None
+            pre, al, stem, suf = h.seg
+            k = "-".join(str(index(c)) for c in stem)
+            key = ("+".join("-".join(str(index(c)) for c in p) for p in pre) + f"|{al}|{k}|"
+                   + "-".join(str(index(c)) for c in suf))
+            assert key == r[5], (key, r)

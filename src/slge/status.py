@@ -921,7 +921,7 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_gates.py::test_ladder_order_and_named_refusals",
        "test:tests/test_gates.py::test_whole_mushaf_climbs_consistently",
        note="قانونُ السُّلَّم مبرهَنٌ على المجرّد؛ البوّاباتُ تركّب الدوالَّ القائمة (مفحوص) ولا تبني قراءة."),
-    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (73 وحدة، 57 جدولًا، 47 فهرسًا): كلُّ وحدةٍ "
+    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (75 وحدة، 58 جدولًا، 48 فهرسًا): كلُّ وحدةٍ "
        "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
        "test:tests/test_gates.py::test_manifest_covers_the_tree",
        note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
@@ -1220,16 +1220,30 @@ _DECLARED: tuple[Claim, ...] = (
        "الجوف", _S,
        "test:tests/test_makharij.py::test_sibawayh_hams_differs_from_the_declared_phonology_by_sad",
        note="لا يُصحَّح المعلَنُ من الذاكرة؛ المختومُ هو الحجّة، والمعلَنُ دينٌ باسمه (ADR ١٩)."),
+    _c("HASM-segments", "القالبُ ليس قسمة: القراءاتُ المتّفقةُ قسمةً (سوابق، أل، جذع، لواحق) قسمةٌ "
+       "واحدة تُحسم بلا قرينة؛ وإن تعدّدت حُسمت بالدرجة (الجوارُ ثمّ المعجمُ ثمّ تكرارُ الجذر في المودَع) "
+       "أعلى وحيدًا أو تعادلًا باسمه، ولا قراءةَ تُحذف", _P,
+       "lean:Slge.Hasm.mem_segments", "lean:Slge.Hasm.best_strict", "lean:Slge.Hasm.best_none_of_tie",
+       "lean:Slge.Hasm.hasm_mem", "lean:Slge.Hasm.score_order", "lean:Slge.Hasm.witness_kataba",
+       "test:tests/test_hasm.py::test_two_segments_are_decided_by_evidence_without_dropping_readings",
+       "test:tests/test_conformance.py::test_hasm_matches_lean",
+       note="الدرجةُ عددٌ واحد ترتيبًا معجميًّا والتكرارُ تحت حدٍّ مبرهَن (freq_lt_bound)."),
+    _c("HASM-masaq", "على MASAQ (40,731): قسمةٌ واحدة صحيحة 26,758 (65.7%) — كانت 15,583 (38.3%) حين "
+       "عُدّ القالبُ قسمة: 21,242 واحدةً بلا قرينة، و5,516 حُسمت بالقرائن صوابًا و3,385 خطأً (62.0%)، "
+       "و1,987 تعادلٌ باسمه", _S,
+       "test:tests/test_hasm.py::test_template_multiplicity_is_one_segment",
+       note="أكثرُ الرفع من تعريف السؤال لا من القرينة؛ تكرارُ الجذر أكثرُ القرائن حسمًا وأقلُّها دقّة "
+            "(HASM_INDEX.md، ADR ٢٢)."),
     _c("PIPELINE-one-number", "السُّلَّمُ رقمًا واحدًا على MASAQ (40,731 كلمةً بشهادات البوّابة): يعبر "
-       "المراحلَ الخمس — الشهادة، الجذعُ قراءةً واحدةً ذهبيّة، الجهة، الحالة، النسبة — 1,763 كلمةً "
-       "(4.3%)؛ ومن الكلمات التي يسألها المرجعُ عن الخمس كلِّها (10,080): 17.5%؛ ولو قُبلت الأولى بعد "
-       "الترتيب: 1,943", _S,
+       "المراحلَ الخمس — الشهادة، الجذعُ قسمةً واحدةً محسومة ذهبيّة، الجهة، الحالة، النسبة — 1,989 "
+       "كلمةً (4.9%؛ كانت 1,763 قبل الحسم)؛ ومن الكلمات التي يسألها المرجعُ عن الخمس كلِّها (10,080): "
+       "19.7%؛ ولو قُبلت الأولى بعد الترتيب: 1,943", _S,
        "lean:Slge.Pipeline.survivors_antitone", "lean:Slge.Pipeline.survive_mem",
        "lean:Slge.Pipeline.funnel_antitone", "lean:Slge.PipelineTable.funnels",
-       "test:tests/test_pipeline.py::test_deposited_funnels_are_antitone_and_ranked_dominates_strict",
+       "test:tests/test_pipeline.py::test_deposited_funnels_are_antitone",
        "test:tests/test_conformance.py::test_pipeline_matches_lean",
-       note="رقمُ الإدارة: التوقّفُ في الجذع (تعدّدٌ 17,830، لا قراءة 4,844) هو عنقُ الزجاجة؛ "
-            "الحرفُ والمبنيُّ خارج القمع باسمهما (PIPELINE_INDEX.md، ADR ٢١)."),
+       note="رقمُ الإدارة: بعد الحسم صار التوقّفُ الأكبر في الجهة (26,758 → 10,999) لا في الجذع؛ "
+            "الحرفُ والمبنيُّ خارج القمع باسمهما (PIPELINE_INDEX.md، ADR ٢١، ٢٢)."),
     _c("ILAL-bab", "لكلّ قاعدةٍ من قواعد الإعلال الثلاثَ عشرةَ بابُها في الكتاب المختوم بسطره وشاهدٌ "
        "من نصّ الباب بعينه؛ ثمانٍ لها صورةٌ من مودَع المصحف تقرؤها القاعدةُ نفسُها، وخمسٌ شاهدُها رسمٌ "
        "بلا خانات باسمها؛ وسبعةُ أبوابٍ بلا قاعدة ديونٌ بأسطرها", _P,

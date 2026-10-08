@@ -17,6 +17,7 @@ from typing import Final
 from slge.adawat import of_cells
 from slge.adawat import rank as rank_adawat
 from slge.cells import Cell
+from slge.hasm import hasm
 from slge.jidh import Reading, jidh
 from slge.maqayis import rank as rank_maqayis
 from slge.nisab import nisba
@@ -32,7 +33,7 @@ STAGES: Final[tuple[str, ...]] = ("البوابة", "الجذع", "الجهة", 
 """المراحلُ بترتيبها؛ `Pipeline.stages` في Lean بالعدد نفسه."""
 
 STOPS: Final[tuple[str, ...]] = (
-    "NOT_IN_CERTIFICATES", "NO_READING", "READINGS_AMBIGUOUS", "READING_NOT_GOLD",
+    "NOT_IN_CERTIFICATES", "NO_READING", "SEGMENTS_TIE", "READING_NOT_GOLD",
     "NO_JIHA_IN_REFERENCE", "JIHA_MISMATCH", "CASE_NOT_READ", "CASE_MISMATCH",
     "NO_NISBA_IN_REFERENCE", "NISBA_MISMATCH", "PASSED",
 )
@@ -96,16 +97,19 @@ def run(w: Word, stem: Word, prev: Word | None, g: Gold, attested: bool,
         strict: bool = True) -> str:
     """اسمُ التوقّف للكلمة `w` (بسوابقها ولواحقها) وجذعِها `stem` (بأل) وجارِها `prev` (بأل).
 
-    `strict`: المرحلةُ (١) تشترط قراءةً واحدةً لا غير؛ وإلّا تكفي أن تكون القراءةُ الأولى بعد الترتيب
-    هي الذهبيّة."""
+    `strict`: المرحلةُ (١) تشترط **قسمةً واحدةً محسومة** (`hasm`: واحدةٌ بلا قرينة أو الأعلى الوحيدةُ
+    بالقرائن؛ التعادلُ يقف باسمه)؛ وإلّا تكفي أن تكون القراءةُ الأولى بعد الترتيب هي الذهبيّة."""
 
     if not attested:
         return "NOT_IN_CERTIFICATES"
     rs, top = _top(w, prev)
     if top is None:
         return "NO_READING"
-    if strict and len(rs) != 1:
-        return "READINGS_AMBIGUOUS"
+    if strict:
+        h = hasm(of_cells(prev) if prev else None, rs)
+        if h.name == "TIE":
+            return "SEGMENTS_TIE"
+        top = h.readings[0]
     if not _is_gold(top, g):
         return "READING_NOT_GOLD"
     jiha = GOLD_JIHA.get(g.tag)
@@ -127,7 +131,7 @@ def run(w: Word, stem: Word, prev: Word | None, g: Gold, attested: bool,
 
 
 _STAGE_OF_STOP: Final[dict[str, int]] = {
-    "NOT_IN_CERTIFICATES": 0, "NO_READING": 1, "READINGS_AMBIGUOUS": 1, "READING_NOT_GOLD": 1,
+    "NOT_IN_CERTIFICATES": 0, "NO_READING": 1, "SEGMENTS_TIE": 1, "READING_NOT_GOLD": 1,
     "NO_JIHA_IN_REFERENCE": 2, "JIHA_MISMATCH": 2, "CASE_NOT_READ": 3, "CASE_MISMATCH": 3,
     "NO_NISBA_IN_REFERENCE": 4, "NISBA_MISMATCH": 4, "PASSED": 5,
 }

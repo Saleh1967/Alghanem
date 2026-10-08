@@ -688,6 +688,18 @@ def main (args : List String) : IO Unit := do
     IO.println s!"strict,{"+".intercalate (PipelineTable.strict.map toString)}"
     IO.println s!"ranked,{"+".intercalate (PipelineTable.ranked.map toString)}"
     IO.println s!"stages,{Pipeline.stageCount}"
+  | ["hasm"] =>
+    -- الحسم: حدُّ التكرار وعددُ الجذور، وثلاثُ كلماتٍ بعدد قراءاتها وقسماتها والقسمةِ المحسومة.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let segKey := fun (s : Hasm.Seg) =>
+      "+".intercalate (s.1.map key) ++ "|" ++ (match s.2.1 with | .none => "0" | .full => "1" | .silent => "2")
+        ++ "|" ++ key s.2.2.1 ++ "|" ++ key s.2.2.2
+    IO.println s!"bound,{HasmTable.bound}"
+    IO.println s!"roots,{HasmTable.table.length}"
+    for (n, w) in [("min", Hasm.min_), ("kataba", Hasm.kataba), ("ilayka", Hasm.ilayka)] do
+      let rs := Jidh.jidh w
+      let h := match Hasm.hasm none rs with | some s => segKey s | none => "TIE"
+      IO.println s!"word,{n},{key w},{rs.length},{(Hasm.segments rs).length},{h}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

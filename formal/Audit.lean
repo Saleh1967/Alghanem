@@ -858,3 +858,17 @@ import Slge
 #print axioms Slge.Pipeline.funnel_antitone
 #print axioms Slge.Pipeline.funnel_length
 #print axioms Slge.PipelineTable.funnels
+#print axioms Slge.HasmTable.freq_lt_bound
+#print axioms Slge.Hasm.mem_segments
+#print axioms Slge.Hasm.segments_nodup
+#print axioms Slge.Hasm.freqMax_lt_bound
+#print axioms Slge.Hasm.best_mem
+#print axioms Slge.Hasm.best_max
+#print axioms Slge.Hasm.best_strict
+#print axioms Slge.Hasm.best_none_of_tie
+#print axioms Slge.Hasm.hasm_mem
+#print axioms Slge.Hasm.hasm_unique
+#print axioms Slge.Hasm.score_order
+#print axioms Slge.Hasm.witness_min
+#print axioms Slge.Hasm.witness_kataba
+#print axioms Slge.Hasm.witness_ilayka

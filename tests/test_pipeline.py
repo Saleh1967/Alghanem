@@ -27,15 +27,15 @@ def test_stops_name_each_stage_without_a_leap() -> None:
     assert stages_passed("NO_READING") == 1 and stages_passed("NISBA_MISMATCH") == 4
 
 
-def test_deposited_funnels_are_antitone_and_ranked_dominates_strict() -> None:
+def test_deposited_funnels_are_antitone() -> None:
     assert len(STRICT) == len(RANKED) == len(STAGES) + 1 and STRICT[0] == RANKED[0] == MASAQ
     assert all(b <= a for a, b in pairwise(STRICT))
     assert all(b <= a for a, b in pairwise(RANKED))
-    assert all(s <= r for s, r in zip(STRICT, RANKED, strict=True))
-    # الجذعُ صارمًا = القسمةُ الذهبيّة بقراءةٍ واحدة في فهرس الجذع (15,583)
-    assert STRICT[2] == 15_583
-    # الرقمُ الواحد دون 30% — كما تُوقِّع؛ ومسجَّلٌ ليُقاس عليه كلُّ تحسين
-    assert STRICT[5] / MASAQ < 0.30 and STRICT[5] == 1_763 and RANKED[5] == 1_943
+    assert STRICT[0] == RANKED[0] and STRICT[1] == RANKED[1]  # لا هيمنةَ لأحدهما بعد الحسم
+    # الجذعُ صارمًا = قسمةٌ واحدة محسومة وذهبيّة (فهرس الحسم: 26,758)؛ كان 15,583 حين عُدّ القالبُ قسمة
+    assert STRICT[2] == 26_758
+    # الرقمُ الواحد دون 30% — مسجَّلٌ ليُقاس عليه كلُّ تحسين (كان 1,763 قبل الحسم)
+    assert STRICT[5] / MASAQ < 0.30 and STRICT[5] == 1_989 and RANKED[5] == 1_943
 
 
 def test_a_sound_verb_crosses_to_the_jiha_and_stops_by_name_when_not_asked() -> None:
@@ -63,9 +63,10 @@ def test_mutants_are_refused() -> None:
     assert "PREP" not in GOLD_JIHA and "مبني" not in GOLD_CASE and "حرف جر" not in GOLD_NISBA
 
 
-def test_strictness_is_the_only_difference_between_the_two_funnels() -> None:
-    # كَتَبَ قراءتان (كَ سابقةً + تَبَ): الصارمُ يقف بالتعدّد، والمرتَّبُ يمضي بالأولى
+def test_strict_decides_segments_by_hasm_and_ranked_takes_the_first() -> None:
+    # كَتَبَ قسمتان (كَ سابقةً + تَبَ، أو كَتَبَ): الحسمُ بالمعجم والتكرار يختار كَتَبَ فيمضي الصارمُ أيضًا
     w = cells_of("كَتَبَ")
     g = Gold(pre=(), det=False, suf=(), tag="PV", case="مبني", role="فعل ماضٍ")
-    assert run(w, w, None, g, attested=True) == "READINGS_AMBIGUOUS"
+    assert run(w, w, None, g, attested=True) == "CASE_NOT_READ"
     assert run(w, w, None, g, attested=True, strict=False) == "CASE_NOT_READ"
+    assert "SEGMENTS_TIE" in STOPS and stages_passed("SEGMENTS_TIE") == 1
