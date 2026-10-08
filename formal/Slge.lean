@@ -58,3 +58,5 @@ import Slge.MukhassasTable
 import Slge.Mukhassas
 import Slge.ZawaidTable
 import Slge.Zawaid
+import Slge.MakharijTable
+import Slge.Makharij

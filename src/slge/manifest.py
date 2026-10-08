@@ -80,6 +80,9 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("zawaid", ("Zawaid", "ZawaidTable"), ("zawaid",), "gen_zawaid_index.py",
            "test_zawaid.py"),
     Module("zawaid_table", (), (), None, "test_zawaid.py"),  # مولَّدٌ من الكتاب المختوم
+    Module("makharij", ("Makharij", "MakharijTable"), ("makharij",), "gen_makharij_index.py",
+           "test_makharij.py"),
+    Module("makharij_table", (), (), None, "test_makharij.py"),  # مولَّدٌ من الكتاب المختوم
     # الفهارسُ الجامعة (بلا وحدة)
     Module("bits", (), (), "gen_bits_index.py", "test_bits.py"),
     Module("nabhani", (), (), "gen_nabhani_index.py", "test_nabhani_index.py"),  # فهرسُ المطابقة

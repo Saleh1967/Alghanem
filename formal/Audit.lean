@@ -838,3 +838,11 @@ import Slge
 #print axioms Slge.Zawaid.mudaraa_are_zawaid
 #print axioms Slge.Zawaid.mudaraa_licensed
 #print axioms Slge.Zawaid.shawahid
+#print axioms Slge.Makharij.order_length
+#print axioms Slge.Makharij.order_is_the_alphabet
+#print axioms Slge.Makharij.lacuna_is_lam
+#print axioms Slge.Makharij.nun_twice
+#print axioms Slge.Makharij.jahr_partition
+#print axioms Slge.Makharij.shidda_partition
+#print axioms Slge.Makharij.itbaq_partition
+#print axioms Slge.Makharij.mutbaqa_witness

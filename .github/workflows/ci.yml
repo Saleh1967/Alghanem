@@ -47,6 +47,8 @@ jobs:
         run: python tools/deposit_mukhassas.py --check
       - name: the augment tables (Lean and Python) are generated from the sealed Kitab of Sibawayh
         run: python tools/deposit_zawaid.py --check
+      - name: the makharij tables (Lean and Python) are generated from the sealed Kitab of Sibawayh
+        run: python tools/deposit_makharij.py --check
       - name: the certificates deposit is what the pinned gate prints now (stitching the layers by code, not by prose)
         run: |
           git clone -q https://github.com/Saleh1967/Alghanem.git /tmp/alghanem

@@ -1208,3 +1208,22 @@ def test_zawaid_matches_lean() -> None:
             assert key(got) == r[2] and str(licensed(got)).lower() == r[3], r
         else:
             assert str(has_tanwin_shape(tawkid(w, False))).lower() == r[2], r
+
+
+def test_makharij_matches_lean() -> None:
+    """ترتيبُ سيبويه والمخارجُ والصفاتُ والساقطُ = جدولُ `Makharij`."""
+
+    from slge.makharij import BAYN, MAKHARIJ, MISSING, ORDER, SIFAT, STATED_COUNT
+
+    rows = _rows("makharij.csv")
+    by = {r[0]: r for r in rows if r[0] in ("order", "stated", "missing")}
+    assert [ALPHABET[int(i)] for i in by["order"][1].split("+")] == list(ORDER)
+    assert int(by["stated"][1]) == STATED_COUNT
+    assert [ALPHABET[int(i)] for i in by["missing"][1].split("+")] == list(MISSING)
+    mk = [r for r in rows if r[0] == "makhraj"]
+    assert len(mk) == len(MAKHARIJ) == 15
+    for r in mk:
+        assert tuple(ALPHABET[int(i)] for i in r[2].split("+")) == MAKHARIJ[int(r[1])][1], r
+    for r in (r for r in rows if r[0] == "sifa"):
+        mine = BAYN if r[1] == "bayn" else SIFAT[r[1]][1]
+        assert tuple(ALPHABET[int(i)] for i in r[2].split("+")) == mine, r

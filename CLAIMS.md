@@ -35,7 +35,7 @@
 | `masaq-zawaid.json` | مرجع محجوب | `15ab1c4691c88ebb99b4f37c5f1c062c83a20a988fdd6099cc835eaea4097478` |
 | `masaq-zuruf.json` | مرجع محجوب | `ef2e77119120a8f5109e28e63c0835468ce85442806c44b0e4f4a70635416dd3` |
 
-## الأرقام (837 رقمًا من 38 مولِّدًا)
+## الأرقام (847 رقمًا من 39 مولِّدًا)
 
 ### `tools/gen_abniya_index.py::measure`
 
@@ -605,6 +605,23 @@
 | `nun.True` | 174 |
 | `sabab.len` | 15 |
 | `sabab.sum` | 11,669 |
+
+### `tools/gen_makharij_index.py::measure`
+
+يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `688459656128b669`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `atoms` | 99,130 |
+| `by_makhraj.len` | 15 |
+| `furu` | 14 |
+| `jahr_agree` | 28 |
+| `lam_atoms` | 7,319 |
+| `lips_agree` | 0 |
+| `makharij` | 15 |
+| `sifat_atoms.len` | 13 |
+| `sifat_atoms.sum` | 351,111 |
+| `stated` | 16 |
 
 ### `tools/gen_mansubat_index.py::measure`
 

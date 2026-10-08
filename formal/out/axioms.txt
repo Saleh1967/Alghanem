@@ -833,3 +833,11 @@
 'Slge.Zawaid.mudaraa_are_zawaid' depends on axioms: [propext, Quot.sound]
 'Slge.Zawaid.mudaraa_licensed' depends on axioms: [propext, Quot.sound]
 'Slge.Zawaid.shawahid' depends on axioms: [propext]
+'Slge.Makharij.order_length' does not depend on any axioms
+'Slge.Makharij.order_is_the_alphabet' does not depend on any axioms
+'Slge.Makharij.lacuna_is_lam' does not depend on any axioms
+'Slge.Makharij.nun_twice' does not depend on any axioms
+'Slge.Makharij.jahr_partition' does not depend on any axioms
+'Slge.Makharij.shidda_partition' does not depend on any axioms
+'Slge.Makharij.itbaq_partition' does not depend on any axioms
+'Slge.Makharij.mutbaqa_witness' does not depend on any axioms

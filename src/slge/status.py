@@ -921,7 +921,7 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_gates.py::test_ladder_order_and_named_refusals",
        "test:tests/test_gates.py::test_whole_mushaf_climbs_consistently",
        note="قانونُ السُّلَّم مبرهَنٌ على المجرّد؛ البوّاباتُ تركّب الدوالَّ القائمة (مفحوص) ولا تبني قراءة."),
-    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (67 وحدة، 54 جدولًا، 44 فهرسًا): كلُّ وحدةٍ "
+    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (69 وحدة، 55 جدولًا، 45 فهرسًا): كلُّ وحدةٍ "
        "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
        "test:tests/test_gates.py::test_manifest_covers_the_tree",
        note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
@@ -1205,6 +1205,21 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_zawaid.py::test_attachment_keeps_licence_and_peel_returns_the_stem",
        "test:tests/test_zawaid.py::test_reader_peels_the_nun_and_the_ta_on_a_verb",
        note="صورتا النون في المثنّى والنسوة (تَفْعَلَانِّ) لم تُنفَّذ؛ والهمزُ عند التقاء الساكنين بابُ الحدّ."),
+    _c("MAKHARIJ-table", "مخارجُ سيبويه وصفاتُه من الكتاب المختوم: ترتيبُه تبديلٌ للحوامل التسعة "
+       "والعشرين؛ المعدودُ 15 مخرجًا والمنطوقُ 16 والساقطُ اللامُ باسمه؛ الجهرُ/الهمس 19+10، الشدّةُ/"
+       "الرخاوةُ/البينيّة 8+13+8، الإطباقُ/الانفتاح 4+25 قسماتٌ تامّة", _P,
+       "lean:Slge.Makharij.order_is_the_alphabet", "lean:Slge.Makharij.lacuna_is_lam",
+       "lean:Slge.Makharij.nun_twice", "lean:Slge.Makharij.jahr_partition",
+       "lean:Slge.Makharij.shidda_partition", "lean:Slge.Makharij.itbaq_partition",
+       "lean:Slge.Makharij.mutbaqa_witness",
+       "test:tests/test_makharij.py::test_partitions_are_exact",
+       "test:tests/test_conformance.py::test_makharij_matches_lean",
+       note="وصفٌ على الحامل لا عمليّة؛ الإدغامُ المبنيُّ عليه في بقيّة الباب لم يُقرأ."),
+    _c("MAKHARIJ-declared", "المعلَنُ في phonology يوافق سيبويه في الجهر/الهمس في 28 حرفًا من 29: "
+       "الصادُ مهموسةٌ عند سيبويه وليست في «فحثهشخسكت» المعلَنة؛ والألفُ عنده من أقصى الحلق لا "
+       "الجوف", _S,
+       "test:tests/test_makharij.py::test_sibawayh_hams_differs_from_the_declared_phonology_by_sad",
+       note="لا يُصحَّح المعلَنُ من الذاكرة؛ المختومُ هو الحجّة، والمعلَنُ دينٌ باسمه (ADR ١٩)."),
     _c("ZAWAID-masaq", "على مودَع المصحف: 267 صورةً آخرُها الثقيلة يقرأ الجذعُ 96 منها فعلًا بها، و224 "
        "آخرُها التاءُ الساكنة يقرأ 156؛ وعلى MASAQ: EMPHATIC_NUN 160/239، SUFF_FEM_TA 348/643، "
        "PROTECT_NUN 109/219", _S,

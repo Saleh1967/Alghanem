@@ -58,6 +58,8 @@ EXEMPT_FILES = (
     "tools/gen_mukhassas_index.py",
     "tools/deposit_zawaid.py",  # يقرأ الكتابَ المختوم ويولّد جدولَي الزوائد
     "tools/gen_zawaid_index.py",
+    "tools/deposit_makharij.py",  # يقرأ الكتابَ المختوم ويولّد جدولَي المخارج
+    "tools/gen_makharij_index.py",
     "src/slge/order.py",  # يبصم خاناتٍ لا نصًّا
 )
 IO_ATTRS = frozenset(

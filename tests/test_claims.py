@@ -36,7 +36,7 @@ def test_fingerprint_ignores_set_order_and_counter_type() -> None:
 def test_every_generator_reads_registered_deposits_only() -> None:
     tools = sorted((ROOT / "tools").glob("gen_*_index.py"))
     with_measure = [t for t in tools if "\ndef measure(" in t.read_text(encoding="utf-8")]
-    assert len(with_measure) == 38
+    assert len(with_measure) == 39
     registered = {d.path for d in MOD.DEPOSITS}
     for t in with_measure:
         assert set(MOD._reads(t)) <= registered

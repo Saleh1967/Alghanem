@@ -661,6 +661,21 @@ def main (args : List String) : IO Unit := do
       IO.println s!"tawkid,{key w},0,{key (Zawaid.tawkid w false)},{licensed (Zawaid.tawkid w false)}"
       IO.println s!"anith,{key w},{key (Zawaid.anith w)},{licensed (Zawaid.anith w)}"
       IO.println s!"tanwin,{key w},{Nida.hasTanwin (Zawaid.tawkid w false)}"
+  | ["makharij"] =>
+    -- ترتيبُ سيبويه، المخارجُ بحروفها، الصفاتُ بحروفها، والساقطُ باسمه.
+    IO.println s!"order,{"+".intercalate (Makharij.order.map toString)}"
+    IO.println s!"stated,{Makharij.statedCount}"
+    IO.println s!"missing,{"+".intercalate (Makharij.missing.map toString)}"
+    for (m, i) in Makharij.makharij.zip (List.range Makharij.makharij.length) do
+      IO.println s!"makhraj,{i},{"+".intercalate (m.map toString)}"
+    for (n, l) in [("majhura", Makharij.majhura), ("mahmusa", Makharij.mahmusa),
+                   ("shadida", Makharij.shadida), ("rikhwa", Makharij.rikhwa),
+                   ("baynBayn", Makharij.baynBayn), ("munharif", Makharij.munharif),
+                   ("ghunna", Makharij.ghunna), ("mukarrar", Makharij.mukarrar),
+                   ("layyina", Makharij.layyina), ("hawi", Makharij.hawi),
+                   ("mutbaqa", Makharij.mutbaqa), ("munfatiha", Makharij.munfatiha),
+                   ("bayn", Makharij.bayn)] do
+      IO.println s!"sifa,{n},{"+".intercalate (l.map toString)}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do
