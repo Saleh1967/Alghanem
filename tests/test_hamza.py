@@ -2,13 +2,9 @@
 
 from __future__ import annotations
 
-from collections import Counter
-
 from conftest import ROOT
 
-from gate import Refusal, enter
-from gate.hamza import SEATS, predict_seat, seat_of
-from gate.residue import clusters, repair
+from gate.hamza import seat_census, seat_of
 
 _POS = {"A116.Hamza.Pos.initial": "initial", "A116.Hamza.Pos.medial": "medial",
         "A116.Hamza.Pos.final": "final"}
@@ -35,18 +31,7 @@ def test_seat_rule_on_the_sealed_corpus() -> None:
 
     text = (ROOT / "corpora" / "quran-simple-enhanced.txt").read_text(encoding="utf-8")
     surfaces = {w for w in text.split() if w != "<sel>" and any("ء" <= c <= "ي" for c in w)}
-    total, agree, miss = 0, 0, Counter()
-    for s in sorted(surfaces):
-        if isinstance(enter(s.encode("utf-8")), Refusal):
-            continue
-        canonical, _ = repair(s)
-        cl = clusters(canonical)
-        for i, c in enumerate(cl):
-            if c[0] in SEATS:
-                total += 1
-                if predict_seat(canonical, i) == c[0]:
-                    agree += 1
-                else:
-                    miss[c[0]] += 1
+    census = seat_census(sorted(surfaces))
+    total, agree, miss = census["seats"], census["by_rule"], census["miss"]
     assert total == 4213 and agree == 4112
     assert dict(miss) == {"أ": 16, "إ": 30, "ئ": 46, "ؤ": 7, "ء": 2}

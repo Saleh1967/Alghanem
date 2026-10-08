@@ -111,6 +111,14 @@ jobs:
           test $r1 -eq 0 -a $r2 -eq 0
       - name: registry matches suspended/ tree
         run: python tools/gen_registry.py --check
+      - name: glossary — every term anchored in the tree, every tag/kind/grade defined, no unused entry
+        run: python tools/gen_glossary.py --check
+      - name: audit_results.json is what gate.audit computes now on the sealed corpus (no hand-written block)
+        run: |
+          python -m gate.audit corpora/quran-simple-enhanced.txt /tmp/audit_out > /dev/null
+          git diff --exit-code -- gate/audit_results.json
+      - name: CLAIMS.md — every published number recomputed from its named generator; no number in CLAUDE.md without one
+        run: python tools/gen_claims.py --check
       - name: guard — no reader or writer outside the gate
         run: python -c "from gate.guard import breaches; b = breaches(); print(b or 'لا خرق'); raise SystemExit(1 if b else 0)"
       - name: conformance, gate, guard (fast)

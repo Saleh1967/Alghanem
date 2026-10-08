@@ -24,6 +24,7 @@ from gate.contextual import (
     unpair,
 )
 from gate.rasm_consistency import consistent
+from gate.residue import RULES, repair
 
 SOURCE_SHA = "37633090743d403886b334d12dd911d1994e49767faa9f2be0f01fd48b466c5a"
 ROOT = Path(__file__).resolve().parent
@@ -47,6 +48,41 @@ def must_refuse(fn):
     except ValueError:
         return
     raise AssertionError("MUTATED_INPUT_WAS_NOT_REFUSED")
+
+
+def edition_residue(forms):
+    """بقيّةُ الرسم على الرسوم المختومة: كم رسمًا يُقبل بعد قواعد الطبعة، وما رُفض باسمه، وكم ردٍّ أخفق.
+
+    يُحسب لا يُكتب: القيمُ هنا هي ما تطبعه البوّابةُ (`gate.enter`/`gate.exit`) على كلّ رسمٍ في
+    المدوّنة، ويطابقها `tests/test_residue.py::test_gate_frees_the_edition_and_names_the_rest`."""
+
+    from gate import Refusal, enter, exit  # noqa: A004 - اسمُ مخرج البوّابة مقصود
+
+    surfaces = sorted(f for f in forms if any("ء" <= c <= "ي" for c in f))
+    status, rules, refused, failures = Counter(), Counter(), Counter(), 0
+    canonical = set()
+    for s in surfaces:
+        canonical.add(repair(s)[0])
+        cert = enter(s.encode("utf-8"))
+        if isinstance(cert, Refusal):
+            status[cert.status] += 1
+            refused[cert.reasons[0] if cert.reasons else cert.status] += 1
+            continue
+        status["READY"] += 1
+        if exit(cert) != s.encode("utf-8"):
+            failures += 1
+        for rule, _, _ in cert.residue:
+            rules[rule] += 1
+    return {
+        "rules": [r for r in RULES if rules[r] > 0],
+        "lean": "formal/a116/A116/Residue.lean (chain_restore, residue_separates)",
+        "sealed_surfaces": len(surfaces),
+        "canonical_forms": len(canonical),
+        "ready_after": status["READY"],
+        "refused_named": dict(sorted(refused.items())),
+        "rules_fired": dict(sorted(rules.items())),
+        "round_trip_failures": failures,
+    }
 
 
 def main(path, out_dir):
@@ -223,6 +259,7 @@ def main(path, out_dir):
             ),
         },
         "general_language_closure": False,
+        "edition_residue": edition_residue(forms),
     }
     (OUT / "joined_provenance.json").write_text(
         json.dumps(first_left, ensure_ascii=False, sort_keys=True)

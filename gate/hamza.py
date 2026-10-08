@@ -89,3 +89,27 @@ def predict_seat(canonical: str, i: int) -> str:
     """كرسيُّ الهمزة في الموضع ‎i‎ من الصورة القانونيّة."""
 
     return seat_of(context(clusters(canonical), i))
+
+
+def seat_census(surfaces: list[str]) -> dict[str, object]:
+    """قاعدةُ الكرسيّ على رسومٍ مختومة: كم كرسيًّا وافقت القاعدةُ وأيُّ كراسٍ خالفت، عدًّا لا تخمينًا.
+
+    تُقرأ الرسومُ من المدوّنة في `tests/test_hamza.py` و`tools/gen_claims.py`؛ هنا العدُّ وحدَه."""
+
+    from gate import Refusal, enter
+    from gate.residue import repair
+
+    total, agree, miss = 0, 0, {}
+    for s in sorted(surfaces):
+        if isinstance(enter(s.encode("utf-8")), Refusal):
+            continue
+        canonical, _ = repair(s)
+        cl = clusters(canonical)
+        for i, c in enumerate(cl):
+            if c[0] in SEATS:
+                total += 1
+                if predict_seat(canonical, i) == c[0]:
+                    agree += 1
+                else:
+                    miss[c[0]] = miss.get(c[0], 0) + 1
+    return {"seats": total, "by_rule": agree, "miss": dict(sorted(miss.items()))}

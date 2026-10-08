@@ -19,10 +19,10 @@
 
 ## ما لا تفعله
 
-1. لا تكتب `open`، `print`، `read_text`، `encode`، `decode`، `normalize`، `argv`، `stdin`… في أيّ ملفٍ خارج `gate/` (و`tests/`، `formal/`، `tools/gen_registry.py`). الحارسُ `gate.guard.breaches()` يمشي على الشجرة كلَّها ويُسقط البناء.
+1. لا تكتب `open`، `print`، `read_text`، `encode`، `decode`، `normalize`، `argv`، `stdin`… في أيّ ملفٍ خارج `gate/` (و`tests/`، `formal/`، `tools/gen_registry.py`، `tools/gen_glossary.py`، `tools/gen_claims.py`). الحارسُ `gate.guard.breaches()` يمشي على الشجرة كلَّها ويُسقط البناء.
 2. لا تستورد من `suspended/` ولا من `canonical116` ولا من داخليّات البوّابة (`gate.contextual`، `gate.bridge`، `gate.mabni_*`…). الواجهةُ `gate` وحدَها (`enter`، `exit`، `derive`، `recover`، `licence`).
 3. لا تُعِد وحدةً من `suspended/` إلّا بثلاثة معًا: (١) مدخلُها ومخرجُها عبر `gate.api`، (٢) اختباراتٌ توقعاتُها مستقلّةٌ عن شيفرتها ومطعَّمةٌ بالطفرة (منهج 20/20)، (٣) ADR مسجَّل. ثمّ `python tools/gen_registry.py` لتحديث السجلّ.
-4. لا تحرِّر الجداول المولَّدة (`formal/a116/*.csv`) ولا `SUSPENDED_REGISTRY.json` ولا `gate/audit_results.json` بيدك؛ تُولَّد وتُطابَق (`git diff --exit-code`).
+4. لا تحرِّر الجداول المولَّدة (`formal/a116/*.csv`) ولا `SUSPENDED_REGISTRY.json` ولا `gate/audit_results.json` ولا `GLOSSARY.md` ولا `CLAIMS.md` بيدك؛ تُولَّد وتُطابَق (`git diff --exit-code`).
 5. لا تمسّ `gate/bridge_v1_0.py` (مجمَّدٌ ببصمته) ولا `corpora/quran-simple-enhanced.txt` (مختومٌ بـ`CORPUS_SHA256`).
 6. لا تدمج في `main` بلا إذن صاحب المستودع. فرعُ العمل: `claude/official-gate`.
 7. لا تكتب «مبرهن» إلّا لما في Lean باسمه، ولا «مفحوص» إلّا لما له اختبارٌ باسمه، ولا «مقيس» إلّا لما له رقمٌ على مرجعٍ محجوب. وما سوى ذلك «معلن» أو «رأي». ولا تُثبت ادّعاءً في ملفٍّ قبل أن يوجد ما يثبته (لا CI قبل CI).
@@ -36,8 +36,11 @@ export PATH=$HOME/.elan/bin:$PATH
 (cd formal/a116 && lake exe a116-table syllables > syllables.csv)   # 13 MB، يُولَّد لا يُودَع؛ يلزم test_conformance
 ruff check gate tests tools && mypy
 python tools/gen_registry.py --check
+python tools/gen_glossary.py --check          # معجمُ الاصطلاح (GLOSSARY.md): كلُّ مصطلحٍ بموضع تعريفه، مرساةٌ لا توجد تُسقط البناء
+python -m gate.audit corpora/quran-simple-enhanced.txt /tmp/audit_out && git diff --exit-code -- gate/audit_results.json   # الملفُّ ما تحسبه البوّابة الآن، لا كتلةَ فيه بيد
+python tools/gen_claims.py --check            # سجلُّ الأرقام (CLAIMS.md): كلُّ رقمٍ منشور يُعاد حسابُه من مولِّده المسمّى ببصمة مودَعاته ومخرَجه؛ ولا عددَ في CLAUDE.md بلا مولِّد (~4 دقائق)
 python -c "from gate.guard import breaches; print(breaches() or 'لا خرق')"
-pytest -q -m "not slow"        # 100 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
+pytest -q -m "not slow"        # 109 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
 ```
 
 وقبل الطبعة: أثبت أنّ الملف الذي تتكلّم عنه موجودٌ («لا ثقة بلا طبعة»)، وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه أنت.
