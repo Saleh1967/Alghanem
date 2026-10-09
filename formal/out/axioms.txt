@@ -941,3 +941,22 @@
 'Slge.Siyaq.restore_length_le' depends on axioms: [propext, Quot.sound]
 'Slge.Siyaq.witness_joined' depends on axioms: [propext]
 'Slge.Siyaq.witness_paused' depends on axioms: [propext]
+'Slge.CoverageTable.attestedCells_length' does not depend on any axioms
+'Slge.Coverage.licensable_length' does not depend on any axioms
+'Slge.Coverage.licensable_nodup' does not depend on any axioms
+'Slge.Coverage.cells_partition' does not depend on any axioms
+'Slge.Coverage.vowelled_alif_not_licensable' does not depend on any axioms
+'Slge.Coverage.alif_sukun_licensable' does not depend on any axioms
+'Slge.Coverage.attested_eq_licensable' does not depend on any axioms
+'Slge.Coverage.qati_iff' depends on axioms: [propext]
+'Slge.Coverage.witness_some_iff_mem' depends on axioms: [propext, Quot.sound]
+'Slge.Coverage.qati_mem' depends on axioms: [propext, Quot.sound]
+'Slge.Coverage.qati_unique' depends on axioms: [propext, Quot.sound]
+'Slge.Coverage.row_mafhum_pos' does not depend on any axioms
+'Slge.Coverage.row_malumah_iff' depends on axioms: [propext, Quot.sound]
+'Slge.Coverage.node_mafhum_has_witness' depends on axioms: [propext, Quot.sound]
+'Slge.Coverage.nodeGrade_total' does not depend on any axioms
+'Slge.Coverage.nodeGrade_nil' does not depend on any axioms
+'Slge.Coverage.axes_attested_le_total' does not depend on any axioms
+'Slge.Coverage.roots_partition' does not depend on any axioms
+'Slge.Coverage.nodes_partition' does not depend on any axioms

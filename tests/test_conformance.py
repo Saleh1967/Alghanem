@@ -1414,3 +1414,34 @@ def test_siyaq_matches_lean() -> None:
         elif r[0] == "project":
             assert project(Hadd(True, True), True, kinds[r[1]], (("ء", "كسر"), *w(r[3]))) == w(r[4])
     assert seen == 16 and len(rows) == 32
+
+
+def test_coverage_matches_lean() -> None:
+    """المرخَّصُ من الشبكة (113 بمؤشّر الخانة)، وشاهدُ الجذر ودرجةُ العقدة والصفّ على شواهدَ بعينها =
+    `Coverage`."""
+
+    from slge.coverage import MAFHUM, MALUMAH, licensable_cells, node_grade, row_grade, witness_of
+
+    rows = _rows("coverage.csv")
+    names = {"qati": "قاطع", "muhtamal": "محتمل", "none": None}
+    cells = [_cell(int(r[1])) for r in rows if r[0] == "cell"]
+    assert cells == list(licensable_cells()) and len(cells) == 113
+
+    def nats(s: str) -> tuple[int, ...]:
+        return tuple(int(x) for x in s.split("-")) if s else ()
+
+    def grade(s: str) -> tuple[str, int | None]:
+        return (MAFHUM, int(s[7:])) if s.startswith("mafhum:") else (MALUMAH, None)
+
+    seen = 0
+    for r in rows:
+        if r[0] == "witness":
+            assert witness_of(frozenset(nats(r[2])), int(r[3])) == names[r[4]], r[1]
+            seen += 1
+        elif r[0] == "node":
+            assert node_grade(nats(r[2]), nats(r[3])) == grade(r[4]), r[1]
+            seen += 1
+        elif r[0] == "row":
+            assert row_grade(int(r[1])) == grade(r[2])
+            seen += 1
+    assert seen == 12 and len(rows) == 125

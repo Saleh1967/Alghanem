@@ -752,6 +752,22 @@ def main (args : List String) : IO Unit := do
        ("allahu", ⟨Alam.allahu, [1, 0, 0, 0, 1, 1, 1], none⟩)]
     for (n, s) in ws do
       IO.println s!"shahada,{n},{key s.cells},{"-".intercalate (s.path.map toString)},{Shahada.encMadlul s.madlul},{Shahada.atomNumberC (Shahada.atoms s)},{Shahada.encListC s.path},{Shahada.fingerprintC s}"
+  | ["coverage"] =>
+    -- التغطية: المرخَّصُ من الشبكة (113 خانة بمؤشّرها)، وشاهدُ الجذر ودرجةُ العقدة والصفّ على شواهدَ بعينها.
+    for x in Coverage.licensable do
+      IO.println s!"cell,{x.index}"
+    let wit := fun (o : Option Coverage.Witness) => match o with
+      | some .qati => "qati" | some .muhtamal => "muhtamal" | none => "none"
+    for (n, roots, r) in [("one", [5], 5), ("two", [5, 6], 5), ("other", [6], 5), ("nil", [], 5),
+                          ("dup", [5, 5], 5)] do
+      IO.println s!"witness,{n},{"-".intercalate (roots.map toString)},{r},{wit (Coverage.witnessOf roots r)}"
+    let grade := fun (g : Coverage.Grade) => match g with
+      | .mafhum w => s!"mafhum:{w}" | .malumah => "malumah"
+    for (n, title, q) in [("first", [1, 2], [2, 1]), ("second", [1, 2], [2]), ("none", [1, 2], [3]),
+                          ("empty", [], [1])] do
+      IO.println s!"node,{n},{"-".intercalate (title.map toString)},{"-".intercalate (q.map toString)},{grade (Coverage.nodeGrade title q)}"
+    for n in [0, 1, 7] do
+      IO.println s!"row,{n},{grade (Coverage.rowGrade n)}"
   | ["siyaq"] =>
     -- السياق: الإسقاطُ إلى الحدّ بأوجه الوقف، والردُّ مرشَّحاتٍ لشواهدَ بعينها (الحدّ|الصورة|المرشَّحات).
     let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)

@@ -107,6 +107,9 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("shahada", ("Shahada",), ("shahada",), None, "test_shahada.py"),  # شهادةُ SLGE ببصمتها
     Module("intiqal", ("Intiqal", "IntiqalTable"), (), "gen_intiqal_index.py", "test_intiqal.py"),
     Module("siyaq", ("Siyaq",), ("siyaq",), "gen_siyaq_index.py", "test_siyaq.py"),  # في حدّها
+    Module("coverage", ("Coverage", "CoverageTable"), ("coverage",), "gen_coverage_index.py",
+           "test_coverage.py"),  # التغطية: الشاهدُ لكلّ محور، والمشهودُ من الشبكة هو المرخَّص
+    Module("coverage_table", (), (), None, "test_coverage.py"),  # مولَّدٌ من مودَعَي المصحف
     Module("gates", (), (), None, "test_gates.py"),
 )
 """كلُّ وحدةٍ حيّة (وصفيّةُ `order`/`status`/`guard`/`manifest` خارجَها) وما يقابلها."""
@@ -191,7 +194,7 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
     Deposit("owner-alam.json", "وضع",
             "لفظُ الجلالة (10 صور) و57 علمًا موسومةً بعينها؛ وضعُ العلميّة لا القياس — تُولَّد منه "
             "جداولُ `Alam` بـ--check (ADR ٢٤)",
-            "09290ebbc0203a407531a74dd528581108f7403931c7bd4dd80a9b0d5fb59a86",
+            "561fa752b4c97d356786009ba0e5017b15089bf615bc2939eafc794edce6993f",
             "بتوقيع المالك"),
     Deposit("openiti-majaz-quran.txt.gz", "مرجع محجوب",
             "مجاز القرآن لأبي عبيدة (JK010146): مرجعُ الأحكام المحجوب للمجاز — يُقاس عليه ولا يُقرأ "

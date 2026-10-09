@@ -41,8 +41,10 @@ def test_prior_knowledge_is_read_only_above_the_gates() -> None:
     «معلومات سابقة» (حين يوجد) يسكن طبقةَ الحكم أو فوقها."""
     assert "البوابات" in ancestors("الحكم")
     assert "الحكم" not in ancestors("البوابات")
-    assert [m for m, layer in MODULE_LAYER.items() if layer == "الحكم"] == ["mukhassas"], \
-        "لا وحدةَ في الحكم بلا إذنٍ مسجَّل (المادّة ٩؛ ADR ١٥)"
+    hukm = [m for m, layer in MODULE_LAYER.items() if layer == "الحكم"]
+    # لا وحدةَ في الحكم بلا إذنٍ مسجَّل (المادّة ٩): المخصّص ADR ١٥؛ والتغطيةُ بإذن المالك «غطي بالبرهان
+    # وعرف الشاهد» (2026-10-09، ADR ٢٩)
+    assert hukm == ["mukhassas", "coverage"], "HUKM_MODULE_WITHOUT_RECORDED_PERMISSION"
 
 
 def _canonical(d: object) -> str:

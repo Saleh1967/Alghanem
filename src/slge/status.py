@@ -1268,6 +1268,33 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_conformance.py::test_siyaq_matches_lean",
        note="وجهُ الوقف وهمزةُ الوصل معاملان لا يُقرآن من الخانات؛ وحركةُ الهمزة المردودة بقاعدة "
             "`Sawabiq.lift` مقيسةٌ لا مبرهَنة (SIYAQ_INDEX.md: المثلان في الصدر يُقرآن أل) (ADR ٢٨)."),
+    _c("COVERAGE-grid", "المرخَّصُ من شبكة الـ116 ثلاثَ عشرةَ ومئة: الألفُ لا تكون أبدًا إلّا ساكنة "
+       "(الكتاب س18101) فالألفُ بالحركات الثلاث خاناتٌ في الشبكة لا في الكلام، والشبكةُ قسمةٌ تامّة؛ "
+       "والمشهودُ في مودَعَي المصحف هو المرخَّصُ بعينه — لا مرخَّصَ بلا شاهد ولا ألفَ متحرّكةً في المصحف", _P,
+       "lean:Slge.Coverage.licensable_length", "lean:Slge.Coverage.cells_partition",
+       "lean:Slge.Coverage.vowelled_alif_not_licensable",
+       "lean:Slge.Coverage.attested_eq_licensable",
+       "test:tests/test_coverage.py::test_the_grid_is_licensable_minus_vowelled_alif",
+       "test:tests/test_coverage.py::test_attested_cells_are_exactly_the_licensable",
+       "test:tests/test_conformance.py::test_coverage_matches_lean",
+       note="المرآةُ في الغانم `A116.Alif.licensable` بجدولها المودَع (`licensable.csv`)؛ الجسرُ بين "
+            "التعريفين غيرُ مبرهَن في Lean بعدُ (إيداعُ الـ116 المثبَّت هنا أسبقُ من `A116.Alif`) — "
+            "مطابَقٌ عدًّا (ADR ٢٩)."),
+    _c("COVERAGE-witness", "الشاهدُ معرَّفٌ لكلّ محور: شاهدُ الجذر صورةٌ يقرؤها الجذعُ عليه — قاطعٌ إن لم "
+       "يقرأها على غيره ومحتملٌ إن قرأها على غيره أيضًا، ولا شاهدَ إلّا والجذرُ من جذور الصورة، ولا "
+       "قاطعَ لجذرين من صورة؛ وشاهدُ العقدة جذرٌ من عنوانها له شاهدٌ قاطع — لا «مفهوم» بلا شاهد ولا "
+       "رفض؛ وشاهدُ الصفّ صورةٌ يقرؤها قارئُ الجدول عليه ودرجتُه بعددها؛ والمشهودُ لا يتجاوز المودَع "
+       "في كلّ محور وقسمتا الجذور والعقد تامّتان", _P,
+       "lean:Slge.Coverage.qati_iff", "lean:Slge.Coverage.witness_some_iff_mem",
+       "lean:Slge.Coverage.qati_unique", "lean:Slge.Coverage.node_mafhum_has_witness",
+       "lean:Slge.Coverage.nodeGrade_total", "lean:Slge.Coverage.row_mafhum_pos",
+       "lean:Slge.Coverage.axes_attested_le_total", "lean:Slge.Coverage.roots_partition",
+       "lean:Slge.Coverage.nodes_partition",
+       "test:tests/test_coverage.py::test_witness_of_root_and_node_are_the_defined_ones",
+       "test:tests/test_coverage.py::test_deposited_rows_are_graded_by_their_corpus_witnesses",
+       "test:tests/test_coverage.py::test_mutations_are_refused",
+       note="الصفُّ بلا شاهدٍ يبقى في جدوله «معلومة» (الموزِّع 86 من 246)؛ وشاهدُ الجذر من قراءات "
+            "الجذع لا من قسمة MASAQ (COVERAGE_INDEX.md؛ ADR ٢٩)."),
     _c("INTIQAL-registry", "لا انتقالَ على الـ116 إلّا مسجَّلًا: كلُّ دالّةٍ عامّة تنقل خاناتٍ إلى خانات في "
        "الشجرة مسجَّلةٌ باسمها ومبرهنتها المدقَّقة أو دَينًا بملاحظة، والحارسُ يرفض غيرَ المسجَّل وغيرَ "
        "المدقَّق؛ 89 انتقالًا: إغلاقٌ 34، خاصّةٌ 35، دَينٌ 20", _X,

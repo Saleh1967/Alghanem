@@ -4,7 +4,7 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 152 |
+| مبرهن | 154 |
 | مفحوص_استقصاء | 14 |
 | مفحوص_بعينة | 50 |
 | دليل | 0 |
@@ -32,6 +32,8 @@
 | BRIDGE | الجسرُ بين ترميز SLGE وترميز الـ116 تقابلٌ يحفظ السكون | مبرهن | `lean:Slge.ofCell_toCell`<br>`lean:Slge.toCell_ofCell`<br>`lean:Slge.toCell_isSukun`<br>`test:tests/test_conformance.py::test_bridge_matches_lean` |  |
 | CHAIN | الأخصُّ متعدٍّ (مفهومُ الموافقة سلسلة) | مبرهن | `lean:Slge.Ghazali.akhass_chain` |  |
 | COUNT | عدّادُ SLGE هو ‎U(n)‎ لكلّ n | مبرهن | `lean:Slge.count_eq_U`<br>`test:tests/test_conformance.py::test_counts_match_lean` |  |
+| COVERAGE-grid | المرخَّصُ من شبكة الـ116 ثلاثَ عشرةَ ومئة: الألفُ لا تكون أبدًا إلّا ساكنة (الكتاب س18101) فالألفُ بالحركات الثلاث خاناتٌ في الشبكة لا في الكلام، والشبكةُ قسمةٌ تامّة؛ والمشهودُ في مودَعَي المصحف هو المرخَّصُ بعينه — لا مرخَّصَ بلا شاهد ولا ألفَ متحرّكةً في المصحف | مبرهن | `lean:Slge.Coverage.licensable_length`<br>`lean:Slge.Coverage.cells_partition`<br>`lean:Slge.Coverage.vowelled_alif_not_licensable`<br>`lean:Slge.Coverage.attested_eq_licensable`<br>`test:tests/test_coverage.py::test_the_grid_is_licensable_minus_vowelled_alif`<br>`test:tests/test_coverage.py::test_attested_cells_are_exactly_the_licensable`<br>`test:tests/test_conformance.py::test_coverage_matches_lean` | المرآةُ في الغانم `A116.Alif.licensable` بجدولها المودَع (`licensable.csv`)؛ الجسرُ بين التعريفين غيرُ مبرهَن في Lean بعدُ (إيداعُ الـ116 المثبَّت هنا أسبقُ من `A116.Alif`) — مطابَقٌ عدًّا (ADR ٢٩). |
+| COVERAGE-witness | الشاهدُ معرَّفٌ لكلّ محور: شاهدُ الجذر صورةٌ يقرؤها الجذعُ عليه — قاطعٌ إن لم يقرأها على غيره ومحتملٌ إن قرأها على غيره أيضًا، ولا شاهدَ إلّا والجذرُ من جذور الصورة، ولا قاطعَ لجذرين من صورة؛ وشاهدُ العقدة جذرٌ من عنوانها له شاهدٌ قاطع — لا «مفهوم» بلا شاهد ولا رفض؛ وشاهدُ الصفّ صورةٌ يقرؤها قارئُ الجدول عليه ودرجتُه بعددها؛ والمشهودُ لا يتجاوز المودَع في كلّ محور وقسمتا الجذور والعقد تامّتان | مبرهن | `lean:Slge.Coverage.qati_iff`<br>`lean:Slge.Coverage.witness_some_iff_mem`<br>`lean:Slge.Coverage.qati_unique`<br>`lean:Slge.Coverage.node_mafhum_has_witness`<br>`lean:Slge.Coverage.nodeGrade_total`<br>`lean:Slge.Coverage.row_mafhum_pos`<br>`lean:Slge.Coverage.axes_attested_le_total`<br>`lean:Slge.Coverage.roots_partition`<br>`lean:Slge.Coverage.nodes_partition`<br>`test:tests/test_coverage.py::test_witness_of_root_and_node_are_the_defined_ones`<br>`test:tests/test_coverage.py::test_deposited_rows_are_graded_by_their_corpus_witnesses`<br>`test:tests/test_coverage.py::test_mutations_are_refused` | الصفُّ بلا شاهدٍ يبقى في جدوله «معلومة» (الموزِّع 86 من 246)؛ وشاهدُ الجذر من قراءات الجذع لا من قسمة MASAQ (COVERAGE_INDEX.md؛ ADR ٢٩). |
 | DAMAIR-forms | 33 صورةً مرخَّصةً متباينة: 12 رفعًا و12 نصبًا منفصلة و9 شواهدَ متّصلة | مبرهن | `lean:Slge.Damair.damair_licensed`<br>`lean:Slge.Damair.damair_nodup`<br>`test:tests/test_conformance.py::test_damair_matches_lean` |  |
 | DAMAIR-iyya | ضميرُ النصب المنفصل = الحاملُ إِيَّا + المتّصل؛ والإلحاقُ يحفظ الترخيص | مبرهن | `lean:Slge.Damair.iyya_is_carrier_plus_suffix`<br>`lean:Slge.Damair.witness_iyya`<br>`lean:Slge.Damair.attach_licensed`<br>`test:tests/test_damair.py::test_iyya_is_carrier_plus_attached` |  |
 | DAMAIR-na | قانونُ نا: سكونُ الصحيح قبلها رفعٌ، وحركتُه أو مدُّه نصبٌ/جرّ — من الخانة، لكلّ حامل | مبرهن | `lean:Slge.Damair.na_raf_reads_sukun`<br>`lean:Slge.Damair.na_nasb_reads_vowel`<br>`lean:Slge.Damair.na_after_madd_not_raf`<br>`lean:Slge.Damair.witness_na_roles`<br>`test:tests/test_damair.py::test_na_law_on_gate_witnesses` |  |

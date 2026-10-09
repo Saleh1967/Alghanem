@@ -18,7 +18,7 @@ DATA = Path(__file__).parent / "data" / "owner-alam.json"
 
 def test_deposit_is_owner_signed_and_the_tables_mirror_it() -> None:
     raw = DATA.read_bytes()
-    assert hashlib.sha256(raw).hexdigest().startswith("09290ebb")
+    assert hashlib.sha256(raw).hexdigest().startswith("561fa752")
     d = json.loads(raw)
     assert d["signed_by"] == SIGNED_BY and "بتوقيع المالك" in SIGNED_BY
     assert len(d["alam"]) == len(ALAM) == 57

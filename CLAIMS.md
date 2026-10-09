@@ -16,7 +16,7 @@
 | `openiti-sibawayh-kitab.txt.gz` | وضع | `a160f940bb194e6fe7e6655d2c7f28e41f1fc648c4c5e340cc4e42306d5cb625` |
 | `nabhani-shakhsiyya-3.txt.gz` | وضع | `359bb5532ecee8156f266522bb5388a1711e46e136004c3ac22e43f2ce656cb4` |
 | `nabhani-tafkir.txt.gz` | وضع | `b9b08eabec468aa0f93b80c01879e3812c57f4bd677e68e448967e3575bfaae4` |
-| `owner-alam.json` | وضع | `09290ebbc0203a407531a74dd528581108f7403931c7bd4dd80a9b0d5fb59a86` |
+| `owner-alam.json` | وضع | `561fa752b4c97d356786009ba0e5017b15089bf615bc2939eafc794edce6993f` |
 | `openiti-majaz-quran.txt.gz` | مرجع محجوب | `432dae05748f2f972b3238e56dd0c56e72b10f0c3900ee8da1a8cca812b2fc88` |
 | `masaq-adad.json` | مرجع محجوب | `9018b3f445f65bc23799f0bee3cda1ab1fe3a1a0a0ab7e67e6d85406e77cd822` |
 | `masaq-fil.json.gz` | مرجع محجوب | `61ed093595d72dc3b144b1ce1baf5f9c358f17ceeda765378a5198e86546060c` |
@@ -39,7 +39,7 @@
 | `masaq-zawaid.json` | مرجع محجوب | `15ab1c4691c88ebb99b4f37c5f1c062c83a20a988fdd6099cc835eaea4097478` |
 | `masaq-zuruf.json` | مرجع محجوب | `ef2e77119120a8f5109e28e63c0835468ce85442806c44b0e4f4a70635416dd3` |
 
-## الأرقام (1,076 رقمًا من 46 مولِّدًا)
+## الأرقام (1,123 رقمًا من 47 مولِّدًا)
 
 ### `tools/gen_abniya_index.py::measure`
 
@@ -131,7 +131,7 @@
 
 ### `tools/gen_alam_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `51d469d7656e1f66`.
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `e7ef8a0a45ac5cbb`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -147,14 +147,14 @@
 | `jforms.MADD` | 3 |
 | `kinds.أعجمي` | 86 |
 | `kinds.جلالة` | 17 |
-| `kinds.عربي` | 73 |
+| `kinds.عربي` | 75 |
 | `multi` | 0 |
-| `none` | 220 |
+| `none` | 218 |
 | `props` | 1,935 |
-| `read` | 176 |
+| `read` | 178 |
 | `sarfs.غير مشهود الجرّ` | 23 |
 | `sarfs.مقصور` | 13 |
-| `sarfs.ممنوع` | 74 |
+| `sarfs.ممنوع` | 76 |
 | `sarfs.منصرف` | 49 |
 | `sarfs.منفرد` | 17 |
 | `table` | 57 |
@@ -165,8 +165,8 @@
 | `table_sarfs.ممنوع` | 27 |
 | `table_sarfs.منصرف` | 18 |
 | `unread_top.len` | 15 |
-| `with_pre` | 80 |
-| `wrong` | 0 |
+| `with_pre` | 81 |
+| `wrong` | 2 |
 
 ### `tools/gen_bits_index.py::measure`
 
@@ -212,6 +212,60 @@
 | `widths.7` | 4,468 |
 | `widths.8` | 2,710 |
 | `widths.9` | 341 |
+
+### `tools/gen_coverage_index.py::measure`
+
+يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`. بصمةُ المخرَج: `db1e48d05d29b7c6`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `attested_cells.len` | 113 |
+| `cells.attested` | 113 |
+| `cells.licensable` | 113 |
+| `cells.vowelled_alif_seen` | 0 |
+| `context_forms` | 17,937 |
+| `forms` | 18,179 |
+| `maqayis.forms_with_root` | 13,450 |
+| `maqayis.muhtamal_only` | 276 |
+| `maqayis.none` | 2,666 |
+| `maqayis.qati` | 1,619 |
+| `maqayis.roots` | 4,561 |
+| `maqayis.top_qati[0][1]` | 131 |
+| `maqayis.top_qati[1][1]` | 115 |
+| `maqayis.top_qati[2][1]` | 106 |
+| `maqayis.top_qati[3][1]` | 91 |
+| `maqayis.top_qati[4][1]` | 86 |
+| `maqayis.top_qati[5][1]` | 83 |
+| `maqayis.top_qati[6][1]` | 82 |
+| `maqayis.top_qati[7][1]` | 74 |
+| `maqayis.top_qati[8][1]` | 74 |
+| `maqayis.top_qati[9][1]` | 67 |
+| `mukhassas.muhtamal_only` | 19 |
+| `mukhassas.no_roots` | 520 |
+| `mukhassas.nodes` | 1,600 |
+| `mukhassas.none` | 89 |
+| `mukhassas.qati` | 972 |
+| `mukhassas.with_roots` | 1,080 |
+| `readers.الإعراب.forms` | 18,114 |
+| `readers.الإعراب.tokens` | 78,100 |
+| `readers.الجداول.forms` | 1,029 |
+| `readers.الجداول.tokens` | 30,548 |
+| `readers.الجذع.forms` | 15,667 |
+| `readers.الجذع.tokens` | 67,999 |
+| `readers.الجواب.forms` | 18,114 |
+| `readers.الجواب.tokens` | 78,100 |
+| `readers.السوابق.forms` | 4,928 |
+| `readers.السوابق.tokens` | 20,138 |
+| `readers.الصرف.forms` | 1,221 |
+| `readers.الصرف.tokens` | 6,874 |
+| `tables.alam.attested` | 57 |
+| `tables.alam.rows` | 57 |
+| `tables.sawabiq.attested` | 11 |
+| `tables.sawabiq.rows` | 11 |
+| `tables.tawzi.attested` | 160 |
+| `tables.tawzi.rows` | 246 |
+| `tables.tawzi.unattested.len` | 86 |
+| `tokens` | 78,245 |
 
 ### `tools/gen_fil_index.py::measure`
 
@@ -940,7 +994,7 @@
 
 ### `tools/gen_pipeline_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `71cbdfaa4e67f1b2`.
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `7d8757a3f0117525`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -983,8 +1037,8 @@
 | `strict.stops.NO_READING` | 1,803 |
 | `strict.stops.PARTICLE_NOT_IN_TABLE` | 151 |
 | `strict.stops.PASSED` | 3,070 |
-| `strict.stops.READING_NOT_GOLD` | 2,890 |
-| `strict.stops.SEGMENTS_TIE` | 1,681 |
+| `strict.stops.READING_NOT_GOLD` | 2,891 |
+| `strict.stops.SEGMENTS_TIE` | 1,680 |
 
 ### `tools/gen_sarf_index.py::measure`
 
