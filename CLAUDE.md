@@ -48,7 +48,7 @@ python tools/gen_certificates.py --check ../slge/tests/data/corpus-certificates.
 python tools/gen_context_certificates.py --check ../slge/tests/data/context-certificates.json.gz   # مودَعُ SLGE الثاني: كلُّ موقعٍ في سياقه (ابتداء/وصل، استمرار/وقف) على قاموسٍ مسمًّى `Gate(context, domain)`؛ همزةُ الوصل ساقطةٌ في الوصل والوقفُ يُسكِّن ويُرخَّص بقيده، والرفضُ باسمه (~25 ثانية)
 python tools/gen_claims.py --check            # سجلُّ الأرقام (CLAIMS.md): كلُّ رقمٍ منشور يُعاد حسابُه من مولِّده المسمّى ببصمة مودَعاته ومخرَجه؛ ولا عددَ في CLAUDE.md بلا مولِّد (~4 دقائق)
 python -c "from gate.guard import breaches; print(breaches() or 'لا خرق')"
-pytest -q -m "not slow"        # 148 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
+pytest -q -m "not slow"        # 149 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
 ```
 
 وقبل الطبعة: أثبت أنّ الملف الذي تتكلّم عنه موجودٌ («لا ثقة بلا طبعة»)، وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه أنت.
@@ -72,7 +72,7 @@ pytest -q -m "not slow"        # 148 اختبارًا؛ و`pytest -q -m slow` ل
 | `gate/residue.py` | بقيّةُ الرسم: 9 قواعد طبعةٍ مسمّاة (`A116.Residue`؛ التاسعةُ `DAGGER_ALIF` لطبعة globalquran/hamil)؛ READY 8,532 → 18,179 من 18,200، ردٌّ بعينه | مبرهن (الردّ) + مقيس (التغطية) |
 | `gate/mabni_verbs.py`, `gate/mabni_bridge.py` | 770 جذرًا ← 315,874 صورة؛ الاسترجاع | مقيس (MASAQ 97.23%) |
 | `gate/guard.py` | الحارس | مفحوص (خرقٌ مزروعٌ يُلتقط) |
-| `tools/gen_refusals.py` → `REFUSALS.md` | سجلُّ الرفض: 30 اسمًا تُطلقها البوّابة — 5 مرسًى في Lean، 25 معلَنًا بصنفه (واجهة/رسم/همزة/ترخيص/حدّ) وشرطِ سداده | مفحوص (`test_refusals.py`: اسمٌ مزروعٌ وإعلانان باطلان يُلتقطون) |
+| `tools/gen_refusals.py` → `REFUSALS.md` | سجلُّ الرفض: 30 اسمًا تُطلقها البوّابة — 8 مرسًى في Lean (منها `INITIAL_SUKUN_WITHOUT_REPAIR` ← `Boundary.initialSukun`، `NOT_CONTINUE_LICENSED_AFTER_REPAIR` ← `Hadd.notContinueLicensed`، و`START_VOWEL_OF_WASL_IS_UNKNOWN` ← `Boundary.waslVowel`: حركةُ الوصل من الثالث، الكتاب س17530)، 22 معلَنًا بصنفه (واجهة/رسم/همزة) وشرطِ سداده | مفحوص (`test_refusals.py`: اسمٌ مزروعٌ وإعلانان باطلان يُلتقطون) |
 | `suspended/` | 984 وحدة معلَّقة | لا يُستورد |
 
 **المستودعاتُ المشمولة بهذا القانون:** الغانم (هذا)، SLGE، hamil، Algebra، والدساتير الثلاثة. **Taaqol-GPT ليس منها.** البوّابةُ لها جميعًا هي بوّابةُ الغانم هذه؛ ما في غيرها من بوّاباتٍ يُعلَّق بالطريقة نفسها حتى يعود عبرها.

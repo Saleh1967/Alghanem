@@ -46,3 +46,27 @@ def test_wasl_dropped_when_joined_and_junction_is_licensed() -> None:
     after_sukun = enter(AL_HAMD.encode("utf-8"), Context(entry="joined", left="قُلْ"))
     assert not isinstance(after_sukun, Refusal) and after_sukun.junction == "SAKIN_KASRA"
     assert after_sukun.atoms == joined.atoms  # ذرّاتُ الكلمة الثانية كما هي
+
+
+def test_wasl_vowel_from_the_third_letter_mirrors_boundary_lean() -> None:
+    """الكتاب س17530–17531: الألفُ الموصولة ابتداءً «مكسورة أبدا إلا أن يكون الحرف الثالث مضموما»،
+    وهمزةُ «ال» مفتوحة (`A116.Boundary.waslVowel`؛ المرآةُ قاعدةُ الرسم `WASL`). الألفُ المجرّدة والألفُ
+    المرسومةُ وصلةً (ٱ) سواء، والردُّ يعيد الرسمَ بعينه؛ ولا سكونَ أبدًا (`waslVowel_ne_sukun`)."""
+
+    from gate.contextual import Context, project
+    from gate.residue import repair, unrepair
+
+    for bare, wasla, first in (("اكْتُبْ", "ٱكْتُبْ", "ءُ"), ("انْصُرْ", "ٱنْصُرْ", "ءُ"),
+                               ("اضْرِبْ", "ٱضْرِبْ", "ءِ"), ("اسْتَغْفِرْ", "ٱسْتَغْفِرْ", "ءِ"),
+                               ("الْحَمْدُ", "ٱلْحَمْدُ", "ءَ"), ("اسْمُ", "ٱسْمُ", "ءُ")):
+        for w in (bare, wasla):
+            canonical, residue = repair(w)
+            assert residue and residue[0][0] == "WASL" and unrepair(canonical, residue) == w, w
+            d = project(canonical, Context())
+            assert d["status"] == "READY" and d["atoms"][0] == first, (w, d["atoms"][:1])
+    # الطفرة: من ضمّ الوصلَ لثالثٍ مكسور خالف الكتاب — اضْرِبْ لا تُقرأ ءُ
+    assert project(repair("اضْرِبْ")[0], Context())["atoms"][0] != "ءُ"
+    # وصلةٌ بسكونٍ صريح: لا تُقرَّر حركتُها — رفضٌ باسمه لا تخمين
+    d = project("ٱْكْتُبْ", Context())
+    assert d["status"] == "DEFER" and any(
+        r.get("reason") == "START_VOWEL_OF_WASL_IS_UNKNOWN" for r in d["reasons"])

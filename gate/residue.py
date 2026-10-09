@@ -117,15 +117,17 @@ def repair(surface: str) -> tuple[str, tuple[Edit, ...]]:
 
     # 4. WASL: ألفٌ بلا علامةٍ أوّلَ الكلمة قبل ساكنٍ = همزةُ وصل، بحركتها بالقاعدة:
     #    فتحةٌ في «ال»، وضمّةٌ إن كان ثالثُ الفعل مضمومًا، وإلّا كسرة (سيبويه).
-    if len(cl) >= 3 and cl[0] == ALIF and (_bare(cl[1]) or SUKUN in cl[1] or SHADDA in cl[1]):
+    #    (`A116.Boundary.waslVowel`؛ الكتاب س17530–17531). والألفُ المرسومةُ وصلةً (ٱ) بلا علامةٍ كذلك.
+    if (len(cl) >= 3 and cl[0] in (ALIF, ALIF_WASLA)
+            and (_bare(cl[1]) or SUKUN in cl[1] or SHADDA in cl[1])):
         if cl[1][0] == LAM:
             v = FATHA
         elif DAMMA in cl[2]:  # ثالثُ الفعل بعدّ الهمزة: ا ن صُ ر
             v = DAMMA
         else:
             v = KASRA
+        edits.append(("WASL", 0, cl[0]))
         cl[0] = ALIF_WASLA + v
-        edits.append(("WASL", 0, ALIF))
 
     # 5. WASL_SILENT: ألفُ وصلٍ بلا علامةٍ بعد لاصقةٍ متحرّكة (و/ف/ب/ل/ك/أ) قبل لامِ «ال» أو ساكن:
     #    صامتةٌ في الوصل، تُحذف وتُعاد بالسجلّ.

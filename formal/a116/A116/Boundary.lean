@@ -26,7 +26,7 @@ import A116.Pause
 
 namespace A116.Boundary
 
-open A116 A116.Junction A116.Pause
+open A116 A116.Junction A116.Pause A116.Ladder
 
 inductive Entry where | start | joined deriving DecidableEq, Repr
 inductive Exit where | continue | pause deriving DecidableEq, Repr
@@ -79,5 +79,59 @@ theorem pause_then_join_is_not_join (v : List Cell) (c : Cell) (h : Cell) (t : L
   simp only [Cell.isSukun, Haraka.isSukun, ↓reduceIte] at hj
   have := no_start_with_sukun hj
   simp_all
+
+/-! ## أسماءُ الرفض وهمزةُ الوصل بحركتها (سجلُّ الرفض، ADR ٦)
+
+* **`INITIAL_SUKUN_WITHOUT_REPAIR`**: الرفضُ الذي تُطلقه البوّابة حين تبدأ الكلمةُ بساكنٍ ابتداءً ولا إصلاحَ
+  مسمًّى لها — هو «لا يُبتدأ بساكن» بعينه: `initialSukun` يصدق على كلمةٍ أوّلُها ساكن، ولا مرخَّصةَ كذلك
+  (`initialSukun_not_admissible`، من `no_start_with_sukun`).
+* **همزةُ الوصل بحركتها** (الكتاب س17530–17531: «الألف الموصولة … في الابتداء مكسورة أبدا إلا أن يكون
+  الحرف الثالث مضموما فتضمها»؛ وس17573): `waslVowel` دالّةٌ في الثاني والثالث — فتحةٌ قبل لام «ال»،
+  وضمّةٌ إن كان الثالثُ مضمومًا، وإلّا كسرة؛ لا تكون سكونًا أبدًا (`waslVowel_ne_sukun`)، وضمُّها إذا
+  وفقط إذا كان الثالثُ مضمومًا في غير «ال» (`waslVowel_damm_iff`) — مرآةُ `Slge.Sawabiq.wasl_state_damm_iff`
+  في الغانم، ومرآتُها في البوّابة قاعدةُ الرسم `WASL` (`gate/residue.py`). وما لا ثالثَ له أو كُتبت وصلتُه
+  بسكونٍ صريح لا تُقرَّر حركتُه فيُرفض باسم `START_VOWEL_OF_WASL_IS_UNKNOWN`. -/
+
+/-- كلمةٌ أوّلُها ساكن: ما يرفضه الجسرُ باسم `INITIAL_SUKUN_WITHOUT_REPAIR`. -/
+def initialSukun : List Cell → Bool
+  | c :: _ => c.isSukun
+  | [] => false
+
+theorem initialSukun_not_admissible {w : List Cell} (h : initialSukun w = true) : ¬ Admissible w := by
+  intro ha
+  cases w with
+  | nil => simp [initialSukun] at h
+  | cons c t =>
+    simp only [initialSukun] at h
+    exact absurd h (by simpa using no_start_with_sukun ha)
+
+/-- حركةُ همزة الوصل من الثاني والثالث: فتحةٌ قبل اللام، وضمّةٌ إن ضُمّ الثالث، وإلّا كسرة. -/
+def waslVowel (second third : Cell) : Haraka :=
+  if second.carrier = carrierOf 'ل' then .fatha
+  else if third.haraka = .damma then .damma else .kasra
+
+theorem waslVowel_ne_sukun (s t : Cell) : waslVowel s t ≠ .sukun := by
+  unfold waslVowel
+  split
+  · decide
+  · split <;> decide
+
+theorem waslVowel_damm_iff (s t : Cell) :
+    waslVowel s t = .damma ↔ s.carrier ≠ carrierOf 'ل' ∧ t.haraka = .damma := by
+  unfold waslVowel
+  by_cases hl : s.carrier = carrierOf 'ل'
+  · simp [hl]
+  · by_cases hd : t.haraka = .damma
+    · simp [hl, hd]
+    · simp [hl, hd]
+
+theorem waslVowel_lam (s t : Cell) (h : s.carrier = carrierOf 'ل') : waslVowel s t = .fatha := by
+  simp [waslVowel, h]
+
+/-- شواهد: اُكْتُبْ (ضمّ)، اِضْرِبْ (كسر)، اَلْحَمْدُ (فتح). -/
+theorem waslVowel_witnesses :
+    waslVowel (atom 'ك' .sukun) (atom 'ت' .damma) = .damma ∧
+    waslVowel (atom 'ض' .sukun) (atom 'ر' .kasra) = .kasra ∧
+    waslVowel (atom 'ل' .sukun) (atom 'ح' .fatha) = .fatha := by decide
 
 end A116.Boundary

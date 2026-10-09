@@ -54,22 +54,13 @@ DECLARED: dict[str, tuple[str, str]] = {
     "TA_MARBUTA_IS_NOT_FINAL": ("رسم", "تاءٌ مربوطة في غير الآخر"),
     "UNVOCALIZED_WORD_IS_NEVER_GUESSED": ("رسم",
                                           "كلمةٌ بلا أيّ علامة (الحروفُ المقطّعة) لا تُشكَّل تخمينًا"),
-    # — همزة: ما لم يُحسم في `A116.Hamza`/`Boundary` بعدُ —
-    "START_VOWEL_OF_WASL_IS_UNKNOWN": ("همزة",
-                                       "همزةُ وصلٍ بلا حركةٍ مكتوبة؛ قاعدةُ الثالث في SLGE "
-                                       "(`Sawabiq.wasl_state_damm_iff`) لم تُرفَع إلى بوّابة الغانم"),
+    # — همزة: ما لم يُحسم في `A116.Hamza`/`Boundary` بعدُ (حركةُ الوصل من الثالث مرساتُها
+    #   `Boundary.waslVowel`) —
     "WASL_IS_DECLARED_OUTSIDE_A_WORD_START": ("همزة", "وصلٌ معلَنٌ في غير أوّل الكلمة"),
     "THE_ROLE_OF_THIS_ALIF_IS_UNDECIDED": ("همزة", "ألفٌ لا يُعرف أهي مدٌّ أم كرسيٌّ أم فارقة"),
     "ALIF_AFTER_A_POSSIBLE_PREFIX_MAY_BE_WASL": ("همزة",
                                                  "ألفٌ بعد سابقةٍ محتملة قد تكون وصلًا — تحتاج الحدّ"),
     "TANWIN_ATTACHMENT_IS_AMBIGUOUS": ("همزة", "موضعُ التنوين على الألف أو ما قبلها غيرُ محسوم"),
-    "NOT_CONTINUE_LICENSED_AFTER_REPAIR": ("ترخيص",
-                                           "الترخيصُ الثلاثيّ وصلًا هو `Ternary.continueB` بعينه؛ "
-                                           "الاسمُ وحدَه لم يدخل Lean"),
-    "INITIAL_SUKUN_WITHOUT_REPAIR": ("حدّ",
-                                     "ساكنٌ في الابتداء بلا إصلاح — `A116.Boundary` «لا ابتداء "
-                                     "بساكن»؛ "
-                                     "الاسمُ نفسُه ليس في Lean بعدُ"),
 }
 """الرفضُ المعلَن: (الصنف، الملاحظة). ما له مرساةٌ لا يُدرَج هنا؛ وما يُدرَج ثمّ يُسدَّد يُحذَف منه."""
 

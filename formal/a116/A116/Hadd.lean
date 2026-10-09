@@ -676,4 +676,21 @@ theorem jalbaba_vs_aadda :
 /-- الطفرةُ المرفوضة: جَلَبَّ صورةٌ أخرى لا جَلْبَبَ — الخاناتُ تفرّق ولا تُردّ إحداهما إلى الأخرى. -/
 theorem jalbaba_ne_jalabba : jalbaba ≠ jalabba ∧ kindOf jalabba = [.cv, .cv, .c, .cv] := by decide
 
+/-! ## اسمُ الرفض `NOT_CONTINUE_LICENSED_AFTER_REPAIR` (سجلُّ الرفض، ADR ٦)
+
+بعد إصلاح الرسم، إن لم يقبل الترخيصُ الثلاثيُّ وصلًا أصنافَ الكلمة رفضتها البوّابةُ بهذا الاسم؛ وهو
+`Ternary.continueB` على `kindOf` بعينه، لا حكمٌ آخر. -/
+
+/-- ما يُرفض باسم `NOT_CONTINUE_LICENSED_AFTER_REPAIR`: الأصنافُ لا يقبلها الترخيصُ الثلاثيّ وصلًا. -/
+def notContinueLicensed (w : List Cell) : Bool := !Ternary.continueB (kindOf w)
+
+theorem notContinueLicensed_iff (w : List Cell) :
+    notContinueLicensed w = true ↔ Ternary.continueB (kindOf w) = false := by
+  simp [notContinueLicensed]
+
+/-- المرخَّصُ بالقيد لا يُرفض بهذا الاسم. -/
+theorem strictB_not_refused {w : List Cell} (h : strictB w = true) : notContinueLicensed w = false := by
+  simp only [strictB, Bool.and_eq_true] at h
+  simp [notContinueLicensed, h.1]
+
 end A116.Hadd

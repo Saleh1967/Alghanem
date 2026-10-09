@@ -208,3 +208,10 @@ import A116
 #print axioms A116.Hadd.idgham_closer
 #print axioms A116.Hadd.jalbaba_vs_aadda
 #print axioms A116.Hadd.jalbaba_ne_jalabba
+#print axioms A116.Boundary.initialSukun_not_admissible
+#print axioms A116.Boundary.waslVowel_ne_sukun
+#print axioms A116.Boundary.waslVowel_damm_iff
+#print axioms A116.Boundary.waslVowel_lam
+#print axioms A116.Boundary.waslVowel_witnesses
+#print axioms A116.Hadd.notContinueLicensed_iff
+#print axioms A116.Hadd.strictB_not_refused
