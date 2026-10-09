@@ -83,7 +83,8 @@ def test_classify_names_the_relation_with_its_condition() -> None:
 
 def test_every_position_of_the_mushaf_has_a_named_relation() -> None:
     """المودَعان على المواقع نفسِها: كلُّ موقعٍ جاهزٍ في الحالين علاقتُه مسمّاة، والردُّ يحوي الأصلَ إلّا
-    حيث تُخطئ قاعدةُ الهمزة حركتَها (مثلان في الصدر: اتَّخَذَ، اثَّاقَلْتُمْ) — وهي معدودةٌ باسمها."""
+    حيث تُخطئ قاعدةُ الهمزة حركتَها (مثلان في الصدر: اتَّخَذَ، اثَّاقَلْتُمْ) — وهي معدودةٌ باسمها (127 بعد
+    سدّ التقاء الساكنين في الغانم: 78,188 موقعًا جاهزًا في الحالين؛ كانت 96 على 75,431)."""
 
     with gzip.open(DATA / "corpus-certificates.json.gz", "rt", encoding="utf-8") as f:
         start = json.load(f)
@@ -95,7 +96,7 @@ def test_every_position_of_the_mushaf_has_a_named_relation() -> None:
     pos = unnamed = both = missed = 0
     for n in ctx["line_lengths"]:
         for i in range(n):
-            s_idx, (c_idx, exit_, _) = start["stream"][pos], ctx["stream"][pos]
+            s_idx, (c_idx, exit_, _, _) = start["stream"][pos], ctx["stream"][pos]
             pos += 1
             if s_idx < 0 or c_idx < 0:
                 continue
@@ -110,7 +111,7 @@ def test_every_position_of_the_mushaf_has_a_named_relation() -> None:
                 # مثلان في الصدر (اتَّخَذَ، اثَّاقَلْتُمْ): `lift` يقرؤهما أل الشمسيّة والبوّابةُ تقرأ وصلَ الفعل
                 assert r[0] and lift(c)[0] != s[0], (s, c)
                 assert c[0][0] == c[1][0] and c[0][1] == SUKUN, (s, c)
-    assert unnamed == 0 and both == 75431 and missed == 96
+    assert unnamed == 0 and both == 78188 and missed == 127
 
 
 def test_mutations_are_refused() -> None:

@@ -41,20 +41,22 @@ def vowelled(w: Word) -> str:
     return "".join(k + MARKS[s] for k, s in w)
 
 
-def positions() -> list[tuple[Word | None, Word | None, Hadd, str | None]]:
-    """لكلّ موقع: صورةُ الابتداء (أو لا شهادة)، صورةُ السياق (أو لا)، الحدُّ، واسمُ رفض السياق."""
+def positions() -> list[tuple[Word | None, Word | None, Hadd, str | None, str | None]]:
+    """لكلّ موقع: صورةُ الابتداء (أو لا شهادة)، صورةُ السياق (أو لا)، الحدُّ، اسمُ رفض السياق، ووجهُ
+    الوصل في آخر الكلمة اليساريّة (التقاءُ الساكنين) إن كان."""
 
     start, ctx = _load("corpus-certificates.json.gz"), _load("context-certificates.json.gz")
     assert start["tokens"] == ctx["tokens"] == len(start["stream"]) == len(ctx["stream"])
     assert start["corpus_sha256"] == ctx["corpus_sha256"]
     sf, cf = _forms(start), _forms(ctx)
-    out: list[tuple[Word | None, Word | None, Hadd, str | None]] = []
+    out: list[tuple[Word | None, Word | None, Hadd, str | None, str | None]] = []
     pos = 0
     for n in ctx["line_lengths"]:
         for i in range(n):
-            s_idx, (c_idx, exit_, ref) = start["stream"][pos], ctx["stream"][pos]
+            s_idx, (c_idx, exit_, ref, jn) = start["stream"][pos], ctx["stream"][pos]
             out.append((sf[s_idx] if s_idx >= 0 else None, cf[c_idx] if c_idx >= 0 else None,
-                        Hadd(i > 0, exit_ == 1), ctx["refusals"][ref] if ref >= 0 else None))
+                        Hadd(i > 0, exit_ == 1), ctx["refusals"][ref] if ref >= 0 else None,
+                        ctx["junctions"][jn] if jn >= 0 else None))
             pos += 1
     assert pos == ctx["tokens"]
     return out
@@ -71,7 +73,10 @@ def measure() -> dict[str, Any]:
     hidden: Counter[str] = Counter()
     restored = named = 0
     other_top: Counter[str] = Counter()
-    for s, c, h, ref in rows:
+    junction: Counter[str] = Counter()
+    for s, c, h, ref, jn in rows:
+        if jn:
+            junction[jn] += 1
         key = (("ابتداءً جاهز" if s else "ابتداءً مرفوض") + "، "
                + ("سياقًا جاهز" if c else "سياقًا مرفوض"))
         status[key] += 1
@@ -103,6 +108,7 @@ def measure() -> dict[str, Any]:
         "tokens": len(rows),
         "status": dict(sorted(status.items())),
         "refusals": dict(sorted(refusals.items())),
+        "junctions": dict(sorted(junction.items())),
         "both_ready": sum(rel.values()),
         "relation": dict(sorted(rel.items(), key=lambda kv: -kv[1])),
         "lift_ok": lift_ok, "lift_bad": lift_bad,
@@ -142,6 +148,11 @@ def render() -> str:
         "| الرفض | المواقع |", "|---|---|",
         *(f"| `{k}` | {v:,} |" for k, v in sorted(m["refusals"].items(), key=lambda kv: -kv[1])),
         "",
+        "التقاءُ الساكنين على الحدّ — ما فعله الوصلُ بآخر الكلمة اليساريّة (`A116.Iltiqa`، وجهٌ مسمًّى "
+        "تحمله شهادةُ الموقع؛ ذرّاتُ الكلمة نفسِها لا تُمسّ):", "",
+        "| الوجه | المواقع |", "|---|---|",
+        *(f"| `{k}` | {v:,} |" for k, v in sorted(m["junctions"].items(), key=lambda kv: -kv[1])),
+        "",
         "## علاقةُ صورة السياق بصورة الابتداء (كما طبعتهما البوّابة)", "",
         f"على {m['both_ready']:,} موقعًا جاهزًا في الحالين (`siyaq.classify`):",
         "",
@@ -174,8 +185,10 @@ def render() -> str:
         "## ما ليس هنا — باسمه", "",
         "- الحدُّ هنا حدُّ الآية (سطرُ المدوّنة): وقفٌ في آخرها ووصلٌ فيما بينها؛ الوقفُ داخلَ الآية "
         "والوصلُ بين آيتين ليسا في المودَع.",
-        "- ما رُفض في السياق باسمه (قافيةُ مدٍّ عند الوقف `CVVC_NOT_GEMINATE`، مدٌّ قبل مدغمٍ عبر الحدّ "
-        "`CVVC_ACROSS_WORD_BOUNDARY`…) لا يُقاس عليه: دَينُ البوّابة لا هذا القارئ.",
+        "- ما رُفض في السياق باسمه (الحروفُ المقطّعة قبل كلمة، مدُّ الفرق موصولًا…) لا يُقاس عليه: دَينُ "
+        "البوّابة لا هذا القارئ.",
+        "- وجهُ الوصل (حذفُ المدّ، كسرُ التنوين، سقوطُ الألف الفارقة) مسجَّلٌ على الموقع ولا يدخل خانات "
+        "الكلمة الثانية؛ أثرُه على الكلمة اليساريّة مسألةُ شهادة الموقع (م١+م٢) لا هذا الفهرس.",
         "- «غيرُ ذلك» أعلاه علاقاتٌ لا يسمّيها `classify`؛ لا تُزاد قاعدةٌ من الذاكرة بل من الشاهد.",
         "",
     ]

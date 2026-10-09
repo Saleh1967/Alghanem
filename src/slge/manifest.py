@@ -132,7 +132,7 @@ class Deposit:
     licence: str = ""
 
 
-GATE_REV: Final[str] = "8e8797dbe3a82eb65fa824270e325b876c7b1a4b"
+GATE_REV: Final[str] = "f18e82de8c0a62d7323fbe00b7528f2f3e8d5207"
 """إيداعُ بوّابة الغانم (`Saleh1967/Alghanem`، فرع `claude/official-gate`) الذي يُعاد منه توليدُ مودَع
 الشهادات في CI (`tools/gen_certificates.py --check`): ما يقيسه SLGE هو ما تطبعه البوّابةُ على المدوّنة
 المختومة بهذا الإيداع؛ أيُّ فرقٍ `DEPOSIT_DRIFTED_FROM_GATE`. يُرفع مع المودَع معًا لا أحدُهما وحدَه."""
@@ -142,7 +142,7 @@ CERTIFICATES_DIGEST: Final[str] = "4329fb9c3acaf5235c00da1e2373d9706c9739e488c05
 يفحصها `tests/test_deposits.py` محلّيًّا بلا بوّابة، وCI يعيد التوليدَ من البوّابة نفسها."""
 
 CONTEXT_CERTIFICATES_DIGEST: Final[str] = (
-    "670514605c2d3c8de90870b32bf07060978723c5c2a456d65bb87f6112ccc35b")
+    "31338125834c9d457337fa41b6a5fde3edb28d1e163ead2d8561368199200d35")
 """بصمةُ مودَع السياق (`context-certificates.json.gz`) بصورته القانونيّة كما طبعتها البوّابةُ على
 `GATE_REV` (`tools/gen_context_certificates.py`)؛ يُرفع مع `GATE_REV` والمودَع الأوّل معًا (ADR ٢٨)."""
 
