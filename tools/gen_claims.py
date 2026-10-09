@@ -91,6 +91,17 @@ def _audit() -> Any:
     return json.loads((ROOT / "gate" / "audit_results.json").read_text(encoding="utf-8"))
 
 
+def _hadith_tool() -> Any:
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("gen_hadith_lines",
+                                                  ROOT / "tools" / "gen_hadith_lines.py")
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def generators() -> list[tuple[str, tuple[str, ...], Any]]:
     """(المولِّد، المودَعاتُ التي يقرؤها، دالّتُه) — الترتيبُ ترتيبُ السجلّ."""
 
@@ -98,8 +109,10 @@ def generators() -> list[tuple[str, tuple[str, ...], Any]]:
     from gate.hamza import seat_census
 
     corpus, masaq = "corpora/quran-simple-enhanced.txt", "corpora/MASAQ.csv"
+    hadith = tuple(f"corpora/hadith/{n}.gz" for n in _hadith_tool().HADITH_SOURCES)
     return [
         ("gate.audit.main", (corpus,), _audit),
+        ("tools/gen_hadith_lines.py::stats", hadith, lambda: _hadith_tool().stats()),
         ("gate.hamza.seat_census", (corpus,), lambda: seat_census(_surfaces())),
         ("gate.mabni_bridge.verb_readings", (masaq,), mabni_bridge.verb_readings),
         ("gate.mabni_bridge.verb_generation_reading", (masaq,),
@@ -153,6 +166,8 @@ def render(rows: list[dict[str, Any]]) -> str:
         "| `corpora/quran-simple-enhanced.txt` | واقع مختوم (`CORPUS_SHA256`) | "
         f"`{CORPUS_SHA256}` |",
         f"| `corpora/MASAQ.csv` | مرجع محجوب | `{_sha(MASAQ)}` |",
+        *(f"| `corpora/hadith/{n}.gz` | واقع مختوم (ODbL 1.0؛ بايتاتُه بعد فكّ الضغط) | `{sha}` |"
+          for n, sha in _hadith_tool().HADITH_SOURCES.items()),
     ]
     total = sum(len(r["numbers"]) for r in rows)
     lines += ["", f"## الأرقام ({total:,} رقمًا من {len(rows)} مولِّدًا)", ""]

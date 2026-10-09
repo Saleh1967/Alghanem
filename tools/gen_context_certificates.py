@@ -29,14 +29,15 @@ from pathlib import Path
 from typing import Any
 
 from gate import Refusal, gate
-from gate.api import CORPUS_SHA256, Gate
+from gate.api import CORPUS, HADITH_CORPUS, SEALED_CORPORA, Gate, is_marker
 from gate.bridge import PROTOCOL_VERSION
 from gate.contextual import Context, fold_atoms
 from gate.licence import REPAIRS
 from gate.residue import repair
 
 ROOT = Path(__file__).resolve().parent.parent
-CORPUS = ROOT / "corpora" / "quran-simple-enhanced.txt"
+CORPORA: dict[str, Path] = {"quran": CORPUS, "sahihain": HADITH_CORPUS}
+"""المدوّناتُ المختومة بأسمائها: المصحفُ (الآيةُ سطر) والصحيحان (الحديثُ سطر)."""
 STATE = {"َ": "فتح", "ِ": "كسر", "ُ": "ضم", "ْ": "سكون"}
 EXITS = ("continue", "pause")
 POLICY = {
@@ -54,10 +55,13 @@ def cells_of(atoms: tuple[str, ...]) -> list[list[str]]:
 
 
 def lines_of(raw: bytes) -> list[list[str]]:
-    return [[w for w in line.split() if w != "<sel>"] for line in raw.decode("utf-8").splitlines()]
+    """السطورُ كلماتٍ: رموزُ الطبعة (`<sel>`، `<rlm>`، `<ltr:ح>`…) ليست مواقع."""
+
+    return [[w for w in line.split() if not is_marker(w)]
+            for line in raw.decode("utf-8").splitlines()]
 
 
-def gates_for(lines: list[list[str]]) -> dict[tuple[str, str], Gate]:
+def gates_for(lines: list[list[str]], corpus: Path) -> dict[tuple[str, str], Gate]:
     """بوّابةٌ لكلّ سياقٍ موصول (الكلمةُ اليساريّة القانونيّة، الحدّ) على مجالها المشهود."""
 
     domains: dict[tuple[str, str], set[str]] = defaultdict(set)
@@ -66,17 +70,23 @@ def gates_for(lines: list[list[str]]) -> dict[tuple[str, str], Gate]:
             exit_ = EXITS[i == len(tokens) - 1]
             domains[(repair(tokens[i - 1])[0], exit_)].add(repair(tokens[i])[0])
     return {
-        (left, exit_): Gate(Context(entry="joined", exit=exit_, left=left), domain=domain)
+        (left, exit_): Gate(Context(entry="joined", exit=exit_, left=left), corpus=corpus,
+                            domain=domain)
         for (left, exit_), domain in sorted(domains.items())
     }
 
 
-def generate() -> dict[str, Any]:
-    raw = CORPUS.read_bytes()
-    assert hashlib.sha256(raw).hexdigest() == CORPUS_SHA256
+def generate(name: str = "quran") -> dict[str, Any]:
+    corpus = CORPORA[name]
+    raw = corpus.read_bytes()
+    if corpus.name.endswith(".gz"):
+        raw = gzip.decompress(raw)
+    sha = SEALED_CORPORA[corpus.name]
+    assert hashlib.sha256(raw).hexdigest() == sha
     lines = lines_of(raw)
-    joined = gates_for(lines)
-    start = {"continue": gate(), "pause": Gate(Context(exit="pause"))}
+    joined = gates_for(lines, corpus)
+    start = {"continue": gate() if name == "quran" else Gate(corpus=corpus),
+             "pause": Gate(Context(exit="pause"), corpus=corpus)}
     forms: list[dict[str, Any]] = []
     form_index: dict[tuple[str, ...], int] = {}
     refusals: list[str] = []
@@ -113,7 +123,7 @@ def generate() -> dict[str, Any]:
     return {
         "version": 1,
         "source": "gate.enter في سياق كلّ موقع على المدوّنة المختومة؛ لا نصَّ هنا: خاناتٌ وأعداد",
-        "corpus_sha256": CORPUS_SHA256,
+        "corpus_sha256": sha,  # تُعرف المدوّنةُ ببصمتها (`SEALED_CORPORA`)
         "bridge_protocol": PROTOCOL_VERSION,
         "boundary_policy": POLICY,
         "lines": len(lines),
@@ -154,25 +164,32 @@ def drift(fresh: dict[str, Any], deposit: dict[str, Any]) -> str | None:
 
 
 def main(argv: list[str]) -> int:
+    name = "quran"
+    if len(argv) >= 3 and argv[1] == "--corpus":
+        name, argv = argv[2], [argv[0], *argv[3:]]
+    if name not in CORPORA:
+        sys.stderr.write(f"UNKNOWN_SEALED_CORPUS:{name} — {', '.join(CORPORA)}\n")
+        return 2
     if len(argv) == 3 and argv[1] == "--check":
         with gzip.open(argv[2], "rt", encoding="utf-8") as f:
             deposit = json.load(f)
-        fresh = generate()
+        fresh = generate(name)
         d = drift(fresh, deposit)
         if d:
             sys.stderr.write(f"DEPOSIT_DRIFTED_FROM_GATE: {d}\n")
             return 1
-        sys.stdout.write(f"المودَعُ بسياقه هو ما تطبعه البوّابة: {canonical_sha(fresh)} "
+        sys.stdout.write(f"المودَعُ بسياقه ({name}) هو ما تطبعه البوّابة: {canonical_sha(fresh)} "
                          f"({len(fresh['forms']):,} صورة في سياقها، {fresh['tokens']:,} موقعًا، "
                          f"{fresh['status'].get('READY', 0):,} جاهزًا)\n")
         return 0
     if len(argv) != 2:
-        sys.stderr.write("gen_context_certificates.py OUT.json.gz | --check DEPOSIT.json.gz\n")
+        sys.stderr.write("gen_context_certificates.py [--corpus quran|sahihain] OUT.json.gz | "
+                         "--check DEPOSIT.json.gz\n")
         return 2
-    fresh = generate()
+    fresh = generate(name)
     with gzip.open(argv[1], "wt", encoding="utf-8") as f:
         json.dump(fresh, f, ensure_ascii=False)
-    sys.stdout.write(f"كُتب {argv[1]}: {canonical_sha(fresh)}\n")
+    sys.stdout.write(f"كُتب {argv[1]} ({name}): {canonical_sha(fresh)}\n")
     return 0
 
 

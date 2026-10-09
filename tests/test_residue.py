@@ -41,7 +41,9 @@ def test_gate_frees_the_edition_and_names_the_rest() -> None:
         for rule, _, _ in cert.residue:
             rules[rule] += 1
     assert status == {"READY": 18179, "REJECT": 7, "DEFER": 14}
-    sealed_rules = set(RULES) - {"DAGGER_ALIF"}  # الخنجريّةُ طبعةُ globalquran لا المختومة
+    # الخنجريّةُ طبعةُ globalquran، وواوُ عمرو وألفُ ابنٍ المحذوفة (بْنُ) طبعةُ الصحيحين
+    # (test_hadith_lines): ليست في المصحف فلا تُطلَق عليه
+    sealed_rules = set(RULES) - {"DAGGER_ALIF", "AMR_WAW", "IBN_ALIF"}
     assert set(rules) == sealed_rules and all(rules[r] > 0 for r in sealed_rules)
     assert {"حم", "طس", "ص", "ق", "خَطَاً"} <= set(refused)
     assert any(r.startswith("بِأَي") for r in refused)  # بِأَييِّكُمُ: رسمٌ لا يُرخَّص بعد الإصلاح

@@ -11,6 +11,8 @@ residue) → surface` بعينه، ومطابقةُ الردّ على كلّ م�
 1. `IDGHAM`   — شدّةٌ أوّلَ الكلمة (إدغامٌ من الوصل): تُحذف.
 2. `TANWIN_ALIF` — تنوينُ الفتح بعد الألف: يُقدَّم على الألف (`اً` ← `ًا`).
 3. `FARIQA`   — ألفٌ في الآخر بعد واوٍ ساكنة (أو واوٍ بلا علامة ستصير ساكنة): تُحذف.
+3ب. `AMR_WAW` — واوٌ بلا علامةٍ في الآخر بعد حرفٍ منوَّن (عَمْرٍو): واوُ عمرو الفارقة، تُحذف.
+3ج. `IBN_ALIF` — «بْنُ» بلا ألفٍ بين علمين: تُعاد ألفُ «ابن» فتأخذ حركتَها بـWASL؛ الردُّ يحذفها.
 4. `WASL`     — ألفٌ بلا علامةٍ أوّلَ الكلمة قبل ساكن: همزةُ وصلٍ بحركتها بالقاعدة (فتحةٌ في «ال»،
    ضمّةٌ إن كان ثالثُ الفعل مضمومًا، وإلّا كسرة).
 5. `WASL_SILENT` — ألفُ وصلٍ بعد لاصقةٍ متحرّكة: صامتةٌ في الوصل، تُحذف.
@@ -31,6 +33,13 @@ __all__ = ["RULES", "Edit", "clusters", "has_marks", "repair", "unrepair"]
 SUKUN: Final = "ْ"
 SHADDA: Final = "ّ"
 FATHATAN: Final = "ً"
+TANWINS: Final = ("\u064b", "\u064c", "\u064d")  # ً ٌ ٍ
+WASL_NOUNS: Final = ("\u0628\u0646", "\u0633\u0645", "\u0645\u0631\u0623", "\u0645\u0631\u0624",
+                     "\u062b\u0646")
+"""الأسماءُ الموصولةُ الهمزة (هياكلُها بعد الألف): ابن/ابنة، اسم، امرأة، امرؤ، اثنان/اثنتان («است»
+تُركت: هيكلُها يلتبس باستفعل) — همزتُها مكسورةٌ أبدًا (الكتاب س17573: «مكسورة أبدا في الأسماء والأفعال
+إلا في الفعل المضموم الثالث»)."""
+WASL_NOUNS_FATHA: Final = ("\u064a\u0645\u0646",)  # ايمن: مفتوحة
 ALIF: Final = "ا"
 WAW: Final = "و"
 YA: Final = "ي"
@@ -47,8 +56,8 @@ LETTERS: Final[frozenset[str]] = frozenset("ءآأؤإئابةتثجحخدذرز
 (واوٌ صغيرة، ياءٌ صغيرة، تطويل، ترقيم…) كي لا تُصنع علامةٌ بلا حرفٍ تُقرأ كلمةً ثانية."""
 DAGGER: Final = "\u0670"
 RULES: Final[tuple[str, ...]] = (
-    "DAGGER_ALIF", "IDGHAM", "TANWIN_ALIF", "FARIQA", "WASL", "WASL_SILENT", "SHAMSI", "ASSIM",
-    "SUKUN",
+    "DAGGER_ALIF", "IDGHAM", "TANWIN_ALIF", "FARIQA", "AMR_WAW", "IBN_ALIF", "WASL", "WASL_SILENT",
+    "SHAMSI", "ASSIM", "SUKUN",
 )
 
 
@@ -115,13 +124,31 @@ def repair(surface: str) -> tuple[str, tuple[Edit, ...]]:
         edits.append(("FARIQA", len(cl) - 1, ALIF))
         cl.pop()
 
+    # 3ب. AMR_WAW: واوُ «عَمْرو» الفارقة — واوٌ بلا علامةٍ في الآخر بعد حرفٍ منوَّن (عَمْرٍو، عَمْرٌو):
+    #     لا تُنطق، تُحذف وتُردّ؛ لا تظهر في مدوّنة المصحف (الصحيحان: 1,129 موقعًا).
+    if len(cl) >= 2 and cl[-1] == WAW and any(t in cl[-2] for t in TANWINS):
+        edits.append(("AMR_WAW", len(cl) - 1, WAW))
+        cl.pop()
+
+    # 3ج. IBN_ALIF: «بْنُ/بْنِ/بْنَ» بلا ألف — ألفُ «ابن» تسقط رسمًا بين علمين (الصحيحان: 41,229 موقعًا):
+    #     تُعاد ألفُ الوصل ثمّ تأخذ حركتَها بقاعدة WASL أدناه؛ والردُّ يحذفها. لا تظهر في المصحف.
+    if len(cl) == 2 and cl[0] in ("\u0628", "\u0628" + SUKUN) and cl[1][0] == "\u0646" \
+            and len(cl[1]) == 2 and cl[1][1] in MADD.values():
+        cl.insert(0, ALIF)
+        edits.append(("IBN_ALIF", 0, ""))
+
     # 4. WASL: ألفٌ بلا علامةٍ أوّلَ الكلمة قبل ساكنٍ = همزةُ وصل، بحركتها بالقاعدة:
     #    فتحةٌ في «ال»، وضمّةٌ إن كان ثالثُ الفعل مضمومًا، وإلّا كسرة (سيبويه).
     #    (`A116.Boundary.waslVowel`؛ الكتاب س17530–17531). والألفُ المرسومةُ وصلةً (ٱ) بلا علامةٍ كذلك.
     if (len(cl) >= 3 and cl[0] in (ALIF, ALIF_WASLA)
             and (_bare(cl[1]) or SUKUN in cl[1] or SHADDA in cl[1])):
+        skeleton = "".join(c[0] for c in cl[1:4])
         if cl[1][0] == LAM:
             v = FATHA
+        elif skeleton.startswith(WASL_NOUNS_FATHA):
+            v = FATHA  # ايْمُنُ اللهِ
+        elif skeleton.startswith(WASL_NOUNS):
+            v = KASRA  # الأسماءُ الموصولة مكسورةٌ أبدًا (الكتاب س17573) ولو ضُمّ ثالثُها: اِبْنُ، اِسْمُ
         elif DAMMA in cl[2]:  # ثالثُ الفعل بعدّ الهمزة: ا ن صُ ر
             v = DAMMA
         else:
@@ -181,10 +208,12 @@ def unrepair(canonical: str, residue: tuple[Edit, ...]) -> str:
     for rule, i, removed in reversed(residue):
         if rule == "SUKUN":
             cl[i] = cl[i].replace(SUKUN, "", 1)
-        elif rule in ("ASSIM", "SHAMSI", "WASL_SILENT", "FARIQA"):
+        elif rule in ("ASSIM", "SHAMSI", "WASL_SILENT", "FARIQA", "AMR_WAW"):
             cl.insert(i, removed)
         elif rule == "WASL":
             cl[0] = removed
+        elif rule == "IBN_ALIF":
+            cl.pop(0)
         elif rule == "TANWIN_ALIF":
             cl[i] = cl[i].replace(FATHATAN, "", 1)
             cl[i + 1] = cl[i + 1][0] + FATHATAN

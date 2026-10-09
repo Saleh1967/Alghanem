@@ -51,14 +51,17 @@ def test_wasl_dropped_when_joined_and_junction_is_licensed() -> None:
 def test_wasl_vowel_from_the_third_letter_mirrors_boundary_lean() -> None:
     """الكتاب س17530–17531: الألفُ الموصولة ابتداءً «مكسورة أبدا إلا أن يكون الحرف الثالث مضموما»،
     وهمزةُ «ال» مفتوحة (`A116.Boundary.waslVowel`؛ المرآةُ قاعدةُ الرسم `WASL`). الألفُ المجرّدة والألفُ
-    المرسومةُ وصلةً (ٱ) سواء، والردُّ يعيد الرسمَ بعينه؛ ولا سكونَ أبدًا (`waslVowel_ne_sukun`)."""
+    المرسومةُ وصلةً (ٱ) سواء، والردُّ يعيد الرسمَ بعينه؛ ولا سكونَ أبدًا (`waslVowel_ne_sukun`).
+    والأسماءُ الموصولة (اسم، ابن، امرؤ…) مكسورةٌ وإن انضمّ ثالثُها — الكتاب س17573 (`WASL_NOUNS`)؛
+    كان التوقّعُ ضمًّا (277667d) قبل مراجعة الكتاب فصُحِّح باسمه لا تبعًا للمخرج."""
 
     from gate.contextual import Context, project
     from gate.residue import repair, unrepair
 
     for bare, wasla, first in (("اكْتُبْ", "ٱكْتُبْ", "ءُ"), ("انْصُرْ", "ٱنْصُرْ", "ءُ"),
                                ("اضْرِبْ", "ٱضْرِبْ", "ءِ"), ("اسْتَغْفِرْ", "ٱسْتَغْفِرْ", "ءِ"),
-                               ("الْحَمْدُ", "ٱلْحَمْدُ", "ءَ"), ("اسْمُ", "ٱسْمُ", "ءُ")):
+                               ("الْحَمْدُ", "ٱلْحَمْدُ", "ءَ"), ("اسْمُ", "ٱسْمُ", "ءِ"),
+                               ("ابْنُ", "ٱبْنُ", "ءِ"), ("اسْتُخْرِجَ", "ٱسْتُخْرِجَ", "ءُ")):
         for w in (bare, wasla):
             canonical, residue = repair(w)
             assert residue and residue[0][0] == "WASL" and unrepair(canonical, residue) == w, w

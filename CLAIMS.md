@@ -8,8 +8,10 @@
 |---|---|---|
 | `corpora/quran-simple-enhanced.txt` | واقع مختوم (`CORPUS_SHA256`) | `37633090743d403886b334d12dd911d1994e49767faa9f2be0f01fd48b466c5a` |
 | `corpora/MASAQ.csv` | مرجع محجوب | `d43d2a813afbe0490254bb26623d6041ed352a273d333e731ddbcda3bd0b6f3a` |
+| `corpora/hadith/sahih_al-bukhari_ahadith_mushakkala_mufassala.utf8.csv.gz` | واقع مختوم (ODbL 1.0؛ بايتاتُه بعد فكّ الضغط) | `b03f661876fc4089520800b9231b57a1564baff734344ea8914494b86e2eb708` |
+| `corpora/hadith/sahih_muslim_ahadith_mushakkala_mufassala.utf8.csv.gz` | واقع مختوم (ODbL 1.0؛ بايتاتُه بعد فكّ الضغط) | `79232c8d7c27fef161d8f33ca169f9754741cfe14957dde2ac76893374998943` |
 
-## الأرقام (173 رقمًا من 18 مولِّدًا)
+## الأرقام (178 رقمًا من 19 مولِّدًا)
 
 ### `gate.audit.main`
 
@@ -109,6 +111,18 @@
 | `stats.start_pause.domain` | 18,200 |
 | `stats.start_pause.exact_roundtrips` | 8,532 |
 | `stats.start_pause.sum_residual_bits_per_ready_form` | 2,218 |
+
+### `tools/gen_hadith_lines.py::stats`
+
+يقرأ: `corpora/hadith/sahih_al-bukhari_ahadith_mushakkala_mufassala.utf8.csv.gz`، `corpora/hadith/sahih_muslim_ahadith_mushakkala_mufassala.utf8.csv.gz`. بصمةُ المخرَج: `976c5dcfe339dc6e`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `lines` | 12,370 |
+| `markers` | 725,280 |
+| `per_book.sahih_al-bukhari_ahadith_mushakkala_mufassala.utf8.csv` | 7,008 |
+| `per_book.sahih_muslim_ahadith_mushakkala_mufassala.utf8.csv` | 5,362 |
+| `words` | 995,413 |
 
 ### `gate.hamza.seat_census`
 

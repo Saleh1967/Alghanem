@@ -20,10 +20,19 @@ SPEC.loader.exec_module(MOD)
 
 def test_every_generator_is_a_named_function_in_the_gate() -> None:
     gens = MOD.generators()
-    assert [g[0] for g in gens][:2] == ["gate.audit.main", "gate.hamza.seat_census"]
+    assert [g[0] for g in gens][:3] == ["gate.audit.main", "tools/gen_hadith_lines.py::stats",
+                                        "gate.hamza.seat_census"]
     for name, reads, _ in gens:
-        module, attr = name.rsplit(".", 1)
-        assert hasattr(importlib.import_module(module), attr), name
+        if "::" in name:  # أداةُ إيداعٍ خارج الحزمة (tools/…py::دالّة): تُحمَّل من ملفّها
+            path, attr = name.split("::")
+            spec = importlib.util.spec_from_file_location(Path(path).stem, ROOT / path)
+            assert spec and spec.loader, name
+            tool = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(tool)
+            assert hasattr(tool, attr), name
+        else:
+            module, attr = name.rsplit(".", 1)
+            assert hasattr(importlib.import_module(module), attr), name
         assert all((ROOT / r).exists() for r in reads), name
 
 

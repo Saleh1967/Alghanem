@@ -69,7 +69,7 @@ def test_pausal_madd_is_licensed_and_the_cross_word_straddle_is_refused_by_name(
 
 
 def test_gates_follow_the_declared_boundary_policy() -> None:
-    gates = MOD.gates_for(FATIHA[:2])
+    gates = MOD.gates_for(FATIHA[:2], MOD.CORPUS)
     keys = sorted(gates)
     assert keys == sorted({(repair(t[i - 1])[0], MOD.EXITS[i == len(t) - 1])
                            for t in FATIHA[:2] for i in range(1, len(t))})

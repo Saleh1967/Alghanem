@@ -22,6 +22,7 @@
 from __future__ import annotations
 
 import functools
+import gzip
 import hashlib
 from collections.abc import Iterable
 from dataclasses import dataclass, replace
@@ -43,6 +44,9 @@ from .residue import Edit, has_marks, repair, unrepair
 
 __all__ = [
     "CORPUS_SHA256",
+    "HADITH_CORPUS",
+    "HADITH_LINES_SHA256",
+    "SEALED_CORPORA",
     "Certificate",
     "Context",
     "Refusal",
@@ -59,6 +63,18 @@ CORPUS: Final[Path] = _ROOT / "corpora" / "quran-simple-enhanced.txt"
 CORPUS_SHA256: Final[str] = (
     "37633090743d403886b334d12dd911d1994e49767faa9f2be0f01fd48b466c5a"
 )
+HADITH_CORPUS: Final[Path] = Path(__file__).resolve().parent.parent / "corpora" / "hadith" / (
+    "sahihain-lines.txt.gz")
+HADITH_LINES_SHA256: Final[str] = (
+    "14b1a4b7a6d67449b23f016f351d12da9a934ce76116e3c283042705c6d71e3b"
+)
+SEALED_CORPORA: Final[dict[str, str]] = {
+    CORPUS.name: CORPUS_SHA256,
+    HADITH_CORPUS.name: HADITH_LINES_SHA256,
+}
+"""المدوّناتُ المختومة ببصمة محتواها (بعد فكّ الضغط إن كانت مضغوطة): المصحفُ، والصحيحان سطورًا
+(`tools/gen_hadith_lines.py`، من ملفّي Open-Hadith-Data المختومين، ODbL 1.0). الرموزُ `<…>` فيها
+رموزُ طبعةٍ مسمّاة لا كلمات."""
 
 @dataclass(frozen=True)
 class Certificate:
@@ -98,11 +114,13 @@ def sealed_forms(corpus: Path = CORPUS) -> frozenset[str]:
     تُقرأ مرّةً وتُفحص بصمتُها، فلا تُعاد قراءتُها لكلّ سياق."""
 
     raw = corpus.read_bytes()
+    if corpus.name.endswith(".gz"):
+        raw = gzip.decompress(raw)
     digest = hashlib.sha256(raw).hexdigest()
-    if digest != CORPUS_SHA256:
+    if digest != SEALED_CORPORA.get(corpus.name):
         raise ValueError(f"WRONG_SEALED_CORPUS:{digest}")
     text = raw.decode("utf-8")
-    surfaces = {w for w in text.split() if w != "<sel>" and _arabic(w)}
+    surfaces = {w for w in text.split() if not is_marker(w) and _arabic(w)}
     return frozenset(repair(w)[0] for w in surfaces)
 
 
@@ -200,6 +218,13 @@ class Gate:
 
 def _arabic(w: str) -> bool:
     return any("ء" <= c <= "ي" for c in w)
+
+
+def is_marker(w: str) -> bool:
+    """رمزُ طبعةٍ في المدوّنة المختومة (`<sel>` في المصحف؛ `<rlm>`، `<q>`، `<ltr:ح>`… في الصحيحين): ليس
+    كلمةً فلا يدخل البوّابة ولا يُعدّ موقعًا."""
+
+    return len(w) > 2 and w[0] == "<" and w[-1] == ">"
 
 
 def _reasons(decision: dict[str, Any]) -> tuple[str, ...]:
