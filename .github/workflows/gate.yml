@@ -127,6 +127,10 @@ jobs:
           git diff --exit-code -- gate/audit_results.json
       - name: CLAIMS.md — every published number recomputed from its named generator; no number in CLAUDE.md without one
         run: python tools/gen_claims.py --check
+      - name: context deposit — every position of the sealed corpus enters the gate in its own context (start/joined, continue/pause) on a named domain, and the tool's --check is its own fixed point
+        run: |
+          python tools/gen_context_certificates.py /tmp/context-certificates.json.gz
+          python tools/gen_context_certificates.py --check /tmp/context-certificates.json.gz
       - name: guard — no reader or writer outside the gate
         run: python -c "from gate.guard import breaches; b = breaches(); print(b or 'لا خرق'); raise SystemExit(1 if b else 0)"
       - name: conformance, gate, guard (fast)

@@ -21,9 +21,10 @@
 
 from __future__ import annotations
 
+import functools
 import hashlib
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Final, cast
 
@@ -42,6 +43,7 @@ __all__ = [
     "exit",
     "gate",
     "recover",
+    "sealed_forms",
 ]
 
 _ROOT: Final[Path] = Path(__file__).resolve().parents[1]
@@ -78,19 +80,46 @@ class Refusal:
     reasons: tuple[str, ...]
 
 
-class Gate:
-    """قاموسٌ مختومٌ على مدوّنةٍ ببصمتها، في سياقٍ واحد. يُبنى مرّةً ويُسأل كثيرًا."""
+@functools.lru_cache(maxsize=4)
+def sealed_forms(corpus: Path = CORPUS) -> frozenset[str]:
+    """الصورُ القانونيّةُ للمدوّنة المختومة (بعد إصلاح الرسم بقواعد الطبعة المسمّاة `residue`)؛
+    تُقرأ مرّةً وتُفحص بصمتُها، فلا تُعاد قراءتُها لكلّ سياق."""
 
-    def __init__(self, context: Context | None = None, corpus: Path = CORPUS) -> None:
-        raw = corpus.read_bytes()
-        digest = hashlib.sha256(raw).hexdigest()
-        if digest != CORPUS_SHA256:
-            raise ValueError(f"WRONG_SEALED_CORPUS:{digest}")
-        self.context = context or Context()
-        text = raw.decode("utf-8")
-        surfaces = {w for w in text.split() if w != "<sel>" and _arabic(w)}
-        # القاموسُ على الصور القانونيّة: الرسمُ يدخل بعد إصلاحه بقواعد الطبعة المسمّاة (`residue`).
-        forms = {repair(w)[0] for w in surfaces}
+    raw = corpus.read_bytes()
+    digest = hashlib.sha256(raw).hexdigest()
+    if digest != CORPUS_SHA256:
+        raise ValueError(f"WRONG_SEALED_CORPUS:{digest}")
+    text = raw.decode("utf-8")
+    surfaces = {w for w in text.split() if w != "<sel>" and _arabic(w)}
+    return frozenset(repair(w)[0] for w in surfaces)
+
+
+class Gate:
+    """قاموسٌ مختومٌ على مدوّنةٍ ببصمتها، في سياقٍ واحد. يُبنى مرّةً ويُسأل كثيرًا.
+
+    المجالُ المعلَن `domain` (إن أُعطي) صورٌ قانونيّة **من المدوّنة المختومة** يُبنى القاموسُ عليها وحدَها
+    في هذا السياق — كما يفعل `gate.audit` لكلّ كلمةٍ يساريّة؛ وما خرج عن المختوم يُرفض باسمه
+    `DOMAIN_OUTSIDE_SEALED_CORPUS`. الشهادةُ تسمّي قاموسَها ببصمته، فالمجالُ المقيَّد قاموسٌ مسمًّى لا
+    مجالٌ مخمَّن؛ وبلا `domain` القاموسُ على المدوّنة كلِّها.
+    """
+
+    def __init__(
+        self,
+        context: Context | None = None,
+        corpus: Path = CORPUS,
+        domain: Iterable[str] | None = None,
+    ) -> None:
+        context = context or Context()
+        if context.entry == "joined":
+            # الكلمةُ اليساريّة تدخل بصورتها القانونيّة (إصلاحُ الرسم ثابتٌ عليها: `repair` لا يغيّرها)،
+            # فالسياقُ المسمّى في الشهادة هو الصورةُ لا رسمُها.
+            context = replace(context, left=repair(context.left)[0])
+        self.context = context
+        sealed = sealed_forms(corpus)
+        forms: frozenset[str] = sealed if domain is None else frozenset(domain)
+        if not forms <= sealed:
+            # القاموسُ على الصور القانونيّة: الرسمُ يدخل بعد إصلاحه بقواعد الطبعة المسمّاة (`residue`).
+            raise ValueError("DOMAIN_OUTSIDE_SEALED_CORPUS")
         self.book = Codebook(forms, self.context)  # type: ignore[no-untyped-call]
 
     def enter(self, data: bytes) -> Certificate | Refusal:

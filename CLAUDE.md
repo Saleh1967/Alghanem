@@ -13,14 +13,14 @@
 - الاشتقاق: `gate.derive(root)`، والاسترجاع: `gate.recover(cert)`؛ كلاهما يُقاس على مرجعٍ بشريٍّ محجوب (MASAQ) لا على شيفرته.
 - الترخيص: `gate.licence` — الثلاثيّ (`cv | v | c`) لا الثنائيّ؛ فالثنائيُّ أعمى عن المدّ (`Ternary.binary_is_blind_to_madd`).
 - قيدُ الحدّ: قافيةُ المدّ (CVVC) لا تُرخَّص وصلًا إلّا والمُغلِقُ أوّلُ مثلين (حَاجَّ)، أو مدَّ الفرق (آلْآنَ) — `A116.Hadd.strictB` ومرآتُه `gate.licence.strict_licensed`؛ وما سواه رفضٌ مسمًّى `CVVC_NOT_GEMINATE` (قَالْتُ)، لا تقصيرَ تخمينًا. والاستثناءُ **داخلَ الكلمة الواحدة** وحدَها: في الوصل `A116.Hadd.strictJoinB` (مرآتُه `strict_joined`) يرفض مدًّا في كلمةٍ قبل مدغمٍ في الأخرى (يَا + الشَّافِعِينَ) باسم `CVVC_ACROSS_WORD_BOUNDARY`. والسكونُ في الخانة **موضعيّ**: «موضعٌ لا تتبعه حركةٌ قصيرة» لا «عدمُ الحركة نطقًا»؛ فحرفُ المدّ خانةٌ ساكنةٌ دورُها `v` (`Hadd.kindOf`)، و«الحركةُ الصفر» هي حالةُ `sukun` وظيفيًّا (ADR ٣).
-- الحدّ: `Context(entry, exit)` — في الوصل تُرخَّص الكلمةُ مع ما قبلها (`JUNCTION_NOT_LICENSED` رفضٌ مسمًّى)، لا تُحشر كسرةُ التقاء الساكنين تخمينًا.
+- الحدّ: `Context(entry, exit)` — في الوصل تُرخَّص الكلمةُ مع ما قبلها (`JUNCTION_NOT_LICENSED` رفضٌ مسمًّى)، لا تُحشر كسرةُ التقاء الساكنين تخمينًا. والمدوّنةُ كلُّها تدخل **بسياقها** موقعًا موقعًا (`tools/gen_context_certificates.py`: الآيةُ سطرٌ، أوّلُها ابتداءٌ وآخرُها وقف، وما بينهما موصولٌ بما قبله على قاموسٍ مسمًّى `Gate(context, domain)` — مجالٌ من المدوّنة المختومة لا مخمَّن `DOMAIN_OUTSIDE_SEALED_CORPUS`)؛ مودَعُها في SLGE (`context-certificates.json.gz`) بمواقع `corpus-certificates` نفسِها.
 - البقيّة: `gate.residue` — الرسمُ = صورةٌ قانونيّة + بقيّةُ قواعدِ طبعةٍ مسمّاة؛ الشهادةُ تحملها ويُردّ الرسمُ بعينه (`A116.Residue.chain_restore`). ما لا قاعدةَ له يُرفض باسمه، لا يُخمَّن.
 
 كلُّ ما سوى ذلك **معلَّق** في `suspended/` بسجلٍّ (`SUSPENDED_REGISTRY.json`) يذكر سببَ كلّ وحدةٍ وشرطَ عودتها. التعليقُ نقلٌ لا حذف؛ التاريخُ في git.
 
 ## ما لا تفعله
 
-1. لا تكتب `open`، `print`، `read_text`، `encode`، `decode`، `normalize`، `argv`، `stdin`… في أيّ ملفٍ خارج `gate/` (و`tests/`، `formal/`، `tools/gen_registry.py`، `tools/gen_glossary.py`، `tools/gen_claims.py`، `tools/gen_certificates.py`). الحارسُ `gate.guard.breaches()` يمشي على الشجرة كلَّها ويُسقط البناء.
+1. لا تكتب `open`، `print`، `read_text`، `encode`، `decode`، `normalize`، `argv`، `stdin`… في أيّ ملفٍ خارج `gate/` (و`tests/`، `formal/`، `tools/gen_registry.py`، `tools/gen_glossary.py`، `tools/gen_claims.py`، `tools/gen_certificates.py`، `tools/gen_context_certificates.py`). الحارسُ `gate.guard.breaches()` يمشي على الشجرة كلَّها ويُسقط البناء.
 2. لا تستورد من `suspended/` ولا من `canonical116` ولا من داخليّات البوّابة (`gate.contextual`، `gate.bridge`، `gate.mabni_*`…). الواجهةُ `gate` وحدَها (`enter`، `exit`، `derive`، `recover`، `licence`).
 3. لا تُعِد وحدةً من `suspended/` إلّا بثلاثة معًا: (١) مدخلُها ومخرجُها عبر `gate.api`، (٢) اختباراتٌ توقعاتُها مستقلّةٌ عن شيفرتها ومطعَّمةٌ بالطفرة (منهج 20/20)، (٣) ADR مسجَّل. ثمّ `python tools/gen_registry.py` لتحديث السجلّ.
 4. لا تحرِّر الجداول المولَّدة (`formal/a116/*.csv`) ولا `SUSPENDED_REGISTRY.json` ولا `gate/audit_results.json` ولا `GLOSSARY.md` ولا `CLAIMS.md` بيدك؛ تُولَّد وتُطابَق (`git diff --exit-code`).
@@ -42,9 +42,10 @@ python tools/gen_registry.py --check
 python tools/gen_glossary.py --check          # معجمُ الاصطلاح (GLOSSARY.md): كلُّ مصطلحٍ بموضع تعريفه، مرساةٌ لا توجد تُسقط البناء
 python -m gate.audit corpora/quran-simple-enhanced.txt /tmp/audit_out && git diff --exit-code -- gate/audit_results.json   # الملفُّ ما تحسبه البوّابة الآن، لا كتلةَ فيه بيد
 python tools/gen_certificates.py --check ../slge/tests/data/corpus-certificates.json.gz   # مودَعُ SLGE هو ما تطبعه هذه البوّابة الآن (DEPOSIT_DRIFTED_FROM_GATE)؛ CI الخاصّ بـSLGE يشغّله على الإيداع المثبَّت
+python tools/gen_context_certificates.py --check ../slge/tests/data/context-certificates.json.gz   # مودَعُ SLGE الثاني: كلُّ موقعٍ في سياقه (ابتداء/وصل، استمرار/وقف) على قاموسٍ مسمًّى `Gate(context, domain)`؛ همزةُ الوصل ساقطةٌ في الوصل والوقفُ يُسكِّن، والرفضُ باسمه (~25 ثانية)
 python tools/gen_claims.py --check            # سجلُّ الأرقام (CLAIMS.md): كلُّ رقمٍ منشور يُعاد حسابُه من مولِّده المسمّى ببصمة مودَعاته ومخرَجه؛ ولا عددَ في CLAUDE.md بلا مولِّد (~4 دقائق)
 python -c "from gate.guard import breaches; print(breaches() or 'لا خرق')"
-pytest -q -m "not slow"        # 122 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
+pytest -q -m "not slow"        # 128 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
 ```
 
 وقبل الطبعة: أثبت أنّ الملف الذي تتكلّم عنه موجودٌ («لا ثقة بلا طبعة»)، وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه أنت.
