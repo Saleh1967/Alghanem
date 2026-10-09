@@ -110,7 +110,7 @@ def test_every_position_of_the_mushaf_has_a_named_relation() -> None:
                 # مثلان في الصدر (اتَّخَذَ، اثَّاقَلْتُمْ): `lift` يقرؤهما أل الشمسيّة والبوّابةُ تقرأ وصلَ الفعل
                 assert r[0] and lift(c)[0] != s[0], (s, c)
                 assert c[0][0] == c[1][0] and c[0][1] == SUKUN, (s, c)
-    assert unnamed == 0 and both == 71027 and missed == 96
+    assert unnamed == 0 and both == 75431 and missed == 96
 
 
 def test_mutations_are_refused() -> None:

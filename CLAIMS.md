@@ -7,7 +7,7 @@
 | المودَع | النوع | sha256 |
 |---|---|---|
 | `corpus-certificates.json.gz` | واقع مختوم | `89d4bb9f5d354e1bece473ff8a058625d82b13b848994f77edd8f9d26c3e844b` |
-| `context-certificates.json.gz` | واقع مختوم | `bbaf0a85649ca467d0ba6c246e01d15b275a9377b022aa23077c9d70c2aebd8b` |
+| `context-certificates.json.gz` | واقع مختوم | `82984dc5e50af2f4078637537265e27ae831ed539ec141a63899dd80c3fc4620` |
 | `maqayis-roots.json.gz` | وضع | `90312a5adb4bc32043d1e57cc0bc8438c4ac19d6b3d57e90defe2d9c77c1542e` |
 | `sibawayh-abniya.tsv` | وضع | `678ca5144698b571a42804b19b8d1680766df7f2339cf6c9c53d84994051fdd9` |
 | `nabhani-huruf.json` | وضع | `5f6f3d64736e981a867524d7478ab1773670033d2a229f8aefcbbaf4905f4766` |
@@ -1085,17 +1085,17 @@
 
 ### `tools/gen_siyaq_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`. بصمةُ المخرَج: `b14eb54a2bf7ded5`.
+يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`. بصمةُ المخرَج: `3b55a052e9e8a061`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
-| `both_ready` | 71,027 |
-| `hidden_by_pause.تنوين ضم` | 64 |
+| `both_ready` | 75,431 |
+| `hidden_by_pause.تنوين ضم` | 618 |
 | `hidden_by_pause.تنوين فتح` | 920 |
-| `hidden_by_pause.تنوين كسر` | 57 |
-| `hidden_by_pause.ضم` | 55 |
-| `hidden_by_pause.فتح` | 50 |
-| `hidden_by_pause.كسر` | 53 |
+| `hidden_by_pause.تنوين كسر` | 465 |
+| `hidden_by_pause.ضم` | 334 |
+| `hidden_by_pause.فتح` | 2,733 |
+| `hidden_by_pause.كسر` | 533 |
 | `lift_bad` | 96 |
 | `lift_bad_top[0][1]` | 15 |
 | `lift_bad_top[1][1]` | 14 |
@@ -1107,29 +1107,29 @@
 | `lift_bad_top[7][1]` | 3 |
 | `lift_bad_top[8][1]` | 3 |
 | `lift_bad_top[9][1]` | 3 |
-| `lift_ok` | 6,810 |
+| `lift_ok` | 8,035 |
 | `lift_pairs.فتح ← ضم` | 6 |
 | `lift_pairs.فتح ← كسر` | 90 |
-| `named` | 71,027 |
+| `named` | 75,431 |
 | `refusals.DEFER:UNVOCALIZED_WORD_IS_NEVER_GUESSED` | 30 |
-| `refusals.REJECT:CVVC_NOT_GEMINATE` | 1 |
 | `refusals.REJECT:INITIAL_SUKUN_WITHOUT_REPAIR` | 7 |
-| `refusals.REJECT:JUNCTION_NOT_LICENSED` | 126 |
-| `refusals.REJECT:JUNCTION_NOT_LICENSED,CVVC_ACROSS_WORD_BOUNDARY` | 1,294 |
-| `refusals.REJECT:JUNCTION_NOT_LICENSED,CVVC_NOT_GEMINATE` | 5,749 |
+| `refusals.REJECT:JUNCTION_NOT_LICENSED` | 73 |
+| `refusals.REJECT:JUNCTION_NOT_LICENSED,CVVC_ACROSS_WORD_BOUNDARY` | 1,335 |
+| `refusals.REJECT:JUNCTION_NOT_LICENSED,CVVC_NOT_GEMINATE` | 1,349 |
+| `refusals.REJECT:JUNCTION_NOT_LICENSED,NOT_PAUSE_LICENSED` | 9 |
 | `refusals.REJECT:NOT_CONTINUE_LICENSED_AFTER_REPAIR` | 1 |
 | `refusals.REJECT:TANWIN_WITH_ANOTHER_HARAKA` | 8 |
 | `relation.ساقطة الوصل` | 6,850 |
-| `relation.ساقطة الوصل، وقف سكون` | 25 |
+| `relation.ساقطة الوصل، وقف سكون` | 1,250 |
 | `relation.ساقطة الوصل، وقف هاء` | 31 |
 | `relation.هي` | 62,978 |
 | `relation.وقف ألف` | 911 |
-| `relation.وقف حذف` | 56 |
-| `relation.وقف سكون` | 96 |
+| `relation.وقف حذف` | 1,018 |
+| `relation.وقف سكون` | 2,313 |
 | `relation.وقف هاء` | 80 |
-| `restored` | 70,931 |
-| `status.ابتداءً جاهز، سياقًا جاهز` | 71,027 |
-| `status.ابتداءً جاهز، سياقًا مرفوض` | 7,180 |
+| `restored` | 75,335 |
+| `status.ابتداءً جاهز، سياقًا جاهز` | 75,431 |
+| `status.ابتداءً جاهز، سياقًا مرفوض` | 2,776 |
 | `status.ابتداءً مرفوض، سياقًا جاهز` | 2 |
 | `status.ابتداءً مرفوض، سياقًا مرفوض` | 36 |
 | `tokens` | 78,245 |
