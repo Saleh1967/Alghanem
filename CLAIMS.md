@@ -9,7 +9,7 @@
 | `corpora/quran-simple-enhanced.txt` | واقع مختوم (`CORPUS_SHA256`) | `37633090743d403886b334d12dd911d1994e49767faa9f2be0f01fd48b466c5a` |
 | `corpora/MASAQ.csv` | مرجع محجوب | `d43d2a813afbe0490254bb26623d6041ed352a273d333e731ddbcda3bd0b6f3a` |
 
-## الأرقام (172 رقمًا من 17 مولِّدًا)
+## الأرقام (173 رقمًا من 18 مولِّدًا)
 
 ### `gate.audit.main`
 
@@ -253,6 +253,14 @@
 | المسار في المخرَج | الرقم |
 |---|---|
 | `iltiqa.csv.rows` | 360,000 |
+
+### `lake exe a116-table licensable`
+
+يقرأ: — (نواةُ Lean؛ لا مودَع). بصمةُ المخرَج: `2a84446370e21995`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `licensable.csv.rows` | 113 |
 
 ### `lake exe a116-table numbers`
 

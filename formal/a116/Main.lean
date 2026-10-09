@@ -153,6 +153,10 @@ def main (args : List String) : IO Unit := do
         for n in List.range 2 do
           for r in HaddTable.allI (n + 1) do
             IO.println (HaddTable.renderIltiqa l r)
+  | ["licensable"] =>
+    -- المرخَّصُ من الشبكة: 113 خانةً (الألفُ المتحرّكة الثلاثُ خارجَه) — ذرّةٌ في كلّ سطر.
+    for c in Alif.licensable do
+      IO.println (HaddTable.atomsOf [c])
   | ["hamza"] =>
     -- جدولُ الكرسيّ لكلّ سياق: pos,own,prev,prevLong,prevYa,nextWaw,seat
     for p in [Hamza.Pos.initial, .medial, .final] do

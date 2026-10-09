@@ -199,6 +199,17 @@ def strict_joined_pause(left: Sequence[str], right: Sequence[str]) -> bool:
     return strict_pause_licensed(tuple(left) + tuple(right)) and not straddles(left, right)
 
 
+# ── الألفُ لا تكون أبدًا إلّا ساكنة (`A116.Alif`) ──────────────────────────────────────────
+ALIF_VOWELLED: tuple[str, ...] = ("ا\u064e", "ا\u064f", "ا\u0650")
+"""الألفُ بالحركات الثلاث (`Alif.alifVowelled`): خاناتٌ في الشبكة لا في الكلام."""
+
+
+def licensable_atom(atom: str) -> bool:
+    """`Alif.licensable`: كلُّ خانةٍ من الـ116 إلّا الألفَ المتحرّكة — 113 خانةً."""
+
+    return atom not in ALIF_VOWELLED
+
+
 # ── التقاءُ الساكنين على الحدّ (`A116.Iltiqa`) ──────────────────────────────────────────────
 REPAIRS: tuple[str, ...] = ("FARQ_ALIF_DROPPED", "MADD_DROPPED", "SAKIN_KASRA")
 """أوجهُ الوصل في آخر الأولى (`Iltiqa.Repair`): الألفُ الفارقة تسقط؛ حرفُ المدّ يُحذف؛ الساكنُ يُكسَر."""

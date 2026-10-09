@@ -196,3 +196,10 @@ import A116
 #print axioms A116.Iltiqa.ishtarawu_ddalalata
 #print axioms A116.Iltiqa.lutin_lmursalun
 #print axioms A116.Iltiqa.no_repair_without_clash
+#print axioms A116.Alif.alifVowelled_sub
+#print axioms A116.Alif.licensable_length
+#print axioms A116.Alif.licensable_nodup
+#print axioms A116.Alif.cells_partition
+#print axioms A116.Alif.vowelled_alif_not_licensable
+#print axioms A116.Alif.alif_sukun_licensable
+#print axioms A116.Alif.licensable_no_vowelled_alif
