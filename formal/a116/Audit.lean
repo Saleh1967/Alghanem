@@ -203,3 +203,8 @@ import A116
 #print axioms A116.Alif.vowelled_alif_not_licensable
 #print axioms A116.Alif.alif_sukun_licensable
 #print axioms A116.Alif.licensable_no_vowelled_alif
+#print axioms A116.Hadd.ilhaq_idgham_disjoint
+#print axioms A116.Hadd.ilhaq_not_geminate
+#print axioms A116.Hadd.idgham_closer
+#print axioms A116.Hadd.jalbaba_vs_aadda
+#print axioms A116.Hadd.jalbaba_ne_jalabba

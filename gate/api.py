@@ -244,12 +244,16 @@ def exit(cert: Certificate) -> bytes:  # noqa: A001 - الاسمُ مقصود: �
     return gate().exit(cert)
 
 
-def derive(root: str, before_object: bool = False) -> dict[str, list[tuple[str, str, str]]]:
-    """جذرٌ ← صورُ الفعل المولَّدةُ بالقواعد المعلنة: الصورةُ ← قراءاتُها (الصيغة، الوزن، الضمير)."""
+def derive(
+    root: str, before_object: bool = False, ilhaq: bool = False
+) -> dict[str, list[tuple[str, str, str]]]:
+    """جذرٌ ← صورُ الفعل المولَّدةُ بالقواعد المعلنة: الصورةُ ← قراءاتُها (الصيغة، الوزن، الضمير).
+    وبـ`ilhaq=True` الملحَقُ بالرباعيّ من الثلاثيّ الصحيح وحدَه (باب الكتاب س19135–19138؛ سماعيٌّ
+    معجمًا فلا يدخل الفهرسَ المقيس)."""
 
-    from .mabni_verbs import verb_forms
+    from .mabni_verbs import ilhaq_forms, verb_forms
 
-    return dict(verb_forms(root, before_object))
+    return dict(ilhaq_forms(root, before_object) if ilhaq else verb_forms(root, before_object))
 
 
 Reading = tuple[str, str, str, str]

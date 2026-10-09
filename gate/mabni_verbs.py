@@ -586,6 +586,38 @@ def _quadriliteral(root: str, before_object: bool) -> Forms:
     return out
 
 
+ILHAQ_SHAPES: Final[tuple[tuple[str, str, int], ...]] = (
+    ("QL", "1234", 19135),  # فَعْلَلَ: «ألحقوا الزيادة من موضع اللام» — جَلْبَبَ، شَمْلَلَ (س19136)
+    ("QW", "1و23", 19137),  # فَوْعَلَ: «فوعلت نحو حوقلت حوقلة»
+    ("QY", "1ي23", 19137),  # فَيْعَلَ: «فيعلت نحو بيطرت بيطرة وهينمت هينمة» (س19138)
+    ("QV", "12و3", 19138),  # فَعْوَلَ: «فعولت نحو جهورة وهرولة هرولة»
+)
+"""الملحَقُ بالرباعيّ من الثلاثيّ الصحيح على باب الكتاب (JK006989 المختوم في SLGE، س19135–19138): زيادةٌ
+تُجري الثلاثيَّ مجرى دَحْرَجَ — لامٌ مكرَّرة، أو واوٌ/ياءٌ ثانيةً، أو واوٌ ثالثةً. الشكلُ: مواضعُ الجذر ‎1 2 3‎
+وحرفُ الزيادة بعينه؛ والرابعُ في ‎QL‎ هو الثالثُ مكرَّرًا (‎4 = 3‎). الصورُ على ‎Q-I‎ (ماضٍ ومبنيٌّ
+للمجهول وأمر) و‎Q-II‎ (تَفَعْلَلَ: «تجلبب ويتجلبب أجريته مجرى تدحرج»، س21110؛ «يتحوقل»، س19099) — لا
+‎Q-IV‎. سماعيٌّ معجمًا قياسيٌّ شكلًا؛ لذلك لا يدخل الفهرسَ المعكوس (`verb_index`) المقيسَ على المرجع،
+ويُطلب بـ `derive(root, ilhaq=True)` ويُفحص ردًّا (`test_ilhaq.py`) لا قياسًا."""
+
+
+def ilhaq_forms(root: str, before_object: bool = False) -> Forms:
+    """الملحَقُ بالرباعيّ من جذرٍ ثلاثيٍّ صحيح: الصورةُ ← ‎(الصيغة، الوزن ‎QL/QW/QY/QV‎-I/II، الضمير)‎."""
+
+    root = _seat_free(root)
+    out: Forms = {}
+    if len(root) != 3 or root_class(root) != "SOUND":
+        return out
+    for shape, pattern, _ in ILHAQ_SHAPES:
+        quad = "".join(root[int(ch) - 1] if ch in "123" else ch for ch in pattern)
+        if shape == "QL":
+            quad = root + root[2]
+        for word, analyses in _quadriliteral(quad, before_object).items():
+            for kind, form, person in analyses:
+                if form in ("Q-I", "Q-II"):
+                    _put(out, word, (kind, f"{shape}-{form[2:]}", person))
+    return out
+
+
 _ASSIMILATING_TA: Final[frozenset[str]] = frozenset("تثدذزسشصضطظ")
 
 

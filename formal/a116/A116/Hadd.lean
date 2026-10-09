@@ -600,4 +600,80 @@ theorem strictJoinB_pause {l r : List Cell} (h : strictJoinB l r = true) :
   simp only [strictJoinPauseB, Bool.and_eq_true]
   exact ⟨strictB_pause h.1, h.2⟩
 
+/-! ## الإلحاقُ ليس إدغامًا (الكتاب س21122: «أدغموا في أعددت كما لم يدغموا في جلببت»)
+
+لامُ الإلحاق (جَلْبَبَ، شَمْلَلَ — س19135: «ألحقوا الزيادة من موضع اللام وأجروها مجرى دحرجت») مثلان
+**أوّلُهما متحرّك**؛ والإدغامُ (أَعَدَّ، اطْمَأَنَّ) مثلان **أوّلُهما ساكن**. الفرقُ تعريفٌ على الخانات بلا
+بُعدٍ جديد: أوّلُ زوج الإلحاق صنفُه `cv` في أيّ موضع (`ilhaq_not_geminate`) فلا يكون المُغلِقَ `c` الذي
+يطلب `stepOK` مثلَه؛ وأوّلُ زوج الإدغام `c` (`idgham_closer`). والشاهدان على الشبكة بأعيانهما
+(`jalbaba_vs_aadda`): جَلْبَبَ `cv c cv cv` وأَعَدَّ `cv cv c cv`، كلاهما مرخَّص، وجَلْبَبْ وقفًا وتَجَلْبَبَ
+مرخَّصتان، ولا تُردّ إحدى الصورتين إلى الأخرى (`jalbaba_ne_jalabba`). -/
+
+/-- زوجُ الإلحاق: مثلان أوّلُهما متحرّك. -/
+def ilhaqPair (x y : Cell) : Bool := x.carrier == y.carrier && x.haraka != .sukun
+
+/-- زوجُ الإدغام: مثلان أوّلُهما ساكن. -/
+def idghamPair (x y : Cell) : Bool := x.carrier == y.carrier && x.haraka == .sukun
+
+theorem ilhaq_idgham_disjoint (x y : Cell) (h : ilhaqPair x y = true) : idghamPair x y = false := by
+  simp only [ilhaqPair, Bool.and_eq_true, bne_iff_ne, ne_eq] at h
+  simp [idghamPair, h.2]
+
+theorem kindOne_vowelled {p : Option Haraka} {x : Cell} (h : x.haraka ≠ .sukun) :
+    kindOne p x = .cv := by
+  simp [kindOne, h]
+
+/-- **لامُ الإلحاق ليست مُغلِقًا**: في أيّ موضعٍ من أيّ كلمة، أوّلُ زوج الإلحاق صنفُه `cv` — فلا يكون
+الـ`c` الذي يطلب `stepOK` مثلَه؛ الإلحاقُ خارج قيد الإدغام بالتعريف لا بالاستثناء. -/
+theorem ilhaq_not_geminate :
+    ∀ (p : Option Haraka) (w : List Cell) (x y : Cell) (q : List Cell), ilhaqPair x y = true →
+      kindGo p (w ++ x :: y :: q) = kindGo p w ++ .cv :: kindGo (some x.haraka) (y :: q)
+  | p, [], x, y, q, h => by
+    simp only [ilhaqPair, Bool.and_eq_true, bne_iff_ne, ne_eq] at h
+    simp [kindGo, kindOne_vowelled h.2]
+  | p, a :: t, x, y, q, h => by
+    simp [kindGo, ilhaq_not_geminate (some a.haraka) t x y q h]
+
+/-- أوّلُ زوج الإدغام مُغلِقٌ `c` ما لم يكن حاملُه حرفَ مدٍّ بعد حركته (فذلك مدٌّ لا إدغام). -/
+theorem idgham_closer {p : Option Haraka} {x y : Cell} (h : idghamPair x y = true)
+    (hm : maddVowel x.carrier = none) : kindOne p x = .c := by
+  simp only [idghamPair, Bool.and_eq_true, beq_iff_eq] at h
+  simp [kindOne, h.2, hm]
+
+open Haraka in
+/-- جَلْبَبَ: `جَ لْ بَ بَ` — لامُ الإلحاق مثلان متحرّكان. -/
+def jalbaba : List Cell := [atom 'ج' fatha, atom 'ل' sukun, atom 'ب' fatha, atom 'ب' fatha]
+open Haraka in
+/-- جَلْبَبْ وقفًا. -/
+def jalbabPause : List Cell := [atom 'ج' fatha, atom 'ل' sukun, atom 'ب' fatha, atom 'ب' sukun]
+open Haraka in
+/-- تَجَلْبَبَ (س21110: «تجلبب ويتجلبب أجريته مجرى تدحرج»). -/
+def tajalbaba : List Cell := atom 'ت' fatha :: jalbaba
+open Haraka in
+/-- أَعَدَّ: `ءَ عَ دْ دَ` — الإدغامُ مثلان أوّلُهما ساكن. -/
+def aadda : List Cell := [atom 'ء' fatha, atom 'ع' fatha, atom 'د' sukun, atom 'د' fatha]
+open Haraka in
+/-- الطفرة: جَلَبَّ — لو أُدغمت لامُ الإلحاق لصارت صورةً أخرى بأصنافٍ أخرى. -/
+def jalabba : List Cell := [atom 'ج' fatha, atom 'ل' fatha, atom 'ب' sukun, atom 'ب' fatha]
+
+/-- الشاهدان بأعيانهما: كلاهما مرخَّص، وصنفاهما مختلفان عند المثلين. -/
+theorem jalbaba_vs_aadda :
+    strictB jalbaba = true ∧ strictPauseB jalbabPause = true ∧ strictB tajalbaba = true ∧
+    strictB aadda = true ∧
+    kindOf jalbaba = [.cv, .c, .cv, .cv] ∧ kindOf aadda = [.cv, .cv, .c, .cv] ∧
+    ilhaqPair (atom 'ب' .fatha) (atom 'ب' .fatha) = true ∧
+    idghamPair (atom 'د' .sukun) (atom 'د' .fatha) = true := by
+  have h1 : kindOf jalbaba = flat .none [.CVC, .CV, .CV] := by decide
+  have h2 : kindOf jalbabPause = flat .none [.CVC, .CVC] := by decide
+  have h3 : kindOf tajalbaba = flat .none [.CV, .CVC, .CV, .CV] := by decide
+  have h4 : kindOf aadda = flat .none [.CV, .CVC, .CV] := by decide
+  refine ⟨?_, ?_, ?_, ?_, by decide, by decide, by decide, by decide⟩
+  · simp only [strictB, h1, continueB_flat]; decide
+  · simp only [strictPauseB, Ternary.pauseB, h2, parse_flat]; decide
+  · simp only [strictB, h3, continueB_flat]; decide
+  · simp only [strictB, h4, continueB_flat]; decide
+
+/-- الطفرةُ المرفوضة: جَلَبَّ صورةٌ أخرى لا جَلْبَبَ — الخاناتُ تفرّق ولا تُردّ إحداهما إلى الأخرى. -/
+theorem jalbaba_ne_jalabba : jalbaba ≠ jalabba ∧ kindOf jalabba = [.cv, .cv, .c, .cv] := by decide
+
 end A116.Hadd
