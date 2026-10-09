@@ -1371,3 +1371,19 @@ def test_nabhani_matches_lean() -> None:
     lean = {(r[1], r[2]): r[3] == "true" for r in rows if r[0] == "awla"}
     assert len(lean) == 25
     assert lean == {(a, b): awla(a, b) for a in IHTIMAL for b in IHTIMAL}
+
+def test_shahada_matches_lean() -> None:
+    """عددُ الذرّات وترميزُ المسار والبصمةُ لستّ شهاداتٍ شاهدة (خانات|مسار|مدلول) = `Shahada`."""
+
+    from slge.nabhani import MADLUL
+    from slge.shahada import Shahada, atom_number, enc_list, fingerprint
+
+    rows = [r for r in _rows("shahada.csv") if r[0] == "shahada"]
+    assert len(rows) == 6
+    for _, name, cells, path, madlul, atoms, enc, fp in rows:
+        w = tuple(CELLS[int(i)] for i in cells.split("-")) if cells else ()
+        pth = tuple(int(x) for x in path.split("-")) if path else ()
+        m = None if madlul == "0" else MADLUL[int(madlul) - 1]
+        s = Shahada(w, pth, m)
+        assert atom_number(w) == int(atoms) and enc_list(pth) == int(enc), name
+        assert fingerprint(s) == int(fp), name

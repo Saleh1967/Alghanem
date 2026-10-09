@@ -922,7 +922,7 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_gates.py::test_ladder_order_and_named_refusals",
        "test:tests/test_gates.py::test_whole_mushaf_climbs_consistently",
        note="قانونُ السُّلَّم مبرهَنٌ على المجرّد؛ البوّاباتُ تركّب الدوالَّ القائمة (مفحوص) ولا تبني قراءة."),
-    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (81 وحدة، 62 جدولًا، 51 فهرسًا): كلُّ وحدةٍ "
+    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (83 وحدة، 63 جدولًا، 52 فهرسًا): كلُّ وحدةٍ "
        "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
        "test:tests/test_gates.py::test_manifest_covers_the_tree",
        note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
@@ -1244,6 +1244,25 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_seals.py::test_owner_signed_deposits_match_their_hash_and_name_the_signer",
        note="قائمةُ الأعلام من صفوف MASAQ ثمّ وُقِّعت فاختيارُها غيرُ مستقلٍّ عن المرجع؛ وأل في لفظ "
             "الجلالة خلافٌ مع وسم المرجع مفصولٌ بالتوقيع لا بالقياس (ALAM_INDEX.md، ADR ٢٤)."),
+    _c("SHAHADA-fingerprint", "شهادةُ SLGE: الدالُّ خاناتٍ، ومسارُ القراءة أعدادًا (عددُ قراءات كلّ "
+       "بوّابةٍ قارئة)، ونوعُ المدلول الخماسيّ اختياريًّا (لا حكمَ بعد = none) — ببصمةٍ عددًا واحدًا: "
+       "اقترانُ كانتور لعدد الذرّات (مميِّزٌ بلا شرط ترخيص) مع ترميز المسار ونوع المدلول؛ شهادتان "
+       "ببصمةٍ واحدة هما واحدة، وإسنادُ المدلول يغيّر البصمة؛ الصورُ المغلقةُ للحساب مساويةٌ للتعريف", _P,
+       "lean:Slge.Shahada.fingerprint_injective", "lean:Slge.Shahada.encList_injective",
+       "lean:Slge.Shahada.withMadlul_changes_fingerprint", "lean:Slge.Shahada.restore_cells",
+       "lean:Slge.Shahada.fingerprintC_eq",
+       "test:tests/test_shahada.py::test_fingerprint_separates_cells_path_and_madlul",
+       "test:tests/test_shahada.py::test_built_from_the_ladder_on_the_corpus_and_distinct_per_form",
+       "test:tests/test_conformance.py::test_shahada_matches_lean",
+       note="البصمةُ على الخانات لا الرسم (بقيّةُ الرسم في شهادة الغانم)؛ المسارُ أعدادُ القراءات لا "
+            "المختارةَ بعدُ؛ والمدلولُ لا تسنده وحدةٌ بعد (ADR ٢٧)."),
+    _c("INTIQAL-registry", "لا انتقالَ على الـ116 إلّا مسجَّلًا: كلُّ دالّةٍ عامّة تنقل خاناتٍ إلى خانات في "
+       "الشجرة مسجَّلةٌ باسمها ومبرهنتها المدقَّقة أو دَينًا بملاحظة، والحارسُ يرفض غيرَ المسجَّل وغيرَ "
+       "المدقَّق؛ 87 انتقالًا: إغلاقٌ 32، خاصّةٌ 35، دَينٌ 20", _X,
+       "lean:Slge.Intiqal.registry_nodup", "lean:Slge.Intiqal.kind_matches_theorem",
+       "test:tests/test_intiqal.py::test_every_transition_is_registered_and_its_theorem_audited",
+       note="السجلُّ مفحوصٌ لا مبرهَن: Lean يرى الأسماءَ لا الدوالّ؛ والانتقالاتُ عبر أنواعٍ وسيطة خارج "
+            "الحصر (ADR ٢٧)."),
     _c("NABHANI-taxonomy", "تقسيماتُ النبهانيّ أنماطًا من «أبحاث اللغة» المختوم: الدالُّ وحده "
        "(الدلالاتُ الثلاث، التراكيبُ الثلاثة، المركّبُ الستّة «من أقسام الدالّ وحده»)، المدلولُ وحده "
        "(خمسةٌ فيها الهذيان)، الدالُّ والمدلول (سبعة)، النِّسَبُ الثلاث (إسناديّة، تقييديّة، إضافيّة)؛ "

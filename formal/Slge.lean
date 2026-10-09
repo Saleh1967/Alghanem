@@ -73,3 +73,6 @@ import Slge.SawabiqTable
 import Slge.Sawabiq
 import Slge.NabhaniTable
 import Slge.Nabhani
+import Slge.Shahada
+import Slge.IntiqalTable
+import Slge.Intiqal

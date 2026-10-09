@@ -916,3 +916,18 @@
 'Slge.Nabhani.nisba_from_text' depends on axioms: [propext]
 'Slge.Nabhani.murakkab_is_dall' depends on axioms: [propext]
 'Slge.Nabhani.sections_count' does not depend on any axioms
+'Slge.Shahada.encList_injective' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Shahada.encMadlul_injective' depends on axioms: [propext]
+'Slge.Shahada.fingerprint_injective' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Shahada.map_ofCell_toCell' depends on axioms: [propext]
+'Slge.Shahada.restore_cells' depends on axioms: [propext]
+'Slge.Shahada.withMadlul_changes_fingerprint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Shahada.witness_distinct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Shahada.pairC_eq' depends on axioms: [propext, Quot.sound]
+'Slge.Shahada.encListC_eq' depends on axioms: [propext, Quot.sound]
+'Slge.Shahada.atomNumberC_eq' depends on axioms: [propext, Quot.sound]
+'Slge.Shahada.fingerprintC_eq' depends on axioms: [propext, Quot.sound]
+'Slge.IntiqalTable.registry_length' does not depend on any axioms
+'Slge.Intiqal.registry_nodup' does not depend on any axioms
+'Slge.Intiqal.kind_matches_theorem' does not depend on any axioms
+'Slge.Intiqal.counts' does not depend on any axioms

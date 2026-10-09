@@ -68,6 +68,7 @@ EXEMPT_FILES = (
     "tools/deposit_sawabiq.py",  # يقرأ الكتابَ المختوم ومودَعَ المصحف ويولّد جدولَي السوابق
     "tools/gen_sawabiq_index.py",  # يقرأ الشهادات وMASAQ ويولّد فهرسَ السوابق
     "tools/deposit_nabhani.py",  # يقرأ ج3 و«التفكير» المختومَين ويولّد جدولَي النبهانيّ
+    "tools/gen_intiqal_index.py",  # يقرأ شجرة src وAudit ويولّد فهرسَ الانتقالات وجدولَه
     "tools/gen_hasm_index.py",  # يقرأ الشهادات وMASAQ ويولّد جدولَ التكرار والفهرس
     "tools/gen_pipeline_index.py",  # يقرأ MASAQ والشهادات ويولّد القمعَ وجدولَيه
     "src/slge/order.py",  # يبصم خاناتٍ لا نصًّا

@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_lean_index.py` من ملفّات `.lean` و`Audit.lean` و`out/axioms.txt`؛ لا يُحرَّر باليد. الـ116 من الغانم بإيداعه المثبَّت في `formal/lakefile.toml`.
 
-**1141 مبرهنة، منها 914 مدقَّقةُ المسلّمات.**
+**1156 مبرهنة، منها 929 مدقَّقةُ المسلّمات.**
 
 كلُّ درجةٍ تستهلك ما قبلها: لا تدخل الكلمةُ درجةً قبل أن تُرخَّص في التي تحتها. «مدقَّق» = في `Audit.lean` وطُبعت مسلّماتُه؛ وما ليس مدقَّقًا مبرهَنٌ في Lean لكن لم يُطبع سندُه بعدُ فلا يُستشهد به في `status.py`.
 
@@ -1632,6 +1632,36 @@
 | `nisba_from_text` | الأوجهُ العشرةُ بألفاظها في النصّ، بترتيب `ten_rules`. | مدقَّق | propext |
 | `murakkab_is_dall` | المركّبُ «من أقسام الدالّ وحده» بنصّه — فالخبرُ والإنشاءُ في جبر الدالّ. | مدقَّق | propext |
 | `sections_count` | المركّبُ «من أقسام الدالّ وحده» بنصّه — فالخبرُ والإنشاءُ في جبر الدالّ. | مدقَّق | لا مسلّمات |
+
+### `Slge/Shahada.lean` — 11 مبرهنة (`Slge.Shahada`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `encList_injective` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `encMadlul_injective` | — | مدقَّق | propext |
+| `fingerprint_injective` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `map_ofCell_toCell` | الردُّ: الذرّاتُ تعود خاناتِ الشهادة بعينها (على خانات SLGE المودَعة). | مدقَّق | propext |
+| `restore_cells` | الردُّ: الذرّاتُ تعود خاناتِ الشهادة بعينها (على خانات SLGE المودَعة). | مدقَّق | propext |
+| `withMadlul_changes_fingerprint` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `pairC_eq` | — | مدقَّق | propext, Quot.sound |
+| `encListC_eq` | — | مدقَّق | propext, Quot.sound |
+| `atomNumberC_eq` | — | مدقَّق | propext, Quot.sound |
+| `fingerprintC_eq` | — | مدقَّق | propext, Quot.sound |
+| `witness_distinct` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+
+### `Slge/IntiqalTable.lean` — 1 مبرهنة (`Slge.IntiqalTable`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `registry_length` | — | مدقَّق | لا مسلّمات |
+
+### `Slge/Intiqal.lean` — 3 مبرهنة (`Slge.Intiqal`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `registry_nodup` | — | مدقَّق | لا مسلّمات |
+| `kind_matches_theorem` | النوعُ 2 (دَين) ⇔ لا مبرهنة. | مدقَّق | لا مسلّمات |
+| `counts` | — | مدقَّق | لا مسلّمات |
 
 ## الدرجة ١٩ — المعرفةُ والترجيح: الإنتاجُ والتعارضُ وقطعيُّ الدلالة
 

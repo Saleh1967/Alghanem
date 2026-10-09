@@ -741,6 +741,17 @@ def main (args : List String) : IO Unit := do
     for a in Nabhani.Ihtimal.all do
       for b in Nabhani.Ihtimal.all do
         IO.println s!"awla,{a.name},{b.name},{Nabhani.awla a b}"
+  | ["shahada"] =>
+    -- شهادةُ SLGE: عددُ الذرّات وترميزُ المسار والبصمةُ لشواهدَ بعينها (الخانات|المسار|المدلول).
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let ws : List (String × Shahada.Shahada) :=
+      [("kataba", Shahada.kataba), ("kataba_mana", Shahada.withMadlul Shahada.kataba .mana),
+       ("kataba_muhmal", Shahada.withMadlul Shahada.kataba .muhmalMurakkab),
+       ("kataba_path", { Shahada.kataba with path := [0, 0, 1, 1, 1, 1, 1] }),
+       ("empty", ⟨[], [], none⟩),
+       ("allahu", ⟨Alam.allahu, [1, 0, 0, 0, 1, 1, 1], none⟩)]
+    for (n, s) in ws do
+      IO.println s!"shahada,{n},{key s.cells},{"-".intercalate (s.path.map toString)},{Shahada.encMadlul s.madlul},{Shahada.atomNumberC (Shahada.atoms s)},{Shahada.encListC s.path},{Shahada.fingerprintC s}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

@@ -103,6 +103,8 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("nabhani", ("Nabhani", "NabhaniTable"), ("nabhani",), "gen_nabhani_index.py",
            "test_nabhani.py"),  # تقسيماتُ النبهانيّ أنماطًا من المختوم، وفهرسُ المطابقة
     Module("nabhani_table", (), (), None, "test_nabhani.py"),  # مولَّدٌ من ج3 و«التفكير» المختومَين
+    Module("shahada", ("Shahada",), ("shahada",), None, "test_shahada.py"),  # شهادةُ SLGE ببصمتها
+    Module("intiqal", ("Intiqal", "IntiqalTable"), (), "gen_intiqal_index.py", "test_intiqal.py"),
     Module("gates", (), (), None, "test_gates.py"),
 )
 """كلُّ وحدةٍ حيّة (وصفيّةُ `order`/`status`/`guard`/`manifest` خارجَها) وما يقابلها."""
