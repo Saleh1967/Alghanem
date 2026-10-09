@@ -164,9 +164,9 @@
   },
   "exact_recovery_cases": 26526,
   "context_transitions": {
-    "successful_reversible_context_transports": 35740,
+    "destination_context_unavailable": 489,
     "destination_nonready_no_promotion": 3560,
-    "destination_context_unavailable": 489
+    "successful_reversible_context_transports": 35740
   },
   "short_numbering_cases": 13573,
   "minimality_scope": "fixed-length residual conditional on atoms, context and full shared finite codebook",

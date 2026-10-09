@@ -77,6 +77,12 @@ TERMS: tuple[Term, ...] = (
          "(`Certificate.junction`)؛ وبلا التقاءٍ لا شيء.",
          "formal/a116/A116/Iltiqa.lean", "def repair (l r : List Cell) : List Cell × Option Repair",
          ("التقاء الساكنين",)),
+    Term("سجلُّ الرفض", "refusal registry",
+         "كلُّ اسمِ رفضٍ تُطلقه البوّابةُ (`_defer`، `_reject`، `Refusal`، `reason`) إمّا مرسًى بقضيّةٍ أو "
+         "تعريفٍ في Lean أو مدخلٍ هنا، وإمّا مكتوبٌ دَينًا بصنفه وشرطه؛ لا اسمَ بلا هذا ولا ذاك "
+         "(`REFUSAL_WITHOUT_ANCHOR`)، ولا كتابةَ دَينٍ باطلة (`STALE_DECLARED_REFUSAL`). مولَّدٌ "
+         "ويُطابَق في CI.",
+         "tools/gen_refusals.py", "DECLARED: dict[str, tuple[str, str]]", ("REFUSALS.md",)),
     Term("الألفُ المتحرّكة", "vowelled alif (the three unlicensable cells)",
          "من شبكة الـ116 ثلاثُ خاناتٍ لا وجودَ لها في الكلام: (ا،فتح) (ا،ضم) (ا،كسر) — "
          "الكتاب: «لأن الألف لا تكون أبدا إلا ساكنة»؛ فالمرخَّصُ من الشبكة 113 خانةً "

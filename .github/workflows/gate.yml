@@ -124,6 +124,8 @@ jobs:
         run: python tools/gen_registry.py --check
       - name: glossary — every term anchored in the tree, every tag/kind/grade defined, no unused entry
         run: python tools/gen_glossary.py --check
+      - name: refusals — every refusal name the gate emits is anchored in Lean/GLOSSARY or declared by kind; stale declarations fail
+        run: python tools/gen_refusals.py --check
       - name: audit_results.json is what gate.audit computes now on the sealed corpus (no hand-written block)
         run: |
           python -m gate.audit corpora/quran-simple-enhanced.txt /tmp/audit_out > /dev/null

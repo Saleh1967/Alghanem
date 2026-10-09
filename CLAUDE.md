@@ -20,10 +20,10 @@
 
 ## ما لا تفعله
 
-1. لا تكتب `open`، `print`، `read_text`، `encode`، `decode`، `normalize`، `argv`، `stdin`… في أيّ ملفٍ خارج `gate/` (و`tests/`، `formal/`، `tools/gen_registry.py`، `tools/gen_glossary.py`، `tools/gen_claims.py`، `tools/gen_certificates.py`، `tools/gen_context_certificates.py`). الحارسُ `gate.guard.breaches()` يمشي على الشجرة كلَّها ويُسقط البناء.
+1. لا تكتب `open`، `print`، `read_text`، `encode`، `decode`، `normalize`، `argv`، `stdin`… في أيّ ملفٍ خارج `gate/` (و`tests/`، `formal/`، `tools/gen_registry.py`، `tools/gen_glossary.py`، `tools/gen_claims.py`، `tools/gen_certificates.py`، `tools/gen_context_certificates.py`، `tools/gen_refusals.py`). الحارسُ `gate.guard.breaches()` يمشي على الشجرة كلَّها ويُسقط البناء.
 2. لا تستورد من `suspended/` ولا من `canonical116` ولا من داخليّات البوّابة (`gate.contextual`، `gate.bridge`، `gate.mabni_*`…). الواجهةُ `gate` وحدَها (`enter`، `exit`، `derive`، `recover`، `licence`).
 3. لا تُعِد وحدةً من `suspended/` إلّا بثلاثة معًا: (١) مدخلُها ومخرجُها عبر `gate.api`، (٢) اختباراتٌ توقعاتُها مستقلّةٌ عن شيفرتها ومطعَّمةٌ بالطفرة (منهج 20/20)، (٣) ADR مسجَّل. ثمّ `python tools/gen_registry.py` لتحديث السجلّ.
-4. لا تحرِّر الجداول المولَّدة (`formal/a116/*.csv`) ولا `SUSPENDED_REGISTRY.json` ولا `gate/audit_results.json` ولا `GLOSSARY.md` ولا `CLAIMS.md` بيدك؛ تُولَّد وتُطابَق (`git diff --exit-code`).
+4. لا تحرِّر الجداول المولَّدة (`formal/a116/*.csv`) ولا `SUSPENDED_REGISTRY.json` ولا `gate/audit_results.json` ولا `GLOSSARY.md` ولا `REFUSALS.md` ولا `CLAIMS.md` بيدك؛ تُولَّد وتُطابَق (`git diff --exit-code`).
 5. لا تمسّ `gate/bridge_v1_0.py` (مجمَّدٌ ببصمته) ولا `corpora/quran-simple-enhanced.txt` (مختومٌ بـ`CORPUS_SHA256`).
 6. لا تدمج في `main` بلا إذن صاحب المستودع. فرعُ العمل: `claude/official-gate`.
 7. لا تكتب «مبرهن» إلّا لما في Lean باسمه، ولا «مفحوص» إلّا لما له اختبارٌ باسمه، ولا «مقيس» إلّا لما له رقمٌ على مرجعٍ محجوب. وما سوى ذلك «معلن» أو «رأي». ولا تُثبت ادّعاءً في ملفٍّ قبل أن يوجد ما يثبته (لا CI قبل CI).
@@ -42,12 +42,13 @@ export PATH=$HOME/.elan/bin:$PATH
 ruff check gate tests tools && mypy
 python tools/gen_registry.py --check
 python tools/gen_glossary.py --check          # معجمُ الاصطلاح (GLOSSARY.md): كلُّ مصطلحٍ بموضع تعريفه، مرساةٌ لا توجد تُسقط البناء
+python tools/gen_refusals.py --check          # سجلُّ الرفض (REFUSALS.md): كلُّ اسمِ رفضٍ تُطلقه البوّابة مرسًى في Lean/GLOSSARY أو معلَنٌ بصنفه وشرطه؛ اسمٌ بلا هذا ولا ذاك يُسقط البناء (REFUSAL_WITHOUT_ANCHOR)، وإعلانٌ بَطَل كذلك
 python -m gate.audit corpora/quran-simple-enhanced.txt /tmp/audit_out && git diff --exit-code -- gate/audit_results.json   # الملفُّ ما تحسبه البوّابة الآن، لا كتلةَ فيه بيد
 python tools/gen_certificates.py --check ../slge/tests/data/corpus-certificates.json.gz   # مودَعُ SLGE هو ما تطبعه هذه البوّابة الآن (DEPOSIT_DRIFTED_FROM_GATE)؛ CI الخاصّ بـSLGE يشغّله على الإيداع المثبَّت
 python tools/gen_context_certificates.py --check ../slge/tests/data/context-certificates.json.gz   # مودَعُ SLGE الثاني: كلُّ موقعٍ في سياقه (ابتداء/وصل، استمرار/وقف) على قاموسٍ مسمًّى `Gate(context, domain)`؛ همزةُ الوصل ساقطةٌ في الوصل والوقفُ يُسكِّن ويُرخَّص بقيده، والرفضُ باسمه (~25 ثانية)
 python tools/gen_claims.py --check            # سجلُّ الأرقام (CLAIMS.md): كلُّ رقمٍ منشور يُعاد حسابُه من مولِّده المسمّى ببصمة مودَعاته ومخرَجه؛ ولا عددَ في CLAUDE.md بلا مولِّد (~4 دقائق)
 python -c "from gate.guard import breaches; print(breaches() or 'لا خرق')"
-pytest -q -m "not slow"        # 146 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
+pytest -q -m "not slow"        # 148 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
 ```
 
 وقبل الطبعة: أثبت أنّ الملف الذي تتكلّم عنه موجودٌ («لا ثقة بلا طبعة»)، وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه أنت.
@@ -71,6 +72,7 @@ pytest -q -m "not slow"        # 146 اختبارًا؛ و`pytest -q -m slow` ل
 | `gate/residue.py` | بقيّةُ الرسم: 9 قواعد طبعةٍ مسمّاة (`A116.Residue`؛ التاسعةُ `DAGGER_ALIF` لطبعة globalquran/hamil)؛ READY 8,532 → 18,179 من 18,200، ردٌّ بعينه | مبرهن (الردّ) + مقيس (التغطية) |
 | `gate/mabni_verbs.py`, `gate/mabni_bridge.py` | 770 جذرًا ← 315,874 صورة؛ الاسترجاع | مقيس (MASAQ 97.23%) |
 | `gate/guard.py` | الحارس | مفحوص (خرقٌ مزروعٌ يُلتقط) |
+| `tools/gen_refusals.py` → `REFUSALS.md` | سجلُّ الرفض: 30 اسمًا تُطلقها البوّابة — 5 مرسًى في Lean، 25 معلَنًا بصنفه (واجهة/رسم/همزة/ترخيص/حدّ) وشرطِ سداده | مفحوص (`test_refusals.py`: اسمٌ مزروعٌ وإعلانان باطلان يُلتقطون) |
 | `suspended/` | 984 وحدة معلَّقة | لا يُستورد |
 
 **المستودعاتُ المشمولة بهذا القانون:** الغانم (هذا)، SLGE، hamil، Algebra، والدساتير الثلاثة. **Taaqol-GPT ليس منها.** البوّابةُ لها جميعًا هي بوّابةُ الغانم هذه؛ ما في غيرها من بوّاباتٍ يُعلَّق بالطريقة نفسها حتى يعود عبرها.

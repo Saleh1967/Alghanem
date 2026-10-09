@@ -242,7 +242,8 @@ def main(path, out_dir):
         "fiber_size_histograms": dict(fiber_hist),
         "largest_fibers": largest,
         "exact_recovery_cases": checked,
-        "context_transitions": dict(transitions),
+        # ترتيبُ المفاتيح بالاسم: `forms` مجموعةٌ فترتيبُ أوّل ظهورٍ يتبع بذرةَ التجزئة لا الحساب
+        "context_transitions": dict(sorted(transitions.items())),
         "short_numbering_cases": len(all_short),
         "minimality_scope": (
             "fixed-length residual conditional on atoms, context and "
