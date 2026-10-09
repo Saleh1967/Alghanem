@@ -26,8 +26,8 @@
 | `NOT_IN_CERTIFICATES` | البوابة | 0 | 0 |
 | `NO_READING` | الجذع | 1,803 | 1,803 |
 | `PARTICLE_NOT_IN_TABLE` | الجذع | 151 | 151 |
-| `SEGMENTS_TIE` | الجذع | 1,681 | 0 |
-| `READING_NOT_GOLD` | الجذع | 2,890 | 4,540 |
+| `SEGMENTS_TIE` | الجذع | 1,680 | 0 |
+| `READING_NOT_GOLD` | الجذع | 2,891 | 4,540 |
 | `NO_JIHA_IN_REFERENCE` | الجهة | 13,092 | 13,197 |
 | `JIHA_MISMATCH` | الجهة | 7,854 | 7,953 |
 | `CASE_NOT_READ` | الحالة | 4,132 | 3,903 |
