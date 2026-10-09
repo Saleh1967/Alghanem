@@ -61,9 +61,11 @@ def test_pausal_madd_is_licensed_and_the_cross_word_straddle_is_refused_by_name(
     r = _joined(FATIHA[0][2], FATIHA[0][3], "pause")
     assert not isinstance(r, Refusal) and r.atoms[-2:] == ("يْ", "مْ")
     assert not isinstance(_joined(FATIHA[0][2], FATIHA[0][3], "continue"), Refusal)
-    # `Hadd.strictJoinB`: المدُّ في كلمةٍ والمدغمُ في التالية (اهْدِنَا + الصِّرَاطَ) — عبر الحدّ لا يُستثنى
+    # `Iltiqa.repair`: المدُّ في كلمةٍ والمدغمُ في التالية (اهْدِنَا + الصِّرَاطَ) — كان يُرفض عبر الحدّ
+    # (`CVVC_ACROSS_WORD_BOUNDARY`)، والآن يُحذف المدُّ وجهًا مسمًّى تحمله الشهادة.
     r = _joined(FATIHA[5][0], FATIHA[5][1], "continue")
-    assert r == Refusal("REJECT", ("JUNCTION_NOT_LICENSED", "CVVC_ACROSS_WORD_BOUNDARY"))
+    assert not isinstance(r, Refusal) and r.junction == "MADD_DROPPED"
+    assert _joined(FATIHA[0][0], FATIHA[0][1], "continue").junction is None  # type: ignore[union-attr]
 
 
 def test_gates_follow_the_declared_boundary_policy() -> None:
@@ -79,10 +81,10 @@ def test_gates_follow_the_declared_boundary_policy() -> None:
 
 def test_drift_is_named_at_its_first_position() -> None:
     fresh = {"version": 1, "tokens": 3, "line_lengths": [3], "forms": [{"cells": []}],
-             "stream": [[0, 0, -1], [0, 0, -1], [-1, 1, 0]], "refusals": ["REJECT:X"]}
+             "stream": [[0, 0, -1, -1], [0, 0, -1, 1], [-1, 1, 0, -1]], "refusals": ["REJECT:X"]}
     assert MOD.drift(fresh, fresh) is None
     mutant = copy.deepcopy(fresh)
-    mutant["stream"][2] = [0, 1, -1]
+    mutant["stream"][2] = [0, 1, -1, -1]
     assert MOD.drift(fresh, mutant).startswith("stream[2]:")
     mutant = copy.deepcopy(fresh)
     mutant["line_lengths"] = [2]
@@ -104,4 +106,7 @@ def test_the_whole_mushaf_in_context() -> None:
     assert sum(fresh["status"].values()) == fresh["tokens"]
     assert sum(fresh["refusal_counts"].values()) == fresh["tokens"] - fresh["status"]["READY"]
     assert all(s[0] == -1 or s[2] == -1 for s in fresh["stream"])
+    assert all(len(s) == 4 and (s[3] == -1 or s[0] >= 0) for s in fresh["stream"])
     assert all(":" in r for r in fresh["refusals"])
+    assert fresh["junctions"] == ["FARQ_ALIF_DROPPED", "MADD_DROPPED", "SAKIN_KASRA"]
+    assert sum(fresh["junction_counts"].values()) == sum(1 for s in fresh["stream"] if s[3] >= 0)

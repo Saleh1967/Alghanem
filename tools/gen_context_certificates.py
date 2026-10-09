@@ -9,8 +9,10 @@
 
 المخرَج: الصورَ المتمايزة **في سياقها** (خاناتُ الشهادة كما رخّصها الحدّ: همزةُ الوصل ساقطةٌ بعد كلمة،
 والآخرُ ساكنٌ وقفًا، وعرضُ عدد ذرّاتها)، وطولَ كلّ سطر، والتيارَ لكلّ موقع: (رقمُ الصورة أو −1، الحدُّ
-0 استمرار / 1 وقف، رقمُ الرفض المسمّى أو −1). ترتيبُ المواقع هو ترتيبُ `corpus-certificates.json.gz`
-نفسُه (78,245 موقعًا) فيُقرأ الموقعُ هناك ابتداءً وهنا في سياقه. لا نصَّ في المخرَج: خاناتٌ وأعداد.
+0 استمرار / 1 وقف، رقمُ الرفض المسمّى أو −1، رقمُ وجه الوصل في آخر الكلمة اليساريّة أو −1 —
+`A116.Iltiqa`: الألفُ الفارقة تسقط / المدُّ يُحذف / الساكنُ يُكسَر). ترتيبُ المواقع هو ترتيبُ
+`corpus-certificates.json.gz` نفسُه (78,245 موقعًا) فيُقرأ الموقعُ هناك ابتداءً وهنا في سياقه. لا نصَّ في
+المخرَج: خاناتٌ وأعداد.
 
 `--check DEPOSIT.json.gz` يعيد التوليدَ ويقارنه بالمودَع قيمةً قيمة؛ أيُّ فرقٍ يُسقط البناءَ باسم
 `DEPOSIT_DRIFTED_FROM_GATE` مع أوّل موضعٍ مختلف.
@@ -30,6 +32,7 @@ from gate import Refusal, gate
 from gate.api import CORPUS_SHA256, Gate
 from gate.bridge import PROTOCOL_VERSION
 from gate.contextual import Context, fold_atoms
+from gate.licence import REPAIRS
 from gate.residue import repair
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -80,6 +83,7 @@ def generate() -> dict[str, Any]:
     refusal_index: dict[str, int] = {}
     counts: Counter[str] = Counter()
     status: Counter[str] = Counter()
+    junctions: Counter[str] = Counter()
     stream: list[list[int]] = []
     for tokens in lines:
         for i, w in enumerate(tokens):
@@ -93,7 +97,7 @@ def generate() -> dict[str, Any]:
                     refusals.append(name)
                 counts[name] += 1
                 status[cert.status] += 1
-                stream.append([-1, EXITS.index(exit_), refusal_index[name]])
+                stream.append([-1, EXITS.index(exit_), refusal_index[name], -1])
                 continue
             status["READY"] += 1
             if cert.atoms not in form_index:
@@ -102,7 +106,10 @@ def generate() -> dict[str, Any]:
                     "cells": cells_of(cert.atoms),
                     "atoms_number_bits": fold_atoms(cert.atoms).bit_length(),
                 })
-            stream.append([form_index[cert.atoms], EXITS.index(exit_), -1])
+            j = REPAIRS.index(cert.junction) if cert.junction else -1
+            if cert.junction:
+                junctions[cert.junction] += 1
+            stream.append([form_index[cert.atoms], EXITS.index(exit_), -1, j])
     return {
         "version": 1,
         "source": "gate.enter في سياق كلّ موقع على المدوّنة المختومة؛ لا نصَّ هنا: خاناتٌ وأعداد",
@@ -115,6 +122,8 @@ def generate() -> dict[str, Any]:
         "status": dict(sorted(status.items())),
         "refusals": refusals,
         "refusal_counts": {k: counts[k] for k in refusals},
+        "junctions": list(REPAIRS),
+        "junction_counts": {k: junctions[k] for k in REPAIRS},
         "line_lengths": [len(t) for t in lines],
         "forms": forms,
         "stream": stream,

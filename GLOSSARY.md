@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_glossary.py` من `TERMS` فيه؛ لا يُحرَّر باليد. لكلّ مدخلٍ موضعٌ (ملفٌّ ومرساةٌ نصّيّة) يفحصه `--check` في CI: مرساةٌ لا توجد تُسقط البناءَ باسم `HALLUCINATED_REFERENCE`، ووسمٌ أو نوعُ مودَعٍ أو مرتبةٌ بلا مدخلٍ باسم `TERM_WITHOUT_ENTRY`، ومدخلٌ لا يُستعمل في `CLAUDE.md` ولا `AGENT_CONSTITUTION.md` باسم `ENTRY_WITHOUT_USE`. المعاني هنا تعريفاتٌ «معلنة»؛ سندُ كلٍّ منها في موضعه لا هنا. يحكم المستودعاتِ كلَّها (الغانم، SLGE، hamil، Algebra، الدساتير الثلاثة).
 
-39 مدخلًا.
+40 مدخلًا.
 
 | المصطلح | بالإنجليزيّة | المعنى | موضعُ التعريف |
 |---|---|---|---|
@@ -18,6 +18,7 @@
 | **الترخيصُ الثلاثيّ** | ternary licence (cv | v | c) | تقطيعُ الكلمة إلى مقاطع ثلاثيّةٍ لا ثنائيّة؛ فالثنائيُّ أعمى عن المدّ. | `formal/a116/A116/Ternary.lean` — «theorem binary_is_blind_to_madd» |
 | **قيدُ الحدّ** | hadd constraint (CVVC only before a geminate) | «التقاءُ الساكنين على حدّه»: قافيةُ المدّ (CVVC) لا تُرخَّص وصلًا إلّا والمُغلِقُ أوّلُ مثلين (حَاجَّ) أو مدَّ فرق، والمدُّ والمدغمُ في كلمةٍ واحدة؛ وما سواه رفضٌ مسمًّى (`CVVC_NOT_GEMINATE`، `CVVC_ACROSS_WORD_BOUNDARY`) — `strictB` و`strictJoinB`. | `formal/a116/A116/Hadd.lean` — «def strictB (w : List Cell) : Bool» |
 | **المدُّ العارض للسكون** | pausal madd (CVVC licensed only word-finally at pause) | وقفًا يُسكَّن الآخر فتجتمع قافيةُ مدٍّ ومُغلِقٌ في الطرف (الرَّحِيمْ)؛ الطرفُ وحدَه يُقبل (`strictPauseB`، `strictJoinPauseB`) وكلُّ `v c` داخليٍّ مدغمٌ كما وصلًا؛ وما يرفضه الوقف `NOT_PAUSE_LICENSED`. | `formal/a116/A116/Hadd.lean` — «def strictPauseB (w : List Cell) : Bool» |
+| **التقاءُ الساكنين على الحدّ** | sukun clash at the word boundary (three named repairs) | ساكنٌ آخرَ الأولى يليه ساكنٌ أوّلَ الثانية: الألفُ الفارقة تسقط، أو حرفُ المدّ يُحذف، أو الساكنُ يُكسَر (الكتاب: «أن يكون الساكن الأول مكسورا») — في آخر الأولى وحدَها، وجهًا مسمًّى في الشهادة (`Certificate.junction`)؛ وبلا التقاءٍ لا شيء. | `formal/a116/A116/Iltiqa.lean` — «def repair (l r : List Cell) : List Cell × Option Repair» |
 | **السكونُ الموضعيّ** | positional sukun | حالةُ `sukun` في الخانة معناها «موضعٌ لا تتبعه حركةٌ قصيرة» لا «عدمُ الحركة نطقًا»؛ فحرفُ المدّ خانةٌ ساكنةٌ موضعًا وجزءٌ ثانٍ من حركةٍ طويلةٍ نطقًا. | `formal/a116/A116/Hadd.lean` — «معناه موضعيٌّ» |
 | **دورُ المدّ** | madd role (v) | صنفُ الخانة الساكنة إن كانت ا بعد فتحة أو و بعد ضمّة أو ي بعد كسرة (`v`)، وإلّا فهي مُغلِق (`c`)؛ تعريفٌ في Lean (`kindOf`) ومرآتُه `kind_of`. | `formal/a116/A116/Hadd.lean` — «def kindOf (w : List Cell) : List K» |
 | **مدُّ الفرق** | madd al-farq | الاستثناءُ الوحيد من قيد الحدّ: ءَ اْ لْ في أوّل الكلمة (آلْآنَ)؛ معلنٌ من اصطلاح القرّاء، ومشهودٌ في المودَع، وموضعُ نصّه في مصدرٍ مسمًّى لم يُتحقَّق. | `formal/a116/A116/Hadd.lean` — «def isFarq : List Cell → Bool» |

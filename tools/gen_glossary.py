@@ -71,6 +71,12 @@ TERMS: tuple[Term, ...] = (
          "(`strictPauseB`، `strictJoinPauseB`) وكلُّ `v c` داخليٍّ مدغمٌ كما وصلًا؛ وما يرفضه الوقف "
          "`NOT_PAUSE_LICENSED`.",
          "formal/a116/A116/Hadd.lean", "def strictPauseB (w : List Cell) : Bool", ("المدُّ العارض",)),
+    Term("التقاءُ الساكنين على الحدّ", "sukun clash at the word boundary (three named repairs)",
+         "ساكنٌ آخرَ الأولى يليه ساكنٌ أوّلَ الثانية: الألفُ الفارقة تسقط، أو حرفُ المدّ يُحذف، أو الساكنُ "
+         "يُكسَر (الكتاب: «أن يكون الساكن الأول مكسورا») — في آخر الأولى وحدَها، وجهًا مسمًّى في الشهادة "
+         "(`Certificate.junction`)؛ وبلا التقاءٍ لا شيء.",
+         "formal/a116/A116/Iltiqa.lean", "def repair (l r : List Cell) : List Cell × Option Repair",
+         ("التقاء الساكنين",)),
     Term("السكونُ الموضعيّ", "positional sukun",
          "حالةُ `sukun` في الخانة معناها «موضعٌ لا تتبعه حركةٌ قصيرة» لا «عدمُ الحركة نطقًا»؛ فحرفُ المدّ "
          "خانةٌ ساكنةٌ موضعًا وجزءٌ ثانٍ من حركةٍ طويلةٍ نطقًا.",

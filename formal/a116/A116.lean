@@ -19,3 +19,4 @@ import A116.Boundary
 import A116.Ilal
 import A116.Hamza
 import A116.Hadd
+import A116.Iltiqa

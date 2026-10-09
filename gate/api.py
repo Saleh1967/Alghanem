@@ -36,6 +36,7 @@ from .licence import (
     hadd_pause_ok,
     kind_of,
     pause_licensed,
+    repair_junction,
     straddles,
 )
 from .residue import Edit, has_marks, repair, unrepair
@@ -65,10 +66,14 @@ class Certificate:
 
     `A116.Residue`: الرسمُ = الصورةُ + البقيّة، ويُردّ بعينه (`chain_restore`)، والرسمُ يحدّدهما معًا
     (`residue_separates`). فالبصمةُ الكاملة (العدد، البقيّة)، لا العددُ وحدَه.
+    `junction`: ما فعله الوصلُ بآخر الكلمة **اليساريّة** عند التقاء الساكنين على الحدّ (`A116.Iltiqa`:
+    `FARQ_ALIF_DROPPED` | `MADD_DROPPED` | `SAKIN_KASRA`) — وجهٌ مسمًّى لا تخمين؛ ذرّاتُ هذه الكلمة لا
+    تُمسّ.
     """
 
     core: _Cert
     residue: tuple[Edit, ...]
+    junction: str | None = None
 
     @property
     def atoms(self) -> tuple[str, ...]:
@@ -162,7 +167,10 @@ class Gate:
             left = project(repair(self.context.left)[0], Context())
             if left["status"] != "READY":
                 return Refusal("DEFER", ("LEFT_CONTEXT_HAS_NO_CERTIFICATE",))
-            joined = tuple(left["atoms"]) + atoms
+            # التقاءُ الساكنين على الحدّ (`Iltiqa.repair`): الألفُ الفارقة تسقط، أو المدُّ يُحذف، أو
+            # الساكنُ يُكسَر — في آخر اليساريّة وحدَها، وجهًا مسمًّى يحمله الشهادة؛ وإلّا لا شيء.
+            left_atoms, junction = repair_junction(tuple(left["atoms"]), atoms)
+            joined = left_atoms + atoms
             if not licensed(kind_of(joined)):
                 return Refusal("REJECT", ("JUNCTION_NOT_LICENSED",)
                                + (("NOT_PAUSE_LICENSED",) if pause else ()))
@@ -170,11 +178,12 @@ class Gate:
                 # `Hadd.strictB`/`strictPauseB`: مدٌّ قبل ساكنٍ غيرِ مدغمٍ داخلَ الكلمة (يَا + لْأَرْضِ)
                 # — لا يُقصَّر تخمينًا؛ وقفًا الطرفُ وحدَه مُعفًى (`geminatePauseB_vc_carrier`).
                 return Refusal("REJECT", ("JUNCTION_NOT_LICENSED", "CVVC_NOT_GEMINATE"))
-            if straddles(tuple(left["atoms"]), atoms):
+            if straddles(left_atoms, atoms):
                 # `Hadd.strictJoinB`/`strictJoinPauseB`: المدُّ في كلمةٍ والمدغمُ في الأخرى
                 # (يَا + شْشَافِعِينَ) — الاستثناءُ داخلَ الكلمة الواحدة وحدَها؛ والمدُّ يُقصَّر نطقًا، فلا
                 # يُرخَّص ولا يُقصَّر تخمينًا.
                 return Refusal("REJECT", ("JUNCTION_NOT_LICENSED", "CVVC_ACROSS_WORD_BOUNDARY"))
+            return Certificate(core, residue, junction)
         elif not licensed(kind_of(atoms)):
             # الترخيصُ الثلاثيّ (`Ternary.ContinueLicensed`/`PauseLicensed`) هو الحكمُ الأخير.
             return Refusal("REJECT", ("NOT_PAUSE_LICENSED",) if pause

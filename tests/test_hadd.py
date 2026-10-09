@@ -205,15 +205,18 @@ def test_sealed_corpus_before_equals_after() -> None:
     assert ready == 17551
 
 
-def test_junction_after_madd_is_refused_by_name() -> None:
-    """يَا + الْأَرْضِ: الألفُ ثمّ لامٌ ساكنةٌ غيرُ مدغمة عند الحدّ؛ كان الثلاثيُّ يقبلها، والقيدُ يرفضها
-    باسمها ولا يُقصّر المدَّ تخمينًا. وبعد متحرّكٍ (قُلِ) يبقى الوصلُ مقبولًا."""
+def test_junction_after_madd_is_licensed_by_a_named_repair() -> None:
+    """يَا + الْأَرْضِ: الألفُ ثمّ لامٌ ساكنةٌ غيرُ مدغمة عند الحدّ؛ كان الثلاثيُّ يقبلها والقيدُ يرفضها
+    باسمها (`CVVC_NOT_GEMINATE`) حين لم يكن لتقصير المدّ اسم؛ والآن (ADR ٤، `Iltiqa.maddDropped`)
+    يُحذف المدُّ وجهًا مسمًّى تحمله الشهادة — لا تخمينًا — ويبقى القيدُ وحدَه (`strict_joined`) رافضًا بلا
+    إصلاح.
+    وبعد متحرّكٍ (قُلِ) الوصلُ مقبولٌ بلا وجه."""
 
     after_madd = enter("الْأَرْضِ".encode(), Context(entry="joined", left="يَا"))
-    assert isinstance(after_madd, Refusal)
-    assert after_madd.reasons == ("JUNCTION_NOT_LICENSED", "CVVC_NOT_GEMINATE")
+    assert not isinstance(after_madd, Refusal) and after_madd.junction == "MADD_DROPPED"
+    assert not strict_joined(w("يَ اْ"), after_madd.atoms)  # بلا إصلاحٍ يبقى الرفض
     after_vowel = enter("الْأَرْضِ".encode(), Context(entry="joined", left="قُلِ"))
-    assert not isinstance(after_vowel, Refusal)
+    assert not isinstance(after_vowel, Refusal) and after_vowel.junction is None
 
 
 def _join_rows() -> list[tuple[tuple[str, ...], tuple[str, ...], bool, bool, bool]]:
@@ -263,15 +266,16 @@ def test_lean_join_table_rejects_named_mutants(
     assert wrong > 0
 
 
-def test_madd_then_geminate_across_words_is_refused_by_name() -> None:
+def test_madd_then_geminate_across_words_is_refused_without_repair() -> None:
     """`ya_shafiina_straddles`: يَا + الشَّافِعِينَ — المدُّ في الأولى والمدغمُ (لامُ الشمسيّة) في الثانية؛
     الاستثناءُ داخلَ الكلمة الواحدة وحدَها، فيُرفض باسمه. والمدُّ والمدغمُ معًا في الثانية مقبولان."""
 
     shafiina = "\u0627\u0644\u0634\u0651\u064e\u0627\u0641\u0650\u0639\u0650\u064a\u0646\u064e"
     # الرسمُ بنقاطه في المدوّنة المختومة (الشدّةُ قبل الفتحة)، لا كما تُدخله لوحةُ مفاتيح
     across = enter(shafiina.encode(), Context(entry="joined", left="يَا"))
-    assert isinstance(across, Refusal)
-    assert across.reasons == ("JUNCTION_NOT_LICENSED", "CVVC_ACROSS_WORD_BOUNDARY")
+    # كان يُرفض `CVVC_ACROSS_WORD_BOUNDARY`؛ والآن (ADR ٤) يُحذف المدُّ وجهًا مسمًّى، والقيدُ بلا إصلاحٍ
+    # يبقى رافضًا (`strict_joined` أدناه): الاستثناءُ داخلَ الكلمة الواحدة وحدَها.
+    assert not isinstance(across, Refusal) and across.junction == "MADD_DROPPED"
     assert strict_joined(w("قُ لِ"), w("ضَ اْ لْ لِ يْ نَ"))  # quli_dallina_join
     assert not strict_joined(w("يَ اْ"), w("شْ شَ اْ فِ عِ يْ نَ"))  # ya_shafiina_straddles
     assert strict_licensed(w("يَ اْ شْ شَ اْ فِ عِ يْ نَ"))  # …وكان القيدُ بلا حدٍّ يقبلها

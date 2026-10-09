@@ -92,6 +92,24 @@ def allJ : Nat → List (List Cell)
 def atomsOf (w : List Cell) : String :=
   " ".intercalate (w.map fun c => String.ofList [Field112.carrierChar c.carrier, mark c.haraka])
 
+def iltiqaAlphabet : List Cell :=
+  ['ء', 'ا', 'و', 'ي', 'ن', 'ل'].flatMap fun ch => Haraka.all.map fun h => Ladder.atom ch h
+
+def allI : Nat → List (List Cell)
+  | 0 => [[]]
+  | n + 1 => (allI n).flatMap fun w => iltiqaAlphabet.map fun c => w ++ [c]
+
+def repairName : Option Iltiqa.Repair → String
+  | none => "-"
+  | some .farqAlifDropped => "FARQ_ALIF_DROPPED"
+  | some .maddDropped => "MADD_DROPPED"
+  | some .sakinKasra => "SAKIN_KASRA"
+
+/-- التقاءُ الساكنين على الحدّ: الزوج، الوجه، الأولى بعد الإصلاح، الوصلُ قبلُ وبعدُ، والوقفُ بعدُ. -/
+def renderIltiqa (l r : List Cell) : String :=
+  let p := Iltiqa.repair l r
+  s!"{atomsOf l}|{atomsOf r},{repairName p.2},{atomsOf p.1},{Hadd.strictJoinB l r},{Iltiqa.strictJoinRepairedB l r},{Iltiqa.strictJoinPauseRepairedB l r}"
+
 def renderJoin (l r : List Cell) : String :=
   s!"{atomsOf l}|{atomsOf r},{Hadd.strictB (l ++ r)},{Hadd.strictJoinB l r},{Hadd.strictJoinPauseB l r}"
 
@@ -129,6 +147,12 @@ def main (args : List String) : IO Unit := do
         for n in List.range 2 do
           for r in HaddTable.allJ (n + 1) do
             IO.println (HaddTable.renderJoin l r)
+  | ["iltiqa"] =>
+    for m in List.range 2 do
+      for l in HaddTable.allI (m + 1) do
+        for n in List.range 2 do
+          for r in HaddTable.allI (n + 1) do
+            IO.println (HaddTable.renderIltiqa l r)
   | ["hamza"] =>
     -- جدولُ الكرسيّ لكلّ سياق: pos,own,prev,prevLong,prevYa,nextWaw,seat
     for p in [Hamza.Pos.initial, .medial, .final] do

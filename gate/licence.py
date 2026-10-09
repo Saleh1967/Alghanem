@@ -199,6 +199,47 @@ def strict_joined_pause(left: Sequence[str], right: Sequence[str]) -> bool:
     return strict_pause_licensed(tuple(left) + tuple(right)) and not straddles(left, right)
 
 
+# ── التقاءُ الساكنين على الحدّ (`A116.Iltiqa`) ──────────────────────────────────────────────
+REPAIRS: tuple[str, ...] = ("FARQ_ALIF_DROPPED", "MADD_DROPPED", "SAKIN_KASRA")
+"""أوجهُ الوصل في آخر الأولى (`Iltiqa.Repair`): الألفُ الفارقة تسقط؛ حرفُ المدّ يُحذف؛ الساكنُ يُكسَر."""
+
+
+def _starts_sukun(atoms: Sequence[str]) -> bool:
+    return bool(atoms) and atoms[0][1] == "\u0652"
+
+
+def _ends_sukun(atoms: Sequence[str]) -> bool:
+    return bool(atoms) and atoms[-1][1] == "\u0652"
+
+
+def repair_junction(
+    left: Sequence[str], right: Sequence[str]
+) -> tuple[tuple[str, ...], str | None]:
+    """`Iltiqa.repair`: عند التقاء ساكنٍ آخرَ الأولى بساكنٍ أوّلَ الثانية — بترتيبٍ لا يُبدَّل: الألفُ
+    الفارقة (وُ اْ) تسقط، أو حرفُ المدّ (`v`) يُحذف، أو الساكنُ يُكسَر؛ وإلّا لا شيء. الثانيةُ لا تُمسّ."""
+
+    left = tuple(left)
+    if not (_starts_sukun(right) and _ends_sukun(left)):
+        return left, None
+    if len(left) >= 2 and left[-1] == "اْ" and left[-2] == "وُ":
+        return left[:-1], "FARQ_ALIF_DROPPED"
+    if kind_of(left)[-1] == "v":
+        return left[:-1], "MADD_DROPPED"
+    return (*left[:-1], left[-1][0] + "\u0650"), "SAKIN_KASRA"
+
+
+def strict_joined_repaired(left: Sequence[str], right: Sequence[str]) -> bool:
+    """`Iltiqa.strictJoinRepairedB`: الوصلُ بقيد الحدّ بعد الإصلاح."""
+
+    return strict_joined(repair_junction(left, right)[0], right)
+
+
+def strict_joined_pause_repaired(left: Sequence[str], right: Sequence[str]) -> bool:
+    """`Iltiqa.strictJoinPauseRepairedB`: الوصلُ وقفًا بقيد الحدّ بعد الإصلاح."""
+
+    return strict_joined_pause(repair_junction(left, right)[0], right)
+
+
 def licence(atoms: Sequence[str]) -> tuple[Lead, list[Syl]] | None:
     """ذرّاتٌ ← تقطيعُها الثلاثيّ، أو `None` إن لم تُقطَّع."""
 

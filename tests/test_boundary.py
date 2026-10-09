@@ -35,11 +35,14 @@ def test_pause_ends_with_sukun() -> None:
 
 def test_wasl_dropped_when_joined_and_junction_is_licensed() -> None:
     """`wasl_dropped_needs_moving_left` + `pause_then_join_is_not_join`: همزةُ الوصل تسقط في الوصل
-    فتصير الكلمةُ مبدوءةً بساكن؛ تُقبل بعد متحرّك (قُلِ) وتُرفض باسمها بعد ساكن (قُلْ)."""
+    فتصير الكلمةُ مبدوءةً بساكن؛ تُقبل بعد متحرّك (قُلِ) بلا وجه، وبعد ساكن (قُلْ) لا يُقبل الساكنان
+    (`pause_then_join_is_not_join`) إلّا بوجهٍ مسمًّى: الساكنُ يُكسَر (`Iltiqa.sakinKasra`؛ ADR ٤ — كان
+    يُرفض `JUNCTION_NOT_LICENSED` حين لم يكن للوجه اسم)، وتحمله الشهادةُ لا الكلمة."""
 
     start = enter(AL_HAMD.encode("utf-8"))
     assert not isinstance(start, Refusal) and start.atoms[:2] == ("ءَ", "لْ")
     joined = enter(AL_HAMD.encode("utf-8"), Context(entry="joined", left="قُلِ"))
-    assert not isinstance(joined, Refusal) and joined.atoms[0] == "لْ"
+    assert not isinstance(joined, Refusal) and joined.atoms[0] == "لْ" and joined.junction is None
     after_sukun = enter(AL_HAMD.encode("utf-8"), Context(entry="joined", left="قُلْ"))
-    assert isinstance(after_sukun, Refusal) and after_sukun.reasons == ("JUNCTION_NOT_LICENSED",)
+    assert not isinstance(after_sukun, Refusal) and after_sukun.junction == "SAKIN_KASRA"
+    assert after_sukun.atoms == joined.atoms  # ذرّاتُ الكلمة الثانية كما هي
