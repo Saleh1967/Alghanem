@@ -9,8 +9,8 @@ import Slge.Maqayis
 
 * **شجرة**: المعرّفاتُ مواضع (`ids_are_positions`)؛ الأبُ أسبقُ من ابنه (`parent_lt`: لا دور) وأدنى مستوًى، وكتابُ
   الابن كتابُ أبيه (`parent_level_lt`)؛ المستوى الأوّل وحدَه بلا أب وكتابُه نفسُه (`level_one_iff_no_parent`)؛ كتابُ
-  كلّ عقدةٍ من المستوى الأوّل (`book_is_level_one`)؛ الأعدادُ بالمستوى (`level_counts`). فالكتابُ، بالاستقراء على
-  `parent_lt`، ما تبلغه مطاردةُ الأب — الاستقراءُ العامّ غيرُ مكتوبٍ في Lean (الفحصُ الشامل في `test_conformance`).
+  كلّ عقدةٍ من المستوى الأوّل (`book_is_level_one`)؛ الأعدادُ بالمستوى (`level_counts`). فالكتابُ ما تبلغه مطاردةُ الأب — **مكتوبٌ** عامًّا (`chase_eq_book`: استقراءٌ على الوقود فوق خواصّ
+  العقد المقرَّرة `nodes_ok`).
 * **القابليّات**: `caps` العقدُ ذاتُ الجذور (بالتعريف)، و`capsUnder b` اتّحادُ جذور عناوين ما تحت الكتاب `b`
   **بالتعريف** — فكلُّ قابليّةٍ موروثة شهد بها عنوانٌ تحت الكتاب، ولا قابليّةَ بلا عنوان؛ وعددُ العقد المربوطة
   (`caps_length`).
@@ -73,6 +73,81 @@ theorem parent_level_lt :
 
 set_option maxRecDepth 100000 in
 theorem book_is_level_one : nodes.all (fun n => levelOf n.2.2.2.1 == 1) = true := by decide +kernel
+
+/-! ## الاستقراءُ العامّ: الكتابُ ما تبلغه مطاردةُ الأب
+
+كان مكتوبًا أعلاه أنّ الاستقراءَ العامّ «غيرُ مكتوبٍ في Lean». هنا يُكتب: خواصُّ العقدة الواحدة بمؤشّرها
+تُقرَّر على الجدول (`nodes_ok` — فحصٌ منتهٍ على 1,600 عقدة، كلُّ عقدةٍ في اليد)، ثمّ **الاستقراءُ على الوقود** عامٌّ لا يَعدّ:
+مطاردةُ الأب من أيّ عقدةٍ تبلغ كتابَها (`chase_eq_book`)، والوقودُ i يكفي لأنّ الأبَ أسبقُ من ابنه. -/
+
+/-- مطاردةُ الأب بوقود: من `i` صعودًا حتى عقدةٍ بلا أب. -/
+def chase : Nat → Nat → Nat
+  | 0, i => i
+  | fuel + 1, i => if parentOf i < 0 then i else chase fuel (parentOf i).toNat
+
+/-- خواصُّ العقدة الواحدة (وهي في اليد): أبوها أسبقُ منها؛ بلا أبٍ فكتابُها نفسُها، وبأبٍ فكتابُها كتابُ أبيها. -/
+def nodeOK (n : Node) : Bool :=
+  decide (n.2.2.1 < (n.1 : Int)) &&
+    (if n.2.2.1 < 0 then n.2.2.2.1 == n.1 else bookOf n.2.2.1.toNat == n.2.2.2.1)
+
+set_option maxRecDepth 100000 in
+theorem nodes_ok : nodes.all nodeOK = true := by decide +kernel
+
+theorem node_mem (i : Nat) (h : i < nodes.length) : node i ∈ nodes := by
+  unfold node
+  rw [← List.getElem_eq_getD (h := h)]
+  exact List.getElem_mem h
+
+/-- المعرّفُ موضعُه، بمؤشّره (من `ids_are_positions`). -/
+theorem node_id (i : Nat) (h : i < nodes.length) : (node i).1 = i := by
+  have hall := List.all_eq_true.mp ids_are_positions
+  have hlen : i < ((List.range nodes.length).zip nodes).length := by
+    simp [List.length_zip, h]
+  have hmem := List.getElem_mem hlen
+  rw [List.getElem_zip, List.getElem_range] at hmem
+  have := hall _ hmem
+  simp only [beq_iff_eq] at this
+  unfold node
+  rw [← List.getElem_eq_getD (h := h)]
+  exact this
+
+theorem nodeOK_unfold {i : Nat} (h : i < nodes.length) :
+    parentOf i < (i : Int) ∧
+      (parentOf i < 0 → bookOf i = i) ∧ (¬ parentOf i < 0 → bookOf (parentOf i).toNat = bookOf i) := by
+  have hok := List.all_eq_true.mp nodes_ok _ (node_mem i h)
+  have hid := node_id i h
+  unfold nodeOK at hok
+  simp only [Bool.and_eq_true, decide_eq_true_eq] at hok
+  unfold parentOf bookOf
+  rw [hid] at hok
+  refine ⟨hok.1, fun hp => ?_, fun hp => ?_⟩
+  · rw [ite_eq_left hp] at hok; exact beq_iff_eq.mp hok.2
+  · rw [ite_eq_right hp] at hok; exact beq_iff_eq.mp hok.2
+
+/-- **الاستقراءُ العامّ**: من أيّ عقدةٍ بوقودٍ لا يقلّ عن مؤشّرها تبلغ المطاردةُ كتابَها. -/
+theorem chase_eq_book : ∀ (fuel i : Nat), i < 1600 → i ≤ fuel → chase fuel i = bookOf i
+  | 0, i, hi, hf => by
+    have : i = 0 := Nat.le_zero.mp hf
+    subst this
+    decide
+  | fuel + 1, i, hi, hf => by
+    obtain ⟨hlt, hroot, hstep⟩ := nodeOK_unfold (by rw [nodes_length]; exact hi)
+    simp only [chase]
+    split
+    · exact (hroot ‹_›).symm
+    · rename_i hp
+      have hp' : 0 ≤ parentOf i := Int.not_lt.mp hp
+      have hpn : (parentOf i).toNat < i := by
+        have := Int.toNat_lt_toNat (by omega : (0 : Int) < i) |>.mpr hlt
+        simpa using this
+      rw [chase_eq_book fuel (parentOf i).toNat (by omega) (by omega)]
+      exact hstep hp
+
+/-- بوقودٍ قدرِ المؤشّر. -/
+theorem chase_self (i : Nat) (hi : i < 1600) : chase i i = bookOf i := chase_eq_book i i hi (Nat.le_refl i)
+
+/-- شاهدان: 163 كتابٌ قائم (بلا أب)، و 3 تحت 2 تحت 1. -/
+theorem chase_witnesses : chase 163 163 = 163 ∧ chase 3 3 = 1 ∧ chase 2 2 = 1 := by decide +kernel
 
 /-! ## الحكم -/
 

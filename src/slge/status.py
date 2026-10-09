@@ -1162,10 +1162,11 @@ _DECLARED: tuple[Claim, ...] = (
        "lean:Slge.Mukhassas.nodes_length", "lean:Slge.Mukhassas.ids_are_positions",
        "lean:Slge.Mukhassas.parent_lt", "lean:Slge.Mukhassas.parent_level_lt",
        "lean:Slge.Mukhassas.level_one_iff_no_parent", "lean:Slge.Mukhassas.book_is_level_one",
-       "lean:Slge.Mukhassas.level_counts",
+       "lean:Slge.Mukhassas.level_counts", "lean:Slge.Mukhassas.nodes_ok",
+       "lean:Slge.Mukhassas.node_id", "lean:Slge.Mukhassas.chase_eq_book",
        "test:tests/test_mukhassas.py::test_tree_is_the_source_tree",
-       note="الاستقراءُ العامّ (الكتابُ ما تبلغه مطاردةُ الأب) غيرُ مكتوبٍ في Lean؛ محليًّا مبرهَن وشاملًا "
-            "مفحوص."),
+       note="الاستقراءُ العامّ مكتوبٌ (2026-10-09): مطاردةُ الأب من أيّ عقدةٍ تبلغ كتابَها — استقراءٌ على "
+            "الوقود فوق خواصّ العقد المقرَّرة على الجدول (`chase_eq_book`)."),
     _c("MUKHASSAS-rasm", "ربطُ عناوين الشجرة بجذور المقاييس بالرسم (قاعدةٌ معلَنة: سوابقُ ولواحق، "
        "ثلاثةُ "
        "حروف أو أربعةٌ بألف، ألفاظُ الهيكل لا تُربط): 1,080 من 1,600 عقدة، 608 جذرًا متمايزًا؛ قابليّةُ "

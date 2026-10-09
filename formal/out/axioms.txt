@@ -816,6 +816,11 @@
 'Slge.Mukhassas.caps_length' does not depend on any axioms
 'Slge.Mukhassas.parent_level_lt' depends on axioms: [propext]
 'Slge.Mukhassas.book_is_level_one' depends on axioms: [propext]
+'Slge.Mukhassas.nodes_ok' depends on axioms: [propext]
+'Slge.Mukhassas.node_id' depends on axioms: [propext, Quot.sound]
+'Slge.Mukhassas.chase_eq_book' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Mukhassas.chase_self' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Mukhassas.chase_witnesses' depends on axioms: [propext]
 'Slge.Mukhassas.mafhum_has_witness' depends on axioms: [propext, Quot.sound]
 'Slge.Mukhassas.mafhum_in_capsUnder' depends on axioms: [propext, Quot.sound]
 'Slge.Mukhassas.judge_total' depends on axioms: [propext]

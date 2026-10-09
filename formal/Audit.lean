@@ -821,6 +821,11 @@ import Slge
 #print axioms Slge.Mukhassas.caps_length
 #print axioms Slge.Mukhassas.parent_level_lt
 #print axioms Slge.Mukhassas.book_is_level_one
+#print axioms Slge.Mukhassas.nodes_ok
+#print axioms Slge.Mukhassas.node_id
+#print axioms Slge.Mukhassas.chase_eq_book
+#print axioms Slge.Mukhassas.chase_self
+#print axioms Slge.Mukhassas.chase_witnesses
 #print axioms Slge.Mukhassas.mafhum_has_witness
 #print axioms Slge.Mukhassas.mafhum_in_capsUnder
 #print axioms Slge.Mukhassas.judge_total
