@@ -752,6 +752,21 @@ def main (args : List String) : IO Unit := do
        ("allahu", ⟨Alam.allahu, [1, 0, 0, 0, 1, 1, 1], none⟩)]
     for (n, s) in ws do
       IO.println s!"shahada,{n},{key s.cells},{"-".intercalate (s.path.map toString)},{Shahada.encMadlul s.madlul},{Shahada.atomNumberC (Shahada.atoms s)},{Shahada.encListC s.path},{Shahada.fingerprintC s}"
+  | ["siyaq"] =>
+    -- السياق: الإسقاطُ إلى الحدّ بأوجه الوقف، والردُّ مرشَّحاتٍ لشواهدَ بعينها (الحدّ|الصورة|المرشَّحات).
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let hadds : List (String × Siyaq.Hadd) :=
+      [("start_continue", ⟨false, false⟩), ("joined_continue", ⟨true, false⟩),
+       ("start_pause", ⟨false, true⟩), ("joined_pause", ⟨true, true⟩)]
+    let words := [("lillahi", Siyaq.lillahiJoined), ("sabilan", Siyaq.sabilanPaused),
+                  ("wahidah", Siyaq.wahidahPaused), ("rahim", Sawabiq.kataba)]
+    for (hn, h) in hadds do
+      for (wn, w) in words do
+        IO.println s!"restore,{hn},{wn},{key w},{"|".intercalate ((Siyaq.restore h w).map key)}"
+    for (kn, k) in [("sukun", Siyaq.Waqf.sukun), ("alif", .alif), ("hadhf", .hadhf), ("ha", .ha)] do
+      for (wn, w) in [("sabilan", Siyaq.sabilan), ("wahidatun", Siyaq.wahidatun)] do
+        IO.println s!"waqf,{kn},{wn},{key w},{key (Siyaq.waqf k w)}"
+        IO.println s!"project,{kn},{wn},{key w},{key (Siyaq.project ⟨true, true⟩ true k (Categories.c 0 1 :: w))}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

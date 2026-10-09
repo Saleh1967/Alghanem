@@ -1256,9 +1256,21 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_conformance.py::test_shahada_matches_lean",
        note="البصمةُ على الخانات لا الرسم (بقيّةُ الرسم في شهادة الغانم)؛ المسارُ أعدادُ القراءات لا "
             "المختارةَ بعدُ؛ والمدلولُ لا تسنده وحدةٌ بعد (ADR ٢٧)."),
+    _c("SIYAQ-boundary", "الكلمةُ في حدّها (مودَعُ الغانم الثاني: المصحفُ موقعًا موقعًا في سياقه): "
+       "الإسقاطُ إلى الحدّ بوجوه الوقف الأربعة كما طبعتها البوّابة (تسكينٌ؛ تنوينُ النصب ألفًا؛ حذفُ "
+       "التنوين مع التسكين؛ تاءُ التأنيث هاءً) ثمّ سقوطُ همزة الوصل، والردُّ مرشَّحاتٍ مغلقٌ على الإسقاط "
+       "يحوي الصورةَ نفسَها ومحدودٌ باثنين وعشرين وستّة؛ كلُّ موقعٍ جاهزٍ في الحالين علاقتُه مسمّاة", _P,
+       "lean:Slge.Siyaq.project_restore", "lean:Slge.Siyaq.waqf_candidates_sound",
+       "lean:Slge.Siyaq.self_mem_restore", "lean:Slge.Siyaq.restore_plain",
+       "lean:Slge.Siyaq.restore_length_le", "lean:Slge.Siyaq.witness_paused",
+       "test:tests/test_siyaq.py::test_restore_is_closed_under_projection_and_contains_the_form",
+       "test:tests/test_siyaq.py::test_every_position_of_the_mushaf_has_a_named_relation",
+       "test:tests/test_conformance.py::test_siyaq_matches_lean",
+       note="وجهُ الوقف وهمزةُ الوصل معاملان لا يُقرآن من الخانات؛ وحركةُ الهمزة المردودة بقاعدة "
+            "`Sawabiq.lift` مقيسةٌ لا مبرهَنة (SIYAQ_INDEX.md: المثلان في الصدر يُقرآن أل) (ADR ٢٨)."),
     _c("INTIQAL-registry", "لا انتقالَ على الـ116 إلّا مسجَّلًا: كلُّ دالّةٍ عامّة تنقل خاناتٍ إلى خانات في "
        "الشجرة مسجَّلةٌ باسمها ومبرهنتها المدقَّقة أو دَينًا بملاحظة، والحارسُ يرفض غيرَ المسجَّل وغيرَ "
-       "المدقَّق؛ 87 انتقالًا: إغلاقٌ 32، خاصّةٌ 35، دَينٌ 20", _X,
+       "المدقَّق؛ 89 انتقالًا: إغلاقٌ 34، خاصّةٌ 35، دَينٌ 20", _X,
        "lean:Slge.Intiqal.registry_nodup", "lean:Slge.Intiqal.kind_matches_theorem",
        "test:tests/test_intiqal.py::test_every_transition_is_registered_and_its_theorem_audited",
        note="السجلُّ مفحوصٌ لا مبرهَن: Lean يرى الأسماءَ لا الدوالّ؛ والانتقالاتُ عبر أنواعٍ وسيطة خارج "

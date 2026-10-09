@@ -936,3 +936,13 @@ import Slge
 #print axioms Slge.Intiqal.registry_nodup
 #print axioms Slge.Intiqal.kind_matches_theorem
 #print axioms Slge.Intiqal.counts
+#print axioms Slge.Siyaq.setLast_of_lastSukun
+#print axioms Slge.Siyaq.lift_tail
+#print axioms Slge.Siyaq.dropLast_append_of_getLast?
+#print axioms Slge.Siyaq.waqf_candidates_sound
+#print axioms Slge.Siyaq.project_restore
+#print axioms Slge.Siyaq.self_mem_restore
+#print axioms Slge.Siyaq.restore_plain
+#print axioms Slge.Siyaq.restore_length_le
+#print axioms Slge.Siyaq.witness_joined
+#print axioms Slge.Siyaq.witness_paused

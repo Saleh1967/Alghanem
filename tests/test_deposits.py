@@ -69,3 +69,25 @@ def test_certificates_deposit_is_what_the_pinned_gate_printed() -> None:
     assert "GATE_REV" in ci and "gen_certificates.py --check" in ci  # CI يقرأ الإيداعَ من هنا
     d["forms"][7]["fiber_size"] += 1
     assert _canonical(d) != CERTIFICATES_DIGEST
+
+
+def test_context_deposit_is_what_the_pinned_gate_printed() -> None:
+    """المودَعُ الثاني (ADR ٢٨): المصحفُ موقعًا موقعًا في سياقه؛ بصمتُه القانونيّة ما طبعته البوّابةُ على
+    `GATE_REV` نفسِه، ومواقعُه مواقعُ الأوّل، وCI يعيد توليدَه من البوّابة نفسِها."""
+
+    import gzip
+    import json
+
+    from slge.manifest import CONTEXT_CERTIFICATES_DIGEST
+
+    with gzip.open(DATA / "context-certificates.json.gz", "rt", encoding="utf-8") as f:
+        d = json.load(f)
+    assert _canonical(d) == CONTEXT_CERTIFICATES_DIGEST
+    assert d["tokens"] == 78245 == len(d["stream"]) == sum(d["line_lengths"]) and d["lines"] == 6236
+    assert set(d["status"]) == {"READY", "REJECT", "DEFER"} and sum(d["status"].values()) == 78245
+    assert all(r.split(":")[0] in ("REJECT", "DEFER") for r in d["refusals"])
+    assert set(d["boundary_policy"]) == {"line", "entry", "exit", "domain"}
+    ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    assert "gen_context_certificates.py --check" in ci
+    d["stream"][3][1] ^= 1
+    assert _canonical(d) != CONTEXT_CERTIFICATES_DIGEST

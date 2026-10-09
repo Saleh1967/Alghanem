@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_intiqal_index.py` من `slge.intiqal.REGISTRY`؛ لا يُحرَّر باليد. الحارسُ يمشي على `src/slge` فيرفض دالّةَ انتقالٍ عامّةً (‎Word → Word‎) غيرَ مسجَّلة، وصفًّا بلا دالّة، ومبرهنةً غيرَ مدقَّقة في `Audit.lean`، ودَينًا بلا ملاحظة. السجلُّ **مفحوصٌ** لا مبرهَن: Lean (`IntiqalTable`) يحمل الأسماءَ لا الدوالَّ، والإغلاقُ حيث ذُكر مبرهنةٌ باسمها.
 
-87 انتقالًا: إغلاقٌ 32، خاصّةٌ 35، دَينٌ باسمه 20.
+89 انتقالًا: إغلاقٌ 34، خاصّةٌ 35، دَينٌ باسمه 20.
 
 | الوحدة | الدالّة | المبرهنة | النوع | ملاحظة |
 |---|---|---|---|---|
@@ -75,6 +75,8 @@
 | `sarf` | `idafa_jarr` | `Slge.Sarf.idafa_jarr_kasra` | خاصّة |  |
 | `sawabiq` | `lift` | `Slge.Sawabiq.joined_is_initial` | خاصّة |  |
 | `shibh` | `jarr_majrur` | `Slge.Shibh.jarr_majrur_licensed` | إغلاق |  |
+| `siyaq` | `project` | `Slge.Siyaq.project_restore` | إغلاق | الإسقاطُ إلى الحدّ يعود من كلّ مرشَّح ردٍّ إلى الصورة بعينها |
+| `siyaq` | `waqf` | `Slge.Siyaq.waqf_candidates_sound` | إغلاق | كلُّ مرشَّح وقفٍ يُسقَط بوجهٍ من الأربعة إلى الصورة بعينها |
 | `shibh` | `zarf` | — | — | الظرفُ شبهَ جملة بلا مبرهنةٍ باسمه |
 | `talab` | `lam_amr` | `Slge.Talab.lam_amr_licensed` | إغلاق |  |
 | `talab` | `lam_amr_after_waw` | `Slge.Sawabiq.sakin_is_kasra` | خاصّة |  |

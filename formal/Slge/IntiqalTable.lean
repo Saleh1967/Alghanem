@@ -77,6 +77,8 @@ def registry : List (String × String × String × Nat) := [
   ("sarf", "idafa_jarr", "Slge.Sarf.idafa_jarr_kasra", 1),
   ("sawabiq", "lift", "Slge.Sawabiq.joined_is_initial", 1),
   ("shibh", "jarr_majrur", "Slge.Shibh.jarr_majrur_licensed", 0),
+  ("siyaq", "project", "Slge.Siyaq.project_restore", 0),
+  ("siyaq", "waqf", "Slge.Siyaq.waqf_candidates_sound", 0),
   ("shibh", "zarf", "", 2),
   ("talab", "lam_amr", "Slge.Talab.lam_amr_licensed", 0),
   ("talab", "lam_amr_after_waw", "Slge.Sawabiq.sakin_is_kasra", 1),
@@ -97,6 +99,6 @@ def registry : List (String × String × String × Nat) := [
   ("zuruf", "qat", "Slge.Zuruf.hukm_qat", 1)
 ]
 
-theorem registry_length : registry.length = 87 := by rfl
+theorem registry_length : registry.length = 89 := by rfl
 
 end Slge.IntiqalTable

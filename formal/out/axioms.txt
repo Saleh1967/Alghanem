@@ -931,3 +931,13 @@
 'Slge.Intiqal.registry_nodup' does not depend on any axioms
 'Slge.Intiqal.kind_matches_theorem' does not depend on any axioms
 'Slge.Intiqal.counts' does not depend on any axioms
+'Slge.Siyaq.setLast_of_lastSukun' depends on axioms: [propext, Quot.sound]
+'Slge.Siyaq.lift_tail' depends on axioms: [propext]
+'Slge.Siyaq.dropLast_append_of_getLast?' depends on axioms: [propext]
+'Slge.Siyaq.waqf_candidates_sound' depends on axioms: [propext, Quot.sound]
+'Slge.Siyaq.project_restore' depends on axioms: [propext, Quot.sound]
+'Slge.Siyaq.self_mem_restore' depends on axioms: [propext, Quot.sound]
+'Slge.Siyaq.restore_plain' depends on axioms: [propext]
+'Slge.Siyaq.restore_length_le' depends on axioms: [propext, Quot.sound]
+'Slge.Siyaq.witness_joined' depends on axioms: [propext]
+'Slge.Siyaq.witness_paused' depends on axioms: [propext]

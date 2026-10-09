@@ -1387,3 +1387,30 @@ def test_shahada_matches_lean() -> None:
         s = Shahada(w, pth, m)
         assert atom_number(w) == int(atoms) and enc_list(pth) == int(enc), name
         assert fingerprint(s) == int(fp), name
+
+
+def test_siyaq_matches_lean() -> None:
+    """الردُّ `restore` لأربعة حدودٍ على أربع صور، والوقفُ بأوجهه الأربعة والإسقاطُ بعد رفع الهمزة على
+    سَبِيلًا ووَاحِدَةٌ = `Siyaq`."""
+
+    from slge.siyaq import WAQF, Hadd, project, restore, waqf
+
+    rows = _rows("siyaq.csv")
+    hadds = {"start_continue": Hadd(False, False), "joined_continue": Hadd(True, False),
+             "start_pause": Hadd(False, True), "joined_pause": Hadd(True, True)}
+    kinds = dict(zip(("sukun", "alif", "hadhf", "ha"), WAQF, strict=True))
+
+    def w(s: str) -> tuple[tuple[str, str], ...]:
+        return tuple(CELLS[int(i)] for i in s.split("-")) if s else ()
+
+    seen = 0
+    for r in rows:
+        if r[0] == "restore":
+            lean = tuple(w(x) for x in r[4].split("|"))
+            assert restore(hadds[r[1]], w(r[3])) == lean, (r[1], r[2])
+            seen += 1
+        elif r[0] == "waqf":
+            assert waqf(kinds[r[1]], w(r[3])) == w(r[4]), (r[1], r[2])
+        elif r[0] == "project":
+            assert project(Hadd(True, True), True, kinds[r[1]], (("ء", "كسر"), *w(r[3]))) == w(r[4])
+    assert seen == 16 and len(rows) == 32

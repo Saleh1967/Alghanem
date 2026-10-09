@@ -11,7 +11,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Final
 
-__all__ = ["CERTIFICATES_DIGEST", "DEPOSITS", "DEPOSIT_KINDS", "GATE_REV", "MODULES", "Deposit",
+__all__ = ["CERTIFICATES_DIGEST", "CONTEXT_CERTIFICATES_DIGEST", "DEPOSITS", "DEPOSIT_KINDS",
+           "GATE_REV", "MODULES", "Deposit",
            "Module", "index_tools", "lean_files", "readers_under_law", "tables"]
 
 
@@ -105,6 +106,7 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("nabhani_table", (), (), None, "test_nabhani.py"),  # مولَّدٌ من ج3 و«التفكير» المختومَين
     Module("shahada", ("Shahada",), ("shahada",), None, "test_shahada.py"),  # شهادةُ SLGE ببصمتها
     Module("intiqal", ("Intiqal", "IntiqalTable"), (), "gen_intiqal_index.py", "test_intiqal.py"),
+    Module("siyaq", ("Siyaq",), ("siyaq",), "gen_siyaq_index.py", "test_siyaq.py"),  # في حدّها
     Module("gates", (), (), None, "test_gates.py"),
 )
 """كلُّ وحدةٍ حيّة (وصفيّةُ `order`/`status`/`guard`/`manifest` خارجَها) وما يقابلها."""
@@ -130,7 +132,7 @@ class Deposit:
     licence: str = ""
 
 
-GATE_REV: Final[str] = "072ef77d1f9945ec2fde100f9d32c9b56d0e609e"
+GATE_REV: Final[str] = "5c88acfb00bd59e66a25f314b2f330945fbfc275"
 """إيداعُ بوّابة الغانم (`Saleh1967/Alghanem`، فرع `claude/official-gate`) الذي يُعاد منه توليدُ مودَع
 الشهادات في CI (`tools/gen_certificates.py --check`): ما يقيسه SLGE هو ما تطبعه البوّابةُ على المدوّنة
 المختومة بهذا الإيداع؛ أيُّ فرقٍ `DEPOSIT_DRIFTED_FROM_GATE`. يُرفع مع المودَع معًا لا أحدُهما وحدَه."""
@@ -139,10 +141,18 @@ CERTIFICATES_DIGEST: Final[str] = "4329fb9c3acaf5235c00da1e2373d9706c9739e488c05
 """بصمةُ المودَع بصورته القانونيّة (JSON مرتّبَ المفاتيح بلا فراغ) كما طبعتها البوّابةُ على `GATE_REV`؛
 يفحصها `tests/test_deposits.py` محلّيًّا بلا بوّابة، وCI يعيد التوليدَ من البوّابة نفسها."""
 
+CONTEXT_CERTIFICATES_DIGEST: Final[str] = (
+    "d78e2c4572e0133a3004ff481f608cbb7974930088340fb9aabb12d8721b705d")
+"""بصمةُ مودَع السياق (`context-certificates.json.gz`) بصورته القانونيّة كما طبعتها البوّابةُ على
+`GATE_REV` (`tools/gen_context_certificates.py`)؛ يُرفع مع `GATE_REV` والمودَع الأوّل معًا (ADR ٢٨)."""
+
 DEPOSITS: Final[tuple[Deposit, ...]] = (
     Deposit("corpus-certificates.json.gz", "واقع مختوم",
             "شهاداتُ المصحف كلِّه خاناتٍ وأعدادًا؛ بصمةُ المدوّنة فيه؛ يُعاد توليدُه من البوّابة على "
             "GATE_REV"),
+    Deposit("context-certificates.json.gz", "واقع مختوم",
+            "المصحفُ موقعًا موقعًا في سياقه (ابتداء/وصل، استمرار/وقف) من البوّابة على قاموسٍ مسمًّى؛ "
+            "مواقعُ المودَع الأوّل نفسُها (78,245)؛ يُعاد توليدُه من البوّابة على GATE_REV"),
     Deposit("maqayis-roots.json.gz", "وضع", "جذورُ مقاييس اللغة حواملَ (4,561)"),
     Deposit("sibawayh-abniya.tsv", "وضع", "أبنيةُ الأسماء عند سيبويه (158 هيكلًا)"),
     Deposit("nabhani-huruf.json", "وضع",
