@@ -30,7 +30,14 @@ from typing import Any, Final, cast
 
 from .contextual import Certificate as _Cert
 from .contextual import Codebook, Context, project
-from .licence import continue_licensed, hadd_ok, kind_of, straddles
+from .licence import (
+    continue_licensed,
+    hadd_ok,
+    hadd_pause_ok,
+    kind_of,
+    pause_licensed,
+    straddles,
+)
 from .residue import Edit, has_marks, repair, unrepair
 
 __all__ = [
@@ -144,6 +151,11 @@ class Gate:
             return Refusal(decision["status"], _reasons(decision))
         core = self.book.encode(canonical)  # type: ignore[no-untyped-call]
         atoms = tuple(core.atoms)
+        # الترخيصُ بالحدّ: وصلًا `Hadd.strictB` (`continueB ∧ haddB`)، ووقفًا `Hadd.strictPauseB`
+        # (`pauseB ∧ haddPauseB`: المدُّ العارض للسكون — `v c` في الطرف وحدَه يُقبل؛ `strictB_pause`).
+        pause = self.context.exit == "pause"
+        licensed = pause_licensed if pause else continue_licensed
+        hadd = hadd_pause_ok if pause else hadd_ok
         if self.context.entry == "joined":
             # قانونُ الحدّ (`Boundary.join_iff`): الموصولُ يُرخَّص مع ما قبله، لا وحدَه؛ وما سقطت وصلُه
             # لا يُقبل بعد ساكن (`pause_then_join_is_not_join`). لا تُحشَر كسرةٌ: رفضٌ مسمًّى.
@@ -151,20 +163,24 @@ class Gate:
             if left["status"] != "READY":
                 return Refusal("DEFER", ("LEFT_CONTEXT_HAS_NO_CERTIFICATE",))
             joined = tuple(left["atoms"]) + atoms
-            if not continue_licensed(kind_of(joined)):
-                return Refusal("REJECT", ("JUNCTION_NOT_LICENSED",))
-            if not hadd_ok(joined):
-                # `Hadd.strictB`: مدٌّ قبل ساكنٍ غيرِ مدغمٍ عند الحدّ (يَا + لْأَرْضِ) — لا يُقصَّر تخمينًا.
+            if not licensed(kind_of(joined)):
+                return Refusal("REJECT", ("JUNCTION_NOT_LICENSED",)
+                               + (("NOT_PAUSE_LICENSED",) if pause else ()))
+            if not hadd(joined):
+                # `Hadd.strictB`/`strictPauseB`: مدٌّ قبل ساكنٍ غيرِ مدغمٍ داخلَ الكلمة (يَا + لْأَرْضِ)
+                # — لا يُقصَّر تخمينًا؛ وقفًا الطرفُ وحدَه مُعفًى (`geminatePauseB_vc_carrier`).
                 return Refusal("REJECT", ("JUNCTION_NOT_LICENSED", "CVVC_NOT_GEMINATE"))
             if straddles(tuple(left["atoms"]), atoms):
-                # `Hadd.strictJoinB`: المدُّ في كلمةٍ والمدغمُ في الأخرى (يَا + شْشَافِعِينَ) — الاستثناءُ
-                # داخلَ الكلمة الواحدة وحدَها؛ والمدُّ يُقصَّر نطقًا، فلا يُرخَّص ولا يُقصَّر تخمينًا.
+                # `Hadd.strictJoinB`/`strictJoinPauseB`: المدُّ في كلمةٍ والمدغمُ في الأخرى
+                # (يَا + شْشَافِعِينَ) — الاستثناءُ داخلَ الكلمة الواحدة وحدَها؛ والمدُّ يُقصَّر نطقًا، فلا
+                # يُرخَّص ولا يُقصَّر تخمينًا.
                 return Refusal("REJECT", ("JUNCTION_NOT_LICENSED", "CVVC_ACROSS_WORD_BOUNDARY"))
-        elif not continue_licensed(kind_of(atoms)):
-            # الترخيصُ الثلاثيّ (`Ternary.ContinueLicensed`) هو الحكمُ الأخير: لا شهادةَ لغير المرخَّص.
-            return Refusal("REJECT", ("NOT_CONTINUE_LICENSED_AFTER_REPAIR",))
-        elif not hadd_ok(atoms):
-            # قيدُ الحدّ (`Hadd.strictB`): قافيةُ مدٍّ لا يُغلقها أوّلُ مثلين (قَالْتُ) — رفضٌ مسمًّى.
+        elif not licensed(kind_of(atoms)):
+            # الترخيصُ الثلاثيّ (`Ternary.ContinueLicensed`/`PauseLicensed`) هو الحكمُ الأخير.
+            return Refusal("REJECT", ("NOT_PAUSE_LICENSED",) if pause
+                           else ("NOT_CONTINUE_LICENSED_AFTER_REPAIR",))
+        elif not hadd(atoms):
+            # قيدُ الحدّ (`Hadd.strictB`/`strictPauseB`): قافيةُ مدٍّ داخليّة لا يُغلقها أوّلُ مثلين (قَالْتُ).
             return Refusal("REJECT", ("CVVC_NOT_GEMINATE",))
         return Certificate(core, residue)
 

@@ -54,12 +54,12 @@ def test_wasl_drops_after_a_word_and_pause_silences_the_last() -> None:
     assert _joined(allahi, rahman, "continue").atoms[0] == "رْ"
 
 
-def test_madd_before_a_pausal_sukun_is_refused_by_name_not_shortened() -> None:
-    """`Hadd.strictB`: قافيةُ مدٍّ يُغلقها ساكنُ الوقف (الرَّحِيمْ) ليست مثلين — رفضٌ مسمًّى؛ ما لم يُبرهَن
-    مدُّ الوقف العارض في Lean لا يُقصَّر تخمينًا (الدَّينُ المسمّى CVVC_PAUSE)."""
+def test_pausal_madd_is_licensed_and_the_cross_word_straddle_is_refused_by_name() -> None:
+    """`Hadd.strictPauseB`: قافيةُ مدٍّ يُغلقها ساكنُ الوقف (الرَّحِيمْ) مرخَّصةٌ وقفًا (المدُّ العارض
+    للسكون؛ `rahim_pause_debt_closed`) — الدَّينُ `CVVC_PAUSE` مسدود؛ ووصلًا كما كانت."""
 
     r = _joined(FATIHA[0][2], FATIHA[0][3], "pause")
-    assert r == Refusal("REJECT", ("JUNCTION_NOT_LICENSED", "CVVC_NOT_GEMINATE"))
+    assert not isinstance(r, Refusal) and r.atoms[-2:] == ("يْ", "مْ")
     assert not isinstance(_joined(FATIHA[0][2], FATIHA[0][3], "continue"), Refusal)
     # `Hadd.strictJoinB`: المدُّ في كلمةٍ والمدغمُ في التالية (اهْدِنَا + الصِّرَاطَ) — عبر الحدّ لا يُستثنى
     r = _joined(FATIHA[5][0], FATIHA[5][1], "continue")

@@ -66,6 +66,11 @@ TERMS: tuple[Term, ...] = (
          "(حَاجَّ) أو مدَّ فرق، والمدُّ والمدغمُ في كلمةٍ واحدة؛ وما سواه رفضٌ مسمًّى "
          "(`CVVC_NOT_GEMINATE`، `CVVC_ACROSS_WORD_BOUNDARY`) — `strictB` و`strictJoinB`.",
          "formal/a116/A116/Hadd.lean", "def strictB (w : List Cell) : Bool", ("قيدُ الحدّ",)),
+    Term("المدُّ العارض للسكون", "pausal madd (CVVC licensed only word-finally at pause)",
+         "وقفًا يُسكَّن الآخر فتجتمع قافيةُ مدٍّ ومُغلِقٌ في الطرف (الرَّحِيمْ)؛ الطرفُ وحدَه يُقبل "
+         "(`strictPauseB`، `strictJoinPauseB`) وكلُّ `v c` داخليٍّ مدغمٌ كما وصلًا؛ وما يرفضه الوقف "
+         "`NOT_PAUSE_LICENSED`.",
+         "formal/a116/A116/Hadd.lean", "def strictPauseB (w : List Cell) : Bool", ("المدُّ العارض",)),
     Term("السكونُ الموضعيّ", "positional sukun",
          "حالةُ `sukun` في الخانة معناها «موضعٌ لا تتبعه حركةٌ قصيرة» لا «عدمُ الحركة نطقًا»؛ فحرفُ المدّ "
          "خانةٌ ساكنةٌ موضعًا وجزءٌ ثانٍ من حركةٍ طويلةٍ نطقًا.",

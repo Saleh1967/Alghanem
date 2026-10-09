@@ -1,5 +1,6 @@
 import A116.Ternary
 import A116.Ladder
+import A116.Pause
 
 /-!
 # التقاءُ الساكنين على حدّه: قافيةُ المدّ (CVVC) لا تُرخَّص وصلًا إلّا والمُغلِقُ أوّلُ مثلين
@@ -42,6 +43,10 @@ import A116.Ladder
   الأولى ومُغلِقٌ أوّلَ الثانية مرفوضٌ لكلّ طول)، `strictJoinB_strict`، `strictJoinB_nil`، والعيبُ المسدود
   `ya_shafiina_straddles` (يَا + الشَّافِعِينَ: يقبله `strictB` موصولًا ويرفضه `strictJoinB`)، وشاهدا القبول
   `quli_dallina_join` و`quli_lhamdu_join`.
+* **الوقف** (`strictPauseB`، `haddPauseB`، `strictJoinPauseB`): المدُّ العارض للسكون — `v c` في الطرف وحدَه
+  يُقبل وقفًا؛ `strictB_pause` (الوصلُ يستلزم الوقف)، `geminatePauseB_vc_carrier` (كلُّ `v c` داخليٍّ مدغمٌ
+  وقفًا أيضًا)، `strictPauseB_pause` (وقفُ المرخَّص وصلًا مرخَّصٌ وقفًا إذا صار آخرُه مُغلِقًا)، والشواهدُ
+  `rahim_pause_debt_closed`، `asr_tamm_pause`، `rahmani_rahim_join_pause`، والطفرةُ `qaaltu_pause_still_refused`.
 
 ولا يُبرهَن هنا أنّ هذا القيدَ هو قانونُ العربيّة: Lean يُبرهن خواصَّ التعريف على الخانات؛ ومطابقتُه
 للمرويّ مقيسةٌ على المدوّنة المختومة (`tests/test_hadd.py`).
@@ -279,5 +284,320 @@ theorem quli_dallina_join : strictJoinB quli dallina = true := by
 theorem quli_lhamdu_join : strictJoinB quli lhamdu = true := by
   have hk : kindOf (quli ++ lhamdu) = flat .none [.CV, .CVC, .CVC, .CV] := by decide
   simp only [strictJoinB, strictB, hk, continueB_flat]; decide
+
+/-! ## قيدُ الحدّ وقفًا: المدُّ العارض للسكون
+
+في الوقف يُسكَّن الآخر (`Pause.pause`)، فتجتمع قافيةُ مدٍّ ومُغلِقٌ في الطرف (الرَّحِيمْ: `رَ حِ يْ مْ`) وليس
+بعد المُغلِق مثلٌ — فيرفضها `haddB` (`geminateB_vc_final`) مع أنّ `Ternary.pauseB` يقبل CVVC في
+الآخر. القيدُ وقفًا: كلُّ `v c` داخليٍّ مدغمٌ كما هو (`geminatePauseB_vc_carrier`)، والطرفيُّ وحده يُقبل
+(`geminatePauseB_vc_final`). والوصلُ يستلزم الوقف (`strictB_pause`)، ووقفُ المرخَّص وصلًا مرخَّصٌ وقفًا
+إذا صار آخرُه مُغلِقًا (`strictPauseB_pause`)؛ وما يبقى خارجَه باسمه: آخرٌ صار حرفَ مدٍّ بعد مدٍّ
+(CVV + `v` ليس مقطعًا) — لا تُدَّعى له مبرهنة. -/
+
+/-- شرطُ الموضع الواحد وقفًا: كـ`stepOK` إلّا `v` ثمّ `c` في الآخر. -/
+def stepOKPause : K × Cell → List (K × Cell) → Bool
+  | (.v, _), [(.c, _)] => true
+  | a, tl => stepOK a tl
+
+def geminatePauseB : List (K × Cell) → Bool
+  | [] => true
+  | a :: tl => stepOKPause a tl && geminatePauseB tl
+
+def haddPauseB (w : List Cell) : Bool :=
+  let p := (kindOf w).zip w
+  if isFarq w then geminatePauseB (p.drop 2) else geminatePauseB p
+
+/-- الترخيصُ الثلاثيّ وقفًا مع قيد الحدّ. -/
+def strictPauseB (w : List Cell) : Bool := Ternary.pauseB (kindOf w) && haddPauseB w
+
+/-- الوصلُ وقفًا على الثانية: مرخَّصٌ موصولًا وقفًا، ولا قافيةَ مدٍّ يقطعها الحدّ. -/
+def strictJoinPauseB (l r : List Cell) : Bool := strictPauseB (l ++ r) && !straddles l r
+
+theorem stepOK_pause {a : K × Cell} {tl : List (K × Cell)} (h : stepOK a tl = true) :
+    stepOKPause a tl = true := by
+  unfold stepOKPause; split
+  · rfl
+  · exact h
+
+theorem geminateB_pause : ∀ {p : List (K × Cell)}, geminateB p = true → geminatePauseB p = true
+  | [], _ => rfl
+  | a :: tl, h => by
+    simp only [geminateB, Bool.and_eq_true] at h
+    simp only [geminatePauseB, Bool.and_eq_true]
+    exact ⟨stepOK_pause h.1, geminateB_pause h.2⟩
+
+theorem haddB_pause {w : List Cell} (h : haddB w = true) : haddPauseB w = true := by
+  unfold haddB at h; unfold haddPauseB
+  split <;> rename_i hf <;> simp only [hf] at h <;> exact geminateB_pause h
+
+/-- الوصلُ يستلزم الوقف: القيدُ وقفًا لا يضيّق على مرخَّصٍ وصلًا. -/
+theorem strictB_pause {w : List Cell} (h : strictB w = true) : strictPauseB w = true := by
+  simp only [strictB, Bool.and_eq_true] at h
+  simp only [strictPauseB, Bool.and_eq_true]
+  exact ⟨(Ternary.pauseB_iff _).2 (Ternary.continue_is_pause ((Ternary.continueB_iff _).1 h.1)),
+         haddB_pause h.2⟩
+
+theorem geminatePauseB_cons_true {a : K × Cell} {tl : List (K × Cell)}
+    (h : geminatePauseB (a :: tl) = true) : geminatePauseB tl = true := by
+  simp only [geminatePauseB, Bool.and_eq_true] at h
+  exact h.2
+
+/-- **الأمان:** الرخصةُ طرفيّةٌ وحدَها — كلُّ `v` ثمّ `c` ثمّ خانةٍ مدغمٌ وقفًا كما وصلًا. -/
+theorem geminatePauseB_vc_carrier :
+    ∀ (p q : List (K × Cell)) (a x y : Cell) (k : K),
+      geminatePauseB (p ++ (.v, a) :: (.c, x) :: (k, y) :: q) = true → x.carrier = y.carrier
+  | [], q, a, x, y, k, h => by
+    simp only [List.nil_append, geminatePauseB, Bool.and_eq_true] at h
+    simpa [stepOKPause, stepOK] using h.1
+  | b :: p, q, a, x, y, k, h =>
+    geminatePauseB_vc_carrier p q a x y k (geminatePauseB_cons_true (by simpa using h))
+
+/-- الطرفُ يُقبل: `v` ثمّ `c` في الآخر لا يُسقط القبول. -/
+theorem geminatePauseB_vc_final (p : List (K × Cell)) (a x : Cell) :
+    geminatePauseB (p ++ [(.v, a), (.c, x)]) = geminatePauseB (p ++ [(.v, a)]) := by
+  induction p with
+  | nil => simp [geminatePauseB, stepOKPause, stepOK]
+  | cons b p ih =>
+    simp only [List.cons_append, geminatePauseB, ih]
+    congr 1
+    cases p with
+    | nil => cases b with | mk k c => cases k <;> simp [stepOKPause, stepOK]
+    | cons d q =>
+      cases b with | mk k c => cases k <;> cases d with | mk k' c' => cases k' <;>
+        cases q <;> simp [stepOKPause, stepOK]
+
+/-- **على الخانات:** في كلّ كلمةٍ مرخَّصةٍ بالقيد وقفًا ليست مدَّ فرق، كلُّ مدٍّ يليه مُغلِقٌ ثمّ خانةٌ
+فالمُغلِقُ أوّلُ مثلين. -/
+theorem strict_pause_interior_geminate {w : List Cell} (h : strictPauseB w = true)
+    (hf : isFarq w = false) {p q : List (K × Cell)} {a x y : Cell} {k : K}
+    (hz : (kindOf w).zip w = p ++ (.v, a) :: (.c, x) :: (k, y) :: q) : x.carrier = y.carrier := by
+  simp only [strictPauseB, haddPauseB, hf, Bool.and_eq_true] at h
+  rw [hz] at h
+  exact geminatePauseB_vc_carrier p q a x y k (by simpa using h.2)
+
+/-! ### وقفُ المرخَّص وصلًا مرخَّصٌ وقفًا (إذا صار آخرُه مُغلِقًا) -/
+
+open Stages in
+/-- إغلاقُ المقطع بساكنٍ زائد؛ لا إغلاقَ لما كان موقوفًا عليه أصلًا. -/
+def Syl.close : Syl → Option Syl
+  | .CV => some .CVC
+  | .CVV => some .CVVC
+  | .CVC => some .CVCC
+  | .CVVC => some .CVVCC
+  | _ => none
+
+open Stages in
+theorem close_atoms {s t : Syl} (h : Syl.close s = some t) : t.atoms = s.atoms ++ [.c] := by
+  cases s <;> simp [Syl.close] at h <;> subst h <;> rfl
+
+open Stages in
+theorem close_of_not_pauseOnly {s : Syl} (h : Ternary.pauseOnly s = false) : ∃ t, Syl.close s = some t := by
+  cases s <;> simp [Ternary.pauseOnly] at h <;> exact ⟨_, rfl⟩
+
+open Stages in
+theorem flatMap_ends_cv (ss : List Syl) (ks : List K)
+    (h : ss.flatMap Syl.atoms = ks ++ [.cv]) : ∃ ss0, ss = ss0 ++ [.CV] ∧ ss0.flatMap Syl.atoms = ks := by
+  rcases List.eq_nil_or_concat ss with rfl | ⟨ss0, s, rfl⟩
+  · simp at h
+  · simp only [List.concat_eq_append] at h ⊢
+    rw [List.flatMap_append, List.flatMap_singleton] at h
+    have hl := congrArg List.getLast? h
+    rw [List.getLast?_append, List.getLast?_append] at hl
+    simp only [List.getLast?_singleton] at hl
+    cases s <;> simp [Syl.atoms, Syl.coda] at hl
+    refine ⟨ss0, rfl, ?_⟩
+    have := List.append_inj_left' h (by rfl)
+    simpa [Syl.atoms, Syl.coda] using this
+
+open Stages in
+/-- على الأصناف: ما رُخِّص وصلًا وآخرُه متحرّكٌ، إذا صار آخرُه مُغلِقًا رُخِّص وقفًا (بشرط ألّا يكون كلمةً
+من خانةٍ واحدة). -/
+theorem pauseB_of_continueB_close (ks : List K) (hne : ks ≠ [])
+    (h : Ternary.continueB (ks ++ [.cv]) = true) : Ternary.pauseB (ks ++ [.c]) = true := by
+  unfold Ternary.continueB at h
+  split at h
+  · rename_i ss hp
+    have hf := flat_parse hp
+    simp only [flat, Lead.atoms, List.nil_append] at hf
+    obtain ⟨ss0, rfl, hss0⟩ := flatMap_ends_cv ss ks hf
+    rw [List.all_append] at h
+    simp only [Bool.and_eq_true, List.all_eq_true] at h
+    obtain ⟨hall, _⟩ := h
+    rcases List.eq_nil_or_concat ss0 with rfl | ⟨ss1, t, rfl⟩
+    · simp at hss0; exact absurd hss0 hne
+    · simp only [List.concat_eq_append] at hss0 hall
+      have ht : Ternary.pauseOnly t = false := by
+        have := hall t (by simp)
+        simpa using this
+      obtain ⟨t', ht'⟩ := close_of_not_pauseOnly ht
+      have hk : ks ++ [K.c] = flat .none (ss1 ++ [t']) := by
+        simp only [flat, Lead.atoms, List.nil_append, List.flatMap_append, List.flatMap_singleton,
+          close_atoms ht']
+        rw [← hss0, List.flatMap_append, List.flatMap_singleton, List.append_assoc]
+      unfold Ternary.pauseB
+      rw [hk, parse_flat]
+      simp only [List.dropLast_concat, List.all_eq_true]
+      intro s hs
+      have := hall s (by simp [hs])
+      simpa using this
+  · simp at h
+
+/-- الحركةُ الأخيرة في سلسلةٍ (أو السابقة إن كانت فارغة). -/
+def lastH (p : Option Haraka) : List Cell → Option Haraka
+  | [] => p
+  | x :: t => lastH (some x.haraka) t
+
+theorem kindGo_snoc : ∀ (p : Option Haraka) (v : List Cell) (x : Cell),
+    kindGo p (v ++ [x]) = kindGo p v ++ [kindOne (lastH p v) x]
+  | _, [], _ => rfl
+  | p, y :: t, x => by simp [kindGo, lastH, kindGo_snoc (some y.haraka) t x]
+
+theorem isFarq_snoc (v : List Cell) (c : Cell) (h : Haraka) :
+    isFarq (v ++ [⟨c.carrier, h⟩]) = isFarq (v ++ [c]) := by
+  match v with
+  | [] => rfl
+  | [_] => rfl
+  | [_, _] => simp [isFarq]
+  | _ :: _ :: _ :: _ => simp [isFarq]
+
+theorem zip_snoc_of_length {α β} (a : List α) (b : List β) (x : α) (y : β) (h : a.length = b.length) :
+    (a ++ [x]).zip (b ++ [y]) = a.zip b ++ [(x, y)] := by
+  rw [List.zip_append h]; rfl
+
+theorem stepOKPause_close (a : K × Cell) (p : List (K × Cell)) (k : K) (x y : Cell)
+    (hc : x.carrier = y.carrier) (h : stepOK a (p ++ [(k, x)]) = true) :
+    stepOKPause a (p ++ [(.c, y)]) = true := by
+  obtain ⟨ka, b⟩ := a
+  cases ka with
+  | cv => simp [stepOKPause, stepOK]
+  | c => simp [stepOKPause, stepOK]
+  | v =>
+    match p with
+    | [] => rfl
+    | [(kc, z)] =>
+      cases kc <;> simp [stepOKPause, stepOK] at h ⊢
+      rw [← hc]; exact h
+    | (kd, _) :: (ke, _) :: q =>
+      cases kd <;> cases ke
+      all_goals try simp [stepOKPause, stepOK]
+      all_goals simpa [stepOKPause, stepOK] using h
+
+/-- `geminateB` على سلسلةٍ آخرُها متحرّك يعطي `geminatePauseB` على السلسلة نفسها بآخرٍ مُغلِقٍ من حامله. -/
+theorem geminatePauseB_close : ∀ (p : List (K × Cell)) (k : K) (x y : Cell), x.carrier = y.carrier →
+    geminateB (p ++ [(k, x)]) = true → geminatePauseB (p ++ [(.c, y)]) = true
+  | [], _, _, _, _, _ => rfl
+  | a :: p, k, x, y, hc, h => by
+    simp only [List.cons_append, geminateB, Bool.and_eq_true] at h
+    simp only [List.cons_append, geminatePauseB, Bool.and_eq_true]
+    exact ⟨stepOKPause_close a p k x y hc h.1, geminatePauseB_close p k x y hc h.2⟩
+
+/-- **وقفُ المرخَّص وصلًا مرخَّصٌ وقفًا** إذا صار آخرُه مُغلِقًا: لكلّ كلمةٍ من خانتين فأكثر آخرُها متحرّك. -/
+theorem strictPauseB_pause (v : List Cell) (c : Cell) (hv : v ≠ []) (hcv : c.haraka ≠ .sukun)
+    (hk : kindOne (lastH none v) ⟨c.carrier, .sukun⟩ = .c) (h : strictB (v ++ [c]) = true) :
+    strictPauseB (Pause.pause (v ++ [c])) = true := by
+  rw [Pause.pause_snoc]
+  simp only [strictB, Bool.and_eq_true] at h
+  obtain ⟨hcont, hhadd⟩ := h
+  have hcv' : kindOne (lastH none v) c = .cv := by simp [kindOne, hcv]
+  have hk1 : kindOf (v ++ [c]) = kindOf v ++ [.cv] := by rw [kindOf, kindGo_snoc, hcv']; rfl
+  have hk2 : kindOf (v ++ [⟨c.carrier, .sukun⟩]) = kindOf v ++ [.c] := by
+    rw [kindOf, kindGo_snoc, hk]; rfl
+  have hlen : (kindOf v).length = v.length := kindGo_length none v
+  simp only [strictPauseB, Bool.and_eq_true]
+  constructor
+  · rw [hk2]
+    exact pauseB_of_continueB_close (kindOf v) (by cases v <;> simp_all [kindOf, kindGo]) (hk1 ▸ hcont)
+  · unfold haddB at hhadd
+    unfold haddPauseB
+    rw [isFarq_snoc, hk2, zip_snoc_of_length _ _ _ _ hlen]
+    rw [hk1, zip_snoc_of_length _ _ _ _ hlen] at hhadd
+    split at hhadd <;> rename_i hf <;> simp only [hf, ↓reduceIte]
+    · match v, hv with
+      | [], hv => exact absurd rfl hv
+      | [a], _ => simp [isFarq] at hf
+      | a :: b :: t, _ =>
+        simp only [List.cons_append, kindOf, kindGo, List.zip_cons_cons, List.drop_succ_cons,
+          List.drop_zero] at hhadd ⊢
+        exact geminatePauseB_close _ _ c ⟨c.carrier, .sukun⟩ rfl hhadd
+    · exact geminatePauseB_close _ _ c ⟨c.carrier, .sukun⟩ rfl hhadd
+
+/-! ### الشواهد وقفًا -/
+
+theorem cited_pause_letters_are_carriers :
+    ['ر', 'ح', 'م', 'ع', 'ص', 'ت'].all (Field112.carriers29.contains ·) = true := by
+  decide
+
+open Haraka in
+/-- الرَّحِيمِ موصولةً موقوفًا عليها: `رْ رَ حِ يْ مْ`. -/
+def rrahimPause : List Cell :=
+  [atom 'ر' sukun, atom 'ر' fatha, atom 'ح' kasra, atom 'ي' sukun, atom 'م' sukun]
+open Haraka in
+/-- رَحِيمٌ وصلًا: `رَ حِ يْ مُ`. -/
+def rahimu : List Cell := [atom 'ر' fatha, atom 'ح' kasra, atom 'ي' sukun, atom 'م' damma]
+open Haraka in
+/-- الْعَصْرِ موقوفًا عليها: `عَ صْ رْ` (CVCC). -/
+def asrPause : List Cell := [atom 'ع' fatha, atom 'ص' sukun, atom 'ر' sukun]
+open Haraka in
+/-- تَامّْ: `تَ اْ مْ مْ` (CVVCC). -/
+def tammPause : List Cell := [atom 'ت' fatha, atom 'ا' sukun, atom 'م' sukun, atom 'م' sukun]
+open Haraka in
+/-- الرَّحْمَنِ ابتداءً (الكلمةُ اليساريّة بصورتها): `ءَ رْ رَ حْ مَ نِ`. -/
+def rrahmani : List Cell :=
+  [atom 'ء' fatha, atom 'ر' sukun, atom 'ر' fatha, atom 'ح' sukun, atom 'م' fatha, atom 'ن' kasra]
+
+/-- **الدَّينُ المسمّى مسدود:** الرَّحِيمْ مرفوضةٌ وصلًا (`CVVC_NOT_GEMINATE`) ومقبولةٌ وقفًا. -/
+theorem rahim_pause_debt_closed :
+    strictB (Pause.pause rahimu) = false ∧ strictPauseB (Pause.pause rahimu) = true ∧
+    strictPauseB rahimu = true := by
+  refine ⟨?_, ?_, strictB_pause ?_⟩
+  · have hk : kindOf (Pause.pause rahimu) = flat .none [.CV, .CVVC] := by decide
+    simp only [strictB, hk, continueB_flat]; decide
+  · have hk : kindOf (Pause.pause rahimu) = flat .none [.CV, .CVVC] := by decide
+    simp only [strictPauseB, Ternary.pauseB, hk, parse_flat]; decide
+  · have hk : kindOf rahimu = flat .none [.CV, .CVV, .CV] := by decide
+    simp only [strictB, hk, continueB_flat]; decide
+
+/-- `strictPauseB_pause` على شاهده: رَحِيمٌ ← رَحِيمْ. -/
+theorem rahimu_pause_by_theorem : strictPauseB (Pause.pause rahimu) = true :=
+  strictPauseB_pause [atom 'ر' .fatha, atom 'ح' .kasra, atom 'ي' .sukun] (atom 'م' .damma)
+    (by simp) (by decide) (by decide) (by
+      show strictB rahimu = true
+      have hk : kindOf rahimu = flat .none [.CV, .CVV, .CV] := by decide
+      simp only [strictB, hk, continueB_flat]; decide)
+
+/-- CVCC وCVVCC وقفًا: مرفوضان وصلًا (`continueB`) مقبولان وقفًا. -/
+theorem asr_tamm_pause :
+    strictB asrPause = false ∧ strictPauseB asrPause = true ∧
+    strictB tammPause = false ∧ strictPauseB tammPause = true := by
+  have h1 : kindOf asrPause = flat .none [.CVCC] := by decide
+  have h2 : kindOf tammPause = flat .none [.CVVCC] := by decide
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · simp only [strictB, h1, continueB_flat]; decide
+  · simp only [strictPauseB, Ternary.pauseB, h1, parse_flat]; decide
+  · simp only [strictB, h2, continueB_flat]; decide
+  · simp only [strictPauseB, Ternary.pauseB, h2, parse_flat]; decide
+
+/-- **الطفرةُ المرفوضة:** الرخصةُ طرفيّةٌ — قَالْتُ تبقى مرفوضةً وقفًا، فالمدُّ قبل مُغلِقٍ داخليّ لا يُقبل. -/
+theorem qaaltu_pause_still_refused : strictPauseB qaaltu = false := by
+  have hk : kindOf qaaltu = flat .none [.CVVC, .CV] := by decide
+  simp only [strictPauseB, Ternary.pauseB, hk, parse_flat]; decide
+
+/-- الوصلُ وقفًا: الرَّحْمَنِ + الرَّحِيمْ مقبولٌ وقفًا ومرفوضٌ وصلًا. -/
+theorem rahmani_rahim_join_pause :
+    strictJoinB rrahmani rrahimPause = false ∧ strictJoinPauseB rrahmani rrahimPause = true := by
+  have hk : kindOf (rrahmani ++ rrahimPause) = flat .none [.CVC, .CVC, .CV, .CVC, .CV, .CVVC] := by
+    decide
+  refine ⟨?_, ?_⟩
+  · simp only [strictJoinB, strictB, hk, continueB_flat]; decide
+  · simp only [strictJoinPauseB, strictPauseB, Ternary.pauseB, hk, parse_flat]; decide
+
+theorem strictJoinPauseB_nil (r : List Cell) : strictJoinPauseB [] r = strictPauseB r := by
+  simp [strictJoinPauseB, straddles]
+
+theorem strictJoinB_pause {l r : List Cell} (h : strictJoinB l r = true) :
+    strictJoinPauseB l r = true := by
+  simp only [strictJoinB, Bool.and_eq_true] at h
+  simp only [strictJoinPauseB, Bool.and_eq_true]
+  exact ⟨strictB_pause h.1, h.2⟩
 
 end A116.Hadd

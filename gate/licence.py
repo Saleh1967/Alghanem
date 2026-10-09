@@ -9,7 +9,10 @@
 (`hajja`، `bahr`، `tamm`) في `tests/test_gate.py`. وإسقاطُ الذرّةِ على صنفها (`kind_of`) مرآةُ
 `A116.Hadd.kindOf`، وقيدُ الحدّ (`hadd_ok`، `strict_licensed`) مرآةُ `Hadd.haddB` و`Hadd.strictB`،
 ومطابقتُهما بجدول `lake exe a116-table hadd` (346,200 سطرًا) في `tests/test_hadd.py`؛ والحدُّ بين كلمتين
-(`strict_joined`) مرآةُ `Hadd.strictJoinB` بجدول `hadd-join` (293,904 سطرًا).
+(`strict_joined`) مرآةُ `Hadd.strictJoinB` بجدول `hadd-join` (293,904 سطرًا). ووقفًا
+(`strict_pause_licensed`، `hadd_pause_ok`، `strict_joined_pause`) مرآةُ `Hadd.strictPauseB`
+و`haddPauseB` و`strictJoinPauseB`: المدُّ العارض للسكون — `v c` في الطرف وحدَه يُقبل — في العمود الأخير
+من الجدولين.
 
 «ساكن» في الذرّة معناه موضعيّ: موضعٌ لا تتبعه حركةٌ قصيرة. فحرفُ المدّ (`اْ` بعد فتحة) ساكنٌ موضعًا
 وجزءٌ ثانٍ من حركةٍ طويلةٍ نطقًا، ودورُه `v` هو ما يفرّقه عن المُغلِق `c`.
@@ -149,6 +152,31 @@ def strict_licensed(atoms: Sequence[str]) -> bool:
     return continue_licensed(kind_of(atoms)) and hadd_ok(atoms)
 
 
+def _geminate_pause(pairs: Sequence[tuple[K, str]]) -> bool:
+    """`Hadd.geminatePauseB`: كـ`geminateB` إلّا `v` ثمّ `c` في الآخر (المدُّ العارض للسكون)."""
+
+    for i in range(len(pairs) - 1):
+        if pairs[i][0] == "v" and pairs[i + 1][0] == "c":
+            if i + 2 >= len(pairs):
+                return True  # الفرقُ الوحيد: الطرفُ يُقبل وقفًا
+            if _carrier(pairs[i + 1][1]) != _carrier(pairs[i + 2][1]):
+                return False
+    return True
+
+
+def hadd_pause_ok(atoms: Sequence[str]) -> bool:
+    """`Hadd.haddPauseB`: التقاءُ الساكنين على حدّه وقفًا — الطرفيُّ وحدَه مُعفًى."""
+
+    pairs = list(zip(kind_of(atoms), atoms))
+    return _geminate_pause(pairs[2:] if _is_farq(atoms) else pairs)
+
+
+def strict_pause_licensed(atoms: Sequence[str]) -> bool:
+    """`Hadd.strictPauseB`: مرخَّصٌ ثلاثيًّا وقفًا، وكلُّ قافيةِ مدٍّ داخليّة مدغمة (أو مدُّ فرق)."""
+
+    return pause_licensed(kind_of(atoms)) and hadd_pause_ok(atoms)
+
+
 def straddles(left: Sequence[str], right: Sequence[str]) -> bool:
     """`Hadd.straddles`: قافيةُ مدٍّ يقطعها الحدّ — `v | c` أو `v c | x`."""
 
@@ -163,6 +191,12 @@ def strict_joined(left: Sequence[str], right: Sequence[str]) -> bool:
     """`Hadd.strictJoinB`: الموصولُ مرخَّصٌ بالقيد، ولا قافيةَ مدٍّ يقطعها الحدّ (الاستثناءُ داخلَ الكلمة)."""
 
     return strict_licensed(tuple(left) + tuple(right)) and not straddles(left, right)
+
+
+def strict_joined_pause(left: Sequence[str], right: Sequence[str]) -> bool:
+    """`Hadd.strictJoinPauseB`: الموصولُ مرخَّصٌ بالقيد وقفًا، ولا قافيةَ مدٍّ يقطعها الحدّ."""
+
+    return strict_pause_licensed(tuple(left) + tuple(right)) and not straddles(left, right)
 
 
 def licence(atoms: Sequence[str]) -> tuple[Lead, list[Syl]] | None:

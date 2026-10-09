@@ -8,6 +8,10 @@
 ٤. المدوّنةُ المختومة: الرقمُ قبلُ وبعدُ واحد (لا جاهزَ سقط)، والوصلُ بعد مدٍّ يُرفض باسمه.
 ٥. الحدُّ بين كلمتين (`Hadd.strictJoinB`): مطابقةُ `hadd-join` (293,904 سطرًا) وطفرتان مسمّاتان، والعيبُ
    المسدود «يَا + الشَّافِعِينَ» مرفوضٌ في البوّابة باسمه.
+٦. الوقف (`Hadd.strictPauseB`، `strictJoinPauseB`): المدُّ العارض للسكون — مطابقةُ العمود الأخير في
+   الجدولين، وطفرتان مسمّاتان (الرخصةُ تتّسع للداخل / الوقفُ بلا رخصة)، وشواهدُ بتوقّعات الاصطلاح
+   (الرَّحِيمْ، الْعَصْرْ، تَامّْ مقبولة وقفًا؛ قَالْتُ مرفوضة)، والبوّابةُ تحكم بالحدّ: `exit="pause"` →
+   `NOT_PAUSE_LICENSED` لما يرفضه الوقف، ولا يرفض وقفًا ما قبله الوصل (`strictB_pause`).
 """
 
 from __future__ import annotations
@@ -23,9 +27,13 @@ from gate.licence import (
     K,
     continue_licensed,
     hadd_ok,
+    hadd_pause_ok,
     kind_of,
+    pause_licensed,
     strict_joined,
+    strict_joined_pause,
     strict_licensed,
+    strict_pause_licensed,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -37,24 +45,26 @@ def w(s: str) -> tuple[str, ...]:
     return tuple(s.split())
 
 
-def _rows() -> list[tuple[tuple[str, ...], list[str], bool, bool]]:
+def _rows() -> list[tuple[tuple[str, ...], list[str], bool, bool, bool]]:
     out = []
     with TABLE.open(encoding="utf-8") as fh:
         for line in fh:
-            atoms, kinds, cont, strict = line.rstrip("\n").split(",")
+            atoms, kinds, cont, strict, pause = line.rstrip("\n").split(",")
             out.append((tuple(atoms.split(" ")), kinds.lower().split("-"), cont == "true",
-                        strict == "true"))
+                        strict == "true", pause == "true"))
     return out
 
 
 def test_python_mirror_matches_lean_hadd_table() -> None:
     rows = _rows()
     assert len(rows) == 346200
-    for atoms, kinds, cont, strict in rows:
+    for atoms, kinds, cont, strict, pause in rows:
         k = kind_of(atoms)
         assert k == kinds, atoms
         assert continue_licensed(k) == cont, atoms
         assert strict_licensed(atoms) == strict, atoms
+        assert strict_pause_licensed(atoms) == pause, atoms
+        assert not strict or pause, atoms  # strictB_pause: الوصلُ يستلزم الوقف
 
 
 def _mut_no_gemination(atoms: Sequence[str]) -> bool:
@@ -87,8 +97,77 @@ def _mut_farq_any_madd_lam(atoms: Sequence[str]) -> bool:
     ids=["MUTANT_TERNARY_ONLY", "MUTANT_NO_FARQ", "MUTANT_FARQ_WITHOUT_HAMZA"],
 )
 def test_lean_table_rejects_named_mutants(mutant: Callable[[Sequence[str]], bool]) -> None:
-    wrong = sum(1 for atoms, _, _, strict in _rows() if mutant(atoms) != strict)
+    wrong = sum(1 for atoms, _, _, strict, _ in _rows() if mutant(atoms) != strict)
     assert wrong > 0
+
+
+def _mut_pause_interior_too(atoms: Sequence[str]) -> bool:
+    """الطفرة ٦ (`MUTANT_PAUSE_LICENCE_LEAKS_INSIDE`): الرخصةُ وقفًا تتّسع لكلّ `v c` لا للطرف وحدَه."""
+
+    return pause_licensed(kind_of(atoms))
+
+
+def _mut_pause_without_licence(atoms: Sequence[str]) -> bool:
+    """الطفرة ٧ (`MUTANT_PAUSE_IS_CONTINUE`): الوقفُ بلا رخصةٍ طرفيّة — `strictB` نفسُه."""
+
+    return strict_licensed(atoms)
+
+
+@pytest.mark.parametrize(
+    "mutant", [_mut_pause_interior_too, _mut_pause_without_licence],
+    ids=["MUTANT_PAUSE_LICENCE_LEAKS_INSIDE", "MUTANT_PAUSE_IS_CONTINUE"],
+)
+def test_lean_table_rejects_named_pause_mutants(mutant: Callable[[Sequence[str]], bool]) -> None:
+    wrong = sum(1 for atoms, _, _, _, pause in _rows() if mutant(atoms) != pause)
+    assert wrong > 0
+
+
+def test_pause_witnesses_with_independent_expectations() -> None:
+    """المدُّ العارض للسكون من اصطلاح القرّاء (مدٌّ طرفيٌّ أغلقه ساكنُ الوقف جائز)، والمدُّ الداخليُّ قبل
+    ساكنٍ غيرِ مدغم لا يجوز وقفًا ولا وصلًا؛ كلُّها شواهدُ مبرهنةٌ بأسمائها في `Hadd.lean`."""
+
+    pause_only = {
+        "الرَّحِيمْ": w("ءَ رْ رَ حِ يْ مْ"),  # rahim_pause_debt_closed (CV·CVC·CVVC)
+        "الْعَصْرْ": w("ءَ لْ عَ صْ رْ"),  # asr_tamm_pause (CVC·CVCC)
+        "تَامّْ": w("تَ اْ مْ مْ"),  # asr_tamm_pause (CVVCC)
+    }
+    for name, atoms in pause_only.items():
+        assert not strict_licensed(atoms), name
+        assert strict_pause_licensed(atoms), name
+        assert hadd_pause_ok(atoms), name
+    assert not strict_pause_licensed(w("قَ اْ لْ تُ"))  # qaaltu_pause_still_refused
+    assert not hadd_pause_ok(w("قَ اْ لْ تُ"))
+    assert strict_pause_licensed(w("حَ اْ جْ جَ")) and strict_pause_licensed(w("ءَ اْ لْ ءَ اْ نَ"))
+    # الحدُّ بين كلمتين وقفًا: rahmani_rahim_join_pause
+    left, right = w("ءَ رْ رَ حْ مَ نِ"), w("رْ رَ حِ يْ مْ")
+    assert not strict_joined(left, right) and strict_joined_pause(left, right)
+    assert not strict_joined_pause(w("يَ اْ"), w("شْ شَ اْ فِ عِ يْ نْ"))  # الحدُّ يقطع المدَّ وقفًا أيضًا
+
+
+def test_gate_licenses_by_its_exit() -> None:
+    """`exit="pause"` في البوّابة: الرَّحِيمِ آخرَ الفاتحة تُرخَّص وقفًا (وكانت تُرفض `CVVC_NOT_GEMINATE`
+    لأنّ الجسرَ يُسكِّن آخرَها ثمّ يُحكم عليها بقيد الوصل)، ووصلًا كما كانت؛ ولا يُرفض وقفًا ما قُبل وصلًا."""
+
+    rahim = "\u0627\u0644\u0631\u0651\u064e\u062d\u0650\u064a\u0645\u0650"  # الرَّحِيمِ برسم المدوّنة
+    cont = enter(rahim.encode(), Context(entry="joined", left="الرَّحْمَنِ"))
+    assert not isinstance(cont, Refusal) and cont.atoms[-1] == "مِ"
+    pause = enter(rahim.encode(), Context(entry="joined", exit="pause", left="الرَّحْمَنِ"))
+    assert not isinstance(pause, Refusal) and pause.atoms[-1] == "مْ"
+    start_pause = enter(rahim.encode(), Context(exit="pause"))
+    assert not isinstance(start_pause, Refusal) and start_pause.atoms == w("ءَ رْ رَ حِ يْ مْ")
+    nabudu = enter("نَعْبُدُ".encode(), Context(exit="pause"))
+    assert not isinstance(nabudu, Refusal) and nabudu.atoms[-1] == "دْ"
+    # ما يقبله الوصلُ يقبله الوقف (`strictB_pause`) على عيّنةٍ من المدوّنة
+    g, gp = gate(), gate_pause()
+    for surface in list(g.book.domain)[:2000]:
+        if not isinstance(g.enter(surface.encode()), Refusal):
+            assert not isinstance(gp.enter(surface.encode()), Refusal), surface
+
+
+def gate_pause() -> object:
+    from gate.api import Gate
+
+    return Gate(Context(exit="pause"))
 
 
 def test_named_witnesses_with_independent_expectations() -> None:
@@ -137,23 +216,25 @@ def test_junction_after_madd_is_refused_by_name() -> None:
     assert not isinstance(after_vowel, Refusal)
 
 
-def _join_rows() -> list[tuple[tuple[str, ...], tuple[str, ...], bool, bool]]:
+def _join_rows() -> list[tuple[tuple[str, ...], tuple[str, ...], bool, bool, bool]]:
     out = []
     with JOIN_TABLE.open(encoding="utf-8") as fh:
         for line in fh:
-            pair, strict, joined = line.rstrip("\n").split(",")
+            pair, strict, joined, pause = line.rstrip("\n").split(",")
             left, right = pair.split("|")
             out.append((tuple(left.split(" ")), tuple(right.split(" ")), strict == "true",
-                        joined == "true"))
+                        joined == "true", pause == "true"))
     return out
 
 
 def test_python_mirror_matches_lean_hadd_join_table() -> None:
     rows = _join_rows()
     assert len(rows) == 293904
-    for left, right, strict, joined in rows:
+    for left, right, strict, joined, pause in rows:
         assert strict_licensed(left + right) == strict, (left, right)
         assert strict_joined(left, right) == joined, (left, right)
+        assert strict_joined_pause(left, right) == pause, (left, right)
+        assert not joined or pause, (left, right)  # strictJoinB_pause
 
 
 def _mut_no_boundary(left: Sequence[str], right: Sequence[str]) -> bool:
@@ -178,7 +259,7 @@ def _mut_boundary_after_madd_only(left: Sequence[str], right: Sequence[str]) -> 
 def test_lean_join_table_rejects_named_mutants(
     mutant: Callable[[Sequence[str], Sequence[str]], bool],
 ) -> None:
-    wrong = sum(1 for left, right, _, joined in _join_rows() if mutant(left, right) != joined)
+    wrong = sum(1 for left, right, _, joined, _ in _join_rows() if mutant(left, right) != joined)
     assert wrong > 0
 
 

@@ -80,7 +80,7 @@ def allW : Nat → List (List Cell)
 def render (w : List Cell) : String :=
   let atoms := " ".intercalate (w.map fun c => String.ofList [Field112.carrierChar c.carrier, mark c.haraka])
   let k := Hadd.kindOf w
-  s!"{atoms},{"-".intercalate (k.map SyllableTable.kName)},{Ternary.continueB k},{Hadd.strictB w}"
+  s!"{atoms},{"-".intercalate (k.map SyllableTable.kName)},{Ternary.continueB k},{Hadd.strictB w},{Hadd.strictPauseB w}"
 
 def joinAlphabet : List Cell :=
   ['ا', 'ل', 'ج'].flatMap fun ch => Haraka.all.map fun h => Ladder.atom ch h
@@ -93,7 +93,7 @@ def atomsOf (w : List Cell) : String :=
   " ".intercalate (w.map fun c => String.ofList [Field112.carrierChar c.carrier, mark c.haraka])
 
 def renderJoin (l r : List Cell) : String :=
-  s!"{atomsOf l}|{atomsOf r},{Hadd.strictB (l ++ r)},{Hadd.strictJoinB l r}"
+  s!"{atomsOf l}|{atomsOf r},{Hadd.strictB (l ++ r)},{Hadd.strictJoinB l r},{Hadd.strictJoinPauseB l r}"
 
 end HaddTable
 
