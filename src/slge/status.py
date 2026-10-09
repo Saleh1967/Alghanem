@@ -922,7 +922,7 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_gates.py::test_ladder_order_and_named_refusals",
        "test:tests/test_gates.py::test_whole_mushaf_climbs_consistently",
        note="قانونُ السُّلَّم مبرهَنٌ على المجرّد؛ البوّاباتُ تركّب الدوالَّ القائمة (مفحوص) ولا تبني قراءة."),
-    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (80 وحدة، 61 جدولًا، 51 فهرسًا): كلُّ وحدةٍ "
+    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (81 وحدة، 62 جدولًا، 51 فهرسًا): كلُّ وحدةٍ "
        "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
        "test:tests/test_gates.py::test_manifest_covers_the_tree",
        note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
@@ -1244,6 +1244,21 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_seals.py::test_owner_signed_deposits_match_their_hash_and_name_the_signer",
        note="قائمةُ الأعلام من صفوف MASAQ ثمّ وُقِّعت فاختيارُها غيرُ مستقلٍّ عن المرجع؛ وأل في لفظ "
             "الجلالة خلافٌ مع وسم المرجع مفصولٌ بالتوقيع لا بالقياس (ALAM_INDEX.md، ADR ٢٤)."),
+    _c("NABHANI-taxonomy", "تقسيماتُ النبهانيّ أنماطًا من «أبحاث اللغة» المختوم: الدالُّ وحده "
+       "(الدلالاتُ الثلاث، التراكيبُ الثلاثة، المركّبُ الستّة «من أقسام الدالّ وحده»)، المدلولُ وحده "
+       "(خمسةٌ فيها الهذيان)، الدالُّ والمدلول (سبعة)، النِّسَبُ الثلاث (إسناديّة، تقييديّة، إضافيّة)؛ "
+       "والترجيحُ عند تعارض ما يخلّ بالفهم عشرةُ أوجهٍ بنصّه رتبةً شبهَ تامّة: التخصيصُ أولى من الكلّ، "
+       "المجازُ والإضمارُ سيّان، ثمّ النقل، ثمّ الاشتراك — وكلُّ قائمةٍ مربوطةٌ بعبارات بحثها في المودَع", _P,
+       "lean:Slge.Nabhani.ten_rules", "lean:Slge.Nabhani.awla_total",
+       "lean:Slge.Nabhani.tie_only_majaz_idmar", "lean:Slge.Nabhani.dallMadlul_from_text",
+       "lean:Slge.Nabhani.madlul_from_text", "lean:Slge.Nabhani.ten_rules_from_text",
+       "lean:Slge.Nabhani.murakkab_is_dall", "lean:Slge.NabhaniTable.sections_length",
+       "test:tests/test_nabhani.py::test_three_divisions_with_their_members_in_text_order",
+       "test:tests/test_nabhani.py::test_tarjih_is_the_ten_rules_of_the_text",
+       "test:tests/test_conformance.py::test_nabhani_matches_lean",
+       "test:tests/test_seals.py::test_owner_sealed_books_match_their_hash",
+       note="الأنماطُ أسماءٌ في Lean لا قارئَ بعد؛ الترجيحُ ترتيبٌ لا يُسقط احتمالًا؛ الأطرُ (أنواعُ "
+            "المواقف) في طبقة الحكم لا في العمود، والسببيّاتُ أربعةُ مواضع (ADR ٢٦)."),
     _c("SAWABIQ-reader", "السوابقُ الحرفيّة تُقرأ بعلاقتها بما بعدها على أبواب الكتاب لسيبويه "
        "المودَعة بأسطرها: باءُ الجرّ ولامُ الجرّ أمام المجرور، لامُ الأمر أمام المجزوم، لامُ كي أمام "
        "المنصوب (أن مضمرة)، أل بهمزةٍ مفتوحة، همزةُ الوصل مكسورةً إلّا أن يُضمّ الثالث؛ الموصولُ يُردّ "

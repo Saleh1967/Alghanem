@@ -55,6 +55,8 @@ jobs:
         run: python tools/deposit_alam.py --check
       - name: the proclitic-chapter tables (Lean and Python) are generated from the sealed Kitab and the certificates deposit
         run: python tools/deposit_sawabiq.py --check
+      - name: the Nabhani taxonomy tables (Lean and Python) are generated from the owner-sealed books
+        run: python tools/deposit_nabhani.py --check
       - name: the certificates deposit is what the pinned gate prints now (stitching the layers by code, not by prose)
         run: |
           git clone -q https://github.com/Saleh1967/Alghanem.git /tmp/alghanem

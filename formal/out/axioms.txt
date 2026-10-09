@@ -898,3 +898,21 @@
 'Slge.Sawabiq.table_read' depends on axioms: [propext]
 'Slge.Sawabiq.table_kinds' does not depend on any axioms
 'Slge.Sawabiq.witness_none_and_multiple' depends on axioms: [propext]
+'Slge.NabhaniTable.sections_length' does not depend on any axioms
+'Slge.Nabhani.ten_rules' does not depend on any axioms
+'Slge.Nabhani.awla_trans' depends on axioms: [propext, Quot.sound]
+'Slge.Nabhani.awla_irrefl' depends on axioms: [propext]
+'Slge.Nabhani.awla_total' depends on axioms: [propext, Quot.sound]
+'Slge.Nabhani.tie_only_majaz_idmar' depends on axioms: [propext]
+'Slge.Nabhani.takhsis_top' depends on axioms: [propext]
+'Slge.Nabhani.ishtirak_bottom' depends on axioms: [propext]
+'Slge.Nabhani.dalala_from_text' does not depend on any axioms
+'Slge.Nabhani.tarkib_from_text' does not depend on any axioms
+'Slge.Nabhani.murakkab_from_text' does not depend on any axioms
+'Slge.Nabhani.madlul_from_text' does not depend on any axioms
+'Slge.Nabhani.dallMadlul_from_text' does not depend on any axioms
+'Slge.Nabhani.ihtimal_from_text' does not depend on any axioms
+'Slge.Nabhani.ten_rules_from_text' does not depend on any axioms
+'Slge.Nabhani.nisba_from_text' depends on axioms: [propext]
+'Slge.Nabhani.murakkab_is_dall' depends on axioms: [propext]
+'Slge.Nabhani.sections_count' does not depend on any axioms

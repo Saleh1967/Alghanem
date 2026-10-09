@@ -729,6 +729,18 @@ def main (args : List String) : IO Unit := do
       for m in Sawabiq.sawabiq w do
         IO.println s!"word,{n},{key w},{key m.pre}|{m.kind.idx}|{decide (m.under ≠ m.rest)}"
       IO.println s!"count,{n},{key w},{(Sawabiq.sawabiq w).length}"
+  | ["nabhani"] =>
+    -- تقسيماتُ النبهانيّ: الأبحاثُ بأسطرها وعدد عباراتها، والأنماطُ بأسمائها، ومصفوفةُ الترجيح.
+    for (k, n, ph) in NabhaniTable.sections do
+      IO.println s!"section,{k},{n},{ph.length}"
+    IO.println s!"dalala,{",".intercalate (Nabhani.Dalala.all.map Nabhani.Dalala.name)}"
+    IO.println s!"tarkib,{",".intercalate (Nabhani.Tarkib.all.map Nabhani.Tarkib.name)}"
+    IO.println s!"murakkab,{",".intercalate (Nabhani.Murakkab.all.map Nabhani.Murakkab.name)}"
+    IO.println s!"madlul,{",".intercalate (Nabhani.Madlul.all.map Nabhani.Madlul.name)}"
+    IO.println s!"dallmadlul,{",".intercalate (Nabhani.DallMadlul.all.map Nabhani.DallMadlul.name)}"
+    for a in Nabhani.Ihtimal.all do
+      for b in Nabhani.Ihtimal.all do
+        IO.println s!"awla,{a.name},{b.name},{Nabhani.awla a b}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

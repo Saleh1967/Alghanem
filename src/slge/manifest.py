@@ -100,7 +100,9 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("pipeline_table", (), (), None, "test_pipeline.py"),  # القمعُ أعدادًا، مولَّدٌ على MASAQ
     # الفهارسُ الجامعة (بلا وحدة)
     Module("bits", (), (), "gen_bits_index.py", "test_bits.py"),
-    Module("nabhani", (), (), "gen_nabhani_index.py", "test_nabhani_index.py"),  # فهرسُ المطابقة
+    Module("nabhani", ("Nabhani", "NabhaniTable"), ("nabhani",), "gen_nabhani_index.py",
+           "test_nabhani.py"),  # تقسيماتُ النبهانيّ أنماطًا من المختوم، وفهرسُ المطابقة
+    Module("nabhani_table", (), (), None, "test_nabhani.py"),  # مولَّدٌ من ج3 و«التفكير» المختومَين
     Module("gates", (), (), None, "test_gates.py"),
 )
 """كلُّ وحدةٍ حيّة (وصفيّةُ `order`/`status`/`guard`/`manifest` خارجَها) وما يقابلها."""
@@ -162,6 +164,18 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
             "CC BY-NC-SA 4.0 (OpenITI)"),
     # — بتوقيع المالك (صالح الغانم، 2026-10-09): لفظُ الجلالة منفردًا لا شبيهَ له، واللهمّ، والأعلامُ
     #   موسومةً لفظًا منفردًا بلا قياس (ممنوعٌ/منصرف/مقصور/غيرُ مشهود الجرّ، عربيٌّ/أعجميّ). —
+    # — مختومان بإذن المالك (2026-10-09): الشخصيّةُ الإسلاميّة ج3 (المحوَّل من `docx` المستودع،
+    #   SHA-256 للأصل 360f7653…) و«التفكير» (المحوَّل من `doc`، SHA-256 للأصل e917d9a0…)؛ بايتاتٌ لا
+    #   تقرؤها شيفرةٌ هنا إلّا أداةُ الإيداع المعفاة `tools/deposit_nabhani.py`. —
+    Deposit("nabhani-shakhsiyya-3.txt.gz", "وضع",
+            "الشخصيّة الإسلاميّة ج3 كاملًا؛ منه «أبحاث اللغة»: التقسيمُ الثلاثيّ والنِّسَبُ والترجيح — تُولَّد "
+            "منه جداولُ `Nabhani` بـ--check (ADR ٢٦)",
+            "359bb5532ecee8156f266522bb5388a1711e46e136004c3ac22e43f2ce656cb4",
+            "بإذن المالك"),
+    Deposit("nabhani-tafkir.txt.gz", "وضع",
+            "«التفكير» كاملًا؛ منه فهمُ النصّ بمعلوماتٍ سابقةٍ مُدرَكٍ واقعُها",
+            "b9b08eabec468aa0f93b80c01879e3812c57f4bd677e68e448967e3575bfaae4",
+            "بإذن المالك"),
     Deposit("owner-alam.json", "وضع",
             "لفظُ الجلالة (10 صور) و57 علمًا موسومةً بعينها؛ وضعُ العلميّة لا القياس — تُولَّد منه "
             "جداولُ `Alam` بـ--check (ADR ٢٤)",

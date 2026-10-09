@@ -71,3 +71,5 @@ import Slge.AlamTable
 import Slge.Alam
 import Slge.SawabiqTable
 import Slge.Sawabiq
+import Slge.NabhaniTable
+import Slge.Nabhani

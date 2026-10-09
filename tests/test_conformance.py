@@ -1354,3 +1354,20 @@ def test_sawabiq_matches_lean() -> None:
         mine = {f"{k(m.pre)}|{KINDS.index(m.kind)}|{str(m.joined).lower()}" for m in sawabiq(w)}
         assert mine == lean, (name, mine, lean)
         assert len(mine) == int(next(r[3] for r in rows if r[0] == "count" and r[1] == name))
+
+def test_nabhani_matches_lean() -> None:
+    """أبحاثُ النبهانيّ بأسطرها وعباراتها، والأنماطُ بأسمائها، ومصفوفةُ الترجيح الكاملة = `Nabhani`."""
+
+    from slge.nabhani import DALALA, DALL_MADLUL, IHTIMAL, MADLUL, MURAKKAB, TARKIB, awla
+    from slge.nabhani_table import SECTIONS
+
+    rows = _rows("nabhani.csv")
+    secs = [(r[1], int(r[2]), int(r[3])) for r in rows if r[0] == "section"]
+    assert secs == [(k, n, len(ph)) for k, n, ph in SECTIONS]
+    named = {r[0]: tuple(r[1:]) for r in rows if r[0] in
+             ("dalala", "tarkib", "murakkab", "madlul", "dallmadlul")}
+    assert named == {"dalala": DALALA, "tarkib": TARKIB, "murakkab": MURAKKAB,
+                     "madlul": MADLUL, "dallmadlul": DALL_MADLUL}
+    lean = {(r[1], r[2]): r[3] == "true" for r in rows if r[0] == "awla"}
+    assert len(lean) == 25
+    assert lean == {(a, b): awla(a, b) for a in IHTIMAL for b in IHTIMAL}

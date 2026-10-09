@@ -13,6 +13,8 @@
 | `openiti-mukhassas.txt.gz` | وضع | `8d8134c2bce16b70b07bddf974fa5e9c0f7cd80129d8452baf55cd87006b80ac` |
 | `openiti-maqayis.txt.gz` | وضع | `da8853fc941d4016a533fd9c7a1f794a2ccfa92f1c74e68d4acbd6d910e72a67` |
 | `openiti-sibawayh-kitab.txt.gz` | وضع | `a160f940bb194e6fe7e6655d2c7f28e41f1fc648c4c5e340cc4e42306d5cb625` |
+| `nabhani-shakhsiyya-3.txt.gz` | وضع | `359bb5532ecee8156f266522bb5388a1711e46e136004c3ac22e43f2ce656cb4` |
+| `nabhani-tafkir.txt.gz` | وضع | `b9b08eabec468aa0f93b80c01879e3812c57f4bd677e68e448967e3575bfaae4` |
 | `owner-alam.json` | وضع | `09290ebbc0203a407531a74dd528581108f7403931c7bd4dd80a9b0d5fb59a86` |
 | `openiti-majaz-quran.txt.gz` | مرجع محجوب | `432dae05748f2f972b3238e56dd0c56e72b10f0c3900ee8da1a8cca812b2fc88` |
 | `masaq-adad.json` | مرجع محجوب | `9018b3f445f65bc23799f0bee3cda1ab1fe3a1a0a0ab7e67e6d85406e77cd822` |
