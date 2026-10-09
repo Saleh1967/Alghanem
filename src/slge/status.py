@@ -914,14 +914,15 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_madd.py::test_corpus_measurement_and_index",
        note="الخانةُ لا تفصل هاءَ الكناية من هاء الكلمة (اللَّه): الصلةُ قراءةٌ بشرط القرينة."),
     # — البوّاباتُ المتتابعة والسجلّ —
-    _c("GATES-ladder", "شهادةُ الغانم تصعد SLGE سبعَ بوّاباتٍ متتابعة (الخانة، الترخيص، العدد حاكمةً؛ "
-       "الجداول، الصرف، الإعراب، الجواب قارئةً)، ولا بوّابةَ فوق مرفوضة، والمخرجُ ذرّاتٌ بعينها؛ على "
+    _c("GATES-ladder", "شهادةُ الغانم تصعد SLGE عشرَ بوّاباتٍ متتابعة (الخانة، الترخيص، العدد حاكمةً؛ "
+       "الجداول، السوابق، الجذع، الأدوات، الصرف، الإعراب، الجواب قارئةً)، ولا بوّابةَ فوق مرفوضة، "
+       "والمخرجُ ذرّاتٌ بعينها؛ على "
        "المصحف 18,114 صورةً تصعد كلَّه و65 تقف عند العدد باسمها", _S,
        "lean:Slge.Grant.ladder_implies_base", "lean:Slge.Grant.no_grant_of_refused",
        "test:tests/test_gates.py::test_ladder_order_and_named_refusals",
        "test:tests/test_gates.py::test_whole_mushaf_climbs_consistently",
        note="قانونُ السُّلَّم مبرهَنٌ على المجرّد؛ البوّاباتُ تركّب الدوالَّ القائمة (مفحوص) ولا تبني قراءة."),
-    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (78 وحدة، 60 جدولًا، 50 فهرسًا): كلُّ وحدةٍ "
+    _c("GATES-manifest", "السجلُّ مصدرٌ واحدٌ لمواضع كلّ وحدة (80 وحدة، 61 جدولًا، 51 فهرسًا): كلُّ وحدةٍ "
        "موصولةٌ في Lean والتدقيق والتصدير والفهرس والاختبار وبالعكس، وCI يأخذ قوائمَه منه", _X,
        "test:tests/test_gates.py::test_manifest_covers_the_tree",
        note="ما نُسي من المواضع العشرة يسقط الفحص بدل أن يُكتشف باليد."),
@@ -1243,6 +1244,19 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_seals.py::test_owner_signed_deposits_match_their_hash_and_name_the_signer",
        note="قائمةُ الأعلام من صفوف MASAQ ثمّ وُقِّعت فاختيارُها غيرُ مستقلٍّ عن المرجع؛ وأل في لفظ "
             "الجلالة خلافٌ مع وسم المرجع مفصولٌ بالتوقيع لا بالقياس (ALAM_INDEX.md، ADR ٢٤)."),
+    _c("SAWABIQ-reader", "السوابقُ الحرفيّة تُقرأ بعلاقتها بما بعدها على أبواب الكتاب لسيبويه "
+       "المودَعة بأسطرها: باءُ الجرّ ولامُ الجرّ أمام المجرور، لامُ الأمر أمام المجزوم، لامُ كي أمام "
+       "المنصوب (أن مضمرة)، أل بهمزةٍ مفتوحة، همزةُ الوصل مكسورةً إلّا أن يُضمّ الثالث؛ الموصولُ يُردّ "
+       "إلى أصله ويُقرأ عليه، ولامُ الأمر المسكَّنة هي المكسورة؛ كلُّ قراءةٍ تُردّ بعينها والتعدّدُ يُحصى", _P,
+       "lean:Slge.Sawabiq.sawabiq_restores", "lean:Slge.Sawabiq.joined_rest_unlicensed",
+       "lean:Slge.Sawabiq.joined_is_initial", "lean:Slge.Sawabiq.sakin_is_kasra",
+       "lean:Slge.Sawabiq.wasl_state_damm_iff", "lean:Slge.Sawabiq.table_read",
+       "lean:Slge.Sawabiq.witness_none_and_multiple",
+       "test:tests/test_sawabiq.py::test_ba_and_lam_read_by_the_relation_with_what_follows",
+       "test:tests/test_sawabiq.py::test_al_and_hamzat_wasl_initial_and_joined",
+       "test:tests/test_conformance.py::test_sawabiq_matches_lean",
+       note="الجارُّ على مبنيٍّ (لَهُمْ، بِمَا) من الموزِّع لا من هنا؛ لامُ التوكيد خارجه؛ كسرةُ التقاء "
+            "الساكنين وجزمُ الناقص بالحذف لا يُقرآن (SAWABIQ_INDEX.md، ADR ٢٥)."),
     _c("HASM-segments", "القالبُ ليس قسمة: القراءاتُ المتّفقةُ قسمةً (سوابق، أل، جذع، لواحق) قسمةٌ "
        "واحدة تُحسم بلا قرينة؛ وإن تعدّدت حُسمت بالدرجة (الجوارُ ثمّ المعجمُ ثمّ تكرارُ الجذر في المودَع) "
        "أعلى وحيدًا أو تعادلًا باسمه، ولا قراءةَ تُحذف", _P,

@@ -719,6 +719,16 @@ def main (args : List String) : IO Unit := do
       for m in Alam.ilm w do
         IO.println s!"word,{n},{key w},{"+".intercalate (m.pre.map key)}|{m.item}|{m.case}"
       IO.println s!"count,{n},{key w},{(Alam.ilm w).length}"
+  | ["sawabiq"] =>
+    -- السوابقُ الحرفيّة: حجمُ الجدول، وصفوفُه مقروءةً، وقراءاتُ الشواهد (سوابق|الباب|أموصولة).
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    IO.println s!"table,{SawabiqTable.table.length},{(SawabiqTable.table.filter Sawabiq.reads).length}"
+    let words := (SawabiqTable.table.zipIdx.map fun (r, i) => (s!"row{i}", Sawabiq.rowCells r)) ++
+      [("kataba", Sawabiq.kataba), ("liyawmin", Sawabiq.liyawmin)]
+    for (n, w) in words do
+      for m in Sawabiq.sawabiq w do
+        IO.println s!"word,{n},{key w},{key m.pre}|{m.kind.idx}|{decide (m.under ≠ m.rest)}"
+      IO.println s!"count,{n},{key w},{(Sawabiq.sawabiq w).length}"
   | ["rank"] =>
     for g1 in [Rank.Grade.zanni, .qati] do
       for s1 in [1, 2, 3] do

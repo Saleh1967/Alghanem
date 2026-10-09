@@ -36,7 +36,7 @@
 | `masaq-zawaid.json` | مرجع محجوب | `15ab1c4691c88ebb99b4f37c5f1c062c83a20a988fdd6099cc835eaea4097478` |
 | `masaq-zuruf.json` | مرجع محجوب | `ef2e77119120a8f5109e28e63c0835468ce85442806c44b0e4f4a70635416dd3` |
 
-## الأرقام (982 رقمًا من 44 مولِّدًا)
+## الأرقام (1,028 رقمًا من 45 مولِّدًا)
 
 ### `tools/gen_abniya_index.py::measure`
 
@@ -997,6 +997,59 @@
 | `[1].معجم` | 27 |
 | `[1].وزن أَفْعَل/فَعْلَان (صفةٌ أو علم)` | 5 |
 | `[3]` | 754 |
+
+### `tools/gen_sawabiq_index.py::measure`
+
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `6a1a4d26b7267a13`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `agree` | 7,438 |
+| `asked` | 7,654 |
+| `by_kind.AL[0]` | 5,711 |
+| `by_kind.AL[1]` | 5,707 |
+| `by_kind.BA_JARR[0]` | 1,543 |
+| `by_kind.BA_JARR[1]` | 1,436 |
+| `by_kind.LAM_AMR[0]` | 40 |
+| `by_kind.LAM_AMR[1]` | 26 |
+| `by_kind.LAM_JARR[0]` | 527 |
+| `by_kind.LAM_JARR[1]` | 465 |
+| `by_kind.LAM_KAY[0]` | 302 |
+| `by_kind.LAM_KAY[1]` | 295 |
+| `by_kind.WASL_FIL[0]` | 138 |
+| `by_kind.WASL_FIL[1]` | 114 |
+| `forms` | 18,179 |
+| `joined` | 2,289 |
+| `kinds.AL` | 2,607 |
+| `kinds.BA_JARR` | 526 |
+| `kinds.LAM_AMR` | 211 |
+| `kinds.LAM_JARR` | 287 |
+| `kinds.LAM_KAY` | 255 |
+| `kinds.WASL_FIL` | 1,591 |
+| `kinds.WASL_ISM` | 13 |
+| `lines[0]` | 8,658 |
+| `lines[1]` | 8,686 |
+| `lines[2]` | 17,502 |
+| `lines[3]` | 17,564 |
+| `lines[4]` | 18,330 |
+| `mabni` | 575 |
+| `multi` | 511 |
+| `none` | 138 |
+| `other` | 78 |
+| `read` | 4,947 |
+| `table` | 11 |
+| `unread_top[0][1]` | 6 |
+| `unread_top[1][1]` | 5 |
+| `unread_top[2][1]` | 5 |
+| `unread_top[3][1]` | 4 |
+| `unread_top[4][1]` | 4 |
+| `unread_top[5][1]` | 4 |
+| `unread_top[6][1]` | 3 |
+| `unread_top[7][1]` | 3 |
+| `unread_top[8][1]` | 3 |
+| `unread_top[9][1]` | 3 |
+| `unread_top[10][1]` | 2 |
+| `unread_top[11][1]` | 2 |
 
 ### `tools/gen_shibh_index.py::measure`
 

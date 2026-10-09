@@ -1333,3 +1333,24 @@ def test_alam_matches_lean() -> None:
             mine.add("+".join(k(p) for p in m.pre) + f"|{item}|{cases[m.case]}")
         assert mine == lean, (name, mine, lean)
         assert len(mine) == int(next(r[3] for r in rows if r[0] == "count" and r[1] == name))
+
+def test_sawabiq_matches_lean() -> None:
+    """جدولُ السوابق من الكتاب وصفوفُه المقروءة كلُّها، وقراءاتُ صور الجدول وكَتَبَ ولِيَوْمٍ
+    (سوابق|الباب|أموصولة) = `Sawabiq`."""
+
+    from slge.sawabiq import KINDS, sawabiq
+    from slge.sawabiq_table import TABLE
+
+    rows = _rows("sawabiq.csv")
+    t = next(r for r in rows if r[0] == "table")
+    assert int(t[1]) == len(TABLE) and int(t[2]) == len(TABLE)
+    words = {r[1]: tuple(CELLS[int(i)] for i in r[2].split("-")) for r in rows if r[0] == "count"}
+    assert len(words) == len({c for *_, c, _, _ in TABLE}) + 2
+    for name, w in words.items():
+        lean = {r[3] for r in rows if r[0] == "word" and r[1] == name}
+        def k(x: tuple[tuple[str, str], ...]) -> str:
+            return "-".join(str(index(c)) for c in x)
+
+        mine = {f"{k(m.pre)}|{KINDS.index(m.kind)}|{str(m.joined).lower()}" for m in sawabiq(w)}
+        assert mine == lean, (name, mine, lean)
+        assert len(mine) == int(next(r[3] for r in rows if r[0] == "count" and r[1] == name))

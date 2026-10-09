@@ -883,3 +883,18 @@
 'Slge.Alam.ilm_restores' depends on axioms: [propext, Quot.sound]
 'Slge.Alam.witness_jalala' depends on axioms: [propext]
 'Slge.Alam.witness_alam' depends on axioms: [propext]
+'Slge.SawabiqTable.table_length' does not depend on any axioms
+'Slge.Sawabiq.idx_ofIdx' does not depend on any axioms
+'Slge.Sawabiq.wasl_state_damm_iff' depends on axioms: [propext, Quot.sound]
+'Slge.Sawabiq.lift_head' depends on axioms: [propext, Quot.sound]
+'Slge.Sawabiq.lift_length' depends on axioms: [propext]
+'Slge.Sawabiq.mem_readAt' depends on axioms: [propext, Quot.sound]
+'Slge.Sawabiq.sawabiq_restores' depends on axioms: [propext, Quot.sound]
+'Slge.Sawabiq.joinedKinds_sukun' depends on axioms: [propext, Quot.sound]
+'Slge.Sawabiq.sakinKinds_sukun' depends on axioms: [propext, Quot.sound]
+'Slge.Sawabiq.joined_rest_unlicensed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Sawabiq.joined_is_initial' depends on axioms: [propext, Quot.sound]
+'Slge.Sawabiq.sakin_is_kasra' depends on axioms: [propext, Quot.sound]
+'Slge.Sawabiq.table_read' depends on axioms: [propext]
+'Slge.Sawabiq.table_kinds' does not depend on any axioms
+'Slge.Sawabiq.witness_none_and_multiple' depends on axioms: [propext]

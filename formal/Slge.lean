@@ -69,3 +69,5 @@ import Slge.Hasm
 import Slge.Tawzi
 import Slge.AlamTable
 import Slge.Alam
+import Slge.SawabiqTable
+import Slge.Sawabiq

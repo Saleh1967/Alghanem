@@ -32,9 +32,9 @@ def _forms() -> list[tuple[tuple[str, str], ...]]:
 
 def test_ladder_order_and_named_refusals() -> None:
     names = [g.name for g in LADDER]
-    assert names == ["الخانة", "الترخيص", "العدد", "الجداول", "الجذع", "الأدوات", "الصرف",
-                     "الإعراب", "الجواب"]
-    assert [g.governing for g in LADDER] == [True, True, True] + [False] * 6
+    assert names == ["الخانة", "الترخيص", "العدد", "الجداول", "السوابق", "الجذع", "الأدوات",
+                     "الصرف", "الإعراب", "الجواب"]
+    assert [g.governing for g in LADDER] == [True, True, True] + [False] * 7
     t = climb(("كَ", "تَ", "بَ"))
     assert all(isinstance(x, Pass) for x in t) and exit_atoms(t) == ("كَ", "تَ", "بَ")
     # الطفرة: ذرّةٌ ليست من الـ116 — تقف عند الخانة باسمها ولا بوّابةَ فوقها
@@ -78,7 +78,7 @@ def test_manifest_covers_the_tree() -> None:
     import subprocess
     import sys
 
-    assert len(MODULES) >= 50 and len(tables()) == 60 and len(index_tools()) == 50
+    assert len(MODULES) >= 50 and len(tables()) == 61 and len(index_tools()) == 51
     res = subprocess.run([sys.executable, str(ROOT_DIR / "tools" / "check_manifest.py")],
                          capture_output=True, text=True, cwd=ROOT_DIR)
     assert res.returncode == 0, res.stderr

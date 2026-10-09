@@ -33,6 +33,7 @@ from slge.maani import is_zarf, senses_of
 from slge.maani import rank as rank_maani
 from slge.madd import continue_licensed, madd
 from slge.maqayis import attested, rank
+from slge.sawabiq import sawabiq
 from slge.tawabi import case_class
 from slge.tawzi import tawzi
 from slge.wad import senses, wad
@@ -101,6 +102,19 @@ def _g4(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
     return Pass("الجداول", None, "ليست مجدوَلة")
 
 
+def _g4c(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
+    """السوابقُ الحرفيّة: الحرفُ في صدر الكلمة يُقرأ بعلاقته بما بعده على أبواب الكتاب (باءُ الجرّ،
+    لامُ الجرّ والأمر وكي، أل، همزةُ الوصل) ويُردّ بعينه (`Sawabiq.sawabiq_restores`)؛ الموصولُ يُردّ إلى
+    أصله (`joined_is_initial`)؛ التعدّدُ يُحصى ولا يُحسم هنا."""
+
+    ms = sawabiq(w)
+    if ms:
+        kinds = sorted({m.kind for m in ms})
+        joined = any(m.joined for m in ms)
+        return Pass("السوابق", ms, "؛ ".join(kinds) + ("؛ موصولة" if joined else ""))
+    return Pass("السوابق", None, "لا سابقةَ تُقرأ بعلاقتها")
+
+
 def _g5(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
     rs = rank(jidh(w))  # المشهودُ في المقاييس أوّلًا؛ لا قراءةَ تسقط (`mem_rank`، `length_rank`)
     used = sorted({rule for r in rs for rule, _ in r.ilal}, key=RULES.index)
@@ -161,7 +175,8 @@ def _g8(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
 
 LADDER: Final[tuple[Gate, ...]] = (
     Gate("الخانة", True, _g1), Gate("الترخيص", True, _g2), Gate("العدد", True, _g3),
-    Gate("الجداول", False, _g4), Gate("الجذع", False, _g5), Gate("الأدوات", False, _g5b),
+    Gate("الجداول", False, _g4), Gate("السوابق", False, _g4c), Gate("الجذع", False, _g5),
+    Gate("الأدوات", False, _g5b),
     Gate("الصرف", False, _g6),
     Gate("الإعراب", False, _g7), Gate("الجواب", False, _g8),
 )

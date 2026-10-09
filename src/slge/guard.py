@@ -65,6 +65,8 @@ EXEMPT_FILES = (
     "tools/gen_tawzi_index.py",  # يقرأ الشهادات وMASAQ ويولّد فهرسَ الموزِّع
     "tools/deposit_alam.py",  # يقرأ المودَعَ الموقَّع ويولّد جدولَي الأعلام
     "tools/gen_alam_index.py",  # يقرأ الشهادات وMASAQ ويولّد فهرسَ الأعلام
+    "tools/deposit_sawabiq.py",  # يقرأ الكتابَ المختوم ومودَعَ المصحف ويولّد جدولَي السوابق
+    "tools/gen_sawabiq_index.py",  # يقرأ الشهادات وMASAQ ويولّد فهرسَ السوابق
     "tools/gen_hasm_index.py",  # يقرأ الشهادات وMASAQ ويولّد جدولَ التكرار والفهرس
     "tools/gen_pipeline_index.py",  # يقرأ MASAQ والشهادات ويولّد القمعَ وجدولَيه
     "src/slge/order.py",  # يبصم خاناتٍ لا نصًّا

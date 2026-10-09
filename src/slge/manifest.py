@@ -90,6 +90,9 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("alam", ("Alam", "AlamTable"), ("alam",), "gen_alam_index.py", "test_alam.py",
            law=True),
     Module("alam_table", (), (), None, "test_alam.py"),  # مولَّدٌ من المودَع الموقَّع
+    Module("sawabiq", ("Sawabiq", "SawabiqTable"), ("sawabiq",), "gen_sawabiq_index.py",
+           "test_sawabiq.py", law=True),
+    Module("sawabiq_table", (), (), None, "test_sawabiq.py"),  # مولَّدٌ من الكتاب المختوم والمصحف
     Module("hasm", ("Hasm", "HasmTable"), ("hasm",), "gen_hasm_index.py", "test_hasm.py"),
     Module("hasm_table", (), (), None, "test_hasm.py"),  # تكرارُ الجذور، مولَّدٌ من مودَع المصحف
     Module("pipeline", ("Pipeline", "PipelineTable"), ("pipeline",), "gen_pipeline_index.py",
