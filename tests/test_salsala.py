@@ -3,7 +3,8 @@
 وصفته»)، الجذرُ الأركانُ الأربعة لا «أوليات»، النسبُ إسنادٌ وتقييدٌ وإضافةٌ بلا «تضمين»، السببيّةُ
 والمسببيّةُ علاقتا مجازٍ في الحكم، الفاعليّةُ والمفعوليّةُ نسبتان بعد الإسناد، وكلُّ ركنٍ بسطره من المختوم
 أو معلَنٌ باسمه؛ ثمّ سُلَّما الغزاليّ خارج العمود («نختم وفق النبهاني»): مصادرُ اليقين السبعة من المستصفى
-بسطرها، وأوليّاتُه خلافًا مسجَّلًا بلا سالفٍ في العمود؛ وطفراتٌ مرفوضة."""
+بسطرها، وأوليّاتُه خلافًا مسجَّلًا بلا سالفٍ في العمود؛ وشواهدُ الغزاليّ الثانية على العمود لا تُرسي
+(ADR ٣٣)؛ وطفراتٌ مرفوضة."""
 
 from __future__ import annotations
 
@@ -16,7 +17,18 @@ from typing import Any
 
 import pytest
 
-from slge.salsala import ARKAN, DECLARED, LADDERS, ROWS, anchored, grade, ladder, salaf
+from slge.salsala import (
+    ARKAN,
+    DECLARED,
+    LADDERS,
+    ROWS,
+    SHAWAHID,
+    anchored,
+    grade,
+    ladder,
+    salaf,
+    shahid,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "tests" / "data"
@@ -112,6 +124,24 @@ def test_ghazali_ladders_are_outside_the_spine_and_sourced_by_name() -> None:
     assert all(src in ("ج3", "التفكير") for r in ROWS if r[1] < 3 for src, _, _ in r[4])
 
 
+def test_second_witnesses_from_ghazali_do_not_anchor_or_undeclare() -> None:
+    """ADR ٣٣ (إذنُ المالك «كشاهدٍ أو رأيٍ ثانٍ»): شواهدُ الغزاليّ على أركان العمود — المكانُ (محكّ النظر
+    329 «لا يكون في مكانين»، معيار العلم «في الأين») والعددُ (المستصفى 619، «في الكم») والزمانُ («في
+    المتى») والأجناسُ («الجنس والنوع») — بسطرها، من خارج العمود، ولا تُرسي: المعلَناتُ الثلاث تبقى
+    معلَنة."""
+
+    texts = _texts()
+    assert len(SHAWAHID) == 6
+    for rid, src, line, phrase, _ in SHAWAHID:
+        assert src in ("المستصفى", "محك النظر", "معيار العلم") and ROWS[rid][1] < 3
+        assert phrase in texts[src][line - 1], (rid, src, line, phrase)
+    assert {s[0] for s in SHAWAHID} == {4, 9, 10, 11}
+    assert ("محك النظر", 329) in {(s[1], s[2]) for s in shahid(10)}
+    assert ("المستصفى", 619) in {(s[1], s[2]) for s in shahid(11)}
+    assert shahid(7) == () and shahid(0) == ()
+    assert {7, 10, 11} == DECLARED and all(not anchored(i) for i in DECLARED)
+
+
 def test_mutations_are_refused_by_name() -> None:
     m = _tool()
     texts = _texts()
@@ -147,6 +177,16 @@ def test_mutations_are_refused_by_name() -> None:
     with pytest.raises(SystemExit, match="OUTSIDE_SPINE_HAS_SALAF"):
         m.verify(texts)
     m.ROWS = tuple(rows)
+    # شاهدٌ ثانٍ من العمود نفسِه: ليس شاهدًا ثانيًا بل مرساةٌ مدّعاة
+    shawahid = m.SHAWAHID
+    m.SHAWAHID = (*shawahid, (10, "ج3", 393, "نقل الواقع", ""))
+    with pytest.raises(SystemExit, match="SHAHID_NOT_FROM_SECOND_SOURCE"):
+        m.verify(texts)
+    # شاهدٌ على ركنٍ خارج العمود
+    m.SHAWAHID = (*shawahid, (29, "المستصفى", 1353, "علم الإنسان بوجود نفسه", ""))
+    with pytest.raises(SystemExit, match="SHAHID_TARGET_OUTSIDE_SPINE"):
+        m.verify(texts)
+    m.SHAWAHID = shawahid
     m.verify(texts)
 
 

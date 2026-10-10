@@ -90,4 +90,13 @@ theorem ladder_counts :
     (rows.filter (·.ladder == 2)).length = 3 ∧ (rows.filter (·.ladder == 3)).length = 7 ∧
     (rows.filter (·.ladder == 4)).length = 5 := by decide
 
+/-- **الشاهدُ الثاني لا يُرسي:** شواهدُ الغزاليّ على أركان العمود (ADR ٣٣، إذنُ المالك «كشاهدٍ أو رأيٍ
+ثانٍ») كلُّها من مودَعاته لا من العمود، وكلُّها على ركنٍ في العمود، والمعلَنُ يبقى معلَنًا بلا مرساةٍ وإن
+شُهد له. -/
+theorem shahid_does_not_anchor :
+    shawahid.all (fun s => (s.2.1 == "المستصفى" || s.2.1 == "محك النظر" || s.2.1 == "معيار العلم")
+                            && (rows.filter (·.id == s.1)).all (·.ladder < 3)) = true ∧
+      (rows.filter (fun r => declared.contains r.id)).all (·.anchors.isEmpty) = true := by
+  decide
+
 end Slge.Salsala

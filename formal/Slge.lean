@@ -1,5 +1,7 @@
 import Slge.Bridge
 import Slge.Ghazali
+import Slge.GhazaliTable
+import Slge.GhazaliAnchors
 import Slge.Rank
 import Slge.Rasm
 import Slge.Sequence

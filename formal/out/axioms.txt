@@ -145,6 +145,14 @@
 'Slge.Ghazali.barren_witnessed' does not depend on any axioms
 'Slge.Ghazali.akhass_chain' does not depend on any axioms
 'Slge.Ghazali.licence_makes_mafhum' does not depend on any axioms
+'Slge.GhazaliTable.rows_length' does not depend on any axioms
+'Slge.GhazaliAnchors.cells_cover' does not depend on any axioms
+'Slge.GhazaliAnchors.cells_agree' depends on axioms: [propext]
+'Slge.GhazaliAnchors.anchored_is_productive' does not depend on any axioms
+'Slge.GhazaliAnchors.logic_is_second_opinion' does not depend on any axioms
+'Slge.GhazaliAnchors.manhaj_from_spine' does not depend on any axioms
+'Slge.GhazaliAnchors.usul_agreed_and_productive' does not depend on any axioms
+'Slge.GhazaliAnchors.sources_named' does not depend on any axioms
 'Slge.Rank.pathGrade_qati_iff' depends on axioms: [propext, Quot.sound]
 'Slge.Rank.no_promotion' depends on axioms: [propext, Quot.sound]
 'Slge.Rank.weigh_swap' depends on axioms: [propext, Quot.sound]
@@ -922,6 +930,7 @@
 'Slge.Salsala.spine_anchored_in_nabhani' does not depend on any axioms
 'Slge.Salsala.outside_spine_no_salaf' does not depend on any axioms
 'Slge.Salsala.ghazali_sources_from_mustasfa' does not depend on any axioms
+'Slge.Salsala.shahid_does_not_anchor' does not depend on any axioms
 'Slge.Nabhani.awla_trans' depends on axioms: [propext, Quot.sound]
 'Slge.Nabhani.awla_irrefl' depends on axioms: [propext]
 'Slge.Nabhani.awla_total' depends on axioms: [propext, Quot.sound]

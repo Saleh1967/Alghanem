@@ -49,7 +49,9 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("categories", ("Categories",), ("categories",), None, None),
     Module("nazm", (), (), None, "test_nazm.py"),
     Module("grant", ("Grant",), (), None, "test_grant.py"),
-    Module("knowledge", ("Ghazali",), ("ghazali",), None, "test_knowledge.py"),
+    Module("knowledge", ("Ghazali", "GhazaliAnchors"), ("ghazali",), None, "test_knowledge.py"),
+    Module("ghazali_table", ("GhazaliTable",), ("ghazali_table",), None,
+           "test_ghazali.py"),  # صورُ الشرطيّ بأسطرها من مودَع الغزاليّ المختوم (ADR ٣٣)
     Module("rank", ("Rank",), ("rank",), None, "test_rank.py"),
     Module("learning", (), (), None, "test_learning.py"),
     Module("answer", (), (), None, "test_answer.py"),

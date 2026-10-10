@@ -161,6 +161,21 @@ SALAF_ANCHORED: frozenset[tuple[int, int]] = frozenset(
     | {(18, k) for k in (13, 14, 15, 16, 17)} | {(20, 19), (21, 19)} | {(1, 0)})
 """السوالفُ المنصوصة: الوضعُ فرعُ التصوّر (393)، النسبُ بالوضع (393)، الإفادةُ غرضُ التركيب (414)، السببيّةُ
 نوعُ علاقة (433)، والوجودُ على الأركان (65 مع 24)؛ وما سواها من جدول المالك رأيٌ."""
+SPINE = ("ج3", "التفكير")
+"""العمود: لا يُرسى ركنٌ منه إلّا فيه؛ وما سواه من `SOURCES` مصدرٌ ثانٍ باسم صاحبه."""
+Shahid = tuple[int, str, int, str, str]
+"""(الركن، المودَع، سطرُه، عبارةٌ بعينها، ملاحظة) — شاهدٌ ثانٍ من مصدرٍ خارج العمود."""
+SHAWAHID: tuple[Shahid, ...] = (
+    # إذنُ المالك (2026-10-10): «أعطي إذنًا لغيره كشاهدٍ أو رأيٍ ثانٍ» — الشاهدُ لا يُرسي ولا يرفع الإعلان
+    (4, "معيار العلم", 705, "إنقسم الذاتي إلى الجنس والنوع والفصل", "الجنس والنوع ذاتيّان عنده"),
+    (9, "معيار العلم", 4154, "وإذا عرضت في المتى", "المتى مقولةٌ عنده"),
+    (10, "محك النظر", 329, "لا يكون في مكانين", "المكانُ معلَنٌ في العمود؛ هذا شاهدٌ ثانٍ لا مرساة"),
+    (10, "معيار العلم", 4153, "وإن عرضت في الأين", "الأين مقولةٌ عنده"),
+    (11, "المستصفى", 619, "الاثنين أكثر من الواحد", "العددُ معلَنٌ في العمود؛ هذا شاهدٌ ثانٍ لا مرساة"),
+    (11, "معيار العلم", 4151, "وإن عرضت في الكم", "الكمّ مقولةٌ عنده"),
+)
+"""شواهدُ ثانية من مودَع الغزاليّ على أركانٍ في العمود (رأيٌ ثانٍ): لا تُرسي ركنًا ولا تُخرج معلَنًا من
+`DECLARED`؛ تُفحص في سطرها كالمراسي."""
 
 
 def _read(path: Path, sha: str) -> list[str]:
@@ -201,6 +216,13 @@ def verify(texts: dict[str, list[str]]) -> None:
     for rid, s in SALAF_ANCHORED:
         if s not in ROWS[rid][5]:
             raise SystemExit(f"ANCHORED_SALAF_NOT_IN_ROW:{rid}:{s}")
+    for rid, src, line, phrase, _ in SHAWAHID:
+        if rid >= len(ROWS) or ROWS[rid][1] >= 3:
+            raise SystemExit(f"SHAHID_TARGET_OUTSIDE_SPINE:{rid}")
+        if src in SPINE or src not in texts:
+            raise SystemExit(f"SHAHID_NOT_FROM_SECOND_SOURCE:{rid}:{src}")
+        if phrase not in texts[src][line - 1]:
+            raise SystemExit(f"PHRASE_NOT_IN_LINE:shahid:{rid}:{src}:{line}:{phrase}")
 
 
 def _lean_str(s: str) -> str:
@@ -237,6 +259,12 @@ def render_lean() -> str:
             f"theorem rows_length : rows.length = {len(ROWS)} := by rfl", "",
             "/-- الأركانُ بلا مرساة، معلَنةٌ بقرار المالك. -/",
             f"def declared : List Nat := {decl}", "",
+            "/-- شواهدُ ثانية من مودَع الغزاليّ على أركانٍ في العمود (الركن، المودَع، السطر، العبارة): "
+            "رأيٌ ثانٍ لا مرساة. -/",
+            "def shawahid : List (Nat × String × Nat × String) := [",
+            ",\n".join(f"  ({rid}, {_lean_str(s)}, {n}, {_lean_str(p)})"
+                      for rid, s, n, p, _ in SHAWAHID),
+            "]", "",
             "end Slge.SalsalaTable", ""]
     return "\n".join(out)
 
@@ -265,7 +293,9 @@ def render_py() -> str:
     sa = ",\n    ".join(repr(x) for x in sorted(SALAF_ANCHORED))
     out += [")", f"DECLARED: Final[frozenset[int]] = frozenset({sorted(DECLARED)!r})",
             "SALAF_ANCHORED: Final[frozenset[tuple[int, int]]] = frozenset([", f"    {sa},", "])",
-            ""]
+            f"SPINE: Final[tuple[str, ...]] = {SPINE!r}",
+            "Shahid = tuple[int, str, int, str, str]",
+            "SHAWAHID: Final[tuple[Shahid, ...]] = (", *(f"    {x!r}," for x in SHAWAHID), ")", ""]
     return "\n".join(out)
 
 

@@ -67,7 +67,7 @@ LADDER: tuple[tuple[str, str, tuple[tuple[str, str], ...]], ...] = (
       ("Slge", "CoverageTable"), ("Slge", "Coverage"), ("Slge", "SalsalaTable"),
       ("Slge", "Salsala"))),
     ("١٩", "المعرفةُ والترجيح: الإنتاجُ والتعارضُ وقطعيُّ الدلالة",
-     (("Slge", "Ghazali"), ("Slge", "Rank"))),
+     (("Slge", "Ghazali"), ("Slge", "GhazaliTable"), ("Slge", "GhazaliAnchors"), ("Slge", "Rank"))),
 )
 
 THEOREM = re.compile(r"^theorem\s+([A-Za-z0-9_.']+)")

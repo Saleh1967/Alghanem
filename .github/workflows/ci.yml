@@ -59,6 +59,8 @@ jobs:
         run: python tools/deposit_nabhani.py --check
       - name: the salsala tables (ranks of the universal signified) are what the sealed Nabhani texts anchor
         run: python tools/deposit_salsala.py --check
+      - name: the ghazali tables (conditional forms by line, second opinion) are what the sealed texts anchor
+        run: python tools/deposit_ghazali.py --check
       - name: every cell-to-cell transition in the tree is registered with an audited theorem or a named debt
         run: python tools/gen_intiqal_index.py --check
       - name: the certificates deposit is what the pinned gate prints now (stitching the layers by code, not by prose)

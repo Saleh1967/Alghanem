@@ -150,6 +150,14 @@ import Slge
 #print axioms Slge.Ghazali.barren_witnessed
 #print axioms Slge.Ghazali.akhass_chain
 #print axioms Slge.Ghazali.licence_makes_mafhum
+#print axioms Slge.GhazaliTable.rows_length
+#print axioms Slge.GhazaliAnchors.cells_cover
+#print axioms Slge.GhazaliAnchors.cells_agree
+#print axioms Slge.GhazaliAnchors.anchored_is_productive
+#print axioms Slge.GhazaliAnchors.logic_is_second_opinion
+#print axioms Slge.GhazaliAnchors.manhaj_from_spine
+#print axioms Slge.GhazaliAnchors.usul_agreed_and_productive
+#print axioms Slge.GhazaliAnchors.sources_named
 #print axioms Slge.Rank.pathGrade_qati_iff
 #print axioms Slge.Rank.no_promotion
 #print axioms Slge.Rank.weigh_swap
@@ -927,6 +935,7 @@ import Slge
 #print axioms Slge.Salsala.spine_anchored_in_nabhani
 #print axioms Slge.Salsala.outside_spine_no_salaf
 #print axioms Slge.Salsala.ghazali_sources_from_mustasfa
+#print axioms Slge.Salsala.shahid_does_not_anchor
 #print axioms Slge.Nabhani.awla_trans
 #print axioms Slge.Nabhani.awla_irrefl
 #print axioms Slge.Nabhani.awla_total

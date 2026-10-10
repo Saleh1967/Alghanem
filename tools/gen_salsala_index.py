@@ -9,7 +9,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from slge.salsala import DECLARED, GRADES, LADDERS, ROWS, salaf
+from slge.salsala import DECLARED, GRADES, LADDERS, ROWS, SHAWAHID, salaf, shahid
 
 ROOT = Path(__file__).resolve().parent.parent
 TARGET = ROOT / "SALSALA_INDEX.md"
@@ -27,27 +27,31 @@ def render() -> str:
         "المالك** (2026-10-10) لا من الذاكرة. السُّلَّمان (د) و(هـ) **خارج العمود**: مرساهما "
         "مودَعُ الغزاليّ "
         "باسم صاحبه، بلا مرتبةٍ ولا سالفٍ في العمود؛ (د) موافقٌ للعمود حيث يلتقيان، و(هـ) خلافٌ مسجَّلٌ "
-        "(التفكير 24، 73–74) لا يُدمج.", "",
+        "(التفكير 24، 73–74) لا يُدمج. و**الشاهدُ الثاني** (عمودٌ أخير، ADR ٣٣): سطرٌ من مودَع الغزاليّ "
+        "على ركنٍ في العمود بإذن المالك «كشاهدٍ أو رأيٍ ثانٍ» — لا يُرسي الركنَ ولا يرفع إعلانه.", "",
         f"الأركانُ {len(ROWS)}: {sum(1 for r in ROWS if r[1] == 0)} في المعلومات السابقة، "
         f"{sum(1 for r in ROWS if r[1] == 1)} في الوضع والنسب، "
         f"{sum(1 for r in ROWS if r[1] == 2)} في الحكم، "
         f"{sum(1 for r in ROWS if r[1] == 3)} في مصادر الغزاليّ السبعة، "
         f"{sum(1 for r in ROWS if r[1] == 4)} في أوليّاته خارج العمود؛ "
-        f"المرسى {sum(1 for r in ROWS if r[4])}، المعلَن {len(DECLARED)}.", "",
+        f"المرسى {sum(1 for r in ROWS if r[4])}، المعلَن {len(DECLARED)}؛ "
+        f"الشواهدُ الثانية {len(SHAWAHID)}.", "",
     ]
     for li, lname in enumerate(LADDERS):
         out += [f"## {'أبجده'[li]}. {lname}", "",
-                "| # | الركن | المرتبة | السطر والعبارة من المودَع | السوالف | ملاحظة |",
-                "|---|---|---|---|---|---|"]
+                "| # | الركن | المرتبة | السطر والعبارة من المودَع | السوالف | ملاحظة | شاهدٌ ثانٍ |",
+                "|---|---|---|---|---|---|---|"]
         for rid, lad, name, gr, anchors, _, note in ROWS:
             if lad != li:
                 continue
             an = "؛ ".join(f"{src} {line}: «{ph}»" for src, line, ph in anchors) or "— (معلَن)"
             sa = "، ".join(f"{s}{'' if ok else '؟'}" for s, ok in salaf(rid)) or "—"
-            out.append(f"| {rid} | {name} | {GRADES[gr]} | {an} | {sa} | {note} |")
+            sh = "؛ ".join(f"{src} {line}: «{ph}»" for _, src, line, ph, _ in shahid(rid)) or "—"
+            out.append(f"| {rid} | {name} | {GRADES[gr]} | {an} | {sa} | {note} | {sh} |")
         out.append("")
     out += ["**العلامة «؟» بعد السالف:** رأيٌ من جدول المالك لا سطرَ له. **ما بقي باسمه:** الأركانُ "
-            "المعلَنة الثلاثة (القابليّات، المكان، العدد) تحتاج سطرًا من مودَعٍ مختوم أو تبقى معلَنة؛ "
+            "المعلَنة الثلاثة (القابليّات، المكان، العدد) تحتاج سطرًا من العمود أو تبقى معلَنة — وشاهدُ "
+            "الغزاليّ عليها رأيٌ ثانٍ لا مرساة؛ "
             "ومرجعُ الأحكام المحجوب (المادّة ١٢) لم يُؤذن به بعد فلا «مقيس» هنا.", ""]
     return "\n".join(out)
 

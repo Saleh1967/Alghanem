@@ -1,0 +1,11 @@
+row,0,0,akhass,ayn_muqaddam,true,3,0
+row,1,0,akhass,naqid_tali,true,3,0
+row,2,0,akhass,naqid_muqaddam,false,4,0
+row,3,0,akhass,ayn_tali,false,4,0
+row,4,0,musawi,ayn_muqaddam,true,2,0
+row,5,0,musawi,naqid_tali,true,3,0
+row,6,0,musawi,naqid_muqaddam,true,3,0
+row,7,0,musawi,ayn_tali,true,2,0
+row,8,1,akhass,ayn_muqaddam,true,3,3
+row,9,1,musawi,naqid_muqaddam,true,3,3
+row,10,2,akhass,ayn_muqaddam,false,0,3
