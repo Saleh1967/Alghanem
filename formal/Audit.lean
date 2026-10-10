@@ -914,6 +914,16 @@ import Slge
 #print axioms Slge.Sawabiq.witness_none_and_multiple
 #print axioms Slge.NabhaniTable.sections_length
 #print axioms Slge.Nabhani.ten_rules
+#print axioms Slge.SalsalaTable.rows_length
+#print axioms Slge.Salsala.ladders_cover
+#print axioms Slge.Salsala.certain_iff
+#print axioms Slge.Salsala.wad_hukm_ungraded
+#print axioms Slge.Salsala.no_tadmin
+#print axioms Slge.Salsala.nisab_three
+#print axioms Slge.Salsala.salaf_earlier
+#print axioms Slge.Salsala.anchored_or_declared
+#print axioms Slge.Salsala.root_is_arkan
+#print axioms Slge.Salsala.ladder_counts
 #print axioms Slge.Nabhani.awla_trans
 #print axioms Slge.Nabhani.awla_irrefl
 #print axioms Slge.Nabhani.awla_total

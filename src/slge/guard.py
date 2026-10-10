@@ -53,7 +53,7 @@ EXEMPT_FILES = (
     "tools/deposit_wujud.py",
     "tools/deposit_maani.py",
     "tools/gen_maani_index.py",
-    "tools/gen_nabhani_index.py",
+    "tools/gen_nabhani_index.py", "tools/gen_salsala_index.py",
     "tools/deposit_mukhassas.py",  # يقرأ المختومَ ويولّد جدولَيه؛ لا نصَّ يُطبَّع
     "tools/gen_mukhassas_index.py",
     "tools/deposit_zawaid.py",  # يقرأ الكتابَ المختوم ويولّد جدولَي الزوائد
@@ -68,6 +68,7 @@ EXEMPT_FILES = (
     "tools/deposit_sawabiq.py",  # يقرأ الكتابَ المختوم ومودَعَ المصحف ويولّد جدولَي السوابق
     "tools/gen_sawabiq_index.py",  # يقرأ الشهادات وMASAQ ويولّد فهرسَ السوابق
     "tools/deposit_nabhani.py",  # يقرأ ج3 و«التفكير» المختومَين ويولّد جدولَي النبهانيّ
+    "tools/deposit_salsala.py",  # يقرأ المختومَين نفسَيهما ويولّد جدولَي السلسلة بأسطرها
     "tools/gen_intiqal_index.py",  # يقرأ شجرة src وAudit ويولّد فهرسَ الانتقالات وجدولَه
     "tools/gen_siyaq_index.py",  # يقرأ مودَعَي الشهادات (ابتداءً وسياقًا) ويولّد فهرسَ السياق
     "tools/gen_coverage_index.py",  # يقرأ مودَعَي الشهادات ويولّد فهرسَ التغطية وجدولَيها

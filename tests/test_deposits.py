@@ -44,7 +44,8 @@ def test_prior_knowledge_is_read_only_above_the_gates() -> None:
     hukm = [m for m, layer in MODULE_LAYER.items() if layer == "الحكم"]
     # لا وحدةَ في الحكم بلا إذنٍ مسجَّل (المادّة ٩): المخصّص ADR ١٥؛ والتغطيةُ بإذن المالك «غطي بالبرهان
     # وعرف الشاهد» (2026-10-09، ADR ٢٩)
-    assert hukm == ["mukhassas", "coverage"], "HUKM_MODULE_WITHOUT_RECORDED_PERMISSION"
+    # والسلسلةُ بإذن المالك «موافق راجع النبهاني أولا ونفذ» (2026-10-10، ADR ٣١)
+    assert hukm == ["mukhassas", "coverage", "salsala"], "HUKM_MODULE_WITHOUT_RECORDED_PERMISSION"
 
 
 def _canonical(d: object) -> str:

@@ -741,6 +741,11 @@ def main (args : List String) : IO Unit := do
     for a in Nabhani.Ihtimal.all do
       for b in Nabhani.Ihtimal.all do
         IO.println s!"awla,{a.name},{b.name},{Nabhani.awla a b}"
+  | ["salsala"] =>
+    -- السلسلة: الأركانُ برقمها وسلّمها ومرتبتها وعدد مراسيها وسوالفها.
+    for r in SalsalaTable.rows do
+      IO.println s!"rukn,{r.id},{r.ladder},{r.grade},{r.anchors.length},{"+".intercalate (r.salaf.map toString)}"
+    IO.println s!"declared,{",".intercalate (SalsalaTable.declared.map toString)}"
   | ["shahada"] =>
     -- شهادةُ SLGE: عددُ الذرّات وترميزُ المسار والبصمةُ لشواهدَ بعينها (الخانات|المسار|المدلول).
     let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)

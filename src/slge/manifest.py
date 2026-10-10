@@ -104,6 +104,9 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("nabhani", ("Nabhani", "NabhaniTable"), ("nabhani",), "gen_nabhani_index.py",
            "test_nabhani.py"),  # تقسيماتُ النبهانيّ أنماطًا من المختوم، وفهرسُ المطابقة
     Module("nabhani_table", (), (), None, "test_nabhani.py"),  # مولَّدٌ من ج3 و«التفكير» المختومَين
+    Module("salsala", ("Salsala", "SalsalaTable"), ("salsala",), "gen_salsala_index.py",
+           "test_salsala.py"),  # السلسلة: أركانُ المدلول الكونيّ على سلالم النبهانيّ بأسطرها (ADR ٣١)
+    Module("salsala_table", (), (), None, "test_salsala.py"),  # مولَّدٌ من ج3 و«التفكير» المختومَين
     Module("shahada", ("Shahada",), ("shahada",), None, "test_shahada.py"),  # شهادةُ SLGE ببصمتها
     Module("intiqal", ("Intiqal", "IntiqalTable"), (), "gen_intiqal_index.py", "test_intiqal.py"),
     Module("siyaq", ("Siyaq",), ("siyaq",), "gen_siyaq_index.py", "test_siyaq.py"),  # في حدّها
