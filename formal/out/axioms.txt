@@ -932,12 +932,18 @@
 'Slge.Salsala.ghazali_sources_from_mustasfa' does not depend on any axioms
 'Slge.Salsala.shahid_does_not_anchor' does not depend on any axioms
 'Slge.AjnasTable.genera_length' does not depend on any axioms
+'Slge.MadlulTable.tags_length' does not depend on any axioms
+'Slge.MadlulTable.unsigned_none' does not depend on any axioms
+'Slge.Hukm.jins_no_delete' depends on axioms: [propext, Quot.sound]
+'Slge.Hukm.lafz_witness_not_mana' depends on axioms: [propext, Quot.sound]
+'Slge.Hukm.tag_total' does not depend on any axioms
+'Slge.Hukm.unsigned_no_jins' depends on axioms: [propext, Quot.sound]
 'Slge.Hukm.hukm_none_iff' depends on axioms: [propext]
 'Slge.Hukm.hukm_length' depends on axioms: [propext]
 'Slge.Hukm.hukm_mem' depends on axioms: [propext, Quot.sound]
 'Slge.Hukm.mem_rank' depends on axioms: [propext]
 'Slge.Hukm.length_rank' depends on axioms: [propext, Quot.sound]
-'Slge.Hukm.jins_mafhum_has_witness' depends on axioms: [propext, Quot.sound]
+'Slge.Hukm.jins_mafhum_has_witness' depends on axioms: [propext]
 'Slge.Hukm.qabiliyya_mafhum_has_witness' depends on axioms: [propext, Quot.sound]
 'Slge.Hukm.caps_are_tree_nodes' depends on axioms: [propext]
 'Slge.Hukm.qabiliyya_witness_in_tree' depends on axioms: [propext, Quot.sound]

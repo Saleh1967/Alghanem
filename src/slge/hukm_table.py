@@ -7,8 +7,8 @@ from typing import Final
 FORMS: Final[int] = 18179
 LA_HUKM: Final[int] = 4728
 AHKAM: Final[int] = 13451
-ANY_MAFHUM: Final[int] = 6284
-BOTH_MALUMAH: Final[int] = 7167
+ANY_MAFHUM: Final[int] = 6160
+BOTH_MALUMAH: Final[int] = 7291
 SINGLE_ROOT: Final[int] = 11905
 MULTI_ROOT: Final[int] = 1546
 REFERENCE_SIZE: Final[int] = 300

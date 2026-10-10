@@ -19,11 +19,30 @@ from typing import Final
 from slge.ajnas_table import GENERA
 from slge.cells import Cell
 from slge.jidh import jidh
+from slge.madlul_table import TAGS
 from slge.maqayis import code_of_root, roots_of
 from slge.salsala_table import GRADES, ROWS
 
-__all__ = ["JINS", "LA_HUKM", "MAFHUM", "MALUMAH", "QABILIYYA", "Judgement", "Row", "hukm",
-           "hukm_of_form", "judge_jins", "judge_qabiliyya", "judge_root", "rank", "roots_of_form"]
+__all__ = [
+    "JINS",
+    "LA_HUKM",
+    "MAFHUM",
+    "MALUMAH",
+    "MANA",
+    "QABILIYYA",
+    "Judgement",
+    "Row",
+    "accepted",
+    "hukm",
+    "hukm_of_form",
+    "judge_jins",
+    "judge_qabiliyya",
+    "judge_root",
+    "lafz_witness",
+    "rank",
+    "roots_of_form",
+    "tag_of",
+]
 
 JINS: Final[int] = 4
 QABILIYYA: Final[int] = 7
@@ -59,13 +78,38 @@ Row = tuple[int, Judgement, Judgement]
 """(الجذر، حكمُ الجنس، حكمُ القابليّة)."""
 
 
+MANA: Final[str] = "مدلول اللفظ معنى"
+"""القسمُ الأوّل من ج3 409: «أن يكون مدلول اللفظ معنى» (`Nabhani.Madlul.mana`)."""
+
+
+def tag_of(book: int) -> str | None:
+    """قسمُ الجنس من جدول المالك (`tagOf`)؛ لا شيء = لم يُوقَّع أو «ليس جنسًا»."""
+
+    return TAGS.get(book)
+
+
+def accepted(book: int) -> bool:
+    """الجنسُ المقبولُ شاهدًا للركن 4: ما مدلولُه معنى وحدَه (`accepted`، ADR ٣٥)."""
+
+    return tag_of(book) == MANA
+
+
 def judge_jins(r: int) -> Judgement:
-    """الجنس: أوّلُ كتابٍ جذورُ عنوانه تحمل الجذر (`judgeJins`)."""
+    """الجنس: أوّلُ كتابٍ مقبولٍ جذورُ عنوانه تحمل الجذر (`judgeJins`)."""
 
     for book, _, roots, _ in GENERA:
-        if r in roots:
+        if accepted(book) and r in roots:
             return Judgement(JINS, book)
     return Judgement(JINS, None)
+
+
+def lafz_witness(r: int) -> int | None:
+    """شاهدُ الدالّ: أوّلُ كتابٍ غيرِ مقبول جذورُ عنوانه تحمل الجذر (`lafzWitness`) — لا يُحكم به."""
+
+    for book, _, roots, _ in GENERA:
+        if not accepted(book) and r in roots:
+            return book
+    return None
 
 
 def judge_qabiliyya(r: int) -> Judgement:
@@ -121,7 +165,8 @@ def hukm_of_form(w: Word) -> list[Row] | None:
 
 def _check() -> None:
     assert ROWS[JINS][2] == "الأجناس والأنواع" and ROWS[QABILIYYA][2] == "القابليّات"
-    assert judge_jins(22018) == Judgement(JINS, 163)
+    assert judge_jins(22018) == Judgement(JINS, 163 if accepted(163) else None)
+    assert accepted(163) or lafz_witness(22018) == 163
     assert judge_qabiliyya(24998) == Judgement(QABILIYYA, 2)
     assert judge_jins(24998).witness is None and judge_jins(22018).grade == "ظنّ"
     assert hukm([]) is None and len(hukm([22018, 24998]) or []) == 2

@@ -1,14 +1,15 @@
-"""فهرسُ الحكم (HUKM_INDEX.md): دالّةُ الحكم على مودَع المصحف كاملًا، وعلى مرجع الأحكام المحجوب (ADR ٣٤).
+"""فهرسُ الحكم (HUKM_INDEX.md): دالّةُ الحكم على مودَع المصحف كاملًا، وعلى مرجع الأحكام المحجوب
+(ADR ٣٤).
 
 يقرأ `corpus-certificates.json.gz` (صورُ المصحف وتكرارُها مواقعَ) ويمرّر كلَّ صورةٍ على
-`hukm.hukm_of_form`: جذورُ قراءات الجذع ثمّ حكمُ الجنس (الركن 4) وحكمُ القابليّة (الركن 7) لكلّ جذر من
-مودَع المعلومات السابقة (`ajnas-qabiliyyat.json.gz`) — فيعدّ: الصورَ بلا جذرٍ (**لا حكم**)، والصورَ ذاتَ
-الحكم ومنها ما فيه «مفهومٌ» بشاهد (جنسًا أو قابليّةً) وما كلُّه «معلومة»، والمواقعَ كذلك بالتكرار؛ ويذكر
-أكثرَ الأجناس والعقد شهادةً.
-ثمّ **المرجعُ المحجوب** (`hukm-reference.tsv`، إطارٌ من 300 موقعٍ من المصحف ببذرةٍ معلَنة — الغانم ADR ٩):
-ما ملأه المالكُ من أعمدته (الجذر، الجنس، القابليّة) يُقاس عليه الحكمُ موقعًا موقعًا؛ وما لم يُملأ فلا رقم —
-الفهرسُ يكتب «لا رقم» ولا يخمّن. يكتب أيضًا `formal/Slge/HukmTable.lean` و`src/slge/hukm_table.py`
-(الأعدادُ، ويبرهن Lean قسمتَها). لا نصَّ هنا إلّا عناوينُ المخصّص من جدوله لمطابقة ما كتبه المالك بالرسم.
+`hukm.hukm_of_form`: جذورُ قراءات الجذع ثمّ حكمُ الجنس (الركن 4) وحكمُ القابليّة (الركن 7) لكلّ جذر
+من مودَع المعلومات السابقة (`ajnas-qabiliyyat.json.gz`) — فيعدّ: الصورَ بلا جذرٍ (**لا حكم**)،
+والصورَ ذاتَ الحكم ومنها ما فيه «مفهومٌ» بشاهد (جنسًا أو قابليّةً) وما كلُّه «معلومة»، والمواقعَ
+كذلك بالتكرار؛ ويذكر أكثرَ الأجناس والعقد شهادةً. ثمّ **المرجعُ المحجوب** (`hukm-reference.tsv`،
+إطارٌ من 300 موقعٍ من المصحف ببذرةٍ معلَنة — الغانم ADR ٩): ما ملأه المالكُ من أعمدته (الجذر،
+الجنس، القابليّة) يُقاس عليه الحكمُ موقعًا موقعًا؛ وما لم يُملأ فلا رقم — الفهرسُ يكتب «لا رقم» ولا
+يخمّن. يكتب أيضًا `formal/Slge/HukmTable.lean` و`src/slge/hukm_table.py` (الأعدادُ، ويبرهن Lean
+قسمتَها). لا نصَّ هنا إلّا عناوينُ المخصّص من جدوله لمطابقة ما كتبه المالك بالرسم.
 """
 
 from __future__ import annotations
@@ -22,7 +23,8 @@ from pathlib import Path
 from typing import Any
 
 from slge.cells import ALPHABET, Cell
-from slge.hukm import JINS, QABILIYYA, hukm_of_form, roots_of_form
+from slge.hukm import JINS, QABILIYYA, hukm_of_form, lafz_witness, roots_of_form
+from slge.madlul_table import PROPOSALS, SIGNED
 from slge.maqayis import decode
 from slge.mukhassas import code_of_root, title_of
 from slge.salsala import ROWS as SALSALA
@@ -33,6 +35,8 @@ LEAN = ROOT / "formal" / "Slge" / "HukmTable.lean"
 PY = ROOT / "src" / "slge" / "hukm_table.py"
 DATA = ROOT / "tests" / "data"
 REFERENCE = DATA / "hukm-reference.tsv"
+REFERENCE_2 = DATA / "hukm-reference-2.tsv"
+"""نسخةُ الإطار نفسِه لمالئٍ ثانٍ مستقلّ (ADR ٣٥): يُقاس اتّفاقُ المالئَين ولا يُحسم خلافُهما."""
 AJNAS = DATA / "ajnas-qabiliyyat.json.gz"
 """مودَعُ المعلومات السابقة الذي تقرؤه الدالّةُ عبر `ajnas_table` (مسجَّلٌ هنا للسجلّ)."""
 OWNER = ("root", "jins", "qabiliyya")
@@ -67,15 +71,53 @@ def _owner_root_code(text: str) -> int | None:
     return code_of_root(letters)
 
 
+def _rows(path: Path) -> list[dict[str, str]]:
+    with path.open("r", encoding="utf-8", newline="") as f:
+        return list(csv.DictReader(f, delimiter="\t"))
+
+
+def _filled(r: dict[str, str]) -> bool:
+    return any(r.get(k, "").strip() for k in OWNER)
+
+
+def _kappa(pairs: list[tuple[bool, bool]]) -> float | None:
+    """معاملُ كوهين على وسمٍ ثنائيّ (مفهومٌ بعنوانٍ / «-»)؛ لا شيء إن لم يُعرَّف (لا أزواج، أو اتّفاقٌ
+    متوقَّعٌ تامّ)."""
+
+    n = len(pairs)
+    if n == 0:
+        return None
+    po = sum(a == b for a, b in pairs) / n
+    pa, pb = sum(a for a, _ in pairs) / n, sum(b for _, b in pairs) / n
+    pe = pa * pb + (1 - pa) * (1 - pb)
+    return None if pe == 1 else round((po - pe) / (1 - pe), 4)
+
+
+def _agreement() -> dict[str, Any]:
+    """اتّفاقُ المالئَين على ما ملآه كلاهما: نسبةٌ لكلّ عمود، وكابا للجنس والقابليّة (مفهوم/«-»)؛
+    والخلافُ يُعدّ ولا يُحسم (لا أكثريّةَ بشاهدين)."""
+
+    one = {r["id"]: r for r in _rows(REFERENCE)}
+    two = {r["id"]: r for r in _rows(REFERENCE_2)}
+    both = [i for i in one if _filled(one[i]) and i in two and _filled(two[i])]
+    out: dict[str, Any] = {"both_filled": len(both)}
+    for k in OWNER:
+        out[f"agree_{k}"] = sum(one[i][k].strip() == two[i][k].strip() for i in both)
+    for k in ("jins", "qabiliyya"):
+        pairs = [(one[i][k].strip() not in ("", "-"), two[i][k].strip() not in ("", "-"))
+                 for i in both]
+        out[f"kappa_{k}"] = _kappa(pairs)
+    return out
+
+
 def _reference(forms: list[Word], stream: list[int], line_lengths: list[int]) -> dict[str, Any]:
     """المرجعُ المحجوب: المملوءُ من الإطار يُقاس عليه موقعًا موقعًا؛ ولا رقمَ إن لم يُملأ شيء."""
 
-    with REFERENCE.open("r", encoding="utf-8", newline="") as f:
-        rows = list(csv.DictReader(f, delimiter="\t"))
+    rows = _rows(REFERENCE)
     offsets = [0]
     for n in line_lengths:
         offsets.append(offsets[-1] + n)
-    filled = [r for r in rows if any(r.get(k, "").strip() for k in OWNER)]
+    filled = [r for r in rows if _filled(r)]
     root_ok = jins_ok = qab_ok = unresolved = 0
     for r in filled:
         token = offsets[int(r["line"]) - 1] + int(r["pos"]) - 1
@@ -115,8 +157,9 @@ def measure() -> dict[str, Any]:
     freq: Counter[int] = Counter(i for i in stream if i >= 0)
     la_hukm = any_mafhum = both_malumah = single = multi = 0
     la_hukm_tok = any_mafhum_tok = both_malumah_tok = 0
-    jins_forms = qab_forms = 0
+    jins_forms = qab_forms = lafz_forms = 0
     books: Counter[int] = Counter()
+    lafz_books: Counter[int] = Counter()
     nodes: Counter[int] = Counter()
     for i, w in enumerate(forms):
         h = hukm_of_form(w)
@@ -132,6 +175,9 @@ def measure() -> dict[str, Any]:
         q_ok = any(x[2].witness is not None for x in h)
         jins_forms += j_ok
         qab_forms += q_ok
+        lw = {b for x in h if (b := lafz_witness(x[0])) is not None}
+        lafz_forms += bool(lw)
+        lafz_books.update(lw)
         if j_ok or q_ok:
             any_mafhum += 1
             any_mafhum_tok += freq[i]
@@ -147,12 +193,17 @@ def measure() -> dict[str, Any]:
         "forms": len(forms), "tokens": sum(freq.values()),
         "la_hukm": la_hukm, "ahkam": len(forms) - la_hukm, "single_root": single,
         "multi_root": multi, "any_mafhum": any_mafhum, "both_malumah": both_malumah,
-        "jins_mafhum": jins_forms, "qabiliyya_mafhum": qab_forms,
+        "jins_mafhum": jins_forms, "qabiliyya_mafhum": qab_forms, "signed": int(SIGNED),
+        "lafz_witness_forms": lafz_forms,
+        "lafz_witness_forms_by_proposal": dict(sorted(Counter(
+            PROPOSALS[b] for b in lafz_books.elements()).items())),
+        "top_lafz_books": [(title_of(b), PROPOSALS[b], n) for b, n in lafz_books.most_common(10)],
         "tokens_la_hukm": la_hukm_tok, "tokens_any_mafhum": any_mafhum_tok,
         "tokens_both_malumah": both_malumah_tok,
         "top_books": [(title_of(b), n) for b, n in books.most_common(10)],
         "top_nodes": [(title_of(w), n) for w, n in nodes.most_common(10)],
         "reference": _reference(forms, stream, list(ctx["line_lengths"])),
+        "agreement": _agreement(),
     }
 
 
@@ -230,11 +281,24 @@ def render(m: dict[str, Any]) -> str:
         f"{m['multi_root']:,} (التعدّدُ يُرتَّب ولا يُحسم: `mem_rank`)؛ فيها مفهومُ جنسٍ "
         f"{m['jins_mafhum']:,}، ومفهومُ قابليّةٍ {m['qabiliyya_mafhum']:,}.",
         "",
-        "### أكثرُ الأجناس شهادةً (الكتاب في المخصّص: كم صورةً جذرُها اسمُه)",
+        "### الجنسُ بقسمة ج3 409 (ADR ٣٥)",
         "",
-        "| الكتاب | الصور |", "|---|---|",
-        *(f"| {t} | {n:,} |" for t, n in m["top_books"]),
+        "لا يُحكم على الركن 4 (المعلوماتُ السابقة) إلّا بجنسٍ مدلولُه **معنى** بتوقيع المالك "
+        "(`owner-ajnas-madlul.json`)؛ وما سواه — مدلولُه لفظ، أو لم يُوقَّع — **شاهدٌ للدالّ** لا يُحكم "
+        f"به (`lafzWitness`، `jins_no_delete`). الجدولُ موقَّع: **{'نعم' if m['signed'] else 'لا'}**"
+        + ("؛ فلا حكمَ على الجنس بعدُ (`unsigned_no_jins`)." if not m["signed"] else "."),
         "",
+        f"صورٌ لها شاهدُ دالٍّ من الأجناس: {m['lafz_witness_forms']:,}. توزيعُ شواهدها على **اقتراح "
+        "الوكيل** (رأيٌ للعرض على المالك، لا يستهلكه الحكم):",
+        "",
+        "| الاقتراح | شواهد |", "|---|---|",
+        *(f"| {k} | {n:,} |" for k, n in m["lafz_witness_forms_by_proposal"].items()),
+        "",
+        "| الكتاب (شاهدُ دالّ) | اقتراحُ الوكيل | الصور |", "|---|---|---|",
+        *(f"| {t} | {p} | {n:,} |" for t, p, n in m["top_lafz_books"]),
+        "",
+        *(["### أكثرُ الأجناس المقبولة شهادةً", "", "| الكتاب | الصور |", "|---|---|",
+           *(f"| {t} | {n:,} |" for t, n in m["top_books"]), ""] if m["top_books"] else []),
         "### أكثرُ العقد شهادةً للقابليّة",
         "",
         "| العقدة | الصور |", "|---|---|",
@@ -259,6 +323,19 @@ def render(m: dict[str, Any]) -> str:
                   f"| الجذر | {_pct(r['root_agree'], r['filled'])} |",
                   f"| الجنس | {_pct(r['jins_agree'], r['filled'])} |",
                   f"| القابليّة | {_pct(r['qabiliyya_agree'], r['filled'])} |", ""]
+    a = m["agreement"]
+    lines += ["### اتّفاقُ المالئَين (`hukm-reference-2.tsv`: الإطارُ نفسُه لمالئٍ ثانٍ مستقلّ)", ""]
+    if a["both_filled"] == 0:
+        lines += ["**لا رقم:** لم يملأ المالئان موقعًا مشتركًا بعد؛ الاستقلالُ شرطٌ معلَنٌ لا تفحصه "
+                  "الآلة. ومواضعُ الخلاف تُعدّ ولا تُحسم بالأكثريّة.", ""]
+    else:
+        kj = "—" if a["kappa_jins"] is None else f"{a['kappa_jins']:.4f}"
+        kq = "—" if a["kappa_qabiliyya"] is None else f"{a['kappa_qabiliyya']:.4f}"
+        lines += [f"المملوءُ عندهما معًا {a['both_filled']}:", "",
+                  "| | الاتّفاق | كابا |", "|---|---|---|",
+                  f"| الجذر | {_pct(a['agree_root'], a['both_filled'])} | — |",
+                  f"| الجنس | {_pct(a['agree_jins'], a['both_filled'])} | {kj} |",
+                  f"| القابليّة | {_pct(a['agree_qabiliyya'], a['both_filled'])} | {kq} |", ""]
     lines += ["**ما بقي باسمه:** الحكمُ هنا على ركنَين من اثنين وعشرين؛ وما ليس من جذور المقاييس "
               "لا حكمَ له باسمه؛ والمرتبةُ من جدول السلسلة (ظنٌّ للركنين) لا من المودَع.", ""]
     return "\n".join(lines)

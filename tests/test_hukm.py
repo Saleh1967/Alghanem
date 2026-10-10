@@ -18,6 +18,7 @@ import pytest
 from slge.ajnas_table import GENERA, KIND
 from slge.hukm import (
     JINS,
+    MANA,
     QABILIYYA,
     Judgement,
     hukm,
@@ -25,9 +26,11 @@ from slge.hukm import (
     judge_jins,
     judge_qabiliyya,
     judge_root,
+    lafz_witness,
     rank,
     roots_of_form,
 )
+from slge.madlul_table import SIGNED, TAGS
 from slge.manifest import AJNAS_DIGEST, DEPOSITS
 from slge.mukhassas import NODES, level_of, title_of
 from slge.rawabit import cells_of
@@ -71,7 +74,11 @@ def test_first_prior_knowledge_deposit_is_registered_by_kind_and_digest() -> Non
 def test_judgement_is_total_witnessed_and_never_drops_a_root() -> None:
     # «مشي» (22018) اسمُ الكتاب 163 «أبواب المشي»؛ «ولد» (24998) في «باب الحمل والولادة» (2) تحت كتاب
     # خلق الإنسان
-    assert title_of(163).endswith("المشي") and judge_jins(22018) == Judgement(JINS, 163)
+    # «أبواب المشي» جنسٌ لا يُحكم به على الركن 4 إلّا بعد أن يوقّع المالكُ قسمَه «معنى» (ج3 409، ADR ٣٥)؛
+    # وقبل ذلك شاهدٌ للدالّ لا يضيع
+    assert title_of(163).endswith("المشي")
+    assert judge_jins(22018) == Judgement(JINS, 163 if SIGNED and TAGS[163] == MANA else None)
+    assert (judge_jins(22018).witness == 163) != (lafz_witness(22018) == 163)
     assert title_of(2) == "باب الحمل والولادة" and judge_qabiliyya(24998) == Judgement(QABILIYYA, 2)
     assert judge_jins(24998).witness is None  # «ولد» ليس اسمَ كتاب: معلومةٌ لا رفض
     assert hukm([]) is None  # لا حكمَ بلا جذر
@@ -82,7 +89,7 @@ def test_judgement_is_total_witnessed_and_never_drops_a_root() -> None:
     assert ROWS[JINS][1] == 0 and ROWS[QABILIYYA][1] == 0 and QABILIYYA in DECLARED
     assert rows[0][1].grade == grade(JINS) == "ظنّ" and rows[1][2].grade == "ظنّ"
     assert rows[0][1].name == "الأجناس والأنواع" and rows[1][2].name == "القابليّات"
-    assert rows[0][1].kind == "مفهوم" and rows[2][1].kind == "معلومة"
+    assert rows[1][2].kind == "مفهوم" and rows[2][1].kind == "معلومة"
     # الترتيبُ مفهومًا أوّلًا ولا يحذف
     ranked = rank([judge_root(5), judge_root(22018)])
     assert [x[0] for x in ranked] == [22018, 5] and sorted(ranked) == sorted([judge_root(5),
@@ -100,7 +107,7 @@ def test_judgement_of_a_form_leaves_the_shahada_untouched() -> None:
     w = cells_of("مَشَى")
     s = Shahada(w, (0, 0, 1, 1, 1, 1, 1), None)
     h = hukm_of_form(w)
-    assert h is not None and h[0][0] == 22018 and h[0][1] == Judgement(JINS, 163)
+    assert h is not None and h[0][0] == 22018 and h[0][1].rukn == JINS
     assert fingerprint(s) == fingerprint(Shahada(w, (0, 0, 1, 1, 1, 1, 1), None))
     assert 22018 in roots_of_form(w)
     assert all(x[1].rukn == JINS and x[2].rukn == QABILIYYA for x in h)
@@ -128,10 +135,11 @@ def test_python_judgement_matches_the_lean_export() -> None:
     rows = (ROOT / "formal" / "out" / "hukm.csv").read_text(encoding="utf-8").splitlines()
     judged = [r.split(",") for r in rows if r.startswith("judge,")]
     assert len(judged) == 608
-    for _, r, j, q in judged:
+    for _, r, j, q, lw in judged:
         jj, qq = judge_jins(int(r)), judge_qabiliyya(int(r))
         want = (None if j == "-" else int(j), None if q == "-" else int(q))
         assert (jj.witness, qq.witness) == want
+        assert lafz_witness(int(r)) == (None if lw == "-" else int(lw))
     assert "nohukm,true" in rows
     genera = [r.split(",") for r in (ROOT / "formal" / "out" / "ajnas_table.csv")
               .read_text(encoding="utf-8").splitlines() if r.startswith("genus,")]

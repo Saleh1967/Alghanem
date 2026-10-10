@@ -63,6 +63,8 @@ jobs:
         run: python tools/deposit_ghazali.py --check
       - name: the first prior-knowledge deposit (genera and capabilities with witnesses) is what the sealed Mukhassas yields
         run: python tools/deposit_ajnas.py --check
+      - name: the genus tags (Nabhani 409, owner-signed) and their tables match the frame
+        run: python tools/deposit_madlul.py --check
       - name: every cell-to-cell transition in the tree is registered with an audited theorem or a named debt
         run: python tools/gen_intiqal_index.py --check
       - name: the certificates deposit is what the pinned gate prints now (stitching the layers by code, not by prose)

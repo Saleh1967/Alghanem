@@ -1,4 +1,5 @@
 import Slge.AjnasTable
+import Slge.MadlulTable
 import Slge.SalsalaTable
 import Slge.Mukhassas
 import Slge.Shahada
@@ -54,11 +55,23 @@ def Judgement.isMafhum : Judgement → Bool
   | .malumah _ => false
   | .mafhum _ _ => true
 
-/-- الجنس: أوّلُ كتابٍ جذورُ عنوانه تحمل الجذر. -/
+/-- قسمُ الجنس «باعتبار المدلول وحده» (ج3 409) من جدول المالك؛ `none` = لم يُوقَّع أو «ليس جنسًا». -/
+def tagOf (b : Nat) : Option Nabhani.Madlul := (MadlulTable.tags.find? (·.1 == b)).bind (·.2)
+
+/-- الجنسُ المقبولُ شاهدًا للركن 4 (المعلوماتُ السابقة: «حقائق الأشياء» ج3 395): ما مدلولُه **معنى** وحدَه
+(ADR ٣٥). -/
+def accepted (g : AjnasTable.Genus) : Bool := tagOf g.book == some .mana
+
+/-- الجنس: أوّلُ كتابٍ مقبولٍ (مدلولُه معنى) جذورُ عنوانه تحمل الجذر. -/
 def judgeJins (r : Nat) : Judgement :=
-  match genera.find? (fun g => g.roots.contains r) with
+  match genera.find? (fun g => accepted g && g.roots.contains r) with
   | some g => .mafhum JINS g.book
   | none => .malumah JINS
+
+/-- شاهدُ الدالّ: أوّلُ كتابٍ غيرِ مقبول (مدلولُه لفظ، أو لم يُوقَّع) جذورُ عنوانه تحمل الجذر — يبقى شاهدًا
+ولا يُحكم به على الركن 4. -/
+def lafzWitness (r : Nat) : Option Nat :=
+  (genera.find? (fun g => !accepted g && g.roots.contains r)).map (·.book)
 
 /-- القابليّة: أوّلُ عقدةٍ شاهدةٍ في جدول القابليّات تحمل الجذر. -/
 def judgeQabiliyya (r : Nat) : Judgement :=
@@ -129,17 +142,70 @@ theorem length_rank : ∀ l : List Row, (rank l).length = l.length
 /-! ## لا «مفهوم» بلا شاهدٍ من المودَع -/
 
 theorem jins_mafhum_has_witness (r k w : Nat) (h : judgeJins r = .mafhum k w) :
-    k = JINS ∧ ∃ g ∈ genera, g.book = w ∧ g.roots.contains r = true := by
+    k = JINS ∧ ∃ g ∈ genera, g.book = w ∧ g.roots.contains r = true ∧ tagOf w = some .mana := by
   unfold judgeJins at h
   split at h
   · rename_i g hg
     have hw : w = g.book := by cases h; rfl
     have hk : k = JINS := by cases h; rfl
     subst hw
-    refine ⟨hk, g, List.mem_of_find?_eq_some hg, rfl, ?_⟩
-    have := List.find?_some hg
-    simpa using this
+    have hp := List.find?_some hg
+    simp only [Bool.and_eq_true, accepted, beq_iff_eq] at hp
+    exact ⟨hk, g, List.mem_of_find?_eq_some hg, rfl, hp.2, hp.1⟩
   · cases h
+
+/-- **الوسمُ لا يحذف:** كلُّ جذرٍ في عنوان جنسٍ إمّا محكومٌ به على الركن 4 (جنسٌ مدلولُه معنى) وإمّا باقٍ
+شاهدًا للدالّ — لا يضيع. -/
+theorem jins_no_delete (r : Nat) (h : ∃ g ∈ genera, g.roots.contains r = true) :
+    (judgeJins r).isMafhum = true ∨ (lafzWitness r).isSome = true := by
+  obtain ⟨g, hg, hc⟩ := h
+  have hm : r ∈ g.roots := List.contains_iff_mem.mp hc
+  cases ha : accepted g
+  · right
+    have : (genera.find? (fun g => !accepted g && g.roots.contains r)).isSome := by
+      rw [List.find?_isSome]; exact ⟨g, hg, by simp [ha, hm]⟩
+    simpa [lafzWitness] using this
+  · left
+    unfold judgeJins
+    cases hf : genera.find? (fun g => accepted g && g.roots.contains r) with
+    | none =>
+      rw [List.find?_eq_none] at hf
+      exact absurd (hf g hg) (by simp [ha, hm])
+    | some _ => rfl
+
+/-- شاهدُ الدالّ ليس جنسًا مدلولُه معنى: لا يتسرّب لفظٌ إلى المعلومات السابقة. -/
+theorem lafz_witness_not_mana (r w : Nat) (h : lafzWitness r = some w) :
+    ∃ g ∈ genera, g.book = w ∧ g.roots.contains r = true ∧ tagOf w ≠ some .mana := by
+  unfold lafzWitness at h
+  simp only [Option.map_eq_some_iff] at h
+  obtain ⟨g, hg, hw⟩ := h
+  have hp := List.find?_some hg
+  simp only [Bool.and_eq_true, Bool.not_eq_true', accepted, beq_eq_false_iff_ne] at hp
+  exact ⟨g, List.mem_of_find?_eq_some hg, hw, hp.2, hw ▸ hp.1⟩
+
+/-- كلُّ جنسٍ له صفٌّ واحدٌ في جدول المالك، بترتيب الأجناس. -/
+theorem tag_total : MadlulTable.tags.map (·.1) = genera.map (·.book) := by decide
+
+/-- **لا حكمَ على الجنس قبل التوقيع:** ما لم يوقّع المالكُ جدولَ الأقسام فلا جنسَ مقبول، فكلُّ حكمٍ على
+الركن 4 «معلومة» — والآلةُ لا تصنّف بدلًا منه. -/
+theorem unsigned_no_jins (hs : MadlulTable.signed = false) (r : Nat) :
+    judgeJins r = .malumah JINS := by
+  have hall := MadlulTable.unsigned_none hs
+  have hnone : ∀ b, tagOf b = none := by
+    intro b
+    unfold tagOf
+    cases hf : MadlulTable.tags.find? (·.1 == b) with
+    | none => rfl
+    | some p =>
+      have hm := List.mem_of_find?_eq_some hf
+      have := List.all_eq_true.mp hall p hm
+      simpa using this
+  unfold judgeJins
+  have : genera.find? (fun g => accepted g && g.roots.contains r) = none := by
+    rw [List.find?_eq_none]
+    intro g _
+    simp [accepted, hnone]
+  rw [this]
 
 theorem qabiliyya_mafhum_has_witness (r k w : Nat) (h : judgeQabiliyya r = .mafhum k w) :
     k = QABILIYYA ∧ ∃ g ∈ genera, (r, w) ∈ g.caps := by
@@ -218,7 +284,8 @@ set_option maxRecDepth 100000 in
 /-- «مشي» (22018) جنسٌ بشاهد الكتاب 163، و«ولد» (24998) قابليّةٌ لكتاب خلق الإنسان بشاهد العقدة 2 — فالركنُ
 المعلَن (القابليّات) له شاهدٌ من الواقع المودَع لا من نصّ. -/
 theorem witnesses :
-    judgeJins 22018 = .mafhum JINS 163 ∧ judgeQabiliyya 24998 = .mafhum QABILIYYA 2 ∧
+    judgeJins 22018 = .malumah JINS ∧ lafzWitness 22018 = some 163 ∧
+      judgeQabiliyya 24998 = .mafhum QABILIYYA 2 ∧
       judgeJins 24998 = .malumah JINS ∧ hukm [] = none ∧
       (hukm [22018, 24998]).map List.length = some 2 := by
   decide +kernel

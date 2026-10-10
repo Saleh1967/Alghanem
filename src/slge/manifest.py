@@ -111,6 +111,8 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("salsala_table", (), (), None, "test_salsala.py"),  # مولَّدٌ من ج3 و«التفكير» المختومَين
     Module("ajnas_table", ("AjnasTable",), ("ajnas_table",), None,
            "test_hukm.py"),  # مودَعُ المعلومات السابقة الأوّل: الأجناسُ والقابليّاتُ من المخصّص (ADR ٣٤)
+    Module("madlul_table", ("MadlulTable",), ("madlul_table",), None,
+           "test_madlul.py"),  # وسمُ الأجناس بقسمة ج3 409 بتوقيع المالك (ADR ٣٥)
     Module("hukm", ("Hukm", "HukmTable"), ("hukm",), "gen_hukm_index.py",
            "test_hukm.py"),  # الحكم: من جذور الشهادة إلى ركنٍ من السلسلة بشاهد، أو «لا حكم»
     Module("hukm_table", (), (), None, "test_hukm.py"),  # أعدادُ الحكم على المودَع، مولَّدةٌ من الفهرس
@@ -245,6 +247,13 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
             "الأجناسُ والقابليّاتُ من شجرة المخصّص بشاهدها (73 جنسًا، 863 قابليّة)؛ مولَّدٌ من المختوم "
             "بـtools/deposit_ajnas.py --check وبصمتُه AJNAS_DIGEST؛ يستهلكه الحكمُ (hukm) لا السُّلَّم "
             "— ADR ٣٤"),
+    Deposit("owner-ajnas-madlul.json", "معلومات سابقة",
+            "وسمُ الأجناس الـ73 بقسمة ج3 409 «باعتبار المدلول وحده» (معنى / أقسامُ اللفظ الأربعة / "
+            "«ليس جنسًا»): إطارٌ يملؤه المالكُ ويوقّعه — ولا وسمَ قبل التوقيع؛ الاقتراحُ فيه رأيُ الوكيل "
+            "لا يستهلكه الحكم (tools/deposit_madlul.py، ADR ٣٥)"),
+    Deposit("hukm-reference-2.tsv", "مرجع محجوب",
+            "الإطارُ نفسُه (300 موقعًا) لمالئٍ ثانٍ مستقلّ: يُقاس اتّفاقُ المالئَين (نسبةً وكابا) ولا يُحسم "
+            "خلافُهما — ADR ٣٥"),
     Deposit("hukm-reference.tsv", "مرجع محجوب",
             "إطارُ عيّنة الأحكام من المصحف (300 موقعًا ببذرة 20261010؛ الغانم gen_hukm_sample.py، "
             "ADR ٩): يملؤه المالكُ بيده (الجذر، الجنس، القابليّة) فيُقاس عليه الحكم؛ لا رقمَ قبل "

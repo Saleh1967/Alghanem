@@ -758,8 +758,13 @@ def main (args : List String) : IO Unit := do
     -- الحكمُ على كلّ جذرٍ في المودَع: شاهدُ الجنس وشاهدُ القابليّة أو «-».
     let roots := (AjnasTable.genera.flatMap fun g => g.roots ++ g.caps.map (·.1)).eraseDups
     for r in roots do
-      IO.println s!"judge,{r},{witnessName (Hukm.judgeJins r)},{witnessName (Hukm.judgeQabiliyya r)}"
+      IO.println s!"judge,{r},{witnessName (Hukm.judgeJins r)},{witnessName (Hukm.judgeQabiliyya r)},{(Hukm.lafzWitness r).map toString |>.getD "-"}"
     IO.println s!"nohukm,{(Hukm.hukm []).isNone}"
+  | ["madlul_table"] =>
+    -- وسمُ الأجناس بقسمة ج3 409: الكتابُ وقسمُه أو «-» (لم يُوقَّع أو ليس جنسًا).
+    IO.println s!"signed,{MadlulTable.signed}"
+    for (b, m) in MadlulTable.tags do
+      IO.println s!"tag,{b},{(m.map Nabhani.Madlul.name).getD "-"}"
   | ["ghazali_table"] =>
     -- جدولُ الغزاليّ بأسطره: الرقم، الصنف، الدرجة، الصورة، هل تُنتج، عددُ مراسي الغزاليّ وعددُ مراسي النبهانيّ.
     for r in GhazaliTable.rows do

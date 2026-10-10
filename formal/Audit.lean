@@ -937,6 +937,12 @@ import Slge
 #print axioms Slge.Salsala.ghazali_sources_from_mustasfa
 #print axioms Slge.Salsala.shahid_does_not_anchor
 #print axioms Slge.AjnasTable.genera_length
+#print axioms Slge.MadlulTable.tags_length
+#print axioms Slge.MadlulTable.unsigned_none
+#print axioms Slge.Hukm.jins_no_delete
+#print axioms Slge.Hukm.lafz_witness_not_mana
+#print axioms Slge.Hukm.tag_total
+#print axioms Slge.Hukm.unsigned_no_jins
 #print axioms Slge.Hukm.hukm_none_iff
 #print axioms Slge.Hukm.hukm_length
 #print axioms Slge.Hukm.hukm_mem
