@@ -1,7 +1,7 @@
 import Slge.Bridge
 
 /-! الأجناسُ والقابليّاتُ من شجرة المخصّص — مودَعُ **المعلومات السابقة** الأوّل
-(`tests/data/ajnas-qabiliyyat.json.gz`، SHA-256 `86f035bd0f3204cb29ace975d90b44b25ba9c389614cbcb384679b3040ce3070`)؛
+(`tests/data/ajnas-qabiliyyat.json.gz`، SHA-256 `db619720dae3f2c27881789727c121ffd7a75910ae0b605a01f97d346e78b155`)؛
 مولَّدٌ بـ`tools/deposit_ajnas.py`
 من `MukhassasTable` (المختومُ `openiti-mukhassas.txt.gz` `8d8134c2bce16b70b07bddf974fa5e9c0f7cd80129d8452baf55cd87006b80ac`)، لا يُحرَّر باليد.
 الجنسُ: (الكتاب، جذورُ عنوانه، القابليّاتُ (الجذر، العقدةُ الشاهدة)). -/

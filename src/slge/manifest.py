@@ -166,9 +166,10 @@ HADITH_CONTEXT_CERTIFICATES_DIGEST: Final[str] = (
 sahihain`، الغانم ADR ٧)؛ المصدرُ Open-Hadith-Data برخصة ODbL 1.0 والمودَعُ المشتقُّ يحملها. لا مرجعَ
 محجوبًا له فلا «مقيس» عليه."""
 
-AJNAS_DIGEST: Final[str] = "86f035bd0f3204cb29ace975d90b44b25ba9c389614cbcb384679b3040ce3070"
-"""بصمةُ مودَع المعلومات السابقة الأوّل (`ajnas-qabiliyyat.json.gz`) كما يولّده `tools/deposit_ajnas.py`
-من جدول المخصّص المختوم؛ مودَعٌ مشتقٌّ لا مختوم، فبصمتُه هنا لا في `Deposit.sha256` (ADR ٣٤)."""
+AJNAS_DIGEST: Final[str] = "db619720dae3f2c27881789727c121ffd7a75910ae0b605a01f97d346e78b155"
+"""بصمةُ مودَع المعلومات السابقة الأوّل (`ajnas-qabiliyyat.json.gz`) بصورته القانونيّة قبل الضغط
+(بايتاتُ gzip تختلف باختلاف zlib) كما يولّده `tools/deposit_ajnas.py` من جدول المخصّص المختوم؛ مودَعٌ
+مشتقٌّ لا مختوم، فبصمتُه هنا لا في `Deposit.sha256` (ADR ٣٤)."""
 
 DEPOSITS: Final[tuple[Deposit, ...]] = (
     Deposit("corpus-certificates.json.gz", "واقع مختوم",

@@ -1,5 +1,5 @@
 """الأجناسُ والقابليّاتُ من شجرة المخصّص — مودَعُ المعلومات السابقة الأوّل
-(`tests/data/ajnas-qabiliyyat.json.gz`، SHA-256 86f035bd0f3204cb…)؛
+(`tests/data/ajnas-qabiliyyat.json.gz`، SHA-256 db619720dae3f2c2…)؛
 مولَّدٌ بـ`tools/deposit_ajnas.py`
 من جدول المخصّص؛ لا يُحرَّر باليد."""
 

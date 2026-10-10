@@ -65,12 +65,15 @@ def verify(gs: list[Genus]) -> None:
 
 
 def render_json(gs: list[Genus]) -> bytes:
+    """المودَعُ بصورته القانونيّة (مفاتيحُ مرتّبة بلا فراغ) قبل الضغط؛ البصمةُ عليها لا على الضغط، لأنّ
+    بايتاتِ gzip تختلف باختلاف zlib."""
+
     doc = {"version": 1, "kind": KIND, "source": SOURCE, "source_sha256": SOURCE_SHA,
            "note": "الأجناسُ والقابليّاتُ من شجرة المخصّص بشاهدها؛ لا نصَّ يُقرأ هنا",
            "genera": [{"book": b, "title": t, "roots": list(rs), "caps": [list(c) for c in caps]}
                       for b, t, rs, caps in gs]}
     blob = json.dumps(doc, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-    return gzip.compress(blob.encode("utf-8"), mtime=0)
+    return blob.encode("utf-8")
 
 
 def render_lean(gs: list[Genus], sha: str) -> str:
@@ -132,12 +135,12 @@ def main(argv: list[str]) -> int:
     sha = hashlib.sha256(blob).hexdigest()
     lean, py = render_lean(gs, sha), render_py(gs, sha)
     if "--check" in argv:
-        ok = (DEPOSIT.read_bytes() == blob and LEAN.read_text(encoding="utf-8") == lean
-              and PY.read_text(encoding="utf-8") == py)
+        ok = (gzip.decompress(DEPOSIT.read_bytes()) == blob
+              and LEAN.read_text(encoding="utf-8") == lean and PY.read_text(encoding="utf-8") == py)
         sys.stdout.write("مودَعُ الأجناس والقابليّات وجدولاه مطابقة للمخصّص\n" if ok
                          else "مودَعُ الأجناس غيرُ مطابق\n")
         return 0 if ok else 1
-    DEPOSIT.write_bytes(blob)
+    DEPOSIT.write_bytes(gzip.compress(blob, mtime=0))
     LEAN.write_text(lean, encoding="utf-8")
     PY.write_text(py, encoding="utf-8")
     caps = sum(len(g[3]) for g in gs)

@@ -52,8 +52,9 @@ def test_first_prior_knowledge_deposit_is_registered_by_kind_and_digest() -> Non
     dep = next(d for d in DEPOSITS if d.path == "ajnas-qabiliyyat.json.gz")
     assert dep.kind == KIND == "معلومات سابقة"
     raw = (DATA / dep.path).read_bytes()
-    assert hashlib.sha256(raw).hexdigest() == AJNAS_DIGEST and not dep.sha256  # مشتقٌّ لا مختوم
-    doc = json.loads(gzip.decompress(raw).decode("utf-8"))
+    blob = gzip.decompress(raw)
+    assert hashlib.sha256(blob).hexdigest() == AJNAS_DIGEST and not dep.sha256  # مشتقٌّ لا مختوم
+    doc = json.loads(blob.decode("utf-8"))
     assert doc["kind"] == KIND and doc["source"] == "openiti-mukhassas.txt.gz"
     assert len(doc["genera"]) == len(GENERA) == 73
     assert [g["book"] for g in doc["genera"]] == [g[0] for g in GENERA]
