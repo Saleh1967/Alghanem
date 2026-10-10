@@ -139,6 +139,8 @@ jobs:
       - name: second sealed corpus — the Sahihain lines are what the sealed sources yield (lossless, named edition glyphs), and their context deposit is the tool's own fixed point
         run: |
           python tools/gen_hadith_lines.py --check
+          python tools/gen_hadith_sample.py --check
+          python tools/gen_hukm_sample.py --check
           python tools/gen_context_certificates.py --corpus sahihain /tmp/hadith-context-certificates.json.gz
           python tools/gen_context_certificates.py --corpus sahihain --check /tmp/hadith-context-certificates.json.gz
       - name: guard — no reader or writer outside the gate

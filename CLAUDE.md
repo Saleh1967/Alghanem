@@ -21,7 +21,7 @@
 
 ## ما لا تفعله
 
-1. لا تكتب `open`، `print`، `read_text`، `encode`، `decode`، `normalize`، `argv`، `stdin`… في أيّ ملفٍ خارج `gate/` (و`tests/`، `formal/`، `tools/gen_registry.py`، `tools/gen_glossary.py`، `tools/gen_claims.py`، `tools/gen_certificates.py`، `tools/gen_context_certificates.py`، `tools/gen_refusals.py`، `tools/gen_hadith_lines.py`، `tools/gen_hadith_sample.py`). الحارسُ `gate.guard.breaches()` يمشي على الشجرة كلَّها ويُسقط البناء.
+1. لا تكتب `open`، `print`، `read_text`، `encode`، `decode`، `normalize`، `argv`، `stdin`… في أيّ ملفٍ خارج `gate/` (و`tests/`، `formal/`، `tools/gen_registry.py`، `tools/gen_glossary.py`، `tools/gen_claims.py`، `tools/gen_certificates.py`، `tools/gen_context_certificates.py`، `tools/gen_refusals.py`، `tools/gen_hadith_lines.py`، `tools/gen_hadith_sample.py`، `tools/gen_hukm_sample.py`). الحارسُ `gate.guard.breaches()` يمشي على الشجرة كلَّها ويُسقط البناء.
 2. لا تستورد من `suspended/` ولا من `canonical116` ولا من داخليّات البوّابة (`gate.contextual`، `gate.bridge`، `gate.mabni_*`…). الواجهةُ `gate` وحدَها (`enter`، `exit`، `derive`، `recover`، `licence`).
 3. لا تُعِد وحدةً من `suspended/` إلّا بثلاثة معًا: (١) مدخلُها ومخرجُها عبر `gate.api`، (٢) اختباراتٌ توقعاتُها مستقلّةٌ عن شيفرتها ومطعَّمةٌ بالطفرة (منهج 20/20)، (٣) ADR مسجَّل. ثمّ `python tools/gen_registry.py` لتحديث السجلّ.
 4. لا تحرِّر الجداول المولَّدة (`formal/a116/*.csv`) ولا `SUSPENDED_REGISTRY.json` ولا `gate/audit_results.json` ولا `GLOSSARY.md` ولا `REFUSALS.md` ولا `CLAIMS.md` بيدك؛ تُولَّد وتُطابَق (`git diff --exit-code`).
@@ -50,9 +50,10 @@ python tools/gen_context_certificates.py --check ../slge/tests/data/context-cert
 python tools/gen_hadith_lines.py --check          # الصحيحان سطورًا من الملفّين المختومين، بلا تطبيع ويُردّ العمودُ بعينه
 python tools/gen_context_certificates.py --corpus sahihain --check ../slge/tests/data/hadith-context-certificates.json.gz   # مودَعُ الصحيحين بسياقه (~6 دقائق)
 python tools/gen_hadith_sample.py --check         # إطارُ العيّنة المحجوبة ثابتٌ ببذرته؛ الأعمدةُ المملوءة للمالك
+python tools/gen_hukm_sample.py --check           # إطارُ عيّنة الأحكام المحجوبة (المصحف، 300 موقعًا) ثابتٌ ببذرته؛ يملؤه المالك (الجذر، الجنس، القابليّة) فيُقاس عليه الحكمُ في SLGE
 python tools/gen_claims.py --check            # سجلُّ الأرقام (CLAIMS.md): كلُّ رقمٍ منشور يُعاد حسابُه من مولِّده المسمّى ببصمة مودَعاته ومخرَجه؛ ولا عددَ في CLAUDE.md بلا مولِّد (~4 دقائق)
 python -c "from gate.guard import breaches; print(breaches() or 'لا خرق')"
-pytest -q -m "not slow"        # 156 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
+pytest -q -m "not slow"        # 157 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
 ```
 
 وقبل الطبعة: أثبت أنّ الملف الذي تتكلّم عنه موجودٌ («لا ثقة بلا طبعة»)، وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه أنت.
@@ -75,6 +76,7 @@ pytest -q -m "not slow"        # 156 اختبارًا؛ و`pytest -q -m slow` ل
 | `formal/a116/A116/Hamza.lean` + `gate/hamza.py` | الهمزة: حاملٌ كسائر الحوامل؛ كرسيُّها دالّة في السياق (384 سياقًا، جدول Lean)؛ القطع يبقى في الوصل، والأدوار الزائدة (استفهام/متكلّم/تعدية) تحفظ الترخيص | مبرهن؛ مقيس (97.6% من كراسي المصحف، الباقي بقيّة مسمّاة) |
 | `gate/residue.py` | بقيّةُ الرسم: 11 قاعدةَ طبعةٍ مسمّاة (`A116.Residue`؛ `DAGGER_ALIF` لطبعة globalquran/hamil؛ `AMR_WAW` و`IBN_ALIF` لطبعة الصحيحين)؛ READY 8,532 → 18,179 من 18,200، ردٌّ بعينه | مبرهن (الردّ) + مقيس (التغطية) |
 | `corpora/hadith/` + `tools/gen_hadith_lines.py`، `tools/gen_hadith_sample.py` | المدوّنةُ الثانية: الصحيحان (Open-Hadith-Data، ODbL) — 12,370 حديثًا سطورًا، كلُّ رمزِ طبعةٍ مسمًّى ويُردّ العمودُ بعينه؛ مودَعُها بسياقها في SLGE؛ مرجعُها تشكيلُ الطبعة بتوقيع المالك للترخيص وحدَه (`owner-reference.json`)، وعيّنةٌ محجوبة فارغةٌ للمالك (`sample-frame.tsv`) | مختوم (`HADITH_SOURCES`، `HADITH_LINES_SHA256`)؛ مفحوص (`test_hadith_lines.py`، `test_hadith_reference.py`)؛ مقيس: الترخيصُ وحدَه (99.77%) |
+| `corpora/hukm-sample-frame.tsv` + `tools/gen_hukm_sample.py` | عيّنةُ الأحكام المحجوبة (ADR ٩): 300 موقعًا من المصحف ببذرةٍ معلَنة، أعمدتُها الثابتة من المدوّنة وأعمدةٌ فارغة يملؤها المالك (الجذر، الجنس، القابليّة) فتصير مرجعَ أحكامٍ محجوبًا يُقاس عليه الحكمُ في SLGE (`HUKM_INDEX.md` هناك)؛ لا رقمَ قبل الملء | مفحوص (`test_hukm_reference.py`: بذرة، عمى، الكلمةُ بعينها من سطرها) |
 | `gate/mabni_verbs.py`, `gate/mabni_bridge.py` | 770 جذرًا ← 315,874 صورة؛ الاسترجاع | مقيس (MASAQ 97.23%) |
 | `gate/guard.py` | الحارس | مفحوص (خرقٌ مزروعٌ يُلتقط) |
 | `tools/gen_refusals.py` → `REFUSALS.md` | سجلُّ الرفض: 30 اسمًا تُطلقها البوّابة — 8 مرسًى في Lean (منها `INITIAL_SUKUN_WITHOUT_REPAIR` ← `Boundary.initialSukun`، `NOT_CONTINUE_LICENSED_AFTER_REPAIR` ← `Hadd.notContinueLicensed`، و`START_VOWEL_OF_WASL_IS_UNKNOWN` ← `Boundary.waslVowel`: حركةُ الوصل من الثالث، الكتاب س17530)، 22 معلَنًا بصنفه (واجهة/رسم/همزة) وشرطِ سداده | مفحوص (`test_refusals.py`: اسمٌ مزروعٌ وإعلانان باطلان يُلتقطون) |

@@ -22,7 +22,7 @@ EXEMPT_DIRS = ("gate", "suspended", "formal", "tests", ".git", ".lake", "__pycac
 EXEMPT_FILES = ("tools/gen_registry.py", "tools/gen_glossary.py", "tools/gen_claims.py",
                 "tools/gen_certificates.py", "tools/gen_context_certificates.py",
                 "tools/gen_refusals.py", "tools/gen_hadith_lines.py",
-                "tools/gen_hadith_sample.py")
+                "tools/gen_hadith_sample.py", "tools/gen_hukm_sample.py")
 IO_ATTRS = frozenset(
     {
         "read_text", "read_bytes", "write_text", "write_bytes", "open", "decode", "encode",
