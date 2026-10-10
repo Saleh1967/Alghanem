@@ -97,6 +97,14 @@ import A116
 #print axioms A116.Ternary.admissible_iff_admissibleB
 #print axioms A116.Ternary.binOK_eq_admissibleB
 #print axioms A116.Ternary.continueB_iff
+#print axioms A116.Ternary.mem_kseqs
+#print axioms A116.Ternary.kseqs_nodup
+#print axioms A116.Ternary.pauseB_eq_acc
+#print axioms A116.Ternary.cnt_n
+#print axioms A116.Ternary.cnt_start
+#print axioms A116.Ternary.cnt_start_one
+#print axioms A116.Ternary.pause_count_fib
+#print axioms A116.Ternary.pause_count_375
 #print axioms A116.Ternary.pauseB_iff
 #print axioms A116.Recovery.edit_roundtrip
 #print axioms A116.Recovery.shadda_restore

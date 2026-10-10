@@ -12,6 +12,7 @@ import A116.Stages
 import A116.Junction
 import A116.Pause
 import A116.Ternary
+import A116.PauseCount
 import A116.Recovery
 import A116.Residue
 import A116.Unicode
