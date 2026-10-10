@@ -893,6 +893,8 @@
 'Slge.Sawabiq.wasl_state_damm_iff' depends on axioms: [propext, Quot.sound]
 'Slge.Sawabiq.wasl_noun_kasra' depends on axioms: [propext]
 'Slge.Sawabiq.wasl_noun_witnesses' depends on axioms: [propext]
+'Slge.Sawabiq.liftArid_tail' does not depend on any axioms
+'Slge.Sawabiq.liftArid_length' does not depend on any axioms
 'Slge.Sawabiq.lift_head' depends on axioms: [propext, Quot.sound]
 'Slge.Sawabiq.lift_length' depends on axioms: [propext]
 'Slge.Sawabiq.mem_readAt' depends on axioms: [propext, Quot.sound]

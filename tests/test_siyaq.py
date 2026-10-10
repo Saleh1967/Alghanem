@@ -52,7 +52,7 @@ def test_restore_is_closed_under_projection_and_contains_the_form() -> None:
             if h.pause and x[-1][1] != SUKUN:
                 continue
             cands = restore(h, x)
-            assert x in cands and len(cands) <= 26 and len(set(cands)) == len(cands)
+            assert x in cands and len(cands) <= 39 and len(set(cands)) == len(cands)
             for u in cands:
                 assert any(project(h, b, k, u) == x for b in (False, True) for k in WAQF), (h, x, u)
     assert restore(Hadd(False, False), cells_of("كَتَبَ")) == (cells_of("كَتَبَ"),)

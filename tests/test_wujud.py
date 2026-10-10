@@ -99,7 +99,7 @@ def test_numbers_on_the_deposit_and_masaq() -> None:
     # ثمّ 2,506 و7,445 قبل تصحيح همزة الأسماء الموصولة كسرًا (الغانم ADR ٧): خمسُ صورٍ تغيّر أوّلُها كسرًا
     assert m["forms"] == 18179 and sum(m["dist"].values()) == 18179 and m["dist"]["—"] == 2507
     # الفعلُ كان 7,250 وبلا قراءةٍ 1,952 وعلى MASAQ 23,847 قبل زوائد سيبويه (ADR ١٨)
-    assert m["dist"][F] == 7442 and m["masaq"] == 25799 and m["none"] == 1822
+    assert m["dist"][F] == 7440 and m["masaq"] == 25799 and m["none"] == 1822  # 7,442 قبل ADR ٨
     b, a = m["before"], m["after"]
     assert sum(b.values()) == sum(a.values()) == 23977
     assert b[(F, F)] == 6954 and a[(F, F)] == 6939  # الفعلُ بترتيب الأداة (كانا 6,817 و6,804)

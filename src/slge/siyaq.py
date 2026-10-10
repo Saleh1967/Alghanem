@@ -6,7 +6,7 @@
 التأنيث هاءً ساكنة)، و**الوصلُ** يُسقط همزةَ الوصل (`project`؛ أهمزةُ وصلٍ هي وأيُّ وجهٍ للوقف؟ قراءتان
 تُؤخذان معاملَين). والردُّ `restore` يعكسهما مرشَّحاتٍ: ما أوّلُه ساكنٌ في الوصل يُرفع بهمزةٍ على قاعدة
 `sawabiq.lift` أو يبقى، وفي الوقف كلُّ ما يُسقَط إلى الصورة بوجهٍ من الأربعة — كلُّ مرشَّحٍ يُسقَط إلى
-الصورة بعينها (`project_restore`) والصورةُ نفسُها مرشَّحة (`self_mem_restore`) والعددُ ≤ 26
+الصورة بعينها (`project_restore`) والصورةُ نفسُها مرشَّحة (`self_mem_restore`) والعددُ ≤ 39
 (`restore_length_le`). و`classify` يسمّي علاقةَ صورة الابتداء بصورة السياق كما طبعتهما البوّابة.
 """
 
@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from typing import Final
 
 from slge.cells import STATES, SUKUN, Cell
-from slge.sawabiq import lift
+from slge.sawabiq import lift, lift_arid, plural_waw
 from slge.zuruf import set_last
 
 __all__ = ["WAQF", "Hadd", "classify", "project", "relation", "restore", "waqf"]
@@ -70,13 +70,16 @@ def _waqf_candidates(x: Word) -> tuple[Word, ...]:
 
 
 def _heads(h: Hadd, x: Word) -> tuple[Word, ...]:
+    """في الوصل ما أوّلُه ساكنٌ يُرفع بهمزةٍ أو يبقى؛ وعلى شكل أمر الجماعة من الناقص (`plural_waw`) يُرفع
+    بالوجهين ضمًّا وكسرًا لأنّ ثبوتَ الضمّة ليس في الخانات (`heads`)."""
+
     if h.joined and x and x[0][1] == SUKUN:
-        return (lift(x), x)
+        return (lift(x), lift_arid(x), x) if plural_waw(x) else (lift(x), x)
     return (x,)
 
 
 def restore(h: Hadd, x: Word) -> tuple[Word, ...]:
-    """مرشَّحاتُ الكلمة من حيث هي من صورتها في الحدّ (`restore`)؛ عددُها ≤ 26 (`restore_length_le`)."""
+    """مرشَّحاتُ الكلمة من حيث هي من صورتها في الحدّ (`restore`)؛ عددُها ≤ 39 (`restore_length_le`)."""
 
     hs = _heads(h, x)
     if h.pause:

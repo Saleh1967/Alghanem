@@ -25,7 +25,8 @@ from slge.wasl import TEN
 from slge.wasl import kind as wasl_kind
 from slge.zuruf import set_last
 
-__all__ = ["KINDS", "PROCLITIC_CELLS", "Reading", "lift", "restore", "sawabiq", "wasl_state"]
+__all__ = ["KINDS", "PROCLITIC_CELLS", "Reading", "lift", "lift_arid", "plural_waw", "restore",
+           "sawabiq", "wasl_noun", "wasl_state"]
 
 Word = tuple[Cell, ...]
 KINDS: Final[tuple[str, ...]] = ("BA_JARR", "LAM_JARR", "LAM_AMR", "LAM_KAY", "AL", "WASL_FIL",
@@ -130,6 +131,20 @@ def lift(r: Word) -> Word:
     """ردُّ ما سقط في الوصل: همزةُ أل مفتوحة، وهمزةُ الوصل بحركتها (`lift`)."""
 
     return (("ء", "فتح"), *r) if _al_joined(r) else (("ء", wasl_state(r)), *r)
+
+
+def plural_waw(r: Word) -> bool:
+    """الشكلُ «C₁ْ C₂ُ و…» بعد الهمزة الساقطة: أمرُ الجماعة من الناقص — ضمّةُ C₂ ثابتةٌ (اُدْعُوا) أو عارضةٌ
+    (اِمْشُوا) وثبوتُها ليس في الخانات (`pluralWaw`؛ الغانم `A116.Boundary.waslVowelStable`)."""
+
+    return len(r) >= 3 and r[0][1] == SUKUN and r[1][1] == "ضم" and r[2][0] == "و"
+
+
+def lift_arid(r: Word) -> Word:
+    """الردُّ الآخر على شكل أمر الجماعة: همزةٌ مكسورةٌ لضمّةٍ عارضة (`liftArid`)؛ `siyaq.restore` يقدّم
+    الوجهين ولا يحسم — الحسمُ عند البوّابة من فهرس الأفعال (الغانم ADR ٨)."""
+
+    return (("ء", "كسر"), *r)
 
 
 def _wasl_kinds(w: Word) -> tuple[str, ...]:

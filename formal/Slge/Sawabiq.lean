@@ -132,6 +132,20 @@ theorem wasl_noun_witnesses :
 def lift (r : List SCell) : List SCell :=
   (if alJoined r then hamzaA else ⟨⟨0, by decide⟩, waslState r⟩) :: r
 
+/-- الشكلُ «C₁ْ C₂ُ و…» بعد الهمزة الساقطة: أمرُ الجماعة من الناقص — ضمّةُ C₂ ثابتةٌ (اُدْعُوا) أو عارضةٌ
+(اِمْشُوا) وثبوتُها ليس في الخانات (الغانم `A116.Boundary.waslVowelStable`، الكتاب س17570–17573). -/
+def pluralWaw (r : List SCell) : Bool :=
+  match r with
+  | a :: b :: w :: _ => a.state.val == 3 && b.state.val == 2 && w.carrier.val == 27
+  | _ => false
+
+/-- الردُّ الآخر على هذا الشكل: همزةٌ مكسورةٌ (الضمّةُ عارضة). `restore` يقدّم الوجهين ولا يحسم. -/
+def liftArid (r : List SCell) : List SCell := ⟨⟨0, by decide⟩, ⟨1, by decide⟩⟩ :: r
+
+theorem liftArid_tail (r : List SCell) : (liftArid r).tail = r := rfl
+
+theorem liftArid_length (r : List SCell) : (liftArid r).length = r.length + 1 := rfl
+
 theorem lift_head (r : List SCell) : ∃ v, (lift r).head? = some ⟨⟨0, by decide⟩, v⟩ := by
   unfold lift; split
   · exact ⟨0, rfl⟩

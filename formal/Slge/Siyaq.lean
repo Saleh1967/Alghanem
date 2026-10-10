@@ -16,7 +16,7 @@ import Slge.Sawabiq
 
 المبرهَن: كلُّ مرشَّحٍ يُسقَط إلى الصورة بعينها (`project_restore`: الردُّ مغلقٌ على الإسقاط)؛ والصورةُ
 نفسُها مرشَّحة (`self_mem_restore`)؛ وبلا وصلٍ ولا وقف تُردّ إلى نفسها وحدَها (`restore_plain`)؛ والعددُ
-محدود (`restore_length_le`: ≤ 26). وما **لا** يُبرهَن هنا: أنّ حركةَ الهمزة المردودة هي حركةُ الأصل — ذلك
+محدود (`restore_length_le`: ≤ 39). وما **لا** يُبرهَن هنا: أنّ حركةَ الهمزة المردودة هي حركةُ الأصل — ذلك
 قياسُ `Sawabiq.lift` على مودَع الابتداء، رقمُه في `SIYAQ_INDEX.md`.
 -/
 
@@ -74,9 +74,12 @@ def waqfCandidates (x : List SCell) : List (List SCell) :=
          x.dropLast ++ [c 3 0, tanwin], x.dropLast ++ [c 3 1, tanwin], x.dropLast ++ [c 3 2, tanwin]]
       else [])
 
-/-- مرشَّحاتُ الأوّل: في الوصل ما أوّلُه ساكنٌ يُرفع بهمزةٍ أو يبقى. -/
+/-- مرشَّحاتُ الأوّل: في الوصل ما أوّلُه ساكنٌ يُرفع بهمزةٍ أو يبقى؛ وعلى شكل أمر الجماعة من الناقص
+(`Sawabiq.pluralWaw`) يُرفع بالوجهين — ضمًّا (الضمّةُ ثابتة) وكسرًا (عارضة) — لأنّ الثبوتَ ليس في الخانات. -/
 def heads (h : Hadd) (x : List SCell) : List (List SCell) :=
-  if h.joined && headSukun x then [Sawabiq.lift x, x] else [x]
+  if h.joined && headSukun x then
+    (if Sawabiq.pluralWaw x then [Sawabiq.lift x, Sawabiq.liftArid x, x] else [Sawabiq.lift x, x])
+  else [x]
 
 /-- ردُّ الصورة في الحدّ إلى مرشَّحات الكلمة من حيث هي. -/
 def restore (h : Hadd) (x : List SCell) : List (List SCell) :=
@@ -152,16 +155,24 @@ theorem waqf_candidates_sound {x : List SCell} (hx : lastSukun x = true) :
         simp [waqf, endsWith_append, endsWith_append₂, endsWith_restore hh, tanwin, c]⟩
     · simp at hw
 
+/-- كلُّ مرشَّحٍ للأوّل: الصورةُ نفسُها، أو — في الوصل — همزةٌ قبلها بعينها. -/
 theorem mem_heads {h : Hadd} {u x : List SCell} (hu : u ∈ heads h x) :
-    ∃ b, (h.joined && b) = true ∧ u = Sawabiq.lift x ∨ b = false ∧ u = x := by
+    u = x ∨ (h.joined = true ∧ ∃ a, u = a :: x) := by
   unfold heads at hu
   split at hu <;> rename_i hc
+  · have hj : h.joined = true := by simp_all
+    split at hu
+    · simp only [List.mem_cons, List.not_mem_nil, or_false] at hu
+      rcases hu with rfl | rfl | rfl
+      · exact Or.inr ⟨hj, by unfold Sawabiq.lift; split <;> exact ⟨_, rfl⟩⟩
+      · exact Or.inr ⟨hj, ⟨_, rfl⟩⟩
+      · exact Or.inl rfl
+    · simp only [List.mem_cons, List.not_mem_nil, or_false] at hu
+      rcases hu with rfl | rfl
+      · exact Or.inr ⟨hj, by unfold Sawabiq.lift; split <;> exact ⟨_, rfl⟩⟩
+      · exact Or.inl rfl
   · simp only [List.mem_cons, List.not_mem_nil, or_false] at hu
-    rcases hu with rfl | rfl
-    · exact ⟨true, Or.inl ⟨by simp_all, rfl⟩⟩
-    · exact ⟨false, Or.inr ⟨rfl, rfl⟩⟩
-  · simp only [List.mem_cons, List.not_mem_nil, or_false] at hu
-    exact ⟨false, Or.inr ⟨rfl, hu⟩⟩
+    exact Or.inl hu
 
 theorem project_pause (h : Hadd) (b : Bool) (k : Waqf) (w : List SCell) (hp : h.pause = true) :
     project h b k w = (if h.joined && b then (waqf k w).tail else waqf k w) := by
@@ -182,27 +193,23 @@ theorem project_restore (h : Hadd) (x : List SCell) (hx : h.pause = true → las
   cases hp : h.pause
   · rw [hp] at hw
     simp only [Bool.false_eq_true, ite_false] at hw
-    obtain ⟨b, hb⟩ := mem_heads hw
-    refine ⟨b, .sukun, ?_⟩
-    rw [project_continue h b .sukun w hp]
-    rcases hb with ⟨hjb, rfl⟩ | ⟨rfl, rfl⟩
-    · rw [hjb]; simp [lift_tail]
-    · simp
+    rcases mem_heads hw with rfl | ⟨hj, a, rfl⟩
+    · exact ⟨false, .sukun, by rw [project_continue h false .sukun w hp]; simp⟩
+    · exact ⟨true, .sukun, by rw [project_continue h true .sukun _ hp]; simp [hj]⟩
   · rw [hp] at hw
     simp only [ite_true, List.mem_flatMap] at hw
     obtain ⟨u, hu, hwu⟩ := hw
-    obtain ⟨b, hb⟩ := mem_heads hu
-    rcases hb with ⟨hjb, rfl⟩ | ⟨rfl, rfl⟩
-    · -- `u = lift x`: آخرُه آخرُ `x` ساكنٌ، فمرشَّحاتُ وقفه تعود إليه، وذيلُه `x`.
-      have hl : lastSukun (Sawabiq.lift x) = true := by
-        rw [lastSukun_lift x (lastSukun_ne_nil (hx hp))]; exact hx hp
-      obtain ⟨k, hk⟩ := waqf_candidates_sound hl w hwu
-      exact ⟨b, k, by rw [project_pause h b k w hp, hjb]; simp [hk, lift_tail]⟩
+    rcases mem_heads hu with rfl | ⟨hj, a, rfl⟩
     · obtain ⟨k, hk⟩ := waqf_candidates_sound (hx hp) w hwu
       exact ⟨false, k, by rw [project_pause h false k w hp]; simp [hk]⟩
+    · -- `u = a :: x`: آخرُه آخرُ `x` ساكنٌ، فمرشَّحاتُ وقفه تعود إليه، وذيلُه `x`.
+      have hl : lastSukun (a :: x) = true := by
+        rw [lastSukun_cons a x (lastSukun_ne_nil (hx hp))]; exact hx hp
+      obtain ⟨k, hk⟩ := waqf_candidates_sound hl w hwu
+      exact ⟨true, k, by rw [project_pause h true k w hp]; simp [hj, hk]⟩
 
 theorem self_mem_heads (h : Hadd) (x : List SCell) : x ∈ heads h x := by
-  unfold heads; split <;> simp
+  unfold heads; split <;> (try split) <;> simp
 
 /-- الصورةُ نفسُها مرشَّحة (آخرُها ساكنٌ وقفًا). -/
 theorem self_mem_restore (h : Hadd) (x : List SCell) (hx : h.pause = true → lastSukun x = true) :
@@ -218,22 +225,28 @@ theorem self_mem_restore (h : Hadd) (x : List SCell) (hx : h.pause = true → la
 /-- بلا وصلٍ ولا وقف: الصورةُ هي الكلمة. -/
 theorem restore_plain (x : List SCell) : restore ⟨false, false⟩ x = [x] := rfl
 
-theorem heads_length_le (h : Hadd) (x : List SCell) : (heads h x).length ≤ 2 := by
-  unfold heads; split <;> simp
+theorem heads_length_le (h : Hadd) (x : List SCell) : (heads h x).length ≤ 3 := by
+  unfold heads; split <;> (try split) <;> simp
 
 theorem waqfCandidates_length_le (x : List SCell) : (waqfCandidates x).length ≤ 13 := by
   unfold waqfCandidates; split <;> split <;> simp
 
-/-- عددُ المرشَّحات: اثنان في الوصل، وثلاثةَ عشرَ لكلٍّ في الوقف. -/
-theorem restore_length_le (h : Hadd) (x : List SCell) : (restore h x).length ≤ 26 := by
+/-- عددُ المرشَّحات: ثلاثةٌ على الأكثر في الوصل، وثلاثةَ عشرَ لكلٍّ في الوقف. -/
+theorem restore_length_le (h : Hadd) (x : List SCell) : (restore h x).length ≤ 39 := by
   unfold restore
   split
   · unfold heads
     split
-    · simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.length_append]
-      have := waqfCandidates_length_le (Sawabiq.lift x)
-      have := waqfCandidates_length_le x
-      omega
+    · split
+      · simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.length_append]
+        have := waqfCandidates_length_le (Sawabiq.lift x)
+        have := waqfCandidates_length_le (Sawabiq.liftArid x)
+        have := waqfCandidates_length_le x
+        omega
+      · simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.length_append]
+        have := waqfCandidates_length_le (Sawabiq.lift x)
+        have := waqfCandidates_length_le x
+        omega
     · simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil]
       exact Nat.le_trans (waqfCandidates_length_le x) (by decide)
   · exact Nat.le_trans (heads_length_le h x) (by decide)

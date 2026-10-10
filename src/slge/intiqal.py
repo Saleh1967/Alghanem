@@ -106,6 +106,7 @@ REGISTRY: Final[tuple[Intiqal, ...]] = (
     _i("sarf", "al_jarr", "Slge.Sarf.al_jarr_kasra"),
     _i("sarf", "idafa_jarr", "Slge.Sarf.idafa_jarr_kasra"),
     _i("sawabiq", "lift", "Slge.Sawabiq.joined_is_initial"),
+    _i("sawabiq", "lift_arid", "Slge.Sawabiq.liftArid_tail"),
     _i("shibh", "jarr_majrur", "Slge.Shibh.jarr_majrur_licensed"),
     _i("siyaq", "project", "Slge.Siyaq.project_restore", "إغلاق",
        "الإسقاطُ إلى الحدّ يعود من كلّ مرشَّح ردٍّ إلى الصورة بعينها"),

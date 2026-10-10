@@ -135,12 +135,12 @@ class Deposit:
     licence: str = ""
 
 
-GATE_REV: Final[str] = "25c65ffe2114cb67c0fea1189ad40cd243d07599"
+GATE_REV: Final[str] = "6717d1a2e177f8a3e692c4050b41a803d22780b5"
 """إيداعُ بوّابة الغانم (`Saleh1967/Alghanem`، فرع `claude/official-gate`) الذي يُعاد منه توليدُ مودَع
 الشهادات في CI (`tools/gen_certificates.py --check`): ما يقيسه SLGE هو ما تطبعه البوّابةُ على المدوّنة
 المختومة بهذا الإيداع؛ أيُّ فرقٍ `DEPOSIT_DRIFTED_FROM_GATE`. يُرفع مع المودَع معًا لا أحدُهما وحدَه."""
 
-CERTIFICATES_DIGEST: Final[str] = "6bfa3422faad927139564f260fefb0dc5330a45192f148ebb9802beaf4047635"
+CERTIFICATES_DIGEST: Final[str] = "5e856bbb4ffead0962756441a8a09f793b28b22d50d03e9e798c9969158d490d"
 """بصمةُ المودَع بصورته القانونيّة (JSON مرتّبَ المفاتيح بلا فراغ) كما طبعتها البوّابةُ على `GATE_REV`؛
 يفحصها `tests/test_deposits.py` محلّيًّا بلا بوّابة، وCI يعيد التوليدَ من البوّابة نفسها."""
 
@@ -150,7 +150,7 @@ CONTEXT_CERTIFICATES_DIGEST: Final[str] = (
 `GATE_REV` (`tools/gen_context_certificates.py`)؛ يُرفع مع `GATE_REV` والمودَع الأوّل معًا (ADR ٢٨)."""
 
 HADITH_CONTEXT_CERTIFICATES_DIGEST: Final[str] = (
-    "731057b5a9c543f65ee050327005d02e78a216b83bc650bc21c6a8ae38c1606a")
+    "571fbbf0ab5ca0cea7159889333b4e8c0c62a964c8c80760cbb8b23d7cd82328")
 """بصمةُ مودَع المدوّنة المختومة الثانية (`hadith-context-certificates.json.gz`): الصحيحان موقعًا
 موقعًا في سياقهما كما طبعتها البوّابةُ نفسُها على `GATE_REV` (`gen_context_certificates.py --corpus
 sahihain`، الغانم ADR ٧)؛ المصدرُ Open-Hadith-Data برخصة ODbL 1.0 والمودَعُ المشتقُّ يحملها. لا مرجعَ
