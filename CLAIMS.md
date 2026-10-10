@@ -47,7 +47,7 @@
 | `masaq-zawaid.json` | مرجع محجوب | `15ab1c4691c88ebb99b4f37c5f1c062c83a20a988fdd6099cc835eaea4097478` |
 | `masaq-zuruf.json` | مرجع محجوب | `ef2e77119120a8f5109e28e63c0835468ce85442806c44b0e4f4a70635416dd3` |
 
-## الأرقام (1,172 رقمًا من 48 مولِّدًا)
+## الأرقام (1,181 رقمًا من 49 مولِّدًا)
 
 ### `tools/gen_abniya_index.py::measure`
 
@@ -76,6 +76,22 @@
 | `with.122` | 660 |
 | `with.123` | 15 |
 | `with.124` | 45 |
+
+### `tools/gen_abniya_licence_index.py::measure`
+
+يقرأ: — (جداولُ الوحدة وحدَها). بصمةُ المخرَج: `b21224cf531480ab`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `continue` | 106,043 |
+| `pause` | 113,374 |
+| `rows.len` | 158 |
+| `skeletons` | 158 |
+| `skeletons_with_continue` | 158 |
+| `skeletons_with_pause` | 158 |
+| `skeletons_without_rule_unlicensed` | 13 |
+| `vocalizations` | 182,144 |
+| `wasl_skeletons` | 13 |
 
 ### `tools/gen_adad_index.py::measure`
 

@@ -933,6 +933,12 @@
 'Slge.Salsala.shahid_does_not_anchor' does not depend on any axioms
 'Slge.AjnasTable.genera_length' does not depend on any axioms
 'Slge.MadlulTable.tags_length' does not depend on any axioms
+'Slge.AbniyaLicence.witnesses_cover' does not depend on any axioms
+'Slge.AbniyaLicence.witnesses_match' depends on axioms: [propext]
+'Slge.AbniyaLicence.witnesses_licensed' depends on axioms: [propext, Quot.sound]
+'Slge.AbniyaLicence.witnesses_alif_sukun' does not depend on any axioms
+'Slge.AbniyaLicence.wasl_is_the_difference' depends on axioms: [propext, Quot.sound]
+'Slge.AbniyaLicenceTable.witnesses_length' does not depend on any axioms
 'Slge.MadlulTable.unsigned_none' does not depend on any axioms
 'Slge.Hukm.jins_no_delete' depends on axioms: [propext, Quot.sound]
 'Slge.Hukm.lafz_witness_not_mana' depends on axioms: [propext, Quot.sound]

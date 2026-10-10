@@ -938,6 +938,12 @@ import Slge
 #print axioms Slge.Salsala.shahid_does_not_anchor
 #print axioms Slge.AjnasTable.genera_length
 #print axioms Slge.MadlulTable.tags_length
+#print axioms Slge.AbniyaLicence.witnesses_cover
+#print axioms Slge.AbniyaLicence.witnesses_match
+#print axioms Slge.AbniyaLicence.witnesses_licensed
+#print axioms Slge.AbniyaLicence.witnesses_alif_sukun
+#print axioms Slge.AbniyaLicence.wasl_is_the_difference
+#print axioms Slge.AbniyaLicenceTable.witnesses_length
 #print axioms Slge.MadlulTable.unsigned_none
 #print axioms Slge.Hukm.jins_no_delete
 #print axioms Slge.Hukm.lafz_witness_not_mana

@@ -48,6 +48,7 @@ EXEMPT_FILES = (
     "tools/deposit_maqayis.py",  # يقرأ المصدرَ المختوم ويكتب المودَعَ وجدولَيه؛ لا نصَّ يُطبَّع
     "tools/deposit_abniya.py",
     "tools/gen_abniya_index.py",
+    "tools/gen_abniya_licence_index.py",  # يكتب فهرسَ الأبنية على الترخيص وجدولَي شواهدها
     "tools/gen_adawat_index.py",
     "tools/gen_wujud_index.py",
     "tools/deposit_wujud.py",

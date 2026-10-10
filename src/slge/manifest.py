@@ -71,6 +71,9 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("abniya", ("Abniya", "AbniyaTable"), ("abniya",), "gen_abniya_index.py",
            "test_abniya.py"),
     Module("abniya_table", (), (), None, "test_abniya.py"),  # مولَّدٌ من المودَع
+    Module("abniya_licence", ("AbniyaLicence", "AbniyaLicenceTable"), ("abniya_licence",),
+           "gen_abniya_licence_index.py", "test_abniya_licence.py"),  # الأبنيةُ على الترخيص (ADR ٣٦)
+    Module("abniya_licence_table", (), (), None, "test_abniya_licence.py"),  # شواهدُ مولَّدةٌ من الفهرس
     Module("adawat", ("Adawat",), ("adawat",), "gen_adawat_index.py", "test_adawat.py", law=True),
     Module("wujud", ("Wujud", "WujudTable"), ("wujud",), "gen_wujud_index.py", "test_wujud.py",
            law=True),

@@ -760,6 +760,10 @@ def main (args : List String) : IO Unit := do
     for r in roots do
       IO.println s!"judge,{r},{witnessName (Hukm.judgeJins r)},{witnessName (Hukm.judgeQabiliyya r)},{(Hukm.lafzWitness r).map toString |>.getD "-"}"
     IO.println s!"nohukm,{(Hukm.hukm []).isNone}"
+  | ["abniya_licence"] =>
+    -- شواهدُ أبنية سيبويه: لكلّ هيكلٍ عددُ خاناته وترخيصُه وصلًا ووقفًا، وترخيصُه بألفٍ أولى كما رُسمت.
+    for (s, w) in AbniyaLicenceTable.witnesses do
+      IO.println s!"witness,{"-".intercalate (s.map toString)},{w.length},{Madd.continueLicensed w},{Madd.pauseLicensed w},{Madd.continueLicensed (AbniyaLicence.asWritten w)}"
   | ["madlul_table"] =>
     -- وسمُ الأجناس بقسمة ج3 409: الكتابُ وقسمُه أو «-» (لم يُوقَّع أو ليس جنسًا).
     IO.println s!"signed,{MadlulTable.signed}"

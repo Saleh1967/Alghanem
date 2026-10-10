@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_lean_index.py` من ملفّات `.lean` و`Audit.lean` و`out/axioms.txt`؛ لا يُحرَّر باليد. الـ116 من الغانم بإيداعه المثبَّت في `formal/lakefile.toml`.
 
-**1254 مبرهنة، منها 1011 مدقَّقةُ المسلّمات.**
+**1260 مبرهنة، منها 1017 مدقَّقةُ المسلّمات.**
 
 كلُّ درجةٍ تستهلك ما قبلها: لا تدخل الكلمةُ درجةً قبل أن تُرخَّص في التي تحتها. «مدقَّق» = في `Audit.lean` وطُبعت مسلّماتُه؛ وما ليس مدقَّقًا مبرهَنٌ في Lean لكن لم يُطبع سندُه بعدُ فلا يُستشهد به في `status.py`.
 
@@ -1348,6 +1348,22 @@
 | `ambiguous_sound` | — | مدقَّق | propext |
 | `awzan_separated` | كلُّ زوجين من الجدول مفصولان إلّا المسمّاة. | مدقَّق | propext |
 | `awzan_disjoint` | التمايز: قالبان مختلفان غيرُ مسمّيين لا يقرآن ملءً واحدًا على أصلين نظيفين بعد تسوية الآخر. | مدقَّق | propext, Classical.choice, Quot.sound |
+
+### `Slge/AbniyaLicenceTable.lean` — 1 مبرهنة (`Slge.AbniyaLicenceTable`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `witnesses_length` | — | مدقَّق | لا مسلّمات |
+
+### `Slge/AbniyaLicence.lean` — 5 مبرهنة (`Slge.AbniyaLicence`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `witnesses_cover` | — | مدقَّق | لا مسلّمات |
+| `witnesses_match` | — | مدقَّق | propext |
+| `witnesses_licensed` | — | مدقَّق | propext, Quot.sound |
+| `witnesses_alif_sukun` | — | مدقَّق | لا مسلّمات |
+| `wasl_is_the_difference` | — | مدقَّق | propext, Quot.sound |
 
 ### `Slge/Adawat.lean` — 9 مبرهنة (`Slge.Adawat`)
 
