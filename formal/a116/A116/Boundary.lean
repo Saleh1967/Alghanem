@@ -91,8 +91,13 @@ theorem pause_then_join_is_not_join (v : List Cell) (c : Cell) (h : Cell) (t : L
   الفعل المضموم الثالث» — فالأسماءُ الموصولة ابن/اسم/امرؤ/اثنان مكسورةٌ ولو ضُمّ ثالثُها، وأيمن مفتوحة؛
   قائمتُها المغلقة معلَنةٌ في `gate/residue.py` `WASL_NOUNS` لا هنا)؛ لا تكون سكونًا أبدًا (`waslVowel_ne_sukun`)، وضمُّها إذا
   وفقط إذا كان الثالثُ مضمومًا في غير «ال» (`waslVowel_damm_iff`) — مرآةُ `Slge.Sawabiq.wasl_state_damm_iff`
-  في الغانم، ومرآتُها في البوّابة قاعدةُ الرسم `WASL` (`gate/residue.py`). وما لا ثالثَ له أو كُتبت وصلتُه
-  بسكونٍ صريح لا تُقرَّر حركتُه فيُرفض باسم `START_VOWEL_OF_WASL_IS_UNKNOWN`. -/
+  في الغانم، ومرآتُها في البوّابة قاعدةُ الرسم `WASL` (`gate/residue.py`). و**ثبوتُ الضمّة** شرطُ الضمّ
+  (س17570–17573: «ليست ضمة تثبت في هذا البناء على كل حال… لأن الضمة فيهن ثابتة»): ضمّةُ ثالثِ أمرِ الناقص
+  اليائيّ قبل واو الجماعة عارضةٌ (اِمْشِ ← اِمْشُوا، اِقْضُوا، اِبْنُوا) فالهمزةُ مكسورة، والواويُّ ثابتةٌ (اُدْعُ ← اُدْعُوا)
+  فمضمومة — `waslVowelStable` تأخذ الثبوتَ معاملًا لأنّه حكمٌ على البناء لا على الخانة: تقرّره البوّابةُ من فهرس
+  الأفعال على جذور المقاييس (`gate.mabni_verbs.verb_index`) لا تخمينًا، وما لم يُقرَّر ثبوتُه كُتبت وصلتُه ساكنةً
+  فرُفض. وما لا ثالثَ له أو كُتبت وصلتُه بسكونٍ صريح أو لم يُعلم ثبوتُ ضمّة ثالثه لا تُقرَّر حركتُه فيُرفض باسم
+  `START_VOWEL_OF_WASL_IS_UNKNOWN`. -/
 
 /-- كلمةٌ أوّلُها ساكن: ما يرفضه الجسرُ باسم `INITIAL_SUKUN_WITHOUT_REPAIR`. -/
 def initialSukun : List Cell → Bool
@@ -135,5 +140,32 @@ theorem waslVowel_witnesses :
     waslVowel (atom 'ك' .sukun) (atom 'ت' .damma) = .damma ∧
     waslVowel (atom 'ض' .sukun) (atom 'ر' .kasra) = .kasra ∧
     waslVowel (atom 'ل' .sukun) (atom 'ح' .fatha) = .fatha := by decide
+
+/-- حركةُ همزة الوصل بشرط ثبوت الضمّة (س17570–17573): إن ثبتت ضمّةُ الثالث فالقاعدةُ `waslVowel`، وإلّا
+فلا ضمَّ — فتحةٌ قبل اللام وكسرةٌ سواها. -/
+def waslVowelStable (second third : Cell) (stable : Bool) : Haraka :=
+  if stable then waslVowel second third
+  else if second.carrier = carrierOf 'ل' then .fatha else .kasra
+
+theorem waslVowelStable_true (s t : Cell) : waslVowelStable s t true = waslVowel s t := rfl
+
+/-- الضمّةُ العارضة لا تضمّ الهمزةَ أبدًا. -/
+theorem waslVowelStable_arid_ne_damma (s t : Cell) : waslVowelStable s t false ≠ .damma := by
+  unfold waslVowelStable
+  split
+  · contradiction
+  · split <;> decide
+
+theorem waslVowelStable_ne_sukun (s t : Cell) (b : Bool) : waslVowelStable s t b ≠ .sukun := by
+  unfold waslVowelStable
+  split
+  · exact waslVowel_ne_sukun s t
+  · split <;> decide
+
+/-- شاهدان: اِمْشُوا (ش مضمومةٌ عارضًا → كسر) واُدْعُوا (ع مضمومةٌ ثابتةً → ضمّ): الخانتان واحدةٌ شكلًا
+والفرقُ في الثبوت وحدَه. -/
+theorem waslVowelStable_witnesses :
+    waslVowelStable (atom 'م' .sukun) (atom 'ش' .damma) false = .kasra ∧
+    waslVowelStable (atom 'د' .sukun) (atom 'ع' .damma) true = .damma := by decide
 
 end A116.Boundary

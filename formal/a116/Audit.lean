@@ -213,5 +213,9 @@ import A116
 #print axioms A116.Boundary.waslVowel_damm_iff
 #print axioms A116.Boundary.waslVowel_lam
 #print axioms A116.Boundary.waslVowel_witnesses
+#print axioms A116.Boundary.waslVowelStable_true
+#print axioms A116.Boundary.waslVowelStable_arid_ne_damma
+#print axioms A116.Boundary.waslVowelStable_ne_sukun
+#print axioms A116.Boundary.waslVowelStable_witnesses
 #print axioms A116.Hadd.notContinueLicensed_iff
 #print axioms A116.Hadd.strictB_not_refused

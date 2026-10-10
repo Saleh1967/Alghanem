@@ -73,3 +73,37 @@ def test_wasl_vowel_from_the_third_letter_mirrors_boundary_lean() -> None:
     d = project("ٱْكْتُبْ", Context())
     assert d["status"] == "DEFER" and any(
         r.get("reason") == "START_VOWEL_OF_WASL_IS_UNKNOWN" for r in d["reasons"])
+
+
+def test_wasl_vowel_needs_a_stable_damma_before_the_plural_waw() -> None:
+    """الكتاب س17570–17573: «ليست ضمة تثبت في هذا البناء… لأن الضمة فيهن ثابتة» — ضمّةُ ثالثِ أمرِ
+    الناقص اليائيّ قبل واو الجماعة عارضةٌ (اِمْشِ ← اِمْشُوا) فالهمزةُ مكسورة، والواويُّ ثابتةٌ
+    (اُدْعُ ← اُدْعُوا) فمضمومة (`A116.Boundary.waslVowelStable`؛ ومصادرُ التجويد تذكر امشوا/اقضوا/ابنوا
+    كسرًا). الثبوتُ من فهرس الأفعال على جذور المقاييس (`damma_stability`)؛ وما لا يُقرَّر — لا جذرَ أو
+    جذران (جري/جرو) — وصلةٌ ساكنةٌ يرفضها الجسر باسم `START_VOWEL_OF_WASL_IS_UNKNOWN` لا تخمينًا.
+    والردُّ يعيد الرسمَ بعينه."""
+
+    from gate.contextual import Context, project
+    from gate.residue import damma_stability, repair, unrepair
+
+    for w, first, stability in (("امْشُوا", "ءِ", "عارضة"), ("اقْضُوا", "ءِ", "عارضة"),
+                                ("ابْنُوا", "ءِ", "عارضة"), ("ارْمُوا", "ءِ", "عارضة"),
+                                ("ادْعُوا", "ءُ", "ثابتة"), ("اغْدُوا", "ءُ", "ثابتة"),
+                                ("ادْعُونِي", "ءُ", "ثابتة")):
+        assert damma_stability(w[:6] + "ا") == stability, w  # الأمرُ المجرّد: اC₁ْC₂ُوا
+        canonical, residue = repair(w)
+        assert unrepair(canonical, residue) == w
+        d = project(canonical, Context())
+        assert d["status"] == "READY" and d["atoms"][0] == first, (w, d)
+    # دَينٌ باسمه: المقاييسُ يرسم أتى «أتو» فتُقرأ ائْتُوا بالضمّ على جذره، ومصادرُ التجويد تكسرها (ايتوا)
+    assert damma_stability("ائْتُوا") == "ثابتة"
+    for w in ("اجْرُوا", "اكْزُوا"):  # جذران (جري/جرو) أو لا جذر: لا يُقرَّر
+        assert damma_stability(w) is None
+        d = project(repair(w)[0], Context())
+        assert d["status"] == "DEFER" and any(
+            r.get("reason") == "START_VOWEL_OF_WASL_IS_UNKNOWN" for r in d["reasons"]), w
+    # الطفرة: من ضمّ امشوا على ظاهر الثالث خالف الكتاب
+    assert project(repair("امْشُوا")[0], Context())["atoms"][0] != "ءُ"
+    # والشكلُ لا يمسّ غيرَه: انْصُرُوا على الثالث (ضمّ)، والْحُوتَ على اللام (فتح)
+    assert project(repair("انْصُرُوا")[0], Context())["atoms"][0] == "ءُ"
+    assert project(repair("الْحُوتَ")[0], Context())["atoms"][0] == "ءَ"

@@ -94,6 +94,33 @@ def _bare(c: str) -> bool:
     return len(c) == 1 and c[0] in LETTERS and c[0] != "آ"  # آ تحمل مدّها في ذاتها
 
 
+def _plural_waw_stem(cl: list[str]) -> str | None:
+    """أمرُ الجماعة من الناقص: ا C₁ْ C₂ُ و (ا | ْا | لاحقة) — يعيد صورةَ الأمر المجرّدة «اC₁ْC₂ُوا» للفهرس،
+    أو لا شيء إن لم يكن الشكلُ هذا."""
+
+    if not (len(cl) >= 4 and cl[0] in (ALIF, ALIF_WASLA) and len(cl[1]) == 2 and cl[1][1] == SUKUN
+            and cl[1][0] != LAM and len(cl[2]) == 2 and cl[2][1] == DAMMA and cl[3][0] == WAW):
+        return None
+    if len(cl) == 4 and cl[3] in (WAW, WAW + SUKUN) or len(cl) > 4 and cl[3] == WAW:
+        return ALIF + cl[1] + cl[2] + WAW + ALIF
+    return None
+
+
+def damma_stability(imperative: str) -> str | None:
+    """ثبوتُ ضمّة الثالث قبل واو الجماعة (الكتاب س17570–17573؛ `A116.Boundary.waslVowelStable`):
+    من فهرس الأفعال على جذور المقاييس (`mabni_verbs.verb_index`) — جذرٌ واحدٌ يولّد الأمرَ: ناقصٌ يائيٌّ
+    (اِمْشِ ← اِمْشُوا) فالضمّةُ «عارضة»، واويٌّ (اُدْعُ ← اُدْعُوا) فـ«ثابتة»؛ ولا جذرَ أو أكثرُ من واحد فلا يُقرَّر
+    (لا تخمين). الفهرسُ يُبنى عند أوّل حاجةٍ (نحو 20 ثانية) ويُحفظ."""
+
+    from .mabni_verbs import normalize, verb_index
+
+    analyses = verb_index().get(normalize(imperative), ())
+    roots = {a[0] for a in analyses if a[1] == "IMPERATIVE"}
+    if len(roots) != 1:
+        return None
+    return "عارضة" if roots.pop()[2] == YA else "ثابتة"
+
+
 def repair(surface: str) -> tuple[str, tuple[Edit, ...]]:
     """الرسمُ ← (الصورةُ القانونيّة، البقيّة). لا يُخمَّن شيء: كلُّ تعديلٍ من قاعدةٍ مسمّاة."""
 
@@ -140,6 +167,7 @@ def repair(surface: str) -> tuple[str, tuple[Edit, ...]]:
     # 4. WASL: ألفٌ بلا علامةٍ أوّلَ الكلمة قبل ساكنٍ = همزةُ وصل، بحركتها بالقاعدة:
     #    فتحةٌ في «ال»، وضمّةٌ إن كان ثالثُ الفعل مضمومًا، وإلّا كسرة (سيبويه).
     #    (`A116.Boundary.waslVowel`؛ الكتاب س17530–17531). والألفُ المرسومةُ وصلةً (ٱ) بلا علامةٍ كذلك.
+    #    وضمّةُ ثالثِ أمرِ الناقص قبل واو الجماعة لا تضمّ الهمزةَ إلّا ثابتةً (`waslVowelStable`).
     if (len(cl) >= 3 and cl[0] in (ALIF, ALIF_WASLA)
             and (_bare(cl[1]) or SUKUN in cl[1] or SHADDA in cl[1])):
         skeleton = "".join(c[0] for c in cl[1:4])
@@ -147,6 +175,12 @@ def repair(surface: str) -> tuple[str, tuple[Edit, ...]]:
             v = FATHA
         elif skeleton.startswith(WASL_NOUNS_FATHA):
             v = FATHA  # ايْمُنُ اللهِ
+        elif (imperative := _plural_waw_stem(cl)) is not None:
+            # ضمّةُ الثالث قبل واو الجماعة: ثابتةٌ (اُدْعُوا) فضمّ، عارضةٌ (اِمْشُوا) فكسر، ولا يُعلم
+            # فوصلةٌ ساكنةٌ يرفضها الجسرُ باسمها START_VOWEL_OF_WASL_IS_UNKNOWN (الكتاب س17570–17573؛
+            # `waslVowelStable`)
+            stability = damma_stability(imperative)
+            v = DAMMA if stability == "ثابتة" else KASRA if stability == "عارضة" else SUKUN
         elif skeleton.startswith(WASL_NOUNS):
             v = KASRA  # الأسماءُ الموصولة مكسورةٌ أبدًا (الكتاب س17573) ولو ضُمّ ثالثُها: اِبْنُ، اِسْمُ
         elif DAMMA in cl[2]:  # ثالثُ الفعل بعدّ الهمزة: ا ن صُ ر
