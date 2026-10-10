@@ -931,6 +931,23 @@
 'Slge.Salsala.outside_spine_no_salaf' does not depend on any axioms
 'Slge.Salsala.ghazali_sources_from_mustasfa' does not depend on any axioms
 'Slge.Salsala.shahid_does_not_anchor' does not depend on any axioms
+'Slge.AjnasTable.genera_length' does not depend on any axioms
+'Slge.Hukm.hukm_none_iff' depends on axioms: [propext]
+'Slge.Hukm.hukm_length' depends on axioms: [propext]
+'Slge.Hukm.hukm_mem' depends on axioms: [propext, Quot.sound]
+'Slge.Hukm.mem_rank' depends on axioms: [propext]
+'Slge.Hukm.length_rank' depends on axioms: [propext, Quot.sound]
+'Slge.Hukm.jins_mafhum_has_witness' depends on axioms: [propext, Quot.sound]
+'Slge.Hukm.qabiliyya_mafhum_has_witness' depends on axioms: [propext, Quot.sound]
+'Slge.Hukm.caps_are_tree_nodes' depends on axioms: [propext]
+'Slge.Hukm.qabiliyya_witness_in_tree' depends on axioms: [propext, Quot.sound]
+'Slge.Hukm.genera_are_books' depends on axioms: [propext]
+'Slge.Hukm.judge_total' does not depend on any axioms
+'Slge.Hukm.judgeRoot_ranks' does not depend on any axioms
+'Slge.Hukm.ranks_in_spine' does not depend on any axioms
+'Slge.Hukm.shahada_untouched' does not depend on any axioms
+'Slge.Hukm.witnesses' does not depend on any axioms
+'Slge.HukmTable.partition' does not depend on any axioms
 'Slge.Nabhani.awla_trans' depends on axioms: [propext, Quot.sound]
 'Slge.Nabhani.awla_irrefl' depends on axioms: [propext]
 'Slge.Nabhani.awla_total' depends on axioms: [propext, Quot.sound]

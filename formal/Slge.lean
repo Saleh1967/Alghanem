@@ -77,6 +77,9 @@ import Slge.NabhaniTable
 import Slge.Nabhani
 import Slge.SalsalaTable
 import Slge.Salsala
+import Slge.AjnasTable
+import Slge.Hukm
+import Slge.HukmTable
 import Slge.Shahada
 import Slge.Siyaq
 import Slge.CoverageTable

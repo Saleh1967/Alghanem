@@ -65,7 +65,7 @@ LADDER: tuple[tuple[str, str, tuple[tuple[str, str], ...]], ...] = (
       ("Slge", "Sawabiq"), ("Slge", "NabhaniTable"), ("Slge", "Nabhani"), ("Slge", "Shahada"),
       ("Slge", "IntiqalTable"), ("Slge", "Intiqal"), ("Slge", "Siyaq"),
       ("Slge", "CoverageTable"), ("Slge", "Coverage"), ("Slge", "SalsalaTable"),
-      ("Slge", "Salsala"))),
+      ("Slge", "Salsala"), ("Slge", "AjnasTable"), ("Slge", "Hukm"), ("Slge", "HukmTable"))),
     ("١٩", "المعرفةُ والترجيح: الإنتاجُ والتعارضُ وقطعيُّ الدلالة",
      (("Slge", "Ghazali"), ("Slge", "GhazaliTable"), ("Slge", "GhazaliAnchors"), ("Slge", "Rank"))),
 )

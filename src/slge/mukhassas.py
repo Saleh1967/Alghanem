@@ -10,8 +10,7 @@ from __future__ import annotations
 
 from typing import Final
 
-from slge.maqayis import Root, _code, _matches_l, decode
-from slge.maqayis_table import ROOTS
+from slge.maqayis import code_of_root
 from slge.mukhassas_table import BOOKS, NODES
 
 __all__ = ["BOOKS", "MAFHUM", "MALUMAH", "NODES", "book_of", "caps_under", "code_of_root", "judge",
@@ -19,7 +18,6 @@ __all__ = ["BOOKS", "MAFHUM", "MALUMAH", "NODES", "book_of", "caps_under", "code
 
 MAFHUM: Final[str] = "مفهوم"
 MALUMAH: Final[str] = "معلومة"
-_CODES: Final[tuple[tuple[int, int, int], ...]] = tuple(decode(n) for n in ROOTS)
 
 
 def level_of(i: int) -> int:
@@ -42,16 +40,6 @@ def caps_under(b: int) -> tuple[int, ...]:
     """القابليّاتُ الموروثة للكتاب: اتّحادُ جذور عناوين ما تحته (`capsUnder`)."""
 
     return BOOKS.get(b, ())
-
-
-def code_of_root(r: Root) -> int | None:
-    """رمزُ جذرٍ من الخانات في ترميز جدول المقاييس، أو لا شيء إن لم يكن فيه."""
-
-    a, b, d = _code(r)
-    for ta, tb, td in _CODES:
-        if _matches_l(ta, a) and _matches_l(tb, b) and _matches_l(td, d):
-            return ta * 900 + tb * 30 + td
-    return None
 
 
 def judge_in(b: int, r: int) -> tuple[str, int | None]:

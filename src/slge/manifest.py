@@ -11,8 +11,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Final
 
-__all__ = ["CERTIFICATES_DIGEST", "CONTEXT_CERTIFICATES_DIGEST", "DEPOSITS", "DEPOSIT_KINDS",
-           "GATE_REV", "HADITH_CONTEXT_CERTIFICATES_DIGEST", "MODULES", "Deposit",
+__all__ = ["AJNAS_DIGEST", "CERTIFICATES_DIGEST", "CONTEXT_CERTIFICATES_DIGEST", "DEPOSITS",
+           "DEPOSIT_KINDS", "GATE_REV", "HADITH_CONTEXT_CERTIFICATES_DIGEST", "MODULES", "Deposit",
            "Module", "index_tools", "lean_files", "readers_under_law", "tables"]
 
 
@@ -109,6 +109,11 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("salsala", ("Salsala", "SalsalaTable"), ("salsala",), "gen_salsala_index.py",
            "test_salsala.py"),  # السلسلة: أركانُ المدلول الكونيّ على سلالم النبهانيّ بأسطرها (ADR ٣١)
     Module("salsala_table", (), (), None, "test_salsala.py"),  # مولَّدٌ من ج3 و«التفكير» المختومَين
+    Module("ajnas_table", ("AjnasTable",), ("ajnas_table",), None,
+           "test_hukm.py"),  # مودَعُ المعلومات السابقة الأوّل: الأجناسُ والقابليّاتُ من المخصّص (ADR ٣٤)
+    Module("hukm", ("Hukm", "HukmTable"), ("hukm",), "gen_hukm_index.py",
+           "test_hukm.py"),  # الحكم: من جذور الشهادة إلى ركنٍ من السلسلة بشاهد، أو «لا حكم»
+    Module("hukm_table", (), (), None, "test_hukm.py"),  # أعدادُ الحكم على المودَع، مولَّدةٌ من الفهرس
     Module("shahada", ("Shahada",), ("shahada",), None, "test_shahada.py"),  # شهادةُ SLGE ببصمتها
     Module("intiqal", ("Intiqal", "IntiqalTable"), (), "gen_intiqal_index.py", "test_intiqal.py"),
     Module("siyaq", ("Siyaq",), ("siyaq",), "gen_siyaq_index.py", "test_siyaq.py"),  # في حدّها
@@ -160,6 +165,10 @@ HADITH_CONTEXT_CERTIFICATES_DIGEST: Final[str] = (
 موقعًا في سياقهما كما طبعتها البوّابةُ نفسُها على `GATE_REV` (`gen_context_certificates.py --corpus
 sahihain`، الغانم ADR ٧)؛ المصدرُ Open-Hadith-Data برخصة ODbL 1.0 والمودَعُ المشتقُّ يحملها. لا مرجعَ
 محجوبًا له فلا «مقيس» عليه."""
+
+AJNAS_DIGEST: Final[str] = "86f035bd0f3204cb29ace975d90b44b25ba9c389614cbcb384679b3040ce3070"
+"""بصمةُ مودَع المعلومات السابقة الأوّل (`ajnas-qabiliyyat.json.gz`) كما يولّده `tools/deposit_ajnas.py`
+من جدول المخصّص المختوم؛ مودَعٌ مشتقٌّ لا مختوم، فبصمتُه هنا لا في `Deposit.sha256` (ADR ٣٤)."""
 
 DEPOSITS: Final[tuple[Deposit, ...]] = (
     Deposit("corpus-certificates.json.gz", "واقع مختوم",
@@ -231,6 +240,14 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
             "(المتقدّم والمتأخّر)، والشرطيّ المتّصل (مرساةُ Slge.Ghazali)",
             "2ddf91651376fddd834fbf27ba14c532f3a32303eb1b82860fc2314fd3392259",
             "CC BY-NC-SA 4.0 (OpenITI)"),
+    Deposit("ajnas-qabiliyyat.json.gz", "معلومات سابقة",
+            "الأجناسُ والقابليّاتُ من شجرة المخصّص بشاهدها (73 جنسًا، 863 قابليّة)؛ مولَّدٌ من المختوم "
+            "بـtools/deposit_ajnas.py --check وبصمتُه AJNAS_DIGEST؛ يستهلكه الحكمُ (hukm) لا السُّلَّم "
+            "— ADR ٣٤"),
+    Deposit("hukm-reference.tsv", "مرجع محجوب",
+            "إطارُ عيّنة الأحكام من المصحف (300 موقعًا ببذرة 20261010؛ الغانم gen_hukm_sample.py، "
+            "ADR ٩): يملؤه المالكُ بيده (الجذر، الجنس، القابليّة) فيُقاس عليه الحكم؛ لا رقمَ قبل "
+            "الملء"),
     Deposit("openiti-majaz-quran.txt.gz", "مرجع محجوب",
             "مجاز القرآن لأبي عبيدة (JK010146): مرجعُ الأحكام المحجوب للمجاز — يُقاس عليه ولا يُقرأ "
             "منه",
@@ -242,8 +259,8 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
         "mansubat.json", "marifa.json", "munada.json", "nawasikh.json", "sarf.json",
         "shibh.json.gz", "tawabi.json", "zaman.json", "zawaid.json", "zuruf.json")),
 )
-"""كلُّ مودَعٍ بنوعه. «معلومات سابقة» لا مودَعَ لها بعد: المخصّصُ مختومٌ «وضعًا» (روايةُ الوضع)،
-وتُشتقّ منه المعلوماتُ السابقة (الأجناسُ والقابليّات) جدولًا مولَّدًا بنوعها حين يُؤذن بأداتها."""
+"""كلُّ مودَعٍ بنوعه. أوّلُ مودَعٍ من «معلومات سابقة» (ADR ٣٤): الأجناسُ والقابليّاتُ مشتقّةً من المخصّص
+المختوم «وضعًا» جدولًا مولَّدًا بنوعها وبصمتها، ومرجعُها المحجوب إطارُ عيّنةٍ يملؤه المالك."""
 
 
 def tables() -> tuple[str, ...]:

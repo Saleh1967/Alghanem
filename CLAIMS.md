@@ -21,6 +21,8 @@
 | `openiti-ghazali-mustasfa.txt.gz` | وضع | `59cda7d5424b26ab73aa2d7d8130d1fbe28fc465ab6075d759dc782ebe1697ac` |
 | `openiti-ghazali-mihakk.txt.gz` | وضع | `9e54d050a9178392f48057738dd96796ddee094faff357bdb554e9e3cf6f5948` |
 | `openiti-ghazali-micyar.txt.gz` | وضع | `2ddf91651376fddd834fbf27ba14c532f3a32303eb1b82860fc2314fd3392259` |
+| `ajnas-qabiliyyat.json.gz` | معلومات سابقة | `86f035bd0f3204cb29ace975d90b44b25ba9c389614cbcb384679b3040ce3070` |
+| `hukm-reference.tsv` | مرجع محجوب | `93053415cff2b393147b654214c80af1a4494bf056304cdaa4a03e846170411c` |
 | `openiti-majaz-quran.txt.gz` | مرجع محجوب | `432dae05748f2f972b3238e56dd0c56e72b10f0c3900ee8da1a8cca812b2fc88` |
 | `masaq-adad.json` | مرجع محجوب | `9018b3f445f65bc23799f0bee3cda1ab1fe3a1a0a0ab7e67e6d85406e77cd822` |
 | `masaq-fil.json.gz` | مرجع محجوب | `61ed093595d72dc3b144b1ce1baf5f9c358f17ceeda765378a5198e86546060c` |
@@ -43,7 +45,7 @@
 | `masaq-zawaid.json` | مرجع محجوب | `15ab1c4691c88ebb99b4f37c5f1c062c83a20a988fdd6099cc835eaea4097478` |
 | `masaq-zuruf.json` | مرجع محجوب | `ef2e77119120a8f5109e28e63c0835468ce85442806c44b0e4f4a70635416dd3` |
 
-## الأرقام (1,124 رقمًا من 47 مولِّدًا)
+## الأرقام (1,163 رقمًا من 48 مولِّدًا)
 
 ### `tools/gen_abniya_index.py::measure`
 
@@ -363,6 +365,52 @@
 | `masaq.masaq` | 40,731 |
 | `roots` | 2,380 |
 | `unique_forms` | 12,157 |
+
+### `tools/gen_hukm_index.py::measure`
+
+يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`، `ajnas-qabiliyyat.json.gz`، `hukm-reference.tsv`. بصمةُ المخرَج: `2b61e41315b15d09`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `ahkam` | 13,451 |
+| `any_mafhum` | 6,284 |
+| `both_malumah` | 7,167 |
+| `forms` | 18,179 |
+| `jins_mafhum` | 1,025 |
+| `la_hukm` | 4,728 |
+| `multi_root` | 1,546 |
+| `qabiliyya_mafhum` | 6,160 |
+| `reference.filled` | 0 |
+| `reference.jins_agree` | 0 |
+| `reference.qabiliyya_agree` | 0 |
+| `reference.root_agree` | 0 |
+| `reference.size` | 300 |
+| `reference.unresolved` | 0 |
+| `single_root` | 11,905 |
+| `tokens` | 78,207 |
+| `tokens_any_mafhum` | 23,749 |
+| `tokens_both_malumah` | 31,537 |
+| `tokens_la_hukm` | 22,921 |
+| `top_books[0][1]` | 151 |
+| `top_books[1][1]` | 138 |
+| `top_books[2][1]` | 104 |
+| `top_books[3][1]` | 89 |
+| `top_books[4][1]` | 65 |
+| `top_books[5][1]` | 60 |
+| `top_books[6][1]` | 51 |
+| `top_books[7][1]` | 46 |
+| `top_books[8][1]` | 38 |
+| `top_books[9][1]` | 35 |
+| `top_nodes[0][1]` | 131 |
+| `top_nodes[1][1]` | 106 |
+| `top_nodes[2][1]` | 102 |
+| `top_nodes[3][1]` | 96 |
+| `top_nodes[4][1]` | 90 |
+| `top_nodes[5][1]` | 83 |
+| `top_nodes[6][1]` | 82 |
+| `top_nodes[7][1]` | 82 |
+| `top_nodes[8][1]` | 79 |
+| `top_nodes[9][1]` | 77 |
 
 ### `tools/gen_huruf_index.py::measure`
 

@@ -27,6 +27,10 @@ def formName : Ghazali.Form → String
   | .naqidMuqaddam => "naqid_muqaddam"
   | .aynTali => "ayn_tali"
 
+def witnessName : Hukm.Judgement → String
+  | .malumah _ => "-"
+  | .mafhum _ w => toString w
+
 def glyphName : Rasm.G → String
   | .letter l => s!"L{l.val}"
   | .mark h => s!"M{h.val}"
@@ -746,6 +750,16 @@ def main (args : List String) : IO Unit := do
     for r in SalsalaTable.rows do
       IO.println s!"rukn,{r.id},{r.ladder},{r.grade},{r.anchors.length},{"+".intercalate (r.salaf.map toString)}"
     IO.println s!"declared,{",".intercalate (SalsalaTable.declared.map toString)}"
+  | ["ajnas_table"] =>
+    -- مودَعُ المعلومات السابقة: لكلّ جنسٍ (كتابٍ) عددُ جذور عنوانه وعددُ قابليّاته بشاهدها.
+    for g in AjnasTable.genera do
+      IO.println s!"genus,{g.book},{g.roots.length},{g.caps.length}"
+  | ["hukm"] =>
+    -- الحكمُ على كلّ جذرٍ في المودَع: شاهدُ الجنس وشاهدُ القابليّة أو «-».
+    let roots := (AjnasTable.genera.flatMap fun g => g.roots ++ g.caps.map (·.1)).eraseDups
+    for r in roots do
+      IO.println s!"judge,{r},{witnessName (Hukm.judgeJins r)},{witnessName (Hukm.judgeQabiliyya r)}"
+    IO.println s!"nohukm,{(Hukm.hukm []).isNone}"
   | ["ghazali_table"] =>
     -- جدولُ الغزاليّ بأسطره: الرقم، الصنف، الدرجة، الصورة، هل تُنتج، عددُ مراسي الغزاليّ وعددُ مراسي النبهانيّ.
     for r in GhazaliTable.rows do

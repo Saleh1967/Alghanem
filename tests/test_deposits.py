@@ -23,7 +23,7 @@ def test_every_deposit_has_a_kind_and_exists() -> None:
     present = {p.name for p in DATA.iterdir() if p.is_file()}
     assert _problems(DEPOSITS, present) == []
     assert len(DEPOSITS) == len({d.path for d in DEPOSITS})
-    assert {d.kind for d in DEPOSITS} == DEPOSIT_KINDS - {"معلومات سابقة"}
+    assert {d.kind for d in DEPOSITS} == DEPOSIT_KINDS  # الأنواعُ الأربعة كلُّها مودَعة (ADR ٣٤)
 
 
 def test_mutations_are_named() -> None:
@@ -45,7 +45,9 @@ def test_prior_knowledge_is_read_only_above_the_gates() -> None:
     # لا وحدةَ في الحكم بلا إذنٍ مسجَّل (المادّة ٩): المخصّص ADR ١٥؛ والتغطيةُ بإذن المالك «غطي بالبرهان
     # وعرف الشاهد» (2026-10-09، ADR ٢٩)
     # والسلسلةُ بإذن المالك «موافق راجع النبهاني أولا ونفذ» (2026-10-10، ADR ٣١)
-    assert hukm == ["mukhassas", "coverage", "salsala"], "HUKM_MODULE_WITHOUT_RECORDED_PERMISSION"
+    # والحكمُ بإذن المالك «نفذ وفق أفضل الممارسات SLGE والبرهان» (2026-10-10، ADR ٣٤)
+    assert hukm == ["mukhassas", "coverage", "salsala", "hukm"], (
+        "HUKM_MODULE_WITHOUT_RECORDED_PERMISSION")
 
 
 def _canonical(d: object) -> str:

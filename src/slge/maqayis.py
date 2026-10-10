@@ -18,7 +18,8 @@ from slge.jidh import Reading, stem_form
 from slge.maqayis_table import ROOTS, SHA256, WEAK
 from slge.wazn import AWZAN, root_of
 
-__all__ = ["ROOTS", "SHA256", "WEAK", "attested", "decode", "member", "rank", "roots_of"]
+__all__ = ["ROOTS", "SHA256", "WEAK", "attested", "code_of_root", "decode", "member", "rank",
+           "roots_of"]
 
 Root = tuple[str, str, str]
 
@@ -40,6 +41,20 @@ def _code(r: Root) -> tuple[int, int, int]:
 
 
 _TABLE: Final[frozenset[tuple[int, int, int]]] = frozenset(decode(n) for n in ROOTS)
+
+
+_CODES: Final[tuple[tuple[int, int, int], ...]] = tuple(decode(n) for n in ROOTS)
+
+
+def code_of_root(r: Root) -> int | None:
+    """رمزُ جذرٍ من الخانات في ترميز جدول المقاييس (‎900a+30b+c‎، والمعتلّ 29)، أو لا شيء إن لم يكن
+    فيه."""
+
+    a, b, d = _code(r)
+    for ta, tb, td in _CODES:
+        if _matches_l(ta, a) and _matches_l(tb, b) and _matches_l(td, d):
+            return ta * 900 + tb * 30 + td
+    return None
 
 
 def member(r: Root) -> bool:
