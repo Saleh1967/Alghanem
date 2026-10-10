@@ -1,8 +1,9 @@
-"""السلسلة (ADR ٣١): توقّعاتٌ مستقلّةٌ عن الشيفرة من نصّ النبهانيّ المختوم وقرار المالك
+"""السلسلة (ADR ٣١، ٣٢): توقّعاتٌ مستقلّةٌ عن الشيفرة من نصّ النبهانيّ المختوم وقرار المالك
 (2026-10-10) — ثلاثةُ سلالم، اليقينُ للوجود والحقائق وحدَهما («قطعية عن وجود الشيء… ظنية عن كنهه
 وصفته»)، الجذرُ الأركانُ الأربعة لا «أوليات»، النسبُ إسنادٌ وتقييدٌ وإضافةٌ بلا «تضمين»، السببيّةُ
 والمسببيّةُ علاقتا مجازٍ في الحكم، الفاعليّةُ والمفعوليّةُ نسبتان بعد الإسناد، وكلُّ ركنٍ بسطره من المختوم
-أو معلَنٌ باسمه؛ وطفراتٌ مرفوضة."""
+أو معلَنٌ باسمه؛ ثمّ سُلَّما الغزاليّ خارج العمود («نختم وفق النبهاني»): مصادرُ اليقين السبعة من المستصفى
+بسطرها، وأوليّاتُه خلافًا مسجَّلًا بلا سالفٍ في العمود؛ وطفراتٌ مرفوضة."""
 
 from __future__ import annotations
 
@@ -15,10 +16,15 @@ from typing import Any
 
 import pytest
 
-from slge.salsala import ARKAN, DECLARED, ROWS, anchored, grade, ladder, salaf
+from slge.salsala import ARKAN, DECLARED, LADDERS, ROWS, anchored, grade, ladder, salaf
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "tests" / "data"
+SEALED = {"ج3": ("nabhani-shakhsiyya-3.txt.gz", "359bb553"),
+          "التفكير": ("nabhani-tafkir.txt.gz", "b9b08eab"),
+          "المستصفى": ("openiti-ghazali-mustasfa.txt.gz", "59cda7d5"),
+          "محك النظر": ("openiti-ghazali-mihakk.txt.gz", "9e54d050"),
+          "معيار العلم": ("openiti-ghazali-micyar.txt.gz", "2ddf9165")}
 
 
 def _tool() -> Any:
@@ -37,18 +43,21 @@ def _lines(name: str, prefix: str) -> list[str]:
     return raw.decode("utf-8").split("\n")
 
 
+def _texts() -> dict[str, list[str]]:
+    return {src: _lines(name, prefix) for src, (name, prefix) in SEALED.items()}
+
+
 def test_every_rukn_is_anchored_in_the_sealed_text_or_declared_by_name() -> None:
-    j3 = _lines("nabhani-shakhsiyya-3.txt.gz", "359bb553")
-    tafkir = _lines("nabhani-tafkir.txt.gz", "b9b08eab")
+    texts = _texts()
     for rid, _, name, _, anchors, _, note in ROWS:
         if rid in DECLARED:
             assert not anchors and "معلَن" in note, name
             continue
         assert anchors, name
         for src, line, phrase in anchors:
-            assert phrase in (j3 if src == "ج3" else tafkir)[line - 1], (name, src, line, phrase)
+            assert phrase in texts[src][line - 1], (name, src, line, phrase)
     assert {7, 10, 11} == DECLARED  # القابليّات، المكان، العدد — بقرار المالك لا من الذاكرة
-    assert sum(1 for i in range(len(ROWS)) if anchored(i)) == 19
+    assert sum(1 for i in range(len(ROWS)) if anchored(i)) == 31
 
 
 def test_three_ladders_with_the_ranked_tag() -> None:
@@ -58,7 +67,7 @@ def test_three_ladders_with_the_ranked_tag() -> None:
     # التفكير 65 و123: اليقينُ في الوجود وحقائقه، والظنُّ في الكنه والصفات
     assert [i for i in range(len(ROWS)) if grade(i) == "يقين"] == [1, 2]
     assert all(grade(i) == "ظنّ" for i in range(3, 12))
-    assert all(grade(i) == "—" for i in range(12, 22)) and grade(0) == "—"
+    assert all(grade(i) == "—" for i in range(12, len(ROWS))) and grade(0) == "—"
     assert ROWS[0][2] == "الأركان الأربعة" and ARKAN == ("الواقع", "الإحساس", "الذهن",
                                                          "المعلومات السابقة")
 
@@ -77,34 +86,68 @@ def test_nisab_three_without_tadmin_and_majaz_in_the_judgement_ladder() -> None:
     assert salaf(9) == ((8, False),) and salaf(3) == ((2, False),)
 
 
+def test_ghazali_ladders_are_outside_the_spine_and_sourced_by_name() -> None:
+    """ADR ٣٢: (د) مصادرُ اليقين السبعة من المستصفى 1351–1460 بترتيب الغزاليّ نفسِه، و(هـ) أوليّاتُه
+    G1–G4 والكمّ؛ كلاهما مرسًى في مودَع الغزاليّ باسمه، بلا مرتبةٍ ولا سالفٍ في العمود؛ والعمودُ (أ–ج)
+    لا يُرسى إلّا في النبهانيّ."""
+
+    assert len(LADDERS) == 5 and len(ROWS) == 34
+    seven = [r for r in ROWS if r[1] == 3]
+    assert [r[2] for r in seven] == ["الأوليات (مصدرًا)", "المشاهدات الباطنة", "المحسوسات الظاهرة",
+                                     "التجريبيات", "المتواترات", "الوهميات", "المشهورات"]
+    assert [r[4][0][1] for r in seven] == [1351, 1363, 1367, 1376, 1405, 1414, 1458]
+    assert all(r[4][0][0] == "المستصفى" for r in seven)
+    outside = [r for r in ROWS if r[1] == 4]
+    assert [r[2][-4:-1] for r in outside[:4]] == ["(G1", "(G2", "(G3", "(G4"]
+    assert outside[-1][2].endswith("(الكمّ)")
+    # خارج العمود: لا سالفَ ولا مرتبة، ومرساةٌ عند الغزاليّ لا غير
+    for r in [*seven, *outside]:
+        assert not r[5] and grade(r[0]) == "—" and anchored(r[0])
+        assert all(src != "ج3" or r[2] == "المتواترات" for src, _, _ in r[4])
+    # ملتقيا المصدرين: الحسّ (التفكير 22) والتواترُ بلا عدد (ج3 308 مع المستصفى 1408)
+    sources = {r[2]: {a[0] for a in r[4]} for r in seven}
+    assert sources["المحسوسات الظاهرة"] == {"المستصفى", "التفكير"}
+    assert sources["المتواترات"] == {"المستصفى", "ج3"}
+    # العمودُ لا يُرسى في الغزاليّ
+    assert all(src in ("ج3", "التفكير") for r in ROWS if r[1] < 3 for src, _, _ in r[4])
+
+
 def test_mutations_are_refused_by_name() -> None:
     m = _tool()
-    j3 = _lines("nabhani-shakhsiyya-3.txt.gz", "359bb553")
-    tafkir = _lines("nabhani-tafkir.txt.gz", "b9b08eab")
-    m.verify(j3, tafkir)
+    texts = _texts()
+    m.verify(texts)
     rows = list(m.ROWS)
     # عبارةٌ لا ترد في سطرها
     rid, lad, name, gr, anchors, sal, note = rows[1]
     m.ROWS = (*rows[:1], (rid, lad, name, gr, (("التفكير", 65, "الوجود يقيني بلا شك"),), sal, note),
               *rows[2:])
     with pytest.raises(SystemExit, match="PHRASE_NOT_IN_LINE"):
-        m.verify(j3, tafkir)
+        m.verify(texts)
     # ركنٌ بلا مرساةٍ ولا إعلان
     m.ROWS = (*rows[:1], (rid, lad, name, gr, (), sal, note), *rows[2:])
     with pytest.raises(SystemExit, match="ANCHOR_OR_DECLARATION_MISSING"):
-        m.verify(j3, tafkir)
+        m.verify(texts)
     # «التضمين» نسبةً
     rid, lad, name, gr, anchors, sal, note = rows[15]
     m.ROWS = (*rows[:15], (rid, lad, "التضمين", gr, anchors, sal, note), *rows[16:])
     with pytest.raises(SystemExit, match="TADMIN_IS_NOT_A_NISBA"):
-        m.verify(j3, tafkir)
+        m.verify(texts)
     # سالفٌ لاحق: دور
     rid, lad, name, gr, anchors, sal, note = rows[9]
     m.ROWS = (*rows[:9], (rid, lad, name, gr, anchors, (10,), note), *rows[10:])
     with pytest.raises(SystemExit, match="SALAF_NOT_EARLIER"):
-        m.verify(j3, tafkir)
+        m.verify(texts)
+    # مودَعٌ غيرُ مختوم باسمه
+    rid, lad, name, gr, anchors, sal, note = rows[29]
+    m.ROWS = (*rows[:29], (rid, lad, name, gr, (("الإحياء", 1, "x"),), sal, note), *rows[30:])
+    with pytest.raises(SystemExit, match="UNKNOWN_SOURCE"):
+        m.verify(texts)
+    # أوليّةُ الغزاليّ تُبنى على ركنٍ من العمود: دمجٌ مرفوض
+    m.ROWS = (*rows[:29], (rid, lad, name, gr, anchors, (1,), note), *rows[30:])
+    with pytest.raises(SystemExit, match="OUTSIDE_SPINE_HAS_SALAF"):
+        m.verify(texts)
     m.ROWS = tuple(rows)
-    m.verify(j3, tafkir)
+    m.verify(texts)
 
 
 def test_python_table_matches_the_lean_export() -> None:
@@ -114,7 +157,7 @@ def test_python_table_matches_the_lean_export() -> None:
 
     rows = (ROOT / "formal" / "out" / "salsala.csv").read_text(encoding="utf-8").splitlines()
     exported = [r.split(",") for r in rows if r.startswith("rukn,")]
-    assert len(exported) == len(ROWS) == 22
+    assert len(exported) == len(ROWS) == 34
     for (_, rid, lad, gr, n_anchors, sal), row in zip(exported, ROWS, strict=True):
         assert (int(rid), int(lad), int(gr), int(n_anchors)) == (row[0], row[1], row[3],
                                                                   len(row[4]))

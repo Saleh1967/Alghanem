@@ -1,8 +1,10 @@
-"""السلسلة: أركانُ المدلول الكونيّ على سلالم النبهانيّ الثلاثة — مرآةُ `Slge.Salsala` (ADR ٣١).
+"""السلسلة: أركانُ المدلول الكونيّ على سلالم النبهانيّ الثلاثة — مرآةُ `Slge.Salsala` (ADR ٣١، ٣٢).
 
 جدولُ المالك أُعيد ترتيبُه على ثلاثة سلالم بوسمٍ مرتَّب: (أ) المعلوماتُ السابقة — الجذرُ الأركانُ
 الأربعة، والوجودُ والحقائقُ يقينًا، والكنهُ وما بعده ظنًّا؛ (ب) الوضعُ والنسبُ الثلاث والإفادة؛ (ج) الحكم:
-علاقاتُ المجاز. كلُّ ركنٍ بسطره من المختومَين (`salsala_table`) أو معلَنٌ باسمه؛ لا شيءَ من الذاكرة.
+علاقاتُ المجاز. ثمّ خارج العمود، من مودَع الغزاليّ المختوم باسم صاحبه (ADR ٣٢): (د) مصادرُ اليقين
+السبعة، و(هـ) أوليّاتُه خلافًا مسجَّلًا بلا سالفٍ في العمود. كلُّ ركنٍ بسطره من المختوم (`salsala_table`)
+أو معلَنٌ باسمه؛ لا شيءَ من الذاكرة.
 """
 
 from __future__ import annotations
@@ -45,13 +47,16 @@ def salaf(i: int) -> tuple[tuple[int, bool], ...]:
 
 
 def _check() -> None:
-    assert len(ROWS) == 22 and [r[0] for r in ROWS] == list(range(22))
-    assert [i for i in range(22) if grade(i) == "يقين"] == [1, 2]
-    assert all(grade(i) == "—" for i in range(22) if ROWS[i][1] != 0)
-    assert all(anchored(i) != (i in DECLARED) for i in range(22))
-    assert all(s < i for i in range(22) for s, _ in salaf(i))
+    n = len(ROWS)
+    assert n == 34 and [r[0] for r in ROWS] == list(range(n)) and len(LADDERS) == 5
+    assert [i for i in range(n) if grade(i) == "يقين"] == [1, 2]
+    assert all(grade(i) == "—" for i in range(n) if ROWS[i][1] != 0)
+    assert all(anchored(i) != (i in DECLARED) for i in range(n))
+    assert all(s < i for i in range(n) for s, _ in salaf(i))
     assert [ROWS[i][2] for i in (13, 14, 15)] == ["الإسناد", "التقييد", "الإضافة"]
     assert not any("التضمين" in r[2] for r in ROWS)
-
+    # خارج العمود (السلّمان الأخيران): لا سالفَ في العمود، ومرساةٌ باسم صاحبها
+    assert all(not ROWS[i][5] for i in range(n) if ROWS[i][1] >= 3)
+    assert all(anchored(i) for i in range(n) if ROWS[i][1] >= 3)
 
 _check()

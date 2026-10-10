@@ -18,6 +18,9 @@
 | `nabhani-shakhsiyya-3.txt.gz` | وضع | `359bb5532ecee8156f266522bb5388a1711e46e136004c3ac22e43f2ce656cb4` |
 | `nabhani-tafkir.txt.gz` | وضع | `b9b08eabec468aa0f93b80c01879e3812c57f4bd677e68e448967e3575bfaae4` |
 | `owner-alam.json` | وضع | `561fa752b4c97d356786009ba0e5017b15089bf615bc2939eafc794edce6993f` |
+| `openiti-ghazali-mustasfa.txt.gz` | وضع | `59cda7d5424b26ab73aa2d7d8130d1fbe28fc465ab6075d759dc782ebe1697ac` |
+| `openiti-ghazali-mihakk.txt.gz` | وضع | `9e54d050a9178392f48057738dd96796ddee094faff357bdb554e9e3cf6f5948` |
+| `openiti-ghazali-micyar.txt.gz` | وضع | `2ddf91651376fddd834fbf27ba14c532f3a32303eb1b82860fc2314fd3392259` |
 | `openiti-majaz-quran.txt.gz` | مرجع محجوب | `432dae05748f2f972b3238e56dd0c56e72b10f0c3900ee8da1a8cca812b2fc88` |
 | `masaq-adad.json` | مرجع محجوب | `9018b3f445f65bc23799f0bee3cda1ab1fe3a1a0a0ab7e67e6d85406e77cd822` |
 | `masaq-fil.json.gz` | مرجع محجوب | `61ed093595d72dc3b144b1ce1baf5f9c358f17ceeda765378a5198e86546060c` |

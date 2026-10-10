@@ -924,6 +924,9 @@ import Slge
 #print axioms Slge.Salsala.anchored_or_declared
 #print axioms Slge.Salsala.root_is_arkan
 #print axioms Slge.Salsala.ladder_counts
+#print axioms Slge.Salsala.spine_anchored_in_nabhani
+#print axioms Slge.Salsala.outside_spine_no_salaf
+#print axioms Slge.Salsala.ghazali_sources_from_mustasfa
 #print axioms Slge.Nabhani.awla_trans
 #print axioms Slge.Nabhani.awla_irrefl
 #print axioms Slge.Nabhani.awla_total

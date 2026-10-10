@@ -919,6 +919,9 @@
 'Slge.Salsala.anchored_or_declared' does not depend on any axioms
 'Slge.Salsala.root_is_arkan' does not depend on any axioms
 'Slge.Salsala.ladder_counts' does not depend on any axioms
+'Slge.Salsala.spine_anchored_in_nabhani' does not depend on any axioms
+'Slge.Salsala.outside_spine_no_salaf' does not depend on any axioms
+'Slge.Salsala.ghazali_sources_from_mustasfa' does not depend on any axioms
 'Slge.Nabhani.awla_trans' depends on axioms: [propext, Quot.sound]
 'Slge.Nabhani.awla_irrefl' depends on axioms: [propext]
 'Slge.Nabhani.awla_total' depends on axioms: [propext, Quot.sound]

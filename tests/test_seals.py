@@ -15,8 +15,12 @@ OWNER_SEALED = tuple(d for d in DEPOSITS if d.licence == "بإذن المالك"
 
 
 def test_sealed_sources_match_their_hash_and_carry_a_licence() -> None:
+    # الغزاليُّ ثلاثةً بإذن المالك «نختم وفق النبهاني» (2026-10-10، ADR ٣٢)
     assert [d.path for d in SEALED] == ["openiti-mukhassas.txt.gz", "openiti-maqayis.txt.gz",
                                          "openiti-sibawayh-kitab.txt.gz",
+                                         "openiti-ghazali-mustasfa.txt.gz",
+                                         "openiti-ghazali-mihakk.txt.gz",
+                                         "openiti-ghazali-micyar.txt.gz",
                                          "openiti-majaz-quran.txt.gz"]
     for d in SEALED:
         raw = gzip.decompress((DATA / d.path).read_bytes())
