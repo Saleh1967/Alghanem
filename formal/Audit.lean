@@ -896,6 +896,8 @@ import Slge
 #print axioms Slge.SawabiqTable.table_length
 #print axioms Slge.Sawabiq.idx_ofIdx
 #print axioms Slge.Sawabiq.wasl_state_damm_iff
+#print axioms Slge.Sawabiq.wasl_noun_kasra
+#print axioms Slge.Sawabiq.wasl_noun_witnesses
 #print axioms Slge.Sawabiq.lift_head
 #print axioms Slge.Sawabiq.lift_length
 #print axioms Slge.Sawabiq.mem_readAt

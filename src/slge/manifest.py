@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from typing import Final
 
 __all__ = ["CERTIFICATES_DIGEST", "CONTEXT_CERTIFICATES_DIGEST", "DEPOSITS", "DEPOSIT_KINDS",
-           "GATE_REV", "MODULES", "Deposit",
+           "GATE_REV", "HADITH_CONTEXT_CERTIFICATES_DIGEST", "MODULES", "Deposit",
            "Module", "index_tools", "lean_files", "readers_under_law", "tables"]
 
 
@@ -135,12 +135,12 @@ class Deposit:
     licence: str = ""
 
 
-GATE_REV: Final[str] = "f18e82de8c0a62d7323fbe00b7528f2f3e8d5207"
+GATE_REV: Final[str] = "25c65ffe2114cb67c0fea1189ad40cd243d07599"
 """إيداعُ بوّابة الغانم (`Saleh1967/Alghanem`، فرع `claude/official-gate`) الذي يُعاد منه توليدُ مودَع
 الشهادات في CI (`tools/gen_certificates.py --check`): ما يقيسه SLGE هو ما تطبعه البوّابةُ على المدوّنة
 المختومة بهذا الإيداع؛ أيُّ فرقٍ `DEPOSIT_DRIFTED_FROM_GATE`. يُرفع مع المودَع معًا لا أحدُهما وحدَه."""
 
-CERTIFICATES_DIGEST: Final[str] = "4329fb9c3acaf5235c00da1e2373d9706c9739e488c05ab7d3cb377e69545144"
+CERTIFICATES_DIGEST: Final[str] = "6bfa3422faad927139564f260fefb0dc5330a45192f148ebb9802beaf4047635"
 """بصمةُ المودَع بصورته القانونيّة (JSON مرتّبَ المفاتيح بلا فراغ) كما طبعتها البوّابةُ على `GATE_REV`؛
 يفحصها `tests/test_deposits.py` محلّيًّا بلا بوّابة، وCI يعيد التوليدَ من البوّابة نفسها."""
 
@@ -149,6 +149,13 @@ CONTEXT_CERTIFICATES_DIGEST: Final[str] = (
 """بصمةُ مودَع السياق (`context-certificates.json.gz`) بصورته القانونيّة كما طبعتها البوّابةُ على
 `GATE_REV` (`tools/gen_context_certificates.py`)؛ يُرفع مع `GATE_REV` والمودَع الأوّل معًا (ADR ٢٨)."""
 
+HADITH_CONTEXT_CERTIFICATES_DIGEST: Final[str] = (
+    "731057b5a9c543f65ee050327005d02e78a216b83bc650bc21c6a8ae38c1606a")
+"""بصمةُ مودَع المدوّنة المختومة الثانية (`hadith-context-certificates.json.gz`): الصحيحان موقعًا
+موقعًا في سياقهما كما طبعتها البوّابةُ نفسُها على `GATE_REV` (`gen_context_certificates.py --corpus
+sahihain`، الغانم ADR ٧)؛ المصدرُ Open-Hadith-Data برخصة ODbL 1.0 والمودَعُ المشتقُّ يحملها. لا مرجعَ
+محجوبًا له فلا «مقيس» عليه."""
+
 DEPOSITS: Final[tuple[Deposit, ...]] = (
     Deposit("corpus-certificates.json.gz", "واقع مختوم",
             "شهاداتُ المصحف كلِّه خاناتٍ وأعدادًا؛ بصمةُ المدوّنة فيه؛ يُعاد توليدُه من البوّابة على "
@@ -156,6 +163,10 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
     Deposit("context-certificates.json.gz", "واقع مختوم",
             "المصحفُ موقعًا موقعًا في سياقه (ابتداء/وصل، استمرار/وقف) من البوّابة على قاموسٍ مسمًّى؛ "
             "مواقعُ المودَع الأوّل نفسُها (78,245)؛ يُعاد توليدُه من البوّابة على GATE_REV"),
+    Deposit("hadith-context-certificates.json.gz", "واقع مختوم",
+            "المدوّنةُ المختومةُ الثانية: الصحيحان (Open-Hadith-Data، ODbL 1.0) موقعًا موقعًا في "
+            "سياقهما من البوّابة نفسِها (995,413 موقعًا، 12,370 حديثًا سطورًا)؛ يُعاد توليدُه من "
+            "البوّابة على GATE_REV"),
     Deposit("maqayis-roots.json.gz", "وضع", "جذورُ مقاييس اللغة حواملَ (4,561)"),
     Deposit("sibawayh-abniya.tsv", "وضع", "أبنيةُ الأسماء عند سيبويه (158 هيكلًا)"),
     Deposit("nabhani-huruf.json", "وضع",

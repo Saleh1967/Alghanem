@@ -103,9 +103,26 @@ def _al_joined(r: Word) -> bool:
     return r[0][0] == "ل" or (r[0][0] in SUN and r[0][0] == r[1][0])
 
 
-def wasl_state(r: Word) -> str:
-    """حركةُ همزة الوصل المردودة: مضمومةٌ إن كان الثالثُ مضمومًا وإلّا مكسورة (`waslState`)."""
+WASL_NOUNS: Final[tuple[tuple[str, ...], ...]] = (("ب", "ن"), ("س", "م"), ("م", "ر", "ء"),
+                                                   ("ث", "ن"))
+"""هياكلُ الأسماء الموصولة الهمزة بعد الهمزة (ابن/ابنة، اسم، امرؤ/امرأة، اثنان؛ «است» تُركت لالتباسها
+باستفعل): «مكسورة في الابتداء وإن كان الثالث مضموما… لأنها ليست ضمة تثبت» (الكتاب س17569–17573)؛
+مرآةُ `WASL_NOUNS` في بوّابة الغانم (`gate/residue.py`) و`Sawabiq.waslNouns`."""
 
+
+def wasl_noun(r: Word) -> bool:
+    """أهيكلُ ما بعد الهمزة هيكلُ اسمٍ موصول؟ (`waslNoun`)"""
+
+    carriers = tuple(c[0] for c in r[:3])
+    return any(carriers[:len(n)] == n for n in WASL_NOUNS)
+
+
+def wasl_state(r: Word) -> str:
+    """حركةُ همزة الوصل المردودة: مضمومةٌ إن كان الثالثُ مضمومًا في غير الأسماء الموصولة، وإلّا مكسورة
+    (`waslState`؛ الكتاب س17530 وس17573)."""
+
+    if wasl_noun(r):
+        return "كسر"
     return "ضم" if len(r) >= 2 and r[1][1] == "ضم" else "كسر"
 
 

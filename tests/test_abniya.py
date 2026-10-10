@@ -113,10 +113,12 @@ def test_numbers_before_and_after_on_the_same_deposit() -> None:
     m = measure()
     assert m["forms"] == 18179 and m["n"] == 125 and m["in_abniya"] == 111
     # كانت 15,510 قبل زوائد سيبويه (ADR ١٨)، و14,912 قبل القوالب الأربعة
-    assert m["step2"] == 15673 and m["read"] == 15673
+    # ثمّ 15,673 قبل تصحيح همزة الأسماء الموصولة كسرًا (الغانم ADR ٧ — الكتاب س17573)
+    assert m["step2"] == 15672 and m["read"] == 15672
     for k in ISM:
         assert m["with"][k] >= m["only"][k] > 0  # كلُّ قالبٍ مضاف يرفع الرقم
-    assert m["only"][121] == 396 and m["only"][122] == 265  # فِعْل كانت 406 قبل زوائد سيبويه
+    # فِعْل كانت 406 قبل زوائد سيبويه و396 قبل ADR ٧
+    assert m["only"][121] == 399 and m["only"][122] == 265
     assert m["gold"][121] == 1197 and m["gold"][122] == 763  # فَعَال كانت 756 قبل زوائد سيبويه
     gen = str(ROOT_DIR / "tools" / "gen_abniya_index.py")
     res = subprocess.run([sys.executable, gen, "--check"], capture_output=True, text=True,

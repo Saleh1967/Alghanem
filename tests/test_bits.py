@@ -80,7 +80,8 @@ def test_certificate_integer_doubles_the_atoms_number() -> None:
     assert isinstance(forms, list)
     cert = sum(f["integer_bits"] for f in forms)
     atoms = sum(f["atoms_number_bits"] for f in forms)
-    assert cert == 1276753 and atoms == 651981 and 1.9 < cert / atoms < 2.0
+    # كانا 1,276,753 و651,981 قبل تصحيح همزة الأسماء الموصولة كسرًا (الغانم ADR ٧): خمسُ صورٍ بتًّا أطول
+    assert cert == 1276758 and atoms == 651986 and 1.9 < cert / atoms < 2.0
     assert sum(f["residual_bits"] for f in forms) == 38 == sum(f["fiber_size"] > 1 for f in forms)
 
 

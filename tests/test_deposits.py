@@ -93,3 +93,31 @@ def test_context_deposit_is_what_the_pinned_gate_printed() -> None:
     assert "gen_context_certificates.py --check" in ci
     d["stream"][3][1] ^= 1
     assert _canonical(d) != CONTEXT_CERTIFICATES_DIGEST
+
+
+def test_hadith_context_deposit_is_what_the_pinned_gate_printed() -> None:
+    """المدوّنةُ المختومةُ الثانية (الغانم ADR ٧): الصحيحان موقعًا موقعًا في سياقهما من البوّابة نفسِها
+    على `GATE_REV` نفسِه، بالقانون نفسِه (سياسةُ الحدّ واحدة) وبصمةِ مدوّنتها المختومة؛ CI يعيد توليدَه
+    من البوّابة. رموزُ الطبعة ليست مواقع فلا تُعدّ."""
+
+    import gzip
+    import json
+
+    from slge.manifest import HADITH_CONTEXT_CERTIFICATES_DIGEST
+
+    with gzip.open(DATA / "hadith-context-certificates.json.gz", "rt", encoding="utf-8") as f:
+        d = json.load(f)
+    with gzip.open(DATA / "context-certificates.json.gz", "rt", encoding="utf-8") as f:
+        quran = json.load(f)
+    assert _canonical(d) == HADITH_CONTEXT_CERTIFICATES_DIGEST
+    assert d["tokens"] == 995413 == len(d["stream"]) == sum(d["line_lengths"])
+    assert d["lines"] == 12370
+    assert d["corpus_sha256"] != quran["corpus_sha256"] and len(d["corpus_sha256"]) == 64
+    assert d["boundary_policy"] == quran["boundary_policy"]
+    assert d["bridge_protocol"] == quran["bridge_protocol"]
+    assert set(d["status"]) == {"READY", "REJECT", "DEFER"} and sum(d["status"].values()) == 995413
+    assert all(r.split(":")[0] in ("REJECT", "DEFER") for r in d["refusals"])
+    ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    assert "--corpus sahihain --check tests/data/hadith-context-certificates.json.gz" in ci
+    d["stream"][3][1] ^= 1
+    assert _canonical(d) != HADITH_CONTEXT_CERTIFICATES_DIGEST

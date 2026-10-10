@@ -65,6 +65,7 @@ jobs:
           git -C /tmp/alghanem checkout -q "$(PYTHONPATH=src python -c 'from slge.manifest import GATE_REV; print(GATE_REV)')"
           PYTHONPATH=/tmp/alghanem python /tmp/alghanem/tools/gen_certificates.py --check tests/data/corpus-certificates.json.gz
           PYTHONPATH=/tmp/alghanem python /tmp/alghanem/tools/gen_context_certificates.py --check tests/data/context-certificates.json.gz
+          PYTHONPATH=/tmp/alghanem python /tmp/alghanem/tools/gen_context_certificates.py --corpus sahihain --check tests/data/hadith-context-certificates.json.gz
       - name: CLAIMS.md — every published number recomputed from its generator; no number in CLAUDE.md without one
         run: python tools/gen_claims.py --check
       - name: guard — no text reader or writer outside suspended/

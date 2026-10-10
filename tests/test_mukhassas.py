@@ -95,5 +95,6 @@ def test_mutations_are_refused() -> None:
 def test_numbers_on_the_deposit() -> None:
     text = (ROOT / "MUKHASSAS_INDEX.md").read_text(encoding="utf-8")
     # كانت 324/1,115 و2,794/6,329 قبل زوائد سيبويه (ADR ١٨)
-    assert "**328 من 1,128 جذرًا** (29.1%)" in text and "2,876 من 6,519 صورة (44.1%)" in text
+    # كانت 1,128 و6,519 و2,876 قبل تصحيح همزة الأسماء الموصولة كسرًا (الغانم ADR ٧)
+    assert "**328 من 1,127 جذرًا** (29.1%)" in text and "2,875 من 6,516 صورة (44.1%)" in text
     assert "رُبط عنوانُ 1,080 عقدةً من 1,600" in text

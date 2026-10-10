@@ -89,16 +89,44 @@ def alJoined (r : List SCell) : Bool :=
       (l.carrier.val == 23 || (Marifa.sun.contains l.carrier.val && l.carrier == x.carrier))
   | _ => false
 
-/-- حركةُ همزة الوصل المردودة: مضمومةٌ إن كان الثالثُ مضمومًا وإلّا مكسورة («مكسورة أبدا إلا أن يكون
-الحرف الثالث مضموما فتضمها»). `r` ما بعد الهمزة (أوّلُه الساكن). -/
+/-- أهيكلُ ما بعد الهمزة هيكلُ اسمٍ موصول؟ حواملُه بادئةً: ابن ٢٬٢٥، اسم ١٢٬٢٤، امرؤ ٢٤٬١٠٬٠، اثنان ٤٬٢٥
+(«است» تُركت لالتباسها باستفعل) — مرآةُ `WASL_NOUNS` في بوّابة الغانم (`gate/residue.py`). -/
+def waslNoun (r : List SCell) : Bool :=
+  match r.map (·.carrier.val) with
+  | 2 :: 25 :: _ => true
+  | 12 :: 24 :: _ => true
+  | 24 :: 10 :: 0 :: _ => true
+  | 4 :: 25 :: _ => true
+  | _ => false
+
+/-- حركةُ همزة الوصل المردودة: مضمومةٌ إن كان الثالثُ مضمومًا («مكسورة أبدا إلا أن يكون الحرف الثالث
+مضموما فتضمها»، س17530) **في غير الأسماء الموصولة** — فهي «مكسورة في الابتداء وإن كان الثالث مضموما
+نحو ابنم وامرؤ لأنها ليست ضمة تثبت في هذا البناء» (س17569–17573) — وإلّا مكسورة. `r` ما بعد الهمزة
+(أوّلُه الساكن). -/
 def waslState (r : List SCell) : Fin 4 :=
+  if waslNoun r then 1 else
   match r with
   | _ :: y :: _ => if y.state.val == 2 then 2 else 1
   | _ => 1
 
 theorem wasl_state_damm_iff (x y : SCell) (t : List SCell) :
-    waslState (x :: y :: t) = 2 ↔ y.state.val = 2 := by
-  simp only [waslState]; split <;> simp_all
+    waslState (x :: y :: t) = 2 ↔ y.state.val = 2 ∧ waslNoun (x :: y :: t) = false := by
+  simp only [waslState]
+  split
+  · rename_i h; simp [h]
+  · rename_i h; simp only [Bool.not_eq_true] at h; split
+    · rename_i h2; simp [h, beq_iff_eq.1 h2]
+    · rename_i h2; simp only [beq_iff_eq] at h2; simp [h, h2]
+
+/-- الاسمُ الموصول مكسورٌ أبدًا، ولو ضُمّ ثالثُه. -/
+theorem wasl_noun_kasra (r : List SCell) (h : waslNoun r = true) : waslState r = 1 := by
+  simp [waslState, h]
+
+/-- شاهدان: اِبْنُ (ب ن ضمّ) كسرٌ، واُنْصُرْ (ن ص ضمّ) ضمّ. -/
+theorem wasl_noun_witnesses :
+    waslState [⟨⟨2, by decide⟩, ⟨3, by decide⟩⟩, ⟨⟨25, by decide⟩, ⟨2, by decide⟩⟩] = 1 ∧
+    waslState [⟨⟨25, by decide⟩, ⟨3, by decide⟩⟩, ⟨⟨13, by decide⟩, ⟨2, by decide⟩⟩,
+               ⟨⟨10, by decide⟩, ⟨3, by decide⟩⟩] = 2 := by decide
 
 /-- ردُّ ما سقط في الوصل: همزةُ أل مفتوحة، وهمزةُ الوصل بحركتها. -/
 def lift (r : List SCell) : List SCell :=

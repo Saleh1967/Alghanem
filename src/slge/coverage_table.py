@@ -125,9 +125,9 @@ AXES: Final[tuple[tuple[int, int, int], ...]] = (
     (2, 246, 160),
     (3, 57, 57),
     (4, 11, 11),
-    (5, 4561, 1895),
+    (5, 4561, 1894),
     (6, 1080, 972),
 )
 
-ROOTS: Final[tuple[int, int, int, int]] = (4561, 1619, 276, 2666)
+ROOTS: Final[tuple[int, int, int, int]] = (4561, 1619, 275, 2667)
 NODES: Final[tuple[int, int, int, int, int]] = (1600, 972, 19, 89, 520)
