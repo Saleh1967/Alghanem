@@ -1599,8 +1599,8 @@
 |---|---|---|---|
 | `idx_ofIdx` | — | مدقَّق | لا مسلّمات |
 | `wasl_state_damm_iff` | — | مدقَّق | propext, Quot.sound |
-| `wasl_noun_kasra` | الاسمُ الموصول مكسورٌ أبدًا، ولو ضُمّ ثالثُه. | مدقَّق | — |
-| `wasl_noun_witnesses` | شاهدان: اِبْنُ (ب ن ضمّ) كسرٌ، واُنْصُرْ (ن ص ضمّ) ضمّ. | مدقَّق | — |
+| `wasl_noun_kasra` | الاسمُ الموصول مكسورٌ أبدًا، ولو ضُمّ ثالثُه. | مدقَّق | propext |
+| `wasl_noun_witnesses` | شاهدان: اِبْنُ (ب ن ضمّ) كسرٌ، واُنْصُرْ (ن ص ضمّ) ضمّ. | مدقَّق | propext |
 | `lift_head` | — | مدقَّق | propext, Quot.sound |
 | `lift_length` | — | مدقَّق | propext |
 | `mem_readAt` | — | مدقَّق | propext, Quot.sound |
