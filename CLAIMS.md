@@ -12,7 +12,7 @@
 | `corpora/hadith/sahih_muslim_ahadith_mushakkala_mufassala.utf8.csv.gz` | واقع مختوم (ODbL 1.0؛ بايتاتُه بعد فكّ الضغط) | `79232c8d7c27fef161d8f33ca169f9754741cfe14957dde2ac76893374998943` |
 | `corpora/abniya-intiqa-lines.txt` | مجالٌ مختومٌ ثالث: انتقاءُ الأبنية بيد المالك (`ABNIYA_INTIQA_SHA256`، ADR ١٣) | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 
-## الأرقام (206 رقمًا من 22 مولِّدًا)
+## الأرقام (216 رقمًا من 25 مولِّدًا)
 
 ### `gate.audit.main`
 
@@ -171,6 +171,21 @@
 | `degrees.8.forms` | 6 |
 | `degrees.8.table` | 49,152 |
 | `refused_by_gate` | 21 |
+
+### `tests/test_neutral.py::corpus_comparison`
+
+يقرأ: `corpora/quran-simple-enhanced.txt`. بصمةُ المخرَج: `17e229430787a150`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `gaps.IFTAAL_IBDAL` | 5 |
+| `gaps.IMPERATIVE_WEAK_DELETION` | 47 |
+| `gaps.ISTAHWADHA_NOT_NEUTRALIZED` | 1 |
+| `gaps.LAM_YA_AFTER_KASRA` | 2 |
+| `gaps.PASSIVE_WEAK_NOT_NEUTRAL` | 21 |
+| `matched` | 295 |
+| `matched_by_wazn.len` | 22 |
+| `matched_by_wazn.sum` | 295 |
 
 ### `gate.mabni_bridge.verb_readings`
 
@@ -334,6 +349,14 @@
 |---|---|
 | `order.csv.rows` | 116 |
 
+### `lake exe a116-table neutral`
+
+يقرأ: — (نواةُ Lean؛ لا مودَع). بصمةُ المخرَج: `1992d0a2feaabfe7`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `neutral.csv.rows` | 341 |
+
 ### `lake exe a116-table pairs`
 
 يقرأ: — (نواةُ Lean؛ لا مودَع). بصمةُ المخرَج: `9cefda5e3998e4d5`.
@@ -373,6 +396,14 @@
 | المسار في المخرَج | الرقم |
 |---|---|
 | `wazn.csv.rows` | 31 |
+
+### `lake exe a116-table wazn-body`
+
+يقرأ: — (نواةُ Lean؛ لا مودَع). بصمةُ المخرَج: `b03a4c22cdc02e69`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `wazn-body.csv.rows` | 31 |
 
 
 ## أعدادُ المبرهنات بوحداتها (30 مبرهنة)

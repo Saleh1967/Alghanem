@@ -38,9 +38,9 @@ MASAQ = ROOT / "corpora" / "MASAQ.csv"
 TABLES = ROOT / "formal" / "a116"
 TABLE_NAMES = (
     "counts", "degrees", "hadd", "hadd-join", "hamza", "iltiqa", "licensable", "numbers", "order",
-    "pairs", "syllables", "table", "utf8", "wazn",
+    "neutral", "pairs", "syllables", "table", "utf8", "wazn", "wazn-body",
 )
-"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ العشرة (يطابقها CI بايتًا بايتًا)
+"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ الاثنا عشر (يطابقها CI بايتًا بايتًا)
 والمولَّداتُ الأربع لحجمها (`syllables`، `hadd`، `hadd-join`، `iltiqa`: تُولَّد في وظيفة Lean وتُنزَّل
 أثرًا إلى وظيفة البوّابة). جدولٌ جديد لا يدخل السجلَّ بوجوده على القرص بل بإضافته هنا وإلى الأثر في CI
 — وإلّا اختلف السجلُّ محلّيًّا عنه في CI."""
@@ -152,6 +152,24 @@ def _hadith_tool() -> Any:
     return mod
 
 
+def _neutral_comparison() -> Any:
+    """`tests/test_neutral.py::corpus_comparison`: المطابَقُ بالوزن، والفجواتُ بأسمائها (ADR ١٧)."""
+
+    import importlib.util
+
+    path = ROOT / "tests" / "test_neutral.py"
+    spec = importlib.util.spec_from_file_location("test_neutral", path)
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    hits, misses = mod.corpus_comparison()
+    gaps: dict[str, int] = {}
+    for _, label, atoms, _ in misses:
+        name = mod.gap_of(label, atoms)
+        gaps[name] = gaps.get(name, 0) + 1
+    return {"matched": sum(hits.values()), "matched_by_wazn": dict(hits), "gaps": gaps}
+
+
 def generators() -> list[tuple[str, tuple[str, ...], Any]]:
     """(المولِّد، المودَعاتُ التي يقرؤها، دالّتُه) — الترتيبُ ترتيبُ السجلّ."""
 
@@ -166,6 +184,7 @@ def generators() -> list[tuple[str, tuple[str, ...], Any]]:
         ("tools/gen_hadith_lines.py::stats", hadith, lambda: _hadith_tool().stats()),
         ("gate.hamza.seat_census", (corpus,), lambda: seat_census(_surfaces())),
         ("gate.degrees.attestation", (corpus,), lambda: attestation(_surfaces())),
+        ("tests/test_neutral.py::corpus_comparison", (corpus,), _neutral_comparison),
         ("gate.mabni_bridge.verb_readings", (masaq,), mabni_bridge.verb_readings),
         ("gate.mabni_bridge.verb_generation_reading", (masaq,),
          mabni_bridge.verb_generation_reading),

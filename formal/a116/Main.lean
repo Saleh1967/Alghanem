@@ -194,6 +194,28 @@ def main (args : List String) : IO Unit := do
       let cont := Wazn.realize W Wazn.ktb .start .continue (Wazn.lastH i)
       let paus := Wazn.realize W Wazn.ktb .start .pause (Wazn.lastH i)
       IO.println s!"{i},{" ".intercalate (pre ++ body ++ [last])},{sy cont},{sy paus}"
+  | ["wazn-body"] =>
+    -- جسمُ كلّ وزنٍ ثلاثيّ رموزًا (`Wazn.thulathi`): رقمُه، أله همزةُ وصل، رقمُ الأصل الأخير، ثمّ الرموز:
+    -- خانةٌ زائدة حرفًا وحالةً، أو أصلٌ رقمًا (1 2 3) وحالة.
+    let mark : Haraka → String
+      | .fatha => "َ" | .damma => "ُ" | .kasra => "ِ" | .sukun => "ْ"
+    for (i, W) in (List.range Wazn.thulathi.length).zip Wazn.thulathi do
+      let toks := W.body.map fun
+        | .lit c => s!"{Field112.carrierChar c.carrier}{mark c.haraka}"
+        | .slot j h => s!"{j.val + 1}{mark h}"
+      IO.println s!"{i},{W.wasl},{W.last.val + 1},{" ".intercalate toks}"
+  | ["neutral"] =>
+    -- التقييمُ بالمحايد (`Neutral.realizeN`) على الجذور المرجعيّة والأوزان كلِّها، ابتداءً وصلًا وابتداءً وقفًا.
+    let mark : Haraka → String
+      | .fatha => "َ" | .damma => "ُ" | .kasra => "ِ" | .sukun => "ْ"
+    let atoms := fun (w : List Cell) =>
+      " ".intercalate (w.map fun c => s!"{Field112.carrierChar c.carrier}{mark c.haraka}")
+    let names := ["قول", "سير", "دعو", "رمي", "وعد", "ءمن", "سءل", "قرء", "مدد", "هوي", "حيي"]
+    for (nm, r) in names.zip Neutral.refRoots do
+      for (i, W) in (List.range Wazn.thulathi.length).zip Wazn.thulathi do
+        let c := Neutral.realizeN W r .start .continue (Wazn.lastH i)
+        let p := Neutral.realizeN W r .start .pause (Wazn.lastH i)
+        IO.println s!"{nm},{i},{atoms c},{atoms p}"
   | ["utf8"] =>
     -- أبجديّةُ الرسم: الحروفُ ‎U+0621–U+064A‎، العلاماتُ ‎U+064B–U+0652‎، ألفُ الوصل ‎U+0671‎، والمسافة.
     for c in (List.range 0x2B).map (· + 0x621) ++ (List.range 8).map (· + 0x64B) ++ [0x671, 0x20] do

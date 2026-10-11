@@ -322,3 +322,17 @@ import A116
 #print axioms A116.Wazn.wasl_joined_waits
 #print axioms A116.Wazn.root_degree_is_not_syllable_degree
 #print axioms A116.Wazn.wasl_lam_conflict
+-- الألفُ عنصرًا محايدًا: المعتلُّ والمهموزُ والمضعَّفُ في الأوزان (ADR ١٧)
+#print axioms A116.Neutral.erase_append
+#print axioms A116.Neutral.erase_alif
+#print axioms A116.Neutral.erase_idem
+#print axioms A116.Neutral.factor_through_erase
+#print axioms A116.Neutral.alif_neutral_unique
+#print axioms A116.Neutral.pause_fixes_alif
+#print axioms A116.Neutral.neutral_forgets_weak
+#print axioms A116.Neutral.neutral_identifies_lit_and_radical
+#print axioms A116.Neutral.neutral_restore
+#print axioms A116.Neutral.weak_licensed
+#print axioms A116.Neutral.neutral_follows_fatha
+#print axioms A116.Neutral.lafif_witnesses
+#print axioms A116.Neutral.sound_unchanged
