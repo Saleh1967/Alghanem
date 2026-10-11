@@ -9,7 +9,8 @@
 `NOT_CONTINUE_LICENSED`)، ٣ العدد (ثنائيٌّ ← `fold`؛ والثلاثيُّ فقط `TERNARY_ONLY_NO_NUMBER`: عددُه في
 شهادته).
 القارئة (قراءةٌ أو «لا قراءة» باسمه، ولا ترفض): ٤ الجداول الحاصرة، ٥ الجذع (تسويةُ الآخر وفصلُ الزوائد
-`jidh`)، ٦ الصرف على الصورة كما هي (`wad.senses`)، ٧ الإعراب (`tawabi.case_class`)، ٨ الجواب (القرّاء
+`jidh`، على الصورة وعلى أصلها المردود، والحرفُ يحجب الجذرَ ولا يحذف: `qiraa`، ADR ٤١)،
+٦ الصرف على الصورة كما هي (`wad.senses`)، ٧ الإعراب (`tawabi.case_class`)، ٨ الجواب (القرّاء
 بسياقهم). فما لا يُقرأ ليس خطأً بل حدًّا معلَنًا. الجدولُ الكامل في
 `ARCHITECTURE.md` (ADR ٦). `climb(atoms)` يعيد أثرَ الصعود كلَّه.
 """
@@ -33,6 +34,8 @@ from slge.maani import is_zarf, senses_of
 from slge.maani import rank as rank_maani
 from slge.madd import continue_licensed, madd
 from slge.maqayis import attested, rank
+from slge.qiraa import harf, hukm_readings, qiraa
+from slge.qiraa import rank as rank_qiraa
 from slge.sawabiq import sawabiq
 from slge.tawabi import case_class
 from slge.tawzi import tawzi
@@ -116,12 +119,20 @@ def _g4c(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
 
 
 def _g5(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
-    rs = rank(jidh(w))  # المشهودُ في المقاييس أوّلًا؛ لا قراءةَ تسقط (`mem_rank`، `length_rank`)
-    used = sorted({rule for r in rs for rule, _ in r.ilal}, key=RULES.index)
+    """الجذعُ على الصورة ثمّ على أصلها المردود (`Qiraa.qiraa_restores`)، والمشهودُ أوّلًا؛ وما قرأه
+    الموزِّعُ حرفًا يحجب جذرَه عن الحكم ولا تُحذف قراءتُه (`harf_no_hukm`، `jidh_sub_qiraa`)."""
+
+    rs = rank_qiraa(qiraa(w))  # المشهودُ في المقاييس أوّلًا؛ لا قراءةَ تسقط (`mem_rank`، `length_rank`)
+    used = sorted({rule for q in rs for rule, _ in q.r.ilal}, key=RULES.index)
     notes = ["الإعلال: " + "، ".join(used)] if used else []
-    seen = sum(attested(r) for r in rs)
+    seen = sum(attested(q.r) for q in rs)
     if rs and seen < len(rs):
         notes.append(f"المقاييس: {seen} من {len(rs)} مشهودة")
+    lifted = sum(q.via is not None for q in rs)
+    if lifted:
+        notes.append(f"الأصلُ المردود: {lifted}")
+    if harf(w):
+        notes.append("حرفٌ بالموزِّع: لا جذرَ يُحكم عليه")
     return Pass("الجذع", rs, "؛ ".join(notes) if rs else "لا قطعَ من الجداول يضع جذعًا على قالب")
 
 
@@ -167,9 +178,10 @@ def _g7(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
 
 def _g8(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
     nxt: Word = ctx.get("next", ())
-    rs = rank(jidh(w))
+    hs = rank_qiraa(hukm_readings(w))  # الحرفُ لا وجودَ له من جذر (`harf_no_hukm`)
+    ont = ont_of_reading(hs[0].r) if hs else "حرف" if harf(w) else "—"
     return Pass("الجواب", {"الكليّ": kulli(w), "الوضع": wad(w), "الصيغة": sigha(w),
-                          "الوجود": ont_of_reading(rs[0]) if rs else "—",
+                          "الوجود": ont,
                           "المدود": madd(w, nxt, bool(ctx.get("pause", False)))})
 
 

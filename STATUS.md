@@ -4,7 +4,7 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 155 |
+| مبرهن | 156 |
 | مفحوص_استقصاء | 14 |
 | مفحوص_بعينة | 50 |
 | دليل | 0 |
@@ -121,6 +121,7 @@
 | NUM-agree | عددُ الشهادة (ترقيم الذرّات) وعددُ الطيّ متكافئان على المرخَّصات بطولٍ واحد | مبرهن | `lean:Slge.Consistency.numbers_agree`<br>`lean:Slge.Consistency.atomNumber_determines_fold`<br>`lean:Slge.Consistency.fold_determines_atomNumber` |  |
 | Q1 | الخاناتُ ‎116 = 29 × 4‎، تامّةٌ بلا تكرار | مبرهن | `lean:Slge.scells_length`<br>`test:tests/test_cells.py::test_cells_are_116` |  |
 | Q2 | الترخيصُ قيدُ مسار، وهو `Admissible` في الـ116 بعينه لكلّ طول | مبرهن | `lean:Slge.licensed_iff`<br>`test:tests/test_conformance.py::test_folds_match_lean` |  |
+| QIRAA-reader | القراءةُ الموحَّدة: ما يقرؤه الموزِّعُ ونواتُه من حروف المعاني حرفٌ يحجب جذرَه عن الحكم ولا يحذف قراءةَ الجذع؛ والجذعُ يقرأ الصورةَ ثمّ أصلَها الذي ردّت السوابقُ ساقطَه في الوصل، وكلُّ قراءةٍ تُردّ (السابقةُ إلى الكلمة والجذعُ إلى الأصل) وأصلُها يصعد إلى جذعها — لكلّ كلمة | مبرهن | `lean:Slge.Qiraa.harf_no_hukm`<br>`lean:Slge.Qiraa.hukm_of_not_harf`<br>`lean:Slge.Qiraa.jidh_sub_qiraa`<br>`lean:Slge.Qiraa.qiraa_restores`<br>`lean:Slge.Qiraa.qiraa_ascends`<br>`lean:Slge.Qiraa.harf_restores`<br>`lean:Slge.Qiraa.witnesses_harf`<br>`lean:Slge.Qiraa.witness_famshu`<br>`test:tests/test_qiraa.py::test_mutants_are_refused_by_name`<br>`test:tests/test_conformance.py::test_qiraa_matches_lean` | على MASAQ المحجوب: من 12,039 كلمةً قرأها الموزِّعُ حرفًا يعدّها المرجعُ بلا جهة 98.2%، والباقي (لَمَّا ظرفًا، عَلِيّ، خَلَا فعلًا) حجبٌ لا حذف؛ وعلى المصحف 803 صورةً قُرئ أصلُها المردود على جذرٍ مشهود (QIRAA_INDEX.md، ADR ٤١). |
 | RANK-KHASS | الخاصُّ يُعمل به أيًّا كان ثبوتُه، والعامُّ مخصوصٌ لا مردود | مبرهن | `lean:Slge.Rank.specific_wins`<br>`lean:Slge.Rank.general_is_makhsus`<br>`lean:Slge.Rank.qati_general_yields_to_zanni_specific`<br>`lean:Slge.Rank.same_scope_is_weigh`<br>`test:tests/test_rank.py::test_specific_wins_and_general_is_makhsus` | ج٣ ¶1065. والخصوصُ محسوبٌ من لزوم المقدَّمين بالقواعد المقبولة. |
 | RANK-MEET | رتبةُ النتيجة رتبةُ أضعف مقدّماتها؛ لا ترقية | مبرهن | `lean:Slge.Rank.pathGrade_qati_iff`<br>`lean:Slge.Rank.no_promotion`<br>`test:tests/test_rank.py::test_rank_never_promotes_on_random_worlds` | الغزالي، محكّ النظر: «يقينية ضرورية بحسب ذوق المقدمات». |
 | RANK-WEIGH | القطعيُّ يردّ الظنّيّ، ولا يُردّ قطعيّ، والراجحُ مرجوحٌ من الجهة الأخرى، والتعادلُ ظنّيّان متساويان، وتعارضُ قطعيّين تناقض | مبرهن | `lean:Slge.Rank.weigh_swap`<br>`lean:Slge.Rank.qati_never_loses`<br>`lean:Slge.Rank.mardud_iff`<br>`lean:Slge.Rank.tanaqud_iff`<br>`lean:Slge.Rank.taadul_iff`<br>`test:tests/test_rank.py::test_rank_table_matches_lean` | التفكير: «يؤخذ القطعي ويرد الظني»؛ ج٣ ¶1060، ¶1062. |

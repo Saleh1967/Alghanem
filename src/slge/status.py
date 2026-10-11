@@ -1245,6 +1245,18 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_conformance.py::test_tawzi_matches_lean",
        note="الجدولُ 246 صورةً من الجداول القائمة بلا زيادةٍ من الذاكرة؛ مَعَ وأَنَّا ولفظُ الجلالة بأل "
             "خارجه باسمها (TAWZI_INDEX.md، ADR ٢٣)."),
+    _c("QIRAA-reader", "القراءةُ الموحَّدة: ما يقرؤه الموزِّعُ ونواتُه من حروف المعاني حرفٌ يحجب جذرَه عن "
+       "الحكم ولا يحذف قراءةَ الجذع؛ والجذعُ يقرأ الصورةَ ثمّ أصلَها الذي ردّت السوابقُ ساقطَه في الوصل، "
+       "وكلُّ قراءةٍ تُردّ (السابقةُ إلى الكلمة والجذعُ إلى الأصل) وأصلُها يصعد إلى جذعها — لكلّ كلمة", _P,
+       "lean:Slge.Qiraa.harf_no_hukm", "lean:Slge.Qiraa.hukm_of_not_harf",
+       "lean:Slge.Qiraa.jidh_sub_qiraa", "lean:Slge.Qiraa.qiraa_restores",
+       "lean:Slge.Qiraa.qiraa_ascends", "lean:Slge.Qiraa.harf_restores",
+       "lean:Slge.Qiraa.witnesses_harf", "lean:Slge.Qiraa.witness_famshu",
+       "test:tests/test_qiraa.py::test_mutants_are_refused_by_name",
+       "test:tests/test_conformance.py::test_qiraa_matches_lean",
+       note="على MASAQ المحجوب: من 12,039 كلمةً قرأها الموزِّعُ حرفًا يعدّها المرجعُ بلا جهة 98.2%، "
+            "والباقي (لَمَّا ظرفًا، عَلِيّ، خَلَا فعلًا) حجبٌ لا حذف؛ وعلى المصحف 803 صورةً قُرئ أصلُها "
+            "المردود على جذرٍ مشهود (QIRAA_INDEX.md، ADR ٤١)."),
     _c("ALAM-signed", "لفظُ الجلالة لفظٌ منفردٌ لا شبيهَ له (عشرُ صورٍ مسمّاة بموضعها: ابتداءً، بعد "
        "سابقة، مدًّا بعد تاء القسم أو همزة الاستفهام، واللهمّ)، والأعلامُ موسومةٌ بعينها بلا قياس "
        "(ممنوعٌ جرُّه بالفتح، منصرفٌ بالتنوين، مقصورٌ بلا حالة، أعجميٌّ وعربيّ) — من مودَعٍ بتوقيع "

@@ -878,6 +878,14 @@ import Slge
 #print axioms Slge.IlalBab.witnesses_read
 #print axioms Slge.IlalBab.unwitnessed
 #print axioms Slge.IlalBab.debts_named
+#print axioms Slge.Qiraa.harf_restores
+#print axioms Slge.Qiraa.harf_no_hukm
+#print axioms Slge.Qiraa.hukm_of_not_harf
+#print axioms Slge.Qiraa.jidh_sub_qiraa
+#print axioms Slge.Qiraa.qiraa_restores
+#print axioms Slge.Qiraa.qiraa_ascends
+#print axioms Slge.Qiraa.witnesses_harf
+#print axioms Slge.Qiraa.witness_famshu
 #print axioms Slge.Pipeline.survive_mem
 #print axioms Slge.Pipeline.survive_prefix
 #print axioms Slge.Pipeline.survivors_antitone

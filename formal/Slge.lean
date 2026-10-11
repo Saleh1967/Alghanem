@@ -83,6 +83,7 @@ import Slge.AjnasTable
 import Slge.MadlulTable
 import Slge.Hukm
 import Slge.HukmTable
+import Slge.Qiraa
 import Slge.Shahada
 import Slge.Siyaq
 import Slge.CoverageTable
