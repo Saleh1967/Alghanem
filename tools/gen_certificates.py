@@ -3,7 +3,11 @@
 
 `python tools/gen_certificates.py OUT.json.gz` يمرّر كلَّ كلمةٍ من المدوّنة المختومة على `gate.enter`
 بترتيب المصحف ويكتب: الصورَ المتمايزة (خاناتُ الشهادة، عرضُ عددها، عرضُ عدد ذرّاتها، بتّاتُ الرتبة، حجمُ
-الليف، عددُ قيود البقيّة)، والتيارَ (رقمُ الصورة لكلّ موقع، و−1 للمرفوض)، والرفضَ بالاسم عدًّا على المواقع.
+الليف، عددُ قيود البقيّة، **ورتبةُ الصورة في ليفها `ordinal` وعددُ الشهادة `integer`** — الـn بعينه:
+‎n = P(F(atoms), ordinal)‎، `A116.Certificate.certNumber_injective`؛ فالخاناتُ وحدَها تُسقط الرتبة
+(`cells_forget_rank`) والعددُ يحفظها؛ وبقيّةُ الرسم `residue` أسماءَ قواعدها بمواضعها بلا حروفها:
+صورتان من المدوّنة بعددٍ واحد كلمةٌ واحدة تختلف رسمًا لا غير، كرَبِّ ورَّبِّ)، والتيارَ (رقمُ الصورة
+لكلّ موقع، و−1 للمرفوض)، والرفضَ بالاسم عدًّا على المواقع.
 لا نصَّ في المخرَج: خاناتٌ وأعداد.
 
 `--check DEPOSIT.json.gz` يعيد التوليدَ ويقارنه بالمودَع قيمةً قيمة؛ أيُّ فرقٍ يُسقط البناءَ باسم
@@ -70,6 +74,9 @@ def generate() -> dict[str, Any]:
                 "residual_bits": cert.core.residual_bits,
                 "fiber_size": cert.core.fiber_size,
                 "residue_edits": len(cert.residue),
+                "ordinal": cert.core.ordinal,
+                "integer": cert.integer,
+                "residue": [[e[0], e[1]] for e in cert.residue],
             })
     book = gate().book
     return {

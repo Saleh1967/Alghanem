@@ -9,6 +9,7 @@
 **لا يدخل إلى هذه الشجرة إلّا بتٌّ ولا يخرج منها إلّا بتّ، ومدخلُه ومخرجُه الوحيدان: البرهانُ في `formal/a116` ومرآتُه `gate/`.**
 
 - المدخل: `gate.enter(bytes) → Certificate | Refusal`. الشهادةُ ذرّاتٌ من الـ116 وعددٌ يطويها؛ والرفضُ مسمًّى (`DEFER`، `REJECT`، `OUTSIDE_DECLARED_DOMAIN`) ولا يُخمَّن شيء.
+- الـn: عددُ الشهادة ‎n = P(F(atoms), rank)‎ — رقمُ الذرّات مقترنًا برتبة الكلمة في ليفها (`A116.Certificate.certNumber_injective`)؛ الخاناتُ وحدَها تُسقط الرتبة (`cells_forget_rank`: «عَلَى» و«عَلَا» ذرّاتٌ واحدة وعددان)، فالمودَعُ يحمل الـn كاملًا (`ordinal`، `integer`، `residue` في `tools/gen_certificates.py`؛ ADR ١٤).
 - المخرج: `gate.exit(cert) → bytes` — الكلمةُ بعينها (`Fiber.decode_encode`).
 - الاشتقاق: `gate.derive(root)`، والاسترجاع: `gate.recover(cert)`؛ كلاهما يُقاس على مرجعٍ بشريٍّ محجوب (MASAQ) لا على شيفرته.
 - الترخيص: `gate.licence` — الثلاثيّ (`cv | v | c`) لا الثنائيّ؛ فالثنائيُّ أعمى عن المدّ (`Ternary.binary_is_blind_to_madd`). وعددُ المرخَّص وقفًا بالوزن (`cv`=2، `v`=`c`=1) هو fib n لكلّ n ≥ 2 (`Ternary.pause_count_fib`، ADR ١٠؛ مرآتُه `tests/test_pause_count.py`)، والوصلُ ليس فيبوناتشي بل ‎(fib(n+1) + χ(n))/2‎ بـ‎χ‎ دوريٍّ بدورة 3 (`Ternary.continue_count_closed`، ADR ١١؛ مرآتُه `tests/test_envelope_continue.py`).
@@ -54,7 +55,7 @@ python tools/gen_hukm_sample.py --check           # إطارُ عيّنة الأ
 python tools/gen_claims.py --check            # سجلُّ الأرقام (CLAIMS.md): كلُّ رقمٍ منشور يُعاد حسابُه من مولِّده المسمّى ببصمة مودَعاته ومخرَجه؛ ولا عددَ في CLAUDE.md بلا مولِّد؛ وكلُّ مبرهنةٍ عدديّة بوحدتها من قائمةٍ مغلقة ومدقَّقة (CLAIM_WITHOUT_UNIT، COUNT_NOT_AUDITED؛ ADR ١٢) (~4 دقائق)
 python tools/gen_abniya_intiqa.py --check --slge ../slge   # المجالُ الثالث: السطورُ مختومةٌ كما تقرؤها البوّابة، وكلُّ صفٍّ مملوءٍ يمرّ عليها، وأعمدةُ الآلة مطابقةٌ لمختومَي SLGE (ADR ١٣)
 python -c "from gate.guard import breaches; print(breaches() or 'لا خرق')"
-pytest -q -m "not slow"        # 170 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
+pytest -q -m "not slow"        # 175 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%)
 ```
 
 وقبل الطبعة: أثبت أنّ الملف الذي تتكلّم عنه موجودٌ («لا ثقة بلا طبعة»)، وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه أنت.
@@ -69,6 +70,8 @@ pytest -q -m "not slow"        # 170 اختبارًا؛ و`pytest -q -m slow` ل
 | `gate/bridge.py`, `gate/contextual.py` | النصّ ← الذرّات، الترقيم، الشهادة (بروتوكول A116-CANONICAL-TXT-1.1) | مطابَق للجداول (`tests/test_conformance.py`) |
 | `gate/licence.py` | التقطيع الثلاثيّ بايثونًا؛ الحكمُ الأخير قبل الشهادة | مطابَق لـ265,719 سطرًا من Lean |
 | `formal/a116/A116/Hadd.lean` + `gate/licence.py` (`strict_licensed`) | قيدُ الحدّ: قافيةُ المدّ مدغمةٌ أو مدُّ فرق؛ إسقاطُ الخانة على `cv \| v \| c` تعريفٌ في Lean (`kindOf`) | مبرهن؛ مطابَق لـ346,200 سطرًا ولـ293,904 زوجًا موصولًا (`strictJoinB`) وصلًا ووقفًا (`strictPauseB`، `strictJoinPauseB` في العمود الأخير) (`test_hadd.py`، بسبع طفراتٍ مرفوضة) |
+| `formal/a116/A116/Certificate.lean` | عددُ الشهادة n: تباينُه على كلّ مجالٍ منتهٍ (`certNumber_injective`)، والاستعادة (`certNumber_decode`)، والخاناتُ وحدَها تُسقط الرتبة (`cells_forget_rank`)، وشاهدُ عَلَى/عَلَا (`ala_alaa`) — ADR ١٤ | مبرهن؛ مفحوص على المودَع كلِّه (`test_certificates.py`: n للكلمة لا للرسم، والرتبةُ دون الليف، وفرقُ عَلَى/عَلَا) |
+| `formal/a116/A116/Grade.lean` | الدرجاتُ بعدد المقاطع بقوانين الحدّ: الوصلُ `contGrade k` والوقفُ `pauseGrade k`؛ قانونُ التدرّج (`cont_succ`، `pause_succ`: الدرجةُ k+1 من k ومقطع)، والتمام (`mem_cont_iff`، `mem_pause_iff`)، ولا تكرار، والعددُ لكلّ k (`cont_length`، `pause_length`، `grade_table`) — على أصناف المقاطع لا الخانات؛ وبوّابةُ الاستنفاد لم تُكتب بعد (ADR ١٤) | مبرهن؛ مفحوص (`test_grade.py`: استقصاءٌ على `gate.licence` وطفرة) |
 | `formal/a116/A116/PauseCount.lean` | عددُ المرخَّص وقفًا بالوزن: آليّةٌ بسبع حالاتٍ تساوي `pauseB` (`pauseB_eq_acc`)، والعددُ fib n لكلّ n ≥ 2 (`pause_count_fib`)، ومجموعُه 2..12 = 375 (`pause_count_375`) — العددُ لا الأعيان (ADR ١٠) | مبرهن؛ مفحوص (`test_pause_count.py`: مطابقةٌ للأوزان 2..14 وطفرتان مرفوضتان) |
 | `formal/a116/A116/ContinueCount.lean`، `Envelope.lean` | عددُ المرخَّص وصلًا بالوزن: آلةٌ تساوي `continueB` (`continueB_eq_accC`)، وشكلٌ مغلق `continue_count_closed`، والوقفُ = الوصلُ ومقطعٌ طرفيّ (`pause_eq_continue_add`)؛ و«الغلافُ» الثنائيّ المقترَح: 375 عددًا (`envelope_375`) منه 75 مرخَّصًا وقفًا (`envelope_licensed_75`) — العمى عن المدّ (ADR ١١) | مبرهن (الغلافُ بـ`decide +kernel` على الأطوال 2..12، ولكلّ طولٍ منها مع تكرارَيه — نارايانا وصلًا — `envelope_*_per_length`؛ والشكلُ المغلق بالصحاح `continue_count_closed_form`، ADR ١٢)؛ مفحوص (`test_envelope_continue.py`، بطفراتٍ مرفوضة) |
 | `formal/a116/A116/Iltiqa.lean` + `gate/licence.py` (`repair_junction`) | التقاءُ الساكنين على الحدّ: الألفُ الفارقة تسقط / المدُّ يُحذف / الساكنُ يُكسَر، في آخر الأولى وحدَها، وجهًا مسمًّى في الشهادة | مبرهن (لا تصرّفَ بلا التقاء، الآخرُ متحرّكٌ بعده، ثابتٌ عليه، لا قافيةَ تقطع الحدّ)؛ مطابَق لـ360,000 زوجٍ (`test_iltiqa.py`، بثلاث طفراتٍ مرفوضة) |
