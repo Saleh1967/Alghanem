@@ -114,6 +114,10 @@ import A116
 #print axioms A116.Ternary.envelope_375
 #print axioms A116.Ternary.envelope_licensed_75
 #print axioms A116.Ternary.envelope_licensed_continue_59
+#print axioms A116.Ternary.continue_count_closed_form
+#print axioms A116.Ternary.envelope_pause_per_length
+#print axioms A116.Ternary.envelope_continue_per_length
+#print axioms A116.Ternary.envelope_recurrences_upto_12
 #print axioms A116.Ternary.pauseB_iff
 #print axioms A116.Recovery.edit_roundtrip
 #print axioms A116.Recovery.shadda_restore
@@ -236,3 +240,13 @@ import A116
 #print axioms A116.Boundary.waslVowelStable_witnesses
 #print axioms A116.Hadd.notContinueLicensed_iff
 #print axioms A116.Hadd.strictB_not_refused
+-- مبرهناتٌ عدديّة كانت خارج التدقيق؛ ألزمها سجلُّ الوحدات (ADR ١٢، COUNT_NOT_AUDITED):
+#print axioms A116.Alif.alifVowelled_length
+#print axioms A116.cells112_length
+#print axioms A116.hamzaRow_length
+#print axioms A116.U_one
+#print axioms A116.Derivation.edges_length
+#print axioms A116.Derivation.w_total
+#print axioms A116.Field112.hamilField112_length
+#print axioms A116.Field112.letters28_length
+#print axioms A116.Ishtiqaq.soundTemplates_length

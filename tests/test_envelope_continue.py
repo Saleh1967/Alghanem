@@ -79,3 +79,23 @@ def test_mutations_are_rejected() -> None:
     # الغلافُ أعمى عن المدّ: لو قُرئت ‎C‎ وحدَها ساكنًا أبدًا لنقص المرخَّصُ إلى 35
     only_c = _env_total(lambda s: any(pause_licensed(r) for r in _readings(s, ("c",))))
     assert only_c == 35 != 75
+
+
+def test_envelope_per_length_and_recurrences() -> None:
+    """لكلّ طولٍ 2..12 (ADR ١٢): الأعدادُ مكتوبةٌ باليد، والتكراران عليها — الوصلُ أبقارُ نارايانا
+    ‎C(n) = C(n−1) + C(n−3)‎ والوقفُ ‎P(n) = P(n−2) + P(n−3) + P(n−4)‎
+    و‎3P(n) = C(n+1)+C(n)+2C(n−1)−(−1)ⁿ‎.
+    الطفرة: تكرارُ فيبوناتشي (عددُ الغلاف نفسِه) لا يصدق على المرخَّص."""
+
+    p = [0, 1, 1, 2, 2, 4, 5, 8, 11, 17, 24]
+    c = [0, 1, 1, 1, 2, 3, 4, 6, 9, 13, 19]
+    for n in range(2, 13):
+        env = list(_envelope(n))
+        assert sum(any(pause_licensed(r) for r in _readings(s)) for s in env) == p[n - 2]
+        assert sum(any(continue_licensed(r) for r in _readings(s)) for s in env) == c[n - 2]
+    assert all(c[i] == c[i - 1] + c[i - 3] for i in range(3, 11))
+    assert all(p[i] == p[i - 2] + p[i - 3] + p[i - 4] for i in range(4, 11))
+    assert all(3 * p[i] == c[i + 1] + c[i] + 2 * c[i - 1] - (-1) ** (i + 2) for i in range(3, 10))
+    assert not all(p[i] == p[i - 1] + p[i - 2] for i in range(2, 11))
+    for n, a in enumerate(CONT):  # الشكلُ المغلق بالصحاح (`continue_count_closed_form`)
+        assert 2 * a == FIB[n + 1] + (n % 3 == 0) - (n % 3 == 1)

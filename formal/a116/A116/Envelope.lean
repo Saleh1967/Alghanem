@@ -59,4 +59,30 @@ theorem envelope_licensed_75 : total pauseSome = 75 := by decide +kernel
 set_option maxRecDepth 100000 in
 theorem envelope_licensed_continue_59 : total continueSome = 59 := by decide +kernel
 
+/-! ## لكلّ طولٍ من 2 إلى 12 (ADR ١٢)
+
+الأعدادُ لكلّ طول، والتكراران عليها: الوصلُ ‎C(n) = C(n−1) + C(n−3)‎ (أبقارُ نارايانا، OEIS A000930)، والوقفُ
+‎P(n) = P(n−2) + P(n−3) + P(n−4)‎ و‎3·P(n) = C(n+1) + C(n) + 2·C(n−1) − (−1)ⁿ‎. مبرهنٌ **على هذه الأطوال**
+بالحساب؛ والبرهانُ لكلّ طول (آلةٌ على C/V حالاتُها مجموعاتُ حالات `δ`) دَينٌ مسمًّى. والوحدة: سلاسلُ غلافٍ
+بالطول. -/
+
+def perLength (f : List Bool → Bool) : List Nat :=
+  (List.range 11).map fun i => ((envelope (i + 2)).filter f).length
+
+set_option maxRecDepth 100000 in
+theorem envelope_pause_per_length :
+    perLength pauseSome = [0, 1, 1, 2, 2, 4, 5, 8, 11, 17, 24] := by decide +kernel
+
+set_option maxRecDepth 100000 in
+theorem envelope_continue_per_length :
+    perLength continueSome = [0, 1, 1, 1, 2, 3, 4, 6, 9, 13, 19] := by decide +kernel
+
+/-- التكراران على الأطوال المحسوبة (الفهرسُ ‎i‎ للطول ‎i+2‎). -/
+theorem envelope_recurrences_upto_12 :
+    (let c := [0, 1, 1, 1, 2, 3, 4, 6, 9, 13, 19]
+     let p := [0, 1, 1, 2, 2, 4, 5, 8, 11, 17, 24]
+     ((List.range 8).all fun i => c[i + 3]! == c[i + 2]! + c[i]!) &&
+     ((List.range 7).all fun i => p[i + 4]! == p[i + 2]! + p[i + 1]! + p[i]!)) = true := by
+  decide
+
 end A116.Ternary

@@ -219,6 +219,15 @@ theorem continue_count_closed (n : Nat) :
     simp only [show m + 2 + 1 = m + 3 from rfl]
     split <;> split <;> split at h <;> split at h <;> omega
 
+/-- **الشكلُ المغلق بالصحاح** (ADR ١٢): ‎a(n) = (fib(n+1) + [n≡0] − [n≡1]) / 2‎ مضروبًا في 2 — نتيجةٌ
+مباشرةٌ لـ`continue_count_closed`. والوحدة: متتالياتُ أصنافٍ بالوزن، لا سلاسلُ غلاف. -/
+theorem continue_count_closed_form (n : Nat) :
+    (2 : Int) * ((kseqs n).filter continueB).length
+      = (fib (n + 1) : Int) + (if n % 3 = 0 then 1 else 0) - (if n % 3 = 1 then 1 else 0) := by
+  have h := continue_count_closed n
+  have hr : n % 3 = 0 ∨ n % 3 = 1 ∨ n % 3 = 2 := by omega
+  rcases hr with hr | hr | hr <;> simp [hr] at h ⊢ <;> omega
+
 /-- الوقفُ هو الوصلُ ومقطعٌ طرفيٌّ CVCC أو CVVCC: ‎fib (m+5) = a(m+5) + a(m+1) + a(m)‎. -/
 theorem pause_eq_continue_add (m : Nat) :
     ((kseqs (m + 5)).filter pauseB).length

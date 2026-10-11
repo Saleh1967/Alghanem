@@ -64,3 +64,28 @@ def test_ledger_file_names_every_generator_and_table() -> None:
     from gate.api import CORPUS_SHA256
 
     assert CORPUS_SHA256 in text
+
+
+def test_every_lean_count_has_a_unit_and_one_number_two_units_is_named() -> None:
+    """أعدادُ المبرهنات بوحداتها (ADR ١٢): كلُّ مبرهنةٍ عدديّة لها وحدةٌ من القائمة المغلقة ومدقَّقة؛
+    و375 بوحدتين مسمّاتين (مكتوبٌ باليد). الطفرات: حذفُ وحدةٍ، ووحدةٌ خارج القائمة، يُلتقطان باسمهما."""
+
+    counts = MOD.lean_counts()
+    assert MOD.unit_breaches(counts) == []
+    found = dict(counts)
+    assert found["PauseCount.pause_count_375"] == found["Envelope.envelope_375"] == 375
+    assert MOD.LEAN_UNITS["PauseCount.pause_count_375"] == "متتالية أصناف بالوزن"
+    assert MOD.LEAN_UNITS["Envelope.envelope_375"] == "سلسلة غلاف بالطول"
+    assert found["Derivation.w_total"] == 15 and MOD.LEAN_UNITS["Derivation.w_total"] != "قالب"
+    text = "\n".join(MOD.render_units(counts))
+    assert "- 375: سلسلة غلاف بالطول؛ متتالية أصناف بالوزن" in text
+    saved = dict(MOD.LEAN_UNITS)
+    try:
+        del MOD.LEAN_UNITS["Envelope.envelope_licensed_75"]
+        assert "Envelope.envelope_licensed_75 — CLAIM_WITHOUT_UNIT" in MOD.unit_breaches(counts)
+        MOD.LEAN_UNITS.update(saved)
+        MOD.LEAN_UNITS["Envelope.envelope_licensed_75"] = "قراءة"
+        assert any("UNIT_NOT_IN_VOCABULARY" in b for b in MOD.unit_breaches(counts))
+    finally:
+        MOD.LEAN_UNITS.clear()
+        MOD.LEAN_UNITS.update(saved)
