@@ -37,10 +37,11 @@ CORPUS = ROOT / "corpora" / "quran-simple-enhanced.txt"
 MASAQ = ROOT / "corpora" / "MASAQ.csv"
 TABLES = ROOT / "formal" / "a116"
 TABLE_NAMES = (
-    "counts", "degrees", "hadd", "hadd-join", "hamza", "iltiqa", "licensable", "numbers", "order",
-    "neutral", "pairs", "syllables", "table", "utf8", "wazn", "wazn-body",
+    "counts", "degrees", "degrees-pause", "hadd", "hadd-join", "hamza", "iltiqa", "ledger",
+    "licensable", "numbers", "order", "neutral", "pairs", "syllables", "table", "utf8", "wazn",
+    "wazn-body",
 )
-"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ الاثنا عشر (يطابقها CI بايتًا بايتًا)
+"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ الأربعةَ عشر (يطابقها CI بايتًا بايتًا)
 والمولَّداتُ الأربع لحجمها (`syllables`، `hadd`، `hadd-join`، `iltiqa`: تُولَّد في وظيفة Lean وتُنزَّل
 أثرًا إلى وظيفة البوّابة). جدولٌ جديد لا يدخل السجلَّ بوجوده على القرص بل بإضافته هنا وإلى الأثر في CI
 — وإلّا اختلف السجلُّ محلّيًّا عنه في CI."""
@@ -87,6 +88,7 @@ LEAN_UNITS: dict[str, str] = {
     "Exhaust.role_count": "دور خانة", "Exhaust.current_qaim_count": "حقل وظيفة",
     "Zawaid.zawaid_length": "حامل", "Zawaid.zawaid_cells_licensable": "خانة",
     "Wazn.wasl_joined_waits": "قالب",
+    "Ledger.filled_qaim_count": "حقل وظيفة",
 }
 """كلُّ مبرهنةٍ عدديّة ووحدتُها؛ مبرهنةٌ عدديّةٌ جديدة لا تمرّ بلا سطرٍ هنا."""
 

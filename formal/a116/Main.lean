@@ -216,6 +216,16 @@ def main (args : List String) : IO Unit := do
         let c := Neutral.realizeN W r .start .continue (Wazn.lastH i)
         let p := Neutral.realizeN W r .start .pause (Wazn.lastH i)
         IO.println s!"{nm},{i},{atoms c},{atoms p}"
+  | ["degrees-pause"] =>
+    -- جداولُ الدرجات وقفًا (`ExhaustPause.pauseTable`، ADR ١٨): الدرجة d = 1 … 4، والعدد n، ومقاطعُ الصفّ — 510 سطرًا.
+    for k in List.range 4 do
+      for n in List.range (6 * 4 ^ k) do
+        let ss := ExhaustPause.decodeP k n
+        IO.println s!"{k + 1},{n},{"-".intercalate (ss.map SyllableTable.sylName)}"
+  | ["ledger"] =>
+    -- الأوزانُ في جداول درجاتها (`Ledger.waznRows`، ADR ١٩): رقمُ القالب، الدرجة، العدد n.
+    for (i, d, n) in Ledger.waznRows do
+      IO.println s!"{i},{d},{n}"
   | ["utf8"] =>
     -- أبجديّةُ الرسم: الحروفُ ‎U+0621–U+064A‎، العلاماتُ ‎U+064B–U+0652‎، ألفُ الوصل ‎U+0671‎، والمسافة.
     for c in (List.range 0x2B).map (· + 0x621) ++ (List.range 8).map (· + 0x64B) ++ [0x671, 0x20] do
