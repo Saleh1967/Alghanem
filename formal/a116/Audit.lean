@@ -305,3 +305,20 @@ import A116
 #print axioms A116.Zawaid.peel_returns_root
 #print axioms A116.Zawaid.peel_sound_templates
 #print axioms A116.Zawaid.ibdal_targets_outside_zawaid
+-- الأوزانُ على الخانات بعدد الأصول، ومقاطعُها بقانون الحدّ، ودالّةُ آرتين (ADR ١٦)
+#print axioms A116.Wazn.fillC_append
+#print axioms A116.Wazn.fillC_determines_root
+#print axioms A116.Wazn.realize_determines_root
+#print axioms A116.Wazn.kindGo_prof
+#print axioms A116.Wazn.kindOf_realize_invariant
+#print axioms A116.Wazn.syllables_fixed_by_wazn
+#print axioms A116.Wazn.sylF_sound
+#print axioms A116.Wazn.parse_of_sylF
+#print axioms A116.Wazn.strictB_of_check
+#print axioms A116.Wazn.strictPauseB_of_check
+#print axioms A116.Wazn.convert_all
+#print axioms A116.Wazn.ktb_sound
+#print axioms A116.Wazn.thulathi_licensed
+#print axioms A116.Wazn.wasl_joined_waits
+#print axioms A116.Wazn.root_degree_is_not_syllable_degree
+#print axioms A116.Wazn.wasl_lam_conflict

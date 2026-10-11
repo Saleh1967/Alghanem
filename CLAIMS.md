@@ -12,7 +12,7 @@
 | `corpora/hadith/sahih_muslim_ahadith_mushakkala_mufassala.utf8.csv.gz` | واقع مختوم (ODbL 1.0؛ بايتاتُه بعد فكّ الضغط) | `79232c8d7c27fef161d8f33ca169f9754741cfe14957dde2ac76893374998943` |
 | `corpora/abniya-intiqa-lines.txt` | مجالٌ مختومٌ ثالث: انتقاءُ الأبنية بيد المالك (`ABNIYA_INTIQA_SHA256`، ADR ١٣) | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 
-## الأرقام (205 رقمًا من 21 مولِّدًا)
+## الأرقام (206 رقمًا من 22 مولِّدًا)
 
 ### `gate.audit.main`
 
@@ -366,8 +366,16 @@
 |---|---|
 | `utf8.csv.rows` | 53 |
 
+### `lake exe a116-table wazn`
 
-## أعدادُ المبرهنات بوحداتها (29 مبرهنة)
+يقرأ: — (نواةُ Lean؛ لا مودَع). بصمةُ المخرَج: `f658fd7949a27714`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `wazn.csv.rows` | 31 |
+
+
+## أعدادُ المبرهنات بوحداتها (30 مبرهنة)
 
 مستخرَجةٌ من نصوص Lean (`formal/a116/A116/*.lean`): كلُّ مبرهنةٍ مدقَّقة ينتهي نصُّها بـ‎= عدد‎؛ والوحدةُ من القائمة المغلقة أدناه (ADR ١٢). العددُ هو الثابتُ الأخير في نصّ المبرهنة.
 
@@ -400,6 +408,7 @@
 | 8 | خانة | `A116.Numbering.orders_differ_only_in_two_rows` |
 | 375 | متتالية أصناف بالوزن | `A116.PauseCount.pause_count_375` |
 | 2 | بايت | `A116.Unicode.arabic_is_two_bytes` |
+| 12 | قالب | `A116.Wazn.wasl_joined_waits` |
 | 10 | حامل | `A116.Zawaid.zawaid_length` |
 | 37 | خانة | `A116.Zawaid.zawaid_cells_licensable` |
 

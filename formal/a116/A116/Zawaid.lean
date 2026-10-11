@@ -29,6 +29,8 @@ import A116.Ilal
   معلَّقٌ في الدفتر الحاليّ (`JAMID_MUSHTAQ_PER_NUMBER_UNDEFINED`).
 -/
 
+set_option autoImplicit false
+
 namespace A116.Zawaid
 
 open A116 A116.Ladder A116.Field112 A116.Ishtiqaq

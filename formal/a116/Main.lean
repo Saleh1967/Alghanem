@@ -173,6 +173,27 @@ def main (args : List String) : IO Unit := do
       for n in List.range (3 * 4 ^ k) do
         let ss := Exhaust.decodeW k n
         IO.println s!"{k + 1},{n},{"-".intercalate (ss.map SyllableTable.sylName)}"
+  | ["wazn"] =>
+    -- الأوزانُ الثلاثيّة على الخانات (`Wazn.thulathi`) ابتداءً وصلًا بحالة الأصل الأخير الصرفيّة: رقمُ القالب،
+    -- ثمّ الذرّاتُ والأصولُ أرقامًا (1 2 3) بحالاتها، ثمّ المقاطعُ وصلًا ووقفًا على الجذر الصحيح ك ت ب.
+    let mark : Haraka → String
+      | .fatha => "َ" | .damma => "ُ" | .kasra => "ِ" | .sukun => "ْ"
+    let nm : Stages.Syl → String
+      | .CV => "CV" | .CVV => "CVV" | .CVC => "CVC" | .CVVC => "CVVC" | .CVCC => "CVCC"
+      | .CVVCC => "CVVCC"
+    let sy := fun (w : List Cell) =>
+      match Wazn.syllables w with
+      | some ss => "-".intercalate (ss.map nm)
+      | none => "none"
+    for (i, W) in (List.range Wazn.thulathi.length).zip Wazn.thulathi do
+      let pre := if W.wasl then [s!"ء{mark (Wazn.waslH W Wazn.ktb)}"] else []
+      let body := W.body.map fun
+        | .lit c => s!"{Field112.carrierChar c.carrier}{mark c.haraka}"
+        | .slot j h => s!"{j.val + 1}{mark h}"
+      let last := s!"{W.last.val + 1}{mark (Wazn.lastH i)}"
+      let cont := Wazn.realize W Wazn.ktb .start .continue (Wazn.lastH i)
+      let paus := Wazn.realize W Wazn.ktb .start .pause (Wazn.lastH i)
+      IO.println s!"{i},{" ".intercalate (pre ++ body ++ [last])},{sy cont},{sy paus}"
   | ["utf8"] =>
     -- أبجديّةُ الرسم: الحروفُ ‎U+0621–U+064A‎، العلاماتُ ‎U+064B–U+0652‎، ألفُ الوصل ‎U+0671‎، والمسافة.
     for c in (List.range 0x2B).map (· + 0x621) ++ (List.range 8).map (· + 0x64B) ++ [0x671, 0x20] do

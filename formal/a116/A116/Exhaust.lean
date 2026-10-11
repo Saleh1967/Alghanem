@@ -45,6 +45,8 @@ import A116.Grade
 ولا يُبرهَن هنا شيءٌ «على العربيّة»: Lean يُبرهن خواصَّ التعريف على الخانات، ومطابقتُه للمرويّ تُقاس.
 -/
 
+set_option autoImplicit false
+
 namespace A116.Exhaust
 
 open A116 A116.Stages A116.Ternary A116.Ladder A116.Hadd
