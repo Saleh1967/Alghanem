@@ -43,6 +43,8 @@ from .licence import (
 from .residue import Edit, has_marks, repair, unrepair
 
 __all__ = [
+    "ABNIYA_INTIQA_CORPUS",
+    "ABNIYA_INTIQA_SHA256",
     "CORPUS_SHA256",
     "HADITH_CORPUS",
     "HADITH_LINES_SHA256",
@@ -68,13 +70,20 @@ HADITH_CORPUS: Final[Path] = Path(__file__).resolve().parent.parent / "corpora" 
 HADITH_LINES_SHA256: Final[str] = (
     "14b1a4b7a6d67449b23f016f351d12da9a934ce76116e3c283042705c6d71e3b"
 )
+ABNIYA_INTIQA_CORPUS: Final[Path] = _ROOT / "corpora" / "abniya-intiqa-lines.txt"
+ABNIYA_INTIQA_SHA256: Final[str] = (
+    "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+)
+"""انتقاءُ الأبنية الموقَّع (ADR ١٣): كلماتُ أبنية سيبويه مشكولةً بيد المالك من طبعةٍ بموضعها، كلمةٌ في سطر
+(`tools/gen_abniya_intiqa.py seal`). تُختم بصمتُها هنا عند كلّ ملء؛ وفارغةً بصمتُها بصمةُ الفراغ."""
 SEALED_CORPORA: Final[dict[str, str]] = {
     CORPUS.name: CORPUS_SHA256,
     HADITH_CORPUS.name: HADITH_LINES_SHA256,
+    ABNIYA_INTIQA_CORPUS.name: ABNIYA_INTIQA_SHA256,
 }
 """المدوّناتُ المختومة ببصمة محتواها (بعد فكّ الضغط إن كانت مضغوطة): المصحفُ، والصحيحان سطورًا
-(`tools/gen_hadith_lines.py`، من ملفّي Open-Hadith-Data المختومين، ODbL 1.0). الرموزُ `<…>` فيها
-رموزُ طبعةٍ مسمّاة لا كلمات."""
+(`tools/gen_hadith_lines.py`، من ملفّي Open-Hadith-Data المختومين، ODbL 1.0)، وانتقاءُ الأبنية الموقَّع
+(ADR ١٣). الرموزُ `<…>` فيها رموزُ طبعةٍ مسمّاة لا كلمات."""
 
 @dataclass(frozen=True)
 class Certificate:

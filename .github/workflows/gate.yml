@@ -143,6 +143,11 @@ jobs:
           python tools/gen_hukm_sample.py --check
           python tools/gen_context_certificates.py --corpus sahihain /tmp/hadith-context-certificates.json.gz
           python tools/gen_context_certificates.py --corpus sahihain --check /tmp/hadith-context-certificates.json.gz
+      - name: third sealed domain — the signed abniya selection is sealed as the gate reads it, every filled row enters through the gate, and its deposit is the tool's own fixed point (ADR 13)
+        run: |
+          python tools/gen_abniya_intiqa.py --check
+          python tools/gen_abniya_intiqa.py deposit /tmp/abniya-intiqa.json
+          python tools/gen_abniya_intiqa.py --check --deposit /tmp/abniya-intiqa.json
       - name: guard — no reader or writer outside the gate
         run: python -c "from gate.guard import breaches; b = breaches(); print(b or 'لا خرق'); raise SystemExit(1 if b else 0)"
       - name: conformance, gate, guard (fast)

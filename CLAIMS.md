@@ -10,6 +10,7 @@
 | `corpora/MASAQ.csv` | مرجع محجوب | `d43d2a813afbe0490254bb26623d6041ed352a273d333e731ddbcda3bd0b6f3a` |
 | `corpora/hadith/sahih_al-bukhari_ahadith_mushakkala_mufassala.utf8.csv.gz` | واقع مختوم (ODbL 1.0؛ بايتاتُه بعد فكّ الضغط) | `b03f661876fc4089520800b9231b57a1564baff734344ea8914494b86e2eb708` |
 | `corpora/hadith/sahih_muslim_ahadith_mushakkala_mufassala.utf8.csv.gz` | واقع مختوم (ODbL 1.0؛ بايتاتُه بعد فكّ الضغط) | `79232c8d7c27fef161d8f33ca169f9754741cfe14957dde2ac76893374998943` |
+| `corpora/abniya-intiqa-lines.txt` | مجالٌ مختومٌ ثالث: انتقاءُ الأبنية بيد المالك (`ABNIYA_INTIQA_SHA256`، ADR ١٣) | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 
 ## الأرقام (178 رقمًا من 19 مولِّدًا)
 

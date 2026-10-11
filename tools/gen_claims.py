@@ -240,7 +240,7 @@ def _fmt(v: int | float) -> str:
 
 
 def render(rows: list[dict[str, Any]]) -> str:
-    from gate.api import CORPUS_SHA256
+    from gate.api import ABNIYA_INTIQA_SHA256, CORPUS_SHA256
 
     lines = [
         "# سجلُّ الأرقام — لا رقمَ بلا مولِّد",
@@ -258,6 +258,8 @@ def render(rows: list[dict[str, Any]]) -> str:
         f"| `corpora/MASAQ.csv` | مرجع محجوب | `{_sha(MASAQ)}` |",
         *(f"| `corpora/hadith/{n}.gz` | واقع مختوم (ODbL 1.0؛ بايتاتُه بعد فكّ الضغط) | `{sha}` |"
           for n, sha in _hadith_tool().HADITH_SOURCES.items()),
+        "| `corpora/abniya-intiqa-lines.txt` | مجالٌ مختومٌ ثالث: انتقاءُ الأبنية بيد المالك "
+        f"(`ABNIYA_INTIQA_SHA256`، ADR ١٣) | `{ABNIYA_INTIQA_SHA256}` |",
     ]
     total = sum(len(r["numbers"]) for r in rows)
     lines += ["", f"## الأرقام ({total:,} رقمًا من {len(rows)} مولِّدًا)", ""]
