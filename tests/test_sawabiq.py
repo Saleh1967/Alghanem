@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from slge.cells import licensed
+from slge.cells import SUKUN, licensed
 from slge.rawabit import cells_of
 from slge.sawabiq import KINDS, PROCLITIC_CELLS, lift, restore, sawabiq, wasl_state
 from slge.sawabiq_table import TABLE
@@ -79,3 +79,17 @@ def test_mutants_are_refused() -> None:
     assert not _kinds("اِبَنَ")
     # لامُ الأمر المسكَّنة بعد الباء مرفوضة (الباءُ ليست من الفاء والواو)
     assert not any(m.kind == "LAM_AMR" for m in sawabiq(cells_of("بِلْيَنْظُرْ")))
+
+
+def test_plural_imperative_of_defective_offers_both_vowels() -> None:
+    """ADR ٣٩: ﴿فَامْشُوا﴾ (الملك 15) كما طبعتها البوّابةُ موصولةً — فَ مْ شُ وْ — يُردّ ساقطُها بالوجهين:
+    ءُمْشُوا (الضمُّ من الثالث) وءِمْشُوا (الضمّةُ عارضة، والطبعةُ بالكسر؛ الغانم ADR ٨). مكتوبٌ باليد.
+    والطفرة: شكلٌ ليس أمرَ جماعة (فَاسْتَكْبَرَ) لا يُزاد له وجه؛ واِسْتَغْفِرْ بلا سابقةٍ على حاله."""
+
+    a, i, u, s = "فتح", "كسر", "ضم", SUKUN
+    w = (("ف", a), ("م", s), ("ش", u), ("و", s))
+    unders = [m.under for m in sawabiq(w) if m.kind == "WASL_FIL"]
+    assert unders == [(("ء", u), *w[1:]), (("ء", i), *w[1:])]
+    assert all(restore(m) == w for m in sawabiq(w))
+    k = (("ف", a), ("س", s), ("ت", a), ("ك", s), ("ب", a), ("ر", a))
+    assert [m.under[0] for m in sawabiq(k) if m.kind == "WASL_FIL"] == [("ء", i)]

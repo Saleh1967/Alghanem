@@ -190,6 +190,11 @@ def sakinKinds (p : Option SCell) (r : List SCell) : List Kind :=
       (direct (some lamI) t).filter (· == .lamAmr) else []
   | [] => []
 
+/-- على شكل أمر الجماعة من الناقص (`pluralWaw`) يُردّ الساقطُ بالوجه الآخر أيضًا — همزةٌ مكسورةٌ لضمّةٍ عارضة
+(`liftArid`؛ الغانم ADR ٨) — بالأبواب نفسِها؛ والحسمُ بين الوجهين للقرينة المعجميّة لا لهذه الطبقة (ADR ٣٩). -/
+def aridKinds (p : Option SCell) (r : List SCell) : List Kind :=
+  if pluralWaw r then joinedKinds p r else []
+
 structure Reading where
   pre : List SCell
   kind : Kind
@@ -203,7 +208,8 @@ def restore (m : Reading) : List SCell := m.pre ++ m.rest
 def readAt (pre : List SCell) (r : List SCell) : List Reading :=
   (direct pre.getLast? r).map (fun k => ⟨pre, k, r, r⟩) ++
   (joinedKinds pre.getLast? r).map (fun k => ⟨pre, k, r, lift r⟩) ++
-  (sakinKinds pre.getLast? r).map (fun k => ⟨pre, k, r, lamI :: r.tail⟩)
+  (sakinKinds pre.getLast? r).map (fun k => ⟨pre, k, r, lamI :: r.tail⟩) ++
+  (aridKinds pre.getLast? r).map (fun k => ⟨pre, k, r, liftArid r⟩)
 
 def pres : List (List SCell) :=
   [[]] ++ proclitics.map ([·]) ++ (proclitics.flatMap fun p => proclitics.map fun q => [p, q])
@@ -216,18 +222,27 @@ theorem mem_readAt {pre r : List SCell} {m : Reading} :
     m ∈ readAt pre r ↔ m.pre = pre ∧ m.rest = r ∧
       ((m.kind ∈ direct pre.getLast? r ∧ m.under = r) ∨
        (m.kind ∈ joinedKinds pre.getLast? r ∧ m.under = lift r) ∨
-       (m.kind ∈ sakinKinds pre.getLast? r ∧ m.under = lamI :: r.tail)) := by
+       (m.kind ∈ sakinKinds pre.getLast? r ∧ m.under = lamI :: r.tail) ∨
+       (m.kind ∈ aridKinds pre.getLast? r ∧ m.under = liftArid r)) := by
   unfold readAt
   simp only [List.mem_append, List.mem_map]
   constructor
-  · rintro ((⟨k, hk, rfl⟩ | ⟨k, hk, rfl⟩) | ⟨k, hk, rfl⟩)
+  · rintro (((⟨k, hk, rfl⟩ | ⟨k, hk, rfl⟩) | ⟨k, hk, rfl⟩) | ⟨k, hk, rfl⟩)
     · exact ⟨rfl, rfl, Or.inl ⟨hk, rfl⟩⟩
     · exact ⟨rfl, rfl, Or.inr (Or.inl ⟨hk, rfl⟩)⟩
-    · exact ⟨rfl, rfl, Or.inr (Or.inr ⟨hk, rfl⟩)⟩
-  · rintro ⟨h1, h2, (⟨hk, hu⟩ | ⟨hk, hu⟩ | ⟨hk, hu⟩)⟩
-    · left; left; exact ⟨m.kind, hk, by cases m; simp_all⟩
+    · exact ⟨rfl, rfl, Or.inr (Or.inr (Or.inl ⟨hk, rfl⟩))⟩
+    · exact ⟨rfl, rfl, Or.inr (Or.inr (Or.inr ⟨hk, rfl⟩))⟩
+  · rintro ⟨h1, h2, (⟨hk, hu⟩ | ⟨hk, hu⟩ | ⟨hk, hu⟩ | ⟨hk, hu⟩)⟩
+    · left; left; left; exact ⟨m.kind, hk, by cases m; simp_all⟩
+    · left; left; right; exact ⟨m.kind, hk, by cases m; simp_all⟩
     · left; right; exact ⟨m.kind, hk, by cases m; simp_all⟩
     · right; exact ⟨m.kind, hk, by cases m; simp_all⟩
+
+theorem aridKinds_sub {p : Option SCell} {r : List SCell} {k : Kind}
+    (h : k ∈ aridKinds p r) : k ∈ joinedKinds p r := by
+  unfold aridKinds at h; split at h
+  · exact h
+  · simp at h
 
 /-- كلُّ قراءةٍ تُردّ إلى الكلمة بعينها. -/
 theorem sawabiq_restores {w : List SCell} {m : Reading} (h : m ∈ sawabiq w) : restore m = w := by
@@ -264,14 +279,24 @@ theorem joined_rest_unlicensed {pre r : List SCell} {m : Reading} (h : m ∈ rea
     (hne : m.under ≠ m.rest) : licensed m.rest = false := by
   obtain ⟨_, h2, hc⟩ := mem_readAt.1 h
   have key : ∃ x t, r = x :: t ∧ x.state.val = 3 := by
-    rcases hc with ⟨_, hu⟩ | ⟨hk, _⟩ | ⟨hk, _⟩
+    rcases hc with ⟨_, hu⟩ | ⟨hk, _⟩ | ⟨hk, _⟩ | ⟨hk, _⟩
     · exact absurd (hu.trans h2.symm) hne
     · exact joinedKinds_sukun hk
     · exact sakinKinds_sukun hk
+    · exact joinedKinds_sukun (aridKinds_sub hk)
   obtain ⟨x, t, rfl, hx⟩ := key
   rw [h2]
   have : x = ⟨x.carrier, 3⟩ := by cases x; simp only [SCell.mk.injEq, true_and]; exact Fin.ext hx
   rw [this]; exact Wasl.no_initial_sukun _ _
+
+theorem joinedKinds_direct {p : Option SCell} {r : List SCell} {k : Kind}
+    (hk : k ∈ joinedKinds p r) : k ∈ direct none (lift r) := by
+  unfold joinedKinds at hk
+  split at hk
+  · split at hk
+    · exact (List.mem_filter.1 hk).1
+    · simp at hk
+  · simp at hk
 
 /-- القراءةُ الموصولة قراءةُ الأصل ابتداءً: ما قُرئ بعد سابقةٍ بردّ همزته يُقرأ أصلُه بلا سابقة بالباب
 نفسه. -/
@@ -279,18 +304,30 @@ theorem joined_is_initial {pre r : List SCell} {m : Reading} (h : m ∈ readAt p
     (hu : m.under = lift r) : ⟨[], m.kind, lift r, lift r⟩ ∈ readAt [] (lift r) := by
   obtain ⟨_, _, hc⟩ := mem_readAt.1 h
   have key : m.kind ∈ direct none (lift r) := by
-    rcases hc with ⟨_, hu'⟩ | ⟨hk, _⟩ | ⟨_, hu'⟩
+    rcases hc with ⟨_, hu'⟩ | ⟨hk, _⟩ | ⟨_, hu'⟩ | ⟨hk, _⟩
     · have := congrArg List.length (hu'.symm.trans hu); rw [lift_length] at this; omega
-    · unfold joinedKinds at hk
-      split at hk
-      · split at hk
-        · exact (List.mem_filter.1 hk).1
-        · simp at hk
-      · simp at hk
+    · exact joinedKinds_direct hk
     · obtain ⟨v, hv⟩ := lift_head r
       have := congrArg List.head? (hu'.symm.trans hu)
       rw [hv] at this; simp [lamI, c] at this
+    · exact joinedKinds_direct (aridKinds_sub hk)
   exact mem_readAt.2 ⟨rfl, rfl, Or.inl ⟨key, rfl⟩⟩
+
+/-- **الوجهان على أمر الجماعة من الناقص** (ADR ٣٩): ما قُرئ موصولًا بردّ همزته على شكل `pluralWaw` يُقرأ
+أيضًا بالهمزة المكسورة بالباب نفسه — فلا يُفرض الضمُّ (اُمْشُوا) والثابتُ في الطبعة الكسرُ (اِمْشُوا)؛ والحسمُ بعدُ
+للقرينة المعجميّة. -/
+theorem arid_alongside {pre r : List SCell} {k : Kind} (hp : pluralWaw r = true)
+    (hk : k ∈ joinedKinds pre.getLast? r) : ⟨pre, k, r, liftArid r⟩ ∈ readAt pre r := by
+  have ha : k ∈ aridKinds pre.getLast? r := by
+    unfold aridKinds; simp only [hp, ite_true]; exact hk
+  exact mem_readAt.2 ⟨rfl, rfl, Or.inr (Or.inr (Or.inr ⟨ha, rfl⟩))⟩
+
+/-- شاهدٌ (الملك 15: ﴿فَامْشُوا﴾ كما طبعتها البوّابةُ موصولةً: فَ مْ شُ وْ): بابُ همزة الوصل بالوجهين —
+ءُمْشُوا وءِمْشُوا؛ وقبل ADR ٣٩ كان الضمُّ وحدَه. -/
+theorem famshu_two_ways :
+    ((sawabiq [fa, c 24 3, c 13 2, c 27 3]).filter (·.kind == .waslFil)).map (·.under) =
+      [[c 0 2, c 24 3, c 13 2, c 27 3], [c 0 1, c 24 3, c 13 2, c 27 3]] := by
+  decide +kernel
 
 /-- لامُ الأمر المسكَّنةُ بعد الواو والفاء هي المكسورةُ بعينها: فَلْيَنْظُرْ تُقرأ كما تُقرأ لِيَنْظُرْ. -/
 theorem sakin_is_kasra {pre r : List SCell} {m : Reading} (h : m ∈ readAt pre r)
@@ -298,7 +335,7 @@ theorem sakin_is_kasra {pre r : List SCell} {m : Reading} (h : m ∈ readAt pre 
     ⟨[lamI], .lamAmr, r.tail, r.tail⟩ ∈ readAt [lamI] r.tail := by
   obtain ⟨_, h2, hc⟩ := mem_readAt.1 h
   have key : Kind.lamAmr ∈ direct (some lamI) r.tail := by
-    rcases hc with ⟨_, hu'⟩ | ⟨_, hu'⟩ | ⟨hk, _⟩
+    rcases hc with ⟨_, hu'⟩ | ⟨_, hu'⟩ | ⟨hk, _⟩ | ⟨_, hu'⟩
     · exact absurd (hu'.trans h2.symm) hne
     · obtain ⟨v, hv⟩ := lift_head r
       have := congrArg List.head? (hu'.symm.trans hu)
@@ -310,6 +347,8 @@ theorem sakin_is_kasra {pre r : List SCell} {m : Reading} (h : m ∈ readAt pre 
           rw [beq_iff_eq.1 this.2] at this; exact this.1
         · simp at hk
       · simp at hk
+    · have := congrArg List.head? (hu'.symm.trans hu)
+      simp [liftArid, lamI, c] at this
   exact mem_readAt.2 ⟨rfl, rfl, Or.inl ⟨key, rfl⟩⟩
 
 /-! ## الجدولُ المولَّد من الكتاب: كلُّ بابٍ بشاهدٍ من المصحف يقرؤه القارئ -/

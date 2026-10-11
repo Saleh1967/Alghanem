@@ -920,6 +920,10 @@ import Slge
 #print axioms Slge.Sawabiq.lift_length
 #print axioms Slge.Sawabiq.mem_readAt
 #print axioms Slge.Sawabiq.sawabiq_restores
+#print axioms Slge.Sawabiq.aridKinds_sub
+#print axioms Slge.Sawabiq.joinedKinds_direct
+#print axioms Slge.Sawabiq.arid_alongside
+#print axioms Slge.Sawabiq.famshu_two_ways
 #print axioms Slge.Sawabiq.joinedKinds_sukun
 #print axioms Slge.Sawabiq.sakinKinds_sukun
 #print axioms Slge.Sawabiq.joined_rest_unlicensed

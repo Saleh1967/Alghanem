@@ -180,10 +180,13 @@ def _read_at(pre: Word, r: Word) -> tuple[Reading, ...]:
     if r and p is not None and r[0][1] == SUKUN:
         u = lift(r)
         # همزةُ أل لا تسقط بعد همزة الاستفهام («إلا ما ذكرنا من الألف واللام في الاستفهام»)
-        out += [Reading(pre, k, r, u) for k in _direct(None, u) if not (k == "AL" and p == _HAMZA)]
+        joined = [k for k in _direct(None, u) if not (k == "AL" and p == _HAMZA)]
+        out += [Reading(pre, k, r, u) for k in joined]
         if p in (_WA, _FA) and r[0][0] == "ل":
             out += [Reading(pre, k, r, (_LAM_I, *r[1:])) for k in _direct(_LAM_I, r[1:])
                     if k == "LAM_AMR"]
+        if plural_waw(r):  # الوجهُ الآخر: همزةٌ مكسورةٌ لضمّةٍ عارضة (`aridKinds`، ADR ٣٩)
+            out += [Reading(pre, k, r, lift_arid(r)) for k in joined]
     return tuple(out)
 
 
