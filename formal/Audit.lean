@@ -88,6 +88,14 @@ import Slge
 #print axioms A116.Ternary.continue_is_pause
 #print axioms A116.Ternary.pause_strictly_extends_continue
 #print axioms A116.Ternary.tamm_is_pause_only
+#print axioms A116.Ternary.pauseB_eq_acc
+#print axioms A116.Ternary.pause_count_fib
+#print axioms A116.Ternary.pause_count_375
+#print axioms A116.Ternary.continueB_eq_accC
+#print axioms A116.Ternary.continue_count_closed
+#print axioms A116.Ternary.pause_eq_continue_add
+#print axioms A116.Ternary.envelope_375
+#print axioms A116.Ternary.envelope_licensed_75
 #print axioms A116.Ternary.binary_is_blind_to_madd
 #print axioms A116.Ternary.admissible_iff_admissibleB
 #print axioms A116.Ternary.binOK_eq_admissibleB
@@ -943,6 +951,7 @@ import Slge
 #print axioms Slge.AbniyaLicence.witnesses_licensed
 #print axioms Slge.AbniyaLicence.witnesses_alif_sukun
 #print axioms Slge.AbniyaLicence.wasl_is_the_difference
+#print axioms Slge.AbniyaLicence.wasl_vowel_irrelevant
 #print axioms Slge.AbniyaLicenceTable.witnesses_length
 #print axioms Slge.MadlulTable.unsigned_none
 #print axioms Slge.Hukm.jins_no_delete

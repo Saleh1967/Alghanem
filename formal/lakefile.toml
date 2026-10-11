@@ -6,7 +6,7 @@ defaultTargets = ["Slge", "slge-table"]
 [[require]]
 name = "a116"
 git = "https://github.com/Saleh1967/alghanem"
-rev = "a3341231703542f68c3909d93f289ccbd8faf5e6"
+rev = "4648a95bf4ae0ceeceb83efe136c23129b2efc9a"
 subDir = "formal/a116"
 
 [[lean_lib]]

@@ -78,3 +78,75 @@ def test_python_matches_the_lean_export() -> None:
         assert cont == pause == "true"
         cells = tuple((ALPHABET[k], STATES[s]) for k, s in w)
         assert (written == "true") == continue_licensed((("ا", SUKUN), *cells[1:]))
+
+
+def test_witness_rule_is_pinned_and_hamza_vowel_is_not_a_licence_fact() -> None:
+    """الشاهدُ اختيارٌ مسمًّى لا تشكيلُ سيبويه (ADR ٣٧): أوّلُ مرخَّصٍ بترتيب `STATES` المثبَّت هنا؛
+    فَعَلَ، فَاعَلَ، ءِفَتَعَلَ مكتوبةً باليد. وطفرةُ الترتيب (السكونُ أوّلًا) تغيّر الشاهد — فالترتيبُ
+    جزءٌ من التعريف لا تفصيل. وحركةُ همزة الوصل لا تغيّر الترخيص (`wasl_vowel_irrelevant`)."""
+
+    from itertools import product
+
+    assert STATES == ("فتح", "كسر", "ضم", "سكون")
+    a, i = "فتح", "كسر"
+    hand = {"فعل": (("ف", a), ("ع", a), ("ل", a)),
+            "فاعل": (("ف", a), ("ا", SUKUN), ("ع", a), ("ل", a)),
+            "افتعل": (("ء", i), ("ف", a), ("ت", a), ("ع", a), ("ل", a))}
+    got = {"".join(ALPHABET[k] for k in sk): tuple((ALPHABET[k], STATES[s]) for k, s in w)
+           for sk, w in WITNESSES}
+    for name, w in hand.items():
+        assert got[name] == w, name
+    fal = _sk("فعل")
+    reordered = (SUKUN, "فتح", "كسر", "ضم")
+    first = next(fw for st in product(reordered, repeat=3)
+                 if continue_licensed(fw := tuple(zip(("ف", "ع", "ل"), st, strict=True)))
+                 and pause_licensed(fw))
+    assert first != got["فعل"] and len(fal) == 3
+    for sk, wit in WITNESSES:
+        if is_wasl(sk):
+            cells = tuple((ALPHABET[k], STATES[s]) for k, s in wit)
+            for v in ("فتح", "كسر", "ضم"):
+                moved = (("ء", v), *cells[1:])
+                assert continue_licensed(moved) == continue_licensed(cells)
+                assert pause_licensed(moved) == pause_licensed(cells)
+
+
+def _tool() -> object:
+    import importlib.util
+    import sys
+
+    spec = importlib.util.spec_from_file_location(
+        "gen_abniya_licence_index", ROOT / "tools" / "gen_abniya_licence_index.py")
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules["gen_abniya_licence_index"] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_owner_reference_frame(tmp_path: Path) -> None:
+    """الإطارُ المحجوب (ADR ٣٧): صفٌّ لكلّ هيكلٍ بترتيبه، أعمدةُ المالك فارغة فلا رقم؛ وصفٌّ مملوءٌ
+    بحالاتٍ (لا نصّ) يُقرأ خاناتٍ، والمخالفُ لشكله يُرفض باسمه (طفرة)."""
+
+    import csv
+
+    tool = _tool()
+    rows = tool.reference_rows()  # type: ignore[attr-defined]
+    assert [r["skeleton"] for r in rows] == ["".join(ALPHABET[i] for i in s) for s in SKELETONS]
+    assert all(not r["states"] and not r["source"] for r in rows)
+    assert tool.check_reference() == []  # type: ignore[attr-defined]
+    row = next(r for r in rows if r["skeleton"] == "افتعل")
+    filled = {**row, "states": "كسر سكون فتح فتح فتح"}
+    cells = tool.owner_cells(filled)  # type: ignore[attr-defined]
+    assert cells == (("ء", "كسر"), ("ف", SUKUN), ("ت", "فتح"), ("ع", "فتح"), ("ل", "فتح"))
+    assert continue_licensed(cells) and pause_licensed(cells)
+    assert tool.owner_cells({**row, "states": "كسر سكون فتح"}) is None  # type: ignore[attr-defined]
+    bad = [dict(r) for r in rows]
+    bad[0]["states"] = "نصب"
+    ref = tmp_path / "abniya-reference.tsv"
+    with ref.open("w", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=list(rows[0]), delimiter="\t", lineterminator="\n")
+        w.writeheader()
+        w.writerows(bad)
+    tool.REFERENCE = ref  # type: ignore[attr-defined]
+    assert tool.check_reference() == ["REFERENCE_ROW_MALFORMED A001"]  # type: ignore[attr-defined]

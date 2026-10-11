@@ -4,17 +4,26 @@
 همزةُ وصل بقاعدتها)، والمرخَّصُ منها وصلًا ووقفًا، والمرخَّصُ نفسُه بلا قاعدة الوصل — فالهياكلُ
 التي لا يرخّصها شيءٌ إلّا بالقاعدة مسمّاةٌ بأعدادها. ويكتب `formal/Slge/AbniyaLicenceTable.lean`
 و`src/slge/abniya_licence_table.py`: لكلّ هيكلٍ **شاهدٌ** — أوّلُ تشكيلٍ مرخَّصٍ وصلًا ووقفًا
-بترتيب الحالات — يبرهن Lean ترخيصَه ومطابقتَه هيكلَه (`Slge.AbniyaLicence`). لا نصَّ هنا: حواملُ
-وحالات.
+بترتيب الحالات `STATES` (اختيارٌ مسمًّى لا تشكيلُ سيبويه) — يبرهن Lean ترخيصَه ومطابقتَه هيكلَه
+(`Slge.AbniyaLicence`). لا نصَّ هنا: حواملُ وحالات.
+
+و**المرجعُ المحجوب** (ADR ٣٧): الكتابُ المختوم بلا حركات، فتشكيلُ سيبويه ليس في مودَع. فالأداةُ تكتب
+(إن غاب) إطارًا `tests/data/abniya-reference.tsv` — صفٌّ لكلّ هيكل: ثابتُه من المودَع (الهيكل، حروفه،
+أسطرُه في الكتاب، رسمُه كما ورد) وأعمدةٌ فارغة يملؤها المالكُ بيده: `states` حالاتُ الحروف بالترتيب
+(فتح/كسر/ضم/سكون، والألفُ الأولى همزةُ الوصل بحركتها)، و`source` الطبعةُ المشكولة وموضعُها، و`note`.
+حالاتٌ لا نصّ: لا يدخل الشجرةَ لفظٌ مشكول. `--check` يطابق الثابتَ ولا يمسّ المملوء، ويرفض صفًّا مملوءًا
+مخالفًا لشكله باسم `REFERENCE_ROW_MALFORMED`؛ ولا رقمَ في الفهرس قبل الملء.
 """
 
 from __future__ import annotations
 
+import csv
 import sys
+from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-from slge.abniya_licence import counts, is_wasl, vocalizations
+from slge.abniya_licence import HAMZA, counts, is_wasl, vocalizations
 from slge.abniya_table import SKELETONS
 from slge.cells import ALPHABET, STATES
 from slge.madd import continue_licensed, pause_licensed
@@ -23,6 +32,10 @@ ROOT = Path(__file__).resolve().parent.parent
 TARGET = ROOT / "ABNIYA_LICENCE_INDEX.md"
 LEAN = ROOT / "formal" / "Slge" / "AbniyaLicenceTable.lean"
 PY = ROOT / "src" / "slge" / "abniya_licence_table.py"
+SOURCE = ROOT / "tests" / "data" / "sibawayh-abniya.tsv"
+REFERENCE = ROOT / "tests" / "data" / "abniya-reference.tsv"
+FIXED = ("id", "skeleton", "letters", "kitab_lines", "as_written")
+OWNER = ("states", "source", "note")
 MARKS = {"فتح": "َ", "كسر": "ِ", "ضم": "ُ", "سكون": "ْ"}
 
 
@@ -35,6 +48,74 @@ def _witness(sk: tuple[int, ...]) -> tuple[tuple[str, str], ...] | None:
         if continue_licensed(w) and pause_licensed(w):
             return w
     return None
+
+
+def reference_fresh() -> list[dict[str, str]]:
+    """الإطار: لكلّ هيكلٍ أسطرُه في الكتاب ورسمُه كما ورد من المودَع المختوم، والأعمدةُ للمالك فارغة."""
+
+    lines: dict[str, set[int]] = defaultdict(set)
+    written: dict[str, set[str]] = defaultdict(set)
+    with SOURCE.open(encoding="utf-8") as f:
+        for r in csv.DictReader(f, delimiter="\t"):
+            lines[r["skeleton"]].add(int(r["line"]))
+            written[r["skeleton"]].add(r["token"])
+    out = []
+    for i, sk in enumerate(SKELETONS, 1):
+        name = _name(sk)
+        key = name
+        out.append({"id": f"A{i:03d}", "skeleton": name, "letters": " ".join(name),
+                    "kitab_lines": " ".join(str(n) for n in sorted(lines[key])),
+                    "as_written": " ".join(sorted(written[key])),
+                    **dict.fromkeys(OWNER, "")})
+    return out
+
+
+def reference_rows() -> list[dict[str, str]]:
+    with REFERENCE.open(encoding="utf-8") as f:
+        return list(csv.DictReader(f, delimiter="\t"))
+
+
+def _write_reference(rows: list[dict[str, str]]) -> None:
+    with REFERENCE.open("w", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=(*FIXED, *OWNER), delimiter="\t", lineterminator="\n")
+        w.writeheader()
+        w.writerows(rows)
+
+
+def owner_cells(row: dict[str, str]) -> tuple[tuple[str, str], ...] | None:
+    """خاناتُ الصفّ المملوء: حواملُ الهيكل (والألفُ الأولى همزةُ الوصل) وحالاتُ المالك؛ أو لا شيء."""
+
+    sk = next(s for s in SKELETONS if _name(s) == row["skeleton"])
+    states = row["states"].split()
+    if len(states) != len(sk) or any(x not in STATES for x in states):
+        return None
+    return tuple((HAMZA if i == 0 and is_wasl(sk) else ALPHABET[k], st)
+                 for i, (k, st) in enumerate(zip(sk, states, strict=True)))
+
+
+def check_reference() -> list[str]:
+    """أسماءُ المخالفات: ثابتٌ تغيّر، أو صفٌّ مملوءٌ مخالفٌ لشكله."""
+
+    rows, fresh = reference_rows(), reference_fresh()
+    bad = []
+    if [{k: r[k] for k in FIXED} for r in rows] != [{k: r[k] for k in FIXED} for r in fresh]:
+        bad.append("REFERENCE_FIXED_COLUMNS_DRIFTED")
+    bad += [f"REFERENCE_ROW_MALFORMED {r['id']}" for r in rows
+            if r["states"].strip() and owner_cells(r) is None]
+    return bad
+
+
+def reference_measure() -> dict[str, Any]:
+    rows = [r for r in reference_rows() if r["states"].strip()]
+    cells = [c for c in (owner_cells(r) for r in rows) if c is not None]
+    ws = {_name(sk): w for sk, w in ((sk, _witness(sk)) for sk in SKELETONS)}
+    by_name = {r["skeleton"]: owner_cells(r) for r in rows}
+    return {
+        "size": len(SKELETONS), "filled": len(rows),
+        "continue": sum(continue_licensed(c) for c in cells),
+        "pause": sum(pause_licensed(c) for c in cells),
+        "witness_equal": sum(by_name[n] == ws[n] for n in by_name),
+    }
 
 
 def measure() -> dict[str, Any]:
@@ -55,6 +136,7 @@ def measure() -> dict[str, Any]:
         "skeletons_without_rule_unlicensed": sum(r["continue_without_wasl_rule"] == 0
                                                  for r in rows),
         "rows": rows,
+        "reference": reference_measure(),
     }
 
 
@@ -127,7 +209,19 @@ def render(m: dict[str, Any]) -> str:
         "",
         "**ما لا يقيسه هذا الفهرس:** الهيكلُ بلا حركاتٍ لا يقول أيَّ تشكيلٍ أراد سيبويه؛ فالمرخَّصُ هنا "
         "**سقفٌ** لكلّ هيكل لا شهادةٌ بالبناء المشكول. والشاهدُ في Lean أوّلُ تشكيلٍ مرخَّصٍ بترتيب "
-        "الحالات، لا تشكيلُ سيبويه.",
+        "الحالات `STATES`، لا تشكيلُ سيبويه.",
+        "",
+        "## المرجعُ المحجوب: تشكيلُ سيبويه بيد المالك (ADR ٣٧)",
+        "",
+        "الكتابُ المختوم بلا حركات (لا علامةَ حركةٍ في نصّه)، والمطابقةُ بالحروف على المصحف تُلبس "
+        "(«كانوا» على فاعل، «إنّهم» على انفعل)؛ فتشكيلُ البناء يُملأ في `abniya-reference.tsv` "
+        "حالاتٍ لا نصًّا، بطبعته وموضعه.",
+        "",
+        *(["- **لا رقم**: الإطارُ غيرُ مملوء (0 من "
+           f"{m['reference']['size']})."] if not m["reference"]["filled"] else [
+            f"- مملوء: {m['reference']['filled']} من {m['reference']['size']}؛ "
+            f"المرخَّصُ منه وصلًا {m['reference']['continue']} ووقفًا {m['reference']['pause']}؛ "
+            f"ويساوي شاهدَ Lean {m['reference']['witness_equal']}."]),
         "",
         "## الهياكل",
         "",
@@ -143,11 +237,16 @@ def render(m: dict[str, Any]) -> str:
 
 
 def main(argv: list[str]) -> int:
+    if not REFERENCE.exists():
+        _write_reference(reference_fresh())
     m = measure()
     lean, py = render_tables()
     text = render(m)
     if "--check" in argv:
-        ok = (TARGET.read_text(encoding="utf-8") == text
+        bad = check_reference()
+        for b in bad:
+            sys.stdout.write(b + "\n")
+        ok = (not bad and TARGET.read_text(encoding="utf-8") == text
               and LEAN.read_text(encoding="utf-8") == lean
               and PY.read_text(encoding="utf-8") == py)
         sys.stdout.write("ABNIYA_LICENCE_INDEX.md مطابق\n" if ok

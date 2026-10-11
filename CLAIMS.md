@@ -1,6 +1,6 @@
 # سجلُّ الأرقام — لا رقمَ بلا مولِّد
 
-مولَّدٌ بـ`python tools/gen_claims.py` من `measure()` في كلّ أداةِ فهرس؛ لا يُحرَّر باليد، و`--check` يعيد الحسابَ كلَّه في CI ويُسقط البناءَ على أيّ فرق. السطرُ أربعةٌ لا خامسَ لها: الرقم، المولِّد، المودَعاتُ المقروءة (ببصمتها أدناه)، بصمةُ المخرَج كاملًا. مراجعةُ هذا المستودع هي الإيداعُ الحاملُ لهذا الملفّ وشاهدُها تشغيلُ CI؛ وبرهانُ الـ116 مثبَّتٌ على الإيداع `a3341231703542f68c3909d93f289ccbd8faf5e6` (`formal/lakefile.toml`).
+مولَّدٌ بـ`python tools/gen_claims.py` من `measure()` في كلّ أداةِ فهرس؛ لا يُحرَّر باليد، و`--check` يعيد الحسابَ كلَّه في CI ويُسقط البناءَ على أيّ فرق. السطرُ أربعةٌ لا خامسَ لها: الرقم، المولِّد، المودَعاتُ المقروءة (ببصمتها أدناه)، بصمةُ المخرَج كاملًا. مراجعةُ هذا المستودع هي الإيداعُ الحاملُ لهذا الملفّ وشاهدُها تشغيلُ CI؛ وبرهانُ الـ116 مثبَّتٌ على الإيداع `4648a95bf4ae0ceeceb83efe136c23129b2efc9a` (`formal/lakefile.toml`).
 
 ## المودَعات ببصماتها
 
@@ -23,6 +23,7 @@
 | `openiti-ghazali-micyar.txt.gz` | وضع | `2ddf91651376fddd834fbf27ba14c532f3a32303eb1b82860fc2314fd3392259` |
 | `ajnas-qabiliyyat.json.gz` | معلومات سابقة | `86f035bd0f3204cb29ace975d90b44b25ba9c389614cbcb384679b3040ce3070` |
 | `owner-ajnas-madlul.json` | معلومات سابقة | `793c948c980c8a17ad4f18456071b087003b49b73f7227c9deaeab76535a60a7` |
+| `abniya-reference.tsv` | مرجع محجوب | `6994ff7a0a8c3ce13e541659d3f4a79578f1aea96e11531e8411a994d95396bd` |
 | `hukm-reference-2.tsv` | مرجع محجوب | `93053415cff2b393147b654214c80af1a4494bf056304cdaa4a03e846170411c` |
 | `hukm-reference.tsv` | مرجع محجوب | `93053415cff2b393147b654214c80af1a4494bf056304cdaa4a03e846170411c` |
 | `openiti-majaz-quran.txt.gz` | مرجع محجوب | `432dae05748f2f972b3238e56dd0c56e72b10f0c3900ee8da1a8cca812b2fc88` |
@@ -47,7 +48,7 @@
 | `masaq-zawaid.json` | مرجع محجوب | `15ab1c4691c88ebb99b4f37c5f1c062c83a20a988fdd6099cc835eaea4097478` |
 | `masaq-zuruf.json` | مرجع محجوب | `ef2e77119120a8f5109e28e63c0835468ce85442806c44b0e4f4a70635416dd3` |
 
-## الأرقام (1,181 رقمًا من 49 مولِّدًا)
+## الأرقام (1,186 رقمًا من 49 مولِّدًا)
 
 ### `tools/gen_abniya_index.py::measure`
 
@@ -79,12 +80,17 @@
 
 ### `tools/gen_abniya_licence_index.py::measure`
 
-يقرأ: — (جداولُ الوحدة وحدَها). بصمةُ المخرَج: `b21224cf531480ab`.
+يقرأ: `sibawayh-abniya.tsv`، `abniya-reference.tsv`. بصمةُ المخرَج: `42df21d85d20701f`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
 | `continue` | 106,043 |
 | `pause` | 113,374 |
+| `reference.continue` | 0 |
+| `reference.filled` | 0 |
+| `reference.pause` | 0 |
+| `reference.size` | 158 |
+| `reference.witness_equal` | 0 |
 | `rows.len` | 158 |
 | `skeletons` | 158 |
 | `skeletons_with_continue` | 158 |

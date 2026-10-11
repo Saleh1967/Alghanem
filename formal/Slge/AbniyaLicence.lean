@@ -14,6 +14,9 @@ import Slge.Madd
 * `witnesses_alif_sukun`: لا ألفَ متحرّكةً في شاهد (الألفُ لا تكون إلّا ساكنة).
 * `wasl_is_the_difference`: في هياكل همزة الوصل (13)، الشاهدُ نفسُه بألفٍ ساكنةٍ أوّلًا كما رُسمت لا يُرخَّص —
   فالقاعدةُ (لا ابتداءَ بساكن، والهمزةُ تُجتلب) هي ما يُدخل هذه الأبنية، لا الهيكل.
+* `wasl_vowel_irrelevant` (ADR ٣٧): وأيُّ حركةٍ للهمزة (فتح، كسر، ضم) لا تغيّر ترخيصَ الشاهد وصلًا ولا وقفًا —
+  الترخيصُ يرى المتحرّكَ لا حركتَه؛ فحركةُ همزة الوصل (الكسرُ إلّا أن يُضمّ الثالث) قانونُ الحدّ
+  (`Sawabiq.wasl_state_damm_iff`، الغانم `Boundary.waslVowel`) لا قانونُ الترخيص.
 
 وعددُ التشكيلات المرخَّصة لكلّ هيكلٍ محسوبٌ على المودَع في `ABNIYA_LICENCE_INDEX.md`؛ ومنه أنّ هياكلَ همزة الوصل
 بلا القاعدة لا يُرخَّص لها تشكيلٌ أصلًا (فحصٌ شاملٌ لتشكيلاتها كلِّها في `test_abniya_licence.py`).
@@ -59,6 +62,18 @@ theorem wasl_is_the_difference :
       (witnesses.filter (fun p => isWasl p.1)).all
         (fun p => !Madd.continueLicensed (asWritten p.2) && !Madd.pauseLicensed (asWritten p.2))
         = true := by
+  decide +kernel
+
+/-- الشاهدُ بحالةٍ أخرى لخانته الأولى. -/
+def withFirst (st : Fin 4) : List SCell → List SCell
+  | x :: t => ⟨x.carrier, st⟩ :: t
+  | [] => []
+
+set_option maxRecDepth 100000 in
+theorem wasl_vowel_irrelevant :
+    (witnesses.filter (fun p => isWasl p.1)).all (fun p => ([0, 1, 2] : List (Fin 4)).all fun st =>
+      Madd.continueLicensed (withFirst st p.2) == Madd.continueLicensed p.2 &&
+        Madd.pauseLicensed (withFirst st p.2) == Madd.pauseLicensed p.2) = true := by
   decide +kernel
 
 end Slge.AbniyaLicence
