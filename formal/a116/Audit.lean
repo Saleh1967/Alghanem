@@ -105,6 +105,15 @@ import A116
 #print axioms A116.Ternary.cnt_start_one
 #print axioms A116.Ternary.pause_count_fib
 #print axioms A116.Ternary.pause_count_375
+#print axioms A116.Ternary.continueB_eq_accC
+#print axioms A116.Ternary.cntC_n_rec
+#print axioms A116.Ternary.cntC_n_closed
+#print axioms A116.Ternary.continue_count_closed
+#print axioms A116.Ternary.pause_eq_continue_add
+#print axioms A116.Ternary.continue_count_304
+#print axioms A116.Ternary.envelope_375
+#print axioms A116.Ternary.envelope_licensed_75
+#print axioms A116.Ternary.envelope_licensed_continue_59
 #print axioms A116.Ternary.pauseB_iff
 #print axioms A116.Recovery.edit_roundtrip
 #print axioms A116.Recovery.shadda_restore
