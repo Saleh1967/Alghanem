@@ -1041,3 +1041,17 @@
 'Slge.Coverage.axes_attested_le_total' does not depend on any axioms
 'Slge.Coverage.roots_partition' does not depend on any axioms
 'Slge.Coverage.nodes_partition' does not depend on any axioms
+'A116.Certificate.certNumber_injective' depends on axioms: [propext, Classical.choice, Quot.sound]
+'A116.Certificate.certNumber_decode' depends on axioms: [propext, Quot.sound]
+'A116.Certificate.cells_forget_rank' depends on axioms: [propext, Classical.choice, Quot.sound]
+'A116.Certificate.pair_rank_one' depends on axioms: [propext]
+'A116.Certificate.ala_alaa' depends on axioms: [propext, Classical.choice, Quot.sound]
+'A116.Grade.cont_succ' depends on axioms: [propext, Quot.sound]
+'A116.Grade.pause_succ' depends on axioms: [propext, Quot.sound]
+'A116.Grade.mem_cont_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'A116.Grade.mem_pause_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'A116.Grade.cont_nodup' depends on axioms: [propext, Quot.sound]
+'A116.Grade.pause_nodup' depends on axioms: [propext, Quot.sound]
+'A116.Grade.cont_length' depends on axioms: [propext]
+'A116.Grade.pause_length' depends on axioms: [propext]
+'A116.Grade.grade_table' depends on axioms: [propext, Quot.sound]

@@ -38,7 +38,7 @@
 
 ```sh
 pip install -r requirements-dev.txt && pip install -e . --no-deps
-ruff check . && mypy && pytest -q                     # 489 اختبارًا
+ruff check . && mypy && pytest -q                     # 490 اختبارًا
 python tools/gen_status.py --check
 python tools/gen_registry.py --check
 python tools/check_manifest.py && python tools/check_manifest.py --indexes   # السجلُّ وكلُّ الفهارس (بدل السطور أدناه واحدًا واحدًا)
@@ -117,7 +117,7 @@ python tools/gen_hasm_index.py --check               # الحسم: جدولُ ت
 python tools/gen_pipeline_index.py --check           # السُّلَّمُ رقمًا واحدًا: قمعُ المراحل الخمس على MASAQ وجدولاه (PIPELINE_INDEX.md)
 python tools/gen_claims.py --check                   # سجلُّ الأرقام: كلُّ رقمٍ منشور يُعاد حسابُه من measure() مولِّده ببصمة مودَعاته ومخرَجه؛ ولا عددَ في CLAUDE.md بلا مولِّد (CLAIMS.md؛ ~7 دقائق)
 python -c "from slge.guard import breaches; print(breaches() or 'لا خرق')"
-cd formal && lake build && lake env lean Audit.lean   # 1043 مدقَّقة (الـ116 وSLGE)؛ propext/Classical.choice/Quot.sound فقط
+cd formal && lake build && lake env lean Audit.lean   # 1057 مدقَّقة (الـ116 وSLGE)؛ propext/Classical.choice/Quot.sound فقط
 ```
 
 وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه، وأثبت وجودَ كلّ ملفٍّ تذكره قبل الكلام عنه.

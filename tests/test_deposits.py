@@ -76,6 +76,28 @@ def test_certificates_deposit_is_what_the_pinned_gate_printed() -> None:
     assert _canonical(d) != CERTIFICATES_DIGEST
 
 
+def test_certificate_n_is_carried_whole() -> None:
+    """الـn (الغانم ADR ١٤، `A116.Certificate`): لكلّ صورةٍ عددُ شهادتها ورتبتُها في ليفها وبقيّةُ رسمها؛
+    والعددُ هو ‎P(F(الخانات)، الرتبة)‎ بترقيم SLGE نفسِه (`shahada.atom_number`، `shahada.pair`) على
+    المودَع كلِّه. الخاناتُ وحدَها تُسقط الرتبة: «عَلَى» و«عَلَا» خاناتٌ واحدة وعددان (رتبتاهما 1 و0)."""
+
+    import gzip
+    import json
+
+    from slge.shahada import atom_number, pair
+
+    with gzip.open(DATA / "corpus-certificates.json.gz", "rt", encoding="utf-8") as f:
+        forms = json.load(f)["forms"]
+    for x in forms:
+        w = tuple((a, b) for a, b in x["cells"])
+        assert 0 <= x["ordinal"] < x["fiber_size"]
+        assert x["integer"] == pair(atom_number(w), x["ordinal"])
+    ala = [x for x in forms if x["cells"] == [["ع", "فتح"], ["ل", "فتح"], ["ا", "سكون"]]]
+    assert sorted(x["ordinal"] for x in ala) == [0, 1] and len({x["integer"] for x in ala}) == 2
+    # الطفرة: الخاناتُ وحدَها مفتاحًا تجعلهما صورةً واحدة
+    assert len({tuple(map(tuple, x["cells"])) for x in ala}) == 1
+
+
 def test_context_deposit_is_what_the_pinned_gate_printed() -> None:
     """المودَعُ الثاني (ADR ٢٨): المصحفُ موقعًا موقعًا في سياقه؛ بصمتُه القانونيّة ما طبعته البوّابةُ على
     `GATE_REV` نفسِه، ومواقعُه مواقعُ الأوّل، وCI يعيد توليدَه من البوّابة نفسِها."""

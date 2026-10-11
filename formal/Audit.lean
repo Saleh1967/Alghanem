@@ -1046,3 +1046,17 @@ import Slge
 #print axioms Slge.Coverage.axes_attested_le_total
 #print axioms Slge.Coverage.roots_partition
 #print axioms Slge.Coverage.nodes_partition
+#print axioms A116.Certificate.certNumber_injective
+#print axioms A116.Certificate.certNumber_decode
+#print axioms A116.Certificate.cells_forget_rank
+#print axioms A116.Certificate.pair_rank_one
+#print axioms A116.Certificate.ala_alaa
+#print axioms A116.Grade.cont_succ
+#print axioms A116.Grade.pause_succ
+#print axioms A116.Grade.mem_cont_iff
+#print axioms A116.Grade.mem_pause_iff
+#print axioms A116.Grade.cont_nodup
+#print axioms A116.Grade.pause_nodup
+#print axioms A116.Grade.cont_length
+#print axioms A116.Grade.pause_length
+#print axioms A116.Grade.grade_table
