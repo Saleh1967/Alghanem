@@ -50,12 +50,15 @@ def pauseGrade : Nat → List (List Syl)
   | 0 => []
   | k + 1 => (contGrade k).flatMap fun ss => final.map fun s => ss ++ [s]
 
+/-- مقاطعُ الوصل هي ما ليس طرفيًّا وقفًا. -/
 theorem mem_inner (s : Syl) : s ∈ inner ↔ pauseOnly s = false := by cases s <;> decide
 
+/-- كلُّ مقطعٍ من الستّة يقع طرفًا وقفًا. -/
 theorem mem_final (s : Syl) : s ∈ final := by cases s <;> decide
 
 /-! ## قانونُ التدرّج -/
 
+/-- **قانونُ التدرّج (الوصل):** عنصرُ الدرجة k+1 عنصرٌ من الدرجة k ومعه مقطعٌ داخليّ، وبالعكس. -/
 theorem cont_succ (k : Nat) (ss : List Syl) :
     ss ∈ contGrade (k + 1) ↔ ∃ t ∈ contGrade k, ∃ s ∈ inner, ss = t ++ [s] := by
   simp only [contGrade, List.mem_flatMap, List.mem_map]
@@ -63,6 +66,7 @@ theorem cont_succ (k : Nat) (ss : List Syl) :
   · rintro ⟨t, ht, s, hs, rfl⟩; exact ⟨t, ht, s, hs, rfl⟩
   · rintro ⟨t, ht, s, hs, rfl⟩; exact ⟨t, ht, s, hs, rfl⟩
 
+/-- **قانونُ التدرّج (الوقف):** الوقفُ في الدرجة k+1 وصلُ الدرجة k ومعه مقطعٌ طرفيّ، وبالعكس. -/
 theorem pause_succ (k : Nat) (ss : List Syl) :
     ss ∈ pauseGrade (k + 1) ↔ ∃ t ∈ contGrade k, ∃ s ∈ final, ss = t ++ [s] := by
   simp only [pauseGrade, List.mem_flatMap, List.mem_map]
@@ -72,6 +76,7 @@ theorem pause_succ (k : Nat) (ss : List Syl) :
 
 /-! ## التمام: الجدولُ هو الترخيصُ نفسُه -/
 
+/-- كلُّ متتاليةٍ غيرِ فارغة متتاليةٌ ومقطعٌ أخير. -/
 theorem exists_concat : ∀ (ss : List Syl), ss ≠ [] → ∃ t s, ss = t ++ [s]
   | [], h => absurd rfl h
   | [s], _ => ⟨[], s, rfl⟩
@@ -79,6 +84,7 @@ theorem exists_concat : ∀ (ss : List Syl), ss ≠ [] → ∃ t s, ss = t ++ [s
     obtain ⟨t, s, h⟩ := exists_concat (b :: r) (by simp)
     exact ⟨a :: t, s, by simp [h]⟩
 
+/-- درجةُ الوصل k: الطولُ k وكلُّ مقطعٍ غيرُ طرفيّ. -/
 theorem mem_cont_iff_all (k : Nat) (ss : List Syl) :
     ss ∈ contGrade k ↔ ss.length = k ∧ ∀ s ∈ ss, pauseOnly s = false := by
   induction k generalizing ss with
@@ -101,10 +107,12 @@ theorem mem_cont_iff_all (k : Nat) (ss : List Syl) :
       refine ⟨t, (ih t).2 ⟨by simpa using hl, fun x hx => ha x (by simp [hx])⟩, s,
         (mem_inner s).2 (ha s (by simp)), rfl⟩
 
+/-- الوصلُ على وصل المقاطع: لا مقطعَ طرفيّ. -/
 theorem continueB_flat (ss : List Syl) :
     continueB (flat .none ss) = ss.all fun s => !(pauseOnly s) := by
   unfold continueB; rw [parse_flat]
 
+/-- الوقفُ على وصل المقاطع: لا مقطعَ طرفيّ قبل الأخير. -/
 theorem pauseB_flat (ss : List Syl) :
     pauseB (flat .none ss) = ss.dropLast.all fun s => !(pauseOnly s) := by
   unfold pauseB; rw [parse_flat]
@@ -131,11 +139,13 @@ theorem mem_pause_iff (k : Nat) (ss : List Syl) :
 
 /-! ## لا تكرار، والعددُ لكلّ k -/
 
+/-- إلحاقُ مقطعٍ تباين: يُستردّ منه الأصلُ والمقطع. -/
 theorem append_single_inj {t t' : List Syl} {s s' : Syl} (h : t ++ [s] = t' ++ [s']) :
     t = t' ∧ s = s' := by
   have := List.append_inj' h rfl
   exact ⟨this.1, by simpa using this.2⟩
 
+/-- صورةُ قائمةٍ بلا تكرار بدالّةٍ متباينة بلا تكرار. -/
 theorem nodup_map_inj {α β : Type} (f : α → β) (hf : ∀ a b, f a = f b → a = b) :
     ∀ l : List α, l.Nodup → (l.map f).Nodup
   | [], _ => by simp
@@ -146,6 +156,7 @@ theorem nodup_map_inj {α β : Type} (f : α → β) (hf : ∀ a b, f a = f b �
     obtain ⟨b, hb, he⟩ := List.mem_map.1 hm
     exact h.1 (hf b a he ▸ hb)
 
+/-- خطوةُ الدرجة تحفظ عدمَ التكرار. -/
 theorem nodup_step (L : List (List Syl)) (S : List Syl) (hL : L.Nodup) (hS : S.Nodup) :
     (L.flatMap fun ss => S.map fun s => ss ++ [s]).Nodup := by
   induction L with
@@ -162,14 +173,17 @@ theorem nodup_step (L : List (List Syl)) (S : List Syl) (hL : L.Nodup) (hS : S.N
       simpa [List.mem_flatMap] using hy
     exact (List.nodup_cons.1 hL).1 ((append_single_inj h).1 ▸ hu)
 
+/-- **لا تكرار (الوصل):** لكلّ عنصرٍ موضعٌ واحد في جدول درجته. -/
 theorem cont_nodup : ∀ k, (contGrade k).Nodup
   | 0 => by simp [contGrade]
   | k + 1 => nodup_step _ _ (cont_nodup k) (by decide)
 
+/-- **لا تكرار (الوقف):** لكلّ عنصرٍ موضعٌ واحد في جدول درجته. -/
 theorem pause_nodup : ∀ k, (pauseGrade k).Nodup
   | 0 => by simp [pauseGrade]
   | k + 1 => nodup_step _ _ (cont_nodup k) (by decide)
 
+/-- عددُ خطوة الدرجة: عددُ ما قبلها في عدد المقاطع. -/
 theorem length_step (L : List (List Syl)) (S : List Syl) :
     (L.flatMap fun ss => S.map fun s => ss ++ [s]).length = L.length * S.length := by
   induction L with

@@ -65,9 +65,12 @@ def alaProj : Nat → List Cell := fun _ => alaAtoms
 theorem pair_rank_one (u : Nat) : pair u 1 = pair u 0 + u + 2 := by
   simp only [pair, Nat.add_zero, tri]
 
+/-- رتبةُ عَلَا (بالألف القائمة) في ليفها صفر. -/
 theorem rank_ala0 : rank alaDomain alaProj 0 = 0 := by decide
+/-- رتبةُ عَلَى (بالألف المقصورة) في ليفها واحد. -/
 theorem rank_ala1 : rank alaDomain alaProj 1 = 1 := by decide
 
+/-- **الشاهد:** عَلَا وعَلَى ذرّاتٌ واحدة، ورتبتان 0 و1، وعددان مختلفان. -/
 theorem ala_alaa :
     alaProj 0 = alaProj 1 ∧ rank alaDomain alaProj 0 = 0 ∧ rank alaDomain alaProj 1 = 1 ∧
     certNumber alaDomain alaProj 0 ≠ certNumber alaDomain alaProj 1 :=
