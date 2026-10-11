@@ -283,6 +283,10 @@ import A116
 #print axioms A116.Exhaust.hadd_removes
 #print axioms A116.Exhaust.farq_is_the_exception
 #print axioms A116.Exhaust.table_realized_upto_three
+#print axioms A116.Exhaust.kindOf_realize
+#print axioms A116.Exhaust.geminate_realize
+#print axioms A116.Exhaust.table_realized
+#print axioms A116.Exhaust.table_iff_licensed
 #print axioms A116.Exhaust.roles_exhausted_within_three
 #print axioms A116.Exhaust.role_count
 #print axioms A116.Exhaust.exhaustion_gate

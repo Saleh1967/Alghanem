@@ -70,7 +70,7 @@ jobs:
                    Hadd.strictB_continue Hadd.hadd_debt_closed Hadd.farq_needs_its_hamza \
                    Hadd.straddle_rejected Hadd.ya_shafiina_straddles Hadd.strictJoinB_nil \
                    Exhaust.codeI_snoc Exhaust.decodeI_codeI Exhaust.codeI_decodeI Exhaust.table_nodup \
-                   Exhaust.strict_mem_table Exhaust.mem_table_iff_contGrade Exhaust.table_realized_upto_three Exhaust.roles_exhausted_within_three \
+                   Exhaust.strict_mem_table Exhaust.mem_table_iff_contGrade Exhaust.table_iff_licensed Exhaust.table_realized_upto_three Exhaust.roles_exhausted_within_three \
                    Exhaust.exhaustion_gate Exhaust.no_skip Exhaust.current_stops_at_one \
                    Zawaid.template_lits_from_zawaid Zawaid.peel_sound_templates; do
             grep -q "A116.$t" axioms.txt || { echo "::error::$t غيرُ مدقَّقة"; exit 1; }

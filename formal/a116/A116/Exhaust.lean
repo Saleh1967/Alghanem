@@ -26,8 +26,9 @@ import A116.Grade
 * **الترخيصُ داخلَ الجدول** (`strict_mem_table`): كلُّ كلمةٍ من خانات الـ116 مرخَّصةٍ بقيد الحدّ وصلًا
   (`Hadd.strictB`) ليست مدَّ فرق، تقطيعُها صفٌّ في جدول درجتها — لكلّ طول. ومدُّ الفرق هو الاستثناءُ
   المسمّى (`farq_is_the_exception`: ءَاْلْ مقطعٌ واحدٌ CVVC مرخَّص).
-* **الجدولُ كلُّه مرخَّصٌ على الخانات** للدرجات 1، 2، 3 (`table_realized_upto_three`): لكلّ صفٍّ كلمةٌ من
-  خاناتٍ مرخَّصة يقبلها `strictB` وإسقاطُها الصفُّ بعينه.
+* **الجامعُ المانع لكلّ درجة** (`table_iff_licensed`): الصفُّ في جدول الدرجة k+1 ⟺ تقطيعُ كلمةٍ من خاناتٍ
+  مرخَّصةٍ بقيد الحدّ وصلًا (غيرِ مدّ الفرق) — لكلّ k، بشاهدٍ موحَّد على طريقة آرتين (`table_realized`). وللدرجات
+  1، 2، 3 فحصٌ إضافيٌّ أنّ خاناتِ الشاهد من المرخَّص (`table_realized_upto_three`).
 * **استنفادُ الـ116 بأدوارها داخل الثلاثيّ** (`roles_exhausted_within_three`): كلُّ خانةٍ من الـ113
   المرخَّصة (`Alif.licensable`) تقع في كلّ دورٍ تقبله (`cv`، `c`، و`v` لحروف المدّ) آخرَ كلمةٍ مرخَّصةٍ
   بكلّ درجةٍ من 1 و2 و3.
@@ -452,6 +453,147 @@ theorem table_realized_upto_three :
   intro k hk ss hss
   obtain ⟨h1, h2, h3⟩ := realized_check k hk ss hss
   exact ⟨strict_of_kind h1 (inner_of_row hss) h2, h1, h3⟩
+
+/-! ## ٥′. الجامعُ المانع لكلّ درجة: الصفُّ في الجدول ⟺ تحقّقه كلمةٌ مرخَّصة
+
+درسُ آرتين: يُعطى **كلُّ** عنصرٍ شاهدَه دفعةً واحدة بقاعدةٍ موحَّدة، ثمّ يُبرهَن أنّ الشاهدَ لا يناقض القيد. وهنا:
+لكلّ صفٍّ في أيّ درجة، الكلمةُ `realize` (كلُّ مقطعٍ يبدأ بـ«بَ»، والمُغلِقُ بعد المدّ «بْ» يليه مثلُه) مرخَّصةٌ بقيد
+الحدّ وإسقاطُها الصفُّ بعينه — لكلّ طول، لا بالحساب على الدرجات الثلاث وحدَها. ومع `strict_mem_table` يصير
+الجدولُ **جامعًا** (كلُّ مرخَّصٍ فيه) **مانعًا** (كلُّ ما فيه مرخَّص). -/
+
+/-- أزواجُ (صنف، خانة) لكلّ مقطع. -/
+def pairsOf (ss : List Syl) : List (Stages.K × Cell) := ss.flatMap fun s => s.atoms.zip (block s)
+
+theorem block_length (s : Syl) : (block s).length = s.atoms.length := by
+  cases s <;> rfl
+
+theorem kindOne_bv (p : Option Haraka) : kindOne p bv = .cv := by simp [kindOne, bv, atom]
+theorem kindOne_alif : kindOne (some .fatha) (atom 'ا' .sukun) = .v := by decide
+theorem kindOne_ba_f : kindOne (some .fatha) (atom 'ب' .sukun) = .c := by decide
+theorem kindOne_ba_s : kindOne (some .sukun) (atom 'ب' .sukun) = .c := by decide
+
+theorem kindGo_block (s : Syl) (p : Option Haraka) (rest : List Cell) :
+    ∃ q, kindGo p (block s ++ rest) = s.atoms ++ kindGo q rest := by
+  cases s with
+  | CV => exact ⟨some .fatha, by
+      simp only [block, List.cons_append, List.nil_append, kindGo, kindOne_bv, Syl.atoms, Syl.coda]
+      rfl⟩
+  | CVV => exact ⟨some .sukun, by
+      simp only [block, List.cons_append, List.nil_append, kindGo, kindOne_bv, Syl.atoms, Syl.coda]
+      simp only [bv, atom]; simp; decide⟩
+  | CVC => exact ⟨some .sukun, by
+      simp only [block, List.cons_append, List.nil_append, kindGo, kindOne_bv, Syl.atoms, Syl.coda]
+      simp only [bv, atom]; simp; decide⟩
+  | CVVC => exact ⟨some .sukun, by
+      simp only [block, List.cons_append, List.nil_append, kindGo, kindOne_bv, Syl.atoms, Syl.coda]
+      simp only [bv, atom]; simp; decide⟩
+  | CVCC => exact ⟨some .sukun, by
+      simp only [block, List.cons_append, List.nil_append, kindGo, kindOne_bv, Syl.atoms, Syl.coda]
+      simp only [bv, atom]; simp; decide⟩
+  | CVVCC => exact ⟨some .sukun, by
+      simp only [block, List.cons_append, List.nil_append, kindGo, kindOne_bv, Syl.atoms, Syl.coda]
+      simp only [bv, atom]; simp; decide⟩
+
+theorem kindGo_realize : ∀ (ss : List Syl) (p : Option Haraka),
+    kindGo p (realize ss) = flat .none ss
+  | [], _ => rfl
+  | s :: t, p => by
+    obtain ⟨q, hq⟩ := kindGo_block s p (realize t)
+    have e : realize (s :: t) = block s ++ realize t := by simp [realize]
+    rw [e, hq, kindGo_realize t q]
+    simp [flat, Lead.atoms]
+
+theorem kindOf_realize (ss : List Syl) : kindOf (realize ss) = flat .none ss :=
+  kindGo_realize ss none
+
+theorem zip_realize : ∀ ss : List Syl, (flat .none ss).zip (realize ss) = pairsOf ss
+  | [] => rfl
+  | s :: t => by
+    have e : realize (s :: t) = block s ++ realize t := by simp [realize]
+    have ef : flat .none (s :: t) = s.atoms ++ flat .none t := by simp [flat, Lead.atoms]
+    rw [e, ef, List.zip_append (by rw [block_length]), zip_realize t]
+    simp [pairsOf]
+
+/-- ما بعد المقطع: فارغٌ أو يبدأ بـ«بَ» متحرّكة. -/
+def StartsBv (rest : List (Stages.K × Cell)) : Prop :=
+  rest = [] ∨ ∃ r, rest = (Stages.K.cv, bv) :: r
+
+theorem pairsOf_starts (t : List Syl) : StartsBv (pairsOf t) := by
+  cases t with
+  | nil => left; rfl
+  | cons s u => right; cases s <;> exact ⟨_, by simp [pairsOf, block, Syl.atoms, Syl.coda]; rfl⟩
+
+theorem geminate_block (s : Syl) (hs : inner s = true) (rest : List (Stages.K × Cell))
+    (hr : StartsBv rest) (hne : s = .CVVC → rest ≠ []) :
+    geminateB (s.atoms.zip (block s) ++ rest) = geminateB rest := by
+  rcases hr with rfl | ⟨r, rfl⟩
+  · cases s <;> simp_all [inner, pauseOnly, block, Syl.atoms, Syl.coda, geminateB, stepOK]
+  · cases s <;> simp_all [inner, pauseOnly, block, Syl.atoms, Syl.coda, geminateB, stepOK, bv, atom]
+
+theorem geminate_realize : ∀ ss : List Syl, (∀ s ∈ ss, inner s = true) →
+    ss.getLast? ≠ some .CVVC → geminateB (pairsOf ss) = true
+  | [], _, _ => rfl
+  | s :: t, hi, hl => by
+    have hs := hi s List.mem_cons_self
+    have ht : ∀ x ∈ t, inner x = true := fun x hx => hi x (List.mem_cons_of_mem _ hx)
+    have e : pairsOf (s :: t) = s.atoms.zip (block s) ++ pairsOf t := by simp [pairsOf]
+    rw [e]
+    cases t with
+    | nil =>
+      rw [geminate_block s hs _ (pairsOf_starts []) ?_]
+      · rfl
+      · intro hc; subst hc; simp at hl
+    | cons u v =>
+      have hl' : (u :: v).getLast? ≠ some .CVVC := by
+        intro h; apply hl; rw [List.getLast?_cons_cons]; exact h
+      rw [geminate_block s hs _ (pairsOf_starts _) (fun _ => by simp [pairsOf]; cases u <;> simp [block, Syl.atoms])]
+      exact geminate_realize (u :: v) ht hl'
+
+theorem isFarq_bv (rest : List Cell) : isFarq (bv :: rest) = false := by
+  have hb : (bv == atom 'ء' .fatha) = false := by decide
+  match rest with
+  | [] => rfl
+  | [_] => rfl
+  | _ :: _ :: _ => simp only [isFarq, hb, Bool.false_and]
+
+theorem isFarq_realize (ss : List Syl) : isFarq (realize ss) = false := by
+  cases ss with
+  | nil => rfl
+  | cons s t =>
+    have e : realize (s :: t) = block s ++ realize t := by simp [realize]
+    rw [e]
+    cases s <;> exact isFarq_bv _
+
+/-- **مانع لكلّ درجة**: كلُّ صفٍّ في جدول الدرجة k+1 تحقّقه كلمةٌ مرخَّصةٌ بقيد الحدّ إسقاطُها الصفُّ بعينه. -/
+theorem table_realized (k : Nat) (ss : List Syl) (h : ss ∈ table k) :
+    strictB (realize ss) = true ∧ kindOf (realize ss) = flat .none ss ∧ isFarq (realize ss) = false := by
+  have hi := inner_of_row h
+  have hl : ss.getLast? ≠ some .CVVC := ((mem_table_iff_contGrade k ss).1 h).2
+  refine ⟨strict_of_kind (kindOf_realize ss) hi ?_, kindOf_realize ss, isFarq_realize ss⟩
+  simp only [haddB, isFarq_realize, Bool.false_eq_true, ↓reduceIte, kindOf_realize, zip_realize]
+  exact geminate_realize ss hi hl
+
+/-- **الجامعُ المانع لكلّ درجة**: الصفُّ في جدول الدرجة k+1 ⟺ تقطيعُ كلمةٍ من خاناتٍ، مرخَّصةٍ بقيد الحدّ وصلًا، ليست
+مدَّ فرق، بطول k+1. -/
+theorem table_iff_licensed (k : Nat) (ss : List Syl) :
+    ss ∈ table k ↔ ∃ w : List Cell, w ≠ [] ∧ isFarq w = false ∧ strictB w = true ∧
+      parse (kindOf w) = some (.none, ss) ∧ ss.length = k + 1 := by
+  constructor
+  · intro h
+    obtain ⟨hs, hk, hf⟩ := table_realized k ss h
+    obtain ⟨t, u, rfl, hl, _, _⟩ := (mem_table k _).1 h
+    refine ⟨realize (t ++ [u]), ?_, hf, hs, by rw [hk]; exact parse_flat _ _, by simp [hl]⟩
+    intro e
+    have := congrArg List.length (kindOf_realize (t ++ [u]))
+    rw [e] at this
+    simp [kindOf, kindGo, flat, Lead.atoms, Syl.atoms] at this
+  · rintro ⟨w, hw, hf, h, hp, hl⟩
+    obtain ⟨ss', hp', _, hm⟩ := strict_mem_table w hw hf h
+    rw [hp] at hp'
+    simp only [Option.some.injEq, Prod.mk.injEq, true_and] at hp'
+    subst hp'
+    rw [hl] at hm
+    simpa using hm
 
 /-! ## ٦. استنفادُ الـ116 بأدوارها داخل الثلاثيّ -/
 
