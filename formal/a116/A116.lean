@@ -26,3 +26,5 @@ import A116.Iltiqa
 import A116.Alif
 import A116.Certificate
 import A116.Grade
+import A116.Exhaust
+import A116.Zawaid

@@ -37,10 +37,10 @@ CORPUS = ROOT / "corpora" / "quran-simple-enhanced.txt"
 MASAQ = ROOT / "corpora" / "MASAQ.csv"
 TABLES = ROOT / "formal" / "a116"
 TABLE_NAMES = (
-    "counts", "hadd", "hadd-join", "hamza", "iltiqa", "licensable", "numbers", "order", "pairs",
-    "syllables", "table", "utf8",
+    "counts", "degrees", "hadd", "hadd-join", "hamza", "iltiqa", "licensable", "numbers", "order",
+    "pairs", "syllables", "table", "utf8",
 )
-"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ الثمانية (يطابقها CI بايتًا بايتًا)
+"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ التسعة (يطابقها CI بايتًا بايتًا)
 والمولَّداتُ الأربع لحجمها (`syllables`، `hadd`، `hadd-join`، `iltiqa`: تُولَّد في وظيفة Lean وتُنزَّل
 أثرًا إلى وظيفة البوّابة). جدولٌ جديد لا يدخل السجلَّ بوجوده على القرص بل بإضافته هنا وإلى الأثر في CI
 — وإلّا اختلف السجلُّ محلّيًّا عنه في CI."""
@@ -60,6 +60,8 @@ UNITS: dict[str, str] = {
     "قالب": "قالبُ صيغةٍ صرفيّة",
     "متتالية أصناف بالوزن": "متتاليةُ أصنافٍ (cv=2، v=c=1) بوزنها الصوتيّ",
     "سلسلة غلاف بالطول": "سلسلةُ C/V من الغلاف المقترَح بطولها",
+    "دور خانة": "زوجُ (خانةٍ مرخَّصة، دورٍ تقبله: cv أو v أو c) — ADR ١٥",
+    "حقل وظيفة": "حقلٌ من الوظائف السبع في صفّ درجة (ترميز … دلالة) — ADR ١٥",
 }
 """القائمةُ المغلقة للوحدات: لا تُضاف وحدةٌ إلّا هنا وبـADR."""
 LEAN_UNITS: dict[str, str] = {
@@ -82,6 +84,8 @@ LEAN_UNITS: dict[str, str] = {
     "Envelope.envelope_375": "سلسلة غلاف بالطول",
     "Envelope.envelope_licensed_75": "سلسلة غلاف بالطول",
     "Envelope.envelope_licensed_continue_59": "سلسلة غلاف بالطول",
+    "Exhaust.role_count": "دور خانة", "Exhaust.current_qaim_count": "حقل وظيفة",
+    "Zawaid.zawaid_length": "حامل", "Zawaid.zawaid_cells_licensable": "خانة",
 }
 """كلُّ مبرهنةٍ عدديّة ووحدتُها؛ مبرهنةٌ عدديّةٌ جديدة لا تمرّ بلا سطرٍ هنا."""
 
@@ -151,6 +155,7 @@ def generators() -> list[tuple[str, tuple[str, ...], Any]]:
     """(المولِّد، المودَعاتُ التي يقرؤها، دالّتُه) — الترتيبُ ترتيبُ السجلّ."""
 
     from gate import mabni_bridge
+    from gate.degrees import attestation
     from gate.hamza import seat_census
 
     corpus, masaq = "corpora/quran-simple-enhanced.txt", "corpora/MASAQ.csv"
@@ -159,6 +164,7 @@ def generators() -> list[tuple[str, tuple[str, ...], Any]]:
         ("gate.audit.main", (corpus,), _audit),
         ("tools/gen_hadith_lines.py::stats", hadith, lambda: _hadith_tool().stats()),
         ("gate.hamza.seat_census", (corpus,), lambda: seat_census(_surfaces())),
+        ("gate.degrees.attestation", (corpus,), lambda: attestation(_surfaces())),
         ("gate.mabni_bridge.verb_readings", (masaq,), mabni_bridge.verb_readings),
         ("gate.mabni_bridge.verb_generation_reading", (masaq,),
          mabni_bridge.verb_generation_reading),

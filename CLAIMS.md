@@ -12,7 +12,7 @@
 | `corpora/hadith/sahih_muslim_ahadith_mushakkala_mufassala.utf8.csv.gz` | واقع مختوم (ODbL 1.0؛ بايتاتُه بعد فكّ الضغط) | `79232c8d7c27fef161d8f33ca169f9754741cfe14957dde2ac76893374998943` |
 | `corpora/abniya-intiqa-lines.txt` | مجالٌ مختومٌ ثالث: انتقاءُ الأبنية بيد المالك (`ABNIYA_INTIQA_SHA256`، ADR ١٣) | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 
-## الأرقام (178 رقمًا من 19 مولِّدًا)
+## الأرقام (205 رقمًا من 21 مولِّدًا)
 
 ### `gate.audit.main`
 
@@ -139,6 +139,39 @@
 | `miss.ئ` | 46 |
 | `seats` | 4,213 |
 
+### `gate.degrees.attestation`
+
+يقرأ: `corpora/quran-simple-enhanced.txt`. بصمةُ المخرَج: `fce2ff86346c07b7`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `degrees.1.attested` | 2 |
+| `degrees.1.forms` | 64 |
+| `degrees.1.table` | 3 |
+| `degrees.2.attested` | 12 |
+| `degrees.2.forms` | 1,835 |
+| `degrees.2.table` | 12 |
+| `degrees.3.attested` | 35 |
+| `degrees.3.forms` | 6,840 |
+| `degrees.3.table` | 48 |
+| `degrees.3.unattested.len` | 13 |
+| `degrees.4.attested` | 79 |
+| `degrees.4.forms` | 6,320 |
+| `degrees.4.table` | 192 |
+| `degrees.5.attested` | 122 |
+| `degrees.5.forms` | 2,531 |
+| `degrees.5.table` | 768 |
+| `degrees.6.attested` | 111 |
+| `degrees.6.forms` | 488 |
+| `degrees.6.table` | 3,072 |
+| `degrees.7.attested` | 36 |
+| `degrees.7.forms` | 95 |
+| `degrees.7.table` | 12,288 |
+| `degrees.8.attested` | 4 |
+| `degrees.8.forms` | 6 |
+| `degrees.8.table` | 49,152 |
+| `refused_by_gate` | 21 |
+
 ### `gate.mabni_bridge.verb_readings`
 
 يقرأ: `corpora/MASAQ.csv`. بصمةُ المخرَج: `ac473b098cf1934f`.
@@ -237,6 +270,14 @@
 |---|---|
 | `counts.csv.rows` | 7 |
 
+### `lake exe a116-table degrees`
+
+يقرأ: — (نواةُ Lean؛ لا مودَع). بصمةُ المخرَج: `0217e1252456df8d`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `degrees.csv.rows` | 255 |
+
 ### `lake exe a116-table hadd`
 
 يقرأ: — (نواةُ Lean؛ لا مودَع). بصمةُ المخرَج: `b0d2c362048bc8ff`.
@@ -326,7 +367,7 @@
 | `utf8.csv.rows` | 53 |
 
 
-## أعدادُ المبرهنات بوحداتها (25 مبرهنة)
+## أعدادُ المبرهنات بوحداتها (29 مبرهنة)
 
 مستخرَجةٌ من نصوص Lean (`formal/a116/A116/*.lean`): كلُّ مبرهنةٍ مدقَّقة ينتهي نصُّها بـ‎= عدد‎؛ والوحدةُ من القائمة المغلقة أدناه (ADR ١٢). العددُ هو الثابتُ الأخير في نصّ المبرهنة.
 
@@ -346,6 +387,8 @@
 | 375 | سلسلة غلاف بالطول | `A116.Envelope.envelope_375` |
 | 75 | سلسلة غلاف بالطول | `A116.Envelope.envelope_licensed_75` |
 | 59 | سلسلة غلاف بالطول | `A116.Envelope.envelope_licensed_continue_59` |
+| 116 | دور خانة | `A116.Exhaust.role_count` |
+| 3 | حقل وظيفة | `A116.Exhaust.current_qaim_count` |
 | 28 | حامل | `A116.Field112.letters28_length` |
 | 112 | خانة | `A116.Field112.hamilField112_length` |
 | 31 | قالب | `A116.Ishtiqaq.soundTemplates_length` |
@@ -357,11 +400,14 @@
 | 8 | خانة | `A116.Numbering.orders_differ_only_in_two_rows` |
 | 375 | متتالية أصناف بالوزن | `A116.PauseCount.pause_count_375` |
 | 2 | بايت | `A116.Unicode.arabic_is_two_bytes` |
+| 10 | حامل | `A116.Zawaid.zawaid_length` |
+| 37 | خانة | `A116.Zawaid.zawaid_cells_licensable` |
 
 ### رقمٌ واحدٌ بوحداتٍ مختلفة — لا يُقرأ بلا وحدته
 
-- 3: حالة آلة؛ خانة
+- 3: حالة آلة؛ حقل وظيفة؛ خانة
 - 6: احتمال×6؛ ضلع اشتقاق
+- 116: خانة؛ دور خانة
 - 375: سلسلة غلاف بالطول؛ متتالية أصناف بالوزن
 
 ### القائمةُ المغلقة للوحدات
@@ -381,3 +427,5 @@
 | قالب | قالبُ صيغةٍ صرفيّة |
 | متتالية أصناف بالوزن | متتاليةُ أصنافٍ (cv=2، v=c=1) بوزنها الصوتيّ |
 | سلسلة غلاف بالطول | سلسلةُ C/V من الغلاف المقترَح بطولها |
+| دور خانة | زوجُ (خانةٍ مرخَّصة، دورٍ تقبله: cv أو v أو c) — ADR ١٥ |
+| حقل وظيفة | حقلٌ من الوظائف السبع في صفّ درجة (ترميز … دلالة) — ADR ١٥ |

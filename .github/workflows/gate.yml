@@ -68,7 +68,11 @@ jobs:
                    Hamza.prefix_hamza_admissible \
                    Hadd.geminateB_vc_carrier Hadd.geminateB_vc_final Hadd.strict_cvvc_is_geminate \
                    Hadd.strictB_continue Hadd.hadd_debt_closed Hadd.farq_needs_its_hamza \
-                   Hadd.straddle_rejected Hadd.ya_shafiina_straddles Hadd.strictJoinB_nil; do
+                   Hadd.straddle_rejected Hadd.ya_shafiina_straddles Hadd.strictJoinB_nil \
+                   Exhaust.codeI_snoc Exhaust.decodeI_codeI Exhaust.codeI_decodeI Exhaust.table_nodup \
+                   Exhaust.strict_mem_table Exhaust.mem_table_iff_contGrade Exhaust.table_realized_upto_three Exhaust.roles_exhausted_within_three \
+                   Exhaust.exhaustion_gate Exhaust.no_skip Exhaust.current_stops_at_one \
+                   Zawaid.template_lits_from_zawaid Zawaid.peel_sound_templates; do
             grep -q "A116.$t" axioms.txt || { echo "::error::$t غيرُ مدقَّقة"; exit 1; }
           done
 
@@ -83,7 +87,8 @@ jobs:
           lake exe a116-table utf8 > utf8.csv
           lake exe a116-table hamza > hamza.csv
           lake exe a116-table licensable > licensable.csv
-          git diff --exit-code -- table.csv counts.csv order.csv numbers.csv pairs.csv utf8.csv hamza.csv licensable.csv
+          lake exe a116-table degrees > degrees.csv
+          git diff --exit-code -- table.csv counts.csv order.csv numbers.csv pairs.csv utf8.csv hamza.csv licensable.csv degrees.csv
           lake exe a116-table syllables > syllables.csv   # 13 MB: يُولَّد هنا ويُسلَّم للبايثون لا يُودَع
           lake exe a116-table hadd > hadd.csv             # 14 MB: قيدُ الحدّ (Hadd.strictB) — يُولَّد ولا يُودَع
           lake exe a116-table hadd-join > hadd-join.csv   # الحدُّ بين كلمتين (Hadd.strictJoinB) — يُولَّد ولا يُودَع

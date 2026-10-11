@@ -167,6 +167,12 @@ def main (args : List String) : IO Unit := do
               for nw in [false, true] do
                 let s := Hamza.seatOf ⟨p, own, prev, pl, py, nw⟩
                 IO.println s!"{repr p},{repr own},{repr prev},{pl},{py},{nw},{repr s}"
+  | ["degrees"] =>
+    -- جداولُ الدرجات وصلًا (`Exhaust.table`): الدرجة d = 1 … 4، والعدد n، ومقاطعُ الصفّ — 255 سطرًا.
+    for k in List.range 4 do
+      for n in List.range (3 * 4 ^ k) do
+        let ss := Exhaust.decodeW k n
+        IO.println s!"{k + 1},{n},{"-".intercalate (ss.map SyllableTable.sylName)}"
   | ["utf8"] =>
     -- أبجديّةُ الرسم: الحروفُ ‎U+0621–U+064A‎، العلاماتُ ‎U+064B–U+0652‎، ألفُ الوصل ‎U+0671‎، والمسافة.
     for c in (List.range 0x2B).map (· + 0x621) ++ (List.range 8).map (· + 0x64B) ++ [0x671, 0x20] do

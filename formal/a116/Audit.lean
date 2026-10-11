@@ -267,3 +267,37 @@ import A116
 #print axioms A116.Grade.pause_length
 #print axioms A116.Grade.grade_table
 #print axioms A116.Grade.grade_one
+-- الاستنفادُ قبل الانتقال (ADR ١٥): جداولُ الدرجات وعددُها وبوّابتُها والوظائفُ السبع
+#print axioms A116.Exhaust.codeI_snoc
+#print axioms A116.Exhaust.decodeI_codeI
+#print axioms A116.Exhaust.codeI_decodeI
+#print axioms A116.Exhaust.mem_tableI
+#print axioms A116.Exhaust.tableI_nodup
+#print axioms A116.Exhaust.mem_table
+#print axioms A116.Exhaust.table_nodup
+#print axioms A116.Exhaust.codeW_snoc
+#print axioms A116.Exhaust.table_counts
+#print axioms A116.Exhaust.strict_mem_table
+#print axioms A116.Exhaust.mem_tableI_iff_contGrade
+#print axioms A116.Exhaust.mem_table_iff_contGrade
+#print axioms A116.Exhaust.hadd_removes
+#print axioms A116.Exhaust.farq_is_the_exception
+#print axioms A116.Exhaust.table_realized_upto_three
+#print axioms A116.Exhaust.roles_exhausted_within_three
+#print axioms A116.Exhaust.role_count
+#print axioms A116.Exhaust.exhaustion_gate
+#print axioms A116.Exhaust.no_skip
+#print axioms A116.Exhaust.gate_of_exhausted
+#print axioms A116.Exhaust.current_row1_not_mustawfa
+#print axioms A116.Exhaust.current_stops_at_one
+#print axioms A116.Exhaust.current_qaim_count
+-- الزوائدُ العشر من الـ116 (ADR ١٥)
+#print axioms A116.Zawaid.zawaid_length
+#print axioms A116.Zawaid.zawaid_nodup
+#print axioms A116.Zawaid.zawaid_are_carriers
+#print axioms A116.Zawaid.zawaid_cells_licensable
+#print axioms A116.Zawaid.template_lits_from_zawaid
+#print axioms A116.Zawaid.tafa_template_rejected
+#print axioms A116.Zawaid.peel_returns_root
+#print axioms A116.Zawaid.peel_sound_templates
+#print axioms A116.Zawaid.ibdal_targets_outside_zawaid
