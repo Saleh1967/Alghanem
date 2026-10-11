@@ -150,3 +150,42 @@ def test_owner_reference_frame(tmp_path: Path) -> None:
         w.writerows(bad)
     tool.REFERENCE = ref  # type: ignore[attr-defined]
     assert tool.check_reference() == ["REFERENCE_ROW_MALFORMED A001"]  # type: ignore[attr-defined]
+
+
+def test_intiqa_deposit_is_bound_and_counted_only_when_signed(tmp_path: Path) -> None:
+    """انتقاءُ الأبنية (ADR ٣٨): المودَعُ ببصمته القانونيّة (`ABNIYA_INTIQA_DIGEST`)، ولا صفَّ قبل
+    التوقيع؛
+    وعلى نسخةٍ مؤقّتةٍ موقَّعة يُعدّ المشهودُ والمرفوض: «ٱسْتَفْعَلَ» (كسر سكون فتح سكون فتح فتح، باليد)
+    مشهودٌ مرخَّص، وصفٌّ رفضته البوّابةُ يُعدّ مرفوضًا لا يُحذف. والطفرة: تعديلُ المودَع يغيّر البصمة،
+    وإلغاءُ التوقيع يُفرغ المعدود."""
+
+    import hashlib
+    import json
+
+    from slge.abniya_licence_table import SIGNED
+    from slge.manifest import ABNIYA_INTIQA_DIGEST
+
+    def digest(d: object) -> str:
+        blob = json.dumps(d, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        return hashlib.sha256(blob.encode("utf-8")).hexdigest()
+
+    tool = _tool()
+    d = json.loads((ROOT / "tests" / "data" / "abniya-intiqa.json").read_text(encoding="utf-8"))
+    assert digest(d) == ABNIYA_INTIQA_DIGEST and d["signed"] is False and d["rows"] == []
+    assert SIGNED == () and tool.signed_rows() == []  # type: ignore[attr-defined]
+    a, i, s = "فتح", "كسر", SUKUN
+    d.update(signed=True, rows=[
+        {"id": "x", "skeleton": "استفعل", "status": "CERTIFICATE", "states": [i, s, a, s, a, a]},
+        {"id": "y", "skeleton": "فعيل", "status": "REJECT", "states": None,
+         "reasons": ["NOT_CONTINUE_LICENSED_AFTER_REPAIR"]}])
+    assert digest(d) != ABNIYA_INTIQA_DIGEST
+    fake = tmp_path / "abniya-intiqa.json"
+    fake.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
+    tool.INTIQA = fake  # type: ignore[attr-defined]
+    rows = tool.signed_rows()  # type: ignore[attr-defined]
+    assert [c for _, c in rows] == [(("ء", i), ("س", s), ("ت", a), ("ف", s), ("ع", a), ("ل", a))]
+    m = tool.intiqa_measure()  # type: ignore[attr-defined]
+    assert (m["filled"], m["refused"], m["certified"], m["licensed"]) == (2, 1, 1, 1)
+    d["signed"] = False
+    fake.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
+    assert tool.signed_rows() == []  # type: ignore[attr-defined]

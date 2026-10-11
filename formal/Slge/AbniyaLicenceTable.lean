@@ -173,4 +173,11 @@ def witnesses : List (List Nat × List SCell) := [
 
 theorem witnesses_length : witnesses.length = 158 := by rfl
 
+set_option maxRecDepth 100000 in
+/-- انتقاءُ الأبنية الموقَّع (ADR ٣٨): ما شهدت له البوّابةُ من صفوفه — الهيكلُ وخاناتُه بحالات الطبعة؛ فارغٌ قبل التوقيع. -/
+def signed : List (List Nat × List SCell) := []
+
+/-- عددُ الموقَّع المرخَّص وصلًا ووقفًا، محسوبًا عند التوليد ومبرهنًا في `AbniyaLicence`. -/
+def signedLicensed : Nat := 0
+
 end Slge.AbniyaLicenceTable

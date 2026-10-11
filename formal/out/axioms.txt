@@ -947,6 +947,8 @@
 'Slge.AbniyaLicence.witnesses_alif_sukun' does not depend on any axioms
 'Slge.AbniyaLicence.wasl_is_the_difference' depends on axioms: [propext, Quot.sound]
 'Slge.AbniyaLicence.wasl_vowel_irrelevant' depends on axioms: [propext, Quot.sound]
+'Slge.AbniyaLicence.signed_match' depends on axioms: [propext]
+'Slge.AbniyaLicence.signed_licensed_count' depends on axioms: [propext, Quot.sound]
 'Slge.AbniyaLicenceTable.witnesses_length' does not depend on any axioms
 'Slge.MadlulTable.unsigned_none' does not depend on any axioms
 'Slge.Hukm.jins_no_delete' depends on axioms: [propext, Quot.sound]

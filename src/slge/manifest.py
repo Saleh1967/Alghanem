@@ -11,7 +11,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Final
 
-__all__ = ["AJNAS_DIGEST", "CERTIFICATES_DIGEST", "CONTEXT_CERTIFICATES_DIGEST", "DEPOSITS",
+__all__ = ["ABNIYA_INTIQA_DIGEST", "AJNAS_DIGEST", "CERTIFICATES_DIGEST",
+           "CONTEXT_CERTIFICATES_DIGEST", "DEPOSITS",
            "DEPOSIT_KINDS", "GATE_REV", "HADITH_CONTEXT_CERTIFICATES_DIGEST", "MODULES", "Deposit",
            "Module", "index_tools", "lean_files", "readers_under_law", "tables"]
 
@@ -150,7 +151,7 @@ class Deposit:
     licence: str = ""
 
 
-GATE_REV: Final[str] = "4648a95bf4ae0ceeceb83efe136c23129b2efc9a"
+GATE_REV: Final[str] = "1f3a085876a51da37ed71e1d071abf4fd769f8e8"
 """إيداعُ بوّابة الغانم (`Saleh1967/Alghanem`، فرع `claude/official-gate`) الذي يُعاد منه توليدُ مودَع
 الشهادات في CI (`tools/gen_certificates.py --check`): ما يقيسه SLGE هو ما تطبعه البوّابةُ على المدوّنة
 المختومة بهذا الإيداع؛ أيُّ فرقٍ `DEPOSIT_DRIFTED_FROM_GATE`. يُرفع مع المودَع معًا لا أحدُهما وحدَه."""
@@ -175,6 +176,11 @@ AJNAS_DIGEST: Final[str] = "db619720dae3f2c27881789727c121ffd7a75910ae0b605a01f9
 """بصمةُ مودَع المعلومات السابقة الأوّل (`ajnas-qabiliyyat.json.gz`) بصورته القانونيّة قبل الضغط
 (بايتاتُ gzip تختلف باختلاف zlib) كما يولّده `tools/deposit_ajnas.py` من جدول المخصّص المختوم؛ مودَعٌ
 مشتقٌّ لا مختوم، فبصمتُه هنا لا في `Deposit.sha256` (ADR ٣٤)."""
+
+ABNIYA_INTIQA_DIGEST: Final[str] = (
+    "b24013b5e9f5d230324cac1e731926c4acb4dd97f64fd35ad5234876937506c0")
+"""بصمةُ مودَع انتقاء الأبنية بصورته القانونيّة (JSON مرتّبَ المفاتيح بلا فراغ) كما طبعته أداةُ الغانم
+`gen_abniya_intiqa.py deposit` على `GATE_REV` (ADR ٣٨)؛ CI يعيد توليدَه هناك ويطابقه."""
 
 DEPOSITS: Final[tuple[Deposit, ...]] = (
     Deposit("corpus-certificates.json.gz", "واقع مختوم",
@@ -254,8 +260,12 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
             "وسمُ الأجناس الـ73 بقسمة ج3 409 «باعتبار المدلول وحده» (معنى / أقسامُ اللفظ الأربعة / "
             "«ليس جنسًا»): إطارٌ يملؤه المالكُ ويوقّعه — ولا وسمَ قبل التوقيع؛ الاقتراحُ فيه رأيُ الوكيل "
             "لا يستهلكه الحكم (tools/deposit_madlul.py، ADR ٣٥)"),
+    Deposit("abniya-intiqa.json", "مرجع محجوب",
+            "انتقاءُ الأبنية الموقَّع (الغانم ADR ١٣): لكلّ صفٍّ مملوءٍ من إطار الغانم شهادةُ البوّابة على "
+            "المجال المختوم الثالث وحالاتُ حروف الهيكل أو رفضُها المسمّى، والتوقيع؛ مولَّدٌ هناك على "
+            "GATE_REV وبصمتُه ABNIYA_INTIQA_DIGEST (ADR ٣٨) — لا رقمَ قبل التوقيع"),
     Deposit("abniya-reference.tsv", "مرجع محجوب",
-            "إطارُ تشكيل أبنية سيبويه الـ158 (الكتابُ المختوم بلا حركات): ثابتُه من "
+            "مستبدَلٌ بانتقاء الأبنية (ADR ٣٨) ولا يُملأ — إطارُ تشكيل أبنية سيبويه الـ158: ثابتُه من "
             "sibawayh-abniya.tsv، وأعمدةٌ يملؤها المالكُ حالاتٍ لا نصًّا (states، source)؛ "
             "يُقاس عليه الترخيصُ والشاهد — لا رقمَ قبل الملء "
             "(tools/gen_abniya_licence_index.py، ADR ٣٧)"),

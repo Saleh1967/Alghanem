@@ -18,6 +18,7 @@
 from __future__ import annotations
 
 import csv
+import json
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -34,6 +35,9 @@ LEAN = ROOT / "formal" / "Slge" / "AbniyaLicenceTable.lean"
 PY = ROOT / "src" / "slge" / "abniya_licence_table.py"
 SOURCE = ROOT / "tests" / "data" / "sibawayh-abniya.tsv"
 REFERENCE = ROOT / "tests" / "data" / "abniya-reference.tsv"
+INTIQA = ROOT / "tests" / "data" / "abniya-intiqa.json"
+"""انتقاءُ الأبنية الموقَّع (الغانم ADR ١٣؛ هنا ADR ٣٨): مودَعٌ تطبعه أداةُ الغانم `gen_abniya_intiqa.py`
+على `GATE_REV` — لكلّ صفٍّ مملوءٍ شهادةُ البوّابة وحالاتُ حروف الهيكل أو رفضُها المسمّى، والتوقيع."""
 FIXED = ("id", "skeleton", "letters", "kitab_lines", "as_written")
 OWNER = ("states", "source", "note")
 MARKS = {"فتح": "َ", "كسر": "ِ", "ضم": "ُ", "سكون": "ْ"}
@@ -105,6 +109,44 @@ def check_reference() -> list[str]:
     return bad
 
 
+def intiqa() -> dict[str, Any]:
+    with INTIQA.open(encoding="utf-8") as f:
+        d: dict[str, Any] = json.load(f)
+    return d
+
+
+def signed_rows() -> list[tuple[tuple[int, ...], tuple[tuple[str, str], ...]]]:
+    """الصفوفُ الموقَّعة التي شهدت لها البوّابة: (الهيكل، خاناتُه بحالات الطبعة)؛ ولا شيء قبل التوقيع."""
+
+    d = intiqa()
+    if not d["signed"]:
+        return []
+    by_name = {_name(sk): sk for sk in SKELETONS}
+    out = []
+    for r in d["rows"]:
+        if r["status"] == "CERTIFICATE" and r["states"]:
+            sk = by_name[r["skeleton"]]
+            out.append((sk, tuple((HAMZA if i == 0 and is_wasl(sk) else ALPHABET[k], st)
+                                  for i, (k, st) in enumerate(zip(sk, r["states"], strict=True)))))
+    return out
+
+
+def intiqa_measure() -> dict[str, Any]:
+    d = intiqa()
+    rows = d["rows"]
+    signed = signed_rows()
+    ws = {sk: _witness(sk) for sk, _ in signed}
+    return {
+        "size": len(d["frame"]), "filled": len(rows), "signed": bool(d["signed"]),
+        "refused": sum(r["status"] != "CERTIFICATE" for r in rows),
+        "certified": len(signed),
+        "continue": sum(continue_licensed(c) for _, c in signed),
+        "pause": sum(pause_licensed(c) for _, c in signed),
+        "licensed": sum(continue_licensed(c) and pause_licensed(c) for _, c in signed),
+        "witness_equal": sum(ws[sk] == c for sk, c in signed),
+    }
+
+
 def reference_measure() -> dict[str, Any]:
     rows = [r for r in reference_rows() if r["states"].strip()]
     cells = [c for c in (owner_cells(r) for r in rows) if c is not None]
@@ -137,6 +179,7 @@ def measure() -> dict[str, Any]:
                                                  for r in rows),
         "rows": rows,
         "reference": reference_measure(),
+        "intiqa": intiqa_measure(),
     }
 
 
@@ -145,6 +188,7 @@ def _vowelled(w: tuple[tuple[str, str], ...]) -> str:
 
 
 def render_tables() -> tuple[str, str]:
+    signed = signed_rows()
     ws = []
     for sk in SKELETONS:
         w = _witness(sk)
@@ -166,6 +210,17 @@ def render_tables() -> tuple[str, str]:
         "def witnesses : List (List Nat × List SCell) := [",
         ",\n".join(lean_rows), "]", "",
         f"theorem witnesses_length : witnesses.length = {len(ws)} := by rfl", "",
+        "set_option maxRecDepth 100000 in",
+        "/-- انتقاءُ الأبنية الموقَّع (ADR ٣٨): ما شهدت له البوّابةُ من صفوفه — الهيكلُ وخاناتُه بحالات "
+        "الطبعة؛ فارغٌ قبل التوقيع. -/",
+        "def signed : List (List Nat × List SCell) := [" + "".join(
+            f"\n  ([{', '.join(str(i) for i in sk)}], "
+            f"[{', '.join(f'c {ALPHABET.index(k)} {STATES.index(x)}' for k, x in c)}])"
+            + ("," if j < len(signed) - 1 else "") for j, (sk, c) in enumerate(signed)) + "]", "",
+        "/-- عددُ الموقَّع المرخَّص وصلًا ووقفًا، محسوبًا عند التوليد ومبرهنًا في `AbniyaLicence`. -/",
+        "def signedLicensed : Nat := "
+        f"{sum(continue_licensed(c) and pause_licensed(c) for _, c in signed)}",
+        "",
         "end Slge.AbniyaLicenceTable", "",
     ])
     py = "\n".join([
@@ -175,6 +230,10 @@ def render_tables() -> tuple[str, str]:
         "WITNESSES: Final[tuple[tuple[tuple[int, ...], tuple[tuple[int, int], ...]], ...]] = (",
         *(f"    ({sk!r},\n     {tuple((ALPHABET.index(k), STATES.index(s)) for k, s in w)!r}),"
           for sk, w in ws), ")", "",
+        "SIGNED: Final[tuple[tuple[tuple[int, ...], tuple[tuple[int, int], ...]], ...]] = (",
+        *(f"    ({sk!r},\n     {tuple((ALPHABET.index(k), STATES.index(x)) for k, x in c)!r}),"
+          for sk, c in signed), ")",
+        '"""انتقاءُ الأبنية الموقَّع: ما شهدت له البوّابةُ من صفوفه (ADR ٣٨)؛ فارغٌ قبل التوقيع."""', "",
     ])
     return lean, py
 
@@ -211,17 +270,23 @@ def render(m: dict[str, Any]) -> str:
         "**سقفٌ** لكلّ هيكل لا شهادةٌ بالبناء المشكول. والشاهدُ في Lean أوّلُ تشكيلٍ مرخَّصٍ بترتيب "
         "الحالات `STATES`، لا تشكيلُ سيبويه.",
         "",
-        "## المرجعُ المحجوب: تشكيلُ سيبويه بيد المالك (ADR ٣٧)",
+        "## المرجعُ: انتقاءُ الأبنية الموقَّع (ADR ٣٨؛ الغانم ADR ١٣)",
         "",
-        "الكتابُ المختوم بلا حركات (لا علامةَ حركةٍ في نصّه)، والمطابقةُ بالحروف على المصحف تُلبس "
-        "(«كانوا» على فاعل، «إنّهم» على انفعل)؛ فتشكيلُ البناء يُملأ في `abniya-reference.tsv` "
-        "حالاتٍ لا نصًّا، بطبعته وموضعه.",
+        "الكتابُ المختوم بلا حركات، والمطابقةُ بالحروف على المصحف تُلبس («كانوا» على فاعل، «إنّهم» على "
+        "انفعل)؛ فتشكيلُ البناء سماعٌ ينقله المالكُ من طبعةٍ مشكولةٍ بموضعها إلى إطار الغانم "
+        "(`corpora/abniya-intiqa.tsv`)، ويمرّ على البوّابة **مجالًا مختومًا ثالثًا**، ويصل هنا مودَعًا "
+        "(`abniya-intiqa.json`) خاناتٍ لا نصًّا. ولا يُعدّ صفٌّ قبل التوقيع؛ ورفضُ البوّابة لصفٍّ موقَّعٍ "
+        "نقضٌ مسمًّى للترخيص لا يُخفى. (إطارُ الحالات السابق `abniya-reference.tsv`، ADR ٣٧، "
+        "مستبدَلٌ بهذا ولا يُملأ.)",
         "",
-        *(["- **لا رقم**: الإطارُ غيرُ مملوء (0 من "
-           f"{m['reference']['size']})."] if not m["reference"]["filled"] else [
-            f"- مملوء: {m['reference']['filled']} من {m['reference']['size']}؛ "
-            f"المرخَّصُ منه وصلًا {m['reference']['continue']} ووقفًا {m['reference']['pause']}؛ "
-            f"ويساوي شاهدَ Lean {m['reference']['witness_equal']}."]),
+        *([f"- **لا رقم**: المملوءُ {m['intiqa']['filled']} من {m['intiqa']['size']}، موقَّع: "
+           f"{'نعم' if m['intiqa']['signed'] else 'لا'}."]
+          if not (m["intiqa"]["signed"] and m["intiqa"]["filled"]) else [
+            f"- موقَّع: {m['intiqa']['filled']} صفًّا من {m['intiqa']['size']}؛ شهدت البوّابةُ لـ"
+            f"{m['intiqa']['certified']} ورفضت {m['intiqa']['refused']} بأسمائها في المودَع.",
+            f"- من المشهود: المرخَّصُ وصلًا {m['intiqa']['continue']} ووقفًا {m['intiqa']['pause']}، "
+            f"ومعًا {m['intiqa']['licensed']} (`signed_licensed_count`)؛ ويساوي شاهدَ Lean "
+            f"{m['intiqa']['witness_equal']}."]),
         "",
         "## الهياكل",
         "",

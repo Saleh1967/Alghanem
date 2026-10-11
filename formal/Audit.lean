@@ -952,6 +952,8 @@ import Slge
 #print axioms Slge.AbniyaLicence.witnesses_alif_sukun
 #print axioms Slge.AbniyaLicence.wasl_is_the_difference
 #print axioms Slge.AbniyaLicence.wasl_vowel_irrelevant
+#print axioms Slge.AbniyaLicence.signed_match
+#print axioms Slge.AbniyaLicence.signed_licensed_count
 #print axioms Slge.AbniyaLicenceTable.witnesses_length
 #print axioms Slge.MadlulTable.unsigned_none
 #print axioms Slge.Hukm.jins_no_delete

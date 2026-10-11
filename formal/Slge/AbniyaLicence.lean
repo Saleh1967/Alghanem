@@ -76,4 +76,22 @@ theorem wasl_vowel_irrelevant :
         Madd.pauseLicensed (withFirst st p.2) == Madd.pauseLicensed p.2) = true := by
   decide +kernel
 
+/-! ## انتقاءُ الأبنية الموقَّع (ADR ٣٨)
+
+`AbniyaLicenceTable.signed`: ما وقّعه المالكُ وشهدت له البوّابةُ على المجال المختوم الثالث (الغانم ADR ١٣)،
+الهيكلُ وخاناتُه بحالات الطبعة. لا يُفترض أنّه مرخَّص: `signed_licensed_count` **يعدّ** المرخَّصَ منه وصلًا
+ووقفًا عددًا محسوبًا عند التوليد (`signedLicensed`)، فما نقص عن الطول نقضٌ مسمًّى للترخيص لا يُخفى. -/
+
+open Slge.AbniyaLicenceTable (signed signedLicensed)
+
+set_option maxRecDepth 100000 in
+theorem signed_match :
+    signed.all (fun p => p.2.map (fun x => x.carrier.val) == waslize p.1) = true := by decide
+
+set_option maxRecDepth 100000 in
+theorem signed_licensed_count :
+    (signed.filter (fun p => Madd.continueLicensed p.2 && Madd.pauseLicensed p.2)).length
+      = signedLicensed := by
+  decide +kernel
+
 end Slge.AbniyaLicence

@@ -323,3 +323,7 @@ WITNESSES: Final[tuple[tuple[tuple[int, ...], tuple[tuple[int, int], ...]], ...]
     ((28, 25, 20, 18, 23),
      ((28, 0), (25, 0), (20, 0), (18, 0), (23, 0))),
 )
+
+SIGNED: Final[tuple[tuple[tuple[int, ...], tuple[tuple[int, int], ...]], ...]] = (
+)
+"""انتقاءُ الأبنية الموقَّع: ما شهدت له البوّابةُ من صفوفه (ADR ٣٨)؛ فارغٌ قبل التوقيع."""

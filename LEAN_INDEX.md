@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_lean_index.py` من ملفّات `.lean` و`Audit.lean` و`out/axioms.txt`؛ لا يُحرَّر باليد. الـ116 من الغانم بإيداعه المثبَّت في `formal/lakefile.toml`.
 
-**1411 مبرهنة، منها 1026 مدقَّقةُ المسلّمات.**
+**1417 مبرهنة، منها 1028 مدقَّقةُ المسلّمات.**
 
 كلُّ درجةٍ تستهلك ما قبلها: لا تدخل الكلمةُ درجةً قبل أن تُرخَّص في التي تحتها. «مدقَّق» = في `Audit.lean` وطُبعت مسلّماتُه؛ وما ليس مدقَّقًا مبرهَنٌ في Lean لكن لم يُطبع سندُه بعدُ فلا يُستشهد به في `status.py`.
 
@@ -387,7 +387,7 @@
 | `pause_count_fib` | **المبرهنة:** من كلّ قوائم الخانات بوزن `n ≥ 2`، المرخَّصةُ وقفًا (`pauseB`) عددُها `fib n`. | مدقَّق | propext, Quot.sound |
 | `pause_count_375` | الأطوالُ 2..12 مجموعُها 375. | مدقَّق | propext, Quot.sound |
 
-### `A116/ContinueCount.lean` — 20 مبرهنة (`A116.Ternary`)
+### `A116/ContinueCount.lean` — 21 مبرهنة (`A116.Ternary`)
 
 | المبرهنة | ما تقول | التدقيق | المسلّمات |
 |---|---|---|---|
@@ -409,16 +409,20 @@
 | `cntC_n_closed` | الشكلُ المغلق من حالة «بعد متحرّك»: ‎2·cntC .n m + [m%3=2] = fib (m+3) + [m%3=1]‎. | — | — |
 | `cntC_start` | الشكلُ المغلق من حالة «بعد متحرّك»: ‎2·cntC .n m + [m%3=2] = fib (m+3) + [m%3=1]‎. | — | — |
 | `continue_count_closed` | **المبرهنة:** من كلّ قوائم الخانات بوزن `n`، المرخَّصةُ وصلًا عددُها ‎a‎ حيث | مدقَّق | propext, Quot.sound |
+| `continue_count_closed_form` | **الشكلُ المغلق بالصحاح** (ADR ١٢): ‎a(n) = (fib(n+1) + [n≡0] − [n≡1]) / 2‎ مضروبًا في 2 — نتيجةٌ | — | — |
 | `pause_eq_continue_add` | الوقفُ هو الوصلُ ومقطعٌ طرفيٌّ CVCC أو CVVCC: ‎fib (m+5) = a(m+5) + a(m+1) + a(m)‎. | مدقَّق | propext, Quot.sound |
 | `continue_count_304` | الأطوالُ 2..12 وصلًا مجموعُها 304 (والوقفُ 375). | — | — |
 
-### `A116/Envelope.lean` — 3 مبرهنة (`A116.Ternary`)
+### `A116/Envelope.lean` — 6 مبرهنة (`A116.Ternary`)
 
 | المبرهنة | ما تقول | التدقيق | المسلّمات |
 |---|---|---|---|
 | `envelope_375` | — | مدقَّق | propext |
 | `envelope_licensed_75` | — | مدقَّق | propext, Quot.sound |
 | `envelope_licensed_continue_59` | — | — | — |
+| `envelope_pause_per_length` | — | — | — |
+| `envelope_continue_per_length` | — | — | — |
+| `envelope_recurrences_upto_12` | التكراران على الأطوال المحسوبة (الفهرسُ ‎i‎ للطول ‎i+2‎). | — | — |
 
 ## الدرجة ٩ — الإعلالُ والهمزة: تعديلاتٌ على الخانات تُردّ، والكرسيُّ دالّةٌ في السياق
 
@@ -1535,7 +1539,7 @@
 |---|---|---|---|
 | `witnesses_length` | — | مدقَّق | لا مسلّمات |
 
-### `Slge/AbniyaLicence.lean` — 6 مبرهنة (`Slge.AbniyaLicence`)
+### `Slge/AbniyaLicence.lean` — 8 مبرهنة (`Slge.AbniyaLicence`)
 
 | المبرهنة | ما تقول | التدقيق | المسلّمات |
 |---|---|---|---|
@@ -1545,6 +1549,8 @@
 | `witnesses_alif_sukun` | — | مدقَّق | لا مسلّمات |
 | `wasl_is_the_difference` | — | مدقَّق | propext, Quot.sound |
 | `wasl_vowel_irrelevant` | — | مدقَّق | propext, Quot.sound |
+| `signed_match` | — | مدقَّق | propext |
+| `signed_licensed_count` | — | مدقَّق | propext, Quot.sound |
 
 ### `Slge/Adawat.lean` — 9 مبرهنة (`Slge.Adawat`)
 

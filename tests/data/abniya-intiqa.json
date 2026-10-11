@@ -1,0 +1,1117 @@
+{
+ "frame": [
+  {
+   "id": "A041",
+   "kitab_lines": "18717 18757",
+   "priority": "1",
+   "sealed_page": "4/250 4/253",
+   "skeleton": "فعاعيل"
+  },
+  {
+   "id": "A040",
+   "kitab_lines": "18718",
+   "priority": "1",
+   "sealed_page": "4/250",
+   "skeleton": "فعاعل"
+  },
+  {
+   "id": "A050",
+   "kitab_lines": "18725 19242",
+   "priority": "1",
+   "sealed_page": "4/250 4/293",
+   "skeleton": "فعاليل"
+  },
+  {
+   "id": "A045",
+   "kitab_lines": "18726 19182 19246 19249",
+   "priority": "1",
+   "sealed_page": "4/250 4/288 4/293",
+   "skeleton": "فعالل"
+  },
+  {
+   "id": "A062",
+   "kitab_lines": "18782 18784 19251 19259 19264",
+   "priority": "1",
+   "sealed_page": "4/255 4/293 4/294",
+   "skeleton": "فعلال"
+  },
+  {
+   "id": "A065",
+   "kitab_lines": "18860",
+   "priority": "1",
+   "sealed_page": "4/262",
+   "skeleton": "فعلعال"
+  },
+  {
+   "id": "A094",
+   "kitab_lines": "18860 19262",
+   "priority": "1",
+   "sealed_page": "4/262 4/294",
+   "skeleton": "فعنلال"
+  },
+  {
+   "id": "A109",
+   "kitab_lines": "18901 19226",
+   "priority": "1",
+   "sealed_page": "4/266 4/291",
+   "skeleton": "فعيلل"
+  },
+  {
+   "id": "A106",
+   "kitab_lines": "18904",
+   "priority": "1",
+   "sealed_page": "4/266",
+   "skeleton": "فعيعل"
+  },
+  {
+   "id": "A112",
+   "kitab_lines": "18916",
+   "priority": "1",
+   "sealed_page": "4/267",
+   "skeleton": "فعيليل"
+  },
+  {
+   "id": "A090",
+   "kitab_lines": "18920 19231 19234 19367",
+   "priority": "1",
+   "sealed_page": "4/268 4/292 4/302",
+   "skeleton": "فعليل"
+  },
+  {
+   "id": "A058",
+   "kitab_lines": "18923",
+   "priority": "1",
+   "sealed_page": "4/268",
+   "skeleton": "فعفعيل"
+  },
+  {
+   "id": "A118",
+   "kitab_lines": "18924",
+   "priority": "1",
+   "sealed_page": "4/268",
+   "skeleton": "فنعليل"
+  },
+  {
+   "id": "A092",
+   "kitab_lines": "18934",
+   "priority": "1",
+   "sealed_page": "4/269",
+   "skeleton": "فعنعل"
+  },
+  {
+   "id": "A095",
+   "kitab_lines": "18935 19290 19292",
+   "priority": "1",
+   "sealed_page": "4/269 4/296",
+   "skeleton": "فعنلل"
+  },
+  {
+   "id": "A023",
+   "kitab_lines": "18951",
+   "priority": "1",
+   "sealed_page": "4/270",
+   "skeleton": "التفعل"
+  },
+  {
+   "id": "A125",
+   "kitab_lines": "18980",
+   "priority": "1",
+   "sealed_page": "4/273",
+   "skeleton": "فوعلل"
+  },
+  {
+   "id": "A098",
+   "kitab_lines": "18988",
+   "priority": "1",
+   "sealed_page": "4/274",
+   "skeleton": "فعوعل"
+  },
+  {
+   "id": "A101",
+   "kitab_lines": "18989 19202",
+   "priority": "1",
+   "sealed_page": "4/274 4/289",
+   "skeleton": "فعولل"
+  },
+  {
+   "id": "A082",
+   "kitab_lines": "18997 18998 19208 19211 19213 19215 19217",
+   "priority": "1",
+   "sealed_page": "4/274 4/290 4/291",
+   "skeleton": "فعلول"
+  },
+  {
+   "id": "A067",
+   "kitab_lines": "19013 19014 19015 19168 19172 19175 19177 19299 19303 19304 19305 19309 19310 19311 19316 19341 19357 19358",
+   "priority": "1",
+   "sealed_page": "4/276 4/287 4/288 4/297 4/298 4/300 4/301",
+   "skeleton": "فعلل"
+  },
+  {
+   "id": "A066",
+   "kitab_lines": "19030 19031",
+   "priority": "1",
+   "sealed_page": "4/277",
+   "skeleton": "فعلعل"
+  },
+  {
+   "id": "A024",
+   "kitab_lines": "19090",
+   "priority": "1",
+   "sealed_page": "4/282",
+   "skeleton": "الفاعل"
+  },
+  {
+   "id": "A016",
+   "kitab_lines": "19106",
+   "priority": "1",
+   "sealed_page": "4/283",
+   "skeleton": "افعالل"
+  },
+  {
+   "id": "A017",
+   "kitab_lines": "19106",
+   "priority": "1",
+   "sealed_page": "4/283",
+   "skeleton": "افعاللت"
+  },
+  {
+   "id": "A019",
+   "kitab_lines": "19120",
+   "priority": "1",
+   "sealed_page": "4/284",
+   "skeleton": "افعوعل"
+  },
+  {
+   "id": "A020",
+   "kitab_lines": "19120",
+   "priority": "1",
+   "sealed_page": "4/284",
+   "skeleton": "افعوعلت"
+  },
+  {
+   "id": "A018",
+   "kitab_lines": "19145",
+   "priority": "1",
+   "sealed_page": "4/285",
+   "skeleton": "افعنللت"
+  },
+  {
+   "id": "A102",
+   "kitab_lines": "19206",
+   "priority": "1",
+   "sealed_page": "4/290",
+   "skeleton": "فعوللان"
+  },
+  {
+   "id": "A103",
+   "kitab_lines": "19207",
+   "priority": "1",
+   "sealed_page": "4/290",
+   "skeleton": "فعوللي"
+  },
+  {
+   "id": "A084",
+   "kitab_lines": "19209",
+   "priority": "1",
+   "sealed_page": "4/290",
+   "skeleton": "فعلويل"
+  },
+  {
+   "id": "A132",
+   "kitab_lines": "19220",
+   "priority": "1",
+   "sealed_page": "4/291",
+   "skeleton": "فيعلول"
+  },
+  {
+   "id": "A071",
+   "kitab_lines": "19221",
+   "priority": "1",
+   "sealed_page": "4/291",
+   "skeleton": "فعللوت"
+  },
+  {
+   "id": "A072",
+   "kitab_lines": "19223 19368 19371",
+   "priority": "1",
+   "sealed_page": "4/291 4/302",
+   "skeleton": "فعللول"
+  },
+  {
+   "id": "A110",
+   "kitab_lines": "19229",
+   "priority": "1",
+   "sealed_page": "4/292",
+   "skeleton": "فعيللان"
+  },
+  {
+   "id": "A074",
+   "kitab_lines": "19243 19365",
+   "priority": "1",
+   "sealed_page": "4/293 4/302",
+   "skeleton": "فعلليل"
+  },
+  {
+   "id": "A046",
+   "kitab_lines": "19248",
+   "priority": "1",
+   "sealed_page": "4/293",
+   "skeleton": "فعاللي"
+  },
+  {
+   "id": "A063",
+   "kitab_lines": "19258",
+   "priority": "1",
+   "sealed_page": "4/294",
+   "skeleton": "فعلالاء"
+  },
+  {
+   "id": "A068",
+   "kitab_lines": "19270 19271 19272 19274",
+   "priority": "1",
+   "sealed_page": "4/294 4/295",
+   "skeleton": "فعللاء"
+  },
+  {
+   "id": "A069",
+   "kitab_lines": "19275 19276 19277",
+   "priority": "1",
+   "sealed_page": "4/295",
+   "skeleton": "فعللان"
+  },
+  {
+   "id": "A073",
+   "kitab_lines": "19279 19281 19370",
+   "priority": "1",
+   "sealed_page": "4/295 4/302",
+   "skeleton": "فعللي"
+  },
+  {
+   "id": "A116",
+   "kitab_lines": "19289",
+   "priority": "1",
+   "sealed_page": "4/296",
+   "skeleton": "فنعلل"
+  },
+  {
+   "id": "A142",
+   "kitab_lines": "19317",
+   "priority": "1",
+   "sealed_page": "4/298",
+   "skeleton": "مفعلل"
+  },
+  {
+   "id": "A153",
+   "kitab_lines": "19317",
+   "priority": "1",
+   "sealed_page": "4/298",
+   "skeleton": "يفعلل"
+  },
+  {
+   "id": "A070",
+   "kitab_lines": "19356",
+   "priority": "1",
+   "sealed_page": "4/301",
+   "skeleton": "فعللل"
+  },
+  {
+   "id": "A051",
+   "kitab_lines": "—",
+   "priority": "1",
+   "sealed_page": "—",
+   "skeleton": "فعاليلن"
+  },
+  {
+   "id": "A059",
+   "kitab_lines": "18624 18626 18627 18629 18630 18631 18633 18634 18637 18639 19006 19007 19009 19018 19019 19021 19023 19026 19057 19064 19075 19101 19102 19178 19298 19301",
+   "priority": "2",
+   "sealed_page": "4/241 4/242 4/243 4/275 4/276 4/279 4/280 4/281 4/282 4/283 4/288 4/297",
+   "skeleton": "فعل"
+  },
+  {
+   "id": "A060",
+   "kitab_lines": "18624 18626 18627 18629 18630 18631 18633 18634 18637 18639",
+   "priority": "2",
+   "sealed_page": "4/241 4/242 4/243",
+   "skeleton": "فعلا"
+  },
+  {
+   "id": "A003",
+   "kitab_lines": "18644 18645 18646 18647 18648 18673 19038 19052 19058",
+   "priority": "2",
+   "sealed_page": "4/244 4/246 4/278 4/279 4/280",
+   "skeleton": "ءفعل"
+  },
+  {
+   "id": "A004",
+   "kitab_lines": "18648",
+   "priority": "2",
+   "sealed_page": "4/244",
+   "skeleton": "ءفعلا"
+  },
+  {
+   "id": "A002",
+   "kitab_lines": "18651 18653 18972",
+   "priority": "2",
+   "sealed_page": "4/244 4/272",
+   "skeleton": "ءفعال"
+  },
+  {
+   "id": "A009",
+   "kitab_lines": "18654 18972",
+   "priority": "2",
+   "sealed_page": "4/244 4/272",
+   "skeleton": "ءفعيل"
+  },
+  {
+   "id": "A008",
+   "kitab_lines": "18656 18660",
+   "priority": "2",
+   "sealed_page": "4/244 4/245",
+   "skeleton": "ءفعول"
+  },
+  {
+   "id": "A001",
+   "kitab_lines": "18658",
+   "priority": "2",
+   "sealed_page": "4/245",
+   "skeleton": "ءفاعل"
+  },
+  {
+   "id": "A011",
+   "kitab_lines": "18667",
+   "priority": "2",
+   "sealed_page": "4/246",
+   "skeleton": "ءفنعل"
+  },
+  {
+   "id": "A010",
+   "kitab_lines": "18671",
+   "priority": "2",
+   "sealed_page": "4/246",
+   "skeleton": "ءفعيلي"
+  },
+  {
+   "id": "A007",
+   "kitab_lines": "18672 18674",
+   "priority": "2",
+   "sealed_page": "4/246",
+   "skeleton": "ءفعلي"
+  },
+  {
+   "id": "A006",
+   "kitab_lines": "18675 18677 18679",
+   "priority": "2",
+   "sealed_page": "4/246 4/247",
+   "skeleton": "ءفعلان"
+  },
+  {
+   "id": "A012",
+   "kitab_lines": "18675",
+   "priority": "2",
+   "sealed_page": "4/246",
+   "skeleton": "ءنفعل"
+  },
+  {
+   "id": "A005",
+   "kitab_lines": "18681",
+   "priority": "2",
+   "sealed_page": "4/247",
+   "skeleton": "ءفعلاء"
+  },
+  {
+   "id": "A085",
+   "kitab_lines": "18685 18768 18770 18773 18774 18775 18776 18777 18836 18839 18840 18844 19261 19282 19283 19284",
+   "priority": "2",
+   "sealed_page": "4/247 4/254 4/255 4/260 4/294 4/295",
+   "skeleton": "فعلي"
+  },
+  {
+   "id": "A035",
+   "kitab_lines": "18688 18689 19055 19090",
+   "priority": "2",
+   "sealed_page": "4/248 4/279 4/282",
+   "skeleton": "فاعل"
+  },
+  {
+   "id": "A036",
+   "kitab_lines": "18689",
+   "priority": "2",
+   "sealed_page": "4/248",
+   "skeleton": "فاعلا"
+  },
+  {
+   "id": "A042",
+   "kitab_lines": "18690 18691 18692 18790 18792 18793",
+   "priority": "2",
+   "sealed_page": "4/248 4/256",
+   "skeleton": "فعال"
+  },
+  {
+   "id": "A038",
+   "kitab_lines": "18697",
+   "priority": "2",
+   "sealed_page": "4/248",
+   "skeleton": "فاعول"
+  },
+  {
+   "id": "A034",
+   "kitab_lines": "18698",
+   "priority": "2",
+   "sealed_page": "4/248",
+   "skeleton": "فاعال"
+  },
+  {
+   "id": "A037",
+   "kitab_lines": "18700",
+   "priority": "2",
+   "sealed_page": "4/248",
+   "skeleton": "فاعلاء"
+  },
+  {
+   "id": "A039",
+   "kitab_lines": "18701",
+   "priority": "2",
+   "sealed_page": "4/249",
+   "skeleton": "فاعولاء"
+  },
+  {
+   "id": "A137",
+   "kitab_lines": "18704 18711 19055 19056",
+   "priority": "2",
+   "sealed_page": "4/249 4/279",
+   "skeleton": "مفاعل"
+  },
+  {
+   "id": "A119",
+   "kitab_lines": "18714 18761",
+   "priority": "2",
+   "sealed_page": "4/249 4/253",
+   "skeleton": "فواعل"
+  },
+  {
+   "id": "A120",
+   "kitab_lines": "18716",
+   "priority": "2",
+   "sealed_page": "4/250",
+   "skeleton": "فواعيل"
+  },
+  {
+   "id": "A048",
+   "kitab_lines": "18721 18724 18756 18798",
+   "priority": "2",
+   "sealed_page": "4/250 4/253 4/256",
+   "skeleton": "فعالي"
+  },
+  {
+   "id": "A052",
+   "kitab_lines": "18727",
+   "priority": "2",
+   "sealed_page": "4/251",
+   "skeleton": "فعالين"
+  },
+  {
+   "id": "A047",
+   "kitab_lines": "18729",
+   "priority": "2",
+   "sealed_page": "4/251",
+   "skeleton": "فعالن"
+  },
+  {
+   "id": "A054",
+   "kitab_lines": "18730",
+   "priority": "2",
+   "sealed_page": "4/251",
+   "skeleton": "فعاول"
+  },
+  {
+   "id": "A056",
+   "kitab_lines": "18731",
+   "priority": "2",
+   "sealed_page": "4/251",
+   "skeleton": "فعايل"
+  },
+  {
+   "id": "A127",
+   "kitab_lines": "18734",
+   "priority": "2",
+   "sealed_page": "4/251",
+   "skeleton": "فياعل"
+  },
+  {
+   "id": "A128",
+   "kitab_lines": "18735",
+   "priority": "2",
+   "sealed_page": "4/251",
+   "skeleton": "فياعيل"
+  },
+  {
+   "id": "A027",
+   "kitab_lines": "18737",
+   "priority": "2",
+   "sealed_page": "4/251",
+   "skeleton": "تفاعيل"
+  },
+  {
+   "id": "A026",
+   "kitab_lines": "18738 19074",
+   "priority": "2",
+   "sealed_page": "4/251 4/281",
+   "skeleton": "تفاعل"
+  },
+  {
+   "id": "A151",
+   "kitab_lines": "18739",
+   "priority": "2",
+   "sealed_page": "4/251",
+   "skeleton": "يفاعيل"
+  },
+  {
+   "id": "A150",
+   "kitab_lines": "18741 19055 19056",
+   "priority": "2",
+   "sealed_page": "4/252 4/279",
+   "skeleton": "يفاعل"
+  },
+  {
+   "id": "A055",
+   "kitab_lines": "18742",
+   "priority": "2",
+   "sealed_page": "4/252",
+   "skeleton": "فعاويل"
+  },
+  {
+   "id": "A057",
+   "kitab_lines": "18743",
+   "priority": "2",
+   "sealed_page": "4/252",
+   "skeleton": "فعاييل"
+  },
+  {
+   "id": "A049",
+   "kitab_lines": "18744",
+   "priority": "2",
+   "sealed_page": "4/252",
+   "skeleton": "فعاليت"
+  },
+  {
+   "id": "A114",
+   "kitab_lines": "18745",
+   "priority": "2",
+   "sealed_page": "4/252",
+   "skeleton": "فناعل"
+  },
+  {
+   "id": "A043",
+   "kitab_lines": "18759",
+   "priority": "2",
+   "sealed_page": "4/253",
+   "skeleton": "فعالاء"
+  },
+  {
+   "id": "A044",
+   "kitab_lines": "18760",
+   "priority": "2",
+   "sealed_page": "4/253",
+   "skeleton": "فعالان"
+  },
+  {
+   "id": "A138",
+   "kitab_lines": "18785",
+   "priority": "2",
+   "sealed_page": "4/255",
+   "skeleton": "مفعال"
+  },
+  {
+   "id": "A028",
+   "kitab_lines": "18786",
+   "priority": "2",
+   "sealed_page": "4/255",
+   "skeleton": "تفعال"
+  },
+  {
+   "id": "A061",
+   "kitab_lines": "18794 18796 18797 18799 18802 18803",
+   "priority": "2",
+   "sealed_page": "4/256 4/257",
+   "skeleton": "فعلاء"
+  },
+  {
+   "id": "A064",
+   "kitab_lines": "18808 18809 18811 18813 18814 18815 18852 18854 18863 18867",
+   "priority": "2",
+   "sealed_page": "4/257 4/258 4/261 4/262 4/263",
+   "skeleton": "فعلان"
+  },
+  {
+   "id": "A097",
+   "kitab_lines": "18819 18823",
+   "priority": "2",
+   "sealed_page": "4/259",
+   "skeleton": "فعوال"
+  },
+  {
+   "id": "A105",
+   "kitab_lines": "18821",
+   "priority": "2",
+   "sealed_page": "4/259",
+   "skeleton": "فعيال"
+  },
+  {
+   "id": "A129",
+   "kitab_lines": "18821",
+   "priority": "2",
+   "sealed_page": "4/259",
+   "skeleton": "فيعال"
+  },
+  {
+   "id": "A121",
+   "kitab_lines": "18825",
+   "priority": "2",
+   "sealed_page": "4/259",
+   "skeleton": "فوعال"
+  },
+  {
+   "id": "A096",
+   "kitab_lines": "18829 18840 18842",
+   "priority": "2",
+   "sealed_page": "4/259 4/260",
+   "skeleton": "فعنلي"
+  },
+  {
+   "id": "A077",
+   "kitab_lines": "18831 18838",
+   "priority": "2",
+   "sealed_page": "4/259 4/260",
+   "skeleton": "فعلني"
+  },
+  {
+   "id": "A123",
+   "kitab_lines": "18835",
+   "priority": "2",
+   "sealed_page": "4/260",
+   "skeleton": "فوعلاء"
+  },
+  {
+   "id": "A133",
+   "kitab_lines": "18841",
+   "priority": "2",
+   "sealed_page": "4/260",
+   "skeleton": "فيعلي"
+  },
+  {
+   "id": "A126",
+   "kitab_lines": "18842",
+   "priority": "2",
+   "sealed_page": "4/260",
+   "skeleton": "فوعلي"
+  },
+  {
+   "id": "A131",
+   "kitab_lines": "18846 18848",
+   "priority": "2",
+   "sealed_page": "4/261",
+   "skeleton": "فيعلان"
+  },
+  {
+   "id": "A088",
+   "kitab_lines": "18850",
+   "priority": "2",
+   "sealed_page": "4/261",
+   "skeleton": "فعليان"
+  },
+  {
+   "id": "A079",
+   "kitab_lines": "18851",
+   "priority": "2",
+   "sealed_page": "4/261",
+   "skeleton": "فعلوان"
+  },
+  {
+   "id": "A141",
+   "kitab_lines": "18855",
+   "priority": "2",
+   "sealed_page": "4/262",
+   "skeleton": "مفعلان"
+  },
+  {
+   "id": "A087",
+   "kitab_lines": "18856",
+   "priority": "2",
+   "sealed_page": "4/262",
+   "skeleton": "فعلياء"
+  },
+  {
+   "id": "A100",
+   "kitab_lines": "18857",
+   "priority": "2",
+   "sealed_page": "4/262",
+   "skeleton": "فعولاء"
+  },
+  {
+   "id": "A104",
+   "kitab_lines": "18858",
+   "priority": "2",
+   "sealed_page": "4/262",
+   "skeleton": "فعولي"
+  },
+  {
+   "id": "A108",
+   "kitab_lines": "18862",
+   "priority": "2",
+   "sealed_page": "4/262",
+   "skeleton": "فعيلاء"
+  },
+  {
+   "id": "A124",
+   "kitab_lines": "18865",
+   "priority": "2",
+   "sealed_page": "4/263",
+   "skeleton": "فوعلان"
+  },
+  {
+   "id": "A140",
+   "kitab_lines": "18866",
+   "priority": "2",
+   "sealed_page": "4/263",
+   "skeleton": "مفعلاء"
+  },
+  {
+   "id": "A111",
+   "kitab_lines": "18868 18871",
+   "priority": "2",
+   "sealed_page": "4/263",
+   "skeleton": "فعيلي"
+  },
+  {
+   "id": "A145",
+   "kitab_lines": "18870",
+   "priority": "2",
+   "sealed_page": "4/263",
+   "skeleton": "مفعولاء"
+  },
+  {
+   "id": "A154",
+   "kitab_lines": "18875",
+   "priority": "2",
+   "sealed_page": "4/264",
+   "skeleton": "يفعلي"
+  },
+  {
+   "id": "A086",
+   "kitab_lines": "18876",
+   "priority": "2",
+   "sealed_page": "4/264",
+   "skeleton": "فعليا"
+  },
+  {
+   "id": "A081",
+   "kitab_lines": "18877",
+   "priority": "2",
+   "sealed_page": "4/264",
+   "skeleton": "فعلوتي"
+  },
+  {
+   "id": "A143",
+   "kitab_lines": "18878 18879",
+   "priority": "2",
+   "sealed_page": "4/264",
+   "skeleton": "مفعلي"
+  },
+  {
+   "id": "A152",
+   "kitab_lines": "18880 19038 19039 19053 19066 19067 19074 19081 19089 19091 19096 19316",
+   "priority": "2",
+   "sealed_page": "4/264 4/278 4/279 4/280 4/281 4/282 4/298",
+   "skeleton": "يفعل"
+  },
+  {
+   "id": "A155",
+   "kitab_lines": "18882",
+   "priority": "2",
+   "sealed_page": "4/264",
+   "skeleton": "يفعول"
+  },
+  {
+   "id": "A156",
+   "kitab_lines": "18883",
+   "priority": "2",
+   "sealed_page": "4/264",
+   "skeleton": "يفعيل"
+  },
+  {
+   "id": "A157",
+   "kitab_lines": "18888",
+   "priority": "2",
+   "sealed_page": "4/265",
+   "skeleton": "يفنعل"
+  },
+  {
+   "id": "A130",
+   "kitab_lines": "18889 18897",
+   "priority": "2",
+   "sealed_page": "4/265 4/266",
+   "skeleton": "فيعل"
+  },
+  {
+   "id": "A134",
+   "kitab_lines": "18893",
+   "priority": "2",
+   "sealed_page": "4/265",
+   "skeleton": "فيعول"
+  },
+  {
+   "id": "A107",
+   "kitab_lines": "18898 18899 18902 18907 18910 18911 18912",
+   "priority": "2",
+   "sealed_page": "4/266 4/267",
+   "skeleton": "فعيل"
+  },
+  {
+   "id": "A113",
+   "kitab_lines": "18904",
+   "priority": "2",
+   "sealed_page": "4/266",
+   "skeleton": "فعيول"
+  },
+  {
+   "id": "A146",
+   "kitab_lines": "18914",
+   "priority": "2",
+   "sealed_page": "4/267",
+   "skeleton": "مفعيل"
+  },
+  {
+   "id": "A089",
+   "kitab_lines": "18917",
+   "priority": "2",
+   "sealed_page": "4/267",
+   "skeleton": "فعليت"
+  },
+  {
+   "id": "A091",
+   "kitab_lines": "18920",
+   "priority": "2",
+   "sealed_page": "4/268",
+   "skeleton": "فعلين"
+  },
+  {
+   "id": "A115",
+   "kitab_lines": "18926 18927 19288",
+   "priority": "2",
+   "sealed_page": "4/268 4/296",
+   "skeleton": "فنعل"
+  },
+  {
+   "id": "A117",
+   "kitab_lines": "18928",
+   "priority": "2",
+   "sealed_page": "4/268",
+   "skeleton": "فنعلو"
+  },
+  {
+   "id": "A076",
+   "kitab_lines": "18930 18932",
+   "priority": "2",
+   "sealed_page": "4/269",
+   "skeleton": "فعلن"
+  },
+  {
+   "id": "A093",
+   "kitab_lines": "18936",
+   "priority": "2",
+   "sealed_page": "4/269",
+   "skeleton": "فعنل"
+  },
+  {
+   "id": "A029",
+   "kitab_lines": "18938 18939 18940 18941 18951",
+   "priority": "2",
+   "sealed_page": "4/269 4/270",
+   "skeleton": "تفعل"
+  },
+  {
+   "id": "A030",
+   "kitab_lines": "18943",
+   "priority": "2",
+   "sealed_page": "4/270",
+   "skeleton": "تفعلوت"
+  },
+  {
+   "id": "A032",
+   "kitab_lines": "18944",
+   "priority": "2",
+   "sealed_page": "4/270",
+   "skeleton": "تفعيل"
+  },
+  {
+   "id": "A031",
+   "kitab_lines": "18946 18948",
+   "priority": "2",
+   "sealed_page": "4/270",
+   "skeleton": "تفعول"
+  },
+  {
+   "id": "A080",
+   "kitab_lines": "18954",
+   "priority": "2",
+   "sealed_page": "4/271",
+   "skeleton": "فعلوت"
+  },
+  {
+   "id": "A144",
+   "kitab_lines": "18958",
+   "priority": "2",
+   "sealed_page": "4/271",
+   "skeleton": "مفعول"
+  },
+  {
+   "id": "A139",
+   "kitab_lines": "18959 18961 18962 18963 18964 18965 18974 19038 19039 19053 19066 19067 19074 19081 19089 19091 19096 19316",
+   "priority": "2",
+   "sealed_page": "4/271 4/272 4/278 4/279 4/280 4/281 4/282 4/298",
+   "skeleton": "مفعل"
+  },
+  {
+   "id": "A075",
+   "kitab_lines": "18974 18975",
+   "priority": "2",
+   "sealed_page": "4/272",
+   "skeleton": "فعلم"
+  },
+  {
+   "id": "A053",
+   "kitab_lines": "18976",
+   "priority": "2",
+   "sealed_page": "4/272",
+   "skeleton": "فعامل"
+  },
+  {
+   "id": "A122",
+   "kitab_lines": "18977",
+   "priority": "2",
+   "sealed_page": "4/273",
+   "skeleton": "فوعل"
+  },
+  {
+   "id": "A099",
+   "kitab_lines": "18981 18982 18983 18984 18985 18993 18994 18995",
+   "priority": "2",
+   "sealed_page": "4/273 4/274",
+   "skeleton": "فعول"
+  },
+  {
+   "id": "A083",
+   "kitab_lines": "18990",
+   "priority": "2",
+   "sealed_page": "4/274",
+   "skeleton": "فعلوه"
+  },
+  {
+   "id": "A033",
+   "kitab_lines": "19075",
+   "priority": "2",
+   "sealed_page": "4/281",
+   "skeleton": "تفوعل"
+  },
+  {
+   "id": "A135",
+   "kitab_lines": "19076 19098",
+   "priority": "2",
+   "sealed_page": "4/281 4/282",
+   "skeleton": "متفاعل"
+  },
+  {
+   "id": "A025",
+   "kitab_lines": "19089",
+   "priority": "2",
+   "sealed_page": "4/281",
+   "skeleton": "انفعل"
+  },
+  {
+   "id": "A147",
+   "kitab_lines": "19089 19090",
+   "priority": "2",
+   "sealed_page": "4/281 4/282",
+   "skeleton": "منفعل"
+  },
+  {
+   "id": "A158",
+   "kitab_lines": "19089",
+   "priority": "2",
+   "sealed_page": "4/281",
+   "skeleton": "ينفعل"
+  },
+  {
+   "id": "A015",
+   "kitab_lines": "19093",
+   "priority": "2",
+   "sealed_page": "4/282",
+   "skeleton": "افتعل"
+  },
+  {
+   "id": "A013",
+   "kitab_lines": "19096 19101 19106 19109 19120 19124 19327",
+   "priority": "2",
+   "sealed_page": "4/282 4/283 4/284 4/299",
+   "skeleton": "استفعل"
+  },
+  {
+   "id": "A136",
+   "kitab_lines": "19096",
+   "priority": "2",
+   "sealed_page": "4/282",
+   "skeleton": "مستفعل"
+  },
+  {
+   "id": "A149",
+   "kitab_lines": "19096",
+   "priority": "2",
+   "sealed_page": "4/282",
+   "skeleton": "يستفعل"
+  },
+  {
+   "id": "A148",
+   "kitab_lines": "19098",
+   "priority": "2",
+   "sealed_page": "4/282",
+   "skeleton": "يتفاعل"
+  },
+  {
+   "id": "A014",
+   "kitab_lines": "19106 19120 19124 19146",
+   "priority": "2",
+   "sealed_page": "4/283 4/284 4/285",
+   "skeleton": "استفعلت"
+  },
+  {
+   "id": "A021",
+   "kitab_lines": "19123",
+   "priority": "2",
+   "sealed_page": "4/284",
+   "skeleton": "افعول"
+  },
+  {
+   "id": "A022",
+   "kitab_lines": "19123",
+   "priority": "2",
+   "sealed_page": "4/284",
+   "skeleton": "افعولت"
+  },
+  {
+   "id": "A078",
+   "kitab_lines": "—",
+   "priority": "2",
+   "sealed_page": "—",
+   "skeleton": "فعلو"
+  }
+ ],
+ "law": "الكتابُ المختوم بلا حركات؛ فتشكيلُ الأبنية سماعٌ موقَّع من طبعةٍ مشكولةٍ بموضعها، يمرّ على البوّابة مدوّنةً مختومةً ثالثة (ADR ١٣)؛ والتوقيعُ واحدٌ فهو آحاد، والمالئُ الثاني يرفعه",
+ "lines_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+ "rows": [],
+ "signed": false,
+ "signed_by": null,
+ "signed_on": null,
+ "version": 1
+}
