@@ -75,6 +75,11 @@ TABLE: Final[tuple[Row, ...]] = (
      ), 2, "chapter"),
     ("YA_WAW", "هذا باب تقلب فيه الياء واوا", 20400, "موقن",
      None, None, "none"),
+    ("SAMAI_FA", "هذا باب عدة ما يكون عليه الكلم", 18330, "خذ",
+     (
+         ("خ", "ضم"),
+         ("ذ", "كسر"),
+     ), 0, "chapter"),
 )
 
 DEBTS: Final[tuple[tuple[str, int], ...]] = (

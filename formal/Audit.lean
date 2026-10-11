@@ -749,6 +749,12 @@ import Slge
 #print axioms Slge.Ilal.ibdal_kinds
 #print axioms Slge.Ilal.ibdal_ternary
 #print axioms Slge.Ilal.roundtrip_witnesses
+#print axioms Slge.Ilal.samai_closed
+#print axioms Slge.Ilal.samai_up_heard
+#print axioms Slge.Ilal.samai_heard
+#print axioms Slge.Ilal.samai_witnesses
+#print axioms Slge.Ilal.yumin_untouched
+#print axioms Slge.Ilal.general_touches_yumin
 #print axioms Slge.Jidh.map_carrier_setLast
 #print axioms Slge.Jidh.extract_of_carriers
 #print axioms Slge.Jidh.rootOf_setLast

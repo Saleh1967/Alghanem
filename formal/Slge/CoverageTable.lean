@@ -41,8 +41,8 @@ def axes : List (Nat × Nat × Nat) := [
 ]
 
 def rootsTotal : Nat := 4561
-def rootsQati : Nat := 1619
-def rootsMuhtamalOnly : Nat := 275
+def rootsQati : Nat := 1617
+def rootsMuhtamalOnly : Nat := 277
 def rootsNone : Nat := 2667
 
 def nodesTotal : Nat := 1600

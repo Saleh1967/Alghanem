@@ -44,15 +44,24 @@ def alif : SCell := c 1 3
 /-- واوٌ ساكنة (واوُ الجماعة). -/
 def gw : SCell := c 27 3
 
-/-- القواعدُ الاثنتا عشرة (حذفُ العين بوجهيه: ضمُّ الفاء أو كسرُها). -/
+/-- القائمةُ السماعيّةُ المغلقة لحذف الفاء همزةً في الأمر: (العين، اللام) — خُذْ (خ ذ)، كُلْ (ك ل)، مُرْ (م ر).
+«وأما ما جاء من الأفعال فخذ وكل ومر، وبعض العرب يقول أوكل فيتم» (الكتاب المختوم، س18368–18369)؛
+«فقف على هذه الأشياء حيث وقفوا» (س2700–2701): سماعٌ لا قياس، فلا تُزاد. -/
+def heard : List (Nat × Nat) := [(7, 9), (22, 23), (24, 10)]
+
+/-- العينُ واللامُ من القائمة السماعيّة؟ -/
+def listed (x y : SCell) : Bool := heard.contains (x.carrier.val, y.carrier.val)
+
+/-- القواعدُ الاثنتا عشرة (حذفُ العين بوجهيه: ضمُّ الفاء أو كسرُها)، والرابعةَ عشرةَ سماعيّةٌ مغلقة: حذفُ الفاء
+همزةً من أمر أخذ وأكل وأمر (`samaiFa`، ADR ٤٠). -/
 inductive Rule where
   | qalbAyn | hadhfAynU | hadhfAynI | naql | qalbLam | hadhfLam | hadhfWaw
-  | hamzaMadd | taTta | taDal | faTa | wawYa | yaWaw
+  | hamzaMadd | taTta | taDal | faTa | wawYa | yaWaw | samaiFa
   deriving DecidableEq, Repr
 
 def Rule.all : List Rule :=
   [.qalbAyn, .hadhfAynU, .hadhfAynI, .naql, .qalbLam, .hadhfLam, .hadhfWaw,
-   .hamzaMadd, .taTta, .taDal, .faTa, .wawYa, .yaWaw]
+   .hamzaMadd, .taTta, .taDal, .faTa, .wawYa, .yaWaw, .samaiFa]
 
 theorem Rule.mem_all (ρ : Rule) : ρ ∈ Rule.all := by cases ρ <;> decide
 
@@ -87,6 +96,8 @@ def up : Rule → List SCell → Option (List SCell)
     if p.state.val == 1 && y == gw then some (p :: c 28 3 :: r) else none
   | .yaWaw, p :: y :: r =>  -- مُيْقِن ← مُوقِن
     if p.state.val == 2 && y == c 28 3 then some (p :: gw :: r) else none
+  | .samaiFa, h :: f :: x :: y :: r =>  -- ءُءْكُلْ ← كُلْ: همزةُ الوصل والفاءُ معًا، للثلاثة وحدَها
+    if h == c 0 2 && f == c 0 3 && x.state.val == 2 && listed x y then some (x :: y :: r) else none
   | _, _ => none
 
 /-- تطبيقُ القاعدة في الموضع `i` من الكلمة. -/
@@ -117,6 +128,7 @@ def down : Rule → List SCell → List (List SCell)
   | .faTa, y :: t :: r => if y == c 3 3 && t.carrier.val == 3 then [c 27 3 :: t :: r, c 28 3 :: t :: r] else []
   | .wawYa, p :: y :: r => if p.state.val == 1 && y == c 28 3 then [p :: gw :: r] else []
   | .yaWaw, p :: y :: r => if p.state.val == 2 && y == gw then [p :: c 28 3 :: r] else []
+  | .samaiFa, x :: y :: r => if x.state.val == 2 && listed x y then [c 0 2 :: c 0 3 :: x :: y :: r] else []
   | _, _ => []
 
 /-- الأصولُ في الموضع `i`. -/
@@ -166,7 +178,7 @@ theorem down_sound (ρ : Rule) (v : List SCell) : ∀ u ∈ down ρ v, up ρ u =
     (split at hu <;> simp only [List.mem_cons, or_false, wyDamma,
         List.map_cons, List.map_nil, List.mem_nil_iff] at hu) <;>
     rename_i hc <;> simp only [Bool.and_eq_true, beq_iff_eq, Bool.not_eq_true'] at hc <;>
-    (rcases hu with rfl | rfl <;> simp_all [up, vow, wy, alif, gw, c, itbaq, dzz, mudari] <;>
+    (rcases hu with rfl | rfl <;> simp_all [up, vow, wy, alif, gw, c, itbaq, dzz, mudari, listed] <;>
       (first | decide | omega | cellext | (refine ⟨by decide, ?_⟩; cellext) | skip))
 
 /-- كلُّ أصلٍ يصعد إلى الصورة ينزل إليه القارئ: لا أصلَ يفوت. -/
@@ -351,10 +363,11 @@ def ascend : Chain → List SCell → Option (List SCell)
   | [], u => some u
   | (ρ, i) :: ch, u => (apply ρ u i).bind (ascend ch)
 
-/-- مواضعُ النافذة في جذعٍ طولُه `n`: حذفُ واو المثال في صدر الجذع وحدَه (بعد حرف المضارعة)، وحذفُ لام
+/-- مواضعُ النافذة في جذعٍ طولُه `n`: حذفُ واو المثال والحذفُ السماعيّ في صدر الجذع وحدَه، وحذفُ لام
 الناقص في آخره وحدَه (قبل واو الجماعة اللاحقة)، وسائرُ القواعد في أيّ موضعٍ من الجذع — شرطٌ معلَن. -/
 def positions : Rule → Nat → List Nat
   | .hadhfWaw, _ => [0]
+  | .samaiFa, _ => [0]
   | .hadhfLam, n => [n - 1]
   | _, n => List.range n
 
@@ -413,6 +426,7 @@ def record (ρ : Rule) (u : List SCell) (i : Nat) : EditRecord SCell :=
   | .hadhfLam, _ :: y :: _ => ⟨i + 1, 0, [y]⟩
   | .hadhfWaw, _ :: y :: _ => ⟨i + 1, 0, [y]⟩
   | .faTa, y :: _ => ⟨i, 1, [y]⟩
+  | .samaiFa, h :: f :: _ => ⟨i, 0, [h, f]⟩
   | _, _ :: y :: _ => ⟨i + 1, 1, [y]⟩
   | _, _ => ⟨i, 0, []⟩
 
@@ -452,6 +466,7 @@ theorem apply_roundtrip (ρ : Rule) (u w : List SCell) (i : Nat) (h : apply ρ u
       | exact roundtrip_cons (u.take i) [p] [⟨8, y.state⟩] _ [y] (i + 1) (by simp [hlen])
       | exact roundtrip_cons (u.take i) [p] [c 28 3] _ [y] (i + 1) (by simp [hlen])
       | exact roundtrip_cons (u.take i) [p] [gw] _ [y] (i + 1) (by simp [hlen])
+      | exact roundtrip_cons (u.take i) [] [] _ [p, y] i (by simp [hlen])
 
 theorem restoreEdit_map (out : List SCell) (r : EditRecord SCell) :
     restoreEdit (out.map toCell) ⟨r.start, r.insertedLength, r.removed.map toCell⟩ =
@@ -565,5 +580,77 @@ theorem roundtrip_witnesses :
     A116.Recovery.restoreEdit yaqulu (record .naql yaqwulu 0) = yaqwulu ∧
     A116.Recovery.restoreEdit yaidu (record .hadhfWaw yawidu 0) = yawidu ∧
     A116.Recovery.restoreEdit istabara (record .taTta istabara0 1) = istabara0 := by decide
+
+/-! ## الحذفُ السماعيّ: خُذْ، كُلْ، مُرْ — قائمةٌ مغلقة لا قاعدةٌ صوتيّة (ADR ٤٠)
+
+«وأما ما جاء من الأفعال فخذ وكل ومر، وبعض العرب يقول أوكل فيتم» (الكتاب المختوم، س18368–18369). الأصلُ
+أمرُ يَفْعُلُ على قالبه (ءُفْعُلْ): ءُءْكُلْ، والصورةُ كُلْ بحذف همزة الوصل والفاء معًا. المبرهَن: الصعودُ
+والنزولُ عكسان (عامّان أعلاه بلا تخصيص)، والردُّ بالسجلّ، والإغلاقُ على الترخيص (`samai_closed`)، و**القائمةُ
+مغلقة**: لا تصعد القاعدةُ إلّا إلى عينٍ ولامٍ من الثلاثة (`samai_heard`)؛ فلا تمسّ «يُؤْمِنُ» (`yumin_untouched`)
+— بخلاف قاعدةِ حذفٍ صوتيّةٍ عامّة (همزةٌ ساكنةٌ بعد ضمّة) تمسّها (`general_touches_yumin`): فالعامّةُ طفرةٌ
+مرفوضة بمبرهنة. -/
+
+/-- الإغلاقُ على الترخيص: حذفُ متحرّكٍ فساكنٍ من صدر الكلمة لا يغيّر ترخيصَ ما بعدهما — لكلّ ذيل. -/
+theorem samai_closed (r : List SCell) : licensed (c 0 2 :: c 0 3 :: r) = licensed r := by
+  have ha : (c 0 2 : SCell).isSukun = false := rfl
+  have hb : (c 0 3 : SCell).isSukun = true := rfl
+  rcases r with _ | ⟨x, t⟩
+  · rfl
+  · simp only [licensed, noAdj, ha, hb, Bool.not_false, Bool.true_and, Bool.and_true]
+
+/-- القائمةُ مغلقة: كلُّ صورةٍ يصعد إليها الحذفُ السماعيّ عينُها ولامُها من الثلاثة. -/
+theorem samai_up_heard (u v : List SCell) (h : up .samaiFa u = some v) :
+    ∃ x y r, v = x :: y :: r ∧ (x.carrier.val, y.carrier.val) ∈ heard := by
+  rcases u with _ | ⟨p, _ | ⟨q, _ | ⟨x, _ | ⟨y, r⟩⟩⟩⟩ <;> simp only [up, reduceCtorEq] at h
+  split at h
+  · rename_i hc
+    simp only [Option.some.injEq] at h
+    simp only [Bool.and_eq_true, listed, List.contains_iff_mem] at hc
+    exact ⟨x, y, r, h.symm, by simpa using hc.2⟩
+  · simp at h
+
+/-- وفي الكلمة كلِّها: ما يصعد إليه الحذفُ في الموضع `i` فخانتاه `i` و`i+1` من الثلاثة. -/
+theorem samai_heard (u w : List SCell) (i : Nat) (h : apply .samaiFa u i = some w) :
+    ∃ x y r, w.drop i = x :: y :: r ∧ (x.carrier.val, y.carrier.val) ∈ heard := by
+  simp only [apply, Option.map_eq_some_iff] at h
+  obtain ⟨v, hv, rfl⟩ := h
+  have hne : u.drop i ≠ [] := by intro hn; rw [hn, up_nil] at hv; exact absurd hv (by simp)
+  have hlen := take_length_of_drop_ne_nil hne
+  obtain ⟨x, y, r, rfl, hm⟩ := samai_up_heard _ _ hv
+  exact ⟨x, y, r, List.drop_left' hlen, hm⟩
+
+def kulu : List SCell := [c 22 2, c 23 2, c 27 3]                       -- كُلُوْ
+def uukulu : List SCell := [c 0 2, c 0 3, c 22 2, c 23 2, c 27 3]       -- ءُءْكُلُوْ
+def khudh : List SCell := [c 7 2, c 9 3]                                -- خُذْ
+def mur : List SCell := [c 24 2, c 10 3]                                -- مُرْ
+def yuminu : List SCell := [c 28 2, c 0 3, c 24 1, c 25 2]              -- يُؤْمِنُ
+
+/-- الشواهد: كُلُوا ← ءُءْكُلُوا وخُذْ ومُرْ ينزلان، والأصلُ يصعد إلى الصورة ويُردّ بسجلّه، والقائمةُ ثلاثة. -/
+theorem samai_witnesses :
+    apply .samaiFa uukulu 0 = some kulu ∧ undo .samaiFa kulu 0 = [uukulu] ∧
+    undo .samaiFa khudh 0 = [[c 0 2, c 0 3, c 7 2, c 9 3]] ∧
+    undo .samaiFa mur 0 = [[c 0 2, c 0 3, c 24 2, c 10 3]] ∧
+    A116.Recovery.restoreEdit kulu (record .samaiFa uukulu 0) = uukulu ∧
+    ([(.samaiFa, 0)], uukulu) ∈ descend kulu 2 ∧ heard.length = 3 := by decide
+
+/-- لا تمسّ «يُؤْمِنُ»: لا نزولَ منها في أيّ موضع، ولا أصلَ يصعد إليها بالحذف السماعيّ. -/
+theorem yumin_untouched : (∀ i, undo .samaiFa yuminu i = []) ∧ ∀ u i, apply .samaiFa u i ≠ some yuminu := by
+  have hu : ∀ i, undo .samaiFa yuminu i = [] := by
+    intro i
+    match i with
+    | 0 | 1 | 2 | 3 => decide
+    | n + 4 => simp [undo, yuminu, down_nil]
+  refine ⟨hu, fun u i h => ?_⟩
+  have := undo_complete .samaiFa u yuminu i h
+  rw [hu i] at this
+  exact List.not_mem_nil this
+
+/-- الطفرةُ المرفوضة: قاعدةٌ صوتيّةٌ عامّة (تُحذف الهمزةُ الساكنةُ بعد مضموم) — كما اقتُرحت بديلًا عن القائمة. -/
+def generalDrop : List SCell → Option (List SCell)
+  | p :: f :: r => if p.state.val == 2 && f == c 0 3 then some (p :: r) else none
+  | _ => none
+
+/-- العامّةُ تمسّ «يُؤْمِنُ» فتجعلها «يُمِنُ»؛ فليست هي القاعدة. -/
+theorem general_touches_yumin : generalDrop yuminu = some [c 28 2, c 24 1, c 25 2] := by decide
 
 end Slge.Ilal

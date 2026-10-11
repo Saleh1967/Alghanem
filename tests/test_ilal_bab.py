@@ -1,4 +1,4 @@
-"""أبوابُ الإعلال: توقّعاتٌ مستقلّةٌ عن الشيفرة (كلُّ قاعدةٍ لها بابٌ واحدٌ بسطره؛ ثمانٍ تقرأ صورتَها
+"""أبوابُ الإعلال: توقّعاتٌ مستقلّةٌ عن الشيفرة (كلُّ قاعدةٍ لها بابٌ واحدٌ بسطره؛ تسعٌ تقرأ صورتَها
 المودَعة بعينها والخمسُ الباقيةُ رسمٌ بلا خانات؛ سبعةُ ديونٍ بأسطرها)، وطفراتٌ مرفوضة."""
 
 from __future__ import annotations
@@ -10,18 +10,20 @@ AYN = "هذا باب ما الياء والواو فيه ثانية وهما ف�
 
 
 def test_every_rule_has_exactly_one_chapter_in_rule_order() -> None:
-    assert tuple(r[0] for r in TABLE) == RULES and len(TABLE) == 13
+    assert tuple(r[0] for r in TABLE) == RULES and len(TABLE) == 14
     # الأربعُ الأُوَل (القلبُ والحذفُ بوجهيه والنقل) في باب العين الواحد؛ والبدلان في باب حروف البدل
     assert all(anchor_of(k)[1] == AYN for k in ("QALB_AYN", "HADHF_AYN_U", "HADHF_AYN_I", "NAQL"))
     assert anchor_of("TA_TTA")[2] == anchor_of("TA_DAL")[2] == 18566
     assert anchor_of("HAMZA_MADD")[1] == "هذا باب الهمز" and anchor_of("HAMZA_MADD")[3] == "آدم"
     assert anchor_of("WAW_YA")[3] == "ميزان" and anchor_of("YA_WAW")[3] == "موقن"
+    # السماعيُّ في «باب عدة ما يكون عليه الكلم» (س18330؛ «فخذ وكل ومر» س18368)
+    assert anchor_of("SAMAI_FA")[1:4] == ("هذا باب عدة ما يكون عليه الكلم", 18330, "خذ")
 
 
-def test_eight_rules_read_their_deposited_forms() -> None:
+def test_nine_rules_read_their_deposited_forms() -> None:
     w = witnessed()
     assert tuple(r[0] for r in w) == ("QALB_AYN", "HADHF_AYN_U", "HADHF_AYN_I", "NAQL",
-                                      "QALB_LAM", "HADHF_WAW", "HAMZA_MADD", "WAW_YA")
+                                      "QALB_LAM", "HADHF_WAW", "HAMZA_MADD", "WAW_YA", "SAMAI_FA")
     assert all(reads(r) for r in w) and all(r[6] == "chapter" for r in w)
     # خَافَ ← خَوَفَ/خَيَفَ في الموضع 0؛ ءَلْمِيزَانَ تُقرأ في الموضع 2 بعد لام التعريف
     _, _, _, _, cells, at, _ = anchor_of("QALB_AYN")
@@ -30,6 +32,10 @@ def test_eight_rules_read_their_deposited_forms() -> None:
     mizan = anchor_of("WAW_YA")
     assert mizan[5] == 2 and mizan[4] is not None
     assert mizan[4][:2] == (("ء", "فتح"), ("ل", "سكون"))
+    # ﴿خُذِ الْعَفْوَ﴾: صورةُ الشهادة خُذِ (التقاءُ الساكنين) تُقرأ في الموضع 0 إلى ءُءْخُذِ
+    khudh = anchor_of("SAMAI_FA")
+    assert khudh[4] == (("خ", "ضم"), ("ذ", "كسر")) and khudh[5] == 0
+    assert undo("SAMAI_FA", khudh[4], 0) == ((("ء", "ضم"), ("ء", "سكون"), *khudh[4]),)
 
 
 def test_five_rules_stay_unvowelled_by_name() -> None:

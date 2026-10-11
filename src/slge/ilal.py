@@ -6,7 +6,8 @@
 (`down_sound`/`undo_sound`) ولا أصلَ يفوت (`down_complete`/`undo_complete`)؛ والإغلاقُ على الترخيص
 عبر الجسر
 إلى أدوات الغانم بعينها (`qalbAyn_closed`، `naql_closed`، `hadhfWaw_closed`، `ibdal_closed`،
-`hadhfAyn_forced`، `qalbLam_closed`، `hadhfLam_closed`)؛ وكلُّ ما ينزل إليه القارئُ حتى خطوتين يصعد
+`hadhfAyn_forced`، `qalbLam_closed`، `hadhfLam_closed`، `samai_closed`)؛ وكلُّ ما ينزل إليه القارئُ
+حتى خطوتين يصعد
 بسلسلته
 (`descend_ascends`) وما صعد بخطوةٍ في موضعه ينزل (`descend_complete`). الشروطُ اللغويّة (حرفُ المضارعة،
 ضمُّ اللام قبل واو الجماعة، مواضعُ النوافذ) معلَنةٌ لا مبرهَنة — كما في الغانم.
@@ -25,9 +26,15 @@ Word = tuple[Cell, ...]
 Chain = tuple[tuple[str, int], ...]
 RULES: Final[tuple[str, ...]] = (
     "QALB_AYN", "HADHF_AYN_U", "HADHF_AYN_I", "NAQL", "QALB_LAM", "HADHF_LAM", "HADHF_WAW",
-    "HAMZA_MADD", "TA_TTA", "TA_DAL", "FA_TA", "WAW_YA", "YA_WAW",
+    "HAMZA_MADD", "TA_TTA", "TA_DAL", "FA_TA", "WAW_YA", "YA_WAW", "SAMAI_FA",
 )
-"""القواعدُ بترتيب `Rule.all` (حذفُ العين بوجهيه: ضمُّ الفاء أو كسرُها)."""
+"""القواعدُ بترتيب `Rule.all` (حذفُ العين بوجهيه: ضمُّ الفاء أو كسرُها)؛ والأخيرةُ سماعيّةٌ مغلقة."""
+HEARD: Final[tuple[tuple[str, str], ...]] = (("خ", "ذ"), ("ك", "ل"), ("م", "ر"))
+"""القائمةُ السماعيّةُ المغلقة (`Ilal.heard`): عينُ الأمر ولامُه من أخذ وأكل وأمر — «وأما ما جاء من
+الأفعال
+فخذ وكل ومر» (الكتاب س18368–18369)، «فقف على هذه الأشياء حيث وقفوا» (س2700–2701). لا تُزاد."""
+_HAMZA_U: Final[Cell] = ("ء", "ضم")
+_HAMZA_S: Final[Cell] = ("ء", SUKUN)
 _A: Final = "فتح"
 _I: Final = "كسر"
 _U: Final = "ضم"
@@ -47,6 +54,10 @@ def _wy(x: Cell) -> bool:
 
 def _mudari(x: Cell) -> bool:
     return x[0] in "ءنتي"
+
+
+def _listed(x: Cell, y: Cell) -> bool:
+    return (x[0], y[0]) in HEARD
 
 
 def up(rule: str, win: Word) -> Word | None:
@@ -100,6 +111,10 @@ def up(rule: str, win: Word) -> Word | None:
         p, y = win[0], win[1]
         if p[1] == _U and y == ("ي", SUKUN):
             return (p, GW, *win[2:])
+    elif rule == "SAMAI_FA" and n >= 4:  # ءُءْكُلْ ← كُلْ: همزةُ الوصل والفاءُ معًا، للثلاثة وحدَها
+        x, y = win[2], win[3]
+        if win[0] == _HAMZA_U and win[1] == _HAMZA_S and x[1] == _U and _listed(x, y):
+            return win[2:]
     return None
 
 
@@ -154,6 +169,10 @@ def down(rule: str, win: Word) -> tuple[Word, ...]:
         p, y = win[0], win[1]
         if p[1] == _U and y == GW:
             return ((p, ("ي", SUKUN), *win[2:]),)
+    elif rule == "SAMAI_FA" and n >= 2:
+        x, y = win[0], win[1]
+        if x[1] == _U and _listed(x, y):
+            return ((_HAMZA_U, _HAMZA_S, *win),)
     return ()
 
 
@@ -186,6 +205,8 @@ def record(rule: str, u: Word, i: int) -> Record:
         return (i + 1, 0, d[1:2])
     if rule == "FA_TA" and len(d) >= 1:
         return (i, 1, d[:1])
+    if rule == "SAMAI_FA" and len(d) >= 2:
+        return (i, 0, d[:2])
     if len(d) >= 2:
         return (i + 1, 1, d[1:2])
     return (i, 0, ())
@@ -200,11 +221,12 @@ def restore(out: Word, rec: Record) -> Word:
 
 
 def positions(rule: str, n: int) -> tuple[int, ...]:
-    """مواضعُ النافذة في جذعٍ طولُه `n`: حذفُ واو المثال في الصدر، وحذفُ لام الناقص في الآخر، والباقي في
+    """مواضعُ النافذة في جذعٍ طولُه `n`: حذفُ واو المثال والحذفُ السماعيّ في الصدر، وحذفُ لام الناقص
+    في الآخر، والباقي في
     أيّ
     موضع — شرطٌ معلَن."""
 
-    if rule == "HADHF_WAW":
+    if rule in ("HADHF_WAW", "SAMAI_FA"):
         return (0,)
     if rule == "HADHF_LAM":
         return (max(n - 1, 0),)
@@ -261,6 +283,11 @@ def _check() -> None:
                 assert qawala in undo(rule, v, i), (rule, i)  # لا أصلَ يفوت
                 assert restore(v, record(rule, qawala, i)) == qawala  # الردُّ بالسجلّ (roundtrip)
     assert restore(cells_of("يَقُولُ"), record("NAQL", cells_of("يَقْوُلُ"), 0)) == cells_of("يَقْوُلُ")
+    kulu, uukulu = cells_of("كُلُوْ"), cells_of("ءُءْكُلُوْ")  # السماعيّ: يصعد ويُردّ بسجلّه
+    assert apply("SAMAI_FA", uukulu, 0) == kulu and undo("SAMAI_FA", kulu, 0) == (uukulu,)
+    assert restore(kulu, record("SAMAI_FA", uukulu, 0)) == uukulu
+    yumin = cells_of("يُؤْمِنُ")  # لا تمسّ «يُؤْمِنُ» (`yumin_untouched`)
+    assert all(not undo("SAMAI_FA", yumin, i) for i in range(len(yumin) + 1))
 
 
 _check()

@@ -1,7 +1,8 @@
 """أبوابُ الإعلال عند سيبويه — مرآةُ `Slge.IlalBab` (الحدُّ الأدنى المكتمل).
 
-لكلّ قاعدةٍ من قواعد `Slge.Ilal` الثلاثَ عشرةَ بابُها في الكتاب المختوم بسطره وشاهدُه رسمًا من نصّ
-الباب بعينه (`every_rule_once`)؛ وثمانٍ منها لها صورةٌ من مودَع المصحف تقرؤها القاعدةُ نفسُها —
+لكلّ قاعدةٍ من قواعد `Slge.Ilal` الأربعَ عشرةَ (والأخيرةُ سماعيّةٌ مغلقة) بابُها في الكتاب المختوم
+بسطره وشاهدُه رسمًا من نصّ
+الباب بعينه (`every_rule_once`)؛ وتسعٌ منها لها صورةٌ من مودَع المصحف تقرؤها القاعدةُ نفسُها —
 `undo` غيرُ فارغ في موضعها (`witnesses_read`)؛ والخمسُ الباقيةُ شاهدُها رسمٌ بلا خانات لم يُشكَّل من
 الذاكرة (`unwitnessed`). وأبوابٌ عند سيبويه لا قاعدةَ لها عندنا ديونٌ مسمّاةٌ بأسطرها (`debts_named`).
 الجدولُ `ilal_bab_table` مولَّدٌ بـ`tools/deposit_ilal_bab.py`؛ هذه الطبقةُ تقرؤه ولا تزيد عليه.
@@ -43,7 +44,7 @@ def unwitnessed() -> tuple[str, ...]:
 
 
 _WITNESSED: Final[tuple[str, ...]] = ("QALB_AYN", "HADHF_AYN_U", "HADHF_AYN_I", "NAQL", "QALB_LAM",
-                                      "HADHF_WAW", "HAMZA_MADD", "WAW_YA")
+                                      "HADHF_WAW", "HAMZA_MADD", "WAW_YA", "SAMAI_FA")
 _UNWITNESSED: Final[tuple[str, ...]] = ("HADHF_LAM", "TA_TTA", "TA_DAL", "FA_TA", "YA_WAW")
 
 

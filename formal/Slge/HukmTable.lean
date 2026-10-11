@@ -5,12 +5,12 @@
 namespace Slge.HukmTable
 
 def forms : Nat := 18179
-def laHukm : Nat := 4728
-def ahkam : Nat := 13451
+def laHukm : Nat := 4725
+def ahkam : Nat := 13454
 def anyMafhum : Nat := 6160
-def bothMalumah : Nat := 7291
-def singleRoot : Nat := 11905
-def multiRoot : Nat := 1546
+def bothMalumah : Nat := 7294
+def singleRoot : Nat := 11898
+def multiRoot : Nat := 1556
 def referenceSize : Nat := 300
 def referenceFilled : Nat := 0
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import Final
 
-UNIQUE_FORMS: Final[int] = 12157
+UNIQUE_FORMS: Final[int] = 12158
 BOUND: Final[int] = 129
 ROOT_FREQ: Final[dict[int, int]] = {
     2: 22,
@@ -40,7 +40,7 @@ ROOT_FREQ: Final[dict[int, int]] = {
     208: 7,
     212: 1,
     218: 1,
-    219: 36,
+    219: 38,
     220: 42,
     237: 18,
     238: 1,

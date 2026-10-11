@@ -23,12 +23,12 @@ PAIRS = (  # (القاعدة، الموضع، الأصل، الصورة) — م�
     ("HADHF_WAW", 0, "يَوْعِدُ", "يَعِدُ"), ("HAMZA_MADD", 0, "ءَءْمَنَ", "ءَامَنَ"),
     ("TA_TTA", 1, "إِصْتَبَرَ", "إِصْطَبَرَ"), ("TA_DAL", 1, "إِزْتَادَ", "إِزْدَادَ"),
     ("FA_TA", 1, "إِوْتَصَلَ", "إِتْتَصَلَ"), ("WAW_YA", 0, "مِوْزَانُ", "مِيزَانُ"),
-    ("YA_WAW", 0, "مُيْقِنُ", "مُوقِنُ"),
+    ("YA_WAW", 0, "مُيْقِنُ", "مُوقِنُ"), ("SAMAI_FA", 0, "ءُءْكُلُوْ", "كُلُوْ"),
 )
 
 
 def test_every_rule_ascends_and_descends_exactly() -> None:
-    assert len(RULES) == 13 and len(PAIRS) == 13
+    assert len(RULES) == 14 and len(PAIRS) == 14
     for rule, i, asl, sura in PAIRS:
         u, w = cells_of(asl), cells_of(sura)
         assert apply(rule, u, i) == w, rule  # الصعودُ بعينه
@@ -119,7 +119,8 @@ def test_numbers_on_the_deposit() -> None:
     # ثمّ 1,960 قبل زوائد سيبويه (ADR ١٨: النونُ والتاءُ لاحقتين تفتحان جذوعًا معتلّةً للإعلال)
     # ثمّ 2,040 قبل تصحيح همزة الأسماء الموصولة كسرًا (الغانم ADR ٧)
     # ثمّ 2,041 قبل ADR ٨ في الغانم (الضمّةُ العارضة: اِمْشُوا، اِقْضُوا بالكسر تنزلان بالإعلال)
-    assert m["forms"] == 18179 and m["with"] == 2043 and m["only"] == 648
+    # ثمّ 2,043 و648 قبل الحذف السماعيّ (ADR ٤٠: كُلُوْ، كُلِي، خُذِ لا تُقرأ على جذرها إلّا به)
+    assert m["forms"] == 18179 and m["with"] == 2044 and m["only"] == 649
     assert m["rules"]["QALB_AYN"] > m["rules"]["HADHF_AYN_U"] > m["rules"]["NAQL"]
     # كانت 9,249 كلمةً لا تُقرأ إلّا بالإعلال فصارت 7,746 بعد قوالب الاسم (أ2)
     assert m["m_total"] == 7749 and m["m_hit"] > 0.9 * m["m_total"]  # كانت 7,746

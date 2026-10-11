@@ -1239,7 +1239,7 @@ def test_ilal_bab_matches_lean() -> None:
     got = [r for r in rows if r[0] == "row"]
     # رسمُ الشاهد خشنًا كما أودعته الأداة: الهمزةُ بصورها ألفٌ، ة→ت، ى→ا.
     coarse = {"أ": "ء", "إ": "ء", "ؤ": "ء", "ئ": "ء", "آ": "ءا", "ة": "ت", "ى": "ا"}
-    assert len(got) == len(TABLE) == 13
+    assert len(got) == len(TABLE) == 14  # والرابعةَ عشرةَ سماعيّة (ADR ٤٠)
     for r, mine in zip(got, TABLE, strict=True):
         rule, _, line, word, cells, at, _ = mine
         assert RULES[int(r[1])] == rule and int(r[2]) == line, r

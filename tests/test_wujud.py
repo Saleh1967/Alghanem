@@ -97,15 +97,18 @@ def test_numbers_on_the_deposit_and_masaq() -> None:
     m = measure()
     # «—» كانت 2,669 قبل زوائد سيبويه (ADR ١٨)
     # ثمّ 2,506 و7,445 قبل تصحيح همزة الأسماء الموصولة كسرًا (الغانم ADR ٧): خمسُ صورٍ تغيّر أوّلُها كسرًا
-    assert m["forms"] == 18179 and sum(m["dist"].values()) == 18179 and m["dist"]["—"] == 2507
+    # ثمّ 2,507 قبل الحذف السماعيّ (ADR ٤٠: خُذِ صارت تُقرأ)
+    assert m["forms"] == 18179 and sum(m["dist"].values()) == 18179 and m["dist"]["—"] == 2506
     # الفعلُ كان 7,250 وبلا قراءةٍ 1,952 وعلى MASAQ 23,847 قبل زوائد سيبويه (ADR ١٨)
-    assert m["dist"][F] == 7440 and m["masaq"] == 25799 and m["none"] == 1822  # 7,442 قبل ADR ٨
+    # 7,442 قبل ADR ٨، و7,440 قبل الحذف السماعيّ (ADR ٤٠: خُذِ وكُلِي أمرًا)
+    assert m["dist"][F] == 7442 and m["masaq"] == 25799 and m["none"] == 1822
     b, a = m["before"], m["after"]
     assert sum(b.values()) == sum(a.values()) == 23977
-    assert b[(F, F)] == 6954 and a[(F, F)] == 6939  # الفعلُ بترتيب الأداة (كانا 6,817 و6,804)
+    # 6,954 و6,939 و12,593 و12,622 قبل الحذف السماعيّ (ADR ٤٠)
+    assert b[(F, F)] == 6964 and a[(F, F)] == 6949  # الفعلُ بترتيب الأداة (كانا 6,817 و6,804)
     hit_b = sum(b[(g, g)] for g in ("فعل", "مصدر", "وصف", "اسم"))
     hit_a = sum(a[(g, g)] for g in ("فعل", "مصدر", "وصف", "اسم"))
-    assert hit_b == 12593 and hit_a == 12622  # 52.5% ← 52.6% (كانا 12,456 و12,487)
+    assert hit_b == 12603 and hit_a == 12632  # 52.6% ← 52.7% (كانا 12,456 و12,487)
     gen = str(ROOT_DIR / "tools" / "gen_wujud_index.py")
     res = subprocess.run([sys.executable, gen, "--check"], capture_output=True, text=True,
                          cwd=ROOT_DIR)

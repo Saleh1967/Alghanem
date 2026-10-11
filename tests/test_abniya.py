@@ -114,7 +114,8 @@ def test_numbers_before_and_after_on_the_same_deposit() -> None:
     assert m["forms"] == 18179 and m["n"] == 125 and m["in_abniya"] == 111
     # كانت 15,510 قبل زوائد سيبويه (ADR ١٨)، و14,912 قبل القوالب الأربعة
     # ثمّ 15,673 قبل تصحيح همزة الأسماء الموصولة كسرًا (الغانم ADR ٧ — الكتاب س17573)
-    assert m["step2"] == 15672 and m["read"] == 15672
+    # ثمّ 15,672 قبل الحذف السماعيّ (ADR ٤٠)
+    assert m["step2"] == 15673 and m["read"] == 15673
     for k in ISM:
         assert m["with"][k] >= m["only"][k] > 0  # كلُّ قالبٍ مضاف يرفع الرقم
     # فِعْل كانت 406 قبل زوائد سيبويه و396 قبل ADR ٧
