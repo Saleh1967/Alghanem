@@ -59,7 +59,8 @@ jobs:
           for t in sukun_restore fariqa_restore tanwinAlif_restore idgham_restore chain_restore residue_separates; do
             grep -q "A116.Residue.$t" axioms.txt || { echo "::error::Residue.$t غيرُ مدقَّقة"; exit 1; }
           done
-          for t in Unicode.decode_encode Unicode.encode_prefix_free Unicode.decodeAll_encodeAll \
+          for t in cells_length_eq_product decode_code code_decode \
+                   Unicode.decode_encode Unicode.encode_prefix_free Unicode.decodeAll_encodeAll \
                    Boundary.no_start_with_sukun Boundary.pause_ends_with_sukun Boundary.join_iff \
                    Boundary.wasl_dropped_needs_moving_left Boundary.pause_then_join_is_not_join \
                    Ilal.vowelled_to_sukun_between_vowelled Ilal.swap_sukun_vowel Ilal.delete_sukun_after_vowelled \

@@ -10,6 +10,9 @@ import A116
 #print axioms A116.mem_cells
 #print axioms A116.cells_nodup
 #print axioms A116.cells_length
+#print axioms A116.cells_length_eq_product
+#print axioms A116.decode_code
+#print axioms A116.code_decode
 #print axioms A116.cells_split
 #print axioms A116.step_depends_only_on_sukun
 #print axioms A116.run_fellOut
