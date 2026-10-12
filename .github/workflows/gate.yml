@@ -68,6 +68,8 @@ jobs:
                    NizamHadd.strictB_is_nizam NizamHadd.strictPauseB_split NizamHadd.farq_outside_nizam \
                    NizamLine.licWasl_haddJ NizamLine.crossOK_tagC NizamLine.strictLineB_is_nizam \
                    NizamLine.crossStr_split NizamLine.line_two NizamLine.line_two_pause \
+                   NizamTree.seamsT_eq NizamTree.tree_eq_line NizamTree.tree_eq_line_pause NizamTree.regroup_invariant \
+                   NizamTree.line_is_depth_one NizamTree.tree_two NizamTree.tagT_forget NizamTree.licWasl_comap NizamTree.tree_is_nizam \
                    RootGrade.khumasi_jamid RootGrade.jamid_not_murakhkhas \
                    Tasrif.transfer_strict Tasrif.transfer_pause Tasrif.every_position Tasrif.every_cell_in_every_slot \
                    Tasrif.madi_exhausted Tasrif.mudari_exhausted Tasrif.amr_exhausted Tasrif.madd_drop_forced Tasrif.haa_forced Tasrif.agrees_with_mudari \
