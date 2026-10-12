@@ -1,0 +1,36 @@
+{
+ "agree_exact_among_read": 0.872364,
+ "agree_weak_class_over_all": 0.248343,
+ "coverage_read": 0.284679,
+ "maqayis_sha256": "2c6000bd47797e183294b89da77df4ddfd27921ea595c6071ba52299c382ccb0",
+ "n": 197247,
+ "outcomes": {
+  "agree_exact": 48985,
+  "disagree": 7167,
+  "no_reading": 140748,
+  "refused": 347
+ },
+ "positions": {
+  "ambiguous_reference": 647,
+  "excluded_seen": 500,
+  "no_reference": 797019,
+  "unique_reference": 197247
+ },
+ "prereg": "docs/hadith-roots/PREREG.md",
+ "primary_agree_weak_class_among_read": 0.872364,
+ "primary_wilson95": [
+  0.869579,
+  0.875099
+ ],
+ "read": 56152,
+ "reference_quality_vs_qac": {
+  "exact_rate": 0.715346,
+  "n": 113443,
+  "weak_class_rate": 0.946026,
+  "weak_class_wilson95": [
+   0.944696,
+   0.947326
+  ]
+ },
+ "system": "gate.recover(word, peel=True)"
+}
