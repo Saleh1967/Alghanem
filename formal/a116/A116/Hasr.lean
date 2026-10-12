@@ -90,4 +90,17 @@ theorem hasr_refine {β : Type} (C D : α → List β) (hsub : ∀ x, ∀ b ∈ 
     obtain ⟨b, hb, hp⟩ := List.any_eq_true.mp h
     exact List.any_eq_true.mpr ⟨b, hsub x b hb, hp⟩
 
+/-- **التعيينُ بالتمايز** (ADR ٤٣): إن كان حقُّ بندٍ (`x`) من مرشَّحيه `A` وكان غيرَ حقِّ بندٍ آخرَ تعيّن (`b`) — بندان
+مسمّيان في النصّ لا يكرّر أحدُهما الآخر — فهو من `A` بعد حذف `b`. -/
+theorem pin_distinct {β : Type} [DecidableEq β] (A : List β) (b x : β) (hx : x ∈ A)
+    (hne : x ≠ b) : x ∈ A.filter (fun y => decide (y ≠ b)) :=
+  List.mem_filter.mpr ⟨hx, by simpa using hne⟩
+
+/-- فإن بقي بعد الحذف مرشَّحٌ واحد فهو الحقّ. -/
+theorem pin_unique {β : Type} [DecidableEq β] (A : List β) (b c x : β) (hx : x ∈ A)
+    (hne : x ≠ b) (h : A.filter (fun y => decide (y ≠ b)) = [c]) : x = c := by
+  have hm := pin_distinct A b x hx hne
+  rw [h] at hm
+  simpa using hm
+
 end A116.Hasr

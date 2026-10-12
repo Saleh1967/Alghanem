@@ -685,3 +685,5 @@ import A116
 #print axioms A116.Mizan.hal_nodup
 #print axioms A116.Mizan.khana_nodup
 #print axioms A116.Mizan.cells_map
+#print axioms A116.Hasr.pin_distinct
+#print axioms A116.Hasr.pin_unique
