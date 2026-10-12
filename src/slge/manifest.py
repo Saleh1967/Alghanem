@@ -123,6 +123,10 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("hukm", ("Hukm", "HukmTable"), ("hukm",), "gen_hukm_index.py",
            "test_hukm.py"),  # الحكم: من جذور الشهادة إلى ركنٍ من السلسلة بشاهد، أو «لا حكم»
     Module("hukm_table", (), (), None, "test_hukm.py"),  # أعدادُ الحكم على المودَع، مولَّدةٌ من الفهرس
+    Module("mayaatir_table", ("MayaatirTable",), (), None,
+           "test_maqool.py"),  # معاييرُ الحكم العقليّ بأسطرها من كتب النبهانيّ المختومة (ADR ٤٩)
+    Module("maqool", ("Maqool",), ("maqool",), None,
+           "test_maqool.py"),  # المعقوليّة: حكمٌ ثلاثيٌّ على الحجّة، وبطاقةُ الحوار، وطيُّ المرفوض (ADR ٤٩)
     Module("shahada", ("Shahada",), ("shahada",), None, "test_shahada.py"),  # شهادةُ SLGE ببصمتها
     # عقدُ الشرح: سطرٌ بدعواه ووسمه (ADR ٤٤)
     Module("sharh", (), (), "gen_sharh_index.py", "test_sharh.py"),
@@ -239,6 +243,15 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
             "الشخصيّة الإسلاميّة ج3 كاملًا؛ منه «أبحاث اللغة»: التقسيمُ الثلاثيّ والنِّسَبُ والترجيح — تُولَّد "
             "منه جداولُ `Nabhani` بـ--check (ADR ٢٦)",
             "359bb5532ecee8156f266522bb5388a1711e46e136004c3ac22e43f2ce656cb4",
+            "بإذن المالك"),
+    # — مختومٌ بأمر المالك «ابحث عن مصدرٍ واعتمده» (2026-10-12، ADR ٤٩): الشخصيّةُ الإسلاميّة ج1
+    #   (الأصلُ `docx` ببصمة 5e327aa2… = مدخلُ السجلّ f0024 في الغانم، من
+    #   hamil-hala-zaman-program@7de0bc2)، محوَّلٌ بالطريقة التي أعادت ج3 بايتًا بايتًا؛ يقرؤه
+    #   `tools/deposit_mayaatir.py` وحدَه. —
+    Deposit("nabhani-shakhsiyya-1.txt.gz", "وضع",
+            "الشخصيّة الإسلاميّة ج1 كاملًا؛ منه حدُّ المفهوم والمعلومات (U3) — تُولَّد منه جداولُ "
+            "`MayaatirTable` بـ--check (ADR ٤٩)",
+            "b474d56021427070e2e3852b78bb774383f37bf87e2310d39dcdbaecf33aed63",
             "بإذن المالك"),
     Deposit("nabhani-tafkir.txt.gz", "وضع",
             "«التفكير» كاملًا؛ منه فهمُ النصّ بمعلوماتٍ سابقةٍ مُدرَكٍ واقعُها",

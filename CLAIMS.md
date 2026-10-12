@@ -17,6 +17,7 @@
 | `openiti-maqayis.txt.gz` | وضع | `da8853fc941d4016a533fd9c7a1f794a2ccfa92f1c74e68d4acbd6d910e72a67` |
 | `openiti-sibawayh-kitab.txt.gz` | وضع | `a160f940bb194e6fe7e6655d2c7f28e41f1fc648c4c5e340cc4e42306d5cb625` |
 | `nabhani-shakhsiyya-3.txt.gz` | وضع | `359bb5532ecee8156f266522bb5388a1711e46e136004c3ac22e43f2ce656cb4` |
+| `nabhani-shakhsiyya-1.txt.gz` | وضع | `b474d56021427070e2e3852b78bb774383f37bf87e2310d39dcdbaecf33aed63` |
 | `nabhani-tafkir.txt.gz` | وضع | `b9b08eabec468aa0f93b80c01879e3812c57f4bd677e68e448967e3575bfaae4` |
 | `owner-alam.json` | وضع | `561fa752b4c97d356786009ba0e5017b15089bf615bc2939eafc794edce6993f` |
 | `openiti-ghazali-mustasfa.txt.gz` | وضع | `59cda7d5424b26ab73aa2d7d8130d1fbe28fc465ab6075d759dc782ebe1697ac` |

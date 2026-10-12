@@ -1167,3 +1167,29 @@
 'A116.MizanKernel.stateT_eq' depends on axioms: [propext]
 'A116.MizanKernel.waslT_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'A116.MizanKernel.waqfT_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.MayaatirTable.criteria_length' does not depend on any axioms
+'Slge.Maqool.every_bab_anchored' depends on axioms: [propext]
+'Slge.Maqool.every_sabab_anchored' depends on axioms: [propext]
+'Slge.Maqool.reach_mono' does not depend on any axioms
+'Slge.Maqool.reach_step' depends on axioms: [propext, Quot.sound]
+'Slge.Maqool.self_premise_dawar' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Maqool.door_indep_shahid' does not depend on any axioms
+'Slge.Maqool.ghayr_indep_shahid' depends on axioms: [propext]
+'Slge.Maqool.judge_ghayr_iff' depends on axioms: [propext]
+'Slge.Maqool.maqool_has_sealed_witness' depends on axioms: [propext]
+'Slge.Maqool.no_witness_not_maqool' depends on axioms: [propext]
+'Slge.Maqool.card_never_anchors' depends on axioms: [propext]
+'Slge.Maqool.daraja_of_kind' depends on axioms: [propext]
+'Slge.Maqool.u5_only_khabar' depends on axioms: [propext]
+'Slge.Maqool.ray_door' depends on axioms: [propext, Quot.sound]
+'Slge.Maqool.dawar_door' depends on axioms: [propext]
+'Slge.Maqool.ternary' does not depend on any axioms
+'Slge.Maqool.no_card_no_entry' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Maqool.admit_needs_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Maqool.admitted_is_sabiqa' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Maqool.zur_carries_door' depends on axioms: [propext, Quot.sound]
+'Slge.Maqool.zur_length' depends on axioms: [propext]
+'Slge.Maqool.archive_length' depends on axioms: [propext, Quot.sound]
+'Slge.Maqool.archive_mem' depends on axioms: [propext, Quot.sound]
+'Slge.Maqool.cases_verdicts' does not depend on any axioms
+'Slge.Maqool.cases_archive' depends on axioms: [propext]

@@ -39,6 +39,7 @@ def test_owner_signed_deposits_match_their_hash_and_name_the_signer() -> None:
 
 def test_owner_sealed_books_match_their_hash() -> None:
     assert [d.path for d in OWNER_SEALED] == ["nabhani-shakhsiyya-3.txt.gz",
+                                               "nabhani-shakhsiyya-1.txt.gz",
                                                "nabhani-tafkir.txt.gz"]
     for d in OWNER_SEALED:
         raw = gzip.decompress((DATA / d.path).read_bytes())

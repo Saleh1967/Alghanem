@@ -1,0 +1,17 @@
+c01_wujud_sound,maqool,qati,U8
+c02_haqiqa_sound,maqool,zanni,U8
+c03_self_premise,ghayr,dawar,U4
+c04_cycle_two,ghayr,dawar,U4
+c05_ray,ghayr,ray_mutanakkir,U2
+c06_ad_hominem,ghayr,khuruj_mawdu,U6
+c07_straw_man,ghayr,tahrif_waqi,U1
+c08_tajrid,ghayr,tajrid,U5
+c09_taamim,ghayr,taamim,U5
+c10_shumuli,ghayr,qiyas_shumuli,U5
+c11_u5_outside_khabar,maqool,qati,U8
+c12_no_witness,la_hukm,bila_shahid,U3
+c13_card_witness,la_hukm,shahid_bitaqa,U3
+c14_cycle_no_witness,ghayr,dawar,U4
+c15_khabar_sound,maqool,qati,U8
+c16_cycle_three,ghayr,dawar,U4
+c17_chain_no_cycle,maqool,qati,U8

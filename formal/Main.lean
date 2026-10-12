@@ -755,6 +755,9 @@ def main (args : List String) : IO Unit := do
     for a in Nabhani.Ihtimal.all do
       for b in Nabhani.Ihtimal.all do
         IO.println s!"awla,{a.name},{b.name},{Nabhani.awla a b}"
+  | ["maqool"] =>
+    -- المعقوليّة: الحججُ معلومةُ الحكم سلفًا بأحكامها ومراسيها (ADR ٤٨).
+    for r in Slge.Maqool.rows do IO.println r
   | ["salsala"] =>
     -- السلسلة: الأركانُ برقمها وسلّمها ومرتبتها وعدد مراسيها وسوالفها.
     for r in SalsalaTable.rows do

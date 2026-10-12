@@ -46,7 +46,8 @@ def test_prior_knowledge_is_read_only_above_the_gates() -> None:
     # وعرف الشاهد» (2026-10-09، ADR ٢٩)
     # والسلسلةُ بإذن المالك «موافق راجع النبهاني أولا ونفذ» (2026-10-10، ADR ٣١)
     # والحكمُ بإذن المالك «نفذ وفق أفضل الممارسات SLGE والبرهان» (2026-10-10، ADR ٣٤)
-    assert hukm == ["mukhassas", "coverage", "salsala", "hukm"], (
+    # والمعقوليّةُ بأمر المالك «نفذ المراحل الأربعة» (2026-10-12، ADR ٤٩)
+    assert hukm == ["mukhassas", "coverage", "salsala", "hukm", "maqool"], (
         "HUKM_MODULE_WITHOUT_RECORDED_PERMISSION")
 
 

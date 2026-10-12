@@ -90,3 +90,5 @@ import Slge.CoverageTable
 import Slge.Coverage
 import Slge.IntiqalTable
 import Slge.Intiqal
+import Slge.MayaatirTable
+import Slge.Maqool
