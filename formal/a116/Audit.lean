@@ -607,3 +607,8 @@ import A116
 #print axioms A116.NizamTree.licWaqf_comap
 #print axioms A116.NizamTree.tree_is_nizam
 #print axioms A116.NizamTree.witnesses
+#print axioms A116.LineEmpty.empty_word_smuggles_straddle
+#print axioms A116.LineEmpty.strictLineN_erase_empty
+#print axioms A116.LineEmpty.strictLineN_nonempty
+#print axioms A116.LineEmpty.strictLineN_fixes_smuggling
+#print axioms A116.LineEmpty.pairwise_needs_vowel_start
