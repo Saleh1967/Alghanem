@@ -1084,3 +1084,8 @@ import Slge
 #print axioms A116.NizamHadd.roleN_inj
 #print axioms A116.NizamHadd.strictB_is_nizam
 #print axioms A116.NizamHadd.strictPauseB_split
+#print axioms A116.NizamLine.licWasl_haddJ
+#print axioms A116.NizamLine.crossOK_tagC
+#print axioms A116.NizamLine.strictLineB_is_nizam
+#print axioms A116.NizamLine.line_two
+#print axioms A116.NizamLine.line_two_pause

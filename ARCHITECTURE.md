@@ -1426,3 +1426,15 @@ MASAQ باسم بناء سيبويه. فشاهدٌ «مشهودٌ» بهذه ا�
 **ما بقي باسمه.** النواةُ في الغانم؛ ولم يُجعل بعدُ ترخيصُ SLGE نفسِه (`Slge.Grant`، `Slge.Madd`) مثولًا لها
 (`SLGE_LICENCE_AS_NIZAM_UNPROVEN`)، ولا الحكمُ (`Mukhassas`، `Hukm`) مثولًا لرخصة الخواصّ والقابليّات
 (`RUKHSA_GRADES_NOT_INSTANTIATED`، الغانم ADR ٢٣).
+
+## ADR ٤٦ — رفعُ التثبيت إلى e1eca06: السطرُ مثولًا للنواة (الغانم ADR ٢٦–٢٧؛ قرارُ المالك 2026-10-12)
+
+**السبب.** نصُّ المالك: «الخطوة التالية جعلُ الحدّ بين كلمتين حالةً من النواة … بذلك يكتمل الترخيص من الخانة إلى السطر، قبل
+الانتقال إلى طبقة الحكم». في الغانم بعد التثبيت السابق (35e6aaa) وحدتان: `Tasrif` (ADR ٢٦) و`NizamLine` (ADR ٢٧: ترخيصُ
+السطر هو ترخيصُ نظام الأزواج الموسومة بعنصر الحدّ، وسطرٌ من كلمتين هو `Hadd.strictJoinB` بعينه).
+
+**القرار.** `GATE_REV` و`formal/lakefile.toml` و`lake-manifest.json` على e1eca06؛ لم يتغيّر في `gate/` شيءٌ بين الإيداعين،
+فالمودَعاتُ الثلاثة وبصماتُها كما هي. الدرجةُ ١٠ تضمّ `Tasrif` و`NizamLine`؛ وخمسُ مبرهناتٍ من `NizamLine` في `Audit.lean`
+(`licWasl_haddJ`، `crossOK_tagC`، `strictLineB_is_nizam`، `line_two`، `line_two_pause`) — 1086 مدقَّقة.
+
+**ما بقي باسمه.** `SLGE_LICENCE_AS_NIZAM_UNPROVEN` و`RUKHSA_GRADES_NOT_INSTANTIATED` (ADR ٤٥) قائمان: طبقةُ الحكم هي التالية.

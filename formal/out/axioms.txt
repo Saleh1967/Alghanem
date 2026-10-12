@@ -1079,3 +1079,8 @@
 'A116.NizamHadd.roleN_inj' depends on axioms: [propext, Quot.sound]
 'A116.NizamHadd.strictB_is_nizam' depends on axioms: [propext, Classical.choice, Quot.sound]
 'A116.NizamHadd.strictPauseB_split' depends on axioms: [propext, Classical.choice, Quot.sound]
+'A116.NizamLine.licWasl_haddJ' depends on axioms: [propext, Quot.sound]
+'A116.NizamLine.crossOK_tagC' depends on axioms: [propext]
+'A116.NizamLine.strictLineB_is_nizam' depends on axioms: [propext, Classical.choice, Quot.sound]
+'A116.NizamLine.line_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'A116.NizamLine.line_two_pause' depends on axioms: [propext, Classical.choice, Quot.sound]
