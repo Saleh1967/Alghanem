@@ -1,0 +1,512 @@
+{
+ "lines_sha256": "248def99adaf4ba565f250685b102591b3cbce4c1d09524fbb58f92bf270a1d5",
+ "a_over_coverage": {
+  "verbs": 401,
+  "covered": 393,
+  "rate": 0.98
+ },
+ "masdar": {
+  "strata": {
+   "sound": {
+    "strict_nowit": {
+     "n": 1238,
+     "hits_low": 495,
+     "hits_high": 1149,
+     "transmitted_low": 0.0719,
+     "transmitted_high": 0.6002,
+     "ci95_low_end": [
+      0.9124,
+      0.9412
+     ],
+     "ci95_high_end": [
+      0.3729,
+      0.4274
+     ]
+    },
+    "strict_wit": {
+     "n": 1238,
+     "hits_low": 571,
+     "hits_high": 1134,
+     "transmitted_low": 0.084,
+     "transmitted_high": 0.5388,
+     "ci95_low_end": [
+      0.8992,
+      0.9302
+     ],
+     "ci95_high_end": [
+      0.4336,
+      0.4891
+     ]
+    },
+    "relax_wit": {
+     "n": 1238,
+     "hits_low": 792,
+     "hits_high": 1155,
+     "transmitted_low": 0.067,
+     "transmitted_high": 0.3603,
+     "ci95_low_end": [
+      0.9176,
+      0.9456
+     ],
+     "ci95_high_end": [
+      0.6126,
+      0.666
+     ]
+    }
+   },
+   "hamzated": {
+    "strict_nowit": {
+     "n": 87,
+     "hits_low": 30,
+     "hits_high": 68,
+     "transmitted_low": 0.2184,
+     "transmitted_high": 0.6552,
+     "ci95_low_end": [
+      0.6839,
+      0.8555
+     ],
+     "ci95_high_end": [
+      0.2534,
+      0.4494
+     ]
+    },
+    "strict_wit": {
+     "n": 87,
+     "hits_low": 31,
+     "hits_high": 68,
+     "transmitted_low": 0.2184,
+     "transmitted_high": 0.6437,
+     "ci95_low_end": [
+      0.6839,
+      0.8555
+     ],
+     "ci95_high_end": [
+      0.2637,
+      0.4611
+     ]
+    },
+    "relax_wit": {
+     "n": 87,
+     "hits_low": 34,
+     "hits_high": 69,
+     "transmitted_low": 0.2069,
+     "transmitted_high": 0.6092,
+     "ci95_low_end": [
+      0.6965,
+      0.8649
+     ],
+     "ci95_high_end": [
+      0.295,
+      0.4959
+     ]
+    }
+   },
+   "doubled": {
+    "strict_nowit": {
+     "n": 198,
+     "hits_low": 38,
+     "hits_high": 167,
+     "transmitted_low": 0.1566,
+     "transmitted_high": 0.8081,
+     "ci95_low_end": [
+      0.7863,
+      0.8875
+     ],
+     "ci95_high_end": [
+      0.1431,
+      0.2524
+     ]
+    },
+    "strict_wit": {
+     "n": 198,
+     "hits_low": 44,
+     "hits_high": 167,
+     "transmitted_low": 0.1566,
+     "transmitted_high": 0.7778,
+     "ci95_low_end": [
+      0.7863,
+      0.8875
+     ],
+     "ci95_high_end": [
+      0.1699,
+      0.2851
+     ]
+    },
+    "relax_wit": {
+     "n": 198,
+     "hits_low": 50,
+     "hits_high": 168,
+     "transmitted_low": 0.1515,
+     "transmitted_high": 0.7475,
+     "ci95_low_end": [
+      0.7919,
+      0.8918
+     ],
+     "ci95_high_end": [
+      0.1971,
+      0.3174
+     ]
+    }
+   },
+   "weak": {
+    "strict_nowit": {
+     "n": 389,
+     "hits_low": 0,
+     "hits_high": 354,
+     "transmitted_low": 0.09,
+     "transmitted_high": 1.0,
+     "ci95_low_end": [
+      0.8774,
+      0.9346
+     ],
+     "ci95_high_end": [
+      0.0,
+      0.0098
+     ]
+    },
+    "strict_wit": {
+     "n": 389,
+     "hits_low": 0,
+     "hits_high": 352,
+     "transmitted_low": 0.0951,
+     "transmitted_high": 1.0,
+     "ci95_low_end": [
+      0.8716,
+      0.9302
+     ],
+     "ci95_high_end": [
+      0.0,
+      0.0098
+     ]
+    },
+    "relax_wit": {
+     "n": 389,
+     "hits_low": 0,
+     "hits_high": 353,
+     "transmitted_low": 0.0925,
+     "transmitted_high": 1.0,
+     "ci95_low_end": [
+      0.8745,
+      0.9324
+     ],
+     "ci95_high_end": [
+      0.0,
+      0.0098
+     ]
+    }
+   },
+   "pooled": {
+    "strict_nowit": {
+     "n": 1912,
+     "hits_low": 563,
+     "hits_high": 1738,
+     "transmitted_low": 0.091,
+     "transmitted_high": 0.7055,
+     "ci95_low_end": [
+      0.8953,
+      0.9211
+     ],
+     "ci95_high_end": [
+      0.2745,
+      0.3153
+     ]
+    },
+    "strict_wit": {
+     "n": 1912,
+     "hits_low": 646,
+     "hits_high": 1721,
+     "transmitted_low": 0.0999,
+     "transmitted_high": 0.6621,
+     "ci95_low_end": [
+      0.8859,
+      0.9128
+     ],
+     "ci95_high_end": [
+      0.317,
+      0.3594
+     ]
+    },
+    "relax_wit": {
+     "n": 1912,
+     "hits_low": 876,
+     "hits_high": 1745,
+     "transmitted_low": 0.0873,
+     "transmitted_high": 0.5418,
+     "ci95_low_end": [
+      0.8992,
+      0.9245
+     ],
+     "ci95_high_end": [
+      0.4359,
+      0.4806
+     ]
+    }
+   }
+  },
+  "witness_counts": {
+   "doubled": {
+    "DOUBLED_BAB_HIDDEN": 93,
+    "DOUBLED_BAB_WITNESSED": 112,
+    "UNMARKED_UNWITNESSED": 120,
+    "UNMARKED_WITNESSED": 14
+   },
+   "hamzated": {
+    "UNMARKED_UNWITNESSED": 62,
+    "UNMARKED_WITNESSED": 2
+   },
+   "sound": {
+    "DOUBLED_BAB_HIDDEN": 2,
+    "UNMARKED_UNWITNESSED": 759,
+    "UNMARKED_WITNESSED": 112
+   },
+   "weak": {
+    "DOUBLED_BAB_HIDDEN": 2,
+    "DOUBLED_BAB_WITNESSED": 1,
+    "UNMARKED_UNWITNESSED": 292,
+    "UNMARKED_WITNESSED": 22
+   }
+  },
+  "excluded": {
+   "doubled": {
+    "NO_MASDAR_CERTIFICATE": 7,
+    "VERB_NOT_FACALA": 1,
+    "VERB_NO_CERTIFICATE": 3
+   },
+   "hamzated": {
+    "VERB_NOT_FACALA": 4
+   },
+   "pooled": {
+    "NO_MASDAR_CERTIFICATE": 0,
+    "VERB_NOT_FACALA": 0,
+    "VERB_NO_CERTIFICATE": 0
+   },
+   "sound": {
+    "NO_MASDAR_CERTIFICATE": 3,
+    "VERB_NOT_FACALA": 33,
+    "VERB_NO_CERTIFICATE": 2
+   },
+   "weak": {
+    "NO_MASDAR_CERTIFICATE": 1,
+    "VERB_NOT_FACALA": 5,
+    "VERB_NO_CERTIFICATE": 3
+   }
+  },
+  "relaxed_rules_added": [
+   {
+    "class": "transitive",
+    "root": "ضرب",
+    "masdar": "ضَرَبٌ",
+    "pattern": "1َ 2َ 3"
+   }
+  ]
+ },
+ "plural": {
+  "strata": {
+   "sound": {
+    "strict": {
+     "n": 997,
+     "hits_low": 510,
+     "hits_high": 511,
+     "transmitted_low": 0.4875,
+     "transmitted_high": 0.4885,
+     "ci95_low_end": [
+      0.4815,
+      0.5435
+     ],
+     "ci95_high_end": [
+      0.4805,
+      0.5425
+     ]
+    },
+    "relax": {
+     "n": 997,
+     "hits_low": 600,
+     "hits_high": 601,
+     "transmitted_low": 0.3972,
+     "transmitted_high": 0.3982,
+     "ci95_low_end": [
+      0.5721,
+      0.6327
+     ],
+     "ci95_high_end": [
+      0.5711,
+      0.6317
+     ]
+    }
+   },
+   "hamzated": {
+    "strict": {
+     "n": 45,
+     "hits_low": 15,
+     "hits_high": 15,
+     "transmitted_low": 0.6667,
+     "transmitted_high": 0.6667,
+     "ci95_low_end": [
+      0.2136,
+      0.4793
+     ],
+     "ci95_high_end": [
+      0.2136,
+      0.4793
+     ]
+    },
+    "relax": {
+     "n": 45,
+     "hits_low": 19,
+     "hits_high": 19,
+     "transmitted_low": 0.5778,
+     "transmitted_high": 0.5778,
+     "ci95_low_end": [
+      0.2897,
+      0.567
+     ],
+     "ci95_high_end": [
+      0.2897,
+      0.567
+     ]
+    }
+   },
+   "doubled": {
+    "strict": {
+     "n": 197,
+     "hits_low": 99,
+     "hits_high": 100,
+     "transmitted_low": 0.4924,
+     "transmitted_high": 0.4975,
+     "ci95_low_end": [
+      0.4383,
+      0.5766
+     ],
+     "ci95_high_end": [
+      0.4333,
+      0.5716
+     ]
+    },
+    "relax": {
+     "n": 197,
+     "hits_low": 132,
+     "hits_high": 133,
+     "transmitted_low": 0.3249,
+     "transmitted_high": 0.3299,
+     "ci95_low_end": [
+      0.6069,
+      0.7366
+     ],
+     "ci95_high_end": [
+      0.6017,
+      0.7319
+     ]
+    }
+   },
+   "weak": {
+    "strict": {
+     "n": 338,
+     "hits_low": 0,
+     "hits_high": 116,
+     "transmitted_low": 0.6568,
+     "transmitted_high": 1.0,
+     "ci95_low_end": [
+      0.2946,
+      0.3953
+     ],
+     "ci95_high_end": [
+      0.0,
+      0.0112
+     ]
+    },
+    "relax": {
+     "n": 338,
+     "hits_low": 0,
+     "hits_high": 124,
+     "transmitted_low": 0.6331,
+     "transmitted_high": 1.0,
+     "ci95_low_end": [
+      0.3172,
+      0.4195
+     ],
+     "ci95_high_end": [
+      0.0,
+      0.0112
+     ]
+    }
+   },
+   "pooled": {
+    "strict": {
+     "n": 1577,
+     "hits_low": 624,
+     "hits_high": 742,
+     "transmitted_low": 0.5295,
+     "transmitted_high": 0.6043,
+     "ci95_low_end": [
+      0.446,
+      0.4952
+     ],
+     "ci95_high_end": [
+      0.3718,
+      0.42
+     ]
+    },
+    "relax": {
+     "n": 1577,
+     "hits_low": 751,
+     "hits_high": 877,
+     "transmitted_low": 0.4439,
+     "transmitted_high": 0.5238,
+     "ci95_low_end": [
+      0.5315,
+      0.5805
+     ],
+     "ci95_high_end": [
+      0.4517,
+      0.5009
+     ]
+    }
+   }
+  },
+  "excluded": {
+   "doubled": {
+    "NO_PLURAL_CANDIDATE": 1,
+    "SINGULAR_NO_CANDIDATE": 3
+   },
+   "hamzated": {
+    "NO_PLURAL_CANDIDATE": 1,
+    "SINGULAR_NO_CANDIDATE": 1
+   },
+   "pooled": {
+    "NO_PLURAL_CANDIDATE": 0,
+    "SINGULAR_NO_CANDIDATE": 0
+   },
+   "sound": {
+    "NO_PLURAL_CANDIDATE": 14,
+    "SINGULAR_NO_CANDIDATE": 3
+   },
+   "weak": {
+    "NO_PLURAL_CANDIDATE": 5,
+    "SINGULAR_NO_CANDIDATE": 22
+   }
+  },
+  "relaxed_rules_added": [
+   {
+    "singular": "غُرْفَةٌ",
+    "plural": "غُرَفٌ",
+    "from": "1ُ 2ْ 3َ ة",
+    "to": "1ُ 2َ 3"
+   }
+  ]
+ },
+ "witness_roots": {
+  "lane": 404,
+  "quran": 63,
+  "sahihain": 175
+ },
+ "refusals": {
+  "DEFER:HARAKA_IS_ABSENT_AND_IS_NEVER_GUESSED": 2,
+  "DEFER:TANWIN_ATTACHMENT_IS_AMBIGUOUS": 19,
+  "DEFER:UNSUPPORTED_LETTER": 1,
+  "DEFER:UNVOCALIZED_WORD_IS_NEVER_GUESSED": 3,
+  "REJECT:BARE_ALIF_OWN_MARK_NOT_LICENSED": 10,
+  "REJECT:CVVC_NOT_GEMINATE": 2,
+  "REJECT:INITIAL_SUKUN_WITHOUT_REPAIR": 17,
+  "REJECT:NOT_CONTINUE_LICENSED_AFTER_REPAIR": 8
+ }
+}
