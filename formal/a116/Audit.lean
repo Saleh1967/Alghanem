@@ -691,3 +691,15 @@ import A116
 #print axioms A116.MizanKernel.stateT_eq
 #print axioms A116.MizanKernel.waslT_eq
 #print axioms A116.MizanKernel.waqfT_eq
+#print axioms A116.Sawabiq.candidates_head
+#print axioms A116.Sawabiq.strip_suffix
+#print axioms A116.Sawabiq.step_suffix
+#print axioms A116.Sawabiq.candidates_suffix
+#print axioms A116.Sawabiq.step_length_le
+#print axioms A116.Sawabiq.candidates_length_le
+#print axioms A116.Sawabiq.strip_append
+#print axioms A116.Sawabiq.mem_step
+#print axioms A116.Sawabiq.peel_exact
+#print axioms A116.Sawabiq.fa_qalu
+#print axioms A116.Sawabiq.afala
+#print axioms A116.Sawabiq.fa_not_zawaid

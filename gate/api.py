@@ -313,10 +313,17 @@ def derive(
 Reading = tuple[str, str, str, str]
 
 
-def recover(surface_or_cert: Certificate | str) -> tuple[str, tuple[Reading, ...]]:
-    """صورةٌ (أو شهادتُها) ← (المآل، التحليلات: جذر، صنف، وزن، ضمير)."""
+def recover(
+    surface_or_cert: Certificate | str, peel: bool = False
+) -> tuple[str, tuple[Reading, ...]]:
+    """صورةٌ (أو شهادتُها) ← (المآل، التحليلات: جذر، صنف، وزن، ضمير).
+
+    و`peel=True` (ADR ٤٦): إن لم تُقرأ الصورةُ بعينها جُرّبت مرشَّحاتُ `A116.Sawabiq` بترتيبها، وأوّلُ
+    مرشَّحٍ يُقرأ هو الجواب؛ فالقراءةُ المباشرة لا تسقط (`candidates_head`).
+    """
 
     from .mabni_bridge import recover_verb
+    from .sawabiq import candidates
 
     surface = (
         gate().exit(surface_or_cert).decode("utf-8")
@@ -324,6 +331,12 @@ def recover(surface_or_cert: Certificate | str) -> tuple[str, tuple[Reading, ...
         else surface_or_cert
     )
     outcome, found = recover_verb(surface)
+    if peel and not found:
+        for stem in candidates(surface)[1:]:
+            if stem:
+                outcome, found = recover_verb(stem)
+                if found:
+                    break
     return outcome.name, tuple((a.root, a.kind, a.form, a.person) for a in found)
 
 
