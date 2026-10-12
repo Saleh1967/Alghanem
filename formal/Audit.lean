@@ -1068,3 +1068,9 @@ import Slge
 #print axioms A116.Grade.cont_length
 #print axioms A116.Grade.pause_length
 #print axioms A116.Grade.grade_table
+#print axioms A116.ExhaustPause.pauseTable_iff_licensed
+#print axioms A116.ExhaustPause.awa_chain
+#print axioms A116.Ledger.wazn_row_mem
+#print axioms A116.Ledger.filled_stops_at_one
+#print axioms A116.Ledger.dalala_alone_blocks
+#print axioms A116.Ledger.four_and_three_share_n
