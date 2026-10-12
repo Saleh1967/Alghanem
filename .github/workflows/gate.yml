@@ -199,6 +199,8 @@ jobs:
           python tools/gen_lane.py --check
           python tools/gen_lane_hasr.py --check
           python tools/gen_lane_shahid.py --check
+      - name: fifth sealed domain — QAC 0.4 roots are sealed verbatim, the aligned reference is what the tool yields, and the preregistered measurement is reproduced once it exists (ADR 41)
+        run: python tools/gen_qac.py --check
       - name: guard — no reader or writer outside the gate
         run: python -c "from gate.guard import breaches; b = breaches(); print(b or 'لا خرق'); raise SystemExit(1 if b else 0)"
       - name: conformance, gate, guard (fast)
