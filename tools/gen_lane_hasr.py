@@ -33,6 +33,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import math
 import sys
 from collections import Counter, defaultdict
@@ -255,9 +256,12 @@ def measure() -> dict[str, object]:
         return out
 
     # ١. القواعد: الصارمةُ (القياسُ الأوّل بعينه) والمُرخاة (اتّحادُها بكلّ مرشَّح)
-    m1 = L.read_tsv(L.MASDAR_TSV)
-    p1 = L.read_tsv(L.PLURAL_TSV)
-    strict_m, _, strict_p, _ = L.rules(m1, p1, lambda w, r: pat(w, r))
+    # الصارمةُ تُقرأ من نتيجة القياس الأوّل المودَعة بعينها، لا يُعاد حسابُها: إعادتُه على قاموسٍ آخر
+    # تُسقط أمثلةً دخلت ذاك القاموسَ بصورتها المنزوعة «هُ» (ضَرَبَ) — إصلاحٌ بعد التسجيل الثاني، مسمًّى
+    # في ADR ٣٧.
+    v1 = json.loads(L.RESULT.read_text(encoding="utf-8"))
+    strict_m: dict[str, set[str]] = {k: set(v) for k, v in v1["masdar"]["rules"].items()}
+    strict_p: dict[str, set[str]] = {k: set(v) for k, v in v1["plural"]["rules"].items()}
     relax_m: dict[str, set[str]] = {k: set(v) for k, v in strict_m.items()}
     relax_p: dict[str, set[str]] = {k: set(v) for k, v in strict_p.items()}
     added_m: list[dict[str, str]] = []
@@ -292,7 +296,7 @@ def measure() -> dict[str, object]:
     m_excl: dict[str, Counter[str]] = defaultdict(Counter)
     m_feat: list[tuple[Any, Any, str]] = []
     for st in ("sound", "hamzated", "doubled", "pooled"):
-        n = point = lo = hi = 0
+        n = point = lo = hi = hi_t = 0
         for r in masdar:
             if not in_scope(r) or (st != "pooled" and r[0] != st):
                 continue
@@ -314,14 +318,18 @@ def measure() -> dict[str, object]:
                 a1, b1 = hit(ps, relax_m, cls), hit(ps, relax_m, "transitive")
                 lo += a0 and b0
                 hi += a1 or b1
+                hi_t += a0 or b0
             else:
                 lo += hit(ps, strict_m, cls)
                 hi += hit(ps, relax_m, cls)
+                hi_t += hit(ps, strict_m, cls)
             if st == "sound":
                 assert vp is not None
                 bab = vp.split()[1][1:]
                 m_feat.append((r[6], (bab, r[6]), ps[0]))
-        m_out[st] = {"point": share(point, n), "hasr": bounds(lo, hi, n)}
+        # وصفٌ أُضيف بعد رؤية الحصر: نصيبُ مجهول التعدية وحدَه (القواعدُ الصارمة طرفين)
+        m_out[st] = {"point": share(point, n), "hasr": bounds(lo, hi, n),
+                     "hasr_transitivity_only": bounds(lo, hi_t, n)}
 
     # ٣. الجمع بالطبقات
     p_out: dict[str, object] = {}
