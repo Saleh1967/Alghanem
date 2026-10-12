@@ -37,12 +37,12 @@ CORPUS = ROOT / "corpora" / "quran-simple-enhanced.txt"
 MASAQ = ROOT / "corpora" / "MASAQ.csv"
 TABLES = ROOT / "formal" / "a116"
 TABLE_NAMES = (
-    "counts", "degrees", "degrees-pause", "hadd", "hadd-join", "hamza", "iltiqa", "ledger",
+    "amr", "counts", "degrees", "degrees-pause", "hadd", "hadd-join", "hamza", "iltiqa", "ledger",
     "licensable", "need", "nizam", "numbers", "order", "neutral", "pairs", "syllables", "table",
     "utf8",
     "wazn", "wazn-body",
 )
-"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ الستّةَ عشر (يطابقها CI بايتًا بايتًا)
+"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ السبعةَ عشر (يطابقها CI بايتًا بايتًا)
 والمولَّداتُ الأربع لحجمها (`syllables`، `hadd`، `hadd-join`، `iltiqa`: تُولَّد في وظيفة Lean وتُنزَّل
 أثرًا إلى وظيفة البوّابة). جدولٌ جديد لا يدخل السجلَّ بوجوده على القرص بل بإضافته هنا وإلى الأثر في CI
 — وإلّا اختلف السجلُّ محلّيًّا عنه في CI."""
@@ -158,6 +158,19 @@ def _hadith_tool() -> Any:
     return mod
 
 
+def _mudari_comparison() -> Any:
+    """`tests/test_mudari.py::corpus_comparison`: الأمرُ بالإزالة مقابلَ أوامر البوّابة (ADR ٢٤)."""
+
+    import importlib.util
+
+    path = ROOT / "tests" / "test_mudari.py"
+    spec = importlib.util.spec_from_file_location("test_mudari", path)
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod.corpus_comparison()
+
+
 def _neutral_comparison() -> Any:
     """`tests/test_neutral.py::corpus_comparison`: المطابَقُ بالوزن، والفجواتُ بأسمائها (ADR ١٧)."""
 
@@ -191,6 +204,7 @@ def generators() -> list[tuple[str, tuple[str, ...], Any]]:
         ("gate.hamza.seat_census", (corpus,), lambda: seat_census(_surfaces())),
         ("gate.degrees.attestation", (corpus,), lambda: attestation(_surfaces())),
         ("tests/test_neutral.py::corpus_comparison", (corpus,), _neutral_comparison),
+        ("tests/test_mudari.py::corpus_comparison", (corpus,), _mudari_comparison),
         ("gate.mabni_bridge.verb_readings", (masaq,), mabni_bridge.verb_readings),
         ("gate.mabni_bridge.verb_generation_reading", (masaq,),
          mabni_bridge.verb_generation_reading),

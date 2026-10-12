@@ -12,7 +12,7 @@
 | `corpora/hadith/sahih_muslim_ahadith_mushakkala_mufassala.utf8.csv.gz` | واقع مختوم (ODbL 1.0؛ بايتاتُه بعد فكّ الضغط) | `79232c8d7c27fef161d8f33ca169f9754741cfe14957dde2ac76893374998943` |
 | `corpora/abniya-intiqa-lines.txt` | مجالٌ مختومٌ ثالث: انتقاءُ الأبنية بيد المالك (`ABNIYA_INTIQA_SHA256`، ADR ١٣) | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 
-## الأرقام (220 رقمًا من 29 مولِّدًا)
+## الأرقام (236 رقمًا من 31 مولِّدًا)
 
 ### `gate.audit.main`
 
@@ -187,6 +187,28 @@
 | `matched_by_wazn.len` | 22 |
 | `matched_by_wazn.sum` | 295 |
 
+### `tests/test_mudari.py::corpus_comparison`
+
+يقرأ: `corpora/quran-simple-enhanced.txt`. بصمةُ المخرَج: `1c3147f9911e8547`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `gaps.ALIF_IN_ROOT` | 8 |
+| `gaps.HAMZA_DOUBLED_ROOT` | 27 |
+| `gaps.RAA_TAKHFIF_OWNER_OVER_GATE` | 1 |
+| `gaps.YA_FA_IFTAAL_HOLLOW` | 1 |
+| `matched` | 7,621 |
+| `matched_by_form.I` | 2,022 |
+| `matched_by_form.II` | 703 |
+| `matched_by_form.III` | 700 |
+| `matched_by_form.IV` | 699 |
+| `matched_by_form.V` | 702 |
+| `matched_by_form.VI` | 699 |
+| `matched_by_form.VII` | 699 |
+| `matched_by_form.VIII` | 698 |
+| `matched_by_form.X` | 699 |
+| `roots` | 703 |
+
 ### `gate.mabni_bridge.verb_readings`
 
 يقرأ: `corpora/MASAQ.csv`. بصمةُ المخرَج: `ac473b098cf1934f`.
@@ -276,6 +298,14 @@
 | `Suffix:predicted` | 18,976 |
 | `words` | 35,048 |
 | `words_not_aligned` | 1,165 |
+
+### `lake exe a116-table amr`
+
+يقرأ: — (نواةُ Lean؛ لا مودَع). بصمةُ المخرَج: `8c2b1db31fae9e20`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `amr.csv.rows` | 118 |
 
 ### `lake exe a116-table counts`
 

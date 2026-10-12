@@ -453,3 +453,16 @@ import A116
 #print axioms A116.Nizam.lift_flatten
 #print axioms A116.Nizam.lift_lift
 #print axioms A116.Nizam.wasl_element_needs_no_ibtida
+-- الماضي ← المضارعُ بزائدةٍ من «أنيت» ← الأمرُ بإزالة الزوائد (ADR ٢٤)
+#print axioms A116.Mudari.anayt_are_carriers
+#print axioms A116.Mudari.waslVerb_ne_fatha
+#print axioms A116.Mudari.waslVerb_ne_sukun
+#print axioms A116.Mudari.ibtida_head
+#print axioms A116.Mudari.amr_head_vowelled
+#print axioms A116.Mudari.amr_lqy
+#print axioms A116.Mudari.owner_examples
+#print axioms A116.Mudari.mudari_examples
+#print axioms A116.Mudari.reference_check
+#print axioms A116.Mudari.reference_licensed
+#print axioms A116.Mudari.ibtida_spec
+#print axioms A116.Mudari.amr_restores_mudari

@@ -243,6 +243,20 @@ def main (args : List String) : IO Unit := do
     for a in [Stages.K.cv, .v, .c] do
       for b in [Stages.K.cv, .v, .c] do
         IO.println s!"{nm a},{nm b},{Nizam.waslK a b},{Nizam.waqfK a b}"
+  | ["amr"] =>
+    -- المضارعُ والأمر (`Mudari`، ADR ٢٤) على الجذور المرجعيّة × الأوزان التسعة × الأبواب: رقمُ الجذر، الوزن، الباب،
+    -- المضارعُ رفعًا بالياء، والمجزومُ بالتاء، والأمر — ذرّاتٍ، وأأقام قانونُ الابتداء همزةَ وصل.
+    let mark : Haraka → String
+      | .fatha => "َ" | .damma => "ُ" | .kasra => "ِ" | .sukun => "ْ"
+    let atoms := fun (w : List Cell) =>
+      " ".intercalate (w.map fun c => s!"{Field112.carrierChar c.carrier}{mark c.haraka}")
+    let fname : Mudari.Form → String
+      | .I => "I" | .II => "II" | .III => "III" | .IV => "IV" | .V => "V" | .VI => "VI"
+      | .VII => "VII" | .VIII => "VIII" | .X => "X"
+    for (r, i) in Mudari.refRoots.zip (List.range Mudari.refRoots.length) do
+      for f in Mudari.Form.all do
+        for b in Mudari.babs r f do
+          IO.println s!"{i},{fname f},{mark b},{atoms (Mudari.mudari r f b 'ي' .damma)},{atoms (Mudari.mudari r f b 'ت' .sukun)},{atoms (Mudari.amr r f b)},{Mudari.amrWasl r f b}"
   | ["utf8"] =>
     -- أبجديّةُ الرسم: الحروفُ ‎U+0621–U+064A‎، العلاماتُ ‎U+064B–U+0652‎، ألفُ الوصل ‎U+0671‎، والمسافة.
     for c in (List.range 0x2B).map (· + 0x621) ++ (List.range 8).map (· + 0x64B) ++ [0x671, 0x20] do
