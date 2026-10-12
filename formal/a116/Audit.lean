@@ -648,3 +648,8 @@ import A116
 #print axioms A116.Dal.no_cell_function_recovers_root
 #print axioms A116.ContextDeposit.free_witness_pause_agrees
 #print axioms A116.ContextDeposit.deposit_needs_vowel_after_madd
+#print axioms A116.Hasr.hasr
+#print axioms A116.Hasr.hasr_tight_low
+#print axioms A116.Hasr.hasr_tight_high
+#print axioms A116.Hasr.countP_mono
+#print axioms A116.Hasr.hasr_mono
