@@ -13,7 +13,8 @@ from typing import Final
 
 __all__ = ["ABNIYA_INTIQA_DIGEST", "AJNAS_DIGEST", "CERTIFICATES_DIGEST",
            "CONTEXT_CERTIFICATES_DIGEST", "DEPOSITS",
-           "DEPOSIT_KINDS", "GATE_REV", "HADITH_CONTEXT_CERTIFICATES_DIGEST", "MODULES", "Deposit",
+           "DEPOSIT_KINDS", "GATE_REV", "HADITH_CONTEXT_CERTIFICATES_DIGEST",
+           "LANE_CONTEXT_CERTIFICATES_DIGEST", "MODULES", "Deposit",
            "Module", "index_tools", "lean_files", "readers_under_law", "tables"]
 
 
@@ -155,7 +156,7 @@ class Deposit:
     licence: str = ""
 
 
-GATE_REV: Final[str] = "7c87b7ec2156288c4431ac9c0957ab94857f97c6"
+GATE_REV: Final[str] = "9ae8d812c11a86df0a823924e5cdb85968957573"
 """إيداعُ بوّابة الغانم (`Saleh1967/Alghanem`، فرع `claude/official-gate`) الذي يُعاد منه توليدُ مودَع
 الشهادات في CI (`tools/gen_certificates.py --check`): ما يقيسه SLGE هو ما تطبعه البوّابةُ على المدوّنة
 المختومة بهذا الإيداع؛ أيُّ فرقٍ `DEPOSIT_DRIFTED_FROM_GATE`. يُرفع مع المودَع معًا لا أحدُهما وحدَه."""
@@ -175,6 +176,13 @@ HADITH_CONTEXT_CERTIFICATES_DIGEST: Final[str] = (
 موقعًا في سياقهما كما طبعتها البوّابةُ نفسُها على `GATE_REV` (`gen_context_certificates.py --corpus
 sahihain`، الغانم ADR ٧)؛ المصدرُ Open-Hadith-Data برخصة ODbL 1.0 والمودَعُ المشتقُّ يحملها. لا مرجعَ
 محجوبًا له فلا «مقيس» عليه."""
+
+LANE_CONTEXT_CERTIFICATES_DIGEST: Final[str] = (
+    "3873f1c79d5a5cd924432fb7dd90cff952b2a0e08e39ccef7b73181074165061")
+"""بصمةُ مودَع المجال الرابع (`lane-context-certificates.json.gz`): معجمُ لين
+(alpheios-project/lan@7dd04e1، CC BY-SA 3.0 US؛ الغانم ADR ٣٣) كلُّ وسمٍ عربيٍّ سطرٌ، موقعًا موقعًا في
+سياقه من البوّابة نفسِها على `GATE_REV` (`gen_context_certificates.py --corpus lane`، الغانم ADR ٤٥)؛
+والمودَعُ المشتقُّ يحمل رخصتَه. لا مرجعَ محجوبًا عليه هنا فلا «مقيس» عليه في SLGE (ADR ٤٨)."""
 
 AJNAS_DIGEST: Final[str] = "db619720dae3f2c27881789727c121ffd7a75910ae0b605a01f97d346e78b155"
 """بصمةُ مودَع المعلومات السابقة الأوّل (`ajnas-qabiliyyat.json.gz`) بصورته القانونيّة قبل الضغط
@@ -197,6 +205,10 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
             "المدوّنةُ المختومةُ الثانية: الصحيحان (Open-Hadith-Data، ODbL 1.0) موقعًا موقعًا في "
             "سياقهما من البوّابة نفسِها (995,413 موقعًا، 12,370 حديثًا سطورًا)؛ يُعاد توليدُه من "
             "البوّابة على GATE_REV"),
+    Deposit("lane-context-certificates.json.gz", "واقع مختوم",
+            "المجالُ المختومُ الرابع: معجمُ لين (CC BY-SA 3.0 US) كلُّ وسمٍ عربيٍّ سطرٌ، موقعًا موقعًا في "
+            "سياقه من البوّابة نفسِها (518,930 موقعًا، 382,852 سطرًا)؛ يُعاد توليدُه من البوّابة على "
+            "GATE_REV"),
     Deposit("maqayis-roots.json.gz", "وضع", "جذورُ مقاييس اللغة حواملَ (4,561)"),
     Deposit("sibawayh-abniya.tsv", "وضع", "أبنيةُ الأسماء عند سيبويه (158 هيكلًا)"),
     Deposit("nabhani-huruf.json", "وضع",

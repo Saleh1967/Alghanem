@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_lean_index.py` من ملفّات `.lean` و`Audit.lean` و`out/axioms.txt`؛ لا يُحرَّر باليد. الـ116 من الغانم بإيداعه المثبَّت في `formal/lakefile.toml`.
 
-**1867 مبرهنة، منها 1091 مدقَّقةُ المسلّمات.**
+**1949 مبرهنة، منها 1164 مدقَّقةُ المسلّمات.**
 
 كلُّ درجةٍ تستهلك ما قبلها: لا تدخل الكلمةُ درجةً قبل أن تُرخَّص في التي تحتها. «مدقَّق» = في `Audit.lean` وطُبعت مسلّماتُه؛ وما ليس مدقَّقًا مبرهَنٌ في Lean لكن لم يُطبع سندُه بعدُ فلا يُستشهد به في `status.py`.
 
@@ -1064,6 +1064,143 @@
 | `mana_never_mustawfa` | **ولأيّ أدلّةٍ وأيّ إسنادٍ على درجات هذا السجلّ: لا تُستوفى الدرجة 4 (المعنى)** — أربعةُ ملفّاتٍ لسبع وظائف. | — | — |
 | `mukhtabar_never_licensed` | **فلا يُرخَّص المختبرُ (5) ولا الزوائدُ (6) بقانون السجلّ نفسِه**، ولو استوفت كلُّ ملفّاته أدلّتَها. | — | — |
 | `sijill_not_rank_mono` | **الرتبةُ مقلوبةٌ في السجلّ**: وحداتُ Lean المدقَّقة يرخّصها مدخلٌ لا دليلَ قائمًا له (شاهدُه `f1021` ← `f0978`). | — | — |
+
+### `A116/ContextDeposit.lean` — 4 مبرهنة (`A116.ContextDeposit`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `deposit_needs_raw` | **الخامُ لازم**: السطرُ المصلَح مرخَّص، والمودَعُ يرفض، والفرقُ «قَالْ» خامًا بعد «بَ». | مدقَّق | propext, Classical.choice, Quot.sound |
+| `deposit_needs_free` | **الأوّلُ الحرّ لازمٌ للصيغة**: «ءَ» ثمّ «اْلْ» (أوّلُها حرفُ مدٍّ ساكن) — المودَعُ غيرُ الصيغة. | مدقَّق | propext, Classical.choice, Quot.sound |
+| `free_witness_pause_agrees` | شاهدُ ADR ٣٤ («ءَ» ثمّ «اْلْ») **ليس شاهدًا وقفًا**: آخرُ السطر وقفٌ فالمدُّ العارض يُقبل، فيتساوى الطرفان. | مدقَّق | propext, Classical.choice, Quot.sound |
+| `deposit_needs_vowel_after_madd` | **الشاهدُ وقفًا ووصلًا** (`HarfBridge.deposit_needs_vowel_after_madd` في Algebra، ADR ٧ هناك): «بَ اْبْبَ وَ»، وصورةُ اب | مدقَّق | propext, Classical.choice, Quot.sound |
+
+### `A116/Tadwir.lean` — 13 مبرهنة (`A116.Tadwir`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `restore_append_left` | — | مدقَّق | propext |
+| `step_inv` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `fold_inv` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `restore_dedupBy` | **الضياعُ الصفريّ**: الردُّ بعد إزالة الازدواج هويّة، متى صدقت العلاقةُ على المدخل. | مدقَّق | propext, Classical.choice, Quot.sound |
+| `mem_dedupBy` | **الضياعُ الصفريّ**: الردُّ بعد إزالة الازدواج هويّة، متى صدقت العلاقةُ على المدخل. | مدقَّق | propext, Classical.choice, Quot.sound |
+| `stepBy_nodup` | **الضياعُ الصفريّ**: الردُّ بعد إزالة الازدواج هويّة، متى صدقت العلاقةُ على المدخل. | مدقَّق | propext, Quot.sound |
+| `dedupBy_nodup` | **القانونيُّ بلا تكرار** لكلّ علاقةٍ انعكاسيّة. | مدقَّق | propext, Quot.sound |
+| `stepBy_length` | **القانونيُّ بلا تكرار** لكلّ علاقةٍ انعكاسيّة. | مدقَّق | propext, Quot.sound |
+| `dedupBy_length_le` | **لا يزيد القانونيُّ على المدخل.** | مدقَّق | propext, Quot.sound |
+| `restore_dedup` | بالمساواة: لا ضياعَ بلا شرط، والقانونيُّ بلا تكرار. | مدقَّق | propext, Classical.choice, Quot.sound |
+| `dedup_nodup` | بالمساواة: لا ضياعَ بلا شرط، والقانونيُّ بلا تكرار. | مدقَّق | propext, Quot.sound |
+| `restore_dedupKey` | **لا ضياعَ بالبصمة إن لم تتصادم على المدخل** — الشرطُ يُقاس على المودَع، والأثرُ مبرهَن. | مدقَّق | propext, Classical.choice, Quot.sound |
+| `collision_loses` | **والشرطُ لازم**: بصمةٌ تتصادم (كلُّ شيءٍ إلى صفر) تُضيع — ‎[1, 2]‎ يُردّ ‎[1, 1]‎. | مدقَّق | propext |
+
+### `A116/Kraft.lean` — 5 مبرهنة (`A116.Kraft`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `huffman_lengths` | **هوفمان يُخرج الأطوالَ المنقولة.** | مدقَّق | propext |
+| `kraft_complete` | **كرافت تامّ**: ‎Σ 2^(5 − ℓ) = 2⁵‎. | مدقَّق | لا مسلّمات |
+| `mean_length_bounds` | **L بين 2.4335 و2.4336** بت/موضع. | مدقَّق | لا مسلّمات |
+| `flat_surplus_bounds` | **فائضُ المسطَّح** ‎3 − L‎ بين 0.5664 و0.5665. | مدقَّق | لا مسلّمات |
+| `assignment_monotone` | **الترتيب**: كلّما زاد التردّدُ لم يزد الطول. | مدقَّق | لا مسلّمات |
+
+### `A116/Shannon.lean` — 22 مبرهنة (`A116.Shannon`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `pow_le_pow_left'` | — | — | — |
+| `flog_spec` | **الخاصّيّةُ المميِّزة لكلّ ‎n ≥ d > 0‎**: ‎2^a·d^b ≤ n^b < 2^(a+1)·d^b‎. | مدقَّق | propext, Quot.sound |
+| `shannon_exact` | **‎H ≤ L‎** بالأعداد الصحيحة: ‎N^N ≤ 2^bits · Π c^c‎. | مدقَّق | لا مسلّمات |
+| `within_one_bit` | **‎L < H + 1‎**: ‎2^bits · Π c^c < 2^N · N^N‎. | مدقَّق | لا مسلّمات |
+| `normLow_inv` | — | مدقَّق | propext, Quot.sound |
+| `normUp_inv` | — | مدقَّق | propext, Quot.sound |
+| `pow_two_succ` | — | — | — |
+| `ceil_mul` | — | — | — |
+| `sq_le` | — | — | — |
+| `stepLow_inv` | — | مدقَّق | propext, Quot.sound |
+| `stepUp_inv` | — | مدقَّق | propext, Quot.sound |
+| `runLow_inv` | — | مدقَّق | propext, Quot.sound |
+| `runUp_inv` | — | مدقَّق | propext, Quot.sound |
+| `initLow_inv` | — | مدقَّق | propext, Quot.sound |
+| `initUp_inv` | — | مدقَّق | propext, Quot.sound |
+| `logCheck_spec` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `flog_eq` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `map_flog` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `cells_check` | الشهادةُ بالتربيع على الخلايا الثماني: ‎K = 64‎، ثماني عشرةَ تربيعة. | مدقَّق | لا مسلّمات |
+| `flog_values` | الشهادةُ بالتربيع على الخلايا الثماني: ‎K = 64‎، ثماني عشرةَ تربيعة. | مدقَّق | propext, Classical.choice, Quot.sound |
+| `freqs_le_total` | الشهادةُ بالتربيع على الخلايا الثماني: ‎K = 64‎، ثماني عشرةَ تربيعة. | مدقَّق | لا مسلّمات |
+| `entropy_bounds` | **‎2.30975 ≤ H < 2.30977‎**: ‎Σ cᵢaᵢ‎ و‎Σ cᵢ(aᵢ+1)‎ بين ‎2.30975·N·b‎ و‎2.30977·N·b‎. | مدقَّق | لا مسلّمات |
+
+### `A116/Dal.lean` — 4 مبرهنة (`A116.Dal`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `qwl_ne_qyl` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `qala_same_cells` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `no_cell_function_separates` | **لا دالّةَ في الخانات تفصلهما.** | مدقَّق | propext, Classical.choice, Quot.sound |
+| `no_cell_function_recovers_root` | **لا ردَّ من الخانات وحدَها إلى الجذر.** | مدقَّق | propext, Classical.choice, Quot.sound |
+
+### `A116/MaqayisData.lean` — 0 مبرهنة (`A116.Maqayis`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+
+### `A116/Maqayis.lean` — 12 مبرهنة (`A116.Maqayis`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `nums_increasing` | — | مدقَّق | propext |
+| `increasing_tail` | — | — | — |
+| `increasing_head_lt` | — | — | — |
+| `nodup_of_increasing` | — | مدقَّق | propext |
+| `nums_nodup` | — | مدقَّق | propext |
+| `nums_in_range` | — | مدقَّق | لا مسلّمات |
+| `roots_in_table` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `roots_num` | — | مدقَّق | propext, Quot.sound |
+| `nodup_map_of_inj` | — | مدقَّق | propext, Quot.sound |
+| `roots_nodup` | — | مدقَّق | propext, Quot.sound |
+| `count_is_maqayisCount` | **عددُ صفوف الشاهد هو عددُ الشاهد الذي فتح الرباعيّ** (`Rubai.maqayisCount`). | مدقَّق | propext |
+| `witness_share` | **حدُّ الشاهد**: أقلُّ من 21% من جدول الدرجة. | مدقَّق | propext |
+
+### `A116/Hasr.lean` — 9 مبرهنة (`A116.Hasr`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `hasr` | **الحصر**: لكلّ اختيارٍ للمعامل، عددُ الإصابات بين عدّ «كلاهما» وعدّ «أحدهما». | مدقَّق | propext, Classical.choice, Quot.sound |
+| `hasr_tight_low` | الحدُّ الأدنى يُبلَغ: يُختار من الإصابتين أضعفُهما. | مدقَّق | Quot.sound |
+| `hasr_tight_high` | والأعلى يُبلَغ: يُختار أقواهما. | مدقَّق | Quot.sound |
+| `countP_mono` | **الاطّراد**: ما أصاب بالقاعدة الأضيق أصاب بالأوسع. | مدقَّق | propext, Quot.sound |
+| `hasr_mono` | **الحصران معًا**: معاملٌ مجهول (`c`) وقاعدةٌ بين صارمةٍ (`a₀`، `b₀`) ومُرخاةٍ (`a₁`، `b₁`). | مدقَّق | propext, Classical.choice, Quot.sound |
+| `hasr_list` | **الحصرُ على قائمة مرشَّحين** — تعميمُ `hasr`: إن كان الحقُّ `t x` أحدَ المرشَّحين `C x` (تعديةٌ مجهولة، بابٌ | مدقَّق | propext, Quot.sound |
+| `hasr_refine` | **الشاهدُ يضيّق ولا يوسّع**: مرشَّحون أقلُّ (`D ⊆ C`، بشاهدٍ يُسقط بعضَهم) يرفعون الحدَّ الأدنى ويخفضون | مدقَّق | propext, Quot.sound |
+| `pin_distinct` | **التعيينُ بالتمايز** (ADR ٤٣): إن كان حقُّ بندٍ (`x`) من مرشَّحيه `A` وكان غيرَ حقِّ بندٍ آخرَ تعيّن (`b`) — بندان | مدقَّق | propext |
+| `pin_unique` | فإن بقي بعد الحذف مرشَّحٌ واحد فهو الحقّ. | مدقَّق | propext |
+
+### `A116/Mizan.lean` — 9 مبرهنة (`A116.Mizan`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `projW_toH` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `toH_ne` | — | — | — |
+| `machineJoin_eq` | **الموصولُ وصلًا هو `strictJoinB` بعينه، على كلّ طول**. | مدقَّق | propext, Classical.choice, Quot.sound |
+| `machineJoin_pause_eq` | **ووقفًا `strictJoinPauseB` بعينه**. | مدقَّق | propext, Classical.choice, Quot.sound |
+| `hal_nodup` | الجدولُ دالّة: لا حالَ يتكرّر ولا خانة، فالرقمُ في الجدول يعيّن صاحبَه. | مدقَّق | لا مسلّمات |
+| `khana_nodup` | الجدولُ دالّة: لا حالَ يتكرّر ولا خانة، فالرقمُ في الجدول يعيّن صاحبَه. | مدقَّق | لا مسلّمات |
+| `hal_count` | الجدولُ دالّة: لا حالَ يتكرّر ولا خانة، فالرقمُ في الجدول يعيّن صاحبَه. | — | — |
+| `bad_first` | الجدولُ دالّة: لا حالَ يتكرّر ولا خانة، فالرقمُ في الجدول يعيّن صاحبَه. | — | — |
+| `cells_map` | والخانةُ من الغانم تُنقل نقلًا واحدًا: لكلّ خانةٍ صفُّها في جدول الآلة. | مدقَّق | propext, Classical.choice, Quot.sound |
+
+### `A116/MizanData.lean` — 0 مبرهنة (`A116.MizanData`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+
+### `A116/MizanKernel.lean` — 4 مبرهنة (`A116.MizanKernel`)
+
+| المبرهنة | ما تقول | التدقيق | المسلّمات |
+|---|---|---|---|
+| `cellT_eq` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `stateT_eq` | — | مدقَّق | propext |
+| `waslT_eq` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `waqfT_eq` | — | مدقَّق | propext, Classical.choice, Quot.sound |
 
 ## الدرجة ١١ — الجسرُ إلى SLGE: ترميزان، برهانٌ واحد
 

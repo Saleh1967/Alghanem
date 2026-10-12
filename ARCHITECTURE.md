@@ -1456,3 +1456,25 @@ MASAQ باسم بناء سيبويه. فشاهدٌ «مشهودٌ» بهذه ا�
 
 **ما بقي باسمه.** مجالُ لين لا يستهلكه SLGE بعد: لا مودَعَ له هنا (`LANE_DEPOSIT_NOT_CONSUMED`)؛ و`SLGE_LICENCE_AS_NIZAM_UNPROVEN`
 و`RUKHSA_GRADES_NOT_INSTANTIATED` (ADR ٤٥) قائمان.
+
+## ADR ٤٨ — رفعُ التثبيت إلى 9ae8d81 ومودَعُ لين الرابع (الغانم ADR ٣٤–٤٥؛ تفويضُ المالك 2026-10-12)
+
+**السبب.** نصُّ المالك: «نريد الإنجاز وقفل المرحلة انت اوجد حلول وانا موافق على المصادر وعلى التوقيع تصرف». والدَّينُ
+`LANE_DEPOSIT_NOT_CONSUMED` (ADR ٤٧): مجالُ لين مختومٌ في الغانم ولا يستهلكه SLGE.
+
+**القرار.**
+1. `GATE_REV` و`formal/lakefile.toml` و`lake-manifest.json` على 9ae8d81. تغيّر في `gate/` بين الإيداعين: `api.py` (علامةٌ
+   وحدَها يمحوها إصلاحُ الرسم رفضٌ باسمه `NOT_ONE_TOKEN` لا `ValueError`)، `contextual.py` (موصولٌ فيه حرفٌ خارج الحوامل
+   تأجيلٌ `NOT_ONE_EXACT_WORD_SPAN` لا حالةٌ رابعة `INVALID_CONFIGURATION`)، `licence.py` و`mizan.py` (الميزان، الغانم
+   ADR ٤٢، ٤٤)، و`guard.py`؛ ومودَعاتُ المصحف والصحيحين والانتقاء تُطابَق كما هي.
+2. **المودَعُ الرابع** `tests/data/lane-context-certificates.json.gz` بنوع «واقع مختوم»: لين موقعًا موقعًا في سياقه من البوّابة
+   (`gen_context_certificates.py --corpus lane`، والقاموسُ من المختوم وحدَه)؛ بصمتُه `LANE_CONTEXT_CERTIFICATES_DIGEST`، يفحصه
+   `test_lane_context_deposit_is_what_the_pinned_gate_printed` محلّيًّا بطفرة، وCI يعيد توليدَه من البوّابة على `GATE_REV`.
+   والرفضُ فيه بحالتيه وحدَهما.
+3. الدرجةُ ١٠ تضمّ `ContextDeposit`، `Tadwir`، `Kraft`، `Shannon`، `Dal`، `MaqayisData`، `Maqayis`، `Hasr`، `Mizan`،
+   `MizanData`، `MizanKernel`؛ ومبرهناتُها المدقَّقة في الغانم أُضيفت إلى `Audit.lean` (إلّا `Shannon.pow_le_pow_left'`: اسمٌ
+   بشرطةٍ لا يقرؤه فحصُ المسلّمات في CI، وهو لمّةٌ مساعدة) — منها `Hasr.pin_unique` و`Mizan.machineJoin_eq`.
+
+**ما بقي باسمه.** لا قارئَ في السُّلَّم يقرأ مودَعَ لين بعد: هو واقعٌ مودَعٌ مفحوصُ البصمة والحالات (`LANE_DEPOSIT_NOT_READ`)؛
+وقراءتُه بقانون القارئ وحدةٌ تالية. و`SLGE_LICENCE_AS_NIZAM_UNPROVEN` و`RUKHSA_GRADES_NOT_INSTANTIATED` قائمان.
+
