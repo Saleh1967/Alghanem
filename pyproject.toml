@@ -25,7 +25,7 @@ packages = ["gate"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = [
-    "slow: يقيس على مرجعٍ بشريٍّ محجوب (MASAQ) ويطول؛ `-m \"not slow\"` للسريع",
+    "slow: يقيس على مرجعٍ بشريٍّ محجوب (MASAQ)، ويفحص مودَعَ الصحيحين بسياقه؛ يطول؛ `-m \"not slow\"` للسريع",
 ]
 
 [tool.ruff]

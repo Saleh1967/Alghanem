@@ -35,10 +35,10 @@ from .licence import (
     continue_licensed,
     hadd_ok,
     hadd_pause_ok,
+    joined_failure,
     kind_of,
     pause_licensed,
     repair_junction,
-    straddles,
 )
 from .residue import Edit, has_marks, repair, unrepair
 
@@ -207,18 +207,18 @@ class Gate:
             # التقاءُ الساكنين على الحدّ (`Iltiqa.repair`): الألفُ الفارقة تسقط، أو المدُّ يُحذف، أو
             # الساكنُ يُكسَر — في آخر اليساريّة وحدَها، وجهًا مسمًّى يحمله الشهادة؛ وإلّا لا شيء.
             left_atoms, junction = repair_junction(tuple(left["atoms"]), atoms)
-            joined = left_atoms + atoms
-            if not licensed(kind_of(joined)):
+            # الحكمُ: `strict_joined`/`strict_joined_pause` بعينهما (`joined_failure`)، والرفضُ
+            # مسمًّى بشرطه.
+            failed = joined_failure(left_atoms, atoms, pause)
+            if failed == "ternary":
                 return Refusal("REJECT", ("JUNCTION_NOT_LICENSED",)
                                + (("NOT_PAUSE_LICENSED",) if pause else ()))
-            if not hadd(joined):
-                # `Hadd.strictB`/`strictPauseB`: مدٌّ قبل ساكنٍ غيرِ مدغمٍ داخلَ الكلمة (يَا + لْأَرْضِ)
-                # — لا يُقصَّر تخمينًا؛ وقفًا الطرفُ وحدَه مُعفًى (`geminatePauseB_vc_carrier`).
+            if failed == "hadd":
+                # مدٌّ قبل ساكنٍ غيرِ مدغمٍ داخلَ الكلمة (يَا + لْأَرْضِ) — لا يُقصَّر تخمينًا؛ وقفًا الطرفُ
+                # وحدَه مُعفًى (`geminatePauseB_vc_carrier`).
                 return Refusal("REJECT", ("JUNCTION_NOT_LICENSED", "CVVC_NOT_GEMINATE"))
-            if straddles(left_atoms, atoms):
-                # `Hadd.strictJoinB`/`strictJoinPauseB`: المدُّ في كلمةٍ والمدغمُ في الأخرى
-                # (يَا + شْشَافِعِينَ) — الاستثناءُ داخلَ الكلمة الواحدة وحدَها؛ والمدُّ يُقصَّر نطقًا، فلا
-                # يُرخَّص ولا يُقصَّر تخمينًا.
+            if failed == "straddle":
+                # المدُّ في كلمةٍ والمدغمُ في الأخرى (يَا + شْشَافِعِينَ) — الاستثناءُ داخلَ الكلمة الواحدة.
                 return Refusal("REJECT", ("JUNCTION_NOT_LICENSED", "CVVC_ACROSS_WORD_BOUNDARY"))
             return Certificate(core, residue, junction)
         elif not licensed(kind_of(atoms)):

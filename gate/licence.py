@@ -251,6 +251,28 @@ def strict_joined_pause_repaired(left: Sequence[str], right: Sequence[str]) -> b
     return strict_joined_pause(repair_junction(left, right)[0], right)
 
 
+def joined_failure(left: Sequence[str], right: Sequence[str],
+                   pause: bool) -> Literal["ternary", "hadd", "straddle"] | None:
+    """حكمُ الموصول في البوّابة (`Gate.enter` بسياق `joined`): `None` إن رُخِّص، وإلّا أوّلُ شرطٍ سقط —
+    الثلاثيُّ، ثمّ قيدُ الحدّ، ثمّ قطعُ الحدّ؛ والبوّابةُ تسمّي الرفضَ بشرطه.
+
+    هو `strict_joined` وصلًا و`strict_joined_pause` وقفًا بعينهما
+    (`Hadd.strictJoinB`/`strictJoinPauseB`) مفكوكًا إلى شروطه —
+    مطابَقٌ لجدول `hadd-join` كلِّه (`test_gate_joined.py`).
+    """
+
+    joined = tuple(left) + tuple(right)
+    licensed = pause_licensed if pause else continue_licensed
+    hadd = hadd_pause_ok if pause else hadd_ok
+    if not licensed(kind_of(joined)):
+        return "ternary"
+    if not hadd(joined):
+        return "hadd"
+    if straddles(left, right):
+        return "straddle"
+    return None
+
+
 def licence(atoms: Sequence[str]) -> tuple[Lead, list[Syl]] | None:
     """ذرّاتٌ ← تقطيعُها الثلاثيّ، أو `None` إن لم تُقطَّع."""
 

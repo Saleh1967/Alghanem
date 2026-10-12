@@ -10,18 +10,24 @@
   (`hamza_prefix`).
 
 هنا مرآةُ الشرطين بايثونًا مكتوبةً من نصّ المبرهنة لا من شيفرة البوّابة، وطفراتُها، ثمّ الفحصُ
-على كلّ موقعٍ داخليٍّ جاهزٍ ما قبله جاهز: الكلمةُ بخاناتها في سياقها
-(`tools/gen_context_certificates.py`)، وصورةُ ابتداء ما قبلها من البوّابة في سياق الابتداء.
+على كلّ موقعٍ داخليٍّ جاهز: الكلمةُ بخاناتها في سياقها (`tools/gen_context_certificates.py`)،
+ويسارُها صورةُ ابتداء ما قبلها كما تأخذها البوّابة (`project` في سياق الابتداء)، وحكمُها هو
+`strict_joined_repaired` (وقفًا `strict_joined_pause_repaired`) على يسارها وذرّاتها بعينها
+(ADR ٣٨). وبعد موضعٍ مرفوضٍ تبدأ قطعةٌ يسارُها صورةُ ابتداء المرفوض (`segment_eq_line`، ADR ٨ في
+Algebra): يُفحص أنّ اليسارَ موجود. والمصحفُ في الاختبار السريع، والصحيحان في البطيء (ADR ٣٨).
 """
 
 from __future__ import annotations
 
+import gzip
 import importlib.util
 import sys
 
+import pytest
 from conftest import ROOT
 
-from gate import Refusal, gate
+from gate.contextual import Context, project
+from gate.licence import strict_joined_pause_repaired, strict_joined_repaired
 from gate.residue import repair
 
 SPEC = importlib.util.spec_from_file_location("gen_context_certificates",
@@ -78,28 +84,65 @@ def test_mutants_are_caught() -> None:
     assert mutant_bare_prefix([["ء", SUKUN], *lh], lh) != start_ok([["ء", SUKUN], *lh], lh)
 
 
-def test_every_interior_position_of_the_quran_satisfies_the_theorem() -> None:
-    dep = MOD.generate("quran")
+MARK = {v: k for k, v in MOD.STATE.items()}
+
+
+def _atoms(cells: Cells) -> tuple[str, ...]:
+    return tuple(c + MARK[st] for c, st in cells)
+
+
+def _check(name: str) -> dict[str, int]:
+    """كلُّ موقعٍ داخليٍّ جاهز: شكلُه، وصورةُ ابتداء ما قبله (يسارُ القطعة) موجودة، وحكمُه هو
+    `strict_joined_repaired` على يساره وذرّاته بعينها؛ وإن كان ما قبله جاهزًا فصورتُه `StartB` معه."""
+
+    dep = MOD.generate(name)
     forms, stream = dep["forms"], dep["stream"]
-    start = gate()
-    cache: dict[str, Cells | None] = {}
-    lines = MOD.lines_of(MOD.CORPUS.read_bytes())
-    pos, checked, failures = 0, 0, []
-    for tokens in lines:
+    raw = MOD.CORPORA[name].read_bytes()
+    if MOD.CORPORA[name].name.endswith(".gz"):
+        raw = gzip.decompress(raw)
+    cache: dict[str, tuple[str, ...] | None] = {}
+    pos = 0
+    n = {"checked": 0, "after_refusal": 0}
+    failures: list[tuple[str, str, str]] = []
+    for tokens in MOD.lines_of(raw):
         prev: Cells | None = None
         for i, _w in enumerate(tokens):
-            f = stream[pos][0]
+            f, exit_ = stream[pos][0], stream[pos][1]
             pos += 1
             word = forms[f]["cells"] if f >= 0 else None
-            if i > 0 and word is not None and prev is not None:
+            if i > 0 and word is not None:
                 key = repair(tokens[i - 1])[0]
                 if key not in cache:
-                    cert = start.enter(tokens[i - 1].encode("utf-8"))
-                    cache[key] = None if isinstance(cert, Refusal) else MOD.cells_of(cert.atoms)
-                s = cache[key]
-                if s is not None:
-                    checked += 1
-                    if not (shape_ok(word) and start_ok(s, prev)):
-                        failures.append((tokens[i - 1], tokens[i]))
+                    d = project(key, Context())
+                    cache[key] = tuple(d["atoms"]) if d["status"] == "READY" else None
+                left = cache[key]
+                n["checked"] += 1
+                if left is None:
+                    failures.append(("NO_LEFT", tokens[i - 1], tokens[i]))
+                    prev = word
+                    continue
+                verdict = strict_joined_pause_repaired if exit_ == 1 else strict_joined_repaired
+                if not shape_ok(word):
+                    failures.append(("SHAPE", tokens[i - 1], tokens[i]))
+                if not verdict(left, _atoms(word)):
+                    failures.append(("VERDICT", tokens[i - 1], tokens[i]))
+                if prev is None:
+                    n["after_refusal"] += 1
+                elif not start_ok(MOD.cells_of(left), prev):
+                    failures.append(("START", tokens[i - 1], tokens[i]))
             prev = word
-    assert checked > 70000 and failures == []
+    assert failures == [], failures[:5]
+    return n
+
+
+def test_every_interior_position_of_the_quran_satisfies_the_theorem() -> None:
+    n = _check("quran")
+    assert n["checked"] > 70000
+
+
+@pytest.mark.slow
+def test_every_interior_position_of_the_sahihain_satisfies_the_theorem() -> None:
+    """الصحيحان (~7 دقائق): مودَعُهما بسياقه يُولَّد ثمّ يُفحص كالمصحف."""
+
+    n = _check("sahihain")
+    assert n["checked"] > 980000
