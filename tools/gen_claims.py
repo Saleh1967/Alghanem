@@ -38,11 +38,11 @@ MASAQ = ROOT / "corpora" / "MASAQ.csv"
 TABLES = ROOT / "formal" / "a116"
 TABLE_NAMES = (
     "amr", "counts", "degrees", "degrees-pause", "hadd", "hadd-join", "hamza", "iltiqa", "ledger",
-    "licensable", "need", "nizam", "numbers", "order", "neutral", "pairs", "roles", "syllables",
-    "table", "tasrif", "utf8",
+    "licensable", "need", "nizam", "numbers", "order", "neutral", "pairs", "roles", "rubai",
+    "syllables", "table", "tasrif", "utf8",
     "wazn", "wazn-body",
 )
-"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ التسعةَ عشر (يطابقها CI بايتًا بايتًا)
+"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ العشرون (يطابقها CI بايتًا بايتًا)
 والمولَّداتُ الأربع لحجمها (`syllables`، `hadd`، `hadd-join`، `iltiqa`: تُولَّد في وظيفة Lean وتُنزَّل
 أثرًا إلى وظيفة البوّابة). جدولٌ جديد لا يدخل السجلَّ بوجوده على القرص بل بإضافته هنا وإلى الأثر في CI
 — وإلّا اختلف السجلُّ محلّيًّا عنه في CI."""
@@ -65,7 +65,7 @@ UNITS: dict[str, str] = {
     "دور خانة": "زوجُ (خانةٍ مرخَّصة، دورٍ تقبله: cv أو v أو c) — ADR ١٥",
     "حقل وظيفة": "حقلٌ من الوظائف السبع في صفّ درجة (ترميز … دلالة) — ADR ١٥",
     "زوج جوار": "زوجُ صنفين متجاورين (قبل، بعد) مأذونٌ وصلًا في نظام الجوار — ADR ٢٣",
-    "صفة جذر": "صفةُ جذرٍ ثلاثيّ: أصنافُ أصوله (و ي ء ل صحيح) ومماثلةُ العين واللام — ADR ٢٦",
+    "صفة جذر": "صفةُ جذر: أصنافُ أصوله (و ي ء ل صحيح)، ومماثلةُ العين واللام في الثلاثيّ — ADR ٢٦",
 }
 """القائمةُ المغلقة للوحدات: لا تُضاف وحدةٌ إلّا هنا وبـADR."""
 LEAN_UNITS: dict[str, str] = {
@@ -95,6 +95,7 @@ LEAN_UNITS: dict[str, str] = {
     "Hajah.states_length": "حالة آلة",
     "Nizam.waslK_count": "زوج جوار",
     "Tasrif.allSifa_length": "صفة جذر",
+    "Rubai.allSifa4_length": "صفة جذر",
 }
 """كلُّ مبرهنةٍ عدديّة ووحدتُها؛ مبرهنةٌ عدديّةٌ جديدة لا تمرّ بلا سطرٍ هنا."""
 

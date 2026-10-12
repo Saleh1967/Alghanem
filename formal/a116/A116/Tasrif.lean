@@ -149,9 +149,9 @@ theorem rad_eval (r : Root 3) (i : Fin 3) (h : Haraka) : eval r (rad (sifa r) i 
 
 /-! ## ٢. النقلُ من الصفة إلى كلّ جذر -/
 
-def NoAlif (r : Root 3) : Prop := ∀ i, r i ≠ carrierOf 'ا'
+def NoAlif {n : Nat} (r : Root n) : Prop := ∀ i, r i ≠ carrierOf 'ا'
 
-def Agree (r r' : Root 3) : Prop := ∀ i, cls (r i) = cls (r' i)
+def Agree {n : Nat} (r r' : Root n) : Prop := ∀ i, cls (r i) = cls (r' i)
 
 theorem madd_of_cls : ∀ k k' : Fin carrierCount, k ≠ carrierOf 'ا' → k' ≠ carrierOf 'ا' →
     cls k = cls k' → maddVowel k = maddVowel k' := by decide +kernel
@@ -169,7 +169,7 @@ theorem rep_noAlif (s : Sifa) : NoAlif (rep s) := by
   simp only [rep]
   cases s.get i <;> decide
 
-theorem kindOf_agree (t : List (CSym 3)) {r r' : Root 3} (hr : NoAlif r) (hr' : NoAlif r')
+theorem kindOf_agree {n : Nat} (t : List (CSym n)) {r r' : Root n} (hr : NoAlif r) (hr' : NoAlif r')
     (ha : Agree r r') : kindOf (fillC t r) = kindOf (fillC t r') := by
   have hm : MaddEq r r' := fun i => madd_of_cls _ _ (hr i) (hr' i) (ha i)
   apply kindGo_prof
@@ -264,7 +264,7 @@ theorem haddPauseB_of_noVCP (w : List Cell) (h : noVCP (kindOf w) = true) : hadd
     rw [hz]; exact h
 
 /-- **النقلُ وصلًا**: ما رُخِّص على الممثِّل بلا مدٍّ يتلوه ساكن مرخَّصٌ على كلّ جذرٍ يوافقه. -/
-theorem transfer_strict (t : List (CSym 3)) {r r' : Root 3} (hr : NoAlif r) (hr' : NoAlif r')
+theorem transfer_strict {n : Nat} (t : List (CSym n)) {r r' : Root n} (hr : NoAlif r) (hr' : NoAlif r')
     (ha : Agree r r') (hc : contCheck (fillC t r') = true) (hv : noVC (kindOf (fillC t r')) = true) :
     strictB (fillC t r) = true := by
   have hk := kindOf_agree t hr hr' ha
@@ -274,7 +274,7 @@ theorem transfer_strict (t : List (CSym 3)) {r r' : Root 3} (hr : NoAlif r) (hr'
   refine ⟨hk ▸ hs.1, haddB_of_noVC _ (hk ▸ hv)⟩
 
 /-- **النقلُ وقفًا**. -/
-theorem transfer_pause (t : List (CSym 3)) {r r' : Root 3} (hr : NoAlif r) (hr' : NoAlif r')
+theorem transfer_pause {n : Nat} (t : List (CSym n)) {r r' : Root n} (hr : NoAlif r) (hr' : NoAlif r')
     (ha : Agree r r') (hc : pauseCheck (fillC t r') = true) (hv : noVCP (kindOf (fillC t r')) = true) :
     strictPauseB (fillC t r) = true := by
   have hk := kindOf_agree t hr hr' ha
@@ -284,7 +284,7 @@ theorem transfer_pause (t : List (CSym 3)) {r r' : Root 3} (hr : NoAlif r) (hr' 
   refine ⟨hk ▸ hs.1, haddPauseB_of_noVCP _ (hk ▸ hv)⟩
 
 /-- حروفُ القالب كلُّها من المرخَّص. -/
-def litsOK (t : List (CSym 3)) : Bool :=
+def litsOK {n : Nat} (t : List (CSym n)) : Bool :=
   t.all fun s => match s with
     | .lit c => Alif.licensable.contains c
     | .slot _ _ => true
@@ -292,7 +292,7 @@ def litsOK (t : List (CSym 3)) : Bool :=
 theorem licensable_of_ne_alif : ∀ c ∈ cells, c.carrier ≠ carrierOf 'ا' →
     Alif.licensable.contains c = true := by decide +kernel
 
-theorem lits_licensable (t : List (CSym 3)) {r : Root 3} (hr : NoAlif r) (h : litsOK t = true) :
+theorem lits_licensable {n : Nat} (t : List (CSym n)) {r : Root n} (hr : NoAlif r) (h : litsOK t = true) :
     (fillC t r).all (Alif.licensable.contains ·) = true := by
   simp only [litsOK, List.all_eq_true] at h
   simp only [fillC, List.all_map, List.all_eq_true, Function.comp]
@@ -305,11 +305,11 @@ theorem lits_licensable (t : List (CSym 3)) {r : Root 3} (hr : NoAlif r) (h : li
 /-! ## ٣. كلُّ موضعٍ من كلّ وزن: الإحدى والثلاثون على كلّ جذرٍ غيرِ معتلّ -/
 
 /-- الوزنُ في سياقه قالبًا: همزةُ الوصل بحركتها حرفٌ، والجسمُ والأصلُ الأخير متغيّرات. -/
-def waznT (W : WaznC 3) (wh : Haraka) (entry : Entry) (exit : Exit) (h : Haraka) : List (CSym 3) :=
+def waznT {n : Nat} (W : WaznC n) (wh : Haraka) (entry : Entry) (exit : Exit) (h : Haraka) : List (CSym n) :=
   (if W.wasl && entry == .start then [.lit ⟨hamza, wh⟩] else []) ++
     W.body ++ [.slot W.last (if exit == .pause then .sukun else h)]
 
-theorem realize_eq_fill (W : WaznC 3) (r : Root 3) (en : Entry) (ex : Exit) (h : Haraka) :
+theorem realize_eq_fill {n : Nat} (W : WaznC n) (r : Root n) (en : Entry) (ex : Exit) (h : Haraka) :
     realize W r en ex h = fillC (waznT W (waslH W r) en ex h) r := by
   unfold realize waznT
   simp only [fillC_append]
@@ -320,7 +320,7 @@ def Sahih (r : Root 3) : Prop := ∀ i, (cls (r i)).weak = false
 theorem lam_of_cls : ∀ k k' : Fin carrierCount, cls k = cls k' →
     (k = carrierOf 'ل' ↔ k' = carrierOf 'ل') := by decide +kernel
 
-theorem lamEq_of_agree {r r' : Root 3} (ha : Agree r r') : LamEq r r' :=
+theorem lamEq_of_agree {n : Nat} {r r' : Root n} (ha : Agree r r') : LamEq r r' :=
   fun i => lam_of_cls _ _ (ha i)
 
 /-- الجذورُ غيرُ المعتلّة بأصنافها: همزة/لام/صحيح في كلّ موضع (27 صفةً). -/

@@ -553,3 +553,13 @@ import A116
 #print axioms A116.NizamLine.strictLinePauseB_split
 #print axioms A116.NizamLine.line_two_pause
 #print axioms A116.NizamLine.witnesses
+#print axioms A116.Rubai.ifanlala_refused
+#print axioms A116.Rubai.mem_allSifa4
+#print axioms A116.Rubai.allSifa4_length
+#print axioms A116.Rubai.rep4_agree
+#print axioms A116.Rubai.rubai_check
+#print axioms A116.Rubai.rubai_licensed
+#print axioms A116.Rubai.rubai_one_mujarrad
+#print axioms A116.Rubai.rubai_witnesses
+#print axioms A116.Rubai.quad_open_by_maqayis
+#print axioms A116.Rubai.opened_only_dalala_changed

@@ -255,6 +255,23 @@ def main (args : List String) : IO Unit := do
             row "mudari" "IV" "i" p.toString (hn m) (Tasrif.mudari s .afala p .kasra m)
         row "amr" "IV" "i" "-" "-" (Tasrif.amr s .afala .kasra)
       | _ => pure ()
+  | ["rubai"] =>
+    -- أوزانُ الرباعيّ (`Rubai`، ADR ٢٨) على جذورٍ شواهد: اسمُ الوزن، الجذر، الذرّاتُ ابتداءً وصلًا ووقفًا؛
+    -- ثمّ عددُ شاهد الدلالة المختوم (`Rubai.maqayisCount`).
+    let mark : Haraka → String
+      | .fatha => "َ" | .damma => "ُ" | .kasra => "ِ" | .sukun => "ْ"
+    let atoms := fun (w : List Cell) =>
+      " ".intercalate (w.map fun c => s!"{Field112.carrierChar c.carrier}{mark c.haraka}")
+    let roots := ["حصحص", "عسعس", "دمدم", "وسوس", "بعثر", "زحزح", "زلزل", "دحرج", "مضمض", "دهده", "طمءن",
+      "شمءز", "قشعر"]
+    for B in Rubai.abniya do
+      for nm in roots do
+        match nm.toList with
+        | [a, b, c, d] =>
+          let r := Rubai.r4 a b c d
+          IO.println s!"{B.name},{nm},{atoms (Wazn.realize B.w r .start .continue B.h)},{atoms (Wazn.realize B.w r .start .pause B.h)}"
+        | _ => pure ()
+    IO.println s!"maqayis,{Rubai.maqayisCount}"
   | ["degrees-pause"] =>
     -- جداولُ الدرجات وقفًا (`ExhaustPause.pauseTable`، ADR ١٨): الدرجة d = 1 … 4، والعدد n، ومقاطعُ الصفّ — 510 سطرًا.
     for k in List.range 4 do
