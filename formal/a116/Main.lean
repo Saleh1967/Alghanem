@@ -157,6 +157,13 @@ def main (args : List String) : IO Unit := do
     -- المرخَّصُ من الشبكة: 113 خانةً (الألفُ المتحرّكة الثلاثُ خارجَه) — ذرّةٌ في كلّ سطر.
     for c in Alif.licensable do
       IO.println (HaddTable.atomsOf [c])
+  | ["roles"] =>
+    -- الأدوارُ المرخَّصة (`NizamHadd.licensed_roles_n`، ADR ٢٥): الذرّة، الصنف، عددُ الخانة، عددُ الدور n.
+    let nm : Stages.K → String
+      | .cv => "cv" | .v => "v" | .c => "c"
+    for c in Alif.licensable do
+      for k in Exhaust.rolesOf c do
+        IO.println s!"{HaddTable.atomsOf [c]},{nm k},{Numbering.bridgeIndex c},{NizamHadd.roleN (k, c)}"
   | ["hamza"] =>
     -- جدولُ الكرسيّ لكلّ سياق: pos,own,prev,prevLong,prevYa,nextWaw,seat
     for p in [Hamza.Pos.initial, .medial, .final] do

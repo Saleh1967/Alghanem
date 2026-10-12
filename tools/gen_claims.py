@@ -38,11 +38,11 @@ MASAQ = ROOT / "corpora" / "MASAQ.csv"
 TABLES = ROOT / "formal" / "a116"
 TABLE_NAMES = (
     "amr", "counts", "degrees", "degrees-pause", "hadd", "hadd-join", "hamza", "iltiqa", "ledger",
-    "licensable", "need", "nizam", "numbers", "order", "neutral", "pairs", "syllables", "table",
-    "utf8",
+    "licensable", "need", "nizam", "numbers", "order", "neutral", "pairs", "roles", "syllables",
+    "table", "utf8",
     "wazn", "wazn-body",
 )
-"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ السبعةَ عشر (يطابقها CI بايتًا بايتًا)
+"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ الثمانيةَ عشر (يطابقها CI بايتًا بايتًا)
 والمولَّداتُ الأربع لحجمها (`syllables`، `hadd`، `hadd-join`، `iltiqa`: تُولَّد في وظيفة Lean وتُنزَّل
 أثرًا إلى وظيفة البوّابة). جدولٌ جديد لا يدخل السجلَّ بوجوده على القرص بل بإضافته هنا وإلى الأثر في CI
 — وإلّا اختلف السجلُّ محلّيًّا عنه في CI."""
