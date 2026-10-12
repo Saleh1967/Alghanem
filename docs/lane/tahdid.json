@@ -1,0 +1,545 @@
+{
+ "lines_sha256": "248def99adaf4ba565f250685b102591b3cbce4c1d09524fbb58f92bf270a1d5",
+ "witness_roots": {
+  "lane": {
+   "trans": 324,
+   "fakk": 111,
+   "impf": 159
+  },
+  "quran": {
+   "trans": 57,
+   "fakk": 9,
+   "impf": 79
+  },
+  "sahihain": {
+   "trans": 161,
+   "fakk": 33,
+   "impf": 172
+  }
+ },
+ "a_obj": {
+  "pos": {
+   "n": 367,
+   "past": 143,
+   "imperfect": 102,
+   "any": 174,
+   "rate_any": 0.4741,
+   "ci95_any": [
+    0.4236,
+    0.5252
+   ]
+  },
+  "neg_label": {
+   "n": 12,
+   "past": 4,
+   "imperfect": 2,
+   "any": 5,
+   "rate_any": 0.4167,
+   "ci95_any": [
+    0.1933,
+    0.6805
+   ]
+  },
+  "neg_stative": {
+   "n": 103,
+   "past": 4,
+   "imperfect": 4,
+   "any": 7,
+   "rate_any": 0.068,
+   "ci95_any": [
+    0.0333,
+    0.1337
+   ]
+  }
+ },
+ "a_fwd": {
+  "sound_identity": {
+   "masdar": [
+    1831,
+    1831
+   ],
+   "plural": [
+    2376,
+    2376
+   ]
+  },
+  "weak_verbs": {
+   "NO_REALIZATION": 1,
+   "REFINED": 394,
+   "REFINED_FACALA": 387,
+   "REFINED_SIZE_1": 95
+  },
+  "weak_verbs_facala_rate": 0.9822,
+  "weak_verbs_facala_ci95": [
+   0.9638,
+   0.9914
+  ]
+ },
+ "fuula": {
+  "per_example": {
+   "قربة/قرب": [
+    [
+     "1ِ 2ْ 3َ ة",
+     "1ِ 2َ 3"
+    ]
+   ],
+   "غرفة/غرف": [
+    [
+     "1ُ 2ْ 3َ ة",
+     "1ُ 2َ 3"
+    ],
+    [
+     "1ِ 2ْ 3َ ة",
+     "1ِ 2َ 3"
+    ]
+   ],
+   "كسرة/كسر": [
+    [
+     "1ِ 2ْ 3َ ة",
+     "1ِ 2َ 3"
+    ]
+   ]
+  },
+  "clause_a": [
+   [
+    "1ِ 2ْ 3َ ة",
+    "1ِ 2َ 3"
+   ]
+  ],
+  "clause_b": [
+   [
+    "1ِ 2ْ 3َ ة",
+    "1ِ 2َ 3"
+   ]
+  ],
+  "pinned": null,
+  "source": {
+   "file": "0769IbnCaqilBahaDinMisri.SharhCalaAlfiyya.Shamela0009904-ara1",
+   "sha256_prefix": "661e43ea265eca8c",
+   "verse_lines": [
+    8407,
+    8409
+   ],
+   "verse": "وفعل جمعا لفعلة عرف … ونحو كبرى ولفعلة فعل",
+   "examples_lines": [
+    8418,
+    8421
+   ],
+   "clause_a_examples": "فالأول كقربة وقرب وغرفة وغرف",
+   "clause_b_examples": "على فعلة نحو كسرة وكسر وحجة وحجج ومرية ومرى",
+   "named_vowels_lines": [
+    8222,
+    8224
+   ],
+   "named_vowels": "جمع فعلة بكسر الفاء يكون على فعل بكسر الأول وفتح الثاني وجمع فعلة بضم الفاء يكون على فعل بضم الأول وفتح الثاني"
+  }
+ },
+ "masdar": {
+  "strata": {
+   "sound": {
+    "strict_wit3": {
+     "n": 1238,
+     "hits_low": 571,
+     "hits_high": 1134,
+     "transmitted_low": 0.084,
+     "transmitted_high": 0.5388,
+     "ci95_low_end": [
+      0.8992,
+      0.9302
+     ],
+     "ci95_high_end": [
+      0.4336,
+      0.4891
+     ]
+    },
+    "strict_wit4": {
+     "n": 1238,
+     "hits_low": 587,
+     "hits_high": 1122,
+     "transmitted_low": 0.0937,
+     "transmitted_high": 0.5258,
+     "ci95_low_end": [
+      0.8888,
+      0.9213
+     ],
+     "ci95_high_end": [
+      0.4465,
+      0.502
+     ]
+    }
+   },
+   "hamzated": {
+    "strict_wit3": {
+     "n": 87,
+     "hits_low": 31,
+     "hits_high": 68,
+     "transmitted_low": 0.2184,
+     "transmitted_high": 0.6437,
+     "ci95_low_end": [
+      0.6839,
+      0.8555
+     ],
+     "ci95_high_end": [
+      0.2637,
+      0.4611
+     ]
+    },
+    "strict_wit4": {
+     "n": 87,
+     "hits_low": 33,
+     "hits_high": 68,
+     "transmitted_low": 0.2184,
+     "transmitted_high": 0.6207,
+     "ci95_low_end": [
+      0.6839,
+      0.8555
+     ],
+     "ci95_high_end": [
+      0.2845,
+      0.4843
+     ]
+    }
+   },
+   "doubled": {
+    "strict_wit3": {
+     "n": 198,
+     "hits_low": 44,
+     "hits_high": 167,
+     "transmitted_low": 0.1566,
+     "transmitted_high": 0.7778,
+     "ci95_low_end": [
+      0.7863,
+      0.8875
+     ],
+     "ci95_high_end": [
+      0.1699,
+      0.2851
+     ]
+    },
+    "strict_wit4": {
+     "n": 198,
+     "hits_low": 44,
+     "hits_high": 167,
+     "transmitted_low": 0.1566,
+     "transmitted_high": 0.7778,
+     "ci95_low_end": [
+      0.7863,
+      0.8875
+     ],
+     "ci95_high_end": [
+      0.1699,
+      0.2851
+     ]
+    }
+   },
+   "weak": {
+    "strict_wit3": {
+     "n": 389,
+     "hits_low": 0,
+     "hits_high": 352,
+     "transmitted_low": 0.0951,
+     "transmitted_high": 1.0,
+     "ci95_low_end": [
+      0.8716,
+      0.9302
+     ],
+     "ci95_high_end": [
+      0.0,
+      0.0098
+     ]
+    },
+    "strict_wit4": {
+     "n": 389,
+     "hits_low": 0,
+     "hits_high": 351,
+     "transmitted_low": 0.0977,
+     "transmitted_high": 1.0,
+     "ci95_low_end": [
+      0.8688,
+      0.928
+     ],
+     "ci95_high_end": [
+      0.0,
+      0.0098
+     ]
+    },
+    "strict_wit4_fwd": {
+     "n": 389,
+     "hits_low": 123,
+     "hits_high": 332,
+     "transmitted_low": 0.1465,
+     "transmitted_high": 0.6838,
+     "ci95_low_end": [
+      0.8149,
+      0.8852
+     ],
+     "ci95_high_end": [
+      0.272,
+      0.364
+     ]
+    }
+   },
+   "pooled": {
+    "strict_wit3": {
+     "n": 1912,
+     "hits_low": 646,
+     "hits_high": 1721,
+     "transmitted_low": 0.0999,
+     "transmitted_high": 0.6621,
+     "ci95_low_end": [
+      0.8859,
+      0.9128
+     ],
+     "ci95_high_end": [
+      0.317,
+      0.3594
+     ]
+    },
+    "strict_wit4": {
+     "n": 1912,
+     "hits_low": 664,
+     "hits_high": 1708,
+     "transmitted_low": 0.1067,
+     "transmitted_high": 0.6527,
+     "ci95_low_end": [
+      0.8787,
+      0.9064
+     ],
+     "ci95_high_end": [
+      0.3263,
+      0.3689
+     ]
+    }
+   }
+  },
+  "counts": {
+   "doubled": {
+    "SHARED_FORM1": 14,
+    "UNIQUE_FORM1": 184,
+    "UNMARKED_UNWITNESSED": 119,
+    "UNMARKED_WITNESSED_IMPERFECT_ONLY": 1,
+    "UNMARKED_WITNESSED_PAST": 14
+   },
+   "hamzated": {
+    "SHARED_FORM1": 10,
+    "UNIQUE_FORM1": 77,
+    "UNMARKED_UNWITNESSED": 59,
+    "UNMARKED_WITNESSED_IMPERFECT_ONLY": 3,
+    "UNMARKED_WITNESSED_PAST": 2
+   },
+   "sound": {
+    "SHARED_FORM1": 51,
+    "UNIQUE_FORM1": 1187,
+    "UNMARKED_UNWITNESSED": 721,
+    "UNMARKED_WITNESSED_IMPERFECT_ONLY": 38,
+    "UNMARKED_WITNESSED_PAST": 112
+   },
+   "weak": {
+    "SHARED_FORM1": 20,
+    "UNIQUE_FORM1": 369,
+    "UNMARKED_UNWITNESSED": 286,
+    "UNMARKED_WITNESSED_IMPERFECT_ONLY": 6,
+    "UNMARKED_WITNESSED_PAST": 22
+   }
+  }
+ },
+ "plural": {
+  "strata": {
+   "sound": {
+    "strict": {
+     "n": 997,
+     "hits_low": 510,
+     "hits_high": 511,
+     "transmitted_low": 0.4875,
+     "transmitted_high": 0.4885,
+     "ci95_low_end": [
+      0.4815,
+      0.5435
+     ],
+     "ci95_high_end": [
+      0.4805,
+      0.5425
+     ]
+    },
+    "pinned": {
+     "n": 997,
+     "hits_low": 510,
+     "hits_high": 511,
+     "transmitted_low": 0.4875,
+     "transmitted_high": 0.4885,
+     "ci95_low_end": [
+      0.4815,
+      0.5435
+     ],
+     "ci95_high_end": [
+      0.4805,
+      0.5425
+     ]
+    }
+   },
+   "hamzated": {
+    "strict": {
+     "n": 45,
+     "hits_low": 15,
+     "hits_high": 15,
+     "transmitted_low": 0.6667,
+     "transmitted_high": 0.6667,
+     "ci95_low_end": [
+      0.2136,
+      0.4793
+     ],
+     "ci95_high_end": [
+      0.2136,
+      0.4793
+     ]
+    },
+    "pinned": {
+     "n": 45,
+     "hits_low": 15,
+     "hits_high": 15,
+     "transmitted_low": 0.6667,
+     "transmitted_high": 0.6667,
+     "ci95_low_end": [
+      0.2136,
+      0.4793
+     ],
+     "ci95_high_end": [
+      0.2136,
+      0.4793
+     ]
+    }
+   },
+   "doubled": {
+    "strict": {
+     "n": 197,
+     "hits_low": 99,
+     "hits_high": 100,
+     "transmitted_low": 0.4924,
+     "transmitted_high": 0.4975,
+     "ci95_low_end": [
+      0.4383,
+      0.5766
+     ],
+     "ci95_high_end": [
+      0.4333,
+      0.5716
+     ]
+    },
+    "pinned": {
+     "n": 197,
+     "hits_low": 99,
+     "hits_high": 100,
+     "transmitted_low": 0.4924,
+     "transmitted_high": 0.4975,
+     "ci95_low_end": [
+      0.4383,
+      0.5766
+     ],
+     "ci95_high_end": [
+      0.4333,
+      0.5716
+     ]
+    }
+   },
+   "weak": {
+    "strict": {
+     "n": 338,
+     "hits_low": 0,
+     "hits_high": 116,
+     "transmitted_low": 0.6568,
+     "transmitted_high": 1.0,
+     "ci95_low_end": [
+      0.2946,
+      0.3953
+     ],
+     "ci95_high_end": [
+      0.0,
+      0.0112
+     ]
+    },
+    "pinned": {
+     "n": 338,
+     "hits_low": 0,
+     "hits_high": 116,
+     "transmitted_low": 0.6568,
+     "transmitted_high": 1.0,
+     "ci95_low_end": [
+      0.2946,
+      0.3953
+     ],
+     "ci95_high_end": [
+      0.0,
+      0.0112
+     ]
+    },
+    "pinned_fwd": {
+     "n": 338,
+     "hits_low": 59,
+     "hits_high": 76,
+     "transmitted_low": 0.7751,
+     "transmitted_high": 0.8254,
+     "ci95_low_end": [
+      0.1836,
+      0.2723
+     ],
+     "ci95_high_end": [
+      0.1378,
+      0.2186
+     ]
+    }
+   },
+   "pooled": {
+    "strict": {
+     "n": 1577,
+     "hits_low": 624,
+     "hits_high": 742,
+     "transmitted_low": 0.5295,
+     "transmitted_high": 0.6043,
+     "ci95_low_end": [
+      0.446,
+      0.4952
+     ],
+     "ci95_high_end": [
+      0.3718,
+      0.42
+     ]
+    },
+    "pinned": {
+     "n": 1577,
+     "hits_low": 624,
+     "hits_high": 742,
+     "transmitted_low": 0.5295,
+     "transmitted_high": 0.6043,
+     "ci95_low_end": [
+      0.446,
+      0.4952
+     ],
+     "ci95_high_end": [
+      0.3718,
+      0.42
+     ]
+    }
+   }
+  }
+ },
+ "frame": {
+  "seed": "ADR-43-lane-transitivity",
+  "target_half_width": 0.03,
+  "n": 1238,
+  "hits_low": 587,
+  "unresolved": 535,
+  "m": 200,
+  "filled": 0,
+  "estimate": null
+ },
+ "refusals": {
+  "DEFER:HARAKA_IS_ABSENT_AND_IS_NEVER_GUESSED": 2,
+  "DEFER:TANWIN_ATTACHMENT_IS_AMBIGUOUS": 19,
+  "DEFER:UNSUPPORTED_LETTER": 1,
+  "DEFER:UNVOCALIZED_WORD_IS_NEVER_GUESSED": 2,
+  "REJECT:BARE_ALIF_OWN_MARK_NOT_LICENSED": 10,
+  "REJECT:CVVC_NOT_GEMINATE": 2,
+  "REJECT:INITIAL_SUKUN_WITHOUT_REPAIR": 17,
+  "REJECT:NOT_CONTINUE_LICENSED_AFTER_REPAIR": 8
+ }
+}
