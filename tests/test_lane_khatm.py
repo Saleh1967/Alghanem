@@ -2,7 +2,8 @@
 
 الطفراتُ بأسمائها: `MUTANT_DAMMA_READ_AS_KASRA` (الضمُّ يُقرأ كسرًا)،
 `MUTANT_ADMIT_WITHOUT_LANE` (تُقبل القاعدةُ المسمّاة بلا مثالٍ من لين)،
-`MUTANT_PRECISION_COUNTS_BOTH_AS_HIT` (الوجهان إصابةٌ في الحدّ الأدنى).
+`MUTANT_PRECISION_COUNTS_BOTH_AS_HIT` (الوجهان إصابةٌ في الحدّ الأدنى)، `MUTANT_MARK_IGNORED`
+(علامةُ لين «هُ» لا تعيّن التعدية في الإحصاء).
 """
 
 from __future__ import annotations
@@ -48,6 +49,32 @@ def test_precision_by_hand() -> None:
     assert MOD.precision([]) is None
 
 
+def _e(k: str, marked: bool, wit: bool, h0: tuple[bool, bool], h1: tuple[bool, bool]
+       ) -> dict[str, Any]:
+    both = (h0[0] and h1[0], h0[1] or h1[1])
+    return {"file": "f", "entry": k, "rad": "r", "verb": "v", "marked": marked, "past": wit,
+            "impf": False, "hit": {"0": h0, "1": h1, "01": both}}
+
+
+YES, NO = (True, True), (False, False)
+
+
+def test_census_by_hand() -> None:
+    es = [_e("m", True, False, NO, YES),     # معلَّم: متعدٍّ ← إصابة
+          _e("w", False, True, YES, NO),     # مشهود، مُلئ 0 ← إصابة
+          _e("d", False, False, YES, YES),   # لا تتوقّف إصابتُه ← إصابة
+          _e("u1", False, False, NO, YES), _e("u2", False, False, NO, YES)]   # U
+    wframe = [["f", "w", "r", "v", "0", "past"]]
+    c = MOD.census(es, [["f", "u1", "r", "v", "1"]], wframe)
+    # 3 معيَّنة + |U| = 2 × q = 1 ← 5 من 5: المنقولُ صفر
+    assert c and c["unresolved"] == 2 and c["transmitted"] == [0.0, 0.0]
+    # q بين 0 و1 ← الإصابةُ بين 3 و5: المنقولُ بين 0 و0.4
+    c = MOD.census(es, [["f", "u1", "r", "v", "01"]], wframe)
+    assert c and c["transmitted"] == [0.0, 0.4]
+    assert MOD.census(es, [["f", "u1", "r", "v", ""]], wframe) is None
+    assert MOD.census(es, [["f", "d", "r", "v", "1"]], wframe) is None  # الإطارُ من U وحدَه
+
+
 def test_seal_and_quotes() -> None:
     lines = MOD.sealed_lines()
     assert MOD.quotes_hold(lines) == []
@@ -69,6 +96,11 @@ def test_named_mutants_are_caught() -> None:
     assert m["named_rules"](SENT) != [FI, FU]  # DAMMA_READ_AS_KASRA
     m = _mutant("return [r for r in named if r in seen]", "return list(named)")
     assert m["admit"]([FU], {}) == [FU]  # ADMIT_WITHOUT_LANE
+    m = _mutant('if e["marked"]:\n            vals = "1"',
+                'if e["marked"]:\n            vals = "01"')
+    es = [_e("m", True, False, NO, YES), _e("u1", False, False, NO, YES)]
+    got = m["census"](es, [["f", "u1", "r", "v", "1"]], [])
+    assert got["transmitted"] != [0.0, 0.0]  # MARK_IGNORED
     m = _mutant('lo = sum(v == "1" for v in vals)', 'lo = sum(v in ("1", "01") for v in vals)')
     rows = [["f", str(i), "r", "v", v, "past"] for i, v in enumerate(["1", "01"])]
     assert m["precision"](rows)["precision"][0] == 1.0  # PRECISION_COUNTS_BOTH_AS_HIT

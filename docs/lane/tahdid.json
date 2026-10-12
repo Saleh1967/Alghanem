@@ -529,8 +529,20 @@
   "hits_low": 587,
   "unresolved": 535,
   "m": 200,
-  "filled": 0,
-  "estimate": null
+  "filled": 200,
+  "estimate": {
+   "m": 200,
+   "q_low": 0.45,
+   "q_high": 0.89,
+   "transmitted": [
+    0.1412,
+    0.3314
+   ],
+   "ci95": [
+    0.1256,
+    0.3605
+   ]
+  }
  },
  "refusals": {
   "DEFER:HARAKA_IS_ABSENT_AND_IS_NEVER_GUESSED": 2,

@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 
 from gate import Refusal, enter, exit, gate, recover
+from gate.api import Context, Gate
 from gate.licence import binary_ok, continue_licensed, kind_of, pause_licensed
 from gate.rasm_consistency import consistent
 
@@ -77,6 +78,12 @@ def test_enter_has_three_statuses_only() -> None:
             assert r.status in ("DEFER", "REJECT", "OUTSIDE_DECLARED_DOMAIN"), (s, r)
             if r.status != "OUTSIDE_DECLARED_DOMAIN":
                 assert r.reasons and all(x and x != "None" for x in r.reasons), (s, r)
+    # موصولٌ فيه حرفٌ خارج الحوامل أو رمز (لين: «دَارْ پَرْنِيَان»، «حٰم= لَا»): كان الجسرُ يُخرج
+    # INVALID_CONFIGURATION حالةً رابعة؛ الآن تأجيلٌ باسمه (ADR ٤٥)
+    for left, right in (("دَارْ", "پَرْنِيَان"), ("حٰم=", "لَا")):
+        r = Gate(Context(entry="joined", exit="continue", left=left), domain=set()).enter(
+            right.encode())
+        assert r == Refusal("DEFER", ("NOT_ONE_EXACT_WORD_SPAN",)), (left, right, r)
     with pytest.raises(ValueError):
         exit(enter("كَتَبَ".encode())._replace(ordinal=5) if False else _tampered())
 

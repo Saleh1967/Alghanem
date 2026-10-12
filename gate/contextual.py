@@ -78,6 +78,15 @@ def project(surface: str, context: Context):
             "atoms": None,
         }
     report = bridge(source, profile=context.profile, contexts=boundaries)
+    if joined and report["status"] == "INVALID_CONFIGURATION":
+        # حرفٌ خارج الحوامل أو رمزٌ في إحدى الكلمتين (پ، گ، «=» في لين) يُسقطه الإسقاطُ الطباعيّ
+        # فلا يبقى بين الكلمتين فراغٌ يحمل الحدّ: ليستا كلمتين بعينهما — تأجيلٌ باسمه لا حالةٌ رابعة
+        # (ADR ٤٥).
+        return {
+            "status": "DEFER",
+            "reasons": [{"reason": "NOT_ONE_EXACT_WORD_SPAN"}],
+            "atoms": None,
+        }
     reasons = [dict(x) for k in ("deferrals", "rejections") for x in report.get(k, [])]
     if report.get("error"):
         reasons.append({"upstream_error": report["error"]})

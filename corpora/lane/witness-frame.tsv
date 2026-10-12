@@ -1,151 +1,151 @@
-file	entry	root	verb	transitive	witness
-u$0.xml	n21567	شبر	شَبَرَ		past
-u$0.xml	n21670	شتر	شَتِرَ		imperfect
-u$0.xml	n21820	شحذ	شَحَذَ		past
-u$0.xml	n21851	شحن	شَحَنَ		imperfect
-u$0.xml	n21872	شخب	شَخَبَ		past
-u$0.xml	n22024	شرب	شَرِبَ		past
-u$0.xml	n22306	شصر	شَصَرَ		past
-u$0.xml	n22424	شعب	شَعَبَ		past
-u$0.xml	n22966	شمر	شَمَرَ		past
-u$0.xml	n23186	شهد	شَهِدَ		past
-u_0.xml	n13697	ذبر	ذَبَرَ		past
-u_0.xml	n13705	ذبل	ذَبَلَ		past
-u_E0.xml	n27859	عبط	عَبَطَ		past
-u_E0.xml	n28050	عثم	عَثَمَ		past
-u_E0.xml	n28192	عجل	عَجِلَ		imperfect
-u_E0.xml	n28317	عدل	عَدَلَ		imperfect
-u_E0.xml	n29187	عشر	عَشَرَ		past
-u_E0.xml	n29265	عصب	عَصَبَ		past
-u_E0.xml	n29367	عصم	عَصَمَ		past
-u_E0.xml	n29576	عطف	عَطَفَ		past
-u_E0.xml	n30513	عمر	عَمِرَ		imperfect
-u_E0.xml	n30565	عمل	عَمِلَ		past
-u_E0.xml	n30744	عنز	عَنَزَ		past
-u_H0.xml	n7217	حجم	حَجَمَ		past
-u_H0.xml	n7340	حدر	حَدَرَ		past
-u_H0.xml	n7366	حدس	حَدَسَ		past
-u_H0.xml	n8090	حشر	حَشَرَ		past
-u_H0.xml	n8193	حصد	حَصَدَ		imperfect
-u_H0.xml	n8303	حضر	حَضَرَ		past
-u_H0.xml	n8386	حطم	حَطِمَ		imperfect
-u_H0.xml	n8472	حفر	حَفَرَ		imperfect
-u_H0.xml	n8785	حلب	حَلَبَ		past
-u_H0.xml	n8843	حلف	حَلَفَ		imperfect
-u_H0.xml	n8908	حلك	حَلَكَ		past
-u_H0.xml	n9294	حنذ	حَنَذَ		past
-u_S0.xml	n23929	صدر	صَدَرَ		past
-u_S0.xml	n23996	صدق	صَدَقَ		past
-u_S0.xml	n24565	صقر	صَقَرَ		past
-u_S0.xml	n24788	صلق	صَلَقَ		past
-u_S0.xml	n25066	صهر	صَهَرَ		past
-u_T0.xml	n26288	طبخ	طَبَخَ		past
-u_T0.xml	n26607	طرف	طَرَفَ		past
-u_T0.xml	n27104	طمس	طَمَسَ		past
-u_Z0.xml	n27637	ظلم	ظَلَمَ		past
-ua0.xml	n13697	ذبر	ذَبَرَ		past
-ua0.xml	n13705	ذبل	ذَبَلَ		past
-ub0.xml	n1715	بتع	بَتِعَ		imperfect
-ub0.xml	n2086	بذر	بَذَرَ		past
-ub0.xml	n2192	برح	بَرِحَ		imperfect
-ud0.xml	n12246	دخل	دَخَلَ		past
-ud0.xml	n12416	درس	دَرَسَ		past
-ud0.xml	n12640	دغر	دَغَرَ		past
-ud0.xml	n12954	دلف	دَلَفَ		past
-uf0.xml	n32873	فتح	فَتَحَ		past
-uf0.xml	n32908	فتر	فَتَرَ		imperfect
-uf0.xml	n33042	فجر	فَجَرَ		imperfect
-uf0.xml	n33194	فخر	فَخَرَ		past
-uf0.xml	n33797	فزع	فَزِعَ		past
-uf0.xml	n33865	فسق	فَسَقَ		past
-uf0.xml	n34074	فضل	فَضَلَ		past
-uf0.xml	n34151	فطس	فَطَسَ		past
-uf0.xml	n34291	فقر	فَقَرَ		past
-uf0.xml	n34359	فقه	فَقِهَ		imperfect
-uf0.xml	n34478	فلح	فَلَحَ		past
-uh0.xml	n40848	هبش	هَبَشَ		past
-uh0.xml	n40853	هبط	هَبَطَ		past
-uj0.xml	n5925	جعل	جَعَلَ		past
-uj0.xml	n5970	جفل	جَفَلَ		imperfect
-uj0.xml	n6050	جلب	جَلَبَ		past
-uj0.xml	n6304	جمع	جَمَعَ		past
-uj0.xml	n6512	جهد	جَهَدَ		imperfect
-uj0.xml	n6525	جهر	جَهَرَ		past
-ul0.xml	n37707	لزب	لَزَبَ		past
-ul0.xml	n37779	لعب	لَعِبَ		past
-um0.xml	n38222	مجد	مَجَدَ		past
-um0.xml	n38519	مزج	مَزَجَ		past
-um0.xml	n38587	مسد	مَسَدَ		imperfect
-um0.xml	n38757	مغث	مَغَثَ		past
-um0.xml	n38803	مكث	مَكَثَ		imperfect
-um0.xml	n38812	مكر	مَكَرَ		past
-um1.xml	n43727	منع	مَنَعَ		past
-un0.xml	n39253	نبط	نَبَطَ		imperfect
-un0.xml	n39292	نتخ	نَتَخَ		past
-un0.xml	n39485	نحر	نَحَرَ		past
-un0.xml	n39658	نزح	نَزَحَ		past
-un0.xml	n39712	نسج	نَسَجَ		past
-un0.xml	n39727	نسخ	نَسَخَ		past
-un0.xml	n39795	نشد	نَشَدَ		past
-un0.xml	n39807	نشر	نَشَرَ		past
-un0.xml	n39856	نصب	نَصَبَ		past
-un0.xml	n39961	نضح	نَضَحَ		past
-un0.xml	n40077	نعت	نَعَتَ		imperfect
-un0.xml	n40209	نفذ	نَفَذَ		imperfect
-un0.xml	n40221	نفر	نَفَرَ		imperfect
-un0.xml	n40284	نفض	نَفَضَ		past
-un0.xml	n40324	نقب	نَقَبَ		past
-un0.xml	n40371	نقذ	نَقِذَ		imperfect
-un0.xml	n40376	نقر	نَقَرَ		past
-un0.xml	n40412	نقص	نَقَصَ		past
-un0.xml	n40462	نكت	نَكَتَ		imperfect
-un0.xml	n40484	نكح	نَكَحَ		past
-un0.xml	n40610	نهج	نَهَجَ		past
-un0.xml	n40631	نهر	نَهَرَ		imperfect
-un0.xml	n40641	نهز	نَهَزَ		imperfect
-uq0.xml	n35327	قذر	قَذِرَ		past
-uq0.xml	n35892	قطر	قَطَرَ		imperfect
-uq0.xml	n36037	قفز	قَفَزَ		imperfect
-uq0.xml	n36120	قلد	قَلَدَ		past
-uq0.xml	n36210	قمس	قَمَسَ		past
-uq1.xml	n42605	قرع	قَرَعَ		past
-uq2.xml	n42576	قرع	قَرَعَ		past
-uq2.xml	n42928	كتم	كَتَمَ		past
-ur0.xml	n14485	ربض	رَبَضَ		past
-ur0.xml	n14506	ربط	رَبَطَ		past
-ur0.xml	n14825	رجح	رَجَحَ		past
-ur0.xml	n14878	رجع	رَجَعَ		past
-ur0.xml	n14913	رجف	رَجَفَ		past
-ur0.xml	n15020	رحب	رَحُبَ		past
-ur0.xml	n15558	رشح	رَشَحَ		past
-ur0.xml	n15730	رضخ	رَضَخَ		past
-ur0.xml	n16192	رفق	رَفَقَ		imperfect
-ur0.xml	n16506	ركض	رَكَضَ		imperfect
-ur0.xml	n16522	ركع	رَكَعَ		imperfect
-ur0.xml	n16631	رمز	رَمَزَ		past
-ur0.xml	n16819	رهب	رَهِبَ		imperfect
-ur0.xml	n16910	رهن	رَهَنَ		past
-us0.xml	n18801	سبك	سَبَكَ		past
-us0.xml	n18853	ستر	سَتَرَ		past
-us0.xml	n19202	سخط	سَخِطَ		past
-us0.xml	n19598	سرف	سَرِفَ		past
-us0.xml	n19906	سفح	سَفَحَ		past
-us0.xml	n19985	سفك	سَفَكَ		past
-us0.xml	n20250	سكن	سَكَنَ		imperfect
-us0.xml	n20467	سلف	سَلَفَ		imperfect
-ut0.xml	n3798	تخذ	تَخِذَ		past
-ux0.xml	n10187	خذف	خَذَفَ		past
-ux0.xml	n10271	خرج	خَرَجَ		imperfect
-ux0.xml	n10388	خرف	خَرَفَ		past
-ux0.xml	n10510	خزق	خَزَقَ		past
-ux0.xml	n10796	خصل	خَصَلَ		past
-ux0.xml	n10971	خطب	خَطَبَ		past
-ux0.xml	n11219	خلج	خَلَجَ		past
-ux0.xml	n11265	خلص	خَلَصَ		imperfect
-ux0.xml	n11341	خلف	خَلَفَ		past
-ux0.xml	n11469	خمر	خَمَرَ		past
-ux0.xml	n9930	خبط	خَبَطَ		imperfect
-uz0.xml	n17588	زخر	زَخَرَ		past
-uz0.xml	n17658	زرع	زَرَعَ		past
-uz0.xml	n17778	زعق	زَعَقَ		past
-uz0.xml	n18022	زلق	زَلِقَ		imperfect
+file	entry	root	verb	transitive	witness	evidence
+u$0.xml	n21567	شبر	شَبَرَ	01	past	He exulted; or exulted greatly
+u$0.xml	n21670	شتر	شَتِرَ	01	imperfect	He reviled him
+u$0.xml	n21820	شحذ	شَحَذَ	01	past	(assumed tropical:) He was angry with him.
+u$0.xml	n21851	شحن	شَحَنَ	01	imperfect	He filled (S, L, Msb, K) a ship
+u$0.xml	n21872	شخب	شَخَبَ	01	past	[شَخَبْتُهُ] I made it to flow.
+u$0.xml	n22024	شرب	شَرِبَ	01	past	He drank, (KL, PS, TK,)
+u$0.xml	n22306	شصر	شَصَرَ	01	past	He leaped, or leaped upwards; syn. [طَفَرَ]
+u$0.xml	n22424	شعب	شَعَبَ	01	past	He collected; brought, gathered, or drew, together; or united
+u$0.xml	n22966	شمر	شَمَرَ	01	past	see the next paragraph, in five places.
+u$0.xml	n23186	شهد	شَهِدَ	01	past	You say, [شَهِدَ بِكَذَا]
+u_0.xml	n13697	ذبر	ذَبَرَ	01	past	[ذَبِرَ] He was angry
+u_0.xml	n13705	ذبل	ذَبَلَ	01	past	may they perish
+u_E0.xml	n27859	عبط	عَبَطَ	01	past	He slaughtered (S, O, Msb) a she-camel
+u_E0.xml	n28050	عثم	عَثَمَ	01	past	the verb being trans. as well as intrans.
+u_E0.xml	n28192	عجل	عَجِلَ	01	imperfect	It is also trans., as having, or implying, the meaning of
+u_E0.xml	n28317	عدل	عَدَلَ	01	imperfect	He acted equitably, justly, or rightly
+u_E0.xml	n29187	عشر	عَشَرَ	1	past	He took from them the [عُشْر]
+u_E0.xml	n29265	عصب	عَصَبَ	01	past	He twisted [a thing], or wound [it] round
+u_E0.xml	n29367	عصم	عَصَمَ	01	past	he gained, or earned; or he sought means of subsistence
+u_E0.xml	n29576	عطف	عَطَفَ	01	past	He, or it, (a man, S, O, or a thing, Msb,) inclined
+u_E0.xml	n30513	عمر	عَمِرَ	01	imperfect	He inhabited it; remained, continued, stayed, resided, dwelt, or abode, in it
+u_E0.xml	n30565	عمل	عَمِلَ	01	past	he did, or he made, wrought, manufactured, or constructed, a thing.
+u_E0.xml	n30744	عنز	عَنَزَ	01	past	He turned away, (O, K, TA,) and declined
+u_H0.xml	n7217	حجم	حَجَمَ	01	past	He (a child, ISk, S, TA) sucked (ISk, S, K) the breast of his mother
+u_H0.xml	n7340	حدر	حَدَرَ	01	past	He hastened, or was quick, in the reading, or recitation
+u_H0.xml	n7366	حدس	حَدَسَ	01	past	I threw, cast, or shot, at him with such a thing.
+u_H0.xml	n8090	حشر	حَشَرَ	01	past	The going forth with a people fleeing or hastening or dispersing themselves in war
+u_H0.xml	n8193	حصد	حَصَدَ	01	imperfect	It (a rope, and a bow-string,) was, or became, strongly twisted
+u_H0.xml	n8303	حضر	حَضَرَ	01	past	He was, or became, present with him; attended him
+u_H0.xml	n8386	حطم	حَطِمَ	01	imperfect	It broke, or became broken, in pieces
+u_H0.xml	n8472	حفر	حَفَرَ	01	imperfect	He (a child) shed his [رَوَاضِع]
+u_H0.xml	n8785	حلب	حَلَبَ	01	past	They assemble, or collected themselves together, from every quarter
+u_H0.xml	n8843	حلف	حَلَفَ	0	imperfect	He swore. (S.)
+u_H0.xml	n8908	حلك	حَلَكَ	0	past	It (a thing, S) was, or became, intensely black
+u_H0.xml	n9294	حنذ	حَنَذَ	1	past	He roasted a kid, &c.
+u_S0.xml	n23929	صدر	صَدَرَ	01	past	He hit, struck, or hurt, his
+u_S0.xml	n23996	صدق	صَدَقَ	01	past	for it is trans. as well as intrans.
+u_S0.xml	n24565	صقر	صَقَرَ	01	past	The milk was, or became, intensely sour
+u_S0.xml	n24788	صلق	صَلَقَ	01	past	He struck him with the staff, or stick
+u_S0.xml	n25066	صهر	صَهَرَ	1	past	He melted, or liquefied, a thing
+u_T0.xml	n26288	طبخ	طَبَخَ	1	past	He cooked (S, L, K;) flesh-meat
+u_T0.xml	n26607	طرف	طَرَفَ	01	past	I saw, or I looked at or towards, him, or it
+u_T0.xml	n27104	طمس	طَمَسَ	01	past	became effaced, or obliterated
+u_Z0.xml	n27637	ظلم	ظَلَمَ	01	past	when intrans. generally means He did wrong
+ua0.xml	n13697	ذبر	ذَبَرَ	01	past	He looked, and did so well
+ua0.xml	n13705	ذبل	ذَبَلَ	01	past	May a calamity, or misfortune, befall him
+ub0.xml	n1715	بتع	بَتِعَ	01	imperfect	He prepared, and made, the beverage called [نَبِيذ]
+ub0.xml	n2086	بذر	بَذَرَ	01	past	He talked much; was loquacious.
+ub0.xml	n2192	برح	بَرِحَ	01	imperfect	He went away, or departed, from his place
+ud0.xml	n12246	دخل	دَخَلَ	01	past	He, or it, entered; or went, came, passed, or got, in
+ud0.xml	n12416	درس	دَرَسَ	01	past	The wind, (S, M, K,) or winds, (A,) effaced, erased, rased, or obliterated, it
+ud0.xml	n12640	دغر	دَغَرَ	01	past	He entered the house
+ud0.xml	n12954	دلف	دَلَفَ	01	past	He walked, or went, gently, or leisurely
+uf0.xml	n32873	فتح	فَتَحَ	01	past	She had wide orifices to her teats
+uf0.xml	n32908	فتر	فَتَرَ	01	imperfect	[فَتَرَهُ] He measured it by the [فِتْر]
+uf0.xml	n33042	فجر	فَجَرَ	01	imperfect	He, or it, inclined; leant; declined; or deviated.
+uf0.xml	n33194	فخر	فَخَرَ	01	past	He gloried in, boasted of
+uf0.xml	n33797	فزع	فَزِعَ	01	past	signify he aided, or succoured, them
+uf0.xml	n33865	فسق	فَسَقَ	01	past	He made away with his property
+uf0.xml	n34074	فضل	فَضَلَ	01	past	is trans. as well as intrans.
+uf0.xml	n34151	فطس	فَطَسَ	01	past	[فَطَسَ الحَدِيدَ]
+uf0.xml	n34291	فقر	فَقَرَ	01	past	He had a complaint of his vertebræ
+uf0.xml	n34359	فقه	فَقِهَ	01	imperfect	He understood it, (Mgh, K,) namely, a meaning
+uf0.xml	n34478	فلح	فَلَحَ	01	past	He clave, split, or cracked, his head.
+uh0.xml	n40848	هبش	هَبَشَ	01	past	he collected; and gained or earned, or sought sustenance
+uh0.xml	n40853	هبط	هَبَطَ	01	past	He, or it, (said of water &c., Msb,) descended
+uj0.xml	n5925	جعل	جَعَلَ	01	past	He made a thing; syn. [صَنَعَ]
+uj0.xml	n5970	جفل	جَفَلَ	01	imperfect	is also trans., signifying He made a bird to take fright
+uj0.xml	n6050	جلب	جَلَبَ	01	past	They raised cries, shouts, noises, a clamour
+uj0.xml	n6304	جمع	جَمَعَ	01	past	The girl put on the
+uj0.xml	n6512	جهد	جَهَدَ	01	imperfect	He strove, laboured, or toiled
+uj0.xml	n6525	جهر	جَهَرَ	01	past	It (a thing, A, Msb) was, or became, plain, apparent
+ul0.xml	n37707	لزب	لَزَبَ	01	past	It was, or remained, fixed, settled, firm, or constant
+ul0.xml	n37779	لعب	لَعِبَ	0	past	He played, sported, gamed, jested, or joked
+um0.xml	n38222	مجد	مَجَدَ	01	past	See 3.
+um0.xml	n38519	مزج	مَزَجَ	1	past	He mixed, mingled, incorporated, or blended, (S, K,) a thing with ( [بِ] ) water
+um0.xml	n38587	مسد	مَسَدَ	01	imperfect	He pursued a journey laboriously
+um0.xml	n38757	مغث	مَغَثَ	1	past	He steeped, soaked, or macerated, a thing in water
+um0.xml	n38803	مكث	مَكَثَ	0	imperfect	He tarried; tarried and waited, or expected
+um0.xml	n38812	مكر	مَكَرَ	01	past	It is trans. by means of [بِ] : and also, accord. to Z, by itself
+um1.xml	n43727	منع	مَنَعَ	01	past	[مَنُعَ الشَّىْءُ] , inf. n. [مَنَاعَةٌ] , i. q. [اِعْتَزَّ] and [تَعَسَّرَ] .
+un0.xml	n39253	نبط	نَبَطَ	0	imperfect	It (water) welled, or issued forth
+un0.xml	n39292	نتخ	نَتَخَ	1	past	He pulled a thing out, or up, or off
+un0.xml	n39485	نحر	نَحَرَ	1	past	He stabbed, or stuck, (A, K,) a camel
+un0.xml	n39658	نزح	نَزَحَ	01	past	He drew forth all the water of the well; exhausted it entirely
+un0.xml	n39712	نسج	نَسَجَ	01	past	The she-camel moved her legs quickly in going along
+un0.xml	n39727	نسخ	نَسَخَ	1	past	He, or it, annulled, superseded, obliterated, effaced, or cancelled, (L, K,) a thing
+un0.xml	n39795	نشد	نَشَدَ	1	past	He knew, or was acquainted with, a person
+un0.xml	n39807	نشر	نَشَرَ	01	past	The wind blew in a misty or cloudy
+un0.xml	n39856	نصب	نَصَبَ	01	past	He (a goat) had erect ears.
+un0.xml	n39961	نضح	نَضَحَ	01	past	He (a horse) sweated
+un0.xml	n40077	نعت	نَعَتَ	01	imperfect	He (a man) was naturally endowed with powers of description
+un0.xml	n40209	نفذ	نَفَذَ	01	imperfect	It went, or passed, through
+un0.xml	n40221	نفر	نَفَرَ	0	imperfect	He took fright, and fled, or ran away at random
+un0.xml	n40284	نفض	نَفَضَ	01	past	The she-camels brought forth, (S, L, K,) all of them
+un0.xml	n40324	نقب	نَقَبَ	01	past	He (a horse) put his feet together in his running
+un0.xml	n40371	نقذ	نَقِذَ	01	imperfect	See also 4.
+un0.xml	n40376	نقر	نَقَرَ	01	past	He searched or inquired into the thing
+un0.xml	n40412	نقص	نَقَصَ	01	past	the latter being the inf. n. of the trans. verb
+un0.xml	n40462	نكت	نَكَتَ	01	imperfect	He (a horse) bounded
+un0.xml	n40484	نكح	نَكَحَ	01	past	She married, or took a husband
+un0.xml	n40610	نهج	نَهَجَ	01	past	He went along the road.
+un0.xml	n40631	نهر	نَهَرَ	01	imperfect	He chid him; he checked him, restrained him,
+un0.xml	n40641	نهز	نَهَزَ	01	imperfect	The thing became near
+uq0.xml	n35327	قذر	قَذِرَ	01	past	He held it to be unclean, dirty, or filthy:]
+uq0.xml	n35892	قطر	قَطَرَ	01	imperfect	He went away into the country, or in the land
+uq0.xml	n36037	قفز	قَفَزَ	01	imperfect	[قَفَزَ الحَائِطَ] [He leaped the wall]
+uq0.xml	n36120	قلد	قَلَدَ	01	past	He drank of the beverage, or wine
+uq0.xml	n36210	قمس	قَمَسَ	01	past	He immersed, dipped, plunged, or sunk, him or it
+uq1.xml	n42605	قرع	قَرَعَ	01	past	He fillipped with the nail of his thumb and that of his forefinger.
+uq2.xml	n42576	قرع	قَرَعَ	01	past	He fillipped with the nail of his thumb and that of his forefinger
+uq2.xml	n42928	كتم	كَتَمَ	1	past	doubly trans., He concealed, or suppressed, a secret
+ur0.xml	n14485	ربض	رَبَضَ	01	past	He betook himself, or repaired, to him for lodging, covert, or refuge.
+ur0.xml	n14506	ربط	رَبَطَ	01	past	His heart became strong, and firm, and resolute
+ur0.xml	n14825	رجح	رَجَحَ	01	past	It is also used transitively: one says, [رَجَحْتُهُ] [I outweighed him]
+ur0.xml	n14878	رجع	رَجَعَ	01	past	the latter as inf. n. of the trans. v.
+ur0.xml	n14913	رجف	رَجَفَ	01	past	Also He put [a thing] into a state of motion, commotion, or agitation
+ur0.xml	n15020	رحب	رَحُبَ	01	past	it became trans. by itself
+ur0.xml	n15558	رشح	رَشَحَ	01	past	See also 2, as said of a she-camel.
+ur0.xml	n15730	رضخ	رَضَخَ	01	past	The he-goats betook themselves to striking one another with their horns
+ur0.xml	n16192	رفق	رَفَقَ	01	imperfect	He was, or became, gentle, soft, tender
+ur0.xml	n16506	ركض	رَكَضَ	01	imperfect	The horse ran
+ur0.xml	n16522	ركع	رَكَعَ	0	imperfect	He bowed, or bent, himself; or became bowed or bent
+ur0.xml	n16631	رمز	رَمَزَ	01	past	[المَرْأَةُ بِعَيْنِهَا] The woman made a sign to him with her eye.
+ur0.xml	n16819	رهب	رَهِبَ	01	imperfect	He feared him, or it
+ur0.xml	n16910	رهن	رَهَنَ	01	past	He was, or became, lean, or emaciated
+us0.xml	n18801	سبك	سَبَكَ	1	past	He melted, (S, Mgh, Msb, K, TA,) and cleared of its dross
+us0.xml	n18853	ستر	سَتَرَ	01	past	She (a woman) was, or became,
+us0.xml	n19202	سخط	سَخِطَ	01	past	[سَخِطَهُ] He was, or became, displeased, or discontented, with him
+us0.xml	n19598	سرف	سَرِفَ	01	past	He was ignorant: or he was unmindful, negligent, or heedless
+us0.xml	n19906	سفح	سَفَحَ	01	past	The verb is also used intransitively;
+us0.xml	n19985	سفك	سَفَكَ	1	past	He shed, poured forth, or caused to run or flow, blood
+us0.xml	n20250	سكن	سَكَنَ	01	imperfect	It was, or became, still, motionless
+us0.xml	n20467	سلف	سَلَفَ	01	imperfect	He turned over the land for sowing
+ut0.xml	n3798	تخذ	تَخِذَ	01	past	see 8 in art. [اخذ] .
+ux0.xml	n10187	خذف	خَذَفَ	01	past	trans. without a particle, (Msb,) and by means of
+ux0.xml	n10271	خرج	خَرَجَ	0	imperfect	He, or it, went, came, passed, or got, out, or forth
+ux0.xml	n10388	خرف	خَرَفَ	01	past	He remained, stayed, or abode, in the [season called]
+ux0.xml	n10510	خزق	خَزَقَ	01	past	It (an arrow) hit the target
+ux0.xml	n10796	خصل	خَصَلَ	1	past	He cut, or cut off, a thing
+ux0.xml	n10971	خطب	خَطَبَ	01	past	He asked, or demanded, the woman in marriage.
+ux0.xml	n11219	خلج	خَلَجَ	01	past	She goes, journeys, or travels, quickly
+ux0.xml	n11265	خلص	خَلَصَ	01	imperfect	It (a thing, S, TA) was, or became,
+ux0.xml	n11341	خلف	خَلَفَ	01	past	He came after him
+ux0.xml	n11469	خمر	خَمَرَ	01	past	He became concealed, or hidden; or he concealed, or hid, himself
+ux0.xml	n9930	خبط	خَبَطَ	01	imperfect	He struck, or beat, (Msb, TA,) anything
+uz0.xml	n17588	زخر	زَخَرَ	01	past	He filled a thing.
+uz0.xml	n17658	زرع	زَرَعَ	1	past	I sowed wheat and barley
+uz0.xml	n17778	زعق	زَعَقَ	01	past	He called out, or cried out
+uz0.xml	n18022	زلق	زَلِقَ	01	imperfect	He removed him from his place

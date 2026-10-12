@@ -1,0 +1,282 @@
+{
+ "ibn_aqil": {
+  "sha256": "661e43ea265eca8c72b9e4ab7a46cd9182b34e834105b595241bc7787b471f09",
+  "quotes": [
+   "8407-8407",
+   "8409-8409",
+   "8418-8419",
+   "8222-8225"
+  ],
+  "named_rules": [
+   [
+    "1ِ 2ْ 3َ ة",
+    "1ِ 2َ 3"
+   ],
+   [
+    "1ُ 2ْ 3َ ة",
+    "1ُ 2َ 3"
+   ]
+  ],
+  "admitted": [
+   [
+    "1ِ 2ْ 3َ ة",
+    "1ِ 2َ 3"
+   ],
+   [
+    "1ُ 2ْ 3َ ة",
+    "1ُ 2َ 3"
+   ]
+  ]
+ },
+ "plural": {
+  "strata": {
+   "sound": {
+    "strict": {
+     "n": 997,
+     "hits_low": 510,
+     "hits_high": 511,
+     "transmitted_low": 0.4875,
+     "transmitted_high": 0.4885,
+     "ci95_low_end": [
+      0.4815,
+      0.5435
+     ],
+     "ci95_high_end": [
+      0.4805,
+      0.5425
+     ]
+    },
+    "named": {
+     "n": 997,
+     "hits_low": 600,
+     "hits_high": 601,
+     "transmitted_low": 0.3972,
+     "transmitted_high": 0.3982,
+     "ci95_low_end": [
+      0.5721,
+      0.6327
+     ],
+     "ci95_high_end": [
+      0.5711,
+      0.6317
+     ]
+    }
+   },
+   "hamzated": {
+    "strict": {
+     "n": 45,
+     "hits_low": 15,
+     "hits_high": 15,
+     "transmitted_low": 0.6667,
+     "transmitted_high": 0.6667,
+     "ci95_low_end": [
+      0.2136,
+      0.4793
+     ],
+     "ci95_high_end": [
+      0.2136,
+      0.4793
+     ]
+    },
+    "named": {
+     "n": 45,
+     "hits_low": 19,
+     "hits_high": 19,
+     "transmitted_low": 0.5778,
+     "transmitted_high": 0.5778,
+     "ci95_low_end": [
+      0.2897,
+      0.567
+     ],
+     "ci95_high_end": [
+      0.2897,
+      0.567
+     ]
+    }
+   },
+   "doubled": {
+    "strict": {
+     "n": 197,
+     "hits_low": 99,
+     "hits_high": 100,
+     "transmitted_low": 0.4924,
+     "transmitted_high": 0.4975,
+     "ci95_low_end": [
+      0.4383,
+      0.5766
+     ],
+     "ci95_high_end": [
+      0.4333,
+      0.5716
+     ]
+    },
+    "named": {
+     "n": 197,
+     "hits_low": 132,
+     "hits_high": 133,
+     "transmitted_low": 0.3249,
+     "transmitted_high": 0.3299,
+     "ci95_low_end": [
+      0.6069,
+      0.7366
+     ],
+     "ci95_high_end": [
+      0.6017,
+      0.7319
+     ]
+    }
+   },
+   "weak": {
+    "strict": {
+     "n": 338,
+     "hits_low": 0,
+     "hits_high": 116,
+     "transmitted_low": 0.6568,
+     "transmitted_high": 1.0,
+     "ci95_low_end": [
+      0.2946,
+      0.3953
+     ],
+     "ci95_high_end": [
+      0.0,
+      0.0112
+     ]
+    },
+    "named": {
+     "n": 338,
+     "hits_low": 0,
+     "hits_high": 124,
+     "transmitted_low": 0.6331,
+     "transmitted_high": 1.0,
+     "ci95_low_end": [
+      0.3172,
+      0.4195
+     ],
+     "ci95_high_end": [
+      0.0,
+      0.0112
+     ]
+    },
+    "named_fwd": {
+     "n": 338,
+     "hits_low": 59,
+     "hits_high": 84,
+     "transmitted_low": 0.7515,
+     "transmitted_high": 0.8254,
+     "ci95_low_end": [
+      0.2054,
+      0.2972
+     ],
+     "ci95_high_end": [
+      0.1378,
+      0.2186
+     ]
+    }
+   },
+   "pooled": {
+    "strict": {
+     "n": 1577,
+     "hits_low": 624,
+     "hits_high": 742,
+     "transmitted_low": 0.5295,
+     "transmitted_high": 0.6043,
+     "ci95_low_end": [
+      0.446,
+      0.4952
+     ],
+     "ci95_high_end": [
+      0.3718,
+      0.42
+     ]
+    },
+    "named": {
+     "n": 1577,
+     "hits_low": 751,
+     "hits_high": 877,
+     "transmitted_low": 0.4439,
+     "transmitted_high": 0.5238,
+     "ci95_low_end": [
+      0.5315,
+      0.5805
+     ],
+     "ci95_high_end": [
+      0.4517,
+      0.5009
+     ]
+    }
+   }
+  }
+ },
+ "witness_precision": {
+  "all": {
+   "n": 150,
+   "transitive": 15,
+   "both": 127,
+   "intransitive": 8,
+   "precision": [
+    0.1,
+    0.9467
+   ],
+   "ci95": [
+    0.0615,
+    0.9727
+   ]
+  },
+  "past": {
+   "n": 112,
+   "transitive": 15,
+   "both": 95,
+   "intransitive": 2,
+   "precision": [
+    0.1339,
+    0.9821
+   ],
+   "ci95": [
+    0.0829,
+    0.9951
+   ]
+  },
+  "imperfect": {
+   "n": 38,
+   "transitive": 0,
+   "both": 32,
+   "intransitive": 6,
+   "precision": [
+    0.0,
+    0.8421
+   ],
+   "ci95": [
+    0.0,
+    0.9256
+   ]
+  }
+ },
+ "transitivity_estimate": {
+  "m": 200,
+  "q_low": 0.45,
+  "q_high": 0.89,
+  "transmitted": [
+   0.1412,
+   0.3314
+  ],
+  "ci95": [
+   0.1256,
+   0.3605
+  ]
+ },
+ "census_estimate_post_registration": {
+  "n": 1238,
+  "unresolved": 535,
+  "m": 200,
+  "determined_low": 512,
+  "determined_high": 611,
+  "transmitted": [
+   0.1154,
+   0.392
+  ],
+  "ci95": [
+   0.101,
+   0.4211
+  ]
+ }
+}

@@ -113,9 +113,10 @@ def admit(named: list[tuple[str, str]], per_example: dict[str, list[list[str]]]
 # --- ٢. إطارُ الشاهد ---------------------------------------------------------------------------
 
 
-def witness_rows() -> list[list[str]]:
-    """كلُّ مدخلٍ صحيحٍ في القياس غيرِ معلَّم «هُ» شُهد تعدّيه (ماضيًا أو مضارعًا بالتفرّد) — بقواعد ADR ٤٣
-    نفسِها، مرتّبًا بالملف والمدخل."""
+def sound_entries() -> list[dict[str, Any]]:
+    """مداخلُ المصدر الصحيحة في القياس بمرشّحاتها في ADR ٤٣ نفسِها: لكلّ مدخلٍ علامةُ «هُ»، وشاهدا
+    الماضي والمضارع، وحصرُ إصابته بالقواعد الصارمة تحت كلّ مجموعةٍ لقيم التعدية
+    (‎{"0"، "1"، "01"} ← (أدنى، أعلى)‎) — كما في `gen_lane_tahdid.measure`."""
 
     from gate.api import LANE_CORPUS, Gate, Refusal, sealed_forms
     from gate.residue import repair
@@ -131,31 +132,92 @@ def witness_rows() -> list[list[str]]:
         c = gate.enter(w.encode("utf-8"))
         return None if isinstance(c, Refusal) else tuple(H.norm(a[0]) + a[1:] for a in c.atoms)
 
+    def verb_atoms(key: str) -> tuple[str, ...] | None:
+        a = atoms(key)
+        if a is not None and key.endswith(L.PRONOUN) and a and a[-1] == "هُ":
+            a = a[:-1]
+        return a
+
     wit = T.corpus_witnesses({r[4] for r in masdar})
     form1, _ = T.lane_pass(set())
+    v1 = json.loads(L.RESULT.read_text(encoding="utf-8"))
+    strict_m = {k: set(v) for k, v in v1["masdar"]["rules"].items()}
 
     def union(rad: str, key: str) -> set[str]:
         return set().union(*(wit[lab].get(rad, {}).get(key, set()) for lab in wit))
 
-    out: list[list[str]] = []
+    out: list[dict[str, Any]] = []
     for r in masdar:
-        if r[6] != "0":
-            continue
-        a = atoms(r[5])
+        a = verb_atoms(r[5])
         if a is None:
             continue
         vc = S.over(a, r[4], "") or set()
         babs = {p.split()[1][1:] for p in vc if S._facala(p)}
+        if not babs and any(S._assimilated(p) for p in vc):
+            babs = (union(r[4], "fakk") | union(r[4], "trans")) or {FA, KA, DA}
         if not babs:
             continue
         ms = [S.over(x, r[4], w) if (x := atoms(w)) is not None else None for w in r[7].split()]
         if not any(ms):
             continue
-        past = bool(babs & union(r[4], "trans"))
-        impf = form1[r[3]] == 1 and bool(babs & T.compat_babs(union(r[4], "impf")))
-        if past or impf:
-            out.append([r[1], r[2], r[4], r[5], "", "past" if past else "imperfect"])
+        out.append({
+            "file": r[1], "entry": r[2], "rad": r[4], "verb": r[5], "marked": r[6] == "1",
+            "past": bool(babs & union(r[4], "trans")),
+            "impf": form1[r[3]] == 1 and bool(babs & T.compat_babs(union(r[4], "impf"))),
+            "hit": {t: S.hit_bounds(S.classes(babs, set(t)), ms, strict_m)
+                    for t in ("0", "1", "01")},
+        })
+    return out
+
+
+def witness_rows(entries: list[dict[str, Any]] | None = None) -> list[list[str]]:
+    """كلُّ مدخلٍ صحيحٍ في القياس غيرِ معلَّم «هُ» شُهد تعدّيه (ماضيًا أو مضارعًا بالتفرّد) — بقواعد ADR ٤٣
+    نفسِها، مرتّبًا بالملف والمدخل."""
+
+    out = [[e["file"], e["entry"], e["rad"], e["verb"], "", "past" if e["past"] else "imperfect"]
+           for e in (sound_entries() if entries is None else entries)
+           if not e["marked"] and (e["past"] or e["impf"])]
     return sorted(out, key=lambda r: (r[0], r[1]))
+
+
+def census(entries: list[dict[str, Any]], frame: list[list[str]], wframe: list[list[str]]
+           ) -> dict[str, object] | None:
+    """التقديرُ بلا `A_OBJ` (بعد التسجيل، ADR ٤٥): المعلَّمُ «هُ» متعدٍّ بعلامة لين؛ والمشهودُ (150)
+    **إحصاءٌ تامّ** بقيمته المملوءة؛ وما لا تتوقّف إصابتُه على التعدية معيَّن؛ والباقي (`U`) طبقةٌ تُقدَّر
+    من عيّنتها. ولا شيء قبل ملء الإطارين، ولا إن خرج صفٌّ من الإطار عن `U`."""
+
+    fill = {(r[0], r[1]): r[4].strip() for r in frame + wframe}
+    if not frame or any(v not in ("1", "0", "01") for v in fill.values()):
+        return None
+    lo = hi = 0
+    u: list[tuple[str, str]] = []
+    for e in entries:
+        k = (e["file"], e["entry"])
+        if e["marked"]:
+            vals = "1"
+        elif e["past"] or e["impf"]:
+            vals = fill[k]
+        elif e["hit"]["01"][0] != e["hit"]["01"][1]:
+            u.append(k)
+            continue
+        else:
+            vals = "01"
+        lo += e["hit"][vals][0]
+        hi += e["hit"][vals][1]
+    if not {(r[0], r[1]) for r in frame} <= set(u):
+        return None
+    hits = {(e["file"], e["entry"]): e["hit"] for e in entries}
+    qlo = sum(hits[(r[0], r[1])][r[4].strip()][0] for r in frame)
+    qhi = sum(hits[(r[0], r[1])][r[4].strip()][1] for r in frame)
+    n, m = len(entries), len(frame)
+
+    def tr(h: float) -> float:
+        return round(1 - h / n, 4)
+
+    wl, wh = L.wilson(qlo, m), L.wilson(qhi, m)
+    return {"n": n, "unresolved": len(u), "m": m, "determined_low": lo, "determined_high": hi,
+            "transmitted": [tr(hi + len(u) * qhi / m), tr(lo + len(u) * qlo / m)],
+            "ci95": [tr(hi + len(u) * wh[1]), tr(lo + len(u) * wl[0])]}
 
 
 def read_rows(path: Path, width: int) -> list[list[str]]:
@@ -246,6 +308,7 @@ def measure() -> dict[str, object]:
         p_out[st] = {k: H.bounds(v[0], v[1], n) for k, v in acc.items()}
 
     wrows = read_rows(WITNESS_FRAME, 6)
+    frows = read_rows(T.FRAME, 5)
     return {
         "ibn_aqil": {"sha256": IBN_AQIL_SHA, "quotes": [f"{a}-{b}" for a, b, _ in QUOTES],
                      "named_rules": [list(x) for x in named],
@@ -255,6 +318,7 @@ def measure() -> dict[str, object]:
                               "past": precision([r for r in wrows if r[5] == "past"]),
                               "imperfect": precision([r for r in wrows if r[5] == "imperfect"])},
         "transitivity_estimate": tahdid["frame"]["estimate"],
+        "census_estimate_post_registration": census(sound_entries(), frows, wrows),
     }
 
 
