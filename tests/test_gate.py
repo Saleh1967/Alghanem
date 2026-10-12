@@ -60,6 +60,8 @@ def test_refusals_are_named_and_never_guessed() -> None:
     assert enter(b"\xff\xfe") == Refusal("REJECT", ("NOT_UTF8",))
     assert enter(b"") == Refusal("REJECT", ("NOT_ONE_TOKEN",))
     assert enter("كَتَبَ ضَرَبَ".encode()) == Refusal("REJECT", ("NOT_ONE_TOKEN",))
+    # علامةٌ وحدَها يمحوها إصلاحُ الرسم (شدّةٌ مفردة في لين، ADR ٤٥): رفضٌ باسمه لا ValueError
+    assert enter("ّ".encode()) == Refusal("REJECT", ("NOT_ONE_TOKEN",))
 
 
 def test_enter_has_three_statuses_only() -> None:

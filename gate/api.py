@@ -184,6 +184,9 @@ class Gate:
             # كلمةٌ بلا أيّ علامة (الحروفُ المقطّعة، نصٌّ غيرُ مشكول): لا تُصلَح ولا تُخمَّن.
             return Refusal("DEFER", ("UNVOCALIZED_WORD_IS_NEVER_GUESSED",))
         canonical, residue = repair(surface)
+        if not canonical:
+            # علامةٌ وحدَها (شدّةٌ مفردة في لين) يمحوها إصلاحُ الرسم فلا يبقى لفظ: ليست كلمةً واحدة.
+            return Refusal("REJECT", ("NOT_ONE_TOKEN",))
         if canonical not in self.book.decisions:
             decision = project(canonical, self.context)
             if decision["status"] != "READY":

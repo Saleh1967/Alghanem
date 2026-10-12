@@ -29,15 +29,24 @@ from pathlib import Path
 from typing import Any
 
 from gate import Refusal, gate
-from gate.api import CORPUS, HADITH_CORPUS, SEALED_CORPORA, Gate, is_marker
+from gate.api import (
+    CORPUS,
+    HADITH_CORPUS,
+    LANE_CORPUS,
+    SEALED_CORPORA,
+    Gate,
+    is_marker,
+    sealed_forms,
+)
 from gate.bridge import PROTOCOL_VERSION
 from gate.contextual import Context, fold_atoms
 from gate.licence import REPAIRS
 from gate.residue import repair
 
 ROOT = Path(__file__).resolve().parent.parent
-CORPORA: dict[str, Path] = {"quran": CORPUS, "sahihain": HADITH_CORPUS}
-"""المدوّناتُ المختومة بأسمائها: المصحفُ (الآيةُ سطر) والصحيحان (الحديثُ سطر)."""
+CORPORA: dict[str, Path] = {"quran": CORPUS, "sahihain": HADITH_CORPUS, "lane": LANE_CORPUS}
+"""المدوّناتُ المختومة بأسمائها: المصحفُ (الآيةُ سطر) والصحيحان (الحديثُ سطر) ولين (الوسمُ سطر،
+ADR ٤٥)."""
 STATE = {"َ": "فتح", "ِ": "كسر", "ُ": "ضم", "ْ": "سكون"}
 EXITS = ("continue", "pause")
 POLICY = {
@@ -65,10 +74,15 @@ def gates_for(lines: list[list[str]], corpus: Path) -> dict[tuple[str, str], Gat
     """بوّابةٌ لكلّ سياقٍ موصول (الكلمةُ اليساريّة القانونيّة، الحدّ) على مجالها المشهود."""
 
     domains: dict[tuple[str, str], set[str]] = defaultdict(set)
+    # القاموسُ من المختوم وحدَه: ما ليس كلمةً عربيّةً في السطر (أرقامُ لين ورموزُه، «??»، «1َ2ُ3َ») يبقى
+    # موقعًا يُرفض باسمه ولا يدخل القاموس (ADR ٤٥)؛ والمصحفُ والصحيحان كلُّ كلماتهما مختومةٌ فلا يتغيّران.
+    sealed = sealed_forms(corpus)
     for tokens in lines:
         for i in range(1, len(tokens)):
             exit_ = EXITS[i == len(tokens) - 1]
-            domains[(repair(tokens[i - 1])[0], exit_)].add(repair(tokens[i])[0])
+            book = domains[(repair(tokens[i - 1])[0], exit_)]
+            if (w := repair(tokens[i])[0]) in sealed:
+                book.add(w)
     return {
         (left, exit_): Gate(Context(entry="joined", exit=exit_, left=left), corpus=corpus,
                             domain=domain)
@@ -183,7 +197,7 @@ def main(argv: list[str]) -> int:
                          f"{fresh['status'].get('READY', 0):,} جاهزًا)\n")
         return 0
     if len(argv) != 2:
-        sys.stderr.write("gen_context_certificates.py [--corpus quran|sahihain] OUT.json.gz | "
+        sys.stderr.write("gen_context_certificates.py [--corpus quran|sahihain|lane] OUT.json.gz | "
                          "--check DEPOSIT.json.gz\n")
         return 2
     fresh = generate(name)
