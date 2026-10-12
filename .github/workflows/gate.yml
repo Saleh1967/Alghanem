@@ -77,6 +77,7 @@ jobs:
                    Rubai.rubai_licensed Rubai.rubai_one_mujarrad Rubai.quad_open_by_maqayis \
                    Tadwir.restore_dedupBy Tadwir.restore_dedupKey Tadwir.collision_loses Tadwir.dedupBy_nodup \
                    Kraft.huffman_lengths Kraft.kraft_complete Kraft.mean_length_bounds \
+                   Shannon.flog_spec Shannon.logCheck_spec Shannon.flog_values Shannon.shannon_exact Shannon.within_one_bit Shannon.entropy_bounds \
                    Maqayis.roots_in_table Maqayis.roots_nodup Maqayis.count_is_maqayisCount Dal.no_cell_function_recovers_root \
                    Unicode.decode_encode Unicode.encode_prefix_free Unicode.decodeAll_encodeAll \
                    Boundary.no_start_with_sukun Boundary.pause_ends_with_sukun Boundary.join_iff \

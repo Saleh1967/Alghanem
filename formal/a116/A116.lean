@@ -51,3 +51,4 @@ import A116.MaqayisData
 import A116.Maqayis
 import A116.Dal
 import A116.Hasr
+import A116.Shannon
