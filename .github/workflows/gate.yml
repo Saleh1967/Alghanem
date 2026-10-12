@@ -60,6 +60,8 @@ jobs:
             grep -q "A116.Residue.$t" axioms.txt || { echo "::error::Residue.$t غيرُ مدقَّقة"; exit 1; }
           done
           for t in cells_length_eq_product decode_code code_decode \
+                   RootGrade.mem_table RootGrade.num_inj RootGrade.num_unnum RootGrade.quad_needs_tri \
+                   RootGrade.only_tri_and_quad RootGrade.rootLedger_quad_waits RootGrade.cells_exhausted_within_thulathi \
                    Unicode.decode_encode Unicode.encode_prefix_free Unicode.decodeAll_encodeAll \
                    Boundary.no_start_with_sukun Boundary.pause_ends_with_sukun Boundary.join_iff \
                    Boundary.wasl_dropped_needs_moving_left Boundary.pause_then_join_is_not_join \
