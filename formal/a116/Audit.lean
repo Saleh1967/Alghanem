@@ -612,3 +612,5 @@ import A116
 #print axioms A116.LineEmpty.strictLineN_nonempty
 #print axioms A116.LineEmpty.strictLineN_fixes_smuggling
 #print axioms A116.LineEmpty.pairwise_needs_vowel_start
+#print axioms A116.ContextDeposit.deposit_needs_raw
+#print axioms A116.ContextDeposit.deposit_needs_free
