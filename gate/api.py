@@ -44,6 +44,8 @@ from .residue import Edit, has_marks, repair, unrepair
 
 __all__ = [
     "ABNIYA_INTIQA_CORPUS",
+    "LANE_CORPUS",
+    "LANE_LINES_SHA256",
     "ABNIYA_INTIQA_SHA256",
     "CORPUS_SHA256",
     "HADITH_CORPUS",
@@ -76,14 +78,22 @@ ABNIYA_INTIQA_SHA256: Final[str] = (
 )
 """انتقاءُ الأبنية الموقَّع (ADR ١٣): كلماتُ أبنية سيبويه مشكولةً بيد المالك من طبعةٍ بموضعها، كلمةٌ في سطر
 (`tools/gen_abniya_intiqa.py seal`). تُختم بصمتُها هنا عند كلّ ملء؛ وفارغةً بصمتُها بصمةُ الفراغ."""
+LANE_CORPUS: Final[Path] = _ROOT / "corpora" / "lane" / "lane-lines.txt.gz"
+LANE_LINES_SHA256: Final[str] = (
+    "248def99adaf4ba565f250685b102591b3cbce4c1d09524fbb58f92bf270a1d5"
+)
+"""معجمُ لين (ADR ٣٣، قرارُ المالك 2026-10-12): كلُّ وسمٍ عربيٍّ مشكولٍ في TEI المختوم
+(`corpora/lane/tei/`، CC BY-SA 3.0 US، alpheios-project/lan@7dd04e1) سطرٌ (`tools/gen_lane.py`) —
+مرجعٌ محجوبٌ للمصدر والجمع."""
 SEALED_CORPORA: Final[dict[str, str]] = {
     CORPUS.name: CORPUS_SHA256,
     HADITH_CORPUS.name: HADITH_LINES_SHA256,
     ABNIYA_INTIQA_CORPUS.name: ABNIYA_INTIQA_SHA256,
+    LANE_CORPUS.name: LANE_LINES_SHA256,
 }
 """المدوّناتُ المختومة ببصمة محتواها (بعد فكّ الضغط إن كانت مضغوطة): المصحفُ، والصحيحان سطورًا
 (`tools/gen_hadith_lines.py`، من ملفّي Open-Hadith-Data المختومين، ODbL 1.0)، وانتقاءُ الأبنية الموقَّع
-(ADR ١٣). الرموزُ `<…>` فيها رموزُ طبعةٍ مسمّاة لا كلمات."""
+(ADR ١٣)، ومعجمُ لين (ADR ٣٣). الرموزُ `<…>` فيها رموزُ طبعةٍ مسمّاة لا كلمات."""
 
 @dataclass(frozen=True)
 class Certificate:
