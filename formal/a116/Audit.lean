@@ -646,3 +646,5 @@ import A116
 #print axioms A116.Dal.qala_same_cells
 #print axioms A116.Dal.no_cell_function_separates
 #print axioms A116.Dal.no_cell_function_recovers_root
+#print axioms A116.ContextDeposit.free_witness_pause_agrees
+#print axioms A116.ContextDeposit.deposit_needs_vowel_after_madd

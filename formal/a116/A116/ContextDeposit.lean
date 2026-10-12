@@ -1,5 +1,7 @@
 import A116.NizamLine
 import A116.Iltiqa
+import A116.PauseCount
+import A116.ContinueCount
 
 /-!
 # مودَعُ السياق والسطر (ADR ٣٤)
@@ -16,7 +18,9 @@ import A116.Iltiqa
 وهنا الشاهدان على أنّ الشرطين لازمان:
 * `deposit_needs_raw`: «بِ قَالْ الْحَمْدُ» — السطرُ («بِ قَالِ لْحَمْدُ») مرخَّصٌ وصلًا ووقفًا والمودَعُ يرفض؛ فالمودَعُ
   ليس السطرَ وحدَه.
-* `deposit_needs_free`: «ءَ» ثمّ «اْلْ» (أوّلُها حرفُ مدٍّ ساكن) — المودَعُ وصلًا (`depA`) غيرُ الصيغة.
+* `deposit_needs_free`: «ءَ» ثمّ «اْلْ» (أوّلُها حرفُ مدٍّ ساكن) — المودَعُ وصلًا (`depA`) غيرُ الصيغة؛ ووقفًا يتساويان
+  (`free_witness_pause_agrees`). والقيدُ اللازمُ بعد التعميم (ADR ٣٦): حرفُ المدّ الساكن أوّلًا يليه متحرّك
+  (`deposit_needs_vowel_after_madd`، وصلًا ووقفًا).
 -/
 
 set_option autoImplicit false
@@ -81,6 +85,41 @@ theorem deposit_needs_free :
           ([atom 'ا' sukun, atom 'ل' sukun], [atom 'ء' fatha, atom 'ا' sukun, atom 'ل' sukun])] ≠
       (strictLineB (repairsL [[atom 'ء' fatha], [atom 'ا' sukun, atom 'ل' sukun]]) &&
         strictB [atom 'ء' fatha] && strictJoinB baA [atom 'ا' sukun, atom 'ل' sukun]) := by
+  decide +kernel
+
+/-! ## الوقفُ يُحسب بالآلة المبرهنة (ADR ٣٦)
+
+`Stages.parse` لا تختزله النواةُ في `decide +kernel`، لكنّ `pauseB` و`continueB` مبرهَنٌ أنّهما قبولُ آلتين منتهيتين
+بنيويّتَي التكرار (`Ternary.pauseB_eq_acc`، `Ternary.continueB_eq_accC`). فالحسابُ وقفًا يمرّ بهما. -/
+
+/-- شاهدُ ADR ٣٤ («ءَ» ثمّ «اْلْ») **ليس شاهدًا وقفًا**: آخرُ السطر وقفٌ فالمدُّ العارض يُقبل، فيتساوى الطرفان. -/
+theorem free_witness_pause_agrees :
+    depAQ [([atom 'ء' fatha], [atom 'ء' fatha]),
+           ([atom 'ا' sukun, atom 'ل' sukun], [atom 'ء' fatha, atom 'ا' sukun, atom 'ل' sukun])] =
+      (strictLinePauseB (repairsL [[atom 'ء' fatha], [atom 'ا' sukun, atom 'ل' sukun]]) &&
+        strictB [atom 'ء' fatha] &&
+        rawAQ [([atom 'ا' sukun, atom 'ل' sukun], [atom 'ء' fatha, atom 'ا' sukun, atom 'ل' sukun])]) := by
+  simp only [depAQ, depTailAQ, rawAQ, strictJoinPauseRepairedB, strictJoinPauseB, strictLinePauseB,
+    strictPauseB, strictB, Ternary.pauseB_eq_acc, Ternary.continueB_eq_accC]
+  decide +kernel
+
+def abba : List Cell := [atom 'ا' sukun, atom 'ب' sukun, atom 'ب' fatha]
+
+/-- **الشاهدُ وقفًا ووصلًا** (`HarfBridge.deposit_needs_vowel_after_madd` في Algebra، ADR ٧ هناك): «بَ اْبْبَ وَ»،
+وصورةُ ابتداء الثانية «ءِاْبْبَ» — حرفُ مدٍّ ساكنٌ يليه ساكن: في السطر بعد فتحةٍ مدٌّ يُغلقه أوّلُ مثلين، وفي صورة
+الابتداء بعد كسرةٍ ساكنٌ يليه ساكن؛ المودَعُ يرفض والصيغةُ تقبل. -/
+theorem deposit_needs_vowel_after_madd :
+    depAQ [([atom 'ب' fatha], [atom 'ب' fatha]), (abba, atom 'ء' kasra :: abba),
+      ([atom 'و' fatha], [atom 'و' fatha])] = false ∧
+    (strictLinePauseB (repairsL [[atom 'ب' fatha], abba, [atom 'و' fatha]]) && strictB [atom 'ب' fatha] &&
+      rawAQ [(abba, atom 'ء' kasra :: abba), ([atom 'و' fatha], [atom 'و' fatha])]) = true ∧
+    depA [([atom 'ب' fatha], [atom 'ب' fatha]), (abba, atom 'ء' kasra :: abba),
+      ([atom 'و' fatha], [atom 'و' fatha])] = false ∧
+    (strictLineB (repairsL [[atom 'ب' fatha], abba, [atom 'و' fatha]]) && strictB [atom 'ب' fatha] &&
+      strictJoinB baA abba && strictJoinB baA [atom 'و' fatha]) = true := by
+  simp only [depAQ, depTailAQ, depA, depTailA, rawAQ, strictJoinPauseRepairedB, strictJoinRepairedB,
+    strictJoinPauseB, strictJoinB, strictLinePauseB, strictLineB, strictPauseB, strictB,
+    Ternary.pauseB_eq_acc, Ternary.continueB_eq_accC]
   decide +kernel
 
 end A116.ContextDeposit
