@@ -123,6 +123,8 @@ MODULES: Final[tuple[Module, ...]] = (
            "test_hukm.py"),  # الحكم: من جذور الشهادة إلى ركنٍ من السلسلة بشاهد، أو «لا حكم»
     Module("hukm_table", (), (), None, "test_hukm.py"),  # أعدادُ الحكم على المودَع، مولَّدةٌ من الفهرس
     Module("shahada", ("Shahada",), ("shahada",), None, "test_shahada.py"),  # شهادةُ SLGE ببصمتها
+    # عقدُ الشرح: سطرٌ بدعواه ووسمه (ADR ٤٤)
+    Module("sharh", (), (), "gen_sharh_index.py", "test_sharh.py"),
     Module("intiqal", ("Intiqal", "IntiqalTable"), (), "gen_intiqal_index.py", "test_intiqal.py"),
     Module("siyaq", ("Siyaq",), ("siyaq",), "gen_siyaq_index.py", "test_siyaq.py"),  # في حدّها
     Module("coverage", ("Coverage", "CoverageTable"), ("coverage",), "gen_coverage_index.py",

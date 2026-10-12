@@ -49,7 +49,7 @@
 | `masaq-zawaid.json` | مرجع محجوب | `15ab1c4691c88ebb99b4f37c5f1c062c83a20a988fdd6099cc835eaea4097478` |
 | `masaq-zuruf.json` | مرجع محجوب | `ef2e77119120a8f5109e28e63c0835468ce85442806c44b0e4f4a70635416dd3` |
 
-## الأرقام (1,227 رقمًا من 50 مولِّدًا)
+## الأرقام (1,237 رقمًا من 51 مولِّدًا)
 
 ### `tools/gen_abniya_index.py::measure`
 
@@ -1241,6 +1241,23 @@
 | `unread_top[9][1]` | 3 |
 | `unread_top[10][1]` | 2 |
 | `unread_top[11][1]` | 2 |
+
+### `tools/gen_sharh_index.py::measure`
+
+يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `de32a41cd708d03e`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `by_claim.len` | 14 |
+| `by_claim.sum` | 160,706 |
+| `by_claim_pos.len` | 14 |
+| `by_claim_pos.sum` | 693,536 |
+| `by_tag_pos.مبرهن` | 537,122 |
+| `by_tag_pos.مفحوص_استقصاء` | 156,414 |
+| `forms.len` | 18,179 |
+| `positions` | 78,207 |
+| `refused` | 38 |
+| `used.len` | 14 |
 
 ### `tools/gen_shibh_index.py::measure`
 

@@ -57,6 +57,7 @@ EXEMPT_FILES = (
     "tools/gen_nabhani_index.py", "tools/gen_salsala_index.py",
     "tools/deposit_mukhassas.py",  # يقرأ المختومَ ويولّد جدولَيه؛ لا نصَّ يُطبَّع
     "tools/gen_mukhassas_index.py",
+    "tools/gen_sharh_index.py",  # يكتب فهرسَ عقد الشرح ومخرَجَه (أعدادٌ وأسماء، لا نصّ)
     "tools/deposit_zawaid.py",  # يقرأ الكتابَ المختوم ويولّد جدولَي الزوائد
     "tools/gen_zawaid_index.py",
     "tools/deposit_makharij.py",  # يقرأ الكتابَ المختوم ويولّد جدولَي المخارج

@@ -1257,6 +1257,15 @@ _DECLARED: tuple[Claim, ...] = (
        note="على MASAQ المحجوب: من 12,039 كلمةً قرأها الموزِّعُ حرفًا يعدّها المرجعُ بلا جهة 98.2%، "
             "والباقي (لَمَّا ظرفًا، عَلِيّ، خَلَا فعلًا) حجبٌ لا حذف؛ وعلى المصحف 803 صورةً قُرئ أصلُها "
             "المردود على جذرٍ مشهود (QIRAA_INDEX.md، ADR ٤٢)."),
+    _c("HUKM-judge", "الحكمُ على جذور قراءات الشهادة: لكلّ جذرٍ حكمان (الجنس والقابليّة) «مفهومٌ» "
+       "بشاهدٍ من المودَع أو «معلومةٌ» بلا شاهد، ولا جذرَ فـ«لا حكم»؛ لا يُسقط جذرًا ولا يزيد، ولا "
+       "«مفهوم» بلا شاهد", _P,
+       "lean:Slge.Hukm.hukm_none_iff", "lean:Slge.Hukm.hukm_length",
+       "lean:Slge.Hukm.jins_mafhum_has_witness", "lean:Slge.Hukm.jins_no_delete",
+       "test:tests/test_hukm.py::test_judgement_is_total_witnessed_and_never_drops_a_root",
+       "test:tests/test_hukm.py::test_python_judgement_matches_the_lean_export",
+       note="الدعوى التي يحيل إليها سطرُ الحكم في عقد الشرح (ADR ٤٤)؛ المقيسُ في HUKM_INDEX.md "
+            "(ADR ٣٤–٣٥)."),
     _c("ALAM-signed", "لفظُ الجلالة لفظٌ منفردٌ لا شبيهَ له (عشرُ صورٍ مسمّاة بموضعها: ابتداءً، بعد "
        "سابقة، مدًّا بعد تاء القسم أو همزة الاستفهام، واللهمّ)، والأعلامُ موسومةٌ بعينها بلا قياس "
        "(ممنوعٌ جرُّه بالفتح، منصرفٌ بالتنوين، مقصورٌ بلا حالة، أعجميٌّ وعربيّ) — من مودَعٍ بتوقيع "
@@ -1451,6 +1460,14 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_conformance.py::test_bridge_matches_lean"),
     _c("COUNT", "عدّادُ SLGE هو ‎U(n)‎ لكلّ n", _P,
        "lean:Slge.count_eq_U", "test:tests/test_conformance.py::test_counts_match_lean"),
+    _c("CERT-n", "عددُ الشهادة n = P(F(الذرّات)، الرتبة) يُحمل في المودَع كاملًا لكلّ صورة (العددُ "
+       "والرتبةُ في الليف والبقيّة)؛ متباينٌ على كلّ مجالٍ منتهٍ، والخاناتُ وحدَها تُسقط الرتبة "
+       "(عَلَى/عَلَا)", _X,
+       "test:tests/test_deposits.py::test_certificate_n_is_carried_whole",
+       note="مفحوصٌ هنا على المودَع كلِّه (‎n = P(F(الخانات)، الرتبة)‎ لكلّ صورة)؛ "
+            "والتباينُ والإسقاطُ مبرهَنان في الغانم (`A116.Certificate.certNumber_injective`، "
+            "`cells_forget_rank`، `ala_alaa` — ADR ١٤) ومدقَّقان في Audit.lean هنا، لا في "
+            "`formal/Slge`. والطيُّ (FOLD) عددُ الخانات المرخَّصة ثنائيًّا لا عددُ الشهادة (ADR ٤١)."),
     _c("FOLD", "الطيُّ تقابلٌ بين المرخَّصات بطول n و‎{0…U(n)−1}‎", _P,
        "lean:Slge.slgeFold_injective", "lean:Slge.slgeFold_surjective",
        "test:tests/test_conformance.py::test_folds_match_lean",
