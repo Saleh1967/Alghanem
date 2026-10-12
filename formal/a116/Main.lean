@@ -226,6 +226,16 @@ def main (args : List String) : IO Unit := do
     -- الأوزانُ في جداول درجاتها (`Ledger.waznRows`، ADR ١٩): رقمُ القالب، الدرجة، العدد n.
     for (i, d, n) in Ledger.waznRows do
       IO.println s!"{i},{d},{n}"
+  | ["need"] =>
+    -- قانونُ الحاجة المتبادلة (`Hajah.NeedLaw`) على كلّ سلسلةِ أدوارٍ بطول 1 … 8 (9,840 سطرًا): السلسلة، والقانون،
+    -- وحالةُ الوراثة بعدها (ذيلُ المقطع المفتوح، أو none).
+    let st := fun (s : Option (Option (List Stages.K))) => match s with
+      | some (some t) => "[" ++ "-".intercalate (t.map SyllableTable.kName) ++ "]"
+      | some none => "none"
+      | none => "refused"
+    for n in List.range 8 do
+      for k in SyllableTable.allK (n + 1) do
+        IO.println s!"{"-".intercalate (k.map SyllableTable.kName)},{decide (Hajah.NeedLaw k)},{st (Hajah.needState none k)}"
   | ["utf8"] =>
     -- أبجديّةُ الرسم: الحروفُ ‎U+0621–U+064A‎، العلاماتُ ‎U+064B–U+0652‎، ألفُ الوصل ‎U+0671‎، والمسافة.
     for c in (List.range 0x2B).map (· + 0x621) ++ (List.range 8).map (· + 0x64B) ++ [0x671, 0x20] do

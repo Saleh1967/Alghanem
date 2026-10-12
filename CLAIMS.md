@@ -12,7 +12,7 @@
 | `corpora/hadith/sahih_muslim_ahadith_mushakkala_mufassala.utf8.csv.gz` | واقع مختوم (ODbL 1.0؛ بايتاتُه بعد فكّ الضغط) | `79232c8d7c27fef161d8f33ca169f9754741cfe14957dde2ac76893374998943` |
 | `corpora/abniya-intiqa-lines.txt` | مجالٌ مختومٌ ثالث: انتقاءُ الأبنية بيد المالك (`ABNIYA_INTIQA_SHA256`، ADR ١٣) | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 
-## الأرقام (218 رقمًا من 27 مولِّدًا)
+## الأرقام (219 رقمًا من 28 مولِّدًا)
 
 ### `gate.audit.main`
 
@@ -349,6 +349,14 @@
 |---|---|
 | `licensable.csv.rows` | 113 |
 
+### `lake exe a116-table need`
+
+يقرأ: — (نواةُ Lean؛ لا مودَع). بصمةُ المخرَج: `fa515db73b9357f0`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `need.csv.rows` | 9,840 |
+
 ### `lake exe a116-table numbers`
 
 يقرأ: — (نواةُ Lean؛ لا مودَع). بصمةُ المخرَج: `43edb37f96c5b4fd`.
@@ -422,7 +430,7 @@
 | `wazn-body.csv.rows` | 31 |
 
 
-## أعدادُ المبرهنات بوحداتها (31 مبرهنة)
+## أعدادُ المبرهنات بوحداتها (32 مبرهنة)
 
 مستخرَجةٌ من نصوص Lean (`formal/a116/A116/*.lean`): كلُّ مبرهنةٍ مدقَّقة ينتهي نصُّها بـ‎= عدد‎؛ والوحدةُ من القائمة المغلقة أدناه (ADR ١٢). العددُ هو الثابتُ الأخير في نصّ المبرهنة.
 
@@ -446,6 +454,7 @@
 | 3 | حقل وظيفة | `A116.Exhaust.current_qaim_count` |
 | 28 | حامل | `A116.Field112.letters28_length` |
 | 112 | خانة | `A116.Field112.hamilField112_length` |
+| 7 | حالة آلة | `A116.Hajah.states_length` |
 | 31 | قالب | `A116.Ishtiqaq.soundTemplates_length` |
 | 122,052,735 | سلسلة خانات مرخصة بالطول | `A116.Junction.licensed_upto_4` |
 | 177,045 | قلادة حوامل | `A116.Junction.burnside_4` |

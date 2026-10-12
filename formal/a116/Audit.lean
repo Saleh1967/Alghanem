@@ -391,3 +391,27 @@ import A116
 #print axioms A116.RootGrade.root_dalala_alone_opens
 #print axioms A116.RootGrade.tri_witness_all
 #print axioms A116.RootGrade.cells_exhausted_within_thulathi
+-- قانونُ الحاجة المتبادلة تحت «ا و ا و ا»: c يحتاج v وv تحتاج c، الحدُّ الأدنى المكتمل، ووراثةُ الترخيص (ADR ٢٢)
+#print axioms A116.Hajah.kindGo_append
+#print axioms A116.Hajah.kindOf_append
+#print axioms A116.Hajah.role_is_local
+#print axioms A116.Hajah.need_states_closed
+#print axioms A116.Hajah.states_length
+#print axioms A116.Hajah.v_needs_its_vowel
+#print axioms A116.Hajah.need_start
+#print axioms A116.Hajah.needRun_flat
+#print axioms A116.Hajah.need_law_iff_parse
+#print axioms A116.Hajah.one_parent_per_syllable
+#print axioms A116.Hajah.minimal_complete
+#print axioms A116.Hajah.need_append
+#print axioms A116.Hajah.state_mem
+#print axioms A116.Hajah.state_le_three
+#print axioms A116.Hajah.before_after
+#print axioms A116.Hajah.continue_needs
+#print axioms A116.Hajah.pause_needs
+#print axioms A116.Hajah.need_not_continue
+#print axioms A116.Hajah.strict_need
+#print axioms A116.Hajah.madd_after_closer_refused
+#print axioms A116.Hajah.need_of_awa_wasl
+#print axioms A116.Hajah.need_of_awa_waqf
+#print axioms A116.Hajah.awa_ibtida_of_need
