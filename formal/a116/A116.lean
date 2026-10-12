@@ -45,6 +45,7 @@ import A116.SijillData
 import A116.Sijill
 import A116.LineEmpty
 import A116.ContextDeposit
+import A116.Mizan
 import A116.Tadwir
 import A116.Kraft
 import A116.MaqayisData

@@ -13,8 +13,9 @@
 على كلّ موقعٍ داخليٍّ جاهز: الكلمةُ بخاناتها في سياقها (`tools/gen_context_certificates.py`)،
 ويسارُها صورةُ ابتداء ما قبلها كما تأخذها البوّابة (`project` في سياق الابتداء)، وحكمُها هو
 `strict_joined_repaired` (وقفًا `strict_joined_pause_repaired`) على يسارها وذرّاتها بعينها
-(ADR ٣٨). وبعد موضعٍ مرفوضٍ تبدأ قطعةٌ يسارُها صورةُ ابتداء المرفوض (`segment_eq_line`، ADR ٨ في
-Algebra): يُفحص أنّ اليسارَ موجود. والمصحفُ في الاختبار السريع، والصحيحان في البطيء (ADR ٣٨).
+(ADR ٣٨)، وهو حكمُ الميزان `machine_join` (ADR ٤٢). وبعد موضعٍ مرفوضٍ تبدأ قطعةٌ يسارُها
+صورةُ ابتداء المرفوض (`segment_eq_line`، ADR ٨ في Algebra): يُفحص أنّ اليسارَ موجود.
+والمصحفُ في الاختبار السريع، والصحيحان في البطيء (ADR ٣٨).
 """
 
 from __future__ import annotations
@@ -27,7 +28,8 @@ import pytest
 from conftest import ROOT
 
 from gate.contextual import Context, project
-from gate.licence import strict_joined_pause_repaired, strict_joined_repaired
+from gate.licence import repair_junction, strict_joined_pause_repaired, strict_joined_repaired
+from gate.mizan import machine_join
 from gate.residue import repair
 
 SPEC = importlib.util.spec_from_file_location("gen_context_certificates",
@@ -126,6 +128,9 @@ def _check(name: str) -> dict[str, int]:
                     failures.append(("SHAPE", tokens[i - 1], tokens[i]))
                 if not verdict(left, _atoms(word)):
                     failures.append(("VERDICT", tokens[i - 1], tokens[i]))
+                if not machine_join(repair_junction(left, _atoms(word))[0], _atoms(word),
+                                    exit_ == 1):
+                    failures.append(("MIZAN", tokens[i - 1], tokens[i]))
                 if prev is None:
                     n["after_refusal"] += 1
                 elif not start_ok(MOD.cells_of(left), prev):

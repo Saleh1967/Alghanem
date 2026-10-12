@@ -674,3 +674,14 @@ import A116
 #print axioms A116.Shannon.entropy_bounds
 #print axioms A116.Hasr.hasr_list
 #print axioms A116.Hasr.hasr_refine
+#print axioms HarfBridge.wasl_eq_strictB
+#print axioms HarfBridge.waqf_eq_strictPauseB
+#print axioms HarfBridge.line_eq_strictLineB
+#print axioms HarfBridge.join_eq_strictJoinB
+#print axioms HarfBridge.joinWaqf_eq_strictJoinPauseB
+#print axioms A116.Mizan.projW_toH
+#print axioms A116.Mizan.machineJoin_eq
+#print axioms A116.Mizan.machineJoin_pause_eq
+#print axioms A116.Mizan.hal_nodup
+#print axioms A116.Mizan.khana_nodup
+#print axioms A116.Mizan.cells_map

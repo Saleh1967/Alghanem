@@ -115,6 +115,24 @@ def renderJoin (l r : List Cell) : String :=
 
 end HaddTable
 
+namespace MizanTable
+
+def hi (s : Harf.Hal) : Nat := Harf.Hal.all.idxOf s
+def ki (x : Harf.Khana) : Nat := Harf.Khana.all.idxOf x
+
+/-- جدولُ الآلة كاملًا: الخانات، والأحوال، والانتقالُ وصلًا ووقفًا على المجال كلِّه. -/
+def rows : List String :=
+  (A116.cells.map fun c =>
+      s!"cell,{String.ofList [Field112.carrierChar c.carrier, HaddTable.mark c.haraka]},{ki (HarfBridge.unproj c)}") ++
+  (Harf.Hal.all.map fun s =>
+      s!"state,{hi s},{Harf.qabilWasl s},{Harf.qabilWaqf s},{hi (Harf.hadd s)}") ++
+  (Harf.Hal.all.flatMap fun s => Harf.Khana.all.map fun x =>
+      s!"wasl,{hi s},{ki x},{hi (Harf.wasl s x)}") ++
+  (Harf.Hal.all.flatMap fun s => Harf.Khana.all.map fun x =>
+      s!"waqf,{hi s},{ki x},{hi (Harf.waqf s x)}")
+
+end MizanTable
+
 def main (args : List String) : IO Unit := do
   match args with
   | ["counts"] =>
@@ -141,6 +159,8 @@ def main (args : List String) : IO Unit := do
     for n in List.range 4 do
       for w in HaddTable.allW (n + 1) do
         IO.println (HaddTable.render w)
+  | ["mizan"] =>
+    for r in MizanTable.rows do IO.println r
   | ["hadd-join"] =>
     for m in List.range 3 do
       for l in HaddTable.allJ (m + 1) do

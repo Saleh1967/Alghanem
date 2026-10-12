@@ -40,6 +40,7 @@ from .licence import (
     pause_licensed,
     repair_junction,
 )
+from .mizan import machine_join
 from .residue import Edit, has_marks, repair, unrepair
 
 __all__ = [
@@ -207,9 +208,15 @@ class Gate:
             # التقاءُ الساكنين على الحدّ (`Iltiqa.repair`): الألفُ الفارقة تسقط، أو المدُّ يُحذف، أو
             # الساكنُ يُكسَر — في آخر اليساريّة وحدَها، وجهًا مسمًّى يحمله الشهادة؛ وإلّا لا شيء.
             left_atoms, junction = repair_junction(tuple(left["atoms"]), atoms)
-            # الحكمُ: `strict_joined`/`strict_joined_pause` بعينهما (`joined_failure`)، والرفضُ
-            # مسمًّى بشرطه.
             failed = joined_failure(left_atoms, atoms, pause)
+            # الحكمُ بالميزان (`A116.Mizan.machineJoin_eq`): آلةٌ منتهيةٌ جدولُها من البرهان؛
+            # و`joined_failure` لا يُستشار إلّا لتسمية الرفض.
+            ok = (machine_join(left_atoms, atoms, pause) if left_atoms and atoms
+                  else failed is None)
+            if ok:
+                return Certificate(core, residue, junction)
+            if failed is None:
+                return Refusal("REJECT", ("JUNCTION_NOT_LICENSED",))
             if failed == "ternary":
                 return Refusal("REJECT", ("JUNCTION_NOT_LICENSED",)
                                + (("NOT_PAUSE_LICENSED",) if pause else ()))
