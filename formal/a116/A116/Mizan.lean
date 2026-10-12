@@ -56,6 +56,10 @@ theorem khana_nodup : Harf.Khana.all.Nodup := by decide +kernel
 theorem hal_count : Harf.Hal.all.length ∈ [42] := by decide
 theorem bad_first : Harf.Hal.all.head? = some .bad' := rfl
 
+/-- رقمُ الحال ورقمُ الخانة في الجدول: موضعُهما في قائمتَي المجال (`hal_nodup`، `khana_nodup`). -/
+def hi (s : Harf.Hal) : Nat := Harf.Hal.all.idxOf s
+def ki (x : Harf.Khana) : Nat := Harf.Khana.all.idxOf x
+
 /-- والخانةُ من الغانم تُنقل نقلًا واحدًا: لكلّ خانةٍ صفُّها في جدول الآلة. -/
 theorem cells_map : ∀ c ∈ A116.cells, unproj c ∈ Harf.Khana.all := fun _ _ => Harf.Khana.mem_all _
 

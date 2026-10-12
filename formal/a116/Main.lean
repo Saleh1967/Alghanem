@@ -117,8 +117,7 @@ end HaddTable
 
 namespace MizanTable
 
-def hi (s : Harf.Hal) : Nat := Harf.Hal.all.idxOf s
-def ki (x : Harf.Khana) : Nat := Harf.Khana.all.idxOf x
+open A116.Mizan (hi ki)
 
 /-- جدولُ الآلة كاملًا: الخانات، والأحوال، والانتقالُ وصلًا ووقفًا على المجال كلِّه. -/
 def rows : List String :=
@@ -130,6 +129,40 @@ def rows : List String :=
       s!"wasl,{hi s},{ki x},{hi (Harf.wasl s x)}") ++
   (Harf.Hal.all.flatMap fun s => Harf.Khana.all.map fun x =>
       s!"waqf,{hi s},{ki x},{hi (Harf.waqf s x)}")
+
+def esc (c : Char) : String :=
+  let h := String.ofList (Nat.toDigits 16 c.toNat)
+  "'\\u" ++ String.ofList (List.replicate (4 - h.length) '0') ++ h ++ "'"
+
+def harakaName : Haraka → String
+  | .fatha => ".fatha" | .damma => ".damma" | .kasra => ".kasra" | .sukun => ".sukun"
+
+def commas (l : List String) : List String := (l.dropLast.map (· ++ ",")) ++ l.getLast?.toList
+
+def natRow (xs : List Nat) : String := "[" ++ ", ".intercalate (xs.map toString) ++ "]"
+
+/-- الجدولُ نفسُه مصدرَ Lean: يولَّد هنا ثمّ تفحصه النواةُ في `A116.MizanKernel` فلا يُوثَق بهذا الطابع. -/
+def leanFile : List String :=
+  ["import A116.Cells", "",
+   "/-! مولَّدٌ بـ`lake exe a116-table mizan-lean`؛ لا يُحرَّر باليد. النواةُ تفحصه في `A116.MizanKernel` (ADR ٤٤). -/",
+   "", "set_option maxRecDepth 100000", "", "namespace A116.MizanData", "",
+   "def cellT : List (Char × A116.Haraka × Nat) := ["] ++
+  commas (A116.cells.map fun c =>
+      s!"  ({esc (Field112.carrierChar c.carrier)}, {harakaName c.haraka}, {ki (HarfBridge.unproj c)})") ++
+  ["]", "",
+   "def stateT : List (Bool × Bool × Nat) := ["] ++
+  ((Harf.Hal.all.map fun s =>
+      s!"  ({Harf.qabilWasl s}, {Harf.qabilWaqf s}, {hi (Harf.hadd s)})") |> fun l =>
+        commas l) ++
+  ["]", "",
+   "def waslT : List (List Nat) := ["] ++
+  ((Harf.Hal.all.map fun s => "  " ++ natRow (Harf.Khana.all.map fun x => hi (Harf.wasl s x))) |> fun l =>
+        commas l) ++
+  ["]", "",
+   "def waqfT : List (List Nat) := ["] ++
+  ((Harf.Hal.all.map fun s => "  " ++ natRow (Harf.Khana.all.map fun x => hi (Harf.waqf s x))) |> fun l =>
+        commas l) ++
+  ["]", "", "end A116.MizanData"]
 
 end MizanTable
 
@@ -159,6 +192,8 @@ def main (args : List String) : IO Unit := do
     for n in List.range 4 do
       for w in HaddTable.allW (n + 1) do
         IO.println (HaddTable.render w)
+  | ["mizan-lean"] =>
+    for r in MizanTable.leanFile do IO.println r
   | ["mizan"] =>
     for r in MizanTable.rows do IO.println r
   | ["hadd-join"] =>

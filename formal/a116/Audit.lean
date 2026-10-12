@@ -687,3 +687,7 @@ import A116
 #print axioms A116.Mizan.cells_map
 #print axioms A116.Hasr.pin_distinct
 #print axioms A116.Hasr.pin_unique
+#print axioms A116.MizanKernel.cellT_eq
+#print axioms A116.MizanKernel.stateT_eq
+#print axioms A116.MizanKernel.waslT_eq
+#print axioms A116.MizanKernel.waqfT_eq

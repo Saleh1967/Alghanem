@@ -7,10 +7,14 @@
 ٢. المفسِّرُ على جدول Lean `hadd-join` كلِّه هو عمودا `strictJoinB`/`strictJoinPauseB`
    بعينهما — والتوقّعُ من النواة.
 ٣. ثلاثُ طفراتٍ في المفسِّر يلتقطها الجدول: بلا حدّ، والوقفُ بآلة الوصل، والبدءُ من غير `bad'`.
+٤. (ADR ٤٤) الجدولُ هو ما فحصته النواة: `mizan.csv` صفًّا صفًّا هو `A116.MizanData` الذي تساويه
+   النواةُ بتعريف الآلة (`A116.MizanKernel.cellT_eq`، `stateT_eq`، `waslT_eq`، `waqfT_eq`)؛
+   وطفرةُ رقمٍ واحد تُلتقط.
 """
 
 from __future__ import annotations
 
+import re
 from collections.abc import Callable, Sequence
 
 import pytest
@@ -19,6 +23,10 @@ from conftest import ROOT
 from gate.mizan import BAD, CELL, HADD, QABIL_WAQF, QABIL_WASL, WAQF, WASL, machine_join, run
 
 JOIN_TABLE = ROOT / "formal" / "a116" / "hadd-join.csv"
+CSV = ROOT / "formal" / "a116" / "mizan.csv"
+KERNEL_DATA = ROOT / "formal" / "a116" / "A116" / "MizanData.lean"
+MARK = {"fatha": "\u064e", "damma": "\u064f", "kasra": "\u0650", "sukun": "\u0652"}
+"""علامةُ الحالة كما يكتبها `HaddTable.mark` في جداول Lean الأخرى (`hadd-join.csv`): أربعٌ باليد."""
 
 
 def _rows() -> list[tuple[tuple[str, ...], tuple[str, ...], bool, bool]]:
@@ -79,3 +87,37 @@ def test_table_catches_interpreter_mutants(
         mutant: Callable[[Sequence[str], Sequence[str], bool], bool]) -> None:
     assert any(mutant(left, right, False) != joined or mutant(left, right, True) != pause
                for left, right, joined, pause in ROWS)
+
+
+def _kernel_rows(text: str) -> list[str]:
+    """صفوفُ `A116.MizanData` بصيغة `mizan.csv`: الخانةُ (حاملُها وعلامتُها) والحالُ والانتقال."""
+
+    def block(name: str) -> str:
+        i = text.index(f"def {name} ")
+        return text[text.index(":= [", i) + 4:text.index("\n]", i)]
+
+    rows = [f"cell,{chr(int(h, 16))}{MARK[m]},{k}"
+            for h, m, k in re.findall(r"\('\\u([0-9a-f]{4})', \.(\w+), (\d+)\)", block("cellT"))]
+    rows += [f"state,{i},{w},{q},{h}"
+             for i, (w, q, h) in enumerate(re.findall(r"\((true|false), (true|false), (\d+)\)",
+                                                      block("stateT")))]
+    for name, tag in (("waslT", "wasl"), ("waqfT", "waqf")):
+        for s, row in enumerate(re.findall(r"\[([\d, ]+)\]", block(name))):
+            rows += [f"{tag},{s},{k},{t}" for k, t in enumerate(row.split(", "))]
+    return rows
+
+
+def test_csv_is_the_kernel_checked_table() -> None:
+    kernel = _kernel_rows(KERNEL_DATA.read_text(encoding="utf-8"))
+    assert len(kernel) == 116 + 42 + 2 * 42 * 116
+    assert CSV.read_text(encoding="utf-8").splitlines() == kernel
+
+
+def test_one_changed_number_breaks_the_match() -> None:
+    """`MUTANT_TABLE_ENTRY`: رقمٌ واحدٌ في انتقال الوصل يتغيّر فيفترق الجدولان."""
+
+    text = KERNEL_DATA.read_text(encoding="utf-8")
+    i = text.index("[", text.index(":= [", text.index("def waslT ")) + 4)
+    j = text.index(",", i)
+    mutant = text[:i + 1] + str(int(text[i + 1:j]) + 1) + text[j:]
+    assert CSV.read_text(encoding="utf-8").splitlines() != _kernel_rows(mutant)
