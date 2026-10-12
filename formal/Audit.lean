@@ -1074,3 +1074,13 @@ import Slge
 #print axioms A116.Ledger.filled_stops_at_one
 #print axioms A116.Ledger.dalala_alone_blocks
 #print axioms A116.Ledger.four_and_three_share_n
+#print axioms A116.Nizam.admissible_iff_binary
+#print axioms A116.Nizam.continueB_local
+#print axioms A116.Nizam.pauseB_local
+#print axioms A116.Nizam.licWasl_append
+#print axioms A116.Nizam.sijill
+#print axioms A116.Nizam.lift_flatten
+#print axioms A116.NizamHadd.chain_azwaj
+#print axioms A116.NizamHadd.roleN_inj
+#print axioms A116.NizamHadd.strictB_is_nizam
+#print axioms A116.NizamHadd.strictPauseB_split

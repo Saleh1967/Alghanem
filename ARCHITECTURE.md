@@ -1410,3 +1410,19 @@ MASAQ باسم بناء سيبويه. فشاهدٌ «مشهودٌ» بهذه ا�
 
 **ما بقي باسمه.** رقمُ الآية سورةً وآيةً (لا جدولَ مختومًا لحدود السور)؛ والسطرُ يقول ما يقوله قارئُه على الصورة وحدَها،
 لا سياقَ جملةٍ ولا حسمَ بين القراءات.
+
+## ADR ٤٥ — رفعُ التثبيت إلى 35e6aaa: النواةُ ونظامُ الحدّ في السُّلَّم (الغانم ADR ٢٠–٢٥؛ قرارُ المالك 2026-10-12)
+
+**السبب.** نصُّ المالك: «تكون الخطوة التالية بناء قيد الحدّ نظامًا على (صنف، خانة) … ثمّ أرفع تثبيت SLGE». في الغانم بعد
+التثبيت السابق (f86db1d) ستُّ وحداتٍ في `formal/a116`: `RootGrade` (ADR ٢٠)، `Hajah` (ADR ٢٢)، `Nizam` (ADR ٢٣)، `Mudari`
+(ADR ٢٤)، `NizamHadd` (ADR ٢٥) — وفيها أنّ الترخيصَ الثنائيّ والثلاثيّ وقيدَ الحدّ وصلًا ووقفًا مثولاتٌ لنواةٍ واحدة.
+
+**القرار.** `GATE_REV` و`formal/lakefile.toml` و`lake-manifest.json` على 35e6aaa. بين الإيداعين لم يتغيّر في `gate/` إلّا
+إعفاءُ الحارس لأداة الشرح، فالمودَعاتُ الثلاثة وبصماتُها كما هي. الدرجةُ ٨ تضمّ `Hajah`، والدرجةُ ١٠ تضمّ `RootGrade`
+و`Mudari` و`Nizam` و`NizamHadd`؛ وعشرُ مبرهناتٍ منها في `Audit.lean` (`Nizam.admissible_iff_binary`، `continueB_local`،
+`pauseB_local`، `licWasl_append`، `sijill`، `lift_flatten`؛ `NizamHadd.chain_azwaj`، `roleN_inj`، `strictB_is_nizam`،
+`strictPauseB_split`) — 1081 مدقَّقة.
+
+**ما بقي باسمه.** النواةُ في الغانم؛ ولم يُجعل بعدُ ترخيصُ SLGE نفسِه (`Slge.Grant`، `Slge.Madd`) مثولًا لها
+(`SLGE_LICENCE_AS_NIZAM_UNPROVEN`)، ولا الحكمُ (`Mukhassas`، `Hukm`) مثولًا لرخصة الخواصّ والقابليّات
+(`RUKHSA_GRADES_NOT_INSTANTIATED`، الغانم ADR ٢٣).
