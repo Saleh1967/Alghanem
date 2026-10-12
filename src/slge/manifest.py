@@ -102,6 +102,8 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("sawabiq_table", (), (), None, "test_sawabiq.py"),  # مولَّدٌ من الكتاب المختوم والمصحف
     Module("hasm", ("Hasm", "HasmTable"), ("hasm",), "gen_hasm_index.py", "test_hasm.py"),
     Module("hasm_table", (), (), None, "test_hasm.py"),  # تكرارُ الجذور، مولَّدٌ من مودَع المصحف
+    Module("qiraa", ("Qiraa",), ("qiraa",), "gen_qiraa_index.py", "test_qiraa.py",
+           law=True),  # الحرفُ أوّلًا والجذعُ على الأصل المردود (ADR ٤٢)
     Module("pipeline", ("Pipeline", "PipelineTable"), ("pipeline",), "gen_pipeline_index.py",
            "test_pipeline.py"),
     Module("pipeline_table", (), (), None, "test_pipeline.py"),  # القمعُ أعدادًا، مولَّدٌ على MASAQ

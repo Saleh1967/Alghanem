@@ -49,7 +49,7 @@
 | `masaq-zawaid.json` | مرجع محجوب | `15ab1c4691c88ebb99b4f37c5f1c062c83a20a988fdd6099cc835eaea4097478` |
 | `masaq-zuruf.json` | مرجع محجوب | `ef2e77119120a8f5109e28e63c0835468ce85442806c44b0e4f4a70635416dd3` |
 
-## الأرقام (1,195 رقمًا من 49 مولِّدًا)
+## الأرقام (1,227 رقمًا من 50 مولِّدًا)
 
 ### `tools/gen_abniya_index.py::measure`
 
@@ -255,7 +255,7 @@
 
 ### `tools/gen_coverage_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`. بصمةُ المخرَج: `52c5eebc681e2853`.
+يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`. بصمةُ المخرَج: `c90570af6581f919`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -290,8 +290,8 @@
 | `readers.الإعراب.tokens` | 78,100 |
 | `readers.الجداول.forms` | 1,029 |
 | `readers.الجداول.tokens` | 30,548 |
-| `readers.الجذع.forms` | 15,667 |
-| `readers.الجذع.tokens` | 68,000 |
+| `readers.الجذع.forms` | 15,940 |
+| `readers.الجذع.tokens` | 68,479 |
 | `readers.الجواب.forms` | 18,114 |
 | `readers.الجواب.tokens` | 78,100 |
 | `readers.السوابق.forms` | 4,929 |
@@ -402,7 +402,7 @@
 
 ### `tools/gen_hukm_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`، `ajnas-qabiliyyat.json.gz`، `hukm-reference-2.tsv`، `hukm-reference.tsv`. بصمةُ المخرَج: `c8d80b052ea823aa`.
+يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`، `ajnas-qabiliyyat.json.gz`، `hukm-reference-2.tsv`، `hukm-reference.tsv`. بصمةُ المخرَج: `42b1f1408bfffa13`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -410,18 +410,18 @@
 | `agreement.agree_qabiliyya` | 0 |
 | `agreement.agree_root` | 0 |
 | `agreement.both_filled` | 0 |
-| `ahkam` | 13,454 |
-| `any_mafhum` | 6,160 |
-| `both_malumah` | 7,294 |
+| `ahkam` | 13,410 |
+| `any_mafhum` | 6,213 |
+| `both_malumah` | 7,197 |
 | `forms` | 18,179 |
 | `jins_mafhum` | 0 |
-| `la_hukm` | 4,725 |
-| `lafz_witness_forms` | 1,025 |
-| `lafz_witness_forms_by_proposal.لفظاً مفرداً مستعملاً` | 823 |
+| `la_hukm` | 4,769 |
+| `lafz_witness_forms` | 1,012 |
+| `lafz_witness_forms_by_proposal.لفظاً مفرداً مستعملاً` | 809 |
 | `lafz_witness_forms_by_proposal.ليس جنسًا` | 2 |
-| `lafz_witness_forms_by_proposal.مدلول اللفظ معنى` | 200 |
-| `multi_root` | 1,556 |
-| `qabiliyya_mafhum` | 6,160 |
+| `lafz_witness_forms_by_proposal.مدلول اللفظ معنى` | 201 |
+| `multi_root` | 1,442 |
+| `qabiliyya_mafhum` | 6,213 |
 | `reference.filled` | 0 |
 | `reference.jins_agree` | 0 |
 | `reference.qabiliyya_agree` | 0 |
@@ -429,31 +429,31 @@
 | `reference.size` | 300 |
 | `reference.unresolved` | 0 |
 | `signed` | 0 |
-| `single_root` | 11,898 |
+| `single_root` | 11,968 |
 | `tokens` | 78,207 |
-| `tokens_any_mafhum` | 23,459 |
-| `tokens_both_malumah` | 31,845 |
-| `tokens_la_hukm` | 22,903 |
-| `top_lafz_books[0][2]` | 151 |
-| `top_lafz_books[1][2]` | 138 |
-| `top_lafz_books[2][2]` | 104 |
+| `tokens_any_mafhum` | 21,369 |
+| `tokens_both_malumah` | 24,181 |
+| `tokens_la_hukm` | 32,657 |
+| `top_lafz_books[0][2]` | 152 |
+| `top_lafz_books[1][2]` | 142 |
+| `top_lafz_books[2][2]` | 94 |
 | `top_lafz_books[3][2]` | 89 |
 | `top_lafz_books[4][2]` | 65 |
 | `top_lafz_books[5][2]` | 60 |
-| `top_lafz_books[6][2]` | 51 |
-| `top_lafz_books[7][2]` | 46 |
+| `top_lafz_books[6][2]` | 46 |
+| `top_lafz_books[7][2]` | 44 |
 | `top_lafz_books[8][2]` | 38 |
 | `top_lafz_books[9][2]` | 35 |
-| `top_nodes[0][1]` | 131 |
-| `top_nodes[1][1]` | 106 |
-| `top_nodes[2][1]` | 102 |
+| `top_nodes[0][1]` | 135 |
+| `top_nodes[1][1]` | 107 |
+| `top_nodes[2][1]` | 103 |
 | `top_nodes[3][1]` | 96 |
-| `top_nodes[4][1]` | 90 |
-| `top_nodes[5][1]` | 83 |
-| `top_nodes[6][1]` | 82 |
-| `top_nodes[7][1]` | 82 |
-| `top_nodes[8][1]` | 79 |
-| `top_nodes[9][1]` | 77 |
+| `top_nodes[4][1]` | 91 |
+| `top_nodes[5][1]` | 88 |
+| `top_nodes[6][1]` | 87 |
+| `top_nodes[7][1]` | 83 |
+| `top_nodes[8][1]` | 81 |
+| `top_nodes[9][1]` | 80 |
 
 ### `tools/gen_huruf_index.py::measure`
 
@@ -1134,6 +1134,45 @@
 | `strict.stops.PASSED` | 3,069 |
 | `strict.stops.READING_NOT_GOLD` | 2,877 |
 | `strict.stops.SEGMENTS_TIE` | 1,668 |
+
+### `tools/gen_qiraa_index.py::measure`
+
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `d3ee0d4f976ca99e`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `against[0][1]` | 97 |
+| `against[1][1]` | 35 |
+| `against[2][1]` | 27 |
+| `against[3][1]` | 26 |
+| `against[4][1]` | 15 |
+| `against[5][1]` | 5 |
+| `against[6][1]` | 2 |
+| `against[7][1]` | 2 |
+| `against[8][1]` | 2 |
+| `against[9][1]` | 1 |
+| `against[10][1]` | 1 |
+| `against[11][1]` | 1 |
+| `forms` | 18,179 |
+| `gain` | 803 |
+| `gain_pos` | 2,139 |
+| `harf` | 445 |
+| `harf_att` | 329 |
+| `harf_att_pos` | 10,380 |
+| `harf_jidh` | 402 |
+| `harf_jidh_pos` | 14,153 |
+| `harf_pos` | 18,844 |
+| `kinds.LAM_AMR` | 35 |
+| `kinds.WASL_FIL` | 762 |
+| `kinds.WASL_ISM` | 6 |
+| `lifted` | 1,374 |
+| `masaq.against` | 216 |
+| `masaq.harf` | 12,039 |
+| `masaq.with` | 11,823 |
+| `new` | 285 |
+| `new_pos` | 626 |
+| `positions` | 78,245 |
+| `restored_readings` | 1,560 |
 
 ### `tools/gen_sarf_index.py::measure`
 

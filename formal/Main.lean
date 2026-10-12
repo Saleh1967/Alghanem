@@ -713,6 +713,16 @@ def main (args : List String) : IO Unit := do
       for m in Tawzi.tawzi w do
         IO.println s!"word,{n},{key w},{"+".intercalate (m.pre.map key)}|{key m.core}|{key m.surface}|{key m.suf}"
       IO.println s!"count,{n},{key w},{(Tawzi.tawzi w).length}"
+  | ["qiraa"] =>
+    -- القراءةُ الموحَّدة: لكلّ كلمةٍ عددُ قراءات الحرف، وقراءاتُها (بابُ السابقة المردودة|الأصل|الجذع|اللاحقة|طولُ السلسلة).
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    IO.println s!"huruf,{Qiraa.hurufCells.length},{Qiraa.hurufCells.eraseDups.length}"
+    for (n, w) in [("fi", Qiraa.fi), ("lakum", Qiraa.lakum), ("ila", Qiraa.ila),
+                   ("famshu", Qiraa.famshu), ("kataba", Qiraa.kataba)] do
+      IO.println s!"word,{n},{key w},{(Qiraa.harf w).length},{(Qiraa.qiraa w).length},{(Qiraa.hukmReadings w).length}"
+      for q in Qiraa.qiraa w do
+        let via := match q.via with | some m => toString m.kind.idx | none => "-"
+        IO.println s!"read,{n},{via}|{key q.r.asl}|{key q.r.stem}|{key q.r.suf}|{q.r.ilal.length}"
   | ["alam"] =>
     -- الأعلامُ ولفظُ الجلالة (بتوقيع المالك): حجمُ الجدول وصورُ الجلالة، وكلماتٌ بقراءاتها (سوابق|الصفّ|الحالة).
     let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)

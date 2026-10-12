@@ -18,9 +18,9 @@ from typing import Final
 
 from slge.ajnas_table import GENERA
 from slge.cells import Cell
-from slge.jidh import jidh
 from slge.madlul_table import TAGS
 from slge.maqayis import code_of_root, roots_of
+from slge.qiraa import hukm_readings
 from slge.salsala_table import GRADES, ROWS
 
 __all__ = [
@@ -144,12 +144,12 @@ def rank(rows: Sequence[Row]) -> list[Row]:
 
 
 def roots_of_form(w: Word) -> tuple[int, ...]:
-    """جذورُ قراءات الجذع على الصورة رموزًا من جدول المقاييس، بترتيب القراءات وبلا تكرار (كما يقرؤها
-    فهرسُ التغطية)؛ لا نصَّ هنا."""
+    """جذورُ القراءة الموحَّدة رموزًا من جدول المقاييس — الجذعُ على الصورة ثمّ على أصلها المردود، ولا جذرَ
+    لما قرأه الموزِّعُ حرفًا (`Qiraa.harf_no_hukm`، ADR ٤٢) — بترتيب القراءات وبلا تكرار؛ لا نصَّ هنا."""
 
     out: list[int] = []
-    for rd in jidh(w):
-        for r in roots_of(rd):
+    for q in hukm_readings(w):
+        for r in roots_of(q.r):
             c = code_of_root(r)
             if c is not None and c not in out:
                 out.append(c)

@@ -1445,3 +1445,29 @@ def test_coverage_matches_lean() -> None:
             assert row_grade(int(r[1])) == grade(r[2])
             seen += 1
     assert seen == 12 and len(rows) == 125
+
+
+def test_qiraa_matches_lean() -> None:
+    """القراءةُ الموحَّدة على خمس كلمات (عددُ قراءات الحرف والقراءاتِ وقراءاتِ الحكم، وكلُّ قراءةٍ
+    ببابِ سابقتها المردودة وأصلِها وجذعِها ولاحقتها وطولِ سلسلتها) = `Qiraa`."""
+
+    from slge.huruf import TABLE as HURUF
+    from slge.qiraa import HURUF_CELLS, harf, hukm_readings, qiraa
+    from slge.sawabiq import KINDS
+
+    rows = _rows("qiraa.csv")
+    h = next(r for r in rows if r[0] == "huruf")
+    assert (int(h[1]), int(h[2])) == (len(HURUF), len(HURUF_CELLS))  # 68 حرفًا، صورُها بلا تكرار
+
+    def k(x: tuple[tuple[str, str], ...]) -> str:
+        return "-".join(str(index(c)) for c in x)
+
+    words = [r for r in rows if r[0] == "word"]
+    assert len(words) == 5
+    for _, name, key, nh, nq, nk in words:
+        w = tuple(CELLS[int(i)] for i in key.split("-"))
+        assert (len(harf(w)), len(qiraa(w)), len(hukm_readings(w))) == (int(nh), int(nq), int(nk))
+        lean = [r[2] for r in rows if r[0] == "read" and r[1] == name]
+        mine = [f"{'-' if q.via is None else KINDS.index(q.via.kind)}|{k(q.r.asl)}|{k(q.r.stem)}|"
+                f"{k(q.r.suf)}|{len(q.r.ilal)}" for q in qiraa(w)]
+        assert mine == lean, (name, mine, lean)

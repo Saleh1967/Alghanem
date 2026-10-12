@@ -873,6 +873,14 @@
 'Slge.IlalBab.witnesses_read' depends on axioms: [propext]
 'Slge.IlalBab.unwitnessed' does not depend on any axioms
 'Slge.IlalBab.debts_named' does not depend on any axioms
+'Slge.Qiraa.harf_restores' depends on axioms: [propext, Quot.sound]
+'Slge.Qiraa.harf_no_hukm' depends on axioms: [propext, Quot.sound]
+'Slge.Qiraa.hukm_of_not_harf' depends on axioms: [propext, Quot.sound]
+'Slge.Qiraa.jidh_sub_qiraa' depends on axioms: [propext, Quot.sound]
+'Slge.Qiraa.qiraa_restores' depends on axioms: [propext, Quot.sound]
+'Slge.Qiraa.qiraa_ascends' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Slge.Qiraa.witnesses_harf' depends on axioms: [propext, Quot.sound]
+'Slge.Qiraa.witness_famshu' depends on axioms: [propext, Quot.sound]
 'Slge.Pipeline.survive_mem' depends on axioms: [propext, Quot.sound]
 'Slge.Pipeline.survive_prefix' depends on axioms: [propext]
 'Slge.Pipeline.survivors_antitone' depends on axioms: [propext]

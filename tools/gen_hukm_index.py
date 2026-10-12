@@ -270,7 +270,7 @@ def render(m: dict[str, Any]) -> str:
         "",
         "| | صورًا | مواقعَ |",
         "|---|---|---|",
-        f"| لا حكم (لا جذرَ للجذع) | {_pct(m['la_hukm'], m['forms'])} | "
+        f"| لا حكم (لا جذرَ للجذع، أو حرفٌ بالموزِّع — ADR ٤٢) | {_pct(m['la_hukm'], m['forms'])} | "
         f"{_pct(m['tokens_la_hukm'], m['tokens'])} |",
         f"| ذاتُ حكمٍ فيه مفهومٌ بشاهد | {_pct(m['any_mafhum'], m['forms'])} | "
         f"{_pct(m['tokens_any_mafhum'], m['tokens'])} |",

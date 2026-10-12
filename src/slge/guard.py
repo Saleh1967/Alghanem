@@ -78,6 +78,7 @@ EXEMPT_FILES = (
     "tools/gen_siyaq_index.py",  # يقرأ مودَعَي الشهادات (ابتداءً وسياقًا) ويولّد فهرسَ السياق
     "tools/gen_coverage_index.py",  # يقرأ مودَعَي الشهادات ويولّد فهرسَ التغطية وجدولَيها
     "tools/gen_hasm_index.py",  # يقرأ الشهادات وMASAQ ويولّد جدولَ التكرار والفهرس
+    "tools/gen_qiraa_index.py",  # يقرأ الشهادات وMASAQ ويولّد فهرسَ القراءة الموحَّدة
     "tools/gen_pipeline_index.py",  # يقرأ MASAQ والشهادات ويولّد القمعَ وجدولَيه
     "src/slge/order.py",  # يبصم خاناتٍ لا نصًّا
 )
