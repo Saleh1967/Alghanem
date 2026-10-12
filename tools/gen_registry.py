@@ -34,6 +34,8 @@ REASONS = {
     "hifz": "text-level pipeline bypassing the gate",
     "canonical116": "v1.0 bridge package shell; bridge.py and bridge_v1_0.py moved into gate/",
     "github-workflows": "ran the suspended tree; replaced by .github/workflows/gate.yml",
+    "samai": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI "
+    "lexicons) and Lean theorems on script-generated tables, not on A116 cells",
 }
 
 OLD_LOCATION = {"github-workflows": ".github/workflows"}

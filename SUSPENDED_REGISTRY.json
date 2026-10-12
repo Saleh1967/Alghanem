@@ -1,16 +1,17 @@
 {
   "principle": "suspension without deletion: history stays in git; nothing returns except by re_admit_requires",
   "violations_by_kind": {
-    "data": 4,
-    "measures": 95,
+    "data": 27,
+    "lean": 8,
+    "measures": 115,
     "normalizes": 186,
     "pure": 545,
-    "reads_text": 244,
+    "reads_text": 264,
     "script": 17,
-    "writes_text": 74
+    "writes_text": 89
   },
   "sole_entry_exit": "gate.api (enter, exit, derive, recover)",
-  "count": 984,
+  "count": 1035,
   "units": [
     {
       "path": "suspended/canonical116/__init__.py",
@@ -1911,6 +1912,994 @@
       ],
       "readmission_path": [
         "replace by a guarded tool reading only deposits; or drop"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/README.md",
+      "previous_path": "samai/README.md",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/lean/AjwafFuul.lean",
+      "previous_path": "samai/lean/AjwafFuul.lean",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "lean"
+      ],
+      "readmission_path": [
+        "re-prove against A116/SLGE definitions; audit axioms (propext/Classical.choice/Quot.sound)"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/lean/BrokenPlural.lean",
+      "previous_path": "samai/lean/BrokenPlural.lean",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "lean"
+      ],
+      "readmission_path": [
+        "re-prove against A116/SLGE definitions; audit axioms (propext/Classical.choice/Quot.sound)"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/lean/ExhaustionGate.lean",
+      "previous_path": "samai/lean/ExhaustionGate.lean",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "lean"
+      ],
+      "readmission_path": [
+        "re-prove against A116/SLGE definitions; audit axioms (propext/Classical.choice/Quot.sound)"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/lean/FractalBridges.lean",
+      "previous_path": "samai/lean/FractalBridges.lean",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "lean"
+      ],
+      "readmission_path": [
+        "re-prove against A116/SLGE definitions; audit axioms (propext/Classical.choice/Quot.sound)"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/lean/LexSamai.lean",
+      "previous_path": "samai/lean/LexSamai.lean",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "lean"
+      ],
+      "readmission_path": [
+        "re-prove against A116/SLGE definitions; audit axioms (propext/Classical.choice/Quot.sound)"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/lean/MasdarLazim.lean",
+      "previous_path": "samai/lean/MasdarLazim.lean",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "lean"
+      ],
+      "readmission_path": [
+        "re-prove against A116/SLGE definitions; audit axioms (propext/Classical.choice/Quot.sound)"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/lean/SamaiImperative.lean",
+      "previous_path": "samai/lean/SamaiImperative.lean",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "lean"
+      ],
+      "readmission_path": [
+        "re-prove against A116/SLGE definitions; audit axioms (propext/Classical.choice/Quot.sound)"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/lean/Witnesses.lean",
+      "previous_path": "samai/lean/Witnesses.lean",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "lean"
+      ],
+      "readmission_path": [
+        "re-prove against A116/SLGE definitions; audit axioms (propext/Classical.choice/Quot.sound)"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/DEPOSIT_maqayis.json",
+      "previous_path": "samai/maqayis/DEPOSIT_maqayis.json",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/PREREG.sha256",
+      "previous_path": "samai/maqayis/PREREG.sha256",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/PREREG_ajwaf_fuul_and_khalaf.md",
+      "previous_path": "samai/maqayis/PREREG_ajwaf_fuul_and_khalaf.md",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/PREREG_masdar_lazim.md",
+      "previous_path": "samai/maqayis/PREREG_masdar_lazim.md",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/PREREG_masdar_usul_sections.md",
+      "previous_path": "samai/maqayis/PREREG_masdar_usul_sections.md",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/PREREG_sawt_faeel.md",
+      "previous_path": "samai/maqayis/PREREG_sawt_faeel.md",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/build_sections.py",
+      "previous_path": "samai/maqayis/build_sections.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "تقسيم كلّ مادّة من المقاييس إلى أقسام أصولها، ونسبة كلّ مشتقّ إلى قسمه، بشاهدٍ نصّيّ وموضعه.",
+      "violation": [
+        "reads_text",
+        "writes_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "outputs are atoms returned to gate.exit, or generated tables checked with --check",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/build_usul.py",
+      "previous_path": "samai/maqayis/build_usul.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "بناء جدول «جذر ← أصوله» من مقاييس اللغة (OpenITI)، مع شاهد ثانٍ من نسخة أخرى.",
+      "violation": [
+        "reads_text",
+        "writes_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "outputs are atoms returned to gate.exit, or generated tables checked with --check",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/extract_masadir.py",
+      "previous_path": "samai/maqayis/extract_masadir.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "استخراج ثلاثيات (ماضٍ، مضارع، مصدر) من نصّ المحكم (OpenITI، غير مشكول) بشاهدٍ وموضعه.",
+      "violation": [
+        "reads_text",
+        "writes_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "outputs are atoms returned to gate.exit, or generated tables checked with --check",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/extract_muhkam_masadir.py",
+      "previous_path": "samai/maqayis/extract_muhkam_masadir.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "استخراج ثلاثيات (ماضٍ، مضارع، مصدر) من نصّ المحكم (OpenITI، غير مشكول) بشاهدٍ وموضعه.",
+      "violation": [
+        "reads_text",
+        "writes_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "outputs are atoms returned to gate.exit, or generated tables checked with --check",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/lisan_masadir.json.gz",
+      "previous_path": "samai/maqayis/lisan_masadir.json.gz",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/maqayis_sections.json.gz",
+      "previous_path": "samai/maqayis/maqayis_sections.json.gz",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/maqayis_usul_table.json.gz",
+      "previous_path": "samai/maqayis/maqayis_usul_table.json.gz",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/masdar_rows.json.gz",
+      "previous_path": "samai/maqayis/masdar_rows.json.gz",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/muhkam_masadir.json.gz",
+      "previous_path": "samai/maqayis/muhkam_masadir.json.gz",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/muhkam_masadir_v2.json.gz",
+      "previous_path": "samai/maqayis/muhkam_masadir_v2.json.gz",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/qamus_masadir.json.gz",
+      "previous_path": "samai/maqayis/qamus_masadir.json.gz",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/resolve_770.py",
+      "previous_path": "samai/maqayis/resolve_770.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "شاهدٌ ثانٍ للمواد التي لا عدد لأصولها في النسخة الأصل: النصّ نفسه في نسخ المقاييس الأخرى (من مطلع المادّة، لا قبله).",
+      "violation": [
+        "reads_text",
+        "writes_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "outputs are atoms returned to gate.exit, or generated tables checked with --check",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/resolved_770.json.gz",
+      "previous_path": "samai/maqayis/resolved_770.json.gz",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/result_h4_h5.json.gz",
+      "previous_path": "samai/maqayis/result_h4_h5.json.gz",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/result_masdar_lazim.json.gz",
+      "previous_path": "samai/maqayis/result_masdar_lazim.json.gz",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/result_masdar_trans.json.gz",
+      "previous_path": "samai/maqayis/result_masdar_trans.json.gz",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/result_sawt.json.gz",
+      "previous_path": "samai/maqayis/result_sawt.json.gz",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/result_usul_sections.json.gz",
+      "previous_path": "samai/maqayis/result_usul_sections.json.gz",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/sihah_masadir.json.gz",
+      "previous_path": "samai/maqayis/sihah_masadir.json.gz",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/test_h4_h5.py",
+      "previous_path": "samai/maqayis/test_h4_h5.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "تنفيذ PREREG_ajwaf_fuul_and_khalaf.md على القاموس المحيط (المرجع المحجوب)، ثم وصفيًّا على الاستكشاف.",
+      "violation": [
+        "reads_text",
+        "writes_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "outputs are atoms returned to gate.exit, or generated tables checked with --check",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/test_masdar_lazim.py",
+      "previous_path": "samai/maqayis/test_masdar_lazim.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "تنفيذ التسجيل المسبق PREREG_masdar_lazim.md كما كُتب، دون تعديل.",
+      "violation": [
+        "reads_text",
+        "writes_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "outputs are atoms returned to gate.exit, or generated tables checked with --check",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/test_masdar_transitivity.py",
+      "previous_path": "samai/maqayis/test_masdar_transitivity.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "مصدر الثلاثيّ المجرّد (المحكم) بدالّة: حركة عين الماضي + التعدية المشهودة، شاملًا المعتلّ والمهموز.",
+      "violation": [
+        "reads_text",
+        "writes_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "outputs are atoms returned to gate.exit, or generated tables checked with --check",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/test_sawt.py",
+      "previous_path": "samai/maqayis/test_sawt.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "تنفيذ PREREG_sawt_faeel.md كما كُتب.",
+      "violation": [
+        "reads_text",
+        "writes_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "outputs are atoms returned to gate.exit, or generated tables checked with --check",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/maqayis/test_usul_sections.py",
+      "previous_path": "samai/maqayis/test_usul_sections.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "تنفيذ PREREG_masdar_usul_sections.md.",
+      "violation": [
+        "reads_text",
+        "writes_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "outputs are atoms returned to gate.exit, or generated tables checked with --check",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/scripts/gen_lean.py",
+      "previous_path": "samai/scripts/gen_lean.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "reads_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/scripts/gen_lex_lean.py",
+      "previous_path": "samai/scripts/gen_lex_lean.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "reads_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/scripts/impv1.py",
+      "previous_path": "samai/scripts/impv1.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "reads_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/scripts/lex_plural.py",
+      "previous_path": "samai/scripts/lex_plural.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "reads_text",
+        "writes_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "outputs are atoms returned to gate.exit, or generated tables checked with --check",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/scripts/lex_plural_pairs.json",
+      "previous_path": "samai/scripts/lex_plural_pairs.json",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/scripts/lex_samai.py",
+      "previous_path": "samai/scripts/lex_samai.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "reads_text",
+        "writes_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "outputs are atoms returned to gate.exit, or generated tables checked with --check",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/scripts/masdar_fn.py",
+      "previous_path": "samai/scripts/masdar_fn.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "reads_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/scripts/plural2.py",
+      "previous_path": "samai/scripts/plural2.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "reads_text",
+        "writes_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "outputs are atoms returned to gate.exit, or generated tables checked with --check",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/scripts/plural3.py",
+      "previous_path": "samai/scripts/plural3.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "reads_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/scripts/plural_pairs_clean.json",
+      "previous_path": "samai/scripts/plural_pairs_clean.json",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "data"
+      ],
+      "readmission_path": [
+        "deposit as certificates (bits) with sha256, never as text"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/scripts/samai_hadith2.py",
+      "previous_path": "samai/scripts/samai_hadith2.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "reads_text",
+        "writes_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "outputs are atoms returned to gate.exit, or generated tables checked with --check",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/samai/scripts/samai_nouns.py",
+      "previous_path": "samai/scripts/samai_nouns.py",
+      "reason": "2026-10-12 lab (ADR 30): rules measured on unsealed texts (QAC, Arramooz, OpenITI lexicons) and Lean theorems on script-generated tables, not on A116 cells",
+      "suspended_at": "2026-10-05",
+      "claim": "",
+      "violation": [
+        "reads_text",
+        "writes_text",
+        "measures"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here",
+        "outputs are atoms returned to gate.exit, or generated tables checked with --check",
+        "re-measure on the corpus certificate deposit (18,179 forms) and a held-out reference"
       ],
       "re_admit_requires": [
         "entry and exit only through gate.api (bytes -> Certificate; display derived)",

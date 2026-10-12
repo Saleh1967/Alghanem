@@ -1,0 +1,92 @@
+{
+ "deposit": "maqayis_ibn_faris",
+ "kind": "وضع (معجم منقول) — المادة ١٢؛ لا يُقاس عليه حكمٌ على الواقع",
+ "source": {
+  "repo": "https://github.com/OpenITI/0400AH",
+  "commit": "5bb6966d8df2ed22b1bff5cdbe29bb9c24f3ca29",
+  "edition": "تحقيق عبد السلام هارون (بحسب بيانات نسخة JK)"
+ },
+ "primary": {
+  "file": "0395IbnFarisQazwini.MucjamMaqayis.Shamela0021710-ara1",
+  "sha256": "7f71af0dfe056cb84e7da24657fa13edc6e8061ca1980eed7f6c196bd18b5689"
+ },
+ "witness2": {
+  "file": "0395IbnFarisQazwini.MucjamMaqayis.JK008008-ara1",
+  "sha256": "da8853fc941d4016a533fd9c7a1f794a2ccfa92f1c74e68d4acbd6d910e72a67"
+ },
+ "derived_table": {
+  "file": "maqayis_usul_table.json",
+  "sha256": "fcd580923935367a37cf3c8d238a35d9b31bfc402f5c591a481395077ac6b26f",
+  "builder": "build_usul.py",
+  "builder_sha256": "c35d251c244971f6124e1ef556554060fd978637e108f80174a88d5b0421b3f3"
+ },
+ "witness_check": {
+  "entries": 4651,
+  "agree": 4419,
+  "differ": 12,
+  "not_found_in_witness": 220
+ },
+ "sealed_at": "2026-10-12",
+ "derived_sections": {
+  "file": "maqayis_sections.json",
+  "sha256": "a0e0b8944d0d0226210afc25f496580afa707a8f961535f3a1c4407d584e94ae",
+  "builder": "build_sections.py",
+  "builder_sha256": "da5fb3c4746c3e50d2d493f0b9e7ed5dd2be7770cbd17133d4cde172586e6f6d",
+  "usul_resolution": {
+   "نصّ مصرَّح": 2413,
+   "نصّ «يدل على» بمعنى واحد": 1436,
+   "علامات الأقسام": 32,
+   "مستنبط بغياب الشاهد": 770
+  }
+ },
+ "companion_deposit_muhkam": {
+  "repo": "https://github.com/OpenITI/0475AH",
+  "commit": "cc9beb0d9645e8cdce892556423b9926a127054f",
+  "file": "0458IbnSidaMursi.MuhkamWaMuhit.Shamela0009757-ara1",
+  "note": "غير مشكول في OpenITI؛ ثلاثيات المصادر بالحروف",
+  "extract": "muhkam_masadir.json",
+  "sha256": "40ceb25780f13bec3186c5f0794210cf4aead5fa681c7060050bdd270a4e8324"
+ },
+ "witness_sources": {
+  "sihah": {
+   "repo": "https://github.com/OpenITI/0400AH",
+   "commit": "5bb6966d8df2ed22b1bff5cdbe29bb9c24f3ca29",
+   "file": "0393IbnHammadJawhari.SihahTajLugha.Shamela0023235-ara1",
+   "sha256": "f8d6b52d65c8b1f0c58e0cbdcd1e4463770f51eeea27e0211bf7d1acd35a89bc",
+   "role": "استكشاف"
+  },
+  "lisan": {
+   "repo": "https://github.com/OpenITI/0725AH",
+   "commit": "056df249d6619b428a78f1d69a8ab2851b97b0a6",
+   "file": "0711IbnManzurIfriqi.LisanCarab.Shamela0001687-ara1.mARkdown",
+   "sha256": "34fa56710a5b701532a34cb70f8fe440b261e80ae3c40d9667d18b65be7ed86d",
+   "role": "استكشاف (يحوي المحكم والصحاح، فليس مستقلًّا عنهما)"
+  },
+  "qamus": {
+   "repo": "https://github.com/OpenITI/0825AH",
+   "commit": "bae1fba53712c020fe43e3e60b37dfe61f2b64a8",
+   "file": "0817MajdDinFiruzabadi.QamusMuhit.Shamela0007283-ara1",
+   "sha256": "b6daba060a566a7a5218ef2a7685e6356e8e369be419640a391987c4aa4ddf1e",
+   "role": "مرجع محجوب للتأكيد"
+  },
+  "tashkeela_vocalized": {
+   "repo": "https://github.com/AliOsm/arabic-text-diacritization",
+   "commit": "e083579c03e489936200b69d792fd426bb576743",
+   "files": {
+    "train.txt": "f8ce279b6788f6a4fd756075a087616c36d7803de46e48938e81c7d79cfcfcb5"
+   },
+   "role": "مدوّنة مشكولة (فقه في غالبها) — جسر تشكيل مرشَّح، لم تُستعمل في اختبار بعد"
+  },
+  "qac_check": "زفير، شهيق، حسيس موسومة N لا VN ⇒ QAC لا يَسِم مصادر فَعيل مصادرَ (تحقّق في الجلسة)"
+ },
+ "usul_resolution_second_witness": {
+  "resolved_from_other_versions": 4,
+  "roots": [
+   "أث",
+   "بيد",
+   "جحف",
+   "دكأ"
+  ],
+  "file": "resolved_770.json"
+ }
+}

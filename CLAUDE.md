@@ -117,6 +117,6 @@ pytest -q -m "not slow"        # 239 اختبارًا؛ و`pytest -q -m slow` ل
 | `gate/mabni_verbs.py`, `gate/mabni_bridge.py` | 770 جذرًا ← 315,874 صورة؛ الاسترجاع | مقيس (MASAQ 97.23%) |
 | `gate/guard.py` | الحارس | مفحوص (خرقٌ مزروعٌ يُلتقط) |
 | `tools/gen_refusals.py` → `REFUSALS.md` | سجلُّ الرفض: 30 اسمًا تُطلقها البوّابة — 8 مرسًى في Lean (منها `INITIAL_SUKUN_WITHOUT_REPAIR` ← `Boundary.initialSukun`، `NOT_CONTINUE_LICENSED_AFTER_REPAIR` ← `Hadd.notContinueLicensed`، و`START_VOWEL_OF_WASL_IS_UNKNOWN` ← `Boundary.waslVowel`: حركةُ الوصل من الثالث، الكتاب س17530)، 22 معلَنًا بصنفه (واجهة/رسم/همزة) وشرطِ سداده | مفحوص (`test_refusals.py`: اسمٌ مزروعٌ وإعلانان باطلان يُلتقطون) |
-| `suspended/` | 984 وحدة معلَّقة | لا يُستورد |
+| `suspended/` | 1035 وحدة معلَّقة (منها مختبرُ السماعيّ `suspended/samai/`، ADR ٣٠) | لا يُستورد |
 
 **المستودعاتُ المشمولة بهذا القانون:** الغانم (هذا)، SLGE، hamil، Algebra، والدساتير الثلاثة. **Taaqol-GPT ليس منها.** البوّابةُ لها جميعًا هي بوّابةُ الغانم هذه؛ ما في غيرها من بوّاباتٍ يُعلَّق بالطريقة نفسها حتى يعود عبرها.
