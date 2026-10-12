@@ -38,10 +38,11 @@ MASAQ = ROOT / "corpora" / "MASAQ.csv"
 TABLES = ROOT / "formal" / "a116"
 TABLE_NAMES = (
     "counts", "degrees", "degrees-pause", "hadd", "hadd-join", "hamza", "iltiqa", "ledger",
-    "licensable", "need", "numbers", "order", "neutral", "pairs", "syllables", "table", "utf8",
+    "licensable", "need", "nizam", "numbers", "order", "neutral", "pairs", "syllables", "table",
+    "utf8",
     "wazn", "wazn-body",
 )
-"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ الخمسةَ عشر (يطابقها CI بايتًا بايتًا)
+"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ الستّةَ عشر (يطابقها CI بايتًا بايتًا)
 والمولَّداتُ الأربع لحجمها (`syllables`، `hadd`، `hadd-join`، `iltiqa`: تُولَّد في وظيفة Lean وتُنزَّل
 أثرًا إلى وظيفة البوّابة). جدولٌ جديد لا يدخل السجلَّ بوجوده على القرص بل بإضافته هنا وإلى الأثر في CI
 — وإلّا اختلف السجلُّ محلّيًّا عنه في CI."""
@@ -63,6 +64,7 @@ UNITS: dict[str, str] = {
     "سلسلة غلاف بالطول": "سلسلةُ C/V من الغلاف المقترَح بطولها",
     "دور خانة": "زوجُ (خانةٍ مرخَّصة، دورٍ تقبله: cv أو v أو c) — ADR ١٥",
     "حقل وظيفة": "حقلٌ من الوظائف السبع في صفّ درجة (ترميز … دلالة) — ADR ١٥",
+    "زوج جوار": "زوجُ صنفين متجاورين (قبل، بعد) مأذونٌ وصلًا في نظام الجوار — ADR ٢٣",
 }
 """القائمةُ المغلقة للوحدات: لا تُضاف وحدةٌ إلّا هنا وبـADR."""
 LEAN_UNITS: dict[str, str] = {
@@ -90,6 +92,7 @@ LEAN_UNITS: dict[str, str] = {
     "Wazn.wasl_joined_waits": "قالب",
     "Ledger.filled_qaim_count": "حقل وظيفة",
     "Hajah.states_length": "حالة آلة",
+    "Nizam.waslK_count": "زوج جوار",
 }
 """كلُّ مبرهنةٍ عدديّة ووحدتُها؛ مبرهنةٌ عدديّةٌ جديدة لا تمرّ بلا سطرٍ هنا."""
 

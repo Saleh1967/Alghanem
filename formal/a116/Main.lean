@@ -236,6 +236,13 @@ def main (args : List String) : IO Unit := do
     for n in List.range 8 do
       for k in SyllableTable.allK (n + 1) do
         IO.println s!"{"-".intercalate (k.map SyllableTable.kName)},{decide (Hajah.NeedLaw k)},{st (Hajah.needState none k)}"
+  | ["nizam"] =>
+    -- نظامُ الجوار الثلاثيّ (`Nizam.ternary`، ADR ٢٣): لكلّ زوجٍ (قبل، بعد) من أصناف الذرّة إذنُه وصلًا ووقفًا.
+    let nm : Stages.K → String
+      | .cv => "cv" | .v => "v" | .c => "c"
+    for a in [Stages.K.cv, .v, .c] do
+      for b in [Stages.K.cv, .v, .c] do
+        IO.println s!"{nm a},{nm b},{Nizam.waslK a b},{Nizam.waqfK a b}"
   | ["utf8"] =>
     -- أبجديّةُ الرسم: الحروفُ ‎U+0621–U+064A‎، العلاماتُ ‎U+064B–U+0652‎، ألفُ الوصل ‎U+0671‎، والمسافة.
     for c in (List.range 0x2B).map (· + 0x621) ++ (List.range 8).map (· + 0x64B) ++ [0x671, 0x20] do
