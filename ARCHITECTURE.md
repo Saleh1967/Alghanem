@@ -1438,3 +1438,21 @@ MASAQ باسم بناء سيبويه. فشاهدٌ «مشهودٌ» بهذه ا�
 (`licWasl_haddJ`، `crossOK_tagC`، `strictLineB_is_nizam`، `line_two`، `line_two_pause`) — 1086 مدقَّقة.
 
 **ما بقي باسمه.** `SLGE_LICENCE_AS_NIZAM_UNPROVEN` و`RUKHSA_GRADES_NOT_INSTANTIATED` (ADR ٤٥) قائمان: طبقةُ الحكم هي التالية.
+
+## ADR ٤٧ — رفعُ التثبيت إلى 7c87b7e: الشجرةُ ومجالُ لين الرابع (الغانم ADR ٢٨–٣٣؛ قرارُ المالك 2026-10-12)
+
+**السبب.** نصُّ المالك: «تثبيت SLGE لم يُرفع بعد … ابحث عن مصادر وأضف ما يلزم وفق أفضل الممارسات». في الغانم بعد التثبيت
+السابق (e1eca06): `Rubai` (ADR ٢٨)، `SijillData`/`Sijill` (ADR ٢٩)، `NizamTree` (ADR ٣٠: ترخيصُ الشجرة ترخيصُ سطر أوراقها،
+والسطرُ شجرةٌ عمقُها واحد)، مختبرُ السماعيّ معلَّقًا (ADR ٣١)، `LineEmpty` (ADR ٣٢)، ومجالُ لين المعلَنُ الرابع وقياسُ نسبتي
+المنقول بتسجيلٍ مسبق (ADR ٣٣).
+
+**القرار.** `GATE_REV` و`formal/lakefile.toml` و`lake-manifest.json` على 7c87b7e. تغيّر في `gate/` بين الإيداعين
+`api.py` (`LANE_CORPUS` في `SEALED_CORPORA`) و`guard.py` (إعفاءُ `gen_sijill.py` و`gen_lane.py`) وحدَهما؛ ومودَعاتُ
+المصحف والصحيحين والانتقاء تُطابَق كما هي (`gen_certificates.py --check`، `gen_context_certificates.py --check` في الغانم على
+مودَعات هذا المستودع). الدرجةُ ١٠ تضمّ `LineEmpty` و`NizamTree` و`Rubai` و`SijillData` و`Sijill`؛ وعشرُ مبرهناتٍ في
+`Audit.lean` (`LineEmpty.pairwise_needs_vowel_start`، `empty_word_smuggles_straddle`، `strictLineN_fixes_smuggling`؛
+`NizamTree.tree_eq_line`، `regroup_invariant`، `line_is_depth_one`، `tree_is_nizam`؛ `Rubai.rubai_licensed`؛
+`Sijill.ledger_gate`، `sijill_stops_at_zero`) — 1096 مدقَّقة.
+
+**ما بقي باسمه.** مجالُ لين لا يستهلكه SLGE بعد: لا مودَعَ له هنا (`LANE_DEPOSIT_NOT_CONSUMED`)؛ و`SLGE_LICENCE_AS_NIZAM_UNPROVEN`
+و`RUKHSA_GRADES_NOT_INSTANTIATED` (ADR ٤٥) قائمان.

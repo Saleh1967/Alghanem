@@ -1089,3 +1089,13 @@ import Slge
 #print axioms A116.NizamLine.strictLineB_is_nizam
 #print axioms A116.NizamLine.line_two
 #print axioms A116.NizamLine.line_two_pause
+#print axioms A116.LineEmpty.pairwise_needs_vowel_start
+#print axioms A116.LineEmpty.empty_word_smuggles_straddle
+#print axioms A116.LineEmpty.strictLineN_fixes_smuggling
+#print axioms A116.NizamTree.tree_eq_line
+#print axioms A116.NizamTree.regroup_invariant
+#print axioms A116.NizamTree.line_is_depth_one
+#print axioms A116.NizamTree.tree_is_nizam
+#print axioms A116.Rubai.rubai_licensed
+#print axioms A116.Sijill.ledger_gate
+#print axioms A116.Sijill.sijill_stops_at_zero

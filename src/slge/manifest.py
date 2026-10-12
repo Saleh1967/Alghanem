@@ -155,7 +155,7 @@ class Deposit:
     licence: str = ""
 
 
-GATE_REV: Final[str] = "e1eca066859440bfeebfd80825d26d2c933812dd"
+GATE_REV: Final[str] = "7c87b7ec2156288c4431ac9c0957ab94857f97c6"
 """إيداعُ بوّابة الغانم (`Saleh1967/Alghanem`، فرع `claude/official-gate`) الذي يُعاد منه توليدُ مودَع
 الشهادات في CI (`tools/gen_certificates.py --check`): ما يقيسه SLGE هو ما تطبعه البوّابةُ على المدوّنة
 المختومة بهذا الإيداع؛ أيُّ فرقٍ `DEPOSIT_DRIFTED_FROM_GATE`. يُرفع مع المودَع معًا لا أحدُهما وحدَه."""
