@@ -672,3 +672,5 @@ import A116
 #print axioms A116.Shannon.flog_values
 #print axioms A116.Shannon.freqs_le_total
 #print axioms A116.Shannon.entropy_bounds
+#print axioms A116.Hasr.hasr_list
+#print axioms A116.Hasr.hasr_refine

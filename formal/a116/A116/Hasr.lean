@@ -65,4 +65,29 @@ theorem hasr_mono (a₀ b₀ a₁ b₁ c : α → Bool) (ha : ∀ x, a₀ x = tr
   · simp only [hc] at hx ⊢; exact hb x hx
   · simp only [hc] at hx ⊢; exact ha x hx
 
+/-- **الحصرُ على قائمة مرشَّحين** — تعميمُ `hasr`: إن كان الحقُّ `t x` أحدَ المرشَّحين `C x` (تعديةٌ مجهولة، بابٌ
+خفيّ، وزنٌ لا يُستردّ إلّا قائمةً)، فعددُ الإصابة الحقّ بين عدّ «كلُّ المرشَّحين يصيب» وعدّ «أحدُهم يصيب». -/
+theorem hasr_list {β : Type} (C : α → List β) (t : α → β) (p : β → Bool)
+    (ht : ∀ x, t x ∈ C x) (L : List α) :
+    L.countP (fun x => (C x).all p) ≤ L.countP (fun x => p (t x)) ∧
+      L.countP (fun x => p (t x)) ≤ L.countP (fun x => (C x).any p) := by
+  refine ⟨countP_mono _ _ ?_ L, countP_mono _ _ ?_ L⟩
+  · intro x h
+    exact (List.all_eq_true.mp h) (t x) (ht x)
+  · intro x h
+    exact List.any_eq_true.mpr ⟨t x, ht x, h⟩
+
+/-- **الشاهدُ يضيّق ولا يوسّع**: مرشَّحون أقلُّ (`D ⊆ C`، بشاهدٍ يُسقط بعضَهم) يرفعون الحدَّ الأدنى ويخفضون
+الأعلى؛ فإن بقي الحقُّ فيهم فالحصرُ الأضيقُ صادقٌ أيضًا (`hasr_list`). -/
+theorem hasr_refine {β : Type} (C D : α → List β) (hsub : ∀ x, ∀ b ∈ D x, b ∈ C x)
+    (p : β → Bool) (L : List α) :
+    L.countP (fun x => (C x).all p) ≤ L.countP (fun x => (D x).all p) ∧
+      L.countP (fun x => (D x).any p) ≤ L.countP (fun x => (C x).any p) := by
+  refine ⟨countP_mono _ _ ?_ L, countP_mono _ _ ?_ L⟩
+  · intro x h
+    exact List.all_eq_true.mpr fun b hb => (List.all_eq_true.mp h) b (hsub x b hb)
+  · intro x h
+    obtain ⟨b, hb, hp⟩ := List.any_eq_true.mp h
+    exact List.any_eq_true.mpr ⟨b, hsub x b hb, hp⟩
+
 end A116.Hasr

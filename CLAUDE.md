@@ -22,7 +22,7 @@
 
 ## ما لا تفعله
 
-1. لا تكتب `open`، `print`، `read_text`، `encode`، `decode`، `normalize`، `argv`، `stdin`… في أيّ ملفٍ خارج `gate/` (و`tests/`، `formal/`، `tools/gen_registry.py`، `tools/gen_glossary.py`، `tools/gen_claims.py`، `tools/gen_certificates.py`، `tools/gen_context_certificates.py`، `tools/gen_refusals.py`، `tools/gen_hadith_lines.py`، `tools/gen_hadith_sample.py`، `tools/gen_hukm_sample.py`، `tools/gen_abniya_intiqa.py`، `tools/gen_sharh_text.py`، `tools/gen_sijill.py`، `tools/gen_lane.py`، `tools/gen_lane_hasr.py`). الحارسُ `gate.guard.breaches()` يمشي على الشجرة كلَّها ويُسقط البناء.
+1. لا تكتب `open`، `print`، `read_text`، `encode`، `decode`، `normalize`، `argv`، `stdin`… في أيّ ملفٍ خارج `gate/` (و`tests/`، `formal/`، `tools/gen_registry.py`، `tools/gen_glossary.py`، `tools/gen_claims.py`، `tools/gen_certificates.py`، `tools/gen_context_certificates.py`، `tools/gen_refusals.py`، `tools/gen_hadith_lines.py`، `tools/gen_hadith_sample.py`، `tools/gen_hukm_sample.py`، `tools/gen_abniya_intiqa.py`، `tools/gen_sharh_text.py`، `tools/gen_sijill.py`، `tools/gen_lane.py`، `tools/gen_lane_hasr.py`، `tools/gen_lane_shahid.py`). الحارسُ `gate.guard.breaches()` يمشي على الشجرة كلَّها ويُسقط البناء.
 2. لا تستورد من `suspended/` ولا من `canonical116` ولا من داخليّات البوّابة (`gate.contextual`، `gate.bridge`، `gate.mabni_*`…). الواجهةُ `gate` وحدَها (`enter`، `exit`، `derive`، `recover`، `licence`).
 3. لا تُعِد وحدةً من `suspended/` إلّا بثلاثة معًا: (١) مدخلُها ومخرجُها عبر `gate.api`، (٢) اختباراتٌ توقعاتُها مستقلّةٌ عن شيفرتها ومطعَّمةٌ بالطفرة (منهج 20/20)، (٣) ADR مسجَّل. ثمّ `python tools/gen_registry.py` لتحديث السجلّ.
 4. لا تحرِّر الجداول المولَّدة (`formal/a116/*.csv`) ولا `SUSPENDED_REGISTRY.json` ولا `gate/audit_results.json` ولا `GLOSSARY.md` ولا `REFUSALS.md` ولا `CLAIMS.md` بيدك؛ تُولَّد وتُطابَق (`git diff --exit-code`).
@@ -66,12 +66,13 @@ python tools/gen_hadith_sample.py --check         # إطارُ العيّنة ث
 python tools/gen_hukm_sample.py --check           # إطارُ عيّنة الأحكام (المصحف، 300 موقعًا) ثابتٌ ببذرته؛ ملأه الوكيلُ بتفويض المالك (ADR ٣٩) فالحكمُ عليه مفحوصٌ لا مقيس
 python tools/gen_lane.py --check               # المجالُ الرابع (ADR ٣٣): معجمُ لين مختومٌ كما تقرؤه البوّابة، والسجلّاتُ ما يولّده TEI المختوم، والقياسُ المسجَّلُ مسبقًا يُعاد (~1 دقيقة)
 python tools/gen_lane_hasr.py --check          # الحصرُ على لين (ADR ٣٧): سجلّا الطبقات ما يولّده TEI المختوم، والحصرُ والتفكيكُ المسجَّلان يُعادان (~1 دقيقة)
+python tools/gen_lane_shahid.py --check        # الشاهدُ يضيّق الحصر (ADR ٤٠): شواهدُ التعدية والباب من المجالات المختومة الثلاثة والمعتلُّ قائمةً، والنتيجةُ المسجَّلة تُعاد (~3 دقائق)
 python tools/gen_sijill.py --check             # سجلُّ التراخيص محسوبًا (ADR ٢٩): السجلُّ المودَع ببصمته، وصفوفُ الدليل بالمحتوى، وSijillData.lean ما يولّده المودَعان
 python tools/gen_claims.py --check            # سجلُّ الأرقام (CLAIMS.md): كلُّ رقمٍ منشور يُعاد حسابُه من مولِّده المسمّى ببصمة مودَعاته ومخرَجه؛ ولا عددَ في CLAUDE.md بلا مولِّد؛ وكلُّ مبرهنةٍ عدديّة بوحدتها من قائمةٍ مغلقة ومدقَّقة (CLAIM_WITHOUT_UNIT، COUNT_NOT_AUDITED؛ ADR ١٢) (~4 دقائق)
 python tools/gen_abniya_intiqa.py --check --slge ../slge   # المجالُ الثالث: السطورُ مختومةٌ كما تقرؤها البوّابة، وكلُّ صفٍّ مملوءٍ يمرّ عليها، وأعمدةُ الآلة مطابقةٌ لمختومَي SLGE (ADR ١٣)
 python ../slge/tools/gen_sharh_index.py --check --claims /tmp/sharh.json.gz && python tools/gen_sharh_text.py --check /tmp/sharh.json.gz   # عقدُ الشرح: كلُّ كلمةٍ تخرج بـgate.exit بعينها، وعددُ شهادتها n هو سطرُ CERT-n في صورتها من عقد SLGE (ADR ٢١؛ ~3 دقائق)
 python -c "from gate.guard import breaches; print(breaches() or 'لا خرق')"
-pytest -q -m "not slow"        # 266 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%) ولمودَع الصحيحين بسياقه
+pytest -q -m "not slow"        # 272 اختبارًا؛ و`pytest -q -m slow` للقياس على MASAQ (≥ 97%) ولمودَع الصحيحين بسياقه
 ```
 
 وقبل الطبعة: أثبت أنّ الملف الذي تتكلّم عنه موجودٌ («لا ثقة بلا طبعة»)، وافصل في جوابك ما فحصته الآلة عمّا استنتجتَه أنت.

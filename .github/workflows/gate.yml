@@ -70,7 +70,7 @@ jobs:
                    NizamLine.crossStr_split NizamLine.line_two NizamLine.line_two_pause \
                    NizamTree.seamsT_eq NizamTree.tree_eq_line NizamTree.tree_eq_line_pause NizamTree.regroup_invariant \
                    NizamTree.line_is_depth_one NizamTree.tree_two NizamTree.tagT_forget NizamTree.licWasl_comap NizamTree.tree_is_nizam \
-                   Hasr.hasr Hasr.hasr_tight_low Hasr.hasr_tight_high Hasr.countP_mono Hasr.hasr_mono \
+                   Hasr.hasr Hasr.hasr_tight_low Hasr.hasr_tight_high Hasr.countP_mono Hasr.hasr_mono Hasr.hasr_list Hasr.hasr_refine \
                    RootGrade.khumasi_jamid RootGrade.jamid_not_murakhkhas \
                    Tasrif.transfer_strict Tasrif.transfer_pause Tasrif.every_position Tasrif.every_cell_in_every_slot \
                    Tasrif.madi_exhausted Tasrif.mudari_exhausted Tasrif.amr_exhausted Tasrif.madd_drop_forced Tasrif.haa_forced Tasrif.agrees_with_mudari \
@@ -198,6 +198,7 @@ jobs:
         run: |
           python tools/gen_lane.py --check
           python tools/gen_lane_hasr.py --check
+          python tools/gen_lane_shahid.py --check
       - name: guard — no reader or writer outside the gate
         run: python -c "from gate.guard import breaches; b = breaches(); print(b or 'لا خرق'); raise SystemExit(1 if b else 0)"
       - name: conformance, gate, guard (fast)
