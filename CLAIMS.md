@@ -12,7 +12,7 @@
 | `corpora/hadith/sahih_muslim_ahadith_mushakkala_mufassala.utf8.csv.gz` | واقع مختوم (ODbL 1.0؛ بايتاتُه بعد فكّ الضغط) | `79232c8d7c27fef161d8f33ca169f9754741cfe14957dde2ac76893374998943` |
 | `corpora/abniya-intiqa-lines.txt` | مجالٌ مختومٌ ثالث: انتقاءُ الأبنية بيد المالك (`ABNIYA_INTIQA_SHA256`، ADR ١٣) | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 
-## الأرقام (239 رقمًا من 34 مولِّدًا)
+## الأرقام (240 رقمًا من 35 مولِّدًا)
 
 ### `gate.audit.main`
 
@@ -378,6 +378,14 @@
 | المسار في المخرَج | الرقم |
 |---|---|
 | `licensable.csv.rows` | 113 |
+
+### `lake exe a116-table maqayis`
+
+يقرأ: — (نواةُ Lean؛ لا مودَع). بصمةُ المخرَج: `c33179f6f7f07c4b`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `maqayis.csv.rows` | 4,506 |
 
 ### `lake exe a116-table need`
 

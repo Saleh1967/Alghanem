@@ -272,6 +272,10 @@ def main (args : List String) : IO Unit := do
           IO.println s!"{B.name},{nm},{atoms (Wazn.realize B.w r .start .continue B.h)},{atoms (Wazn.realize B.w r .start .pause B.h)}"
         | _ => pure ()
     IO.println s!"maqayis,{Rubai.maqayisCount}"
+  | ["maqayis"] =>
+    -- جذورُ «مقاييس اللغة» الثلاثيّة صفوفًا من جدول الدرجة (`Maqayis.roots`، ADR ٣٥): الأصولُ حروفًا بترتيب العدد n.
+    for r in Maqayis.roots do
+      IO.println (String.ofList (r.map fun d => Field112.carrierChar (RootGrade.toCarrier d)))
   | ["degrees-pause"] =>
     -- جداولُ الدرجات وقفًا (`ExhaustPause.pauseTable`، ADR ١٨): الدرجة d = 1 … 4، والعدد n، ومقاطعُ الصفّ — 510 سطرًا.
     for k in List.range 4 do
