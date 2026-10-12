@@ -223,6 +223,38 @@ def main (args : List String) : IO Unit := do
         let c := Neutral.realizeN W r .start .continue (Wazn.lastH i)
         let p := Neutral.realizeN W r .start .pause (Wazn.lastH i)
         IO.println s!"{nm},{i},{atoms c},{atoms p}"
+  | ["tasrif"] =>
+    -- التصريفُ على الخانات (`Tasrif`، ADR ٢٦) على جذورٍ شواهد: الجذر، الصيغة، الباب، حركةُ العين،
+    -- حرفُ المضارعة، الإعراب، ثمّ الذرّات. الصيغُ: madi (الماضي 3MS)، mudari، amr، amr-pause، khudh.
+    let mark : Haraka → String
+      | .fatha => "َ" | .damma => "ُ" | .kasra => "ِ" | .sukun => "ْ"
+    let hn : Haraka → String
+      | .fatha => "a" | .damma => "u" | .kasra => "i" | .sukun => "0"
+    let atoms := fun (w : List Cell) =>
+      " ".intercalate (w.map fun c => s!"{Field112.carrierChar c.carrier}{mark c.haraka}")
+    let roots := ["قوم", "قول", "نوم", "خوف", "كون", "وقي", "وعي", "وعد", "وصل", "ولد", "نمو", "دعو",
+      "خشي", "رضي", "نهي", "هدي", "مشي", "ءخذ", "ءمر", "عطو", "مدد"]
+    for nm in roots do
+      match nm.toList with
+      | [a, b, c] =>
+        let r := Tasrif.r3 a b c
+        let s := Tasrif.sifa r
+        let row := fun (k bab v p m : String) (t : List (Wazn.CSym 3)) =>
+          IO.println s!"{nm},{k},{bab},{v},{p},{m},{atoms (Wazn.fillC t r)}"
+        for a' in Tasrif.harakat3 do
+          row "madi" "I" (hn a') "-" "-" (Tasrif.madi s a' .fatha)
+        for v in Tasrif.harakat3 do
+          for p in Tasrif.prefixes do
+            for m in Tasrif.moods do
+              row "mudari" "I" (hn v) p.toString (hn m) (Tasrif.mudari s .mujarrad p v m)
+          row "amr" "I" (hn v) "-" "-" (Tasrif.amr s .mujarrad v)
+          row "amr-pause" "I" (hn v) "-" "-" (Tasrif.amrPause s .mujarrad v)
+          row "khudh" "I" (hn v) "-" "-" (Tasrif.amrKhudh s v)
+        for p in Tasrif.prefixes do
+          for m in Tasrif.moods do
+            row "mudari" "IV" "i" p.toString (hn m) (Tasrif.mudari s .afala p .kasra m)
+        row "amr" "IV" "i" "-" "-" (Tasrif.amr s .afala .kasra)
+      | _ => pure ()
   | ["degrees-pause"] =>
     -- جداولُ الدرجات وقفًا (`ExhaustPause.pauseTable`، ADR ١٨): الدرجة d = 1 … 4، والعدد n، ومقاطعُ الصفّ — 510 سطرًا.
     for k in List.range 4 do

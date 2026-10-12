@@ -21,6 +21,8 @@ import A116.Ledger
   لكلّ جذر، والعددُ الجديدُ من السابق: ‎num (d :: t) = d + 28·num t‎.
 * `RootMurakhkhas`، `quad_needs_tri`، `quad_of_exhausted`، `only_tri_and_quad`: **البوّابة بعدد الأصول** — الثلاثيُّ مدخل،
   والرباعيُّ لا يُرخَّص إلّا باستنفاد جدول الثلاثيّ واستيفاء وظائفه السبع (`Exhaust.Mustawfa`)، ولا درجةَ أصولٍ غيرهما.
+* `sinf`، `khumasi_jamid`، `usul_three_four_five`، `murakhkhas_mutasarrif`، `jamid_not_murakhkhas`: **الخماسيُّ جامد**
+  (قرارُ المالك وشاهدُ الكتاب): الأصولُ ثلاثةٌ أو أربعةٌ أو خمسة، والخمسةُ لا فعلَ لها ولا مصدر، فلا تفتحها البوّابة.
 * `rootLedger_quad_waits`، `root_dalala_alone_opens`: **الدفترُ بعدد الأصول** — الترميزُ (ترقيمُ الجذور) والإملاءُ
   والصوت، والاشتقاقُ والصرفُ والنحوُ على الأوزان الثلاثيّة كلِّها (`Ledger.ishtiqaqAt`، `sarfAt`، `mahallAt` لكلّ
   درجة مقاطع) برهانٌ يحمل حدَّه؛ والدلالةُ وحدَها معلَّقة، فالرباعيُّ ينتظرها وحدَها، وأيُّ سندٍ قائمٍ لها يفتحه.
@@ -29,9 +31,8 @@ import A116.Ledger
 
 ## ما ليس هنا — باسمه
 
-* الخماسيُّ في أبنية سيبويه (سَفَرْجَل) خارجُ الدرجتين بقرار المالك؛ لم يُصنَّف زوائدَ بعد (`QUINQUELITERAL_NOT_CLASSIFIED`).
-* حدُّ الاشتقاق والصرف في الدفتر حدُّ `Ledger`: القوالبُ الثلاثيّةُ **الصحيحة**، والترخيصُ على الجذر المرجعيّ وكلِّ جذرٍ
-  صحيح؛ لا على الـ‎28^3‎ كلِّها — فالمعتلُّ بالإعلال (`Neutral`) خارجَ هذا الحدّ.
+* حدُّ الاشتقاق والصرف في الدفتر حدُّ `Ledger`: القوالبُ الثلاثيّةُ الصحيحة؛ والمعتلُّ داخلٌ في `Tasrif` للماضي المجرّد
+  والمضارع والأمر على كلّ جذر، وفي المزيد (غير أَفْعَلَ) على الجذور المرجعيّة وحدَها (`Neutral.weak_licensed`).
 * أوزانُ الرباعيّ: `Wazn` فيه وزنٌ واحدٌ شاهدًا (فَعْلَلَ)، لا قائمةٌ مودَعة.
 -/
 
@@ -179,6 +180,61 @@ theorem only_tri_and_quad (L : Nat → Wazifa → Sanad) (n : Nat) (h : RootMura
   match n, h with
   | 3, _ => exact .head _
   | 4, _ => exact .tail _ (.head _)
+
+/-! ## ٣ب. الخماسيُّ جامد: لا فعلَ له ولا مصدر
+
+قرارُ المالك (2026-10-12): «الخماسيُّ جامدٌ لا فعلَ له ولا مصدر». وشاهدُه في الكتاب المختوم (SLGE
+`tests/data/openiti-sibawayh-kitab.txt.gz`، السطر 18476–18479): «ثمّ بناتُ الخمسة وهي أقلّ، لا تكون في الفعل البتّة…
+فالكلامُ على ثلاثة أحرفٍ وأربعة أحرفٍ وخمسةٍ لا زيادةَ فيها ولا نقصان». فعددُ الأصول ثلاثةٌ أو أربعةٌ أو خمسة،
+والخمسةُ وحدَها جامدة. -/
+
+/-- صنفُ عدد الأصول: متصرِّفٌ (فعلٌ ومصدرٌ واشتقاق)، أو جامد (اسمٌ لا فعلَ له ولا مصدر)، أو ليس عددَ أصول. -/
+inductive Sinf where
+  | mutasarrif
+  | jamid
+  | laysaAsl
+  deriving DecidableEq, Repr
+
+def sinf : Nat → Sinf
+  | 3 | 4 => .mutasarrif
+  | 5 => .jamid
+  | _ => .laysaAsl
+
+/-- له فعلٌ ومصدر. -/
+def hasFil (n : Nat) : Bool := sinf n == .mutasarrif
+
+/-- **الخماسيُّ جامد**: لا فعلَ له ولا مصدر. -/
+theorem khumasi_jamid : sinf 5 = .jamid ∧ hasFil 5 = false := ⟨rfl, rfl⟩
+
+/-- **الأصولُ ثلاثةٌ أو أربعةٌ أو خمسة**، لا غيرُها. -/
+theorem usul_three_four_five (n : Nat) : sinf n ≠ .laysaAsl ↔ n ∈ [3, 4, 5] := by
+  constructor
+  · intro h
+    match n, h with
+    | 3, _ => exact .head _
+    | 4, _ => exact .tail _ (.head _)
+    | 5, _ => exact .tail _ (.tail _ (.head _))
+    | 0, h => exact absurd rfl h
+    | 1, h => exact absurd rfl h
+    | 2, h => exact absurd rfl h
+    | _ + 6, h => exact absurd rfl h
+  · intro h
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at h
+    rcases h with rfl | rfl | rfl <;> decide
+
+/-- **المرخَّصُ بالبوّابة متصرِّفٌ**، والجامدُ لا تفتحه البوّابة: الخماسيُّ خارجَ الاشتقاق لا معلَّقًا عليه. -/
+theorem murakhkhas_mutasarrif (L : Nat → Wazifa → Sanad) (n : Nat) (h : RootMurakhkhas L n) :
+    sinf n = .mutasarrif := by
+  have := only_tri_and_quad L n h
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at this
+  rcases this with rfl | rfl <;> rfl
+
+theorem jamid_not_murakhkhas (L : Nat → Wazifa → Sanad) (n : Nat) (h : sinf n = .jamid) :
+    ¬ RootMurakhkhas L n := by
+  intro hm
+  have := murakhkhas_mutasarrif L n hm
+  rw [h] at this
+  exact absurd this (by decide)
 
 /-- الدفترُ الحاليّ بعدد الأصول. -/
 def rootLedger (n : Nat) : Wazifa → Sanad
