@@ -103,6 +103,8 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("haja", ("Haja", "HajaTable"), ("haja",), "gen_haja_index.py",
            "test_haja.py"),  # توقيعُ الحاجة وقسمةُ المفرد عند النبهانيّ (ADR ٥٦)
     Module("haja_table", (), (), None, "test_haja.py"),  # مولَّدٌ من ج3 والكتاب المختومَين
+    Module("tamam", ("Tamam",), ("tamam",), "gen_tamam_index.py",
+           "test_tamam.py"),  # قانونُ التمام: صدارةٌ وإغلاقٌ ووصل (ADR ٥٧)
     Module("alam", ("Alam", "AlamTable"), ("alam",), "gen_alam_index.py", "test_alam.py",
            law=True),
     Module("alam_table", (), (), None, "test_alam.py"),  # مولَّدٌ من المودَع الموقَّع

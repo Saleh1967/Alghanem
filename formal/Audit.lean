@@ -990,6 +990,14 @@ import Slge
 #print axioms Slge.Haja.mufrad_harf_needs
 #print axioms Slge.Haja.mufrad_witnesses
 #print axioms Slge.HajaTable.anchors_length
+#print axioms Slge.Tamam.runAll_append
+#print axioms Slge.Tamam.before_after
+#print axioms Slge.Tamam.minimal_complete
+#print axioms Slge.Tamam.harf_alone_incomplete
+#print axioms Slge.Tamam.sadr_needs_closed
+#print axioms Slge.Tamam.sadr_forgets
+#print axioms Slge.Tamam.sadr_fresh
+#print axioms Slge.Tamam.witnesses
 #print axioms Slge.Tawzi.witness_alayhim
 #print axioms Slge.Tawzi.witness_lahum
 #print axioms Slge.Tawzi.witness_particles

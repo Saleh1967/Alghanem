@@ -1291,6 +1291,18 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_conformance.py::test_haja_matches_lean",
        note="القيدُ المنقول مبرهَن، لا اللغة (ADR ٥٦)؛ وقسمةُ المفرد على مودَع المصحف مفحوصةٌ لا مقيسة "
             "(HAJA_INDEX.md)."),
+    _c("TAMAM-law", "قانونُ التمام: الحاجةُ مرفوعةً إلى الكلم — الصدارةُ لا تقع وما قبلها مفتوح "
+       "ولا ترى ما قبلها، والإغلاقُ مكدَّسٌ فارغ، والوصلُ وراثةٌ من الحالات؛ والكلمةُ الواحدة تامّةٌ "
+       "إذا وفقط إذا لم تكن لبابها حاجةٌ قبلُ أو بعدُ، والحرفُ وحده لا يتمّ", _P,
+       "lean:Slge.Tamam.runAll_append", "lean:Slge.Tamam.before_after",
+       "lean:Slge.Tamam.minimal_complete", "lean:Slge.Tamam.harf_alone_incomplete",
+       "lean:Slge.Tamam.sadr_needs_closed", "lean:Slge.Tamam.sadr_forgets",
+       "lean:Slge.Tamam.witnesses",
+       "test:tests/test_tamam.py::test_examples",
+       "test:tests/test_tamam.py::test_mutant_sadr_fills_rejected",
+       "test:tests/test_conformance.py::test_tamam_matches_lean",
+       note="القانونُ على توقيعٍ منقول مبرهَن، لا اللغة (ADR ٥٧)؛ وعلى آيات المصحف مفحوصٌ لا مقيس "
+            "(TAMAM_INDEX.md)."),
     _c("QIRAA-reader", "القراءةُ الموحَّدة: ما يقرؤه الموزِّعُ ونواتُه من حروف المعاني حرفٌ يحجب جذرَه عن "
        "الحكم ولا يحذف قراءةَ الجذع؛ والجذعُ يقرأ الصورةَ ثمّ أصلَها الذي ردّت السوابقُ ساقطَه في الوصل، "
        "وكلُّ قراءةٍ تُردّ (السابقةُ إلى الكلمة والجذعُ إلى الأصل) وأصلُها يصعد إلى جذعها — لكلّ كلمة", _P,

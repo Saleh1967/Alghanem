@@ -54,7 +54,7 @@
 | `masaq-zawaid.json` | مرجع محجوب | `15ab1c4691c88ebb99b4f37c5f1c062c83a20a988fdd6099cc835eaea4097478` |
 | `masaq-zuruf.json` | مرجع محجوب | `ef2e77119120a8f5109e28e63c0835468ce85442806c44b0e4f4a70635416dd3` |
 
-## الأرقام (1,447 رقمًا من 54 مولِّدًا)
+## الأرقام (1,460 رقمًا من 55 مولِّدًا)
 
 ### `tools/gen_abniya_index.py::measure`
 
@@ -1637,6 +1637,26 @@
 | `read.('مفعول لأجله', '—')` | 11 |
 | `read.('مفعول مطلق', 'مفعول لأجله')` | 10 |
 | `read.('مفعول مطلق', '—')` | 40 |
+
+### `tools/gen_tamam_index.py::measure`
+
+يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`، `qac-pos.tsv.gz`. بصمةُ المخرَج: `6fabb15b205ea548`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `capped` | 1,304 |
+| `dead_by_bab.atf` | 232 |
+| `dead_by_bab.istifham` | 27 |
+| `dead_by_bab.istithna` | 54 |
+| `dead_by_bab.jawab` | 7 |
+| `dead_by_bab.rad` | 27 |
+| `dead_by_bab.shart` | 9 |
+| `ibtida_dead` | 356 |
+| `ibtida_tamm` | 5,617 |
+| `lines` | 6,236 |
+| `surah_starts` | 114 |
+| `wasl_dead` | 71 |
+| `wasl_tamm` | 5,655 |
 
 ### `tools/gen_tawabi_index.py::measure`
 

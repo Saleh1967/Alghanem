@@ -1549,3 +1549,16 @@ def test_haja_matches_lean() -> None:
     harf = [r for r in rows if r[0] == "harf"]
     assert [r[2] for r in harf] == list(h.BABS)
     assert [tuple(r[1:]) for r in rows if r[0] == "particle"] == list(h.PARTICLES)
+
+
+def test_tamam_matches_lean() -> None:
+    """قانونُ التمام: كلُّ سلسلةٍ حتى ثلاثٍ من عشرة أقسامٍ بأبوابها، تامّةٌ أم لا وعددُ حالاتها = `Tamam`."""
+
+    from slge import tamam as t
+
+    rows = [r for r in _rows("tamam.csv") if r[0] == "run"]
+    assert len(rows) == 10 + 100 + 1000
+    for r in rows:
+        seq = [tuple(x.split(":")) for x in r[1].split("+")]
+        res = t.run_all([t.START], [[(a, b)] for a, b in seq])
+        assert [str(t.tamm(res)).lower(), str(len(res))] == r[2:], r

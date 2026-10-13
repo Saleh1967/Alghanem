@@ -755,6 +755,18 @@ def main (args : List String) : IO Unit := do
       IO.println s!"harf,{i},{rp (Haja.babOf i)}"
     for p in Haja.particles do
       IO.println s!"particle,{p.1},{p.2.1},{rp p.2.2.1},{p.2.2.2}"
+  | ["tamam"] =>
+    -- قانونُ التمام: كلُّ سلسلةٍ حتى ثلاثٍ من عشرة أقسامٍ بأبوابها، تامّةٌ أم لا، وعددُ حالاتها.
+    let rp := fun {α} [Repr α] (x : α) => ((repr x).pretty.splitOn ".").getLastD ""
+    let ts : List Tamam.Tok := [⟨.harf, .mushabbaha⟩, ⟨.ism, .mustaqill⟩, ⟨.fil, .mustaqill⟩,
+      ⟨.harf, .jarr⟩, ⟨.harf, .istifham⟩, ⟨.harf, .nafy⟩, ⟨.harf, .istithna⟩, ⟨.harf, .atf⟩,
+      ⟨.harf, .jawab⟩, ⟨.mudmar, .damir⟩]
+    let key := fun (s : List Tamam.Tok) => "+".intercalate (s.map fun t => s!"{rp t.leaf}:{rp t.bab}")
+    let seqs := ts.map (fun a => [a]) ++ ts.flatMap (fun a => ts.map fun b => [a, b]) ++
+      ts.flatMap (fun a => ts.flatMap fun b => ts.map fun c => [a, b, c])
+    for s in seqs do
+      let r := Tamam.runAll [Tamam.start] (s.map fun t => [t])
+      IO.println s!"run,{key s},{Tamam.tamm r},{r.length}"
   | ["mughlaq"] =>
     -- الصنفُ المغلق: لكلّ نواةٍ من نوى الموزِّع وسمُها ومصدرُ معناها؛ ولكلّ كلمةٍ شاهدةٍ وسمُها.
     let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)

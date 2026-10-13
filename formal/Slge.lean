@@ -76,6 +76,7 @@ import Slge.BawwabatTable
 import Slge.Bawwabat
 import Slge.HajaTable
 import Slge.Haja
+import Slge.Tamam
 import Slge.AlamTable
 import Slge.Alam
 import Slge.SawabiqTable
