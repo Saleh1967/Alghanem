@@ -133,6 +133,7 @@ import A116
 #print axioms A116.Residue.sukun_restore
 #print axioms A116.Residue.fariqa_restore
 #print axioms A116.Residue.tanwinAlif_restore
+#print axioms A116.Residue.ulaWaw_restore
 #print axioms A116.Residue.idgham_restore
 #print axioms A116.Residue.daggerAlif_restore
 #print axioms A116.Residue.chain_restore

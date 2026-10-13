@@ -12,11 +12,11 @@
 | `corpora/hadith/sahih_muslim_ahadith_mushakkala_mufassala.utf8.csv.gz` | واقع مختوم (ODbL 1.0؛ بايتاتُه بعد فكّ الضغط) | `79232c8d7c27fef161d8f33ca169f9754741cfe14957dde2ac76893374998943` |
 | `corpora/abniya-intiqa-lines.txt` | مجالٌ مختومٌ ثالث: انتقاءُ الأبنية بيد المالك (`ABNIYA_INTIQA_SHA256`، ADR ١٣) | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 
-## الأرقام (240 رقمًا من 35 مولِّدًا)
+## الأرقام (241 رقمًا من 35 مولِّدًا)
 
 ### `gate.audit.main`
 
-يقرأ: `corpora/quran-simple-enhanced.txt`. بصمةُ المخرَج: `bc66953c7346f13e`.
+يقرأ: `corpora/quran-simple-enhanced.txt`. بصمةُ المخرَج: `1b890308af74daa9`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -36,8 +36,9 @@
 | `edition_residue.rules_fired.FARIQA` | 1,080 |
 | `edition_residue.rules_fired.IDGHAM` | 910 |
 | `edition_residue.rules_fired.SHAMSI` | 734 |
-| `edition_residue.rules_fired.SUKUN` | 13,074 |
+| `edition_residue.rules_fired.SUKUN` | 13,060 |
 | `edition_residue.rules_fired.TANWIN_ALIF` | 1,119 |
+| `edition_residue.rules_fired.ULA_WAW` | 14 |
 | `edition_residue.rules_fired.WASL` | 1,945 |
 | `edition_residue.rules_fired.WASL_SILENT` | 989 |
 | `edition_residue.sealed_surfaces` | 18,200 |
@@ -127,16 +128,16 @@
 
 ### `gate.hamza.seat_census`
 
-يقرأ: `corpora/quran-simple-enhanced.txt`. بصمةُ المخرَج: `1bb1d9fdc3838bd7`.
+يقرأ: `corpora/quran-simple-enhanced.txt`. بصمةُ المخرَج: `8810d2fd59bacbe8`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
-| `by_rule` | 4,112 |
+| `by_rule` | 4,107 |
 | `miss.ء` | 2 |
 | `miss.أ` | 16 |
 | `miss.ؤ` | 7 |
 | `miss.إ` | 30 |
-| `miss.ئ` | 46 |
+| `miss.ئ` | 51 |
 | `seats` | 4,213 |
 
 ### `gate.degrees.attestation`

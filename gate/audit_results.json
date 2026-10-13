@@ -190,6 +190,7 @@
   "edition_residue": {
     "rules": [
       "IDGHAM",
+      "ULA_WAW",
       "TANWIN_ALIF",
       "FARIQA",
       "WASL",
@@ -213,8 +214,9 @@
       "FARIQA": 1080,
       "IDGHAM": 910,
       "SHAMSI": 734,
-      "SUKUN": 13074,
+      "SUKUN": 13060,
       "TANWIN_ALIF": 1119,
+      "ULA_WAW": 14,
       "WASL": 1945,
       "WASL_SILENT": 989
     },

@@ -16,11 +16,12 @@ import A116.Recovery
 | `fariqa` | ألفٌ فارقةٌ بعد واوٍ ساكنةٍ في الآخر | حذفُ الألف | إعادةُ الألف |
 | `tanwinAlif` | تنوينُ الفتح مكتوبًا بعد الألف | تقديمُ التنوين على الألف | تأخيرُه |
 | `idgham` | شدّةٌ أوّلَ الكلمة (إدغامٌ من الوصل) | حذفُ الشدّة | إعادتُها |
+| `ulaWaw` | واوٌ بعد «أُ» في أُولَئِكَ/أُولُو/أُولِي/أُولَاتُ لا تُنطق | حذفُ الواو | إعادتُها |
 
 ## ما يُبرهَن
 
 * كلُّ قاعدةٍ تعديلٌ له سجلٌّ يعيد الرسمَ بعينه (`sukun_restore`، `fariqa_restore`،
-  `tanwinAlif_restore`، `idgham_restore`) — مثولاتٌ لـ`edit_roundtrip`.
+  `tanwinAlif_restore`، `idgham_restore`، `ulaWaw_restore`) — مثولاتٌ لـ`edit_roundtrip`.
 * **سلسلةُ التعديلات تُردّ بالترتيب المعكوس** (`chain_restore`): مهما تعدّدت قواعدُ الطبعة في
   الكلمة الواحدة، الردُّ يعيد الرسم.
 * **بلا بقيّةٍ لا رسم**: صورتان قانونيّتان واحدةٌ وبقيّتان مختلفتان رسمان مختلفان — والعكس:
@@ -44,9 +45,9 @@ inductive Glyph where
   | dagger : Glyph
   deriving DecidableEq, Repr
 
-/-- قواعدُ الطبعة الخمس المبرهَنةُ هنا (والباقي في `gate/residue.py` مثولاتٌ لـ`edit_roundtrip` نفسِه). -/
+/-- قواعدُ الطبعة الستّ المبرهَنةُ هنا (والباقي في `gate/residue.py` مثولاتٌ لـ`edit_roundtrip` نفسِه). -/
 inductive Rule where
-  | sukun | fariqa | tanwinAlif | idgham | daggerAlif
+  | sukun | fariqa | tanwinAlif | idgham | daggerAlif | ulaWaw
   deriving DecidableEq, Repr
 
 /-- تعديلٌ واحد: قاعدتُه وسجلُّه. -/
@@ -89,6 +90,13 @@ theorem idgham_restore (c : Fin 29) (r : List Glyph) :
 theorem daggerAlif_restore (l r : List Glyph) :
     restoreEdit (l ++ r) ⟨l.length, 0, [.dagger]⟩ = l ++ [.dagger] ++ r := by
   have := edit_roundtrip l [.dagger] [] r
+  simpa using this
+
+/-- `ulaWaw`: الطبعةُ كتبت واوًا بعد «أُ» في أُولَئِكَ وأُولُو وأُولِي وأُولَاتُ ولا تُنطق؛ الإصلاحُ يحذفها فلا يُشهَد
+بمدٍّ غيرِ منطوق؛ السجلُّ يعيدها في موضعها (ADR ٥٢؛ ومواضعُها في `gate/residue.py` بـ`ULA_TAILS`). -/
+theorem ulaWaw_restore (l r : List Glyph) :
+    restoreEdit (l ++ r) ⟨l.length, 0, [waw]⟩ = l ++ [waw] ++ r := by
+  have := edit_roundtrip l [waw] [] r
   simpa using this
 
 /-! ## السلسلة -/

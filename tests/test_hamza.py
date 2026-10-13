@@ -26,12 +26,13 @@ def test_seat_rule_matches_lean_table() -> None:
 
 
 def test_seat_rule_on_the_sealed_corpus() -> None:
-    """4,112 من 4,213 كرسيًّا في الشهادات بالقاعدة (97.60%)؛ والمخالفُ 101 في أجناسٍ مسمّاة (رسمُ
-    المصحف: مِائَة، لُؤْلُؤ، نَبَإٍ، لَئِن؛ ولواصقُ مركّبة وَالْإِحْسَان؛ وفِئَة بلا لاصقة) — بقيّةٌ لا تخمين."""
+    """4,107 من 4,213 كرسيًّا في الشهادات بالقاعدة (97.48%)؛ والمخالفُ 106 في أجناسٍ مسمّاة (رسمُ
+    المصحف: مِائَة، لُؤْلُؤ، نَبَإٍ، لَئِن — ومنه «أُولَئِكَ» بصورها الخمس بعد `ULA_WAW` (ADR ٥٢): كانت
+    توافق بواوٍ ساكنةٍ لا تُنطق قبل الهمزة؛ ولواصقُ مركّبة وَالْإِحْسَان؛ وفِئَة بلا لاصقة) — بقيّةٌ لا تخمين."""
 
     text = (ROOT / "corpora" / "quran-simple-enhanced.txt").read_text(encoding="utf-8")
     surfaces = {w for w in text.split() if w != "<sel>" and any("ء" <= c <= "ي" for c in w)}
     census = seat_census(sorted(surfaces))
     total, agree, miss = census["seats"], census["by_rule"], census["miss"]
-    assert total == 4213 and agree == 4112
-    assert dict(miss) == {"أ": 16, "إ": 30, "ئ": 46, "ؤ": 7, "ء": 2}
+    assert total == 4213 and agree == 4107
+    assert dict(miss) == {"أ": 16, "إ": 30, "ئ": 51, "ؤ": 7, "ء": 2}

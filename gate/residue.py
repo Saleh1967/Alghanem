@@ -11,6 +11,7 @@ residue) → surface` بعينه، ومطابقةُ الردّ على كلّ م�
 1. `IDGHAM`   — شدّةٌ أوّلَ الكلمة (إدغامٌ من الوصل): تُحذف.
 2. `TANWIN_ALIF` — تنوينُ الفتح بعد الألف: يُقدَّم على الألف (`اً` ← `ًا`).
 3. `FARIQA`   — ألفٌ في الآخر بعد واوٍ ساكنة (أو واوٍ بلا علامة ستصير ساكنة): تُحذف.
+1ب. `ULA_WAW` — واوُ «أُولَئِكَ، أُولُو، أُولِي، أُولَاتُ» بعد «أُ»: رسمٌ لا يُنطق، تُحذف.
 3ب. `AMR_WAW` — واوٌ بلا علامةٍ في الآخر بعد حرفٍ منوَّن (عَمْرٍو): واوُ عمرو الفارقة، تُحذف.
 3ج. `IBN_ALIF` — «بْنُ» بلا ألفٍ بين علمين: تُعاد ألفُ «ابن» فتأخذ حركتَها بـWASL؛ الردُّ يحذفها.
 4. `WASL`     — ألفٌ بلا علامةٍ أوّلَ الكلمة قبل ساكن: همزةُ وصلٍ بحركتها بالقاعدة (فتحةٌ في «ال»،
@@ -55,9 +56,13 @@ LETTERS: Final[frozenset[str]] = frozenset("ءآأؤإئابةتثجحخدذرز
 """حروفُ الرسم التي يعرفها الجسر (`bridge._is_arabic_letter`): قاعدةُ السكون لا تُطبَّق على غيرها
 (واوٌ صغيرة، ياءٌ صغيرة، تطويل، ترقيم…) كي لا تُصنع علامةٌ بلا حرفٍ تُقرأ كلمةً ثانية."""
 DAGGER: Final = "\u0670"
+ULA_TAILS: Final[tuple[str, ...]] = ("\u0644\u0626\u0643", "\u0644\u0627\u0621", "\u0644\u0648",
+                                    "\u0644\u064a", "\u0644\u0627\u062a")
+"""ما بعد «أُو» في الألفاظ التي واوُها رسمٌ لا يُنطق (هياكلُ: لئك، لاء، لو، لي، لات — أُولَئِكَ وأُولَئِكُمْ،
+أُولَاءِ، أُولُو، أُولِي، أُولَاتُ)؛ لا «أُولَى» ولا «أُولَاهُمْ» فواوُهما مدٌّ منطوق."""
 RULES: Final[tuple[str, ...]] = (
-    "DAGGER_ALIF", "IDGHAM", "TANWIN_ALIF", "FARIQA", "AMR_WAW", "IBN_ALIF", "WASL", "WASL_SILENT",
-    "SHAMSI", "ASSIM", "SUKUN",
+    "DAGGER_ALIF", "IDGHAM", "ULA_WAW", "TANWIN_ALIF", "FARIQA", "AMR_WAW", "IBN_ALIF", "WASL",
+    "WASL_SILENT", "SHAMSI", "ASSIM", "SUKUN",
 )
 
 
@@ -138,6 +143,15 @@ def repair(surface: str) -> tuple[str, tuple[Edit, ...]]:
     if cl and SHADDA in cl[0]:
         cl[0] = cl[0].replace(SHADDA, "")
         edits.append(("IDGHAM", 0, SHADDA))
+
+    # 1ب. ULA_WAW: واوُ «أُولَئِكَ، أُولُو، أُولِي، أُولَاتُ» رسمٌ لا يُنطق (`A116.Residue.ulaWaw_restore`):
+    #     بعد «أُ» (بلواصقَ أو بدونها) واوٌ بلا علامةٍ يليها هيكلٌ من `ULA_TAILS` — تُحذف وتُردّ بالسجلّ.
+    for i in range(len(cl) - 2):
+        if (cl[i] == "\u0623" + DAMMA and cl[i + 1] == WAW and (i == 0 or _proclitics(cl[:i]))
+                and "".join(c[0] for c in cl[i + 2:]).startswith(ULA_TAILS)):
+            edits.append(("ULA_WAW", i + 1, WAW))
+            cl.pop(i + 1)
+            break
 
     # 2. TANWIN_ALIF: ...X اً  →  ...Xً ا
     if len(cl) >= 2 and cl[-1] in (ALIF + FATHATAN, ALIF_MAQSURA + FATHATAN) \
@@ -242,7 +256,7 @@ def unrepair(canonical: str, residue: tuple[Edit, ...]) -> str:
     for rule, i, removed in reversed(residue):
         if rule == "SUKUN":
             cl[i] = cl[i].replace(SUKUN, "", 1)
-        elif rule in ("ASSIM", "SHAMSI", "WASL_SILENT", "FARIQA", "AMR_WAW"):
+        elif rule in ("ASSIM", "SHAMSI", "WASL_SILENT", "FARIQA", "AMR_WAW", "ULA_WAW"):
             cl.insert(i, removed)
         elif rule == "WASL":
             cl[0] = removed
