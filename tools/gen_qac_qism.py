@@ -5,8 +5,9 @@ Dukes. والقرّاء: الساذج، وبلا فرز، وبفرز الاسم 
 `docs/qism/result.json`.
 
 والتسجيلُ الثاني (`PREREG-2.md`) يصحّح مرشِّحَ اللاحقة وحدَه (`result-2.json`)، والثالثُ
-(`PREREG-3.md`) يضيف كاشفَ الممنوع من الصرف والعاملَ المتّصل (`result-3.json`). و`--check` يُسقط البناءَ
-باسمه `QISM_RESULT_DRIFTED`. الأداةُ معفاةٌ في الحارس لأنّها أداةُ قياس.
+(`PREREG-3.md`) يضيف كاشفَ الممنوع من الصرف والعاملَ المتّصل (`result-3.json`)، والرابعُ
+(`PREREG-4.md`) يعدّ أل المعجميّة (`result-4.json`). و`--check` يُسقط البناءَ باسمه
+`QISM_RESULT_DRIFTED`. الأداةُ معفاةٌ في الحارس لأنّها أداةُ قياس.
 """
 
 from __future__ import annotations
@@ -29,6 +30,7 @@ _SPEC.loader.exec_module(Q)
 RESULT = ROOT / "docs" / "qism" / "result.json"
 RESULT_2 = ROOT / "docs" / "qism" / "result-2.json"
 RESULT_3 = ROOT / "docs" / "qism" / "result-3.json"
+RESULT_4 = ROOT / "docs" / "qism" / "result-4.json"
 JARR_PREFIXES = frozenset({"PREFIX|bi+", "PREFIX|l:P+", "PREFIX|ka+", "PREFIX|w:P+", "PREFIX|ta+"})
 """سوابقُ QAC التي قسمُها `P`: حروفُ الجرّ المتّصلة (التسجيل الثالث §٢)."""
 PLURALS = frozenset({"MP", "FP", "P"})
@@ -76,8 +78,8 @@ def prefix_letters(prefixes: list[str]) -> int:
     return n
 
 
-def sifat(f: dict[str, str], word: str) -> dict[str, bool]:
-    """صفاتُ الكاشف كما في التسجيل الثالث §٢."""
+def sifat(f: dict[str, str], word: str, reg: int = 3) -> dict[str, bool]:
+    """صفاتُ الكاشف كما في التسجيل الثالث §٢؛ والرابعُ يعدّ أل المعجميّة (`LEXICAL_AL_IGNORED`)."""
 
     from gate import mamnu as m
     from gate.qism import clusters
@@ -90,7 +92,8 @@ def sifat(f: dict[str, str], word: str) -> dict[str, bool]:
     w = m.word(stem)
     root = "".join(Q.BW.get(c, "") for c in f["root"])
     return {
-        "tanwin": m.has_tanwin(word), "al": "PREFIX|Al+" in prefixes,
+        "tanwin": m.has_tanwin(word),
+        "al": "PREFIX|Al+" in prefixes or (reg >= 4 and letters.startswith("ال")),
         "tanithAlif": bool(root) and tanith(letters, root) == "mamduda",
         "muntaha": f["num"] in PLURALS and m.muntaha_shape(w),
         "wasf": f["pos"] == "ADJ", "afal": m.afal_shape(w), "falan": m.falan_shape(w),
@@ -182,10 +185,10 @@ def population(reg: int = 1) -> tuple[list[dict[str, str]], Counter[str]]:
             e = ending_of(word)
             row = {"word": word, "noun": "1" if f["pos"] in NOUN_TAGS else "", "gold": gold,
                    "ending": e or "", "class": klass(f, e, word)}
-            if reg == 3:
+            if reg >= 3:
                 from gate.mamnu import mamnu
 
-                sf = sifat(f, word) if row["noun"] else {}
+                sf = sifat(f, word, reg) if row["noun"] else {}
                 hit = row["class"] == "iSahih" and mamnu(sf)
                 row["class_m"] = "iMamnu" if hit else row["class"]
                 row["illa"] = ("strong" if sf.get("tanithAlif") or sf.get("muntaha") else
@@ -248,11 +251,11 @@ def tally3(pop: list[dict[str, str]]) -> dict[str, object]:
     return out
 
 
-def measure3() -> dict[str, object]:
-    pop, counts = population(3)
+def measure3(reg: int = 3) -> dict[str, object]:
+    pop, counts = population(reg)
     nouns = [p for p in pop if p["noun"]]
     return {
-        "prereg": "docs/qism/PREREG-3.md",
+        "prereg": f"docs/qism/PREREG-{reg}.md",
         "reference_sha256": Q.QAC_SHA256,
         "all": tally3(pop), "nouns": tally3(nouns),
         "detected_by_illa": dict(sorted(Counter(p["illa"] for p in nouns if p["illa"]).items())),
@@ -280,10 +283,16 @@ def main(argv: list[str]) -> int:
     if "--check" in argv:
         ok = all(not path.exists() or path.read_text(encoding="utf-8") == Q.dump(measure(reg))
                  for reg, path in ((1, RESULT), (2, RESULT_2)))
-        ok = ok and (not RESULT_3.exists()
-                     or RESULT_3.read_text(encoding="utf-8") == Q.dump(measure3()))
+        later = ((3, RESULT_3), (4, RESULT_4))
+        ok = ok and all(not path.exists()
+                        or path.read_text(encoding="utf-8") == Q.dump(measure3(reg))
+                        for reg, path in later)
         print("الفرزُ على QAC: التسجيلاتُ مطابقة" if ok else "QISM_RESULT_DRIFTED")
         return 0 if ok else 1
+    if argv[:1] == ["measure-4"]:
+        RESULT_4.write_text(Q.dump(measure3(4)), encoding="utf-8")
+        print(f"كُتب {RESULT_4.relative_to(ROOT)}")
+        return 0
     if argv[:1] == ["measure-3"]:
         RESULT_3.write_text(Q.dump(measure3()), encoding="utf-8")
         print(f"كُتب {RESULT_3.relative_to(ROOT)}")
@@ -296,7 +305,7 @@ def main(argv: list[str]) -> int:
         RESULT.write_text(Q.dump(measure()), encoding="utf-8")
         print(f"كُتب {RESULT.relative_to(ROOT)}")
         return 0
-    print("الاستعمال: measure | measure-2 | measure-3 | --check")
+    print("الاستعمال: measure | measure-2 | measure-3 | measure-4 | --check")
     return 2
 
 
