@@ -744,3 +744,17 @@ import A116
 #print axioms A116.Wad.qwl_from_deposit
 #print axioms A116.Wad.qyl_from_deposit
 #print axioms A116.Wad.deposit_not_function
+#print axioms A116.Tayy.comp_law
+#print axioms A116.Tayy.ofIntiqal
+#print axioms A116.Tayy.ofFiber
+#print axioms A116.Tayy.residue_separates
+#print axioms A116.Tayy.unit_residue_injective
+#print axioms A116.Tayy.wad_step_needs_residue
+#print axioms A116.Qarar.sawab_spec
+#print axioms A116.Qarar.sawab_needs_mahsus
+#print axioms A116.Qarar.sawab_needs_no_muarid
+#print axioms A116.Qarar.sawab_needs_sawab_premises
+#print axioms A116.Qarar.qati_needs_wujud
+#print axioms A116.Qarar.missing_premise_dawr
+#print axioms A116.Qarar.sealL0_verdicts
+#print axioms A116.Qarar.jamid_verdicts
