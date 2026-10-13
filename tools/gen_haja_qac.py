@@ -74,6 +74,19 @@ def verdict(m1_low: float, m2_low: float) -> str:
     return "HAJA_GAPS"
 
 
+POST_TAGS: dict[str, frozenset[str]] = {**TAGS, "atf": frozenset({"CONJ", "RET", "AMD"})}
+"""بعد التسجيل — وصفٌ لا حكم (`POST_REGISTRATION`): «بل» و«لكن» عند QAC `RET` و`AMD`، والنصُّ
+يجعلهما عطفًا («المعطوف مخالف للمعطوف عليه»)؛ ولاحقةُ الضمير على الحرف (لَهُ، بِهِ) جذعُها عند QAC
+`PRON`."""
+
+
+def babs_post(w: Word) -> tuple[str, ...]:
+    out = list(babs_of(w))
+    if any(m.suf for m in closed(w)) and "damir" not in out:
+        out.append("damir")
+    return tuple(out)
+
+
 def _load() -> list[tuple[Word, str]]:
     with gzip.open(DATA / "corpus-certificates.json.gz", "rt", encoding="utf-8") as f:
         d: dict[str, Any] = json.load(f)
@@ -111,6 +124,20 @@ def measure() -> dict[str, Any]:
             if not hit:
                 wrong[f"{gold}|{'+'.join(babs)}"] += 1
     m1, m2, m3 = wilson(k1, n_gold), wilson(k2, n_has), wilson(k3, n_gold)
+    pk1 = pn1 = pk2 = pn2 = 0
+    post_gold = frozenset().union(*POST_TAGS.values())
+    pcache: dict[Word, tuple[str, ...]] = {}
+    for w, gold in _load():
+        if w not in pcache:
+            pcache[w] = babs_post(w)
+        babs = pcache[w]
+        hit = any(gold in POST_TAGS[b] for b in babs)
+        if gold in post_gold:
+            pn1 += 1
+            pk1 += hit
+        if babs:
+            pn2 += 1
+            pk2 += hit
     def row(k: int, n: int, ci: tuple[float, float]) -> dict[str, Any]:
         return {"k": k, "n": n, "p": round(k / n, 6), "ci": [round(x, 6) for x in ci]}
 
@@ -120,6 +147,9 @@ def measure() -> dict[str, Any]:
         "m2_mani": row(k2, n_has, m2),
         "m3_hasm": row(k3, n_gold, m3),
         "verdict": verdict(m1[0], m2[0]),
+        "post_registration": {"note": "وصفٌ لا حكم: لاحقةُ الضمير ضميرًا، وRET/AMD عطفًا",
+                              "m1_jami": row(pk1, pn1, wilson(pk1, pn1)),
+                              "m2_mani": row(pk2, pn2, wilson(pk2, pn2))},
         "gaps_jami": dict(miss.most_common(10)),
         "gaps_mani": dict(wrong.most_common(10)),
     }

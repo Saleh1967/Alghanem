@@ -1,0 +1,76 @@
+{
+ "gaps_jami": {
+  "ACC|—": 174,
+  "COND|mawsul": 22,
+  "COND|nafy+istifham+mawsul": 23,
+  "COND|—": 58,
+  "INC|jarr+amilFil+atf": 47,
+  "PRON|jarr": 516,
+  "PRON|jarr+amilFil": 943,
+  "P|—": 234,
+  "SUB|nafy+istifham+mawsul": 79,
+  "SUB|—": 43
+ },
+ "gaps_mani": {
+  "AMD|atf": 65,
+  "INC|jarr+amilFil+atf": 47,
+  "INT|amilFil": 42,
+  "N|istifham": 26,
+  "N|istithna": 30,
+  "PRON|jarr": 516,
+  "PRON|jarr+amilFil": 943,
+  "RET|atf": 122,
+  "SUB|nafy+istifham+mawsul": 79,
+  "T|amilFil": 156
+ },
+ "m1_jami": {
+  "ci": [
+   0.902819,
+   0.910223
+  ],
+  "k": 21526,
+  "n": 23744,
+  "p": 0.906587
+ },
+ "m2_mani": {
+  "ci": [
+   0.903984,
+   0.911351
+  ],
+  "k": 21526,
+  "n": 23714,
+  "p": 0.907734
+ },
+ "m3_hasm": {
+  "ci": [
+   0.652594,
+   0.664656
+  ],
+  "k": 15639,
+  "n": 23744,
+  "p": 0.658651
+ },
+ "post_registration": {
+  "m1_jami": {
+   "ci": [
+    0.965987,
+    0.97043
+   ],
+   "k": 23172,
+   "n": 23931,
+   "p": 0.968284
+  },
+  "m2_mani": {
+   "ci": [
+    0.975164,
+    0.97897
+   ],
+   "k": 23172,
+   "n": 23714,
+   "p": 0.977144
+  },
+  "note": "وصفٌ لا حكم: لاحقةُ الضمير ضميرًا، وRET/AMD عطفًا"
+ },
+ "prereg": "docs/haja/PREREG.md",
+ "verdict": "HAJA_MANI"
+}

@@ -61,6 +61,12 @@ jobs:
         run: python tools/deposit_mayaatir.py --check
       - name: the qabiliyya measurement on the Mukhassas reference is what the tool computes (ADR 50)
         run: python tools/gen_hukm_mukhassas.py --check
+      - name: the meaning-gate tables are what the sealed Nabhani vol. 3 says, line by line (ADR 55)
+        run: python tools/deposit_bawwabat.py --check
+      - name: the need-signature tables are what the sealed Nabhani vol. 3 and Kitab say (ADR 56)
+        run: python tools/deposit_haja.py --check
+      - name: the closed-function measurement on QAC is what the preregistered tool computes (ADR 58)
+        run: python tools/gen_haja_qac.py --check
       - name: the salsala tables (ranks of the universal signified) are what the sealed Nabhani texts anchor
         run: python tools/deposit_salsala.py --check
       - name: the ghazali tables (conditional forms by line, second opinion) are what the sealed texts anchor

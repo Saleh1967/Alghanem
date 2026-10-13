@@ -117,6 +117,7 @@ python tools/gen_bawwabat_index.py --check           # بوّاباتُ المع
 python tools/deposit_haja.py --check                 # جدولا توقيع الحاجة (Lean وبايثون): كلُّ مرساةٍ بعباراتها في سطرٍ واحدٍ من ج3 أو الكتاب المختومَين (ADR ٥٦)
 python tools/gen_haja_index.py --check               # توقيعُ الحاجة: حاجاتُ الأبواب، وأبوابُ الجدول الموحَّد، وقسمةُ المفرد على مودَع المصحف (HAJA_INDEX.md؛ ADR ٥٦)
 python tools/gen_tamam_index.py --check              # قانونُ التمام: الصدارةُ والإغلاقُ والوصلُ على آيات المصحف ابتداءً ووصلًا (TAMAM_INDEX.md؛ ADR ٥٧؛ ~9 دقائق)
+python tools/gen_haja_qac.py --check                 # وظائفُ المغلق بأبواب الحاجة على وسوم QAC بالتسجيل المسبق docs/haja/PREREG.md (ADR ٥٨)
 python tools/gen_qiraa_index.py --check              # القراءةُ الموحَّدة: الحرفُ يحجب الجذرَ ولا يحذف، والجذعُ على الأصل المردود، على المصحف ثمّ MASAQ (QIRAA_INDEX.md)
 python tools/gen_sharh_index.py --check              # عقدُ الشرح: لكلّ صورةٍ أسطرٌ (الدعوى، القيمة، الوحدة) بوسمها ومرساتها من السجلّ، وعددُ الشهادة n؛ لا نصّ، والكلمةُ تخرج بـgate.exit في الغانم (SHARH_INDEX.md؛ ADR ٤٤)
 python tools/deposit_alam.py --check                 # جدولا الأعلام ولفظِ الجلالة (Lean وبايثون) مولَّدان من المودَع الموقَّع بتوقيع المالك
