@@ -28,6 +28,8 @@
 | `abniya-intiqa.json` | مرجع محجوب | `052ed9064548e9d9ad1a495d7db357e434f16b425e7263672d8df01b103026e8` |
 | `abniya-reference.tsv` | مرجع محجوب | `6994ff7a0a8c3ce13e541659d3f4a79578f1aea96e11531e8411a994d95396bd` |
 | `hukm-reference-2.tsv` | مرجع محجوب | `93053415cff2b393147b654214c80af1a4494bf056304cdaa4a03e846170411c` |
+| `mukhassas-ref-nodes.tsv` | مرجع محجوب | `0cfd449b23c933e716add5d923bff914ffd94714f83daaa4fcd86d043736d718` |
+| `mukhassas-ref-membership.tsv` | مرجع محجوب | `96c22bbea3cc13421e613a2334f43249fbe62c5d69ba3851ab55ebcfee8179db` |
 | `hukm-reference.tsv` | مرجع محجوب | `93053415cff2b393147b654214c80af1a4494bf056304cdaa4a03e846170411c` |
 | `openiti-majaz-quran.txt.gz` | مرجع محجوب | `432dae05748f2f972b3238e56dd0c56e72b10f0c3900ee8da1a8cca812b2fc88` |
 | `masaq-adad.json` | مرجع محجوب | `9018b3f445f65bc23799f0bee3cda1ab1fe3a1a0a0ab7e67e6d85406e77cd822` |
