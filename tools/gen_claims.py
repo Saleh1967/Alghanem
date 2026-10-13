@@ -70,6 +70,8 @@ UNITS: dict[str, str] = {
     "زوج صنف وحالة": "زوجُ (صنفِ معربٍ، حالةِ إعراب) له آخرٌ في جدول الألفيّة (`Qism.ending`) — ADR ٥٤",
     "لفظ مشترك": "لفظٌ (مفتاحُ خاناتٍ من لين) له في علاقة الوضع المودَعة جذران فأكثر "
                  "(`corpora/wad/wad.tsv`) — ADR ٥٦",
+    "زوج وضع مشترك": "زوجُ (لفظٍ مشترك، جذرٍ من جذوره) في علاقة الوضع المودَعة، وحقلُه عُقَدُ «المخصَّص» "
+                     "(`corpora/wad/qarina.tsv`) — ADR ٥٩",
 }
 """القائمةُ المغلقة للوحدات: لا تُضاف وحدةٌ إلّا هنا وبـADR."""
 LEAN_UNITS: dict[str, str] = {
@@ -103,6 +105,9 @@ LEAN_UNITS: dict[str, str] = {
     "Qism.pairs_length": "زوج صنف وحالة", "Qism.coverage_counts": "زوج صنف وحالة",
     "Qism.naive_wrong_count": "زوج صنف وحالة",
     "Wad.mushtarak_count": "لفظ مشترك",
+    "Qarina.pair_count": "زوج وضع مشترك", "Qarina.covered_count": "زوج وضع مشترك",
+    "Qarina.separable_count": "زوج وضع مشترك", "Qarina.lafz_covered_count": "لفظ مشترك",
+    "Qarina.lafz_separable_count": "لفظ مشترك",
     "Sijill.rows_length": "مدخل سجل", "Sijill.mana_count": "مدخل سجل",
     "Sijill.qaim_count": "مدخل سجل",
 }

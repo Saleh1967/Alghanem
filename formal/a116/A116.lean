@@ -55,6 +55,8 @@ import A116.Maqayis
 import A116.Dal
 import A116.WadData
 import A116.Wad
+import A116.QarinaData
+import A116.Qarina
 import A116.Tayy
 import A116.Qarar
 import A116.Manhaj
