@@ -1,5 +1,6 @@
 {
  "shakhsiyya-1": {
+  "authority": "sealed",
   "blank_removed": 188,
   "canon_is_stable": true,
   "canonical_lines": 742,
@@ -15,6 +16,7 @@
   "tabs_removed": 0
  },
  "shakhsiyya-3": {
+  "authority": "sealed",
   "blank_removed": 37,
   "canon_is_stable": true,
   "canonical_lines": 1079,
@@ -36,6 +38,8 @@
    880,
    881
   ],
+  "hamil_view_sha256": "520b8e9d55135217d2c07bf521a63ed93431d46bd5cdf16f360c915d8bbfc783",
+  "hamil_view_tab_lines": 141,
   "marks_canonical": 43880,
   "marks_kept": 43880,
   "order_critical_lines": 0,

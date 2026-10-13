@@ -187,3 +187,36 @@ def test_mutant_marks_dropped_rejected() -> None:
 
     kept = [t for x, t in MOD.door(_raw(1)) if not x]
     assert _marks("".join(_canon_with(mutant, [(False, t) for t in kept]))) < _marks("".join(kept))
+
+
+# ADR ٦٠: استخراجُ hamil لج3 منظرٌ للحاوية نفسها. بصمتُه وطولُه منقولان باليد من ختم hamil
+# (`shakhsiyya_v0.json`: «ختمُ متن الشخصية ج٣»، «طولُ متن الشخصية ج٣»)، لا من الأداة.
+HAMIL_J3_BY_HAND = ("520b8e9d55135217d2c07bf521a63ed93431d46bd5cdf16f360c915d8bbfc783", 1241712)
+
+
+def _sha_len(b: bytes) -> tuple[str, int]:
+    return hashlib.sha256(b).hexdigest(), len(b)
+
+
+def test_hamil_view_is_a_view_of_the_same_container() -> None:
+    rows = MOD.door_tabs(_raw(3))
+    view = MOD.hamil_view(rows)
+    assert _sha_len(view) == HAMIL_J3_BY_HAND
+    lines = view.decode("utf-8").split("\n")[:-1]
+    # حذفُ الجدولة يردّ منظرَ hamil إلى الصورة القانونيّة سطرًا سطرًا
+    assert [ln.replace("\t", "") for ln in lines] == _canonical(3).decode("utf-8").split("\n")
+    # والبابُ ذو الجدولة لا يخالف البابَ المختوم إلّا بالجدولة
+    assert [t.replace("\t", "") for _, t in rows] == _sealed(3).split("\n")
+    assert MOD.AUTHORITY == "sealed"
+
+
+def test_mutant_hamil_view_tab_blind_rejected() -> None:
+    # HAMIL_VIEW_TAB_BLIND: البابُ المختوم بلا جدولة لا يعيد ختمَ hamil
+    assert _sha_len(MOD.hamil_view(MOD.door(_raw(3)))) != HAMIL_J3_BY_HAND
+
+
+def test_mutant_hamil_view_space_only_strip_rejected() -> None:
+    # HAMIL_VIEW_SPACE_ONLY_STRIP: قصُّ المسافة وحدَها يُبقي جدولةً في الطرف
+    rows = MOD.door_tabs(_raw(3))
+    kept = [c for x, t in rows if not x and (c := t.strip(" "))]
+    assert _sha_len(("\n".join(kept) + "\n").encode("utf-8")) != HAMIL_J3_BY_HAND

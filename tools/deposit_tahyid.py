@@ -8,7 +8,12 @@
    والشرط: البابُ يعيد النصَّ المختوم بايتًا بايتًا، وإلّا `DOOR_DOES_NOT_REPRODUCE_SEAL`.
 3. **الصورةُ القانونيّة** (`slge.tahyid.canon`، مرآةُ `Slge.Tahyid.canon`): تُكتب
    `tests/data/nabhani-shakhsiyya-{1,3}.canonical.txt.gz`، وتُطابَق بصمتُها بعد فكّ الضغط.
-4. **السجلّ** (`docs/tahyid/result.json`): ما حذفته كلُّ قاعدة، وأزواجُ الالتقاء (الأسطرُ التي يغيّر
+4. **منظرُ hamil** (ADR ٦٠، ج3 وحدَه): البابُ نفسُه والجدولةُ `w:tab` داخل `w:r` محرفَ جدولة، ثمّ حذفُ
+   المستثنى، ثمّ قصُّ المسافات البيضاء من الطرفين، ثمّ حذفُ الفارغ، وسطرٌ أخير — يعيد
+   `shakhsiyya_j3_matn.txt` في hamil-hala-zaman-program بايتًا بايتًا (بصمتُه `HAMIL_J3`)، وحذفُ جدولته
+   يعيد الصورةَ القانونيّة سطرًا سطرًا؛ وإلّا `HAMIL_VIEW_NOT_REPRODUCED`. فالاستخراجان منظران
+   لحاويةٍ واحدة، والمعتمدُ للمراسي النصُّ المختوم (`AUTHORITY`).
+5. **السجلّ** (`docs/tahyid/result.json`): ما حذفته كلُّ قاعدة، وأزواجُ الالتقاء (الأسطرُ التي يغيّر
    الترتيبُ ناتجَها)، وثباتُ علامات الشكل، واستقرارُ الصورة (القانونيّةُ من القانونيّة هي هي).
 
 وبـ`--check` يعيد السلسلةَ كلَّها ويقارن، ولا يكتب.
@@ -44,6 +49,13 @@ BOOKS: dict[str, tuple[str, str, str]] = {
 }
 """(الاسم، بصمةُ الحاوية، بصمةُ النصّ المختوم)."""
 
+AUTHORITY = "sealed"
+"""المعتمدُ للمراسي (ADR ٦٠): النصُّ المختوم — سطرُه فقرتُه في الحاوية، بلا حذف؛ والصورتان منظران."""
+
+HAMIL_J3 = ("520b8e9d55135217d2c07bf521a63ed93431d46bd5cdf16f360c915d8bbfc783", 1241712)
+"""بصمةُ `shakhsiyya_j3_matn.txt` وطولُه كما ختمهما hamil-hala-zaman-program
+(`shakhsiyya_v0.json`)."""
+
 
 def door(raw: bytes) -> list[tuple[bool, str]]:
     root = ET.fromstring(zipfile.ZipFile(io.BytesIO(raw)).read("word/document.xml"))
@@ -60,6 +72,29 @@ def door(raw: bytes) -> list[tuple[bool, str]]:
         holds = any(True for _ in para.iter(W + "txbxContent"))
         rows.append((inside or holds, text))
     return rows
+
+
+def door_tabs(raw: bytes) -> list[tuple[bool, str]]:
+    """البابُ والجدولةُ (`w:tab` ابنُ `w:r`) محرفَ جدولةٍ في موضعها."""
+    root = ET.fromstring(zipfile.ZipFile(io.BytesIO(raw)).read("word/document.xml"))
+    parent = {c: p for p in root.iter() for c in p}
+    flags = [x for x, _ in door(raw)]
+    rows: list[tuple[bool, str]] = []
+    for flag, para in zip(flags, root.iter(W + "p"), strict=True):
+        parts = []
+        for el in para.iter():
+            if el.tag == W + "t":
+                parts.append(el.text or "")
+            elif el.tag == W + "tab" and parent[el].tag == W + "r":
+                parts.append("\t")
+        rows.append((flag, "".join(parts)))
+    return rows
+
+
+def hamil_view(rows: list[tuple[bool, str]]) -> bytes:
+    """منظرُ hamil: المستثنى يُحذف، والطرفان يُقصّان، والفارغُ يُحذف، وسطرٌ أخير."""
+    kept = [c for x, t in rows if not x and (c := t.strip())]
+    return ("\n".join(kept) + "\n").encode("utf-8")
 
 
 def _marks(lines: list[str]) -> int:
@@ -93,6 +128,15 @@ def build(name: str) -> tuple[bytes, dict[str, Any]]:
         "marks_kept": _marks(kept), "marks_canonical": _marks(out),
         "canon_is_stable": again == out,
     }
+    if name == "shakhsiyya-3":
+        view = hamil_view(door_tabs(raw))
+        lines = view.decode("utf-8").split("\n")[:-1]
+        if (hashlib.sha256(view).hexdigest(), len(view)) != HAMIL_J3 or \
+                [ln.replace("\t", "") for ln in lines] != out:
+            raise SystemExit("HAMIL_VIEW_NOT_REPRODUCED:shakhsiyya-3")
+        record["hamil_view_sha256"] = HAMIL_J3[0]
+        record["hamil_view_tab_lines"] = sum(1 for ln in lines if "\t" in ln)
+    record["authority"] = AUTHORITY
     return data, record
 
 
