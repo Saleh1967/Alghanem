@@ -67,6 +67,7 @@ UNITS: dict[str, str] = {
     "زوج جوار": "زوجُ صنفين متجاورين (قبل، بعد) مأذونٌ وصلًا في نظام الجوار — ADR ٢٣",
     "صفة جذر": "صفةُ جذر: أصنافُ أصوله (و ي ء ل صحيح)، ومماثلةُ العين واللام في الثلاثيّ — ADR ٢٦",
     "مدخل سجل": "مدخلٌ في سجلّ التراخيص المودَع (`docs/sijill/ledger.json`): ملفٌّ ببصمته — ADR ٢٩",
+    "زوج صنف وحالة": "زوجُ (صنفِ معربٍ، حالةِ إعراب) له آخرٌ في جدول الألفيّة (`Qism.ending`) — ADR ٥٤",
 }
 """القائمةُ المغلقة للوحدات: لا تُضاف وحدةٌ إلّا هنا وبـADR."""
 LEAN_UNITS: dict[str, str] = {
@@ -97,6 +98,8 @@ LEAN_UNITS: dict[str, str] = {
     "Nizam.waslK_count": "زوج جوار",
     "Tasrif.allSifa_length": "صفة جذر",
     "Rubai.allSifa4_length": "صفة جذر",
+    "Qism.pairs_length": "زوج صنف وحالة", "Qism.coverage_counts": "زوج صنف وحالة",
+    "Qism.naive_wrong_count": "زوج صنف وحالة",
     "Sijill.rows_length": "مدخل سجل", "Sijill.mana_count": "مدخل سجل",
     "Sijill.qaim_count": "مدخل سجل",
 }

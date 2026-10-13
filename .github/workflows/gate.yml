@@ -210,6 +210,7 @@ jobs:
           python tools/gen_qac.py --check
           python tools/gen_qac_peel.py --check
           python tools/gen_qac_tanith.py --check
+          python tools/gen_qac_qism.py --check
           python tools/gen_hadith_roots.py --check
           python tools/gen_lane_roots.py --check
           python tools/gen_lane_lexical.py --check
