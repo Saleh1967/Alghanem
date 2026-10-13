@@ -704,3 +704,10 @@ import A116
 #print axioms A116.Sawabiq.fa_qalu
 #print axioms A116.Sawabiq.afala
 #print axioms A116.Sawabiq.fa_not_zawaid
+#print axioms A116.Tanith.tanith_needs_final
+#print axioms A116.Tanith.tanith_needs_root
+#print axioms A116.Tanith.tanith_partition
+#print axioms A116.Tanith.witnesses
+#print axioms A116.Tanith.ilhaq_named
+#print axioms A116.Tanith.shape_blind
+#print axioms A116.Tanith.no_shape_function

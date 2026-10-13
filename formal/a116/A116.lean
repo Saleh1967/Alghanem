@@ -56,3 +56,4 @@ import A116.Dal
 import A116.Hasr
 import A116.Shannon
 import A116.Sawabiq
+import A116.Tanith
