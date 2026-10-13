@@ -732,3 +732,15 @@ import A116
 #print axioms A116.Mamnu.readJ_sound
 #print axioms A116.Mamnu.mamnu_needs_amil
 #print axioms A116.Mamnu.readJ_all_jarr
+#print axioms A116.Wad.pick_spec
+#print axioms A116.Wad.function_iff_no_mushtarak
+#print axioms A116.Wad.mushtarak_no_function
+#print axioms A116.Wad.mem_maanas
+#print axioms A116.Wad.munfarid_part_function
+#print axioms A116.Wad.qarina_iff
+#print axioms A116.Wad.mushtarak_rows
+#print axioms A116.Wad.mushtarak_count
+#print axioms A116.Wad.qala_in_deposit
+#print axioms A116.Wad.qwl_from_deposit
+#print axioms A116.Wad.qyl_from_deposit
+#print axioms A116.Wad.deposit_not_function
