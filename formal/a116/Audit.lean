@@ -711,3 +711,14 @@ import A116
 #print axioms A116.Tanith.ilhaq_named
 #print axioms A116.Tanith.shape_blind
 #print axioms A116.Tanith.no_shape_function
+#print axioms A116.Qism.murab_iff
+#print axioms A116.Qism.mabni_iff
+#print axioms A116.Qism.pairs_length
+#print axioms A116.Qism.read_sound
+#print axioms A116.Qism.read_best
+#print axioms A116.Qism.coverage_counts
+#print axioms A116.Qism.blind_le_qism
+#print axioms A116.Qism.qism_le_class
+#print axioms A116.Qism.naive_wrong_count
+#print axioms A116.Qism.naive_yadu
+#print axioms A116.Qism.blind_abstains

@@ -79,7 +79,7 @@ jobs:
                    Kraft.huffman_lengths Kraft.kraft_complete Kraft.mean_length_bounds \
                    Mizan.machineJoin_eq Mizan.machineJoin_pause_eq Mizan.hal_nodup Mizan.khana_nodup \
                    MizanKernel.cellT_eq MizanKernel.stateT_eq MizanKernel.waslT_eq MizanKernel.waqfT_eq \
-                   Sawabiq.candidates_head Sawabiq.candidates_suffix Sawabiq.peel_exact Shannon.flog_spec Shannon.logCheck_spec Shannon.flog_values Shannon.shannon_exact Shannon.within_one_bit Shannon.entropy_bounds Tanith.tanith_partition Tanith.witnesses Tanith.no_shape_function \
+                   Sawabiq.candidates_head Sawabiq.candidates_suffix Sawabiq.peel_exact Shannon.flog_spec Shannon.logCheck_spec Shannon.flog_values Shannon.shannon_exact Shannon.within_one_bit Shannon.entropy_bounds Tanith.tanith_partition Tanith.witnesses Tanith.no_shape_function Qism.murab_iff Qism.read_best Qism.coverage_counts Qism.qism_le_class \
                    Maqayis.roots_in_table Maqayis.roots_nodup Maqayis.count_is_maqayisCount Dal.no_cell_function_recovers_root \
                    Unicode.decode_encode Unicode.encode_prefix_free Unicode.decodeAll_encodeAll \
                    Boundary.no_start_with_sukun Boundary.pause_ends_with_sukun Boundary.join_iff \
