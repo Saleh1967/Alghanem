@@ -57,6 +57,7 @@ import A116.WadData
 import A116.Wad
 import A116.Tayy
 import A116.Qarar
+import A116.Manhaj
 import A116.Hasr
 import A116.Shannon
 import A116.Sawabiq

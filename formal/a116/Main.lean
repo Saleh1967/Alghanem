@@ -372,6 +372,31 @@ def main (args : List String) : IO Unit := do
       for f in Mudari.Form.all do
         for b in Mudari.babs r f do
           IO.println s!"{i},{fname f},{mark b},{atoms (Mudari.mudari r f b 'ي' .damma)},{atoms (Mudari.mudari r f b 'ت' .sukun)},{atoms (Mudari.amr r f b)},{Mudari.amrWasl r f b}"
+  | ["qarar"] =>
+    -- سلسلةُ القرار (`Qarar.judge1`، `Manhaj.judgeT`، ADR ٥٨) على كلّ سلسلةٍ حتى ثلاثِ دعاوى (33,296 سطرًا): لكلّ دعوى
+    -- رقمُها i ووجودٌ وحسٌّ ومعارض، وأصولُها من السابق مع أصلٍ مفقود (9) أو بدونه؛ ثمّ الحكمان بالترتيب.
+    let hn : Qarar.Hukm → String
+      | .qati => "qati" | .zanni => "zanni" | .khata => "khata" | .saqit => "saqit"
+      | .dawr => "dawr" | .laHukm => "laHukm"
+    let b : Bool → String := fun x => if x then "1" else "0"
+    let subsets : List Nat → List (List Nat) :=
+      fun xs => xs.foldr (fun x acc => acc.map (x :: ·) ++ acc) [[]]
+    let opts : Nat → List (List Nat) := fun n =>
+      (subsets ((List.range n).map (· + 1))).flatMap fun us => [us, us ++ [9]]
+    let bits : List (Bool × Bool × Bool) :=
+      [false, true].flatMap fun w => [false, true].flatMap fun s => [false, true].map fun m => (w, s, m)
+    let grow : List (List Qarar.Daawa) → Nat → List (List Qarar.Daawa) := fun chs n =>
+      chs.flatMap fun ch => bits.flatMap fun (w, s, m) => (opts n).map fun us =>
+        ch ++ [Qarar.d (n + 1) w s m us]
+    let enc : Qarar.Daawa → String := fun c =>
+      s!"{c.id}:{b c.wujud}{b c.mahsus}{b c.muarid}:{".".intercalate (c.usul.map toString)}"
+    let mut chs : List (List Qarar.Daawa) := [[]]
+    for n in List.range 3 do
+      chs := grow chs n
+      for ch in chs do
+        let v1 := (Qarar.run ch).map fun x => hn x.2
+        let vT := (Manhaj.ids (Manhaj.runD Manhaj.judgeT ch)).map fun x => hn x.2
+        IO.println s!"{";".intercalate (ch.map enc)},{" ".intercalate v1},{" ".intercalate vT}"
   | ["utf8"] =>
     -- أبجديّةُ الرسم: الحروفُ ‎U+0621–U+064A‎، العلاماتُ ‎U+064B–U+0652‎، ألفُ الوصل ‎U+0671‎، والمسافة.
     for c in (List.range 0x2B).map (· + 0x621) ++ (List.range 8).map (· + 0x64B) ++ [0x671, 0x20] do

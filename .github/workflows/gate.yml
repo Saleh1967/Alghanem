@@ -101,6 +101,7 @@ jobs:
                    Neutral.weak_licensed Neutral.sound_unchanged \
                    Hajah.need_law_iff_parse Hajah.need_append Hajah.before_after Hajah.minimal_complete \
                    Hajah.need_states_closed Hajah.strict_need Hajah.awa_ibtida_of_need \
+                   Manhaj.sawabT_iff Manhaj.qatiT_iff Manhaj.closed_reach Manhaj.roots_mahsus Manhaj.monotone Manhaj.judge1_refuses_s87 \
                    Mudari.amr_head_vowelled Mudari.amr_lqy Mudari.owner_examples Mudari.reference_licensed \
                    Mudari.amr_restores_mudari; do
             grep -q "A116.$t" axioms.txt || { echo "::error::$t غيرُ مدقَّقة"; exit 1; }
@@ -137,6 +138,7 @@ jobs:
           lake exe a116-table hadd > hadd.csv             # 14 MB: قيدُ الحدّ (Hadd.strictB) — يُولَّد ولا يُودَع
           lake exe a116-table hadd-join > hadd-join.csv   # الحدُّ بين كلمتين (Hadd.strictJoinB) — يُولَّد ولا يُودَع
           lake exe a116-table iltiqa > iltiqa.csv         # التقاءُ الساكنين على الحدّ (Iltiqa.repair) — يُولَّد ولا يُودَع
+          lake exe a116-table qarar > qarar.csv           # سلسلةُ القرار (Qarar.judge1، Manhaj.judgeT) — يُولَّد ولا يُودَع
 
       - uses: actions/upload-artifact@v4
         with:
@@ -146,6 +148,7 @@ jobs:
             formal/a116/hadd.csv
             formal/a116/hadd-join.csv
             formal/a116/iltiqa.csv
+            formal/a116/qarar.csv
 
   gate:
     needs: [lean]
