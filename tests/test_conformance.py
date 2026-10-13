@@ -1562,3 +1562,24 @@ def test_tamam_matches_lean() -> None:
         seq = [tuple(x.split(":")) for x in r[1].split("+")]
         res = t.run_all([t.START], [[(a, b)] for a, b in seq])
         assert [str(t.tamm(res)).lower(), str(len(res))] == r[2:], r
+
+
+def test_tahyid_matches_lean() -> None:
+    """التحييد: `clean` وترتيبُ القاعدتين و`canon` على أسطرٍ صغيرة = `Tahyid`
+    (الجدولةُ `|` في الجدول)."""
+
+    from slge import tahyid as t
+
+    def un(x: str) -> str:
+        return x.replace("|", "\t")
+
+    rows = _rows("tahyid.csv")
+    lines = [r for r in rows if r[0] == "line"]
+    canons = [r for r in rows if r[0] == "canon"]
+    assert len(lines) == 11 and len(canons) == 22
+    for r in lines:
+        assert [t.clean(un(r[1])), str(t.order_matters(un(r[1]))).lower()] == [un(r[2]), r[3]], r
+    for r in canons:
+        out = t.canon([(r[1] == "true", un(r[2])), (False, "c")])
+        assert "/".join(out) == un(r[3]), r
+

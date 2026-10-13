@@ -1,0 +1,47 @@
+{
+ "shakhsiyya-1": {
+  "blank_removed": 188,
+  "canon_is_stable": true,
+  "canonical_lines": 742,
+  "canonical_sha256": "263bbd85a961ced7d982c99bde7d0715409490314aad1222e0d681d082741567",
+  "container_sha256": "5e327aa2563af094962833951972b7537a872119a58bbfce5f2a813d20c88e17",
+  "excluded_structural": [],
+  "marks_canonical": 7836,
+  "marks_kept": 7836,
+  "order_critical_lines": 0,
+  "paragraphs": 930,
+  "sealed_sha256": "b474d56021427070e2e3852b78bb774383f37bf87e2310d39dcdbaecf33aed63",
+  "spaces_removed": 4,
+  "tabs_removed": 0
+ },
+ "shakhsiyya-3": {
+  "blank_removed": 37,
+  "canon_is_stable": true,
+  "canonical_lines": 1079,
+  "canonical_sha256": "80801201508b4c41771eab5cb7dc4fa420770913fde0a5177f589b3aa67ea9a1",
+  "container_sha256": "360f7653df4e3396d18153d0ea31e607523d33e0cb552b419340400b2211d5bd",
+  "excluded_structural": [
+   18,
+   19,
+   20,
+   21,
+   22,
+   427,
+   428,
+   429,
+   680,
+   681,
+   682,
+   879,
+   880,
+   881
+  ],
+  "marks_canonical": 43880,
+  "marks_kept": 43880,
+  "order_critical_lines": 0,
+  "paragraphs": 1130,
+  "sealed_sha256": "359bb5532ecee8156f266522bb5388a1711e46e136004c3ac22e43f2ce656cb4",
+  "spaces_removed": 209,
+  "tabs_removed": 0
+ }
+}

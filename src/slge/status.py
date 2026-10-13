@@ -1303,6 +1303,18 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_conformance.py::test_tamam_matches_lean",
        note="القانونُ على توقيعٍ منقول مبرهَن، لا اللغة (ADR ٥٧)؛ وعلى آيات المصحف مفحوصٌ لا مقيس "
             "(TAMAM_INDEX.md)."),
+    _c("TAHYID-canon", "التحييد: الصورةُ القانونيّة للنصّ المستخرَج من حاويته — الحذفُ مستقرٌّ ومتبادل، "
+       "والحذفُ والتعديلُ يتبادلان إذا لم يغيّر التعديلُ حكمَ المحمول، والترتيبُ يغيّر الناتجَ في العموم "
+       "فهو معلن، والتحييدُ لا يمسّ حرفًا غيرَ المسافة والجدولة", _P,
+       "lean:Slge.Tahyid.dropL_idem", "lean:Slge.Tahyid.dropL_comm",
+       "lean:Slge.Tahyid.comm_of_invariant", "lean:Slge.Tahyid.order_matters",
+       "lean:Slge.Tahyid.marks_preserved", "lean:Slge.Tahyid.witness",
+       "test:tests/test_tahyid.py::test_structural_exclusion_by_independent_parser",
+       "test:tests/test_tahyid.py::test_mutant_strip_before_tab_rejected",
+       "test:tests/test_tahyid.py::test_mutant_marks_dropped_rejected",
+       "test:tests/test_conformance.py::test_tahyid_matches_lean",
+       note="خواصُّ الدوالّ على الأسطر مبرهَنة؛ وأنّ البابَ يعيد المختومَ وأنّ الصورةَ مستقرّةٌ على المودَع "
+            "مفحوصٌ بالأداة (tools/deposit_tahyid.py --check)، لا برهان (ADR ٥٩)."),
     _c("QIRAA-reader", "القراءةُ الموحَّدة: ما يقرؤه الموزِّعُ ونواتُه من حروف المعاني حرفٌ يحجب جذرَه عن "
        "الحكم ولا يحذف قراءةَ الجذع؛ والجذعُ يقرأ الصورةَ ثمّ أصلَها الذي ردّت السوابقُ ساقطَه في الوصل، "
        "وكلُّ قراءةٍ تُردّ (السابقةُ إلى الكلمة والجذعُ إلى الأصل) وأصلُها يصعد إلى جذعها — لكلّ كلمة", _P,

@@ -19,6 +19,10 @@
 | `nabhani-shakhsiyya-3.txt.gz` | وضع | `359bb5532ecee8156f266522bb5388a1711e46e136004c3ac22e43f2ce656cb4` |
 | `nabhani-shakhsiyya-1.txt.gz` | وضع | `b474d56021427070e2e3852b78bb774383f37bf87e2310d39dcdbaecf33aed63` |
 | `nabhani-tafkir.txt.gz` | وضع | `b9b08eabec468aa0f93b80c01879e3812c57f4bd677e68e448967e3575bfaae4` |
+| `nabhani-shakhsiyya-1.docx` | وضع | `5e327aa2563af094962833951972b7537a872119a58bbfce5f2a813d20c88e17` |
+| `nabhani-shakhsiyya-3.docx` | وضع | `360f7653df4e3396d18153d0ea31e607523d33e0cb552b419340400b2211d5bd` |
+| `nabhani-shakhsiyya-1.canonical.txt.gz` | وضع | `263bbd85a961ced7d982c99bde7d0715409490314aad1222e0d681d082741567` |
+| `nabhani-shakhsiyya-3.canonical.txt.gz` | وضع | `80801201508b4c41771eab5cb7dc4fa420770913fde0a5177f589b3aa67ea9a1` |
 | `owner-alam.json` | وضع | `561fa752b4c97d356786009ba0e5017b15089bf615bc2939eafc794edce6993f` |
 | `openiti-ghazali-mustasfa.txt.gz` | وضع | `59cda7d5424b26ab73aa2d7d8130d1fbe28fc465ab6075d759dc782ebe1697ac` |
 | `openiti-ghazali-mihakk.txt.gz` | وضع | `9e54d050a9178392f48057738dd96796ddee094faff357bdb554e9e3cf6f5948` |

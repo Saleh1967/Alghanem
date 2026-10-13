@@ -12,6 +12,7 @@ DATA = ROOT / "tests" / "data"
 SEALED = tuple(d for d in DEPOSITS if d.licence.startswith("CC BY-NC-SA"))
 SIGNED = tuple(d for d in DEPOSITS if d.licence == "بتوقيع المالك")
 OWNER_SEALED = tuple(d for d in DEPOSITS if d.licence == "بإذن المالك")
+CONTAINERS = tuple(d for d in DEPOSITS if d.licence == "بإذن المالك — حاوية")
 
 
 def test_sealed_sources_match_their_hash_and_carry_a_licence() -> None:
@@ -40,12 +41,26 @@ def test_owner_signed_deposits_match_their_hash_and_name_the_signer() -> None:
 def test_owner_sealed_books_match_their_hash() -> None:
     assert [d.path for d in OWNER_SEALED] == ["nabhani-shakhsiyya-3.txt.gz",
                                                "nabhani-shakhsiyya-1.txt.gz",
-                                               "nabhani-tafkir.txt.gz"]
+                                               "nabhani-tafkir.txt.gz",
+                                               "nabhani-shakhsiyya-1.canonical.txt.gz",
+                                               "nabhani-shakhsiyya-3.canonical.txt.gz"]
     for d in OWNER_SEALED:
         raw = gzip.decompress((DATA / d.path).read_bytes())
         assert hashlib.sha256(raw).hexdigest() == d.sha256 and d.kind == "وضع", d.path
         assert "النبهاني" in raw.decode("utf-8") or "أبحاث اللغة" in raw.decode("utf-8"), d.path
-    assert len(SEALED) + len(SIGNED) + len(OWNER_SEALED) == sum(1 for d in DEPOSITS if d.sha256)
+    total = len(SEALED) + len(SIGNED) + len(OWNER_SEALED) + len(CONTAINERS)
+    assert total == sum(1 for d in DEPOSITS if d.sha256)
+
+
+def test_containers_match_their_raw_hash() -> None:
+    """الحاويتان (ADR ٥٩): البصمةُ على البايتات كما هي — `docx` مضغوطٌ بطبعه فلا فكَّ قبلها."""
+
+    assert [d.path for d in CONTAINERS] == ["nabhani-shakhsiyya-1.docx",
+                                             "nabhani-shakhsiyya-3.docx"]
+    for d in CONTAINERS:
+        raw = (DATA / d.path).read_bytes()
+        assert hashlib.sha256(raw).hexdigest() == d.sha256 and d.kind == "وضع", d.path
+        assert raw.startswith(b"PK"), d.path
 
 
 def test_one_byte_breaks_the_seal() -> None:

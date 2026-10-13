@@ -767,6 +767,17 @@ def main (args : List String) : IO Unit := do
     for s in seqs do
       let r := Tamam.runAll [Tamam.start] (s.map fun t => [t])
       IO.println s!"run,{key s},{Tamam.tamm r},{r.length}"
+  | ["tahyid"] =>
+    -- التحييد: الصورةُ القانونيّة لنصوصٍ صغيرة، وأسطرٌ يغيّر ترتيبُ القاعدتين ناتجَها أم لا.
+    let sh := fun (l : List Char) => String.ofList (l.map fun c => if c == '\t' then '|' else c)
+    let ls : List (List Char) := [[], [' '], ['\t'], ['a'], [' ', 'a'], ['a', ' '], ['a', ' ', '\t'],
+      ['\t', ' ', 'a'], [' ', '\t', 'a', '\t', ' '], ['a', '\t', 'b'], [' ', 'a', ' ', 'b', ' ']]
+    for l in ls do
+      IO.println s!"line,{sh l},{sh (Tahyid.clean l)},{Tahyid.stripSp (Tahyid.delTab l) != Tahyid.delTab (Tahyid.stripSp l)}"
+    for x in [false, true] do
+      for l in ls do
+        let out := Tahyid.canon [(x, l), (false, ['c'])]
+        IO.println s!"canon,{x},{sh l},{"/".intercalate (out.map sh)}"
   | ["mughlaq"] =>
     -- الصنفُ المغلق: لكلّ نواةٍ من نوى الموزِّع وسمُها ومصدرُ معناها؛ ولكلّ كلمةٍ شاهدةٍ وسمُها.
     let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)

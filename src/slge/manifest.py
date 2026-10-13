@@ -105,6 +105,8 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("haja_table", (), (), None, "test_haja.py"),  # مولَّدٌ من ج3 والكتاب المختومَين
     Module("tamam", ("Tamam",), ("tamam",), "gen_tamam_index.py",
            "test_tamam.py"),  # قانونُ التمام: صدارةٌ وإغلاقٌ ووصل (ADR ٥٧)
+    Module("tahyid", ("Tahyid",), ("tahyid",), None,
+           "test_tahyid.py"),  # التحييد: الحاويةُ ← البابُ ← المختومُ ← الصورةُ القانونيّة (ADR ٥٩)
     Module("alam", ("Alam", "AlamTable"), ("alam",), "gen_alam_index.py", "test_alam.py",
            law=True),
     Module("alam_table", (), (), None, "test_alam.py"),  # مولَّدٌ من المودَع الموقَّع
@@ -273,6 +275,28 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
     Deposit("nabhani-tafkir.txt.gz", "وضع",
             "«التفكير» كاملًا؛ منه فهمُ النصّ بمعلوماتٍ سابقةٍ مُدرَكٍ واقعُها",
             "b9b08eabec468aa0f93b80c01879e3812c57f4bd677e68e448967e3575bfaae4",
+            "بإذن المالك"),
+    # — بأمر المالك «أودع الحاويتين والصورة القانونيّة ببصماتها» (2026-10-13، ADR ٥٩): الحاويتان
+    #   (`docx` = مدخلا السجلّ f0024 وf0025 في الغانم) بصمتُهما بايتاتُهما؛ والصورتان القانونيّتان
+    #   ما تولّده `tools/deposit_tahyid.py` من البابِ على الحاوية — بصمتُهما بعد فكّ الضغط. —
+    Deposit("nabhani-shakhsiyya-1.docx", "وضع",
+            "حاويةُ الشخصيّة الإسلاميّة ج1 (f0024)؛ البابُ عليها يعيد `nabhani-shakhsiyya-1.txt.gz` "
+            "بايتًا بايتًا (ADR ٥٩)",
+            "5e327aa2563af094962833951972b7537a872119a58bbfce5f2a813d20c88e17",
+            "بإذن المالك — حاوية"),
+    Deposit("nabhani-shakhsiyya-3.docx", "وضع",
+            "حاويةُ الشخصيّة الإسلاميّة ج3 (f0025)؛ البابُ عليها يعيد `nabhani-shakhsiyya-3.txt.gz` "
+            "بايتًا بايتًا (ADR ٥٩)",
+            "360f7653df4e3396d18153d0ea31e607523d33e0cb552b419340400b2211d5bd",
+            "بإذن المالك — حاوية"),
+    Deposit("nabhani-shakhsiyya-1.canonical.txt.gz", "وضع",
+            "الصورةُ القانونيّة لج1 (`Slge.Tahyid.canon`): 742 سطرًا (ADR ٥٩)",
+            "263bbd85a961ced7d982c99bde7d0715409490314aad1222e0d681d082741567",
+            "بإذن المالك"),
+    Deposit("nabhani-shakhsiyya-3.canonical.txt.gz", "وضع",
+            "الصورةُ القانونيّة لج3 (`Slge.Tahyid.canon`): بلا الجداول وصناديق النصّ، 1079 سطرًا "
+            "(ADR ٥٩)",
+            "80801201508b4c41771eab5cb7dc4fa420770913fde0a5177f589b3aa67ea9a1",
             "بإذن المالك"),
     Deposit("owner-alam.json", "وضع",
             "لفظُ الجلالة (10 صور) و57 علمًا موسومةً بعينها؛ وضعُ العلميّة لا القياس — تُولَّد منه "

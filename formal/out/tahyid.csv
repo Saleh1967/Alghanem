@@ -1,0 +1,33 @@
+line,,,false
+line, ,,false
+line,|,,false
+line,a,a,false
+line, a,a,false
+line,a ,a,false
+line,a |,a,true
+line,| a,a,true
+line, |a| ,a,false
+line,a|b,ab,false
+line, a b ,a b,false
+canon,false,,c
+canon,false, ,c
+canon,false,|,c
+canon,false,a,a/c
+canon,false, a,a/c
+canon,false,a ,a/c
+canon,false,a |,a/c
+canon,false,| a,a/c
+canon,false, |a| ,a/c
+canon,false,a|b,ab/c
+canon,false, a b ,a b/c
+canon,true,,c
+canon,true, ,c
+canon,true,|,c
+canon,true,a,c
+canon,true, a,c
+canon,true,a ,c
+canon,true,a |,c
+canon,true,| a,c
+canon,true, |a| ,c
+canon,true,a|b,c
+canon,true, a b ,c
