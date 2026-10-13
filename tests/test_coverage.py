@@ -88,7 +88,8 @@ def test_deposited_rows_are_graded_by_their_corpus_witnesses() -> None:
     for s in ("هُنَاكَ", "رُبَّ", "إِيَّاكِ", "مُنْذُ", "تَانِكَ"):
         assert by_cells[cells_of(s)] == (MALUMAH, None), s
     mafhum = sum(1 for g in grades.values() if g[0] == MAFHUM)
-    assert (2, len(TAWZI_TABLE), mafhum) in AXES and len(TAWZI_TABLE) == 246
+    # 246 قبل ADR ٥٣؛ ظَنَّ وحَسِبَ خرجا فعلين (VERB_NOT_MABNI)
+    assert (2, len(TAWZI_TABLE), mafhum) in AXES and len(TAWZI_TABLE) == 244
     assert all(a <= t for _, t, a in AXES) and len(AXES) == 6
     assert ROOTS[1] + ROOTS[2] + ROOTS[3] == ROOTS[0] == 4561
     assert NODES[1] + NODES[2] + NODES[3] + NODES[4] == NODES[0] == 1600

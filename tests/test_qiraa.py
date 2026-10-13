@@ -64,7 +64,7 @@ def test_the_ladder_carries_both() -> None:
         assert isinstance(p, Pass)
         return p
 
-    assert "حرفٌ بالموزِّع" in at("فِي", "الجذع").residual
+    assert "مغلقٌ بالموزِّع" in at("فِي", "الجذع").residual  # ADR ٥٣: الحرفُ وسائرُ المغلق
     assert at("فِي", "الجواب").out["الوجود"] == "حرف"
     stem = at("فَمْشُوْ", "الجذع")
     assert "الأصلُ المردود: 5" in stem.residual and stem.out[0].via is not None  # المشهودُ أوّلًا

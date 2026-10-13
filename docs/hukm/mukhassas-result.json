@@ -1,24 +1,24 @@
 {
   "baseline": {
-    "lift_points": 62.81,
-    "mean_chance": 0.0394
+    "lift_points": 63.09,
+    "mean_chance": 0.0395
   },
   "jins": "JINS_NOT_JUDGED_UNSIGNED",
   "pairs": {
-    "all": 453,
-    "matched": 442,
+    "all": 451,
+    "matched": 440,
     "node_unmatched": 11,
-    "rate": 0.6674,
+    "rate": 0.6705,
     "true": 295,
     "wilson95": [
-      0.6222,
-      0.7097
+      0.6252,
+      0.7127
     ]
   },
   "positions": {
-    "matched": 20527,
-    "rate": 0.5904,
-    "true": 12119
+    "matched": 19674,
+    "rate": 0.6128,
+    "true": 12057
   },
   "prereg": "docs/hukm/PREREG-mukhassas.md",
   "reference": {
@@ -29,7 +29,7 @@
   },
   "witness_nodes": {
     "ambiguous": 6,
-    "distinct": 393,
-    "matched": 382
+    "distinct": 391,
+    "matched": 380
   }
 }

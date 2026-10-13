@@ -1236,15 +1236,30 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_makharij.py::test_sibawayh_hams_differs_from_the_declared_phonology_by_sad",
        note="لا يُصحَّح المعلَنُ من الذاكرة؛ المختومُ هو الحجّة، والمعلَنُ دينٌ باسمه (ADR ١٩)."),
     _c("TAWZI-reader", "الموزِّع: المبنيّاتُ المودَعة من جداولها القائمة تُقرأ قبل القوالب بسوابقها "
-       "ولاحقة الضمير وتُردّ بعينها؛ الحرفُ المتّصل حاملٌ لا يُقرأ إلّا بلاحقة؛ التعديلاتُ مسمّاة (الألفُ "
-       "ياءً، لامُ الجرّ مفتوحة، التقاءُ الساكنين)", _P,
+       "ولاحقة الضمير وتُردّ بعينها؛ الحرفُ المتّصل حاملٌ لا يُقرأ إلّا بلاحقة؛ واللاحقةُ لا يحملها إلّا "
+       "الجارُّ والناسخُ والظرفُ وبِ ولِ؛ والمركَّبُ بمَا/مَنْ؛ والتعديلاتُ مسمّاة (الألفُ ياءً، لامُ الجرّ "
+       "مفتوحة، الكسرُ قبل ياء الإضافة، التقاءُ الساكنين، كافُ الخطاب، همزةُ الوصل بعد سابقة)", _P,
        "lean:Slge.Tawzi.tawzi_restores", "lean:Slge.Tawzi.tawzi_core_mem",
-       "lean:Slge.Tawzi.tawzi_host_suf", "lean:Slge.Tawzi.table_licensed",
+       "lean:Slge.Tawzi.tawzi_host_suf", "lean:Slge.Tawzi.tawzi_suf_host",
+       "lean:Slge.Tawzi.table_licensed", "lean:Slge.Tawzi.compounds_licensed",
        "lean:Slge.Tawzi.witness_alayhim", "lean:Slge.Tawzi.witness_lahum",
+       "lean:Slge.Tawzi.witness_closure", "lean:Slge.Tawzi.witness_wa_not_host",
        "test:tests/test_tawzi.py::test_reads_particles_pronouns_and_adverbs_with_clitics_and_restores",
+       "test:tests/test_tawzi.py::test_named_closure_mutants_are_caught",
        "test:tests/test_conformance.py::test_tawzi_matches_lean",
-       note="الجدولُ 246 صورةً من الجداول القائمة بلا زيادةٍ من الذاكرة؛ مَعَ وأَنَّا ولفظُ الجلالة بأل "
-            "خارجه باسمها (TAWZI_INDEX.md، ADR ٢٣)."),
+       note="الجدولُ 244 صورةً من الجداول القائمة بلا زيادةٍ من الذاكرة (ظَنَّ وحَسِبَ خارجه فعلين) و48 "
+            "مركَّبًا؛ مَعَ وأَنَّا ولفظُ الجلالة بأل خارجه باسمها (TAWZI_INDEX.md، ADR ٢٣، ٥٣)."),
+    _c("MUGHLAQ-tag", "الصنفُ المغلق: وسمٌ ثلاثيّ (مغلق/ظرف/مفتوح) قسمةً تامّة — المفتوحُ ما لا يقرؤه "
+       "الموزِّع والمغلقُ ما له قراءةٌ نواتُها غيرُ ظرف — ولكلّ نواةٍ مغلقةٍ مصدرُ معنًى مسمًّى، والمغلقُ لا "
+       "جذرَ يُحكم عليه", _P,
+       "lean:Slge.Mughlaq.maftuh_iff", "lean:Slge.Mughlaq.mughlaq_iff",
+       "lean:Slge.Mughlaq.closed_has_src", "lean:Slge.Mughlaq.closed_reading_has_src",
+       "lean:Slge.Mughlaq.witness_qism", "lean:Slge.Qiraa.mughlaq_no_hukm",
+       "test:tests/test_mughlaq.py::test_meanings_by_hand",
+       "test:tests/test_mughlaq.py::test_named_mutants_are_caught",
+       "test:tests/test_conformance.py::test_mughlaq_matches_lean",
+       note="مقيسٌ على QAC بتسجيلٍ مسبق (MUGHLAQ_INDEX.md، ADR ٥٣)؛ ومصدرُ المعنى إمّا مختومٌ (مبحثُ "
+            "الحرف) أو معلَنٌ في جداوله — والوسمُ لا يُثبت صحّةَ المعنى لغةً."),
     _c("QIRAA-reader", "القراءةُ الموحَّدة: ما يقرؤه الموزِّعُ ونواتُه من حروف المعاني حرفٌ يحجب جذرَه عن "
        "الحكم ولا يحذف قراءةَ الجذع؛ والجذعُ يقرأ الصورةَ ثمّ أصلَها الذي ردّت السوابقُ ساقطَه في الوصل، "
        "وكلُّ قراءةٍ تُردّ (السابقةُ إلى الكلمة والجذعُ إلى الأصل) وأصلُها يصعد إلى جذعها — لكلّ كلمة", _P,
@@ -1254,7 +1269,7 @@ _DECLARED: tuple[Claim, ...] = (
        "lean:Slge.Qiraa.witnesses_harf", "lean:Slge.Qiraa.witness_famshu",
        "test:tests/test_qiraa.py::test_mutants_are_refused_by_name",
        "test:tests/test_conformance.py::test_qiraa_matches_lean",
-       note="على MASAQ المحجوب: من 12,039 كلمةً قرأها الموزِّعُ حرفًا يعدّها المرجعُ بلا جهة 98.2%، "
+       note="على MASAQ المحجوب: من 12,142 كلمةً قرأها الموزِّعُ حرفًا يعدّها المرجعُ بلا جهة 98.2%، "
             "والباقي (لَمَّا ظرفًا، عَلِيّ، خَلَا فعلًا) حجبٌ لا حذف؛ وعلى المصحف 803 صورةً قُرئ أصلُها "
             "المردود على جذرٍ مشهود (QIRAA_INDEX.md، ADR ٤٢)."),
     _c("HUKM-judge", "الحكمُ على جذور قراءات الشهادة: لكلّ جذرٍ حكمان (الجنس والقابليّة) «مفهومٌ» "

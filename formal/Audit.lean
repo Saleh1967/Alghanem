@@ -1186,6 +1186,11 @@ import Slge
 #print axioms A116.MizanKernel.stateT_eq
 #print axioms A116.MizanKernel.waslT_eq
 #print axioms A116.MizanKernel.waqfT_eq
+#print axioms A116.Sawabiq.candidates_head
+#print axioms A116.Sawabiq.candidates_suffix
+#print axioms A116.Sawabiq.candidates_length_le
+#print axioms A116.Sawabiq.peel_exact
+#print axioms A116.Sawabiq.fa_not_zawaid
 #print axioms Slge.MayaatirTable.criteria_length
 #print axioms Slge.Maqool.every_bab_anchored
 #print axioms Slge.Maqool.every_sabab_anchored
