@@ -1292,11 +1292,12 @@ def test_hasm_matches_lean() -> None:
 def test_tawzi_matches_lean() -> None:
     """جدولُ الموزِّع بلا تكرار، والحواملُ، وقراءاتُ ستّ كلمات (سوابق|المبنيّ|الصورة|اللاحقة) = `Tawzi`."""
 
-    from slge.tawzi import HOSTS, TABLE, tawzi
+    from slge.tawzi import COMPOUNDS, HOSTS, SUF_TABLE, TABLE, tawzi
 
     rows = _rows("tawzi.csv")
     t = next(r for r in rows if r[0] == "table")
     assert int(t[2]) == len(TABLE) and int(t[3]) == len(HOSTS)
+    assert int(t[4]) == len(COMPOUNDS) and int(t[5]) == len(dict.fromkeys(SUF_TABLE))
     words = {r[1]: tuple(CELLS[int(i)] for i in r[2].split("-")) for r in rows if r[0] == "count"}
     for name, w in words.items():
         lean = {r[3] for r in rows if r[0] == "word" and r[1] == name}
@@ -1307,6 +1308,28 @@ def test_tawzi_matches_lean() -> None:
                 for m in tawzi(w)}
         assert mine == lean, (name, mine, lean)
         assert len(lean) <= int(next(r[3] for r in rows if r[0] == "count" and r[1] == name))
+
+def test_mughlaq_matches_lean() -> None:
+    """لكلّ نواةٍ من نوى الموزِّع (الجدول، المركَّبات، الحاملان) مغلقيّتُها ومصدرُ معناها، ولثماني
+    كلماتٍ وسمُها وعددُ قراءاتها المغلقة = `Mughlaq` (ADR ٥٣)."""
+
+    from slge.mughlaq import closed, closed_core, qism, src
+    from slge.tawzi import COMPOUNDS, HOSTS, TABLE
+
+    rows = _rows("mughlaq.csv")
+    cores = list(dict.fromkeys(w for _, _, w in (*TABLE, *COMPOUNDS, *HOSTS)))
+    lean = {r[1]: (r[2], r[3]) for r in rows if r[0] == "core"}
+
+    def k(x: tuple[tuple[str, str], ...]) -> str:
+        return "-".join(str(index(c)) for c in x)
+
+    assert len(lean) == len(cores)
+    for w in cores:
+        assert lean[k(w)] == (str(closed_core(w)).lower(), src(w) or "-"), w
+    for r in (r for r in rows if r[0] == "word"):
+        w = tuple(CELLS[int(i)] for i in r[2].split("-"))
+        assert (qism(w), len(closed(w))) == (r[3], int(r[4])), r[1]
+
 
 def test_alam_matches_lean() -> None:
     """جدولُ الأعلام الموقَّع وصورُ الجلالة العشر والسوابق، وقراءاتُ سبع كلمات

@@ -881,6 +881,7 @@ import Slge
 #print axioms Slge.Qiraa.harf_restores
 #print axioms Slge.Qiraa.harf_no_hukm
 #print axioms Slge.Qiraa.hukm_of_not_harf
+#print axioms Slge.Qiraa.mughlaq_no_hukm
 #print axioms Slge.Qiraa.jidh_sub_qiraa
 #print axioms Slge.Qiraa.qiraa_restores
 #print axioms Slge.Qiraa.qiraa_ascends
@@ -912,6 +913,19 @@ import Slge
 #print axioms Slge.Tawzi.tawzi_core_mem
 #print axioms Slge.Tawzi.tawzi_host_suf
 #print axioms Slge.Tawzi.tawzi_suf_mem
+#print axioms Slge.Tawzi.tawzi_suf_host
+#print axioms Slge.Tawzi.sufTable_sub
+#print axioms Slge.Tawzi.compounds_licensed
+#print axioms Slge.Tawzi.hosts_proclitic
+#print axioms Slge.Tawzi.witness_mim_ya
+#print axioms Slge.Tawzi.witness_closure
+#print axioms Slge.Tawzi.witness_wa_not_host
+#print axioms Slge.Mughlaq.maftuh_iff
+#print axioms Slge.Mughlaq.mughlaq_iff
+#print axioms Slge.Mughlaq.closed_restores
+#print axioms Slge.Mughlaq.closed_has_src
+#print axioms Slge.Mughlaq.closed_reading_has_src
+#print axioms Slge.Mughlaq.witness_qism
 #print axioms Slge.Tawzi.witness_alayhim
 #print axioms Slge.Tawzi.witness_lahum
 #print axioms Slge.Tawzi.witness_particles

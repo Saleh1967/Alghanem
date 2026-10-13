@@ -79,6 +79,7 @@ jobs:
           PYTHONPATH=/tmp/alghanem python /tmp/alghanem/tools/gen_context_certificates.py --check tests/data/context-certificates.json.gz
           PYTHONPATH=/tmp/alghanem python /tmp/alghanem/tools/gen_context_certificates.py --corpus sahihain --check tests/data/hadith-context-certificates.json.gz
           PYTHONPATH=/tmp/alghanem python /tmp/alghanem/tools/gen_context_certificates.py --corpus lane --check tests/data/lane-context-certificates.json.gz
+          PYTHONPATH=/tmp/alghanem python /tmp/alghanem/tools/gen_qac_pos.py --check tests/data/qac-pos.tsv.gz
           PYTHONPATH=/tmp/alghanem python /tmp/alghanem/tools/gen_abniya_intiqa.py --check --slge . --deposit tests/data/abniya-intiqa.json
       - name: CLAIMS.md — every published number recomputed from its generator; no number in CLAUDE.md without one
         run: python tools/gen_claims.py --check

@@ -707,12 +707,29 @@ def main (args : List String) : IO Unit := do
   | ["tawzi"] =>
     -- الموزِّع: حجمُ الجدول والحوامل، وكلماتٌ بقراءاتها (سوابق|المبنيّ|الصورة|اللاحقة).
     let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
-    IO.println s!"table,{Tawzi.table.length},{Tawzi.table.eraseDups.length},{Tawzi.hosts.length}"
+    IO.println s!"table,{Tawzi.table.length},{Tawzi.table.eraseDups.length},{Tawzi.hosts.length},{Tawzi.compounds.length},{Tawzi.sufTable.eraseDups.length}"
     for (n, w) in [("alayhim", Tawzi.alayhim), ("lahum", Tawzi.lahum), ("waidha", Tawzi.waidha),
-                   ("mina", Tawzi.mina), ("bihi", Tawzi.bihi), ("kataba", Tawzi.kataba)] do
+                   ("mina", Tawzi.mina), ("bihi", Tawzi.bihi), ("kataba", Tawzi.kataba),
+                   ("lahumu", Tawzi.lahumu), ("li", Tawzi.li), ("walladhina", Tawzi.walladhina),
+                   ("fima", Tawzi.fima), ("mimma", Tawzi.mimma), ("dhalikum", Tawzi.dhalikum),
+                   ("inni", Tawzi.inni), ("wahum", Tawzi.wahum), ("humu", Tawzi.humu)] do
       for m in Tawzi.tawzi w do
         IO.println s!"word,{n},{key w},{"+".intercalate (m.pre.map key)}|{key m.core}|{key m.surface}|{key m.suf}"
       IO.println s!"count,{n},{key w},{(Tawzi.tawzi w).length}"
+  | ["mughlaq"] =>
+    -- الصنفُ المغلق: لكلّ نواةٍ من نوى الموزِّع وسمُها ومصدرُ معناها؛ ولكلّ كلمةٍ شاهدةٍ وسمُها.
+    let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
+    let qs := fun (q : Mughlaq.Qism) => match q with | .mughlaq => "مغلق" | .zarf => "ظرف" | .maftuh => "مفتوح"
+    let ss := fun (s : Option Mughlaq.Src) => match s with
+      | some .nabhani => "نبهاني" | some .amal => "عمل" | some .rawabit => "ربط" | some .damir => "ضمير"
+      | some .ishara => "إشارة" | some .istifham => "استفهام" | some .mawsul => "موصول"
+      | some .tarkib => "تركيب" | none => "-"
+    for k in (Tawzi.table ++ Tawzi.compounds ++ Tawzi.hosts).eraseDups do
+      IO.println s!"core,{key k},{Mughlaq.closedCore k},{ss (Mughlaq.src k)}"
+    for (n, w) in [("lahumu", Tawzi.lahumu), ("wahum", Tawzi.wahum), ("minkum", Mughlaq.minkum),
+                   ("wamin", Mughlaq.wamin), ("fima", Tawzi.fima), ("walladhina", Tawzi.walladhina),
+                   ("indahu", Mughlaq.indahu), ("kataba", Tawzi.kataba)] do
+      IO.println s!"word,{n},{key w},{qs (Mughlaq.qism w)},{(Mughlaq.closed w).length}"
   | ["qiraa"] =>
     -- القراءةُ الموحَّدة: لكلّ كلمةٍ عددُ قراءات الحرف، وقراءاتُها (بابُ السابقة المردودة|الأصل|الجذع|اللاحقة|طولُ السلسلة).
     let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)

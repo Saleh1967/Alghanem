@@ -71,6 +71,7 @@ import Slge.PipelineTable
 import Slge.HasmTable
 import Slge.Hasm
 import Slge.Tawzi
+import Slge.Mughlaq
 import Slge.AlamTable
 import Slge.Alam
 import Slge.SawabiqTable

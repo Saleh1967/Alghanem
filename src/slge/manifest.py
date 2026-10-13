@@ -14,7 +14,7 @@ from typing import Final
 __all__ = ["ABNIYA_INTIQA_DIGEST", "AJNAS_DIGEST", "CERTIFICATES_DIGEST",
            "CONTEXT_CERTIFICATES_DIGEST", "DEPOSITS",
            "DEPOSIT_KINDS", "GATE_REV", "HADITH_CONTEXT_CERTIFICATES_DIGEST",
-           "LANE_CONTEXT_CERTIFICATES_DIGEST", "MODULES", "Deposit",
+           "LANE_CONTEXT_CERTIFICATES_DIGEST", "MODULES", "QAC_POS_DIGEST", "Deposit",
            "Module", "index_tools", "lean_files", "readers_under_law", "tables"]
 
 
@@ -95,6 +95,8 @@ MODULES: Final[tuple[Module, ...]] = (
            "test_ilal_bab.py"),
     Module("ilal_bab_table", (), (), None, "test_ilal_bab.py"),  # مولَّدٌ من الكتاب المختوم والمصحف
     Module("tawzi", ("Tawzi",), ("tawzi",), "gen_tawzi_index.py", "test_tawzi.py", law=True),
+    Module("mughlaq", ("Mughlaq",), ("mughlaq",), "gen_mughlaq_index.py",
+           "test_mughlaq.py"),  # الوسمُ الثلاثيّ: المغلقُ مفصولٌ عن الاسم والفعل (ADR ٥٣)
     Module("alam", ("Alam", "AlamTable"), ("alam",), "gen_alam_index.py", "test_alam.py",
            law=True),
     Module("alam_table", (), (), None, "test_alam.py"),  # مولَّدٌ من المودَع الموقَّع
@@ -160,7 +162,7 @@ class Deposit:
     licence: str = ""
 
 
-GATE_REV: Final[str] = "9ae8d812c11a86df0a823924e5cdb85968957573"
+GATE_REV: Final[str] = "0eb2a41fc358a008b25d3552dc43e89aaab8b767"
 """إيداعُ بوّابة الغانم (`Saleh1967/Alghanem`، فرع `claude/official-gate`) الذي يُعاد منه توليدُ مودَع
 الشهادات في CI (`tools/gen_certificates.py --check`): ما يقيسه SLGE هو ما تطبعه البوّابةُ على المدوّنة
 المختومة بهذا الإيداع؛ أيُّ فرقٍ `DEPOSIT_DRIFTED_FROM_GATE`. يُرفع مع المودَع معًا لا أحدُهما وحدَه."""
@@ -180,6 +182,13 @@ HADITH_CONTEXT_CERTIFICATES_DIGEST: Final[str] = (
 موقعًا في سياقهما كما طبعتها البوّابةُ نفسُها على `GATE_REV` (`gen_context_certificates.py --corpus
 sahihain`، الغانم ADR ٧)؛ المصدرُ Open-Hadith-Data برخصة ODbL 1.0 والمودَعُ المشتقُّ يحملها. لا مرجعَ
 محجوبًا له فلا «مقيس» عليه."""
+
+QAC_POS_DIGEST: Final[str] = (
+    "3b6a736eb7ef30f582ed8848cfc8902e98125b59f3b3a77526fb2e63cefe3be5")
+"""بصمةُ `qac-pos.tsv.gz` بعد فكّ الضغط: أقسامُ الكلم في QAC 0.4 (Kais Dukes، GPL) لكلّ كلمةٍ محاذاةٍ —
+موقعُها في تيّار شهادات المصحف وقطعُها بأقسامها وقسمُ جذعها، لا كلمات (الغانم ADR ٥١،
+`tools/gen_qac_pos.py`)؛ مرجعُ الصنف المغلق المحجوب (ADR ٥٣). CI يعيد توليدَه من الغانم على `GATE_REV`
+(`QAC_POS_DEPOSIT_DRIFTED`)."""
 
 LANE_CONTEXT_CERTIFICATES_DIGEST: Final[str] = (
     "3873f1c79d5a5cd924432fb7dd90cff952b2a0e08e39ccef7b73181074165061")
@@ -307,6 +316,10 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
     Deposit("mukhassas-ref-membership.tsv", "مرجع محجوب",
             "الجذرُ ← العُقَدُ التي في متنها لفظُه بقاعدة RULE_M (الغانم ADR ٤٨ @556d95c)؛ "
             "بصمتُه مثبَّتةٌ في tools/gen_hukm_mukhassas.py"),
+    Deposit("qac-pos.tsv.gz", "مرجع محجوب",
+            "أقسامُ الكلم في QAC 0.4 لـKais Dukes (GPL v3؛ مشتقٌّ يحمل رخصتَه): لكلّ كلمةٍ محاذاةٍ "
+            "موقعُها في تيّار الشهادات وقطعُها بأقسامها وقسمُ جذعها — لا نصّ (الغانم ADR ٥١)؛ يُقاس "
+            "عليه الوسمُ المغلق (ADR ٥٣)، بصمتُه QAC_POS_DIGEST"),
     Deposit("hukm-reference.tsv", "مرجع محجوب",
             "إطارُ عيّنة الأحكام من المصحف (300 موقعًا ببذرة 20261010؛ الغانم gen_hukm_sample.py، "
             "ADR ٩): يملؤه المالكُ بيده (الجذر، الجنس، القابليّة) فيُقاس عليه الحكم؛ لا رقمَ قبل "

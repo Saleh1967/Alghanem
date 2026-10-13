@@ -34,6 +34,7 @@ from slge.maani import is_zarf, senses_of
 from slge.maani import rank as rank_maani
 from slge.madd import continue_licensed, madd
 from slge.maqayis import attested, rank
+from slge.mughlaq import closed, qism
 from slge.qiraa import harf, hukm_readings, qiraa
 from slge.qiraa import rank as rank_qiraa
 from slge.sawabiq import sawabiq
@@ -97,8 +98,8 @@ def _g4(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
     باسمه."""
 
     ms = tawzi(w)
-    if ms:
-        return Pass("الجداول", ms, "؛ ".join(sorted({m.kind for m in ms})))
+    if ms:  # الوسمُ الثلاثيّ أوّلًا (`Mughlaq.qism`): المغلقُ مفصولٌ عن الاسم والفعل (ADR ٥٣)
+        return Pass("الجداول", ms, qism(w) + ": " + "؛ ".join(sorted({m.kind for m in ms})))
     ils = ilm(w)  # ثمّ العلمُ ولفظُ الجلالة: لفظٌ منفردٌ من الموقَّع (`Alam.ilm_restores`)
     if ils:
         return Pass("الجداول", ils, "؛ ".join(sorted({"علم: " + m.kind for m in ils})))
@@ -131,8 +132,8 @@ def _g5(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
     lifted = sum(q.via is not None for q in rs)
     if lifted:
         notes.append(f"الأصلُ المردود: {lifted}")
-    if harf(w):
-        notes.append("حرفٌ بالموزِّع: لا جذرَ يُحكم عليه")
+    if harf(w) or closed(w):
+        notes.append("مغلقٌ بالموزِّع: لا جذرَ يُحكم عليه")
     return Pass("الجذع", rs, "؛ ".join(notes) if rs else "لا قطعَ من الجداول يضع جذعًا على قالب")
 
 
@@ -179,7 +180,7 @@ def _g7(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
 def _g8(w: Word, ctx: dict[str, Any]) -> Pass | Refusal:
     nxt: Word = ctx.get("next", ())
     hs = rank_qiraa(hukm_readings(w))  # الحرفُ لا وجودَ له من جذر (`harf_no_hukm`)
-    ont = ont_of_reading(hs[0].r) if hs else "حرف" if harf(w) else "—"
+    ont = ont_of_reading(hs[0].r) if hs else "حرف" if harf(w) else "مغلق" if closed(w) else "—"
     return Pass("الجواب", {"الكليّ": kulli(w), "الوضع": wad(w), "الصيغة": sigha(w),
                           "الوجود": ont,
                           "المدود": madd(w, nxt, bool(ctx.get("pause", False)))})

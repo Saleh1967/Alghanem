@@ -65,6 +65,7 @@ EXEMPT_FILES = (
     "tools/deposit_ilal_bab.py",  # يقرأ الكتابَ المختوم ومودَعَ المصحف ويولّد جدولَي أبواب الإعلال
     "tools/gen_ilal_bab_index.py",
     "tools/gen_tawzi_index.py",  # يقرأ الشهادات وMASAQ ويولّد فهرسَ الموزِّع
+    "tools/gen_mughlaq_index.py",  # يقرأ الشهادات وQAC وMASAQ ويولّد فهرسَ الصنف المغلق (ADR ٥٣)
     "tools/deposit_alam.py",  # يقرأ المودَعَ الموقَّع ويولّد جدولَي الأعلام
     "tools/gen_alam_index.py",  # يقرأ الشهادات وMASAQ ويولّد فهرسَ الأعلام
     "tools/deposit_sawabiq.py",  # يقرأ الكتابَ المختوم ومودَعَ المصحف ويولّد جدولَي السوابق

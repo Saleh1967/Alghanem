@@ -177,3 +177,26 @@ def test_lane_context_deposit_is_what_the_pinned_gate_printed() -> None:
     assert "--corpus lane --check tests/data/lane-context-certificates.json.gz" in ci
     d["stream"][7][1] ^= 1
     assert _canonical(d) != LANE_CONTEXT_CERTIFICATES_DIGEST
+
+
+def test_qac_pos_deposit_is_what_the_pinned_gate_printed() -> None:
+    """أقسامُ الكلم في QAC مواقعَ لا كلمات (ADR ٥٣؛ الغانم ADR ٥١): البصمةُ، وعددُ الصفوف، وأنّ كلَّ
+    موقعٍ في تيّار شهادات المصحف، وأنّ CI يعيد توليدَه من البوّابة؛ وطفرةٌ تُلتقط."""
+
+    import gzip
+    import hashlib
+    import json
+
+    from slge.manifest import QAC_POS_DIGEST
+
+    raw = gzip.decompress((DATA / "qac-pos.tsv.gz").read_bytes())
+    assert hashlib.sha256(raw).hexdigest() == QAC_POS_DIGEST
+    rows = raw.decode("utf-8").splitlines()
+    assert rows[0] == "tok\tloc\tsegs\tstem" and len(rows) == 1 + 77401
+    with gzip.open(DATA / "corpus-certificates.json.gz", "rt", encoding="utf-8") as f:
+        n = json.load(f)["tokens"]
+    toks = [int(r.split("\t")[0]) for r in rows[1:]]
+    assert toks == sorted(set(toks)) and toks[0] >= 0 and toks[-1] < n
+    ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    assert "gen_qac_pos.py --check tests/data/qac-pos.tsv.gz" in ci
+    assert hashlib.sha256(raw.replace(b"\tP\n", b"\tN\n", 1)).hexdigest() != QAC_POS_DIGEST

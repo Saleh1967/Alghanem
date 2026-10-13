@@ -1,6 +1,7 @@
 import Slge.Tawzi
 import Slge.Sawabiq
 import Slge.Huruf
+import Slge.Mughlaq
 
 /-!
 # القراءةُ الموحَّدة: الحرفُ أوّلًا، والجذعُ على الصورة وعلى أصلها المردود (ADR ٤٢)
@@ -45,8 +46,10 @@ def restored (w : List SCell) : List Reading :=
 /-- القراءةُ الموحَّدة: الجذعُ على الصورة ثمّ على الأصل المردود. -/
 def qiraa (w : List SCell) : List Reading := (Jidh.jidh w).map (⟨none, ·⟩) ++ restored w
 
-/-- ما يُحكم على جذره: لا شيءَ إن قرأ الموزِّعُ الكلمةَ حرفًا، وإلّا القراءةُ الموحَّدة كلُّها. -/
-def hukmReadings (w : List SCell) : List Reading := if (harf w).isEmpty then qiraa w else []
+/-- ما يُحكم على جذره: لا شيءَ إن قرأ الموزِّعُ الكلمةَ حرفًا أو مغلقًا (`Mughlaq.closed`: ضميرٌ، إشارةٌ،
+استفهامٌ، موصولٌ، مركَّب — ADR ٥٣)، وإلّا القراءةُ الموحَّدة كلُّها. -/
+def hukmReadings (w : List SCell) : List Reading :=
+  if (harf w).isEmpty && (Mughlaq.closed w).isEmpty then qiraa w else []
 
 /-! ## المبرهَن -/
 
@@ -60,9 +63,14 @@ theorem harf_restores {w : List SCell} {m : Tawzi.Mabni} (h : m ∈ harf w) :
 theorem harf_no_hukm {w : List SCell} (h : harf w ≠ []) : hukmReadings w = [] := by
   simp [hukmReadings, List.isEmpty_iff, h]
 
-/-- وما لم يُقرأ حرفًا فقراءاتُ الحكم هي القراءةُ الموحَّدة كلُّها. -/
-theorem hukm_of_not_harf {w : List SCell} (h : harf w = []) : hukmReadings w = qiraa w := by
-  simp [hukmReadings, h]
+/-- ولا جذرَ يُحكم عليه من مغلق: الصنفُ المغلق مفصولٌ عن الاسم والفعل في الحكم (ADR ٥٣). -/
+theorem mughlaq_no_hukm {w : List SCell} (h : Mughlaq.closed w ≠ []) : hukmReadings w = [] := by
+  simp [hukmReadings, List.isEmpty_iff, h]
+
+/-- وما لم يُقرأ حرفًا ولا مغلقًا فقراءاتُ الحكم هي القراءةُ الموحَّدة كلُّها. -/
+theorem hukm_of_not_harf {w : List SCell} (h : harf w = []) (h2 : Mughlaq.closed w = []) :
+    hukmReadings w = qiraa w := by
+  simp [hukmReadings, h, h2]
 
 /-- لا تُحذف قراءةُ جذعٍ على الصورة: كلُّها في القراءة الموحَّدة — لكلّ كلمة. -/
 theorem jidh_sub_qiraa (w : List SCell) : ∀ r ∈ Jidh.jidh w, (⟨none, r⟩ : Reading) ∈ qiraa w := by
@@ -104,7 +112,7 @@ theorem witnesses_harf :
     harf fi ≠ [] ∧ harf lakum ≠ [] ∧ harf ila ≠ [] ∧ harf kataba = [] ∧
     hukmReadings fi = [] ∧ hukmReadings kataba = qiraa kataba := by
   refine ⟨by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel,
-    harf_no_hukm (by decide +kernel), hukm_of_not_harf (by decide +kernel)⟩
+    harf_no_hukm (by decide +kernel), hukm_of_not_harf (by decide +kernel) (by decide +kernel)⟩
 
 /-- فَمْشُوْ: الصورةُ الموصولة قراءةٌ واحدة (فَمْشُ)، والأصلُ المردود بهمزة وصلٍ مكسورة (فَءِمْشُوْ، `liftArid`
 وقاعدةُ الثالث معًا) خمسُ قراءاتٍ كلُّها بسابقة الفعل الموصولة. -/

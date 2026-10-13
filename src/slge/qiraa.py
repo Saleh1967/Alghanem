@@ -16,6 +16,7 @@ from slge.huruf import TABLE as HURUF
 from slge.jidh import Reading as JReading
 from slge.jidh import jidh
 from slge.maqayis import attested
+from slge.mughlaq import closed
 from slge.sawabiq import Reading as SReading
 from slge.sawabiq import sawabiq
 from slge.tawzi import Mabni, tawzi
@@ -60,9 +61,10 @@ def qiraa(w: Word) -> tuple[Reading, ...]:
 
 
 def hukm_readings(w: Word) -> tuple[Reading, ...]:
-    """لا شيءَ إن قرأ الموزِّعُ الكلمةَ حرفًا، وإلّا القراءةُ الموحَّدة كلُّها."""
+    """لا شيءَ إن قرأ الموزِّعُ الكلمةَ حرفًا أو مغلقًا (`Qiraa.mughlaq_no_hukm`، ADR ٥٣)، وإلّا
+    القراءةُ الموحَّدة كلُّها."""
 
-    return () if harf(w) else qiraa(w)
+    return () if harf(w) or closed(w) else qiraa(w)
 
 
 def rank(qs: tuple[Reading, ...]) -> tuple[Reading, ...]:
