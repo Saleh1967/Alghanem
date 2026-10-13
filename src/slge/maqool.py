@@ -13,7 +13,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Final, Literal
 
 from slge.mayaatir_table import KEYS
@@ -21,12 +21,12 @@ from slge.mayaatir_table import KEYS
 Kind = Literal["wujud", "haqiqa"]
 Daraja = Literal["qati", "zanni"]
 Bab = Literal["dawar", "ray_mutanakkir", "tahrif_waqi", "khuruj_mawdu", "tajrid", "taamim",
-              "qiyas_shumuli"]
+              "qiyas_shumuli", "khata"]
 Sabab = Literal["bila_shahid", "shahid_bitaqa"]
 
 ANCHOR: Final[dict[str, str]] = {
     "dawar": "U4", "ray_mutanakkir": "U2", "tahrif_waqi": "U1", "khuruj_mawdu": "U6",
-    "tajrid": "U5", "taamim": "U5", "qiyas_shumuli": "U5",
+    "tajrid": "U5", "taamim": "U5", "qiyas_shumuli": "U5", "khata": "U8",
     "bila_shahid": "U3", "shahid_bitaqa": "U3",
 }
 """مرساةُ كلّ بابٍ وسببٍ: مفتاحُ معياره في الجدول المختوم (`Maqool.anchor`)."""
@@ -169,3 +169,30 @@ def archive(hs: Sequence[Hujja]) -> Archive:
     return Archive(tuple(h for h, j in js if j.tag == "maqool"),
                    tuple(h for h, j in js if j.tag == "la_hukm"),
                    tuple((h, j.value) for h, j in js if j.tag == "ghayr"))
+
+
+# — الجولات (دَينُ D-RATING، على U8: «تبقى فكراً صائباً حتى يتبين خطؤها») —
+
+@dataclass(frozen=True)
+class Jawla:
+    """جولة: شاهدٌ مختومٌ جديد إن وُجد، وهل تبيّن فيها الخطأ."""
+
+    shahid: int | None = None
+    khata: bool = False
+
+
+def run_rounds(h: Hujja, js: Sequence[Jawla], khata: bool = False) -> tuple[Hujja, bool]:
+    """`Maqool.runJ`: الشاهدُ الجديدُ يحلّ محلّ القديم مختومًا، والخطأُ إذا تبيّن لا يزول."""
+
+    for j in js:
+        if j.shahid is not None:
+            h = replace(h, shahid=Shahid("makhtum", j.shahid))
+        khata = khata or j.khata
+    return h, khata
+
+
+def judge_rounds(h: Hujja, js: Sequence[Jawla], khata: bool = False) -> Hukm:
+    """`Maqool.judgeJ ∘ runJ`: ما تبيّن خطؤه بابُه `khata` (U8)، وإلّا حكمُ الحجّة بعد الجولات."""
+
+    h2, k = run_rounds(h, js, khata)
+    return Hukm("ghayr", "khata") if k else judge(h2)

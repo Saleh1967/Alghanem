@@ -1198,3 +1198,16 @@ import Slge
 #print axioms Slge.Maqool.archive_mem
 #print axioms Slge.Maqool.cases_verdicts
 #print axioms Slge.Maqool.cases_archive
+#print axioms Slge.Maqool.stepJ_kind
+#print axioms Slge.Maqool.stepJ_door
+#print axioms Slge.Maqool.runJ_kind
+#print axioms Slge.Maqool.runJ_door
+#print axioms Slge.Maqool.khata_sticks
+#print axioms Slge.Maqool.judgeJ_maqool
+#print axioms Slge.Maqool.zanni_never_qati
+#print axioms Slge.Maqool.runJ_no_witness
+#print axioms Slge.Maqool.rise_needs_witness
+#print axioms Slge.Maqool.runJ_sealed
+#print axioms Slge.Maqool.runJ_khata_false
+#print axioms Slge.Maqool.fall_needs_khata
+#print axioms Slge.Maqool.jawlat_verdicts

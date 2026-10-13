@@ -84,6 +84,7 @@ inductive Bab where
   | tajrid
   | taamim
   | qiyasShumuli
+  | khata
   deriving DecidableEq, Repr
 
 /-- أسبابُ «لا حكم». -/
@@ -108,12 +109,14 @@ def anchor : Bab → String
   | .tajrid => "U5"
   | .taamim => "U5"
   | .qiyasShumuli => "U5"
+  | .khata => "U8"
 
 def Sabab.anchor : Sabab → String
   | .bilaShahid => "U3"
   | .shahidBitaqa => "U3"
 
-def allBab : List Bab := [.dawar, .rayMutanakkir, .tahrifWaqi, .khurujMawdu, .tajrid, .taamim, .qiyasShumuli]
+def allBab : List Bab :=
+  [.dawar, .rayMutanakkir, .tahrifWaqi, .khurujMawdu, .tajrid, .taamim, .qiyasShumuli, .khata]
 
 theorem every_bab_anchored : ∀ b ∈ allBab, anchor b ∈ MayaatirTable.keys := by decide
 
@@ -412,7 +415,7 @@ def tag : Hukm → String
   | .ghayr b => "ghayr," ++ (match b with
       | .dawar => "dawar" | .rayMutanakkir => "ray_mutanakkir" | .tahrifWaqi => "tahrif_waqi"
       | .khurujMawdu => "khuruj_mawdu" | .tajrid => "tajrid" | .taamim => "taamim"
-      | .qiyasShumuli => "qiyas_shumuli")
+      | .qiyasShumuli => "qiyas_shumuli" | .khata => "khata")
   | .laHukm .bilaShahid => "la_hukm,bila_shahid"
   | .laHukm .shahidBitaqa => "la_hukm,shahid_bitaqa"
 
@@ -422,5 +425,124 @@ def rows : List String :=
     let j := judge h
     n ++ "," ++ tag j ++ "," ++
       (match j with | .maqool _ => "U8" | .ghayr b => anchor b | .laHukm r => r.anchor)
+
+/-! ## الجولات (دَينُ D-RATING في الخطّة، على U8): «تبقى فكراً صائباً حتى يتبين خطؤها».
+
+الحكمُ لا يُرفع إلّا بشاهدٍ مختومٍ جديد، ولا يُخفض إلّا بخطأٍ تبيّن؛ والدرجةُ من نوع الدعوى لا من عدد الجولات —
+فالظنّيُّ لا يصير قطعيًّا بكثرة الشواهد (`zanni_never_qati`)، و«لا حكم» لا يصير معقولًا بلا شاهد (`rise_needs_witness`)،
+والمعقولُ لا يسقط بلا خطأٍ تبيّن (`fall_needs_khata`)، وما تبيّن خطؤه لا يعود (`khata_sticks`). -/
+
+/-- جولة: شاهدٌ مختومٌ جديد إن وُجد، وهل تبيّن فيها الخطأ. -/
+structure Jawla where
+  shahid : Option Nat
+  khata : Bool
+  deriving DecidableEq, Repr
+
+/-- الحالُ عبر الجولات: الحجّةُ وهل تبيّن خطؤها. -/
+structure HalJ where
+  hujja : Hujja
+  khata : Bool
+  deriving DecidableEq, Repr
+
+def stepJ (s : HalJ) (j : Jawla) : HalJ :=
+  ⟨match j.shahid with
+    | some i => { s.hujja with shahid := some (.makhtum i) }
+    | none => s.hujja, s.khata || j.khata⟩
+
+def runJ (s : HalJ) (js : List Jawla) : HalJ := js.foldl stepJ s
+
+/-- الحكمُ على الحال: ما تبيّن خطؤه بابُه `khata` (U8)، وإلّا حكمُ الحجّة. -/
+def judgeJ (s : HalJ) : Hukm := if s.khata then .ghayr .khata else judge s.hujja
+
+theorem stepJ_kind (s : HalJ) (j : Jawla) : (stepJ s j).hujja.kind = s.hujja.kind := by
+  unfold stepJ; cases j.shahid <;> rfl
+
+theorem stepJ_door (s : HalJ) (j : Jawla) : door (stepJ s j).hujja = door s.hujja := by
+  unfold stepJ; cases j.shahid with
+  | none => rfl
+  | some i => exact door_indep_shahid s.hujja _
+
+theorem runJ_kind : ∀ (s : HalJ) (js : List Jawla), (runJ s js).hujja.kind = s.hujja.kind
+  | _, [] => rfl
+  | s, j :: js => (runJ_kind (stepJ s j) js).trans (stepJ_kind s j)
+
+theorem runJ_door : ∀ (s : HalJ) (js : List Jawla), door (runJ s js).hujja = door s.hujja
+  | _, [] => rfl
+  | s, j :: js => (runJ_door (stepJ s j) js).trans (stepJ_door s j)
+
+/-- ما تبيّن خطؤه لا يعود. -/
+theorem khata_sticks : ∀ (s : HalJ) (js : List Jawla), s.khata = true → (runJ s js).khata = true
+  | _, [], h => h
+  | s, j :: js, h => khata_sticks (stepJ s j) js (by simp [stepJ, h])
+
+theorem judgeJ_maqool (s : HalJ) (d : Daraja) (h : judgeJ s = .maqool d) :
+    s.khata = false ∧ judge s.hujja = .maqool d := by
+  unfold judgeJ at h; cases hk : s.khata <;> simp_all
+
+/-- **الظنّيُّ لا يصير قطعيًّا بالجولات**: الدرجةُ من نوع الدعوى، والنوعُ ثابت. -/
+theorem zanni_never_qati (s : HalJ) (js : List Jawla) (h : judgeJ s = .maqool .zanni) :
+    judgeJ (runJ s js) ≠ .maqool .qati := by
+  intro h'
+  have h1 := (judge_maqool _ _ (judgeJ_maqool s _ h).2).2.2
+  have h2 := (judge_maqool _ _ (judgeJ_maqool _ _ h').2).2.2
+  rw [runJ_kind] at h2
+  rw [← h2] at h1
+  exact Daraja.noConfusion h1
+
+theorem runJ_no_witness : ∀ (s : HalJ) (js : List Jawla), (∀ j ∈ js, j.shahid = none) →
+    (runJ s js).hujja = s.hujja
+  | _, [], _ => rfl
+  | s, j :: js, h => by
+    have hj : j.shahid = none := h j (List.mem_cons_self ..)
+    have : (stepJ s j).hujja = s.hujja := by simp [stepJ, hj]
+    rw [← this]; exact runJ_no_witness _ js (fun x hx => h x (List.mem_cons_of_mem _ hx))
+
+/-- **«لا حكم» لا يصير معقولًا بلا شاهدٍ جديد.** -/
+theorem rise_needs_witness (s : HalJ) (js : List Jawla) (r : Sabab) (d : Daraja)
+    (h : judge s.hujja = .laHukm r) (hn : ∀ j ∈ js, j.shahid = none) : judgeJ (runJ s js) ≠ .maqool d := by
+  intro h'
+  have := (judgeJ_maqool _ _ h').2
+  rw [runJ_no_witness s js hn, h] at this
+  exact Hukm.noConfusion this
+
+theorem runJ_sealed : ∀ (s : HalJ) (js : List Jawla), (∃ i, s.hujja.shahid = some (.makhtum i)) →
+    ∃ i, (runJ s js).hujja.shahid = some (.makhtum i)
+  | _, [], h => h
+  | s, j :: js, h => by
+    apply runJ_sealed (stepJ s j) js
+    unfold stepJ; cases j.shahid with
+    | none => exact h
+    | some i => exact ⟨i, rfl⟩
+
+theorem runJ_khata_false : ∀ (s : HalJ) (js : List Jawla), s.khata = false → (∀ j ∈ js, j.khata = false) →
+    (runJ s js).khata = false
+  | _, [], h, _ => h
+  | s, j :: js, h, hj => by
+    apply runJ_khata_false (stepJ s j) js _ (fun x hx => hj x (List.mem_cons_of_mem _ hx))
+    simp [stepJ, h, hj j (List.mem_cons_self ..)]
+
+/-- **المعقولُ لا يسقط بلا خطأٍ تبيّن**: ولا يتغيّر درجةً. -/
+theorem fall_needs_khata (s : HalJ) (js : List Jawla) (d : Daraja) (h : judgeJ s = .maqool d)
+    (hn : ∀ j ∈ js, j.khata = false) : judgeJ (runJ s js) = .maqool d := by
+  obtain ⟨hk, hj⟩ := judgeJ_maqool s d h
+  obtain ⟨hd, hs, hdk⟩ := judge_maqool _ _ hj
+  obtain ⟨i, hi⟩ := runJ_sealed s js hs
+  unfold judgeJ judge
+  rw [runJ_khata_false s js hk hn, runJ_door, hd]
+  simp only [Bool.false_eq_true, ↓reduceIte, hi, tailHukm, runJ_kind, hdk]
+
+/-- شواهدُ الجولات: (الحالُ الأولى، الجولات) معلومةُ الحكم سلفًا. -/
+def jawlatCases : List (String × HalJ × List Jawla) := [
+  ("j1_zanni_many_witnesses", ⟨{ base with kind := .haqiqa }, false⟩, [⟨some 38, false⟩, ⟨some 241, false⟩]),
+  ("j2_lahukm_then_witness", ⟨{ base with shahid := none }, false⟩, [⟨some 32, false⟩]),
+  ("j3_lahukm_no_witness", ⟨{ base with shahid := none }, false⟩, [⟨none, false⟩, ⟨none, false⟩]),
+  ("j4_maqool_then_khata", ⟨base, false⟩, [⟨none, true⟩]),
+  ("j5_khata_then_witness", ⟨base, false⟩, [⟨none, true⟩, ⟨some 71, false⟩]),
+  ("j6_door_survives_witness", ⟨{ base with sabiqa := [⟨2, true, []⟩] }, false⟩, [⟨some 37, false⟩])
+]
+
+theorem jawlat_verdicts : jawlatCases.map (fun c => judgeJ (runJ c.2.1 c.2.2)) = [
+    .maqool .zanni, .maqool .qati, .laHukm .bilaShahid, .ghayr .khata, .ghayr .khata,
+    .ghayr .rayMutanakkir] := by decide
 
 end Slge.Maqool

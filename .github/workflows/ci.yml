@@ -59,6 +59,8 @@ jobs:
         run: python tools/deposit_nabhani.py --check
       - name: the criteria tables are what the sealed Nabhani books say (ADR 49)
         run: python tools/deposit_mayaatir.py --check
+      - name: the qabiliyya measurement on the Mukhassas reference is what the tool computes (ADR 50)
+        run: python tools/gen_hukm_mukhassas.py --check
       - name: the salsala tables (ranks of the universal signified) are what the sealed Nabhani texts anchor
         run: python tools/deposit_salsala.py --check
       - name: the ghazali tables (conditional forms by line, second opinion) are what the sealed texts anchor

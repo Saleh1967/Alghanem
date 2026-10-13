@@ -23,12 +23,14 @@ from slge.maqool import (
     Bitaqa,
     Hujja,
     Hukm,
+    Jawla,
     Sabiqa,
     Shahid,
     admit,
     archive,
     door,
     judge,
+    judge_rounds,
 )
 from slge.mayaatir_table import ABSENT, CRITERIA
 
@@ -164,3 +166,44 @@ def test_zur_folds_without_loss() -> None:
     assert sorted(map(id, [*a.maqool, *a.muajjal, *(h for h, _ in a.zur)])) == sorted(map(id, hs))
     for h, b in a.zur:
         assert judge(h) == Hukm("ghayr", b)
+
+
+ROUNDS: tuple[tuple[str, Hujja, tuple[Jawla, ...], Hukm], ...] = (
+    ("j1_zanni_many_witnesses", replace(BASE, kind="haqiqa"), (Jawla(38), Jawla(241)),
+     Hukm("maqool", "zanni")),
+    ("j2_lahukm_then_witness", replace(BASE, shahid=None), (Jawla(32),), Hukm("maqool", "qati")),
+    ("j3_lahukm_no_witness", replace(BASE, shahid=None), (Jawla(), Jawla()),
+     Hukm("la_hukm", "bila_shahid")),
+    ("j4_maqool_then_khata", BASE, (Jawla(khata=True),), Hukm("ghayr", "khata")),
+    ("j5_khata_then_witness", BASE, (Jawla(khata=True), Jawla(71)), Hukm("ghayr", "khata")),
+    ("j6_door_survives_witness", replace(BASE, sabiqa=(Sabiqa(2, ray=True),)), (Jawla(37),),
+     Hukm("ghayr", "ray_mutanakkir")),
+)
+"""الجولاتُ نفسُها في `Maqool.jawlatCases` وأحكامُها في `jawlat_verdicts`؛ وهنا الأحكامُ باليد."""
+
+
+def test_rounds_by_hand() -> None:
+    for name, h, js, expected in ROUNDS:
+        assert judge_rounds(h, js) == expected, name
+
+
+def _raise_after_two(h: Hujja, js: tuple[Jawla, ...]) -> Hukm:
+    """`MUTANT_ZANNI_RAISED`: شاهدان جديدان يرفعان الظنّيَّ قطعيًّا."""
+
+    j = judge_rounds(h, js)
+    witnesses = sum(x.shahid is not None for x in js)
+    return Hukm("maqool", "qati") if j == Hukm("maqool", "zanni") and witnesses >= 2 else j
+
+
+def _khata_forgotten(h: Hujja, js: tuple[Jawla, ...]) -> Hukm:
+    """`MUTANT_KHATA_FORGOTTEN`: الشاهدُ الجديد يمحو الخطأ الذي تبيّن قبله."""
+
+    last_witness = max((i for i, x in enumerate(js) if x.shahid is not None), default=-1)
+    return judge_rounds(h, js[last_witness + 1:] if last_witness >= 0 else js) \
+        if any(x.khata for x in js[:last_witness + 1]) else judge_rounds(h, js)
+
+
+@pytest.mark.parametrize("mutant", [_raise_after_two, _khata_forgotten],
+                         ids=["MUTANT_ZANNI_RAISED", "MUTANT_KHATA_FORGOTTEN"])
+def test_rounds_catch_named_mutants(mutant: Callable[[Hujja, tuple[Jawla, ...]], Hukm]) -> None:
+    assert any(mutant(h, js) != expected for _, h, js, expected in ROUNDS)

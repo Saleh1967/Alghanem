@@ -1,0 +1,35 @@
+{
+  "baseline": {
+    "lift_points": 62.81,
+    "mean_chance": 0.0394
+  },
+  "jins": "JINS_NOT_JUDGED_UNSIGNED",
+  "pairs": {
+    "all": 453,
+    "matched": 442,
+    "node_unmatched": 11,
+    "rate": 0.6674,
+    "true": 295,
+    "wilson95": [
+      0.6222,
+      0.7097
+    ]
+  },
+  "positions": {
+    "matched": 20527,
+    "rate": 0.5904,
+    "true": 12119
+  },
+  "prereg": "docs/hukm/PREREG-mukhassas.md",
+  "reference": {
+    "alghanem": "556d95c",
+    "membership_sha256": "96c22bbea3cc13421e613a2334f43249fbe62c5d69ba3851ab55ebcfee8179db",
+    "nodes": 2314,
+    "nodes_sha256": "0cfd449b23c933e716add5d923bff914ffd94714f83daaa4fcd86d043736d718"
+  },
+  "witness_nodes": {
+    "ambiguous": 6,
+    "distinct": 393,
+    "matched": 382
+  }
+}

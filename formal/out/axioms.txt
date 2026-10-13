@@ -1193,3 +1193,16 @@
 'Slge.Maqool.archive_mem' depends on axioms: [propext, Quot.sound]
 'Slge.Maqool.cases_verdicts' does not depend on any axioms
 'Slge.Maqool.cases_archive' depends on axioms: [propext]
+'Slge.Maqool.stepJ_kind' does not depend on any axioms
+'Slge.Maqool.stepJ_door' does not depend on any axioms
+'Slge.Maqool.runJ_kind' does not depend on any axioms
+'Slge.Maqool.runJ_door' does not depend on any axioms
+'Slge.Maqool.khata_sticks' depends on axioms: [propext]
+'Slge.Maqool.judgeJ_maqool' depends on axioms: [propext]
+'Slge.Maqool.zanni_never_qati' depends on axioms: [propext]
+'Slge.Maqool.runJ_no_witness' depends on axioms: [propext]
+'Slge.Maqool.rise_needs_witness' depends on axioms: [propext]
+'Slge.Maqool.runJ_sealed' does not depend on any axioms
+'Slge.Maqool.runJ_khata_false' depends on axioms: [propext]
+'Slge.Maqool.fall_needs_khata' depends on axioms: [propext]
+'Slge.Maqool.jawlat_verdicts' does not depend on any axioms
