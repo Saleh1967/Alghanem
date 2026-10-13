@@ -1,4 +1,5 @@
-"""أداةُ القياس المسجَّل (ADR ٥٨): الحكمُ على الموقع وقاعدةُ القرار بتوقّعاتٍ باليد من التسجيل المسبق، وطفرتان."""
+"""أداةُ القياس المسجَّل (ADR ٥٨): الحكمُ على الموقع وقاعدةُ القرار بتوقّعاتٍ باليد من التسجيل المسبق،
+وطفرتان."""
 
 from __future__ import annotations
 
@@ -50,7 +51,7 @@ def test_mutant_threshold_swapped_rejected() -> None:
     """THRESHOLD_SWAPPED: عتبتا الجامع والمانع مبدَّلتان — يحكم على (0.92، 0.96) بغير ما سجّل."""
 
     def mutant(m1: float, m2: float) -> str:
-        return MOD.verdict(m2, m1)
+        return str(MOD.verdict(m2, m1))
 
     assert mutant(0.92, 0.96) != MOD.verdict(0.92, 0.96)
 

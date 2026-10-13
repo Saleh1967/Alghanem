@@ -1,7 +1,8 @@
-"""قياسُ وظائف المغلق بأبواب الحاجة على وسوم QAC، بالتسجيل المسبق `docs/haja/PREREG.md` (ADR ٥٨).
+"""قياسُ وظائف المغلق بأبواب الحاجة على وسوم QAC، بالتسجيل المسبق `docs/haja/PREREG.md`
+(ADR ٥٨).
 
-لكلّ موقعٍ محاذًى في `qac-pos.tsv.gz`: أبوابُ قراءاته المغلقة (`haja.core_babs` لكلّ نواةٍ من `mughlaq.closed`) مقابلَ
-وسم جذعه في QAC بالتعيين المسجَّل (`TAGS`). يكتب `docs/haja/qac-result.json`، وبـ`--check` يعيد الحساب ويقارن.
+لكلّ موقعٍ محاذًى في `qac-pos.tsv.gz`: أبوابُ قراءاته المغلقة (`haja.core_babs` لكلّ نواةٍ من
+`mughlaq.closed`) مقابلَ وسم جذعه في QAC بالتعيين المسجَّل (`TAGS`). يكتب `docs/haja/qac-result.json`، وبـ`--check` يعيد الحساب ويقارن.
 لا يُحرَّر الناتجُ باليد.
 """
 
@@ -109,11 +110,14 @@ def measure() -> dict[str, Any]:
             if not hit:
                 wrong[f"{gold}|{'+'.join(babs)}"] += 1
     m1, m2, m3 = wilson(k1, n_gold), wilson(k2, n_has), wilson(k3, n_gold)
+    def row(k: int, n: int, ci: tuple[float, float]) -> dict[str, Any]:
+        return {"k": k, "n": n, "p": round(k / n, 6), "ci": [round(x, 6) for x in ci]}
+
     return {
         "prereg": "docs/haja/PREREG.md",
-        "m1_jami": {"k": k1, "n": n_gold, "p": round(k1 / n_gold, 6), "ci": [round(x, 6) for x in m1]},
-        "m2_mani": {"k": k2, "n": n_has, "p": round(k2 / n_has, 6), "ci": [round(x, 6) for x in m2]},
-        "m3_hasm": {"k": k3, "n": n_gold, "p": round(k3 / n_gold, 6), "ci": [round(x, 6) for x in m3]},
+        "m1_jami": row(k1, n_gold, m1),
+        "m2_mani": row(k2, n_has, m2),
+        "m3_hasm": row(k3, n_gold, m3),
         "verdict": verdict(m1[0], m2[0]),
         "gaps_jami": dict(miss.most_common(10)),
         "gaps_mani": dict(wrong.most_common(10)),
