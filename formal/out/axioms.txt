@@ -1206,3 +1206,8 @@
 'Slge.Maqool.runJ_khata_false' depends on axioms: [propext]
 'Slge.Maqool.fall_needs_khata' depends on axioms: [propext]
 'Slge.Maqool.jawlat_verdicts' does not depend on any axioms
+'Slge.Tawzi.ok_variant' depends on axioms: [propext]
+'Slge.Tawzi.tawzi_closed' depends on axioms: [propext, Quot.sound]
+'Slge.Tawzi.sufExtra_named' depends on axioms: [propext]
+'Slge.Tawzi.witness_rules' depends on axioms: [propext]
+'Slge.Qiraa.harf_base' depends on axioms: [propext]

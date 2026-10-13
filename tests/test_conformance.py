@@ -1290,7 +1290,8 @@ def test_hasm_matches_lean() -> None:
 
 
 def test_tawzi_matches_lean() -> None:
-    """جدولُ الموزِّع بلا تكرار، والحواملُ، وقراءاتُ ستّ كلمات (سوابق|المبنيّ|الصورة|اللاحقة) = `Tawzi`."""
+    """جدولُ الموزِّع بلا تكرار، والحواملُ، وقراءاتُ إحدى عشرةَ كلمةً
+    (ستٌّ وشواهدُ قواعد ADR ٥٢ الخمسة) (سوابق|المبنيّ|الصورة|اللاحقة) = `Tawzi`."""
 
     from slge.tawzi import HOSTS, TABLE, tawzi
 
@@ -1298,6 +1299,7 @@ def test_tawzi_matches_lean() -> None:
     t = next(r for r in rows if r[0] == "table")
     assert int(t[2]) == len(TABLE) and int(t[3]) == len(HOSTS)
     words = {r[1]: tuple(CELLS[int(i)] for i in r[2].split("-")) for r in rows if r[0] == "count"}
+    assert len(words) == 11
     for name, w in words.items():
         lean = {r[3] for r in rows if r[0] == "word" and r[1] == name}
         def k(x: tuple[tuple[str, str], ...]) -> str:

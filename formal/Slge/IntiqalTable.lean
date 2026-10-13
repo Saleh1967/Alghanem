@@ -88,6 +88,10 @@ def registry : List (String × String × String × Nat) := [
   ("talil", "apply", "", 2),
   ("tawabi", "tawkid", "Slge.Tawabi.tawkid_words_licensed", 0),
   ("tawzi", "alif_to_ya", "", 2),
+  ("tawzi", "mim_damma", "Slge.Tawzi.sufExtra_named", 1),
+  ("tawzi", "mim_kasra", "Slge.Tawzi.sufExtra_named", 1),
+  ("tawzi", "ya_sakina", "Slge.Tawzi.sufExtra_named", 1),
+  ("tawzi", "wasl_drop", "Slge.Tawzi.witness_rules", 1),
   ("wasl", "drop_wasl", "Slge.Wasl.wasl_drops", 0),
   ("wasl", "istifham_verb", "Slge.Wasl.istifhamVerb_licensed", 0),
   ("zaman", "raf_tanwin", "Slge.Zaman.hukm_rafTanwin", 1),
@@ -100,6 +104,6 @@ def registry : List (String × String × String × Nat) := [
   ("zuruf", "qat", "Slge.Zuruf.hukm_qat", 1)
 ]
 
-theorem registry_length : registry.length = 90 := by rfl
+theorem registry_length : registry.length = 94 := by rfl
 
 end Slge.IntiqalTable

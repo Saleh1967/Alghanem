@@ -18,7 +18,7 @@ from slge.jidh import jidh
 from slge.maqayis import attested
 from slge.sawabiq import Reading as SReading
 from slge.sawabiq import sawabiq
-from slge.tawzi import Mabni, tawzi
+from slge.tawzi import Mabni, is_base, tawzi
 
 __all__ = ["HURUF_CELLS", "Reading", "harf", "hukm_readings", "lifted", "qiraa", "rank", "restored"]
 
@@ -28,9 +28,10 @@ HURUF_CELLS: Final[frozenset[Word]] = frozenset(h.cells for h in HURUF)
 
 
 def harf(w: Word) -> tuple[Mabni, ...]:
-    """قراءاتُ الموزِّع التي نواتُها من حروف المعاني."""
+    """قراءاتُ الموزِّع التي نواتُها من حروف المعاني، بلا قواعد ADR ٥٢ (`is_base`): التسجيلُ المسبق
+    هناك لا يمسّ قراءاتِ الحكم (`Qiraa.harf`، `Tawzi.base`)."""
 
-    return tuple(m for m in tawzi(w) if m.core in HURUF_CELLS)
+    return tuple(m for m in tawzi(w) if m.core in HURUF_CELLS and is_base(m))
 
 
 @dataclass(frozen=True, slots=True)

@@ -1211,3 +1211,8 @@ import Slge
 #print axioms Slge.Maqool.runJ_khata_false
 #print axioms Slge.Maqool.fall_needs_khata
 #print axioms Slge.Maqool.jawlat_verdicts
+#print axioms Slge.Tawzi.ok_variant
+#print axioms Slge.Tawzi.tawzi_closed
+#print axioms Slge.Tawzi.sufExtra_named
+#print axioms Slge.Tawzi.witness_rules
+#print axioms Slge.Qiraa.harf_base

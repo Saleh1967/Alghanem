@@ -21,7 +21,8 @@ def test_sealed_sources_match_their_hash_and_carry_a_licence() -> None:
                                          "openiti-ghazali-mustasfa.txt.gz",
                                          "openiti-ghazali-mihakk.txt.gz",
                                          "openiti-ghazali-micyar.txt.gz",
-                                         "openiti-majaz-quran.txt.gz"]
+                                         "openiti-majaz-quran.txt.gz",
+                                         "openiti-ibn-aqil-alfiyya.txt.gz"]
     for d in SEALED:
         raw = gzip.decompress((DATA / d.path).read_bytes())
         assert hashlib.sha256(raw).hexdigest() == d.sha256, d.path

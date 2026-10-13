@@ -53,9 +53,46 @@ def junction (core : List SCell) : List (List SCell) :=
     else []
   | [] => []
 
+/-- `MIM_DAMMA` (س18109–18110: «لا يكسرها إذا كانت بعدها ألف وصل ولكن يضمها»): ميمُ الجمع الساكنة بعد ضمٍّ
+أو كسرٍ مضمومةً في الوصل (هُمْ ← هُمُ، أَنْتُمْ ← أَنْتُمُ)؛ وإلّا كما هو. -/
+def mimDamma (w : List SCell) : List SCell :=
+  match w.reverse with
+  | a :: p :: rest =>
+    if a == c 24 3 && (p.state.val == 2 || p.state.val == 1) then (c 24 2 :: p :: rest).reverse else w
+  | _ => w
+
+/-- `WASL_DROP` (س17527: «الألفات إذا كان قبلها كلام حذفت»): همزةُ وصل «الـ» أوّلَ المبنيّ تسقط بعد سابقة
+(الَّذِينَ ← لَّذِينَ في وَلِلَّذِينَ)؛ وإلّا كما هو. -/
+def waslDrop (w : List SCell) : List SCell :=
+  match w with
+  | a :: b :: rest => if a == c 0 0 && b == c 23 3 then b :: rest else w
+  | _ => w
+
+/-- `MIM_KASRA` (س18118): ميمُ هِمْ مكسورةً؛ وإلّا كما هو. -/
+def mimKasra (w : List SCell) : List SCell :=
+  match w.reverse with
+  | a :: p :: rest => if a == c 24 3 && p.state.val == 1 then (c 24 1 :: p :: rest).reverse else w
+  | _ => w
+
+/-- `YA_SAKINA` (س4456): ياءُ المتكلّم المفتوحة ساكنةً؛ وإلّا كما هو. -/
+def yaSakina (w : List SCell) : List SCell := if w == [c 28 0] then [c 28 3] else w
+
+/-- «مَا» تُجعل مع الحرف قبلها كلمةً واحدة. -/
+def ma : List SCell := [c 24 0, c 1 3]
+
+/-- الحروفُ المنفصلة التي تُجعل «مَا» معها كلمةً (`MA_COMPOUND`، س5825–5826: «جعل بعد مع ما بمنزلة حرف
+واحد»): حروفُ `Rawabit` غيرُ المتّصلة. -/
+def maHosts : List (List SCell) := (Rawabit.particles.filter (fun p => !p.proclitic)).map (·.cells)
+
 /-- صورُ المبنيّ الجائزة في الكلمة: بلاحقةٍ (كما هو، ألفُه ياءً، لامُه مفتوحة) وبدونها (كما هو، آخرُه
-لالتقاء الساكنين). -/
-def variants (core suf : List SCell) : List (List SCell) :=
+لالتقاء الساكنين، ميمُ جمعه مضمومة، والحرفُ مع «مَا»)؛ وبعد سابقةٍ همزةُ وصله ساقطة. -/
+def variants (wasl : Bool) (core suf : List SCell) : List (List SCell) :=
+  (if suf.isEmpty then
+      core :: junction core ++ [mimDamma core] ++ (if maHosts.contains core then [core ++ ma] else [])
+    else [core, alifToYa core, lamFatha core]) ++ (if wasl then [waslDrop core] else [])
+
+/-- الصورُ قبل قواعد ADR ٥٢. -/
+def variants0 (core suf : List SCell) : List (List SCell) :=
   if suf.isEmpty then core :: junction core else [core, alifToYa core, lamFatha core]
 
 /-- المبنيّاتُ الجائزة مع لاحقةٍ أو بدونها: الحاملُ لا يُقرأ وحدَه. -/
@@ -69,13 +106,23 @@ structure Mabni where
   suf : List SCell
   deriving DecidableEq, Repr
 
+/-- قراءةٌ بلا قاعدةٍ من قواعد ADR ٥٢: صورتُها من صور ما قبلها ولاحقتُها من جدول الضمائر أو لا لاحقة
+(مرآتُها `tawzi.is_base`). -/
+def base (m : Mabni) : Bool :=
+  (variants0 m.core m.suf).contains m.surface && (m.suf.isEmpty || Filiyya.objectSuffixes.contains m.suf)
+
 /-- الردُّ: السوابقُ ثمّ الصورةُ ثمّ اللاحقة. -/
 def restore (m : Mabni) : List SCell := m.pre.flatten ++ m.surface ++ m.suf
 
 def pres : List (List (List SCell)) :=
   [[]] ++ Jidh.proclitics.map ([·]) ++ (Jidh.proclitics.flatMap fun p => Jidh.proclitics.map fun q => [p, q])
 
-def sufs : List (List SCell) := [] :: Filiyya.objectSuffixes
+/-- لواحقُ الضمير بقواعدها المسمّاة: هُمُ كُمُ هِمُ (`MIM_DAMMA`)، هِمِ (`MIM_KASRA`، س18118: «ومن قال عليهم
+فالأصل عنده في الوصل عليهمي جاء بالكسرة»)، ويْ (`YA_SAKINA`، س4456: «والياء في غلامي وبى»). -/
+def sufExtra : List (List SCell) :=
+  [[c 26 2, c 24 2], [c 22 2, c 24 2], [c 26 1, c 24 2], [c 26 1, c 24 1], [c 28 3]]
+
+def sufs : List (List SCell) := [] :: Filiyya.objectSuffixes ++ sufExtra
 
 /-- الصورةُ: ما بين السوابق واللاحقة. -/
 def surfaceOf (w : List SCell) (pre : List (List SCell)) (suf : List SCell) : List SCell :=
@@ -84,7 +131,7 @@ def surfaceOf (w : List SCell) (pre : List (List SCell)) (suf : List SCell) : Li
 /-- هل تقرأ (السوابقُ، المبنيُّ، اللاحقةُ) الكلمةَ؟ -/
 def ok (w : List SCell) (pre : List (List SCell)) (core suf : List SCell) : Bool :=
   pre.flatten ++ surfaceOf w pre suf ++ suf == w && surfaceOf w pre suf != [] &&
-    (variants core suf).contains (surfaceOf w pre suf)
+    (variants (!pre.isEmpty) core suf).contains (surfaceOf w pre suf)
 
 def readAt (w : List SCell) (pre : List (List SCell)) (core suf : List SCell) : Option Mabni :=
   if ok w pre core suf then some ⟨pre, core, surfaceOf w pre suf, suf⟩ else none
@@ -101,14 +148,21 @@ theorem ok_restore {w : List SCell} {pre : List (List SCell)} {core suf : List S
   simp only [Bool.and_eq_true, beq_iff_eq] at h
   exact h.1.1
 
+theorem ok_variant {w : List SCell} {pre : List (List SCell)} {core suf : List SCell}
+    (h : ok w pre core suf = true) : (variants (!pre.isEmpty) core suf).contains (surfaceOf w pre suf) = true := by
+  unfold ok at h
+  simp only [Bool.and_eq_true] at h
+  exact h.2
+
 theorem readAt_some {w : List SCell} {pre : List (List SCell)} {core suf : List SCell} {m : Mabni}
     (h : readAt w pre core suf = some m) :
-    restore m = w ∧ m.pre = pre ∧ m.core = core ∧ m.suf = suf := by
+    restore m = w ∧ m.pre = pre ∧ m.core = core ∧ m.suf = suf ∧
+      (variants (!pre.isEmpty) core suf).contains m.surface = true := by
   unfold readAt at h
   split at h
   · rename_i hc
     cases h
-    exact ⟨ok_restore hc, rfl, rfl, rfl⟩
+    exact ⟨ok_restore hc, rfl, rfl, rfl, ok_variant hc⟩
   · exact absurd h (by simp)
 
 theorem tawzi_spec {w : List SCell} {m : Mabni} (h : m ∈ tawzi w) :
@@ -117,7 +171,7 @@ theorem tawzi_spec {w : List SCell} {m : Mabni} (h : m ∈ tawzi w) :
   obtain ⟨pre, hpre, h⟩ := List.mem_flatMap.1 h
   obtain ⟨suf, hsuf, h⟩ := List.mem_flatMap.1 h
   obtain ⟨core, hcore, h⟩ := List.mem_filterMap.1 h
-  obtain ⟨hr, hp, hc, hs⟩ := readAt_some h
+  obtain ⟨hr, hp, hc, hs, _⟩ := readAt_some h
   exact ⟨hr, hp ▸ (List.mem_filter.1 hpre).1, hs ▸ hc ▸ hcore, hs ▸ (List.mem_filter.1 hsuf).1⟩
 
 /-- كلُّ قراءةٍ تُردّ إلى الكلمة بعينها. -/
@@ -147,6 +201,28 @@ theorem tawzi_host_suf {w : List SCell} {m : Mabni} (h : m ∈ tawzi w) (hc : m.
 theorem tawzi_suf_mem {w : List SCell} {m : Mabni} (h : m ∈ tawzi w) : m.suf ∈ sufs :=
   (tawzi_spec h).2.2.2
 
+/-- **الإغلاق**: كلُّ قراءةٍ تُردّ بعينها، وسوابقُها ومبنيُّها ولاحقتُها من جداولَ منتهية، وصورتُها في الكلمة
+واحدةٌ من صوره بالقواعد المسمّاة — فلا جزءَ في القراءة من خارج المودَع ولا تعديلَ بلا اسم. -/
+theorem tawzi_closed {w : List SCell} {m : Mabni} (h : m ∈ tawzi w) :
+    restore m = w ∧ m.pre ∈ pres ∧ m.core ∈ table ++ hosts ∧ m.suf ∈ sufs ∧
+      (variants (!m.pre.isEmpty) m.core m.suf).contains m.surface = true := by
+  unfold tawzi at h
+  obtain ⟨pre, hpre, h⟩ := List.mem_flatMap.1 h
+  obtain ⟨suf, hsuf, h⟩ := List.mem_flatMap.1 h
+  obtain ⟨core, hcore, h⟩ := List.mem_filterMap.1 h
+  obtain ⟨hr, hp, hc, hs, hv⟩ := readAt_some h
+  refine ⟨hr, hp ▸ (List.mem_filter.1 hpre).1, cores_sub _ _ (hs ▸ hc ▸ hcore),
+    hs ▸ (List.mem_filter.1 hsuf).1, ?_⟩
+  rw [hp, hc, hs]; exact hv
+
+/-- لواحقُ القواعد الخمس هي قواعدُها على لواحق الجدول بعينها: هُمْ كُمْ هِمْ يَ من `objectSuffixes`. -/
+theorem sufExtra_named :
+    sufExtra = [mimDamma [c 26 2, c 24 3], mimDamma [c 22 2, c 24 3], mimDamma [c 26 1, c 24 3],
+      mimKasra [c 26 1, c 24 3], yaSakina [c 28 0]] ∧
+    [[c 26 2, c 24 3], [c 22 2, c 24 3], [c 26 1, c 24 3], [c 28 0]].all
+      (Filiyya.objectSuffixes.contains ·) = true := by
+  decide +kernel
+
 /-! ## شواهد على المودَع -/
 
 def alayhim : List SCell := [c 18 0, c 23 0, c 28 3, c 26 1, c 24 3]      -- عَلَيْهِمْ
@@ -156,6 +232,12 @@ def mina : List SCell := [c 24 1, c 25 0]                                  -- م
 def bihi : List SCell := [c 2 1, c 26 1]                                   -- بِهِ
 def waidha : List SCell := [c 27 0, c 0 1, c 9 0, c 1 3]                    -- وَإِذَا
 def kataba : List SCell := [c 22 0, c 3 0, c 2 0]                           -- كَتَبَ
+def lahumu : List SCell := [c 23 0, c 26 2, c 24 2]                        -- لَهُمُ
+def alayhimu : List SCell := [c 18 0, c 23 0, c 28 3, c 26 1, c 24 2]      -- عَلَيْهِمُ
+def li : List SCell := [c 23 1, c 28 3]                                    -- لِي
+def walilladhina : List SCell :=
+  [c 27 0, c 23 1, c 23 3, c 23 0, c 9 1, c 28 3, c 25 0]                  -- وَلِلَّذِينَ
+def fima : List SCell := [c 20 1, c 28 3, c 24 0, c 1 3]                   -- فِيمَا
 
 /-- عَلَيْهِمْ = عَلَى (ألفُه ياءً) + هِمْ. -/
 theorem witness_alayhim :
@@ -177,5 +259,15 @@ theorem witness_particles :
 
 /-- كَتَبَ ليس مبنيًّا، وبِ وحدَها حاملٌ لا يُقرأ. -/
 theorem witness_none : tawzi kataba = [] ∧ tawzi [c 2 1] = [] := by decide +kernel
+
+/-- القواعدُ الخمس على المودَع: لَهُمُ (لِ مفتوحةً + هُمُ)، عَلَيْهِمُ (عَلَى ياءً + هِمُ)، لِي (لِ + يْ)،
+وَلِلَّذِينَ (وَ لِ + الَّذِينَ بلا همزة الوصل)، فِيمَا (فِي + مَا). -/
+theorem witness_rules :
+    (tawzi lahumu).any (fun m => m.core == [c 23 1] && m.suf == [c 26 2, c 24 2]) = true ∧
+    (tawzi alayhimu).any (fun m => m.core == ala && m.suf == [c 26 1, c 24 2]) = true ∧
+    (tawzi li).any (fun m => m.core == [c 23 1] && m.suf == [c 28 3]) = true ∧
+    (tawzi walilladhina).any (fun m => m.pre == [[c 27 0], [c 23 1]] && m.core.length == 6) = true ∧
+    (tawzi fima).any (fun m => m.core == [c 20 1, c 28 3] && m.suf == []) = true := by
+  decide +kernel
 
 end Slge.Tawzi

@@ -26,7 +26,7 @@ def hurufCells : List (List SCell) := Huruf.table.map (·.cells)
 
 /-- قراءاتُ الموزِّع التي نواتُها من حروف المعاني. -/
 def harf (w : List SCell) : List Tawzi.Mabni :=
-  (Tawzi.tawzi w).filter fun m => hurufCells.contains m.core
+  (Tawzi.tawzi w).filter fun m => hurufCells.contains m.core && Tawzi.base m
 
 /-- قراءةٌ موحَّدة: قراءةُ الجذع، وقراءةُ السابقة التي رُدّ بها الأصلُ إن كانت. -/
 structure Reading where
@@ -53,8 +53,15 @@ def hukmReadings (w : List SCell) : List Reading := if (harf w).isEmpty then qir
 /-- قراءةُ الحرف تُردّ إلى الكلمة بعينها ونواتُها من حروف المعاني. -/
 theorem harf_restores {w : List SCell} {m : Tawzi.Mabni} (h : m ∈ harf w) :
     Tawzi.restore m = w ∧ m.core ∈ hurufCells := by
-  simp only [harf, List.mem_filter, List.contains_iff_mem] at h
-  exact ⟨Tawzi.tawzi_restores h.1, h.2⟩
+  simp only [harf, List.mem_filter, Bool.and_eq_true, List.contains_iff_mem] at h
+  exact ⟨Tawzi.tawzi_restores h.1, h.2.1⟩
+
+/-- قراءاتُ الحكم لا ترى قواعدَ ADR ٥٢: كلُّ قراءة حرفٍ بلا قاعدة. -/
+theorem harf_base {w : List SCell} {m : Tawzi.Mabni} (h : m ∈ harf w) : Tawzi.base m = true := by
+  unfold harf at h
+  have := (List.mem_filter.1 h).2
+  simp only [Bool.and_eq_true] at this
+  exact this.2
 
 /-- لا جذرَ يُحكم عليه من حرف: ما قرأه الموزِّعُ حرفًا فلا قراءةَ للحكم. -/
 theorem harf_no_hukm {w : List SCell} (h : harf w ≠ []) : hukmReadings w = [] := by

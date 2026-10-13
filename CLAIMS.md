@@ -32,6 +32,7 @@
 | `mukhassas-ref-membership.tsv` | مرجع محجوب | `96c22bbea3cc13421e613a2334f43249fbe62c5d69ba3851ab55ebcfee8179db` |
 | `hukm-reference.tsv` | مرجع محجوب | `93053415cff2b393147b654214c80af1a4494bf056304cdaa4a03e846170411c` |
 | `openiti-majaz-quran.txt.gz` | مرجع محجوب | `432dae05748f2f972b3238e56dd0c56e72b10f0c3900ee8da1a8cca812b2fc88` |
+| `openiti-ibn-aqil-alfiyya.txt.gz` | وضع | `661e43ea265eca8c72b9e4ab7a46cd9182b34e834105b595241bc7787b471f09` |
 | `masaq-adad.json` | مرجع محجوب | `9018b3f445f65bc23799f0bee3cda1ab1fe3a1a0a0ab7e67e6d85406e77cd822` |
 | `masaq-fil.json.gz` | مرجع محجوب | `61ed093595d72dc3b144b1ce1baf5f9c358f17ceeda765378a5198e86546060c` |
 | `masaq-filiyya.json.gz` | مرجع محجوب | `830834cedf1069f581c6e7c5028a3874e610b48568205031140657624548ad08` |
@@ -259,7 +260,7 @@
 
 ### `tools/gen_coverage_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`. بصمةُ المخرَج: `c90570af6581f919`.
+يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`. بصمةُ المخرَج: `ecaa1ffebf92c294`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -292,8 +293,8 @@
 | `mukhassas.with_roots` | 1,080 |
 | `readers.الإعراب.forms` | 18,114 |
 | `readers.الإعراب.tokens` | 78,100 |
-| `readers.الجداول.forms` | 1,029 |
-| `readers.الجداول.tokens` | 30,548 |
+| `readers.الجداول.forms` | 1,109 |
+| `readers.الجداول.tokens` | 31,327 |
 | `readers.الجذع.forms` | 15,940 |
 | `readers.الجذع.tokens` | 68,479 |
 | `readers.الجواب.forms` | 18,114 |
@@ -306,9 +307,9 @@
 | `tables.alam.rows` | 57 |
 | `tables.sawabiq.attested` | 11 |
 | `tables.sawabiq.rows` | 11 |
-| `tables.tawzi.attested` | 160 |
+| `tables.tawzi.attested` | 161 |
 | `tables.tawzi.rows` | 246 |
-| `tables.tawzi.unattested.len` | 86 |
+| `tables.tawzi.unattested.len` | 85 |
 | `tokens` | 78,245 |
 
 ### `tools/gen_fil_index.py::measure`
@@ -1093,7 +1094,7 @@
 
 ### `tools/gen_pipeline_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `4bbc134bfa06dda4`.
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `dbdb064761d02de8`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -1103,41 +1104,41 @@
 | `ranked.content_passed` | 3,022 |
 | `ranked.funnel[0]` | 40,731 |
 | `ranked.funnel[1]` | 40,727 |
-| `ranked.funnel[2]` | 34,247 |
-| `ranked.funnel[3]` | 13,097 |
-| `ranked.funnel[4]` | 8,103 |
+| `ranked.funnel[2]` | 34,532 |
+| `ranked.funnel[3]` | 13,130 |
+| `ranked.funnel[4]` | 8,135 |
 | `ranked.funnel[5]` | 3,022 |
-| `ranked.stops.CASE_MISMATCH` | 1,080 |
+| `ranked.stops.CASE_MISMATCH` | 1,081 |
 | `ranked.stops.CASE_NOT_READ` | 3,914 |
-| `ranked.stops.JIHA_MISMATCH` | 7,953 |
-| `ranked.stops.NISBA_MISMATCH` | 908 |
+| `ranked.stops.JIHA_MISMATCH` | 7,941 |
+| `ranked.stops.NISBA_MISMATCH` | 922 |
 | `ranked.stops.NOT_IN_CERTIFICATES` | 4 |
-| `ranked.stops.NO_JIHA_IN_REFERENCE` | 13,197 |
-| `ranked.stops.NO_NISBA_IN_REFERENCE` | 4,173 |
-| `ranked.stops.NO_READING` | 1,803 |
-| `ranked.stops.PARTICLE_NOT_IN_TABLE` | 151 |
+| `ranked.stops.NO_JIHA_IN_REFERENCE` | 13,461 |
+| `ranked.stops.NO_NISBA_IN_REFERENCE` | 4,191 |
+| `ranked.stops.NO_READING` | 1,782 |
+| `ranked.stops.PARTICLE_NOT_IN_TABLE` | 74 |
 | `ranked.stops.PASSED` | 3,022 |
-| `ranked.stops.READING_NOT_GOLD` | 4,526 |
+| `ranked.stops.READING_NOT_GOLD` | 4,339 |
 | `ranked.stops.SEGMENTS_TIE` | 0 |
 | `strict.content_passed` | 3,069 |
 | `strict.funnel[0]` | 40,731 |
 | `strict.funnel[1]` | 40,727 |
-| `strict.funnel[2]` | 34,228 |
-| `strict.funnel[3]` | 13,283 |
-| `strict.funnel[4]` | 8,164 |
+| `strict.funnel[2]` | 34,243 |
+| `strict.funnel[3]` | 13,316 |
+| `strict.funnel[4]` | 8,196 |
 | `strict.funnel[5]` | 3,069 |
-| `strict.stops.CASE_MISMATCH` | 963 |
+| `strict.stops.CASE_MISMATCH` | 964 |
 | `strict.stops.CASE_NOT_READ` | 4,156 |
-| `strict.stops.JIHA_MISMATCH` | 7,853 |
-| `strict.stops.NISBA_MISMATCH` | 911 |
+| `strict.stops.JIHA_MISMATCH` | 7,838 |
+| `strict.stops.NISBA_MISMATCH` | 925 |
 | `strict.stops.NOT_IN_CERTIFICATES` | 4 |
-| `strict.stops.NO_JIHA_IN_REFERENCE` | 13,092 |
-| `strict.stops.NO_NISBA_IN_REFERENCE` | 4,184 |
-| `strict.stops.NO_READING` | 1,803 |
-| `strict.stops.PARTICLE_NOT_IN_TABLE` | 151 |
+| `strict.stops.NO_JIHA_IN_REFERENCE` | 13,089 |
+| `strict.stops.NO_NISBA_IN_REFERENCE` | 4,202 |
+| `strict.stops.NO_READING` | 1,782 |
+| `strict.stops.PARTICLE_NOT_IN_TABLE` | 74 |
 | `strict.stops.PASSED` | 3,069 |
-| `strict.stops.READING_NOT_GOLD` | 2,877 |
-| `strict.stops.SEGMENTS_TIE` | 1,668 |
+| `strict.stops.READING_NOT_GOLD` | 2,683 |
+| `strict.stops.SEGMENTS_TIE` | 1,945 |
 
 ### `tools/gen_qiraa_index.py::measure`
 
@@ -1248,15 +1249,15 @@
 
 ### `tools/gen_sharh_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `de32a41cd708d03e`.
+يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `d39f24b07bb4e8cc`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
 | `by_claim.len` | 14 |
-| `by_claim.sum` | 160,706 |
+| `by_claim.sum` | 160,786 |
 | `by_claim_pos.len` | 14 |
-| `by_claim_pos.sum` | 693,536 |
-| `by_tag_pos.مبرهن` | 537,122 |
+| `by_claim_pos.sum` | 694,315 |
+| `by_tag_pos.مبرهن` | 537,901 |
 | `by_tag_pos.مفحوص_استقصاء` | 156,414 |
 | `forms.len` | 18,179 |
 | `positions` | 78,207 |
@@ -1430,18 +1431,18 @@
 
 ### `tools/gen_tawzi_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `b3f82e98b1ce45ad`.
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `b0842a9b8390d302`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
 | `forms` | 18,179 |
-| `gold` | 13,151 |
+| `gold` | 13,416 |
 | `kinds.إشارة` | 45 |
 | `kinds.استفهام` | 27 |
-| `kinds.حرف` | 587 |
-| `kinds.ضمير` | 44 |
-| `kinds.ظرف` | 141 |
-| `kinds.موصول` | 10 |
+| `kinds.حرف` | 625 |
+| `kinds.ضمير` | 47 |
+| `kinds.ظرف` | 158 |
+| `kinds.موصول` | 32 |
 | `kinds_table.إشارة` | 23 |
 | `kinds_table.استفهام` | 14 |
 | `kinds_table.حرف` | 82 |
@@ -1449,33 +1450,33 @@
 | `kinds_table.ظرف` | 92 |
 | `kinds_table.موصول` | 11 |
 | `masaq_particles` | 14,313 |
-| `multi` | 45 |
-| `none` | 507 |
-| `read` | 854 |
+| `multi` | 60 |
+| `none` | 158 |
+| `read` | 934 |
 | `table` | 246 |
-| `unread_by_tag[0][1]` | 195 |
-| `unread_by_tag[1][1]` | 82 |
-| `unread_by_tag[2][1]` | 65 |
-| `unread_by_tag[3][1]` | 48 |
-| `unread_by_tag[4][1]` | 32 |
-| `unread_by_tag[5][1]` | 22 |
-| `unread_by_tag[6][1]` | 11 |
-| `unread_by_tag[7][1]` | 10 |
-| `unread_top[0][1]` | 59 |
-| `unread_top[1][1]` | 46 |
-| `unread_top[2][1]` | 43 |
-| `unread_top[3][1]` | 36 |
-| `unread_top[4][1]` | 33 |
-| `unread_top[5][1]` | 31 |
-| `unread_top[6][1]` | 24 |
-| `unread_top[7][1]` | 18 |
-| `unread_top[8][1]` | 11 |
-| `unread_top[9][1]` | 10 |
-| `unread_top[10][1]` | 8 |
-| `unread_top[11][1]` | 8 |
-| `with_pre` | 386 |
-| `with_suf` | 389 |
-| `wrong` | 655 |
+| `unread_by_tag[0][1]` | 48 |
+| `unread_by_tag[1][1]` | 32 |
+| `unread_by_tag[2][1]` | 22 |
+| `unread_by_tag[3][1]` | 11 |
+| `unread_by_tag[4][1]` | 10 |
+| `unread_by_tag[5][1]` | 9 |
+| `unread_by_tag[6][1]` | 8 |
+| `unread_by_tag[7][1]` | 3 |
+| `unread_top[0][1]` | 33 |
+| `unread_top[1][1]` | 18 |
+| `unread_top[2][1]` | 10 |
+| `unread_top[3][1]` | 6 |
+| `unread_top[4][1]` | 5 |
+| `unread_top[5][1]` | 4 |
+| `unread_top[6][1]` | 4 |
+| `unread_top[7][1]` | 3 |
+| `unread_top[8][1]` | 3 |
+| `unread_top[9][1]` | 3 |
+| `unread_top[10][1]` | 3 |
+| `unread_top[11][1]` | 3 |
+| `with_pre` | 424 |
+| `with_suf` | 439 |
+| `wrong` | 739 |
 
 ### `tools/gen_uslub_index.py::measure`
 

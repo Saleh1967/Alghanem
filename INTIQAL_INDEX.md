@@ -2,7 +2,7 @@
 
 مولَّدٌ بـ`python tools/gen_intiqal_index.py` من `slge.intiqal.REGISTRY`؛ لا يُحرَّر باليد. الحارسُ يمشي على `src/slge` فيرفض دالّةَ انتقالٍ عامّةً (‎Word → Word‎) غيرَ مسجَّلة، وصفًّا بلا دالّة، ومبرهنةً غيرَ مدقَّقة في `Audit.lean`، ودَينًا بلا ملاحظة. السجلُّ **مفحوصٌ** لا مبرهَن: Lean (`IntiqalTable`) يحمل الأسماءَ لا الدوالَّ، والإغلاقُ حيث ذُكر مبرهنةٌ باسمها.
 
-90 انتقالًا: إغلاقٌ 34، خاصّةٌ 36، دَينٌ باسمه 20.
+94 انتقالًا: إغلاقٌ 34، خاصّةٌ 40، دَينٌ باسمه 20.
 
 | الوحدة | الدالّة | المبرهنة | النوع | ملاحظة |
 |---|---|---|---|---|
@@ -86,6 +86,10 @@
 | `talil` | `apply` | — | — | تطبيقُ التعليل بلا مبرهنة |
 | `tawabi` | `tawkid` | `Slge.Tawabi.tawkid_words_licensed` | إغلاق |  |
 | `tawzi` | `alif_to_ya` | — | — | الألفُ ياءً قبل الضمير بلا مبرهنةٍ باسمه (`tawzi_restores` يردّه) |
+| `tawzi` | `mim_damma` | `Slge.Tawzi.sufExtra_named` | خاصّة |  |
+| `tawzi` | `mim_kasra` | `Slge.Tawzi.sufExtra_named` | خاصّة |  |
+| `tawzi` | `ya_sakina` | `Slge.Tawzi.sufExtra_named` | خاصّة |  |
+| `tawzi` | `wasl_drop` | `Slge.Tawzi.witness_rules` | خاصّة |  |
 | `wasl` | `drop_wasl` | `Slge.Wasl.wasl_drops` | إغلاق |  |
 | `wasl` | `istifham_verb` | `Slge.Wasl.istifhamVerb_licensed` | إغلاق |  |
 | `zaman` | `raf_tanwin` | `Slge.Zaman.hukm_rafTanwin` | خاصّة |  |

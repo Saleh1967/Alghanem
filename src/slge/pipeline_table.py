@@ -5,5 +5,5 @@ from __future__ import annotations
 from typing import Final
 
 MASAQ: Final[int] = 40731
-STRICT: Final[tuple[int, ...]] = (40731, 40727, 34228, 13283, 8164, 3069)
-RANKED: Final[tuple[int, ...]] = (40731, 40727, 34247, 13097, 8103, 3022)
+STRICT: Final[tuple[int, ...]] = (40731, 40727, 34243, 13316, 8196, 3069)
+RANKED: Final[tuple[int, ...]] = (40731, 40727, 34532, 13130, 8135, 3022)

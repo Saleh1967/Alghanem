@@ -709,7 +709,9 @@ def main (args : List String) : IO Unit := do
     let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
     IO.println s!"table,{Tawzi.table.length},{Tawzi.table.eraseDups.length},{Tawzi.hosts.length}"
     for (n, w) in [("alayhim", Tawzi.alayhim), ("lahum", Tawzi.lahum), ("waidha", Tawzi.waidha),
-                   ("mina", Tawzi.mina), ("bihi", Tawzi.bihi), ("kataba", Tawzi.kataba)] do
+                   ("mina", Tawzi.mina), ("bihi", Tawzi.bihi), ("kataba", Tawzi.kataba),
+                   ("lahumu", Tawzi.lahumu), ("alayhimu", Tawzi.alayhimu), ("li", Tawzi.li),
+                   ("walilladhina", Tawzi.walilladhina), ("fima", Tawzi.fima)] do
       for m in Tawzi.tawzi w do
         IO.println s!"word,{n},{key w},{"+".intercalate (m.pre.map key)}|{key m.core}|{key m.surface}|{key m.suf}"
       IO.println s!"count,{n},{key w},{(Tawzi.tawzi w).length}"

@@ -316,6 +316,14 @@ DEPOSITS: Final[tuple[Deposit, ...]] = (
             "منه",
             "432dae05748f2f972b3238e56dd0c56e72b10f0c3900ee8da1a8cca812b2fc88",
             "CC BY-NC-SA 4.0 (OpenITI)"),
+    # — مختومٌ في الغانم (ADR ٤٥، بإذن المالك 2026-10-12: «موافق على المصادر وعلى التوقيع») والبايتاتُ
+    #   هنا بايتاتُه بعينها من التثبيت 9ae8d81 (`corpora/ibn-aqil/`)؛ يُطابَق منه سطورٌ مسمّاةٌ بأعيانها
+    #   (`tawzi.ANCHORS`) ولا يُحلَّل نصُّه (ADR ٥٥). —
+    Deposit("openiti-ibn-aqil-alfiyya.txt.gz", "وضع",
+            "شرح ابن عقيل على ألفية ابن مالك (Shamela0009904): باب الموصول (س1022–1181) معنًى "
+            "للموصولات بنصّه وسطره",
+            "661e43ea265eca8c72b9e4ab7a46cd9182b34e834105b595241bc7787b471f09",
+            "CC BY-NC-SA 4.0 (OpenITI)"),
     *(Deposit(f"masaq-{x}", "مرجع محجوب", "شريحةُ MASAQ") for x in (
         "adad.json", "fil.json.gz", "filiyya.json.gz", "hamza.json", "huruf.json",
         "interrog.json", "ism.json.gz", "jazm.json", "jumla.json", "majrurat.json.gz",
