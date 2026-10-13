@@ -287,6 +287,7 @@ def measure() -> dict[str, object]:
         return sys_cache[w]
 
     dec: Counter[str] = Counter()
+    against: Counter[tuple[str, str, str]] = Counter()
     for w, lr, mr in both:
         rs = sysr(w)
         if not rs:
@@ -303,6 +304,7 @@ def measure() -> dict[str, object]:
             dec["lane_sides_with_system"] += 1      # خطأُ المرجع بالهيكل
         elif same(lr, mr):
             dec["lane_sides_with_maqayis"] += 1     # خطأُ النظام
+            against[(w, mr, " ".join(sorted(rs)))] += 1
         else:
             dec["three_way"] += 1
     wrong = dec["system_disagrees_maqayis"]
@@ -326,6 +328,12 @@ def measure() -> dict[str, object]:
             "share_reference_error": rate(dec["lane_sides_with_system"], wrong),
             "share_system_error": rate(dec["lane_sides_with_maqayis"], wrong),
             "share_three_way": rate(dec["three_way"], wrong)},
+        # بعد التسجيل (ADR ٤٩): وصفُ ما اتّفق فيه المرجعان على خلاف النظام — الصورُ الأكثرُ تكرارًا
+        "post_registration_refs_agree_against_system": {
+            "distinct_words": len(against),
+            "top": [{"word": w, "reference": mr, "system": rs, "count": c}
+                    for (w, mr, rs), c in sorted(against.items(),
+                                                 key=lambda x: (-x[1], x[0]))[:15]]},
     }
 
 

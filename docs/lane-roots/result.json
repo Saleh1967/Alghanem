@@ -1,0 +1,253 @@
+{
+ "decomposition": {
+  "counts": {
+   "lane_sides_with_maqayis": 1155,
+   "lane_sides_with_system": 77,
+   "read": 10081,
+   "refs_agree": 9304,
+   "system_agrees_maqayis": 8831,
+   "system_disagrees_maqayis": 1250,
+   "three_way": 18
+  },
+  "share_reference_error": {
+   "k": 77,
+   "n": 1250,
+   "rate": 0.0616,
+   "wilson95": [
+    0.049568,
+    0.076319
+   ]
+  },
+  "share_system_error": {
+   "k": 1155,
+   "n": 1250,
+   "rate": 0.924,
+   "wilson95": [
+    0.907976,
+    0.937426
+   ]
+  },
+  "share_three_way": {
+   "k": 18,
+   "n": 1250,
+   "rate": 0.0144,
+   "wilson95": [
+    0.009128,
+    0.022648
+   ]
+  }
+ },
+ "lane_lines_sha256": "248def99adaf4ba565f250685b102591b3cbce4c1d09524fbb58f92bf270a1d5",
+ "lexicon": {
+  "keys": 37153,
+  "unique": 36771
+ },
+ "post_registration_refs_agree_against_system": {
+  "distinct_words": 38,
+  "top": [
+   {
+    "count": 653,
+    "reference": "كنت",
+    "system": "كون",
+    "word": "كُنْتُ"
+   },
+   {
+    "count": 158,
+    "reference": "كنت",
+    "system": "كون",
+    "word": "كُنْتَ"
+   },
+   {
+    "count": 64,
+    "reference": "وله",
+    "system": "وهي",
+    "word": "وَلَهُ"
+   },
+   {
+    "count": 50,
+    "reference": "وجه",
+    "system": "جهو",
+    "word": "وَجْهَ"
+   },
+   {
+    "count": 35,
+    "reference": "كنت",
+    "system": "كون",
+    "word": "كُنْتِ"
+   },
+   {
+    "count": 30,
+    "reference": "وجه",
+    "system": "جهو",
+    "word": "وَجْهُ"
+   },
+   {
+    "count": 24,
+    "reference": "وجه",
+    "system": "جهو",
+    "word": "وَجْهِ"
+   },
+   {
+    "count": 24,
+    "reference": "ولد",
+    "system": "ودي",
+    "word": "وَلَدِ"
+   },
+   {
+    "count": 19,
+    "reference": "وسل",
+    "system": "سول سيل",
+    "word": "وَسَلْ"
+   },
+   {
+    "count": 13,
+    "reference": "وقت",
+    "system": "قتو",
+    "word": "وَقْتِ"
+   },
+   {
+    "count": 9,
+    "reference": "بطن",
+    "system": "بطط",
+    "word": "بَطْنَ"
+   },
+   {
+    "count": 8,
+    "reference": "وسط",
+    "system": "سوط",
+    "word": "وَسَطِ"
+   },
+   {
+    "count": 7,
+    "reference": "شءن",
+    "system": "شيء",
+    "word": "شَأْنَ"
+   },
+   {
+    "count": 6,
+    "reference": "قرن",
+    "system": "قرر قور",
+    "word": "قَرْنَ"
+   },
+   {
+    "count": 6,
+    "reference": "وقت",
+    "system": "قتو",
+    "word": "وَقْتُ"
+   }
+  ]
+ },
+ "prereg": "docs/lane-roots/PREREG.md",
+ "quran_system_vs_lane": {
+  "agree_exact_among_read": {
+   "k": 1645,
+   "n": 1773,
+   "rate": 0.927806,
+   "wilson95": [
+    0.914812,
+    0.93895
+   ]
+  },
+  "coverage_read": 0.190216,
+  "n": 9321,
+  "outcomes": {
+   "agree_exact": 1645,
+   "agree_weak_class": 15,
+   "disagree": 113,
+   "no_reading": 7548
+  },
+  "primary_agree_weak_class_among_read": {
+   "k": 1660,
+   "n": 1773,
+   "rate": 0.936266,
+   "wilson95": [
+    0.923926,
+    0.94672
+   ]
+  }
+ },
+ "reference_quality_vs_qac": {
+  "lane": {
+   "exact": {
+    "k": 9054,
+    "n": 9321,
+    "rate": 0.971355,
+    "wilson95": [
+     0.96777,
+     0.974552
+    ]
+   },
+   "weak_class": {
+    "k": 9064,
+    "n": 9321,
+    "rate": 0.972428,
+    "wilson95": [
+     0.968904,
+     0.975562
+    ]
+   }
+  },
+  "maqayis_same_positions": {
+   "exact": {
+    "k": 3540,
+    "n": 3663,
+    "rate": 0.966421,
+    "wilson95": [
+     0.960081,
+     0.971783
+    ]
+   },
+   "lane_weak_class_on_these": {
+    "k": 3500,
+    "n": 3663,
+    "rate": 0.955501,
+    "wilson95": [
+     0.948333,
+     0.961715
+    ]
+   },
+   "weak_class": {
+    "k": 3582,
+    "n": 3663,
+    "rate": 0.977887,
+    "wilson95": [
+     0.9726,
+     0.982172
+    ]
+   }
+  }
+ },
+ "sahihain_positions": {
+  "excluded_seen": 500,
+  "lane_reference": 166689,
+  "no_lane_reference": 828224
+ },
+ "sahihain_system_vs_lane": {
+  "agree_exact_among_read": {
+   "k": 29835,
+   "n": 36988,
+   "rate": 0.806613,
+   "wilson95": [
+    0.802556,
+    0.810606
+   ]
+  },
+  "coverage_read": 0.221898,
+  "n": 166689,
+  "outcomes": {
+   "agree_exact": 29835,
+   "agree_weak_class": 338,
+   "disagree": 6815,
+   "no_reading": 129701
+  },
+  "primary_agree_weak_class_among_read": {
+   "k": 30173,
+   "n": 36988,
+   "rate": 0.815751,
+   "wilson95": [
+    0.811767,
+    0.819669
+   ]
+  }
+ }
+}
