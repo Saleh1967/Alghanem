@@ -211,6 +211,7 @@ jobs:
           python tools/gen_qac_peel.py --check
           python tools/gen_hadith_roots.py --check
           python tools/gen_lane_roots.py --check
+          python tools/gen_lane_lexical.py --check
           python tools/gen_mukhassas.py --check
       - name: guard — no reader or writer outside the gate
         run: python -c "from gate.guard import breaches; b = breaches(); print(b or 'لا خرق'); raise SystemExit(1 if b else 0)"
