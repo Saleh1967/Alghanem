@@ -52,7 +52,10 @@ def test_s0_is_the_reader_before_closure() -> None:
     forms, _ = MOD.certificates()
     assert sum(1 for w in forms if MOD.before(w)) == 854
     split = MOD.tawzi_split(MOD.masaq_rows(), lambda w: [(p, s) for p, _, s, _ in MOD.before(w)])
-    assert split == {"gold": 13151, "wrong": 655, "none": 507,
+    # gold 13,151 وnone 507 قبل ULA_WAW (الغانم ADR ٥٢): شرائحُ MASAQ المجمَّدة تحمل
+    # «أُولَئِكَ» بخاناتها القديمة (بواو) وجدولُ الإشارة الآن بخانات البوّابة —
+    # 70 صفًّا بلا قراءة، دَينٌ مسمًّى MASAQ_SLICES_PRE_ULA_WAW (ADR ٦١)
+    assert split == {"gold": 13081, "wrong": 655, "none": 577,
                      "open_population": 20498, "open_read": 70}  # ‎20,498 و70 كما في ADR ٥٢
 
 

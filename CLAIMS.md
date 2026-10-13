@@ -6,10 +6,10 @@
 
 | المودَع | النوع | sha256 |
 |---|---|---|
-| `corpus-certificates.json.gz` | واقع مختوم | `996183e631733168cecdf2882d903257c0375bbd989d5d255763283eb2c07e28` |
-| `context-certificates.json.gz` | واقع مختوم | `0c2d2fac65716259eeb6189ae03134b5672665460e43ae0a2830710afa5ac4de` |
-| `hadith-context-certificates.json.gz` | واقع مختوم | `fd2a3a0a8511c6cb917b9854312a1a2b19fd0192b7ad4b6d30b693d557cd0b63` |
-| `lane-context-certificates.json.gz` | واقع مختوم | `9d70bb38ff5b334f26810ec4d53412781743d1d3e1ad44288460a76375cfc91d` |
+| `corpus-certificates.json.gz` | واقع مختوم | `3b577c997708f64abb89245680c6e0d54766d6bbd81166f9830128e61b17268e` |
+| `context-certificates.json.gz` | واقع مختوم | `1be445e8772d3c1b910d847066731dad77ca1ea4f03ced2a4c5b4926d660a87c` |
+| `hadith-context-certificates.json.gz` | واقع مختوم | `aaacefa8946c8655e9f16a727fd4984eed9bb01cd2f66b69800ac4e4ddaa1db6` |
+| `lane-context-certificates.json.gz` | واقع مختوم | `58f2437964572a4f9e7e1f40030eeae44a2ba597a7713f75c48a9fce715f1e77` |
 | `maqayis-roots.json.gz` | وضع | `90312a5adb4bc32043d1e57cc0bc8438c4ac19d6b3d57e90defe2d9c77c1542e` |
 | `sibawayh-abniya.tsv` | وضع | `678ca5144698b571a42804b19b8d1680766df7f2339cf6c9c53d84994051fdd9` |
 | `nabhani-huruf.json` | وضع | `5f6f3d64736e981a867524d7478ab1773670033d2a229f8aefcbbaf4905f4766` |
@@ -58,11 +58,11 @@
 | `masaq-zawaid.json` | مرجع محجوب | `15ab1c4691c88ebb99b4f37c5f1c062c83a20a988fdd6099cc835eaea4097478` |
 | `masaq-zuruf.json` | مرجع محجوب | `ef2e77119120a8f5109e28e63c0835468ce85442806c44b0e4f4a70635416dd3` |
 
-## الأرقام (1,460 رقمًا من 55 مولِّدًا)
+## الأرقام (1,459 رقمًا من 55 مولِّدًا)
 
 ### `tools/gen_abniya_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `26df8c56c6378e11`.
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `4525ff2c08ee4ff5`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -80,9 +80,9 @@
 | `only.122` | 265 |
 | `only.123` | 7 |
 | `only.124` | 28 |
-| `read` | 15,673 |
+| `read` | 15,674 |
 | `separated_pairs` | 7,739 |
-| `step2` | 15,673 |
+| `step2` | 15,674 |
 | `with.121` | 776 |
 | `with.122` | 660 |
 | `with.123` | 15 |
@@ -252,26 +252,26 @@
 
 ### `tools/gen_bits_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `3bd0f2504c25c896`.
+يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `2f7c6144d1769419`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
-| `atoms_number_bits` | 651,986 |
+| `atoms_number_bits` | 651,894 |
 | `atoms_ok` | 18,179 |
 | `binary` | 18,114 |
-| `cells` | 99,130 |
-| `cert_bits` | 1,276,759 |
+| `cells` | 99,116 |
+| `cert_bits` | 1,276,569 |
 | `certified_tokens` | 78,207 |
-| `codebook_bytes` | 2,245,161 |
-| `cost_sum` | 2,792,533 |
+| `codebook_bytes` | 2,244,966 |
+| `cost_sum` | 2,790,538 |
 | `fibers_gt1` | 38 |
-| `fold_bits` | 658,873 |
-| `fold_bound` | 672,465 |
+| `fold_bits` | 658,778 |
+| `fold_bound` | 672,369 |
 | `fold_lt` | 18,114 |
 | `fold_roundtrip` | 18,114 |
 | `forms` | 18,179 |
 | `granted` | 18,114 |
-| `log116` | 679,832 |
+| `log116` | 679,736 |
 | `per_word` | 78,100 |
 | `refusals.DEFER:UNVOCALIZED_WORD_IS_NEVER_GUESSED` | 30 |
 | `refusals.REJECT:INITIAL_SUKUN_WITHOUT_REPAIR` | 3 |
@@ -280,24 +280,24 @@
 | `residual_bits` | 38 |
 | `residue_edits` | 19,889 |
 | `sample_ok` | 1 |
-| `stream_bits` | 2,792,533 |
+| `stream_bits` | 2,790,538 |
 | `stream_words` | 78,100 |
 | `ternary_only` | 65 |
 | `tokens` | 78,245 |
 | `widths.10` | 94 |
 | `widths.11` | 8 |
 | `widths.2` | 10,277 |
-| `widths.3` | 13,089 |
-| `widths.4` | 18,199 |
-| `widths.5` | 16,614 |
-| `widths.6` | 12,300 |
-| `widths.7` | 4,468 |
+| `widths.3` | 13,118 |
+| `widths.4` | 18,320 |
+| `widths.5` | 16,537 |
+| `widths.6` | 12,228 |
+| `widths.7` | 4,467 |
 | `widths.8` | 2,710 |
 | `widths.9` | 341 |
 
 ### `tools/gen_coverage_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`. بصمةُ المخرَج: `bbabd538d911483c`.
+يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`. بصمةُ المخرَج: `e54c05aea20b3913`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -332,14 +332,14 @@
 | `readers.الإعراب.tokens` | 78,100 |
 | `readers.الجداول.forms` | 1,118 |
 | `readers.الجداول.tokens` | 31,427 |
-| `readers.الجذع.forms` | 15,940 |
-| `readers.الجذع.tokens` | 68,479 |
+| `readers.الجذع.forms` | 15,941 |
+| `readers.الجذع.tokens` | 68,481 |
 | `readers.الجواب.forms` | 18,114 |
 | `readers.الجواب.tokens` | 78,100 |
-| `readers.السوابق.forms` | 4,929 |
-| `readers.السوابق.tokens` | 20,158 |
-| `readers.الصرف.forms` | 1,218 |
-| `readers.الصرف.tokens` | 6,870 |
+| `readers.السوابق.forms` | 4,928 |
+| `readers.السوابق.tokens` | 20,145 |
+| `readers.الصرف.forms` | 1,217 |
+| `readers.الصرف.tokens` | 6,857 |
 | `tables.alam.attested` | 57 |
 | `tables.alam.rows` | 57 |
 | `tables.sawabiq.attested` | 11 |
@@ -425,52 +425,52 @@
 
 ### `tools/gen_haja_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `1ed2a078bb014f25`.
+يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `367dcdd5080f6f78`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
 | `form_leaf.fil` | 5,986 |
-| `form_leaf.fil+ism` | 1,785 |
+| `form_leaf.fil+ism` | 1,787 |
 | `form_leaf.harf` | 473 |
 | `form_leaf.harf+ism` | 1 |
 | `form_leaf.harf+mudmar` | 73 |
-| `form_leaf.ism` | 9,775 |
+| `form_leaf.ism` | 9,773 |
 | `form_leaf.mudmar` | 86 |
 | `forms` | 18,179 |
 | `multi_bab_positions` | 7,008 |
 | `pos_bab.len` | 14 |
 | `pos_bab.sum` | 39,637 |
 | `pos_leaf.fil` | 16,569 |
-| `pos_leaf.fil+ism` | 8,354 |
+| `pos_leaf.fil+ism` | 8,356 |
 | `pos_leaf.harf` | 17,420 |
 | `pos_leaf.harf+ism` | 2 |
 | `pos_leaf.harf+mudmar` | 3,443 |
-| `pos_leaf.ism` | 29,599 |
+| `pos_leaf.ism` | 29,597 |
 | `pos_leaf.mudmar` | 2,858 |
 | `positions` | 78,245 |
 
 ### `tools/gen_hasm_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `abd6947d7d4a1134`.
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `f08d8a2ff8188916`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
 | `bound` | 129 |
 | `forms` | 18,179 |
 | `masaq.DECIDED_GOLD` | 5,541 |
-| `masaq.DECIDED_WRONG` | 3,372 |
+| `masaq.DECIDED_WRONG` | 3,370 |
 | `masaq.NO_READING` | 4,844 |
 | `masaq.TIE` | 415 |
-| `masaq.TIE_GOLD_IN` | 1,560 |
+| `masaq.TIE_GOLD_IN` | 1,562 |
 | `masaq.UNIQUE_GOLD` | 21,242 |
 | `masaq.UNIQUE_WRONG` | 3,757 |
 | `masaq.masaq` | 40,731 |
-| `roots` | 2,380 |
-| `unique_forms` | 12,158 |
+| `roots` | 2,379 |
+| `unique_forms` | 12,157 |
 
 ### `tools/gen_hukm_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`، `ajnas-qabiliyyat.json.gz`، `hukm-reference-2.tsv`، `hukm-reference.tsv`. بصمةُ المخرَج: `2b6597f1478bc1c3`.
+يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`، `ajnas-qabiliyyat.json.gz`، `hukm-reference-2.tsv`، `hukm-reference.tsv`. بصمةُ المخرَج: `31cbc7c5fc429280`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -479,17 +479,17 @@
 | `agreement.agree_root` | 0 |
 | `agreement.both_filled` | 0 |
 | `ahkam` | 13,278 |
-| `any_mafhum` | 6,182 |
-| `both_malumah` | 7,096 |
+| `any_mafhum` | 6,180 |
+| `both_malumah` | 7,098 |
 | `forms` | 18,179 |
 | `jins_mafhum` | 0 |
 | `la_hukm` | 4,901 |
-| `lafz_witness_forms` | 999 |
-| `lafz_witness_forms_by_proposal.لفظاً مفرداً مستعملاً` | 796 |
+| `lafz_witness_forms` | 997 |
+| `lafz_witness_forms_by_proposal.لفظاً مفرداً مستعملاً` | 794 |
 | `lafz_witness_forms_by_proposal.ليس جنسًا` | 2 |
 | `lafz_witness_forms_by_proposal.مدلول اللفظ معنى` | 201 |
-| `multi_root` | 1,414 |
-| `qabiliyya_mafhum` | 6,182 |
+| `multi_root` | 1,416 |
+| `qabiliyya_mafhum` | 6,180 |
 | `reference.filled` | 0 |
 | `reference.jins_agree` | 0 |
 | `reference.qabiliyya_agree` | 0 |
@@ -497,15 +497,15 @@
 | `reference.size` | 300 |
 | `reference.unresolved` | 0 |
 | `signed` | 0 |
-| `single_root` | 11,864 |
+| `single_root` | 11,862 |
 | `tokens` | 78,207 |
-| `tokens_any_mafhum` | 20,516 |
-| `tokens_both_malumah` | 22,310 |
+| `tokens_any_mafhum` | 20,492 |
+| `tokens_both_malumah` | 22,334 |
 | `tokens_la_hukm` | 35,381 |
 | `top_lafz_books[0][2]` | 152 |
 | `top_lafz_books[1][2]` | 142 |
 | `top_lafz_books[2][2]` | 89 |
-| `top_lafz_books[3][2]` | 87 |
+| `top_lafz_books[3][2]` | 85 |
 | `top_lafz_books[4][2]` | 65 |
 | `top_lafz_books[5][2]` | 60 |
 | `top_lafz_books[6][2]` | 44 |
@@ -573,7 +573,7 @@
 
 ### `tools/gen_ilal_bab_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `90cc231a5d6e17bf`.
+يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `fd4454618f990210`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -582,17 +582,17 @@
 | `debts` | 7 |
 | `forms` | 18,179 |
 | `read.len` | 14 |
-| `read.sum` | 37,961 |
+| `read.sum` | 37,928 |
 | `rows` | 14 |
 | `witnessed` | 9 |
 
 ### `tools/gen_ilal_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `4e4b0e039df48ea5`.
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `ba89f8c82d5d556f`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
-| `checked` | 6,222 |
+| `checked` | 6,276 |
 | `forms` | 18,179 |
 | `law.dzz_dal` | 297 |
 | `law.dzz_other` | 693 |
@@ -601,16 +601,16 @@
 | `law.itbaq_ta` | 17 |
 | `law.itbaq_tta` | 108 |
 | `law.kept.len` | 32 |
-| `law.wy_other` | 5,496 |
+| `law.wy_other` | 5,482 |
 | `law.wy_ta` | 224 |
-| `lengths.1` | 3,163 |
-| `lengths.2` | 3,059 |
+| `lengths.1` | 3,179 |
+| `lengths.2` | 3,097 |
 | `m_hit` | 7,163 |
 | `m_total` | 7,749 |
 | `only` | 649 |
 | `rules.len` | 14 |
-| `rules.sum` | 9,281 |
-| `with` | 2,044 |
+| `rules.sum` | 9,373 |
+| `with` | 2,052 |
 
 ### `tools/gen_ism_index.py::measure`
 
@@ -669,23 +669,23 @@
 
 ### `tools/gen_jidh_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `40da58dff1e04d58`.
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `d9d11abffa528042`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
-| `before` | 1,845 |
+| `before` | 1,844 |
 | `forms` | 18,179 |
 | `gold_among` | 14,331 |
 | `gold_match` | 15,583 |
 | `masaq` | 40,731 |
 | `none` | 4,844 |
 | `only_wrong` | 5,973 |
-| `readings.0` | 2,506 |
-| `readings.1` | 11,367 |
-| `readings.2` | 2,654 |
-| `readings.3+` | 1,652 |
-| `step1` | 5,191 |
-| `step2` | 15,673 |
+| `readings.0` | 2,505 |
+| `readings.1` | 11,366 |
+| `readings.2` | 2,650 |
+| `readings.3+` | 1,658 |
+| `step1` | 5,193 |
+| `step2` | 15,674 |
 
 ### `tools/gen_jiha_index.py::measure`
 
@@ -724,7 +724,7 @@
 
 ### `tools/gen_jumla_index.py::measure`
 
-يقرأ: `masaq-jumla.json`. بصمةُ المخرَج: `aef4b1092195f085`.
+يقرأ: `masaq-jumla.json`. بصمةُ المخرَج: `2f8ac916e21c69b8`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -755,7 +755,7 @@
 
 ### `tools/gen_kulli_index.py::measure`
 
-يقرأ: `masaq-shibh.json.gz`. بصمةُ المخرَج: `e8abfbb271d08dd3`.
+يقرأ: `masaq-shibh.json.gz`. بصمةُ المخرَج: `08f4ab0b4e20f6cb`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -845,7 +845,7 @@
 
 ### `tools/gen_madd_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `37e3d1c24ce1aee7`.
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `b47919ec891e16e7`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -853,7 +853,7 @@
 | `forms` | 18,179 |
 | `lazim_all_ternary_only` | 1 |
 | `lazim_forms` | 65 |
-| `letters` | 47,865 |
+| `letters` | 47,612 |
 | `sila_pron` | 1,648 |
 | `sila_total` | 2,984 |
 | `ternary_only` | 65 |
@@ -863,11 +863,10 @@
 | `waqf.لين` | 3,031 |
 | `wasl.صلة صغرى` | 3,547 |
 | `wasl.صلة كبرى` | 1,044 |
-| `wasl.طبيعيّ` | 40,230 |
+| `wasl.طبيعيّ` | 40,141 |
 | `wasl.لازم مثقَّل` | 106 |
 | `wasl.لازم مخفَّف` | 2 |
 | `wasl.متّصل` | 1,744 |
-| `wasl.محجوب` | 164 |
 | `wasl.منفصل` | 5,619 |
 
 ### `tools/gen_majrurat_index.py::measure`
@@ -902,11 +901,11 @@
 
 ### `tools/gen_makharij_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `688459656128b669`.
+يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `09e6b30bdf065b69`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
-| `atoms` | 99,130 |
+| `atoms` | 99,116 |
 | `by_makhraj.len` | 15 |
 | `furu` | 14 |
 | `jahr_agree` | 28 |
@@ -914,7 +913,7 @@
 | `lips_agree` | 0 |
 | `makharij` | 15 |
 | `sifat_atoms.len` | 13 |
-| `sifat_atoms.sum` | 351,111 |
+| `sifat_atoms.sum` | 351,055 |
 | `stated` | 16 |
 
 ### `tools/gen_mansubat_index.py::measure`
@@ -979,7 +978,7 @@
 
 ### `tools/gen_maqayis_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `c84c76f2ed024a24`.
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `1188be2c36b9ed91`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -988,17 +987,17 @@
 | `a.match` | 17,666 |
 | `a.none` | 4,844 |
 | `a.wrong` | 5,973 |
-| `after.1` | 12,473 |
-| `after.2` | 2,284 |
-| `after.3+` | 916 |
-| `attested_readings` | 17,768 |
+| `after.1` | 12,472 |
+| `after.2` | 2,280 |
+| `after.3+` | 922 |
+| `attested_readings` | 17,808 |
 | `b.among` | 14,331 |
 | `b.match` | 15,583 |
 | `b.none` | 4,844 |
 | `b.wrong` | 5,973 |
-| `before.1` | 11,367 |
-| `before.2` | 2,654 |
-| `before.3+` | 1,652 |
+| `before.1` | 11,366 |
+| `before.2` | 2,650 |
+| `before.3+` | 1,658 |
 | `dropped[0][1]` | 217 |
 | `dropped[1][1]` | 33 |
 | `dropped[2][1]` | 20 |
@@ -1009,9 +1008,9 @@
 | `dropped[7][1]` | 8 |
 | `forms` | 18,179 |
 | `masaq` | 40,731 |
-| `none_attested` | 2,219 |
+| `none_attested` | 2,220 |
 | `roots` | 4,561 |
-| `total_readings` | 24,547 |
+| `total_readings` | 24,596 |
 
 ### `tools/gen_marifa_index.py::measure`
 
@@ -1033,7 +1032,7 @@
 
 ### `tools/gen_mughlaq_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `qac-pos.tsv.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `91412c5cfc5d05cd`.
+يقرأ: `corpus-certificates.json.gz`، `qac-pos.tsv.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `58dd47d36afe88d4`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -1055,8 +1054,8 @@
 | `deposit.S2.positions.ظرف` | 2,256 |
 | `deposit.S2.positions.مغلق` | 25,549 |
 | `deposit.S2.positions.مفتوح` | 50,402 |
-| `masaq_checked_not_measured.S0.gold` | 13,151 |
-| `masaq_checked_not_measured.S0.none` | 507 |
+| `masaq_checked_not_measured.S0.gold` | 13,081 |
+| `masaq_checked_not_measured.S0.none` | 577 |
 | `masaq_checked_not_measured.S0.open_population` | 20,498 |
 | `masaq_checked_not_measured.S0.open_read` | 70 |
 | `masaq_checked_not_measured.S0.wrong` | 655 |
@@ -1065,11 +1064,11 @@
 | `masaq_checked_not_measured.S1.open_population` | 20,498 |
 | `masaq_checked_not_measured.S1.open_read` | 65 |
 | `masaq_checked_not_measured.S1.wrong` | 617 |
-| `masaq_checked_not_measured.S2.gold` | 13,566 |
-| `masaq_checked_not_measured.S2.none` | 130 |
+| `masaq_checked_not_measured.S2.gold` | 13,496 |
+| `masaq_checked_not_measured.S2.none` | 201 |
 | `masaq_checked_not_measured.S2.open_population` | 20,498 |
 | `masaq_checked_not_measured.S2.open_read` | 63 |
-| `masaq_checked_not_measured.S2.wrong` | 617 |
+| `masaq_checked_not_measured.S2.wrong` | 616 |
 | `qac.S0.matrix.ظرف→ظرف` | 1,282 |
 | `qac.S0.matrix.ظرف→مغلق` | 188 |
 | `qac.S0.matrix.ظرف→مفتوح` | 364 |
@@ -1205,7 +1204,7 @@
 
 ### `tools/gen_mukhassas_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `04d6731c17219b04`.
+يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `83739fac24ccaab6`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -1216,9 +1215,9 @@
 | `by_level.3` | 1,190 |
 | `distinct` | 608 |
 | `linked` | 1,080 |
-| `unlinked` | 923 |
-| `verb_roots.len` | 1,127 |
-| `verb_roots.sum` | 6,519 |
+| `unlinked` | 918 |
+| `verb_roots.len` | 1,128 |
+| `verb_roots.sum` | 6,520 |
 
 ### `tools/gen_naat_index.py::measure`
 
@@ -1303,7 +1302,7 @@
 
 ### `tools/gen_nisab_index.py::measure`
 
-يقرأ: `masaq-filiyya.json.gz`، `masaq-jumla.json`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `65eda71af5c5ea54`.
+يقرأ: `masaq-filiyya.json.gz`، `masaq-jumla.json`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `5f35e82614180867`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -1314,66 +1313,66 @@
 | `depths.4` | 25 |
 | `depths.5` | 9 |
 | `pairs` | 10,149 |
-| `read.('إسناد: فعل وفاعل', 'إسناد')` | 1,226 |
-| `read.('إسناد: فعل وفاعل', 'تقييد')` | 271 |
+| `read.('إسناد: فعل وفاعل', 'إسناد')` | 1,224 |
+| `read.('إسناد: فعل وفاعل', 'تقييد')` | 273 |
 | `read.('إسناد: فعل وفاعل', '—')` | 804 |
-| `read.('إسناد: مبتدأ وخبر', 'إسناد')` | 1,416 |
-| `read.('إسناد: مبتدأ وخبر', 'تقييد')` | 143 |
-| `read.('إسناد: مبتدأ وخبر', '—')` | 84 |
-| `read.('تقييد: مضاف إليه أو مجرور', 'إسناد')` | 460 |
+| `read.('إسناد: مبتدأ وخبر', 'إسناد')` | 1,328 |
+| `read.('إسناد: مبتدأ وخبر', 'تقييد')` | 144 |
+| `read.('إسناد: مبتدأ وخبر', '—')` | 171 |
+| `read.('تقييد: مضاف إليه أو مجرور', 'إسناد')` | 442 |
 | `read.('تقييد: مضاف إليه أو مجرور', 'تقييد')` | 1,735 |
-| `read.('تقييد: مضاف إليه أو مجرور', '—')` | 539 |
+| `read.('تقييد: مضاف إليه أو مجرور', '—')` | 557 |
 | `read.('تقييد: مفعول به', 'إسناد')` | 712 |
 | `read.('تقييد: مفعول به', 'تقييد')` | 1,955 |
 | `read.('تقييد: مفعول به', '—')` | 804 |
 
 ### `tools/gen_pipeline_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `60b9c9eec7d6dd57`.
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `87d5d99dd2110bf1`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
 | `asked` | 10,445 |
 | `content` | 26,418 |
 | `masaq` | 40,731 |
-| `ranked.content_passed` | 3,023 |
+| `ranked.content_passed` | 3,022 |
 | `ranked.funnel[0]` | 40,731 |
-| `ranked.funnel[1]` | 40,727 |
-| `ranked.funnel[2]` | 34,688 |
+| `ranked.funnel[1]` | 40,639 |
+| `ranked.funnel[2]` | 34,618 |
 | `ranked.funnel[3]` | 13,125 |
 | `ranked.funnel[4]` | 8,135 |
-| `ranked.funnel[5]` | 3,023 |
+| `ranked.funnel[5]` | 3,022 |
 | `ranked.stops.CASE_MISMATCH` | 1,075 |
 | `ranked.stops.CASE_NOT_READ` | 3,915 |
 | `ranked.stops.JIHA_MISMATCH` | 7,951 |
-| `ranked.stops.NISBA_MISMATCH` | 921 |
-| `ranked.stops.NOT_IN_CERTIFICATES` | 4 |
-| `ranked.stops.NO_JIHA_IN_REFERENCE` | 13,612 |
+| `ranked.stops.NISBA_MISMATCH` | 922 |
+| `ranked.stops.NOT_IN_CERTIFICATES` | 92 |
+| `ranked.stops.NO_JIHA_IN_REFERENCE` | 13,542 |
 | `ranked.stops.NO_NISBA_IN_REFERENCE` | 4,191 |
 | `ranked.stops.NO_READING` | 1,782 |
 | `ranked.stops.PARTICLE_NOT_IN_TABLE` | 51 |
-| `ranked.stops.PASSED` | 3,023 |
-| `ranked.stops.READING_NOT_GOLD` | 4,206 |
+| `ranked.stops.PASSED` | 3,022 |
+| `ranked.stops.READING_NOT_GOLD` | 4,188 |
 | `ranked.stops.SEGMENTS_TIE` | 0 |
-| `strict.content_passed` | 3,070 |
+| `strict.content_passed` | 3,059 |
 | `strict.funnel[0]` | 40,731 |
-| `strict.funnel[1]` | 40,727 |
-| `strict.funnel[2]` | 34,427 |
-| `strict.funnel[3]` | 13,311 |
-| `strict.funnel[4]` | 8,196 |
-| `strict.funnel[5]` | 3,070 |
+| `strict.funnel[1]` | 40,639 |
+| `strict.funnel[2]` | 34,340 |
+| `strict.funnel[3]` | 13,294 |
+| `strict.funnel[4]` | 8,179 |
+| `strict.funnel[5]` | 3,059 |
 | `strict.stops.CASE_MISMATCH` | 958 |
 | `strict.stops.CASE_NOT_READ` | 4,157 |
 | `strict.stops.JIHA_MISMATCH` | 7,850 |
-| `strict.stops.NISBA_MISMATCH` | 924 |
-| `strict.stops.NOT_IN_CERTIFICATES` | 4 |
-| `strict.stops.NO_JIHA_IN_REFERENCE` | 13,266 |
-| `strict.stops.NO_NISBA_IN_REFERENCE` | 4,202 |
+| `strict.stops.NISBA_MISMATCH` | 922 |
+| `strict.stops.NOT_IN_CERTIFICATES` | 92 |
+| `strict.stops.NO_JIHA_IN_REFERENCE` | 13,196 |
+| `strict.stops.NO_NISBA_IN_REFERENCE` | 4,198 |
 | `strict.stops.NO_READING` | 1,782 |
 | `strict.stops.PARTICLE_NOT_IN_TABLE` | 51 |
-| `strict.stops.PASSED` | 3,070 |
-| `strict.stops.READING_NOT_GOLD` | 2,637 |
-| `strict.stops.SEGMENTS_TIE` | 1,830 |
+| `strict.stops.PASSED` | 3,059 |
+| `strict.stops.READING_NOT_GOLD` | 2,634 |
+| `strict.stops.SEGMENTS_TIE` | 1,832 |
 
 ### `tools/gen_qiraa_index.py::measure`
 
@@ -1431,7 +1430,7 @@
 
 ### `tools/gen_sawabiq_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `0f1a673f7e8114df`.
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `1cf07e8c30733af8`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -1456,7 +1455,7 @@
 | `kinds.LAM_AMR` | 211 |
 | `kinds.LAM_JARR` | 287 |
 | `kinds.LAM_KAY` | 255 |
-| `kinds.WASL_FIL` | 1,590 |
+| `kinds.WASL_FIL` | 1,589 |
 | `kinds.WASL_ISM` | 15 |
 | `lines[0]` | 8,658 |
 | `lines[1]` | 8,686 |
@@ -1467,7 +1466,7 @@
 | `multi` | 511 |
 | `none` | 138 |
 | `other` | 78 |
-| `read` | 4,948 |
+| `read` | 4,947 |
 | `table` | 11 |
 | `unread_top[0][1]` | 6 |
 | `unread_top[1][1]` | 5 |
@@ -1484,15 +1483,15 @@
 
 ### `tools/gen_sharh_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `aa867884bbdff7d2`.
+يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `2a67d519536c463e`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
 | `by_claim.len` | 14 |
-| `by_claim.sum` | 160,140 |
+| `by_claim.sum` | 160,139 |
 | `by_claim_pos.len` | 14 |
-| `by_claim_pos.sum` | 679,503 |
-| `by_tag_pos.مبرهن` | 523,089 |
+| `by_claim_pos.sum` | 679,490 |
+| `by_tag_pos.مبرهن` | 523,076 |
 | `by_tag_pos.مفحوص_استقصاء` | 156,414 |
 | `forms.len` | 18,179 |
 | `positions` | 78,207 |
@@ -1644,11 +1643,11 @@
 
 ### `tools/gen_tamam_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`، `qac-pos.tsv.gz`. بصمةُ المخرَج: `6fabb15b205ea548`.
+يقرأ: `corpus-certificates.json.gz`، `context-certificates.json.gz`، `qac-pos.tsv.gz`. بصمةُ المخرَج: `011c769748bd0ec0`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
-| `capped` | 1,304 |
+| `capped` | 1,302 |
 | `dead_by_bab.atf` | 232 |
 | `dead_by_bab.istifham` | 27 |
 | `dead_by_bab.istithna` | 54 |
@@ -1659,7 +1658,7 @@
 | `ibtida_tamm` | 5,617 |
 | `lines` | 6,236 |
 | `surah_starts` | 114 |
-| `wasl_dead` | 71 |
+| `wasl_dead` | 73 |
 | `wasl_tamm` | 5,655 |
 
 ### `tools/gen_tawabi_index.py::measure`
@@ -1686,12 +1685,12 @@
 
 ### `tools/gen_tawzi_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `d9d937fc0f68079e`.
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `d0b55a2ab8f6c71f`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
 | `forms` | 18,179 |
-| `gold` | 13,566 |
+| `gold` | 13,496 |
 | `kinds.إشارة` | 57 |
 | `kinds.استفهام` | 26 |
 | `kinds.حرف` | 618 |
@@ -1706,24 +1705,24 @@
 | `kinds_table.موصول` | 10 |
 | `masaq_particles` | 14,313 |
 | `multi` | 45 |
-| `none` | 130 |
+| `none` | 201 |
 | `read` | 943 |
 | `table` | 243 |
-| `unread_by_tag[0][1]` | 48 |
-| `unread_by_tag[1][1]` | 32 |
-| `unread_by_tag[2][1]` | 11 |
-| `unread_by_tag[3][1]` | 10 |
-| `unread_by_tag[4][1]` | 8 |
-| `unread_by_tag[5][1]` | 3 |
-| `unread_by_tag[6][1]` | 3 |
-| `unread_by_tag[7][1]` | 2 |
-| `unread_top[0][1]` | 33 |
-| `unread_top[1][1]` | 10 |
-| `unread_top[2][1]` | 6 |
-| `unread_top[3][1]` | 5 |
-| `unread_top[4][1]` | 4 |
-| `unread_top[5][1]` | 3 |
-| `unread_top[6][1]` | 3 |
+| `unread_by_tag[0][1]` | 56 |
+| `unread_by_tag[1][1]` | 48 |
+| `unread_by_tag[2][1]` | 32 |
+| `unread_by_tag[3][1]` | 17 |
+| `unread_by_tag[4][1]` | 11 |
+| `unread_by_tag[5][1]` | 10 |
+| `unread_by_tag[6][1]` | 8 |
+| `unread_by_tag[7][1]` | 3 |
+| `unread_top[0][1]` | 56 |
+| `unread_top[1][1]` | 33 |
+| `unread_top[2][1]` | 13 |
+| `unread_top[3][1]` | 10 |
+| `unread_top[4][1]` | 6 |
+| `unread_top[5][1]` | 5 |
+| `unread_top[6][1]` | 4 |
 | `unread_top[7][1]` | 3 |
 | `unread_top[8][1]` | 3 |
 | `unread_top[9][1]` | 3 |
@@ -1731,7 +1730,7 @@
 | `unread_top[11][1]` | 3 |
 | `with_pre` | 429 |
 | `with_suf` | 422 |
-| `wrong` | 617 |
+| `wrong` | 616 |
 
 ### `tools/gen_uslub_index.py::measure`
 
@@ -1759,15 +1758,15 @@
 
 ### `tools/gen_wad_index.py::measure`
 
-يقرأ: `masaq-shibh.json.gz`. بصمةُ المخرَج: `f7832698b4f56a1b`.
+يقرأ: `masaq-shibh.json.gz`. بصمةُ المخرَج: `71c236e8c2d24e6b`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
-| `dist.مجدوَل` | 2,389 |
+| `dist.مجدوَل` | 2,375 |
 | `dist.مشترك الصورة` | 115 |
 | `dist.مشترك الوضع` | 48 |
 | `dist.مفرد الوضع` | 3,019 |
-| `dist.—` | 9,689 |
+| `dist.—` | 9,703 |
 | `n` | 15,260 |
 | `sura.((11, 12), 'علَم')` | 87 |
 | `sura.((11, 12), 'فعل')` | 3 |
@@ -1810,7 +1809,7 @@
 
 ### `tools/gen_wujud_index.py::measure`
 
-يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `904dd07d2d1696a3`.
+يقرأ: `corpus-certificates.json.gz`، `masaq-shibh.json.gz`. بصمةُ المخرَج: `ad44d65d63a53142`.
 
 | المسار في المخرَج | الرقم |
 |---|---|
@@ -1825,12 +1824,12 @@
 | `classes.مصدر` | 22 |
 | `classes.وصف` | 25 |
 | `dist.اسم` | 884 |
-| `dist.جمع` | 1,810 |
+| `dist.جمع` | 1,816 |
 | `dist.ظرف وآلة` | 155 |
-| `dist.فعل` | 7,442 |
-| `dist.مصدر` | 2,947 |
-| `dist.وصف` | 2,435 |
-| `dist.—` | 2,506 |
+| `dist.فعل` | 7,438 |
+| `dist.مصدر` | 2,950 |
+| `dist.وصف` | 2,431 |
+| `dist.—` | 2,505 |
 | `forms` | 18,179 |
 | `masaq` | 25,799 |
 | `none` | 1,822 |

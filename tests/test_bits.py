@@ -46,7 +46,8 @@ def test_deposit_is_the_sealed_corpus_as_cells_and_numbers() -> None:
     stream = deposit["stream"]
     assert isinstance(stream, list)
     assert len(forms) == 18179 and sum(i >= 0 for i in stream) == 78207
-    assert sum(len(w) for w in forms) == 99130
+    # 99,130 قبل ULA_WAW (الغانم ADR ٥٢، ADR ٦١ هنا: واوُ «أُولَئِكَ» رسمٌ لا خانة، 14 صورةً)
+    assert sum(len(w) for w in forms) == 99116
     assert all(from_atoms(to_atoms(w)) == w for w in forms)  # الخاناتُ ذرّاتٌ بعينها
     refusals = deposit["refusals"]
     assert isinstance(refusals, dict) and sum(refusals.values()) == 78245 - 78207
@@ -63,7 +64,8 @@ def test_fold_under_its_proven_bound_and_back() -> None:
         z = fold(w)
         assert z < count(len(w)) and tuple(unfold(len(w), z)) == w
         bits += z.bit_length()
-    assert bits == 658873
+    # 658,873 قبل ULA_WAW (الغانم ADR ٥٢، ADR ٦١ هنا: واوُ «أُولَئِكَ» رسمٌ لا خانة، 14 صورةً)
+    assert bits == 658778
     assert bits <= sum(count(len(w)).bit_length() for w in lic)
     # الطفرة: عددٌ فوق U(n) لا يُفكّ، وخانةٌ مبدَّلة تغيّر العدد
     w = lic[0]
@@ -81,7 +83,9 @@ def test_certificate_integer_doubles_the_atoms_number() -> None:
     cert = sum(f["integer_bits"] for f in forms)
     atoms = sum(f["atoms_number_bits"] for f in forms)
     # كانا 1,276,753 و651,981 قبل تصحيح همزة الأسماء الموصولة كسرًا (الغانم ADR ٧): خمسُ صورٍ بتًّا أطول
-    assert cert == 1276759 and atoms == 651986 and 1.9 < cert / atoms < 2.0  # 1,276,758 قبل ADR ٨
+    # 1,276,758 قبل ADR ٨، ثمّ 1,276,759 و651,986 قبل ULA_WAW
+    # (الغانم ADR ٥٢، ADR ٦١ هنا: واوُ «أُولَئِكَ» رسمٌ لا خانة، 14 صورةً)
+    assert cert == 1276569 and atoms == 651894 and 1.9 < cert / atoms < 2.0
     assert sum(f["residual_bits"] for f in forms) == 38 == sum(f["fiber_size"] > 1 for f in forms)
 
 
@@ -92,7 +96,8 @@ def test_whole_mushaf_as_one_stream() -> None:
     assert isinstance(idx, list)
     stream = [forms[i] for i in idx if i >= 0 and licensed(forms[i])]
     bits = encode(stream)
-    assert len(stream) == 78100 and len(bits) == 2792533 == sum(cost(len(w)) for w in stream)
+    # 2,792,533 بتًّا قبل ULA_WAW (الغانم ADR ٥٢، ADR ٦١ هنا: واوُ «أُولَئِكَ» رسمٌ لا خانة، 14 صورةً)
+    assert len(stream) == 78100 and len(bits) == 2790538 == sum(cost(len(w)) for w in stream)
     assert all(decode_word(encode_word(w)) == (w, []) for w in stream)
     head = stream[:2000]
     assert decode(encode(head)) == head

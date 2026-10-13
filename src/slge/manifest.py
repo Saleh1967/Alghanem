@@ -172,22 +172,22 @@ class Deposit:
     licence: str = ""
 
 
-GATE_REV: Final[str] = "0eb2a41fc358a008b25d3552dc43e89aaab8b767"
+GATE_REV: Final[str] = "b5fd37e7e21c020b00140320cf2433b80044284b"
 """إيداعُ بوّابة الغانم (`Saleh1967/Alghanem`، فرع `claude/official-gate`) الذي يُعاد منه توليدُ مودَع
 الشهادات في CI (`tools/gen_certificates.py --check`): ما يقيسه SLGE هو ما تطبعه البوّابةُ على المدوّنة
 المختومة بهذا الإيداع؛ أيُّ فرقٍ `DEPOSIT_DRIFTED_FROM_GATE`. يُرفع مع المودَع معًا لا أحدُهما وحدَه."""
 
-CERTIFICATES_DIGEST: Final[str] = "9a1cbb7bf78ceb6f793f0b700f16d27179f9079fce3df7fd8695f41185c7c733"
+CERTIFICATES_DIGEST: Final[str] = "39f17e25b71a29c57f7ea265266c790e25069843dfa98287600118fd252f3584"
 """بصمةُ المودَع بصورته القانونيّة (JSON مرتّبَ المفاتيح بلا فراغ) كما طبعتها البوّابةُ على `GATE_REV`؛
 يفحصها `tests/test_deposits.py` محلّيًّا بلا بوّابة، وCI يعيد التوليدَ من البوّابة نفسها."""
 
 CONTEXT_CERTIFICATES_DIGEST: Final[str] = (
-    "31338125834c9d457337fa41b6a5fde3edb28d1e163ead2d8561368199200d35")
+    "ca61d46f8d4cfdd51636f67cac7b974a34419244ceaf89286f91976207512fe0")
 """بصمةُ مودَع السياق (`context-certificates.json.gz`) بصورته القانونيّة كما طبعتها البوّابةُ على
 `GATE_REV` (`tools/gen_context_certificates.py`)؛ يُرفع مع `GATE_REV` والمودَع الأوّل معًا (ADR ٢٨)."""
 
 HADITH_CONTEXT_CERTIFICATES_DIGEST: Final[str] = (
-    "571fbbf0ab5ca0cea7159889333b4e8c0c62a964c8c80760cbb8b23d7cd82328")
+    "ec2c70eef823e6146117b846a28b5899babfc96db472f110100d68ce4e88965a")
 """بصمةُ مودَع المدوّنة المختومة الثانية (`hadith-context-certificates.json.gz`): الصحيحان موقعًا
 موقعًا في سياقهما كما طبعتها البوّابةُ نفسُها على `GATE_REV` (`gen_context_certificates.py --corpus
 sahihain`، الغانم ADR ٧)؛ المصدرُ Open-Hadith-Data برخصة ODbL 1.0 والمودَعُ المشتقُّ يحملها. لا مرجعَ
@@ -201,7 +201,7 @@ QAC_POS_DIGEST: Final[str] = (
 (`QAC_POS_DEPOSIT_DRIFTED`)."""
 
 LANE_CONTEXT_CERTIFICATES_DIGEST: Final[str] = (
-    "3873f1c79d5a5cd924432fb7dd90cff952b2a0e08e39ccef7b73181074165061")
+    "6f77be9cfc3618fe2bd371b51f273ecbdf8cda77e356f9af0a276fd687b4b6d4")
 """بصمةُ مودَع المجال الرابع (`lane-context-certificates.json.gz`): معجمُ لين
 (alpheios-project/lan@7dd04e1، CC BY-SA 3.0 US؛ الغانم ADR ٣٣) كلُّ وسمٍ عربيٍّ سطرٌ، موقعًا موقعًا في
 سياقه من البوّابة نفسِها على `GATE_REV` (`gen_context_certificates.py --corpus lane`، الغانم ADR ٤٥)؛

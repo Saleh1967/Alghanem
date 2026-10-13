@@ -74,7 +74,9 @@ def test_numbers_before_and_after_on_the_same_deposit() -> None:
     # ثمّ 1,848 / 5,196 / 15,673 قبل تصحيح همزة الأسماء الموصولة كسرًا (الغانم ADR ٧)
     # ثمّ 1,847 / 5,193 قبل ADR ٨ في الغانم (الضمّةُ العارضة: اِمْشُوا، اِقْضُوا)
     # ثمّ 15,672 قبل الحذف السماعيّ (ADR ٤٠: خُذِ صارت تُقرأ بأصلها ءُءْخُذِ)
-    assert m["before"] == 1845 and m["step1"] == 5191 and m["step2"] == 15673
+    # ثمّ 1,845 / 5,191 / 15,673 قبل ULA_WAW (الغانم ADR ٥٢، ADR ٦١ هنا:
+    # واوُ «أُولَئِكَ» رسمٌ لا خانة، 14 صورةً)
+    assert m["before"] == 1844 and m["step1"] == 5193 and m["step2"] == 15674
     assert m["before"] < m["step1"] < m["step2"]
     assert m["gold_match"] > 14000 and m["gold_match"] + m["gold_among"] > 18000
     assert m["only_wrong"] < m["gold_match"] / 2

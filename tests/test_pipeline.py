@@ -41,10 +41,13 @@ def test_deposited_funnels_are_antitone() -> None:
     # ثمّ 34,203 قبل الحذف السماعيّ (ADR ٤٠): كُلُوا وخُذُوا تُقرأ بأصلها فتوافق قسمةَ المرجع
     # ثمّ 34,228 قبل إغلاق الموزِّع (ADR ٥٣): لَهُمُ ولِي ووَلِلَّذِينَ وفِيمَا تُقرأ بقسمة المرجع
     # ثمّ 34,438 قبل سداد الديون (ADR ٥٤): أَنَّا وأَنَّى خاناتٌ واحدة فصارتا قسمتين (SEGMENTS_TIE صارمًا)
-    assert STRICT[1] == 40_727 and STRICT[2] == 34_427
+    # ثمّ 40,727 و34,427 قبل ULA_WAW (الغانم ADR ٥٢، ADR ٦١ هنا): 88 صفًّا من MASAQ المجمَّد خاناتُها
+    # القديمة بواو «أُولَئِكَ/أُولِي/أُولُو» لم تعد في المودَع (NOT_IN_CERTIFICATES) — دَينٌ مسمًّى
+    # MASAQ_SLICES_PRE_ULA_WAW، لا خطأُ قراءة
+    assert STRICT[1] == 40_639 and STRICT[2] == 34_340
     # الرقمُ الواحد دون 30% — مسجَّلٌ ليُقاس عليه كلُّ تحسين (1,763 ← 1,989 ← 2,070 ← 3,070 ← 3,069
-    # ← 3,070)
-    assert STRICT[5] / MASAQ < 0.30 and STRICT[5] == 3_070 and RANKED[5] == 3_023
+    # ← 3,070 ← 3,059 بـMASAQ_SLICES_PRE_ULA_WAW؛ والمرتَّبُ 3,023 ← 3,022)
+    assert STRICT[5] / MASAQ < 0.30 and STRICT[5] == 3_059 and RANKED[5] == 3_022
 
 
 def test_a_sound_verb_crosses_to_the_jiha_and_stops_by_name_when_not_asked() -> None:

@@ -80,7 +80,9 @@ def test_corpus_measurement_and_index() -> None:
     m = measure()
     wasl = m["wasl"]
     assert isinstance(wasl, dict)
-    assert m["forms"] == 18179 and m["tokens"] == 78207 and m["letters"] == 47865
+    # 47,865 حرفَ مدٍّ قبل ULA_WAW (الغانم ADR ٥٢، ADR ٦١ هنا: واوُ «أُولَئِكَ» رسمٌ لا خانة،
+    # 14 صورةً): سقطت واوُ 253 موضعًا
+    assert m["forms"] == 18179 and m["tokens"] == 78207 and m["letters"] == 47612
     assert m["ternary_only"] == 65 == m["lazim_forms"]
     assert m["ternary_only_all_lazim"] and m["lazim_all_ternary_only"]  # lazim_iff_not_binary مقيسًا
     assert wasl["لازم مثقَّل"] + wasl["لازم مخفَّف"] == 108 and wasl["متّصل"] > 1500
