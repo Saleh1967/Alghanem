@@ -1,0 +1,51 @@
+{
+ "baseline_chance_on_decided": 0.496855,
+ "baseline_field_size_on_decided": {
+  "k": 30,
+  "n": 53,
+  "wilson95": [
+   0.432654,
+   0.690496
+  ]
+ },
+ "coverage": {
+  "k": 53,
+  "n": 571,
+  "rate": 0.09282,
+  "wilson95": [
+   0.071664,
+   0.119418
+  ]
+ },
+ "outcomes": {
+  "DECIDED": 53,
+  "GOLD_OUTSIDE_RELATION": 12,
+  "NO_QARINA": 41,
+  "QARINA_CONFLICT": 477,
+  "correct": 30,
+  "in_relation": 571,
+  "population": 583,
+  "wrong": 23
+ },
+ "precision": {
+  "k": 30,
+  "n": 53,
+  "rate": 0.566038,
+  "wilson95": [
+   0.432654,
+   0.690496
+  ]
+ },
+ "prereg": "docs/qarina/PREREG.md",
+ "reference": "QAC 0.4 (Dukes)",
+ "secondary_by_count": {
+  "coverage_over_in_relation": 0.90718,
+  "k": 85,
+  "n": 518,
+  "wilson95": [
+   0.134693,
+   0.198438
+  ]
+ },
+ "verdict": "QARINA_NOT_INFORMATIVE"
+}
