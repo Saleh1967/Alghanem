@@ -2,21 +2,21 @@
 
 مولَّدٌ بـ`python tools/gen_sharh_index.py`؛ لا يُحرَّر باليد (ADR ٤٤). لكلّ صورةٍ من مودَع المصحف أسطرٌ (الدعوى، القيمة، الوحدة) من قرّاء السُّلَّم القائمين، ووسمُ السطر ومرساتُه وسمُ دعواه وسندُها في `status.LEDGER` بعينه — فلا سطرَ أقوى من سنده. لا نصَّ في العقد؛ والكلمةُ تخرج بـ`gate.exit` في الغانم (`tools/gen_sharh_text.py`).
 
-18,179 صورةً على 78,207 موضعًا (والمواضعُ المرفوضةُ في البوّابة 38 لا أسطرَ لها)؛ أسطرٌ على المواضع: 679,874؛ خروقُ العقد: 0.
+18,179 صورةً على 78,207 موضعًا (والمواضعُ المرفوضةُ في البوّابة 38 لا أسطرَ لها)؛ أسطرٌ على المواضع: 679,503؛ خروقُ العقد: 0.
 
-الوسومُ على المواضع: مبرهن 523,460 (77.0%)، مفحوص_استقصاء 156,414 (23.0%).
+الوسومُ على المواضع: مبرهن 523,089 (77.0%)، مفحوص_استقصاء 156,414 (23.0%).
 
 | الدعوى | الوسم | المرساة | أسطرٌ على الصور | أسطرٌ على المواضع |
 |---|---|---|---:|---:|
 | `TAWABI-case` | مبرهن | `lean:Slge.Tawabi.four_markers_one_case` | 18,179 | 78,207 |
 | `MADD-lazim` | مبرهن | `lean:Slge.Madd.lazim_iff_not_binary` | 65 | 107 |
 | `ILAL-samai` | مبرهن | `lean:Slge.Ilal.samai_closed` | 3 | 18 |
-| `ILAL-descent` | مبرهن | `lean:Slge.Ilal.descend_ascends` | 1,089 | 6,127 |
-| `MAQAYIS-member` | مبرهن | `lean:Slge.Maqayis.member_sound` | 15,304 | 48,965 |
-| `WUJUD-partition` | مبرهن | `lean:Slge.Wujud.table_length` | 15,304 | 48,965 |
-| `TAWZI-reader` | مبرهن | `lean:Slge.Tawzi.tawzi_restores` | 937 | 27,575 |
-| `QIRAA-reader` | مبرهن | `lean:Slge.Qiraa.harf_no_hukm` | 18,624 | 96,801 |
-| `HUKM-judge` | مبرهن | `lean:Slge.Hukm.hukm_none_iff` | 13,103 | 40,308 |
+| `ILAL-descent` | مبرهن | `lean:Slge.Ilal.descend_ascends` | 1,088 | 5,952 |
+| `MAQAYIS-member` | مبرهن | `lean:Slge.Maqayis.member_sound` | 15,298 | 48,735 |
+| `WUJUD-partition` | مبرهن | `lean:Slge.Wujud.table_length` | 15,298 | 48,735 |
+| `TAWZI-reader` | مبرهن | `lean:Slge.Tawzi.tawzi_restores` | 943 | 27,805 |
+| `QIRAA-reader` | مبرهن | `lean:Slge.Qiraa.harf_no_hukm` | 18,635 | 97,065 |
+| `HUKM-judge` | مبرهن | `lean:Slge.Hukm.hukm_none_iff` | 13,097 | 40,078 |
 | `SAWABIQ-reader` | مبرهن | `lean:Slge.Sawabiq.sawabiq_restores` | 4,948 | 20,187 |
 | `GRANT-mursam` | مبرهن | `lean:Slge.Grant.mursam_sound` | 18,114 | 78,100 |
 | `ENTRY` | مفحوص_استقصاء | `test:tests/test_entry.py::test_kitabun_enters_as_five_cells_and_exits_byte_for_byte` | 18,179 | 78,207 |

@@ -1244,17 +1244,20 @@ _DECLARED: tuple[Claim, ...] = (
        "lean:Slge.Tawzi.table_licensed", "lean:Slge.Tawzi.compounds_licensed",
        "lean:Slge.Tawzi.witness_alayhim", "lean:Slge.Tawzi.witness_lahum",
        "lean:Slge.Tawzi.witness_closure", "lean:Slge.Tawzi.witness_wa_not_host",
+       "lean:Slge.Tawzi.witness_debts_read", "lean:Slge.Tawzi.witness_debts_refused",
        "test:tests/test_tawzi.py::test_reads_particles_pronouns_and_adverbs_with_clitics_and_restores",
        "test:tests/test_tawzi.py::test_named_closure_mutants_are_caught",
        "test:tests/test_conformance.py::test_tawzi_matches_lean",
-       note="الجدولُ 244 صورةً من الجداول القائمة بلا زيادةٍ من الذاكرة (ظَنَّ وحَسِبَ خارجه فعلين) و48 "
-            "مركَّبًا؛ مَعَ وأَنَّا ولفظُ الجلالة بأل خارجه باسمها (TAWZI_INDEX.md، ADR ٢٣، ٥٣)."),
+       note="الجدولُ 243 صورةً من الجداول القائمة بلا زيادةٍ من الذاكرة (ظَنَّ وحَسِبَ خارجه فعلين، "
+            "وذُو الطائيّةُ بلا سند) و50 مركَّبًا؛ مَعَ ولفظُ الجلالة بأل خارجه باسمها "
+            "(TAWZI_INDEX.md، ADR ٢٣، ٥٣، ٥٤)."),
     _c("MUGHLAQ-tag", "الصنفُ المغلق: وسمٌ ثلاثيّ (مغلق/ظرف/مفتوح) قسمةً تامّة — المفتوحُ ما لا يقرؤه "
        "الموزِّع والمغلقُ ما له قراءةٌ نواتُها غيرُ ظرف — ولكلّ نواةٍ مغلقةٍ مصدرُ معنًى مسمًّى، والمغلقُ لا "
        "جذرَ يُحكم عليه", _P,
        "lean:Slge.Mughlaq.maftuh_iff", "lean:Slge.Mughlaq.mughlaq_iff",
        "lean:Slge.Mughlaq.closed_has_src", "lean:Slge.Mughlaq.closed_reading_has_src",
        "lean:Slge.Mughlaq.witness_qism", "lean:Slge.Qiraa.mughlaq_no_hukm",
+       "lean:Slge.Mughlaq.const_errors_ge_min", "lean:Slge.Mughlaq.const_errors_majority",
        "test:tests/test_mughlaq.py::test_meanings_by_hand",
        "test:tests/test_mughlaq.py::test_named_mutants_are_caught",
        "test:tests/test_conformance.py::test_mughlaq_matches_lean",
@@ -1269,7 +1272,7 @@ _DECLARED: tuple[Claim, ...] = (
        "lean:Slge.Qiraa.witnesses_harf", "lean:Slge.Qiraa.witness_famshu",
        "test:tests/test_qiraa.py::test_mutants_are_refused_by_name",
        "test:tests/test_conformance.py::test_qiraa_matches_lean",
-       note="على MASAQ المحجوب: من 12,142 كلمةً قرأها الموزِّعُ حرفًا يعدّها المرجعُ بلا جهة 98.2%، "
+       note="على MASAQ المحجوب: من 12,153 كلمةً قرأها الموزِّعُ حرفًا يعدّها المرجعُ بلا جهة 98.2%، "
             "والباقي (لَمَّا ظرفًا، عَلِيّ، خَلَا فعلًا) حجبٌ لا حذف؛ وعلى المصحف 803 صورةً قُرئ أصلُها "
             "المردود على جذرٍ مشهود (QIRAA_INDEX.md، ADR ٤٢)."),
     _c("HUKM-judge", "الحكمُ على جذور قراءات الشهادة: لكلّ جذرٍ حكمان (الجنس والقابليّة) «مفهومٌ» "

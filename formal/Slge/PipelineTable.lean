@@ -7,7 +7,7 @@ import Slge.Pipeline
 namespace Slge.PipelineTable
 
 /-- 40731 كلمةً؛ العابرون بعد 0..5 مراحل (الصارم). -/
-def strict : List Nat := [40731, 40727, 34438, 13311, 8196, 3070]
+def strict : List Nat := [40731, 40727, 34427, 13311, 8196, 3070]
 
 /-- العابرون بعد 0..5 مراحل (المرتَّب). -/
 def ranked : List Nat := [40731, 40727, 34688, 13125, 8135, 3023]

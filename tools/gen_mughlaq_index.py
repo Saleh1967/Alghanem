@@ -309,7 +309,8 @@ def meaning_classes(core: Word) -> frozenset[str]:
     return frozenset(out)
 
 
-def meaning(kept: list[tuple[int, str, str]], forms: list[Word], pred: list[str]) -> dict[str, Any]:
+def meaning(kept: list[tuple[int, str, str]], forms: list[Word], pred: list[str],
+            with_suffix: bool = False) -> dict[str, Any]:
     """صدقُ المعنى بالصنف (PREREG-2 §٣): على ما هو مغلقٌ عند المرجع وعندنا معًا، هل صنفُ معنى المرجع في
     أصناف
     مصادرنا لنوى القراءات المغلقة؟ ومعه متوسّطُ حجم المجموعة لئلّا يُخفي الاتّساعُ الخطأ."""
@@ -319,7 +320,9 @@ def meaning(kept: list[tuple[int, str, str]], forms: list[Word], pred: list[str]
     for i, _segs, stem in kept:
         if gold_class(stem) != "مغلق" or pred[i] != "مغلق":
             continue
-        ours = frozenset().union(*(meaning_classes(m.core) for m in closed(forms[i])))
+        ours = frozenset().union(*(meaning_classes(m.core) | ({"ضمير"} if with_suffix and m.suf
+                                                               else set())
+                                   for m in closed(forms[i])))
         g = GOLD_MEANING.get(stem, "حرف")
         n += 1
         size += len(ours)
@@ -358,7 +361,8 @@ def measure() -> dict[str, Any]:
             "qac": {"rows": len(rows), "refused_by_gate": refused, "measured": len(kept), **qac,
                     "verdict": verdict(qac["S0"], qac["S1"]),
                     "verdict2": verdict2(qac["S1"], qac["S2"]),
-                    "floor_S2": fl, "meaning_S2": meaning(kept, forms, q2)},
+                    "floor_S2": fl, "meaning_S2": meaning(kept, forms, q2),
+                    "meaning_S2_with_suffix_post_registration": meaning(kept, forms, q2, True)},
             "masaq_checked_not_measured": {"S0": m0, "S1": RECORDED_S1["masaq"], "S2": m2,
                                            "adr52_rule": adr52_rule(m0, m2)}}
 
@@ -428,6 +432,16 @@ def render(m: dict[str, Any] | None = None) -> str:
         "",
         "| الصورة | قسمُ QAC | أصنافُنا | العدد |", "|---|---|---|---|",
         *(f"| {w} | `{t}` | {o} | {k:,} |" for w, t, o, k in mn["miss_top"]),
+        "",
+        "**بعد التسجيل — وصفٌ لا حكم** (`MEANING_SUFFIX_POST_REGISTRATION`): أكثرُ ما فات أنّ QAC "
+        "يجعل جذعَ "
+        "«بِهِ، لَكُمْ» الضميرَ والجارَّ سابقة، وأصنافُنا للنواة وحدَها. فإن عُدّت لاحقةُ الضمير في القراءة "
+        f"صنفَ ضمير: {_pct(q['meaning_S2_with_suffix_post_registration']['agree'])}، ومتوسّطُ "
+        f"المجموعة {q['meaning_S2_with_suffix_post_registration']['mean_set_size']}.",
+        "",
+        "| الصورة | قسمُ QAC | أصنافُنا | العدد |", "|---|---|---|---|",
+        *(f"| {w} | `{t}` | {o} | {k:,} |"
+          for w, t, o, k in q["meaning_S2_with_suffix_post_registration"]["miss_top"]),
         "",
         "## على MASAQ — مفحوصٌ لا مقيس", "",
         "قواعدُ الإغلاق صُمّمت بعد رؤية ما لا يقرؤه الموزِّعُ على MASAQ (PREREG §٥)، فهذه الأرقامُ "

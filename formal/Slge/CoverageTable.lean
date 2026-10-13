@@ -33,7 +33,7 @@ def attestedCells : List SCell := [
 
 def axes : List (Nat × Nat × Nat) := [
   (1, 113, 113),
-  (2, 244, 162),
+  (2, 243, 161),
   (3, 57, 57),
   (4, 11, 11),
   (5, 4561, 1894),
