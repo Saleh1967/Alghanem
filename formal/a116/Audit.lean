@@ -722,3 +722,13 @@ import A116
 #print axioms A116.Qism.naive_wrong_count
 #print axioms A116.Qism.naive_yadu
 #print axioms A116.Qism.blind_abstains
+#print axioms A116.Mamnu.strong_alone
+#print axioms A116.Mamnu.wasf_alone
+#print axioms A116.Mamnu.alam_alone
+#print axioms A116.Mamnu.nakira_munsarif
+#print axioms A116.Mamnu.tanwin_munsarif
+#print axioms A116.Mamnu.al_munsarif
+#print axioms A116.Mamnu.shape_witnesses
+#print axioms A116.Mamnu.readJ_sound
+#print axioms A116.Mamnu.mamnu_needs_amil
+#print axioms A116.Mamnu.readJ_all_jarr

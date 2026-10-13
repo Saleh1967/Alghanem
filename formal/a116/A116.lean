@@ -58,3 +58,4 @@ import A116.Shannon
 import A116.Sawabiq
 import A116.Tanith
 import A116.Qism
+import A116.Mamnu
