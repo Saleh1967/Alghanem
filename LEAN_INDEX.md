@@ -2588,21 +2588,21 @@
 
 | المبرهنة | ما تقول | التدقيق | المسلّمات |
 |---|---|---|---|
-| `dropL_idem` | — | مدقَّق | — |
-| `dropL_comm` | — | مدقَّق | — |
-| `mapL_idem` | — | مدقَّق | — |
-| `drop_after_map` | — | مدقَّق | — |
-| `comm_of_invariant` | — | مدقَّق | — |
-| `order_matters` | — | مدقَّق | — |
-| `dropWhile_idem` | — | مدقَّق | — |
-| `count_dropWhile_sp` | — | مدقَّق | — |
-| `count_stripSp` | — | مدقَّق | — |
-| `count_delTab` | — | مدقَّق | — |
-| `count_clean` | — | مدقَّق | — |
-| `count_flatten_dropEmpty` | — | مدقَّق | — |
-| `count_flatten_map_clean` | — | مدقَّق | — |
-| `marks_preserved` | الشكلُ والحروفُ لا تُمسّ: كلُّ حرفٍ غيرِ المسافة والجدولة عددُه في الصورة القانونيّة عددُه في غير المستثنى. | مدقَّق | — |
-| `witness` | الشكلُ والحروفُ لا تُمسّ: كلُّ حرفٍ غيرِ المسافة والجدولة عددُه في الصورة القانونيّة عددُه في غير المستثنى. | مدقَّق | — |
+| `dropL_idem` | — | مدقَّق | propext, Quot.sound |
+| `dropL_comm` | — | مدقَّق | propext, Quot.sound |
+| `mapL_idem` | — | مدقَّق | propext, Quot.sound |
+| `drop_after_map` | — | مدقَّق | propext |
+| `comm_of_invariant` | — | مدقَّق | propext, Quot.sound |
+| `order_matters` | — | مدقَّق | لا مسلّمات |
+| `dropWhile_idem` | — | مدقَّق | propext |
+| `count_dropWhile_sp` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `count_stripSp` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `count_delTab` | — | مدقَّق | propext |
+| `count_clean` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `count_flatten_dropEmpty` | — | مدقَّق | propext |
+| `count_flatten_map_clean` | — | مدقَّق | propext, Classical.choice, Quot.sound |
+| `marks_preserved` | الشكلُ والحروفُ لا تُمسّ: كلُّ حرفٍ غيرِ المسافة والجدولة عددُه في الصورة القانونيّة عددُه في غير المستثنى. | مدقَّق | propext, Classical.choice, Quot.sound |
+| `witness` | الشكلُ والحروفُ لا تُمسّ: كلُّ حرفٍ غيرِ المسافة والجدولة عددُه في الصورة القانونيّة عددُه في غير المستثنى. | مدقَّق | لا مسلّمات |
 
 ### `Slge/AlamTable.lean` — 1 مبرهنة (`Slge.AlamTable`)
 
