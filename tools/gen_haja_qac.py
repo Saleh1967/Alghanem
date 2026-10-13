@@ -2,7 +2,8 @@
 (ADR ٥٨).
 
 لكلّ موقعٍ محاذًى في `qac-pos.tsv.gz`: أبوابُ قراءاته المغلقة (`haja.core_babs` لكلّ نواةٍ من
-`mughlaq.closed`) مقابلَ وسم جذعه في QAC بالتعيين المسجَّل (`TAGS`). يكتب `docs/haja/qac-result.json`، وبـ`--check` يعيد الحساب ويقارن.
+`mughlaq.closed`) مقابلَ وسم جذعه في QAC بالتعيين المسجَّل (`TAGS`). يكتب
+`docs/haja/qac-result.json`، وبـ`--check` يعيد الحساب ويقارن.
 لا يُحرَّر الناتجُ باليد.
 """
 
