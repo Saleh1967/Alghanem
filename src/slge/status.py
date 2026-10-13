@@ -1278,6 +1278,19 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_conformance.py::test_bawwabat_matches_lean",
        note="الجبرُ المنقول مبرهَن، لا اللغة (ADR ٥٥)؛ وما يلي الأداةَ على مودَع المصحف مفحوصٌ لا مقيس "
             "(BAWWABAT_INDEX.md)."),
+    _c("HAJA-signature", "توقيعُ الحاجة: لكلّ بابٍ من المغلق حاجاتُه (الجهة، ما يقضيها، الاتّصال) "
+       "مرسًى في ج3 والكتاب؛ الحرفُ له حاجةٌ والمستقلُّ لا، والاتّصالُ منصوصٌ في الاستثناء والشرط "
+       "وحدَهما، والصدارةُ للشرط والاستفهام؛ وصنفُ الجدول الموحَّد يوافق الحاجة إلّا أربعةً "
+       "بأسمائها، وقسمةُ المفرد تامّة", _P,
+       "lean:Slge.Haja.needs_anchored", "lean:Slge.Haja.harf_has_need",
+       "lean:Slge.Haja.ittisal_only_takhsis", "lean:Slge.Haja.sadr_exactly",
+       "lean:Slge.Haja.huruf_have_needs", "lean:Slge.Haja.class_agrees", "lean:Slge.Haja.la_four",
+       "lean:Slge.Haja.mufrad_partition", "lean:Slge.Haja.mufrad_harf_needs",
+       "test:tests/test_haja.py::test_babs_by_hand",
+       "test:tests/test_haja.py::test_mutant_istithna_as_jarr_rejected",
+       "test:tests/test_conformance.py::test_haja_matches_lean",
+       note="القيدُ المنقول مبرهَن، لا اللغة (ADR ٥٦)؛ وقسمةُ المفرد على مودَع المصحف مفحوصةٌ لا مقيسة "
+            "(HAJA_INDEX.md)."),
     _c("QIRAA-reader", "القراءةُ الموحَّدة: ما يقرؤه الموزِّعُ ونواتُه من حروف المعاني حرفٌ يحجب جذرَه عن "
        "الحكم ولا يحذف قراءةَ الجذع؛ والجذعُ يقرأ الصورةَ ثمّ أصلَها الذي ردّت السوابقُ ساقطَه في الوصل، "
        "وكلُّ قراءةٍ تُردّ (السابقةُ إلى الكلمة والجذعُ إلى الأصل) وأصلُها يصعد إلى جذعها — لكلّ كلمة", _P,

@@ -968,6 +968,23 @@
 'Slge.Bawwabat.umum_witnesses' does not depend on any axioms
 'Slge.Bawwabat.takhsis_anchored' does not depend on any axioms
 'Slge.BawwabatTable.gates_length' does not depend on any axioms
+'Slge.Haja.needs_anchored' does not depend on any axioms
+'Slge.Haja.harf_has_need' depends on axioms: [propext]
+'Slge.Haja.mustaqill_none' does not depend on any axioms
+'Slge.Haja.damir_mufassir' does not depend on any axioms
+'Slge.Haja.muttasil_takhsis' does not depend on any axioms
+'Slge.Haja.ittisal_only_takhsis' does not depend on any axioms
+'Slge.Haja.sadr_exactly' depends on axioms: [propext]
+'Slge.Haja.babs_length' does not depend on any axioms
+'Slge.Haja.particles_anchored' depends on axioms: [propext]
+'Slge.Haja.huruf_have_needs' depends on axioms: [propext]
+'Slge.Haja.ghayr_musnad' depends on axioms: [propext]
+'Slge.Haja.class_agrees' depends on axioms: [propext]
+'Slge.Haja.la_four' depends on axioms: [propext]
+'Slge.Haja.mufrad_partition' depends on axioms: [propext]
+'Slge.Haja.mufrad_harf_needs' depends on axioms: [propext]
+'Slge.Haja.mufrad_witnesses' depends on axioms: [propext]
+'Slge.HajaTable.anchors_length' does not depend on any axioms
 'Slge.Tawzi.witness_alayhim' depends on axioms: [propext]
 'Slge.Tawzi.witness_lahum' depends on axioms: [propext]
 'Slge.Tawzi.witness_particles' depends on axioms: [propext]

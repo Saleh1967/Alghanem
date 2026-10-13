@@ -100,6 +100,9 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("bawwabat", ("Bawwabat", "BawwabatTable"), ("bawwabat",), "gen_bawwabat_index.py",
            "test_bawwabat.py"),  # بوّاباتُ المعنى: الزمنُ والعطفُ والتخصيصُ والعموم (ADR ٥٥)
     Module("bawwabat_table", (), (), None, "test_bawwabat.py"),  # مولَّدٌ من ج3 المختوم بأسطره
+    Module("haja", ("Haja", "HajaTable"), ("haja",), "gen_haja_index.py",
+           "test_haja.py"),  # توقيعُ الحاجة وقسمةُ المفرد عند النبهانيّ (ADR ٥٦)
+    Module("haja_table", (), (), None, "test_haja.py"),  # مولَّدٌ من ج3 والكتاب المختومَين
     Module("alam", ("Alam", "AlamTable"), ("alam",), "gen_alam_index.py", "test_alam.py",
            law=True),
     Module("alam_table", (), (), None, "test_alam.py"),  # مولَّدٌ من المودَع الموقَّع

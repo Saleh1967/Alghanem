@@ -37,7 +37,8 @@ def test_every_generator_reads_registered_deposits_only() -> None:
     tools = sorted((ROOT / "tools").glob("gen_*_index.py"))
     with_measure = [t for t in tools if "\ndef measure(" in t.read_text(encoding="utf-8")]
     # + التغطية (ADR ٢٩) + الحكم (ADR ٣٤) + الأبنية على الترخيص (ADR ٣٦)
-    assert len(with_measure) == 53  # ومنها gen_mughlaq_index (ADR ٥٣) وgen_bawwabat_index (ADR ٥٥)
+    # ومنها gen_mughlaq_index (ADR ٥٣) وgen_bawwabat_index (ADR ٥٥) وgen_haja_index (ADR ٥٦)
+    assert len(with_measure) == 54
     registered = {d.path for d in MOD.DEPOSITS}
     for t in with_measure:
         assert set(MOD._reads(t)) <= registered

@@ -1528,3 +1528,24 @@ def test_bawwabat_matches_lean() -> None:
     for r in um:
         assert (b.umum(r[1], r[2]) or "-") == r[3], r
 
+
+def test_haja_matches_lean() -> None:
+    """توقيعُ الحاجة: المراسي بأسطرها، وحاجاتُ كلّ باب وصدارتُه، وقسمةُ المفرد، وبابُ كلّ حرف = `Haja`."""
+
+    from slge import haja as h
+    from slge.haja_table import ANCHORS
+
+    rows = _rows("haja.csv")
+    assert [(r[1], r[2], int(r[3])) for r in rows if r[0] == "anchor"] == [
+        (k, b, ln) for k, b, _, ln, _ in ANCHORS]
+    babs = [r for r in rows if r[0] == "bab"]
+    assert [r[1] for r in babs] == list(h.BAB_ALL)
+    for r in babs:
+        b = r[1]
+        mine = "+".join(f"{j}:{m}:{str(i).lower()}:{k}" for j, m, i, k in h.NEEDS[b])
+        assert r[2:] == [str(b in h.HARF_BABS).lower(), str(b in h.SADR).lower(), mine], r
+    for r in (r for r in rows if r[0] == "mufrad"):
+        assert h.mufrad_of(r[1], r[2] == "true") == r[3], r
+    harf = [r for r in rows if r[0] == "harf"]
+    assert [r[2] for r in harf] == list(h.BABS)
+    assert [tuple(r[1:]) for r in rows if r[0] == "particle"] == list(h.PARTICLES)

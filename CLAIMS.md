@@ -54,7 +54,7 @@
 | `masaq-zawaid.json` | مرجع محجوب | `15ab1c4691c88ebb99b4f37c5f1c062c83a20a988fdd6099cc835eaea4097478` |
 | `masaq-zuruf.json` | مرجع محجوب | `ef2e77119120a8f5109e28e63c0835468ce85442806c44b0e4f4a70635416dd3` |
 
-## الأرقام (1,428 رقمًا من 53 مولِّدًا)
+## الأرقام (1,447 رقمًا من 54 مولِّدًا)
 
 ### `tools/gen_abniya_index.py::measure`
 
@@ -418,6 +418,32 @@
 | `zarf.('ظرف مكان', 'لا تقرؤه الخانة')` | 26 |
 | `zarf.('ظرف مكان', 'نصب')` | 641 |
 | `zarf.('ظرف مكان', 'نصب/جرّ')` | 10 |
+
+### `tools/gen_haja_index.py::measure`
+
+يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `1ed2a078bb014f25`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `form_leaf.fil` | 5,986 |
+| `form_leaf.fil+ism` | 1,785 |
+| `form_leaf.harf` | 473 |
+| `form_leaf.harf+ism` | 1 |
+| `form_leaf.harf+mudmar` | 73 |
+| `form_leaf.ism` | 9,775 |
+| `form_leaf.mudmar` | 86 |
+| `forms` | 18,179 |
+| `multi_bab_positions` | 7,008 |
+| `pos_bab.len` | 14 |
+| `pos_bab.sum` | 39,637 |
+| `pos_leaf.fil` | 16,569 |
+| `pos_leaf.fil+ism` | 8,354 |
+| `pos_leaf.harf` | 17,420 |
+| `pos_leaf.harf+ism` | 2 |
+| `pos_leaf.harf+mudmar` | 3,443 |
+| `pos_leaf.ism` | 29,599 |
+| `pos_leaf.mudmar` | 2,858 |
+| `positions` | 78,245 |
 
 ### `tools/gen_hasm_index.py::measure`
 

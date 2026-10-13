@@ -78,8 +78,8 @@ def test_manifest_covers_the_tree() -> None:
     import subprocess
     import sys
 
-    # + بوّاباتُ المعنى (ADR ٥٥): جدولٌ وفهرس
-    assert len(MODULES) >= 50 and len(tables()) == 75 and len(index_tools()) == 61
+    # + بوّاباتُ المعنى (ADR ٥٥) وتوقيعُ الحاجة (ADR ٥٦): جدولٌ وفهرسٌ لكلٍّ
+    assert len(MODULES) >= 50 and len(tables()) == 76 and len(index_tools()) == 62
     res = subprocess.run([sys.executable, str(ROOT_DIR / "tools" / "check_manifest.py")],
                          capture_output=True, text=True, cwd=ROOT_DIR)
     assert res.returncode == 0, res.stderr

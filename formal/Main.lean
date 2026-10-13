@@ -741,6 +741,20 @@ def main (args : List String) : IO Unit := do
       for d in Bawwabat.Dawr.all do
         let m := match Bawwabat.umum x d with | some m => rp m | none => "-"
         IO.println s!"umum,{x},{rp d},{m}"
+  | ["haja"] =>
+    -- توقيعُ الحاجة: حاجاتُ كلّ باب، والصدارة، وبابُ كلّ حرفٍ من الجدول الموحَّد، وقسمةُ المفرد.
+    let rp := fun {α} [Repr α] (x : α) => ((repr x).pretty.splitOn ".").getLastD ""
+    for g in HajaTable.anchors do
+      IO.println s!"anchor,{g.1},{g.2.1},{g.2.2.2.1}"
+    for b in Haja.Bab.all do
+      let ns := (Haja.needs b).map fun h => s!"{rp h.jiha}:{rp h.ma}:{h.ittisal}:{h.key}"
+      IO.println s!"bab,{rp b},{b.harf},{Haja.sadr b},{"+".intercalate ns}"
+      for hy in [false, true] do
+        IO.println s!"mufrad,{rp b},{hy},{rp (Haja.mufradOf b hy)}"
+    for i in List.range Huruf.table.length do
+      IO.println s!"harf,{i},{rp (Haja.babOf i)}"
+    for p in Haja.particles do
+      IO.println s!"particle,{p.1},{p.2.1},{rp p.2.2.1},{p.2.2.2}"
   | ["mughlaq"] =>
     -- الصنفُ المغلق: لكلّ نواةٍ من نوى الموزِّع وسمُها ومصدرُ معناها؛ ولكلّ كلمةٍ شاهدةٍ وسمُها.
     let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)
