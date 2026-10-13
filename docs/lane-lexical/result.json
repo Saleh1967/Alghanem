@@ -1,0 +1,460 @@
+{
+ "prereg": "docs/lane-lexical/PREREG.md",
+ "reference": "QAC 0.4 (Dukes)",
+ "systems": {
+  "S0": {
+   "all_rooted": {
+    "agree_among_covered": {
+     "k": 8738,
+     "n": 9544,
+     "rate": 0.915549,
+     "wilson95": [
+      0.909802,
+      0.920962
+     ]
+    },
+    "agree_over_all": {
+     "k": 8738,
+     "n": 49769,
+     "rate": 0.175571,
+     "wilson95": [
+      0.172254,
+      0.178939
+     ]
+    },
+    "agree_weak_class_over_all": {
+     "k": 8981,
+     "n": 49769,
+     "rate": 0.180454,
+     "wilson95": [
+      0.1771,
+      0.183857
+     ]
+    },
+    "coverage": 0.191766,
+    "n": 49769,
+    "outcomes": {
+     "agree": 8738,
+     "agree_weak_class": 243,
+     "disagree": 563,
+     "no_reading": 40225
+    }
+   },
+   "mabni_verbs": {
+    "agree_among_covered": {
+     "k": 7761,
+     "n": 8120,
+     "rate": 0.955788,
+     "wilson95": [
+      0.951097,
+      0.960048
+     ]
+    },
+    "agree_over_all": {
+     "k": 7761,
+     "n": 10980,
+     "rate": 0.706831,
+     "wilson95": [
+      0.698245,
+      0.715272
+     ]
+    },
+    "agree_weak_class_over_all": {
+     "k": 7987,
+     "n": 10980,
+     "rate": 0.727413,
+     "wilson95": [
+      0.719006,
+      0.735662
+     ]
+    },
+    "coverage": 0.739526,
+    "n": 10980,
+    "outcomes": {
+     "agree": 7761,
+     "agree_weak_class": 226,
+     "disagree": 133,
+     "no_reading": 2860
+    }
+   },
+   "non_verbs": {
+    "agree_among_covered": {
+     "k": 884,
+     "n": 1283,
+     "rate": 0.68901,
+     "wilson95": [
+      0.663148,
+      0.713744
+     ]
+    },
+    "agree_over_all": {
+     "k": 884,
+     "n": 30486,
+     "rate": 0.028997,
+     "wilson95": [
+      0.027172,
+      0.030941
+     ]
+    },
+    "agree_weak_class_over_all": {
+     "k": 900,
+     "n": 30486,
+     "rate": 0.029522,
+     "wilson95": [
+      0.02768,
+      0.031482
+     ]
+    },
+    "coverage": 0.042085,
+    "n": 30486,
+    "outcomes": {
+     "agree": 884,
+     "agree_weak_class": 16,
+     "disagree": 383,
+     "no_reading": 29203
+    }
+   }
+  },
+  "S1": {
+   "all_rooted": {
+    "agree_among_covered": {
+     "k": 16102,
+     "n": 17092,
+     "rate": 0.942078,
+     "wilson95": [
+      0.938476,
+      0.945482
+     ]
+    },
+    "agree_over_all": {
+     "k": 16102,
+     "n": 49769,
+     "rate": 0.323535,
+     "wilson95": [
+      0.319438,
+      0.327658
+     ]
+    },
+    "agree_weak_class_over_all": {
+     "k": 16348,
+     "n": 49769,
+     "rate": 0.328478,
+     "wilson95": [
+      0.324365,
+      0.332617
+     ]
+    },
+    "coverage": 0.343427,
+    "n": 49769,
+    "outcomes": {
+     "agree": 16102,
+     "agree_weak_class": 246,
+     "disagree": 744,
+     "no_reading": 32677
+    }
+   },
+   "mabni_verbs": {
+    "agree_among_covered": {
+     "k": 7885,
+     "n": 8299,
+     "rate": 0.950114,
+     "wilson95": [
+      0.945219,
+      0.954594
+     ]
+    },
+    "agree_over_all": {
+     "k": 7885,
+     "n": 10980,
+     "rate": 0.718124,
+     "wilson95": [
+      0.709633,
+      0.726462
+     ]
+    },
+    "agree_weak_class_over_all": {
+     "k": 8111,
+     "n": 10980,
+     "rate": 0.738707,
+     "wilson95": [
+      0.730407,
+      0.74684
+     ]
+    },
+    "coverage": 0.755829,
+    "n": 10980,
+    "outcomes": {
+     "agree": 7885,
+     "agree_weak_class": 226,
+     "disagree": 188,
+     "no_reading": 2681
+    }
+   },
+   "non_verbs": {
+    "agree_among_covered": {
+     "k": 8080,
+     "n": 8602,
+     "rate": 0.939316,
+     "wilson95": [
+      0.934072,
+      0.944168
+     ]
+    },
+    "agree_over_all": {
+     "k": 8080,
+     "n": 30486,
+     "rate": 0.26504,
+     "wilson95": [
+      0.260115,
+      0.270023
+     ]
+    },
+    "agree_weak_class_over_all": {
+     "k": 8099,
+     "n": 30486,
+     "rate": 0.265663,
+     "wilson95": [
+      0.260735,
+      0.27065
+     ]
+    },
+    "coverage": 0.282162,
+    "n": 30486,
+    "outcomes": {
+     "agree": 8080,
+     "agree_weak_class": 19,
+     "disagree": 503,
+     "no_reading": 21884
+    }
+   }
+  },
+  "S2": {
+   "all_rooted": {
+    "agree_among_covered": {
+     "k": 16087,
+     "n": 17092,
+     "rate": 0.941201,
+     "wilson95": [
+      0.937574,
+      0.944629
+     ]
+    },
+    "agree_over_all": {
+     "k": 16087,
+     "n": 49769,
+     "rate": 0.323233,
+     "wilson95": [
+      0.319138,
+      0.327356
+     ]
+    },
+    "agree_weak_class_over_all": {
+     "k": 16323,
+     "n": 49769,
+     "rate": 0.327975,
+     "wilson95": [
+      0.323864,
+      0.332113
+     ]
+    },
+    "coverage": 0.343427,
+    "n": 49769,
+    "outcomes": {
+     "agree": 16087,
+     "agree_weak_class": 236,
+     "disagree": 769,
+     "no_reading": 32677
+    }
+   },
+   "mabni_verbs": {
+    "agree_among_covered": {
+     "k": 7846,
+     "n": 8299,
+     "rate": 0.945415,
+     "wilson95": [
+      0.940318,
+      0.9501
+     ]
+    },
+    "agree_over_all": {
+     "k": 7846,
+     "n": 10980,
+     "rate": 0.714572,
+     "wilson95": [
+      0.706051,
+      0.722943
+     ]
+    },
+    "agree_weak_class_over_all": {
+     "k": 8074,
+     "n": 10980,
+     "rate": 0.735337,
+     "wilson95": [
+      0.727004,
+      0.743505
+     ]
+    },
+    "coverage": 0.755829,
+    "n": 10980,
+    "outcomes": {
+     "agree": 7846,
+     "agree_weak_class": 228,
+     "disagree": 225,
+     "no_reading": 2681
+    }
+   },
+   "non_verbs": {
+    "agree_among_covered": {
+     "k": 8107,
+     "n": 8602,
+     "rate": 0.942455,
+     "wilson95": [
+      0.937334,
+      0.947182
+     ]
+    },
+    "agree_over_all": {
+     "k": 8107,
+     "n": 30486,
+     "rate": 0.265925,
+     "wilson95": [
+      0.260995,
+      0.270914
+     ]
+    },
+    "agree_weak_class_over_all": {
+     "k": 8114,
+     "n": 30486,
+     "rate": 0.266155,
+     "wilson95": [
+      0.261224,
+      0.271145
+     ]
+    },
+    "coverage": 0.282162,
+    "n": 30486,
+    "outcomes": {
+     "agree": 8107,
+     "agree_weak_class": 7,
+     "disagree": 488,
+     "no_reading": 21884
+    }
+   }
+  },
+  "S3": {
+   "all_rooted": {
+    "agree_among_covered": {
+     "k": 16136,
+     "n": 17092,
+     "rate": 0.944067,
+     "wilson95": [
+      0.940522,
+      0.947414
+     ]
+    },
+    "agree_over_all": {
+     "k": 16136,
+     "n": 49769,
+     "rate": 0.324218,
+     "wilson95": [
+      0.320119,
+      0.328344
+     ]
+    },
+    "agree_weak_class_over_all": {
+     "k": 16382,
+     "n": 49769,
+     "rate": 0.329161,
+     "wilson95": [
+      0.325046,
+      0.333302
+     ]
+    },
+    "coverage": 0.343427,
+    "n": 49769,
+    "outcomes": {
+     "agree": 16136,
+     "agree_weak_class": 246,
+     "disagree": 710,
+     "no_reading": 32677
+    }
+   },
+   "mabni_verbs": {
+    "agree_among_covered": {
+     "k": 7879,
+     "n": 8299,
+     "rate": 0.949391,
+     "wilson95": [
+      0.944464,
+      0.953903
+     ]
+    },
+    "agree_over_all": {
+     "k": 7879,
+     "n": 10980,
+     "rate": 0.717577,
+     "wilson95": [
+      0.709082,
+      0.725921
+     ]
+    },
+    "agree_weak_class_over_all": {
+     "k": 8105,
+     "n": 10980,
+     "rate": 0.73816,
+     "wilson95": [
+      0.729855,
+      0.746299
+     ]
+    },
+    "coverage": 0.755829,
+    "n": 10980,
+    "outcomes": {
+     "agree": 7879,
+     "agree_weak_class": 226,
+     "disagree": 194,
+     "no_reading": 2681
+    }
+   },
+   "non_verbs": {
+    "agree_among_covered": {
+     "k": 8120,
+     "n": 8602,
+     "rate": 0.943967,
+     "wilson95": [
+      0.938905,
+      0.948631
+     ]
+    },
+    "agree_over_all": {
+     "k": 8120,
+     "n": 30486,
+     "rate": 0.266352,
+     "wilson95": [
+      0.261419,
+      0.271343
+     ]
+    },
+    "agree_weak_class_over_all": {
+     "k": 8139,
+     "n": 30486,
+     "rate": 0.266975,
+     "wilson95": [
+      0.262039,
+      0.27197
+     ]
+    },
+    "coverage": 0.282162,
+    "n": 30486,
+    "outcomes": {
+     "agree": 8120,
+     "agree_weak_class": 19,
+     "disagree": 463,
+     "no_reading": 21884
+    }
+   }
+  }
+ },
+ "verdict_all_rooted": "S3_BETTER",
+ "verdict_mabni_verbs": "S3_NOT_BETTER"
+}
