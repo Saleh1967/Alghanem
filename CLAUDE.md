@@ -38,7 +38,7 @@
 
 ```sh
 pip install -r requirements-dev.txt && pip install -e . --no-deps
-ruff check . && mypy && pytest -q                     # 572 اختبارًا
+ruff check . && mypy && pytest -q                     # 577 اختبارًا
 python tools/gen_status.py --check
 python tools/gen_registry.py --check
 python tools/check_manifest.py && python tools/check_manifest.py --indexes   # السجلُّ وكلُّ الفهارس (بدل السطور أدناه واحدًا واحدًا)
