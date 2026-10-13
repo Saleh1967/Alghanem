@@ -54,7 +54,7 @@
 | `masaq-zawaid.json` | مرجع محجوب | `15ab1c4691c88ebb99b4f37c5f1c062c83a20a988fdd6099cc835eaea4097478` |
 | `masaq-zuruf.json` | مرجع محجوب | `ef2e77119120a8f5109e28e63c0835468ce85442806c44b0e4f4a70635416dd3` |
 
-## الأرقام (1,402 رقمًا من 52 مولِّدًا)
+## الأرقام (1,428 رقمًا من 53 مولِّدًا)
 
 ### `tools/gen_abniya_index.py::measure`
 
@@ -212,6 +212,39 @@
 | `unread_top.len` | 15 |
 | `with_pre` | 81 |
 | `wrong` | 2 |
+
+### `tools/gen_bawwabat_index.py::measure`
+
+يقرأ: `corpus-certificates.json.gz`. بصمةُ المخرَج: `c601aaa9ce36ac35`.
+
+| المسار في المخرَج | الرقم |
+|---|---|
+| `after.an.أمر` | 3 |
+| `after.an.غيرُ فعلٍ مقروء` | 391 |
+| `after.an.ماضٍ` | 12 |
+| `after.an.مضارع` | 113 |
+| `after.inShart.أمر` | 1 |
+| `after.inShart.غيرُ فعلٍ مقروء` | 308 |
+| `after.inShart.ماضٍ` | 8 |
+| `after.inShart.مضارع` | 27 |
+| `after.la.غيرُ فعلٍ مقروء` | 651 |
+| `after.la.ماضٍ` | 8 |
+| `after.la.مضارع` | 153 |
+| `after.lam.غيرُ فعلٍ مقروء` | 119 |
+| `after.lam.مضارع` | 44 |
+| `after.lamma.غيرُ فعلٍ مقروء` | 31 |
+| `after.lamma.ماضٍ` | 1 |
+| `after.lan.غيرُ فعلٍ مقروء` | 35 |
+| `after.lan.مضارع` | 24 |
+| `after.ma.غيرُ فعلٍ مقروء` | 880 |
+| `after.ma.ماضٍ` | 75 |
+| `after.ma.مضارع` | 55 |
+| `after.qad.غيرُ فعلٍ مقروء` | 85 |
+| `after.qad.ماضٍ` | 30 |
+| `after.qad.مضارع` | 5 |
+| `after.sawfa.غيرُ فعلٍ مقروء` | 6 |
+| `after.sawfa.مضارع` | 1 |
+| `tokens` | 78,245 |
 
 ### `tools/gen_bits_index.py::measure`
 

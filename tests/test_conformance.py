@@ -1494,3 +1494,37 @@ def test_qiraa_matches_lean() -> None:
         mine = [f"{'-' if q.via is None else KINDS.index(q.via.kind)}|{k(q.r.asl)}|{k(q.r.stem)}|"
                 f"{k(q.r.suf)}|{len(q.r.ilal)}" for q in qiraa(w)]
         assert mine == lean, (name, mine, lean)
+
+
+def test_bawwabat_matches_lean() -> None:
+    """بوّاباتُ المعنى: الجدولُ بأسطره، والأدواتُ على الهيئات، وصدقُ العطف، والعمومُ بالدور =
+    `Bawwabat`."""
+
+    from slge import bawwabat as b
+    from slge.bawwabat_table import GATES
+
+    def az(z: tuple[bool, bool, bool, bool] | None) -> str:
+        return "-" if z is None else "".join(str(int(x)) for x in z)
+
+    rows = _rows("bawwabat.csv")
+    gates = [r for r in rows if r[0] == "gate"]
+    assert [(r[1], int(r[2])) for r in gates] == [(k, ln) for k, _, ln, _ in GATES]
+    hay = [r for r in rows if r[0] == "hayaa"]
+    assert [(r[1], r[2]) for r in hay] == [(h, az(b.zaman_of(h))) for h in b.HAYAA]
+    app = [r for r in rows if r[0] == "apply"]
+    assert len(app) == len(b.ADAT) * len(b.HAYAA)
+    for r in app:
+        a, h = r[1], r[2]
+        mine = [az(b.apply(a, h)), str(b.takhlis(a, h)).lower(), str(b.qalb(a, h)).lower(),
+                str(a in b.NAFY).lower()]
+        assert r[3:] == mine, r
+    atf = [r for r in rows if r[0] == "atf"]
+    assert len(atf) == len(b.ATF) * 4 * 9
+    for r in atf:
+        got = b.sidq(r[1], r[2] == "true", r[3] == "true", int(r[4]), int(r[5]))
+        assert str(got).lower() == r[6], r
+    um = [r for r in rows if r[0] == "umum"]
+    assert len(um) == (len(b.SIYAGH) + 1) * len(b.DAWR)
+    for r in um:
+        assert (b.umum(r[1], r[2]) or "-") == r[3], r
+

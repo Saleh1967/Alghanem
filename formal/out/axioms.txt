@@ -925,6 +925,49 @@
 'Slge.Mughlaq.witness_qism' depends on axioms: [propext]
 'Slge.Mughlaq.const_errors_ge_min' depends on axioms: [propext, Quot.sound]
 'Slge.Mughlaq.const_errors_majority' depends on axioms: [propext, Quot.sound]
+'Slge.Bawwabat.takhlis_xor_qalb' depends on axioms: [propext]
+'Slge.Bawwabat.qalb_exactly' depends on axioms: [propext]
+'Slge.Bawwabat.none_on_amr' depends on axioms: [propext]
+'Slge.Bawwabat.on_madi' depends on axioms: [propext]
+'Slge.Bawwabat.on_mudari' depends on axioms: [propext]
+'Slge.Bawwabat.istiqbal_group' depends on axioms: [propext]
+'Slge.Bawwabat.mudari_two_points' does not depend on any axioms
+'Slge.Bawwabat.takhlis_resolves_mudari' depends on axioms: [propext]
+'Slge.Bawwabat.reach_exhausted' depends on axioms: [propext]
+'Slge.Bawwabat.nafy_six' depends on axioms: [propext]
+'Slge.Bawwabat.adat_anchored' does not depend on any axioms
+'Slge.Bawwabat.adat_in_huruf' does not depend on any axioms
+'Slge.Bawwabat.agrees_with_maani' depends on axioms: [propext]
+'Slge.Bawwabat.waw_comm' depends on axioms: [propext]
+'Slge.Bawwabat.fa_not_comm' does not depend on any axioms
+'Slge.Bawwabat.lt_split' depends on axioms: [propext, Quot.sound]
+'Slge.Bawwabat.tartib_split' depends on axioms: [propext, Quot.sound]
+'Slge.Bawwabat.fa_thumma_disjoint' depends on axioms: [propext, Quot.sound]
+'Slge.Bawwabat.tartib_imp_waw' depends on axioms: [propext, Quot.sound]
+'Slge.Bawwabat.waw_imp_aw' depends on axioms: [propext]
+'Slge.Bawwabat.mukhalafa_exactly_one' depends on axioms: [propext]
+'Slge.Bawwabat.nafy_waw' does not depend on any axioms
+'Slge.Bawwabat.am_istifham_only' depends on axioms: [propext]
+'Slge.Bawwabat.atf_anchored' does not depend on any axioms
+'Slge.Bawwabat.atf_agrees_with_maani' does not depend on any axioms
+'Slge.Bawwabat.istithna_sub' depends on axioms: [propext]
+'Slge.Bawwabat.shart_sub' depends on axioms: [propext]
+'Slge.Bawwabat.sifa_sub' depends on axioms: [propext]
+'Slge.Bawwabat.istithna_removes' depends on axioms: [propext]
+'Slge.Bawwabat.sifa_shart_comm' depends on axioms: [Quot.sound]
+'Slge.Bawwabat.istithna_comm' depends on axioms: [Quot.sound]
+'Slge.Bawwabat.istithna_idem' depends on axioms: [Quot.sound]
+'Slge.Bawwabat.shart_mafhum_partition' does not depend on any axioms
+'Slge.Bawwabat.shart_mafhum_disjoint' does not depend on any axioms
+'Slge.Bawwabat.nakira_nafy_umum' depends on axioms: [propext]
+'Slge.Bawwabat.ghaya_sub' depends on axioms: [propext]
+'Slge.Bawwabat.ghaya_excludes_bound' depends on axioms: [propext]
+'Slge.Bawwabat.ghaya_mono' depends on axioms: [propext, Quot.sound]
+'Slge.Bawwabat.ayy_man_need_role' does not depend on any axioms
+'Slge.Bawwabat.ma_mawsula_umum' does not depend on any axioms
+'Slge.Bawwabat.umum_witnesses' does not depend on any axioms
+'Slge.Bawwabat.takhsis_anchored' does not depend on any axioms
+'Slge.BawwabatTable.gates_length' does not depend on any axioms
 'Slge.Tawzi.witness_alayhim' depends on axioms: [propext]
 'Slge.Tawzi.witness_lahum' depends on axioms: [propext]
 'Slge.Tawzi.witness_particles' depends on axioms: [propext]

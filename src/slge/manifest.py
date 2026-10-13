@@ -97,6 +97,9 @@ MODULES: Final[tuple[Module, ...]] = (
     Module("tawzi", ("Tawzi",), ("tawzi",), "gen_tawzi_index.py", "test_tawzi.py", law=True),
     Module("mughlaq", ("Mughlaq",), ("mughlaq",), "gen_mughlaq_index.py",
            "test_mughlaq.py"),  # الوسمُ الثلاثيّ: المغلقُ مفصولٌ عن الاسم والفعل (ADR ٥٣)
+    Module("bawwabat", ("Bawwabat", "BawwabatTable"), ("bawwabat",), "gen_bawwabat_index.py",
+           "test_bawwabat.py"),  # بوّاباتُ المعنى: الزمنُ والعطفُ والتخصيصُ والعموم (ADR ٥٥)
+    Module("bawwabat_table", (), (), None, "test_bawwabat.py"),  # مولَّدٌ من ج3 المختوم بأسطره
     Module("alam", ("Alam", "AlamTable"), ("alam",), "gen_alam_index.py", "test_alam.py",
            law=True),
     Module("alam_table", (), (), None, "test_alam.py"),  # مولَّدٌ من المودَع الموقَّع

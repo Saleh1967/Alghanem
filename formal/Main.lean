@@ -719,6 +719,28 @@ def main (args : List String) : IO Unit := do
       for m in Tawzi.tawzi w do
         IO.println s!"word,{n},{key w},{"+".intercalate (m.pre.map key)}|{key m.core}|{key m.surface}|{key m.suf}"
       IO.println s!"count,{n},{key w},{(Tawzi.tawzi w).length}"
+  | ["bawwabat"] =>
+    -- بوّاباتُ المعنى: الأدواتُ على الهيئات، وصدقُ العطف على واقعاتٍ صغيرة، والعمومُ بالدور، ومفاتيحُ الجدول بأسطرها.
+    let rp := fun {α} [Repr α] (x : α) => ((repr x).pretty.splitOn ".").getLastD ""
+    let az := fun (o : Option Bawwabat.Azmina) => match o with
+      | some z => s!"{z.madi.toNat}{z.qarib.toNat}{z.hal.toNat}{z.mustaqbal.toNat}" | none => "-"
+    for g in BawwabatTable.gates do
+      IO.println s!"gate,{g.1},{g.2.2.1}"
+    for h in Bawwabat.Hayaa.all do
+      IO.println s!"hayaa,{rp h},{az (Bawwabat.zamanOf h)}"
+    for a in Bawwabat.Adat.all do
+      for h in Bawwabat.Hayaa.all do
+        IO.println s!"apply,{rp a},{rp h},{az (Bawwabat.apply a h)},{Bawwabat.takhlis a h},{Bawwabat.qalb a h},{a.nafy}"
+    for t in Bawwabat.Atf.all do
+      for a in [false, true] do
+        for b in [false, true] do
+          for ta in List.range 3 do
+            for tb in List.range 3 do
+              IO.println s!"atf,{rp t},{a},{b},{ta},{tb},{Bawwabat.sidq t ⟨a, b, ta, tb⟩}"
+    for x in Bawwabat.siyagh ++ ["رجل"] do
+      for d in Bawwabat.Dawr.all do
+        let m := match Bawwabat.umum x d with | some m => rp m | none => "-"
+        IO.println s!"umum,{x},{rp d},{m}"
   | ["mughlaq"] =>
     -- الصنفُ المغلق: لكلّ نواةٍ من نوى الموزِّع وسمُها ومصدرُ معناها؛ ولكلّ كلمةٍ شاهدةٍ وسمُها.
     let key := fun (w : List SCell) => "-".intercalate (w.map fun c => toString c.index)

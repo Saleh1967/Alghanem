@@ -4,7 +4,7 @@
 
 | الوسم | العدد |
 |---|---|
-| مبرهن | 158 |
+| مبرهن | 159 |
 | مفحوص_استقصاء | 15 |
 | مفحوص_بعينة | 50 |
 | دليل | 0 |
@@ -29,6 +29,7 @@
 | AQ-lattice | الاحتواءُ بين الأقانيم انعكاسيٌّ متعدٍّ، والسلامةُ تنزل من الأعلى إلى الأدنى | مبرهن | `lean:Slge.Categories.sub_trans` |  |
 | AQ-pronoun | الضمائرُ المنفصلة أقنومٌ سليم (كلُّها مرخَّصة) بأعدادٍ متباينة، وشكلُها ليس بصمة | مبرهن | `lean:Slge.Categories.pronoun_sound`<br>`lean:Slge.Categories.pronoun_numbers_nodup`<br>`test:tests/test_conformance.py::test_categories_match_lean` | خاناتُها من جسر الغانم (ستّةٌ في المجال المختوم، وستّةٌ خارجه تُذرَّر بالجسر وتُرفض من البوّابة بالاسم)؛ اكتمالُها على MASAQ قياسٌ لم يُطبع بعد. |
 | BARREN | عقمُ نقيض المقدَّم وعين التالي في الأخصّ مشهودٌ بنموذجين | مبرهن | `lean:Slge.Ghazali.barren_witnessed` |  |
+| BAWWABAT-gates | بوّاباتُ المعنى: الأداةُ على الهيئة تخليصٌ داخلَ زمنها أو قلبٌ خارجَه لا ثالث، والأزمنةُ المبلوغة خمسٌ؛ والواوُ تبادليّةٌ والترتيبُ تعقيبٌ أو تراخٍ؛ والتخصيصُ المتّصل يُخرج ولا يُدخل، والشرطُ ومفهومُه قسمة؛ والعمومُ بالصيغة والدور — كلٌّ بعباراته في سطرٍ من ج3 المختوم | مبرهن | `lean:Slge.Bawwabat.takhlis_xor_qalb`<br>`lean:Slge.Bawwabat.qalb_exactly`<br>`lean:Slge.Bawwabat.reach_exhausted`<br>`lean:Slge.Bawwabat.agrees_with_maani`<br>`lean:Slge.Bawwabat.waw_comm`<br>`lean:Slge.Bawwabat.tartib_split`<br>`lean:Slge.Bawwabat.mukhalafa_exactly_one`<br>`lean:Slge.Bawwabat.istithna_sub`<br>`lean:Slge.Bawwabat.shart_mafhum_partition`<br>`lean:Slge.Bawwabat.ghaya_excludes_bound`<br>`lean:Slge.Bawwabat.ayy_man_need_role`<br>`lean:Slge.Bawwabat.nakira_nafy_umum`<br>`test:tests/test_bawwabat.py::test_time_from_nabhani_examples`<br>`test:tests/test_bawwabat.py::test_mutant_qalb_as_takhlis_rejected`<br>`test:tests/test_conformance.py::test_bawwabat_matches_lean` | الجبرُ المنقول مبرهَن، لا اللغة (ADR ٥٥)؛ وما يلي الأداةَ على مودَع المصحف مفحوصٌ لا مقيس (BAWWABAT_INDEX.md). |
 | BRIDGE | الجسرُ بين ترميز SLGE وترميز الـ116 تقابلٌ يحفظ السكون | مبرهن | `lean:Slge.ofCell_toCell`<br>`lean:Slge.toCell_ofCell`<br>`lean:Slge.toCell_isSukun`<br>`test:tests/test_conformance.py::test_bridge_matches_lean` |  |
 | CHAIN | الأخصُّ متعدٍّ (مفهومُ الموافقة سلسلة) | مبرهن | `lean:Slge.Ghazali.akhass_chain` |  |
 | COUNT | عدّادُ SLGE هو ‎U(n)‎ لكلّ n | مبرهن | `lean:Slge.count_eq_U`<br>`test:tests/test_conformance.py::test_counts_match_lean` |  |

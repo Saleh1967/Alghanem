@@ -72,6 +72,8 @@ import Slge.HasmTable
 import Slge.Hasm
 import Slge.Tawzi
 import Slge.Mughlaq
+import Slge.BawwabatTable
+import Slge.Bawwabat
 import Slge.AlamTable
 import Slge.Alam
 import Slge.SawabiqTable

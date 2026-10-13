@@ -1263,6 +1263,21 @@ _DECLARED: tuple[Claim, ...] = (
        "test:tests/test_conformance.py::test_mughlaq_matches_lean",
        note="مقيسٌ على QAC بتسجيلٍ مسبق (MUGHLAQ_INDEX.md، ADR ٥٣)؛ ومصدرُ المعنى إمّا مختومٌ (مبحثُ "
             "الحرف) أو معلَنٌ في جداوله — والوسمُ لا يُثبت صحّةَ المعنى لغةً."),
+    _c("BAWWABAT-gates", "بوّاباتُ المعنى: الأداةُ على الهيئة تخليصٌ داخلَ زمنها أو قلبٌ خارجَه لا ثالث، "
+       "والأزمنةُ المبلوغة خمسٌ؛ والواوُ تبادليّةٌ والترتيبُ تعقيبٌ أو تراخٍ؛ والتخصيصُ المتّصل "
+       "يُخرج ولا يُدخل، والشرطُ ومفهومُه قسمة؛ والعمومُ بالصيغة والدور — كلٌّ بعباراته في سطرٍ "
+       "من ج3 المختوم", _P,
+       "lean:Slge.Bawwabat.takhlis_xor_qalb", "lean:Slge.Bawwabat.qalb_exactly",
+       "lean:Slge.Bawwabat.reach_exhausted", "lean:Slge.Bawwabat.agrees_with_maani",
+       "lean:Slge.Bawwabat.waw_comm", "lean:Slge.Bawwabat.tartib_split",
+       "lean:Slge.Bawwabat.mukhalafa_exactly_one", "lean:Slge.Bawwabat.istithna_sub",
+       "lean:Slge.Bawwabat.shart_mafhum_partition", "lean:Slge.Bawwabat.ghaya_excludes_bound",
+       "lean:Slge.Bawwabat.ayy_man_need_role", "lean:Slge.Bawwabat.nakira_nafy_umum",
+       "test:tests/test_bawwabat.py::test_time_from_nabhani_examples",
+       "test:tests/test_bawwabat.py::test_mutant_qalb_as_takhlis_rejected",
+       "test:tests/test_conformance.py::test_bawwabat_matches_lean",
+       note="الجبرُ المنقول مبرهَن، لا اللغة (ADR ٥٥)؛ وما يلي الأداةَ على مودَع المصحف مفحوصٌ لا مقيس "
+            "(BAWWABAT_INDEX.md)."),
     _c("QIRAA-reader", "القراءةُ الموحَّدة: ما يقرؤه الموزِّعُ ونواتُه من حروف المعاني حرفٌ يحجب جذرَه عن "
        "الحكم ولا يحذف قراءةَ الجذع؛ والجذعُ يقرأ الصورةَ ثمّ أصلَها الذي ردّت السوابقُ ساقطَه في الوصل، "
        "وكلُّ قراءةٍ تُردّ (السابقةُ إلى الكلمة والجذعُ إلى الأصل) وأصلُها يصعد إلى جذعها — لكلّ كلمة", _P,
