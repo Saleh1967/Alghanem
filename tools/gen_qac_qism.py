@@ -4,7 +4,8 @@
 Dukes. والقرّاء: الساذج، وبلا فرز، وبفرز الاسم من الفعل، وبالصنف بقواعد الألفيّة (`klass`). والنتيجةُ
 `docs/qism/result.json`.
 
-`--check` يُسقط البناءَ باسمه `QISM_RESULT_DRIFTED`. الأداةُ معفاةٌ في الحارس لأنّها أداةُ قياس.
+والتسجيلُ الثاني (`PREREG-2.md`) يصحّح مرشِّحَ اللاحقة وحدَه (`result-2.json`). و`--check` يُسقط البناءَ
+باسمه `QISM_RESULT_DRIFTED`. الأداةُ معفاةٌ في الحارس لأنّها أداةُ قياس.
 """
 
 from __future__ import annotations
@@ -25,6 +26,8 @@ sys.modules["gen_qac"] = Q
 _SPEC.loader.exec_module(Q)
 
 RESULT = ROOT / "docs" / "qism" / "result.json"
+RESULT_2 = ROOT / "docs" / "qism" / "result-2.json"
+KHAMSA_PERSONS = frozenset({"3MP", "2MP", "3MD", "3FD", "3D", "2D", "2MD", "2FD", "2FS"})
 NOUN_TAGS = frozenset({"N", "ADJ", "PN"})
 CASE = {"NOM": "raf", "ACC": "nasb", "GEN": "jarr"}
 SITTA = frozenset({">abN", ">ax", "*uw", "*aA", "Ham", "fuw"})
@@ -48,6 +51,9 @@ def feats_of(segs: list[str]) -> dict[str, str]:
     sufs = [f for f in segs if f.startswith("SUFFIX")]
     out["emph"] = "1" if any("EMPH" in f for f in sufs) else ""
     out["subj_only"] = "1" if all(f == f"SUFFIX|PRON:{out['person']}" for f in sufs) else ""
+    # التسجيلُ الثاني: لاحقةٌ واحدةٌ هي ضميرُ الفاعل، ولا يكون إلّا في الأفعال الخمسة
+    out["subj_only_2"] = "1" if not sufs or (len(sufs) == 1 and out["person"] in KHAMSA_PERSONS
+                                              and sufs[0] == f"SUFFIX|PRON:{out['person']}") else ""
     out["nosuf"] = "" if sufs else "1"
     return out
 
@@ -93,7 +99,7 @@ def klass(f: dict[str, str], e: str | None, word: str) -> str:
     return "fSahih"
 
 
-def population() -> tuple[list[dict[str, str]], Counter[str]]:
+def population(reg: int = 1) -> tuple[list[dict[str, str]], Counter[str]]:
     from gate import Refusal, enter, exit
     from gate.qism import ending_of
 
@@ -121,7 +127,7 @@ def population() -> tuple[list[dict[str, str]], Counter[str]]:
                     sep = f["person"] in ("3MP", "2MP", "2FS") or "D" in f["person"]
                     tally["TAWKID_" + ("MAFSUL" if sep else "MUBASHIR")] += 1
                     continue
-                if not f["subj_only"]:
+                if not f["subj_only" if reg == 1 else "subj_only_2"]:
                     continue
                 gold = {"MOOD:SUBJ": "nasb", "MOOD:JUS": "jazm"}.get(f["mood"], "raf")
             else:
@@ -161,13 +167,13 @@ def tally(pop: list[dict[str, str]]) -> dict[str, object]:
     return out
 
 
-def measure() -> dict[str, object]:
-    pop, counts = population()
+def measure(reg: int = 1) -> dict[str, object]:
+    pop, counts = population(reg)
     nouns = [p for p in pop if p["noun"]]
     verbs = [p for p in pop if not p["noun"]]
     mamnu = sum(1 for p in nouns if p["gold"] == "jarr" and p["ending"] == "fatha")
     return {
-        "prereg": "docs/qism/PREREG.md",
+        "prereg": "docs/qism/PREREG.md" if reg == 1 else "docs/qism/PREREG-2.md",
         "reference_sha256": Q.QAC_SHA256,
         "all": tally(pop), "nouns": tally(nouns), "verbs": tally(verbs),
         "class_counts": dict(sorted(Counter(p["class"] for p in pop).items())),
@@ -178,15 +184,19 @@ def measure() -> dict[str, object]:
 
 def main(argv: list[str]) -> int:
     if "--check" in argv:
-        ok = not RESULT.exists() or RESULT.read_text(encoding="utf-8") == Q.dump(measure())
-        state = "مطابقة" if RESULT.exists() else "لم تُقس بعد"
-        print(f"الفرزُ على QAC: النتيجة {state}" if ok else "QISM_RESULT_DRIFTED")
+        ok = all(not path.exists() or path.read_text(encoding="utf-8") == Q.dump(measure(reg))
+                 for reg, path in ((1, RESULT), (2, RESULT_2)))
+        print("الفرزُ على QAC: النتيجتان مطابقتان" if ok else "QISM_RESULT_DRIFTED")
         return 0 if ok else 1
+    if argv[:1] == ["measure-2"]:
+        RESULT_2.write_text(Q.dump(measure(2)), encoding="utf-8")
+        print(f"كُتب {RESULT_2.relative_to(ROOT)}")
+        return 0
     if argv[:1] == ["measure"]:
         RESULT.write_text(Q.dump(measure()), encoding="utf-8")
         print(f"كُتب {RESULT.relative_to(ROOT)}")
         return 0
-    print("الاستعمال: measure | --check")
+    print("الاستعمال: measure | measure-2 | --check")
     return 2
 
 

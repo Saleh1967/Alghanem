@@ -1,0 +1,181 @@
+{
+ "all": {
+  "R0": {
+   "accuracy_on_decided": [
+    0.953773,
+    0.958835
+   ],
+   "correct": 23939,
+   "correct_over_n": [
+    0.728849,
+    0.738441
+   ],
+   "decided": 25031
+  },
+  "R1": {
+   "accuracy_on_decided": [
+    0.921525,
+    0.938383
+   ],
+   "correct": 3263,
+   "correct_over_n": [
+    0.096795,
+    0.103305
+   ],
+   "decided": 3507
+  },
+  "R2": {
+   "accuracy_on_decided": [
+    0.958656,
+    0.96609
+   ],
+   "correct": 9664,
+   "correct_over_n": [
+    0.291248,
+    0.301156
+   ],
+   "decided": 10040
+  },
+  "R3": {
+   "accuracy_on_decided": [
+    0.975301,
+    0.97883
+   ],
+   "correct": 26962,
+   "correct_over_n": [
+    0.822171,
+    0.830392
+   ],
+   "decided": 27593
+  },
+  "n": 32629
+ },
+ "class_counts": {
+  "fKhamsaA": 82,
+  "fKhamsaW": 3096,
+  "fKhamsaY": 6,
+  "fMutalAlif": 292,
+  "fMutalW": 83,
+  "fMutalY": 468,
+  "fSahih": 2741,
+  "iJamF": 826,
+  "iJamM": 2155,
+  "iManqus": 102,
+  "iMaqsur": 984,
+  "iMuthanna": 149,
+  "iSahih": 21562,
+  "iSitta": 83
+ },
+ "excluded": {
+  "ALIGN_RESIDUAL": 3,
+  "MABNI_INATH": 54,
+  "REFUSED_REJECT": 7,
+  "TAWKID_MAFSUL": 51,
+  "TAWKID_MUBASHIR": 192
+ },
+ "jarr_with_fatha_ending": 348,
+ "nouns": {
+  "R0": {
+   "accuracy_on_decided": [
+    0.966785,
+    0.971343
+   ],
+   "correct": 21453,
+   "correct_over_n": [
+    0.824918,
+    0.834084
+   ],
+   "decided": 22136
+  },
+  "R1": {
+   "accuracy_on_decided": [
+    0.786846,
+    0.839941
+   ],
+   "correct": 669,
+   "correct_over_n": [
+    0.024004,
+    0.027875
+   ],
+   "decided": 821
+  },
+  "R2": {
+   "accuracy_on_decided": [
+    0.959349,
+    0.96799
+   ],
+   "correct": 6919,
+   "correct_over_n": [
+    0.262185,
+    0.272975
+   ],
+   "decided": 7178
+  },
+  "R3": {
+   "accuracy_on_decided": [
+    0.975098,
+    0.979034
+   ],
+   "correct": 21680,
+   "correct_over_n": [
+    0.833791,
+    0.842765
+   ],
+   "decided": 22187
+  },
+  "n": 25861
+ },
+ "prereg": "docs/qism/PREREG.md",
+ "reference_sha256": "a1d12923815341face765083805d2148ed2d9f5cc3f7d6665219d887675d8c46",
+ "verbs": {
+  "R0": {
+   "accuracy_on_decided": [
+    0.845558,
+    0.870935
+   ],
+   "correct": 2486,
+   "correct_over_n": [
+    0.35591,
+    0.378874
+   ],
+   "decided": 2895
+  },
+  "R1": {
+   "accuracy_on_decided": [
+    0.958178,
+    0.971988
+   ],
+   "correct": 2594,
+   "correct_over_n": [
+    0.371761,
+    0.39492
+   ],
+   "decided": 2686
+  },
+  "R2": {
+   "accuracy_on_decided": [
+    0.951228,
+    0.96578
+   ],
+   "correct": 2745,
+   "correct_over_n": [
+    0.393944,
+    0.417333
+   ],
+   "decided": 2862
+  },
+  "R3": {
+   "accuracy_on_decided": [
+    0.97272,
+    0.980727
+   ],
+   "correct": 5282,
+   "correct_over_n": [
+    0.770418,
+    0.790139
+   ],
+   "decided": 5406
+  },
+  "n": 6768
+ }
+}
