@@ -2,6 +2,7 @@ import Slge.Jidh
 import Slge.Zaman
 import Slge.Istifham
 import Slge.Marifa
+import Slge.Khamsa
 
 /-!
 # الموزِّع — المبنيّاتُ تُقرأ من جدولها قبل القوالب
@@ -24,11 +25,15 @@ open Slge.Categories (c)
 مغلقة، فتُترك لقارئ القوالب (`VERB_NOT_MABNI`). -/
 def verbs : List String := ["ظَنَّ", "حَسِبَ"]
 
+/-- موصولٌ لا سندَ له في الكتاب المختوم: ذُو الطائيّة؛ وذُو فيه اسمٌ من الخمسة («ذو مال» س12422، س12981) —
+`DHU_TAI_UNSOURCED`. -/
+def unsourced : List String := ["ذُو"]
+
 /-- المبنيّاتُ المودَعة بصورها. -/
 def table : List (List SCell) :=
   (Rawabit.particles.filter (fun p => !p.proclitic && !verbs.contains p.name)).map (·.cells) ++
     Categories.pronouns ++ Damair.nasbDetached ++ Ishara.forms.map (·.2) ++ Istifham.forms.map (·.2) ++
-    Marifa.mawsul.map (·.2) ++ Zuruf.forms ++ Zuruf.constants.map (·.2) ++ Zaman.forms ++
+    (Marifa.mawsul.filter (fun p => !unsourced.contains p.1)).map (·.2) ++ Zuruf.forms ++ Zuruf.constants.map (·.2) ++ Zaman.forms ++
     Zaman.constants.map (·.2.1)
 
 theorem table_licensed : table.all licensed = true := by decide +kernel
@@ -41,9 +46,14 @@ def hosts : List (List SCell) := [[c 2 1], [c 23 1]]
 theorem hosts_proclitic :
     hosts.all (fun h => (Rawabit.particles.filter (·.proclitic)).any (·.cells == h)) = true := by decide
 
+/-- أَيُّ أَيَّ أَيِّ: معربٌ يُضاف إلى الضمير — «أيُّهم كان أخاك»، «أيُّهم تَرَ يأتِك» (الكتاب س532، س871؛
+`AYY_WITH_SUFFIX`). -/
+def ayyForms : List (List SCell) := [Istifham.ayy 2, Istifham.ayy 0, Istifham.ayy 1]
+
 /-- ما يحمل لاحقةَ الضمير من المبنيّات القائمة بنفسها (`SUFFIX_HOSTS`): الجارُّ والناسخُ من الحروف، والظروف. -/
 def sufTable : List (List SCell) :=
   (Rawabit.particles.filter (fun p => !p.proclitic && (p.amal == .jarr || p.amal == .nasbIsm))).map (·.cells) ++
+    ayyForms ++
     Zuruf.forms ++ Zuruf.constants.map (·.2) ++ Zaman.forms
 
 theorem sufTable_sub : sufTable.all table.contains = true := by decide +kernel
@@ -58,10 +68,19 @@ def joinMa (a b : List SCell) : List SCell :=
   | x :: rest => if x == c 25 3 then (c 24 3 :: rest).reverse ++ b else a ++ b
   | [] => b
 
-/-- المركَّباتُ المغلقة: كلُّ جارٍّ أو ناسخٍ من الحروف القائمة بنفسها موصولًا بمَا أو مَنْ (`MA_COMPOUND`). -/
+/-- لَا تتّصل بالحرف قبلها والنونُ الساكنة آخرَه لامٌ مدغمة: «النونُ قد تُدغم مع اللام حتى تُبدل مكانها لام»
+(الكتاب س8095؛ `NUN_LAM_IDGHAM`). -/
+def joinLa (a : List SCell) : List SCell := a.dropLast ++ [c 23 3, c 23 0, c 1 3]
+
+/-- ما يتّصل بلَا (`LA_COMPOUND`): أَنْ + لَا ← أَلَّا، إِنْ + لَا ← إِلَّا. -/
+def laHeads : List String := ["أَنْ", "إِنْ"]
+
+/-- المركَّباتُ المغلقة: كلُّ جارٍّ أو ناسخٍ من الحروف القائمة بنفسها موصولًا بمَا أو مَنْ (`MA_COMPOUND`)، وأَنْ
+وإِنْ موصولتين بلَا. -/
 def compounds : List (List SCell) :=
   ((Rawabit.particles.filter (fun p => !p.proclitic && (p.amal == .jarr || p.amal == .nasbIsm))).map
-    (·.cells)).flatMap fun a => maMan.map (joinMa a)
+    (·.cells)).flatMap (fun a => maMan.map (joinMa a)) ++
+  ((Rawabit.particles.filter (fun p => laHeads.contains p.name)).map (·.cells)).map joinLa
 
 theorem compounds_licensed : compounds.all licensed = true := by decide +kernel
 
@@ -128,12 +147,19 @@ def dropWasl (core : List SCell) : List (List SCell) :=
   | a :: b :: rest => if a == c 0 0 && b == c 23 3 then [b :: rest] else []
   | _ => []
 
+/-- نونُ «نَا» بعد النون المشدّدة تُحذف إحداهما: إِنَّنَا ← إِنَّا (`NUN_NA_IDGHAM`؛ «يستثقلون التضعيفَ … فحذفوا» في
+إِنِّي وكَأَنِّي ولَكِنِّي، الكتاب س8091–8093، وقياسُ نَا عليها معلَن). -/
+def nunNa (core suf : List SCell) : List (List SCell) :=
+  if suf == [c 25 0, c 1 3] && core.reverse.take 2 == [c 25 0, c 25 3] then [core.dropLast] else []
+
 /-- صورُ المبنيّ الجائزة في الكلمة: بلاحقةٍ (كما هو، ألفُه ياءً، لامُه مفتوحة، وآخرُه مكسورًا قبل ياء الإضافة) وبدونها
-(كما هو، آخرُه لالتقاء الساكنين، كافُ خطابه بصورها، وهمزةُ وصله ساقطةً بعد سابقة). -/
+(كما هو، آخرُه لالتقاء الساكنين، كافُ خطابه بصورها، وهمزةُ وصله ساقطةً بعد سابقة)؛ ونونُ نَا بعد المشدّدة محذوفة. -/
 def variants (hasPre : Bool) (core suf : List SCell) : List (List SCell) :=
   if suf.isEmpty then
-    core :: junction core ++ mimDamma core ++ kafKhitab core ++ (if hasPre then dropWasl core else [])
-  else [core, alifToYa core, lamFatha core] ++ (if yaSufs.contains suf then [kasrLast core] else [])
+    core :: junction core ++ mimDamma core ++ kafKhitab core ++
+      (if hasPre && !compounds.contains core then dropWasl core else [])
+  else [core, alifToYa core, lamFatha core] ++ (if yaSufs.contains suf then [kasrLast core] else []) ++
+    nunNa core suf
 
 /-- المبنيّاتُ الجائزة مع لاحقةٍ أو بدونها: بلا لاحقةٍ الجدولُ والمركَّبات، وباللاحقة حاملُها وحدَه. -/
 def cores (suf : List SCell) : List (List SCell) :=
@@ -160,10 +186,25 @@ def sufs : List (List SCell) := [] :: Filiyya.objectSuffixes ++ [[c 28 3]] ++ mi
 def surfaceOf (w : List SCell) (pre : List (List SCell)) (suf : List SCell) : List SCell :=
   (w.drop pre.flatten.length).take (w.length - pre.flatten.length - suf.length)
 
+/-- الجارُّ المتّصلُ المحض (بِ كَ تَ). -/
+def jarrPre : List (List SCell) := [[c 2 1], [c 22 0], [c 3 0]]
+
+/-- الجارُّ والحامل: «والجرُّ إنما يكون في كلّ اسمٍ مضافٍ إليه» (الكتاب س4192)، فلا يليان جارًّا متّصلًا محضًا
+(`JARR_NEEDS_ISM`). -/
+def jarrCores : List (List SCell) := (Rawabit.particles.filter (·.amal == .jarr)).map (·.cells) ++ hosts
+
+/-- القيودُ المسمّاة على القراءة: صورةُ اسمٍ من الخمسة لا تُقطع حروفًا (`KHAMSA_WHOLE_FIRST`)؛ ولا جارَّ بعد جارٍّ
+متّصلٍ محض (`JARR_NEEDS_ISM`)؛ ولا هاءَ ضميرٍ بعد أيّ (يا أيُّها: «جاءوا بيا أيها ليصلوا…» س5503–5505،
+`AYYUHA_VOCATIVE`). -/
+def allowed (w : List SCell) (pre : List (List SCell)) (core suf : List SCell) : Bool :=
+  !((pre != [] || suf != []) && Khamsa.forms.contains w) &&
+  !((pre.getLast?.map jarrPre.contains).getD false && jarrCores.contains core) &&
+  !(ayyForms.contains core && suf == [c 26 0, c 1 3])
+
 /-- هل تقرأ (السوابقُ، المبنيُّ، اللاحقةُ) الكلمةَ؟ -/
 def ok (w : List SCell) (pre : List (List SCell)) (core suf : List SCell) : Bool :=
   pre.flatten ++ surfaceOf w pre suf ++ suf == w && surfaceOf w pre suf != [] &&
-    (variants (!pre.isEmpty) core suf).contains (surfaceOf w pre suf)
+    (variants (!pre.isEmpty) core suf).contains (surfaceOf w pre suf) && allowed w pre core suf
 
 def readAt (w : List SCell) (pre : List (List SCell)) (core suf : List SCell) : Option Mabni :=
   if ok w pre core suf then some ⟨pre, core, surfaceOf w pre suf, suf⟩ else none
@@ -178,7 +219,7 @@ theorem ok_restore {w : List SCell} {pre : List (List SCell)} {core suf : List S
     (h : ok w pre core suf = true) : pre.flatten ++ surfaceOf w pre suf ++ suf = w := by
   unfold ok at h
   simp only [Bool.and_eq_true, beq_iff_eq] at h
-  exact h.1.1
+  exact h.1.1.1
 
 theorem readAt_some {w : List SCell} {pre : List (List SCell)} {core suf : List SCell} {m : Mabni}
     (h : readAt w pre core suf = some m) :
@@ -308,6 +349,29 @@ theorem witness_closure :
 /-- الواوُ ليست حاملًا: وَهُمْ = وَ + هُمْ ضميرًا منفصلًا، ولا قراءةَ فيها بلاحقة. -/
 theorem witness_wa_not_host :
     (tawzi wahum).all (fun m => m.suf == []) = true ∧ (tawzi wahum).length > 0 := by
+  decide +kernel
+
+/-! ## سدادُ الديون (ADR ٥٤) -/
+
+def inna : List SCell := [c 0 1, c 25 3, c 25 0, c 1 3]                    -- إِنَّا
+def alla : List SCell := [c 0 0, c 23 3, c 23 0, c 1 3]                    -- أَلَّا
+def ayyuhum : List SCell := [c 0 0, c 28 3, c 28 2, c 26 2, c 24 3]        -- أَيُّهُمْ
+def ayyuha : List SCell := [c 0 0, c 28 3, c 28 2, c 26 0, c 1 3]          -- أَيُّهَا
+def akalahu : List SCell := [c 0 0, c 22 0, c 23 0, c 26 2]                -- أَكَلَهُ
+def abi : List SCell := [c 0 0, c 2 1, c 28 3]                             -- أَبِي
+def dhu : List SCell := [c 9 2, c 27 3]                                    -- ذُو
+
+/-- إِنَّا = إِنَّ + نَا بحذف إحدى النونات؛ أَلَّا = أَنْ + لَا بإدغام النون في اللام؛ أَيُّهُمْ = أَيُّ + هُمْ — كلٌّ
+قراءةٌ واحدة. -/
+theorem witness_debts_read :
+    (tawzi inna).map (fun m => (m.core, m.suf)) = [([c 0 1, c 25 3, c 25 0], [c 25 0, c 1 3])] ∧
+    (tawzi alla).map (fun m => (m.pre, m.core)) = [([], alla)] ∧
+    (tawzi ayyuhum).map (fun m => (m.core, m.suf)) = [(Istifham.ayy 2, [c 26 2, c 24 3])] := by
+  decide +kernel
+
+/-- ولا تُقرأ: يا أَيُّهَا (هاءُ التنبيه)، أَكَلَهُ (لا جارَّ بعد الكاف)، أَبِي (اسمٌ من الخمسة)، ذُو (لا سندَ لموصوله). -/
+theorem witness_debts_refused :
+    tawzi ayyuha = [] ∧ tawzi akalahu = [] ∧ tawzi abi = [] ∧ tawzi dhu = [] := by
   decide +kernel
 
 end Slge.Tawzi

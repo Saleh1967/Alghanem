@@ -1,23 +1,16 @@
-"""فهرسُ الصنف المغلق (MUGHLAQ_INDEX.md) — الوسمُ الذي يفصل المبنيّات عن الاسم والفعل (ADR ٥٣)،
-بتسجيلٍ مسبق
-`docs/mughlaq/PREREG.md` (أُودعت الأداةُ معه قبل أيّ قياسٍ على QAC).
+"""فهرسُ الصنف المغلق (MUGHLAQ_INDEX.md) — الوسمُ الذي يفصل المبنيّات عن الاسم والفعل (ADR ٥٣،
+٥٤)، بتسجيلين مسبقين: `docs/mughlaq/PREREG.md` و`docs/mughlaq/PREREG-2.md`.
 
-نظامان يُقاسان على المودَع نفسِه بالقاعدة نفسِها للوسم (مغلقٌ إن قُرئ بنواةٍ ليست ظرفًا):
+ثلاثةُ أنظمةٍ بقاعدةٍ واحدة للوسم (مغلقٌ إن قُرئ بنواةٍ ليست ظرفًا):
 
-* `S0` — **قبل الإغلاق**: الموزِّع كما كان قبل ADR ٥٣ (`before`، منسوخًا هنا بعينه ليُقاس عليه):
-الجدولُ بالفعلين،
-  والمتّصلةُ السبعُ حواملُ، وكلُّ مبنيٍّ يحمل اللاحقة، والتعديلاتُ الخمسة الأولى وحدَها. شاهدُ
-  أمانة النسخ: يعيد أرقامَ
-  `TAWZI_INDEX.md` السابقة بعينها (854؛ 13,151 / 655 / 507 — `tests/test_mughlaq_index.py`).
-* `S1` — **بعد الإغلاق**: `slge.mughlaq.qism`.
+* `S0` — الموزِّعُ قبل ADR ٥٣ منسوخًا بعينه (`before`): يعيد أرقامَ `TAWZI_INDEX.md` السابقة
+  (854؛ 13,151 / 655 / 507) ورقمَي ADR ٥٢ (20,498، 70) — `tests/test_mughlaq_index.py`.
+* `S1` — بعد ADR ٥٣ (`389d86a`)؛ نظامُه لم يعد في الشجرة فأرقامُه المطبوعة ثابتةٌ هنا (`RECORDED_S1`).
+* `S2` — بعد سداد الديون (ADR ٥٤): `slge.mughlaq.qism` الآن.
 
-القياسُ بترتيب قانون القارئ: (١) على مودَع شهادات المصحف كاملًا (الصورُ والمواقعُ بوسمها)؛ (٢) على
-**QAC 0.4**
-(`qac-pos.tsv.gz`، مرجعٌ بشريٌّ محجوب لقسم الجذع: مفتوحٌ ‎N PN ADJ IMPN V‎، ظرفٌ ‎T LOC‎، وما
-سواهما مغلق) — الدقّةُ
-والاستدعاءُ بفاصل Wilson وحكمُ التسجيل؛ (٣) على MASAQ مقاييسَ الموزِّع (قسمةُ المرجع/غيرُها/لا
-يُقرأ) — **مفحوصٌ لا مقيس**،
-لأنّ قواعدَ الإغلاق صُمّمت بعد رؤية ما لا يُقرأ عليه (PREREG §٥).
+القياسُ بترتيب قانون القارئ: (١) مودَعُ شهادات المصحف كاملًا؛ (٢) QAC 0.4 (`qac-pos.tsv.gz`): الدقّةُ
+والاستدعاءُ بفاصل Wilson، وحكما التسجيلين، وتفكيكُ خطأ S2 إلى حدٍّ أدنى لا تفصله الخانات وخلافِ تعريفٍ
+وقابلٍ للإصلاح (`Mughlaq.const_errors_ge_min`)، وصدقُ المعنى بالصنف؛ (٣) MASAQ — مفحوصٌ لا مقيس.
 """
 
 from __future__ import annotations
@@ -30,11 +23,22 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
+from slge.categories import PRONOUNS
+from slge.categories import PRONOUNS as _PRONOUNS
+from slge.damair import DETACHED_NASB
+from slge.huruf import TABLE as HURUF
+from slge.ishara import FORMS as ISHARA
+from slge.istifham import FORMS as ISTIFHAM
 from slge.jidh import OBJECT_SUFFIXES, PROCLITICS
-from slge.mughlaq import ZARF_CELLS, qism
+from slge.marifa import MAWSUL
+from slge.mughlaq import ZARF_CELLS, closed, qism
 from slge.pipeline import GOLD_JIHA
 from slge.rawabit import PARTICLES, cells_of
-from slge.tawzi import TABLE, alif_to_ya, junction, tawzi
+from slge.tawzi import COMPOUNDS, alif_to_ya, junction, tawzi
+from slge.zaman import CONSTANTS as ZAMAN_CONSTANTS
+from slge.zaman import STEMS as ZAMAN
+from slge.zaman import forms_of
+from slge.zuruf import CONSTANTS, STEMS, jarr, mudaf, qat
 
 ROOT = Path(__file__).resolve().parent.parent
 TARGET = ROOT / "MUGHLAQ_INDEX.md"
@@ -45,12 +49,30 @@ OPEN = frozenset({"N", "PN", "ADJ", "IMPN", "V"})
 ZARF = frozenset({"T", "LOC"})
 PRE_IN_STEM = ("IMPERF_PREF", "CV_PREF", "IV1S", "IV1P", "IV2MP", "IV3MS", "IV3MP", "IV3FS")
 
-# — S0: الموزِّع قبل ADR ٥٣ بعينه —
-_NEW_RAWABIT = sum(1 for k, n, _ in TABLE if k == "حرف" and any(p.name == n for p in PARTICLES))
+HURUF_CELLS = frozenset(h.cells for h in HURUF)
+COMPOUND_CELLS = frozenset(w for _, _, w in COMPOUNDS)
+DAMIR_CELLS = frozenset((*_PRONOUNS, *(p.cells for p in DETACHED_NASB)))
+
+# — S0: الموزِّع قبل ADR ٥٣ بعينه (جدولُه كما بناه `_table` يومئذٍ: الفعلان وذُو فيه) —
+def _old_table() -> tuple[tuple[str, str, Word], ...]:
+    rows: list[tuple[str, str, Word]] = []
+    rows += [("حرف", p.name, cells_of(p.name)) for p in PARTICLES if not p.proclitic]
+    rows += [("ضمير", "", w) for w in PRONOUNS]
+    rows += [("ضمير", p.name, p.cells) for p in DETACHED_NASB]
+    rows += [("إشارة", f.name, f.cells) for f in ISHARA]
+    rows += [("استفهام", f.name, f.cells) for f in ISTIFHAM]
+    rows += [("موصول", n, w) for n, w in MAWSUL.items()]
+    rows += [("ظرف", z.name, form(z.stem)) for z in STEMS for form in (mudaf, jarr, qat)]
+    rows += [("ظرف", n, w) for n, w in CONSTANTS.items()]
+    rows += [("ظرف", n, f) for n, st in ZAMAN.items() for f in forms_of(st)]
+    rows += [("ظرف", n, w) for n, (w, _) in ZAMAN_CONSTANTS.items()]
+    return tuple(rows)
+
+
 _OLD_CORES: dict[Word, tuple[str, str]] = {}
-for _k, _n, _w in (*(("حرف", p.name, cells_of(p.name)) for p in PARTICLES if not p.proclitic),
-                   *TABLE[_NEW_RAWABIT:]):
-    _OLD_CORES.setdefault(_w, (_k, _n))  # الجدولُ القديم: أدواتُ الربط بفعليها في مواضعهما ثمّ الباقي
+for _k, _n, _w in _old_table():
+    if _w:
+        _OLD_CORES.setdefault(_w, (_k, _n))
 _OLD_HOSTS: dict[Word, tuple[str, str]] = {
     cells_of(p.name): ("حرف", p.name) for p in PARTICLES if p.proclitic}
 _LI: Word = (("ل", "كسر"),)
@@ -202,36 +224,143 @@ def adr52_rule(s0: dict[str, int], s1: dict[str, int]) -> str:
     return "ADR52_ACCEPTED" if ok else "ADR52_REJECTED"
 
 
+# — الجولةُ الأولى مسجَّلةً (ADR ٥٣، `389d86a`): نظامُها لم يعد في الشجرة، فأرقامُها ثابتةٌ هنا كما طُبعت —
+RECORDED_S1: dict[str, Any] = {
+    "matrix": {"ظرف→ظرف": 1314, "ظرف→مغلق": 188, "ظرف→مفتوح": 332, "مغلق→ظرف": 20,
+               "مغلق→مغلق": 24877, "مغلق→مفتوح": 293, "مفتوح→ظرف": 921, "مفتوح→مغلق": 245,
+               "مفتوح→مفتوح": 49173},
+    "forms": {"مغلق": 729, "ظرف": 208, "مفتوح": 17242},
+    "positions": {"مغلق": 25319, "ظرف": 2256, "مفتوح": 50632},
+    "masaq": {"gold": 13562, "wrong": 617, "none": 134, "open_population": 20498, "open_read": 65},
+}
+
+
+def confusion_from_matrix(matrix: dict[str, int]) -> dict[str, Any]:
+    """المصفوفةُ ← الدقّةُ والاستدعاءُ والتسرّب بتعريف `confusion` نفسِه."""
+
+    pairs = [tuple(k.split("→")) for k, n in matrix.items() for _ in range(n)]
+    return confusion([(g, p) for g, p in pairs])
+
+
+def verdict2(s1: dict[str, Any], s2: dict[str, Any]) -> str:
+    """قاعدةُ التسجيل الثاني (PREREG-2 §٤): `DEBTS_BETTER` إن جاوز حدُّ S2 الأدنى للاستدعاء حدَّ S1
+    الأعلى
+    ولم ينزل حدُّ S2 الأدنى للدقّة عن حدّ S1 الأدنى بأكثرَ من نقطة."""
+
+    up = s2["recall"]["wilson95"][0] > s1["recall"]["wilson95"][1]
+    keep = s2["precision"]["wilson95"][0] >= s1["precision"]["wilson95"][0] - 0.01
+    return "DEBTS_BETTER" if up and keep else (
+        "DEBTS_NOT_BETTER" if not up else "DEBTS_LOSE_PRECISION")
+
+
+def floor(rows: list[tuple[int, str]], pred: list[str]) -> dict[str, Any]:
+    """تفكيكُ خطأ الوسم على الذهبيّ مغلقًا أو مفتوحًا (PREREG-2 §٣): الوسمُ دالّةٌ في الخانات، فكلُّ صورةٍ
+    بوسمٍ واحد، وخطؤها لا ينزل عن أقلِّ صنفَيها (`Mughlaq.const_errors_ge_min`). فالخطأُ = **الحدُّ
+    الأدنى**
+    (Σ الأقلّ: متجانساتُ الخانات) + **خلافُ التعريف** (صورٌ صنفُها عند المرجع واحدٌ ووسمُنا غيرُه) +
+    **القابلُ
+    للإصلاح** (صورٌ مختلطةٌ أخذنا فيها الأقلّ)."""
+
+    by: dict[int, Counter[str]] = {}
+    for i, g in rows:
+        if g != "ظرف":
+            by.setdefault(i, Counter())[g] += 1
+    out = {"errors": 0, "floor": 0, "definitional": 0, "reducible": 0}
+    top: dict[str, Counter[int]] = {"floor": Counter(), "definitional": Counter(),
+                                    "reducible": Counter()}
+    for i, c in by.items():
+        closed, opened = c["مغلق"], c["مفتوح"]
+        err = opened if pred[i] == "مغلق" else closed
+        low = min(closed, opened)
+        out["errors"] += err
+        out["floor"] += low
+        top["floor"][i] += low
+        if low == 0:
+            out["definitional"] += err
+            top["definitional"][i] += err
+        else:
+            out["reducible"] += err - low
+            top["reducible"][i] += err - low
+    assert out["errors"] == out["floor"] + out["definitional"] + out["reducible"]
+    return {**out, "top": {k: [[i, n] for i, n in v.most_common(10) if n] for k, v in top.items()}}
+
+
+GOLD_MEANING: dict[str, str] = {"PRON": "ضمير", "DEM": "إشارة", "REL": "موصول", "INTG": "استفهام"}
+"""صنفُ المعنى عند المرجع (PREREG-2 §٣، معلن): قسمُ الجذع ضميرًا أو إشارةً أو موصولًا أو استفهامًا، وما
+سواه
+من أقسام المغلق حرف."""
+
+
+def meaning_classes(core: Word) -> frozenset[str]:
+    """أصنافُ المعنى التي تجعلها مصادرُنا للنواة — كلُّها لا أوّلُها (`mughlaq.src` يأخذ الأوّل)."""
+
+    out: set[str] = set()
+    if (core in HURUF_CELLS or core in COMPOUND_CELLS
+            or any(cells_of(p.name) == core for p in PARTICLES)):
+        out.add("حرف")
+    if core in DAMIR_CELLS:
+        out.add("ضمير")
+    if any(f.cells == core for f in ISHARA):
+        out.add("إشارة")
+    if any(f.cells == core for f in ISTIFHAM):
+        out.add("استفهام")
+    if core in MAWSUL.values():
+        out.add("موصول")
+    return frozenset(out)
+
+
+def meaning(kept: list[tuple[int, str, str]], forms: list[Word], pred: list[str]) -> dict[str, Any]:
+    """صدقُ المعنى بالصنف (PREREG-2 §٣): على ما هو مغلقٌ عند المرجع وعندنا معًا، هل صنفُ معنى المرجع في
+    أصناف
+    مصادرنا لنوى القراءات المغلقة؟ ومعه متوسّطُ حجم المجموعة لئلّا يُخفي الاتّساعُ الخطأ."""
+
+    hit = n = size = 0
+    miss: Counter[tuple[str, str, str]] = Counter()
+    for i, _segs, stem in kept:
+        if gold_class(stem) != "مغلق" or pred[i] != "مغلق":
+            continue
+        ours = frozenset().union(*(meaning_classes(m.core) for m in closed(forms[i])))
+        g = GOLD_MEANING.get(stem, "حرف")
+        n += 1
+        size += len(ours)
+        if g in ours:
+            hit += 1
+        else:
+            miss[(vowelled(forms[i]), stem, "، ".join(sorted(ours)))] += 1
+    return {"agree": rate(hit, n), "mean_set_size": round(size / n, 4) if n else None,
+            "miss_top": [[w, t, o, k] for (w, t, o), k in miss.most_common(12)]}
+
+
 def measure() -> dict[str, Any]:
     forms, stream = certificates()
     q0 = [qism0(w) for w in forms]
-    q1 = [qism(w) for w in forms]
+    q2 = [qism(w) for w in forms]
     deposit: dict[str, Any] = {
         name: {"forms": dict(Counter(q)),
                "positions": dict(Counter(q[i] for i in stream if i >= 0))}
-        for name, q in (("S0", q0), ("S1", q1))}
-    deposit["changed_forms"] = sum(a != b for a, b in zip(q0, q1, strict=True))
+        for name, q in (("S0", q0), ("S2", q2))}
+    deposit["S1"] = {"forms": RECORDED_S1["forms"], "positions": RECORDED_S1["positions"]}
     rows = qac_rows()
     refused = sum(1 for t, _, _ in rows if stream[t] < 0)
-    kept = [(stream[t], segs, gold_class(stem)) for t, segs, stem in rows if stream[t] >= 0]
-    qac = {name: confusion([(g, q[i]) for i, _, g in kept]) for name, q in (("S0", q0), ("S1", q1))}
-    fn: Counter[tuple[str, str]] = Counter()
-    fp: Counter[tuple[str, str]] = Counter()
-    for i, segs, g in kept:
-        if g == "مغلق" and q1[i] != "مغلق":
-            fn[(vowelled(forms[i]), segs)] += 1
-        if g == "مفتوح" and q1[i] == "مغلق":
-            fp[(vowelled(forms[i]), segs)] += 1
+    kept = [(stream[t], segs, stem) for t, segs, stem in rows if stream[t] >= 0]
+    gold = [(i, gold_class(stem)) for i, _, stem in kept]
+    qac = {"S0": confusion([(g, q0[i]) for i, g in gold]),
+           "S1": confusion_from_matrix(RECORDED_S1["matrix"]),
+           "S2": confusion([(g, q2[i]) for i, g in gold])}
+    fl = floor(gold, q2)
+    fl["top"] = {k: [[vowelled(forms[i]), n] for i, n in v] for k, v in fl["top"].items()}
     mrows = masaq_rows()
     m0 = tawzi_split(mrows, lambda w: [(pre, suf) for pre, _, suf, _ in before(w)])
-    m1 = tawzi_split(mrows, lambda w: [(m.pre, m.suf) for m in tawzi(w)])
-    return {"prereg": "docs/mughlaq/PREREG.md", "reference": "QAC 0.4 (Dukes) — قسمُ الجذع",
+    m2 = tawzi_split(mrows, lambda w: [(m.pre, m.suf) for m in tawzi(w)])
+    return {"prereg": ["docs/mughlaq/PREREG.md", "docs/mughlaq/PREREG-2.md"],
+            "reference": "QAC 0.4 (Dukes) — قسمُ الجذع",
             "deposit": deposit,
             "qac": {"rows": len(rows), "refused_by_gate": refused, "measured": len(kept), **qac,
                     "verdict": verdict(qac["S0"], qac["S1"]),
-                    "fn_top": [[w, s, n] for (w, s), n in fn.most_common(15)],
-                    "fp_top": [[w, s, n] for (w, s), n in fp.most_common(15)]},
-            "masaq_checked_not_measured": {"S0": m0, "S1": m1, "adr52_rule": adr52_rule(m0, m1)}}
+                    "verdict2": verdict2(qac["S1"], qac["S2"]),
+                    "floor_S2": fl, "meaning_S2": meaning(kept, forms, q2)},
+            "masaq_checked_not_measured": {"S0": m0, "S1": RECORDED_S1["masaq"], "S2": m2,
+                                           "adr52_rule": adr52_rule(m0, m2)}}
 
 
 def _pct(r: dict[str, Any]) -> str:
@@ -242,6 +371,8 @@ def _pct(r: dict[str, Any]) -> str:
 def render(m: dict[str, Any] | None = None) -> str:
     m = m or measure()
     d, q, ms = m["deposit"], m["qac"], m["masaq_checked_not_measured"]
+    fl, mn = q["floor_S2"], q["meaning_S2"]
+    sys3 = ("S0", "S1", "S2")
 
     def qs(c: dict[str, int]) -> str:
         return "، ".join(f"{k} {c.get(k, 0):,}" for k in ("مغلق", "ظرف", "مفتوح"))
@@ -249,63 +380,69 @@ def render(m: dict[str, Any] | None = None) -> str:
     lines = [
         "# فهرسُ الصنف المغلق — وسمٌ يفصل المبنيّات عن الاسم والفعل",
         "",
-        "مولَّدٌ بـ`python tools/gen_mughlaq_index.py` من `src/slge/mughlaq.py` "
-        "و`src/slge/tawzi.py`؛ لا يُحرَّر باليد. "
-        "البرهانُ `formal/Slge/Mughlaq.lean` (القسمةُ `maftuh_iff`، `mughlaq_iff`؛ إغلاقُ المعنى "
-        "`closed_has_src`) و"
-        "`formal/Slge/Tawzi.lean` (اللاحقةُ لا يحملها إلّا حاملُها `tawzi_suf_host`؛ شواهدُ "
-        "القواعد المسمّاة)؛ "
-        "والقياسُ بتسجيلٍ مسبق `docs/mughlaq/PREREG.md`. S0 الموزِّعُ قبل ADR ٥٣، وS1 بعده.",
+        "مولَّدٌ بـ`python tools/gen_mughlaq_index.py` من `src/slge/mughlaq.py` و`src/slge/tawzi.py`؛ "
+        "لا يُحرَّر باليد. البرهانُ `formal/Slge/Mughlaq.lean` (القسمةُ `maftuh_iff`، `mughlaq_iff`؛ "
+        "إغلاقُ المعنى `closed_has_src`؛ حدُّ الخطأ `const_errors_ge_min`) و`formal/Slge/Tawzi.lean` "
+        "(اللاحقةُ لا يحملها إلّا حاملُها `tawzi_suf_host`؛ شواهدُ القواعد والديون). S0 الموزِّعُ قبل "
+        "ADR ٥٣، وS1 بعده مسجَّلًا (`389d86a`، أرقامُه ثابتة)، وS2 بعد سداد الديون (ADR ٥٤).",
         "",
         "## على مودَع المصحف أوّلًا (قانونُ القارئ)", "",
         "| النظام | الصور (18,179) | المواقع |", "|---|---|---|",
-        *(f"| {k} | {qs(d[k]['forms'])} | {qs(d[k]['positions'])} |" for k in ("S0", "S1")),
+        *(f"| {k} | {qs(d[k]['forms'])} | {qs(d[k]['positions'])} |" for k in sys3),
         "",
-        f"تغيّر وسمُ {d['changed_forms']:,} صورة.",
-        "",
-        "## على QAC 0.4 (مرجعٌ بشريٌّ محجوب لقسم الجذع)", "",
+        "## على QAC 0.4 (مرجعٌ بشريٌّ لقسم الجذع)", "",
         f"{q['rows']:,} كلمةً محاذاة؛ ترفض البوّابةُ {q['refused_by_gate']:,}، فالمقيس "
-        f"{q['measured']:,} موقعًا. "
-        "الذهبيُّ: مفتوحٌ ‎N PN ADJ IMPN V‎، ظرفٌ ‎T LOC‎، وما سواهما مغلق؛ الدقّةُ والاستدعاءُ "
-        "على الذهبيّ مغلقًا أو "
-        "مفتوحًا، والظرفُ يُعدّ في المصفوفة وحدَها.",
+        f"{q['measured']:,} موقعًا. الذهبيُّ: مفتوحٌ ‎N PN ADJ IMPN V‎، ظرفٌ ‎T LOC‎، وما سواهما "
+        "مغلق؛ الدقّةُ والاستدعاءُ على الذهبيّ مغلقًا أو مفتوحًا، والظرفُ يُعدّ في المصفوفة وحدَها.",
         "",
         "| النظام | الدقّة | الاستدعاء | المفتوحُ موسومًا مغلقًا |", "|---|---|---|---|",
         *(f"| {k} | {_pct(q[k]['precision'])} | {_pct(q[k]['recall'])} | "
-          f"{_pct(q[k]['open_leak'])} |"
-          for k in ("S0", "S1")),
+          f"{_pct(q[k]['open_leak'])} |" for k in sys3),
         "",
-        f"**الحكمُ المسجَّل: `{q['verdict']}`.**",
+        f"**حكمُ التسجيل الأوّل (S0 ← S1، مقيس): `{q['verdict']}`. وحكمُ التسجيل الثاني (S1 ← S2): "
+        f"`{q['verdict2']}`** — مفحوصٌ لا مقيس: الديونُ عُرفت من هذا المرجع (PREREG-2 §٥).",
         "",
-        "| الذهبيّ→المتنبَّأ | S0 | S1 |", "|---|---|---|",
-        *(f"| {k} | {q['S0']['matrix'].get(k, 0):,} | {q['S1']['matrix'].get(k, 0):,} |"
-          for k in sorted(set(q["S0"]["matrix"]) | set(q["S1"]["matrix"]))),
+        "| الذهبيّ→المتنبَّأ | S0 | S1 | S2 |", "|---|---|---|---|",
+        *(f"| {k} | " + " | ".join(f"{q[s]['matrix'].get(k, 0):,}" for s in sys3) + " |"
+          for k in sorted(set(q["S0"]["matrix"]) | set(q["S2"]["matrix"]))),
         "",
-        "### ما يفوت S1 (مغلقٌ عند المرجع، غيرُ مغلقٍ هنا) — بصوره وقطعه", "",
-        "| الصورة | قطعُ QAC | العدد |", "|---|---|---|",
-        *(f"| {w} | `{s}` | {n:,} |" for w, s, n in q["fn_top"]),
+        "## تفكيكُ الخطأ الباقي (S2) — ما تفصله الخاناتُ وما لا تفصله", "",
+        "الوسمُ دالّةٌ في الخانات، فالصورةُ الواحدة بوسمٍ واحد، وخطؤها لا ينزل عن أقلّ صنفَيها عند المرجع "
+        "(`Mughlaq.const_errors_ge_min`).",
         "",
-        "### ما يزيد S1 (مفتوحٌ عند المرجع، مغلقٌ هنا)", "",
-        "| الصورة | قطعُ QAC | العدد |", "|---|---|---|",
-        *(f"| {w} | `{s}` | {n:,} |" for w, s, n in q["fp_top"]),
+        "| الخطأ | المواقع |", "|---|---|",
+        f"| الكلّ (مفتوحٌ موسومٌ مغلقًا + مغلقٌ غيرُ موسوم) | {fl['errors']:,} |",
+        f"| الحدُّ الأدنى: متجانساتُ الخانات — لا تفصلها دالّةٌ في الخانات | {fl['floor']:,} |",
+        f"| خلافُ التعريف: صورٌ صنفُها عند المرجع واحدٌ ووسمُنا غيرُه | {fl['definitional']:,} |",
+        f"| القابلُ للإصلاح في الخانات: صورٌ مختلطةٌ أخذنا فيها الأقلّ | {fl['reducible']:,} |",
+        "",
+        *(f"- **{name}**: " + "، ".join(f"{w} {n:,}" for w, n in fl["top"][k]) + "."
+          for k, name in (("floor", "الحدُّ الأدنى"), ("definitional", "خلافُ التعريف"),
+                          ("reducible", "القابلُ للإصلاح")) if fl["top"][k]),
+        "",
+        "## صدقُ المعنى بالصنف (S2)", "",
+        "على ما هو مغلقٌ عند المرجع وعندنا معًا: صنفُ معنى المرجع "
+        "(ضمير/إشارة/موصول/استفهام/حرف من قسم "
+        f"الجذع) في أصناف مصادرنا: **{_pct(mn['agree'])}**، ومتوسّطُ حجم المجموعة "
+        f"{mn['mean_set_size']}.",
+        "",
+        "| الصورة | قسمُ QAC | أصنافُنا | العدد |", "|---|---|---|---|",
+        *(f"| {w} | `{t}` | {o} | {k:,} |" for w, t, o, k in mn["miss_top"]),
         "",
         "## على MASAQ — مفحوصٌ لا مقيس", "",
         "قواعدُ الإغلاق صُمّمت بعد رؤية ما لا يقرؤه الموزِّعُ على MASAQ (PREREG §٥)، فهذه الأرقامُ "
-        "فحصٌ لا قياس. على "
-        "الكلمات التي لا جهةَ لها عند المرجع:",
+        "فحصٌ لا قياس. على الكلمات التي لا جهةَ لها عند المرجع:",
         "",
         "| النظام | بقسمة المرجع | بغيرها | لا يُقرأ | المفتوحُ يقرؤه الموزِّع (ADR ٥٢) |",
         "|---|---|---|---|---|",
         *(f"| {k} | {ms[k]['gold']:,} | {ms[k]['wrong']:,} | {ms[k]['none']:,} | "
-          f"{ms[k]['open_read']:,} من {ms[k]['open_population']:,} |" for k in ("S0", "S1")),
+          f"{ms[k]['open_read']:,} من {ms[k]['open_population']:,} |" for k in sys3),
         "",
-        f"وقاعدةُ القرار المسجَّلة في ADR ٥٢ على النظام كلّه (لا على قواعده الخمس وحدَها): "
-        f"`{ms['adr52_rule']}`.",
+        f"وقاعدةُ القرار المسجَّلة في ADR ٥٢ على النظام كلّه (S0 ← S2): `{ms['adr52_rule']}`.",
         "",
         "## ما ليس هنا — باسمه", "",
         "- `HUKM_INPUT_CHANGED_BY_CLOSURE`: المغلقُ لا جذرَ يُحكم عليه (`Qiraa.mughlaq_no_hukm`)، "
-        "فتغيّر مدخلُ الحكم "
-        "على الصور التي تغيّر وسمُها؛ فقياسُ ADR ٥٠ على المخصَّص أُعيد بالنظام الجديد، والفرقُ في ADR ٥٣.",
+        "فقياسُ ADR ٥٠ على المخصَّص يُعاد بكلّ نظامٍ جديد، والفرقُ في ADR ٥٣ و٥٤.",
         "- الظرفُ وسمٌ ثالث لا مغلق: عِنْدَ وقَبْلَ وإِذَا وحَيْثُ تُقرأ من جداولها ولا يُعدّ "
         "ظرفُها أداةً.",
         "",

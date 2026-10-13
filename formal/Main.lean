@@ -712,7 +712,10 @@ def main (args : List String) : IO Unit := do
                    ("mina", Tawzi.mina), ("bihi", Tawzi.bihi), ("kataba", Tawzi.kataba),
                    ("lahumu", Tawzi.lahumu), ("li", Tawzi.li), ("walladhina", Tawzi.walladhina),
                    ("fima", Tawzi.fima), ("mimma", Tawzi.mimma), ("dhalikum", Tawzi.dhalikum),
-                   ("inni", Tawzi.inni), ("wahum", Tawzi.wahum), ("humu", Tawzi.humu)] do
+                   ("inni", Tawzi.inni), ("wahum", Tawzi.wahum), ("humu", Tawzi.humu),
+                   ("inna", Tawzi.inna), ("alla", Tawzi.alla), ("ayyuhum", Tawzi.ayyuhum),
+                   ("ayyuha", Tawzi.ayyuha), ("akalahu", Tawzi.akalahu), ("abi", Tawzi.abi),
+                   ("dhu", Tawzi.dhu)] do
       for m in Tawzi.tawzi w do
         IO.println s!"word,{n},{key w},{"+".intercalate (m.pre.map key)}|{key m.core}|{key m.surface}|{key m.suf}"
       IO.println s!"count,{n},{key w},{(Tawzi.tawzi w).length}"

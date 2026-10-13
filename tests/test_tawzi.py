@@ -21,6 +21,7 @@ from slge.tawzi import (
     SUF_TABLE,
     SUFFIXES,
     TABLE,
+    UNSOURCED,
     VARIANTS,
     VERBS,
     alif_to_ya,
@@ -34,15 +35,17 @@ SRC = Path(__file__).resolve().parent.parent / "src" / "slge" / "tawzi.py"
 
 def test_table_is_the_union_of_deposited_tables_without_duplicates() -> None:
     # 246 صورةً قبل الإغلاق، والفعلان ظَنَّ وحَسِبَ خرجا (VERB_NOT_MABNI)؛ الحاملان بِ ولِ وحدَهما
-    assert VERBS == ("ظَنَّ", "حَسِبَ") and len(TABLE) == 244 and len(HOSTS) == 2
+    # 246 قبل ADR ٥٣؛ ظَنَّ وحَسِبَ فعلان (ADR ٥٣)، وذُو الطائيّةُ بلا سندٍ في الكتاب (ADR ٥٤)
+    assert VERBS == ("ظَنَّ", "حَسِبَ") and UNSOURCED == ("ذُو",)
+    assert len(TABLE) == 243 and len(HOSTS) == 2
     assert not {cells_of(v) for v in VERBS} & {w for _, _, w in TABLE}
     assert len({w for _, _, w in TABLE}) == len(TABLE) and all(licensed(w) for _, _, w in TABLE)
     assert {k for k, _, _ in TABLE} == set(KINDS) and all(k == "حرف" for k, _, _ in HOSTS)
     assert {n for _, n, _ in HOSTS} == {"بِ", "لِ"}
     assert not {w for _, _, w in HOSTS} & {w for _, _, w in TABLE}  # الحاملُ ليس مبنيًّا قائمًا بنفسه
     assert set(SUF_TABLE) <= {w for _, _, w in TABLE}
-    # المركَّباتُ: 24 جارًّا وناسخًا قائمًا بنفسه × (مَا، مَنْ)، كلُّها مرخَّصة
-    assert len(COMPOUNDS) == 48 and all(licensed(w) for _, _, w in COMPOUNDS)
+    # المركَّباتُ: 24 جارًّا وناسخًا قائمًا بنفسه × (مَا، مَنْ)، وأَنْ وإِنْ بلَا (ADR ٥٤)؛ كلُّها مرخَّصة
+    assert len(COMPOUNDS) == 24 * 2 + 2 and all(licensed(w) for _, _, w in COMPOUNDS)
     # اللواحق: 17 ضميرًا متّصلًا، وياءُ الإضافة ساكنة، وثلاثُ لواحقَ بميمٍ ساكنة (كُمْ هُمْ هِمْ) × (ضمّ، كسر)
     assert len(SUFFIXES) == 17 + 1 + 3 * 2
 
@@ -103,7 +106,8 @@ def test_template_words_and_bare_hosts_are_not_read_here() -> None:
 
 def test_variants_are_named_and_minimal_and_mutants() -> None:
     assert VARIANTS == ("", "ALIF_TO_YA", "LAM_FATHA", "KASR_BEFORE_YA", "JUNCTION_KASRA",
-                        "JUNCTION_FATHA", "JUNCTION_DAMMA", "KAF_KHITAB", "WASL_DROP")
+                        "JUNCTION_FATHA", "JUNCTION_DAMMA", "KAF_KHITAB", "WASL_DROP",
+                        "NUN_NA_IDGHAM")
     assert alif_to_ya(cells_of("إِلَى")) == cells_of("إِلَيْ")
     assert alif_to_ya(cells_of("عَنْ")) == cells_of("عَنْ")
     k, f = junction(cells_of("عَنْ"))
@@ -140,7 +144,7 @@ def test_named_closure_mutants_are_caught() -> None:
     m = _mutant('return (*a[:-1], ("م", SUKUN), *b)', "return (*a, *b)")
     assert not m["tawzi"](cells_of("مِمَّا"))
     # MUTANT_WASL_WITHOUT_PREFIX: همزةُ الوصل تسقط بلا سابقة
-    m = _mutant("if has_pre and core[:2]", "if core[:2]")
+    m = _mutant("if has_pre and core not in _COMPOUND_CORES and core[:2]", "if core[:2]")
     assert m["tawzi"](cells_of("الَّذِينَ")[1:])
 
 
@@ -159,3 +163,36 @@ def test_rules_are_anchored_in_the_sealed_kitab() -> None:
     for anchor in ("س8106", "س8128", "س14027", "س18109", "س21468"):
         assert anchor in lean
     assert re.search(r"س18117", lean)
+
+
+def test_debts_paid_by_hand() -> None:
+    """ADR ٥٤: كلُّ دَينٍ بقراءته المتوقَّعة باليد، أو بلا قراءة حيث المصدرُ يمنع."""
+
+    def reads(word: str) -> list[tuple[str, str, str, str]]:
+        return [("".join(k for p in m.pre for k, _ in p), m.name, m.variant,
+                 "".join(k for k, _ in m.suf)) for m in tawzi(cells_of(word))]
+
+    assert reads("إِنَّا") == [("", "إِنَّ", "NUN_NA_IDGHAM", "نا")]
+    assert reads("وَلَكِنَّا") == [("و", "لَكِنَّ", "NUN_NA_IDGHAM", "نا")]
+    assert reads("أَلَّا") == [("", "أَنْ+لَا", "", "")]
+    assert reads("أَيُّهُمْ") == [("", "أَيُّ", "", "هم")]
+    assert reads("أَيُّهَا") == []        # يا أَيُّها: الهاءُ للتنبيه (س5503–5505)
+    assert reads("أَكَلَهُ") == []        # لا جارَّ بعد الكاف (س4192)
+    assert reads("أَبِي") == []           # اسمٌ من الخمسة لا يُقطع
+    assert reads("ذُو") == []             # ذُو الطائيّةُ بلا سند
+    assert reads("أَلَهُمْ")[0][:2] == ("ء", "لِ")  # والاستفهامُ قبل الحامل باقٍ
+
+
+def test_debt_mutants_are_caught() -> None:
+    # MUTANT_NO_NUN_NA: بلا حذف النون ← إِنَّا لا تُقرأ
+    m = _mutant('out.append(("NUN_NA_IDGHAM", core[:-1]))', "pass")
+    assert not m["tawzi"](cells_of("إِنَّا"))
+    # MUTANT_AYYUHA_PRONOUN: هاءُ أيّها ضميرًا
+    m = _mutant("if core in _AYY and suf == _HA:", "if False:")
+    assert m["tawzi"](cells_of("أَيُّهَا"))
+    # MUTANT_JARR_ON_JARR: الكافُ قبل اللام الحاملة
+    m = _mutant("if pre and pre[-1] in _JARR_PRE and core in _JARR_CORES:", "if False:")
+    assert m["tawzi"](cells_of("أَكَلَهُ"))
+    # MUTANT_KHAMSA_CUT: الاسمُ من الخمسة يُقطع حروفًا
+    m = _mutant("frozenset(khamsa_form(s, c) for s in KHAMSA for c in CASES)", "frozenset()")
+    assert m["tawzi"](cells_of("أَبِي"))

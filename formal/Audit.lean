@@ -920,12 +920,16 @@ import Slge
 #print axioms Slge.Tawzi.witness_mim_ya
 #print axioms Slge.Tawzi.witness_closure
 #print axioms Slge.Tawzi.witness_wa_not_host
+#print axioms Slge.Tawzi.witness_debts_read
+#print axioms Slge.Tawzi.witness_debts_refused
 #print axioms Slge.Mughlaq.maftuh_iff
 #print axioms Slge.Mughlaq.mughlaq_iff
 #print axioms Slge.Mughlaq.closed_restores
 #print axioms Slge.Mughlaq.closed_has_src
 #print axioms Slge.Mughlaq.closed_reading_has_src
 #print axioms Slge.Mughlaq.witness_qism
+#print axioms Slge.Mughlaq.const_errors_ge_min
+#print axioms Slge.Mughlaq.const_errors_majority
 #print axioms Slge.Tawzi.witness_alayhim
 #print axioms Slge.Tawzi.witness_lahum
 #print axioms Slge.Tawzi.witness_particles

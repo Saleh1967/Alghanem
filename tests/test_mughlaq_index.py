@@ -1,4 +1,5 @@
-"""فهرسُ الصنف المغلق (ADR ٥٣): أدواتُ القياس على مدخلاتٍ باليد، وأمانةُ نسخ S0، وطفراتٌ بأسمائها:
+"""فهرسُ الصنف المغلق (ADR ٥٣، ٥٤): أدواتُ القياس على مدخلاتٍ باليد، وأمانةُ نسخ S0، وطفراتٌ بأسمائها
+(ومنها `MUTANT_FLOOR_IS_MAX`، `MUTANT_MAWSUL_SOURCE_DROPPED`):
 `MUTANT_ZARF_IN_PRECISION` (الظرفُ الذهبيّ في الدقّة)، `MUTANT_VERDICT_IGNORES_PRECISION`،
 `MUTANT_S0_ALL_CORES_HOST` (S0 بلا شرط الحامل لا يعيد أرقامَه)."""
 
@@ -62,6 +63,42 @@ def test_adr52_rule_by_hand() -> None:
     assert MOD.adr52_rule(s0, {"gold": 120, "none": 50, "open_read": 10}) == "ADR52_REJECTED"
 
 
+def test_round1_is_recorded_by_hand() -> None:
+    # أرقامُ MUGHLAQ_INDEX.md في 389d86a: الدقّةُ 24,877/25,122 والاستدعاءُ 24,877/(24,877+293+20)
+    c = MOD.confusion_from_matrix(MOD.RECORDED_S1["matrix"])
+    assert (c["precision"]["k"], c["precision"]["n"]) == (24877, 25122)
+    assert (c["recall"]["k"], c["recall"]["n"]) == (24877, 25190)
+    assert (c["open_leak"]["k"], c["open_leak"]["n"]) == (245, 245 + 921 + 49173)
+
+
+def test_verdict2_by_hand() -> None:
+    def s(pk: int, pn: int, rk: int, rn: int) -> dict[str, Any]:
+        return {"precision": MOD.rate(pk, pn), "recall": MOD.rate(rk, rn)}
+
+    s1 = s(900, 1000, 800, 1000)
+    assert MOD.verdict2(s1, s(905, 1000, 900, 1000)) == "DEBTS_BETTER"
+    assert MOD.verdict2(s1, s(905, 1000, 805, 1000)) == "DEBTS_NOT_BETTER"
+    assert MOD.verdict2(s1, s(800, 1000, 900, 1000)) == "DEBTS_LOSE_PRECISION"
+
+
+def test_floor_by_hand() -> None:
+    # الصورة 0: 3 مغلق و1 مفتوح ووسمُنا مغلق ← خطأ 1، حدٌّ 1؛ الصورة 1: 2 مفتوح ووسمُنا مغلق ← خلافُ
+    # تعريف 2؛ الصورة 2: 1 مغلق و4 مفتوح ووسمُنا مغلق ← خطأ 4، حدٌّ 1، قابلٌ للإصلاح 3؛ والظرفُ خارج
+    rows = [(0, "مغلق")] * 3 + [(0, "مفتوح"), (1, "مفتوح"), (1, "مفتوح"), (2, "مغلق")] + \
+        [(2, "مفتوح")] * 4 + [(2, "ظرف")]
+    f = MOD.floor(rows, ["مغلق", "مغلق", "مغلق"])
+    assert (f["errors"], f["floor"], f["definitional"], f["reducible"]) == (7, 2, 2, 3)
+
+
+def test_meaning_classes_by_hand() -> None:
+    from slge.rawabit import cells_of
+
+    assert MOD.meaning_classes(cells_of("لِ")) == {"حرف"}
+    assert MOD.meaning_classes(cells_of("هُمْ")) == {"ضمير"}
+    assert MOD.meaning_classes(cells_of("ذَلِكَ")) == {"إشارة"}
+    assert {"حرف", "استفهام", "موصول"} <= MOD.meaning_classes(cells_of("مَا"))
+
+
 def _mutant(old: str, new: str) -> dict[str, Any]:
     src = (ROOT / "tools" / "gen_mughlaq_index.py").read_text(encoding="utf-8")
     assert old in src, old
@@ -80,6 +117,11 @@ def test_named_mutants_are_caught() -> None:
     s0 = {"precision": MOD.rate(900, 1000), "recall": MOD.rate(800, 1000)}
     s1 = {"precision": MOD.rate(800, 1000), "recall": MOD.rate(900, 1000)}
     assert m["verdict"](s0, s1) == "CLOSURE_BETTER"  # VERDICT_IGNORES_PRECISION
+    m = _mutant("low = min(closed, opened)", "low = max(closed, opened)")
+    f = m["floor"]([(0, "مغلق"), (0, "مغلق"), (0, "مفتوح")], ["مغلق"])
+    assert f["floor"] == 2 and f["reducible"] == -1  # FLOOR_IS_MAX: الحدُّ فوق الخطأ (والصحيحُ 1 و0)
+    m = _mutant('out.add("موصول")', "pass")
+    assert "موصول" not in m["meaning_classes"](MOD.MAWSUL["الَّذِي"])  # MAWSUL_SOURCE_DROPPED
     m = _mutant("cores = {**_OLD_CORES, **_OLD_HOSTS} if suf else _OLD_CORES",
                 "cores = _OLD_HOSTS if suf else _OLD_CORES")
     forms, _ = MOD.certificates()

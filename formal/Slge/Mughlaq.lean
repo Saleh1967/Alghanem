@@ -127,4 +127,30 @@ theorem witness_qism :
     qism indahu = .zarf ∧ qism Tawzi.kataba = .maftuh := by
   decide +kernel
 
+/-! ## حدُّ الخطأ (ADR ٥٤): الوسمُ دالّةٌ في الخانات -/
+
+theorem countP_ne_true (ls : List Bool) : ls.countP (fun x => x != true) = ls.count false := by
+  have : (fun x : Bool => x != true) = (fun x => x == false) := by funext x; cases x <;> rfl
+  rw [this, List.count]
+
+theorem countP_ne_false (ls : List Bool) : ls.countP (fun x => x != false) = ls.count true := by
+  have : (fun x : Bool => x != false) = (fun x => x == true) := by funext x; cases x <;> rfl
+  rw [this, List.count]
+
+/-- صورةٌ واحدة بوسمٍ واحد `b`، ومواضعُها بأصنافها عند مرجعٍ ما `ls` (صوابٌ = مغلق): لا ينزل خطؤها عن أقلّ
+الصنفين. فما تساوت خاناتُه واختلف صنفُه عند المرجع حدٌّ أدنى للخطأ لا تفصله دالّةٌ في الخانات. -/
+theorem const_errors_ge_min (ls : List Bool) (b : Bool) :
+    min (ls.count true) (ls.count false) ≤ ls.countP (fun x => x != b) := by
+  cases b
+  · rw [countP_ne_false]; exact Nat.min_le_left _ _
+  · rw [countP_ne_true]; exact Nat.min_le_right _ _
+
+/-- والحدُّ يُبلَغ: الوسمُ بالأكثر خطؤه الأقلُّ بعينه. -/
+theorem const_errors_majority (ls : List Bool) :
+    ls.countP (fun x => x != decide (ls.count false ≤ ls.count true)) =
+      min (ls.count true) (ls.count false) := by
+  by_cases h : ls.count false ≤ ls.count true
+  · simp only [h, decide_true, countP_ne_true]; omega
+  · simp only [h, decide_false, countP_ne_false]; omega
+
 end Slge.Mughlaq
