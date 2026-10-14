@@ -98,6 +98,7 @@ LEAN_UNITS: dict[str, str] = {
     "Zawaid.zawaid_length": "حامل", "Zawaid.zawaid_cells_licensable": "خانة",
     "Wazn.wasl_joined_waits": "قالب",
     "Ledger.filled_qaim_count": "حقل وظيفة",
+    "Qufl.locked_qaim_count": "حقل وظيفة",
     "Hajah.states_length": "حالة آلة",
     "Nizam.waslK_count": "زوج جوار",
     "Tasrif.allSifa_length": "صفة جذر",

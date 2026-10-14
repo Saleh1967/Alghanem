@@ -43,7 +43,13 @@ from .licence import (
 from .mizan import machine_join
 from .residue import Edit, has_marks, repair, unrepair
 
+DAL_LOCK = "dal-v1"
+"""قفلُ الدالّ وحده (ADR ٦٢): واجهةُ البوّابة — `enter`، `exit`، `derive`، `recover`، `licence`،
+وحقولُ `Certificate` و`Refusal` و`Context` — مجمَّدةٌ بهذا الاسم؛ ومرآتُها المكتوبةُ باليد في
+`tests/test_qufl.py::FROZEN`. تغييرُها ADR موسومٌ بكسر الواجهة ورفعُ الاسم معًا (`INTERFACE_FROZEN`)."""
+
 __all__ = [
+    "DAL_LOCK",
     "ABNIYA_INTIQA_CORPUS",
     "LANE_CORPUS",
     "LANE_LINES_SHA256",

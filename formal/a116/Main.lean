@@ -341,6 +341,21 @@ def main (args : List String) : IO Unit := do
     -- الأوزانُ في جداول درجاتها (`Ledger.waznRows`، ADR ١٩): رقمُ القالب، الدرجة، العدد n.
     for (i, d, n) in Ledger.waznRows do
       IO.println s!"{i},{d},{n}"
+  | ["qufl"] =>
+    -- قفلُ الدالّ (`Qufl.locked`، ADR ٦٢): لكلّ درجةٍ 1–4 ولكلّ وظيفةٍ قيامُ سندها؛ ثمّ شواهدُ القفل: الماضي فَعَلَ
+    -- على جذور الصفات الستّ وصلًا ووقفًا، ودَحْرَجَ على فَعْلَلَ.
+    let wn := fun (w : Exhaust.Wazifa) => match w with
+      | .tarmiz => "tarmiz" | .imla => "imla" | .sawt => "sawt" | .ishtiqaq => "ishtiqaq"
+      | .sarf => "sarf" | .nahw => "nahw" | .dalala => "dalala"
+    for d in [1, 2, 3, 4] do
+      for w in Exhaust.Wazifa.all do
+        let reason := match Qufl.locked d w with | .muallaq r => r | _ => "-"
+        IO.println s!"row,{d},{wn w},{(Qufl.locked d w).qaim},{reason}"
+    for r in Qufl.shawahid do
+      let f := Wazn.fillC (Tasrif.madi (Tasrif.sifa r) .fatha .fatha) r
+      IO.println s!"madi,{HaddTable.atomsOf f},{Hadd.strictB f},{Hadd.strictPauseB (Pause.pause f)}"
+    let q := Wazn.realize Rubai.faalala.w (Rubai.r4 'د' 'ح' 'ر' 'ج') .start .continue Rubai.faalala.h
+    IO.println s!"rubai,{HaddTable.atomsOf q},{Hadd.strictB q},{Hadd.strictPauseB (Wazn.realize Rubai.faalala.w (Rubai.r4 'د' 'ح' 'ر' 'ج') .start .pause Rubai.faalala.h)}"
   | ["need"] =>
     -- قانونُ الحاجة المتبادلة (`Hajah.NeedLaw`) على كلّ سلسلةِ أدوارٍ بطول 1 … 8 (9,840 سطرًا): السلسلة، والقانون،
     -- وحالةُ الوراثة بعدها (ذيلُ المقطع المفتوح، أو none).
