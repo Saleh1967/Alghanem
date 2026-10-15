@@ -225,6 +225,7 @@ jobs:
           python tools/gen_wad.py --check
           python tools/gen_qarina.py --check
           python tools/gen_trial_seals.py --check
+          python tools/gen_kitab.py --check
       - name: guard — no reader or writer outside the gate
         run: python -c "from gate.guard import breaches; b = breaches(); print(b or 'لا خرق'); raise SystemExit(1 if b else 0)"
       - name: conformance, gate, guard (fast)

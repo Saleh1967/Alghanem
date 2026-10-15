@@ -73,6 +73,8 @@ UNITS: dict[str, str] = {
                  "(`corpora/wad/wad.tsv`) — ADR ٥٦",
     "زوج وضع مشترك": "زوجُ (لفظٍ مشترك، جذرٍ من جذوره) في علاقة الوضع المودَعة، وحقلُه عُقَدُ «المخصَّص» "
                      "(`corpora/wad/qarina.tsv`) — ADR ٥٩",
+    "زوج إدغام": "زوجُ (حرفٍ مدغَم، حرفٍ مدغَمٍ فيه) من صفوف أبواب الإدغام في «الكتاب» المختوم "
+                 "(`A116.MakharijIdgham`) — ADR ٦٨",
 }
 """القائمةُ المغلقة للوحدات: لا تُضاف وحدةٌ إلّا هنا وبـADR."""
 LEAN_UNITS: dict[str, str] = {
@@ -106,6 +108,8 @@ LEAN_UNITS: dict[str, str] = {
     "Tawafiq.waqf_two": "سلسلة خانات",
     "Tawafiq.alif_closers_two": "سلسلة خانات",
     "Makharij.huruf_length": "حامل", "Makharij.jahr_partition": "حامل",
+    "MakharijIdgham.pos_count": "زوج إدغام", "MakharijIdgham.neg_count": "زوج إدغام",
+    "MakharijIdgham.R_count": "زوج إدغام", "MakharijIdgham.far_count": "زوج إدغام",
     "Hajah.states_length": "حالة آلة",
     "Nizam.waslK_count": "زوج جوار",
     "Tasrif.allSifa_length": "صفة جذر",

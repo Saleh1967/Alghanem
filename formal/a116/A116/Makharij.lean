@@ -1,35 +1,36 @@
 import A116.Jisr
 import A116.JisrWazaif
 import A116.Field112
+import A116.JisrCount
 
 /-!
-# مستوى المخرج ومستوى الصفة: R مكتوبةً من «الكتاب» والمبرهنةُ عليها (ADR ٦٧، أمرُ المالك «اكتب R وابنِ المبرهنة»)
+# مستوى المخرج ومستوى الصفة: R مكتوبةً من «الكتاب» والمبرهنةُ عليها (ADR ٦٧، ٦٨؛ أمرُ المالك «اكتب R وابنِ المبرهنة»)
 
-**المصدر.** «الكتاب» لسيبويه، نسخةُ OpenITI ‏`0180Sibawayhi.KitabSibawayhi.JK006989-ara1`، بالطول والبصمة المعلنين في
-الشجرة (`KITAB_SIBAWAYH`: 2,639,395 بايتًا، sha256 ‏`a160f940…5cb625` — طوبقت البصمةُ في الجلسة)، «هذا بابُ عددِ الحروف العربيّة
-ومخارجِها ومهموسِها ومجهورِها…» (V04P431–V04P436). كلُّ صفٍّ أدناه **مرساةٌ منقولةٌ بحروفها من الباب** ومعها الحروفُ التي
-تسمّيها بترتيبها؛ و`tests/test_makharij.py` يتحقّق أنّ كلَّ مرساةٍ تقع في الباب مرّةً واحدة وأنّ الحروفَ ما تسمّيه.
+**المصدر.** «الكتاب» لسيبويه، نسخةُ OpenITI ‏`0180Sibawayhi.KitabSibawayhi.JK006989-ara1` مختومةً في `corpora/kitab/`
+(`tools/gen_kitab.py`: 2,639,395 بايتًا، sha256 ‏`a160f940…5cb625`)، «هذا بابُ عددِ الحروف العربيّة ومخارجِها ومهموسِها
+ومجهورِها…» (V04P431–V04P436). كلُّ صفٍّ أدناه **مرساةٌ منقولةٌ بحروفها** ومعها الحروفُ التي تسمّيها بترتيبها؛
+و`tests/test_makharij.py` يتحقّق من المراسي على النصوص المختومة.
 
 ## ما يقوله الباب ويُبرهَن هنا
 
-* **المخارج**: يُعلن «ستّة عشر مخرجًا»، ويذكر في هذه النسخة **خمسةَ عشر** (والخياشيمُ لا حرفَ أصلٍ فيها): وصفُ حافة اللسان
-  ينتهي بـ«مخرج النون»، فمخرجُ اللام ساقطٌ من النصّ المودَع — **يُسمّى ولا يُسدّ من محفوظ** (`lam_unplaced`).
+* **المخارج**: يُعلن «ستّة عشر مخرجًا»، ويذكر في نسختي الكتاب المودَعتين **خمسةَ عشر**: وصفُ حافة اللسان ينتهي بـ«مخرج
+  النون»، فمخرجُ اللام ساقطٌ منهما (`lam_unplaced`). **ويُسدّ من روايةٍ مختومة لا من محفوظ** (ADR ٦٨): السيرافيُّ ينقل الباب
+  بعد «قال سيبويه» وفيه مخرجُ اللام بين الضاد والنون (`lamRow`)؛ فالمخارجُ ستّةَ عشر والحروفُ كلُّها مسنَدة (`restored`).
 * **الجهرُ والهمس** قسمةٌ تامّةٌ على الـ29، و**العددُ المشتقّ يطابق المنصوص** (19 و10) (`jahr_partition`).
 * **الشدّةُ وما يقابلها** قسمةٌ تامّةٌ على الـ29 بثمانية أصناف (`manner_partition`).
-* **الصفاتُ تفصل ما جمعه المخرج**: (المخرج، الجهر، الصنف، الإطباق) متباينٌ على الحروف الثمانية والعشرين المسنَدة
-  (`fasl`) — جسرٌ بلا ضياع (`sifa_bridge_radd`).
+* **الصفاتُ تفصل ما جمعه المخرج**: (المخرج، الجهر، الصنف، الإطباق) متباينٌ على الحروف التسعة والعشرين (`fasl`) — جسرٌ بلا
+  ضياع (`sifa_bridge_radd`).
 * **«ولولا الإطباقُ لصارت الطاءُ دالًا والصادُ سينًا والظاءُ ذالًا»**: بإسقاط الإطباق يتصادم بالضبط هذه الأزواجُ الثلاثة
   (`lawla_itbaq`)، **«ولخرجت الضادُ من الكلام لأنه ليس شيءٌ من موضعها غيرُها»**: مخرجُها لا حرفَ فيه سواها (`dad_alone`).
 
-## R: علاقةُ الوصل في مستوى المخرج
+## R الترتيبيّة: علاقةُ الوصل في مستوى المخرج
 
-المرفقُ السابق سمّاها «حروفُ المخرج والمخرج التالي». فهي هنا: **m′ = m أو m′ = m + 1** بترتيب الباب من أقصى الحلق إلى الخياشيم
-(`nM`). ومستوى الحرف سحبُها على إسقاط الحرف إلى مخرجه (`nL = comap nM makhrajOf`)، فترخيصُ سلسلة الحروف هو ترخيصُ إسقاطها
-(`tower`). وبها يصير للمستويين عدد: `count_M`، `count_L`، وعددُ الحرف = مجموعُ عدد المخرج مضروبًا في أحجام الألياف
-(`count_factor`).
+**m′ = m أو m′ = m + 1** بترتيب الباب من أقصى الحلق إلى الخياشيم (`nM`)، ومستوى الحرف سحبُها على إسقاط الحرف إلى مخرجه
+(`nL = comap nM makhrajOf`)، فترخيصُ سلسلة الحروف هو ترخيصُ إسقاطها (`tower`)؛ والعدد: `count_M`، `count_L`، وعددُ الحرف =
+مجموعٌ على مسارات المخرج لحاصل ضرب أحجام الألياف **لكلّ طول** (`count_factor` على `JisrCount.count_comap`).
 
-**تنبيه (وسمٌ لا يُرفع):** R هذه **ترتيبُ المخارج** كما رتّبها الباب، لا قانونُ تجاورٍ في الجذور؛ فالعددُ عددُ مساراتٍ على
-هذا الترتيب. قانونُ التجاور الفعليّ في الباب التالي (الإدغام) ولم يُكتب هنا.
+**R الترتيبيّة اختيارٌ معلَن، لا قانونٌ منقول.** قانونُ التجاور المنقولُ من أبواب الإدغام في `A116.MakharijIdgham`، وهناك
+يُبرهَن أنّ الترتيبيّةَ لا تحتويه ولا يحتويها.
 -/
 
 namespace A116.Makharij
@@ -91,12 +92,35 @@ def huruf : List Char := Field112.carriers29
 
 theorem huruf_length : huruf.length = 29 := by decide
 
-/-- **المخارجُ المذكورةُ خمسةَ عشر والمنصوصُ ستّةَ عشر**، والمسنَدُ ثمانيةٌ وعشرون حرفًا بلا تكرار. -/
+/-- **المخارجُ المذكورةُ في نسخة JK006989 خمسةَ عشر والمنصوصُ ستّةَ عشر**، والمسنَدُ ثمانيةٌ وعشرون حرفًا بلا تكرار. -/
 theorem listed_vs_stated : makharij.length = 15 ∧ statedMakharij = 16 ∧ placed.length = 28 ∧ placed.Nodup := by
   decide
 
-/-- **مخرجُ اللام ساقطٌ من النصّ المودَع**: كلُّ حرفٍ أصلٍ مسنَدٌ إلى مخرج إلّا اللام. -/
+/-- **مخرجُ اللام ساقطٌ من نسختي الكتاب المودَعتين**: كلُّ حرفٍ أصلٍ مسنَدٌ إلى مخرجٍ فيهما إلّا اللام. -/
 theorem lam_unplaced : ∀ c ∈ huruf, (c ∈ placed ↔ c ≠ 'ل') := by decide
+
+/-! ### سدُّ الساقط من روايةٍ مختومة لا من محفوظ
+
+السيرافيّ في «شرح كتاب سيبويه» (`corpora/kitab/`، Sham19Y0017726) ينقل الباب بعد «قال سيبويه: وحروف العربية ستة عشر
+مخرجا»، وفيه بين مخرج الضاد ومخرج النون: «… الحنك الأعلى مما فويق الضاحك والناس [كذا] والرباعية والثنية مخرج اللام».
+فالصفُّ منقولٌ بحروفه من روايته، وموضعُه بعد الضاد كما في روايته؛ ويتحقّق `tests/test_makharij.py` أنّ المرساةَ تقع في
+المنقول بعد «قال سيبويه» مرّةً واحدة وبين المخرجين. وهي روايةُ الشارح لمتن الكتاب، لا مخطوطٌ للكتاب. -/
+
+def lamRow : String × List Char :=
+  ("الحنك الأعلى مما فويق الضاحك والناس والرباعية والثنية مخرج اللام", ['ل'])
+
+/-- المخارجُ الستّةَ عشر: صفوفُ JK006989 واللامُ في موضعها من رواية السيرافيّ. -/
+def makharij16 : List (String × List Char) := makharij.take 7 ++ [lamRow] ++ makharij.drop 7
+
+def placed16 : List Char := makharij16.flatMap (·.2)
+
+/-- **موضعُ اللام كما في رواية السيرافيّ**: بعد الضاد وقبل النون. -/
+theorem lam_order : ((makharij16.drop 6).take 3).map (·.2) = [['ض'], ['ل'], ['ن']] := by decide
+
+/-- **العددُ المنصوصُ يُستوفى**: ستّةَ عشرَ مخرجًا، والحروفُ التسعةُ والعشرون كلُّها مسنَدةٌ بلا تكرار. -/
+theorem restored :
+    makharij16.length = statedMakharij ∧ placed16.length = 29 ∧ placed16.Nodup ∧ (∀ c ∈ huruf, c ∈ placed16) := by
+  decide
 
 /-- **الجهرُ والهمسُ قسمةٌ تامّة**، والعددُ المشتقّ يطابق المنصوص (19، 10). -/
 theorem jahr_partition :
@@ -116,7 +140,8 @@ theorem manner_partition :
 def idxIn (xs : List (String × List Char)) (c : Char) : Nat :=
   (xs.findIdx? fun p => p.2.contains c).getD 99
 
-def makhrajOf (c : Char) : Nat := idxIn makharij c
+/-- المخرجُ بترتيب المخارج الستّةَ عشر. -/
+def makhrajOf (c : Char) : Nat := idxIn makharij16 c
 def mannerOf (c : Char) : Nat := idxIn manners c
 def jahrOf (c : Char) : Bool := majhura.2.contains c
 def itbaqOf (c : Char) : Bool := mutbaqa.2.contains c
@@ -124,70 +149,72 @@ def itbaqOf (c : Char) : Bool := mutbaqa.2.contains c
 /-- الإحداثيّاتُ: المخرج، والجهر، والصنف، والإطباق. -/
 def coord (c : Char) : Nat × Bool × Nat × Bool := (makhrajOf c, jahrOf c, mannerOf c, itbaqOf c)
 
-/-- **الفصل**: الإحداثيّاتُ متباينةٌ على الحروف المسنَدة. -/
-theorem fasl : (placed.map coord).Nodup := by decide
+/-- **الفصل**: الإحداثيّاتُ متباينةٌ على الحروف التسعة والعشرين. -/
+theorem fasl : (placed16.map coord).Nodup := by decide
 
 /-- الاسترجاعُ من الإحداثيّات. -/
-def decodeC (p : Nat × Bool × Nat × Bool) : Option Char := placed.find? fun c => coord c == p
+def decodeC (p : Nat × Bool × Nat × Bool) : Option Char := placed16.find? fun c => coord c == p
 
-/-- **جسرُ الصفة بلا ضياع**: كلُّ حرفٍ مسنَدٍ يُستردّ من إحداثيّاته. -/
-theorem sifa_bridge_radd : placed.all (fun c => decodeC (coord c) == some c) = true := by decide
+/-- **جسرُ الصفة بلا ضياع**: كلُّ حرفٍ يُستردّ من إحداثيّاته. -/
+theorem sifa_bridge_radd : placed16.all (fun c => decodeC (coord c) == some c) = true := by decide
 
 def coordNoItbaq (c : Char) : Nat × Bool × Nat := (makhrajOf c, jahrOf c, mannerOf c)
 
 /-- أزواجُ التصادم (بترتيب الإسناد) إذا أُسقط الإطباق. -/
 def collisionsNoItbaq : List (Char × Char) :=
-  (placed.zipIdx.flatMap fun (a, i) => (placed.drop (i + 1)).filterMap fun b =>
+  (placed16.zipIdx.flatMap fun (a, i) => (placed16.drop (i + 1)).filterMap fun b =>
     if coordNoItbaq a == coordNoItbaq b then some (a, b) else none)
 
 /-- **«ولولا الإطباقُ لصارت الطاءُ دالًا والصادُ سينًا والظاءُ ذالًا»** — بالحساب، ولا تصادمَ غيرُها. -/
 theorem lawla_itbaq : collisionsNoItbaq = [('ط', 'د'), ('س', 'ص'), ('ظ', 'ذ')] := by decide
 
 /-- **«ولخرجت الضادُ من الكلام لأنه ليس شيءٌ من موضعها غيرُها»**: مخرجُ الضاد لا حرفَ فيه سواها. -/
-theorem dad_alone : (makharij.find? fun p => p.2.contains 'ض').map (·.2) = some ['ض'] := by decide
+theorem dad_alone : (makharij16.find? fun p => p.2.contains 'ض').map (·.2) = some ['ض'] := by decide
 
-/-! ## ٤. R: الوصلُ في مستوى المخرج، والسحبُ إلى الحرف -/
+/-! ## ٤. R الترتيبيّة: الوصلُ في مستوى المخرج، والسحبُ إلى الحرف
 
-/-- **مستوى المخرج**: الحاملُ عددٌ دون 15 بترتيب الباب، والوصلُ «المخرجُ نفسُه أو التالي». -/
+R هنا **ترتيبُ المخارج** («المخرجُ نفسُه أو التالي») — اختيارٌ معلَن يُقاس عليه قانونُ الإدغام في
+`A116.MakharijIdgham` فيُرى أين يخالفه. -/
+
+/-- **مستوى المخرج**: الحاملُ عددٌ دون 16 بترتيب الباب، والوصلُ «المخرجُ نفسُه أو التالي». -/
 def nM : Nizam Nat where
-  wujud m := decide (m < 15)
+  wujud m := decide (m < 16)
   ibtida _ := true
   wasl m m' := m' == m || m' == m + 1
   waqf _ _ := false
 
-/-- **مستوى الحرف**: سحبُ مستوى المخرج على إسقاط الحرف إلى مخرجه؛ اللامُ بلا مخرجٍ مودَع فلا رخصةَ لها هنا. -/
+/-- **مستوى الحرف**: سحبُ مستوى المخرج على إسقاط الحرف إلى مخرجه. -/
 def nL : Nizam Char := comap nM makhrajOf
 
 /-- **البرج**: ترخيصُ سلسلة الحروف هو ترخيصُ إسقاطها على المخارج. -/
 theorem tower (w : List Char) : licWasl nL w = licWasl nM (w.map makhrajOf) := licWasl_comap nM makhrajOf w
 
-theorem lam_not_licensed : licWasl nL ['ل'] = false := by decide
+/-- اللامُ صارت مرخَّصةً بعد سدّ مخرجها. -/
+theorem lam_licensed : licWasl nL ['ل'] = true := by decide
 
 /-! ## ٥. العدد -/
 
-def mAlph : List Nat := List.range 15
+def mAlph : List Nat := List.range 16
 
 /-- **عددُ المرخَّص في مستوى المخرج** بطول 0..6. -/
 theorem count_M :
-    (List.range 7).map (fun n => (gen nM mAlph n).length) = [1, 15, 29, 56, 108, 208, 400] := by
+    (List.range 7).map (fun n => (gen nM mAlph n).length) = [1, 16, 31, 60, 116, 224, 432] := by
   decide +kernel
 
-/-- **عددُ المرخَّص في مستوى الحرف** بطول 0..4 (على الحروف المسنَدة). -/
+/-- **عددُ المرخَّص في مستوى الحرف** بطول 0..4. -/
 theorem count_L :
-    (List.range 5).map (fun n => (gen nL placed n).length) = [1, 28, 116, 495, 2121] := by
+    (List.range 5).map (fun n => (gen nL placed16 n).length) = [1, 29, 118, 499, 2129] := by
   decide +kernel
 
 /-- حجمُ الليف: عددُ حروف المخرج m. -/
-def fiber (m : Nat) : Nat := (placed.filter fun c => makhrajOf c == m).length
-
-/-- **عددُ الحرف = مجموعُ عدد المخرج مضروبًا في أحجام الألياف** (المبرهنةُ ٢ في المرفق، مثولًا): لكلّ طولٍ 0..4. -/
-theorem count_factor :
-    (List.range 5).all (fun n =>
-      (gen nL placed n).length ==
-        ((gen nM mAlph n).map fun u => (u.map fiber).foldl (· * ·) 1).foldl (· + ·) 0) = true := by
-  decide +kernel
+def fiber (m : Nat) : Nat := JisrCount.fiberOf makhrajOf placed16 m
 
 /-- أحجامُ الألياف بترتيب الباب: الخياشيمُ صفر. -/
-theorem fibers : mAlph.map fiber = [3, 2, 2, 1, 1, 3, 1, 1, 1, 3, 3, 3, 1, 3, 0] := by decide
+theorem fibers : mAlph.map fiber = [3, 2, 2, 1, 1, 3, 1, 1, 1, 1, 3, 3, 3, 1, 3, 0] := by decide
+
+/-- **عددُ الحرف = مجموعٌ على مسارات المخرج لحاصل ضرب أحجام الألياف — لكلّ طول** (على `JisrCount.count_comap`). -/
+theorem count_factor (n : Nat) :
+    (gen nL placed16 n).length = JisrCount.sumN ((gen nM mAlph n).map (JisrCount.prodF makhrajOf placed16)) :=
+  JisrCount.count_comap nM makhrajOf placed16 mAlph (List.nodup_range) (by decide) n
 
 end A116.Makharij
