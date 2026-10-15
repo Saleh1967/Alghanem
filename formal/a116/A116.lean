@@ -68,3 +68,4 @@ import A116.Tanith
 import A116.Qism
 import A116.Mamnu
 import A116.Tawafiq
+import A116.Sigha

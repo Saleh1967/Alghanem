@@ -830,3 +830,13 @@ import A116
 #print axioms A116.Tawafiq.alif_after_fatha_is_madd
 #print axioms A116.Tawafiq.alif_closers_two
 #print axioms A116.Tawafiq.kaa_aa_pause
+-- ADR ٦٤: صيغةُ البرهان ونقدُ «SlgeComplete.lean»
+#print axioms A116.Sigha.Naqd.verify_eq
+#print axioms A116.Sigha.Naqd.integrated_slge_safety
+#print axioms A116.Sigha.Naqd.verify_ignores_structure
+#print axioms A116.Sigha.Naqd.accepts_garbage
+#print axioms A116.Sigha.Naqd.quint_verb_contradicts_repo
+#print axioms A116.Sigha.Naqd.unique_n_not_injective
+#print axioms A116.Sigha.Naqd.patterns_missing
+#print axioms A116.Sigha.sigha
+#print axioms A116.Sigha.sigha_not_vacuous
