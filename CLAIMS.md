@@ -501,7 +501,7 @@
 | `wazn-body.csv.rows` | 31 |
 
 
-## أعدادُ المبرهنات بوحداتها (53 مبرهنة)
+## أعدادُ المبرهنات بوحداتها (55 مبرهنة)
 
 مستخرَجةٌ من نصوص Lean (`formal/a116/A116/*.lean`): كلُّ مبرهنةٍ مدقَّقة ينتهي نصُّها بـ‎= عدد‎؛ والوحدةُ من القائمة المغلقة أدناه (ADR ١٢). العددُ هو الثابتُ الأخير في نصّ المبرهنة.
 
@@ -532,6 +532,8 @@
 | 5 | نمط متحرك/ساكن | `A116.Ladder.admissible_patterns_3` |
 | 1,097,505 | سلسلة خانات مرخصة بالطول | `A116.Ladder.U3_by_pattern` |
 | 6 | حقل وظيفة | `A116.Ledger.filled_qaim_count` |
+| 29 | حامل | `A116.Makharij.huruf_length` |
+| 10 | حامل | `A116.Makharij.jahr_partition` |
 | 3 | حالة آلة | `A116.Model.saturation_rungs` |
 | 6 | زوج جوار | `A116.Nizam.waslK_count` |
 | 8 | خانة | `A116.Numbering.orders_differ_only_in_two_rows` |

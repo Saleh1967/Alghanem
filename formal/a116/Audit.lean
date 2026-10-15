@@ -869,3 +869,19 @@ import A116
 #print axioms A116.JisrWazaif.tree_needs_shape
 #print axioms A116.JisrWazaif.jusur_wazaif
 #print axioms A116.JisrWazaif.shawahid_radd
+-- ADR ٦٧: مستوى المخرج والصفة من «الكتاب»
+#print axioms A116.Makharij.huruf_length
+#print axioms A116.Makharij.listed_vs_stated
+#print axioms A116.Makharij.lam_unplaced
+#print axioms A116.Makharij.jahr_partition
+#print axioms A116.Makharij.manner_partition
+#print axioms A116.Makharij.fasl
+#print axioms A116.Makharij.sifa_bridge_radd
+#print axioms A116.Makharij.lawla_itbaq
+#print axioms A116.Makharij.dad_alone
+#print axioms A116.Makharij.tower
+#print axioms A116.Makharij.lam_not_licensed
+#print axioms A116.Makharij.count_M
+#print axioms A116.Makharij.count_L
+#print axioms A116.Makharij.count_factor
+#print axioms A116.Makharij.fibers

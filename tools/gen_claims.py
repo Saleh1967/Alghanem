@@ -105,6 +105,7 @@ LEAN_UNITS: dict[str, str] = {
     "Tawafiq.wasl_two": "سلسلة خانات",
     "Tawafiq.waqf_two": "سلسلة خانات",
     "Tawafiq.alif_closers_two": "سلسلة خانات",
+    "Makharij.huruf_length": "حامل", "Makharij.jahr_partition": "حامل",
     "Hajah.states_length": "حالة آلة",
     "Nizam.waslK_count": "زوج جوار",
     "Tasrif.allSifa_length": "صفة جذر",

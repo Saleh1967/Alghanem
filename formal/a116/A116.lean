@@ -71,3 +71,4 @@ import A116.Tawafiq
 import A116.Sigha
 import A116.Jisr
 import A116.JisrWazaif
+import A116.Makharij
