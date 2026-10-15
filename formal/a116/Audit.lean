@@ -854,3 +854,18 @@ import A116
 #print axioms A116.Jisr.gen_ternary_agrees
 #print axioms A116.Jisr.gen_ternary_counts
 #print axioms A116.Jisr.jisr
+-- ADR ٦٦: ترخيصُ جسور الوظائف
+#print axioms A116.JisrWazaif.enc_injective
+#print axioms A116.JisrWazaif.comp_tamm
+#print axioms A116.JisrWazaif.tarmiz_tamm
+#print axioms A116.JisrWazaif.maqta_tamm
+#print axioms A116.JisrWazaif.eval_rad
+#print axioms A116.JisrWazaif.madi_rad_check
+#print axioms A116.JisrWazaif.madi_cell
+#print axioms A116.JisrWazaif.recover_madi
+#print axioms A116.JisrWazaif.ishtiqaq_needs_sifa
+#print axioms A116.JisrWazaif.split_flatten
+#print axioms A116.JisrWazaif.tarkib_tamm
+#print axioms A116.JisrWazaif.tree_needs_shape
+#print axioms A116.JisrWazaif.jusur_wazaif
+#print axioms A116.JisrWazaif.shawahid_radd
