@@ -356,6 +356,13 @@ def main (args : List String) : IO Unit := do
       IO.println s!"madi,{HaddTable.atomsOf f},{Hadd.strictB f},{Hadd.strictPauseB (Pause.pause f)}"
     let q := Wazn.realize Rubai.faalala.w (Rubai.r4 'د' 'ح' 'ر' 'ج') .start .continue Rubai.faalala.h
     IO.println s!"rubai,{HaddTable.atomsOf q},{Hadd.strictB q},{Hadd.strictPauseB (Wazn.realize Rubai.faalala.w (Rubai.r4 'د' 'ح' 'ر' 'ج') .start .pause Rubai.faalala.h)}"
+  | ["tawafiq"] =>
+    -- توافيقُ الخانات (`Tawafiq`، ADR ٦٣): لكلّ طولٍ 1–3 كلُّ سلاسل الشبكة المرخَّصة (113^n)، والمرخَّصُ منها
+    -- وصلًا ووقفًا، وما آخرُه ألفٌ مُغلِقة (`ALIF_CLOSER_NOT_REFUSED`).
+    IO.println "n,total,wasl,waqf,alif_closers"
+    for n in [1, 2, 3] do
+      let s := Tawafiq.seqs n
+      IO.println s!"{n},{s.length},{Tawafiq.wasl n},{Tawafiq.waqf n},{Tawafiq.alifClosers n}"
   | ["need"] =>
     -- قانونُ الحاجة المتبادلة (`Hajah.NeedLaw`) على كلّ سلسلةِ أدوارٍ بطول 1 … 8 (9,840 سطرًا): السلسلة، والقانون،
     -- وحالةُ الوراثة بعدها (ذيلُ المقطع المفتوح، أو none).

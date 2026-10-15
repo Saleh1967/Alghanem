@@ -67,3 +67,4 @@ import A116.Sawabiq
 import A116.Tanith
 import A116.Qism
 import A116.Mamnu
+import A116.Tawafiq

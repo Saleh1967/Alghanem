@@ -816,3 +816,17 @@ import A116
 #print axioms A116.Manhaj.taslim_verdicts
 #print axioms A116.Manhaj.judge1_refuses_s87
 #print axioms A116.Manhaj.qarar_witnesses_unchanged
+#print axioms A116.Tawafiq.length_flatMap_cons
+#print axioms A116.Tawafiq.seqs_length
+#print axioms A116.Tawafiq.wasl_one
+#print axioms A116.Tawafiq.waqf_one
+#print axioms A116.Tawafiq.one_is_cv
+#print axioms A116.Tawafiq.binary_adds_vowelled_alif
+#print axioms A116.Tawafiq.wasl_two
+#print axioms A116.Tawafiq.waqf_two
+#print axioms A116.Tawafiq.two_structure
+#print axioms A116.Tawafiq.not_3364
+#print axioms A116.Tawafiq.alif_closer_licensed
+#print axioms A116.Tawafiq.alif_after_fatha_is_madd
+#print axioms A116.Tawafiq.alif_closers_two
+#print axioms A116.Tawafiq.kaa_aa_pause
