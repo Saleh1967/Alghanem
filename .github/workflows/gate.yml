@@ -76,6 +76,7 @@ jobs:
                    Tasrif.madi_exhausted Tasrif.mudari_exhausted Tasrif.amr_exhausted Tasrif.madd_drop_forced Tasrif.haa_forced Tasrif.agrees_with_mudari \
                    Rubai.rubai_licensed Rubai.rubai_one_mujarrad Rubai.quad_open_by_maqayis \
                    Tawafiq.law_fil_twelve Tawafiq.law_rubai Tawafiq.fuila_verb_only Tarkib.isnad_sep_needs_two Tarkib.fasl_shahid \
+                   Awamil.reduces_to_amil Awamil.jarr_targets_ism Awamil.jazm_targets_fil Awamil.inna_kana_dual Awamil.rows_length Awamil.class_counts Awamil.anchored_or_none \
                    Amil.naib_count Amil.ism_no_jazm Amil.fil_no_jarr Amil.pause_forgets_amil Amil.isnad_raf Amil.taqyid_nasb Amil.idafa_jarr Amil.nisab_three \
                    Tawafiq.law_ism_twelve Tawafiq.law_ism_all Tawafiq.naql_sub_law Tawafiq.law_minus_naql Tawafiq.shapes64_wasl \
                    Tarkib.cells_recycled Tarkib.licence_blind_to_qism Tarkib.isnad_needs_two Tarkib.musnad_ilayh_is_ism Tarkib.huruf_no_isnad Tarkib.shibh_no_isnad Tarkib.atf_two_isnad \
@@ -231,6 +232,7 @@ jobs:
           python tools/gen_qarina.py --check
           python tools/gen_trial_seals.py --check
           python tools/gen_kitab.py --check
+          python tools/gen_awamil.py --check
       - name: guard — no reader or writer outside the gate
         run: python -c "from gate.guard import breaches; b = breaches(); print(b or 'لا خرق'); raise SystemExit(1 if b else 0)"
       - name: conformance, gate, guard (fast)
