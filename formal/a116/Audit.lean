@@ -840,3 +840,17 @@ import A116
 #print axioms A116.Sigha.Naqd.patterns_missing
 #print axioms A116.Sigha.sigha
 #print axioms A116.Sigha.sigha_not_vacuous
+-- ADR ٦٥: جسورُ اللغة على Nizam
+#print axioms A116.Jisr.licWasl_comap
+#print axioms A116.Jisr.proj_sound
+#print axioms A116.Jisr.proj_not_complete
+#print axioms A116.Jisr.pull_flatten
+#print axioms A116.Jisr.pull_pull
+#print axioms A116.Jisr.adj_reverse
+#print axioms A116.Jisr.taraf_reverse
+#print axioms A116.Jisr.ofNizam_licT
+#print axioms A116.Jisr.reverse_not_nizam
+#print axioms A116.Jisr.mem_gen
+#print axioms A116.Jisr.gen_ternary_agrees
+#print axioms A116.Jisr.gen_ternary_counts
+#print axioms A116.Jisr.jisr
