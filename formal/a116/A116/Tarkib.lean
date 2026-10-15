@@ -159,4 +159,54 @@ theorem shawahid :
   ⟨Isnad.here _ _ [] (Or.inl ⟨rfl, rfl⟩), Isnad.here _ _ [] (Or.inr ⟨rfl, rfl⟩),
    shibh_no_isnad _ _ rfl⟩
 
+/-! ## ٥. الفصلُ بين المسند والمسند إليه (ADR ٧٠؛ سدُّ `ISNAD_ADJACENT_ONLY`)
+
+الإسنادُ بين كلمتين لا يلزم تجاورُهما: «يذهب اليوم عبد الله» — المسندُ أوّلًا والمسندُ إليه بعد فاصل. فالإسنادُ
+المفصول: كلمةٌ ثمّ فاصلٌ من كلماتٍ (أيُّ عدد) ثمّ كلمة، على القسمين نفسِهما. المتجاورُ حالةٌ خاصّة منه
+(`isnad_sep_of_isnad`)، ويبقى اثنين في الحدّ الأدنى (`isnad_sep_needs_two`)، والحروفُ وحدَها لا تُسند
+(`huruf_no_isnad_sep`). ما الفاصلُ المسموح (معمولٌ أو ظرفٌ أو جملةٌ معترضة) فليس هنا: `FASIL_KIND_NOT_WRITTEN`. -/
+
+/-- الإسنادُ مع فاصل: a ثمّ فاصلٌ f ثمّ b، في أيّ موضعٍ من التركيب. -/
+inductive IsnadSep : Tarkib → Prop where
+  | here (a : Kalima) (f : Tarkib) (b : Kalima) (rest : Tarkib) (h : ismiyya a b ∨ filiyya a b) :
+      IsnadSep (a :: f ++ b :: rest)
+  | there (w : Kalima) (t : Tarkib) (h : IsnadSep t) : IsnadSep (w :: t)
+
+theorem isnad_sep_of_isnad {t : Tarkib} (h : Isnad t) : IsnadSep t := by
+  induction h with
+  | here a b rest hab => exact IsnadSep.here a [] b rest hab
+  | there w t _ ih => exact IsnadSep.there w t ih
+
+theorem isnad_sep_needs_two {t : Tarkib} (h : IsnadSep t) : 2 ≤ t.length := by
+  induction h with
+  | here a f b rest _ => simp; omega
+  | there w t _ ih => simp; omega
+
+theorem musnad_ilayh_is_ism_sep {t : Tarkib} (h : IsnadSep t) : ∃ w ∈ t, w.qism = .ism := by
+  induction h with
+  | here a f b rest hab =>
+    exact ⟨b, by simp, by rcases hab with ⟨_, hb⟩ | ⟨_, hb⟩ <;> exact hb⟩
+  | there w t _ ih => obtain ⟨u, hu, hq⟩ := ih; exact ⟨u, List.mem_cons_of_mem _ hu, hq⟩
+
+theorem huruf_no_isnad_sep (t : Tarkib) (h : ∀ w ∈ t, w.qism = .harf) : ¬ IsnadSep t := by
+  intro hi
+  obtain ⟨w, hw, hq⟩ := musnad_ilayh_is_ism_sep hi
+  rw [h w hw] at hq
+  exact Qism.noConfusion hq
+
+/-- الشاهد: «يذهبُ اليومَ عبدُ الله» — فعلٌ، فاصلٌ (اسمٌ معمول)، ثمّ المسندُ إليه؛ وليس إسنادًا متجاورًا. -/
+theorem fasl_shahid :
+    IsnadSep [⟨[], .fil⟩, ⟨[], .ism⟩, ⟨[], .ism⟩] ∧
+    IsnadSep [⟨[], .fil⟩, ⟨[], .harf⟩, ⟨[], .ism⟩] ∧ ¬ Isnad [⟨[], .fil⟩, ⟨[], .harf⟩, ⟨[], .ism⟩] := by
+  refine ⟨IsnadSep.here _ [⟨[], .ism⟩] _ [] (Or.inr ⟨rfl, rfl⟩),
+          IsnadSep.here _ [⟨[], .harf⟩] _ [] (Or.inr ⟨rfl, rfl⟩), ?_⟩
+  intro h
+  cases h with
+  | here a b rest hab => rcases hab with ⟨_, hb⟩ | ⟨_, hb⟩ <;> exact Qism.noConfusion hb
+  | there w t ht =>
+    cases ht with
+    | here a b rest hab => rcases hab with ⟨ha, _⟩ | ⟨ha, _⟩ <;> exact Qism.noConfusion ha
+    | there _ _ ht' => cases ht' with
+      | there _ _ ht'' => cases ht''
+
 end A116.Tarkib

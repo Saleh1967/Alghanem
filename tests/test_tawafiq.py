@@ -116,7 +116,7 @@ def _shapes(root: str = "كتب") -> dict[str, list[str]]:
 
 
 def test_generated_space_row_by_hand() -> None:
-    g = [ln for ln in _lines() if ln.startswith("g,")]
+    g = [ln for ln in _lines() if ln.startswith("g,ism3")]
     assert g == ["g,ism3,64,45,48,12,10"]
     shapes = _shapes()
     assert len(shapes) == 64
@@ -125,6 +125,19 @@ def test_generated_space_row_by_hand() -> None:
     twelve = [(a, b) for a in "َُِ" for b in "َُِْ"]
     assert all(strict_licensed(["ك" + a, "ت" + b, "بُ"]) for a, b in twelve)
     assert all(strict_pause_licensed(["ك" + a, "ت" + b, "بْ"]) for a, b in twelve)
+
+
+def test_higher_degree_rows_by_hand() -> None:
+    """ADR ٧٠: الفعلُ 12 بالقانون و4 بالنقل (ثلاثةُ أبواب وفُعِلَ س18641)، والرباعيُّ 48/45/1،
+    والزوائدُ 31."""
+
+    g = {ln.split(",")[1]: ln.split(",")[2:] for ln in _lines() if ln.startswith("g,")}
+    assert g["fil3"] == ["12", "12", "-", "12", "4"]
+    assert g["rubai4"] == ["48", "45", "-", "-", "1"]
+    assert g["zawaid"] == ["31", "31", "-", "-", "31"]
+    marks = "َُِْ"
+    assert sum(strict_licensed(["د" + a, "ح" + b, "ر" + c, "جَ"])
+               for a in marks[:3] for b in marks for c in marks) == 45
 
 
 def test_naql_ten_is_subset_and_two_are_left() -> None:

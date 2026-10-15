@@ -1,5 +1,7 @@
 import A116.Alif
 import A116.Count
+import A116.Wazn
+import A116.Rubai
 
 /-!
 # توافيقُ الخانات: عددُ المرخَّص من كلّ سلاسل الشبكة بطولٍ معلوم (ADR ٦٣)
@@ -161,5 +163,53 @@ theorem law_minus_naql :
 /-- النسبةُ: الفضاءُ المولَّد بالنقل عُشرُ الممكن الأعمى تقريبًا، لا ‎113^n‎. -/
 theorem generated_vs_blind : naqlIsm.length * 6 < shapes64.length ∧ shapes64.length < wasl 2 := by
   rw [shapes64_length, wasl_two] <;> decide
+
+/-! ## الدرجاتُ الأعلى في جدول الفضاء المولَّد (ADR ٧٠؛ سدُّ `GENERATED_SPACE_HIGHER_DEGREES`)
+
+* الفعلُ الثلاثيّ المجرّد (آخرُه فتحةٌ أبدًا): الأعمى 12 (الأوّلُ من ثلاث والثاني من أربع)، والقانونُ يبقيها
+  (`law_fil_twelve`)؛ والمنقولُ أربعة: فَعَلَ فَعِلَ فَعُلَ (أبوابُ `Tasrif.harakat3`، ADR ٢٦) وفُعِلَ
+  («لا يكون إلّا في الفعل»، الكتاب س18641) — `naql_fil_four`، `naql_fil_sub_law`.
+* الرباعيُّ المجرّد (أربعةُ أصول، آخرُه فتحة): الأعمى 48، والقانونُ (`law_rubai`)، والمنقولُ واحدٌ فَعْلَلَ
+  (`Rubai.rubai_one_mujarrad`، ADR ٢٨) — `naql_rubai_one`.
+* الزوائدُ: القوالبُ الإحدى والثلاثون كلُّها مرخَّصة (`Wazn.thulathi_licensed`) — `zawaid_row`. -/
+
+/-- أبنيةُ الفعل الثلاثيّ: الأوّلُ والثاني، والآخرُ فتحة. -/
+def lawFil : List (Haraka × Haraka) :=
+  ismPairs.filter fun p => strictB (shape p.1 p.2 .fatha) && strictPauseB (shape p.1 p.2 .sukun)
+
+theorem law_fil_twelve : lawFil.length = 12 := by decide +kernel
+
+/-- المنقولُ للفعل: الأبوابُ الثلاثة بفتح الأوّل، وفُعِلَ (س18641). -/
+def naqlFil : List (Haraka × Haraka × Nat) :=
+  (Tasrif.harakat3.map fun h => (Haraka.fatha, h, 19036)) ++ [(.damma, .kasra, 18641)]
+
+theorem naql_fil_four : naqlFil.length = 4 := by rfl
+
+theorem naql_fil_sub_law : naqlFil.all (fun r => lawFil.contains (r.1, r.2.1)) = true := by
+  decide +kernel
+
+/-- فُعِلَ فعلٌ لا اسم: في منقول الفعل وليس في منقول الاسم (س18641). -/
+theorem fuila_verb_only :
+    naqlFil.any (fun r => (r.1, r.2.1) == (.damma, .kasra)) = true ∧
+    naqlIsm.any (fun r => (r.1, r.2.1) == (.damma, .kasra)) = false := by decide +kernel
+
+/-- أصولٌ أربعة شاهدة (د ح ر ج) بحركاتٍ على الثلاثة الأولى، والآخرُ فتحة. -/
+def shape4 (a b c : Haraka) : List Cell :=
+  [atom 'د' a, atom 'ح' b, atom 'ر' c, atom 'ج' .fatha]
+
+def shapes48 : List (List Cell) := h3.flatMap fun a => h4.flatMap fun b => h4.map fun c => shape4 a b c
+
+theorem shapes48_length : shapes48.length = 48 := by decide +kernel
+
+theorem law_rubai : (shapes48.filter strictB).length = 45 := by decide +kernel
+
+/-- المنقولُ واحد: فَعْلَلَ، وهو مرخَّص. -/
+theorem naql_rubai_one :
+    (Rubai.abniya.filter fun B => !Rubai.augmented B).length = 2 ∧
+    strictB (shape4 .fatha .sukun .fatha) = true := by
+  refine ⟨by decide, by decide +kernel⟩
+
+/-- الزوائد: الإحدى والثلاثون قالبًا. -/
+theorem zawaid_row : Wazn.thulathi.length = 31 := by decide
 
 end A116.Tawafiq

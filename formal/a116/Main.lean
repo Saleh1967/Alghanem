@@ -367,6 +367,21 @@ def main (args : List String) : IO Unit := do
     IO.println s!"g,ism3,{Tawafiq.shapes64.length},{(Tawafiq.shapes64.filter Hadd.strictB).length},{(Tawafiq.shapes64.filter Hadd.strictPauseB).length},{Tawafiq.lawIsm.length},{Tawafiq.naqlIsm.length}"
     for r in Tawafiq.naqlIsm do
       IO.println s!"naql,{HaddTable.atomsOf (Tawafiq.shape r.1 r.2.1 .sukun)},{r.2.2.1},{r.2.2.2}"
+    -- الدرجاتُ الأعلى (ADR ٧٠): الفعلُ الثلاثيّ، والرباعيُّ المجرّد، والزوائد — الأعمى، والقانون، والمنقول.
+    IO.println s!"g,fil3,{Tawafiq.ismPairs.length},{Tawafiq.lawFil.length},-,{Tawafiq.lawFil.length},{Tawafiq.naqlFil.length}"
+    IO.println s!"g,rubai4,{Tawafiq.shapes48.length},{(Tawafiq.shapes48.filter Hadd.strictB).length},-,-,1"
+    IO.println s!"g,zawaid,{Wazn.thulathi.length},{Wazn.thulathi.length},-,-,{Wazn.thulathi.length}"
+  | ["amil"] =>
+    -- العاملُ والمعمول (`Amil`، ADR ٧٠): لكلّ زوجٍ (صنف، حالة) له آخرٌ: الآخرُ، أصليٌّ أم حرفيّ، ونائبٌ عن أصله أم لا.
+    let short := fun (s : String) => (s.splitOn ".").getLastD s
+    let cn := fun (c : Qism.Cls) => short (repr c).pretty
+    let en := fun (e : Qism.Ending) => short (repr e).pretty
+    let irn := fun (i : Qism.Irab) => short (repr i).pretty
+    IO.println "cls,irab,ending,asliyya,naib"
+    for p in Qism.pairs do
+      match Qism.ending p.1 p.2 with
+      | some e => IO.println s!"{cn p.1},{irn p.2},{en e},{Amil.asliyya e},{Amil.naib p.1 p.2}"
+      | none => pure ()
   | ["need"] =>
     -- قانونُ الحاجة المتبادلة (`Hajah.NeedLaw`) على كلّ سلسلةِ أدوارٍ بطول 1 … 8 (9,840 سطرًا): السلسلة، والقانون،
     -- وحالةُ الوراثة بعدها (ذيلُ المقطع المفتوح، أو none).
