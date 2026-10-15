@@ -984,3 +984,21 @@ import A116
 #print axioms A116.Awamil.counts_sum
 #print axioms A116.Awamil.anchored_or_none
 #print axioms A116.Awamil.names_repeat
+-- ADR ٧٢: R داخل البرهان — السببُ والمانع، والاستنفادُ بالشرط وبالسبب، والحدُّ الأدنى المكتمل
+#print axioms A116.MakharijIdgham.shawahid_idgham
+#print axioms A116.MakharijIdgham.shawahid_mumtani
+#print axioms A116.MakharijIdgham.sabab_needed
+#print axioms A116.MakharijIdgham.mani_needed
+#print axioms A116.MakharijIdgham.R_sub_Rd
+#print axioms A116.MakharijIdgham.istinfad
+#print axioms A116.MakharijIdgham.maskut_list
+#print axioms A116.MakharijIdgham.R_needs_sifa
+#print axioms A116.MakharijIdgham.ibtida_then_wasl
+#print axioms A116.MakharijIdgham.mukhtamal
+#print axioms A116.MakharijIdgham.waqf_after_idgham
+#print axioms A116.MakharijIdgham.window_minimal
+#print axioms A116.MakharijIdgham.istinfad_ibtida
+#print axioms A116.MakharijIdgham.istinfad_mutaharrik
+#print axioms A116.MakharijIdgham.istinfad_madd
+#print axioms A116.MakharijIdgham.istinfad_sakin
+#print axioms A116.MakharijIdgham.labels_closed

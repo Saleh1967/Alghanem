@@ -542,7 +542,7 @@
 | 29 | حامل | `A116.Makharij.huruf_length` |
 | 10 | حامل | `A116.Makharij.jahr_partition` |
 | 93 | زوج إدغام | `A116.MakharijIdgham.pos_count` |
-| 41 | زوج إدغام | `A116.MakharijIdgham.neg_count` |
+| 44 | زوج إدغام | `A116.MakharijIdgham.neg_count` |
 | 120 | زوج إدغام | `A116.MakharijIdgham.R_count` |
 | 44 | زوج إدغام | `A116.MakharijIdgham.far_count` |
 | 3 | حالة آلة | `A116.Model.saturation_rungs` |

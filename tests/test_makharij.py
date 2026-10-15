@@ -76,6 +76,7 @@ IMPLICIT = {
     "والذال والثاء منزلة كل واحدة منهما من صاحبتها منزلة الدال والتاء": ("ذث", "ذث"),
     "وكذلك الظاء والثاء والذال لأنهن من طرف اللسان وأطراف الثنايا": ("ظثذ", "صزس"),
     "وأما الصاد والسين والزاي فلا تدغمهن في هذه الحروف التي أدغمت فيهن": ("صسز", "طدتظثذ"),
+    "وذلك قولك رأيت قاضي جابر ورأيت دلو مالك": ("يو", "جم"),  # قاضي جابر: ي/ج؛ دلو مالك: و/م
 }
 
 
@@ -213,8 +214,23 @@ def test_lam_absent_from_both_kitab_texts_present_in_sirafi() -> None:
 
 def test_idgham_rows_are_the_chapters() -> None:
     rows = _idgham_rows()
-    assert len(rows) == 52
+    assert len(rows) == 55
     assert _check_idgham(_idgham_chapters(), rows) == []
+
+
+def _cause_anchors() -> list[str]:
+    src = (LEAN / "MakharijIdgham.lean").read_text(encoding="utf-8")
+    body = src[src.index("def sababAnchor"):src.index("def lam13")]
+    return re.findall(r'"([^"]+)"', body)
+
+
+def test_cause_and_preventer_anchors_in_chapters() -> None:
+    anchors = _cause_anchors()
+    assert len(anchors) == 5 + 6  # خمسةُ أسباب، وستُّ مراسٍ لخمسة موانع
+    chapters = _idgham_chapters()
+    assert [a for a in anchors if chapters.count(a) != 1] == []
+    # MUTANT_CAUSE_NOT_IN_TEXT: سببٌ مخترَع لا يقع في الأبواب
+    assert chapters.count("لأنهما من حروف الإطباق فأدغما") != 1
 
 
 def test_mutants_rejected() -> None:
