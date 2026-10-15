@@ -363,6 +363,10 @@ def main (args : List String) : IO Unit := do
     for n in [1, 2, 3] do
       let s := Tawafiq.seqs n
       IO.println s!"{n},{s.length},{Tawafiq.wasl n},{Tawafiq.waqf n},{Tawafiq.alifClosers n}"
+    -- الفضاءُ المولَّد (ADR ٦٩): أبنيةُ الاسم الثلاثيّ — الأعمى، والقانونُ وصلًا ووقفًا، والاثنا عشر، والمنقولُ عشرة.
+    IO.println s!"g,ism3,{Tawafiq.shapes64.length},{(Tawafiq.shapes64.filter Hadd.strictB).length},{(Tawafiq.shapes64.filter Hadd.strictPauseB).length},{Tawafiq.lawIsm.length},{Tawafiq.naqlIsm.length}"
+    for r in Tawafiq.naqlIsm do
+      IO.println s!"naql,{HaddTable.atomsOf (Tawafiq.shape r.1 r.2.1 .sukun)},{r.2.2.1},{r.2.2.2}"
   | ["need"] =>
     -- قانونُ الحاجة المتبادلة (`Hajah.NeedLaw`) على كلّ سلسلةِ أدوارٍ بطول 1 … 8 (9,840 سطرًا): السلسلة، والقانون،
     -- وحالةُ الوراثة بعدها (ذيلُ المقطع المفتوح، أو none).

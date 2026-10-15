@@ -75,6 +75,8 @@ jobs:
                    Tasrif.transfer_strict Tasrif.transfer_pause Tasrif.every_position Tasrif.every_cell_in_every_slot \
                    Tasrif.madi_exhausted Tasrif.mudari_exhausted Tasrif.amr_exhausted Tasrif.madd_drop_forced Tasrif.haa_forced Tasrif.agrees_with_mudari \
                    Rubai.rubai_licensed Rubai.rubai_one_mujarrad Rubai.quad_open_by_maqayis \
+                   Tawafiq.law_ism_twelve Tawafiq.law_ism_all Tawafiq.naql_sub_law Tawafiq.law_minus_naql Tawafiq.shapes64_wasl \
+                   Tarkib.cells_recycled Tarkib.licence_blind_to_qism Tarkib.isnad_needs_two Tarkib.musnad_ilayh_is_ism Tarkib.huruf_no_isnad Tarkib.shibh_no_isnad Tarkib.atf_two_isnad \
                    Tawafiq.seqs_length Tawafiq.wasl_one Tawafiq.wasl_two Tawafiq.waqf_two Tawafiq.two_structure Tawafiq.not_3364 Tawafiq.alif_closer_licensed Tawafiq.alif_closers_two Tawafiq.kaa_aa_pause \
                    Qufl.ishtiqaqLocked Qufl.sarfLocked Qufl.locked_six_qaim Qufl.locked_stops_at_one Qufl.dalala_alone_opens Qufl.locked_beyond_sahih Qufl.locked_quad Qufl.dal_locked \
                    Tadwir.restore_dedupBy Tadwir.restore_dedupKey Tadwir.collision_loses Tadwir.dedupBy_nodup \

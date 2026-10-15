@@ -101,4 +101,65 @@ theorem kaa_aa_pause :
     strictPauseB [atom 'ك' .fatha, atom 'ا' .sukun, atom 'ا' .sukun] = true ∧
     strictB [atom 'ك' .fatha, atom 'ا' .sukun, atom 'ا' .sukun] = false := by decide +kernel
 
+/-! ## الفضاءُ المولَّد لا فضاءُ الترخيص (ADR ٦٩): أبنيةُ الاسم الثلاثيّ المجرّد — القانونُ ثمّ النقل
+
+`TEN_OF_TWELVE_IS_NAQL`: على جذرٍ صحيحٍ شاهد (ك ت ب) تكون حركاتُ الأصول الثلاثة ‎4³ = 64‎ توفيقًا؛ قانونُ
+الابتداء والوصل والوقف يبقي منها 45 وصلًا و48 وقفًا (`shapes64_wasl`، `shapes64_waqf`)؛ وأبنيةُ الاسم
+(الأوّلُ متحرّكٌ من ثلاث، والثاني من أربع، والثالثُ علامةٌ: ضمّةٌ وصلًا وسكونٌ وقفًا) اثنا عشر **كلُّها مرخَّصة**
+(`law_ism_twelve`، `law_ism_all`). والعشرةُ المستعملة **نقلٌ** من الكتاب المختوم (باب ما بنت العرب، س18621–18641):
+فَعْل صقر، فِعْل عكم، فُعْل برد، فَعَل جبل، فَعِل كتف، فَعُل رجل، فُعَل صرد، فُعُل طنب، فِعَل ضلع، فِعِل إبل؛
+والمتروكان بنصّه: «ليس في الأسماء والصفات فُعِل ولا يكون إلّا في الفعل، وليس في الكلام فِعُل» (س18641؛ وعلّتُه
+س17924: «كرهوا الضمّة بعد الكسرة»). الكتابُ غيرُ مشكول، فحركةُ كلّ بناءٍ مأخوذةٌ من مثاله (`corpora/sibawayh/`).
+فالعشرةُ ⊂ الاثني عشر (`naql_sub_law`) والفرقُ هما بأعيانهما (`law_minus_naql`) — ولا يُنسب الحصرُ في عشرةٍ
+إلى القانون في أيّ موضع. -/
+
+def h3 : List Haraka := [.fatha, .damma, .kasra]
+def h4 : List Haraka := [.fatha, .damma, .kasra, .sukun]
+
+/-- الأصولُ الثلاثة الشاهدة بحركاتٍ معلومة. -/
+def shape (a b c : Haraka) : List Cell := [atom 'ك' a, atom 'ت' b, atom 'ب' c]
+
+def shapes64 : List (List Cell) := h4.flatMap fun a => h4.flatMap fun b => h4.map fun c => shape a b c
+
+theorem shapes64_length : shapes64.length = 64 := by decide +kernel
+
+theorem shapes64_wasl : (shapes64.filter strictB).length = 45 := by decide +kernel
+
+theorem shapes64_waqf : (shapes64.filter strictPauseB).length = 48 := by decide +kernel
+
+/-- الاثنا عشر الممكنة لبناء الاسم. -/
+def ismPairs : List (Haraka × Haraka) := h3.flatMap fun a => h4.map fun b => (a, b)
+
+/-- ما يرخّصه القانون منها وصلًا (الآخرُ ضمّة) ووقفًا (الآخرُ ساكن). -/
+def lawIsm : List (Haraka × Haraka) :=
+  ismPairs.filter fun p => strictB (shape p.1 p.2 .damma) && strictPauseB (shape p.1 p.2 .sukun)
+
+theorem law_ism_twelve : lawIsm.length = 12 := by decide +kernel
+
+/-- القانونُ لا يُسقط بناءً من الاثني عشر. -/
+theorem law_ism_all : lawIsm = ismPairs := by decide +kernel
+
+/-- المنقول: (الأوّل، الثاني، سطرُ الكتاب المختوم، المثال). -/
+def naqlIsm : List (Haraka × Haraka × Nat × String) :=
+  [(.fatha, .sukun, 18625, "صقر"), (.kasra, .sukun, 18626, "عكم"), (.damma, .sukun, 18628, "برد"),
+   (.fatha, .fatha, 18630, "جبل"), (.fatha, .kasra, 18631, "كتف"), (.fatha, .damma, 18632, "رجل"),
+   (.damma, .fatha, 18633, "صرد"), (.damma, .damma, 18635, "طنب"), (.kasra, .fatha, 18637, "ضلع"),
+   (.kasra, .kasra, 18640, "إبل")]
+
+theorem naql_ism_ten : naqlIsm.length = 10 := by rfl
+
+theorem naql_ism_nodup : (naqlIsm.map fun r => (r.1, r.2.1)).Nodup := by decide
+
+/-- كلُّ منقولٍ مرخَّصٌ بالقانون. -/
+theorem naql_sub_law : naqlIsm.all (fun r => lawIsm.contains (r.1, r.2.1)) = true := by decide +kernel
+
+/-- ما رخّصه القانونُ ولم تنقله العرب: فُعِل وفِعُل بأعيانهما (س18641). -/
+theorem law_minus_naql :
+    lawIsm.filter (fun p => !naqlIsm.any fun r => (r.1, r.2.1) == p) = [(.damma, .kasra), (.kasra, .damma)] := by
+  decide +kernel
+
+/-- النسبةُ: الفضاءُ المولَّد بالنقل عُشرُ الممكن الأعمى تقريبًا، لا ‎113^n‎. -/
+theorem generated_vs_blind : naqlIsm.length * 6 < shapes64.length ∧ shapes64.length < wasl 2 := by
+  rw [shapes64_length, wasl_two] <;> decide
+
 end A116.Tawafiq
