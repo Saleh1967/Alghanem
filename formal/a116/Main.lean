@@ -438,6 +438,21 @@ def main (args : List String) : IO Unit := do
         let v1 := (Qarar.run ch).map fun x => hn x.2
         let vT := (Manhaj.ids (Manhaj.runD Manhaj.judgeT ch)).map fun x => hn x.2
         IO.println s!"{";".intercalate (ch.map enc)},{" ".intercalate v1},{" ".intercalate vT}"
+  | ["huruf"] =>
+    -- جدولُ المخارج والصفات (`Jadwal`، ADR ٧٣): البرجُ مخرجٌ ⊃ حرفٌ ⊃ حركة، 116 خانةً بترتيب المخارج الستّةَ عشر؛
+    -- لكلّ خانة: مخرجُها عند سيبويه وابن جنّي (16)، والجزريّ (17، والألفُ في الجوف 0)، وحيزُها عند الخليل (11)،
+    -- وصفاتُها الأربعَ عشرة، وترخيصُها، وجوازُ الابتداء بها، والوقفُ عليها.
+    let hn := fun (h : Haraka) => match h with
+      | .fatha => "fatha" | .damma => "damma" | .kasra => "kasra" | .sukun => "sukun"
+    IO.println s!"k,harf,haraka,makhraj16,jazari17,khalil11,{",".intercalate ["hams", "shidda", "tawassut", "istila", "itbaq", "idhlaq", "safir", "qalqala", "lin", "inhiraf", "takrir", "tafashi", "istitala", "ghunna"]},licensable,ibtida,waqf"
+    let mut k := 0
+    for h in Jadwal.jadwal do
+      for v in Jadwal.harakat do
+        let x := Ladder.atom h.c v
+        let lic := Jadwal.licensableCell x
+        let bits := ",".intercalate (h.sifat.map fun b => if b then "1" else "0")
+        IO.println s!"{k},{h.c},{hn v},{h.makhraj},{h.jazariMakhraj},{h.hayyiz},{bits},{lic},{lic && v != .sukun},{v == .sukun}"
+        k := k + 1
   | ["utf8"] =>
     -- أبجديّةُ الرسم: الحروفُ ‎U+0621–U+064A‎، العلاماتُ ‎U+064B–U+0652‎، ألفُ الوصل ‎U+0671‎، والمسافة.
     for c in (List.range 0x2B).map (· + 0x621) ++ (List.range 8).map (· + 0x64B) ++ [0x671, 0x20] do
