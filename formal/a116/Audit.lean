@@ -1178,3 +1178,17 @@ import A116
 #print axioms A116.FractalTarkib.kalimat_mushaf
 #print axioms A116.FractalTarkib.isnad_mushaf
 #print axioms A116.FractalTarkib.azwaj_mushaf
+-- المفرد عند النبهانيّ: الضميرُ اسمٌ لا حرف (ADR ٨١)
+#print axioms A116.Mufrad.harf_iff
+#print axioms A116.Mufrad.ism_iff
+#print axioms A116.Mufrad.harf_taalluq
+#print axioms A116.Mufrad.mufassir_la_yughayyir
+#print axioms A116.Mufrad.damir_ism
+#print axioms A116.Mufrad.damir_ne_harf
+#print axioms A116.Mufrad.damir_haja
+#print axioms A116.Mufrad.damir_juzi
+#print axioms A116.Mufrad.shabah_la_yuhawwil
+#print axioms A116.Mufrad.hajatan_mukhtalifatan
+#print axioms A116.Mufrad.damir_min_116
+#print axioms A116.Mufrad.shawahid
+#print axioms A116.Mufrad.damir_musnad_ilayh

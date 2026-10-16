@@ -537,7 +537,7 @@
 | 38 | كلمة مصحف | `A116.FractalMushaf.kalimat_count` |
 | 6,198 | آية | `A116.FractalMushaf.ayat_ctx_count` |
 | 16,188 | حد بين كلمتين | `A116.FractalMushaf.hadd_counts` |
-| 5,997 | آية | `A116.FractalTarkib.isnad_mushaf` |
+| 6,006 | آية | `A116.FractalTarkib.isnad_mushaf` |
 | 7 | حالة آلة | `A116.Hajah.states_length` |
 | 31 | قالب | `A116.Ishtiqaq.soundTemplates_length` |
 | 29 | حامل | `A116.Jadwal.khalil_partition` |

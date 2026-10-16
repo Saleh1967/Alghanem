@@ -178,7 +178,7 @@ theorem kalimat_mushaf : ayat.length = 6236 ∧ (ayat.map List.length).sum = 119
 
 set_option maxRecDepth 200000 in
 /-- **الإسناد**: الآياتُ التي فيها إسنادٌ بين متجاورين. -/
-theorem isnad_mushaf : (ayat.filter fun r => lic isnadT (aya r)).length = 5997 := by
+theorem isnad_mushaf : (ayat.filter fun r => lic isnadT (aya r)).length = 6006 := by
   decide +kernel
 
 end A116.FractalTarkib

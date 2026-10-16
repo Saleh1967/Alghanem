@@ -6,6 +6,13 @@
 والتنوين والندا وأل»)، فوسمُ `DET` لا يُعدّ (`DET_IS_ISM_SIGN`). والقسمُ مرجعٌ لا تقرؤه البوّابة
 (`TARKIB_QISM_IS_INPUT`، `QISM_ORACLE`).
 
+**القسمُ باللفظ لا بعنوان الوسم** (ADR ٨١): وسما `COND` و`INTG` في QAC يجمعان الحرفَ والاسم؛
+فـ«وحرفُ إذما
+كإنْ وباقي الأدواتِ أسما» (الألفيّة، شرح ابن عقيل المختوم س7578–7579)، والبناءُ في «أسماء الشرط وأسماء
+الاستفهام» (س347). فما كان هيكلُه في `ASMA_ADAWAT` اسمٌ، وما سواه حرف.
+والحروفُ المقطّعة (`INL`) أسماءُ حروف
+الهجاء (الشخصيّة ج3، «تقسيم اللفظ باعتبار المدلول»: «كأسماء حروف الهجاء … قد وضع له اسم») فهي اسم.
+
 `--check` يُسقط البناءَ بـ`FRACTAL_TARKIB_LEAN_DRIFTED` أو `FRACTAL_TARKIB_COUNT_DRIFTED`
 (`A116/FractalTarkibCount.lean`: عدُّ الأزواج قطعةً قطعة). معفاةٌ في الحارس لأنّها أداةُ إيداع.
 """
@@ -28,6 +35,21 @@ ISM = frozenset({"N", "PN", "ADJ", "PRON", "DEM", "REL", "T", "LOC", "IMPN"})
 """الاسم: الاسمُ والعلَمُ والصفةُ والضميرُ والإشارةُ والموصولُ والظرفان واسمُ الفعل."""
 FIL = frozenset({"V"})
 SKIP = frozenset({"DET"})
+ADAWAT = frozenset({"COND", "INTG"})
+"""الوسمان اللذان يجمعان الحرفَ والاسم: يُحكم فيهما باللفظ."""
+ASMA_ADAWAT = frozenset({"mn", "mA", "mhmA", ">yn", ">ynmA", "mtY", ">yAn", ">nY", "Hyv",
+                         "kyf", "km",
+                         "mA*A", ">y", ">Y", ">yy", "{l*yn", "{ltY", "<*A", "mAl", "m"})
+"""هياكلُ أسماء الشرط والاستفهام والموصول تحت الوسمين (بلا حركاتٍ ولا شدّةٍ ولا علاماتِ رسم)؛ و«m» ما
+الاستفهاميّةُ محذوفةُ الألف بعد الجارّ («إذا دخل على ما الاستفهامية جارٌّ وجب حذفُ ألفها نحو عمَّ»، ابن عقيل
+س8934)، و«>Y»/«>yy» أيٌّ برسمها."""
+INL = "INL"
+STRIP = frozenset("aiuoFNK~^[@`")
+
+
+def skel(form: str) -> str:
+    """هيكلُ الصورة في ترقيم Buckwalter: بلا الحركات القصيرة والتنوين والشدّة وعلامات الرسم."""
+    return "".join(ch for ch in form if ch not in STRIP)
 
 
 def _load(name: str, path: Path) -> Any:
@@ -40,21 +62,25 @@ def _load(name: str, path: Path) -> Any:
 
 
 Q = _load("gen_qac", ROOT / "tools" / "gen_qac.py")
-P = _load("gen_qac_pos", ROOT / "tools" / "gen_qac_pos.py")
 
 
-def code(tag: str) -> int:
-    return 0 if tag in ISM else 1 if tag in FIL else 2
+def code(tag: str, form: str) -> int:
+    if tag in ISM or tag == INL or (tag in ADAWAT and skel(form) in ASMA_ADAWAT):
+        return 0
+    return 1 if tag in FIL else 2
 
 
 def rows() -> list[list[int]]:
     """لكلّ آيةٍ أقسامُ كلماتها بالترتيب (0 اسم، 1 فعل، 2 حرف)."""
-    segs = P.segments(Q.source())
-    out = []
-    for key in sorted(segs):
-        out.append([code(x.split(":", 1)[1]) for _w, ss in segs[key] for x in ss
-                    if x.split(":", 1)[1] not in SKIP])
-    return out
+    by: dict[tuple[int, int], list[tuple[int, int, int]]] = {}
+    for ln in Q.source().decode("utf-8").splitlines():
+        if not ln.startswith("("):
+            continue
+        loc, form, tag, _feats = ln.split("\t")
+        s, v, w, g = (int(x) for x in loc.strip("()").split(":"))
+        if tag not in SKIP:
+            by.setdefault((s, v), []).append((w, g, code(tag, form)))
+    return [[q for _w, _g, q in sorted(by[k])] for k in sorted(by)]
 
 
 def render_lean(rs: list[list[int]]) -> str:
