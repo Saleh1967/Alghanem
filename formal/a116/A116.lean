@@ -99,3 +99,6 @@ import A116.Ihala
 import A116.IhalaHasr
 import A116.Imla
 import A116.Sawt
+import A116.Malumat
+import A116.MalumatData
+import A116.MalumatShawahid
