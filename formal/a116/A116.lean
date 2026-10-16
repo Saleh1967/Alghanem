@@ -83,3 +83,4 @@ import A116.Jadwal
 import A116.Fasl
 import A116.Tawrith
 import A116.TawrithSitta
+import A116.Fractal
