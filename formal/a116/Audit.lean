@@ -1165,3 +1165,16 @@ import A116
 #print axioms A116.NaqdFractal.phonetic_link_is_blind_product
 #print axioms A116.NaqdFractal.no_xor_in_awamil
 #print axioms A116.NaqdFractal.fractal_says_something
+-- فراكتالُ التركيب (ADR ٨٠)
+#print axioms A116.FractalTarkib.azwaj_length
+#print axioms A116.FractalTarkib.azwaj_seam
+#print axioms A116.FractalTarkib.naw_tisa
+#print axioms A116.FractalTarkib.run_isnadT
+#print axioms A116.FractalTarkib.lic_isnadT
+#print axioms A116.FractalTarkib.isnadB_cons2
+#print axioms A116.FractalTarkib.isnadT_iff
+#print axioms A116.FractalTarkib.isnad_seam
+#print axioms A116.FractalTarkib.ramz_naw
+#print axioms A116.FractalTarkib.kalimat_mushaf
+#print axioms A116.FractalTarkib.isnad_mushaf
+#print axioms A116.FractalTarkib.azwaj_mushaf

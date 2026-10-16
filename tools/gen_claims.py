@@ -146,6 +146,7 @@ LEAN_UNITS: dict[str, str] = {
     "Fasl.makhraj_mani_count": "زوج مانع",
     "FractalMushaf.ayat_count": "آية", "FractalMushaf.ayat_ctx_count": "آية",
     "FractalMushaf.kalimat_count": "كلمة مصحف", "FractalMushaf.hadd_counts": "حد بين كلمتين",
+    "FractalTarkib.isnad_mushaf": "آية",
     "Hajah.states_length": "حالة آلة",
     "Nizam.waslK_count": "زوج جوار",
     "Tasrif.allSifa_length": "صفة جذر",

@@ -89,3 +89,6 @@ import A116.FractalMushafDef
 import A116.FractalData
 import A116.FractalMushaf
 import A116.NaqdFractal
+import A116.FractalTarkibData
+import A116.FractalTarkib
+import A116.FractalTarkibCount
