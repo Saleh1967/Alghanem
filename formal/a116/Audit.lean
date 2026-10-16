@@ -1230,3 +1230,17 @@ import A116
 #print axioms A116.Hudud.zayd_three_n
 #print axioms A116.Hudud.zayd_pause_one_n
 #print axioms A116.Hudud.ajnas_length
+-- الضميرُ والإحالةُ والموصولُ والإشارة (ADR ٨٣)
+#print axioms A116.Ihala.mufassir_fi_nass_iff
+#print axioms A116.Ihala.mamnu_iff
+#print axioms A116.Ihala.taqaddum_lafzi
+#print axioms A116.Ihala.taqaddum_rutbi
+#print axioms A116.Ihala.shawahid_ihala
+#print axioms A116.Ihala.ghulamuhu_mamnu
+#print axioms A116.Ihala.la_tamam_bila_sila
+#print axioms A116.Ihala.ismi_yahtaj_aid
+#print axioms A116.Ihala.harfi_bila_aid
+#print axioms A116.Ihala.man_lafz_wa_maana
+#print axioms A116.Ihala.ishara_shawahid
+#print axioms A116.Ihala.kaf_qismayn
+#print axioms A116.Ihala.marifa_ism

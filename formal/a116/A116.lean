@@ -95,3 +95,4 @@ import A116.FractalTarkibCount
 import A116.Mufrad
 import A116.Atf
 import A116.Hudud
+import A116.Ihala
