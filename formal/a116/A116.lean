@@ -84,3 +84,7 @@ import A116.Fasl
 import A116.Tawrith
 import A116.TawrithSitta
 import A116.Fractal
+import A116.FractalHadd
+import A116.FractalMushafDef
+import A116.FractalData
+import A116.FractalMushaf

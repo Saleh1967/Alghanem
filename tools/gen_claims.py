@@ -84,6 +84,11 @@ UNITS: dict[str, str] = {
     "زوج متجاور": "زوجُ أصلين متجاورين في جذرٍ ثلاثيٍّ من «مقاييس اللغة» المختومة "
                   "(`A116.Jadwal.obsD`) — ADR ٧٣",
     "زوج مانع": "زوجٌ مرتّبٌ من حرفين مختلفين سببُ فصلهما واحد في مجاله (`A116.Fasl.mani`) — ADR ٧٤",
+    "آية": "آيةٌ من المصحف المختوم سطرًا (`A116.FractalMushaf.ayat`) — ADR ٧٨",
+    "كلمة مصحف": "موقعُ كلمةٍ في المصحف المختوم داخلٌ `gate.enter` "
+                 "(`A116.FractalMushaf.Aya`) — ADR ٧٨",
+    "حد بين كلمتين": "حدٌّ بين كلمتين متجاورتين في آيةٍ من المصحف المختوم "
+                     "(`A116.FractalMushaf.Aya`) — ADR ٧٨",
 }
 """القائمةُ المغلقة للوحدات: لا تُضاف وحدةٌ إلّا هنا وبـADR."""
 LEAN_UNITS: dict[str, str] = {
@@ -139,6 +144,8 @@ LEAN_UNITS: dict[str, str] = {
     "Jadwal.ibtida_wasl_waqf_counts": "خانة", "Jadwal.khalil_partition": "حامل",
     "Jadwal.obs_counts": "زوج متجاور",
     "Fasl.makhraj_mani_count": "زوج مانع",
+    "FractalMushaf.ayat_count": "آية", "FractalMushaf.ayat_ctx_count": "آية",
+    "FractalMushaf.kalimat_count": "كلمة مصحف", "FractalMushaf.hadd_counts": "حد بين كلمتين",
     "Hajah.states_length": "حالة آلة",
     "Nizam.waslK_count": "زوج جوار",
     "Tasrif.allSifa_length": "صفة جذر",
