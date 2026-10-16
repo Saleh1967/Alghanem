@@ -83,6 +83,7 @@ UNITS: dict[str, str] = {
                  "(`A116.MakharijIdgham`) — ADR ٦٨",
     "زوج متجاور": "زوجُ أصلين متجاورين في جذرٍ ثلاثيٍّ من «مقاييس اللغة» المختومة "
                   "(`A116.Jadwal.obsD`) — ADR ٧٣",
+    "زوج مانع": "زوجٌ مرتّبٌ من حرفين مختلفين سببُ فصلهما واحد في مجاله (`A116.Fasl.mani`) — ADR ٧٤",
 }
 """القائمةُ المغلقة للوحدات: لا تُضاف وحدةٌ إلّا هنا وبـADR."""
 LEAN_UNITS: dict[str, str] = {
@@ -137,6 +138,7 @@ LEAN_UNITS: dict[str, str] = {
     "MakharijIdgham.R_count": "زوج إدغام", "MakharijIdgham.far_count": "زوج إدغام",
     "Jadwal.ibtida_wasl_waqf_counts": "خانة", "Jadwal.khalil_partition": "حامل",
     "Jadwal.obs_counts": "زوج متجاور",
+    "Fasl.makhraj_mani_count": "زوج مانع",
     "Hajah.states_length": "حالة آلة",
     "Nizam.waslK_count": "زوج جوار",
     "Tasrif.allSifa_length": "صفة جذر",

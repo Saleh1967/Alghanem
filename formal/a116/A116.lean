@@ -80,3 +80,5 @@ import A116.JisrCount
 import A116.Makharij
 import A116.MakharijIdgham
 import A116.Jadwal
+import A116.Fasl
+import A116.Tawrith
