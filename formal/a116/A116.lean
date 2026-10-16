@@ -88,3 +88,4 @@ import A116.FractalHadd
 import A116.FractalMushafDef
 import A116.FractalData
 import A116.FractalMushaf
+import A116.NaqdFractal

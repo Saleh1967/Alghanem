@@ -1154,3 +1154,14 @@ import A116
 #print axioms A116.FractalMushaf.hadd_counts
 #print axioms A116.FractalMushaf.islah_sifr
 #print axioms A116.FractalMushaf.nass_atf
+-- نقدُ مرفق «الاتّساق الفراكتاليّ» (ADR ٧٩)
+#print axioms A116.NaqdFractal.continuity_without_hypothesis
+#print axioms A116.NaqdFractal.closure_without_hypothesis
+#print axioms A116.NaqdFractal.continuity_is_about_nothing
+#print axioms A116.NaqdFractal.continuity_even_when_gate_closed
+#print axioms A116.NaqdFractal.gate_ignores_cells
+#print axioms A116.NaqdFractal.open_gate_accepts_empty
+#print axioms A116.NaqdFractal.real_gate_reads_cells
+#print axioms A116.NaqdFractal.phonetic_link_is_blind_product
+#print axioms A116.NaqdFractal.no_xor_in_awamil
+#print axioms A116.NaqdFractal.fractal_says_something
