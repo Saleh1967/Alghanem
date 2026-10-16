@@ -99,7 +99,7 @@ LEAN_UNITS: dict[str, str] = {
     "Cells.cells_length": "خانة", "Cells.cells112_length": "خانة",
     "Cells.hamzaRow_length": "خانة", "Numbering.orders_differ_only_in_two_rows": "خانة",
     "Field112.hamilField112_length": "خانة", "Field112.letters28_length": "حامل",
-    "Unicode.arabic_is_two_bytes": "بايت",
+    "Unicode.arabic_is_two_bytes": "بايت", "Imla.renderC_bytes": "بايت",
     "Count.U_one": "سلسلة خانات مرخصة بالطول",
     "Junction.licensed_upto_4": "سلسلة خانات مرخصة بالطول",
     "Ladder.U3_by_pattern": "سلسلة خانات مرخصة بالطول",
