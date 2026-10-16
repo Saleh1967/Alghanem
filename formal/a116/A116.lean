@@ -102,3 +102,5 @@ import A116.Sawt
 import A116.Malumat
 import A116.MalumatData
 import A116.MalumatShawahid
+import A116.Istiqama
+import A116.Sidq
