@@ -77,6 +77,7 @@ jobs:
                    Rubai.rubai_licensed Rubai.rubai_one_mujarrad Rubai.quad_open_by_maqayis \
                    Tawafiq.law_fil_twelve Tawafiq.law_rubai Tawafiq.fuila_verb_only Tarkib.isnad_sep_needs_two Tarkib.fasl_shahid \
                    Awamil.reduces_to_amil Awamil.jarr_targets_ism Awamil.jazm_targets_fil Awamil.inna_kana_dual Awamil.rows_length Awamil.class_counts Awamil.anchored_or_none \
+                   Hudud.n_inj Hudud.unn_n Hudud.jins_separates Hudud.jidhr_inj Hudud.wazn_nodup Hudud.kalima_inj Hudud.nFi_inj Hudud.mabni_licensed Hudud.mabni_nodup Hudud.man_two_n Hudud.damir_mabni Hudud.zayd_three_n \
                    NaqdFractal.continuity_is_about_nothing NaqdFractal.continuity_even_when_gate_closed NaqdFractal.gate_ignores_cells NaqdFractal.real_gate_reads_cells NaqdFractal.phonetic_link_is_blind_product NaqdFractal.no_xor_in_awamil NaqdFractal.fractal_says_something \
                    Amil.naib_count Amil.ism_no_jazm Amil.fil_no_jarr Amil.pause_forgets_amil Amil.isnad_raf Amil.taqyid_nasb Amil.idafa_jarr Amil.nisab_three \
                    Tawafiq.law_ism_twelve Tawafiq.law_ism_all Tawafiq.naql_sub_law Tawafiq.law_minus_naql Tawafiq.shapes64_wasl \
