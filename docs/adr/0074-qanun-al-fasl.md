@@ -42,4 +42,4 @@
 * `FASL_NOT_IN_GATE`: البوّابة لا تُطلق رفضًا باسم المانع، فالتعيينُ في `gate.recover` لم يُردّ إلى `tayin`.
 * `FASL_SHART_IS_LIST`: الشرطُ مجالٌ منتهٍ قائمةً. الفصلُ على مجالٍ غير منتهٍ (كلّ الكلمات) لم يُكتب.
 * `QAWANIN_ARBAA_NOT_BUNDLED`: مسدودٌ على `Nizam` في ADR ٧٥ (`Tawrith.qawanin_khamsa`).
-* `ISTINFAD_SHART_SABAB_IN_RD`: سببُ الإدغام ومانعُه (`MakharijIdgham.Rd`) لم يُكتبا مثولًا لهذه البنية.
+* `ISTINFAD_SHART_SABAB_IN_RD`: مسدودٌ في ADR ٧٦ (`TawrithSitta.rd_la_tafsil`، `wilada`).

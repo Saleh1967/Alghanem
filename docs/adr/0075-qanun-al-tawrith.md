@@ -48,5 +48,5 @@
 
 * `TAWRITH_MINIMAL_STATE_NOT_PROVEN`: أنّ آخرَ صنفٍ حالةٌ دنيا (لا تُدمج حالتان) مفحوصٌ على البوّابة حتى سبع ذرّات، لا مبرهن.
 * `TAWRITH_NOT_IN_GATE`: البوّابة لا تُطلق رفضًا باسم المانع في الخطوة.
-* `HADD_AS_TAWRITH_NOT_WRITTEN`: قيدُ الحدّ (`strictB`، `strictJoinB`) لم يُكتب توريثًا؛ مثولُه نظامًا قائمٌ (`NizamHadd`).
-* `RD_AS_FASL_NOT_WRITTEN`: سببُ الإدغام ومانعُه (`MakharijIdgham.Rd`) لم يُكتبا مثولًا لـ`Fasl` (هو `ISTINFAD_SHART_SABAB_IN_RD` في ADR ٧٤).
+* `HADD_AS_TAWRITH_NOT_WRITTEN`: مسدودٌ للكلمة الواحدة في ADR ٧٦ (`TawrithSitta.strictB_is_tawrith`)؛ والسطرُ `HADD_LINE_AS_TAWRITH_NOT_WRITTEN`.
+* `RD_AS_FASL_NOT_WRITTEN`: مسدودٌ في ADR ٧٦ (`TawrithSitta.rd_hukm`، `rd_la_tafsil`، `miftah_mukhtamal`).
