@@ -96,3 +96,4 @@ import A116.Mufrad
 import A116.Atf
 import A116.Hudud
 import A116.Ihala
+import A116.IhalaHasr

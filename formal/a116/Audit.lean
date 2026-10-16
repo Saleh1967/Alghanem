@@ -1244,3 +1244,21 @@ import A116
 #print axioms A116.Ihala.ishara_shawahid
 #print axioms A116.Ihala.kaf_qismayn
 #print axioms A116.Ihala.marifa_ism
+-- الإحالةُ بالحصر على خانات الحدود، وعددُ الشهادة بحدّها (ADR ٨٦)
+#print axioms A116.IhalaHasr.sifat_counts
+#print axioms A116.IhalaHasr.damir_hudur_ghaib
+#print axioms A116.IhalaHasr.shawahid_laiq
+#print axioms A116.IhalaHasr.sila_needs_aid
+#print axioms A116.IhalaHasr.darabtuhu_sila
+#print axioms A116.IhalaHasr.murashshah_precedes
+#print axioms A116.IhalaHasr.murashshah_laiq
+#print axioms A116.IhalaHasr.hudur_no_marji
+#print axioms A116.IhalaHasr.mutaayyin_iff
+#print axioms A116.IhalaHasr.no_guess
+#print axioms A116.IhalaHasr.aid_refers_to_mawsul
+#print axioms A116.IhalaHasr.two_marji_no_guess
+#print axioms A116.IhalaHasr.man_two_wajh
+#print axioms A116.IhalaHasr.anta_after_mawsul
+#print axioms A116.Hudud.certHadd_injective
+#print axioms A116.Hudud.certHadd_jins
+#print axioms A116.Hudud.certHadd_to_certNumber
