@@ -1192,3 +1192,15 @@ import A116
 #print axioms A116.Mufrad.damir_min_116
 #print axioms A116.Mufrad.shawahid
 #print axioms A116.Mufrad.damir_musnad_ilayh
+-- حروفُ العطف علاقاتٌ منقولة (ADR ٨٢)
+#print axioms A116.Atf.wa_aamm
+#print axioms A116.Atf.wa_la_tartib
+#print axioms A116.Atf.fa_thumma
+#print axioms A116.Atf.and_blind
+#print axioms A116.Atf.no_gate_separates
+#print axioms A116.Atf.aw_not_one_gate
+#print axioms A116.Atf.am_hamza
+#print axioms A116.Atf.ikhtisam_wa
+#print axioms A116.Atf.ishrak_count
+#print axioms A116.Atf.atf_harf
+#print axioms A116.Atf.atf_atraf
