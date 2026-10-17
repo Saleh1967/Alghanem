@@ -1,25 +1,32 @@
-"""الأطرُ الثلاثة (ADR ١٠٤، `A116/Itar.lean`): ترخيصُ الدالّ في شواهد Lean يُعاد بمُقطِّع البوّابة.
+"""الأطرُ الثلاثة (ADR ١٠٤، `A116/Itar.lean`): ترخيصُ الدالّ في شواهد Lean يُعاد بالبوّابة.
 
-التوقّعاتُ مكتوبةٌ هنا باليد من قول الشواهد، والحكمُ على الخانات من `gate.licence` لا من Lean.
+ما يفحصه هذا الملفّ ترخيصُ الدالّ وحدَه: الوصلُ بـ`gate.licence.strict_joined` (`Hadd.strictJoinB`، وهو
+`strictLineB` على كلمتين بـ`NizamLine.line_two`)، والابتداءُ برفض `gate.enter` المسمّى.
+والتوقّعاتُ مكتوبةٌ هنا باليد.
+وأحكامُ المدلول (حقيقة، مجاز، لا حكم) لا تُعاد هنا: هي `decide` في Lean على مدلولٍ مُعطى.
 """
 
 from __future__ import annotations
 
-import re
+from collections.abc import Callable, Sequence
 from pathlib import Path
 
-from gate.licence import strict_joined
+import gate
+from gate import Refusal
+from gate.licence import strict_joined, strict_licensed
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "formal/a116/A116/Itar.lean"
-SUKUN = "ْ"
 
-# (اليسار، اليمين، الموضع، الترخيص المتوقّع، الحكم المتوقّع) — من نصّ الشواهد.
-SHAWAHID = [
-    ("نَطَقَ", "لْوَلَدُ", "wasl", True, "haqiqa"),
-    ("نَبَحَ", "لْكَلْبُ", "wasl", True, "majaz"),
-    ("فِيْ", "دَاْرِ", "wasl", True, "laHukm"),
-    ("نْطَقَ", "لْوَلَدُ", "ibtida", False, None),
+Judge = Callable[[Sequence[str], Sequence[str]], bool]
+
+# (اليسار، اليمين، الترخيص وصلًا المتوقّع)
+WASL = [
+    ("نَطَقَ", "لْوَلَدُ", True),
+    ("خُوْطِبَ", "لْكَلْبُ", True),
+    ("نَطَقَ", "لْغُوْلُ", True),
+    ("فِ", "دْدَاْرِ", True),     # «فِي الدَّارِ» بعد حذف المدّ لالتقاء الساكنين
+    ("فِيْ", "دْدَاْرِ", False),  # بلا إصلاح: قافيةُ مدٍّ يقطعها الحدّ
 ]
 
 
@@ -28,29 +35,33 @@ def atoms(s: str) -> tuple[str, ...]:
     return tuple(s[i:i + 2] for i in range(0, len(s), 2))
 
 
-def dal(p: str, left: str, right: str, ibtida_open: bool = False) -> bool:
-    a, b = atoms(left), atoms(right)
-    if p == "ibtida":
-        return ibtida_open or not a[0].endswith(SUKUN)
-    assert p == "wasl"
-    return strict_joined(a, b)
+def no_seam(a: Sequence[str], b: Sequence[str]) -> bool:
+    """MUTANT_NO_SEAM: السطرُ يُحكم بتسطيحه وحدَه، بلا شرط الحدّ."""
+
+    return strict_licensed(tuple(a) + tuple(b))
 
 
-def test_shawahid_in_lean() -> None:
+def verdicts(judge: Judge) -> list[bool]:
+    return [judge(atoms(a), atoms(b)) for a, b, _ in WASL]
+
+
+def test_witnesses_are_lean_witnesses() -> None:
     text = LEAN.read_text(encoding="utf-8")
-    for left, right, _, _, _ in SHAWAHID:
-        assert f'k "{left}"' in text and f'k "{right}"' in text
-    assert "⟨true, some .haqiqa⟩" in text and "⟨true, some .majaz⟩" in text
-    assert "⟨false, none⟩" in text
-    assert re.search(r"theorem shawahid\b", text)
+    for a, b, _ in WASL:
+        assert f'k "{a}"' in text and f'k "{b}"' in text, (a, b)
+    assert 'k "نْطَقَ"' in text
 
 
-def test_dal_by_gate() -> None:
-    for left, right, p, tarkhis, _ in SHAWAHID:
-        assert dal(p, left, right) is tarkhis, (left, right, p)
+def test_wasl_by_gate() -> None:
+    assert verdicts(strict_joined) == [t for _, _, t in WASL]
 
 
-def test_mutant_ibtida_open() -> None:
-    # MUTANT_IBTIDA_OPEN: الابتداءُ مفتوحٌ لكلّ شيء — يُكشف بـ«نْطَقَ».
-    got = [dal(p, a, b, ibtida_open=True) for a, b, p, _, _ in SHAWAHID]
-    assert got != [t for _, _, _, t, _ in SHAWAHID]
+def test_ibtida_by_gate() -> None:
+    r = gate.enter("نْطَقَ".encode())
+    assert isinstance(r, Refusal) and "INITIAL_SUKUN_WITHOUT_REPAIR" in r.reasons
+    # ضابطٌ موجب: كلمةٌ من المجال المختوم ابتداؤها بمتحرّك تُقبل.
+    assert not isinstance(gate.enter("قَالَ".encode()), Refusal)
+
+
+def test_mutant_no_seam() -> None:
+    assert verdicts(no_seam) != [t for _, _, t in WASL]

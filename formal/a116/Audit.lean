@@ -1564,6 +1564,8 @@ import A116
 #print axioms A116.AjnasMukhassas.muwafiq_khawass
 #print axioms A116.AjnasMukhassas.wad_mafhum
 #print axioms A116.AjnasMukhassas.hukm_ala_shajara
+#print axioms A116.Itar.dal_waqf_ibtida
+#print axioms A116.Itar.dal_wasl_waqf
 #print axioms A116.Itar.dal_silsila
 #print axioms A116.Itar.dal_kalima
 #print axioms A116.Itar.isnadPair_iff

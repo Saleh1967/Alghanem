@@ -6,7 +6,7 @@ import A116.Imla
 /-!
 # الأطرُ الثلاثة على القانون العامّ: الدالّ، والمدلول، والدالُّ والمدلولُ معًا (ADR ١٠٤)
 
-أمرُ المالك (2026-10-18): «ممكن تنسخ فكرته الى الغانم ولا تعمل في mashru ابدا ممكن تنسخ من طريقته وتكتب مثلها من
+أمرُ المالك (2026-10-18): «ممكن تنسخ فكرته الى الغانم ولا تعمل فيmashru ابدا ممكن تنسخ من طريقته وتكتب مثلها من
 جديد بناء جديد». الفكرةُ من تصميم «Itar3» في مستودعٍ آخر قُرئ ولم يُمسّ. والبناءُ هنا جديدٌ على وحدات الغانم وحدها.
 
 ## ما يُبنى
@@ -15,13 +15,16 @@ import A116.Imla
    * الابتداءُ: لا ابتداءَ بساكن (`Boundary.initialSukun`).
    * الوصلُ: `NizamLine.strictLineB`.
    * الوقفُ: `NizamLine.strictLinePauseB`.
-   والوصلُ يستلزم الوقف، والوقفُ يستلزم الابتداء (`dal_silsila`)، كما في الكلمة (`ExhaustPause.awa_chain`).
+   والوصلُ يستلزم الوقف (`dal_wasl_waqf`)، والوقفُ يستلزم الابتداء (`dal_waqf_ibtida`)، كما في الكلمة
+   (`ExhaustPause.awa_chain`). والابتداءُ هنا شرطُ الخانة الأولى وحدَها، فهو أوسعُ من الوصل والوقف. والمواضعُ الثلاثة
+   تُحكم على **الخانات نفسِها**: صورةُ الوقف وصورةُ الابتداء (إسكانُ الآخر، وهمزةُ الوصل) ليستا من هذا الإطار.
 ٢. **إطارُ المدلول** (`madlul`): المسندُ إليه جنسٌ، والمسندُ ربطُ صيغته واستعمالُه. والحكمُ ثلاثيٌّ بعينه:
    `HukmMuwahhad.hukm` (حقيقة، مجاز، لا حكم) على شجرةٍ وقابليّةٍ موروثة.
 ٣. **الإطارُ الجامع** (`hukm3`): التركيبُ بأقسامه ومدلولُه. ونتيجتُه ترخيصٌ وحكم:
    * الترخيصُ من الدالّ وحدَه في موضعه، ولا يغيّره المدلول (`tarkhis_dal_wahdahu`).
    * الحكمُ لا يقوم إلّا على مرخَّص (`hukm_yastalzim_tarkhis`).
-   * وما لا إسنادَ فيه خارجَ حدّ الطبقة: «لا حكم» (`kharij_hadd`). مثالُه «فِي الدَّارِ»: مرخَّصٌ دالًّا ولا قضيّة.
+   * وما لا إسنادَ فيه خارجَ حدّ الطبقة: «لا حكم» (`kharij_hadd`). مثالُه «فِي الدَّارِ» بعد إصلاح الالتقاء («فِ دْدَاْرِ»):
+     مرخَّصٌ دالًّا ولا قضيّة.
    * وما فيه إسنادٌ حكمُه حكمُ المدلول بعينه (`hukm_madlul`)، و«لا حكم» فيه لا يُسقط الترخيص.
 ٤. **الإسنادُ محسوبًا** (`isnadB`): دالّةٌ تقرّر `Tarkib.Isnad` (`isnadB_iff`).
 
@@ -29,6 +32,9 @@ import A116.Imla
 
 * جنسُ المسند إليه وصيغةُ المسند معاملان مُعطَيان (`ITAR_MADLUL_FIELDS_ARE_INPUT`). فلا دالّةَ هنا تقرأ الجنسَ من خانات
   الكلمة.
+* والإصلاحُ على الحدّ (`Iltiqa`) لا يُطبَّق هنا: السطرُ يُعطى مصلَحًا (`ITAR_ILTIQA_IS_INPUT`).
+* ومبرهناتُ الجامع (`tarkhis_dal_wahdahu`، `hukm_yastalzim_tarkhis`، `kharij_hadd`، `hukm_madlul`) فكٌّ لتعريف `hukm3`: هي
+  ما بُني عليه لا قانونٌ مستقلّ.
 * والإسنادُ متجاورٌ وحدَه. فـ«الْوَلَدُ ذَهَبَ» (فاعلُها مستتر) خارجَ الحدّ هنا (`MUSTATIR_NOT_SEGMENTED`).
 * والإطارُ ليس مدخلًا في `gate.enter` (`ITAR_NOT_IN_GATE`).
 -/
@@ -47,14 +53,21 @@ def dal : AWA → List (List Cell) → Bool
   | .wasl, ws => strictLineB ws
   | .waqf, ws => strictLinePauseB ws
 
-/-- **السلسلةُ في السطر**: الوصلُ يستلزم الوقف، والوقفُ يستلزم الابتداء. -/
+/-- **الوقفُ يستلزم الابتداء في السطر**. -/
+theorem dal_waqf_ibtida {ws : List (List Cell)} (h : dal .waqf ws = true) : dal .ibtida ws = true := by
+  simp only [dal, strictLinePauseB, Bool.and_eq_true] at h ⊢
+  have := ExhaustPause.awa_waqf_ibtida (w := ws.flatten) (by simpa [ExhaustPause.awa] using h.1)
+  simpa [ExhaustPause.awa] using this
+
+/-- **الوصلُ يستلزم الوقف في السطر**. -/
+theorem dal_wasl_waqf {ws : List (List Cell)} (h : dal .wasl ws = true) : dal .waqf ws = true := by
+  simp only [dal, strictLineB, strictLinePauseB, Bool.and_eq_true] at h ⊢
+  exact ⟨Hadd.strictB_pause h.1, h.2⟩
+
+/-- **السلسلةُ في السطر**: الوصلُ ⇒ الوقف ⇒ الابتداء. -/
 theorem dal_silsila {ws : List (List Cell)} (h : dal .wasl ws = true) :
     dal .waqf ws = true ∧ dal .ibtida ws = true := by
-  simp only [dal, strictLineB, strictLinePauseB, Bool.and_eq_true] at h ⊢
-  have hp : Hadd.strictPauseB ws.flatten = true := Hadd.strictB_pause h.1
-  refine ⟨⟨hp, h.2⟩, ?_⟩
-  have := ExhaustPause.awa_waqf_ibtida (w := ws.flatten) (by simpa [ExhaustPause.awa] using hp)
-  simpa [ExhaustPause.awa] using this
+  exact ⟨dal_wasl_waqf h, dal_waqf_ibtida (dal_wasl_waqf h)⟩
 
 /-- **سطرٌ من كلمةٍ واحدة** حكمُه وصلًا حكمُ الكلمة بقيد الحدّ. -/
 theorem dal_kalima (w : List Cell) : dal .wasl [w] = strictLineB [w] := rfl
@@ -149,7 +162,8 @@ theorem hukm_madlul (abb : HukmMuwahhad.Shajara) (n : Nat) (q : String → Optio
     hukm3 abb n q p j = ⟨true, some (madlul abb n q j.madlul)⟩ := by
   simp [hukm3, ht, hf]
 
-/-- **الوصلُ يرث إلى الوقف والابتداء** في الإطار الجامع: ما يُحكم عليه موصولًا يُحكم عليه بالحكم نفسِه موقوفًا ومبتدأً. -/
+/-- **الوصلُ يرث إلى الوقف والابتداء على الخانات نفسِها**: ما رُخّص وصلًا فحكمُه على خاناته نفسِها في الوقف والابتداء هو
+هو. ولا تتناول صورةَ الوقف ولا صورةَ الابتداء. -/
 theorem hukm3_silsila (abb : HukmMuwahhad.Shajara) (n : Nat) (q : String → Option Bool) (j : Jumla)
     (h : (hukm3 abb n q .wasl j).tarkhis = true) :
     hukm3 abb n q .waqf j = hukm3 abb n q .wasl j ∧ hukm3 abb n q .ibtida j = hukm3 abb n q .wasl j := by
@@ -157,7 +171,7 @@ theorem hukm3_silsila (abb : HukmMuwahhad.Shajara) (n : Nat) (q : String → Opt
   obtain ⟨h1, h2⟩ := dal_silsila h
   simp [hukm3, h, h1, h2]
 
-/-- **القسمُ لا يمسّ الترخيص**، ويمسّ الحدَّ وحدَه: إعادةُ وسم الأقسام لا تغيّر ترخيصَ الدالّ. -/
+/-- **القسمُ لا يمسّ الترخيص**: إعادةُ وسم الأقسام لا تغيّر ترخيصَ الدالّ. -/
 theorem tarkhis_ama_an_qism (abb : HukmMuwahhad.Shajara) (n : Nat) (q : String → Option Bool) (p : AWA)
     (f : Qism → Qism) (j : Jumla) :
     (hukm3 abb n q p ⟨relabel f j.tarkib, j.madlul⟩).tarkhis = (hukm3 abb n q p j).tarkhis := by
@@ -165,39 +179,48 @@ theorem tarkhis_ama_an_qism (abb : HukmMuwahhad.Shajara) (n : Nat) (q : String �
 
 /-! ## ٥. الشواهد
 
-الكلماتُ صورٌ قانونيّة (كلُّ خانةٍ حرفٌ ثمّ علامته، `Imla.parse`). وفي الوصل تسقط همزةُ الوصل فـ«الْوَلَدُ» بعد كلمةٍ
-«لْوَلَدُ». والجنسُ معاملٌ مُعطى من شجرة المخصَّص (`AjnasMukhassas`). -/
+الكلماتُ صورٌ قانونيّة (كلُّ خانةٍ حرفٌ ثمّ علامته، `Imla.parse`)، مكتوبةً كما تُنطق في الوصل: همزةُ الوصل ساقطة
+(«لْوَلَدُ»)، والسطرُ يُعطى مصلَحًا (`ITAR_ILTIQA_IS_INPUT`).
+
+والمدلولُ مُعطى لا مقروء (`ITAR_MADLUL_FIELDS_ARE_INPUT`): جنسُ المسند إليه من شجرة المخصَّص (`AjnasMukhassas.abb`)،
+والقابليّةُ الموروثة هي العقلُ (`AjnasMukhassas.qKitab`)، وهو ما يشترطه النطقُ فاعلًا والخطابُ مفعولًا في `Khawass`. فالحكمُ
+حكمُ المدلول المُعطى مقترنًا بترخيص السطر، لا حكمٌ تقرؤه الآلة من الكلمات. وجعلُ «الولد» من جنس «الإنسان» مُدخَل. -/
 
 /-- الكلمةُ من صورتها القانونيّة. -/
 def k (s : String) : List Cell := (Imla.parse (s.toList.map Char.toNat)).getD []
 
 def nataqa : Kalima := ⟨k "نَطَقَ", .fil⟩
-def nabaha : Kalima := ⟨k "نَبَحَ", .fil⟩
+def khutiba : Kalima := ⟨k "خُوْطِبَ", .fil⟩
 def walad : Kalima := ⟨k "لْوَلَدُ", .ism⟩
 def kalb : Kalima := ⟨k "لْكَلْبُ", .ism⟩
-def fi : Kalima := ⟨k "فِيْ", .harf⟩
-def dar : Kalima := ⟨k "دَاْرِ", .ism⟩
+def ghul : Kalima := ⟨k "لْغُوْلُ", .ism⟩
+/-- «فِي» بعد حذف مدّها لالتقاء الساكنين (`MADD_DROPPED`). -/
+def fi : Kalima := ⟨k "فِ", .harf⟩
+def fiy : Kalima := ⟨k "فِيْ", .harf⟩
+/-- «الدَّار» موصولةً: همزةُ الوصل ساقطة واللامُ مدغمةٌ في الدال. -/
+def dar : Kalima := ⟨k "دْدَاْرِ", .ism⟩
 
-/-- المدلول: «الإنسان» فاعلًا لفعلٍ معلوم، و«الكلب» مفعولًا (يُخاطَب)، والاستعمالُ بالتشبيه. -/
+/-- المدلول: «الإنسانُ ينطق» (فاعلٌ لفعلٍ معلوم)، و«الكلبُ يُخاطَب» (مفعول)، و«الغول» جنسٌ لا صفَّ له. -/
 def mInsan : Madlul := ⟨"الإنسان", Khawass.sighaLink .filMaloom .faail, HukmMuwahhad.tashbih⟩
-def mKalbKhitab : Madlul := ⟨"الكلب", Khawass.sighaLink .ismMafool .mafool, HukmMuwahhad.tashbih⟩
-def mGhul : Madlul := ⟨"الغول", .haqiqa, HukmMuwahhad.tashbih⟩
+def mKalbKhitab : Madlul := ⟨"الكلب", Khawass.sighaLink .filMajhul .mafool, HukmMuwahhad.tashbih⟩
+def mGhul : Madlul := ⟨"الغول", Khawass.sighaLink .filMaloom .faail, HukmMuwahhad.tashbih⟩
 
 def h3 := hukm3 AjnasMukhassas.abb 1 AjnasMukhassas.qKitab
 
-/-- **الشواهد** (`decide`):
+/-- **الشواهد** (`decide +kernel`):
 * الكلماتُ تُقرأ من صورها (لا فارغ).
-* «نَطَقَ الْوَلَدُ» والجنسُ الإنسان: مرخَّصٌ وصلًا، وحقيقة.
-* «نَبَحَ الْكَلْبُ» وقد جُعل الكلبُ مخاطَبًا: مرخَّص، ومجازٌ بالتشبيه.
-* والجنسُ «الغول» لا صفَّ له: مرخَّص، و«لا حكم» — والترخيصُ لم يسقط.
-* «فِي الدَّارِ»: مرخَّصٌ، وخارجَ الحدّ «لا حكم».
+* «نَطَقَ الْوَلَدُ» ومدلولُه «الإنسانُ ينطق»: مرخَّصٌ وصلًا، وحقيقة.
+* «خُوطِبَ الْكَلْبُ» ومدلولُه «الكلبُ يُخاطَب»: مرخَّص، ومجازٌ بالتشبيه.
+* «نَطَقَ الْغُولُ»: مرخَّص، و«لا حكم» لأنّ الجنسَ لا صفَّ له — والترخيصُ لم يسقط.
+* «فِي الدَّارِ» مصلَحةً: مرخَّصٌ، وخارجَ الحدّ «لا حكم». وبلا إصلاحٍ مرفوضةٌ وصلًا.
 * «نْطَقَ» ابتداءً بساكن: مرفوضٌ دالًّا، ولا حكم يُطلب. -/
 theorem shawahid :
-    (k "نَطَقَ" ≠ [] ∧ k "لْوَلَدُ" ≠ [] ∧ k "فِيْ" ≠ [] ∧ k "دَاْرِ" ≠ []) ∧
+    (k "نَطَقَ" ≠ [] ∧ k "خُوْطِبَ" ≠ [] ∧ k "لْغُوْلُ" ≠ [] ∧ k "فِ" ≠ [] ∧ k "دْدَاْرِ" ≠ []) ∧
     h3 .wasl ⟨[nataqa, walad], mInsan⟩ = ⟨true, some .haqiqa⟩ ∧
-    h3 .wasl ⟨[nabaha, kalb], mKalbKhitab⟩ = ⟨true, some .majaz⟩ ∧
-    h3 .wasl ⟨[nataqa, walad], mGhul⟩ = ⟨true, some .laHukm⟩ ∧
+    h3 .wasl ⟨[khutiba, kalb], mKalbKhitab⟩ = ⟨true, some .majaz⟩ ∧
+    h3 .wasl ⟨[nataqa, ghul], mGhul⟩ = ⟨true, some .laHukm⟩ ∧
     h3 .wasl ⟨[fi, dar], mInsan⟩ = ⟨true, some .laHukm⟩ ∧
+    h3 .wasl ⟨[fiy, dar], mInsan⟩ = ⟨false, none⟩ ∧
     h3 .ibtida ⟨[⟨k "نْطَقَ", .fil⟩, walad], mInsan⟩ = ⟨false, none⟩ := by
   decide +kernel
 

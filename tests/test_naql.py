@@ -162,18 +162,19 @@ def _asl_agreement(rule: Pair, fill: Pair) -> tuple[int, int]:
 
 
 def test_asl_fill_result() -> None:
-    """ADR ١٠٤: اتّفاقُ `RULE_ASL` مع ملء الوكيل على الإطار المسجَّل يُعاد من الملفّين، لا من الأداة."""
+    """ADR ١٠٤: عدُّ اتّفاق مخرج `RULE_ASL` (`usul.tsv`) مع ملء الوكيل يُعاد هنا، لا من الأداة."""
 
     import json
 
-    def rows(p: Path) -> list[list[str]]:
-        return [ln.split("\t") for ln in p.read_text(encoding="utf-8").splitlines()[1:]]
+    def rows(p: Path, header: bool = True) -> list[list[str]]:
+        lines = p.read_text(encoding="utf-8").splitlines()
+        return [ln.split("\t") for ln in (lines[1:] if header else lines)]
 
     frame = [r[0] for r in rows(ROOT / "corpora/naql/asl-frame.tsv")]
     fill = {r[0]: (r[1], int(r[2])) for r in rows(ROOT / "corpora/naql/asl-fill.tsv")}
     assert len(frame) == 200 and set(fill) == set(frame)
     assert {c for c, _ in fill.values()} <= {"wahid", "kalima", "usul", "laysa", "laHukm"}
-    rule = {r[0]: (r[1], int(r[2])) for r in rows(ROOT / "corpora/naql/usul.tsv")}
+    rule = {r[0]: (r[1], int(r[2])) for r in rows(ROOT / "corpora/naql/usul.tsv", header=False)}
     cls, both = _asl_agreement(rule, fill)
     res = json.loads((ROOT / "docs/naql/asl-result.json").read_text(encoding="utf-8"))
     assert (cls, both, res["n"]) == (res["class_agree"], res["class_and_n_agree"], 200)
@@ -181,6 +182,6 @@ def test_asl_fill_result() -> None:
     assert "لا مقيس" in res["label"]
     prereg = (ROOT / "docs/naql/PREREG-ASL.md").read_bytes()
     assert res["prereg_sha256"] == hashlib.sha256(prereg).hexdigest()
-    # طفرة MUTANT_FILL_EQUALS_RULE: ملءٌ يُنسخ من القاعدة يتّفق كلّه فيُكشف.
-    copied = {r: rule[r] for r in frame}
-    assert _asl_agreement(rule, copied) == (200, 200) != (cls, both)
+    # طفرة MUTANT_N_IGNORED: عدٌّ يُسقط العددَ يعطي «الصنف والعدد» = «الصنف» (181)، والمتوقَّعُ 178، فيُكشف.
+    mutant_both = sum(1 for r in frame if rule[r][0] == fill[r][0])
+    assert mutant_both != res["class_and_n_agree"]
