@@ -9,7 +9,7 @@ import A116.LazimData
 
 ## السند
 
-* الدلالاتُ الثلاث `Dalalat` (ADR ٩٣)، ج3 س371: الالتزامُ «على لازمه… والمعتبرُ باللزوم هو اللزومُ الذهنيّ».
+* الدلالاتُ الثلاث `Dalalat` (ADR ٩٣)، ج3 س371: الالتزامُ «على لازمه… والمعتبر باللزوم هو اللزوم الذهني».
   ومسمّى اللفظ هناك مُدخَلٌ بلا مودَع (`MUSAMMA_IS_INPUT`).
 * ابنُ فارس في «مقاييس اللغة» المختومة: لكلّ جذرٍ أصلٌ يحكم به (ADR ١٠٠، `Naql.Asl`). ثمّ يربط ألفاظَ الجذر بأصله بجملٍ
   صريحة صنفين:
@@ -27,14 +27,14 @@ import A116.LazimData
    المجاز، وشهادتُه نقلٌ «معلومةٌ مشهودة» (`haml_maluma_mashhuda`).
 ٣. **لا لزومَ بلا شهادة** (`la_lazim_bila_shahada`): لفظٌ لا جملةَ تعليلٍ فيه لا لازمَ له في الجدول — لا يُستنتج اللزومُ من
    انتسابه إلى الجذر.
-٤. **اللازمُ المعيَّن له سندُه** (`lazim_muayyan`): إن تعيّن لازمُ لفظٍ ففي الجدول صفُّ تعليلٍ فيه اللفظ، وحكمُ ابن فارس على
-   جذره أصلٌ واحد أو كلمة. والأصولُ تُحتمل (`Naql.usul_muhtamal`).
-٥. **المودَع** (`LazimData`، `corpora/naql/lawazim.tsv`): 1,121 جملةَ تعليلٍ و1,044 جملةَ حمل، والشواهدُ بأعيانها.
+٤. **اللازمُ المعيَّن له سندُه** (`lazim_muayyan`): إن تعيّن لازمُ لفظٍ ففي الجدول صفُّ تعليلٍ فيه اللفظ، وحكمُ القاعدة على
+   جذره أصلٌ واحد أو كلمة أو أصولٌ عددُها واحد. والأصولُ اثنان فأكثر تُحتمل (`Naql.usul_muhtamal`).
+٥. **المودَع** (`LazimData`، `corpora/naql/lawazim.tsv`): 1,210 جملةَ تعليلٍ و1,044 جملةَ حمل، والشواهدُ بأعيانها.
 -/
 
 namespace A116.Lazim
 
-/-- صنفُ الجملة عند ابن فارس (`RULE_ILAQA` في `tools/gen_naql.py`). -/
+/-- صنفُ الجملة عند ابن فارس (`RULE_ILAQA` في `tools/gen_naql.py`؛ القاعدةُ معلنةٌ لم تُقَس على مرجعٍ محجوب). -/
 inductive Ilaqa | taalil | haml
   deriving DecidableEq, Repr
 
@@ -102,28 +102,29 @@ theorem lazim_muayyan (jadwal : List Saff) (jumla : String → String) (j w : St
   · cases h
 
 /-- **الحملُ نقلٌ لا مفهوم**: شهادةُ ابن فارس بالحمل («والمجاز قولهم خَشِيت بمعنى عَلِمت»، المدخل 987) خبرُ آحاد،
-فهي بالدستور القائم «معلومةٌ مشهودة» على جسر الوضع، والمسمّى بها «معلومة» بلا شاهد. -/
+فهي «معلومةٌ مشهودة» على جسر الوضع ولو حُكم بتواترها (مودَعُها «وضع»)، والمسمّى بها «معلومة» بلا شاهد. -/
 theorem haml_maluma_mashhuda :
-    Naql.jisrWad (fun _ => false) [⟨"f", "ibn-faris", .naql, 987⟩] =
-      .maluma [⟨"f", "ibn-faris", .naql, 987⟩] ∧
-    Naql.jisrWaqi [⟨"f", "ibn-faris", .naql, 987⟩] = .maluma [] := by decide
+    Naql.jisrWad (fun _ => true) [⟨"f", "ibn-faris", .naql, .wad, 987⟩] =
+      .maluma [⟨"f", "ibn-faris", .naql, .wad, 987⟩] ∧
+    Naql.jisrWaqi [⟨"f", "ibn-faris", .naql, .wad, 987⟩] = .maluma [] := by decide
 
 /-! ## المودَع -/
 
+/-- عددُ الأصول من حكم ابن فارس على الجذر في المودَع. -/
+def adad (j : String) : Nat := ((LazimData.usul.find? (·.1 == j)).map (·.2.2.1)).getD 0
+
 def saffOf (r : String × String × String × Nat × List String × String) : Option Saff :=
-  (Ilaqa.ofString r.2.2.1).map fun k =>
-    ⟨r.1, Naql.Asl.ofString r.2.1 (if r.2.1 == "usul" then 2 else 1), k,
-     r.2.2.2.2.1⟩
+  (Ilaqa.ofString r.2.2.1).map fun k => ⟨r.1, Naql.Asl.ofString r.2.1 (adad r.1), k, r.2.2.2.2.1⟩
 
 def jadwal : List Saff := LazimData.shawahid.filterMap saffOf
 
 def jumla (j : String) : String := ((LazimData.usul.find? (·.1 == j)).map (·.2.2.2)).getD ""
 
 /-- عددُ الجمل في المودَع. -/
-theorem jumal_count : LazimData.bisinf = [1121, 1044] ∧ LazimData.biAslWahid = [825, 795] := by decide
+theorem jumal_count : LazimData.bisinf = [1210, 1044] ∧ LazimData.biAslWahid = [910, 804] := by decide
 
-/-- **الشواهد**: المِداد والتِّلاوة والكِنْف لازمُها أصلُ جذرها بعينه؛ و«خشيت» و«الشرب» حملٌ لا لازمَ لهما؛ و«الطرف» من
-أصلين حملٌ أيضًا. -/
+/-- **الشواهد** على جدولٍ من صفوف الشواهد الستّة وحدَها (لا الجدول كلّه): المِداد والتِّلاوة والكِنْف لازمُها أصلُ
+جذرها بعينه؛ و«خشيت» و«الشرب» حملٌ لا لازمَ لهما؛ و«الطرف» من أصلين حملٌ أيضًا. -/
 theorem shawahid :
     lazim jadwal jumla "مدد" "المداد" = .muayyan (jumla "مدد", 1) ∧
     lazim jadwal jumla "تلو" "تلاوة" = .muayyan (jumla "تلو", 1) ∧

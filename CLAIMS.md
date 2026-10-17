@@ -501,7 +501,7 @@
 | `wazn-body.csv.rows` | 31 |
 
 
-## أعدادُ المبرهنات بوحداتها (94 مبرهنة)
+## أعدادُ المبرهنات بوحداتها (96 مبرهنة)
 
 مستخرَجةٌ من نصوص Lean (`formal/a116/A116/*.lean`): كلُّ مبرهنةٍ مدقَّقة ينتهي نصُّها بـ‎= عدد‎؛ والوحدةُ من القائمة المغلقة أدناه (ADR ١٢). العددُ هو الثابتُ الأخير في نصّ المبرهنة.
 
@@ -563,6 +563,7 @@
 | 120 | زوج إدغام | `A116.MakharijIdgham.R_count` |
 | 44 | زوج إدغام | `A116.MakharijIdgham.far_count` |
 | 3 | حالة آلة | `A116.Model.saturation_rungs` |
+| 645 | زوج جذر ولفظ مشهود | `A116.Naql.mawdu_count` |
 | 6 | زوج جوار | `A116.Nizam.waslK_count` |
 | 8 | خانة | `A116.Numbering.orders_differ_only_in_two_rows` |
 | 375 | متتالية أصناف بالوزن | `A116.PauseCount.pause_count_375` |
@@ -580,6 +581,7 @@
 | 1,094 | مدخل سجل | `A116.Sijill.rows_length` |
 | 4 | مدخل سجل | `A116.Sijill.mana_count` |
 | 7 | مدخل سجل | `A116.Sijill.qaim_count` |
+| 39,154 | هيكل تشكيل | `A116.Tashkil.mujam_count` |
 | 250 | صفة جذر | `A116.Tasrif.allSifa_length` |
 | 84 | سلسلة خانات | `A116.Tawafiq.wasl_one` |
 | 84 | سلسلة خانات | `A116.Tawafiq.waqf_one` |
@@ -660,3 +662,5 @@
 | كلمة مصحف | موقعُ كلمةٍ في المصحف المختوم داخلٌ `gate.enter` (`A116.FractalMushaf.Aya`) — ADR ٧٨ |
 | حد بين كلمتين | حدٌّ بين كلمتين متجاورتين في آيةٍ من المصحف المختوم (`A116.FractalMushaf.Aya`) — ADR ٧٨ |
 | شاهد كذب ظاهر | شاهدُ كذبٍ ظاهرٍ من شرح السيرافيّ المختوم (`A116.SidqSirafi.shawahid`) — ADR ٨٩ |
+| زوج جذر ولفظ مشهود | زوجُ (جذرٍ ثلاثيٍّ من «مقاييس اللغة»، هيكلِ لفظٍ) مشهودٌ في معجمٍ مختومٍ أو مرشَّح (`corpora/naql/shuhud.tsv.gz`) — ADR ١٠٠ |
+| هيكل تشكيل | هيكلُ لفظٍ بلا علامات له صورٌ مشكولةٌ في المصحف أو الصحيحين (`corpora/tashkil/mujam.tsv.gz`) — ADR ١٠٣ |

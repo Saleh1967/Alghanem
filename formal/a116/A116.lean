@@ -121,3 +121,5 @@ import A116.Naql
 import A116.LazimData
 import A116.Lazim
 import A116.HukmMuwahhad
+import A116.TashkilData
+import A116.Tashkil

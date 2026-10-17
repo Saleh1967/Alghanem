@@ -4,8 +4,10 @@
 ١. جملُ الشواهد في نصّ ابن فارس المختوم بعينها (بلا حركات)، مكتوبةً هنا باليد.
 ٢. الأصنافُ على جملٍ مكتوبةٍ هنا: «لأنّه» تعليل، و«كأنّه» حملٌ ولو جاء معه «لأنّه»، و«مجاز» حمل،
    و«مجازاة» في «جزي» ليست حملًا، والشعرُ لا يدخل.
-٣. اتّساقُ `LazimData.lean` مع الجدول بشيفرةٍ هنا.
-الطفرات: `MUTANT_JAZA_AS_MAJAZ`، `MUTANT_TAALIL_BEFORE_HAML`، `MUTANT_POETRY_INCLUDED`.
+٣. اتّساقُ مولَّدَين: `LazimData.lean` والجدول (مرآةٌ لا شاهد).
+٤. التعليلُ بحدود اللفظ: «الأنثى» ليست «لأن»، و«وسمى لدقته» تعليلٌ بالألف المقصورة.
+الطفرات: `MUTANT_JAZA_AS_MAJAZ`، `MUTANT_TAALIL_BEFORE_HAML`، `MUTANT_POETRY_INCLUDED`،
+`MUTANT_TAALIL_SUBSTRING`.
 """
 
 from __future__ import annotations
@@ -59,6 +61,11 @@ def test_kinds() -> None:
     assert kind[both] == "haml"
     # MUTANT_JAZA_AS_MAJAZ: «وجازيته مجازاة» ليست حملًا ولا تعليلًا
     assert not any(r[0] == "جزي" and "مجازاة" in bare(r[5]) for r in rs)
+    # MUTANT_TAALIL_SUBSTRING: «الأنثى خلاف الذكر» ليست تعليلًا، و«وسمى لدقته» تعليل
+    unth = "الأنثى خلاف الذكر"
+    assert unth in body("أنث")  # root_full في الجدول بالهمزة على الألف
+    assert not any(r[0] == "ءنث" and unth in bare(r[5]) for r in rs)
+    assert any(r[0] == "ءزب" and r[2] == "taalil" and "وسمى لدقته" in bare(r[5]) for r in rs)
     # MUTANT_POETRY_INCLUDED
     assert not any("…" in r[5] or "*" in r[5] or bare(r[5]).startswith("قال") for r in rs)
 

@@ -1516,6 +1516,7 @@ import A116
 #print axioms A116.Naql.aql_la_yashhad
 #print axioms A116.Naql.ahad_maluma
 #print axioms A116.Naql.wad_mafhum_bi_tawatur
+#print axioms A116.Naql.wad_la_yakfi
 #print axioms A116.Naql.hiss_yakfi
 #print axioms A116.Naql.naql_la_yashhad_lilmusamma
 #print axioms A116.Naql.filter_length_mono
@@ -1551,3 +1552,9 @@ import A116
 #print axioms A116.HukmMuwahhad.khawass_mithal
 #print axioms A116.HukmMuwahhad.shawahid
 #print axioms A116.HukmMuwahhad.dimagh_la_majaz
+#print axioms A116.Tashkil.la_tashkil_bila_wad
+#print axioms A116.Tashkil.muayyan_min_mujam
+#print axioms A116.Tashkil.la_takhmin
+#print axioms A116.Tashkil.qayd_la_yazid
+#print axioms A116.Tashkil.shawahid
+#print axioms A116.Tashkil.mujam_count

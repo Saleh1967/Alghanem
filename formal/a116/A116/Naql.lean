@@ -22,9 +22,10 @@ import A116.NaqlData
 
 * المعاجمُ مودَعٌ من نوع **وضع** (المادّة ١٢).
 * و«مفهوم» لا يكون إلّا بشاهد واقع (المادّة ١٦): إمّا **محسوسٌ** (موضعٌ في الواقع المختوم)، وإمّا **مسلَّمٌ به**. والمسلَّمُ
-  عند المادّة ١٥ «تواترُ شهودٍ مستقلّين من مودَع المعلومات السابقة».
-* فشهادةُ صاحب معجمٍ واحد خبرُ آحاد، تُفيد الظنّ (ج3)، ولا تصنع «مفهومًا» في الدستور القائم.
-* و`Iqtiran.mujam_la_yasna` («المعجمُ يصنع معلومة») قائمةٌ بمعناها.
+  عند المادّة ١٥ «تواترُ شهودٍ مستقلّين من مودَع «المعلومات السابقة»».
+* فشهادةُ صاحب معجمٍ واحد خبرُ آحاد، تُفيد الظنّ (ج3)، ومودَعُها «وضع» لا «معلومات سابقة». فلا تصنع «مفهومًا» في الدستور
+  القائم ولو حُكم بتواترها (`wad_la_yakfi`).
+* و`Iqtiran.mujam_la_yasna` (المعجمُ لا يصنع مفهومًا، `Iqtiran.lean` س26) قائمةٌ بمعناها.
 
 ## ما يُبنى: الجسرُ المعمَّم بشرط كفايةٍ لكلّ طريق
 
@@ -34,11 +35,11 @@ import A116.NaqlData
 * شهاداتٌ تكفي: «مفهوم». والمُنشئ يحمل شاهدًا بالنوع، وهذا فحصُ المادّة ١٦.
 
 والجسران مثولان له:
-* `jisrWaqi`: الحسُّ وحدَه، وشاهدٌ واحدٌ يكفي. هو `Iqtiran.martaba` بعد الإسقاط إلى المراتب الثلاث، على المعيَّن
-  (`iqtiran_mithal`).
-* `jisrWad t`: النقلُ وحدَه، ولا يكفي إلّا بحكم تواترٍ `t`.
-  * هذا الحكمُ قرارُ المالك، ومعه تعديلُ المادّة ١٥ إن أراد أن يُعدّ مودَعُ الوضع فيه.
-  * وبلاه (`t = fun _ => false`، الدستورُ القائم) فكلُّ شهادة معجمٍ «معلومةٌ مشهودة» (`ahad_maluma`).
+* `jisrWaqi`: الحسُّ وحدَه من الواقع المختوم، وشاهدٌ واحدٌ يكفي. هو `Iqtiran.martaba` بعد الإسقاط إلى المراتب الثلاث،
+  على المعيَّن (`iqtiran_mithal`).
+* `jisrWad t`: النقلُ وحدَه، ولا يكفي إلّا بالأمرين معًا: حكمِ تواترٍ `t`، وشهودٍ كلُّهم من مودَع «معلومات سابقة».
+  * فشهادةُ المعجم (مودَعُ «وضع») لا تكفي أبدًا (`wad_la_yakfi`).
+  * وبلا حكم تواتر فالمقبولُ «معلومة» تحمله (`ahad_maluma`).
 
 والتعاضد (`quwwa`): عددُ القائلين المستقلّين في المعلومة المشهودة.
 * لا ينقص بشهادةٍ تُضاف (`taadud`).
@@ -62,11 +63,16 @@ namespace A116.Naql
 inductive Tariq | naql | hiss | aql
   deriving DecidableEq, Repr
 
-/-- الشهادة: راويها (المعجم)، وقائلُها، وطريقُها، وسطرُها (مدخلُ الجذر في المعجم المختوم). -/
+/-- نوعُ المودَع (المادّة ١٢): واقعٌ مختوم، ووضع، ومعلوماتٌ سابقة، ومرجعٌ محجوب. -/
+inductive Mawda | waqiMakhtum | wad | malumat | marjaMahjub
+  deriving DecidableEq, Repr
+
+/-- الشهادة: راويها (المعجم)، وقائلُها، وطريقُها، ونوعُ مودَعها، وسطرُها في المودَع. -/
 structure Shahada where
   rawi : String
   qail : String
   tariq : Tariq
+  mawda : Mawda
   satr : Nat
   deriving DecidableEq, Repr
 
@@ -86,10 +92,14 @@ def jisr (q : Tariq → Bool) (kafi : List Shahada → Bool) (ws : List Shahada)
 def wad (t : Tariq) : Bool := t == .naql
 def waqi (t : Tariq) : Bool := t == .hiss
 
-/-- جسرُ الوضع: النقلُ وحدَه، ويكفي بحكم التواتر `t`. -/
-def jisrWad (t : List Shahada → Bool) : List Shahada → Hukm := jisr wad t
-/-- جسرُ المسمّى: الحسُّ وحدَه، وشاهدٌ واحدٌ يكفي (المادّة ١٥: «محسوس»). -/
-def jisrWaqi : List Shahada → Hukm := jisr waqi (fun _ => true)
+/-- كفايةُ النقل (المادّة ١٥): حكمُ التواتر `t`، وكلُّ الشهود من مودَع «معلومات سابقة». -/
+def kafiNaql (t : List Shahada → Bool) (ss : List Shahada) : Bool :=
+  t ss && ss.all (fun s => s.mawda == .malumat)
+
+/-- جسرُ الوضع: النقلُ وحدَه، ويكفي بـ`kafiNaql`. -/
+def jisrWad (t : List Shahada → Bool) : List Shahada → Hukm := jisr wad (kafiNaql t)
+/-- جسرُ المسمّى: الحسُّ وحدَه من الواقع المختوم، وشاهدٌ واحدٌ يكفي (المادّة ١٥: «محسوس»). -/
+def jisrWaqi : List Shahada → Hukm := jisr waqi (fun ss => ss.all (fun s => s.mawda == .waqiMakhtum))
 
 /-- **لا مفهومَ بلا شاهد** (المادّة ١٦): شاهدُ المفهوم من الشهادات، وطريقُه مقبول، والكفايةُ قائمة. -/
 theorem mafhum_bishahid (q : Tariq → Bool) (k : List Shahada → Bool) (ws : List Shahada)
@@ -140,22 +150,34 @@ theorem aql_la_yashhad (t : List Shahada → Bool) (ws : List Shahada) (s : Shah
   ⟨ghayr_maqbul_la_yughayyir _ _ _ _ (by simp [wad, h]),
    ghayr_maqbul_la_yughayyir _ _ _ _ (by simp [waqi, h])⟩
 
-/-- **خبرُ الآحاد معلومةٌ مشهودة** (الدستورُ القائم): بلا حكم تواترٍ فشهاداتُ المعاجم كلُّها «معلومة» تحمل المقبولَ
-منها، ولا تكون «مفهومًا». -/
+/-- **خبرُ الآحاد معلومة**: بلا حكم تواترٍ فالحكمُ «معلومة» تحمل المقبولَ من الشهادات (وقد يكون فارغًا)، ولا يكون
+«مفهومًا». -/
 theorem ahad_maluma (ws : List Shahada) : jisrWad (fun _ => false) ws = .maluma (maqbul wad ws) := by
   unfold jisrWad jisr
   split
   · rename_i hm; rw [hm]
-  · rename_i s ss hm; simp [hm]
+  · rename_i s ss hm; simp [hm, kafiNaql]
 
-/-- **مفهومُ الوضع بالتواتر وحدَه**: إن صار النقلُ مفهومًا فقد حُكم بتواتر شهاداته. -/
+/-- **مفهومُ النقل بالأمرين معًا**: إن صار النقلُ مفهومًا فقد حُكم بتواتر شهاداته، وكلُّها من «معلومات سابقة». -/
 theorem wad_mafhum_bi_tawatur (t : List Shahada → Bool) (ws : List Shahada) (s : Shahada)
-    (ss : List Shahada) (h : jisrWad t ws = .mafhum s ss) : t (s :: ss) = true :=
-  (mafhum_bishahid _ _ _ _ _ h).2.2
+    (ss : List Shahada) (h : jisrWad t ws = .mafhum s ss) :
+    t (s :: ss) = true ∧ ∀ x ∈ s :: ss, x.mawda = .malumat := by
+  have hk := (mafhum_bishahid _ _ _ _ _ h).2.2
+  simp only [kafiNaql, Bool.and_eq_true, List.all_eq_true, beq_iff_eq] at hk
+  exact hk
 
-/-- **والمحسوسُ يكفي بواحد**: شهادةُ حسٍّ واحدة مفهومٌ على جسر المسمّى. -/
-theorem hiss_yakfi (s : Shahada) (hs : s.tariq = .hiss) : jisrWaqi [s] = .mafhum s [] := by
-  simp [jisrWaqi, jisr, maqbul, waqi, hs]
+/-- **مودَعُ الوضع لا يكفي أبدًا** (المادّتان ١٢ و١٥): شهاداتٌ كلُّها من «وضع» لا تصير مفهومًا بأيّ حكمِ تواتر. -/
+theorem wad_la_yakfi (t : List Shahada → Bool) (ws : List Shahada) (h : ∀ s ∈ ws, s.mawda = .wad)
+    (s : Shahada) (ss : List Shahada) : jisrWad t ws ≠ .mafhum s ss := by
+  intro hm
+  have hs := (mafhum_bishahid _ _ _ _ _ hm).1
+  have := (wad_mafhum_bi_tawatur t ws s ss hm).2 s List.mem_cons_self
+  rw [h s hs] at this; cases this
+
+/-- **والمحسوسُ يكفي بواحد**: شهادةُ حسٍّ واحدة من الواقع المختوم مفهومٌ على جسر المسمّى. -/
+theorem hiss_yakfi (s : Shahada) (hs : s.tariq = .hiss) (hm : s.mawda = .waqiMakhtum) :
+    jisrWaqi [s] = .mafhum s [] := by
+  simp [jisrWaqi, jisr, maqbul, waqi, hs, hm]
 
 /-- **شهادةُ المعجم لا تشهد للمسمّى** (بتعريف `waqi`): شهاداتٌ كلُّها نقلٌ تُبقي المسمّى «معلومة» بلا شاهد. -/
 theorem naql_la_yashhad_lilmusamma (ws : List Shahada) (h : ∀ s ∈ ws, s.tariq = .naql) :
@@ -244,12 +266,13 @@ def jisrM {M : Type} (q : Tariq → Bool) (k : List Shahada → Bool) (shuhud : 
 /-- **`Iqtiran.martaba` مثولٌ للنمط**: بعد الإسقاط، شاهدُ الواقع الثنائيّ هو شهادةُ حسٍّ واحدة على جسر المسمّى.
 والمساواةُ عملٌ على المعيَّن وحدَه؛ المحتمَلُ و«لا حكم» منسوخان بالتعريف. -/
 theorem iqtiran_mithal {M : Type} (s : M → Bool) (w : Shahada) (hw : w.tariq = .hiss)
-    (x : Iqtiran.Mantuq M) :
+    (hm : w.mawda = .waqiMakhtum) (x : Iqtiran.Mantuq M) :
     Iqtiran.martaba s x =
-      ilaMartaba (jisrM waqi (fun _ => true) (fun m => if s m then [w] else []) x) := by
+      ilaMartaba (jisrM waqi (fun ss => ss.all (fun v => v.mawda == .waqiMakhtum))
+        (fun m => if s m then [w] else []) x) := by
   cases x with
   | muayyan m =>
-    cases hs : s m <;> simp [Iqtiran.martaba, jisrM, jisr, maqbul, waqi, hs, hw, ilaMartaba]
+    cases hs : s m <;> simp [Iqtiran.martaba, jisrM, jisr, maqbul, waqi, hs, hw, hm, ilaMartaba]
   | muhtamal _ => rfl
   | laHukm => rfl
 
@@ -299,8 +322,8 @@ theorem usul_muhtamal (n : Nat) (hn : 2 ≤ n) (j : String) (m : String × Nat) 
 /-- القائلون المعلومون: الخليل، وابنُ فارس، وابنُ منظور. -/
 def shuyukh : List String := ["khalil", "ibn-faris", "ibn-manzur"]
 
-/-- شاهدُ الصفّ شهادةُ نقل: (المعجم، القائل، سطرُ المدخل). -/
-def shahadaOf (w : String × String × Nat) : Shahada := ⟨w.1, w.2.1, .naql, w.2.2⟩
+/-- شاهدُ الصفّ شهادةُ نقلٍ من مودَع «وضع»: (المعجم، القائل، سطرُ المدخل). -/
+def shahadaOf (w : String × String × Nat) : Shahada := ⟨w.1, w.2.1, .naql, .wad, w.2.2⟩
 
 /-- مجموعُ الأزواج بعدد الشهود وبعدد المعاجم واحد، ومجموعُ أحكام ابن فارس عددُ الجذور. -/
 theorem mawdu_count :
@@ -309,16 +332,16 @@ theorem mawdu_count :
     NaqlData.hukmAsl.foldl (· + ·) 0 = NaqlData.jidhrCount ∧
     NaqlData.zawjCount = 108735 ∧ NaqlData.naqlAnWahid = 645 := by decide
 
-/-- **على الشواهد** (`decide` على صفوف خمسة جذور): كلُّ صفٍّ بالدستور القائم «معلومةٌ مشهودة» تحمل شهاداته كلَّها،
-وقوّتُه اثنان فأكثر، والمسمّى «معلومة» بلا شاهد. -/
+/-- **على الشواهد** (`decide` على صفوف خمسة جذور): كلُّ صفٍّ «معلومةٌ» تحمل شهاداته كلَّها ولو حُكم بتواترها، وقوّتُه
+اثنان فأكثر، والمسمّى «معلومة» بلا شاهد. -/
 theorem shawahid_maluma :
     NaqlData.shawahid.all (fun r =>
       let ws := r.2.2.2.map shahadaOf
-      jisrWad (fun _ => false) ws == .maluma ws &&
+      jisrWad (fun _ => true) ws == .maluma ws &&
       2 ≤ quwwa shuyukh wad ws &&
       jisrWaqi ws == .maluma []) = true := by decide +kernel
 
-/-- **«الكتاب» تحت «كتب»**: الخليلُ وابنُ فارس وابنُ منظور، كلٌّ في مدخله؛ وابنُ فارس يجعل «كتب» أصلًا واحدًا. -/
+/-- **ورودُ «الكتاب» تحت «كتب»**: الخليلُ وابنُ فارس وابنُ منظور، كلٌّ في مدخله؛ وابنُ فارس يجعل «كتب» أصلًا واحدًا. -/
 theorem kataba :
     ("كتب", "الكتاب", "kfm", [("k", "khalil", 30475), ("f", "ibn-faris", 3334), ("m", "ibn-manzur", 23989)])
       ∈ NaqlData.shawahid ∧
@@ -326,15 +349,19 @@ theorem kataba :
   decide +kernel
 
 def kitab : List Shahada :=
-  [⟨"k", "khalil", .naql, 30475⟩, ⟨"f", "ibn-faris", .naql, 3334⟩, ⟨"m", "ibn-manzur", .naql, 23989⟩]
+  [⟨"k", "khalil", .naql, .wad, 30475⟩, ⟨"f", "ibn-faris", .naql, .wad, 3334⟩,
+   ⟨"m", "ibn-manzur", .naql, .wad, 23989⟩]
 
-/-- **ما يقلبه حكمُ التواتر وحدَه**: «الكتاب» بالدستور القائم معلومةٌ مشهودةٌ بثلاثة. ولو حكم المالكُ بتواتر ما شهد له
-الثلاثةُ لصار مفهومَ وضع. والمسمّى معلومةٌ بلا شاهد في الحالين. -/
+/-- الشهاداتُ نفسُها لو كانت من مودَع «معلومات سابقة» بأسطرها (فرضٌ لا مودَع). -/
+def kitabMalumat : List Shahada := kitab.map (fun s => { s with mawda := .malumat })
+
+/-- **ما يُحتاج لقلب الحكم**: ورودُ «الكتاب» تحت «كتب» معلومةٌ مشهودةٌ بثلاثة، ولو حُكم بالتواتر، لأنّ مودَعه «وضع».
+ولو كانت الشهاداتُ نفسُها من مودَع «معلومات سابقة» وحُكم بتواتر ثلاثة قائلين لصار مفهومًا. والمسمّى معلومةٌ بلا شاهد. -/
 theorem kitab_hukm :
-    jisrWad (fun _ => false) kitab = .maluma kitab ∧ quwwa shuyukh wad kitab = 3 ∧
-    jisrWad (fun ws => decide (3 ≤ quwwa shuyukh wad ws)) kitab =
-      .mafhum ⟨"k", "khalil", .naql, 30475⟩
-        [⟨"f", "ibn-faris", .naql, 3334⟩, ⟨"m", "ibn-manzur", .naql, 23989⟩] ∧
+    jisrWad (fun _ => true) kitab = .maluma kitab ∧ quwwa shuyukh wad kitab = 3 ∧
+    jisrWad (fun ws => decide (3 ≤ quwwa shuyukh wad ws)) kitabMalumat =
+      .mafhum ⟨"k", "khalil", .naql, .malumat, 30475⟩
+        [⟨"f", "ibn-faris", .naql, .malumat, 3334⟩, ⟨"m", "ibn-manzur", .naql, .malumat, 23989⟩] ∧
     jisrWaqi kitab = .maluma [] := by decide
 
 /-! ## المراسي -/

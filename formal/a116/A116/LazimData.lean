@@ -3,9 +3,9 @@
 namespace A116.LazimData
 
 /-- عددُ جمل التعليل والحمل (`RULE_ILAQA`). -/
-def bisinf : List Nat := [1121, 1044]
+def bisinf : List Nat := [1210, 1044]
 /-- منها ما جذرُه أصلٌ واحدٌ أو كلمةٌ واحدة عند ابن فارس. -/
-def biAslWahid : List Nat := [825, 795]
+def biAslWahid : List Nat := [910, 804]
 
 /-- صفوفُ الشواهد: (الجذر، حكمُ ابن فارس، الصنف، رقمُ المدخل، الألفاظ، الجملة). -/
 def shawahid : List (String × String × String × Nat × List String × String) := [

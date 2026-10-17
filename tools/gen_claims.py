@@ -94,8 +94,10 @@ UNITS: dict[str, str] = {
                      "(`A116.FractalMushaf.Aya`) — ADR ٧٨",
     "شاهد كذب ظاهر": "شاهدُ كذبٍ ظاهرٍ من شرح السيرافيّ المختوم (`A116.SidqSirafi.shawahid`) "
                      "— ADR ٨٩",
-    "زوج جذر ولفظ مشهود": "زوجُ (جذرٍ ثلاثيٍّ من «مقاييس اللغة»، هيكلِ لفظٍ) مشهودٌ في معجمٍ مختوم "
+    "زوج جذر ولفظ مشهود": "زوجُ (جذرٍ ثلاثيٍّ من «مقاييس اللغة»، هيكلِ لفظٍ) مشهودٌ في معجمٍ مختومٍ أو مرشَّح "
                           "(`corpora/naql/shuhud.tsv.gz`) — ADR ١٠٠",
+    "هيكل تشكيل": "هيكلُ لفظٍ بلا علامات له صورٌ مشكولةٌ في المصحف أو الصحيحين "
+                  "(`corpora/tashkil/mujam.tsv.gz`) — ADR ١٠٣",
 }
 """القائمةُ المغلقة للوحدات: لا تُضاف وحدةٌ إلّا هنا وبـADR."""
 LEAN_UNITS: dict[str, str] = {
@@ -106,6 +108,7 @@ LEAN_UNITS: dict[str, str] = {
     "Unicode.arabic_is_two_bytes": "بايت", "Imla.renderC_bytes": "بايت",
     "SidqSirafi.musawwada_tahkum": "شاهد كذب ظاهر",
     "Naql.mawdu_count": "زوج جذر ولفظ مشهود",
+    "Tashkil.mujam_count": "هيكل تشكيل",
     "Count.U_one": "سلسلة خانات مرخصة بالطول",
     "Junction.licensed_upto_4": "سلسلة خانات مرخصة بالطول",
     "Ladder.U3_by_pattern": "سلسلة خانات مرخصة بالطول",
