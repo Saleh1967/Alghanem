@@ -113,3 +113,4 @@ import A116.Dalalat
 import A116.Majaz
 import A116.Qabil
 import A116.Khawass
+import A116.Umum
