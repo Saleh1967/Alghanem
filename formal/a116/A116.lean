@@ -112,3 +112,4 @@ import A116.Haqaiq
 import A116.Dalalat
 import A116.Majaz
 import A116.Qabil
+import A116.Khawass
