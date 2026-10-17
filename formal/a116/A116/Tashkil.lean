@@ -25,6 +25,10 @@ import A116.TashkilData
 
 وعلى الشاهد (`decide`): «قال» معيَّنٌ «قَالَ»، و«كتب» محتمَلٌ بخمس صور، وقيدُ الحركة على الحرف الأوّل يقطعه إلى
 «كَتَبَ» وحدَها.
+
+والقياسُ المسجَّل مسبقًا على تشكيلٍ بشريٍّ محجوب (`qiyas`):
+* المعيَّنُ 26.74٪ من الألفاظ، وصورتُه هي الذهبيّةُ بعينها في 62.04٪ منه.
+* وبلا علامة الحرف الأخير، أي البنيةُ دون الإعراب: المعيَّنُ 47.29٪، والمطابقةُ 81.79٪.
 -/
 
 namespace A116.Tashkil
@@ -80,6 +84,17 @@ theorem shawahid :
     tashkil mujam [qaydAwwal 'ك' 'َ'] "كتب" = .muayyan "كَتَبَ" ∧
     tashkil mujam [] "والله" = .muhtamal ["وَاللَّهُ", "وَاللَّهِ"] ∧
     tashkil mujam [] "غول" = .laHukm := by decide +kernel
+
+/-- **القياسُ المسجَّل** (`docs/tashkil/PREREG.md`، `docs/tashkil/result.json`) على تشكيل Fadel المحجوب (106,775 لفظًا):
+(البسط، المقام) لكلّ مقياس. والمعيَّنُ ليس إصابةً في كلّه: المعجمُ منتهٍ، فالصورةُ الواحدةُ فيه ليست الصورةَ الوحيدةَ
+في اللغة (`MUJAM_NOT_EXHAUSTIVE`). -/
+theorem qiyas :
+    TashkilData.muayyan = (28552, 106775) ∧ TashkilData.muhtamal = (55547, 106775) ∧
+    TashkilData.laHukm = (22676, 106775) ∧ TashkilData.exact = (17714, 28552) ∧
+    TashkilData.inSet = (39813, 55547) ∧ TashkilData.coreMuayyan = (50494, 106775) ∧
+    TashkilData.coreExact = (41297, 50494) ∧
+    TashkilData.muayyan.1 + TashkilData.muhtamal.1 + TashkilData.laHukm.1 = TashkilData.muayyan.2 ∧
+    TashkilData.exact.1 < TashkilData.exact.2 := by decide
 
 /-- عددُ هياكل المعجم كلِّه وما له صورةٌ واحدة. -/
 theorem mujam_count : TashkilData.haykalCount = 49412 ∧ TashkilData.wahidCount = 39154 := by decide

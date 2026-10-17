@@ -1558,3 +1558,4 @@ import A116
 #print axioms A116.Tashkil.qayd_la_yazid
 #print axioms A116.Tashkil.shawahid
 #print axioms A116.Tashkil.mujam_count
+#print axioms A116.Tashkil.qiyas

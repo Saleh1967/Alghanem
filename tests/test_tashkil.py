@@ -72,7 +72,7 @@ def test_fadel_not_a_source() -> None:
 def test_lean_names() -> None:
     lean = (ROOT / "formal" / "a116" / "A116" / "Tashkil.lean").read_text(encoding="utf-8")
     names = ("la_tashkil_bila_wad", "muayyan_min_mujam", "la_takhmin", "qayd_la_yazid", "shawahid",
-             "mujam_count")
+             "mujam_count", "qiyas")
     assert all(f"theorem {n}" in lean for n in names)
     audit = (ROOT / "formal" / "a116" / "Audit.lean").read_text(encoding="utf-8")
     assert all(f"A116.Tashkil.{n}" in audit for n in names)
