@@ -92,6 +92,8 @@ UNITS: dict[str, str] = {
                  "(`A116.FractalMushaf.Aya`) — ADR ٧٨",
     "حد بين كلمتين": "حدٌّ بين كلمتين متجاورتين في آيةٍ من المصحف المختوم "
                      "(`A116.FractalMushaf.Aya`) — ADR ٧٨",
+    "شاهد كذب ظاهر": "شاهدُ كذبٍ ظاهرٍ من شرح السيرافيّ المختوم (`A116.SidqSirafi.shawahid`) "
+                     "— ADR ٨٩",
 }
 """القائمةُ المغلقة للوحدات: لا تُضاف وحدةٌ إلّا هنا وبـADR."""
 LEAN_UNITS: dict[str, str] = {
@@ -100,6 +102,7 @@ LEAN_UNITS: dict[str, str] = {
     "Cells.hamzaRow_length": "خانة", "Numbering.orders_differ_only_in_two_rows": "خانة",
     "Field112.hamilField112_length": "خانة", "Field112.letters28_length": "حامل",
     "Unicode.arabic_is_two_bytes": "بايت", "Imla.renderC_bytes": "بايت",
+    "SidqSirafi.musawwada_tahkum": "شاهد كذب ظاهر",
     "Count.U_one": "سلسلة خانات مرخصة بالطول",
     "Junction.licensed_upto_4": "سلسلة خانات مرخصة بالطول",
     "Ladder.U3_by_pattern": "سلسلة خانات مرخصة بالطول",

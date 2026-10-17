@@ -1331,3 +1331,17 @@ import A116
 #print axioms A116.Sidq.martaba_shahid
 #print axioms A116.Sidq.hukm_la_yusqit
 #print axioms A116.Sidq.jabal_mustaqim
+#print axioms A116.SidqSirafi.khabar_faqat
+#print axioms A116.SidqSirafi.muhal_khabar_kadhib
+#print axioms A116.SidqSirafi.qum_ams
+#print axioms A116.SidqSirafi.sibawayh_muhal_kadhib
+#print axioms A116.SidqSirafi.kadhib_malumat_bi_shahid
+#print axioms A116.SidqSirafi.kadhib_waqi_bi_shahid
+#print axioms A116.SidqSirafi.laqitu_zaydan
+#print axioms A116.SidqSirafi.laqitu_zaydan_la_hukm
+#print axioms A116.SidqSirafi.thulathi_la_yahkum
+#print axioms A116.SidqSirafi.qiyas
+#print axioms A116.SidqSirafi.musawwada_tahkum
+#print axioms A116.SidqSirafi.bila_sufuf
+#print axioms A116.SidqSirafi.sufuf_bi_marasi
+#print axioms A116.SidqSirafi.qisma_rubaiyya

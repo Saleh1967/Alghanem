@@ -104,3 +104,5 @@ import A116.MalumatData
 import A116.MalumatShawahid
 import A116.Istiqama
 import A116.Sidq
+import A116.SidqData
+import A116.SidqSirafi
