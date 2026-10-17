@@ -108,3 +108,4 @@ import A116.SidqData
 import A116.SidqSirafi
 import A116.Bawwabat
 import A116.BawwabatMarsa
+import A116.Haqaiq
