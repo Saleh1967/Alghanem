@@ -27,10 +27,10 @@ J3 = ROOT / "corpora" / "nabhani" / "shakhsiyya_j3.txt.gz"
 NAQL = ROOT / "corpora" / "naql"
 MARKS = re.compile(r"[ً-ْٰـ]")
 LEAN_NAMES = ("mafhum_bishahid", "maluma_tahmil", "bila_shahid_iff", "ghayr_maqbul_la_yughayyir",
-              "aql_la_yashhad", "ahad_maluma", "wad_mafhum_bi_tawatur", "hiss_yakfi",
-              "naql_la_yashhad_lilmusamma", "taadud", "naql_an_wahid", "mustaqill_yazid",
-              "iqtiran_mithal", "la_takhmin_asl", "usul_muhtamal", "mawdu_count",
-              "shawahid_maluma", "kataba", "kitab_hukm")
+              "aql_la_yashhad", "wahid_yakfi", "qati_bi_tawatur", "kathra_la_tuwatir",
+              "marja_la_yashhad", "hiss_yakfi", "naql_la_yashhad_lilmusamma", "taadud",
+              "naql_an_wahid", "mustaqill_yazid", "iqtiran_mithal", "la_takhmin_asl",
+              "usul_muhtamal", "mawdu_count", "shawahid_mafhum", "kataba", "kitab_hukm")
 
 
 def sealed(path: Path, sha: str) -> list[str]:
@@ -65,6 +65,18 @@ def test_lisan_seal() -> None:
     assert lines[23988].startswith("### $ كتب: الكتاب: معروف")
     manifest = (ROOT / "corpora" / "lisan" / "MANIFEST.tsv").read_text(encoding="utf-8")
     assert "056df249d6619b428a78f1d69a8ab2851b97b0a6" in manifest
+    assert "\tمختوم\t" in manifest  # بإذن المالك 2026-10-18 «اختم» (ADR ١٠٤)
+
+
+def test_constitution_amendment() -> None:
+    """المادّتان ١٥ و١٦ معدَّلتان بنصّ المالك (ADR ١٠٤)، ومفهومُ الوضع برتبة شهادته في Lean."""
+    c = " ".join((ROOT / "AGENT_CONSTITUTION.md").read_text(encoding="utf-8").split())
+    for q in ("النقل عن الوضع ليس بالضرورة تويتر",
+              "نقبلها شاهد برتبة الشهادة فليس كل رتبة تشترط التواتر"
+              " وليس المطلوب التواتر لكل لفظ وضع لمعنى"):
+        assert q in c
+    src = (A / "Naql.lean").read_text(encoding="utf-8")
+    assert "theorem wahid_yakfi" in src and "theorem marja_la_yashhad" in src
 
 
 def test_nabhani_anchors() -> None:
@@ -134,7 +146,7 @@ def test_deposit_counts() -> None:
 def test_lean_names() -> None:
     src = (A / "Naql.lean").read_text(encoding="utf-8")
     # CONCEPT_WITHOUT_WITNESS (المادّة ١٦): مُنشئُ المفهوم يحمل شاهدًا بالنوع
-    assert re.search(r"\| mafhum \(s : Shahada\) \(ss : List Shahada\)", src)
+    assert re.search(r"\| mafhum \(r : Rutba\) \(s : Shahada\) \(ss : List Shahada\)", src)
     assert all(f"theorem {n}" in src for n in LEAN_NAMES)
     audit = (ROOT / "formal" / "a116" / "Audit.lean").read_text(encoding="utf-8")
     assert all(f"A116.Naql.{n}" in audit for n in LEAN_NAMES)

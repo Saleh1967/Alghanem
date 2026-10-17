@@ -21,7 +21,7 @@ TSV = ROOT / "corpora" / "naql" / "lawazim.tsv"
 DATA = ROOT / "formal" / "a116" / "A116" / "LazimData.lean"
 MARKS = re.compile(r"[ً-ْٰـ]")
 LEAN_NAMES = ("taalil_iltizam", "haml_la_iltizam", "la_lazim_bila_shahada", "lazim_muayyan",
-              "haml_maluma_mashhuda", "jumal_count", "shawahid", "midad_iltizam")
+              "haml_mafhum_zanni", "jumal_count", "shawahid", "midad_iltizam")
 
 
 def rows() -> list[list[str]]:

@@ -67,6 +67,8 @@ import csv
 import gzip
 import hashlib
 import io
+import json
+import random
 import re
 import sys
 from pathlib import Path
@@ -395,6 +397,46 @@ def render_lazim(rows: list[tuple[str, str, str, int, str, str]],
     return "\n".join(out)
 
 
+ASL_FRAME = OUT / "asl-frame.tsv"
+ASL_FILL = OUT / "asl-fill.tsv"
+ASL_RESULT = ROOT / "docs" / "naql" / "asl-result.json"
+ASL_SEED = 20261018
+ASL_N = 200
+
+
+def asl_frame(usul: list[tuple[str, str, int, str]]) -> str:
+    """إطارُ العيّنة (ADR ١٠٤، `docs/naql/PREREG-ASL.md`): 200 جذرٍ ببذرةٍ معلنة، والجملةُ الأولى
+    وحدَها، بلا حكم القاعدة."""
+
+    rows = sorted(usul)
+    pick = sorted(random.Random(ASL_SEED).sample(range(len(rows)), ASL_N))
+    return "root\tclause\n" + "".join(f"{rows[i][0]}\t{rows[i][3]}\n" for i in pick)
+
+
+def asl_measure(usul: list[tuple[str, str, int, str]]) -> dict[str, object]:
+    """اتّفاقُ `RULE_ASL` مع ملء الوكيل المستقلّ على الإطار: الصنفُ، والصنفُ والعدد."""
+
+    rule = {u[0]: (u[1], u[2]) for u in usul}
+    lines = ASL_FILL.read_text(encoding="utf-8").splitlines()[1:]
+    fill = {ln.split("\t")[0]: (ln.split("\t")[1], int(ln.split("\t")[2])) for ln in lines}
+    roots = [ln.split("\t")[0] for ln in ASL_FRAME.read_text(encoding="utf-8").splitlines()[1:]]
+    assert sorted(fill) == sorted(roots), "ASL_FILL_NOT_FRAME"
+    cls = sum(1 for r in roots if rule[r][0] == fill[r][0])
+    both = sum(1 for r in roots if rule[r] == fill[r])
+    confusion: dict[str, int] = {}
+    for r in roots:
+        if rule[r][0] != fill[r][0]:
+            k = f"{rule[r][0]}->{fill[r][0]}"
+            confusion[k] = confusion.get(k, 0) + 1
+    prereg = (ROOT / "docs" / "naql" / "PREREG-ASL.md").read_bytes()
+    return {"prereg_sha256": hashlib.sha256(prereg).hexdigest(), "n": len(roots),
+            "class_agree": cls, "class_and_n_agree": both,
+            "class_rate": round(cls / len(roots), 6),
+            "class_and_n_rate": round(both / len(roots), 6),
+            "confusion_rule_to_fill": dict(sorted(confusion.items())),
+            "label": "مفحوص بملء وكيلٍ مستقلّ، لا مقيس (ADR ٣٩)"}
+
+
 def gz(text: str) -> bytes:
     buf = io.BytesIO()
     with gzip.GzipFile(fileobj=buf, mode="wb", compresslevel=9, mtime=0) as f:
@@ -408,8 +450,24 @@ def main(argv: list[str]) -> int:
     lean = render_lean(shuhud, usul, madakhil)
     lz = lawazim(usul)
     l_tsv, l_lean = render_tsv(lz), render_lazim(lz, usul)
+    frame = asl_frame(usul)
+    if "measure-asl" in argv:
+        res = asl_measure(usul)
+        ASL_RESULT.parent.mkdir(parents=True, exist_ok=True)
+        out = json.dumps(res, ensure_ascii=False, indent=1) + "\n"
+        ASL_RESULT.write_text(out, encoding="utf-8")
+        sys.stdout.write(out)
+        return 0
     if "--check" in argv:
         bad = 0
+        if not ASL_FRAME.exists() or ASL_FRAME.read_text(encoding="utf-8") != frame:
+            sys.stderr.write("ASL_FRAME_DRIFTED\n")
+            bad = 1
+        if ASL_RESULT.exists():
+            res = asl_measure(usul)
+            if json.loads(ASL_RESULT.read_text(encoding="utf-8")) != res:
+                sys.stderr.write("ASL_RESULT_DRIFTED\n")
+                bad = 1
         if (not LAWAZIM.exists() or LAWAZIM.read_text(encoding="utf-8") != l_tsv
                 or not LEAN_LAZIM.exists() or LEAN_LAZIM.read_text(encoding="utf-8") != l_lean):
             sys.stderr.write("LAZIM_DRIFTED: شغّل python tools/gen_naql.py\n")
@@ -431,6 +489,7 @@ def main(argv: list[str]) -> int:
     MADAKHIL.write_text(m_tsv, encoding="utf-8")
     LEAN.write_text(lean, encoding="utf-8")
     LAWAZIM.write_text(l_tsv, encoding="utf-8")
+    ASL_FRAME.write_text(frame, encoding="utf-8")
     LEAN_LAZIM.write_text(l_lean, encoding="utf-8")
     sys.stdout.write(f"كُتب المودَع ({len(shuhud)} زوجًا، {len(usul)} جذرًا) و{LEAN.name}\n")
     return 0
