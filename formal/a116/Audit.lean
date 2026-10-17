@@ -1426,3 +1426,13 @@ import A116
 #print axioms A116.Majaz.darib
 #print axioms A116.Majaz.zaman_shift
 #print axioms A116.Majaz.zaman_itarayn
+#print axioms A116.Qabil.majaz_iff
+#print axioms A116.Qabil.haqiqa_iff
+#print axioms A116.Qabil.ghiyab_la_hukm
+#print axioms A116.Qabil.qabiliyya_tuhaddid
+#print axioms A116.Qabil.manfi_lahu_taqdir
+#print axioms A116.Qabil.shawahid
+#print axioms A116.Qabil.haqiqa_rabtan
+#print axioms A116.Qabil.nahar_saim
+#print axioms A116.Qabil.mushtaq_tabi
+#print axioms A116.Qabil.majaz_ghayr_kadhib
