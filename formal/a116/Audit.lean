@@ -1538,3 +1538,16 @@ import A116
 #print axioms A116.Lazim.jumal_count
 #print axioms A116.Lazim.shawahid
 #print axioms A116.Lazim.midad_iltizam
+#print axioms A116.HukmMuwahhad.khass_yaghlib
+#print axioms A116.HukmMuwahhad.yarith
+#print axioms A116.HukmMuwahhad.la_saff
+#print axioms A116.HukmMuwahhad.haqiqa_iff
+#print axioms A116.HukmMuwahhad.majaz_iff
+#print axioms A116.HukmMuwahhad.la_majaz_bila_alaqa
+#print axioms A116.HukmMuwahhad.la_majaz_bila_wad
+#print axioms A116.HukmMuwahhad.la_hukm_bila_saff
+#print axioms A116.HukmMuwahhad.majaz_mithal
+#print axioms A116.HukmMuwahhad.qabil_mithal
+#print axioms A116.HukmMuwahhad.khawass_mithal
+#print axioms A116.HukmMuwahhad.shawahid
+#print axioms A116.HukmMuwahhad.dimagh_la_majaz
