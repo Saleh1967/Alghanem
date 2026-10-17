@@ -86,7 +86,7 @@
 
 ## الديون
 
-* `SHAJARA_IS_KHAWASS_ISA`: شجرةُ الأجناس هنا شجرةُ `Khawass` بدرجةٍ واحدة. وشجرةُ «المخصَّص» (`corpora/mukhassas/nodes.tsv`)
+* ~~`SHAJARA_IS_KHAWASS_ISA`~~ (سُدّ في ADR ١٠٤: شجرةُ المخصَّص `AjnasMukhassas`): شجرةُ الأجناس هنا شجرةُ `Khawass` بدرجةٍ واحدة. وشجرةُ «المخصَّص» (`corpora/mukhassas/nodes.tsv`)
   لم تُربط بها.
 * `QABIL_KHAWASS_NOT_MERGED`: صفوفُ `Qabil` (مصادرُ نصّيّة) وصفوفُ `Khawass` (مصادرُ معدودة) قابليّتان محلّيّتان منفصلتان.
   ولم يُكتب قاموسٌ يجمعهما على مصدرٍ واحد.

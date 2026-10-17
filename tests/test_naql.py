@@ -150,3 +150,37 @@ def test_lean_names() -> None:
     assert all(f"theorem {n}" in src for n in LEAN_NAMES)
     audit = (ROOT / "formal" / "a116" / "Audit.lean").read_text(encoding="utf-8")
     assert all(f"A116.Naql.{n}" in audit for n in LEAN_NAMES)
+
+
+Pair = dict[str, tuple[str, int]]
+
+
+def _asl_agreement(rule: Pair, fill: Pair) -> tuple[int, int]:
+    roots = list(fill)
+    return (sum(1 for r in roots if rule[r][0] == fill[r][0]),
+            sum(1 for r in roots if rule[r] == fill[r]))
+
+
+def test_asl_fill_result() -> None:
+    """ADR ١٠٤: اتّفاقُ `RULE_ASL` مع ملء الوكيل على الإطار المسجَّل يُعاد من الملفّين، لا من الأداة."""
+
+    import json
+
+    def rows(p: Path) -> list[list[str]]:
+        return [ln.split("\t") for ln in p.read_text(encoding="utf-8").splitlines()[1:]]
+
+    frame = [r[0] for r in rows(ROOT / "corpora/naql/asl-frame.tsv")]
+    fill = {r[0]: (r[1], int(r[2])) for r in rows(ROOT / "corpora/naql/asl-fill.tsv")}
+    assert len(frame) == 200 and set(fill) == set(frame)
+    assert {c for c, _ in fill.values()} <= {"wahid", "kalima", "usul", "laysa", "laHukm"}
+    rule = {r[0]: (r[1], int(r[2])) for r in rows(ROOT / "corpora/naql/usul.tsv")}
+    cls, both = _asl_agreement(rule, fill)
+    res = json.loads((ROOT / "docs/naql/asl-result.json").read_text(encoding="utf-8"))
+    assert (cls, both, res["n"]) == (res["class_agree"], res["class_and_n_agree"], 200)
+    assert (cls, both) == (181, 178)
+    assert "لا مقيس" in res["label"]
+    prereg = (ROOT / "docs/naql/PREREG-ASL.md").read_bytes()
+    assert res["prereg_sha256"] == hashlib.sha256(prereg).hexdigest()
+    # طفرة MUTANT_FILL_EQUALS_RULE: ملءٌ يُنسخ من القاعدة يتّفق كلّه فيُكشف.
+    copied = {r: rule[r] for r in frame}
+    assert _asl_agreement(rule, copied) == (200, 200) != (cls, both)

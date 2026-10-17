@@ -124,3 +124,4 @@ import A116.HukmMuwahhad
 import A116.TashkilData
 import A116.Tashkil
 import A116.AjnasMukhassas
+import A116.Itar
