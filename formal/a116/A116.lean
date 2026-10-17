@@ -116,3 +116,7 @@ import A116.Khawass
 import A116.Umum
 import A116.Iqtiran
 import A116.Marakib
+import A116.NaqlData
+import A116.Naql
+import A116.LazimData
+import A116.Lazim
