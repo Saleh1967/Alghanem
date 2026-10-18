@@ -1577,3 +1577,13 @@ import A116
 #print axioms A116.Itar.hukm3_silsila
 #print axioms A116.Itar.tarkhis_ama_an_qism
 #print axioms A116.Itar.shawahid
+#print axioms A116.QiraaMadlul.sighaCands_iff
+#print axioms A116.QiraaMadlul.sigha_wad
+#print axioms A116.QiraaMadlul.jins_mudaa
+#print axioms A116.QiraaMadlul.jins_bila_wad
+#print axioms A116.QiraaMadlul.dawr_min_naw
+#print axioms A116.QiraaMadlul.qiraa_la_takhmin
+#print axioms A116.QiraaMadlul.hukmQ_qiraa
+#print axioms A116.QiraaMadlul.hukmQ_bila_qiraa
+#print axioms A116.QiraaMadlul.tarkhis_qiraa
+#print axioms A116.QiraaMadlul.shawahid
