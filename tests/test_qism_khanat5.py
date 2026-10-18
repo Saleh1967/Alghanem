@@ -15,8 +15,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import gate
-
 ROOT = Path(__file__).resolve().parents[1]
 V1 = ROOT / "corpora/awamil/awamil-mashkul.tsv"
 V2 = ROOT / "corpora/awamil/awamil-mashkul-2.tsv"
@@ -96,8 +94,24 @@ def test_result5_consistent() -> None:
 def test_zanna_is_noun_in_3_154() -> None:
     s = R5["selection_D1"]["AMIL_OWN_N_NASB_NASB_1"]
     assert (s["fires_A"], s["misfires_A"], s["kept"]) == (54, 1, False)
-    rows = [ln.split("\t") for ln in gzip.decompress(QAC.read_bytes()).decode("utf-8").splitlines()]
-    hit = [p for p in rows if p[0].startswith("(3:154:20:")]
-    assert hit and hit[0][1] == "Zan~a" and hit[0][2] == "N"
-    # و«ظَنَّ» فعلًا واسمًا عددٌ واحد.
-    assert not isinstance(gate.enter(("ظ" + F + "ن" + S + F).encode()), gate.Refusal)
+    # مواضعُ «ظَنَّ» (بلا سابقةٍ أو بعد وَ/فَ) في السور الفردية من QAC المختوم: ثلاثة، اسمٌ واحد.
+    tok: dict[str, list[tuple[str, str]]] = {}
+    for ln in gzip.decompress(QAC.read_bytes()).decode("utf-8").splitlines():
+        p = ln.split("\t")
+        if len(p) >= 3 and p[0].startswith("("):
+            loc = p[0][1:].split(":")
+            tok.setdefault(":".join(loc[:3]), []).append((p[1], p[2]))
+    hits = {}
+    for loc, segs in tok.items():
+        if int(loc.split(":")[0]) % 2 == 1:
+            body = [s for s in segs if s[1] not in ("CONJ", "REM", "RSLT", "CAUS", "SUP")]
+            if [f for f, _ in body] == ["Zan~a"]:
+                hits[loc] = body[0][1]
+    assert hits == {"3:154:20": "N", "21:87:6": "V", "75:28:1": "V"}
+
+
+def test_mashkul_in_sealed_mushaf() -> None:
+    words = set((ROOT / "corpora/quran-simple-enhanced.txt").read_text(encoding="utf-8").split())
+    assert "ظ" + F + "ن" + S + F in words
+    assert "إ" + "\u0650" + "ذ" + "ا" + "\u064b" in words
+    assert "ع" + F + "د" + S + F not in words and "ر" + D + "ب" + S + F not in words
