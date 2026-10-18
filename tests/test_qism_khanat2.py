@@ -124,7 +124,8 @@ def test_result2_consistent() -> None:
     k, n = r["K2"], r["n_B"]
     assert k["muayyan"] + k["muhtamal"] + k["la_hukm"] == n == R1["n_B"]
     assert k["wrong"] == k["muayyan"] - k["sahih"] <= k["sum_misfires_B"]   # `khata_qari_le`
-    assert k["muayyan"] >= R1["K"]["muayyan"]                                # `cands_append_sub`
+    # فحصٌ على هذه النتيجة لا مثولٌ لمبرهنة: `muayyan_baqi` يجيز أن يصير المعيَّنُ «لا حكم».
+    assert k["muayyan"] >= R1["K"]["muayyan"]
     assert r["ceiling_atoms"] == R1["ceiling_atoms"] <= r["ceiling_prev_atoms"] <= n
     assert r["H2_more_than_K"] == (k["muayyan"] > R1["K"]["muayyan"])
     # MUTANT_THRESHOLD_10: عتبةٌ أرخى تُبقي `MUDARI_WAZN` فيتغيّر المُبقى.

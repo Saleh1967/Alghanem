@@ -476,7 +476,7 @@ def matches(spec: Spec, w: Atoms) -> bool:
 
 def own_of(name: str, athar: str) -> int | None:
     if athar == "JAZM_FILAYN":
-        return HARF if name in ("إنْ", "إن", "إذما") else ISM
+        return HARF if name == "إنْ" else ISM
     if athar == "NONE":
         return NONE_OWN.get(name)
     return OWN.get(athar)
