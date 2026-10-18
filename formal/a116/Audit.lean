@@ -1647,9 +1647,12 @@ import A116
 #print axioms A116.WahdaMuqarana.word_slge
 #print axioms A116.WahdaMuqarana.pair_slge
 #print axioms A116.WahdaMuqarana.encS_injective
+#print axioms A116.WahdaMuqarana.slgeF_eq
+#print axioms A116.WahdaMuqarana.slgeF_injective
+#print axioms A116.WahdaMuqarana.nSlge_injective
+#print axioms A116.WahdaMuqarana.nSlge_iff_n
 #print axioms A116.WahdaMuqarana.nPair_injective
 #print axioms A116.WahdaMuqarana.tarjama_n
-#print axioms A116.WahdaMuqarana.tarjama_aks
 #print axioms A116.WahdaMuqarana.wahda_tusqit_rutba
 #print axioms A116.WahdaMuqarana.j3_eq_slge
 #print axioms A116.WahdaMuqarana.la_rabia

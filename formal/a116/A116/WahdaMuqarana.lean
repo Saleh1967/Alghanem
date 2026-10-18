@@ -2,6 +2,7 @@ import A116.QismDaraja
 import A116.Marakib
 import A116.Mufrad
 import A116.Field112
+import A116.IhalaHasr
 
 /-!
 # مقارنةُ الوحدة بوحدة SLGE، وربطُ القسم بقسمة ج3 (ADR ١٠٩)
@@ -9,22 +10,31 @@ import A116.Field112
 أمرُ المالك: «UNIT_IS_HUDUD_N_NOT_SLGE … اعمل مقارنة انت خبير رياضيات … ومراجعة الشخصية الإسلامية ج٣ بعمق … لعمل الربط
 وفق افضل الممارسات».
 
-**المصدر.** تعريفاتُ SLGE هنا **منسوخةٌ نصًّا** من ملفّات المالك كما قُرئت في الجلسة (مستودعُ SLGE نفسُه لم يُبلَغ؛ قُرئت نسختُها
+**المصدر.** تعريفاتُ SLGE هنا **منقولةٌ** من ملفّات المالك كما قُرئت في الجلسة (مستودعُ SLGE نفسُه لم يُبلَغ؛ قُرئت نسختُها
 في مجلّد `SLGE/` بمستودعٍ آخر للمالك، ولا يُستورد منه شيء):
 * `Core.lean`: ‎`pair u r = tri(u+r) + r`‎، و‎`encS [] = 0`، `encS (a :: l) = 1 + pair a (encS l)`‎.
 * `Ladder.lean`: ‎`cellEnc c s = mixEnc 1 4 c 0 s = 4c + s`‎ (فتحة 0، ضمّة 1، كسرة 2، سكون 3).
 * `Category.lean`: ‎`roles ind tim = (ind && !tim, ind)`‎، و`kindOf`: ‎(true, _) ← اسم، (false, true) ← فعل، (false, false) ← حرف‎.
 
-**ما يثبت هنا:**
+**وفروقُ النقل (معلنة):**
+* ترتيبُ الحوامل في SLGE تعليقُ توثيقٍ في `Ladder.lean` يسمّيه SLGE «المعلَن (شاهدٌ لا قانون)»، ولا دالّةَ فيه من الحرف إلى رقمه.
+  فـ`slgeIndex` بناءٌ هنا على ذلك الترتيب.
+* `slgePair` صيغةُ `pair` المغلقة لا `tri` بعينه، و`encS` هنا على `A116.Numbering.pair` لا `SLGE.pair` (وهما واحد: `pair_slge`).
+* `kindOf` هنا يُخرج `Tarkib.Qism` لا `SLGE.Kind`.
+* **ولا وحدةَ في SLGE تقترن فيها الخاناتُ بالجنس.** فـ`nSlge` بناءٌ هنا من ترميز SLGE للكلمة (`encS` على أرقام الخانات بترتيب
+  المخارج، كما في `Tarkib.sEnc`) مقترنًا بالجنس.
+
+**ما يثبت هنا** (و`pair_slge`، `slgeOrder_eq_makharij`، `nPair_injective`، `tarjama_n` تعريفيّة أو نتائجُ مباشرة):
 ١. **الخانة:** رقمُ SLGE للخانة ‎4c + s‎ بترتيب حوامله هو رقمُ مركب المخارج في `Marakib` بعينه، على الخانات الـ116 كلّها
    (`cell_slge_eq_makharij`).
 ٢. **الاقتران:** اقترانُ SLGE هو `Numbering.pair` بعينه (`pair_slge`)، و`encS` تباين (`encS_injective`).
-٣. **الوحدة:** وحدةُ الغانم ‎`Hudud.n` = 11F + j‎ ووحدةٌ على أسلوب SLGE ‎P(F, j)‎ كلتاهما تباين (`Hudud.n_inj`، `nPair_injective`)،
-   وبينهما ترجمةٌ محسوبة في الاتّجاهين (`tarjama_n`، `tarjama_aks`). **وكلتاهما تُسقط الرتبة** (`wahda_tusqit_rutba`): «عَلَى»
-   و«عَلَا» وحدةٌ واحدة؛ والرتبةُ في `Hudud.certHadd` لا في الوحدة.
+٣. **الوحدة:** عددُ الكلمة بترميز SLGE ‎`encS (w.map slgeIndex)`‎ تباين (`slgeF_injective`)، والوحدةُ عليه ‎P(F_SLGE, j)‎ تباين
+   (`nSlge_injective`). **وهي تفصل الوحداتِ نفسَها التي يفصلها `Hudud.n`** (`nSlge_iff_n`): فالفرقُ بين العددين ترميزٌ لا معلومة.
+   وكلاهما يُسقط الرتبة: كلمتان بخاناتٍ واحدة وجنسٍ واحد وحدةٌ واحدة، و`Hudud.certHadd` يفصلهما (`wahda_tusqit_rutba`).
 ٤. **القسم:** قسمةُ ج3 (`Mufrad.qismOf` على الاستقلال والدلالة بالهيئة على الزمان) هي `kindOf ∘ roles` في SLGE بعينها
    (`j3_eq_slge`)؛ فالقسمُ من صفات المدلول لا من الخانات.
-٥. **السلامة:** إن كان المرجعُ قسمةَ ج3 على صفاتٍ معطاة ولم تخطئ علامة، فمعيَّنُ القارئ قسمُ ج3 بعينه (`muayyan_j3`).
+٥. **السلامة:** إن كان المرجعُ قسمةَ ج3 على صفاتٍ معطاة ولم تخطئ علامة، فمعيَّنُ القارئ قسمُ ج3 بعينه (`muayyan_j3`،
+   نتيجةٌ مباشرة لـ`muayyan_sahih`؛ والمرجعُ المقيس QAC لا قسمةُ ج3).
 
 ومراسي ج3 (الشخصيّة ج3 المختومة): س373 القسمة، س375 حدُّ الاسم، س377 الضميرُ والحرف، س467 حدُّ الحرف — تُفحص في
 `tests/test_qism_khanat4.py`.
@@ -82,7 +92,30 @@ theorem encS_injective : ∀ {l l' : List Nat}, encS l = encS l' → l = l'
 
 /-! ## ٣. الوحدة -/
 
-/-- الوحدةُ على أسلوب SLGE: الخاناتُ والجنسُ إحداثيّان مقترنان. -/
+/-- عددُ الكلمة بترميز SLGE: `encS` على أرقام خاناتها بترتيب حوامله. -/
+def slgeF (w : List Cell) : Nat := encS (w.map slgeIndex)
+
+theorem slgeF_eq (w : List Cell) : slgeF w = encS (w.map (Marakib.index .makharij)) := by
+  unfold slgeF; rw [word_slge]
+
+theorem slgeF_injective {w w' : List Cell} (h : slgeF w = slgeF w') : w = w' := by
+  rw [slgeF_eq, slgeF_eq] at h
+  exact Marakib.map_index_injective .makharij (encS_injective h)
+
+/-- وحدةٌ مبنيّةٌ على ترميز SLGE: عددُ الكلمة مقترنًا بالجنس. -/
+def nSlge (u : Hudud.Wahda) : Nat := pair (slgeF u.cells) (Hudud.jinsN u.jins)
+
+theorem nSlge_injective {u v : Hudud.Wahda} (h : nSlge u = nSlge v) : u = v := by
+  obtain ⟨h1, h2⟩ := pair_injective h
+  have hj : u.jins = v.jins := by rw [← Hudud.ofN_jinsN u.jins, h2, Hudud.ofN_jinsN]
+  have hc := slgeF_injective h1
+  cases u; cases v; simp_all
+
+/-- **العددان يفصلان الوحداتِ نفسَها.** -/
+theorem nSlge_iff_n (u v : Hudud.Wahda) : nSlge u = nSlge v ↔ Hudud.n u = Hudud.n v :=
+  ⟨fun h => by rw [nSlge_injective h], fun h => by rw [Hudud.n_inj h]⟩
+
+/-- صيغةُ اقترانٍ على `atomNumber` الغانم (لا على ترميز SLGE): ‎P(F, j)‎. -/
 def nPair (u : Hudud.Wahda) : Nat := pair (atomNumber u.cells) (Hudud.jinsN u.jins)
 
 theorem nPair_injective {u v : Hudud.Wahda} (h : nPair u = nPair v) : u = v := by
@@ -91,24 +124,18 @@ theorem nPair_injective {u v : Hudud.Wahda} (h : nPair u = nPair v) : u = v := b
   have hc := atomNumber_injective h1
   cases u; cases v; simp_all
 
-/-- الترجمةُ من عدد الغانم إلى عدد SLGE. -/
+/-- الترجمةُ بين ‎11F + j‎ و‎P(F, j)‎ على F الغانم (تعريفيّة). -/
 def tarjama (k : Nat) : Nat := pair (k / 11) (k % 11)
 
 theorem tarjama_n (u : Hudud.Wahda) : tarjama (Hudud.n u) = nPair u := by
   unfold tarjama nPair; rw [Hudud.n_div, Hudud.n_mod]
 
-/-- والعكس: من الاقتران إلى ‎11F + j‎. -/
-def tarjamaAks (F j : Nat) : Nat := 11 * F + j
-
-theorem tarjama_aks (u : Hudud.Wahda) :
-    tarjamaAks (atomNumber u.cells) (Hudud.jinsN u.jins) = Hudud.n u := rfl
-
-/-- **كلتاهما تُسقط الرتبة:** الوحدةُ دالّةٌ في الخانات والجنس وحدهما، فكلمتان بخاناتٍ واحدة وجنسٍ واحد وحدةٌ واحدة في
-الصيغتين. والرتبةُ في `Hudud.certHadd` وحدَه. -/
-theorem wahda_tusqit_rutba (j : Hudud.Jins) (c : List Cell) (r r' : Nat) :
-    Hudud.n ⟨j, c⟩ = Hudud.n ⟨j, c⟩ ∧ nPair ⟨j, c⟩ = nPair ⟨j, c⟩ ∧
-    (r ≠ r' → pair (Hudud.n ⟨j, c⟩) r ≠ pair (Hudud.n ⟨j, c⟩) r') :=
-  ⟨rfl, rfl, fun hr he => hr (pair_injective he).2⟩
+/-- **الوحدةُ تُسقط الرتبة، و`certHadd` يحملها:** كلمتان من المجال بخاناتٍ واحدة وحدةٌ واحدة في العددين، وعددا حدّهما مختلفان. -/
+theorem wahda_tusqit_rutba {α : Type} [DecidableEq α] {D : List α} {A : α → List Cell} (j : Hudud.Jins)
+    {x y : α} (hx : x ∈ D) (hy : y ∈ D) (hxy : x ≠ y) (hA : A x = A y) :
+    Hudud.n ⟨j, A x⟩ = Hudud.n ⟨j, A y⟩ ∧ nSlge ⟨j, A x⟩ = nSlge ⟨j, A y⟩ ∧
+    Hudud.certHadd D A j x ≠ Hudud.certHadd D A j y := by
+  refine ⟨by rw [hA], by rw [hA], fun h => hxy (Hudud.certHadd_injective hx hy h).2⟩
 
 /-! ## ٤. القسم: ج3 = SLGE -/
 

@@ -96,25 +96,14 @@ def test_result4_consistent() -> None:
 
 
 SLGE_ORDER = "ءهاعحغخقكجشيضلنرطدتزسصظذثفبمو"
+QAC = ROOT / "corpora/qac/quranic-corpus-morphology-0.4.txt.gz"
 
 
-def slge_cell(ch: str, s: int) -> int:
-    # `SLGE.Ladder.cellEnc c s = mixEnc 1 4 c 0 s = (c·1 + 0)·4 + s`، باليد.
-    return (SLGE_ORDER.index(ch) * 1 + 0) * 4 + s
-
-
-def test_slge_cells_by_hand() -> None:
+def test_slge_text_match() -> None:
+    # مطابقةُ نصّ لا استقلال: السلسلةُ منقولةٌ من تعليق `SLGE/Ladder.lean` وتُكتب هنا ثانيةً.
     assert len(SLGE_ORDER) == len(set(SLGE_ORDER)) == 29
-    assert [slge_cell(c, 0) for c in "كتب"] == [32, 72, 104]
+    assert [(SLGE_ORDER.index(c) * 1 + 0) * 4 + 0 for c in "كتب"] == [32, 72, 104]
     assert "[32, 72, 104]" in LEAN and SLGE_ORDER in LEAN
-    # الصيغةُ المغلقة للاقتران كما في SLGE.Core.
-    assert all((u + r) * (u + r + 1) // 2 + r == sum(range(u + r + 1)) + r
-               for u in range(30) for r in range(30))
-
-
-def slge_kind(ind: bool, tim: bool) -> str:
-    a, b = ind and not tim, ind              # SLGE.Cat.roles
-    return "ism" if a else ("fil" if b else "harf")   # SLGE.Cat.kindOf
 
 
 def j3_qism(istiqlal: bool, zaman: bool) -> str:
@@ -124,17 +113,43 @@ def j3_qism(istiqlal: bool, zaman: bool) -> str:
     return "fil" if zaman else "ism"
 
 
-def test_j3_eq_slge_by_hand() -> None:
+def test_j3_eq_slge_text() -> None:
+    # مرآةُ نصّ `roles` و`kindOf` كما نُقلا. وطفرةُ `roles` في Lean في الجلسة (ADR ١٠٩).
     for ind in (False, True):
         for tim in (False, True):
-            assert slge_kind(ind, tim) == j3_qism(ind, tim)
-    # MUTANT_ROLES_SWAP: ‎roles = (ind, ind && !tim)‎ يجعل الفعلَ اسمًا.
-    assert any((("ism" if ind else ("fil" if ind and not tim else "harf")) != j3_qism(ind, tim))
-               for ind in (False, True) for tim in (False, True))
+            a, b = ind and not tim, ind
+            assert ("ism" if a else ("fil" if b else "harf")) == j3_qism(ind, tim)
+    assert "def roles (ind tim : Bool) : Bool × Bool := (ind && !tim, ind)" in LEAN
+
+
+def test_qac_lamma_tags() -> None:
+    # وسومُ «لمّا» في QAC المختوم بصورها الثلاث: ظرفٌ 156، ونفيٌ 7، واستثناءٌ 2 (165).
+    tags: dict[str, int] = {}
+    for ln in gzip.decompress(QAC.read_bytes()).decode("utf-8").splitlines():
+        p = ln.split("\t")
+        if len(p) >= 3 and p[1] in ("lam~aA", "lam~aA^", "l~am~aA"):
+            tags[p[2]] = tags.get(p[2], 0) + 1
+    assert tags == {"T": 156, "NEG": 7, "EXP": 2}
+    # ومجتمعُ الأداة 164 منها، وحرفُه 9 = النفيُ والاستثناء.
+    a, b = R4["lamma_A"], R4["lamma_B"]
+    assert a["lamma"] + b["lamma"] == 164
+    assert a["by_qism"].get("2", 0) + b["by_qism"].get("2", 0) == tags["NEG"] + tags["EXP"]
+
+
+def test_j3_lamma_not_defined() -> None:
+    import re
+    j = sealed(J3, J3_SHA)
+    bare = re.compile(r"(?<![\u0621-\u064a])لما(?![\u0621-\u064a])")
+    assert sum(len(bare.findall(ln)) for ln in j) == 132
+    assert "فلمّا كانت دلالة الألفاظ" in j[363 - 1]
+    dfn = re.compile(r"(أما|وأما) لما|لما (حرف|ظرف)|معنى لما")
+    assert not any(dfn.search(ln) for ln in j)
 
 
 def test_lean_text() -> None:
-    for name in ("slgeOrder_eq_makharij", "cell_slge_eq_makharij", "word_slge", "pair_slge",
-                 "encS_injective", "nPair_injective", "tarjama_n", "tarjama_aks",
+    import re
+    for name in ("slgeOrder_eq_makharij", "cell_slge_eq_makharij_all", "cell_slge_eq_makharij",
+                 "word_slge", "pair_slge", "encS_injective", "slgeF_eq", "slgeF_injective",
+                 "nSlge_injective", "nSlge_iff_n", "nPair_injective", "tarjama_n",
                  "wahda_tusqit_rutba", "j3_eq_slge", "la_rabia", "muayyan_j3", "shawahid"):
-        assert f"theorem {name}" in LEAN, name
+        assert re.search(rf"theorem {name}\b(?!_)", LEAN), name
