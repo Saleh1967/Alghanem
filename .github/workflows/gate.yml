@@ -38,6 +38,9 @@ jobs:
           lake build 2>&1 | tee build.log
           if grep -n "warning" build.log; then echo "::error::تحذيرٌ في البناء"; exit 1; fi
 
+      - name: every registered Lean mutant is killed (constitution art. 19, ADR 111)
+        run: python3 ../../tools/gen_tafrat.py --check
+
       - name: no sorry, no native_decide, standard axioms only
         run: |
           set -euo pipefail
@@ -244,6 +247,7 @@ jobs:
           python tools/gen_naql.py --check
           python tools/gen_tashkil.py --check
           python tools/gen_qism_khanat.py --check
+          python tools/gen_protocol.py --check
       - name: guard — no reader or writer outside the gate
         run: python -c "from gate.guard import breaches; b = breaches(); print(b or 'لا خرق'); raise SystemExit(1 if b else 0)"
       - name: conformance, gate, guard (fast)
