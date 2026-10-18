@@ -621,6 +621,8 @@ def compute2() -> dict[str, Any]:
 PREREG3 = ROOT / "docs" / "qism-khanat" / "PREREG-3.md"
 RESULT3 = ROOT / "docs" / "qism-khanat" / "result-3.json"
 MASHKUL = ROOT / "corpora" / "awamil" / "awamil-mashkul.tsv"
+MASHKUL2 = ROOT / "corpora" / "awamil" / "awamil-mashkul-2.tsv"
+"""الجدولُ الموقَّع بتفويض المالك (`owner-mashkul.json`، ADR ١١٠)."""
 
 Row3 = tuple[int, Atoms, Atoms | None, int, int, bool, int | None, str]
 """(السورة، الذرّات، ذرّاتُ السابق، n، القسم، أقرأها recover، n السابق، نصُّ الرمز)."""
@@ -646,10 +648,12 @@ def variants(m: str) -> list[str]:
     return out
 
 
-def mashkul_rows() -> tuple[list[tuple[str, str, frozenset[int]]], Counter[str]]:
+def mashkul_rows(
+    path: Path = MASHKUL,
+) -> tuple[list[tuple[str, str, frozenset[int]]], Counter[str]]:
     rows = []
     refused: Counter[str] = Counter()
-    for ln in MASHKUL.read_text(encoding="utf-8").splitlines()[1:]:
+    for ln in path.read_text(encoding="utf-8").splitlines()[1:]:
         amil, athar, m = ln.split("\t")
         if not m:
             refused["NO_MASHKUL"] += 1
@@ -1012,12 +1016,105 @@ def compute4() -> dict[str, Any]:
     }
 
 
+# ═══ التسجيلُ الخامس (`docs/qism-khanat/PREREG-5.md`، ADR ١١٠) ═══
+
+PREREG5 = ROOT / "docs" / "qism-khanat" / "PREREG-5.md"
+RESULT5 = ROOT / "docs" / "qism-khanat" / "result-5.json"
+
+
+def compute5() -> dict[str, Any]:
+    rows = population(rec=True, full=True, nxt=True)[0]
+    a = [r for r in rows if r[0] % 2 == 1]
+    b = [r for r in rows if r[0] % 2 == 0]
+    mrows, mref = mashkul_rows(MASHKUL2)
+    rs = roots()
+    ts, _ = mudari_templates2()
+    pre_n = {r[7]: strip_prefix(r[7]) for r in rows}
+    r1 = json.loads(RESULT.read_text(encoding="utf-8"))
+    r2 = json.loads(RESULT2.read_text(encoding="utf-8"))
+    r3 = json.loads(RESULT3.read_text(encoding="utf-8"))
+    r4 = json.loads(RESULT4.read_text(encoding="utf-8"))
+    s2 = signs2()
+    d0: dict[str, Sign2] = {n: ((lambda r, n=n: SIGNS[n][0](r[1], r[2])), SIGNS[n][1])
+                            for n in r1["kept"]}
+    d0.update({n: s2[n] for n in r2["kept_new"]})
+
+    def select(new: dict[str, Sign2]) -> tuple[dict[str, Any], list[str]]:
+        sel: dict[str, Any] = {}
+        kept: list[str] = []
+        for name, (fn, keep) in new.items():
+            f = m = 0
+            for r in a:
+                if fn(r):
+                    f += 1
+                    m += r[4] not in keep
+            k = keep_rule(f, m)
+            if f:
+                sel[name] = {"fires_A": f, "misfires_A": m, "kept": k}
+            if k:
+                kept.append(name)
+        return sel, kept
+
+    new1: dict[str, Sign2] = {}
+    for at in sorted({at for _n, at, _s in mrows}):
+        for q in ALL:
+            new1[f"AMIL_OWN_N_{at}_{q}"] = (
+                lambda r, at=at, q=q: amil_own_n(at, r[3], pre_n[r[7]], mrows) == q, frozenset({q}))
+            new1[f"AMIL_NEXT_N_{at}_{q}"] = (
+                lambda r, at=at, q=q: amil_next_n(at, r[6], mrows) == q, frozenset({q}))
+    sel1, kept1 = select(new1)
+    d1 = {**d0, **{n: new1[n] for n in kept1}}
+    d1s = {k: v for k, v in d1.items() if not (k.startswith("AMIL_") and "_N_" not in k)}
+    lamma = next(ns for nm, at, ns in mrows if nm == "لما" and at == "JAZM_FIL")
+
+    def is_lamma(r: Any) -> bool:
+        return r[3] in lamma or pre_n[r[7]] in lamma
+
+    lsigns: dict[str, Sign2] = {
+        "LAMMA_MUDARI": (lambda r: is_lamma(r) and r[8] is not None
+                         and mudari_wazn2(r[8], ts, rs, "ءتين"),
+                         frozenset({HARF})),
+        "LAMMA_MADI_HARF": (lambda r: is_lamma(r) and r[9], frozenset({HARF})),
+        "LAMMA_MADI_ISM": (lambda r: is_lamma(r) and r[9], frozenset({ISM})),
+    }
+    sel3, kept3 = select(lsigns)
+    d3 = {**d1s, **{n: lsigns[n] for n in kept3}}
+    e1, _c1 = evaluate(d1, b)
+    e1s, c1s = evaluate(d1s, b)
+    e3, c3 = evaluate(d3, b)
+    e3["violations_vs_D1_sub"] = sum(
+        1 for x, y in zip(c1s, c3, strict=True) if not set(y) <= set(x))
+    e3["licensed"] = (bool(e3["muayyan"]) and e3["sahih"] * 100 >= 99 * e3["muayyan"]
+                      and e3["violations_vs_D1_sub"] == 0)
+    old = set(r3["kept_D1"])
+    return {
+        "prereg_sha256": hashlib.sha256(PREREG5.read_bytes()).hexdigest(),
+        "mashkul_sha256": hashlib.sha256(MASHKUL2.read_bytes()).hexdigest(),
+        "n_B": len(b), "mashkul_refused": dict(sorted(mref.items())),
+        "mashkul_rows_in_domain": sum(1 for _n, _a, ns in mrows if ns),
+        "selection_D1": sel1, "kept_D1": kept1,
+        "kept_D1_added": sorted(set(kept1) - old), "kept_D1_removed": sorted(old - set(kept1)),
+        "selection_lamma": sel3, "kept_lamma": kept3,
+        "D1": e1, "D1_sub": e1s, "D3": e3,
+        "D3_v1": {k: r4["D3"][k] for k in ("muayyan", "sahih", "wrong")},
+        "D3_delta_muayyan": e3["muayyan"] - r4["D3"]["muayyan"],
+        "D3_delta_wrong": e3["wrong"] - r4["D3"]["wrong"],
+        "H1": e3["licensed"],
+        "H2": e3["muayyan"] >= r4["D3"]["muayyan"],
+        "H3": set(kept1) != old,
+    }
+
+
 def main(argv: list[str]) -> int:
     out = render(compute())
     out2 = render(compute2())
     out3 = render(compute3())
     out4 = render(compute4())
+    out5 = render(compute5())
     if "--check" in argv:
+        if not RESULT5.exists() or RESULT5.read_text(encoding="utf-8") != out5:
+            sys.stderr.write("QISM_KHANAT_RESULT_5_DRIFTED\n")
+            return 1
         if not RESULT4.exists() or RESULT4.read_text(encoding="utf-8") != out4:
             sys.stderr.write("QISM_KHANAT_RESULT_4_DRIFTED\n")
             return 1
@@ -1030,13 +1127,14 @@ def main(argv: list[str]) -> int:
         if not RESULT2.exists() or RESULT2.read_text(encoding="utf-8") != out2:
             sys.stderr.write("QISM_KHANAT_RESULT_2_DRIFTED\n")
             return 1
-        sys.stdout.write("قياساتُ القسم من الخانات الأربعة مطابقة\n")
+        sys.stdout.write("قياساتُ القسم من الخانات الخمسة مطابقة\n")
         return 0
     RESULT.write_text(out, encoding="utf-8")
     RESULT2.write_text(out2, encoding="utf-8")
     RESULT3.write_text(out3, encoding="utf-8")
     RESULT4.write_text(out4, encoding="utf-8")
-    sys.stdout.write(out4)
+    RESULT5.write_text(out5, encoding="utf-8")
+    sys.stdout.write(out5)
     return 0
 
 
