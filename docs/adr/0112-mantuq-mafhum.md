@@ -9,7 +9,7 @@
 
 عرضتُ المهمّة ٢ في آخر تقرير STEP-0002، فقال المالك (2026-10-18 21:35 بتوقيت عمّان): «موافق انت خبير رياضيات وخبير
 برمجة نفذ المهمة ٢ وفق افضل الممارسات». وأرقامُ المهامّ (٢، ٣، ٤، ٧) من خطّة البنّاء التي عُرضت على المالك في الجلسة
-ووافق عليها (20:29)، وهي غيرُ مودَعةٍ في المستودع (`PLAN_NOT_DEPOSITED`).
+ووافق عليها (20:29)، وهي غيرُ مودَعةٍ في المستودع (`PLAN_NOT_DEPOSITED`) — أُودعت بلفظها في STEP-0004 (`docs/protocol/khitta.md`).
 
 ## القرار
 
@@ -98,6 +98,8 @@
 * `MANTUQB_NOT_LINKED_TO_DALALAT`: المنطوقُ غيرُ مربوطٍ بـ`Dalalat.dalala`.
 * `MANI_ORDER_DECLARED`: ترتيبُ الموانع تعيينُ البنّاء.
 * `MUDAA_PAIRING_IS_INPUT`: قرنُ الشهادة بمفهومها مُدخَل.
-* `PLAN_NOT_DEPOSITED`: خطّةُ المهامّ غيرُ مودَعة.
+* `PLAN_NOT_DEPOSITED`: خطّةُ المهامّ غيرُ مودَعة — سُدّ في STEP-0004 (`docs/protocol/khitta.md` بلفظها وبصمتها).
+* `HAML_NOT_LINKED`: الجسرُ لا يقوم على `Haqaiq.haml`، وكانت الخطّة تشترطه للمهمّة ٢.
+* `AWAMIL_NOT_LINKED`: ولا يقوم على `Awamil` (آلةُ الشرط والغاية من جدول العوامل)، وكانت الخطّة تشترطه للمهمّة ٢؛ وموضعُه المهمّة ٤.
 * `CHAIN_NOT_WRITTEN` (المهمّة ٣)، `TARJIH_NOT_WRITTEN` (المهمّة ٧).
-* `BRIDGE_NOT_IN_GATE`: الجسرُ في Lean لا في `gate`.
+* `BRIDGE_NOT_IN_GATE`: الجسرُ في Lean لا في `gate`. — سُدّ في ADR ١١٣ (`gate.mantuq` مطابَقٌ لجدول `mantuq.csv`) إلى `MANTUQ_TABLE_FINITE_DOMAIN` و`GATE_MANTUQ_NOT_IN_CHAIN` و`MANTUQ_REFUSALS_NOT_REGISTERED`.

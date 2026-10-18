@@ -17,6 +17,9 @@ import A116
 * `hadd-join`: لكلّ زوجٍ (أولى بطول ‎1 … 3‎، ثانيةٌ بطول ‎1 … 2‎) من ثلاثة حواملَ (ا ل ج) × أربع
   حالات (‎1,884 × 156 = 293,904‎ سطرًا): الذرّاتُ، ثمّ `Hadd.strictB` على الموصول و`Hadd.strictJoinB`،
   ليُطابَق بـ`gate.licence.strict_joined` سطرًا سطرًا.
+* `mantuq`: الجسرُ من المنطوق إلى المفهوم (`MantuqMafhum`، ADR ١١٢): `naw` على الصفات الستّ عشرة، و`mukhalafa`
+  على ثمانية قيودٍ × الأغلب × المعطِّل، والرتبةُ بمساريها على مودَعاتٍ صغيرة بالطرق والأنواع كلّها، وتركيبُ الرتبة على مخرج
+  الجسر بمعنيين (178 سطرًا)، ليُطابَق بـ`gate.mantuq`.
 * `syllables`: لكلّ سلسلةِ أنواعٍ بطول ‎1 … 11‎ (265,719 سلسلة) تقطيعُها بـ`Stages.parse`
   أو `none`، ثمّ `binOK` و`continueB` و`pauseB` من `Ternary`، ليُطابَق ذلك كلُّه
   بـ`mabni_stages.syllabify` و`ternary_licence` سلسلةً سلسلة.
@@ -399,6 +402,54 @@ def main (args : List String) : IO Unit := do
     for a in [Stages.K.cv, .v, .c] do
       for b in [Stages.K.cv, .v, .c] do
         IO.println s!"{nm a},{nm b},{Nizam.waslK a b},{Nizam.waqfK a b}"
+  | ["mantuq"] =>
+    -- الجسرُ من المنطوق إلى المفهوم الأصوليّ (`MantuqMafhum`، ADR ١١٢)، ليُطابَق بـ`gate.mantuq` سطرًا سطرًا:
+    -- `naw` على الصفات الستّ عشرة، و`mukhalafa` على ثمانية قيودٍ × الأغلب × المعطِّل، والرتبةُ بمساريها على مودَعاتٍ صغيرة.
+    let b : Bool → String := fun x => if x then "1" else "0"
+    let nn : MantuqMafhum.Naw → String
+      | .iqtida => "iqtida" | .tanbih => "tanbih" | .ishara => "ishara"
+      | .muwafaqa => "muwafaqa" | .mukhalafa => "mukhalafa"
+    let mn : MantuqMafhum.Mani → String
+      | .adadBilaSiyaq => "adadBilaSiyaq" | .ism => "ism" | .wasfGhayrMufhim => "wasfGhayrMufhim"
+      | .innama => "innama" | .aghlab => "aghlab" | .muattil => "muattil"
+    let hn : MantuqMafhum.Hukm → String
+      | .yumal m => s!"yumal:{nn m.naw}" | .layumal x => s!"layumal:{mn x}"
+    let bs := [false, true]
+    for s1 in bs do for s2 in bs do for s3 in bs do for s4 in bs do
+      IO.println s!"naw,{b s1}{b s2}{b s3}{b s4},{nn (MantuqMafhum.naw ⟨s1, s2, s3, s4⟩)}"
+    let qs : List (String × MantuqMafhum.Qayd) :=
+      [("sifa1", .sifa MantuqMafhum.saima), ("sifa0", .sifa Dalalat.sail), ("shart", .shart), ("ghaya", .ghaya),
+       ("adad1", .adad true), ("adad0", .adad false), ("ism", .ism), ("innama", .innama)]
+    for (qn, q) in qs do for a in bs do for u in bs do
+      IO.println s!"mukhalafa,{qn},{b a}{b u},{hn (MantuqMafhum.mukhalafa q a u "م")}"
+    let m1 : MantuqMafhum.MafhumUsul := ⟨.mukhalafa, "أ"⟩
+    let m2 : MantuqMafhum.MafhumUsul := ⟨.mukhalafa, "ب"⟩
+    let sh : Naql.Tariq → Naql.Mawda → Naql.Shahada := fun t w => ⟨"م", "م", t, w, 0⟩
+    let tn : Naql.Tariq → String | .naql => "naql" | .hiss => "hiss" | .aql => "aql"
+    let wn : Naql.Mawda → String
+      | .waqiMakhtum => "waqiMakhtum" | .wad => "wad" | .malumat => "malumat" | .marjaMahjub => "marjaMahjub"
+    let kinds : List Naql.Shahada :=
+      [Naql.Tariq.naql, .hiss, .aql].flatMap fun t => [Naql.Mawda.waqiMakhtum, .wad, .malumat, .marjaMahjub].map (sh t)
+    let one : Naql.Shahada → String := fun s => s!"{tn s.tariq}-{wn s.mawda}"
+    let dn : MantuqMafhum.Mudaa → String := fun d =>
+      if d.isEmpty then "none" else "|".intercalate (d.map fun (m, s) => s!"{if m = m1 then "m1" else "m2"}:{one s}")
+    let ds : List MantuqMafhum.Mudaa :=
+      [[]] ++ kinds.map (fun s => [(m1, s)]) ++ [[(m2, sh .hiss .waqiMakhtum)]] ++
+      [[(m1, sh .naql .wad), (m1, sh .naql .marjaMahjub)], [(m1, sh .naql .wad), (m1, sh .naql .malumat)],
+       [(m1, sh .hiss .waqiMakhtum), (m1, sh .hiss .wad)]]
+    let hs : List (String × MantuqMafhum.Hukm) := [("yumal:m1", .yumal m1), ("layumal:ism", .layumal .ism)]
+    let rn : Iqtiran.Martaba → String
+      | .minHaythuHiya => "minHaythuHiya" | .maluma => "maluma" | .mafhum => "mafhum"
+    let nh : Naql.Hukm → String
+      | .minHaythuHiya => "minHaythuHiya"
+      | .maluma ws => s!"maluma:{ws.length}"
+      | .mafhum r _ ss => s!"mafhum:{match r with | .qati => "qati" | .zanni => "zanni"}:{ss.length + 1}"
+    for d in ds do for (hnm, h) in hs do
+      IO.println s!"martaba,{dn d},{hnm},{rn (MantuqMafhum.martabaWaqi d h)},{nh (MantuqMafhum.hukmNaql (Naql.jisrWad (fun _ => false)) d h)},{nh (MantuqMafhum.hukmNaql (Naql.jisrWad (fun _ => true)) d h)},{nh (MantuqMafhum.hukmNaql Naql.jisrWaqi d h)}"
+    -- التركيب: رتبةُ ما يُخرجه الجسرُ نفسُه (`martabaWaqi d (mukhalafa q a u mana)`) بمعنيين، فالمفهومُ في الحكم لا مُدخَلٌ منفصل.
+    for (qn, q) in qs do for (a, u) in [(false, false), (true, false)] do for mana in ["أ", "ب"] do
+      for d in [[], [(m1, sh .hiss .waqiMakhtum)], [(m2, sh .hiss .waqiMakhtum)]] do
+        IO.println s!"tarkib,{qn},{b a}{b u},{mana},{dn d},{rn (MantuqMafhum.martabaWaqi d (MantuqMafhum.mukhalafa q a u mana))}"
   | ["amr"] =>
     -- المضارعُ والأمر (`Mudari`، ADR ٢٤) على الجذور المرجعيّة × الأوزان التسعة × الأبواب: رقمُ الجذر، الوزن، الباب،
     -- المضارعُ رفعًا بالياء، والمجزومُ بالتاء، والأمر — ذرّاتٍ، وأأقام قانونُ الابتداء همزةَ وصل.

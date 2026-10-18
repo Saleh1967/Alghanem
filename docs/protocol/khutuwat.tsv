@@ -2,3 +2,5 @@ khutwa	tarikh	unwan	adr	fuhus
 STEP-0001	2026-10-18	البروتوكولُ بابًا رابعًا في الدستور، وسجلُّ طفرات Lean في CI، وتوثيقُ كلّ خطوة	111	lake_build;audit;tafrat;ruff;mypy;registry;glossary;refusals;guard;claims;pytest_fast;protocol
 STEP-0002	2026-10-18	تصحيحُ STEP-0001 بمراجعة المراجع المستقلّ: فحصُ الخطوة في CI بالتاريخ الكامل، والطفرةُ على ملفٍّ سليم، ونصوصُ الباب الرابع بلفظها	111	lake_build;audit;tafrat;ruff;mypy;registry;glossary;refusals;guard;claims;pytest_fast;gen:qism_khanat;murajii;protocol
 STEP-0003	2026-10-18	الجسرُ من المنطوق إلى المفهوم الأصوليّ (المهمّة ٢)، والمادّة ٢٤ بمبرهناتها	112	lake_build;audit;tafrat;ruff;mypy;registry;glossary;refusals;guard;claims;pytest_fast;murajii;protocol
+STEP-0004	2026-10-18	إيداعُ خطّة المهامّ بلفظها وبصمتها وحالُ كلّ مهمّة (سدُّ PLAN_NOT_DEPOSITED)	112	lake_build;audit;tafrat;ruff;mypy;registry;glossary;refusals;guard;claims;pytest_fast;murajii;protocol
+STEP-0005	2026-10-18	الجسرُ في gate: مرآةُ gate.mantuq مطابَقةٌ لجدول Lean mantuq.csv (سدُّ BRIDGE_NOT_IN_GATE)	113	lake_build;audit;tafrat;ruff;mypy;registry;glossary;refusals;guard;claims;pytest_fast;murajii;protocol
