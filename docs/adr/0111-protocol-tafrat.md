@@ -102,7 +102,7 @@
   CLAUDE.md 42 موضعًا (عدُّ `grep -c` للأسطر)، كلُّها من قبل الباب الرابع، وهي بحكم م١٩ `MUTANT_NOT_IN_CI` حتى تُنقل.
 * `SIBLINGS_POINTER_ONLY`: في hamil والدساتير الثلاثة إحالةٌ إلى هذا الباب، لا أدواتُه.
 * `ALGEBRA_SLGE_NOT_WRITTEN`: لا وصولَ للكتابة إليهما في هذه الجلسة.
-* `MAFHUM_USUL_TYPE_NOT_WRITTEN`: الفصلُ في Lean ينتظر وحدة الجسر (المهمّة ٢).
+* `MAFHUM_USUL_TYPE_NOT_WRITTEN`: الفصلُ في Lean ينتظر وحدة الجسر (المهمّة ٢). — سُدّ في ADR ١١٢ إلى `MUDAA_PAIRING_IS_INPUT`.
 * `GEN_CHECK_SLGE_NOT_RUN`: فحوصُ `--check` التي تقرأ `../slge` لم تُشغَّل (لا وصول)، فحُذف `gen_check` من صفّ STEP-0001 في
   STEP-0002 تصحيحًا معلنًا للسجلّ؛ والمولِّداتُ تُسمّى `gen:<x>` كلٌّ باسمه.
 * `ELLIPSIS_CHECK_NOT_WRITTEN`: فحصُ «…» آليًّا (المرفق س42) لم يُكتب.

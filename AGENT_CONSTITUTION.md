@@ -275,8 +275,11 @@
 بمساريهما — `A116.Iqtiran.Martaba.mafhum` (شاهدُ واقع)، و`A116.Naql.Hukm.mafhum` يُسمّى بجسره: `jisrWaqi` (الحسُّ من الواقع
 المختوم) أو `jisrWad` (شهادةُ وضعٍ كافية). والمستخرَجُ بالجسر
 `MafhumUsul` رتبتُه «معلومة» حتى يحمل أحدَ الشاهدين، ولا يرتفع إلى «مفهوم» بغيره. ولا يُكتب `Martaba.mafhum` بلا مساره.
-- **الفحص:** مبرهنةٌ مع أوّل وحدةٍ للجسر: لا رتبةَ «مفهوم» من `MafhumUsul` بلا شاهد، بطفرةٍ في `docs/tafrat.json`. وإلى ذلك
-  الحين بالقراءة.
+- **الفحص:** `A116.MantuqMafhum` (ADR ١١٢)، والشاهدُ فيه مودَعٌ مقرونٌ بالمفهوم الذي يشهد له لا دالّةٌ حرّة:
+  `la_martaba_bila_shahid` (مسارُ الواقع) و`la_mafhum_wad_bila_shahid` و`la_mafhum_waqi_bila_shahid` (مسارا `Naql`) لكلّ مودَعٍ
+  وحكم؛ و`shahid_ghayrih_la_yarfa`: بلا شهادةٍ له بعينه فرتبتُه «معلومة» (و`bila_mudaa` تعريفيّةٌ على المودَع الفارغ)؛ وطفرتاها في `docs/tafrat.json`
+  (`MUTANT_RANK_WITHOUT_WITNESS`، `MUTANT_SHAHADA_NOT_ABOUT_M`). وحدُّه: أنّ المودَع صادقٌ في قرنه، وأنّ لا وحدةَ غيرَها تُطلق
+  «مفهوم» على `MafhumUsul`: بالقراءة.
 - **المخالفة:** `MAFHUM_USUL_AS_MARTABA`.
 
 ---
