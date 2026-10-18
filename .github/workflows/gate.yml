@@ -172,6 +172,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # gen_protocol يقرأ أبَ الإيداع ورأسَ الفرع؛ والضحلُ بلا أب (STEP-0002)
       - uses: actions/download-artifact@v4
         with:
           name: lean-syllables

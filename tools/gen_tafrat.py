@@ -1,4 +1,4 @@
-"""سجلُّ طفرات Lean (ADR ١١١، الدستور م٢٠).
+"""سجلُّ طفرات Lean (ADR ١١١، الدستور م١٩).
 
 كلُّ طفرةٍ في `docs/tafrat.json` نصٌّ `min` يقع **مرّةً واحدة** في ملفّ Lean، ويُبدَّل بـ`ila`. فيجب أن تُسقط
 النواةُ الملفّ (`lake env lean`)، ثمّ يُعاد الملفّ بايتًا بايتًا. فالطفرةُ في CI لا «في الجلسة».
@@ -7,7 +7,8 @@
     python tools/gen_tafrat.py --check NAME ...   # بعضُها
 
 الرفضُ باسمه: `MUTANT_TEXT_NOT_UNIQUE`، `MUTANT_SURVIVED`، `MUTANT_FILE_NOT_RESTORED`،
-`MUTANT_NAME_DUPLICATED`.
+`MUTANT_NAME_DUPLICATED`، `MUTANT_ROW_MALFORMED`، `MUTANT_ADR_MISSING`، `MUTANT_BASELINE_BROKEN`،
+`LAKE_NOT_FOUND`، `MUTANT_TIMEOUT`. والملفُّ السليمُ يُبنى أوّلًا، فلا تُعدّ طفرةٌ مقتولةً على ملفٍّ معطوبٍ أصلًا.
 """
 
 from __future__ import annotations
@@ -49,16 +50,24 @@ def validate(rows: list[dict[str, Any]]) -> list[str]:
     return errs
 
 
-def kills(r: dict[str, Any], lake: str) -> tuple[bool, bool]:
-    """(قتلتها النواة، أُعيد الملفّ بعينه)."""
+def lean(lake: str, milaf: str) -> int | None:
+    """رمزُ خروج `lake env lean`، أو None إن جاوز المهلة (`MUTANT_TIMEOUT`)."""
+    try:
+        return subprocess.run([lake, "env", "lean", milaf], cwd=LEAN, capture_output=True,
+                              text=True, timeout=1800).returncode
+    except subprocess.TimeoutExpired:
+        return None
+
+
+def kills(r: dict[str, Any], lake: str) -> tuple[bool | None, bool]:
+    """(قتلتها النواة، أُعيد الملفّ بعينه)؛ والأوّلُ None إن جاوز المهلة."""
     path = LEAN / r["milaf"]
     raw = path.read_bytes()
     sha = hashlib.sha256(raw).hexdigest()
     try:
         path.write_bytes(raw.decode("utf-8").replace(r["min"], r["ila"], 1).encode("utf-8"))
-        p = subprocess.run([lake, "env", "lean", r["milaf"]], cwd=LEAN, capture_output=True,
-                           text=True, timeout=1800)
-        killed = p.returncode != 0
+        rc = lean(lake, r["milaf"])
+        killed = None if rc is None else rc != 0
     finally:
         path.write_bytes(raw)
     return killed, hashlib.sha256(path.read_bytes()).hexdigest() == sha
@@ -75,13 +84,23 @@ def main(argv: list[str]) -> int:
         sys.stderr.write("LAKE_NOT_FOUND\n")
         return 1
     if not errs:
+        for milaf in sorted({r["milaf"] for r in rows}):
+            rc = lean(lake, milaf)
+            if rc is None:
+                errs.append(f"MUTANT_TIMEOUT {milaf}")
+            elif rc != 0:
+                errs.append(f"MUTANT_BASELINE_BROKEN {milaf}")
+    if not errs:
         for r in rows:
             killed, restored = kills(r, lake)
             if not restored:
                 errs.append(f"MUTANT_FILE_NOT_RESTORED {r['ism']}")
-            if not killed:
+            if killed is None:
+                errs.append(f"MUTANT_TIMEOUT {r['ism']}")
+            elif not killed:
                 errs.append(f"MUTANT_SURVIVED {r['ism']}")
-            sys.stdout.write(f"{'قُتلت' if killed else 'نجت'} {r['ism']} ({r['milaf']})\n")
+            hal = "جاوزت المهلة" if killed is None else ("قُتلت" if killed else "نجت")
+            sys.stdout.write(f"{hal} {r['ism']} ({r['milaf']})\n")
     for e in errs:
         sys.stderr.write(e + "\n")
     if errs:
