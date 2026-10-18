@@ -161,7 +161,8 @@ def population() -> tuple[list[Row], Counter[str]]:
     lines = Q.CORPUS.read_text(encoding="utf-8").splitlines()
     assert len(keys) == len(lines), "QAC_VERSE_COUNT"
     rows: list[Row] = []
-    excl: Counter[str] = Counter()
+    names = ("ALIGN_RESIDUAL", "YA_JOINED", "REFUSED", "NO_STEM")
+    excl: Counter[str] = Counter({k: 0 for k in names})
     for (s, v), line in zip(keys, lines, strict=True):
         raw = line.split(" ")
         gs, _ = Q.groups(s, v, raw)

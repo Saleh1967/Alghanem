@@ -3,7 +3,8 @@
 * المراسي أسطرٌ بأعيانها في «الكتاب» المختوم (JK006989) وشرح ابن عقيل المختوم.
 * العلاماتُ على ذرّاتٍ مكتوبةٍ هنا باليد، وعلى ذرّات البوّابة لكلماتٍ بأعيانها.
 * قاعدةُ الاختيار والأعدادُ المشتقّة في `result.json` تُعاد بحسابٍ مستقلّ من أعداده الخام.
-* وفي `-m slow`: السقفُ وقارئُ العلامات بشيفرةٍ مستقلّة على المجتمع نفسه، وأعدادُ شاهدَي Lean.
+* وفي `-m slow`: التجميعُ (القارئ، والسقفان، والحافظ) بشيفرةٍ مستقلّة على مجتمع الأداة
+  وأنماطها، وأعدادُ شاهدَي Lean.
 """
 
 from __future__ import annotations
@@ -118,7 +119,7 @@ def test_result_consistent() -> None:
     assert k["wrong"] == k["muayyan"] - k["sahih"]
     assert k["wrong"] <= sum(k["misfires_B"].values())        # `khata_qari_le` عددًا
     assert abs(k["muayyan_share"] - k["muayyan"] / n) < 1e-6
-    # `damj_la_yazid`: نسيانُ الرتبة لا يرفع السقف.
+    # نسيانُ الرتبة لا يرفع السقف (مفحوصٌ على هذه النتيجة؛ `damj_la_yazid` لدمجٍ واحد).
     assert r["ceiling_atoms"] <= r["ceiling_integer"] <= n
     assert r["H1_precision_ge_99"] == (100 * k["sahih"] >= 99 * k["muayyan"])
     # MUTANT_THRESHOLD_5: عتبةٌ أرخى تُبقي «AL» فيتغيّر المُبقى.
@@ -162,5 +163,17 @@ def test_independent_recount() -> None:
     for _s, w, _p, _n, q in b:
         per[w][q] += 1
     assert sum(max(c.values()) for c in per.values()) == RESULT["ceiling_atoms"]
+    pn: dict[int, Counter[int]] = defaultdict(Counter)
+    for _s, _w, _p, n, q in b:
+        pn[n][q] += 1
+    assert sum(max(c.values()) for c in pn.values()) == RESULT["ceiling_integer"]
+    learn: dict[tuple[str, ...], Counter[int]] = defaultdict(Counter)
+    for s, w, _p, _n, q in rows:
+        if s % 2:
+            learn[w][q] += 1
+    hk = sum(w in learn for _s, w, _p, _n, _q in b)
+    sk = sum(w in learn and max((0, 1, 2), key=lambda x: (learn[w][x], -x)) == q
+             for _s, w, _p, _n, q in b)
+    assert (hk, sk) == (RESULT["M"]["hakim"], RESULT["M"]["sahih"])
     assert per[("مَ", "اْ")] == Counter({0: 437, 2: 115})
     assert per[("ءَ", "عْ", "لَ", "مُ")] == Counter({0: 30, 1: 5})

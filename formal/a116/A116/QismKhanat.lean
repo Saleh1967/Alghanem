@@ -9,7 +9,7 @@ import A116.Itar
 بتّاتٍ لكلّ خانة (`Iqtiran.saa_tamma`)، على وجهين:
 
 * **العلامة** نمطٌ على ذرّات الكلمة وذرّات ما قبلها، معه ما تُبقيه من الأقسام. وأصلُها من النصّ المختوم:
-  * الكتاب س109–110: «فالكلم اسم وفعل وحرف جاء لمعنى»، والحرفُ «نحو ثم وسوف».
+  * الكتاب س103: «فالكلم اسم وفعل وحرف جاء لمعنى»، والحرفُ س109–110: «فنحو ثم وسوف».
   * س123–125: «وليس في الأسماء جزم … والنصب في المضارع من الأفعال لن يفعل … والجزم لم يفعل».
   * س129–130: «سيفعل ذلك وسوف يفعل … كما تلحق الألف واللام الأسماء».
   * شرح ابن عقيل س262–286 (علاماتُ الفعل والحرف).
@@ -234,7 +234,8 @@ theorem saqf_lt_jumla (T : List (α × Adad)) (x : α) (c : Adad) (hm : (x, c) �
     · exact Nat.add_lt_add_of_lt_of_le hc (hle T)
     · exact Nat.add_lt_add_of_le_of_lt (max3_le_sum3 _) (ih hm)
 
-/-- **المزجُ لا يرفع السقف**: صورتان تُنسى بينهما بتّةٌ أو رتبةٌ فتصيران صورةً واحدة. -/
+/-- **المزجُ لا يرفع السقف**، لدمجٍ واحدٍ في رأس الجدول: صورتان تُنسى بينهما بتّةٌ أو رتبةٌ فتصيران صورةً واحدة.
+وتعميمُه إلى كلّ دالّةِ مفاتيح (تكرارُ الدمج وثباتُ السقف تحت التبديل) غيرُ مكتوب: `DAMJ_GENERAL_NOT_PROVEN`. -/
 theorem damj_la_yazid (x y : α) (c d : Adad) (T : List (α × Adad)) :
     saqf ((x, c.add d) :: T) ≤ saqf ((x, c) :: (y, d) :: T) := by
   simp only [saqf, List.map_cons, List.sum_cons, Adad.max3, Adad.add]
@@ -286,8 +287,9 @@ def cell (s : String) : List Cell := Itar.k s
 
 def takhir (w : List Cell) (n : Nat) : List Cell := w.drop (w.length - n)
 
-/-- `TA_SAKINA` (ابن عقيل س265–266): «تاء التأنيث الساكنة … فاحترزنا بالساكنة عن اللاحقة للأسماء فإنها تكون متحركة
-بحركة الإعراب». وفي الخانات تاءُ الاسم المربوطة خانةٌ متحرّكة، فتُفرَّق ببتّتَي الحالة وحدَهما. -/
+/-- `TA_SAKINA` (ابن عقيل س265–267): «تاء التأنيث الساكنة … فاحترزنا بالساكنة عن اللاحقة للأسماء فإنها تكون متحركة
+بحركة الإعراب». وفي الخانات تاءُ الاسم المربوطة خانةٌ متحرّكة: «رَحْمَةُ» (تُ) تُفرَّق من «قَالَتْ» (تْ) ببتّتَي الحالة
+وحدَهما، و«رَحْمَةً» آخرُها نْ فلا تُطلقها لاختلاف الحرف. والخاناتُ هنا مكتوبةٌ باليد، لا ذرّاتُ بوّابة. -/
 def taSakina : Alama (List Cell × Option (List Cell)) where
   tutabiq x := match takhir x.1 2 with
     | [a, b] => a.haraka == .fatha && b == (cell "تْ").headD a
@@ -304,9 +306,14 @@ def harfLafz : Alama (List Cell × Option (List Cell)) where
   tutabiq x := [cell "ثُمْمَ", cell "سَوْفَ", cell "هَلْ", cell "فِيْ", cell "لَمْ"].contains x.1
   tubqi := [.harf]
 
-/-- `AL` (الكتاب س130: «كما تلحق الألف واللام الأسماء للمعرفة»)، ولم تُبقِها قاعدةُ الاختيار. -/
+def alAt (r : List Cell) : Bool :=
+  (r.take 2 == cell "ءَلْ" && 2 < r.length) || (r.take 1 == cell "لْ" && 1 < r.length)
+
+/-- `AL` بنمط التسجيل بعينه (الكتاب س130: «كما تلحق الألف واللام الأسماء للمعرفة»): بعد خانةٍ اختياريّةٍ من
+{وَ، فَ، بِ، كَ، لِ}، «ءَلْ» أو «لْ» ثمّ خانةٌ على الأقلّ. ولم تُبقِها قاعدةُ الاختيار. -/
 def al : Alama (List Cell × Option (List Cell)) where
-  tutabiq x := x.1.take 2 == cell "ءَلْ"
+  tutabiq x := alAt x.1 ||
+    ([cell "وَ", cell "فَ", cell "بِ", cell "كَ", cell "لِ"].contains (x.1.take 1) && alAt (x.1.drop 1))
   tubqi := [.ism]
 
 def alamat : List (Alama (List Cell × Option (List Cell))) := [taSakina, badLam, harfLafz]
@@ -325,11 +332,14 @@ theorem shawahid :
     qiraa alamat (cell "يَكُنْ", none) = .muhtamal [.ism, .fil, .harf] := by
   decide +kernel
 
-/-- **أداةُ التعريف في الخانات تشتبه بلام الأصل**: «أَلَّا» (حرف) و«أَلْقَى» (فعل) أوّلُهما «ءَلْ» كـ«الْكِتَابُ».
-فالعلامةُ كما في النصّ صادقةٌ لفظًا، وفي الخانات أخطأت (85 من 4,804 على A)، وهذا `WASL_LAM_ARTICLE_VS_ROOT`. -/
+/-- **أداةُ التعريف في الخانات تشتبه بغيرها**: «أَلَّا» و«كَلَّا» (حرفان)، و«فَلْيَتَوَكَّلْ» (لامُ الأمر)، و«أَلْقَى»
+(لامُ الأصل) تُطلقها كـ«الْكِتَابُ» و«وَالْكِتَابِ». وأخطاؤها على A بهذا النمط 85 من 4,804: 39 حرفًا، و27 لامَ أمر،
+و19 لامَ أصل. -/
 theorem al_yashtabih :
-    al.tutabiq (cell "ءَلْلَاْ", none) = true ∧ al.tutabiq (cell "ءَلْقَاْ", none) = true ∧
-    al.tutabiq (cell "ءَلْكِتَاْبُ", none) = true := by
+    al.tutabiq (cell "ءَلْلَاْ", none) = true ∧ al.tutabiq (cell "كَلْلَاْ", none) = true ∧
+    al.tutabiq (cell "فَلْيَتَوَكْكَلْ", none) = true ∧ al.tutabiq (cell "ءَلْقَاْ", none) = true ∧
+    al.tutabiq (cell "ءَلْكِتَاْبُ", none) = true ∧ al.tutabiq (cell "وَلْكِتَاْبِ", none) = true ∧
+    al.tutabiq (cell "كِتَاْبُ", none) = false := by
   decide +kernel
 
 /-- **«مَا» و«أَعْلَمُ» بقسمين في المرجع** (على B: «مَا» 437 اسمًا و115 حرفًا، «أَعْلَمُ» 30 اسمًا و5 أفعال)، فالسقفُ

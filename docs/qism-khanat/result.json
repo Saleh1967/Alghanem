@@ -44,6 +44,7 @@
  "ceiling_integer_share": 0.992586,
  "excluded": {
   "ALIGN_RESIDUAL": 3,
+  "NO_STEM": 0,
   "REFUSED": 38,
   "YA_JOINED": 364
  },
