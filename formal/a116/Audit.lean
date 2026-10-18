@@ -1587,3 +1587,4 @@ import A116
 #print axioms A116.QiraaMadlul.hukmQ_bila_qiraa
 #print axioms A116.QiraaMadlul.tarkhis_qiraa
 #print axioms A116.QiraaMadlul.shawahid
+#print axioms A116.QiraaMadlul.qarina_la_tazid

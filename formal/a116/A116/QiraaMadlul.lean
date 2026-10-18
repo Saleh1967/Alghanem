@@ -6,7 +6,8 @@ import A116.Wad
 # قراءةُ المدلول من الكلمة: الصيغةُ من القالب، والجنسُ من الوضع، بلا تخمين (ADR ١٠٥)
 
 أمرُ المالك (2026-10-18): «الخطوةَ التالية الأقربَ إلى الهدف فهي البند الأوّل: دالّةٌ تقرأ الجنس والصيغة من الكلمة عبر
-الوضع والقرينة». كان المدلولُ في `Itar` مُعطًى (`ITAR_MADLUL_FIELDS_ARE_INPUT`)؛ وهنا يُقرأ من الخانات.
+الوضع والقرينة». كان المدلولُ في `Itar` مُعطًى كلُّه (`ITAR_MADLUL_FIELDS_ARE_INPUT`)؛ وهنا تُقرأ الصيغةُ والجنسُ والدورُ
+من الخانات على معجمٍ شاهد. وما زال مُدخَلًا: قسمُ الكلمة، والاستعمال، وجدولُ المصدر، وربطُ الجذر بالجنس.
 
 ## ما يُبنى
 
@@ -16,7 +17,8 @@ import A116.Wad
      وس5691: «زنة مفعول»).
    * الجذورُ من الوضع وحدَه، فلا جذرَ من خارجه (`sigha_wad`).
    * آخرُ الاسم موضعُ الإعراب فلا تُطابَق حركتُه (`akhirEq`؛ `Amil`: أثرُ العامل في الموضع الأخير وحدَه)، وآخرُ الماضي
-     مبنيٌّ على الفتح فيُطابَق (س368: «الماضي وهو مبني على الفتح»؛ والمجهولُ س3329: «فأول الفعل اضممن … بالآخر اكسر»).
+     مبنيٌّ على الفتح فيُطابَق (س368: «الماضي وهو مبني على الفتح»؛ والمجهولُ س3329: «فأول الفعل اضممن … بالآخر اكسر»،
+     وواوُ فُوعِلَ س9355: «وفي ضارب ضورب»).
 ٢. **الجنسُ** (`jins`): الكلمةُ بلا أداة التعريف هيكلًا، فجذورُها من الوضع (هياكلُ ابن فارس)، فالجنسُ صفٌّ مودَعٌ لجذرها.
 ٣. **المصدرُ** (`masdarOf`): جذرُ الفعل ← مصدرٌ من مصادر `Khawass`، وما ليس فيها لا شرطَ له مودَعًا.
 ٤. **القراءةُ** (`qiraa`): فعلٌ ثمّ اسم. الدورُ من نوع الفعل لا مُدخَل: المعلومُ فاعلُه، والمجهولُ نائبُه مفعولٌ في
@@ -27,8 +29,11 @@ import A116.Wad
 
 ## ما ليس هنا
 
-* القرينةُ قيودٌ تقطع المرشَّحين (`Iqtiran.Qayd`)، ولا قيدَ مودَعًا يُضاف هنا: قرينةُ المخصَّص بالعضويّة قيسَت فلم تُفِد
-  (`QARINA_NOT_INFORMATIVE`، ADR ٥٩). فالمحتمَلُ يبقى محتمَلًا.
+* القرينةُ موضعُها قيودٌ في المعجم تقطع مرشَّحي الصيغة والجنس (`Mujam.qSigha`، `Mujam.qJins`؛ `qarina_la_tazid`). ولا
+  قيدَ مودَعًا فيها بعد: قرينةُ المخصَّص بالعضويّة قيسَت فلم تُفِد (ADR ٥٩). فالمحتمَلُ يبقى محتمَلًا
+  (`QARINA_NOT_DEPOSITED_HERE`).
+* وربطُ جذر الجنس بالجنس (ءنس ← الإنسان) معلَن: `ajnas.tsv` بلا عمود جذر (`JIDHR_JINS_MAP_DECLARED`)، فكلُّ ما جذرُه
+  ءنس يُقرأ جنسُه «الإنسان».
 * الاستعمالُ (الوضعُ الأوّل والعلاقة) مُدخَل (`ALAQA_IS_INPUT`).
 * أداةُ التعريف تُقشَّر بقاعدةٍ معلَنة (`RULE_AL_DECLARED`)، والقوالبُ ثمانيةٌ للثلاثيّ الصحيح وحدَه (`QAWALIB_EIGHT`).
 * جذرُ الفعل إلى مصدره جدولٌ معلَن، ثلاثةُ صفوفٍ في الشاهد (`MASDAR_TABLE_DECLARED`).
@@ -147,6 +152,8 @@ structure Mujam where
   hayakil : List (String × List String)
   ajnas : List (String × String)
   masdarOf : String → Option Masdar
+  qSigha : List (Iqtiran.Qayd (String × Naw)) := []
+  qJins : List (Iqtiran.Qayd String) := []
 
 /-- المقروء: المدلولُ والقابليّةُ التي يشترطها مصدرُه. -/
 structure Maqru where
@@ -157,7 +164,8 @@ structure Maqru where
 /-- **القراءة**: فعلٌ ثمّ اسم؛ والصيغةُ معيَّنة، والجنسُ معيَّن، والمصدرُ مودَع، والدورُ من النوع — وإلّا لا قراءة. -/
 def qiraa (mj : Mujam) (i : Istimal) : Tarkib → Option Maqru
   | [f, s] =>
-    match sigha mj.qawalib mj.judhur f.cells, jins mj.hayakil mj.ajnas s.cells with
+    match Iqtiran.mantuq (Iqtiran.iqtiran (sighaCands mj.qawalib mj.judhur f.cells) mj.qSigha),
+      Iqtiran.mantuq (Iqtiran.iqtiran (jinsCands mj.hayakil mj.ajnas s.cells) mj.qJins) with
     | .muayyan (r, n), .muayyan g =>
       match mj.masdarOf r, dawrOf n with
       | some m, some d => some ⟨⟨g, Khawass.sighaLink n d, i⟩, m, d⟩
@@ -165,11 +173,11 @@ def qiraa (mj : Mujam) (i : Istimal) : Tarkib → Option Maqru
     | _, _ => none
   | _ => none
 
-/-- **لا تخمين**: ما قُرئ فصيغتُه وجنسُه معيَّنان بمرشَّحٍ واحد. -/
+/-- **لا تخمين**: ما قُرئ فصيغتُه وجنسُه معيَّنان بمرشَّحٍ واحدٍ بعد القرائن. -/
 theorem qiraa_la_takhmin (mj : Mujam) (i : Istimal) (f s : Kalima) (q : Maqru)
     (h : qiraa mj i [f, s] = some q) :
-    (∃ x, sighaCands mj.qawalib mj.judhur f.cells = [x]) ∧
-      jinsCands mj.hayakil mj.ajnas s.cells = [q.madlul.jins] := by
+    (∃ x, Iqtiran.iqtiran (sighaCands mj.qawalib mj.judhur f.cells) mj.qSigha = [x]) ∧
+      Iqtiran.iqtiran (jinsCands mj.hayakil mj.ajnas s.cells) mj.qJins = [q.madlul.jins] := by
   simp only [qiraa] at h
   split at h
   · rename_i r n g h1 h2
@@ -179,6 +187,12 @@ theorem qiraa_la_takhmin (mj : Mujam) (i : Istimal) (f s : Kalima) (q : Maqru)
       exact ⟨⟨(r, n), Iqtiran.la_takhmin _ _ h1⟩, Iqtiran.la_takhmin _ _ h2⟩
     · cases h
   · cases h
+
+/-- **القرينةُ تقطع ولا تزيد**: كلُّ جنسٍ يبقى بعد قرينةٍ مضافة كان مرشَّحًا من الوضع قبلها. -/
+theorem qarina_la_tazid (mj : Mujam) (r : Iqtiran.Qayd String) (w : List Cell) (g : String)
+    (h : g ∈ Iqtiran.iqtiran (jinsCands mj.hayakil mj.ajnas w) (mj.qJins ++ [r])) :
+    g ∈ Iqtiran.iqtiran (jinsCands mj.hayakil mj.ajnas w) mj.qJins :=
+  Iqtiran.qayd_la_yazid _ _ r g h
 
 /-- القابليّة: شرطُ المصدر في دوره على عقل الجنس الموروث من شجرة المخصَّص. -/
 def qabiliyya (m : Masdar) (d : Dawr) (j : String) : Option Bool :=
@@ -247,11 +261,14 @@ def kw (s : String) (q : Qism) : Kalima := ⟨Itar.k s, q⟩
 
 def hQ (t : Tarkib) := hukmQ mujamShahid HukmMuwahhad.tashbih .wasl t
 
-/-- **الشواهد** (`decide +kernel`): المدلولُ مقروءٌ من الخانات، لا مُدخَل.
+def hQbila (t : Tarkib) := hukmQ mujamShahid HukmMuwahhad.bilaAlaqa .wasl t
+
+/-- **الشواهد** (`decide +kernel`): الصيغةُ والجنسُ والدورُ مقروءةٌ من الخانات على المعجم الشاهد، والقسمُ والاستعمالُ
+مُعطَيان. و«مجاز» مشروطٌ بالاستعمال المُعطى (`HukmMuwahhad.tashbih`)، فبلا علاقةٍ مودَعة (`bilaAlaqa`) «لا حكم».
 * «نَطَقَ»: صيغتُه فعلٌ معلوم من «نطق»؛ و«خُوطِبَ»: مجهولٌ من «خطب»؛ و«نَاطِقُ»: اسمُ فاعل (والتنوينُ ليس من الخانات)؛ و«نَطَقُ» بضمّ الآخر ليس ماضيًا.
 * ودورُ «الْكَلْبُ» بعد «خُوطِبَ» مفعولٌ مقروءٌ من نوع الفعل.
 * «الْإِنْسَانُ» جنسُه الإنسان، و«الْكَلْبُ» الكلب، و«الْغُولُ» لا حكم.
-* «نَطَقَ الْإِنْسَانُ» حقيقة؛ «خُوطِبَ الْكَلْبُ» مجازٌ بالتشبيه؛ «نَطَقَ الْحَجَرُ» مجاز.
+* «نَطَقَ الْإِنْسَانُ» حقيقة؛ «خُوطِبَ الْكَلْبُ» مجازٌ بالتشبيه؛ «نَطَقَ الْحَجَرُ» مجازٌ بالتشبيه، و«لا حكم» بلا علاقة.
 * «نَبَحَ الْكَلْبُ» «لا حكم»: لا مصدرَ مودَعًا لـ«نبح»، فلا يُدّعى مجاز.
 * «نَطَقَ الْغُولُ» «لا حكم»: لا جنس. والترخيصُ قائمٌ في الحالين. -/
 theorem shawahid :
@@ -267,6 +284,7 @@ theorem shawahid :
     hQ [kw "نَطَقَ" .fil, kw "لْءِنْسَاْنُ" .ism] = ⟨true, some .haqiqa⟩ ∧
     hQ [kw "خُوْطِبَ" .fil, kw "لْكَلْبُ" .ism] = ⟨true, some .majaz⟩ ∧
     hQ [kw "نَطَقَ" .fil, kw "لْحَجَرُ" .ism] = ⟨true, some .majaz⟩ ∧
+    hQbila [kw "نَطَقَ" .fil, kw "لْحَجَرُ" .ism] = ⟨true, some .laHukm⟩ ∧
     hQ [kw "نَبَحَ" .fil, kw "لْكَلْبُ" .ism] = ⟨true, some .laHukm⟩ ∧
     hQ [kw "نَطَقَ" .fil, kw "لْغُوْلُ" .ism] = ⟨true, some .laHukm⟩ := by
   decide +kernel

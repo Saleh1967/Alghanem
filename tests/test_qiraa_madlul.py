@@ -3,9 +3,9 @@
 * صفوفُ المعجم الشاهد في Lean من مودَعاتٍ مختومة: هياكلُ ابن فارس، وأجناسُ المخصَّص.
 * المراسي أسطرٌ بأعيانها في شرح ابن عقيل المختوم.
 * القوالبُ صفوفُ جدول الأوزان المودَع بأعيانها.
-* وقارئُ الصيغة مكتوبٌ هنا مستقلًّا، ويُقارَن بـ`gate.recover` على كلمات المصحف كلِّها: كلُّ ماضٍ ثلاثيٍّ صحيح
-  (المجرّدُ بأبوابه الثلاثة وفاعَلَ، معلومًا ومجهولًا) يقرؤه `gate.recover` يقرؤه القارئ،
-  ولا يقرأ القارئُ فعلًا يخالفه فيه.
+* ومرآةُ بايثون لقارئ الماضي: قوالبُ الماضي الستّة وحدَها، مشتقّةً من صفوف `wazn.csv`،
+  بلا اسم فاعلٍ ولا مفعولٍ ولا جنس. تُقارَن بـ`gate.recover` على صور المصحف المتمايزة،
+  كلُّ صورةٍ معزولةٌ بلا سياق، وعلى جذور ابن فارس كلِّها. هذا فحصٌ للمرآة لا لـLean.
 """
 
 from __future__ import annotations
@@ -21,18 +21,13 @@ ROOT = Path(__file__).resolve().parents[1]
 LEAN = (ROOT / "formal/a116/A116/QiraaMadlul.lean").read_text(encoding="utf-8")
 F, D, K, S = "َ", "ُ", "ِ", "ْ"
 
-# القوالبُ باليد: (النوع، الخانات)؛ «1 2 3» مواضعُ الأصول بحالاتها.
-QAWALIB = [
-    ("filMaloom", ["1" + F, "2" + F, "3" + F]),
-    ("filMaloom", ["1" + F, "2" + K, "3" + F]),
-    ("filMaloom", ["1" + F, "2" + D, "3" + F]),
-    ("filMaloom", ["1" + F, "ا" + S, "2" + F, "3" + F]),
-    ("filMajhul", ["1" + D, "2" + K, "3" + F]),
-    ("filMajhul", ["1" + D, "و" + S, "2" + K, "3" + F]),
-]
-# صفوفُ `wazn.csv` التي يأخذها Lean، بأجسامها كما يتوقّعها هذا الاختبار.
+# صفوفُ `wazn.csv` التي يأخذها Lean، بأجسامها كما يتوقّعها هذا الاختبار (باليد)، ونوعُ كلٍّ منها.
 WAZN_ROWS = {"0": "1َ 2َ 3َ", "1": "1َ 2ِ 3َ", "2": "1َ 2ُ 3َ", "4": "1َ اْ 2َ 3َ",
              "11": "1ُ 2ِ 3َ", "13": "1ُ وْ 2ِ 3َ"}
+NAW = {"0": "filMaloom", "1": "filMaloom", "2": "filMaloom", "4": "filMaloom",
+       "11": "filMajhul", "13": "filMajhul"}
+# قوالبُ المرآة مشتقّةٌ من الصفوف نفسها، فلا تفترق عنها.
+QAWALIB = [(NAW[i], body.split()) for i, body in WAZN_ROWS.items()]
 
 
 def skeletons() -> dict[str, set[str]]:
@@ -47,7 +42,9 @@ def skeletons() -> dict[str, set[str]]:
 def lean_pairs(field: str) -> list[tuple[str, str]]:
     m = re.search(field + r" := \[(.*?)\]\n", LEAN, re.S)
     assert m, field
-    return re.findall(r'\("([^"]+)", \[?"([^"]+)"\]?\)', m.group(1))
+    rows = re.findall(r'\("([^"]+)", \[?"([^"\]]+)"\]?\)', m.group(1))
+    assert len(rows) == m.group(1).count("("), (field, "ROW_NOT_PARSED")
+    return rows
 
 
 def read(atoms: tuple[str, ...], roots: set[str], free_last: bool = False) -> set[tuple[str, str]]:
@@ -76,7 +73,7 @@ def test_deposit_rows() -> None:
     sk = skeletons()
     roots = set().union(*sk.values())
     hayakil = lean_pairs("hayakil")
-    assert hayakil
+    assert len(hayakil) == 4
     for key, root in hayakil:
         assert sk.get(key) == {root}, (key, sk.get(key))
     ajnas = (ROOT / "corpora/mukhassas/ajnas.tsv").read_text(encoding="utf-8").splitlines()
@@ -88,6 +85,13 @@ def test_deposit_rows() -> None:
     judhur = re.search(r"judhur := \[(.*?)\]", LEAN).group(1)  # type: ignore[union-attr]
     for r in re.findall(r'"([^"]+)"', judhur):
         assert r in roots, r
+    # جدولُ المصدر: جذورُه من المقاييس، ومصادرُه من مصادر `Khawass`.
+    khawass = (ROOT / "formal/a116/A116/Khawass.lean").read_text(encoding="utf-8")
+    masadir = re.search(r"inductive Masdar \| (.*)\n", khawass).group(1).split(" | ")  # type: ignore[union-attr]
+    rows = re.findall(r'\| "([^"]+)" => some \.(\w+)', LEAN)
+    assert len(rows) == 3
+    for r, m in rows:
+        assert r in roots and m in masadir, (r, m)
 
 
 def test_anchors() -> None:
@@ -109,12 +113,12 @@ def test_templates_from_wazn() -> None:
     assert "[0, 1, 2, 4]" in LEAN and "[11, 13]" in LEAN
 
 
-def gate_vs_reader(free_last: bool = False) -> tuple[int, int, int]:
+def gate_vs_reader(free_last: bool = False) -> tuple[int, int, int, int]:
     roots = set().union(*skeletons().values())
     words: set[str] = set()
     for ln in (ROOT / "corpora/quran-simple-enhanced.txt").read_text(encoding="utf-8").splitlines():
         words.update(ln.split())
-    covered = missed = contradicted = 0
+    covered = missed = contradicted = extra = 0
     for w in sorted(words):
         cert = gate.enter(w.encode("utf-8"))
         if isinstance(cert, Refusal):
@@ -133,12 +137,14 @@ def gate_vs_reader(free_last: bool = False) -> tuple[int, int, int]:
         gate_any = {r for r, k, f, p in readings if k in ("PAST", "PASSIVE")}
         if mine and gate_any and not {r for r, _ in mine} & gate_any:
             contradicted += 1
-    return covered, missed, contradicted
+        if mine and not gate_any:
+            extra += 1
+    return covered, missed, contradicted, extra
 
 
 def test_reader_vs_gate() -> None:
-    covered, missed, contradicted = gate_vs_reader()
-    assert (covered, missed, contradicted) == (128, 0, 0)
+    # (يقرؤه الطرفان، يقرؤه gate ويفوت المرآة، بجذرٍ مخالف، تقرؤه المرآةُ فعلًا ولا ماضيَ له في gate)
+    base = gate_vs_reader()
+    assert base == (128, 0, 0, 11)
     # MUTANT_VERB_LAST_FREE: آخرُ الماضي غيرُ مطابَق فيُقرأ «آدَمُ» وأمثالُه أفعالًا.
-    mut = read(tuple(gate.enter("آدَمُ".encode()).atoms), {"ءدم"}, free_last=True)  # type: ignore[union-attr]
-    assert mut and not read(tuple(gate.enter("آدَمُ".encode()).atoms), {"ءدم"})  # type: ignore[union-attr]
+    assert gate_vs_reader(free_last=True) != base
