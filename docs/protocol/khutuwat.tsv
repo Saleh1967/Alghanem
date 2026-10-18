@@ -4,3 +4,4 @@ STEP-0002	2026-10-18	تصحيحُ STEP-0001 بمراجعة المراجع الم
 STEP-0003	2026-10-18	الجسرُ من المنطوق إلى المفهوم الأصوليّ (المهمّة ٢)، والمادّة ٢٤ بمبرهناتها	112	lake_build;audit;tafrat;ruff;mypy;registry;glossary;refusals;guard;claims;pytest_fast;murajii;protocol
 STEP-0004	2026-10-18	إيداعُ خطّة المهامّ بلفظها وبصمتها وحالُ كلّ مهمّة (سدُّ PLAN_NOT_DEPOSITED)	112	lake_build;audit;tafrat;ruff;mypy;registry;glossary;refusals;guard;claims;pytest_fast;murajii;protocol
 STEP-0005	2026-10-18	الجسرُ في gate: مرآةُ gate.mantuq مطابَقةٌ لجدول Lean mantuq.csv (سدُّ BRIDGE_NOT_IN_GATE)	113	lake_build;audit;tafrat;ruff;mypy;registry;glossary;refusals;guard;claims;pytest_fast;murajii;protocol
+STEP-0006	2026-10-19	السلسلةُ كلمةً كلمة (المهمّة ٣): Silsila وSilsilaQurra في Lean، والمرآةُ والجدول، والتسجيلُ المسبق والأداة قبل القياس	114	lake_build;audit;tafrat;ruff;mypy;registry;glossary;refusals;guard;claims;pytest_fast;murajii;protocol

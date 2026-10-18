@@ -51,7 +51,7 @@
 |---|---|---|---|
 | 1 | منجَزةٌ جزئيًّا | STEP-0001، STEP-0002 (ADR ١١١) | «ويُسدّ «في الجلسة» في الوحدات الأخيرة»: جزئيّ — `TAFRAT_COVERS_RECENT_ONLY` |
 | 2 | منجَزةٌ جزئيًّا | STEP-0003 (ADR ١١٢) | «بأنواعه الخمسة»: للمخالفة وحدَها دالّةُ إخراج (`NAW_PRODUCERS_MUKHALAFA_ONLY`)، ومصدرُ الاقتضاء والموافقة غيرُ مرمَّز (`TARKIB_SOURCE_NOT_ENCODED`)؛ «ويقوم على `Haqaiq.haml` و`Dalalat` و`Awamil`»: على `Dalalat.mufhim` وحدَه، والمنطوقُ غيرُ مربوطٍ بـ`Dalalat.dalala` (`MANTUQB_NOT_LINKED_TO_DALALAT`)، ولا قيامَ على `Haqaiq.haml` (`HAML_NOT_LINKED`) ولا على `Awamil` (`AWAMIL_NOT_LINKED`)؛ «وشروطُ التنبيه وآلةُ الشرط والغاية مبنيّةٌ لا معلنة»: مُدخَلة (`MAFHUM_FEATURES_ARE_INPUT`، `QAYD_IS_INPUT`)؛ و«المبرهنة `MafhumUsul ≠ Martaba.mafhum`» بُنيت بصيغة الرتبة (`la_martaba_bila_shahid` ونظائرها) لا بمساواةٍ بين نوعين |
-| 3 | لم تبدأ (مُجدولةٌ بعد STEP-0005، تعيينُ البنّاء) | — | — |
+| 3 | جاريةٌ: التسجيلُ قبل النتيجة | STEP-0006 (ADR ١١٤) | «ونسبةُ المعيَّن في كلّ طبقة مقيسةٌ بتسجيلٍ مسبق»: النتيجةُ في STEP-0007، وهي أعدادٌ لا دقّة (`SILSILA_NO_HELD_OUT_REFERENCE`)؛ و«الصيغة والجنس ← الحمل»: الجنسُ كتابُ ما ذُكر فيه الجذر (`MENTIONED_NOT_POSITED`)، والحملُ فوق الجنس (`HAML_ABOVE_JINS_DECLARED`) |
 | 4 | لم تبدأ (مُجدولةٌ بعد المهمّة ٣، تعيينُ البنّاء) | — | — |
 | 5 | لم تبدأ | — | — |
 | 6 | لم تبدأ | — | — |

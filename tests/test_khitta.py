@@ -2,7 +2,8 @@
 
 * النصُّ بين العلامتين بصمتُه بصمةُ القسم في سجلّ الجلسة الخام
   (حُسبت بأداةٍ في الجلسة؛ السجلُّ ليس في المستودع).
-* جدولُ الحال معلن؛ والمفحوصُ منه أنّ لكلّ مهمّةٍ صفًّا، وأنّ كلَّ دَينٍ يذكره موجودٌ باسمه في ADR ١١١ أو ١١٢.
+* جدولُ الحال معلن؛ والمفحوصُ منه أنّ لكلّ مهمّةٍ صفًّا، وأنّ كلَّ دَينٍ يذكره موجودٌ باسمه
+  في ADR ١١١ أو ١١٢ أو ١١٤.
 """
 
 from __future__ import annotations
@@ -42,7 +43,8 @@ def test_status_rows() -> None:
     for n in range(1, 8):
         assert f"\n| {n} |" in status, n
     adrs = "".join((ROOT / "docs" / "adr" / f).read_text(encoding="utf-8")
-                   for f in ("0111-protocol-tafrat.md", "0112-mantuq-mafhum.md"))
+                   for f in ("0111-protocol-tafrat.md", "0112-mantuq-mafhum.md",
+                             "0114-silsila.md"))
     debts = re.findall(r"`([A-Z][A-Z_]{5,})`", status)
     assert len(debts) >= 8
     for d in debts:

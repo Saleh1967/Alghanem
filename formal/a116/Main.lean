@@ -20,6 +20,9 @@ import A116
 * `mantuq`: الجسرُ من المنطوق إلى المفهوم (`MantuqMafhum`، ADR ١١٢): `naw` على الصفات الستّ عشرة، و`mukhalafa`
   على ثمانية قيودٍ × الأغلب × المعطِّل، والرتبةُ بمساريها على مودَعاتٍ صغيرة بالطرق والأنواع كلّها، وتركيبُ الرتبة على مخرج
   الجسر بمعنيين (178 سطرًا)، ليُطابَق بـ`gate.mantuq`.
+* `silsila`: السلسلةُ كلمةً كلمة (`Silsila`، ADR ١١٤): `khutwa` على كلمتين × ستّة أحكامٍ لما دون الطبقة × سبعة قرّاء
+  (84 سطرًا)، و`silsila` على الشاهد (ستّة أسطر)، وقارئا الجنس والحمل (`SilsilaQurra`) على المعجم الشاهد (عشرةُ أسطر
+  للجنس وسبعةٌ للحمل)، ليُطابَق بمرآة `tools/gen_silsila.py`.
 * `syllables`: لكلّ سلسلةِ أنواعٍ بطول ‎1 … 11‎ (265,719 سلسلة) تقطيعُها بـ`Stages.parse`
   أو `none`، ثمّ `binOK` و`continueB` و`pauseB` من `Ternary`، ليُطابَق ذلك كلُّه
   بـ`mabni_stages.syllabify` و`ternary_licence` سلسلةً سلسلة.
@@ -402,6 +405,37 @@ def main (args : List String) : IO Unit := do
     for a in [Stages.K.cv, .v, .c] do
       for b in [Stages.K.cv, .v, .c] do
         IO.println s!"{nm a},{nm b},{Nizam.waslK a b},{Nizam.waqfK a b}"
+  | ["silsila"] =>
+    -- السلسلةُ كلمةً كلمة (`Silsila`، ADR ١١٤)، ليُطابَق بمرآة `tools/gen_silsila.py` سطرًا سطرًا.
+    let duns : List Silsila.Hal :=
+      [.muayyan "d", .muhtamal ["d", "e"], .laHukm (.rafd "R"), .laHukm .dunaha, .laHukm .laQari,
+       .laHukm .kharij]
+    let qs : List (String × Option (String → Silsila.Hal → Silsila.Hal)) :=
+      [("none", none), ("m", some fun _ _ => .muayyan "v"), ("p", some fun _ _ => .muhtamal ["v", "u"]),
+       ("l", some fun _ _ => .laHukm (.rafd "Q")), ("k", some fun _ _ => .laHukm .kharij), ("echo", some fun _ d => d),
+       ("word", some fun w _ => if w = "x" then .muayyan w else .laHukm (.rafd "R"))]
+    for w in ["x", "y"] do for d in duns do for (qn, q) in qs do
+      IO.println s!"khutwa,{w},{Silsila.ramz d},{qn},{Silsila.ramz (Silsila.khutwa w d ⟨qn, q⟩)}"
+    let ws := ["كَتَبَ", "كتب"]
+    let out := Silsila.silsila [Silsila.shahadaMithal, Silsila.qismMithal, Silsila.jinsMithal] ws
+    for (w, hs) in ws.zip out do
+      for (k, h) in (List.range hs.length).zip hs do
+        IO.println s!"silsila,{w},{k},{Silsila.ramz h}"
+    -- قارئا الجنس والحمل (`SilsilaQurra`) على المعجم الشاهد: الهيكلُ والجذورُ والأجناس، ثمّ الحملُ على مفاتيحَ وقيود.
+    let nawR : Haqaiq.Naw → String
+      | .lughawiyya => "lughawiyya" | .shariyya => "shariyya"
+      | .urfiyya .amma => "urfiyya_amma" | .urfiyya .khassa => "urfiyya_khassa"
+    let pr : List (String × String) → String := fun ps => String.intercalate "|" (ps.map fun p => s!"{p.1}:{p.2}")
+    for w in ["ءَلْكَلْبُ", "ءَشْشَمْسُ", "لْكَلْبُ", "كَلْبُ", "عَيْنُ", "ءَلْعَيْنُ", "كَتَبَ", "ءَلْلَيْلُ", "ءَيْيَاْمِ", "شْشَمْسُ"] do
+      let rs := SilsilaQurra.judhurOf SilsilaQurra.hyMithal (Itar.k w)
+      IO.println s!"jins,{w},{QiraaMadlul.haykal (SilsilaQurra.tajrid (Itar.k w))},{String.intercalate "|" rs},{pr (SilsilaQurra.ajnasOf SilsilaQurra.ajMithal rs)}"
+    let hs : List (String × String × List String) :=
+      [("الصلاة", "صَ لَ اْ ت", ["صلو"]), ("الصلاة", "صَ لَ اْ ت", ["عين"]), ("الكلب", "كَ لْ ب", ["كلب"]),
+       ("الدابة", "كَ لْ ب", ["كلب"]), ("الرفع", "عَ يْ ن", ["عين", "عون"]), ("عين", "عَ يْ ن", []),
+       ("الكلب", "سَ مَ اْ ء", ["سمو"])]
+    for (l, key, rs) in hs do
+      let out := SilsilaQurra.hamlOf Haqaiq.naql SilsilaQurra.wadMithal l key rs
+      IO.println s!"haml,{l},{key},{String.intercalate "|" rs},{String.intercalate "|" (out.map fun x => s!"{x.1}:{nawR x.2}")}"
   | ["mantuq"] =>
     -- الجسرُ من المنطوق إلى المفهوم الأصوليّ (`MantuqMafhum`، ADR ١١٢)، ليُطابَق بـ`gate.mantuq` سطرًا سطرًا:
     -- `naw` على الصفات الستّ عشرة، و`mukhalafa` على ثمانية قيودٍ × الأغلب × المعطِّل، والرتبةُ بمساريها على مودَعاتٍ صغيرة.
