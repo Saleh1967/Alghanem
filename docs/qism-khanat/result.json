@@ -1,0 +1,113 @@
+{
+ "H1_precision_ge_99": true,
+ "H2_integer_above_atoms": true,
+ "H3_ceiling_below_100": true,
+ "K": {
+  "la_hukm": 0,
+  "misfires_B": {
+   "BAD_FI": 0,
+   "BAD_LAM_LAN_SAWFA": 0,
+   "HARF_LAFZ": 0,
+   "NUN_TAWKID": 0,
+   "TA_SAKINA": 0,
+   "YA_FAILA": 0
+  },
+  "muayyan": 1970,
+  "muayyan_share": 0.048046,
+  "muhtamal": 39032,
+  "precision": 1.0,
+  "precision_wilson": [
+   0.998054,
+   1.0
+  ],
+  "sahih": 1970,
+  "wrong": 0,
+  "wrong_le_sum_misfires": true
+ },
+ "M": {
+  "hakim": 32296,
+  "precision": 0.989565,
+  "precision_wilson": [
+   0.988397,
+   0.990617
+  ],
+  "sahih": 31959
+ },
+ "ambiguous_share": 0.0469,
+ "ceiling_atoms": 40690,
+ "ceiling_atoms_share": 0.992391,
+ "ceiling_atoms_wilson": [
+  0.991502,
+  0.993187
+ ],
+ "ceiling_integer": 40698,
+ "ceiling_integer_share": 0.992586,
+ "excluded": {
+  "ALIGN_RESIDUAL": 3,
+  "REFUSED": 38,
+  "YA_JOINED": 364
+ },
+ "kept": [
+  "TA_SAKINA",
+  "YA_FAILA",
+  "NUN_TAWKID",
+  "BAD_LAM_LAN_SAWFA",
+  "BAD_FI",
+  "HARF_LAFZ"
+ ],
+ "n_A": 35997,
+ "n_B": 41002,
+ "prereg_sha256": "7bd0043c3f8aafbf1af72e32aefa142be136c0d82bd818a0d4132fb8e96c4c0f",
+ "selection": {
+  "AL": {
+   "fires_A": 4804,
+   "kept": false,
+   "misfires_A": 85
+  },
+  "BAD_FI": {
+   "fires_A": 559,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "BAD_LAM_LAN_SAWFA": {
+   "fires_A": 99,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "HARF_LAFZ": {
+   "fires_A": 809,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "NUN_TAWKID": {
+   "fires_A": 65,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "SA": {
+   "fires_A": 73,
+   "kept": false,
+   "misfires_A": 2
+  },
+  "TANWIN": {
+   "fires_A": 5957,
+   "kept": false,
+   "misfires_A": 1508
+  },
+  "TA_FAIL": {
+   "fires_A": 186,
+   "kept": false,
+   "misfires_A": 50
+  },
+  "TA_SAKINA": {
+   "fires_A": 197,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "YA_FAILA": {
+   "fires_A": 1,
+   "kept": true,
+   "misfires_A": 0
+  }
+ }
+}

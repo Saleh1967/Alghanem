@@ -34,7 +34,7 @@ EXEMPT_FILES = ("tools/gen_registry.py", "tools/gen_glossary.py", "tools/gen_cla
                 "tools/gen_qarina.py", "tools/gen_trial_seals.py",
                 "tools/gen_kitab.py", "tools/gen_awamil.py", "tools/gen_fractal.py",
                 "tools/gen_fractal_tarkib.py", "tools/gen_nabhani.py", "tools/gen_sidq.py",
-                "tools/gen_naql.py", "tools/gen_tashkil.py")
+                "tools/gen_naql.py", "tools/gen_tashkil.py", "tools/gen_qism_khanat.py")
 IO_ATTRS = frozenset(
     {
         "read_text", "read_bytes", "write_text", "write_bytes", "open", "decode", "encode",
