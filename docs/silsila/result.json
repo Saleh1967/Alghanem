@@ -1,0 +1,89 @@
+{
+ "H1": true,
+ "H2": true,
+ "H3": true,
+ "H4": true,
+ "above_fall": 0,
+ "corpus_lines": 6236,
+ "d32_on_B_reproduced": {
+  "muayyan": 8842,
+  "sahih": 8838,
+  "signs": 16,
+  "wrong": 4
+ },
+ "funnel_violations": 0,
+ "haml_muayyan_by_narrator_count": {
+  "1": 901,
+  "2": 2275,
+  "3": 2072,
+  "4": 1280
+ },
+ "layers": {
+  "haml": {
+   "asbab": {
+    "dunaha": 50183,
+    "rafd:LA_WAD": 20824,
+    "rafd:WAD_KHARIJ_AL_JUDHUR": 287
+   },
+   "la_hukm": 71294,
+   "muayyan": 6528,
+   "muhtamal": 423
+  },
+  "jins": {
+   "asbab": {
+    "dunaha": 48452,
+    "rafd:LA_JINS_FI_ALMUKHASSAS": 1731
+   },
+   "la_hukm": 50183,
+   "muayyan": 649,
+   "muhtamal": 27413
+  },
+  "qism": {
+   "asbab": {
+    "dunaha": 38,
+    "rafd:QISM_TANAQUD": 19
+   },
+   "la_hukm": 57,
+   "muayyan": 16398,
+   "muhtamal": 61790
+  },
+  "shahada": {
+   "asbab": {
+    "rafd:INITIAL_SUKUN_WITHOUT_REPAIR": 3,
+    "rafd:NOT_CONTINUE_LICENSED_AFTER_REPAIR": 1,
+    "rafd:TANWIN_WITH_ANOTHER_HARAKA": 4,
+    "rafd:UNVOCALIZED_WORD_IS_NEVER_GUESSED": 30
+   },
+   "la_hukm": 38,
+   "muayyan": 78207,
+   "muhtamal": 0
+  },
+  "sigha": {
+   "asbab": {
+    "dunaha": 57,
+    "kharij": 8538,
+    "rafd:LA_JIDHR": 39857
+   },
+   "la_hukm": 48452,
+   "muayyan": 20819,
+   "muhtamal": 8974
+  }
+ },
+ "muayyan_share": {
+  "haml": 0.08343,
+  "jins": 0.008294,
+  "qism": 0.209572,
+  "shahada": 0.999514,
+  "sigha": 0.266075
+ },
+ "n_verdicts": 391225,
+ "n_words": 78245,
+ "prereg_sha256": "3cb5e3ebfc77d0a1bfa878f99bb3ddb94cae16693c58dfddac509dc07f3d212b",
+ "qism_even_surahs": {
+  "muayyan": 8848,
+  "muayyan_share": 0.212743,
+  "n": 41590
+ },
+ "verdict_stream_sha256": "09db71c9b4d3cfdbecaffaf56f604d90f875887e415581aef785d84356c34f5a",
+ "wiring_violations": 0
+}
