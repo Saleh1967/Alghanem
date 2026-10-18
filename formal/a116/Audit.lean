@@ -1641,3 +1641,17 @@ import A116
 #print axioms A116.QismDaraja.wahdat_nodup
 #print axioms A116.QismDaraja.muayyan_wahda
 #print axioms A116.QismDaraja.shahid_darajat
+#print axioms A116.WahdaMuqarana.slgeOrder_eq_makharij
+#print axioms A116.WahdaMuqarana.cell_slge_eq_makharij_all
+#print axioms A116.WahdaMuqarana.cell_slge_eq_makharij
+#print axioms A116.WahdaMuqarana.word_slge
+#print axioms A116.WahdaMuqarana.pair_slge
+#print axioms A116.WahdaMuqarana.encS_injective
+#print axioms A116.WahdaMuqarana.nPair_injective
+#print axioms A116.WahdaMuqarana.tarjama_n
+#print axioms A116.WahdaMuqarana.tarjama_aks
+#print axioms A116.WahdaMuqarana.wahda_tusqit_rutba
+#print axioms A116.WahdaMuqarana.j3_eq_slge
+#print axioms A116.WahdaMuqarana.la_rabia
+#print axioms A116.WahdaMuqarana.muayyan_j3
+#print axioms A116.WahdaMuqarana.shawahid

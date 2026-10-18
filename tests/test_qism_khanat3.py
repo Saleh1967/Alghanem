@@ -78,7 +78,7 @@ def test_mashkul_table() -> None:
 def test_mudari_templates2_by_hand() -> None:
     ts, skipped = G.mudari_templates2()
     assert (len(ts), skipped) == (R3["mudari_templates"], R3["mudari_templates_skipped"])
-    # «يَقَامُ»: قوم بابَ الفتح، الأوّلُ مقعدٌ والعينُ واوٌ ثابتة.
+    # صفُّ «قوم» الأوّل في `amr.csv` (بابُ الفتح، قالبٌ آليّ لا صيغةٌ مسموعة): الأوّلُ مقعدٌ والعينُ واوٌ ثابتة.
     assert ts[0] == ("َ", [("S0", "َ"), ("ا", "ْ"), ("S2", "*")], {1: "و"})
     rs = frozenset({"قول", "بيع", "علم", "دعو"})
     assert G.mudari_wazn2(("يَ", "قُ", "وْ", "لُ"), ts, rs, "ءتين")
@@ -117,20 +117,39 @@ def test_result3_consistent() -> None:
     # المفتاحُ الأدقّ لا يُنقص السقف (`tadqiq_la_yanqus`): الذرّاتُ دالّةٌ في n.
     assert c["atoms"] <= c["n"] and c["prev_atoms_atoms"] <= c["prev_n_n"] <= r["n_B"]
     assert r["H3"] and r["H2"] == (d[2]["muayyan"] > d[1]["muayyan"] and d[2]["licensed"])
-    # MUTANT_THRESHOLD_2: عتبةٌ أرخى تُبقي `MUDARI_YTN`.
-    assert "MUDARI_YTN" in kept(r["selection_D2"], 2) and "MUDARI_YTN" not in r["kept_D2"]
+    # المُبقى هو ما تقبله قاعدةُ الأداة نفسُها `keep_rule` على الأعداد الخام.
+    def tool_kept() -> list[str]:
+        return sorted(n for n, s in r["selection_D2"].items()
+                      if G.keep_rule(s["fires_A"], s["misfires_A"]))
+    assert tool_kept() == sorted(r["kept_D2"])
+    # MUTANT_THRESHOLD_2 على الأداة: عتبةٌ أرخى في `SELECT_PCT` تُبقي `MUDARI_YTN` فتنكسر المطابقة.
+    old = G.SELECT_PCT
+    try:
+        G.SELECT_PCT = 2
+        assert tool_kept() != sorted(r["kept_D2"])
+    finally:
+        G.SELECT_PCT = old
 
 
-def test_mutant_no_gemination() -> None:
-    # MUTANT_NO_GEMINATION: بلا تشديد الأوّل لا تُرى «لَّمْ» بعد إدغام ما قبلها.
-    def no_gem(m: str) -> list[str]:
-        out = [m]
-        if m.endswith("ْ"):
-            out += [m[:-1] + "ِ", m[:-1] + "َ"]
-        return out
+def test_variants_effect() -> None:
+    # البوّابةُ تطوي الشدّةَ الأولى: «لَّمْ» و«لَمْ» عددٌ واحد، فقاعدةُ التشديد بلا أثر (معلن في ADR ١٠٨).
     lam = "ل" + "\u064e" + "م" + "\u0652"
     gem = "ل" + "\u0651\u064e" + "م" + "\u0652"
-    assert gem in G.variants(lam) and gem not in no_gem(lam)
+    assert gate.enter(lam.encode()).integer == gate.enter(gem.encode()).integer  # type: ignore[union-attr]
+    base, _ = G.mashkul_rows()
+    old = G.variants
+    try:
+        # MUTANT_NO_ILTIQA على الأداة: بلا صورتَي التقاء الساكنين تنقص أعدادُ 12 صفًّا.
+        G.variants = lambda m: [m]
+        mut, _ = G.mashkul_rows()
+        assert sum(x[2] != y[2] for x, y in zip(base, mut, strict=True)) == 12
+        # وبلا قاعدة التشديد وحدَها لا يتغيّر صفّ.
+        G.variants = lambda m: [m] + (
+            [m[:-1] + "\u0650", m[:-1] + "\u064e"] if m.endswith("\u0652") else [])
+        no_gem, _ = G.mashkul_rows()
+        assert sum(x[2] != y[2] for x, y in zip(base, no_gem, strict=True)) == 0
+    finally:
+        G.variants = old
 
 
 def test_lean_text() -> None:

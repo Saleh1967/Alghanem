@@ -153,7 +153,8 @@ def stems(data: bytes) -> dict[tuple[int, int, int], tuple[str, str] | None]:
     return out
 
 
-def population(rec: bool = False, full: bool = False) -> tuple[list[Any], Counter[str]]:
+def population(rec: bool = False, full: bool = False,
+               nxt: bool = False) -> tuple[list[Any], Counter[str]]:
     data = Q.source()
     st = stems(data)
     words = Q.qac_words(data)
@@ -194,8 +195,22 @@ def population(rec: bool = False, full: bool = False) -> tuple[list[Any], Counte
             if full:
                 pn = int(prev.integer) if prev is not None else None
                 row = (*row, pn, raw[j])
+            if nxt:
+                nc = certs.get(j + 1)
+                na = tuple(nc.atoms) if nc is not None else None
+                past = nc is not None and any(
+                    k in ("PAST", "PASSIVE") for _r, k, _f, _p in gate.recover(nc)[1])
+                row = (*row, na, past)
             rows.append(row)
     return rows, excl
+
+
+SELECT_PCT = 1
+"""قاعدةُ الاختيار في التسجيلات كلّها: إطلاقٌ ≥ 1 وخطأ ≤ 1٪ على A."""
+
+
+def keep_rule(f: int, m: int) -> bool:
+    return f >= 1 and m * 100 <= f * SELECT_PCT
 
 
 def fires(name: str, r: Row) -> bool:
@@ -237,7 +252,7 @@ def compute() -> dict[str, Any]:
     for name in SIGNS:
         f = sum(fires(name, r) for r in a)
         m = sum(misfire(name, r) for r in a)
-        keep = f >= 1 and m * 100 <= f
+        keep = keep_rule(f, m)
         sel[name] = {"fires_A": f, "misfires_A": m, "kept": keep}
         if keep:
             kept.append(name)
@@ -550,7 +565,7 @@ def compute2() -> dict[str, Any]:
             if fn(r):
                 f += 1
                 m += r[4] not in keep
-        k = f >= 1 and m * 100 <= f
+        k = keep_rule(f, m)
         if f:
             sel[name] = {"fires_A": f, "misfires_A": m, "kept": k}
         if k:
@@ -798,7 +813,7 @@ def compute3() -> dict[str, Any]:
                 if fn(r):
                     f += 1
                     m += r[4] not in keep
-            k = f >= 1 and m * 100 <= f
+            k = keep_rule(f, m)
             if f:
                 sel[name] = {"fires_A": f, "misfires_A": m, "kept": k}
             if k:
@@ -878,11 +893,134 @@ def compute3() -> dict[str, Any]:
     }
 
 
+# ═══ التسجيلُ الرابع (`docs/qism-khanat/PREREG-4.md`، ADR ١٠٩) ═══
+
+PREREG4 = ROOT / "docs" / "qism-khanat" / "PREREG-4.md"
+RESULT4 = ROOT / "docs" / "qism-khanat" / "result-4.json"
+
+
+def evaluate(
+    sg: dict[str, Sign2], b: Sequence[Any]
+) -> tuple[dict[str, Any], list[tuple[int, ...]]]:
+    cs: list[tuple[int, ...]] = []
+    mu = sa = mh = la = mis = 0
+    for r in b:
+        fired = [keep for _n, (fn, keep) in sg.items() if fn(r)]
+        for keep in fired:
+            mis += r[4] not in keep
+        c = tuple(q for q in ALL if all(q in keep for keep in fired))
+        cs.append(c)
+        if len(c) == 1:
+            mu += 1
+            sa += c[0] == r[4]
+        elif c:
+            mh += 1
+        else:
+            la += 1
+    return ({"signs": len(sg), "muayyan": mu, "muayyan_share": round(mu / len(b), 6), "sahih": sa,
+             "precision": round(sa / mu, 6) if mu else None, "precision_wilson": wilson(sa, mu),
+             "muhtamal": mh, "la_hukm": la, "wrong": mu - sa, "sum_misfires_B": mis,
+             "wrong_le_sum_misfires": mu - sa <= mis}, cs)
+
+
+def compute4() -> dict[str, Any]:
+    rows = population(rec=True, full=True, nxt=True)[0]
+    a = [r for r in rows if r[0] % 2 == 1]
+    b = [r for r in rows if r[0] % 2 == 0]
+    mrows, _ = mashkul_rows()
+    rs = roots()
+    ts, _ = mudari_templates2()
+    pre_n = {r[7]: strip_prefix(r[7]) for r in rows}
+    r1 = json.loads(RESULT.read_text(encoding="utf-8"))
+    r2 = json.loads(RESULT2.read_text(encoding="utf-8"))
+    r3 = json.loads(RESULT3.read_text(encoding="utf-8"))
+    s2 = signs2()
+    d0: dict[str, Sign2] = {n: ((lambda r, n=n: SIGNS[n][0](r[1], r[2])), SIGNS[n][1])
+                            for n in r1["kept"]}
+    d0.update({n: s2[n] for n in r2["kept_new"]})
+    new1: dict[str, Sign2] = {}
+    for name in r3["kept_D1"]:
+        kind, rest = name.split("_N_", 1)
+        at, q = rest.rsplit("_", 1)
+        qi = int(q)
+        if kind == "AMIL_OWN":
+            new1[name] = (lambda r, at=at, qi=qi: amil_own_n(at, r[3], pre_n[r[7]], mrows) == qi,
+                          frozenset({qi}))
+        else:
+            new1[name] = (lambda r, at=at, qi=qi: amil_next_n(at, r[6], mrows) == qi,
+                          frozenset({qi}))
+    d1 = {**d0, **new1}
+    d1s = {k: v for k, v in d1.items() if not (k.startswith("AMIL_") and "_N_" not in k)}
+    lamma = next(ns for nm, at, ns in mrows if nm == "لما" and at == "JAZM_FIL")
+
+    def is_lamma(r: Any) -> bool:
+        return r[3] in lamma or pre_n[r[7]] in lamma
+
+    lsigns: dict[str, Sign2] = {
+        "LAMMA_MUDARI": (lambda r: is_lamma(r) and r[8] is not None
+                         and mudari_wazn2(r[8], ts, rs, "ءتين"),
+                         frozenset({HARF})),
+        "LAMMA_MADI_HARF": (lambda r: is_lamma(r) and r[9], frozenset({HARF})),
+        "LAMMA_MADI_ISM": (lambda r: is_lamma(r) and r[9], frozenset({ISM})),
+    }
+    sel: dict[str, Any] = {}
+    kept: list[str] = []
+    for name, (fn, keep) in lsigns.items():
+        f = m = 0
+        for r in a:
+            if fn(r):
+                f += 1
+                m += r[4] not in keep
+        k = keep_rule(f, m)
+        sel[name] = {"fires_A": f, "misfires_A": m, "kept": k}
+        if k:
+            kept.append(name)
+    d3 = {**d1s, **{n: lsigns[n] for n in kept}}
+    e1, c1 = evaluate(d1, b)
+    e1s, c1s = evaluate(d1s, b)
+    e3, c3 = evaluate(d3, b)
+    conflicts = sum(1 for x, y in zip(c1s, c1, strict=True)
+                    if len(x) == 1 and len(y) == 1 and x != y)
+    e1s["conflicts_vs_D1"] = conflicts
+    e1s["licensed"] = (bool(e1s["muayyan"]) and e1s["sahih"] * 100 >= 99 * e1s["muayyan"]
+                       and e1s["wrong"] <= e1["wrong"] and conflicts == 0)
+    e3["violations_vs_D1_sub"] = sum(
+        1 for x, y in zip(c1s, c3, strict=True) if not set(y) <= set(x))
+    e3["licensed"] = (bool(e3["muayyan"]) and e3["sahih"] * 100 >= 99 * e3["muayyan"]
+                      and e3["violations_vs_D1_sub"] == 0)
+
+    def lamma_stats(rr: Sequence[Any]) -> dict[str, Any]:
+        lm = [r for r in rr if is_lamma(r)]
+        madi = [r for r in lm if r[9]]
+        return {"lamma": len(lm), "by_qism": dict(sorted(Counter(r[4] for r in lm).items())),
+                "lamma_madi": len(madi), "lamma_madi_harf": sum(r[4] == HARF for r in madi),
+                "agreement_with_sibawayh": round(sum(r[4] == HARF for r in madi) / len(madi), 6)
+                if madi else None,
+                "lamma_mudari": sum(1 for r in lm if r[8] is not None
+                                    and mudari_wazn2(r[8], ts, rs, "ءتين"))}
+
+    return {
+        "prereg_sha256": hashlib.sha256(PREREG4.read_bytes()).hexdigest(),
+        "n_B": len(b),
+        "D1": e1, "D1_sub": e1s, "selection_lamma": sel, "kept_lamma": kept, "D3": e3,
+        "lamma_A": lamma_stats(a), "lamma_B": lamma_stats(b),
+        "H1": e1s["licensed"] and e1s["wrong"] < e1["wrong"],
+        "H2": "LAMMA_MUDARI" in kept,
+        "H3": (lambda s: s["agreement_with_sibawayh"] is not None
+               and s["agreement_with_sibawayh"] < 0.5)(
+            lamma_stats(a)),
+    }
+
+
 def main(argv: list[str]) -> int:
     out = render(compute())
     out2 = render(compute2())
     out3 = render(compute3())
+    out4 = render(compute4())
     if "--check" in argv:
+        if not RESULT4.exists() or RESULT4.read_text(encoding="utf-8") != out4:
+            sys.stderr.write("QISM_KHANAT_RESULT_4_DRIFTED\n")
+            return 1
         if not RESULT3.exists() or RESULT3.read_text(encoding="utf-8") != out3:
             sys.stderr.write("QISM_KHANAT_RESULT_3_DRIFTED\n")
             return 1
@@ -892,12 +1030,13 @@ def main(argv: list[str]) -> int:
         if not RESULT2.exists() or RESULT2.read_text(encoding="utf-8") != out2:
             sys.stderr.write("QISM_KHANAT_RESULT_2_DRIFTED\n")
             return 1
-        sys.stdout.write("قياساتُ القسم من الخانات الثلاثة مطابقة\n")
+        sys.stdout.write("قياساتُ القسم من الخانات الأربعة مطابقة\n")
         return 0
     RESULT.write_text(out, encoding="utf-8")
     RESULT2.write_text(out2, encoding="utf-8")
     RESULT3.write_text(out3, encoding="utf-8")
-    sys.stdout.write(out3)
+    RESULT4.write_text(out4, encoding="utf-8")
+    sys.stdout.write(out4)
     return 0
 
 

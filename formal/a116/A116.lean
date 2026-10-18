@@ -129,3 +129,4 @@ import A116.QiraaMadlul
 import A116.QismKhanat
 import A116.QismAwamil
 import A116.QismDaraja
+import A116.WahdaMuqarana
