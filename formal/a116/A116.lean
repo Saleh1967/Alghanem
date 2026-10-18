@@ -127,3 +127,4 @@ import A116.AjnasMukhassas
 import A116.Itar
 import A116.QiraaMadlul
 import A116.QismKhanat
+import A116.QismAwamil

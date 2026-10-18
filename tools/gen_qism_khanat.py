@@ -153,7 +153,7 @@ def stems(data: bytes) -> dict[tuple[int, int, int], tuple[str, str] | None]:
     return out
 
 
-def population() -> tuple[list[Row], Counter[str]]:
+def population(rec: bool = False) -> tuple[list[Any], Counter[str]]:
     data = Q.source()
     st = stems(data)
     words = Q.qac_words(data)
@@ -188,7 +188,10 @@ def population() -> tuple[list[Row], Counter[str]]:
                 continue
             prev = certs.get(j - 1) if j > 0 else None
             p = tuple(prev.atoms) if prev is not None else None
-            rows.append((s, tuple(c.atoms), p, int(c.integer), FT.code(*stem)))
+            row = (s, tuple(c.atoms), p, int(c.integer), FT.code(*stem))
+            if rec:
+                row = (*row, bool(gate.recover(c, peel=True)[1]))
+            rows.append(row)
     return rows, excl
 
 
@@ -293,16 +296,323 @@ def render(res: dict[str, Any]) -> str:
     return json.dumps(res, ensure_ascii=False, indent=1, sort_keys=True) + "\n"
 
 
+# ═══ التسجيلُ الثاني (`docs/qism-khanat/PREREG-2.md`، ADR ١٠٧) ═══
+
+PREREG2 = ROOT / "docs" / "qism-khanat" / "PREREG-2.md"
+RESULT2 = ROOT / "docs" / "qism-khanat" / "result-2.json"
+AMR = ROOT / "formal" / "a116" / "amr.csv"
+AWAMIL = ROOT / "corpora" / "awamil" / "awamil.tsv"
+SKELETONS = ROOT / "corpora" / "hadith" / "maqayis-skeletons.tsv"
+
+Row2 = tuple[int, Atoms, Atoms | None, int, int, bool]
+"""(السورة، الذرّات، ذرّاتُ السابق، عددُ الشهادة، القسم، أقرأها `gate.recover`)."""
+
+Slot = tuple[str, str]
+"""(«R1»/«R2»/«R3»/«P» أو حرفٌ، والحركة أو «*» حرّة)."""
+
+
+def roots() -> frozenset[str]:
+    out = set()
+    for ln in SKELETONS.read_text(encoding="utf-8").splitlines():
+        out.add(ln.split("\t")[1])
+    return frozenset(out)
+
+
+def mudari_templates() -> list[list[Slot]]:
+    """صفوفُ المضارع المرفوع للجذر «صبر» (رقمه 10) في `amr.csv`.
+
+    ص ب ر ← R1 R2 R3، والأوّلُ حرفُ مضارعة."""
+    out = []
+    for ln in AMR.read_text(encoding="utf-8").splitlines():
+        cols = ln.split(",")
+        if cols[0] != "10":
+            continue
+        cells = cols[3].split(" ")
+        slots: list[Slot] = [("P", cells[0][1:])]
+        for c in cells[1:]:
+            slots.append(({"ص": "R1", "ب": "R2", "ر": "R3"}.get(c[0], c[0]), c[1:]))
+        slots[-1] = (slots[-1][0], "*")
+        out.append(slots)
+    return out
+
+
+FAIL: list[Slot] = [("R1", F), ("ا", S), ("R2", K), ("R3", "*")]
+MAFUL: list[Slot] = [("م", F), ("R1", S), ("R2", D), ("و", S), ("R3", "*")]
+
+
+def fit(slots: Sequence[Slot], w: Atoms, rs: frozenset[str]) -> bool:
+    if len(slots) != len(w):
+        return False
+    r: dict[str, str] = {}
+    for (k, h), c in zip(slots, w, strict=True):
+        if k == "P":
+            if c not in MUDARI or c[1:] != h:
+                return False
+            continue
+        if h != "*" and c[1:] != h:
+            return False
+        if k in ("R1", "R2", "R3"):
+            if r.setdefault(k, c[0]) != c[0]:
+                return False
+        elif c[0] != k:
+            return False
+    return r["R1"] + r["R2"] + r["R3"] in rs
+
+
+SUBJ = [(), ("وْ", "نَ"), ("يْ", "نَ"), ("اْ", "نِ"), ("وْ", "اْ"), ("وْ",), ("اْ",), ("يْ",)]
+
+
+def heads(w: Atoms, first: frozenset[str], second: frozenset[str]) -> list[Atoms]:
+    out = []
+    for a in (0, 1):
+        if a and (not w or w[0] not in first):
+            continue
+        for b in (0, 1):
+            if b and (len(w) <= a or w[a] not in second):
+                continue
+            out.append(w[a + b:])
+    return out
+
+
+def mudari_wazn(w: Atoms, ts: list[list[Slot]], rs: frozenset[str]) -> bool:
+    for body in heads(w, frozenset({"وَ", "فَ"}), frozenset({"لِ", "لَ", "سَ"})):
+        for suf in SUBJ:
+            if suf and body[-len(suf):] != suf:
+                continue
+            core = body[:len(body) - len(suf)]
+            if any(fit(t, core, rs) for t in ts):
+                return True
+    return False
+
+
+def articles(w: Atoms) -> list[Atoms]:
+    out = [w]
+    if w[:2] == ("ءَ", "لْ"):
+        out.append(w[2:])
+    if w[:1] == ("لْ",):
+        out.append(w[1:])
+    if len(w) >= 3 and w[0] == "ءَ" and w[1][1:] == S and w[2][0] == w[1][0]:
+        out.append(w[2:])
+    if len(w) >= 2 and w[0][1:] == S and w[1][0] == w[0][0]:
+        out.append(w[1:])
+    return out
+
+
+ISM_TAILS = [(), ("نْ",), ("وْ", "نَ"), ("يْ", "نَ")] + [(t,) for t in ("تَ", "تُ", "تِ")] + [
+    (t, "نْ") for t in ("تَ", "تُ", "تِ")]
+
+
+def ism_wazn(w: Atoms, rs: frozenset[str]) -> bool:
+    for body in heads(w, frozenset({"وَ", "فَ", "بِ", "كَ", "لِ"}), frozenset()):
+        for core0 in articles(body):
+            for suf in ISM_TAILS:
+                if suf and core0[-len(suf):] != suf:
+                    continue
+                core = core0[:len(core0) - len(suf)]
+                if fit(FAIL, core, rs) or fit(MAFUL, core, rs):
+                    return True
+    return False
+
+
+HAMZA = frozenset("أإآءؤئ")
+MARKS = {"َ": F, "ُ": D, "ِ": K, "ْ": S}
+SHADDA = "ّ"
+
+OWN: dict[str, int | None] = {"NASB_RAF": HARF, "RAF_NASB": FIL, "NASB_NASB": FIL, "RAF_TAWIL": FIL,
+                              "JARR": HARF, "TABI": HARF, "NIDA": HARF, "JAZM_FIL": HARF,
+                              "NASB_FIL": HARF, "JARR_OR_NASB": None, "JARR_OR_NASB_FIL": None}
+NONE_OWN: dict[str, int] = {"لو": HARF, "هل": HARF, "مَن": ISM, "ما": ISM, "ماذا": ISM, "أيّ": ISM,
+                            "كم": ISM, "كيف": ISM, "أين": ISM, "متى": ISM}
+TARGET: dict[str, int | None] = {"NASB_RAF": ISM, "RAF_NASB": ISM, "NASB_NASB": ISM,
+                                 "RAF_TAWIL": ISM, "JARR": ISM, "JARR_OR_NASB": ISM,
+                                 "JARR_OR_NASB_FIL": ISM, "NIDA": ISM,
+                                 "JAZM_FIL": FIL, "NASB_FIL": FIL, "JAZM_FILAYN": FIL,
+                                 "TABI": None, "NONE": None}
+"""`A116.Awamil.target` بعينه (الاختبارُ يطابقه بنصّ Lean)."""
+
+Spec = list[tuple[str, frozenset[str] | None]]
+"""لكلّ حرفٍ: الحرفُ، والحالاتُ المسموحة (None حرّة)."""
+
+
+def amil_spec(name: str) -> Spec | None:
+    name = name.split(" (")[0]
+    if " " in name or name.startswith("ال"):
+        return None
+    out: Spec = []
+    for i, ch in enumerate(name):
+        if ch in MARKS:
+            out[-1] = (out[-1][0], frozenset({MARKS[ch]}))
+        elif ch == SHADDA:
+            letter, h = out[-1]
+            out[-1] = (letter, frozenset({S}))
+            out.append((letter, h))
+        else:
+            letter = "ء" if ch in HAMZA else {"ى": "ا", "ة": "ت"}.get(ch, ch)
+            h = None
+            if i == 0 and ch == "إ":
+                h = frozenset({K})
+            elif i == 0 and ch == "أ":
+                h = frozenset({F, D})
+            out.append((letter, h))
+    return out
+
+
+def awamil() -> list[tuple[str, str, Spec]]:
+    rows = []
+    for ln in AWAMIL.read_text(encoding="utf-8").splitlines()[1:]:
+        cols = ln.split("\t")
+        spec = amil_spec(cols[0])
+        if spec is not None:
+            rows.append((cols[0].split(" (")[0], cols[3], spec))
+    return rows
+
+
+def matches(spec: Spec, w: Atoms) -> bool:
+    if len(spec) != len(w):
+        return False
+    return all(c[0] == letter and (h is None or c[1:] in h)
+               for (letter, h), c in zip(spec, w, strict=True))
+
+
+def own_of(name: str, athar: str) -> int | None:
+    if athar == "JAZM_FILAYN":
+        return HARF if name in ("إنْ", "إن", "إذما") else ISM
+    if athar == "NONE":
+        return NONE_OWN.get(name)
+    return OWN.get(athar)
+
+
+def amil_own(athar: str, w: Atoms, rows: list[tuple[str, str, Spec]]) -> int | None:
+    for body in heads(w, frozenset({"وَ", "فَ"}), frozenset()):
+        hit = [(n, a) for n, a, sp in rows if matches(sp, body)]
+        if any(a == athar for _n, a in hit):
+            qs = {own_of(n, a) for n, a in hit}
+            if len(qs) == 1 and None not in qs:
+                return qs.pop()
+    return None
+
+
+def amil_next(athar: str, p: Atoms | None, rows: list[tuple[str, str, Spec]]) -> int | None:
+    if p is None:
+        return None
+    hit = [a for _n, a, sp in rows if matches(sp, p)]
+    if athar not in hit:
+        return None
+    qs = {TARGET[a] for a in hit}
+    return qs.pop() if len(qs) == 1 and None not in qs else None
+
+
+Sign2 = tuple[Callable[[Row2], bool], frozenset[int]]
+
+
+def signs2() -> dict[str, Sign2]:
+    rs = roots()
+    ts = mudari_templates()
+    rows = awamil()
+    out: dict[str, Sign2] = {
+        "VERB_RECOVER": (lambda r: r[5], frozenset({FIL})),
+        "MUDARI_WAZN": (lambda r: mudari_wazn(r[1], ts, rs), frozenset({FIL})),
+        "ISM_WAZN": (lambda r: ism_wazn(r[1], rs), frozenset({ISM})),
+    }
+    athars = sorted({a for _n, a, _s in rows})
+    for a in athars:
+        for q in ALL:
+            out[f"AMIL_OWN_{a}_{q}"] = (
+                lambda r, a=a, q=q: amil_own(a, r[1], rows) == q, frozenset({q}))
+            out[f"AMIL_NEXT_{a}_{q}"] = (
+                lambda r, a=a, q=q: amil_next(a, r[2], rows) == q, frozenset({q}))
+    return out
+
+
+FAMILY = {"VERB_RECOVER": "A", "MUDARI_WAZN": "A", "ISM_WAZN": "B"}
+
+
+def population2() -> list[Row2]:
+    return population(rec=True)[0]
+
+
+def compute2() -> dict[str, Any]:
+    rows = population2()
+    a = [r for r in rows if r[0] % 2 == 1]
+    b = [r for r in rows if r[0] % 2 == 0]
+    old_kept = json.loads(RESULT.read_text(encoding="utf-8"))["kept"]
+    sg: dict[str, Sign2] = {n: ((lambda r, n=n: SIGNS[n][0](r[1], r[2])), SIGNS[n][1])
+                            for n in old_kept}
+    new = signs2()
+    sel: dict[str, dict[str, int | bool]] = {}
+    kept_new: list[str] = []
+    for name, (fn, keep) in new.items():
+        f = m = 0
+        for r in a:
+            if fn(r):
+                f += 1
+                m += r[4] not in keep
+        k = f >= 1 and m * 100 <= f
+        if f:
+            sel[name] = {"fires_A": f, "misfires_A": m, "kept": k}
+        if k:
+            kept_new.append(name)
+
+    def family(n: str) -> str:
+        return FAMILY.get(n, "C")
+
+    def run(names: Sequence[str]) -> dict[str, Any]:
+        allsg = {**sg, **{n: new[n] for n in names}}
+        mu = sa = mh = la = 0
+        mis = dict.fromkeys(allsg, 0)
+        for r in b:
+            fired = [(n, keep) for n, (fn, keep) in allsg.items() if fn(r)]
+            for n, keep in fired:
+                mis[n] += r[4] not in keep
+            c = tuple(q for q in ALL if all(q in keep for _n, keep in fired))
+            if len(c) == 1:
+                mu += 1
+                sa += c[0] == r[4]
+            elif c:
+                mh += 1
+            else:
+                la += 1
+        return {"muayyan": mu, "muayyan_share": round(mu / len(b), 6), "sahih": sa,
+                "precision": round(sa / mu, 6) if mu else None, "precision_wilson": wilson(sa, mu),
+                "muhtamal": mh, "la_hukm": la, "wrong": mu - sa,
+                "sum_misfires_B": sum(mis.values()),
+                "wrong_le_sum_misfires": mu - sa <= sum(mis.values())}
+
+    k2 = run(kept_new)
+    contrib = {fam: run([n for n in kept_new if family(n) == fam])["muayyan"]
+               for fam in ("A", "B", "C")}
+    n = len(b)
+    cc = ceiling(b, lambda r: r[1])  # type: ignore[arg-type,return-value]
+    cp = ceiling(b, lambda r: (r[2], r[1]))  # type: ignore[arg-type,return-value]
+    k_old = json.loads(RESULT.read_text(encoding="utf-8"))["K"]["muayyan"]
+    return {
+        "prereg_sha256": hashlib.sha256(PREREG2.read_bytes()).hexdigest(),
+        "n_A": len(a), "n_B": n,
+        "selection": sel, "kept_new": kept_new,
+        "K2": k2, "muayyan_by_family_with_K": contrib,
+        "ceiling_atoms": cc, "ceiling_atoms_share": round(cc / n, 6),
+        "ceiling_prev_atoms": cp, "ceiling_prev_atoms_share": round(cp / n, 6),
+        "H1_precision_ge_99": bool(k2["muayyan"]) and k2["sahih"] * 100 >= 99 * k2["muayyan"],
+        "H2_more_than_K": k2["muayyan"] > k_old,
+        "H3_prev_ceiling_above": cp > cc,
+    }
+
+
 def main(argv: list[str]) -> int:
     out = render(compute())
+    out2 = render(compute2())
     if "--check" in argv:
         if RESULT.read_text(encoding="utf-8") != out:
             sys.stderr.write("QISM_KHANAT_RESULT_DRIFTED\n")
             return 1
-        sys.stdout.write("قياسُ القسم من الخانات مطابق\n")
+        if not RESULT2.exists() or RESULT2.read_text(encoding="utf-8") != out2:
+            sys.stderr.write("QISM_KHANAT_RESULT_2_DRIFTED\n")
+            return 1
+        sys.stdout.write("قياسا القسم من الخانات مطابقان\n")
         return 0
     RESULT.write_text(out, encoding="utf-8")
-    sys.stdout.write(out)
+    RESULT2.write_text(out2, encoding="utf-8")
+    sys.stdout.write(out2)
     return 0
 
 

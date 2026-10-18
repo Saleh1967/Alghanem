@@ -1613,3 +1613,16 @@ import A116
 #print axioms A116.QismKhanat.shawahid
 #print axioms A116.QismKhanat.al_yashtabih
 #print axioms A116.QismKhanat.ma_alam
+#print axioms A116.QismAwamil.cands_append_sub
+#print axioms A116.QismAwamil.cands_append_iff
+#print axioms A116.QismAwamil.cands_nodup
+#print axioms A116.QismAwamil.muayyan_baqi
+#print axioms A116.QismAwamil.next_tubqi
+#print axioms A116.QismAwamil.next_jarr
+#print axioms A116.QismAwamil.next_jazm
+#print axioms A116.QismAwamil.next_tabi_la
+#print axioms A116.QismAwamil.muwafiq_shawahid
+#print axioms A116.QismAwamil.min_an
+#print axioms A116.QismAwamil.ba_dar
+#print axioms A116.QismAwamil.afal_yashtabih
+#print axioms A116.QismAwamil.amr_faail_yashtabih

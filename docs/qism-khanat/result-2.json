@@ -1,0 +1,166 @@
+{
+ "H1_precision_ge_99": true,
+ "H2_more_than_K": true,
+ "H3_prev_ceiling_above": true,
+ "K2": {
+  "la_hukm": 12,
+  "muayyan": 8869,
+  "muayyan_share": 0.216307,
+  "muhtamal": 32121,
+  "precision": 0.999436,
+  "precision_wilson": [
+   0.998681,
+   0.999759
+  ],
+  "sahih": 8864,
+  "sum_misfires_B": 17,
+  "wrong": 5,
+  "wrong_le_sum_misfires": true
+ },
+ "ceiling_atoms": 40690,
+ "ceiling_atoms_share": 0.992391,
+ "ceiling_prev_atoms": 40918,
+ "ceiling_prev_atoms_share": 0.997951,
+ "kept_new": [
+  "ISM_WAZN",
+  "AMIL_NEXT_JARR_0",
+  "AMIL_OWN_JARR_2",
+  "AMIL_OWN_JAZM_FILAYN_2",
+  "AMIL_OWN_NASB_FIL_2",
+  "AMIL_OWN_NASB_RAF_2",
+  "AMIL_OWN_NONE_2",
+  "AMIL_OWN_RAF_NASB_1",
+  "AMIL_OWN_RAF_TAWIL_1",
+  "AMIL_OWN_TABI_2"
+ ],
+ "muayyan_by_family_with_K": {
+  "A": 1970,
+  "B": 2839,
+  "C": 8071
+ },
+ "n_A": 35997,
+ "n_B": 41002,
+ "prereg_sha256": "8e35cc761f63ab265918f96366df94fd003a26a2c3f745bf7db7e12441a88d77",
+ "selection": {
+  "AMIL_NEXT_JARR_0": {
+   "fires_A": 2217,
+   "kept": true,
+   "misfires_A": 11
+  },
+  "AMIL_NEXT_JARR_OR_NASB_0": {
+   "fires_A": 1,
+   "kept": false,
+   "misfires_A": 1
+  },
+  "AMIL_NEXT_JAZM_FILAYN_1": {
+   "fires_A": 172,
+   "kept": false,
+   "misfires_A": 42
+  },
+  "AMIL_NEXT_JAZM_FIL_1": {
+   "fires_A": 95,
+   "kept": false,
+   "misfires_A": 8
+  },
+  "AMIL_NEXT_NASB_FIL_1": {
+   "fires_A": 262,
+   "kept": false,
+   "misfires_A": 24
+  },
+  "AMIL_NEXT_NASB_NASB_0": {
+   "fires_A": 37,
+   "kept": false,
+   "misfires_A": 8
+  },
+  "AMIL_NEXT_NASB_RAF_0": {
+   "fires_A": 332,
+   "kept": false,
+   "misfires_A": 30
+  },
+  "AMIL_NEXT_RAF_NASB_0": {
+   "fires_A": 174,
+   "kept": false,
+   "misfires_A": 38
+  },
+  "AMIL_NEXT_RAF_TAWIL_0": {
+   "fires_A": 13,
+   "kept": false,
+   "misfires_A": 9
+  },
+  "AMIL_OWN_JARR_2": {
+   "fires_A": 2323,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_JAZM_FILAYN_0": {
+   "fires_A": 833,
+   "kept": false,
+   "misfires_A": 354
+  },
+  "AMIL_OWN_JAZM_FILAYN_2": {
+   "fires_A": 254,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_JAZM_FIL_2": {
+   "fires_A": 126,
+   "kept": false,
+   "misfires_A": 30
+  },
+  "AMIL_OWN_NASB_FIL_2": {
+   "fires_A": 294,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_NASB_NASB_1": {
+   "fires_A": 63,
+   "kept": false,
+   "misfires_A": 7
+  },
+  "AMIL_OWN_NASB_RAF_2": {
+   "fires_A": 427,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_NONE_0": {
+   "fires_A": 863,
+   "kept": false,
+   "misfires_A": 354
+  },
+  "AMIL_OWN_NONE_2": {
+   "fires_A": 129,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_RAF_NASB_1": {
+   "fires_A": 224,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_RAF_TAWIL_1": {
+   "fires_A": 15,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_TABI_2": {
+   "fires_A": 262,
+   "kept": true,
+   "misfires_A": 1
+  },
+  "ISM_WAZN": {
+   "fires_A": 962,
+   "kept": true,
+   "misfires_A": 2
+  },
+  "MUDARI_WAZN": {
+   "fires_A": 1955,
+   "kept": false,
+   "misfires_A": 182
+  },
+  "VERB_RECOVER": {
+   "fires_A": 10199,
+   "kept": false,
+   "misfires_A": 6283
+  }
+ }
+}
