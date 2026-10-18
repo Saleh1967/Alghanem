@@ -153,7 +153,7 @@ def stems(data: bytes) -> dict[tuple[int, int, int], tuple[str, str] | None]:
     return out
 
 
-def population(rec: bool = False) -> tuple[list[Any], Counter[str]]:
+def population(rec: bool = False, full: bool = False) -> tuple[list[Any], Counter[str]]:
     data = Q.source()
     st = stems(data)
     words = Q.qac_words(data)
@@ -191,6 +191,9 @@ def population(rec: bool = False) -> tuple[list[Any], Counter[str]]:
             row = (s, tuple(c.atoms), p, int(c.integer), FT.code(*stem))
             if rec:
                 row = (*row, bool(gate.recover(c, peel=True)[1]))
+            if full:
+                pn = int(prev.integer) if prev is not None else None
+                row = (*row, pn, raw[j])
             rows.append(row)
     return rows, excl
 
@@ -598,21 +601,303 @@ def compute2() -> dict[str, Any]:
     }
 
 
+# ═══ التسجيلُ الثالث (`docs/qism-khanat/PREREG-3.md`، ADR ١٠٨) ═══
+
+PREREG3 = ROOT / "docs" / "qism-khanat" / "PREREG-3.md"
+RESULT3 = ROOT / "docs" / "qism-khanat" / "result-3.json"
+MASHKUL = ROOT / "corpora" / "awamil" / "awamil-mashkul.tsv"
+
+Row3 = tuple[int, Atoms, Atoms | None, int, int, bool, int | None, str]
+"""(السورة، الذرّات، ذرّاتُ السابق، n، القسم، أقرأها recover، n السابق، نصُّ الرمز)."""
+
+SUKUN_MARK, KASRA_MARK, FATHA_MARK = "ْ", "ِ", "َ"
+
+
+def unpair(z: int) -> tuple[int, int]:
+    """حلُّ زوج كانتور: ‎n = P(F, الرتبة)‎."""
+    import math
+    w = (math.isqrt(8 * z + 1) - 1) // 2
+    b = z - w * (w + 1) // 2
+    return w - b, b
+
+
+def variants(m: str) -> list[str]:
+    """صورُ الصيغة بالقواعد المعلنة: هي، وآخرُها الساكنُ مكسورًا ومفتوحًا، وأوّلُها مشدّدًا."""
+    base = [m]
+    if m.endswith(SUKUN_MARK):
+        base += [m[:-1] + KASRA_MARK, m[:-1] + FATHA_MARK]
+    out = list(base)
+    out += [b[0] + SHADDA + b[1:] for b in base if len(b) > 1]
+    return out
+
+
+def mashkul_rows() -> tuple[list[tuple[str, str, frozenset[int]]], Counter[str]]:
+    rows = []
+    refused: Counter[str] = Counter()
+    for ln in MASHKUL.read_text(encoding="utf-8").splitlines()[1:]:
+        amil, athar, m = ln.split("\t")
+        if not m:
+            refused["NO_MASHKUL"] += 1
+            continue
+        ns = set()
+        for v in variants(m):
+            c = gate.enter(v.encode("utf-8"))
+            if isinstance(c, Refusal):
+                refused["VARIANT_REFUSED"] += 1
+            else:
+                ns.add(int(c.integer))
+        if not ns:
+            refused["ROW_OUTSIDE_DOMAIN"] += 1
+        rows.append((amil.split(" (")[0], athar, frozenset(ns)))
+    return rows, refused
+
+
+def own_of3(name: str, athar: str) -> int | None:
+    """قسمُ العامل نفسِه بجدول PREREG-2 (و`JAZM_FIL` حرف فيه)."""
+    return own_of(name, athar)
+
+
+def strip_prefix(text: str) -> int | None:
+    if len(text) > 2 and text[:2] in ("وَ", "فَ"):
+        c = gate.enter(text[2:].encode("utf-8"))
+        if not isinstance(c, Refusal):
+            return int(c.integer)
+    return None
+
+
+MRows = list[tuple[str, str, frozenset[int]]]
+
+
+def amil_own_n(athar: str, n: int, n2: int | None, rows: MRows) -> int | None:
+    for key in (n, n2):
+        if key is None:
+            continue
+        hit = [(nm, a) for nm, a, ns in rows if key in ns]
+        if any(a == athar for _nm, a in hit):
+            qs = {own_of3(nm, a) for nm, a in hit}
+            if len(qs) == 1 and None not in qs:
+                return qs.pop()
+    return None
+
+
+def amil_next_n(athar: str, pn: int | None, rows: MRows) -> int | None:
+    if pn is None:
+        return None
+    hit = [a for _nm, a, ns in rows if pn in ns]
+    if athar not in hit:
+        return None
+    qs = {TARGET[a] for a in hit}
+    return qs.pop() if len(qs) == 1 and None not in qs else None
+
+
+REF_ROOTS = ["كتب", "قوم", "بيع", "دعو", "رمي", "وعد", "وقي", "ءمن", "رءي", "مدد", "صبر"]
+"""`A116.Mudari.refRoots` بترتيبها (`amr.csv`، العمود الأوّل)."""
+WEAK = frozenset("ويء")
+
+Tmpl = tuple[str, list[tuple[str, str]], dict[int, str]]
+"""(حركةُ حرف المضارعة، الخاناتُ: («S<i>» مقعدُ الأصل i أو حرفٌ، الحركة أو «*»)، الأصولُ الثابتة)."""
+
+
+def mudari_templates2() -> tuple[list[Tmpl], int]:
+    out: list[Tmpl] = []
+    skipped = 0
+    for ln in AMR.read_text(encoding="utf-8").splitlines():
+        cols = ln.split(",")
+        k = int(cols[0])
+        if k == 0:
+            continue
+        root = REF_ROOTS[k]
+        cells = cols[3].split(" ")
+        sound = {ch for ch in root if ch not in WEAK}
+        cnt = Counter(c[0] for c in cells[1:])
+        if any(cnt[ch] > root.count(ch) for ch in sound):
+            skipped += 1
+            continue
+        slots: list[tuple[str, str]] = []
+        for c in cells[1:]:
+            if c[0] in sound:
+                idx = "".join(str(i) for i, ch in enumerate(root) if ch == c[0])
+                slots.append(("S" + idx, c[1:]))
+            else:
+                slots.append((c[0], c[1:]))
+        slots[-1] = (slots[-1][0], "*")
+        fixed = {i: ch for i, ch in enumerate(root) if ch in WEAK}
+        out.append((cells[0][1:], slots, fixed))
+    return out, skipped
+
+
+def fit2(t: Tmpl, w: Atoms, letters: str, rs: frozenset[str]) -> bool:
+    pv, slots, fixed = t
+    if len(w) != len(slots) + 1 or w[0][0] not in letters or w[0][1:] != pv:
+        return False
+    r: dict[int, str] = dict(fixed)
+    for (k, h), c in zip(slots, w[1:], strict=True):
+        if h != "*" and c[1:] != h:
+            return False
+        if k.startswith("S"):
+            for i in map(int, k[1:]):
+                if r.setdefault(i, c[0]) != c[0]:
+                    return False
+        elif c[0] != k:
+            return False
+    return len(r) == 3 and r[0] + r[1] + r[2] in rs
+
+
+OBJ = [(), ("هُ",), ("هِ",), ("هَ", "اْ"), ("هُ", "مْ"), ("هِ", "مْ"), ("هُ", "مَ", "اْ"), ("هُ", "نْ", "نَ"),
+       ("كَ",), ("كِ",), ("كُ", "مْ"), ("كُ", "مَ", "اْ"), ("كُ", "نْ", "نَ"), ("نِ", "يْ"), ("نَ", "اْ")]
+
+
+def mudari_wazn2(w: Atoms, ts: list[Tmpl], rs: frozenset[str], letters: str) -> bool:
+    for body in heads(w, frozenset({"وَ", "فَ"}), frozenset({"لِ", "لَ", "سَ"})):
+        for obj in OBJ:
+            if obj and body[-len(obj):] != obj:
+                continue
+            b1 = body[:len(body) - len(obj)]
+            for suf in SUBJ:
+                if suf and b1[-len(suf):] != suf:
+                    continue
+                core = b1[:len(b1) - len(suf)]
+                if any(fit2(t, core, letters, rs) for t in ts):
+                    return True
+    return False
+
+
+def compute3() -> dict[str, Any]:
+    rows: list[Row3] = population(rec=True, full=True)[0]
+    a = [r for r in rows if r[0] % 2 == 1]
+    b = [r for r in rows if r[0] % 2 == 0]
+    mrows, mref = mashkul_rows()
+    rs = roots()
+    ts, tskip = mudari_templates2()
+    pre_n = {r[7]: strip_prefix(r[7]) for r in rows}
+    r1 = json.loads(RESULT.read_text(encoding="utf-8"))
+    r2 = json.loads(RESULT2.read_text(encoding="utf-8"))
+    s2 = signs2()
+    d0: dict[str, Sign2] = {n: ((lambda r, n=n: SIGNS[n][0](r[1], r[2])), SIGNS[n][1])
+                            for n in r1["kept"]}
+    d0.update({n: s2[n] for n in r2["kept_new"]})
+    athars = sorted({at for _n, at, _s in mrows})
+    new1: dict[str, Sign2] = {}
+    for at in athars:
+        for q in ALL:
+            new1[f"AMIL_OWN_N_{at}_{q}"] = (
+                lambda r, at=at, q=q: amil_own_n(at, r[3], pre_n[r[7]], mrows) == q, frozenset({q}))
+            new1[f"AMIL_NEXT_N_{at}_{q}"] = (
+                lambda r, at=at, q=q: amil_next_n(at, r[6], mrows) == q, frozenset({q}))
+    new2: dict[str, Sign2] = {
+        "MUDARI_WAZN2": (lambda r: mudari_wazn2(r[1], ts, rs, "ءتين"), frozenset({FIL})),
+        "MUDARI_YTN": (lambda r: mudari_wazn2(r[1], ts, rs, "تين"), frozenset({FIL})),
+    }
+
+    def select(new: dict[str, Sign2]) -> tuple[dict[str, Any], list[str]]:
+        sel: dict[str, Any] = {}
+        kept: list[str] = []
+        for name, (fn, keep) in new.items():
+            f = m = 0
+            for r in a:
+                if fn(r):
+                    f += 1
+                    m += r[4] not in keep
+            k = f >= 1 and m * 100 <= f
+            if f:
+                sel[name] = {"fires_A": f, "misfires_A": m, "kept": k}
+            if k:
+                kept.append(name)
+        return sel, kept
+
+    sel1, kept1 = select(new1)
+    sel2, kept2 = select(new2)
+    degrees = [d0, {**d0, **{n: new1[n] for n in kept1}}]
+    degrees.append({**degrees[1], **{n: new2[n] for n in kept2}})
+    prev_c: list[tuple[int, ...]] | None = None
+    out_deg = []
+    for sg in degrees:
+        cs = []
+        mu = sa = mh = la = 0
+        mis = 0
+        units: set[int] = set()
+        for r in b:
+            fired = [keep for _n, (fn, keep) in sg.items() if fn(r)]
+            for keep in fired:
+                mis += r[4] not in keep
+            c = tuple(q for q in ALL if all(q in keep for keep in fired))
+            cs.append(c)
+            if len(c) == 1:
+                mu += 1
+                sa += c[0] == r[4]
+                units.add(11 * unpair(r[3])[0] + {ISM: 2, FIL: 3, HARF: 4}[c[0]])
+            elif c:
+                mh += 1
+            else:
+                la += 1
+        viol = 0
+        if prev_c is not None:
+            for old, c in zip(prev_c, cs, strict=True):
+                if not set(c) <= set(old):
+                    viol += 1
+        prev_c = cs
+        out_deg.append({"signs": len(sg), "muayyan": mu, "muayyan_share": round(mu / len(b), 6),
+                        "sahih": sa, "precision": round(sa / mu, 6) if mu else None,
+                        "precision_wilson": wilson(sa, mu), "muhtamal": mh, "la_hukm": la,
+                        "wrong": mu - sa, "sum_misfires_B": mis,
+                        "wrong_le_sum_misfires": mu - sa <= mis,
+                        "violations_vs_previous": viol, "distinct_units": len(units),
+                        "licensed": bool(mu) and sa * 100 >= 99 * mu and viol == 0})
+    # استكشافٌ غيرُ مسجَّل: إبدالُ علامات العوامل بالخانات بنظائرها بعدد الشهادة، لا إضافتُها.
+    sub = {k: v for k, v in degrees[1].items() if not (k.startswith("AMIL_") and "_N_" not in k)}
+    smu = ssa = 0
+    for r in b:
+        fired = [keep for _n, (fn, keep) in sub.items() if fn(r)]
+        c = tuple(q for q in ALL if all(q in keep for keep in fired))
+        if len(c) == 1:
+            smu += 1
+            ssa += c[0] == r[4]
+    exploratory = {"label": "EXPLORATORY_NOT_PREREGISTERED", "D1_substitute_muayyan": smu,
+                   "D1_substitute_sahih": ssa, "D1_substitute_wrong": smu - ssa}
+    n = len(b)
+    ceil = {
+        "atoms": ceiling(b, lambda r: r[1]),  # type: ignore[arg-type,return-value]
+        "n": ceiling(b, lambda r: r[3]),  # type: ignore[arg-type,return-value]
+        "prev_atoms_atoms": ceiling(b, lambda r: (r[2], r[1])),  # type: ignore[arg-type,return-value]
+        "prev_n_n": ceiling(b, lambda r: (r[6], r[3])),  # type: ignore[arg-type,return-value]
+    }
+    return {
+        "prereg_sha256": hashlib.sha256(PREREG3.read_bytes()).hexdigest(),
+        "mashkul_sha256": hashlib.sha256(MASHKUL.read_bytes()).hexdigest(),
+        "n_B": n, "mashkul_refused": dict(sorted(mref.items())),
+        "mashkul_rows_in_domain": sum(1 for _n, _a, ns in mrows if ns),
+        "mudari_templates": len(ts), "mudari_templates_skipped": tskip,
+        "selection_D1": sel1, "kept_D1": kept1, "selection_D2": sel2, "kept_D2": kept2,
+        "degrees": out_deg,
+        "ceilings": ceil, "ceilings_share": {k: round(v / n, 6) for k, v in ceil.items()},
+        "H1": out_deg[1]["muayyan"] > out_deg[0]["muayyan"] and out_deg[1]["licensed"],
+        "H2": out_deg[2]["muayyan"] > out_deg[1]["muayyan"] and out_deg[2]["licensed"],
+        "H3": all(d["violations_vs_previous"] == 0 for d in out_deg),
+        "H4": ceil["prev_n_n"] >= ceil["prev_atoms_atoms"],
+        "exploratory": exploratory,
+    }
+
+
 def main(argv: list[str]) -> int:
     out = render(compute())
     out2 = render(compute2())
+    out3 = render(compute3())
     if "--check" in argv:
+        if not RESULT3.exists() or RESULT3.read_text(encoding="utf-8") != out3:
+            sys.stderr.write("QISM_KHANAT_RESULT_3_DRIFTED\n")
+            return 1
         if RESULT.read_text(encoding="utf-8") != out:
             sys.stderr.write("QISM_KHANAT_RESULT_DRIFTED\n")
             return 1
         if not RESULT2.exists() or RESULT2.read_text(encoding="utf-8") != out2:
             sys.stderr.write("QISM_KHANAT_RESULT_2_DRIFTED\n")
             return 1
-        sys.stdout.write("قياسا القسم من الخانات مطابقان\n")
+        sys.stdout.write("قياساتُ القسم من الخانات الثلاثة مطابقة\n")
         return 0
     RESULT.write_text(out, encoding="utf-8")
     RESULT2.write_text(out2, encoding="utf-8")
-    sys.stdout.write(out2)
+    RESULT3.write_text(out3, encoding="utf-8")
+    sys.stdout.write(out3)
     return 0
 
 

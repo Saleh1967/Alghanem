@@ -1,0 +1,225 @@
+{
+ "H1": true,
+ "H2": false,
+ "H3": true,
+ "H4": true,
+ "ceilings": {
+  "atoms": 40690,
+  "n": 40698,
+  "prev_atoms_atoms": 40918,
+  "prev_n_n": 40919
+ },
+ "ceilings_share": {
+  "atoms": 0.992391,
+  "n": 0.992586,
+  "prev_atoms_atoms": 0.997951,
+  "prev_n_n": 0.997976
+ },
+ "degrees": [
+  {
+   "distinct_units": 1608,
+   "la_hukm": 12,
+   "licensed": true,
+   "muayyan": 8869,
+   "muayyan_share": 0.216307,
+   "muhtamal": 32121,
+   "precision": 0.999436,
+   "precision_wilson": [
+    0.998681,
+    0.999759
+   ],
+   "sahih": 8864,
+   "signs": 16,
+   "sum_misfires_B": 17,
+   "violations_vs_previous": 0,
+   "wrong": 5,
+   "wrong_le_sum_misfires": true
+  },
+  {
+   "distinct_units": 1626,
+   "la_hukm": 12,
+   "licensed": true,
+   "muayyan": 9038,
+   "muayyan_share": 0.220428,
+   "muhtamal": 31952,
+   "precision": 0.999447,
+   "precision_wilson": [
+    0.998706,
+    0.999764
+   ],
+   "sahih": 9033,
+   "signs": 25,
+   "sum_misfires_B": 27,
+   "violations_vs_previous": 0,
+   "wrong": 5,
+   "wrong_le_sum_misfires": true
+  },
+  {
+   "distinct_units": 1626,
+   "la_hukm": 12,
+   "licensed": true,
+   "muayyan": 9038,
+   "muayyan_share": 0.220428,
+   "muhtamal": 31952,
+   "precision": 0.999447,
+   "precision_wilson": [
+    0.998706,
+    0.999764
+   ],
+   "sahih": 9033,
+   "signs": 25,
+   "sum_misfires_B": 27,
+   "violations_vs_previous": 0,
+   "wrong": 5,
+   "wrong_le_sum_misfires": true
+  }
+ ],
+ "exploratory": {
+  "D1_substitute_muayyan": 8831,
+  "D1_substitute_sahih": 8827,
+  "D1_substitute_wrong": 4,
+  "label": "EXPLORATORY_NOT_PREREGISTERED"
+ },
+ "kept_D1": [
+  "AMIL_NEXT_N_JARR_0",
+  "AMIL_OWN_N_JARR_2",
+  "AMIL_OWN_N_JAZM_FILAYN_2",
+  "AMIL_OWN_N_NASB_FIL_2",
+  "AMIL_OWN_N_NASB_NASB_1",
+  "AMIL_OWN_N_NASB_RAF_2",
+  "AMIL_OWN_N_RAF_NASB_1",
+  "AMIL_OWN_N_RAF_TAWIL_1",
+  "AMIL_OWN_N_TABI_2"
+ ],
+ "kept_D2": [],
+ "mashkul_refused": {
+  "NO_MASHKUL": 21,
+  "ROW_OUTSIDE_DOMAIN": 20,
+  "VARIANT_REFUSED": 89
+ },
+ "mashkul_rows_in_domain": 59,
+ "mashkul_sha256": "5dd3b24e82bdf2d91cc6388d342fa88dabcdd6900f53f3429d98f4c2145cd2dc",
+ "mudari_templates": 91,
+ "mudari_templates_skipped": 16,
+ "n_B": 41002,
+ "prereg_sha256": "97c1e29a7c48432bf7f91168ad561cdab0fde4813c07ce31989b29b67ec15f50",
+ "selection_D1": {
+  "AMIL_NEXT_N_JARR_0": {
+   "fires_A": 2217,
+   "kept": true,
+   "misfires_A": 11
+  },
+  "AMIL_NEXT_N_JARR_OR_NASB_0": {
+   "fires_A": 1,
+   "kept": false,
+   "misfires_A": 1
+  },
+  "AMIL_NEXT_N_JAZM_FILAYN_1": {
+   "fires_A": 169,
+   "kept": false,
+   "misfires_A": 29
+  },
+  "AMIL_NEXT_N_JAZM_FIL_1": {
+   "fires_A": 77,
+   "kept": false,
+   "misfires_A": 1
+  },
+  "AMIL_NEXT_N_NASB_FIL_1": {
+   "fires_A": 257,
+   "kept": false,
+   "misfires_A": 16
+  },
+  "AMIL_NEXT_N_NASB_NASB_0": {
+   "fires_A": 30,
+   "kept": false,
+   "misfires_A": 8
+  },
+  "AMIL_NEXT_N_NASB_RAF_0": {
+   "fires_A": 332,
+   "kept": false,
+   "misfires_A": 30
+  },
+  "AMIL_NEXT_N_RAF_NASB_0": {
+   "fires_A": 174,
+   "kept": false,
+   "misfires_A": 38
+  },
+  "AMIL_NEXT_N_RAF_TAWIL_0": {
+   "fires_A": 13,
+   "kept": false,
+   "misfires_A": 9
+  },
+  "AMIL_OWN_N_JARR_2": {
+   "fires_A": 2384,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_N_JAZM_FILAYN_0": {
+   "fires_A": 1144,
+   "kept": false,
+   "misfires_A": 354
+  },
+  "AMIL_OWN_N_JAZM_FILAYN_2": {
+   "fires_A": 262,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_N_JAZM_FIL_2": {
+   "fires_A": 165,
+   "kept": false,
+   "misfires_A": 66
+  },
+  "AMIL_OWN_N_NASB_FIL_2": {
+   "fires_A": 349,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_N_NASB_NASB_1": {
+   "fires_A": 51,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_N_NASB_RAF_2": {
+   "fires_A": 412,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_N_NONE_0": {
+   "fires_A": 1186,
+   "kept": false,
+   "misfires_A": 354
+  },
+  "AMIL_OWN_N_NONE_2": {
+   "fires_A": 131,
+   "kept": false,
+   "misfires_A": 2
+  },
+  "AMIL_OWN_N_RAF_NASB_1": {
+   "fires_A": 224,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_N_RAF_TAWIL_1": {
+   "fires_A": 15,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_N_TABI_2": {
+   "fires_A": 442,
+   "kept": true,
+   "misfires_A": 0
+  }
+ },
+ "selection_D2": {
+  "MUDARI_WAZN2": {
+   "fires_A": 3586,
+   "kept": false,
+   "misfires_A": 556
+  },
+  "MUDARI_YTN": {
+   "fires_A": 2458,
+   "kept": false,
+   "misfires_A": 35
+  }
+ }
+}
