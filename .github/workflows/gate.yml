@@ -251,7 +251,7 @@ jobs:
           python tools/gen_naql.py --check
           python tools/gen_tashkil.py --check
           python tools/gen_qism_khanat.py --check
-          python tools/gen_silsila.py --check           # السلسلةُ على المصحف (ADR ١١٤، STEP-0007)
+          python tools/gen_silsila.py --check           # السلسلةُ على المصحف (ADR ١١٤، STEP-0007؛ ADR ١١٥، STEP-0009)
           python tools/gen_protocol.py --check
       - name: guard — no reader or writer outside the gate
         run: python -c "from gate.guard import breaches; b = breaches(); print(b or 'لا خرق'); raise SystemExit(1 if b else 0)"
