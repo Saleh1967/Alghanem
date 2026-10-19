@@ -1,0 +1,107 @@
+khutwa,x,m:d,none,l:laQari
+khutwa,x,m:d,m,m:v
+khutwa,x,m:d,p,p:v|u
+khutwa,x,m:d,l,l:rafd:Q
+khutwa,x,m:d,k,l:kharij
+khutwa,x,m:d,echo,m:d
+khutwa,x,m:d,word,m:x
+khutwa,x,p:d|e,none,l:laQari
+khutwa,x,p:d|e,m,m:v
+khutwa,x,p:d|e,p,p:v|u
+khutwa,x,p:d|e,l,l:rafd:Q
+khutwa,x,p:d|e,k,l:kharij
+khutwa,x,p:d|e,echo,p:d|e
+khutwa,x,p:d|e,word,m:x
+khutwa,x,l:rafd:R,none,l:dunaha
+khutwa,x,l:rafd:R,m,l:dunaha
+khutwa,x,l:rafd:R,p,l:dunaha
+khutwa,x,l:rafd:R,l,l:dunaha
+khutwa,x,l:rafd:R,k,l:dunaha
+khutwa,x,l:rafd:R,echo,l:dunaha
+khutwa,x,l:rafd:R,word,l:dunaha
+khutwa,x,l:dunaha,none,l:dunaha
+khutwa,x,l:dunaha,m,l:dunaha
+khutwa,x,l:dunaha,p,l:dunaha
+khutwa,x,l:dunaha,l,l:dunaha
+khutwa,x,l:dunaha,k,l:dunaha
+khutwa,x,l:dunaha,echo,l:dunaha
+khutwa,x,l:dunaha,word,l:dunaha
+khutwa,x,l:laQari,none,l:dunaha
+khutwa,x,l:laQari,m,l:dunaha
+khutwa,x,l:laQari,p,l:dunaha
+khutwa,x,l:laQari,l,l:dunaha
+khutwa,x,l:laQari,k,l:dunaha
+khutwa,x,l:laQari,echo,l:dunaha
+khutwa,x,l:laQari,word,l:dunaha
+khutwa,x,l:kharij,none,l:dunaha
+khutwa,x,l:kharij,m,l:dunaha
+khutwa,x,l:kharij,p,l:dunaha
+khutwa,x,l:kharij,l,l:dunaha
+khutwa,x,l:kharij,k,l:dunaha
+khutwa,x,l:kharij,echo,l:dunaha
+khutwa,x,l:kharij,word,l:dunaha
+khutwa,y,m:d,none,l:laQari
+khutwa,y,m:d,m,m:v
+khutwa,y,m:d,p,p:v|u
+khutwa,y,m:d,l,l:rafd:Q
+khutwa,y,m:d,k,l:kharij
+khutwa,y,m:d,echo,m:d
+khutwa,y,m:d,word,l:rafd:R
+khutwa,y,p:d|e,none,l:laQari
+khutwa,y,p:d|e,m,m:v
+khutwa,y,p:d|e,p,p:v|u
+khutwa,y,p:d|e,l,l:rafd:Q
+khutwa,y,p:d|e,k,l:kharij
+khutwa,y,p:d|e,echo,p:d|e
+khutwa,y,p:d|e,word,l:rafd:R
+khutwa,y,l:rafd:R,none,l:dunaha
+khutwa,y,l:rafd:R,m,l:dunaha
+khutwa,y,l:rafd:R,p,l:dunaha
+khutwa,y,l:rafd:R,l,l:dunaha
+khutwa,y,l:rafd:R,k,l:dunaha
+khutwa,y,l:rafd:R,echo,l:dunaha
+khutwa,y,l:rafd:R,word,l:dunaha
+khutwa,y,l:dunaha,none,l:dunaha
+khutwa,y,l:dunaha,m,l:dunaha
+khutwa,y,l:dunaha,p,l:dunaha
+khutwa,y,l:dunaha,l,l:dunaha
+khutwa,y,l:dunaha,k,l:dunaha
+khutwa,y,l:dunaha,echo,l:dunaha
+khutwa,y,l:dunaha,word,l:dunaha
+khutwa,y,l:laQari,none,l:dunaha
+khutwa,y,l:laQari,m,l:dunaha
+khutwa,y,l:laQari,p,l:dunaha
+khutwa,y,l:laQari,l,l:dunaha
+khutwa,y,l:laQari,k,l:dunaha
+khutwa,y,l:laQari,echo,l:dunaha
+khutwa,y,l:laQari,word,l:dunaha
+khutwa,y,l:kharij,none,l:dunaha
+khutwa,y,l:kharij,m,l:dunaha
+khutwa,y,l:kharij,p,l:dunaha
+khutwa,y,l:kharij,l,l:dunaha
+khutwa,y,l:kharij,k,l:dunaha
+khutwa,y,l:kharij,echo,l:dunaha
+khutwa,y,l:kharij,word,l:dunaha
+silsila,كَتَبَ,0,m:كَتَبَ
+silsila,كَتَبَ,1,p:فعل|اسم
+silsila,كَتَبَ,2,l:laQari
+silsila,كتب,0,l:rafd:REJECT
+silsila,كتب,1,l:dunaha
+silsila,كتب,2,l:dunaha
+jins,ءَلْكَلْبُ,كلب,كلب,كلب:كتاب السباع
+jins,ءَشْشَمْسُ,شمس,شمس,شمس:كتاب السماء
+jins,لْكَلْبُ,كلب,كلب,كلب:كتاب السباع
+jins,كَلْبُ,كلب,كلب,كلب:كتاب السباع
+jins,عَيْنُ,عين,عين|عون,عين:كتاب خلق الإنسان|عين:كتاب المياه
+jins,ءَلْعَيْنُ,عين,عين|عون,عين:كتاب خلق الإنسان|عين:كتاب المياه
+jins,كَتَبَ,كتب,,
+jins,ءَلْلَيْلُ,ليل,,
+jins,ءَيْيَاْمِ,ءييام,,
+jins,شْشَمْسُ,شمس,شمس,شمس:كتاب السماء
+haml,الصلاة,صَ لَ اْ ت,صلو,صلو:shariyya
+haml,الصلاة,صَ لَ اْ ت,عين,
+haml,الكلب,كَ لْ ب,كلب,كلب:lughawiyya
+haml,الدابة,كَ لْ ب,كلب,كلب:urfiyya_amma
+haml,الرفع,عَ يْ ن,عين|عون,عين:urfiyya_khassa
+haml,عين,عَ يْ ن,,
+haml,الكلب,سَ مَ اْ ء,سمو,

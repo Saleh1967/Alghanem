@@ -1,0 +1,275 @@
+name: Gate (sole entry and exit)
+
+# بوّابةٌ واحدة: البرهانُ في Lean، ومرآتُه في `gate/`، ومطابقتُهما بالجداول المولَّدة،
+# والحارسُ الذي يمنع أيَّ قارئٍ أو كاتبٍ خارجَها. سقوطُ أيّ خطوةٍ يُسقط الفحص.
+#   ١. نواةُ Lean تقبل كلَّ مبرهنة (بما فيها Recovery)، بلا تحذير.
+#   ٢. لا sorry ولا native_decide ولا مسلّمةً خارجَ القياسيّة (Audit.lean).
+#   ٣. الجداولُ المولَّدةُ من Lean (order/numbers/pairs/syllables/table/counts) هي المودَعةُ بايتًا بايتًا.
+#   ٤. البايثون يطابق الجداول (test_conformance)، والبوّابة تعمل على المدوّنة المختومة (test_gate).
+#   ٥. الحارس: لا خرق، والمعلَّقُ غيرُ قابلٍ للاستيراد، والسجلُّ مطابقٌ للشجرة (test_guard).
+#   ٦. القياسُ على المرجع البشريّ المحجوب (MASAQ ≥ 97%) — بطيء، على main فقط.
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: formal/a116
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install elan (toolchain pinned by formal/a116/lean-toolchain)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
+            | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: kernel checks every theorem, no warning swallowed
+        run: |
+          set -euo pipefail
+          lake build 2>&1 | tee build.log
+          if grep -n "warning" build.log; then echo "::error::تحذيرٌ في البناء"; exit 1; fi
+
+      - name: every registered Lean mutant is killed (constitution art. 19, ADR 111)
+        run: python3 ../../tools/gen_tafrat.py --check
+
+      - name: no sorry, no native_decide, standard axioms only
+        run: |
+          set -euo pipefail
+          if grep -rnE "\bsorry\b|native_decide|^\s*axiom\b" --include=*.lean A116 A116.lean Main.lean; then
+            echo "::error::برهانٌ ناقصٌ أو مسلَّمةٌ مُضافة"; exit 1
+          fi
+          lake env lean Audit.lean | tee axioms.txt
+          if grep -nE "sorryAx|Lean.ofReduceBool" axioms.txt; then
+            echo "::error::مبرهنةٌ تستند إلى ما لا تفحصه النواة"; exit 1
+          fi
+          if grep -oE "\[[^]]*\]" axioms.txt | tr -d '[] ' | tr ',' '\n' | grep -v '^$' \
+               | grep -vxE "propext|Classical.choice|Quot.sound"; then
+            echo "::error::مسلّمةٌ خارجَ القياسيّة"; exit 1
+          fi
+          for t in edit_roundtrip shadda_restore tanwin_restore hamza_restore ilal_edit_restore \
+                   no_seat_recovery_from_hamza_alone restoration_forces_fiber_separation compose_restoration; do
+            grep -q "A116.Recovery.$t" axioms.txt || { echo "::error::Recovery.$t غيرُ مدقَّقة"; exit 1; }
+          done
+          for t in sukun_restore fariqa_restore tanwinAlif_restore idgham_restore ulaWaw_restore chain_restore residue_separates; do
+            grep -q "A116.Residue.$t" axioms.txt || { echo "::error::Residue.$t غيرُ مدقَّقة"; exit 1; }
+          done
+          for t in cells_length_eq_product decode_code code_decode \
+                   RootGrade.mem_table RootGrade.num_inj RootGrade.num_unnum RootGrade.quad_needs_tri \
+                   RootGrade.only_tri_and_quad RootGrade.rootLedger_quad_waits RootGrade.cells_exhausted_within_thulathi \
+                   Nizam.admissible_iff_binary Nizam.continueB_local Nizam.pauseB_local Nizam.licWasl_append \
+                   Nizam.sijill Nizam.sijill_huwiyya Nizam.lift_flatten Nizam.wasl_element_needs_no_ibtida \
+                   NizamHadd.roleN_inj NizamHadd.edgeN_inj NizamHadd.chain_azwaj NizamHadd.geminate_win3 \
+                   NizamHadd.strictB_is_nizam NizamHadd.strictPauseB_split NizamHadd.farq_outside_nizam \
+                   NizamLine.licWasl_haddJ NizamLine.crossOK_tagC NizamLine.strictLineB_is_nizam \
+                   NizamLine.crossStr_split NizamLine.line_two NizamLine.line_two_pause \
+                   NizamTree.seamsT_eq NizamTree.tree_eq_line NizamTree.tree_eq_line_pause NizamTree.regroup_invariant \
+                   NizamTree.line_is_depth_one NizamTree.tree_two NizamTree.tagT_forget NizamTree.licWasl_comap NizamTree.tree_is_nizam \
+                   Hasr.hasr Hasr.hasr_tight_low Hasr.hasr_tight_high Hasr.countP_mono Hasr.hasr_mono Hasr.hasr_list Hasr.hasr_refine Hasr.pin_distinct Hasr.pin_unique \
+                   RootGrade.khumasi_jamid RootGrade.jamid_not_murakhkhas \
+                   Tasrif.transfer_strict Tasrif.transfer_pause Tasrif.every_position Tasrif.every_cell_in_every_slot \
+                   Tasrif.madi_exhausted Tasrif.mudari_exhausted Tasrif.amr_exhausted Tasrif.madd_drop_forced Tasrif.haa_forced Tasrif.agrees_with_mudari \
+                   Rubai.rubai_licensed Rubai.rubai_one_mujarrad Rubai.quad_open_by_maqayis \
+                   Tawafiq.law_fil_twelve Tawafiq.law_rubai Tawafiq.fuila_verb_only Tarkib.isnad_sep_needs_two Tarkib.fasl_shahid \
+                   Awamil.reduces_to_amil Awamil.jarr_targets_ism Awamil.jazm_targets_fil Awamil.inna_kana_dual Awamil.rows_length Awamil.class_counts Awamil.anchored_or_none \
+                   IhalaHasr.murashshah_precedes IhalaHasr.murashshah_laiq IhalaHasr.hudur_no_marji IhalaHasr.mutaayyin_iff IhalaHasr.no_guess IhalaHasr.aid_refers_to_mawsul IhalaHasr.two_marji_no_guess IhalaHasr.sila_needs_aid Hudud.certHadd_injective Hudud.certHadd_to_certNumber \
+                   Hudud.n_inj Hudud.unn_n Hudud.jins_separates Hudud.jidhr_inj Hudud.wazn_nodup Hudud.kalima_inj Hudud.nFi_inj Hudud.mabni_licensed Hudud.mabni_nodup Hudud.man_two_n Hudud.damir_mabni Hudud.zayd_three_n \
+                   NaqdFractal.continuity_is_about_nothing NaqdFractal.continuity_even_when_gate_closed NaqdFractal.gate_ignores_cells NaqdFractal.real_gate_reads_cells NaqdFractal.phonetic_link_is_blind_product NaqdFractal.no_xor_in_awamil NaqdFractal.fractal_says_something \
+                   Amil.naib_count Amil.ism_no_jazm Amil.fil_no_jarr Amil.pause_forgets_amil Amil.isnad_raf Amil.taqyid_nasb Amil.idafa_jarr Amil.nisab_three \
+                   Tawafiq.law_ism_twelve Tawafiq.law_ism_all Tawafiq.naql_sub_law Tawafiq.law_minus_naql Tawafiq.shapes64_wasl \
+                   Tarkib.cells_recycled Tarkib.licence_blind_to_qism Tarkib.isnad_needs_two Tarkib.musnad_ilayh_is_ism Tarkib.huruf_no_isnad Tarkib.shibh_no_isnad Tarkib.atf_two_isnad \
+                   Tawafiq.seqs_length Tawafiq.wasl_one Tawafiq.wasl_two Tawafiq.waqf_two Tawafiq.two_structure Tawafiq.not_3364 Tawafiq.alif_closer_licensed Tawafiq.alif_closers_two Tawafiq.kaa_aa_pause \
+                   Qufl.ishtiqaqLocked Qufl.sarfLocked Qufl.locked_six_qaim Qufl.locked_stops_at_one Qufl.dalala_alone_opens Qufl.locked_beyond_sahih Qufl.locked_quad Qufl.dal_locked \
+                   Tadwir.restore_dedupBy Tadwir.restore_dedupKey Tadwir.collision_loses Tadwir.dedupBy_nodup \
+                   Kraft.huffman_lengths Kraft.kraft_complete Kraft.mean_length_bounds \
+                   Mizan.machineJoin_eq Mizan.machineJoin_pause_eq Mizan.hal_nodup Mizan.khana_nodup \
+                   MizanKernel.cellT_eq MizanKernel.stateT_eq MizanKernel.waslT_eq MizanKernel.waqfT_eq \
+                   Sawabiq.candidates_head Sawabiq.candidates_suffix Sawabiq.peel_exact Shannon.flog_spec Shannon.logCheck_spec Shannon.flog_values Shannon.shannon_exact Shannon.within_one_bit Shannon.entropy_bounds Tanith.tanith_partition Tanith.witnesses Tanith.no_shape_function Qism.murab_iff Qism.read_best Qism.coverage_counts Qism.qism_le_class Mamnu.strong_alone Mamnu.alam_alone Mamnu.nakira_munsarif Mamnu.readJ_sound Mamnu.mamnu_needs_amil \
+                   Maqayis.roots_in_table Maqayis.roots_nodup Maqayis.count_is_maqayisCount Dal.no_cell_function_recovers_root \
+                   Unicode.decode_encode Unicode.encode_prefix_free Unicode.decodeAll_encodeAll \
+                   Boundary.no_start_with_sukun Boundary.pause_ends_with_sukun Boundary.join_iff \
+                   Boundary.wasl_dropped_needs_moving_left Boundary.pause_then_join_is_not_join \
+                   Ilal.vowelled_to_sukun_between_vowelled Ilal.swap_sukun_vowel Ilal.delete_sukun_after_vowelled \
+                   Ilal.two_sukun_not_admissible Ilal.hadhf_ayn_forced Ilal.admissible_replace_carrier \
+                   Hamza.seat_initial_by_own Hamza.seat_medial_strongest Hamza.qat_stays_when_joined \
+                   Hamza.prefix_hamza_admissible \
+                   Hadd.geminateB_vc_carrier Hadd.geminateB_vc_final Hadd.strict_cvvc_is_geminate \
+                   Hadd.strictB_continue Hadd.hadd_debt_closed Hadd.farq_needs_its_hamza \
+                   Hadd.straddle_rejected Hadd.ya_shafiina_straddles Hadd.strictJoinB_nil \
+                   Exhaust.codeI_snoc Exhaust.decodeI_codeI Exhaust.codeI_decodeI Exhaust.table_nodup \
+                   Exhaust.strict_mem_table Exhaust.mem_table_iff_contGrade Exhaust.table_iff_licensed Exhaust.table_realized_upto_three Exhaust.roles_exhausted_within_three \
+                   Exhaust.exhaustion_gate Exhaust.no_skip Exhaust.current_stops_at_one \
+                   Zawaid.template_lits_from_zawaid Zawaid.peel_sound_templates \
+                   Wazn.kindOf_realize_invariant Wazn.syllables_fixed_by_wazn Wazn.sylF_sound \
+                   Wazn.thulathi_licensed Wazn.root_degree_is_not_syllable_degree Wazn.wasl_lam_conflict \
+                   Neutral.factor_through_erase Neutral.alif_neutral_unique Neutral.neutral_forgets_weak \
+                   Neutral.weak_licensed Neutral.sound_unchanged \
+                   Hajah.need_law_iff_parse Hajah.need_append Hajah.before_after Hajah.minimal_complete \
+                   Hajah.need_states_closed Hajah.strict_need Hajah.awa_ibtida_of_need \
+                   Manhaj.sawabT_iff Manhaj.qatiT_iff Manhaj.closed_reach Manhaj.roots_mahsus Manhaj.monotone Manhaj.judge1_refuses_s87 \
+                   Mudari.amr_head_vowelled Mudari.amr_lqy Mudari.owner_examples Mudari.reference_licensed \
+                   Mudari.amr_restores_mudari; do
+            grep -q "A116.$t" axioms.txt || { echo "::error::$t غيرُ مدقَّقة"; exit 1; }
+          done
+
+      - name: the committed tables are the ones Lean generates now
+        run: |
+          set -euo pipefail
+          lake exe a116-table > table.csv
+          lake exe a116-table counts > counts.csv
+          lake exe a116-table bridge-order > order.csv
+          lake exe a116-table numbers > numbers.csv
+          lake exe a116-table pairs > pairs.csv
+          lake exe a116-table utf8 > utf8.csv
+          lake exe a116-table hamza > hamza.csv
+          lake exe a116-table licensable > licensable.csv
+          lake exe a116-table degrees > degrees.csv
+          lake exe a116-table wazn > wazn.csv
+          lake exe a116-table wazn-body > wazn-body.csv
+          lake exe a116-table neutral > neutral.csv
+          lake exe a116-table degrees-pause > degrees-pause.csv
+          lake exe a116-table ledger > ledger.csv
+          lake exe a116-table need > need.csv
+          lake exe a116-table nizam > nizam.csv
+          lake exe a116-table mantuq > mantuq.csv         # الجسرُ من المنطوق إلى المفهوم (ADR ١١٢، STEP-0005) — يُودَع ويُطابَق
+          lake exe a116-table silsila > silsila.csv       # السلسلةُ كلمةً كلمة (ADR ١١٤، STEP-0006) — يُودَع ويُطابَق
+          lake exe a116-table furu > furu.csv             # فرعا السلسلة (ADR ١١٥، STEP-0008؛ أُضيف في STEP-0010) — يُودَع ويُطابَق
+          lake exe a116-table amr > amr.csv
+          lake exe a116-table roles > roles.csv
+          lake exe a116-table tasrif > tasrif.csv
+          lake exe a116-table rubai > rubai.csv
+          lake exe a116-table maqayis > maqayis.csv
+          lake exe a116-table qufl > qufl.csv
+          lake exe a116-table tawafiq > tawafiq.csv
+          lake exe a116-table masfufa > masfufa.csv       # عددُ المرخَّص لكلّ طول بالمصفوفة (ADR ١١٦، STEP-0010)
+          lake exe a116-table masfufa-lean > /tmp/TawafiqMasfufaData.lean && cp /tmp/TawafiqMasfufaData.lean A116/TawafiqMasfufaData.lean
+          lake exe a116-table amil > amil.csv
+          lake exe a116-table huruf > huruf.csv
+          lake exe a116-table mizan > mizan.csv
+          lake exe a116-table mizan-lean > /tmp/MizanData.lean && cp /tmp/MizanData.lean A116/MizanData.lean
+          git diff --exit-code -- table.csv counts.csv order.csv numbers.csv pairs.csv utf8.csv hamza.csv licensable.csv degrees.csv wazn.csv wazn-body.csv neutral.csv degrees-pause.csv ledger.csv need.csv nizam.csv mantuq.csv silsila.csv furu.csv amr.csv roles.csv tasrif.csv rubai.csv maqayis.csv qufl.csv tawafiq.csv masfufa.csv A116/TawafiqMasfufaData.lean amil.csv huruf.csv mizan.csv A116/MizanData.lean
+          lake exe a116-table syllables > syllables.csv   # 13 MB: يُولَّد هنا ويُسلَّم للبايثون لا يُودَع
+          lake exe a116-table hadd > hadd.csv             # 14 MB: قيدُ الحدّ (Hadd.strictB) — يُولَّد ولا يُودَع
+          lake exe a116-table hadd-join > hadd-join.csv   # الحدُّ بين كلمتين (Hadd.strictJoinB) — يُولَّد ولا يُودَع
+          lake exe a116-table iltiqa > iltiqa.csv         # التقاءُ الساكنين على الحدّ (Iltiqa.repair) — يُولَّد ولا يُودَع
+          lake exe a116-table qarar > qarar.csv           # سلسلةُ القرار (Qarar.judge1، Manhaj.judgeT) — يُولَّد ولا يُودَع
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lean-syllables
+          path: |
+            formal/a116/syllables.csv
+            formal/a116/hadd.csv
+            formal/a116/hadd-join.csv
+            formal/a116/iltiqa.csv
+            formal/a116/qarar.csv
+
+  gate:
+    needs: [lean]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # gen_protocol يقرأ أبَ الإيداع ورأسَ الفرع؛ والضحلُ بلا أب (STEP-0002)
+      - uses: actions/download-artifact@v4
+        with:
+          name: lean-syllables
+          path: formal/a116
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: install the gate only
+        run: python -m pip install -e ".[dev]"
+      - name: lint and types on the gate surface
+        run: |
+          set +e
+          ruff check --output-format github gate tests tools; r1=$?
+          mypy | tee mypy.txt; r2=${PIPESTATUS[0]}
+          { echo "## ruff rc=$r1 · mypy rc=$r2"; echo '```'; cat mypy.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          grep -E "error:" mypy.txt | sed 's/^/::error::/'
+          test $r1 -eq 0 -a $r2 -eq 0
+      - name: registry matches suspended/ tree
+        run: python tools/gen_registry.py --check
+      - name: glossary — every term anchored in the tree, every tag/kind/grade defined, no unused entry
+        run: python tools/gen_glossary.py --check
+      - name: refusals — every refusal name the gate emits is anchored in Lean/GLOSSARY or declared by kind; stale declarations fail
+        run: python tools/gen_refusals.py --check
+      - name: audit_results.json is what gate.audit computes now on the sealed corpus (no hand-written block)
+        run: |
+          python -m gate.audit corpora/quran-simple-enhanced.txt /tmp/audit_out > /dev/null
+          git diff --exit-code -- gate/audit_results.json
+      - name: CLAIMS.md — every published number recomputed from its named generator; no number in CLAUDE.md without one
+        run: python tools/gen_claims.py --check
+      - name: context deposit — every position of the sealed corpus enters the gate in its own context (start/joined, continue/pause) on a named domain, and the tool's --check is its own fixed point
+        run: |
+          python tools/gen_context_certificates.py /tmp/context-certificates.json.gz
+          python tools/gen_context_certificates.py --check /tmp/context-certificates.json.gz
+      - name: second sealed corpus — the Sahihain lines are what the sealed sources yield (lossless, named edition glyphs), and their context deposit is the tool's own fixed point
+        run: |
+          python tools/gen_hadith_lines.py --check
+          python tools/gen_hadith_sample.py --check
+          python tools/gen_hukm_sample.py --check
+          python tools/gen_sijill.py --check
+          python tools/gen_context_certificates.py --corpus sahihain /tmp/hadith-context-certificates.json.gz
+          python tools/gen_context_certificates.py --corpus sahihain --check /tmp/hadith-context-certificates.json.gz
+      - name: third sealed domain — the signed abniya selection is sealed as the gate reads it, every filled row enters through the gate, and its deposit is the tool's own fixed point (ADR 13)
+        run: |
+          python tools/gen_abniya_intiqa.py --check
+          python tools/gen_abniya_intiqa.py deposit /tmp/abniya-intiqa.json
+          python tools/gen_abniya_intiqa.py --check --deposit /tmp/abniya-intiqa.json
+      - name: fourth sealed domain — Lane's lexicon is sealed as the gate reads it, its records are what the sealed TEI yields, and the preregistered measurement is reproduced (ADR 33)
+        run: |
+          python tools/gen_lane.py --check
+          python tools/gen_lane_hasr.py --check
+          python tools/gen_lane_shahid.py --check
+          python tools/gen_lane_tahdid.py --check
+          python tools/gen_lane_khatm.py --check
+      - name: fifth sealed domain — QAC 0.4 roots are sealed verbatim, the aligned reference is what the tool yields, and the preregistered measurement is reproduced once it exists (ADR 41)
+        run: |
+          python tools/gen_qac.py --check
+          python tools/gen_qac_peel.py --check
+          python tools/gen_qac_tanith.py --check
+          python tools/gen_qac_qism.py --check
+          python tools/gen_hadith_roots.py --check
+          python tools/gen_lane_roots.py --check
+          python tools/gen_lane_lexical.py --check
+          python tools/gen_mukhassas.py --check
+          python tools/gen_wad.py --check
+          python tools/gen_qarina.py --check
+          python tools/gen_trial_seals.py --check
+          python tools/gen_kitab.py --check
+          python tools/gen_awamil.py --check
+          python tools/gen_fractal.py --check
+          python tools/gen_fractal_tarkib.py --check
+          python tools/gen_nabhani.py --check
+          python tools/gen_sidq.py --check
+          python tools/gen_naql.py --check
+          python tools/gen_tashkil.py --check
+          python tools/gen_qism_khanat.py --check
+          python tools/gen_silsila.py --check           # السلسلةُ على المصحف (ADR ١١٤، STEP-0007؛ ADR ١١٥، STEP-0009)
+          python tools/gen_protocol.py --check
+      - name: guard — no reader or writer outside the gate
+        run: python -c "from gate.guard import breaches; b = breaches(); print(b or 'لا خرق'); raise SystemExit(1 if b else 0)"
+      - name: conformance, gate, guard (fast)
+        run: pytest -q -m "not slow"
+
+  masaq:
+    if: github.ref == 'refs/heads/main'
+    needs: [lean, gate]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - run: python -m pip install -e ".[dev]"
+      - name: recovery measured against the held-out human reference
+        run: pytest -q -m slow

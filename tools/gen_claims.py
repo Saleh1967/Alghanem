@@ -1,0 +1,446 @@
+"""سجلُّ الأرقام (CLAIMS.md): لا رقمَ منشورًا بلا مولِّدٍ ومودَعٍ وبصمةِ مخرَج.
+
+كلُّ رقمٍ يُنشر عن البوّابة له مولِّدٌ مسمًّى في الشجرة: `gate.audit.main` على المدوّنة المختومة،
+قراءاتُ `gate.mabni_bridge` على المرجع المحجوب (MASAQ)، `gate.hamza.seat_census` على الرسوم المختومة،
+وجداولُ Lean المولَّدة (`formal/a116/*.csv`). هذه الأداةُ تستدعي كلَّ مولِّدٍ وتكتب لكلّ رقمٍ عدديٍّ
+في مخرَجه سطرًا من أربعة لا خامسَ لها: (الرقم، المولِّد، المودَعاتُ التي يقرؤها ببصماتها، بصمةُ المخرَج
+كاملًا). الأرقامُ لا تُكتب باليد؛ `--check` يعيد الحسابَ كلَّه ويُسقط البناءَ على أيّ فرق.
+
+«المراجعة» (rev): بصماتُ المودَعات (المدوّنةُ المختومة `CORPUS_SHA256`، والمرجعُ المحجوب، وجداولُ
+Lean كما هي على القرص)؛ أمّا مراجعةُ هذا المستودع فهي الإيداعُ الحاملُ لهذا الملفّ وشاهدُها تشغيلُ CI.
+
+وبـ`--check` أيضًا: كلُّ عددٍ بفاصلة الآلاف في `CLAUDE.md` (خارج سطرٍ يحيل إلى ADR) يجب أن يكون قيمةً
+في هذا السجلّ، وإلّا سقط البناءُ باسم `NUMBER_WITHOUT_GENERATOR`.
+
+و**أعدادُ المبرهنات بوحداتها** (ADR ١٢): كلُّ مبرهنةٍ في `formal/a116/A116/*.lean` ينتهي نصُّها بـ‎= عدد‎
+(عددٌ ≥ 2) تُسجَّل برقمها ووحدتها من قائمةٍ مغلقة (`UNITS`)، مدقَّقةً في `Audit.lean`. مبرهنةٌ عدديّة بلا
+وحدة `CLAIM_WITHOUT_UNIT`، ووحدةٌ خارج القائمة `UNIT_NOT_IN_VOCABULARY`، ووحدةٌ لمبرهنةٍ لا توجد
+`UNIT_FOR_MISSING_THEOREM`، ومبرهنةٌ عدديّة غيرُ مدقَّقة `COUNT_NOT_AUDITED`؛ والرقمُ الواحد بوحدتين
+يُسمّى في السجلّ (375: متتالياتُ أصنافٍ بالوزن وسلاسلُ غلافٍ بالطول) — فلا يُقرأ رقمٌ بلا وحدته.
+"""
+
+from __future__ import annotations
+
+import contextlib
+import hashlib
+import io
+import json
+import re
+import sys
+import tempfile
+from pathlib import Path
+from typing import Any
+
+ROOT = Path(__file__).resolve().parent.parent
+TARGET = ROOT / "CLAIMS.md"
+CORPUS = ROOT / "corpora" / "quran-simple-enhanced.txt"
+MASAQ = ROOT / "corpora" / "MASAQ.csv"
+TABLES = ROOT / "formal" / "a116"
+TABLE_NAMES = (
+    "amr", "counts", "degrees", "degrees-pause", "hadd", "hadd-join", "hamza", "iltiqa", "ledger",
+    "licensable", "maqayis", "need", "nizam", "numbers", "order", "neutral", "pairs", "roles",
+    "rubai", "syllables", "table", "tasrif", "utf8",
+    "wazn", "wazn-body",
+)
+"""جداولُ Lean المسجَّلة في السجلّ بترتيب الاسم: المودَعةُ الحاديةُ والعشرون (يطابقها CI بايتًا)
+والمولَّداتُ الأربع لحجمها (`syllables`، `hadd`، `hadd-join`، `iltiqa`: تُولَّد في وظيفة Lean وتُنزَّل
+أثرًا إلى وظيفة البوّابة). جدولٌ جديد لا يدخل السجلَّ بوجوده على القرص بل بإضافته هنا وإلى الأثر في CI
+— وإلّا اختلف السجلُّ محلّيًّا عنه في CI."""
+FAN = 12  # أقصى ما يُفرد من مفاتيح؛ وما فوقه يُجمل عددًا ومجموعًا
+LEAN_DIR = TABLES / "A116"
+UNITS: dict[str, str] = {
+    "خانة": "خانةٌ من شبكة الحوامل × الحالات",
+    "حامل": "حرفٌ حاملٌ بلا حالة",
+    "بايت": "بايتٌ في ترميز UTF-8",
+    "سلسلة خانات مرخصة بالطول": "سلسلةُ خاناتٍ مرخَّصةٌ ثنائيًّا (‎U(n)‎) بطولها",
+    "سلسلة خانات": "سلسلةُ خاناتٍ من الشبكة المرخَّصة (113) بطولٍ معلوم، مرخَّصةٌ ثلاثيًّا",
+    "بناء ثلاثي": "بناءٌ من حركاتٍ على الأصول الثلاثة لجذرٍ صحيحٍ شاهد (ك ت ب)",
+    "صنف أثر": "صنفُ أثرِ العامل على معموليه (`Awamil.Athar`) — ADR ٧١",
+    "جنس حدّ": "جنسُ الوحدة من الأحدَ عشر (`Hudud.Jins`) — ADR ٨٥",
+    "صورة ضمير": "صورةُ ضميرٍ أو عائدٍ أو موصولٍ بصفته (`IhalaHasr`) — ADR ٨٦",
+    "وحدة مبنيّة": "وحدةٌ مبنيّة بشكلها المختوم (`Hudud.mabniWahdat`) — ADR ٨٥",
+    "عامل": "عاملٌ من جدول العوامل المودَع (`corpora/awamil/awamil.tsv`) — ADR ٧١",
+    "بناء رباعي": "بناءٌ من حركاتٍ على الأصول الأربعة لجذرٍ صحيحٍ شاهد (د ح ر ج)، آخرُه فتحة",
+    "علامة إعراب": "آخرٌ من آخِر المعرب في جدول الألفيّة (`Qism.Ending`): حركةٌ أصليّة أو حرفٌ نائب "
+                   "— ADR ٧٠",
+    "قلادة حوامل": "مدارُ سلاسل الحوامل تحت الدوران (عدُّ بيرنسايد)",
+    "نمط متحرك/ساكن": "نمطُ M/S بطولٍ معيّن",
+    "حالة آلة": "حالةٌ في آلة الترخيص المشبَّعة",
+    "ضلع اشتقاق": "ضلعٌ بين أبواب الفعل في رسم الاشتقاق",
+    "احتمال×6": "احتمالُ انتقالٍ مضروبًا في 6",
+    "وزن التوزيع المستقر": "وزنٌ غيرُ مسوًّى في التوزيع المستقرّ على الأبواب",
+    "قالب": "قالبُ صيغةٍ صرفيّة",
+    "متتالية أصناف بالوزن": "متتاليةُ أصنافٍ (cv=2، v=c=1) بوزنها الصوتيّ",
+    "سلسلة غلاف بالطول": "سلسلةُ C/V من الغلاف المقترَح بطولها",
+    "دور خانة": "زوجُ (خانةٍ مرخَّصة، دورٍ تقبله: cv أو v أو c) — ADR ١٥",
+    "حقل وظيفة": "حقلٌ من الوظائف السبع في صفّ درجة (ترميز … دلالة) — ADR ١٥",
+    "زوج جوار": "زوجُ صنفين متجاورين (قبل، بعد) مأذونٌ وصلًا في نظام الجوار — ADR ٢٣",
+    "صفة جذر": "صفةُ جذر: أصنافُ أصوله (و ي ء ل صحيح)، ومماثلةُ العين واللام في الثلاثيّ — ADR ٢٦",
+    "مدخل سجل": "مدخلٌ في سجلّ التراخيص المودَع (`docs/sijill/ledger.json`): ملفٌّ ببصمته — ADR ٢٩",
+    "زوج صنف وحالة": "زوجُ (صنفِ معربٍ، حالةِ إعراب) له آخرٌ في جدول الألفيّة (`Qism.ending`) — ADR ٥٤",
+    "لفظ مشترك": "لفظٌ (مفتاحُ خاناتٍ من لين) له في علاقة الوضع المودَعة جذران فأكثر "
+                 "(`corpora/wad/wad.tsv`) — ADR ٥٦",
+    "زوج وضع مشترك": "زوجُ (لفظٍ مشترك، جذرٍ من جذوره) في علاقة الوضع المودَعة، وحقلُه عُقَدُ «المخصَّص» "
+                     "(`corpora/wad/qarina.tsv`) — ADR ٥٩",
+    "زوج إدغام": "زوجُ (حرفٍ مدغَم، حرفٍ مدغَمٍ فيه) من صفوف أبواب الإدغام في «الكتاب» المختوم "
+                 "(`A116.MakharijIdgham`) — ADR ٦٨",
+    "زوج متجاور": "زوجُ أصلين متجاورين في جذرٍ ثلاثيٍّ من «مقاييس اللغة» المختومة "
+                  "(`A116.Jadwal.obsD`) — ADR ٧٣",
+    "زوج مانع": "زوجٌ مرتّبٌ من حرفين مختلفين سببُ فصلهما واحد في مجاله (`A116.Fasl.mani`) — ADR ٧٤",
+    "آية": "آيةٌ من المصحف المختوم سطرًا (`A116.FractalMushaf.ayat`) — ADR ٧٨",
+    "كلمة مصحف": "موقعُ كلمةٍ في المصحف المختوم داخلٌ `gate.enter` "
+                 "(`A116.FractalMushaf.Aya`) — ADR ٧٨",
+    "حد بين كلمتين": "حدٌّ بين كلمتين متجاورتين في آيةٍ من المصحف المختوم "
+                     "(`A116.FractalMushaf.Aya`) — ADR ٧٨",
+    "شاهد كذب ظاهر": "شاهدُ كذبٍ ظاهرٍ من شرح السيرافيّ المختوم (`A116.SidqSirafi.shawahid`) "
+                     "— ADR ٨٩",
+    "زوج جذر ولفظ مشهود": "زوجُ (جذرٍ ثلاثيٍّ من «مقاييس اللغة»، هيكلِ لفظٍ) مشهودٌ في معجمٍ مختوم "
+                          "(`corpora/naql/shuhud.tsv.gz`) — ADR ١٠٠",
+    "هيكل تشكيل": "هيكلُ لفظٍ بلا علامات له صورٌ مشكولةٌ في المصحف أو الصحيحين "
+                  "(`corpora/tashkil/mujam.tsv.gz`) — ADR ١٠٣",
+}
+"""القائمةُ المغلقة للوحدات: لا تُضاف وحدةٌ إلّا هنا وبـADR."""
+LEAN_UNITS: dict[str, str] = {
+    "Alif.alifVowelled_length": "خانة", "Alif.licensable_length": "خانة",
+    "Cells.cells_length": "خانة", "Cells.cells112_length": "خانة",
+    "Cells.hamzaRow_length": "خانة", "Numbering.orders_differ_only_in_two_rows": "خانة",
+    "Field112.hamilField112_length": "خانة", "Field112.letters28_length": "حامل",
+    "Unicode.arabic_is_two_bytes": "بايت", "Imla.renderC_bytes": "بايت",
+    "SidqSirafi.musawwada_tahkum": "شاهد كذب ظاهر",
+    "Naql.mawdu_count": "زوج جذر ولفظ مشهود",
+    "Tashkil.mujam_count": "هيكل تشكيل",
+    "Count.U_one": "سلسلة خانات مرخصة بالطول",
+    "Junction.licensed_upto_4": "سلسلة خانات مرخصة بالطول",
+    "Ladder.U3_by_pattern": "سلسلة خانات مرخصة بالطول",
+    "Junction.burnside_4": "قلادة حوامل",
+    "Ladder.admissible_patterns_3": "نمط متحرك/ساكن",
+    "Model.saturation_rungs": "حالة آلة",
+    "Derivation.edges_length": "ضلع اشتقاق", "Derivation.branching_nodes": "ضلع اشتقاق",
+    "Derivation.rows_stochastic": "احتمال×6", "Derivation.w_total": "وزن التوزيع المستقر",
+    "Ishtiqaq.soundTemplates_length": "قالب",
+    "PauseCount.pause_count_375": "متتالية أصناف بالوزن",
+    "ContinueCount.continue_count_304": "متتالية أصناف بالوزن",
+    "Envelope.envelope_375": "سلسلة غلاف بالطول",
+    "Envelope.envelope_licensed_75": "سلسلة غلاف بالطول",
+    "Envelope.envelope_licensed_continue_59": "سلسلة غلاف بالطول",
+    "Exhaust.role_count": "دور خانة", "Exhaust.current_qaim_count": "حقل وظيفة",
+    "Zawaid.zawaid_length": "حامل", "Zawaid.zawaid_cells_licensable": "خانة",
+    "Wazn.wasl_joined_waits": "قالب",
+    "Ledger.filled_qaim_count": "حقل وظيفة",
+    "Qufl.locked_qaim_count": "حقل وظيفة",
+    "Tawafiq.wasl_one": "سلسلة خانات",
+    "Tawafiq.waqf_one": "سلسلة خانات",
+    "Tawafiq.wasl_two": "سلسلة خانات",
+    "Tawafiq.waqf_two": "سلسلة خانات",
+    "Tawafiq.alif_closers_two": "سلسلة خانات",
+    "TawafiqMasfufa.rows_113": "خانة",
+    "TawafiqMasfufa.wasl_qiyam": "سلسلة خانات",
+    "TawafiqMasfufa.waqf_qiyam": "سلسلة خانات",
+    "Tawafiq.shapes64_length": "بناء ثلاثي",
+    "Tawafiq.shapes64_wasl": "بناء ثلاثي",
+    "Tawafiq.shapes64_waqf": "بناء ثلاثي",
+    "Tawafiq.law_ism_twelve": "بناء ثلاثي",
+    "Tawafiq.naql_ism_ten": "بناء ثلاثي",
+    "Tawafiq.law_fil_twelve": "بناء ثلاثي",
+    "Tawafiq.naql_fil_four": "بناء ثلاثي",
+    "Tawafiq.shapes48_length": "بناء رباعي",
+    "Tawafiq.law_rubai": "بناء رباعي",
+    "Tawafiq.zawaid_row": "قالب",
+    "Amil.asliyya_count": "علامة إعراب",
+    "Amil.harfiyya_count": "علامة إعراب",
+    "Amil.naib_count": "زوج صنف وحالة",
+    "IhalaHasr.sifat_counts": "صورة ضمير",
+    "IhalaHasr.damir_hudur_ghaib": "صورة ضمير",
+    "Hudud.ajnas_length": "جنس حدّ",
+    "Hudud.wazn_count": "قالب",
+    "Hudud.nFi_mod": "جنس حدّ",
+    "Hudud.counts": "وحدة مبنيّة",
+    "Hudud.mabni_count": "وحدة مبنيّة",
+    "Awamil.all_length": "صنف أثر",
+    "AwamilCount.rows_length": "عامل",
+    "AwamilCount.names_repeat": "عامل",
+    "AwamilCount.class_counts": "عامل",
+    "Makharij.huruf_length": "حامل", "Makharij.jahr_partition": "حامل",
+    "MakharijIdgham.pos_count": "زوج إدغام", "MakharijIdgham.neg_count": "زوج إدغام",
+    "MakharijIdgham.R_count": "زوج إدغام", "MakharijIdgham.far_count": "زوج إدغام",
+    "Jadwal.ibtida_wasl_waqf_counts": "خانة", "Jadwal.khalil_partition": "حامل",
+    "Jadwal.obs_counts": "زوج متجاور",
+    "Fasl.makhraj_mani_count": "زوج مانع",
+    "FractalMushaf.ayat_count": "آية", "FractalMushaf.ayat_ctx_count": "آية",
+    "FractalMushaf.kalimat_count": "كلمة مصحف", "FractalMushaf.hadd_counts": "حد بين كلمتين",
+    "FractalTarkib.isnad_mushaf": "آية",
+    "Hajah.states_length": "حالة آلة",
+    "Nizam.waslK_count": "زوج جوار",
+    "Tasrif.allSifa_length": "صفة جذر",
+    "Rubai.allSifa4_length": "صفة جذر",
+    "Qism.pairs_length": "زوج صنف وحالة", "Qism.coverage_counts": "زوج صنف وحالة",
+    "Qism.naive_wrong_count": "زوج صنف وحالة",
+    "Wad.mushtarak_count": "لفظ مشترك",
+    "Qarina.pair_count": "زوج وضع مشترك", "Qarina.covered_count": "زوج وضع مشترك",
+    "Qarina.separable_count": "زوج وضع مشترك", "Qarina.lafz_covered_count": "لفظ مشترك",
+    "Qarina.lafz_separable_count": "لفظ مشترك",
+    "Sijill.rows_length": "مدخل سجل", "Sijill.mana_count": "مدخل سجل",
+    "Sijill.qaim_count": "مدخل سجل",
+}
+"""كلُّ مبرهنةٍ عدديّة ووحدتُها؛ مبرهنةٌ عدديّةٌ جديدة لا تمرّ بلا سطرٍ هنا."""
+
+
+def _canon(x: Any) -> Any:
+    if isinstance(x, bool | int | float | str) or x is None:
+        return x
+    if isinstance(x, dict):
+        return {str(k): _canon(v) for k, v in sorted(x.items(), key=lambda kv: str(kv[0]))}
+    if isinstance(x, list | tuple):
+        return [_canon(v) for v in x]
+    if isinstance(x, set | frozenset):
+        return sorted((_canon(v) for v in x), key=lambda v: json.dumps(v, ensure_ascii=False))
+    return repr(x)
+
+
+def _numbers(x: Any, path: str, out: list[tuple[str, int | float]]) -> None:
+    if isinstance(x, bool):
+        out.append((path, int(x)))
+    elif isinstance(x, int | float):
+        out.append((path, x))
+    elif isinstance(x, dict):
+        if len(x) <= FAN or not path:  # الجذرُ يُفرد كلُّه؛ والتفريعُ تحته بحدّ FAN
+            for k, v in x.items():
+                _numbers(v, f"{path}.{k}" if path else str(k), out)
+        else:
+            out.append((f"{path}.len", len(x)))
+            if all(isinstance(v, int | float) and not isinstance(v, bool) for v in x.values()):
+                out.append((f"{path}.sum", sum(x.values())))
+    elif isinstance(x, list | tuple | set | frozenset):
+        if isinstance(x, set | frozenset) or len(x) > FAN:
+            out.append((f"{path}.len", len(x)))
+        else:
+            for i, v in enumerate(x):
+                _numbers(v, f"{path}[{i}]", out)
+
+
+def _sha(p: Path) -> str:
+    return hashlib.sha256(p.read_bytes()).hexdigest()
+
+
+def _surfaces() -> list[str]:
+    text = CORPUS.read_text(encoding="utf-8")
+    return sorted({w for w in text.split() if w != "<sel>" and any("ء" <= c <= "ي" for c in w)})
+
+
+def _audit() -> Any:
+    from gate import audit
+
+    with tempfile.TemporaryDirectory() as out, contextlib.redirect_stdout(io.StringIO()):
+        audit.main(str(CORPUS), out)
+    return json.loads((ROOT / "gate" / "audit_results.json").read_text(encoding="utf-8"))
+
+
+def _hadith_tool() -> Any:
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("gen_hadith_lines",
+                                                  ROOT / "tools" / "gen_hadith_lines.py")
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _mudari_comparison() -> Any:
+    """`tests/test_mudari.py::corpus_comparison`: الأمرُ بالإزالة مقابلَ أوامر البوّابة (ADR ٢٤)."""
+
+    import importlib.util
+
+    path = ROOT / "tests" / "test_mudari.py"
+    spec = importlib.util.spec_from_file_location("test_mudari", path)
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod.corpus_comparison()
+
+
+def _neutral_comparison() -> Any:
+    """`tests/test_neutral.py::corpus_comparison`: المطابَقُ بالوزن، والفجواتُ بأسمائها (ADR ١٧)."""
+
+    import importlib.util
+
+    path = ROOT / "tests" / "test_neutral.py"
+    spec = importlib.util.spec_from_file_location("test_neutral", path)
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    hits, misses = mod.corpus_comparison()
+    gaps: dict[str, int] = {}
+    for _, label, atoms, _ in misses:
+        name = mod.gap_of(label, atoms)
+        gaps[name] = gaps.get(name, 0) + 1
+    return {"matched": sum(hits.values()), "matched_by_wazn": dict(hits), "gaps": gaps}
+
+
+def generators() -> list[tuple[str, tuple[str, ...], Any]]:
+    """(المولِّد، المودَعاتُ التي يقرؤها، دالّتُه) — الترتيبُ ترتيبُ السجلّ."""
+
+    from gate import mabni_bridge
+    from gate.degrees import attestation
+    from gate.hamza import seat_census
+
+    corpus, masaq = "corpora/quran-simple-enhanced.txt", "corpora/MASAQ.csv"
+    hadith = tuple(f"corpora/hadith/{n}.gz" for n in _hadith_tool().HADITH_SOURCES)
+    return [
+        ("gate.audit.main", (corpus,), _audit),
+        ("tools/gen_hadith_lines.py::stats", hadith, lambda: _hadith_tool().stats()),
+        ("gate.hamza.seat_census", (corpus,), lambda: seat_census(_surfaces())),
+        ("gate.degrees.attestation", (corpus,), lambda: attestation(_surfaces())),
+        ("tests/test_neutral.py::corpus_comparison", (corpus,), _neutral_comparison),
+        ("tests/test_mudari.py::corpus_comparison", (corpus,), _mudari_comparison),
+        ("gate.mabni_bridge.verb_readings", (masaq,), mabni_bridge.verb_readings),
+        ("gate.mabni_bridge.verb_generation_reading", (masaq,),
+         mabni_bridge.verb_generation_reading),
+        ("gate.mabni_bridge.lexical_generation_reading", (masaq,),
+         mabni_bridge.lexical_generation_reading),
+        ("gate.mabni_bridge.lexical_recognition_reading", (masaq,),
+         mabni_bridge.lexical_recognition_reading),
+    ]
+
+
+def ledger() -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for name, reads, fn in generators():
+        out = _canon(fn())
+        blob = json.dumps(out, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        nums: list[tuple[str, int | float]] = []
+        _numbers(out, "", nums)
+        rows.append({"generator": name, "reads": list(reads),
+                     "fingerprint": hashlib.sha256(blob.encode("utf-8")).hexdigest()[:16],
+                     "numbers": nums})
+    for name in TABLE_NAMES:
+        csv = TABLES / f"{name}.csv"
+        if not csv.exists():
+            raise FileNotFoundError(
+                f"{csv.name}: جدولُ Lean غيرُ مولَّد — شغّل lake exe a116-table {name}")
+        n = sum(1 for _ in csv.open(encoding="utf-8"))
+        rows.append({"generator": f"lake exe a116-table {csv.stem}", "reads": [],
+                     "fingerprint": _sha(csv)[:16], "numbers": [(f"{csv.name}.rows", n)]})
+    return rows
+
+
+_THEOREM = re.compile(r"^(?:theorem|lemma)\s+(\S+)(.*?):=", re.S | re.M)
+
+
+def lean_counts() -> list[tuple[str, int]]:
+    """(الوحدةُ.المبرهنة، عددُها) لكلّ مبرهنةٍ ينتهي نصُّها بـ‎= عدد ≥ 2‎، بترتيب الملفّ ثمّ الموضع."""
+
+    out = []
+    for f in sorted(LEAN_DIR.glob("*.lean")):
+        for m in _THEOREM.finditer(f.read_text(encoding="utf-8")):
+            tail = re.search(r"=\s*(\d+)\s*$", " ".join(m.group(2).split()))
+            if tail and int(tail.group(1)) >= 2:
+                out.append((f"{f.stem}.{m.group(1)}", int(tail.group(1))))
+    return out
+
+
+def unit_breaches(counts: list[tuple[str, int]]) -> list[str]:
+    audit = (TABLES / "Audit.lean").read_text(encoding="utf-8")
+    names = {n for n, _ in counts}
+    out = [f"{n} — CLAIM_WITHOUT_UNIT" for n in sorted(names - set(LEAN_UNITS))]
+    out += [f"{n} — UNIT_FOR_MISSING_THEOREM" for n in sorted(set(LEAN_UNITS) - names)]
+    out += [f"{n}: {u} — UNIT_NOT_IN_VOCABULARY" for n, u in LEAN_UNITS.items() if u not in UNITS]
+    out += [f"{n} — COUNT_NOT_AUDITED" for n in sorted(names)
+            if not re.search(rf"#print axioms A116\.(?:\w+\.)*{re.escape(n.split('.')[1])}\s*$",
+                             audit, re.M)]
+    return out
+
+
+def render_units(counts: list[tuple[str, int]]) -> list[str]:
+    lines = ["", f"## أعدادُ المبرهنات بوحداتها ({len(counts)} مبرهنة)", "",
+             "مستخرَجةٌ من نصوص Lean (`formal/a116/A116/*.lean`): كلُّ مبرهنةٍ مدقَّقة ينتهي نصُّها "
+             "بـ‎= عدد‎؛ والوحدةُ من القائمة المغلقة أدناه (ADR ١٢). العددُ هو الثابتُ الأخير في نصّ "
+             "المبرهنة.", "",
+             "| الرقم | الوحدة | المبرهنة |", "|---|---|---|"]
+    lines += [f"| {v:,} | {LEAN_UNITS.get(n, '—')} | `A116.{n}` |" for n, v in counts]
+    by_value: dict[int, set[str]] = {}
+    for n, v in counts:
+        by_value.setdefault(v, set()).add(LEAN_UNITS.get(n, "—"))
+    clash = sorted((v, us) for v, us in by_value.items() if len(us) > 1)
+    lines += ["", "### رقمٌ واحدٌ بوحداتٍ مختلفة — لا يُقرأ بلا وحدته", ""]
+    lines += [f"- {v:,}: " + "؛ ".join(sorted(us)) for v, us in clash] or ["- لا شيء"]
+    lines += ["", "### القائمةُ المغلقة للوحدات", "", "| الوحدة | معناها |", "|---|---|"]
+    lines += [f"| {u} | {d} |" for u, d in UNITS.items()]
+    return lines
+
+
+def _fmt(v: int | float) -> str:
+    return f"{v:,}" if isinstance(v, int) else f"{v:.4f}"
+
+
+def render(rows: list[dict[str, Any]]) -> str:
+    from gate.api import ABNIYA_INTIQA_SHA256, CORPUS_SHA256
+
+    lines = [
+        "# سجلُّ الأرقام — لا رقمَ بلا مولِّد",
+        "",
+        "مولَّدٌ بـ`python tools/gen_claims.py` باستدعاء كلّ مولِّدٍ مسمًّى في الشجرة؛ لا يُحرَّر "
+        "باليد، و`--check` يعيد الحسابَ كلَّه في CI ويُسقط البناءَ على أيّ فرق. السطرُ أربعةٌ لا "
+        "خامسَ لها: الرقم، المولِّد، المودَعاتُ المقروءة (ببصمتها أدناه)، بصمةُ المخرَج كاملًا. "
+        "مراجعةُ هذا المستودع هي الإيداعُ الحاملُ لهذا الملفّ وشاهدُها تشغيلُ CI. جداولُ Lean "
+        "يولّدها `lake exe a116-table` في CI وتُطابَق بايتًا بايتًا بالإيداع المسجَّل هنا.",
+        "",
+        "## المودَعات ببصماتها", "",
+        "| المودَع | النوع | sha256 |", "|---|---|---|",
+        "| `corpora/quran-simple-enhanced.txt` | واقع مختوم (`CORPUS_SHA256`) | "
+        f"`{CORPUS_SHA256}` |",
+        f"| `corpora/MASAQ.csv` | مرجع محجوب | `{_sha(MASAQ)}` |",
+        *(f"| `corpora/hadith/{n}.gz` | واقع مختوم (ODbL 1.0؛ بايتاتُه بعد فكّ الضغط) | `{sha}` |"
+          for n, sha in _hadith_tool().HADITH_SOURCES.items()),
+        "| `corpora/abniya-intiqa-lines.txt` | مجالٌ مختومٌ ثالث: انتقاءُ الأبنية بيد المالك "
+        f"(`ABNIYA_INTIQA_SHA256`، ADR ١٣) | `{ABNIYA_INTIQA_SHA256}` |",
+    ]
+    total = sum(len(r["numbers"]) for r in rows)
+    lines += ["", f"## الأرقام ({total:,} رقمًا من {len(rows)} مولِّدًا)", ""]
+    for r in rows:
+        reads = "، ".join(f"`{p}`" for p in r["reads"]) or "— (نواةُ Lean؛ لا مودَع)"
+        lines += [f"### `{r['generator']}`", "",
+                  f"يقرأ: {reads}. بصمةُ المخرَج: `{r['fingerprint']}`.", "",
+                  "| المسار في المخرَج | الرقم |", "|---|---|"]
+        lines += [f"| `{k}` | {_fmt(v)} |" for k, v in r["numbers"]]
+        lines.append("")
+    lines += render_units(lean_counts())
+    lines.append("")
+    return "\n".join(lines)
+
+
+def unbacked(rows: list[dict[str, Any]]) -> list[str]:
+    vals = {_fmt(v) for r in rows for _, v in r["numbers"] if isinstance(v, int)}
+    vals |= {_fmt(v) for _, v in lean_counts()}
+    out: list[str] = []
+    for i, line in enumerate((ROOT / "CLAUDE.md").read_text(encoding="utf-8").splitlines(), 1):
+        if "ADR" in line:
+            continue
+        for n in re.findall(r"\d{1,3}(?:,\d{3})+", line):
+            if n not in vals:
+                out.append(f"CLAUDE.md:{i}: {n} — NUMBER_WITHOUT_GENERATOR")
+    return out
+
+
+def main() -> int:
+    rows = ledger()
+    text = render(rows)
+    if "--check" in sys.argv:
+        rc = 0
+        if TARGET.read_text(encoding="utf-8") != text:
+            sys.stderr.write("CLAIMS.md غيرُ مطابق؛ شغّل tools/gen_claims.py\n")
+            rc = 1
+        for p in unbacked(rows) + unit_breaches(lean_counts()):
+            sys.stderr.write(p + "\n")
+            rc = 1
+        sys.stdout.write("CLAIMS.md مطابق\n" if rc == 0 else "")
+        return rc
+    TARGET.write_text(text, encoding="utf-8")
+    sys.stdout.write(f"كُتب CLAIMS.md ({sum(len(r['numbers']) for r in rows):,} رقمًا)\n")
+    for p in unbacked(rows) + unit_breaches(lean_counts()):
+        sys.stdout.write(p + "\n")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

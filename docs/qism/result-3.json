@@ -1,0 +1,111 @@
+{
+ "all": {
+  "R3": {
+   "accuracy_on_decided": [
+    0.977869,
+    0.981215
+   ],
+   "correct": 26903,
+   "correct_over_n": [
+    0.824154,
+    0.832357
+   ],
+   "decided": 27463,
+   "wrong": 560
+  },
+  "R3m": {
+   "accuracy_on_decided": [
+    0.989714,
+    0.992051
+   ],
+   "correct": 25094,
+   "correct_over_n": [
+    0.768008,
+    0.777125
+   ],
+   "decided": 25323,
+   "wrong": 229
+  },
+  "R4": {
+   "accuracy_on_decided": [
+    0.990075,
+    0.992352
+   ],
+   "correct": 25484,
+   "correct_over_n": [
+    0.780102,
+    0.789043
+   ],
+   "decided": 25708,
+   "wrong": 224
+  },
+  "jarr_fatha_wrong": {
+   "R3": 348,
+   "R3m": 17,
+   "R4": 12
+  },
+  "n": 32480
+ },
+ "detected_by_illa": {
+  "alam": 3104,
+  "strong": 210,
+  "wasf": 30
+ },
+ "excluded": {
+  "ALIGN_RESIDUAL": 3,
+  "MABNI_INATH": 54,
+  "REFUSED_REJECT": 7,
+  "TAWKID_MAFSUL": 51,
+  "TAWKID_MUBASHIR": 192
+ },
+ "nouns": {
+  "R3": {
+   "accuracy_on_decided": [
+    0.975098,
+    0.979034
+   ],
+   "correct": 21680,
+   "correct_over_n": [
+    0.833791,
+    0.842765
+   ],
+   "decided": 22187,
+   "wrong": 507
+  },
+  "R3m": {
+   "accuracy_on_decided": [
+    0.989832,
+    0.992421
+   ],
+   "correct": 19871,
+   "correct_over_n": [
+    0.763196,
+    0.773479
+   ],
+   "decided": 20047,
+   "wrong": 176
+  },
+  "R4": {
+   "accuracy_on_decided": [
+    0.990286,
+    0.992791
+   ],
+   "correct": 20261,
+   "correct_over_n": [
+    0.778396,
+    0.788435
+   ],
+   "decided": 20432,
+   "wrong": 171
+  },
+  "jarr_fatha_wrong": {
+   "R3": 348,
+   "R3m": 17,
+   "R4": 12
+  },
+  "n": 25861
+ },
+ "prereg": "docs/qism/PREREG-3.md",
+ "reference_sha256": "a1d12923815341face765083805d2148ed2d9f5cc3f7d6665219d887675d8c46",
+ "with_jarr_prefix": 2010
+}

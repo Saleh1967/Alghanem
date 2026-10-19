@@ -1,0 +1,202 @@
+{
+ "all": {
+  "M1_shape_precision": [
+   496,
+   1020,
+   [
+    0.455711,
+    0.516941
+   ]
+  ],
+  "M2_s1_on_covered": [
+   316,
+   342,
+   [
+    0.89094,
+    0.947594
+   ]
+  ],
+  "M3_s1_fallback": [
+   591,
+   1020,
+   [
+    0.548874,
+    0.609353
+   ]
+  ],
+  "confusion_gold_s1": {
+   "mamduda|NO_ROOT": 123,
+   "mamduda|mamduda": 22,
+   "maqsura|NO_ROOT": 152,
+   "maqsura|maqsura": 179,
+   "maqsura|none": 20,
+   "none|NO_ROOT": 403,
+   "none|mamduda": 6,
+   "none|none": 115
+  },
+  "coverage": [
+   342,
+   1020
+  ],
+  "gold_positive": 496,
+  "n": 1020,
+  "types": 284
+ },
+ "by_kind": {
+  "mamduda": {
+   "M1_shape_precision": [
+    145,
+    471,
+    [
+     0.267862,
+     0.350958
+    ]
+   ],
+   "M2_s1_on_covered": [
+    22,
+    28,
+    [
+     0.604614,
+     0.897875
+    ]
+   ],
+   "M3_s1_fallback": [
+    145,
+    471,
+    [
+     0.267862,
+     0.350958
+    ]
+   ],
+   "confusion_gold_s1": {
+    "mamduda|NO_ROOT": 123,
+    "mamduda|mamduda": 22,
+    "none|NO_ROOT": 320,
+    "none|mamduda": 6
+   },
+   "coverage": [
+    28,
+    471
+   ],
+   "gold_positive": 145,
+   "n": 471,
+   "types": 136
+  },
+  "maqsura": {
+   "M1_shape_precision": [
+    351,
+    549,
+    [
+     0.598337,
+     0.678416
+    ]
+   ],
+   "M2_s1_on_covered": [
+    294,
+    314,
+    [
+     0.903672,
+     0.958393
+    ]
+   ],
+   "M3_s1_fallback": [
+    446,
+    549,
+    [
+     0.7776,
+     0.842831
+    ]
+   ],
+   "confusion_gold_s1": {
+    "maqsura|NO_ROOT": 152,
+    "maqsura|maqsura": 179,
+    "maqsura|none": 20,
+    "none|NO_ROOT": 83,
+    "none|none": 115
+   },
+   "coverage": [
+    314,
+    549
+   ],
+   "gold_positive": 351,
+   "n": 549,
+   "types": 148
+  }
+ },
+ "gold_positive_gender": {
+  "-": 42,
+  "F": 135,
+  "FS": 176,
+  "M": 22,
+  "MD": 2,
+  "MP": 116,
+  "MS": 3
+ },
+ "gold_radical_top": [
+  [
+   "السَّمَاءِ",
+   81
+  ],
+  [
+   "آلَاءِ",
+   32
+  ],
+  [
+   "الْهُدَى",
+   22
+  ],
+  [
+   "الْقُرَى",
+   17
+  ],
+  [
+   "السَّمَاءُ",
+   15
+  ],
+  [
+   "النِّسَاءِ",
+   14
+  ],
+  [
+   "جَزَاءُ",
+   14
+  ],
+  [
+   "السَّمَاءَ",
+   13
+  ],
+  [
+   "ابْتِغَاءَ",
+   10
+  ],
+  [
+   "النِّسَاءَ",
+   9
+  ],
+  [
+   "الْأَعْلَى",
+   9
+  ],
+  [
+   "أَدْنَى",
+   8
+  ],
+  [
+   "أَوْلَى",
+   8
+  ],
+  [
+   "الرِّبَا",
+   7
+  ],
+  [
+   "الْأَعْمَى",
+   7
+  ]
+ ],
+ "prereg": "docs/tanith/PREREG.md",
+ "reference_sha256": "a1d12923815341face765083805d2148ed2d9f5cc3f7d6665219d887675d8c46",
+ "refused_by_gate": {
+  "REJECT": 5
+ }
+}

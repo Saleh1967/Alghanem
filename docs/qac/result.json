@@ -1,0 +1,99 @@
+{
+ "alignment": {
+  "excluded_seen": 180,
+  "residual_verses": [
+   "20:94",
+   "37:130",
+   "72:16"
+  ],
+  "rooted_rows": 49949,
+  "rules": {
+   "BASMALA": 112,
+   "YA_JOINED": 365
+  }
+ },
+ "prereg": "docs/qac/PREREG.md",
+ "primary_by_prefix": {
+  "0": {
+   "agree_among_covered_rate": 0.96953,
+   "agree_any": 5441,
+   "agree_any_rate": 0.728966,
+   "agree_any_wilson95": [
+    0.718766,
+    0.73893
+   ],
+   "agree_mod_waw_ya_rate": 0.746785,
+   "agree_unique_rate": 0.511522,
+   "covered": 5612,
+   "n": 7464,
+   "outcomes": {
+    "agree_among": 1623,
+    "agree_unique": 3818,
+    "disagree": 38,
+    "disagree_waw_ya": 133,
+    "no_reading": 1852
+   }
+  },
+  "1": {
+   "agree_among_covered_rate": 0.097222,
+   "agree_any": 7,
+   "agree_any_rate": 0.001991,
+   "agree_any_wilson95": [
+    0.000965,
+    0.004104
+   ],
+   "agree_mod_waw_ya_rate": 0.001991,
+   "agree_unique_rate": 0.001706,
+   "covered": 72,
+   "n": 3516,
+   "outcomes": {
+    "agree_among": 1,
+    "agree_unique": 6,
+    "disagree": 65,
+    "no_reading": 3444
+   }
+  }
+ },
+ "primary_mabni_verbs": {
+  "agree_among_covered_rate": 0.95848,
+  "agree_any": 5448,
+  "agree_any_rate": 0.496175,
+  "agree_any_wilson95": [
+   0.486826,
+   0.505527
+  ],
+  "agree_mod_waw_ya_rate": 0.508288,
+  "agree_unique_rate": 0.34827,
+  "covered": 5684,
+  "n": 10980,
+  "outcomes": {
+   "agree_among": 1624,
+   "agree_unique": 3824,
+   "disagree": 103,
+   "disagree_waw_ya": 133,
+   "no_reading": 5296
+  }
+ },
+ "reference_sha256": "a1d12923815341face765083805d2148ed2d9f5cc3f7d6665219d887675d8c46",
+ "secondary_all_rooted": {
+  "agree_among_covered_rate": 0.919096,
+  "agree_any": 6180,
+  "agree_any_rate": 0.124174,
+  "agree_any_wilson95": [
+   0.121305,
+   0.1271
+  ],
+  "agree_mod_waw_ya_rate": 0.127168,
+  "agree_unique_rate": 0.090578,
+  "covered": 6724,
+  "n": 49769,
+  "outcomes": {
+   "agree_among": 1672,
+   "agree_unique": 4508,
+   "disagree": 395,
+   "disagree_waw_ya": 149,
+   "no_reading": 43038,
+   "refused": 7
+  }
+ }
+}

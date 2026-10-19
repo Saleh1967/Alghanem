@@ -1,0 +1,88 @@
+{
+ "prereg": "docs/qac/PREREG-2.md",
+ "primary_by_prefix": {
+  "0": {
+   "agree_among_covered_rate": 0.967289,
+   "agree_any": 5441,
+   "agree_any_rate": 0.728966,
+   "agree_any_wilson95": [
+    0.718766,
+    0.73893
+   ],
+   "agree_mod_waw_ya_rate": 0.746785,
+   "agree_unique_rate": 0.511522,
+   "covered": 5625,
+   "n": 7464,
+   "outcomes": {
+    "agree_among": 1623,
+    "agree_unique": 3818,
+    "disagree": 51,
+    "disagree_waw_ya": 133,
+    "no_reading": 1839
+   }
+  },
+  "1": {
+   "agree_among_covered_rate": 0.92986,
+   "agree_any": 2320,
+   "agree_any_rate": 0.659841,
+   "agree_any_wilson95": [
+    0.644014,
+    0.675318
+   ],
+   "agree_mod_waw_ya_rate": 0.685154,
+   "agree_unique_rate": 0.518203,
+   "covered": 2495,
+   "n": 3516,
+   "outcomes": {
+    "agree_among": 498,
+    "agree_unique": 1822,
+    "disagree": 86,
+    "disagree_waw_ya": 89,
+    "no_reading": 1021
+   }
+  }
+ },
+ "primary_mabni_verbs": {
+  "agree_among_covered_rate": 0.955788,
+  "agree_any": 7761,
+  "agree_any_rate": 0.706831,
+  "agree_any_wilson95": [
+   0.698245,
+   0.715272
+  ],
+  "agree_mod_waw_ya_rate": 0.727049,
+  "agree_unique_rate": 0.513661,
+  "covered": 8120,
+  "n": 10980,
+  "outcomes": {
+   "agree_among": 2121,
+   "agree_unique": 5640,
+   "disagree": 137,
+   "disagree_waw_ya": 222,
+   "no_reading": 2860
+  }
+ },
+ "reference_sha256": "a1d12923815341face765083805d2148ed2d9f5cc3f7d6665219d887675d8c46",
+ "secondary_all_rooted": {
+  "agree_among_covered_rate": 0.915549,
+  "agree_any": 8738,
+  "agree_any_rate": 0.175571,
+  "agree_any_wilson95": [
+   0.172254,
+   0.178939
+  ],
+  "agree_mod_waw_ya_rate": 0.180373,
+  "agree_unique_rate": 0.131909,
+  "covered": 9544,
+  "n": 49769,
+  "outcomes": {
+   "agree_among": 2173,
+   "agree_unique": 6565,
+   "disagree": 567,
+   "disagree_waw_ya": 239,
+   "no_reading": 40218,
+   "refused": 7
+  }
+ },
+ "system": "gate.recover(word, peel=True)"
+}

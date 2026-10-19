@@ -1,5 +1,15 @@
 # Alghanem Kernel Constitution
 
+> **2026-10-05 — معلَّق (suspended).** The kernel this document describes (`alghanem.kernel`,
+> G0.EX.1c, `kernel/experimental_evidence_gate.py`, the birth/admission gates and ledgers) is
+> **not** the governing layer of this tree. It was moved, unchanged, to `suspended/src/alghanem/`
+> and is registered by name in `SUSPENDED_REGISTRY.json` (35 kernel units) — a suspension, not a
+> deletion; its history is in git. The only entry and exit of the tree since 2026-10-05 are the
+> proof in `formal/a116` and its mirror `gate/` (`enter` / `exit` / `derive` / `recover` /
+> `licence`), and the law binding every agent is `AGENT_CONSTITUTION.md`. Nothing below is
+> enforced by CI today; it is kept as the engineering record it was, and returns only through the
+> gate (`CLAUDE.md`, rule 3). An evaluation of this document is an evaluation of a suspended layer.
+
 These are the initial laws of the language-agnostic kernel:
 
 | Law | Status | Kernel v0.1 scope |

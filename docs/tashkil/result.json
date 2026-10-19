@@ -1,0 +1,77 @@
+{
+ "prereg_sha256": "3bcb1f5f1e366995fdf77cbb5c0cd3ae8e37cf4e6fd90e277ee93623d64360d4",
+ "n_gold_tokens": 106775,
+ "mujam_haykal": 49412,
+ "muayyan_rate": {
+  "k": 28552,
+  "n": 106775,
+  "rate": 0.267403,
+  "wilson95": [
+   0.264757,
+   0.270067
+  ]
+ },
+ "muhtamal_rate": {
+  "k": 55547,
+  "n": 106775,
+  "rate": 0.520225,
+  "wilson95": [
+   0.517228,
+   0.523221
+  ]
+ },
+ "laHukm_rate": {
+  "k": 22676,
+  "n": 106775,
+  "rate": 0.212372,
+  "wilson95": [
+   0.209929,
+   0.214835
+  ]
+ },
+ "exact_given_muayyan": {
+  "k": 17714,
+  "n": 28552,
+  "rate": 0.620412,
+  "wilson95": [
+   0.614767,
+   0.626024
+  ]
+ },
+ "consistent_given_muayyan": {
+  "k": 24513,
+  "n": 28552,
+  "rate": 0.858539,
+  "wilson95": [
+   0.854448,
+   0.862533
+  ]
+ },
+ "in_set_given_muhtamal": {
+  "k": 39813,
+  "n": 55547,
+  "rate": 0.716744,
+  "wilson95": [
+   0.712982,
+   0.720476
+  ]
+ },
+ "core_muayyan_rate": {
+  "k": 50494,
+  "n": 106775,
+  "rate": 0.472901,
+  "wilson95": [
+   0.469907,
+   0.475897
+  ]
+ },
+ "core_exact_given_core_muayyan": {
+  "k": 41297,
+  "n": 50494,
+  "rate": 0.81786,
+  "wilson95": [
+   0.814469,
+   0.821202
+  ]
+ }
+}

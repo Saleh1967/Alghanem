@@ -1,0 +1,9 @@
+cv,cv,true,false
+cv,v,true,false
+cv,c,true,false
+v,cv,true,false
+v,v,false,false
+v,c,true,false
+c,cv,true,false
+c,v,false,false
+c,c,false,true

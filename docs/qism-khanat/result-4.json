@@ -1,0 +1,101 @@
+{
+ "D1": {
+  "la_hukm": 12,
+  "muayyan": 9038,
+  "muayyan_share": 0.220428,
+  "muhtamal": 31952,
+  "precision": 0.999447,
+  "precision_wilson": [
+   0.998706,
+   0.999764
+  ],
+  "sahih": 9033,
+  "signs": 25,
+  "sum_misfires_B": 27,
+  "wrong": 5,
+  "wrong_le_sum_misfires": true
+ },
+ "D1_sub": {
+  "conflicts_vs_D1": 0,
+  "la_hukm": 10,
+  "licensed": true,
+  "muayyan": 8831,
+  "muayyan_share": 0.21538,
+  "muhtamal": 32161,
+  "precision": 0.999547,
+  "precision_wilson": [
+   0.998836,
+   0.999824
+  ],
+  "sahih": 8827,
+  "signs": 16,
+  "sum_misfires_B": 14,
+  "wrong": 4,
+  "wrong_le_sum_misfires": true
+ },
+ "D3": {
+  "la_hukm": 10,
+  "licensed": true,
+  "muayyan": 8887,
+  "muayyan_share": 0.216746,
+  "muhtamal": 32105,
+  "precision": 0.99955,
+  "precision_wilson": [
+   0.998843,
+   0.999825
+  ],
+  "sahih": 8883,
+  "signs": 17,
+  "sum_misfires_B": 14,
+  "violations_vs_D1_sub": 0,
+  "wrong": 4,
+  "wrong_le_sum_misfires": true
+ },
+ "H1": true,
+ "H2": false,
+ "H3": true,
+ "kept_lamma": [
+  "LAMMA_MADI_ISM"
+ ],
+ "lamma_A": {
+  "agreement_with_sibawayh": 0.0,
+  "by_qism": {
+   "0": 66,
+   "2": 3
+  },
+  "lamma": 69,
+  "lamma_madi": 39,
+  "lamma_madi_harf": 0,
+  "lamma_mudari": 9
+ },
+ "lamma_B": {
+  "agreement_with_sibawayh": 0.0,
+  "by_qism": {
+   "0": 89,
+   "2": 6
+  },
+  "lamma": 95,
+  "lamma_madi": 56,
+  "lamma_madi_harf": 0,
+  "lamma_mudari": 6
+ },
+ "n_B": 41002,
+ "prereg_sha256": "6024cd8a58aa4991f8b8f7a6deb4aebc315e17ed50de89c750128f3dec2bf82e",
+ "selection_lamma": {
+  "LAMMA_MADI_HARF": {
+   "fires_A": 39,
+   "kept": false,
+   "misfires_A": 39
+  },
+  "LAMMA_MADI_ISM": {
+   "fires_A": 39,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "LAMMA_MUDARI": {
+   "fires_A": 9,
+   "kept": false,
+   "misfires_A": 7
+  }
+ }
+}

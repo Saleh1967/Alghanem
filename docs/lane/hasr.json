@@ -1,0 +1,469 @@
+{
+ "lines_sha256": "248def99adaf4ba565f250685b102591b3cbce4c1d09524fbb58f92bf270a1d5",
+ "masdar": {
+  "strata": {
+   "sound": {
+    "point": {
+     "hits": 806,
+     "n": 1236,
+     "rate": 0.6521,
+     "ci95": [
+      0.6251,
+      0.6781
+     ],
+     "transmitted": 0.3479
+    },
+    "hasr": {
+     "n": 1236,
+     "hits_low": 500,
+     "hits_high": 1163,
+     "transmitted_low": 0.0591,
+     "transmitted_high": 0.5955,
+     "ci95_low_end": [
+      0.9264,
+      0.9528
+     ],
+     "ci95_high_end": [
+      0.3775,
+      0.4321
+     ]
+    },
+    "hasr_transitivity_only": {
+     "n": 1236,
+     "hits_low": 500,
+     "hits_high": 1147,
+     "transmitted_low": 0.072,
+     "transmitted_high": 0.5955,
+     "ci95_low_end": [
+      0.9122,
+      0.9411
+     ],
+     "ci95_high_end": [
+      0.3775,
+      0.4321
+     ]
+    }
+   },
+   "hamzated": {
+    "point": {
+     "hits": 38,
+     "n": 87,
+     "rate": 0.4368,
+     "ci95": [
+      0.3374,
+      0.5415
+     ],
+     "transmitted": 0.5632
+    },
+    "hasr": {
+     "n": 87,
+     "hits_low": 30,
+     "hits_high": 69,
+     "transmitted_low": 0.2069,
+     "transmitted_high": 0.6552,
+     "ci95_low_end": [
+      0.6965,
+      0.8649
+     ],
+     "ci95_high_end": [
+      0.2534,
+      0.4494
+     ]
+    },
+    "hasr_transitivity_only": {
+     "n": 87,
+     "hits_low": 30,
+     "hits_high": 68,
+     "transmitted_low": 0.2184,
+     "transmitted_high": 0.6552,
+     "ci95_low_end": [
+      0.6839,
+      0.8555
+     ],
+     "ci95_high_end": [
+      0.2534,
+      0.4494
+     ]
+    }
+   },
+   "doubled": {
+    "point": {
+     "hits": 62,
+     "n": 64,
+     "rate": 0.9688,
+     "ci95": [
+      0.893,
+      0.9914
+     ],
+     "transmitted": 0.0312
+    },
+    "hasr": {
+     "n": 64,
+     "hits_low": 62,
+     "hits_high": 63,
+     "transmitted_low": 0.0156,
+     "transmitted_high": 0.0312,
+     "ci95_low_end": [
+      0.9167,
+      0.9972
+     ],
+     "ci95_high_end": [
+      0.893,
+      0.9914
+     ]
+    },
+    "hasr_transitivity_only": {
+     "n": 64,
+     "hits_low": 62,
+     "hits_high": 62,
+     "transmitted_low": 0.0312,
+     "transmitted_high": 0.0312,
+     "ci95_low_end": [
+      0.893,
+      0.9914
+     ],
+     "ci95_high_end": [
+      0.893,
+      0.9914
+     ]
+    }
+   },
+   "pooled": {
+    "point": {
+     "hits": 906,
+     "n": 1387,
+     "rate": 0.6532,
+     "ci95": [
+      0.6278,
+      0.6778
+     ],
+     "transmitted": 0.3468
+    },
+    "hasr": {
+     "n": 1387,
+     "hits_low": 592,
+     "hits_high": 1295,
+     "transmitted_low": 0.0663,
+     "transmitted_high": 0.5732,
+     "ci95_low_end": [
+      0.9193,
+      0.9456
+     ],
+     "ci95_high_end": [
+      0.401,
+      0.453
+     ]
+    },
+    "hasr_transitivity_only": {
+     "n": 1387,
+     "hits_low": 592,
+     "hits_high": 1277,
+     "transmitted_low": 0.0793,
+     "transmitted_high": 0.5732,
+     "ci95_low_end": [
+      0.9053,
+      0.9338
+     ],
+     "ci95_high_end": [
+      0.401,
+      0.453
+     ]
+    }
+   }
+  },
+  "excluded": {
+   "doubled": {
+    "NO_MASDAR_PATTERN": 2,
+    "VERB_NOT_FACALA_OR_NO_CERTIFICATE": 143
+   },
+   "hamzated": {
+    "VERB_NOT_FACALA_OR_NO_CERTIFICATE": 4
+   },
+   "sound": {
+    "NO_MASDAR_PATTERN": 3,
+    "VERB_NOT_FACALA_OR_NO_CERTIFICATE": 37
+   }
+  },
+  "relaxed_rules_added": [
+   {
+    "class": "transitive",
+    "root": "ضرب",
+    "masdar": "ضَرَبٌ",
+    "pattern": "1َ 2َ 3"
+   }
+  ],
+  "decomposition": {
+   "n": 1236,
+   "loo_accuracy": {
+    "none": {
+     "hits": 700,
+     "n": 1236,
+     "rate": 0.5663,
+     "ci95": [
+      0.5386,
+      0.5937
+     ],
+     "transmitted": 0.4337
+    },
+    "transitivity_mark": {
+     "hits": 700,
+     "n": 1236,
+     "rate": 0.5663,
+     "ci95": [
+      0.5386,
+      0.5937
+     ],
+     "transmitted": 0.4337
+    },
+    "bab_and_mark": {
+     "hits": 938,
+     "n": 1236,
+     "rate": 0.7589,
+     "ci95": [
+      0.7343,
+      0.7819
+     ],
+     "transmitted": 0.2411
+    }
+   },
+   "points": {
+    "transitivity_mark": 0.0,
+    "bab_and_mark": 19.26
+   },
+   "bits": {
+    "H": 2.1849,
+    "transitivity_mark": 0.2011,
+    "bab_and_mark": 0.6617
+   }
+  }
+ },
+ "plural": {
+  "strata": {
+   "sound": {
+    "point": {
+     "hits": 511,
+     "n": 997,
+     "rate": 0.5125,
+     "ci95": [
+      0.4815,
+      0.5435
+     ],
+     "transmitted": 0.4875
+    },
+    "hasr": {
+     "n": 997,
+     "hits_low": 511,
+     "hits_high": 634,
+     "transmitted_low": 0.3641,
+     "transmitted_high": 0.4875,
+     "ci95_low_end": [
+      0.6056,
+      0.6652
+     ],
+     "ci95_high_end": [
+      0.4815,
+      0.5435
+     ]
+    }
+   },
+   "hamzated": {
+    "point": {
+     "hits": 15,
+     "n": 45,
+     "rate": 0.3333,
+     "ci95": [
+      0.2136,
+      0.4793
+     ],
+     "transmitted": 0.6667
+    },
+    "hasr": {
+     "n": 45,
+     "hits_low": 15,
+     "hits_high": 22,
+     "transmitted_low": 0.5111,
+     "transmitted_high": 0.6667,
+     "ci95_low_end": [
+      0.3496,
+      0.63
+     ],
+     "ci95_high_end": [
+      0.2136,
+      0.4793
+     ]
+    }
+   },
+   "doubled": {
+    "point": {
+     "hits": 99,
+     "n": 197,
+     "rate": 0.5025,
+     "ci95": [
+      0.4333,
+      0.5716
+     ],
+     "transmitted": 0.4975
+    },
+    "hasr": {
+     "n": 197,
+     "hits_low": 99,
+     "hits_high": 142,
+     "transmitted_low": 0.2792,
+     "transmitted_high": 0.4975,
+     "ci95_low_end": [
+      0.6544,
+      0.7788
+     ],
+     "ci95_high_end": [
+      0.4333,
+      0.5716
+     ]
+    }
+   },
+   "pooled": {
+    "point": {
+     "hits": 625,
+     "n": 1239,
+     "rate": 0.5044,
+     "ci95": [
+      0.4766,
+      0.5322
+     ],
+     "transmitted": 0.4956
+    },
+    "hasr": {
+     "n": 1239,
+     "hits_low": 625,
+     "hits_high": 798,
+     "transmitted_low": 0.3559,
+     "transmitted_high": 0.4956,
+     "ci95_low_end": [
+      0.617,
+      0.6702
+     ],
+     "ci95_high_end": [
+      0.4766,
+      0.5322
+     ]
+    }
+   }
+  },
+  "excluded": {
+   "doubled": {
+    "NO_PLURAL_PATTERN": 1,
+    "SINGULAR_NO_CERTIFICATE_OR_PATTERN": 3
+   },
+   "hamzated": {
+    "NO_PLURAL_PATTERN": 1,
+    "SINGULAR_NO_CERTIFICATE_OR_PATTERN": 1
+   },
+   "sound": {
+    "NO_PLURAL_PATTERN": 14,
+    "SINGULAR_NO_CERTIFICATE_OR_PATTERN": 3
+   }
+  },
+  "relaxed_rules_added": [
+   {
+    "singular": "بُرْدٌ",
+    "plural": "بُرُودُ",
+    "from": "1ُ 2ْ 3",
+    "to": "1ُ 2ُ وْ 3"
+   },
+   {
+    "singular": "حَمْلٌ",
+    "plural": "أَحْمَالٌ",
+    "from": "1َ 2ْ 3",
+    "to": "ءَ 1ْ 2َ اْ 3"
+   },
+   {
+    "singular": "دَرَجٌ",
+    "plural": "دَرَجَةٌ",
+    "from": "1َ 2َ 3",
+    "to": "1َ 2َ 3َ ة"
+   },
+   {
+    "singular": "ضَرِسٌ",
+    "plural": "ضَرُوسٌ",
+    "from": "1َ 2ِ 3",
+    "to": "1َ 2ُ وْ 3"
+   },
+   {
+    "singular": "غُرْفَةٌ",
+    "plural": "غُرَفٌ",
+    "from": "1ُ 2ْ 3َ ة",
+    "to": "1ُ 2َ 3"
+   },
+   {
+    "singular": "قُرْبَةٌ",
+    "plural": "قُرْبٌ",
+    "from": "1ُ 2ْ 3َ ة",
+    "to": "1ُ 2ْ 3"
+   },
+   {
+    "singular": "كَسْرَةٌ",
+    "plural": "كَسْرٌ",
+    "from": "1َ 2ْ 3َ ة",
+    "to": "1َ 2ْ 3"
+   },
+   {
+    "singular": "كِسْرَةٌ",
+    "plural": "كِسْرٌ",
+    "from": "1ِ 2ْ 3َ ة",
+    "to": "1ِ 2ْ 3"
+   }
+  ],
+  "decomposition": {
+   "n": 997,
+   "loo_accuracy": {
+    "none": {
+     "hits": 322,
+     "n": 997,
+     "rate": 0.323,
+     "ci95": [
+      0.2947,
+      0.3526
+     ],
+     "transmitted": 0.677
+    },
+    "skeleton": {
+     "hits": 406,
+     "n": 997,
+     "rate": 0.4072,
+     "ci95": [
+      0.3771,
+      0.438
+     ],
+     "transmitted": 0.5928
+    },
+    "haraka": {
+     "hits": 613,
+     "n": 997,
+     "rate": 0.6148,
+     "ci95": [
+      0.5843,
+      0.6446
+     ],
+     "transmitted": 0.3852
+    }
+   },
+   "points": {
+    "skeleton": 8.43,
+    "haraka": 20.76
+   },
+   "bits": {
+    "H": 3.3339,
+    "skeleton": 0.6548,
+    "haraka": 0.8196
+   }
+  }
+ },
+ "refusals": {
+  "DEFER:HARAKA_IS_ABSENT_AND_IS_NEVER_GUESSED": 2,
+  "DEFER:TANWIN_ATTACHMENT_IS_AMBIGUOUS": 3,
+  "DEFER:UNSUPPORTED_LETTER": 1,
+  "DEFER:UNVOCALIZED_WORD_IS_NEVER_GUESSED": 2,
+  "REJECT:BARE_ALIF_OWN_MARK_NOT_LICENSED": 4,
+  "REJECT:INITIAL_SUKUN_WITHOUT_REPAIR": 13,
+  "REJECT:NOT_CONTINUE_LICENSED_AFTER_REPAIR": 4
+ }
+}

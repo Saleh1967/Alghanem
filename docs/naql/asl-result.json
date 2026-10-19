@@ -1,0 +1,18 @@
+{
+ "prereg_sha256": "eff16e05fde9801ce92aedda08df71882b7d3bf86e88c68a9262f4a8cf490b1e",
+ "n": 200,
+ "class_agree": 181,
+ "class_and_n_agree": 178,
+ "class_rate": 0.905,
+ "class_and_n_rate": 0.89,
+ "confusion_rule_to_fill": {
+  "kalima->usul": 1,
+  "laHukm->laysa": 3,
+  "laHukm->usul": 1,
+  "laHukm->wahid": 8,
+  "laysa->kalima": 4,
+  "wahid->laysa": 1,
+  "wahid->usul": 1
+ },
+ "label": "مفحوص بملء وكيلٍ مستقلّ، لا مقيس (ADR ٣٩)"
+}

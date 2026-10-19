@@ -1,0 +1,181 @@
+{
+ "all": {
+  "R0": {
+   "accuracy_on_decided": [
+    0.956948,
+    0.961849
+   ],
+   "correct": 23886,
+   "correct_over_n": [
+    0.730582,
+    0.740176
+   ],
+   "decided": 24895
+  },
+  "R1": {
+   "accuracy_on_decided": [
+    0.923759,
+    0.940397
+   ],
+   "correct": 3263,
+   "correct_over_n": [
+    0.09724,
+    0.103778
+   ],
+   "decided": 3499
+  },
+  "R2": {
+   "accuracy_on_decided": [
+    0.96125,
+    0.968456
+   ],
+   "correct": 9659,
+   "correct_over_n": [
+    0.292436,
+    0.302378
+   ],
+   "decided": 10009
+  },
+  "R3": {
+   "accuracy_on_decided": [
+    0.977869,
+    0.981215
+   ],
+   "correct": 26903,
+   "correct_over_n": [
+    0.824154,
+    0.832357
+   ],
+   "decided": 27463
+  },
+  "n": 32480
+ },
+ "class_counts": {
+  "fKhamsaA": 82,
+  "fKhamsaW": 3083,
+  "fKhamsaY": 6,
+  "fMutalAlif": 291,
+  "fMutalW": 71,
+  "fMutalY": 443,
+  "fSahih": 2643,
+  "iJamF": 826,
+  "iJamM": 2155,
+  "iManqus": 102,
+  "iMaqsur": 984,
+  "iMuthanna": 149,
+  "iSahih": 21562,
+  "iSitta": 83
+ },
+ "excluded": {
+  "ALIGN_RESIDUAL": 3,
+  "MABNI_INATH": 54,
+  "REFUSED_REJECT": 7,
+  "TAWKID_MAFSUL": 51,
+  "TAWKID_MUBASHIR": 192
+ },
+ "jarr_with_fatha_ending": 348,
+ "nouns": {
+  "R0": {
+   "accuracy_on_decided": [
+    0.966785,
+    0.971343
+   ],
+   "correct": 21453,
+   "correct_over_n": [
+    0.824918,
+    0.834084
+   ],
+   "decided": 22136
+  },
+  "R1": {
+   "accuracy_on_decided": [
+    0.786846,
+    0.839941
+   ],
+   "correct": 669,
+   "correct_over_n": [
+    0.024004,
+    0.027875
+   ],
+   "decided": 821
+  },
+  "R2": {
+   "accuracy_on_decided": [
+    0.959349,
+    0.96799
+   ],
+   "correct": 6919,
+   "correct_over_n": [
+    0.262185,
+    0.272975
+   ],
+   "decided": 7178
+  },
+  "R3": {
+   "accuracy_on_decided": [
+    0.975098,
+    0.979034
+   ],
+   "correct": 21680,
+   "correct_over_n": [
+    0.833791,
+    0.842765
+   ],
+   "decided": 22187
+  },
+  "n": 25861
+ },
+ "prereg": "docs/qism/PREREG-2.md",
+ "reference_sha256": "a1d12923815341face765083805d2148ed2d9f5cc3f7d6665219d887675d8c46",
+ "verbs": {
+  "R0": {
+   "accuracy_on_decided": [
+    0.869262,
+    0.893358
+   ],
+   "correct": 2433,
+   "correct_over_n": [
+    0.356043,
+    0.379267
+   ],
+   "decided": 2759
+  },
+  "R1": {
+   "accuracy_on_decided": [
+    0.961331,
+    0.974593
+   ],
+   "correct": 2594,
+   "correct_over_n": [
+    0.380207,
+    0.403722
+   ],
+   "decided": 2678
+  },
+  "R2": {
+   "accuracy_on_decided": [
+    0.960698,
+    0.973746
+   ],
+   "correct": 2740,
+   "correct_over_n": [
+    0.402147,
+    0.425872
+   ],
+   "decided": 2831
+  },
+  "R3": {
+   "accuracy_on_decided": [
+    0.986885,
+    0.992311
+   ],
+   "correct": 5223,
+   "correct_over_n": [
+    0.779098,
+    0.798751
+   ],
+   "decided": 5276
+  },
+  "n": 6619
+ }
+}

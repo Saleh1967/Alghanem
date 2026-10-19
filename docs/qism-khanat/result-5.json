@@ -1,0 +1,212 @@
+{
+ "D1": {
+  "la_hukm": 12,
+  "muayyan": 8978,
+  "muayyan_share": 0.218965,
+  "muhtamal": 32012,
+  "precision": 0.999443,
+  "precision_wilson": [
+   0.998697,
+   0.999762
+  ],
+  "sahih": 8973,
+  "signs": 24,
+  "sum_misfires_B": 27,
+  "wrong": 5,
+  "wrong_le_sum_misfires": true
+ },
+ "D1_sub": {
+  "la_hukm": 10,
+  "muayyan": 8786,
+  "muayyan_share": 0.214282,
+  "muhtamal": 32206,
+  "precision": 0.999545,
+  "precision_wilson": [
+   0.99883,
+   0.999823
+  ],
+  "sahih": 8782,
+  "signs": 15,
+  "sum_misfires_B": 14,
+  "wrong": 4,
+  "wrong_le_sum_misfires": true
+ },
+ "D3": {
+  "la_hukm": 10,
+  "licensed": true,
+  "muayyan": 8842,
+  "muayyan_share": 0.215648,
+  "muhtamal": 32150,
+  "precision": 0.999548,
+  "precision_wilson": [
+   0.998837,
+   0.999824
+  ],
+  "sahih": 8838,
+  "signs": 16,
+  "sum_misfires_B": 14,
+  "violations_vs_D1_sub": 0,
+  "wrong": 4,
+  "wrong_le_sum_misfires": true
+ },
+ "D3_delta_muayyan": -45,
+ "D3_delta_wrong": 0,
+ "D3_v1": {
+  "muayyan": 8887,
+  "sahih": 8883,
+  "wrong": 4
+ },
+ "H1": true,
+ "H2": false,
+ "H3": true,
+ "kept_D1": [
+  "AMIL_NEXT_N_JARR_0",
+  "AMIL_OWN_N_JARR_2",
+  "AMIL_OWN_N_JAZM_FILAYN_2",
+  "AMIL_OWN_N_NASB_FIL_2",
+  "AMIL_OWN_N_NASB_RAF_2",
+  "AMIL_OWN_N_RAF_NASB_1",
+  "AMIL_OWN_N_RAF_TAWIL_1",
+  "AMIL_OWN_N_TABI_2"
+ ],
+ "kept_D1_added": [],
+ "kept_D1_removed": [
+  "AMIL_OWN_N_NASB_NASB_1"
+ ],
+ "kept_lamma": [
+  "LAMMA_MADI_ISM"
+ ],
+ "mashkul_refused": {
+  "NO_MASHKUL": 18,
+  "ROW_OUTSIDE_DOMAIN": 21,
+  "VARIANT_REFUSED": 87
+ },
+ "mashkul_rows_in_domain": 61,
+ "mashkul_sha256": "53cebd4b1c40987a23f15c2c88677ceb10706b57eb41fe315db18b06920a66e9",
+ "n_B": 41002,
+ "prereg_sha256": "83934844156cf17530ce257a34ec4352e91d4efb29e51071fbca5a565b58cbf8",
+ "selection_D1": {
+  "AMIL_NEXT_N_JARR_0": {
+   "fires_A": 2217,
+   "kept": true,
+   "misfires_A": 11
+  },
+  "AMIL_NEXT_N_JARR_OR_NASB_0": {
+   "fires_A": 1,
+   "kept": false,
+   "misfires_A": 1
+  },
+  "AMIL_NEXT_N_JAZM_FILAYN_1": {
+   "fires_A": 169,
+   "kept": false,
+   "misfires_A": 29
+  },
+  "AMIL_NEXT_N_JAZM_FIL_1": {
+   "fires_A": 77,
+   "kept": false,
+   "misfires_A": 1
+  },
+  "AMIL_NEXT_N_NASB_FIL_1": {
+   "fires_A": 270,
+   "kept": false,
+   "misfires_A": 24
+  },
+  "AMIL_NEXT_N_NASB_NASB_0": {
+   "fires_A": 31,
+   "kept": false,
+   "misfires_A": 8
+  },
+  "AMIL_NEXT_N_NASB_RAF_0": {
+   "fires_A": 332,
+   "kept": false,
+   "misfires_A": 30
+  },
+  "AMIL_NEXT_N_RAF_NASB_0": {
+   "fires_A": 174,
+   "kept": false,
+   "misfires_A": 38
+  },
+  "AMIL_NEXT_N_RAF_TAWIL_0": {
+   "fires_A": 13,
+   "kept": false,
+   "misfires_A": 9
+  },
+  "AMIL_OWN_N_JARR_2": {
+   "fires_A": 2384,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_N_JAZM_FILAYN_0": {
+   "fires_A": 1144,
+   "kept": false,
+   "misfires_A": 354
+  },
+  "AMIL_OWN_N_JAZM_FILAYN_2": {
+   "fires_A": 262,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_N_JAZM_FIL_2": {
+   "fires_A": 165,
+   "kept": false,
+   "misfires_A": 66
+  },
+  "AMIL_OWN_N_NASB_FIL_2": {
+   "fires_A": 365,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_N_NASB_NASB_1": {
+   "fires_A": 54,
+   "kept": false,
+   "misfires_A": 1
+  },
+  "AMIL_OWN_N_NASB_RAF_2": {
+   "fires_A": 412,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_N_NONE_0": {
+   "fires_A": 1186,
+   "kept": false,
+   "misfires_A": 354
+  },
+  "AMIL_OWN_N_NONE_2": {
+   "fires_A": 131,
+   "kept": false,
+   "misfires_A": 2
+  },
+  "AMIL_OWN_N_RAF_NASB_1": {
+   "fires_A": 224,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_N_RAF_TAWIL_1": {
+   "fires_A": 15,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "AMIL_OWN_N_TABI_2": {
+   "fires_A": 442,
+   "kept": true,
+   "misfires_A": 0
+  }
+ },
+ "selection_lamma": {
+  "LAMMA_MADI_HARF": {
+   "fires_A": 39,
+   "kept": false,
+   "misfires_A": 39
+  },
+  "LAMMA_MADI_ISM": {
+   "fires_A": 39,
+   "kept": true,
+   "misfires_A": 0
+  },
+  "LAMMA_MUDARI": {
+   "fires_A": 9,
+   "kept": false,
+   "misfires_A": 7
+  }
+ }
+}

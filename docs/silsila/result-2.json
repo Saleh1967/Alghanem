@@ -1,0 +1,159 @@
+{
+ "H1": true,
+ "H2": true,
+ "H3": true,
+ "H4": true,
+ "H5": true,
+ "H6": true,
+ "H7": true,
+ "H8": true,
+ "above_fall": 0,
+ "before_after": {
+  "haml": {
+   "bad": 17444,
+   "qabl": 6528
+  },
+  "jins": {
+   "bad": 612,
+   "qabl": 649
+  },
+  "qism": {
+   "bad": 16398,
+   "qabl": 16398
+  },
+  "shahada": {
+   "bad": 78207,
+   "qabl": 78207
+  },
+  "sigha": {
+   "bad": 22781,
+   "qabl": 20819
+  }
+ },
+ "corpus_lines": 6236,
+ "d32_on_B_reproduced": {
+  "muayyan": 8842,
+  "sahih": 8838,
+  "signs": 16,
+  "wrong": 4
+ },
+ "funnel_violations": 0,
+ "haml_muayyan_by_narrator_count": {
+  "1": 4198,
+  "2": 4882,
+  "3": 4478,
+  "4": 2134
+ },
+ "layers": {
+  "haml": {
+   "asbab": {
+    "dunaha": 57,
+    "rafd:LA_MAANA_HARF": 31,
+    "rafd:LA_WAD": 53144
+   },
+   "la_hukm": 53232,
+   "muayyan": 17444,
+   "muhtamal": 7569
+  },
+  "jins": {
+   "asbab": {
+    "dunaha": 45717,
+    "rafd:LA_JINS_FI_ALMUKHASSAS": 1762
+   },
+   "la_hukm": 47479,
+   "muayyan": 612,
+   "muhtamal": 30154
+  },
+  "qism": {
+   "asbab": {
+    "dunaha": 38,
+    "rafd:QISM_TANAQUD": 19
+   },
+   "la_hukm": 57,
+   "muayyan": 16398,
+   "muhtamal": 61790
+  },
+  "shahada": {
+   "asbab": {
+    "rafd:INITIAL_SUKUN_WITHOUT_REPAIR": 3,
+    "rafd:NOT_CONTINUE_LICENSED_AFTER_REPAIR": 1,
+    "rafd:TANWIN_WITH_ANOTHER_HARAKA": 4,
+    "rafd:UNVOCALIZED_WORD_IS_NEVER_GUESSED": 30
+   },
+   "la_hukm": 38,
+   "muayyan": 78207,
+   "muhtamal": 0
+  },
+  "sigha": {
+   "asbab": {
+    "dunaha": 57,
+    "kharij": 8538,
+    "rafd:LA_JIDHR": 37122
+   },
+   "la_hukm": 45717,
+   "muayyan": 22781,
+   "muhtamal": 9747
+  }
+ },
+ "muayyan_share": {
+  "haml": 0.222941,
+  "jins": 0.007822,
+  "qism": 0.209572,
+  "shahada": 0.999514,
+  "sigha": 0.29115
+ },
+ "n_verdicts": 391225,
+ "n_words": 78245,
+ "peeled": {
+  "A_harf": 753,
+  "A_wad": 2616,
+  "B_ism": 3570
+ },
+ "prereg_sha256": "b5007a2b4d0b72c37891cfb64b65232be5dcc0c2d3c76cc5eb96b8a822ce3689",
+ "qac_even_surahs": {
+  "A_haml": {
+   "inclusion": 0.301844,
+   "khata": 142,
+   "la_hukm": 18327,
+   "muayyan_share": 0.291679,
+   "muhtamal_fih": 411,
+   "muhtamal_kharij": 7,
+   "n": 26464,
+   "precision": 0.981604,
+   "sahih": 7577
+  },
+  "B_sigha": {
+   "inclusion": 0.4457,
+   "khata": 772,
+   "la_hukm": 13847,
+   "muayyan_share": 0.365213,
+   "muhtamal_fih": 2902,
+   "muhtamal_kharij": 50,
+   "n": 26464,
+   "precision": 0.920124,
+   "sahih": 8893
+  }
+ },
+ "qac_even_surahs_peeled": {
+  "A_haml": {
+   "khata": 45,
+   "muhtamal_fih": 80,
+   "muhtamal_kharij": 3,
+   "sahih": 1087
+  },
+  "B_sigha": {
+   "khata": 83,
+   "muhtamal_fih": 354,
+   "muhtamal_kharij": 5,
+   "sahih": 1111
+  }
+ },
+ "qism_even_surahs": {
+  "muayyan": 8848,
+  "muayyan_share": 0.212743,
+  "n": 41590
+ },
+ "shared_prefix_violations": 0,
+ "verdict_stream_sha256": "b60e8a1c9039bb32378431b6a6f5bcaf6e825d51a3de836541835f660da92d87",
+ "wiring_violations": 0
+}
