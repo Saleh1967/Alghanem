@@ -1,0 +1,11 @@
+{
+ "adr": "115",
+ "date": "2026-10-19T02:40+03:00",
+ "owner_words": "موافق اختم البيب ختم نهائي وحمل قطر الندى واختمه",
+ "source": "رسالةُ المالك في الجلسة (سجلُّ الجلسة الخام)، ردًّا على سطر الدَّين QATR_MUGHNI_NOT_SEALED",
+ "builder_reading": "«البيب» = «مغني اللبيب» (Shamela0006972، المختوم تجريبيًّا)، و«قطر الندى» = «متن قطر الندى» (Shamela0011376) لا «شرح قطر الندى»",
+ "files": [
+  "0761JamalDinIbnHisham.MughniLabib.Shamela0006972-ara1.gz",
+  "0761JamalDinIbnHisham.MatnQatrNada.Shamela0011376-ara1.gz"
+ ]
+}

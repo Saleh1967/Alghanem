@@ -20,6 +20,7 @@ import A116
 * `mantuq`: الجسرُ من المنطوق إلى المفهوم (`MantuqMafhum`، ADR ١١٢): `naw` على الصفات الستّ عشرة، و`mukhalafa`
   على ثمانية قيودٍ × الأغلب × المعطِّل، والرتبةُ بمساريها على مودَعاتٍ صغيرة بالطرق والأنواع كلّها، وتركيبُ الرتبة على مخرج
   الجسر بمعنيين (178 سطرًا)، ليُطابَق بـ`gate.mantuq`.
+* `furu`: فروعُ السلسلة وحملُ الحرف ومرشَّحو التقشير ومفتاحُ الحرف (`SilsilaFuru`، ADR ١١٥) على الشاهد.
 * `silsila`: السلسلةُ كلمةً كلمة (`Silsila`، ADR ١١٤): `khutwa` على كلمتين × ستّة أحكامٍ لما دون الطبقة × سبعة قرّاء
   (84 سطرًا)، و`silsila` على الشاهد (ستّة أسطر)، وقارئا الجنس والحمل (`SilsilaQurra`) على المعجم الشاهد (عشرةُ أسطر
   للجنس وسبعةٌ للحمل)، ليُطابَق بمرآة `tools/gen_silsila.py`.
@@ -436,6 +437,27 @@ def main (args : List String) : IO Unit := do
     for (l, key, rs) in hs do
       let out := SilsilaQurra.hamlOf Haqaiq.naql SilsilaQurra.wadMithal l key rs
       IO.println s!"haml,{l},{key},{String.intercalate "|" rs},{String.intercalate "|" (out.map fun x => s!"{x.1}:{nawR x.2}")}"
+  | ["furu"] =>
+    -- فروعُ السلسلة وحملُ الحرف ومرشَّحو التقشير (`SilsilaFuru`، ADR ١١٥)، ليُطابَق بمرآة `tools/gen_silsila.py` سطرًا سطرًا.
+    let str : List Cell → String := fun w => String.ofList ((Imla.render w).map Char.ofNat)
+    let ws := ["بِسْمِ", "وَلَاْ", "وَبِلْغَيْبِ", "فَلِيَعْبُدُوْاْ", "كَمَثَلِ", "لِلْ", "بِهِ", "ءِلَاْ", "ءِلْلَاْ", "حَتْتَاْ",
+      "مِنْ", "وَمَاْ", "لَكُمْ", "كَتَبَ"]
+    for w in ws do
+      IO.println s!"qashr,{w},{String.intercalate "|" ((SilsilaFuru.qashr (Itar.k w)).map str)}"
+      IO.println s!"key,{w},{SilsilaFuru.harfKey (Itar.k w)}"
+      let hit : List Cell → Bool := fun v => ["لا", "ما", "وما", "من", "لغيب", "يعبدوا"].contains (SilsilaFuru.harfKey v)
+      IO.println s!"awwal,{w},{((SilsilaFuru.awwal hit (Itar.k w)).map str).getD "-"}"
+    let mn : Iqtiran.Mantuq String → String
+      | .muayyan m => s!"m:{m}" | .muhtamal ms => s!"p:{String.intercalate "|" ms}" | .laHukm => "l"
+    let hk : Naql.Hukm → String
+      | .minHaythuHiya => "hiya" | .maluma ss => s!"maluma:{ss.length}"
+      | .mafhum r s ss => s!"mafhum:{match r with | .qati => "qati" | .zanni => "zanni"}:{s.qail}:{ss.length}"
+    for k in ["من", "و", "رب", "ءلا"] do
+      let (m, _, h) := SilsilaFuru.hamlHarf (fun _ => false) SilsilaFuru.maaniMithal k
+      IO.println s!"harf,{k},{mn m},{hk h}"
+    for keys in [["صَ لَ اْ ت"], ["صَ لَ اْ ت", "كَ لْ ب"], ["كَ لْ ب"]] do
+      let out := SilsilaFuru.hamlWad Haqaiq.naql (fun _ => false) SilsilaFuru.shWad "الصلاة" keys
+      IO.println s!"wad,{String.intercalate "|" keys},{String.intercalate "|" (out.map fun x => s!"{x.1}:{hk x.2.2}")}"
   | ["mantuq"] =>
     -- الجسرُ من المنطوق إلى المفهوم الأصوليّ (`MantuqMafhum`، ADR ١١٢)، ليُطابَق بـ`gate.mantuq` سطرًا سطرًا:
     -- `naw` على الصفات الستّ عشرة، و`mukhalafa` على ثمانية قيودٍ × الأغلب × المعطِّل، والرتبةُ بمساريها على مودَعاتٍ صغيرة.

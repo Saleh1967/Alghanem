@@ -137,6 +137,97 @@ def haml_of(manqul: dict[str, str], wad: Sequence[tuple[str, str]], lafz: str, k
     return list(dict.fromkeys((r, naw_of(manqul, lafz)) for k, r in wad if k == key and r in rs))
 
 
+# ═══ المرآة: `A116.SilsilaFuru` (ADR ١١٥) ═══
+
+SABIQA1 = ("وَ", "فَ")
+SABIQA2 = ("بِ", "لِ", "كَ", "لَ")
+HAMZA_K = "ءِ"
+
+
+def qishr(ps: Sequence[str], a: tuple[str, ...] | None) -> tuple[str, ...] | None:
+    """`SilsilaFuru.qishr`: سابقةٌ من القائمة وما بقي خانتان فأكثر."""
+    if a and a[0] in ps and len(a) - 1 >= 2:
+        return a[1:]
+    return None
+
+
+def radd(a: tuple[str, ...]) -> tuple[str, ...]:
+    """`SilsilaFuru.radd`: همزةُ الوصل مكسورةً قبل ساكنٍ غيرِ اللام."""
+    if a and a[0][1:] == SUKUN and a[0][0] != "ل":
+        return (HAMZA_K,) + a
+    return a
+
+
+def qashr(a: Sequence[str]) -> list[tuple[str, ...]]:
+    """`SilsilaFuru.qashr`: الكلمةُ، ثمّ بلا «وَ/فَ»، ثمّ بلا «بِ/لِ/كَ/لَ»، ثمّ بلاهما؛ بلا تكرار."""
+    a = tuple(a)
+    p1, p2 = qishr(SABIQA1, a), qishr(SABIQA2, a)
+    p12 = qishr(SABIQA2, p1)
+    return list(dict.fromkeys([a] + [radd(x) for x in (p1, p2, p12) if x is not None]))
+
+
+def awwal(hit: Callable[[tuple[str, ...]], bool], a: Sequence[str]) -> tuple[str, ...] | None:
+    """`SilsilaFuru.awwal`: أوّلُ مرشَّحٍ يصيبه المعجم."""
+    return next((v for v in qashr(a) if hit(v)), None)
+
+
+def harf_key(a: Sequence[str]) -> str:
+    """`SilsilaFuru.harfKey`: الحواملُ، والساكنُ قبل مثله ساقط."""
+    a = tuple(a)
+    return "".join(c[0] for i, c in enumerate(a)
+                   if not (i + 1 < len(a) and c[1:] == SUKUN and a[i + 1][0] == c[0]))
+
+
+Shahada = tuple[str, str]
+"""(القائل، السطر)؛ والطريقُ نقلٌ والمودَعُ «وضع» في كلّ شهادةٍ هنا
+(`HARF_SHAHADA_MAWDA_WAD_DECLARED`)."""
+
+
+def jisr_wad(ws: Sequence[Shahada]) -> str:
+    """`Naql.jisrWad (fun _ => false)` على شهاداتٍ كلُّها نقلٌ من «وضع»:
+    مفهومٌ ظنّيٌّ برأسه وعدد ما بعده."""
+    if not ws:
+        return "maluma:0"
+    return f"mafhum:zanni:{ws[0][0]}:{len(ws) - 1}"
+
+
+def maani_harf(rows: Sequence[tuple[str, str, Sequence[Shahada]]], k: str) -> list[str]:
+    """`SilsilaFuru.maaniHarf`: معاني صفوف الحرف بترتيبها، بلا تكرار."""
+    return list(dict.fromkeys(m for h, m, _ws in rows if h == k))
+
+
+def haml_harf(rows: Sequence[tuple[str, str, Sequence[Shahada]]], k: str) -> tuple[Hal, str, str]:
+    """`SilsilaFuru.hamlHarf`: المنطوقُ الثلاثيّ ونوعُه (لغويٌّ أبدًا) وجسرُ الوضع على شهادات صفوفه
+    بلا تكرار."""
+    ms = maani_harf(rows, k)
+    m: Hal = ("l", "laHukm") if not ms else ("m", ms[0]) if len(ms) == 1 else ("p", tuple(ms))
+    ws = list(dict.fromkeys(w for h, _m, s in rows if h == k for w in s))
+    return m, "lughawiyya", jisr_wad(ws)
+
+
+def haml_wad(manqul: dict[str, str], sh: Sequence[tuple[tuple[str, str], Shahada]], lafz: str,
+             keys: Sequence[str]) -> list[tuple[str, str, str]]:
+    """`SilsilaFuru.hamlWad`: لكلّ جذرٍ شُهد له لأحد المفاتيح نوعُه وجسرُ الوضع على شهاداته؛
+    لا يقرأ الجنس."""
+    rs = list(dict.fromkeys(r for (k, r), _s in sh if k in keys))
+    return [(r, naw_of(manqul, lafz), jisr_wad([s for (k, r2), s in sh if k in keys and r2 == r]))
+            for r in rs]
+
+
+HURUF = ROOT / "corpora" / "huruf" / "maani.tsv"
+
+
+def huruf() -> list[tuple[str, str, list[Shahada]]]:
+    """مودَعُ معاني الحروف (ج3 س468–507 بترقيم الغانم، و«الكتاب» JK006989 حيث وُجد):
+    (المفتاح، المعنى، الشهادات)."""
+    out: list[tuple[str, str, list[Shahada]]] = []
+    for ln in HURUF.read_text(encoding="utf-8").splitlines()[1:]:
+        _lafz, h, m, j3, ks, _kn = ln.split("\t")
+        ws: list[Shahada] = [("nabhani", j3)] + ([("sibawayh", ks)] if ks != "0" else [])
+        out.append((h, m, ws))
+    return out
+
+
 # ═══ المعاجمُ المودَعة (تُقرأ كما هي؛ لا تُحرَّر) ═══
 
 SKELETONS = ROOT / "corpora" / "hadith" / "maqayis-skeletons.tsv"
@@ -343,10 +434,47 @@ def reproduce_b(QK: Any) -> dict[str, int]:
 # ═══ السلسلةُ على المصحف ═══
 
 PAST_KINDS = ("PAST", "PASSIVE")
+PREREG2 = ROOT / "docs" / "silsila" / "PREREG-2.md"
+RESULT2 = ROOT / "docs" / "silsila" / "result-2.json"
+QAC_ROOTS = ROOT / "corpora" / "qac" / "qac-roots.tsv"
+HARF = QISM_NAME[2]
 
 
-def compute(lines_limit: int | None = None) -> dict[str, Any]:
-    """`lines_limit` لفحص الوصل على السطور الأولى وحدَها (`--smoke N`)؛ القياسُ بلا حدّ."""
+def qac_gold() -> dict[tuple[int, int], str]:
+    """(سطر، موضع) ← جذرُ QAC (`corpora/qac/qac-roots.tsv`: الموضعُ رقمُ الرمز في السطر من 1)."""
+    out: dict[tuple[int, int], str] = {}
+    for ln in QAC_ROOTS.read_text(encoding="utf-8").splitlines()[1:]:
+        f = ln.split("\t")
+        out[(int(f[0]), int(f[1]))] = f[4]
+    return out
+
+
+def norm_root(r: str) -> str:
+    """الجذرُ للمقارنة: ألفُ لين همزةٌ، والطيُّ، ولامُ الناقص بلا تمييزٍ بين واوٍ وياء (`gen_qac.wy`)."""
+    r = lane_root(r)
+    return r[:-1] + "ي" if r.endswith("و") else r
+
+
+def judge_root(h: Hal, gold: str) -> str:
+    """حكمُ طبقة جذرٍ على الذهبيّ: صائب/خاطئ للمعيَّن، فيه/خارجه للمحتمَل، و«لا حكم»، و«حرف» لمعنى حرف."""
+    if h[0] == "l":
+        return "la_hukm"
+    vs = (h[1],) if h[0] == "m" else h[1]
+    if any(v.startswith("ح:") for v in vs):
+        return "harf"
+    rs = {norm_root(v.split(":", 1)[0]) for v in vs}
+    g = norm_root(gold)
+    if h[0] == "m":
+        return "sahih" if g in rs else "khata"
+    return "muhtamal_fih" if g in rs else "muhtamal_kharij"
+
+
+def compute(lines_limit: int | None = None, version: int = 1) -> dict[str, Any]:
+    """`lines_limit` لفحص الوصل على السطور الأولى وحدَها (`--smoke N`)؛ القياسُ بلا حدّ.
+
+    `version=1` هو تسجيلُ ADR ١١٤ بعينه (`PREREG.md` ← `result.json`)؛ و`version=2` هو ADR ١١٥
+    (`PREREG-2.md` ← `result-2.json`): فرعُ الوضع [الشهادة، القسم، الحمل] مستقلٌّ عن فرع الجنس
+    [الشهادة، القسم، الصيغة، الجنس]، وحملُ الحرف من مودَعه، ومرشَّحو التقشير للاسم، والقياسُ على QAC."""
     QK = _load("gen_qism_khanat", ROOT / "tools" / "gen_qism_khanat.py")
     rep = reproduce_b(QK)
     r5 = json.loads(QK.RESULT5.read_text(encoding="utf-8"))
@@ -370,6 +498,12 @@ def compute(lines_limit: int | None = None) -> dict[str, Any]:
 
     hy, aj, (wd, rawat), ls, mq = hayakil(), ajnas(), wad(), lisan(), manqul()
     aj_set, wd_set = set(aj), set(wd)
+    wd_roots: dict[str, list[str]] = {}
+    for k, r in wd:
+        wd_roots.setdefault(k, []).append(r)
+    hr = huruf() if version == 2 else []
+    hr_keys = {h for h, _m, _ws in hr}
+    gold = qac_gold() if version == 2 else {}
     nrawi: Counter[int] = Counter()
     wiring_viol = 0
     lines = CORPUS.read_text(encoding="utf-8").splitlines()
@@ -381,10 +515,23 @@ def compute(lines_limit: int | None = None) -> dict[str, Any]:
     layers = ("shahada", "qism", "sigha", "jins", "haml")
     kinds: dict[str, Counter[str]] = {k: Counter() for k in layers}
     asbab: dict[str, Counter[str]] = {k: Counter() for k in layers}
+    qac: dict[str, Counter[str]] = {"A_haml": Counter(), "B_sigha": Counter()}
+    qac_peeled: dict[str, Counter[str]] = {"A_haml": Counter(), "B_sigha": Counter()}
+    peeled: Counter[str] = Counter()
     stream = hashlib.sha256()
-    n_words = n_verdicts = funnel_viol = above_fall = 0
+    n_words = n_verdicts = funnel_viol = above_fall = shared_viol = 0
+
+    def shuhud_wad(k: str, r: str, w: str) -> list[Shahada]:
+        """شهاداتُ (مفتاح، جذر): لين ثمّ ابنُ فارس من `wad.tsv`، ثمّ ابنُ منظور مؤكِّدًا من «لسان العرب»."""
+        ws: list[Shahada] = [(q, "0") for q in ("lane", "ibn-faris") if q in rawat[(k, r)]]
+        sk = fold(haykal(k.split(" ")))
+        ws += [(q, "0") for q in sorted(ls.get((r, sk), set()))]
+        return ws
+
     for li, line in enumerate(lines[:lines_limit]):
-        raw = [t for t in line.split(" ") if not is_marker(t)]
+        toks = line.split(" ")
+        idx = [i for i, t in enumerate(toks) if not is_marker(t)]
+        raw = [toks[i] for i in idx]
         certs = [gate.enter(t.encode("utf-8")) for t in raw]
         ok = [None if isinstance(c, Refusal) else c for c in certs]
         for j, t in enumerate(raw):
@@ -392,6 +539,7 @@ def compute(lines_limit: int | None = None) -> dict[str, Any]:
             prev = ok[j - 1] if j > 0 else None
             nxt = ok[j + 1] if j + 1 < len(raw) else None
             row: Any = None
+            flag = {"A_haml": False, "B_sigha": False}
             if not isinstance(c, Refusal):
                 past = nxt is not None and any(
                     k in PAST_KINDS for _r, k, _f, _p in gate.recover(nxt)[1])
@@ -411,6 +559,15 @@ def compute(lines_limit: int | None = None) -> dict[str, Any]:
                 names = tuple(QISM_NAME[q] for q in cs)
                 return ("m", names[0]) if len(names) == 1 else ("p", names)
 
+            def ism_roots(a: Sequence[str]) -> list[str]:
+                if version == 1:
+                    return judhur_of(hy, a)
+                v = awwal(lambda x: bool(judhur_of(hy, x)), a)
+                if v is not None and v != tuple(a):
+                    peeled["B_ism"] += 1
+                    flag["B_sigha"] = True
+                return judhur_of(hy, v) if v is not None else []
+
             def q_sigha(w: str, d: Hal, c: Any = c) -> Hal:
                 allowed = (d[1],) if d[0] == "m" else d[1]
                 if QISM_NAME[1] not in allowed and QISM_NAME[0] not in allowed:
@@ -419,7 +576,7 @@ def compute(lines_limit: int | None = None) -> dict[str, Any]:
                 if QISM_NAME[1] in allowed:
                     rk |= {f"{fold(r)}:{k}" for r, k, _f, _p in rec(w, c)[1]}
                 if QISM_NAME[0] in allowed:
-                    rk |= {f"{r}:ISM" for r in judhur_of(hy, c.atoms)}
+                    rk |= {f"{r}:ISM" for r in ism_roots(c.atoms)}
                 if not rk:
                     return rafd("LA_JIDHR")
                 v = sorted(rk)
@@ -445,22 +602,80 @@ def compute(lines_limit: int | None = None) -> dict[str, Any]:
                 v = [f"{r}:{n}" for r, n in ps]
                 return ("m", v[0]) if len(v) == 1 else ("p", tuple(v))
 
-            hs = ahkam(t, ("m", t), [q_shahada, q_qism, q_sigha, q_jins, q_haml])
+            def q_haml2(w: str, d: Hal, c: Any = c) -> Hal:
+                """فرعُ الوضع: على القسم وحدَه، لا على الجنس
+                (تصحيحُ المالك 02:01، `WAD_GATED_BY_JINS`)."""
+                allowed = (d[1],) if d[0] == "m" else d[1]
+                if d == ("m", HARF):
+                    v = awwal(lambda x: harf_key(x) in hr_keys, c.atoms)
+                    if v is None:
+                        return rafd("LA_MAANA_HARF")
+                    peeled["A_harf"] += v != tuple(c.atoms)
+                    k = harf_key(v)
+                    m, naw, rk = haml_harf(hr, k)
+                    ms = (m[1],) if m[0] == "m" else m[1]
+                    vals = tuple(f"ح:{k}:{x}:{naw}:{rk}" for x in ms)
+                    return ("m", vals[0]) if m[0] == "m" else ("p", vals)
+                if QISM_NAME[0] not in allowed and QISM_NAME[1] not in allowed:
+                    return ("l", "kharij")
+                v = awwal(lambda x: wad_key(tajrid(x), w) in wd_roots, c.atoms)
+                if v is None:
+                    return rafd("LA_WAD")
+                peeled["A_wad"] += v != tuple(c.atoms)
+                flag["A_haml"] = v != tuple(c.atoms)
+                k = wad_key(tajrid(v), w)
+                lafz = MARKS.sub("", w)
+                vals = tuple(f"{r}:{naw_of(mq, lafz)}:{jisr_wad(shuhud_wad(k, r, w))}"
+                             for r in dict.fromkeys(wd_roots[k]))
+                return ("m", vals[0]) if len(vals) == 1 else ("p", vals)
+
+            start: Hal = ("m", t)
+            if version == 1:
+                hs = ahkam(t, start, [q_shahada, q_qism, q_sigha, q_jins, q_haml])
+                branches = [hs]
+            else:
+                ha = ahkam(t, start, [q_shahada, q_qism, q_haml2])
+                hb = ahkam(t, start, [q_shahada, q_qism, q_sigha, q_jins])
+                shared_viol += ha[:2] != hb[:2]
+                hs = [hb[0], hb[1], hb[2], hb[3], ha[2]]
+                branches = [ha, hb]
             if hs[3][0] != "l":
                 low = set(roots_of(hs[2]))
                 for v in ((hs[3][1],) if hs[3][0] == "m" else hs[3][1]):
                     r, b = v.split(":", 1)
                     wiring_viol += (r, b) not in aj_set or r not in low
             if hs[4][0] != "l" and not isinstance(c, Refusal):
-                key = wad_key(tajrid(c.atoms), t)
-                low = set(roots_of(hs[3]))
-                sk = fold(haykal(key.split(" ")))
-                for v in ((hs[4][1],) if hs[4][0] == "m" else hs[4][1]):
-                    r, n = v.split(":", 1)
-                    wiring_viol += (key, r) not in wd_set or r not in low
-                    wiring_viol += n != "lughawiyya" and mq.get(MARKS.sub("", t)) != n
-                    if hs[4][0] == "m":
-                        nrawi[len(rawat[(key, r)] | ls.get((r, sk), set()))] += 1
+                vals = (hs[4][1],) if hs[4][0] == "m" else hs[4][1]
+                if version == 1:
+                    key = wad_key(tajrid(c.atoms), t)
+                    low = set(roots_of(hs[3]))
+                    sk = fold(haykal(key.split(" ")))
+                    for v in vals:
+                        r, n = v.split(":", 1)
+                        wiring_viol += (key, r) not in wd_set or r not in low
+                        wiring_viol += n != "lughawiyya" and mq.get(MARKS.sub("", t)) != n
+                        if hs[4][0] == "m":
+                            nrawi[len(rawat[(key, r)] | ls.get((r, sk), set()))] += 1
+                else:
+                    for v in vals:
+                        f = v.split(":")
+                        if f[0] == "ح":
+                            wiring_viol += (f[1] not in hr_keys or f[3] != "lughawiyya"
+                                            or f[4] != "mafhum")
+                            wiring_viol += f[2] not in maani_harf(hr, f[1])
+                        else:
+                            wiring_viol += f[2] != "mafhum" or f[3] != "zanni"
+                            wiring_viol += f[1] != "lughawiyya" and mq.get(MARKS.sub("", t)) != f[1]
+                            wiring_viol += not any((k, f[0]) in wd_set for k in
+                                                   (wad_key(tajrid(x), t) for x in qashr(c.atoms)))
+                            if hs[4][0] == "m":
+                                nrawi[1 + int(f[5])] += 1
+            if version == 2 and surah[li] % 2 == 0 and (li + 1, idx[j] + 1) in gold:
+                g = gold[(li + 1, idx[j] + 1)]
+                for bname, h in (("A_haml", hs[4]), ("B_sigha", hs[2])):
+                    qac[bname][judge_root(h, g)] += 1
+                    if flag[bname]:
+                        qac_peeled[bname][judge_root(h, g)] += 1
             n_words += 1
             n_verdicts += len(hs)
             if surah[li] % 2 == 0:
@@ -469,22 +684,24 @@ def compute(lines_limit: int | None = None) -> dict[str, Any]:
                 kinds[k][h[0]] += 1
                 if h[0] == "l":
                     asbab[k][h[1]] += 1
-            seen_fall = False
-            for i, h in enumerate(hs):
-                if seen_fall and not saqit(h):
-                    above_fall += 1
-                if saqit(h):
-                    seen_fall = True
-                if i > 0 and not saqit(h) and saqit(hs[i - 1]):
-                    funnel_viol += 1
+            for br in branches:
+                seen_fall = False
+                for i, h in enumerate(br):
+                    if seen_fall and not saqit(h):
+                        above_fall += 1
+                    if saqit(h):
+                        seen_fall = True
+                    if i > 0 and not saqit(h) and saqit(br[i - 1]):
+                        funnel_viol += 1
             stream.update(f"{li}\t{j}\t{t}\t".encode() + "\t".join(map(ramz, hs)).encode() + b"\n")
             if lines_limit is not None:
                 sys.stdout.write(f"{t}\t" + "\t".join(map(ramz, hs)) + "\n")
     per = {k: {"muayyan": kinds[k]["m"], "muhtamal": kinds[k]["p"], "la_hukm": kinds[k]["l"],
                "asbab": dict(sorted(asbab[k].items()))} for k in layers}
     share = {k: round(kinds[k]["m"] / n_words, 6) for k in layers}
-    return {
-        "prereg_sha256": hashlib.sha256(PREREG.read_bytes()).hexdigest(),
+    res: dict[str, Any] = {
+        "prereg_sha256": hashlib.sha256(
+            (PREREG if version == 1 else PREREG2).read_bytes()).hexdigest(),
         "corpus_lines": len(lines), "n_words": n_words,
         "d32_on_B_reproduced": rep,
         "layers": per, "muayyan_share": share,
@@ -500,6 +717,27 @@ def compute(lines_limit: int | None = None) -> dict[str, Any]:
         "wiring_violations": wiring_viol,
         "H4": wiring_viol == 0,
     }
+    if version == 2:
+        before = json.loads(RESULT.read_text(encoding="utf-8"))
+        res["shared_prefix_violations"] = shared_viol
+        res["H8"] = shared_viol == 0
+        res["peeled"] = dict(sorted(peeled.items()))
+        res["before_after"] = {k: {"qabl": before["layers"][k]["muayyan"], "bad": kinds[k]["m"]}
+                               for k in layers}
+        res["H5"] = kinds["haml"]["m"] >= before["layers"]["haml"]["muayyan"]
+        res["qac_even_surahs"] = {}
+        for bname, cnt in qac.items():
+            mu = cnt["sahih"] + cnt["khata"]
+            n = sum(cnt.values())
+            res["qac_even_surahs"][bname] = {
+                "n": n, **dict(sorted(cnt.items())),
+                "muayyan_share": round(mu / max(1, n), 6),
+                "precision": round(cnt["sahih"] / max(1, mu), 6),
+                "inclusion": round((cnt["sahih"] + cnt["muhtamal_fih"]) / max(1, n), 6)}
+        res["qac_even_surahs_peeled"] = {b: dict(sorted(c.items())) for b, c in qac_peeled.items()}
+        res["H6"] = res["qac_even_surahs"]["A_haml"]["precision"] >= 0.95
+        res["H7"] = res["qac_even_surahs"]["B_sigha"]["precision"] >= 0.90
+    return res
 
 
 def render(res: dict[str, Any]) -> str:
@@ -507,17 +745,20 @@ def render(res: dict[str, Any]) -> str:
 
 
 def main(argv: list[str]) -> int:
+    v = 2 if "--v2" in argv else 1
     if "--smoke" in argv:
-        compute(int(argv[argv.index("--smoke") + 1]))
+        compute(int(argv[argv.index("--smoke") + 1]), version=v)
         return 0
-    out = render(compute())
     if "--check" in argv:
-        if not RESULT.exists() or RESULT.read_text(encoding="utf-8") != out:
-            sys.stderr.write("SILSILA_RESULT_DRIFTED\n")
-            return 1
+        targets = [(1, RESULT)] + ([(2, RESULT2)] if RESULT2.exists() else [])
+        for ver, path in targets:
+            if path.read_text(encoding="utf-8") != render(compute(version=ver)):
+                sys.stderr.write(f"SILSILA_RESULT_DRIFTED {path.name}\n")
+                return 1
         sys.stdout.write("السلسلةُ على المصحف مطابقة\n")
         return 0
-    RESULT.write_text(out, encoding="utf-8")
+    out = render(compute(version=v))
+    (RESULT if v == 1 else RESULT2).write_text(out, encoding="utf-8")
     sys.stdout.write(out)
     return 0
 

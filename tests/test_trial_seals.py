@@ -27,8 +27,6 @@ SPEC.loader.exec_module(MOD)
 
 DIR = ROOT / "corpora" / "trial"
 HAND = {  # من الحساب على نسخ OpenITI في الجلسة (2026-10-14)
-    "0761JamalDinIbnHisham.MughniLabib.Shamela0006972-ara1":
-        "f37ac2bb4b273f59169053dd0ac2abf50a52846a7e87ddf689ee5c0b87f77e7d",
     "0794BadrDinZarkashi.BurhanFiCulumQuran.Shamela0011436-ara1":
         "393283ef77be278ffc2ce35e3a8095205a2ba2567775d7c7a4be5bd26729fa88",
     "0338AbuJacfarNahhas.IcrabQuran.Shamela0023587-ara1":
@@ -71,12 +69,12 @@ def _statuses(manifest: str) -> list[str]:
 
 def test_every_row_is_trial() -> None:
     text = (DIR / "MANIFEST.tsv").read_text(encoding="utf-8")
-    assert _statuses(text) == ["تجريبي"] * 4
+    assert _statuses(text) == ["تجريبي"] * 3
 
 
 def test_mutant_status_final_rejected() -> None:
     text = (DIR / "MANIFEST.tsv").read_text(encoding="utf-8").replace("تجريبي", "نهائي", 1)
-    assert _statuses(text) != ["تجريبي"] * 4
+    assert _statuses(text) != ["تجريبي"] * 3
 
 
 def _readers(root: Path) -> list[Path]:
