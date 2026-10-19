@@ -590,6 +590,42 @@ def main (args : List String) : IO Unit := do
         let bits := ",".intercalate (h.sifat.map fun b => if b then "1" else "0")
         IO.println s!"{k},{h.c},{hn v},{h.makhraj},{h.jazariMakhraj},{h.hayyiz},{bits},{lic},{lic && v != .sukun},{v == .sukun}"
         k := k + 1
+  | ["marja"] =>
+    -- مرجعُ المالك (`Marja`، ADR ١١٨): لكلّ خانةٍ من البرج (`Jadwal.khanat`) ولكلّ موضعٍ من التسعة ولادةٌ بعددها
+    -- ‎n = 9·k + m‎، ودورُها (`Hadd.kindOne`) وحكمُها، وشرطُ المشروط واسمُ المرفوض؛ ودرجةُ ولادة الحرف في سُلَّم الباب.
+    let hn := fun (h : Haraka) => match h with
+      | .fatha => "fatha" | .damma => "damma" | .kasra => "kasra" | .sukun => "sukun"
+    let kn := fun (k : Stages.K) => match k with | .cv => "cv" | .v => "v" | .c => "c"
+    let mn := fun (m : Marja.Mawdi) => match m with
+      | .ibtida => "ibtida" | .wasl p => s!"wasl:{hn p}" | .waqf p => s!"waqf:{hn p}"
+    IO.println "n,k,harf,haraka,makhraj16,wilada,mawdi,dawr,hukm,qabl,shart"
+    for b in Marja.wiladat do
+      let x := b.1
+      let c := Field112.carrierChar x.carrier
+      let (h, q, s) := match Marja.hukm b.2 x with
+        | .murakhkhas => ("murakhkhas", "", "")
+        | .mashrut qs sh => ("mashrut", " ".intercalate (qs.map kn), sh)
+        | .yuskan => ("yuskan", "", "")
+        | .marfud ism => ("marfud", "", ism)
+      IO.println s!"{Marja.nOf b},{Jadwal.khanat.idxOf x},{c},{hn x.haraka},{Makharij.makhrajOf c},{Marja.wilada c},{mn b.2},{kn (Marja.dawr b.2 x)},{h},{q},{s}"
+  | ["marja-huruf"] =>
+    -- الحروفُ في سُلَّم الباب (`Marja`، ADR ١١٨): المخرجُ وحجمُ ليفه، والجهرُ والصنفُ والإطباق، ودرجةُ الولادة، وقرناءُ
+    -- الحرف في كلّ درجةٍ قبلها، وأقسامُ قانون الإدغام (`MakharijIdgham.qism`) والحرفُ أوّلًا.
+    let b := fun (x : Bool) => if x then "1" else "0"
+    IO.println "harf,makhraj16,lif,jahr,manner,itbaq,wilada,qurana0,qurana1,qurana2,mithl,mithl_mumtani,shahid_idgham,shahid_mumtani,maskut,mumtani,izhar"
+    for c in Makharij.placed16 do
+      let m := Makharij.makhrajOf c
+      let qs := ",".intercalate ([0, 1, 2].map fun d => String.ofList (Marja.qurana d c))
+      let ids := ",".intercalate ((Marja.idghamAdad c).map toString)
+      IO.println s!"{c},{m},{(Marja.lif m).length},{b (Makharij.jahrOf c)},{Makharij.mannerOf c},{b (Makharij.itbaqOf c)},{Marja.wilada c},{qs},{ids}"
+  | ["marja-azwaj"] =>
+    -- الأزواجُ الـ841 بقسمها في قانون الإدغام (`MakharijIdgham.qism`)، يقرؤها `tools/gen_marja.py` للشاهد (ADR ١١٨).
+    let qn := fun (q : MakharijIdgham.Qism) => match q with
+      | .mithl => "mithl" | .mithlMumtani => "mithl_mumtani" | .shahidIdgham => "shahid_idgham"
+      | .shahidMumtani => "shahid_mumtani" | .maskut => "maskut" | .mumtani => "mumtani" | .izhar => "izhar"
+    IO.println "a,b,qism"
+    for (a, c) in MakharijIdgham.allPairs do
+      IO.println s!"{a},{c},{qn (MakharijIdgham.qism a c)}"
   | ["utf8"] =>
     -- أبجديّةُ الرسم: الحروفُ ‎U+0621–U+064A‎، العلاماتُ ‎U+064B–U+0652‎، ألفُ الوصل ‎U+0671‎، والمسافة.
     for c in (List.range 0x2B).map (· + 0x621) ++ (List.range 8).map (· + 0x64B) ++ [0x671, 0x20] do

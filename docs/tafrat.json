@@ -91,5 +91,17 @@
   "ila": "    Naql.jisrWad tawatur ((sufuf rows k).flatMap (·.shuhud)))"},
  {"ism": "MUTANT_MASFUFA_CNT_ACCEPT", "milaf": "A116/TawafiqMasfufa.lean", "adr": "116", "min": "  | 0, s => if acc s then 1 else 0", "ila": "  | 0, _ => 1"},
  {"ism": "MUTANT_MASFUFA_MAT_PLUS_ONE", "milaf": "A116/TawafiqMasfufa.lean", "adr": "116", "min": "def mat (A : List α) (f : S → α → S) (s t : S) : Nat := (A.filter fun x => f s x = t).length", "ila": "def mat (A : List α) (f : S → α → S) (s t : S) : Nat := (A.filter fun x => f s x = t).length + 1"},
- {"ism": "MUTANT_MASFUFA_REC_COEFF", "milaf": "A116/TawafiqMasfufa.lean", "adr": "116", "min": "      2436 * pow Harf.Hal.all Alif.licensable fW Harf.qabilWasl 5 s +", "ila": "      2437 * pow Harf.Hal.all Alif.licensable fW Harf.qabilWasl 5 s +"}
+ {"ism": "MUTANT_MASFUFA_REC_COEFF", "milaf": "A116/TawafiqMasfufa.lean", "adr": "116", "min": "      2436 * pow Harf.Hal.all Alif.licensable fW Harf.qabilWasl 5 s +", "ila": "      2437 * pow Harf.Hal.all Alif.licensable fW Harf.qabilWasl 5 s +"},
+ {"ism": "MUTANT_MARJA_MANI_COUNT", "milaf": "A116/Marja.lean", "adr": "118",
+  "min": "(List.range 4).map (fun d => (mani (daraja d)).length) = [40, 16, 6, 0] := by",
+  "ila": "(List.range 4).map (fun d => (mani (daraja d)).length) = [40, 16, 6, 1] := by"},
+ {"ism": "MUTANT_MARJA_SAKIN_QABL", "milaf": "A116/Marja.lean", "adr": "118",
+  "min": "  | .wasl p | .waqf p => if p == .sukun then [.v, .c] else [.cv]",
+  "ila": "  | .wasl p | .waqf p => if p == .sukun then [.v] else [.cv]"},
+ {"ism": "MUTANT_MARJA_NO_ITBAQ", "milaf": "A116/Marja.lean", "adr": "118",
+  "min": "  | _, c => [makhrajOf c, b2n (jahrOf c), mannerOf c, b2n (itbaqOf c)]",
+  "ila": "  | _, c => [makhrajOf c, b2n (jahrOf c), mannerOf c]"},
+ {"ism": "MUTANT_MARJA_N_STRIDE", "milaf": "A116/Marja.lean", "adr": "118",
+  "min": "def nOf (b : Cell × Mawdi) : Nat := 9 * Jadwal.khanat.idxOf b.1 + mIdx b.2",
+  "ila": "def nOf (b : Cell × Mawdi) : Nat := 8 * Jadwal.khanat.idxOf b.1 + mIdx b.2"}
 ]
