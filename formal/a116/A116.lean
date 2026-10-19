@@ -68,6 +68,8 @@ import A116.Tanith
 import A116.Qism
 import A116.Mamnu
 import A116.Tawafiq
+import A116.TawafiqMasfufaData
+import A116.TawafiqMasfufa
 import A116.Tarkib
 import A116.Amil
 import A116.Awamil

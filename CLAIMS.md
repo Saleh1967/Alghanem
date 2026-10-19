@@ -501,7 +501,7 @@
 | `wazn-body.csv.rows` | 31 |
 
 
-## أعدادُ المبرهنات بوحداتها (96 مبرهنة)
+## أعدادُ المبرهنات بوحداتها (99 مبرهنة)
 
 مستخرَجةٌ من نصوص Lean (`formal/a116/A116/*.lean`): كلُّ مبرهنةٍ مدقَّقة ينتهي نصُّها بـ‎= عدد‎؛ والوحدةُ من القائمة المغلقة أدناه (ADR ١٢). العددُ هو الثابتُ الأخير في نصّ المبرهنة.
 
@@ -598,6 +598,9 @@
 | 48 | بناء رباعي | `A116.Tawafiq.shapes48_length` |
 | 45 | بناء رباعي | `A116.Tawafiq.law_rubai` |
 | 31 | قالب | `A116.Tawafiq.zawaid_row` |
+| 113 | خانة | `A116.TawafiqMasfufa.rows_113` |
+| 1,223,605,775,448 | سلسلة خانات | `A116.TawafiqMasfufa.wasl_qiyam` |
+| 138,276,963,960,489 | سلسلة خانات | `A116.TawafiqMasfufa.waqf_qiyam` |
 | 2 | بايت | `A116.Unicode.arabic_is_two_bytes` |
 | 382 | لفظ مشترك | `A116.Wad.mushtarak_count` |
 | 12 | قالب | `A116.Wazn.wasl_joined_waits` |

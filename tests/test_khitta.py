@@ -44,7 +44,8 @@ def test_status_rows() -> None:
         assert f"\n| {n} |" in status, n
     adrs = "".join((ROOT / "docs" / "adr" / f).read_text(encoding="utf-8")
                    for f in ("0111-protocol-tafrat.md", "0112-mantuq-mafhum.md",
-                             "0114-silsila.md", "0115-silsila-furu.md"))
+                             "0114-silsila.md", "0115-silsila-furu.md",
+                             "0116-tawafiq-masfufa.md"))
     debts = re.findall(r"`([A-Z][A-Z_]{5,})`", status)
     assert len(debts) >= 8
     for d in debts:

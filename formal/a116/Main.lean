@@ -201,6 +201,36 @@ def main (args : List String) : IO Unit := do
         IO.println (HaddTable.render w)
   | ["mizan-lean"] =>
     for r in MizanTable.leanFile do IO.println r
+  | ["masfufa-lean"] =>
+    -- مصفوفتا انتقال الوصل والوقف ومتّجها القبول حرفيّةً (`TawafiqMasfufa`، STEP-0010)؛ النواةُ تفحص أنّها هي (`MW_eq`…).
+    let lst : List Nat → String := fun r => "[" ++ String.intercalate ", " (r.map toString) ++ "]"
+    IO.println "/-! مولَّدٌ بـ`lake exe a116-table masfufa-lean`؛ لا يُحرَّر باليد. النواةُ تفحص أنّه `TawafiqMasfufa.MW` و`MQ` و`aW` و`aQ` بعينها (`MW_eq`…). -/"
+    IO.println ""
+    IO.println "namespace A116.TawafiqMasfufaData"
+    IO.println ""
+    for (name, m) in [("wL", TawafiqMasfufa.MW), ("qL", TawafiqMasfufa.MQ)] do
+      IO.println s!"def {name} : List (List Nat) := ["
+      for (r, i) in m.zip (List.range m.length) do
+        IO.println s!"  {lst r}{if i + 1 < m.length then "," else ""}"
+      IO.println "]"
+      IO.println ""
+    IO.println s!"def aWL : List Nat := {lst TawafiqMasfufa.aW}"
+    IO.println ""
+    IO.println s!"def aQL : List Nat := {lst TawafiqMasfufa.aQ}"
+    IO.println ""
+    IO.println "end A116.TawafiqMasfufaData"
+  | ["masfufa"] =>
+    -- عددُ المرخَّص لكلّ طول (`TawafiqMasfufa`، STEP-0010): المصفوفتان صفًّا صفًّا ومتّجها القبول، والقيمُ 0–14 بالضرب
+    -- (`wasl_list`، `waqf_list`)، ليعيدها `tests/test_tawafiq_masfufa.py` بضربٍ مستقلّ ويطابقها بالتكرار.
+    let row : String → List Nat → String := fun t r => t ++ "," ++ String.intercalate "," (r.map toString)
+    for r in TawafiqMasfufaData.wL do IO.println (row "W" r)
+    for r in TawafiqMasfufaData.qL do IO.println (row "Q" r)
+    IO.println (row "aW" TawafiqMasfufaData.aWL)
+    IO.println (row "aQ" TawafiqMasfufaData.aQL)
+    for n in List.range 15 do
+      let w := (TawafiqMasfufa.iterL TawafiqMasfufaData.wL TawafiqMasfufaData.aWL n).head?.getD 0
+      let q := (TawafiqMasfufa.iterL TawafiqMasfufaData.qL TawafiqMasfufaData.aQL n).head?.getD 0
+      IO.println s!"val,{n},{w},{q}"
   | ["mizan"] =>
     for r in MizanTable.rows do IO.println r
   | ["hadd-join"] =>

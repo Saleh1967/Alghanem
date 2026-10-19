@@ -25,9 +25,9 @@ import A116.Rubai
   في `kindOne` يمسّ جداولَ Lean المودَعة كلَّها، فهو ADR بعد قفل الدالّ لا تعديلٌ صامت.
 
 الطولُ الثالث وما بعده يطبعه Lean المترجَم جدولًا (`lake exe a116-table tawafiq`) ويطابقه
-`tests/test_tawafiq.py` بمرآة البوّابة؛ وعددُه لكلّ طولٍ **غيرُ مبرهَن** بعدُ (`TAWAFIQ_CLOSED_FORM_NOT_PROVEN`):
-النموذجُ الثنائيّ له شكلٌ مغلق لكلّ طول (`Count.U_succ_succ`)، والثلاثيُّ على الخانات ينتظر آلةَ انتقالٍ
-بحالة (حركةُ ما قبل، حاملُ المُغلِق المنتظَر) على نسق `Fold`.
+`tests/test_tawafiq.py` بمرآة البوّابة؛ وعددُه لكلّ طولٍ **مبرهَنٌ في `A116.TawafiqMasfufa`** (ADR ١١٦، سدّ
+`TAWAFIQ_CLOSED_FORM_NOT_PROVEN`): ‎wasl n = uᵀMⁿa‎ بمصفوفة انتقال آلة الحرف لكلّ n، والتكرارُ
+‎wasl(n+7) = 84·wasl(n+6) + 2436·wasl(n+5) + 84·wasl(n+4)‎ لكلّ n ووقفًا مثلُه من الطول الخامس.
 -/
 
 namespace A116.Tawafiq

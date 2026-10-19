@@ -88,5 +88,8 @@
   "ila": "  ((sh.filter fun x => true).map (·.1.2)).eraseDups"},
  {"ism": "MUTANT_FURU_SHUHUD_DUPS", "milaf": "A116/SilsilaFuru.lean", "adr": "115",
   "min": "    Naql.jisrWad tawatur ((sufuf rows k).flatMap (·.shuhud)).eraseDups)",
-  "ila": "    Naql.jisrWad tawatur ((sufuf rows k).flatMap (·.shuhud)))"}
+  "ila": "    Naql.jisrWad tawatur ((sufuf rows k).flatMap (·.shuhud)))"},
+ {"ism": "MUTANT_MASFUFA_CNT_ACCEPT", "milaf": "A116/TawafiqMasfufa.lean", "adr": "116", "min": "  | 0, s => if acc s then 1 else 0", "ila": "  | 0, _ => 1"},
+ {"ism": "MUTANT_MASFUFA_MAT_PLUS_ONE", "milaf": "A116/TawafiqMasfufa.lean", "adr": "116", "min": "def mat (A : List α) (f : S → α → S) (s t : S) : Nat := (A.filter fun x => f s x = t).length", "ila": "def mat (A : List α) (f : S → α → S) (s t : S) : Nat := (A.filter fun x => f s x = t).length + 1"},
+ {"ism": "MUTANT_MASFUFA_REC_COEFF", "milaf": "A116/TawafiqMasfufa.lean", "adr": "116", "min": "      2436 * pow Harf.Hal.all Alif.licensable fW Harf.qabilWasl 5 s +", "ila": "      2437 * pow Harf.Hal.all Alif.licensable fW Harf.qabilWasl 5 s +"}
 ]
