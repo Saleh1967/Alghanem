@@ -174,8 +174,8 @@ class ScopeFingerprint:
 
 
 PROSE_SCOPE_AT_MEASUREMENT: Final[ScopeFingerprint] = ScopeFingerprint(
-    files=486,
-    text_bytes=9964738,
+    files=488,
+    text_bytes=9990805,
 )
 
 

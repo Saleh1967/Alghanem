@@ -5,13 +5,13 @@
     "lean": 8,
     "measures": 115,
     "normalizes": 186,
-    "pure": 545,
-    "reads_text": 264,
+    "pure": 548,
+    "reads_text": 265,
     "script": 17,
     "writes_text": 89
   },
   "sole_entry_exit": "gate.api (enter, exit, derive, recover)",
-  "count": 1035,
+  "count": 1039,
   "units": [
     {
       "path": "suspended/canonical116/__init__.py",
@@ -7700,6 +7700,24 @@
       ]
     },
     {
+      "path": "suspended/src/alghanem/arabic/world_knowledge_gap.py",
+      "previous_path": "src/alghanem/arabic/world_knowledge_gap.py",
+      "reason": "reads/writes/normalizes text outside the gate; superseded by gate/ (api, bridge, contextual, mabni_*)",
+      "suspended_at": "2026-10-05",
+      "claim": "كم قاعدة ينقص كل سؤال: مولد يقترح، ودليل مستقل يقبل، وأسئلة ذهبية تقيس الفجوة.",
+      "violation": [
+        "pure"
+      ],
+      "readmission_path": [
+        "restate the claim as a Lean theorem on cells + python mirror + conformance table"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
       "path": "suspended/src/alghanem/arabic/written_haraka_mark.py",
       "previous_path": "src/alghanem/arabic/written_haraka_mark.py",
       "reason": "reads/writes/normalizes text outside the gate; superseded by gate/ (api, bridge, contextual, mabni_*)",
@@ -10847,6 +10865,24 @@
       "reason": "reads/writes/normalizes text outside the gate; superseded by gate/ (api, bridge, contextual, mabni_*)",
       "suspended_at": "2026-10-05",
       "claim": "التحقّقُ المستقلُّ ثمّ القبولُ النهائيّ، مربوطَين بكلّ عنصرٍ مؤثِّر.",
+      "violation": [
+        "pure"
+      ],
+      "readmission_path": [
+        "restate the claim as a Lean theorem on cells + python mirror + conformance table"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/src/alghanem/ontology/world_knowledge.py",
+      "previous_path": "src/alghanem/ontology/world_knowledge.py",
+      "reason": "reads/writes/normalizes text outside the gate; superseded by gate/ (api, bridge, contextual, mabni_*)",
+      "suspended_at": "2026-10-05",
+      "claim": "هيكل المعرفة بالعالم: قواعد اللزوم بدرجتها ومنزلتها ودليلها، وصيغ الانتاج المغلقة.",
       "violation": [
         "pure"
       ],
@@ -16006,6 +16042,24 @@
       ]
     },
     {
+      "path": "suspended/tests/arabic/test_world_knowledge_gap.py",
+      "previous_path": "tests/arabic/test_world_knowledge_gap.py",
+      "reason": "tests of suspended modules, or expectations derived from the code under test",
+      "suspended_at": "2026-10-05",
+      "claim": "الفجوة مقيسة: ما ينقص كل سؤال ذهبي، والمولد لا يحكم، والشواهد القرآنية في المودع.",
+      "violation": [
+        "reads_text"
+      ],
+      "readmission_path": [
+        "input only as gate certificates (gate.enter -> atoms -> cells); no bytes read here"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
       "path": "suspended/tests/arabic/test_written_haraka_mark.py",
       "previous_path": "tests/arabic/test_written_haraka_mark.py",
       "reason": "tests of suspended modules, or expectations derived from the code under test",
@@ -18140,6 +18194,24 @@
       ],
       "readmission_path": [
         "normalization is the gate's residue rules (A116.Residue); map each rule to a named residue edit or drop it"
+      ],
+      "re_admit_requires": [
+        "entry and exit only through gate.api (bytes -> Certificate; display derived)",
+        "tests with expectations independent of the code, mutation-tested (20/20 method)",
+        "ADR recorded in docs/adr/"
+      ]
+    },
+    {
+      "path": "suspended/tests/ontology/test_world_knowledge.py",
+      "previous_path": "tests/ontology/test_world_knowledge.py",
+      "reason": "tests of suspended modules, or expectations derived from the code under test",
+      "suspended_at": "2026-10-05",
+      "claim": "هيكل المعرفة بالعالم على أمثلة الغزالي والجرجاني والنبهاني بنصوصها.",
+      "violation": [
+        "pure"
+      ],
+      "readmission_path": [
+        "restate the claim as a Lean theorem on cells + python mirror + conformance table"
       ],
       "re_admit_requires": [
         "entry and exit only through gate.api (bytes -> Certificate; display derived)",
