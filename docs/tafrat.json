@@ -121,5 +121,14 @@
   "ila": "∀ a, g (J.enc a) = none"},
  {"ism": "MUTANT_AMALIYYA_KUTIBA_DIGIT", "milaf": "A116/AmaliyyaHafiza.lean", "adr": "121",
   "min": "bridgeCell 85, bridgeCell 10, bridgeCell 4]",
-  "ila": "bridgeCell 85, bridgeCell 8, bridgeCell 4]"}
+  "ila": "bridgeCell 85, bridgeCell 8, bridgeCell 4]"},
+ {"ism": "MUTANT_BAQI_DHARRA_EMPTY", "milaf": "A116/Baqi.lean", "adr": "122",
+  "min": "    | none => [[a]]",
+  "ila": "    | none => [[]]"},
+ {"ism": "MUTANT_BAQI_AW_LEFT_ONLY", "milaf": "A116/Baqi.lean", "adr": "122",
+  "min": "  | .aw p q => matlub e p ++ matlub e q",
+  "ila": "  | .aw p q => matlub e p"},
+ {"ism": "MUTANT_BAQI_ADNA_NONSTRICT", "milaf": "A116/Baqi.lean", "adr": "122",
+  "min": "M.filter (fun S => !M.any (fun T => subB T S && !subB S T))",
+  "ila": "M.filter (fun S => !M.any (fun T => subB T S))"}
 ]

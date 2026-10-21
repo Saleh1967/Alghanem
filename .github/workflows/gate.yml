@@ -140,6 +140,7 @@ jobs:
           lake exe a116-table need > need.csv
           lake exe a116-table nizam > nizam.csv
           lake exe a116-table mantuq > mantuq.csv         # الجسرُ من المنطوق إلى المفهوم (ADR ١١٢، STEP-0005) — يُودَع ويُطابَق
+          lake exe a116-table baqi > baqi.csv             # المتبقّي (ADR ١٢٢، STEP-0016) — يُودَع ويُطابَق
           lake exe a116-table silsila > silsila.csv       # السلسلةُ كلمةً كلمة (ADR ١١٤، STEP-0006) — يُودَع ويُطابَق
           lake exe a116-table furu > furu.csv             # فرعا السلسلة (ADR ١١٥، STEP-0008؛ أُضيف في STEP-0010) — يُودَع ويُطابَق
           lake exe a116-table amr > amr.csv
@@ -158,7 +159,7 @@ jobs:
           lake exe a116-table marja-azwaj > marja-azwaj.csv
           lake exe a116-table mizan > mizan.csv
           lake exe a116-table mizan-lean > /tmp/MizanData.lean && cp /tmp/MizanData.lean A116/MizanData.lean
-          git diff --exit-code -- table.csv counts.csv order.csv numbers.csv pairs.csv utf8.csv hamza.csv licensable.csv degrees.csv wazn.csv wazn-body.csv neutral.csv degrees-pause.csv ledger.csv need.csv nizam.csv mantuq.csv silsila.csv furu.csv amr.csv roles.csv tasrif.csv rubai.csv maqayis.csv qufl.csv tawafiq.csv masfufa.csv A116/TawafiqMasfufaData.lean amil.csv huruf.csv marja.csv marja-huruf.csv marja-azwaj.csv mizan.csv A116/MizanData.lean
+          git diff --exit-code -- table.csv counts.csv order.csv numbers.csv pairs.csv utf8.csv hamza.csv licensable.csv degrees.csv wazn.csv wazn-body.csv neutral.csv degrees-pause.csv ledger.csv need.csv nizam.csv mantuq.csv baqi.csv silsila.csv furu.csv amr.csv roles.csv tasrif.csv rubai.csv maqayis.csv qufl.csv tawafiq.csv masfufa.csv A116/TawafiqMasfufaData.lean amil.csv huruf.csv marja.csv marja-huruf.csv marja-azwaj.csv mizan.csv A116/MizanData.lean
           lake exe a116-table syllables > syllables.csv   # 13 MB: يُولَّد هنا ويُسلَّم للبايثون لا يُودَع
           lake exe a116-table hadd > hadd.csv             # 14 MB: قيدُ الحدّ (Hadd.strictB) — يُولَّد ولا يُودَع
           lake exe a116-table hadd-join > hadd-join.csv   # الحدُّ بين كلمتين (Hadd.strictJoinB) — يُولَّد ولا يُودَع

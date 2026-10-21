@@ -618,6 +618,26 @@ def main (args : List String) : IO Unit := do
       let qs := ",".intercalate ([0, 1, 2].map fun d => String.ofList (Marja.qurana d c))
       let ids := ",".intercalate ((Marja.idghamAdad c).map toString)
       IO.println s!"{c},{m},{(Marja.lif m).length},{b (Makharij.jahrOf c)},{Makharij.mannerOf c},{b (Makharij.itbaqOf c)},{Marja.wilada c},{qs},{ids}"
+  | ["baqi"] =>
+    -- المتبقّي (`Baqi`، ADR ١٢٢): كلُّ صيغةٍ بعمقٍ ≤ 2 على ⊤ و⊥ وذرّتين، مع كلّ أدلّةٍ ثلاثيّة على الذرّتين؛
+    -- الحكمُ والمطلوبُ الأدنى، ليُطابَقا بتعدادٍ مستقلٍّ للاستكمالات في `tests/test_baqi.py`.
+    let qs : Bawwabat.Q → String
+      | some true => "P" | some false => "N" | none => "U"
+    let rec sh : Baqi.Sigha → String
+      | .thabit => "T" | .mumtani => "F" | .dharra a => s!"a{a}"
+      | .wa p q => s!"({sh p}&{sh q})" | .aw p q => s!"({sh p}|{sh q})"
+    let d0 : List Baqi.Sigha := [.thabit, .mumtani, .dharra 0, .dharra 1]
+    let up (l : List Baqi.Sigha) : List Baqi.Sigha :=
+      l.flatMap fun p => l.flatMap fun q => [.wa p q, .aw p q]
+    let d1 := d0 ++ up d0
+    let d2 := d0 ++ up d1
+    let vs : List Bawwabat.Q := [none, some true, some false]
+    IO.println "sigha,e0,e1,hukm,matlub"
+    for f in d2 do for v0 in vs do for v1 in vs do
+      let e : Nat → Bawwabat.Q := fun a => if a = 0 then v0 else if a = 1 then v1 else none
+      let m := (Baqi.matlubAdna e f).map fun S =>
+        if S.isEmpty then "{}" else String.intercalate "+" (S.map fun a => s!"a{a}")
+      IO.println s!"{sh f},{qs v0},{qs v1},{qs (Baqi.qima e f)},{String.intercalate "/" m}"
   | ["marja-azwaj"] =>
     -- الأزواجُ الـ841 بقسمها في قانون الإدغام (`MakharijIdgham.qism`)، يقرؤها `tools/gen_marja.py` للشاهد (ADR ١١٨).
     let qn := fun (q : MakharijIdgham.Qism) => match q with
