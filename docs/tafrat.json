@@ -112,5 +112,14 @@
   "ila": "def conflictQ (p f : Bool × Bool) : Bool := (p.2 != f.2)"},
  {"ism": "MUTANT_TAWRITH_BIT_MUTTASIQ_FLIP", "milaf": "A116/TawrithBit.lean", "adr": "119",
   "min": "w.all fun p => !tanaqud p.1 p.2",
-  "ila": "w.all fun p => tanaqud p.1 p.2"}
+  "ila": "w.all fun p => tanaqud p.1 p.2"},
+ {"ism": "MUTANT_AMALIYYA_WASL_SHIFT", "milaf": "A116/AmaliyyaHafiza.lean", "adr": "121",
+  "min": "(116 ^ q.2 * p.1 + q.1",
+  "ila": "(116 ^ (q.2 + 1) * p.1 + q.1"},
+ {"ism": "MUTANT_AMALIYYA_YAHFAZ_NONE", "milaf": "A116/AmaliyyaHafiza.lean", "adr": "121",
+  "min": "∀ a, g (J.enc a) = (f a).map K.enc",
+  "ila": "∀ a, g (J.enc a) = none"},
+ {"ism": "MUTANT_AMALIYYA_KUTIBA_DIGIT", "milaf": "A116/AmaliyyaHafiza.lean", "adr": "121",
+  "min": "bridgeCell 85, bridgeCell 10, bridgeCell 4]",
+  "ila": "bridgeCell 85, bridgeCell 8, bridgeCell 4]"}
 ]
