@@ -103,5 +103,14 @@
   "ila": "  | _, c => [makhrajOf c, b2n (jahrOf c), mannerOf c]"},
  {"ism": "MUTANT_MARJA_N_STRIDE", "milaf": "A116/Marja.lean", "adr": "118",
   "min": "def nOf (b : Cell × Mawdi) : Nat := 9 * Jadwal.khanat.idxOf b.1 + mIdx b.2",
-  "ila": "def nOf (b : Cell × Mawdi) : Nat := 8 * Jadwal.khanat.idxOf b.1 + mIdx b.2"}
+  "ila": "def nOf (b : Cell × Mawdi) : Nat := 8 * Jadwal.khanat.idxOf b.1 + mIdx b.2"},
+ {"ism": "MUTANT_TAWRITH_BIT_FAST_NO_UNKNOWN", "milaf": "A116/TawrithBit.lean", "adr": "119",
+  "min": "(p.1 || f.1, p.2 || (!p.1 && f.2))",
+  "ila": "(p.1 || f.1, p.2 || f.2)"},
+ {"ism": "MUTANT_TAWRITH_BIT_CONFLICT_NO_KNOWN", "milaf": "A116/TawrithBit.lean", "adr": "119",
+  "min": "def conflictQ (p f : Bool × Bool) : Bool := p.1 && f.1 && (p.2 != f.2)",
+  "ila": "def conflictQ (p f : Bool × Bool) : Bool := (p.2 != f.2)"},
+ {"ism": "MUTANT_TAWRITH_BIT_MUTTASIQ_FLIP", "milaf": "A116/TawrithBit.lean", "adr": "119",
+  "min": "w.all fun p => !tanaqud p.1 p.2",
+  "ila": "w.all fun p => tanaqud p.1 p.2"}
 ]

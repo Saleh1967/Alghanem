@@ -404,7 +404,7 @@ def test_births_tool_synthetic() -> None:
 
 def test_shahid_consistent() -> None:
     if not SHAHID.exists():
-        # الشاهدُ في إيداعٍ بعد التسجيل المسبق (STEP-0013)؛ التخطّي معلَّقٌ بالبايتات لا بمتغيّر.
+        # الشاهدُ في إيداعٍ بعد التسجيل المسبق (الخطوةُ التالية)؛ التخطّي معلَّقٌ بالبايتات لا بمتغيّر.
         pytest.skip("SHAHID_NOT_YET_DEPOSITED")
     s = json.loads(SHAHID.read_text(encoding="utf-8"))
     assert s["prereg_sha256"] == sha(PREREG)

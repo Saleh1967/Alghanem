@@ -98,6 +98,8 @@ UNITS: dict[str, str] = {
                           "(`corpora/naql/shuhud.tsv.gz`) — ADR ١٠٠",
     "هيكل تشكيل": "هيكلُ لفظٍ بلا علامات له صورٌ مشكولةٌ في المصحف أو الصحيحين "
                   "(`corpora/tashkil/mujam.tsv.gz`) — ADR ١٠٣",
+    "زوج حالتين ثلاثيتين": "زوجُ حالتين من خاناتٍ ثلاثيّة القيمة (نعم، لا، لا حكم) بعرضٍ معلوم "
+                           "(`A116.TawrithBit.azwaj`) — ADR ١١٩",
 }
 """القائمةُ المغلقة للوحدات: لا تُضاف وحدةٌ إلّا هنا وبـADR."""
 LEAN_UNITS: dict[str, str] = {
@@ -136,6 +138,7 @@ LEAN_UNITS: dict[str, str] = {
     "TawafiqMasfufa.rows_113": "خانة",
     "TawafiqMasfufa.wasl_qiyam": "سلسلة خانات",
     "TawafiqMasfufa.waqf_qiyam": "سلسلة خانات",
+    "TawrithBit.shahid_khamsa": "زوج حالتين ثلاثيتين",
     "Tawafiq.shapes64_length": "بناء ثلاثي",
     "Tawafiq.shapes64_wasl": "بناء ثلاثي",
     "Tawafiq.shapes64_waqf": "بناء ثلاثي",
