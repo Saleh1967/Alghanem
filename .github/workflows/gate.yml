@@ -260,6 +260,7 @@ jobs:
           python tools/gen_qism_khanat.py --check
           python tools/gen_silsila.py --check           # السلسلةُ على المصحف (ADR ١١٤، STEP-0007؛ ADR ١١٥، STEP-0009)
           python tools/gen_iktisab.py --check           # الاكتسابُ بالأمثلة المضادّة (ADR ١٢٣، STEP-0018)
+          python tools/gen_iktisab_huwiyya.py --check   # اكتسابُ قوانين الهويّة (ADR ١٢٤، STEP-0019)
           python tools/gen_protocol.py --check
       - name: guard — no reader or writer outside the gate
         run: python -c "from gate.guard import breaches; b = breaches(); print(b or 'لا خرق'); raise SystemExit(1 if b else 0)"

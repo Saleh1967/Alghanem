@@ -133,5 +133,8 @@
   "ila": "M.filter (fun S => !M.any (fun T => subB T S))"},
  {"ism": "MUTANT_IKTISAB_NAQIS_SPEC", "milaf": "A116/IktisabAqd.lean", "adr": "123", "min": "(evalN [r, p] naqis).testBit j = (r.testBit j && !p.testBit j)", "ila": "(evalN [r, p] naqis).testBit j = (r.testBit j && p.testBit j)"},
  {"ism": "MUTANT_IKTISAB_XOR_AS_OR", "milaf": "A116/Iktisab.lean", "adr": "123", "min": "  | .xor a b => evalB env a ^^ evalB env b", "ila": "  | .xor a b => evalB env a || evalB env b"},
- {"ism": "MUTANT_IKTISAB_FASTQ_KNOWN", "milaf": "A116/IktisabAqd.lean", "adr": "123", "min": "evalB [k₁, v₁, k₂, v₂] batt_qima_bil_maktaba = (fastQ (k₁, v₁) (k₂, v₂)).2", "ila": "evalB [k₁, v₁, k₂, v₂] batt_qima_bil_maktaba = (fastQ (k₁, v₁) (k₂, v₂)).1"}
+ {"ism": "MUTANT_IKTISAB_FASTQ_KNOWN", "milaf": "A116/IktisabAqd.lean", "adr": "123", "min": "evalB [k₁, v₁, k₂, v₂] batt_qima_bil_maktaba = (fastQ (k₁, v₁) (k₂, v₂)).2", "ila": "evalB [k₁, v₁, k₂, v₂] batt_qima_bil_maktaba = (fastQ (k₁, v₁) (k₂, v₂)).1"},
+ {"ism": "MUTANT_HUWIYYA_YUAYYIN_AND", "milaf": "A116/IktisabHuwiyya.lean", "adr": "124", "min": "  D.all fun a => D.all fun b => key ws a != key ws b || law a == law b", "ila": "  D.all fun a => D.all fun b => key ws a != key ws b && law a == law b"},
+ {"ism": "MUTANT_HUWIYYA_WUJUD_NOT_UNIQUE", "milaf": "A116/IktisabHuwiyyaAqd.lean", "adr": "124", "min": "      (ikhtiyar wasfAll 2).filter (yuayyin · wujud dom) = [wujudW] := by", "ila": "      (ikhtiyar wasfAll 2).filter (yuayyin · wujud dom) = [] := by"},
+ {"ism": "MUTANT_HUWIYYA_KHALIL_TO_MAKHRAJ", "milaf": "A116/IktisabHuwiyyaAqd.lean", "adr": "124", "min": "theorem sibawayh_khalil : yuayyin [.hala, .makhraj, .hayyiz] wujud dom = true", "ila": "theorem sibawayh_khalil : yuayyin [.hala, .makhraj, .makhraj] wujud dom = true"}
 ]

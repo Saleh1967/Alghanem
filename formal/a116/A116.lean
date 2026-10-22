@@ -143,3 +143,6 @@ import A116.Baqi
 import A116.Iktisab
 import A116.IktisabData
 import A116.IktisabAqd
+import A116.IktisabHuwiyya
+import A116.IktisabHuwiyyaData
+import A116.IktisabHuwiyyaAqd
