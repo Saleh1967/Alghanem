@@ -130,5 +130,8 @@
   "ila": "  | .aw p q => matlub e p"},
  {"ism": "MUTANT_BAQI_ADNA_NONSTRICT", "milaf": "A116/Baqi.lean", "adr": "122",
   "min": "M.filter (fun S => !M.any (fun T => subB T S && !subB S T))",
-  "ila": "M.filter (fun S => !M.any (fun T => subB T S))"}
+  "ila": "M.filter (fun S => !M.any (fun T => subB T S))"},
+ {"ism": "MUTANT_IKTISAB_NAQIS_SPEC", "milaf": "A116/IktisabAqd.lean", "adr": "123", "min": "(evalN [r, p] naqis).testBit j = (r.testBit j && !p.testBit j)", "ila": "(evalN [r, p] naqis).testBit j = (r.testBit j && p.testBit j)"},
+ {"ism": "MUTANT_IKTISAB_XOR_AS_OR", "milaf": "A116/Iktisab.lean", "adr": "123", "min": "  | .xor a b => evalB env a ^^ evalB env b", "ila": "  | .xor a b => evalB env a || evalB env b"},
+ {"ism": "MUTANT_IKTISAB_FASTQ_KNOWN", "milaf": "A116/IktisabAqd.lean", "adr": "123", "min": "evalB [k₁, v₁, k₂, v₂] batt_qima_bil_maktaba = (fastQ (k₁, v₁) (k₂, v₂)).2", "ila": "evalB [k₁, v₁, k₂, v₂] batt_qima_bil_maktaba = (fastQ (k₁, v₁) (k₂, v₂)).1"}
 ]

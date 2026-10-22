@@ -1,0 +1,8 @@
+{
+  "naqis": {
+    "arity": 2,
+    "body": "and(v0, xor(v0, v1))",
+    "contract": "A116.IktisabAqd.naqis_aqd",
+    "spec": "spec_naqis"
+  }
+}

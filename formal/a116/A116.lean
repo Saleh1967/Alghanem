@@ -140,3 +140,6 @@ import A116.Marja
 import A116.TawrithBit
 import A116.AmaliyyaHafiza
 import A116.Baqi
+import A116.Iktisab
+import A116.IktisabData
+import A116.IktisabAqd

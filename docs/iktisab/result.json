@@ -1,0 +1,393 @@
+{
+  "adr": 123,
+  "max_size": 7,
+  "stage_one": {
+    "counterexamples": [
+      {
+        "candidate": "v0",
+        "row": [
+          1,
+          1
+        ]
+      },
+      {
+        "candidate": "0",
+        "row": [
+          1,
+          0
+        ]
+      },
+      {
+        "candidate": "xor(v0, v1)",
+        "row": [
+          0,
+          1
+        ]
+      }
+    ],
+    "enumerated": 50,
+    "found": "and(v0, xor(v0, v1))",
+    "size": 5,
+    "task": "naqis",
+    "teacher_queries": 4
+  },
+  "stage_two": {
+    "batt_maalum": {
+      "bil_maktaba": {
+        "counterexamples": [
+          {
+            "candidate": "v0",
+            "row": [
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "candidate": "v2",
+            "row": [
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "enumerated": 33,
+        "found": "or(v0, v2)",
+        "size": 3,
+        "task": "batt_maalum",
+        "teacher_queries": 3
+      },
+      "bila_maktaba": {
+        "counterexamples": [
+          {
+            "candidate": "v0",
+            "row": [
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "candidate": "v2",
+            "row": [
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "enumerated": 33,
+        "found": "or(v0, v2)",
+        "size": 3,
+        "task": "batt_maalum",
+        "teacher_queries": 3
+      }
+    },
+    "batt_qima": {
+      "bil_maktaba": {
+        "counterexamples": [
+          {
+            "candidate": "v0",
+            "row": [
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "candidate": "v1",
+            "row": [
+              0,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "candidate": "v2",
+            "row": [
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "candidate": "or(v1, v2)",
+            "row": [
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "candidate": "or(v1, v3)",
+            "row": [
+              1,
+              0,
+              1,
+              1
+            ]
+          }
+        ],
+        "enumerated": 1296,
+        "found": "or(v1, naqis(v3, v0))",
+        "size": 5,
+        "task": "batt_qima",
+        "teacher_queries": 6
+      },
+      "bila_maktaba": {
+        "counterexamples": [
+          {
+            "candidate": "v0",
+            "row": [
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "candidate": "v1",
+            "row": [
+              0,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "candidate": "v2",
+            "row": [
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "candidate": "or(v1, v2)",
+            "row": [
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "candidate": "or(v1, v3)",
+            "row": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "candidate": "and(or(v1, v2), xor(v0, v3))",
+            "row": [
+              1,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "candidate": "and(or(v1, v3), xor(v0, v2))",
+            "row": [
+              1,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "candidate": "and(or(v1, v3), xor(v0, v3))",
+            "row": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        ],
+        "enumerated": 32983,
+        "found": "or(v1, and(v3, xor(v0, v2)))",
+        "size": 7,
+        "task": "batt_qima",
+        "teacher_queries": 9
+      }
+    },
+    "taarud": {
+      "bil_maktaba": {
+        "counterexamples": [
+          {
+            "candidate": "v0",
+            "row": [
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "candidate": "v1",
+            "row": [
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "candidate": "v2",
+            "row": [
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "candidate": "v3",
+            "row": [
+              1,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "candidate": "and(v0, v2)",
+            "row": [
+              1,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "candidate": "and(v1, v2)",
+            "row": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "candidate": "and(v2, or(v1, v3))",
+            "row": [
+              0,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "candidate": "and(v0, and(v2, or(v1, v3)))",
+            "row": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        ],
+        "enumerated": 4364,
+        "found": "and(v0, and(v2, xor(v1, v3)))",
+        "size": 7,
+        "task": "taarud",
+        "teacher_queries": 9
+      },
+      "bila_maktaba": {
+        "counterexamples": [
+          {
+            "candidate": "v0",
+            "row": [
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "candidate": "v1",
+            "row": [
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "candidate": "v2",
+            "row": [
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "candidate": "v3",
+            "row": [
+              1,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "candidate": "and(v0, v2)",
+            "row": [
+              1,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "candidate": "and(v1, v2)",
+            "row": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "candidate": "and(v2, or(v1, v3))",
+            "row": [
+              0,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "candidate": "and(v0, and(v2, or(v1, v3)))",
+            "row": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        ],
+        "enumerated": 2539,
+        "found": "and(v0, and(v2, xor(v1, v3)))",
+        "size": 7,
+        "task": "taarud",
+        "teacher_queries": 9
+      }
+    }
+  }
+}
